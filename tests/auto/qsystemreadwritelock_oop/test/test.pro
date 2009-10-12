@@ -10,16 +10,14 @@ include(../../../../common.pri)
 # Input 
 SOURCES += ../tst_qsystemreadwritelock_oop.cpp
 
-LIBS += -lQtContextFramework
+LIBS += -lQtPublishSubscribe
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
 
-wince*: {
-	externApp.sources = ../process/vsextern.exe
-	externApp.path = vsextern
-	DEPLOYMENT += externApp
-
+wince* {
+    DEPLOYLACKEY.sources = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/lackey.exe
+    DEPLOYLACKEY.path = .
+    DEPLOYMENT += DEPLOYLACKEY
 }
-

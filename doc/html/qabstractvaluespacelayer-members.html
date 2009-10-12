@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- ../../context/qvaluespace.cpp -->
+<!-- qvaluespace.cpp -->
 <head>
   <title>List of All Members for QAbstractValueSpaceLayer</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -17,38 +17,30 @@
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
 <li><div class="fn">typedef <b><a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a></b></div></li>
-<li><div class="fn">enum <b><a href="qabstractvaluespacelayer.html#LayerOption-enum">LayerOption</a></b></div></li>
-<li><div class="fn">flags <b><a href="qabstractvaluespacelayer.html#LayerOption-enum">LayerOptions</a></b></div></li>
 <li><div class="fn">enum <b><a href="qabstractvaluespacelayer.html#Properties-enum">Properties</a></b></div></li>
 <li><div class="fn">enum <b><a href="qabstractvaluespacelayer.html#Type-enum">Type</a></b></div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#addWatch">addWatch</a></b> ( QValueSpaceObject *, Handle )</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#children">children</a></b> ( Handle ) : QSet&lt;QByteArray&gt;</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#emitItemNotify">emitItemNotify</a></b> ( QValueSpaceObject *, const QByteArray &amp;, bool )</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#emitItemRemove">emitItemRemove</a></b> ( QValueSpaceObject *, const QByteArray &amp; )</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#emitItemSetValue">emitItemSetValue</a></b> ( QValueSpaceObject *, const QByteArray &amp;, const QVariant &amp; )</div></li>
+<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#addWatch">addWatch</a></b> ( QValueSpaceProvider *, Handle )</div></li>
+<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#children">children</a></b> ( Handle ) : QSet&lt;QString&gt;</div></li>
+<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#emitAttributeInterestChanged">emitAttributeInterestChanged</a></b> ( QValueSpaceProvider *, const QString &amp;, bool )</div></li>
 <li><div class="fn"><b><a href="qabstractvaluespacelayer.html#handleChanged">handleChanged</a></b> ( quintptr )</div></li>
 <li><div class="fn"><b><a href="qabstractvaluespacelayer.html#id">id</a></b> () : QUuid</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#item">item</a></b> ( Handle, const QByteArray &amp; ) : Handle</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#layerOptions">layerOptions</a></b> () const : LayerOptions</div></li>
+<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#item">item</a></b> ( Handle, const QString &amp; ) : Handle</div></li>
+<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#layerOptions">layerOptions</a></b> () const : QValueSpace::LayerOptions</div></li>
 <li><div class="fn"><b><a href="qabstractvaluespacelayer.html#name">name</a></b> () : QString</div></li>
 <li><div class="fn"><b><a href="qabstractvaluespacelayer.html#notifyInterest">notifyInterest</a></b> ( Handle, bool ) : bool</div></li>
 </ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qabstractvaluespacelayer.html#order">order</a></b> () : unsigned int</div></li>
 <li><div class="fn"><b><a href="qabstractvaluespacelayer.html#removeHandle">removeHandle</a></b> ( Handle )</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#removeSubTree">removeSubTree</a></b> ( QValueSpaceObject *, Handle ) : bool</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#removeValue">removeValue</a></b> ( QValueSpaceObject *, Handle, const QByteArray &amp; ) : bool</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#removeWatches">removeWatches</a></b> ( QValueSpaceObject *, Handle )</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#requestRemoveValue">requestRemoveValue</a></b> ( Handle, const QByteArray &amp; ) : bool</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#requestSetValue">requestSetValue</a></b> ( Handle, const QVariant &amp; ) : bool</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#requestSetValue-2">requestSetValue</a></b> ( Handle, const QByteArray &amp;, const QVariant &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#removeSubTree">removeSubTree</a></b> ( QValueSpaceProvider *, Handle ) : bool</div></li>
+<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#removeValue">removeValue</a></b> ( QValueSpaceProvider *, Handle, const QString &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#removeWatches">removeWatches</a></b> ( QValueSpaceProvider *, Handle )</div></li>
 <li><div class="fn"><b><a href="qabstractvaluespacelayer.html#setProperty">setProperty</a></b> ( Handle, Properties )</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#setValue">setValue</a></b> ( QValueSpaceObject *, Handle, const QByteArray &amp;, const QVariant &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#setValue">setValue</a></b> ( QValueSpaceProvider *, Handle, const QString &amp;, const QVariant &amp; ) : bool</div></li>
 <li><div class="fn"><b><a href="qabstractvaluespacelayer.html#startup">startup</a></b> ( Type ) : bool</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#supportsRequests">supportsRequests</a></b> () const : bool</div></li>
+<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#supportsInterestNotification">supportsInterestNotification</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="qabstractvaluespacelayer.html#sync">sync</a></b> ()</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#syncRequests">syncRequests</a></b> () : bool</div></li>
 <li><div class="fn"><b><a href="qabstractvaluespacelayer.html#value">value</a></b> ( Handle, QVariant * ) : bool</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#value-2">value</a></b> ( Handle, const QByteArray &amp;, QVariant * ) : bool</div></li>
+<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#value-2">value</a></b> ( Handle, const QString &amp;, QVariant * ) : bool</div></li>
 </ul>
 </td></tr>
 </table></p>

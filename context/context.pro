@@ -1,6 +1,6 @@
 TEMPLATE = lib
-TARGET = QtContextFramework
-QT = core network gui
+TARGET = QtPublishSubscribe
+QT = core network
 
 include(../common.pri)
 
@@ -9,8 +9,8 @@ DEFINES += QT_BUILD_CFW_LIB QT_MAKEDLL
 
 PUBLIC_HEADERS += qcontextglobal.h \
            qvaluespace.h \
-           qvaluespaceobject.h \
-           qvaluespaceitem.h
+           qvaluespaceprovider.h \
+           qvaluespacesubscriber.h
 
 PRIVATE_HEADERS += qpacketprotocol_p.h \
            qmallocpool_p.h \
@@ -23,17 +23,19 @@ SOURCES += qpacketprotocol.cpp \
            qmallocpool.cpp \
            qvaluespace.cpp \
            qvaluespacemanager.cpp \
-           qvaluespaceobject.cpp \
-           qvaluespaceitem.cpp
+           qvaluespaceprovider.cpp \
+           qvaluespacesubscriber.cpp
 
 symbian {
     deploy.path = /
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
     DEPLOYMENT += exportheaders
+
+    MMP_RULES += "EXPORTUNFROZEN"
 }
 
-unix {
+unix:!symbian {
     HEADERS += qsystemreadwritelock_p.h
     SOURCES += sharedmemorylayer.cpp \
                qsystemreadwritelock.cpp \
@@ -48,7 +50,8 @@ win32 {
                qsystemreadwritelock.cpp \
                registrylayer_win.cpp
 
-    LIBS += -ladvapi32
+    !wince*:LIBS += -ladvapi32
+    wince*:LIBS += -ltoolhelp
 }
 
 headers.files = $$PUBLIC_HEADERS

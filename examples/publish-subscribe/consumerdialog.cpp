@@ -34,19 +34,19 @@
 #include "consumerdialog.h"
 #include "ui_consumerdialog.h"
 
-#include <qvaluespaceitem.h>
+#include <qvaluespacesubscriber.h>
 
 #include <QDebug>
 
 ConsumerDialog::ConsumerDialog(QWidget *parent) :
         QDialog(parent),
         ui(new Ui::ConsumerDialog),
-        item(0)
+        subscriber(0)
 {
     ui->setupUi(this);
 
-    connect(ui->connectButton, SIGNAL(clicked()), this, SLOT(createNewItem()));
-    createNewItem();
+    connect(ui->connectButton, SIGNAL(clicked()), this, SLOT(changeSubscriberPath()));
+    changeSubscriberPath();
 }
 
 ConsumerDialog::~ConsumerDialog()
@@ -67,30 +67,31 @@ void ConsumerDialog::changeEvent(QEvent *e)
 }
 
 //! [0]
-void ConsumerDialog::createNewItem()
+void ConsumerDialog::changeSubscriberPath()
 {
-    if (item)
-        delete item;
-
     ui->values->clearContents();
 
-    item = new QValueSpaceItem(ui->basePath->text(), this);
+    if (!subscriber)
+        subscriber = new QValueSpaceSubscriber(ui->basePath->text(), this);
+    else
+        subscriber->setPath(ui->basePath->text());
 
-    connect(item, SIGNAL(contentsChanged()), this, SLOT(itemChanged()));
-    itemChanged();
+    connect(subscriber, SIGNAL(contentsChanged()), this, SLOT(subscriberChanged()));
+
+    subscriberChanged();
 }
 //! [0]
 
 //! [1]
-void ConsumerDialog::itemChanged()
+void ConsumerDialog::subscriberChanged()
 {
     ui->values->clearContents();
 
-    QList<QString> subPaths = item->subPaths();
+    QStringList subPaths = subscriber->subPaths();
     ui->values->setRowCount(subPaths.count());
 
     for (int i = 0; i < subPaths.count(); ++i) {
-        QVariant v = item->value(subPaths.at(i));
+        QVariant v = subscriber->value(subPaths.at(i));
 
         QTableWidgetItem *pathItem = new QTableWidgetItem(subPaths.at(i));
         QTableWidgetItem *valueItem = new QTableWidgetItem(v.toString());

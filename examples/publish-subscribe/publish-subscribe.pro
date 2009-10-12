@@ -15,4 +15,4 @@ FORMS = providerdialog.ui \
         consumerdialog.ui
 
 include(../../common.pri)
-LIBS += -lQtContextFramework
+LIBS += -lQtPublishSubscribe

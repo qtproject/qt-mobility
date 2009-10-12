@@ -31,12 +31,13 @@
 **
 ****************************************************************************/
 
-#include <qvaluespace.h>
-#include <qvaluespaceitem.h>
-#include <qvaluespaceobject.h>
+#include <qvaluespace_p.h>
+#include <qvaluespacesubscriber.h>
+#include <qvaluespaceprovider.h>
 
 #include <QtTest/QTest>
 #include <QSet>
+#include <QFile>
 
 #include <QDebug>
 
@@ -54,44 +55,41 @@ public:
                               0x54, 0x21, 0xff, 0xa3, 0x63, 0x74, 0xf7); }
     unsigned int order() { return 0x20000000; }
 
-    Handle item(Handle parent, const QByteArray &subPath);
+    Handle item(Handle parent, const QString &subPath);
     void removeHandle(Handle handle);
     void setProperty(Handle, Properties) { }
 
     bool value(Handle handle, QVariant *data);
-    bool value(Handle handle, const QByteArray &subPath, QVariant *data);
-    QSet<QByteArray> children(Handle handle);
+    bool value(Handle handle, const QString &subPath, QVariant *data);
+    QSet<QString> children(Handle handle);
 
-    LayerOptions layerOptions() const;
+    QValueSpace::LayerOptions layerOptions() const;
 
-    /* QValueSpaceItem functions */
-    bool supportsRequests() const { return true; }
-    bool requestSetValue(Handle handle, const QVariant &value);
-    bool requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &value);
-    bool requestRemoveValue(Handle handle, const QByteArray &path = QByteArray());
+    /* QValueSpaceSubscriber functions */
+    bool supportsInterestNotification() const;
     bool notifyInterest(Handle handle, bool interested);
-    bool syncRequests() { return true; }
 
-    /* QValueSpaceObject functions */
-    bool setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath, const QVariant &value);
-    bool removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath);
-    bool removeSubTree(QValueSpaceObject *creator, Handle handle);
-    void addWatch(QValueSpaceObject *creator, Handle handle);
-    void removeWatches(QValueSpaceObject *creator, Handle parent);
+    /* QValueSpaceProvider functions */
+    bool setValue(QValueSpaceProvider *creator, Handle handle,
+                  const QString &subPath, const QVariant &value);
+    bool removeValue(QValueSpaceProvider *creator, Handle handle, const QString &subPath);
+    bool removeSubTree(QValueSpaceProvider *creator, Handle handle);
+    void addWatch(QValueSpaceProvider *creator, Handle handle);
+    void removeWatches(QValueSpaceProvider *creator, Handle parent);
     void sync() { }
 
-    QList<QString> testErrors() { QList<QString> result = m_testErrors; m_testErrors.clear(); return result; }
+    QStringList testErrors();
 
 private:
-    bool testPath(const QByteArray &path);
+    bool testPath(const QString &path);
 
-    QMap<uint, QByteArray> handles;
+    QMap<uint, QString> handles;
     QMap<uint, uint> interest;
 
-    QList<QString> m_testErrors;
+    QStringList m_testErrors;
 };
 
-bool FakeLayer::testPath(const QByteArray &path)
+bool FakeLayer::testPath(const QString &path)
 {
     if (path.isEmpty())
         m_testErrors << QLatin1String("path is empty");
@@ -110,7 +108,7 @@ bool FakeLayer::testPath(const QByteArray &path)
     return false;
 }
 
-QAbstractValueSpaceLayer::Handle FakeLayer::item(Handle parent, const QByteArray &subPath)
+QAbstractValueSpaceLayer::Handle FakeLayer::item(Handle parent, const QString &subPath)
 {
     if (parent == InvalidHandle) {
         if (testPath(subPath)) {
@@ -146,7 +144,7 @@ bool FakeLayer::value(Handle handle, QVariant *data)
     return true;
 }
 
-bool FakeLayer::value(Handle handle, const QByteArray &subPath, QVariant *data)
+bool FakeLayer::value(Handle handle, const QString &subPath, QVariant *data)
 {
     if (!handles.contains(handle))
         m_testErrors << QLatin1String("Unknown handle");
@@ -162,44 +160,21 @@ bool FakeLayer::value(Handle handle, const QByteArray &subPath, QVariant *data)
     }
 }
 
-QSet<QByteArray> FakeLayer::children(Handle handle)
+QSet<QString> FakeLayer::children(Handle handle)
 {
     if (!handles.contains(handle))
         m_testErrors << QLatin1String("Unknown handle");
 
-    return QSet<QByteArray>();
+    return QSet<QString>();
 }
 
-QAbstractValueSpaceLayer::LayerOptions FakeLayer::layerOptions() const
+QValueSpace::LayerOptions FakeLayer::layerOptions() const
 {
-    return NonPermanentLayer;
+    return QValueSpace::NonPermanentLayer;
 }
 
-bool FakeLayer::requestSetValue(Handle handle, const QVariant &)
+bool FakeLayer::supportsInterestNotification() const
 {
-    if (!handles.contains(handle))
-        m_testErrors << QLatin1String("Unknown handle");
-
-    return true;
-}
-
-bool FakeLayer::requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &)
-{
-    if (!handles.contains(handle))
-        m_testErrors << QLatin1String("Unknown handle");
-
-    testPath(subPath);
-
-    return true;
-}
-
-bool FakeLayer::requestRemoveValue(Handle handle, const QByteArray &path)
-{
-    if (!handles.contains(handle))
-        m_testErrors << QLatin1String("Unknown handle");
-
-    testPath(path);
-
     return true;
 }
 
@@ -223,8 +198,8 @@ bool FakeLayer::notifyInterest(Handle handle, bool interested)
     return true;
 }
 
-bool FakeLayer::setValue(QValueSpaceObject *creator, Handle handle,
-                         const QByteArray &subPath, const QVariant &)
+bool FakeLayer::setValue(QValueSpaceProvider *creator, Handle handle,
+                         const QString &subPath, const QVariant &)
 {
     if (!creator)
         m_testErrors << QLatin1String("creator is null");
@@ -237,7 +212,7 @@ bool FakeLayer::setValue(QValueSpaceObject *creator, Handle handle,
     return true;
 }
 
-bool FakeLayer::removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath)
+bool FakeLayer::removeValue(QValueSpaceProvider *creator, Handle handle, const QString &subPath)
 {
     if (!creator)
         m_testErrors << QLatin1String("creator is null");
@@ -250,7 +225,7 @@ bool FakeLayer::removeValue(QValueSpaceObject *creator, Handle handle, const QBy
     return true;
 }
 
-bool FakeLayer::removeSubTree(QValueSpaceObject *creator, Handle handle)
+bool FakeLayer::removeSubTree(QValueSpaceProvider *creator, Handle handle)
 {
     if (!creator)
         m_testErrors << QLatin1String("creator is null");
@@ -261,7 +236,7 @@ bool FakeLayer::removeSubTree(QValueSpaceObject *creator, Handle handle)
     return true;
 }
 
-void FakeLayer::addWatch(QValueSpaceObject *creator, Handle handle)
+void FakeLayer::addWatch(QValueSpaceProvider *creator, Handle handle)
 {
     if (!creator)
         m_testErrors << QLatin1String("creator is null");
@@ -270,13 +245,20 @@ void FakeLayer::addWatch(QValueSpaceObject *creator, Handle handle)
         m_testErrors << QLatin1String("Unknown handle");
 }
 
-void FakeLayer::removeWatches(QValueSpaceObject *creator, Handle parent)
+void FakeLayer::removeWatches(QValueSpaceProvider *creator, Handle parent)
 {
     if (!creator)
         m_testErrors << QLatin1String("creator is null");
 
     if (!handles.contains(parent))
         m_testErrors << QLatin1String("Unknown handle");
+}
+
+QStringList FakeLayer::testErrors()
+{
+    QStringList result = m_testErrors;
+    m_testErrors.clear();
+    return result;
 }
 
 class tst_QValueSpace: public QObject
@@ -298,11 +280,15 @@ private:
 
 void tst_QValueSpace::initTestCase()
 {
+#ifdef Q_OS_UNIX
+    QFile::remove("/tmp/qt-0/valuespace_shmlayer");
+#endif
+
     qRegisterMetaType<QVariant>("QVariant");
 
     fakeLayer = new FakeLayer;
     QValueSpace::installLayer(fakeLayer);
-    QValueSpace::initValueSpaceManager();
+    QValueSpace::initValueSpaceServer();
 }
 
 void tst_QValueSpace::cleanupTestCase()
@@ -329,7 +315,7 @@ void tst_QValueSpace::availableLayers()
 
 #define CHECK_ERRORS(x) do { \
     x; \
-    QList<QString> testErrors = fakeLayer->testErrors(); \
+    QStringList testErrors = fakeLayer->testErrors(); \
     if (!testErrors.isEmpty()) { \
         qDebug() << testErrors; \
         QFAIL(#x); \
@@ -339,9 +325,9 @@ void tst_QValueSpace::availableLayers()
 void tst_QValueSpace::layerInterface_data()
 {
     QTest::addColumn<QString>("path");
-    QTest::addColumn<QByteArray>("attribute");
+    QTest::addColumn<QString>("attribute");
 
-    QList<QString> paths;
+    QStringList paths;
     paths << QString() << QString("/") << QString("//")
           << QString("layerInterface") << QString("layerInterface/")
           << QString("/layerInterface") << QString("//layerInterface")
@@ -349,22 +335,22 @@ void tst_QValueSpace::layerInterface_data()
           << QString("/layerInterface/subpath") << QString("/layerInterface//subpath")
           << QString("/layerInterface/subpath/") << QString("/layerInterface/subpath//");
 
-    QList<QByteArray> attributes;
-    attributes << QByteArray()
-               << QByteArray("/")
-               << QByteArray("//")
-               << QByteArray("value")
-               << QByteArray("value/")
-               << QByteArray("value//")
-               << QByteArray("/value")
-               << QByteArray("//value")
-               << QByteArray("/value/")
-               << QByteArray("subpath/value")
-               << QByteArray("subpath//value");
+    QStringList attributes;
+    attributes << QString()
+               << QString("/")
+               << QString("//")
+               << QString("value")
+               << QString("value/")
+               << QString("value//")
+               << QString("/value")
+               << QString("//value")
+               << QString("/value/")
+               << QString("subpath/value")
+               << QString("subpath//value");
 
     foreach (const QString &path, paths) {
-        foreach (const QByteArray &attribute, attributes) {
-            QString id = QString("p:%1 a:%2").arg(QString(path), QString(attribute));
+        foreach (const QString &attribute, attributes) {
+            QString id = QString("p:%1 a:%2").arg(path, attribute);
             QTest::newRow(id.toLocal8Bit().constData()) << path << attribute;
         }
     }
@@ -381,36 +367,32 @@ public slots:
 void tst_QValueSpace::layerInterface()
 {
     QFETCH(QString, path);
-    QFETCH(QByteArray, attribute);
+    QFETCH(QString, attribute);
 
-    QValueSpaceItem *item;
+    QValueSpaceSubscriber *subscriber;
 
-    CHECK_ERRORS(item = new QValueSpaceItem(path));
+    CHECK_ERRORS(subscriber = new QValueSpaceSubscriber(path));
 
-    CHECK_ERRORS(item->value(attribute));
-    CHECK_ERRORS(item->children());
-    CHECK_ERRORS(item->setValue(10); item->sync());
-    CHECK_ERRORS(item->setValue(attribute, 10); item->sync());
-    CHECK_ERRORS(item->remove(); item->sync());
-    CHECK_ERRORS(item->remove(attribute); item->sync());
+    CHECK_ERRORS(subscriber->value(attribute));
+    CHECK_ERRORS(subscriber->children());
 
-    CHECK_ERRORS(delete item);
+    CHECK_ERRORS(delete subscriber);
 
 
-    QValueSpaceObject *object;
+    QValueSpaceProvider *provider;
 
-    CHECK_ERRORS(object = new QValueSpaceObject(path, fakeLayer->id()));
+    CHECK_ERRORS(provider = new QValueSpaceProvider(path, fakeLayer->id()));
 
-    QVERIFY(object->isValid());
-    QVERIFY(object->supportsRequests());
+    QVERIFY(provider->isConnected());
 
-    CHECK_ERRORS(object->setAttribute(attribute, 10));
-    CHECK_ERRORS(object->removeAttribute(attribute));
+    CHECK_ERRORS(provider->setAttribute(attribute, 10));
+    CHECK_ERRORS(provider->removeAttribute(attribute));
 
     SignalSink sink;
-    CHECK_ERRORS(connect(object, SIGNAL(itemNotify(QByteArray,bool)), &sink, SLOT(slot())));
+    CHECK_ERRORS(connect(provider, SIGNAL(attributeInterestChanged(QString,bool)),
+                         &sink, SLOT(slot())));
 
-    CHECK_ERRORS(delete object);
+    CHECK_ERRORS(delete provider);
 }
 
 QTEST_MAIN(tst_QValueSpace)

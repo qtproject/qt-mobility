@@ -62,8 +62,8 @@
         bool createConsumer = false;
 
         for (int i = 1; i &lt; argc; ++i) {
-            if (argv[i] == QLatin1String(&quot;-manager&quot;)) {
-                QValueSpace::initValueSpaceManager();
+            if (argv[i] == QLatin1String(&quot;-server&quot;)) {
+                QValueSpace::initValueSpaceServer();
             } else if (argv[i] == QLatin1String(&quot;-provider&quot;)) {
                 createProvider = true;
                 createDefault = false;

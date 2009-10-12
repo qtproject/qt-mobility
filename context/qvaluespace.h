@@ -34,47 +34,16 @@
 #ifndef QVALUESPACE_H
 #define QVALUESPACE_H
 
-#include <QVariant>
-#include <QByteArray>
-#include <QList>
-#include <QObject>
-#include <QUuid>
-
 #include "qcontextglobal.h"
+
+#include <QList>
+#include <QUuid>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QValueSpaceObject;
-
-class Q_CFW_EXPORT QAbstractValueSpaceLayer : public QObject
-{
-    Q_OBJECT
-
-public:
-    typedef quintptr Handle;
-    static const Handle InvalidHandle = ~Handle(0);
-
-    virtual QString name() = 0;
-
-    enum Type { Server, Client };
-
-    virtual bool startup(Type type) = 0;
-
-    virtual QUuid id() = 0;
-    virtual unsigned int order() = 0;
-
-    enum Properties { Publish = 0x00000001 };
-
-    virtual Handle item(Handle parent, const QByteArray &subPath) = 0;
-    virtual void removeHandle(Handle handle) = 0;
-    virtual void setProperty(Handle handle, Properties properties) = 0;
-
-    virtual bool value(Handle handle, QVariant *data) = 0;
-    virtual bool value(Handle handle, const QByteArray &subPath, QVariant *data) = 0;
-    virtual QSet<QByteArray> children(Handle handle) = 0;
-
+namespace QValueSpace {
     enum LayerOption {
         UnspecifiedLayer = 0x0000,
         PermanentLayer = 0x0001,
@@ -88,49 +57,12 @@ public:
     };
     Q_DECLARE_FLAGS(LayerOptions, LayerOption);
 
-    virtual LayerOptions layerOptions() const = 0;
-
-    /* QValueSpaceItem functions */
-    virtual bool supportsRequests() const = 0;
-    virtual bool requestSetValue(Handle handle, const QVariant &value) = 0;
-    virtual bool requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &value) = 0;
-    virtual bool requestRemoveValue(Handle handle, const QByteArray &path = QByteArray("/")) = 0;
-    virtual bool notifyInterest(Handle handle, bool interested) = 0;
-    virtual bool syncRequests() = 0;
-
-    /* QValueSpaceObject functions */
-    virtual bool setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath, const QVariant &value) = 0;
-    virtual bool removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath) = 0;
-    virtual bool removeSubTree(QValueSpaceObject *creator, Handle handle) = 0;
-    virtual void addWatch(QValueSpaceObject *creator, Handle handle) = 0;
-    virtual void removeWatches(QValueSpaceObject *creator, Handle parent) = 0;
-    virtual void sync() = 0;
-
-protected:
-    /* QValueSpaceObject functions */
-    void emitItemRemove(QValueSpaceObject *object, const QByteArray &path);
-    void emitItemSetValue(QValueSpaceObject *object, const QByteArray &path, const QVariant &data);
-    void emitItemNotify(QValueSpaceObject *object, const QByteArray &path, bool interested);
-
-signals:
-    void handleChanged(quintptr);
-};
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QAbstractValueSpaceLayer::LayerOptions);
-
-namespace QValueSpace {
-    Q_CFW_EXPORT void initValueSpaceManager();
-
-    typedef QAbstractValueSpaceLayer *(*LayerCreateFunc)();
-    Q_CFW_EXPORT void installLayer(LayerCreateFunc func);
-    Q_CFW_EXPORT void installLayer(QAbstractValueSpaceLayer *layer);
-
-    struct AutoInstall {
-        AutoInstall(LayerCreateFunc func) { installLayer(func); }
-    };
+    Q_CFW_EXPORT void initValueSpaceServer();
 
     Q_CFW_EXPORT QList<QUuid> availableLayers();
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QValueSpace::LayerOptions);
 
 #define QVALUESPACE_SHAREDMEMORY_LAYER QUuid(0xd81199c1, 0x6f60, 0x4432, 0x93, 0x4e, \
                                              0x0c, 0xe4, 0xd3, 0x7e, 0xf2, 0x52)
@@ -138,13 +70,6 @@ namespace QValueSpace {
                                                  0x26, 0x47, 0x67, 0xe0, 0xbb, 0xd9)
 #define QVALUESPACE_NONVOLATILEREGISTRY_LAYER QUuid(0x8e29561c, 0xa0f0, 0x4e89, 0xba, 0x56, \
                                                     0x08, 0x06, 0x64, 0xab, 0xc0, 0x17)
-
-#define QVALUESPACE_AUTO_INSTALL_LAYER(name) \
-    QAbstractValueSpaceLayer * _qvaluespaceauto_layercreate_ ## name() \
-    { \
-        return name::instance(); \
-    } \
-    static QValueSpace::AutoInstall _qvaluespaceauto_ ## name(_qvaluespaceauto_layercreate_ ## name);
 
 QT_END_NAMESPACE
 

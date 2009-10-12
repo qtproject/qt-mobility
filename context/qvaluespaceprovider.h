@@ -31,8 +31,8 @@
 **
 ****************************************************************************/
 
-#ifndef QVALUESPACEOBJECT_H
-#define QVALUESPACEOBJECT_H
+#ifndef QVALUESPACEPROVIDER_H
+#define QVALUESPACEPROVIDER_H
 
 #include "qcontextglobal.h"
 #include "qvaluespace.h"
@@ -44,65 +44,53 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QValueSpaceObjectPrivate;
-class Q_CFW_EXPORT QValueSpaceObject : public QObject
+class QValueSpaceProviderPrivate;
+class Q_CFW_EXPORT QValueSpaceProvider : public QObject
 {
     friend class QAbstractValueSpaceLayer;
 
     Q_OBJECT
 
 public:
-    explicit QValueSpaceObject(const QByteArray &path, QObject *parent = 0);
-    explicit QValueSpaceObject(const QString &path, QObject *parent = 0);
-    explicit QValueSpaceObject(const char *path, QObject *parent = 0);
+    explicit QValueSpaceProvider(const QString &path, QObject *parent = 0);
+    explicit QValueSpaceProvider(const char *path, QObject *parent = 0);
 
-    QValueSpaceObject(const QByteArray &path,
-                      QAbstractValueSpaceLayer::LayerOptions filter,
-                      QObject *parent = 0);
-    QValueSpaceObject(const QString &path,
-                      QAbstractValueSpaceLayer::LayerOptions filter,
-                      QObject *parent = 0);
-    QValueSpaceObject(const char *path,
-                      QAbstractValueSpaceLayer::LayerOptions filter,
-                      QObject *parent = 0);
+    QValueSpaceProvider(const QString &path, QValueSpace::LayerOptions filter,
+                        QObject *parent = 0);
+    QValueSpaceProvider(const char *path, QValueSpace::LayerOptions filter, QObject *parent = 0);
 
-    QValueSpaceObject(const QByteArray &objectPath, const QUuid &uuid, QObject *parent = 0);
-    QValueSpaceObject(const QString &objectPath, const QUuid &uuid, QObject *parent = 0);
-    QValueSpaceObject(const char *objectPath, const QUuid &uuid, QObject *parent = 0);
+    QValueSpaceProvider(const QString &path, const QUuid &uuid, QObject *parent = 0);
+    QValueSpaceProvider(const char *path, const QUuid &uuid, QObject *parent = 0);
 
-    ~QValueSpaceObject();
+    virtual ~QValueSpaceProvider();
 
     QString path() const;
 
-    bool isValid() const;
-
-    bool supportsRequests() const;
+    bool isConnected() const;
 
     static void sync();
 
 signals:
-    void itemRemove(const QByteArray &attribute);
-    void itemSetValue(const QByteArray &attribute, const QVariant &value);
-    void itemNotify(const QByteArray &path, bool interested);
+    void attributeInterestChanged(const QString &attribute, bool interested);
 
 public slots:
-    void setAttribute(const char *attribute, const QVariant &data);
-    void removeAttribute(const char *attribute);
     void setAttribute(const QString &attribute, const QVariant &data);
+    void setAttribute(const char *attribute, const QVariant &data);
+
     void removeAttribute(const QString &attribute);
-    void setAttribute(const QByteArray &attribute, const QVariant &data);
-    void removeAttribute(const QByteArray &attribute);
+    void removeAttribute(const char *attribute);
 
 protected:
     virtual void connectNotify(const char *);
 
 private:
-    Q_DISABLE_COPY(QValueSpaceObject)
-    QValueSpaceObjectPrivate *d;
+    Q_DISABLE_COPY(QValueSpaceProvider)
+
+    QValueSpaceProviderPrivate *d;
 };
 
 QT_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QVALUESPACEOBJECT_H
+#endif // QVALUESPACEPROVIDER_H

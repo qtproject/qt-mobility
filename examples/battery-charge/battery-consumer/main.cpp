@@ -31,19 +31,20 @@
 **
 ****************************************************************************/
 
+#include <qvaluespacesubscriber.h>
+
 #include <QApplication>
 #include <QObject>
-#include <QFxView>
+#include <QmlView>
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QUrl>
 #include <qml.h>
-#include <qvaluespaceitem.h>
 
 //! [0]
-QML_DECLARE_TYPE(QValueSpaceItem);
-QML_DEFINE_TYPE(Qt, 4, 6, (QT_VERSION&0x00ff00)>>8, ValueSpaceItem, QValueSpaceItem);
+QML_DECLARE_TYPE(QValueSpaceSubscriber);
+QML_DEFINE_TYPE(Qt, 4, 6, (QT_VERSION&0x00ff00)>>8, ValueSpaceSubscriber, QValueSpaceSubscriber);
 //! [0]
 
 class MainWidget : public QWidget
@@ -54,7 +55,7 @@ public:
     MainWidget();
 
 private:
-    QFxView *view;
+    QmlView *view;
 };
 
 MainWidget::MainWidget()
@@ -63,7 +64,7 @@ MainWidget::MainWidget()
     vbox->setMargin(0);
     setLayout(vbox);
 
-    view = new QFxView(this);
+    view = new QmlView(this);
     view->setFixedSize(100, 230);
     vbox->addWidget(view);
 

@@ -31,13 +31,14 @@
 **
 ****************************************************************************/
 
-#include <qvaluespaceitem.h>
+#include <qvaluespacesubscriber.h>
 #include <qvaluespacemanager_p.h>
-#include <qvaluespaceobject.h>
+#include <qvaluespaceprovider.h>
 
 #include <QTest>
 #include <QDebug>
 #include <QSignalSpy>
+#include <QFile>
 
 #ifdef Q_OS_WIN
 #define _WIN32_WINNT 0x0500
@@ -62,17 +63,15 @@ class ChangeListener : public QObject
 {
     Q_OBJECT
 Q_SIGNALS:
-    void changeValue(const QByteArray&, const QVariant&);
-    void itemRemove(const QByteArray&);
-    void itemNotify(const QByteArray&,bool);
+    void attributeInterestChanged(const QString&, bool);
 };
 
-class tst_QValueSpaceObject: public QObject
+class tst_QValueSpaceProvider: public QObject
 {
     Q_OBJECT
 
 public:
-    enum Type { CharStar, String, ByteArray };
+    enum Type { CharStar, String };
 
 private slots:
     void initTestCase();
@@ -94,13 +93,13 @@ private:
     int variantMetaTypeId;
 };
 
-Q_DECLARE_METATYPE(tst_QValueSpaceObject::Type)
+Q_DECLARE_METATYPE(tst_QValueSpaceProvider::Type)
 Q_DECLARE_METATYPE(QAbstractValueSpaceLayer *)
 Q_DECLARE_METATYPE(QUuid)
 Q_DECLARE_METATYPE(QVariant)
-Q_DECLARE_METATYPE(QAbstractValueSpaceLayer::LayerOptions);
+Q_DECLARE_METATYPE(QValueSpace::LayerOptions)
 
-void tst_QValueSpaceObject::initTestCase()
+void tst_QValueSpaceProvider::initTestCase()
 {
     variantMetaTypeId = qRegisterMetaType<QVariant>("QVariant");
 
@@ -117,10 +116,14 @@ void tst_QValueSpaceObject::initTestCase()
     }
 #endif
 
-    QValueSpace::initValueSpaceManager();
+#ifdef Q_OS_UNIX
+    QFile::remove("/tmp/qt-0/valuespace_shmlayer");
+#endif
+
+    QValueSpace::initValueSpaceServer();
 }
 
-void tst_QValueSpaceObject::cleanupTestCase()
+void tst_QValueSpaceProvider::cleanupTestCase()
 {
 }
 
@@ -130,11 +133,9 @@ void tst_QValueSpaceObject::cleanupTestCase()
         << layer << id << CharStar << path << canonical << valid; \
     QTest::newRow((layerName + ' ' + path + " const QString &").toLocal8Bit().constData()) \
         << layer << id << String << path << canonical << valid; \
-    QTest::newRow((layerName + ' ' + path + " const QByteArray &").toLocal8Bit().constData()) \
-        << layer << id << ByteArray << path << canonical << valid; \
 } while (false)
 
-void tst_QValueSpaceObject::testConstructor_data()
+void tst_QValueSpaceProvider::testConstructor_data()
 {
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
     QTest::addColumn<QUuid>("uuid");
@@ -142,7 +143,7 @@ void tst_QValueSpaceObject::testConstructor_data()
     QTest::addColumn<Type>("type");
     QTest::addColumn<QString>("path");
     QTest::addColumn<QString>("canonical");
-    QTest::addColumn<bool>("valid");
+    QTest::addColumn<bool>("connected");
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
@@ -167,7 +168,7 @@ void tst_QValueSpaceObject::testConstructor_data()
 
 #undef ADD
 
-void tst_QValueSpaceObject::testConstructor()
+void tst_QValueSpaceProvider::testConstructor()
 {
     QFETCH(QAbstractValueSpaceLayer *, layer);
     QFETCH(QUuid, uuid);
@@ -175,26 +176,23 @@ void tst_QValueSpaceObject::testConstructor()
     QFETCH(Type, type);
     QFETCH(QString, path);
     QFETCH(QString, canonical);
-    QFETCH(bool, valid);
+    QFETCH(bool, connected);
 
-    QValueSpaceObject *object;
+    QValueSpaceProvider *provider;
 
     switch (type) {
     case CharStar:
-        object = new QValueSpaceObject(path.toUtf8().constData(), uuid);
+        provider = new QValueSpaceProvider(path.toUtf8().constData(), uuid);
         break;
     case String:
-        object = new QValueSpaceObject(path, uuid);
-        break;
-    case ByteArray:
-        object = new QValueSpaceObject(path.toUtf8(), uuid);
+        provider = new QValueSpaceProvider(path, uuid);
         break;
     default:
         QFAIL("Invalid type.");
     };
 
-    QCOMPARE(object->path(), canonical);
-    QCOMPARE(object->isValid(), valid);
+    QCOMPARE(provider->path(), canonical);
+    QCOMPARE(provider->isConnected(), connected);
 
     if (layer) {
         QAbstractValueSpaceLayer::Handle handle =
@@ -208,16 +206,13 @@ void tst_QValueSpaceObject::testConstructor()
 
     switch (type) {
     case CharStar:
-        object->setAttribute("value", 100);
+        provider->setAttribute("value", 100);
         break;
     case String:
-        object->setAttribute(QString("value"), 100);
-        break;
-    case ByteArray:
-        object->setAttribute(QByteArray("value"), 100);
+        provider->setAttribute(QString("value"), 100);
         break;
     };
-    object->sync();
+    provider->sync();
 
     if (layer) {
         QAbstractValueSpaceLayer::Handle handle =
@@ -232,16 +227,13 @@ void tst_QValueSpaceObject::testConstructor()
 
     switch (type) {
     case CharStar:
-        object->removeAttribute("value");
+        provider->removeAttribute("value");
         break;
     case String:
-        object->removeAttribute(QString("value"));
-        break;
-    case ByteArray:
-        object->removeAttribute(QByteArray("value"));
+        provider->removeAttribute(QString("value"));
         break;
     };
-    object->sync();
+    provider->sync();
 
     if (layer) {
         QAbstractValueSpaceLayer::Handle handle =
@@ -253,10 +245,10 @@ void tst_QValueSpaceObject::testConstructor()
         layer->removeHandle(handle);
     }
 
-    delete object;
+    delete provider;
 
-    if (layer && layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer) {
-        QValueSpaceObject root("/", uuid);
+    if (layer && layer->layerOptions() & QValueSpace::PermanentLayer) {
+        QValueSpaceProvider root("/", uuid);
         while (!canonical.isEmpty()) {
             root.removeAttribute(canonical.mid(1));
             canonical.truncate(canonical.lastIndexOf('/'));
@@ -267,18 +259,16 @@ void tst_QValueSpaceObject::testConstructor()
 
 #define ADD(opt, valid) do {\
     QTest::newRow(QString::number(opt).append(" const char *").toLocal8Bit().constData()) \
-        << (QAbstractValueSpaceLayer::UnspecifiedLayer | opt) << CharStar << valid; \
+        << (QValueSpace::UnspecifiedLayer | opt) << CharStar << valid; \
     QTest::newRow(QString::number(opt).append(" const QString &").toLocal8Bit().constData()) \
-        << (QAbstractValueSpaceLayer::UnspecifiedLayer | opt) << String << valid; \
-    QTest::newRow(QString::number(opt).append(" const QByteArray &").toLocal8Bit().constData()) \
-        << (QAbstractValueSpaceLayer::UnspecifiedLayer | opt) << ByteArray << valid; \
+        << (QValueSpace::UnspecifiedLayer | opt) << String << valid; \
 } while (false)
 
-void tst_QValueSpaceObject::testFilterConstructor_data()
+void tst_QValueSpaceProvider::testFilterConstructor_data()
 {
-    QTest::addColumn<QAbstractValueSpaceLayer::LayerOptions>("options");
+    QTest::addColumn<QValueSpace::LayerOptions>("options");
     QTest::addColumn<Type>("type");
-    QTest::addColumn<bool>("valid");
+    QTest::addColumn<bool>("connected");
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
@@ -288,177 +278,126 @@ void tst_QValueSpaceObject::testFilterConstructor_data()
         ADD(layer->layerOptions(), true);
     }
 
-    ADD(QAbstractValueSpaceLayer::PermanentLayer | QAbstractValueSpaceLayer::NonPermanentLayer,
+    ADD(QValueSpace::PermanentLayer | QValueSpace::NonPermanentLayer,
         false);
-    ADD(QAbstractValueSpaceLayer::WriteableLayer | QAbstractValueSpaceLayer::NonWriteableLayer,
+    ADD(QValueSpace::WriteableLayer | QValueSpace::NonWriteableLayer,
         false);
 }
 
-void tst_QValueSpaceObject::testFilterConstructor()
+void tst_QValueSpaceProvider::testFilterConstructor()
 {
-    QFETCH(QAbstractValueSpaceLayer::LayerOptions, options);
+    QFETCH(QValueSpace::LayerOptions, options);
     QFETCH(Type, type);
-    QFETCH(bool, valid);
+    QFETCH(bool, connected);
 
-    QValueSpaceObject *object;
+    QValueSpaceProvider *provider;
 
     switch (type) {
     case CharStar:
-        object = new QValueSpaceObject("/", options);
+        provider = new QValueSpaceProvider("/", options);
         break;
     case String:
-        object = new QValueSpaceObject(QString("/"), options);
-        break;
-    case ByteArray:
-        object = new QValueSpaceObject(QByteArray("/"), options);
+        provider = new QValueSpaceProvider(QString("/"), options);
         break;
     default:
         QFAIL("Invalid type");
         return;
     };
 
-    QCOMPARE(object->isValid(), valid);
+    QCOMPARE(provider->isConnected(), connected);
 }
 
-void tst_QValueSpaceObject::testBaseConstructor()
+void tst_QValueSpaceProvider::testBaseConstructor()
 {
     {
-        QValueSpaceObject object("/");
-        QVERIFY(object.isValid());
+        QValueSpaceProvider provider("/");
+        QVERIFY(provider.isConnected());
     }
 
     {
-        QValueSpaceObject object(QString("/"));
-        QVERIFY(object.isValid());
-    }
-
-    {
-        QValueSpaceObject object(QByteArray("/"));
-        QVERIFY(object.isValid());
+        QValueSpaceProvider provider(QString("/"));
+        QVERIFY(provider.isConnected());
     }
 }
 
-void tst_QValueSpaceObject::testSignals_data()
+void tst_QValueSpaceProvider::testSignals_data()
 {
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
 
-    QTest::addColumn<QString>("objectPath");
-    QTest::addColumn<QByteArray>("objectAttribute");
-    QTest::addColumn<QString>("itemPath");
-    QTest::addColumn<QString>("itemAttribute");
+    QTest::addColumn<QString>("providerPath");
+    QTest::addColumn<QString>("subscriberPath");
+    QTest::addColumn<QString>("attribute");
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
-
-    bool skip = true;
 
     for (int i = 0; i < layers.count(); ++i) {
         QAbstractValueSpaceLayer *layer = layers.at(i);
 
-        if (!layer->supportsRequests())
+        if (!layer->supportsInterestNotification())
             continue;
 
-        skip = false;
-
-        QTest::newRow("root")
+        QTest::newRow("/ /")
             << layer
             << QString("/")
-            << QByteArray()
             << QString("/")
             << QString();
 
-        QTest::newRow("")
+        QTest::newRow("/ /testSignals")
+            << layer
+            << QString("/")
+            << QString("/testSignals")
+            << QString("testSignals");
+
+        QTest::newRow("/testSignals /testSignals")
             << layer
             << QString("/testSignals")
-            << QByteArray("/value")
             << QString("/testSignals")
-            << QString("value");
+            << QString();
     }
-
-    if (skip)
-        QSKIP("No applicable layers found.", SkipAll);
 }
 
-void tst_QValueSpaceObject::testSignals()
+void tst_QValueSpaceProvider::testSignals()
 {
     QFETCH(QAbstractValueSpaceLayer *, layer);
 
-    QFETCH(QString, objectPath);
-    QFETCH(QByteArray, objectAttribute);
-    QFETCH(QString, itemPath);
-    QFETCH(QString, itemAttribute);
+    QFETCH(QString, providerPath);
+    QFETCH(QString, subscriberPath);
+    QFETCH(QString, attribute);
 
-    QValueSpaceObject *object = new QValueSpaceObject(objectPath, layer->id());
+    QValueSpaceProvider *provider = new QValueSpaceProvider(providerPath, layer->id());
 
     ChangeListener listener;
-    connect(object, SIGNAL(itemSetValue(QByteArray,QVariant)),
-            &listener, SIGNAL(changeValue(QByteArray,QVariant)));
-    connect(object, SIGNAL(itemRemove(QByteArray)),
-            &listener, SIGNAL(itemRemove(QByteArray)));
-    connect(object, SIGNAL(itemNotify(QByteArray,bool)),
-            &listener, SIGNAL(itemNotify(QByteArray,bool)));
+    connect(provider, SIGNAL(attributeInterestChanged(QString,bool)),
+            &listener, SIGNAL(attributeInterestChanged(QString,bool)));
 
-    QSignalSpy setValueSpy(&listener, SIGNAL(changeValue(QByteArray,QVariant)));
-    QSignalSpy removeSpy(&listener, SIGNAL(itemRemove(QByteArray)));
-    QSignalSpy itemNotifySpy(&listener, SIGNAL(itemNotify(QByteArray,bool)));
+    QSignalSpy interestChangedSpy(&listener, SIGNAL(attributeInterestChanged(QString,bool)));
 
-    QValueSpaceItem *item = new QValueSpaceItem(itemPath, layer->id());
+    QValueSpaceSubscriber *subscriber = new QValueSpaceSubscriber(subscriberPath, layer->id());
 
-    QTRY_COMPARE(itemNotifySpy.count(), 1);
-    QVERIFY(setValueSpy.isEmpty());
-    QVERIFY(removeSpy.isEmpty());
+    QTRY_COMPARE(interestChangedSpy.count(), 1);
 
-    QList<QVariant> arguments = itemNotifySpy.takeFirst();
+    QList<QVariant> arguments = interestChangedSpy.takeFirst();
     QCOMPARE(arguments.count(), 2);
-    QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
-    QVERIFY(arguments.at(0).toByteArray().isEmpty());
+    QCOMPARE(arguments.at(0).type(), QVariant::String);
+    QCOMPARE(arguments.at(0).toString(), attribute);
     QCOMPARE(arguments.at(1).type(), QVariant::Bool);
     QVERIFY(arguments.at(1).toBool());
 
-    if (itemAttribute.isEmpty())
-        item->setValue(10);
-    else
-        item->setValue(itemAttribute, 10);
-    item->sync();
+    delete subscriber;
 
-    QTRY_COMPARE(setValueSpy.count(), 1);
-    QVERIFY(removeSpy.isEmpty());
-    QVERIFY(itemNotifySpy.isEmpty());
+    QTRY_COMPARE(interestChangedSpy.count(), 1);
 
-    arguments = setValueSpy.takeFirst();
+    arguments = interestChangedSpy.takeFirst();
     QCOMPARE(arguments.count(), 2);
-    QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
-    QCOMPARE(arguments.at(0).toByteArray(), objectAttribute);
-    QCOMPARE(arguments.at(1).userType(), variantMetaTypeId);
-    QCOMPARE(arguments.at(1).value<QVariant>().type(), QVariant::Int);
-    QCOMPARE(arguments.at(1).value<QVariant>().toInt(), 10);
-
-    item->remove(itemAttribute);
-    item->sync();
-
-    QTRY_COMPARE(removeSpy.count(), 1);
-    QVERIFY(setValueSpy.isEmpty());
-    QVERIFY(itemNotifySpy.isEmpty());
-
-    arguments = removeSpy.takeFirst();
-    QCOMPARE(arguments.count(), 1);
-    QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
-    QCOMPARE(arguments.at(0).toByteArray(), objectAttribute);
-
-    delete item;
-
-    QTRY_COMPARE(itemNotifySpy.count(), 1);
-    QVERIFY(setValueSpy.isEmpty());
-    QVERIFY(removeSpy.isEmpty());
-
-    arguments = itemNotifySpy.takeFirst();
-    QCOMPARE(arguments.count(), 2);
-    QCOMPARE(arguments.at(0).type(), QVariant::ByteArray);
-    QVERIFY(arguments.at(0).toByteArray().isEmpty());
+    QCOMPARE(arguments.at(0).type(), QVariant::String);
+    QCOMPARE(arguments.at(0).toString(), attribute);
     QCOMPARE(arguments.at(1).type(), QVariant::Bool);
     QVERIFY(!arguments.at(1).toBool());
+
+    delete provider;
 }
 
-void tst_QValueSpaceObject::valuePermanence_data()
+void tst_QValueSpaceProvider::valuePermanence_data()
 {
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
 
@@ -472,38 +411,38 @@ void tst_QValueSpaceObject::valuePermanence_data()
     }
 }
 
-void tst_QValueSpaceObject::valuePermanence()
+void tst_QValueSpaceProvider::valuePermanence()
 {
     QFETCH(QAbstractValueSpaceLayer *, layer);
 
-    QValueSpaceObject *object = new QValueSpaceObject("/valuePermanence", layer->id());
+    QValueSpaceProvider *provider = new QValueSpaceProvider("/valuePermanence", layer->id());
 
-    object->setAttribute("value", 10);
+    provider->setAttribute("value", 10);
 
-    QValueSpaceItem item("/valuePermanence");
-    QCOMPARE(item.value("value", 0).toInt(), 10);
+    QValueSpaceSubscriber subscriber("/valuePermanence");
+    QCOMPARE(subscriber.value("value", 0).toInt(), 10);
 
-    delete object;
+    delete provider;
 
-    if (layer->layerOptions() & QAbstractValueSpaceLayer::PermanentLayer) {
-        // Permanent layer, check that value is still available after object is deleted.
-        QCOMPARE(item.value("value", 0).toInt(), 10);
+    if (layer->layerOptions() & QValueSpace::PermanentLayer) {
+        // Permanent layer, check that value is still available after provider is deleted.
+        QCOMPARE(subscriber.value("value", 0).toInt(), 10);
 
-        object = new QValueSpaceObject("/valuePermanence", layer->id());
+        provider = new QValueSpaceProvider("/valuePermanence", layer->id());
 
-        object->removeAttribute("value");
+        provider->removeAttribute("value");
 
-        QCOMPARE(item.value("value", 0).toInt(), 0);
+        QCOMPARE(subscriber.value("value", 0).toInt(), 0);
 
-        object->removeAttribute(QByteArray());
+        provider->removeAttribute(QString());
 
-        delete object;
+        delete provider;
     } else {
-        // Non-permanent layer, check that value is not available after object is deleted.
-        QCOMPARE(item.value("value", 0).toInt(), 0);
+        // Non-permanent layer, check that value is not available after provider is deleted.
+        QCOMPARE(subscriber.value("value", 0).toInt(), 0);
     }
 }
 
 
-QTEST_MAIN(tst_QValueSpaceObject)
-#include "tst_qvaluespaceobject.moc"
+QTEST_MAIN(tst_QValueSpaceProvider)
+#include "tst_qvaluespaceprovider.moc"

@@ -81,15 +81,13 @@ Rectangle {
     }
 
     //! [0]
-    ValueSpaceItem {
+    ValueSpaceSubscriber {
         id: batteryCharge
         path: "/power/battery/charge"
-        notify: true
     }
-    ValueSpaceItem {
+    ValueSpaceSubscriber {
         id: batteryCharging
         path: "/power/battery/charging"
-        notify: true
     }
     //! [0]
 }

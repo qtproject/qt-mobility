@@ -12,5 +12,5 @@ CONFIG+= testcase
 
 include(../../../../common.pri)
 
-LIBS += -lQtContextFramework
+LIBS += -lQtPublishSubscribe
 

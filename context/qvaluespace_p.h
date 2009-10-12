@@ -34,9 +34,86 @@
 #ifndef QVALUESPACE_P_H
 #define QVALUESPACE_P_H
 
+#include "qcontextglobal.h"
+#include "qvaluespace.h"
+
+#include <QObject>
+#include <QUuid>
+
 QT_BEGIN_NAMESPACE
 
-QByteArray qCanonicalPath(const QByteArray &path);
+class QValueSpaceProvider;
+
+QString qCanonicalPath(const QString &path);
+
+class Q_AUTOTEST_EXPORT QAbstractValueSpaceLayer : public QObject
+{
+    Q_OBJECT
+
+public:
+    typedef quintptr Handle;
+    static const Handle InvalidHandle = ~Handle(0);
+
+    virtual QString name() = 0;
+
+    enum Type { Server, Client };
+
+    virtual bool startup(Type type) = 0;
+
+    virtual QUuid id() = 0;
+    virtual unsigned int order() = 0;
+
+    enum Properties { Publish = 0x00000001 };
+
+    virtual Handle item(Handle parent, const QString &subPath) = 0;
+    virtual void removeHandle(Handle handle) = 0;
+    virtual void setProperty(Handle handle, Properties properties) = 0;
+
+    virtual bool value(Handle handle, QVariant *data) = 0;
+    virtual bool value(Handle handle, const QString &subPath, QVariant *data) = 0;
+    virtual QSet<QString> children(Handle handle) = 0;
+
+    virtual QValueSpace::LayerOptions layerOptions() const = 0;
+
+    /* QValueSpaceSubscriber functions */
+    virtual bool supportsInterestNotification() const = 0;
+    virtual bool notifyInterest(Handle handle, bool interested) = 0;
+
+    /* QValueSpaceProvider functions */
+    virtual bool setValue(QValueSpaceProvider *creator, Handle handle,
+                          const QString &subPath, const QVariant &value) = 0;
+    virtual bool removeValue(QValueSpaceProvider *creator, Handle handle,
+                             const QString &subPath) = 0;
+    virtual bool removeSubTree(QValueSpaceProvider *creator, Handle handle) = 0;
+    virtual void addWatch(QValueSpaceProvider *creator, Handle handle) = 0;
+    virtual void removeWatches(QValueSpaceProvider *creator, Handle parent) = 0;
+    virtual void sync() = 0;
+
+protected:
+    /* QValueSpaceProvider functions */
+    void emitAttributeInterestChanged(QValueSpaceProvider *provider, const QString &attribute,
+                                      bool interested);
+
+signals:
+    void handleChanged(quintptr);
+};
+
+namespace QValueSpace {
+    typedef QAbstractValueSpaceLayer *(*LayerCreateFunc)();
+    Q_AUTOTEST_EXPORT void installLayer(LayerCreateFunc func);
+    Q_AUTOTEST_EXPORT void installLayer(QAbstractValueSpaceLayer *layer);
+
+    struct AutoInstall {
+        AutoInstall(LayerCreateFunc func) { installLayer(func); }
+    };
+};
+
+#define QVALUESPACE_AUTO_INSTALL_LAYER(name) \
+QAbstractValueSpaceLayer * _qvaluespaceauto_layercreate_ ## name() \
+{ \
+  return name::instance(); \
+} \
+static QValueSpace::AutoInstall _qvaluespaceauto_ ## name(_qvaluespaceauto_layercreate_ ## name);
 
 QT_END_NAMESPACE
 

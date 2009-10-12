@@ -35,10 +35,9 @@
 #include "qvaluespace_p.h"
 #include "qvaluespacemanager_p.h"
 #include "qmallocpool_p.h"
-#include "qvaluespaceobject.h"
+#include "qvaluespaceprovider.h"
 #include "qpacketprotocol_p.h"
 
-#include <QByteArray>
 #include <QObject>
 #include <QMap>
 #include <QPair>
@@ -63,10 +62,10 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QAbstractValueSpaceLayer::LayerOption
+    \enum QValueSpace::LayerOption
 
     This enum describes the behaviour of the Value Space layer.  In addition this enum is used as
-    a filter when constructing a QValueSpaceObject or QValueSpaceItem.
+    a filter when constructing a QValueSpaceProvider or QValueSpaceSubscriber.
 
     \value UnspecifiedLayer     Used as a filter to specify that any layer should be used.
     \value PermanentLayer       Indicates that the layer uses a permanent backing store.  When used
@@ -162,7 +161,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn Handle QAbstractValueSpaceLayer::item(Handle parent, const QByteArray &subPath)
+    \fn Handle QAbstractValueSpaceLayer::item(Handle parent, const QString &subPath)
 
     Returns a new opaque handle for the requested \a subPath of \a parent.  If \a parent is an
     InvalidHandle, \a subPath is interpreted as an absolute path.
@@ -191,14 +190,14 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::value(Handle handle, const QByteArray &subPath, QVariant *data)
+    \fn bool QAbstractValueSpaceLayer::value(Handle handle, const QString &subPath, QVariant *data)
 
     Returns the value for a particular \a subPath of \a handle.  If a value is available, the
     layer will set \a data and return true.  If no value is available, false is returned.
 */
 
 /*!
-    \fn QSet<QByteArray> QAbstractValueSpaceLayer::children(Handle handle)
+    \fn QSet<QString> QAbstractValueSpaceLayer::children(Handle handle)
 
     Returns the set of children of \a handle.  For example, in a layer providing the following
     items:
@@ -214,47 +213,17 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QAbstractValueSpaceLayer::LayerOptions QAbstractValueSpaceLayer::layerOptions() const
+    \fn QValueSpace::LayerOptions QAbstractValueSpaceLayer::layerOptions() const
 
-    Returns the LayerOptions describing this layer.
+    Returns the QValueSpace::LayerOptions describing this layer.
 
-    \sa LayerOption
+    \sa QValueSpace::LayerOption
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::supportsRequests() const
+    \fn bool QAbstractValueSpaceLayer::supportsInterestNotification() const
 
-    Returns true if the layer supports sending requests via the requestSetValue() and
-    requestRemoveValue() functions; otherwise returns false.
-*/
-
-/*!
-    \fn bool QAbstractValueSpaceLayer::requestSetValue(Handle handle, const QVariant &value)
-
-    Process a client side QValueSpaceItem::setValue() call by sending a request to the provider of
-    the value space item identified by \a handle to set it to \a value.
-
-    Returns true if the request was successfully sent; otherwise returns false.
-
-    \sa handleChanged()
-*/
-
-/*!
-    \fn bool QAbstractValueSpaceLayer::requestSetValue(Handle handle, const QByteArray &subPath, const QVariant &value)
-
-    Process a client side QValueSpaceItem::setValue() call by sending a request to the provider of
-    the value space item identified by \a handle and \a subPath to set the value to \a value.
-
-    Returns true if the request was successfully sent; otherwise returns false.
-*/
-
-/*!
-    \fn bool QAbstractValueSpaceLayer::requestRemoveValue(Handle handle, const QByteArray &subPath)
-
-    Process a client side QValueSpaceItem::remove() call by sending a request to the provider of
-    the value space item identified by \a handle and \a subPath to remove the item.
-
-    Returns true if the request was successfully sent; otherwise returns false.
+    Returns true if the layer supports interest notifications; otherwise returns false.
 */
 
 /*!
@@ -270,17 +239,10 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::syncRequests()
+    \fn bool QAbstractValueSpaceLayer::setValue(QValueSpaceProvider *creator, Handle handle,
+                                                const QString &subPath, const QVariant &value)
 
-    Commit any pending request made through call to requestSetValue() and requestRemoveValue().
-
-    Returns true on success; otherwise returns false.
-*/
-
-/*!
-    \fn bool QAbstractValueSpaceLayer::setValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath, const QVariant &value)
-
-    Process calls to QValueSpaceObject::setAttribute() by setting the value specified by the
+    Process calls to QValueSpaceProvider::setAttribute() by setting the value specified by the
     \a subPath under \a handle to \a value.  Ownership of the value space item is assigned to
     \a creator.
 
@@ -288,37 +250,38 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::removeValue(QValueSpaceObject *creator, Handle handle, const QByteArray &subPath)
+    \fn bool QAbstractValueSpaceLayer::removeValue(QValueSpaceProvider *creator, Handle handle,
+                                                   const QString &subPath)
 
-    Process calls to QValueSpaceObject::removeAttribute() by removing the value space item
+    Process calls to QValueSpaceProvider::removeAttribute() by removing the value space item
     identified by \a handle and \a subPath and created by \a creator.
 
     Returns true on success; otherwise returns false.
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::removeSubTree(QValueSpaceObject *creator, Handle handle)
+    \fn bool QAbstractValueSpaceLayer::removeSubTree(QValueSpaceProvider *creator, Handle handle)
 
-    Process calls to QValueSpaceObject::~QValueSpaceObject() by removing the entire sub tree
+    Process calls to QValueSpaceProvider::~QValueSpaceProvider() by removing the entire sub tree
     created by \a creator under \a handle.
 
     Returns true on success; otherwise returns false.
 */
 
 /*!
-    \fn void QAbstractValueSpaceLayer::addWatch(QValueSpaceObject *creator, Handle handle)
+    \fn void QAbstractValueSpaceLayer::addWatch(QValueSpaceProvider *creator, Handle handle)
 
     Registers \a creator for change notifications to values under \a handle.
 
-    \sa removeWatches(), emitItemRemove(), emitItemSetValue()
+    \sa removeWatches()
 */
 
 /*!
-    \fn void QAbstractValueSpaceLayer::removeWatches(QValueSpaceObject *creator, Handle parent)
+    \fn void QAbstractValueSpaceLayer::removeWatches(QValueSpaceProvider *creator, Handle parent)
 
     Removes all registered change notifications for \a creator under \a parent.
 
-    \sa addWatch(), emitItemRemove(), emitItemSetValue()
+    \sa addWatch()
 */
 
 /*!
@@ -328,32 +291,15 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    Emits the QValueSpaceObject::itemRemove() signal on \a object with \a path.
-*/
-void QAbstractValueSpaceLayer::emitItemRemove(QValueSpaceObject *object, const QByteArray &path)
-{
-    emit object->itemRemove(path);
-}
-
-/*!
-    Emits the QValueSpaceObject::itemSetValue() signal on \a object with \a path and \a data.
-*/
-void QAbstractValueSpaceLayer::emitItemSetValue(QValueSpaceObject *object,
-                                                const QByteArray &path,
-                                                const QVariant &data)
-{
-    emit object->itemSetValue(path, data);
-}
-
-/*!
-    Emits the QValueSpaceObject::itemNotify() signal on \a object with \a path and \a interested.
+    Emits the QValueSpaceProvider::attributeInterestChanged() signal on \a provider with \a path
+    and \a interested.
 */
 
-void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object,
-                                              const QByteArray &path,
-                                              bool interested)
+void QAbstractValueSpaceLayer::emitAttributeInterestChanged(QValueSpaceProvider *provider,
+                                                            const QString &path,
+                                                            bool interested)
 {
-    emit object->itemNotify(path, interested);
+    emit provider->attributeInterestChanged(path, interested);
 }
 
 /*!
@@ -393,7 +339,7 @@ void QAbstractValueSpaceLayer::emitItemNotify(QValueSpaceObject *object,
     process acting as the server and should be called before any process in the system uses a value
     space class.
 */
-void QValueSpace::initValueSpaceManager()
+void QValueSpace::initValueSpaceServer()
 {
     QValueSpaceManager::instance()->initServer();
 }
@@ -427,8 +373,8 @@ void QValueSpace::installLayer(LayerCreateFunc func)
     The UUID of the Shared Memory Layer as a QUuid.  The actual UUID value is
     {d81199c1-6f60-4432-934e-0ce4d37ef252}.
 
-    This value can be passed to the constructor of QValueSpaceObject to force the constructed value
-    space object to publish its values in the Shared Memory Layer.
+    This value can be passed to the constructor of QValueSpaceProvider to force the constructed
+    value space provider to publish its values in the Shared Memory Layer.
 
     You can test if the Shared Memory Layer is available by checking if the list returned by
     QValueSpace::availableLayers() contains this value.
@@ -441,8 +387,8 @@ void QValueSpace::installLayer(LayerCreateFunc func)
     The UUID of the Volatile Registry Layer as a QUuid.  The actual UUID value is
     {8ceb5811-4968-470f-8fc2-264767e0bbd9}.
 
-    This value can be passed to the constructor of QValueSpaceObject to force the constructed value
-    space object to publish its values in the Volatile Registry Layer.
+    This value can be passed to the constructor of QValueSpaceProvider to force the constructed
+    value space provider to publish its values in the Volatile Registry Layer.
 
     You can test if the Volatile Registry Layer is available by checking if the list returned by
     QValueSpace::availableLayers() contains this value.  The Volatile Registry Layer is only
@@ -456,8 +402,8 @@ void QValueSpace::installLayer(LayerCreateFunc func)
     The UUID of the Non-Volatile Registry Layer as a QUuid.  The actual UUID value is
     {8e29561c-a0f0-4e89-ba56-080664abc017}.
 
-    This value can be passed to the constructor of QValueSpaceObject to force the constructed value
-    space object to publish its values in the Non-Volatile Registry Layer.
+    This value can be passed to the constructor of QValueSpaceProvider to force the constructed
+    value space provider to publish its values in the Non-Volatile Registry Layer.
 
     You can test if the Non-Volatile Registry Layer is available by checking if the list returned
     by QValueSpace::availableLayers() contains this value.  The Non-Volatile Registry Layer is only
@@ -484,22 +430,22 @@ QList<QUuid> QValueSpace::availableLayers()
 
     Returns \a path with all duplicate '/' characters removed.
 */
-QByteArray qCanonicalPath(const QByteArray &path)
+QString qCanonicalPath(const QString &path)
 {
-    QByteArray result;
+    QString result;
     result.resize(path.length());
-    const char *from = path.constData();
-    const char *fromend = from + path.length();
+    const QChar *from = path.constData();
+    const QChar *fromend = from + path.length();
     int outc=0;
-    char *to = result.data();
+    QChar *to = result.data();
     do {
-        to[outc++] = '/';
-        while (from!=fromend && *from == '/')
+        to[outc++] = QLatin1Char('/');
+        while (from!=fromend && *from == QLatin1Char('/'))
             ++from;
-        while (from!=fromend && *from != '/')
+        while (from!=fromend && *from != QLatin1Char('/'))
             to[outc++] = *from++;
     } while (from != fromend);
-    if (outc > 1 && to[outc-1] == '/')
+    if (outc > 1 && to[outc-1] == QLatin1Char('/'))
         --outc;
     result.resize(outc);
     return result;
