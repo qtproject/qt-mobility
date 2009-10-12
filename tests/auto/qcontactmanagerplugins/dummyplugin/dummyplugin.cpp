@@ -56,10 +56,10 @@ public:
     QString managerName() const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QUniqueId> contacts(QContactManager::Error& error) const;
-    QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
+    QList<QContactId> contacts(QContactManager::Error& error) const;
+    QContact contact(const QContactId& contactId, QContactManager::Error& error) const;
     bool saveContact(QContact* contact, bool batch, QContactManager::Error& error);
-    bool removeContact(const QUniqueId& contactId, bool batch, QContactManager::Error& error);
+    bool removeContact(const QContactId& contactId, bool batch, QContactManager::Error& error);
 
     /* Capabilities reporting */
     QStringList capabilities() const;
@@ -133,9 +133,9 @@ QString DummyEngine::managerName() const
 #endif
 }
 
-QList<QUniqueId> DummyEngine::contacts(QContactManager::Error& error) const
+QList<QContactId> DummyEngine::contacts(QContactManager::Error& error) const
 {
-    QList<QUniqueId> allCIds;
+    QList<QContactId> allCIds;
 
     if (allCIds.count() > 0 && error == QContactManager::NoError)
         error = QContactManager::DoesNotExistError;
@@ -143,7 +143,7 @@ QList<QUniqueId> DummyEngine::contacts(QContactManager::Error& error) const
     return allCIds;
 }
 
-QContact DummyEngine::contact(const QUniqueId& contactId, QContactManager::Error& error) const
+QContact DummyEngine::contact(const QContactId& contactId, QContactManager::Error& error) const
 {
     Q_UNUSED(contactId);
     error = QContactManager::DoesNotExistError;
@@ -165,7 +165,7 @@ bool DummyEngine::saveContact(QContact* contact, bool batch, QContactManager::Er
     // if we need to emit signals (ie, this isn't part of a batch operation)
     // then emit the correct one.
     if (!batch) {
-        QList<QUniqueId> emitList;
+        QList<QContactId> emitList;
         emitList.append(contact->id());
         emit contactsAdded(emitList);
     }
@@ -173,7 +173,7 @@ bool DummyEngine::saveContact(QContact* contact, bool batch, QContactManager::Er
     return true;
 }
 
-bool DummyEngine::removeContact(const QUniqueId& contactId, bool batch, QContactManager::Error& error)
+bool DummyEngine::removeContact(const QContactId& contactId, bool batch, QContactManager::Error& error)
 {
     if (contactId != 5) {
         error = QContactManager::DoesNotExistError;
@@ -185,7 +185,7 @@ bool DummyEngine::removeContact(const QUniqueId& contactId, bool batch, QContact
     // if we need to emit signals (ie, this isn't part of a batch operation)
     // then emit the correct one.
     if (!batch) {
-        QList<QUniqueId> emitList;
+        QList<QContactId> emitList;
         emitList.append(contactId);
         emit contactsRemoved(emitList);
     }

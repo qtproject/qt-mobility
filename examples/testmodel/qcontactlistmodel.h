@@ -103,7 +103,7 @@ public:
     bool insertRows(int row, int count, const QModelIndex& parent = QModelIndex());
     bool removeRows(int row, int count, const QModelIndex& parent = QModelIndex());
 
-    int contactRow(const QUniqueId& contactId) const;
+    int contactRow(const QContactId& contactId) const;
     QContact contact(const QModelIndex& index) const;
 
 private slots:

@@ -47,7 +47,7 @@
 #include "transformcontact.h"
 
 //remember to remove this in the code and just return a normal list
-//typedef QList<QUniqueId> QUniqueIdIterator;
+//typedef QList<QContactId> QContactIdIterator;
 
 class QContactChangeSet;
 
@@ -62,35 +62,35 @@ public:
 
 public:
     /* Access */
-	QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error);
-    QContact contact(const QUniqueId& contactId, QContactManager::Error& qtError) const;
-    QList<QUniqueId> contacts(QContactManager::Error& qtError) const;
+        QList<QContactId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error);
+    QContact contact(const QContactId& contactId, QContactManager::Error& qtError) const;
+    QList<QContactId> contacts(QContactManager::Error& qtError) const;
     int count() const;
     
     /* "My card" */
-    QUniqueId personalID() const;
-    bool hasPersonalDetails() const; //is this needed, QUniqueId could be 0 if it doesn't exist
-    int setPersonalContactId(const QUniqueId &);
+    QContactId personalID() const;
+    bool hasPersonalDetails() const; //is this needed, QContactId could be 0 if it doesn't exist
+    int setPersonalContactId(const QContactId &);
     void clearPersonalContactId();
 
     /* Add/Update/Remove */ 
     bool addContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
     bool updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
-    bool removeContact(const QUniqueId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError);
+    bool removeContact(const QContactId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError);
     
     //function to find contacts, based on the communication method
     //communication type - call (number, voip fields), digits to match
     //communication type - sms (number fields), digits to match
     //communication type - email (email fields)
-    QList<QUniqueId> matchCommunicationAddress( const QString &communicationType, const QString &communicationAddress );
+    QList<QContactId> matchCommunicationAddress( const QString &communicationType, const QString &communicationAddress );
 
     /* Groups functionality */
-	QList<QUniqueId> groups(QContactManager::Error& qtError) const;
-	QContactGroup group(const QUniqueId& groupId, QContactManager::Error& qtError) const;
+        QList<QContactId> groups(QContactManager::Error& qtError) const;
+        QContactGroup group(const QContactId& groupId, QContactManager::Error& qtError) const;
 	bool addGroup(QContactGroup& group, QContactChangeSet& changeSet, QContactManager::Error& qtError);
 	bool updateGroup(QContactGroup& group, QContactChangeSet& changeSet, QContactManager::Error& qtError);
-	bool removeGroup(const QUniqueId& groupId, QContactChangeSet& changeSet, QContactManager::Error& qtError);
-	QUniqueId simPhonebookGroupId() const;
+        bool removeGroup(const QContactId& groupId, QContactChangeSet& changeSet, QContactManager::Error& qtError);
+        QContactId simPhonebookGroupId() const;
     
 public:
 	// From MContactDbObserver
@@ -98,41 +98,41 @@ public:
     
 signals:
     // Database change notifications
-    void contactAdded(const QUniqueId &contactId);
-    void contactRemoved(const QUniqueId &contactId);
-    void contactChanged(const QUniqueId &contactId);
-    void groupAdded(const QUniqueId &contactId);
-    void groupRemoved(const QUniqueId &contactId);
-    void groupChanged(const QUniqueId &contactId);
+    void contactAdded(const QContactId &contactId);
+    void contactRemoved(const QContactId &contactId);
+    void contactChanged(const QContactId &contactId);
+    void groupAdded(const QContactId &contactId);
+    void groupRemoved(const QContactId &contactId);
+    void groupChanged(const QContactId &contactId);
 
 private:
     // Utility function to convert symbian error to QContactManager error
 	void transformError(TInt symbianError, QContactManager::Error& qtError) const;
 
 	// Leaving functions implementing CNTMODEL interaction.
-	QContact contactL(const QUniqueId &id) const;
-	QList<QUniqueId> contactsL() const;
+        QContact contactL(const QContactId &id) const;
+        QList<QContactId> contactsL() const;
 	int countL() const;
 
 	int addContactL(QContact &contact);
 	void updateContactL(QContact &contact);
-    int removeContactL(QUniqueId id);
+    int removeContactL(QContactId id);
 
-	QList<QUniqueId>  matchCommunicationAddressL( const QString &communicationType, const QString &communicationAddress );
+        QList<QContactId>  matchCommunicationAddressL( const QString &communicationType, const QString &communicationAddress );
 
 	//Leaving functions for groups functionality
-	QList<QUniqueId> groupsL() const;
-	QContactGroup groupL(const QUniqueId& groupId) const;
+        QList<QContactId> groupsL() const;
+        QContactGroup groupL(const QContactId& groupId) const;
 	void addGroupL(QContactGroup& group);
 	void updateGroupL(QContactGroup& group);
-	void removeGroupL(const QUniqueId& groupId);
-	QUniqueId simPhonebookGroupIdL() const;
-	QList<QUniqueId> memberOfGroupsL(const TContactItemId contactId) const;
+        void removeGroupL(const QContactId& groupId);
+        QContactId simPhonebookGroupIdL() const;
+        QList<QContactId> memberOfGroupsL(const TContactItemId contactId) const;
 	void updateMemberOfGroupsL(QContact contact);
 
 	//utility functions
-	CContactGroup* fetchCGroup(const QUniqueId& id) const;
-	bool isGroup(const QUniqueId& id) const;
+        CContactGroup* fetchCGroup(const QContactId& id) const;
+        bool isGroup(const QContactId& id) const;
 
 private:
 	CContactDatabase* m_contactDatabase;
@@ -140,9 +140,9 @@ private:
 	CContactChangeNotifier* m_contactChangeNotifier;
 #endif	
 	TransformContact* m_transformContact;
-    QList<QUniqueId> m_contactsAddedEmitted;
-    QList<QUniqueId> m_contactsChangedEmitted;
-    QList<QUniqueId> m_contactsRemovedEmitted;
+    QList<QContactId> m_contactsAddedEmitted;
+    QList<QContactId> m_contactsChangedEmitted;
+    QList<QContactId> m_contactsRemovedEmitted;
 };
 
 #endif

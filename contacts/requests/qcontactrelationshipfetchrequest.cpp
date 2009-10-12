@@ -63,14 +63,14 @@ QContactRelationshipFetchRequest::~QContactRelationshipFetchRequest()
 /*! Sets the source contact criterion of the fetch request to \a contactId.
  *  If \a contactId is the zero id, or the source contact is not set,
  *  the request will fetch relationships involving any source contact. */
-void QContactRelationshipFetchRequest::setSourceContact(const QUniqueId& contactId)
+void QContactRelationshipFetchRequest::setSourceContact(const QContactId& contactId)
 {
     Q_D(QContactRelationshipFetchRequest);
     d->m_sourceContact = contactId;
 }
 
 /*! Returns the source contact criterion of the fetch request */
-QUniqueId QContactRelationshipFetchRequest::sourceContact() const
+QContactId QContactRelationshipFetchRequest::sourceContact() const
 {
     Q_D(const QContactRelationshipFetchRequest);
     return d->m_sourceContact;
@@ -106,7 +106,7 @@ QString QContactRelationshipFetchRequest::relationshipType() const
  *  or if the participant criterion is not set, the request will fetch relationships
  *  involving any participant.
  */
-void QContactRelationshipFetchRequest::setParticipant(const QPair<QString, QUniqueId>& participantUri, QContactRelationshipFilter::Role role)
+void QContactRelationshipFetchRequest::setParticipant(const QPair<QString, QContactId>& participantUri, QContactRelationshipFilter::Role role)
 {
     Q_D(QContactRelationshipFetchRequest);
     d->m_participantUri = participantUri;
@@ -114,7 +114,7 @@ void QContactRelationshipFetchRequest::setParticipant(const QPair<QString, QUniq
 }
 
 /*! Returns the participant criterion of the fetch request */
-QPair<QString, QUniqueId> QContactRelationshipFetchRequest::participant() const
+QPair<QString, QContactId> QContactRelationshipFetchRequest::participant() const
 {
     Q_D(const QContactRelationshipFetchRequest);
     return d->m_participantUri;

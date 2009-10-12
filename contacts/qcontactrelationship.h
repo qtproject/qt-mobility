@@ -71,20 +71,20 @@ public:
     bool operator==(const QContactRelationship &other) const;
     bool operator!=(const QContactRelationship &other) const { return !(*this==other); }
 
-    QUniqueId sourceContact() const;
-    QList<QPair<QString, QUniqueId> > destinationContacts() const;
+    QContactId sourceContact() const;
+    QList<QPair<QString, QContactId> > destinationContacts() const;
     QString relationshipType() const;
 
-    void setSourceContact(const QUniqueId& id);
-    void setDestinationContacts(const QList<QPair<QString, QUniqueId> >& contacts);
+    void setSourceContact(const QContactId& id);
+    void setDestinationContacts(const QList<QPair<QString, QContactId> >& contacts);
     void setRelationshipType(const QString& relationshipType);
 
     // convenience accessors and mutators for destination contacts
     bool removeDestinationContact(int position);
-    bool removeDestinationContact(const QPair<QString, QUniqueId>& contact);
-    void insertDestinationContact(int position, const QPair<QString, QUniqueId>& contact);
-    void appendDestinationContact(const QPair<QString, QUniqueId>& contact);
-    void appendDestinationContact(const QUniqueId& contactId);
+    bool removeDestinationContact(const QPair<QString, QContactId>& contact);
+    void insertDestinationContact(int position, const QPair<QString, QContactId>& contact);
+    void appendDestinationContact(const QPair<QString, QContactId>& contact);
+    void appendDestinationContact(const QContactId& contactId);
 
 private:
     QSharedDataPointer<QContactRelationshipPrivate> d;

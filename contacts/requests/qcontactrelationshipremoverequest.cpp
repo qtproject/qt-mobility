@@ -60,14 +60,14 @@ QContactRelationshipRemoveRequest::~QContactRelationshipRemoveRequest()
 /*! Sets the source contact criterion of the remove request to \a contactId.
  *  If \a contactId is the zero id, or the source contact is not set,
  *  the request will remove relationships involving any source contact. */
-void QContactRelationshipRemoveRequest::setSourceContact(const QUniqueId& contactId)
+void QContactRelationshipRemoveRequest::setSourceContact(const QContactId& contactId)
 {
     Q_D(QContactRelationshipRemoveRequest);
     d->m_sourceContact = contactId;
 }
 
 /*! Returns the source contact criterion of the remove request */
-QUniqueId QContactRelationshipRemoveRequest::sourceContact() const
+QContactId QContactRelationshipRemoveRequest::sourceContact() const
 {
     Q_D(const QContactRelationshipRemoveRequest);
     return d->m_sourceContact;

@@ -80,7 +80,7 @@ void QContactRelationshipFilter::setType(const QString& relationshipType)
  * the contact in order for the contact to match the filter to be \a managerUri and \a id respectively.
  * If the manager URI is the empty string, it denotes a contact in the manager in which the relationship is stored.
  */
-void QContactRelationshipFilter::setOtherParticipant(const QString& managerUri, const QUniqueId& id)
+void QContactRelationshipFilter::setOtherParticipant(const QString& managerUri, const QContactId& id)
 {
     Q_D(QContactRelationshipFilter);
     d->m_otherParticipantId = id;
@@ -92,7 +92,7 @@ void QContactRelationshipFilter::setOtherParticipant(const QString& managerUri, 
  * in order for the contact to match the filter to be \a id, and sets the manager URI of the participant
  * to the empty string, which denotes the manager in which the relationship is stored.
  */
-void QContactRelationshipFilter::setOtherParticipant(const QUniqueId& id)
+void QContactRelationshipFilter::setOtherParticipant(const QContactId& id)
 {
     Q_D(QContactRelationshipFilter);
     d->m_otherParticipantId = id;
@@ -130,7 +130,7 @@ QString QContactRelationshipFilter::otherParticipantManagerUri() const
 /*!
  * Returns the id of another contact with whom a contact must have a relationship in order to match the filter
  */
-QUniqueId QContactRelationshipFilter::otherParticipantId() const
+QContactId QContactRelationshipFilter::otherParticipantId() const
 {
     Q_D(const QContactRelationshipFilter);
     return d->m_otherParticipantId;

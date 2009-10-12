@@ -106,8 +106,8 @@ public:
         }
     }
 
-    QMap<QUniqueId, int> m_idsToRows;
-    QMap<int, QUniqueId> m_rowsToIds;
+    QMap<QContactId, int> m_idsToRows;
+    QMap<int, QContactId> m_rowsToIds;
 
     QContactManager* m_manager;
     QContactListModel::AsynchronousRequestPolicy m_requestPolicy;

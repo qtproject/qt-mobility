@@ -297,7 +297,7 @@ void tst_QContact::details()
     QCOMPARE(c.displayLabel().label(), QString("test"));
     QVERIFY(c.details().size() > 0);
     QVERIFY(!c.isEmpty());
-    QUniqueId oldId = c.id();
+    QContactId oldId = c.id();
     c.clearDetails();
     QVERIFY(c.details().size() == 1); // always has a display label.
     QCOMPARE(c.displayLabel().label(), QString());

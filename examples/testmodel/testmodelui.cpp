@@ -50,9 +50,9 @@ TestModelView::~TestModelView()
     delete model;
 }
 
-QUniqueId TestModelView::currentId() const
+QContactId TestModelView::currentId() const
 {
-    return QUniqueId(model->data(currentIndex(), QContactListModel::IdRole).toUInt());
+    return QContactId(model->data(currentIndex(), QContactListModel::IdRole).toUInt());
 }
 
 QVariant TestModelView::currentData(QContactListModel::ContactDataRole role) const
@@ -319,7 +319,7 @@ void TestModelUi::dial()
     currentState = TestModelUi::DialingState;
 
     QContactIdListFilter fil;
-    QList<QUniqueId> fetchIds;
+    QList<QContactId> fetchIds;
     fetchIds << list->currentId();
     fil.setIds(fetchIds);
     fetchRequest->cancel(); // if not already stopped.

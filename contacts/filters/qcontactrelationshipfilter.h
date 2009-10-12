@@ -62,13 +62,13 @@ public:
 
     void setRole(QContactRelationshipFilter::Role roleInRelationship);
     void setType(const QString& relationshipType);
-    void setOtherParticipant(const QString& managerUri, const QUniqueId& id);
-    void setOtherParticipant(const QUniqueId& id);
+    void setOtherParticipant(const QString& managerUri, const QContactId& id);
+    void setOtherParticipant(const QContactId& id);
 
     QContactRelationshipFilter::Role role() const;
     QString type() const;
     QString otherParticipantManagerUri() const;
-    QUniqueId otherParticipantId() const;
+    QContactId otherParticipantId() const;
 
 private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactRelationshipFilter)

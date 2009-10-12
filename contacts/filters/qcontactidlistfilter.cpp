@@ -62,7 +62,7 @@ QContactIdListFilter::QContactIdListFilter()
  * Sets the list which contains the ids of possible matching contacts to \a ids
  * \sa ids()
  */
-void QContactIdListFilter::setIds(const QList<QUniqueId>& ids)
+void QContactIdListFilter::setIds(const QList<QContactId>& ids)
 {
     Q_D(QContactIdListFilter);
     d->m_ids = ids;
@@ -72,7 +72,7 @@ void QContactIdListFilter::setIds(const QList<QUniqueId>& ids)
  * Returns the list of ids of contacts which match this filter
  * \sa setIds()
  */
-QList<QUniqueId> QContactIdListFilter::ids() const
+QList<QContactId> QContactIdListFilter::ids() const
 {
     Q_D(const QContactIdListFilter);
     return d->m_ids;

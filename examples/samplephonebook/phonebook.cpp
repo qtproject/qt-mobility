@@ -142,12 +142,12 @@ PhoneBook::~PhoneBook()
         delete manager;
 }
 
-void PhoneBook::backendChanged(const QList<QUniqueId>& changes)
+void PhoneBook::backendChanged(const QList<QContactId>& changes)
 {
     // load all contacts from the updated backend
-    QList<QUniqueId> contactIds = cm->contacts(QContactType::TypeContact);
+    QList<QContactId> contactIds = cm->contacts(QContactType::TypeContact);
     contacts.clear();
-    foreach (const QUniqueId cid, contactIds)
+    foreach (const QContactId cid, contactIds)
         contacts.append(cm->contact(cid));
 qDebug() << "backend changed, and now have" << contactIds.size() << "contacts which are TypeContact!";
 
@@ -185,12 +185,12 @@ void PhoneBook::backendSelected(const QString& backend)
     }
 
     // and connect the selected manager's signals to our slots
-    connect(cm, SIGNAL(contactsAdded(const QList<QUniqueId>&)), this, SLOT(backendChanged(const QList<QUniqueId>&)));
-    connect(cm, SIGNAL(contactsChanged(const QList<QUniqueId>&)), this, SLOT(backendChanged(const QList<QUniqueId>&)));
-    connect(cm, SIGNAL(contactsRemoved(const QList<QUniqueId>&)), this, SLOT(backendChanged(const QList<QUniqueId>&)));
+    connect(cm, SIGNAL(contactsAdded(const QList<QContactId>&)), this, SLOT(backendChanged(const QList<QContactId>&)));
+    connect(cm, SIGNAL(contactsChanged(const QList<QContactId>&)), this, SLOT(backendChanged(const QList<QContactId>&)));
+    connect(cm, SIGNAL(contactsRemoved(const QList<QContactId>&)), this, SLOT(backendChanged(const QList<QContactId>&)));
 
     // and trigger an update.
-    backendChanged(QList<QUniqueId>());
+    backendChanged(QList<QContactId>());
 }
 
 bool PhoneBook::eventFilter(QObject* watched, QEvent* event)
@@ -325,9 +325,9 @@ void PhoneBook::displayContact()
     QContact c = contacts.value(currentIndex);
     c = cm->contact(c.id()); // this removes any unsaved information.
 
-    QPair<QString, QUniqueId> contactUri = QPair<QString, QUniqueId>(cm->managerUri(), c.id());
+    QPair<QString, QContactId> contactUri = QPair<QString, QContactId>(cm->managerUri(), c.id());
     QList<QContactRelationship> relationships = cm->relationships(QContactRelationship::RelationshipTypeHasMember, contactUri);
-    QList<QUniqueId> currentGroups;
+    QList<QContactId> currentGroups;
     foreach (const QContactRelationship& currRel, relationships) {
         if (currRel.destinationContacts().contains(contactUri)) {
             currentGroups.append(currRel.sourceContact());
@@ -583,7 +583,7 @@ void PhoneBook::findContact()
                         tr("Sorry, \"%1\" is not in your address book.").arg(contactName));
             }
         }else{
-            QList<QUniqueId> matchedContacts = cm->contacts(dialog->getFindFilter());
+            QList<QContactId> matchedContacts = cm->contacts(dialog->getFindFilter());
             if (matchedContacts.count()){
                 QStringList matchedContactNames;
                 QContact matchedContact;

@@ -54,9 +54,9 @@ public:
     void setDataChanged(bool dataChanged);
     bool dataChanged();
 
-    QSet<QUniqueId>& addedContacts();
-    QSet<QUniqueId>& changedContacts();
-    QSet<QUniqueId>& removedContacts();
+    QSet<QContactId>& addedContacts();
+    QSet<QContactId>& changedContacts();
+    QSet<QContactId>& removedContacts();
 
     void clear();
 

@@ -74,7 +74,7 @@ bool MaliciousAsyncManagerEngine::startRequest(QContactAbstractRequest* req)
 {
     QContactManager::Error errorResult = QContactManager::NoError;
     QList<QContactManager::Error> errorsResult;
-    QList<QUniqueId> idResult;
+    QList<QContactId> idResult;
     QList<QContact> contactResult;
     QList<QContactDetailDefinition> defResult;
     QMap<QString, QContactDetailDefinition> defMapResult;

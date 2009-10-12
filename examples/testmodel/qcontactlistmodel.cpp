@@ -120,9 +120,9 @@ void QContactListModel::setManager(QContactManager* manager)
     connect(d->m_idRequest, SIGNAL(progress(QContactIdFetchRequest*,bool)), this, SLOT(contactIdFetchRequestProgress(QContactIdFetchRequest*,bool)));
     d->m_idRequest->setManager(manager);
     if (manager) {
-        connect(manager, SIGNAL(contactsAdded(QList<QUniqueId>)), this, SLOT(backendChanged()));
-        connect(manager, SIGNAL(contactsChanged(QList<QUniqueId>)), this, SLOT(backendChanged()));
-        connect(manager, SIGNAL(contactsRemoved(QList<QUniqueId>)), this, SLOT(backendChanged()));
+        connect(manager, SIGNAL(contactsAdded(QList<QContactId>)), this, SLOT(backendChanged()));
+        connect(manager, SIGNAL(contactsChanged(QList<QContactId>)), this, SLOT(backendChanged()));
+        connect(manager, SIGNAL(contactsRemoved(QList<QContactId>)), this, SLOT(backendChanged()));
     }
 
     // and kick of a request for the ids.
@@ -358,7 +358,7 @@ QVariant QContactListModel::data(const QModelIndex& index, int role) const
         QContactFetchRequest* req = new QContactFetchRequest;
         d->m_requestCentreRows.insert(req, d->m_lastCacheCentreRow);
         QContactIdListFilter idFil;
-        QList<QUniqueId> newCacheIds;
+        QList<QContactId> newCacheIds;
         for (int i = 0; i < newCacheRows.size(); i++) {
             newCacheIds.append(d->m_rowsToIds.value(newCacheRows.at(i)));
         }
@@ -513,7 +513,7 @@ bool QContactListModel::removeRows(int row, int count, const QModelIndex& parent
  * Returns the row number at which the data of the contact with the given \a contactId is stored, or
  * -1 if no such contact exists in the model
  */
-int QContactListModel::contactRow(const QUniqueId& contactId) const
+int QContactListModel::contactRow(const QContactId& contactId) const
 {
     return d->m_idsToRows.value(contactId, -1);
 }
@@ -612,7 +612,7 @@ void QContactListModel::contactIdFetchRequestProgress(QContactIdFetchRequest* re
     }
 
     // then get the results, calculate the start and end indices, and fill our data structures.
-    QList<QUniqueId> ids = request->ids();
+    QList<QContactId> ids = request->ids();
     int startIndex = d->m_idsToRows.count();
     int endIndex = ids.size();
     for (int i = startIndex; i < endIndex; i++) {

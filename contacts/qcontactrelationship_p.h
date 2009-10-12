@@ -73,8 +73,8 @@ public:
     {
     }
 
-    QUniqueId m_sourceContact;
-    QList<QPair<QString, QUniqueId> > m_destinationContacts;
+    QContactId m_sourceContact;
+    QList<QPair<QString, QContactId> > m_destinationContacts;
     QString m_relationshipType;
 };
 

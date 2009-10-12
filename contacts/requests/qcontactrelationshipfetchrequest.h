@@ -53,14 +53,14 @@ public:
     ~QContactRelationshipFetchRequest();
 
     /* Selection */
-    void setSourceContact(const QUniqueId& contactId);
-    QUniqueId sourceContact() const;
+    void setSourceContact(const QContactId& contactId);
+    QContactId sourceContact() const;
 
     void setRelationshipType(const QString& relationshipType);
     QString relationshipType() const;
 
-    void setParticipant(const QPair<QString, QUniqueId>& participantUri, QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either);
-    QPair<QString, QUniqueId> participant() const;
+    void setParticipant(const QPair<QString, QContactId>& participantUri, QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either);
+    QPair<QString, QContactId> participant() const;
     QContactRelationshipFilter::Role participantRole() const;
 
     /* Results */

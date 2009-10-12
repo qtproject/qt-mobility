@@ -88,7 +88,7 @@ QList<QContactSortOrder> QContactIdFetchRequest::sorting() const
 }
 
 /*! Returns the list of ids of contacts which matched the request */
-QList<QUniqueId> QContactIdFetchRequest::ids() const
+QList<QContactId> QContactIdFetchRequest::ids() const
 {
     Q_D(const QContactIdFetchRequest);
     return d->m_ids;

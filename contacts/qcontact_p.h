@@ -75,7 +75,7 @@ public:
 
     ~QContactData() {}
 
-    QUniqueId m_id;
+    QContactId m_id;
     QList<QContactDetail> m_details;
     QList<QContactRelationship> m_relationships;
     QMap<QString, quint32> m_preferences;

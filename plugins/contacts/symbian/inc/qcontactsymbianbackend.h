@@ -73,19 +73,19 @@ public:
     void deref();
     
     /* Contacts - Accessors and Mutators */
-    QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
+    QList<QContactId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContactId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QContact contact(const QContactId& contactId, QContactManager::Error& error) const;
     bool saveContact(QContact* contact, QContactManager::Error& error);
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
-    bool removeContact(const QUniqueId& contactId, QContactManager::Error& error);
-    QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error);
+    bool removeContact(const QContactId& contactId, QContactManager::Error& error);
+    QList<QContactManager::Error> removeContacts(QList<QContactId>* contactIds, QContactManager::Error& error);
 
     /* Groups - Accessors and Mutators */
-    QList<QUniqueId> groups(QContactManager::Error& error) const;
-    QContactGroup group(const QUniqueId& groupId, QContactManager::Error& error) const;
+    QList<QContactId> groups(QContactManager::Error& error) const;
+    QContactGroup group(const QContactId& groupId, QContactManager::Error& error) const;
     bool saveGroup(QContactGroup* group, QContactManager::Error& error);
-    bool removeGroup(const QUniqueId& groupId, QContactManager::Error& error);
+    bool removeGroup(const QContactId& groupId, QContactManager::Error& error);
 
     /* Definitions */
     QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
@@ -98,12 +98,12 @@ public:
     virtual QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 
 private slots:
-	void eventContactAdded(const QUniqueId &contactId);
-	void eventContactRemoved(const QUniqueId &contactId);
-	void eventContactChanged(const QUniqueId &contactId);
-	void eventGroupAdded(const QUniqueId &groupId);
-	void eventGroupRemoved(const QUniqueId &groupId);
-	void eventGroupChanged(const QUniqueId &groupId);
+        void eventContactAdded(const QContactId &contactId);
+        void eventContactRemoved(const QContactId &contactId);
+        void eventContactChanged(const QContactId &contactId);
+        void eventGroupAdded(const QContactId &groupId);
+        void eventGroupRemoved(const QContactId &groupId);
+        void eventGroupChanged(const QContactId &groupId);
     
 private:
     bool doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error);

@@ -58,7 +58,7 @@ public:
     QList<QContactSortOrder> sorting() const;
 
     /* Results */
-    QList<QUniqueId> ids() const;
+    QList<QContactId> ids() const;
 
 signals:
     void progress(QContactIdFetchRequest* self, bool appendOnly);

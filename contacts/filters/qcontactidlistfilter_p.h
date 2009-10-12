@@ -75,7 +75,7 @@ public:
 
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactIdListFilter, QContactFilter::IdListFilter)
 
-    QList<QUniqueId> m_ids;
+    QList<QContactId> m_ids;
 };
 
 #endif

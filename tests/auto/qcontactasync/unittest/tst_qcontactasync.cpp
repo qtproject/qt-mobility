@@ -223,7 +223,7 @@ void tst_QContactAsync::contactFetch()
     QVERIFY(cfr.isFinished());
     QVERIFY(!cfr.isActive());
 
-    QList<QUniqueId> contactIds = cm->contacts();
+    QList<QContactId> contactIds = cm->contacts();
     QList<QContact> contacts = cfr.contacts();
     QCOMPARE(contactIds.size(), contacts.size());
     for (int i = 0; i < contactIds.size(); i++) {
@@ -397,8 +397,8 @@ void tst_QContactAsync::contactIdFetch()
     QVERIFY(cfr.isFinished());
     QVERIFY(!cfr.isActive());
 
-    QList<QUniqueId> contactIds = cm->contacts();
-    QList<QUniqueId> result = cfr.ids();
+    QList<QContactId> contactIds = cm->contacts();
+    QList<QContactId> result = cfr.ids();
     QCOMPARE(contactIds, result);
 
     // asynchronous detail filtering
@@ -705,7 +705,7 @@ void tst_QContactAsync::contactSave()
 
     // verify that the changes were not saved
     expected.clear();
-    QList<QUniqueId> allContacts = cm->contacts();
+    QList<QContactId> allContacts = cm->contacts();
     for (int i = 0; i < allContacts.size(); i++) {
         expected.append(cm->contact(allContacts.at(i)));
     }
@@ -1189,9 +1189,9 @@ void tst_QContactAsync::relationshipFetch()
 
     // specific source contact retrieval
     rfr.setRelationshipType(QString());
-    QList<QUniqueId> contacts = cm->contacts();
-    QUniqueId aId;
-    foreach (const QUniqueId& currId, contacts) {
+    QList<QContactId> contacts = cm->contacts();
+    QContactId aId;
+    foreach (const QContactId& currId, contacts) {
         QContact curr = cm->contact(currId);
         if (curr.displayLabel().label() == QString("Aaron Aaronson")) {
             aId = currId;
@@ -1216,17 +1216,17 @@ void tst_QContactAsync::relationshipFetch()
     QCOMPARE(rels, result);
 
     // specific participant retrieval #1 - destination participant
-    rfr.setSourceContact(QUniqueId());
+    rfr.setSourceContact(QContactId());
     contacts = cm->contacts();
-    QUniqueId bId;
-    foreach (const QUniqueId& currId, contacts) {
+    QContactId bId;
+    foreach (const QContactId& currId, contacts) {
         QContact curr = cm->contact(currId);
         if (curr.displayLabel().label() == QString("Bob Aaronsen")) {
             bId = currId;
             break;
         }
     }
-    rfr.setParticipant(QPair<QString, QUniqueId>(cm->managerUri(), bId), QContactRelationshipFilter::Destination);
+    rfr.setParticipant(QPair<QString, QContactId>(cm->managerUri(), bId), QContactRelationshipFilter::Destination);
     QVERIFY(rfr.participantRole() == QContactRelationshipFilter::Destination);
     QVERIFY(!rfr.cancel()); // not started
     QVERIFY(rfr.start());
@@ -1240,7 +1240,7 @@ void tst_QContactAsync::relationshipFetch()
     QVERIFY(rfr.isFinished());
     QVERIFY(!rfr.isActive());
 
-    rels = cm->relationships(QPair<QString, QUniqueId>(cm->managerUri(), bId));
+    rels = cm->relationships(QPair<QString, QContactId>(cm->managerUri(), bId));
     for (int i = rels.size(); i > 0; ) {
         i -= 1;
         QContactRelationship currRel = rels.at(i);
@@ -1252,17 +1252,17 @@ void tst_QContactAsync::relationshipFetch()
     QCOMPARE(rels, result);
 
     // specific participant retrieval #2 - source participant
-    rfr.setSourceContact(QUniqueId());
+    rfr.setSourceContact(QContactId());
     contacts = cm->contacts();
-    QUniqueId cId;
-    foreach (const QUniqueId& currId, contacts) {
+    QContactId cId;
+    foreach (const QContactId& currId, contacts) {
         QContact curr = cm->contact(currId);
         if (curr.displayLabel().label() == QString("Borris Aaronsun")) {
             cId = currId;
             break;
         }
     }
-    rfr.setParticipant(QPair<QString, QUniqueId>(cm->managerUri(), cId), QContactRelationshipFilter::Source);
+    rfr.setParticipant(QPair<QString, QContactId>(cm->managerUri(), cId), QContactRelationshipFilter::Source);
     QVERIFY(rfr.participantRole() == QContactRelationshipFilter::Source);
     QVERIFY(!rfr.cancel()); // not started
     QVERIFY(rfr.start());
@@ -1281,8 +1281,8 @@ void tst_QContactAsync::relationshipFetch()
     QCOMPARE(rels, result);
 
     // specific participant retrieval #3 - either participant
-    rfr.setSourceContact(QUniqueId());
-    rfr.setParticipant(QPair<QString, QUniqueId>(cm->managerUri(), aId), QContactRelationshipFilter::Either);
+    rfr.setSourceContact(QContactId());
+    rfr.setParticipant(QPair<QString, QContactId>(cm->managerUri(), aId), QContactRelationshipFilter::Either);
     QVERIFY(rfr.participantRole() == QContactRelationshipFilter::Either);
     QVERIFY(!rfr.cancel()); // not started
     QVERIFY(rfr.start());
@@ -1296,7 +1296,7 @@ void tst_QContactAsync::relationshipFetch()
     QVERIFY(rfr.isFinished());
     QVERIFY(!rfr.isActive());
 
-    rels = cm->relationships(QPair<QString, QUniqueId>(cm->managerUri(), aId));
+    rels = cm->relationships(QPair<QString, QContactId>(cm->managerUri(), aId));
     result = rfr.relationships();
     QCOMPARE(rels, result);
 
@@ -1384,9 +1384,9 @@ void tst_QContactAsync::relationshipRemove()
     QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
     // remove (asynchronously) a nonexistent relationship - should fail.
-    QList<QUniqueId> contacts = cm->contacts();
-    QUniqueId cId;
-    foreach (const QUniqueId& currId, contacts) {
+    QList<QContactId> contacts = cm->contacts();
+    QContactId cId;
+    foreach (const QContactId& currId, contacts) {
         QContact curr = cm->contact(currId);
         if (curr.displayLabel().label() == QString("Borris Aaronsun")) {
             cId = currId;
@@ -1411,8 +1411,8 @@ void tst_QContactAsync::relationshipRemove()
     QCOMPARE(rrr.error(), QContactManager::DoesNotExistError);
 
     // specific relationship type plus source removal
-    QUniqueId bId;
-    foreach (const QUniqueId& currId, contacts) {
+    QContactId bId;
+    foreach (const QContactId& currId, contacts) {
         QContact curr = cm->contact(currId);
         if (curr.displayLabel().label() == QString("Bob Aaronsen")) {
             bId = currId;
@@ -1444,8 +1444,8 @@ void tst_QContactAsync::relationshipRemove()
     QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
     // specific source removal
-    QUniqueId aId;
-    foreach (const QUniqueId& currId, contacts) {
+    QContactId aId;
+    foreach (const QContactId& currId, contacts) {
         QContact curr = cm->contact(currId);
         if (curr.displayLabel().label() == QString("Aaron Aaronson")) {
             aId = currId;
@@ -1535,9 +1535,9 @@ void tst_QContactAsync::relationshipSave()
     QVERIFY(!rsr.waitForFinished());
     QVERIFY(!rsr.waitForProgress());
 
-    QList<QUniqueId> contacts = cm->contacts();
-    QUniqueId cId, aId, bId;
-    foreach (const QUniqueId& currId, contacts) {
+    QList<QContactId> contacts = cm->contacts();
+    QContactId cId, aId, bId;
+    foreach (const QContactId& currId, contacts) {
         QContact curr = cm->contact(currId);
         if (curr.displayLabel().label() == QString("Borris Aaronsun")) {
             cId = currId;
@@ -1553,7 +1553,7 @@ void tst_QContactAsync::relationshipSave()
     QContactRelationship testRel;
     testRel.setSourceContact(aId);
     testRel.setRelationshipType(QContactRelationship::RelationshipTypeIsSpouseOf);
-    testRel.appendDestinationContact(QPair<QString, QUniqueId>(cm->managerUri(), bId));
+    testRel.appendDestinationContact(QPair<QString, QContactId>(cm->managerUri(), bId));
     QList<QContactRelationship> saveList;
     saveList << testRel;
     rsr.setManager(cm);
@@ -1586,7 +1586,7 @@ void tst_QContactAsync::relationshipSave()
     QCOMPARE(cm->relationships(aId).size(), originalCount + 1); // should be one extra
 
     // update a previously saved relationship
-    testRel.appendDestinationContact(QPair<QString, QUniqueId>(cm->managerUri(), cId));
+    testRel.appendDestinationContact(QPair<QString, QContactId>(cm->managerUri(), cId));
     saveList.clear();
     saveList << testRel;
     rsr.setRelationships(saveList);
@@ -1690,7 +1690,7 @@ void tst_QContactAsync::maliciousManager()
     QContactManager mcm("maliciousplugin");
     QCOMPARE(mcm.managerName(), QString("maliciousplugin"));
     QList<QContact> emptyCList;
-    QList<QUniqueId> emptyIList;
+    QList<QContactId> emptyIList;
     QList<QContactDetailDefinition> emptyDList;
     QStringList emptyDNList;
     QMap<QString, QContactDetailDefinition> emptyDMap;

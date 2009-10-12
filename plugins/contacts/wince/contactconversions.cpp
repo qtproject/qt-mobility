@@ -1152,11 +1152,11 @@ QString QContactWinCEEngine::convertFilterToQueryString(const QContactFilter& fi
         case QContactFilter::IdListFilter:
             {
                 const QContactIdListFilter idf(filter);
-                QList<QUniqueId> ids = idf.ids();
+                QList<QContactId> ids = idf.ids();
                 if (!ids.isEmpty())
                 {
                     QStringList idList;
-                    foreach(const QUniqueId id, ids) {
+                    foreach(const QContactId id, ids) {
                         idList << QString("[Oid] = %1").arg(id);
                     }
                     ret = idList.join(" OR ");
@@ -1307,10 +1307,10 @@ QString QContactWinCEEngine::convertFilterToQueryString(const QContactFilter& fi
 /*!
  * Return a list of QContact ids from the given POOM item \a collection.
  */
-QList<QUniqueId> QContactWinCEEngine::convertP2QIdList(SimpleComPointer<IPOutlookItemCollection> collection) const
+QList<QContactId> QContactWinCEEngine::convertP2QIdList(SimpleComPointer<IPOutlookItemCollection> collection) const
 {
     SimpleComPointer<IPOlItems2> items;
-    QList<QUniqueId> ids;
+    QList<QContactId> ids;
     if (SUCCEEDED(collection->QueryInterface<IPOlItems2>(&items))) {
         CEPROPID propid = PIMPR_OID;
         CEPROPVAL *ppropval = 0;
@@ -1331,7 +1331,7 @@ QList<QUniqueId> QContactWinCEEngine::convertP2QIdList(SimpleComPointer<IPOutloo
                 hr = items->GetProps(i + 1, &propid, 0, 1, &ppropval, &cbSize, NULL);
             }
             if (SUCCEEDED(hr)) {
-                ids << (QUniqueId) ppropval->val.ulVal;
+                ids << (QContactId) ppropval->val.ulVal;
             } else {
                 qDebug() << QString("Eternal sadness: %1").arg(HRESULT_CODE(hr), 0, 16);
             }

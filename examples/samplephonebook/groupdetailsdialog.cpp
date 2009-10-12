@@ -80,7 +80,7 @@ void GroupDetailsDialog::repopulateGroupList()
 {
     listWidget->clear();
 
-    QList<QUniqueId> grpList = cm->contacts(QString(QLatin1String(QContactType::TypeGroup)));
+    QList<QContactId> grpList = cm->contacts(QString(QLatin1String(QContactType::TypeGroup)));
     for (int index=0; index < grpList.count(); index++){
         QContact grp = cm->contact(grpList[index]);
         QListWidgetItem *item = new QListWidgetItem(grp.displayLabel().label(), listWidget);
@@ -88,8 +88,8 @@ void GroupDetailsDialog::repopulateGroupList()
         bool foundInGroup = false;
 
         QList<QContactRelationship> thisGroupsRels = cm->relationships(grpList[index], QContactRelationship::RelationshipTypeHasMember);
-        QPair<QString, QUniqueId> localContactUriOne = QPair<QString, QUniqueId>(cm->managerUri(), localContact.id());
-        QPair<QString, QUniqueId> localContactUriTwo = QPair<QString, QUniqueId>(QString(), localContact.id());
+        QPair<QString, QContactId> localContactUriOne = QPair<QString, QContactId>(cm->managerUri(), localContact.id());
+        QPair<QString, QContactId> localContactUriTwo = QPair<QString, QContactId>(QString(), localContact.id());
         foreach (const QContactRelationship& currRel, thisGroupsRels) {
             if (currRel.destinationContacts().contains(localContactUriOne) || currRel.destinationContacts().contains(localContactUriTwo)) {
                 foundInGroup = true;
@@ -106,11 +106,11 @@ void GroupDetailsDialog::repopulateGroupList()
 
 }
 
-QList<QUniqueId> GroupDetailsDialog::groups()
+QList<QContactId> GroupDetailsDialog::groups()
 {
-    QPair<QString, QUniqueId> localContactUri = QPair<QString, QUniqueId>(cm->managerUri(), localContact.id());
+    QPair<QString, QContactId> localContactUri = QPair<QString, QContactId>(cm->managerUri(), localContact.id());
     QList<QContactRelationship> relationships = cm->relationships(QContactRelationship::RelationshipTypeHasMember, localContactUri);
-    QList<QUniqueId> ret;
+    QList<QContactId> ret;
     foreach (const QContactRelationship& currRel, relationships) {
         if (currRel.destinationContacts().contains(localContactUri)) {
             ret.append(currRel.sourceContact());
@@ -121,10 +121,10 @@ QList<QUniqueId> GroupDetailsDialog::groups()
 
 void GroupDetailsDialog::groupItemChanged(QListWidgetItem * item)
 {
-    QUniqueId id = item->data(Qt::UserRole + 1).toUInt();
-    QPair<QString, QUniqueId> localContactUri = QPair<QString, QUniqueId>(cm->managerUri(), localContact.id());
+    QContactId id = item->data(Qt::UserRole + 1).toUInt();
+    QPair<QString, QContactId> localContactUri = QPair<QString, QContactId>(cm->managerUri(), localContact.id());
     QList<QContactRelationship> relationships = cm->relationships(QContactRelationship::RelationshipTypeHasMember, localContactUri);
-    QList<QUniqueId> currentGroups;
+    QList<QContactId> currentGroups;
     foreach (const QContactRelationship& currRel, relationships) {
         if (currRel.destinationContacts().contains(localContactUri)) {
             currentGroups.append(currRel.sourceContact());

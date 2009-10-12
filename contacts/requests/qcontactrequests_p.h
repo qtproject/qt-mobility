@@ -139,7 +139,7 @@ public:
     QContactFilter m_filter;
     QList<QContactSortOrder> m_sorting;
 
-    QList<QUniqueId> m_ids;
+    QList<QContactId> m_ids;
 };
 
 class QContactDetailDefinitionFetchRequestPrivate : public QContactAbstractRequestPrivate
@@ -224,9 +224,9 @@ public:
         return QContactAbstractRequest::RelationshipFetchRequest;
     }
 
-    QUniqueId m_sourceContact;
+    QContactId m_sourceContact;
     QString m_relationshipType;
-    QPair<QString, QUniqueId> m_participantUri;
+    QPair<QString, QContactId> m_participantUri;
     QContactRelationshipFilter::Role m_role;
     QList<QContactRelationship> m_relationships;
 };
@@ -269,7 +269,7 @@ public:
         return QContactAbstractRequest::RelationshipRemoveRequest;
     }
 
-    QUniqueId m_sourceContact;
+    QContactId m_sourceContact;
     QString m_relationshipType;
 };
 

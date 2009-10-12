@@ -132,8 +132,8 @@ QContact::~QContact()
 {
 }
 
-/*! Returns the QUniqueId that identifies this contact */
-QUniqueId QContact::id() const
+/*! Returns the QContactId that identifies this contact */
+QContactId QContact::id() const
 {
     return d->m_id;
 }
@@ -224,7 +224,7 @@ void QContact::setDisplayLabel(const QString& label)
  * Returns true if the \a id was set successfully, otherwise
  * returns false.
  */
-void QContact::setId(const QUniqueId& id)
+void QContact::setId(const QContactId& id)
 {
     d->m_id = id;
 }

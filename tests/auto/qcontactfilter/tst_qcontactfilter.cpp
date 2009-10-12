@@ -809,13 +809,13 @@ void tst_QContactFilter::idListFilter()
 
     QVERIFY(idf.ids().count() == 0);
 
-    QList<QUniqueId> ids;
+    QList<QContactId> ids;
     ids << 5 << 6 << 17;
 
     idf.setIds(ids);
     QVERIFY(idf.ids() == ids);
 
-    idf.setIds(QList<QUniqueId>());
+    idf.setIds(QList<QContactId>());
     QVERIFY(idf.ids().count() == 0);
 
     /* Test op= */

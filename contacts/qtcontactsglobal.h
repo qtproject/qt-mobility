@@ -50,7 +50,7 @@
 #define QTCONTACTS_PRIVATE_EXPORT
 #endif
 
-typedef quint32 QUniqueId; // XXX Put this else where
+typedef quint32 QContactId; // XXX Put this else where
 
 template <int N> struct Latin1Literal
 {

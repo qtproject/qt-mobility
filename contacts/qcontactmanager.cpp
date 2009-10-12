@@ -58,19 +58,19 @@
  */
 
 /*!
- * \fn QContactManager::contactsAdded(const QList<QUniqueId>& contactIds)
+ * \fn QContactManager::contactsAdded(const QList<QContactId>& contactIds)
  * This signal is emitted at some point once the contacts identified by \a contactIds have been added to a datastore managed by this manager.
  * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
- * \fn QContactManager::contactsChanged(const QList<QUniqueId>& contactIds)
+ * \fn QContactManager::contactsChanged(const QList<QContactId>& contactIds)
  * This signal is emitted at some point once the contacts identified by \a contactIds have been modified in a datastore managed by this manager.
  * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
- * \fn QContactManager::contactsRemoved(const QList<QUniqueId>& contactIds)
+ * \fn QContactManager::contactsRemoved(const QList<QContactId>& contactIds)
  * This signal is emitted at some point once the contacts identified by \a contactIds have been removed from a datastore managed by this manager.
  * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
@@ -200,9 +200,9 @@ QContactManager::QContactManager(const QString& managerName, const QMap<QString,
 {
     d->createEngine(managerName, parameters);
     connect(d->m_engine, SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
-    connect(d->m_engine, SIGNAL(contactsAdded(QList<QUniqueId>)), this, SIGNAL(contactsAdded(QList<QUniqueId>)));
-    connect(d->m_engine, SIGNAL(contactsChanged(QList<QUniqueId>)), this, SIGNAL(contactsChanged(QList<QUniqueId>)));
-    connect(d->m_engine, SIGNAL(contactsRemoved(QList<QUniqueId>)), this, SIGNAL(contactsRemoved(QList<QUniqueId>)));
+    connect(d->m_engine, SIGNAL(contactsAdded(QList<QContactId>)), this, SIGNAL(contactsAdded(QList<QContactId>)));
+    connect(d->m_engine, SIGNAL(contactsChanged(QList<QContactId>)), this, SIGNAL(contactsChanged(QList<QContactId>)));
+    connect(d->m_engine, SIGNAL(contactsRemoved(QList<QContactId>)), this, SIGNAL(contactsRemoved(QList<QContactId>)));
 }
 
 /*! Frees the memory used by the QContactManager */
@@ -238,7 +238,7 @@ QContactManager::Error QContactManager::error() const
 }
 
 /*! Return the list of added contact ids, sorted according to the given list of \a sortOrders */
-QList<QUniqueId> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders) const
+QList<QContactId> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders) const
 {
     return d->m_engine->contacts(sortOrders, d->m_error);
 }
@@ -248,7 +248,7 @@ QList<QUniqueId> QContactManager::contacts(const QList<QContactSortOrder>& sortO
  *
  * Depending on the backend, this filtering operation may involve retrieving all the contacts.
  */
-QList<QUniqueId> QContactManager::contacts(const QContactFilter &filter, const QList<QContactSortOrder>& sortOrders) const
+QList<QContactId> QContactManager::contacts(const QContactFilter &filter, const QList<QContactSortOrder>& sortOrders) const
 {
     return d->m_engine->contacts(filter, sortOrders, d->m_error);
 }
@@ -256,13 +256,13 @@ QList<QUniqueId> QContactManager::contacts(const QContactFilter &filter, const Q
 /*! 
  * Returns a list of ids of contacts of the given \a contactType, sorted according to the given list of \a sortOrders.
  */
-QList<QUniqueId> QContactManager::contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders) const
+QList<QContactId> QContactManager::contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders) const
 {
     return d->m_engine->contacts(contactType, sortOrders, d->m_error);
 }
 
 /*! Returns the contact in the database identified by \a contactId */
-QContact QContactManager::contact(const QUniqueId& contactId) const
+QContact QContactManager::contact(const QContactId& contactId) const
 {
     return d->m_engine->contact(contactId, d->m_error);
 }
@@ -295,7 +295,7 @@ bool QContactManager::saveContact(QContact* contact)
  * Returns true if the contact was removed successfully, otherwise
  * returns false.
  */
-bool QContactManager::removeContact(const QUniqueId& contactId)
+bool QContactManager::removeContact(const QContactId& contactId)
 {
     return d->m_engine->removeContact(contactId, d->m_error);
 }
@@ -335,7 +335,7 @@ QList<QContactManager::Error> QContactManager::saveContacts(QList<QContact>* con
  *
  * \sa QContactManager::removeContact()
  */
-QList<QContactManager::Error> QContactManager::removeContacts(QList<QUniqueId>* idList)
+QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactId>* idList)
 {
     return d->m_engine->removeContacts(idList, d->m_error);
 }
@@ -357,7 +357,7 @@ QString QContactManager::synthesiseDisplayLabel(const QContact& contact) const
  * \c QContactManager::NotSupportedError and the function will
  * return false.
  */
-bool QContactManager::setSelfContactId(const QUniqueId& contactId)
+bool QContactManager::setSelfContactId(const QContactId& contactId)
 {
     return d->m_engine->setSelfContactId(contactId, d->m_error);
 }
@@ -369,7 +369,7 @@ bool QContactManager::setSelfContactId(const QUniqueId& contactId)
  * the concept of a "self" contact, an invalid id will be returned
  * and the error will be set to \c QContactManager::DoesNotExistError.
  */
-QUniqueId QContactManager::selfContactId() const
+QContactId QContactManager::selfContactId() const
 {
     return d->m_engine->selfContactId(d->m_error);
 }
@@ -384,7 +384,7 @@ QUniqueId QContactManager::selfContactId() const
  * If no matching relationships are managed by this manager, a new relationship with the given \a sourceId and
  * \a relationshipType set (but no destination contacts) will be returned.
  */
-QContactRelationship QContactManager::relationship(const QUniqueId& sourceId, const QString& relationshipType) const
+QContactRelationship QContactManager::relationship(const QContactId& sourceId, const QString& relationshipType) const
 {
     return d->m_engine->relationship(sourceId, relationshipType, d->m_error);
 }
@@ -394,7 +394,7 @@ QContactRelationship QContactManager::relationship(const QUniqueId& sourceId, co
  * If the \a source is the zero id, a list of all of the relationships of the given \a relationshipType is returned.
  * If the \a relationshipType is empty, relationships of any type are returned.
  */
-QList<QContactRelationship> QContactManager::relationships(const QUniqueId& sourceId, const QString& relationshipType) const
+QList<QContactRelationship> QContactManager::relationships(const QContactId& sourceId, const QString& relationshipType) const
 {
     return d->m_engine->relationships(sourceId, relationshipType, d->m_error);
 }
@@ -404,7 +404,7 @@ QList<QContactRelationship> QContactManager::relationships(const QUniqueId& sour
  * If \a participantUri consists of an empty manager URI and the zero id, all relationships of the given \a relationshipType are returned.  If the \a relationshipType
  * is empty, all relationships in which the contact identified by \a participantUri is a source or involved participant are returned.
  */
-QList<QContactRelationship> QContactManager::relationships(const QString& relationshipType, const QPair<QString, QUniqueId>& participantUri) const
+QList<QContactRelationship> QContactManager::relationships(const QString& relationshipType, const QPair<QString, QContactId>& participantUri) const
 {
     return d->m_engine->relationships(relationshipType, participantUri, d->m_error);
 }
@@ -412,7 +412,7 @@ QList<QContactRelationship> QContactManager::relationships(const QString& relati
 /*!
  * Returns all relationships of any type in which the contact identified by \a participantUri is a source or involved participant.
  */
-QList<QContactRelationship> QContactManager::relationships(const QPair<QString, QUniqueId>& participantUri) const
+QList<QContactRelationship> QContactManager::relationships(const QPair<QString, QContactId>& participantUri) const
 {
     return d->m_engine->relationships(participantUri, d->m_error);
 }

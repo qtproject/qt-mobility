@@ -49,8 +49,8 @@ public:
     ~QContactRelationshipRemoveRequest();
 
     /* Selection */
-    void setSourceContact(const QUniqueId& contactId);
-    QUniqueId sourceContact() const;
+    void setSourceContact(const QContactId& contactId);
+    QContactId sourceContact() const;
 
     void setRelationshipType(const QString& relationshipType);
     QString relationshipType() const;

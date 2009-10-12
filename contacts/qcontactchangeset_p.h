@@ -72,9 +72,9 @@ public:
     }
 
     bool m_dataChanged;
-    QSet<QUniqueId> m_addedContacts;
-    QSet<QUniqueId> m_changedContacts;
-    QSet<QUniqueId> m_removedContacts;
+    QSet<QContactId> m_addedContacts;
+    QSet<QContactId> m_changedContacts;
+    QSet<QContactId> m_removedContacts;
 };
 
 #endif

@@ -44,10 +44,10 @@ public:
     QContactIdListFilter(const QContactFilter& other);
 
     /* Mutators */
-    void setIds(const QList<QUniqueId>& ids);
+    void setIds(const QList<QContactId>& ids);
 
     /* Accessors */
-    QList<QUniqueId> ids() const;
+    QList<QContactId> ids() const;
 
 private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactIdListFilter)

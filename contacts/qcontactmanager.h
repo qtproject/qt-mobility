@@ -93,29 +93,29 @@ public:
     QContactManager::Error error() const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const;    // retrieve contact ids
-    QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve ids of contacts matching the filter
-    QList<QUniqueId> contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve contacts of the given type
+    QList<QContactId> contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const;    // retrieve contact ids
+    QList<QContactId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve ids of contacts matching the filter
+    QList<QContactId> contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve contacts of the given type
 
-    QContact contact(const QUniqueId& contactId) const;  // retrieve a contact
+    QContact contact(const QContactId& contactId) const;  // retrieve a contact
 
     bool saveContact(QContact* contact);                 // note: MODIFIES contact (sets the contactId)
-    bool removeContact(const QUniqueId& contactId);      // remove the contact from the persistent store
+    bool removeContact(const QContactId& contactId);      // remove the contact from the persistent store
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts);       // batch API - save
-    QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds);  // batch API - remove
+    QList<QContactManager::Error> removeContacts(QList<QContactId>* contactIds);  // batch API - remove
 
     /* Synthesise the display label of a contact */
     QString synthesiseDisplayLabel(const QContact& contact) const;
 
     /* "Self" contact id (MyCard) */
-    bool setSelfContactId(const QUniqueId& contactId);
-    QUniqueId selfContactId() const;
+    bool setSelfContactId(const QContactId& contactId);
+    QContactId selfContactId() const;
 
     /* Relationships */
-    QContactRelationship relationship(const QUniqueId& sourceId, const QString& relationshipType = QString()) const;
-    QList<QContactRelationship> relationships(const QUniqueId& sourceId, const QString& relationshipType = QString()) const;
-    QList<QContactRelationship> relationships(const QString& relationshipType, const QPair<QString, QUniqueId>& participantUri = (QPair<QString, QUniqueId>())) const;
-    QList<QContactRelationship> relationships(const QPair<QString, QUniqueId>& participantUri = (QPair<QString, QUniqueId>())) const;
+    QContactRelationship relationship(const QContactId& sourceId, const QString& relationshipType = QString()) const;
+    QList<QContactRelationship> relationships(const QContactId& sourceId, const QString& relationshipType = QString()) const;
+    QList<QContactRelationship> relationships(const QString& relationshipType, const QPair<QString, QContactId>& participantUri = (QPair<QString, QContactId>())) const;
+    QList<QContactRelationship> relationships(const QPair<QString, QContactId>& participantUri = (QPair<QString, QContactId>())) const;
     bool saveRelationship(QContactRelationship* relationship);
     QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships);
     bool removeRelationship(const QContactRelationship& relationship);
@@ -135,9 +135,9 @@ public:
 
 signals:
     void dataChanged();
-    void contactsAdded(const QList<QUniqueId>& contactIds);
-    void contactsChanged(const QList<QUniqueId>& contactIds);
-    void contactsRemoved(const QList<QUniqueId>& contactIds);
+    void contactsAdded(const QList<QContactId>& contactIds);
+    void contactsChanged(const QList<QContactId>& contactIds);
+    void contactsRemoved(const QList<QContactId>& contactIds);
 
 private:
     friend class QContactManagerData;

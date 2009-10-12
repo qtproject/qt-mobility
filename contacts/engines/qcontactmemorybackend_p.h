@@ -93,12 +93,12 @@ public:
     QString m_id;                                  // the id parameter value
 
     QList<QContact> m_contacts;                    // list of contacts
-    QList<QUniqueId> m_contactIds;                 // list of contact Id's
+    QList<QContactId> m_contactIds;                 // list of contact Id's
     QList<QContactRelationship> m_relationships;   // list of contact relationships
     QList<QString> m_definitionIds;                // list of definition types (id's)
     mutable QMap<QString, QContactDetailDefinition> m_definitions; // list of definitions.
     mutable QSet<QString> m_createOnlyIds; // a list of create only ids.
-    QUniqueId m_nextContactId;
+    QContactId m_nextContactId;
     bool m_anonymous;                              // Is this backend ever shared?
     QString m_engineName;                          // name of this engine as supplied by factory (memory)
 
@@ -120,17 +120,17 @@ public:
     QMap<QString, QString> managerParameters() const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
+    QList<QContactId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QContact contact(const QContactId& contactId, QContactManager::Error& error) const;
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
     bool saveContact(QContact* contact, QContactManager::Error& error);
-    QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error);
-    bool removeContact(const QUniqueId& contactId, QContactManager::Error& error);
+    QList<QContactManager::Error> removeContacts(QList<QContactId>* contactIds, QContactManager::Error& error);
+    bool removeContact(const QContactId& contactId, QContactManager::Error& error);
 
     /* Relationships - Accessors and Mutators */
-    QList<QContactRelationship> relationships(const QUniqueId& sourceId, const QString& relationshipType, QContactManager::Error& error) const;
-    QList<QContactRelationship> relationships(const QString& relationshipType, const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error) const;
-    QList<QContactRelationship> relationships(const QPair<QString, QUniqueId>& participantUri, QContactManager::Error& error) const;
+    QList<QContactRelationship> relationships(const QContactId& sourceId, const QString& relationshipType, QContactManager::Error& error) const;
+    QList<QContactRelationship> relationships(const QString& relationshipType, const QPair<QString, QContactId>& participantUri, QContactManager::Error& error) const;
+    QList<QContactRelationship> relationships(const QPair<QString, QContactId>& participantUri, QContactManager::Error& error) const;
     bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
     QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
     bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);
@@ -162,7 +162,7 @@ private slots:
 private:
     /* Implement "signal coalescing" for batch functions via change set */
     bool saveContact(QContact* theContact, QContactChangeSet& changeSet, QContactManager::Error& error);
-    bool removeContact(const QUniqueId& contactId, QContactChangeSet& changeSet, QContactManager::Error& error);
+    bool removeContact(const QContactId& contactId, QContactChangeSet& changeSet, QContactManager::Error& error);
     bool saveDetailDefinition(const QContactDetailDefinition& def, QContactChangeSet& changeSet, QContactManager::Error& error);
     bool removeDetailDefinition(const QString& definitionId, QContactChangeSet& changeSet, QContactManager::Error& error);
 

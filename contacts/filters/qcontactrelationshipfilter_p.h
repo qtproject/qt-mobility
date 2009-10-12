@@ -90,7 +90,7 @@ public:
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactRelationshipFilter, QContactFilter::RelationshipFilter)
 
     QContactRelationshipFilter::Role m_roleInRelationship;
-    QUniqueId m_otherParticipantId;
+    QContactId m_otherParticipantId;
     QString m_otherParticipantManagerUri;
     QString m_relationshipType;
 };

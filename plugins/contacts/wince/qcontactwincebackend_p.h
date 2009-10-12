@@ -179,7 +179,7 @@ public:
     PROPID m_emailmeta;
 
     // List of ids (OIDs are equiv to unique ids, yay)
-    QList<QUniqueId> m_ids;
+    QList<QContactId> m_ids;
 };
 
 class QContactWinCEEngine : public QContactManagerEngine
@@ -194,19 +194,19 @@ public:
     void deref();
 
     /* Filtering */
-    QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContactId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
+    QList<QContactId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QContact contact(const QContactId& contactId, QContactManager::Error& error) const;
     bool saveContact(QContact* contact, QContactManager::Error& error);
-    bool removeContact(const QUniqueId& contactId, QContactManager::Error& error);
+    bool removeContact(const QContactId& contactId, QContactManager::Error& error);
 
     /* Groups - Accessors and Mutators */
-    //QList<QUniqueId> groups(QContactManager::Error& error) const;
-    //QContactGroup group(const QUniqueId& groupId, QContactManager::Error& error) const;
+    //QList<QContactId> groups(QContactManager::Error& error) const;
+    //QContactGroup group(const QContactId& groupId, QContactManager::Error& error) const;
     //bool saveGroup(QContactGroup* group, QContactManager::Error& error);
-    //bool removeGroup(const QUniqueId& groupId, QContactManager::Error& error);
+    //bool removeGroup(const QContactId& groupId, QContactManager::Error& error);
 
     /* Definitions */
     QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
@@ -225,7 +225,7 @@ private:
     bool convertFromQContact(const QContact& contact, IItem* item, QContactManager::Error &error) const;
     void buildHashForContactDetailToPoomPropId() const;
     QString convertFilterToQueryString(const QContactFilter& filter) const;
-    QList<QUniqueId> convertP2QIdList(SimpleComPointer<IPOutlookItemCollection> collection) const;
+    QList<QContactId> convertP2QIdList(SimpleComPointer<IPOutlookItemCollection> collection) const;
 };
 
 class Q_DECL_EXPORT ContactWinceFactory : public QObject, public QContactManagerEngineFactory
