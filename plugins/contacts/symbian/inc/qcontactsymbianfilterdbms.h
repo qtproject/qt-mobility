@@ -61,11 +61,16 @@ public:
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
             QContactManager::Error& error);
-    bool filterSupported(const QContactFilter& filter);
+    QAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter);
 
 private:
-    TInt findContacts(CContactIdArray*& idArray, const TDesC& text) const;
-    CContactIdArray* findContactsL( const TDesC& text) const;
+    TInt findContacts(
+            CContactIdArray*& idArray,
+            const TUid fieldUid,
+            const TDesC& text) const;
+    CContactIdArray* findContactsL(
+            const TUid fieldUid,
+            const TDesC& text) const;
     TInt matchContacts(
             CContactIdArray*& idArray,
             const TDesC& phoneNumber,

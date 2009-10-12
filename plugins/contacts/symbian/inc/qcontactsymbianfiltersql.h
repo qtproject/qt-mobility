@@ -59,7 +59,7 @@ public:
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
             QContactManager::Error& error);
-    bool filterSupported(const QContactFilter& filter);
+    QAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter);
 
 private:
     CContactDatabase& m_contactDatabase;

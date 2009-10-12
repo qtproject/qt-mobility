@@ -95,12 +95,16 @@ QContactSymbianEngineData::~QContactSymbianEngineData()
 }
 
 /* Access */
-QList<QUniqueId> QContactSymbianEngineData::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QUniqueId> QContactSymbianEngineData::contacts(
+        const QContactFilter& filter,
+        const QList<QContactSortOrder>& sortOrders,
+        QContactManager::Error& error) const
 {
     return m_contactFilter->contacts(filter, sortOrders, error);
 }
 
-bool QContactSymbianEngineData::filterSupported(const QContactFilter& filter) const
+QAbstractContactFilter::FilterSupport QContactSymbianEngineData::filterSupported(
+        const QContactFilter& filter) const
 {
     return m_contactFilter->filterSupported(filter);
 }
