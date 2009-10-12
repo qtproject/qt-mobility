@@ -54,31 +54,31 @@ struct Q_MEDIA_EXPORT QMediaServiceProviderFactoryInterface : public QFactoryInt
 Q_DECLARE_INTERFACE(QMediaServiceProviderFactoryInterface, QMediaServiceProviderFactoryInterface_iid)
 
 
-struct Q_MEDIA_EXPORT QMediaServiceProviderSupportedFormatsInterface
+struct Q_MEDIA_EXPORT QMediaServiceSupportedFormatsInterface
 {
-    virtual QMediaServiceProvider::SupportEstimate canPlay(const QString &mimeType, const QStringList& codecs) const = 0;
+    virtual QtMedia::SupportEstimate canPlay(const QString &mimeType, const QStringList& codecs) const = 0;
 };
-#define QMediaServiceProviderSupportedFormatsInterface_iid \
-    "com.nokia.Qt.QMediaServiceProviderSupportedFormatsInterface/1.0"
-Q_DECLARE_INTERFACE(QMediaServiceProviderSupportedFormatsInterface, QMediaServiceProviderSupportedFormatsInterface_iid)
+#define QMediaServiceSupportedFormatsInterface_iid \
+    "com.nokia.Qt.QMediaServiceSupportedFormatsInterface/1.0"
+Q_DECLARE_INTERFACE(QMediaServiceSupportedFormatsInterface, QMediaServiceSupportedFormatsInterface_iid)
 
 
-struct Q_MEDIA_EXPORT QMediaServiceProviderSupportedDevicesInterface
+struct Q_MEDIA_EXPORT QMediaServiceSupportedDevicesInterface
 {
     virtual QList<QByteArray> devices() const = 0;
     virtual QString deviceDescription(const QByteArray &device) = 0;
 };
-#define QMediaServiceProviderSupportedDevicesInterface_iid \
-    "com.nokia.Qt.QMediaServiceProviderSupportedDevicesInterface/1.0"
-Q_DECLARE_INTERFACE(QMediaServiceProviderSupportedDevicesInterface, QMediaServiceProviderSupportedDevicesInterface_iid)
+#define QMediaServiceSupportedDevicesInterface_iid \
+    "com.nokia.Qt.QMediaServiceSupportedDevicesInterface/1.0"
+Q_DECLARE_INTERFACE(QMediaServiceSupportedDevicesInterface, QMediaServiceSupportedDevicesInterface_iid)
 
-struct Q_MEDIA_EXPORT QMediaServiceProviderSupportedControlsInterface
+struct Q_MEDIA_EXPORT QMediaServiceFeaturesInterface
 {
-    virtual QList<QByteArray> supportedControls() const = 0;
+    virtual QMediaServiceProviderHint::Features supportedFeatures() const = 0;
 };
-#define QMediaServiceProviderSupportedControlsInterface_iid \
-    "com.nokia.Qt.QMediaServiceProviderSupportedControlsInterface/1.0"
-Q_DECLARE_INTERFACE(QMediaServiceProviderSupportedControlsInterface, QMediaServiceProviderSupportedControlsInterface_iid)
+#define QMediaServiceFeaturesInterface_iid \
+    "com.nokia.Qt.QMediaServiceFeaturesInterface/1.0"
+Q_DECLARE_INTERFACE(QMediaServiceFeaturesInterface, QMediaServiceFeaturesInterface_iid)
 
 
 class Q_MEDIA_EXPORT QMediaServiceProviderPlugin : public QObject, public QMediaServiceProviderFactoryInterface

@@ -248,7 +248,7 @@ void tst_QMediaPlayer::initTestCase()
 {
     mockService = new MockPlayerService;
     mockProvider = new MockProvider(mockService);
-    player = new QMediaPlayer(0, mockProvider);
+    player = new QMediaPlayer(0, 0, mockProvider);
 }
 
 void tst_QMediaPlayer::cleanupTestCase()

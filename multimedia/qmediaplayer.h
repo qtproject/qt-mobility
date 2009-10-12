@@ -83,6 +83,12 @@ public:
         InvalidMedia
     };
 
+    enum Flag
+    {
+        LowLatency = 0x01
+    };
+    Q_DECLARE_FLAGS(Flags, Flag)
+
     enum Error
     {
         NoError,
@@ -93,8 +99,12 @@ public:
         ServiceMissingError
     };
 
-    QMediaPlayer(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
+    QMediaPlayer(QObject *parent = 0, Flags flags = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QMediaPlayer();
+
+    static QtMedia::SupportEstimate canPlay(const QString &mimeType,
+                                            const QStringList& codecs = QStringList(),
+                                            Flags flags = 0);
 
     QMediaContent media() const;
     const QIODevice *mediaStream() const;

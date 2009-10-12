@@ -87,14 +87,14 @@ void tst_QMediaServiceProvider::testCanPlay()
 {
     MockMediaServiceProvider mockProvider;
     QCOMPARE(mockProvider.canPlay(QByteArray("mediaplayer"), "video/ogv", QStringList()),
-             QMediaServiceProvider::MaybeSupported);
+             QtMedia::MaybeSupported);
 
     QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider();
     QCOMPARE(provider->canPlay(QByteArray("mediaplayer"), "video/ogv", QStringList()),
-             QMediaServiceProvider::MaybeSupported);
+             QtMedia::MaybeSupported);
 
     QCOMPARE(provider->canPlay(QByteArray("non existing service"), "video/ogv", QStringList()),
-             QMediaServiceProvider::NotSupported);
+             QtMedia::NotSupported);
 }
 
 void tst_QMediaServiceProvider::testDevices()
