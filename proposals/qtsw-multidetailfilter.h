@@ -82,6 +82,10 @@ public:
 
     Qt::MatchFlags matchFlags() const;
     void setMatchFlags(Qt::MatchFlags flags);
+
+    // This should be rolled into match flags or setvalue
+    bool valueExcluded() const;
+    void setValueExcluded(bool excludeFlag);
 };
 
 class QContactMultiDetailFilter : public QContactFilter
@@ -108,5 +112,42 @@ private:
 };
 
 
+
+/* Sample code */
+
+void sampleCode()
+{
+    /* Find all the contacts with "home mobile" numbers */
+    QContactMultiDetailFilter qcmdf;
+    qcmdf.setDetailDefinitionName(QContactPhoneNumber::DefinitionName);
+
+    QContactDetailFilterValueExpression homebit;
+    homebit.setFieldName(QContactDetail::FieldContext);
+    homebit.setValue(QContactDetail::ContextHome);
+
+    QContactDetailFilterValueExpression mobilebit;
+    mobilebit.setFieldName(QContactPhoneNumber::FieldSubType);
+    mobilebit.setValue(QContactPhoneNumber::SubTypeMobile);
+
+    qcmdf.setExpression(homebit & mobilebit);
+
+    QList<QUniqueId> ids = manager->contacts(qcmdf);
+}
+
+void sampleCode()
+{
+    /* Find all the contacts that have phonenumber that aren't only faxes */
+    QContactMultiDetailFilter qcmdf;
+    qcmdf.setDetailDefinitionName(QContactPhoneNumber::DefinitionName);
+
+    QContactDetailFilterValueExpression faxbit;
+    faxbit.setFieldName(QContactPhoneNumber::FieldSubType);
+    faxbit.setValue(QContactPhoneNumber::SubTypeFax);
+    faxbit.setValueExcluded(true);
+
+    qcmdf.setExpression(faxbit);
+
+    QList<QUniqueId> ids = manager->contacts(qcmdf);
+}
 
 #endif // QTSWMULTIDETAILFILTER_H
