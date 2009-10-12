@@ -1420,11 +1420,6 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
     return QSystemDeviceInfo::SimNotAvailable;
 }
 
-QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
-{
-    return QSystemDeviceInfo::NoBatteryLevel;
-}
-
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
 #ifdef Q_OS_WINCE

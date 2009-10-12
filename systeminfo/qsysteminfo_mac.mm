@@ -516,11 +516,6 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
     return 0;
 }
 
-QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
-{
-    return QSystemDeviceInfo::NoBatteryLevel;
-}
-
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
     return QSystemDeviceInfo::SimNotAvailable;

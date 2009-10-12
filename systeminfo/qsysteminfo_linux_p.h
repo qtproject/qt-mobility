@@ -214,7 +214,6 @@ public:
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
     int  batteryLevel() const;
-    QSystemDeviceInfo::BatteryStatus batteryStatus();
 
     QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
