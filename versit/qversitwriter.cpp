@@ -76,6 +76,9 @@ void QVersitWriter::setDevice(QIODevice* device)
     d->mIoDevice = device;
 }
 
+/*!
+ * Returns the \a device used for encoding. 
+ */
 QIODevice* QVersitWriter::device() const
 {
     return d->mIoDevice;
@@ -86,6 +89,14 @@ QIODevice* QVersitWriter::device() const
  */
 bool QVersitWriter::start()
 {
+    if (d->mIoDevice
+        && !d->mVersitDocument.properties().empty()) {
+        QByteArray output = encodeVersitDocument(d->mVersitDocument);
+        if (d->mIoDevice->write(output) > 0) {
+            return true;
+        }
+        return false;
+    }
     return false;
 }
 

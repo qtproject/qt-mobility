@@ -51,7 +51,6 @@ void UT_QVersitWriter::cleanup()
 void UT_QVersitWriter::testVersitDocument()
 {
     QVersitDocument doc;
-    doc.setVersitType(QVersitDocument::VCard21);
     mWriter->setVersitDocument(doc);
     QCOMPARE(doc.versitType(), QVersitDocument::VCard21);
 }
@@ -70,6 +69,28 @@ void UT_QVersitWriter::testDevice()
 void UT_QVersitWriter::testStart()
 {
     QVERIFY(!mWriter->start());
+    
+    //device set, document not set
+    QBuffer buffer;
+    mWriter->setDevice(&buffer);
+    buffer.open(QBuffer::ReadWrite);
+    QVERIFY(!mWriter->start());
+
+    //document set, device not set
+    mWriter->setDevice(0);
+    QVersitDocument doc;
+    QVersitProperty prop;
+    prop.setName(QString("FN"));
+    prop.setValue("John Smith");
+    doc.addProperty(prop);
+    doc.addProperty(prop);
+    mWriter->setVersitDocument(doc);
+    QVERIFY(!mWriter->start());
+
+    //both document and device are set
+    mWriter->setDevice(&buffer);
+    buffer.open(QBuffer::ReadWrite);
+    QVERIFY(mWriter->start());
 }
 
 void UT_QVersitWriter::testEncodeVersitDocument()

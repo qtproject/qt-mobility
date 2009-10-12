@@ -52,7 +52,6 @@ class QVersitWriterPrivate
 public:
     QVersitWriterPrivate() :
         mIoDevice(0)
-        //mVersitDocument(0)
         {}
     ~QVersitWriterPrivate() {}
     
