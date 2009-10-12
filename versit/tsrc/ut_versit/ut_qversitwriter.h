@@ -31,47 +31,31 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITWRITER_H
-#define QVERSITWRITER_H
+#ifndef UT_QVERSITWRITER_H
+#define UT_QVERSITWRITER_H
 
 #include <QObject>
-#include <QIODevice>
-#include <QByteArray>
-#include "qversitdocument.h"
-#include "qversitproperty.h"
 
-class QVersitWriterPrivate;
+class QVersitWriter;
 
-// writes QVersitDocument to iodevice
-class QVersitWriter : public QObject
+
+class UT_QVersitWriter : public QObject                 
 {
-    Q_OBJECT
-
-public:
-    QVersitWriter();
-    ~QVersitWriter();
-
-    // input:
-    void setVersitDocument(const QVersitDocument& versitDocument);
-    QVersitDocument versitDocument() const;
-
-    // async read / write operations.
-    void setDevice(QIODevice* device);
-    QIODevice* device() const;
-    bool start();
-
-signals:
-    void progress(bool finished);
-
-private:
-    QByteArray encodeVersitDocument(const QVersitDocument& versitDocument);
-    QByteArray encodeVersitProperty(const QVersitProperty& versitProperty);
-
-private:
-    QVersitWriterPrivate* d;
+     Q_OBJECT
     
-private:
-    friend class UT_QVersitWriter;
+private slots: // Tests
+
+    void init();
+    void cleanup();
+
+    void testVersitDocument();
+    void testDevice();    
+    void testStart();
+    void testEncodeVersitDocument();
+    void testEncodeVersitProperty();
+
+private: // Data
+    QVersitWriter* mWriter;
 };
 
-#endif
+#endif // UT_QVERSITWRITER_H

@@ -34,9 +34,10 @@
 #include "testresultxmlparser.h"
 #include "ut_qversitcontactgenerator.h"
 #include "ut_qversitproperty.h"
+#include "ut_qversitdocument.h"
 #include "ut_versitutils.h"
 #include "ut_qversitreader.h"
-#include "ut_qversitdocument.h"
+#include "ut_qversitwriter.h"
 
 #include <QtTest/QtTest>
 
@@ -75,6 +76,12 @@ int main(int /*argc*/, char* /*argv[]*/)
     resultFileName = "c:/ut_versitReader.xml";
     args.replace(args.count()-1,resultFileName);    
     QTest::qExec(&ut_versitReader, args);
+    parser.parseAndPrintResults(resultFileName);
+   
+    UT_QVersitWriter ut_versitWriter;
+    resultFileName = "c:/ut_versitWriter.xml";
+    args.replace(args.count()-1,resultFileName);    
+    QTest::qExec(&ut_versitWriter, args);
     parser.parseAndPrintResults(resultFileName,true);
     
     printf("Press any key...\n");

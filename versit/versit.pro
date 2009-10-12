@@ -20,6 +20,7 @@ PUBLIC_HEADERS += qtversitglobal.h \
 PRIVATE_HEADERS += qversitdocument_p.h \
     qversitproperty_p.h \
     qversitreader_p.h \
+    qversitwriter_p.h \
     qversitcontactgenerator_p.h
 
 SOURCES += qversitdocument.cpp \

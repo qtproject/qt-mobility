@@ -31,19 +31,106 @@
 **
 ****************************************************************************/
 
+#include "qversitwriter.h"
+#include "qversitwriter_p.h"
+
+#include <QStringList>
+
 /*!
- * \class QContact
+ * \class QVersitWriter
  *
- * \brief The QContact class provides an addressbook contact.
+ * \brief The QVersitWriter class provides an interface 
+ * for encoding vCards from a versit document into a stream. 
  *
- * A QContact consists of zero or more details.
- *
- * An instance of the QContact class represents an in-memory contact,
- * and may not reflect the state of that contact found in persistent
- * storage until the appropriate synchronisation method is called
- * on the QContactManager (i.e., saveContact, removeContact).
- *
- * \sa QContactManager, QContactDetail
+ * \sa
  */
 
+/*! Constructs a writer. */
+QVersitWriter::QVersitWriter() 
+{
+    d = new QVersitWriterPrivate;
+}
 
+/*! Destroys a writer. */
+QVersitWriter::~QVersitWriter()
+{
+    delete d;
+}
+
+// input:
+void QVersitWriter::setVersitDocument(const QVersitDocument& versitDocument)
+{
+    d->mVersitDocument = versitDocument;
+}
+
+QVersitDocument QVersitWriter::versitDocument() const
+{
+    return d->mVersitDocument;
+}
+
+/*!
+ * Sets the \a device used for encoding.
+ */
+void QVersitWriter::setDevice(QIODevice* device)
+{
+    d->mIoDevice = device;
+}
+
+QIODevice* QVersitWriter::device() const
+{
+    return d->mIoDevice;
+}
+
+/*!
+ * Starts encoding.
+ */
+bool QVersitWriter::start()
+{
+    return false;
+}
+
+QByteArray QVersitWriter::encodeVersitDocument(const QVersitDocument& versitDocument)
+{
+    QList<QVersitProperty> propertyList = versitDocument.properties();
+    QByteArray docArray;
+    
+    foreach (QVersitProperty property, propertyList) {
+        docArray.append(encodeVersitProperty(property));
+    }
+    return docArray;
+}
+
+
+QByteArray QVersitWriter::encodeVersitProperty(const QVersitProperty& versitProperty)
+{
+    QByteArray propertyArray;
+    
+    // 1. Encode the property name
+    QString name = versitProperty.name();    
+    propertyArray.append(name.toAscii());
+    if (name == QString("AGENT")) {
+        // TODO: QVersitDocument embDoc = versitProperty.embeddedDocument();  
+    } else {
+        // 2. Encode the property parameters and values (if they exist)
+        QMultiMap<QString,QString> paramsMap = versitProperty.parameters();
+        QList<QString> keys = paramsMap.uniqueKeys();
+        foreach (QString param, keys) {
+            QStringList values = paramsMap.values(param);
+            foreach (QString value, values) {
+                propertyArray.append(";");
+                if (!(param.contains("TYPE",Qt::CaseInsensitive))) {
+                    propertyArray.append(param.toAscii());
+                    propertyArray.append("=");
+                }
+                propertyArray.append(value.toAscii());
+            }
+        }
+        
+        // 3. Encode the property value
+        propertyArray.append(":");
+        QByteArray value = versitProperty.value();
+        propertyArray.append(value);
+        propertyArray.append("\r\n");
+    }
+    return propertyArray;
+}

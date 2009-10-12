@@ -18,6 +18,8 @@ HEADERS += testresultxmlparser.h \
     ut_versitutils.h \
     ../../qversitreader.h \
     ut_qversitreader.h \
+    ../../qversitwriter.h \
+    ut_qversitwriter.h \
 
 SOURCES += main.cpp \
     testresultxmlparser.cpp \
@@ -30,7 +32,9 @@ SOURCES += main.cpp \
     ../../versitutils.cpp \
     ut_versitutils.cpp \
     ../../qversitreader.cpp \
-    ut_qversitreader.cpp
+    ut_qversitreader.cpp \
+    ../../qversitwriter.cpp \
+    ut_qversitwriter.cpp
 
 symbian: { 
     TARGET.CAPABILITY = ALL \
