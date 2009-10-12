@@ -106,7 +106,10 @@ QByteArray QVersitWriter::encodeVersitDocument(const QVersitDocument& versitDocu
     QByteArray docArray;
     
     foreach (QVersitProperty property, propertyList) {
+        docArray.append("BEGIN:VCARD\r\n");
+        docArray.append("VERSION:2.1\r\n");
         docArray.append(encodeVersitProperty(property));
+        docArray.append("END:VCARD\r\n");
     }
     return docArray;
 }
