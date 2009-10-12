@@ -105,12 +105,23 @@ public:
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
 Q_SIGNALS:
-   void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
-   void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int);
-   void currentMobileCountryCodeChanged(const QString &);
-   void currentMobileNetworkCodeChanged(const QString &);
-   void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
-   void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
+    void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int);
+    void currentMobileCountryCodeChanged(const QString &);
+    void currentMobileNetworkCodeChanged(const QString &);
+    void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
+    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+
+protected:  //from MTelephonyInfoObserver
+    void batteryLevelChanged(){};
+    void powerStateChanged(){};
+
+    void currentMobileCountryCodeChanged();
+    void currentMobileNetworkCodeChanged();
+
+    void cellNetworkNameChanged();
+    void cellNetworkSignalStrengthChanged();
+    void cellNetworkStatusChanged();
 };
 
 //////// QSystemDisplayInfo
@@ -195,8 +206,15 @@ Q_SIGNALS:
     void powerStateChanged(QSystemDeviceInfo::PowerState);
 
 protected:  //from MTelephonyInfoObserver
-    void batteryStatusChanged();
     void batteryLevelChanged();
+    void powerStateChanged();
+    
+    void currentMobileCountryCodeChanged(){};
+    void currentMobileNetworkCodeChanged(){};
+
+    void cellNetworkNameChanged(){};
+    void cellNetworkSignalStrengthChanged(){};
+    void cellNetworkStatusChanged(){};
 };
 
 //////// QSystemScreenSaver

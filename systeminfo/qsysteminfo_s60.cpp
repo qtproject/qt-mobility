@@ -108,7 +108,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
                 case CTelephony::ERegisteredBusy:
                     return QSystemNetworkInfo::Busy;
                 /*
-                case CTelephony::ERegisteredOnHomeNetwork: //How this case should be handled? There are no connected state in CTelephony.
+                case CTelephony::ERegisteredOnHomeNetwork: //How this case should be handled? There are no connected state in CTelephony. Should this be same as HomeNetwork?
                     return QSystemNetworkInfo::Connected;
                 */
                 case CTelephony::ERegisteredOnHomeNetwork:
@@ -200,7 +200,6 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
         case QSystemNetworkInfo::GsmMode:
             return DeviceInfo::instance()->cellNetworkInfo()->networkName();
 
-        break;
         case QSystemNetworkInfo::CdmaMode:
         break;
         case QSystemNetworkInfo::WcdmaMode:
@@ -240,6 +239,31 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
     return QNetworkInterface();     //TODO
+}
+
+void QSystemNetworkInfoPrivate::currentMobileCountryCodeChanged()
+{
+    //TODO
+}
+
+void QSystemNetworkInfoPrivate::currentMobileNetworkCodeChanged()
+{
+    //TODO
+}
+
+void QSystemNetworkInfoPrivate::cellNetworkNameChanged()
+{
+    //TODO
+}
+
+void QSystemNetworkInfoPrivate::cellNetworkSignalStrengthChanged()
+{
+    //TODO
+}
+
+void QSystemNetworkInfoPrivate::cellNetworkStatusChanged()
+{
+    //TODO
 }
 
 //////// QSystemDisplayInfo
@@ -325,7 +349,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 
         case CTelephony::EBatteryConnectedButExternallyPowered:
         {
-            if (DeviceInfo::instance()->batteryInfo()->batteryLevel() < 100) { //TODO: Use real indicator, EPSHWRMChargingStatus
+            if (DeviceInfo::instance()->batteryInfo()->batteryLevel() < 100) { //TODO: Use real indicator, EPSHWRMChargingStatus::EChargingStatusNotCharging?
                 return QSystemDeviceInfo::WallPowerChargingBattery;
             } else {
                 return QSystemDeviceInfo::WallPower;
@@ -404,14 +428,29 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
     return false;   //TODO
 }
 
-void QSystemDeviceInfoPrivate::batteryStatusChanged()
-{
-    emit powerStateChanged(currentPowerState());
-}
-
 void QSystemDeviceInfoPrivate::batteryLevelChanged()
 {
     emit batteryLevelChanged(batteryLevel());
+    
+    int batteryLevel = DeviceInfo::instance()->batteryInfo()->batteryLevel();
+    QSystemDeviceInfo::BatteryStatus status(batteryStatus());
+    
+    if(batteryLevel < 4 && status != QSystemDeviceInfo::BatteryCritical) {
+        emit batteryStatusChanged(QSystemDeviceInfo::BatteryCritical);
+    } else if (batteryLevel < 11 && status != QSystemDeviceInfo::BatteryVeryLow) {
+        emit batteryStatusChanged(QSystemDeviceInfo::BatteryVeryLow);
+    } else if (batteryLevel < 41 && status != QSystemDeviceInfo::BatteryLow) {
+        emit batteryStatusChanged(QSystemDeviceInfo::BatteryLow);
+    } else if (batteryLevel > 40 && status != QSystemDeviceInfo::BatteryNormal) {
+        emit batteryStatusChanged(QSystemDeviceInfo::BatteryNormal);
+    } else {
+        emit batteryStatusChanged(QSystemDeviceInfo::NoBatteryLevel);
+    }
+}
+
+void QSystemDeviceInfoPrivate::powerStateChanged()
+{
+    emit powerStateChanged(currentPowerState());
 }
 
 DeviceInfo *DeviceInfo::m_instance = NULL;

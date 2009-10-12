@@ -158,8 +158,8 @@ CBatteryInfo::CBatteryInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
     m_batteryLevel = m_batteryInfoV1.iChargeLevel;
     m_previousBatteryLevel = m_batteryLevel;
 
-    m_batteryStatus = m_batteryInfoV1.iStatus;
-    m_previousBatteryStatus = m_batteryStatus;
+    m_powerState = m_batteryInfoV1.iStatus;
+    m_previousBatteryStatus = m_powerState;
     
     m_initializing = false;
 
@@ -172,16 +172,16 @@ void CBatteryInfo::RunL()
         CTelephonyInfo::RunL();
     } else {
         m_batteryLevel = m_batteryInfoV1.iChargeLevel;
-        m_batteryStatus = m_batteryInfoV1.iStatus;
+        m_powerState = m_batteryInfoV1.iStatus;
 
         foreach (MTelephonyInfoObserver *observer, m_observers) {
-            if (m_batteryStatus != m_previousBatteryStatus) {
-                m_previousBatteryStatus = m_batteryStatus;
-                observer->batteryStatusChanged();
-            }
             if (m_batteryLevel != m_previousBatteryLevel) {
                 m_previousBatteryLevel = m_batteryLevel;
                 observer->batteryLevelChanged();
+            }
+            if (m_powerState != m_previousBatteryStatus) {
+                m_previousBatteryStatus = m_powerState;
+                observer->powerStateChanged();
             }
         }
         startMonitoring();
@@ -231,39 +231,44 @@ CCellNetworkInfo::CCellNetworkInfo(CTelephony &telephony) : CTelephonyInfo(telep
 
     TBuf<CTelephony::KNetworkLongNameSize> networkName = m_networkInfoV1.iLongName;
     m_networkName = QString::fromUtf16(networkName.Ptr(), networkName.Length());
-    
+
     m_initializing = false;
 }
 
-//TODO
-/*
 void CCellNetworkInfo::RunL()
 {
     if (m_initializing) {
         CTelephonyInfo::RunL();
     } else {
-        m_homeMobileNetworkCode = m_networkInfoV1.iNetworkId;
-        m_homeMobileCountryCode = m_networkInfoV1.iCountryCode;
-        m_networkName = m_networkInfoV1.iLongName;
+        TBuf<CTelephony::KNetworkIdentitySize> homeMobileNetworkCode = m_networkInfoV1.iNetworkId;
+            m_homeMobileNetworkCode = QString::fromUtf16(homeMobileNetworkCode.Ptr(),
+            homeMobileNetworkCode.Length());
+
+        TBuf<CTelephony::KNetworkCountryCodeSize> homeMobileCountryCode = m_networkInfoV1.iCountryCode;
+            m_homeMobileCountryCode = QString::fromUtf16(homeMobileCountryCode.Ptr(),
+            homeMobileCountryCode.Length());
+
+        TBuf<CTelephony::KNetworkLongNameSize> networkName = m_networkInfoV1.iLongName;
+            m_networkName = QString::fromUtf16(networkName.Ptr(),
+            networkName.Length());
 
         foreach (MTelephonyInfoObserver *observer, m_observers) {
             if (m_homeMobileNetworkCode != m_previousHomeMobileNetworkCode) {
                 m_previousHomeMobileNetworkCode = m_homeMobileNetworkCode;
-                observer->currentMobileNetworkCodeChanged(&mnc);
+                observer->currentMobileNetworkCodeChanged();
             }
             if (m_homeMobileCountryCode != m_previousHomeMobileCountryCode) {
                 m_previousHomeMobileCountryCode = m_homeMobileCountryCode;
-                observer->currentMobileCountryCodeChanged(&mcc);
+                observer->currentMobileCountryCodeChanged();
             }
             if (m_networkName != m_previousNetworkName) {
                 m_previousNetworkName = m_networkName;
-                observer->networkNameChanged(mode, &netName);
+                observer->cellNetworkNameChanged();
             }
         }
         startMonitoring();
     }
 }
-*/
 
 void CCellNetworkInfo::DoCancel()
 {
@@ -299,14 +304,11 @@ QString CCellNetworkInfo::networkName() const
     return m_networkName;
 }
 
-//TODO
-/*
 void CCellNetworkInfo::startMonitoring()
 {
-    m_telephony.NotifyChange(iStatus, CTelephony::ESignalStrengthChange, m_signalStrengthV1Pckg);
+    m_telephony.NotifyChange(iStatus, CTelephony::ESignalStrengthChange, m_networkInfoV1Pckg);
     SetActive();
 }
-*/
 
 CCellNetworkRegistrationInfo::CCellNetworkRegistrationInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
     m_networkRegistrationV1Pckg(m_networkRegistrationV1), m_initializing(true)
@@ -318,8 +320,6 @@ CCellNetworkRegistrationInfo::CCellNetworkRegistrationInfo(CTelephony &telephony
     m_initializing = false;
 }
 
-//TODO
-/*
 void CCellNetworkRegistrationInfo::RunL()
 {
     if (m_initializing) {
@@ -330,13 +330,12 @@ void CCellNetworkRegistrationInfo::RunL()
         foreach (MTelephonyInfoObserver *observer, m_observers) {
             if (m_networkStatus != m_previousNetworkStatus) {
                 m_previousNetworkStatus = m_networkStatus;
-                observer->networkStatusChanged(mode, status);
+                observer->cellNetworkStatusChanged();
             }
         }
         startMonitoring();
     }
 }
-*/
 
 void CCellNetworkRegistrationInfo::DoCancel()
 {
@@ -352,14 +351,11 @@ CTelephony::TRegistrationStatus CCellNetworkRegistrationInfo::cellNetworkStatus(
     return m_networkStatus;
 }
 
-//TODO
-/*
 void CCellNetworkRegistrationInfo::startMonitoring()
 {
     m_telephony.NotifyChange(iStatus, CTelephony::ENetworkRegistrationStatusChange, m_networkRegistrationV1Pckg);
     SetActive();
 }
-*/
 
 CCellSignalStrengthInfo::CCellSignalStrengthInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
     m_signalStrengthV1Pckg(m_signalStrengthV1), m_initializing(true)
@@ -372,8 +368,6 @@ CCellSignalStrengthInfo::CCellSignalStrengthInfo(CTelephony &telephony) : CTelep
     m_initializing = false;
 }
 
-//TODO
-/*
 void CCellSignalStrengthInfo::RunL()
 {
     if (m_initializing) {
@@ -384,14 +378,13 @@ void CCellSignalStrengthInfo::RunL()
         foreach (MTelephonyInfoObserver *observer, m_observers) {
             if (m_cellNetworkSignalStrength != m_previousCellNetworkSignalStrength) {
                 m_previousCellNetworkSignalStrength = m_cellNetworkSignalStrength;
-                observer->batteryStatusChanged(mode, strength);
+                observer->cellNetworkSignalStrengthChanged();
             }
         }
         startMonitoring();
 
     }
 }
-*/
 
 void CCellSignalStrengthInfo::DoCancel()
 {
@@ -407,11 +400,8 @@ int CCellSignalStrengthInfo::cellNetworkSignalStrength() const
     return m_cellNetworkSignalStrength;
 }
 
-//TODO
-/*
 void CCellSignalStrengthInfo::startMonitoring()
 {
     m_telephony.NotifyChange(iStatus, CTelephony::ESignalStrengthChange, m_signalStrengthV1Pckg);
     SetActive();
 }
-*/

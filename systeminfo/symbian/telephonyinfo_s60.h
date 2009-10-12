@@ -44,17 +44,15 @@ class CActiveSchedulerWait;
 class MTelephonyInfoObserver
 {
 public:
-    virtual void batteryStatusChanged() = 0;
     virtual void batteryLevelChanged() = 0;
-    
-    /*
-    virtual void currentMobileCountryCodeChanged(const QString& mcc) = 0;
-    virtual void currentMobileNetworkCodeChanged(const QString& mnc) = 0;
-    virtual void networkModeChanged(QSystemNetworkInfo::NetworkMode mode) = 0;
-    virtual void networkNameChanged(QSystemNetworkInfo::NetworkMode mode, const QString& netName) = 0;
-    virtual void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode, int strength) = 0;
-    virtual void networkStatusChanged(QSystemNetworkInfo::NetworkMode mode, QSystemNetworkInfo::NetworkStatus status) = 0;
-    */
+    virtual void powerStateChanged() = 0;
+
+    virtual void currentMobileCountryCodeChanged() = 0;
+    virtual void currentMobileNetworkCodeChanged() = 0;
+
+    virtual void cellNetworkNameChanged() = 0;
+    virtual void cellNetworkSignalStrengthChanged() = 0;
+    virtual void cellNetworkStatusChanged() = 0;
 };
 
 class CTelephonyInfo : public CActive
@@ -160,17 +158,17 @@ private:
     int m_previousBatteryLevel;
 
     CTelephony::TBatteryStatus m_previousBatteryStatus;
-    CTelephony::TBatteryStatus m_batteryStatus;
+    CTelephony::TBatteryStatus m_powerState;
 };
 
 class CCellNetworkInfo : public CTelephonyInfo
 {
 public:
     CCellNetworkInfo(CTelephony &telephony);
-    //void startMonitoring();
+    void startMonitoring();
 
 protected:
-    //void RunL();
+    void RunL();
     void DoCancel();
 
 public:
@@ -205,10 +203,10 @@ class CCellNetworkRegistrationInfo : public CTelephonyInfo
 {
 public:
     CCellNetworkRegistrationInfo(CTelephony &telephony);
-    //void startMonitoring();
+    void startMonitoring();
 
 protected:
-    //void RunL();
+    void RunL();
     void DoCancel();
 
 public:
@@ -228,10 +226,10 @@ class CCellSignalStrengthInfo : public CTelephonyInfo
 {
 public:
     CCellSignalStrengthInfo(CTelephony &telephony);
-    //void startMonitoring();
+    void startMonitoring();
 
 protected:
-    //void RunL();
+    void RunL();
     void DoCancel();
 
 public:
