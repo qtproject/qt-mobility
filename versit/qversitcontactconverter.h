@@ -60,16 +60,16 @@ public:
 
 private: //Methods
     
-    void encodeFieldInfo(QVersitDocument versitDocumen, const QContact& contact, 
-                            QContactDetailDefinition definitionName);
-    void encodeName(QVersitDocument versitDocumen, const QContact& contact,
-                        QContactDetailDefinition definitionName);
-    void encodePhoneNumber(QVersitDocument versitDocumen, const QContact& contact,
-                        QContactDetailDefinition definitionName);
-    void encodeEmailAddress(QVersitDocument versitDocumen, const QContact& contact,
-                        QContactDetailDefinition definitionName);
-    void encodeStreetAddress(QVersitDocument versitDocumen, const QContact& contact,
-                        QContactDetailDefinition definitionName);
+    void encodeFieldInfo(QVersitDocument& versitDocumen, const QContact& contact, 
+                            QContactDetailDefinition& definitionName);
+    void encodeName(QVersitDocument& versitDocumen, const QContact& contact,
+                        QContactDetailDefinition& definitionName);
+    void encodePhoneNumber(QVersitDocument& versitDocumen, const QContact& contact,
+                        QContactDetailDefinition& definitionName);
+    void encodeEmailAddress(QVersitDocument& versitDocumen, const QContact& contact,
+                        QContactDetailDefinition& definitionName);
+    void encodeStreetAddress(QVersitDocument& versitDocumen, const QContact& contact,
+                        QContactDetailDefinition& definitionName);
     
 private:
     QVersitContactConverterPrivate* d;

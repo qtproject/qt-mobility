@@ -106,9 +106,9 @@ QVersitDocument QVersitContactConverter::convertContacts(const QContact& contact
 /*!
  * Encode Contact Field Information into the Versit Document 
  */
-void QVersitContactConverter::encodeFieldInfo(QVersitDocument versitDocument, 
+void QVersitContactConverter::encodeFieldInfo(QVersitDocument& versitDocument, 
                                                 const QContact& contact, 
-                                                QContactDetailDefinition definitionName)
+                                                QContactDetailDefinition& definitionName)
 {
     if (definitionName.name() == versitContactName )
     {
@@ -126,31 +126,33 @@ void QVersitContactConverter::encodeFieldInfo(QVersitDocument versitDocument,
 /*!
  * Encode Contact Name Field Information into the Versit Document 
  */
-void QVersitContactConverter::encodeName(QVersitDocument versitDocument, 
+void QVersitContactConverter::encodeName(QVersitDocument& versitDocument, 
                                             const QContact& contact,
-                                            QContactDetailDefinition definitionName)
+                                            QContactDetailDefinition& definitionName)
 {
     QContactName contactName = contact.detail(definitionName.name());
     QString name = contactName.last() +  ";"  + contactName.first() + ";" + contactName.middle() 
                     + ";"  + contactName.prefix() + ";" + contactName.suffix();
     
     QVersitProperty versitProperty;
-    versitProperty.addParameter(versitName, name);
+    versitProperty.setName(versitName);
+    versitProperty.setValue(name.toAscii());
     versitDocument.addProperty(versitProperty);
 }
 
 /*!
  * Encode Phone Numer Field Information into the Versit Document 
  */
-void QVersitContactConverter::encodePhoneNumber(QVersitDocument versitDocument,
+void QVersitContactConverter::encodePhoneNumber(QVersitDocument& versitDocument,
                                                     const QContact& contact,
-                                                    QContactDetailDefinition definitionName)
+                                                    QContactDetailDefinition& definitionName)
 {
     QContactPhoneNumber phoneNumer = contact.detail(definitionName.name());
     QString phone = phoneNumer.number();
     
     QVersitProperty versitProperty;
-    versitProperty.addParameter(versitPhoneNumer, phone);
+    versitProperty.setName(versitPhoneNumer);
+    versitProperty.setValue(phone.toAscii());
     versitDocument.addProperty(versitProperty);
 }
 
@@ -159,15 +161,16 @@ void QVersitContactConverter::encodePhoneNumber(QVersitDocument versitDocument,
  * Encode Email Address Field Information into the Versit Document 
  */
 
-void QVersitContactConverter::encodeEmailAddress(QVersitDocument versitDocument,
+void QVersitContactConverter::encodeEmailAddress(QVersitDocument& versitDocument,
                                                     const QContact& contact,
-                                                    QContactDetailDefinition definitionName)
+                                                    QContactDetailDefinition& definitionName)
 {
     QContactEmailAddress emailAddress = contact.detail(definitionName.name());
     QString email = emailAddress.emailAddress();
 
     QVersitProperty versitProperty;
-    versitProperty.addParameter(versitEmail, email);
+    versitProperty.setName(versitEmail);
+    versitProperty.setValue(email.toAscii());
     versitDocument.addProperty(versitProperty);
 }
 
@@ -176,15 +179,16 @@ void QVersitContactConverter::encodeEmailAddress(QVersitDocument versitDocument,
  * Encode Street Address Field Information into the Versit Document 
  */
 
-void QVersitContactConverter::encodeStreetAddress(QVersitDocument versitDocument,
+void QVersitContactConverter::encodeStreetAddress(QVersitDocument& versitDocument,
                                                     const QContact& contact,
-                                                    QContactDetailDefinition definitionName)
+                                                    QContactDetailDefinition& definitionName)
 {
     QContactAddress address = contact.detail(definitionName.name());
     QString addr = address.postOfficeBox() + ";" + address.street() + ";" + address.locality() 
                     + ";" + address.region() + ";" + address.postcode() + ";" + address.country();
     
     QVersitProperty versitProperty;
-    versitProperty.addParameter(versitAddress, addr);
+    versitProperty.setName(versitAddress);
+    versitProperty.setValue(addr.toAscii());
     versitDocument.addProperty(versitProperty);
 }

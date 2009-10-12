@@ -37,16 +37,16 @@
 
 
 //Contacts Defs ids:
-const char versitContactName[] = "Name";
-const char versitContactEmail[] = "EmailAddress";
-const char versitContactPhoneNumer[] = "PhoneNumber";
-const char versitContactAddress[] = "StreetAddress";
+const QString versitContactName = "Name";
+const QString versitContactEmail = "EmailAddress";
+const QString versitContactPhoneNumer = "PhoneNumber";
+const QString versitContactAddress = "StreetAddress";
 
 
 //Versit Defs ids:
-const char versitName[] = "N";
-const char versitEmail[] = "EMAIL";
-const char versitPhoneNumer[] = "TEL";
-const char versitAddress[] = "ADDR";
+const QString versitName = "N";
+const QString versitEmail = "EMAIL";
+const QString versitPhoneNumer = "TEL";
+const QString versitAddress = "ADDR";
 
 #endif /* QVERSITDEFS_H_ */

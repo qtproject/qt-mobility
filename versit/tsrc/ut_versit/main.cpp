@@ -33,6 +33,7 @@
 
 #include "testresultxmlparser.h"
 #include "ut_qversitcontactgenerator.h"
+#include "ut_qversitcontactconverter.h"
 #include "ut_qversitproperty.h"
 #include "ut_qversitdocument.h"
 #include "ut_versitutils.h"
@@ -54,6 +55,12 @@ int main(int /*argc*/, char* /*argv[]*/)
     QTest::qExec(&ut_versitContactGenerator, args);
 	parser.parseAndPrintResults(resultFileName);
 
+	UT_QVersitContactConvertert ut_versitContactconverter;
+    resultFileName = "c:/ut_versitContactconverter.xml";
+    args.replace(args.count()-1,resultFileName);
+    QTest::qExec(&ut_versitContactconverter, args);
+    parser.parseAndPrintResults(resultFileName);
+	
     UT_QVersitProperty ut_qVersitProperty;
     resultFileName = "c:/ut_versitProperty.xml";
     args.replace(args.count()-1,resultFileName);

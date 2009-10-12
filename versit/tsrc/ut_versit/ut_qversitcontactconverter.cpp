@@ -74,7 +74,6 @@ void UT_QVersitContactConvertert::error()
 void UT_QVersitContactConvertert::convertContacts()
 {
     QContact contact;
-    QVersitDocument myVersitDocument;
 
     // Adding Name for the Contact
     QContactName name;
@@ -86,13 +85,10 @@ void UT_QVersitContactConvertert::convertContacts()
     p.setNumber("12345678");
     contact.saveDetail(&p);
     
-    //Ensure there are no properties in the versit document.
-    QVERIFY(!myVersitDocument.properties().count());
-
-    myVersitDocument = mVersitContactConverter->convertContacts(contact);
+    QVersitDocument myVersitDocument = mVersitContactConverter->convertContacts(contact);
     
     //Ensure versit document is created with properties.
-    QVERIFY(myVersitDocument.properties().count());
+    QCOMPARE(2, myVersitDocument.properties().count());
 }
 
 
@@ -119,6 +115,11 @@ void UT_QVersitContactConvertert::encodeName()
     //Ensure versit document is created with properties.
     QCOMPARE(1, myVersitDocument.properties().count());
     QCOMPARE(versitName, myVersitDocument.properties().at(0).name());
+    
+    //Ensure value of properties contains all the infomation encoded
+    QString value (myVersitDocument.properties().at(0).value() );
+    QString expectedValue = "HH;Heiddo;A;Mr.;";
+    QCOMPARE(expectedValue, value );
 }
 
 void UT_QVersitContactConvertert::encodePhoneNumber()
@@ -147,7 +148,10 @@ void UT_QVersitContactConvertert::encodePhoneNumber()
     
     QCOMPARE(1, myVersitDocument.properties().count());
     QCOMPARE(versitPhoneNumer, myVersitDocument.properties().at(0).name());
-
+    
+    QString value (myVersitDocument.properties().at(0).value() );
+    QString expectedValue = "12345678";
+    QCOMPARE(expectedValue, value );
 }
 
 void UT_QVersitContactConvertert::encodeEmailAddress()
@@ -173,6 +177,10 @@ void UT_QVersitContactConvertert::encodeEmailAddress()
     
     QCOMPARE(1, myVersitDocument.properties().count());
     QCOMPARE(versitEmail, myVersitDocument.properties().at(0).name());
+
+    QString value (myVersitDocument.properties().at(0).value() );
+    QString expectedValue = "test@test";
+    QCOMPARE(expectedValue, value );
 
 }
 
@@ -204,4 +212,8 @@ void UT_QVersitContactConvertert::encodeStreetAddress()
     
     QCOMPARE(1, myVersitDocument.properties().count());
     QCOMPARE(versitAddress, myVersitDocument.properties().at(0).name());
+    
+    QString value (myVersitDocument.properties().at(0).value() );
+    QString expectedValue = ";HKKI 1X 90;Helsinki;;00440;Finland";
+    QCOMPARE(expectedValue, value );
 }
