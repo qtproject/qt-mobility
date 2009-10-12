@@ -40,17 +40,13 @@
 QMessageAccountId QMessageAccountIdPrivate::from(const MapiEntryId &storeKey)
 {
     QMessageAccountId result;
-    if (!result.d_ptr)
-        result.d_ptr = new QMessageAccountIdPrivate(&result);
     result.d_ptr->_storeRecordKey = storeKey;
     return result;
 }
 
 MapiEntryId QMessageAccountIdPrivate::storeRecordKey(const QMessageAccountId &id)
 {
-    if (id.d_ptr)
-        return id.d_ptr->_storeRecordKey;
-    return MapiEntryId();
+    return id.d_ptr->_storeRecordKey;
 }
 
 #else
@@ -58,30 +54,25 @@ MapiEntryId QMessageAccountIdPrivate::storeRecordKey(const QMessageAccountId &id
 QMessageAccountId QMessageAccountIdPrivate::from(const MapiRecordKey &storeKey)
 {
     QMessageAccountId result;
-    if (!result.d_ptr)
-        result.d_ptr = new QMessageAccountIdPrivate(&result);
     result.d_ptr->_storeRecordKey = storeKey;
     return result;
 }
 
 MapiRecordKey QMessageAccountIdPrivate::storeRecordKey(const QMessageAccountId &id)
 {
-    if (id.d_ptr)
-        return id.d_ptr->_storeRecordKey;
-    return MapiRecordKey();
+    return id.d_ptr->_storeRecordKey;
 }
 
 #endif
 
 
-
 QMessageAccountId::QMessageAccountId()
-    : d_ptr(0)
+    : d_ptr(new QMessageAccountIdPrivate(this))
 {
 }
 
 QMessageAccountId::QMessageAccountId(const QMessageAccountId& other)
-    : d_ptr(0)
+    : d_ptr(new QMessageAccountIdPrivate(this))
 {
     this->operator=(other);
 }
@@ -113,15 +104,7 @@ bool QMessageAccountId::operator==(const QMessageAccountId& other) const
 QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId& other)
 {
     if (&other != this) {
-        if (other.isValid()) {
-            if (!d_ptr) {
-                d_ptr = new QMessageAccountIdPrivate(this);
-            }
-            d_ptr->_storeRecordKey = other.d_ptr->_storeRecordKey;
-        } else {
-            delete d_ptr;
-            d_ptr = 0;
-        }
+        d_ptr->_storeRecordKey = other.d_ptr->_storeRecordKey;
     }
 
     return *this;
@@ -129,17 +112,14 @@ QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId& other)
 
 bool QMessageAccountId::operator<(const QMessageAccountId& other) const
 {
-    if (d_ptr && other.d_ptr) {
-        return (d_ptr->_storeRecordKey < other.d_ptr->_storeRecordKey);
-    }
-
-    return false;
+    return (d_ptr->_storeRecordKey < other.d_ptr->_storeRecordKey);
 }
 
 QString QMessageAccountId::toString() const
 {
     if (!isValid())
         return QString();
+
     QByteArray encodedId;
     QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
     encodedIdStream << d_ptr->_storeRecordKey;
@@ -148,7 +128,7 @@ QString QMessageAccountId::toString() const
 
 bool QMessageAccountId::isValid() const
 {
-    return (d_ptr && !d_ptr->_storeRecordKey.isEmpty());
+    return !d_ptr->_storeRecordKey.isEmpty();
 }
 
 uint qHash(const QMessageAccountId &id)
