@@ -423,7 +423,6 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
     // Attempt to validate the relationship.
     // first, check that the source contact exists
     if (!d->m_contactIds.contains(relationship->sourceContact())) {
-qDebug() << "relationship source contact doesn't exist!";
         error = QContactManager::InvalidRelationshipError;
         return false;
     }
@@ -432,8 +431,6 @@ qDebug() << "relationship source contact doesn't exist!";
     QString myUri = managerUri();
     QList<QPair<QString, QUniqueId> > dests = relationship->destinationContacts();
 
-qDebug() << "allDestinations =" << dests;
-
     QList<QPair<QString, QUniqueId> > checkDuplicates;
     for (int i = 0; i < dests.size(); i++) {
         QPair<QString, QUniqueId> curr = dests.at(i);
@@ -441,7 +438,6 @@ qDebug() << "allDestinations =" << dests;
             // this entry in the destination list is supposedly stored in this manager.
             // check that it exists, and that it isn't the source contact (circular)
             if (!d->m_contactIds.contains(curr.second) || curr.second == relationship->sourceContact()) {
-qDebug() << "relationship destination contact doesn't exist or is the source contact!";
                 error = QContactManager::InvalidRelationshipError;
                 return false;
             }
@@ -452,7 +448,6 @@ qDebug() << "relationship destination contact doesn't exist or is the source con
             curr.first = myUri;
         if (checkDuplicates.contains(curr)) {
             // contains a duplicate entry.
-qDebug() << "relationship contains a duplicate entry!";
             error = QContactManager::InvalidRelationshipError;
             return false;
         }
@@ -469,8 +464,6 @@ qDebug() << "relationship contains a duplicate entry!";
             // need to update the URI
             curr.first = myUri;
         }
-
-qDebug() << "updated dest:" << curr;
         updatedDests.append(curr);
     }
     relationship->setDestinationContacts(updatedDests);

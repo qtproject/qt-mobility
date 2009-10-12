@@ -78,6 +78,7 @@ bool MaliciousAsyncManagerEngine::startRequest(QContactAbstractRequest* req)
     QList<QContact> contactResult;
     QList<QContactDetailDefinition> defResult;
     QMap<QString, QContactDetailDefinition> defMapResult;
+    QList<QContactRelationship> relResult;
 
     // maliciously attempt to update the request with every result type
     updateRequestStatus(req, errorResult, errorsResult, QContactAbstractRequest::Active, false);
@@ -85,6 +86,7 @@ bool MaliciousAsyncManagerEngine::startRequest(QContactAbstractRequest* req)
     updateRequest(req, contactResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
     updateRequest(req, defResult, errorResult, errorsResult, QContactAbstractRequest::Active);
     updateRequest(req, defMapResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
+    updateRequest(req, relResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
 
     QContactManagerEngine::startRequest(req);
     return true;
