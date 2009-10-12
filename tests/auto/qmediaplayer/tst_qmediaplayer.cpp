@@ -131,6 +131,11 @@ public:
         mockControl = new MockPlayerControl;
     }
 
+    ~MockPlayerService()
+    {
+        delete mockControl;
+    }
+
     QMediaControl* control(const char *iid) const
     {
         if (qstrcmp(iid, QMediaPlayerControl_iid) == 0)
