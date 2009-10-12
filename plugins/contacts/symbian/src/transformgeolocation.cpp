@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 #include "transformgeolocation.h"
-#include "cntmodelextuids.hrh"
+#include "cntmodelextuids.h"
 
 const char separator = ',';
 
