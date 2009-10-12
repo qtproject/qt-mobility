@@ -68,9 +68,9 @@ public:
     void setBitrate(int) {}
     QMediaRecorder::EncodingQuality quality() const { return QMediaRecorder::NormalQuality; }
     void setQuality(QMediaRecorder::EncodingQuality) {}
-    QStringList supportedEncodingOptions() const { return QStringList() << "bitrate"; }
-    QVariant encodingOption(const QString &name) const { return m_optionValue; }
-    void setEncodingOption(const QString &name, const QVariant &value) { m_optionValue = value; }
+    QStringList supportedEncodingOptions(const QString &) const { return QStringList() << "bitrate"; }
+    QVariant encodingOption(const QString &, const QString &name) const { return m_optionValue; }
+    void setEncodingOption(const QString &, const QString &name, const QVariant &value) { m_optionValue = value; }
     int frequency() const { return m_freq; }
     void setFrequency(int frequency) { m_freq = frequency; }
     QList<int> supportedFrequencies() const { return m_freqs; }
@@ -289,10 +289,12 @@ void tst_QAudioCaptureSource::testAudioSource()
 
 void tst_QAudioCaptureSource::testOptions()
 {
-    QStringList options = mockAudioSourceService->mockAudioEncoderControl->supportedEncodingOptions();
+    const QString codec(QLatin1String("mp3"));
+
+    QStringList options = mockAudioSourceService->mockAudioEncoderControl->supportedEncodingOptions(codec);
     QVERIFY(options.count() == 1);
-    mockAudioSourceService->mockAudioEncoderControl->setEncodingOption(options.first(),8000);
-    QVERIFY(mockAudioSourceService->mockAudioEncoderControl->encodingOption(options.first()).toInt() == 8000);
+    mockAudioSourceService->mockAudioEncoderControl->setEncodingOption(codec, options.first(),8000);
+    QVERIFY(mockAudioSourceService->mockAudioEncoderControl->encodingOption(codec, options.first()).toInt() == 8000);
 }
 
 void tst_QAudioCaptureSource::testDevices()

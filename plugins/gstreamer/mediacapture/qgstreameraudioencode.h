@@ -67,9 +67,9 @@ public:
     QMediaRecorder::EncodingQuality quality() const;
     void setQuality(QMediaRecorder::EncodingQuality);
 
-    QStringList supportedEncodingOptions() const;
-    QVariant encodingOption(const QString &name) const;
-    void setEncodingOption(const QString &name, const QVariant &value);
+    QStringList supportedEncodingOptions(const QString &codec) const;
+    QVariant encodingOption(const QString &codec, const QString &name) const;
+    void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
 
     int frequency() const { return m_frequency; }
     void setFrequency(int frequency) { m_frequency = frequency; }

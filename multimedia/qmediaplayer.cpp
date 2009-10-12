@@ -150,6 +150,15 @@ void QMediaPlayerPrivate::_q_updateMedia(const QMediaContent &media)
         q->stop();
 }
 
+static QMediaService *playerService(QMediaPlayer::Flags flags, QMediaServiceProvider *provider)
+{
+    if (flags && QMediaPlayer::LowLatency)
+        return provider->requestService("mediaplayer",
+                                        QMediaServiceProviderHint(QMediaServiceProviderHint::LowLatencyPlayback));
+    else
+        return provider->requestService("mediaplayer");
+}
+
 
 /*!
     Construct a QMediaPlayer that uses the playback service from \a provider,
@@ -158,14 +167,18 @@ void QMediaPlayerPrivate::_q_updateMedia(const QMediaContent &media)
     If a playback service is not specified the system default will be used.
 */
 
-QMediaPlayer::QMediaPlayer(QObject *parent, QMediaServiceProvider *provider):
-    QMediaObject(*new QMediaPlayerPrivate, parent, provider->requestService("mediaplayer"))
+QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaServiceProvider *provider):
+    QMediaObject(*new QMediaPlayerPrivate,
+                 parent,
+                 playerService(flags,provider))
 {
     Q_D(QMediaPlayer);
 
     d->provider = provider;
 
-    if (d->service != 0) {
+    if (d->service == 0) {
+        d->error = ServiceMissingError;
+    } else {
         d->control = qobject_cast<QMediaPlayerControl*>(d->service->control(QMediaPlayerControl_iid));
         if (d->control != 0) {
             connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
@@ -479,6 +492,16 @@ void QMediaPlayer::bind(QObject *obj)
                     this, SLOT(_q_updateMedia(QMediaContent)));
         }
     }
+}
+
+QtMedia::SupportEstimate QMediaPlayer::canPlay(const QString &mimeType,
+                                               const QStringList& codecs,
+                                               Flags flags)
+{
+    return QMediaServiceProvider::defaultServiceProvider()->canPlay(QByteArray("mediaplayer"),
+                                                                    mimeType,
+                                                                    codecs,
+                                                                    flags);
 }
 
 

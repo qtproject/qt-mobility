@@ -107,6 +107,13 @@ namespace QtMedia
         Event,
         Subject
     };
+
+    enum SupportEstimate {
+        NotSupported,
+        MaybeSupported,
+        ProbablySupported,
+        PreferedService
+    };
 }
 
 #endif

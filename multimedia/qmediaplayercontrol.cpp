@@ -226,14 +226,6 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     it means the buffered part of media.
 */
 
-QPair<qint64,qint64> QMediaPlayerControl::seekRange() const
-{
-    if (isSeekable())
-        return qMakePair<qint64,qint64>(0,duration());
-    else
-        return qMakePair<qint64,qint64>(0,0);
-}
-
 /*!
     \fn QMediaPlayerControl::seekRangeChanged(const QPair<qint64,qint64>& range)
 

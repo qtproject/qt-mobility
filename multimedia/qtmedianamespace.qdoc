@@ -114,3 +114,13 @@
     \value Event The event during which the media was captured.  QString.
     \value Subject The subject of the media.  QString.
 */
+
+/*!
+  \enum QtMedia::SupportEstimate
+
+  \item NotSupported
+  \item MaybeSupported
+  \item ProbablySupported
+  \item PreferedService
+*/
+

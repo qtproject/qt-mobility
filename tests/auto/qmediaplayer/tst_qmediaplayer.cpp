@@ -68,6 +68,8 @@ public:
     bool isVideoAvailable() const { return _videoAvailable; }
 
     bool isSeekable() const { return _isSeekable; }
+    QPair<qint64, qint64> seekRange() const { return _seekRange; }
+    void setSeekRange(qint64 minimum, qint64 maximum) { _seekRange = qMakePair(minimum, maximum); }
 
     qreal playbackRate() const { return _playbackRate; }
     void setPlaybackRate(qreal rate) { if (rate != _playbackRate) emit playbackRateChanged(_playbackRate = rate); }
@@ -90,6 +92,7 @@ public:
     int _bufferStatus;
     bool _videoAvailable;
     bool _isSeekable;
+    QPair<qint64, qint64> _seekRange;
     qreal _playbackRate;
     QMediaContent _media;
     QIODevice *_stream;
@@ -178,10 +181,10 @@ public slots:
     void cleanup();
 
 private slots:
+    void testNullService();
     void testValid();
     void testMedia();
     void testDuration();
-    void testSeekRange();
     void testPosition();
     void testVolume();
     void testMuted();
@@ -246,7 +249,7 @@ void tst_QMediaPlayer::initTestCase()
 {
     mockService = new MockPlayerService;
     mockProvider = new MockProvider(mockService);
-    player = new QMediaPlayer(0, mockProvider);
+    player = new QMediaPlayer(0, 0, mockProvider);
 }
 
 void tst_QMediaPlayer::cleanupTestCase()
@@ -261,6 +264,91 @@ void tst_QMediaPlayer::init()
 
 void tst_QMediaPlayer::cleanup()
 {
+}
+
+void tst_QMediaPlayer::testNullService()
+{
+    MockProvider provider(0);
+    QMediaPlayer player(0, 0, &provider);
+
+    const QIODevice *nullDevice = 0;
+
+    QCOMPARE(player.media(), QMediaContent());
+    QCOMPARE(player.mediaStream(), nullDevice);
+    QCOMPARE(player.state(), QMediaPlayer::StoppedState);
+    QCOMPARE(player.mediaStatus(), QMediaPlayer::UnknownMediaStatus);
+    QCOMPARE(player.duration(), qint64(-1));
+    QCOMPARE(player.position(), qint64(0));
+    QCOMPARE(player.volume(), 0);
+    QCOMPARE(player.isMuted(), false);
+    QCOMPARE(player.isVideoAvailable(), false);
+    QCOMPARE(player.bufferStatus(), 0);
+    QCOMPARE(player.isSeekable(), false);
+    QCOMPARE(player.playbackRate(), qreal(0));
+    QCOMPARE(player.error(), QMediaPlayer::ServiceMissingError);
+
+    {
+        QFETCH_GLOBAL(QMediaContent, mediaContent);
+
+        QSignalSpy spy(&player, SIGNAL(mediaChanged(QMediaContent)));
+        QFile file;
+
+        player.setMedia(mediaContent, &file);
+        QCOMPARE(player.media(), QMediaContent());
+        QCOMPARE(player.mediaStream(), nullDevice);
+        QCOMPARE(spy.count(), 0);
+    } {
+        QSignalSpy stateSpy(&player, SIGNAL(stateChanged(QMediaPlayer::State)));
+        QSignalSpy statusSpy(&player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
+
+        player.play();
+        QCOMPARE(player.state(), QMediaPlayer::StoppedState);
+        QCOMPARE(player.mediaStatus(), QMediaPlayer::UnknownMediaStatus);
+        QCOMPARE(stateSpy.count(), 0);
+        QCOMPARE(statusSpy.count(), 0);
+
+        player.pause();
+        QCOMPARE(player.state(), QMediaPlayer::StoppedState);
+        QCOMPARE(player.mediaStatus(), QMediaPlayer::UnknownMediaStatus);
+        QCOMPARE(stateSpy.count(), 0);
+        QCOMPARE(statusSpy.count(), 0);
+
+        player.stop();
+        QCOMPARE(player.state(), QMediaPlayer::StoppedState);
+        QCOMPARE(player.mediaStatus(), QMediaPlayer::UnknownMediaStatus);
+        QCOMPARE(stateSpy.count(), 0);
+        QCOMPARE(statusSpy.count(), 0);
+    } {
+        QFETCH_GLOBAL(int, volume);
+        QFETCH_GLOBAL(bool, muted);
+
+        QSignalSpy volumeSpy(&player, SIGNAL(volumeChanged(int)));
+        QSignalSpy mutingSpy(&player, SIGNAL(mutingChanged(bool)));
+
+        player.setVolume(volume);
+        QCOMPARE(player.volume(), 0);
+        QCOMPARE(volumeSpy.count(), 0);
+
+        player.setMuted(muted);
+        QCOMPARE(player.isMuted(), false);
+        QCOMPARE(mutingSpy.count(), 0);
+    } {
+        QFETCH_GLOBAL(qint64, position);
+
+        QSignalSpy spy(&player, SIGNAL(positionChanged(qint64)));
+
+        player.setPosition(position);
+        QCOMPARE(player.position(), qint64(0));
+        QCOMPARE(spy.count(), 0);
+    } {
+        QFETCH_GLOBAL(qreal, playbackRate);
+
+        QSignalSpy spy(&player, SIGNAL(playbackRateChanged(qreal)));
+
+        player.setPlaybackRate(playbackRate);
+        QCOMPARE(player.playbackRate(), qreal(0));
+        QCOMPARE(spy.count(), 0);
+    }
 }
 
 void tst_QMediaPlayer::testValid()
@@ -292,24 +380,6 @@ void tst_QMediaPlayer::testDuration()
 
     mockService->setDuration(duration);
     QVERIFY(player->duration() == duration);
-}
-
-void tst_QMediaPlayer::testSeekRange()
-{
-    QFETCH_GLOBAL(qint64, duration);
-    QMediaPlayerControl *control = mockService->mockControl;
-
-    mockService->setDuration(duration);
-
-    mockService->setSeekable(false);
-
-    QCOMPARE(control->seekRange().first, qint64(0));
-    QCOMPARE(control->seekRange().second, qint64(0));
-
-    mockService->setSeekable(true);
-
-    QCOMPARE(control->seekRange().first, qint64(0));
-    QCOMPARE(control->seekRange().second, duration);
 }
 
 void tst_QMediaPlayer::testPosition()

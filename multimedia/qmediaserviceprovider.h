@@ -38,6 +38,7 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qshareddata.h>
 #include <multimedia/qmultimediaglobal.h>
+#include <multimedia/qtmedianamespace.h>
 
 class QMediaService;
 
@@ -45,11 +46,18 @@ class QMediaServiceProviderHintPrivate;
 class Q_MEDIA_EXPORT QMediaServiceProviderHint
 {
 public:
-    enum Type { Null, ContentType, Device, SupportedControls };
+    enum Type { Null, ContentType, Device, SupportedFeatures };
+
+    enum Feature {
+        LowLatencyPlayback = 0x01,
+        RecordingSupport = 0x02
+    };
+    Q_DECLARE_FLAGS(Features, Feature);
+
     QMediaServiceProviderHint();
     QMediaServiceProviderHint(const QString &mimeType, const QStringList& codecs);
     QMediaServiceProviderHint(const QByteArray &device);
-    QMediaServiceProviderHint(const QList<QByteArray> &controls);
+    QMediaServiceProviderHint(Features features);
     QMediaServiceProviderHint(const QMediaServiceProviderHint &other);
     ~QMediaServiceProviderHint();
 
@@ -67,7 +75,7 @@ public:
 
     QByteArray device() const;
 
-    QList<QByteArray> controls() const;
+    Features features() const;
 
     //to be extended, if necessary
 
@@ -80,12 +88,13 @@ class Q_MEDIA_EXPORT QMediaServiceProvider : public QObject
     Q_OBJECT
 
 public:
-    enum SupportEstimate { NotSupported, MaybeSupported, ProbablySupported, PreferedService };
-
     virtual QMediaService* requestService(const QByteArray &type, const QMediaServiceProviderHint &hint = QMediaServiceProviderHint()) = 0;
     virtual void releaseService(QMediaService *service) = 0;
 
-    virtual SupportEstimate canPlay(const QByteArray &serviceType, const QString &mimeType, const QStringList& codecs) const;
+    virtual QtMedia::SupportEstimate canPlay(const QByteArray &serviceType,
+                                             const QString &mimeType,
+                                             const QStringList& codecs,
+                                             int flags = 0) const;
 
     virtual QList<QByteArray> devices(const QByteArray &serviceType) const;
     virtual QString deviceDescription(const QByteArray &serviceType, const QByteArray &device);

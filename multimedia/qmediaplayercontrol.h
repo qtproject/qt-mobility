@@ -69,7 +69,7 @@ public:
     virtual bool isVideoAvailable() const = 0;
 
     virtual bool isSeekable() const = 0;
-    virtual QPair<qint64,qint64> seekRange() const;
+    virtual QPair<qint64,qint64> seekRange() const = 0;
 
     virtual qreal playbackRate() const = 0;
     virtual void setPlaybackRate(qreal rate) = 0;
