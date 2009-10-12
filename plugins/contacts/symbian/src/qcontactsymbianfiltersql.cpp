@@ -88,16 +88,17 @@ QList<QUniqueId> QContactSymbianFilter::contacts(
     return matches;
 }
 
-bool QContactSymbianFilter::filterSupported(const QContactFilter& filter)
+QAbstractContactFilter::FilterSupport QContactSymbianFilter::filterSupported(const QContactFilter& filter)
 {
-    // TODO: return either true or false, depending on the supported filters
-    TBool supported(false);
+    // TODO: modify depending on the supported filters
+
+    FilterSupport filterSupported(NotSupported);
     if (filter.type() == QContactFilter::ContactDetailFilter) {
         const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
         if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName)
-            supported = true;
+            filterSupported = Supported;
     }
-    return supported;
+    return filterSupported;
 }
 
 #endif

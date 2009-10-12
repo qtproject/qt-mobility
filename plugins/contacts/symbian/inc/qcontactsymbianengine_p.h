@@ -45,6 +45,7 @@
 
 
 #include "transformcontact.h"
+#include "qabstractcontactfilter.h"
 
 //remember to remove this in the code and just return a normal list
 //typedef QList<QUniqueId> QUniqueIdIterator;
@@ -64,7 +65,7 @@ public:
 public:
     /* Access */
 	QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-	bool filterSupported(const QContactFilter& filter) const;
+	QAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter) const;
     QContact contact(const QUniqueId& contactId, QContactManager::Error& qtError) const;
     QList<QUniqueId> contacts(QContactManager::Error& qtError) const;
     int count() const;

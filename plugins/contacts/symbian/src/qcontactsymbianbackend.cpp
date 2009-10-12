@@ -107,11 +107,33 @@ void QContactSymbianEngine::deref()
  */
 QList<QUniqueId> QContactSymbianEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
-    if(d->filterSupported(filter))
-        return d->contacts(filter, sortOrders, error);
-    else
-        // Filter not supported by the backend, use slow emulated filtering
-        return QContactManagerEngine::contacts(filter, sortOrders, error);
+    QList<QUniqueId> result;
+
+    // Check if the filter is supported by the underlying filter implementation
+    QAbstractContactFilter::FilterSupport filterSupport = d->filterSupported(filter);
+    if (filterSupport == QAbstractContactFilter::Supported) {
+        result = d->contacts(filter, sortOrders, error);
+    } else {
+        QList<QUniqueId> contacts;
+        if (filterSupport == QAbstractContactFilter::SupportedPreFilterOnly) {
+            // Filter not supported, but fetch a subset of contacts (may
+            // include false positives)
+             contacts = d->contacts(filter, sortOrders, error);
+        } else {
+            // TODO: sort order
+            // Filter not supported; fetch all contacts (probably includes
+            // false positives)
+            contacts = d->contacts(error);
+        }
+
+        for (int i(0); i < contacts.count(); i++) {
+            QUniqueId contactid = contacts.at(i);
+            // Check if this is a false positive. If not, add to the result set.
+            if(QContactManagerEngine::testFilter(filter, d->contact(contactid, error)))
+                result << contactid;
+        }
+    }
+    return result;
 }
 
 QList<QUniqueId> QContactSymbianEngine::contacts(const QList<QContactSortOrder>& /*sortOrders*/, QContactManager::Error& error) const
@@ -298,7 +320,18 @@ bool QContactSymbianEngine::hasFeature(QContactManagerInfo::ManagerFeature featu
 
 bool QContactSymbianEngine::filterSupported(const QContactFilter& filter) const
 {
-    return d->filterSupported(filter);
+    TBool result;
+
+    // Map filter support into a boolean value
+    QAbstractContactFilter::FilterSupport filterSupport = d->filterSupported(filter);
+    if (filterSupport == QAbstractContactFilter::Supported
+        || filterSupport == QAbstractContactFilter::SupportedPreFilterOnly) {
+        result = true;
+    } else {
+        result = false;
+    }
+
+    return result;
 }
 
 /* Synthesise the display label of a contact */

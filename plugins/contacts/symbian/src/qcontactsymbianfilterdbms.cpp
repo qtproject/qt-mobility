@@ -67,8 +67,11 @@ QContactSymbianFilter::~QContactSymbianFilter()
 }
 
 /*!
- * The contact database version implementation for
- * QContactManager::contacts function.
+ * The contact database version implementation for QContactManager::contacts
+ * function. Symbian backend supports filtering with flag MatchContains.
+ * TODO: other constraints.
+ * All the other filtering flags fallback to the generic filtering done
+ * in QContactManagerEngine.
  *
  * \a filter The QContactFilter to be used.
  * \a sortOrders The sort order to be used.
@@ -95,7 +98,7 @@ QList<QUniqueId> QContactSymbianFilter::contacts(
             TInt err = matchContacts(idArray, commPtr, 7);
             if(err != KErrNone)
             {
-                // TODO: error code
+                // TODO: map error code
                 error = QContactManager::UnspecifiedError;
             }
             else
@@ -106,13 +109,31 @@ QList<QUniqueId> QContactSymbianFilter::contacts(
             }
         }
         else if (detailFilter.detailDefinitionName() == QContactName::DefinitionName
-                && detailFilter.detailFieldName() == QContactName::FieldFirst
-                && detailFilter.matchFlags() == Qt::MatchContains)
+                /* MatchExactly filter is implemented as "partially supported"
+                 by using the MatchContains compatible search of CntModel */
+                && (detailFilter.matchFlags() == Qt::MatchExactly
+                || detailFilter.matchFlags() == Qt::MatchStartsWith
+                || detailFilter.matchFlags() == Qt::MatchEndsWith
+                || detailFilter.matchFlags() == Qt::MatchCaseSensitive
+                || detailFilter.matchFlags() == Qt::MatchContains))
         {
             QString name((detailFilter.value()).toString());
             // TODO: this looks ugly
             TPtrC namePtr(reinterpret_cast<const TUint16*>(name.utf16()));
-            TInt err = findContacts(idArray, namePtr);
+            TUid fieldUid(KNullUid);
+
+            if(detailFilter.detailFieldName() == QContactName::FieldPrefix)
+                fieldUid.iUid = KUidContactFieldPrefixNameValue;
+            else if(detailFilter.detailFieldName() == QContactName::FieldFirst)
+                fieldUid.iUid = KUidContactFieldGivenNameValue;
+            else if(detailFilter.detailFieldName() == QContactName::FieldMiddle)
+                fieldUid.iUid = KUidContactFieldAdditionalNameValue;
+            else if(detailFilter.detailFieldName() == QContactName::FieldLast)
+                fieldUid.iUid = KUidContactFieldFamilyNameValue;
+            else if(detailFilter.detailFieldName() == QContactName::FieldSuffix)
+                fieldUid.iUid = KUidContactFieldSuffixNameValue;
+
+            TInt err = findContacts(idArray, fieldUid, namePtr);
             if(err != KErrNone)
             {
                 // TODO: map error code
@@ -144,26 +165,52 @@ QList<QUniqueId> QContactSymbianFilter::contacts(
  * The contact database version implementation for
  * QContactManager::filterSupported function.
  * \a filter The QContactFilter to be checked.
+ * \a return Supported in case the filter is supported. NotSupported in case
+ * the filter is not supported. SupportedPreFilterOnly in case the filter is not
+ * supported, but the QContactSymbianFilter::contacts will pretend that the
+ * filter is supported.
+ * SupportedPreFilterOnly is returned in the following cases:
+ * 1. matchFlags is set to Qt::MatchExactly (QContactSymbianFilter::contacts
+ * will use Qt::MatchContains)
+ * 2. matchFlags is set to Qt::MatchStartsWith (QContactSymbianFilter::contacts
+ * will use Qt::MatchContains)
+ * 3. matchFlags is set to Qt::MatchEndsWith (QContactSymbianFilter::contacts
+ * will use Qt::MatchContains)
+ * 4. matchFlags is set to Qt::MatchCaseSensitive (QContactSymbianFilter::contacts
+ * will use Qt::MatchContains)
  */
-bool QContactSymbianFilter::filterSupported(const QContactFilter& filter)
+QAbstractContactFilter::FilterSupport QContactSymbianFilter::filterSupported(const QContactFilter& filter)
 {
-    TBool supported(false);
+    FilterSupport filterSupported(NotSupported);
     if (filter.type() == QContactFilter::ContactDetailFilter) {
         const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
-        if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName)
-            supported = true;
-        else if(detailFilter.detailDefinitionName() == QContactName::DefinitionName
-                && detailFilter.detailFieldName() == QContactName::FieldFirst
-                && detailFilter.matchFlags() == Qt::MatchContains)
-            supported = true;
+        if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName) {
+            filterSupported = Supported;
+        // TODO: also combinations of the following could be quite easily
+        // supported as a pre-filters:
+        } else if(detailFilter.detailDefinitionName() == QContactName::DefinitionName) {
+            if(detailFilter.matchFlags() == Qt::MatchExactly
+                || detailFilter.matchFlags() == Qt::MatchStartsWith
+                || detailFilter.matchFlags() == Qt::MatchEndsWith
+                || detailFilter.matchFlags() == Qt::MatchCaseSensitive)
+            {
+                filterSupported = SupportedPreFilterOnly;
+            }
+            else if(detailFilter.matchFlags() == Qt::MatchContains) {
+                filterSupported = Supported;
+            }
+        }
     }
-    return supported;
+    return filterSupported;
 }
 
-TInt QContactSymbianFilter::findContacts(CContactIdArray*& idArray, const TDesC& text) const
+TInt QContactSymbianFilter::findContacts(
+        CContactIdArray*& idArray,
+        const TUid fieldUid,
+        const TDesC& text) const
 {
     CContactIdArray* idArrayTmp(0);
-    TRAPD( err, idArrayTmp = findContactsL(text));
+    TRAPD( err, idArrayTmp = findContactsL(fieldUid, text));
     if(err == KErrNone)
     {
         idArray = idArrayTmp;
@@ -174,15 +221,17 @@ TInt QContactSymbianFilter::findContacts(CContactIdArray*& idArray, const TDesC&
 /*!
  * \a text The text to be searched for.
  */
-CContactIdArray* QContactSymbianFilter::findContactsL(const TDesC& text) const
+CContactIdArray* QContactSymbianFilter::findContactsL(
+        const TUid fieldUid,
+        const TDesC& text) const
 {
     CContactItemFieldDef* fieldDef = new (ELeave) CContactItemFieldDef();
     CleanupStack::PushL(fieldDef);
     fieldDef->SetReserveL(2);
-    TUid uid;
+    //TUid uid;
     //if( detailFilter. )
-    uid.iUid = KUidContactFieldGivenNameValue;
-    fieldDef->AppendL(uid);
+    //uid.iUid = KUidContactFieldGivenNameValue;
+    fieldDef->AppendL(fieldUid);
     // TODO: the fields?
     //uid.iUid = KUidContactFieldFamilyNameValue;
     //fieldDef->AppendL(uid);
