@@ -15,7 +15,7 @@
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog),
-    systemInfo(NULL), di(NULL), saver(NULL)
+    systemInfo(NULL), di(NULL), ni(NULL), saver(NULL)
 {
     ui->setupUi(this);
     setupGeneral();
@@ -222,6 +222,7 @@ void Dialog::setupStorage()
 
 void Dialog::setupNetwork()
 {
+    delete ni;
     ni = new QSystemNetworkInfo(this);
 
     connect(ui->netStatusComboBox,SIGNAL(activated(int)),

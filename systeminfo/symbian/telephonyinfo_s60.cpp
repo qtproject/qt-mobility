@@ -220,19 +220,23 @@ CCellNetworkInfo::CCellNetworkInfo(CTelephony &telephony) : CTelephonyInfo(telep
     makeRequest();    
 
     m_cellId = m_networkInfoV1.iCellId;
-
-	m_locationAreaCode = m_networkInfoV1.iLocationAreaCode;
+    m_locationAreaCode = m_networkInfoV1.iLocationAreaCode;
 
 	TBuf<CTelephony::KNetworkIdentitySize> homeMobileNetworkCode = m_networkInfoV1.iNetworkId;
     m_homeMobileNetworkCode = QString::fromUtf16(homeMobileNetworkCode.Ptr(), homeMobileNetworkCode.Length());
+    m_previousHomeMobileNetworkCode = m_homeMobileNetworkCode;
 
     TBuf<CTelephony::KNetworkCountryCodeSize> homeMobileCountryCode = m_networkInfoV1.iCountryCode;
     m_homeMobileCountryCode = QString::fromUtf16(homeMobileCountryCode.Ptr(), homeMobileCountryCode.Length());
+    m_previousHomeMobileCountryCode = m_homeMobileCountryCode
 
     TBuf<CTelephony::KNetworkLongNameSize> networkName = m_networkInfoV1.iLongName;
     m_networkName = QString::fromUtf16(networkName.Ptr(), networkName.Length());
+    m_previousNetworkName = m_networkName;
 
     m_initializing = false;
+    
+    startMonitoring();    
 }
 
 void CCellNetworkInfo::RunL()
@@ -240,6 +244,9 @@ void CCellNetworkInfo::RunL()
     if (m_initializing) {
         CTelephonyInfo::RunL();
     } else {
+        m_cellId = m_networkInfoV1.iCellId;
+        m_locationAreaCode = m_networkInfoV1.iLocationAreaCode;
+
         TBuf<CTelephony::KNetworkIdentitySize> homeMobileNetworkCode = m_networkInfoV1.iNetworkId;
             m_homeMobileNetworkCode = QString::fromUtf16(homeMobileNetworkCode.Ptr(),
             homeMobileNetworkCode.Length());
@@ -306,7 +313,7 @@ QString CCellNetworkInfo::networkName() const
 
 void CCellNetworkInfo::startMonitoring()
 {
-    m_telephony.NotifyChange(iStatus, CTelephony::ESignalStrengthChange, m_networkInfoV1Pckg);
+    m_telephony.NotifyChange(iStatus, CTelephony::ECurrentNetworkInfoChange, m_networkInfoV1Pckg);
     SetActive();
 }
 
@@ -317,7 +324,11 @@ CCellNetworkRegistrationInfo::CCellNetworkRegistrationInfo(CTelephony &telephony
     makeRequest();
 
     m_networkStatus = m_networkRegistrationV1.iRegStatus;
+    m_previousNetworkStatus = m_networkStatus;
+
     m_initializing = false;
+    
+    startMonitoring();
 }
 
 void CCellNetworkRegistrationInfo::RunL()
@@ -364,8 +375,11 @@ CCellSignalStrengthInfo::CCellSignalStrengthInfo(CTelephony &telephony) : CTelep
     makeRequest();
 
     m_cellNetworkSignalStrength = m_signalStrengthV1.iSignalStrength;
-    
+    m_previousCellNetworkSignalStrength = m_cellNetworkSignalStrength;
+
     m_initializing = false;
+    
+    startMonitoring();    
 }
 
 void CCellSignalStrengthInfo::RunL()
@@ -382,7 +396,6 @@ void CCellSignalStrengthInfo::RunL()
             }
         }
         startMonitoring();
-
     }
 }
 
