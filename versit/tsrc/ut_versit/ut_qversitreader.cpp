@@ -107,39 +107,37 @@ void UT_QVersitReader::testParseNextVersitProperty()
     // Test a valid card with properties having separate handling: 
     // AGENT property, some property with parameter ENCODING=QUOTED-PRINTABLE 
     // and some other property without this parameter
-    const char vCardData[] = 
-"BEGIN:VCARD\r\n\
-VERSION:2.1\r\n\
-N:Homer\r\n\
-EMAIL;ENCODING=QUOTED-PRINTABLE:homer=40simp=\r\nsons.com\r\n\
-AGENT:\r\nBEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\r\n
-END:VCARD\r\n";
-    QByteArray vCard(vCardData);
+    QByteArray vCard("BEGIN:VCARD\r\n");
+    vCard.append("VERSION:2.1\r\n");
+    vCard.append("N:Homer\r\n");
+    vCard.append("EMAIL;ENCODING=QUOTED-PRINTABLE:homer=40simp=\r\nsons.com\r\n");
+    vCard.append("AGENT:\r\nBEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\r\n");
+    vCard.append("END:VCARD\r\n");
     
     QVersitProperty property = m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(property.name(),QString("BEGIN"));
+    QCOMPARE(property.name(),QString::fromAscii("BEGIN"));
     QCOMPARE(property.value(),QByteArray("VCARD"));
     
     property = m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(property.name(),QString("VERSION"));
+    QCOMPARE(property.name(),QString::fromAscii("VERSION"));
     QCOMPARE(property.value(),QByteArray("2.1"));
     
     property = m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(property.name(),QString("N"));
+    QCOMPARE(property.name(),QString::fromAscii("N"));
     QCOMPARE(property.value(),QByteArray("Homer"));
     
     property = m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(property.name(),QString("EMAIL"));
+    QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
     QCOMPARE(0,property.parameters().count());
     QCOMPARE(property.value(),QByteArray("homer@simpsons.com"));
     
     property = m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(property.name(),QString("AGENT"));
+    QCOMPARE(property.name(),QString::fromAscii("AGENT"));
     QCOMPARE(property.value(),QByteArray());
     QCOMPARE(property.embeddedDocument().properties().count(),1);
     
     property = m_reader->parseNextVersitProperty(vCard);
-    QCOMPARE(property.name(),QString("END"));
+    QCOMPARE(property.name(),QString::fromAscii("END"));
     QCOMPARE(property.value(),QByteArray("VCARD"));
     
     property = m_reader->parseNextVersitProperty(vCard);
@@ -149,9 +147,9 @@ END:VCARD\r\n";
     // Simulate a situation where the document nesting level is exceeded
     // In practice this would mean a big number of nested AGENT properties
     m_reader->d->m_DocumentNestingLevel = 20;
-    QByteArray agentProperty = "AGENT:BEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\r\n";
+    QByteArray agentProperty("AGENT:BEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\r\n");
     property = m_reader->parseNextVersitProperty(agentProperty);
-    QCOMPARE(property.name(),QString("AGENT"));
+    QCOMPARE(property.name(),QString::fromAscii("AGENT"));
     QCOMPARE(property.embeddedDocument().properties().count(),0);
     QCOMPARE(property.value(),QByteArray());    
 }

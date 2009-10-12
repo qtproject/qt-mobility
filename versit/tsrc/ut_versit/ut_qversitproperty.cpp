@@ -92,10 +92,11 @@ void UT_QVersitProperty::testEmbeddedDocument()
 {
     QVersitDocument document;
     QVersitProperty property;
-    property.setName(QString("X-tension"));
+    property.setName(QString::fromAscii("X-tension"));
     document.addProperty(property);
     mVersitProperty->setEmbeddedDocument(document);
-    
-    QCOMPARE(mVersitProperty->embeddedDocument().properties().count(),1);
-    QCOMPARE(mVersitProperty->embeddedDocument().properties()[0].name(),QString("X-tension"));
+    QList<QVersitProperty> embeddedDocumentProperties = 
+        mVersitProperty->embeddedDocument().properties();
+    QCOMPARE(embeddedDocumentProperties.count(),1);
+    QCOMPARE(embeddedDocumentProperties[0].name(),QString::fromAscii("X-tension"));
 }

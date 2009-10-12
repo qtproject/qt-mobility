@@ -88,15 +88,15 @@ void UT_VersitUtils::testParamName()
 
     // Only value present
     QByteArray param("WORK");
-    QCOMPARE(QString("TYPE"), VersitUtils::paramName(param));
+    QCOMPARE(QString::fromAscii("TYPE"), VersitUtils::paramName(param));
 
     // Both name and value, spaces after the name
     param = "TYPE \t =WORK";
-    QCOMPARE(QString("TYPE"), VersitUtils::paramName(param));    
+    QCOMPARE(QString::fromAscii("TYPE"), VersitUtils::paramName(param));    
 
     // Both name and value, no spaces after the name
     param = "TYPE=WORK";
-    QCOMPARE(QString("TYPE"), VersitUtils::paramName(param));    
+    QCOMPARE(QString::fromAscii("TYPE"), VersitUtils::paramName(param));    
 }
 
 void UT_VersitUtils::testParamValue()
@@ -106,7 +106,7 @@ void UT_VersitUtils::testParamValue()
     
     // Only value present
     QByteArray param("WORK");
-    QCOMPARE(QString("WORK"), VersitUtils::paramValue(param));
+    QCOMPARE(QString::fromAscii("WORK"), VersitUtils::paramValue(param));
     
     // Name and equals sign, but no value
     param = "TYPE=";
@@ -118,11 +118,11 @@ void UT_VersitUtils::testParamValue()
     
     // Both name and value, spaces before the value
     param = "TYPE= \t  WORK";
-    QCOMPARE(QString("WORK"), VersitUtils::paramValue(param));    
+    QCOMPARE(QString::fromAscii("WORK"), VersitUtils::paramValue(param));    
     
     // Both name and value, no spaces before the value
     param = "ENCODING=QUOTED-PRINTABLE";
-    QCOMPARE(QString("QUOTED-PRINTABLE"), VersitUtils::paramValue(param));
+    QCOMPARE(QString::fromAscii("QUOTED-PRINTABLE"), VersitUtils::paramValue(param));
 }
 
 void UT_VersitUtils::testAddParam()
@@ -147,26 +147,26 @@ void UT_VersitUtils::testAddParam()
     originalStr = "ENCODING=7BIT";
     VersitUtils::addParam(params,originalStr,0,100);
     QCOMPARE(1, params.count());
-    QCOMPARE(QString("7BIT"), params.value("ENCODING"));
+    QCOMPARE(QString::fromAscii("7BIT"), params.value("ENCODING"));
 
     // Non-empty substring, from the beginning
     originalStr = " TYPE=WORK ; VOICE; ENCODING=8BIT";
     params.clear();
     VersitUtils::addParam(params,originalStr,0,11);
     QCOMPARE(1, params.count());
-    QCOMPARE(QString("WORK"), params.value("TYPE"));
+    QCOMPARE(QString::fromAscii("WORK"), params.value("TYPE"));
     
     // Non-empty substring, from the middle
     params.clear();
     VersitUtils::addParam(params,originalStr,12,6);
     QCOMPARE(1, params.count());
-    QCOMPARE(QString("VOICE"), params.value("TYPE"));
+    QCOMPARE(QString::fromAscii("VOICE"), params.value("TYPE"));
     
     // Non-empty substring, from the middle to the end
     params.clear();
     VersitUtils::addParam(params,originalStr,20);
     QCOMPARE(1, params.count());
-    QCOMPARE(QString("8BIT"), params.value("ENCODING"));
+    QCOMPARE(QString::fromAscii("8BIT"), params.value("ENCODING"));
 }
 
 void UT_VersitUtils::testUnfold()
@@ -436,41 +436,41 @@ void UT_VersitUtils::testExtractPropertyParams()
     property = "TEL;HOME:123";
     QMultiMap<QString,QString> params = VersitUtils::extractPropertyParams(property);
     QCOMPARE(1, params.count());
-    QCOMPARE(1, params.values(QString("TYPE")).count());
-    QCOMPARE(QString("HOME"), params.values(QString("TYPE"))[0]);      
+    QCOMPARE(1, params.values(QString::fromAscii("TYPE")).count());
+    QCOMPARE(QString::fromAscii("HOME"), params.values(QString::fromAscii("TYPE"))[0]);      
     
     // One parameter with an escaped semicolon
     property = "X-property;para\\;meter:value";
     params = VersitUtils::extractPropertyParams(property);
     QCOMPARE(1, params.count());
-    QCOMPARE(1, params.values(QString("TYPE")).count());
-    QCOMPARE(QString("para\\;meter"), params.values(QString("TYPE"))[0]);
+    QCOMPARE(1, params.values(QString::fromAscii("TYPE")).count());
+    QCOMPARE(QString::fromAscii("para\\;meter"), params.values(QString::fromAscii("TYPE"))[0]);
     
     // Two parameters of the same type
     property = "TEL;HOME;VOICE:123";
     params = VersitUtils::extractPropertyParams(property);
     QCOMPARE(2, params.count());
-    QCOMPARE(2, params.values(QString("TYPE")).count());
-    QCOMPARE(QString("VOICE"), params.values(QString("TYPE"))[0]);
-    QCOMPARE(QString("HOME"), params.values(QString("TYPE"))[1]);
+    QCOMPARE(2, params.values(QString::fromAscii("TYPE")).count());
+    QCOMPARE(QString::fromAscii("VOICE"), params.values(QString::fromAscii("TYPE"))[0]);
+    QCOMPARE(QString::fromAscii("HOME"), params.values(QString::fromAscii("TYPE"))[1]);
     
     // Two parameters, several empty parameters (extra semicolons)
     property = "TEL;;;;HOME;;;;;VOICE;;;:123";
     params = VersitUtils::extractPropertyParams(property);
     QCOMPARE(2, params.count());
-    QCOMPARE(2, params.values(QString("TYPE")).count());
-    QCOMPARE(QString("VOICE"), params.values(QString("TYPE"))[0]);
-    QCOMPARE(QString("HOME"), params.values(QString("TYPE"))[1]);    
+    QCOMPARE(2, params.values(QString::fromAscii("TYPE")).count());
+    QCOMPARE(QString::fromAscii("VOICE"), params.values(QString::fromAscii("TYPE"))[0]);
+    QCOMPARE(QString::fromAscii("HOME"), params.values(QString::fromAscii("TYPE"))[1]);    
     
     // Two parameters with different types
     property = "EMAIL;INTERNET;ENCODING=QUOTED-PRINTABLE:user=40ovi.com";
     params.clear();
     params = VersitUtils::extractPropertyParams(property);
     QCOMPARE(2, params.count());
-    QList<QString> typeParams = params.values(QString("TYPE"));
+    QList<QString> typeParams = params.values(QString::fromAscii("TYPE"));
     QCOMPARE(1, typeParams.count());
-    QCOMPARE(QString("INTERNET"), typeParams[0]);
-    QList<QString> encodingParams = params.values(QString("ENCODING"));
+    QCOMPARE(QString::fromAscii("INTERNET"), typeParams[0]);
+    QList<QString> encodingParams = params.values(QString::fromAscii("ENCODING"));
     QCOMPARE(1, encodingParams.count());
-    QCOMPARE(QString("QUOTED-PRINTABLE"), encodingParams[0]);
+    QCOMPARE(QString::fromAscii("QUOTED-PRINTABLE"), encodingParams[0]);
 }
