@@ -64,10 +64,9 @@ void Dialog::tabChanged(int index)
 
 void Dialog::setupGeneral()
 {
-    systemInfo = new QSystemInfo(this);
-    ui->curLanguageLineEdit->setText( systemInfo->currentLanguage());
-    ui->languagesComboBox->insertItems(0,systemInfo->availableLanguages());
-    ui->countryCodeLabel->setText(systemInfo->currentCountryCode());
+    ui->curLanguageLineEdit->setText( QSystemInfo::currentLanguage());
+    ui->languagesComboBox->insertItems(0,QSystemInfo::availableLanguages());
+    ui->countryCodeLabel->setText(QSystemInfo::currentCountryCode());
 }
 
 void Dialog::setupDevice()
@@ -130,12 +129,8 @@ void Dialog::setupDevice()
 
 void Dialog::setupDisplay()
 {
-    QSystemDisplayInfo di;
-    ui->brightnessLineEdit->setText(QString::number(di.displayBrightness(0)));
-    ui->colorDepthLineEdit->setText(QString::number(di.colorDepth((0))));
-    QDesktopWidget wid;
-    ui->resolutionLabel->setText(QString::number(wid.width())+"x"+QString::number(wid.height()));
-
+    ui->brightnessLineEdit->setText(QString::number(QSystemDisplayInfo::displayBrightness(0)));
+    ui->colorDepthLineEdit->setText(QString::number(QSystemDisplayInfo::colorDepth((0))));
 }
 
 void Dialog::setupStorage()
@@ -196,6 +191,7 @@ void Dialog::setupNetwork()
     ui->homeMMCLabel->setText(ni->homeMobileCountryCode());
     ui->homeMNCLabel->setText(ni->homeMobileNetworkCode());
 }
+
 void Dialog::netStatusComboActivated(int index)
 {
     QString status;
