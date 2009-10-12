@@ -39,6 +39,7 @@
 #include <qmessagestore.h>
 #include <QDataStream>
 #include <QFile>
+#include <QVector>
 #include <QDebug>
 
 #include <mapix.h>
@@ -143,10 +144,6 @@ QueryAllRows::QueryAllRows(LPMAPITABLE ptable,
     {
         return m_lastError;
     }
-
-
-
-
 
 GUID GuidPublicStrings = { 0x00020329, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 };
 
@@ -358,14 +355,34 @@ QByteArray objectProperty(IMAPIProp *object, ULONG tag)
     return result;
 }
 
+class Lptstr : public QVector<TCHAR>
+{
+        public:
+            Lptstr(int length) : QVector(length){}
+            operator TCHAR* (){ return QVector::data(); }
+};
+
+Lptstr LptstrFromQString(const QString &src)
+{
+    uint length(src.length());
+    Lptstr dst(length+1);
+
+    const quint16 *data = src.utf16();
+    const quint16 *it = data, *end = data + length;
+    TCHAR *oit = dst;
+    for ( ; it != end; ++it, ++oit) {
+        *oit = static_cast<TCHAR>(*it);
+    }
+    *oit = TCHAR('\0');
+    return dst;
+}
+
 ULONG createNamedProperty(IMAPIProp *object, const QString &name)
 {
     ULONG result = 0;
 
     if (!name.isEmpty()) {
-        wchar_t *nameBuffer = new wchar_t[name.length() + 1];
-        name.toWCharArray(nameBuffer);
-        nameBuffer[name.length()] = 0;
+        Lptstr nameBuffer = LptstrFromQString(name);
 
         MAPINAMEID propName = { 0 };
         propName.lpguid = &GuidPublicStrings;
@@ -383,8 +400,6 @@ ULONG createNamedProperty(IMAPIProp *object, const QString &name)
         } else {
             qWarning() << "createNamedProperty: GetIDsFromNames failed";
         }
-
-        delete [] nameBuffer;
     }
 
     return result;
@@ -395,9 +410,7 @@ ULONG getNamedPropertyTag(IMAPIProp *object, const QString &name)
     ULONG result = 0;
 
     if (!name.isEmpty()) {
-        wchar_t *nameBuffer = new wchar_t[name.length() + 1];
-        name.toWCharArray(nameBuffer);
-        nameBuffer[name.length()] = 0;
+        Lptstr nameBuffer = LptstrFromQString(name);
 
         MAPINAMEID propName = { 0 };
         propName.lpguid = &GuidPublicStrings;
@@ -417,8 +430,6 @@ ULONG getNamedPropertyTag(IMAPIProp *object, const QString &name)
         } else {
             qWarning() << "getNamedPropertyTag: GetIDsFromNames failed";
         }
-
-        delete [] nameBuffer;
     }
 
     return result;
