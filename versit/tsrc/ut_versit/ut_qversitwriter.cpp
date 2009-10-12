@@ -99,12 +99,16 @@ void UT_QVersitWriter::testEncodeVersitDocument()
 "BEGIN:VCARD\r\n\
 VERSION:2.1\r\n\
 N:Homer\r\n\
+TEL:12347\r\n\
 END:VCARD\r\n";
     QVersitDocument doc;
     doc.setVersitType(QVersitDocument::VCard21);
     QVersitProperty property;
     property.setName(QString("N"));
     property.setValue(QByteArray("Homer"));
+    doc.addProperty(property);
+    property.setName(QString("TEL"));
+    property.setValue(QByteArray("12347"));
     doc.addProperty(property);
     QVERIFY(mWriter->encodeVersitDocument(doc) == vCardSimple);
  /*
