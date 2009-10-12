@@ -551,6 +551,8 @@ bool QContactTrackerEngine::startRequest(QContactAbstractRequest* req)
     switch (req->type())
     {
         case QContactAbstractRequest::ContactIdFetch:
+            request = new QTrackerContactIdFetchRequest(req, this);
+            break;
         case QContactAbstractRequest::ContactFetch:
             request = new QTrackerContactFetchRequest(req, this);
             break;

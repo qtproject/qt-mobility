@@ -160,12 +160,9 @@ QTrackerContactAsyncRequest::~QTrackerContactAsyncRequest()
 
 }
 
-
-QTrackerContactFetchRequest::QTrackerContactFetchRequest(
+QTrackerContactIdFetchRequest::QTrackerContactIdFetchRequest(
         QContactAbstractRequest* request, QContactManagerEngine* parent) :
-    QObject(parent),QTrackerContactAsyncRequest(request),
-    queryPhoneNumbersNodesReady(false),
-    queryEmailAddressNodesReady(false)
+    QObject(parent),QTrackerContactAsyncRequest(request)
 {
     Q_ASSERT(req);
     Q_ASSERT(parent);
@@ -173,177 +170,207 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(
     parent->updateRequestStatus(request, QContactManager::NoError, dummy,
             QContactAbstractRequest::Active);
 
-    switch (req->type())
+    Q_ASSERT( req->type() == QContactAbstractRequest::ContactIdFetch );
+    QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*> (req);
+    QContactFilter filter = r->filter();
+    QList<QContactSortOrder> sorting = r->sorting();
+    Q_UNUSED(filter)
+    Q_UNUSED(sorting)
+
+    RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
+    RDFSelect quer;
+
+    quer.addColumn("contact_uri", RDFContact);
+    quer.addColumn("contactId", RDFContact.property<nco::contactUID> ());
+    query = ::tracker()->modelQuery(quer);
+    // need to store LiveNodes in order to receive notification from model
+    QObject::connect(query.model(), SIGNAL(modelUpdated()), this, SLOT(modelUpdated()));
+
+}
+
+/*!
+ * The method was initially created to add default fields in case client did not supply
+ * fields constraint - in that case the constraint is that default contact fields (ones
+ * being edited in contact card and synchronized) are queried.
+ */
+void QTrackerContactFetchRequest::validateRequest()
+{
+    Q_ASSERT(req);
+    Q_ASSERT( req->type() == QContactAbstractRequest::ContactFetch );
+    QContactFetchRequest* r = static_cast<QContactFetchRequest*> (req);
+    if( r->definitionRestrictions().isEmpty() )
     {
-        case QContactAbstractRequest::ContactIdFetch:
-        {
-            QContactIdFetchRequest* r =
-                    static_cast<QContactIdFetchRequest*> (req);
-            QContactFilter filter = r->filter();
-            QList<QContactSortOrder> sorting = r->sorting();
-            Q_UNUSED(filter)
-            Q_UNUSED(sorting)
-
-            RDFVariable RDFContact =
-                    RDFVariable::fromType<nco::PersonContact>();
-            RDFSelect quer;
-
-            quer.addColumn("contact_uri", RDFContact);
-            quer.addColumn("contactId",
-                    RDFContact.property<nco::contactUID> ());
-            query = ::tracker()->modelQuery(quer);
-            // need to store LiveNodes in order to receive notification from model
-            QObject::connect(query.model(), SIGNAL(modelUpdated()), this,
-                    SLOT(modelUpdated()));
-
-            break;
-        }
-        case QContactAbstractRequest::ContactFetch:
-        {
-            QContactFetchRequest* r =
-                    static_cast<QContactFetchRequest*> (req);
-
-            RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
-            applyFilterToRDFVariable(RDFContact,r->filter());
-            if( r->definitionRestrictions().contains( QContactPhoneNumber::DefinitionName ) )
-            {
-                queryPhoneNumbersNodes.clear(); queryPhoneNumbersNodesReady = 0;
-                for (int forAffiliations = 0; forAffiliations <= 1; forAffiliations++ )
-                {
-                    // prepare query to get all phone numbers
-                    RDFVariable rdfcontact1 = RDFVariable::fromType<nco::PersonContact>();
-                    applyFilterToRDFVariable(rdfcontact1,r->filter());
-                    // criteria - only those with phone numbers
-                    RDFSelect queryidsnumbers = preparePhoneNumbersQuery(rdfcontact1, forAffiliations);
-                    queryPhoneNumbersNodes<< ::tracker()->modelQuery(queryidsnumbers);
-                    // need to store LiveNodes in order to receive notification from model
-                    QObject::connect(queryPhoneNumbersNodes[forAffiliations].model(), SIGNAL(modelUpdated()), this,
-                            SLOT(phoneNumbersReady()));
-                }
-            }
-
-            if (r->definitionRestrictions().contains(QContactEmailAddress::DefinitionName))
-            {
-                queryEmailAddressNodes.clear();
-                queryEmailAddressNodesReady = 0;
-                for (int forAffiliations = 0; forAffiliations <= 1; forAffiliations++ )
-                {
-                    // prepare query to get all email addresses
-                    RDFVariable rdfcontact1 = RDFVariable::fromType<nco::PersonContact>();
-                    applyFilterToRDFVariable(rdfcontact1,r->filter());
-                    // criteria - only those with email addresses
-                    RDFSelect queryidsnumbers = prepareEmailAddressesQuery(rdfcontact1, forAffiliations);
-                    queryEmailAddressNodes<< ::tracker()->modelQuery(queryidsnumbers);
-                    // need to store LiveNodes in order to receive notification from model
-                    QObject::connect(queryEmailAddressNodes[forAffiliations].model(), SIGNAL(modelUpdated()), this,
-                            SLOT(emailAddressesReady()));
-                }
-            }
-
-            if (r->definitionRestrictions().contains(QContactPresence::DefinitionName)
-                    || r->definitionRestrictions().contains(QContactOnlineAccount::DefinitionName))
-            {
-                queryIMAccountNodes.clear(); queryIMAccountNodesReady = 0;
-                for (int forAffiliations = 0; forAffiliations <= 1; forAffiliations++ )
-                {
-                    // prepare query to get all im accounts
-                    RDFVariable rdfcontact1 = RDFVariable::fromType<nco::PersonContact>();
-                    applyFilterToRDFVariable(rdfcontact1,r->filter());
-                    // criteria - only those with im accounts
-                    RDFSelect queryidsimacccounts = prepareIMAccountsQuery(rdfcontact1, forAffiliations);
-                    queryIMAccountNodes << ::tracker()->modelQuery(queryidsimacccounts);
-                    QObject::connect(queryIMAccountNodes[forAffiliations].model(),SIGNAL(modelUpdated()),SLOT(iMAcountsReady()));
-                }
-            }
-
-            QList<QUniqueId> ids;
-            RDFVariable RDFContact1 = RDFVariable::fromType<nco::PersonContact>();
-            applyFilterToRDFVariable(RDFContact1, r->filter());
-            RDFSelect quer;
-            RDFVariable prefix = RDFContact1.optional().property<nco::nameHonorificPrefix>();
-            RDFVariable lastname = RDFContact1.optional().property<nco::nameFamily>();
-            RDFVariable middlename = RDFContact1.optional().property<nco::nameAdditional>();
-            RDFVariable firstname = RDFContact1.optional().property<nco::nameGiven>();
-            RDFVariable nickname = RDFContact1.optional().property<nco::nickname>();
-            quer.addColumn("contactId",  RDFContact1.property<nco::contactUID>());
-            quer.addColumn("prefix",  prefix);
-            quer.addColumn("firstname",  firstname);
-            quer.addColumn("middlename",  middlename);
-            quer.addColumn("secondname", lastname);
-            quer.addColumn("photo",      RDFContact1.optional().property<nco::photo>());
-            quer.addColumn("nickname", nickname);
-
-            // for now adding columns to main query. later separate queries
-            if (r->definitionRestrictions().contains(QContactAddress::DefinitionName))
-            {
-                RDFVariable address = RDFContact.optional().property<nco::hasPostalAddress>();
-                quer.addColumn("street", address.optional().property<nco::streetAddress>());
-                quer.addColumn("city", address.optional().property<nco::locality>());
-                quer.addColumn("country", address.optional().property<nco::country>());
-                quer.addColumn("pcode", address.optional().property<nco::postalcode>());
-                quer.addColumn("reg", address.optional().property<nco::region>());
-            }
-            if (r->definitionRestrictions().contains(QContactUrl::DefinitionName))
-            {
-                quer.addColumn("homepage", RDFContact.optional().property<nco::websiteUrl>());
-                quer.addColumn("url", RDFContact.optional().property<nco::url>());
-                quer.addColumn("work_homepage", RDFContact.optional().property<nco::hasAffiliation>().property<nco::websiteUrl>());
-                quer.addColumn("work_url", RDFContact.optional().property<nco::hasAffiliation>().property<nco::url>());
-            }
-            if (r->definitionRestrictions().contains(QContactBirthday::DefinitionName))
-            {
-                quer.addColumn("birth", RDFContact.optional().property<nco::birthDate>());
-            }
-            if (r->definitionRestrictions().contains(QContactGender::DefinitionName))
-            {
-                quer.addColumn("gender", RDFContact.optional().property<nco::gender>());
-            }
-            if (r->definitionRestrictions().contains(QContactOrganisation::DefinitionName))
-            {
-                RDFVariable rdforg = RDFContact.optional().property<nco::hasAffiliation>().optional().property<nco::org>();
-                quer.addColumn("org", rdforg.optional().property<nco::fullname>());
-                quer.addColumn("logo", rdforg.optional().property<nco::logo>());
-            }
-
-            // QContactAnniversary - no such thing in tracker
-            // QContactGeolocation - nco:hasLocation is not having class defined in nco yet. no properties. maybe rdfs:Resource:label
-
-            // supporting sorting only here, difficult and no requirements in UI for sorting in multivalue details (phones, emails)
-            foreach(QContactSortOrder sort, r->sorting())
-            {
-                if( sort.detailDefinitionName() == QContactName::DefinitionName)
-                {
-                    if( sort.detailFieldName() == QContactName::FieldFirst)
-                        quer.orderBy(firstname);
-                    else if( sort.detailFieldName() == QContactName::FieldLast)
-                        quer.orderBy(lastname);
-                    else
-                        qWarning()<<"QTrackerContactFetchRequest"<<"sorting by"<<sort.detailDefinitionName()<<sort.detailFieldName()<<"is not yet supported";
-                }else
-                    qWarning()<<"QTrackerContactFetchRequest"<<"sorting by"<<sort.detailDefinitionName()<<"is not yet supported";
-            }
-            query = ::tracker()->modelQuery(quer);
-            // need to store LiveNodes in order to receive notification from model
-            QObject::connect(query.model(), SIGNAL(modelUpdated()), this,
-                    SLOT(contactsReady()));
-
-
-
-            break;
-        }
-        default:
-            Q_ASSERT_X(false, Q_FUNC_INFO, "Unsupported request type");
-
+        QStringList fields;
+        fields << QContactAvatar::DefinitionName
+                << QContactBirthday::DefinitionName
+                << QContactAddress::DefinitionName
+                << QContactEmailAddress::DefinitionName
+                << QContactGender::DefinitionName
+                << QContactAnniversary::DefinitionName
+                << QContactName::DefinitionName
+                << QContactOnlineAccount::DefinitionName
+                << QContactOrganisation::DefinitionName
+                << QContactPhoneNumber::DefinitionName
+                << QContactUrl::DefinitionName;
+        r->setDefinitionRestrictions(fields);
     }
 }
 
-QTrackerContactFetchRequest::~QTrackerContactFetchRequest()
+QTrackerContactFetchRequest::QTrackerContactFetchRequest(
+        QContactAbstractRequest* request, QContactManagerEngine* parent) :
+    QObject(parent),QTrackerContactAsyncRequest(request),
+    queryPhoneNumbersNodesReady(false),
+    queryEmailAddressNodesReady(false)
 {
+    Q_ASSERT(parent);
+    QList<QContactManager::Error> dummy;
+    parent->updateRequestStatus(request, QContactManager::NoError, dummy,
+            QContactAbstractRequest::Active);
+
+
+    validateRequest();
+    QContactFetchRequest* r = static_cast<QContactFetchRequest*> (req);
+
+    RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
+    applyFilterToRDFVariable(RDFContact, r->filter());
+    if (r->definitionRestrictions().contains(
+            QContactPhoneNumber::DefinitionName))
+    {
+        queryPhoneNumbersNodes.clear();
+        queryPhoneNumbersNodesReady = 0;
+        for(int forAffiliations = 0; forAffiliations <= 1; forAffiliations++)
+        {
+            // prepare query to get all phone numbers
+            RDFVariable rdfcontact1 = RDFVariable::fromType<nco::PersonContact>();
+            applyFilterToRDFVariable(rdfcontact1, r->filter());
+            // criteria - only those with phone numbers
+            RDFSelect queryidsnumbers = preparePhoneNumbersQuery(rdfcontact1, forAffiliations);
+            queryPhoneNumbersNodes << ::tracker()->modelQuery(queryidsnumbers);
+            // need to store LiveNodes in order to receive notification from model
+            QObject::connect(queryPhoneNumbersNodes[forAffiliations].model(),
+                    SIGNAL(modelUpdated()), this, SLOT(phoneNumbersReady()));
+        }
+    }
+
+    if (r->definitionRestrictions().contains(
+            QContactEmailAddress::DefinitionName))
+    {
+        queryEmailAddressNodes.clear();
+        queryEmailAddressNodesReady = 0;
+        for(int forAffiliations = 0; forAffiliations <= 1; forAffiliations++)
+        {
+            // prepare query to get all email addresses
+            RDFVariable rdfcontact1 = RDFVariable::fromType<nco::PersonContact>();
+            applyFilterToRDFVariable(rdfcontact1, r->filter());
+            // criteria - only those with email addresses
+            RDFSelect queryidsnumbers = prepareEmailAddressesQuery(rdfcontact1,forAffiliations);
+            queryEmailAddressNodes << ::tracker()->modelQuery(queryidsnumbers);
+            // need to store LiveNodes in order to receive notification from model
+            QObject::connect(queryEmailAddressNodes[forAffiliations].model(),
+                    SIGNAL(modelUpdated()), this, SLOT(emailAddressesReady()));
+        }
+    }
+
+    if (r->definitionRestrictions().contains(QContactPresence::DefinitionName)
+            || r->definitionRestrictions().contains(
+                    QContactOnlineAccount::DefinitionName))
+    {
+        queryIMAccountNodes.clear();
+        queryIMAccountNodesReady = 0;
+        for(int forAffiliations = 0; forAffiliations <= 1; forAffiliations++)
+        {
+            // prepare query to get all im accounts
+            RDFVariable rdfcontact1 = RDFVariable::fromType<nco::PersonContact>();
+            applyFilterToRDFVariable(rdfcontact1, r->filter());
+            // criteria - only those with im accounts
+            RDFSelect queryidsimacccounts = prepareIMAccountsQuery(rdfcontact1,forAffiliations);
+            queryIMAccountNodes << ::tracker()->modelQuery(queryidsimacccounts);
+            QObject::connect(queryIMAccountNodes[forAffiliations].model(),
+                    SIGNAL(modelUpdated()),SLOT(iMAcountsReady()));
+        }
+    }
+
+    QList<QUniqueId> ids;
+    RDFVariable RDFContact1 = RDFVariable::fromType<nco::PersonContact>();
+    applyFilterToRDFVariable(RDFContact1, r->filter());
+    RDFSelect quer;
+    RDFVariable prefix = RDFContact1.optional().property<
+            nco::nameHonorificPrefix> ();
+    RDFVariable lastname = RDFContact1.optional().property<nco::nameFamily> ();
+    RDFVariable middlename = RDFContact1.optional().property<
+            nco::nameAdditional> ();
+    RDFVariable firstname = RDFContact1.optional().property<nco::nameGiven> ();
+    RDFVariable nickname = RDFContact1.optional().property<nco::nickname> ();
+    quer.addColumn("contactId", RDFContact1.property<nco::contactUID> ());
+    quer.addColumn("prefix", prefix);
+    quer.addColumn("firstname", firstname);
+    quer.addColumn("middlename", middlename);
+    quer.addColumn("secondname", lastname);
+    quer.addColumn("photo", RDFContact1.optional().property<nco::photo> ());
+    quer.addColumn("nickname", nickname);
+
+    // for now adding columns to main query. later separate queries
+    if (r->definitionRestrictions().contains(QContactAddress::DefinitionName))
+    {
+        RDFVariable address = RDFContact.optional().property<
+                nco::hasPostalAddress> ();
+        quer.addColumn("street",address.optional().property<nco::streetAddress> ());
+        quer.addColumn("city", address.optional().property<nco::locality> ());
+        quer.addColumn("country", address.optional().property<nco::country> ());
+        quer.addColumn("pcode", address.optional().property<nco::postalcode> ());
+        quer.addColumn("reg", address.optional().property<nco::region> ());
+    }
+    if (r->definitionRestrictions().contains(QContactUrl::DefinitionName))
+    {
+        quer.addColumn("homepage", RDFContact.optional().property<
+                nco::websiteUrl> ());
+        quer.addColumn("url", RDFContact.optional().property<nco::url> ());
+        quer.addColumn("work_homepage", RDFContact.optional().property<nco::hasAffiliation> ().property<nco::websiteUrl> ());
+        quer.addColumn("work_url", RDFContact.optional().property<nco::hasAffiliation> ().property<nco::url> ());
+    }
+    if (r->definitionRestrictions().contains(QContactBirthday::DefinitionName))
+    {
+        quer.addColumn("birth",RDFContact.optional().property<nco::birthDate> ());
+    }
+    if (r->definitionRestrictions().contains(QContactGender::DefinitionName))
+    {
+        quer.addColumn("gender", RDFContact.optional().property<nco::gender> ());
+    }
+    if (r->definitionRestrictions().contains(QContactOrganisation::DefinitionName))
+    {
+        RDFVariable rdforg = RDFContact.optional().property<nco::hasAffiliation> ().optional().property<nco::org> ();
+        quer.addColumn("org", rdforg.optional().property<nco::fullname> ());
+        quer.addColumn("logo", rdforg.optional().property<nco::logo> ());
+    }
+
+    // QContactAnniversary - no such thing in tracker
+    // QContactGeolocation - nco:hasLocation is not having class defined in nco yet. no properties. maybe rdfs:Resource:label
+
+    // supporting sorting only here, difficult and no requirements in UI for sorting in multivalue details (phones, emails)
+    foreach(QContactSortOrder sort, r->sorting())
+        {
+            if (sort.detailDefinitionName() == QContactName::DefinitionName)
+            {
+                if (sort.detailFieldName() == QContactName::FieldFirst)
+                    quer.orderBy(firstname);
+                else if (sort.detailFieldName() == QContactName::FieldLast)
+                    quer.orderBy(lastname);
+                else
+                    qWarning() << "QTrackerContactFetchRequest" << "sorting by"
+                            << sort.detailDefinitionName()
+                            << sort.detailFieldName() << "is not yet supported";
+            }
+            else
+                qWarning() << "QTrackerContactFetchRequest" << "sorting by"
+                        << sort.detailDefinitionName()
+                        << "is not yet supported";
+        }
+    query = ::tracker()->modelQuery(quer);
+    // need to store LiveNodes in order to receive notification from model
+    QObject::connect(query.model(), SIGNAL(modelUpdated()), this, SLOT(contactsReady()));
 }
 
-
-
-void QTrackerContactFetchRequest::modelUpdated()
+void QTrackerContactIdFetchRequest::modelUpdated()
 {
     // fastest way to get this working. refactor
     QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *> (

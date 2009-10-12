@@ -33,15 +33,16 @@ protected:
     QContactAbstractRequest* req;
 };
 
-
+/*!
+ * Running QContactFetchRequest. Doing the async tracker query and when data is ready setting the
+ * finished status of request. \sa QTrackerContactFetchRequest
+ */
 class QTrackerContactFetchRequest : public QObject, public QTrackerContactAsyncRequest
 {
     Q_OBJECT
 public:
     QTrackerContactFetchRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);
-    virtual ~QTrackerContactFetchRequest();
 public slots:
-    void modelUpdated();
     void contactsReady();
     void phoneNumbersReady();
     void emailAddressesReady();
@@ -52,6 +53,7 @@ private:
     void processQueryPhoneNumbers(SopranoLive::LiveNodes queryPhoneNumbers, QList<QContact>& contacts, bool affiliationNumbers);
     void processQueryEmailAddresses(SopranoLive::LiveNodes queryEmailAddresses, QList<QContact>& contacts, bool affiliationEmails);
     void processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts, QList<QContact>& contacts, bool affiliationAccounts);
+    void validateRequest();
 
 protected:
     SopranoLive::LiveNodes query;
@@ -63,5 +65,23 @@ protected:
     QList<SopranoLive::LiveNodes> queryIMAccountNodes; // 2 - one for affiliations and another one for PersonContact
     int queryIMAccountNodesReady; // remove after figuring out how to check if data in LiveNodes is updated
 };
+
+/*!
+ * Running QContactIdFetchRequest. Doing the async tracker query and when data is ready setting the
+ * finished status of request. \sa QTrackerContactIdFetchRequest
+ */
+class QTrackerContactIdFetchRequest : public QObject, public QTrackerContactAsyncRequest
+{
+    Q_OBJECT
+public:
+    QTrackerContactIdFetchRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);
+public slots:
+    void modelUpdated();
+
+protected:
+    SopranoLive::LiveNodes query;
+};
+
+
 
 #endif /* QTRACKERCONTACTASYNCREQUEST_H_ */
