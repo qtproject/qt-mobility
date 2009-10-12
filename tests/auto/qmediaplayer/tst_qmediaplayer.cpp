@@ -269,7 +269,7 @@ void tst_QMediaPlayer::cleanup()
 void tst_QMediaPlayer::testNullService()
 {
     MockProvider provider(0);
-    QMediaPlayer player(0, &provider);
+    QMediaPlayer player(0, 0, &provider);
 
     const QIODevice *nullDevice = 0;
 
