@@ -61,6 +61,7 @@ void tst_QMediaContent::testNull()
     QCOMPARE(media.isNull(), true);
     QCOMPARE(media.canonicalUri(), QUrl());
     QCOMPARE(media.canonicalResource(), QMediaResource());
+    QCOMPARE(media.resources(), QMediaResourceList());
 
     media.setCoverArtUriSmall(QUrl("file:///cover/art/small.jpg"));
     media.setCoverArtUriLarge(QUrl("file:///cover/art/large.jpg"));
@@ -71,7 +72,7 @@ void tst_QMediaContent::testNull()
     QCOMPARE(media.coverArtUriSmall(), QUrl());
     QCOMPARE(media.coverArtUriLarge(), QUrl());
     QCOMPARE(media.thumbnailUriSmall(), QUrl());
-    QCOMPARE(media.thumbnailUriSmall(), QUrl());
+    QCOMPARE(media.thumbnailUriLarge(), QUrl());
     QCOMPARE(media.posterUri(), QUrl());
 }
 
