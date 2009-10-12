@@ -39,7 +39,7 @@ TestResultXmlParser::TestResultXmlParser()
   mParsingDescriptionElement(false),
   mCurrentTestFailed(false),
   mCurrentTestFailureLine(0),
-  mBenchMarkAccumulatedTime(0),
+  mTotalBenchMarkTime(0),
   mBenchMarkCount(0)
 {
     mErrors = new QStringList;
@@ -65,7 +65,7 @@ bool TestResultXmlParser::startElement(
     const QXmlAttributes& atts)
 {
     if( qName == benchmarkElement) {
-        mBenchMarkAccumulatedTime += atts.value(valueAttr).toInt();
+        mTotalBenchMarkTime += atts.value(valueAttr).toInt();
         mBenchMarkCount++;
     }
     if (qName == testFunctionElement) {
@@ -161,10 +161,10 @@ int TestResultXmlParser::parseAndPrintResults(
             printf("\n");
         }
     }
-    if( mBenchMarkCount && mBenchMarkAccumulatedTime){
-        printf("Performance\n\tcount = %u \n", mBenchMarkCount);
-        printf("\ttotal_time = %u\n", mBenchMarkAccumulatedTime);
-        printf("\taverage_time = %u\n\n",mBenchMarkAccumulatedTime/mBenchMarkCount);
+    if (mBenchMarkCount && mTotalBenchMarkTime) {
+        printf(" Benchmark count: %u\n", mBenchMarkCount);
+        printf(" Total time: %u ms\n", mTotalBenchMarkTime);
+        printf(" Average time: %u ms\n\n", mTotalBenchMarkTime/mBenchMarkCount);
     }
     return error;
 }

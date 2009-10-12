@@ -62,8 +62,7 @@ private: // Data
     QString mCurrentTestName;
     QString mCurrentTestFile;
     int mCurrentTestFailureLine;
-    // to calculate average performance time
-    unsigned int mBenchMarkAccumulatedTime;
+    unsigned int mTotalBenchMarkTime;
     unsigned int mBenchMarkCount;
 };
 

@@ -43,7 +43,7 @@
 class QVersitWriterPrivate;
 
 // writes QVersitDocument to iodevice
-class QVersitWriter : public QObject
+class QTVERSIT_EXPORT QVersitWriter : public QObject
 {
     Q_OBJECT
 
