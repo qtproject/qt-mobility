@@ -20,6 +20,9 @@ HEADERS += testresultxmlparser.h \
     ut_qversitreader.h \
     ../../qversitwriter.h \
     ut_qversitwriter.h \
+        ../../qversitcontactconverter.h \
+    ut_qversitcontactconverter.h 
+
 
 SOURCES += main.cpp \
     testresultxmlparser.cpp \
@@ -34,11 +37,14 @@ SOURCES += main.cpp \
     ../../qversitreader.cpp \
     ut_qversitreader.cpp \
     ../../qversitwriter.cpp \
-    ut_qversitwriter.cpp
+    ut_qversitwriter.cpp \
+        ../../qversitcontactconverter.cpp \
+    ut_qversitcontactconverter.cpp
 
 symbian: { 
     TARGET.CAPABILITY = ALL \
         -TCB
     LIBS += -lws32 \
-        -lbafl
+        -lbafl \
+        -lqtcontacts
 }

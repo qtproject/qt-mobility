@@ -35,75 +35,47 @@
 #define QVERSITCONTACTCONVERTER_H
 
 #include <QObject>
-
-#include "qcontact.h"
+#include <QList>
+#include <qcontact.h>
 #include "qversitdocument.h"
 
-// Converts a list of contacts to a QVersitDocument
-class QVersitContactConvertPrivate;
+// forward class declaration.
+class QVersitContactConverterPrivate;
+
 class QVersitContactConverter
 {
 public:
-    QVersitContactConverter() {}
-    ~QVersitContactConverter() {}
-
-    enum VersitType {
-        VCard21 = 0,
-        VCard30,
-        VCardDav,
-        VCalendar10,
-        ICalendar20
-        // ... etc.
-    };
-
-    enum BinaryEncoding {
-        // whatever values required here.
-        Base64 = 0,
-        Uucode,
-    };
-
-    enum CharacterEncoding {
-        // whatever values required here.
-        Latin1 = 0,
-        Utf8,
-        Utf16,
-        Utf32
-    };
-
-    enum ImageFormat {
-        // whatever values required here.
-        Jpeg = 0,
-        Bitmap,
-        Gif,
-        Png,
-        Svg
-    };
-
-    // knobs that affect behaviour of the converter
-    void setVersitType(VersitType type);
-    void setBinaryEnconding(BinaryEncoding encoding);
-    void setCharacterEncoding(CharacterEncoding encoding);
-    void setImageFormat(ImageFormat format);
-
-    // accessors for those knobs
-    VersitType versitType() const;
-    BinaryEncoding binaryEncoding() const;
-    CharacterEncoding characterEncoding() const;
-    ImageFormat imageFormat() const;
-
-    // blob provider (eg, image detail value -> QPixmap in a QVariant)
-    virtual QVariant loadBlob(const QContactDetail& detail, const QString& fieldName);
+    QVersitContactConverter();
+    ~QVersitContactConverter();
 
     enum Error {
-        // ...
+        NoError = 0
     };
 
     Error error() const;
 
     // convert the list of contacts into a versit document.
-    QVersitDocument convertContacts(const QList<QContact>& contacts);
+    QVersitDocument convertContacts(const QContact& contacts);
+    
+
+private: //Methods
+    
+    void encodeFieldInfo(QVersitDocument versitDocumen, const QContact& contact, 
+                            QContactDetailDefinition definitionName);
+    void encodeName(QVersitDocument versitDocumen, const QContact& contact,
+                        QContactDetailDefinition definitionName);
+    void encodePhoneNumber(QVersitDocument versitDocumen, const QContact& contact,
+                        QContactDetailDefinition definitionName);
+    void encodeEmailAddress(QVersitDocument versitDocumen, const QContact& contact,
+                        QContactDetailDefinition definitionName);
+    void encodeStreetAddress(QVersitDocument versitDocumen, const QContact& contact,
+                        QContactDetailDefinition definitionName);
+    
 private:
-    QVersitContactConvertPrivate* d;
+    QVersitContactConverterPrivate* d;
+    
+private:
+    friend class UT_QVersitContactConvertert;    
 };
 
 #endif

@@ -32,18 +32,159 @@
 ****************************************************************************/
 
 /*!
- * \class QContact
+ * \class QVersitContactConverter
  *
- * \brief The QContact class provides an addressbook contact.
+ * \brief The QVersitContactConverter class converts the contacts into versit document.
  *
- * A QContact consists of zero or more details.
+ * A QVersitContactConverter process contacts list and generates the corresponding
+ * versit document.
  *
- * An instance of the QContact class represents an in-memory contact,
- * and may not reflect the state of that contact found in persistent
- * storage until the appropriate synchronisation method is called
- * on the QContactManager (i.e., saveContact, removeContact).
- *
- * \sa QContactManager, QContactDetail
+ * \sa QContact, QVersitDocument, QVersitProperty
  */
 
 
+#include <qcontact.h>
+#include <qcontactdetail.h>
+#include <qcontactmanager.h>
+#include <qcontactname.h>
+#include <qcontactphonenumber.h>
+#include <qcontactemailaddress.h>
+#include <qcontactaddress.h>
+
+#include "qversitdefs.h"
+#include "qversitdocument.h"
+#include "qversitproperty.h"
+#include "qversitcontactconverter.h"
+#include "qversitcontactconverter_p.h"
+
+
+/*!
+ * Constructs a new contact converter
+ */
+QVersitContactConverter::QVersitContactConverter()
+    : d(new QVersitContactConverterPrivate())
+{
+}
+
+/*!
+ * Frees any memory in use by this contact converter
+ */
+QVersitContactConverter::~QVersitContactConverter()
+{
+}
+
+/*!
+ * Get the error code
+ */
+QVersitContactConverter::Error QVersitContactConverter::error() const
+{
+    return d->mError;
+}
+
+/*!
+ * Get the versit document corresponding to the corresponding contact 
+ */
+QVersitDocument QVersitContactConverter::convertContacts(const QContact& contact)
+{
+    QVersitDocument versitDocument;
+    int contactCount = 0;
+    QContactManager cm;
+    QList<QContactDetail> allDetails = contact.details();
+    for (int i = 0; i < allDetails.size(); i++) {
+        QContactDetail detail = allDetails.at(i);
+        QContactDetailDefinition currentDefinition = 
+            cm.detailDefinition(detail.definitionName());
+
+        //Encode FieldInfo
+        encodeFieldInfo(versitDocument, contact, currentDefinition);
+    }
+    return versitDocument;
+}
+
+
+
+/*!
+ * Encode Contact Field Information into the Versit Document 
+ */
+void QVersitContactConverter::encodeFieldInfo(QVersitDocument versitDocument, 
+                                                const QContact& contact, 
+                                                QContactDetailDefinition definitionName)
+{
+    if (definitionName.name() == versitContactName )
+    {
+        encodeName(versitDocument, contact, definitionName);
+    } else if (definitionName.name() == versitContactPhoneNumer){
+        encodePhoneNumber(versitDocument, contact, definitionName);
+    } else if (definitionName.name()== versitContactEmail){
+        encodeEmailAddress(versitDocument, contact, definitionName);
+    } else if (definitionName.name() == versitContactAddress){
+        encodeStreetAddress(versitDocument, contact, definitionName);
+    }
+}
+
+
+/*!
+ * Encode Contact Name Field Information into the Versit Document 
+ */
+void QVersitContactConverter::encodeName(QVersitDocument versitDocument, 
+                                            const QContact& contact,
+                                            QContactDetailDefinition definitionName)
+{
+    QContactName contactName = contact.detail(definitionName.name());
+    QString name = contactName.last() +  ";"  + contactName.first() + ";" + contactName.middle() 
+                    + ";"  + contactName.prefix() + ";" + contactName.suffix();
+    
+    QVersitProperty versitProperty;
+    versitProperty.addParameter(versitName, name);
+    versitDocument.addProperty(versitProperty);
+}
+
+/*!
+ * Encode Phone Numer Field Information into the Versit Document 
+ */
+void QVersitContactConverter::encodePhoneNumber(QVersitDocument versitDocument,
+                                                    const QContact& contact,
+                                                    QContactDetailDefinition definitionName)
+{
+    QContactPhoneNumber phoneNumer = contact.detail(definitionName.name());
+    QString phone = phoneNumer.number();
+    
+    QVersitProperty versitProperty;
+    versitProperty.addParameter(versitPhoneNumer, phone);
+    versitDocument.addProperty(versitProperty);
+}
+
+
+/*!
+ * Encode Email Address Field Information into the Versit Document 
+ */
+
+void QVersitContactConverter::encodeEmailAddress(QVersitDocument versitDocument,
+                                                    const QContact& contact,
+                                                    QContactDetailDefinition definitionName)
+{
+    QContactEmailAddress emailAddress = contact.detail(definitionName.name());
+    QString email = emailAddress.emailAddress();
+
+    QVersitProperty versitProperty;
+    versitProperty.addParameter(versitEmail, email);
+    versitDocument.addProperty(versitProperty);
+}
+
+
+/*!
+ * Encode Street Address Field Information into the Versit Document 
+ */
+
+void QVersitContactConverter::encodeStreetAddress(QVersitDocument versitDocument,
+                                                    const QContact& contact,
+                                                    QContactDetailDefinition definitionName)
+{
+    QContactAddress address = contact.detail(definitionName.name());
+    QString addr = address.postOfficeBox() + ";" + address.street() + ";" + address.locality() 
+                    + ";" + address.region() + ";" + address.postcode() + ";" + address.country();
+    
+    QVersitProperty versitProperty;
+    versitProperty.addParameter(versitAddress, addr);
+    versitDocument.addProperty(versitProperty);
+}

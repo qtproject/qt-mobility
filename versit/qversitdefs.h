@@ -31,33 +31,22 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITWRITER_P_H
-#define QVERSITWRITER_P_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-#include <QIODevice>
-#include "qversitdocument.h"
+#ifndef QVERSITDEFS_H_
+#define QVERSITDEFS_H_
 
-class QVersitWriterPrivate
-{
-public:
-    QVersitWriterPrivate() :
-        mIoDevice(0)
-        //mVersitDocument(0)
-        {}
-    ~QVersitWriterPrivate() {}
-    
-    QIODevice* mIoDevice;
-    QVersitDocument mVersitDocument;
-};
 
-#endif // QVERSITWRITER_P_H
+//Contacts Defs ids:
+const char versitContactName[] = "Name";
+const char versitContactEmail[] = "EmailAddress";
+const char versitContactPhoneNumer[] = "PhoneNumber";
+const char versitContactAddress[] = "StreetAddress";
+
+
+//Versit Defs ids:
+const char versitName[] = "N";
+const char versitEmail[] = "EMAIL";
+const char versitPhoneNumer[] = "TEL";
+const char versitAddress[] = "ADDR";
+
+#endif /* QVERSITDEFS_H_ */

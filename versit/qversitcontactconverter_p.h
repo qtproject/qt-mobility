@@ -31,33 +31,31 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITWRITER_P_H
-#define QVERSITWRITER_P_H
+#ifndef QVERSITCONTACTCONVERTER_P_H
+#define QVERSITCONTACTCONVERTER_P_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-#include <QIODevice>
-#include "qversitdocument.h"
+#include <QObject>
+#include <QHash>
+#include <qcontact.h>
+#include <qversitcontactconverter.h>
+#include <qversitdocument.h>
 
-class QVersitWriterPrivate
+class QVersitContactConverter;
+
+class QVersitContactConverterPrivate
 {
-public:
-    QVersitWriterPrivate() :
-        mIoDevice(0)
-        //mVersitDocument(0)
-        {}
-    ~QVersitWriterPrivate() {}
+public:    
+    QVersitContactConverterPrivate() 
+        : mError(QVersitContactConverter::NoError)
+    {
+    }
     
-    QIODevice* mIoDevice;
-    QVersitDocument mVersitDocument;
+    ~QVersitContactConverterPrivate()
+    {
+    }
+
+    // Data Container
+    QVersitContactConverter::Error mError;
 };
 
-#endif // QVERSITWRITER_P_H
+#endif
