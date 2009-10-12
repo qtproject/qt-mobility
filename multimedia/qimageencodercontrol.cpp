@@ -51,17 +51,14 @@ QImageEncoderControl::~QImageEncoderControl()
 }
 
 /*!
+  \fn QImageEncoderControl::supportedResolutions() const
+
   Returns the list of resolutions if the image encoder supports only the limited set
   of image sizes, otherwise returns an empty list.
 
   \sa resolution(), minimumResolution(), maximumResolution()
 
 */
-QList<QSize> QImageEncoderControl::supportedResolutions() const
-{
-    return QList<QSize>();
-}
-
 
 /*!
   \fn QImageEncoderControl::resolution() const

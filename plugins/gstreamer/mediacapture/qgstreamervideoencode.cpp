@@ -181,7 +181,7 @@ int QGstreamerVideoEncode::bitrate() const
 
 void QGstreamerVideoEncode::setBitrate(int value)
 {
-    setEncodingOption(QLatin1String("bitrate"), QVariant(value));
+    setEncodingOption(m_codec, QLatin1String("bitrate"), QVariant(value));
 }
 
 QMediaRecorder::EncodingQuality QGstreamerVideoEncode::quality() const
@@ -192,22 +192,24 @@ QMediaRecorder::EncodingQuality QGstreamerVideoEncode::quality() const
 
 void QGstreamerVideoEncode::setQuality(QMediaRecorder::EncodingQuality value)
 {
-    setEncodingOption(QLatin1String("quality"), QVariant(value));
+    setEncodingOption(m_codec, QLatin1String("quality"), QVariant(value));
 }
 
-QStringList QGstreamerVideoEncode::supportedEncodingOptions() const
+QStringList QGstreamerVideoEncode::supportedEncodingOptions(const QString &codec) const
 {
-    return m_codecOptions.value(m_codec);
+    return m_codecOptions.value(codec);
 }
 
-QVariant QGstreamerVideoEncode::encodingOption(const QString &name) const
-{
-    return m_options.value(name);
+QVariant QGstreamerVideoEncode::encodingOption(const QString &codec, const QString &name) const
+{    
+    return codec == m_codec ? m_options.value(name) : QVariant();
 }
 
-void QGstreamerVideoEncode::setEncodingOption(const QString &name, const QVariant &value)
+void QGstreamerVideoEncode::setEncodingOption(
+        const QString &codec, const QString &name, const QVariant &value)
 {
-    m_options.insert(name,value);
+    if (codec == m_codec)
+        m_options.insert(name,value);
 }
 
 GstElement *QGstreamerVideoEncode::createEncoder()

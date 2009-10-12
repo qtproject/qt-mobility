@@ -182,34 +182,20 @@ QAudioEncoderControl::~QAudioEncoderControl()
   Returns the list of supported audio sample sizes, if known.
 */
 
+/*!
+    \fn QAudioEncoderControl::supportedEncodingOptions(const QString &codec) const
 
+    Returns the list of \a codec specific audio encoding options.
+*/
 
 /*!
-  Returns the list of \a codec specific audio encoding options.
+    \fn QAudioEncoderControl::encodingOption(const QString &codec, const QString &option) const
+
+    Returns value of audio encoding \a option.
 */
-QStringList QAudioEncoderControl::supportedEncodingOptions(const QString &codec) const
-{
-    Q_UNUSED(codec);
-    return QStringList();
-}
 
 /*!
-   Returns value of audio encoding \a option.
-*/
-QVariant QAudioEncoderControl::encodingOption(const QString &codec, const QString &option) const
-{
-    Q_UNUSED(codec);
-    Q_UNUSED(option);
-    return QVariant();
-}
+    \fn QAudioEncoderControl::setEncodingOption(const QString &codec, const QString &option, const QVariant &value)
 
-/*!
-  Set the \a codec specific \a option to \a value.
+    Set the \a codec specific \a option to \a value.
 */
-void QAudioEncoderControl::setEncodingOption(const QString &codec, const QString &option, const QVariant &value)
-{
-    Q_UNUSED(codec);
-    Q_UNUSED(option);
-    Q_UNUSED(value);
-}
-

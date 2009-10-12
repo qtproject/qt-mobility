@@ -129,6 +129,13 @@ bool QGstreamerPlayerControl::isSeekable() const
     return m_session->isSeekable();
 }
 
+QPair<qint64, qint64> QGstreamerPlayerControl::seekRange() const
+{
+    return m_session->isSeekable()
+            ? qMakePair<qint64, qint64>(0, m_session->duration())
+            : qMakePair<qint64, qint64>(0, 0);
+}
+
 qreal QGstreamerPlayerControl::playbackRate() const
 {
     return m_session->playbackRate();

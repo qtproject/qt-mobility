@@ -91,13 +91,13 @@ void AudioEncoderControl::setQuality(QMediaRecorder::EncodingQuality value)
     Q_UNUSED(value)
 }
 
-QStringList AudioEncoderControl::supportedEncodingOptions() const
+QStringList AudioEncoderControl::supportedEncodingOptions(const QString &codec) const
 {
     QStringList list;
     return list;
 }
 
-QVariant AudioEncoderControl::encodingOption(const QString &name) const
+QVariant AudioEncoderControl::encodingOption(const QString &code, const QString &name) const
 {
     if(qstrcmp(name.toLocal8Bit().constData(),"bitrate") == 0) {
         return QVariant(8000);
@@ -106,7 +106,8 @@ QVariant AudioEncoderControl::encodingOption(const QString &name) const
     return QVariant();
 }
 
-void AudioEncoderControl::setEncodingOption(const QString &name, const QVariant &value)
+void AudioEncoderControl::setEncodingOption(
+        const QString &codec, const QString &name, const QVariant &value)
 {
     Q_UNUSED(value)
 

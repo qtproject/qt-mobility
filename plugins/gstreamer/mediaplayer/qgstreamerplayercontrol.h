@@ -72,6 +72,7 @@ public:
     void setVideoOutput(QObject *output);
 
     bool isSeekable() const;
+    QPair<qint64, qint64> seekRange() const;
 
     qreal playbackRate() const;
     void setPlaybackRate(qreal rate);

@@ -62,9 +62,10 @@ public:
     virtual QMediaRecorder::EncodingQuality quality() const = 0;
     virtual void setQuality(QMediaRecorder::EncodingQuality) = 0;
 
-    virtual QStringList supportedEncodingOptions(const QString &codec) const;
-    virtual QVariant encodingOption(const QString &codec, const QString &name) const;
-    virtual void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
+    virtual QStringList supportedEncodingOptions(const QString &codec) const = 0;
+    virtual QVariant encodingOption(const QString &codec, const QString &name) const = 0;
+    virtual void setEncodingOption(
+            const QString &codec, const QString &name, const QVariant &value) = 0;
 
     virtual int frequency() const = 0;
     virtual void setFrequency(int frequency) = 0;

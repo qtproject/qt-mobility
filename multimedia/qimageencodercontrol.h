@@ -52,7 +52,7 @@ public:
     virtual QSize resolution() const = 0;
     virtual QSize minimumResolution() const = 0;
     virtual QSize maximumResolution() const = 0;
-    virtual QList<QSize> supportedResolutions() const;
+    virtual QList<QSize> supportedResolutions() const = 0;
     virtual void setResolution(const QSize &) = 0;
 
     virtual QStringList supportedImageCodecs() const = 0;

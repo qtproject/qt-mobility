@@ -68,6 +68,7 @@ public:
     bool isVideoAvailable() const { return _videoAvailable; }
 
     bool isSeekable() const { return _isSeekable; }
+    QPair<qint64, qint64> seekRange() const { return _seekRange; }
 
     qreal playbackRate() const { return _playbackRate; }
     void setPlaybackRate(qreal rate) { if (rate != _playbackRate) emit playbackRateChanged(_playbackRate = rate); }
@@ -90,6 +91,7 @@ public:
     int _bufferStatus;
     bool _videoAvailable;
     bool _isSeekable;
+    QPair<qint64, qint64> _seekRange;
     qreal _playbackRate;
     QMediaContent _media;
     QIODevice *_stream;

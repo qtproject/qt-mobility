@@ -114,7 +114,7 @@ int QGstreamerAudioEncode::bitrate() const
 
 void QGstreamerAudioEncode::setBitrate(int value)
 {
-    setEncodingOption(QLatin1String("bitrate"), QVariant(value));
+    setEncodingOption(m_codec, QLatin1String("bitrate"), QVariant(value));
 }
 
 QMediaRecorder::EncodingQuality QGstreamerAudioEncode::quality() const
@@ -125,22 +125,25 @@ QMediaRecorder::EncodingQuality QGstreamerAudioEncode::quality() const
 
 void QGstreamerAudioEncode::setQuality(QMediaRecorder::EncodingQuality value)
 {
-    setEncodingOption(QLatin1String("quality"), QVariant(value));
+    setEncodingOption(m_codec, QLatin1String("quality"), QVariant(value));
 }
 
-QStringList QGstreamerAudioEncode::supportedEncodingOptions() const
+QStringList QGstreamerAudioEncode::supportedEncodingOptions(const QString &codec) const
 {
-    return m_codecOptions.value(m_codec);
+    return m_codecOptions.value(codec);
 }
 
-QVariant QGstreamerAudioEncode::encodingOption(const QString &name) const
+QVariant QGstreamerAudioEncode::encodingOption(
+        const QString &codec, const QString &name) const
 {
-    return m_options.value(name);
+    return codec == m_codec ? m_options.value(name) : QVariant();
 }
 
-void QGstreamerAudioEncode::setEncodingOption(const QString &name, const QVariant &value)
+void QGstreamerAudioEncode::setEncodingOption(
+        const QString &codec, const QString &name, const QVariant &value)
 {
-    m_options.insert(name,value);
+    if (codec == m_codec)
+        m_options.insert(name,value);
 }
 
 QList<int> QGstreamerAudioEncode::supportedFrequencies() const
