@@ -247,6 +247,7 @@ private slots:
     void testSearch();
     void testVolume();
     void testSignal();
+    void testStereo();
 
 private:
     MockObject      *object;
@@ -266,10 +267,15 @@ void tst_QRadioTuner::init()
     provider = new MockProvider(service);
     radio = new QRadioTuner(0,provider);
     QVERIFY(radio->service() != 0);
+    radio->start();
 }
 
 void tst_QRadioTuner::cleanup()
 {
+    QVERIFY(radio->error() == QRadioTuner::NoError);
+    QVERIFY(radio->errorString().isEmpty());
+
+    radio->stop();
     delete radio;
     delete service;
     delete provider;
@@ -296,6 +302,11 @@ void tst_QRadioTuner::testFrequency()
     QTestEventLoop::instance().enterLoop(1);
     QVERIFY(radio->frequency() == 104500000);
     QVERIFY(readSignal.count() == 1);
+
+    QVERIFY(radio->frequencyStep(QRadioTuner::FM) == 1);
+    QPair<int,int> test = radio->frequencyRange(QRadioTuner::FM);
+    QVERIFY(test.first == 1);
+    QVERIFY(test.second == 2);
 }
 
 void tst_QRadioTuner::testMute()
@@ -345,6 +356,13 @@ void tst_QRadioTuner::testSignal()
 {
     QVERIFY(radio->signalStrength() == 0);
     // There is no set of this only a get, do nothing else.
+}
+
+void tst_QRadioTuner::testStereo()
+{
+    QVERIFY(radio->isStereo());
+    radio->setStereoMode(QRadioTuner::ForceMono);
+    QVERIFY(radio->stereoMode() == QRadioTuner::ForceMono);
 }
 
 QTEST_MAIN(tst_QRadioTuner)
