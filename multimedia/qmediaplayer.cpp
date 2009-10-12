@@ -176,7 +176,9 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaSer
 
     d->provider = provider;
 
-    if (d->service != 0) {
+    if (d->service == 0) {
+        d->error = ServiceMissingError;
+    } else {
         d->control = qobject_cast<QMediaPlayerControl*>(d->service->control(QMediaPlayerControl_iid));
         if (d->control != 0) {
             connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
