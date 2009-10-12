@@ -39,6 +39,8 @@
 class QFile;
 class QIODevice;
 class QVersitReader;
+class QVersitWriter;
+
 
 class VersitTest : public QObject
 {
@@ -63,7 +65,8 @@ private:
  
     QStringList* mExcludedFields;    
     QStringList mFiles;
-    QVersitReader* mReader; 
+    QVersitReader* mReader;
+    QVersitWriter* mWriter;
 };
 
 #endif // VERSITTEST_H

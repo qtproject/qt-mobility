@@ -41,11 +41,12 @@
 #include <QList>
 #include <QtTest/QtTest>
 #include <qversitreader.h>
+#include <qversitwriter.h>
 #include <qversitdocument.h>
 
 const QString inputDirPath = "c:\\data\\testvcards";
 const QString excludeFieldsFileName = "c:\\data\\testvcards\\excludefields.txt";
-const QString outputDirPath = "c:\\data\\vcard\\out";
+const QString outputDirPath = "c:\\data\\testvcards\\out";
 
 void VersitTest::initTestCase()
 {
@@ -73,10 +74,12 @@ void VersitTest::cleanupTestCase()
 void VersitTest::init()
 {
     mReader = new QVersitReader;
+    mWriter = new QVersitWriter;
 }
 
 void VersitTest::cleanup()
 {
+    delete mWriter;
     delete mReader;
 }
 
@@ -88,11 +91,12 @@ void VersitTest::test()
         QFile in(InFile);
         QVERIFY(in.open(QIODevice::ReadOnly));        
         QDir dir;
-        if(!dir.exists(outputDirPath))dir.mkdir(outputDirPath);
-        QFileInfo fInfo = in.fileName();
-        QFile out(outputDirPath+"\\"+fInfo.fileName());
+        if (!dir.exists(outputDirPath))
+            dir.mkdir(outputDirPath);
+        QFileInfo fileInfo = in.fileName();
+        QFile out(outputDirPath+ "\\" + fileInfo.fileName());
         QVERIFY(out.open(QIODevice::ReadWrite));
-        executeTest(in,out);
+        QBENCHMARK { executeTest(in,out); }
         in.close();
         out.close();        
     }
@@ -112,7 +116,16 @@ void VersitTest::test_data()
 void VersitTest::executeTest(QFile& in, QIODevice& out)
 {    
     mReader->setDevice(&in);
+    mWriter->setDevice(&out);
     QVERIFY2(mReader->start(), in.fileName().toAscii().constData());
+    foreach (QVersitDocument document, mReader->result()) {
+        mWriter->setVersitDocument(document);
+        QVERIFY2(mWriter->start(), in.fileName().toAscii().constData());
+    }
+    in.seek(0);
+    out.seek(0);
+    VCardComparator comparator(in,out,*mExcludedFields);
+    QCOMPARE(QString(),comparator.nonMatchingLines());   
 }
 
 

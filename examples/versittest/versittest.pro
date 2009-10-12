@@ -8,9 +8,9 @@ DEPENDPATH += .
 INCLUDEPATH += .
 
 # Input
-HEADERS += versittest.h performancetest.h
+HEADERS += versittest.h
 
-SOURCES += main.cpp versittest.cpp vcardcomparator.cpp testresultxmlparser.cpp performancetest.cpp
+SOURCES += main.cpp versittest.cpp vcardcomparator.cpp testresultxmlparser.cpp
 
 LIBS += -lQtContacts -lQtVersit
 
