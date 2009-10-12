@@ -11,7 +11,6 @@
 #include "qcontactabstractrequest.h"
 #include "qcontactmanagerengine.h"
 
-
 #include <QtTracker/ontologies/nie.h>
 #include <QtTracker/ontologies/nco.h>
 
@@ -19,8 +18,10 @@
 #include "qcontactfilters.h"
 #include "qcontactrequests.h"
 #include "qtrackercontactasyncrequest.h"
-using namespace SopranoLive;
+#include "debuglevel.h"
 
+using namespace SopranoLive;
+using namespace hcontacts;
 
 void applyFilterToRDFVariable(RDFVariable &variable,
         const QContactFilter &filter)
@@ -30,7 +31,7 @@ void applyFilterToRDFVariable(RDFVariable &variable,
         if( !filt.ids().isEmpty() )
             variable.property<nco::contactUID>().isMemberOf(filt.ids());// = LiteralValue(filt.ids()[0]);
         else
-            qWarning()<<Q_FUNC_INFO<<"QContactIdListFilter idlist is empty";
+            warning() << Q_FUNC_INFO << "QContactIdListFilter idlist is empty";
     }
     else if (filter.type() == QContactFilter::ContactDetail){
         // right now implementing this for phone numbers
@@ -56,7 +57,7 @@ void applyFilterToRDFVariable(RDFVariable &variable,
                 rdfEmailAddress.property<nco::emailAddress>() = LiteralValue(filt.value().toString());
             }
             else
-                qWarning()<<"QContactTrackerEngine: Unsupported QContactFilter::ContactDetail"<<filt.detailDefinitionName();
+                warning() << "QContactTrackerEngine: Unsupported QContactFilter::ContactDetail" << filt.detailDefinitionName();
         }
     }
     else if(filter.type() == QContactFilter::ChangeLog)
@@ -70,7 +71,7 @@ void applyFilterToRDFVariable(RDFVariable &variable,
         if (clFilter.changeType() == QContactChangeLogFilter::Removed) {
             // did not find how to set errror to async request
             // error = QContactManager::NotSupportedError;
-            qWarning()<<"QContactTrackerEngine: Unsupported QContactChangeLogFilter::Removed (contacts removed since)";
+            warning() << "QContactTrackerEngine: Unsupported QContactChangeLogFilter::Removed (contacts removed since)";
         }
         // Added since
         else if (clFilter.changeType() == QContactChangeLogFilter::Added) {
@@ -348,23 +349,23 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(
 
     // supporting sorting only here, difficult and no requirements in UI for sorting in multivalue details (phones, emails)
     foreach(QContactSortOrder sort, r->sorting())
+    {
+        if (sort.detailDefinitionName() == QContactName::DefinitionName)
         {
-            if (sort.detailDefinitionName() == QContactName::DefinitionName)
-            {
-                if (sort.detailFieldName() == QContactName::FieldFirst)
-                    quer.orderBy(firstname);
-                else if (sort.detailFieldName() == QContactName::FieldLast)
-                    quer.orderBy(lastname);
-                else
-                    qWarning() << "QTrackerContactFetchRequest" << "sorting by"
-                            << sort.detailDefinitionName()
-                            << sort.detailFieldName() << "is not yet supported";
-            }
+            if (sort.detailFieldName() == QContactName::FieldFirst)
+                quer.orderBy(firstname);
+            else if (sort.detailFieldName() == QContactName::FieldLast)
+                quer.orderBy(lastname);
             else
-                qWarning() << "QTrackerContactFetchRequest" << "sorting by"
-                        << sort.detailDefinitionName()
-                        << "is not yet supported";
+                warning() << "QTrackerContactFetchRequest" << "sorting by"
+                    << sort.detailDefinitionName()
+                    << sort.detailFieldName() << "is not yet supported";
         }
+        else
+            warning() << "QTrackerContactFetchRequest" << "sorting by"
+                << sort.detailDefinitionName()
+                << "is not yet supported";
+    }
     query = ::tracker()->modelQuery(quer);
     // need to store LiveNodes in order to receive notification from model
     QObject::connect(query.model(), SIGNAL(modelUpdated()), this, SLOT(contactsReady()));
@@ -568,7 +569,7 @@ void QTrackerContactFetchRequest::contactsReady()
     }
     if(request->definitionRestrictions().contains( QContactEmailAddress::DefinitionName ))
     {
-        qDebug() << "processQueryEmailAddresses";
+        debug() << "processQueryEmailAddresses";
         Q_ASSERT(queryEmailAddressNodes.size() == 2);
         for( int cnt = 0; cnt < queryEmailAddressNodes.size(); cnt++)
             processQueryEmailAddresses(queryEmailAddressNodes[cnt], result, cnt);
@@ -626,7 +627,7 @@ const QString rdfPhoneType2QContactSubtype(const QString rdfPhoneType)
     else if ( rdfPhoneType.endsWith("MessagingNumber") )
         return QContactPhoneNumber::SubTypeMessagingCapable;
     else
-        qWarning()<<Q_FUNC_INFO<<"Not handled phone number type:"<<rdfPhoneType;
+        warning() << Q_FUNC_INFO << "Not handled phone number type:" << rdfPhoneType;
     return "";
 }
 
@@ -637,7 +638,10 @@ void QTrackerContactFetchRequest::processQueryPhoneNumbers(SopranoLive::LiveNode
     Q_ASSERT_X( queryPhoneNumbersNodesReady==2, Q_FUNC_INFO, "Phonenumbers query was supposed to be ready and it is not." );
     for(int i = 0; i < queryPhoneNumbers->rowCount(); i++)
     {
-        qDebug()<<Q_FUNC_INFO<<i<<queryPhoneNumbers->rowCount()<<queryPhoneNumbers->columnCount()<<queryPhoneNumbers->index(i, 0).data().toString()<<queryPhoneNumbers->index(i, 1).data().toString()<<queryPhoneNumbers->index(i, 2).data().toString();
+        debug() << Q_FUNC_INFO << i << queryPhoneNumbers->rowCount() << queryPhoneNumbers->columnCount()
+            << queryPhoneNumbers->index(i, 0).data().toString()
+            << queryPhoneNumbers->index(i, 1).data().toString()
+            << queryPhoneNumbers->index(i, 2).data().toString();
         // ignore if next one is the same - asked iridian about making query to ignore supertypes
         // TODO remove after his answer
         if( i-1 >= 0
@@ -675,7 +679,7 @@ void QTrackerContactFetchRequest::processQueryEmailAddresses( SopranoLive::LiveN
     Q_ASSERT_X( queryEmailAddressNodesReady==2, Q_FUNC_INFO, "Email query was supposed to be ready and it is not." );
     for(int i = 0; i < queryEmailAddresses->rowCount(); i++)
     {
-        qDebug()<< Q_FUNC_INFO << i
+        debug() << Q_FUNC_INFO << i
                 << queryEmailAddresses->rowCount()
                 << queryEmailAddresses->columnCount()
                 << queryEmailAddresses->index(i, 0).data().toString()
@@ -719,7 +723,11 @@ void QTrackerContactFetchRequest::processQueryIMAccounts(SopranoLive::LiveNodes 
     for(int i = 0; i < queryIMAccounts->rowCount(); i++)
     {   //contactid, imid, status, message, nick, type
 
-        qDebug()<<Q_FUNC_INFO<<queryIMAccounts->index(i, 0).data().toString()<<queryIMAccounts->index(i, 1).data().toString()<<queryIMAccounts->index(i, 2).data().toString()<<queryIMAccounts->index(i, 3).data().toString();
+        debug() << Q_FUNC_INFO
+            << queryIMAccounts->index(i, 0).data().toString()
+            << queryIMAccounts->index(i, 1).data().toString()
+            << queryIMAccounts->index(i, 2).data().toString()
+            << queryIMAccounts->index(i, 3).data().toString();
 
         QUniqueId contactid = queryIMAccounts->index(i, 0).data().toUInt();
         // TODO replace this lookup with something faster
@@ -741,7 +749,7 @@ void QTrackerContactFetchRequest::processQueryIMAccounts(SopranoLive::LiveNodes 
                     presence.setContexts(QContactPresence::ContextWork);
                 presence.setValue(QContactPresence::FieldNickname, queryIMAccounts->index(i, 4).data().toString()); // nick
                 presence.setValue(QContactPresence::FieldPresence, queryIMAccounts->index(i, 2).data().toString()); // imStatus
-                qDebug() << "the status from **tracker**" << presence.value(QContactPresence::FieldPresence);
+                debug() << "the status from **tracker**" << presence.value(QContactPresence::FieldPresence);
                 presence.setValue(QContactPresence::FieldStatusMessage, queryIMAccounts->index(i, 3).data().toString()); // imStatusMessage
                 contacts[j].saveDetail(&presence);
                 break;

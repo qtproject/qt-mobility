@@ -10,11 +10,14 @@
 
 
 #include <QtTracker/ontologies/nco.h>
+#include <QDebug>
 
 #include "trackerchangelistener.h"
 #include "qcontact.h"
+#include "debuglevel.h"
 
 using namespace SopranoLive;
+using namespace hcontacts;
 
 TrackerChangeListener::TrackerChangeListener(QObject* parent)
 :QObject(parent)
@@ -62,7 +65,7 @@ QUniqueId url2UniqueId(const QString &contactUrl)
         id = rx.cap(1).toUInt(&conversion, 10);
     }
     if( !conversion )
-        qWarning()<<Q_FUNC_INFO<<"unparsed uri to uniqueI:"<<contactUrl;
+        warning() << Q_FUNC_INFO << "unparsed uri to uniqueI:" << contactUrl;
     return id;
 
 }
@@ -74,7 +77,7 @@ void TrackerChangeListener::subjectsAdded(const QStringList &subjects)
     {
         added << url2UniqueId(uri);
     }
-    qDebug()<<Q_FUNC_INFO<<"added contactids:"<<added;
+    debug() << Q_FUNC_INFO << "added contactids:" << added;
     emit contactsAdded(added);
 }
 
@@ -85,7 +88,7 @@ void TrackerChangeListener::subjectsRemoved(const QStringList &subjects)
     {
         added << url2UniqueId(uri);
     }
-    qDebug()<<Q_FUNC_INFO<<"removed contactids:"<<added;
+    debug() << Q_FUNC_INFO << "removed contactids:" << added;
     emit contactsRemoved(added);
 }
 
@@ -97,13 +100,13 @@ void TrackerChangeListener::subjectsChanged(const QStringList &subjects)
     {
         added << url2UniqueId(uri);
     }
-    qDebug()<<Q_FUNC_INFO<<"changed contactids:"<<added;
+    debug() << Q_FUNC_INFO << "changed contactids:" << added;
     emit contactsChanged(added);
 }
 
 void TrackerChangeListener::imAccountChanged(const QStringList& subjects) {
     // leave the debug output for few days as TODO remainder to fix writing to tracker
-    qDebug()<<Q_FUNC_INFO<<subjects;
+    debug() << Q_FUNC_INFO << subjects;
 
     RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
     // fetch all changed contacts at once

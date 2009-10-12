@@ -23,10 +23,12 @@
 #include "qcontactgroup_p.h"
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
-
+#include "debuglevel.h"
 
 #include "trackerchangelistener.h"
 #include "qtrackercontactsaverequest.h"
+
+using namespace hcontacts;
 
 QContactManagerEngine* ContactTrackerFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
@@ -148,7 +150,7 @@ QList<QUniqueId> QContactTrackerEngine::contacts(const QList<QContactSortOrder>&
 
 QContact QContactTrackerEngine::contact(const QUniqueId& contactId, QContactManager::Error& error ) const
 {
-    qWarning()<<"QContactManager::contact()"<<"api is not supported for tracker plugin. Please use asynchronous API QContactFetchRequest.";
+    warning() << "QContactManager::contact()" << "api is not supported for tracker plugin. Please use asynchronous API QContactFetchRequest.";
     return contact_impl(contactId, error);
 }
 // used in tests, removed warning while decided if to provide sync api. Until then customers are advised to use async
@@ -210,7 +212,7 @@ bool QContactTrackerEngine::waitForRequestFinished(QContactAbstractRequest* req,
         if(req->isFinished())
             return true;
     }
-    qDebug()<<Q_FUNC_INFO<<"not finished";
+    debug() << Q_FUNC_INFO << "not finished";
     return req->isFinished();
 
 }
@@ -385,11 +387,11 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
         // none in the list?  get the schema definitions, and modify them to match our capabilities.
         d->m_definitions = QContactManagerEngine::schemaDefinitions();
         {
-            qDebug() << "the definitions";
+            debug() << "the definitions";
             QList<QString> defs = d->m_definitions.keys();
             foreach(QString def,  defs)
             {
-                qDebug() << def;
+                debug() << def;
             }
         }
         // modification: name is unique
