@@ -8,7 +8,8 @@ TEMPLATE = app
 TARGET = testmodel
 DEPENDPATH += .
 INCLUDEPATH += .
-LIBS += -lQtContacts
+
+qtAddLibrary(QtContacts)
 
 include(../../common.pri)
 

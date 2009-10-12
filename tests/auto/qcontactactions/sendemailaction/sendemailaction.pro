@@ -13,8 +13,6 @@ include(../../../../common.pri)
 DEFINES += ACTIONFACTORYPLUGINTARGET=contacts_sendemailactionfactory
 DEFINES += ACTIONFACTORYPLUGINNAME=SendEmailActionFactory
 
-LIBS += -lQtContacts
-
 HEADERS += sendemailaction_p.h
 SOURCES += sendemailaction.cpp
 

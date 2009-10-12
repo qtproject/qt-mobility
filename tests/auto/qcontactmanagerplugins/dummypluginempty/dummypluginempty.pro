@@ -14,7 +14,4 @@ DEFINES += DUMMYPLUGINTARGET=contacts_testdummyempty
 
 SOURCES += ../dummyplugin/dummyplugin.cpp
 
-# We need to link against this for all sorts of reasons :)
-LIBS += -lQtContacts
-
 include(../../contacts_plugins.pri)
