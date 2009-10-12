@@ -32,6 +32,7 @@
 ****************************************************************************/
 
 #include "qvaluespace.h"
+#include "qvaluespace_p.h"
 
 #include <QSet>
 #include <QDebug>
@@ -41,6 +42,8 @@
 
 QT_BEGIN_NAMESPACE
 
+using namespace QValueSpace;
+
 #define CONTEXTKIT_LAYER_PREFIX "C"
 
 /* ContextKit layer
@@ -48,14 +51,11 @@ QT_BEGIN_NAMESPACE
    This layer makes ContextKit properties visible in the QValueSpace.
    All properties appear as direct children of "/C".  A property with
    the name "Battery.ChargePercentage", for example, is visible as the
-   item names "/C/Battery.ChargePercentage".
+   item named "/C/Battery.ChargePercentage".
 
    You can not publish values of ContextKit properties using the
    QValueSpace.  This might be fixed later.
 */
-
-// XXX - ContextProperty keys are strings, but ValueSpaceItem paths
-//       are ByteArrays.  We assume that the ByteArrays are unicode.
 
 // XXX - Right now, this code assumes that a 'subPath' given to
 //       'value' is always the name of a direct child, and never a
@@ -83,8 +83,7 @@ public:
     ContextKitLayer();
     virtual ~ContextKitLayer();
 
-    ContextProperty *get_prop (const QByteArray &path);
-    ContextProperty *get_prop_from_key (const QString &key);
+    ContextProperty *get_prop (const QString &path);
     void get_all_props ();
 
     /* ValueSpaceLayer interface - Common functions */
@@ -94,28 +93,29 @@ public:
     unsigned int order();
     LayerOptions layerOptions() const;
 
-    Handle item(Handle parent, const QByteArray &);
+    Handle item(Handle parent, const QString &);
     void removeHandle(Handle);
     void setProperty(Handle handle, Properties);
 
     bool value(Handle, QVariant *);
-    bool value(Handle, const QByteArray &, QVariant *);
-    QSet<QByteArray> children(Handle);
+    bool value(Handle, const QString &, QVariant *);
+    QSet<QString> children(Handle);
 
     /* ValueSpaceLayer interface - QValueSpaceItem functions */
+    bool supportsInterestNotification() const { return true; }
     bool notifyInterest(Handle handle, bool interested);
     bool supportsRequests() const { return false; }
     bool requestSetValue(Handle, const QVariant &) { return false; }
-    bool requestSetValue(Handle, const QByteArray &, const QVariant &) { return false; }
-    bool requestRemoveValue(Handle, const QByteArray &) { return false; }
+    bool requestSetValue(Handle, const QString &, const QVariant &) { return false; }
+    bool requestRemoveValue(Handle, const QString &) { return false; }
     bool syncRequests() { return false; }
 
-    /* ValueSpaceLayer interface - QValueSpaceObject functions */
-    bool setValue(QValueSpaceObject *, Handle, const QByteArray &, const QVariant &) { return false; }
-    bool removeValue(QValueSpaceObject *, Handle, const QByteArray &) { return false; }
-    bool removeSubTree(QValueSpaceObject *, Handle) { return false; }
-    void addWatch(QValueSpaceObject *, Handle) { return; }
-    void removeWatches(QValueSpaceObject *, Handle) { return; }
+    /* ValueSpaceLayer interface - QValueSpaceProvider functions */
+    bool setValue(QValueSpaceProvider *, Handle, const QString &, const QVariant &) { return false; }
+    bool removeValue(QValueSpaceProvider *, Handle, const QString &) { return false; }
+    bool removeSubTree(QValueSpaceProvider *, Handle) { return false; }
+    void addWatch(QValueSpaceProvider *, Handle) { return; }
+    void removeWatches(QValueSpaceProvider *, Handle) { return; }
     void sync() { return; }
 
     static ContextKitLayer *instance();
@@ -165,17 +165,12 @@ unsigned int ContextKitLayer::order()
     return 0;
 }
 
-QAbstractValueSpaceLayer::LayerOptions ContextKitLayer::layerOptions () const
+LayerOptions ContextKitLayer::layerOptions () const
 {
     return NonPermanentLayer | NonWriteableLayer;
 }
 
-ContextProperty *ContextKitLayer::get_prop (const QByteArray &path)
-{
-    return get_prop_from_key (QString::fromUtf8 (path));
-}
-
-ContextProperty *ContextKitLayer::get_prop_from_key (const QString &key)
+ContextProperty *ContextKitLayer::get_prop (const QString &key)
 {
     ContextProperty *p = props.value (key);
     if (p == NULL)
@@ -195,11 +190,11 @@ void ContextKitLayer::get_all_props ()
     QStringList keys = registry->listKeys();
     
     foreach (const QString &key, keys)
-        get_prop_from_key (key);
+        get_prop (key);
     got_all_props = true;
 }
 
-QAbstractValueSpaceLayer::Handle ContextKitLayer::item (Handle parent, const QByteArray &subPath)
+QAbstractValueSpaceLayer::Handle ContextKitLayer::item (Handle parent, const QString &subPath)
 {
     if (parent == InvalidHandle
         && subPath == "/" CONTEXTKIT_LAYER_PREFIX)
@@ -281,12 +276,12 @@ bool ContextKitLayer::notifyInterest(Handle handle, bool interested)
     }
 }
 
-bool ContextKitLayer::value(Handle handle, const QByteArray &subPath, QVariant *data)
+bool ContextKitLayer::value(Handle handle, const QString &subPath, QVariant *data)
 {
     // XXX - can handle be InvalidHandle and subPath be something like
     //       "/C/Battery.Foo"?  Does subPath always start with a slash?
 
-     if (handle == (Handle) this)
+    if (handle == (Handle) this)
     {
         ContextProperty *p = get_prop (subPath.mid(1));
         *data = p->value();
@@ -298,19 +293,19 @@ bool ContextKitLayer::value(Handle handle, const QByteArray &subPath, QVariant *
     }
 }
 
-QSet<QByteArray> ContextKitLayer::children (Handle handle)
+QSet<QString> ContextKitLayer::children (Handle handle)
 {
     if (handle == (Handle) this)
     {
-        QSet<QByteArray> kids;
+        QSet<QString> kids;
 
         get_all_props ();
         foreach (const QString &key, props.keys())
-            kids.insert (key.toUtf8());
+            kids.insert (key);
         return kids;
     }
     else
-        return QSet<QByteArray>();
+        return QSet<QString>();
 }
 
 QT_END_NAMESPACE
