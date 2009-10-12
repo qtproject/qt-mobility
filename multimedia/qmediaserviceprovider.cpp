@@ -46,7 +46,7 @@ class QMediaServiceProviderHintPrivate : public QSharedData
 {
 public:
     QMediaServiceProviderHintPrivate(QMediaServiceProviderHint::Type type)
-        :type(type)
+        :type(type), features(0)
     {
     }
 
