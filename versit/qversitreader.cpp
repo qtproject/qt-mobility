@@ -112,7 +112,7 @@ QVersitDocument QVersitReader::parseVersitDocument(QByteArray& text)
     text = text.mid(VersitUtils::countLeadingWhiteSpaces(text));
     QVersitProperty property = parseNextVersitProperty(text);
     if (property.name() == QString::fromAscii("BEGIN") && 
-        property.value().trimmed() == "VCARD") {
+        property.value().trimmed().toUpper() == "VCARD") {
         while (property.name().length() > 0 && 
                property.name() != QString::fromAscii("END")) {
             property = parseNextVersitProperty(text);   

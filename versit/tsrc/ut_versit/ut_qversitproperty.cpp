@@ -50,35 +50,40 @@ void UT_QVersitProperty::cleanup()
 
 void UT_QVersitProperty::testName()
 {
-    QString name("TEL");
+    // Name in upper case
+    QString name(QString::fromAscii("TEL"));
     mVersitProperty->setName(name);
     QCOMPARE(mVersitProperty->name(), name);
+    
+    // Name in lower case, converted automatically to upper case
+    mVersitProperty->setName(QString::fromAscii("tel"));
+    QCOMPARE(mVersitProperty->name(), name);    
 }
 
 void UT_QVersitProperty::testParameters()
 {
-    QString name("TYPE");
-    QString value1("HOME");
-    mVersitProperty->addParameter(name,value1);
-    QMultiMap<QString,QString> params = mVersitProperty->parameters();
-    QCOMPARE(params.count(), 1);
-    QVERIFY(params.contains(name,value1));
+    QString typeParameterName(QString::fromAscii("TYPE"));
     
-    QString value2("VOICE");
+    QString name(QString::fromAscii("type"));
+    QString value1(QString::fromAscii("home"));
+    mVersitProperty->addParameter(name,value1);
+    QMultiMap<QString,QString> parameters = mVersitProperty->parameters();
+    QCOMPARE(parameters.count(), 1);
+    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("HOME")));
+    
+    QString value2(QString::fromAscii("voice"));
     mVersitProperty->addParameter(name,value2);
-    params = mVersitProperty->parameters();
-    QCOMPARE(params.count(), 2);
-    QVERIFY(params.contains(name,value1));
-    QVERIFY(params.contains(name,value2));
+    parameters = mVersitProperty->parameters();
+    QCOMPARE(parameters.count(), 2);
+    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("HOME")));
+    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("VOICE")));
     
     mVersitProperty->removeParameter(name,value1);
-    params = mVersitProperty->parameters();
-    QCOMPARE(params.count(), 1);
-    QVERIFY(params.contains(name,value2));
+    QCOMPARE(mVersitProperty->parameters().count(), 1);
+    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("HOME")));
     
     mVersitProperty->removeParameter(name,value2);
-    params = mVersitProperty->parameters();
-    QCOMPARE(params.count(), 0);    
+    QCOMPARE(mVersitProperty->parameters().count(), 0);    
 }
 
 void UT_QVersitProperty::testValue()
@@ -98,5 +103,5 @@ void UT_QVersitProperty::testEmbeddedDocument()
     QList<QVersitProperty> embeddedDocumentProperties = 
         mVersitProperty->embeddedDocument().properties();
     QCOMPARE(embeddedDocumentProperties.count(),1);
-    QCOMPARE(embeddedDocumentProperties[0].name(),QString::fromAscii("X-tension"));
+    QCOMPARE(embeddedDocumentProperties[0].name(),QString::fromAscii("X-TENSION"));
 }

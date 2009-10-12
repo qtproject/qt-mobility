@@ -33,6 +33,7 @@
 
 #include "qversitproperty.h"
 #include "qversitproperty_p.h"
+#include <QStringList>
 
 /*! Constructs a new empty property */
 QVersitProperty::QVersitProperty() : d(new QVersitPropertyPrivate())
@@ -62,7 +63,7 @@ QVersitProperty& QVersitProperty::operator=(const QVersitProperty& other)
  */
 void QVersitProperty::setName(const QString& name)
 {
-    d->mName = name;
+    d->mName = name.toUpper();
 }
 
 /*!
@@ -78,7 +79,11 @@ QString QVersitProperty::name() const
  */
 void QVersitProperty::setParameters(const QMultiMap<QString,QString>& parameters)
 {
-    d->mParameters = parameters;
+    // Convert all the parameter names and values to upper case
+    d->mParameters.clear();
+    foreach (QString key, parameters.uniqueKeys())
+        foreach (QString value, parameters.values(key))
+            addParameter(key,value);
 }
 
 /*!
@@ -86,7 +91,7 @@ void QVersitProperty::setParameters(const QMultiMap<QString,QString>& parameters
  */
 void QVersitProperty::addParameter(const QString& name, const QString& value)
 {
-    d->mParameters.insert(name,value);
+    d->mParameters.insert(name.toUpper(),value.toUpper());
 }
 
 /*!
@@ -94,7 +99,7 @@ void QVersitProperty::addParameter(const QString& name, const QString& value)
  */
 void QVersitProperty::removeParameter(const QString& name, const QString& value)
 {
-    d->mParameters.remove(name,value);
+    d->mParameters.remove(name.toUpper(),value.toUpper());
 }
 
 /*!

@@ -81,7 +81,7 @@ void UT_QVersitReader::testStart()
 
     // Device set, one document
     const QByteArray& oneDocument = 
-        "BEGIN:VCARD\r\nVERSION:2.1\r\nN:Homer\r\nEND:VCARD\r\n";
+        "Begin:VCARD\r\nVERSION:2.1\r\nN:Homer\r\nenD:VCARD\r\n";
     buffer.write(oneDocument);
     buffer.seek(0);
     QVERIFY(m_reader->start());
@@ -89,7 +89,7 @@ void UT_QVersitReader::testStart()
     
     // Two documents
     const QByteArray& twoDocuments = 
-        "BEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\nBEGIN:VCARD\r\nN:Bart\r\nEND:VCARD\r\n";
+        "begin:VCARD\r\nN:Marge\r\nEND:VCARD\r\nBEGIN:VCARD\r\nN:Bart\r\nend:VCARD\r\n";
     buffer.reset();
     buffer.write(twoDocuments);
     buffer.seek(0);
@@ -107,16 +107,16 @@ void UT_QVersitReader::testParseNextVersitProperty()
     // Test a valid card with properties having separate handling: 
     // AGENT property, some property with parameter ENCODING=QUOTED-PRINTABLE 
     // and some other property without this parameter
-    QByteArray vCard("BEGIN:VCARD\r\n");
+    QByteArray vCard("Begin:vcard\r\n");
     vCard.append("VERSION:2.1\r\n");
     vCard.append("N:Homer\r\n");
-    vCard.append("EMAIL;ENCODING=QUOTED-PRINTABLE:homer=40simp=\r\nsons.com\r\n");
+    vCard.append("EMAIL;Encoding=Quoted-Printable:homer=40simp=\r\nsons.com\r\n");
     vCard.append("AGENT:\r\nBEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\r\n");
-    vCard.append("END:VCARD\r\n");
+    vCard.append("End:VCARD\r\n");
     
     QVersitProperty property = m_reader->parseNextVersitProperty(vCard);
     QCOMPARE(property.name(),QString::fromAscii("BEGIN"));
-    QCOMPARE(property.value(),QByteArray("VCARD"));
+    QCOMPARE(property.value(),QByteArray("vcard"));
     
     property = m_reader->parseNextVersitProperty(vCard);
     QCOMPARE(property.name(),QString::fromAscii("VERSION"));
@@ -161,7 +161,7 @@ void UT_QVersitReader::testParseVersitDocument()
 "BEGIN:VCARD\r\n\
 VERSION:2.1\r\n\
 N:Homer\r\n\
-AGENT:BEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\
+AGENT:BEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\r\n\
 EMAIL;ENCODING=QUOTED-PRINTABLE:homer=40simp=\r\nsons.com\r\n\
 END:VCARD\r\n";
     QByteArray vCard(validCard);

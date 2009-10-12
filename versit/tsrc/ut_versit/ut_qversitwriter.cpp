@@ -144,13 +144,13 @@ END:VCARD\r\n";
 
 void UT_QVersitWriter::testEncodeVersitProperty()
 {
-    const char simpleProperty[] = "BEGIN:VCARD\r\n"; 
+    QByteArray simpleProperty = "BEGIN:VCARD\r\n"; 
     QVersitProperty property;
     property.setName(QString("BEGIN"));
     property.setValue(QByteArray("VCARD"));
-    QVERIFY(mWriter->encodeVersitProperty(property) == simpleProperty);
+    QCOMPARE(mWriter->encodeVersitProperty(property), simpleProperty);
     
-    const char oneParamValueProperty[] = 
+    QByteArray  oneParamValueProperty = 
         "LABEL;ENCODING=QUOTED-PRINTABLE:123\r\n";    
     QVersitProperty property1;
     property1.setName(QString("LABEL"));
@@ -158,9 +158,9 @@ void UT_QVersitWriter::testEncodeVersitProperty()
     QMultiMap<QString,QString> params1;
     params1.insert(QString("ENCODING"), QString("QUOTED-PRINTABLE"));
     property1.setParameters(params1);
-    QVERIFY(mWriter->encodeVersitProperty(property1) == oneParamValueProperty);
+    QCOMPARE(mWriter->encodeVersitProperty(property1), oneParamValueProperty);
 
-    const char oneParamProperty[] = 
+    QByteArray oneParamProperty = 
         "ADR;HOME:14 Bridge Street, FL1850, USA\r\n";
     QVersitProperty property2;
     property2.setName(QString("ADR"));
@@ -168,16 +168,16 @@ void UT_QVersitWriter::testEncodeVersitProperty()
     QMultiMap<QString,QString> params2;
     params2.insert(QString("TYPE"), QString("HOME"));
     property2.setParameters(params2);
-    QVERIFY(mWriter->encodeVersitProperty(property2) == oneParamProperty);
+    QCOMPARE(mWriter->encodeVersitProperty(property2), oneParamProperty);
     
-    const char moreParamsProperty[] = 
-        "ADR;HOME;DOM:2009 Santa Clauss Street, Lapland, Finland\r\n";
+    QByteArray moreParamsProperty = 
+        "ADR;HOME;DOM:2009 Santa Claus Street, Lapland, Finland\r\n";
     QVersitProperty property3;
     property3.setName(QString("ADR"));
-    property3.setValue(QByteArray("2009 Santa Clauss Street, Lapland, Finland"));
+    property3.setValue(QByteArray("2009 Santa Claus Street, Lapland, Finland"));
     QMultiMap<QString,QString> params3;
-    params3.insert(QString("TYPE"), QString("DOM"));
     params3.insert(QString("TYPE"), QString("HOME"));
+    params3.insert(QString("TYPE"), QString("DOM"));
     property3.setParameters(params3);
-    QVERIFY(mWriter->encodeVersitProperty(property3) == moreParamsProperty);
+    QCOMPARE(mWriter->encodeVersitProperty(property3), moreParamsProperty);
 }
