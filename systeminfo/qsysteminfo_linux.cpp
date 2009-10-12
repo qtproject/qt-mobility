@@ -732,9 +732,9 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
     return QSystemNetworkInfo::UndefinedStatus;
 }
 
+#if !defined(QT_NO_DBUS)
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::getBluetoothNetStatus()
 {
-#if !defined(QT_NO_DBUS)
     QDBusConnection dbusConnection = QDBusConnection::systemBus();
     QDBusInterface *connectionInterface;
     connectionInterface = new QDBusInterface("org.bluez",
@@ -756,8 +756,8 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::getBluetoothNetStat
         }
        }
        return QSystemNetworkInfo::UndefinedStatus;
-#endif
    }
+#endif
 
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
@@ -1119,6 +1119,7 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
     return QNetworkInterface();
 }
 
+#if !defined(QT_NO_DBUS)
 bool QSystemNetworkInfoPrivate::isDefaultInterface(const QString &deviceName)
 {
     QFile routeFilex("/proc/net/route");
@@ -1164,6 +1165,7 @@ QString QSystemNetworkInfoPrivate::getBluetoothInfo(const QString &file)
     }
     return QString();
 }
+#endif
 
 //////// QSystemDisplayInfo
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
