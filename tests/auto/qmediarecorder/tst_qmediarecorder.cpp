@@ -368,6 +368,8 @@ public:
         return m_position;
     }
 
+    using QMediaRecorderControl::error;
+
 public slots:
     void record()
     {
@@ -452,6 +454,7 @@ public slots:
     void cleanup();
 
 private slots:
+    void testError();
     void testSink();
     void testRecord();
     void testAudioDeviceControl();
@@ -469,9 +472,12 @@ private:
     QVideoEncoderControl* videoEncode;
 };
 
+Q_DECLARE_METATYPE(QMediaRecorder::Error);
+
 void tst_QMediaRecorder::init()
 {
     qRegisterMetaType<QMediaRecorder::State>("QMediaRecorder::State");
+    qRegisterMetaType<QMediaRecorder::Error>();
 
     mock = new MockProvider(this);
     service = new MockService(this, mock);
@@ -489,6 +495,22 @@ void tst_QMediaRecorder::cleanup()
     delete object;
     delete service;
     delete mock;
+}
+
+void tst_QMediaRecorder::testError()
+{
+    const QString errorString(QLatin1String("format error"));
+
+    QSignalSpy spy(capture, SIGNAL(error(QMediaRecorder::Error)));
+
+    QCOMPARE(capture->error(), QMediaRecorder::NoError);
+    QCOMPARE(capture->errorString(), QString());
+
+    mock->error(QMediaRecorder::FormatError, errorString);
+    QCOMPARE(capture->error(), QMediaRecorder::FormatError);
+    QCOMPARE(capture->errorString(), errorString);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(qvariant_cast<QMediaRecorder::Error>(spy.last().value(0)), QMediaRecorder::FormatError);
 }
 
 void tst_QMediaRecorder::testSink()
