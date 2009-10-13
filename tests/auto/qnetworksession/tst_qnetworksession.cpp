@@ -307,7 +307,10 @@ void tst_QNetworkSession::sessionOpenCloseStop()
     {
         QVERIFY(session.configuration() == configuration);
         QVERIFY(!session.isActive());
-        QVERIFY(session.state() != QNetworkSession::Invalid);
+        // session may be invalid if configuration is removed between when
+        // sessionOpenCloseStop_data() is called and here.
+        QVERIFY(configuration.isValid() && (session.state() != QNetworkSession::Invalid) ||
+                !configuration.isValid() && (session.state() == QNetworkSession::Invalid));
         QVERIFY(session.error() == QNetworkSession::UnknownSessionError);
     }
 
