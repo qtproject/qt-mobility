@@ -107,12 +107,12 @@ public:
     virtual bool cancelRequest(QContactAbstractRequest* req);
     virtual bool waitForRequestProgress(QContactAbstractRequest* req, int msecs);
     virtual bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
-    void updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
-    void updateRequest(QContactAbstractRequest* req, const QList<QUniqueId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
-    void updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
-    void updateRequest(QContactAbstractRequest* req, const QList<QContactGroup>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
-    void updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status);
-    void updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
+    static void updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
+    static void updateRequest(QContactAbstractRequest* req, const QList<QUniqueId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
+    static void updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
+    static void updateRequest(QContactAbstractRequest* req, const QList<QContactGroup>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
+    static void updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status);
+    static void updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
 
     /* Capabilities reporting */
     virtual bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;

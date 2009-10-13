@@ -44,9 +44,7 @@
 //
 // We mean it.
 //
-
 #include <QSharedData>
-
 #include <windows.h>
 #include <pimstore.h>
 
@@ -58,7 +56,7 @@
 #include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
-
+#include "qcontactrequestworker_p.h"
 
 /*
  * Simple "smart" pointer for IUnknown management - takes ownership when assigning, calls release at dtor
@@ -162,9 +160,7 @@ public:
 
     ~QContactWinCEEngineData()
     {
-
     }
-
     QAtomicInt m_refCount;
 
     ComInit m_cominit;
@@ -180,6 +176,7 @@ public:
 
     // List of ids (OIDs are equiv to unique ids, yay)
     QList<QUniqueId> m_ids;
+    QContactRequestWorker m_requestWorker;
 };
 
 class QContactWinCEEngine : public QContactManagerEngine
@@ -210,6 +207,13 @@ public:
 
     /* Definitions */
     QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
+
+    /* Asynchronous Request Support */
+    void requestDestroyed(QContactAbstractRequest* req);
+    bool startRequest(QContactAbstractRequest* req);
+    bool cancelRequest(QContactAbstractRequest* req);
+    bool waitForRequestProgress(QContactAbstractRequest* req, int msecs);
+    bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
 
     /* Capabilities reporting */
     bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;

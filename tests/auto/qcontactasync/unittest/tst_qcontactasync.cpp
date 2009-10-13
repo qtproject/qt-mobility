@@ -675,6 +675,10 @@ void tst_QContactAsync::contactSave()
     expected << cm->contact(cm->contacts().last());
     result = csr.contacts();
     QCOMPARE(expected, result);
+    if (cm->managerName() == "wince") {
+        //wince backend will change the phone number sub types.
+        expected[0].saveDetail(&phn);
+    }
     QVERIFY(containsIgnoringTimestamps(expected, testContact));
     QCOMPARE(cm->contacts().size(), originalCount + 1);
 
@@ -1288,7 +1292,7 @@ void tst_QContactAsync::definitionRemove()
     QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
     QVERIFY(drr.isFinished());
     QVERIFY(!drr.isActive());
-
+    
     QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 1);
     cm->detailDefinition(removeIds.first()); // check that it has already been removed.
     QCOMPARE(cm->error(), QContactManager::DoesNotExistError);

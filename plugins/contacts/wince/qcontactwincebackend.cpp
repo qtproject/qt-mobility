@@ -41,7 +41,6 @@
 #define INITGUID
 #include "qcontactwincebackend_p.h"
 
-
 /*
  * This file is most of the engine plumbing - conversion to/from POOM is in
  * the contactconversions.cpp file.
@@ -70,7 +69,7 @@ QContactWinCEEngine::QContactWinCEEngine(const QMap<QString, QString>& , QContac
     error = QContactManager::NoError;
     
     buildHashForContactDetailToPoomPropId();
-
+    
     if (SUCCEEDED(d->m_cominit.hr())) {
         if (SUCCEEDED(CoCreateInstance(CLSID_Application, NULL,
                                        CLSCTX_INPROC_SERVER, IID_IPOutlookApp2,
@@ -105,6 +104,7 @@ QContactWinCEEngine::QContactWinCEEngine(const QMap<QString, QString>& , QContac
             }
         }
     }
+    d->m_requestWorker.start();
 }
 
 QContactWinCEEngine::QContactWinCEEngine(const QContactWinCEEngine& other)
@@ -126,6 +126,9 @@ QContactWinCEEngine::~QContactWinCEEngine()
     if (d->m_app) {
         d->m_app->Logoff();
     }
+    d->m_requestWorker.stop();
+    d->m_requestWorker.wait();
+    d->m_requestWorker.quit();
 }
 
 void QContactWinCEEngine::deref()
@@ -231,14 +234,18 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
                 long oid = 0;
                 hr = icontact->get_Oid(&oid);
                 if (SUCCEEDED(hr)) {
-                    contact->setId((QUniqueId)oid);
-                    if (wasOld) {
-                        cs.changedContacts().insert(contact->id());
-                    } else {
-                        cs.addedContacts().insert(contact->id());
-                        d->m_ids.append(contact->id());
+                    error = QContactManager::NoError; 
+                    QContact c = this->contact((QUniqueId)oid, error);
+                    
+                    if (error == QContactManager::NoError) {
+                        *contact = c;
+                        if (wasOld) {
+                            cs.changedContacts().insert(contact->id());
+                        } else {
+                            cs.addedContacts().insert(contact->id());
+                            d->m_ids.append(contact->id());
+                        }
                     }
-                    error = QContactManager::NoError;
 
                     cs.emitSignals(this);
                     return true;
@@ -345,6 +352,37 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(Q
     return defns;
 }
 
+
+/*! \reimp */
+void QContactWinCEEngine::requestDestroyed(QContactAbstractRequest* req)
+{
+    d->m_requestWorker.removeRequest(req);
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::startRequest(QContactAbstractRequest* req)
+{
+    return d->m_requestWorker.addRequest(req);
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::cancelRequest(QContactAbstractRequest* req)
+{
+    return  d->m_requestWorker.cancelRequest(req);
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::waitForRequestProgress(QContactAbstractRequest* req, int msecs)
+{
+    return d->m_requestWorker.waitRequest(req, msecs);
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::waitForRequestFinished(QContactAbstractRequest* req, int msecs)
+{
+    return d->m_requestWorker.waitRequest(req, msecs) && req->isFinished();
+}
+
 /*! \reimp */
 bool QContactWinCEEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
 {
@@ -359,6 +397,7 @@ bool QContactWinCEEngine::hasFeature(QContactManagerInfo::ManagerFeature feature
 /* Synthesise the display label of a contact */
 QString QContactWinCEEngine::synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
+    Q_UNUSED(error)
     // The POOM API (well, lack thereof) makes this a bit strange.
     // It's basically just "Last, First" or "Company", if "FileAs" is not set.
     QContactName name = contact.detail<QContactName>();
