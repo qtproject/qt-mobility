@@ -7,7 +7,7 @@ contains(MOBILITY, bearer) {
 }
 
 contains(MOBILITY, publishsubscribe) {
-    qtAddLibrary(QtContextFramework)
+    qtAddLibrary(QtPublishSubscribe)
 }
 
 contains(MOBILITY, location) {
