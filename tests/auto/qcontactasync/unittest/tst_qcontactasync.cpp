@@ -1170,7 +1170,7 @@ void tst_QContactAsync::relationshipFetch()
     QCOMPARE(rels, result);
 
     // specific relationship type retrieval
-    rfr.setRelationshipType(QContactRelationship::RelationshipTypeIsManagerOf);
+    rfr.setRelationshipType(QContactRelationship::IsManagerOf);
     QVERIFY(!rfr.cancel()); // not started
     QVERIFY(rfr.start());
     QVERIFY(rfr.isActive());
@@ -1183,7 +1183,7 @@ void tst_QContactAsync::relationshipFetch()
     QVERIFY(rfr.isFinished());
     QVERIFY(!rfr.isActive());
 
-    rels = cm->relationships(QContactRelationship::RelationshipTypeIsManagerOf);
+    rels = cm->relationships(QContactRelationship::IsManagerOf);
     result = rfr.relationships();
     QCOMPARE(rels, result);
 
@@ -1362,7 +1362,7 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(!rrr.waitForProgress());
 
     // specific relationship type removal
-    rrr.setRelationshipType(QContactRelationship::RelationshipTypeIsSpouseOf);
+    rrr.setRelationshipType(QContactRelationship::IsSpouseOf);
     rrr.setManager(cm);
     QCOMPARE(rrr.manager(), cm);
     QVERIFY(!rrr.isActive());
@@ -1372,7 +1372,7 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(!rrr.waitForProgress());
     qRegisterMetaType<QContactRelationshipRemoveRequest*>("QContactRelationshipRemoveRequest*");
     QSignalSpy spy(&rrr, SIGNAL(progress(QContactRelationshipRemoveRequest*)));
-    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::RelationshipTypeIsSpouseOf)));
+    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::IsSpouseOf)));
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
     QVERIFY(rrr.isActive());
@@ -1385,8 +1385,8 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(rrr.isFinished());
     QVERIFY(!rrr.isActive());
 
-    QCOMPARE(cm->relationships(QContactRelationship::RelationshipTypeIsSpouseOf).size(), 0);
-    (void)(cm->relationships(QContactRelationship::RelationshipTypeIsSpouseOf)); // check that it has already been removed.
+    QCOMPARE(cm->relationships(QContactRelationship::IsSpouseOf).size(), 0);
+    (void)(cm->relationships(QContactRelationship::IsSpouseOf)); // check that it has already been removed.
     QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
     // remove (asynchronously) a nonexistent relationship - should fail.
@@ -1400,7 +1400,7 @@ void tst_QContactAsync::relationshipRemove()
         }
     }
     rrr.setSourceContact(cId);
-    rrr.setRelationshipType(QContactRelationship::RelationshipTypeIsManagerOf);
+    rrr.setRelationshipType(QContactRelationship::IsManagerOf);
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
     QVERIFY(rrr.isActive());
@@ -1413,7 +1413,7 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(rrr.isFinished());
     QVERIFY(!rrr.isActive());
 
-    (void)(cm->relationship(cId, QContactRelationship::RelationshipTypeIsManagerOf));
+    (void)(cm->relationship(cId, QContactRelationship::IsManagerOf));
     QCOMPARE(rrr.error(), QContactManager::DoesNotExistError);
 
     // specific relationship type plus source removal
@@ -1426,14 +1426,14 @@ void tst_QContactAsync::relationshipRemove()
         }
     }
     rrr.setSourceContact(bId);
-    rrr.setRelationshipType(QContactRelationship::RelationshipTypeIsAssistantOf);
+    rrr.setRelationshipType(QContactRelationship::IsAssistantOf);
     rrr.setManager(cm);
     QCOMPARE(rrr.manager(), cm);
     QVERIFY(!rrr.isActive());
     QVERIFY(!rrr.cancel());
     QVERIFY(!rrr.waitForFinished());
     QVERIFY(!rrr.waitForProgress());
-    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::RelationshipTypeIsAssistantOf)));
+    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::IsAssistantOf)));
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
     QVERIFY(rrr.isActive());
@@ -1446,7 +1446,7 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(rrr.isFinished());
     QVERIFY(!rrr.isActive());
 
-    QCOMPARE(cm->relationships(bId, QContactRelationship::RelationshipTypeIsAssistantOf).size(), 0);
+    QCOMPARE(cm->relationships(bId, QContactRelationship::IsAssistantOf).size(), 0);
     QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
     // specific source removal
@@ -1561,7 +1561,7 @@ void tst_QContactAsync::relationshipSave()
     int originalCount = cm->relationships(aId).size();
     QContactRelationship testRel;
     testRel.setSourceContact(aId);
-    testRel.setRelationshipType(QContactRelationship::RelationshipTypeIsSpouseOf);
+    testRel.setRelationshipType(QContactRelationship::IsSpouseOf);
     testRel.appendDestinationContact(participantId);
     QList<QContactRelationship> saveList;
     saveList << testRel;
@@ -1588,7 +1588,7 @@ void tst_QContactAsync::relationshipSave()
     QVERIFY(rsr.isFinished());
     QVERIFY(!rsr.isActive());
 
-    QList<QContactRelationship> expected = cm->relationships(aId, QContactRelationship::RelationshipTypeIsSpouseOf);
+    QList<QContactRelationship> expected = cm->relationships(aId, QContactRelationship::IsSpouseOf);
     QList<QContactRelationship> result = rsr.relationships();
     QCOMPARE(expected, result);
     QVERIFY(result.contains(testRel));
@@ -1614,7 +1614,7 @@ void tst_QContactAsync::relationshipSave()
     QVERIFY(!rsr.isActive());
 
     expected.clear();
-    expected << cm->relationship(aId, QContactRelationship::RelationshipTypeIsSpouseOf);
+    expected << cm->relationship(aId, QContactRelationship::IsSpouseOf);
     result = rsr.relationships();
     QCOMPARE(expected, result);
     QVERIFY(expected.contains(testRel));
@@ -1881,31 +1881,31 @@ QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
     QContactRelationship arb;
     arb.setSourceContact(a.id().localId());
     arb.appendDestinationContact(b.id());
-    arb.setRelationshipType(QContactRelationship::RelationshipTypeIsManagerOf);
+    arb.setRelationshipType(QContactRelationship::IsManagerOf);
     cm->saveRelationship(&arb);
 
     QContactRelationship brc;
     brc.setSourceContact(b.id().localId());
     brc.appendDestinationContact(c.id());
-    brc.setRelationshipType(QContactRelationship::RelationshipTypeIsAssistantOf);
+    brc.setRelationshipType(QContactRelationship::IsAssistantOf);
     cm->saveRelationship(&brc);
 
     QContactRelationship cra;
     cra.setSourceContact(c.id().localId());
     cra.appendDestinationContact(a.id());
-    cra.setRelationshipType(QContactRelationship::RelationshipTypeIsSpouseOf);
+    cra.setRelationshipType(QContactRelationship::IsSpouseOf);
     cm->saveRelationship(&cra);
 
     QContactRelationship arc;
     arc.setSourceContact(a.id().localId());
     arc.appendDestinationContact(c.id());
-    arc.setRelationshipType(QContactRelationship::RelationshipTypeIsAssistantOf);
+    arc.setRelationshipType(QContactRelationship::IsAssistantOf);
     cm->saveRelationship(&arc);
 
     QContactRelationship crb;
     crb.setSourceContact(c.id().localId());
     crb.appendDestinationContact(b.id());
-    crb.setRelationshipType(QContactRelationship::RelationshipTypeIs);
+    crb.setRelationshipType(QContactRelationship::Is);
     cm->saveRelationship(&crb);
 
     return cm;

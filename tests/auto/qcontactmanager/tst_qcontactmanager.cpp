@@ -2156,7 +2156,7 @@ void tst_QContactManager::relationships()
     QContactManager* cm = QContactManager::fromUri(uri);
 
     int totalRelationships = cm->relationships().size();
-    int totalManagerRelationships = cm->relationships(QContactRelationship::RelationshipTypeIsManagerOf).size();
+    int totalManagerRelationships = cm->relationships(QContactRelationship::IsManagerOf).size();
 
     QContact source;
     QContact dest1, dest2, dest3;
@@ -2196,8 +2196,8 @@ void tst_QContactManager::relationships()
     QCOMPARE(dests.value(0), dest1Uri);
     QCOMPARE(dests.value(1), dest3EmptyUri); // inserted at this position.
     QCOMPARE(dests.value(2), dest2Uri);
-    customRelationshipOne.setRelationshipType(QContactRelationship::RelationshipTypeIsManagerOf);
-    QVERIFY(customRelationshipOne.relationshipType() == QString(QLatin1String(QContactRelationship::RelationshipTypeIsManagerOf)));
+    customRelationshipOne.setRelationshipType(QContactRelationship::IsManagerOf);
+    QVERIFY(customRelationshipOne.relationshipType() == QString(QLatin1String(QContactRelationship::IsManagerOf)));
 
     // save the relationship
     QVERIFY(cm->saveRelationship(&customRelationshipOne));
@@ -2209,14 +2209,14 @@ void tst_QContactManager::relationships()
 
     // remove the dest3 contact, should be removed from the relationship
     cm->removeContact(dest3.id().localId());
-    customRelationshipOne = cm->relationship(source.id().localId(), QContactRelationship::RelationshipTypeIsManagerOf);
+    customRelationshipOne = cm->relationship(source.id().localId(), QContactRelationship::IsManagerOf);
     dests = customRelationshipOne.destinationContacts();
     QCOMPARE(dests.value(0), dest1Uri);
     QCOMPARE(dests.value(1), dest2Uri);
     QCOMPARE(dests.size(), 2);
 
     // test our accessors.
-    QCOMPARE(cm->relationships(QContactRelationship::RelationshipTypeIsManagerOf).size(), (totalManagerRelationships + 1));
+    QCOMPARE(cm->relationships(QContactRelationship::IsManagerOf).size(), (totalManagerRelationships + 1));
     QVERIFY(cm->relationships(source.id()).size() == 1);
 
     // removing the dest1 contact should result in removal of the relationship.

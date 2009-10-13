@@ -326,7 +326,7 @@ void PhoneBook::displayContact()
     c = cm->contact(c.id().localId()); // this removes any unsaved information.
 
     QContactId contactUri = c.id();
-    QList<QContactRelationship> relationships = cm->relationships(QContactRelationship::RelationshipTypeHasMember, contactUri);
+    QList<QContactRelationship> relationships = cm->relationships(QContactRelationship::HasMember, contactUri);
     QList<QContactLocalId> currentGroups;
     foreach (const QContactRelationship& currRel, relationships) {
         if (currRel.destinationContacts().contains(contactUri)) {

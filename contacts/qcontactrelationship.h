@@ -49,19 +49,19 @@ class QTCONTACTS_EXPORT QContactRelationship
 {
 public:
 #ifdef Q_QDOC
-    const char* RelationshipTypeIsMemberOf;
-    const char* RelationshipTypeIsAggregatedBy;
-    const char* RelationshipTypeIs;
-    const char* RelationshipTypeAssistant;
-    const char* RelationshipTypeManager;
-    const char* RelationshipTypeSpouse;
+    const char* IsMemberOf;
+    const char* IsAggregatedBy;
+    const char* Is;
+    const char* IsAssistantOf;
+    const char* IsManagerOf;
+    const char* IsSpouseOf;
 #else
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeHasMember, "HasMember");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeAggregates, "Aggregates");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIs, "Is");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIsAssistantOf, "IsAssistantOf");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIsManagerOf, "IsManagerOf");
-    Q_DECLARE_LATIN1_LITERAL(RelationshipTypeIsSpouseOf, "IsSpouseOf");
+    Q_DECLARE_LATIN1_LITERAL(HasMember, "HasMember");
+    Q_DECLARE_LATIN1_LITERAL(Aggregates, "Aggregates");
+    Q_DECLARE_LATIN1_LITERAL(Is, "Is");
+    Q_DECLARE_LATIN1_LITERAL(IsAssistantOf, "IsAssistantOf");
+    Q_DECLARE_LATIN1_LITERAL(IsManagerOf, "IsManagerOf");
+    Q_DECLARE_LATIN1_LITERAL(IsSpouseOf, "IsSpouseOf");
 #endif
 
     QContactRelationship();

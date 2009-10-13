@@ -87,7 +87,7 @@ void GroupDetailsDialog::repopulateGroupList()
         item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
         bool foundInGroup = false;
 
-        QList<QContactRelationship> thisGroupsRels = cm->relationships(grpList[index], QContactRelationship::RelationshipTypeHasMember);
+        QList<QContactRelationship> thisGroupsRels = cm->relationships(grpList[index], QContactRelationship::HasMember);
         QContactId localContactUriOne = localContact.id();
         QContactId localContactUriTwo;
         localContactUriTwo.setLocalId(localContact.id().localId());
@@ -110,7 +110,7 @@ void GroupDetailsDialog::repopulateGroupList()
 QList<QContactLocalId> GroupDetailsDialog::groups()
 {
     QContactId localContactUri = localContact.id();
-    QList<QContactRelationship> relationships = cm->relationships(QContactRelationship::RelationshipTypeHasMember, localContactUri);
+    QList<QContactRelationship> relationships = cm->relationships(QContactRelationship::HasMember, localContactUri);
     QList<QContactLocalId> ret;
     foreach (const QContactRelationship& currRel, relationships) {
         if (currRel.destinationContacts().contains(localContactUri)) {
@@ -124,7 +124,7 @@ void GroupDetailsDialog::groupItemChanged(QListWidgetItem * item)
 {
     QContactLocalId id = item->data(Qt::UserRole + 1).toUInt();
     QContactId localContactUri = localContact.id();
-    QList<QContactRelationship> relationships = cm->relationships(QContactRelationship::RelationshipTypeHasMember, localContactUri);
+    QList<QContactRelationship> relationships = cm->relationships(QContactRelationship::HasMember, localContactUri);
     QList<QContactLocalId> currentGroups;
     foreach (const QContactRelationship& currRel, relationships) {
         if (currRel.destinationContacts().contains(localContactUri)) {
@@ -135,14 +135,14 @@ void GroupDetailsDialog::groupItemChanged(QListWidgetItem * item)
     if (item->checkState() == Qt::Checked) {
         if (!currentGroups.contains(id)) {
             // add it to the group.
-            QContactRelationship newRelationship = cm->relationship(id, QContactRelationship::RelationshipTypeHasMember);
+            QContactRelationship newRelationship = cm->relationship(id, QContactRelationship::HasMember);
             newRelationship.appendDestinationContact(localContactUri);
             cm->saveRelationship(&newRelationship);
         }
     } else {
         if (currentGroups.contains(id)) {
             // remove any membership in that group
-            QContactRelationship currRel = cm->relationship(id, QContactRelationship::RelationshipTypeHasMember);
+            QContactRelationship currRel = cm->relationship(id, QContactRelationship::HasMember);
             currRel.removeDestinationContact(localContactUri);
             cm->saveRelationship(&currRel);
         }

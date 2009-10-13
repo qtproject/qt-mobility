@@ -55,40 +55,40 @@
  */
 
 /*!
- * \variable QContactRelationship::RelationshipTypeHasMember
+ * \variable QContactRelationship::HasMember
  * The relationship type which identifies the source contact as being a group which includes each of the destination contacts
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeHasMember, "HasMember");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::HasMember, "HasMember");
 
 /*!
- * \variable QContactRelationship::RelationshipTypeAggregates
+ * \variable QContactRelationship::Aggregates
  * The relationship type which identifies the source contact as aggregating the destination contacts into a metacontact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeAggregates, "Aggregates");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::Aggregates, "Aggregates");
 
 /*!
- * \variable QContactRelationship::RelationshipTypeIs
+ * \variable QContactRelationship::Is
  * The relationship type which identifies the source contact as being the same contact as the destination contacts
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeIs, "Is");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::Is, "Is");
 
 /*!
- * \variable QContactRelationship::RelationshipTypeIsAssistantOf
+ * \variable QContactRelationship::IsAssistantOf
  * The relationship type which identifies the source contact as being the assistant of the destination contacts
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeIsAssistantOf, "IsAssistantOf");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::IsAssistantOf, "IsAssistantOf");
 
 /*!
- * \variable QContactRelationship::RelationshipTypeIsManagerOf
+ * \variable QContactRelationship::IsManagerOf
  * The relationship type which identifies the source contact as being the manager of the destination contacts
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeIsManagerOf, "IsManagerOf");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::IsManagerOf, "IsManagerOf");
 
 /*!
- * \variable QContactRelationship::RelationshipTypeIsSpouseOf
+ * \variable QContactRelationship::IsSpouseOf
  * The relationship type which identifies the source contact as being the spouse of the destination contacts
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::RelationshipTypeIsSpouseOf, "IsSpouseOf");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::IsSpouseOf, "IsSpouseOf");
 
 /*!
  * Constructs a new relationship
