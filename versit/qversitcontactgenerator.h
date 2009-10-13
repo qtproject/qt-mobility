@@ -44,8 +44,8 @@ class QVersitContactGenerator
 public:
     QVersitContactGenerator();
     ~QVersitContactGenerator();
-    // Generates a list of contacts from a QVersitDocument
-    QList<QContact> generateContacts(const QVersitDocument& versitDocument);
+    // Generates a contact from a QVersitDocument
+    QContact generateContact(const QVersitDocument& versitDocument);
 private:
     QVersitContactGeneratorPrivate *d;
 };

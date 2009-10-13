@@ -139,7 +139,7 @@ QByteArray QVersitWriter::encodeVersitProperty(const QVersitProperty& versitProp
     encodedProperty.append(encodedParameters);
 
     encodedProperty.append(":");
-    if (name == QString::fromAscii(("AGENT"))) {
+    if (name == QString::fromAscii("AGENT")) {
         encodedProperty.append("\r\n");
         QVersitDocument embDoc = versitProperty.embeddedDocument();
         QByteArray embDocArray = encodeVersitDocument(embDoc);
