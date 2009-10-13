@@ -101,6 +101,9 @@ bool QVersitWriter::start()
     return false;
 }
 
+/*!
+ * Encodes the \a versitDocument to text. 
+ */
 QByteArray QVersitWriter::encodeVersitDocument(const QVersitDocument& versitDocument)
 {
     QList<QVersitProperty> propertyList = versitDocument.properties();
@@ -124,22 +127,28 @@ QByteArray QVersitWriter::encodeVersitProperty(const QVersitProperty& versitProp
     QByteArray encodedProperty;
     QString name = versitProperty.name();    
     encodedProperty.append(name.toAscii());
-    if (name == QString::fromAscii("AGENT")) {
-        // TODO: QVersitDocument embDoc = versitProperty.embeddedDocument();  
-    } else {
-        QByteArray value(versitProperty.value());
-        bool quotedPrintable = false;
-        if (VersitUtils::containsSpecialChars(versitProperty.value())) {
-            quotedPrintable = true;
-            value = VersitUtils::encodeQuotedPrintable(value);   
-        }
-        QByteArray encodedParameters = 
-            encodeParameters(versitProperty.parameters(),quotedPrintable);
-        encodedProperty.append(encodedParameters);
-        encodedProperty.append(":");
-        encodedProperty.append(value);
-        encodedProperty.append("\r\n");
+
+    QByteArray value(versitProperty.value());
+    bool quotedPrintable = false;
+    if (VersitUtils::containsSpecialChars(versitProperty.value())) {
+        quotedPrintable = true;
+        value = VersitUtils::encodeQuotedPrintable(value);   
     }
+    QByteArray encodedParameters = 
+        encodeParameters(versitProperty.parameters(),quotedPrintable);
+    encodedProperty.append(encodedParameters);
+
+    encodedProperty.append(":");
+    if (name == QString::fromAscii(("AGENT"))) {
+        encodedProperty.append("\r\n");
+        QVersitDocument embDoc = versitProperty.embeddedDocument();
+        QByteArray embDocArray = encodeVersitDocument(embDoc);
+        encodedProperty.append(embDocArray);
+    } else {
+        encodedProperty.append(value);
+    }
+    encodedProperty.append("\r\n");
+
     return encodedProperty;
 }
 

@@ -111,7 +111,7 @@ END:VCARD\r\n";
     property.setValue(QByteArray("12347"));
     doc.addProperty(property);
     QVERIFY(mWriter->encodeVersitDocument(doc) == vCardSimple);
- /*
+/*
     const char vCardAgent[] = 
 "BEGIN:VCARD\r\n\
 VERSION:2.1\r\n\
@@ -157,7 +157,7 @@ void UT_QVersitWriter::testEncodeVersitProperty()
     property.setName(QString::fromAscii("TEL"));
     property.setValue(QByteArray("123"));
     property.addParameter(QByteArray("TYPE"),QByteArray("HOME"));
-    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);    
+    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
     
     // With parameter(s). Special characters in the value.
     // -> The value needs to be Quoted-Printable encoded.
@@ -165,6 +165,27 @@ void UT_QVersitWriter::testEncodeVersitProperty()
     property.setName(QString::fromAscii("EMAIL"));
     property.setValue(QByteArray("homer@simpsons.com"));
     QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
+    
+    // AGENT property with parameter
+    expectedResult = 
+"AGENT;X-WIFE:\r\n\
+BEGIN:VCARD\r\n\
+VERSION:2.1\r\n\
+N:Marge\r\n\
+END:VCARD\r\n\
+\r\n";
+    QVersitProperty agentProperty;
+    agentProperty.setName(QString("AGENT"));
+    QMultiMap<QString,QString> params;
+    params.insert(QString("TYPE"), QString("X-WIFE"));
+    agentProperty.setParameters(params);
+    QVersitDocument doc;
+    QVersitProperty embProperty;
+    embProperty.setName(QString("N"));
+    embProperty.setValue(QByteArray("Marge"));
+    doc.addProperty(embProperty);
+    agentProperty.setEmbeddedDocument(doc);
+    QCOMPARE(mWriter->encodeVersitProperty(agentProperty), QByteArray(expectedResult));
 }
 
 void UT_QVersitWriter::testEncodeParameters()
