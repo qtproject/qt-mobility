@@ -32,7 +32,7 @@
 ****************************************************************************/
 
 #include "addressfinder.h"
-#include "addresshelper.h"
+#include <qmessageaddress.h>
 #include <QComboBox>
 #include <QDateTime>
 #include <QGroupBox>
@@ -45,30 +45,6 @@
 #include <QApplication>
 #include <QMenuBar>
 #include <QTabWidget>
-
-void parseAddress(const QString& addressText, QString *name, QString *address)
-{
-    QString suffix;
-    QString input = addressText.trimmed();
-
-    if (!addressText.isEmpty()) {
-        QString input = addressText.trimmed();
-
-        // See whether this address is a group
-        if (qContainsGroupSpecifier(input)) {
-            QRegExp groupFormat("(.*):(.*);");
-            if (groupFormat.indexIn(input) != -1) {
-                *name = groupFormat.cap(1).trimmed();
-                *address = groupFormat.cap(2).trimmed();
-            }
-        } else {
-            qParseMailbox(input, *name, *address, suffix);
-            *address = address->toLower();
-        }
-    } else {
-        *name = *address = QString();
-    }
-}
 
 AddressFinder::AddressFinder(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags),
@@ -112,7 +88,7 @@ void AddressFinder::addressSelected(const QString &address)
 {
     QString name;
     QString addressOnly;
-    parseAddress(address, &name, &addressOnly);
+    QMessageAddress::parseEmailAddress(address, &name, &addressOnly);
     messageList->clear();
 
     foreach (const QString &message, addressMessages[addressOnly]) {
@@ -207,7 +183,7 @@ void AddressFinder::continueSearch()
 
         // All recipient addresses are to be excluded
         foreach (const QMessageAddress &address, message.to() + message.cc() + message.bcc()) {
-            parseAddress(address.recipient(), &name, &addressOnly);
+            QMessageAddress::parseEmailAddress(address.recipient(), &name, &addressOnly);
             if (!excludedAddresses.contains(addressOnly))
                 qDebug() << "Exclude" << addressOnly;
             excludedAddresses.insert(addressOnly);
@@ -221,7 +197,7 @@ void AddressFinder::continueSearch()
 
         foreach (const QMessageAddress &address, message.to() + message.cc() + message.bcc()) {
             QString recipient(address.recipient());
-            parseAddress(address.recipient(), &name, &addressOnly);
+            QMessageAddress::parseEmailAddress(address.recipient(), &name, &addressOnly);
             if (!includedAddresses.contains(addressOnly))
                 qDebug() << "Include" << addressOnly;
             includedAddresses.insert(addressOnly);
