@@ -65,8 +65,9 @@ signals:
 
 private:
     
-    QVersitDocument parseVersitDocument(QByteArray& text);
-    QVersitProperty parseNextVersitProperty(QByteArray& text);    
+    QVersitDocument parseVersitDocument(QByteArray& text) const;
+    QVersitProperty parseNextVersitProperty(QByteArray& text) const;
+    bool containsSupportedVersion(const QVersitProperty& property) const;
     
 private: // Data
     QVersitReaderPrivate* d;

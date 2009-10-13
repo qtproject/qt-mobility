@@ -105,7 +105,7 @@ QList<QVersitDocument> QVersitReader::result() const
 /*!
  * Parses a versit document and returns the resulting document object
  */
-QVersitDocument QVersitReader::parseVersitDocument(QByteArray& text)
+QVersitDocument QVersitReader::parseVersitDocument(QByteArray& text) const
 {
     d->m_DocumentNestingLevel++;
     QVersitDocument document;
@@ -116,8 +116,7 @@ QVersitDocument QVersitReader::parseVersitDocument(QByteArray& text)
         while (property.name().length() > 0 && 
                property.name() != QString::fromAscii("END")) {
             property = parseNextVersitProperty(text);   
-            if (property.name() == QString::fromAscii("VERSION") && 
-                property.value().trimmed() != "2.1") {
+            if (!containsSupportedVersion(property)) {
                 d->m_DocumentNestingLevel--;
                 return QVersitDocument(); // return an empty document
             }
@@ -133,7 +132,7 @@ QVersitDocument QVersitReader::parseVersitDocument(QByteArray& text)
 /*!
  * Parses a versit document and returns whether parsing succeeded.
  */
-QVersitProperty QVersitReader::parseNextVersitProperty(QByteArray& text)
+QVersitProperty QVersitReader::parseNextVersitProperty(QByteArray& text) const
 {
     QVersitProperty property;
     property.setName(VersitUtils::extractPropertyName(text));
@@ -163,4 +162,19 @@ QVersitProperty QVersitReader::parseNextVersitProperty(QByteArray& text)
         text = text.mid(crlfPos+2); // +2 is for skipping the CRLF
     }
     return property;
+}
+
+/*!
+ * Checks whether the VERSION property contains a supported version.
+ */
+bool QVersitReader::containsSupportedVersion(const QVersitProperty& property) const
+{
+    bool valid = true;
+    if (property.name() == QString::fromAscii("VERSION")) {
+        QByteArray value = property.value().trimmed();
+        if (property.parameters().contains("ENCODING","BASE64"))
+            value = QByteArray::fromBase64(value);
+        valid = (value == "2.1");
+    } 
+    return valid;
 }
