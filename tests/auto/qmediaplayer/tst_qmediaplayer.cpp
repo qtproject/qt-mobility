@@ -190,7 +190,7 @@ public:
         return mockService;
     }
 
-    void releaseService(QMediaService *) {}
+    void releaseService(QMediaService *service) { delete service; }
 
     MockPlayerService *mockService;
 };

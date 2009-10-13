@@ -49,7 +49,7 @@ class QNetworkAccessManager;
 
 class QMediaImageViewerServicePrivate;
 
-class QMediaImageViewerService : public QMediaService
+class Q_AUTOTEST_EXPORT QMediaImageViewerService : public QMediaService
 {
     Q_OBJECT
 public:
@@ -59,6 +59,7 @@ public:
     QMediaControl *control(const char *name) const;
 
     QNetworkAccessManager *networkManager() const;
+    void setNetworkManager(QNetworkAccessManager *manager);
 
 private:
     Q_DECLARE_PRIVATE(QMediaImageViewerService)

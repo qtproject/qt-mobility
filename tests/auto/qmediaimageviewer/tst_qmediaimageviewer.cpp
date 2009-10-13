@@ -37,14 +37,20 @@
 #include <QtCore/qdir.h>
 
 #include <multimedia/qmediaimageviewer.h>
+#include <multimedia/qmediaimageviewerservice_p.h>
 #include <multimedia/qmediaplaylist.h>
 #include <multimedia/qmediaservice.h>
 #include <multimedia/qvideooutputcontrol.h>
 #include <multimedia/qvideorenderercontrol.h>
 #include <multimedia/qvideowidgetcontrol.h>
 
+#include <QtCore/qfile.h>
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideosurfaceformat.h>
+#include <QtNetwork/qnetworkaccessmanager.h>
+#include <QtNetwork/qnetworkreply.h>
+
+class QtTestNetworkAccessManager;
 
 class tst_QMediaImageViewer : public QObject
 {
@@ -65,12 +71,15 @@ private slots:
 #endif
 
 public:
-    tst_QMediaImageViewer() : m_imageDir(QLatin1String(TESTDATA_DIR)) {}
+    tst_QMediaImageViewer() : m_network(0), m_imageDir(QLatin1String(TESTDATA_DIR)) {}
 
 private:
     QUrl imageUri(const char *fileName) const {
         return QUrl::fromLocalFile(m_imageDir.absoluteFilePath(QLatin1String(fileName))); }
+    QString imageFileName(const char *fileName) {
+        return m_imageDir.absoluteFilePath(QLatin1String(fileName)); }
 
+    QtTestNetworkAccessManager *m_network;
     QDir m_imageDir;
     QString m_fileProtocol;
 };
@@ -99,9 +108,161 @@ private:
 };
 #endif
 
+class QtTestNetworkReply : public QNetworkReply
+{
+public:
+    QtTestNetworkReply(
+            const QNetworkRequest &request,
+            const QByteArray &mimeType,
+            QObject *parent)
+        : QNetworkReply(parent)
+    {
+        setRequest(request);
+        setOperation(QNetworkAccessManager::HeadOperation);
+        setRawHeader("content-type", mimeType);
+
+        QCoreApplication::postEvent(this, new QEvent(QEvent::User));
+    }
+
+    QtTestNetworkReply(
+            const QNetworkRequest &request,
+            const QByteArray &mimeType,
+            const QString &fileName,
+            QObject *parent)
+        : QNetworkReply(parent)
+        , m_file(fileName)
+    {
+        setRequest(request);
+        setOperation(QNetworkAccessManager::GetOperation);
+        setRawHeader("content-type", mimeType);
+
+        if (m_file.open(QIODevice::ReadOnly | QIODevice::Unbuffered)) {
+            setOpenMode(QIODevice::ReadOnly);
+        }
+
+        QCoreApplication::postEvent(this, new QEvent(QEvent::User));
+    }
+
+    void abort() { m_file.close(); }
+
+    bool atEnd () const { return m_file.atEnd(); }
+    qint64 bytesAvailable() const { return m_file.bytesAvailable() + QIODevice::bytesAvailable(); }
+    void close() { m_file.close(); setOpenMode(QIODevice::NotOpen); }
+    bool isSequential() const { return true; }
+    bool open(OpenMode) { return false; }
+    qint64 pos() const { return 0; }
+    bool seek(qint64) { return false; }
+    qint64 size() const { return m_file.size(); }
+    qint64 readData(char * data, qint64 maxSize) { return m_file.read(data, maxSize); }
+    qint64 writeData(const char *, qint64) { return -1; }
+
+protected:
+    void customEvent(QEvent *event)
+    {
+        if (event->type() == QEvent::User) {
+            event->accept();
+            emit finished();
+        }
+    }
+
+private:
+    QFile m_file;
+};
+
+class QtTestNetworkAccessManager : public QNetworkAccessManager
+{
+public:
+    QtTestNetworkAccessManager(QObject *parent = 0)
+        : QNetworkAccessManager(parent)
+    {
+    }
+
+    void appendDocument(const QUrl &url, const QByteArray &mimeType, const QString &fileName)
+    {
+        m_documents.append(Document(url, mimeType, fileName));
+    }
+
+protected:
+    QNetworkReply *createRequest(
+            Operation op, const QNetworkRequest &request, QIODevice *outgoingData = 0)
+    {
+        foreach (const Document &document, m_documents) {
+            if (document.url == request.url()) {
+                if (op == GetOperation) {
+                    return new QtTestNetworkReply(
+                            request, document.mimeType, document.fileName, this);
+                } else if (op == HeadOperation) {
+                    return new QtTestNetworkReply(request, document.mimeType, this);
+                }
+            }
+        }
+        return QNetworkAccessManager::createRequest(op, request, outgoingData);
+    }
+
+private:
+    struct Document
+    {
+        Document(const QUrl url, const QByteArray mimeType, const QString &fileName)
+            : url(url), mimeType(mimeType), fileName(fileName)
+        {
+        }
+
+        QUrl url;
+        QByteArray mimeType;
+        QString fileName;
+    };
+
+    QList<Document> m_documents;
+};
+
 void tst_QMediaImageViewer::initTestCase()
 {
     qRegisterMetaType<QMediaImageViewer::State>();
+
+    m_network = new QtTestNetworkAccessManager(this);
+
+    m_network->appendDocument(
+            QUrl(QLatin1String("test://image/png?id=1")),
+            "image/png",
+            imageFileName("image.png"));
+    m_network->appendDocument(
+            QUrl(QLatin1String("test://image/png?id=2")),
+            QByteArray(),
+            imageFileName("image.png"));
+    m_network->appendDocument(
+            QUrl(QLatin1String("test://image/invalid?id=1")),
+            "image/png",
+            imageFileName("invalid.png"));
+    m_network->appendDocument(
+            QUrl(QLatin1String("test://image/invalid?id=2")),
+            QByteArray(),
+            imageFileName("invalid.png"));
+#ifdef QTEST_HAVE_JPEG
+    m_network->appendDocument(
+            QUrl(QLatin1String("test://image/jpeg?id=1")),
+            "image/jpeg",
+            imageFileName("image.jpg"));
+#endif
+    m_network->appendDocument(
+            QUrl(QLatin1String("test://music/songs/mp3?id=1")),
+             "audio/mpeg",
+             QString());
+    m_network->appendDocument(
+            QUrl(QLatin1String("test://music/covers/small?id=1")),
+            "image/png",
+            imageFileName("coverart.png"));
+    m_network->appendDocument(
+            QUrl(QLatin1String("test://music/covers/large?id=1")),
+            "image/png",
+            imageFileName("coverart.png"));
+    m_network->appendDocument(
+            QUrl(QLatin1String("test://video/movies/mp4?id=1")),
+            "video/mp4",
+            QString());
+    m_network->appendDocument(
+            QUrl(QLatin1String("test://video/posters/png?id=1")),
+            "image/png",
+            imageFileName("poster.png"));
 }
 
 void tst_QMediaImageViewer::isValid()
@@ -130,52 +291,78 @@ void tst_QMediaImageViewer::timeout()
 void tst_QMediaImageViewer::setMedia_data()
 {
     QTest::addColumn<QMediaContent>("media");
-    QTest::addColumn<QMediaResource>("currentMedia");
 
     {
-        QMediaResource contentResource(imageUri("image.png"));
-        QMediaContent source(contentResource);
+        QMediaContent media(imageUri("image.png"));
 
-        QTest::newRow("png image")
-                << source
-                << contentResource;
+        QTest::newRow("file: png image")
+                << media;
     } {
-        QMediaResource contentResource(imageUri("song.mp3"));
-        QMediaResource coverArtResource(imageUri("coverart.png"));
-        QMediaContent source(contentResource);
-        source.setCoverArtUriLarge(coverArtResource.uri());
+        QMediaContent media(QUrl(QLatin1String("test://image/png?id=1")));
 
-        QTest::newRow("png cover art")
-                << source
-                << coverArtResource;
+        QTest::newRow("network: png image")
+                << media;
     } {
-        QMediaResource contentResource(imageUri("movie.mp4"));
-        QMediaResource posterResource(imageUri("poster.png"));
-        QMediaContent source(contentResource);
-        source.setPosterUri(posterResource.uri());
+        QMediaContent media(QMediaResource(
+                QUrl(QLatin1String("test://image/png?id=1")), QLatin1String("image/png")));
 
-        QTest::newRow("png poster")
-                << source
-                << posterResource;
+        QTest::newRow("network: png image, explicit mime type")
+                << media;
     } {
-        QMediaResource contentResource(imageUri("image.png"));
-        QMediaResource coverArtResource(imageUri("coverart.png"));
-        QMediaResource posterResource(imageUri("poster.png"));
-        QMediaContent source(contentResource);
-        source.setCoverArtUriLarge(coverArtResource.uri());
-        source.setPosterUri(posterResource.uri());
+        QMediaContent media(QUrl(QLatin1String("test://image/png?id=2")));
 
-        QTest::newRow("png image with cover art and poster")
-                << source
-                << contentResource;
+        QTest::newRow("network: png image, no mime type")
+                << media;
+    } {
+        QMediaContent media(imageUri("song.mp3"));
+        media.setCoverArtUriLarge(imageUri("coverart.png"));
+
+        QTest::newRow("file: png cover art")
+                << media;
+    } {
+        QMediaContent media(QUrl(QLatin1String("test://music/songs/mp3?id=1")));
+        media.setCoverArtUriLarge(QUrl(QLatin1String("test://music/covers/large?id=1")));
+
+        QTest::newRow("network: png cover art")
+                << media;
+    } {
+        QMediaContent media(QMediaResource(
+                QUrl(QLatin1String("test://music/songs/mp3?id=1")), QLatin1String("audio/mpeg")));
+        media.setCoverArtUriSmall(QUrl(QLatin1String("test://music/covers/small?id=1")));
+        media.setCoverArtUriLarge(QUrl(QLatin1String("test://music/covers/large?id=1")));
+
+        QTest::newRow("network: png cover art, explicit mime type")
+                << media;
+    } {
+        QMediaContent media(imageUri("movie.mp4"));
+        media.setPosterUri(imageUri("poster.png"));
+
+        QTest::newRow("file: png poster")
+                << media;
+    } {
+        QMediaContent media(QUrl(QLatin1String("test/movies/mp4?id=1")));
+        media.setPosterUri(QUrl(QLatin1String("test://video/posters/png?id=1")));
+
+        QTest::newRow("network: png poster")
+                << media;
+    } {
+        QMediaContent media(imageUri("image.png"));
+        media.setCoverArtUriLarge(imageUri("coverart.png"));
+        media.setPosterUri(imageUri("poster.png"));
+
+        QTest::newRow("file: png image with cover art and poster")
+                << media;
 #ifdef QTEST_HAVE_JPEG
     } {
-        QMediaResource contentResource(imageUri("image.jpg"));
-        QMediaContent source(contentResource);
+        QMediaContent media(imageUri("image.jpg"));
 
-        QTest::newRow("jpg image")
-                << source
-                << contentResource;
+        QTest::newRow("file: jpg image")
+                << media;
+    } {
+        QMediaContent media(QUrl(QLatin1String("test://image/jpeg?id=1")));
+
+        QTest::newRow("network: jpg image")
+                << media;
 #endif
     }
 }
@@ -183,9 +370,11 @@ void tst_QMediaImageViewer::setMedia_data()
 void tst_QMediaImageViewer::setMedia()
 {
     QFETCH(QMediaContent, media);
-    QFETCH(QMediaResource, currentMedia);
 
     QMediaImageViewer viewer;
+
+    QMediaImageViewerService *service = qobject_cast<QMediaImageViewerService *>(viewer.service());
+    service->setNetworkManager(m_network);
 
     connect(&viewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
             &QTestEventLoop::instance(), SLOT(exitLoop()));
@@ -204,56 +393,86 @@ void tst_QMediaImageViewer::setInvalidMedia()
 {
     QMediaImageViewer viewer;
 
+    QMediaImageViewerService *service = qobject_cast<QMediaImageViewerService *>(viewer.service());
+    service->setNetworkManager(m_network);
+
     connect(&viewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
             &QTestEventLoop::instance(), SLOT(exitLoop()));
 
     {
-        QMediaContent source(imageUri("invalid.png"));
+        QMediaContent media(imageUri("invalid.png"));
 
-        viewer.setMedia(source);
+        viewer.setMedia(media);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
 
         QTestEventLoop::instance().enterLoop(2);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
-        QCOMPARE(viewer.media(), source);
+        QCOMPARE(viewer.media(), media);
     } {
-        QMediaContent source(imageUri("deleted.png"));
+        QMediaContent media(imageUri("deleted.png"));
 
-        viewer.setMedia(source);
+        viewer.setMedia(media);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
 
         QTestEventLoop::instance().enterLoop(2);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
-        QCOMPARE(viewer.media(), source);
+        QCOMPARE(viewer.media(), media);
     } {
         QMediaResource invalidResource(imageUri("invalid.png"));
         QMediaResource deletedResource(imageUri("deleted.png"));
-        QMediaContent source(QMediaResourceList() << invalidResource << deletedResource);
+        QMediaContent media(QMediaResourceList() << invalidResource << deletedResource);
 
-        viewer.setMedia(source);
+        viewer.setMedia(media);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
 
         QTestEventLoop::instance().enterLoop(2);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
-        QCOMPARE(viewer.media(), source);
+        QCOMPARE(viewer.media(), media);
     } {
         QMediaResource resource(imageUri("image.png"), QLatin1String("audio/mpeg"));
-        QMediaContent source(resource);
+        QMediaContent media(resource);
 
-        viewer.setMedia(source);
+        viewer.setMedia(media);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
-        QCOMPARE(viewer.media(), source);
+        QCOMPARE(viewer.media(), media);
     } {
         QMediaResource audioResource(imageUri("image.png"), QLatin1String("audio/mpeg"));
         QMediaResource invalidResource(imageUri("invalid.png"));
-        QMediaContent source(QMediaResourceList() << audioResource << invalidResource);
+        QMediaContent media(QMediaResourceList() << audioResource << invalidResource);
 
-        viewer.setMedia(source);
+        viewer.setMedia(media);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
 
         QTestEventLoop::instance().enterLoop(2);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
-        QCOMPARE(viewer.media(), source);
+        QCOMPARE(viewer.media(), media);
+    } {
+        QMediaContent media(QUrl(QLatin1String("test://image/invalid?id=1")));
+
+        viewer.setMedia(media);
+        QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
+
+        QTestEventLoop::instance().enterLoop(2);
+        QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
+        QCOMPARE(viewer.media(), media);
+    } {
+        QMediaContent media(QUrl(QLatin1String("test://image/invalid?id=2")));
+
+        viewer.setMedia(media);
+        QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
+
+        QTestEventLoop::instance().enterLoop(2);
+        QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
+        QCOMPARE(viewer.media(), media);
+    } {
+        QMediaContent media(QUrl(QLatin1String("test://image/invalid?id=3")));
+
+        viewer.setMedia(media);
+        QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
+
+        QTestEventLoop::instance().enterLoop(2);
+        QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
+        QCOMPARE(viewer.media(), media);
     }
 }
 
