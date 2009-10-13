@@ -172,7 +172,8 @@ bool QVersitReader::containsSupportedVersion(const QVersitProperty& property) co
     bool valid = true;
     if (property.name() == QString::fromAscii("VERSION")) {
         QByteArray value = property.value().trimmed();
-        if (property.parameters().contains("ENCODING","BASE64"))
+        if (property.parameters().contains(
+                QString::fromAscii("ENCODING"),QString::fromAscii("BASE64")))
             value = QByteArray::fromBase64(value);
         valid = (value == "2.1");
     } 
