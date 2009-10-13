@@ -52,8 +52,23 @@
 #ifdef Q_OS_WIN
 #include <winsock2.h>
 #include <mswsock.h>
-#include <ntddndis.h>
 #undef interface
+
+enum NDIS_MEDIUM {
+    NdisMedium802_3 = 0,
+};
+
+enum NDIS_PHYSICAL_MEDIUM {
+    NdisPhysicalMediumWirelessLan = 1,
+    NdisPhysicalMediumBluetooth = 10,
+    NdisPhysicalMediumWiMax = 12,
+};
+
+#define OID_GEN_MEDIA_SUPPORTED 0x00010103
+#define OID_GEN_PHYSICAL_MEDIUM 0x00010202
+
+#define IOCTL_NDIS_QUERY_GLOBAL_STATS \
+    CTL_CODE(FILE_DEVICE_PHYSICAL_NETCARD, 0, METHOD_OUT_DIRECT, FILE_ANY_ACCESS)
 #endif
 
 QT_BEGIN_NAMESPACE
