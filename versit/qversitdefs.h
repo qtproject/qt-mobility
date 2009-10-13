@@ -38,15 +38,10 @@
 
 //Contacts Defs ids:
 const QString versitContactName = "Name";
+
 const QString versitContactEmail = "EmailAddress";
 const QString versitContactPhoneNumer = "PhoneNumber";
 const QString versitContactAddress = "StreetAddress";
 
-
-//Versit Defs ids:
-const QString versitName = "N";
-const QString versitEmail = "EMAIL";
-const QString versitPhoneNumer = "TEL";
-const QString versitAddress = "ADDR";
 
 #endif /* QVERSITDEFS_H_ */

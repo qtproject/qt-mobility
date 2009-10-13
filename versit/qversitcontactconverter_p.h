@@ -48,6 +48,32 @@ public:
     QVersitContactConverterPrivate() 
         : mError(QVersitContactConverter::NoError)
     {
+        //Fields Mapping
+        mMappingTable.insert("Name","N");
+        mMappingTable.insert("DisplayLabel","FN");
+        mMappingTable.insert("EmailAddress","EMAIL");
+        mMappingTable.insert("PhoneNumber","TEL");
+        mMappingTable.insert("StreetAddress","ADDR");
+        
+        //Context Mapping
+        mMappingTable.insert("WORK","WORK");
+        mMappingTable.insert("HOME","HOME");
+
+        // Sub Types parameters.
+        /* Sub types for the Address */
+        mMappingTable.insert("Domestic","DOM");
+        mMappingTable.insert("International","INTL");
+        mMappingTable.insert("Postal","POSTAL");
+        mMappingTable.insert("Parcel","PARCEL");
+        
+        /* Sub types for the telephone */
+        mMappingTable.insert("Work","WORK");
+        mMappingTable.insert("Home","HOME");
+        mMappingTable.insert("Voice","VOICE");
+        mMappingTable.insert("Mobile","CELL");
+        mMappingTable.insert("Modem","MODEM");
+        mMappingTable.insert("Car","CAR");
+        mMappingTable.insert("Video","VIDEO");
     }
     
     ~QVersitContactConverterPrivate()
@@ -56,6 +82,7 @@ public:
 
     // Data Container
     QVersitContactConverter::Error mError;
+    QHash<QString,QString> mMappingTable;
 };
 
 #endif

@@ -37,16 +37,10 @@
 #include <QtTest/QtTest>
 #include <qcontact.h>
 #include <QContactAddress.h> 
-#include <QContactDisplayLabel.h> 
 #include <QContactEmailAddress.h> 
 #include <QContactName.h> 
 #include <QContactPhoneNumber.h> 
 #include <QContactUrl.h> 
-
-
-/* Temporary Added for testing only */
-#include <qcontactmanager.h>
-
 
 #include "ut_qversitcontactconverter.h"
 #include "qversitcontactconverter.h"
@@ -96,7 +90,7 @@ void UT_QVersitContactConvertert::encodeName()
 {
     QContact contact;
 
-    // Adding Name for the Contact
+    // Adding name detail for the Contact
     QContactName name;
     name.setFirst("Heiddo");
     name.setLast("HH");
@@ -105,22 +99,27 @@ void UT_QVersitContactConvertert::encodeName()
     contact.saveDetail(&name);
     
     QVersitDocument myVersitDocument;
-    QContactDetailDefinition defintion;
-    defintion.setName(versitContactName);
     
     //Ensure there are no properties in the versit document.
     QVERIFY(!myVersitDocument.properties().count());
-    mVersitContactConverter->encodeFieldInfo(myVersitDocument, contact, defintion);
+    
+    mVersitContactConverter->encodeFieldInfo(myVersitDocument, contact.detail(versitContactName));
     
     //Ensure versit document is created with properties.
     QCOMPARE(1, myVersitDocument.properties().count());
-    QCOMPARE(versitName, myVersitDocument.properties().at(0).name());
+    
+    //Check for the property Name
+    QString propertyName = myVersitDocument.properties().at(0).name();
+    QString expectedPropertyName = 
+        mVersitContactConverter->getMappingTable().value(versitContactName);
+    QCOMPARE(propertyName, expectedPropertyName );
     
     //Ensure value of properties contains all the infomation encoded
     QString value (myVersitDocument.properties().at(0).value() );
     QString expectedValue = "HH;Heiddo;A;Mr.;";
     QCOMPARE(expectedValue, value );
 }
+
 
 void UT_QVersitContactConvertert::encodePhoneNumber()
 {
@@ -137,17 +136,21 @@ void UT_QVersitContactConvertert::encodePhoneNumber()
     contact.saveDetail(&p);
     
     QVersitDocument myVersitDocument;
-    QContactDetailDefinition defintion;
-    
-    defintion.setName(versitContactPhoneNumer);
 
     //Ensure there are no properties in the versit document.
     QVERIFY(!myVersitDocument.properties().count());
 
-    mVersitContactConverter->encodeFieldInfo(myVersitDocument, contact, defintion);
-    
+    mVersitContactConverter->encodeFieldInfo(myVersitDocument, 
+                                                contact.detail(versitContactPhoneNumer));
     QCOMPARE(1, myVersitDocument.properties().count());
-    QCOMPARE(versitPhoneNumer, myVersitDocument.properties().at(0).name());
+
+    //Check property name
+    QString propertyName = myVersitDocument.properties().at(0).name();
+    QString expectedPropertyName = 
+            mVersitContactConverter->getMappingTable().value(versitContactPhoneNumer);
+    QCOMPARE(propertyName, expectedPropertyName );
+    
+    //Check property value
     
     QString value (myVersitDocument.properties().at(0).value() );
     QString expectedValue = "12345678";
@@ -168,16 +171,20 @@ void UT_QVersitContactConvertert::encodeEmailAddress()
     contact.saveDetail(&pref);
     
     QVersitDocument myVersitDocument;
-    QContactDetailDefinition defintion;
-    defintion.setName(versitContactEmail);
     
     //Ensure there are no properties in the versit document.
     QVERIFY(!myVersitDocument.properties().count());
-    mVersitContactConverter->encodeFieldInfo(myVersitDocument, contact, defintion);
+    mVersitContactConverter->encodeFieldInfo(myVersitDocument, contact.detail(versitContactEmail));
     
     QCOMPARE(1, myVersitDocument.properties().count());
-    QCOMPARE(versitEmail, myVersitDocument.properties().at(0).name());
-
+    
+    //Check property name
+    QString propertyName = myVersitDocument.properties().at(0).name();
+    QString expectedPropertyName = 
+        mVersitContactConverter->getMappingTable().value(versitContactEmail);
+    QCOMPARE(propertyName, expectedPropertyName );
+    
+    //Check value 
     QString value (myVersitDocument.properties().at(0).value() );
     QString expectedValue = "test@test";
     QCOMPARE(expectedValue, value );
@@ -202,18 +209,47 @@ void UT_QVersitContactConvertert::encodeStreetAddress()
     contact.saveDetail(&address);
     
     QVersitDocument myVersitDocument;
-    QContactDetailDefinition defintion;
-    defintion.setName(versitContactAddress);
 
     //Ensure there are no properties in the versit document.
     QVERIFY(!myVersitDocument.properties().count());
 
-    mVersitContactConverter->encodeFieldInfo(myVersitDocument, contact, defintion);
+    mVersitContactConverter->encodeFieldInfo(myVersitDocument, 
+                                                contact.detail(versitContactAddress));
     
     QCOMPARE(1, myVersitDocument.properties().count());
-    QCOMPARE(versitAddress, myVersitDocument.properties().at(0).name());
     
+    //Check property name
+    QString propertyName = myVersitDocument.properties().at(0).name();
+    QString expectedPropertyName = 
+                        mVersitContactConverter->getMappingTable().value(versitContactAddress);
+    QCOMPARE(propertyName, expectedPropertyName );
+
+    //Check property value 
     QString value (myVersitDocument.properties().at(0).value() );
     QString expectedValue = ";HKKI 1X 90;Helsinki;;00440;Finland";
     QCOMPARE(expectedValue, value );
 }
+
+
+
+void UT_QVersitContactConvertert::encodeParameters()
+{
+    // Valid Param Test
+    QStringList paramList;
+    paramList << "HOME" << "WORK" << "EmailAddress" << "INVALID";
+    QVersitProperty property;
+    mVersitContactConverter->encodeParameters(property, paramList);
+    
+    //Ensure Invalid Keys are not encoded 
+    QCOMPARE(3, property.parameters().keys().count());
+
+    //Ensure Valid keys are encoded.
+    QVERIFY(property.parameters().keys().contains("HOME"));
+    QVERIFY(property.parameters().keys().contains("WORK"));
+    
+    //Ensure Keys are Encoded into versity Types.
+    //EmailAddress == EMAIL
+    QVERIFY(!property.parameters().keys().contains("EmailAddress"));
+    QVERIFY(property.parameters().keys().contains("EMAIL"));
+}
+

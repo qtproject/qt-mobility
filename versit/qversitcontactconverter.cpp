@@ -88,15 +88,11 @@ QVersitDocument QVersitContactConverter::convertContacts(const QContact& contact
 {
     QVersitDocument versitDocument;
     int contactCount = 0;
-    QContactManager cm;
     QList<QContactDetail> allDetails = contact.details();
     for (int i = 0; i < allDetails.size(); i++) {
         QContactDetail detail = allDetails.at(i);
-        QContactDetailDefinition currentDefinition = 
-            cm.detailDefinition(detail.definitionName());
-
         //Encode FieldInfo
-        encodeFieldInfo(versitDocument, contact, currentDefinition);
+        encodeFieldInfo(versitDocument, detail );
     }
     return versitDocument;
 }
@@ -107,18 +103,17 @@ QVersitDocument QVersitContactConverter::convertContacts(const QContact& contact
  * Encode Contact Field Information into the Versit Document 
  */
 void QVersitContactConverter::encodeFieldInfo(QVersitDocument& versitDocument, 
-                                                const QContact& contact, 
-                                                QContactDetailDefinition& definitionName)
+                                                const QContactDetail& detail )
 {
-    if (definitionName.name() == versitContactName )
+    if (detail.definitionName() == versitContactName )
     {
-        encodeName(versitDocument, contact, definitionName);
-    } else if (definitionName.name() == versitContactPhoneNumer){
-        encodePhoneNumber(versitDocument, contact, definitionName);
-    } else if (definitionName.name()== versitContactEmail){
-        encodeEmailAddress(versitDocument, contact, definitionName);
-    } else if (definitionName.name() == versitContactAddress){
-        encodeStreetAddress(versitDocument, contact, definitionName);
+        encodeName(versitDocument, detail);
+    } else if (detail.definitionName() == versitContactPhoneNumer){
+        encodePhoneNumber(versitDocument, detail);
+    } else if (detail.definitionName()== versitContactEmail){
+        encodeEmailAddress(versitDocument, detail);
+    } else if (detail.definitionName() == versitContactAddress){
+        encodeStreetAddress(versitDocument, detail);
     }
 }
 
@@ -127,32 +122,45 @@ void QVersitContactConverter::encodeFieldInfo(QVersitDocument& versitDocument,
  * Encode Contact Name Field Information into the Versit Document 
  */
 void QVersitContactConverter::encodeName(QVersitDocument& versitDocument, 
-                                            const QContact& contact,
-                                            QContactDetailDefinition& definitionName)
-{
-    QContactName contactName = contact.detail(definitionName.name());
-    QString name = contactName.last() +  ";"  + contactName.first() + ";" + contactName.middle() 
+                                            const QContactDetail& detail)
+{   
+    QContactName contactName = static_cast<QContactName>(detail);
+    QString name = d->mMappingTable.value(detail.definitionName());
+    
+    QString value = contactName.last() +  ";"  + contactName.first() + ";" + contactName.middle() 
                     + ";"  + contactName.prefix() + ";" + contactName.suffix();
     
     QVersitProperty versitProperty;
-    versitProperty.setName(versitName);
-    versitProperty.setValue(name.toAscii());
+    versitProperty.setName(name);
+    versitProperty.setValue(value.toAscii());
     versitDocument.addProperty(versitProperty);
 }
+
 
 /*!
  * Encode Phone Numer Field Information into the Versit Document 
  */
 void QVersitContactConverter::encodePhoneNumber(QVersitDocument& versitDocument,
-                                                    const QContact& contact,
-                                                    QContactDetailDefinition& definitionName)
+                                                    const QContactDetail& detail )
 {
-    QContactPhoneNumber phoneNumer = contact.detail(definitionName.name());
-    QString phone = phoneNumer.number();
+    QContactPhoneNumber phoneNumer = static_cast<QContactPhoneNumber>(detail);
+    
+    QString name = d->mMappingTable.value(detail.definitionName());
+    QString value = phoneNumer.number();
     
     QVersitProperty versitProperty;
-    versitProperty.setName(versitPhoneNumer);
-    versitProperty.setValue(phone.toAscii());
+
+    //Add Context 
+    QStringList contexts = phoneNumer.contexts();
+    encodeParameters(versitProperty, contexts);
+    
+    //Add SubTypes
+    QStringList subTypes = phoneNumer.subTypes();
+    encodeParameters(versitProperty, subTypes);
+    
+    //Add Values
+    versitProperty.setName(name);
+    versitProperty.setValue(value.toAscii());
     versitDocument.addProperty(versitProperty);
 }
 
@@ -162,15 +170,21 @@ void QVersitContactConverter::encodePhoneNumber(QVersitDocument& versitDocument,
  */
 
 void QVersitContactConverter::encodeEmailAddress(QVersitDocument& versitDocument,
-                                                    const QContact& contact,
-                                                    QContactDetailDefinition& definitionName)
+                                                    const QContactDetail& detail )
 {
-    QContactEmailAddress emailAddress = contact.detail(definitionName.name());
-    QString email = emailAddress.emailAddress();
+    QContactEmailAddress emailAddress = static_cast<QContactEmailAddress>(detail);
+    QString name = d->mMappingTable.value(detail.definitionName());
+    QString value = emailAddress.emailAddress();
 
     QVersitProperty versitProperty;
-    versitProperty.setName(versitEmail);
-    versitProperty.setValue(email.toAscii());
+    
+    //Add Context 
+    QStringList contexts = emailAddress.contexts();
+    encodeParameters(versitProperty, contexts);
+    
+    // Add Value:
+    versitProperty.setName(name);
+    versitProperty.setValue(value.toAscii());
     versitDocument.addProperty(versitProperty);
 }
 
@@ -180,15 +194,52 @@ void QVersitContactConverter::encodeEmailAddress(QVersitDocument& versitDocument
  */
 
 void QVersitContactConverter::encodeStreetAddress(QVersitDocument& versitDocument,
-                                                    const QContact& contact,
-                                                    QContactDetailDefinition& definitionName)
+                                                    const QContactDetail& detail )
 {
-    QContactAddress address = contact.detail(definitionName.name());
-    QString addr = address.postOfficeBox() + ";" + address.street() + ";" + address.locality() 
+    QContactAddress address = static_cast<QContactAddress>(detail);
+    
+    QString name = d->mMappingTable.value(detail.definitionName());
+    QString value = address.postOfficeBox() + ";" + address.street() + ";" + address.locality() 
                     + ";" + address.region() + ";" + address.postcode() + ";" + address.country();
     
     QVersitProperty versitProperty;
-    versitProperty.setName(versitAddress);
-    versitProperty.setValue(addr.toAscii());
+    
+    //Add Context 
+    QStringList contexts = address.contexts();
+    encodeParameters(versitProperty, contexts);
+    
+    //Add SubTypes
+    QStringList subTypes = address.subTypes();
+    encodeParameters(versitProperty, subTypes);
+    
+    versitProperty.setName(name);
+    versitProperty.setValue(value.toAscii());
     versitDocument.addProperty(versitProperty);
+}
+
+
+/*!
+ * Encode Parameter for versit property if its supported in Versit Document 
+ */
+
+void QVersitContactConverter::encodeParameters( QVersitProperty& versitProperty,
+                                                   const QStringList& paramList )
+{
+    foreach (QString type, paramList) {
+            QString decodedParameter = d->mMappingTable.value(type);
+            if ( decodedParameter.size())
+            {
+                versitProperty.addParameter(decodedParameter, QString());    
+            }
+    }
+}
+
+
+/*!
+ * Get Versit contact mapping table 
+ */
+
+const QHash<QString,QString>& QVersitContactConverter::getMappingTable()
+{
+    return d->mMappingTable;
 }

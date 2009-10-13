@@ -59,17 +59,16 @@ public:
     
 
 private: //Methods
+
+    void encodeParameters( QVersitProperty& versitProperty, const QStringList& paramList );
+    void encodeFieldInfo(QVersitDocument& versitDocumen, const QContactDetail& detail) ; 
+    void encodeName(QVersitDocument& versitDocumen, const QContactDetail& detail );
+    void encodePhoneNumber(QVersitDocument& versitDocumen, const QContactDetail& detail );
+    void encodeEmailAddress(QVersitDocument& versitDocumen, const QContactDetail& detail );
+    void encodeStreetAddress(QVersitDocument& versitDocumen, const QContactDetail& detail );
     
-    void encodeFieldInfo(QVersitDocument& versitDocumen, const QContact& contact, 
-                            QContactDetailDefinition& definitionName);
-    void encodeName(QVersitDocument& versitDocumen, const QContact& contact,
-                        QContactDetailDefinition& definitionName);
-    void encodePhoneNumber(QVersitDocument& versitDocumen, const QContact& contact,
-                        QContactDetailDefinition& definitionName);
-    void encodeEmailAddress(QVersitDocument& versitDocumen, const QContact& contact,
-                        QContactDetailDefinition& definitionName);
-    void encodeStreetAddress(QVersitDocument& versitDocumen, const QContact& contact,
-                        QContactDetailDefinition& definitionName);
+    const QHash<QString,QString>& getMappingTable();
+
     
 private:
     QVersitContactConverterPrivate* d;

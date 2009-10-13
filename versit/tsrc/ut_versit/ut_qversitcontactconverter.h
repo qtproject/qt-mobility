@@ -52,6 +52,7 @@ private slots:
     void encodePhoneNumber();
     void encodeEmailAddress();
     void encodeStreetAddress();
+    void encodeParameters();
     
 private: //Data
     QVersitContactConverter* mVersitContactConverter;
