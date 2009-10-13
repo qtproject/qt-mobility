@@ -48,6 +48,18 @@
 
 #include <qversitcontactgenerator.h>
 #include "qversitcontactgenerator_p.h"
+#include <qversitdocument.h>
+#include <qversitproperty.h>
+#include <qcontact.h>
+#include <qcontactdetail.h>
+#include <qcontactmanager.h>
+#include <qcontactname.h>
+#include <qcontactphonenumber.h>
+#include <qcontactemailaddress.h>
+#include <qcontactaddress.h>
+
+#include "qversitdefs.h"
+
 
 QVersitContactGenerator::QVersitContactGenerator()
 {
@@ -62,7 +74,14 @@ QVersitContactGenerator::~QVersitContactGenerator()
 QContact QVersitContactGenerator::generateContact(
     const QVersitDocument& versitDocument)
 {
-    Q_UNUSED(versitDocument);
-    return QContact();
+    QContact contact;
+    const QList<QVersitProperty> properties = versitDocument.properties();
+    foreach(const QVersitProperty& property,properties){
+        if(property.name()==versitNameId){
+            d->addName(contact,property);
+        }
+    }  
+    return contact;
 }
+
 

@@ -40,6 +40,8 @@
 #include <qcontactdetail.h>
 #include <qcontactname.h>
 
+#include "qversitdefs.h"
+
 void UT_QVersitContactGenerator::init()
 {    
    mGenerator = new QVersitContactGenerator();
@@ -55,10 +57,12 @@ void UT_QVersitContactGenerator::testGenerateContacts()
 {
     QVersitDocument document;
     QVersitProperty nameProperty;
-    nameProperty.setName(QString::fromAscii("N"));
-    nameProperty.setValue(QByteArray("Simpson;Homer"));
-    document.addProperty(nameProperty);
-    
-    QContact contact = mGenerator->generateContact(document);
-    QCOMPARE(contact.details().count(),1);
+    QByteArray val("Homer");
+    nameProperty.setName(QString::fromAscii(versitNameId));
+    nameProperty.setValue(val);
+    document.addProperty(nameProperty);        
+    QContact contact = mGenerator->generateContact(document);    
+    QCOMPARE(contact.details().count(),2);
+    QContactDetail detail = contact.detail(QContactName::DefinitionName);    
+    QCOMPARE(detail.value(QContactName::FieldFirst),QString(val));
 }

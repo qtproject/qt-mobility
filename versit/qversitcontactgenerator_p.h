@@ -35,12 +35,27 @@
 #define QVERSITCONTACTGENERATOR_P_H
 
 #include "qversitcontactgenerator.h"
+#include <qversitproperty.h>
+#include <qcontact.h>
+#include <qcontactdetail.h>
+#include <qcontactmanager.h>
+#include <qcontactname.h>
+#include <qcontactphonenumber.h>
+#include <qcontactemailaddress.h>
+#include <qcontactaddress.h>
+
 
 class QVersitContactGeneratorPrivate
 {
 public:
     QVersitContactGeneratorPrivate() {}
     ~QVersitContactGeneratorPrivate() {}
+    void addName(QContact& contact,const QVersitProperty& property)
+    {
+        QContactName* name=new QContactName();
+        name->setFirst(property.value());                  
+        contact.saveDetail(name);
+    }
 };
 
 #endif // QVERSITCONTACTGENERATOR_P_H
