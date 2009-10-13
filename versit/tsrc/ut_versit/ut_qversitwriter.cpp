@@ -161,7 +161,7 @@ void UT_QVersitWriter::testEncodeVersitProperty()
     
     // With parameter(s). Special characters in the value.
     // -> The value needs to be Quoted-Printable encoded.
-    expectedResult = "EMAIL;ENCODING=QUOTED-PRINTABLE;HOME:homer=40simpsons.com\r\n"; 
+    expectedResult = "EMAIL;HOME;ENCODING=QUOTED-PRINTABLE:homer=40simpsons.com\r\n"; 
     property.setName(QString::fromAscii("EMAIL"));
     property.setValue(QByteArray("homer@simpsons.com"));
     QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
@@ -169,12 +169,14 @@ void UT_QVersitWriter::testEncodeVersitProperty()
 
 void UT_QVersitWriter::testEncodeParameters()
 {
+    QString encodingParameterName(QString::fromAscii("ENCODING"));
+    
     // No parameters
     QMultiMap<QString,QString> parameters;
     QCOMPARE(mWriter->encodeParameters(parameters), QByteArray());
     
     // One parameter that is not a "TYPE" parameter
-    parameters.insertMulti(QString::fromAscii("ENCODING"),QString::fromAscii("8BIT"));
+    parameters.insertMulti(encodingParameterName,QString::fromAscii("8BIT"));
     QCOMPARE(mWriter->encodeParameters(parameters), QByteArray(";ENCODING=8BIT"));
     
     // One parameter that is a "TYPE" parameter
@@ -183,6 +185,16 @@ void UT_QVersitWriter::testEncodeParameters()
     QCOMPARE(mWriter->encodeParameters(parameters), QByteArray(";HOME"));    
     
     // Two parameters
-    parameters.insertMulti(QString::fromAscii("ENCODING"),QString::fromAscii("7BIT"));    
+    parameters.insertMulti(encodingParameterName,QString::fromAscii("7BIT"));    
     QCOMPARE(mWriter->encodeParameters(parameters), QByteArray(";ENCODING=7BIT;HOME"));
+    
+    // Add ENCODING=QUOTED-PRINTABLE, not present in the parameters yet
+    parameters.clear();
+    QCOMPARE(mWriter->encodeParameters(parameters,true), 
+             QByteArray(";ENCODING=QUOTED-PRINTABLE"));
+    
+    // ENCODING=QUOTED-PRINTABLE in the parameters already, don't encode it twice
+    parameters.insertMulti(encodingParameterName,QString::fromAscii("QUOTED-PRINTABLE"));
+    QCOMPARE(mWriter->encodeParameters(parameters,true), 
+             QByteArray(";ENCODING=QUOTED-PRINTABLE"));    
 }

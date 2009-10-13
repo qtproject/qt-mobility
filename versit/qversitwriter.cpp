@@ -128,18 +128,14 @@ QByteArray QVersitWriter::encodeVersitProperty(const QVersitProperty& versitProp
         // TODO: QVersitDocument embDoc = versitProperty.embeddedDocument();  
     } else {
         QByteArray value(versitProperty.value());
+        bool quotedPrintable = false;
         if (VersitUtils::containsSpecialChars(versitProperty.value())) {
-            QMultiMap<QString,QString> parameters = versitProperty.parameters();
-            QString encoding(QString::fromAscii("ENCODING"));
-            QString quotedPrintable(QString::fromAscii("QUOTED-PRINTABLE"));
-            parameters.insertMulti(encoding,quotedPrintable);
-            encodedProperty.append(encodeParameters(parameters));
-            value = VersitUtils::encodeQuotedPrintable(value);
-            
+            quotedPrintable = true;
+            value = VersitUtils::encodeQuotedPrintable(value);   
         }
-        else {
-            encodedProperty.append(encodeParameters(versitProperty.parameters()));
-        }
+        QByteArray encodedParameters = 
+            encodeParameters(versitProperty.parameters(),quotedPrintable);
+        encodedProperty.append(encodedParameters);
         encodedProperty.append(":");
         encodedProperty.append(value);
         encodedProperty.append("\r\n");
@@ -151,7 +147,8 @@ QByteArray QVersitWriter::encodeVersitProperty(const QVersitProperty& versitProp
  * Encodes the \a parameters to text. 
  */
 QByteArray QVersitWriter::encodeParameters(
-    const QMultiMap<QString,QString>& parameters)
+    const QMultiMap<QString,QString>& parameters,
+    bool addQuotedPrintable)
 {
     QByteArray encodedParameters;
     QString typeParameterName(QString::fromAscii("TYPE"));
@@ -167,5 +164,10 @@ QByteArray QVersitWriter::encodeParameters(
             encodedParameters.append(value.toAscii());
         } 
     }
+    QString encodingParameterName(QString::fromAscii("ENCODING"));
+    QString quotedPrintableValue(QString::fromAscii("QUOTED-PRINTABLE"));
+    if (addQuotedPrintable && 
+        !parameters.contains(encodingParameterName,quotedPrintableValue))
+        encodedParameters.append(";ENCODING=QUOTED-PRINTABLE");
     return encodedParameters;
 }
