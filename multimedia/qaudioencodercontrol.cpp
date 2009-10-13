@@ -191,7 +191,7 @@ QAudioEncoderControl::~QAudioEncoderControl()
 /*!
     \fn QAudioEncoderControl::encodingOption(const QString &codec, const QString &option) const
 
-    Returns value of audio encoding \a option.
+    Returns the value of audio encoding \a option for \a codec.
 */
 
 /*!
