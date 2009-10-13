@@ -43,7 +43,7 @@
 
 QT_BEGIN_NAMESPACE
 
-/*!
+/*
     \class DatabaseManager
     \ingroup servicesfw
     \brief The database manager is responsible for receiving queries
@@ -76,7 +76,7 @@ QT_BEGIN_NAMESPACE
     user database only.
 */
 
-/*!
+/*
     \fn DatabaseManager::DatabaseManager()
     
    Constructor
@@ -87,7 +87,7 @@ DatabaseManager::DatabaseManager()
     iDatabaseManagerSignalMonitor = new DatabaseManagerSignalMonitor(*this, iSession);
 }
 
-/*!
+/*
     \fn DatabaseManager::~DatabaseManager()
     
    Destructor
@@ -98,7 +98,7 @@ DatabaseManager::~DatabaseManager()
     iSession.Close();
 }
 
-/*!
+/*
     \fn bool DatabaseManager::registerService(ServiceMetaDataResults &service, DbScope scope)
 
     Adds the details \a  service into the service database corresponding to
@@ -112,7 +112,7 @@ bool DatabaseManager::registerService(ServiceMetaDataResults &service, DbScope s
     return iSession.RegisterService(service, static_cast<RDatabaseManagerSession::DbScope>(scope));
 }
 
-/*!
+/*
     \fn bool DatabaseManager::unregisterService(const QString &serviceName, DbScope scope)
     
     Removes the details of \a serviceName from the database corresponding to \a
@@ -126,7 +126,7 @@ bool DatabaseManager::unregisterService(const QString &serviceName, DbScope scop
     return iSession.UnregisterService(serviceName, scope);
 }
 
-/*!
+/*
     \fn QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServiceFilter &filter, DbScope scope)
     
     Retrieves a list of interface descriptors that fulfill the constraints specified
@@ -140,7 +140,7 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
 }
 
 
-/*!
+/*
     \fn QStringList DatabaseManager::getServiceNames(const QString &interfaceName, DbScope scope)
     
     Retrieves a list of the names of services that provide the interface
@@ -153,7 +153,7 @@ QStringList DatabaseManager::getServiceNames(const QString &interfaceName, DbSco
     return iSession.ServiceNames(interfaceName, static_cast<RDatabaseManagerSession::DbScope>(scope));
 }
 
-/*!
+/*
     \fn  QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &interfaceName, DbScope scope)
     
     Returns the default interface implementation descriptor for a given
@@ -166,7 +166,7 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
     return iSession.InterfaceDefault(interfaceName, static_cast<RDatabaseManagerSession::DbScope>(scope));
 }
 
-/*!
+/*
     \fn  bool DatabaseManager::setInterfaceDefault(const QString &serviceName, const   QString &interfaceName, DbScope scope)
 
     Sets the default interface implemenation for \a interfaceName to the matching
@@ -183,7 +183,7 @@ bool DatabaseManager::setInterfaceDefault(const QString &serviceName, const
         return iSession.SetInterfaceDefault(serviceName, interfaceName, static_cast<RDatabaseManagerSession::DbScope>(scope));
 }
 
-/*!
+/*
     \fn  bool DatabaseManager::setInterfaceDefault(const QServiceInterfaceDescriptor &descriptor, DbScope scope)
     
     Sets the interface implementation specified by \a descriptor to be the default
@@ -197,7 +197,7 @@ bool DatabaseManager::setInterfaceDefault(const QServiceInterfaceDescriptor &des
     return iSession.SetInterfaceDefault(descriptor, static_cast<RDatabaseManagerSession::DbScope>(scope));
 }
 
-/*!
+/*
     \fn  void DatabaseManager::setChangeNotificationsEnabled(DbScope scope, bool enabled)
     
     Sets whether change notifications for added and removed services are

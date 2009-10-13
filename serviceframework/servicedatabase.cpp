@@ -516,7 +516,7 @@ QString ServiceDatabase::getInterfaceID(QSqlQuery *query, const QServiceInterfac
     return query->value(EBindIndex).toString();
 }
 
-/*!
+/*
     Helper functions that saves \a interface related data in the Interface table
     The \a interface data is recorded as belonging to the service assocciated
     with \a serviceID.
@@ -1548,7 +1548,7 @@ QString ServiceDatabase::databasePath() const
     return path;
 }
 
-/*!
+/*
     Helper method that creates the database tables: Service, Interface,
     Defaults, ServiceProperty and InterfaceProperty
 
@@ -1737,7 +1737,7 @@ bool ServiceDatabase::removeExternalDefaultServiceInterface(const QString &inter
     return true;
 }
 
-/*!
+/*
     Removes all tables from the database
 
     In future this function may be deprecated or removed.
