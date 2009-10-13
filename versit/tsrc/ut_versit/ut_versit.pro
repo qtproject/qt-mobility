@@ -6,6 +6,8 @@ DEFINES += BUILD_QTVERSIT
 DEPENDPATH += .
 INCLUDEPATH += . ../../
 
+include(../../../common.pri)
+
 HEADERS += testresultxmlparser.h \
     ../../qversitproperty.h \
     ../../qversitproperty_p.h \
@@ -41,7 +43,7 @@ SOURCES += main.cpp \
         ../../qversitcontactconverter.cpp \
     ut_qversitcontactconverter.cpp
 
-LIBS += -lqtcontacts
+LIBS += -lQtContacts
 
 symbian: { 
     TARGET.CAPABILITY = ALL \
