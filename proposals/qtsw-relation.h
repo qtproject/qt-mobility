@@ -28,7 +28,7 @@ QList<QContactDetail> groupDetails = theGroup.details();
 // Use Case 4: Retrieve The Groups Which A Particular Contact Is A Member Of
 QContactRelationshipFilter crf;
 crf.setRole(QContactRelationshipFilter::Source);                 // we want "source" contact ids
-crf.setType(QContactRelationship::RelationshipTypeHasMember);    // which have as a member
+crf.setType(QContactRelationship::HasMember);                    // which have as a member
 crf.setOtherParticipant(someContact.id());                       // the particular contact.
 QList<QContactLocalId> matchingGroups = contactManager.contacts(crf);
 
@@ -59,7 +59,7 @@ QList<QContactLocalId> matchingGroups = contactManager.contacts(cif);
 // Disadvantage: only get local id's (of contacts which are stored in the manager)
 QContactRelationshipFilter crf;
 crf.setRole(QContactRelationshipFilter::Destination);           // we want all destination particpants
-crf.setType(QContactRelationship::RelationshipTypeHasMember);   // ie, group members
+crf.setType(QContactRelationship::HasMember);                   // ie, group members
 crf.setOtherParticipant(someGroupContact.id());                 // where I am the source (group)
 QList<QContactLocalId> groupMembers = contactManager.contacts(crf);
 
@@ -67,7 +67,7 @@ QList<QContactLocalId> groupMembers = contactManager.contacts(crf);
 // Advantage: get _all_ groups members no matter which manager they are part of
 // Disadvantage: cached information, possibly stale.
 QContact someGroup;
-QList<QContactId> groupMembers = someGroup.relationship(someGroup.localId(), QContactRelationship::RelationshipTypeHasMember).destinationContacts();
+QList<QContactId> groupMembers = someGroup.relationship(someGroup.localId(), QContactRelationship::HasMember).destinationContacts();
 
 // Use Case 11: Modify Ordering Of Group Members
 QContactRelationship someGroupRelationship;
