@@ -66,7 +66,7 @@ public:
         RelationshipFilter,
         IntersectionFilter,
         UnionFilter,
-        IdListFilter,
+        LocalIdFilter,
         DefaultFilter
     };
 

@@ -67,7 +67,7 @@ public:
     bool operator==(const QContact &other) const;
     bool operator!=(const QContact &other) const {return !(other == *this);}
 
-    /* Local ID */
+    /* ID */
     QContactId id() const;
     void setId(const QContactId& id);
 
@@ -124,7 +124,7 @@ public:
     bool removeDetail(QContactDetail* detail); // modifies the detail - unsets its ID
 
     /* Relationships that this contact was involved in when it was retrieved from the manager */
-    QList<QContactRelationship> relationships() const;
+    QList<QContactRelationship> relationships(const QString& relationshipType = QString()) const;
     
     /* Actions available to be performed on this contact */
     QStringList availableActions() const;

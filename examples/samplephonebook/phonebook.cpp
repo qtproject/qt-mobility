@@ -142,12 +142,12 @@ PhoneBook::~PhoneBook()
         delete manager;
 }
 
-void PhoneBook::backendChanged(const QList<QContactId>& changes)
+void PhoneBook::backendChanged(const QList<QContactLocalId>& changes)
 {
     // load all contacts from the updated backend
-    QList<QContactId> contactIds = cm->contacts(QContactType::TypeContact);
+    QList<QContactLocalId> contactIds = cm->contacts(QContactType::TypeContact);
     contacts.clear();
-    foreach (const QContactId cid, contactIds)
+    foreach (const QContactLocalId cid, contactIds)
         contacts.append(cm->contact(cid));
 qDebug() << "backend changed, and now have" << contactIds.size() << "contacts which are TypeContact!";
 
@@ -185,12 +185,12 @@ void PhoneBook::backendSelected(const QString& backend)
     }
 
     // and connect the selected manager's signals to our slots
-    connect(cm, SIGNAL(contactsAdded(const QList<QContactId>&)), this, SLOT(backendChanged(const QList<QContactId>&)));
-    connect(cm, SIGNAL(contactsChanged(const QList<QContactId>&)), this, SLOT(backendChanged(const QList<QContactId>&)));
-    connect(cm, SIGNAL(contactsRemoved(const QList<QContactId>&)), this, SLOT(backendChanged(const QList<QContactId>&)));
+    connect(cm, SIGNAL(contactsAdded(const QList<QContactLocalId>&)), this, SLOT(backendChanged(const QList<QContactLocalId>&)));
+    connect(cm, SIGNAL(contactsChanged(const QList<QContactLocalId>&)), this, SLOT(backendChanged(const QList<QContactLocalId>&)));
+    connect(cm, SIGNAL(contactsRemoved(const QList<QContactLocalId>&)), this, SLOT(backendChanged(const QList<QContactLocalId>&)));
 
     // and trigger an update.
-    backendChanged(QList<QContactId>());
+    backendChanged(QList<QContactLocalId>());
 }
 
 bool PhoneBook::eventFilter(QObject* watched, QEvent* event)
@@ -323,11 +323,11 @@ QContact PhoneBook::buildContact() const
 void PhoneBook::displayContact()
 {
     QContact c = contacts.value(currentIndex);
-    c = cm->contact(c.id()); // this removes any unsaved information.
+    c = cm->contact(c.id().localId()); // this removes any unsaved information.
 
-    QPair<QString, QContactId> contactUri = QPair<QString, QContactId>(cm->managerUri(), c.id());
+    QContactId contactUri = c.id();
     QList<QContactRelationship> relationships = cm->relationships(QContactRelationship::RelationshipTypeHasMember, contactUri);
-    QList<QContactId> currentGroups;
+    QList<QContactLocalId> currentGroups;
     foreach (const QContactRelationship& currRel, relationships) {
         if (currRel.destinationContacts().contains(contactUri)) {
             currentGroups.append(currRel.sourceContact());
@@ -467,7 +467,7 @@ void PhoneBook::saveContact()
 void PhoneBook::updateButtons()
 {
     QString currentState = "Unsaved";
-    if (!contacts.count() || (contacts.at(currentIndex).id() == 0)) {
+    if (!contacts.count() || (contacts.at(currentIndex).id() == QContactId())) {
         addButton->setEnabled(true);
         findButton->setEnabled(false);
         exportButton->setEnabled(false);
@@ -526,7 +526,7 @@ void PhoneBook::removeContact()
         QMessageBox::Yes | QMessageBox::No);
 
     if (button == QMessageBox::Yes) {
-        cm->removeContact(contacts.at(currentIndex).id());
+        cm->removeContact(contacts.at(currentIndex).id().localId());
         QMessageBox::information(this, tr("Remove Successful"),
             tr("\"%1\" has been removed from your phone book.").arg(contactName));
     }
@@ -544,7 +544,7 @@ void PhoneBook::previous()
 {
     // first, check to see if the current index is saved.
     // if not, we delete it.
-    if (contacts.at(currentIndex).id() == 0) {
+    if (contacts.at(currentIndex).id() == QContactId()) {
         contacts.removeAt(currentIndex);
     }
 
@@ -583,7 +583,7 @@ void PhoneBook::findContact()
                         tr("Sorry, \"%1\" is not in your address book.").arg(contactName));
             }
         }else{
-            QList<QContactId> matchedContacts = cm->contacts(dialog->getFindFilter());
+            QList<QContactLocalId> matchedContacts = cm->contacts(dialog->getFindFilter());
             if (matchedContacts.count()){
                 QStringList matchedContactNames;
                 QContact matchedContact;

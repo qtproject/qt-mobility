@@ -36,6 +36,7 @@
 
 #include "qtcontactsglobal.h"
 #include "qcontactfilter.h"
+#include "qcontactid.h"
 
 #include <QSharedDataPointer>
 #include <QStringList>
@@ -62,12 +63,10 @@ public:
 
     void setRole(QContactRelationshipFilter::Role roleInRelationship);
     void setType(const QString& relationshipType);
-    void setOtherParticipant(const QString& managerUri, const QContactId& id);
-    void setOtherParticipant(const QContactId& id);
+    void setOtherParticipantId(const QContactId& contactId);
 
     QContactRelationshipFilter::Role role() const;
     QString type() const;
-    QString otherParticipantManagerUri() const;
     QContactId otherParticipantId() const;
 
 private:

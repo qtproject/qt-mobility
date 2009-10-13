@@ -76,27 +76,13 @@ void QContactRelationshipFilter::setType(const QString& relationshipType)
 }
 
 /*!
- * Sets the manager URI and contact id of the other participant which must be present in the relationship with
- * the contact in order for the contact to match the filter to be \a managerUri and \a id respectively.
- * If the manager URI is the empty string, it denotes a contact in the manager in which the relationship is stored.
- */
-void QContactRelationshipFilter::setOtherParticipant(const QString& managerUri, const QContactId& id)
-{
-    Q_D(QContactRelationshipFilter);
-    d->m_otherParticipantId = id;
-    d->m_otherParticipantManagerUri = managerUri;
-}
-
-/*!
  * Sets the contact id of the other participant which must be present in the relationship with the contact
- * in order for the contact to match the filter to be \a id, and sets the manager URI of the participant
- * to the empty string, which denotes the manager in which the relationship is stored.
+ * in order for the contact to match the filter to be \a id
  */
-void QContactRelationshipFilter::setOtherParticipant(const QContactId& id)
+void QContactRelationshipFilter::setOtherParticipantId(const QContactId& id)
 {
     Q_D(QContactRelationshipFilter);
     d->m_otherParticipantId = id;
-    d->m_otherParticipantManagerUri = QString();
 }
 
 /*!
@@ -115,16 +101,6 @@ QString QContactRelationshipFilter::type() const
 {
     Q_D(const QContactRelationshipFilter);
     return d->m_relationshipType;
-}
-
-/*!
- * Returns the URI of the manager which must store the other participant for the contact to match the filter.
- * An empty URI denotes that the other participant must be stored in the manager that stores the relationship.
- */
-QString QContactRelationshipFilter::otherParticipantManagerUri() const
-{
-    Q_D(const QContactRelationshipFilter);
-    return d->m_otherParticipantManagerUri;
 }
 
 /*!

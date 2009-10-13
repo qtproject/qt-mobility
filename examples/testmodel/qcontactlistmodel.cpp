@@ -116,13 +116,13 @@ void QContactListModel::setManager(QContactManager* manager)
     // then set up the new manager.
     d->m_manager = manager;
     delete d->m_idRequest;
-    d->m_idRequest = new QContactIdFetchRequest;
-    connect(d->m_idRequest, SIGNAL(progress(QContactIdFetchRequest*,bool)), this, SLOT(contactIdFetchRequestProgress(QContactIdFetchRequest*,bool)));
+    d->m_idRequest = new QContactLocalIdFetchRequest;
+    connect(d->m_idRequest, SIGNAL(progress(QContactLocalIdFetchRequest*,bool)), this, SLOT(contactIdFetchRequestProgress(QContactLocalIdFetchRequest*,bool)));
     d->m_idRequest->setManager(manager);
     if (manager) {
-        connect(manager, SIGNAL(contactsAdded(QList<QContactId>)), this, SLOT(backendChanged()));
-        connect(manager, SIGNAL(contactsChanged(QList<QContactId>)), this, SLOT(backendChanged()));
-        connect(manager, SIGNAL(contactsRemoved(QList<QContactId>)), this, SLOT(backendChanged()));
+        connect(manager, SIGNAL(contactsAdded(QList<QContactLocalId>)), this, SLOT(backendChanged()));
+        connect(manager, SIGNAL(contactsChanged(QList<QContactLocalId>)), this, SLOT(backendChanged()));
+        connect(manager, SIGNAL(contactsRemoved(QList<QContactLocalId>)), this, SLOT(backendChanged()));
     }
 
     // and kick of a request for the ids.
@@ -357,8 +357,8 @@ QVariant QContactListModel::data(const QModelIndex& index, int role) const
         // now fire off an asynchronous request to update our cache
         QContactFetchRequest* req = new QContactFetchRequest;
         d->m_requestCentreRows.insert(req, d->m_lastCacheCentreRow);
-        QContactIdListFilter idFil;
-        QList<QContactId> newCacheIds;
+        QContactLocalIdFilter idFil;
+        QList<QContactLocalId> newCacheIds;
         for (int i = 0; i < newCacheRows.size(); i++) {
             newCacheIds.append(d->m_rowsToIds.value(newCacheRows.at(i)));
         }
@@ -380,7 +380,7 @@ QVariant QContactListModel::data(const QModelIndex& index, int role) const
 
         case QContactListModel::IdRole:
         {
-            ret = currentContact.id();
+            ret = currentContact.id().localId();
         }
         break;
 
@@ -513,7 +513,7 @@ bool QContactListModel::removeRows(int row, int count, const QModelIndex& parent
  * Returns the row number at which the data of the contact with the given \a contactId is stored, or
  * -1 if no such contact exists in the model
  */
-int QContactListModel::contactRow(const QContactId& contactId) const
+int QContactListModel::contactRow(const QContactLocalId& contactId) const
 {
     return d->m_idsToRows.value(contactId, -1);
 }
@@ -548,7 +548,7 @@ void QContactListModel::contactFetchRequestProgress(QContactFetchRequest* reques
     QMap<int, int> rowMap; // sorted list of rows changed.
     QList<QContact> fetched = request->contacts();
     foreach (const QContact& c, fetched) {
-        int fetchedRow = d->m_idsToRows.value(c.id(), -1);
+        int fetchedRow = d->m_idsToRows.value(c.id().localId(), -1);
 
         // see if this row should be cached
         if (!d->m_cache.contains(fetchedRow))
@@ -602,7 +602,7 @@ void QContactListModel::contactFetchRequestProgress(QContactFetchRequest* reques
  * and the dataChanged() signal is emitted; otherwise, the model emits the reset() signal
  * once the new data has been loaded.
  */
-void QContactListModel::contactIdFetchRequestProgress(QContactIdFetchRequest* request, bool appendOnly)
+void QContactListModel::contactIdFetchRequestProgress(QContactLocalIdFetchRequest* request, bool appendOnly)
 {
     // first, if it's not append only, we need to rebuild the entire list + cache.
     if (!appendOnly) {
@@ -612,7 +612,7 @@ void QContactListModel::contactIdFetchRequestProgress(QContactIdFetchRequest* re
     }
 
     // then get the results, calculate the start and end indices, and fill our data structures.
-    QList<QContactId> ids = request->ids();
+    QList<QContactLocalId> ids = request->ids();
     int startIndex = d->m_idsToRows.count();
     int endIndex = ids.size();
     for (int i = startIndex; i < endIndex; i++) {

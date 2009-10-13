@@ -31,8 +31,8 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTRELATIONSHIPFILTER_P_H
-#define QCONTACTRELATIONSHIPFILTER_P_H
+#ifndef QCONTACTID_P_H
+#define QCONTACTID_P_H
 
 //
 //  W A R N I N G
@@ -45,50 +45,33 @@
 // We mean it.
 //
 
-#include "qcontactfilter_p.h"
-#include "qcontactfilter.h"
-#include "qcontactid.h"
-
-#include "qcontactrelationshipfilter.h"
-
 #include <QString>
-#include <QStringList>
-#include <QList>
+#include <QSharedData>
 
-class QContactRelationshipFilterPrivate : public QContactFilterPrivate
+#include "qtcontactsglobal.h"
+
+class QContactIdPrivate : public QSharedData
 {
 public:
-    QContactRelationshipFilterPrivate()
-        : QContactFilterPrivate(),
-        m_roleInRelationship(QContactRelationshipFilter::Either)
+    QContactIdPrivate()
+            : QSharedData(),
+            m_localId(0)
     {
     }
 
-    QContactRelationshipFilterPrivate(const QContactRelationshipFilterPrivate& other)
-        : QContactFilterPrivate(other),
-        m_roleInRelationship(other.m_roleInRelationship),
-        m_otherParticipantId(other.m_otherParticipantId),
-        m_relationshipType(other.m_relationshipType)
+    QContactIdPrivate(const QContactIdPrivate& other)
+            : QSharedData(other),
+            m_managerUri(other.m_managerUri),
+            m_localId(other.m_localId)
     {
     }
 
-    virtual bool compare(const QContactFilterPrivate* other) const
+    ~QContactIdPrivate()
     {
-        const QContactRelationshipFilterPrivate *od = static_cast<const QContactRelationshipFilterPrivate*>(other);
-        if (m_roleInRelationship != od->m_roleInRelationship)
-            return false;
-        if (m_otherParticipantId != od->m_otherParticipantId)
-            return false;
-        if (m_relationshipType != od->m_relationshipType)
-            return false;
-        return true;
     }
 
-    Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactRelationshipFilter, QContactFilter::RelationshipFilter)
-
-    QContactRelationshipFilter::Role m_roleInRelationship;
-    QContactId m_otherParticipantId;
-    QString m_relationshipType;
+    QString m_managerUri;
+    QContactLocalId m_localId;
 };
 
 #endif

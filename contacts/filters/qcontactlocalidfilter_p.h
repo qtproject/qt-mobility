@@ -51,15 +51,15 @@
 #include <QString>
 #include <QVariant>
 
-class QContactIdListFilterPrivate : public QContactFilterPrivate
+class QContactLocalIdFilterPrivate : public QContactFilterPrivate
 {
 public:
-    QContactIdListFilterPrivate()
+    QContactLocalIdFilterPrivate()
         : QContactFilterPrivate()
     {
     }
 
-    QContactIdListFilterPrivate(const QContactIdListFilterPrivate& other)
+    QContactLocalIdFilterPrivate(const QContactLocalIdFilterPrivate& other)
         : QContactFilterPrivate(other),
         m_ids(other.m_ids)
     {
@@ -67,15 +67,15 @@ public:
 
     virtual bool compare(const QContactFilterPrivate* other) const
     {
-        const QContactIdListFilterPrivate *od = static_cast<const QContactIdListFilterPrivate*>(other);
+        const QContactLocalIdFilterPrivate *od = static_cast<const QContactLocalIdFilterPrivate*>(other);
         if (m_ids != od->m_ids)
             return false;
         return true;
     }
 
-    Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactIdListFilter, QContactFilter::IdListFilter)
+    Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactLocalIdFilter, QContactFilter::LocalIdFilter)
 
-    QList<QContactId> m_ids;
+    QList<QContactLocalId> m_ids;
 };
 
 #endif

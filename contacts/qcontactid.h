@@ -31,42 +31,36 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTIDFETCHREQUEST_H
-#define QCONTACTIDFETCHREQUEST_H
+#ifndef QCONTACTID_H
+#define QCONTACTID_H
+
+#include <QString>
+#include <QSharedDataPointer>
 
 #include "qtcontactsglobal.h"
-#include "qcontactabstractrequest.h"
-#include "qcontactsortorder.h"
-#include "qcontactfilter.h"
 
-#include <QList>
-#include <QStringList>
-
-class QContactIdFetchRequestPrivate;
-class QTCONTACTS_EXPORT QContactIdFetchRequest : public QContactAbstractRequest
+class QContactIdPrivate;
+class QTCONTACTS_EXPORT QContactId
 {
-    Q_OBJECT
-
 public:
-    QContactIdFetchRequest();
-    ~QContactIdFetchRequest();
+    QContactId();
+    ~QContactId();
 
-    /* Selection, restriction and sorting */
-    void setFilter(const QContactFilter& filter);
-    void setSorting(const QList<QContactSortOrder>& sorting);
-    QContactFilter filter() const;
-    QList<QContactSortOrder> sorting() const;
+    QContactId(const QContactId& other);
+    QContactId& operator=(const QContactId& other);
 
-    /* Results */
-    QList<QContactId> ids() const;
+    bool operator==(const QContactId& other) const;
+    bool operator!=(const QContactId& other) const;
 
-signals:
-    void progress(QContactIdFetchRequest* self, bool appendOnly);
+    QString managerUri() const;
+    QContactLocalId localId() const;
+
+    void setManagerUri(const QString& uri);
+    void setLocalId(const QContactLocalId& id);
 
 private:
-    Q_DISABLE_COPY(QContactIdFetchRequest)
-    friend class QContactManagerEngine;
-    Q_DECLARE_PRIVATE_D(d_ptr, QContactIdFetchRequest)
+    QSharedDataPointer<QContactIdPrivate> d;
 };
 
 #endif
+

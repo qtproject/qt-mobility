@@ -102,7 +102,7 @@
  */
 
 /*!
- * \fn QContactManagerEngine::contactsAdded(const QList<QContactId>& contactIds);
+ * \fn QContactManagerEngine::contactsAdded(const QList<QContactLocalId>& contactIds);
  *
  * This signal is emitted some time after a set of contacts has been added to
  * this engine where the \l dataChanged() signal was not emitted for those changes.
@@ -116,7 +116,7 @@
  */
 
 /*!
- * \fn QContactManagerEngine::contactsChanged(const QList<QContactId>& contactIds);
+ * \fn QContactManagerEngine::contactsChanged(const QList<QContactLocalId>& contactIds);
  *
  * This signal is emitted some time after a set of contacts has been modified in
  * this engine where the \l dataChanged() signal was not emitted for those changes.
@@ -130,7 +130,7 @@
  */
 
 /*!
- * \fn QContactManagerEngine::contactsRemoved(const QList<QContactId>& contactIds);
+ * \fn QContactManagerEngine::contactsRemoved(const QList<QContactLocalId>& contactIds);
  *
  * This signal is emitted some time after a set of contacts has been removed from
  * this engine where the \l dataChanged() signal was not emitted for those changes.
@@ -173,11 +173,11 @@ QString QContactManagerEngine::managerUri() const
  *
  * Any errors encountered should be stored to \a error.
  */
-QList<QContactId> QContactManagerEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactManagerEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     Q_UNUSED(sortOrders);
     error = QContactManager::NotSupportedError;
-    return QList<QContactId>();
+    return QList<QContactLocalId>();
 }
 
 /*!
@@ -186,13 +186,13 @@ QList<QContactId> QContactManagerEngine::contacts(const QList<QContactSortOrder>
  *
  * The default implementation will retrieve all contacts and test them with testFilter.
  */
-QList<QContactId> QContactManagerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactManagerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     /* Slow way */
-    QList<QContactId> ret;
+    QList<QContactLocalId> ret;
 
     /* Retrieve each contact.. . . */
-    const QList<QContactId>& all = contacts(sortOrders, error);
+    const QList<QContactLocalId>& all = contacts(sortOrders, error);
     if (error != QContactManager::NoError)
         return ret;
 
@@ -211,7 +211,7 @@ QList<QContactId> QContactManagerEngine::contacts(const QContactFilter& filter, 
  * Returns a list of ids of contacts of the given \a contactType, sorted according to the given list of \a sortOrders.
  * Any error which occurs is saved in \a error.
  */
-QList<QContactId> QContactManagerEngine::contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactManagerEngine::contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     QContactDetailFilter df;
     df.setDetailDefinitionName(QContactType::DefinitionName, QContactType::FieldType);
@@ -225,7 +225,7 @@ QList<QContactId> QContactManagerEngine::contacts(const QString& contactType, co
  *
  * Any errors encountered should be stored to \a error.
  */
-QContact QContactManagerEngine::contact(const QContactId& contactId, QContactManager::Error& error) const
+QContact QContactManagerEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
     Q_UNUSED(contactId);
     error = QContactManager::NotSupportedError;
@@ -243,7 +243,7 @@ QContact QContactManagerEngine::contact(const QContactId& contactId, QContactMan
  * \c QContactManager::NotSupportedError and the function will
  * return false.
  */
-bool QContactManagerEngine::setSelfContactId(const QContactId& contactId, QContactManager::Error& error)
+bool QContactManagerEngine::setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error)
 {
     Q_UNUSED(contactId);
     error = QContactManager::NotSupportedError;
@@ -257,10 +257,10 @@ bool QContactManagerEngine::setSelfContactId(const QContactId& contactId, QConta
  * the concept of a "self" contact, an invalid id will be returned
  * and the \a error will be set to \c QContactManager::DoesNotExistError.
  */
-QContactId QContactManagerEngine::selfContactId(QContactManager::Error& error) const
+QContactLocalId QContactManagerEngine::selfContactId(QContactManager::Error& error) const
 {
     error = QContactManager::DoesNotExistError;
-    return QContactId();
+    return QContactLocalId();
 }
 
 /*!
@@ -274,16 +274,19 @@ QContactId QContactManagerEngine::selfContactId(QContactManager::Error& error) c
  * \a relationshipType set (but no destination contacts) will be returned, and \a error will be set to
  * \c QContactManager::DoesNotExistError.
  */
-QContactRelationship QContactManagerEngine::relationship(const QContactId& sourceId, const QString& relationshipType, QContactManager::Error& error) const
+QContactRelationship QContactManagerEngine::relationship(const QContactLocalId& sourceId, const QString& relationshipType, QContactManager::Error& error) const
 {
     QList<QContactRelationship> matchingRelationships = relationships(sourceId, relationshipType, error);
-    if (matchingRelationships.isEmpty()) {
+    if (error == QContactManager::DoesNotExistError && matchingRelationships.isEmpty()) {
         // found no matching relationships.  synthesise one and return it.
         QContactRelationship retnRelationship;
         retnRelationship.setSourceContact(sourceId);
         retnRelationship.setRelationshipType(relationshipType);
         error = QContactManager::DoesNotExistError;
         return retnRelationship;
+    } else if (error != QContactManager::NoError) {
+        // error occurred, return an empty relationship
+        return QContactRelationship();
     }
 
     // found at least one match.  Return the first one.
@@ -297,7 +300,7 @@ QContactRelationship QContactManagerEngine::relationship(const QContactId& sourc
  * If no relationships are found, \a error is set to \c QContactManager::DoesNotExistError; if the operation completes successfully, \a error is set
  * to \c QContactManager::NoError.
  */
-QList<QContactRelationship> QContactManagerEngine::relationships(const QContactId& sourceId, const QString& relationshipType, QContactManager::Error& error) const
+QList<QContactRelationship> QContactManagerEngine::relationships(const QContactLocalId& sourceId, const QString& relationshipType, QContactManager::Error& error) const
 {
     Q_UNUSED(sourceId);
     Q_UNUSED(relationshipType);
@@ -306,28 +309,28 @@ QList<QContactRelationship> QContactManagerEngine::relationships(const QContactI
 }
 
 /*!
- * Returns all relationships of the specified \a relationshipType in which the contact identified by \a participantUri is a source or involved participant.
- * If \a participantUri consists of an empty manager URI and the zero id, all relationships of the given \a relationshipType are returned.  If the \a relationshipType
- * is empty, all relationships in which the contact identified by \a participantUri is a source or involved participant are returned.
+ * Returns all relationships of the specified \a relationshipType in which the contact identified by \a participant is a source or destination participant.
+ * If \a participant consists of an empty manager URI and the zero id, all relationships of the given \a relationshipType are returned.  If the \a relationshipType
+ * is empty, all relationships in which the contact identified by \a participant is a source or involved participant are returned.
  * If no relationships are found, \a error is set to \c QContactManager::DoesNotExistError; if the operation completes successfully, \a error is set
  * to \c QContactManager::NoError.
  */
-QList<QContactRelationship> QContactManagerEngine::relationships(const QString& relationshipType, const QPair<QString, QContactId>& participantUri, QContactManager::Error& error) const
+QList<QContactRelationship> QContactManagerEngine::relationships(const QString& relationshipType, const QContactId& participant, QContactManager::Error& error) const
 {
     Q_UNUSED(relationshipType);
-    Q_UNUSED(participantUri);
+    Q_UNUSED(participant);
     error = QContactManager::DoesNotExistError;
     return QList<QContactRelationship>();
 }
 
 /*!
- * Returns all relationships of any type in which the contact identified by \a participantUri is a source or involved participant.
+ * Returns all relationships of any type in which the contact identified by \a participant is a source or destination participant.
  * If no relationships are found, \a error is set to \c QContactManager::DoesNotExistError; if the operation completes successfully, \a error is set
  * to \c QContactManager::NoError.
  */
-QList<QContactRelationship> QContactManagerEngine::relationships(const QPair<QString, QContactId>& participantUri, QContactManager::Error& error) const
+QList<QContactRelationship> QContactManagerEngine::relationships(const QContactId& participant, QContactManager::Error& error) const
 {
-    Q_UNUSED(participantUri);
+    Q_UNUSED(participant);
     error = QContactManager::DoesNotExistError;
     return QList<QContactRelationship>();
 }
@@ -1039,7 +1042,7 @@ bool QContactManagerEngine::validateDefinition(const QContactDetailDefinition& d
  * Any errors encountered during this operation should be stored to
  * \a error.
  */
-bool QContactManagerEngine::removeContact(const QContactId& contactId, QContactManager::Error& error)
+bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
 {
     Q_UNUSED(contactId);
     error = QContactManager::NotSupportedError;
@@ -1182,17 +1185,17 @@ QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact
  *
  * \sa QContactManager::removeContact()
  */
-QList<QContactManager::Error> QContactManagerEngine::removeContacts(QList<QContactId>* contactIds, QContactManager::Error& error)
+QList<QContactManager::Error> QContactManagerEngine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error)
 {
     QList<QContactManager::Error> ret;
     if (!contactIds) {
         error = QContactManager::BadArgumentError;
         return ret;
     } else {
-        QList<QContactId> removedList;
+        QList<QContactLocalId> removedList;
         QContactManager::Error functionError = QContactManager::NoError;
         for (int i = 0; i < contactIds->count(); i++) {
-            QContactId current = contactIds->at(i);
+            QContactLocalId current = contactIds->at(i);
             if (!removeContact(current, error)) {
                 functionError = error;
                 ret.append(functionError);
@@ -1283,10 +1286,10 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
         case QContactFilter::DefaultFilter:
             return true;
 
-        case QContactFilter::IdListFilter:
+        case QContactFilter::LocalIdFilter:
             {
-                const QContactIdListFilter idf(filter);
-                if (idf.ids().contains(contact.id()))
+                const QContactLocalIdFilter idf(filter);
+                if (idf.ids().contains(contact.id().localId()))
                     return true;
             }
             // Fall through to end
@@ -1456,29 +1459,27 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
         case QContactFilter::RelationshipFilter:
             {
                 // first, build contact's uri - FIXME
-                QPair<QString, QContactId> contactUriOne = QPair<QString, QContactId>(QString(), contact.id());
-                QPair<QString, QContactId> contactUriTwo = QPair<QString, QContactId>(QString(QLatin1String("thisEngineUri")), contact.id()); // TODO!
-
+                QContactId contactUri = contact.id();
                 const QContactRelationshipFilter rf(filter);
-                QPair<QString, QContactId> participant = QPair<QString, QContactId>(rf.otherParticipantManagerUri(), rf.otherParticipantId());
+                QContactId participant = rf.otherParticipantId();
                 QList<QContactRelationship> allRelationships;
                 allRelationships = contact.relationships();
 
                 // now check to see that the role is correct.
                 foreach (const QContactRelationship& rel, allRelationships) {
                     if (rf.role() == QContactRelationshipFilter::Source) {
-                        if (rel.relationshipType() == rf.type() && rel.sourceContact() == contact.id() && rel.destinationContacts().contains(participant)) {
+                        if (rel.relationshipType() == rf.type() && rel.sourceContact() == contact.id().localId() && rel.destinationContacts().contains(participant)) {
                             return true;
                         }
                     } else if (rf.role() == QContactRelationshipFilter::Either) {
                         if (rel.relationshipType() == rf.type()
-                                && ((rel.sourceContact() == contact.id() && rel.destinationContacts().contains(participant))
-                                    || (rel.destinationContacts().contains(contactUriOne) || rel.destinationContacts().contains(contactUriTwo)))) {
+                                && ((rel.sourceContact() == contact.id().localId() && rel.destinationContacts().contains(participant))
+                                    || (rel.destinationContacts().contains(contactUri)))) {
                             return true;
                         }
                     } else if (rf.role() == QContactRelationshipFilter::Destination) {
                         if (rel.relationshipType() == rf.type()
-                                && (rel.destinationContacts().contains(contactUriOne) || rel.destinationContacts().contains(contactUriTwo))) {
+                                && (rel.destinationContacts().contains(contactUri))) {
                             return true;
                         }
                     }
@@ -1752,7 +1753,7 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
 
         case QContactAbstractRequest::ContactIdFetchRequest:
         {
-            QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*>(req);
+            QContactLocalIdFetchRequest* r = static_cast<QContactLocalIdFetchRequest*>(req);
             emit r->progress(r, appendOnly);
         }
         break;
@@ -1821,15 +1822,15 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
 /*!
  * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability.  If the request is of a type which does not return a list of unique ids as a result, this function will return without doing anything.
  */
-void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     if (req->type() == QContactAbstractRequest::ContactIdFetchRequest) {
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
         req->d_ptr->m_status = status;
-        QContactIdFetchRequestPrivate* rd = static_cast<QContactIdFetchRequestPrivate*>(req->d_ptr);
+        QContactLocalIdFetchRequestPrivate* rd = static_cast<QContactLocalIdFetchRequestPrivate*>(req->d_ptr);
         rd->m_ids = result;
-        QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*>(req);
+        QContactLocalIdFetchRequest* r = static_cast<QContactLocalIdFetchRequest*>(req);
         emit r->progress(r, appendOnly);
     }
 }

@@ -101,7 +101,7 @@ bool QContactChangeSet::dataChanged()
  * Returns a reference to the set of ids of contacts which have been added to
  * the database.
  */
-QSet<QContactId>& QContactChangeSet::addedContacts()
+QSet<QContactLocalId>& QContactChangeSet::addedContacts()
 {
     return d->m_addedContacts;
 }
@@ -110,7 +110,7 @@ QSet<QContactId>& QContactChangeSet::addedContacts()
  * Returns a reference to the set of ids of contacts which have been changed in
  * the database.
  */
-QSet<QContactId>& QContactChangeSet::changedContacts()
+QSet<QContactLocalId>& QContactChangeSet::changedContacts()
 {
     return d->m_changedContacts;
 }
@@ -119,7 +119,7 @@ QSet<QContactId>& QContactChangeSet::changedContacts()
  * Returns a reference to the set of ids of contacts which have been removed from
  * the database.
  */
-QSet<QContactId>& QContactChangeSet::removedContacts()
+QSet<QContactLocalId>& QContactChangeSet::removedContacts()
 {
     return d->m_removedContacts;
 }

@@ -58,7 +58,6 @@ class QContactData : public QSharedData
 public:
     QContactData()
         : QSharedData(),
-        m_id(0),
         m_nextDetailId(3) // already two "must have" details: DisplayLabel and Type
     {
     }

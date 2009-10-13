@@ -803,19 +803,19 @@ void tst_QContactFilter::boringFilters()
 
 void tst_QContactFilter::idListFilter()
 {
-    QContactIdListFilter idf;
+    QContactLocalIdFilter idf;
 
-    QVERIFY(idf.type() == QContactFilter::IdListFilter);
+    QVERIFY(idf.type() == QContactFilter::LocalIdFilter);
 
     QVERIFY(idf.ids().count() == 0);
 
-    QList<QContactId> ids;
+    QList<QContactLocalId> ids;
     ids << 5 << 6 << 17;
 
     idf.setIds(ids);
     QVERIFY(idf.ids() == ids);
 
-    idf.setIds(QList<QContactId>());
+    idf.setIds(QList<QContactLocalId>());
     QVERIFY(idf.ids().count() == 0);
 
     /* Test op= */
@@ -823,7 +823,7 @@ void tst_QContactFilter::idListFilter()
     QContactFilter f = idf;
     QVERIFY(f == idf);
 
-    QContactIdListFilter idf2 = f;
+    QContactLocalIdFilter idf2 = f;
     QVERIFY(idf2 == idf);
     QVERIFY(idf2.ids() == ids);
 

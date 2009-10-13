@@ -119,15 +119,15 @@ public:
     QContactFilter m_filter;
 };
 
-class QContactIdFetchRequestPrivate : public QContactAbstractRequestPrivate
+class QContactLocalIdFetchRequestPrivate : public QContactAbstractRequestPrivate
 {
 public:
-    QContactIdFetchRequestPrivate()
+    QContactLocalIdFetchRequestPrivate()
         : QContactAbstractRequestPrivate()
     {
     }
 
-    ~QContactIdFetchRequestPrivate()
+    ~QContactLocalIdFetchRequestPrivate()
     {
     }
 
@@ -139,7 +139,7 @@ public:
     QContactFilter m_filter;
     QList<QContactSortOrder> m_sorting;
 
-    QList<QContactId> m_ids;
+    QList<QContactLocalId> m_ids;
 };
 
 class QContactDetailDefinitionFetchRequestPrivate : public QContactAbstractRequestPrivate
@@ -224,9 +224,9 @@ public:
         return QContactAbstractRequest::RelationshipFetchRequest;
     }
 
-    QContactId m_sourceContact;
+    QContactLocalId m_sourceContact;
     QString m_relationshipType;
-    QPair<QString, QContactId> m_participantUri;
+    QContactId m_participantUri;
     QContactRelationshipFilter::Role m_role;
     QList<QContactRelationship> m_relationships;
 };
@@ -269,7 +269,7 @@ public:
         return QContactAbstractRequest::RelationshipRemoveRequest;
     }
 
-    QContactId m_sourceContact;
+    QContactLocalId m_sourceContact;
     QString m_relationshipType;
 };
 

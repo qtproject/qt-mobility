@@ -116,7 +116,7 @@ void addContact(QContactManager* cm)
 //! [Calling an existing contact]
 void callContact(QContactManager* cm)
 {
-    QList<QContactId> contactIds = cm->contacts();
+    QList<QContactLocalId> contactIds = cm->contacts();
     QContact a = cm->contact(contactIds.first());
 
     /* Get this contact's first phone number */
@@ -140,7 +140,7 @@ void matchCall(QContactManager* cm, const QString& incomingCallNbr)
     phoneFilter.setValue(incomingCallNbr);
     phoneFilter.setMatchFlags(Qt::MatchExactly);
 
-    QList<QContactId> matchingContacts = cm->contacts(phoneFilter);
+    QList<QContactLocalId> matchingContacts = cm->contacts(phoneFilter);
     if (matchingContacts.size() == 0) {
         qDebug() << "Incoming call from unknown contact (" << incomingCallNbr << ")";
     } else {
@@ -158,7 +158,7 @@ void matchCall(QContactManager* cm, const QString& incomingCallNbr)
 //! [Viewing a specific detail of a contact]
 void viewSpecificDetail(QContactManager* cm)
 {
-    QList<QContactId> contactIds = cm->contacts();
+    QList<QContactLocalId> contactIds = cm->contacts();
     QContact a = cm->contact(contactIds.first());
     QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
     if (cdl.isEmpty())
@@ -171,7 +171,7 @@ void viewSpecificDetail(QContactManager* cm)
 //! [Viewing the details of a contact]
 void viewDetails(QContactManager* cm)
 {
-    QList<QContactId> contactIds = cm->contacts();
+    QList<QContactLocalId> contactIds = cm->contacts();
     QContact a = cm->contact(contactIds.first());
     QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
     if (cdl.isEmpty())
@@ -220,7 +220,7 @@ void addPlugin(QContactManager* cm)
 //! [Modifying an existing contact]
 void editView(QContactManager* cm)
 {
-    QList<QContactId> contactIds = cm->contacts();
+    QList<QContactLocalId> contactIds = cm->contacts();
     QContact a = cm->contact(contactIds.first());
     QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
     if (cdl.isEmpty())
@@ -293,7 +293,7 @@ void RequestExample::printContacts(QContactFetchRequest* request, bool appendOnl
 void loadManager()
 {
     QContactManager* cm = new QContactManager("KABC");
-    QList<QContactId> contactIds = cm->contacts();
+    QList<QContactLocalId> contactIds = cm->contacts();
     if (!contactIds.isEmpty()) {
         QContact a = cm->contact(contactIds.first());
         QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);

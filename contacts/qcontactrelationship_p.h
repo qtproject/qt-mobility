@@ -51,6 +51,7 @@
 #include <QSharedData>
 
 #include "qtcontactsglobal.h"
+#include "qcontactid.h"
 
 class QContactRelationshipPrivate : public QSharedData
 {
@@ -73,8 +74,8 @@ public:
     {
     }
 
-    QContactId m_sourceContact;
-    QList<QPair<QString, QContactId> > m_destinationContacts;
+    QContactLocalId m_sourceContact;
+    QList<QContactId> m_destinationContacts;
     QString m_relationshipType;
 };
 

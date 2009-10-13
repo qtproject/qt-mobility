@@ -47,7 +47,7 @@
 #include "transformcontact.h"
 
 //remember to remove this in the code and just return a normal list
-//typedef QList<QContactId> QContactIdIterator;
+//typedef QList<QContactLocalId> QContactLocalIdIterator;
 
 class QContactChangeSet;
 
@@ -62,35 +62,35 @@ public:
 
 public:
     /* Access */
-        QList<QContactId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error);
-    QContact contact(const QContactId& contactId, QContactManager::Error& qtError) const;
-    QList<QContactId> contacts(QContactManager::Error& qtError) const;
+        QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error);
+    QContact contact(const QContactLocalId& contactId, QContactManager::Error& qtError) const;
+    QList<QContactLocalId> contacts(QContactManager::Error& qtError) const;
     int count() const;
     
     /* "My card" */
-    QContactId personalID() const;
-    bool hasPersonalDetails() const; //is this needed, QContactId could be 0 if it doesn't exist
-    int setPersonalContactId(const QContactId &);
+    QContactLocalId personalID() const;
+    bool hasPersonalDetails() const; //is this needed, QContactLocalId could be 0 if it doesn't exist
+    int setPersonalContactId(const QContactLocalId &);
     void clearPersonalContactId();
 
     /* Add/Update/Remove */ 
     bool addContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
     bool updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
-    bool removeContact(const QContactId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError);
+    bool removeContact(const QContactLocalId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError);
     
     //function to find contacts, based on the communication method
     //communication type - call (number, voip fields), digits to match
     //communication type - sms (number fields), digits to match
     //communication type - email (email fields)
-    QList<QContactId> matchCommunicationAddress( const QString &communicationType, const QString &communicationAddress );
+    QList<QContactLocalId> matchCommunicationAddress( const QString &communicationType, const QString &communicationAddress );
 
     /* Groups functionality */
-        QList<QContactId> groups(QContactManager::Error& qtError) const;
-        QContactGroup group(const QContactId& groupId, QContactManager::Error& qtError) const;
+        QList<QContactLocalId> groups(QContactManager::Error& qtError) const;
+        QContactGroup group(const QContactLocalId& groupId, QContactManager::Error& qtError) const;
 	bool addGroup(QContactGroup& group, QContactChangeSet& changeSet, QContactManager::Error& qtError);
 	bool updateGroup(QContactGroup& group, QContactChangeSet& changeSet, QContactManager::Error& qtError);
-        bool removeGroup(const QContactId& groupId, QContactChangeSet& changeSet, QContactManager::Error& qtError);
-        QContactId simPhonebookGroupId() const;
+        bool removeGroup(const QContactLocalId& groupId, QContactChangeSet& changeSet, QContactManager::Error& qtError);
+        QContactLocalId simPhonebookGroupId() const;
     
 public:
 	// From MContactDbObserver
@@ -98,41 +98,41 @@ public:
     
 signals:
     // Database change notifications
-    void contactAdded(const QContactId &contactId);
-    void contactRemoved(const QContactId &contactId);
-    void contactChanged(const QContactId &contactId);
-    void groupAdded(const QContactId &contactId);
-    void groupRemoved(const QContactId &contactId);
-    void groupChanged(const QContactId &contactId);
+    void contactAdded(const QContactLocalId &contactId);
+    void contactRemoved(const QContactLocalId &contactId);
+    void contactChanged(const QContactLocalId &contactId);
+    void groupAdded(const QContactLocalId &contactId);
+    void groupRemoved(const QContactLocalId &contactId);
+    void groupChanged(const QContactLocalId &contactId);
 
 private:
     // Utility function to convert symbian error to QContactManager error
 	void transformError(TInt symbianError, QContactManager::Error& qtError) const;
 
 	// Leaving functions implementing CNTMODEL interaction.
-        QContact contactL(const QContactId &id) const;
-        QList<QContactId> contactsL() const;
+        QContact contactL(const QContactLocalId &id) const;
+        QList<QContactLocalId> contactsL() const;
 	int countL() const;
 
 	int addContactL(QContact &contact);
 	void updateContactL(QContact &contact);
-    int removeContactL(QContactId id);
+    int removeContactL(QContactLocalId id);
 
-        QList<QContactId>  matchCommunicationAddressL( const QString &communicationType, const QString &communicationAddress );
+        QList<QContactLocalId>  matchCommunicationAddressL( const QString &communicationType, const QString &communicationAddress );
 
 	//Leaving functions for groups functionality
-        QList<QContactId> groupsL() const;
-        QContactGroup groupL(const QContactId& groupId) const;
+        QList<QContactLocalId> groupsL() const;
+        QContactGroup groupL(const QContactLocalId& groupId) const;
 	void addGroupL(QContactGroup& group);
 	void updateGroupL(QContactGroup& group);
-        void removeGroupL(const QContactId& groupId);
-        QContactId simPhonebookGroupIdL() const;
-        QList<QContactId> memberOfGroupsL(const TContactItemId contactId) const;
+        void removeGroupL(const QContactLocalId& groupId);
+        QContactLocalId simPhonebookGroupIdL() const;
+        QList<QContactLocalId> memberOfGroupsL(const TContactItemId contactId) const;
 	void updateMemberOfGroupsL(QContact contact);
 
 	//utility functions
-        CContactGroup* fetchCGroup(const QContactId& id) const;
-        bool isGroup(const QContactId& id) const;
+        CContactGroup* fetchCGroup(const QContactLocalId& id) const;
+        bool isGroup(const QContactLocalId& id) const;
 
 private:
 	CContactDatabase* m_contactDatabase;
@@ -140,9 +140,9 @@ private:
 	CContactChangeNotifier* m_contactChangeNotifier;
 #endif	
 	TransformContact* m_transformContact;
-    QList<QContactId> m_contactsAddedEmitted;
-    QList<QContactId> m_contactsChangedEmitted;
-    QList<QContactId> m_contactsRemovedEmitted;
+    QList<QContactLocalId> m_contactsAddedEmitted;
+    QList<QContactLocalId> m_contactsChangedEmitted;
+    QList<QContactLocalId> m_contactsRemovedEmitted;
 };
 
 #endif

@@ -41,6 +41,7 @@
 #include <QSharedDataPointer>
 
 #include "qtcontactsglobal.h"
+#include "qcontactid.h"
 
 class QContactRelationshipPrivate;
 
@@ -71,20 +72,19 @@ public:
     bool operator==(const QContactRelationship &other) const;
     bool operator!=(const QContactRelationship &other) const { return !(*this==other); }
 
-    QContactId sourceContact() const;
-    QList<QPair<QString, QContactId> > destinationContacts() const;
+    QContactLocalId sourceContact() const;
+    QList<QContactId> destinationContacts() const;
     QString relationshipType() const;
 
-    void setSourceContact(const QContactId& id);
-    void setDestinationContacts(const QList<QPair<QString, QContactId> >& contacts);
+    void setSourceContact(const QContactLocalId& id);
+    void setDestinationContacts(const QList<QContactId>& contacts);
     void setRelationshipType(const QString& relationshipType);
 
     // convenience accessors and mutators for destination contacts
     bool removeDestinationContact(int position);
-    bool removeDestinationContact(const QPair<QString, QContactId>& contact);
-    void insertDestinationContact(int position, const QPair<QString, QContactId>& contact);
-    void appendDestinationContact(const QPair<QString, QContactId>& contact);
-    void appendDestinationContact(const QContactId& contactId);
+    bool removeDestinationContact(const QContactId& contact);
+    void insertDestinationContact(int position, const QContactId& contact);
+    void appendDestinationContact(const QContactId& contact);
 
 private:
     QSharedDataPointer<QContactRelationshipPrivate> d;

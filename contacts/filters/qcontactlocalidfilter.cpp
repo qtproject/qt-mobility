@@ -31,26 +31,49 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTIDLISTFILTER_H
-#define QCONTACTIDLISTFILTER_H
+#include "qcontactlocalidfilter.h"
+#include "qcontactlocalidfilter_p.h"
+#include "qcontactfilter_p.h"
+#include "qcontactmanager.h"
 
-#include "qcontactfilter.h"
+/*!
+ * \class QContactLocalIdFilter
+ * \brief The QContactLocalIdFilter class provides a filter based around a list of contact ids
+ *
+ * It may be used to select contacts whose ids are contained in the given list of ids
+ */
 
-class QContactIdListFilterPrivate;
-class QTCONTACTS_EXPORT QContactIdListFilter : public QContactFilter
+Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactLocalIdFilter);
+
+/*!
+ * \fn QContactLocalIdFilter::QContactLocalIdFilter(const QContactFilter& other)
+ * Constructs a copy of \a other if possible, otherwise constructs a new contact local id filter
+ */
+
+/*!
+ * Constructs a new contact local id filter
+ */
+QContactLocalIdFilter::QContactLocalIdFilter()
+    : QContactFilter(new QContactLocalIdFilterPrivate)
 {
-public:
-    QContactIdListFilter();
-    QContactIdListFilter(const QContactFilter& other);
+}
 
-    /* Mutators */
-    void setIds(const QList<QContactId>& ids);
+/*!
+ * Sets the list which contains the ids of possible matching contacts to \a ids
+ * \sa ids()
+ */
+void QContactLocalIdFilter::setIds(const QList<QContactLocalId>& ids)
+{
+    Q_D(QContactLocalIdFilter);
+    d->m_ids = ids;
+}
 
-    /* Accessors */
-    QList<QContactId> ids() const;
-
-private:
-    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactIdListFilter)
-};
-
-#endif
+/*!
+ * Returns the list of ids of contacts which match this filter
+ * \sa setIds()
+ */
+QList<QContactLocalId> QContactLocalIdFilter::ids() const
+{
+    Q_D(const QContactLocalIdFilter);
+    return d->m_ids;
+}

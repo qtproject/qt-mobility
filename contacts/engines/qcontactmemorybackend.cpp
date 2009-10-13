@@ -138,21 +138,21 @@ QMap<QString, QString> QContactMemoryEngine::managerParameters() const
 }
 
 /*! \reimp */
-QList<QContactId> QContactMemoryEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactMemoryEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     // TODO: this needs to be done properly...
     error = QContactManager::NoError;
-    QList<QContactId> sortedIds;
+    QList<QContactLocalId> sortedIds;
     QList<QContact> sortedContacts;
     for (int i = 0; i < d->m_contacts.size(); i++)
         QContactManagerEngine::addSorted(&sortedContacts, d->m_contacts.at(i), sortOrders);
     for (int i = 0; i < sortedContacts.size(); i++)
-        sortedIds.append(sortedContacts.at(i).id());
+        sortedIds.append(sortedContacts.at(i).id().localId());
     return sortedIds;
 }
 
 /*! \reimp */
-QContact QContactMemoryEngine::contact(const QContactId& contactId, QContactManager::Error& error) const
+QContact QContactMemoryEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
     int index = d->m_contactIds.indexOf(contactId);
     if (index != -1) {
@@ -171,8 +171,10 @@ QContact QContactMemoryEngine::contact(const QContactId& contactId, QContactMana
 
         // also, retrieve the current relationships the contact is involved with.
         QContactManager::Error relationshipError;
-        QPair<QString, QContactId> participantUri = QPair<QString, QContactId>(QString(), contactId);
-        QList<QContactRelationship> relationshipCache = relationships(participantUri, relationshipError);
+        QContactId participant;
+        participant.setManagerUri(QString());
+        participant.setLocalId(contactId);
+        QList<QContactRelationship> relationshipCache = relationships(participant, relationshipError);
         QContactManagerEngine::setContactRelationships(&retn, relationshipCache);
 
         // and return the contact
@@ -191,7 +193,7 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
     }
 
     // check to see if this contact already exists
-    int index = d->m_contactIds.indexOf(theContact->id());
+    int index = d->m_contactIds.indexOf(theContact->id().localId());
     if (index != -1) {
         /* We also need to check that there are no modified create only details */
         QContact oldContact = d->m_contacts.at(index);
@@ -223,10 +225,10 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
 
         // Looks ok, so continue
         d->m_contacts.replace(index, *theContact);
-        changeSet.changedContacts().insert(theContact->id());
+        changeSet.changedContacts().insert(theContact->id().localId());
     } else {
         // id does not exist; if not zero, fail.
-        if (theContact->id() != 0) {
+        if (theContact->id() != QContactId()) {
             error = QContactManager::DoesNotExistError;
             return false;
         }
@@ -238,13 +240,16 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
         theContact->saveDetail(&ts);
 
         // update the contact item - set its ID
-        theContact->setId(++d->m_nextContactId);
+        QContactId newId;
+        newId.setLocalId(++d->m_nextContactId);
+        newId.setManagerUri(managerUri());
+        theContact->setId(newId);
 
         // finally, add the contact to our internal lists and return
         d->m_contacts.append(*theContact);             // add contact to list
-        d->m_contactIds.append(theContact->id());      // track the contact id.
+        d->m_contactIds.append(theContact->id().localId());      // track the contact id.
 
-        changeSet.addedContacts().insert(theContact->id());
+        changeSet.addedContacts().insert(theContact->id().localId());
     }
 
     error = QContactManager::NoError;     // successful.
@@ -288,7 +293,7 @@ QList<QContactManager::Error> QContactMemoryEngine::saveContacts(QList<QContact>
     }
 }
 
-bool QContactMemoryEngine::removeContact(const QContactId& contactId, QContactChangeSet& changeSet, QContactManager::Error& error)
+bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QContactChangeSet& changeSet, QContactManager::Error& error)
 {
     int index = d->m_contactIds.indexOf(contactId);
 
@@ -298,8 +303,10 @@ bool QContactMemoryEngine::removeContact(const QContactId& contactId, QContactCh
     }
 
     // remove the contact from any relationships it was in.
-    QPair<QString, QContactId> thisContactUri = QPair<QString, QContactId>(managerUri(), contactId);
-    QList<QContactRelationship> allRelationships = relationships(thisContactUri, error);
+    QContactId thisContact;
+    thisContact.setManagerUri(managerUri());
+    thisContact.setLocalId(contactId);
+    QList<QContactRelationship> allRelationships = relationships(thisContact, error);
     if (error != QContactManager::NoError && error != QContactManager::DoesNotExistError) {
         error = QContactManager::UnspecifiedError; // failed to clean up relationships
         return false;
@@ -314,7 +321,7 @@ bool QContactMemoryEngine::removeContact(const QContactId& contactId, QContactCh
             continue;
         }
 
-        currRel.removeDestinationContact(thisContactUri);
+        currRel.removeDestinationContact(thisContact);
         saveRelationship(&currRel, error);
     }
 
@@ -328,7 +335,7 @@ bool QContactMemoryEngine::removeContact(const QContactId& contactId, QContactCh
 }
 
 /*! \reimp */
-bool QContactMemoryEngine::removeContact(const QContactId& contactId, QContactManager::Error& error)
+bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
 {
     QContactChangeSet changeSet;
     bool retn = removeContact(contactId, changeSet, error);
@@ -337,7 +344,7 @@ bool QContactMemoryEngine::removeContact(const QContactId& contactId, QContactMa
 }
 
 /*! \reimp */
-QList<QContactManager::Error> QContactMemoryEngine::removeContacts(QList<QContactId>* contactIds, QContactManager::Error& error)
+QList<QContactManager::Error> QContactMemoryEngine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error)
 {
     QList<QContactManager::Error> ret;
     if (!contactIds) {
@@ -349,7 +356,7 @@ QList<QContactManager::Error> QContactMemoryEngine::removeContacts(QList<QContac
     QContactChangeSet changeSet;
     QContactManager::Error functionError = QContactManager::NoError;
     for (int i = 0; i < contactIds->count(); i++) {
-        QContactId current = contactIds->at(i);
+        QContactLocalId current = contactIds->at(i);
         if (!removeContact(current, changeSet, error)) {
             functionError = error;
             ret.append(functionError);
@@ -365,11 +372,11 @@ QList<QContactManager::Error> QContactMemoryEngine::removeContacts(QList<QContac
 }
 
 /*! \reimp */
-QList<QContactRelationship> QContactMemoryEngine::relationships(const QContactId& sourceId, const QString& relationshipType, QContactManager::Error& error) const
+QList<QContactRelationship> QContactMemoryEngine::relationships(const QContactLocalId& sourceId, const QString& relationshipType, QContactManager::Error& error) const
 {
     QList<QContactRelationship> retn;
     foreach (const QContactRelationship& rel, d->m_relationships) {
-        if ((rel.sourceContact() == sourceId || sourceId == QContactId(0))
+        if ((rel.sourceContact() == sourceId || sourceId == QContactLocalId(0))
                 && (rel.relationshipType() == relationshipType || relationshipType.isEmpty())) {
             retn.append(rel);
         }
@@ -382,21 +389,21 @@ QList<QContactRelationship> QContactMemoryEngine::relationships(const QContactId
 }
 
 /*! \reimp */
-QList<QContactRelationship> QContactMemoryEngine::relationships(const QString& relationshipType, const QPair<QString, QContactId>& participantUri, QContactManager::Error& error) const
+QList<QContactRelationship> QContactMemoryEngine::relationships(const QString& relationshipType, const QContactId& participant, QContactManager::Error& error) const
 {
     // convenience function checking - if participant is blank, they want all relationships of the given type
-    if (participantUri.first.isEmpty() && (participantUri.second == QContactId(0)))
-        return relationships(QContactId(0), relationshipType, error);
+    if (participant.managerUri().isEmpty() && (participant.localId() == QContactLocalId(0)))
+        return relationships(QContactLocalId(0), relationshipType, error);
 
     QList<QContactRelationship> retn;
-    QPair<QString, QContactId> participant = participantUri;
-    if (participant.first.isEmpty())
-        participant.first = managerUri();
+    QContactId fixedParticipant = participant;
+    if (participant.managerUri().isEmpty())
+        fixedParticipant.setManagerUri(managerUri());
 
     foreach (const QContactRelationship& rel, d->m_relationships) {
         if ((rel.relationshipType() == relationshipType || relationshipType.isEmpty())
-                && ((rel.destinationContacts().contains(participant) || rel.destinationContacts().contains(participantUri))
-                    || ((participantUri.first.isEmpty() || participantUri.first == managerUri()) && rel.sourceContact() == participantUri.second))) {
+                && ((rel.destinationContacts().contains(fixedParticipant) || rel.destinationContacts().contains(participant))
+                    || ((participant.managerUri().isEmpty() || participant.managerUri() == managerUri()) && rel.sourceContact() == participant.localId()))) {
             retn.append(rel);
         }
     }
@@ -408,10 +415,10 @@ QList<QContactRelationship> QContactMemoryEngine::relationships(const QString& r
 }
 
 /*! \reimp */
-QList<QContactRelationship> QContactMemoryEngine::relationships(const QPair<QString, QContactId>& participantUri, QContactManager::Error& error) const
+QList<QContactRelationship> QContactMemoryEngine::relationships(const QContactId& participant, QContactManager::Error& error) const
 {
     // convenience function.
-    return relationships(QString(), participantUri, error);
+    return relationships(QString(), participant, error);
 }
 
 /*! \reimp */
@@ -429,23 +436,23 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
 
     // second, check that the local destination contacts exist; we cannot check other managers' contacts.
     QString myUri = managerUri();
-    QList<QPair<QString, QContactId> > dests = relationship->destinationContacts();
+    QList<QContactId> dests = relationship->destinationContacts();
 
-    QList<QPair<QString, QContactId> > checkDuplicates;
+    QList<QContactId> checkDuplicates;
     for (int i = 0; i < dests.size(); i++) {
-        QPair<QString, QContactId> curr = dests.at(i);
-        if (curr.first.isEmpty() || curr.first == myUri) {
+        QContactId curr = dests.at(i);
+        if (curr.managerUri().isEmpty() || curr.managerUri() == myUri) {
             // this entry in the destination list is supposedly stored in this manager.
             // check that it exists, and that it isn't the source contact (circular)
-            if (!d->m_contactIds.contains(curr.second) || curr.second == relationship->sourceContact()) {
+            if (!d->m_contactIds.contains(curr.localId()) || curr.localId() == relationship->sourceContact()) {
                 error = QContactManager::InvalidRelationshipError;
                 return false;
             }
         }
 
         // check for duplicates.
-        if (curr.first.isEmpty())
-            curr.first = myUri;
+        if (curr.managerUri().isEmpty())
+            curr.setManagerUri(myUri);
         if (checkDuplicates.contains(curr)) {
             // contains a duplicate entry.
             error = QContactManager::InvalidRelationshipError;
@@ -457,12 +464,12 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
     }
 
     // the relationship is valid.  We need to update any empty manager URIs in the destination contacts to our URI.
-    QList<QPair<QString, QContactId> > updatedDests;
+    QList<QContactId> updatedDests;
     for (int i = 0; i < dests.size(); i++) {
-        QPair<QString, QContactId> curr = dests.at(i);
-        if (curr.first.isEmpty()) {
+        QContactId curr = dests.at(i);
+        if (curr.managerUri().isEmpty()) {
             // need to update the URI
-            curr.first = myUri;
+            curr.setManagerUri(myUri);
         }
         updatedDests.append(curr);
     }
@@ -698,7 +705,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QContactManager::Error operationError;
             QList<QContactManager::Error> operationErrors;
             QList<QContact> requestedContacts;
-            QList<QContactId> requestedContactIds = contacts(filter, sorting, operationError);
+            QList<QContactLocalId> requestedContactIds = contacts(filter, sorting, operationError);
 
             QContactManager::Error tempError;
             for (int i = 0; i < requestedContactIds.size(); i++) {
@@ -732,12 +739,12 @@ void QContactMemoryEngine::performAsynchronousOperation()
 
         case QContactAbstractRequest::ContactIdFetchRequest:
         {
-            QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*>(currentRequest);
+            QContactLocalIdFetchRequest* r = static_cast<QContactLocalIdFetchRequest*>(currentRequest);
             QContactFilter filter = r->filter();
             QList<QContactSortOrder> sorting = r->sorting();
 
             QContactManager::Error operationError = QContactManager::NoError;
-            QList<QContactId> requestedContactIds = contacts(filter, sorting, operationError);
+            QList<QContactLocalId> requestedContactIds = contacts(filter, sorting, operationError);
 
             updateRequest(currentRequest, requestedContactIds, operationError, QList<QContactManager::Error>(), QContactAbstractRequest::Finished);
         }
@@ -773,7 +780,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QContactFilter filter = r->filter();
 
             QContactManager::Error operationError = QContactManager::NoError;
-            QList<QContactId> contactsToRemove = contacts(filter, QList<QContactSortOrder>(), operationError);
+            QList<QContactLocalId> contactsToRemove = contacts(filter, QList<QContactSortOrder>(), operationError);
 
             for (int i = 0; i < contactsToRemove.size(); i++) {
                 QContactManager::Error tempError;
@@ -865,11 +872,11 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QContactRelationshipFetchRequest* r = static_cast<QContactRelationshipFetchRequest*>(currentRequest);
             QContactManager::Error operationError = QContactManager::NoError;
             QList<QContactManager::Error> operationErrors;
-            QList<QContactRelationship> allRelationships = relationships(QContactId(0), QString(), operationError);
+            QList<QContactRelationship> allRelationships = relationships(QContactLocalId(0), QString(), operationError);
             QList<QContactRelationship> requestedRelationships;
 
             // first criteria: source contact id must be empty or must match
-            if (r->sourceContact() == QContactId(0)) {
+            if (r->sourceContact() == QContactLocalId(0)) {
                 // all relationships match this criteria (zero id denotes "any")
                 requestedRelationships = allRelationships;
             } else {
@@ -895,7 +902,9 @@ void QContactMemoryEngine::performAsynchronousOperation()
 
             // third criteria: participant must be empty or must match (including role in relationship)
             QString myUri = managerUri();
-            QPair<QString, QContactId> anonymousParticipant = QPair<QString, QContactId>(QString(), QContactId(0));
+            QContactId anonymousParticipant;
+            anonymousParticipant.setLocalId(QContactLocalId(0));
+            anonymousParticipant.setManagerUri(QString());
             if (r->participant() != anonymousParticipant) {
                 allRelationships = requestedRelationships;
                 requestedRelationships.clear();
@@ -905,7 +914,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
                             && currRelationship.destinationContacts().contains(r->participant())) {
                         requestedRelationships.append(currRelationship);
                     } else if ((r->participantRole() == QContactRelationshipFilter::Either || r->participantRole() == QContactRelationshipFilter::Source)
-                            && (currRelationship.sourceContact() == r->participant().second && r->participant().first == myUri)) {
+                            && (currRelationship.sourceContact() == r->participant().localId() && r->participant().managerUri() == myUri)) {
                         requestedRelationships.append(currRelationship);
                     }
                 }

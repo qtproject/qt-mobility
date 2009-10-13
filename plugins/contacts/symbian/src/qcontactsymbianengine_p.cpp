@@ -78,9 +78,9 @@ QContactSymbianEngineData::~QContactSymbianEngineData()
 }
 
 /* Access */
-QList<QContactId> QContactSymbianEngineData::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error)
+QList<QContactLocalId> QContactSymbianEngineData::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error)
 {
-        QList<QContactId> matches;
+        QList<QContactLocalId> matches;
 	
 	if (filter.type() == QContactFilter::ContactDetailFilter)
 	{
@@ -111,7 +111,7 @@ QList<QContactId> QContactSymbianEngineData::contacts(const QContactFilter& filt
  * \return A QContact for the requested QUniquId value or 0 if the read
  *  operation was unsuccessful (e.g. contact not found).
  */
-QContact QContactSymbianEngineData::contact(const QContactId& contactId, QContactManager::Error& qtError) const
+QContact QContactSymbianEngineData::contact(const QContactLocalId& contactId, QContactManager::Error& qtError) const
 {
 	QContact contact;
 	int err(0);
@@ -160,10 +160,10 @@ int QContactSymbianEngineData::count() const
  *  or an empty list if there was a problem or the database is
  *  empty.
  */
-QList<QContactId> QContactSymbianEngineData::contacts(QContactManager::Error& qtError) const
+QList<QContactLocalId> QContactSymbianEngineData::contacts(QContactManager::Error& qtError) const
 {
 	// Create an empty list
-        QList<QContactId> ids;
+        QList<QContactLocalId> ids;
 	
 	// Attempt to read from database, leaving the list empty if
 	// there was a problem
@@ -189,7 +189,7 @@ bool QContactSymbianEngineData::addContact(QContact& contact, QContactChangeSet&
 {
 	// Attempt to persist contact, trapping errors
     int err(0);
-    QContactId id(0);
+    QContactLocalId id(0);
     TRAP(err, QT_TRYCATCH_LEAVING(id = addContactL(contact)));
     if(err == KErrNone)
     {
@@ -237,7 +237,7 @@ bool QContactSymbianEngineData::updateContact(QContact& contact, QContactChangeS
  * \param qtError Qt error code. 
  * \return Error status.
  */
-bool QContactSymbianEngineData::removeContact(const QContactId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError)
+bool QContactSymbianEngineData::removeContact(const QContactLocalId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError)
 {
     // removeContactL() can't throw c++ exception
 	TRAPD(err, removeContactL(id));
@@ -262,10 +262,10 @@ bool QContactSymbianEngineData::removeContact(const QContactId &id, QContactChan
  * 
  * \return A list of QContact objects with the specificed communication address.
  */
-QList<QContactId> QContactSymbianEngineData::matchCommunicationAddress(const QString &communicationType, const QString &communicationAddress)
+QList<QContactLocalId> QContactSymbianEngineData::matchCommunicationAddress(const QString &communicationType, const QString &communicationAddress)
 {
 	// Create an empty list to return on failure
-        QList<QContactId> matches;
+        QList<QContactLocalId> matches;
 	
 	// Attempt to match address, list will remain empty if there's an error
     TRAP_IGNORE(QT_TRYCATCH_LEAVING(matches = matchCommunicationAddressL(communicationType, communicationAddress)));
@@ -281,9 +281,9 @@ QList<QContactId> QContactSymbianEngineData::matchCommunicationAddress(const QSt
  * \param qtError Qt error code. 
  * \return List of group IDs.
  */
-QList<QContactId> QContactSymbianEngineData::groups(QContactManager::Error& qtError) const
+QList<QContactLocalId> QContactSymbianEngineData::groups(QContactManager::Error& qtError) const
 {
-        QList<QContactId> list;
+        QList<QContactLocalId> list;
 	int err(0);
     TRAP(err, QT_TRYCATCH_LEAVING(list = groupsL()));
 	
@@ -298,7 +298,7 @@ QList<QContactId> QContactSymbianEngineData::groups(QContactManager::Error& qtEr
  * \param qtError Qt error code. 
  * \return The contact group object.
  */
-QContactGroup QContactSymbianEngineData::group(const QContactId& groupId, QContactManager::Error& qtError) const
+QContactGroup QContactSymbianEngineData::group(const QContactLocalId& groupId, QContactManager::Error& qtError) const
 {
 	QContactGroup qGroup;
 	int err(0);
@@ -360,7 +360,7 @@ bool QContactSymbianEngineData::updateGroup(QContactGroup& group, QContactChange
  * \param qtError Qt error code.
  * \return a bool indicating whether the operation was successful.
  */
-bool QContactSymbianEngineData::removeGroup(const QContactId& groupId, QContactChangeSet& changeSet, QContactManager::Error& qtError)
+bool QContactSymbianEngineData::removeGroup(const QContactLocalId& groupId, QContactChangeSet& changeSet, QContactManager::Error& qtError)
 {
     // removeGroupL() can't throw c++ exception
 	TRAPD(err, removeGroupL(groupId));
@@ -379,9 +379,9 @@ bool QContactSymbianEngineData::removeGroup(const QContactId& groupId, QContactC
  * 
  * \return a unique id relating the SIM phonebook group or 0 if it fails
  */
-QContactId QContactSymbianEngineData::simPhonebookGroupId() const
+QContactLocalId QContactSymbianEngineData::simPhonebookGroupId() const
 {
-        QContactId val = 0;
+        QContactLocalId val = 0;
 	// simPhonebookGroupIdL() can't throw c++ exception
 	TRAP_IGNORE(val = simPhonebookGroupIdL());
 	return val;
@@ -396,7 +396,7 @@ QContactId QContactSymbianEngineData::simPhonebookGroupId() const
  */
 void QContactSymbianEngineData::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
 {
-        // TODO: Conversion to/from QContactId
+        // TODO: Conversion to/from QContactLocalId
 
     TContactItemId id = aEvent.iContactId;
 
@@ -503,7 +503,7 @@ void QContactSymbianEngineData::transformError(TInt symbianError, QContactManage
 /*!
  * Private leaving implementation for contact()
  */
-QContact QContactSymbianEngineData::contactL(const QContactId &contactId) const
+QContact QContactSymbianEngineData::contactL(const QContactLocalId &contactId) const
 {
     // A contact with a zero id is not expected to exist.
     // Symbian contact database uses id 0 internally as the id of the
@@ -520,7 +520,7 @@ QContact QContactSymbianEngineData::contactL(const QContactId &contactId) const
 	QContact contact = m_transformContact->transformContactL(*symContact, *m_contactDatabase);
 
 	// Read group membership
-        QList<QContactId> groups = memberOfGroupsL(id);
+        QList<QContactLocalId> groups = memberOfGroupsL(id);
     contact.setGroups(groups);
 
     CleanupStack::PopAndDestroy(symContact);
@@ -531,18 +531,18 @@ QContact QContactSymbianEngineData::contactL(const QContactId &contactId) const
 /*!
  * Private leaving implementation for contactIds()
  */
-QList<QContactId> QContactSymbianEngineData::contactsL() const
+QList<QContactLocalId> QContactSymbianEngineData::contactsL() const
 {
 	TTime epoch(0);
-        QList<QContactId> qIds;
+        QList<QContactLocalId> qIds;
 	
     // Populate the ID array, returns the coontact ids + group ids 
 	CContactIdArray *ids = m_contactDatabase->ContactsChangedSinceL(epoch);
 	CleanupStack::PushL(ids);
 	
 	// If there was a problem, return an empty list, otherwise
-        // copy the IDs to the QContactId list. Note that this works
-        // while QContactId is a typedef to quint32.
+        // copy the IDs to the QContactLocalId list. Note that this works
+        // while QContactLocalId is a typedef to quint32.
 	const int idCount(ids->Count());
 	for (int i(0); i < idCount; ++i) {
 		qIds.append((*ids)[i]);
@@ -552,7 +552,7 @@ QList<QContactId> QContactSymbianEngineData::contactsL() const
 	
 	//remove the groups from the list
 	QContactManager::Error err = QContactManager::NoError;
-        QList<QContactId> groupIds = groups(err);
+        QList<QContactLocalId> groupIds = groups(err);
 	int indexOf(0);
 	
 	if (err==QContactManager::NoError) {
@@ -639,19 +639,19 @@ void QContactSymbianEngineData::updateContactL(QContact &contact)
  */
 void QContactSymbianEngineData::updateMemberOfGroupsL(QContact contact)
 {
-    QSet<QContactId> oldGroups = QSet<QContactId>::fromList(memberOfGroupsL(contact.id()));
-    QSet<QContactId> newGroups = QSet<QContactId>::fromList(contact.groups());
-    QSet<QContactId> toBeRemoved = oldGroups - newGroups;
-    QSet<QContactId> membersToAdd = newGroups - oldGroups;
+    QSet<QContactLocalId> oldGroups = QSet<QContactLocalId>::fromList(memberOfGroupsL(contact.id()));
+    QSet<QContactLocalId> newGroups = QSet<QContactLocalId>::fromList(contact.groups());
+    QSet<QContactLocalId> toBeRemoved = oldGroups - newGroups;
+    QSet<QContactLocalId> membersToAdd = newGroups - oldGroups;
 
     // Remove group memberships that have been removed
-    foreach (QContactId groupId, toBeRemoved)
+    foreach (QContactLocalId groupId, toBeRemoved)
     {
         m_contactDatabase->RemoveContactFromGroupL(TContactItemId(contact.id()), TContactItemId(groupId));
     }
 
     // add any new memberships
-    foreach (QContactId groupId, membersToAdd)
+    foreach (QContactLocalId groupId, membersToAdd)
     {
         m_contactDatabase->AddContactToGroupL(TContactItemId(contact.id()), TContactItemId(groupId));
     }    
@@ -660,9 +660,9 @@ void QContactSymbianEngineData::updateMemberOfGroupsL(QContact contact)
 /*!
  * Private leaving implementation for matchCommunicationAddress()
  */
-QList<QContactId> QContactSymbianEngineData::matchCommunicationAddressL( const QString &/*communicationType*/, const QString &communicationAddress )
+QList<QContactLocalId> QContactSymbianEngineData::matchCommunicationAddressL( const QString &/*communicationType*/, const QString &communicationAddress )
 {
-        QList<QContactId> contactIds;
+        QList<QContactLocalId> contactIds;
 	
 	//TODO - for now assume matching is done only for phone numbers and there is a 7bit wide match
 	TPtrC commPtr(reinterpret_cast<const TUint16*>(communicationAddress.utf16()));
@@ -672,7 +672,7 @@ QList<QContactId> QContactSymbianEngineData::matchCommunicationAddressL( const Q
 	const int noContacts = idsArray->Count();
 	for(int loop = 0; loop < noContacts; ++loop)
 	{
-        contactIds.append(QContactId((*idsArray)[loop]));
+        contactIds.append(QContactLocalId((*idsArray)[loop]));
 	}
 	
 	CleanupStack::PopAndDestroy( idsArray );
@@ -684,7 +684,7 @@ QList<QContactId> QContactSymbianEngineData::matchCommunicationAddressL( const Q
 /*!
  * Private leaving implementation for removeContact
  */
-int QContactSymbianEngineData::removeContactL(QContactId id)
+int QContactSymbianEngineData::removeContactL(QContactLocalId id)
 {
     // A contact with a zero id is not expected to exist.
     // Symbian contact database uses id 0 internally as the id of the
@@ -692,11 +692,11 @@ int QContactSymbianEngineData::removeContactL(QContactId id)
 	if(id == 0)
 	    User::Leave(KErrNotFound);
 
-    //TODO: in future QContactId will be a class so this will need to be changed.
+    //TODO: in future QContactLocalId will be a class so this will need to be changed.
     TContactItemId cId = static_cast<TContactItemId>(id);
 
-    QList<QContactId> groupIds = memberOfGroupsL(cId);
-    foreach (QContactId id, groupIds)
+    QList<QContactLocalId> groupIds = memberOfGroupsL(cId);
+    foreach (QContactLocalId id, groupIds)
     {
         m_contactDatabase->RemoveContactFromGroupL(TContactItemId(cId), TContactItemId(id));
     }
@@ -710,15 +710,15 @@ int QContactSymbianEngineData::removeContactL(QContactId id)
 /*!
  * Private leaving implementation for groups
  */
-QList<QContactId> QContactSymbianEngineData::groupsL() const
+QList<QContactLocalId> QContactSymbianEngineData::groupsL() const
 {
-        QList<QContactId> list;
+        QList<QContactLocalId> list;
 	CContactIdArray* cIdList = m_contactDatabase->GetGroupIdListL();
 	CleanupStack::PushL(cIdList);
 	const int count = cIdList->Count();
 	for (int i = 0; i < count; ++i)
 	{
-                list.append(QContactId((*cIdList)[i]));
+                list.append(QContactLocalId((*cIdList)[i]));
 	}
 	CleanupStack::PopAndDestroy(cIdList);
 	return list;
@@ -727,7 +727,7 @@ QList<QContactId> QContactSymbianEngineData::groupsL() const
 /*!
  * Private leaving implementation for group
  */
-QContactGroup QContactSymbianEngineData::groupL(const QContactId& groupId) const
+QContactGroup QContactSymbianEngineData::groupL(const QContactLocalId& groupId) const
 {
 	// try to fetch a group item of that id
 	CContactGroup* cGroup = fetchCGroup(groupId);
@@ -752,7 +752,7 @@ QContactGroup QContactSymbianEngineData::groupL(const QContactId& groupId) const
 	const int count = members->Count();
 	for (int i = 0; i < count; ++i)
 	{
-                qGroup.addMember(QContactId((*members)[i]));
+                qGroup.addMember(QContactLocalId((*members)[i]));
 	}
 	
 	return qGroup;
@@ -772,19 +772,19 @@ void QContactSymbianEngineData::addGroupL(QContactGroup& group)
         User::Leave( KErrArgument );
     }
 
-    // following line works at time of writing as QContactIdIterator is a typedef of QList<QContactId>
-        QSet<QContactId> newMembers = QSet<QContactId>::fromList(group.members());
-        QSet<QContactId> membersToAdd;
+    // following line works at time of writing as QContactLocalIdIterator is a typedef of QList<QContactLocalId>
+        QSet<QContactLocalId> newMembers = QSet<QContactLocalId>::fromList(group.members());
+        QSet<QContactLocalId> membersToAdd;
 
     // get the name, create a new group in the database and set the id
     TPtrC label(reinterpret_cast<const TUint16*>(group.name().utf16()));
     CContactGroup* cGroup = static_cast<CContactGroup*>(m_contactDatabase->CreateContactGroupLC(label));
-    group.setId(QContactId(cGroup->Id()));
+    group.setId(QContactLocalId(cGroup->Id()));
     CleanupStack::PopAndDestroy(cGroup); // no longer needed...
     membersToAdd = newMembers;
 
 	// add any new members
-        foreach (QContactId id, membersToAdd)
+        foreach (QContactLocalId id, membersToAdd)
 	{
 		m_contactDatabase->AddContactToGroupL(TContactItemId(id), TContactItemId(group.id()));
 	}
@@ -804,9 +804,9 @@ void QContactSymbianEngineData::updateGroupL(QContactGroup& group)
         User::Leave( KErrArgument );
     }
 
-    // following line works at time of writing as QContactIdIterator is a typedef of QList<QContactId>
-    QSet<QContactId> newMembers = QSet<QContactId>::fromList(group.members());
-    QSet<QContactId> membersToAdd;
+    // following line works at time of writing as QContactLocalIdIterator is a typedef of QList<QContactLocalId>
+    QSet<QContactLocalId> newMembers = QSet<QContactLocalId>::fromList(group.members());
+    QSet<QContactLocalId> membersToAdd;
 
     CContactGroup* cGroup = fetchCGroup(group.id());
     if (!cGroup)
@@ -832,18 +832,18 @@ void QContactSymbianEngineData::updateGroupL(QContactGroup& group)
     CContactIdArray* oldIds = cGroup->ItemsContainedLC();
 
     // build set of old members from list of ids in the database's version of the group
-    QSet<QContactId> oldMembers;
+    QSet<QContactLocalId> oldMembers;
     const int count = oldIds->Count();
     for (int i = 0; i < count; ++i)
     {
-        oldMembers.insert(QContactId((*oldIds)[i]));
+        oldMembers.insert(QContactLocalId((*oldIds)[i]));
     }
     CleanupStack::PopAndDestroy(oldIds);
     oldIds = NULL;
     
     //remove old members from the database that no longer are in the group
-    QSet<QContactId> membersToDelete = oldMembers - newMembers;
-    foreach (QContactId id, membersToDelete)
+    QSet<QContactLocalId> membersToDelete = oldMembers - newMembers;
+    foreach (QContactLocalId id, membersToDelete)
     {
         m_contactDatabase->RemoveContactFromGroupL(TContactItemId(id), TContactItemId(group.id()));
     }
@@ -853,7 +853,7 @@ void QContactSymbianEngineData::updateGroupL(QContactGroup& group)
     membersToAdd = newMembers - oldMembers;
 
     // add any new members
-    foreach (QContactId id, membersToAdd)
+    foreach (QContactLocalId id, membersToAdd)
     {
         m_contactDatabase->AddContactToGroupL(TContactItemId(id), TContactItemId(group.id()));
     }
@@ -863,7 +863,7 @@ void QContactSymbianEngineData::updateGroupL(QContactGroup& group)
 /*!
  * Private leaving implementation for removeGroup
  */
-void QContactSymbianEngineData::removeGroupL(const QContactId& groupId)
+void QContactSymbianEngineData::removeGroupL(const QContactLocalId& groupId)
 {
 	// try to fetch a contact item of that id and check it's a group object
 	if (!isGroup(groupId))
@@ -876,7 +876,7 @@ void QContactSymbianEngineData::removeGroupL(const QContactId& groupId)
 /*!
  * Private leaving implementation for simPhonebookGroupId
  */
-QContactId QContactSymbianEngineData::simPhonebookGroupIdL() const
+QContactLocalId QContactSymbianEngineData::simPhonebookGroupIdL() const
 {
 	return m_contactDatabase->PhonebookGroupIdL();
 }
@@ -884,10 +884,10 @@ QContactId QContactSymbianEngineData::simPhonebookGroupIdL() const
 /*!
  * Lists groups the contact is member of currently in the contact database. 
  */
-QList<QContactId> QContactSymbianEngineData::memberOfGroupsL(
+QList<QContactLocalId> QContactSymbianEngineData::memberOfGroupsL(
         const TContactItemId contactId) const
 {
-    QList<QContactId> list;
+    QList<QContactLocalId> list;
     CContactIdArray* groupIdList = m_contactDatabase->GetGroupIdListL();
     CleanupStack::PushL(groupIdList);
     for (int i = 0; i < groupIdList->Count(); ++i)
@@ -912,7 +912,7 @@ QList<QContactId> QContactSymbianEngineData::memberOfGroupsL(
  * @param id an id of a prospective group
  * @return a pointer to a CContactGroup or NULL if it's not a group
  */
-CContactGroup* QContactSymbianEngineData::fetchCGroup(const QContactId& id) const
+CContactGroup* QContactSymbianEngineData::fetchCGroup(const QContactLocalId& id) const
 {
 	// try to fetch a contact item of that id and turn it into a group object
 	CContactItem* cItem = NULL;
@@ -931,7 +931,7 @@ CContactGroup* QContactSymbianEngineData::fetchCGroup(const QContactId& id) cons
  * @param id an id of a prospective group 
  * @return bool indicating whether it a group
  */
-bool QContactSymbianEngineData::isGroup(const QContactId& id) const
+bool QContactSymbianEngineData::isGroup(const QContactLocalId& id) const
 {
 	CContactGroup* group = fetchCGroup(id);
 	if (!group)

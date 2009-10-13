@@ -437,8 +437,9 @@ QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) con
 }
 
 /*! Returns a list of relationships in which the contact was a participant at the time that it was retrieved from the manager */
-QList<QContactRelationship> QContact::relationships() const
+QList<QContactRelationship> QContact::relationships(const QString& relationshipType) const
 {
+    // TODO: filter.
     return d->m_relationships;
 }
 

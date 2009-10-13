@@ -133,7 +133,7 @@ void QContactWinCEEngine::deref()
         delete this;
 }
 
-QList<QContactId> QContactWinCEEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactWinCEEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     QString query = convertFilterToQueryString(filter);
     
@@ -156,11 +156,11 @@ QList<QContactId> QContactWinCEEngine::contacts(const QContactFilter& filter, co
 }
 
 
-QList<QContactId> QContactWinCEEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactWinCEEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     //XXX   POOM doses not support multi sort orders
 
-    QList<QContactId> allCIds = d->m_ids;
+    QList<QContactLocalId> allCIds = d->m_ids;
     error = QContactManager::NoError;
 
     return d->m_ids;
@@ -168,7 +168,7 @@ QList<QContactId> QContactWinCEEngine::contacts(const QList<QContactSortOrder>& 
     // return the list sorted according to sortOrders
     QContactManager::Error sortError;
     QList<QContact> sorted;
-    QList<QContactId> sortedIds;
+    QList<QContactLocalId> sortedIds;
     for (int i = 0; i < allCIds.size(); i++)
         QContactManagerEngine::addSorted(&sorted, contact(allCIds.at(i), sortError), sortOrders);
     for (int i = 0; i < sorted.size(); i++)
@@ -177,7 +177,7 @@ QList<QContactId> QContactWinCEEngine::contacts(const QList<QContactSortOrder>& 
     return sortedIds;
 }
 
-QContact QContactWinCEEngine::contact(const QContactId& contactId, QContactManager::Error& error) const
+QContact QContactWinCEEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
     QContact ret;
 
@@ -271,7 +271,7 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
                 long oid = 0;
                 hr = icontact->get_Oid(&oid);
                 if (SUCCEEDED(hr)) {
-                    contact->setId((QContactId)oid);
+                    contact->setId((QContactLocalId)oid);
                     if (wasOld) {
                         cs.changedContacts().insert(contact->id());
                     } else {
@@ -298,7 +298,7 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
     return false;
 }
 
-bool QContactWinCEEngine::removeContact(const QContactId& contactId, QContactManager::Error& error)
+bool QContactWinCEEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
 {
     // Fetch an IItem* for this
     if (contactId != 0) {

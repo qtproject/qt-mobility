@@ -82,8 +82,8 @@ public:
         m_settingsWatcher(0),
         m_definitions(other.m_definitions),
         m_lastUsedId(other.m_lastUsedId),
-        m_kabcUidToQContactId(other.m_kabcUidToQContactId),
-        m_QContactIdToKabcUid(other.m_QContactIdToKabcUid),
+        m_kabcUidToQContactLocalId(other.m_kabcUidToQContactLocalId),
+        m_QContactLocalIdToKabcUid(other.m_QContactLocalIdToKabcUid),
         m_standardAddressbook(other.m_standardAddressbook),
         ab(0)
     {
@@ -102,9 +102,9 @@ public:
     QString m_settingsFile;
     QFileSystemWatcher* m_settingsWatcher;
     mutable QMap<QString, QContactDetailDefinition> m_definitions;
-    mutable QContactId m_lastUsedId;
-    mutable QMap<QString, QContactId> m_kabcUidToQContactId;
-    mutable QMap<QContactId, QString> m_QContactIdToKabcUid;
+    mutable QContactLocalId m_lastUsedId;
+    mutable QMap<QString, QContactLocalId> m_kabcUidToQContactLocalId;
+    mutable QMap<QContactLocalId, QString> m_QContactLocalIdToKabcUid;
     bool m_standardAddressbook;
     KABC::AddressBook *ab;
 };
@@ -124,16 +124,16 @@ public:
     QMap<QString, QString> parameters() const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QContactId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QContact contact(const QContactId& contactId, QContactManager::Error& error) const;
-    bool saveContact(QContact* contact, QSet<QContactId>& contactsAdded, QSet<QContactId>& contactsChanged, QSet<QContactId>& groupsChanged, QContactManager::Error& error);
-    bool removeContact(const QContactId& contactId, QSet<QContactId>& contactsChanged, QSet<QContactId>& groupsChanged, QContactManager::Error& error);
+    QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
+    bool saveContact(QContact* contact, QSet<QContactLocalId>& contactsAdded, QSet<QContactLocalId>& contactsChanged, QSet<QContactLocalId>& groupsChanged, QContactManager::Error& error);
+    bool removeContact(const QContactLocalId& contactId, QSet<QContactLocalId>& contactsChanged, QSet<QContactLocalId>& groupsChanged, QContactManager::Error& error);
 
     /* Groups - Accessors and Mutators */
-    //QList<QContactId> groups(QContactManager::Error& error) const;
-    //QContactGroup group(const QContactId& groupId, QContactManager::Error& error) const;
+    //QList<QContactLocalId> groups(QContactManager::Error& error) const;
+    //QContactGroup group(const QContactLocalId& groupId, QContactManager::Error& error) const;
     //bool saveGroup(QContactGroup* group, QContactManager::Error& error);
-    //bool removeGroup(const QContactId& groupId, QContactManager::Error& error);
+    //bool removeGroup(const QContactLocalId& groupId, QContactManager::Error& error);
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
@@ -146,7 +146,7 @@ public:
     QList<QVariant::Type> supportedDataTypes() const;
 
 private:
-    QContactId getIdOfAddressee(const KABC::Addressee& addressee, QContactManager::Error& error) const;
+    QContactLocalId getIdOfAddressee(const KABC::Addressee& addressee, QContactManager::Error& error) const;
     QString escaped(const QString& input) const;
     QString convertDetail(const QContactDetail& detail, const QContact& contact) const;
     QContactDetail convertCustomString(const QString& customString) const;

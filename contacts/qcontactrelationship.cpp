@@ -34,6 +34,7 @@
 #include "qcontactrelationship.h"
 #include "qcontactrelationship_p.h"
 #include "qtcontactsglobal.h"
+#include "qcontactid.h"
 
 #include <QList>
 #include <QPair>
@@ -139,7 +140,7 @@ bool QContactRelationship::operator==(const QContactRelationship &other) const
  * Returns the id of the locally-stored contact which has a relationship of the given type with the destination contacts
  * \sa relationshipType(), destination(), setSourceId()
  */
-QContactId QContactRelationship::sourceContact() const
+QContactLocalId QContactRelationship::sourceContact() const
 {
     return d->m_sourceContact;
 }
@@ -148,7 +149,7 @@ QContactId QContactRelationship::sourceContact() const
  * Returns the id of the contact with which the left contact has a relationship of the given type
  * \sa relationshipType(), sourceId(), setInvolved()
  */
-QList<QPair<QString, QContactId> > QContactRelationship::destinationContacts() const
+QList<QContactId> QContactRelationship::destinationContacts() const
 {
     return d->m_destinationContacts;
 }
@@ -168,7 +169,7 @@ QString QContactRelationship::relationshipType() const
  * a relationship of the specified type with the destination contacts.
  * \sa leftId()
  */
-void QContactRelationship::setSourceContact(const QContactId& id)
+void QContactRelationship::setSourceContact(const QContactLocalId& id)
 {
     d->m_sourceContact = id;
 }
@@ -178,7 +179,7 @@ void QContactRelationship::setSourceContact(const QContactId& id)
  * has a relationship of the specified type with these contacts.
  * \sa destination()
  */
-void QContactRelationship::setDestinationContacts(const QList<QPair<QString, QContactId> >& contacts)
+void QContactRelationship::setDestinationContacts(const QList<QContactId>& contacts)
 {
     d->m_destinationContacts = contacts;
 }
@@ -210,7 +211,7 @@ bool QContactRelationship::removeDestinationContact(int position)
  * Removes the given destination \a contact from the list of destination contacts if it exists.
  * Returns true if the destination contact was removed from the list successfully, false if it did not exist.
  */
-bool QContactRelationship::removeDestinationContact(const QPair<QString, QContactId>& contact)
+bool QContactRelationship::removeDestinationContact(const QContactId& contact)
 {
     return d->m_destinationContacts.removeOne(contact);
 }
@@ -220,7 +221,7 @@ bool QContactRelationship::removeDestinationContact(const QPair<QString, QContac
  * If \a position is 0, the \a contact will be inserted at the head of the list.  If \a position is greater
  * than or equal to the size of the list of destination contacts, it will be append to the end of the list.
  */
-void QContactRelationship::insertDestinationContact(int position, const QPair<QString, QContactId>& contact)
+void QContactRelationship::insertDestinationContact(int position, const QContactId& contact)
 {
     d->m_destinationContacts.insert(position, contact);
 }
@@ -228,16 +229,7 @@ void QContactRelationship::insertDestinationContact(int position, const QPair<QS
 /*!
  * Appends the given \a contact onto the list of destination contacts.
  */
-void QContactRelationship::appendDestinationContact(const QPair<QString, QContactId>& contact)
+void QContactRelationship::appendDestinationContact(const QContactId& contact)
 {
     d->m_destinationContacts.append(contact);
-}
-
-/*!
- * Appends a contact in the relationship's manager identified by the given \a contactId onto the list of destination contacts.
- */
-void QContactRelationship::appendDestinationContact(const QContactId& contactId)
-{
-    QPair<QString, QContactId> contact = QPair<QString, QContactId>(QString(), contactId);
-    appendDestinationContact(contact);
 }

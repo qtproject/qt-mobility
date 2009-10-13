@@ -223,7 +223,7 @@ void tst_QContactAsync::contactFetch()
     QVERIFY(cfr.isFinished());
     QVERIFY(!cfr.isActive());
 
-    QList<QContactId> contactIds = cm->contacts();
+    QList<QContactLocalId> contactIds = cm->contacts();
     QList<QContact> contacts = cfr.contacts();
     QCOMPARE(contactIds.size(), contacts.size());
     for (int i = 0; i < contactIds.size(); i++) {
@@ -361,7 +361,7 @@ void tst_QContactAsync::contactIdFetch()
 {
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
-    QContactIdFetchRequest cfr;
+    QContactLocalIdFetchRequest cfr;
     QVERIFY(cfr.type() == QContactAbstractRequest::ContactIdFetchRequest);
 
     // initial state - not started, no manager.
@@ -381,8 +381,8 @@ void tst_QContactAsync::contactIdFetch()
     QVERIFY(!cfr.cancel());
     QVERIFY(!cfr.waitForFinished());
     QVERIFY(!cfr.waitForProgress());
-    qRegisterMetaType<QContactIdFetchRequest*>("QContactIdFetchRequest*");
-    QSignalSpy spy(&cfr, SIGNAL(progress(QContactIdFetchRequest*, bool)));
+    qRegisterMetaType<QContactLocalIdFetchRequest*>("QContactLocalIdFetchRequest*");
+    QSignalSpy spy(&cfr, SIGNAL(progress(QContactLocalIdFetchRequest*, bool)));
     cfr.setFilter(fil);
     QCOMPARE(cfr.filter(), fil);
     QVERIFY(!cfr.cancel()); // not started
@@ -397,8 +397,8 @@ void tst_QContactAsync::contactIdFetch()
     QVERIFY(cfr.isFinished());
     QVERIFY(!cfr.isActive());
 
-    QList<QContactId> contactIds = cm->contacts();
-    QList<QContactId> result = cfr.ids();
+    QList<QContactLocalId> contactIds = cm->contacts();
+    QList<QContactLocalId> result = cfr.ids();
     QCOMPARE(contactIds, result);
 
     // asynchronous detail filtering
@@ -705,7 +705,7 @@ void tst_QContactAsync::contactSave()
 
     // verify that the changes were not saved
     expected.clear();
-    QList<QContactId> allContacts = cm->contacts();
+    QList<QContactLocalId> allContacts = cm->contacts();
     for (int i = 0; i < allContacts.size(); i++) {
         expected.append(cm->contact(allContacts.at(i)));
     }
@@ -1189,9 +1189,9 @@ void tst_QContactAsync::relationshipFetch()
 
     // specific source contact retrieval
     rfr.setRelationshipType(QString());
-    QList<QContactId> contacts = cm->contacts();
-    QContactId aId;
-    foreach (const QContactId& currId, contacts) {
+    QList<QContactLocalId> contacts = cm->contacts();
+    QContactLocalId aId;
+    foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
         if (curr.displayLabel().label() == QString("Aaron Aaronson")) {
             aId = currId;
@@ -1216,17 +1216,20 @@ void tst_QContactAsync::relationshipFetch()
     QCOMPARE(rels, result);
 
     // specific participant retrieval #1 - destination participant
-    rfr.setSourceContact(QContactId());
+    rfr.setSourceContact(QContactLocalId());
     contacts = cm->contacts();
-    QContactId bId;
-    foreach (const QContactId& currId, contacts) {
+    QContactLocalId bId;
+    foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
         if (curr.displayLabel().label() == QString("Bob Aaronsen")) {
             bId = currId;
             break;
         }
     }
-    rfr.setParticipant(QPair<QString, QContactId>(cm->managerUri(), bId), QContactRelationshipFilter::Destination);
+    QContactId participantId;
+    participantId.setManagerUri(cm->managerUri());
+    participantId.setLocalId(bId);
+    rfr.setParticipant(participantId, QContactRelationshipFilter::Destination);
     QVERIFY(rfr.participantRole() == QContactRelationshipFilter::Destination);
     QVERIFY(!rfr.cancel()); // not started
     QVERIFY(rfr.start());
@@ -1240,7 +1243,8 @@ void tst_QContactAsync::relationshipFetch()
     QVERIFY(rfr.isFinished());
     QVERIFY(!rfr.isActive());
 
-    rels = cm->relationships(QPair<QString, QContactId>(cm->managerUri(), bId));
+    // the synchronous API doesn't allow us to specify the role of the participant; remove source participant relationships.
+    rels = cm->relationships(participantId);
     for (int i = rels.size(); i > 0; ) {
         i -= 1;
         QContactRelationship currRel = rels.at(i);
@@ -1252,17 +1256,18 @@ void tst_QContactAsync::relationshipFetch()
     QCOMPARE(rels, result);
 
     // specific participant retrieval #2 - source participant
-    rfr.setSourceContact(QContactId());
+    rfr.setSourceContact(QContactLocalId());
     contacts = cm->contacts();
-    QContactId cId;
-    foreach (const QContactId& currId, contacts) {
+    QContactLocalId cId;
+    foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
         if (curr.displayLabel().label() == QString("Borris Aaronsun")) {
             cId = currId;
             break;
         }
     }
-    rfr.setParticipant(QPair<QString, QContactId>(cm->managerUri(), cId), QContactRelationshipFilter::Source);
+    participantId.setLocalId(cId);
+    rfr.setParticipant(participantId, QContactRelationshipFilter::Source);
     QVERIFY(rfr.participantRole() == QContactRelationshipFilter::Source);
     QVERIFY(!rfr.cancel()); // not started
     QVERIFY(rfr.start());
@@ -1276,13 +1281,14 @@ void tst_QContactAsync::relationshipFetch()
     QVERIFY(rfr.isFinished());
     QVERIFY(!rfr.isActive());
 
-    rels = cm->relationships(cId);
+    rels = cm->relationships(cId); // retrieve rels where source = the local id of C
     result = rfr.relationships();
     QCOMPARE(rels, result);
 
     // specific participant retrieval #3 - either participant
-    rfr.setSourceContact(QContactId());
-    rfr.setParticipant(QPair<QString, QContactId>(cm->managerUri(), aId), QContactRelationshipFilter::Either);
+    participantId.setLocalId(aId);
+    rfr.setSourceContact(QContactLocalId());
+    rfr.setParticipant(participantId, QContactRelationshipFilter::Either);
     QVERIFY(rfr.participantRole() == QContactRelationshipFilter::Either);
     QVERIFY(!rfr.cancel()); // not started
     QVERIFY(rfr.start());
@@ -1296,7 +1302,7 @@ void tst_QContactAsync::relationshipFetch()
     QVERIFY(rfr.isFinished());
     QVERIFY(!rfr.isActive());
 
-    rels = cm->relationships(QPair<QString, QContactId>(cm->managerUri(), aId));
+    rels = cm->relationships(participantId); // either role.
     result = rfr.relationships();
     QCOMPARE(rels, result);
 
@@ -1384,9 +1390,9 @@ void tst_QContactAsync::relationshipRemove()
     QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
     // remove (asynchronously) a nonexistent relationship - should fail.
-    QList<QContactId> contacts = cm->contacts();
-    QContactId cId;
-    foreach (const QContactId& currId, contacts) {
+    QList<QContactLocalId> contacts = cm->contacts();
+    QContactLocalId cId;
+    foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
         if (curr.displayLabel().label() == QString("Borris Aaronsun")) {
             cId = currId;
@@ -1411,8 +1417,8 @@ void tst_QContactAsync::relationshipRemove()
     QCOMPARE(rrr.error(), QContactManager::DoesNotExistError);
 
     // specific relationship type plus source removal
-    QContactId bId;
-    foreach (const QContactId& currId, contacts) {
+    QContactLocalId bId;
+    foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
         if (curr.displayLabel().label() == QString("Bob Aaronsen")) {
             bId = currId;
@@ -1444,8 +1450,8 @@ void tst_QContactAsync::relationshipRemove()
     QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
     // specific source removal
-    QContactId aId;
-    foreach (const QContactId& currId, contacts) {
+    QContactLocalId aId;
+    foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
         if (curr.displayLabel().label() == QString("Aaron Aaronson")) {
             aId = currId;
@@ -1535,9 +1541,9 @@ void tst_QContactAsync::relationshipSave()
     QVERIFY(!rsr.waitForFinished());
     QVERIFY(!rsr.waitForProgress());
 
-    QList<QContactId> contacts = cm->contacts();
-    QContactId cId, aId, bId;
-    foreach (const QContactId& currId, contacts) {
+    QList<QContactLocalId> contacts = cm->contacts();
+    QContactLocalId cId, aId, bId;
+    foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
         if (curr.displayLabel().label() == QString("Borris Aaronsun")) {
             cId = currId;
@@ -1547,13 +1553,16 @@ void tst_QContactAsync::relationshipSave()
             aId = currId;
         }
     }
+    QContactId participantId;
+    participantId.setManagerUri(cm->managerUri());
+    participantId.setLocalId(bId);
 
     // save a new relationship
     int originalCount = cm->relationships(aId).size();
     QContactRelationship testRel;
     testRel.setSourceContact(aId);
     testRel.setRelationshipType(QContactRelationship::RelationshipTypeIsSpouseOf);
-    testRel.appendDestinationContact(QPair<QString, QContactId>(cm->managerUri(), bId));
+    testRel.appendDestinationContact(participantId);
     QList<QContactRelationship> saveList;
     saveList << testRel;
     rsr.setManager(cm);
@@ -1586,7 +1595,8 @@ void tst_QContactAsync::relationshipSave()
     QCOMPARE(cm->relationships(aId).size(), originalCount + 1); // should be one extra
 
     // update a previously saved relationship
-    testRel.appendDestinationContact(QPair<QString, QContactId>(cm->managerUri(), cId));
+    participantId.setLocalId(cId);
+    testRel.appendDestinationContact(participantId);
     saveList.clear();
     saveList << testRel;
     rsr.setRelationships(saveList);
@@ -1611,7 +1621,8 @@ void tst_QContactAsync::relationshipSave()
     QCOMPARE(cm->relationships(aId).size(), originalCount + 1); // should still only be one extra
 
     // cancelling
-    testRel.appendDestinationContact(aId); // shouldn't get saved (circular anyway)
+    participantId.setLocalId(aId);
+    testRel.appendDestinationContact(participantId); // shouldn't get saved (circular anyway)
     saveList.clear();
     saveList << testRel;
     rsr.setRelationships(saveList);
@@ -1690,7 +1701,7 @@ void tst_QContactAsync::maliciousManager()
     QContactManager mcm("maliciousplugin");
     QCOMPARE(mcm.managerName(), QString("maliciousplugin"));
     QList<QContact> emptyCList;
-    QList<QContactId> emptyIList;
+    QList<QContactLocalId> emptyIList;
     QList<QContactDetailDefinition> emptyDList;
     QStringList emptyDNList;
     QMap<QString, QContactDetailDefinition> emptyDMap;
@@ -1705,7 +1716,7 @@ void tst_QContactAsync::maliciousManager()
     QVERIFY(!cfr.waitForFinished(100));
     QVERIFY(cfr.cancel());
 
-    QContactIdFetchRequest cifr;
+    QContactLocalIdFetchRequest cifr;
     cifr.setFilter(fil);
     cifr.setManager(&mcm);
     QVERIFY(cifr.start());
@@ -1868,31 +1879,31 @@ QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
     cm->saveContact(&c);
 
     QContactRelationship arb;
-    arb.setSourceContact(a.id());
+    arb.setSourceContact(a.id().localId());
     arb.appendDestinationContact(b.id());
     arb.setRelationshipType(QContactRelationship::RelationshipTypeIsManagerOf);
     cm->saveRelationship(&arb);
 
     QContactRelationship brc;
-    brc.setSourceContact(b.id());
+    brc.setSourceContact(b.id().localId());
     brc.appendDestinationContact(c.id());
     brc.setRelationshipType(QContactRelationship::RelationshipTypeIsAssistantOf);
     cm->saveRelationship(&brc);
 
     QContactRelationship cra;
-    cra.setSourceContact(c.id());
+    cra.setSourceContact(c.id().localId());
     cra.appendDestinationContact(a.id());
     cra.setRelationshipType(QContactRelationship::RelationshipTypeIsSpouseOf);
     cm->saveRelationship(&cra);
 
     QContactRelationship arc;
-    arc.setSourceContact(a.id());
+    arc.setSourceContact(a.id().localId());
     arc.appendDestinationContact(c.id());
     arc.setRelationshipType(QContactRelationship::RelationshipTypeIsAssistantOf);
     cm->saveRelationship(&arc);
 
     QContactRelationship crb;
-    crb.setSourceContact(c.id());
+    crb.setSourceContact(c.id().localId());
     crb.appendDestinationContact(b.id());
     crb.setRelationshipType(QContactRelationship::RelationshipTypeIs);
     cm->saveRelationship(&crb);

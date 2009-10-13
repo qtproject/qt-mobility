@@ -43,7 +43,9 @@
 #include <QList>
 #include <QDateTime>
 
+#include "qtcontactsglobal.h"
 #include "qcontact.h"
+#include "qcontactid.h"
 #include "qcontactrelationship.h"
 #include "qcontactmanagerinfo.h"
 #include "qcontactsortorder.h"
@@ -93,29 +95,29 @@ public:
     QContactManager::Error error() const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QContactId> contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const;    // retrieve contact ids
-    QList<QContactId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve ids of contacts matching the filter
-    QList<QContactId> contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve contacts of the given type
+    QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const;    // retrieve contact ids
+    QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve ids of contacts matching the filter
+    QList<QContactLocalId> contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve contacts of the given type
 
-    QContact contact(const QContactId& contactId) const;  // retrieve a contact
+    QContact contact(const QContactLocalId& contactId) const;  // retrieve a contact
 
     bool saveContact(QContact* contact);                 // note: MODIFIES contact (sets the contactId)
-    bool removeContact(const QContactId& contactId);      // remove the contact from the persistent store
+    bool removeContact(const QContactLocalId& contactId);      // remove the contact from the persistent store
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts);       // batch API - save
-    QList<QContactManager::Error> removeContacts(QList<QContactId>* contactIds);  // batch API - remove
+    QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds);  // batch API - remove
 
     /* Synthesise the display label of a contact */
     QString synthesiseDisplayLabel(const QContact& contact) const;
 
     /* "Self" contact id (MyCard) */
-    bool setSelfContactId(const QContactId& contactId);
-    QContactId selfContactId() const;
+    bool setSelfContactId(const QContactLocalId& contactId);
+    QContactLocalId selfContactId() const;
 
     /* Relationships */
-    QContactRelationship relationship(const QContactId& sourceId, const QString& relationshipType = QString()) const;
-    QList<QContactRelationship> relationships(const QContactId& sourceId, const QString& relationshipType = QString()) const;
-    QList<QContactRelationship> relationships(const QString& relationshipType, const QPair<QString, QContactId>& participantUri = (QPair<QString, QContactId>())) const;
-    QList<QContactRelationship> relationships(const QPair<QString, QContactId>& participantUri = (QPair<QString, QContactId>())) const;
+    QContactRelationship relationship(const QContactLocalId& sourceId, const QString& relationshipType) const;
+    QList<QContactRelationship> relationships(const QContactLocalId& sourceId, const QString& relationshipType = QString()) const;
+    QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participant = QContactId()) const;
+    QList<QContactRelationship> relationships(const QContactId& participant = QContactId()) const;
     bool saveRelationship(QContactRelationship* relationship);
     QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships);
     bool removeRelationship(const QContactRelationship& relationship);
@@ -135,9 +137,9 @@ public:
 
 signals:
     void dataChanged();
-    void contactsAdded(const QList<QContactId>& contactIds);
-    void contactsChanged(const QList<QContactId>& contactIds);
-    void contactsRemoved(const QList<QContactId>& contactIds);
+    void contactsAdded(const QList<QContactLocalId>& contactIds);
+    void contactsChanged(const QList<QContactLocalId>& contactIds);
+    void contactsRemoved(const QList<QContactLocalId>& contactIds);
 
 private:
     friend class QContactManagerData;

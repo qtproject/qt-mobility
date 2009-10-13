@@ -47,7 +47,7 @@
 
 Q_DECLARE_METATYPE(QVariant)
 Q_DECLARE_METATYPE(QContactManager*)
-Q_DECLARE_METATYPE(QList<QContactId>)
+Q_DECLARE_METATYPE(QList<QContactLocalId>)
 
 /*
  * Global variables:
@@ -71,11 +71,11 @@ private:
     bool isSuperset(const QContact& ca, const QContact& cb);
 
     QPair<QString, QString> definitionAndField(QContactManager *cm, QVariant::Type type, bool *nativelyFilterable);
-    QList<QContactId> prepareModel(QContactManager* cm); // add the standard contacts
-    QString convertIds(QList<QContactId> allIds, QList<QContactId> ids); // convert back to "abcd"
+    QList<QContactLocalId> prepareModel(QContactManager* cm); // add the standard contacts
+    QString convertIds(QList<QContactLocalId> allIds, QList<QContactLocalId> ids); // convert back to "abcd"
 
     QMap<QContactManager*, QMap<QString, QPair<QString, QString> > > defAndFieldNamesForTypePerManager;
-    QMultiMap<QContactManager*, QContactId> contactsAddedToManagers;
+    QMultiMap<QContactManager*, QContactLocalId> contactsAddedToManagers;
     QMultiMap<QContactManager*, QString> detailDefinitionsAddedToManagers;
     QList<QContactManager*> managers;
 
@@ -149,7 +149,7 @@ tst_QContactManagerFiltering::tst_QContactManagerFiltering()
 
     // for each manager that we wish to test, prepare the model.
     foreach (QContactManager* cm, managers) {
-        QList<QContactId> addedContacts = prepareModel(cm);
+        QList<QContactLocalId> addedContacts = prepareModel(cm);
         if (addedContacts != contactsAddedToManagers.values(cm)) {
             qDebug() << "prepareModel returned:" << addedContacts;
             qDebug() << "contactsAdded are:    " << contactsAddedToManagers.values(cm);
@@ -164,8 +164,8 @@ tst_QContactManagerFiltering::~tst_QContactManagerFiltering()
 {
     // first, remove any contacts that we've added to any managers.
     foreach (QContactManager* manager, managers) {
-        QList<QContactId> contactIds = contactsAddedToManagers.values(manager);
-        foreach (const QContactId& cid, contactIds) {
+        QList<QContactLocalId> contactIds = contactsAddedToManagers.values(manager);
+        foreach (const QContactLocalId& cid, contactIds) {
             manager->removeContact(cid);
         }
     }
@@ -186,7 +186,7 @@ tst_QContactManagerFiltering::~tst_QContactManagerFiltering()
     defAndFieldNamesForTypePerManager.clear();
 }
 
-QString tst_QContactManagerFiltering::convertIds(QList<QContactId> allIds, QList<QContactId> ids)
+QString tst_QContactManagerFiltering::convertIds(QList<QContactLocalId> allIds, QList<QContactLocalId> ids)
 {
     QString ret;
     /* Expected is of the form "abcd".. */
@@ -276,8 +276,8 @@ void tst_QContactManagerFiltering::detailStringFiltering()
     QFETCH(QString, expected);
     QFETCH(int, matchflags);
 
-    QList<QContactId> contacts = contactsAddedToManagers.values(cm);
-    QList<QContactId> ids;
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> ids;
 
     QContactDetailFilter df;
     df.setDetailDefinitionName(defname, fieldname);
@@ -536,8 +536,8 @@ void tst_QContactManagerFiltering::detailVariantFiltering()
     QFETCH(QVariant, value);
     QFETCH(QString, expected);
 
-    QList<QContactId> contacts = contactsAddedToManagers.values(cm);
-    QList<QContactId> ids;
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> ids;
 
     QContactDetailFilter df;
     df.setDetailDefinitionName(defname, fieldname);
@@ -712,8 +712,8 @@ void tst_QContactManagerFiltering::rangeFiltering()
     QContactDetailRangeFilter::RangeFlags rangeflags = (QContactDetailRangeFilter::RangeFlags)rangeflagsi;
     Qt::MatchFlags matchflags = (Qt::MatchFlags) matchflagsi;
 
-    QList<QContactId> contacts = contactsAddedToManagers.values(cm);
-    QList<QContactId> ids;
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> ids;
 
     /* Build the range filter */
     QContactDetailRangeFilter drf;
@@ -758,8 +758,8 @@ void tst_QContactManagerFiltering::groupMembershipFiltering()
     QFETCH(QString, expectedone);
     QFETCH(QString, expectedtwo);
 
-    QList<QContactId> contacts = contactsAddedToManagers.values(cm);
-    QList<QContactId> idsone, idstwo;
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> idsone, idstwo;
     QContactGroup g1, g2;
     g1.setName("GroupOne");
     g2.setName("GroupTwo");
@@ -1222,8 +1222,8 @@ void tst_QContactManagerFiltering::intersectionFiltering()
             resultFilter = *z && *y;
     }
 
-    QList<QContactId> contacts = contactsAddedToManagers.values(cm);
-    QList<QContactId> ids;
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> ids;
 
     ids = cm->contacts(resultFilter);
 
@@ -1665,8 +1665,8 @@ void tst_QContactManagerFiltering::unionFiltering()
             resultFilter = *z || *y;
     }
 
-    QList<QContactId> contacts = contactsAddedToManagers.values(cm);
-    QList<QContactId> ids;
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> ids;
 
     ids = cm->contacts(resultFilter);
 
@@ -1730,8 +1730,8 @@ void tst_QContactManagerFiltering::sorting()
     Qt::SortOrder direction = (Qt::SortOrder)directioni;
     QContactSortOrder::BlankPolicy blankpolicy = (QContactSortOrder::BlankPolicy)blankpolicyi;
 
-    QList<QContactId> contacts = contactsAddedToManagers.values(cm);
-    QList<QContactId> ids;
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> ids;
 
     /* Build the sort order */
     QContactSortOrder s;
@@ -1859,7 +1859,7 @@ void tst_QContactManagerFiltering::multiSorting()
     Qt::SortOrder fsdirection = (Qt::SortOrder)fsdirectioni;
     Qt::SortOrder ssdirection = (Qt::SortOrder)ssdirectioni;
 
-    QList<QContactId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
 
     /* Build the sort orders */
     QContactSortOrder fs;
@@ -1874,7 +1874,7 @@ void tst_QContactManagerFiltering::multiSorting()
     if (secondsort)
         sortOrders.append(ss);
 
-    QList<QContactId> ids = cm->contacts(sortOrders);
+    QList<QContactLocalId> ids = cm->contacts(sortOrders);
     QString output = convertIds(contacts, ids);
     QCOMPARE(output, expected);
 }
@@ -2006,8 +2006,8 @@ void tst_QContactManagerFiltering::actionFiltering()
     af.setValue(value);
     af.setVendor(vendorName, version);
 
-    QList<QContactId> ids = cm->contacts(af);
-    QList<QContactId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> ids = cm->contacts(af);
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
 
     QString output = convertIds(contacts, ids);
     QCOMPARE(output, expected);
@@ -2039,13 +2039,13 @@ void tst_QContactManagerFiltering::idListFiltering()
     QFETCH(QString, input);
     QFETCH(QString, expected);
 
-    QList<QContactId> contacts = contactsAddedToManagers.values(cm);
-    QList<QContactId> ids;
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> ids;
 
     // 3 extra ids that (hopefully) won't exist
-    QContactId e = 0x54555657;
-    QContactId f = 0x96969696;
-    QContactId g = 0x44335566;
+    QContactLocalId e = 0x54555657;
+    QContactLocalId f = 0x96969696;
+    QContactLocalId g = 0x44335566;
 
     /* Convert the input to a list of ids */
     foreach(QChar c, input) {
@@ -2066,7 +2066,7 @@ void tst_QContactManagerFiltering::idListFiltering()
     }
 
     /* And do the search */
-    QContactIdListFilter idf;
+    QContactLocalIdFilter idf;
     idf.setIds(ids);
 
     // now reuse ids
@@ -2090,9 +2090,9 @@ void tst_QContactManagerFiltering::invalidFiltering()
 {
     QFETCH(QContactManager*, cm);
 
-    QList<QContactId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
     QContactInvalidFilter f; // invalid
-    QList<QContactId> ids = cm->contacts(f);
+    QList<QContactLocalId> ids = cm->contacts(f);
     QVERIFY(ids.count() == 0);
 
     // Try unions/intersections of invalids too
@@ -2117,9 +2117,9 @@ void tst_QContactManagerFiltering::allFiltering()
 {
     QFETCH(QContactManager*, cm);
 
-    QList<QContactId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
     QContactFilter f; // default = permissive
-    QList<QContactId> ids = cm->contacts(f);
+    QList<QContactLocalId> ids = cm->contacts(f);
     QVERIFY(ids.count() == contacts.size());
 
     // Try unions/intersections of defaults
@@ -2133,7 +2133,7 @@ void tst_QContactManagerFiltering::allFiltering()
 void tst_QContactManagerFiltering::changelogFiltering_data()
 {
     QTest::addColumn<QContactManager *>("cm");
-    QTest::addColumn<QList<QContactId> >("contacts");
+    QTest::addColumn<QList<QContactLocalId> >("contacts");
     QTest::addColumn<int>("eventType");
     QTest::addColumn<QDateTime>("since");
     QTest::addColumn<QString>("expected");
@@ -2144,7 +2144,7 @@ void tst_QContactManagerFiltering::changelogFiltering_data()
 
     for (int i = 0; i < managers.size(); i++) {
         QContactManager *manager = managers.at(i);
-        QList<QContactId> contacts = contactsAddedToManagers.values(manager);
+        QList<QContactLocalId> contacts = contactsAddedToManagers.values(manager);
         QContact a,b,c,d;
         a = manager->contact(contacts.at(0));
         b = manager->contact(contacts.at(1));
@@ -2199,9 +2199,9 @@ void tst_QContactManagerFiltering::changelogFiltering()
     QFETCH(QDateTime, since);
     QFETCH(QString, expected);
     QFETCH(QContactManager*, cm);
-    QFETCH(QList<QContactId>, contacts);
+    QFETCH(QList<QContactLocalId>, contacts);
 
-    QList<QContactId> ids;
+    QList<QContactLocalId> ids;
 
     QContactChangeLogFilter clf((QContactChangeLogFilter::EventType)eventType);
     clf.setSince(since);
@@ -2309,7 +2309,7 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
     return result;
 }
 
-QList<QContactId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
+QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
 {
     /* Discover the definition and field names required for testing */
     QMap<QString, QPair<QString, QString> > definitionDetails; // per value type string
@@ -2560,38 +2560,38 @@ QList<QContactId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm
     QTest::qSleep(2000);
 
     /* Add our newly saved contacts to our internal list of added contacts */
-    contactsAddedToManagers.insert(cm, g.id());
-    contactsAddedToManagers.insert(cm, f.id());
-    contactsAddedToManagers.insert(cm, e.id());
-    contactsAddedToManagers.insert(cm, d.id());
-    contactsAddedToManagers.insert(cm, c.id());
-    contactsAddedToManagers.insert(cm, b.id());
-    contactsAddedToManagers.insert(cm, a.id());
+    contactsAddedToManagers.insert(cm, g.id().localId());
+    contactsAddedToManagers.insert(cm, f.id().localId());
+    contactsAddedToManagers.insert(cm, e.id().localId());
+    contactsAddedToManagers.insert(cm, d.id().localId());
+    contactsAddedToManagers.insert(cm, c.id().localId());
+    contactsAddedToManagers.insert(cm, b.id().localId());
+    contactsAddedToManagers.insert(cm, a.id().localId());
 
     /* Reload the contacts to pick up any changes */
-    a = cm->contact(a.id());
-    b = cm->contact(b.id());
-    c = cm->contact(c.id());
-    d = cm->contact(d.id());
-    e = cm->contact(e.id());
-    f = cm->contact(f.id());
-    g = cm->contact(g.id());
+    a = cm->contact(a.id().localId());
+    b = cm->contact(b.id().localId());
+    c = cm->contact(c.id().localId());
+    d = cm->contact(d.id().localId());
+    e = cm->contact(e.id().localId());
+    f = cm->contact(f.id().localId());
+    g = cm->contact(g.id().localId());
 
-    QList<QContactId> list;
+    QList<QContactLocalId> list;
     if (!a.isEmpty())
-        list << a.id();
+        list << a.id().localId();
     if (!b.isEmpty())
-        list << b.id();
+        list << b.id().localId();
     if (!c.isEmpty())
-        list << c.id();
+        list << c.id().localId();
     if (!d.isEmpty())
-        list << d.id();
+        list << d.id().localId();
     if (!e.isEmpty())
-        list << e.id();
+        list << e.id().localId();
     if (!f.isEmpty())
-        list << f.id();
+        list << f.id().localId();
     if (!g.isEmpty())
-        list << g.id();
+        list << g.id().localId();
     return list;
 }
 
@@ -2684,7 +2684,7 @@ bool tst_QContactManagerFiltering::isSuperset(const QContact& ca, const QContact
 void tst_QContactManagerFiltering::dumpContact(const QContact& contact)
 {
     QContactManager m;
-    qDebug() << "Contact: " << contact.id() << "(" << m.synthesiseDisplayLabel(contact) << ")";
+    qDebug() << "Contact: " << contact.id().localId() << "(" << m.synthesiseDisplayLabel(contact) << ")";
     QList<QContactDetail> details = contact.details();
     foreach(QContactDetail d, details) {
         qDebug() << "  " << d.definitionName() << ":";
@@ -2695,9 +2695,9 @@ void tst_QContactManagerFiltering::dumpContact(const QContact& contact)
 void tst_QContactManagerFiltering::dumpContacts()
 {
     QContactManager m;
-    QList<QContactId> ids = m.contacts();
+    QList<QContactLocalId> ids = m.contacts();
 
-    foreach(QContactId id, ids) {
+    foreach(QContactLocalId id, ids) {
         QContact c = m.contact(id);
         dumpContact(c);
     }

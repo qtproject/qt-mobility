@@ -31,49 +31,42 @@
 **
 ****************************************************************************/
 
-#include "qcontactidlistfilter.h"
-#include "qcontactidlistfilter_p.h"
-#include "qcontactfilter_p.h"
-#include "qcontactmanager.h"
+#ifndef QCONTACTIDFETCHREQUEST_H
+#define QCONTACTIDFETCHREQUEST_H
 
-/*!
- * \class QContactIdListFilter
- * \brief The QContactIdListFilter class provides a filter based around a list of contact ids
- *
- * It may be used to select contacts whose ids are contained in the given list of ids
- */
+#include "qtcontactsglobal.h"
+#include "qcontactabstractrequest.h"
+#include "qcontactsortorder.h"
+#include "qcontactfilter.h"
 
-Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactIdListFilter);
+#include <QList>
+#include <QStringList>
 
-/*!
- * \fn QContactIdListFilter::QContactIdListFilter(const QContactFilter& other)
- * Constructs a copy of \a other if possible, otherwise constructs a new contact id list filter
- */
-
-/*!
- * Constructs a new contact id list filter
- */
-QContactIdListFilter::QContactIdListFilter()
-    : QContactFilter(new QContactIdListFilterPrivate)
+class QContactLocalIdFetchRequestPrivate;
+class QTCONTACTS_EXPORT QContactLocalIdFetchRequest : public QContactAbstractRequest
 {
-}
+    Q_OBJECT
 
-/*!
- * Sets the list which contains the ids of possible matching contacts to \a ids
- * \sa ids()
- */
-void QContactIdListFilter::setIds(const QList<QContactId>& ids)
-{
-    Q_D(QContactIdListFilter);
-    d->m_ids = ids;
-}
+public:
+    QContactLocalIdFetchRequest();
+    ~QContactLocalIdFetchRequest();
 
-/*!
- * Returns the list of ids of contacts which match this filter
- * \sa setIds()
- */
-QList<QContactId> QContactIdListFilter::ids() const
-{
-    Q_D(const QContactIdListFilter);
-    return d->m_ids;
-}
+    /* Selection, restriction and sorting */
+    void setFilter(const QContactFilter& filter);
+    void setSorting(const QList<QContactSortOrder>& sorting);
+    QContactFilter filter() const;
+    QList<QContactSortOrder> sorting() const;
+
+    /* Results */
+    QList<QContactLocalId> ids() const;
+
+signals:
+    void progress(QContactLocalIdFetchRequest* self, bool appendOnly);
+
+private:
+    Q_DISABLE_COPY(QContactLocalIdFetchRequest)
+    friend class QContactManagerEngine;
+    Q_DECLARE_PRIVATE_D(d_ptr, QContactLocalIdFetchRequest)
+};
+
+#endif

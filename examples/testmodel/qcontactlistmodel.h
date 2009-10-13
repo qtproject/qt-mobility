@@ -55,7 +55,7 @@
 
 class QContactManager;
 class QContactFetchRequest;
-class QContactIdFetchRequest;
+class QContactLocalIdFetchRequest;
 
 class QContactListModelPrivate;
 class QContactListModel : public QAbstractListModel
@@ -103,12 +103,12 @@ public:
     bool insertRows(int row, int count, const QModelIndex& parent = QModelIndex());
     bool removeRows(int row, int count, const QModelIndex& parent = QModelIndex());
 
-    int contactRow(const QContactId& contactId) const;
+    int contactRow(const QContactLocalId& contactId) const;
     QContact contact(const QModelIndex& index) const;
 
 private slots:
     void contactFetchRequestProgress(QContactFetchRequest* request, bool appendOnly);
-    void contactIdFetchRequestProgress(QContactIdFetchRequest* request, bool appendOnly);
+    void contactIdFetchRequestProgress(QContactLocalIdFetchRequest* request, bool appendOnly);
     void backendChanged();
 
 private:

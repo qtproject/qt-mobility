@@ -31,45 +31,26 @@
 **
 ****************************************************************************/
 
-#ifndef GROUPDETAILSDIALOG_H
-#define GROUPDETAILSDIALOG_H
+#ifndef QCONTACTLOCALIDFILTER_H
+#define QCONTACTLOCALIDFILTER_H
 
-#include <QDialog>
-#include "qcontact.h"
+#include "qcontactfilter.h"
 
-class QPushButton;
-class QListWidget;
-class QListWidgetItem;
-class QLineEdit;
-class QContactManager;
-
-class GroupDetailsDialog : public QDialog
+class QContactLocalIdFilterPrivate;
+class QTCONTACTS_EXPORT QContactLocalIdFilter : public QContactFilter
 {
-    Q_OBJECT
-
 public:
-    GroupDetailsDialog(QWidget *parent, QContactManager *contactManager, const QContact &contact);
-    QList<QContactLocalId> groups();
+    QContactLocalIdFilter();
+    QContactLocalIdFilter(const QContactFilter& other);
+
+    /* Mutators */
+    void setIds(const QList<QContactLocalId>& ids);
+
+    /* Accessors */
+    QList<QContactLocalId> ids() const;
 
 private:
-    void repopulateGroupList();
-
-public slots:
-    void show();
-    void groupItemChanged(QListWidgetItem * item);
-
-private slots:
-    void okButtonClicked();
-    void cancelButtonClicked();
-
-private:
-    QListWidget *listWidget;
-    QLineEdit *contactNameEdit;
-    QPushButton *cancelButton;
-    QPushButton *okButton;
-    QContactManager *cm;
-    QContact localContact;
+    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactLocalIdFilter)
 };
 
-#endif // GROUPDETAILSDIALOG_H
-
+#endif
