@@ -30,23 +30,26 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#include "ui_bearerdialog.h"
+#ifndef BEARERMONITOR_H
+#define BEARERMONITOR_H
 
 #include <qnetworkconfigmanager.h>
 #include <qnetworksession.h>
-
-#include <QDialog>
+#if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE)	
+#include "ui_bearermonitor_240_320.h"
+#else
+#include "ui_bearermonitor_640_480.h"
+#endif
 
 class SessionWidget;
 
-class BearerDialog : public QDialog, public Ui_BearerDialog
+class BearerMonitor : public QWidget, public Ui_BearerMonitor
 {
     Q_OBJECT
 
 public:
-    BearerDialog(QWidget *parent = 0);
-    ~BearerDialog();
+    BearerMonitor(QWidget *parent = 0);
+    ~BearerMonitor();
 
 private slots:
     void configurationAdded(const QNetworkConfiguration &config, QTreeWidgetItem *parent = 0);
@@ -75,3 +78,4 @@ private:
     QList<SessionWidget *> sessionWidgets;
 };
 
+#endif //BEARERMONITOR_H

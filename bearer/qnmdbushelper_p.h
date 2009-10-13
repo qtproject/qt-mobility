@@ -51,8 +51,9 @@
 #include <QMap>
 #endif
 
-#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
+QT_BEGIN_NAMESPACE
 
+#if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
 
 class QNmDBusHelper: public QObject, protected QDBusContext
  {
@@ -74,5 +75,7 @@ Q_SIGNALS:
     void pathForSettingsRemoved(const QString &);
 };
 #endif
+
+QT_END_NAMESPACE
 
 #endif// QNMDBUSHELPERPRIVATE_H

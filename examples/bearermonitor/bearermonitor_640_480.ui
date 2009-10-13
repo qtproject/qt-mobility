@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>BearerDialog</class>
- <widget class="QDialog" name="BearerDialog">
+ <class>BearerMonitor</class>
+ <widget class="QWidget" name="BearerMonitor">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>620</width>
-    <height>702</height>
+    <width>640</width>
+    <height>515</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Qt Bearer Management Example</string>
+   <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
     <widget class="QGroupBox" name="systemState">
      <property name="title">
       <string>System State</string>
@@ -59,7 +59,7 @@
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>Configurations</string>
@@ -340,7 +340,7 @@
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="2" column="0">
     <widget class="QGroupBox" name="sessionGroup">
      <property name="title">
       <string>Sessions</string>
@@ -379,59 +379,8 @@
      </layout>
     </widget>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="closeLayout">
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="closeButton">
-       <property name="text">
-        <string>Close</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
   </layout>
  </widget>
- <tabstops>
-  <tabstop>treeWidget</tabstop>
-  <tabstop>registerButton</tabstop>
-  <tabstop>unregisterButton</tabstop>
-  <tabstop>newSessionButton</tabstop>
-  <tabstop>deleteSessionButton</tabstop>
-  <tabstop>scanButton</tabstop>
-  <tabstop>tabWidget</tabstop>
-  <tabstop>closeButton</tabstop>
- </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>closeButton</sender>
-   <signal>clicked()</signal>
-   <receiver>BearerDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>421</x>
-     <y>468</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>168</x>
-     <y>456</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

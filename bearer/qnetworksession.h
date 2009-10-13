@@ -85,6 +85,7 @@ public:
     SessionError error() const;
     QString errorString() const;
     QVariant property(const QString& key) const;
+    void setProperty(const QString& key, const QVariant& value);
 
     quint64 sentData() const;
     quint64 receivedData() const;
