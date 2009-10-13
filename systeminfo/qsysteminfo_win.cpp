@@ -519,7 +519,7 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
                                                    this, 0, 0)) {
          qWarning() << "failed";
      }
-     QTimer::singleShot(2000, this, SLOT(networkStrengthTimeout()));
+  //   QTimer::singleShot(2000, this, SLOT(networkStrengthTimeout()));
  }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
@@ -543,7 +543,7 @@ void QSystemNetworkInfoPrivate::emitNetworkStatusChanged(QSystemNetworkInfo::Net
 
 void QSystemNetworkInfoPrivate::emitNetworkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode,int strength)
 {
-     QTimer::singleShot(2000, this, SLOT(networkStrengthTimeout()));
+   //  QTimer::singleShot(2000, this, SLOT(networkStrengthTimeout()));
     emit networkSignalStrengthChanged(mode, strength);
 }
 
@@ -845,7 +845,9 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
 
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
-    return interfaceForMode(mode).hardwareAddress();
+    QString mac = interfaceForMode(mode).hardwareAddress();
+    qWarning() << __FUNCTION__ << mac <<"for mode" << mode;
+    return mac;
 }
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
@@ -855,12 +857,13 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
     QListIterator<QNetworkInterface> i(interfaceList);
     while(i.hasNext()) {
        QNetworkInterface netInterface = i.next();
-
+       //qWarning() << "trying" << netInterface.hardwareAddress() << netInterface.humanReadableName() << netInterface.index();
         if (!netInterface.isValid() || (netInterface.flags() & QNetworkInterface::IsLoopBack)) {
             continue;
         }
 
 #if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
+
         unsigned long oid;
         DWORD bytesWritten;
 
@@ -869,8 +872,8 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
 
         HANDLE handle = CreateFile((TCHAR *)QString("\\\\.\\%1").arg(netInterface.name()).utf16(), 0,
                                    FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
+
         if (handle == INVALID_HANDLE_VALUE) {
-            qWarning() << "Invalid handle";
             continue;
         }
 
@@ -890,29 +893,41 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
         bytesWritten = 0;
         result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
                                  &physicalMedium, sizeof(physicalMedium), &bytesWritten, 0);
-//         qWarning()
-//         << netInterface.name()
-//         << netInterface.hardwareAddress();
-
-// qWarning() << medium << physicalMedium << NdisMedium802_3 << NdisMediumWirelessWan <<NdisMediumNative802_11;
+         qWarning()
+         << netInterface.name()
+         << netInterface.hardwareAddress();
 
         if (!result) {
             CloseHandle(handle);
             if (medium == NdisMedium802_3 && mode == QSystemNetworkInfo::EthernetMode) {
-               //     qWarning() << "this must be wired, or not";
+
                 return netInterface;
             } else {
                continue;
             }
         }
 
-
         CloseHandle(handle);
+ 
+        qWarning() << medium << physicalMedium << result;
+
+        if (physicalMedium == NdisMediumWirelessWan && mode == QSystemNetworkInfo::WlanMode) {
+
+            return netInterface;
+        }
 
         if (medium == NdisMedium802_3) {
             switch (physicalMedium) {
+            case NdisPhysicalMediumUnspecified:
+                {
+                    if(mode == QSystemNetworkInfo::EthernetMode) {
+                        return netInterface;
+                    }
+                }
+                break;
             case NdisPhysicalMediumWirelessLan:
                 {
+                    qWarning() << "wireless";
                     if(mode == QSystemNetworkInfo::WlanMode) {
                         return netInterface;
                     }
