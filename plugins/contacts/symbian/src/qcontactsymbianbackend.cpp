@@ -105,33 +105,30 @@ void QContactSymbianEngine::deref()
  * Any error that occurs will be stored in \a error. Uses either the Symbian backend native filtering or in case of an
  * unsupported filter, the generic (slow) filtering of QContactManagerEngine.
  */
-QList<QUniqueId> QContactSymbianEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QUniqueId> QContactSymbianEngine::contacts(
+        const QContactFilter& filter,
+        const QList<QContactSortOrder>& sortOrders,
+        QContactManager::Error& error) const
 {
     QList<QUniqueId> result;
 
     // Check if the filter is supported by the underlying filter implementation
     QAbstractContactFilter::FilterSupport filterSupport = d->filterSupported(filter);
-    if (filterSupport == QAbstractContactFilter::Supported) {
-        result = d->contacts(filter, sortOrders, error);
-    } else {
-        QList<QUniqueId> contacts;
-        if (filterSupport == QAbstractContactFilter::SupportedPreFilterOnly) {
-            // Filter not supported, but fetch a subset of contacts (may
-            // include false positives)
-             contacts = d->contacts(filter, sortOrders, error);
-        } else {
-            // TODO: sort order
-            // Filter not supported; fetch all contacts (probably includes
-            // false positives)
-            contacts = d->contacts(error);
-        }
 
-        for (int i(0); i < contacts.count(); i++) {
-            QUniqueId contactid = contacts.at(i);
-            // Check if this is a false positive. If not, add to the result set.
-            if(QContactManagerEngine::testFilter(filter, d->contact(contactid, error)))
-                result << contactid;
-        }
+    if (filterSupport == QAbstractContactFilter::Supported) {
+        // Filter supported, use as the result directly
+        result = d->contacts(filter, sortOrders, error);
+    } else if (filterSupport == QAbstractContactFilter::SupportedPreFilterOnly) {
+        // Filter only does pre-filtering and may include false positives
+        QList<QUniqueId> contacts = d->contacts(filter, sortOrders, error);
+        if(error == QContactManager::NoError)
+            slowFilter(filter, contacts, result, error);
+    } else {
+        // Filter not supported; fetch all contacts and remove false positives
+        // one-by-one
+        QList<QUniqueId> contacts = d->contacts(error);
+        if(error == QContactManager::NoError)
+            slowFilter(filter, contacts, result, error);
     }
     return result;
 }
@@ -185,6 +182,20 @@ QList<QContactManager::Error> QContactSymbianEngine::saveContacts(QList<QContact
     return ret;
 }
 
+void QContactSymbianEngine::slowFilter(
+        const QContactFilter& filter,
+        const QList<QUniqueId>& contacts,
+        QList<QUniqueId>& result,
+        QContactManager::Error& error
+        ) const
+{
+    for (int i(0); i < contacts.count(); i++) {
+        QUniqueId contactid = contacts.at(i);
+        // Check if this is a false positive. If not, add to the result set.
+        if(QContactManagerEngine::testFilter(filter, d->contact(contactid, error)))
+            result << contactid;
+    }
+}
 bool QContactSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error)
 {
     bool ret = false;

@@ -111,6 +111,7 @@ private slots:
 	void eventGroupChanged(const QUniqueId &groupId);
 
 private:
+    void slowFilter(const QContactFilter& filter, const QList<QUniqueId>& contacts, QList<QUniqueId>& result, QContactManager::Error& error) const;
     bool doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error);
     void updateDisplayLabel(QContact& contact) const;
     QContactSymbianEngineData *d;

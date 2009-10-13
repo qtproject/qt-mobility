@@ -109,13 +109,9 @@ QList<QUniqueId> QContactSymbianFilter::contacts(
             }
         }
         else if (detailFilter.detailDefinitionName() == QContactName::DefinitionName
-                /* MatchExactly filter is implemented as "partially supported"
-                 by using the MatchContains compatible search of CntModel */
-                && (detailFilter.matchFlags() == Qt::MatchExactly
-                || detailFilter.matchFlags() == Qt::MatchStartsWith
-                || detailFilter.matchFlags() == Qt::MatchEndsWith
-                || detailFilter.matchFlags() == Qt::MatchCaseSensitive
-                || detailFilter.matchFlags() == Qt::MatchContains))
+                && (filterSupported(filter) == Supported
+                // All the name pre-filters are implemented as "MatchContains"
+                || filterSupported(filter) == SupportedPreFilterOnly))
         {
             QString name((detailFilter.value()).toString());
             // TODO: this looks ugly
@@ -136,7 +132,7 @@ QList<QUniqueId> QContactSymbianFilter::contacts(
             TInt err = findContacts(idArray, fieldUid, namePtr);
             if(err != KErrNone)
             {
-                // TODO: map error code
+                // TODO: map error codes
                 error = QContactManager::UnspecifiedError;
             }
             else
@@ -163,12 +159,20 @@ QList<QUniqueId> QContactSymbianFilter::contacts(
 
 /*!
  * The contact database version implementation for
- * QContactManager::filterSupported function.
+ * QContactManager::filterSupported function. The possible return values are
+ * Supported, NotSupported and SupportedPreFilterOnly. Supported means that
+ * the filtering is implemented directly by the underlying database.
+ * NotSupported means that QContactSymbianFilter::contacts will return an
+ * error. And SupportedPreFilterOnly means that the filter is not supported,
+ * but the QContactSymbianFilter::contacts will act like the filter was
+ * supported. This means that the client must filter the pre-filtered set of
+ * contacts to see if there are false positives included. Note that in some
+ * cases the pre-filtering is not very effective.
+ *
  * \a filter The QContactFilter to be checked.
  * \a return Supported in case the filter is supported. NotSupported in case
- * the filter is not supported. SupportedPreFilterOnly in case the filter is not
- * supported, but the QContactSymbianFilter::contacts will pretend that the
- * filter is supported.
+ * the filter is not supported. returns
+ *
  * SupportedPreFilterOnly is returned in the following cases:
  * 1. matchFlags is set to Qt::MatchExactly (QContactSymbianFilter::contacts
  * will use Qt::MatchContains)
@@ -186,18 +190,17 @@ QAbstractContactFilter::FilterSupport QContactSymbianFilter::filterSupported(con
         const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
         if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName) {
             filterSupported = Supported;
-        // TODO: also combinations of the following could be quite easily
-        // supported as a pre-filters:
         } else if(detailFilter.detailDefinitionName() == QContactName::DefinitionName) {
-            if(detailFilter.matchFlags() == Qt::MatchExactly
-                || detailFilter.matchFlags() == Qt::MatchStartsWith
-                || detailFilter.matchFlags() == Qt::MatchEndsWith
-                || detailFilter.matchFlags() == Qt::MatchCaseSensitive)
-            {
-                filterSupported = SupportedPreFilterOnly;
-            }
-            else if(detailFilter.matchFlags() == Qt::MatchContains) {
+            Qt::MatchFlags supportedPreFilterFlags = Qt::MatchExactly
+                & Qt::MatchStartsWith
+                & Qt::MatchEndsWith
+                & Qt::MatchCaseSensitive;
+            if(detailFilter.matchFlags() == Qt::MatchContains) {
                 filterSupported = Supported;
+            }
+            else if(detailFilter.matchFlags() | supportedPreFilterFlags ==
+                supportedPreFilterFlags ) {
+                filterSupported = SupportedPreFilterOnly;
             }
         }
     }
