@@ -126,9 +126,6 @@ QContactWinCEEngine::~QContactWinCEEngine()
     if (d->m_app) {
         d->m_app->Logoff();
     }
-    d->m_requestWorker.stop();
-    d->m_requestWorker.wait();
-    d->m_requestWorker.quit();
 }
 
 void QContactWinCEEngine::deref()

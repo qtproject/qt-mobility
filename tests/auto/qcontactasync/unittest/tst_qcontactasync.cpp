@@ -750,8 +750,10 @@ void tst_QContactAsync::groupFetch()
 {
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
-    if (!cm->information()->hasFeature(QContactManagerInfo::Groups))
+    if (!cm->information()->hasFeature(QContactManagerInfo::Groups)) {
+        delete cm;
         QSKIP("This manager does not support groups", SkipSingle);
+    }
 
     QContactGroupFetchRequest gfr;
     QVERIFY(gfr.type() == QContactAbstractRequest::GroupFetchRequest);
@@ -862,8 +864,10 @@ void tst_QContactAsync::groupRemove()
 {
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
-    if (!cm->information()->hasFeature(QContactManagerInfo::Groups)) 
+    if (!cm->information()->hasFeature(QContactManagerInfo::Groups)) {
+        delete cm;
         QSKIP("This manager does not support groups", SkipSingle);
+    }
 
     QContactGroupRemoveRequest grr;
     QVERIFY(grr.type() == QContactAbstractRequest::GroupRemoveRequest);
@@ -1011,8 +1015,10 @@ void tst_QContactAsync::groupSave()
 {
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
-    if (!cm->information()->hasFeature(QContactManagerInfo::Groups))
+    if (!cm->information()->hasFeature(QContactManagerInfo::Groups)) {
+        delete cm;
         QSKIP("This manager does not support groups", SkipSingle);
+    }
 
     QContactGroupSaveRequest gsr;
     QVERIFY(gsr.type() == QContactAbstractRequest::GroupSaveRequest);
@@ -1255,6 +1261,12 @@ void tst_QContactAsync::definitionRemove()
 {
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
+
+    if (!cm->information()->hasFeature(QContactManagerInfo::MutableDefinitions)) {
+        delete cm;
+        QSKIP("This manager does not support mutable definitions", SkipSingle);
+    }
+
     QContactDetailDefinitionRemoveRequest drr;
     QVERIFY(drr.type() == QContactAbstractRequest::DetailDefinitionRemoveRequest);
 
@@ -1401,6 +1413,11 @@ void tst_QContactAsync::definitionSave()
 {
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
+    if (!cm->information()->hasFeature(QContactManagerInfo::MutableDefinitions)) {
+        delete cm;
+        QSKIP("This manager does not support mutable definitions", SkipSingle);
+    }
+
     QContactDetailDefinitionSaveRequest dsr;
     QVERIFY(dsr.type() == QContactAbstractRequest::DetailDefinitionSaveRequest);
 

@@ -43,12 +43,12 @@
  *
  * \brief The QContactRequestWorker class provides a common thread worker queue for QContact asynchronous requests.
  *
- * A QContact consists of zero or more details.
+ * A QContactRequestWorker consists of a QContactAbstractRequest request queue.
  *
- * An instance of the QContact class represents an in-memory contact,
- * and may not reflect the state of that contact found in persistent
- * storage until the appropriate synchronisation method is called
- * on the QContactManager (i.e., saveContact, removeContact).
+ * An instance of the QContactRequestWorker class is a thread object which is dedicated for processing asynchronous contact requests.
+ * All of these requests are instances of derived classes from QContactAbstractRequest. These request instances can be added to, removed/cancelled from the
+ * worker thread's internal request queue. Once these requests are processed by the worker thread, the related signals will be emitted
+ * and all these requests' waiting clients will also wake up.
  *
  * \sa QContactAbstractRequest
  */
@@ -77,7 +77,9 @@ QContactRequestWorker& QContactRequestWorker::operator=(const QContactRequestWor
 QContactRequestWorker::~QContactRequestWorker()
 {
     stop();
-    d->cleanUpFinishedRequests(true);
+    quit();
+    while (isRunning() && !wait(1)) 
+        d->m_newRequestAdded.wakeAll();
 }
 
 /*!
@@ -115,10 +117,11 @@ void QContactRequestWorker::run()
     QContactRequestElement *re;
     
     for(;;) {
+        
         d->cleanUpFinishedRequests();
         re = d->takeFirstRequestElement();
         if (d->m_stop)
-            break;
+           break;
         
         Q_ASSERT(re && re->request);
         
@@ -586,6 +589,8 @@ QContactRequestElement* QContactRequestWorkerData::takeFirstRequestElement()
 void QContactRequestWorkerData::cleanUpFinishedRequests(bool waitForAll)
 {
     QList<QContactRequestElement*> deleteAll;
+    QMutex mtx;
+    QWaitCondition wc;
     for (;;) {
         foreach (QContactRequestElement* re, m_removedRequests) {
             if (re->waiting) {
@@ -601,7 +606,11 @@ void QContactRequestWorkerData::cleanUpFinishedRequests(bool waitForAll)
                 delete re;
         }
         deleteAll.clear();
-        if (!waitForAll || m_removedRequests.isEmpty())
+        if (!waitForAll || m_removedRequests.isEmpty()) {
             break;
+        } else {
+            QMutexLocker locker(&mtx);
+            wc.wait(&mtx, 10);
+        }
     }
 }
