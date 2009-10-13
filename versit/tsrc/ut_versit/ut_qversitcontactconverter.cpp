@@ -36,11 +36,11 @@
 #include <QList>
 #include <QtTest/QtTest>
 #include <qcontact.h>
-#include <QContactAddress.h> 
-#include <QContactEmailAddress.h> 
-#include <QContactName.h> 
-#include <QContactPhoneNumber.h> 
-#include <QContactUrl.h> 
+#include <qcontactaddress.h>
+#include <qcontactemailaddress.h>
+#include <qcontactname.h>
+#include <qcontactphonenumber.h>
+#include <qcontacturl.h>
 
 #include "ut_qversitcontactconverter.h"
 #include "qversitcontactconverter.h"

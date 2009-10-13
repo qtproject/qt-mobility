@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#include "UT_VersitUtils.h"
+#include "ut_versitutils.h"
 #include "versitutils.h"
 #include <QByteArray>
 #include <QtTest/QtTest>
