@@ -65,7 +65,7 @@ QString VCardComparator::nonMatchingLines() const
 {   
     QString nonMatchingLines;
     for( int i=0;i<mInputLines->count();i++) {
-        if (!mOutputLines->contains(mInputLines->at(i))) {
+        if (!mOutputLines->contains(mInputLines->at(i),Qt::CaseInsensitive)) {
             nonMatchingLines.append(mInputLines->at(i));
         }
     }

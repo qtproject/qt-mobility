@@ -44,7 +44,7 @@
 #include <qversitwriter.h>
 #include <qversitdocument.h>
 
-const QString inputDirPath = "c:\\data\\testvcards";
+const QString inputDirPath = "c:\\data\\testvcards\\in";
 const QString excludeFieldsFileName = "c:\\data\\testvcards\\excludefields.txt";
 const QString outputDirPath = "c:\\data\\testvcards\\out";
 
@@ -125,7 +125,7 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
     in.seek(0);
     out.seek(0);
     VCardComparator comparator(in,out,*mExcludedFields);
-    QCOMPARE(QString(),comparator.nonMatchingLines());   
+    QCOMPARE(QString(),comparator.nonMatchingLines());
 }
 
 
