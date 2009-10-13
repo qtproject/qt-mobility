@@ -33,6 +33,7 @@
 
 #include "qversitwriter.h"
 #include "qversitwriter_p.h"
+#include "versitutils.h"
 
 #include <QStringList>
 
@@ -77,7 +78,7 @@ void QVersitWriter::setDevice(QIODevice* device)
 }
 
 /*!
- * Returns the \a device used for encoding. 
+ * Returns the device used for encoding. 
  */
 QIODevice* QVersitWriter::device() const
 {
@@ -115,37 +116,56 @@ QByteArray QVersitWriter::encodeVersitDocument(const QVersitDocument& versitDocu
     return docArray;
 }
 
-
+/*!
+ * Encodes the \a versitProperty to text. 
+ */
 QByteArray QVersitWriter::encodeVersitProperty(const QVersitProperty& versitProperty)
 {
-    QByteArray propertyArray;
-    
-    // 1. Encode the property name
+    QByteArray encodedProperty;
     QString name = versitProperty.name();    
-    propertyArray.append(name.toAscii());
-    if (name == QString("AGENT")) {
+    encodedProperty.append(name.toAscii());
+    if (name == QString::fromAscii("AGENT")) {
         // TODO: QVersitDocument embDoc = versitProperty.embeddedDocument();  
     } else {
-        // 2. Encode the property parameters and values (if they exist)
-        QMultiMap<QString,QString> paramsMap = versitProperty.parameters();
-        QList<QString> keys = paramsMap.uniqueKeys();
-        foreach (QString param, keys) {
-            QStringList values = paramsMap.values(param);
-            foreach (QString value, values) {
-                propertyArray.append(";");
-                if (!(param.contains("TYPE",Qt::CaseInsensitive))) {
-                    propertyArray.append(param.toAscii());
-                    propertyArray.append("=");
-                }
-                propertyArray.append(value.toAscii());
-            }
+        QByteArray value(versitProperty.value());
+        if (VersitUtils::containsSpecialChars(versitProperty.value())) {
+            QMultiMap<QString,QString> parameters = versitProperty.parameters();
+            QString encoding(QString::fromAscii("ENCODING"));
+            QString quotedPrintable(QString::fromAscii("QUOTED-PRINTABLE"));
+            parameters.insertMulti(encoding,quotedPrintable);
+            encodedProperty.append(encodeParameters(parameters));
+            value = VersitUtils::encodeQuotedPrintable(value);
+            
         }
-        
-        // 3. Encode the property value
-        propertyArray.append(":");
-        QByteArray value = versitProperty.value();
-        propertyArray.append(value);
-        propertyArray.append("\r\n");
+        else {
+            encodedProperty.append(encodeParameters(versitProperty.parameters()));
+        }
+        encodedProperty.append(":");
+        encodedProperty.append(value);
+        encodedProperty.append("\r\n");
     }
-    return propertyArray;
+    return encodedProperty;
+}
+
+/*!
+ * Encodes the \a parameters to text. 
+ */
+QByteArray QVersitWriter::encodeParameters(
+    const QMultiMap<QString,QString>& parameters)
+{
+    QByteArray encodedParameters;
+    QString typeParameterName(QString::fromAscii("TYPE"));
+    QList<QString> names = parameters.uniqueKeys();
+    foreach (QString name, names) {
+        QStringList values = parameters.values(name);
+        foreach (QString value, values) {
+            encodedParameters.append(";");
+            if (name != typeParameterName) {
+                encodedParameters.append(name.toAscii());
+                encodedParameters.append("=");
+            }
+            encodedParameters.append(value.toAscii());
+        } 
+    }
+    return encodedParameters;
 }

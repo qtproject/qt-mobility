@@ -66,6 +66,7 @@ signals:
 private:
     QByteArray encodeVersitDocument(const QVersitDocument& versitDocument);
     QByteArray encodeVersitProperty(const QVersitProperty& versitProperty);
+    QByteArray encodeParameters(const QMultiMap<QString,QString>& parameters);
 
 private:
     QVersitWriterPrivate* d;

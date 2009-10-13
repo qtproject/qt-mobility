@@ -144,40 +144,45 @@ END:VCARD\r\n";
 
 void UT_QVersitWriter::testEncodeVersitProperty()
 {
-    QByteArray simpleProperty = "BEGIN:VCARD\r\n"; 
+    // No parameters
+    QByteArray expectedResult = "N:Simpson, Homer\r\n"; 
     QVersitProperty property;
-    property.setName(QString("BEGIN"));
-    property.setValue(QByteArray("VCARD"));
-    QCOMPARE(mWriter->encodeVersitProperty(property), simpleProperty);
+    property.setName(QString::fromAscii("N"));
+    property.setValue(QByteArray("Simpson, Homer"));
+    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
     
-    QByteArray  oneParamValueProperty = 
-        "LABEL;ENCODING=QUOTED-PRINTABLE:123\r\n";    
-    QVersitProperty property1;
-    property1.setName(QString("LABEL"));
-    property1.setValue(QByteArray("123"));
-    QMultiMap<QString,QString> params1;
-    params1.insert(QString("ENCODING"), QString("QUOTED-PRINTABLE"));
-    property1.setParameters(params1);
-    QCOMPARE(mWriter->encodeVersitProperty(property1), oneParamValueProperty);
+    // With parameter(s). No special characters in the value.
+    // -> No need to Quoted-Printable encode the value.
+    expectedResult = "TEL;HOME:123\r\n"; 
+    property.setName(QString::fromAscii("TEL"));
+    property.setValue(QByteArray("123"));
+    property.addParameter(QByteArray("TYPE"),QByteArray("HOME"));
+    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);    
+    
+    // With parameter(s). Special characters in the value.
+    // -> The value needs to be Quoted-Printable encoded.
+    expectedResult = "EMAIL;ENCODING=QUOTED-PRINTABLE;HOME:homer=40simpsons.com\r\n"; 
+    property.setName(QString::fromAscii("EMAIL"));
+    property.setValue(QByteArray("homer@simpsons.com"));
+    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
+}
 
-    QByteArray oneParamProperty = 
-        "ADR;HOME:14 Bridge Street, FL1850, USA\r\n";
-    QVersitProperty property2;
-    property2.setName(QString("ADR"));
-    property2.setValue(QByteArray("14 Bridge Street, FL1850, USA"));
-    QMultiMap<QString,QString> params2;
-    params2.insert(QString("TYPE"), QString("HOME"));
-    property2.setParameters(params2);
-    QCOMPARE(mWriter->encodeVersitProperty(property2), oneParamProperty);
+void UT_QVersitWriter::testEncodeParameters()
+{
+    // No parameters
+    QMultiMap<QString,QString> parameters;
+    QCOMPARE(mWriter->encodeParameters(parameters), QByteArray());
     
-    QByteArray moreParamsProperty = 
-        "ADR;HOME;DOM:2009 Santa Claus Street, Lapland, Finland\r\n";
-    QVersitProperty property3;
-    property3.setName(QString("ADR"));
-    property3.setValue(QByteArray("2009 Santa Claus Street, Lapland, Finland"));
-    QMultiMap<QString,QString> params3;
-    params3.insert(QString("TYPE"), QString("HOME"));
-    params3.insert(QString("TYPE"), QString("DOM"));
-    property3.setParameters(params3);
-    QCOMPARE(mWriter->encodeVersitProperty(property3), moreParamsProperty);
+    // One parameter that is not a "TYPE" parameter
+    parameters.insertMulti(QString::fromAscii("ENCODING"),QString::fromAscii("8BIT"));
+    QCOMPARE(mWriter->encodeParameters(parameters), QByteArray(";ENCODING=8BIT"));
+    
+    // One parameter that is a "TYPE" parameter
+    parameters.clear();
+    parameters.insertMulti(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
+    QCOMPARE(mWriter->encodeParameters(parameters), QByteArray(";HOME"));    
+    
+    // Two parameters
+    parameters.insertMulti(QString::fromAscii("ENCODING"),QString::fromAscii("7BIT"));    
+    QCOMPARE(mWriter->encodeParameters(parameters), QByteArray(";ENCODING=7BIT;HOME"));
 }
