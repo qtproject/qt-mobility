@@ -578,14 +578,14 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
                         emit networkStatusChanged(QSystemNetworkInfo::EthernetMode, QSystemNetworkInfo::Connected);
                     }
                     if(nmState == NM_DEVICE_STATE_DISCONNECTED) {
-                        emit networkNameChanged(QSystemNetworkInfo::EthernetMode, "No network");
+                        emit networkNameChanged(QSystemNetworkInfo::EthernetMode, "");
                         emit networkStatusChanged(QSystemNetworkInfo::EthernetMode, QSystemNetworkInfo::NoNetworkAvailable);
                     }
                     if(nmState == NM_DEVICE_STATE_PREPARE
                        || nmState == NM_DEVICE_STATE_CONFIG
                        || nmState == NM_DEVICE_STATE_NEED_AUTH
                       /* || nmState == NM_DEVICE_IP_CONFIG*/) {
-                        emit networkNameChanged(QSystemNetworkInfo::EthernetMode, "No network");
+                        emit networkNameChanged(QSystemNetworkInfo::EthernetMode, "");
                         emit networkStatusChanged(QSystemNetworkInfo::EthernetMode, QSystemNetworkInfo::Searching);
                     }
 
@@ -613,13 +613,13 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
                        || nmState == NM_DEVICE_STATE_UNAVAILABLE
                        || nmState == NM_DEVICE_STATE_FAILED) {
                         emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::NoNetworkAvailable);
-                        emit networkNameChanged(QSystemNetworkInfo::WlanMode, "No network");
+                        emit networkNameChanged(QSystemNetworkInfo::WlanMode, "");
                     }
                     if(nmState == NM_DEVICE_STATE_PREPARE
                        || nmState == NM_DEVICE_STATE_CONFIG
                        || nmState == NM_DEVICE_STATE_NEED_AUTH
                        /*|| nmState == NM_DEVICE_IP_CONFIG*/) {
-                        emit networkNameChanged(QSystemNetworkInfo::WlanMode, "No network");
+                        emit networkNameChanged(QSystemNetworkInfo::WlanMode, "");
                         emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::Searching);
                     }
                 }
@@ -834,28 +834,28 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
 // Mobile Country Code
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
-    return "No Mobile Network";
+    return QString();
 }
 
 // Mobile Network Code
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
-    return "No Mobile Network";
+    return QString();
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 {
-    return "No Mobile Network";
+    return QString();
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
-    return "No Mobile Network";
+    return QString();
 }
 
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
-    QString netname = "No network available";
+    QString netname = "";
 
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:

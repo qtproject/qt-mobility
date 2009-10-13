@@ -68,7 +68,7 @@ void tst_QSystemStorageInfo::tst_availableDiskSpace()
     QSystemStorageInfo mi;
     QStringList volList = mi.logicalDrives();
     foreach(QString vol, volList) {
-        QVERIFY(mi.availableDiskSpace(vol) != 0);
+        QVERIFY(mi.availableDiskSpace(vol) > -1);
     }
 }
 
