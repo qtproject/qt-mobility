@@ -67,9 +67,10 @@ public:
     bool operator==(const QContact &other) const;
     bool operator!=(const QContact &other) const {return !(other == *this);}
 
-    /* ID */
+    /* Unique ID */
     QContactId id() const;
     void setId(const QContactId& id);
+    QContactLocalId localId() const;
 
     /* Type - contact, group, metacontact, ... */
     QString type() const;

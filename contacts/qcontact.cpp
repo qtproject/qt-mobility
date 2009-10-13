@@ -138,6 +138,12 @@ QContactId QContact::id() const
     return d->m_id;
 }
 
+/*! Returns the QContactLocalId that identifies this contact within its manager */
+QContactLocalId QContact::localId() const
+{
+    return d->m_id.localId();
+}
+
 /*!
  * Returns the type of the contact.  Every contact has exactly one type which
  * is either set manually (by saving a modified copy of the QCotnactType
