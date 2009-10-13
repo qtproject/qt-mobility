@@ -64,11 +64,12 @@ signals:
     void progress(bool finished);
 
 private:
-    QByteArray encodeVersitDocument(const QVersitDocument& versitDocument);
-    QByteArray encodeVersitProperty(const QVersitProperty& versitProperty);
+    QByteArray encodeVersitDocument(const QVersitDocument& document);
+    QByteArray encodeVersitProperty(const QVersitProperty& property);
     QByteArray encodeParameters(
         const QMultiMap<QString,QString>& parameters,
         bool addQuotedPrintable=false);
+    bool shouldBeQuotedPrintableEncoded(const QVersitProperty& property) const;
 
 private:
     QVersitWriterPrivate* d;

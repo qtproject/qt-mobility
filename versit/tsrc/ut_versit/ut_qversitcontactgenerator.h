@@ -42,16 +42,14 @@ class UT_QVersitContactGenerator : public QObject
 {
     Q_OBJECT
 
-private slots:
-    void initTestCase();
-    void cleanupTestCase();
-
-private slots:
-    void generateContacts();
+private slots: // Tests
+    
+    void init();
+    void cleanup();
+    void testGenerateContacts();
 
 private:
-    QVersitContactGenerator* d_ptr;
-
+    QVersitContactGenerator* mGenerator;
 };
 
 #endif // UT_QVERSITCONTACTGENERATOR_H

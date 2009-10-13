@@ -102,48 +102,46 @@ bool QVersitWriter::start()
 }
 
 /*!
- * Encodes the \a versitDocument to text. 
+ * Encodes the \a document to text. 
  */
-QByteArray QVersitWriter::encodeVersitDocument(const QVersitDocument& versitDocument)
+QByteArray QVersitWriter::encodeVersitDocument(const QVersitDocument& document)
 {
-    QList<QVersitProperty> propertyList = versitDocument.properties();
-    QByteArray docArray;
+    QList<QVersitProperty> properties = document.properties();
+    QByteArray encodedDocument;
     
-    docArray.append("BEGIN:VCARD\r\n");
-    docArray.append("VERSION:2.1\r\n");
-    foreach (QVersitProperty property, propertyList) {
-        docArray.append(encodeVersitProperty(property));
+    encodedDocument.append("BEGIN:VCARD\r\n");
+    encodedDocument.append("VERSION:2.1\r\n");
+    foreach (QVersitProperty property, properties) {
+        encodedDocument.append(encodeVersitProperty(property));
     }
-    docArray.append("END:VCARD\r\n");
+    encodedDocument.append("END:VCARD\r\n");
     
-    return docArray;
+    return encodedDocument;
 }
 
 /*!
- * Encodes the \a versitProperty to text. 
+ * Encodes the \a property to text. 
  */
-QByteArray QVersitWriter::encodeVersitProperty(const QVersitProperty& versitProperty)
+QByteArray QVersitWriter::encodeVersitProperty(const QVersitProperty& property)
 {
     QByteArray encodedProperty;
-    QString name = versitProperty.name();    
+    QString name = property.name();    
     encodedProperty.append(name.toAscii());
 
-    QByteArray value(versitProperty.value());
-    bool quotedPrintable = false;
-    if (VersitUtils::containsSpecialChars(versitProperty.value())) {
-        quotedPrintable = true;
+    QByteArray value(property.value());
+    bool quotedPrintableValue = shouldBeQuotedPrintableEncoded(property);
+    if (quotedPrintableValue) {
         value = VersitUtils::encodeQuotedPrintable(value);   
     }
     QByteArray encodedParameters = 
-        encodeParameters(versitProperty.parameters(),quotedPrintable);
+        encodeParameters(property.parameters(),quotedPrintableValue);
     encodedProperty.append(encodedParameters);
 
     encodedProperty.append(":");
-    if (name == QString::fromAscii(("AGENT"))) {
+    if (name == QString::fromAscii("AGENT")) {
         encodedProperty.append("\r\n");
-        QVersitDocument embDoc = versitProperty.embeddedDocument();
-        QByteArray embDocArray = encodeVersitDocument(embDoc);
-        encodedProperty.append(embDocArray);
+        QVersitDocument embeddedDocument = property.embeddedDocument();
+        encodedProperty.append(encodeVersitDocument(embeddedDocument));
     } else {
         encodedProperty.append(value);
     }
@@ -179,4 +177,13 @@ QByteArray QVersitWriter::encodeParameters(
         !parameters.contains(encodingParameterName,quotedPrintableValue))
         encodedParameters.append(";ENCODING=QUOTED-PRINTABLE");
     return encodedParameters;
+}
+
+/*!
+ * Checks whether the value of \a property should be Quoted-Printable encoded. 
+ */
+bool QVersitWriter::shouldBeQuotedPrintableEncoded(const QVersitProperty& property) const
+{
+    return (!property.parameters().contains(QString::fromAscii("ENCODING")) &&
+            VersitUtils::containsSpecialChars(property.value())); 
 }

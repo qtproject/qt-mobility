@@ -219,3 +219,26 @@ void UT_QVersitWriter::testEncodeParameters()
     QCOMPARE(mWriter->encodeParameters(parameters,true), 
              QByteArray(";ENCODING=QUOTED-PRINTABLE"));    
 }
+
+void UT_QVersitWriter::testShouldBeQuotedPrintableEncoded()
+{
+    // The property doesn't contain ENCODING parameter, 
+    // no special characters in the value -> no need to use Quoted-Printable encode
+    QVersitProperty property;
+    property.setName(QString::fromAscii("N"));
+    property.setValue(QByteArray("Simpson;Homer"));
+    QVERIFY(!mWriter->shouldBeQuotedPrintableEncoded(property));
+    
+    // The property doesn't contain ENCODING parameter,
+    // special characters in the value -> needs to be Quoted-Printable encoded
+    property.setName(QString::fromAscii("EMAIL"));
+    property.setValue(QByteArray("homer@simpsons.com"));
+    QVERIFY(mWriter->shouldBeQuotedPrintableEncoded(property));    
+    
+    // The property contains ENCODING parameter
+    // -> Value should not be Quoted-Printable encoded
+    property.setName(QString::fromAscii("PHOTO"));
+    property.setValue(QByteArray("the data").toBase64());
+    property.addParameter(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
+    QVERIFY(!mWriter->shouldBeQuotedPrintableEncoded(property));
+}
