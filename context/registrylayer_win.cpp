@@ -826,7 +826,7 @@ bool RegistryLayer::removeRegistryValue(RegistryHandle *handle, const QString &s
         fullPath = QLatin1Char('/') + value;
 
     foreach (RegistryHandle *h, hKeys.keys()) {
-        if (h->path.startsWith(fullPath)) {
+        if (h->path.startsWith(fullPath) && !h->valueHandle) {
             deletedKeys.append(h);
             closeRegistryKey(h);
         }
