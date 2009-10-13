@@ -140,11 +140,15 @@ void QGstreamerAudioInputDeviceControl::updateOssDevices()
 {
     QDir devDir("/dev");
     devDir.setFilter(QDir::System);
-
+#ifndef QT_QWS_N810
     QFileInfoList entries = devDir.entryInfoList(QStringList() << "dsp*");
     foreach(const QFileInfo& entryInfo, entries) {
         m_names.append(QLatin1String("oss:")+entryInfo.filePath());
         m_descriptions.append(QString("OSS device %1").arg(entryInfo.fileName()));
     }
+#else
+    m_names.append("dsppcm");
+    m_descriptions.append("PCM audio input");
+#endif
 }
 

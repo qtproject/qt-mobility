@@ -41,6 +41,7 @@
 #include <multimedia/qmediarecorder.h>
 
 #include <gst/gsttagsetter.h>
+#include <gst/gstversion.h>
 
 #include <QDebug>
 #include <QUrl>
@@ -162,6 +163,9 @@ GstElement *QGstreamerCaptureSession::buildAudioSrc()
     if (m_audioInputFactory)
         audioSrc = m_audioInputFactory->buildElement();
     else {
+#ifdef QT_QWS_N810
+        audioSrc = gst_element_factory_make("dsppcmsrc", "audio_src");
+#else
         QString elementName = "alsasrc";
         QString device;
 
@@ -175,6 +179,7 @@ GstElement *QGstreamerCaptureSession::buildAudioSrc()
         audioSrc = gst_element_factory_make(elementName.toAscii().constData(), "audio_src");
         if (audioSrc && !device.isEmpty())
             g_object_set(G_OBJECT(audioSrc), "device", device.toLocal8Bit().constData(), NULL);
+#endif
     }
 
     if (!audioSrc) {
@@ -374,7 +379,9 @@ bool QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
     dumpGraph( QString("rebuild_graph_%1_%2").arg(m_pipelineMode).arg(newMode) );
     if (m_encodeBin) {
         QString fileName = QString("rebuild_graph_encode_%1_%2").arg(m_pipelineMode).arg(newMode);
+#if (GST_VERSION_MAJOR >= 0) && (GST_VERSION_MINOR >= 10) && (GST_VERSION_MICRO >= 19)
         _gst_debug_bin_to_dot_file(GST_BIN(m_encodeBin), GST_DEBUG_GRAPH_SHOW_ALL, fileName.toAscii());
+#endif
     }
 
     if (ok) {
@@ -398,9 +405,11 @@ bool QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
 
 void QGstreamerCaptureSession::dumpGraph(const QString &fileName)
 {
+#if (GST_VERSION_MAJOR >= 0) && (GST_VERSION_MINOR >= 10) && (GST_VERSION_MICRO >= 19)
     _gst_debug_bin_to_dot_file(GST_BIN(m_pipeline),
                                GstDebugGraphDetails(/*GST_DEBUG_GRAPH_SHOW_ALL |*/ GST_DEBUG_GRAPH_SHOW_MEDIA_TYPE | GST_DEBUG_GRAPH_SHOW_NON_DEFAULT_PARAMS | GST_DEBUG_GRAPH_SHOW_STATES),
                                fileName.toAscii());
+#endif
 }
 
 QUrl QGstreamerCaptureSession::sink() const

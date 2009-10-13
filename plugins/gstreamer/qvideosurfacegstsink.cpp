@@ -103,12 +103,12 @@ GstFlowReturn QVideoSurfaceGstDelegate::render(GstBuffer *buffer)
     qint64 startTime = GST_BUFFER_TIMESTAMP(buffer);
 
     if (startTime >= 0) {
-        m_frame.setStartTime(GST_TIME_AS_MSECONDS(startTime));
+        m_frame.setStartTime(startTime/G_GINT64_CONSTANT (1000000));
 
         qint64 duration = GST_BUFFER_DURATION(buffer);
 
         if (duration >= 0)
-            m_frame.setEndTime(GST_TIME_AS_MSECONDS(startTime + duration));
+            m_frame.setEndTime((startTime + duration)/G_GINT64_CONSTANT (1000000));
     }
 
     QMetaObject::invokeMethod(this, "queuedRender", Qt::QueuedConnection);

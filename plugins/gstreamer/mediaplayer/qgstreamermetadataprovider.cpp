@@ -36,6 +36,8 @@
 #include "qgstreamerplayersession.h"
 #include <QDebug>
 
+#include <gst/gstversion.h>
+
 struct QGstreamerMetaDataKeyLookup
 {
     QtMedia::MetaData key;
@@ -76,7 +78,9 @@ static const QGstreamerMetaDataKeyLookup qt_gstreamerMetaDataKeys[] =
     { QtMedia::AlbumTitle, GST_TAG_ALBUM },
     { QtMedia::AlbumArtist,  GST_TAG_ARTIST},
     { QtMedia::ContributingArtist, GST_TAG_PERFORMER },
+#if (GST_VERSION_MAJOR >= 0) && (GST_VERSION_MINOR >= 10) && (GST_VERSION_MICRO >= 19)
     { QtMedia::Composer, GST_TAG_COMPOSER },
+#endif
     //{ QtMedia::Conductor, 0 },
     //{ QtMedia::Lyrics, 0 },
     //{ QtMedia::Mood, 0 },
