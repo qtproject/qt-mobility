@@ -54,14 +54,22 @@ QList<QContactLocalId> matchingGroups = contactManager.contacts(cif);
 // - if we disallow nested groups (ie, during validation of saving a relationship) then this cannot happen
 // - otherwise, we'll need to either add a new Contact Type (TopLevelGroup) or do complex filtering.
 
-// Use Case 9: Retrieving The Members Of A Group
+// Use Case 9: Retrieving The Members Of A Group (Option 1)
+// Advantage: know that the information is up to date
+// Disadvantage: only get local id's (of contacts which are stored in the manager)
 QContactRelationshipFilter crf;
 crf.setRole(QContactRelationshipFilter::Destination);           // we want all destination particpants
 crf.setType(QContactRelationship::RelationshipTypeHasMember);   // ie, group members
 crf.setOtherParticipant(someGroupContact.id());                 // where I am the source (group)
 QList<QContactLocalId> groupMembers = contactManager.contacts(crf);
 
-// Use Case 10: Modify Ordering Of Group Members
+// Use Case 10: Retrieving The Members Of A Group (Option 2)
+// Advantage: get _all_ groups members no matter which manager they are part of
+// Disadvantage: cached information, possibly stale.
+QContact someGroup;
+QList<QContactId> groupMembers = someGroup.relationship(someGroup.localId(), QContactRelationship::RelationshipTypeHasMember).destinationContacts();
+
+// Use Case 11: Modify Ordering Of Group Members
 QContactRelationship someGroupRelationship;
 QList<QContactId> groupMembers = someGroupRelationship.destinationContacts();
 QContactId someEntry = groupMembers.takeAt(3);                  // move from position 3
@@ -69,7 +77,7 @@ groupMembers.insert(6, someEntry);                              // to position 6
 someGroupRelationship.setDestinationContacts(groupMembers);
 contactManager.saveRelationship(someGroupRelationship);
 
-// Use Case 11: Adding A Contact To A Group
+// Use Case 12: Adding A Contact To A Group
 QContactRelationship someGroupRelationship;
 someGroupRelationship.appendDestinationContact(someContact.id());
 contactManager.saveRelationship(someGroupRelationship);
