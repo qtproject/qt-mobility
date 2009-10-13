@@ -39,53 +39,53 @@
 
 void UT_QVersitReader::init()
 {
-    m_reader = new QVersitReader;
+    mReader = new QVersitReader;
 }
 
 void UT_QVersitReader::cleanup()
 {   
-    delete m_reader;
+    delete mReader;
 }
 
 void UT_QVersitReader::testDevice()
 {
     // No device
-    QVERIFY(m_reader->device() == NULL);    
+    QVERIFY(mReader->device() == NULL);    
     
     // Device has been set
     QBuffer device;
-    m_reader->setDevice(&device);
-    QVERIFY(m_reader->device() == &device);
+    mReader->setDevice(&device);
+    QVERIFY(mReader->device() == &device);
 }
 
 void UT_QVersitReader::testStart()
 {
     // No I/O device set
-    QVERIFY(!m_reader->start());
+    QVERIFY(!mReader->start());
     
     // Device set, not open
     QBuffer buffer;
-    m_reader->setDevice(&buffer);
-    QVERIFY(!m_reader->start());
+    mReader->setDevice(&buffer);
+    QVERIFY(!mReader->start());
     
     // Device set, opened, no data
     buffer.open(QBuffer::ReadWrite);
-    QVERIFY(!m_reader->start());
+    QVERIFY(!mReader->start());
     
     // Device ready, invalid data
     const QByteArray& invalidData = 
         "BEGIN:VCARD\r\nVERSION:2.1\r\nEND:VCARD\r\n";
     buffer.write(invalidData);
     buffer.seek(0);
-    QVERIFY(!m_reader->start());
+    QVERIFY(!mReader->start());
 
     // Device set, one document
     const QByteArray& oneDocument = 
         "Begin:VCARD\r\nVERSION:2.1\r\nN:Homer\r\nenD:VCARD\r\n";
     buffer.write(oneDocument);
     buffer.seek(0);
-    QVERIFY(m_reader->start());
-    QCOMPARE(m_reader->result().count(),1);
+    QVERIFY(mReader->start());
+    QCOMPARE(mReader->result().count(),1);
     
     // Two documents
     const QByteArray& twoDocuments = 
@@ -93,13 +93,39 @@ void UT_QVersitReader::testStart()
     buffer.reset();
     buffer.write(twoDocuments);
     buffer.seek(0);
-    QVERIFY(m_reader->start());
-    QCOMPARE(m_reader->result().count(),3);
+    QVERIFY(mReader->start());
+    QCOMPARE(mReader->result().count(),3);
 }
 
 void UT_QVersitReader::testResult()
 {
-    QCOMPARE(m_reader->result().count(),0);
+    QCOMPARE(mReader->result().count(),0);
+}
+
+void UT_QVersitReader::testContainsSupportedVersion()
+{
+    // Some other property than VERSION
+    QVersitProperty property;
+    property.setName(QString::fromAscii("N"));
+    QVERIFY(mReader->containsSupportedVersion(property));
+    
+    // VERSION property with a supported value
+    property.setName(QString::fromAscii("VERSION"));
+    property.setValue(QByteArray("2.1"));
+    QVERIFY(mReader->containsSupportedVersion(property));    
+    
+    // VERSION property with a not supported value
+    property.setValue(QByteArray("3.0"));
+    QVERIFY(!mReader->containsSupportedVersion(property));     
+    
+    // VERSION property with BASE64 encoded supported value
+    property.setValue(QByteArray("2.1").toBase64());
+    property.addParameter(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
+    QVERIFY(mReader->containsSupportedVersion(property));    
+    
+    // VERSION property with BASE64 encoded not supported value
+    property.setValue(QByteArray("3.0").toBase64());
+    QVERIFY(!mReader->containsSupportedVersion(property));     
 }
 
 void UT_QVersitReader::testParseNextVersitProperty()
@@ -114,41 +140,41 @@ void UT_QVersitReader::testParseNextVersitProperty()
     vCard.append("AGENT:\r\nBEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\r\n");
     vCard.append("End:VCARD\r\n");
     
-    QVersitProperty property = m_reader->parseNextVersitProperty(vCard);
+    QVersitProperty property = mReader->parseNextVersitProperty(vCard);
     QCOMPARE(property.name(),QString::fromAscii("BEGIN"));
     QCOMPARE(property.value(),QByteArray("vcard"));
     
-    property = m_reader->parseNextVersitProperty(vCard);
+    property = mReader->parseNextVersitProperty(vCard);
     QCOMPARE(property.name(),QString::fromAscii("VERSION"));
     QCOMPARE(property.value(),QByteArray("2.1"));
     
-    property = m_reader->parseNextVersitProperty(vCard);
+    property = mReader->parseNextVersitProperty(vCard);
     QCOMPARE(property.name(),QString::fromAscii("N"));
     QCOMPARE(property.value(),QByteArray("Homer"));
     
-    property = m_reader->parseNextVersitProperty(vCard);
+    property = mReader->parseNextVersitProperty(vCard);
     QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
     QCOMPARE(0,property.parameters().count());
     QCOMPARE(property.value(),QByteArray("homer@simpsons.com"));
     
-    property = m_reader->parseNextVersitProperty(vCard);
+    property = mReader->parseNextVersitProperty(vCard);
     QCOMPARE(property.name(),QString::fromAscii("AGENT"));
     QCOMPARE(property.value(),QByteArray());
     QCOMPARE(property.embeddedDocument().properties().count(),1);
     
-    property = m_reader->parseNextVersitProperty(vCard);
+    property = mReader->parseNextVersitProperty(vCard);
     QCOMPARE(property.name(),QString::fromAscii("END"));
     QCOMPARE(property.value(),QByteArray("VCARD"));
     
-    property = m_reader->parseNextVersitProperty(vCard);
+    property = mReader->parseNextVersitProperty(vCard);
     QCOMPARE(property.name(),QString());
     QCOMPARE(property.value(),QByteArray());
     
     // Simulate a situation where the document nesting level is exceeded
     // In practice this would mean a big number of nested AGENT properties
-    m_reader->d->m_DocumentNestingLevel = 20;
+    mReader->d->m_DocumentNestingLevel = 20;
     QByteArray agentProperty("AGENT:BEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\r\n");
-    property = m_reader->parseNextVersitProperty(agentProperty);
+    property = mReader->parseNextVersitProperty(agentProperty);
     QCOMPARE(property.name(),QString::fromAscii("AGENT"));
     QCOMPARE(property.embeddedDocument().properties().count(),0);
     QCOMPARE(property.value(),QByteArray());    
@@ -165,9 +191,9 @@ AGENT:BEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\r\n\
 EMAIL;ENCODING=QUOTED-PRINTABLE:homer=40simp=\r\nsons.com\r\n\
 END:VCARD\r\n";
     QByteArray vCard(validCard);
-    QVersitDocument document = m_reader->parseVersitDocument(vCard);
+    QVersitDocument document = mReader->parseVersitDocument(vCard);
     QCOMPARE(document.properties().count(),3);
-    QCOMPARE(m_reader->d->m_DocumentNestingLevel,0);
+    QCOMPARE(mReader->d->m_DocumentNestingLevel,0);
     
     // No BEGIN found
     const char beginMissing[] = 
@@ -176,18 +202,18 @@ VERSION:2.1\r\n\
 N:Nobody\r\n\
 END:VCARD\r\n";
     vCard = beginMissing;
-    document = m_reader->parseVersitDocument(vCard);
+    document = mReader->parseVersitDocument(vCard);
     QCOMPARE(document.properties().count(),0);
-    QCOMPARE(m_reader->d->m_DocumentNestingLevel,0);
+    QCOMPARE(mReader->d->m_DocumentNestingLevel,0);
     
     // Wrong card type
     const char wrongType[] = 
 "BEGIN:VCAL\r\n\
 END:VCAL\r\n";
     vCard = wrongType;
-    document = m_reader->parseVersitDocument(vCard);
+    document = mReader->parseVersitDocument(vCard);
     QCOMPARE(document.properties().count(),0);
-    QCOMPARE(m_reader->d->m_DocumentNestingLevel,0);
+    QCOMPARE(mReader->d->m_DocumentNestingLevel,0);
     
     // Wrong version
     const char wrongVersion[] = 
@@ -196,7 +222,7 @@ VERSION:3.0\r\n\
 N:Nobody\r\n\
 END:VCARD\r\n";
     vCard = wrongVersion;
-    document = m_reader->parseVersitDocument(vCard);
+    document = mReader->parseVersitDocument(vCard);
     QCOMPARE(document.properties().count(),0);
-    QCOMPARE(m_reader->d->m_DocumentNestingLevel,0);
+    QCOMPARE(mReader->d->m_DocumentNestingLevel,0);
 }

@@ -47,16 +47,17 @@ private slots: // Tests
 
     void init();
     void cleanup();
-
-    void testParseNextVersitProperty();
-    void testParseVersitDocument();    
+    
     void testDevice();
     void testStart();
     void testResult();
+    void testContainsSupportedVersion();
+    void testParseNextVersitProperty();
+    void testParseVersitDocument();     
 
 private: // Data
 
-    QVersitReader* m_reader;
+    QVersitReader* mReader;
 };
 
 #endif // UT_VERSITREADER_H
