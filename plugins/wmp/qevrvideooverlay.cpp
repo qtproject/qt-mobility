@@ -98,8 +98,7 @@ bool QEvrVideoOverlay::isFullScreen() const
 
 void QEvrVideoOverlay::setFullScreen(bool fullScreen)
 {
-    if (m_displayControl && m_displayControl->SetFullscreen(fullScreen) == S_OK)
-        emit fullScreenChanged(m_fullScreen = fullScreen);
+    emit fullScreenChanged(m_fullScreen = fullScreen);
 }
 
 QSize QEvrVideoOverlay::nativeSize() const
@@ -120,26 +119,28 @@ QVideoWidget::AspectRatioMode QEvrVideoOverlay::aspectRatioMode() const
 
 void QEvrVideoOverlay::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 {
-        switch (mode) {
-        case QVideoWidget::KeepAspectRatio:
-		if (m_displayControl)
-			m_displayControl->SetAspectRatioMode(MFVideoARMode_PreservePicture);
+    switch (mode) {
+    case QVideoWidget::KeepAspectRatio:
+            if (m_displayControl)
+                    m_displayControl->SetAspectRatioMode(MFVideoARMode_PreservePicture);
 
-                m_aspectRatioMode = mode;
-		break;
-        case QVideoWidget::IgnoreAspectRatio:
-		if (m_displayControl)
-			m_displayControl->SetAspectRatioMode(MFVideoARMode_None);
+            m_aspectRatioMode = mode;
+            break;
+    case QVideoWidget::IgnoreAspectRatio:
+            if (m_displayControl)
+                    m_displayControl->SetAspectRatioMode(MFVideoARMode_None);
 
-                m_aspectRatioMode = mode;
-		break;
-	default:
-		break;
-	}
+            m_aspectRatioMode = mode;
+            break;
+    default:
+            break;
+    }
 }
 
 void QEvrVideoOverlay::repaint()
 {
+    if (m_displayControl)
+        m_displayControl->RepaintVideo();
 }
 
 int QEvrVideoOverlay::brightness() const
