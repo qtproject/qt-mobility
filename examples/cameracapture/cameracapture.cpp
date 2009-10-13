@@ -69,7 +69,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
     }
 
     //camera devices
-    foreach(const QString deviceName, camera->devices()) {
+    foreach(const QByteArray deviceName, camera->devices()) {
         ui->cameraDeviceBox->addItem(deviceName+" "+camera->deviceDescription(deviceName), QVariant(deviceName));
     }
 
@@ -142,7 +142,8 @@ void CameraCapture::setAudioInputDevice(int idx)
 
 void CameraCapture::setCameraDevice(int idx)
 {
-    camera->setDevice(ui->cameraDeviceBox->itemData(idx).toString());
+    Q_UNUSED(idx);
+    //camera->setDevice(ui->cameraDeviceBox->itemData(idx).toString());
 }
 
 void CameraCapture::setAudioCodec(int idx)

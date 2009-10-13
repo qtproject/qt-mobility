@@ -5,6 +5,7 @@ include (../../../common.pri)
 
 SOURCES += tst_qmediaimageviewer.cpp
 
+QT += network
 LIBS += -lQtMedia
 
 !contains(QT_CONFIG, no-jpeg):DEFINES += QTEST_HAVE_JPEG

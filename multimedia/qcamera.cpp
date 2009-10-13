@@ -59,6 +59,8 @@ class QCameraPrivate : public QMediaObjectPrivate
     Q_DECLARE_PUBLIC(QCamera)
 
 public:
+    void initControls();
+
     QCameraControl *control;
     QCameraExposureControl *exposureControl;
     QCameraFocusControl *focusControl;
@@ -81,6 +83,61 @@ void QCameraPrivate::_q_error(int error, const QString &errorString)
     emit q->error(this->error);
 }
 
+void QCameraPrivate::initControls()
+{
+    Q_Q(QCamera);
+
+    if (service) {
+        control = qobject_cast<QCameraControl *>(service->control(QCameraControl_iid));
+        exposureControl = qobject_cast<QCameraExposureControl *>(service->control(QCameraExposureControl_iid));
+        focusControl = qobject_cast<QCameraFocusControl *>(service->control(QCameraFocusControl_iid));
+        imageControl = qobject_cast<QImageProcessingControl *>(service->control(QImageProcessingControl_iid));
+        captureControl = qobject_cast<QImageCaptureControl *>(service->control(QImageCaptureControl_iid));
+
+        q->connect(control, SIGNAL(stateChanged(QCamera::State)), q, SIGNAL(stateChanged(QCamera::State)));
+        q->connect(control, SIGNAL(error(int,QString)), q, SLOT(_q_error(int,QString)));
+
+        error = QCamera::NoError;
+    } else {
+        control = 0;
+        exposureControl = 0;
+        focusControl = 0;
+        imageControl = 0;
+        captureControl = 0;
+
+        error = QCamera::ServiceMissingError;
+        errorString = QCamera::tr("The camera service is missing");
+    }
+
+    if (exposureControl) {
+        q->connect(exposureControl, SIGNAL(flashReady(bool)), q, SIGNAL(flashReady(bool)));
+        q->connect(exposureControl, SIGNAL(exposureLocked()), q, SIGNAL(exposureLocked()));
+
+        q->connect(exposureControl, SIGNAL(apertureChanged(qreal)),
+                q, SIGNAL(apertureChanged(qreal)));
+        q->connect(exposureControl, SIGNAL(apertureRangeChanged()),
+                q, SIGNAL(apertureRangeChanged()));
+        q->connect(exposureControl, SIGNAL(shutterSpeedChanged(qreal)),
+                q, SIGNAL(shutterSpeedChanged(qreal)));
+        q->connect(exposureControl, SIGNAL(isoSensitivityChanged(int)),
+                q, SIGNAL(isoSensitivityChanged(int)));
+    }
+
+    if (focusControl) {
+        q->connect(focusControl, SIGNAL(focusStatusChanged(QCamera::FocusStatus)),
+                q, SIGNAL(focusStatusChanged(QCamera::FocusStatus)));
+        q->connect(focusControl, SIGNAL(zoomValueChanged(qreal)), q, SIGNAL(zoomValueChanged(qreal)));
+        q->connect(focusControl, SIGNAL(focusLocked()), q, SIGNAL(focusLocked()));
+    }
+
+    if (captureControl) {
+        q->connect(captureControl, SIGNAL(imageCaptured(QString,QImage)),
+                q, SIGNAL(imageCaptured(QString,QImage)));
+        q->connect(captureControl, SIGNAL(readyForCaptureChanged(bool)),
+                q, SIGNAL(readyForCaptureChanged(bool)));
+    }
+}
+
 /*!
     Construct a QCamera from service \a provider and \a parent.
 */
@@ -89,6 +146,8 @@ QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
     QMediaObject(*new QCameraPrivate, parent, provider->requestService("camera"))
 {
     Q_D(QCamera);
+    d->initControls();
+    /*
 
     if (d->service) {
         d->control = qobject_cast<QCameraControl *>(d->service->control(QCameraControl_iid));
@@ -139,6 +198,15 @@ QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
         connect(d->captureControl, SIGNAL(readyForCaptureChanged(bool)),
                 this, SIGNAL(readyForCaptureChanged(bool)));
     }
+    */
+}
+
+QCamera::QCamera(const QByteArray& device, QObject *parent, QMediaServiceProvider *provider)
+    :QMediaObject(*new QCameraPrivate, parent,
+                  provider->requestService("camera", QMediaServiceProviderHint(device)))
+{
+    Q_D(QCamera);
+    d->initControls();
 }
 
 /*!
@@ -253,36 +321,19 @@ void QCamera::unlockFocus()
     Returns a list of camera device's available.
 */
 
-QStringList QCamera::devices() const
+QList<QByteArray> QCamera::devices()
 {
-    if (d_func()->service != 0)
-        return d_func()->service->supportedEndpoints(QMediaService::VideoInput);
-
-    return QStringList();
+    return QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray("camera"));
 }
 
-/*!
-    Set the camera device being used to \a device
-*/
-
-void QCamera::setDevice(const QString& device)
-{
-    Q_D(QCamera);
-
-    if (d->service)
-        d->service->setActiveEndpoint(QMediaService::VideoInput, device);
-}
 
 /*!
     Returns the description of the \a device.
 */
 
-QString QCamera::deviceDescription(const QString &device) const
+QString QCamera::deviceDescription(const QByteArray &device)
 {
-    if (d_func()->service != 0)
-        return d_func()->service->endpointDescription(QMediaService::VideoInput, device);
-    else
-        return device;
+    return QMediaServiceProvider::defaultServiceProvider()->deviceDescription(QByteArray("camera"), device);
 }
 
 QCamera::State QCamera::state() const
