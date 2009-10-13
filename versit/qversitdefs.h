@@ -32,16 +32,35 @@
 ****************************************************************************/
 
 
+
 #ifndef QVERSITDEFS_H_
 #define QVERSITDEFS_H_
 
 
-//Contacts Defs ids:
-const QString versitContactName = "Name";
+//vCard 2.1 constants.
+const char versitNameId[] = "N";
+const char versitFormatedNameId[] = "FN";
+const char versitEmailId[] = "EMAIL";
+const char versitPhoneId[] = "TEL";
+const char versitAddressId[] = "ADDR";
 
-const QString versitContactEmail = "EmailAddress";
-const QString versitContactPhoneNumer = "PhoneNumber";
-const QString versitContactAddress = "StreetAddress";
+//Constexts:
+const char versiContextWorkId[] = "WORK";
+const char versitContextHomeId[] = "HOME";
+
+//SubTypes for Addresses
+const char versitDomesticId[] = "DOM";
+const char versitInternationalId[] = "INTL";
+const char versitPostalID[] = "POSTAL";
+const char versitParcelId[] = "PARCEL";
+
+
+//SubTypes for Telephone
+const char versitVoiceId[] = "VOICE";
+const char versitCellId[] = "CELL";
+const char versitModemId[] = "MODEM";
+const char versitCarId[] = "CAR";
+const char versitVideoId[] = "VIDEO";
 
 
 #endif /* QVERSITDEFS_H_ */

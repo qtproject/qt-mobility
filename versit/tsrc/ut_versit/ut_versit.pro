@@ -41,10 +41,11 @@ SOURCES += main.cpp \
         ../../qversitcontactconverter.cpp \
     ut_qversitcontactconverter.cpp
 
+LIBS += -lqtcontacts
+
 symbian: { 
     TARGET.CAPABILITY = ALL \
         -TCB
     LIBS += -lws32 \
-        -lbafl \
-        -lqtcontacts
+        -lbafl
 }

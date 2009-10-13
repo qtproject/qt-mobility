@@ -39,6 +39,12 @@
 #include <qcontact.h>
 #include <qversitcontactconverter.h>
 #include <qversitdocument.h>
+#include <qcontactname.h>
+#include <qcontactaddress.h>
+#include <qcontactemailaddress.h>
+#include <qcontactphonenumber.h>
+#include <qcontactaddress.h>
+#include "qversitdefs.h"
 
 class QVersitContactConverter;
 
@@ -47,33 +53,30 @@ class QVersitContactConverterPrivate
 public:    
     QVersitContactConverterPrivate() 
         : mError(QVersitContactConverter::NoError)
-    {
-        //Fields Mapping
-        mMappingTable.insert("Name","N");
-        mMappingTable.insert("DisplayLabel","FN");
-        mMappingTable.insert("EmailAddress","EMAIL");
-        mMappingTable.insert("PhoneNumber","TEL");
-        mMappingTable.insert("StreetAddress","ADDR");
-        
+    {                
+         //Fields Mapping
+        mMappingTable.insert(QContactName::DefinitionName,versitNameId);
+        mMappingTable.insert(QContactEmailAddress::DefinitionName,versitEmailId);
+        mMappingTable.insert(QContactPhoneNumber::DefinitionName,versitPhoneId);
+        mMappingTable.insert(QContactAddress::DefinitionName,versitAddressId);
+
         //Context Mapping
-        mMappingTable.insert("WORK","WORK");
-        mMappingTable.insert("HOME","HOME");
+        mMappingTable.insert(QContactDetail::ContextWork,versiContextWorkId);
+        mMappingTable.insert(QContactDetail::ContextHome,versitContextHomeId);
 
         // Sub Types parameters.
         /* Sub types for the Address */
-        mMappingTable.insert("Domestic","DOM");
-        mMappingTable.insert("International","INTL");
-        mMappingTable.insert("Postal","POSTAL");
-        mMappingTable.insert("Parcel","PARCEL");
-        
+        mMappingTable.insert(QContactAddress::SubTypeDomestic,versitDomesticId);
+        mMappingTable.insert(QContactAddress::SubTypeInternational,versitInternationalId);
+        mMappingTable.insert(QContactAddress::SubTypePostal,versitPostalID);
+        mMappingTable.insert(QContactAddress::SubTypeParcel,versitParcelId);
+
         /* Sub types for the telephone */
-        mMappingTable.insert("Work","WORK");
-        mMappingTable.insert("Home","HOME");
-        mMappingTable.insert("Voice","VOICE");
-        mMappingTable.insert("Mobile","CELL");
-        mMappingTable.insert("Modem","MODEM");
-        mMappingTable.insert("Car","CAR");
-        mMappingTable.insert("Video","VIDEO");
+        mMappingTable.insert(QContactPhoneNumber::SubTypeVoice,versitVoiceId);
+        mMappingTable.insert(QContactPhoneNumber::SubTypeMobile,versitCellId);
+        mMappingTable.insert(QContactPhoneNumber::SubTypeModem,versitModemId);
+        mMappingTable.insert(QContactPhoneNumber::SubTypeCar,versitCarId);
+        mMappingTable.insert(QContactPhoneNumber::SubTypeVideo,versitVideoId);
     }
     
     ~QVersitContactConverterPrivate()

@@ -86,8 +86,7 @@ QVersitContactConverter::Error QVersitContactConverter::error() const
  */
 QVersitDocument QVersitContactConverter::convertContacts(const QContact& contact)
 {
-    QVersitDocument versitDocument;
-    int contactCount = 0;
+    QVersitDocument versitDocument;    
     QList<QContactDetail> allDetails = contact.details();
     for (int i = 0; i < allDetails.size(); i++) {
         QContactDetail detail = allDetails.at(i);
@@ -105,14 +104,16 @@ QVersitDocument QVersitContactConverter::convertContacts(const QContact& contact
 void QVersitContactConverter::encodeFieldInfo(QVersitDocument& versitDocument, 
                                                 const QContactDetail& detail )
 {
-    if (detail.definitionName() == versitContactName )
-    {
+    if (detail.definitionName() == QContactName::DefinitionName ){
         encodeName(versitDocument, detail);
-    } else if (detail.definitionName() == versitContactPhoneNumer){
+    }
+    else if (detail.definitionName() == QContactPhoneNumber::DefinitionName){
         encodePhoneNumber(versitDocument, detail);
-    } else if (detail.definitionName()== versitContactEmail){
+    }
+    else if (detail.definitionName()== QContactEmailAddress::DefinitionName){
         encodeEmailAddress(versitDocument, detail);
-    } else if (detail.definitionName() == versitContactAddress){
+    }
+    else if (detail.definitionName() == QContactAddress::DefinitionName){
         encodeStreetAddress(versitDocument, detail);
     }
 }
