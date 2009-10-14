@@ -38,13 +38,16 @@
 
 
 //vCard 2.1 constants.
+
+// Type vaues
 const char versitNameId[] = "N";
 const char versitFormatedNameId[] = "FN";
 const char versitEmailId[] = "EMAIL";
 const char versitPhoneId[] = "TEL";
 const char versitAddressId[] = "ADDR";
+const char versitType[] = "TYPE";
 
-//Constexts:
+//Contexts:
 const char versiContextWorkId[] = "WORK";
 const char versitContextHomeId[] = "HOME";
 
@@ -54,7 +57,6 @@ const char versitInternationalId[] = "INTL";
 const char versitPostalID[] = "POSTAL";
 const char versitParcelId[] = "PARCEL";
 
-
 //SubTypes for Telephone
 const char versitVoiceId[] = "VOICE";
 const char versitCellId[] = "CELL";
@@ -62,5 +64,7 @@ const char versitModemId[] = "MODEM";
 const char versitCarId[] = "CAR";
 const char versitVideoId[] = "VIDEO";
 
+// Value separator
+const char versitValueSeparator[] = ",";
 
 #endif /* QVERSITDEFS_H_ */

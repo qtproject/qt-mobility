@@ -39,6 +39,7 @@
 #include <qcontact.h>
 #include <qcontactdetail.h>
 #include <qcontactname.h>
+#include <qcontactphonenumber.h>
 
 #include "qversitdefs.h"
 
@@ -53,7 +54,7 @@ void UT_QVersitContactGenerator::cleanup()
    delete mGenerator;
 }
 
-void UT_QVersitContactGenerator::testGenerateContacts()
+void UT_QVersitContactGenerator::testAddName()
 {
     QVersitDocument document;
     QVersitProperty nameProperty;
@@ -65,4 +66,42 @@ void UT_QVersitContactGenerator::testGenerateContacts()
     QCOMPARE(contact.details().count(),2);
     QContactDetail detail = contact.detail(QContactName::DefinitionName);    
     QCOMPARE(detail.value(QContactName::FieldFirst),QString(val));
+}
+
+void UT_QVersitContactGenerator::testAddTel()
+{
+    QVersitDocument document;
+    QVersitProperty nameProperty;
+    nameProperty.setName(QString::fromAscii(versitPhoneId));
+    QByteArray val("+35850486321");
+    nameProperty.setValue(val);
+    QStringList param;
+    param.append(versitVoiceId);
+    param.append(versitCellId);
+    param.append(versitModemId);
+    param.append(versitCarId);
+    param.append(versitVideoId);
+    param.append(versitContextHomeId);
+    param.append(versiContextWorkId);
+    param.append("");//other type
+    nameProperty.addParameter(versitType,param.join(versitValueSeparator));
+    document.addProperty(nameProperty);
+    QContact contact = mGenerator->generateContact(document);
+    const QContactPhoneNumber& phone = (QContactPhoneNumber)contact.detail(
+                                             QContactPhoneNumber::DefinitionName);
+    QCOMPARE(phone.number(),QString(val));
+
+    const QStringList subTypes = phone.subTypes();
+    QCOMPARE(subTypes.count(),5);
+    QCOMPARE(subTypes[0],QContactPhoneNumber::SubTypeVoice.operator QString());
+    QCOMPARE(subTypes[1],QContactPhoneNumber::SubTypeMobile.operator QString());
+    QCOMPARE(subTypes[2],QContactPhoneNumber::SubTypeModem.operator QString());
+    QCOMPARE(subTypes[3],QContactPhoneNumber::SubTypeCar.operator QString());
+    QCOMPARE(subTypes[4],QContactPhoneNumber::SubTypeVideo.operator QString());
+
+    const QStringList contexts = phone.contexts();
+    QCOMPARE(contexts.count(),3);
+    QCOMPARE(contexts[0],QContactDetail::ContextHome.operator QString());
+    QCOMPARE(contexts[1],QContactDetail::ContextWork.operator QString());
+    QCOMPARE(contexts[2],QContactDetail::ContextOther.operator QString());
 }

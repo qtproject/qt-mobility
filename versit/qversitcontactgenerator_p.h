@@ -44,6 +44,7 @@
 #include <qcontactemailaddress.h>
 #include <qcontactaddress.h>
 
+#include "qversitdefs.h"
 
 class QVersitContactGeneratorPrivate
 {
@@ -55,6 +56,50 @@ public:
         QContactName* name=new QContactName();
         name->setFirst(property.value());                  
         contact.saveDetail(name);
+    }
+    void addPhone(QContact& contact,const QVersitProperty& property)
+    {
+        QContactPhoneNumber* phone=new QContactPhoneNumber();
+        phone->setNumber(property.value());
+        // parse the comma separated multi types
+        const QMultiHash<QString,QString> params = property.parameters();
+        const QList<QString> paramsOfVersitType = params.values(versitType);
+        QStringList types;
+        foreach(const QString& param,paramsOfVersitType){
+            types.append(param.split(versitValueSeparator));
+        }
+        // construct subtypes and contexts
+        QStringList subTypes;
+        QStringList contexts;
+        foreach(const QString& type,types){
+            if(type==versitVoiceId){
+                subTypes+=QContactPhoneNumber::SubTypeVoice;
+            }
+            else if(type==versitCellId){
+                subTypes+=QContactPhoneNumber::SubTypeMobile;
+            }
+            else if(type==versitModemId){
+                subTypes+=QContactPhoneNumber::SubTypeModem;
+            }
+            else if(type==versitCarId){
+                subTypes+=QContactPhoneNumber::SubTypeCar;
+            }
+            else if(type==versitVideoId){
+                subTypes+=QContactPhoneNumber::SubTypeVideo;
+            }
+            else if(type==versitContextHomeId){
+                contexts+=QContactDetail::ContextHome;
+            }
+            else if(type==versiContextWorkId){
+                contexts+=QContactDetail::ContextWork;
+            }
+            else {
+                contexts+=(QContactDetail::ContextOther);
+            }
+        }
+        phone->setSubTypes(subTypes);
+        phone->setContexts(contexts);
+        contact.saveDetail(phone);
     }
 };
 

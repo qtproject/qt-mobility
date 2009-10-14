@@ -80,6 +80,9 @@ QContact QVersitContactGenerator::generateContact(
         if(property.name()==versitNameId){
             d->addName(contact,property);
         }
+        else if(property.name()==versitPhoneId){
+            d->addPhone(contact,property);
+        }
     }  
     return contact;
 }

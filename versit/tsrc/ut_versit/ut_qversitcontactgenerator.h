@@ -46,7 +46,9 @@ private slots: // Tests
     
     void init();
     void cleanup();
-    void testGenerateContacts();
+    void testAddName();
+    void testAddTel();
+
 
 private:
     QVersitContactGenerator* mGenerator;
