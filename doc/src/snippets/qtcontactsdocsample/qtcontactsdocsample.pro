@@ -10,7 +10,7 @@ include(../../../../common.pri)
 DEPENDPATH += .
 INCLUDEPATH += .
 
-qtAddLibrary(QtContacts)
+qtAddLibraryFixMe(QtContacts)
 
 SOURCES += qtcontactsdocsample.cpp
 HEADERS += requestexample.h

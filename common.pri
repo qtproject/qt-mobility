@@ -34,7 +34,7 @@ defineReplace(mobilityDeployFilename) {
 # builds, since the name decoration is inconsistent between qtLibraryTarget
 # and qtAddLibrary
 #
-defineTest(qtAddLibrary) {
+defineTest(qtAddLibraryFixMe) {
     INCLUDEPATH -= $$QMAKE_INCDIR_QT/$$1
     INCLUDEPATH = $$QMAKE_INCDIR_QT/$$1 $$INCLUDEPATH
 

@@ -7,7 +7,7 @@ include(../../../../common.pri)
 
 SOURCES  += tst_qcontactmanagerplugins.cpp
 
-qtAddLibrary(QtContacts)
+qtAddLibraryFixMe(QtContacts)
 
 TESTDLLS = \
     $$mobilityDeployFilename(contacts_testdummy) \

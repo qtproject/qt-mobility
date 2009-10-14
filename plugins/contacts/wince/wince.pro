@@ -20,5 +20,5 @@ INCLUDEPATH += $$SOURCE_DIR/contacts $$SOURCE_DIR/contacts/details $$SOURCE_DIR/
 
 LIBS += pimstore.lib -lole32
 
-qtAddLibrary(QtContacts)
+qtAddLibraryFixMe(QtContacts)
 

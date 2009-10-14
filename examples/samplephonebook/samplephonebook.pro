@@ -11,7 +11,7 @@ INCLUDEPATH += .
 INCLUDEPATH += ../testmodel
 VPATH += ../testmodel
 
-qtAddLibrary(QtContacts)
+qtAddLibraryFixMe(QtContacts)
 
 include(../../common.pri)
 

@@ -7,7 +7,7 @@ include(../../../common.pri)
 
 SOURCES  += tst_qcontact.cpp
 
-qtAddLibrary(QtContacts)
+qtAddLibraryFixMe(QtContacts)
 
 # App local deployment
 symbian:QCONTACTACTION_PLUGINS_DEPLOY.sources = contacts_sendemailactionfactory.dll

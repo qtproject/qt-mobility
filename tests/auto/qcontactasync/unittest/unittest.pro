@@ -9,7 +9,7 @@ include(../../../../common.pri)
 
 SOURCES  += tst_qcontactasync.cpp
 
-qtAddLibrary(QtContacts)
+qtAddLibraryFixMe(QtContacts)
 
 # App local deployment
 symbian:QCONTACTASYNC_PLUGINS_DEPLOY.sources = contacts_maliciousplugin.dll

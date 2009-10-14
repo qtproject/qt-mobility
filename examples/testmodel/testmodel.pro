@@ -9,7 +9,7 @@ TARGET = testmodel
 DEPENDPATH += .
 INCLUDEPATH += .
 
-qtAddLibrary(QtContacts)
+qtAddLibraryFixMe(QtContacts)
 
 include(../../common.pri)
 
