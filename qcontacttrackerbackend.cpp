@@ -95,20 +95,20 @@ QList<QUniqueId> QContactTrackerEngine::contacts(const QContactFilter& filter, c
     // TODO Implement sorting
     QList<QUniqueId> ids;
     RDFVariable rdfContact = RDFVariable::fromType<nco::PersonContact>();
-    if (filter.type() == QContactFilter::ChangeLog) {
+    if (filter.type() == QContactFilter::ChangeLogFilter) {
         const QContactChangeLogFilter& clFilter = static_cast<const QContactChangeLogFilter&>(filter);
         // Removed since
-        if (clFilter.changeType() == QContactChangeLogFilter::Removed) {
+        if (clFilter.eventType() == QContactChangeLogFilter::EventRemoved) {
             error = QContactManager::NotSupportedError;
             return ids;
         }
         // Added since
-        if (clFilter.changeType() == QContactChangeLogFilter::Added) {
+        if (clFilter.eventType() == QContactChangeLogFilter::EventAdded) {
             rdfContact.property<nao::hasTag>().property<nao::prefLabel>() = LiteralValue("addressbook");
             rdfContact.property<nie::contentCreated>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
         }
         // Changed since
-        else if (clFilter.changeType() == QContactChangeLogFilter::Changed) {
+        else if (clFilter.eventType() == QContactChangeLogFilter::EventChanged) {
             rdfContact.property<nao::hasTag>().property<nao::prefLabel>() = LiteralValue("addressbook");
             rdfContact.property<nie::contentLastModified>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
         }
@@ -172,7 +172,7 @@ QContact QContactTrackerEngine::contact_impl(const QUniqueId& contactId, QContac
             << QContactAnniversary::DefinitionName
             << QContactName::DefinitionName
             << QContactOnlineAccount::DefinitionName
-            << QContactOrganisation::DefinitionName
+            << QContactOrganization::DefinitionName
             << QContactPhoneNumber::DefinitionName
             << QContactPresence::DefinitionName
             << QContactUrl::DefinitionName;
@@ -367,19 +367,6 @@ QContactGroup QContactTrackerEngine::group(const QUniqueId& groupId) const
     return QContactGroup();
 }
 
-bool QContactTrackerEngine::saveGroup(QContactGroup* group)
-{
-    Q_UNUSED(group)
-    return false;
-}
-
-bool QContactTrackerEngine::removeGroup(const QUniqueId& groupId)
-{
-    Q_UNUSED(groupId)
-
-    return false;
-}
-
 QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions(QContactManager::Error& error) const
 {
     // lazy initialisation of schema definitions.
@@ -552,13 +539,13 @@ bool QContactTrackerEngine::startRequest(QContactAbstractRequest* req)
     QTrackerContactAsyncRequest *request = 0;
     switch (req->type())
     {
-        case QContactAbstractRequest::ContactIdFetch:
+        case QContactAbstractRequest::ContactIdFetchRequest:
             request = new QTrackerContactIdFetchRequest(req, this);
             break;
-        case QContactAbstractRequest::ContactFetch:
+        case QContactAbstractRequest::ContactFetchRequest:
             request = new QTrackerContactFetchRequest(req, this);
             break;
-        case QContactAbstractRequest::ContactSave:
+        case QContactAbstractRequest::ContactSaveRequest:
             request = new QTrackerContactSaveRequest(req, this);
             break;
         default:

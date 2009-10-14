@@ -26,14 +26,14 @@ using namespace hcontacts;
 void applyFilterToRDFVariable(RDFVariable &variable,
         const QContactFilter &filter)
 {
-    if (filter.type() == QContactFilter::IdList){
+    if (filter.type() == QContactFilter::IdListFilter){
         QContactIdListFilter filt = filter;
         if( !filt.ids().isEmpty() )
             variable.property<nco::contactUID>().isMemberOf(filt.ids());// = LiteralValue(filt.ids()[0]);
         else
             warning() << Q_FUNC_INFO << "QContactIdListFilter idlist is empty";
     }
-    else if (filter.type() == QContactFilter::ContactDetail){
+    else if (filter.type() == QContactFilter::ContactDetailFilter){
         // right now implementing this for phone numbers
         // later for the rest of fields
         QContactDetailFilter filt = filter;
@@ -60,7 +60,7 @@ void applyFilterToRDFVariable(RDFVariable &variable,
                 warning() << "QContactTrackerEngine: Unsupported QContactFilter::ContactDetail" << filt.detailDefinitionName();
         }
     }
-    else if(filter.type() == QContactFilter::ChangeLog)
+    else if(filter.type() == QContactFilter::ChangeLogFilter)
     {
         const QContactChangeLogFilter& clFilter = static_cast<const QContactChangeLogFilter&>(filter);
         // do not return facebook and telepathy contacts here
@@ -68,17 +68,17 @@ void applyFilterToRDFVariable(RDFVariable &variable,
         variable.property<nao::hasTag>().property<nao::prefLabel>() = LiteralValue("addressbook");
 
         // Removed since
-        if (clFilter.changeType() == QContactChangeLogFilter::Removed) {
+        if (clFilter.eventType() == QContactChangeLogFilter::EventRemoved) {
             // did not find how to set errror to async request
             // error = QContactManager::NotSupportedError;
             warning() << "QContactTrackerEngine: Unsupported QContactChangeLogFilter::Removed (contacts removed since)";
         }
         // Added since
-        else if (clFilter.changeType() == QContactChangeLogFilter::Added) {
+        else if (clFilter.eventType() == QContactChangeLogFilter::EventAdded) {
             variable.property<nie::contentCreated>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
         }
         // Changed since
-        else if (clFilter.changeType() == QContactChangeLogFilter::Changed) {
+        else if (clFilter.eventType() == QContactChangeLogFilter::EventChanged) {
             variable.property<nie::contentLastModified>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
         }
     }
@@ -171,7 +171,7 @@ QTrackerContactIdFetchRequest::QTrackerContactIdFetchRequest(
     parent->updateRequestStatus(request, QContactManager::NoError, dummy,
             QContactAbstractRequest::Active);
 
-    Q_ASSERT( req->type() == QContactAbstractRequest::ContactIdFetch );
+    Q_ASSERT( req->type() == QContactAbstractRequest::ContactIdFetchRequest );
     QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*> (req);
     QContactFilter filter = r->filter();
     QList<QContactSortOrder> sorting = r->sorting();
@@ -197,7 +197,7 @@ QTrackerContactIdFetchRequest::QTrackerContactIdFetchRequest(
 void QTrackerContactFetchRequest::validateRequest()
 {
     Q_ASSERT(req);
-    Q_ASSERT( req->type() == QContactAbstractRequest::ContactFetch );
+    Q_ASSERT( req->type() == QContactAbstractRequest::ContactFetchRequest );
     QContactFetchRequest* r = static_cast<QContactFetchRequest*> (req);
     if( r->definitionRestrictions().isEmpty() )
     {
@@ -210,7 +210,7 @@ void QTrackerContactFetchRequest::validateRequest()
                 << QContactAnniversary::DefinitionName
                 << QContactName::DefinitionName
                 << QContactOnlineAccount::DefinitionName
-                << QContactOrganisation::DefinitionName
+                << QContactOrganization::DefinitionName
                 << QContactPhoneNumber::DefinitionName
                 << QContactUrl::DefinitionName;
         r->setDefinitionRestrictions(fields);
@@ -337,7 +337,7 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(
     {
         quer.addColumn("gender", RDFContact.optional().property<nco::gender> ());
     }
-    if (r->definitionRestrictions().contains(QContactOrganisation::DefinitionName))
+    if (r->definitionRestrictions().contains(QContactOrganization::DefinitionName))
     {
         RDFVariable rdforg = RDFContact.optional().property<nco::hasAffiliation> ().optional().property<nco::org> ();
         quer.addColumn("org", rdforg.optional().property<nco::fullname> ());
@@ -409,7 +409,7 @@ bool detailExisting(const QString &definitionName, const QContact &contact, cons
 
 void QTrackerContactFetchRequest::contactsReady()
 {
-    QContactFetchRequest* request = (req->type() == QContactAbstractRequest::ContactFetch)?
+    QContactFetchRequest* request = (req->type() == QContactAbstractRequest::ContactFetchRequest)?
             static_cast<QContactFetchRequest*> (req):0;
     Q_ASSERT( request ); // signal is supposed to be used only for contact fetch
     // fastest way to get this working. refactor
@@ -539,16 +539,16 @@ void QTrackerContactFetchRequest::contactsReady()
                 contact.saveDetail(&g);
             }
         }
-        if (request->definitionRestrictions().contains(QContactOrganisation::DefinitionName))
+        if (request->definitionRestrictions().contains(QContactOrganization::DefinitionName))
         {
             QString org = query->index(i, column++).data().toString();
             QString logo = query->index(i, column++).data().toString();
             if( !( org.isEmpty() && logo.isEmpty()) )
             {
-                QContactOrganisation o;
-                o.setDisplayLabel(org);
+                QContactOrganization o;
+                o.setName(org);
                 o.setLogo(logo);
-                if( !detailExisting(QContactOrganisation::DefinitionName, contact, o) )
+                if( !detailExisting(QContactOrganization::DefinitionName, contact, o) )
                     contact.saveDetail(&o);
             }
         }

@@ -20,7 +20,7 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
 : QObject(parent), QTrackerContactAsyncRequest(req)
 {
     Q_ASSERT(req);
-    Q_ASSERT(req->type() == QContactAbstractRequest::ContactSave);
+    Q_ASSERT(req->type() == QContactAbstractRequest::ContactSaveRequest);
     Q_ASSERT(parent);
 
     QContactSaveRequest* r = static_cast<QContactSaveRequest*>(req);
@@ -42,7 +42,7 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
 
 void QTrackerContactSaveRequest::computeProgress()
 {
-    Q_ASSERT(req->type() == QContactAbstractRequest::ContactSave);
+    Q_ASSERT(req->type() == QContactAbstractRequest::ContactSaveRequest);
     QContactSaveRequest* r = static_cast<QContactSaveRequest*>(req);
     if( r->contacts().size() == contactsFinished.size() )
     {

@@ -96,8 +96,6 @@ public:
     /* Groups - Accessors and Mutators */
     QList<QUniqueId> groups() const;
     QContactGroup group(const QUniqueId& groupId) const;
-    bool saveGroup(QContactGroup* group);
-    bool removeGroup(const QUniqueId& groupId);
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
