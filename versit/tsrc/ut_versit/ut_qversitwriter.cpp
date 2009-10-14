@@ -117,27 +117,25 @@ END:VCARD\r\n";
 VERSION:2.1\r\n\
 N:Homer\r\n\
 EMAIL;ENCODING=QUOTED-PRINTABLE:homer=40simp=\r\nsons.com\r\n\
-AGENT:\r\nBEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\
+AGENT:\r\nBEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\r\n\
 END:VCARD\r\n";
     QVersitDocument docAgent;
     docAgent.setVersitType(QVersitDocument::VCard21);
     QVersitProperty propertyAgent;
-    propertyAgent.setName(QString("N"));
+    propertyAgent.setName(QString::fromAscii("N"));
     propertyAgent.setValue(QByteArray("Homer"));
     docAgent.addProperty(propertyAgent);
-    propertyAgent.setName(QString("EMAIL"));
+    propertyAgent.setName(QString::fromAscii("EMAIL"));
     propertyAgent.setValue(QByteArray("homer@simpsons.com"));
-    propertyAgent.addParameter(QString("ENCODING"), 
-                               QString("QUOTED-PRINTABLE"));
     docAgent.addProperty(propertyAgent);
     propertyAgent.setName(QString("AGENT"));
     QVersitDocument embeddedDocument;
     QVersitProperty embeddedProperty;
-    embeddedProperty.setName(QString("Marge"));
+    embeddedProperty.setName(QString::fromAscii("Marge"));
     embeddedDocument.addProperty(embeddedProperty);
     propertyAgent.setEmbeddedDocument(embeddedDocument);
     docAgent.addProperty(propertyAgent);
-    QVERIFY(mWriter->encodeVersitDocument(docAgent) == vCardAgent);
+    QCOMPARE(QString::fromAscii(mWriter->encodeVersitDocument(docAgent)), QString::fromAscii(vCardAgent));
 */
 }
 
@@ -176,7 +174,7 @@ END:VCARD\r\n\
 \r\n";
     QVersitProperty agentProperty;
     agentProperty.setName(QString("AGENT"));
-    QMultiMap<QString,QString> params;
+    QMultiHash<QString,QString> params;
     params.insert(QString("TYPE"), QString("X-WIFE"));
     agentProperty.setParameters(params);
     QVersitDocument doc;
@@ -193,21 +191,21 @@ void UT_QVersitWriter::testEncodeParameters()
     QString encodingParameterName(QString::fromAscii("ENCODING"));
     
     // No parameters
-    QMultiMap<QString,QString> parameters;
+    QMultiHash<QString,QString> parameters;
     QCOMPARE(mWriter->encodeParameters(parameters), QByteArray());
     
     // One parameter that is not a "TYPE" parameter
-    parameters.insertMulti(encodingParameterName,QString::fromAscii("8BIT"));
+    parameters.insert(encodingParameterName,QString::fromAscii("8BIT"));
     QCOMPARE(mWriter->encodeParameters(parameters), QByteArray(";ENCODING=8BIT"));
     
     // One parameter that is a "TYPE" parameter
     parameters.clear();
-    parameters.insertMulti(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
+    parameters.insert(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
     QCOMPARE(mWriter->encodeParameters(parameters), QByteArray(";HOME"));    
     
     // Two parameters
-    parameters.insertMulti(encodingParameterName,QString::fromAscii("7BIT"));    
-    QCOMPARE(mWriter->encodeParameters(parameters), QByteArray(";ENCODING=7BIT;HOME"));
+    parameters.insert(encodingParameterName,QString::fromAscii("7BIT"));    
+    QCOMPARE(mWriter->encodeParameters(parameters), QByteArray(";HOME;ENCODING=7BIT"));
     
     // Add ENCODING=QUOTED-PRINTABLE, not present in the parameters yet
     parameters.clear();
@@ -215,7 +213,7 @@ void UT_QVersitWriter::testEncodeParameters()
              QByteArray(";ENCODING=QUOTED-PRINTABLE"));
     
     // ENCODING=QUOTED-PRINTABLE in the parameters already, don't encode it twice
-    parameters.insertMulti(encodingParameterName,QString::fromAscii("QUOTED-PRINTABLE"));
+    parameters.insert(encodingParameterName,QString::fromAscii("QUOTED-PRINTABLE"));
     QCOMPARE(mWriter->encodeParameters(parameters,true), 
              QByteArray(";ENCODING=QUOTED-PRINTABLE"));    
 }

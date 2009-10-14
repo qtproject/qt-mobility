@@ -77,7 +77,7 @@ QString QVersitProperty::name() const
 /*!
  * Replaces all the parameters
  */
-void QVersitProperty::setParameters(const QMultiMap<QString,QString>& parameters)
+void QVersitProperty::setParameters(const QMultiHash<QString,QString>& parameters)
 {
     // Convert all the parameter names and values to upper case
     d->mParameters.clear();
@@ -105,7 +105,7 @@ void QVersitProperty::removeParameter(const QString& name, const QString& value)
 /*!
  * Returns the contained list of parameters
  */
-QMultiMap<QString,QString> QVersitProperty::parameters() const
+QMultiHash<QString,QString> QVersitProperty::parameters() const
 {
     return d->mParameters;
 }

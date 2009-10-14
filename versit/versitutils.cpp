@@ -32,6 +32,7 @@
 ****************************************************************************/
 
 #include "versitutils.h"
+#include <QMap>
 #include <QRegExp>
 
 /*!
@@ -232,13 +233,13 @@ QByteArray VersitUtils::extractPropertyValue(const QByteArray& property)
 }
 
 /*!
- * Extracts the property parameters as a QMultiMap.
+ * Extracts the property parameters as a QMultiHash.
  * The parameters without names are added as "TYPE" parameters.
  */
-QMultiMap<QString,QString> VersitUtils::extractPropertyParams(
+QMultiHash<QString,QString> VersitUtils::extractPropertyParams(
     const QByteArray& property)
 {
-    QMultiMap<QString,QString> params;    
+    QMultiHash<QString,QString> params;    
     int colonIndex = property.indexOf(':');
     if (colonIndex > 0) {
         QByteArray nameAndParamsString = property.left(colonIndex);
@@ -264,7 +265,7 @@ QMultiMap<QString,QString> VersitUtils::extractPropertyParams(
  * limited by /a startPosition and /a length
  */
 void VersitUtils::addParam(
-    QMultiMap<QString,QString>& params,
+    QMultiHash<QString,QString>& params,
     const QByteArray& originalString, 
     int startPosition, 
     int length)

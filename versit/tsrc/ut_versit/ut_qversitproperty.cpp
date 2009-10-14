@@ -67,7 +67,7 @@ void UT_QVersitProperty::testParameters()
     QString name(QString::fromAscii("type"));
     QString value1(QString::fromAscii("home"));
     mVersitProperty->addParameter(name,value1);
-    QMultiMap<QString,QString> parameters = mVersitProperty->parameters();
+    QMultiHash<QString,QString> parameters = mVersitProperty->parameters();
     QCOMPARE(parameters.count(), 1);
     QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("HOME")));
     

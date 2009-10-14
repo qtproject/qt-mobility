@@ -67,7 +67,7 @@ private:
     QByteArray encodeVersitDocument(const QVersitDocument& document);
     QByteArray encodeVersitProperty(const QVersitProperty& property);
     QByteArray encodeParameters(
-        const QMultiMap<QString,QString>& parameters,
+        const QMultiHash<QString,QString>& parameters,
         bool addQuotedPrintable=false);
     bool shouldBeQuotedPrintableEncoded(const QVersitProperty& property) const;
 

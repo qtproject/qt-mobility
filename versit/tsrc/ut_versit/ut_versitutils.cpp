@@ -127,7 +127,7 @@ void UT_VersitUtils::testParamValue()
 
 void UT_VersitUtils::testAddParam()
 {
-    QMultiMap<QString,QString> params;
+    QMultiHash<QString,QString> params;
     QByteArray originalStr;
 
     // Negative starting position
@@ -434,7 +434,7 @@ void UT_VersitUtils::testExtractPropertyParams()
     
     // One parameter
     property = "TEL;HOME:123";
-    QMultiMap<QString,QString> params = VersitUtils::extractPropertyParams(property);
+    QMultiHash<QString,QString> params = VersitUtils::extractPropertyParams(property);
     QCOMPARE(1, params.count());
     QCOMPARE(1, params.values(QString::fromAscii("TYPE")).count());
     QCOMPARE(QString::fromAscii("HOME"), params.values(QString::fromAscii("TYPE"))[0]);      

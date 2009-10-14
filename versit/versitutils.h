@@ -36,7 +36,7 @@
 #define VERSITUTILS_H
 
 #include <QByteArray>
-#include <QMultiMap>
+#include <QMultiHash>
 
 
 class VersitUtils                
@@ -50,13 +50,13 @@ public:
     static int findHardLineBreakInQuotedPrintable(const QByteArray& encoded);
     static QString extractPropertyName(const QByteArray& property);
     static QByteArray extractPropertyValue(const QByteArray& property);
-    static QMultiMap<QString,QString> extractPropertyParams(
+    static QMultiHash<QString,QString> extractPropertyParams(
         const QByteArray& property);
     
 private:
     
     static void addParam(
-        QMultiMap<QString,QString>& params,
+        QMultiHash<QString,QString>& params,
         const QByteArray& originalString,
         int startPosition, 
         int length=-1);    

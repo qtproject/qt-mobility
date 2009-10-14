@@ -37,7 +37,7 @@
 #include <qtversitglobal.h>
 #include <qversitdocument.h>
 #include <QString>
-#include <QMultiMap>
+#include <QMultiHash>
 #include <QByteArray>
 #include <QSharedDataPointer>
 
@@ -57,8 +57,8 @@ public:
 
     void addParameter(const QString& name, const QString& value);
     void removeParameter(const QString& name, const QString& value);
-    void setParameters(const QMultiMap<QString,QString>& parameters);
-    QMultiMap<QString,QString> parameters() const;
+    void setParameters(const QMultiHash<QString,QString>& parameters);
+    QMultiHash<QString,QString> parameters() const;
     
     void setValue(const QByteArray& value);
     QByteArray value() const;

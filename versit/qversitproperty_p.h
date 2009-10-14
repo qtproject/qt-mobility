@@ -37,7 +37,7 @@
 #include "qversitdocument.h"
 #include <QSharedData>
 #include <QString>
-#include <QMultiMap>
+#include <QMultiHash>
 #include <QByteArray>
 
 
@@ -60,7 +60,7 @@ public:
     ~QVersitPropertyPrivate() {}
     
     QString mName;
-    QMultiMap<QString,QString> mParameters;
+    QMultiHash<QString,QString> mParameters;
     QByteArray mValue;
     QVersitDocument mDocument;
 };

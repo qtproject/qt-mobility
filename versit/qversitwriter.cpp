@@ -154,7 +154,7 @@ QByteArray QVersitWriter::encodeVersitProperty(const QVersitProperty& property)
  * Encodes the \a parameters to text. 
  */
 QByteArray QVersitWriter::encodeParameters(
-    const QMultiMap<QString,QString>& parameters,
+    const QMultiHash<QString,QString>& parameters,
     bool addQuotedPrintable)
 {
     QByteArray encodedParameters;
