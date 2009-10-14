@@ -39,6 +39,7 @@
 #include <multimedia/qcameraexposurecontrol.h>
 #include <multimedia/qcamerafocuscontrol.h>
 #include <multimedia/qimagecapturecontrol.h>
+#include <multimedia/qimageencodercontrol.h>
 #include <multimedia/qimageprocessingcontrol.h>
 #include <multimedia/qmediaservice.h>
 #include <multimedia/qcamera.h>
@@ -411,6 +412,49 @@ private:
     bool m_denoisingSupported;
 };
 
+class MockImageEncoderControl : public QImageEncoderControl
+{
+public:
+    MockImageEncoderControl(QObject *parent = 0)
+        : QImageEncoderControl(parent)
+        , m_quality(QtMedia::HighQuality)
+    {
+    }
+
+    QSize resolution() const { return m_resolution; }
+    void setResolution(const QSize &resolution) { m_resolution = resolution; }
+    QSize minimumResolution() const { return m_minimumResolution; }
+    void setMinimumResolution(const QSize &resolution) { m_minimumResolution = resolution; }
+    QSize maximumResolution() const { return m_maximumResolution; }
+    void setMaximumResolution(const QSize &resolution) { m_maximumResolution = resolution; }
+    QList<QSize> supportedResolutions() const { return m_supportedResolutions; }
+    void setSupportedResolutions(const QList<QSize> &resolutions) {
+        m_supportedResolutions = resolutions; }
+
+    QStringList supportedImageCodecs() const { return m_supportedCodecs; }
+    void setSupportedImageCodecs(const QStringList &codecs) { m_supportedCodecs = codecs; }
+    QString imageCodec() const { return m_imageCodec; }
+    bool setImageCodec(const QString &codecName) { m_imageCodec = codecName; return true; }
+
+    QString imageCodecDescription(const QString &codecName) const {
+        return m_codecDescriptions.value(codecName); }
+    void setImageCodecDescriptions(const QMap<QString, QString> &descriptions) {
+        m_codecDescriptions = descriptions; }
+
+    QtMedia::EncodingQuality quality() const { return m_quality; }
+    void setQuality(QtMedia::EncodingQuality quality) { m_quality = quality; }
+
+private:
+    QSize m_resolution;
+    QSize m_minimumResolution;
+    QSize m_maximumResolution;
+    QList<QSize> m_supportedResolutions;
+    QStringList m_supportedCodecs;
+    QString m_imageCodec;
+    QMap<QString, QString> m_codecDescriptions;
+    QtMedia::EncodingQuality m_quality;
+};
+
 class MockSimpleCameraService : public QMediaService
 {
     Q_OBJECT
@@ -448,6 +492,7 @@ public:
         mockFocusControl = new MockCameraFocusControl(this);
         mockCaptureControl = new MockCaptureControl(this);
         mockImageProcessingControl = new MockImageProcessingControl(this);
+        mockImageEncoderControl = new MockImageEncoderControl(this);
     }
 
     ~MockCameraService()
@@ -471,6 +516,9 @@ public:
         if (qstrcmp(iid, QImageProcessingControl_iid) == 0)
             return mockImageProcessingControl;
 
+        if (qstrcmp(iid, QImageEncoderControl_iid) == 0)
+            return mockImageEncoderControl;
+
         return 0;
     }
 
@@ -479,6 +527,7 @@ public:
     MockCameraExposureControl *mockExposureControl;
     MockCameraFocusControl *mockFocusControl;
     MockImageProcessingControl *mockImageProcessingControl;
+    MockImageEncoderControl *mockImageEncoderControl;
 };
 
 class MockProvider : public QMediaServiceProvider
