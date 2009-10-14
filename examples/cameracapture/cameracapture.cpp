@@ -54,15 +54,27 @@ CameraCapture::CameraCapture(QWidget *parent) :
     ui->setupUi(this);
 
     //camera devices
+    QByteArray cameraDevice;
+
     ui->actionCamera->setMenu(new QMenu(this));
+    QActionGroup *videoDevicesGroup = new QActionGroup(this);
+    videoDevicesGroup->setExclusive(true);
     foreach(const QByteArray deviceName, QCamera::devices()) {
         QString description = deviceName+" "+camera->deviceDescription(deviceName);
-        ui->actionCamera->menu()->addAction(description);
+        QAction *videoDeviceAction = new QAction(description, videoDevicesGroup);
+        videoDeviceAction->setCheckable(true);
+        if (cameraDevice.isEmpty()) {
+            cameraDevice = deviceName;
+            videoDeviceAction->setChecked(true);
+        }
+        ui->actionCamera->menu()->addAction(videoDeviceAction);
     }
+
+    connect(videoDevicesGroup, SIGNAL(triggered(QAction*)), this, SLOT(updateCameraDevice(QAction*)));
 
     ui->actionAudio->setMenu(new QMenu(this));
 
-    setCamera(QByteArray());
+    setCamera(cameraDevice);
 }
 
 CameraCapture::~CameraCapture()
@@ -101,6 +113,8 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
             service->activeEndpoints(QMediaService::AudioInput).first() == deviceName)
             audioDeviceAction->setChecked(true);
     }
+
+    connect(audioDevicesGroup, SIGNAL(triggered(QAction*)), this, SLOT(updateAudioDevice(QAction*)));
 
 
     mediaRecorder->setSink(QUrl("test.mkv"));
@@ -164,4 +178,14 @@ void CameraCapture::enablePreview(bool enabled)
 void CameraCapture::displayErrorMessage()
 {
     QMessageBox::warning(this, "Capture error", mediaRecorder->errorString());
+}
+
+void CameraCapture::updateCameraDevice(QAction *action)
+{
+    setCamera(action->data().toByteArray());
+}
+
+void CameraCapture::updateAudioDevice(QAction *action)
+{
+    service->setActiveEndpoint(QMediaService::AudioInput, action->data().toString());
 }

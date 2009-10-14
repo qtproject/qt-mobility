@@ -66,6 +66,9 @@ private slots:
 
     void enablePreview(bool);
 
+    void updateCameraDevice(QAction*);
+    void updateAudioDevice(QAction*);
+
 private:
     Ui::CameraCapture *ui;
 
