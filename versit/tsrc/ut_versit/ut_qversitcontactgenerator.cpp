@@ -59,14 +59,23 @@ void UT_QVersitContactGenerator::testAddName()
 {
     QVersitDocument document;
     QVersitProperty nameProperty;
-    QByteArray val("Homer");
+    QStringList val;
+    val.append("Simpson");//FirstName
+    val.append("Homer");//LastName
+    val.append("BellyBoy");//GivenName
+    val.append("Dr");//PreFix
+    val.append("MSc");//Suffix
     nameProperty.setName(QString::fromAscii(versitNameId));
-    nameProperty.setValue(val);
+    nameProperty.setValue(val.join(versitValueSeparator).toAscii());
     document.addProperty(nameProperty);        
     QContact contact = mGenerator->generateContact(document);    
     QCOMPARE(contact.details().count(),2);
-    QContactDetail detail = contact.detail(QContactName::DefinitionName);    
-    QCOMPARE(detail.value(QContactName::FieldFirst),QString(val));
+    const QContactName& name = (QContactName)contact.detail(QContactName::DefinitionName);    
+    QCOMPARE(name.last(),val[0]);
+    QCOMPARE(name.first(),val[1]);
+    QCOMPARE(name.middle(),val[2]);
+    QCOMPARE(name.prefix(),val[3]);
+    QCOMPARE(name.suffix(),val[4]);
 }
 
 void UT_QVersitContactGenerator::testCreateAddress()
