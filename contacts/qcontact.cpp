@@ -467,7 +467,7 @@ QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QCo
     QList<QContactId> retn;
     for (int i = 0; i < d->m_relationships.size(); i++) {
         QContactRelationship curr = d->m_relationships.at(i);
-        if (curr.relationshipType() == relationshipType) {
+        if (curr.relationshipType() == relationshipType || relationshipType.isEmpty()) {
             // check that the other contacts fill the given role
             if (role == QContactRelationshipFilter::Source) {
                 if (curr.sourceContact() != d->m_id.localId()) {
