@@ -514,7 +514,11 @@ MapiRestriction::MapiRestriction(const QMessageFilter &filter)
         }
         if (d_ptr->_field == QMessageFilterPrivate::Id) {
             QStringList ids(d_ptr->_value.toStringList());
+#ifdef _WIN32_WCE
+            _recordKeys = new MapiEntryId[ids.count()];
+#else
             _recordKeys = new MapiRecordKey[ids.count()];
+#endif
             _keyProps = new SPropValue[ids.count()];
             _restrictions = new SRestriction[ids.count()];
 
@@ -522,7 +526,11 @@ MapiRestriction::MapiRestriction(const QMessageFilter &filter)
             _restriction.res.resOr.cRes = ids.count();
             _restriction.res.resOr.lpRes = &_restrictions[0];
             for (int i = 0; i < ids.count(); ++i) {
+#ifdef _WIN32_WCE
+                _recordKeys[i] = QMessageIdPrivate::entryId(QMessageId(ids[i]));
+#else
                 _recordKeys[i] = QMessageIdPrivate::messageRecordKey(QMessageId(ids[i]));
+#endif
                 _keyProps[i].ulPropTag = PR_RECORD_KEY;
                 _keyProps[i].Value.bin.cb = _recordKeys[i].count();
                 _keyProps[i].Value.bin.lpb = reinterpret_cast<LPBYTE>(const_cast<char*>(_recordKeys[i].data()));
