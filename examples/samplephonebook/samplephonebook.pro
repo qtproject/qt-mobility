@@ -11,9 +11,9 @@ INCLUDEPATH += .
 INCLUDEPATH += ../testmodel
 VPATH += ../testmodel
 
-qtAddLibraryFixMe(QtContacts)
-
 include(../../common.pri)
+
+qtAddLibraryFixMe(QtContacts)
 
 # Input
 SOURCES +=  contactdetailsform.cpp \

@@ -9,9 +9,9 @@ TARGET = testmodel
 DEPENDPATH += .
 INCLUDEPATH += .
 
-qtAddLibraryFixMe(QtContacts)
-
 include(../../common.pri)
+
+qtAddLibraryFixMe(QtContacts)
 
 # Input
 SOURCES += main.cpp \
