@@ -75,6 +75,7 @@ private:
             CContactIdArray*& idArray,
             const TDesC& phoneNumber,
             const TInt matchLength);
+    void getMatchLengthL(TInt& matchLength);
     CContactDatabase& m_contactDatabase;
 };
 

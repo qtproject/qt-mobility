@@ -44,8 +44,9 @@
 #include "qcontactsymbianfilterdbms.h"
 
 #include <cntdb.h>
-
 #include <cntfield.h>
+#include <centralrepository.h>
+#include <telephonydomaincrkeys.h>
 
 #include "qcontactname.h"
 #include "qcontactdetailfilter.h"
@@ -56,6 +57,9 @@
 #define QT_TRAP_THROWING QT_TRANSLATE_SYMBIAN_LEAVE_TO_EXCEPTION
 #define QT_TRYCATCH_LEAVING QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE
 #endif
+
+const TInt KMaxMatchLength(15);
+const TInt KDefaultMatchLength(7);
 
 QContactSymbianFilter::QContactSymbianFilter(CContactDatabase& contactDatabase):
     m_contactDatabase(contactDatabase)
@@ -91,11 +95,18 @@ QList<QUniqueId> QContactSymbianFilter::contacts(
     {
         const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
 
-        if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName)
+        if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName
+                && (filterSupported(filter) == Supported
+                || filterSupported(filter) == SupportedPreFilterOnly))
         {
             QString number((detailFilter.value()).toString());
             TPtrC commPtr(reinterpret_cast<const TUint16*>(number.utf16()));
-            TInt err = matchContacts(idArray, commPtr, 7);
+
+            TInt matchLength(KDefaultMatchLength);
+            // no need to propagate error, we can use the default match length
+            TRAP_IGNORE(getMatchLengthL(matchLength));
+
+            TInt err = matchContacts(idArray, commPtr, matchLength);
             if(err != KErrNone)
             {
                 // TODO: map error code
@@ -188,17 +199,26 @@ QAbstractContactFilter::FilterSupport QContactSymbianFilter::filterSupported(con
     FilterSupport filterSupported(NotSupported);
     if (filter.type() == QContactFilter::ContactDetailFilter) {
         const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
+        Qt::MatchFlags matchFlags = detailFilter.matchFlags();
+
+        // Phone numbers
         if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName) {
-            filterSupported = Supported;
-        } else if(detailFilter.detailDefinitionName() == QContactName::DefinitionName) {
-            Qt::MatchFlags supportedPreFilterFlags = Qt::MatchExactly
+            if (matchFlags == Qt::MatchEndsWith)
+                filterSupported = Supported;
+            else if (matchFlags == Qt::MatchExactly)
+                filterSupported = SupportedPreFilterOnly;
+        }
+        // Names
+        else if (detailFilter.detailDefinitionName() == QContactName::DefinitionName) {
+            Qt::MatchFlags supportedPreFilterFlags =
+                Qt::MatchExactly
                 & Qt::MatchStartsWith
                 & Qt::MatchEndsWith
                 & Qt::MatchCaseSensitive;
-            if(detailFilter.matchFlags() == Qt::MatchContains) {
+            if (matchFlags == Qt::MatchContains) {
                 filterSupported = Supported;
             }
-            else if(detailFilter.matchFlags() | supportedPreFilterFlags ==
+            else if (matchFlags | supportedPreFilterFlags ==
                 supportedPreFilterFlags ) {
                 filterSupported = SupportedPreFilterOnly;
             }
@@ -207,6 +227,14 @@ QAbstractContactFilter::FilterSupport QContactSymbianFilter::filterSupported(con
     return filterSupported;
 }
 
+/*!
+ * Find contacts based on a contact field contents.
+ * \a idArray On return contains the ids of the contacts that have the field
+ * defined that contains the find text.
+ * \a fieldUid The UID of the contact database field to be searched.
+ * \a text The text to be searched for.
+ * \return Symbian error code.
+ */
 TInt QContactSymbianFilter::findContacts(
         CContactIdArray*& idArray,
         const TUid fieldUid,
@@ -222,7 +250,7 @@ TInt QContactSymbianFilter::findContacts(
 }
 
 /*!
- * \a text The text to be searched for.
+ * Leaving implementation called by findContacts.
  */
 CContactIdArray* QContactSymbianFilter::findContactsL(
         const TUid fieldUid,
@@ -244,6 +272,12 @@ CContactIdArray* QContactSymbianFilter::findContactsL(
     return idsArray;
 }
 
+/*
+ * Find contacts based on a phone number.
+ * \a idArray On return contains the ids of the contacts that match the filter.
+ * \a phoneNumber The phone number to match
+ * \a matchLength Match length; digits from right.
+ */
 TInt QContactSymbianFilter::matchContacts(
         CContactIdArray*& idArray,
         const TDesC& phoneNumber,
@@ -256,6 +290,19 @@ TInt QContactSymbianFilter::matchContacts(
         idArray = idArrayTmp;
     }
     return err;
+}
+
+/*
+ * Get the match length setting. Digits to be used in matching (counted from
+ * right).
+ */
+void QContactSymbianFilter::getMatchLengthL(TInt& matchLength)
+{
+    //Get number of digits used to match
+    CRepository* repository = CRepository::NewL(KCRUidTelConfiguration);
+    CleanupStack::PushL(repository);
+    User::LeaveIfError(repository->Get(KTelMatchDigits, matchLength));
+    CleanupStack::PopAndDestroy(repository);
 }
 
 #endif

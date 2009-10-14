@@ -77,6 +77,7 @@ symbian: {
       
   LIBS += \
   				-lcntmodel \
+  				-lcentralrepository \
   				-lQtContacts 
 
 	target.path = /sys/bin
