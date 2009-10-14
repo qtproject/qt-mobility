@@ -1856,7 +1856,6 @@ void MapiFolder::removeMessages(QMessageStore::ErrorCode *lastError, const QMess
     MAPIFreeBuffer(bin);
 }
 
-/*
 MapiEntryId MapiFolder::messageEntryId(QMessageStore::ErrorCode *lastError, const MapiRecordKey &messageKey)
 {
     MapiEntryId result;
@@ -1913,7 +1912,6 @@ MapiEntryId MapiFolder::messageEntryId(QMessageStore::ErrorCode *lastError, cons
 
     return result;
 }
-*/
 
 IMessage *MapiFolder::openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId)
 {
@@ -2276,6 +2274,18 @@ QMessageFolder MapiStore::folderFromId(QMessageStore::ErrorCode *lastError, cons
     return result;
 }
 #endif
+
+MapiEntryId MapiStore::messageEntryId(QMessageStore::ErrorCode *lastError, const MapiRecordKey &folderKey, const MapiRecordKey &messageKey)
+{
+    MapiEntryId result;
+
+    MapiFolderPtr folder(openFolderWithKey(lastError, folderKey));
+    if (*lastError == QMessageStore::NoError) {
+        result = folder->messageEntryId(lastError, messageKey);
+    }
+
+    return result;
+}
 
 MapiFolderPtr MapiStore::openFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId& entryId) const
 {
@@ -2964,6 +2974,17 @@ IMessage *MapiSession::openMapiMessage(QMessageStore::ErrorCode *lastError, cons
     return message;
 }
 
+MapiEntryId MapiSession::messageEntryId(QMessageStore::ErrorCode *lastError, const MapiRecordKey &storeKey, const MapiRecordKey &folderKey, const MapiRecordKey &messageKey)
+{
+    MapiEntryId result;
+
+    MapiStorePtr store(openStoreWithKey(lastError, storeKey));
+    if (*lastError == QMessageStore::NoError) {
+        result = store->messageEntryId(lastError, folderKey, messageKey);
+    }
+
+    return result;
+}
 
 MapiRecordKey MapiSession::messageRecordKey(QMessageStore::ErrorCode *lastError, const QMessageId &id)
 {
@@ -3129,6 +3150,21 @@ bool MapiSession::flushQueues()
 Quit:
     if (pTbl) pTbl -> Release();
     return false;
+}
+
+bool MapiSession::equal(const MapiEntryId &lhs, const MapiEntryId &rhs) const
+{
+    ULONG result(0);
+
+    LPENTRYID lhsEntryId(reinterpret_cast<LPENTRYID>(const_cast<char*>(lhs.data())));
+    LPENTRYID rhsEntryId(reinterpret_cast<LPENTRYID>(const_cast<char*>(rhs.data())));
+
+    HRESULT rv = _mapiSession->CompareEntryIDs(lhs.count(), lhsEntryId, rhs.count(), rhsEntryId, 0, &result);
+    if (HR_FAILED(rv)) {
+        qWarning() << "Unable to compare entry IDs.";
+    }
+
+    return (result != FALSE);
 }
 
 QMessageFolder MapiSession::folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const

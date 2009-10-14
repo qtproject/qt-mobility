@@ -174,7 +174,9 @@ public:
     uint countMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter = QMessageFilter()) const;
 
     void removeMessages(QMessageStore::ErrorCode *lastError, const QMessageIdList &ids);
-//    MapiEntryId messageEntryId(QMessageStore::ErrorCode *lastError, const MapiRecordKey &messagekey);
+
+    MapiEntryId messageEntryId(QMessageStore::ErrorCode *lastError, const MapiRecordKey &messagekey);
+
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderId id() const;
 #endif
@@ -235,6 +237,8 @@ public:
     QMessageFolderIdList folderIds(QMessageStore::ErrorCode *lastError);
     QMessageFolder folderFromId(QMessageStore::ErrorCode *lastError, const QMessageFolderId &folderId);
 #endif
+
+    MapiEntryId messageEntryId(QMessageStore::ErrorCode *lastError, const MapiRecordKey &folderKey, const MapiRecordKey &messageKey);
 
     MapiFolderPtr openFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId& id) const;
     MapiFolderPtr openFolderWithKey(QMessageStore::ErrorCode *lastError, const MapiRecordKey& key) const;
@@ -316,12 +320,16 @@ public:
 
     QMessageAccountId defaultAccountId(QMessageStore::ErrorCode *lastError, QMessage::Type type) const;
 
+    MapiEntryId messageEntryId(QMessageStore::ErrorCode *lastError, const MapiRecordKey &storeKey, const MapiRecordKey &folderKey, const MapiRecordKey &messageKey);
+
     MapiRecordKey messageRecordKey(QMessageStore::ErrorCode *lastError, const QMessageId &id);
     MapiRecordKey folderRecordKey(QMessageStore::ErrorCode *lastError, const QMessageId &id);
 
 #ifdef _WIN32_WCE
     MapiEntryId folderEntryId(QMessageStore::ErrorCode *lastError, const QMessageId &id);
 #endif
+
+    bool equal(const MapiEntryId &lhs, const MapiEntryId &rhs) const;
 
     QMessageFolder folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const;
     QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
