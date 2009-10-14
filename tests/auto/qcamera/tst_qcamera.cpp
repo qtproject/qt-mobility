@@ -430,7 +430,7 @@ void tst_QCamera::testSimpleCamera()
 {
     QCamera camera(0, mockSimpleCameraService);
 
-    QCOMPARE(camera.service(), mockSimpleCameraService);
+    QCOMPARE(camera.service(), (QAbstractMediaService*)mockSimpleCameraService);
 
     QVERIFY(camera.isValid());
     QCOMPARE(camera.state(), QCamera::StoppedState);
