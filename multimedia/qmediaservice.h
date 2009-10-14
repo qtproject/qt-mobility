@@ -70,7 +70,7 @@ public:
 #endif
 
 signals:
-    void supoortedEndpointsChanged();
+    void supportedEndpointsChanged();
     void activeEndpointChanged(QMediaService::MediaEndpoint endpointType, const QString &endpoint);
 
 protected:

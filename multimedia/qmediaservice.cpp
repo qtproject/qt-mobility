@@ -101,7 +101,7 @@ bool QMediaService::isEndpointSupported(QMediaService::MediaEndpoint endpointTyp
 }
 
 /*!
-    Returns a list of currently active endpoints for \a endpointType.
+    Returns the active endpoint for \a endpointType.
 */
 
 QString QMediaService::activeEndpoint(QMediaService::MediaEndpoint endpointType)
@@ -202,7 +202,14 @@ QList<QString> QMediaService::supportedEndpoints(QMediaService::MediaEndpoint en
 
 
 /*!
-    \fn void QMediaaService::supportedEndpointsChanged()
+    \fn void QMediaService::supportedEndpointsChanged()
 
     This signal is emitted when there is a change in the availability of devices.
 */
+
+/*!
+    \fn void QMediaService::activeEndpointChanged(QMediaService::MediaEndpoint endpointType, const QString &endpoint)
+
+    This signal emitted when the active endpoint of type \a endpointType has been changed to \a endpoint.
+*/
+
