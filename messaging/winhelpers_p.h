@@ -193,7 +193,6 @@ public:
     bool hasSubFolders() const { return _hasSubFolders; }
     uint messageCount() const { return _messageCount; }
 
-    LPMAPITABLE subFolders(QMessageStore::ErrorCode *lastError) { if (!_init) findSubFolders(lastError); return _subFolders; }
     IMessage *createMessage(QMessageStore::ErrorCode* lastError);
     IMessage *createMessage(QMessageStore::ErrorCode* lastError, const QMessage& source, const MapiSessionPtr &session, PostSendAction postSendAction = MoveAfterSend, SaveOption saveOption = SaveMessage );
 
@@ -218,11 +217,11 @@ private:
     IMAPIFolder* _folder;
     MapiRecordKey _key;
     QString _name;
-    LPMAPITABLE _subFolders;
     MapiEntryId _entryId;
     bool _hasSubFolders;
     uint _messageCount;
     bool _init;
+    QList<MapiEntryId> _subFolders;
 };
 
 class MapiStore {
