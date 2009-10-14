@@ -37,7 +37,6 @@
 #include <QSet>
 #include <QDebug>
 #include <contextproperty.h>
-#include <contextpropertyinfo.h>
 #include <contextregistryinfo.h>
 
 QT_BEGIN_NAMESPACE
@@ -49,42 +48,155 @@ using namespace QValueSpace;
 /* ContextKit layer
 
    This layer makes ContextKit properties visible in the QValueSpace.
-   All properties appear as direct children of "/C".  A property with
-   the name "Battery.ChargePercentage", for example, is visible as the
-   item named "/C/Battery.ChargePercentage".
 
    You can not publish values of ContextKit properties using the
    QValueSpace.  This might be fixed later.
 */
 
-// XXX - Right now, this code assumes that a 'subPath' given to
-//       'value' is always the name of a direct child, and never a
-//       path to a indirect child, and always starts with "/".  This
-//       needs to be checked.  The assumption isn't true for 'item',
-//       for example.
+/* ContextKit properties have names with dots in them, which allows
+   these properties to be arranged in a tree.  The context commander
+   does this in its UI, for example.
 
-// XXX - We do not monitor the ContextKit registry, and we call
-//       get_all_props only once.  This means that any changes done to
-//       the registry after the first time "/C" has been listed (or
-//       similar) are ignored.
+   However, the ContextKit itself does not pay attention to the dots
+   at all: properties just have names and there are no such things as
+   parent / child / sibling relations between properties.  For
+   example, there is a property called "Battery.ChargeLevel", but the
+   ContextKit doesn't know anything about "Battery".  Subscribing to
+   "Battery" is exactly the same as subscribing to any other
+   non-declared property.  When "Battery.ChargeLevel" changes,
+   "Battery" does _not_ receive a change notification.
 
-// XXX - How can you list children that are in more than one layer?
-//       I.e., if one layer claims everything below "/A" and another
-//       everything below "/B", what happens when you list "/"?
+   The QValueSpace, on the other hand, has a explicit tree-structure:
+   the key "/foo" represents all its children, like "/foo/bar".  When
+   "/foo/bar" changes, "/foo" _does_ receive a change notification.
+
+   There are two ways to map ContextKit properties into the
+   QValueSpace: simply as a long list of siblings (a one-level tree),
+   or as the multi-level tree that is implied by their names.
+
+   We do the latter since that is more natural.  For example, the
+   ContextKit property "Battery.ChargeLevel" is mapped to
+   "/Battery/ChargeLevel", and the key "/Battery" gets a change
+   notifications for all its children.
+*/
+
+/* ContextKitHandle - contains a ContextKit property and all its
+   direct and indirect children.
+
+   ContextKitHandles do not form a hierarchy between each other; think
+   of them as individual little trees that are created in direct
+   response to requests to the ContextKitLayer.  The properties in
+   these trees can overlap; a single ContextKit property can be
+   accessed via many ContextKitHandles.
+ */
+
+class ContextKitHandle : public QObject {
+    
+    Q_OBJECT
+
+public:
+    ContextKitHandle (ContextKitHandle *parent, const QString &root);
+    ~ContextKitHandle ();
+
+    bool value (const QString &path, QVariant *data);
+    void subscribe ();
+    void unsubscribe ();
+    QSet<QString> children ();
+
+signals:
+    void valueChanged();
+
+private:
+    QString prefix;
+    QHash<QString, ContextProperty *> props;
+
+    void insert (const QString &path, const QString &key);
+};
+
+void ContextKitHandle::insert (const QString &path, const QString &key)
+{
+    ContextProperty *prop = new ContextProperty (key);
+    connect (prop, SIGNAL (valueChanged()),
+             this, SIGNAL (valueChanged()));
+    props.insert (path, prop);
+}
+
+ContextKitHandle::ContextKitHandle (ContextKitHandle *parent, const QString &path)
+{
+    QString key = path;
+    if (key.startsWith("/"))
+        key = key.mid(1);
+    key = key.replace('/', '.');
+    if (parent)
+        key = parent->prefix + key;
+
+    prefix = (key == "")? "" : key + ".";
+    foreach (const QString &k, ContextRegistryInfo::instance()->listKeys())
+    {
+        if (k == key)
+            insert ("", k);
+        else if (k.startsWith (prefix))
+            insert (k.mid(prefix.length()).replace ('.', '/'), k);
+    }
+}
+
+ContextKitHandle::~ContextKitHandle ()
+{
+    foreach (ContextProperty *prop, props.values())
+        delete prop;
+}
+
+bool
+ContextKitHandle::value (const QString &path, QVariant *data)
+{
+    // path always starts with a "/".
+    ContextProperty *p = props.value (path.mid(1));
+    if (p)
+    {
+        *data = p->value();
+        return true;
+    }
+    else
+        return false;
+}
+
+void
+ContextKitHandle::subscribe ()
+{
+    foreach (ContextProperty *p, props.values())
+        p->subscribe ();
+}
+
+void
+ContextKitHandle::unsubscribe ()
+{
+    foreach (ContextProperty *p, props.values())
+        p->unsubscribe ();
+}
+
+QSet<QString>
+ContextKitHandle::children ()
+{
+    QSet<QString> kids;
+
+    foreach (const QString &path, props.keys())
+    {
+        int pos = path.indexOf("/");
+        if (pos >= 0)
+            kids.insert (path.left(pos));
+        else
+            kids.insert (path);
+    }
+    return kids;
+}
 
 class ContextKitLayer : public QAbstractValueSpaceLayer
 {
     Q_OBJECT
 
-    QHash<QString, ContextProperty *> props;
-    bool got_all_props;
-
 public:
     ContextKitLayer();
     virtual ~ContextKitLayer();
-
-    ContextProperty *get_prop (const QString &path);
-    void get_all_props ();
 
     /* ValueSpaceLayer interface - Common functions */
     QString name();
@@ -121,20 +233,17 @@ public:
     static ContextKitLayer *instance();
 
 private slots:
-    void contextPropertyChanged();
+    void contextHandleChanged();
 };
 
 QVALUESPACE_AUTO_INSTALL_LAYER(ContextKitLayer);
 
 ContextKitLayer::ContextKitLayer ()
-    : got_all_props (false)
 {
 }
 
 ContextKitLayer::~ContextKitLayer ()
 {
-    foreach (ContextProperty *p, props.values())
-        delete p;
 }
 
 Q_GLOBAL_STATIC(ContextKitLayer, contextKitLayer);
@@ -170,142 +279,65 @@ LayerOptions ContextKitLayer::layerOptions () const
     return NonPermanentLayer | NonWriteableLayer;
 }
 
-ContextProperty *ContextKitLayer::get_prop (const QString &key)
-{
-    ContextProperty *p = props.value (key);
-    if (p == NULL)
-    {
-        p = new ContextProperty (key);
-        props.insert (key, p);
-    }
-    return p;
-}
-
-void ContextKitLayer::get_all_props ()
-{
-    if (got_all_props)
-        return;
-
-    ContextRegistryInfo *registry = ContextRegistryInfo::instance ();
-    QStringList keys = registry->listKeys();
-    
-    foreach (const QString &key, keys)
-        get_prop (key);
-    got_all_props = true;
-}
-
 QAbstractValueSpaceLayer::Handle ContextKitLayer::item (Handle parent, const QString &subPath)
 {
-    if (parent == InvalidHandle
-        && subPath == "/" CONTEXTKIT_LAYER_PREFIX)
-    {
-        return (Handle) this;
-    }
-    else if (parent == InvalidHandle
-             && subPath.startsWith ("/" CONTEXTKIT_LAYER_PREFIX "/"))
-    {
-        return (Handle) get_prop (subPath.mid(strlen (CONTEXTKIT_LAYER_PREFIX)+2));
-    }
-    else if (parent == (Handle) this)
-    {
-        return (Handle) get_prop (subPath);
-    }
-    else
-        return InvalidHandle;
+    return (Handle) new ContextKitHandle ((parent == InvalidHandle)
+                                          ? NULL
+                                          : (ContextKitHandle *) parent,
+                                          subPath);
 }
 
 void ContextKitLayer::removeHandle (Handle handle)
 {
-    if (handle != (Handle) this)
-    {
-        ContextProperty *p = (ContextProperty *)handle;
-        props.remove (p->key());
-        delete p;
-    }
+    ContextKitHandle *h = (ContextKitHandle *)handle;
+    delete h;
 }
 
 void ContextKitLayer::setProperty (Handle handle, Properties properties)
 {
-    if (handle == (Handle) this)
-    {
-        get_all_props ();
-        foreach (ContextProperty *p, props.values())
-            setProperty ((Handle) p, properties);
-        return;
-    }
-
-    ContextProperty *p = (ContextProperty *)handle;
+    ContextKitHandle *h = (ContextKitHandle *)handle;
 
     if (properties & Publish)
-        connect (p, SIGNAL(valueChanged()),
-                 this, SLOT(contextPropertyChanged()));
+        connect (h, SIGNAL(valueChanged()),
+                 this, SLOT(contextHandleChanged()));
     else
-        disconnect (p, SIGNAL(valueChanged()),
-                    this, SLOT(contextPropertyChanged()));
+        disconnect (h, SIGNAL(valueChanged()),
+                    this, SLOT(contextHandleChanged()));
 }
 
-void ContextKitLayer::contextPropertyChanged()
+void ContextKitLayer::contextHandleChanged()
 {
-    ContextProperty *p = (ContextProperty *)sender();
-    emit handleChanged ((Handle) p);
-    emit handleChanged ((Handle) this);
+    ContextKitHandle *h = (ContextKitHandle *)sender();
+    emit handleChanged ((Handle) h);
 }
 
-bool ContextKitLayer::value(Handle handle, QVariant *data)
+bool ContextKitLayer::value (Handle handle, QVariant *data)
 {
-    if (handle == (Handle) this)
-        return false;
+    ContextKitHandle *h = (ContextKitHandle *)handle;
+    return h->value ("", data);
+}
 
-    ContextProperty *p = (ContextProperty *)handle;
-    *data = p->value();
-    return true;
+bool ContextKitLayer::value (Handle handle, const QString &subPath, QVariant *data)
+{
+    ContextKitHandle *h = (ContextKitHandle *)handle;
+    return h->value (subPath, data);
 }
 
 bool ContextKitLayer::notifyInterest(Handle handle, bool interested)
 {
-    if (handle == (Handle) this)
-        return false;
+    ContextKitHandle *h = (ContextKitHandle *)handle;
+
+    if (interested)
+        h->subscribe();
     else
-    {
-        ContextProperty *p = (ContextProperty *)handle;
-        if (interested)
-            p->subscribe();
-        else
-            p->unsubscribe();
-        return true;
-    }
-}
-
-bool ContextKitLayer::value(Handle handle, const QString &subPath, QVariant *data)
-{
-    // XXX - can handle be InvalidHandle and subPath be something like
-    //       "/C/Battery.Foo"?  Does subPath always start with a slash?
-
-    if (handle == (Handle) this)
-    {
-        ContextProperty *p = get_prop (subPath.mid(1));
-        *data = p->value();
-        return true;
-    }
-    else 
-    {
-        return false;
-    }
+        h->unsubscribe();
+    return true;
 }
 
 QSet<QString> ContextKitLayer::children (Handle handle)
 {
-    if (handle == (Handle) this)
-    {
-        QSet<QString> kids;
-
-        get_all_props ();
-        foreach (const QString &key, props.keys())
-            kids.insert (key);
-        return kids;
-    }
-    else
-        return QSet<QString>();
+    ContextKitHandle *h = (ContextKitHandle *)handle;
+    return h->children ();
 }
 
 QT_END_NAMESPACE
