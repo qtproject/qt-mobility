@@ -56,7 +56,7 @@ public:
     virtual bool isActive(int streamNumber) = 0;
     virtual void setActive(int streamNumber, bool state) = 0;
 
-signals:
+Q_SIGNALS:
     void streamsChanged();
     void activeStreamsChanged();
 

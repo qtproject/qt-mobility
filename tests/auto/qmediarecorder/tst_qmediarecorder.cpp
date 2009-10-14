@@ -59,9 +59,11 @@ public:
     {
         m_supportedFormats.append("wav");
         m_supportedFormats.append("mp3");
+        m_supportedFormats.append("mov");
 
         m_descriptions.insert("wav", "WAV format");
         m_descriptions.insert("mp3", "MP3 format");
+        m_descriptions.insert("mov", "MOV format");
     }
 
     virtual ~MockMediaFormatControl() {};
@@ -100,8 +102,8 @@ public:
     MockVideoEncodeProvider(QObject *parent):
         QVideoEncoderControl(parent)
     {
-        m_bitrate = 0;
-        m_quality = QMediaRecorder::NormalQuality;
+        m_bitrate = -1;
+        m_quality = QtMedia::NormalQuality;
         m_supportedEncodeOptions.insert("video/3gpp", QStringList() << "quantizer" << "me");
         m_supportedEncodeOptions.insert("video/H264", QStringList() << "quantizer" << "me" << "bframes");
         m_videoCodecs << "video/3gpp" << "video/H264";
@@ -115,19 +117,19 @@ public:
     QSize maximumResolution() const { return QSize(640,480); }
     QList<QSize> supportedResolutions() const { return m_sizes; }
     void setResolution(const QSize &sz) { m_size = sz; }
-    QMediaRecorder::FrameRate frameRate() const { return m_framerate; }
-    QMediaRecorder::FrameRate minimumFrameRate() const { return qMakePair<int,int>(1,1); }
-    QMediaRecorder::FrameRate maximumFrameRate() const { return qMakePair<int,int>(30,1); }
-    QList<QMediaRecorder::FrameRate> supportedFrameRates() const { return m_framerates; }
-    void setFrameRate(const QMediaRecorder::FrameRate &rate) { m_framerate = rate; }
+    QtMedia::FrameRate frameRate() const { return m_framerate; }
+    QtMedia::FrameRate minimumFrameRate() const { return qMakePair<int,int>(1,1); }
+    QtMedia::FrameRate maximumFrameRate() const { return qMakePair<int,int>(30,1); }
+    QList<QtMedia::FrameRate> supportedFrameRates() const { return m_framerates; }
+    void setFrameRate(const QtMedia::FrameRate &rate) { m_framerate = rate; }
     QStringList supportedVideoCodecs() const { return m_videoCodecs; }
     QString videoCodec() const { return m_vCodec; }
     bool setVideoCodec(const QString &codecName) { m_vCodec = codecName; return true; }
     QString videoCodecDescription(const QString &codecName) const { return codecName; }
     int bitrate() const { return m_bitrate; }
     void setBitrate(int bitrate) { m_bitrate = bitrate; }
-    QMediaRecorder::EncodingQuality quality() const { return m_quality; }
-    void setQuality(QMediaRecorder::EncodingQuality quality) { m_quality = quality; }
+    QtMedia::EncodingQuality quality() const { return m_quality; }
+    void setQuality(QtMedia::EncodingQuality quality) { m_quality = quality; }
 
     QStringList supportedEncodingOptions(const QString &codec) const
     {
@@ -146,7 +148,7 @@ public:
 
 private:
     int m_bitrate;
-    QMediaRecorder::EncodingQuality m_quality;
+    QtMedia::EncodingQuality m_quality;
 
     QMap<QString, QStringList> m_supportedEncodeOptions;
     QMap< QString, QMap<QString, QVariant> > m_encodeOptions;
@@ -156,8 +158,8 @@ private:
 
     QSize m_size;
     QList<QSize> m_sizes;
-    QMediaRecorder::FrameRate m_framerate;
-    QList<QMediaRecorder::FrameRate> m_framerates;
+    QtMedia::FrameRate m_framerate;
+    QList<QtMedia::FrameRate> m_framerates;
 };
 
 class MockAudioEncodeProvider : public QAudioEncoderControl
@@ -172,18 +174,17 @@ public:
         m_supportedEncodeOptions.insert("audio/mpeg", QStringList() << "quality" << "bitrate" << "mode" << "vbr");
         m_codec = "audio/pcm";
         m_bitrate = 128;
-        m_quality = QMediaRecorder::NormalQuality;
-        m_frequency = -1;
+        m_quality = QtMedia::NormalQuality;
+        m_sampleRate = -1;
         m_sampleSize = -1;
         m_channels = -1;
     }
 
     ~MockAudioEncodeProvider() {}
 
-    int frequency() const { return m_frequency; }
-    void setFrequency(int frequency) { m_frequency = frequency; }
-    QList<int> supportedFrequencies() const { return QList<int>() << 44100; }
-    QPair<int,int> supportedFrequencyRange() const { return qMakePair<int,int>(44100,44100); }
+    int sampleRate() const { return m_sampleRate; }
+    void setSampleRate(int sampleRate) { m_sampleRate = sampleRate; }
+    QList<int> supportedSampleRates() const { return QList<int>() << 44100; }
 
     int channels() const { return m_channels; }
     void setChannels(int channels) { m_channels = channels; }
@@ -233,12 +234,12 @@ public:
         m_bitrate = bitrate;
     }
 
-    QMediaRecorder::EncodingQuality quality() const
+    QtMedia::EncodingQuality quality() const
     {
         return m_quality;
     }
 
-    void setQuality(QMediaRecorder::EncodingQuality qual)
+    void setQuality(QtMedia::EncodingQuality qual)
     {
         m_quality = qual;
     }
@@ -259,14 +260,14 @@ public:
     }
 
 private:
-    int m_frequency;
+    int m_sampleRate;
     int m_channels;
     int m_sampleSize;
 
     QStringList  m_codecs;
     QStringList  m_codecsDesc;
     int          m_bitrate;
-    QMediaRecorder::EncodingQuality        m_quality;
+    QtMedia::EncodingQuality        m_quality;
 
     QMap<QString, QStringList> m_supportedEncodeOptions;
     QMap< QString, QMap<QString, QVariant> > m_encodeOptions;
@@ -368,6 +369,8 @@ public:
         return m_position;
     }
 
+    using QMediaRecorderControl::error;
+
 public slots:
     void record()
     {
@@ -452,12 +455,14 @@ public slots:
     void cleanup();
 
 private slots:
+    void testError();
     void testSink();
     void testRecord();
     void testAudioDeviceControl();
     void testAudioEncodeControl();
     void testMediaFormatsControl();
     void testVideoEncodeControl();
+    void testEncodingSettings();
 
 private:
     QAudioEncoderControl* encode;
@@ -469,9 +474,12 @@ private:
     QVideoEncoderControl* videoEncode;
 };
 
+Q_DECLARE_METATYPE(QMediaRecorder::Error);
+
 void tst_QMediaRecorder::init()
 {
     qRegisterMetaType<QMediaRecorder::State>("QMediaRecorder::State");
+    qRegisterMetaType<QMediaRecorder::Error>();
 
     mock = new MockProvider(this);
     service = new MockService(this, mock);
@@ -489,6 +497,22 @@ void tst_QMediaRecorder::cleanup()
     delete object;
     delete service;
     delete mock;
+}
+
+void tst_QMediaRecorder::testError()
+{
+    const QString errorString(QLatin1String("format error"));
+
+    QSignalSpy spy(capture, SIGNAL(error(QMediaRecorder::Error)));
+
+    QCOMPARE(capture->error(), QMediaRecorder::NoError);
+    QCOMPARE(capture->errorString(), QString());
+
+    mock->error(QMediaRecorder::FormatError, errorString);
+    QCOMPARE(capture->error(), QMediaRecorder::FormatError);
+    QCOMPARE(capture->errorString(), errorString);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(qvariant_cast<QMediaRecorder::Error>(spy.last().value(0)), QMediaRecorder::FormatError);
 }
 
 void tst_QMediaRecorder::testSink()
@@ -536,14 +560,7 @@ void tst_QMediaRecorder::testAudioEncodeControl()
 {
     QStringList codecs = capture->supportedAudioCodecs();
     QVERIFY(codecs.count() == 2);
-    QVERIFY(capture->setAudioCodec("audio/mpeg"));
-    QVERIFY(capture->audioCodec() == QString("audio/mpeg"));
     QVERIFY(capture->audioCodecDescription("audio/pcm") == "Pulse Code Modulation");
-    QCOMPARE(capture->audioQuality(), QMediaRecorder::NormalQuality);
-    capture->setAudioQuality(QMediaRecorder::LowQuality);
-    QCOMPARE(capture->audioQuality(), QMediaRecorder::LowQuality);
-    capture->setAudioBitrate(64);
-    QVERIFY(capture->audioBitrate() == 64);
     QStringList options = encode->supportedEncodingOptions("audio/mpeg");
     QCOMPARE(options.count(), 4);
     QVERIFY(encode->encodingOption("audio/mpeg","bitrate").isNull());
@@ -553,13 +570,7 @@ void tst_QMediaRecorder::testAudioEncodeControl()
 
 void tst_QMediaRecorder::testMediaFormatsControl()
 {
-    QCOMPARE(capture->supportedFormats(), QStringList() << "wav" << "mp3");
-    capture->setFormat("wav");
-    QCOMPARE(capture->format(), QString("wav"));
-    capture->setFormat("mp3");
-    QCOMPARE(capture->format(), QString("mp3"));
-    capture->setFormat("ogg");
-    QCOMPARE(capture->format(), QString("mp3"));
+    QCOMPARE(capture->supportedFormats(), QStringList() << "wav" << "mp3" << "mov");
 
     QCOMPARE(capture->formatDescription("wav"), QString("WAV format"));
     QCOMPARE(capture->formatDescription("mp3"), QString("MP3 format"));
@@ -570,32 +581,17 @@ void tst_QMediaRecorder::testVideoEncodeControl()
 {
     QList<QSize> sizes = capture->supportedResolutions();
     QVERIFY(sizes.count() == 2);
-    capture->setResolution(sizes.first());
-    QVERIFY(capture->resolution() == QSize(320,240));
     QVERIFY(capture->minimumResolution() == QSize(320,240));
     QVERIFY(capture->maximumResolution() == QSize(640,480));
 
-    QCOMPARE(capture->frameRate().first, 0);
-    QCOMPARE(capture->frameRate().second, 0);
-
-    QList<QMediaRecorder::FrameRate> rates = capture->supportedFrameRates();
+    QList<QtMedia::FrameRate> rates = capture->supportedFrameRates();
     QVERIFY(rates.count() == 3);
-    capture->setFrameRate(rates.first());
-    QVERIFY(capture->frameRate().first == 30);
     QVERIFY(capture->minimumFrameRate().first == 1);
     QVERIFY(capture->maximumFrameRate().first == 30);
 
     QStringList vCodecs = capture->supportedVideoCodecs();
     QVERIFY(vCodecs.count() == 2);
-    capture->setVideoCodec(vCodecs.first());
-    QCOMPARE(capture->videoCodec(), QString("video/3gpp"));
     QCOMPARE(capture->videoCodecDescription("video/3gpp"), QString("video/3gpp"));
-
-    capture->setVideoBitrate(800000);
-    QVERIFY(capture->videoBitrate() == 800000);
-
-    capture->setVideoQuality(QMediaRecorder::HighQuality);
-    QVERIFY(capture->videoQuality() == QMediaRecorder::HighQuality);
 
     QStringList options = videoEncode->supportedEncodingOptions("video/3gpp");
     QCOMPARE(options.count(), 2);
@@ -604,6 +600,44 @@ void tst_QMediaRecorder::testVideoEncodeControl()
     encode->setEncodingOption("video/3gpp", "me", QString("dia"));
     QCOMPARE(encode->encodingOption("video/3gpp","me").toString(), QString("dia"));
 
+}
+
+void tst_QMediaRecorder::testEncodingSettings()
+{
+    QAudioEncoderSettings audioSettings = capture->audioSettings();
+    QCOMPARE(audioSettings.codec(), QString("audio/pcm"));
+    QCOMPARE(audioSettings.bitrate(), 128);
+    QCOMPARE(audioSettings.sampleRate(), -1);
+    QCOMPARE(audioSettings.quality(), QtMedia::NormalQuality);
+
+    QVideoEncoderSettings videoSettings = capture->videoSettings();
+    QCOMPARE(videoSettings.codec(), QString());
+    QCOMPARE(videoSettings.bitrate(), -1);
+    QCOMPARE(videoSettings.resolution(), QSize());
+    QCOMPARE(videoSettings.frameRate(), QtMedia::FrameRate());
+    QCOMPARE(videoSettings.quality(), QtMedia::NormalQuality);
+
+    QString format = capture->format();
+    QCOMPARE(format, QString());
+
+    audioSettings.setCodec("audio/mpeg");
+    audioSettings.setSampleRate(44100);
+    audioSettings.setBitrate(256);
+    audioSettings.setQuality(QtMedia::HighQuality);
+
+    videoSettings.setCodec("video/3gpp");
+    videoSettings.setBitrate(800);
+    videoSettings.setFrameRate(QtMedia::FrameRate(24,1));
+    videoSettings.setResolution(QSize(800,600));
+    videoSettings.setQuality(QtMedia::HighQuality);
+
+    format = QString("mov");
+
+    capture->setEncodingSettings(audioSettings,videoSettings,format);
+
+    QCOMPARE(capture->audioSettings(), audioSettings);
+    QCOMPARE(capture->videoSettings(), videoSettings);
+    QCOMPARE(capture->format(), format);
 }
 
 QTEST_MAIN(tst_QMediaRecorder)

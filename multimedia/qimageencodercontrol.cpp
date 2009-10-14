@@ -123,7 +123,7 @@ QImageEncoderControl::~QImageEncoderControl()
 */
 
 /*!
-  \fn QImageEncoderControl::setQuality(QMediaRecorder::EncodingQuality)
+  \fn QImageEncoderControl::setQuality(QtMedia::EncodingQuality)
 
   Sets the image encoding quality to \a value.
 

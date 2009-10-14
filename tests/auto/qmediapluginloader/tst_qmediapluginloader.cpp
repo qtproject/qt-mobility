@@ -44,26 +44,27 @@ class tst_QMediaPluginLoader : public QObject
     Q_OBJECT
 
 public slots:
-    void init();
-    void cleanup();
+    void initTestCase();
+    void cleanupTestCase();
 
 private slots:
     void testKeys();
     void testInstance();
     void testInstances();
+    void testInvalidKey();
 
 private:
     QMediaPluginLoader *loader;
 };
 
-void tst_QMediaPluginLoader::init()
+void tst_QMediaPluginLoader::initTestCase()
 {
     loader = new QMediaPluginLoader(QMediaServiceProviderFactoryInterface_iid,
-                                    QLatin1String("/mediaservice"),
-                                    Qt::CaseInsensitive);
+                                QLatin1String("/mediaservice"),
+                                Qt::CaseInsensitive);
 }
 
-void tst_QMediaPluginLoader::cleanup()
+void tst_QMediaPluginLoader::cleanupTestCase()
 {
     delete loader;
 }
@@ -71,20 +72,47 @@ void tst_QMediaPluginLoader::cleanup()
 void tst_QMediaPluginLoader::testKeys()
 {
     // Each platform should have a plugin available.
-    // Should work up something where if it doesn't we xfail everything
     QVERIFY(loader->keys().size() > 0);
 }
 
 void tst_QMediaPluginLoader::testInstance()
 {
-    foreach (const QString &key, loader->keys())
+    const QStringList keys = loader->keys();
+
+    if (keys.isEmpty()) // Test is invalidated, skip.
+        QSKIP("No plug-ins available", SkipAll);
+
+    foreach (const QString &key, keys)
         QVERIFY(loader->instance(key) != 0);
 }
 
 void tst_QMediaPluginLoader::testInstances()
 {
-    foreach (const QString &key, loader->keys())
+    const QStringList keys = loader->keys();
+
+    if (keys.isEmpty()) // Test is invalidated, skip.
+        QSKIP("No plug-ins available", SkipAll);
+
+    foreach (const QString &key, keys)
         QVERIFY(loader->instances(key).size() > 0);
+}
+
+// Last so as to not interfere with the other tests if there is a failure.
+void tst_QMediaPluginLoader::testInvalidKey()
+{
+    const QString key(QLatin1String("invalid-key"));
+
+    // This test assumes there is no 'invalid-key' in the key list, verify that.
+    if (loader->keys().contains(key))
+        QSKIP("a plug-in includes the invalid key", SkipAll);
+
+    QVERIFY(loader->instance(key) == 0);
+
+    // Test looking up the key hasn't inserted it into the list. See QMap::operator[].
+    QVERIFY(!loader->keys().contains(key));
+
+    QVERIFY(loader->instances(key).isEmpty());
+    QVERIFY(!loader->keys().contains(key));
 }
 
 QTEST_MAIN(tst_QMediaPluginLoader)

@@ -37,6 +37,7 @@
 
 #include <multimedia/qmediaobject.h>
 #include <multimedia/qmediaserviceprovider.h>
+#include <multimedia/qmediaencodersettings.h>
 
 #include <QtCore/qpair.h>
 
@@ -45,6 +46,8 @@ class QUrl;
 class QAudioFormat;
 class QSize;
 class QMediaRecorderService;
+class QAudioEncoderSettings;
+class QVideoEncoderSettings;
 
 class QMediaRecorderPrivate;
 class Q_MEDIA_EXPORT QMediaRecorder : public QMediaObject
@@ -54,18 +57,7 @@ class Q_MEDIA_EXPORT QMediaRecorder : public QMediaObject
     Q_ENUMS(Error)
     Q_ENUMS(EncodingQuality)
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
-    Q_PROPERTY(QString format READ format WRITE setFormat NOTIFY formatChanged)
-    Q_PROPERTY(QString audioCodec READ audioCodec WRITE setAudioCodec NOTIFY audioCodecChanged)
-    Q_PROPERTY(int audioBitrate READ audioBitrate WRITE setAudioBitrate NOTIFY audioBitrateChanged)
-    Q_PROPERTY(QMediaRecorder::EncodingQuality audioQuality READ audioQuality WRITE setAudioQuality NOTIFY audioQualityChanged)
-    Q_PROPERTY(QSize resolution READ resolution WRITE setResolution NOTIFY resolutionChanged)
-    Q_PROPERTY(QMediaRecorder::FrameRate frameRate READ frameRate WRITE setFrameRate NOTIFY frameRateChanged)
-    Q_PROPERTY(QString videoCodec READ videoCodec WRITE setVideoCodec NOTIFY videoCodecChanged)
-    Q_PROPERTY(int videoBitrate READ videoBitrate WRITE setVideoBitrate NOTIFY videoBitrateChanged)
-    Q_PROPERTY(QMediaRecorder::EncodingQuality videoQuality READ videoQuality WRITE setVideoQuality NOTIFY videoQualityChanged)
-
 public:
-    typedef QPair<int, int> FrameRate;
 
     enum State
     {
@@ -79,15 +71,6 @@ public:
         NoError,
         ResourceError,
         FormatError
-    };
-
-    enum EncodingQuality
-    {
-        VeryLowQuality = 0,
-        LowQuality,
-        NormalQuality,
-        HighQuality,
-        VeryHighQuality
     };
 
     QMediaRecorder(QMediaObject *mediaObject, QObject *parent = 0);
@@ -105,51 +88,37 @@ public:
 
     QStringList supportedFormats() const;
     QString formatDescription(const QString &formatMimeType) const;
-    QString format() const;
-
 
     QStringList supportedAudioCodecs() const;
     QString audioCodecDescription(const QString &codecName) const;
-    QString audioCodec() const;
 
-    int audioBitrate() const;
-    EncodingQuality audioQuality() const;
+    QList<int> supportedAudioSampleRates() const;
 
     QStringList supportedVideoCodecs() const;
     QString videoCodecDescription(const QString &codecName) const;
-    QString videoCodec() const;
 
-    QSize resolution() const;
     QSize minimumResolution() const;
     QSize maximumResolution() const;
     QList<QSize> supportedResolutions() const;
 
-    FrameRate frameRate() const;
-    FrameRate minimumFrameRate();
-    FrameRate maximumFrameRate();
-    QList<FrameRate> supportedFrameRates() const;
+    QtMedia::FrameRate minimumFrameRate();
+    QtMedia::FrameRate maximumFrameRate();
+    QList<QtMedia::FrameRate> supportedFrameRates() const;
 
-    int videoBitrate() const;
-    EncodingQuality videoQuality() const;
+    QAudioEncoderSettings audioSettings() const;
+    QVideoEncoderSettings videoSettings() const;
+    QString format() const;
 
-public slots:
+    void setEncodingSettings(const QAudioEncoderSettings &audioSettings,
+                             const QVideoEncoderSettings &videoSettings = QVideoEncoderSettings(),
+                             const QString &format = QString());
+
+public Q_SLOTS:
     void record();
     void pause();
     void stop();
 
-    void setFormat(const QString &formatMimeType);
-
-    bool setAudioCodec(const QString &codecName);
-    void setAudioBitrate(int bitrate);
-    void setAudioQuality(EncodingQuality quality);
-
-    void setResolution(const QSize &);
-    void setFrameRate(const QMediaRecorder::FrameRate &rate);
-    bool setVideoCodec(const QString &codecName);
-    void setVideoBitrate(int bitrate);
-    void setVideoQuality(EncodingQuality quality);
-
-signals:
+Q_SIGNALS:
     void stateChanged(QMediaRecorder::State state);
     void durationChanged(qint64 duration);
 
@@ -162,6 +131,5 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &));
 };
 
-//Q_DECLARE_METATYPE(QMediaRecorder::FrameRate);
 
 #endif  // QMEDIARECORDER_H

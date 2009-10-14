@@ -46,21 +46,14 @@
 // We mean it.
 //
 
+class QAudioDeviceControl;
 
 class QMediaServicePrivate
 {
 public:
-    QMediaServicePrivate()
-        : q_ptr(0)
-        , inputStream(0)
-        , outputStream(0)
-    {
-    }
+    QMediaServicePrivate(): q_ptr(0) {}
 
     QMediaService *q_ptr;
-
-    QIODevice* inputStream;
-    QIODevice* outputStream;
 };
 
 

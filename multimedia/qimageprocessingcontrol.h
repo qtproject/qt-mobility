@@ -43,6 +43,7 @@
 class Q_MEDIA_EXPORT QImageProcessingControl : public QMediaControl
 {
     Q_OBJECT
+
 public:
     ~QImageProcessingControl();
 
@@ -53,7 +54,7 @@ public:
     virtual void setManualWhiteBalance(int colorTemperature) = 0;
 
     virtual qreal contrast() const = 0;
-    virtual void setContrast(qreal value) const = 0;
+    virtual void setContrast(qreal value) = 0;
 
     virtual qreal saturation() const = 0;
     virtual void setSaturation(qreal value) = 0;
@@ -67,7 +68,7 @@ public:
     virtual void setDenoisingLevel(qreal value) = 0;
 
 protected:
-    QImageProcessingControl(QObject* parent);
+    QImageProcessingControl(QObject* parent = 0);
 };
 
 #define QImageProcessingControl_iid "com.nokia.Qt.QImageProcessingControl/1.0"

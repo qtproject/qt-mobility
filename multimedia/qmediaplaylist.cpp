@@ -514,12 +514,6 @@ void QMediaPlaylist::setCurrentPosition(int playlistPosition)
  */
 
 /*!
-    \fn void QMediaPlaylist::playlistProviderChanged()
-
-    Signal emitted when playlist provider has changed.
-*/
-
-/*!
     \fn void QMediaPlaylist::playlistPositionChanged(int position)
 
     Signal emitted when playlist position changed to \a position.
@@ -547,11 +541,6 @@ void QMediaPlaylist::setCurrentPosition(int playlistPosition)
     \fn void QMediaPlaylist::currentMediaChanged(const QMediaContent &content)
 
     Signal emitted when current media changes to \a content.
-*/
-
-/*!
-    \property QMediaPlaylist::playlistProvider
-    \brief Current playlist provider.
 */
 
 /*!

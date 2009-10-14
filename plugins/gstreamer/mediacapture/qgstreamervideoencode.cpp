@@ -114,24 +114,24 @@ void QGstreamerVideoEncode::setResolution(const QSize &r)
     m_resolution = r;
 }
 
-QMediaRecorder::FrameRate QGstreamerVideoEncode::frameRate() const
+QtMedia::FrameRate QGstreamerVideoEncode::frameRate() const
 {
     return m_frameRate;
 }
 
-QMediaRecorder::FrameRate QGstreamerVideoEncode::minimumFrameRate() const
+QtMedia::FrameRate QGstreamerVideoEncode::minimumFrameRate() const
 {
     return qMakePair<int,int>(1,1);
 }
 
-QMediaRecorder::FrameRate QGstreamerVideoEncode::maximumFrameRate() const
+QtMedia::FrameRate QGstreamerVideoEncode::maximumFrameRate() const
 {
     return qMakePair<int,int>(30,1);
 }
 
-QList< QMediaRecorder::FrameRate > QGstreamerVideoEncode::supportedFrameRates() const
+QList< QtMedia::FrameRate > QGstreamerVideoEncode::supportedFrameRates() const
 {
-    QList<QMediaRecorder::FrameRate> res;
+    QList<QtMedia::FrameRate> res;
     res << qMakePair<int,int>(30,1);
     res << qMakePair<int,int>(25,1);
     res << qMakePair<int,int>(20,1);
@@ -142,7 +142,7 @@ QList< QMediaRecorder::FrameRate > QGstreamerVideoEncode::supportedFrameRates() 
     return res;
 }
 
-void QGstreamerVideoEncode::setFrameRate(const QMediaRecorder::FrameRate &rate)
+void QGstreamerVideoEncode::setFrameRate(const QtMedia::FrameRate &rate)
 {
     m_frameRate = rate;
 }
@@ -184,13 +184,13 @@ void QGstreamerVideoEncode::setBitrate(int value)
     setEncodingOption(m_codec, QLatin1String("bitrate"), QVariant(value));
 }
 
-QMediaRecorder::EncodingQuality QGstreamerVideoEncode::quality() const
+QtMedia::EncodingQuality QGstreamerVideoEncode::quality() const
 {
-    return QMediaRecorder::EncodingQuality(m_options.value(QLatin1String("quality"),
-                                                           QVariant(QMediaRecorder::NormalQuality)).toInt());
+    return QtMedia::EncodingQuality(m_options.value(QLatin1String("quality"),
+                                                           QVariant(QtMedia::NormalQuality)).toInt());
 }
 
-void QGstreamerVideoEncode::setQuality(QMediaRecorder::EncodingQuality value)
+void QGstreamerVideoEncode::setQuality(QtMedia::EncodingQuality value)
 {
     setEncodingOption(m_codec, QLatin1String("quality"), QVariant(value));
 }
@@ -201,7 +201,7 @@ QStringList QGstreamerVideoEncode::supportedEncodingOptions(const QString &codec
 }
 
 QVariant QGstreamerVideoEncode::encodingOption(const QString &codec, const QString &name) const
-{    
+{
     return codec == m_codec ? m_options.value(name) : QVariant();
 }
 
@@ -247,7 +247,7 @@ GstElement *QGstreamerVideoEncode::createEncoder()
             QVariant value = it.value();
 
             if (option == QLatin1String("quality")) {
-                int qualityValue = qBound(int(QMediaRecorder::VeryLowQuality), value.toInt(), int(QMediaRecorder::VeryHighQuality));
+                int qualityValue = qBound(int(QtMedia::VeryLowQuality), value.toInt(), int(QtMedia::VeryHighQuality));
 
                 if (m_codec == QLatin1String("video/h264")) {
                     //constant quantizer mode

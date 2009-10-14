@@ -54,18 +54,18 @@ public:
 
     virtual qint64 duration() const = 0;
 
-signals:
+Q_SIGNALS:
     void stateChanged(QMediaRecorder::State state);
     void durationChanged(qint64 position);
     void error(int error, const QString &errorString);
 
-public slots:
+public Q_SLOTS:
     virtual void record() = 0;
     virtual void pause() = 0;
     virtual void stop() = 0;
 
 protected:
-    QMediaRecorderControl(QObject* parent);
+    QMediaRecorderControl(QObject* parent = 0);
 };
 
 #define QMediaRecorderControl_iid "com.nokia.Qt.QMediaRecorderControl/1.0"

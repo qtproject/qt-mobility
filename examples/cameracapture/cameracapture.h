@@ -53,24 +53,21 @@ public:
     ~CameraCapture();
 
 private slots:
+    void setCamera(const QByteArray &cameraDevice);
+
     void updateRecordTime();
     void record();
     void pause();
     void stop();
 
-    void setAudioInputDevice(int idx);
-    void setCameraDevice(int idx);
-    void setAudioCodec(int idx);
-    void setVideoCodec(int idx);
-    void setContainerFormat(int idx);
-    void setAudioQuality(int value);
-    void setVideoQuality(int value);
-    void setVideoResolution();
-    void setVideoFramerate();
+    void settings();
 
     void displayErrorMessage();
 
     void enablePreview(bool);
+
+    void updateCameraDevice(QAction*);
+    void updateAudioDevice(QAction*);
 
 private:
     Ui::CameraCapture *ui;
@@ -78,6 +75,7 @@ private:
     QMediaRecorder* mediaRecorder;
     QCamera *camera;
     QMediaService *service;
+    QWidget *videoWidget;
 };
 
 #endif

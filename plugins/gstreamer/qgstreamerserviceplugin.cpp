@@ -34,6 +34,9 @@
 
 #include <QtCore/qstring.h>
 #include <QtCore/qdebug.h>
+#include <QtGui/QIcon>
+#include <QtCore/QDir>
+#include <QtCore/QDebug>
 
 #include "qgstreamerserviceplugin.h"
 
@@ -45,6 +48,18 @@
 #endif
 
 #include <multimedia/qmediaserviceprovider.h>
+
+#include <linux/types.h>
+#include <sys/time.h>
+#include <sys/ioctl.h>
+#include <sys/poll.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/mman.h>
+#include <linux/videodev2.h>
 
 
 QStringList QGstreamerServicePlugin::keys() const
@@ -83,5 +98,77 @@ void QGstreamerServicePlugin::release(QMediaService *service)
     delete service;
 }
 
-Q_EXPORT_PLUGIN2(gstengine, QGstreamerServicePlugin);
+QList<QByteArray> QGstreamerServicePlugin::devices(const QByteArray &service) const
+{
+    if (service == "camera") {
+        if (m_cameraDevices.isEmpty())
+            updateDevices();
 
+        return m_cameraDevices;
+    }
+
+    return QList<QByteArray>();
+}
+
+QString QGstreamerServicePlugin::deviceDescription(const QByteArray &service, const QByteArray &device)
+{
+    if (service == "camera") {
+        if (m_cameraDevices.isEmpty())
+            updateDevices();
+
+        for (int i=0; i<m_cameraDevices.count(); i++)
+            if (m_cameraDevices[i] == device)
+                return m_cameraDescriptions[i];
+    }
+
+    return QString();
+}
+
+void QGstreamerServicePlugin::updateDevices() const
+{
+    m_cameraDevices.clear();
+    m_cameraDescriptions.clear();
+
+    QDir devDir("/dev");
+    devDir.setFilter(QDir::System);
+
+    QFileInfoList entries = devDir.entryInfoList(QStringList() << "video*");
+
+    foreach( const QFileInfo &entryInfo, entries ) {
+        qDebug() << "Try" << entryInfo.filePath();
+
+        int fd = ::open(entryInfo.filePath().toLatin1().constData(), O_RDWR );
+        if (fd == -1)
+            continue;
+
+        bool isCamera = false;
+
+        v4l2_input input;
+        memset(&input, 0, sizeof(input));
+        for (; ::ioctl(fd, VIDIOC_ENUMINPUT, &input) >= 0; ++input.index) {
+            if(input.type == V4L2_INPUT_TYPE_CAMERA || input.type == 0) {
+                isCamera = ::ioctl(fd, VIDIOC_S_INPUT, input.index) != 0;
+                break;
+            }
+        }
+
+        if (isCamera) {
+            // find out its driver "name"
+            QString name;
+            struct v4l2_capability vcap;
+            memset(&vcap, 0, sizeof(struct v4l2_capability));
+
+            if (ioctl(fd, VIDIOC_QUERYCAP, &vcap) != 0)
+                name = entryInfo.fileName();
+            else
+                name = QString((const char*)vcap.card);
+            qDebug() << "found camera: " << name;
+
+            m_cameraDevices.append(entryInfo.filePath().toLocal8Bit());
+            m_cameraDescriptions.append(name);
+        }
+        ::close(fd);
+    }
+}
+
+Q_EXPORT_PLUGIN2(gstengine, QGstreamerServicePlugin);

@@ -73,7 +73,9 @@ void tst_QMediaServiceProvider::testDefaultProviderAvailable()
 void tst_QMediaServiceProvider::testObtainService()
 {
     QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider();
-    QVERIFY(provider != 0);
+
+    if (provider == 0)
+        QSKIP("No default provider", SkipSingle);
 
     QMediaService *service = 0;
 
@@ -90,6 +92,10 @@ void tst_QMediaServiceProvider::testCanPlay()
              QtMedia::MaybeSupported);
 
     QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider();
+
+    if (provider == 0)
+        QSKIP("No default provider", SkipSingle);
+
     QCOMPARE(provider->canPlay(QByteArray("mediaplayer"), "video/ogv", QStringList()),
              QtMedia::MaybeSupported);
 
@@ -103,6 +109,9 @@ void tst_QMediaServiceProvider::testDevices()
     QVERIFY(mockProvider.devices(QByteArray("camera")).isEmpty());
 
     QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider();
+
+    if (provider == 0)
+        QSKIP("No default provider", SkipSingle);
 
     //how to test this properly?
     //it depends on plugins installed

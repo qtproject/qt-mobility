@@ -51,6 +51,7 @@ private slots:
     void notifyInterval_data();
     void notifyInterval();
 
+    void nullMetaDataControl();
     void isMetaDataAvailable();
     void isWritable();
     void metaDataChanged();
@@ -62,6 +63,7 @@ private slots:
     void extendedMetaData();
     void setExtendedMetaData_data() { extendedMetaData_data(); }
     void setExtendedMetaData();
+
 
 private:
     void setupNotifyTests();
@@ -112,19 +114,20 @@ class QtTestMetaDataService : public QMediaService
 {
     Q_OBJECT
 public:
-    QtTestMetaDataService(QObject *parent = 0):QMediaService(parent)
+    QtTestMetaDataService(QObject *parent = 0):QMediaService(parent), hasMetaData(true)
     {
     }
 
     QMediaControl *control(const char *iid) const
     {
-        if (qstrcmp(iid, QMetaDataControl_iid) == 0)
+        if (hasMetaData && qstrcmp(iid, QMetaDataControl_iid) == 0)
             return const_cast<QtTestMetaDataProvider *>(&metaData);
         else
             return 0;
     }
 
     QtTestMetaDataProvider metaData;
+    bool hasMetaData;
 };
 
 
@@ -134,8 +137,9 @@ class QtTestMediaObject : public QMediaObject
     Q_PROPERTY(int a READ a WRITE setA NOTIFY aChanged)
     Q_PROPERTY(int b READ b WRITE setB NOTIFY bChanged)
     Q_PROPERTY(int c READ c WRITE setC NOTIFY cChanged)
+    Q_PROPERTY(int d READ d WRITE setD)
 public:
-    QtTestMediaObject(QMediaService *service = 0): QMediaObject(0, service), m_a(0), m_b(0), m_c(0) {}
+    QtTestMediaObject(QMediaService *service = 0): QMediaObject(0, service), m_a(0), m_b(0), m_c(0), m_d(0) {}
 
     using QMediaObject::addPropertyWatch;
     using QMediaObject::removePropertyWatch;
@@ -149,6 +153,9 @@ public:
     int c() const { return m_c; }
     void setC(int c) { m_c = c; }
 
+    int d() const { return m_d; }
+    void setD(int d) { m_d = d; }
+
 Q_SIGNALS:
     void aChanged(int a);
     void bChanged(int b);
@@ -158,6 +165,7 @@ private:
     int m_a;
     int m_b;
     int m_c;
+    int m_d;
 };
 
 void tst_QMediaObject::propertyWatch()
@@ -209,6 +217,8 @@ void tst_QMediaObject::propertyWatch()
     aCount = aSpy.count();
 
     object.addPropertyWatch("b");
+    object.addPropertyWatch("d");
+    object.removePropertyWatch("e");
     object.setA(43);
     object.setB(235);
     object.setC(90);
@@ -226,6 +236,7 @@ void tst_QMediaObject::propertyWatch()
 
     object.removePropertyWatch("a");
     object.addPropertyWatch("c");
+    object.addPropertyWatch("e");
 
     QTestEventLoop::instance().enterLoop(1);
 
@@ -256,6 +267,7 @@ void tst_QMediaObject::propertyWatch()
     object.setB(324);
     object.setC(443);
     object.removePropertyWatch("c");
+    object.removePropertyWatch("d");
 
     QTestEventLoop::instance().enterLoop(1);
 
@@ -326,9 +338,39 @@ void tst_QMediaObject::notifyInterval()
     QFETCH(int, interval);
 
     QtTestMediaObject object;
-    object.setNotifyInterval(interval);
+    QSignalSpy spy(&object, SIGNAL(notifyIntervalChanged(int)));
 
+    object.setNotifyInterval(interval);
     QCOMPARE(object.notifyInterval(), interval);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(spy.last().value(0).toInt(), interval);
+
+    object.setNotifyInterval(interval);
+    QCOMPARE(object.notifyInterval(), interval);
+    QCOMPARE(spy.count(), 1);
+}
+
+void tst_QMediaObject::nullMetaDataControl()
+{
+    const QString titleKey(QLatin1String("Title"));
+    const QString title(QLatin1String("Host of Seraphim"));
+
+    QtTestMetaDataService service;
+    service.hasMetaData = false;
+
+    QtTestMediaObject object(&service);
+
+    QSignalSpy spy(&object, SIGNAL(metaDataChanged()));
+
+    QCOMPARE(object.isMetaDataAvailable(), false);
+    QCOMPARE(object.isMetaDataWritable(), false);
+
+    object.setMetaData(QtMedia::Title, title);
+    object.setExtendedMetaData(titleKey, title);
+
+    QCOMPARE(object.metaData(QtMedia::Title).toString(), QString());
+    QCOMPARE(object.extendedMetaData(titleKey).toString(), QString());
+    QCOMPARE(spy.count(), 0);
 }
 
 void tst_QMediaObject::isMetaDataAvailable()

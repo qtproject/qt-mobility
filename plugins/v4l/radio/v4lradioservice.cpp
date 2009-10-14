@@ -64,26 +64,6 @@ bool V4LRadioService::isEndpointSupported(QMediaService::MediaEndpoint endpointT
     return false;
 }
 
-void V4LRadioService::setInputStream(QIODevice* stream)
-{
-    Q_UNUSED(stream)
-}
-
-QIODevice* V4LRadioService::inputStream() const
-{
-    return 0;
-}
-
-void V4LRadioService::setOutputStream(QIODevice* stream)
-{
-    Q_UNUSED(stream)
-}
-
-QIODevice* V4LRadioService::outputStream() const
-{
-    return 0;
-}
-
 QList<QString> V4LRadioService::activeEndpoints(QMediaService::MediaEndpoint endpointType)
 {
     Q_UNUSED(endpointType)

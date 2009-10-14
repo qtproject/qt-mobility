@@ -124,16 +124,12 @@ void tst_QMediaService::control()
 
 void tst_QMediaService::testEndpoints()
 {
-    QVERIFY(!m_service->isEndpointSupported(QMediaService::AudioInput));
-    m_service->setInputStream((QIODevice*)0);
-    QVERIFY(m_service->inputStream() == 0);
-    m_service->setOutputStream((QIODevice*)0);
-    QVERIFY(m_service->outputStream() == 0);
-    QList<QString> endpoints = m_service->activeEndpoints(QMediaService::AudioInput);
-    QVERIFY(endpoints.count() == 0);
-    QVERIFY(!m_service->setActiveEndpoint(QMediaService::AudioInput, "test"));
-    QVERIFY(m_service->endpointDescription(QMediaService::AudioInput, "test") == QString());
-    endpoints = m_service->supportedEndpoints(QMediaService::AudioInput);
+    QVERIFY(!m_service->isEndpointSupported(QMediaService::AudioDevice));
+    QString endpoint = m_service->activeEndpoint(QMediaService::AudioDevice);
+    QVERIFY(!endpoint.isNull());
+    QVERIFY(!m_service->setActiveEndpoint(QMediaService::AudioDevice, "test"));
+    QVERIFY(m_service->endpointDescription(QMediaService::AudioDevice, "test") == QString());
+    QStringList endpoints = m_service->supportedEndpoints(QMediaService::AudioDevice);
     QVERIFY(endpoints.count() == 0);
 }
 

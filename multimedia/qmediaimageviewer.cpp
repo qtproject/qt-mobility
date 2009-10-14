@@ -175,8 +175,6 @@ QMediaImageViewer::MediaStatus QMediaImageViewer::mediaStatus() const
 
     This is the media used to initially populate the playlist, and may not be representive of the
     currently displayed media.
-
-    \sa currentMedia
 */
 
 QMediaContent QMediaImageViewer::media() const

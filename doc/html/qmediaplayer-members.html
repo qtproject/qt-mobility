@@ -17,14 +17,17 @@
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
 <li><div class="fn">enum <b><a href="qmediaplayer.html#Error-enum">Error</a></b></div></li>
+<li><div class="fn">enum <b><a href="qmediaplayer.html#Flag-enum">Flag</a></b></div></li>
+<li><div class="fn">flags <b><a href="qmediaplayer.html#Flag-enum">Flags</a></b></div></li>
 <li><div class="fn">enum <b><a href="qmediaplayer.html#MediaStatus-enum">MediaStatus</a></b></div></li>
 <li><div class="fn">enum <b><a href="qmediaplayer.html#State-enum">State</a></b></div></li>
-<li><div class="fn"><b><a href="qmediaplayer.html#QMediaPlayer">QMediaPlayer</a></b> ( QObject *, QMediaServiceProvider * )</div></li>
+<li><div class="fn"><b><a href="qmediaplayer.html#QMediaPlayer">QMediaPlayer</a></b> ( QObject *, Flags, QMediaServiceProvider * )</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#dtor.QMediaPlayer">~QMediaPlayer</a></b> ()</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#addPropertyWatch">addPropertyWatch</a></b> ( QByteArray const &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#blockSignals">blockSignals</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#bufferStatus-prop">bufferStatus</a></b> () const : int</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#bufferStatusChanged">bufferStatusChanged</a></b> ( int )</div></li>
+<li><div class="fn"><b><a href="qmediaplayer.html#canPlay">canPlay</a></b> ( const QString &amp;, const QStringList &amp;, Flags ) : QtMedia::SupportEstimate</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#childEvent">childEvent</a></b> ( QChildEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#children">children</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#connect">connect</a></b> ( const QObject *, const char *, const QObject *, const char *, Qt::ConnectionType )</div></li>
@@ -64,9 +67,9 @@
 <li><div class="fn"><b><a href="qmediaplayer.html#media-prop">media</a></b> () const : QMediaContent</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#mediaChanged">mediaChanged</a></b> ( const QMediaContent &amp; )</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#mediaStatus-prop">mediaStatus</a></b> () const : MediaStatus</div></li>
+</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qmediaplayer.html#mediaStatusChanged">mediaStatusChanged</a></b> ( QMediaPlayer::MediaStatus )</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#mediaStream">mediaStream</a></b> () const : const QIODevice *</div></li>
-</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qmediaobject.html#metaData">metaData</a></b> ( QtMedia::MetaData ) const : QVariant</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#metaDataAvailableChanged">metaDataAvailableChanged</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#metaDataChanged">metaDataChanged</a></b> ()</div></li>

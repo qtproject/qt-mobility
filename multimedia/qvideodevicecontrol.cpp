@@ -108,6 +108,11 @@ QVideoDeviceControl::~QVideoDeviceControl()
     The index of the selected device.
 */
 
+/*!
+    \fn QVideoDeviceControl::setSelectedDevice(int index)
+
+    Set the device to the device associated with \a index.
+*/
 
 /*!
     \fn QVideoDeviceControl::devicesChanged()
@@ -116,7 +121,13 @@ QVideoDeviceControl::~QVideoDeviceControl()
 */
 
 /*!
-    \fn QVideoDeviceControl::setSelectedDevice(int index)
+    \fn QVideoDeviceControl::selectedDeviceChanged(int index)
 
-    Set the device to the device associated with \a index.
+    Signals that the \a index of the selected device has changed.
+*/
+
+/*!
+    \fn QVideoDeviceControl::selectedDeviceChanged(const QString &deviceName)
+
+    Signals that the video device has changed to \a deviceName.
 */

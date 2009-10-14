@@ -64,27 +64,9 @@ QAudioEncoderControl::~QAudioEncoderControl()
 }
 
 /*!
-  \fn QAudioEncoderControl::supportedFrequencyRange() const
-
-  Returns the minimum and maximum frequencies available.
-*/
-
-/*!
   \fn QAudioEncoderControl::supportedAudioCodecs() const
 
   Returns the list of supported audio codec names.
-*/
-
-/*!
-  \fn QAudioEncoderControl::audioCodec() const
-
-  Returns the current audio codec name.
-*/
-
-/*!
-  \fn QAudioEncoderControl::setAudioCodec(const QString &codecName)
-
-  Returns true if able to set the audio codec to \a codecName.
 */
 
 /*!
@@ -94,54 +76,9 @@ QAudioEncoderControl::~QAudioEncoderControl()
 */
 
 /*!
-  \fn QAudioEncoderControl::bitrate() const
+  \fn QAudioEncoderControl::supportedSampleRates() const
 
-  Returns the bitrate of compressed audio stream.
-*/
-
-/*!
-  \fn QAudioEncoderControl::setBitrate(int value)
-
-  Sets the bitrate of encoded audio stream to \a value.
-*/
-
-/*!
-  \fn QAudioEncoderControl::quality() const
-
-  Returns the audio encoding quality parameter.
-
-  \sa setQuality()
-*/
-
-/*!
-  \fn QAudioEncoderControl::setQuality(QMediaRecorder::EncodingQuality value)
-
-  Set the encoding quality of audio stream to \a value.
-
-  \sa quality()
-*/
-
-/*!
-  \fn QAudioEncoderControl::frequency() const
-
-  Returns the frequency of audio stream.
-
-  \sa setFrequency()
-*/
-
-/*!
-  \fn QAudioEncoderControl::setFrequency(int frequency)
-
-  Sets the \a frequency of audio stream.
-
-  Frequency value of -1 means the encoder will choose the
-  suitable frequency depending on source and codec capabilities.
-*/
-
-/*!
-  \fn QAudioEncoderControl::supportedFrequencies() const
-
-  Returns the list of supported audio frequencies, if known.
+  Returns the list of supported audio sample rates, if known.
 */
 
 /*!

@@ -40,6 +40,9 @@
 
 #include <QtCore/qtimer.h>
 
+
+
+
 /*!
     \class QMediaService
     \brief The QMediaService class provides a common base class for media service
@@ -52,12 +55,7 @@
 
     Enumerates the possible end points a media service may have.
 
-    \value VideoInput A video input end point.
-    \value VideoOutput A video output end point.
-    \value AudioInput An audio input end point.
-    \value AudioOutput An audio output end point.
-    \value StreamInput A data stream input end point
-    \value StreamOutput A data stream output end point.
+    \value AudioDevice An audio device for either input or output.
 */
 
 /*!
@@ -97,101 +95,26 @@ QMediaService::~QMediaService()
 
 bool QMediaService::isEndpointSupported(QMediaService::MediaEndpoint endpointType)
 {
-    QAudioDeviceControl *audioControl = control<QAudioDeviceControl *>();
-    QVideoDeviceControl *videoControl = control<QVideoDeviceControl *>();
+    Q_UNUSED(endpointType);
 
-    switch(endpointType) {
-        case QMediaService::AudioInput:
-        case QMediaService::AudioOutput:
-            if(audioControl) return true;
-            break;
-        case QMediaService::VideoInput:
-        case QMediaService::VideoOutput:
-            if(videoControl) return true;
-            break;
-        case QMediaService::StreamInput:
-        case QMediaService::StreamOutput:
-            return true;
-        default:
-            return false;
-    }
-    return false;
+    return control(QAudioDeviceControl_iid) != 0;
 }
 
 /*!
-    Sets the data input \a stream of a media service.
-*/
-void QMediaService::setInputStream(QIODevice* stream)
-{
-    d_ptr->inputStream = stream;
-}
-
-/*!
-    Returns the data input stream a media service.
-*/
-QIODevice* QMediaService::inputStream() const
-{
-    return d_ptr->inputStream;
-}
-
-/*!
-    Sets the data output \a stream of a media service.
-*/
-void QMediaService::setOutputStream(QIODevice* stream)
-{
-    d_ptr->outputStream = stream;
-}
-
-/*!
-    Returns the data output stream of a media service.
-*/
-QIODevice* QMediaService::outputStream() const
-{
-    return d_ptr->outputStream;
-}
-
-/*!
-    Returns a list of currently active endpoints for \a endpointType.
+    Returns the active endpoint for \a endpointType.
 */
 
-QList<QString> QMediaService::activeEndpoints(QMediaService::MediaEndpoint endpointType)
+QString QMediaService::activeEndpoint(QMediaService::MediaEndpoint endpointType)
 {
-    QList<QString> ret;
-    int idx = 0;
+    Q_UNUSED(endpointType);
 
-    QAudioDeviceControl *audioControl = control<QAudioDeviceControl *>();
-    QVideoDeviceControl *videoControl = control<QVideoDeviceControl *>();
+    QAudioDeviceControl *audioDeviceControl =
+                            qobject_cast<QAudioDeviceControl*>(control(QAudioDeviceControl_iid));
 
-    switch(endpointType) {
-        case QMediaService::AudioInput:
-            if(audioControl) {
-                idx = audioControl->selectedDevice();
-                ret << audioControl->name(idx);
-            }
-            break;
-        case QMediaService::AudioOutput:
-            if(audioControl) {
-                idx = audioControl->selectedDevice();
-                ret << audioControl->name(idx);
-            }
-            break;
-        case QMediaService::VideoInput:
-            if(videoControl) {
-                idx = videoControl->selectedDevice();
-                ret << videoControl->name(idx);
-            }
-            break;
-        case QMediaService::VideoOutput:
-            if(videoControl) {
-                idx = videoControl->selectedDevice();
-                ret << videoControl->name(idx);
-            }
-            break;
-        default:
-            ret.clear();
-    }
+    if (audioDeviceControl == 0)
+        return QString();
 
-    return ret;
+    return audioDeviceControl->name(audioDeviceControl->selectedDevice());
 }
 
 /*!
@@ -200,39 +123,21 @@ QList<QString> QMediaService::activeEndpoints(QMediaService::MediaEndpoint endpo
 
 bool QMediaService::setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint)
 {
-    int numDevices = 0;
+    Q_UNUSED(endpointType);
 
-    QAudioDeviceControl *audioControl = control<QAudioDeviceControl *>();
-    QVideoDeviceControl *videoControl = control<QVideoDeviceControl *>();
+    QAudioDeviceControl *audioDeviceControl =
+                            qobject_cast<QAudioDeviceControl*>(control(QAudioDeviceControl_iid));
 
-    switch(endpointType) {
-        case QMediaService::AudioInput:
-        case QMediaService::AudioOutput:
-            if(audioControl) {
-                numDevices = audioControl->deviceCount();
-                for(int i=0;i<numDevices;i++) {
-                    if (endpoint == audioControl->name(i)) {
-                        audioControl->setSelectedDevice(i);
-                        return true;
-                    }
-                }
-            }
-            break;
-        case QMediaService::VideoInput:
-        case QMediaService::VideoOutput:
-            if(videoControl) {
-                numDevices = videoControl->deviceCount();
-                for(int i=0;i<numDevices;i++) {
-                    if (endpoint == videoControl->name(i)) {
-                        videoControl->setSelectedDevice(i);
-                        return true;
-                    }
-                }
-            }
-            break;
-        default:
-            return false;
+    if (audioDeviceControl == 0)
+        return false;
+
+    for (int i = audioDeviceControl->deviceCount() - 1; i >= 0; --i) {
+        if (endpoint == audioDeviceControl->name(i)) {
+            audioDeviceControl->setSelectedDevice(i);
+            return true;
+        }
     }
+
     return false;
 }
 
@@ -242,39 +147,20 @@ bool QMediaService::setActiveEndpoint(QMediaService::MediaEndpoint endpointType,
 
 QString QMediaService::endpointDescription(QMediaService::MediaEndpoint endpointType, const QString& endpoint)
 {
-    QString desc;
-    switch(endpointType) {
-        case QMediaService::AudioInput:
-        case QMediaService::AudioOutput:
-            {
-                QAudioDeviceControl *audioControl = control<QAudioDeviceControl *>();
-                if(audioControl) {
-                    int numDevices = audioControl->deviceCount();
-                    for(int i=0;i<numDevices;i++) {
-                        if (endpoint == audioControl->name(i))
-                            return audioControl->description(i);
+    Q_UNUSED(endpointType);
 
-                    }
-                }
-            }
-            break;
-        case QMediaService::VideoInput:
-        case QMediaService::VideoOutput:
-            {
-                QVideoDeviceControl *videoControl = control<QVideoDeviceControl *>();
-                if(videoControl) {
-                    int numDevices = videoControl->deviceCount();
-                    for(int i=0;i<numDevices;i++) {
-                        if (endpoint == videoControl->name(i))
-                            return videoControl->description(i);
-                    }
-                }
-            }
-            break;
-        default:
-            break;
+    QAudioDeviceControl *audioDeviceControl =
+                            qobject_cast<QAudioDeviceControl*>(control(QAudioDeviceControl_iid));
+
+    if (audioDeviceControl == 0)
+        return QString();
+
+    for (int i = audioDeviceControl->deviceCount() - 1; i >= 0; --i) {
+        if (endpoint == audioDeviceControl->name(i))
+            return audioDeviceControl->description(i);
     }
-    return desc;
+
+    return QString();
 }
 
 /*!
@@ -283,34 +169,19 @@ QString QMediaService::endpointDescription(QMediaService::MediaEndpoint endpoint
 
 QList<QString> QMediaService::supportedEndpoints(QMediaService::MediaEndpoint endpointType) const
 {
-    int numDevices = 0;
-    QList<QString> list;
+    Q_UNUSED(endpointType);
 
-    QAudioDeviceControl *audioControl = control<QAudioDeviceControl *>();
-    QVideoDeviceControl *videoControl = control<QVideoDeviceControl *>();
+    QAudioDeviceControl *audioDeviceControl =
+                            qobject_cast<QAudioDeviceControl*>(control(QAudioDeviceControl_iid));
 
-    if(endpointType == QMediaService::AudioInput && audioControl) {
-        numDevices = audioControl->deviceCount();
-        for(int i=0;i<numDevices;i++)
-            list.append(audioControl->name(i));
+    QList<QString> endpoints;
 
-    } else if(endpointType == QMediaService::VideoInput && videoControl) {
-        numDevices = videoControl->deviceCount();
-        for(int i=0;i<numDevices;i++)
-            list.append(videoControl->name(i));
-
-    } else if(endpointType == QMediaService::AudioOutput && audioControl) {
-        numDevices = audioControl->deviceCount();
-        for(int i=0;i<numDevices;i++)
-            list.append(audioControl->name(i));
-
-    } else if(endpointType == QMediaService::VideoOutput && videoControl) {
-        numDevices = videoControl->deviceCount();
-        for(int i=0;i<numDevices;i++)
-            list.append(videoControl->name(i));
+    if (audioDeviceControl != 0) {
+        for (int i = 0 ; i<audioDeviceControl->deviceCount(); ++i)
+            endpoints << audioDeviceControl->name(i);
     }
 
-    return list;
+    return endpoints;
 }
 
 /*!
@@ -329,42 +200,16 @@ QList<QString> QMediaService::supportedEndpoints(QMediaService::MediaEndpoint en
     If the service does not implment the control a null pointer is returned instead.
 */
 
-/*
 
-QMediaService* createService(const QString &type,
-                                     const QList<QByteArray> &optional = QList<QByteArray>(),
-                                     QMediaServiceProvider *provider = 0)
-{
-    if (provider != 0)
-        return provider->createService(type, optional);
+/*!
+    \fn void QMediaService::supportedEndpointsChanged()
 
-    // Check for name of provider in type, else use default
-    QMediaServiceProvider *p = defaultServiceProvider(
-    if (p != 0)
-        return p->createService(type, optional);
-
-    return 0;
-}
-
-QMediaService* createMediaPlayerService()
-{
-    QByteArray providerKey = qgetenv("QT_MEDIAPLAYER_PROVIDER");
-
-    QMediaServiceProvider *provider = defaultServiceProvider(!providerKey.isNull()
-            ? providerKey.constData()
-            : "mediaplayer");
-
-    QObject *object = provider ? provider->createObject(QMediaPlayerService_iid) : 0;
-
-    if (object != 0) {
-        QMediaPlayerService *service = qobject_cast<QMediaPlayerService*>(object);
-
-        if (service != 0)
-            return service;
-
-        delete object;
-    }
-
-    return 0;
-}
+    This signal is emitted when there is a change in the availability of devices.
 */
+
+/*!
+    \fn void QMediaService::activeEndpointChanged(QMediaService::MediaEndpoint endpointType, const QString &endpoint)
+
+    This signal emitted when the active endpoint of type \a endpointType has been changed to \a endpoint.
+*/
+

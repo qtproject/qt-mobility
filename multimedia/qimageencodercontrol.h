@@ -46,6 +46,7 @@ class QStringList;
 class Q_MEDIA_EXPORT QImageEncoderControl : public QMediaControl
 {
     Q_OBJECT
+
 public:
     virtual ~QImageEncoderControl();
 
@@ -61,11 +62,11 @@ public:
 
     virtual QString imageCodecDescription(const QString &codecName) const = 0;
 
-    virtual QMediaRecorder::EncodingQuality quality() const = 0;
-    virtual void setQuality(QMediaRecorder::EncodingQuality) = 0;
+    virtual QtMedia::EncodingQuality quality() const = 0;
+    virtual void setQuality(QtMedia::EncodingQuality) = 0;
 
 protected:
-    QImageEncoderControl(QObject *parent);
+    QImageEncoderControl(QObject *parent = 0);
 };
 
 #define QImageEncoderControl_iid "com.nokia.Qt.QImageEncoderControl/1.0"

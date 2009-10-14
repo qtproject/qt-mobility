@@ -53,12 +53,6 @@ QVideoEncoderControl::~QVideoEncoderControl()
 
 
 /*!
-  \fn QVideoEncoderControl::resolution() const
-
-  Returns the resolution of encoded video stream.
-*/
-
-/*!
   \fn QVideoEncoderControl::minimumResolution() const
 
   Returns the smallest resolution, video encoder supports.
@@ -72,20 +66,6 @@ QVideoEncoderControl::~QVideoEncoderControl()
   Returns the largest resolution, video encoder supports.
 
   \sa resolution
-*/
-
-/*!
-  \fn QVideoEncoderControl::setResolution(const QSize &size)
-
-  Set the video \a resolution.
-  If an empty size is passed,
-  the media service should choose the default or content
-  related resolution value.
-*/
-
-/*!
-  \fn QVideoEncoderControl::frameRate() const
-  Returns frame rate of video stream.
 */
 
 /*!
@@ -105,63 +85,15 @@ QVideoEncoderControl::~QVideoEncoderControl()
 */
 
 /*!
-  \fn QVideoEncoderControl::setFrameRate(const QMediaRecorder::FrameRate &rate)
-
-  Sets the video frame \a rate.
-  If passed frame rate equals to -1/-1, the default value should be used.
-*/
-
-/*!
   \fn QVideoEncoderControl::supportedVideoCodecs() const
 
   Returns the list of supported video codec names.
 */
 
 /*!
-  \fn QVideoEncoderControl::videoCodec() const
-
-  Returns the currently used video codec name.
-*/
-
-/*!
-  \fn QVideoEncoderControl::setVideoCodec(const QString &codecName)
-
-  Use the video codec with name equals to \a codecName.
-
-*/
-
-/*!
   \fn QVideoEncoderControl::videoCodecDescription(const QString &codec) const
 
   Returns description of video \a codec.
-*/
-
-/*!
-  \fn QVideoEncoderControl::bitrate() const
-
-  Returns bitrate of encoded video stream.
-*/
-
-/*!
-  \fn QVideoEncoderControl::setBitrate(int value)
-
-  Set the bitrate of encoded video stream to \a value.
-*/
-
-/*!
-  \fn QVideoEncoderControl::quality() const
-
-  Video encoding quality value.
-
-  \sa QMediaRecorder::videoQuality
-*/
-
-/*!
-  \fn QVideoEncoderControl::setQuality(QMediaRecorder::EncodingQuality value)
-
-  Sets the video encoding quality to \a value.
-
-  \sa quality(), QMediaRecorder::videoQuality
 */
 
 

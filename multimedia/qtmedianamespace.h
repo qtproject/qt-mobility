@@ -35,6 +35,9 @@
 #ifndef QTMEDIANAMESPACE_H
 #define QTMEDIANAMESPACE_H
 
+#include <QtCore/qpair.h>
+#include <QtCore/qmetatype.h>
+
 namespace QtMedia
 {
     enum MetaData
@@ -89,7 +92,7 @@ namespace QtMedia
         PixelAspectRatio,
 
         // Video
-        FrameRate,
+        VideoFrameRate,
         VideoBitRate,
         VideoCodec,
 
@@ -114,6 +117,19 @@ namespace QtMedia
         ProbablySupported,
         PreferedService
     };
+
+    enum EncodingQuality
+    {
+        VeryLowQuality,
+        LowQuality,
+        NormalQuality,
+        HighQuality,
+        VeryHighQuality
+    };
+
+    typedef QPair<int, int> FrameRate;
 }
+
+//Q_DECLARE_METATYPE(QtMedia::FrameRate);
 
 #endif
