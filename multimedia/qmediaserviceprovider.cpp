@@ -252,7 +252,7 @@ public:
                             // but this choice still can be overridden
                             plugin = currentPlugin;
                         } else {
-                            if (iface->devices().contains(hint.device())) {
+                            if (iface->devices(type).contains(hint.device())) {
                                 plugin = currentPlugin;
                                 break;
                             }
@@ -328,7 +328,7 @@ public:
                 QMediaServiceFeaturesInterface *iface =
                         qobject_cast<QMediaServiceFeaturesInterface*>(obj);
 
-                if (iface && !(iface->supportedFeatures() & QMediaServiceProviderHint::LowLatencyPlayback))
+                if (iface && !(iface->supportedFeatures(serviceType) & QMediaServiceProviderHint::LowLatencyPlayback))
                     continue;
             }
 
@@ -355,7 +355,7 @@ public:
                     qobject_cast<QMediaServiceSupportedDevicesInterface*>(obj);
 
             if (iface) {
-                res.append(iface->devices());
+                res.append(iface->devices(serviceType));
             }
         }
 
@@ -369,8 +369,8 @@ public:
                     qobject_cast<QMediaServiceSupportedDevicesInterface*>(obj);
 
             if (iface) {
-                if (iface->devices().contains(device))
-                    return iface->deviceDescription(device);
+                if (iface->devices(serviceType).contains(device))
+                    return iface->deviceDescription(serviceType, device);
             }
         }
 

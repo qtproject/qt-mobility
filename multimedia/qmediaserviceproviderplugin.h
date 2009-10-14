@@ -65,8 +65,8 @@ Q_DECLARE_INTERFACE(QMediaServiceSupportedFormatsInterface, QMediaServiceSupport
 
 struct Q_MEDIA_EXPORT QMediaServiceSupportedDevicesInterface
 {
-    virtual QList<QByteArray> devices() const = 0;
-    virtual QString deviceDescription(const QByteArray &device) = 0;
+    virtual QList<QByteArray> devices(const QByteArray &service) const = 0;
+    virtual QString deviceDescription(const QByteArray &service, const QByteArray &device) = 0;
 };
 #define QMediaServiceSupportedDevicesInterface_iid \
     "com.nokia.Qt.QMediaServiceSupportedDevicesInterface/1.0"
@@ -74,7 +74,7 @@ Q_DECLARE_INTERFACE(QMediaServiceSupportedDevicesInterface, QMediaServiceSupport
 
 struct Q_MEDIA_EXPORT QMediaServiceFeaturesInterface
 {
-    virtual QMediaServiceProviderHint::Features supportedFeatures() const = 0;
+    virtual QMediaServiceProviderHint::Features supportedFeatures(const QByteArray &service) const = 0;
 };
 #define QMediaServiceFeaturesInterface_iid \
     "com.nokia.Qt.QMediaServiceFeaturesInterface/1.0"
