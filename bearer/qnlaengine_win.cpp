@@ -43,8 +43,8 @@
 
 #include <winsock2.h>
 #include <mswsock.h>
-#include <ntddndis.h>
 #undef interface
+#include "qnetworksessionengine_win_p.h"
 
 QT_BEGIN_NAMESPACE
 
