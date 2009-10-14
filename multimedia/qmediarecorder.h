@@ -149,7 +149,7 @@ public slots:
     void setVideoBitrate(int bitrate);
     void setVideoQuality(EncodingQuality quality);
 
-signals:
+Q_SIGNALS:
     void stateChanged(QMediaRecorder::State state);
     void durationChanged(qint64 duration);
 

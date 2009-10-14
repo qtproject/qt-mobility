@@ -54,7 +54,7 @@ public:
 
     virtual qint64 duration() const = 0;
 
-signals:
+Q_SIGNALS:
     void stateChanged(QMediaRecorder::State state);
     void durationChanged(qint64 position);
     void error(int error, const QString &errorString);

@@ -69,7 +69,7 @@ public:
     }
 #endif
 
-signals:
+Q_SIGNALS:
     void supportedEndpointsChanged();
     void activeEndpointChanged(QMediaService::MediaEndpoint endpointType, const QString &endpoint);
 
