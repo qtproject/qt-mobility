@@ -3566,8 +3566,8 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                             } else {
                                 qWarning() << "Unable to synchronize RTF.";
                             }
-#endif
                         }
+#endif
                     }
 
                     // Either the body is in RTF, or we need to read the RTF to know that it is text...
