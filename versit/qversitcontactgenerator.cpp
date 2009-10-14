@@ -77,9 +77,16 @@ QContact QVersitContactGenerator::generateContact(
         if (property.name() == QString::fromAscii(versitNameId)) {
             detail = d->addName(property);
         }
+        else if (property.name() == QString::fromAscii(versitPhoneId)) {
+            detail = d->addPhone(property);
+        }        
         else if (property.name() == QString::fromAscii(versitAddressId)) {
             detail = createAddress(property);
         }
+        else {
+            // NOP
+        }
+            
         if (detail)
             contact.saveDetail(detail);
     }  

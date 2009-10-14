@@ -46,8 +46,10 @@ private slots: // Tests
     
     void init();
     void cleanup();
-    void testGenerateContacts();
+
+    void testAddName();
     void testCreateAddress();
+    void testAddTel();    
     void testExtractContexts();
 
 private:
