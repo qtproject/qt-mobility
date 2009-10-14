@@ -81,7 +81,8 @@ private:
     void validateTransformOnlineAccount(TPtrC16 sipField, QString sipDetail);
     void validateTransformOrganisation(TPtrC16 companyField, QString companyDetail,
                                        TPtrC16 departmentField, QString departmentDetail,
-                                       TPtrC16 jobtitleField, QString jobtitleDetail);
+                                       TPtrC16 jobtitleField, QString jobtitleDetail,
+                                       TPtrC16 assistantField, QString assistantDetail);
     void validateTransformAvatar(TPtrC16 field, QString detail);
     void validateTransformSyncTarget(TPtrC16 field, QString detail);
     void validateTransformGender(TPtrC16 field, QString detail);

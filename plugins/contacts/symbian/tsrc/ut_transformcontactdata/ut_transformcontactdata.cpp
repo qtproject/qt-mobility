@@ -132,8 +132,10 @@ void TestTransformContactData::executeTransformOrganisation()
 {
     validateTransformOrganisation(_L("dummycompany"), QString("dummycompany"),
                                   _L("dummydepartment"), QString("dummydepartment"),
-                                  _L("dummyjobtitle"), QString("dummyjobtitle"));
+                                  _L("dummyjobtitle"), QString("dummyjobtitle"),
+                                  _L("dummyassistant"), QString("dummyassistant"));
     validateTransformOrganisation(_L(""), QString(""),
+                                  _L(""), QString(""),
                                   _L(""), QString(""),
                                   _L(""), QString(""));
 }
@@ -822,13 +824,15 @@ void TestTransformContactData::validateTransformOnlineAccount(TPtrC16 sipField, 
 
 void TestTransformContactData::validateTransformOrganisation(TPtrC16 companyField, QString companyDetail,
                                 TPtrC16 departmentField, QString departmentDetail,
-                                TPtrC16 jobtitleField, QString jobtitleDetail)
+                                TPtrC16 jobtitleField, QString jobtitleDetail,
+                                TPtrC16 assistantField, QString assistantDetail)
 {
     TransformContactData* transformOrganisation = new TransformOrganisation();
     QVERIFY(transformOrganisation != 0);
     QVERIFY(transformOrganisation->supportsField(KUidContactFieldCompanyName.iUid));
     QVERIFY(transformOrganisation->supportsField(KUidContactFieldDepartmentName.iUid));
     QVERIFY(transformOrganisation->supportsField(KUidContactFieldJobTitle.iUid));
+    QVERIFY(transformOrganisation->supportsField(KUidContactFieldAssistant.iUid));
     QVERIFY(transformOrganisation->supportsDetail(QContactOrganization::DefinitionName));
     
     validateContexts(transformOrganisation);
@@ -837,8 +841,9 @@ void TestTransformContactData::validateTransformOrganisation(TPtrC16 companyFiel
     organisation.setName(companyDetail);
     organisation.setDepartment(departmentDetail);
     organisation.setTitle(jobtitleDetail);
+    organisation.setAssistantName(assistantDetail);
     QList<CContactItemField *> fields = transformOrganisation->transformDetailL(organisation);
-    QVERIFY(fields.count() == 3);
+    QVERIFY(fields.count() == 4);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldCompanyName));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(companyField), 0);
@@ -848,6 +853,10 @@ void TestTransformContactData::validateTransformOrganisation(TPtrC16 companyFiel
     QVERIFY(fields.at(2)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(2)->ContentType().ContainsFieldType(KUidContactFieldJobTitle));
     QCOMPARE(fields.at(2)->TextStorage()->Text().CompareF(jobtitleField), 0);
+    QVERIFY(fields.at(3)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(3)->ContentType().ContainsFieldType(KUidContactFieldAssistant));
+    QCOMPARE(fields.at(3)->TextStorage()->Text().CompareF(assistantField), 0);
+
     
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldCompanyName);
     newField->TextStorage()->SetTextL(companyField);
@@ -875,6 +884,16 @@ void TestTransformContactData::validateTransformOrganisation(TPtrC16 companyFiel
     contactDetail = transformOrganisation->transformItemField(*newField, contact);
     const QContactOrganization* organisationInfo3(static_cast<const QContactOrganization*>(contactDetail));
     QCOMPARE(organisationInfo3->title(), jobtitleDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldAssistant);
+    newField->TextStorage()->SetTextL(assistantField);
+    contactDetail = transformOrganisation->transformItemField(*newField, contact);
+    const QContactOrganization* organisationInfo4(static_cast<const QContactOrganization*>(contactDetail));
+    QCOMPARE(organisationInfo4->assistantName(), assistantDetail);
     delete contactDetail;
     contactDetail = 0;
     delete newField;

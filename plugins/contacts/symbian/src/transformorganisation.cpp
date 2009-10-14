@@ -37,10 +37,10 @@ QList<CContactItemField *> TransformOrganisation::transformDetailL(const QContac
 	QList<CContactItemField *> fieldList;
 	
 	//cast to orgenisation
-        const QContactOrganization &orgDetails(static_cast<const QContactOrganization&>(detail));
+    const QContactOrganization &orgDetails(static_cast<const QContactOrganization&>(detail));
 	
 	//Company
-        TPtrC fieldTextCompany(reinterpret_cast<const TUint16*>(orgDetails.name().utf16()));
+    TPtrC fieldTextCompany(reinterpret_cast<const TUint16*>(orgDetails.name().utf16()));
 	CContactItemField* company = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldCompanyName);
 	company->TextStorage()->SetTextL(fieldTextCompany);
 	company->SetMapping(KUidContactFieldVCardMapORG);
@@ -63,36 +63,45 @@ QList<CContactItemField *> TransformOrganisation::transformDetailL(const QContac
 	fieldList.append(jobTitle);
 	CleanupStack::Pop(jobTitle);
 	
+	//Assistant name
+    TPtrC fieldTextAssistantName(reinterpret_cast<const TUint16*>(orgDetails.assistantName().utf16()));
+    CContactItemField* assistantName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldAssistant);
+    assistantName->TextStorage()->SetTextL(fieldTextAssistantName);
+    assistantName->SetMapping(KUidContactFieldVCardMapAssistant);
+    fieldList.append(assistantName);
+    CleanupStack::Pop(assistantName);
+
 	return fieldList;
 }	
 
 
 QContactDetail *TransformOrganisation::transformItemField(const CContactItemField& field, const QContact &contact)
 {
-        QContactOrganization *organisation = new QContactOrganization(contact.detail<QContactOrganization>());
+    QContactOrganization *organisation = new QContactOrganization(contact.detail<QContactOrganization>());
 	
 	CContactTextField* storage = field.TextStorage();
 	QString orgDetail = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
 	
-	for (int i = 0; i < field.ContentType().FieldTypeCount(); i++)
-	{
+	for (int i = 0; i < field.ContentType().FieldTypeCount(); i++) {
 		//Company
-		if (field.ContentType().FieldType(i) == KUidContactFieldCompanyName)
-		{
+		if (field.ContentType().FieldType(i) == KUidContactFieldCompanyName) {
             organisation->setName(orgDetail);
 		}
 		
 		//Department
-		else if (field.ContentType().FieldType(i) == KUidContactFieldDepartmentName)
-		{
+		else if (field.ContentType().FieldType(i) == KUidContactFieldDepartmentName) {
             organisation->setDepartment(orgDetail);
 		}
 		
 		//Job title
-		else if (field.ContentType().FieldType(i) == KUidContactFieldJobTitle)
-		{
+		else if (field.ContentType().FieldType(i) == KUidContactFieldJobTitle) {
             organisation->setTitle(orgDetail);
 		}
+		
+	    //Assistant name
+	    else if (field.ContentType().FieldType(i) == KUidContactFieldAssistant) {
+            organisation->setAssistantName(orgDetail);
+	    }
 	}
 	
 	return organisation;
@@ -103,7 +112,8 @@ bool TransformOrganisation::supportsField(TUint32 fieldType) const
     bool ret = false;
     if (fieldType == KUidContactFieldCompanyName.iUid ||
         fieldType == KUidContactFieldDepartmentName.iUid ||
-        fieldType == KUidContactFieldJobTitle.iUid) {
+        fieldType == KUidContactFieldJobTitle.iUid ||
+        fieldType == KUidContactFieldAssistant.iUid) {
         ret = true;
     }
     return ret;
