@@ -445,6 +445,11 @@ QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) con
 /*! Returns a list of relationships of the given \a relationshipType in which the contact was a participant at the time that it was retrieved from the manager */
 QList<QContactRelationship> QContact::relationships(const QString& relationshipType) const
 {
+    // if empty, then they want all relationships
+    if (relationshipType.isEmpty())
+        return d->m_relationships;
+
+    // otherwise, filter on type.
     QList<QContactRelationship> retn;
     for (int i = 0; i < d->m_relationships.size(); i++) {
         QContactRelationship curr = d->m_relationships.at(i);
