@@ -202,7 +202,8 @@ void QMessageAddress::parseEmailAddress(const QString &emailAddress, QString *na
     if (!aEndDelimeterFound)
         aEndDelimeterFound = &ignored2;
 
-    qParseMailbox(QString(emailAddress), *aName, *aAddress, *aSuffix, *aStartDelimeterFound, *aEndDelimeterFound);
+    QString emailAddressCopy(emailAddress);
+    qParseMailbox(emailAddressCopy, *aName, *aAddress, *aSuffix, *aStartDelimeterFound, *aEndDelimeterFound);
 }
 
 /*! \typedef QMessageAddressList
