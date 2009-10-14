@@ -26,8 +26,8 @@ public:
     int bitrate() const;
     void setBitrate(int);
 
-    QMediaRecorder::EncodingQuality quality() const;
-    void setQuality(QMediaRecorder::EncodingQuality);
+    QtMedia::EncodingQuality quality() const;
+    void setQuality(QtMedia::EncodingQuality);
 
     QStringList supportedEncodingOptions(const QString &codec) const;
     QVariant encodingOption(const QString &codec, const QString &name) const;

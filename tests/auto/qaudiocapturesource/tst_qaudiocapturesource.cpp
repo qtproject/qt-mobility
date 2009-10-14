@@ -66,15 +66,14 @@ public:
     QString codecDescription(const QString &codecName) const { return m_descriptions.at(m_codecs.indexOf(codecName)); }
     int bitrate() const { return 0; }
     void setBitrate(int) {}
-    QMediaRecorder::EncodingQuality quality() const { return QMediaRecorder::NormalQuality; }
-    void setQuality(QMediaRecorder::EncodingQuality) {}
+    QtMedia::EncodingQuality quality() const { return QtMedia::NormalQuality; }
+    void setQuality(QtMedia::EncodingQuality) {}
     QStringList supportedEncodingOptions(const QString &) const { return QStringList() << "bitrate"; }
     QVariant encodingOption(const QString &, const QString &name) const { return m_optionValue; }
     void setEncodingOption(const QString &, const QString &name, const QVariant &value) { m_optionValue = value; }
-    int frequency() const { return m_freq; }
-    void setFrequency(int frequency) { m_freq = frequency; }
-    QList<int> supportedFrequencies() const { return m_freqs; }
-    QPair<int,int> supportedFrequencyRange() const { return m_freqRange; }
+    int sampleRate() const { return m_freq; }
+    void setSampleRate(int sampleRate) { m_freq = sampleRate; }
+    QList<int> supportedSampleRates() const { return m_freqs; }
     int channels() const { return m_channels; }
     void setChannels(int channels) { m_channels = channels; }
     QList<int> supportedChannelCounts() const { QList<int> list; list << 1 << 2; return list; }

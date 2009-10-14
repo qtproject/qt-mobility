@@ -56,11 +56,11 @@ public:
     virtual QList<QSize> supportedResolutions() const = 0;
     virtual void setResolution(const QSize &) = 0;
 
-    virtual QMediaRecorder::FrameRate frameRate() const = 0;
-    virtual QMediaRecorder::FrameRate minimumFrameRate() const = 0;
-    virtual QMediaRecorder::FrameRate maximumFrameRate() const = 0;
-    virtual QList<QMediaRecorder::FrameRate> supportedFrameRates() const = 0;
-    virtual void setFrameRate(const QMediaRecorder::FrameRate &rate) = 0;
+    virtual QtMedia::FrameRate frameRate() const = 0;
+    virtual QtMedia::FrameRate minimumFrameRate() const = 0;
+    virtual QtMedia::FrameRate maximumFrameRate() const = 0;
+    virtual QList<QtMedia::FrameRate> supportedFrameRates() const = 0;
+    virtual void setFrameRate(const QtMedia::FrameRate &rate) = 0;
 
     virtual QStringList supportedVideoCodecs() const = 0;
     virtual QString videoCodec() const = 0;
@@ -72,8 +72,8 @@ public:
     virtual int bitrate() const = 0;
     virtual void setBitrate(int) = 0;
 
-    virtual QMediaRecorder::EncodingQuality quality() const = 0;
-    virtual void setQuality(QMediaRecorder::EncodingQuality) = 0;
+    virtual QtMedia::EncodingQuality quality() const = 0;
+    virtual void setQuality(QtMedia::EncodingQuality) = 0;
 
     virtual QStringList supportedEncodingOptions(const QString &codec) const = 0;
     virtual QVariant encodingOption(const QString &codec, const QString &name) const = 0;

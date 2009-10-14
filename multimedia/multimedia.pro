@@ -33,6 +33,7 @@ HEADERS = \
     qmediacontent.h \
     qmediaresource.h \
     qmediarecorder.h \
+    qmediaencodersettings.h \
     qmediarecordercontrol.h \
     qmediaserviceprovider.h \
     qmediaserviceproviderplugin.h \
@@ -76,6 +77,7 @@ SOURCES = qmediacontrol.cpp \
     qmediaplaylistnavigator.cpp \
     qmediaplaylistprovider.cpp \
     qmediarecorder.cpp \
+    qmediaencodersettings.cpp \
     qmediarecordercontrol.cpp \
     qmediacontent.cpp \
     qmediaresource.cpp \

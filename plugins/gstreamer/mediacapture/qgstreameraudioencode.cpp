@@ -41,7 +41,7 @@
 
 QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
     :QAudioEncoderControl(parent),
-    m_frequency(-1),
+    m_sampleRate(-1),
     m_channels(-1),
     m_sampleSize(-1)
 {
@@ -100,8 +100,8 @@ bool QGstreamerAudioEncode::setAudioCodec(const QString &codecName)
     m_codec = codecName;
 
     //speex is optimised for a limited set of frequencies
-    if (codecName == QLatin1String("audio/speex") && m_frequency == -1) {
-        m_frequency = 32000;
+    if (codecName == QLatin1String("audio/speex") && m_sampleRate == -1) {
+        m_sampleRate = 32000;
     }
 
     return true;
@@ -117,13 +117,13 @@ void QGstreamerAudioEncode::setBitrate(int value)
     setEncodingOption(m_codec, QLatin1String("bitrate"), QVariant(value));
 }
 
-QMediaRecorder::EncodingQuality QGstreamerAudioEncode::quality() const
+QtMedia::EncodingQuality QGstreamerAudioEncode::quality() const
 {
-    return QMediaRecorder::EncodingQuality(m_options.value(QLatin1String("quality"),
-                                                           QVariant(QMediaRecorder::NormalQuality)).toInt());
+    return QtMedia::EncodingQuality(m_options.value(QLatin1String("quality"),
+                                                           QVariant(QtMedia::NormalQuality)).toInt());
 }
 
-void QGstreamerAudioEncode::setQuality(QMediaRecorder::EncodingQuality value)
+void QGstreamerAudioEncode::setQuality(QtMedia::EncodingQuality value)
 {
     setEncodingOption(m_codec, QLatin1String("quality"), QVariant(value));
 }
@@ -146,18 +146,11 @@ void QGstreamerAudioEncode::setEncodingOption(
         m_options.insert(name,value);
 }
 
-QList<int> QGstreamerAudioEncode::supportedFrequencies() const
+QList<int> QGstreamerAudioEncode::supportedSampleRates() const
 {
     //TODO check element caps to find actual values
 
     return QList<int>();
-}
-
-QPair<int,int> QGstreamerAudioEncode::supportedFrequencyRange() const
-{
-    //TODO check element caps to find actual values
-
-    return qMakePair<int,int>(8000, 48000);
 }
 
 QList<int> QGstreamerAudioEncode::supportedChannelCounts() const
@@ -198,12 +191,12 @@ GstElement *QGstreamerAudioEncode::createEncoder()
     gst_element_add_pad(GST_ELEMENT(encoderBin), gst_ghost_pad_new("src", pad));
     gst_object_unref(GST_OBJECT(pad));
 
-    if (m_frequency > 0 || m_channels > 0 || m_sampleSize > 0) {
+    if (m_sampleRate > 0 || m_channels > 0 || m_sampleSize > 0) {
         GstCaps *caps = gst_caps_new_empty();
         GstStructure *structure = gst_structure_new("audio/x-raw-int", NULL);
 
-        if ( m_frequency > 0 )
-            gst_structure_set(structure, "rate", G_TYPE_INT, m_frequency, NULL );
+        if ( m_sampleRate > 0 )
+            gst_structure_set(structure, "rate", G_TYPE_INT, m_sampleRate, NULL );
 
         if ( m_channels > 0 )
             gst_structure_set(structure, "channels", G_TYPE_INT, m_channels, NULL );
@@ -227,7 +220,7 @@ GstElement *QGstreamerAudioEncode::createEncoder()
             QVariant value = it.value();
 
             if (option == QLatin1String("quality")) {
-                int qualityValue = qBound(int(QMediaRecorder::VeryLowQuality), value.toInt(), int(QMediaRecorder::VeryHighQuality));
+                int qualityValue = qBound(int(QtMedia::VeryLowQuality), value.toInt(), int(QtMedia::VeryHighQuality));
 
                 if (m_codec == QLatin1String("audio/vorbis")) {
                     double qualityTable[] = {

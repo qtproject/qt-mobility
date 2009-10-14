@@ -56,11 +56,11 @@ public:
     QList<QSize> supportedResolutions() const;
     void setResolution(const QSize &);
 
-    QMediaRecorder::FrameRate frameRate() const;
-    QMediaRecorder::FrameRate minimumFrameRate() const;
-    QMediaRecorder::FrameRate maximumFrameRate() const;
-    QList< QMediaRecorder::FrameRate > supportedFrameRates() const;
-    void setFrameRate(const QMediaRecorder::FrameRate &rate);
+    QtMedia::FrameRate frameRate() const;
+    QtMedia::FrameRate minimumFrameRate() const;
+    QtMedia::FrameRate maximumFrameRate() const;
+    QList< QtMedia::FrameRate > supportedFrameRates() const;
+    void setFrameRate(const QtMedia::FrameRate &rate);
 
     QStringList supportedVideoCodecs() const;
     QString videoCodecDescription(const QString &codecName) const;
@@ -72,8 +72,8 @@ public:
     int bitrate() const;
     void setBitrate(int);
 
-    QMediaRecorder::EncodingQuality quality() const;
-    void setQuality(QMediaRecorder::EncodingQuality);
+    QtMedia::EncodingQuality quality() const;
+    void setQuality(QtMedia::EncodingQuality);
 
     QStringList supportedEncodingOptions(const QString &codec) const;
     QVariant encodingOption(const QString &codec, const QString &name) const;
@@ -90,7 +90,7 @@ private:
     QString m_codec;
     QMap<QString, QVariant> m_options;
     QSize m_resolution;
-    QMediaRecorder::FrameRate m_frameRate;
+    QtMedia::FrameRate m_frameRate;
 };
 
 #endif

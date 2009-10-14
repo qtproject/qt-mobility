@@ -64,17 +64,16 @@ public:
     int bitrate() const;
     void setBitrate(int);
 
-    QMediaRecorder::EncodingQuality quality() const;
-    void setQuality(QMediaRecorder::EncodingQuality);
+    QtMedia::EncodingQuality quality() const;
+    void setQuality(QtMedia::EncodingQuality);
 
     QStringList supportedEncodingOptions(const QString &codec) const;
     QVariant encodingOption(const QString &codec, const QString &name) const;
     void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
 
-    int frequency() const { return m_frequency; }
-    void setFrequency(int frequency) { m_frequency = frequency; }
-    QList<int> supportedFrequencies() const;
-    QPair<int,int> supportedFrequencyRange() const;
+    int sampleRate() const { return m_sampleRate; }
+    void setSampleRate(int sampleRate) { m_sampleRate = sampleRate; }
+    QList<int> supportedSampleRates() const;
 
     int channels() const { return m_channels; }
     void setChannels(int channels) { m_channels = channels; }
@@ -95,7 +94,7 @@ private:
     QMap<QString, QVariant> m_options;
     QString m_codec;
 
-    int m_frequency;
+    int m_sampleRate;
     int m_channels;
     int m_sampleSize;
 };

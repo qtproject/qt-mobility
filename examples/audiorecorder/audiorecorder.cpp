@@ -147,11 +147,12 @@ void AudioRecorder::deviceChanged(int idx)
 
 void AudioRecorder::codecChanged(int idx)
 {
-    capture->setAudioCodec(codecsBox->itemText(idx));
+    //capture->setAudioCodec(codecsBox->itemText(idx));
 }
 
 void AudioRecorder::qualityChanged(int idx)
 {
+    /*
     if(capture->audioCodec().compare("audio/pcm") == 0) {
         if(qualityBox->itemText(idx).compare("Low") == 0) {
             // 8000Hz mono is 8kbps
@@ -164,6 +165,7 @@ void AudioRecorder::qualityChanged(int idx)
             capture->setAudioBitrate(88);
         }
     }
+    */
 }
 
 void AudioRecorder::toggleRecord()

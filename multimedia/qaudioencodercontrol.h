@@ -59,18 +59,17 @@ public:
     virtual int bitrate() const = 0;
     virtual void setBitrate(int) = 0;
 
-    virtual QMediaRecorder::EncodingQuality quality() const = 0;
-    virtual void setQuality(QMediaRecorder::EncodingQuality) = 0;
+    virtual QtMedia::EncodingQuality quality() const = 0;
+    virtual void setQuality(QtMedia::EncodingQuality) = 0;
 
     virtual QStringList supportedEncodingOptions(const QString &codec) const = 0;
     virtual QVariant encodingOption(const QString &codec, const QString &name) const = 0;
     virtual void setEncodingOption(
             const QString &codec, const QString &name, const QVariant &value) = 0;
 
-    virtual int frequency() const = 0;
-    virtual void setFrequency(int frequency) = 0;
-    virtual QList<int> supportedFrequencies() const = 0;
-    virtual QPair<int,int> supportedFrequencyRange() const = 0;
+    virtual int sampleRate() const = 0;
+    virtual void setSampleRate(int sampleRate) = 0;
+    virtual QList<int> supportedSampleRates() const = 0;
 
     virtual int channels() const = 0;
     virtual void setChannels(int channels) = 0;
