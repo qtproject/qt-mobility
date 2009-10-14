@@ -132,7 +132,7 @@ public:
     int videoBitrate() const;
     EncodingQuality videoQuality() const;
 
-public slots:
+public Q_SLOTS:
     void record();
     void pause();
     void stop();

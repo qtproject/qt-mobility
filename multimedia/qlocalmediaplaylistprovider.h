@@ -56,7 +56,7 @@ public:
     virtual bool removeItems(int start, int end);
     virtual bool clear();
 
-public slots:
+public Q_SLOTS:
     virtual void shuffle();
 
 private:

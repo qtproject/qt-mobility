@@ -59,7 +59,7 @@ Q_SIGNALS:
     void durationChanged(qint64 position);
     void error(int error, const QString &errorString);
 
-public slots:
+public Q_SLOTS:
     virtual void record() = 0;
     virtual void pause() = 0;
     virtual void stop() = 0;
