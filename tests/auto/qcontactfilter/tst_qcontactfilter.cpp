@@ -592,7 +592,42 @@ void tst_QContactFilter::detailRangeFilter()
 
 void tst_QContactFilter::relationshipFilter()
 {
-    QSKIP("TODO!", SkipSingle);
+    QContactRelationshipFilter crf;
+
+    QVERIFY(crf.type() == QContactFilter::RelationshipFilter);
+
+    QVERIFY(crf.role() == QContactRelationshipFilter::Either);
+    QVERIFY(crf.relationshipType() == QString());
+    QVERIFY(crf.otherParticipantId() == QContactId());
+
+    QContactId newId;
+    newId.setManagerUri("test");
+    newId.setLocalId(QContactLocalId(5));
+    crf.setOtherParticipantId(newId);
+    QVERIFY(crf.role() == QContactRelationshipFilter::Either);
+    QVERIFY(crf.relationshipType() == QString());
+    QVERIFY(crf.otherParticipantId() == newId);
+
+    crf.setRole(QContactRelationshipFilter::Source);
+    QVERIFY(crf.role() == QContactRelationshipFilter::Source);
+    QVERIFY(crf.relationshipType() == QString());
+    QVERIFY(crf.otherParticipantId() == newId);
+
+    crf.setRelationshipType(QContactRelationship::IsManagerOf);
+    QVERIFY(crf.role() == QContactRelationshipFilter::Source);
+    QVERIFY(crf.relationshipType() == QContactRelationship::IsManagerOf);
+    QVERIFY(crf.otherParticipantId() == newId);
+
+    /* Test op= */
+    QContactFilter f = crf;
+    QVERIFY(f == crf);
+
+    QContactRelationshipFilter crf2 = f;
+    QVERIFY(crf2 == crf);
+
+    /* Self assignment should do nothing */
+    crf2 = crf2;
+    QVERIFY(crf2 == crf);
 }
 
 void tst_QContactFilter::sortObject()

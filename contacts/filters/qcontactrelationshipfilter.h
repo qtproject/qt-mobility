@@ -62,11 +62,11 @@ public:
     };
 
     void setRole(QContactRelationshipFilter::Role roleInRelationship);
-    void setType(const QString& relationshipType);
+    void setRelationshipType(const QString& relationshipType);
     void setOtherParticipantId(const QContactId& contactId);
 
     QContactRelationshipFilter::Role role() const;
-    QString type() const;
+    QString relationshipType() const;
     QContactId otherParticipantId() const;
 
 private:

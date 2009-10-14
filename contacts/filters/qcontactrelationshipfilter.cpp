@@ -69,7 +69,7 @@ void QContactRelationshipFilter::setRole(QContactRelationshipFilter::Role roleIn
 /*!
  * Sets the type of relationship which a contact must have in order to match this filter to \a relationshipType
  */
-void QContactRelationshipFilter::setType(const QString& relationshipType)
+void QContactRelationshipFilter::setRelationshipType(const QString& relationshipType)
 {
     Q_D(QContactRelationshipFilter);
     d->m_relationshipType = relationshipType;
@@ -97,7 +97,7 @@ QContactRelationshipFilter::Role QContactRelationshipFilter::role() const
 /*!
  * Returns the type of relationship that a contact must have in order to match the filter
  */
-QString QContactRelationshipFilter::type() const
+QString QContactRelationshipFilter::relationshipType() const
 {
     Q_D(const QContactRelationshipFilter);
     return d->m_relationshipType;
