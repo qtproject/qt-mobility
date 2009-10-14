@@ -86,7 +86,8 @@ symbian: {
     }
 
     win32: {
-        HEADERS += qnlaengine_win_p.h
+        HEADERS += qnlaengine_win_p.h \
+                   qnetworksessionengine_win_p.h
 
         !wince*:HEADERS += qnativewifiengine_win_p.h
 
