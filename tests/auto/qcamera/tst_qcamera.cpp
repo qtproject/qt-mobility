@@ -39,6 +39,7 @@
 #include <multimedia/qcameraexposurecontrol.h>
 #include <multimedia/qcamerafocuscontrol.h>
 #include <multimedia/qimagecapturecontrol.h>
+#include <multimedia/qimageprocessingcontrol.h>
 #include <multimedia/qmediaservice.h>
 #include <multimedia/qcamera.h>
 
@@ -355,6 +356,61 @@ private:
     QCamera::FocusMode m_focusMode;
 };
 
+class MockImageProcessingControl : public QImageProcessingControl
+{
+public:
+    MockImageProcessingControl(QObject *parent = 0)
+        : QImageProcessingControl(parent)
+        , m_supportedWhiteBalance(QCamera::WhiteBalanceAuto)
+        , m_contrast(0.0)
+        , m_saturation(0.0)
+        , m_sharpeningLevel(0.0)
+        , m_denoisingLevel(0.0)
+        , m_sharpeningSupported(false)
+        , m_denoisingSupported(true)
+    {
+    }
+
+    QCamera::WhiteBalanceMode whiteBalanceMode() const { return m_whiteBalanceMode; }
+    void setWhiteBalanceMode(QCamera::WhiteBalanceMode mode) { m_whiteBalanceMode = mode; }
+
+    QCamera::WhiteBalanceModes supportedWhiteBalanceModes() const {
+        return m_supportedWhiteBalance; }
+    void setSupportedWhiteBalanceModes(QCamera::WhiteBalanceModes modes) {
+        m_supportedWhiteBalance = modes; }
+
+    int manualWhiteBalance() const { return m_manualWhiteBalance; }
+    void setManualWhiteBalance(int colorTemperature) { m_manualWhiteBalance = colorTemperature; }
+
+    qreal contrast() const { return m_contrast; }
+    void setContrast(qreal value) { m_contrast = value; }
+
+    qreal saturation() const { return m_saturation; }
+    void setSaturation(qreal value) { m_saturation = value; }
+
+    bool isSharpeningSupported() const { return m_sharpeningSupported; }
+    void setSharpendingSupported(bool supported) { m_sharpeningSupported = supported; }
+
+    qreal sharpeningLevel() const { return m_sharpeningLevel; }
+    void setSharpeningLevel(qreal value) { m_sharpeningLevel = value; }
+
+    bool isDenoisingSupported() const { return m_denoisingSupported; }
+    void setDenoisingSupported(bool supported) { m_denoisingSupported = supported; }
+    qreal denoisingLevel() const { return m_denoisingLevel; }
+    void setDenoisingLevel(qreal value) { m_denoisingLevel = value; }
+
+private:
+    QCamera::WhiteBalanceMode m_whiteBalanceMode;
+    QCamera::WhiteBalanceModes m_supportedWhiteBalance;
+    int m_manualWhiteBalance;
+    qreal m_contrast;
+    qreal m_saturation;
+    qreal m_sharpeningLevel;
+    qreal m_denoisingLevel;
+    bool m_sharpeningSupported;
+    bool m_denoisingSupported;
+};
+
 class MockSimpleCameraService : public QMediaService
 {
     Q_OBJECT
@@ -391,6 +447,7 @@ public:
         mockExposureControl = new MockCameraExposureControl(this);
         mockFocusControl = new MockCameraFocusControl(this);
         mockCaptureControl = new MockCaptureControl(this);
+        mockImageProcessingControl = new MockImageProcessingControl(this);
     }
 
     ~MockCameraService()
@@ -411,6 +468,9 @@ public:
         if (qstrcmp(iid, QImageCaptureControl_iid) == 0)
             return mockCaptureControl;
 
+        if (qstrcmp(iid, QImageProcessingControl_iid) == 0)
+            return mockImageProcessingControl;
+
         return 0;
     }
 
@@ -418,6 +478,7 @@ public:
     MockCaptureControl *mockCaptureControl;
     MockCameraExposureControl *mockExposureControl;
     MockCameraFocusControl *mockFocusControl;
+    MockImageProcessingControl *mockImageProcessingControl;
 };
 
 class MockProvider : public QMediaServiceProvider
@@ -450,6 +511,7 @@ private slots:
     void testSimpleCameraFocus();
     void testSimpleCameraCapture();
 
+    void testCameraWhiteBalance();
     void testCameraExposure();
     void testCameraFocus();
     void testCameraCapture();
@@ -609,6 +671,37 @@ void tst_QCamera::testCameraCapture()
     camera.capture(QString::fromLatin1("/dev/null"));
     QCOMPARE(capturedSignal.size(), 1);
     QCOMPARE(camera.error(), QCamera::NoError);
+}
+
+void tst_QCamera::testCameraWhiteBalance()
+{
+    QCamera::WhiteBalanceModes whiteBalanceModes
+            = QCamera::WhiteBalanceAuto
+            | QCamera::WhiteBalanceFlash
+            | QCamera::WhiteBalanceIncandescent;
+    
+    MockCameraService service;
+    service.mockImageProcessingControl->setWhiteBalanceMode(QCamera::WhiteBalanceFlash);
+    service.mockImageProcessingControl->setSupportedWhiteBalanceModes(whiteBalanceModes);
+    service.mockImageProcessingControl->setManualWhiteBalance(34);
+
+    MockProvider provider;
+    provider.service = &service;
+    
+    QCamera camera(0, &provider);
+    
+    QCOMPARE(camera.whiteBalanceMode(), QCamera::WhiteBalanceFlash);
+    QCOMPARE(camera.supportedWhiteBalanceModes(), whiteBalanceModes);
+
+    camera.setWhiteBalanceMode(QCamera::WhiteBalanceIncandescent);
+    QCOMPARE(camera.whiteBalanceMode(), QCamera::WhiteBalanceIncandescent);
+
+    camera.setWhiteBalanceMode(QCamera::WhiteBalanceManual);
+    QCOMPARE(camera.whiteBalanceMode(), QCamera::WhiteBalanceManual);
+    QCOMPARE(camera.manualWhiteBalance(), 34);
+
+    camera.setManualWhiteBalance(432);
+    QCOMPARE(camera.manualWhiteBalance(), 432);
 }
 
 void tst_QCamera::testCameraExposure()

@@ -95,7 +95,7 @@ QImageProcessingControl::~QImageProcessingControl()
 */
 
 /*!
-    \fn QImageProcessingControl::setContrast(qreal value) const
+    \fn QImageProcessingControl::setContrast(qreal value)
     Set the contrast to \a value.
 */
 

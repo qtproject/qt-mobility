@@ -54,7 +54,7 @@ public:
     virtual void setManualWhiteBalance(int colorTemperature) = 0;
 
     virtual qreal contrast() const = 0;
-    virtual void setContrast(qreal value) const = 0;
+    virtual void setContrast(qreal value) = 0;
 
     virtual qreal saturation() const = 0;
     virtual void setSaturation(qreal value) = 0;
