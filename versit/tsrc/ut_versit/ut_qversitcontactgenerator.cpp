@@ -42,6 +42,8 @@
 #include <qcontactname.h>
 #include <qcontactaddress.h>
 #include <qcontactphonenumber.h>
+#include <qcontactemailaddress.h>
+#include <qcontacturl.h>
 
 
 void UT_QVersitContactGenerator::init()
@@ -55,7 +57,7 @@ void UT_QVersitContactGenerator::cleanup()
    delete mGenerator;
 }
 
-void UT_QVersitContactGenerator::testAddName()
+void UT_QVersitContactGenerator::testCreateName()
 {
     QVersitDocument document;
     QVersitProperty nameProperty;
@@ -157,7 +159,7 @@ void UT_QVersitContactGenerator::testCreateAddress()
     address = 0;    
 }
 
-void UT_QVersitContactGenerator::testAddTel()
+void UT_QVersitContactGenerator::testCreateTel()
 {
     QVersitDocument document;
     QVersitProperty nameProperty;
@@ -192,6 +194,36 @@ void UT_QVersitContactGenerator::testAddTel()
     QCOMPARE(contexts.count(),2);
     QCOMPARE(contexts[0],QContactDetail::ContextWork.operator QString());
     QCOMPARE(contexts[1],QContactDetail::ContextHome.operator QString());
+}
+
+void UT_QVersitContactGenerator::testCreateEmail()
+{
+    QVersitDocument document;
+    QVersitProperty nameProperty;
+    nameProperty.setName(QString::fromAscii(versitEmailId));
+    QByteArray value("homer.simpson@springfield.com");
+    nameProperty.setValue(value);
+    document.addProperty(nameProperty);
+    QContact contact = mGenerator->generateContact(document);
+    const QContactEmailAddress& email =
+        static_cast<QContactEmailAddress>(
+            contact.detail(QContactEmailAddress::DefinitionName));
+    QCOMPARE(email.emailAddress(),QString(value));
+}
+
+void UT_QVersitContactGenerator::testCreateUrl()
+{
+    QVersitDocument document;
+    QVersitProperty nameProperty;
+    nameProperty.setName(QString::fromAscii(versitUrlId));
+    QByteArray value("http://www.simpsonsmovie.com/homer.html");
+    nameProperty.setValue(value);
+    document.addProperty(nameProperty);
+    QContact contact = mGenerator->generateContact(document);
+    const QContactUrl& url =
+        static_cast<QContactUrl>(
+            contact.detail(QContactUrl::DefinitionName));
+    QCOMPARE(url.url(),QString(value));
 }
 
 void UT_QVersitContactGenerator::testExtractContexts()

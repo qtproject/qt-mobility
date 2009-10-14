@@ -46,10 +46,13 @@ private slots: // Tests
     
     void init();
     void cleanup();
-
-    void testAddName();
+    // test functions
+    void testCreateName();
     void testCreateAddress();
-    void testAddTel();    
+    void testCreateTel();    
+    void testCreateEmail();
+    void testCreateUrl();
+    // test utilities
     void testExtractContexts();
 
 private:

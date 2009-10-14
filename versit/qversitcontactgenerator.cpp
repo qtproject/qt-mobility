@@ -54,6 +54,8 @@
 #include <qcontact.h>
 #include <qcontactdetail.h>
 #include <qcontactaddress.h>
+#include <qcontactemailaddress.h>
+#include <qcontacturl.h>
 #include <QHash>
 
 
@@ -82,6 +84,12 @@ QContact QVersitContactGenerator::generateContact(
         }        
         else if (property.name() == QString::fromAscii(versitAddressId)) {
             detail = createAddress(property);
+        }
+        else if (property.name() == QString::fromAscii(versitEmailId)) {
+            detail = createEmail(property);
+        }
+        else if (property.name() == QString::fromAscii(versitUrlId)) {
+            detail = createUrl(property);
         }
         else {
             // NOP
@@ -190,6 +198,28 @@ QContactDetail* QVersitContactGenerator::createAddress(
     address->setCountry(takeFirst(addressParts));
     
     return address;
+}
+
+/*!
+ * Creates a QContactEmailAddress from \a property
+ */
+QContactDetail* QVersitContactGenerator::createEmail(
+    const QVersitProperty& property) const
+{
+    QContactEmailAddress* email = new QContactEmailAddress();
+    email->setEmailAddress(property.value());
+    return email;
+}
+
+/*!
+ * Creates a QContactUrl from \a property
+ */
+QContactDetail* QVersitContactGenerator::createUrl(
+    const QVersitProperty& property) const
+{
+    QContactUrl* url = new QContactUrl();
+    url->setUrl(property.value());
+    return url;
 }
 
 /*!
