@@ -48,6 +48,7 @@
 #include "qcontactdetaildefinition.h"
 #include "qcontactdisplaylabel.h"
 #include "qcontactrelationship.h"
+#include "qcontactrelationshipfilter.h"
 #include "qcontacttype.h"
 
 class QContactManager;
@@ -126,6 +127,8 @@ public:
 
     /* Relationships that this contact was involved in when it was retrieved from the manager */
     QList<QContactRelationship> relationships(const QString& relationshipType = QString()) const;
+    QList<QContactId> relatedContacts(const QString& relationshipType = QString(), QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
+
     
     /* Actions available to be performed on this contact */
     QStringList availableActions() const;

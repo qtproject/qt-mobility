@@ -442,11 +442,61 @@ QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) con
     return retn;
 }
 
-/*! Returns a list of relationships in which the contact was a participant at the time that it was retrieved from the manager */
+/*! Returns a list of relationships of the given \a relationshipType in which the contact was a participant at the time that it was retrieved from the manager */
 QList<QContactRelationship> QContact::relationships(const QString& relationshipType) const
 {
-    // TODO: filter.
-    return d->m_relationships;
+    QList<QContactRelationship> retn;
+    for (int i = 0; i < d->m_relationships.size(); i++) {
+        QContactRelationship curr = d->m_relationships.at(i);
+        if (curr.relationshipType() == relationshipType) {
+            retn.append(curr);
+        }
+    }
+
+    return retn;
+}
+
+/*! Returns a list of ids of contacts which are related to this contact in a relationship of the given \a relationshipType, where those other contacts participate in the relationship in the given \a role */
+QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QContactRelationshipFilter::Role role) const
+{
+    QList<QContactId> retn;
+    for (int i = 0; i < d->m_relationships.size(); i++) {
+        QContactRelationship curr = d->m_relationships.at(i);
+        if (curr.relationshipType() == relationshipType) {
+            // check that the other contacts fill the given role
+            if (role == QContactRelationshipFilter::Source) {
+                if (curr.sourceContact() != d->m_id.localId()) {
+                    QContactId matchingId;
+                    matchingId.setManagerUri(d->m_id.managerUri());
+                    matchingId.setLocalId(curr.sourceContact());
+                    retn.append(matchingId);
+                }
+            } else if (role == QContactRelationshipFilter::Destination) {
+                if (curr.sourceContact() == d->m_id.localId()) {
+                    retn.append(curr.destinationContacts());
+                }
+            } else { // role == Either.
+                if (curr.sourceContact() == d->m_id.localId()) {
+                    retn.append(curr.destinationContacts());
+                } else {
+                    QContactId matchingId;
+                    matchingId.setManagerUri(d->m_id.managerUri());
+                    matchingId.setLocalId(curr.sourceContact());
+                    retn.append(matchingId);
+                }
+            }
+        }
+    }
+
+    QList<QContactId> removeDuplicates;
+    for (int i = 0; i < retn.size(); i++) {
+        QContactId curr = retn.at(i);
+        if (!removeDuplicates.contains(curr)) {
+            removeDuplicates.append(curr);
+        }
+    }
+
+    return removeDuplicates;
 }
 
 /*! Return a list of actions available to be performed on this contact */
