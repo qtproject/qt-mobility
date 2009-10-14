@@ -65,7 +65,7 @@ public Q_SLOTS:
     virtual void stop() = 0;
 
 protected:
-    QMediaRecorderControl(QObject* parent);
+    QMediaRecorderControl(QObject* parent = 0);
 };
 
 #define QMediaRecorderControl_iid "com.nokia.Qt.QMediaRecorderControl/1.0"

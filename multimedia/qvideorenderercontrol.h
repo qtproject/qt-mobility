@@ -32,8 +32,8 @@
 **
 ****************************************************************************/
 
-#ifndef QVIDEORENDERERENDPOINT_H
-#define QVIDEORENDERERENDPOINT_H
+#ifndef QVIDEORENDERERCONTROL_H
+#define QVIDEORENDERERCONTROL_H
 
 #ifndef QT_NO_MULTIMEDIA
 
@@ -44,18 +44,20 @@ class QAbstractVideoSurface;
 class Q_MEDIA_EXPORT QVideoRendererControl : public QMediaControl
 {
     Q_OBJECT
+
 public:
-    QVideoRendererControl(QObject *parent = 0);
     ~QVideoRendererControl();
 
     virtual QAbstractVideoSurface *surface() const = 0;
     virtual void setSurface(QAbstractVideoSurface *surface) = 0;
+
+protected:
+    QVideoRendererControl(QObject *parent = 0);
 };
 
 #define QVideoRendererControl_iid "com.nokia.Qt.QVideoRendererControl/1.0"
-
 Q_MEDIA_DECLARE_CONTROL(QVideoRendererControl, QVideoRendererControl_iid)
 
-#endif
+#endif  // QT_NO_MULTIMEDIA
 
-#endif
+#endif // QVIDEORENDERERCONTROL_H

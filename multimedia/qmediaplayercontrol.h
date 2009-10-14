@@ -98,7 +98,7 @@ Q_SIGNALS:
     void error(int error, const QString &errorString);
 
 protected:
-    QMediaPlayerControl(QObject* parent);
+    QMediaPlayerControl(QObject* parent = 0);
 };
 
 #define QMediaPlayerControl_iid "com.nokia.Qt.QMediaPlayerControl/1.0"

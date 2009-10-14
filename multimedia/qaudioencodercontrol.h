@@ -40,6 +40,7 @@
 #include <QtCore/qlist.h>
 #include <QtCore/qpair.h>
 
+
 class QAudioFormat;
 class QStringList;
 
@@ -47,6 +48,7 @@ class QStringList;
 class Q_MEDIA_EXPORT QAudioEncoderControl : public QMediaControl
 {
     Q_OBJECT
+
 public:
     virtual ~QAudioEncoderControl();
 
@@ -81,7 +83,7 @@ public:
     virtual QList<int> supportedSampleSizes() const = 0;
 
 protected:
-    QAudioEncoderControl(QObject *parent);
+    QAudioEncoderControl(QObject *parent = 0);
 };
 
 #define QAudioEncoderControl_iid "com.nokia.Qt.QAudioEncoderControl/1.0"

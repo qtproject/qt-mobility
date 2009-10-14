@@ -56,7 +56,7 @@ Q_SIGNALS:
     void error(int error, const QString &errorString);
 
 protected:
-    QCameraControl(QObject* parent);
+    QCameraControl(QObject* parent = 0);
 };
 
 #define QCameraControl_iid "com.nokia.Qt.QCameraControl/1.0"

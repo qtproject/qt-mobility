@@ -40,7 +40,8 @@
 
 class Q_MEDIA_EXPORT QMediaFormatControl : public QMediaControl
 {
-Q_OBJECT
+    Q_OBJECT
+
 public:
     virtual ~QMediaFormatControl();
 
@@ -51,7 +52,7 @@ public:
     virtual QString formatDescription(const QString &formatMimeType) const = 0;
 
 protected:
-    QMediaFormatControl(QObject *parent);
+    QMediaFormatControl(QObject *parent = 0);
 };
 
 #define QMediaFormatControl_iid "com.nokia.Qt.QMediaFormatControl/1.0"

@@ -62,11 +62,10 @@ Q_SIGNALS:
     void devicesChanged();
 
 protected:
-    QAudioDeviceControl(QObject *parent);
+    QAudioDeviceControl(QObject *parent = 0);
 };
 
 #define QAudioDeviceControl_iid "com.nokia.Qt.QAudioDeviceControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QAudioDeviceControl, QAudioDeviceControl_iid)
-
 
 #endif // QAUDIODEVICECONTROL_H
