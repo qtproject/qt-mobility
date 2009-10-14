@@ -54,7 +54,17 @@ public:
     void addName(QContact& contact,const QVersitProperty& property)
     {
         QContactName* name=new QContactName();
-        name->setFirst(property.value());                  
+        const QByteArray& val = property.value();
+        const QList<QByteArray>& values = val.split(versitValueSeparator[0]);
+        for(int i=0;i<values.count();i++){
+            switch(i){
+                case 0:name->setLast(values[0]);break;
+                case 1:name->setFirst(values[1]);break;
+                case 2:name->setMiddle(values[2]);break;
+                case 3:name->setPrefix(values[3]);break;
+                case 4:name->setSuffix(values[4]);break;
+            }
+        }
         contact.saveDetail(name);
     }
     void addPhone(QContact& contact,const QVersitProperty& property)
