@@ -100,17 +100,12 @@ QContactDetail* QVersitContactGenerator::createName(
     const QVersitProperty& property) const
 {
     QContactName* name = new QContactName();
-    const QByteArray& val = property.value();
-    const QList<QByteArray>& values = val.split(versitValueSeparator[0]);
-    for(int i=0;i<values.count();i++){
-        switch(i){
-            case 0:name->setLast(values[0]);break;
-            case 1:name->setFirst(values[1]);break;
-            case 2:name->setMiddle(values[2]);break;
-            case 3:name->setPrefix(values[3]);break;
-            case 4:name->setSuffix(values[4]);break;
-        }
-    }
+    QList<QByteArray> values = property.value().split(',');
+    name->setLast(takeFirst(values));
+    name->setFirst(takeFirst(values));
+    name->setMiddle(takeFirst(values));
+    name->setPrefix(takeFirst(values));
+    name->setSuffix(takeFirst(values));
     return name;
 }
 
@@ -120,46 +115,35 @@ QContactDetail* QVersitContactGenerator::createName(
 QContactDetail* QVersitContactGenerator::createPhone(
     const QVersitProperty& property) const
 {
-    QContactPhoneNumber* phone=new QContactPhoneNumber();
+    QContactPhoneNumber* phone = new QContactPhoneNumber();
     phone->setNumber(property.value());
-    // parse the comma separated multi types
-    const QMultiHash<QString,QString> params = property.parameters();
-    const QList<QString> paramsOfVersitType = params.values(versitType);
-    QStringList types;
-    foreach(const QString& param,paramsOfVersitType){
-        types.append(param.split(versitValueSeparator));
-    }
-    // construct subtypes and contexts
+    
+    QStringList types = 
+        property.parameters().values(QString::fromAscii(versitType));
+    phone->setContexts(extractContexts(types));
+
     QStringList subTypes;
-    QStringList contexts;
-    foreach(const QString& type,types){
-        if(type==versitVoiceId){
+    foreach (QString type, types){
+        if (type == versitVoiceId){
             subTypes+=QContactPhoneNumber::SubTypeVoice;
         }
-        else if(type==versitCellId){
+        else if (type == versitCellId){
             subTypes+=QContactPhoneNumber::SubTypeMobile;
         }
-        else if(type==versitModemId){
+        else if (type == versitModemId){
             subTypes+=QContactPhoneNumber::SubTypeModem;
         }
-        else if(type==versitCarId){
+        else if (type == versitCarId){
             subTypes+=QContactPhoneNumber::SubTypeCar;
         }
-        else if(type==versitVideoId){
+        else if (type == versitVideoId){
             subTypes+=QContactPhoneNumber::SubTypeVideo;
         }
-        else if(type==versitContextHomeId){
-            contexts+=QContactDetail::ContextHome;
-        }
-        else if(type==versitContextWorkId){
-            contexts+=QContactDetail::ContextWork;
-        }
         else {
-            contexts+=(QContactDetail::ContextOther);
+            // NOP
         }
     }
     phone->setSubTypes(subTypes);
-    phone->setContexts(contexts);
     return phone;
 }
 
@@ -172,7 +156,7 @@ QContactDetail* QVersitContactGenerator::createAddress(
     QContactAddress* address = new QContactAddress();
     
     QStringList types = 
-        property.parameters().values(QString::fromAscii("TYPE"));
+        property.parameters().values(QString::fromAscii(versitType));
     address->setContexts(extractContexts(types));
     
     QStringList subTypes;
@@ -196,20 +180,14 @@ QContactDetail* QVersitContactGenerator::createAddress(
     address->setSubTypes(subTypes);
     
     QList<QByteArray> addressParts = property.value().split(';');
-    if (!addressParts.isEmpty())
-        address->setPostOfficeBox(QString::fromAscii(addressParts.takeFirst()));
+    address->setPostOfficeBox(takeFirst(addressParts));
     if (!addressParts.isEmpty())
         addressParts.removeFirst(); // TODO: Where to set the Extended Address?
-    if (!addressParts.isEmpty())
-        address->setStreet(QString::fromAscii(addressParts.takeFirst()));
-    if (!addressParts.isEmpty())
-        address->setLocality(QString::fromAscii(addressParts.takeFirst()));
-    if (!addressParts.isEmpty()) 
-        address->setRegion(QString::fromAscii(addressParts.takeFirst()));
-    if (!addressParts.isEmpty())
-        address->setPostcode(QString::fromAscii(addressParts.takeFirst()));
-    if (!addressParts.isEmpty())
-        address->setCountry(QString::fromAscii(addressParts.takeFirst()));
+    address->setStreet(takeFirst(addressParts));
+    address->setLocality(takeFirst(addressParts));
+    address->setRegion(takeFirst(addressParts));
+    address->setPostcode(takeFirst(addressParts));
+    address->setCountry(takeFirst(addressParts));
     
     return address;
 }
@@ -233,4 +211,16 @@ QStringList QVersitContactGenerator::extractContexts(
         }
     }
     return contexts;    
+}
+
+/*!
+ * Takes the first value in \a list and converts it to a QString.
+ * An empty QString is returned, if the list is empty.
+ */
+QString QVersitContactGenerator::takeFirst(QList<QByteArray>& list) const
+{
+    QString first;
+    if (!list.isEmpty())
+        first = QString::fromAscii(list.takeFirst());
+    return first; 
 }

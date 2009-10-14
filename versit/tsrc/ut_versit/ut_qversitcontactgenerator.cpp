@@ -66,7 +66,7 @@ void UT_QVersitContactGenerator::testAddName()
     val.append("Dr");//PreFix
     val.append("MSc");//Suffix
     nameProperty.setName(QString::fromAscii(versitNameId));
-    nameProperty.setValue(val.join(versitValueSeparator).toAscii());
+    nameProperty.setValue(val.join(QString::fromAscii(",")).toAscii());
     document.addProperty(nameProperty);        
     QContact contact = mGenerator->generateContact(document);    
     QCOMPARE(contact.details().count(),2);
@@ -136,13 +136,13 @@ void UT_QVersitContactGenerator::testCreateAddress()
     address = 0;    
     
     // Address with TYPE parameters coverted to contexts and subtypes
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("WORK"));    
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("DOM"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("INTL"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("POSTAL"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("PARCEL"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("X-EXTENSION")); 
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("HOME"));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("WORK"));    
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("DOM"));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("INTL"));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("POSTAL"));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("PARCEL"));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("X-EXTENSION")); 
     address = static_cast<QContactAddress*>(mGenerator->createAddress(property));
     QVERIFY(address != 0);
     QStringList contexts = address->contexts();
@@ -162,37 +162,36 @@ void UT_QVersitContactGenerator::testAddTel()
     QVersitDocument document;
     QVersitProperty nameProperty;
     nameProperty.setName(QString::fromAscii(versitPhoneId));
-    QByteArray val("+35850486321");
-    nameProperty.setValue(val);
-    QStringList param;
-    param.append(versitVoiceId);
-    param.append(versitCellId);
-    param.append(versitModemId);
-    param.append(versitCarId);
-    param.append(versitVideoId);
-    param.append(versitContextHomeId);
-    param.append(versitContextWorkId);
-    param.append("");//other type
-    nameProperty.addParameter(versitType,param.join(versitValueSeparator));
+    QByteArray value("+35850486321");
+    nameProperty.setValue(value);
+    
+    nameProperty.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitVoiceId));
+    nameProperty.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitCellId));
+    nameProperty.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitModemId));
+    nameProperty.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitCarId));
+    nameProperty.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitVideoId));
+    nameProperty.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitContextHomeId));
+    nameProperty.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitContextWorkId));
+
     document.addProperty(nameProperty);
     QContact contact = mGenerator->generateContact(document);
-    const QContactPhoneNumber& phone = (QContactPhoneNumber)contact.detail(
-                                             QContactPhoneNumber::DefinitionName);
-    QCOMPARE(phone.number(),QString(val));
+    const QContactPhoneNumber& phone = 
+        static_cast<QContactPhoneNumber>(
+            contact.detail(QContactPhoneNumber::DefinitionName));
+    QCOMPARE(phone.number(),QString(value));
 
     const QStringList subTypes = phone.subTypes();
     QCOMPARE(subTypes.count(),5);
-    QCOMPARE(subTypes[0],QContactPhoneNumber::SubTypeVoice.operator QString());
-    QCOMPARE(subTypes[1],QContactPhoneNumber::SubTypeMobile.operator QString());
+    QCOMPARE(subTypes[4],QContactPhoneNumber::SubTypeVoice.operator QString());
+    QCOMPARE(subTypes[3],QContactPhoneNumber::SubTypeMobile.operator QString());
     QCOMPARE(subTypes[2],QContactPhoneNumber::SubTypeModem.operator QString());
-    QCOMPARE(subTypes[3],QContactPhoneNumber::SubTypeCar.operator QString());
-    QCOMPARE(subTypes[4],QContactPhoneNumber::SubTypeVideo.operator QString());
+    QCOMPARE(subTypes[1],QContactPhoneNumber::SubTypeCar.operator QString());
+    QCOMPARE(subTypes[0],QContactPhoneNumber::SubTypeVideo.operator QString());
 
     const QStringList contexts = phone.contexts();
-    QCOMPARE(contexts.count(),3);
-    QCOMPARE(contexts[0],QContactDetail::ContextHome.operator QString());
-    QCOMPARE(contexts[1],QContactDetail::ContextWork.operator QString());
-    QCOMPARE(contexts[2],QContactDetail::ContextOther.operator QString());
+    QCOMPARE(contexts.count(),2);
+    QCOMPARE(contexts[0],QContactDetail::ContextWork.operator QString());
+    QCOMPARE(contexts[1],QContactDetail::ContextHome.operator QString());
 }
 
 void UT_QVersitContactGenerator::testExtractContexts()

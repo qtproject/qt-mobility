@@ -64,7 +64,4 @@ const char versitModemId[] = "MODEM";
 const char versitCarId[] = "CAR";
 const char versitVideoId[] = "VIDEO";
 
-// Value separator
-const char versitValueSeparator[] = ",";
-
 #endif /* QVERSITDEFS_H_ */
