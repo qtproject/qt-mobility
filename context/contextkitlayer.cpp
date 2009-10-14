@@ -43,17 +43,14 @@ QT_BEGIN_NAMESPACE
 
 using namespace QValueSpace;
 
-#define CONTEXTKIT_LAYER_PREFIX "C"
-
 /* ContextKit layer
 
    This layer makes ContextKit properties visible in the QValueSpace.
 
    You can not publish values of ContextKit properties using the
    QValueSpace.  This might be fixed later.
-*/
 
-/* ContextKit properties have names with dots in them, which allows
+   ContextKit properties have names with dots in them, which allows
    these properties to be arranged in a tree.  The context commander
    does this in its UI, for example.
 
@@ -81,7 +78,7 @@ using namespace QValueSpace;
 */
 
 /* ContextKitHandle - contains a ContextKit property and all its
-   direct and indirect children.
+                      direct and indirect children.
 
    ContextKitHandles do not form a hierarchy between each other; think
    of them as individual little trees that are created in direct
@@ -190,7 +187,13 @@ ContextKitHandle::children ()
     return kids;
 }
 
-class ContextKitLayer : public QAbstractValueSpaceLayer
+/* ContextKitLayer - implements QAbstractValueSpaceLayer interface to
+                     hook ContextKit into QValueSpace.
+   
+   It mainly creates ContextKitHandles and dispatches to them.
+*/
+
+class ContextKitLayer : public 
 {
     Q_OBJECT
 
