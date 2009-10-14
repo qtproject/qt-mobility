@@ -67,7 +67,7 @@ QList<QContactLocalId> groupMembers = contactManager.contacts(crf);
 // Advantage: get _all_ groups members no matter which manager they are part of
 // Disadvantage: cached information, possibly stale.
 QContact someGroup;
-QList<QContactId> groupMembers = someGroup.relationship(someGroup.localId(), QContactRelationship::HasMember).destinationContacts();
+QList<QContactId> groupMembers = someGroup.relatedContacts(QContactRelationship::HasMember, QContactRelationshipFilter::Destination);
 
 // Use Case 11: Modify Ordering Of Group Members
 QContactRelationship someGroupRelationship;
