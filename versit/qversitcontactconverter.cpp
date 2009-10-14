@@ -128,8 +128,10 @@ void QVersitContactConverter::encodeName(QVersitDocument& versitDocument,
     QContactName contactName = static_cast<QContactName>(detail);
     QString name = d->mMappingTable.value(detail.definitionName());
     
-    QString value = contactName.last() +  ";"  + contactName.first() + ";" + contactName.middle() 
-                    + ";"  + contactName.prefix() + ";" + contactName.suffix();
+    QString value = contactName.last() +  QString::fromAscii(";")  + 
+                    contactName.first() + QString::fromAscii(";") + 
+                    contactName.middle() + QString::fromAscii(";")  + 
+                    contactName.prefix() + QString::fromAscii(";") + contactName.suffix();
     
     QVersitProperty versitProperty;
     versitProperty.setName(name);
@@ -200,8 +202,11 @@ void QVersitContactConverter::encodeStreetAddress(QVersitDocument& versitDocumen
     QContactAddress address = static_cast<QContactAddress>(detail);
     
     QString name = d->mMappingTable.value(detail.definitionName());
-    QString value = address.postOfficeBox() + ";" + address.street() + ";" + address.locality() 
-                    + ";" + address.region() + ";" + address.postcode() + ";" + address.country();
+    QString value = address.postOfficeBox() + QString::fromAscii(";") + address.street() + 
+                    QString::fromAscii(";") + address.locality() + 
+                    QString::fromAscii(";") + address.region() + 
+                    QString::fromAscii(";") + address.postcode() + 
+                    QString::fromAscii(";") + address.country();
     
     QVersitProperty versitProperty;
     
@@ -227,11 +232,10 @@ void QVersitContactConverter::encodeParameters( QVersitProperty& versitProperty,
                                                    const QStringList& paramList )
 {
     foreach (QString type, paramList) {
-            QString decodedParameter = d->mMappingTable.value(type);
-            if ( decodedParameter.size())
-            {
-                versitProperty.addParameter(decodedParameter, QString());    
-            }
+        QString decodedParameter = d->mMappingTable.value(type);
+        if ( decodedParameter.size()) {
+            versitProperty.addParameter(decodedParameter, QString());    
+        }
     }
 }
 
