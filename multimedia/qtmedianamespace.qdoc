@@ -116,11 +116,11 @@
 */
 
 /*!
-  \enum QtMedia::SupportEstimate
+    \enum QtMedia::SupportEstimate
 
-  \item NotSupported
-  \item MaybeSupported
-  \item ProbablySupported
-  \item PreferedService
+    \value NotSupported
+    \value MaybeSupported
+    \value ProbablySupported
+    \value PreferedService
 */
 

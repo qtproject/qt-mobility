@@ -1,6 +1,19 @@
 <!DOCTYPE DCF>
 <DCF ref="index.html" icon="multimedia-library.png" imagedir="../../gif" title="Multimedia Library Reference Documentation">
 <section ref="classes.html" title="Classes">
+    <section ref="qaudiocapturesource.html" title="QAudioCaptureSource Class Reference">
+        <keyword ref="qaudiocapturesource.html">QAudioCaptureSource</keyword>
+        <keyword ref="qaudiocapturesource.html#defaultDevice">defaultDevice</keyword>
+        <keyword ref="qaudiocapturesource.html#description">description</keyword>
+        <keyword ref="qaudiocapturesource.html#deviceCount">deviceCount</keyword>
+        <keyword ref="qaudiocapturesource.html#devicesChanged">devicesChanged</keyword>
+        <keyword ref="qaudiocapturesource.html#icon">icon</keyword>
+        <keyword ref="qaudiocapturesource.html#name">name</keyword>
+        <keyword ref="qaudiocapturesource.html#selectedDevice">selectedDevice</keyword>
+        <keyword ref="qaudiocapturesource.html#selectedDeviceChanged">selectedDeviceChanged</keyword>
+        <keyword ref="qaudiocapturesource.html#setSelectedDevice">setSelectedDevice</keyword>
+        <section ref="qaudiocapturesource-members.html" title="List of all members"/>
+    </section>
     <section ref="qaudiodevicecontrol.html" title="QAudioDeviceControl Class Reference">
         <keyword ref="qaudiodevicecontrol.html">QAudioDeviceControl</keyword>
         <keyword ref="qaudiodevicecontrol.html#defaultDevice">defaultDevice</keyword>
@@ -68,19 +81,6 @@
         <keyword ref="qaudioformat.html#operator-eq-eq">operator==</keyword>
         <section ref="qaudioformat-members.html" title="List of all members"/>
     </section>
-    <section ref="qaudiosource.html" title="QAudioSource Class Reference">
-        <keyword ref="qaudiosource.html">QAudioSource</keyword>
-        <keyword ref="qaudiosource.html#defaultDevice">defaultDevice</keyword>
-        <keyword ref="qaudiosource.html#description">description</keyword>
-        <keyword ref="qaudiosource.html#deviceCount">deviceCount</keyword>
-        <keyword ref="qaudiosource.html#devicesChanged">devicesChanged</keyword>
-        <keyword ref="qaudiosource.html#icon">icon</keyword>
-        <keyword ref="qaudiosource.html#name">name</keyword>
-        <keyword ref="qaudiosource.html#selectedDevice">selectedDevice</keyword>
-        <keyword ref="qaudiosource.html#selectedDeviceChanged">selectedDeviceChanged</keyword>
-        <keyword ref="qaudiosource.html#setSelectedDevice">setSelectedDevice</keyword>
-        <section ref="qaudiosource-members.html" title="List of all members"/>
-    </section>
     <section ref="qcamera.html" title="QCamera Class Reference">
         <keyword ref="qcamera.html">QCamera</keyword>
         <keyword ref="qcamera.html#Error-enum">Error</keyword>
@@ -141,10 +141,17 @@
         <keyword ref="qcamera.html#WhiteBalanceMode-enum">QCamera::WhiteBalanceSunlight</keyword>
         <keyword ref="qcamera.html#WhiteBalanceMode-enum">QCamera::WhiteBalanceCloudy</keyword>
         <keyword ref="qcamera.html#WhiteBalanceMode-enum">QCamera::WhiteBalanceShade</keyword>
+        <keyword ref="qcamera.html#aperture-prop">aperture</keyword>
+        <keyword ref="qcamera.html#aperture-prop">setManualAperture</keyword>
+        <keyword ref="qcamera.html#isoSensitivity-prop">isoSensitivity</keyword>
+        <keyword ref="qcamera.html#isoSensitivity-prop">setManualIsoSensitivity</keyword>
         <keyword ref="qcamera.html#readyForCapture-prop">readyForCapture</keyword>
         <keyword ref="qcamera.html#readyForCapture-prop">isReadyForCapture</keyword>
+        <keyword ref="qcamera.html#shutterSpeed-prop">shutterSpeed</keyword>
+        <keyword ref="qcamera.html#shutterSpeed-prop">setManualShutterSpeed</keyword>
         <keyword ref="qcamera.html#state-prop">state</keyword>
-        <keyword ref="qcamera.html#aperture">aperture</keyword>
+        <keyword ref="qcamera.html#apertureChanged">apertureChanged</keyword>
+        <keyword ref="qcamera.html#apertureRangeChanged">apertureRangeChanged</keyword>
         <keyword ref="qcamera.html#capture">capture</keyword>
         <keyword ref="qcamera.html#deviceDescription">deviceDescription</keyword>
         <keyword ref="qcamera.html#devices">devices</keyword>
@@ -164,41 +171,43 @@
         <keyword ref="qcamera.html#isFlashReady">isFlashReady</keyword>
         <keyword ref="qcamera.html#isFocusLocked">isFocusLocked</keyword>
         <keyword ref="qcamera.html#isMacroFocusingSupported">isMacroFocusingSupported</keyword>
-        <keyword ref="qcamera.html#isoSensitivity">isoSensitivity</keyword>
+        <keyword ref="qcamera.html#isoSensitivityChanged">isoSensitivityChanged</keyword>
         <keyword ref="qcamera.html#lockExposure">lockExposure</keyword>
         <keyword ref="qcamera.html#lockFocus">lockFocus</keyword>
         <keyword ref="qcamera.html#macroFocusingEnabled">macroFocusingEnabled</keyword>
         <keyword ref="qcamera.html#manualWhiteBalance">manualWhiteBalance</keyword>
+        <keyword ref="qcamera.html#maximumAperture">maximumAperture</keyword>
         <keyword ref="qcamera.html#maximumDigitalZoom">maximumDigitalZoom</keyword>
+        <keyword ref="qcamera.html#maximumIsoSensitivity">maximumIsoSensitivity</keyword>
         <keyword ref="qcamera.html#maximumOpticalZoom">maximumOpticalZoom</keyword>
+        <keyword ref="qcamera.html#maximumShutterSpeed">maximumShutterSpeed</keyword>
         <keyword ref="qcamera.html#meteringMode">meteringMode</keyword>
+        <keyword ref="qcamera.html#minimumAperture">minimumAperture</keyword>
+        <keyword ref="qcamera.html#minimumIsoSensitivity">minimumIsoSensitivity</keyword>
+        <keyword ref="qcamera.html#minimumShutterSpeed">minimumShutterSpeed</keyword>
         <keyword ref="qcamera.html#readyForCaptureChanged">readyForCaptureChanged</keyword>
         <keyword ref="qcamera.html#setAutoAperture">setAutoAperture</keyword>
         <keyword ref="qcamera.html#setAutoIsoSensitivity">setAutoIsoSensitivity</keyword>
         <keyword ref="qcamera.html#setAutoShutterSpeed">setAutoShutterSpeed</keyword>
-        <keyword ref="qcamera.html#setDevice">setDevice</keyword>
         <keyword ref="qcamera.html#setExposureCompensation">setExposureCompensation</keyword>
         <keyword ref="qcamera.html#setExposureMode">setExposureMode</keyword>
         <keyword ref="qcamera.html#setFlashMode">setFlashMode</keyword>
         <keyword ref="qcamera.html#setFocusMode">setFocusMode</keyword>
         <keyword ref="qcamera.html#setMacroFocusingEnabled">setMacroFocusingEnabled</keyword>
-        <keyword ref="qcamera.html#setManualAperture">setManualAperture</keyword>
-        <keyword ref="qcamera.html#setManualIsoSensitivity">setManualIsoSensitivity</keyword>
-        <keyword ref="qcamera.html#setManualShutterSpeed">setManualShutterSpeed</keyword>
         <keyword ref="qcamera.html#setManualWhiteBalance">setManualWhiteBalance</keyword>
         <keyword ref="qcamera.html#setMeteringMode">setMeteringMode</keyword>
         <keyword ref="qcamera.html#setWhiteBalanceMode">setWhiteBalanceMode</keyword>
-        <keyword ref="qcamera.html#shutterSpeed">shutterSpeed</keyword>
+        <keyword ref="qcamera.html#shutterSpeedChanged">shutterSpeedChanged</keyword>
         <keyword ref="qcamera.html#start">start</keyword>
         <keyword ref="qcamera.html#stateChanged">stateChanged</keyword>
         <keyword ref="qcamera.html#stop">stop</keyword>
-        <keyword ref="qcamera.html#supportedApertureRange">supportedApertureRange</keyword>
+        <keyword ref="qcamera.html#supportedApertures">supportedApertures</keyword>
         <keyword ref="qcamera.html#supportedExposureModes">supportedExposureModes</keyword>
         <keyword ref="qcamera.html#supportedFlashModes">supportedFlashModes</keyword>
         <keyword ref="qcamera.html#supportedFocusModes">supportedFocusModes</keyword>
-        <keyword ref="qcamera.html#supportedIsoSensitivityRange">supportedIsoSensitivityRange</keyword>
+        <keyword ref="qcamera.html#supportedIsoSenitivities">supportedIsoSenitivities</keyword>
         <keyword ref="qcamera.html#supportedMeteringModes">supportedMeteringModes</keyword>
-        <keyword ref="qcamera.html#supportedShutterSpeedRange">supportedShutterSpeedRange</keyword>
+        <keyword ref="qcamera.html#supportedShutterSpeeds">supportedShutterSpeeds</keyword>
         <keyword ref="qcamera.html#supportedWhiteBalanceModes">supportedWhiteBalanceModes</keyword>
         <keyword ref="qcamera.html#unlockExposure">unlockExposure</keyword>
         <keyword ref="qcamera.html#unlockFocus">unlockFocus</keyword>
@@ -220,6 +229,8 @@
     <section ref="qcameraexposurecontrol.html" title="QCameraExposureControl Class Reference">
         <keyword ref="qcameraexposurecontrol.html">QCameraExposureControl</keyword>
         <keyword ref="qcameraexposurecontrol.html#aperture">aperture</keyword>
+        <keyword ref="qcameraexposurecontrol.html#apertureChanged">apertureChanged</keyword>
+        <keyword ref="qcameraexposurecontrol.html#apertureRangeChanged">apertureRangeChanged</keyword>
         <keyword ref="qcameraexposurecontrol.html#exposureCompensation">exposureCompensation</keyword>
         <keyword ref="qcameraexposurecontrol.html#exposureLocked">exposureLocked</keyword>
         <keyword ref="qcameraexposurecontrol.html#exposureMode">exposureMode</keyword>
@@ -228,8 +239,15 @@
         <keyword ref="qcameraexposurecontrol.html#isExposureLocked">isExposureLocked</keyword>
         <keyword ref="qcameraexposurecontrol.html#isFlashReady">isFlashReady</keyword>
         <keyword ref="qcameraexposurecontrol.html#isoSensitivity">isoSensitivity</keyword>
+        <keyword ref="qcameraexposurecontrol.html#isoSensitivityChanged">isoSensitivityChanged</keyword>
         <keyword ref="qcameraexposurecontrol.html#lockExposure">lockExposure</keyword>
+        <keyword ref="qcameraexposurecontrol.html#maximumAperture">maximumAperture</keyword>
+        <keyword ref="qcameraexposurecontrol.html#maximumIsoSensitivity">maximumIsoSensitivity</keyword>
+        <keyword ref="qcameraexposurecontrol.html#maximumShutterSpeed">maximumShutterSpeed</keyword>
         <keyword ref="qcameraexposurecontrol.html#meteringMode">meteringMode</keyword>
+        <keyword ref="qcameraexposurecontrol.html#minimumAperture">minimumAperture</keyword>
+        <keyword ref="qcameraexposurecontrol.html#minimumIsoSensitivity">minimumIsoSensitivity</keyword>
+        <keyword ref="qcameraexposurecontrol.html#minimumShutterSpeed">minimumShutterSpeed</keyword>
         <keyword ref="qcameraexposurecontrol.html#setAutoAperture">setAutoAperture</keyword>
         <keyword ref="qcameraexposurecontrol.html#setAutoIsoSensitivity">setAutoIsoSensitivity</keyword>
         <keyword ref="qcameraexposurecontrol.html#setAutoShutterSpeed">setAutoShutterSpeed</keyword>
@@ -241,12 +259,13 @@
         <keyword ref="qcameraexposurecontrol.html#setManualShutterSpeed">setManualShutterSpeed</keyword>
         <keyword ref="qcameraexposurecontrol.html#setMeteringMode">setMeteringMode</keyword>
         <keyword ref="qcameraexposurecontrol.html#shutterSpeed">shutterSpeed</keyword>
-        <keyword ref="qcameraexposurecontrol.html#supportedApertureRange">supportedApertureRange</keyword>
+        <keyword ref="qcameraexposurecontrol.html#shutterSpeedChanged">shutterSpeedChanged</keyword>
+        <keyword ref="qcameraexposurecontrol.html#supportedApertures">supportedApertures</keyword>
         <keyword ref="qcameraexposurecontrol.html#supportedExposureModes">supportedExposureModes</keyword>
         <keyword ref="qcameraexposurecontrol.html#supportedFlashModes">supportedFlashModes</keyword>
-        <keyword ref="qcameraexposurecontrol.html#supportedIsoSensitivityRange">supportedIsoSensitivityRange</keyword>
+        <keyword ref="qcameraexposurecontrol.html#supportedIsoSenitivities">supportedIsoSenitivities</keyword>
         <keyword ref="qcameraexposurecontrol.html#supportedMeteringModes">supportedMeteringModes</keyword>
-        <keyword ref="qcameraexposurecontrol.html#supportedShutterSpeedRange">supportedShutterSpeedRange</keyword>
+        <keyword ref="qcameraexposurecontrol.html#supportedShutterSpeeds">supportedShutterSpeeds</keyword>
         <keyword ref="qcameraexposurecontrol.html#unlockExposure">unlockExposure</keyword>
         <section ref="qcameraexposurecontrol-members.html" title="List of all members"/>
     </section>
@@ -299,10 +318,20 @@
     </section>
     <section ref="qmediacontent.html" title="QMediaContent Class Reference">
         <keyword ref="qmediacontent.html">QMediaContent</keyword>
-        <keyword ref="qmediacontent.html#contentResource">contentResource</keyword>
-        <keyword ref="qmediacontent.html#contentUri">contentUri</keyword>
+        <keyword ref="qmediacontent.html#canonicalResource">canonicalResource</keyword>
+        <keyword ref="qmediacontent.html#canonicalUri">canonicalUri</keyword>
+        <keyword ref="qmediacontent.html#coverArtUriLarge">coverArtUriLarge</keyword>
+        <keyword ref="qmediacontent.html#coverArtUriSmall">coverArtUriSmall</keyword>
         <keyword ref="qmediacontent.html#isNull">isNull</keyword>
+        <keyword ref="qmediacontent.html#posterUri">posterUri</keyword>
         <keyword ref="qmediacontent.html#resources">resources</keyword>
+        <keyword ref="qmediacontent.html#setCoverArtUriLarge">setCoverArtUriLarge</keyword>
+        <keyword ref="qmediacontent.html#setCoverArtUriSmall">setCoverArtUriSmall</keyword>
+        <keyword ref="qmediacontent.html#setPosterUri">setPosterUri</keyword>
+        <keyword ref="qmediacontent.html#setThumbnailUriLarge">setThumbnailUriLarge</keyword>
+        <keyword ref="qmediacontent.html#setThumbnailUriSmall">setThumbnailUriSmall</keyword>
+        <keyword ref="qmediacontent.html#thumbnailUriLarge">thumbnailUriLarge</keyword>
+        <keyword ref="qmediacontent.html#thumbnailUriSmall">thumbnailUriSmall</keyword>
         <keyword ref="qmediacontent.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qmediacontent.html#operator-eq">operator=</keyword>
         <keyword ref="qmediacontent.html#operator-eq-eq">operator==</keyword>
@@ -323,14 +352,12 @@
         <keyword ref="qmediaimageviewer.html#State-enum">QMediaImageViewer::PausedState</keyword>
         <keyword ref="qmediaimageviewer.html#State-enum">QMediaImageViewer::PlayingState</keyword>
         <keyword ref="qmediaimageviewer.html#State-enum">QMediaImageViewer::StoppedState</keyword>
-        <keyword ref="qmediaimageviewer.html#currentMedia-prop">currentMedia</keyword>
         <keyword ref="qmediaimageviewer.html#media-prop">media</keyword>
         <keyword ref="qmediaimageviewer.html#media-prop">setMedia</keyword>
         <keyword ref="qmediaimageviewer.html#mediaStatus-prop">mediaStatus</keyword>
         <keyword ref="qmediaimageviewer.html#state-prop">state</keyword>
         <keyword ref="qmediaimageviewer.html#timeout-prop">timeout</keyword>
         <keyword ref="qmediaimageviewer.html#timeout-prop">setTimeout</keyword>
-        <keyword ref="qmediaimageviewer.html#currentMediaChanged">currentMediaChanged</keyword>
         <keyword ref="qmediaimageviewer.html#mediaChanged">mediaChanged</keyword>
         <keyword ref="qmediaimageviewer.html#mediaStatusChanged">mediaStatusChanged</keyword>
         <keyword ref="qmediaimageviewer.html#pause">pause</keyword>
@@ -370,6 +397,8 @@
         <keyword ref="qmediaplayer.html#Error-enum">QMediaPlayer::ServiceMissingError</keyword>
         <keyword ref="qmediaplayer.html#Error-enum">QMediaPlayer::ResourceError</keyword>
         <keyword ref="qmediaplayer.html#Error-enum">QMediaPlayer::AccessDeniedError</keyword>
+        <keyword ref="qmediaplayer.html#Flag-enum">Flag</keyword>
+        <keyword ref="qmediaplayer.html#Flag-enum">Flags</keyword>
         <keyword ref="qmediaplayer.html#MediaStatus-enum">MediaStatus</keyword>
         <keyword ref="qmediaplayer.html#MediaStatus-enum">QMediaPlayer::UnknownMediaStatus</keyword>
         <keyword ref="qmediaplayer.html#MediaStatus-enum">QMediaPlayer::StalledMedia</keyword>
@@ -406,6 +435,7 @@
         <keyword ref="qmediaplayer.html#volume-prop">volume</keyword>
         <keyword ref="qmediaplayer.html#volume-prop">setVolume</keyword>
         <keyword ref="qmediaplayer.html#bufferStatusChanged">bufferStatusChanged</keyword>
+        <keyword ref="qmediaplayer.html#canPlay">canPlay</keyword>
         <keyword ref="qmediaplayer.html#durationChanged">durationChanged</keyword>
         <keyword ref="qmediaplayer.html#error">error</keyword>
         <keyword ref="qmediaplayer.html#mediaChanged">mediaChanged</keyword>
@@ -445,6 +475,8 @@
         <keyword ref="qmediaplayercontrol.html#playbackRateChanged">playbackRateChanged</keyword>
         <keyword ref="qmediaplayercontrol.html#position">position</keyword>
         <keyword ref="qmediaplayercontrol.html#positionChanged">positionChanged</keyword>
+        <keyword ref="qmediaplayercontrol.html#seekRange">seekRange</keyword>
+        <keyword ref="qmediaplayercontrol.html#seekRangeChanged">seekRangeChanged</keyword>
         <keyword ref="qmediaplayercontrol.html#seekableChanged">seekableChanged</keyword>
         <keyword ref="qmediaplayercontrol.html#setMedia">setMedia</keyword>
         <keyword ref="qmediaplayercontrol.html#setMuted">setMuted</keyword>
@@ -461,6 +493,7 @@
     </section>
     <section ref="qmediaplaylist.html" title="QMediaPlaylist Class Reference">
         <keyword ref="qmediaplaylist.html">QMediaPlaylist</keyword>
+        <keyword ref="qmediaplaylist.html#Error-enum">Error</keyword>
         <keyword ref="qmediaplaylist.html#PlaybackMode-enum">PlaybackMode</keyword>
         <keyword ref="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::Loop</keyword>
         <keyword ref="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::Linear</keyword>
@@ -472,11 +505,11 @@
         <keyword ref="qmediaplaylist.html#currentPosition-prop">setCurrentPosition</keyword>
         <keyword ref="qmediaplaylist.html#playbackMode-prop">playbackMode</keyword>
         <keyword ref="qmediaplaylist.html#playbackMode-prop">setPlaybackMode</keyword>
-        <keyword ref="qmediaplaylist.html#playlistProvider-prop">playlistProvider</keyword>
-        <keyword ref="qmediaplaylist.html#playlistProvider-prop">setPlaylistProvider</keyword>
         <keyword ref="qmediaplaylist.html#appendItem">appendItem</keyword>
         <keyword ref="qmediaplaylist.html#clear">clear</keyword>
         <keyword ref="qmediaplaylist.html#currentMediaChanged">currentMediaChanged</keyword>
+        <keyword ref="qmediaplaylist.html#error">error</keyword>
+        <keyword ref="qmediaplaylist.html#errorString">errorString</keyword>
         <keyword ref="qmediaplaylist.html#insertItem">insertItem</keyword>
         <keyword ref="qmediaplaylist.html#isEmpty">isEmpty</keyword>
         <keyword ref="qmediaplaylist.html#isReadOnly">isReadOnly</keyword>
@@ -486,12 +519,13 @@
         <keyword ref="qmediaplaylist.html#itemsInserted">itemsInserted</keyword>
         <keyword ref="qmediaplaylist.html#itemsRemoved">itemsRemoved</keyword>
         <keyword ref="qmediaplaylist.html#load">load</keyword>
+        <keyword ref="qmediaplaylist.html#loadFailed">loadFailed</keyword>
+        <keyword ref="qmediaplaylist.html#loaded">loaded</keyword>
         <keyword ref="qmediaplaylist.html#media">media</keyword>
         <keyword ref="qmediaplaylist.html#next">next</keyword>
         <keyword ref="qmediaplaylist.html#nextPosition">nextPosition</keyword>
         <keyword ref="qmediaplaylist.html#playbackModeChanged">playbackModeChanged</keyword>
         <keyword ref="qmediaplaylist.html#playlistPositionChanged">playlistPositionChanged</keyword>
-        <keyword ref="qmediaplaylist.html#playlistProviderChanged">playlistProviderChanged</keyword>
         <keyword ref="qmediaplaylist.html#previous">previous</keyword>
         <keyword ref="qmediaplaylist.html#previousPosition">previousPosition</keyword>
         <keyword ref="qmediaplaylist.html#removeItem">removeItem</keyword>
@@ -531,6 +565,8 @@
         <keyword ref="qmediaplaylistprovider.html#itemsInserted">itemsInserted</keyword>
         <keyword ref="qmediaplaylistprovider.html#itemsRemoved">itemsRemoved</keyword>
         <keyword ref="qmediaplaylistprovider.html#load">load</keyword>
+        <keyword ref="qmediaplaylistprovider.html#loadFailed">loadFailed</keyword>
+        <keyword ref="qmediaplaylistprovider.html#loaded">loaded</keyword>
         <keyword ref="qmediaplaylistprovider.html#media">media</keyword>
         <keyword ref="qmediaplaylistprovider.html#removeItem">removeItem</keyword>
         <keyword ref="qmediaplaylistprovider.html#removeItems">removeItems</keyword>
@@ -610,12 +646,6 @@
     </section>
     <section ref="qmediaresource.html" title="QMediaResource Class Reference">
         <keyword ref="qmediaresource.html">QMediaResource</keyword>
-        <keyword ref="qmediaresource.html#ResourceRole-enum">ResourceRole</keyword>
-        <keyword ref="qmediaresource.html#ResourceRole-enum">QMediaResource::ContentRole</keyword>
-        <keyword ref="qmediaresource.html#ResourceRole-enum">QMediaResource::ThumbnailRole</keyword>
-        <keyword ref="qmediaresource.html#ResourceRole-enum">QMediaResource::PreviewRole</keyword>
-        <keyword ref="qmediaresource.html#ResourceRole-enum">QMediaResource::PosterRole</keyword>
-        <keyword ref="qmediaresource.html#ResourceRole-enum">QMediaResource::CoverArtRole</keyword>
         <keyword ref="qmediaresource.html#audioBitRate">audioBitRate</keyword>
         <keyword ref="qmediaresource.html#audioCodec">audioCodec</keyword>
         <keyword ref="qmediaresource.html#channels">channels</keyword>
@@ -625,7 +655,6 @@
         <keyword ref="qmediaresource.html#language">language</keyword>
         <keyword ref="qmediaresource.html#mimeType">mimeType</keyword>
         <keyword ref="qmediaresource.html#resolution">resolution</keyword>
-        <keyword ref="qmediaresource.html#role">role</keyword>
         <keyword ref="qmediaresource.html#sampleSize">sampleSize</keyword>
         <keyword ref="qmediaresource.html#setAudioBitRate">setAudioBitRate</keyword>
         <keyword ref="qmediaresource.html#setAudioCodec">setAudioCodec</keyword>
@@ -650,29 +679,25 @@
     <section ref="qmediaservice.html" title="QMediaService Class Reference">
         <keyword ref="qmediaservice.html">QMediaService</keyword>
         <keyword ref="qmediaservice.html#MediaEndpoint-enum">MediaEndpoint</keyword>
-        <keyword ref="qmediaservice.html#MediaEndpoint-enum">QMediaService::AudioOutput</keyword>
-        <keyword ref="qmediaservice.html#MediaEndpoint-enum">QMediaService::StreamOutput</keyword>
-        <keyword ref="qmediaservice.html#MediaEndpoint-enum">QMediaService::VideoInput</keyword>
-        <keyword ref="qmediaservice.html#MediaEndpoint-enum">QMediaService::StreamInput</keyword>
-        <keyword ref="qmediaservice.html#MediaEndpoint-enum">QMediaService::VideoOutput</keyword>
-        <keyword ref="qmediaservice.html#MediaEndpoint-enum">QMediaService::AudioInput</keyword>
-        <keyword ref="qmediaservice.html#activeEndpoints">activeEndpoints</keyword>
+        <keyword ref="qmediaservice.html#MediaEndpoint-enum">QMediaService::AudioDevice</keyword>
+        <keyword ref="qmediaservice.html#activeEndpoint">activeEndpoint</keyword>
+        <keyword ref="qmediaservice.html#activeEndpointChanged">activeEndpointChanged</keyword>
         <keyword ref="qmediaservice.html#control">control</keyword>
         <keyword ref="qmediaservice.html#endpointDescription">endpointDescription</keyword>
-        <keyword ref="qmediaservice.html#inputStream">inputStream</keyword>
         <keyword ref="qmediaservice.html#isEndpointSupported">isEndpointSupported</keyword>
-        <keyword ref="qmediaservice.html#outputStream">outputStream</keyword>
         <keyword ref="qmediaservice.html#setActiveEndpoint">setActiveEndpoint</keyword>
-        <keyword ref="qmediaservice.html#setInputStream">setInputStream</keyword>
-        <keyword ref="qmediaservice.html#setOutputStream">setOutputStream</keyword>
         <keyword ref="qmediaservice.html#supportedEndpoints">supportedEndpoints</keyword>
+        <keyword ref="qmediaservice.html#supportedEndpointsChanged">supportedEndpointsChanged</keyword>
         <section ref="qmediaservice-members.html" title="List of all members"/>
     </section>
     <section ref="qmediaserviceproviderhint.html" title="QMediaServiceProviderHint Class Reference">
         <keyword ref="qmediaserviceproviderhint.html">QMediaServiceProviderHint</keyword>
+        <keyword ref="qmediaserviceproviderhint.html#Feature-enum">Feature</keyword>
+        <keyword ref="qmediaserviceproviderhint.html#Feature-enum">Features</keyword>
         <keyword ref="qmediaserviceproviderhint.html#Type-enum">Type</keyword>
         <keyword ref="qmediaserviceproviderhint.html#codecs">codecs</keyword>
         <keyword ref="qmediaserviceproviderhint.html#device">device</keyword>
+        <keyword ref="qmediaserviceproviderhint.html#features">features</keyword>
         <keyword ref="qmediaserviceproviderhint.html#isNull">isNull</keyword>
         <keyword ref="qmediaserviceproviderhint.html#mimeType">mimeType</keyword>
         <keyword ref="qmediaserviceproviderhint.html#type">type</keyword>
@@ -694,71 +719,90 @@
         <keyword ref="qmetadatacontrol.html#writableChanged">writableChanged</keyword>
         <section ref="qmetadatacontrol-members.html" title="List of all members"/>
     </section>
-    <section ref="qradioplayer.html" title="QRadioPlayer Class Reference">
-        <keyword ref="qradioplayer.html">QRadioPlayer</keyword>
-        <keyword ref="qradioplayer.html#Band-enum">Band</keyword>
-        <keyword ref="qradioplayer.html#Band-enum">QRadioPlayer::SW</keyword>
-        <keyword ref="qradioplayer.html#Band-enum">QRadioPlayer::FM</keyword>
-        <keyword ref="qradioplayer.html#Band-enum">QRadioPlayer::LW</keyword>
-        <keyword ref="qradioplayer.html#Band-enum">QRadioPlayer::AM</keyword>
-        <keyword ref="qradioplayer.html#band-prop">band</keyword>
-        <keyword ref="qradioplayer.html#band-prop">setBand</keyword>
-        <keyword ref="qradioplayer.html#duration-prop">duration</keyword>
-        <keyword ref="qradioplayer.html#frequency-prop">frequency</keyword>
-        <keyword ref="qradioplayer.html#frequency-prop">setFrequency</keyword>
-        <keyword ref="qradioplayer.html#muted-prop">muted</keyword>
-        <keyword ref="qradioplayer.html#muted-prop">isMuted</keyword>
-        <keyword ref="qradioplayer.html#muted-prop">setMuted</keyword>
-        <keyword ref="qradioplayer.html#searching-prop">searching</keyword>
-        <keyword ref="qradioplayer.html#searching-prop">isSearching</keyword>
-        <keyword ref="qradioplayer.html#signalStrength-prop">signalStrength</keyword>
-        <keyword ref="qradioplayer.html#stereo-prop">stereo</keyword>
-        <keyword ref="qradioplayer.html#stereo-prop">isStereo</keyword>
-        <keyword ref="qradioplayer.html#stereo-prop">setStereo</keyword>
-        <keyword ref="qradioplayer.html#volume-prop">volume</keyword>
-        <keyword ref="qradioplayer.html#volume-prop">setVolume</keyword>
-        <keyword ref="qradioplayer.html#bandChanged">bandChanged</keyword>
-        <keyword ref="qradioplayer.html#cancelSearch">cancelSearch</keyword>
-        <keyword ref="qradioplayer.html#durationChanged">durationChanged</keyword>
-        <keyword ref="qradioplayer.html#frequencyChanged">frequencyChanged</keyword>
-        <keyword ref="qradioplayer.html#isSupportedBand">isSupportedBand</keyword>
-        <keyword ref="qradioplayer.html#mutingChanged">mutingChanged</keyword>
-        <keyword ref="qradioplayer.html#searchBackward">searchBackward</keyword>
-        <keyword ref="qradioplayer.html#searchForward">searchForward</keyword>
-        <keyword ref="qradioplayer.html#searchingStatusChanged">searchingStatusChanged</keyword>
-        <keyword ref="qradioplayer.html#signalStrengthChanged">signalStrengthChanged</keyword>
-        <keyword ref="qradioplayer.html#stereoStatusChanged">stereoStatusChanged</keyword>
-        <keyword ref="qradioplayer.html#volumeChanged">volumeChanged</keyword>
-        <section ref="qradioplayer-members.html" title="List of all members"/>
+    <section ref="qradiotuner.html" title="QRadioTuner Class Reference">
+        <keyword ref="qradiotuner.html">QRadioTuner</keyword>
+        <keyword ref="qradiotuner.html#Band-enum">Band</keyword>
+        <keyword ref="qradiotuner.html#Band-enum">QRadioTuner::SW</keyword>
+        <keyword ref="qradiotuner.html#Band-enum">QRadioTuner::FM</keyword>
+        <keyword ref="qradiotuner.html#Band-enum">QRadioTuner::LW</keyword>
+        <keyword ref="qradiotuner.html#Band-enum">QRadioTuner::AM</keyword>
+        <keyword ref="qradiotuner.html#Error-enum">Error</keyword>
+        <keyword ref="qradiotuner.html#Error-enum">QRadioTuner::OutOfRangeError</keyword>
+        <keyword ref="qradiotuner.html#Error-enum">QRadioTuner::NoError</keyword>
+        <keyword ref="qradiotuner.html#Error-enum">QRadioTuner::ResourceError</keyword>
+        <keyword ref="qradiotuner.html#Error-enum">QRadioTuner::OpenError</keyword>
+        <keyword ref="qradiotuner.html#StereoMode-enum">StereoMode</keyword>
+        <keyword ref="qradiotuner.html#StereoMode-enum">QRadioTuner::ForceMono</keyword>
+        <keyword ref="qradiotuner.html#StereoMode-enum">QRadioTuner::ForceStereo</keyword>
+        <keyword ref="qradiotuner.html#StereoMode-enum">QRadioTuner::Auto</keyword>
+        <keyword ref="qradiotuner.html#band-prop">band</keyword>
+        <keyword ref="qradiotuner.html#band-prop">setBand</keyword>
+        <keyword ref="qradiotuner.html#frequency-prop">frequency</keyword>
+        <keyword ref="qradiotuner.html#frequency-prop">setFrequency</keyword>
+        <keyword ref="qradiotuner.html#muted-prop">muted</keyword>
+        <keyword ref="qradiotuner.html#muted-prop">isMuted</keyword>
+        <keyword ref="qradiotuner.html#muted-prop">setMuted</keyword>
+        <keyword ref="qradiotuner.html#searching-prop">searching</keyword>
+        <keyword ref="qradiotuner.html#searching-prop">isSearching</keyword>
+        <keyword ref="qradiotuner.html#signalStrength-prop">signalStrength</keyword>
+        <keyword ref="qradiotuner.html#stereo-prop">stereo</keyword>
+        <keyword ref="qradiotuner.html#stereo-prop">isStereo</keyword>
+        <keyword ref="qradiotuner.html#volume-prop">volume</keyword>
+        <keyword ref="qradiotuner.html#volume-prop">setVolume</keyword>
+        <keyword ref="qradiotuner.html#bandChanged">bandChanged</keyword>
+        <keyword ref="qradiotuner.html#cancelSearch">cancelSearch</keyword>
+        <keyword ref="qradiotuner.html#error">error</keyword>
+        <keyword ref="qradiotuner.html#errorString">errorString</keyword>
+        <keyword ref="qradiotuner.html#frequencyChanged">frequencyChanged</keyword>
+        <keyword ref="qradiotuner.html#frequencyRange">frequencyRange</keyword>
+        <keyword ref="qradiotuner.html#frequencyStep">frequencyStep</keyword>
+        <keyword ref="qradiotuner.html#isBandSupported">isBandSupported</keyword>
+        <keyword ref="qradiotuner.html#mutingChanged">mutingChanged</keyword>
+        <keyword ref="qradiotuner.html#searchBackward">searchBackward</keyword>
+        <keyword ref="qradiotuner.html#searchForward">searchForward</keyword>
+        <keyword ref="qradiotuner.html#searchingStatusChanged">searchingStatusChanged</keyword>
+        <keyword ref="qradiotuner.html#setStereoMode">setStereoMode</keyword>
+        <keyword ref="qradiotuner.html#signalStrengthChanged">signalStrengthChanged</keyword>
+        <keyword ref="qradiotuner.html#start">start</keyword>
+        <keyword ref="qradiotuner.html#stereoMode">stereoMode</keyword>
+        <keyword ref="qradiotuner.html#stereoStatusChanged">stereoStatusChanged</keyword>
+        <keyword ref="qradiotuner.html#stop">stop</keyword>
+        <keyword ref="qradiotuner.html#volumeChanged">volumeChanged</keyword>
+        <section ref="qradiotuner-members.html" title="List of all members"/>
     </section>
-    <section ref="qradioplayercontrol.html" title="QRadioPlayerControl Class Reference">
-        <keyword ref="qradioplayercontrol.html">QRadioPlayerControl</keyword>
-        <keyword ref="qradioplayercontrol.html#band">band</keyword>
-        <keyword ref="qradioplayercontrol.html#bandChanged">bandChanged</keyword>
-        <keyword ref="qradioplayercontrol.html#cancelSearch">cancelSearch</keyword>
-        <keyword ref="qradioplayercontrol.html#duration">duration</keyword>
-        <keyword ref="qradioplayercontrol.html#durationChanged">durationChanged</keyword>
-        <keyword ref="qradioplayercontrol.html#frequency">frequency</keyword>
-        <keyword ref="qradioplayercontrol.html#frequencyChanged">frequencyChanged</keyword>
-        <keyword ref="qradioplayercontrol.html#isMuted">isMuted</keyword>
-        <keyword ref="qradioplayercontrol.html#isSearching">isSearching</keyword>
-        <keyword ref="qradioplayercontrol.html#isStereo">isStereo</keyword>
-        <keyword ref="qradioplayercontrol.html#isSupportedBand">isSupportedBand</keyword>
-        <keyword ref="qradioplayercontrol.html#mutingChanged">mutingChanged</keyword>
-        <keyword ref="qradioplayercontrol.html#searchBackward">searchBackward</keyword>
-        <keyword ref="qradioplayercontrol.html#searchForward">searchForward</keyword>
-        <keyword ref="qradioplayercontrol.html#searchingStatusChanged">searchingStatusChanged</keyword>
-        <keyword ref="qradioplayercontrol.html#setBand">setBand</keyword>
-        <keyword ref="qradioplayercontrol.html#setFrequency">setFrequency</keyword>
-        <keyword ref="qradioplayercontrol.html#setMuted">setMuted</keyword>
-        <keyword ref="qradioplayercontrol.html#setStereo">setStereo</keyword>
-        <keyword ref="qradioplayercontrol.html#setVolume">setVolume</keyword>
-        <keyword ref="qradioplayercontrol.html#signalStrength">signalStrength</keyword>
-        <keyword ref="qradioplayercontrol.html#signalStrengthChanged">signalStrengthChanged</keyword>
-        <keyword ref="qradioplayercontrol.html#stereoStatusChanged">stereoStatusChanged</keyword>
-        <keyword ref="qradioplayercontrol.html#volume">volume</keyword>
-        <keyword ref="qradioplayercontrol.html#volumeChanged">volumeChanged</keyword>
-        <section ref="qradioplayercontrol-members.html" title="List of all members"/>
+    <section ref="qradiotunercontrol.html" title="QRadioTunerControl Class Reference">
+        <keyword ref="qradiotunercontrol.html">QRadioTunerControl</keyword>
+        <keyword ref="qradiotunercontrol.html#band">band</keyword>
+        <keyword ref="qradiotunercontrol.html#bandChanged">bandChanged</keyword>
+        <keyword ref="qradiotunercontrol.html#cancelSearch">cancelSearch</keyword>
+        <keyword ref="qradiotunercontrol.html#error">error</keyword>
+        <keyword ref="qradiotunercontrol.html#errorString">errorString</keyword>
+        <keyword ref="qradiotunercontrol.html#frequency">frequency</keyword>
+        <keyword ref="qradiotunercontrol.html#frequencyChanged">frequencyChanged</keyword>
+        <keyword ref="qradiotunercontrol.html#frequencyRange">frequencyRange</keyword>
+        <keyword ref="qradiotunercontrol.html#frequencyStep">frequencyStep</keyword>
+        <keyword ref="qradiotunercontrol.html#isBandSupported">isBandSupported</keyword>
+        <keyword ref="qradiotunercontrol.html#isMuted">isMuted</keyword>
+        <keyword ref="qradiotunercontrol.html#isSearching">isSearching</keyword>
+        <keyword ref="qradiotunercontrol.html#isStereo">isStereo</keyword>
+        <keyword ref="qradiotunercontrol.html#mutingChanged">mutingChanged</keyword>
+        <keyword ref="qradiotunercontrol.html#searchBackward">searchBackward</keyword>
+        <keyword ref="qradiotunercontrol.html#searchForward">searchForward</keyword>
+        <keyword ref="qradiotunercontrol.html#searchingStatusChanged">searchingStatusChanged</keyword>
+        <keyword ref="qradiotunercontrol.html#setBand">setBand</keyword>
+        <keyword ref="qradiotunercontrol.html#setFrequency">setFrequency</keyword>
+        <keyword ref="qradiotunercontrol.html#setMuted">setMuted</keyword>
+        <keyword ref="qradiotunercontrol.html#setStereoMode">setStereoMode</keyword>
+        <keyword ref="qradiotunercontrol.html#setVolume">setVolume</keyword>
+        <keyword ref="qradiotunercontrol.html#signalStrength">signalStrength</keyword>
+        <keyword ref="qradiotunercontrol.html#signalStrengthChanged">signalStrengthChanged</keyword>
+        <keyword ref="qradiotunercontrol.html#start">start</keyword>
+        <keyword ref="qradiotunercontrol.html#stereoMode">stereoMode</keyword>
+        <keyword ref="qradiotunercontrol.html#stereoStatusChanged">stereoStatusChanged</keyword>
+        <keyword ref="qradiotunercontrol.html#stop">stop</keyword>
+        <keyword ref="qradiotunercontrol.html#volume">volume</keyword>
+        <keyword ref="qradiotunercontrol.html#volumeChanged">volumeChanged</keyword>
+        <section ref="qradiotunercontrol-members.html" title="List of all members"/>
     </section>
     <section ref="qtmedia.html" title="QtMedia Namespace Reference">
         <keyword ref="qtmedia.html">QtMedia</keyword>
@@ -813,6 +857,11 @@
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::Date</keyword>
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::AudioCodec</keyword>
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::Size</keyword>
+        <keyword ref="qtmedia.html#SupportEstimate-enum">SupportEstimate</keyword>
+        <keyword ref="qtmedia.html#SupportEstimate-enum">QtMedia::NotSupported</keyword>
+        <keyword ref="qtmedia.html#SupportEstimate-enum">QtMedia::PreferedService</keyword>
+        <keyword ref="qtmedia.html#SupportEstimate-enum">QtMedia::MaybeSupported</keyword>
+        <keyword ref="qtmedia.html#SupportEstimate-enum">QtMedia::ProbablySupported</keyword>
     </section>
     <section ref="qvideodevicecontrol.html" title="QVideoDeviceControl Class Reference">
         <keyword ref="qvideodevicecontrol.html">QVideoDeviceControl</keyword>
@@ -847,6 +896,7 @@
         <keyword ref="qvideowidget.html#contrast-prop">contrast</keyword>
         <keyword ref="qvideowidget.html#contrast-prop">setContrast</keyword>
         <keyword ref="qvideowidget.html#fullScreen-prop">fullScreen</keyword>
+        <keyword ref="qvideowidget.html#fullScreen-prop">isFullScreen</keyword>
         <keyword ref="qvideowidget.html#fullScreen-prop">setFullScreen</keyword>
         <keyword ref="qvideowidget.html#hue-prop">hue</keyword>
         <keyword ref="qvideowidget.html#hue-prop">setHue</keyword>
@@ -854,11 +904,9 @@
         <keyword ref="qvideowidget.html#saturation-prop">setSaturation</keyword>
         <keyword ref="qvideowidget.html#brightnessChanged">brightnessChanged</keyword>
         <keyword ref="qvideowidget.html#contrastChanged">contrastChanged</keyword>
-        <keyword ref="qvideowidget.html#event">event</keyword>
         <keyword ref="qvideowidget.html#fullScreenChanged">fullScreenChanged</keyword>
         <keyword ref="qvideowidget.html#hueChanged">hueChanged</keyword>
         <keyword ref="qvideowidget.html#saturationChanged">saturationChanged</keyword>
-        <keyword ref="qvideowidget.html#setVisible">setVisible</keyword>
         <section ref="qvideowidget-members.html" title="List of all members"/>
     </section>
     <section ref="qvideowidgetcontrol.html" title="QVideoWidgetControl Class Reference">

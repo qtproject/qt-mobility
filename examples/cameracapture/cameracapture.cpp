@@ -87,7 +87,6 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
     delete videoWidget;
     delete camera;
 
-
     if (cameraDevice.isEmpty())
         camera = new QCamera;
     else
@@ -101,16 +100,15 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
     QActionGroup *audioDevicesGroup = new QActionGroup(this);
     audioDevicesGroup->setExclusive(true);
 
-    foreach(const QString deviceName, service->supportedEndpoints(QMediaService::AudioInput)) {
-        QString description = service->endpointDescription(QMediaService::AudioInput, deviceName);
+    foreach(const QString deviceName, service->supportedEndpoints(QMediaService::AudioDevice)) {
+        QString description = service->endpointDescription(QMediaService::AudioDevice, deviceName);
         QAction *audioDeviceAction = new QAction(deviceName+" "+description, audioDevicesGroup);
         audioDeviceAction->setData(QVariant(deviceName));
         audioDeviceAction->setCheckable(true);
 
         ui->actionAudio->menu()->addAction(audioDeviceAction);
 
-        if (!service->activeEndpoints(QMediaService::AudioInput).isEmpty() &&
-            service->activeEndpoints(QMediaService::AudioInput).first() == deviceName)
+        if (service->activeEndpoint(QMediaService::AudioDevice) == deviceName)
             audioDeviceAction->setChecked(true);
     }
 
@@ -187,5 +185,5 @@ void CameraCapture::updateCameraDevice(QAction *action)
 
 void CameraCapture::updateAudioDevice(QAction *action)
 {
-    service->setActiveEndpoint(QMediaService::AudioInput, action->data().toString());
+    service->setActiveEndpoint(QMediaService::AudioDevice, action->data().toString());
 }

@@ -45,8 +45,8 @@ class QVideoWidgetControlPrivate;
 class Q_MEDIA_EXPORT QVideoWidgetControl : public QMediaControl
 {
     Q_OBJECT
+
 public:
-    QVideoWidgetControl(QObject *parent = 0);
     virtual ~QVideoWidgetControl();
 
     virtual QWidget *videoWidget() = 0;
@@ -75,10 +75,12 @@ Q_SIGNALS:
     void contrastChanged(int contrast);
     void hueChanged(int hue);
     void saturationChanged(int saturation);
+
+protected:
+    QVideoWidgetControl(QObject *parent = 0);
 };
 
 #define QVideoWidgetControl_iid "com.nokia.Qt.QVideoWidgetControl/1.0"
-
 Q_MEDIA_DECLARE_CONTROL(QVideoWidgetControl, QVideoWidgetControl_iid)
 
 #endif

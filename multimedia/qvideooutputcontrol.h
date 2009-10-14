@@ -40,6 +40,7 @@
 class Q_MEDIA_EXPORT QVideoOutputControl : public QMediaControl
 {
     Q_OBJECT
+
 public:
     enum Output
     {
@@ -51,7 +52,6 @@ public:
         MaxUserOutput = 1000
     };
 
-    QVideoOutputControl(QObject *parent = 0);
     ~QVideoOutputControl();
 
     virtual QList<Output> availableOutputs() const = 0;
@@ -60,11 +60,13 @@ public:
     virtual void setOutput(Output output) = 0;
 
 Q_SIGNALS:
-    void availableOutputsChanged(const QList<QVideoOutputControl::Output>  &outputs);
+    void availableOutputsChanged(const QList<QVideoOutputControl::Output> &outputs);
+
+protected:
+    QVideoOutputControl(QObject *parent = 0);
 };
 
 #define QVideoOutputControl_iid "com.nokia.Qt.QVideoOutputControl/1.0"
-
 Q_MEDIA_DECLARE_CONTROL(QVideoOutputControl, QVideoOutputControl_iid)
 
 #endif

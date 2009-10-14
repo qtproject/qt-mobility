@@ -40,7 +40,7 @@
 
 #include <multimedia/qmediaresource.h>
 
-class QMetaDataControlPrivate;
+
 class Q_MEDIA_EXPORT QMetaDataControl : public QMediaControl
 {
     Q_OBJECT

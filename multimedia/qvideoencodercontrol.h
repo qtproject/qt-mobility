@@ -47,6 +47,7 @@ class QStringList;
 class Q_MEDIA_EXPORT QVideoEncoderControl : public QMediaControl
 {
     Q_OBJECT
+
 public:
     virtual ~QVideoEncoderControl();
 
@@ -68,7 +69,6 @@ public:
 
     virtual QString videoCodecDescription(const QString &codecName) const = 0;
 
-
     virtual int bitrate() const = 0;
     virtual void setBitrate(int) = 0;
 
@@ -80,7 +80,7 @@ public:
     virtual void setEncodingOption(const QString &codec, const QString &name, const QVariant &value) = 0;
 
 protected:
-    QVideoEncoderControl(QObject *parent);
+    QVideoEncoderControl(QObject *parent = 0);
 };
 
 #define QVideoEncoderControl_iid "com.nokia.Qt.QVideoEncoderControl/1.0"

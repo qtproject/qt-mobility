@@ -147,7 +147,7 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 /*!
   \fn QMediaPlaylistControl::playlistProviderChanged()
 
-  Signal emited when the playlist provider is changed.
+  Signal emited when the playlist provider has changed.
 */
 
 /*!

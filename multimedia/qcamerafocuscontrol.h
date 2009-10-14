@@ -73,7 +73,7 @@ Q_SIGNALS:
     void focusLocked();
 
 protected:
-    QCameraFocusControl(QObject* parent);
+    QCameraFocusControl(QObject* parent = 0);
 };
 
 #define QCameraFocusControl_iid "com.nokia.Qt.QCameraFocusingControl/1.0"

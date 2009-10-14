@@ -56,7 +56,7 @@ QStringList QMediaPluginLoader::keys() const
 
 QObject* QMediaPluginLoader::instance(QString const &key)
 {
-    return m_instances[key];
+    return m_instances.value(key);
 }
 
 QList<QObject*> QMediaPluginLoader::instances(QString const &key)

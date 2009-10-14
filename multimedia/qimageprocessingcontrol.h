@@ -43,6 +43,7 @@
 class Q_MEDIA_EXPORT QImageProcessingControl : public QMediaControl
 {
     Q_OBJECT
+
 public:
     ~QImageProcessingControl();
 
@@ -67,7 +68,7 @@ public:
     virtual void setDenoisingLevel(qreal value) = 0;
 
 protected:
-    QImageProcessingControl(QObject* parent);
+    QImageProcessingControl(QObject* parent = 0);
 };
 
 #define QImageProcessingControl_iid "com.nokia.Qt.QImageProcessingControl/1.0"

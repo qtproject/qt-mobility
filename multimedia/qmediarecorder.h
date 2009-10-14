@@ -113,12 +113,12 @@ public:
                              const QVideoEncoderSettings &videoSettings = QVideoEncoderSettings(),
                              const QString &format = QString());
 
-public slots:
+public Q_SLOTS:
     void record();
     void pause();
     void stop();
 
-signals:
+Q_SIGNALS:
     void stateChanged(QMediaRecorder::State state);
     void durationChanged(qint64 duration);
 

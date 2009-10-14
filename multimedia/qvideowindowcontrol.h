@@ -43,8 +43,8 @@
 class Q_MEDIA_EXPORT QVideoWindowControl : public QMediaControl
 {
     Q_OBJECT
+
 public:
-    QVideoWindowControl(QObject *parent = 0);
     ~QVideoWindowControl();
 
     virtual WId winId() const = 0;
@@ -82,10 +82,12 @@ Q_SIGNALS:
     void hueChanged(int hue);
     void saturationChanged(int saturation);
     void nativeSizeChanged();
+
+protected:
+    QVideoWindowControl(QObject *parent = 0);
 };
 
 #define QVideoWindowControl_iid "com.nokia.Qt.QVideoWindowControl/1.0"
-
 Q_MEDIA_DECLARE_CONTROL(QVideoWindowControl, QVideoWindowControl_iid)
 
 #endif

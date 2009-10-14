@@ -62,7 +62,7 @@ Q_SIGNALS:
     void devicesChanged();
 
 protected:
-    QVideoDeviceControl(QObject *parent);
+    QVideoDeviceControl(QObject *parent = 0);
 };
 
 #define QVideoDeviceControl_iid "com.nokia.Qt.QVideoDeviceControl/1.0"

@@ -44,6 +44,7 @@ class QMediaPlaylistProvider;
 class Q_MEDIA_EXPORT QMediaPlaylistControl : public QMediaControl
 {
     Q_OBJECT
+
 public:
     virtual ~QMediaPlaylistControl();
 
@@ -66,14 +67,12 @@ Q_SIGNALS:
     void playlistPositionChanged(int position);
     void currentMediaChanged(const QMediaContent&);
     void playbackModeChanged(QMediaPlaylist::PlaybackMode mode);
-    void playlistProviderChanged(QMediaPlaylistProvider *);
 
 protected:
-    QMediaPlaylistControl(QObject* parent);
+    QMediaPlaylistControl(QObject* parent = 0);
 };
 
 #define QMediaPlaylistControl_iid "com.nokia.Qt.QMediaPlaylistControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QMediaPlaylistControl, QMediaPlaylistControl_iid)
-
 
 #endif // QMEDIAPLAYLISTCONTROL_H

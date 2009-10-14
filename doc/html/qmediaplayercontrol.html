@@ -36,6 +36,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#play">play</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual qreal </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#playbackRate">playbackRate</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual qint64 </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#position">position</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QPair&lt;qint64, qint64&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#seekRange">seekRange</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setMedia">setMedia</a></b> ( const QMediaContent &amp; <i>media</i>, QIODevice * <i>stream</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setMuted">setMuted</a></b> ( bool <i>mute</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setPlaybackRate">setPlaybackRate</a></b> ( qreal <i>rate</i> ) = 0</td></tr>
@@ -60,6 +61,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#mutingChanged">mutingChanged</a></b> ( bool <i>mute</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#playbackRateChanged">playbackRateChanged</a></b> ( qreal <i>rate</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#positionChanged">positionChanged</a></b> ( qint64 <i>position</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#seekRangeChanged">seekRangeChanged</a></b> ( const QPair&lt;qint64, qint64&gt; &amp; <i>range</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#seekableChanged">seekableChanged</a></b> ( bool <i>seekable</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#stateChanged">stateChanged</a></b> ( QMediaPlayer::State <i>state</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#videoAvailabilityChanged">videoAvailabilityChanged</a></b> ( bool <i>video</i> )</td></tr>
@@ -152,6 +154,11 @@
 <p>Signals the playback <i>position</i> has changed.</p>
 <p>This is only emitted in when there has been a discontinous change in the playback postion, such as a seek or the position being reset.</p>
 <p>See also <a href="qmediaplayercontrol.html#position">position</a>().</p>
+<h3 class="fn"><a name="seekRange"></a><a href="http://qt.nokia.com/doc/4.5/qpair.html">QPair</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qint64-typedef">qint64</a>, <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qint64-typedef">qint64</a>&gt; QMediaPlayerControl::seekRange () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the range in milliseconds the player can seek to. Usually for local files this this range equals to [0..<a href="qmediaplayercontrol.html#duration">duration</a>()] or [0..0] if seeking is not supported, but for network sources it means the buffered part of media.</p>
+<h3 class="fn"><a name="seekRangeChanged"></a>void QMediaPlayerControl::seekRangeChanged ( const <a href="http://qt.nokia.com/doc/4.5/qpair.html">QPair</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qint64-typedef">qint64</a>, <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qint64-typedef">qint64</a>&gt; &amp; <i>range</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that the media seek <i>range</i> has changed.</p>
+<p>See also <a href="qmediaplayercontrol.html#seekRange">QMediaPlayerControl::seekRange</a>().</p>
 <h3 class="fn"><a name="seekableChanged"></a>void QMediaPlayerControl::seekableChanged ( bool <i>seekable</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <i>seekable</i> state of a player control has changed.</p>
 <p>See also <a href="qmediaplayercontrol.html#isSeekable">isSeekable</a>().</p>

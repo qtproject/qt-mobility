@@ -41,7 +41,8 @@
 
 #include <multimedia/qradiotunercontrol.h>
 
-#include "linux/videodev2.h"
+#include <linux/types.h>
+#include <linux/videodev2.h>
 
 class V4LRadioService;
 

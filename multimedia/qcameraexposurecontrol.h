@@ -43,6 +43,7 @@
 class Q_MEDIA_EXPORT QCameraExposureControl : public QMediaControl
 {
     Q_OBJECT
+
 public:
     ~QCameraExposureControl();
 
@@ -99,7 +100,7 @@ Q_SIGNALS:
     void isoSensitivityChanged(int);
 
 protected:
-    QCameraExposureControl(QObject* parent);
+    QCameraExposureControl(QObject* parent = 0);
 };
 
 #define QCameraExposureControl_iid "com.nokia.Qt.QCameraExposureControl/1.0"

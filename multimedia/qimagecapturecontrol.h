@@ -42,6 +42,7 @@ class QImage;
 class Q_MEDIA_EXPORT QImageCaptureControl : public QMediaControl
 {
     Q_OBJECT
+
 public:
     ~QImageCaptureControl();
 
@@ -53,7 +54,7 @@ Q_SIGNALS:
     void imageCaptured(const QString &fileName, const QImage &preview);
 
 protected:
-    QImageCaptureControl(QObject* parent);
+    QImageCaptureControl(QObject* parent = 0);
 };
 
 #define QImageCaptureControl_iid "com.nokia.Qt.QImageCaptureControl/1.0"
