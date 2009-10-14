@@ -59,6 +59,8 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistprovider.html#itemsChanged">itemsChanged</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistprovider.html#itemsInserted">itemsInserted</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistprovider.html#itemsRemoved">itemsRemoved</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistprovider.html#loadFailed">loadFailed</a></b> ( QMediaPlaylist::Error, const QString &amp; <i>errorMessage</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistprovider.html#loaded">loaded</a></b> ()</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
@@ -106,11 +108,13 @@
 <p>Load playlist from <i>location</i>. If <i>format</i> is specified, it is used, otherwise format is guessed from location name and data.</p>
 <p>New items are appended to playlist.</p>
 <p><a href="qmediaplaylist.html">QMediaPlaylist</a> uses <a href="qmediaplaylistprovider.html">QMediaPlaylistProvider</a> to load/save playlists first, than it tries available playlist I/O plugins.</p>
-<p>Returns true if playlist was loaded succesfully, otherwise returns false.</p>
+<p>Returns true if provider supports loading of location URL protocol and passed format, otherwise returns false.</p>
 <h3 class="fn"><a name="load-2"></a>bool QMediaPlaylistProvider::load ( <a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> * <i>device</i>, const char * <i>format</i> = 0 )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Load playlist from <a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> <i>device</i>. If <i>format</i> is specified, it is used, otherwise format is guessed from device data.</p>
 <p>New items are appended to playlist.</p>
-<p>Returns true if playlist was loaded succesfully, otherwise returns false.</p>
+<p>Returns true if provider supports loading of location URL protocol and passed format, otherwise returns false.</p>
+<h3 class="fn"><a name="loadFailed"></a>void QMediaPlaylistProvider::loadFailed ( <a href="qmediaplaylist.html#Error-enum">QMediaPlaylist::Error</a>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>errorMessage</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="loaded"></a>void QMediaPlaylistProvider::loaded ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <h3 class="fn"><a name="media"></a><a href="qmediacontent.html">QMediaContent</a> QMediaPlaylistProvider::media ( int <i>index</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns a media object at playlist position <i>index</i>, or invalid media object if index is out of playlist range.</p>
 <h3 class="fn"><a name="removeItem"></a>bool QMediaPlaylistProvider::removeItem ( int <i>pos</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
