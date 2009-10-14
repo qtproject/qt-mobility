@@ -3,9 +3,10 @@ TEMPLATE = app
 TARGET =
 QT += testlib xml
 CONFIG  += qtestlib
+include(../../common.pri)
 
 DEPENDPATH += .
-INCLUDEPATH += .
+INCLUDEPATH += . ../../versit
 
 # Input
 HEADERS += versittest.h

@@ -157,8 +157,7 @@ int TestResultXmlParser::parseAndPrintResults(
     if (printDetails) {
         printf("\n");
         foreach(QString error, *mErrors) {
-            printf(error.toUtf8().data());
-            printf("\n");
+            printf("%s\n", error.toUtf8().data());
         }
     }
     if (mBenchMarkCount && mTotalBenchMarkTime) {
