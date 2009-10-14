@@ -51,68 +51,6 @@ class QVersitContactGeneratorPrivate
 public:
     QVersitContactGeneratorPrivate() {}
     ~QVersitContactGeneratorPrivate() {}
-    
-    QContactDetail* addName(const QVersitProperty& property)
-    {
-        QContactName* name = new QContactName();
-        const QByteArray& val = property.value();
-        const QList<QByteArray>& values = val.split(versitValueSeparator[0]);
-        for(int i=0;i<values.count();i++){
-            switch(i){
-                case 0:name->setLast(values[0]);break;
-                case 1:name->setFirst(values[1]);break;
-                case 2:name->setMiddle(values[2]);break;
-                case 3:name->setPrefix(values[3]);break;
-                case 4:name->setSuffix(values[4]);break;
-            }
-        }
-        return name;
-    }
-    
-    QContactDetail* addPhone(const QVersitProperty& property)
-    {
-        QContactPhoneNumber* phone=new QContactPhoneNumber();
-        phone->setNumber(property.value());
-        // parse the comma separated multi types
-        const QMultiHash<QString,QString> params = property.parameters();
-        const QList<QString> paramsOfVersitType = params.values(versitType);
-        QStringList types;
-        foreach(const QString& param,paramsOfVersitType){
-            types.append(param.split(versitValueSeparator));
-        }
-        // construct subtypes and contexts
-        QStringList subTypes;
-        QStringList contexts;
-        foreach(const QString& type,types){
-            if(type==versitVoiceId){
-                subTypes+=QContactPhoneNumber::SubTypeVoice;
-            }
-            else if(type==versitCellId){
-                subTypes+=QContactPhoneNumber::SubTypeMobile;
-            }
-            else if(type==versitModemId){
-                subTypes+=QContactPhoneNumber::SubTypeModem;
-            }
-            else if(type==versitCarId){
-                subTypes+=QContactPhoneNumber::SubTypeCar;
-            }
-            else if(type==versitVideoId){
-                subTypes+=QContactPhoneNumber::SubTypeVideo;
-            }
-            else if(type==versitContextHomeId){
-                contexts+=QContactDetail::ContextHome;
-            }
-            else if(type==versitContextWorkId){
-                contexts+=QContactDetail::ContextWork;
-            }
-            else {
-                contexts+=(QContactDetail::ContextOther);
-            }
-        }
-        phone->setSubTypes(subTypes);
-        phone->setContexts(contexts);
-        return phone;
-    }
 };
 
 #endif // QVERSITCONTACTGENERATOR_P_H

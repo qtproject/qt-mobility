@@ -49,6 +49,8 @@ public:
     
 private:
     
+    QContactDetail* createName(const QVersitProperty& property) const;
+    QContactDetail* createPhone(const QVersitProperty& property) const;
     QContactDetail* createAddress(const QVersitProperty& property) const;
     QStringList extractContexts(const QStringList& types) const;
     
