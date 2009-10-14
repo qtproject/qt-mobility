@@ -111,32 +111,32 @@ END:VCARD\r\n";
     property.setValue(QByteArray("12347"));
     doc.addProperty(property);
     QVERIFY(mWriter->encodeVersitDocument(doc) == vCardSimple);
-/*
+
     const char vCardAgent[] = 
 "BEGIN:VCARD\r\n\
 VERSION:2.1\r\n\
 N:Homer\r\n\
-EMAIL;ENCODING=QUOTED-PRINTABLE:homer=40simp=\r\nsons.com\r\n\
-AGENT:\r\nBEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\r\n\
+EMAIL;ENCODING=QUOTED-PRINTABLE:homer=40simpsons.com\r\n\
+AGENT:\r\nBEGIN:VCARD\r\nVERSION:2.1\r\nN:Marge\r\nEND:VCARD\r\n\r\n\
 END:VCARD\r\n";
     QVersitDocument docAgent;
     docAgent.setVersitType(QVersitDocument::VCard21);
-    QVersitProperty propertyAgent;
-    propertyAgent.setName(QString::fromAscii("N"));
-    propertyAgent.setValue(QByteArray("Homer"));
-    docAgent.addProperty(propertyAgent);
-    propertyAgent.setName(QString::fromAscii("EMAIL"));
-    propertyAgent.setValue(QByteArray("homer@simpsons.com"));
-    docAgent.addProperty(propertyAgent);
-    propertyAgent.setName(QString("AGENT"));
+    property.setName(QString::fromAscii("N"));
+    property.setValue(QByteArray("Homer"));
+    docAgent.addProperty(property);
+    property.setName(QString::fromAscii("EMAIL"));
+    property.setValue(QByteArray("homer@simpsons.com"));
+    docAgent.addProperty(property);
+    property.setName(QString("AGENT"));
+    property.setValue(QByteArray());
     QVersitDocument embeddedDocument;
     QVersitProperty embeddedProperty;
-    embeddedProperty.setName(QString::fromAscii("Marge"));
+    embeddedProperty.setName(QString::fromAscii("N"));
+    embeddedProperty.setValue(QByteArray("Marge"));
     embeddedDocument.addProperty(embeddedProperty);
-    propertyAgent.setEmbeddedDocument(embeddedDocument);
-    docAgent.addProperty(propertyAgent);
+    property.setEmbeddedDocument(embeddedDocument);
+    docAgent.addProperty(property);
     QCOMPARE(QString::fromAscii(mWriter->encodeVersitDocument(docAgent)), QString::fromAscii(vCardAgent));
-*/
 }
 
 
