@@ -114,9 +114,9 @@ QByteArray contentTypeFromExtension(const QString &extension);
 
 class Lptstr : public QVector<TCHAR>
 {
-        public:
-            Lptstr(int length) : QVector(length){}
-            operator TCHAR* (){ return QVector::data(); }
+public:
+    Lptstr(int length) : QVector(length){}
+    operator TCHAR* (){ return QVector::data(); }
 };
 
 Lptstr LptstrFromQString(const QString &src);
@@ -142,6 +142,20 @@ public:
 };
 
 }
+
+/* Note on links:
+    - Session must close at exit for correct cleanup
+        Session must be a singleton
+        Stores must have weak ref to session
+    - Stores must remain open after opening to enable notifications
+        Session holds strong ref to stores
+    - Folders should not remain open
+        Store holds weak ref to folders
+        Folder can have strong ref to store
+
+    * Session keeps stores open
+    * Folders keep store open
+*/
 
 class MapiFolder {
 
@@ -179,9 +193,12 @@ public:
 
     LPMAPITABLE subFolders(QMessageStore::ErrorCode *lastError) { if (!_init) findSubFolders(lastError); return _subFolders; }
     IMessage *createMessage(QMessageStore::ErrorCode* lastError);
-    IMessage *createMessage(QMessageStore::ErrorCode* lastError, const QMessage& source, const MapiSessionPtr session, PostSendAction postSendAction = MoveAfterSend, SaveOption saveOption = SaveMessage );
+    IMessage *createMessage(QMessageStore::ErrorCode* lastError, const QMessage& source, const MapiSessionPtr &session, PostSendAction postSendAction = MoveAfterSend, SaveOption saveOption = SaveMessage );
 
     IMessage *openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
+
+    QMessageFolder folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const;
+    QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
 
     QMessage::StandardFolder standardFolder() const;
 
@@ -200,7 +217,6 @@ private:
     MapiRecordKey _key;
     QString _name;
     LPMAPITABLE _subFolders;
-    uint _itemCount;
     MapiEntryId _entryId;
     bool _hasSubFolders;
     uint _messageCount;
@@ -209,7 +225,7 @@ private:
 
 class MapiStore {
 public:
-    static MapiStorePtr createStore(QMessageStore::ErrorCode *lastError, const MapiSessionPtr &session, LPMDB store, const MapiRecordKey &key, const MapiEntryId &entryId, const QString &name, bool cachedMode);
+    static MapiStorePtr createStore(QMessageStore::ErrorCode *lastError, const MapiSessionPtr &session, IMsgStore *store, const MapiRecordKey &key, const MapiEntryId &entryId, const QString &name, bool cachedMode);
 
     ~MapiStore();
 
@@ -239,11 +255,14 @@ public:
 
     QMessageIdList queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const;
 
+    QMessageFolder folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const;
+    QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
+
     void notifyEvents(ULONG mask);
 
 private:
     MapiStore();
-    MapiStore(const MapiSessionPtr &session, LPMDB store, const MapiRecordKey &key, const MapiEntryId &entryId, const QString &name, bool cachedMode);
+    MapiStore(const MapiSessionPtr &session, IMsgStore *store, const MapiRecordKey &key, const MapiEntryId &entryId, const QString &name, bool cachedMode);
 
     IMAPIFolder *openMapiFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId) const;
 
@@ -265,7 +284,7 @@ private:
     };
 
     QWeakPointer<MapiStore> _self;
-    MapiSessionPtr _session;
+    QWeakPointer<MapiSession> _session;
     bool _valid;
     IMsgStore* _store;
     MapiRecordKey _key;
@@ -274,7 +293,7 @@ private:
     bool _cachedMode;
     ULONG _adviseConnection;
 
-    static QHash<MapiEntryId, QWeakPointer<MapiFolder> > _folderMap;
+    mutable QHash<MapiEntryId, QWeakPointer<MapiFolder> > _folderMap;
 };
 
 class MapiSession : public QObject
@@ -350,6 +369,8 @@ private:
     void addAttachment(LPMESSAGE message, const QMessageContentContainer& attachmentContainer);
 
 private:
+    friend class SessionManager;
+
     QWeakPointer<MapiSession> _self;
     WinHelpers::MapiInitializationToken _token;
     IMAPISession* _mapiSession;
@@ -357,9 +378,7 @@ private:
     QMap<QMessageStore::NotificationFilterId, QMessageFilter> _filters;
     bool _registered;
 
-    static QWeakPointer<MapiSession> _session;
-
-    static QHash<MapiEntryId, QSharedPointer<MapiStore> > _storeMap;
+    mutable QHash<MapiEntryId, MapiStorePtr> _storeMap;
 };
 
 #endif

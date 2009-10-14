@@ -40,6 +40,8 @@ class QMessageStorePrivate
 
 public:
     QMessageStorePrivate();
+    ~QMessageStorePrivate();
+
     void initialize(QMessageStore *store);
 
     QMessageStore *q_ptr;

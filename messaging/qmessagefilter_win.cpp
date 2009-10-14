@@ -175,12 +175,12 @@ QMessageFilterPrivate* QMessageFilterPrivate::implementation(const QMessageFilte
     return filter.d_ptr;
 }
 
-MapiFolderIterator QMessageFilterPrivate::folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, MapiStorePtr store)
+MapiFolderIterator QMessageFilterPrivate::folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiStorePtr &store)
 {
     return MapiFolderIterator(store, store->rootFolder(lastError), filter.d_ptr->_standardFoldersInclude, filter.d_ptr->_standardFoldersExclude);
 }
 
-MapiStoreIterator QMessageFilterPrivate::storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, MapiSessionPtr session)
+MapiStoreIterator QMessageFilterPrivate::storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiSessionPtr &session)
 {
     return MapiStoreIterator(session->allStores(lastError), filter.d_ptr->_accountsInclude, filter.d_ptr->_accountsExclude);
 }

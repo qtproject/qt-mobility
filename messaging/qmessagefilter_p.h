@@ -106,8 +106,8 @@ public:
     static QMessageFilter from(QMessageFilterPrivate::Field field, const QVariant &value, QMessageDataComparator::InclusionComparator cmp);
     static QMessageFilterPrivate* implementation(const QMessageFilter &filter);
 
-    static MapiFolderIterator folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, MapiStorePtr store);
-    static MapiStoreIterator storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, MapiSessionPtr session);
+    static MapiFolderIterator folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiStorePtr &store);
+    static MapiStoreIterator storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiSessionPtr &session);
     static QList<QMessageFilter> subFilters(const QMessageFilter &filter);
 
 #endif

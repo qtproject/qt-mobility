@@ -38,6 +38,7 @@
 #include "qmessageaccountid_p.h"
 #include "qmessageaccount_p.h"
 #include "winhelpers_p.h"
+#include <QCoreApplication>
 #include <qdebug.h>
 
 class QMessageStorePrivatePlatform : public QObject
@@ -53,6 +54,9 @@ public:
     QMessageStore::ErrorCode lastError;
 
     MapiSessionPtr session;
+
+private slots:
+    void appDestroyed();
 };
 
 QMessageStorePrivatePlatform::QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q)
@@ -61,6 +65,8 @@ QMessageStorePrivatePlatform::QMessageStorePrivatePlatform(QMessageStorePrivate 
      lastError(QMessageStore::NoError),
      session(MapiSession::createSession(&lastError))
 {
+    connect(QCoreApplication::instance(), SIGNAL(destroyed()), this, SLOT(appDestroyed()));
+
     if (session && (lastError == QMessageStore::NoError)) {
         MapiSession *o(session.data());
         connect(o, SIGNAL(messageAdded(QMessageId, QMessageStore::NotificationFilterIdSet)), q, SIGNAL(messageAdded(QMessageId, QMessageStore::NotificationFilterIdSet)));
@@ -73,10 +79,21 @@ QMessageStorePrivatePlatform::~QMessageStorePrivatePlatform()
 {
 }
 
+void QMessageStorePrivatePlatform::appDestroyed()
+{
+    // We need to terminate our session before main finishes
+    session.clear();
+}
+
 QMessageStorePrivate::QMessageStorePrivate()
     :p_ptr(0),
      q_ptr(0)
 {
+}
+
+QMessageStorePrivate::~QMessageStorePrivate()
+{
+    delete p_ptr;
 }
 
 void QMessageStorePrivate::initialize(QMessageStore *store)
