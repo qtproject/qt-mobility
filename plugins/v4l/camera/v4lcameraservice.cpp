@@ -36,76 +36,51 @@
 #include <QtCore/qdebug.h>
 #include <QtGui/qwidget.h>
 
-#include "endpoints/qmediawidgetendpoint.h"
-
 #include "v4lcameraservice.h"
 #include "v4lcameracontrol.h"
-#include "v4lmediacontrol.h"
 #include "v4lcamerasession.h"
-#include "v4lvideowidget.h"
+#include "v4lvideorenderer.h"
 #include "v4lvideooutputcontrol.h"
-#include "v4lmediaformatcontrol.h"
-#include "v4lvideoencode.h"
+#include "v4lvideodevicecontrol.h"
 
 V4LCameraService::V4LCameraService(QObject *parent):
     QMediaService(parent)
 {
     m_session = new V4LCameraSession(this);
-    m_control = new V4LCameraControl(this,m_session);
-    m_media = new V4LMediaControl(m_session);
-    m_mediaFormat = new V4LMediaFormatControl(m_session);
-    m_videoEncode = new V4LVideoEncode(m_session);
-    m_videoOutput = new V4LVideoOutputControl(m_session);
-    m_device = QByteArray("/dev/video0");
+    m_control = new V4LCameraControl(m_session);
+
+    m_videoOutput = new V4LVideoOutputControl(this);
+    m_videoOutput->setOutput(QVideoOutputControl::RendererOutput);
+
+    m_videoDevice = new V4LVideoDeviceControl(m_session);
+
+    m_videoRenderer = new V4LVideoRendererControl(m_session, this);
+
+    m_device = QByteArray("/dev/video1");
 }
 
 V4LCameraService::~V4LCameraService()
 {
-    delete m_media;
     delete m_control;
     delete m_session;
-    delete m_videoEncode;
-    delete m_mediaFormat;
     delete m_videoOutput;
+    delete m_videoDevice;
+    delete m_videoRenderer;
 }
-/*
-void V4LCameraService::setVideoOutput(QObject *output)
-{
-    V4LVideoWidget *videoWidget = qobject_cast<V4LVideoWidget*>(output);
-    if (videoWidget) {
-        m_session->setVideoOutput(videoWidget);
-    }
-
-    QMediaService::setVideoOutput(output);
-}
-*/
 
 QMediaControl *V4LCameraService::control(const char *name) const
 {
-    if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
-        return m_media;
-
     if(qstrcmp(name,QCameraControl_iid) == 0)
         return m_control;
-
-    if(qstrcmp(name,QVideoEncodeControl_iid) == 0)
-        return m_videoEncode;
-
-    if(qstrcmp(name,QMediaFormatControl_iid) == 0)
-        return m_mediaFormat;
 
     if(qstrcmp(name,QVideoOutputControl_iid) == 0)
         return m_videoOutput;
 
-    return 0;
-}
-/*
-QObject *V4LCameraService::createEndpoint(const char *interface)
-{
-    if (qstrcmp(interface, QMediaWidgetEndpoint_iid) == 0) {
-        return new V4LVideoWidget;
-    }
+    if(qstrcmp(name,QVideoRendererControl_iid) == 0)
+        return m_videoRenderer;
+
+    if(qstrcmp(name,QVideoDeviceControl_iid) == 0)
+        return m_videoDevice;
 
     return 0;
 }
-*/

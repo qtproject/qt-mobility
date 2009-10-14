@@ -36,7 +36,7 @@
 #define V4LCAMERACONTROL_H
 
 #include <QtCore/qobject.h>
-#include "qcameracontrol.h"
+#include <multimedia/qcameracontrol.h>
 
 class V4LCameraService;
 class V4LCameraSession;
@@ -46,75 +46,11 @@ class V4LCameraControl : public QCameraControl
     Q_OBJECT
 public:
     V4LCameraControl(QObject *parent = 0);
-    V4LCameraControl(V4LCameraService *service, QObject *parent = 0);
     ~V4LCameraControl();
 
     void start();
     void stop();
     QCamera::State state() const;
-
-    QCamera::FlashMode flashMode() const;
-    void setFlashMode(QCamera::FlashMode mode);
-    QCamera::FlashModes supportedFlashModes() const;
-    bool isFlashReady() const;
-
-    QCamera::FocusMode focusMode() const;
-    void setFocusMode(QCamera::FocusMode mode);
-    QCamera::FocusModes supportedFocusModes() const;
-    QCamera::FocusStatus focusStatus() const;
-
-    bool macroFocusingEnabled() const;
-    bool isMacroFocusingSupported() const;
-    void setMacroFocusingEnabled(bool);
-
-    QCamera::ExposureMode exposureMode() const;
-    void setExposureMode(QCamera::ExposureMode mode);
-    QCamera::ExposureModes supportedExposureModes() const;
-
-    double exposureCompensation() const;
-    void setExposureCompensation(double ev);
-
-    QCamera::MeteringMode meteringMode() const;
-    void setMeteringMode(QCamera::MeteringMode mode);
-    QCamera::MeteringModes supportedMeteringModes() const;
-
-    QCamera::WhiteBalanceMode whiteBalanceMode() const;
-    void setWhiteBalanceMode(QCamera::WhiteBalanceMode mode);
-    QCamera::WhiteBalanceModes supportedWhiteBalanceModes() const;
-    int manualWhiteBalance() const;
-    void setManualWhiteBalance(int colorTemperature);
-
-    int isoSensitivity() const;
-    QPair<int, int> supportedIsoSensitivityRange() const;
-    void setManualIsoSensitivity(int iso);
-    void setAutoIsoSensitivity();
-
-    double aperture() const;
-    QPair<double, double> supportedApertureRange() const;
-    void setManualAperture(double aperture);
-    void setAutoAperture();
-
-    double shutterSpeed() const;
-    QPair<double, double> supportedShutterSpeedRange() const;
-    void setManualShutterSpeed(double seconds);
-    void setAutoShutterSpeed();
-
-    double maximumOpticalZoom() const;
-    double maximumDigitalZoom() const;
-    double zoomValue() const;
-    void zoomTo(int value);
-
-    void setDevice(const QString &device);
-
-    bool isExposureLocked() const;
-    bool isFocusLocked() const;
-
-public Q_SLOTS:
-    void lockExposure();
-    void unlockExposure();
-
-    void lockFocus();
-    void unlockFocus();
 
 private:
     V4LCameraSession *m_session;

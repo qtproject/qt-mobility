@@ -35,7 +35,7 @@
 #ifndef V4LVIDEOOUTPUTCONTROL_H
 #define V4LVIDEOOUTPUTCONTROL_H
 
-#include "qvideooutputcontrol.h"
+#include <multimedia/qvideooutputcontrol.h>
 
 class V4LVideoOutputControl : public QVideoOutputControl
 {
@@ -44,13 +44,9 @@ public:
     V4LVideoOutputControl(QObject *parent = 0);
 
     QList<Output> availableOutputs() const;
-    void setAvailableOutputs(const QList<Output> &outputs);
 
     Output output() const;
     void setOutput(Output output);
-
-Q_SIGNALS:
-    void outputChanged(QVideoOutputControl::Output output);
 
 private:
     QList<Output> m_outputs;

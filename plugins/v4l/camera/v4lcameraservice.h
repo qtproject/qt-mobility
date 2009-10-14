@@ -39,12 +39,11 @@
 
 #include <multimedia/qmediaservice.h>
 
-class V4LMediaFormatControl;
-class V4LVideoEncode;
 class V4LCameraControl;
-class V4LMediaControl;
 class V4LCameraSession;
 class V4LVideoOutputControl;
+class V4LVideoDeviceControl;
+class V4LVideoRendererControl;
 
 class V4LCameraService : public QMediaService
 {
@@ -57,12 +56,11 @@ public:
     QMediaControl *control(const char *name) const;
 
 private:
-    V4LMediaFormatControl *m_mediaFormat;
-    V4LVideoEncode *m_videoEncode;
-    V4LCameraControl *m_control;
-    V4LMediaControl  *m_media;
-    V4LCameraSession *m_session;
-    V4LVideoOutputControl *m_videoOutput;
+    V4LCameraControl        *m_control;
+    V4LCameraSession        *m_session;
+    V4LVideoOutputControl   *m_videoOutput;
+    V4LVideoDeviceControl   *m_videoDevice;
+    V4LVideoRendererControl *m_videoRenderer;
     QByteArray m_device;
 };
 

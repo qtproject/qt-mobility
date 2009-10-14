@@ -38,16 +38,12 @@ V4LVideoOutputControl::V4LVideoOutputControl(QObject *parent)
     : QVideoOutputControl(parent)
     , m_output(NoOutput)
 {
+    m_outputs.append(QVideoOutputControl::RendererOutput);
 }
 
 QList<QVideoOutputControl::Output> V4LVideoOutputControl::availableOutputs() const
 {
     return m_outputs;
-}
-
-void V4LVideoOutputControl::setAvailableOutputs(const QList<Output> &outputs)
-{
-    emit availableOutputsChanged(m_outputs = outputs);
 }
 
 QVideoOutputControl::Output V4LVideoOutputControl::output() const
@@ -60,6 +56,5 @@ void V4LVideoOutputControl::setOutput(Output output)
     if (!m_outputs.contains(output))
         output = NoOutput;
 
-    if (m_output != output)
-        emit outputChanged(m_output = output);
+    emit availableOutputsChanged(m_outputs);
 }

@@ -32,53 +32,40 @@
 **
 ****************************************************************************/
 
-#include "v4lmediacontrol.h"
-#include "v4lcameracontrol.h"
-#include "v4lcamerasession.h"
+#ifndef V4LVIDEOBUFFER_H
+#define V4LVIDEOBUFFER_H
 
-#include <QtCore/qdebug.h>
+#ifndef QT_NO_MULTIMEDIA
 
-V4LMediaControl::V4LMediaControl(QObject *parent)
-    :QMediaRecorderControl(parent)
+#include <QSize>
+
+#include <QtMultimedia/QAbstractVideoBuffer>
+
+QT_BEGIN_NAMESPACE
+
+class V4LVideoBuffer : public QAbstractVideoBuffer
 {
-    m_session = qobject_cast<V4LCameraSession*>(parent);
-}
+public:
+    V4LVideoBuffer(unsigned char *buffer, int length);
+    ~V4LVideoBuffer();
 
-V4LMediaControl::~V4LMediaControl()
-{
-}
+    MapMode mapMode() const;
 
-QUrl V4LMediaControl::sink() const
-{
-    return m_session->sink();
-}
+    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
+    void unmap();
 
-bool V4LMediaControl::setSink(const QUrl& sink)
-{
-    return m_session->setSink(sink);
-}
+    void setSize(const QSize& size);
 
-QMediaRecorder::State V4LMediaControl::state() const
-{
-    return (QMediaRecorder::State)m_session->state();
-}
+private:
+    unsigned char *m_buffer;
+    int m_Length;
+    QSize m_size;
+    MapMode m_mode;
+};
 
-qint64 V4LMediaControl::duration() const
-{
-    return m_session->position();
-}
 
-void V4LMediaControl::record()
-{
-    m_session->record();
-}
+QT_END_NAMESPACE
 
-void V4LMediaControl::pause()
-{
-    m_session->stop();
-}
+#endif
 
-void V4LMediaControl::stop()
-{
-    m_session->stop();
-}
+#endif

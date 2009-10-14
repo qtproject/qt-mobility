@@ -32,36 +32,28 @@
 **
 ****************************************************************************/
 
-#ifndef V4LMEDIACONTROL_H
-#define V4LMEDIACONTROL_H
+#ifndef V4LVIDEODEVICECONTROL_H
+#define V4LVIDEODEVICECONTROL_H
 
-#include <QtCore/qobject.h>
-#include <QUrl>
-
-#include "qmediarecorder.h"
-#include "qmediarecordercontrol.h"
-#include "qcameracontrol.h"
+#include <multimedia/qvideodevicecontrol.h>
 
 class V4LCameraSession;
 
-class V4LMediaControl : public QMediaRecorderControl
+class V4LVideoDeviceControl : public QVideoDeviceControl
 {
     Q_OBJECT
 public:
-    V4LMediaControl(QObject *parent = 0);
-    ~V4LMediaControl();
+    V4LVideoDeviceControl(QObject *parent = 0);
 
-    QUrl sink() const;
-    bool setSink(const QUrl &sink);
+    int deviceCount() const;
+    QString name(int index) const;
+    QString description(int index) const;
+    QIcon icon(int index) const;
+    int defaultDevice() const;
+    int selectedDevice() const;
 
-    QMediaRecorder::State state() const;
-
-    qint64 duration() const;
-
-public slots:
-    void record();
-    void pause();
-    void stop();
+public Q_SLOTS:
+    void setSelectedDevice(int index);
 
 private:
     V4LCameraSession* m_session;

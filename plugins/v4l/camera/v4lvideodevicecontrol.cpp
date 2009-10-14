@@ -32,15 +32,55 @@
 **
 ****************************************************************************/
 
-#include "v4lmediaformatcontrol.h"
+#include <QtGui/QIcon>
+#include "v4lvideodevicecontrol.h"
 #include "v4lcamerasession.h"
 
-V4LMediaFormatControl::V4LMediaFormatControl(QObject *parent)
-    :QMediaFormatControl(parent)
+V4LVideoDeviceControl::V4LVideoDeviceControl(QObject *parent)
+    : QVideoDeviceControl(parent)
 {
     m_session = qobject_cast<V4LCameraSession*>(parent);
+}
 
-    m_supportedFormats.append("no mux");
-    setFormat(m_supportedFormats[0]);
+int V4LVideoDeviceControl::deviceCount() const
+{
+    return 0;
+}
+
+QString V4LVideoDeviceControl::name(int index) const
+{
+    if(index == 0)
+        return QString("Camera capture device");
+
+    return QString();
+}
+
+QString V4LVideoDeviceControl::description(int index) const
+{
+    Q_UNUSED(index)
+
+    return QString();
+}
+
+QIcon V4LVideoDeviceControl::icon(int index) const
+{
+    Q_UNUSED(index)
+
+    return QIcon();
+}
+
+int V4LVideoDeviceControl::defaultDevice() const
+{
+    return 0;
+}
+
+int V4LVideoDeviceControl::selectedDevice() const
+{
+    return 0;
+}
+
+void V4LVideoDeviceControl::setSelectedDevice(int index)
+{
+    Q_UNUSED(index)
 }
 

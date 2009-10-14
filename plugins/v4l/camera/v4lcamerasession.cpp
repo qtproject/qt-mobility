@@ -34,6 +34,7 @@
 
 #include <QtCore/qdebug.h>
 #include <QWidget>
+#include <QFile>
 
 #include <linux/types.h>
 #include <sys/time.h>
@@ -48,8 +49,11 @@
 #include <linux/videodev2.h>
 
 #include "v4lcamerasession.h"
-#include "v4lvideowidget.h"
+#include "v4lvideorenderer.h"
+#include "v4lvideobuffer.h"
 
+#include <QtMultimedia/qabstractvideobuffer.h>
+#include <QtMultimedia/qvideosurfaceformat.h>
 
 V4LCameraSession::V4LCameraSession(QObject *parent)
     :QObject(parent)
@@ -58,7 +62,7 @@ V4LCameraSession::V4LCameraSession(QObject *parent)
     resolutions.clear();
     formats.clear();
     m_state = QCamera::StoppedState;
-    m_device = "/dev/video0";
+    m_device = "/dev/video1";
 
     sfd = ::open(m_device.constData(), O_RDWR);
 
@@ -87,26 +91,23 @@ V4LCameraSession::V4LCameraSession(QObject *parent)
         sfd = -1;
     }
     m_output = 0;
+    m_surface = 0;
     m_windowSize = QSize(320,240);
-    pixelF = QVideoFrame::Format_RGB24;
+    pixelF = QVideoFrame::Format_RGB565;
 }
 
 V4LCameraSession::~V4LCameraSession()
 {
 }
 
+void V4LCameraSession::setSurface(QAbstractVideoSurface* surface)
+{
+    m_surface = surface;
+}
+
 bool V4LCameraSession::deviceReady()
 {
     return available;
-}
-
-void V4LCameraSession::setVideoOutput(QWidget* widget)
-{
-    qWarning()<<"qqqqqqqqqqqqqqqqqqqqqq";
-    m_output = qobject_cast<V4LVideoWidget*>(widget);
-    m_output->setBaseSize(m_windowSize);
-    m_output->setFrameSize(m_windowSize);
-    qWarning()<<widget->size();
 }
 
 int V4LCameraSession::framerate() const
@@ -297,8 +298,6 @@ QSize V4LCameraSession::frameSize() const
 void V4LCameraSession::setFrameSize(const QSize& s)
 {
     m_windowSize = s;
-    if(m_output)
-        m_output->setFrameSize(s);
 }
 
 void V4LCameraSession::setDevice(const QString &device)
@@ -475,6 +474,15 @@ void V4LCameraSession::record()
     connect(notifier, SIGNAL(activated(int)), this, SLOT(captureFrame()));
     notifier->setEnabled(1);
 
+    QVideoSurfaceFormat requestedFormat(m_windowSize,pixelF);
+    QVideoSurfaceFormat *actualFormat = 0;
+    bool check = m_surface->isFormatSupported(requestedFormat,actualFormat);
+
+    if(check)
+        m_surface->start(requestedFormat);
+    else
+        m_surface->start(*actualFormat);
+
     m_state = QCamera::ActiveState;
     emit stateChanged(QCamera::ActiveState);
     timeStamp.restart();
@@ -511,6 +519,21 @@ void V4LCameraSession::stop()
             delete notifier;
             notifier = 0;
         }
+        // Dequeue remaining buffers
+        for(int i = 0;i < 4; ++i) {
+            v4l2_buffer buf;
+            memset(&buf, 0, sizeof(struct v4l2_buffer));
+            buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+            buf.memory = V4L2_MEMORY_MMAP;
+            buf.index = i;
+            if (ioctl(sfd, VIDIOC_QUERYBUF, &buf) == 0) {
+                if (buf.flags & V4L2_BUF_FLAG_QUEUED) {
+                    ::ioctl(sfd, VIDIOC_DQBUF, &buf);
+                }
+            }
+            munmap(buffers.at(buf.index).start,buf.length);
+        }
+
         ::close(sfd);
         sfd = -1;
         m_state = QCamera::StoppedState;
@@ -532,12 +555,19 @@ void V4LCameraSession::captureFrame()
         return;
     }
 
-    //qWarning()<<"size: "<<buf.bytesused<<", time: "<<(quint64)buf.timestamp.tv_sec/1000000 + (quint64)buf.timestamp.tv_usec*1000000;;
+    //qWarning()<<"size: "<<buf.bytesused<<", time: "<<buf.timestamp.tv_sec;
 
-    if(m_output) {
-        m_output->setLength(buffers.at(buf.index).length);
-        m_output->setData((char*)buffers.at(buf.index).start);
-        m_output->repaint();
+    if(m_surface) {
+        V4LVideoBuffer* packet = new V4LVideoBuffer((unsigned char*)buffers.at(buf.index).start,buf.bytesused);
+        packet->setSize(m_windowSize);
+        QVideoFrame frame(packet,m_windowSize,pixelF);
+        frame.setStartTime(buf.timestamp.tv_sec);
+
+        //QImage image;
+        //image = QImage((unsigned char*)buffers.at(buf.index).start,m_windowSize.width(),m_windowSize.height(),QImage::Format_RGB16);
+        //QVideoFrame frame(image);
+
+        m_surface->present(frame);
     }
 
     ret = ioctl(sfd, VIDIOC_QBUF, &buf);

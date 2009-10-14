@@ -40,10 +40,11 @@
 #include <QTime>
 #include <QUrl>
 
-#include "qcamera.h"
+#include <multimedia/qcamera.h>
 #include <QtMultimedia/qvideoframe.h>
+#include <QtMultimedia/qabstractvideosurface.h>
 
-class V4LVideoWidget;
+class V4LVideoRenderer;
 
 struct video_buffer {
     void* start;
@@ -104,7 +105,7 @@ public:
     void pause();
     void stop();
 
-    void setVideoOutput(QWidget* widget);
+    void setSurface(QAbstractVideoSurface* surface);
 
 Q_SIGNALS:
     void stateChanged(QCamera::State);
@@ -122,7 +123,8 @@ private:
     QCamera::State m_state;
     QByteArray m_device;
     QUrl m_sink;
-    V4LVideoWidget*   m_output;
+    V4LVideoRenderer*   m_output;
+    QAbstractVideoSurface* m_surface;
     QVideoFrame::PixelFormat pixelF;
     QSize m_windowSize;
     QList<QSize> resolutions;

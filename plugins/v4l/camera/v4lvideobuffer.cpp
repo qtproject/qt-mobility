@@ -32,34 +32,51 @@
 **
 ****************************************************************************/
 
+#include "v4lvideobuffer.h"
 
-#ifndef V4LMEDIAFORMATCONTROL_H
-#define V4LMEDIAFORMATCONTROL_H
+#ifndef QT_NO_MULTIMEDIA
 
-#include "qmediaformatcontrol.h"
-#include <QtCore/qstringlist.h>
-
-class V4LCameraSession;
-
-class V4LMediaFormatControl : public QMediaFormatControl
+V4LVideoBuffer::V4LVideoBuffer(unsigned char *buffer, int length)
+    : QAbstractVideoBuffer(NoHandle)
+    , m_buffer(buffer)
+    , m_Length(length)
+    , m_mode(NotMapped)
 {
-Q_OBJECT
-public:
-    V4LMediaFormatControl(QObject *parent);
-    virtual ~V4LMediaFormatControl() {};
+}
 
-    virtual QStringList supportedFormats() const { return m_supportedFormats; }
-    virtual QString format() const { return m_format; }
-    virtual void setFormat(const QString &formatMimeType) { m_format = formatMimeType; }
+V4LVideoBuffer::~V4LVideoBuffer()
+{
+}
 
-    virtual QString formatDescription(const QString &formatMimeType) const { return m_formatDescriptions.value(formatMimeType); }
+void V4LVideoBuffer::setSize(const QSize& size)
+{
+    m_size = size;
+}
 
-private:
-    V4LCameraSession* m_session;
+QAbstractVideoBuffer::MapMode V4LVideoBuffer::mapMode() const
+{
+    return m_mode;
+}
 
-    QString m_format;
-    QStringList m_supportedFormats;
-    QMap<QString, QString> m_formatDescriptions;
-};
+uchar *V4LVideoBuffer::map(MapMode mode, int *numBytes, int *bytesPerLine)
+{
+    if (mode != NotMapped && m_mode == NotMapped) {
+        if (numBytes)
+            *numBytes = m_Length;
 
-#endif // V4LMEDIAFORMATCONTROL_H
+        m_mode = mode;
+
+        if(bytesPerLine)
+            *bytesPerLine = m_size.width();
+
+        return m_buffer;
+    } else {
+        return 0;
+    }
+}
+void V4LVideoBuffer::unmap()
+{
+    m_mode = NotMapped;
+}
+
+#endif
