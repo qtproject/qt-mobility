@@ -613,6 +613,9 @@ void tst_QContactDetails::organization()
     QCOMPARE(o1.title(), QString("title one"));
     QCOMPARE(o1.value(QContactOrganization::FieldTitle), QString("title one"));
 
+    o1.setAssistantName("assistant one");
+    QCOMPARE(o1.assistantName(), QString("assistant one"));
+    QCOMPARE(o1.value(QContactOrganization::FieldAssistantName), QString("assistant one"));
 
     // test property add
     QVERIFY(c.saveDetail(&o1));

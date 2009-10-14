@@ -51,6 +51,7 @@ public:
     const char* FieldDepartment;
     const char* FieldLocation;
     const char* FieldTitle;
+    const char* FieldAssistantName;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOrganization, "Organization")
     Q_DECLARE_LATIN1_LITERAL(FieldName, "Name");
@@ -58,6 +59,7 @@ public:
     Q_DECLARE_LATIN1_LITERAL(FieldDepartment, "Department");
     Q_DECLARE_LATIN1_LITERAL(FieldLocation, "Location");
     Q_DECLARE_LATIN1_LITERAL(FieldTitle, "Title");
+    Q_DECLARE_LATIN1_LITERAL(FieldAssistantName, "AssistantName");
 #endif
 
     void setName(const QString& name) {setValue(FieldName, name);}
@@ -70,6 +72,8 @@ public:
     QString location() const {return value(FieldLocation);}
     void setTitle(const QString& title) {setValue(FieldTitle, title);}
     QString title() const {return value(FieldTitle);}
+    void setAssistantName(const QString& assistantName) {setValue(FieldAssistantName, assistantName);}
+    QString assistantName() const {return value(FieldAssistantName);} 
 };
 
 #endif

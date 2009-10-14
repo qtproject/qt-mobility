@@ -592,6 +592,13 @@ Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldLocation, "Location");
 Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldTitle, "Title");
 
 /*!
+ * \variable QContactOrganization::FieldAssistantName
+ * The constant key for which the contact's assistant name within the organization is stored in details of the QContactOrganization type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldAssistantName, "AssistantName");
+
+
+/*!
  * \variable QContactPresence::FieldAccountUri
  * The constant key for which the remote account uri value is stored in details of the QContactPresence type
  */
