@@ -131,7 +131,7 @@ bool QMediaService::setActiveEndpoint(QMediaService::MediaEndpoint endpointType,
     if (audioDeviceControl == 0)
         return false;
 
-    for (int i = audioDeviceControl->deviceCount() - 1; i >= 0; ++i) {
+    for (int i = audioDeviceControl->deviceCount() - 1; i >= 0; --i) {
         if (endpoint == audioDeviceControl->name(i)) {
             audioDeviceControl->setSelectedDevice(i);
             return true;
@@ -155,7 +155,7 @@ QString QMediaService::endpointDescription(QMediaService::MediaEndpoint endpoint
     if (audioDeviceControl == 0)
         return QString();
 
-    for (int i = audioDeviceControl->deviceCount() - 1; i >= 0; ++i) {
+    for (int i = audioDeviceControl->deviceCount() - 1; i >= 0; --i) {
         if (endpoint == audioDeviceControl->name(i))
             return audioDeviceControl->description(i);
     }
@@ -177,7 +177,7 @@ QList<QString> QMediaService::supportedEndpoints(QMediaService::MediaEndpoint en
     QList<QString> endpoints;
 
     if (audioDeviceControl != 0) {
-        for (int i = audioDeviceControl->deviceCount(); i >= 0; ++i)
+        for (int i = 0 ; i<audioDeviceControl->deviceCount(); ++i)
             endpoints << audioDeviceControl->name(i);
     }
 
