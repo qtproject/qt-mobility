@@ -713,7 +713,7 @@ void PhoneBook::exportAsVCard()
 void PhoneBook::editGroupDetails()
 {
     QContact c = buildContact();
-    c.setId(contacts.at(currentIndex).id());
+    c.setId(contacts.value(currentIndex).id());
     GroupDetailsDialog dlg(detailsForm, cm, c);
     if (smallScreenSize)
 	dlg.showMaximized();
@@ -721,5 +721,6 @@ void PhoneBook::editGroupDetails()
     if (dlg.exec() == QDialog::Accepted)
         contactGroups = dlg.groups();
 
-    contacts.replace(currentIndex, c);
+    if (currentIndex < contacts.size())
+        contacts.replace(currentIndex, c);
 }
