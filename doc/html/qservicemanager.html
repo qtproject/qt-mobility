@@ -127,14 +127,15 @@
 <h3 class="fn"><a name="findInterfaces"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a>&gt; QServiceManager::findInterfaces ( const <a href="qservicefilter.html">QServiceFilter</a> &amp; <i>filter</i> = QServiceFilter() ) const</h3>
 <p>Returns a list of the interfaces that match the specified <i>filter</i>.</p>
 <h3 class="fn"><a name="findInterfaces-2"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a>&gt; QServiceManager::findInterfaces ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>serviceName</i> ) const</h3>
-<p>Returns a list of the interfaces provided by the service named <i>serviceName</i>.</p>
+<p>Returns a list of the interfaces provided by the service named <i>serviceName</i>. If <i>serviceName</i> is empty, this function returns a list of all available interfaces in this manager's scope.</p>
 <h3 class="fn"><a name="findServices"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QServiceManager::findServices ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>interfaceName</i> = QString() ) const</h3>
-<p>Returns a list of the services that provide the interface specified by <i>interfaceName</i>.</p>
+<p>Returns a list of the services that provide the interface specified by <i>interfaceName</i>. If <i>interfaceName</i> is empty, this function returns a list of all available services in this manager's scope.</p>
 <h3 class="fn"><a name="getInterface"></a>T * QServiceManager::getInterface ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>interfaceName</i>, <a href="qservicecontext.html">QServiceContext</a> * <i>context</i> = 0, <a href="qabstractsecuritysession.html">QAbstractSecuritySession</a> * <i>session</i> = 0 )</h3>
 <p>Loads the service object implementing <i>interfaceName</i>, as provided by the default service for this interface, using the given <i>context</i> and <i>session</i>. <i>context</i> and <i>session</i> object are owned by the caller of this function. The template class must be derived from <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a>.</p>
 <p>If <i>interfaceName</i> is not a known interface the returned pointer will be null.</p>
 <p>The caller takes ownership of the returned pointer.</p>
 <p>The security session object is not mandatory. If the session pointer is null, the service manager will not perform any checks. Therefore it is assumed that the service manager client is trusted as it controls whether service capabilities are enforced during service loading.</p>
+<p>See also <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault</a>() and <a href="qservicemanager.html#interfaceDefault">interfaceDefault</a>().</p>
 <h3 class="fn"><a name="getInterface-2"></a>T * QServiceManager::getInterface ( const <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> &amp; <i>serviceDescriptor</i>, <a href="qservicecontext.html">QServiceContext</a> * <i>context</i>, <a href="qabstractsecuritysession.html">QAbstractSecuritySession</a> * <i>session</i> )</h3>
 <p>Loads the service object identified by <i>serviceDescriptor</i> using the given <i>context</i> and <i>session</i>. <i>context</i> and <i>session</i> object are owned by the caller of this function. The template class must be derived from <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a>.</p>
 <p>If the <i>serviceDescriptor</i> is not valid the returned pointer will be null.</p>
@@ -148,6 +149,7 @@
 <p>The caller takes ownership of the returned pointer.</p>
 <p>This function returns a null pointer if the requested service cannot be found.</p>
 <p>The security session object is not mandatory. If the session pointer is null, the service manager will not perform any checks. Therefore it is assumed that the service manager client is trusted as it controls whether service capabilities are enforced during service loading.</p>
+<p>See also <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault</a>() and <a href="qservicemanager.html#interfaceDefault">interfaceDefault</a>().</p>
 <h3 class="fn"><a name="loadInterface-2"></a><a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * QServiceManager::loadInterface ( const <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> &amp; <i>descriptor</i>, <a href="qservicecontext.html">QServiceContext</a> * <i>context</i> = 0, <a href="qabstractsecuritysession.html">QAbstractSecuritySession</a> * <i>session</i> = 0 )</h3>
 <p>Loads and returns the interface specified by <i>descriptor</i> using the given <i>context</i> and <i>session</i>. <i>context</i> and <i>session</i> object are owned by the caller of this function.</p>
 <p>The caller takes ownership of the returned pointer.</p>

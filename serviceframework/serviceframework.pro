@@ -41,9 +41,6 @@ symbian {
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
     
-    #This would put header in pkg file and in target device. That's why it's commented out.
-    #DEPLOYMENT += exportheaders
-
     libBlock = \
         "$${LITERAL_HASH}ifdef WINSCW" \
         "LIBRARY SFWDatabaseManagerServer.lib" \

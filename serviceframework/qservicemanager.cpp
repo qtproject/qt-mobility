@@ -364,6 +364,8 @@ QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QString
     the service manager will not perform any checks. Therefore it is assumed that
     the service manager client is trusted as it controls whether service capabilities
     are enforced during service loading.
+
+    \sa setInterfaceDefault(), interfaceDefault()
 */
 QObject* QServiceManager::loadInterface(const QString& interfaceName, QServiceContext* context, QAbstractSecuritySession* session)
 {
@@ -442,6 +444,8 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     the service manager will not perform any checks. Therefore it is assumed that
     the service manager client is trusted as it controls whether service capabilities
     are enforced during service loading.
+    
+    \sa setInterfaceDefault(), interfaceDefault()
 */
 
 

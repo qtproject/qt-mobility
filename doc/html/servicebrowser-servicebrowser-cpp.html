@@ -232,7 +232,9 @@
         attributesListWidget = new QListWidget;
         attributesListWidget-&gt;addItem(tr(&quot;(Select an interface implementation)&quot;));
 
+    #ifndef Q_OS_SYMBIAN
         interfacesListWidget-&gt;setMinimumWidth(450);
+    #endif
 
         connect(servicesListWidget, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
                 this, SLOT(reloadInterfaceImplementationsList()));
@@ -274,10 +276,29 @@
         attributesLayout-&gt;addWidget(defaultImplRadioButton);
         attributesGroup-&gt;setLayout(attributesLayout);
 
+    #ifndef Q_OS_SYMBIAN
         QGridLayout *layout = new QGridLayout;
         layout-&gt;addWidget(servicesGroup, 0, 0);
         layout-&gt;addWidget(attributesGroup, 0, 1, 2, 1);
         layout-&gt;addWidget(interfacesGroup, 1, 0);
+    #else
+        QVBoxLayout *layout = new QVBoxLayout;
+        QStackedLayout *stackedLayout = new QStackedLayout;
+        stackedLayout-&gt;addWidget(servicesGroup);
+        stackedLayout-&gt;addWidget(interfacesGroup);
+        stackedLayout-&gt;addWidget(attributesGroup);
+
+        QComboBox *pageComboBox = new QComboBox;
+        pageComboBox-&gt;addItem(tr(&quot;Services&quot;));
+        pageComboBox-&gt;addItem(tr(&quot;Interfaces&quot;));
+        pageComboBox-&gt;addItem(tr(&quot;Attributes&quot;));
+        connect(pageComboBox, SIGNAL(activated(int)),
+                stackedLayout, SLOT(setCurrentIndex(int)));
+
+        layout-&gt;addWidget(pageComboBox);
+        layout-&gt;addLayout(stackedLayout);
+    #endif
+
         setLayout(layout);
     }</pre>
 <p /><address><hr /><div align="center">
