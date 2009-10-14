@@ -46,19 +46,20 @@
 #include <cntdb.h>
 #include <cntfield.h>
 #include <centralrepository.h>
-#include <telephonydomaincrkeys.h>
+// TODO: the following header is not available in public SDKs
+//#include <telephonydomaincrkeys.h>
 
 #include "qcontactname.h"
 #include "qcontactdetailfilter.h"
 #include "qcontactphonenumber.h"
 
-/* ... The macros changed names */
-#if QT_VERSION < QT_VERSION_CHECK(4, 6, 0)
-#define QT_TRAP_THROWING QT_TRANSLATE_SYMBIAN_LEAVE_TO_EXCEPTION
-#define QT_TRYCATCH_LEAVING QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE
-#endif
-
-const TInt KMaxMatchLength(15);
+// Telephony Configuration API
+// Keys under this category are used in defining telephony configuration.
+const TUid KCRUidTelConfiguration = {0x102828B8};
+// Amount of digits to be used in contact matching.
+// This allows a customer to variate the amount of digits to be matched.
+const TUint32 KTelMatchDigits                               = 0x00000001;
+// Default match length
 const TInt KDefaultMatchLength(7);
 
 QContactSymbianFilter::QContactSymbianFilter(CContactDatabase& contactDatabase):
