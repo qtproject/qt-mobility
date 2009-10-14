@@ -143,10 +143,10 @@ public:
     Q_PROPERTY(bool readyForCapture READ isReadyForCapture NOTIFY readyForCaptureChanged)
 
     QCamera(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
-    QCamera(const QByteArray& device, QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
+    QCamera(const QByteArray& device, QObject *parent = 0);
     ~QCamera();
 
-    static QList<QByteArray> devices();
+    static QList<QByteArray> availableDevices();
     static QString deviceDescription(const QByteArray &device);
 
     void start();

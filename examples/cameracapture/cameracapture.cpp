@@ -59,7 +59,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
     ui->actionCamera->setMenu(new QMenu(this));
     QActionGroup *videoDevicesGroup = new QActionGroup(this);
     videoDevicesGroup->setExclusive(true);
-    foreach(const QByteArray deviceName, QCamera::devices()) {
+    foreach(const QByteArray &deviceName, QCamera::availableDevices()) {
         QString description = deviceName+" "+camera->deviceDescription(deviceName);
         QAction *videoDeviceAction = new QAction(description, videoDevicesGroup);
         videoDeviceAction->setCheckable(true);

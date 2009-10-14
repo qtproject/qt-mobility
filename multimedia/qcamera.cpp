@@ -201,9 +201,9 @@ QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
     */
 }
 
-QCamera::QCamera(const QByteArray& device, QObject *parent, QMediaServiceProvider *provider)
-    :QMediaObject(*new QCameraPrivate, parent,
-                  provider->requestService("camera", QMediaServiceProviderHint(device)))
+QCamera::QCamera(const QByteArray& device, QObject *parent):
+    QMediaObject(*new QCameraPrivate, parent,
+                  QMediaServiceProvider::defaultServiceProvider()->requestService("camera", QMediaServiceProviderHint(device)))
 {
     Q_D(QCamera);
     d->initControls();
@@ -318,14 +318,13 @@ void QCamera::unlockFocus()
 }
 
 /*!
-    Returns a list of camera device's available.
+    Returns a list of camera device's available from the default service provider.
 */
 
-QList<QByteArray> QCamera::devices()
+QList<QByteArray> QCamera::availableDevices()
 {
     return QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray("camera"));
 }
-
 
 /*!
     Returns the description of the \a device.
