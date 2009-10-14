@@ -51,7 +51,7 @@ QContactSymbianEngine::QContactSymbianEngine(const QMap<QString, QString>& /*par
 {
   error = QContactManager::NoError;
 
-  d = new QContactSymbianEngineData();
+  d = new QContactSymbianEngineData(error);
 
 	// Connect database observer events appropriately.
 	connect(d, SIGNAL(contactAdded(QUniqueId)),

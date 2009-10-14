@@ -61,24 +61,42 @@ typedef QList<QUniqueId> QUniqueIdList;
 // the called function or the return value of the function is placed to the
 // variable.
 
-QContactSymbianEngineData::QContactSymbianEngineData() :
+QContactSymbianEngineData::QContactSymbianEngineData(QContactManager::Error& error) :
     m_contactDatabase(0),
     m_transformContact(0)
 {
-    QT_TRAP_THROWING(m_contactDatabase = CContactDatabase::OpenL());
-
+    TRAPD(err, m_contactDatabase = CContactDatabase::OpenL())
+        
+    //Database not found, create it
+    if(err == KErrNotFound)
+    {
+        TRAP(err, m_contactDatabase = CContactDatabase::CreateL())
+    }
+    
+    //If database didn't open successfully return error
+    if(err != KErrNone)
+    {
+        transformError(err, error);
+    }
+    
+    //Database opened successfully
+    else
+    {
     // In pre 10.1 platforms the AddObserverL & RemoveObserver functions are not
     // exported so we need to use CContactChangeNotifier.
     // TODO: Is it ok to use __SYMBIAN_CNTMODEL_USE_SQLITE__ flag for this?
 #ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
-    QT_TRAP_THROWING(m_contactChangeNotifier = CContactChangeNotifier::NewL(*m_contactDatabase, this));
+        TRAP(err, m_contactChangeNotifier = CContactChangeNotifier::NewL(*m_contactDatabase, this));
 #else
-    QT_TRAP_THROWING(m_contactDatabase->AddObserverL(*this));
+        TRAP(err, m_contactDatabase->AddObserverL(*this));
 #endif
 
-	m_transformContact = new TransformContact;
-    m_contactFilter = new QContactSymbianFilter(*m_contactDatabase);
-    m_contactSorter = new QContactSymbianSorter(*m_contactDatabase, *m_transformContact);
+    	m_transformContact = new TransformContact;
+        m_contactFilter = new QContactSymbianFilter(*m_contactDatabase);
+        m_contactSorter = new QContactSymbianSorter(*m_contactDatabase, *m_transformContact);
+        
+        transformError(err, error);
+    }
 }
 
 QContactSymbianEngineData::~QContactSymbianEngineData()

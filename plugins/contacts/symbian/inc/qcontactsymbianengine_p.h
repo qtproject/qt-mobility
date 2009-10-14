@@ -42,7 +42,7 @@
 #include <cntitem.h>
 
 #include "qtcontactsglobal.h"
-
+#include "qcontactmanager.h"
 
 #include "transformcontact.h"
 #include "qabstractcontactfilter.h"
@@ -60,7 +60,7 @@ class QContactSymbianEngineData : public QObject,
 	Q_OBJECT
 
 public:
-    QContactSymbianEngineData();
+    QContactSymbianEngineData(QContactManager::Error& error);
     virtual ~QContactSymbianEngineData();
 
 public:
