@@ -32,6 +32,7 @@
 ****************************************************************************/
 #include <QObject>
 #include <QTest>
+#include <QSharedPointer>
 #include <QDebug>
 
 #include "qtmessaging.h"
@@ -92,6 +93,23 @@ public slots:
     void messageRemoved(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &filterIds)
     {
         removed.append(qMakePair(id, filterIds));
+    }
+};
+
+class FilterRegistration
+{
+public:
+    QMessageStore::NotificationFilterId id;
+        
+    FilterRegistration(const QMessageFilter &filter)
+        : id(0)
+    {
+        id = QMessageStore::instance()->registerNotificationFilter(filter);
+    }
+
+    ~FilterRegistration()
+    {
+        QMessageStore::instance()->unregisterNotificationFilter(id);
     }
 };
 
@@ -463,9 +481,9 @@ void tst_QMessageStore::testMessage()
     SignalCatcher removeCatcher;
     connect(QMessageStore::instance(), SIGNAL(messageRemoved(QMessageId, QMessageStore::NotificationFilterIdSet)), &removeCatcher, SLOT(messageRemoved(QMessageId, QMessageStore::NotificationFilterIdSet)));
 
-    QMessageStore::NotificationFilterId filter1 = QMessageStore::instance()->registerNotificationFilter(QMessageFilter::byParentAccountId(QMessageAccountId()));
-    QMessageStore::NotificationFilterId filter2 = QMessageStore::instance()->registerNotificationFilter(QMessageFilter::byParentAccountId(testAccountId));
-    QMessageStore::NotificationFilterId filter3 = QMessageStore::instance()->registerNotificationFilter(QMessageFilter());
+    QSharedPointer<FilterRegistration> filter1(new FilterRegistration(QMessageFilter::byParentAccountId(QMessageAccountId())));
+    QSharedPointer<FilterRegistration> filter2(new FilterRegistration(QMessageFilter::byParentAccountId(testAccountId)));
+    QSharedPointer<FilterRegistration> filter3(new FilterRegistration(QMessageFilter()));
 
     QFETCH(QString, to);
     QFETCH(QString, from);
@@ -519,7 +537,7 @@ void tst_QMessageStore::testMessage()
 #ifndef Q_OS_WIN
     // Filters not yet implemented on windows
     QCOMPARE(catcher.added.first().second.count(), 2);
-    QCOMPARE(catcher.added.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2 << filter3);
+    QCOMPARE(catcher.added.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2.id << filter3.id);
 #endif
 
     QMessage message(messageId);
@@ -603,7 +621,7 @@ void tst_QMessageStore::testMessage()
 #ifndef Q_OS_WIN
     // Filters not yet implemented on windows
     QCOMPARE(catcher.updated.first().second.count(), 2);
-    QCOMPARE(catcher.updated.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2 << filter3);
+    QCOMPARE(catcher.updated.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2.id << filter3.id);
 #endif
 
     QMessage updated(message.id());
@@ -639,11 +657,7 @@ void tst_QMessageStore::testMessage()
 #ifndef Q_OS_WIN
     // Filters not yet implemented on windows
     QCOMPARE(removeCatcher.removed.first().second.count(), 1);
-    QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageStore::NotificationFilterId>() << filter3);
+    QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageStore::NotificationFilterId>() << filter3.id);
 #endif
-
-    QMessageStore::instance()->unregisterNotificationFilter(filter1);
-    QMessageStore::instance()->unregisterNotificationFilter(filter2);
-    QMessageStore::instance()->unregisterNotificationFilter(filter3);
 }
 

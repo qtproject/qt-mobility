@@ -4081,8 +4081,6 @@ void MapiSession::notify(MapiStore *store, ULONG notificationCount, NOTIFICATION
 
 QMessageStore::NotificationFilterId MapiSession::registerNotificationFilter(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter)
 {
-    QMessageStore::NotificationFilterId result(0);
-
     QMessageStore::NotificationFilterId filterId = ++_filterId;
     _filters.insert(filterId, filter);
 
@@ -4094,7 +4092,7 @@ QMessageStore::NotificationFilterId MapiSession::registerNotificationFilter(QMes
         }
     }
 
-    return result;
+    return filterId;
 }
 
 void MapiSession::unregisterNotificationFilter(QMessageStore::ErrorCode *lastError, QMessageStore::NotificationFilterId filterId)
