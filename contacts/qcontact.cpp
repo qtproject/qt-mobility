@@ -469,14 +469,14 @@ QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QCo
         QContactRelationship curr = d->m_relationships.at(i);
         if (curr.relationshipType() == relationshipType || relationshipType.isEmpty()) {
             // check that the other contacts fill the given role
-            if (role == QContactRelationshipFilter::Source) {
+            if (role == QContactRelationshipFilter::First) {
                 if (curr.sourceContact() != d->m_id.localId()) {
                     QContactId matchingId;
                     matchingId.setManagerUri(d->m_id.managerUri());
                     matchingId.setLocalId(curr.sourceContact());
                     retn.append(matchingId);
                 }
-            } else if (role == QContactRelationshipFilter::Destination) {
+            } else if (role == QContactRelationshipFilter::Second) {
                 if (curr.sourceContact() == d->m_id.localId()) {
                     retn.append(curr.destinationContacts());
                 }

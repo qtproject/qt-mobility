@@ -375,46 +375,22 @@ QContactLocalId QContactManager::selfContactId() const
 }
 
 /*!
- * Returns the first relationship of the given \a relationshipType which has the specified \a sourceId contact.
- * If \a sourceId is the zero id, the first relationship of the given \a relationshipType will be returned.
- * If \a relationshipType is empty, the first relationship with the given \a sourceId will be returned.
- * If \a sourceId is the zero id and \a relationshipType is empty, the first relationship in the database
- * will be returned.
- *
- * If no matching relationships are managed by this manager, a new relationship with the given \a sourceId and
- * \a relationshipType set (but no destination contacts) will be returned.
+ * Returns a list of relationships in which the contact identified by the given \a participantId participates in the given \a role.
+ * If \a participantId is the default-constructed id, \a role is ignored and all relationships are returned.
  */
-QContactRelationship QContactManager::relationship(const QContactLocalId& sourceId, const QString& relationshipType) const
+QList<QContactRelationship> QContactManager::relationships(const QContactId& participantId, QContactRelationshipFilter::Role role) const
 {
-    return d->m_engine->relationship(sourceId, relationshipType, d->m_error);
+    return d->m_engine->relationships(QString(), participantId, role, d->m_error);
 }
 
 /*!
- * Returns all relationships of the given \a relationshipType which the contact identified by \a sourceId has.
- * If the \a source is the zero id, a list of all of the relationships of the given \a relationshipType is returned.
- * If the \a relationshipType is empty, relationships of any type are returned.
+ * Returns a list of relationships of the given \a relationshipType in which the contact identified by the given \a participantId participates in the given \a role.
+ * If \a participantId is the default-constructed id, \a role is ignored and all relationships of the given \a relationshipType are returned.
+ * If \a relationshipType is empty, relationships of any type are returned.
  */
-QList<QContactRelationship> QContactManager::relationships(const QContactLocalId& sourceId, const QString& relationshipType) const
+QList<QContactRelationship> QContactManager::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role) const
 {
-    return d->m_engine->relationships(sourceId, relationshipType, d->m_error);
-}
-
-/*!
- * Returns all relationships of the specified \a relationshipType in which the contact identified by \a participant is a source or involved participant.
- * If \a participant consists of an empty manager URI and the zero id, all relationships of the given \a relationshipType are returned.  If the \a relationshipType
- * is empty, all relationships in which the contact identified by \a participant is a source or destination participant are returned.
- */
-QList<QContactRelationship> QContactManager::relationships(const QString& relationshipType, const QContactId& participant) const
-{
-    return d->m_engine->relationships(relationshipType, participant, d->m_error);
-}
-
-/*!
- * Returns all relationships of any type in which the contact identified by \a participant is a source or destination participant.
- */
-QList<QContactRelationship> QContactManager::relationships(const QContactId& participant) const
-{
-    return d->m_engine->relationships(participant, d->m_error);
+    return d->m_engine->relationships(relationshipType, participantId, role, d->m_error);
 }
 
 /*!

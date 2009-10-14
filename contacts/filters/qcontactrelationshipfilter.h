@@ -50,14 +50,9 @@ public:
     QContactRelationshipFilter();
     QContactRelationshipFilter(const QContactFilter& other);
 
-//QCRF { fixedUri; fixedId; relType; contactRelPosition [left, right, either] } <-- possible API?
-//QCRF { 0 ,0, 0, either }      -> any local contact that is a participant in any relationship
-//QCRF { 0, 0, 0, left}         -> only local contacts that are on the left hand side of a relationship
-//QCRF { mgr, id, 0, left }     -> only local contacts that are on the left hand side of a relationship, with mgr:id being on the right
-
     enum Role {
-        Source = 0,
-        Destination,
+        First = 0,
+        Second,
         Either
     };
 

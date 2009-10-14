@@ -49,11 +49,14 @@ public:
     ~QContactRelationshipRemoveRequest();
 
     /* Selection */
-    void setSourceContact(const QContactLocalId& contactId);
-    QContactLocalId sourceContact() const;
+    void setFirst(const QContactId& firstId);
+    QContactId first() const;
 
     void setRelationshipType(const QString& relationshipType);
     QString relationshipType() const;
+
+    void setSecond(const QContactId& secondId);
+    QContactId second() const;
 
 signals:
     void progress(QContactRelationshipRemoveRequest* self);

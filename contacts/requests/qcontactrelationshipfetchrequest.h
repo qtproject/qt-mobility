@@ -53,8 +53,8 @@ public:
     ~QContactRelationshipFetchRequest();
 
     /* Selection */
-    void setSourceContact(const QContactLocalId& contactId);
-    QContactLocalId sourceContact() const;
+    void setFirst(const QContactId& firstId);
+    QContactLocalId first() const;
 
     void setRelationshipType(const QString& relationshipType);
     QString relationshipType() const;

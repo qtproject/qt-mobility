@@ -57,20 +57,20 @@ QContactRelationshipRemoveRequest::~QContactRelationshipRemoveRequest()
 {
 }
 
-/*! Sets the source contact criterion of the remove request to \a contactId.
- *  If \a contactId is the zero id, or the source contact is not set,
- *  the request will remove relationships involving any source contact. */
-void QContactRelationshipRemoveRequest::setSourceContact(const QContactLocalId& contactId)
+/*! Sets the first contact criterion of the remove request to \a firstId.
+ *  If \a firstId is the default-constructed id, or the first contact is not set,
+ *  the request will remove relationships involving any first contact. */
+void QContactRelationshipRemoveRequest::setFirst(const QContactId& firstId)
 {
     Q_D(QContactRelationshipRemoveRequest);
-    d->m_sourceContact = contactId;
+    d->m_first = firstId;
 }
 
-/*! Returns the source contact criterion of the remove request */
-QContactLocalId QContactRelationshipRemoveRequest::sourceContact() const
+/*! Returns the first contact criterion of the remove request */
+QContactId QContactRelationshipRemoveRequest::first() const
 {
     Q_D(const QContactRelationshipRemoveRequest);
-    return d->m_sourceContact;
+    return d->m_first;
 }
 
 /*! Sets the relationship type criterion of the remove request to \a relationshipType.
@@ -87,4 +87,20 @@ QString QContactRelationshipRemoveRequest::relationshipType() const
 {
     Q_D(const QContactRelationshipRemoveRequest);
     return d->m_relationshipType;
+}
+
+/*! Sets the second contact criterion of the remove request to \a secondId.
+ *  If \a secondId is the default-constructed id, or the second contact is not set,
+ *  the request will remove relationships involving any second contact. */
+void QContactRelationshipRemoveRequest::setSecond(const QContactId& secondId)
+{
+    Q_D(QContactRelationshipRemoveRequest);
+    d->m_second = secondId;
+}
+
+/*! Returns the second contact criterion of the remove request */
+QContactId QContactRelationshipRemoveRequest::second() const
+{
+    Q_D(const QContactRelationshipRemoveRequest);
+    return d->m_second;
 }

@@ -264,74 +264,18 @@ QContactLocalId QContactManagerEngine::selfContactId(QContactManager::Error& err
 }
 
 /*!
- * Returns the first relationship of the given \a relationshipType which has the specified \a sourceId contact.
- * If \a sourceId is the zero id, the first relationship of the given \a relationshipType will be returned.
- * If \a relationshipType is empty, the first relationship with the given \a sourceId will be returned.
- * If \a sourceId is the zero id and \a relationshipType is empty, the first relationship in the database
- * will be returned.
- *
- * If no matching relationships are managed by this manager, a new relationship with the given \a sourceId and
- * \a relationshipType set (but no destination contacts) will be returned, and \a error will be set to
- * \c QContactManager::DoesNotExistError.
+ * Returns a list of relationships of the given \a relationshipType in which the contact identified by the given \a participantId participates in the given \a role.
+ * If \a participantId is the default-constructed id, \a role is ignored and all relationships of the given \a relationshipType are returned.
+ * If \a relationshipType is empty, relationships of any type are returned.
+ * If no relationships of the given \a relationshipType in which the contact identified by the given \a participantId is involved in the given \a role exists,
+ * \a error is set to QContactManager::DoesNotExistError.
  */
-QContactRelationship QContactManagerEngine::relationship(const QContactLocalId& sourceId, const QString& relationshipType, QContactManager::Error& error) const
-{
-    QList<QContactRelationship> matchingRelationships = relationships(sourceId, relationshipType, error);
-    if (error == QContactManager::DoesNotExistError && matchingRelationships.isEmpty()) {
-        // found no matching relationships.  synthesise one and return it.
-        QContactRelationship retnRelationship;
-        retnRelationship.setSourceContact(sourceId);
-        retnRelationship.setRelationshipType(relationshipType);
-        error = QContactManager::DoesNotExistError;
-        return retnRelationship;
-    } else if (error != QContactManager::NoError) {
-        // error occurred, return an empty relationship
-        return QContactRelationship();
-    }
-
-    // found at least one match.  Return the first one.
-    return matchingRelationships.at(0);
-}
-
-/*!
- * Returns all relationships of the given \a relationshipType which the contact identified by \a sourceId has.
- * If the \a source is the zero id, a list of all of the relationships of the given \a relationshipType is returned.
- * If the \a relationshipType is empty, relationships of any type are returned.
- * If no relationships are found, \a error is set to \c QContactManager::DoesNotExistError; if the operation completes successfully, \a error is set
- * to \c QContactManager::NoError.
- */
-QList<QContactRelationship> QContactManagerEngine::relationships(const QContactLocalId& sourceId, const QString& relationshipType, QContactManager::Error& error) const
-{
-    Q_UNUSED(sourceId);
-    Q_UNUSED(relationshipType);
-    error = QContactManager::DoesNotExistError;
-    return QList<QContactRelationship>();
-}
-
-/*!
- * Returns all relationships of the specified \a relationshipType in which the contact identified by \a participant is a source or destination participant.
- * If \a participant consists of an empty manager URI and the zero id, all relationships of the given \a relationshipType are returned.  If the \a relationshipType
- * is empty, all relationships in which the contact identified by \a participant is a source or involved participant are returned.
- * If no relationships are found, \a error is set to \c QContactManager::DoesNotExistError; if the operation completes successfully, \a error is set
- * to \c QContactManager::NoError.
- */
-QList<QContactRelationship> QContactManagerEngine::relationships(const QString& relationshipType, const QContactId& participant, QContactManager::Error& error) const
+QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
 {
     Q_UNUSED(relationshipType);
-    Q_UNUSED(participant);
-    error = QContactManager::DoesNotExistError;
-    return QList<QContactRelationship>();
-}
-
-/*!
- * Returns all relationships of any type in which the contact identified by \a participant is a source or destination participant.
- * If no relationships are found, \a error is set to \c QContactManager::DoesNotExistError; if the operation completes successfully, \a error is set
- * to \c QContactManager::NoError.
- */
-QList<QContactRelationship> QContactManagerEngine::relationships(const QContactId& participant, QContactManager::Error& error) const
-{
-    Q_UNUSED(participant);
-    error = QContactManager::DoesNotExistError;
+    Q_UNUSED(participantId);
+    Q_UNUSED(role);
+    error = QContactManager::NotSupportedError;
     return QList<QContactRelationship>();
 }
 

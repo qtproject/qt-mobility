@@ -128,9 +128,7 @@ public:
     bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
 
     /* Relationships - Accessors and Mutators */
-    QList<QContactRelationship> relationships(const QContactLocalId& sourceId, const QString& relationshipType, QContactManager::Error& error) const;
-    QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participant, QContactManager::Error& error) const;
-    QList<QContactRelationship> relationships(const QContactId& participant, QContactManager::Error& error) const;
+    QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
     bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
     QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
     bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);

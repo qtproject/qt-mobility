@@ -87,10 +87,7 @@ public:
     virtual QContactLocalId selfContactId(QContactManager::Error& error) const;
 
     /* Relationships between contacts */
-    virtual QContactRelationship relationship(const QContactLocalId& sourceId, const QString& relationshipType, QContactManager::Error& error) const;
-    virtual QList<QContactRelationship> relationships(const QContactLocalId& sourceId, const QString& relationshipType, QContactManager::Error& error) const;
-    virtual QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participant, QContactManager::Error& error) const;
-    virtual QList<QContactRelationship> relationships(const QContactId& participant, QContactManager::Error& error) const;
+    virtual QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
     virtual bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
     virtual QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
     virtual bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);

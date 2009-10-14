@@ -210,7 +210,6 @@ class QContactRelationshipFetchRequestPrivate : public QContactAbstractRequestPr
 public:
     QContactRelationshipFetchRequestPrivate()
         : QContactAbstractRequestPrivate(),
-        m_sourceContact(0),
         m_role(QContactRelationshipFilter::Either)
     {
     }
@@ -224,7 +223,7 @@ public:
         return QContactAbstractRequest::RelationshipFetchRequest;
     }
 
-    QContactLocalId m_sourceContact;
+    QContactId m_first;
     QString m_relationshipType;
     QContactId m_participantUri;
     QContactRelationshipFilter::Role m_role;
@@ -255,8 +254,7 @@ class QContactRelationshipRemoveRequestPrivate : public QContactAbstractRequestP
 {
 public:
     QContactRelationshipRemoveRequestPrivate()
-        : QContactAbstractRequestPrivate(),
-        m_sourceContact(0)
+        : QContactAbstractRequestPrivate()
     {
     }
 
@@ -269,7 +267,8 @@ public:
         return QContactAbstractRequest::RelationshipRemoveRequest;
     }
 
-    QContactLocalId m_sourceContact;
+    QContactId m_first;
+    QContactId m_second;
     QString m_relationshipType;
 };
 

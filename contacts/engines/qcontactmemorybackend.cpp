@@ -174,7 +174,7 @@ QContact QContactMemoryEngine::contact(const QContactLocalId& contactId, QContac
         QContactId participant;
         participant.setManagerUri(QString());
         participant.setLocalId(contactId);
-        QList<QContactRelationship> relationshipCache = relationships(participant, relationshipError);
+        QList<QContactRelationship> relationshipCache = relationships(QString(), participant, QContactRelationshipFilter::Either, relationshipError);
         QContactManagerEngine::setContactRelationships(&retn, relationshipCache);
 
         // and return the contact
@@ -306,7 +306,7 @@ bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QCont
     QContactId thisContact;
     thisContact.setManagerUri(managerUri());
     thisContact.setLocalId(contactId);
-    QList<QContactRelationship> allRelationships = relationships(thisContact, error);
+    QList<QContactRelationship> allRelationships = relationships(QString(), thisContact, QContactRelationshipFilter::Either, error);
     if (error != QContactManager::NoError && error != QContactManager::DoesNotExistError) {
         error = QContactManager::UnspecifiedError; // failed to clean up relationships
         return false;
@@ -316,13 +316,7 @@ bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QCont
     // a real backend will use DBMS transactions to ensure database integrity.
     for (int i = 0; i < allRelationships.size(); i++) {
         QContactRelationship currRel = allRelationships.at(i);
-        if (currRel.sourceContact() == contactId) {
-            removeRelationship(currRel, error);
-            continue;
-        }
-
-        currRel.removeDestinationContact(thisContact);
-        saveRelationship(&currRel, error);
+        removeRelationship(currRel, error);
     }
 
     // having cleaned up the relationships, remove the contact from the lists.
@@ -372,53 +366,37 @@ QList<QContactManager::Error> QContactMemoryEngine::removeContacts(QList<QContac
 }
 
 /*! \reimp */
-QList<QContactRelationship> QContactMemoryEngine::relationships(const QContactLocalId& sourceId, const QString& relationshipType, QContactManager::Error& error) const
+QList<QContactRelationship> QContactMemoryEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
 {
+    QContactId defaultId;
     QList<QContactRelationship> retn;
-    foreach (const QContactRelationship& rel, d->m_relationships) {
-        if ((rel.sourceContact() == sourceId || sourceId == QContactLocalId(0))
-                && (rel.relationshipType() == relationshipType || relationshipType.isEmpty())) {
-            retn.append(rel);
+    for (int i = 0; i < d->m_relationships.size(); i++) {
+        QContactRelationship curr = d->m_relationships.at(i);
+
+        // check that the relationship type matches
+        if (curr.relationshipType() != relationshipType && !relationshipType.isEmpty())
+            continue;
+
+        // if the participantId argument is default constructed, then the relationship matches.
+        if (participantId == defaultId) {
+            retn.append(curr);
+            continue;
+        }
+
+        // otherwise, check that the participant exists and plays the required role in the relationship.
+        if (role == QContactRelationshipFilter::First && curr.first() == participantId) {
+            retn.append(curr);
+        } else if (role == QContactRelationshipFilter::Second && curr.second() == participantId) {
+            retn.append(curr);
+        } else if (role == QContactRelationshipFilter::Either && (curr.first() == participantId || curr.second() == participantId)) {
+            retn.append(curr);
         }
     }
 
     error = QContactManager::NoError;
-    if (retn.size() == 0)
+    if (retn.isEmpty())
         error = QContactManager::DoesNotExistError;
     return retn;
-}
-
-/*! \reimp */
-QList<QContactRelationship> QContactMemoryEngine::relationships(const QString& relationshipType, const QContactId& participant, QContactManager::Error& error) const
-{
-    // convenience function checking - if participant is blank, they want all relationships of the given type
-    if (participant.managerUri().isEmpty() && (participant.localId() == QContactLocalId(0)))
-        return relationships(QContactLocalId(0), relationshipType, error);
-
-    QList<QContactRelationship> retn;
-    QContactId fixedParticipant = participant;
-    if (participant.managerUri().isEmpty())
-        fixedParticipant.setManagerUri(managerUri());
-
-    foreach (const QContactRelationship& rel, d->m_relationships) {
-        if ((rel.relationshipType() == relationshipType || relationshipType.isEmpty())
-                && ((rel.destinationContacts().contains(fixedParticipant) || rel.destinationContacts().contains(participant))
-                    || ((participant.managerUri().isEmpty() || participant.managerUri() == managerUri()) && rel.sourceContact() == participant.localId()))) {
-            retn.append(rel);
-        }
-    }
-
-    error = QContactManager::NoError;
-    if (retn.size() == 0)
-        error = QContactManager::DoesNotExistError;
-    return retn;
-}
-
-/*! \reimp */
-QList<QContactRelationship> QContactMemoryEngine::relationships(const QContactId& participant, QContactManager::Error& error) const
-{
-    // convenience function.
-    return relationships(QString(), participant, error);
 }
 
 /*! \reimp */

@@ -42,51 +42,52 @@
 
 /*!
  * \class QContactRelationship
- * \brief Describes a one-to-many relationship between a locally-stored contact and a list of other (possibly remote) contacts.
+ * \brief Describes a one-to-one relationship between a locally-stored contact and another (possibly remote) contact.
  *
- * Each relationship is uniquely identified by the combination of the source contact id and the relationship type.
+ * Each relationship is uniquely identified by the combination of the first contact id, second contact id, and the relationship type.
  *
- * A relationship should not contain a destination contact which is the same as the source contact, nor should it contain
- * duplicate destination contacts.  Finally, any local contacts which are referenced in the relationship (that is, any
- * source contact, or any destination contact whose manager URI is left empty or whose manager URI references the manager
- * that stores the source contact, and in which the relationship will be saved) should exist.
+ * A relationship should not contain a second contact which is the same as the first contact.
+ * Any local contacts which are referenced in the relationship (that is, any source contact, or any second contact whose manager
+ * URI is left empty or whose manager URI references the manager that stores the source contact, and in which the relationship
+ * will be saved) should exist.
+ *
  * If any of these requirements are not met, validation of the relationship may fail when attempting to save the relationship
  * in a QContactManager.
  */
 
 /*!
  * \variable QContactRelationship::HasMember
- * The relationship type which identifies the source contact as being a group which includes each of the destination contacts
+ * The relationship type which identifies the first contact as being a group which includes the second contact
  */
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::HasMember, "HasMember");
 
 /*!
  * \variable QContactRelationship::Aggregates
- * The relationship type which identifies the source contact as aggregating the destination contacts into a metacontact
+ * The relationship type which identifies the first contact as aggregating the second contact into a metacontact
  */
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::Aggregates, "Aggregates");
 
 /*!
  * \variable QContactRelationship::Is
- * The relationship type which identifies the source contact as being the same contact as the destination contacts
+ * The relationship type which identifies the first contact as being the same contact as the second contact
  */
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::Is, "Is");
 
 /*!
  * \variable QContactRelationship::IsAssistantOf
- * The relationship type which identifies the source contact as being the assistant of the destination contacts
+ * The relationship type which identifies the first contact as being the assistant of the second contact
  */
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::IsAssistantOf, "IsAssistantOf");
 
 /*!
  * \variable QContactRelationship::IsManagerOf
- * The relationship type which identifies the source contact as being the manager of the destination contacts
+ * The relationship type which identifies the first contact as being the manager of the second contact
  */
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::IsManagerOf, "IsManagerOf");
 
 /*!
  * \variable QContactRelationship::IsSpouseOf
- * The relationship type which identifies the source contact as being the spouse of the destination contacts
+ * The relationship type which identifies the first contact as being the spouse of the second contact
  */
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::IsSpouseOf, "IsSpouseOf");
 
@@ -127,9 +128,9 @@ QContactRelationship& QContactRelationship::operator=(const QContactRelationship
  */
 bool QContactRelationship::operator==(const QContactRelationship &other) const
 {
-    if (d->m_sourceContact != other.d->m_sourceContact)
+    if (d->m_first != other.d->m_first)
         return false;
-    if (d->m_destinationContacts != other.d->m_destinationContacts)
+    if (d->m_second != other.d->m_second)
         return false;
     if (d->m_relationshipType != other.d->m_relationshipType)
         return false;
@@ -137,21 +138,21 @@ bool QContactRelationship::operator==(const QContactRelationship &other) const
 }
 
 /*!
- * Returns the id of the locally-stored contact which has a relationship of the given type with the destination contacts
- * \sa relationshipType(), destination(), setSourceId()
+ * Returns the id of the locally-stored contact which has a relationship of the given type with the second contact
+ * \sa relationshipType(), second(), setFirst()
  */
-QContactLocalId QContactRelationship::sourceContact() const
+QContactId QContactRelationship::first() const
 {
-    return d->m_sourceContact;
+    return d->m_first;
 }
 
 /*!
- * Returns the id of the contact with which the left contact has a relationship of the given type
- * \sa relationshipType(), sourceId(), setInvolved()
+ * Returns the id of the contact with which the first contact has a relationship of the given type
+ * \sa relationshipType(), first()
  */
-QList<QContactId> QContactRelationship::destinationContacts() const
+QContactId QContactRelationship::second() const
 {
-    return d->m_destinationContacts;
+    return d->m_second;
 }
 
 /*!
@@ -164,24 +165,24 @@ QString QContactRelationship::relationshipType() const
 }
 
 /*!
- * Sets the id of the source contact in the relationship to \a id.  This contact
+ * Sets the id of the first contact in the relationship to \a id.  This contact
  * must be stored in the manager in which the relationship is stored, and has
- * a relationship of the specified type with the destination contacts.
- * \sa leftId()
+ * a relationship of the specified type with the second contact.
+ * \sa first()
  */
-void QContactRelationship::setSourceContact(const QContactLocalId& id)
+void QContactRelationship::setFirst(const QContactId& firstId)
 {
-    d->m_sourceContact = id;
+    d->m_first = firstId;
 }
 
 /*!
- * Sets the destination contacts in the relationship to \a destinationContacts.  The source contact
- * has a relationship of the specified type with these contacts.
- * \sa destination()
+ * Sets the second contact in the relationship to \a secondId.  The first contact
+ * has a relationship of the specified type with this contact.
+ * \sa second()
  */
-void QContactRelationship::setDestinationContacts(const QList<QContactId>& contacts)
+void QContactRelationship::setSecond(const QContactId& secondId)
 {
-    d->m_destinationContacts = contacts;
+    d->m_second = secondId;
 }
 
 /*!
@@ -192,44 +193,4 @@ void QContactRelationship::setDestinationContacts(const QList<QContactId>& conta
 void QContactRelationship::setRelationshipType(const QString& relationshipType)
 {
     d->m_relationshipType = relationshipType;
-}
-
-/*!
- * Removes the destination contact found at the given \a position in the list of destination contacts if it exists.
- * Returns true if the destination contact was removed from the list successfully, false if it did not exist or
- * \a position is not a valid index position in the list.
- */
-bool QContactRelationship::removeDestinationContact(int position)
-{
-    if (position < 0 || position >= d->m_destinationContacts.size())
-        return false;
-    d->m_destinationContacts.removeAt(position);
-    return true;
-}
-
-/*!
- * Removes the given destination \a contact from the list of destination contacts if it exists.
- * Returns true if the destination contact was removed from the list successfully, false if it did not exist.
- */
-bool QContactRelationship::removeDestinationContact(const QContactId& contact)
-{
-    return d->m_destinationContacts.removeOne(contact);
-}
-
-/*!
- * Inserts the destination \a contact into the list of destination contacts at the specified \a position.
- * If \a position is 0, the \a contact will be inserted at the head of the list.  If \a position is greater
- * than or equal to the size of the list of destination contacts, it will be append to the end of the list.
- */
-void QContactRelationship::insertDestinationContact(int position, const QContactId& contact)
-{
-    d->m_destinationContacts.insert(position, contact);
-}
-
-/*!
- * Appends the given \a contact onto the list of destination contacts.
- */
-void QContactRelationship::appendDestinationContact(const QContactId& contact)
-{
-    d->m_destinationContacts.append(contact);
 }

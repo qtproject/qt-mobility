@@ -114,10 +114,8 @@ public:
     QContactLocalId selfContactId() const;
 
     /* Relationships */
-    QContactRelationship relationship(const QContactLocalId& sourceId, const QString& relationshipType) const;
-    QList<QContactRelationship> relationships(const QContactLocalId& sourceId, const QString& relationshipType = QString()) const;
-    QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participant = QContactId()) const;
-    QList<QContactRelationship> relationships(const QContactId& participant = QContactId()) const;
+    QList<QContactRelationship> relationships(const QContactId& participantId, QContactRelationshipFilter::Role role) const;
+    QList<QContactRelationship> relationships(const QString& relationshipType = QString(), const QContactId& participantId = QContactId(), QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
     bool saveRelationship(QContactRelationship* relationship);
     QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships);
     bool removeRelationship(const QContactRelationship& relationship);
