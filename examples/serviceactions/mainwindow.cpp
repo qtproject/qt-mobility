@@ -523,6 +523,7 @@ QMessage ComposeSendWidget::constructQMessage() const
     message.setParentAccountId(selectedAccountId);
     message.setSubject(m_subjectEdit->text());
     message.setBody(m_bodyEdit->toPlainText());
+    message.setType(QMessage::Email);
     message.appendAttachments(m_attachmentList->attachments());
 
     return message;

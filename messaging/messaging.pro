@@ -20,7 +20,8 @@ HEADERS += qmessageglobal.h \
            qmessageaccountid_p.h \
            qmessagecontentcontainer.h \ 
            qmessagecontentcontainer_p.h \
-           qmessageaddress.h \ 
+           addresshelper_p.h \
+	   qmessageaddress.h \
            qmessageaddress_p.h \
            qmessage_p.h \ 
            qmessage.h \
@@ -49,7 +50,8 @@ SOURCES += qmessageid.cpp \
            qmessagefolderid.cpp \
            qmessageaccountid.cpp \
            qmessagecontentcontainer.cpp \
-           qmessageaddress.cpp \
+           addresshelper.cpp \
+	   qmessageaddress.cpp \
            qmessage.cpp \
            qmessagefolder.cpp \
            qmessageaccount.cpp \

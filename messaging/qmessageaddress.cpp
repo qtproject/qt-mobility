@@ -32,6 +32,7 @@
 ****************************************************************************/
 #include "qmessageaddress.h"
 #include "qmessageaddress_p.h"
+#include "addresshelper_p.h"
 
 /*!
     \class QMessageAddress
@@ -157,6 +158,52 @@ void QMessageAddress::setType(Type type)
     d_ptr->type = type;
 }
 
+/*!
+    Parses an email address into name, address and suffix parts.
+
+    * \a name is set to the name part of the email address.
+    * \a address is set to the address part of the email address.
+    * \a suffix is set to the suffix part of the email address.
+    
+    If the starting delimeter between the name and address part of the email address is found 
+    then * \a startDelimeterFound is set to true; otherwise * \a startDelimeterFound is set to false;
+
+    If the starting delimeter is not found, then the parsing is ambiguous and both * \a name and
+    * \a address will be set to the input \a emailAddress.
+
+    If the ending delimeter of the address part of the email address is found 
+    then * \a endDelimeterFound is set to true; otherwise * \a endDelimeterFound is set to false;
+
+*/
+void QMessageAddress::parseEmailAddress(const QString &emailAddress, QString *name, QString *address, QString *suffix, bool *startDelimeterFound, bool *endDelimeterFound)
+{
+    QString *aName(name);
+    QString strName;
+    if (!aName)
+        aName = &strName;
+
+    QString *aAddress(address);
+    QString strAddress;
+    if (!aAddress)
+        aAddress = &strAddress;
+
+    QString *aSuffix(suffix);
+    QString strSuffix;
+    if (!aSuffix)
+        aSuffix = &strSuffix;
+
+    bool *aStartDelimeterFound(startDelimeterFound);
+    bool ignored1;
+    if (!aStartDelimeterFound)
+        aStartDelimeterFound = &ignored1;
+
+    bool *aEndDelimeterFound(endDelimeterFound);
+    bool ignored2;
+    if (!aEndDelimeterFound)
+        aEndDelimeterFound = &ignored2;
+
+    qParseMailbox(QString(emailAddress), *aName, *aAddress, *aSuffix, *aStartDelimeterFound, *aEndDelimeterFound);
+}
 
 /*! \typedef QMessageAddressList
 

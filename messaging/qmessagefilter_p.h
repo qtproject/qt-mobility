@@ -76,7 +76,7 @@ public:
     QMessageFilter *q_ptr;
     QMessageDataComparator::Options _options;
 #if defined(Q_OS_WIN)
-    enum Field { None = 0, Id, Type, Sender, Recipients, Subject, TimeStamp, ReceptionTimeStamp, Status, Priority, Size, CustomField, ParentAccountId, ParentFolderId, AncestorFolderIds };
+    enum Field { None = 0, Id, Type, SenderName, SenderAddress, Recipients, RecipientName, RecipientAddress, Subject, TimeStamp, ReceptionTimeStamp, Status, Priority, Size, CustomField, ParentAccountId, ParentFolderId, AncestorFolderIds };
     enum Comparator { Equality = 0, Relation, Inclusion };
     enum Operator { Identity = 0, And, Or, Not, Nand, Nor, OperatorEnd };
     QMessageFilterPrivate::Field _field;
@@ -118,6 +118,7 @@ class MapiRestriction {
 public:
     MapiRestriction(const QMessageFilter &filter);
     ~MapiRestriction();
+    void complement();
     SRestriction *sRestriction();
     bool isValid() { return _valid; }
     bool isEmpty() { return _empty; }

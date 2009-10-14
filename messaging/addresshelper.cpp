@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#include "addresshelper.h"
+#include "addresshelper_p.h"
 #include <qpair.h>
 
 struct CharacterProcessor
@@ -168,7 +168,7 @@ static QPair<int, int> findDelimiters(const QString& text)
     return qMakePair(first, second);
 }
 
-void qParseMailbox(QString& input, QString& name, QString& address, QString& suffix)
+void qParseMailbox(QString& input, QString& name, QString& address, QString& suffix, bool &startDelimeterFound, bool &endDelimeterFound)
 {
     // See if there is a trailing suffix
     int pos = input.indexOf("/TYPE=");
@@ -191,6 +191,8 @@ void qParseMailbox(QString& input, QString& name, QString& address, QString& suf
         {
             // Unmatched '>'
             address = input.left( delimiters.second );
+            if ( name.isEmpty() )
+                name = address;
         }
         else
         {
@@ -201,8 +203,15 @@ void qParseMailbox(QString& input, QString& name, QString& address, QString& suf
             else
                 address = input.mid(delimiters.first + 1, (delimiters.second - delimiters.first - 1)).trimmed();
         }
-
-        if ( name.isEmpty() )
-            name = address;
     }
+
+    if (delimiters.first == -1)
+        startDelimeterFound = false;
+    else
+        startDelimeterFound = true;
+
+    if (delimiters.second == -1)
+        endDelimeterFound = false;
+    else
+        endDelimeterFound = true;
 }

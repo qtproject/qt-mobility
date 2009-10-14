@@ -79,6 +79,10 @@
 #include <tchar.h>
 #include <mapitags.h>
 
+#ifdef _WIN32_WCE
+#include <cemapi.h>
+#endif
+
 
 namespace {
 
@@ -237,9 +241,13 @@ namespace {
         entry.rgPropVals[0].ulPropTag = PR_RECIPIENT_TYPE;
         entry.rgPropVals[0].Value.l = type;
 
+#ifdef _WIN32_WCE
+        QString addressStr = addr.recipient();
+#else
         QString addressStr("[%1:%2]");
         addressStr = addressStr.arg(addr.type() == QMessageAddress::Phone ? "SMS" : "SMTP");
         addressStr = addressStr.arg(addr.recipient());
+#endif
 
         // TODO: Escape illegal characters, as per: http://msdn.microsoft.com/en-us/library/cc842281.aspx
 
@@ -248,8 +256,30 @@ namespace {
         memcpy(address, addressStr.utf16(), len * sizeof(TCHAR));
         address[len] = 0;
 
+#ifdef _WIN32_WCE
+
+        entry.rgPropVals[1].ulPropTag = PR_EMAIL_ADDRESS;
+        entry.rgPropVals[1].Value.LPSZ = address;
+
+        if(addr.type() == QMessageAddress::Email)
+        {
+            //Set the address type(SMTP is the only type currently supported)
+            entry.rgPropVals[2].ulPropTag = PR_ADDRTYPE;
+            entry.rgPropVals[2].Value.LPSZ = L"SMTP";
+        }
+        else if(addr.type() == QMessageAddress::Phone)
+        {
+            //Set the address type(SMTP is the only type currently supported)
+            entry.rgPropVals[2].ulPropTag = PR_ADDRTYPE;
+            entry.rgPropVals[2].Value.LPSZ = L"SMS";
+        }
+        else
+            qWarning() << "Unrecognized address type";
+
+#else
         entry.rgPropVals[1].ulPropTag = PR_DISPLAY_NAME;
         entry.rgPropVals[1].Value.LPSZ = address;
+#endif
 
         addresses.append(address);
     }
@@ -712,26 +742,46 @@ namespace {
                 qWarning() << "Unable to set sender address in message.";
                 *lastError = QMessageStore::FrameworkFault;
             } else {
-                if (!setMapiProperty(message, PR_CLIENT_SUBMIT_TIME, toFileTime(source.date()))) {
-                    qWarning() << "Unable to set submit time in message.";
+#ifdef _WIN32_WCE
+                unsigned long msgType  = 0;
+                if(source.type() == QMessage::Email)
+                    msgType = MSGSTATUS_RECTYPE_SMTP;
+                else if(msgType == QMessage::Sms)
+                    msgType = MSGSTATUS_RECTYPE_SMS;
+                else
+                    qWarning() << "Unrecognized message type";
+
+                if(msgType && !setMapiProperty(message, PR_MSG_STATUS, static_cast<long>(msgType)))
+                {
+                    qWarning() << "Unable to set type of message.";
                     *lastError = QMessageStore::FrameworkFault;
-                } else {
-                    QStringList headers;
-                    foreach (const QByteArray &name, source.headerFields()) {
-                        foreach (const QString &value, source.headerFieldValues(name)) {
-                            // TODO: Do we need soft line-breaks?
-                            headers.append(QString("%1: %2").arg(QString(name)).arg(value));
+                }
+                else
+                {
+#endif
+                    if (!setMapiProperty(message, PR_CLIENT_SUBMIT_TIME, toFileTime(source.date()))) {
+                        qWarning() << "Unable to set submit time in message.";
+                        *lastError = QMessageStore::FrameworkFault;
+                    } else {
+                        QStringList headers;
+                        foreach (const QByteArray &name, source.headerFields()) {
+                            foreach (const QString &value, source.headerFieldValues(name)) {
+                                // TODO: Do we need soft line-breaks?
+                                headers.append(QString("%1: %2").arg(QString(name)).arg(value));
+                            }
                         }
-                    }
-                    if (!headers.isEmpty()) {
-                        QString transportHeaders = headers.join("\r\n").append("\r\n\r\n");
-                        if (!setMapiProperty(message, PR_TRANSPORT_MESSAGE_HEADERS, transportHeaders)) {
-                            qWarning() << "Unable to set transport headers in message.";
-                            *lastError = QMessageStore::FrameworkFault;
+                        if (!headers.isEmpty()) {
+                            QString transportHeaders = headers.join("\r\n").append("\r\n\r\n");
+                            if (!setMapiProperty(message, PR_TRANSPORT_MESSAGE_HEADERS, transportHeaders)) {
+                                qWarning() << "Unable to set transport headers in message.";
+                                *lastError = QMessageStore::FrameworkFault;
+                            }
                         }
                     }
                 }
+#ifdef _WIN32_WCE
             }
+#endif
         }
     }
 
@@ -797,14 +847,21 @@ namespace {
             mapiRelease(recipientsTable);
         } else {
             qWarning() << "Unable to get recipients table from message.";
-            *lastError = QMessageStore::FrameworkFault;
+            if(rv != MAPI_E_NO_RECIPIENTS)
+                *lastError = QMessageStore::FrameworkFault;
         }
 
         if (*lastError == QMessageStore::NoError) {
             // Add the current message recipients
             uint recipientCount(source.to().count() + source.cc().count() + source.bcc().count());
             if (recipientCount) {
-                ADRLIST *list = createAddressList(recipientCount, 2);
+#ifdef _WIN32_WCE
+                unsigned int propertyCount = 3;
+#else
+                unsigned int propertyCount = 2;
+#endif
+
+                ADRLIST *list = createAddressList(recipientCount, propertyCount);
                 if (list) {
                     int index = 0;
                     QList<LPTSTR> addresses;
@@ -827,16 +884,20 @@ namespace {
                         ++index;
                     }
 
+#ifndef _WIN32_WCE
                     if (resolveAddressList(list, session)) {
+#endif
                         rv = message->ModifyRecipients(MODRECIP_ADD, list);
                         if (HR_FAILED(rv)) {
                             qWarning() << "Unable to store address list for message.";
                             *lastError = QMessageStore::FrameworkFault;
                         }
+#ifndef _WIN32_WCE
                     } else {
                         qWarning() << "Unable to resolve address list for message.";
                         *lastError = QMessageStore::FrameworkFault;
                     }
+#endif
 
                     destroyAddressList(list, addresses);
                 } else {
@@ -916,11 +977,18 @@ namespace {
                         qWarning() << "Unable to set message editor format in message.";
                         *lastError = QMessageStore::FrameworkFault;
                     }
-
+#ifdef _WIN32_WCE
+                    // Stream the body in...
+                    LPSTREAM pstm = NULL;
+                    HRESULT hr = message->OpenProperty(PR_BODY, NULL, STGM_WRITE, MAPI_MODIFY,(LPUNKNOWN*)&pstm);
+                    pstm->Write(body.utf16(),body.count()* sizeof(WCHAR), NULL);
+                    pstm->Release();
+#else
                     if (!setMapiProperty(message, PR_BODY, body)) {
                         qWarning() << "Unable to set body in message.";
                         *lastError = QMessageStore::FrameworkFault;
                     }
+#endif
                 }
             }
         } else {
@@ -940,18 +1008,22 @@ namespace {
             rv = attachmentsTable->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0);
             if (HR_SUCCEEDED(rv)) {
                 SRowSet *rows(0);
+                ULONG rowCount = 0;
                 while (*lastError == QMessageStore::NoError) {
-                    if (attachmentsTable->QueryRows(1, 0, &rows) == S_OK) {
+                    if (HR_SUCCEEDED(attachmentsTable->QueryRows(1, 0, &rows))) {
                         if (rows->cRows == 0) {
                             FreeProws(rows);
                             break;
                         } else if (rows->cRows == 1) {
                             // Add this attachment's number to the removal list
                             attachmentNumbers.append(rows->aRow[0].lpProps[0].Value.l);
+                            rowCount+= rows->cRows;
                         }
                         FreeProws(rows);
                     } else {
-                        *lastError = QMessageStore::ContentInaccessible;
+                        if(rowCount)
+                            *lastError = QMessageStore::ContentInaccessible;
+                        break;
                         qWarning() << "Unable to query rows for recipient table";
                     }
                 }
@@ -1238,7 +1310,7 @@ namespace {
                 if (count >= 0) {
                     result.append(front.id());
                 }
-    
+
                 ++count;
             }
         }
@@ -1968,7 +2040,6 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
                 qWarning() << "Unable to save changes for message.";
             }
         }
-
         if (*lastError != QMessageStore::NoError) {
             mapiRelease(mapiMessage);
         }
@@ -2080,10 +2151,12 @@ MapiFolderPtr MapiStore::findFolder(QMessageStore::ErrorCode *lastError, QMessag
 
     MAPIFreeBuffer(props);
 
+#ifndef _WIN32_WCE
     if(!commonFolderSupported)
     {
         return result;
     }
+#endif
 
     MapiFolderPtr baseFolder = receiveFolder(lastError); //start with inbox
 
