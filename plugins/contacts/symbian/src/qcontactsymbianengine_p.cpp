@@ -42,6 +42,7 @@
 #include "qcontactchangeset.h"
 #include "qcontactsymbianfilterdbms.h"
 #include "qcontactsymbianfiltersql.h"
+#include "qcontactsymbiansorterdbms.h"
 
 #include <QDebug>
 
@@ -53,7 +54,7 @@ typedef QList<QUniqueId> QUniqueIdList;
 #define QT_TRYCATCH_LEAVING QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE
 #endif
 
-// NOTE: There is a bug with arm-compiler(?) which causes the local stack
+// NOTE: There is a bug with RVCT compiler which causes the local stack
 // variable to corrupt if the called function leaves. As a workaround we are
 // reserving the objects from heap so it will not get corrupted.
 // This of course applies only to those stack variables which are passed to
@@ -77,6 +78,7 @@ QContactSymbianEngineData::QContactSymbianEngineData() :
 
 	m_transformContact = new TransformContact;
     m_contactFilter = new QContactSymbianFilter(*m_contactDatabase);
+    m_contactSorter = new QContactSymbianSorter(*m_contactDatabase, *m_transformContact);
 }
 
 QContactSymbianEngineData::~QContactSymbianEngineData()
@@ -90,6 +92,7 @@ QContactSymbianEngineData::~QContactSymbianEngineData()
 #endif
 	// m_contactFilter needs to be deleted before m_contactDatabase
     delete m_contactFilter;
+    delete m_contactSorter;
 	delete m_contactDatabase;
 	delete m_transformContact;
 }
@@ -107,6 +110,11 @@ QAbstractContactFilter::FilterSupport QContactSymbianEngineData::filterSupported
         const QContactFilter& filter) const
 {
     return m_contactFilter->filterSupported(filter);
+}
+
+bool QContactSymbianEngineData::sortOrderSupported(const QList<QContactSortOrder>& sortOrders) const
+{
+    return m_contactSorter->sortOrderSupported(sortOrders);
 }
 
 /*!
@@ -162,24 +170,15 @@ int QContactSymbianEngineData::count() const
  * It works by retrieving a list of contact IDs changed since
  * epoch, as this API does not exist "properly" in CNTMODEL.
  *
+ * \param sortOrders Sort order
  * \param qtError Qt error code.
  * \return List of all IDs for contact entries in the database,
  *  or an empty list if there was a problem or the database is
  *  empty.
  */
-QList<QUniqueId> QContactSymbianEngineData::contacts(QContactManager::Error& qtError) const
+QList<QUniqueId> QContactSymbianEngineData::contacts( const QList<QContactSortOrder>& sortOrders, QContactManager::Error& qtError) const
 {
-    // Create an empty list
-    // See QT_TRYCATCH_LEAVING note at the begginning of this file
-    QUniqueIdList *ids = new QUniqueIdList();
-
-    // Attempt to read from database, leaving the list empty if
-    // there was a problem
-    TRAPD(err, QT_TRYCATCH_LEAVING(*ids = contactsL()));
-
-    transformError(err, qtError);
-
-    return *QScopedPointer<QUniqueIdList>(ids);
+    return m_contactSorter->contacts( sortOrders, qtError );
 }
 
 /* add/update/delete */
@@ -464,7 +463,7 @@ void QContactSymbianEngineData::HandleDatabaseEventL(TContactDbObserverEvent aEv
  * \param symbianError Symbian error.
  * \param QtError Qt error.
 */
-void QContactSymbianEngineData::transformError(TInt symbianError, QContactManager::Error& qtError) const
+void QContactSymbianEngineData::transformError(TInt symbianError, QContactManager::Error& qtError)
 {
 	switch(symbianError)
 	{
@@ -545,59 +544,12 @@ QContact QContactSymbianEngineData::contactL(const QUniqueId &contactId) const
 }
 
 /*!
- * Private leaving implementation for contactIds()
- */
-QList<QUniqueId> QContactSymbianEngineData::contactsL() const
-{
-	TTime epoch(0);
-	QList<QUniqueId> qIds;
-
-    // Populate the ID array, returns the coontact ids + group ids
-	CContactIdArray *ids = m_contactDatabase->ContactsChangedSinceL(epoch);
-	CleanupStack::PushL(ids);
-
-    // remove templates from the list
-    CContactIdArray *templateIds = m_contactDatabase->GetCardTemplateIdListL();
-    CleanupStack::PushL(templateIds);
-    for(TInt i(0); i < templateIds->Count(); i++) {
-        TContactItemId id = (*templateIds)[i];
-        TInt index = ids->Find(id);
-        if(index > KErrNotFound)
-            ids->Remove(index);
-    }
-
-    // Remove groups from the list
-    CContactIdArray *groupIds = m_contactDatabase->GetGroupIdListL();
-    CleanupStack::PushL(groupIds);
-    for(TInt i(0); i < groupIds->Count(); i++) {
-        TContactItemId id = (*groupIds)[i];
-        TInt index = ids->Find(id);
-        if(index > KErrNotFound)
-            ids->Remove(index);
-    }
-
-    // Add the contact ids to the returned QList
-	for (TInt i(0); i < ids->Count(); i++) {
-		qIds.append((*ids)[i]);
-	}
-
-    CleanupStack::PopAndDestroy(groupIds);
-    CleanupStack::PopAndDestroy(templateIds);
-    CleanupStack::PopAndDestroy(ids);
-
-	return qIds;
-}
-
-/*!
  * Private leaving implementation for count()
  */
 int QContactSymbianEngineData::countL() const
 {
 	// Call CountL and return number of contacts in database
-	int count(0);
-	count = m_contactDatabase->CountL();
-
-	return count;
+	return m_contactDatabase->CountL();
 }
 
 /*!

@@ -119,3 +119,9 @@ bool TransformAvatar::supportsDetail(QString detailName) const
     }
     return ret;
 }
+
+QList<TUid> TransformAvatar::supportedSortingFieldTypes(QString /*detailFieldName*/) const
+{
+    // Sorting not supported
+    return QList<TUid>();
+}

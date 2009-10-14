@@ -178,6 +178,21 @@ void TransformContact::transformContactL(
 	CleanupStack::Pop(fieldSet);
 }
 
+QList<TUid> TransformContact::supportedSortingFieldTypes( QString detailDefinitionName, QString detailFieldName )
+{
+    QList<TUid> uids;
+    QMap<ContactData, TransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+    while (i != m_transformContactData.constEnd()) {
+        if (i.value()->supportsDetail(detailDefinitionName)) { 
+            uids = i.value()->supportedSortingFieldTypes(detailFieldName);
+            if( uids.count() )
+                break;
+        }
+        ++i;
+    }
+    return uids;
+}
+
 QList<CContactItemField *> TransformContact::transformDetailL(const QContactDetail &detail) const
 {
 	QList<CContactItemField *> itemFieldList;

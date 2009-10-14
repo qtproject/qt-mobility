@@ -106,3 +106,9 @@ bool TransformAnniversary::supportsDetail(QString detailName) const
     }
     return ret;
 }
+
+QList<TUid> TransformAnniversary::supportedSortingFieldTypes(QString /*detailFieldName*/) const
+{
+    // Sorting not supported
+    return QList<TUid>();
+}

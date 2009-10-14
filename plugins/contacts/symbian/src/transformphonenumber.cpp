@@ -195,3 +195,14 @@ bool TransformPhoneNumber::supportsDetail(QString detailName) const
     }
     return ret;
 }
+
+QList<TUid> TransformPhoneNumber::supportedSortingFieldTypes(QString detailFieldName) const
+{
+    QList<TUid> uids;
+    if (detailFieldName == QContactPhoneNumber::FieldNumber) {
+        uids << KUidContactFieldPhoneNumber;
+        uids << KUidContactFieldFax;
+        uids << KUidContactFieldDTMF;
+    }
+    return uids;
+}

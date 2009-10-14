@@ -81,3 +81,11 @@ bool TransformNote::supportsDetail(QString detailName) const
     }
     return ret;
 }
+
+QList<TUid> TransformNote::supportedSortingFieldTypes(QString detailFieldName) const
+{
+    QList<TUid> uids;
+    if (detailFieldName == QContactNote::FieldNote)
+        uids << KUidContactFieldNote;
+    return uids;
+}

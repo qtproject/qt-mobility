@@ -53,6 +53,7 @@ public:
 	void transformContactL(
 	        QContact &contact,
 	        CContactItem &contactItem) const;
+	QList<TUid> supportedSortingFieldTypes( QString detailDefinitionName, QString detailFieldName );
 
 private:
 	enum ContactData

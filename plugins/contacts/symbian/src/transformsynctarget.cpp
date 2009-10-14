@@ -82,3 +82,11 @@ bool TransformSyncTarget::supportsDetail(QString detailName) const
     }
     return ret;
 }
+
+QList<TUid> TransformSyncTarget::supportedSortingFieldTypes(QString detailFieldName) const
+{
+    QList<TUid> uids;
+    if (detailFieldName == QContactSyncTarget::FieldSyncTarget)
+        uids << KUidContactFieldSyncTarget;   
+    return uids;
+}

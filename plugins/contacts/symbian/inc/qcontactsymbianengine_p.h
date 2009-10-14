@@ -52,6 +52,7 @@
 
 class QContactChangeSet;
 class QAbstractContactFilter;
+class QAbstractContactSorter;
 
 class QContactSymbianEngineData : public QObject,
 							   public MContactDbObserver
@@ -66,8 +67,9 @@ public:
     /* Access */
 	QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
 	QAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter) const;
+	bool sortOrderSupported(const QList<QContactSortOrder>& sortOrders) const;
     QContact contact(const QUniqueId& contactId, QContactManager::Error& qtError) const;
-    QList<QUniqueId> contacts(QContactManager::Error& qtError) const;
+    QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& qtError) const;
     int count() const;
 
     /* "My card" */
@@ -105,14 +107,15 @@ signals:
     void groupAdded(const QUniqueId &contactId);
     void groupRemoved(const QUniqueId &contactId);
     void groupChanged(const QUniqueId &contactId);
+    
+public:
+    // Utility function to convert symbian error to QContactManager error
+    static void transformError(TInt symbianError, QContactManager::Error& qtError);
 
 private:
-    // Utility function to convert symbian error to QContactManager error
-	void transformError(TInt symbianError, QContactManager::Error& qtError) const;
 
 	// Leaving functions implementing CNTMODEL interaction.
 	QContact contactL(const QUniqueId &id) const;
-	QList<QUniqueId> contactsL() const;
 	int countL() const;
 
 	int addContactL(QContact &contact);
@@ -143,6 +146,7 @@ private:
     QList<QUniqueId> m_contactsChangedEmitted;
     QList<QUniqueId> m_contactsRemovedEmitted;
     QAbstractContactFilter* m_contactFilter;
+    QAbstractContactSorter* m_contactSorter;
 };
 
 #endif

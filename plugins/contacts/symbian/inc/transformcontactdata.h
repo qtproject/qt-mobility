@@ -58,6 +58,7 @@ public:
 	virtual QContactDetail* transformItemField(const CContactItemField& field, const QContact &contact) = 0;
 	virtual bool supportsField(TUint32 fieldType) const = 0;
 	virtual bool supportsDetail(QString detailName) const = 0;
+	virtual QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const = 0;
 };
 
 #endif

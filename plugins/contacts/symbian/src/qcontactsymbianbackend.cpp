@@ -126,16 +126,39 @@ QList<QUniqueId> QContactSymbianEngine::contacts(
     } else {
         // Filter not supported; fetch all contacts and remove false positives
         // one-by-one
-        QList<QUniqueId> contacts = d->contacts(error);
+        QList<QUniqueId> sortedIds = contacts(sortOrders,error);
         if(error == QContactManager::NoError)
-            slowFilter(filter, contacts, result, error);
+            slowFilter(filter, sortedIds, result, error);
     }
     return result;
 }
 
-QList<QUniqueId> QContactSymbianEngine::contacts(const QList<QContactSortOrder>& /*sortOrders*/, QContactManager::Error& error) const
+QList<QUniqueId> QContactSymbianEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
-	return d->contacts(error);
+    // Check if sorting is supported by backend
+    if(d->sortOrderSupported(sortOrders))
+        return d->contacts(sortOrders,error);
+        
+    // Backend does not support this sorting. 
+    // Fall back to slow QContact-level sorting method.
+    
+    // Get unsorted contact ids
+    QList<QContactSortOrder> noSortOrders;
+    QList<QUniqueId> unsortedIds = d->contacts(noSortOrders,error);
+    if( error != QContactManager::NoError )
+        return QList<QUniqueId>();
+
+    // Get unsorted contacts
+    QList<QContact> unsortedContacts;
+    foreach( QUniqueId id, unsortedIds ) {
+        QContact c = contact(id, error);
+        if (error != QContactManager::NoError)
+            return QList<QUniqueId>();
+        unsortedContacts << c;
+    }
+    
+    // Sort contacts
+    return QContactManagerEngine::sortContacts( unsortedContacts, sortOrders );
 }
 
 QContact QContactSymbianEngine::contact(const QUniqueId& contactId, QContactManager::Error& error) const

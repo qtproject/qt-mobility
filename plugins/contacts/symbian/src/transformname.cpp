@@ -149,3 +149,25 @@ bool TransformName::supportsDetail(QString detailName) const
     }
     return ret;
 }
+
+QList<TUid> TransformName::supportedSortingFieldTypes(QString detailFieldName) const
+{
+    QList<TUid> uids;
+    
+    if (detailFieldName == QContactName::FieldPrefix)
+        return uids << KUidContactFieldPrefixName;
+    
+    if (detailFieldName == QContactName::FieldFirst)
+        return uids << KUidContactFieldGivenName;
+    
+    if (detailFieldName == QContactName::FieldMiddle)
+        return uids << KUidContactFieldAdditionalName;
+    
+    if (detailFieldName == QContactName::FieldLast)
+        return uids << KUidContactFieldFamilyName;
+        
+    if (detailFieldName == QContactName::FieldSuffix)
+        return uids << KUidContactFieldSuffixName;
+    
+    return uids;
+}

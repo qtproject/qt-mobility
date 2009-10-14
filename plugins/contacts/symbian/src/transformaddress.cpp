@@ -183,3 +183,28 @@ bool TransformAddress::supportsDetail(QString detailName) const
     }
     return ret;
 }
+
+QList<TUid> TransformAddress::supportedSortingFieldTypes(QString detailFieldName) const
+{
+    QList<TUid> uids;
+    
+    if( detailFieldName == QContactAddress::FieldStreet )
+        return uids << KUidContactFieldAddress;
+    
+    if( detailFieldName == QContactAddress::FieldLocality )
+        return uids << KUidContactFieldLocality;
+    
+    if( detailFieldName == QContactAddress::FieldRegion )
+        return uids << KUidContactFieldRegion;
+    
+    if( detailFieldName == QContactAddress::FieldPostcode )
+        return uids << KUidContactFieldPostcode;
+    
+    if( detailFieldName == QContactAddress::FieldCountry )
+        return uids << KUidContactFieldCountry;  
+        
+    if( detailFieldName == QContactAddress::FieldPostOfficeBox )
+        return uids << KUidContactFieldPostOffice;
+    
+    return uids;
+}

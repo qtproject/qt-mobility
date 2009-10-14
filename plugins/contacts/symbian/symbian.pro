@@ -7,9 +7,7 @@
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(mobapicontactspluginsymbian)
-
 include(../../../common.pri)
-
 symbian: { 
 	load(data_caging_paths)
 
@@ -50,7 +48,9 @@ symbian: {
       inc/transformnote.h \  
       inc/qabstractcontactfilter.h \
       inc/qcontactsymbianfilterdbms.h \
-      inc/qcontactsymbianfiltersql.h
+      inc/qcontactsymbianfiltersql.h \
+      inc/qabstractcontactsorter.h \
+      inc/qcontactsymbiansorterdbms.h
       
   SOURCES += \
   		src/qcontactsymbianbackend.cpp \
@@ -73,7 +73,8 @@ symbian: {
       src/transformgeolocation.cpp \
       src/transformnote.cpp \  
       src/qcontactsymbianfilterdbms.cpp \
-      src/qcontactsymbianfiltersql.cpp
+      src/qcontactsymbianfiltersql.cpp \
+      src/qcontactsymbiansorterdbms.cpp
       
   LIBS += \
   				-lcntmodel \

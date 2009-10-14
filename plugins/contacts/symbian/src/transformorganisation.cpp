@@ -127,3 +127,22 @@ bool TransformOrganisation::supportsDetail(QString detailName) const
     }
     return ret;
 }
+
+QList<TUid> TransformOrganisation::supportedSortingFieldTypes(QString detailFieldName) const
+{
+    QList<TUid> uids;
+    
+    if (detailFieldName == QContactOrganization::FieldName)
+        return uids << KUidContactFieldCompanyName;
+    
+    if (detailFieldName == QContactOrganization::FieldDepartment)
+        return uids << KUidContactFieldDepartmentName;
+    
+    if (detailFieldName == QContactOrganization::FieldTitle)
+        return uids << KUidContactFieldJobTitle;  
+        
+    if (detailFieldName == QContactOrganization::FieldAssistantName)
+        return uids << KUidContactFieldAssistant;
+   
+    return uids;
+}

@@ -82,3 +82,11 @@ bool TransformGender::supportsDetail(QString detailName) const
     }
     return ret;
 }
+
+QList<TUid> TransformGender::supportedSortingFieldTypes(QString detailFieldName) const
+{
+    QList<TUid> uids;
+    if( detailFieldName == QContactGender::FieldGender )
+        uids << KUidContactFieldGender;
+    return uids;
+}

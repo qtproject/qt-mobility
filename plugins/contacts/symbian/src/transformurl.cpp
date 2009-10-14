@@ -98,3 +98,11 @@ bool TransformUrl::supportsDetail(QString detailName) const
     }
     return ret;
 }
+
+QList<TUid> TransformUrl::supportedSortingFieldTypes(QString detailFieldName) const
+{
+    QList<TUid> uids;
+    if (detailFieldName == QContactUrl::FieldUrl)
+        uids << KUidContactFieldUrl;   
+    return uids;
+}
