@@ -33,10 +33,9 @@ public:
     QVariant encodingOption(const QString &codec, const QString &name) const;
     void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
 
-    int frequency() const;
-    void setFrequency(int frequency);
-    QList<int> supportedFrequencies() const;
-    QPair<int,int> supportedFrequencyRange() const;
+    int sampleRate() const;
+    void setSampleRate(int sampleRate);
+    QList<int> supportedSampleRates() const;
 
     int channels() const;
     void setChannels(int channels);

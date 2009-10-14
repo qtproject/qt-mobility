@@ -93,12 +93,15 @@ void AudioEncoderControl::setQuality(QtMedia::EncodingQuality value)
 
 QStringList AudioEncoderControl::supportedEncodingOptions(const QString &codec) const
 {
+    Q_UNUSED(codec)
+
     QStringList list;
     return list;
 }
 
-QVariant AudioEncoderControl::encodingOption(const QString &code, const QString &name) const
+QVariant AudioEncoderControl::encodingOption(const QString &codec, const QString &name) const
 {
+    Q_UNUSED(codec)
     if(qstrcmp(name.toLocal8Bit().constData(),"bitrate") == 0) {
         return QVariant(8000);
     }
@@ -110,6 +113,7 @@ void AudioEncoderControl::setEncodingOption(
         const QString &codec, const QString &name, const QVariant &value)
 {
     Q_UNUSED(value)
+    Q_UNUSED(codec)
 
     QAudioFormat fmt = m_session->format();
 
@@ -123,26 +127,21 @@ void AudioEncoderControl::setEncodingOption(
         qWarning()<<"option: "<<name<<" is an unknown option!";
 }
 
-int AudioEncoderControl::frequency() const
+int AudioEncoderControl::sampleRate() const
 {
     return m_session->format().frequency();
 }
 
-void AudioEncoderControl::setFrequency(int frequency)
+void AudioEncoderControl::setSampleRate(int sampleRate)
 {
     QAudioFormat fmt = m_session->format();
-    fmt.setFrequency(frequency);
+    fmt.setFrequency(sampleRate);
     m_session->setFormat(fmt);
 }
 
-QList<int> AudioEncoderControl::supportedFrequencies() const
+QList<int> AudioEncoderControl::supportedSampleRates() const
 {
     return m_session->deviceInfo()->supportedFrequencies();
-}
-
-QPair<int,int> AudioEncoderControl::supportedFrequencyRange() const
-{
-    return qMakePair<int,int>(8000, 48000);
 }
 
 int AudioEncoderControl::channels() const
