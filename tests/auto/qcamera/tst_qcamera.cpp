@@ -552,8 +552,9 @@ public slots:
     void initTestCase();
     void cleanupTestCase();
 
-
 private slots:
+    void testAvailableDevices();
+    void testDeviceDescription();
     void testSimpleCamera();
     void testSimpleCameraWhiteBalance();
     void testSimpleCameraExposure();
@@ -585,6 +586,24 @@ void tst_QCamera::cleanupTestCase()
     delete provider;
 }
 
+void tst_QCamera::testAvailableDevices()
+{
+    QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider();
+    if (provider == 0 || provider->devices(QByteArray("camera")).count() == 0)
+        QSKIP("No Camera service found on system", SkipSingle);
+
+    QVERIFY(QCamera::availableDevices().count() > 0);
+}
+
+void tst_QCamera::testDeviceDescription()
+{
+    QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider();
+    if (provider == 0 || provider->devices(QByteArray("camera")).count() == 0)
+        QSKIP("No Camera service found on system", SkipSingle);
+
+    foreach (const QByteArray &device, QCamera::availableDevices())
+        QVERIFY(QCamera::deviceDescription(device).length() > 0);
+}
 
 void tst_QCamera::testSimpleCamera()
 {
