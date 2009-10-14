@@ -713,10 +713,13 @@ void PhoneBook::exportAsVCard()
 void PhoneBook::editGroupDetails()
 {
     QContact c = buildContact();
+    c.setId(contacts.at(currentIndex).id());
     GroupDetailsDialog dlg(detailsForm, cm, c);
     if (smallScreenSize)
 	dlg.showMaximized();
 
     if (dlg.exec() == QDialog::Accepted)
         contactGroups = dlg.groups();
+
+    contacts.replace(currentIndex, c);
 }
