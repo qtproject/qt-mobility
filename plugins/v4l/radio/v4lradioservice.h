@@ -53,12 +53,6 @@ public:
 
     bool isEndpointSupported(QMediaService::MediaEndpoint endpointType);
 
-    void setInputStream(QIODevice* stream);
-    QIODevice* inputStream() const;
-
-    void setOutputStream(QIODevice* stream);
-    QIODevice* outputStream() const;
-
     QList<QString> activeEndpoints(QMediaService::MediaEndpoint endpointType);
     bool setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
     QList<QString> supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;

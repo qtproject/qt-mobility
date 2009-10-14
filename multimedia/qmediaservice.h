@@ -47,30 +47,16 @@ class Q_MEDIA_EXPORT QMediaService : public QObject
     Q_OBJECT
 
 public:
-    enum MediaEndpoint
-    {
-        VideoInput,
-        VideoOutput,
-        AudioInput,
-        AudioOutput,
-        StreamInput,
-        StreamOutput
-    };
+    enum MediaEndpoint { AudioDevice };
 
     ~QMediaService();
 
-    virtual bool isEndpointSupported(QMediaService::MediaEndpoint endpointType);
+    bool isEndpointSupported(QMediaService::MediaEndpoint endpointType);
 
-    virtual void setInputStream(QIODevice* stream);
-    virtual QIODevice* inputStream() const;
-
-    virtual void setOutputStream(QIODevice* stream);
-    virtual QIODevice* outputStream() const;
-
-    virtual QList<QString> activeEndpoints(QMediaService::MediaEndpoint endpointType);
-    virtual bool setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
-    virtual QString endpointDescription(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
-    virtual QList<QString> supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
+    QString activeEndpoint(QMediaService::MediaEndpoint endpointType);
+    bool setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
+    QString endpointDescription(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
+    QList<QString> supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
 
     virtual QMediaControl* control(const char *name) const = 0;
 
@@ -82,6 +68,10 @@ public:
         return 0;
     }
 #endif
+
+signals:
+    void supoortedEndpointsChanged();
+    void activeEndpointChanged(QMediaService::MediaEndpoint endpointType, const QString &endpoint);
 
 protected:
     QMediaService(QObject* parent);

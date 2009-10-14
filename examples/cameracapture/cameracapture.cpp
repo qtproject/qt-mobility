@@ -63,13 +63,13 @@ CameraCapture::CameraCapture(QWidget *parent) :
     connect(mediaRecorder, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(displayErrorMessage()));
 
     //audio devices
-    foreach(const QString deviceName, service->supportedEndpoints(QMediaService::AudioInput)) {
-        QString description = service->endpointDescription(QMediaService::AudioInput, deviceName);
+    foreach (const QString &deviceName, service->supportedEndpoints(QMediaService::AudioDevice)) {
+        QString description = service->endpointDescription(QMediaService::AudioDevice, deviceName);
         ui->audioInputDeviceBox->addItem(deviceName+" "+description, QVariant(deviceName));
     }
 
     //camera devices
-    foreach(const QByteArray deviceName, camera->devices()) {
+    foreach (const QByteArray deviceName, camera->devices()) {
         ui->cameraDeviceBox->addItem(deviceName+" "+camera->deviceDescription(deviceName), QVariant(deviceName));
     }
 
@@ -137,7 +137,7 @@ void CameraCapture::updateRecordTime()
 void CameraCapture::setAudioInputDevice(int idx)
 {
     QString deviceName = ui->audioInputDeviceBox->itemData(idx).toString();
-    service->setActiveEndpoint(QMediaService::AudioInput, deviceName );
+    service->setActiveEndpoint(QMediaService::AudioDevice, deviceName );
 }
 
 void CameraCapture::setCameraDevice(int idx)
