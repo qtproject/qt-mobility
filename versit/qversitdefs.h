@@ -44,16 +44,15 @@ const char versitEmailId[] = "EMAIL";
 const char versitPhoneId[] = "TEL";
 const char versitAddressId[] = "ADDR";
 
-//Constexts:
-const char versiContextWorkId[] = "WORK";
+//Contexts:
+const char versitContextWorkId[] = "WORK";
 const char versitContextHomeId[] = "HOME";
 
 //SubTypes for Addresses
 const char versitDomesticId[] = "DOM";
 const char versitInternationalId[] = "INTL";
-const char versitPostalID[] = "POSTAL";
+const char versitPostalId[] = "POSTAL";
 const char versitParcelId[] = "PARCEL";
-
 
 //SubTypes for Telephone
 const char versitVoiceId[] = "VOICE";

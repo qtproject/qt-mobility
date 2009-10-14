@@ -31,6 +31,7 @@
 **
 ****************************************************************************/
 
+#include "qversitdefs.h"
 #include "ut_qversitcontactgenerator.h"
 #include <qversitcontactgenerator.h>
 #include <qversitproperty.h>
@@ -39,8 +40,8 @@
 #include <qcontact.h>
 #include <qcontactdetail.h>
 #include <qcontactname.h>
+#include <qcontactaddress.h>
 
-#include "qversitdefs.h"
 
 void UT_QVersitContactGenerator::init()
 {    
@@ -65,4 +66,119 @@ void UT_QVersitContactGenerator::testGenerateContacts()
     QCOMPARE(contact.details().count(),2);
     QContactDetail detail = contact.detail(QContactName::DefinitionName);    
     QCOMPARE(detail.value(QContactName::FieldFirst),QString(val));
+}
+
+void UT_QVersitContactGenerator::testCreateAddress()
+{
+    QVersitProperty property;
+    property.setName(QString::fromAscii(versitNameId));   
+    
+    // Empty value for the address
+    QContactAddress* address = 
+        static_cast<QContactAddress*>(mGenerator->createAddress(property));
+    QVERIFY(address != 0);
+    QCOMPARE(address->postOfficeBox(),QString());
+    QCOMPARE(address->street(),QString());
+    QCOMPARE(address->locality(),QString());
+    QCOMPARE(address->region(),QString());
+    QCOMPARE(address->postcode(),QString());
+    QCOMPARE(address->country(),QString());
+    delete address;
+    address = 0;
+    
+    // Address with just seprators
+    property.setValue(QByteArray(";;;;;;"));
+    address = static_cast<QContactAddress*>(mGenerator->createAddress(property));
+    QVERIFY(address != 0);
+    QCOMPARE(address->postOfficeBox(),QString());
+    QCOMPARE(address->street(),QString());
+    QCOMPARE(address->locality(),QString());
+    QCOMPARE(address->region(),QString());
+    QCOMPARE(address->postcode(),QString());
+    QCOMPARE(address->country(),QString());
+    delete address;
+    address = 0;     
+    
+    // Address with some fields missing
+    property.setValue(QByteArray(";;My Street;My Town;;12345;"));
+    address = static_cast<QContactAddress*>(mGenerator->createAddress(property));
+    QVERIFY(address != 0);
+    QCOMPARE(address->postOfficeBox(),QString());
+    QCOMPARE(address->street(),QString::fromAscii("My Street"));
+    QCOMPARE(address->locality(),QString::fromAscii("My Town"));
+    QCOMPARE(address->region(),QString());
+    QCOMPARE(address->postcode(),QString::fromAscii("12345"));
+    QCOMPARE(address->country(),QString());
+    delete address;
+    address = 0;    
+    
+    // Address with all the fields filled
+    property.setValue(QByteArray("PO Box;E;My Street;My Town;My State;12345;My Country"));
+    address = static_cast<QContactAddress*>(mGenerator->createAddress(property));
+    QVERIFY(address != 0);
+    QCOMPARE(address->postOfficeBox(),QString::fromAscii("PO Box"));
+    QCOMPARE(address->street(),QString::fromAscii("My Street"));
+    QCOMPARE(address->locality(),QString::fromAscii("My Town"));
+    QCOMPARE(address->region(),QString::fromAscii("My State"));
+    QCOMPARE(address->postcode(),QString::fromAscii("12345"));
+    QCOMPARE(address->country(),QString::fromAscii("My Country"));
+    delete address;
+    address = 0;    
+    
+    // Address with TYPE parameters coverted to contexts and subtypes
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("WORK"));    
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("DOM"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("INTL"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("POSTAL"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("PARCEL"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("X-EXTENSION")); 
+    address = static_cast<QContactAddress*>(mGenerator->createAddress(property));
+    QVERIFY(address != 0);
+    QStringList contexts = address->contexts();
+    QVERIFY(contexts.contains(QContactDetail::ContextHome));   
+    QVERIFY(contexts.contains(QContactDetail::ContextWork));
+    QStringList subTypes = address->subTypes();
+    QVERIFY(subTypes.contains(QContactAddress::SubTypeDomestic));
+    QVERIFY(subTypes.contains(QContactAddress::SubTypeInternational));
+    QVERIFY(subTypes.contains(QContactAddress::SubTypePostal));
+    QVERIFY(subTypes.contains(QContactAddress::SubTypeParcel));
+    delete address;
+    address = 0;    
+}
+
+void UT_QVersitContactGenerator::testExtractContexts()
+{
+    // Empty list
+    QStringList result = mGenerator->extractContexts(QStringList());
+    QVERIFY(result.isEmpty());
+    
+    // HOME
+    QStringList types(QString::fromAscii("HOME"));
+    result = mGenerator->extractContexts(types);
+    QCOMPARE(result.count(),1);
+    QVERIFY(result.contains(QContactDetail::ContextHome));
+    
+    // WORK
+    types.clear();
+    types.append(QString::fromAscii("WORK"));
+    result = mGenerator->extractContexts(types);
+    QCOMPARE(result.count(),1);
+    QVERIFY(result.contains(QContactDetail::ContextWork));    
+    
+    // WORK and HOME
+    types.append(QString::fromAscii("HOME"));
+    result = mGenerator->extractContexts(types);
+    QCOMPARE(result.count(),2);
+    QVERIFY(result.contains(QContactDetail::ContextWork)); 
+    QVERIFY(result.contains(QContactDetail::ContextHome));
+    
+    // HOME and WORK and other items
+    types.prepend(QString::fromAscii("OTHER TYPE 1"));
+    types.insert(2,QString::fromAscii("OTHER TYPE 2"));
+    types.append(QString::fromAscii("OTHER TYPE 3"));
+    result = mGenerator->extractContexts(types);
+    QCOMPARE(result.count(),2);
+    QVERIFY(result.contains(QContactDetail::ContextWork)); 
+    QVERIFY(result.contains(QContactDetail::ContextHome));    
 }

@@ -65,7 +65,7 @@ public:
         mMappingTable.insert(QContactAddress::DefinitionName,QString::fromAscii(versitAddressId));
 
         //Context Mapping
-        mMappingTable.insert(QContactDetail::ContextWork,QString::fromAscii(versiContextWorkId));
+        mMappingTable.insert(QContactDetail::ContextWork,QString::fromAscii(versitContextWorkId));
         mMappingTable.insert(QContactDetail::ContextHome,QString::fromAscii(versitContextHomeId));
 
         // Sub Types parameters.
@@ -73,7 +73,7 @@ public:
         mMappingTable.insert(QContactAddress::SubTypeDomestic,QString::fromAscii(versitDomesticId));
         mMappingTable.insert(QContactAddress::SubTypeInternational,
                              QString::fromAscii(versitInternationalId));
-        mMappingTable.insert(QContactAddress::SubTypePostal,QString::fromAscii(versitPostalID));
+        mMappingTable.insert(QContactAddress::SubTypePostal,QString::fromAscii(versitPostalId));
         mMappingTable.insert(QContactAddress::SubTypeParcel,QString::fromAscii(versitParcelId));
 
         /* Sub types for the telephone */

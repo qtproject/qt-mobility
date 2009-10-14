@@ -46,8 +46,15 @@ public:
     ~QVersitContactGenerator();
     // Generates a contact from a QVersitDocument
     QContact generateContact(const QVersitDocument& versitDocument);
+    
 private:
-    QVersitContactGeneratorPrivate *d;
+    
+    QContactDetail* createAddress(const QVersitProperty& property) const;
+    QStringList extractContexts(const QStringList& types) const;
+    
+private:
+    QVersitContactGeneratorPrivate* d;
+    friend class UT_QVersitContactGenerator;
 };
 
 #endif

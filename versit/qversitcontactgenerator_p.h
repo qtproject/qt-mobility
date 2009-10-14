@@ -50,12 +50,12 @@ class QVersitContactGeneratorPrivate
 public:
     QVersitContactGeneratorPrivate() {}
     ~QVersitContactGeneratorPrivate() {}
-    void addName(QContact& contact,const QVersitProperty& property)
+    QContactDetail* addName(const QVersitProperty& property)
     {
-        QContactName* name=new QContactName();
-        name->setFirst(property.value());                  
-        contact.saveDetail(name);
-    }
+        QContactName* name = new QContactName();
+        name->setFirst(QString::fromAscii(property.value()));
+        return name;
+    }   
 };
 
 #endif // QVERSITCONTACTGENERATOR_P_H
