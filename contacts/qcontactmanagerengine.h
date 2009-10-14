@@ -123,6 +123,7 @@ public:
     virtual bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
     virtual bool filterSupported(const QContactFilter& filter) const;
     virtual QList<QVariant::Type> supportedDataTypes() const;
+    virtual QStringList supportedRelationshipTypes() const;
 
     /* Reports the built-in definitions from the schema */
     static QMap<QString, QContactDetailDefinition> schemaDefinitions();

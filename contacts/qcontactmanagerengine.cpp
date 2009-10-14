@@ -484,6 +484,14 @@ QList<QVariant::Type> QContactManagerEngine::supportedDataTypes() const
     return QList<QVariant::Type>();
 }
 
+/*!
+ * Returns the list of relationship types supported by this engine.
+ */
+QStringList QContactManagerEngine::supportedRelationshipTypes() const
+{
+    return QStringList();
+}
+
 /*! Returns the base schema definitions */
 QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions()
 {

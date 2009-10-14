@@ -51,6 +51,8 @@ public:
         Groups = 0,
         ActionPreferences,
         MutableDefinitions,
+        Relationships,
+        ArbitraryRelationshipTypes,
         SelfContact,
         Anonymous
     };
@@ -58,6 +60,7 @@ public:
     bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
     bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
+    QStringList supportedRelationshipTypes() const;
 
 private:
     /* Can't instantiate apart from through manager */

@@ -986,6 +986,10 @@ bool QContactMemoryEngine::hasFeature(QContactManagerInfo::ManagerFeature featur
     switch (feature) {
         case QContactManagerInfo::Groups:
         case QContactManagerInfo::ActionPreferences:
+        case QContactManagerInfo::Relationships:
+            return true;
+        case QContactManagerInfo::ArbitraryRelationshipTypes:
+            return true;
         case QContactManagerInfo::MutableDefinitions:
             return true;
         case QContactManagerInfo::Anonymous:

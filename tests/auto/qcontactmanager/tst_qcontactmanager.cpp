@@ -2155,8 +2155,20 @@ void tst_QContactManager::relationships()
     QFETCH(QString, uri);
     QContactManager* cm = QContactManager::fromUri(uri);
 
+    if (!cm->information()->hasFeature(QContactManagerInfo::Relationships))
+        QSKIP("Skipping: This manager does not support relationships!", SkipSingle);
+
     int totalRelationships = cm->relationships().size();
     int totalManagerRelationships = cm->relationships(QContactRelationship::IsManagerOf).size();
+
+    QStringList availableRelationshipTypes = cm->information()->supportedRelationshipTypes();
+    if (availableRelationshipTypes.isEmpty()) {
+        // if empty, but has the relationships feature, then it must support arbitrary types.
+        // so, add a few types that we can use.
+        availableRelationshipTypes.append(QContactRelationship::IsManagerOf);
+        availableRelationshipTypes.append(QContactRelationship::IsSpouseOf);
+        availableRelationshipTypes.append(QContactRelationship::IsAssistantOf);
+    }
 
     QContact source;
     QContact dest1, dest2, dest3;
@@ -2196,8 +2208,8 @@ void tst_QContactManager::relationships()
     QCOMPARE(dests.value(0), dest1Uri);
     QCOMPARE(dests.value(1), dest3EmptyUri); // inserted at this position.
     QCOMPARE(dests.value(2), dest2Uri);
-    customRelationshipOne.setRelationshipType(QContactRelationship::IsManagerOf);
-    QVERIFY(customRelationshipOne.relationshipType() == QString(QLatin1String(QContactRelationship::IsManagerOf)));
+    customRelationshipOne.setRelationshipType(availableRelationshipTypes.at(0));
+    QVERIFY(customRelationshipOne.relationshipType() == availableRelationshipTypes.at(0));
 
     // save the relationship
     QVERIFY(cm->saveRelationship(&customRelationshipOne));
@@ -2209,14 +2221,14 @@ void tst_QContactManager::relationships()
 
     // remove the dest3 contact, should be removed from the relationship
     cm->removeContact(dest3.id().localId());
-    customRelationshipOne = cm->relationship(source.id().localId(), QContactRelationship::IsManagerOf);
+    customRelationshipOne = cm->relationship(source.id().localId(), availableRelationshipTypes.at(0));
     dests = customRelationshipOne.destinationContacts();
     QCOMPARE(dests.value(0), dest1Uri);
     QCOMPARE(dests.value(1), dest2Uri);
     QCOMPARE(dests.size(), 2);
 
     // test our accessors.
-    QCOMPARE(cm->relationships(QContactRelationship::IsManagerOf).size(), (totalManagerRelationships + 1));
+    QCOMPARE(cm->relationships(availableRelationshipTypes.at(0)).size(), (totalManagerRelationships + 1));
     QVERIFY(cm->relationships(source.id()).size() == 1);
 
     // removing the source contact should result in removal of the relationship.
@@ -2234,12 +2246,15 @@ void tst_QContactManager::relationships()
     customRelationshipOne.setSourceContact(source.localId());
     customRelationshipOne.setDestinationContacts(dests);
     QVERIFY(cm->saveRelationship(&customRelationshipOne));
+
     QContactRelationship customRelationshipTwo;
-    customRelationshipTwo.setSourceContact(source.localId());
-    customRelationshipTwo.setRelationshipType(QContactRelationship::IsSpouseOf);
-    dests.removeOne(dest2.id());
-    customRelationshipTwo.setDestinationContacts(dests);
-    QVERIFY(cm->saveRelationship(&customRelationshipTwo));
+    if (availableRelationshipTypes.size() > 1) {
+        customRelationshipTwo.setSourceContact(source.localId());
+        customRelationshipTwo.setRelationshipType(availableRelationshipTypes.at(1));
+        dests.removeOne(dest2.id());
+        customRelationshipTwo.setDestinationContacts(dests);
+        QVERIFY(cm->saveRelationship(&customRelationshipTwo));
+    }
 
     // currently, the contacts are "stale" - no cached relationships
     QVERIFY(dest1.relatedContacts().isEmpty());
@@ -2254,31 +2269,60 @@ void tst_QContactManager::relationships()
     // and test again.
     QVERIFY(dest1.relatedContacts().contains(source.id()));
     QVERIFY(dest1.relationships().contains(customRelationshipOne));
-    QVERIFY(dest1.relationships().contains(customRelationshipTwo));
+    if (availableRelationshipTypes.size() > 1) {
+        QVERIFY(dest1.relationships().contains(customRelationshipTwo));
+    }
     QVERIFY(dest2.relatedContacts().contains(source.id()));
     QVERIFY(dest2.relationships().contains(customRelationshipOne));
-    QVERIFY(!dest2.relationships().contains(customRelationshipTwo));
+    if (availableRelationshipTypes.size() > 1) {
+        QVERIFY(!dest2.relationships().contains(customRelationshipTwo));
+    }
 
-    QVERIFY(dest1.relationships(QContactRelationship::IsManagerOf).contains(customRelationshipOne));
-    QVERIFY(!dest1.relationships(QContactRelationship::IsManagerOf).contains(customRelationshipTwo));
-    QVERIFY(dest1.relationships(QContactRelationship::IsSpouseOf).contains(customRelationshipTwo));
-    QVERIFY(!dest1.relationships(QContactRelationship::IsSpouseOf).contains(customRelationshipOne));
+    QVERIFY(dest1.relationships(availableRelationshipTypes.at(0)).contains(customRelationshipOne));
+    if (availableRelationshipTypes.size() > 1) {
+        QVERIFY(!dest1.relationships(availableRelationshipTypes.at(0)).contains(customRelationshipTwo));
+        QVERIFY(dest1.relationships(availableRelationshipTypes.at(1)).contains(customRelationshipTwo));
+        QVERIFY(!dest1.relationships(availableRelationshipTypes.at(1)).contains(customRelationshipOne));
+    }
 
-    QVERIFY(dest2.relationships(QContactRelationship::IsManagerOf).contains(customRelationshipOne));
-    QVERIFY(!dest2.relationships(QContactRelationship::IsManagerOf).contains(customRelationshipTwo));
-    QVERIFY(dest2.relationships(QContactRelationship::IsSpouseOf).isEmpty());
+    QVERIFY(dest2.relationships(availableRelationshipTypes.at(0)).contains(customRelationshipOne));
+    QVERIFY(!dest2.relationships(availableRelationshipTypes.at(0)).contains(customRelationshipTwo));
+    if (availableRelationshipTypes.size() > 1) {
+        QVERIFY(dest2.relationships(availableRelationshipTypes.at(1)).isEmpty());
+    }
 
-    QVERIFY(dest1.relatedContacts(QContactRelationship::IsManagerOf).contains(source.id()));
-    QVERIFY(dest1.relatedContacts(QContactRelationship::IsSpouseOf).contains(source.id()));
-    QVERIFY(!dest1.relatedContacts(QContactRelationship::IsManagerOf, QContactRelationshipFilter::Destination).contains(source.id()));
-    QVERIFY(!dest1.relatedContacts(QContactRelationship::IsSpouseOf, QContactRelationshipFilter::Destination).contains(source.id()));
-    QVERIFY(dest1.relatedContacts(QContactRelationship::IsManagerOf, QContactRelationshipFilter::Source).contains(source.id()));
-    QVERIFY(dest1.relatedContacts(QContactRelationship::IsSpouseOf, QContactRelationshipFilter::Source).contains(source.id()));
+    QVERIFY(dest1.relatedContacts(availableRelationshipTypes.at(0)).contains(source.id()));
+    if (availableRelationshipTypes.size() > 1) {
+        QVERIFY(dest1.relatedContacts(availableRelationshipTypes.at(1)).contains(source.id()));
+    }
+    QVERIFY(!dest1.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::Destination).contains(source.id()));
+    if (availableRelationshipTypes.size() > 1) {
+        QVERIFY(!dest1.relatedContacts(availableRelationshipTypes.at(1), QContactRelationshipFilter::Destination).contains(source.id()));
+    }
+    QVERIFY(dest1.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::Source).contains(source.id()));
+    if (availableRelationshipTypes.size() > 1) {
+        QVERIFY(dest1.relatedContacts(availableRelationshipTypes.at(1), QContactRelationshipFilter::Source).contains(source.id()));
+    }
 
-    QVERIFY(dest2.relatedContacts(QContactRelationship::IsManagerOf).contains(source.id()));
-    QVERIFY(dest2.relatedContacts(QContactRelationship::IsSpouseOf).isEmpty());
-    QVERIFY(!dest2.relatedContacts(QContactRelationship::IsManagerOf, QContactRelationshipFilter::Destination).contains(source.id()));
-    QVERIFY(dest2.relatedContacts(QContactRelationship::IsManagerOf, QContactRelationshipFilter::Source).contains(source.id()));
+    QVERIFY(dest2.relatedContacts(availableRelationshipTypes.at(0)).contains(source.id()));
+    if (availableRelationshipTypes.size() > 1) {
+        QVERIFY(dest2.relatedContacts(availableRelationshipTypes.at(1)).isEmpty());
+    }
+    QVERIFY(!dest2.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::Destination).contains(source.id()));
+    QVERIFY(dest2.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::Source).contains(source.id()));
+
+    // test arbitrary relationship types.
+    if (cm->information()->hasFeature(QContactManagerInfo::ArbitraryRelationshipTypes)) {
+        dests.clear();
+        dests.append(dest1.id());
+        customRelationshipOne.setSourceContact(source.localId());
+        customRelationshipOne.setDestinationContacts(dests);
+        customRelationshipOne.setRelationshipType("test-arbitrary-relationship-type");
+        QVERIFY(cm->saveRelationship(&customRelationshipOne));
+        dest1 = cm->contact(dest1.localId()); // refresh
+        QVERIFY(dest1.relationships("test-arbitrary-relationship-type").size() == 1);
+        QVERIFY(dest1.relationships("test-arbitrary-relationship-type").contains(customRelationshipOne));
+    }
 
     // now clean up and remove our dests.
     cm->removeContact(source.localId());

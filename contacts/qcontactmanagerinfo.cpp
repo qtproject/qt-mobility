@@ -102,3 +102,16 @@ bool QContactManagerInfo::filterSupported(const QContactFilter& filter) const
 {
     return d->m_engine->filterSupported(filter);
 }
+
+/*!
+ * Returns the list of relationship types which are supported by this backend.
+ * If the backend does not support the \c QContactManagerInfo::Relationships feature, this list should
+ * be empty.  If the backend supports the \c QContactManagerInfo::Relationships feature and also
+ * supports the \c QContactManagerInfo::ArbitraryRelationshipTypes feature, the list will
+ * contain the natively supported (well-known) relationship types contained in the list, but clients
+ * are able to add relationships of any custom type also.
+ */
+QStringList QContactManagerInfo::supportedRelationshipTypes() const
+{
+    return d->m_engine->supportedRelationshipTypes();
+}
