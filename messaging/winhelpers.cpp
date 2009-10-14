@@ -1322,6 +1322,39 @@ namespace {
         }
     }
 
+    class NotifyEvent : public QEvent
+    {
+    public:
+        static QEvent::Type eventType();
+
+        NotifyEvent(MapiStore *store, const QMessageId &id, MapiSession::NotifyType type);
+
+        virtual Type type();
+
+        MapiStore *_store;
+        QMessageId _id;
+        MapiSession::NotifyType _notifyType;
+    };
+
+    QEvent::Type NotifyEvent::eventType()
+    {
+        static int result = QEvent::registerEventType();
+        return static_cast<QEvent::Type>(result);
+    }
+
+    NotifyEvent::NotifyEvent(MapiStore *store, const QMessageId &id, MapiSession::NotifyType type)
+        : QEvent(eventType()),
+          _store(store),
+          _id(id),
+          _notifyType(type)
+    {
+    }
+
+    QEvent::Type NotifyEvent::type()
+    {
+        return eventType();
+    }
+
 }
 
 namespace WinHelpers {
@@ -2608,10 +2641,51 @@ ULONG MapiStore::AdviseSink::Release()
 
 ULONG MapiStore::AdviseSink::OnNotify(ULONG notificationCount, LPNOTIFICATION notifications)
 {
-    _store->_session.toStrongRef()->notify(_store, notificationCount, notifications);
+    MapiSessionPtr session = _store->_session.toStrongRef();
+    if (!session.isNull()) {
+        for (uint i = 0; i < notificationCount; ++i) {
+            NOTIFICATION &notification(notifications[i]);
+
+            if (notification.ulEventType == fnevNewMail) {
+                // TODO: Do we need to process this, or is handling object-created sufficient?
+                //NEWMAIL_NOTIFICATION &newmail(notification.info.newmail);
+            } else {
+                OBJECT_NOTIFICATION &object(notification.info.obj);
+
+                if (object.ulObjType == MAPI_MESSAGE) {
+                    MapiEntryId entryId(object.lpEntryID, object.cbEntryID);
+
+                    if (!entryId.isEmpty()) {
+                        // Create a partial ID from the information we have (a message can be
+                        // retrieved using only the store key and the message entry ID)
+#ifdef _WIN32_WCE
+                        QMessageId messageId(QMessageIdPrivate::from(_store->entryId(),entryId));
+#else
+                        QMessageId messageId(QMessageIdPrivate::from(_store->recordKey(), entryId));
+#endif
+
+                        MapiSession::NotifyType notifyType;
+                        switch (notification.ulEventType)
+                        {
+                        case fnevObjectCopied: notifyType = MapiSession::Added; break;
+                        case fnevObjectCreated: notifyType = MapiSession::Added; break;
+                        case fnevObjectDeleted: notifyType = MapiSession::Removed; break;
+                        case fnevObjectModified: notifyType = MapiSession::Updated; break;
+                        case fnevObjectMoved: notifyType = MapiSession::Updated; break;
+                        }
+
+                        // Create an event to be processed by the UI thread
+                        QCoreApplication::postEvent(session.data(), new NotifyEvent(_store, messageId, notifyType));
+                    } else {
+                        qWarning() << "Received notification, but no entry ID";
+                    }
+                }
+            }
+        }
+    }
+
     return 0;
 }
-
 
 class SessionManager : public QObject
 {
@@ -3982,64 +4056,21 @@ bool MapiSession::showForm(IMessage* message, IMAPIFolder* folder, LPMDB store)
     return true;
 }
 
-void MapiSession::notify(MapiStore *store, ULONG notificationCount, NOTIFICATION *notifications)
+bool MapiSession::event(QEvent *e)
 {
-    enum NotifyType { Added = 1, Removed, Updated };
-
-    typedef QPair<QMessageId, NotifyType> NotifyMessage;
-    QList<NotifyMessage> notifyIds;
-
-    for (uint i = 0; i < notificationCount; ++i) {
-        NOTIFICATION &notification(notifications[i]);
-
-        if (notification.ulEventType == fnevNewMail) {
-            // TODO: Do we need to process this, or is handling object-created sufficient?
-            //NEWMAIL_NOTIFICATION &newmail(notification.info.newmail);
-        } else {
-            OBJECT_NOTIFICATION &object(notification.info.obj);
-
-            if (object.ulObjType == MAPI_MESSAGE) {
-                MapiEntryId entryId(object.lpEntryID, object.cbEntryID);
-
-                if (!entryId.isEmpty()) {
-                    // Create a partial ID from the information we have (a message can be
-                    // retrieved using only the store key and the message entry ID)
-#ifdef _WIN32_WCE
-                    QMessageId messageId(QMessageIdPrivate::from(store->entryId(),entryId));
-#else
-                    QMessageId messageId(QMessageIdPrivate::from(store->recordKey(), entryId));
-#endif
-
-                    switch (notification.ulEventType)
-                    {
-                    case fnevObjectCopied:
-                        notifyIds.append(qMakePair(messageId, Added));
-                        break;
-
-                    case fnevObjectCreated:
-                        notifyIds.append(qMakePair(messageId, Added));
-                        break;
-
-                    case fnevObjectDeleted:
-                        notifyIds.append(qMakePair(messageId, Removed));
-                        break;
-
-                    case fnevObjectModified:
-                        notifyIds.append(qMakePair(messageId, Updated));
-                        break;
-
-                    case fnevObjectMoved:
-                        notifyIds.append(qMakePair(messageId, Updated));
-                        break;
-                    }
-                } else {
-                    qWarning() << "Received notification, but no entry ID";
-                }
-            }
+    if (e->type() == NotifyEvent::eventType()) {
+        if (NotifyEvent *ne = static_cast<NotifyEvent*>(e)) {
+            notify(ne->_store, ne->_id, ne->_notifyType);
+            return true;
         }
     }
 
-    QMap<QPair<QMessageId, NotifyType>, QMessageStore::NotificationFilterIdSet> matches;
+    return QObject::event(e);
+}
+
+void MapiSession::notify(MapiStore *store, const QMessageId &id, MapiSession::NotifyType notifyType)
+{
+    QMessageStore::NotificationFilterIdSet matchingFilterIds;
 
     QMap<QMessageStore::NotificationFilterId, QMessageFilter>::const_iterator it = _filters.begin(), end = _filters.end();
     for ( ; it != end; ++it) {
@@ -4051,22 +4082,17 @@ void MapiSession::notify(MapiStore *store, ULONG notificationCount, NOTIFICATION
             QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
             filteredIds = store->queryMessages(&ignoredError, filter, QMessageOrdering(), 0, 0).toSet();
         }
-
-        foreach (const NotifyMessage &message, notifyIds) {
-            const QMessageId &id(message.first);
-            if (filter.isEmpty() || filteredIds.contains(id)) {
-                matches[qMakePair(id, message.second)].insert(it.key());
-            }
+        if (filter.isEmpty() || filteredIds.contains(id)) {
+            matchingFilterIds.insert(it.key());
         }
     }
 
-    QMap<QPair<QMessageId, NotifyType>, QMessageStore::NotificationFilterIdSet>::const_iterator mit = matches.begin(), mend = matches.end();
-    for ( ; mit != mend; ++mit) {
+    if (!matchingFilterIds.isEmpty()) {
         void (MapiSession::*signal)(const QMessageId &, const QMessageStore::NotificationFilterIdSet &) =
-            ((mit.key().second == Added) ? &MapiSession::messageAdded
-                                         : ((mit.key().second == Removed) ? &MapiSession::messageRemoved
-                                                                          : &MapiSession::messageUpdated));
-        emit (this->*signal)(mit.key().first, mit.value());
+            ((notifyType == Added) ? &MapiSession::messageAdded
+                                   : ((notifyType == Removed) ? &MapiSession::messageRemoved
+                                                              : &MapiSession::messageUpdated));
+        emit (this->*signal)(id, matchingFilterIds);
     }
 }
 

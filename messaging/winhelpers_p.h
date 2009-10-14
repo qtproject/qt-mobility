@@ -304,6 +304,8 @@ class MapiSession : public QObject
     Q_OBJECT
 
 public:
+    enum NotifyType { Added = 1, Removed, Updated };
+
     static MapiSessionPtr createSession(QMessageStore::ErrorCode *lastError);
 
     ~MapiSession();
@@ -355,8 +357,6 @@ public:
     QMessageStore::NotificationFilterId registerNotificationFilter(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter);
     void unregisterNotificationFilter(QMessageStore::ErrorCode *lastError, QMessageStore::NotificationFilterId filterId);
 
-    void notify(MapiStore *store, ULONG notificationCount, NOTIFICATION *notifications);
-
 signals:
     void messageAdded(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
     void messageRemoved(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
@@ -374,6 +374,10 @@ private:
 
     void addRecipients(LPMESSAGE message, const QMessageAddressList& addressList, unsigned long mapiAddressType);
     void addAttachment(LPMESSAGE message, const QMessageContentContainer& attachmentContainer);
+
+    bool event(QEvent *e);
+
+    void notify(MapiStore *store, const QMessageId &id, NotifyType notifyType);
 
 private:
     friend class SessionManager;
