@@ -168,7 +168,7 @@ public:
 
     ~MapiFolder();
 
-    MapiFolderPtr nextSubFolder(QMessageStore::ErrorCode *lastError, const MapiStore &store);
+    MapiFolderPtr nextSubFolder(QMessageStore::ErrorCode *lastError);
 
     QMessageIdList queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter = QMessageFilter(), const QMessageOrdering &ordering = QMessageOrdering(), uint limit = 0, uint offset = 0) const;
     uint countMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter = QMessageFilter()) const;

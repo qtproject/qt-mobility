@@ -83,7 +83,7 @@ MapiFolderPtr MapiFolderIterator::next()
         if (_folders.back()->isValid()) {
             // Get the next subfolder of this folder
             QMessageStore::ErrorCode ignored(QMessageStore::NoError);
-            MapiFolderPtr folder(_folders.back()->nextSubFolder(&ignored, *_store));
+            MapiFolderPtr folder(_folders.back()->nextSubFolder(&ignored));
             if (ignored == QMessageStore::NoError) {
                 if (folder && folder->isValid()) {
                     // Descend into the subfolder

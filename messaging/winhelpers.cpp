@@ -1607,7 +1607,7 @@ void MapiFolder::findSubFolders(QMessageStore::ErrorCode *lastError)
     }
 }
 
-MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError, const MapiStore &store)
+MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError)
 {
     MapiFolderPtr result;
 
@@ -2098,7 +2098,7 @@ MapiFolderPtr MapiStore::findFolder(QMessageStore::ErrorCode *lastError, const M
     folders.append(rootFolder(lastError));
 
     while (!folders.isEmpty()) {
-        MapiFolderPtr subFolder(folders.back()->nextSubFolder(lastError, *this));
+        MapiFolderPtr subFolder(folders.back()->nextSubFolder(lastError));
         if (!subFolder.isNull() && subFolder->isValid()) {
             if (subFolder->recordKey() == key) {
                 return subFolder;
@@ -2232,7 +2232,7 @@ QMessageFolderIdList MapiStore::folderIds(QMessageStore::ErrorCode *lastError)
         // No valid reason to list the root folder.
 
         while (!folders.isEmpty()) {
-            MapiFolderPtr subFolder(folders.back()->nextSubFolder(lastError, *this));
+            MapiFolderPtr subFolder(folders.back()->nextSubFolder(lastError));
             if (!subFolder.isNull() && subFolder->isValid()) {
                 folderIds.append(subFolder->id());
                 folders.append(subFolder);
@@ -2254,7 +2254,7 @@ QMessageFolder MapiStore::folderFromId(QMessageStore::ErrorCode *lastError, cons
     folders.append(rootFolder(lastError));
 
     while (!folders.isEmpty()) {
-        MapiFolderPtr subFolder(folders.back()->nextSubFolder(lastError, *this));
+        MapiFolderPtr subFolder(folders.back()->nextSubFolder(lastError));
         if (!subFolder.isNull() && subFolder->isValid()) {
             if (folderId == subFolder->id()) {
                 QStringList path;
@@ -3966,7 +3966,8 @@ void MapiSession::notify(MapiStore *store, ULONG notificationCount, NOTIFICATION
         NOTIFICATION &notification(notifications[i]);
 
         if (notification.ulEventType == fnevNewMail) {
-            NEWMAIL_NOTIFICATION &newmail(notification.info.newmail);
+            // TODO: Do we need to process this, or is handling object-created sufficient?
+            //NEWMAIL_NOTIFICATION &newmail(notification.info.newmail);
         } else {
             OBJECT_NOTIFICATION &object(notification.info.obj);
 
