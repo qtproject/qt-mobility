@@ -44,6 +44,7 @@
 #include <qcontactphonenumber.h>
 #include <qcontactemailaddress.h>
 #include <qcontacturl.h>
+#include <qcontactguid.h>
 
 
 void UT_QVersitContactGenerator::init()
@@ -202,25 +203,39 @@ void UT_QVersitContactGenerator::testEmail()
     nameProperty.setValue(value);
     document.addProperty(nameProperty);
     QContact contact = mGenerator->generateContact(document);
-    const QContactEmailAddress& email =
+    QContactEmailAddress email =
         static_cast<QContactEmailAddress>(
             contact.detail(QContactEmailAddress::DefinitionName));
-    QCOMPARE(email.emailAddress(),QString(value));
+    QCOMPARE(email.emailAddress(),QString::fromAscii(value));
 }
 
 void UT_QVersitContactGenerator::testUrl()
 {
     QVersitDocument document;
-    QVersitProperty nameProperty;
-    nameProperty.setName(QString::fromAscii(versitUrlId));
+    QVersitProperty property;
+    property.setName(QString::fromAscii(versitUrlId));
     QByteArray value("http://www.simpsonsmovie.com/homer.html");
-    nameProperty.setValue(value);
-    document.addProperty(nameProperty);
+    property.setValue(value);
+    document.addProperty(property);
     QContact contact = mGenerator->generateContact(document);
-    const QContactUrl& url =
+    QContactUrl url =
         static_cast<QContactUrl>(
             contact.detail(QContactUrl::DefinitionName));
-    QCOMPARE(url.url(),QString(value));
+    QCOMPARE(url.url(),QString::fromAscii(value));
+}
+
+void UT_QVersitContactGenerator::testUid()
+{
+    QVersitProperty property;
+    property.setName(QString::fromAscii(versitUidId));
+    QByteArray value("unique identifier");
+    property.setValue(value);
+    QVersitDocument document = createDocumentWithProperty(property);
+    QContact contact = mGenerator->generateContact(document);
+    QContactGuid uid =
+        static_cast<QContactGuid>(
+            contact.detail(QContactGuid::DefinitionName));
+    QCOMPARE(uid.guid(),QString::fromAscii(value));    
 }
 
 void UT_QVersitContactGenerator::testExtractContexts()

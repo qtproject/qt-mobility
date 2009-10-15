@@ -53,6 +53,7 @@ private slots: // Tests
     void testTel();    
     void testEmail();
     void testUrl();
+    void testUid();
     void testExtractContexts();
     
 private: 

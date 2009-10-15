@@ -39,13 +39,14 @@
 
 //vCard 2.1 constants.
 
-// Type vaues
+// Property names and parameters
 const char versitNameId[] = "N";
 const char versitFormatedNameId[] = "FN";
 const char versitEmailId[] = "EMAIL";
 const char versitPhoneId[] = "TEL";
-const char versitAddressId[] = "ADDR";
+const char versitAddressId[] = "ADR";
 const char versitUrlId[] = "URL";
+const char versitUidId[] = "UID";
 const char versitType[] = "TYPE";
 
 //Contexts:
