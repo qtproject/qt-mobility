@@ -81,9 +81,7 @@ private:
 	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact) const;
 	
 	QContactDetail *transformGuidItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const;
-	void transformGuidDetailL(const QContactDetail &guidDetail, CContactItem &contactItem) const;
 	QContactDetail *transformTimestampItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const;
-	void transformTimestampDetailL(const QContactDetail &guidDetail, CContactItem &contactItem) const;
 	
 private:
 	QMap<ContactData, TransformContactData*> m_transformContactData;

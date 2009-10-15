@@ -113,6 +113,8 @@ QContact TransformContact::transformContactL(CContactItem &contact, CContactData
 			if(detail)
 			{
 				newQtContact.saveDetail(detail);
+				delete detail;
+				detail = 0;
 			}
 		}
 
@@ -121,6 +123,8 @@ QContact TransformContact::transformContactL(CContactItem &contact, CContactData
         if(detailUid)
         {
 	        newQtContact.saveDetail(detailUid);
+	        delete detailUid;
+	        detailUid = 0;
 	    }
 
         // Add contact's timestamp
@@ -128,6 +132,8 @@ QContact TransformContact::transformContactL(CContactItem &contact, CContactData
         if(detailTimestamp)
         {
             newQtContact.saveDetail(detailTimestamp);
+            delete detailTimestamp;
+            detailTimestamp = 0;
         }
 
 		return newQtContact;
@@ -162,18 +168,6 @@ void TransformContact::transformContactL(
 			//Add field to fieldSet
 			fieldSet->AddL(*fieldList.at(j));
 		}
-
-		// Add contact's UID - just ignored silently since it's read only
-		//if (detailList.at(i).definitionName() == QContactGuid::DefinitionName)
-		//{
-        //    transformGuidDetailL(detailList.at(i), contactItem);
-		//}
-
-	    // Add contact's timestamp - just ignored silently since it's read only
-	    //if (detailList.at(i).definitionName() == QContactTimestamp::DefinitionName)
-	    //{
-        //    transformTimestampDetailL(detailList.at(i), contactItem);
-	    //}
 	}
 
 	contactItem.UpdateFieldSet(fieldSet);
@@ -242,16 +236,6 @@ QContactDetail* TransformContact::transformGuidItemFieldL(CContactItem &contactI
     return guidDetail;
 }
 
-void TransformContact::transformGuidDetailL(const QContactDetail &guidDetail, CContactItem &contactItem) const
-{
-    const QContactGuid &guid(static_cast<const QContactGuid&>(guidDetail));
-    TPtrC guidString(reinterpret_cast<const TUint16*>(guid.guid().utf16()));
-    if (guidString.Length() > 0 )
-    {
-        contactItem.SetUidStringL(guidString);
-    }
-}
-
 QContactDetail* TransformContact::transformTimestampItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const
 {
     QContactTimestamp *timestampDetail = 0;
@@ -293,11 +277,4 @@ QContactDetail* TransformContact::transformTimestampItemFieldL(CContactItem &con
     CleanupStack::PopAndDestroy(guidBuf);
 #endif
     return timestampDetail;
-}
-
-void TransformContact::transformTimestampDetailL(const QContactDetail &guidDetail, CContactItem &contactItem) const
-{
-    Q_UNUSED(guidDetail);
-    Q_UNUSED(contactItem);
-    User::LeaveIfError(KErrNotSupported);
 }
