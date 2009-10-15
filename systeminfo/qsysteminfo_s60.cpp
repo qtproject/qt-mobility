@@ -176,23 +176,23 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
 // Mobile Country Code
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
-	return DeviceInfo::instance()->cellNetworkInfo()->homeMobileCountryCode();
+	return DeviceInfo::instance()->cellNetworkInfo()->countryCode();
 }
 
 // Mobile Network Code
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
-	return DeviceInfo::instance()->cellNetworkInfo()->homeMobileNetworkCode();
+	return DeviceInfo::instance()->cellNetworkInfo()->networkCode();
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 {
-	return DeviceInfo::instance()->cellNetworkInfo()->homeMobileCountryCode();
+	return QString();   //TODO
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
-	return DeviceInfo::instance()->cellNetworkInfo()->homeMobileNetworkCode();
+    return QString();   //TODO
 }
 
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
@@ -243,19 +243,19 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
     return QNetworkInterface();     //TODO
 }
 
-void QSystemNetworkInfoPrivate::currentMobileCountryCodeChanged()
+void QSystemNetworkInfoPrivate::countryCodeChanged()
 {
-    //TODO
+    emit currentMobileCountryCodeChanged(DeviceInfo::instance()->cellNetworkInfo()->countryCode());
 }
 
-void QSystemNetworkInfoPrivate::currentMobileNetworkCodeChanged()
+void QSystemNetworkInfoPrivate::networkCodeChanged()
 {
-    //TODO
+    emit currentMobileNetworkCodeChanged(DeviceInfo::instance()->cellNetworkInfo()->networkCode());
 }
 
-void QSystemNetworkInfoPrivate::cellNetworkNameChanged()
+void QSystemNetworkInfoPrivate::networkNameChanged()
 {
-    //TODO
+    emit networkNameChanged(QSystemNetworkInfo::GsmMode, DeviceInfo::instance()->cellNetworkInfo()->networkName());
 }
 
 void QSystemNetworkInfoPrivate::cellNetworkSignalStrengthChanged()

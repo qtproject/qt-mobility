@@ -116,10 +116,10 @@ protected:  //from MTelephonyInfoObserver
     void batteryLevelChanged(){};
     void powerStateChanged(){};
 
-    void currentMobileCountryCodeChanged();
-    void currentMobileNetworkCodeChanged();
+    void countryCodeChanged();
+    void networkCodeChanged();
+    void networkNameChanged();
 
-    void cellNetworkNameChanged();
     void cellNetworkSignalStrengthChanged();
     void cellNetworkStatusChanged();
 };
@@ -209,10 +209,10 @@ protected:  //from MTelephonyInfoObserver
     void batteryLevelChanged();
     void powerStateChanged();
     
-    void currentMobileCountryCodeChanged(){};
-    void currentMobileNetworkCodeChanged(){};
+    void countryCodeChanged(){};
+    void networkCodeChanged(){};
+    void networkNameChanged(){};
 
-    void cellNetworkNameChanged(){};
     void cellNetworkSignalStrengthChanged(){};
     void cellNetworkStatusChanged(){};
 };

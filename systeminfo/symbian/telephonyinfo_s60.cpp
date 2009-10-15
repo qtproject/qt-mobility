@@ -222,13 +222,13 @@ CCellNetworkInfo::CCellNetworkInfo(CTelephony &telephony) : CTelephonyInfo(telep
     m_cellId = m_networkInfoV1.iCellId;
     m_locationAreaCode = m_networkInfoV1.iLocationAreaCode;
 
-	TBuf<CTelephony::KNetworkIdentitySize> homeMobileNetworkCode = m_networkInfoV1.iNetworkId;
-    m_homeMobileNetworkCode = QString::fromUtf16(homeMobileNetworkCode.Ptr(), homeMobileNetworkCode.Length());
-    m_previousHomeMobileNetworkCode = m_homeMobileNetworkCode;
+	TBuf<CTelephony::KNetworkIdentitySize> networkId = m_networkInfoV1.iNetworkId;
+    m_networkId = QString::fromUtf16(networkId.Ptr(), networkId.Length());
+    m_previousNetworkId = m_networkId;
 
-    TBuf<CTelephony::KNetworkCountryCodeSize> homeMobileCountryCode = m_networkInfoV1.iCountryCode;
-    m_homeMobileCountryCode = QString::fromUtf16(homeMobileCountryCode.Ptr(), homeMobileCountryCode.Length());
-    m_previousHomeMobileCountryCode = m_homeMobileCountryCode;
+    TBuf<CTelephony::KNetworkCountryCodeSize> countryCode = m_networkInfoV1.iCountryCode;
+    m_countryCode = QString::fromUtf16(countryCode.Ptr(), countryCode.Length());
+    m_previousCountryCode = m_countryCode;
 
     TBuf<CTelephony::KNetworkLongNameSize> networkName = m_networkInfoV1.iLongName;
     m_networkName = QString::fromUtf16(networkName.Ptr(), networkName.Length());
@@ -247,31 +247,29 @@ void CCellNetworkInfo::RunL()
         m_cellId = m_networkInfoV1.iCellId;
         m_locationAreaCode = m_networkInfoV1.iLocationAreaCode;
 
-        TBuf<CTelephony::KNetworkIdentitySize> homeMobileNetworkCode = m_networkInfoV1.iNetworkId;
-            m_homeMobileNetworkCode = QString::fromUtf16(homeMobileNetworkCode.Ptr(),
-            homeMobileNetworkCode.Length());
+        TBuf<CTelephony::KNetworkIdentitySize> networkId = m_networkInfoV1.iNetworkId;
+            m_networkId = QString::fromUtf16(networkId.Ptr(), networkId.Length());
 
-        TBuf<CTelephony::KNetworkCountryCodeSize> homeMobileCountryCode = m_networkInfoV1.iCountryCode;
-            m_homeMobileCountryCode = QString::fromUtf16(homeMobileCountryCode.Ptr(),
-            homeMobileCountryCode.Length());
+        TBuf<CTelephony::KNetworkCountryCodeSize> countryCode = m_networkInfoV1.iCountryCode;
+            m_countryCode = QString::fromUtf16(countryCode.Ptr(), countryCode.Length());
 
         TBuf<CTelephony::KNetworkLongNameSize> networkName = m_networkInfoV1.iLongName;
             m_networkName = QString::fromUtf16(networkName.Ptr(),
             networkName.Length());
 
         foreach (MTelephonyInfoObserver *observer, m_observers) {
-            if (m_homeMobileNetworkCode != m_previousHomeMobileNetworkCode) {
-                m_previousHomeMobileNetworkCode = m_homeMobileNetworkCode;
-                observer->currentMobileNetworkCodeChanged();
+            if (m_networkId != m_previousNetworkId) {
+                observer->networkCodeChanged();
             }
-            if (m_homeMobileCountryCode != m_previousHomeMobileCountryCode) {
-                m_previousHomeMobileCountryCode = m_homeMobileCountryCode;
-                observer->currentMobileCountryCodeChanged();
+            if (m_countryCode != m_previousCountryCode) {
+                observer->countryCodeChanged();
             }
             if (m_networkName != m_previousNetworkName) {
-                m_previousNetworkName = m_networkName;
-                observer->cellNetworkNameChanged();
+                observer->networkNameChanged();
             }
+            m_previousNetworkId = m_networkId;
+            m_previousCountryCode = m_countryCode;
+            m_previousNetworkName = m_networkName;
         }
         startMonitoring();
     }
@@ -296,14 +294,14 @@ int CCellNetworkInfo::locationAreaCode() const
     return m_locationAreaCode;
 }
 
-QString CCellNetworkInfo::homeMobileNetworkCode() const
+QString CCellNetworkInfo::countryCode() const
 {
-    return m_homeMobileNetworkCode;
+    return m_countryCode;
 }
 
-QString CCellNetworkInfo::homeMobileCountryCode() const
+QString CCellNetworkInfo::networkCode() const
 {
-    return m_homeMobileCountryCode;
+    return m_networkId;
 }
 
 QString CCellNetworkInfo::networkName() const

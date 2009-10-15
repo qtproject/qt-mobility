@@ -47,10 +47,10 @@ public:
     virtual void batteryLevelChanged() = 0;
     virtual void powerStateChanged() = 0;
 
-    virtual void currentMobileCountryCodeChanged() = 0;
-    virtual void currentMobileNetworkCodeChanged() = 0;
+    virtual void countryCodeChanged() = 0;
+    virtual void networkCodeChanged() = 0;
+    virtual void networkNameChanged() = 0;
 
-    virtual void cellNetworkNameChanged() = 0;
     virtual void cellNetworkSignalStrengthChanged() = 0;
     virtual void cellNetworkStatusChanged() = 0;
 };
@@ -174,10 +174,9 @@ protected:
 public:
     int cellId() const;
 	int locationAreaCode() const;
-    //QString currentHomeMobileNetworkCode(); //Is this same as below?
-    //QString currentHomeMobileCountryCode(); //Is this same as below?
-    QString homeMobileNetworkCode() const;
-    QString homeMobileCountryCode() const;
+
+    QString countryCode() const;
+    QString networkCode() const;
     QString networkName() const;
 
 private:
@@ -188,13 +187,13 @@ private:
 
     int m_cellId;
     int m_locationAreaCode;
+
+    QString m_networkId;
+    QString m_previousNetworkId;
+
+    QString m_countryCode;
+    QString m_previousCountryCode;
     
-	QString m_homeMobileNetworkCode;
-    QString m_previousHomeMobileNetworkCode;
-    
-    QString m_homeMobileCountryCode;
-    QString m_previousHomeMobileCountryCode;
-	
     QString m_networkName;
     QString m_previousNetworkName;
 };
