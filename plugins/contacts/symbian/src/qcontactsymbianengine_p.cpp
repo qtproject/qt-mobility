@@ -394,7 +394,7 @@ QContactLocalId QContactSymbianEngineData::simPhonebookGroupId() const
  * \param qtError Qt error code.
  * \return Operation success status.
  */
-bool QContactSymbianEngineData::setSelfContactId(const QUniqueId& contactId, QContactManager::Error& qtError)
+bool QContactSymbianEngineData::setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& qtError)
 {
     TContactItemId id(contactId);
     CContactItem* symContact = 0;
@@ -413,10 +413,10 @@ bool QContactSymbianEngineData::setSelfContactId(const QUniqueId& contactId, QCo
  * \param qtError Qt error code.
  * \return Id of the "my card" contact.
  */
-QUniqueId QContactSymbianEngineData::selfContactId(QContactManager::Error& qtError) const
+QContactLocalId QContactSymbianEngineData::selfContactId(QContactManager::Error& qtError) const
 {
    qtError = QContactManager::NoError;
-   QUniqueId id(m_contactDatabase->OwnCardId());
+   QContactLocalId id(m_contactDatabase->OwnCardId());
    return id;
 }
 

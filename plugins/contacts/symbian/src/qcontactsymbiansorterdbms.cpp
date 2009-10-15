@@ -47,7 +47,7 @@
 #include "transformcontact.h"
 #include "qcontactsymbianengine_p.h"
 
-typedef QList<QUniqueId> QUniqueIdList;
+typedef QList<QContactLocalId> QContactLocalIdList;
 
 /* ... The macros changed names */
 #if QT_VERSION < QT_VERSION_CHECK(4, 6, 0)
@@ -72,13 +72,13 @@ QContactSymbianSorter::~QContactSymbianSorter()
 {
 }
 
-QList<QUniqueId> QContactSymbianSorter::contacts(
+QList<QContactLocalId> QContactSymbianSorter::contacts(
             const QList<QContactSortOrder>& sortOrders,
             QContactManager::Error& error)
 {
     // Create an empty list
     // See QT_TRYCATCH_LEAVING note at the begginning of this file
-    QUniqueIdList *ids = new QUniqueIdList();
+    QContactLocalIdList *ids = new QContactLocalIdList();
 
     // Attempt to read from database, leaving the list empty if
     // there was a problem
@@ -86,17 +86,17 @@ QList<QUniqueId> QContactSymbianSorter::contacts(
 
     QContactSymbianEngineData::transformError(err, error);
 
-    return *QScopedPointer<QUniqueIdList>(ids);
+    return *QScopedPointer<QContactLocalIdList>(ids);
 }
 
-QList<QUniqueId> QContactSymbianSorter::sort(
-            QList<QUniqueId> contactIds,
+QList<QContactLocalId> QContactSymbianSorter::sort(
+            QList<QContactLocalId> contactIds,
             const QList<QContactSortOrder>& sortOrders,
             QContactManager::Error& error)
 {
     // Create an empty list
     // See QT_TRYCATCH_LEAVING note at the begginning of this file
-    QUniqueIdList *ids = new QUniqueIdList();
+    QContactLocalIdList *ids = new QContactLocalIdList();
 
     // Attempt to read from database, leaving the list empty if
     // there was a problem
@@ -104,7 +104,7 @@ QList<QUniqueId> QContactSymbianSorter::sort(
 
     QContactSymbianEngineData::transformError(err, error);
 
-    return *QScopedPointer<QUniqueIdList>(ids);
+    return *QScopedPointer<QContactLocalIdList>(ids);
 }
 
 bool QContactSymbianSorter::sortOrderSupported(const QList<QContactSortOrder>& sortOrders)
@@ -126,7 +126,7 @@ bool QContactSymbianSorter::sortOrderSupported(const QList<QContactSortOrder>& s
     return true;
 }
 
-QList<QUniqueId> QContactSymbianSorter::contactsL(const QList<QContactSortOrder>& sortOrders) const
+QList<QContactLocalId> QContactSymbianSorter::contactsL(const QList<QContactSortOrder>& sortOrders) const
 {
     // Populate the ID array, returns the coontact ids + group ids
     TTime epoch(0);
@@ -162,7 +162,7 @@ QList<QUniqueId> QContactSymbianSorter::contactsL(const QList<QContactSortOrder>
     CleanupStack::PushL(ids);
 
     // Add the contact ids to the returned QList
-    QList<QUniqueId> qIds;
+    QList<QContactLocalId> qIds;
     for (TInt i(0); i < ids->Count(); i++) {
         qIds.append((*ids)[i]);
     }
@@ -172,17 +172,17 @@ QList<QUniqueId> QContactSymbianSorter::contactsL(const QList<QContactSortOrder>
     return qIds;
 }
 
-QList<QUniqueId> QContactSymbianSorter::sortL(const QList<QUniqueId>& contactIds, const QList<QContactSortOrder>& sortOrders) const
+QList<QContactLocalId> QContactSymbianSorter::sortL(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders) const
 {
     CContactIdArray* ids = CContactIdArray::NewL();
-    foreach(QUniqueId id, contactIds)
+    foreach(QContactLocalId id, contactIds)
         ids->AddL(id);
 
     CContactIdArray* sortedIds = sortL(ids, sortOrders);
     CleanupStack::PopAndDestroy(ids);
     CleanupStack::PushL(sortedIds);
 
-    QList<QUniqueId> qSortedIds;
+    QList<QContactLocalId> qSortedIds;
     for (int i=0; i<sortedIds->Count(); i++)
         qSortedIds.append( (*sortedIds)[i] );
     CleanupStack::PopAndDestroy(sortedIds);

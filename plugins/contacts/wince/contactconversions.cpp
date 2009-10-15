@@ -1176,11 +1176,11 @@ QString QContactWinCEEngine::convertFilterToQueryString(const QContactFilter& fi
         case QContactFilter::IdListFilter:
             {
                 const QContactIdListFilter idf(filter);
-                QList<QUniqueId> ids = idf.ids();
+                QList<QContactLocalId> ids = idf.ids();
                 if (!ids.isEmpty())
                 {
                     QStringList idList;
-                    foreach(const QUniqueId id, ids) {
+                    foreach(const QContactLocalId id, ids) {
                         idList << QString("[Oid] = %1").arg(id);
                     }
                     ret = idList.join(" OR ");
@@ -1331,10 +1331,10 @@ QString QContactWinCEEngine::convertFilterToQueryString(const QContactFilter& fi
 /*!
  * Return a list of QContact ids from the given POOM item \a collection.
  */
-QList<QUniqueId> QContactWinCEEngine::convertP2QIdList(const SimpleComPointer<IPOutlookItemCollection>& collection) const
+QList<QContactLocalId> QContactWinCEEngine::convertP2QIdList(const SimpleComPointer<IPOutlookItemCollection>& collection) const
 {
     SimpleComPointer<IPOlItems2> items;
-    QList<QUniqueId> ids;
+    QList<QContactLocalId> ids;
     if (SUCCEEDED(collection->QueryInterface<IPOlItems2>(&items))) {
         CEPROPID propid = PIMPR_OID;
         CEPROPVAL *ppropval = 0;
@@ -1355,7 +1355,7 @@ QList<QUniqueId> QContactWinCEEngine::convertP2QIdList(const SimpleComPointer<IP
                 hr = items->GetProps(i + 1, &propid, 0, 1, &ppropval, &cbSize, NULL);
             }
             if (SUCCEEDED(hr)) {
-                ids << (QUniqueId) ppropval->val.ulVal;
+                ids << (QContactLocalId) ppropval->val.ulVal;
             } else {
                 qDebug() << QString("Eternal sadness: %1").arg(HRESULT_CODE(hr), 0, 16);
             }
@@ -1414,7 +1414,7 @@ static bool sortPOOMContacts(const SimpleComPointer<IPOutlookItemCollection>& co
     return SUCCEEDED(hr);
 }
 
-QList<QUniqueId> QContactWinCEEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactWinCEEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     QString query = convertFilterToQueryString(filter);
 
@@ -1425,7 +1425,7 @@ QList<QUniqueId> QContactWinCEEngine::contacts(const QContactFilter& filter, con
         HRESULT hr = d->m_collection->Restrict((BSTR)(query.constData()), &collection);
 
         if (SUCCEEDED(hr)) {
-            QList<QUniqueId> ids;
+            QList<QContactLocalId> ids;
 
             //Try native sorting first...
             if (sortOrders.size() == 1 && sortPOOMContacts(collection, sortOrders.at(0))) {
@@ -1450,9 +1450,9 @@ QList<QUniqueId> QContactWinCEEngine::contacts(const QContactFilter& filter, con
     return QContactManagerEngine::contacts(filter, sortOrders, error);
 }
 
-QList<QUniqueId> QContactWinCEEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactWinCEEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
-    QList<QUniqueId> ids;
+    QList<QContactLocalId> ids;
     error = QContactManager::NoError;
     if (sortOrders.isEmpty()) {
         ids = d->m_ids;

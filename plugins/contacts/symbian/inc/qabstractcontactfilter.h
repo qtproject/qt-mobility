@@ -68,7 +68,7 @@ public:
     };
 
 public:
-    virtual QList<QUniqueId> contacts(
+    virtual QList<QContactLocalId> contacts(
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
             QContactManager::Error& error) = 0;

@@ -56,18 +56,18 @@ public:
     ~QContactSymbianSorter();
 
     /* from QAbstractContactFilter */
-    QList<QUniqueId> contacts(
+    QList<QContactLocalId> contacts(
             const QList<QContactSortOrder>& sortOrders,
             QContactManager::Error& error);
-    QList<QUniqueId> sort(
-        QList<QUniqueId> contactIds,
+    QList<QContactLocalId> sort(
+        QList<QContactLocalId> contactIds,
         const QList<QContactSortOrder>& sortOrders,
         QContactManager::Error& error);
     bool sortOrderSupported(const QList<QContactSortOrder>& sortOrders);
 
 private:
-    QList<QUniqueId> contactsL(const QList<QContactSortOrder>& sortOrders) const;
-    QList<QUniqueId> sortL(const QList<QUniqueId>& contactIds, const QList<QContactSortOrder>& sortOrders) const;
+    QList<QContactLocalId> contactsL(const QList<QContactSortOrder>& sortOrders) const;
+    QList<QContactLocalId> sortL(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders) const;
     CContactIdArray* sortL(const CContactIdArray* contactIds, const QList<QContactSortOrder>& sortOrders) const;
 
 private:

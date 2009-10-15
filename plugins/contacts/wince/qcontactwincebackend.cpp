@@ -181,22 +181,22 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
     SimpleComPointer<IItem> icontact;
     bool wasOld = false;
     // Figure out if this is a new or old contact
-    if (d->m_ids.contains(contact->id())) {
+    if (d->m_ids.contains(contact->localId())) {
         // update existing contact
-        HRESULT hr = d->m_app->GetItemFromOidEx(contact->id(), 0, &icontact);
+        HRESULT hr = d->m_app->GetItemFromOidEx(contact->localId(), 0, &icontact);
         if (SUCCEEDED(hr)) {
             wasOld = true;
         } else {
             if (HRESULT_CODE(hr) == ERROR_NOT_FOUND) {
                 // Well, doesn't exist any more
                 error = QContactManager::DoesNotExistError;
-                d->m_ids.removeAll(contact->id());
+                d->m_ids.removeAll(contact->localId());
             } else {
                 qDebug() << "Didn't get old contact" << HRESULT_CODE(hr);
                 error = QContactManager::UnspecifiedError;
             }
         }
-    } else if (contact->id() == 0) {
+    } else if (contact->localId() == 0) {
         // new contact!
         SimpleComPointer<IDispatch> idisp = 0;
         HRESULT hr = d->m_collection->Add(&idisp);
@@ -228,15 +228,15 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
                 hr = icontact->get_Oid(&oid);
                 if (SUCCEEDED(hr)) {
                     error = QContactManager::NoError; 
-                    QContact c = this->contact((QUniqueId)oid, error);
+                    QContact c = this->contact((QContactLocalId)oid, error);
                     
                     if (error == QContactManager::NoError) {
                         *contact = c;
                         if (wasOld) {
-                            cs.changedContacts().insert(contact->id());
+                            cs.changedContacts().insert(contact->localId());
                         } else {
-                            cs.addedContacts().insert(contact->id());
-                            d->m_ids.append(contact->id());
+                            cs.addedContacts().insert(contact->localId());
+                            d->m_ids.append(contact->localId());
                         }
                     }
 

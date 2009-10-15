@@ -206,13 +206,13 @@ QList<QContactManager::Error> QContactSymbianEngine::saveContacts(QList<QContact
 
 void QContactSymbianEngine::slowFilter(
         const QContactFilter& filter,
-        const QList<QUniqueId>& contacts,
-        QList<QUniqueId>& result,
+        const QList<QContactLocalId>& contacts,
+        QList<QContactLocalId>& result,
         QContactManager::Error& error
         ) const
 {
     for (int i(0); i < contacts.count(); i++) {
-        QUniqueId contactid = contacts.at(i);
+        QContactLocalId contactid = contacts.at(i);
         // Check if this is a false positive. If not, add to the result set.
         if(QContactManagerEngine::testFilter(filter, d->contact(contactid, error)))
             result << contactid;
@@ -221,15 +221,17 @@ void QContactSymbianEngine::slowFilter(
 bool QContactSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error)
 {
     bool ret = false;
-    if (contact->id()) { //save contact
+    if (contact->id()->managerUri() == managerUri() && contact->localId()) { //save contact
         ret = d->updateContact(*contact, changeSet, error);
         if (ret)
             updateDisplayLabel(*contact);
     }
     else { //create new contact
+        QContactId newId;
+        contact->setId(newId);
         ret = d->addContact(*contact, changeSet, error);
         if (ret) {
-            ASSERT(contact->id());
+            ASSERT(contact->localId());
             updateDisplayLabel(*contact);
         }
     }
@@ -393,12 +395,12 @@ QString QContactSymbianEngine::synthesiseDisplayLabel(const QContact& contact, Q
     }
 }
 
-bool QContactSymbianEngine::setSelfContactId(const QUniqueId& contactId, QContactManager::Error& error)
+bool QContactSymbianEngine::setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error)
 {
     return d->setSelfContactId(contactId, error);
 }
 
-QUniqueId QContactSymbianEngine::selfContactId(QContactManager::Error& error) const
+QContactLocalId QContactSymbianEngine::selfContactId(QContactManager::Error& error) const
 {
     return d->selfContactId(error);
 }

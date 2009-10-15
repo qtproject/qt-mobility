@@ -55,7 +55,7 @@ public:
     ~QContactSymbianFilter();
 
     /* from QAbstractContactFilter */
-    QList<QUniqueId> contacts(
+    QList<QContactLocalId> contacts(
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
             QContactManager::Error& error);
