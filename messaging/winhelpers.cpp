@@ -2024,7 +2024,7 @@ IMessage *MapiFolder::createMessage(QMessageStore::ErrorCode* lastError)
     return message;
 }
 
-IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const QMessage& source, const MapiSessionPtr &session, PostSendAction postSendAction, SavePropertyOption saveOption )
+IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const QMessage& source, const MapiSessionPtr &session, SavePropertyOption saveOption )
 {
     IMessage* mapiMessage(0);
     HRESULT rv = _folder->CreateMessage(0, 0, &mapiMessage);
@@ -2033,26 +2033,20 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
         if (*lastError == QMessageStore::NoError) {
             storeMessageProperties(lastError, source, mapiMessage);
         }
-        if (*lastError == QMessageStore::NoError) {
-#ifndef __WIN32_WCE //unsupported
-            if (postSendAction == DeleteAfterSend) {
-                if (!setMapiProperty(mapiMessage, PR_DELETE_AFTER_SUBMIT, true)) {
-                    qWarning() << "Unable to set delete after send flag.";
-                }
-            } else if (postSendAction == MoveAfterSend) {
-                //move the message to the sent folder after a submission
-                MapiFolderPtr sentFolder = _store->findFolder(lastError,QMessage::SentFolder);
 
-                if (sentFolder.isNull() || *lastError != QMessageStore::NoError) {
-                    qWarning() << "Unable to find the sent folder while constructing message";
-                } else {
-                    if (!setMapiProperty(mapiMessage, PR_SENTMAIL_ENTRYID, sentFolder->entryId())) {
-                        qWarning() << "Unable to set sent folder entry id on message";
-                    }
-                }
+#ifndef _WIN32_WCE
+        //Ensure the message is moved to the sent folder after submission
+        //On Windows Mobile occurs by default and at discretion of mail client settings.
+
+        MapiFolderPtr sentFolder = _store->findFolder(lastError,QMessage::SentFolder);
+        if (sentFolder.isNull() || *lastError != QMessageStore::NoError)
+            qWarning() << "Unable to find the sent folder while constructing message";
+        else if (!setMapiProperty(mapiMessage, PR_SENTMAIL_ENTRYID, sentFolder->entryId()))
+            qWarning() << "Unable to set sent folder entry id on message";
+
 #endif
-            }
-        }
+
+
         if (*lastError == QMessageStore::NoError) {
             replaceMessageRecipients(lastError, source, mapiMessage, session->session());
         }

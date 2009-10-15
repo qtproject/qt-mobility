@@ -162,9 +162,6 @@ public:
 class MapiFolder {
 
 public:
-    enum PostSendAction { DoNothing = 0, DeleteAfterSend, MoveAfterSend };
-
-public:
     static MapiFolderPtr createFolder(QMessageStore::ErrorCode *lastError, const MapiStorePtr &store, IMAPIFolder *folder, const MapiRecordKey &recordKey, const QString &name, const MapiEntryId &entryId, bool hasSubFolders, uint messageCount);
 
     ~MapiFolder();
@@ -195,7 +192,7 @@ public:
     uint messageCount() const { return _messageCount; }
 
     IMessage *createMessage(QMessageStore::ErrorCode* lastError);
-    IMessage *createMessage(QMessageStore::ErrorCode* lastError, const QMessage& source, const MapiSessionPtr &session, PostSendAction postSendAction = MoveAfterSend, WinHelpers::SavePropertyOption saveOption = WinHelpers::SavePropertyChanges );
+    IMessage *createMessage(QMessageStore::ErrorCode* lastError, const QMessage& source, const MapiSessionPtr &session, WinHelpers::SavePropertyOption saveOption = WinHelpers::SavePropertyChanges );
 
     IMessage *openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
 
