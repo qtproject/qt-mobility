@@ -219,6 +219,9 @@ void UT_QVersitContactGenerator::testTel()
     property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitModemId));
     property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitCarId));
     property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitVideoId));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitFaxId));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitBbsId));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitPagerId));
     property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitContextHomeId));
     property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitContextWorkId));
 
@@ -230,17 +233,20 @@ void UT_QVersitContactGenerator::testTel()
     QCOMPARE(phone.number(),QString(value));
 
     const QStringList subTypes = phone.subTypes();
-    QCOMPARE(subTypes.count(),5);
-    QCOMPARE(subTypes[4],QContactPhoneNumber::SubTypeVoice.operator QString());
-    QCOMPARE(subTypes[3],QContactPhoneNumber::SubTypeMobile.operator QString());
-    QCOMPARE(subTypes[2],QContactPhoneNumber::SubTypeModem.operator QString());
-    QCOMPARE(subTypes[1],QContactPhoneNumber::SubTypeCar.operator QString());
-    QCOMPARE(subTypes[0],QContactPhoneNumber::SubTypeVideo.operator QString());
-
+    QCOMPARE(subTypes.count(),8);
+    QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeVoice));
+    QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeMobile));
+    QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeModem));
+    QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeCar));
+    QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeVideo));
+    QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeFacsimile));
+    QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeBulletinBoardSystem));
+    QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypePager));
+    
     const QStringList contexts = phone.contexts();
     QCOMPARE(contexts.count(),2);
-    QCOMPARE(contexts[0],QContactDetail::ContextWork.operator QString());
-    QCOMPARE(contexts[1],QContactDetail::ContextHome.operator QString());
+    QVERIFY(contexts.contains(QContactDetail::ContextWork));
+    QVERIFY(contexts.contains(QContactDetail::ContextHome));
 }
 
 void UT_QVersitContactGenerator::testEmail()

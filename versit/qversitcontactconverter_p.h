@@ -82,6 +82,10 @@ public:
         mMappingTable.insert(QContactPhoneNumber::SubTypeModem,QString::fromAscii(versitModemId));
         mMappingTable.insert(QContactPhoneNumber::SubTypeCar,QString::fromAscii(versitCarId));
         mMappingTable.insert(QContactPhoneNumber::SubTypeVideo,QString::fromAscii(versitVideoId));
+        mMappingTable.insert(QContactPhoneNumber::SubTypeFacsimile,QString::fromAscii(versitFaxId));
+        mMappingTable.insert(QContactPhoneNumber::SubTypeBulletinBoardSystem,QString::fromAscii(versitBbsId));
+        mMappingTable.insert(QContactPhoneNumber::SubTypePager,QString::fromAscii(versitPagerId));        
+        
     }
     
     ~QVersitContactConverterPrivate()
