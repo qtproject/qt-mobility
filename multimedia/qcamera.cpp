@@ -564,9 +564,9 @@ int QCamera::maximumIsoSensitivity() const
     Returns the list of ISO senitivities if camera supports
     only fixed set of ISO sensitivity values, otherwise returns an empty list.
 */
-QList<int> QCamera::supportedIsoSenitivities() const
+QList<int> QCamera::supportedIsoSensitivities() const
 {
-    return d_func()->exposureControl ? d_func()->exposureControl->supportedIsoSenitivities()
+    return d_func()->exposureControl ? d_func()->exposureControl->supportedIsoSensitivities()
                                      : QList<int>();
 }
 

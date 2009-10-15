@@ -188,7 +188,7 @@ public:
     int isoSensitivity() const;
     int minimumIsoSensitivity() const;
     int maximumIsoSensitivity() const;
-    QList<int> supportedIsoSenitivities() const;
+    QList<int> supportedIsoSensitivities() const;
     void setManualIsoSensitivity(int iso);
     void setAutoIsoSensitivity();
 

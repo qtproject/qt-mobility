@@ -66,7 +66,7 @@ public:
     virtual int isoSensitivity() const = 0;
     virtual int minimumIsoSensitivity() const = 0;
     virtual int maximumIsoSensitivity() const = 0;
-    virtual QList<int> supportedIsoSenitivities() const = 0;
+    virtual QList<int> supportedIsoSensitivities() const = 0;
     virtual void setManualIsoSensitivity(int iso) = 0;
     virtual void setAutoIsoSensitivity() = 0;
 

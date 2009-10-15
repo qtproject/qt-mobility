@@ -176,7 +176,7 @@ public:
 
     int minimumIsoSensitivity() const {return 50;}
     int maximumIsoSensitivity() const {return 3200;}
-    QList<int> supportedIsoSenitivities() const {return QList<int>();}
+    QList<int> supportedIsoSensitivities() const {return QList<int>();}
 
 
     void setManualIsoSensitivity(int iso)
@@ -677,7 +677,7 @@ void tst_QCamera::testSimpleCameraExposure()
     QCOMPARE(camera.isoSensitivity(), -1);
     QCOMPARE(camera.minimumIsoSensitivity(), -1);
     QCOMPARE(camera.maximumIsoSensitivity(), -1);
-    QVERIFY(camera.supportedIsoSenitivities().isEmpty());
+    QVERIFY(camera.supportedIsoSensitivities().isEmpty());
     camera.setManualIsoSensitivity(100);
     QCOMPARE(camera.isoSensitivity(), -1);
     camera.setAutoIsoSensitivity();
@@ -765,7 +765,7 @@ void tst_QCamera::testCameraWhiteBalance()
             = QCamera::WhiteBalanceAuto
             | QCamera::WhiteBalanceFlash
             | QCamera::WhiteBalanceIncandescent;
-    
+
     MockCameraService service;
     service.mockImageProcessingControl->setWhiteBalanceMode(QCamera::WhiteBalanceFlash);
     service.mockImageProcessingControl->setSupportedWhiteBalanceModes(whiteBalanceModes);
@@ -773,9 +773,9 @@ void tst_QCamera::testCameraWhiteBalance()
 
     MockProvider provider;
     provider.service = &service;
-    
+
     QCamera camera(0, &provider);
-    
+
     QCOMPARE(camera.whiteBalanceMode(), QCamera::WhiteBalanceFlash);
     QCOMPARE(camera.supportedWhiteBalanceModes(), whiteBalanceModes);
 
