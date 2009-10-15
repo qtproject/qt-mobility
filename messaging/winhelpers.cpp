@@ -2125,27 +2125,6 @@ MapiStore::~MapiStore()
     _valid = false;
 }
 
-MapiFolderPtr MapiStore::findFolder(QMessageStore::ErrorCode *lastError, const MapiRecordKey &key)
-{
-    // TODO: this function should use a restricted search on the hierarchy table
-    QList<MapiFolderPtr> folders;
-    folders.append(rootFolder(lastError));
-
-    while (!folders.isEmpty()) {
-        MapiFolderPtr subFolder(folders.back()->nextSubFolder(lastError));
-        if (!subFolder.isNull() && subFolder->isValid()) {
-            if (subFolder->recordKey() == key) {
-                return subFolder;
-            }
-            folders.append(subFolder);
-        } else {
-            folders.pop_back();
-        }
-    }
-
-    return MapiFolderPtr();
-}
-
 MapiFolderPtr MapiStore::findFolder(QMessageStore::ErrorCode *lastError, QMessage::StandardFolder sf)
 {
     MapiFolderPtr result;

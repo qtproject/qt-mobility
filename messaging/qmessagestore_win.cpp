@@ -301,9 +301,9 @@ bool QMessageStore::addMessage(QMessage *message)
             MapiFolderPtr mapiFolder;
 
             // Find the parent folder for this message
-            QMessageFolder folder(message->parentFolderId());
-            if (folder.id().isValid()) {
-                mapiFolder = mapiStore->findFolder(lError, QMessageFolderIdPrivate::folderRecordKey(folder.id()));
+            QMessageFolderId folderId(message->parentFolderId());
+            if (folderId.isValid()) {
+                mapiFolder = mapiStore->openFolderWithKey(lError, QMessageFolderIdPrivate::folderRecordKey(folderId));
             } else {
                 mapiFolder = mapiStore->findFolder(lError, message->standardFolder());
             }

@@ -230,7 +230,6 @@ public:
 
     ~MapiStore();
 
-    MapiFolderPtr findFolder(QMessageStore::ErrorCode *lastError, const MapiRecordKey &key);
     MapiFolderPtr findFolder(QMessageStore::ErrorCode *lastError, QMessage::StandardFolder sf);
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
