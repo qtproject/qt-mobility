@@ -33,7 +33,6 @@
 #include <QDebug>
 
 #include "qcontact_p.h"
-#include "qcontactgroup_p.h"
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
 #include "qcontactchangeset.h"
@@ -134,10 +133,7 @@ void QContactWinCEEngine::deref()
         delete this;
 }
 
-
-
-
-QContact QContactWinCEEngine::contact(const QUniqueId& contactId, QContactManager::Error& error) const
+QContact QContactWinCEEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
     QContact ret;
 
@@ -262,7 +258,7 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
     return false;
 }
 
-bool QContactWinCEEngine::removeContact(const QUniqueId& contactId, QContactManager::Error& error)
+bool QContactWinCEEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
 {
     // Fetch an IItem* for this
     if (contactId != 0) {

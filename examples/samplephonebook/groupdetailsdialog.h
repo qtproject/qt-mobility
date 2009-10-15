@@ -49,7 +49,7 @@ class GroupDetailsDialog : public QDialog
 
 public:
     GroupDetailsDialog(QWidget *parent, QContactManager *contactManager, const QContact &contact);
-    QList<QUniqueId> groups();
+    QList<QContactLocalId> groups();
 
 private:
     void repopulateGroupList();

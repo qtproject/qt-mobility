@@ -54,11 +54,6 @@ public:
     const char* SubTypeXmpp;
     const char* SubTypeInternet;
     const char* SubTypeShareVideo;
-    const char* SubTypeFlickr;
-    const char* SubTypeFacebook;
-    const char* SubTypeMyspace;
-    const char* SubTypeTwitter;
-    const char* SubTypeWindowsLive;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOnlineAccount, "OnlineAccount")
     Q_DECLARE_LATIN1_LITERAL(FieldAccountUri, "AccountUri");
@@ -68,11 +63,6 @@ public:
     Q_DECLARE_LATIN1_LITERAL(SubTypeXmpp, "Xmpp");
     Q_DECLARE_LATIN1_LITERAL(SubTypeInternet, "Internet");
     Q_DECLARE_LATIN1_LITERAL(SubTypeShareVideo, "ShareVideo");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeFlickr, "Flickr");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeFacebook, "Facebook");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeMyspace, "Myspace");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeTwitter, "Twitter");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeWindowsLive, "WindowsLive");
 #endif
 
     void setAccountUri(const QString& accountUri) {setValue(FieldAccountUri, accountUri);}

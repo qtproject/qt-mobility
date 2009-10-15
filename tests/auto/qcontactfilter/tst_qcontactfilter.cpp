@@ -65,7 +65,7 @@ private slots:
     void detailRangeFilter();
     void changeLogFilter();
     void actionFilter();
-    void groupMembershipFilter();
+    void relationshipFilter();
     void boringFilters();
     void idListFilter();
 
@@ -590,27 +590,44 @@ void tst_QContactFilter::detailRangeFilter()
     QVERIFY(rf2 == rf);
 }
 
-void tst_QContactFilter::groupMembershipFilter()
+void tst_QContactFilter::relationshipFilter()
 {
-    QContactGroupMembershipFilter gf;
+    QContactRelationshipFilter crf;
 
-    QVERIFY(gf.type() == QContactFilter::GroupMembershipFilter);
+    QVERIFY(crf.type() == QContactFilter::RelationshipFilter);
 
-    QVERIFY(gf.groupId() == 0);
+    QVERIFY(crf.role() == QContactRelationshipFilter::Either);
+    QVERIFY(crf.relationshipType() == QString());
+    QVERIFY(crf.otherParticipantId() == QContactId());
 
-    gf.setGroupId(546);
-    QVERIFY(gf.groupId() == 546);
+    QContactId newId;
+    newId.setManagerUri("test");
+    newId.setLocalId(QContactLocalId(5));
+    crf.setOtherParticipantId(newId);
+    QVERIFY(crf.role() == QContactRelationshipFilter::Either);
+    QVERIFY(crf.relationshipType() == QString());
+    QVERIFY(crf.otherParticipantId() == newId);
+
+    crf.setRole(QContactRelationshipFilter::First);
+    QVERIFY(crf.role() == QContactRelationshipFilter::First);
+    QVERIFY(crf.relationshipType() == QString());
+    QVERIFY(crf.otherParticipantId() == newId);
+
+    crf.setRelationshipType(QContactRelationship::IsManagerOf);
+    QVERIFY(crf.role() == QContactRelationshipFilter::First);
+    QVERIFY(crf.relationshipType() == QContactRelationship::IsManagerOf);
+    QVERIFY(crf.otherParticipantId() == newId);
 
     /* Test op= */
-    QContactFilter f = gf;
-    QVERIFY(f == gf);
+    QContactFilter f = crf;
+    QVERIFY(f == crf);
 
-    QContactGroupMembershipFilter gf2 = f;
-    QVERIFY(gf2 == gf);
+    QContactRelationshipFilter crf2 = f;
+    QVERIFY(crf2 == crf);
 
     /* Self assignment should do nothing */
-    gf2 = gf2;
-    QVERIFY(gf2 == gf);
+    crf2 = crf2;
+    QVERIFY(crf2 == crf);
 }
 
 void tst_QContactFilter::sortObject()
@@ -821,19 +838,19 @@ void tst_QContactFilter::boringFilters()
 
 void tst_QContactFilter::idListFilter()
 {
-    QContactIdListFilter idf;
+    QContactLocalIdFilter idf;
 
-    QVERIFY(idf.type() == QContactFilter::IdListFilter);
+    QVERIFY(idf.type() == QContactFilter::LocalIdFilter);
 
     QVERIFY(idf.ids().count() == 0);
 
-    QList<QUniqueId> ids;
+    QList<QContactLocalId> ids;
     ids << 5 << 6 << 17;
 
     idf.setIds(ids);
     QVERIFY(idf.ids() == ids);
 
-    idf.setIds(QList<QUniqueId>());
+    idf.setIds(QList<QContactLocalId>());
     QVERIFY(idf.ids().count() == 0);
 
     /* Test op= */
@@ -841,7 +858,7 @@ void tst_QContactFilter::idListFilter()
     QContactFilter f = idf;
     QVERIFY(f == idf);
 
-    QContactIdListFilter idf2 = f;
+    QContactLocalIdFilter idf2 = f;
     QVERIFY(idf2 == idf);
     QVERIFY(idf2.ids() == ids);
 

@@ -37,16 +37,21 @@
 #include "qcontact.h"
 #include "qcontactmanager.h"
 
+#include "qcontactrelationship.h"
+#include "qcontacttype.h"
+
 GroupDetailsDialog::GroupDetailsDialog(QWidget *parent, QContactManager *contactManager, const QContact &contact)
         : QDialog(parent), cm(contactManager)
 {
     Q_ASSERT(contactManager);
     setWindowTitle(tr("Group Details"));
 
-    localContact.setGroups(contact.groups());
-
     QFormLayout *layout = new QFormLayout;
 
+qDebug() << "constructed group details dialog for contact:" << contact.displayLabel().label();
+qDebug() << "   id =" << contact.id().managerUri() << ":" << contact.id().localId();
+
+    localContact = contact;
     contactNameEdit = new QLineEdit(this);
     contactNameEdit->setReadOnly(true);
     contactNameEdit->setText(contact.displayLabel().label());
@@ -78,12 +83,25 @@ GroupDetailsDialog::GroupDetailsDialog(QWidget *parent, QContactManager *contact
 void GroupDetailsDialog::repopulateGroupList()
 {
     listWidget->clear();
-    QList<QUniqueId> grpList = cm->groups();
+
+    QList<QContactLocalId> grpList = cm->contacts(QString(QLatin1String(QContactType::TypeGroup)));
     for (int index=0; index < grpList.count(); index++){
-        QContactGroup grp = cm->group(grpList[index]);
-        QListWidgetItem *item = new QListWidgetItem(grp.name(), listWidget);
+        QContact grp = cm->contact(grpList[index]);
+        QListWidgetItem *item = new QListWidgetItem(grp.displayLabel().label(), listWidget);
         item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-        if (localContact.groups().contains(grpList[index]))
+        bool foundInGroup = false;
+
+        QContactId groupId;
+        groupId.setManagerUri(cm->managerUri());
+        groupId.setLocalId(grpList[index]);
+        QList<QContactRelationship> thisGroupsRels = cm->relationships(QContactRelationship::HasMember, groupId, QContactRelationshipFilter::First);
+        foreach (const QContactRelationship& currRel, thisGroupsRels) {
+            if (currRel.second() == localContact.id()) {
+                foundInGroup = true;
+                break;
+            }
+        }
+        if (foundInGroup)
             item->setCheckState(Qt::Checked);
         else
             item->setCheckState(Qt::Unchecked);
@@ -93,24 +111,59 @@ void GroupDetailsDialog::repopulateGroupList()
 
 }
 
-QList<QUniqueId> GroupDetailsDialog::groups()
+QList<QContactLocalId> GroupDetailsDialog::groups()
 {
-    return localContact.groups();
+    QContactId localContactUri = localContact.id();
+    QList<QContactRelationship> relationships = cm->relationships(QContactRelationship::HasMember, localContactUri);
+    QList<QContactLocalId> ret;
+    foreach (const QContactRelationship& currRel, relationships) {
+        if (currRel.second() == localContactUri) {
+            ret.append(currRel.first().localId());
+        }
+    }
+    return ret;
 }
 
 void GroupDetailsDialog::groupItemChanged(QListWidgetItem * item)
 {
-    QUniqueId id = item->data(Qt::UserRole + 1).toUInt();
-    QList<QUniqueId> currentGroups = localContact.groups();
-    if (item->checkState() == Qt::Checked){
-        if (!currentGroups.contains(id)){
-            currentGroups.append(id);
-            localContact.setGroups(currentGroups);
+    QContactLocalId id = item->data(Qt::UserRole + 1).toUInt(); // id of the group.
+    QContactId localContactUri = localContact.id();
+    QContactId groupId;
+    groupId.setManagerUri(cm->managerUri());
+    groupId.setLocalId(id);
+    QList<QContactRelationship> relationships = cm->relationships(QContactRelationship::HasMember, localContactUri, QContactRelationshipFilter::Second);
+    QList<QContactLocalId> currentGroups;
+    foreach (const QContactRelationship& currRel, relationships) {
+        currentGroups.append(currRel.first().localId());
+    }
+
+qDebug() << "groups that localcontact is part of:";
+foreach (const QContactLocalId& dbgid, currentGroups) qDebug() << dbgid;
+    if (item->checkState() == Qt::Checked) {
+qDebug() << "item is now checked!";
+qDebug() << "already =" << currentGroups.contains(id);
+        if (!currentGroups.contains(id)) {
+qDebug() << "groupId =" << id;
+qDebug() << "localContactId =" << localContactUri.managerUri() << ":" << localContactUri.localId();
+            // add it to the group.
+            QContactRelationship newRelationship;
+            newRelationship.setFirst(groupId);
+            newRelationship.setRelationshipType(QContactRelationship::HasMember);
+            newRelationship.setSecond(localContactUri);
+            bool success = cm->saveRelationship(&newRelationship);
+qDebug() << "succeed adding?" << success;
         }
-    }else{
-        if (currentGroups.contains(id)){
-            currentGroups.removeOne(id);
-            localContact.setGroups(currentGroups);
+    } else {
+qDebug() << "item is now unchecked!";
+qDebug() << "already =" << currentGroups.contains(id);
+        if (currentGroups.contains(id)) {
+            // remove any membership in that group
+            QContactRelationship currRel;
+            currRel.setFirst(groupId);
+            currRel.setRelationshipType(QContactRelationship::HasMember);
+            currRel.setSecond(localContactUri);
+            bool success = cm->removeRelationship(currRel);
+qDebug() << "succeed removing?" << success;
         }
     }
 }

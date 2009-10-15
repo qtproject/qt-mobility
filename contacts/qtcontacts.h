@@ -43,7 +43,7 @@
 #include "qcontactmanagerenginefactory.h"       // manage backend instantiator
 #include "qcontactmanagerinfo.h"                // manager information
 #include "qcontact.h"                           // contact
-#include "qcontactgroup.h"                      // contact group
+#include "qcontactid.h"                         // contact identifier
 #include "qcontactdetaildefinition.h"           // detail definition
 #include "qcontactdetail.h"                     // contact detail
 #include "qcontactdetails.h"                    // leaf detail classes
@@ -55,5 +55,6 @@
 #include "qcontactactionfactory.h"              // action factory
 #include "qcontactabstractrequest.h"            // asynchronous request
 #include "qcontactrequests.h"                   // request leaf classes
+#include "qcontactrelationship.h"               // contact relationships
 
 #endif

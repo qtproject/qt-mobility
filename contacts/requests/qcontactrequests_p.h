@@ -47,9 +47,9 @@
 
 #include "qcontactabstractrequest_p.h"
 #include "qcontactfilter.h"
+#include "qcontactrelationshipfilter.h"
 #include "qcontactsortorder.h"
 #include "qcontact.h"
-#include "qcontactgroup.h"
 #include "qtcontactsglobal.h"
 
 #include <QStringList>
@@ -119,15 +119,15 @@ public:
     QContactFilter m_filter;
 };
 
-class QContactIdFetchRequestPrivate : public QContactAbstractRequestPrivate
+class QContactLocalIdFetchRequestPrivate : public QContactAbstractRequestPrivate
 {
 public:
-    QContactIdFetchRequestPrivate()
+    QContactLocalIdFetchRequestPrivate()
         : QContactAbstractRequestPrivate()
     {
     }
 
-    ~QContactIdFetchRequestPrivate()
+    ~QContactLocalIdFetchRequestPrivate()
     {
     }
 
@@ -139,69 +139,7 @@ public:
     QContactFilter m_filter;
     QList<QContactSortOrder> m_sorting;
 
-    QList<QUniqueId> m_ids;
-};
-
-class QContactGroupFetchRequestPrivate : public QContactAbstractRequestPrivate
-{
-public:
-    QContactGroupFetchRequestPrivate()
-        : QContactAbstractRequestPrivate()
-    {
-    }
-
-    ~QContactGroupFetchRequestPrivate()
-    {
-    }
-
-    QContactAbstractRequest::RequestType type() const
-    {
-        return QContactAbstractRequest::GroupFetchRequest;
-    }
-
-    QList<QUniqueId> m_ids;
-    QList<QContactGroup> m_groups;
-};
-
-class QContactGroupSaveRequestPrivate : public QContactAbstractRequestPrivate
-{
-public:
-    QContactGroupSaveRequestPrivate()
-        : QContactAbstractRequestPrivate()
-    {
-    }
-
-    ~QContactGroupSaveRequestPrivate()
-    {
-    }
-
-    QContactAbstractRequest::RequestType type() const
-    {
-        return QContactAbstractRequest::GroupSaveRequest;
-    }
-
-    QList<QContactGroup> m_groups;
-
-};
-
-class QContactGroupRemoveRequestPrivate : public QContactAbstractRequestPrivate
-{
-public:
-    QContactGroupRemoveRequestPrivate()
-        : QContactAbstractRequestPrivate()
-    {
-    }
-
-    ~QContactGroupRemoveRequestPrivate()
-    {
-    }
-
-    QContactAbstractRequest::RequestType type() const
-    {
-        return QContactAbstractRequest::GroupRemoveRequest;
-    }
-
-    QList<QUniqueId> m_ids;
+    QList<QContactLocalId> m_ids;
 };
 
 class QContactDetailDefinitionFetchRequestPrivate : public QContactAbstractRequestPrivate
@@ -263,6 +201,75 @@ public:
     }
 
     QStringList m_names;
+};
+
+///////////////////////
+
+class QContactRelationshipFetchRequestPrivate : public QContactAbstractRequestPrivate
+{
+public:
+    QContactRelationshipFetchRequestPrivate()
+        : QContactAbstractRequestPrivate(),
+        m_role(QContactRelationshipFilter::Either)
+    {
+    }
+
+    ~QContactRelationshipFetchRequestPrivate()
+    {
+    }
+
+    QContactAbstractRequest::RequestType type() const
+    {
+        return QContactAbstractRequest::RelationshipFetchRequest;
+    }
+
+    QContactId m_first;
+    QString m_relationshipType;
+    QContactId m_participantUri;
+    QContactRelationshipFilter::Role m_role;
+    QList<QContactRelationship> m_relationships;
+};
+
+class QContactRelationshipSaveRequestPrivate : public QContactAbstractRequestPrivate
+{
+public:
+    QContactRelationshipSaveRequestPrivate()
+        : QContactAbstractRequestPrivate()
+    {
+    }
+
+    ~QContactRelationshipSaveRequestPrivate()
+    {
+    }
+
+    QContactAbstractRequest::RequestType type() const
+    {
+        return QContactAbstractRequest::RelationshipSaveRequest;
+    }
+
+    QList<QContactRelationship> m_relationships;
+};
+
+class QContactRelationshipRemoveRequestPrivate : public QContactAbstractRequestPrivate
+{
+public:
+    QContactRelationshipRemoveRequestPrivate()
+        : QContactAbstractRequestPrivate()
+    {
+    }
+
+    ~QContactRelationshipRemoveRequestPrivate()
+    {
+    }
+
+    QContactAbstractRequest::RequestType type() const
+    {
+        return QContactAbstractRequest::RelationshipRemoveRequest;
+    }
+
+    QContactId m_first;
+    QContactId m_second;
+    QString m_relationshipType;
 };
 
 #endif

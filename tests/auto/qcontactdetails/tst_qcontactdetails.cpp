@@ -68,9 +68,9 @@ private slots:
     void organization();
     void phoneNumber();
     void presence();
-    void relationship();
     void syncTarget();
     void timestamp();
+    void type();
     void url();
 
     // custom definition testing
@@ -141,7 +141,6 @@ void tst_QContactDetails::address()
     QVERIFY(!c.removeDetail(&a2)); // cannot remove twice
     QCOMPARE(c.details(QContactAddress::DefinitionName).count(), 0);
 
-    // test displayName permutations
     QContactAddress a3;
 
     // set street
@@ -168,6 +167,12 @@ void tst_QContactDetails::address()
     a3.setCountry("Test");
     QCOMPARE(a3.country(), QString("Test"));
     a3.setCountry("");
+
+    // subtypes
+    a3.setSubTypes(QContactAddress::SubTypeDomestic);
+    QCOMPARE(a3.subTypes(), QStringList(QContactAddress::SubTypeDomestic));
+    a3.setSubTypes(QStringList() << QContactAddress::SubTypeInternational << QContactAddress::SubTypePostal);
+    QCOMPARE(a3.subTypes(), QStringList() << QContactAddress::SubTypeInternational << QContactAddress::SubTypePostal);
 }
 
 void tst_QContactDetails::anniversary()
@@ -636,6 +641,19 @@ void tst_QContactDetails::organization()
     QCOMPARE(c.details(QContactOrganization::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&o2) == false);
     QCOMPARE(c.details(QContactOrganization::DefinitionName).count(), 0);
+
+    // organization-specific API testing
+    o1.setDepartment("Imaginary Dept");
+    o1.setLocation("Utopia");
+    o1.setLogo("logo.png");
+    o1.setName("Utopian Megacorporation");
+    o1.setTitle("Generic Employee");
+    c.saveDetail(&o1);
+    QVERIFY(c.detail(QContactOrganization::DefinitionName).value(QContactOrganization::FieldDepartment) == QString("Imaginary Dept"));
+    QVERIFY(c.detail(QContactOrganization::DefinitionName).value(QContactOrganization::FieldLocation) == QString("Utopia"));
+    QVERIFY(c.detail(QContactOrganization::DefinitionName).value(QContactOrganization::FieldLogo) == QString("logo.png"));
+    QVERIFY(c.detail(QContactOrganization::DefinitionName).value(QContactOrganization::FieldName) == QString("Utopian Megacorporation"));
+    QVERIFY(c.detail(QContactOrganization::DefinitionName).value(QContactOrganization::FieldTitle) == QString("Generic Employee"));
 }
 
 void tst_QContactDetails::phoneNumber()
@@ -668,6 +686,13 @@ void tst_QContactDetails::phoneNumber()
     QVERIFY(c.saveDetail(&p1));
     QCOMPARE(c.details(QContactPhoneNumber::DefinitionName).value(0).value("label"), QString("label1"));
     QCOMPARE(c.details(QContactPhoneNumber::DefinitionName).value(0).value(QContactPhoneNumber::FieldNumber), QString("12345"));
+
+    p1.setSubTypes(QContactPhoneNumber::SubTypeDtmfMenu);
+    c.saveDetail(&p1);
+    QVERIFY(c.detail(QContactPhoneNumber::DefinitionName).variantValue(QContactPhoneNumber::FieldSubTypes).toStringList() == QStringList(QString(QLatin1String(QContactPhoneNumber::SubTypeDtmfMenu))));
+    p1.setSubTypes(QStringList() << QContactPhoneNumber::SubTypeModem << QContactPhoneNumber::SubTypeFacsimile);
+    c.saveDetail(&p1);
+    QVERIFY(c.detail(QContactPhoneNumber::DefinitionName).variantValue(QContactPhoneNumber::FieldSubTypes).toStringList() == p1.subTypes());
 
     // test property remove
     QVERIFY(c.removeDetail(&p1));
@@ -723,37 +748,6 @@ void tst_QContactDetails::presence()
     QCOMPARE(c.details(QContactPresence::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&p2) == false);
     QCOMPARE(c.details(QContactPresence::DefinitionName).count(), 0);
-}
-
-void tst_QContactDetails::relationship()
-{
-    QContact c;
-    QContactRelationship r1, r2;
-
-    // test property set
-    r1.setRelatedContactUid("contact12345");
-    QCOMPARE(r1.relatedContactUid(), QString("contact12345"));
-    QCOMPARE(r1.value(QContactRelationship::FieldRelatedContactUid), QString("contact12345"));
-
-    // test property add
-    QVERIFY(c.saveDetail(&r1));
-    QCOMPARE(c.details(QContactRelationship::DefinitionName).count(), 1);
-    QCOMPARE(QContactRelationship(c.details(QContactRelationship::DefinitionName).value(0)).relatedContactUid(), r1.relatedContactUid());
-
-    // test property update
-    r1.setRelatedContactUid("contact54321");
-    QVERIFY(c.saveDetail(&r1));
-    QCOMPARE(c.details(QContactRelationship::DefinitionName).value(0).value(QContactRelationship::FieldRelatedContactUid), QString("contact54321"));
-
-    // test property remove
-    QVERIFY(c.removeDetail(&r1));
-    QCOMPARE(c.details(QContactRelationship::DefinitionName).count(), 0);
-    QVERIFY(c.saveDetail(&r2));
-    QCOMPARE(c.details(QContactRelationship::DefinitionName).count(), 1);
-    QVERIFY(c.removeDetail(&r2));
-    QCOMPARE(c.details(QContactRelationship::DefinitionName).count(), 0);
-    QVERIFY(c.removeDetail(&r2) == false);
-    QCOMPARE(c.details(QContactRelationship::DefinitionName).count(), 0);
 }
 
 void tst_QContactDetails::syncTarget()
@@ -824,6 +818,38 @@ void tst_QContactDetails::timestamp()
     QCOMPARE(c.details(QContactTimestamp::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&t2) == false);
     QCOMPARE(c.details(QContactTimestamp::DefinitionName).count(), 0);
+}
+
+void tst_QContactDetails::type()
+{
+    QContact c;
+    QContactType t1, t2;
+
+    // test property set
+    t1.setType(QContactType::TypeGroup);
+    QCOMPARE(t1.type(), QString(QLatin1String(QContactType::TypeGroup)));
+    QCOMPARE(t1.value(QContactType::FieldType), QString(QLatin1String(QContactType::TypeGroup)));
+
+    // test property add
+    QVERIFY(c.saveDetail(&t1));
+    QCOMPARE(c.details(QContactType::DefinitionName).count(), 1);
+    QCOMPARE(QContactType(c.details(QContactType::DefinitionName).value(0)).type(), t1.type());
+
+    // test property update
+    t1.setType(QContactType::TypeContact);
+    QVERIFY(c.saveDetail(&t1));
+    QCOMPARE(c.details(QContactType::DefinitionName).value(0).value(QContactType::FieldType), QString(QLatin1String(QContactType::TypeContact)));
+
+    // test property remove
+    QVERIFY(c.removeDetail(&t1)); // cannot remove type - "succeeds" but count remains unchanged
+    QCOMPARE(c.details(QContactType::DefinitionName).count(), 1);
+    t2.setType(QContactType::TypeGroup);
+    QVERIFY(c.saveDetail(&t2)); // overwrites t1
+    QCOMPARE(c.details(QContactType::DefinitionName).count(), 1);
+    QVERIFY(c.removeDetail(&t2)); // cannot remove type - "succeeds" but count remains unchanged
+    QCOMPARE(c.details(QContactType::DefinitionName).count(), 1);
+    QVERIFY(c.removeDetail(&t2) == false);
+    QCOMPARE(c.details(QContactType::DefinitionName).count(), 1);
 }
 
 void tst_QContactDetails::url()

@@ -70,9 +70,9 @@ public:
         DetailDefinitionFetchRequest,
         DetailDefinitionRemoveRequest,
         DetailDefinitionSaveRequest,
-        GroupFetchRequest,
-        GroupRemoveRequest,
-        GroupSaveRequest
+        RelationshipFetchRequest,
+        RelationshipRemoveRequest,
+        RelationshipSaveRequest
     };
 
     RequestType type() const;

@@ -64,7 +64,7 @@
 
     public:
         GroupDetailsDialog(QWidget *parent, QContactManager *contactManager, const QContact &amp;contact);
-        QList&lt;QUniqueId&gt; groups();
+        QList&lt;QContactLocalId&gt; groups();
 
     private:
         void repopulateGroupList();
