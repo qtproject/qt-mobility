@@ -116,7 +116,7 @@ QContactDetail* QVersitContactGenerator::createName(
     const QVersitProperty& property) const
 {
     QContactName* name = new QContactName();
-    QList<QByteArray> values = property.value().split(',');
+    QList<QByteArray> values = property.value().split(';');
     name->setLast(takeFirst(values));
     name->setFirst(takeFirst(values));
     name->setMiddle(takeFirst(values));
