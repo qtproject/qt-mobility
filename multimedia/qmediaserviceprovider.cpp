@@ -265,7 +265,7 @@ public:
                     foreach (QMediaServiceProviderPlugin *currentPlugin, plugins) {
                         QtMedia::SupportEstimate currentEstimate = QtMedia::MaybeSupported;
                         QMediaServiceSupportedFormatsInterface *iface =
-                                qobject_cast<QMediaServiceSupportedFormatsInterface*>(plugin);
+                                qobject_cast<QMediaServiceSupportedFormatsInterface*>(currentPlugin);
 
                         if (iface)
                             currentEstimate = iface->canPlay(hint.mimeType(), hint.codecs());
