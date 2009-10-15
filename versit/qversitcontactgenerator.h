@@ -58,6 +58,7 @@ private:
     QContactDetail* createEmail(const QVersitProperty& property) const;
     QContactDetail* createUrl( const QVersitProperty& property) const;
     QContactDetail* createUid( const QVersitProperty& property) const;
+    QContactDetail* createTimeStamp( const QVersitProperty& property) const;
 
     QStringList extractContexts(const QStringList& types) const;
     QString takeFirst(QList<QByteArray>& list) const;

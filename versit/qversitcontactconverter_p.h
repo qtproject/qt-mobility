@@ -58,9 +58,7 @@ public:
         : mError(QVersitContactConverter::NoError)
     {                
          //Fields Mapping
-        
-        //mMappingTable.insert(myString,myString);
-        
+
         mMappingTable.insert(QContactName::DefinitionName,QString::fromAscii(versitNameId));
         mMappingTable.insert(QContactEmailAddress::DefinitionName,
                              QString::fromAscii(versitEmailId));
@@ -73,13 +71,16 @@ public:
         mMappingTable.insert(QContactOrganization::DefinitionName,
                              QString::fromAscii(versitOrganizationId));
 
+        mMappingTable.insert(QContactTimestamp::DefinitionName,QString::fromAscii(versitRevId));
+
         //Context Mapping
         mMappingTable.insert(QContactDetail::ContextWork,QString::fromAscii(versitContextWorkId));
         mMappingTable.insert(QContactDetail::ContextHome,QString::fromAscii(versitContextHomeId));
 
         // Sub Types parameters.
         /* Sub types for the Address */
-        mMappingTable.insert(QContactAddress::SubTypeDomestic,QString::fromAscii(versitDomesticId));
+        mMappingTable.insert(QContactAddress::SubTypeDomestic,
+                             QString::fromAscii(versitDomesticId));
         mMappingTable.insert(QContactAddress::SubTypeInternational,
                              QString::fromAscii(versitInternationalId));
         mMappingTable.insert(QContactAddress::SubTypePostal,QString::fromAscii(versitPostalId));
@@ -96,7 +97,8 @@ public:
         mMappingTable.insert(QContactUrl::SubTypeHomePage, QString::fromAscii(versithomePageId));
         mMappingTable.insert(QContactUrl::SubTypeFavourite, QString::fromAscii(versitfavoriteIDId));
         mMappingTable.insert(QContactPhoneNumber::SubTypeFacsimile,QString::fromAscii(versitFaxId));
-        mMappingTable.insert(QContactPhoneNumber::SubTypeBulletinBoardSystem,QString::fromAscii(versitBbsId));
+        mMappingTable.insert(QContactPhoneNumber::SubTypeBulletinBoardSystem,
+                             QString::fromAscii(versitBbsId));
         mMappingTable.insert(QContactPhoneNumber::SubTypePager,QString::fromAscii(versitPagerId));        
     }
     

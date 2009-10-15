@@ -50,6 +50,7 @@
 #include <qcontactaddress.h>
 #include <qcontactguid.h>
 #include <qcontacturl.h>
+#include <qcontacttimestamp.h>
 
 
 #include "qversitdefs.h"
@@ -125,6 +126,11 @@ void QVersitContactConverter::encodeFieldInfo(QVersitDocument& versitDocument,
     else if (detail.definitionName() == QContactUrl::DefinitionName){
         encodeUrl(versitDocument, detail);
     }
+
+    else if (detail.definitionName() == QContactTimestamp::DefinitionName){
+        encodeRev(versitDocument, detail);
+    }
+
 }
 
 
@@ -248,9 +254,6 @@ void QVersitContactConverter::encodeUrl(QVersitDocument& versitDocument,
 
     QVersitProperty versitProperty;
 
-    //Add contexts 
-    encodeParameters(versitProperty, contactUrl.contexts());    
-    
     //Encode Sub Types.
     QString type = contactUrl.subType();
     QStringList subTypes;
@@ -285,6 +288,30 @@ void QVersitContactConverter::encodeUid(QVersitDocument& versitDocument,
     versitDocument.addProperty(versitProperty);
 }
 
+
+/*!
+ * Encode REV Field Information into the Versit Document
+ */
+
+void QVersitContactConverter::encodeRev(QVersitDocument& versitDocument,
+                                        const QContactDetail& detail )
+{
+    QContactTimestamp  rev = static_cast<QContactTimestamp >(detail);
+    QString name = d->mMappingTable.value(detail.definitionName());
+
+    QString value = rev.lastModified().toString(Qt::ISODate);
+
+    if ( !value.size() ) {
+     value = rev.created().toString(Qt::ISODate);
+    }
+
+    QVersitProperty versitProperty;
+
+    //Add Values
+    versitProperty.setName(name);
+    versitProperty.setValue(value.toAscii());
+    versitDocument.addProperty(versitProperty);
+}
 
 
 /*!

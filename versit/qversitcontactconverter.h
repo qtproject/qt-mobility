@@ -69,6 +69,7 @@ private: //Methods
     void encodeStreetAddress(QVersitDocument& versitDocumen, const QContactDetail& detail );
     void encodeUrl(QVersitDocument& versitDocumen, const QContactDetail& detail );
     void encodeUid(QVersitDocument& versitDocumen, const QContactDetail& detail );
+    void encodeRev(QVersitDocument& versitDocumen, const QContactDetail& detail );
     
     const QHash<QString,QString>& getMappingTable();
 

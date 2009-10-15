@@ -42,6 +42,7 @@
 #include <qcontactphonenumber.h>
 #include <qcontacturl.h>
 #include <qcontactguid.h>
+#include <qcontacttimestamp.h>
 
 #include "ut_qversitcontactconverter.h"
 #include "qversitcontactconverter.h"
@@ -288,6 +289,47 @@ void UT_QVersitContactConvertert::testEncodeUid()
     QCOMPARE(expectedValue, value );
 }
 
+
+
+void UT_QVersitContactConvertert::testEncodeRev()
+{
+    QContact contact;
+    QContactTimestamp p;
+    QDateTime changeRev = QDateTime::fromString("M1d1y200906:01:02", "'M'M'd'd'y'yyyyhh:mm:ss");
+
+    p.setLastModified(changeRev);
+    contact.saveDetail(&p);
+
+    //Convert Contat Into Versit Document
+    QVersitDocument mVersitDocument = mVersitContactConverter->convertContact(contact);
+
+    //Ensure property Exisit
+    QCOMPARE(1, mVersitDocument.properties().count());
+
+    //Ensure property parameer exisit and matches.
+    QString propertyName = mVersitDocument.properties().at(0).name();
+    QString expectedPropertyName =
+                mVersitContactConverter->getMappingTable().value(QContactTimestamp::DefinitionName);
+    QCOMPARE(propertyName, expectedPropertyName );
+
+    //Check property value
+    QString value = (mVersitDocument.properties().at(0).value() );
+    QString expectedValue = "2009-01-01T06:01:02";
+    QCOMPARE(expectedValue, value );
+
+
+    // Test 2: If Modified Data does not Exist than Date of Contact Created will be used.
+    QDateTime emptyTime;
+    p.setLastModified(emptyTime);
+    p.setCreated(changeRev);
+    contact.saveDetail(&p);
+
+    mVersitDocument = mVersitContactConverter->convertContact(contact);
+    value = (mVersitDocument.properties().at(0).value() );
+
+    // Ensure Value exisit and matches.
+    QCOMPARE(expectedValue, value );
+}
 
 
 void UT_QVersitContactConvertert::testEncodeParameters()
