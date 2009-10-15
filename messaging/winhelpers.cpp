@@ -2035,12 +2035,12 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
             storeMessageProperties(lastError, source, mapiMessage);
         }
         if (*lastError == QMessageStore::NoError) {
+#ifndef __WIN32_WCE //unsupported
             if (postSendAction == DeleteAfterSend) {
                 if (!setMapiProperty(mapiMessage, PR_DELETE_AFTER_SUBMIT, true)) {
                     qWarning() << "Unable to set delete after send flag.";
                 }
             } else if (postSendAction == MoveAfterSend) {
-                /*
                 //move the message to the sent folder after a submission
                 MapiFolderPtr sentFolder = _store->findFolder(lastError,QMessage::SentFolder);
 
@@ -2051,7 +2051,7 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
                         qWarning() << "Unable to set sent folder entry id on message";
                     }
                 }
-                */
+#endif
             }
         }
         if (*lastError == QMessageStore::NoError) {
