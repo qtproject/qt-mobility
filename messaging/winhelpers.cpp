@@ -999,7 +999,7 @@ namespace {
         }
     }
 
-    void replaceMessageAttachments(QMessageStore::ErrorCode *lastError, const QMessage &source, IMessage *message, MapiFolder::SaveOption saveOption = MapiFolder::SaveMessage )
+    void replaceMessageAttachments(QMessageStore::ErrorCode *lastError, const QMessage &source, IMessage *message, WinHelpers::SavePropertyOption saveOption = WinHelpers::SavePropertyChanges )
     {
         // Find any existing attachments and remove them
         IMAPITable *attachmentsTable(0);
@@ -1039,7 +1039,7 @@ namespace {
                         }
                     }
 
-                    if (*lastError == QMessageStore::NoError && saveOption == MapiFolder::SaveMessage ) {
+                    if (*lastError == QMessageStore::NoError && saveOption == WinHelpers::SavePropertyChanges ) {
 #ifndef _WIN32_WCE //unsupported
                         if (HR_FAILED(message->SaveChanges(KEEP_OPEN_READWRITE))) {
                             qWarning() << "Unable to save changes to message";
@@ -2025,7 +2025,7 @@ IMessage *MapiFolder::createMessage(QMessageStore::ErrorCode* lastError)
     return message;
 }
 
-IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const QMessage& source, const MapiSessionPtr &session, PostSendAction postSendAction, SaveOption saveOption )
+IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const QMessage& source, const MapiSessionPtr &session, PostSendAction postSendAction, SavePropertyOption saveOption )
 {
     IMessage* mapiMessage(0);
     HRESULT rv = _folder->CreateMessage(0, 0, &mapiMessage);
@@ -2063,7 +2063,7 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
         if (*lastError == QMessageStore::NoError) {
             replaceMessageAttachments(lastError, source, mapiMessage, saveOption );
         }
-        if (*lastError == QMessageStore::NoError && saveOption == SaveMessage ) {
+        if (*lastError == QMessageStore::NoError && saveOption == SavePropertyChanges ) {
 #ifndef _WIN32_WCE //unsupported
             if (HR_FAILED(mapiMessage->SaveChanges(0))) {
                 qWarning() << "Unable to save changes for message.";
