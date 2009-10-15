@@ -247,6 +247,9 @@ void QVersitContactConverter::encodeUrl(QVersitDocument& versitDocument,
 
     QVersitProperty versitProperty;
 
+    //Add contexts 
+    encodeParameters(versitProperty, contactUrl.contexts());    
+    
     //Encode Sub Types.
     QString type = contactUrl.subType();
     QStringList subTypes;
