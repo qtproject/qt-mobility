@@ -52,6 +52,7 @@ private:
     QContactDetail* createName(const QVersitProperty& property) const;
     QContactDetail* createPhone(const QVersitProperty& property) const;
     QContactDetail* createAddress(const QVersitProperty& property) const;
+    QContactDetail* createOrganization(const QVersitProperty& property) const;
     QContactDetail* createEmail(const QVersitProperty& property) const;
     QContactDetail* createUrl( const QVersitProperty& property) const;
     QContactDetail* createUid( const QVersitProperty& property) const;

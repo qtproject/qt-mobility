@@ -45,6 +45,7 @@
 #include <qcontactemailaddress.h>
 #include <qcontacturl.h>
 #include <qcontactguid.h>
+#include <qcontactorganization.h>
 
 
 void UT_QVersitContactGenerator::init()
@@ -155,6 +156,57 @@ void UT_QVersitContactGenerator::testAddress()
     QVERIFY(subTypes.contains(QContactAddress::SubTypeInternational));
     QVERIFY(subTypes.contains(QContactAddress::SubTypePostal));
     QVERIFY(subTypes.contains(QContactAddress::SubTypeParcel));
+}
+
+void UT_QVersitContactGenerator::testOrganization()
+{
+    QVersitProperty property;
+    property.setName(QString::fromAscii(versitOrganizationId));
+    
+    // Empty value for the organization
+    QContactOrganization* org = 
+        static_cast<QContactOrganization*>(mGenerator->createOrganization(property));
+    QVERIFY(org != 0);
+    QCOMPARE(org->name(),QString());
+    QCOMPARE(org->department(),QString());
+    delete org;
+    org = 0;
+
+    // Organization with one seprator
+    property.setValue(QByteArray(";"));
+    org = static_cast<QContactOrganization*>(mGenerator->createOrganization(property));
+    QVERIFY(org != 0);
+    QCOMPARE(org->name(),QString::fromAscii(""));
+    QCOMPARE(org->department(),QString::fromAscii(""));
+    delete org;
+    org = 0;
+    
+    // Organization with just seprators
+    property.setValue(QByteArray(";;;"));
+    org = static_cast<QContactOrganization*>(mGenerator->createOrganization(property));
+    QVERIFY(org != 0);
+    QCOMPARE(org->name(),QString::fromAscii(""));
+    QCOMPARE(org->department(),QString::fromAscii(";;"));
+    delete org;
+    org = 0;
+    
+    // Organization with one Organizational Unit
+    property.setValue(QByteArray("Nokia Oyj;R&D"));
+    org = static_cast<QContactOrganization*>(mGenerator->createOrganization(property));
+    QVERIFY(org != 0);
+    QCOMPARE(org->name(),QString::fromAscii("Nokia Oyj"));
+    QCOMPARE(org->department(),QString::fromAscii("R&D"));
+    delete org;
+    org = 0;
+    
+    // Organization with one Organizational Unit
+    property.setValue(QByteArray("ABC, Inc.;North American Division;Devices;Marketing"));
+    org = static_cast<QContactOrganization*>(mGenerator->createOrganization(property));
+    QVERIFY(org != 0);
+    QCOMPARE(org->name(),QString::fromAscii("ABC, Inc."));
+    QCOMPARE(org->department(),QString::fromAscii("North American Division;Devices;Marketing"));
+    delete org;
+    org = 0;
 }
 
 void UT_QVersitContactGenerator::testTel()

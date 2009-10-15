@@ -55,6 +55,7 @@
 #include <qcontactdetail.h>
 #include <qcontactaddress.h>
 #include <qcontactemailaddress.h>
+#include <qcontactorganization.h>
 #include <qcontacturl.h>
 #include <qcontactguid.h>
 #include <QHash>
@@ -202,6 +203,23 @@ QContactDetail* QVersitContactGenerator::createAddress(
     address->setCountry(takeFirst(addressParts));
     
     return address;
+}
+
+QContactDetail* QVersitContactGenerator::createOrganization(
+    const QVersitProperty& property) const
+{
+    QContactOrganization* org = new QContactOrganization();
+    
+    // TODO: now assuming that only the ORG part is present
+    QByteArray value = property.value();
+    int firstSemic = value.indexOf(";");
+    QByteArray orgName = value.left(firstSemic);
+    QByteArray orgUnit = value.mid(firstSemic+1,value.size());
+    
+    org->setName(QString::fromAscii(orgName));
+    org->setDepartment(QString::fromAscii(orgUnit));
+    
+    return org;
 }
 
 /*!

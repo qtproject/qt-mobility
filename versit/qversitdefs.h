@@ -48,6 +48,7 @@ const char versitAddressId[] = "ADR";
 const char versitUrlId[] = "URL";
 const char versitUidId[] = "UID";
 const char versitType[] = "TYPE";
+const char versitOrganizationId[] = "ORG";
 
 //Contexts:
 const char versitContextWorkId[] = "WORK";
@@ -65,5 +66,8 @@ const char versitCellId[] = "CELL";
 const char versitModemId[] = "MODEM";
 const char versitCarId[] = "CAR";
 const char versitVideoId[] = "VIDEO";
+
+// Value separator
+const char versitValueSeparator[] = ",";
 
 #endif /* QVERSITDEFS_H_ */
