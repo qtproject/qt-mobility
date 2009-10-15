@@ -99,7 +99,7 @@ void V4LServicePlugin::updateDevices() const
     QString name;
     QFile video0("/sys/class/video4linux/video0/name");
     if (video0.exists()) {
-        m_cameraDevices.append("dev/video0");
+        m_cameraDevices.append("v4l:/dev/video0");
         char str[30];
         memset(str,0,30);
         video0.open(QIODevice::ReadOnly);
@@ -111,7 +111,7 @@ void V4LServicePlugin::updateDevices() const
 
     QFile video1("/sys/class/video4linux/video1/name");
     if (video0.exists()) {
-        m_cameraDevices.append("dev/video1");
+        m_cameraDevices.append("v4l:/dev/video1");
         char str[30];
         memset(str,0,30);
         video1.open(QIODevice::ReadOnly);

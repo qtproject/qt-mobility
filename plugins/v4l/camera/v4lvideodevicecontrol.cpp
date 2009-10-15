@@ -45,7 +45,7 @@ V4LVideoDeviceControl::V4LVideoDeviceControl(QObject *parent)
     QString name;
     QFile video0("/sys/class/video4linux/video0/name");
     if (video0.exists()) {
-        devices.append("/dev/video0");
+        devices.append("v4l:/dev/video0");
         char str[30];
         memset(str,0,30);
         video0.open(QIODevice::ReadOnly);
@@ -57,7 +57,7 @@ V4LVideoDeviceControl::V4LVideoDeviceControl(QObject *parent)
 
     QFile video1("/sys/class/video4linux/video1/name");
     if (video0.exists()) {
-        devices.append("/dev/video1");
+        devices.append("v4l:/dev/video1");
         char str[30];
         memset(str,0,30);
         video1.open(QIODevice::ReadOnly);
@@ -110,8 +110,12 @@ int V4LVideoDeviceControl::selectedDevice() const
 void V4LVideoDeviceControl::setSelectedDevice(int index)
 {
     if(index >= 0 && index <= devices.count()) {
-        if (m_session)
-            m_session->setDevice(devices.at(index));
+        if (m_session) {
+            QString device = devices.at(index);
+            if (device.startsWith("v4l:"))
+                device.remove(0,4);
+            m_session->setDevice(device);
+        }
         selected = index;
     }
 }
