@@ -53,6 +53,7 @@
 class QContactChangeSet;
 class QAbstractContactFilter;
 class QAbstractContactSorter;
+class CntRelationship;
 
 class QContactSymbianEngineData : public QObject,
 							   public MContactDbObserver
@@ -83,6 +84,11 @@ public:
     bool updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
     bool removeContact(const QContactLocalId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError);
 
+    QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
+    bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
+    QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
+    bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);
+    QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
 #if 0
     /* Groups functionality */
         QList<QContactLocalId> groups(QContactManager::Error& qtError) const;
@@ -147,12 +153,14 @@ private:
 #ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
 	CContactChangeNotifier* m_contactChangeNotifier;
 #endif
-        TransformContact* m_transformContact;
+        
     QList<QContactLocalId> m_contactsAddedEmitted;
     QList<QContactLocalId> m_contactsChangedEmitted;
     QList<QContactLocalId> m_contactsRemovedEmitted;
+    TransformContact       *m_transformContact;
     QAbstractContactFilter* m_contactFilter;
     QAbstractContactSorter* m_contactSorter;
+    CntRelationship        *m_relationship;
 };
 
 #endif

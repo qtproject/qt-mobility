@@ -286,6 +286,32 @@ QList<QContactManager::Error> QContactSymbianEngine::removeContacts(QList<QConta
     return ret;
 }
 
+/* relationships */
+
+QList<QContactRelationship> QContactSymbianEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
+{
+    return d->relationships(relationshipType, participantId, role, error);
+}
+
+bool QContactSymbianEngine::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
+{
+    return d->saveRelationship(relationship, error);
+}
+
+QList<QContactManager::Error> QContactSymbianEngine::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
+{
+    return d->saveRelationships(relationships, error);
+}
+
+bool QContactSymbianEngine::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
+{
+    return d->removeRelationship(relationship, error);
+}
+
+QList<QContactManager::Error> QContactSymbianEngine::removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
+{
+    return d->removeRelationships(relationships, error);
+}
 #if 0
 QList<QContactLocalId> QContactSymbianEngine::groups(QContactManager::Error& error) const
 {

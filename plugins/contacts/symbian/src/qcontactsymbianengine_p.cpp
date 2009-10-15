@@ -43,6 +43,7 @@
 #include "qcontactsymbianfilterdbms.h"
 #include "qcontactsymbianfiltersql.h"
 #include "qcontactsymbiansorterdbms.h"
+#include "cntrelationship.h"
 
 #include <QDebug>
 
@@ -92,9 +93,9 @@ QContactSymbianEngineData::QContactSymbianEngineData(QContactManager::Error& err
 #endif
 
     	m_transformContact = new TransformContact;
-        m_contactFilter = new QContactSymbianFilter(*m_contactDatabase);
-        m_contactSorter = new QContactSymbianSorter(*m_contactDatabase, *m_transformContact);
-        
+        m_contactFilter    = new QContactSymbianFilter(*m_contactDatabase);
+        m_contactSorter    = new QContactSymbianSorter(*m_contactDatabase, *m_transformContact);
+        m_relationship     = new CntRelationship();
         transformError(err, error);
     }
 }
@@ -113,6 +114,7 @@ QContactSymbianEngineData::~QContactSymbianEngineData()
     delete m_contactSorter;
 	delete m_contactDatabase;
 	delete m_transformContact;
+	delete m_relationship;
 }
 
 /* Access */
@@ -277,6 +279,32 @@ bool QContactSymbianEngineData::removeContact(const QContactLocalId &id, QContac
     }
     transformError(err, qtError);
 	return (err==KErrNone);
+}
+/* relationships */
+
+QList<QContactRelationship> QContactSymbianEngineData::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
+{
+    return m_relationship->relationships(relationshipType, participantId, role, error);
+}
+
+bool QContactSymbianEngineData::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
+{
+    return m_relationship->saveRelationship(relationship, error);
+}
+
+QList<QContactManager::Error> QContactSymbianEngineData::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
+{
+    return m_relationship->saveRelationships(relationships, error);
+}
+
+bool QContactSymbianEngineData::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
+{
+    return m_relationship->removeRelationship(relationship, error);
+}
+
+QList<QContactManager::Error> QContactSymbianEngineData::removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
+{
+    return m_relationship->removeRelationships(relationships, error);
 }
 #if 0
 /* groups */

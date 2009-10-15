@@ -81,6 +81,12 @@ public:
     bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
     QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
 
+    /* Relationships between contacts */
+    QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
+    bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
+    QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
+    bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);
+    QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
 #if 0
     /* Groups - Accessors and Mutators */
     QList<QContactLocalId> groups(QContactManager::Error& error) const;

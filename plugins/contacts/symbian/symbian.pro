@@ -50,7 +50,10 @@ symbian: {
       inc/qcontactsymbianfilterdbms.h \
       inc/qcontactsymbianfiltersql.h \
       inc/qabstractcontactsorter.h \
-      inc/qcontactsymbiansorterdbms.h
+      inc/qcontactsymbiansorterdbms.h \
+      inc/cntrelationship.h \
+      inc/cntabstractrelationship.h \
+      inc/cntrelationshipgroup.h
       
   SOURCES += \
   		src/qcontactsymbianbackend.cpp \
@@ -74,7 +77,10 @@ symbian: {
       src/transformnote.cpp \  
       src/qcontactsymbianfilterdbms.cpp \
       src/qcontactsymbianfiltersql.cpp \
-      src/qcontactsymbiansorterdbms.cpp
+      src/qcontactsymbiansorterdbms.cpp \
+      src/cntrelationship.cpp \
+      src/cntabstractrelationship.cpp \
+      src/cntrelationshipgroup.cpp
       
   LIBS += \
   				-lcntmodel \
