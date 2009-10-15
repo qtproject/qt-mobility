@@ -134,6 +134,9 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
 
         connect(m_videoInputDevice, SIGNAL(selectedDeviceChanged(QString)),
                 m_cameraControl, SLOT(setDevice(QString)));
+
+        if (m_videoInputDevice->deviceCount())
+            m_cameraControl->setDevice(m_videoInputDevice->name(m_videoInputDevice->selectedDevice()));
     }
 
     m_videoOutput = new QGstreamerVideoOutputControl(this);
@@ -158,6 +161,9 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
 
     m_audioInputDevice = new QGstreamerAudioInputDeviceControl(this);
     connect(m_audioInputDevice, SIGNAL(selectedDeviceChanged(QString)), m_captureSession, SLOT(setCaptureDevice(QString)));
+
+    if (m_audioInputDevice->deviceCount())
+        m_captureSession->setCaptureDevice(m_audioInputDevice->name(m_audioInputDevice->selectedDevice()));
 
     m_metaDataControl = new QGstreamerCaptureMetaDataControl(this);
     connect(m_metaDataControl, SIGNAL(metaDataChanged(QMap<QByteArray,QVariant>)),
