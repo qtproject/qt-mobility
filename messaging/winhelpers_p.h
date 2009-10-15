@@ -232,6 +232,7 @@ public:
 
     MapiFolderPtr findFolder(QMessageStore::ErrorCode *lastError, const MapiRecordKey &key);
     MapiFolderPtr findFolder(QMessageStore::ErrorCode *lastError, QMessage::StandardFolder sf);
+
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderIdList folderIds(QMessageStore::ErrorCode *lastError);
     QMessageFolder folderFromId(QMessageStore::ErrorCode *lastError, const QMessageFolderId &folderId);
@@ -263,11 +264,17 @@ public:
     QMessageFolder folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const;
     QMessage message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const;
 
+    QMessage::StandardFolder standardFolder(const MapiEntryId &entryId) const;
+
     void notifyEvents(ULONG mask);
 
 private:
     MapiStore();
     MapiStore(const MapiSessionPtr &session, IMsgStore *store, const MapiRecordKey &key, const MapiEntryId &entryId, const QString &name, bool cachedMode);
+
+    MapiEntryId standardFolderId(QMessageStore::ErrorCode *lastError, QMessage::StandardFolder sf) const;
+    MapiEntryId rootFolderId(QMessageStore::ErrorCode *lastError) const;
+    MapiEntryId receiveFolderId(QMessageStore::ErrorCode *lastError) const;
 
     IMAPIFolder *openMapiFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId) const;
 
@@ -297,6 +304,7 @@ private:
     QString _name;
     bool _cachedMode;
     ULONG _adviseConnection;
+    QMap<QMessage::StandardFolder, MapiEntryId> _standardFolderId;
 
     mutable QHash<MapiEntryId, QWeakPointer<MapiFolder> > _folderMap;
 };

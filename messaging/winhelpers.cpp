@@ -1964,8 +1964,7 @@ QMessage MapiFolder::message(QMessageStore::ErrorCode *lastError, const QMessage
 
 QMessage::StandardFolder MapiFolder::standardFolder() const
 {
-    // TODO implement this function
-    return QMessage::InboxFolder; // stub
+    return _store->standardFolder(_entryId);
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
@@ -2101,6 +2100,18 @@ MapiStore::MapiStore(const MapiSessionPtr &session, IMsgStore *store, const Mapi
      _cachedMode(cachedMode),
      _adviseConnection(0)
 {
+    // Find which standard folders the store contains
+    foreach (QMessage::StandardFolder sf, QList<QMessage::StandardFolder>() << QMessage::InboxFolder 
+                                                                            << QMessage::DraftsFolder 
+                                                                            << QMessage::TrashFolder 
+                                                                            << QMessage::SentFolder 
+                                                                            << QMessage::OutboxFolder) {
+        QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+        MapiEntryId entryId(standardFolderId(&ignoredError, sf));
+        if (!entryId.isEmpty()) {
+            _standardFolderId[sf] = entryId;
+        }
+    }
 }
 
 MapiStore::~MapiStore()
@@ -2116,6 +2127,7 @@ MapiStore::~MapiStore()
 
 MapiFolderPtr MapiStore::findFolder(QMessageStore::ErrorCode *lastError, const MapiRecordKey &key)
 {
+    // TODO: this function should use a restricted search on the hierarchy table
     QList<MapiFolderPtr> folders;
     folders.append(rootFolder(lastError));
 
@@ -2138,10 +2150,22 @@ MapiFolderPtr MapiStore::findFolder(QMessageStore::ErrorCode *lastError, QMessag
 {
     MapiFolderPtr result;
 
-    //check if the store supports the common folder
-    //assume drafts exists in every store since there is no mask for it
+    if (_standardFolderId.contains(sf)) {
+        result = openFolder(lastError, _standardFolderId[sf]);
+    }
 
-    unsigned long tag =0;
+    return result;
+}
+
+MapiEntryId MapiStore::standardFolderId(QMessageStore::ErrorCode *lastError, QMessage::StandardFolder sf) const
+{
+    MapiEntryId result;
+
+#ifndef _WIN32_WCE
+    //check if the store supports the common folder (not possible for mobile)
+    bool commonFolderSupported(false);
+
+    unsigned long tag(0);
     switch(sf)
     {
     case QMessage::InboxFolder:
@@ -2156,89 +2180,39 @@ MapiFolderPtr MapiStore::findFolder(QMessageStore::ErrorCode *lastError, QMessag
     case QMessage::SentFolder:
         tag = FOLDER_IPM_SENTMAIL_VALID;
         break;
+    case QMessage::DraftsFolder:
+        //assume drafts exists in every store since there is no mask for it
+        commonFolderSupported = true;
+        break;
     }
 
-    LPSPropValue props=0;
-    ULONG cValues=0;
-    ULONG rTags[]={ 1,PR_VALID_FOLDER_MASK};
-
-    if(FAILED(_store->GetProps((LPSPropTagArray) rTags, 0, &cValues, &props)))
-    {
-        qWarning() << "Could not get folder mask property";
-        MAPIFreeBuffer(props);
-        return result;
+    if (tag) {
+        ULONG folderSupportMask(0);
+        if (getMapiProperty(_store, PR_VALID_FOLDER_MASK, &folderSupportMask)) {
+            if (folderSupportMask & tag) {
+                commonFolderSupported = true;
+            }
+        } else {
+            qWarning() << "Could not get folder mask property for store:" << _name;
+        }
     }
 
-    bool commonFolderSupported = tag ? tag & props[0].Value.ul : true; //true for drafts
-
-    MAPIFreeBuffer(props);
-
-#ifndef _WIN32_WCE
-    if(!commonFolderSupported)
-    {
+    if (!commonFolderSupported) {
         return result;
     }
 #endif
 
-    MapiFolderPtr baseFolder = receiveFolder(lastError); //start with inbox
-
-    switch(sf)
-    {
-        case QMessage::InboxFolder:
-        {
-            result = baseFolder;
-            return result;
-        } break;
-
-        case QMessage::DraftsFolder:
-        {
-            if(*lastError != QMessageStore::NoError || baseFolder.isNull())
-            {
-                //try and use the root folder
-
-                baseFolder = rootFolder(lastError);
-
-                if(*lastError != QMessageStore::NoError || baseFolder.isNull())
-                {
-                    qWarning() << "Could not get a base folder";
-                    return result;
-                }
-            }
-
-            props= 0;
-            cValues=0;
-            ULONG gTags[]={1,commonFolderMap(sf)};
-
-            if(FAILED(baseFolder->folder()->GetProps((LPSPropTagArray) gTags, 0, &cValues, &props)))
-            {
-                qWarning() << "Failed to get common folder from root folder";
-                *lastError = QMessageStore::ContentInaccessible;
-                return result;
-            }
-
-        } break;
-
-        case QMessage::TrashFolder:
-        case QMessage::SentFolder:
-        case QMessage::OutboxFolder:
-        {
-            props= 0;
-            cValues=0;
-            ULONG gTags[]={1,commonFolderMap(sf)};
-
-            if(FAILED(_store->GetProps((LPSPropTagArray) gTags, 0, &cValues, &props)) || props[0].ulPropTag != gTags[1])
-            {
-                qWarning() << "Failed to get common folder from store";
-                *lastError = QMessageStore::ContentInaccessible;
-                return result;
-            }
+    if (sf == QMessage::InboxFolder) {
+        result = receiveFolderId(lastError);
+    } else {
+        MapiEntryId entryId;
+        if (getMapiProperty(_store, commonFolderMap(sf), &entryId)) {
+            result = entryId;
+        } else {
+            *lastError = QMessageStore::ContentInaccessible;
         }
-        break;
     }
 
-    MapiEntryId entryId(props[0].Value.bin.lpb, props[0].Value.bin.cb);
-    MAPIFreeBuffer(props);
-    result = openFolder(lastError, entryId);
     return result;
 }
 
@@ -2505,6 +2479,7 @@ QMessage::TypeFlags MapiStore::types() const
     return flags;
 }
 
+// TODO: can we remove this?
 QMessageAddress MapiStore::address() const
 {
     QMessageAddress result;
@@ -2517,47 +2492,69 @@ MapiFolderPtr MapiStore::rootFolder(QMessageStore::ErrorCode *lastError) const
 {
     MapiFolderPtr result;
 
+    MapiEntryId entryId(rootFolderId(lastError));
+    if (*lastError == QMessageStore::NoError) {
+        result = openFolder(lastError, entryId);
+    }
+
+    return result;
+}
+
+MapiEntryId MapiStore::rootFolderId(QMessageStore::ErrorCode *lastError) const
+{
+    MapiEntryId result;
+
     if (!_valid || !_store) {
         Q_ASSERT(_valid && _store);
         *lastError = QMessageStore::FrameworkFault;
         return result;
     }
 
-    SPropValue *rgProps(0);
-    ULONG rgTags[] = {1, PR_IPM_SUBTREE_ENTRYID};
-    ULONG cCount;
-
-    HRESULT rv = _store->GetProps(reinterpret_cast<LPSPropTagArray>(rgTags), MAPI_UNICODE, &cCount, &rgProps);
-        if (HR_FAILED(rv)) {
+    MapiEntryId entryId;
+    if (getMapiProperty(_store, PR_IPM_SUBTREE_ENTRYID, &entryId)) {
+        result = entryId;
+    } else {
         *lastError = QMessageStore::ContentInaccessible;
-        qWarning() << "Unable to get properties for root folder - rv:" << hex << (ULONG)rv;
-        return result;
+        qWarning() << "Unable to get root folder entry ID for store:" << _name;
     }
 
-    MapiEntryId entryId(rgProps[0].Value.bin.lpb, rgProps[0].Value.bin.cb);
-    MAPIFreeBuffer(rgProps);
-
-    return openFolder(lastError, entryId);
+    return result;
 }
 
 MapiFolderPtr MapiStore::receiveFolder(QMessageStore::ErrorCode *lastError) const
 {
     MapiFolderPtr result;
 
-    ULONG entryIdSize = 0;
-    LPENTRYID entryIdPtr = 0;
-
-    if(FAILED(_store->GetReceiveFolder(NULL, 0, &entryIdSize, &entryIdPtr, NULL)))
-    {
-       *lastError = QMessageStore::FrameworkFault;
-       qWarning() << "Could not get the receive folder";
-       return result;
+    MapiEntryId entryId(receiveFolderId(lastError));
+    if (*lastError == QMessageStore::NoError) {
+        result = openFolder(lastError, entryId);
     }
 
-    MapiEntryId entryId(entryIdPtr, entryIdSize);
-    MAPIFreeBuffer(entryIdPtr);
+    return result;
+}
 
-    return openFolder(lastError, entryId);
+MapiEntryId MapiStore::receiveFolderId(QMessageStore::ErrorCode *lastError) const
+{
+    MapiEntryId result;
+
+    if (!_valid || !_store) {
+        Q_ASSERT(_valid && _store);
+        *lastError = QMessageStore::FrameworkFault;
+        return result;
+    }
+
+    ULONG entryIdSize = 0;
+    LPENTRYID entryIdPtr = 0;
+    HRESULT rv = _store->GetReceiveFolder(0, 0, &entryIdSize, &entryIdPtr, 0);
+    if (HR_SUCCEEDED(rv)) {
+        result = MapiEntryId(entryIdPtr, entryIdSize);
+
+        MAPIFreeBuffer(entryIdPtr);
+    } else {
+        *lastError = QMessageStore::FrameworkFault;
+    }
+
+    return result;
 }
 
 QMessageIdList MapiStore::queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
@@ -2589,6 +2586,18 @@ QMessageFolder MapiStore::folder(QMessageStore::ErrorCode *lastError, const QMes
 QMessage MapiStore::message(QMessageStore::ErrorCode *lastError, const QMessageId& id) const
 {
     return _session.toStrongRef()->message(lastError, id);
+}
+
+QMessage::StandardFolder MapiStore::standardFolder(const MapiEntryId &entryId) const
+{
+    QMap<QMessage::StandardFolder, MapiEntryId>::const_iterator it = _standardFolderId.begin(), end = _standardFolderId.end();
+    for ( ; it != end; ++it) {
+        if (it.value() == entryId) {
+            return it.key();
+        }
+    }
+
+    return QMessage::InboxFolder;
 }
 
 bool MapiStore::setAdviseSink(ULONG mask, IMAPIAdviseSink *sink)
@@ -3357,7 +3366,8 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
 
         IMessage *message = openMapiMessage(lastError, msg->id());
         if (*lastError == QMessageStore::NoError) {
-            SizedSPropTagArray(14, msgCols) = {14, { PR_RECORD_KEY,
+            SizedSPropTagArray(15, msgCols) = {15, { PR_RECORD_KEY,
+                                                     PR_PARENT_ENTRYID,
                                                      PR_MESSAGE_FLAGS,
                                                      PR_MSG_STATUS,
                                                      PR_MESSAGE_CLASS,
@@ -3383,6 +3393,7 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                 QString senderName;
                 QString senderAddress;
                 QString messageClass;
+                MapiEntryId parentEntryId;
 
                 QMessage::StatusFlags flags(0);
 
@@ -3394,6 +3405,9 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                         if (prop.Value.ul & MSGFLAG_READ) {
                             flags |= QMessage::Read;
                         }
+                        break;
+                    case PR_PARENT_ENTRYID:
+                        parentEntryId = MapiEntryId(prop.Value.bin.lpb, prop.Value.bin.cb);
                         break;
                     case PR_MSG_STATUS:
                         if (prop.Value.l & (MSGSTATUS_DELMARKED | MSGSTATUS_REMOTE_DELETE)) {
@@ -3449,6 +3463,19 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                 if (!senderName.isEmpty() || !senderAddress.isEmpty()) {
                     msg->setFrom(createAddress(senderName, senderAddress));
                     QMessagePrivate::setSenderName(*msg, senderName);
+                }
+
+                if (!parentEntryId.isEmpty()) {
+#ifdef _WIN32_WCE
+                    MapiEntryId storeRecordKey(QMessageIdPrivate::storeRecordKey(msg->id()));
+#else
+                    MapiRecordKey storeRecordKey(QMessageIdPrivate::storeRecordKey(msg->id()));
+#endif
+
+                    MapiStorePtr mapiStore(findStore(lastError, QMessageAccountIdPrivate::from(storeRecordKey)));
+                    if (*lastError == QMessageStore::NoError) {
+                        QMessagePrivate::setStandardFolder(*msg, mapiStore->standardFolder(parentEntryId));
+                    }
                 }
 
                 if (!isModified) {
