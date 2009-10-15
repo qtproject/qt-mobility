@@ -309,7 +309,7 @@ bool QMessageStore::addMessage(QMessage *message)
             }
 
             if (*lError == QMessageStore::NoError && !mapiFolder.isNull()) {
-                IMessage* mapiMessage = mapiFolder->createMessage(lError, *message, d_ptr->p_ptr->session, MapiFolder::DoNothing);
+                IMessage* mapiMessage = mapiFolder->createMessage(lError, *message, d_ptr->p_ptr->session);
                 if (*lError == QMessageStore::NoError) {
                     //set the new QMessageId
                     //we can only be guaranteed of an entry id after IMessage->SaveChanges has been called
