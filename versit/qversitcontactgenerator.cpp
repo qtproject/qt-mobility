@@ -132,7 +132,7 @@ QContactDetail* QVersitContactGenerator::createPhone(
     const QVersitProperty& property) const
 {
     QContactPhoneNumber* phone = new QContactPhoneNumber();
-    phone->setNumber(property.value());
+    phone->setNumber(QString::fromAscii(property.value()));
     
     QStringList types = 
         property.parameters().values(QString::fromAscii(versitType));
