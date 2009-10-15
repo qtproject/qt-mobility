@@ -463,6 +463,8 @@ private slots:
     void testMediaFormatsControl();
     void testVideoEncodeControl();
     void testEncodingSettings();
+    void testAudioSettings();
+    void testVideoSettings();
 
 private:
     QAudioEncoderControl* encode;
@@ -638,6 +640,157 @@ void tst_QMediaRecorder::testEncodingSettings()
     QCOMPARE(capture->audioSettings(), audioSettings);
     QCOMPARE(capture->videoSettings(), videoSettings);
     QCOMPARE(capture->format(), format);
+}
+
+void tst_QMediaRecorder::testAudioSettings()
+{
+    QAudioEncoderSettings settings;
+    QVERIFY(settings.isNull());
+    QVERIFY(settings == QAudioEncoderSettings());
+
+    QCOMPARE(settings.codec(), QString());
+    settings.setCodec(QLatin1String("codecName"));
+    QCOMPARE(settings.codec(), QLatin1String("codecName"));
+    QVERIFY(!settings.isNull());
+    QVERIFY(settings != QAudioEncoderSettings());
+
+    settings = QAudioEncoderSettings();
+    QCOMPARE(settings.bitrate(), -1);
+    settings.setBitrate(128000);
+    QCOMPARE(settings.bitrate(), 128000);
+    QVERIFY(!settings.isNull());
+
+    settings = QAudioEncoderSettings();
+    QCOMPARE(settings.quality(), QtMedia::NormalQuality);
+    settings.setQuality(QtMedia::HighQuality);
+    QCOMPARE(settings.quality(), QtMedia::HighQuality);
+    QVERIFY(!settings.isNull());
+
+    settings = QAudioEncoderSettings();
+    QCOMPARE(settings.sampleRate(), -1);
+    settings.setSampleRate(44100);
+    QCOMPARE(settings.sampleRate(), 44100);
+    QVERIFY(!settings.isNull());
+
+    settings = QAudioEncoderSettings();
+    QVERIFY(settings.isNull());
+    QCOMPARE(settings.codec(), QString());
+    QCOMPARE(settings.bitrate(), -1);
+    QCOMPARE(settings.quality(), QtMedia::NormalQuality);
+    QCOMPARE(settings.sampleRate(), -1);
+
+    {
+        QAudioEncoderSettings settings1;
+        QAudioEncoderSettings settings2;
+        QCOMPARE(settings2, settings1);
+
+        settings2 = settings1;
+        QCOMPARE(settings2, settings1);
+        QVERIFY(settings2.isNull());
+
+        settings1.setQuality(QtMedia::HighQuality);
+
+        QVERIFY(settings2.isNull());
+        QVERIFY(!settings1.isNull());
+        QVERIFY(settings1 != settings2);
+    }
+
+    {
+        QAudioEncoderSettings settings1;
+        QAudioEncoderSettings settings2(settings1);
+        QCOMPARE(settings2, settings1);
+
+        settings2 = settings1;
+        QCOMPARE(settings2, settings1);
+        QVERIFY(settings2.isNull());
+
+        settings1.setQuality(QtMedia::HighQuality);
+
+        QVERIFY(settings2.isNull());
+        QVERIFY(!settings1.isNull());
+        QVERIFY(settings1 != settings2);
+    }
+}
+
+void tst_QMediaRecorder::testVideoSettings()
+{
+    QVideoEncoderSettings settings;
+    QVERIFY(settings.isNull());
+    QVERIFY(settings == QVideoEncoderSettings());
+
+    QCOMPARE(settings.codec(), QString());
+    settings.setCodec(QLatin1String("codecName"));
+    QCOMPARE(settings.codec(), QLatin1String("codecName"));
+    QVERIFY(!settings.isNull());
+    QVERIFY(settings != QVideoEncoderSettings());
+
+    settings = QVideoEncoderSettings();
+    QCOMPARE(settings.bitrate(), -1);
+    settings.setBitrate(128000);
+    QCOMPARE(settings.bitrate(), 128000);
+    QVERIFY(!settings.isNull());
+
+    settings = QVideoEncoderSettings();
+    QCOMPARE(settings.quality(), QtMedia::NormalQuality);
+    settings.setQuality(QtMedia::HighQuality);
+    QCOMPARE(settings.quality(), QtMedia::HighQuality);
+    QVERIFY(!settings.isNull());
+
+    settings = QVideoEncoderSettings();
+    QCOMPARE(settings.frameRate(), QtMedia::FrameRate());
+    settings.setFrameRate(QtMedia::FrameRate(30000,10001));
+    QCOMPARE(settings.frameRate(), QtMedia::FrameRate(30000,10001));
+    settings.setFrameRate(24);
+    QCOMPARE(settings.frameRate(), QtMedia::FrameRate(24,1));
+    QVERIFY(!settings.isNull());
+
+    settings = QVideoEncoderSettings();
+    QCOMPARE(settings.resolution(), QSize());
+    settings.setResolution(QSize(320,240));
+    QCOMPARE(settings.resolution(), QSize(320,240));
+    settings.setResolution(800,600);
+    QCOMPARE(settings.resolution(), QSize(800,600));
+    QVERIFY(!settings.isNull());
+
+    settings = QVideoEncoderSettings();
+    QVERIFY(settings.isNull());
+    QCOMPARE(settings.codec(), QString());
+    QCOMPARE(settings.bitrate(), -1);
+    QCOMPARE(settings.quality(), QtMedia::NormalQuality);
+    QCOMPARE(settings.frameRate(), QtMedia::FrameRate());
+    QCOMPARE(settings.resolution(), QSize());
+
+    {
+        QVideoEncoderSettings settings1;
+        QVideoEncoderSettings settings2;
+        QCOMPARE(settings2, settings1);
+
+        settings2 = settings1;
+        QCOMPARE(settings2, settings1);
+        QVERIFY(settings2.isNull());
+
+        settings1.setQuality(QtMedia::HighQuality);
+
+        QVERIFY(settings2.isNull());
+        QVERIFY(!settings1.isNull());
+        QVERIFY(settings1 != settings2);
+    }
+
+    {
+        QVideoEncoderSettings settings1;
+        QVideoEncoderSettings settings2(settings1);
+        QCOMPARE(settings2, settings1);
+
+        settings2 = settings1;
+        QCOMPARE(settings2, settings1);
+        QVERIFY(settings2.isNull());
+
+        settings1.setQuality(QtMedia::HighQuality);
+
+        QVERIFY(settings2.isNull());
+        QVERIFY(!settings1.isNull());
+        QVERIFY(settings1 != settings2);
+    }
 }
 
 QTEST_MAIN(tst_QMediaRecorder)
