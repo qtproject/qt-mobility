@@ -270,7 +270,7 @@ QContactLocalId QContactManagerEngine::selfContactId(QContactManager::Error& err
  * If no relationships of the given \a relationshipType in which the contact identified by the given \a participantId is involved in the given \a role exists,
  * \a error is set to QContactManager::DoesNotExistError.
  */
-QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
+QList<QContactRelationship> QContactManagerEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
 {
     Q_UNUSED(relationshipType);
     Q_UNUSED(participantId);
@@ -1419,19 +1419,19 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
 
                 // now check to see that the role is correct.
                 foreach (const QContactRelationship& rel, allRelationships) {
-                    if (rf.role() == QContactRelationshipFilter::Source) {
-                        if (rel.relationshipType() == rf.relationshipType() && rel.sourceContact() == contact.id().localId() && rel.destinationContacts().contains(participant)) {
+                    if (rf.role() == QContactRelationshipFilter::First) {
+                        if (rel.relationshipType() == rf.relationshipType() && rel.first() == contact.id() && rel.second() == participant) {
                             return true;
                         }
                     } else if (rf.role() == QContactRelationshipFilter::Either) {
                         if (rel.relationshipType() == rf.relationshipType()
-                                && ((rel.sourceContact() == contact.id().localId() && rel.destinationContacts().contains(participant))
-                                    || (rel.destinationContacts().contains(contactUri)))) {
+                                && ((rel.first() == contact.id() && rel.second() == participant)
+                                    || (rel.second() == contactUri))) {
                             return true;
                         }
-                    } else if (rf.role() == QContactRelationshipFilter::Destination) {
+                    } else if (rf.role() == QContactRelationshipFilter::Second) {
                         if (rel.relationshipType() == rf.relationshipType()
-                                && (rel.destinationContacts().contains(contactUri))) {
+                                && (rel.second() == contactUri)) {
                             return true;
                         }
                     }

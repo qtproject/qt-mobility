@@ -54,7 +54,7 @@ public:
 
     /* Selection */
     void setFirst(const QContactId& firstId);
-    QContactLocalId first() const;
+    QContactId first() const;
 
     void setRelationshipType(const QString& relationshipType);
     QString relationshipType() const;

@@ -470,24 +470,18 @@ QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QCo
         if (curr.relationshipType() == relationshipType || relationshipType.isEmpty()) {
             // check that the other contacts fill the given role
             if (role == QContactRelationshipFilter::First) {
-                if (curr.sourceContact() != d->m_id.localId()) {
-                    QContactId matchingId;
-                    matchingId.setManagerUri(d->m_id.managerUri());
-                    matchingId.setLocalId(curr.sourceContact());
-                    retn.append(matchingId);
+                if (curr.first() != d->m_id) {
+                    retn.append(curr.first());
                 }
             } else if (role == QContactRelationshipFilter::Second) {
-                if (curr.sourceContact() == d->m_id.localId()) {
-                    retn.append(curr.destinationContacts());
+                if (curr.first() == d->m_id) {
+                    retn.append(curr.second());
                 }
             } else { // role == Either.
-                if (curr.sourceContact() == d->m_id.localId()) {
-                    retn.append(curr.destinationContacts());
+                if (curr.first() == d->m_id) {
+                    retn.append(curr.second());
                 } else {
-                    QContactId matchingId;
-                    matchingId.setManagerUri(d->m_id.managerUri());
-                    matchingId.setLocalId(curr.sourceContact());
-                    retn.append(matchingId);
+                    retn.append(curr.first());
                 }
             }
         }

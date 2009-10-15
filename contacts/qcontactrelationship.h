@@ -76,7 +76,7 @@ public:
     QContactId second() const;
     QString relationshipType() const;
 
-    void setFirst(const QContactLocalId& firstId);
+    void setFirst(const QContactId& firstId);
     void setSecond(const QContactId& secondId);
     void setRelationshipType(const QString& relationshipType);
 

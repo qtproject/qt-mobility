@@ -402,62 +402,39 @@ QList<QContactRelationship> QContactMemoryEngine::relationships(const QString& r
 /*! \reimp */
 bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
 {
-    // the primary key is the source contact id + relationship type.
-    error = QContactManager::NoError;
-
     // Attempt to validate the relationship.
     // first, check that the source contact exists
-    if (!d->m_contactIds.contains(relationship->sourceContact())) {
+    if (!d->m_contactIds.contains(relationship->first().localId())) {
         error = QContactManager::InvalidRelationshipError;
         return false;
     }
 
-    // second, check that the local destination contacts exist; we cannot check other managers' contacts.
+    // second, check that the second contact exists (if it's local); we cannot check other managers' contacts.
     QString myUri = managerUri();
-    QList<QContactId> dests = relationship->destinationContacts();
+    QContactId dest = relationship->second();
 
-    QList<QContactId> checkDuplicates;
-    for (int i = 0; i < dests.size(); i++) {
-        QContactId curr = dests.at(i);
-        if (curr.managerUri().isEmpty() || curr.managerUri() == myUri) {
-            // this entry in the destination list is supposedly stored in this manager.
-            // check that it exists, and that it isn't the source contact (circular)
-            if (!d->m_contactIds.contains(curr.localId()) || curr.localId() == relationship->sourceContact()) {
-                error = QContactManager::InvalidRelationshipError;
-                return false;
-            }
-        }
-
-        // check for duplicates.
-        if (curr.managerUri().isEmpty())
-            curr.setManagerUri(myUri);
-        if (checkDuplicates.contains(curr)) {
-            // contains a duplicate entry.
+    if (dest.managerUri().isEmpty() || dest.managerUri() == myUri) {
+        // this entry in the destination list is supposedly stored in this manager.
+        // check that it exists, and that it isn't the source contact (circular)
+        if (!d->m_contactIds.contains(dest.localId()) || dest == relationship->first()) {
             error = QContactManager::InvalidRelationshipError;
             return false;
         }
-
-        // fine; add the entry to our list to check duplicates.
-        checkDuplicates.append(curr);
     }
 
-    // the relationship is valid.  We need to update any empty manager URIs in the destination contacts to our URI.
-    QList<QContactId> updatedDests;
-    for (int i = 0; i < dests.size(); i++) {
-        QContactId curr = dests.at(i);
-        if (curr.managerUri().isEmpty()) {
-            // need to update the URI
-            curr.setManagerUri(myUri);
-        }
-        updatedDests.append(curr);
+    // the relationship is valid.  We need to update the manager URIs in the second contact if it is empty to our URI.
+    if (dest.managerUri().isEmpty()) {
+        // need to update the URI
+        dest.setManagerUri(myUri);
+        relationship->setSecond(dest);
     }
-    relationship->setDestinationContacts(updatedDests);
 
     // check to see if the relationship already exists in the database.  If so, replace.
+    error = QContactManager::NoError;
     QList<QContactRelationship> allRelationships = d->m_relationships;
     for (int i = 0; i < allRelationships.size(); i++) {
         QContactRelationship curr = allRelationships.at(i);
-        if (curr.sourceContact() == relationship->sourceContact() && curr.relationshipType() == relationship->relationshipType()) {
+        if (curr == *relationship) {
             d->m_relationships.removeAt(i);
             d->m_relationships.insert(i, *relationship);
             return true;
@@ -850,17 +827,17 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QContactRelationshipFetchRequest* r = static_cast<QContactRelationshipFetchRequest*>(currentRequest);
             QContactManager::Error operationError = QContactManager::NoError;
             QList<QContactManager::Error> operationErrors;
-            QList<QContactRelationship> allRelationships = relationships(QContactLocalId(0), QString(), operationError);
+            QList<QContactRelationship> allRelationships = relationships(QString(), QContactId(), QContactRelationshipFilter::Either, operationError);
             QList<QContactRelationship> requestedRelationships;
 
             // first criteria: source contact id must be empty or must match
-            if (r->sourceContact() == QContactLocalId(0)) {
+            if (r->first() == QContactId()) {
                 // all relationships match this criteria (zero id denotes "any")
                 requestedRelationships = allRelationships;
             } else {
                 for (int i = 0; i < allRelationships.size(); i++) {
                     QContactRelationship currRelationship = allRelationships.at(i);
-                    if (r->sourceContact() == currRelationship.sourceContact()) {
+                    if (r->first() == currRelationship.first()) {
                         requestedRelationships.append(currRelationship);
                     }
                 }
@@ -872,7 +849,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
                 requestedRelationships.clear();
                 for (int i = 0; i < allRelationships.size(); i++) {
                     QContactRelationship currRelationship = allRelationships.at(i);
-                    if (r->relationshipType() == QString() || r->relationshipType() == currRelationship.relationshipType()) {
+                    if (r->relationshipType() == currRelationship.relationshipType()) {
                         requestedRelationships.append(currRelationship);
                     }
                 }
@@ -888,11 +865,11 @@ void QContactMemoryEngine::performAsynchronousOperation()
                 requestedRelationships.clear();
                 for (int i = 0; i < allRelationships.size(); i++) {
                     QContactRelationship currRelationship = allRelationships.at(i);
-                    if ((r->participantRole() == QContactRelationshipFilter::Either || r->participantRole() == QContactRelationshipFilter::Destination)
-                            && currRelationship.destinationContacts().contains(r->participant())) {
+                    if ((r->participantRole() == QContactRelationshipFilter::Either || r->participantRole() == QContactRelationshipFilter::Second)
+                            && currRelationship.second() == r->participant()) {
                         requestedRelationships.append(currRelationship);
-                    } else if ((r->participantRole() == QContactRelationshipFilter::Either || r->participantRole() == QContactRelationshipFilter::Source)
-                            && (currRelationship.sourceContact() == r->participant().localId() && r->participant().managerUri() == myUri)) {
+                    } else if ((r->participantRole() == QContactRelationshipFilter::Either || r->participantRole() == QContactRelationshipFilter::First)
+                            && currRelationship.first() == r->participant()) {
                         requestedRelationships.append(currRelationship);
                     }
                 }
@@ -908,15 +885,20 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QContactRelationshipRemoveRequest* r = static_cast<QContactRelationshipRemoveRequest*>(currentRequest);
             QContactManager::Error operationError = QContactManager::NoError;
             QList<QContactManager::Error> operationErrors;
-            QList<QContactRelationship> matchingRelationships = relationships(r->sourceContact(), r->relationshipType(), operationError);
+            QList<QContactRelationship> matchingRelationships = relationships(r->relationshipType(), r->first(), QContactRelationshipFilter::First, operationError);
 
             for (int i = 0; i < matchingRelationships.size(); i++) {
                 QContactManager::Error tempError;
-                removeRelationship(matchingRelationships.at(i), tempError);
-                operationErrors.append(tempError);
+                QContactRelationship possibleMatch = matchingRelationships.at(i);
 
-                if (tempError != QContactManager::NoError)
-                    operationError = tempError;
+                // if the second criteria matches, or is default constructed id, then we have a match and should remove it.
+                if (r->second() == QContactId() || possibleMatch.second() == r->second()) {
+                    removeRelationship(matchingRelationships.at(i), tempError);
+                    operationErrors.append(tempError);
+
+                    if (tempError != QContactManager::NoError)
+                        operationError = tempError;
+                }
             }
 
             // there are no results, so just update the status with the error.

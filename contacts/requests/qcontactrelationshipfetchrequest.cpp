@@ -61,19 +61,19 @@ QContactRelationshipFetchRequest::~QContactRelationshipFetchRequest()
 }
 
 /*! Sets the source contact criterion of the fetch request to \a contactId.
- *  If \a contactId is the zero id, or the source contact is not set,
- *  the request will fetch relationships involving any source contact. */
-void QContactRelationshipFetchRequest::setSourceContact(const QContactLocalId& contactId)
+ *  If \a contactId is the default-constructed id, or the first contact is not set,
+ *  the request will fetch relationships involving any first contact. */
+void QContactRelationshipFetchRequest::setFirst(const QContactId& contactId)
 {
     Q_D(QContactRelationshipFetchRequest);
-    d->m_sourceContact = contactId;
+    d->m_first = contactId;
 }
 
 /*! Returns the source contact criterion of the fetch request */
-QContactLocalId QContactRelationshipFetchRequest::sourceContact() const
+QContactId QContactRelationshipFetchRequest::first() const
 {
     Q_D(const QContactRelationshipFetchRequest);
-    return d->m_sourceContact;
+    return d->m_first;
 }
 
 /*! Sets the relationship type criterion of the fetch request to \a relationshipType.
