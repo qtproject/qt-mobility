@@ -43,6 +43,7 @@
 #include <multimedia/qmediarecordercontrol.h>
 #include <multimedia/qimageprocessingcontrol.h>
 #include <multimedia/qimagecapturecontrol.h>
+#include <multimedia/qvideodevicecontrol.h>
 
 /*!
     \class QCamera
@@ -147,58 +148,6 @@ QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
 {
     Q_D(QCamera);
     d->initControls();
-    /*
-
-    if (d->service) {
-        d->control = qobject_cast<QCameraControl *>(d->service->control(QCameraControl_iid));
-        d->exposureControl = qobject_cast<QCameraExposureControl *>(d->service->control(QCameraExposureControl_iid));
-        d->focusControl = qobject_cast<QCameraFocusControl *>(d->service->control(QCameraFocusControl_iid));
-        d->imageControl = qobject_cast<QImageProcessingControl *>(d->service->control(QImageProcessingControl_iid));
-        d->captureControl = qobject_cast<QImageCaptureControl *>(d->service->control(QImageCaptureControl_iid));
-
-        connect(d->control, SIGNAL(stateChanged(QCamera::State)), this, SIGNAL(stateChanged(QCamera::State)));
-        connect(d->control, SIGNAL(error(int,QString)), SLOT(_q_error(int,QString)));
-
-        d->error = NoError;
-    } else {
-        d->control = 0;
-        d->exposureControl = 0;
-        d->focusControl = 0;
-        d->imageControl = 0;
-        d->captureControl = 0;
-
-        d->error = ServiceMissingError;
-        d->errorString = tr("The camera service is missing");
-    }
-
-    if (d->exposureControl) {
-        connect(d->exposureControl, SIGNAL(flashReady(bool)), this, SIGNAL(flashReady(bool)));
-        connect(d->exposureControl, SIGNAL(exposureLocked()), this, SIGNAL(exposureLocked()));
-
-        connect(d->exposureControl, SIGNAL(apertureChanged(qreal)),
-                this, SIGNAL(apertureChanged(qreal)));
-        connect(d->exposureControl, SIGNAL(apertureRangeChanged()),
-                this, SIGNAL(apertureRangeChanged()));
-        connect(d->exposureControl, SIGNAL(shutterSpeedChanged(qreal)),
-                this, SIGNAL(shutterSpeedChanged(qreal)));
-        connect(d->exposureControl, SIGNAL(isoSensitivityChanged(int)),
-                this, SIGNAL(isoSensitivityChanged(int)));
-    }
-
-    if (d->focusControl) {
-        connect(d->focusControl, SIGNAL(focusStatusChanged(QCamera::FocusStatus)),
-                this, SIGNAL(focusStatusChanged(QCamera::FocusStatus)));
-        connect(d->focusControl, SIGNAL(zoomValueChanged(qreal)), this, SIGNAL(zoomValueChanged(qreal)));
-        connect(d->focusControl, SIGNAL(focusLocked()), this, SIGNAL(focusLocked()));
-    }
-
-    if (d->captureControl) {
-        connect(d->captureControl, SIGNAL(imageCaptured(QString,QImage)),
-                this, SIGNAL(imageCaptured(QString,QImage)));
-        connect(d->captureControl, SIGNAL(readyForCaptureChanged(bool)),
-                this, SIGNAL(readyForCaptureChanged(bool)));
-    }
-    */
 }
 
 QCamera::QCamera(const QByteArray& device, QObject *parent):
@@ -207,6 +156,21 @@ QCamera::QCamera(const QByteArray& device, QObject *parent):
 {
     Q_D(QCamera);
     d->initControls();
+
+    //pass device name to service
+    QVideoDeviceControl *deviceControl =
+            qobject_cast<QVideoDeviceControl*>(d->service->control(QVideoDeviceControl_iid));
+
+    if (deviceControl) {
+        QString deviceName(device);
+
+        for (int i=0; i<deviceControl->deviceCount(); i++) {
+            if (deviceControl->name(i) == deviceName) {
+                deviceControl->setSelectedDevice(i);
+                break;
+            }
+        }
+    }
 }
 
 /*!
