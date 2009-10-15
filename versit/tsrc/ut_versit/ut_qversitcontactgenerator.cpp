@@ -269,17 +269,20 @@ void UT_QVersitContactGenerator::testEmail()
 
 void UT_QVersitContactGenerator::testUrl()
 {
-    QVersitDocument document;
     QVersitProperty property;
     property.setName(QString::fromAscii(versitUrlId));
     QByteArray value("http://www.simpsonsmovie.com/homer.html");
     property.setValue(value);
-    document.addProperty(property);
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitContextWorkId));    
+    QVersitDocument document = createDocumentWithProperty(property);    
     QContact contact = mGenerator->generateContact(document);
     QContactUrl url =
         static_cast<QContactUrl>(
             contact.detail(QContactUrl::DefinitionName));
     QCOMPARE(url.url(),QString::fromAscii(value));
+    const QStringList contexts = url.contexts();
+    QCOMPARE(contexts.count(),1);
+    QVERIFY(contexts.contains(QContactDetail::ContextWork));    
 }
 
 void UT_QVersitContactGenerator::testUid()

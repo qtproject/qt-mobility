@@ -256,6 +256,9 @@ QContactDetail* QVersitContactGenerator::createUrl(
 {
     QContactUrl* url = new QContactUrl();
     url->setUrl(QString::fromAscii(property.value()));
+    QStringList types = 
+        property.parameters().values(QString::fromAscii(versitType));    
+    url->setContexts(extractContexts(types));
     return url;
 }
 
