@@ -123,6 +123,7 @@ QString QMessageAccountId::toString() const
     QByteArray encodedId;
     QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
     encodedIdStream << d_ptr->_storeRecordKey;
+
     return encodedId.toBase64();
 }
 

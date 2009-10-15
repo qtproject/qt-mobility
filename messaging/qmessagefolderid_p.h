@@ -54,7 +54,7 @@ public:
 
 #ifdef _WIN32_WCE
     MapiEntryId _storeRecordKey;
-    static QMessageFolderId from(const MapiRecordKey &folderKey, const MapiEntryId &storeKey, const MapiEntryId &entryId = MapiEntryId());
+    static QMessageFolderId from(const MapiRecordKey &folderKey, const MapiEntryId &storeKey, const MapiEntryId &entryId);
     static MapiEntryId storeRecordKey(const QMessageFolderId &id);
 #else
     MapiRecordKey _storeRecordKey;

@@ -2424,6 +2424,19 @@ MapiFolderPtr MapiStore::openFolderWithKey(QMessageStore::ErrorCode *lastError, 
     return result;
 }
 
+bool MapiStore::supports(ULONG featureFlag) const
+{
+    LONG supportMask(0);
+
+    if (getMapiProperty(store(), PR_STORE_SUPPORT_MASK, &supportMask)) {
+        return supportMask & featureFlag;
+    }
+    else
+        qWarning() << "Unable to query store support mask.";
+
+    return false;
+}
+
 IMessage *MapiStore::openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId)
 {
     IMessage *message(0);
@@ -2596,22 +2609,19 @@ bool MapiStore::setAdviseSink(ULONG mask, IMAPIAdviseSink *sink)
 void MapiStore::notifyEvents(ULONG mask)
 {
     // Test whether this store supports notifications
-    ULONG supportMask(0);
-    if (getMapiProperty(_store, PR_STORE_SUPPORT_MASK, &supportMask)) {
-        if (supportMask & STORE_NOTIFY_OK) {
-            AdviseSink *sink(new AdviseSink(this));
-            if (setAdviseSink(mask, sink)) {
-                // sink will be deleted when the store releases it
-            } else {
-                delete sink;
-            }
+
+    if (supports(STORE_NOTIFY_OK)) {
+        AdviseSink *sink(new AdviseSink(this));
+        if (setAdviseSink(mask, sink)) {
+            // sink will be deleted when the store releases it
         } else {
-            qWarning() << "Store does not support notifications.";
+            delete sink;
         }
     } else {
-        qWarning() << "Unable to query store support mask.";
+        qWarning() << "Store does not support notifications.";
     }
-}
+
+ }
 
 HRESULT MapiStore::AdviseSink::QueryInterface(REFIID id, LPVOID FAR* o)
 {
@@ -2855,12 +2865,10 @@ QList<MapiStorePtr> MapiSession::allStores(QMessageStore::ErrorCode *lastError, 
                 MapiStorePtr store(openStore(lastError, entryId, cachedMode));
                 if (!store.isNull()) {
                     // We only want stores that contain private messages
-                    LONG supportMask(0);
-                    if (getMapiProperty(store->store(), PR_STORE_SUPPORT_MASK, &supportMask)) {
-                        if ((supportMask & STORE_PUBLIC_FOLDERS) == 0) {
-                            result.append(store);
-                        }
-                    }
+#ifndef _WIN32_WCE
+                    if(!store->supports(STORE_PUBLIC_FOLDERS))
+#endif
+                        result.append(store);
                 }
             }
         }
@@ -3610,26 +3618,21 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                 if (bodySubType.isEmpty()) {
                     if (!msg->d_ptr->_rtfInSync) {
                         // See if we need to sync the RTF
-                        ULONG supportMask(0);
-                        if (getMapiProperty(mapiStore->store(), PR_STORE_SUPPORT_MASK, &supportMask)) {
-                            if ((supportMask & STORE_RTF_OK) == 0) {
-                                BOOL updated(FALSE);
 #ifndef _WIN32_WCE
-                                HRESULT rv = RTFSync(message, RTF_SYNC_BODY_CHANGED, &updated);
-                                if (HR_SUCCEEDED(rv)) {
-                                    if (updated) {
-                                        if (HR_FAILED(message->SaveChanges(0))) {
-                                            qWarning() << "Unable to save changes after synchronizing RTF.";
-                                        }
+                        if (!mapiStore->supports(STORE_RTF_OK)) {
+                            BOOL updated(FALSE);
+                            HRESULT rv = RTFSync(message, RTF_SYNC_BODY_CHANGED, &updated);
+                            if (HR_SUCCEEDED(rv)) {
+                                if (updated) {
+                                    if (HR_FAILED(message->SaveChanges(0))) {
+                                        qWarning() << "Unable to save changes after synchronizing RTF.";
                                     }
-                                } else {
-                                    qWarning() << "Unable to synchronize RTF.";
                                 }
-#endif
+                            } else {
+                                qWarning() << "Unable to synchronize RTF.";
                             }
-                        } else {
-                            qWarning() << "Unable to query store support mask.";
                         }
+#endif
                     }
 
                     // Either the body is in RTF, or we need to read the RTF to know that it is text...

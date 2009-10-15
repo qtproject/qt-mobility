@@ -242,6 +242,8 @@ public:
     MapiFolderPtr openFolder(QMessageStore::ErrorCode *lastError, const MapiEntryId& id) const;
     MapiFolderPtr openFolderWithKey(QMessageStore::ErrorCode *lastError, const MapiRecordKey& key) const;
 
+    bool supports(ULONG featureFlag) const;
+
     bool isValid() const { return _valid; }
     QMessageAccountId id() const;
     MapiEntryId entryId() const { return _entryId; }

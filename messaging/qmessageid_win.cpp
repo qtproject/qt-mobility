@@ -170,15 +170,23 @@ QMessageId::QMessageId(const QString& id)
     : d_ptr(new QMessageIdPrivate(this))
 {
     QDataStream idStream(QByteArray::fromBase64(id.toLatin1()));
+
+#ifdef _WIN32_WCE
+    idStream >> d_ptr->_entryId;
+#else
     idStream >> d_ptr->_messageRecordKey;
+#endif
+
     idStream >> d_ptr->_folderRecordKey;
     idStream >> d_ptr->_storeRecordKey;
 
+#ifndef _WIN32_WCE
     QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
     MapiSessionPtr session(MapiSession::createSession(&ignoredError));
     if (ignoredError == QMessageStore::NoError) {
                 d_ptr->_entryId = session->messageEntryId(&ignoredError, d_ptr->_storeRecordKey, d_ptr->_folderRecordKey, d_ptr->_messageRecordKey);
     }
+#endif
 }
 
 QMessageId::~QMessageId()
@@ -255,7 +263,11 @@ QString QMessageId::toString() const
 
     QByteArray encodedId;
     QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
+#ifdef _WIN32_WCE
+    encodedIdStream << d_ptr->_entryId;
+#else
     encodedIdStream << d_ptr->_messageRecordKey;
+#endif
     encodedIdStream << d_ptr->_folderRecordKey;
     encodedIdStream << d_ptr->_storeRecordKey;
 

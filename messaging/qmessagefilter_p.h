@@ -132,7 +132,11 @@ private:
     SRestriction *_recipientRestriction;
     SPropValue *_keyProps;
     SRestriction *_restrictions;
+#ifdef _WIN32_WCE
+    MapiEntryId *_recordKeys;
+#else
     MapiRecordKey *_recordKeys;
+#endif
     bool _valid;
     bool _empty;
     MapiRestriction *_left;
