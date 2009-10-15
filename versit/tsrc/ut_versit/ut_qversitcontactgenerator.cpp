@@ -46,6 +46,7 @@
 #include <qcontacturl.h>
 #include <qcontactguid.h>
 #include <qcontactorganization.h>
+#include <qcontacttimestamp.h>
 
 
 void UT_QVersitContactGenerator::init()
@@ -288,6 +289,44 @@ void UT_QVersitContactGenerator::testUid()
         static_cast<QContactGuid>(
             contact.detail(QContactGuid::DefinitionName));
     QCOMPARE(uid.guid(),QString::fromAscii(value));    
+}
+
+void UT_QVersitContactGenerator::testTimeStamp()
+{
+    // Simple date : ISO 8601 extended format
+    QVersitProperty property;
+    property.setName(QString::fromAscii(versitRevisionId));    
+    QByteArray dateValue("1981-05-20");
+    property.setValue(dateValue);
+    QVersitDocument document = createDocumentWithProperty(property);
+    QContact contact = mGenerator->generateContact(document);
+    QContactTimestamp timeStamp =
+        static_cast<QContactTimestamp>(
+            contact.detail(QContactTimestamp::DefinitionName));    
+    QCOMPARE(timeStamp.lastModified().date().toString(Qt::ISODate),QString::fromAscii(dateValue));
+
+    // Date and Time : ISO 8601 extended format without utc offset
+    QByteArray dateAndTimeValue("1981-05-20T23:55:55");
+    property.setValue(dateAndTimeValue);
+    document = createDocumentWithProperty(property);
+    contact = mGenerator->generateContact(document);
+    timeStamp =
+        static_cast<QContactTimestamp>(
+            contact.detail(QContactTimestamp::DefinitionName));    
+    QCOMPARE(timeStamp.lastModified().toString(Qt::ISODate),QString::fromAscii(dateAndTimeValue));    
+
+    // Date and Time with utc offset    
+    QByteArray utcOffset = "Z";
+    QByteArray dateAndTimeWithUtcValue = dateAndTimeValue+utcOffset;
+    property.setValue(dateAndTimeWithUtcValue);
+    document = createDocumentWithProperty(property);
+    contact = mGenerator->generateContact(document);
+    timeStamp =
+        static_cast<QContactTimestamp>(
+            contact.detail(QContactTimestamp::DefinitionName));
+    QCOMPARE(timeStamp.lastModified().toString(Qt::ISODate),QString::fromAscii(dateAndTimeValue));
+    QCOMPARE(timeStamp.lastModified().timeSpec(),Qt::UTC);
+
 }
 
 void UT_QVersitContactGenerator::testExtractContexts()

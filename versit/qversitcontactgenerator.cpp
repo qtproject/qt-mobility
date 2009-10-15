@@ -58,6 +58,7 @@
 #include <qcontactorganization.h>
 #include <qcontacturl.h>
 #include <qcontactguid.h>
+#include <qcontacttimestamp.h>
 #include <QHash>
 
 
@@ -98,6 +99,9 @@ QContact QVersitContactGenerator::generateContact(
         }
         else if (property.name() == QString::fromAscii(versitUidId)) {
             detail = createUid(property);
+        }
+         else if (property.name() == QString::fromAscii(versitRevisionId)) {
+            detail = createTimeStamp(property);
         }
         else {
             // NOP
@@ -251,7 +255,7 @@ QContactDetail* QVersitContactGenerator::createUrl(
 }
 
 /*!
- * Creates a QContactGuid from \a property
+ * Creates a QContactUid from \a property
  */
 QContactDetail* QVersitContactGenerator::createUid(
     const QVersitProperty& property) const
@@ -259,6 +263,18 @@ QContactDetail* QVersitContactGenerator::createUid(
     QContactGuid* uid = new QContactGuid();
     uid->setGuid(QString::fromAscii(property.value()));
     return uid;
+}
+
+/*!
+ * Creates a QContactTimeStamp from \a property
+ */
+QContactDetail* QVersitContactGenerator::createTimeStamp(
+    const QVersitProperty& property) const
+{
+    QContactTimestamp* timeStamp = new QContactTimestamp();
+    QDateTime dateTime = QDateTime::fromString(QString::fromAscii(property.value()),Qt::ISODate);
+    timeStamp->setLastModified(dateTime);
+    return timeStamp;
 }
 
 /*!

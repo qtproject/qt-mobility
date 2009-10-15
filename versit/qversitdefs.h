@@ -49,6 +49,7 @@ const char versitUrlId[] = "URL";
 const char versitUidId[] = "UID";
 const char versitType[] = "TYPE";
 const char versitOrganizationId[] = "ORG";
+const char versitRevisionId[] = "REV";
 
 //Contexts:
 const char versitContextWorkId[] = "WORK";

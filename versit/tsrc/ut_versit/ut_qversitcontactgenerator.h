@@ -56,6 +56,7 @@ private slots: // Tests
     void testUid();
     void testExtractContexts();
     void testOrganization();
+    void testTimeStamp();
     
 private: 
     
