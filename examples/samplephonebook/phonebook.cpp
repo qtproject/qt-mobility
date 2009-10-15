@@ -329,8 +329,8 @@ void PhoneBook::displayContact()
     QList<QContactRelationship> relationships = cm->relationships(QContactRelationship::HasMember, contactUri);
     QList<QContactLocalId> currentGroups;
     foreach (const QContactRelationship& currRel, relationships) {
-        if (currRel.destinationContacts().contains(contactUri)) {
-            currentGroups.append(currRel.sourceContact());
+        if (currRel.second() == contactUri) {
+            currentGroups.append(currRel.first().localId());
         }
     }
     contactGroups = currentGroups;
