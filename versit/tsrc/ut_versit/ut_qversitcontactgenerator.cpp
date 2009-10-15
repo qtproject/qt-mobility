@@ -57,7 +57,7 @@ void UT_QVersitContactGenerator::cleanup()
    delete mGenerator;
 }
 
-void UT_QVersitContactGenerator::testCreateName()
+void UT_QVersitContactGenerator::testName()
 {
     QVersitDocument document;
     QVersitProperty nameProperty;
@@ -80,62 +80,60 @@ void UT_QVersitContactGenerator::testCreateName()
     QCOMPARE(name.suffix(),val[4]);
 }
 
-void UT_QVersitContactGenerator::testCreateAddress()
+void UT_QVersitContactGenerator::testAddress()
 {
+    QContact contact;
+    QVersitDocument document;
     QVersitProperty property;
-    property.setName(QString::fromAscii(versitNameId));   
+    property.setName(QString::fromAscii(versitAddressId)); 
     
     // Empty value for the address
-    QContactAddress* address = 
-        static_cast<QContactAddress*>(mGenerator->createAddress(property));
-    QVERIFY(address != 0);
-    QCOMPARE(address->postOfficeBox(),QString());
-    QCOMPARE(address->street(),QString());
-    QCOMPARE(address->locality(),QString());
-    QCOMPARE(address->region(),QString());
-    QCOMPARE(address->postcode(),QString());
-    QCOMPARE(address->country(),QString());
-    delete address;
-    address = 0;
+    document = createDocumentWithProperty(property);
+    contact = mGenerator->generateContact(document);
+    QContactAddress address = 
+        static_cast<QContactAddress>(contact.detail(QContactAddress::DefinitionName));
+    QCOMPARE(address.postOfficeBox(),QString());
+    QCOMPARE(address.street(),QString());
+    QCOMPARE(address.locality(),QString());
+    QCOMPARE(address.region(),QString());
+    QCOMPARE(address.postcode(),QString());
+    QCOMPARE(address.country(),QString());
     
     // Address with just seprators
     property.setValue(QByteArray(";;;;;;"));
-    address = static_cast<QContactAddress*>(mGenerator->createAddress(property));
-    QVERIFY(address != 0);
-    QCOMPARE(address->postOfficeBox(),QString());
-    QCOMPARE(address->street(),QString());
-    QCOMPARE(address->locality(),QString());
-    QCOMPARE(address->region(),QString());
-    QCOMPARE(address->postcode(),QString());
-    QCOMPARE(address->country(),QString());
-    delete address;
-    address = 0;     
+    document = createDocumentWithProperty(property);
+    contact = mGenerator->generateContact(document);
+    address = static_cast<QContactAddress>(contact.detail(QContactAddress::DefinitionName));
+    QCOMPARE(address.postOfficeBox(),QString());
+    QCOMPARE(address.street(),QString());
+    QCOMPARE(address.locality(),QString());
+    QCOMPARE(address.region(),QString());
+    QCOMPARE(address.postcode(),QString());
+    QCOMPARE(address.country(),QString());
     
     // Address with some fields missing
     property.setValue(QByteArray(";;My Street;My Town;;12345;"));
-    address = static_cast<QContactAddress*>(mGenerator->createAddress(property));
-    QVERIFY(address != 0);
-    QCOMPARE(address->postOfficeBox(),QString());
-    QCOMPARE(address->street(),QString::fromAscii("My Street"));
-    QCOMPARE(address->locality(),QString::fromAscii("My Town"));
-    QCOMPARE(address->region(),QString());
-    QCOMPARE(address->postcode(),QString::fromAscii("12345"));
-    QCOMPARE(address->country(),QString());
-    delete address;
-    address = 0;    
+    document = createDocumentWithProperty(property);
+    contact = mGenerator->generateContact(document);
+    address = static_cast<QContactAddress>(contact.detail(QContactAddress::DefinitionName));
+    QCOMPARE(address.postOfficeBox(),QString());
+    QCOMPARE(address.street(),QString::fromAscii("My Street"));
+    QCOMPARE(address.locality(),QString::fromAscii("My Town"));
+    QCOMPARE(address.region(),QString());
+    QCOMPARE(address.postcode(),QString::fromAscii("12345"));
+    QCOMPARE(address.country(),QString());
     
     // Address with all the fields filled
     property.setValue(QByteArray("PO Box;E;My Street;My Town;My State;12345;My Country"));
-    address = static_cast<QContactAddress*>(mGenerator->createAddress(property));
-    QVERIFY(address != 0);
-    QCOMPARE(address->postOfficeBox(),QString::fromAscii("PO Box"));
-    QCOMPARE(address->street(),QString::fromAscii("My Street"));
-    QCOMPARE(address->locality(),QString::fromAscii("My Town"));
-    QCOMPARE(address->region(),QString::fromAscii("My State"));
-    QCOMPARE(address->postcode(),QString::fromAscii("12345"));
-    QCOMPARE(address->country(),QString::fromAscii("My Country"));
-    delete address;
-    address = 0;    
+    document = createDocumentWithProperty(property);
+    contact = mGenerator->generateContact(document);
+    address = static_cast<QContactAddress>(contact.detail(QContactAddress::DefinitionName));
+    QCOMPARE(address.postOfficeBox(),QString::fromAscii("PO Box"));
+    QCOMPARE(address.street(),QString::fromAscii("My Street"));
+    QCOMPARE(address.locality(),QString::fromAscii("My Town"));
+    QCOMPARE(address.region(),QString::fromAscii("My State"));
+    QCOMPARE(address.postcode(),QString::fromAscii("12345"));
+    QCOMPARE(address.country(),QString::fromAscii("My Country"));
     
     // Address with TYPE parameters coverted to contexts and subtypes
     property.addParameter(QString::fromAscii(versitType),QString::fromAscii("HOME"));
@@ -144,22 +142,21 @@ void UT_QVersitContactGenerator::testCreateAddress()
     property.addParameter(QString::fromAscii(versitType),QString::fromAscii("INTL"));
     property.addParameter(QString::fromAscii(versitType),QString::fromAscii("POSTAL"));
     property.addParameter(QString::fromAscii(versitType),QString::fromAscii("PARCEL"));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("X-EXTENSION")); 
-    address = static_cast<QContactAddress*>(mGenerator->createAddress(property));
-    QVERIFY(address != 0);
-    QStringList contexts = address->contexts();
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("X-EXTENSION"));
+    document = createDocumentWithProperty(property);
+    contact = mGenerator->generateContact(document);
+    address = static_cast<QContactAddress>(contact.detail(QContactAddress::DefinitionName));
+    QStringList contexts = address.contexts();
     QVERIFY(contexts.contains(QContactDetail::ContextHome));   
     QVERIFY(contexts.contains(QContactDetail::ContextWork));
-    QStringList subTypes = address->subTypes();
+    QStringList subTypes = address.subTypes();
     QVERIFY(subTypes.contains(QContactAddress::SubTypeDomestic));
     QVERIFY(subTypes.contains(QContactAddress::SubTypeInternational));
     QVERIFY(subTypes.contains(QContactAddress::SubTypePostal));
     QVERIFY(subTypes.contains(QContactAddress::SubTypeParcel));
-    delete address;
-    address = 0;    
 }
 
-void UT_QVersitContactGenerator::testCreateTel()
+void UT_QVersitContactGenerator::testTel()
 {
     QVersitDocument document;
     QVersitProperty nameProperty;
@@ -196,7 +193,7 @@ void UT_QVersitContactGenerator::testCreateTel()
     QCOMPARE(contexts[1],QContactDetail::ContextHome.operator QString());
 }
 
-void UT_QVersitContactGenerator::testCreateEmail()
+void UT_QVersitContactGenerator::testEmail()
 {
     QVersitDocument document;
     QVersitProperty nameProperty;
@@ -211,7 +208,7 @@ void UT_QVersitContactGenerator::testCreateEmail()
     QCOMPARE(email.emailAddress(),QString(value));
 }
 
-void UT_QVersitContactGenerator::testCreateUrl()
+void UT_QVersitContactGenerator::testUrl()
 {
     QVersitDocument document;
     QVersitProperty nameProperty;
@@ -260,4 +257,12 @@ void UT_QVersitContactGenerator::testExtractContexts()
     QCOMPARE(result.count(),2);
     QVERIFY(result.contains(QContactDetail::ContextWork)); 
     QVERIFY(result.contains(QContactDetail::ContextHome));
+}
+
+QVersitDocument UT_QVersitContactGenerator::createDocumentWithProperty(
+    const QVersitProperty& property)
+{
+    QVersitDocument document;
+    document.addProperty(property);
+    return document;
 }

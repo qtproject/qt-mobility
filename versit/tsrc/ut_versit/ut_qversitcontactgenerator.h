@@ -35,6 +35,7 @@
 #define UT_QVERSITCONTACTGENERATOR_H
 
 #include <QObject>
+#include <qversitdocument.h>
 
 class QVersitContactGenerator;
 
@@ -46,14 +47,17 @@ private slots: // Tests
     
     void init();
     void cleanup();
-    // test functions
-    void testCreateName();
-    void testCreateAddress();
-    void testCreateTel();    
-    void testCreateEmail();
-    void testCreateUrl();
-    // test utilities
+    
+    void testName();
+    void testAddress();
+    void testTel();    
+    void testEmail();
+    void testUrl();
     void testExtractContexts();
+    
+private: 
+    
+    QVersitDocument createDocumentWithProperty(const QVersitProperty& property);
 
 private:
     QVersitContactGenerator* mGenerator;
