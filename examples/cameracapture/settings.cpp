@@ -2,6 +2,7 @@
 #include "ui_settings.h"
 
 #include <QtGui/qcombobox.h>
+#include <QtCore/qdebug.h>
 #include <multimedia/qmediarecorder.h>
 #include <multimedia/qmediaservice.h>
 
@@ -47,8 +48,8 @@ Settings::Settings(QMediaRecorder *mediaRecorder, QWidget *parent) :
     QList<QtMedia::FrameRate> supportedFrameRates = mediaRecorder->supportedFrameRates();
     QtMedia::FrameRate rate;
     foreach(rate, supportedFrameRates) {
-        ui->videoFramerateBox->addItem(QString("%1/%2").arg(rate.first).arg(rate.second),
-                                       QVariant::fromValue<QtMedia::FrameRate>(rate));
+        QString rateString = rate.second == 1 ? QString::number(rate.first) : QString("%1/%2").arg(rate.first).arg(rate.second);
+        ui->videoFramerateBox->addItem(rateString, QVariant::fromValue<QtMedia::FrameRate>(rate));
     }
 
     //containers
@@ -97,6 +98,7 @@ QVideoEncoderSettings Settings::videoSettings() const
     settings.setCodec(boxValue(ui->videoCodecBox).toString());
     settings.setQuality(QtMedia::EncodingQuality(ui->videoQualitySlider->value()));
     settings.setResolution(boxValue(ui->videoResolutionBox).toSize());
+    settings.setFrameRate(boxValue(ui->videoFramerateBox).value<QtMedia::FrameRate>());
 
     return settings;
 }
@@ -105,9 +107,16 @@ void Settings::setVideoSettings(const QVideoEncoderSettings &videoSettings)
 {
     selectComboBoxItem(ui->videoCodecBox, QVariant(videoSettings.codec()));
     selectComboBoxItem(ui->videoResolutionBox, QVariant(videoSettings.resolution()));
-    selectComboBoxItem(ui->videoFramerateBox,
-                       QVariant::fromValue<QtMedia::FrameRate>(videoSettings.frameRate()));
     ui->videoQualitySlider->setValue(videoSettings.quality());
+
+    //special case for frame rate
+    for (int i=0; i<ui->videoFramerateBox->count(); i++) {
+        QtMedia::FrameRate itemRate = ui->videoFramerateBox->itemData(i).value<QtMedia::FrameRate>();
+        if ( itemRate == videoSettings.frameRate()) {
+            ui->videoFramerateBox->setCurrentIndex(i);
+            break;
+        }
+    }
 }
 
 QString Settings::format() const
@@ -132,7 +141,9 @@ QVariant Settings::boxValue(const QComboBox *box) const
 void Settings::selectComboBoxItem(QComboBox *box, const QVariant &value)
 {
     for (int i=0; i<box->count(); i++) {
-        if (boxValue(box) == value)
+        if (box->itemData(i) == value) {
             box->setCurrentIndex(i);
+            break;
+        }
     }
 }
