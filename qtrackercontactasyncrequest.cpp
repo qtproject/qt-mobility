@@ -56,6 +56,14 @@ void applyFilterToRDFVariable(RDFVariable &variable,
                 // TODO figure out how to use filter, now only exact match
                 rdfEmailAddress.property<nco::emailAddress>() = LiteralValue(filt.value().toString());
             }
+            else if( QContactOnlineAccount::DefinitionName == filt.detailDefinitionName()
+                    && "Account" == filt.detailFieldName() )
+            {
+                RDFVariable imaccount = variable.property<nco::hasIMAccount>();
+                // TODO figure out how to use filter, now only exact match
+                imaccount.property<nco::imID>() = LiteralValue(filt.value().toString());
+            }
+
             else
                 warning() << "QContactTrackerEngine: Unsupported QContactFilter::ContactDetail" << filt.detailDefinitionName();
         }
