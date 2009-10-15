@@ -1211,7 +1211,7 @@ void tst_QContactAsync::relationshipFetch()
     QVERIFY(rfr.isFinished());
     QVERIFY(!rfr.isActive());
 
-    rels = cm->relationships(aId);
+    rels = cm->relationships(aId, QContactRelationshipFilter::First);
     result = rfr.relationships();
     QCOMPARE(rels, result);
 
@@ -1580,7 +1580,7 @@ void tst_QContactAsync::relationshipSave()
     QVERIFY(result.contains(testRel));
     QCOMPARE(cm->relationships(aId).size(), originalCount + 1); // should be one extra
 
-    // update a previously saved relationship
+    // save a new relationship
     testRel.setSecond(cId);
     saveList.clear();
     saveList << testRel;
@@ -1601,9 +1601,9 @@ void tst_QContactAsync::relationshipSave()
     expected.clear();
     expected = cm->relationships(QContactRelationship::IsSpouseOf, aId, QContactRelationshipFilter::First);
     result = rsr.relationships();
-    QCOMPARE(expected, result);
+    QCOMPARE(result, QList<QContactRelationship>() << testRel);
     QVERIFY(expected.contains(testRel));
-    QCOMPARE(cm->relationships(aId).size(), originalCount + 1); // should still only be one extra
+    QCOMPARE(cm->relationships(aId).size(), originalCount + 2); // should now be two extra
 
     // cancelling
     testRel.setSecond(aId); // shouldn't get saved (circular anyway)
@@ -1631,7 +1631,7 @@ void tst_QContactAsync::relationshipSave()
     // verify that the changes were not saved
     QList<QContactRelationship> aRels = cm->relationships(aId, QContactRelationshipFilter::First);
     QVERIFY(!aRels.contains(testRel));
-    QCOMPARE(cm->relationships(aId).size(), originalCount + 1); // should still only be one extra
+    QCOMPARE(cm->relationships(aId).size(), originalCount + 2); // should still only be two extra
 
     // restart, and wait for progress after cancel.
     QVERIFY(!rsr.cancel()); // not started
@@ -1654,7 +1654,7 @@ void tst_QContactAsync::relationshipSave()
     // verify that the changes were not saved
     aRels = cm->relationships(aId);
     QVERIFY(!aRels.contains(testRel));
-    QCOMPARE(cm->relationships(aId).size(), originalCount + 1); // should still only be one extra
+    QCOMPARE(cm->relationships(aId).size(), originalCount + 2); // should still only be two extra
 
     delete cm;
 }

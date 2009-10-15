@@ -2199,7 +2199,7 @@ void tst_QContactManager::relationships()
     customRelationshipOne.setSecond(dest1EmptyUri);
     customRelationshipOne.setRelationshipType(availableRelationshipTypes.at(0));
     QCOMPARE(customRelationshipOne.first(), source.id());
-    QCOMPARE(customRelationshipOne.second(), dest1Uri);
+    QCOMPARE(customRelationshipOne.second(), dest1EmptyUri);
     QVERIFY(customRelationshipOne.relationshipType() == availableRelationshipTypes.at(0));
 
     // save the relationship

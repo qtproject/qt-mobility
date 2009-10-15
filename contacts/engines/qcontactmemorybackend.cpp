@@ -47,8 +47,6 @@
 #include <QUuid>
 #include <QSharedData>
 
-#include <QDebug>
-
 /*!
  * \class QContactMemoryEngine
  * \brief This class provides an in-memory implementation of a contacts backend.
@@ -172,7 +170,7 @@ QContact QContactMemoryEngine::contact(const QContactLocalId& contactId, QContac
         // also, retrieve the current relationships the contact is involved with.
         QContactManager::Error relationshipError;
         QContactId participant;
-        participant.setManagerUri(QString());
+        participant.setManagerUri(managerUri());
         participant.setLocalId(contactId);
         QList<QContactRelationship> relationshipCache = relationships(QString(), participant, QContactRelationshipFilter::Either, relationshipError);
         QContactManagerEngine::setContactRelationships(&retn, relationshipCache);
