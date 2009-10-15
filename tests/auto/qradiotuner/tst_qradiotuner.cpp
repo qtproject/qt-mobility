@@ -208,16 +208,6 @@ public:
     QMediaControl   *mockControl;
 };
 
-class MockObject : public QMediaObject
-{
-    Q_OBJECT
-public:
-    MockObject(QObject *parent, QMediaService *service, QMediaControl *control):
-        QMediaObject(parent, service)
-    {
-    }
-};
-
 class MockProvider : public QMediaServiceProvider
 {
 public:
@@ -237,10 +227,12 @@ class tst_QRadioTuner: public QObject
     Q_OBJECT
 
 public slots:
-    void init();
-    void cleanup();
+    void initTestCase();
+    void cleanupTestCase();
 
 private slots:
+    void testNullService();
+    void testNullControl();
     void testBand();
     void testFrequency();
     void testMute();
@@ -250,27 +242,25 @@ private slots:
     void testStereo();
 
 private:
-    MockObject      *object;
     MockControl     *mock;
     MockService     *service;
     MockProvider    *provider;
     QRadioTuner    *radio;
 };
 
-void tst_QRadioTuner::init()
+void tst_QRadioTuner::initTestCase()
 {
     qRegisterMetaType<QRadioTuner::Band>("QRadioTuner::Band");
 
     mock = new MockControl(this);
     service = new MockService(this, mock);
-    object = new MockObject(this, service,  mock);
     provider = new MockProvider(service);
     radio = new QRadioTuner(0,provider);
     QVERIFY(radio->service() != 0);
     radio->start();
 }
 
-void tst_QRadioTuner::cleanup()
+void tst_QRadioTuner::cleanupTestCase()
 {
     QVERIFY(radio->error() == QRadioTuner::NoError);
     QVERIFY(radio->errorString().isEmpty());
@@ -279,6 +269,108 @@ void tst_QRadioTuner::cleanup()
     delete radio;
     delete service;
     delete provider;
+}
+
+void tst_QRadioTuner::testNullService()
+{
+    const QPair<int, int> nullRange(0, 0);
+
+    MockProvider provider(0);
+    QRadioTuner radio(0, &provider);
+
+    radio.start();
+    QCOMPARE(radio.error(), QRadioTuner::ResourceError);
+    QCOMPARE(radio.errorString(), QString());
+    QCOMPARE(radio.band(), QRadioTuner::FM);
+    QCOMPARE(radio.isBandSupported(QRadioTuner::AM), false);
+    QCOMPARE(radio.isBandSupported(QRadioTuner::FM), false);
+    QCOMPARE(radio.frequency(), 0);
+    QCOMPARE(radio.frequencyStep(QRadioTuner::AM), 0);
+    QCOMPARE(radio.frequencyStep(QRadioTuner::FM), 0);
+    QCOMPARE(radio.frequencyRange(QRadioTuner::AM), nullRange);
+    QCOMPARE(radio.frequencyRange(QRadioTuner::FM), nullRange);
+    QCOMPARE(radio.isStereo(), false);
+    QCOMPARE(radio.stereoMode(), QRadioTuner::Auto);
+    QCOMPARE(radio.signalStrength(), 0);
+    QCOMPARE(radio.volume(), 0);
+    QCOMPARE(radio.isMuted(), false);
+    QCOMPARE(radio.isSearching(), false);
+    radio.stop();
+}
+
+void tst_QRadioTuner::testNullControl()
+{
+    const QPair<int, int> nullRange(0, 0);
+
+    MockService service(0, 0);
+    MockProvider provider(&service);
+    QRadioTuner radio(0, &provider);
+
+    radio.start();
+
+    QCOMPARE(radio.error(), QRadioTuner::ResourceError);
+    QCOMPARE(radio.errorString(), QString());
+
+    QCOMPARE(radio.band(), QRadioTuner::FM);
+    QCOMPARE(radio.isBandSupported(QRadioTuner::AM), false);
+    QCOMPARE(radio.isBandSupported(QRadioTuner::FM), false);
+    QCOMPARE(radio.frequency(), 0);
+    QCOMPARE(radio.frequencyStep(QRadioTuner::AM), 0);
+    QCOMPARE(radio.frequencyStep(QRadioTuner::FM), 0);
+    QCOMPARE(radio.frequencyRange(QRadioTuner::AM), nullRange);
+    QCOMPARE(radio.frequencyRange(QRadioTuner::FM), nullRange);
+    {
+        QSignalSpy bandSpy(&radio, SIGNAL(bandChanged(QRadioTuner::Band)));
+        QSignalSpy frequencySpy(&radio, SIGNAL(frequencyChanged(int)));
+
+        radio.setFrequency(107500);
+        QCOMPARE(radio.band(), QRadioTuner::FM);
+        QCOMPARE(radio.frequency(), 0);
+        QCOMPARE(bandSpy.count(), 0);
+        QCOMPARE(frequencySpy.count(), 0);
+
+        radio.setBand(QRadioTuner::AM);
+        QCOMPARE(radio.band(), QRadioTuner::FM);
+        QCOMPARE(radio.frequency(), 0);
+        QCOMPARE(bandSpy.count(), 0);
+        QCOMPARE(frequencySpy.count(), 0);
+    }
+    QCOMPARE(radio.isStereo(), false);
+    QCOMPARE(radio.stereoMode(), QRadioTuner::Auto);
+    QCOMPARE(radio.signalStrength(), 0);
+
+    QCOMPARE(radio.volume(), 0);
+    QCOMPARE(radio.isMuted(), false);
+    {
+        QSignalSpy volumeSpy(&radio, SIGNAL(volumeChanged(int)));
+        QSignalSpy muteSpy(&radio, SIGNAL(mutingChanged(bool)));
+
+        radio.setVolume(76);
+        QCOMPARE(radio.volume(), 0);
+        QCOMPARE(volumeSpy.count(), 0);
+
+        radio.setMuted(true);
+        QCOMPARE(radio.isMuted(), false);
+        QCOMPARE(muteSpy.count(), 0);
+    }
+    QCOMPARE(radio.isSearching(), false);
+    {
+        QSignalSpy spy(&radio, SIGNAL(searchingStatusChanged(bool)));
+
+        radio.searchBackward();
+        QCOMPARE(radio.isSearching(), false);
+        QCOMPARE(spy.count(), 0);
+
+        radio.searchForward();
+        QCOMPARE(radio.isSearching(), false);
+        QCOMPARE(spy.count(), 0);
+
+        radio.cancelSearch();
+        QCOMPARE(radio.isSearching(), false);
+        QCOMPARE(spy.count(), 0);
+    }
+
+    radio.stop();
 }
 
 void tst_QRadioTuner::testBand()
