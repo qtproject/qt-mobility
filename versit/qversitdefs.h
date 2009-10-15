@@ -46,6 +46,7 @@ const char versitEmailId[] = "EMAIL";
 const char versitPhoneId[] = "TEL";
 const char versitAddressId[] = "ADR";
 const char versitUrlId[] = "URL";
+const char versitRevId[] = "REV";
 const char versitUidId[] = "UID";
 const char versitType[] = "TYPE";
 const char versitOrganizationId[] = "ORG";
@@ -66,6 +67,12 @@ const char versitCellId[] = "CELL";
 const char versitModemId[] = "MODEM";
 const char versitCarId[] = "CAR";
 const char versitVideoId[] = "VIDEO";
+
+
+//SubTypes for the URL
+const char versithomePageId[] = "HOMEPAGE";
+const char versitfavoriteIDId[] = "FAVOURITE";
+
 
 // Value separator
 const char versitValueSeparator[] = ",";

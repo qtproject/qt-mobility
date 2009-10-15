@@ -47,12 +47,15 @@ private slots:
     void init();
     void cleanup();
     void error();
-    void convertContacts();
-    void encodeName();
-    void encodePhoneNumber();
-    void encodeEmailAddress();
-    void encodeStreetAddress();
-    void encodeParameters();
+    void convertContact();
+
+    void testEncodeName();
+    void testEncodePhoneNumber();
+    void testEncodeEmailAddress();
+    void testEncodeStreetAddress();
+    void testEncodeUrl();
+    void testEncodeParameters();
+    void testEncodeUid();
     
 private: //Data
     QVersitContactConverter* mVersitContactConverter;

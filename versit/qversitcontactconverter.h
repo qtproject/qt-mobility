@@ -54,8 +54,8 @@ public:
 
     Error error() const;
 
-    // convert the list of contacts into a versit document.
-    QVersitDocument convertContacts(const QContact& contacts);
+    // convert contact into a versit document.
+    QVersitDocument convertContact(const QContact& contact);
     
 
 private: //Methods
@@ -66,6 +66,8 @@ private: //Methods
     void encodePhoneNumber(QVersitDocument& versitDocumen, const QContactDetail& detail );
     void encodeEmailAddress(QVersitDocument& versitDocumen, const QContactDetail& detail );
     void encodeStreetAddress(QVersitDocument& versitDocumen, const QContactDetail& detail );
+    void encodeUrl(QVersitDocument& versitDocumen, const QContactDetail& detail );
+    void encodeUid(QVersitDocument& versitDocumen, const QContactDetail& detail );
     
     const QHash<QString,QString>& getMappingTable();
 
