@@ -87,6 +87,9 @@ QContact QVersitContactGenerator::generateContact(
         else if (property.name() == QString::fromAscii(versitAddressId)) {
             detail = createAddress(property);
         }
+        else if (property.name() == QString::fromAscii(versitOrganizationId)) {
+            detail = createOrganization(property);
+        }
         else if (property.name() == QString::fromAscii(versitEmailId)) {
             detail = createEmail(property);
         }
@@ -95,7 +98,7 @@ QContact QVersitContactGenerator::generateContact(
         }
         else if (property.name() == QString::fromAscii(versitUidId)) {
             detail = createUid(property);
-        }        
+        }
         else {
             // NOP
         }
