@@ -52,6 +52,9 @@ private:
     QContactDetail* createName(const QVersitProperty& property) const;
     QContactDetail* createPhone(const QVersitProperty& property) const;
     QContactDetail* createAddress(const QVersitProperty& property) const;
+    QContactDetail* createEmail(const QVersitProperty& property) const;
+    QContactDetail* createUrl( const QVersitProperty& property) const;
+
     QStringList extractContexts(const QStringList& types) const;
     QString takeFirst(QList<QByteArray>& list) const;
     

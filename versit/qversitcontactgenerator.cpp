@@ -132,19 +132,19 @@ QContactDetail* QVersitContactGenerator::createPhone(
 
     QStringList subTypes;
     foreach (QString type, types){
-        if (type == versitVoiceId){
+        if (type == QString::fromAscii(versitVoiceId)){
             subTypes+=QContactPhoneNumber::SubTypeVoice;
         }
-        else if (type == versitCellId){
+        else if (type == QString::fromAscii(versitCellId)){
             subTypes+=QContactPhoneNumber::SubTypeMobile;
         }
-        else if (type == versitModemId){
+        else if (type == QString::fromAscii(versitModemId)){
             subTypes+=QContactPhoneNumber::SubTypeModem;
         }
-        else if (type == versitCarId){
+        else if (type == QString::fromAscii(versitCarId)){
             subTypes+=QContactPhoneNumber::SubTypeCar;
         }
-        else if (type == versitVideoId){
+        else if (type == QString::fromAscii(versitVideoId)){
             subTypes+=QContactPhoneNumber::SubTypeVideo;
         }
         else {
