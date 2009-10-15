@@ -758,4 +758,10 @@ QtMedia::SupportEstimate QMediaPlayer::canPlay(const QString &mimeType,
     Signal the amount of the local buffer filled as a percentage by \a percentFilled.
 */
 
+/*!
+    \enum QMediaPlayer::Flag
+
+    \value LowLatency   TODO
+*/
+
 #include "moc_qmediaplayer.cpp"

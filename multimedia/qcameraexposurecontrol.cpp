@@ -165,11 +165,16 @@ Set the metering mode to \a mode.
   Returns the ISO sensitivity, or -1 if unknown.
 */
 
+/*!
+  \fn int QCameraExposureControl::minimumIsoSensitivity() const
+
+  Returns the minimum iso sensitivity.
+*/
 
 /*!
-  \fn QPair<int, int> QCameraExposureControl::supportedIsoSensitivityRange() const
+  \fn QList<int> QCameraExposureControl::supportedIsoSenitivities() const
 
-  Returns the available sensitivity ranges.
+  Returns the available sensitivities.
 */
 
 
@@ -193,11 +198,16 @@ Set the metering mode to \a mode.
   Returns the aperture
 */
 
+/*!
+  \fn qreal QCameraExposureControl::minimumAperture() const
+
+  Returns the minimum aperture available.
+*/
 
 /*!
-  \fn QPair<qreal, qreal> QCameraExposureControl::supportedApertureRange() const
+  \fn QList<qreal> QCameraExposureControl::supportedApertures() const
 
-  Returns the supported aperture ranges.
+  Returns the supported apertures.
 */
 
 
@@ -222,11 +232,16 @@ Set the metering mode to \a mode.
   Returns the shutter speed
 */
 
+/*!
+  \fn qreal QCameraExposureControl::maximumShutterSpeed() const
+
+  Returns the maximum shutter speed.
+*/
 
 /*!
-  \fn QPair<qreal, qreal> QCameraExposureControl::supportedShutterSpeedRange() const
+  \fn QList<qreal> QCameraExposureControl::supportedShutterSpeeds() const
 
-  Returns the available shutter speed ranges.
+  Returns the available shutter speeds.
 */
 
 
@@ -262,3 +277,22 @@ Set the metering mode to \a mode.
 
     Signal emitted when flash state changes, flash is charged \a ready.
 */
+
+/*!
+    \fn void QCameraExposureControl::apertureChanged(qreal value)
+
+    Signal emitted when the aperture value has changed to \a value.
+*/
+
+/*!
+    \fn void QCameraExposureControl::apertureRangeChanged()
+
+    Signal emitted when the aperture range has changed.
+*/
+
+/*!
+    \fn void QCameraExposureControl::shutterSpeedChanged(qreal value)
+
+    Signal emitted when the shutter speed changes to \a value.
+*/
+

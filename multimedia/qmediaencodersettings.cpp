@@ -67,26 +67,51 @@ private:
 
 /*!
   \class QAudioEncoderSettings
+  \ingroup multimedia
+
+  \preliminary
+  \brief The QAudioEncoderSettings class is use to pass around audio stream information.
+
+*/
+
+/*!
+  Construct a QAudioEncoderSettings.
 */
 QAudioEncoderSettings::QAudioEncoderSettings()
     :d(new QAudioEncoderSettingsPrivate)
 {
 }
 
+/*!
+  Construct a QAudioEncoderSettings from \a other.
+*/
+
 QAudioEncoderSettings::QAudioEncoderSettings(const QAudioEncoderSettings& other)
     :d(other.d)
 {
 }
 
+/*!
+  Destroy this object.
+*/
+
 QAudioEncoderSettings::~QAudioEncoderSettings()
 {
 }
+
+/*!
+    Construst a QAudioEncoderSettings from \a other.
+*/
 
 QAudioEncoderSettings& QAudioEncoderSettings::operator=(const QAudioEncoderSettings &other)
 {
     d = other.d;
     return *this;
 }
+
+/*!
+    Return true if equal to current settings.
+*/
 
 bool QAudioEncoderSettings::operator==(const QAudioEncoderSettings &other) const
 {
@@ -98,10 +123,18 @@ bool QAudioEncoderSettings::operator==(const QAudioEncoderSettings &other) const
             d->codec == other.d->codec);
 }
 
+/*!
+    Return true if equal to current settings.
+*/
+
 bool QAudioEncoderSettings::operator!=(const QAudioEncoderSettings &other) const
 {
     return !(*this == other);
 }
+
+/*!
+  Returns true if a valid object.
+*/
 
 bool QAudioEncoderSettings::isNull() const
 {
@@ -306,7 +339,7 @@ QtMedia::FrameRate QVideoEncoderSettings::frameRate() const
 }
 
 /*!
-  \fn QVideoEncoderControl::setFrameRate(const QtMedia::FrameRate &rate)
+  \fn QVideoEncoderControl::setFrameRate(QtMedia::FrameRate &rate)
 
   Sets the video frame \a rate.
   If a null frame rate (equals to 0/0) is passed, the default value should be used.

@@ -248,8 +248,7 @@ QString QMediaRecorder::formatDescription(const QString &format) const
 }
 
 /*!
-  \property QMediaRecorder::format
-  \brief Conteiner format mime type.
+  Returns the mime type for the container.
 */
 
 QString QMediaRecorder::format() const
@@ -276,6 +275,10 @@ QString QMediaRecorder::audioCodecDescription(const QString &codec) const
            d_func()->audioControl->codecDescription(codec) : QString();
 }
 
+/*!
+    Returns a list of available audio sample rates.
+*/
+
 QList<int> QMediaRecorder::supportedAudioSampleRates() const
 {
     return d_func()->audioControl ?
@@ -283,16 +286,7 @@ QList<int> QMediaRecorder::supportedAudioSampleRates() const
 }
 
 /*!
-  \property QMediaRecorder::resolution
-  \brief Resolution of encoded video stream.
-
-  \sa minimumResolution(), maximumResolution(), supportedResolutions()
-*/
-
-/*!
   Returns the smallest resolution, video encoder supports.
-
-  \sa resolution
 */
 QSize QMediaRecorder::minimumResolution() const
 {
@@ -302,8 +296,6 @@ QSize QMediaRecorder::minimumResolution() const
 
 /*!
   Returns the largest resolution, video encoder supports.
-
-  \sa resolution
 */
 QSize QMediaRecorder::maximumResolution() const
 {
@@ -315,7 +307,7 @@ QSize QMediaRecorder::maximumResolution() const
   Returns the list of resolutions if the video encoder supports only the limited set
   of video frame sizes, otherwise returns an empty list.
 
-  \sa resolution(), minimumResolution(), maximumResolution()
+  \sa minimumResolution(), maximumResolution()
 */
 QList<QSize> QMediaRecorder::supportedResolutions() const
 {
@@ -325,8 +317,6 @@ QList<QSize> QMediaRecorder::supportedResolutions() const
 
 /*!
   Returns the smallest frame rate, video encoder supports.
-
-  \sa frameRate
 */
 QtMedia::FrameRate QMediaRecorder::minimumFrameRate()
 {
@@ -336,8 +326,6 @@ QtMedia::FrameRate QMediaRecorder::minimumFrameRate()
 
 /*!
   Returns the largest frame rate, video encoder supports.
-
-  \sa frameRate
 */
 QtMedia::FrameRate QMediaRecorder::maximumFrameRate()
 {
@@ -348,8 +336,6 @@ QtMedia::FrameRate QMediaRecorder::maximumFrameRate()
 /*!
   Returns the list of frame rates if the video encoder supports only the limited set
   of video frame rates, otherwise returns an empty list.
-
-  \sa frameRate
 */
 QList< QtMedia::FrameRate > QMediaRecorder::supportedFrameRates() const
 {
@@ -377,15 +363,8 @@ QString QMediaRecorder::videoCodecDescription(const QString &codec) const
 }
 
 /*!
-  \property QMediaRecorder::videoQuality
-  \brief Video quality value.
-
-  Quality of encoded video stream.
-
-  Depending on codec, the quality property may affect
-  different parameters, like bitrate or presets.
+    Returns the audio encoding settings being used.
 */
-
 
 QAudioEncoderSettings QMediaRecorder::audioSettings() const
 {
@@ -403,6 +382,10 @@ QAudioEncoderSettings QMediaRecorder::audioSettings() const
     return audioSettings;
 }
 
+/*!
+    Returns th video encoding settings being used.
+*/
+
 QVideoEncoderSettings QMediaRecorder::videoSettings() const
 {
     QVideoEncoderSettings videoSettings;
@@ -417,6 +400,10 @@ QVideoEncoderSettings QMediaRecorder::videoSettings() const
 
     return videoSettings;
 }
+
+/*!
+    Configure the mediarecorder to use \a audioSettings, \a videoSettings and \a format.
+*/
 
 void QMediaRecorder::setEncodingSettings(const QAudioEncoderSettings &audioSettings,
                                          const QVideoEncoderSettings &videoSettings,
