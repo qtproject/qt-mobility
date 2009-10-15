@@ -240,7 +240,7 @@ void UT_QVersitContactConvertert::testEncodeUrl()
     QCOMPARE(1, myVersitDocument.properties().at(0).parameters().count());
 
     //Ensure Valid parameters exisit
-    QVERIFY(myVersitDocument.properties().at(0).parameters().contains("HOMEPAGE"));
+    QVERIFY(myVersitDocument.properties().at(0).parameters().contains("TYPE", "HOMEPAGE"));
 
     //Ensure valud value exist for the parameters.
 
@@ -315,7 +315,7 @@ void UT_QVersitContactConvertert::testEncodeParameters()
     QCOMPARE(2, myVersitDocument.properties().at(0).parameters().count());
 
     //Ensure Valid parameters exisit
-    QVERIFY(myVersitDocument.properties().at(0).parameters().contains("CELL"));
-    QVERIFY(myVersitDocument.properties().at(0).parameters().contains("VIDEO"));
+    QVERIFY(myVersitDocument.properties().at(0).parameters().contains("TYPE", "CELL"));
+    QVERIFY(myVersitDocument.properties().at(0).parameters().contains("TYPE", "VIDEO"));
 }
 

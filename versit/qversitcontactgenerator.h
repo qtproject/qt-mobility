@@ -34,12 +34,14 @@
 #ifndef QVERSITCONTACTGENERATOR_H
 #define QVERSITCONTACTGENERATOR_H
 
-#include "qcontact.h"
-#include "qversitdocument.h"
+#include <qtversitglobal.h>
+#include <qversitdocument.h>
+#include <qcontact.h>
+
 
 class QVersitContactGeneratorPrivate;
 
-class QVersitContactGenerator
+class QTVERSIT_EXPORT QVersitContactGenerator
 {
 public:
     QVersitContactGenerator();
