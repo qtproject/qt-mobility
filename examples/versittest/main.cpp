@@ -36,13 +36,19 @@
 
 #include <QtTest/QtTest>
 
-int main(int /*argc*/, char** /*argv[]*/)
+int main(int argc, char** argv)
 {   
+    bool saveContacts = false; 
+    for (int i=0; i < argc; i++) {
+        QString argStr(QString::fromAscii(argv[i]));
+        if (argStr == QString::fromAscii("save"))
+            saveContacts = true;
+    }
     TestResultXmlParser parser;
     QString resultFileName("c:/QVersitTestResults.xml");
     QStringList args;
     printf("Running tests...\n");
-    VersitTest versitTest;
+    VersitTest versitTest(saveContacts);
     args << "versittest" << "-xml" << "-o" << resultFileName;
     QTest::qExec(&versitTest, args);
     parser.parseAndPrintResults(resultFileName,true);
