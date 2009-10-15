@@ -170,7 +170,7 @@ To build the library, run \tt qmake and \tt make.
     \o \l{QContactDetailDefinition}
     \o \l{QContactDetail}
     \o \l{QContact}
-    \o \l{QContactGroup}
+    \o \l{QContactRelationship}
     \o \l{QContactAction}
 \endlist
 
@@ -213,12 +213,12 @@ Clients may use either the synchronous or asynchronous API to access functionali
 The asynchronous API is offered through subclasses of the \l{QContactAbstractRequest} class:
 \list
     \o \l {QContactFetchRequest}
-    \o \l {QContactIdFetchRequest}
+    \o \l {QContactLocalIdFetchRequest}
     \o \l {QContactRemoveRequest}
     \o \l {QContactSaveRequest}
-    \o \l {QContactGroupFetchRequest}
-    \o \l {QContactGroupRemoveRequest}
-    \o \l {QContactGroupSaveRequest}
+    \o \l {QContactRelationshipFetchRequest}
+    \o \l {QContactRelationshipRemoveRequest}
+    \o \l {QContactRelationshipSaveRequest}
     \o \l {QContactDetailDefinitionFetchRequest}
     \o \l {QContactDetailDefinitionRemoveRequest}
     \o \l {QContactDetailDefinitionSaveRequest}
@@ -234,8 +234,8 @@ and flexible selection of contacts according to various criteria:
     \o \l {QContactChangeLogFilter}
     \o \l {QContactDetailFilter}
     \o \l {QContactDetailRangeFilter}
-    \o \l {QContactGroupMembershipFilter}
-    \o \l {QContactIdListFilter}
+    \o \l {QContactRelationshipFilter}
+    \o \l {QContactLocalIdFilter}
     \o \l {QContactIntersectionFilter}
     \o \l {QContactInvalidFilter}
     \o \l {QContactUnionFilter}
