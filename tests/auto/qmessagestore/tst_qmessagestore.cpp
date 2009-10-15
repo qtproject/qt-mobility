@@ -537,7 +537,7 @@ void tst_QMessageStore::testMessage()
 #ifndef Q_OS_WIN
     // Filters not yet implemented on windows
     QCOMPARE(catcher.added.first().second.count(), 2);
-    QCOMPARE(catcher.added.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2.id << filter3.id);
+    QCOMPARE(catcher.added.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2->id << filter3->id);
 #endif
 
     QMessage message(messageId);
@@ -622,7 +622,7 @@ void tst_QMessageStore::testMessage()
 #ifndef Q_OS_WIN
     // Filters not yet implemented on windows
     QCOMPARE(catcher.updated.first().second.count(), 2);
-    QCOMPARE(catcher.updated.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2.id << filter3.id);
+    QCOMPARE(catcher.updated.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2->id << filter3->id);
 #endif
 
     QMessage updated(message.id());
@@ -658,7 +658,7 @@ void tst_QMessageStore::testMessage()
 #ifndef Q_OS_WIN
     // Filters not yet implemented on windows
     QCOMPARE(removeCatcher.removed.first().second.count(), 1);
-    QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageStore::NotificationFilterId>() << filter3.id);
+    QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageStore::NotificationFilterId>() << filter3->id);
 #endif
 }
 
