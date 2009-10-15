@@ -302,6 +302,7 @@ void V4LCameraSession::setFrameSize(const QSize& s)
 
 void V4LCameraSession::setDevice(const QString &device)
 {
+    qWarning()<<"setDevice: "<<device;
     available = false;
     m_state = QCamera::StoppedState;
     m_device = QByteArray(device.toLocal8Bit().constData());

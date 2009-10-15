@@ -32,6 +32,7 @@
 **
 ****************************************************************************/
 
+#include <QFile>
 #include <QtGui/QIcon>
 #include "v4lvideodevicecontrol.h"
 #include "v4lcamerasession.h"
@@ -40,24 +41,51 @@ V4LVideoDeviceControl::V4LVideoDeviceControl(QObject *parent)
     : QVideoDeviceControl(parent)
 {
     m_session = qobject_cast<V4LCameraSession*>(parent);
+
+    QString name;
+    QFile video0("/sys/class/video4linux/video0/name");
+    if (video0.exists()) {
+        devices.append("dev/video0");
+        char str[30];
+        memset(str,0,30);
+        video0.open(QIODevice::ReadOnly);
+        video0.read(str,30);
+        name = QString(str);
+        descriptions.append(name.simplified());
+        video0.close();
+    }
+
+    QFile video1("/sys/class/video4linux/video1/name");
+    if (video0.exists()) {
+        devices.append("dev/video1");
+        char str[30];
+        memset(str,0,30);
+        video1.open(QIODevice::ReadOnly);
+        video1.read(str,30);
+        name = QString(str);
+        descriptions.append(name.simplified());
+        video1.close();
+    }
+    selected = 0;
 }
 
 int V4LVideoDeviceControl::deviceCount() const
 {
-    return 0;
+    return devices.count();
 }
 
 QString V4LVideoDeviceControl::name(int index) const
 {
-    if(index == 0)
-        return QString("Camera capture device");
+    if(index >= 0 && index <= devices.count())
+        return devices.at(index);
 
     return QString();
 }
 
 QString V4LVideoDeviceControl::description(int index) const
 {
-    Q_UNUSED(index)
+    if(index >= 0 && index <= descriptions.count())
+        return descriptions.at(index);
 
     return QString();
 }
@@ -76,11 +104,15 @@ int V4LVideoDeviceControl::defaultDevice() const
 
 int V4LVideoDeviceControl::selectedDevice() const
 {
-    return 0;
+    return selected;
 }
 
 void V4LVideoDeviceControl::setSelectedDevice(int index)
 {
-    Q_UNUSED(index)
+    if(index >= 0 && index <= devices.count()) {
+        if (m_session)
+            m_session->setDevice(devices.at(index));
+        selected = index;
+    }
 }
 

@@ -57,6 +57,11 @@ public Q_SLOTS:
 
 private:
     V4LCameraSession* m_session;
+
+    QList<QString> devices;
+    QList<QString> descriptions;
+
+    int selected;
 };
 
 #endif

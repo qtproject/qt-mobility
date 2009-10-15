@@ -34,6 +34,7 @@
 
 #include <QtCore/qstring.h>
 #include <QtCore/qdebug.h>
+#include <QtCore/QFile>
 
 #include "v4lserviceplugin.h"
 #include "v4lcameraservice.h"
@@ -63,6 +64,64 @@ void V4LServicePlugin::release(QMediaService *service)
 {
     delete service;
 }
+
+QList<QByteArray> V4LServicePlugin::devices(const QByteArray &service) const
+{
+    if (service == "camera") {
+        if (m_cameraDevices.isEmpty())
+            updateDevices();
+
+        return m_cameraDevices;
+    }
+
+    return QList<QByteArray>();
+}
+
+QString V4LServicePlugin::deviceDescription(const QByteArray &service, const QByteArray &device)
+{
+    if (service == "camera") {
+        if (m_cameraDevices.isEmpty())
+            updateDevices();
+
+        for (int i=0; i<m_cameraDevices.count(); i++)
+            if (m_cameraDevices[i] == device)
+                return m_cameraDescriptions[i];
+    }
+
+    return QString();
+}
+
+void V4LServicePlugin::updateDevices() const
+{
+    m_cameraDevices.clear();
+    m_cameraDescriptions.clear();
+
+    QString name;
+    QFile video0("/sys/class/video4linux/video0/name");
+    if (video0.exists()) {
+        m_cameraDevices.append("dev/video0");
+        char str[30];
+        memset(str,0,30);
+        video0.open(QIODevice::ReadOnly);
+        video0.read(str,30);
+        name = QString(str);
+        m_cameraDescriptions.append(name.simplified());
+        video0.close();
+    }
+
+    QFile video1("/sys/class/video4linux/video1/name");
+    if (video0.exists()) {
+        m_cameraDevices.append("dev/video1");
+        char str[30];
+        memset(str,0,30);
+        video1.open(QIODevice::ReadOnly);
+        video1.read(str,30);
+        name = QString(str);
+        m_cameraDescriptions.append(name.simplified());
+        video1.close();
+    }
+}
+
 
 Q_EXPORT_PLUGIN2(v4lengine, V4LServicePlugin);
 
