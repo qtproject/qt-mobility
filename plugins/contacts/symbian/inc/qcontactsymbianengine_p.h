@@ -73,12 +73,6 @@ public:
     QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& qtError) const;
     int count() const;
 
-    /* "My card" */
-    QContactLocalId personalID() const;
-    bool hasPersonalDetails() const; //is this needed, QContactLocalId could be 0 if it doesn't exist
-    int setPersonalContactId(const QContactLocalId &);
-    void clearPersonalContactId();
-
     /* Add/Update/Remove */
     bool addContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
     bool updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
