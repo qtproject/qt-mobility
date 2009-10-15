@@ -49,8 +49,8 @@ class QTCONTACTS_EXPORT QContactRelationship
 {
 public:
 #ifdef Q_QDOC
-    const char* IsMemberOf;
-    const char* IsAggregatedBy;
+    const char* HasMember;
+    const char* Aggregates;
     const char* Is;
     const char* IsAssistantOf;
     const char* IsManagerOf;

@@ -138,6 +138,11 @@ bool QContactRelationship::operator==(const QContactRelationship &other) const
 }
 
 /*!
+ * \fn QContactRelationship::operator!=(const QContactRelationship& other) const
+ * Returns true if this relationship is not equal to \a other, otherwise returns false.
+ */
+
+/*!
  * Returns the id of the locally-stored contact which has a relationship of the given type with the second contact
  * \sa relationshipType(), second(), setFirst()
  */
@@ -165,7 +170,7 @@ QString QContactRelationship::relationshipType() const
 }
 
 /*!
- * Sets the id of the first contact in the relationship to \a id.  This contact
+ * Sets the id of the first contact in the relationship to \a firstId.  This contact
  * must be stored in the manager in which the relationship is stored, and has
  * a relationship of the specified type with the second contact.
  * \sa first()

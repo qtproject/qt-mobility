@@ -57,7 +57,7 @@ QContactRelationshipSaveRequest::~QContactRelationshipSaveRequest()
 {
 }
 
-/*! Sets the definitions to save to be \a definitions */
+/*! Sets the relationships to save to be \a contactRelationships */
 void QContactRelationshipSaveRequest::setRelationships(const QList<QContactRelationship>& contactRelationships)
 {
     Q_D(QContactRelationshipSaveRequest);

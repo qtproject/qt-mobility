@@ -60,6 +60,11 @@
  */
 
 /*!
+ * \fn QList<T> QContact::details(const QString& fieldName, const QString& value) const
+ * Returns a list of details of the template type which match the \a fieldName and \a value criteria
+ */
+
+/*!
  * \fn T QContact::detail() const
  * Returns the first detail of the template type
  */

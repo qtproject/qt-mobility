@@ -57,6 +57,8 @@
  * This enum describes the possible features that a particular manager may support
  * \value Groups The manager supports all QContactGroup related operations, and emits the appropriate signals
  * \value ActionPreferences The manager supports saving preferred details per action per contact
+ * \value Relationships The manager supports at least some types of relationships between contacts
+ * \value ArbitraryRelationshipTypes The manager supports relationships of arbitrary types between contacts
  * \value MutableDefinitions The manager supports saving, updating or removing detail definitions.  Some built-in definitions may still be immutable
  * \value SelfContact The manager supports the concept of saving a contact which represents the current user
  * \value Anonymous The manager is isolated from other managers

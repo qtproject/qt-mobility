@@ -42,7 +42,6 @@
  * and the local id of the contact in that manager.
  */
 
-
 /*!
  * Constructs a new contact id
  */
@@ -58,17 +57,20 @@ QContactId::~QContactId()
 {
 }
 
+/*! Constructs a new contact id as a copy of \a other */
 QContactId::QContactId(const QContactId& other)
         : d(other.d)
 {
 }
 
+/*! Assigns the contact id to be equal to \a other */
 QContactId& QContactId::operator=(const QContactId& other)
 {
     d = other.d;
     return *this;
 }
 
+/*! Returns true if the contact id has the same manager URI and local id as \a other */
 bool QContactId::operator==(const QContactId& other) const
 {
     if (d->m_managerUri != other.d->m_managerUri)
@@ -78,6 +80,7 @@ bool QContactId::operator==(const QContactId& other) const
     return true;
 }
 
+/*! Returns true if either the manager URI or local id of the contact id is different to that of \a other */
 bool QContactId::operator!=(const QContactId& other) const
 {
     return !(*this == other);

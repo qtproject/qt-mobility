@@ -45,6 +45,14 @@
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactRelationshipFilter)
 
 /*!
+ * \enum QContactRelationshipFilter::Role
+ * Describes the roles that a contact may take in a relationship
+ * \value First The contact is the first contact in the relationship
+ * \value Second The contact is the second contact in the relationship
+ * \value Either The contact is either the first or second contact in the relationship
+ */
+
+/*!
  * \fn QContactRelationshipFilter::QContactRelationshipFilter(const QContactFilter& other)
  * Constructs a copy of \a other if possible, else constructs a new QContactRelationshipFilter.
  */
