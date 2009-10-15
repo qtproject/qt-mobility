@@ -608,13 +608,13 @@ void tst_QContactFilter::relationshipFilter()
     QVERIFY(crf.relationshipType() == QString());
     QVERIFY(crf.otherParticipantId() == newId);
 
-    crf.setRole(QContactRelationshipFilter::Source);
-    QVERIFY(crf.role() == QContactRelationshipFilter::Source);
+    crf.setRole(QContactRelationshipFilter::First);
+    QVERIFY(crf.role() == QContactRelationshipFilter::First);
     QVERIFY(crf.relationshipType() == QString());
     QVERIFY(crf.otherParticipantId() == newId);
 
     crf.setRelationshipType(QContactRelationship::IsManagerOf);
-    QVERIFY(crf.role() == QContactRelationshipFilter::Source);
+    QVERIFY(crf.role() == QContactRelationshipFilter::First);
     QVERIFY(crf.relationshipType() == QContactRelationship::IsManagerOf);
     QVERIFY(crf.otherParticipantId() == newId);
 
