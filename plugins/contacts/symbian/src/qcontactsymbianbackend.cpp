@@ -221,13 +221,14 @@ void QContactSymbianEngine::slowFilter(
 bool QContactSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error)
 {
     bool ret = false;
-    if (contact->id()->managerUri() == managerUri() && contact->localId()) { //save contact
+    if (contact->id().managerUri() == managerUri() && contact->localId()) { //save contact
         ret = d->updateContact(*contact, changeSet, error);
         if (ret)
             updateDisplayLabel(*contact);
     }
     else { //create new contact
         QContactId newId;
+        newId.setManagerUri(managerUri());
         contact->setId(newId);
         ret = d->addContact(*contact, changeSet, error);
         if (ret) {
@@ -285,6 +286,7 @@ QList<QContactManager::Error> QContactSymbianEngine::removeContacts(QList<QConta
     return ret;
 }
 
+#if 0
 QList<QContactLocalId> QContactSymbianEngine::groups(QContactManager::Error& error) const
 {
 	return d->groups(error);
@@ -324,6 +326,7 @@ bool QContactSymbianEngine::removeGroup(const QContactLocalId& groupId, QContact
     changeSet.emitSignals(this);
     return ret;
 }
+#endif
 
 QMap<QString, QContactDetailDefinition> QContactSymbianEngine::detailDefinitions(QContactManager::Error& error) const
 {
@@ -455,6 +458,7 @@ void QContactSymbianEngine::eventContactChanged(const QContactLocalId &contactId
 	emit contactsChanged(contactList);
 }
 
+#if 0
 /*!
  * Private slot to receive events about added groups.
  *
@@ -493,7 +497,7 @@ void QContactSymbianEngine::eventGroupChanged(const QContactLocalId &groupId)
 
 	emit groupsChanged(groupList);
 }
-
+#endif
 
 /* Factory lives here in the basement */
 QContactManagerEngine* QContactSymbianFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)

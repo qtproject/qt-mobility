@@ -83,13 +83,16 @@ public:
     bool updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
     bool removeContact(const QContactLocalId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError);
 
+#if 0
     /* Groups functionality */
         QList<QContactLocalId> groups(QContactManager::Error& qtError) const;
         QContactGroup group(const QContactLocalId& groupId, QContactManager::Error& qtError) const;
 	bool addGroup(QContactGroup& group, QContactChangeSet& changeSet, QContactManager::Error& qtError);
 	bool updateGroup(QContactGroup& group, QContactChangeSet& changeSet, QContactManager::Error& qtError);
         bool removeGroup(const QContactLocalId& groupId, QContactChangeSet& changeSet, QContactManager::Error& qtError);
-        QContactLocalId simPhonebookGroupId() const;
+#endif
+        
+    QContactLocalId simPhonebookGroupId() const;
 
     /* "Self" contact id (MyCard) */
     bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& qtError);
@@ -122,19 +125,22 @@ private:
 	void updateContactL(QContact &contact);
     int removeContactL(QContactLocalId id);
 
+#if 0
 	//Leaving functions for groups functionality
-        QList<QContactLocalId> groupsL() const;
-        QContactGroup groupL(const QContactLocalId& groupId) const;
+    QList<QContactLocalId> groupsL() const;
+    QContactGroup groupL(const QContactLocalId& groupId) const;
 	void addGroupL(QContactGroup& group);
 	void updateGroupL(QContactGroup& group);
-        void removeGroupL(const QContactLocalId& groupId);
-        QContactLocalId simPhonebookGroupIdL() const;
-        QList<QContactLocalId> memberOfGroupsL(const TContactItemId contactId) const;
-	void updateMemberOfGroupsL(QContact contact);
-
+    void removeGroupL(const QContactLocalId& groupId);
+    QList<QContactLocalId> memberOfGroupsL(const TContactItemId contactId) const;
+    void updateMemberOfGroupsL(QContact contact);
+#endif
+    
+    QContactLocalId simPhonebookGroupIdL() const;
+    
 	//utility functions
-        CContactGroup* fetchCGroup(const QContactLocalId& id) const;
-        bool isGroup(const QContactLocalId& id) const;
+    CContactGroup* fetchCGroup(const QContactLocalId& id) const;
+    bool isGroup(const QContactLocalId& id) const;
 
 private:
 	CContactDatabase* m_contactDatabase;
