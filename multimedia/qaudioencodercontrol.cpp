@@ -136,3 +136,28 @@ QAudioEncoderControl::~QAudioEncoderControl()
 
     Set the \a codec specific \a option to \a value.
 */
+
+/*!
+    \fn QAudioEncoderControl::quality() const
+
+    Returns the quality level being used.
+*/
+
+/*!
+    \fn bool QAudioEncoderControl::setAudioCodec(const QString &codecName)
+
+    Returns true if the audio codec is changed to \a codecName.
+*/
+
+/*!
+    \fn void QAudioEncoderControl::setBitrate(int rate)
+
+    Changes the bitrate to \a rate.
+*/
+
+/*!
+    \fn QAudioEncoderControl::setSampleRate(int sampleRate)
+
+    Changes the sample rate to \a sampleRate.
+*/
+

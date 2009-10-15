@@ -426,3 +426,19 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
     return pluginProvider();
 }
 
+/*!
+    \enum QMediaServiceProviderHint::Feature
+
+    \value LowLatencyPlayback TODO
+    \value RecordingSupport   TODO
+*/
+
+/*!
+    \enum QMediaServiceProviderHint::Type
+
+    \value Null               TODO
+    \value ContentType        TODO
+    \value Device             TODO
+    \value SupportedFeatures  TODO
+*/
+

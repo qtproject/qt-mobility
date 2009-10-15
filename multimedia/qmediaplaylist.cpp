@@ -553,4 +553,26 @@ void QMediaPlaylist::setCurrentPosition(int playlistPosition)
     \brief Current media content.
 */
 
+/*!
+    \fn QMediaPlaylist::loaded()
+
+    Signal emitted when playlist finished loading.
+*/
+
+/*!
+    \fn QMediaPlaylist::loadFailed()
+
+    Signal emitted if failed to load playlist.
+*/
+
+/*!
+    \enum QMediaPlaylist::Error
+
+    \value NoError                 No errors.
+    \value FormatError             Format error.
+    \value FormatNotSupportedError Format not supported.
+    \value NetworkError            Network error.
+    \value AccessDeniedError       Access denied error.
+*/
+
 #include "moc_qmediaplaylist.cpp"

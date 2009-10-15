@@ -88,4 +88,10 @@ QCameraControl::~QCameraControl()
     Signal emitted when \a state changes state.
 */
 
+/*!
+    \fn void QCameraControl::error(int error, const QString &errorString)
+
+    Signal emitted when an error occurs with error code \a error and
+    a description of the error \a errorString.
+*/
 
