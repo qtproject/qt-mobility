@@ -206,6 +206,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactGuid::DefinitionName, "Guid");
 Q_DEFINE_LATIN1_LITERAL(QContactEmailAddress::DefinitionName, "EmailAddress");
 
 /*!
+ * \variable QContactFamily::DefinitionName
+ * The constant string which identifies the definition of details which contain the names of the contact's family
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactFamily::DefinitionName, "Family");
+
+/*!
  * \variable QContactUrl::DefinitionName
  * The constant string which identifies the definition of details which are universal resource location paths
  */
@@ -277,6 +283,18 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::FieldSubTypes, "SubTypes");
  * The constant key for which the email address value is stored in details of the QContactEmailAddress type
  */
 Q_DEFINE_LATIN1_LITERAL(QContactEmailAddress::FieldEmailAddress, "EmailAddress");
+
+/*!
+ * \variable QContactFamily::FieldSpouse
+ * The constant key for which the spouse name value is stored in details of the QContactFamily type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactFamily::FieldSpouse, "Spouse");
+
+/*!
+ * \variable QContactFamily::FieldChildren
+ * The constant key for which the children names value is stored in details of the QContactFamily type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactFamily::FieldChildren, "Children");
 
 /*!
  * \variable QContactGuid::FieldGuid
@@ -859,6 +877,26 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 /*!
  * \fn QContactEmailAddress::setEmailAddress(const QString& emailAddress)
  * Sets the email address of the contact which is stored in this detail to \a emailAddress
+ */
+
+/*!
+ * \fn QContactFamily::spouse() const
+ * Returns the name of the spouse of the contact which is stored in this detail
+ */
+
+/*!
+ * \fn QContactFamily::setSpouse(const QString& spouseName)
+ * Sets the name of the spouse of the contact which is stored in this detail to \a spouseName
+ */
+
+/*!
+ * \fn QContactFamily::children() const
+ * Returns the names of the children of the contact which is stored in this detail
+ */
+
+/*!
+ * \fn QContactFamily::setChildren(const QStringList& childrenNames)
+ * Sets the names of the children of the contact which is stored in this detail to \a childrenNames
  */
 
 /*!
