@@ -6,7 +6,7 @@
 
 TEMPLATE = lib
 CONFIG += plugin testplugin
-TARGET = $$qtLibraryTarget(contacts_testdummycopy)
+TARGET = contacts_testdummycopy
 
 include(../../../../common.pri)
 

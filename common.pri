@@ -17,75 +17,19 @@ win32|mac {
     }
 }
 
+# After fixing that part up, we might need to re-set TARGET
+contains(TEMPLATE, .*lib):TARGET=$$qtLibraryTarget($$TARGET)
+
 # Helper function.  This should move to a .prf file
 defineReplace(mobilityDeployFilename) {
    unset(MOBILITY_DEPLOY_NAME)
    MOBILITY_DEPLOY_NAME = $$1
-   CONFIG(debug, debug|release): debug_and_release: {
+   CONFIG(debug, debug|release): {
       mac:RET = $$member(MOBILITY_DEPLOY_NAME, 0)_debug
       else:win32:RET = $$member(MOBILITY_DEPLOY_NAME, 0)d
    }
    isEmpty(RET):RET = $$MOBILITY_DEPLOY_NAME
    return($$RET)
-}
-
-#
-# This function (qtAddLibrary) is broken pre 4.6 for non debug_and_release
-# builds, since the name decoration is inconsistent between qtLibraryTarget
-# and qtAddLibrary
-#
-defineTest(qtAddLibraryFixMe) {
-    INCLUDEPATH -= $$QMAKE_INCDIR_QT/$$1
-    INCLUDEPATH = $$QMAKE_INCDIR_QT/$$1 $$INCLUDEPATH
-
-    LIB_NAME = $$1
-    unset(LINKAGE)
-    mac {
-       CONFIG(qt_framework, qt_framework|qt_no_framework) { #forced
-          QMAKE_FRAMEWORKPATH *= $${QMAKE_LIBDIR_QT}
-          FRAMEWORK_INCLUDE = $$QMAKE_LIBDIR_QT/$${LIB_NAME}.framework/Headers
-          !qt_no_framework_direct_includes:exists($$FRAMEWORK_INCLUDE) {
-             INCLUDEPATH -= $$FRAMEWORK_INCLUDE
-             INCLUDEPATH = $$FRAMEWORK_INCLUDE $$INCLUDEPATH
-           }
-           LINKAGE = -framework $${LIB_NAME}$${QT_LIBINFIX}
-        } else:!qt_no_framework { #detection
-           for(frmwrk_dir, $$list($$QMAKE_LIBDIR_QT $$QMAKE_LIBDIR $$(DYLD_FRAMEWORK_PATH) /Library/Frameworks)) {
-              exists($${frmwrk_dir}/$${LIB_NAME}.framework) {
-                QMAKE_FRAMEWORKPATH *= $${frmwrk_dir}
-                FRAMEWORK_INCLUDE = $$frmwrk_dir/$${LIB_NAME}.framework/Headers
-                !qt_no_framework_direct_includes:exists($$FRAMEWORK_INCLUDE) {
-                  INCLUDEPATH -= $$FRAMEWORK_INCLUDE
-                  INCLUDEPATH = $$FRAMEWORK_INCLUDE $$INCLUDEPATH
-                }
-                LINKAGE = -framework $${LIB_NAME}
-                break()
-              }
-           }
-       }
-    }
-    symbian*:isEqual(LIB_NAME, QtGui) {
-        # Needed for #include <QtGui> because qs60mainapplication.h includes aknapp.h
-        INCLUDEPATH *= $$MW_LAYER_SYSTEMINCLUDE
-    }
-    isEmpty(LINKAGE) {
-       if(!debug_and_release|build_pass):CONFIG(debug, debug|release) {
-           win32:LINKAGE = -l$${LIB_NAME}$${QT_LIBINFIX}d
-           mac:LINKAGE = -l$${LIB_NAME}$${QT_LIBINFIX}_debug
-       }
-       isEmpty(LINKAGE):LINKAGE = -l$${LIB_NAME}$${QT_LIBINFIX}
-    }
-    !isEmpty(QMAKE_LSB) {
-        QMAKE_LFLAGS *= --lsb-libpath=$$$$QMAKE_LIBDIR_QT
-        QMAKE_LFLAGS *= -L/opt/lsb/lib
-        QMAKE_LFLAGS *= --lsb-shared-libs=$${LIB_NAME}$${QT_LIBINFIX}
-    }
-    LIBS += $$LINKAGE
-    export(LIBS)
-    export(INCLUDEPATH)
-    export(QMAKE_FRAMEWORKPATH)
-    export(QMAKE_LFLAGS)
-    return(true)
 }
 
 # Make sure this goes everywhere we need it

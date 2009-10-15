@@ -2,7 +2,9 @@
 # Contacts Mobility API
 # #####################################################################
 TEMPLATE = lib
-TARGET = $$qtLibraryTarget(QtContacts)
+
+# Target gets fixed up in common.pri
+TARGET = QtContacts
 DEFINES += BUILD_QTCONTACTS \
     QT_ASCII_CAST_WARNINGS
 

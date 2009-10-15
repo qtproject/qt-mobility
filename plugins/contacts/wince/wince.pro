@@ -6,7 +6,7 @@
 
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(contacts_wince)
+TARGET = contacts_wince
 
 include(../../../common.pri)
 
@@ -20,5 +20,5 @@ INCLUDEPATH += $$SOURCE_DIR/contacts $$SOURCE_DIR/contacts/details $$SOURCE_DIR/
 
 LIBS += pimstore.lib -lole32
 
-qtAddLibraryFixMe(QtContacts)
+qtAddLibrary(QtContacts)
 

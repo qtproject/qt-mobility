@@ -35,6 +35,6 @@ wince* {
 }
 
 # Add this too
-qtAddLibraryFixMe(QtContacts)
+qtAddLibrary(QtContacts)
 
 
