@@ -245,7 +245,7 @@ public:
             case QMediaServiceProviderHint::Device: {
                     foreach (QMediaServiceProviderPlugin *currentPlugin, plugins) {
                         QMediaServiceSupportedDevicesInterface *iface =
-                                qobject_cast<QMediaServiceSupportedDevicesInterface*>(plugin);
+                                qobject_cast<QMediaServiceSupportedDevicesInterface*>(currentPlugin);
 
                         if (!iface) {
                             // the plugin may support the device,
