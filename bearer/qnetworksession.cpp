@@ -488,13 +488,12 @@ QString QNetworkSession::errorString() const
             \l {QNetworkConfiguration::InternetAccessPoint}{Internet access points} configurations
             whereas \i ActiveConfigurationIdentifier always returns identifiers for
             \l {QNetworkConfiguration::InternetAccessPoint}{Internet access points} configurations.
+        \row
+            \o ConnectInBackground
+            \o Setting this property to \i true before calling \l open() implies that the connection attempt
+            is made but if no connection can be established, the user is not connsulted and asked to select
+            a suitable connection. This property is not set by default and support for it depends on the platform.
     \endtable
-
-    In Maemo, user can set \i ConnectBackground property to true before calling \l open() in order to
-    activate background connection attempt to IAP. This setting means that connection attempt is
-    made but if no connection can be established, then user is not consulted and asked to select a
-    suitable connection. This property is not set by default.
-
 */
 QVariant QNetworkSession::property(const QString& key) const
 {
