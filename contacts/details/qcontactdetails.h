@@ -51,6 +51,7 @@
 #include "qcontactbirthday.h"
 #include "qcontactdisplaylabel.h"
 #include "qcontactemailaddress.h"
+#include "qcontactfamily.h"
 #include "qcontactgender.h"
 #include "qcontactgeolocation.h"
 #include "qcontactguid.h"
