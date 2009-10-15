@@ -134,7 +134,7 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
     QList<QVersitDocument> documents;
     QVersitContactConverter converter;
     foreach (QContact contact, contacts) {
-        documents.append(converter.convertContacts(contact));
+        documents.append(converter.convertContact(contact));
     }
     
     // Encode and write to output
