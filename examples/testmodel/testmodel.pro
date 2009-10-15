@@ -11,7 +11,7 @@ INCLUDEPATH += .
 
 include(../../common.pri)
 
-qtAddLibraryFixMe(QtContacts)
+qtAddLibrary(QtContacts)
 
 # Input
 SOURCES += main.cpp \

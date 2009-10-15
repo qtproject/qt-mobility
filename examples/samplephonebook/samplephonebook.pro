@@ -13,7 +13,7 @@ VPATH += ../testmodel
 
 include(../../common.pri)
 
-qtAddLibraryFixMe(QtContacts)
+qtAddLibrary(QtContacts)
 
 # Input
 SOURCES +=  contactdetailsform.cpp \

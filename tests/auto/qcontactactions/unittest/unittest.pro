@@ -9,11 +9,11 @@ include(../../../../common.pri)
 
 SOURCES  += tst_qcontactactions.cpp
 
-qtAddLibraryFixMe(QtContacts)
+qtAddLibrary(QtContacts)
 
 # App local deployment
 symbian:QCONTACTACTION_PLUGINS_DEPLOY.sources = contacts_sendemailactionfactory.dll
-wince*:QCONTACTACTION_PLUGINS_DEPLOY.sources = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/plugins/contacts/$$mobilityDeployFilename(contacts_sendemailactionfactory)
+wince*:QCONTACTACTION_PLUGINS_DEPLOY.sources = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/plugins/contacts/$$mobilityDeployFilename(contacts_sendemailactionfactory).dll
 
 QCONTACTACTION_PLUGINS_DEPLOY.path = ./plugins/contacts
 

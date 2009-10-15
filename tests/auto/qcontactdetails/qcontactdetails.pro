@@ -7,7 +7,7 @@ include(../../../common.pri)
 
 SOURCES  += tst_qcontactdetails.cpp
 
-qtAddLibraryFixMe(QtContacts)
+qtAddLibrary(QtContacts)
 
 symbian: {
     TARGET.CAPABILITY = ReadUserData \
