@@ -377,7 +377,9 @@ namespace {
                     prop[0].ulPropTag=PR_ATTACH_SIZE;
                     prop[0].Value.ul=ulSize;
                     attachment->SetProps(1, prop, NULL);
+#ifndef _WIN32_WCE //unsupported
                     attachment->SaveChanges(KEEP_OPEN_READONLY);
+#endif
                 } else {
                     qWarning() << "Could not open MAPI attachment data stream";
                 }
@@ -997,7 +999,7 @@ namespace {
         }
     }
 
-    void replaceMessageAttachments(QMessageStore::ErrorCode *lastError, const QMessage &source, IMessage *message, MapiFolder::SaveOption saveOption = MapiFolder::SaveMessage )
+    void replaceMessageAttachments(QMessageStore::ErrorCode *lastError, const QMessage &source, IMessage *message, WinHelpers::SavePropertyOption saveOption = WinHelpers::SavePropertyChanges )
     {
         // Find any existing attachments and remove them
         IMAPITable *attachmentsTable(0);
@@ -1037,11 +1039,13 @@ namespace {
                         }
                     }
 
-                    if (*lastError == QMessageStore::NoError && saveOption == MapiFolder::SaveMessage ) {
+                    if (*lastError == QMessageStore::NoError && saveOption == WinHelpers::SavePropertyChanges ) {
+#ifndef _WIN32_WCE //unsupported
                         if (HR_FAILED(message->SaveChanges(KEEP_OPEN_READWRITE))) {
                             qWarning() << "Unable to save changes to message";
                             *lastError = QMessageStore::FrameworkFault;
                         }
+#endif
                     }
                 }
             } else {
@@ -2020,7 +2024,7 @@ IMessage *MapiFolder::createMessage(QMessageStore::ErrorCode* lastError)
     return message;
 }
 
-IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const QMessage& source, const MapiSessionPtr &session, PostSendAction postSendAction, SaveOption saveOption )
+IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const QMessage& source, const MapiSessionPtr &session, PostSendAction postSendAction, SavePropertyOption saveOption )
 {
     IMessage* mapiMessage(0);
     HRESULT rv = _folder->CreateMessage(0, 0, &mapiMessage);
@@ -2030,6 +2034,7 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
             storeMessageProperties(lastError, source, mapiMessage);
         }
         if (*lastError == QMessageStore::NoError) {
+#ifndef __WIN32_WCE //unsupported
             if (postSendAction == DeleteAfterSend) {
                 if (!setMapiProperty(mapiMessage, PR_DELETE_AFTER_SUBMIT, true)) {
                     qWarning() << "Unable to set delete after send flag.";
@@ -2045,6 +2050,7 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
                         qWarning() << "Unable to set sent folder entry id on message";
                     }
                 }
+#endif
             }
         }
         if (*lastError == QMessageStore::NoError) {
@@ -2056,10 +2062,12 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
         if (*lastError == QMessageStore::NoError) {
             replaceMessageAttachments(lastError, source, mapiMessage, saveOption );
         }
-        if (*lastError == QMessageStore::NoError && saveOption == SaveMessage ) {
+        if (*lastError == QMessageStore::NoError && saveOption == SavePropertyChanges ) {
+#ifndef _WIN32_WCE //unsupported
             if (HR_FAILED(mapiMessage->SaveChanges(0))) {
                 qWarning() << "Unable to save changes for message.";
             }
+#endif
         }
         if (*lastError != QMessageStore::NoError) {
             mapiRelease(mapiMessage);
@@ -3940,9 +3948,11 @@ void MapiSession::updateMessage(QMessageStore::ErrorCode* lastError, const QMess
             replaceMessageAttachments(lastError, source, mapiMessage);
         }
         if (*lastError == QMessageStore::NoError) {
+#ifndef _WIN32_WCE //unsupported
             if (HR_FAILED(mapiMessage->SaveChanges(0))) {
                 qWarning() << "Unable to save changes for message.";
             }
+#endif
         }
 
         mapiRelease(mapiMessage);

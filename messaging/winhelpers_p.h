@@ -98,6 +98,8 @@ typedef QSharedPointer<MapiSession> MapiSessionPtr;
 
 namespace WinHelpers {
 
+enum SavePropertyOption { DontSavePropertyChanges = 0, SavePropertyChanges };
+
 QString QStringFromLpctstr(LPCTSTR lpszValue);
 void LptstrFromQString(const QString &value, LPTSTR *lpsz);
 
@@ -160,7 +162,6 @@ public:
 class MapiFolder {
 
 public:
-    enum SaveOption { DontSaveMessage = 0, SaveMessage };
     enum PostSendAction { DoNothing = 0, DeleteAfterSend, MoveAfterSend };
 
 public:
@@ -194,7 +195,7 @@ public:
     uint messageCount() const { return _messageCount; }
 
     IMessage *createMessage(QMessageStore::ErrorCode* lastError);
-    IMessage *createMessage(QMessageStore::ErrorCode* lastError, const QMessage& source, const MapiSessionPtr &session, PostSendAction postSendAction = MoveAfterSend, SaveOption saveOption = SaveMessage );
+    IMessage *createMessage(QMessageStore::ErrorCode* lastError, const QMessage& source, const MapiSessionPtr &session, PostSendAction postSendAction = MoveAfterSend, WinHelpers::SavePropertyOption saveOption = WinHelpers::SavePropertyChanges );
 
     IMessage *openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId);
 
