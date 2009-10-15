@@ -867,7 +867,7 @@ void QNetworkSessionPrivate::setProperty(const QString& key, const QVariant& val
     if (value.isValid()) {
 	properties.insert(key, value);
 
-	if (key == "ConnectBackground") {
+	if (key == "ConnectInBackground") {
 	    bool v = value.toBool();
 	    if (v)
 		connectFlags = ICD_CONNECTION_FLAG_APPLICATION_EVENT;
@@ -878,7 +878,7 @@ void QNetworkSessionPrivate::setProperty(const QString& key, const QVariant& val
 	properties.remove(key);
 
 	/* Set default value when property is removed */
-	if (key == "ConnectBackground")
+	if (key == "ConnectInBackground")
 	    connectFlags = ICD_CONNECTION_FLAG_USER_EVENT;
     }
 }
