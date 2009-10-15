@@ -34,23 +34,38 @@
 
 #include "v4lvideobuffer.h"
 
+#include <linux/types.h>
+#include <sys/time.h>
+#include <sys/ioctl.h>
+#include <sys/poll.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/mman.h>
+
 #ifndef QT_NO_MULTIMEDIA
 
-V4LVideoBuffer::V4LVideoBuffer(unsigned char *buffer, int length)
+V4LVideoBuffer::V4LVideoBuffer(unsigned char *buffer, int fd, v4l2_buffer buf)
     : QAbstractVideoBuffer(NoHandle)
     , m_buffer(buffer)
-    , m_Length(length)
+    , m_length(buf.bytesused)
+    , m_fd(fd)
+    , m_bytesPerLine(0)
     , m_mode(NotMapped)
+    , m_buf(buf)
 {
 }
 
 V4LVideoBuffer::~V4LVideoBuffer()
 {
+    ioctl(m_fd, VIDIOC_QBUF, &m_buf);
 }
 
-void V4LVideoBuffer::setSize(const QSize& size)
+void V4LVideoBuffer::setBytesPerLine(int bytesPerLine)
 {
-    m_size = size;
+    m_bytesPerLine = bytesPerLine;
 }
 
 QAbstractVideoBuffer::MapMode V4LVideoBuffer::mapMode() const
@@ -62,12 +77,12 @@ uchar *V4LVideoBuffer::map(MapMode mode, int *numBytes, int *bytesPerLine)
 {
     if (mode != NotMapped && m_mode == NotMapped) {
         if (numBytes)
-            *numBytes = m_Length;
+            *numBytes = m_length;
 
         m_mode = mode;
 
         if(bytesPerLine)
-            *bytesPerLine = m_size.width();
+            *bytesPerLine = m_bytesPerLine;
 
         return m_buffer;
     } else {

@@ -40,13 +40,14 @@
 #include <QSize>
 
 #include <QtMultimedia/QAbstractVideoBuffer>
+#include <linux/videodev2.h>
 
 QT_BEGIN_NAMESPACE
 
 class V4LVideoBuffer : public QAbstractVideoBuffer
 {
 public:
-    V4LVideoBuffer(unsigned char *buffer, int length);
+    V4LVideoBuffer(unsigned char *buffer, int fd, v4l2_buffer buf);
     ~V4LVideoBuffer();
 
     MapMode mapMode() const;
@@ -54,13 +55,15 @@ public:
     uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
     void unmap();
 
-    void setSize(const QSize& size);
+    void setBytesPerLine(int bytesPerLine);
 
 private:
     unsigned char *m_buffer;
-    int m_Length;
-    QSize m_size;
+    int m_length;
+    int m_fd;
+    int m_bytesPerLine;
     MapMode m_mode;
+    v4l2_buffer m_buf;
 };
 
 
