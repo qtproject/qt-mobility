@@ -91,7 +91,7 @@
         void contactSelected(int row);
 
     private slots:
-        void backendChanged(const QList&lt;QUniqueId&gt;&amp; changed);
+        void backendChanged(const QList&lt;QContactLocalId&gt;&amp; changed);
         void backendSelected(const QString&amp; backend);
 
     private:
@@ -133,9 +133,9 @@
         int lastIndex;
         bool addingContact;
         bool editingContact;
-            bool smallScreenSize;
+        bool smallScreenSize;
         QList&lt;QContact&gt; contacts;
-        QList&lt;QUniqueId&gt; contactGroups;
+        QList&lt;QContactLocalId&gt; contactGroups;
 
         QMap&lt;QString, QContactManager*&gt; managers;
         QContactManager *cm;

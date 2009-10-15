@@ -106,7 +106,7 @@
         phoneFilter.setValue(incomingCallNbr);
         phoneFilter.setMatchFlags(Qt::MatchExactly);
 
-        QList&lt;QUniqueId&gt; matchingContacts = cm-&gt;contacts(phoneFilter);
+        QList&lt;QContactLocalId&gt; matchingContacts = cm-&gt;contacts(phoneFilter);
         if (matchingContacts.size() == 0) {
             qDebug() &lt;&lt; &quot;Incoming call from unknown contact (&quot; &lt;&lt; incomingCallNbr &lt;&lt; &quot;)&quot;;
         } else {
@@ -124,7 +124,7 @@
 <p>The client retrieves the phone numbers of a contact, and displays the first one</p>
 <pre>    void viewSpecificDetail(QContactManager* cm)
     {
-        QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
+        QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
         QContact a = cm-&gt;contact(contactIds.first());
         QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
         if (cdl.isEmpty())
@@ -137,7 +137,7 @@
 <p>The client retrieves all of the details of a contact, and displays them</p>
 <pre>    void viewDetails(QContactManager* cm)
     {
-        QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
+        QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
         QContact a = cm-&gt;contact(contactIds.first());
         QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
         if (cdl.isEmpty())
@@ -186,7 +186,7 @@
 <p>The client retrieves a contact, modifies one of its details, adds a new detail, and then saves the contact back to the manager. Note that it uses the newly added field of the email address definition!</p>
 <pre>    void editView(QContactManager* cm)
     {
-        QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
+        QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
         QContact a = cm-&gt;contact(contactIds.first());
         QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
         if (cdl.isEmpty())
@@ -269,7 +269,7 @@
 <pre>    void loadManager()
     {
         QContactManager* cm = new QContactManager(&quot;KABC&quot;);
-        QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
+        QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
         if (!contactIds.isEmpty()) {
             QContact a = cm-&gt;contact(contactIds.first());
             QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
@@ -322,7 +322,7 @@
 <li><a href="qcontactdetaildefinition.html">QContactDetailDefinition</a></li>
 <li><a href="qcontactdetail.html">QContactDetail</a></li>
 <li><a href="qcontact.html">QContact</a></li>
-<li><a href="qcontactgroup.html">QContactGroup</a></li>
+<li>QContactGroup</li>
 <li><a href="qcontactaction.html">QContactAction</a></li>
 </ul>
 <a name="detail-leaf-classes"></a>
@@ -355,12 +355,12 @@
 <p>Clients may use either the synchronous or asynchronous API to access functionality provided by a manager backend. The asynchronous API is offered through subclasses of the <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> class:</p>
 <ul>
 <li><a href="qcontactfetchrequest.html">QContactFetchRequest</a></li>
-<li><a href="qcontactidfetchrequest.html">QContactIdFetchRequest</a></li>
+<li>QContactIdFetchRequest</li>
 <li><a href="qcontactremoverequest.html">QContactRemoveRequest</a></li>
 <li><a href="qcontactsaverequest.html">QContactSaveRequest</a></li>
-<li><a href="qcontactgroupfetchrequest.html">QContactGroupFetchRequest</a></li>
-<li><a href="qcontactgroupremoverequest.html">QContactGroupRemoveRequest</a></li>
-<li><a href="qcontactgroupsaverequest.html">QContactGroupSaveRequest</a></li>
+<li>QContactGroupFetchRequest</li>
+<li>QContactGroupRemoveRequest</li>
+<li>QContactGroupSaveRequest</li>
 <li><a href="qcontactdetaildefinitionfetchrequest.html">QContactDetailDefinitionFetchRequest</a></li>
 <li><a href="qcontactdetaildefinitionremoverequest.html">QContactDetailDefinitionRemoveRequest</a></li>
 <li><a href="qcontactdetaildefinitionsaverequest.html">QContactDetailDefinitionSaveRequest</a></li>
@@ -373,8 +373,8 @@
 <li><a href="qcontactchangelogfilter.html">QContactChangeLogFilter</a></li>
 <li><a href="qcontactdetailfilter.html">QContactDetailFilter</a></li>
 <li><a href="qcontactdetailrangefilter.html">QContactDetailRangeFilter</a></li>
-<li><a href="qcontactgroupmembershipfilter.html">QContactGroupMembershipFilter</a></li>
-<li><a href="qcontactidlistfilter.html">QContactIdListFilter</a></li>
+<li>QContactGroupMembershipFilter</li>
+<li>QContactIdListFilter</li>
 <li><a href="qcontactintersectionfilter.html">QContactIntersectionFilter</a></li>
 <li><a href="qcontactinvalidfilter.html">QContactInvalidFilter</a></li>
 <li><a href="qcontactunionfilter.html">QContactUnionFilter</a></li>
