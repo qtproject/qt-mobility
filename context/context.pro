@@ -27,6 +27,8 @@ SOURCES += qpacketprotocol.cpp \
            qvaluespacesubscriber.cpp
 
 symbian {
+    HEADERS += qcrmlparser_p.h
+    SOURCES += qcrmlparser.cpp
     deploy.path = /
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include

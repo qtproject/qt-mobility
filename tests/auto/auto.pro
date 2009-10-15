@@ -4,7 +4,8 @@ SUBDIRS += qvaluespace \
            qvaluespacesubscriber \
            qmallocpool \
            qpacket \
-           qpacketprotocol
+           qpacketprotocol \
+	   qcrmlparser
 
 unix|win32 {
     !symbian: SUBDIRS+= \
