@@ -555,6 +555,7 @@ public slots:
 private slots:
     void testAvailableDevices();
     void testDeviceDescription();
+    void testCtorWithDevice();
     void testSimpleCamera();
     void testSimpleCameraWhiteBalance();
     void testSimpleCameraExposure();
@@ -588,21 +589,38 @@ void tst_QCamera::cleanupTestCase()
 
 void tst_QCamera::testAvailableDevices()
 {
-    QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider();
-    if (provider == 0 || provider->devices(QByteArray("camera")).count() == 0)
-        QSKIP("No Camera service found on system", SkipSingle);
+    int deviceCount = QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray("camera")).count();
 
-    QVERIFY(QCamera::availableDevices().count() > 0);
+    QVERIFY(QCamera::availableDevices().count() == deviceCount);
 }
 
 void tst_QCamera::testDeviceDescription()
 {
-    QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider();
-    if (provider == 0 || provider->devices(QByteArray("camera")).count() == 0)
-        QSKIP("No Camera service found on system", SkipSingle);
+    int deviceCount = QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray("camera")).count();
 
-    foreach (const QByteArray &device, QCamera::availableDevices())
-        QVERIFY(QCamera::deviceDescription(device).length() > 0);
+    if (deviceCount == 0)
+        QVERIFY(QCamera::deviceDescription(QByteArray("random")).isNull());
+    else {
+        foreach (const QByteArray &device, QCamera::availableDevices())
+            QVERIFY(QCamera::deviceDescription(device).length() > 0);
+    }
+}
+
+void tst_QCamera::testCtorWithDevice()
+{
+    int deviceCount = QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray("camera")).count();
+    QCamera *camera = 0;
+
+    if (deviceCount == 0) {
+        camera = new QCamera("random");
+        QVERIFY(camera->error() == QCamera::ServiceMissingError);
+    }
+    else {
+        camera = new QCamera(QCamera::availableDevices().first());
+        QVERIFY(camera->error() == QCamera::NoError);
+    }
+
+    delete camera;
 }
 
 void tst_QCamera::testSimpleCamera()

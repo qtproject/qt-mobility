@@ -157,17 +157,19 @@ QCamera::QCamera(const QByteArray& device, QObject *parent):
     Q_D(QCamera);
     d->initControls();
 
-    //pass device name to service
-    QVideoDeviceControl *deviceControl =
-            qobject_cast<QVideoDeviceControl*>(d->service->control(QVideoDeviceControl_iid));
+    if (d->service != 0) {
+        //pass device name to service
+        QVideoDeviceControl *deviceControl =
+                qobject_cast<QVideoDeviceControl*>(d->service->control(QVideoDeviceControl_iid));
 
-    if (deviceControl) {
-        QString deviceName(device);
+        if (deviceControl) {
+            QString deviceName(device);
 
-        for (int i=0; i<deviceControl->deviceCount(); i++) {
-            if (deviceControl->name(i) == deviceName) {
-                deviceControl->setSelectedDevice(i);
-                break;
+            for (int i=0; i<deviceControl->deviceCount(); i++) {
+                if (deviceControl->name(i) == deviceName) {
+                    deviceControl->setSelectedDevice(i);
+                    break;
+                }
             }
         }
     }
