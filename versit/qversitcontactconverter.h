@@ -34,15 +34,16 @@
 #ifndef QVERSITCONTACTCONVERTER_H
 #define QVERSITCONTACTCONVERTER_H
 
-#include <QObject>
-#include <QList>
+#include <qtversitglobal.h>
+#include <qversitdocument.h>
 #include <qcontact.h>
-#include "qversitdocument.h"
+#include <QStringList>
+#include <QHash>
 
-// forward class declaration.
 class QVersitContactConverterPrivate;
 
-class QVersitContactConverter
+
+class QTVERSIT_EXPORT QVersitContactConverter
 {
 public:
     QVersitContactConverter();
@@ -54,18 +55,20 @@ public:
 
     Error error() const;
 
-    // convert the list of contacts into a versit document.
-    QVersitDocument convertContacts(const QContact& contacts);
+    // convert contact into a versit document.
+    QVersitDocument convertContact(const QContact& contact);
     
 
 private: //Methods
 
-    void encodeParameters( QVersitProperty& versitProperty, const QStringList& paramList );
+    void encodeParameters(QVersitProperty& property, const QStringList& paramList);
     void encodeFieldInfo(QVersitDocument& versitDocumen, const QContactDetail& detail) ; 
     void encodeName(QVersitDocument& versitDocumen, const QContactDetail& detail );
     void encodePhoneNumber(QVersitDocument& versitDocumen, const QContactDetail& detail );
     void encodeEmailAddress(QVersitDocument& versitDocumen, const QContactDetail& detail );
     void encodeStreetAddress(QVersitDocument& versitDocumen, const QContactDetail& detail );
+    void encodeUrl(QVersitDocument& versitDocumen, const QContactDetail& detail );
+    void encodeUid(QVersitDocument& versitDocumen, const QContactDetail& detail );
     
     const QHash<QString,QString>& getMappingTable();
 

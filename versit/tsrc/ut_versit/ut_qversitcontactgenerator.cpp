@@ -71,7 +71,7 @@ void UT_QVersitContactGenerator::testName()
     val.append("Dr");//PreFix
     val.append("MSc");//Suffix
     nameProperty.setName(QString::fromAscii(versitNameId));
-    nameProperty.setValue(val.join(QString::fromAscii(",")).toAscii());
+    nameProperty.setValue(val.join(QString::fromAscii(";")).toAscii());
     document.addProperty(nameProperty);        
     QContact contact = mGenerator->generateContact(document);    
     QCOMPARE(contact.details().count(),2);
@@ -220,6 +220,9 @@ void UT_QVersitContactGenerator::testTel()
     property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitModemId));
     property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitCarId));
     property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitVideoId));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitFaxId));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitBbsId));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitPagerId));
     property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitContextHomeId));
     property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitContextWorkId));
 
@@ -231,17 +234,20 @@ void UT_QVersitContactGenerator::testTel()
     QCOMPARE(phone.number(),QString(value));
 
     const QStringList subTypes = phone.subTypes();
-    QCOMPARE(subTypes.count(),5);
-    QCOMPARE(subTypes[4],QContactPhoneNumber::SubTypeVoice.operator QString());
-    QCOMPARE(subTypes[3],QContactPhoneNumber::SubTypeMobile.operator QString());
-    QCOMPARE(subTypes[2],QContactPhoneNumber::SubTypeModem.operator QString());
-    QCOMPARE(subTypes[1],QContactPhoneNumber::SubTypeCar.operator QString());
-    QCOMPARE(subTypes[0],QContactPhoneNumber::SubTypeVideo.operator QString());
-
+    QCOMPARE(subTypes.count(),8);
+    QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeVoice));
+    QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeMobile));
+    QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeModem));
+    QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeCar));
+    QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeVideo));
+    QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeFacsimile));
+    QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeBulletinBoardSystem));
+    QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypePager));
+    
     const QStringList contexts = phone.contexts();
     QCOMPARE(contexts.count(),2);
-    QCOMPARE(contexts[0],QContactDetail::ContextWork.operator QString());
-    QCOMPARE(contexts[1],QContactDetail::ContextHome.operator QString());
+    QVERIFY(contexts.contains(QContactDetail::ContextWork));
+    QVERIFY(contexts.contains(QContactDetail::ContextHome));
 }
 
 void UT_QVersitContactGenerator::testEmail()
@@ -264,17 +270,20 @@ void UT_QVersitContactGenerator::testEmail()
 
 void UT_QVersitContactGenerator::testUrl()
 {
-    QVersitDocument document;
     QVersitProperty property;
     property.setName(QString::fromAscii(versitUrlId));
     QByteArray value("http://www.simpsonsmovie.com/homer.html");
     property.setValue(value);
-    document.addProperty(property);
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitContextWorkId));    
+    QVersitDocument document = createDocumentWithProperty(property);    
     QContact contact = mGenerator->generateContact(document);
     QContactUrl url =
         static_cast<QContactUrl>(
             contact.detail(QContactUrl::DefinitionName));
     QCOMPARE(url.url(),QString::fromAscii(value));
+    const QStringList contexts = url.contexts();
+    QCOMPARE(contexts.count(),1);
+    QVERIFY(contexts.contains(QContactDetail::ContextWork));    
 }
 
 void UT_QVersitContactGenerator::testUid()

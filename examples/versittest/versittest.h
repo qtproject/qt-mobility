@@ -38,6 +38,7 @@
 
 class QFile;
 class QIODevice;
+class QContactManager;
 class QVersitReader;
 class QVersitWriter;
 
@@ -45,7 +46,12 @@ class QVersitWriter;
 class VersitTest : public QObject
 {
      Q_OBJECT
+
+public:
     
+    VersitTest();
+    VersitTest(bool saveContacts);
+     
 private slots:
 
     void initTestCase();    
@@ -63,6 +69,8 @@ private:
     
 private:
  
+    bool mSaveContacts;
+    QContactManager* mContactManager;
     QStringList* mExcludedFields;    
     QStringList mFiles;
     QVersitReader* mReader;

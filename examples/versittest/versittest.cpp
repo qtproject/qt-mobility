@@ -40,13 +40,26 @@
 #include <QBuffer>
 #include <QList>
 #include <QtTest/QtTest>
+#include <qcontactmanager.h>
 #include <qversitreader.h>
 #include <qversitwriter.h>
 #include <qversitdocument.h>
+#include <qversitcontactgenerator.h>
+#include <qversitcontactconverter.h>
 
 const QString inputDirPath = "c:\\data\\testvcards\\in";
 const QString excludeFieldsFileName = "c:\\data\\testvcards\\excludefields.txt";
 const QString outputDirPath = "c:\\data\\testvcards\\out";
+
+VersitTest::VersitTest() 
+    : QObject(), mSaveContacts(false)
+{   
+}
+
+VersitTest::VersitTest(bool saveContacts) 
+    : QObject(), mSaveContacts(saveContacts)
+{
+}
 
 void VersitTest::initTestCase()
 {
@@ -63,10 +76,12 @@ void VersitTest::initTestCase()
         }
         excludeFieldsFile.close();
     }
+    mContactManager = new QContactManager(QString::fromAscii("symbian"));
 }
 
 void VersitTest::cleanupTestCase()
 {
+    delete mContactManager;
     delete mExcludedFields;
     mFiles.clear();
 }
@@ -117,13 +132,36 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
 {    
     mReader->setDevice(&in);
     mWriter->setDevice(&out);
+    
+    // Parse the input
     QVERIFY2(mReader->start(), in.fileName().toAscii().constData());
+    
+    // Convert to QContacts
+    QList<QContact> contacts;
+    QVersitContactGenerator generator;
     foreach (QVersitDocument document, mReader->result()) {
+        QContact contact = generator.generateContact(document);
+        if (mSaveContacts)
+            QVERIFY(mContactManager->saveContact(&contact));
+        contacts.append(contact);
+    }    
+    
+    // Convert back to QVersitDocuments
+    QList<QVersitDocument> documents;
+    QVersitContactConverter converter;
+    foreach (QContact contact, contacts) {
+        documents.append(converter.convertContact(contact));
+    }
+    
+    // Encode and write to output
+    foreach (QVersitDocument document, documents) {
         mWriter->setVersitDocument(document);
         QVERIFY2(mWriter->start(), in.fileName().toAscii().constData());
     }
+    
+    // Compare the input and output
     in.seek(0);
-    out.seek(0);
+    out.seek(0);    
     VCardComparator comparator(in,out,*mExcludedFields);
     QCOMPARE(QString(),comparator.nonMatchingLines());
 }

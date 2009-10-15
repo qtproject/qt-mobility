@@ -34,9 +34,9 @@
 /*!
  * \class QVersitContactConverter
  *
- * \brief The QVersitContactConverter class converts the contacts into versit document.
+ * \brief The QVersitContactConverter class converts the contact into versit document.
  *
- * A QVersitContactConverter process contacts list and generates the corresponding
+ * A QVersitContactConverter process contact detail and generates the corresponding
  * versit document.
  *
  * \sa QContact, QVersitDocument, QVersitProperty
@@ -47,9 +47,10 @@
 #include <qcontactdetail.h>
 #include <qcontactmanager.h>
 #include <qcontactname.h>
-#include <qcontactphonenumber.h>
-#include <qcontactemailaddress.h>
 #include <qcontactaddress.h>
+#include <qcontactguid.h>
+#include <qcontacturl.h>
+
 
 #include "qversitdefs.h"
 #include "qversitdocument.h"
@@ -84,7 +85,7 @@ QVersitContactConverter::Error QVersitContactConverter::error() const
 /*!
  * Get the versit document corresponding to the corresponding contact 
  */
-QVersitDocument QVersitContactConverter::convertContacts(const QContact& contact)
+QVersitDocument QVersitContactConverter::convertContact(const QContact& contact)
 {
     QVersitDocument versitDocument;    
     QList<QContactDetail> allDetails = contact.details();
@@ -115,6 +116,14 @@ void QVersitContactConverter::encodeFieldInfo(QVersitDocument& versitDocument,
     }
     else if (detail.definitionName() == QContactAddress::DefinitionName){
         encodeStreetAddress(versitDocument, detail);
+    }
+
+    else if (detail.definitionName() == QContactGuid::DefinitionName){
+        encodeUid(versitDocument, detail);
+    }
+
+    else if (detail.definitionName() == QContactUrl::DefinitionName){
+        encodeUrl(versitDocument, detail);
     }
 }
 
@@ -202,7 +211,8 @@ void QVersitContactConverter::encodeStreetAddress(QVersitDocument& versitDocumen
     QContactAddress address = static_cast<QContactAddress>(detail);
     
     QString name = d->mMappingTable.value(detail.definitionName());
-    QString value = address.postOfficeBox() + QString::fromAscii(";") + address.street() + 
+    QString value = address.postOfficeBox() + QString::fromAscii(";") +
+                    QString::fromAscii(";") + address.street() +
                     QString::fromAscii(";") + address.locality() + 
                     QString::fromAscii(";") + address.region() + 
                     QString::fromAscii(";") + address.postcode() + 
@@ -225,17 +235,69 @@ void QVersitContactConverter::encodeStreetAddress(QVersitDocument& versitDocumen
 
 
 /*!
- * Encode Parameter for versit property if its supported in Versit Document 
+ * Encode URL Field Information into the Versit Document
  */
 
-void QVersitContactConverter::encodeParameters( QVersitProperty& versitProperty,
-                                                   const QStringList& paramList )
+void QVersitContactConverter::encodeUrl(QVersitDocument& versitDocument,
+                                        const QContactDetail& detail )
+{
+    QContactUrl contactUrl = static_cast<QContactUrl>(detail);
+
+    QString name = d->mMappingTable.value(detail.definitionName());
+    QString value = contactUrl.url();
+
+    QVersitProperty versitProperty;
+
+    //Add contexts 
+    encodeParameters(versitProperty, contactUrl.contexts());    
+    
+    //Encode Sub Types.
+    QString type = contactUrl.subType();
+    QStringList subTypes;
+    subTypes.append(type);
+    encodeParameters(versitProperty, subTypes);
+
+    //Add Values
+    versitProperty.setName(name);
+    versitProperty.setValue(value.toAscii());
+    versitDocument.addProperty(versitProperty);
+}
+
+
+
+/*!
+ * Encode Uid Field Information into the Versit Document
+ */
+
+void QVersitContactConverter::encodeUid(QVersitDocument& versitDocument,
+                                        const QContactDetail& detail )
+{
+    QContactGuid uid = static_cast<QContactGuid>(detail);
+
+    QString name = d->mMappingTable.value(detail.definitionName());
+    QString value = uid.guid();
+
+    QVersitProperty versitProperty;
+
+    //Add Values
+    versitProperty.setName(name);
+    versitProperty.setValue(value.toAscii());
+    versitDocument.addProperty(versitProperty);
+}
+
+
+
+/*!
+ * Encode Parameter for versit property if its supported in Versit Document 
+ */
+void QVersitContactConverter::encodeParameters(
+    QVersitProperty& property,
+    const QStringList& paramList)
 {
     foreach (QString type, paramList) {
-        QString decodedParameter = d->mMappingTable.value(type);
-        if ( decodedParameter.size()) {
-            versitProperty.addParameter(decodedParameter, QString());    
-        }
+        QString parameterValue = d->mMappingTable.value(type);
+        if (parameterValue.size())
+            property.addParameter(QString::fromAscii(versitType),parameterValue);
     }
 }
 
