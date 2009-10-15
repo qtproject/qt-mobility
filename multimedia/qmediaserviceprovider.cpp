@@ -429,8 +429,13 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
 /*!
     \enum QMediaServiceProviderHint::Feature
 
-    \value LowLatencyPlayback TODO
-    \value RecordingSupport   TODO
+    \value LowLatencyPlayback
+            The service is expected to play simple audio formats,
+            but playback should start without significant delay.
+            Such playback service can be used for beeps, ringtones, etc.
+
+    \value RecordingSupport
+            The service provides audio or video recording functions.
 */
 
 /*!
