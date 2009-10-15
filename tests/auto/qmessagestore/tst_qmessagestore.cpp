@@ -616,7 +616,8 @@ void tst_QMessageStore::testMessage()
     while (QCoreApplication::hasPendingEvents())
         QCoreApplication::processEvents();
 
-    QCOMPARE(catcher.updated.count(), 1);
+    // MAPI generates multiple update notifications per message updated
+    QVERIFY(catcher.updated.count() > 0);
     QCOMPARE(catcher.updated.first().first, messageId);
 #ifndef Q_OS_WIN
     // Filters not yet implemented on windows
