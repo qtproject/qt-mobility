@@ -377,7 +377,9 @@ namespace {
                     prop[0].ulPropTag=PR_ATTACH_SIZE;
                     prop[0].Value.ul=ulSize;
                     attachment->SetProps(1, prop, NULL);
+#ifndef _WIN32_WCE //unsupported
                     attachment->SaveChanges(KEEP_OPEN_READONLY);
+#endif
                 } else {
                     qWarning() << "Could not open MAPI attachment data stream";
                 }
@@ -1038,10 +1040,12 @@ namespace {
                     }
 
                     if (*lastError == QMessageStore::NoError && saveOption == MapiFolder::SaveMessage ) {
+#ifndef _WIN32_WCE //unsupported
                         if (HR_FAILED(message->SaveChanges(KEEP_OPEN_READWRITE))) {
                             qWarning() << "Unable to save changes to message";
                             *lastError = QMessageStore::FrameworkFault;
                         }
+#endif
                     }
                 }
             } else {
@@ -2036,6 +2040,7 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
                     qWarning() << "Unable to set delete after send flag.";
                 }
             } else if (postSendAction == MoveAfterSend) {
+                /*
                 //move the message to the sent folder after a submission
                 MapiFolderPtr sentFolder = _store->findFolder(lastError,QMessage::SentFolder);
 
@@ -2046,6 +2051,7 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
                         qWarning() << "Unable to set sent folder entry id on message";
                     }
                 }
+                */
             }
         }
         if (*lastError == QMessageStore::NoError) {
@@ -2058,9 +2064,11 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
             replaceMessageAttachments(lastError, source, mapiMessage, saveOption );
         }
         if (*lastError == QMessageStore::NoError && saveOption == SaveMessage ) {
+#ifndef _WIN32_WCE //unsupported
             if (HR_FAILED(mapiMessage->SaveChanges(0))) {
                 qWarning() << "Unable to save changes for message.";
             }
+#endif
         }
         if (*lastError != QMessageStore::NoError) {
             mapiRelease(mapiMessage);
@@ -3934,9 +3942,11 @@ void MapiSession::updateMessage(QMessageStore::ErrorCode* lastError, const QMess
             replaceMessageAttachments(lastError, source, mapiMessage);
         }
         if (*lastError == QMessageStore::NoError) {
+#ifndef _WIN32_WCE //unsupported
             if (HR_FAILED(mapiMessage->SaveChanges(0))) {
                 qWarning() << "Unable to save changes for message.";
             }
+#endif
         }
 
         mapiRelease(mapiMessage);
