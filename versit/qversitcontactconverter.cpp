@@ -211,7 +211,8 @@ void QVersitContactConverter::encodeStreetAddress(QVersitDocument& versitDocumen
     QContactAddress address = static_cast<QContactAddress>(detail);
     
     QString name = d->mMappingTable.value(detail.definitionName());
-    QString value = address.postOfficeBox() + QString::fromAscii(";") + address.street() + 
+    QString value = address.postOfficeBox() + QString::fromAscii(";") +
+                    QString::fromAscii(";") + address.street() +
                     QString::fromAscii(";") + address.locality() + 
                     QString::fromAscii(";") + address.region() + 
                     QString::fromAscii(";") + address.postcode() + 

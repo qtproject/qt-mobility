@@ -214,7 +214,11 @@ void UT_QVersitContactConvertert::testEncodeStreetAddress()
 
     //Check property value 
     QString value (myVersitDocument.properties().at(0).value() );
-    QString expectedValue = ";HKKI 1X 90;Helsinki;;00440;Finland";
+
+    //Format: Post Office Address  + ";" +  Extended Address  + ";" + Street  + ";" +
+    //Locality  + ";" + Region  + ";" + Postal Code  + ";" + Country
+
+    QString expectedValue = ";;HKKI 1X 90;Helsinki;;00440;Finland";
     QCOMPARE(expectedValue, value );
 }
 
