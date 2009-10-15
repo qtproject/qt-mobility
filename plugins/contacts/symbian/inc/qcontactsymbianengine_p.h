@@ -72,12 +72,6 @@ public:
     QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& qtError) const;
     int count() const;
 
-    /* "My card" */
-    QUniqueId personalID() const;
-    bool hasPersonalDetails() const; //is this needed, QUniqueId could be 0 if it doesn't exist
-    int setPersonalContactId(const QUniqueId &);
-    void clearPersonalContactId();
-
     /* Add/Update/Remove */
     bool addContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
     bool updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);

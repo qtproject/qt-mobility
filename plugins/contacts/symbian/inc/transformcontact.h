@@ -72,7 +72,8 @@ private:
 		Gender,
 		Anniversary,
 		Geolocation,
-		Note
+		Note,
+		Family
 	};
 	
 	void initializeTransformContactData();

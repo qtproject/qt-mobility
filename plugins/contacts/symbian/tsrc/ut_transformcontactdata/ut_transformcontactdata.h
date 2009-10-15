@@ -60,6 +60,7 @@ private slots:
 	void executeTransformAnniversary();
 	void executeTransformGeolocation();
 	void executeTransformNote();
+	void executeTransformFamily();
 	
 private:
     void validateTransformEmail(TPtrC16 field, QString detail);
@@ -89,5 +90,7 @@ private:
     void validateTransformAnniversary(TPtrC16 field, QDate dateDetail, QString eventDetail);
     void validateTransformGeolocation(TPtrC16 field, double latitudeDetail, double longitudeDetail);
     void validateTransformNote(TPtrC16 field, QString detail);
+    void validateTransformFamily(TPtrC16 spouseField, QString spouseDetail,
+                                 TPtrC16 childField, QString childDetail);
     void validateContexts(TransformContactData* transformContactData) const; 
 };

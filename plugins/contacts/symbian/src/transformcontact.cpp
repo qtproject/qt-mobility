@@ -48,6 +48,7 @@
 #include "transformanniversary.h"
 #include "transformgeolocation.h"
 #include "transformnote.h"
+#include "transformfamily.h"
 
 #include <qtcontacts.h>
 #include <cntfldst.h>
@@ -84,6 +85,7 @@ void TransformContact::initializeTransformContactData()
 	m_transformContactData.insert(Gender, new TransformGender);
 	m_transformContactData.insert(Anniversary, new TransformAnniversary);
 	m_transformContactData.insert(Note, new TransformNote);
+	m_transformContactData.insert(Family, new TransformFamily);
 #ifdef USE_CUSTOM_CNT_MODEL_FIELDS
 	// TODO: what are the other fields to be hidden behind the custom field flag?
 	// i.e. the fields that are not supported in pre-10.1 platforms?

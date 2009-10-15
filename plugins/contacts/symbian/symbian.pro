@@ -45,7 +45,8 @@ symbian: {
       inc/transformgender.h \
       inc/transformanniversary.h \
       inc/transformgeolocation.h \
-      inc/transformnote.h \  
+      inc/transformnote.h \
+      inc/transformfamily.h \  
       inc/qabstractcontactfilter.h \
       inc/qcontactsymbianfilterdbms.h \
       inc/qcontactsymbianfiltersql.h \
@@ -71,7 +72,8 @@ symbian: {
       src/transformgender.cpp \
       src/transformanniversary.cpp \
       src/transformgeolocation.cpp \
-      src/transformnote.cpp \  
+      src/transformnote.cpp \
+      src/transformfamily.cpp \  
       src/qcontactsymbianfilterdbms.cpp \
       src/qcontactsymbianfiltersql.cpp \
       src/qcontactsymbiansorterdbms.cpp

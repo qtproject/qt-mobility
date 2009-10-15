@@ -311,8 +311,22 @@ RESOURCE ARRAY r_cntui_new_field_defns
 			category=EContactCategoryHome;
 			fieldName=qtn_phob_lbl_country_home;
 			},
-
-
+			FIELD   // Spouse
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldSpouseValue;
+			vCardMapping=KIntContactFieldVCardMapSpouse;
+			category=EContactCategoryHome;
+			fieldName=qtn_phob_lbl_spouse;
+			},
+			FIELD   // Children
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldChildrenValue;
+			vCardMapping=KIntContactFieldVCardMapChildren;
+			category=EContactCategoryHome;
+			fieldName=qtn_phob_lbl_children;
+			},
 // work related
       FIELD	// Job Title
 			{

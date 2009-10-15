@@ -48,6 +48,7 @@
 #include "transformanniversary.h"
 #include "transformgeolocation.h"
 #include "transformnote.h"
+#include "transformfamily.h"
 
 #include <QtTest/QtTest>
 
@@ -177,6 +178,14 @@ void TestTransformContactData::executeTransformNote()
 {
     validateTransformNote(_L("dummynote"), QString("dummynote"));
     validateTransformNote(_L(""), QString(""));
+}
+
+void TestTransformContactData::executeTransformFamily()
+{
+    validateTransformFamily(_L("dummyspouse"), QString("dummyspouse"),
+                            _L("dummychild"), QString("dummychild"));
+    validateTransformFamily(_L(""), QString(""),
+                            _L(""), QString(""));
 }
 
 void TestTransformContactData::validateTransformEmail(TPtrC16 field, QString detail)
@@ -1143,6 +1152,66 @@ void TestTransformContactData::validateTransformNote(TPtrC16 field, QString deta
     delete contactDetail;
     delete newField;
     delete transformNote;
+}
+
+void TestTransformContactData::validateTransformFamily(TPtrC16 spouseField, QString spouseDetail,
+                             TPtrC16 childField, QString childDetail)
+{
+    TransformContactData* transformFamily = new TransformFamily();
+    QVERIFY(transformFamily != 0);
+    QVERIFY(transformFamily->supportsField(KUidContactFieldSpouse.iUid));
+    QVERIFY(transformFamily->supportsField(KUidContactFieldChildren.iUid));
+    QVERIFY(transformFamily->supportsDetail(QContactFamily::DefinitionName));
+    
+    validateContexts(transformFamily);
+    
+    QContactFamily family;
+    family.setSpouse(spouseDetail);
+    family.setChildren(QStringList(childDetail));
+    QList<CContactItemField *> fields = transformFamily->transformDetailL(family);
+    QVERIFY(fields.count() == 2);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldSpouse));
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(spouseField), 0);
+    QVERIFY(fields.at(1)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(1)->ContentType().ContainsFieldType(KUidContactFieldChildren));
+    QCOMPARE(fields.at(1)->TextStorage()->Text().CompareF(childField), 0);
+    
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSpouse);
+    newField->TextStorage()->SetTextL(spouseField);
+    QContact contact;
+    QContactDetail* contactDetail = transformFamily->transformItemField(*newField, contact);
+    const QContactFamily* familyInfo1(static_cast<const QContactFamily*>(contactDetail));
+    QCOMPARE(familyInfo1->spouse(), spouseDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldChildren);
+    newField->TextStorage()->SetTextL(childField);
+    contactDetail = transformFamily->transformItemField(*newField, contact);
+    contact.saveDetail(contactDetail);    
+    const QContactFamily* familyInfo2(static_cast<const QContactFamily*>(contactDetail));
+    QCOMPARE(familyInfo2->children().count(), 1);
+    QCOMPARE(familyInfo2->children().at(0), childDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldChildren);
+    newField->TextStorage()->SetTextL(childField);
+    contactDetail = transformFamily->transformItemField(*newField, contact);
+    const QContactFamily* familyInfo3(static_cast<const QContactFamily*>(contactDetail));
+    QCOMPARE(familyInfo3->children().count(), 2);
+    QCOMPARE(familyInfo3->children().at(1), childDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    delete transformFamily;
 }
 
 void TestTransformContactData::validateContexts(TransformContactData* transformContactData) const
