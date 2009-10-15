@@ -193,7 +193,7 @@ ContextKitHandle::children ()
    It mainly creates ContextKitHandles and dispatches to them.
 */
 
-class ContextKitLayer : public 
+class ContextKitLayer : public QAbstractValueSpaceLayer
 {
     Q_OBJECT
 
