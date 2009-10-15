@@ -69,8 +69,8 @@ public:
     QtMedia::EncodingQuality quality() const { return QtMedia::NormalQuality; }
     void setQuality(QtMedia::EncodingQuality) {}
     QStringList supportedEncodingOptions(const QString &) const { return QStringList() << "bitrate"; }
-    QVariant encodingOption(const QString &, const QString &name) const { return m_optionValue; }
-    void setEncodingOption(const QString &, const QString &name, const QVariant &value) { m_optionValue = value; }
+    QVariant encodingOption(const QString &, const QString &) const { return m_optionValue; }
+    void setEncodingOption(const QString &, const QString &, const QVariant &value) { m_optionValue = value; }
     int sampleRate() const { return m_freq; }
     void setSampleRate(int sampleRate) { m_freq = sampleRate; }
     QList<int> supportedSampleRates() const { return m_freqs; }
@@ -200,7 +200,7 @@ class MockAudioSourceService : public QMediaService
     Q_OBJECT
 
 public:
-    MockAudioSourceService(): QMediaService(0)
+    MockAudioSourceService(): QMediaService(0), hasAudioDeviceControl(true)
     {
         mockAudioEncoderControl = new MockAudioEncoderControl(this);
         mockMediaRecorderControl = new MockMediaRecorderControl(this);
@@ -222,7 +222,7 @@ public:
         if (qstrcmp(iid, QMediaRecorderControl_iid) == 0)
             return mockMediaRecorderControl;
 
-        if (qstrcmp(iid, QAudioDeviceControl_iid) == 0)
+        if (hasAudioDeviceControl && qstrcmp(iid, QAudioDeviceControl_iid) == 0)
             return mockAudioDeviceControl;
 
         return 0;
@@ -231,6 +231,7 @@ public:
     MockAudioEncoderControl *mockAudioEncoderControl;
     MockMediaRecorderControl *mockMediaRecorderControl;
     MockAudioDeviceControl *mockAudioDeviceControl;
+    bool hasAudioDeviceControl;
 };
 
 class MockProvider : public QMediaServiceProvider
@@ -257,6 +258,8 @@ public slots:
     void cleanupTestCase();
 
 private slots:
+    void testNullService();
+    void testNullControl();
     void testAudioSource();
     void testOptions();
     void testDevices();
@@ -277,6 +280,55 @@ void tst_QAudioCaptureSource::cleanupTestCase()
 {
     delete audiosource;
     delete mockProvider;
+}
+
+void tst_QAudioCaptureSource::testNullService()
+{
+    MockProvider provider(0);
+    QAudioCaptureSource source(0, &provider);
+
+    QCOMPARE(source.deviceCount(), 0);
+    QCOMPARE(source.defaultDevice(), 0);
+    QCOMPARE(source.selectedDevice(), 0);
+}
+
+void tst_QAudioCaptureSource::testNullControl()
+{
+    MockAudioSourceService service;
+    service.hasAudioDeviceControl = false;
+    MockProvider provider(&service);
+    QAudioCaptureSource source(0, &provider);
+
+    QCOMPARE(source.deviceCount(), 0);
+    QCOMPARE(source.defaultDevice(), 0);
+    QCOMPARE(source.selectedDevice(), 0);
+
+    QCOMPARE(source.name(0), QString());
+    QCOMPARE(source.name(-3), QString());
+    QCOMPARE(source.name(93), QString());
+    QCOMPARE(source.icon(0), QIcon());
+    QCOMPARE(source.icon(-3), QIcon());
+    QCOMPARE(source.icon(93), QIcon());
+    QCOMPARE(source.description(0), QString());
+    QCOMPARE(source.description(-3), QString());
+    QCOMPARE(source.description(93), QString());
+
+    QSignalSpy deviceIndexSpy(&source, SIGNAL(selectedDeviceChanged(int)));
+    QSignalSpy deviceNameSpy(&source, SIGNAL(selectedDeviceChanged(QString)));
+
+    source.setSelectedDevice(0);
+    QCOMPARE(deviceIndexSpy.count(), 0);
+    QCOMPARE(deviceNameSpy.count(), 0);
+
+    source.setSelectedDevice(93);
+    QCOMPARE(source.selectedDevice(), 0);
+    QCOMPARE(deviceIndexSpy.count(), 0);
+    QCOMPARE(deviceNameSpy.count(), 0);
+
+    source.setSelectedDevice(-3);
+    QCOMPARE(source.selectedDevice(), 0);
+    QCOMPARE(deviceIndexSpy.count(), 0);
+    QCOMPARE(deviceNameSpy.count(), 0);
 }
 
 void tst_QAudioCaptureSource::testAudioSource()

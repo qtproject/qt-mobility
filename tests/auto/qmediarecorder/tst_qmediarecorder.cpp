@@ -405,7 +405,8 @@ class MockService : public QMediaService
 public:
     MockService(QObject *parent, QMediaControl *control):
         QMediaService(parent),
-        mockControl(control)
+        mockControl(control),
+        hasControls(true)
     {
         mockAudioDeviceControl = new MockAudioDeviceProvider(parent);
         mockAudioEncodeControl = new MockAudioEncodeProvider(parent);
@@ -415,15 +416,15 @@ public:
 
     QMediaControl* control(const char *name) const
     {
-        if(qstrcmp(name,QAudioEncoderControl_iid) == 0)
+        if(hasControls && qstrcmp(name,QAudioEncoderControl_iid) == 0)
             return mockAudioEncodeControl;
-        if(qstrcmp(name,QAudioDeviceControl_iid) == 0)
+        if(hasControls && qstrcmp(name,QAudioDeviceControl_iid) == 0)
             return mockAudioDeviceControl;
-        if(qstrcmp(name,QMediaRecorderControl_iid) == 0)
+        if(hasControls && qstrcmp(name,QMediaRecorderControl_iid) == 0)
             return mockControl;
-        if(qstrcmp(name,QMediaFormatControl_iid) == 0)
+        if(hasControls && qstrcmp(name,QMediaFormatControl_iid) == 0)
             return mockFormatControl;
-        if(qstrcmp(name,QVideoEncoderControl_iid) == 0)
+        if(hasControls && qstrcmp(name,QVideoEncoderControl_iid) == 0)
             return mockVideoEncodeControl;
 
         return 0;
@@ -434,6 +435,7 @@ public:
     QAudioEncoderControl    *mockAudioEncodeControl;
     QMediaFormatControl     *mockFormatControl;
     QVideoEncoderControl    *mockVideoEncodeControl;
+    bool hasControls;
 };
 
 class MockObject : public QMediaObject
@@ -451,10 +453,12 @@ class tst_QMediaRecorder: public QObject
     Q_OBJECT
 
 public slots:
-    void init();
-    void cleanup();
+    void initTestCase();
+    void cleanupTestCase();
 
 private slots:
+    void testNullService();
+    void testNullControls();
     void testError();
     void testSink();
     void testRecord();
@@ -478,7 +482,7 @@ private:
 
 Q_DECLARE_METATYPE(QMediaRecorder::Error);
 
-void tst_QMediaRecorder::init()
+void tst_QMediaRecorder::initTestCase()
 {
     qRegisterMetaType<QMediaRecorder::State>("QMediaRecorder::State");
     qRegisterMetaType<QMediaRecorder::Error>();
@@ -493,12 +497,97 @@ void tst_QMediaRecorder::init()
     videoEncode = qobject_cast<QVideoEncoderControl*>(capture->service()->control(QVideoEncoderControl_iid));
 }
 
-void tst_QMediaRecorder::cleanup()
+void tst_QMediaRecorder::cleanupTestCase()
 {
     delete capture;
     delete object;
     delete service;
     delete mock;
+}
+
+void tst_QMediaRecorder::testNullService()
+{
+    const QString id(QLatin1String("application/x-format"));
+
+    MockObject object(0, 0);
+    QMediaRecorder recorder(&object);
+
+    QCOMPARE(recorder.sink(), QUrl());
+    QCOMPARE(recorder.state(), QMediaRecorder::StoppedState);
+    QCOMPARE(recorder.error(), QMediaRecorder::NoError);
+    QCOMPARE(recorder.duration(), qint64(0));
+    QCOMPARE(recorder.supportedFormats(), QStringList());
+    QCOMPARE(recorder.formatDescription(id), QString());
+    QCOMPARE(recorder.supportedAudioCodecs(), QStringList());
+    QCOMPARE(recorder.audioCodecDescription(id), QString());
+    QCOMPARE(recorder.supportedAudioSampleRates(), QList<int>());
+    QCOMPARE(recorder.supportedVideoCodecs(), QStringList());
+    QCOMPARE(recorder.videoCodecDescription(id), QString());
+    QCOMPARE(recorder.minimumResolution(), QSize());
+    QCOMPARE(recorder.maximumResolution(), QSize());
+    QCOMPARE(recorder.supportedResolutions(), QList<QSize>());
+    QCOMPARE(recorder.audioSettings(), QAudioEncoderSettings());
+    QCOMPARE(recorder.videoSettings(), QVideoEncoderSettings());
+    QCOMPARE(recorder.format(), QString());
+}
+
+void tst_QMediaRecorder::testNullControls()
+{
+    const QString id(QLatin1String("application/x-format"));
+
+    MockService service(0, 0);
+    service.hasControls = false;
+    MockObject object(0, &service);
+    QMediaRecorder recorder(&object);
+
+    QCOMPARE(recorder.sink(), QUrl());
+    QCOMPARE(recorder.state(), QMediaRecorder::StoppedState);
+    QCOMPARE(recorder.error(), QMediaRecorder::NoError);
+    QCOMPARE(recorder.duration(), qint64(0));
+    QCOMPARE(recorder.supportedFormats(), QStringList());
+    QCOMPARE(recorder.formatDescription(id), QString());
+    QCOMPARE(recorder.supportedAudioCodecs(), QStringList());
+    QCOMPARE(recorder.audioCodecDescription(id), QString());
+    QCOMPARE(recorder.supportedAudioSampleRates(), QList<int>());
+    QCOMPARE(recorder.supportedVideoCodecs(), QStringList());
+    QCOMPARE(recorder.videoCodecDescription(id), QString());
+    QCOMPARE(recorder.minimumResolution(), QSize());
+    QCOMPARE(recorder.maximumResolution(), QSize());
+    QCOMPARE(recorder.supportedResolutions(), QList<QSize>());
+    QCOMPARE(recorder.audioSettings(), QAudioEncoderSettings());
+    QCOMPARE(recorder.videoSettings(), QVideoEncoderSettings());
+    QCOMPARE(recorder.format(), QString());
+
+    QAudioEncoderSettings audio;
+    audio.setCodec(id);
+    audio.setQuality(QtMedia::LowQuality);
+
+    QVideoEncoderSettings video;
+    video.setCodec(id);
+    video.setResolution(640, 480);
+
+    recorder.setEncodingSettings(audio, video, id);
+
+    QCOMPARE(recorder.audioSettings(), QAudioEncoderSettings());
+    QCOMPARE(recorder.videoSettings(), QVideoEncoderSettings());
+    QCOMPARE(recorder.format(), QString());
+
+    QSignalSpy spy(&recorder, SIGNAL(stateChanged(QMediaRecorder::State)));
+
+    recorder.record();
+    QCOMPARE(recorder.state(), QMediaRecorder::StoppedState);
+    QCOMPARE(recorder.error(), QMediaRecorder::NoError);
+    QCOMPARE(spy.count(), 0);
+
+    recorder.pause();
+    QCOMPARE(recorder.state(), QMediaRecorder::StoppedState);
+    QCOMPARE(recorder.error(), QMediaRecorder::NoError);
+    QCOMPARE(spy.count(), 0);
+
+    recorder.stop();
+    QCOMPARE(recorder.state(), QMediaRecorder::StoppedState);
+    QCOMPARE(recorder.error(), QMediaRecorder::NoError);
+    QCOMPARE(spy.count(), 0);
 }
 
 void tst_QMediaRecorder::testError()
