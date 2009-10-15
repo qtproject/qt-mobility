@@ -70,7 +70,7 @@ void UT_QVersitContactGenerator::testName()
     val.append("Dr");//PreFix
     val.append("MSc");//Suffix
     nameProperty.setName(QString::fromAscii(versitNameId));
-    nameProperty.setValue(val.join(QString::fromAscii(",")).toAscii());
+    nameProperty.setValue(val.join(QString::fromAscii(";")).toAscii());
     document.addProperty(nameProperty);        
     QContact contact = mGenerator->generateContact(document);    
     QCOMPARE(contact.details().count(),2);
