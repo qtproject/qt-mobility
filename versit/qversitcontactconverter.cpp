@@ -227,15 +227,14 @@ void QVersitContactConverter::encodeStreetAddress(QVersitDocument& versitDocumen
 /*!
  * Encode Parameter for versit property if its supported in Versit Document 
  */
-
-void QVersitContactConverter::encodeParameters( QVersitProperty& versitProperty,
-                                                   const QStringList& paramList )
+void QVersitContactConverter::encodeParameters(
+    QVersitProperty& property,
+    const QStringList& paramList)
 {
     foreach (QString type, paramList) {
-        QString decodedParameter = d->mMappingTable.value(type);
-        if ( decodedParameter.size()) {
-            versitProperty.addParameter(decodedParameter, QString());    
-        }
+        QString parameterValue = d->mMappingTable.value(type);
+        if (parameterValue.size())
+            property.addParameter(QString::fromAscii(versitType),parameterValue);
     }
 }
 

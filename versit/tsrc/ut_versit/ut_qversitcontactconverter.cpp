@@ -234,22 +234,18 @@ void UT_QVersitContactConvertert::encodeStreetAddress()
 
 void UT_QVersitContactConvertert::encodeParameters()
 {
-    // Valid Param Test
     QStringList paramList;
-    paramList << "Home" << "Work" << "EmailAddress" << "INVALID";
+    paramList << "Home" << "Work" << "INVALID";
     QVersitProperty property;
     mVersitContactConverter->encodeParameters(property, paramList);
     
-    //Ensure Invalid Keys are not encoded 
-    QCOMPARE(3, property.parameters().keys().count());
-
-    //Ensure Valid keys are encoded.
-    QVERIFY(property.parameters().keys().contains("HOME"));
-    QVERIFY(property.parameters().keys().contains("WORK"));
-    
-    //Ensure Keys are Encoded into versity Types.
-    //EmailAddress == EMAIL
-    QVERIFY(!property.parameters().keys().contains("EmailAddress"));
-    QVERIFY(property.parameters().keys().contains("EMAIL"));
+    QMultiHash<QString,QString> parameters = property.parameters();
+    QCOMPARE(2, parameters.count());
+    QVERIFY(parameters.contains(
+        QString::fromAscii(versitType),
+        QString::fromAscii(versitContextWorkId)));
+    QVERIFY(parameters.contains(
+        QString::fromAscii(versitType),
+        QString::fromAscii(versitContextHomeId)));
 }
 

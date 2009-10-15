@@ -34,15 +34,16 @@
 #ifndef QVERSITCONTACTCONVERTER_H
 #define QVERSITCONTACTCONVERTER_H
 
-#include <QObject>
-#include <QList>
+#include <qtversitglobal.h>
+#include <qversitdocument.h>
 #include <qcontact.h>
-#include "qversitdocument.h"
+#include <QStringList>
+#include <QHash>
 
-// forward class declaration.
 class QVersitContactConverterPrivate;
 
-class QVersitContactConverter
+
+class QTVERSIT_EXPORT QVersitContactConverter
 {
 public:
     QVersitContactConverter();
@@ -60,7 +61,7 @@ public:
 
 private: //Methods
 
-    void encodeParameters( QVersitProperty& versitProperty, const QStringList& paramList );
+    void encodeParameters(QVersitProperty& property, const QStringList& paramList);
     void encodeFieldInfo(QVersitDocument& versitDocumen, const QContactDetail& detail) ; 
     void encodeName(QVersitDocument& versitDocumen, const QContactDetail& detail );
     void encodePhoneNumber(QVersitDocument& versitDocumen, const QContactDetail& detail );
