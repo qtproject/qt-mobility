@@ -278,11 +278,12 @@ QList<QContactRelationship> QContactManagerEngine::relationships(const QString& 
 }
 
 /*!
- * Saves the given \a relationship in the database.  If the relationship already exists in the database, but the destination
- * contacts in the relationship have changed, the relationship in the database will be updated with the new information.
- * If the relationship already exists in the database with no differences this function will return \c false and the \a error will be set
- * to \c QContactManager::AlreadyExistsError.  If the relationship is saved or updated successfully, this function will return
- * \c true and \a error will be set to \c QContactManager::NoError.
+ * Saves the given \a relationship in the database.  If the relationship already exists in the database, this function will
+ * return \c false and the \a error will be set to \c QContactManager::AlreadyExistsError.
+ * If the relationship is saved successfully, this function will return \c true and \a error will be set
+ * to \c QContactManager::NoError.  Note that relationships cannot be updated directly using this function; in order
+ * to update a relationship, you must remove the old relationship, make the required modifications, and then save it.
+ *
  * The given relationship is invalid if it is circular (one of the destination contacts is also the source contact), or
  * if it references a non-existent local contact (either source or destination).  If the given \a relationship is invalid,
  * the function will return \c false and the \a error will be set to \c QContactManager::InvalidRelationshipError.
