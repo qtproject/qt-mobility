@@ -135,7 +135,7 @@ typedef bool (*processContactPoomElement)(const QContactDetail& detail, QVector<
 // Might then need PIMPR -> bag above
 
 struct PoomContactElement;
-typedef void (*processPoomContactElement)(const QVariantList& values, QContact& ret);
+typedef void (*processPoomContactElement)(const QContactWinCEEngine* e, const QVariantList& values, QContact& ret);
 
 struct PoomContactElement {
     QList<CEPROPID> poom;
@@ -148,7 +148,7 @@ static void setIfNotEmpty(QContactDetail& detail, const QString& field, const QS
         detail.setValue(field, value);
 }
 
-static void processName(const QVariantList& values, QContact& ret)
+static void processName(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
 {
     QContactName name;
     setIfNotEmpty(name, QContactName::FieldPrefix, values[0].toString());
@@ -160,13 +160,13 @@ static void processName(const QVariantList& values, QContact& ret)
         ret.saveDetail(&name);
 }
 
-static void processFileAs(const QVariantList& values, QContact& ret)
+static void processFileAs(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
 {
     ret.setDisplayLabel(values[0].toString());
     // isSynthesized gets fixed up after the whole contact is retrieved
 }
 
-static void processAddress(const QString& context, const QVariantList& values, QContact& ret)
+static void processAddress(const QContactWinCEEngine*, const QString& context, const QVariantList& values, QContact& ret)
 {
     QContactAddress address;
     address.setContexts(context);
@@ -179,22 +179,22 @@ static void processAddress(const QString& context, const QVariantList& values, Q
         ret.saveDetail(&address);
 }
 
-static void processHomeAddress(const QVariantList& values, QContact& ret)
+static void processHomeAddress(const QContactWinCEEngine* e, const QVariantList& values, QContact& ret)
 {
-    processAddress(QContactDetail::ContextHome, values, ret);
+    processAddress(e, QContactDetail::ContextHome, values, ret);
 }
 
-static void processWorkAddress(const QVariantList& values, QContact& ret)
+static void processWorkAddress(const QContactWinCEEngine* e, const QVariantList& values, QContact& ret)
 {
-    processAddress(QContactDetail::ContextWork, values, ret);
+    processAddress(e, QContactDetail::ContextWork, values, ret);
 }
 
-static void processOtherAddress(const QVariantList& values, QContact& ret)
+static void processOtherAddress(const QContactWinCEEngine* e, const QVariantList& values, QContact& ret)
 {
-    processAddress(QContactDetail::ContextOther, values, ret);
+    processAddress(e, QContactDetail::ContextOther, values, ret);
 }
 
-static void processEmails(const QVariantList& values, QContact& ret)
+static void processEmails(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
 {
     // First value is our additional metadata..
     // takes the form of a single character for each email address for the context
@@ -218,7 +218,7 @@ static void processEmails(const QVariantList& values, QContact& ret)
     }
 }
 
-static void processPhones(const QVariantList& values, QContact& ret)
+static void processPhones(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
 {
     // Just like emails, the first value is our additional metadata
     // metadata for phone numbers is somewhat crazy.
@@ -304,7 +304,7 @@ static void processPhones(const QVariantList& values, QContact& ret)
     }
 }
 
-static void processDates(const QVariantList& values, QContact& ret)
+static void processDates(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
 {
     // We get anniversary, then birthday
     if (!values[0].toDate().isNull()) {
@@ -319,29 +319,15 @@ static void processDates(const QVariantList& values, QContact& ret)
     }
 }
 
-static void processFamily(const QVariantList& values, QContact& ret)
+static void processId(const QContactWinCEEngine* e, const QVariantList& values, QContact& ret)
 {
-    // We get spouse then children
-    if (!values[0].toString().isEmpty()) {
-        QContactRelationship spouse;
-        spouse.setRelationshipType("Spouse"); // XXX need a constant
-        spouse.setRelatedContactLabel(values[0].toString());
-        ret.saveDetail(&spouse);
-    }
-    if (!values[1].toString().isEmpty()) {
-        QContactRelationship kids;
-        kids.setRelationshipType("Children"); // XXX need a constant
-        kids.setRelatedContactLabel(values[1].toString());
-        ret.saveDetail(&kids);
-    }
+    QContactId id;
+    id.setLocalId(values.at(0).toUInt());
+    id.setManagerUri(e->managerUri());
+    ret.setId(id);
 }
 
-static void processId(const QVariantList& values, QContact& ret)
-{
-    ret.setId(values.at(0).toUInt());
-}
-
-static void processNickname(const QVariantList& values, QContact& ret)
+static void processNickname(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
 {
     QContactNickname nick;
     setIfNotEmpty(nick, QContactNickname::FieldNickname, values[0].toString());
@@ -350,7 +336,7 @@ static void processNickname(const QVariantList& values, QContact& ret)
         ret.saveDetail(&nick);
 }
 
-static void processWebpage(const QVariantList& values, QContact& ret)
+static void processWebpage(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
 {
     QContactUrl url;
     setIfNotEmpty(url, QContactUrl::FieldUrl, values[0].toString());
@@ -359,7 +345,7 @@ static void processWebpage(const QVariantList& values, QContact& ret)
         ret.saveDetail(&url);
 }
 
-static void processOrganisation(const QVariantList& values, QContact& ret)
+static void processOrganisation(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
 {
     QContactOrganization org;
     setIfNotEmpty(org, QContactOrganization::FieldName, values[0].toString());
@@ -436,12 +422,6 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
         dates.func = processDates;
         list.append(dates);
 
-        // Spouse and children
-        PoomContactElement family;
-        family.poom << PIMPR_SPOUSE << PIMPR_CHILDREN;
-        family.func = processFamily;
-        list.append(family);
-
         // Nickname
         PoomContactElement nick;
         nick.poom << PIMPR_NICKNAME;
@@ -460,11 +440,14 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
         org.func = processOrganisation;
         list.append(org);
 
-        // Unhandled:
+        // XXX Unhandled:
         //
         //  PIMPR_ACCOUNT_NAME
         //  PIMPR_CUSTOMERID
         //  PIMPR_GOVERNMENTID
+        //
+        //  PIMPR_SPOUSE
+        //  PIMPR_CHILDREN
         //
         //  PIMPR_MANAGER
         //  PIMPR_ASSISTANT_NAME
@@ -764,19 +747,6 @@ static void processQAddresses(const QList<QContactAddress>& addresses, QVector<C
     }
 }
 
-static void processQRelationships(const QList<QContactRelationship>& relationships, QVector<CEPROPVAL>& props)
-{
-    foreach(const QContactRelationship& rel, relationships) {
-        if (rel.relationshipType() == "Spouse") { // XXX constant
-            props.append(convertToCEPropVal(PIMPR_SPOUSE, rel.relatedContactLabel()));
-        } else if (rel.relationshipType() == "Children") { // XXX constant
-            props.append(convertToCEPropVal(PIMPR_CHILDREN, rel.relatedContactLabel()));
-        } else {
-            qDebug() << "unsupported relationship:" << rel.relationshipType();
-        }
-    }
-}
-
 static void contactQ2PTransforms(QHash<QString, processContactPoomElement>& ret)
 {
     static QHash<QString, processContactPoomElement> hash;
@@ -840,7 +810,7 @@ QContact QContactWinCEEngine::convertToQContact(IItem *contact) const
                 foreach(const CEPROPID& id, qmap.poom) {
                     vl << valueHash.take(id);
                 }
-                qmap.func(vl, ret);
+                qmap.func(this, vl, ret);
             } else {
                 qDebug() << "Didn't match property for id:" << QString::number(id, 16);
                 // Remove the ignored value so we don't infinite loop
@@ -891,7 +861,6 @@ bool QContactWinCEEngine::convertFromQContact(const QContact& contact, IItem* it
     processQPhones(contact.details<QContactPhoneNumber>(), d->m_phonemeta, props);
     processQEmails(contact.details<QContactEmailAddress>(), d->m_emailmeta, props);
     processQAddresses(contact.details<QContactAddress>(), props);
-    //processQRelationships(contact.details<QContactRelationship>(), props);
 
     // Now set it
     HRESULT hr = item->SetProps(0, props.count(), props.data());
@@ -1131,10 +1100,6 @@ void QContactWinCEEngine::buildHashForContactDetailToPoomPropId() const
         Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactAnniversary, FieldOriginalDate, PIMPR_ANNIVERSARY);
         Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactBirthday, FieldBirthday, PIMPR_BIRTHDAY);
 
-        // Spouse and children
-        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactRelationship,FieldRelatedContactLabel, PIMPR_SPOUSE);
-        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactRelationship,FieldRelatedContactLabel, PIMPR_CHILDREN);
-
         // Nickname
         Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactNickname, FieldNickname, PIMPR_NICKNAME);
 
@@ -1143,6 +1108,9 @@ void QContactWinCEEngine::buildHashForContactDetailToPoomPropId() const
 
         // Organisation
         Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactOrganization, FieldName, PIMPR_COMPANY_NAME);
+
+        // XXX Todo
+        // Spouse and children
     }
 }
 
@@ -1173,9 +1141,9 @@ QString QContactWinCEEngine::convertFilterToQueryString(const QContactFilter& fi
             }
             break;
 
-        case QContactFilter::IdListFilter:
+        case QContactFilter::LocalIdFilter:
             {
-                const QContactIdListFilter idf(filter);
+                const QContactLocalIdFilter idf(filter);
                 QList<QContactLocalId> ids = idf.ids();
                 if (!ids.isEmpty())
                 {
@@ -1246,7 +1214,7 @@ QString QContactWinCEEngine::convertFilterToQueryString(const QContactFilter& fi
             }
             break;
 
-        case QContactFilter::GroupMembershipFilter:
+        case QContactFilter::RelationshipFilter:
             //XXX Group detail is not supported by WinCE backend
             break;
 

@@ -304,7 +304,6 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(Q
     defns.remove(QContactTimestamp::DefinitionName);
     defns.remove(QContactGuid::DefinitionName);
     defns.remove(QContactGender::DefinitionName); // ? Surprising
-    defns.remove(QContactRelationship::DefinitionName); // XXX perhaps we should fake it
 
     // Remove the fields we don't support
 
@@ -383,7 +382,7 @@ bool QContactWinCEEngine::hasFeature(QContactManagerInfo::ManagerFeature feature
     if (feature == QContactManagerInfo::Anonymous)
         return true;
 
-    // Windows CE backend does not support Mutable Definitions, Groups or Action Preferences
+    // Windows CE backend does not support Mutable Definitions, Relationships or Action Preferences
     return false;
 }
 
@@ -424,7 +423,7 @@ bool QContactWinCEEngine::filterSupported(const QContactFilter& filter) const
     switch (filter.type()) {
         case QContactFilter::InvalidFilter:
         case QContactFilter::DefaultFilter:
-        case QContactFilter::IdListFilter:
+        case QContactFilter::LocalIdFilter:
         case QContactFilter::ContactDetailFilter:
         case QContactFilter::ContactDetailRangeFilter:
         case QContactFilter::ActionFilter:
