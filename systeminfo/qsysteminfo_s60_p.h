@@ -79,7 +79,7 @@ Q_SIGNALS:
 };
 
 //////// QSystemNetworkInfo
-class QSystemNetworkInfoPrivate : public QObject
+class QSystemNetworkInfoPrivate : public QObject, public MTelephonyInfoObserver
 {
     Q_OBJECT
 

@@ -228,7 +228,7 @@ CCellNetworkInfo::CCellNetworkInfo(CTelephony &telephony) : CTelephonyInfo(telep
 
     TBuf<CTelephony::KNetworkCountryCodeSize> homeMobileCountryCode = m_networkInfoV1.iCountryCode;
     m_homeMobileCountryCode = QString::fromUtf16(homeMobileCountryCode.Ptr(), homeMobileCountryCode.Length());
-    m_previousHomeMobileCountryCode = m_homeMobileCountryCode
+    m_previousHomeMobileCountryCode = m_homeMobileCountryCode;
 
     TBuf<CTelephony::KNetworkLongNameSize> networkName = m_networkInfoV1.iLongName;
     m_networkName = QString::fromUtf16(networkName.Ptr(), networkName.Length());
@@ -376,6 +376,9 @@ CCellSignalStrengthInfo::CCellSignalStrengthInfo(CTelephony &telephony) : CTelep
 
     m_cellNetworkSignalStrength = m_signalStrengthV1.iSignalStrength;
     m_previousCellNetworkSignalStrength = m_cellNetworkSignalStrength;
+    
+    m_signalBar = m_signalStrengthV1.iBar;
+    m_previousSignalBar = m_signalBar;
 
     m_initializing = false;
     
@@ -388,10 +391,11 @@ void CCellSignalStrengthInfo::RunL()
         CTelephonyInfo::RunL();
     } else {
         m_cellNetworkSignalStrength = m_signalStrengthV1.iSignalStrength;
-
-        foreach (MTelephonyInfoObserver *observer, m_observers) {
-            if (m_cellNetworkSignalStrength != m_previousCellNetworkSignalStrength) {
-                m_previousCellNetworkSignalStrength = m_cellNetworkSignalStrength;
+        m_signalBar = m_signalStrengthV1.iBar;
+                
+        if (m_signalBar != m_previousSignalBar) {
+            m_previousSignalBar = m_signalBar;
+            foreach (MTelephonyInfoObserver *observer, m_observers) {
                 observer->cellNetworkSignalStrengthChanged();
             }
         }
@@ -410,7 +414,8 @@ void CCellSignalStrengthInfo::DoCancel()
 
 int CCellSignalStrengthInfo::cellNetworkSignalStrength() const
 {
-    return m_cellNetworkSignalStrength;
+    //Workaround solution based on the number of signal bars (max. 7)
+    return int((TReal(m_signalBar) * 100.0 + 0.5) / 7.0);
 }
 
 void CCellSignalStrengthInfo::startMonitoring()

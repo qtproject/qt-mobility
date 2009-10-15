@@ -243,6 +243,9 @@ private:
 
     int m_cellNetworkSignalStrength;
     int m_previousCellNetworkSignalStrength;
+
+    int m_signalBar;
+    int m_previousSignalBar;
 };
 
 #endif //DEVICEINFO_H

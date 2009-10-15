@@ -77,10 +77,12 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     : QObject(parent)
 {
+    DeviceInfo::instance()->cellSignalStrenghtInfo()->addObserver(this);
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
+    DeviceInfo::instance()->cellSignalStrenghtInfo()->removeObserver(this);
 }
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
@@ -258,7 +260,8 @@ void QSystemNetworkInfoPrivate::cellNetworkNameChanged()
 
 void QSystemNetworkInfoPrivate::cellNetworkSignalStrengthChanged()
 {
-    //TODO
+    emit networkSignalStrengthChanged(QSystemNetworkInfo::GsmMode,
+        DeviceInfo::instance()->cellSignalStrenghtInfo()->cellNetworkSignalStrength());
 }
 
 void QSystemNetworkInfoPrivate::cellNetworkStatusChanged()

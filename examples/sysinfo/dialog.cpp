@@ -482,6 +482,12 @@ void Dialog::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode ,
             ui->signalLevelProgressBar->setValue(strength);
         }
     }
+
+    if(mode == QSystemNetworkInfo::GsmMode) {
+        if(ui->netStatusComboBox->currentText() == "Gsm") {
+            ui->signalLevelProgressBar->setValue(strength);
+        }
+    }
 }
 
 void Dialog::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QString &text)
@@ -494,6 +500,12 @@ void Dialog::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QStri
 
     if(mode == QSystemNetworkInfo::EthernetMode) {
         if(ui->netStatusComboBox->currentText() == "Ethernet") {
+            ui->operatorNameLabel->setText(text);
+        }
+    }
+
+    if(mode == QSystemNetworkInfo::GsmMode) {
+        if(ui->netStatusComboBox->currentText() == "Gsm") {
             ui->operatorNameLabel->setText(text);
         }
     }
@@ -510,6 +522,12 @@ void Dialog::networkStatusChanged(QSystemNetworkInfo::NetworkMode mode , QSystem
     if(mode == QSystemNetworkInfo::EthernetMode) {
         if(ui->netStatusComboBox->currentText() == "Ethernet") {
            displayNetworkStatus(status);
+        }
+    }
+
+    if(mode == QSystemNetworkInfo::GsmMode) {
+        if(ui->netStatusComboBox->currentText() == "Gsm") {
+            displayNetworkStatus(status);
         }
     }
 }
