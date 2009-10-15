@@ -141,20 +141,29 @@ QContactDetail* QVersitContactGenerator::createPhone(
     QStringList subTypes;
     foreach (QString type, types){
         if (type == QString::fromAscii(versitVoiceId)){
-            subTypes+=QContactPhoneNumber::SubTypeVoice;
+            subTypes += QContactPhoneNumber::SubTypeVoice;
         }
         else if (type == QString::fromAscii(versitCellId)){
-            subTypes+=QContactPhoneNumber::SubTypeMobile;
+            subTypes += QContactPhoneNumber::SubTypeMobile;
         }
         else if (type == QString::fromAscii(versitModemId)){
-            subTypes+=QContactPhoneNumber::SubTypeModem;
+            subTypes += QContactPhoneNumber::SubTypeModem;
         }
         else if (type == QString::fromAscii(versitCarId)){
-            subTypes+=QContactPhoneNumber::SubTypeCar;
+            subTypes += QContactPhoneNumber::SubTypeCar;
         }
         else if (type == QString::fromAscii(versitVideoId)){
-            subTypes+=QContactPhoneNumber::SubTypeVideo;
+            subTypes += QContactPhoneNumber::SubTypeVideo;
         }
+        else if (type == QString::fromAscii(versitFaxId)){
+            subTypes += QContactPhoneNumber::SubTypeFacsimile;
+        }
+        else if (type == QString::fromAscii(versitBbsId)){
+            subTypes += QContactPhoneNumber::SubTypeBulletinBoardSystem;
+        }
+        else if (type == QString::fromAscii(versitPagerId)){
+            subTypes += QContactPhoneNumber::SubTypePager;
+        }         
         else {
             // NOP
         }
@@ -247,6 +256,9 @@ QContactDetail* QVersitContactGenerator::createUrl(
 {
     QContactUrl* url = new QContactUrl();
     url->setUrl(QString::fromAscii(property.value()));
+    QStringList types = 
+        property.parameters().values(QString::fromAscii(versitType));    
+    url->setContexts(extractContexts(types));
     return url;
 }
 

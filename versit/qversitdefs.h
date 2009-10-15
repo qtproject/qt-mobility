@@ -37,7 +37,7 @@
 #define QVERSITDEFS_H_
 
 
-//vCard 2.1 constants.
+// vCard 2.1 constants.
 
 // Property names and parameters
 const char versitNameId[] = "N";
@@ -51,22 +51,25 @@ const char versitUidId[] = "UID";
 const char versitType[] = "TYPE";
 const char versitOrganizationId[] = "ORG";
 
-//Contexts:
+// Contexts:
 const char versitContextWorkId[] = "WORK";
 const char versitContextHomeId[] = "HOME";
 
-//SubTypes for Addresses
+// SubTypes for Addresses
 const char versitDomesticId[] = "DOM";
 const char versitInternationalId[] = "INTL";
 const char versitPostalId[] = "POSTAL";
 const char versitParcelId[] = "PARCEL";
 
-//SubTypes for Telephone
+// SubTypes for Telephone
 const char versitVoiceId[] = "VOICE";
 const char versitCellId[] = "CELL";
 const char versitModemId[] = "MODEM";
 const char versitCarId[] = "CAR";
 const char versitVideoId[] = "VIDEO";
+const char versitFaxId[] = "FAX";
+const char versitBbsId[] = "BBS";
+const char versitPagerId[] = "PAGER";
 
 
 //SubTypes for the URL

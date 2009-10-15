@@ -95,7 +95,9 @@ public:
         /* Sub types for the url */
         mMappingTable.insert(QContactUrl::SubTypeHomePage, QString::fromAscii(versithomePageId));
         mMappingTable.insert(QContactUrl::SubTypeFavourite, QString::fromAscii(versitfavoriteIDId));
-
+        mMappingTable.insert(QContactPhoneNumber::SubTypeFacsimile,QString::fromAscii(versitFaxId));
+        mMappingTable.insert(QContactPhoneNumber::SubTypeBulletinBoardSystem,QString::fromAscii(versitBbsId));
+        mMappingTable.insert(QContactPhoneNumber::SubTypePager,QString::fromAscii(versitPagerId));        
     }
     
     ~QVersitContactConverterPrivate()
