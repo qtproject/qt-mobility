@@ -212,6 +212,9 @@ QContactDetail* QVersitContactGenerator::createEmail(
 {
     QContactEmailAddress* email = new QContactEmailAddress();
     email->setEmailAddress(QString::fromAscii(property.value()));
+    QStringList types = 
+        property.parameters().values(QString::fromAscii(versitType));
+    email->setContexts(extractContexts(types));
     return email;
 }
 

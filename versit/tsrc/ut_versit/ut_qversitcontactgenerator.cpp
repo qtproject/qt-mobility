@@ -160,20 +160,20 @@ void UT_QVersitContactGenerator::testAddress()
 void UT_QVersitContactGenerator::testTel()
 {
     QVersitDocument document;
-    QVersitProperty nameProperty;
-    nameProperty.setName(QString::fromAscii(versitPhoneId));
+    QVersitProperty property;
+    property.setName(QString::fromAscii(versitPhoneId));
     QByteArray value("+35850486321");
-    nameProperty.setValue(value);
+    property.setValue(value);
     
-    nameProperty.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitVoiceId));
-    nameProperty.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitCellId));
-    nameProperty.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitModemId));
-    nameProperty.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitCarId));
-    nameProperty.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitVideoId));
-    nameProperty.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitContextHomeId));
-    nameProperty.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitContextWorkId));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitVoiceId));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitCellId));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitModemId));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitCarId));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitVideoId));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitContextHomeId));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitContextWorkId));
 
-    document.addProperty(nameProperty);
+    document.addProperty(property);
     QContact contact = mGenerator->generateContact(document);
     const QContactPhoneNumber& phone = 
         static_cast<QContactPhoneNumber>(
@@ -196,17 +196,20 @@ void UT_QVersitContactGenerator::testTel()
 
 void UT_QVersitContactGenerator::testEmail()
 {
-    QVersitDocument document;
-    QVersitProperty nameProperty;
-    nameProperty.setName(QString::fromAscii(versitEmailId));
-    QByteArray value("homer.simpson@springfield.com");
-    nameProperty.setValue(value);
-    document.addProperty(nameProperty);
+    QVersitProperty property;
+    property.setName(QString::fromAscii(versitEmailId));
+    QByteArray value("homer.simpson@burns-corporation.com");
+    property.setValue(value);
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitContextWorkId));    
+    QVersitDocument document = createDocumentWithProperty(property);
     QContact contact = mGenerator->generateContact(document);
     QContactEmailAddress email =
         static_cast<QContactEmailAddress>(
             contact.detail(QContactEmailAddress::DefinitionName));
     QCOMPARE(email.emailAddress(),QString::fromAscii(value));
+    const QStringList contexts = email.contexts();
+    QCOMPARE(contexts.count(),1);
+    QVERIFY(contexts.contains(QContactDetail::ContextWork)); 
 }
 
 void UT_QVersitContactGenerator::testUrl()
