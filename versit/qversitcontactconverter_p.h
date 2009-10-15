@@ -42,9 +42,12 @@
 #include <qcontactname.h>
 #include <qcontactaddress.h>
 #include <qcontactemailaddress.h>
+#include <qcontacturl.h>
 #include <qcontactphonenumber.h>
 #include <qcontactaddress.h>
+#include <qcontactorganization.h>
 #include "qversitdefs.h"
+
 
 class QVersitContactConverter;
 
@@ -59,10 +62,16 @@ public:
         //mMappingTable.insert(myString,myString);
         
         mMappingTable.insert(QContactName::DefinitionName,QString::fromAscii(versitNameId));
-        mMappingTable.insert(QContactEmailAddress::DefinitionName,QString::fromAscii(versitEmailId));
+        mMappingTable.insert(QContactEmailAddress::DefinitionName,
+                             QString::fromAscii(versitEmailId));
         mMappingTable.insert(QContactPhoneNumber::DefinitionName,
                              QString::fromAscii(versitPhoneId));
         mMappingTable.insert(QContactAddress::DefinitionName,QString::fromAscii(versitAddressId));
+
+        mMappingTable.insert(QContactUrl::DefinitionName,QString::fromAscii(versitUrlId));
+        mMappingTable.insert(QContactGuid::DefinitionName,QString::fromAscii(versitUidId));
+        mMappingTable.insert(QContactOrganization::DefinitionName,
+                             QString::fromAscii(versitOrganizationId));
 
         //Context Mapping
         mMappingTable.insert(QContactDetail::ContextWork,QString::fromAscii(versitContextWorkId));
@@ -82,10 +91,13 @@ public:
         mMappingTable.insert(QContactPhoneNumber::SubTypeModem,QString::fromAscii(versitModemId));
         mMappingTable.insert(QContactPhoneNumber::SubTypeCar,QString::fromAscii(versitCarId));
         mMappingTable.insert(QContactPhoneNumber::SubTypeVideo,QString::fromAscii(versitVideoId));
+
+        /* Sub types for the url */
+        mMappingTable.insert(QContactUrl::SubTypeHomePage, QString::fromAscii(versithomePageId));
+        mMappingTable.insert(QContactUrl::SubTypeFavourite, QString::fromAscii(versitfavoriteIDId));
         mMappingTable.insert(QContactPhoneNumber::SubTypeFacsimile,QString::fromAscii(versitFaxId));
         mMappingTable.insert(QContactPhoneNumber::SubTypeBulletinBoardSystem,QString::fromAscii(versitBbsId));
         mMappingTable.insert(QContactPhoneNumber::SubTypePager,QString::fromAscii(versitPagerId));        
-        
     }
     
     ~QVersitContactConverterPrivate()
