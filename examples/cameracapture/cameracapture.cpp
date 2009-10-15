@@ -63,6 +63,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
         QString description = deviceName+" "+camera->deviceDescription(deviceName);
         QAction *videoDeviceAction = new QAction(description, videoDevicesGroup);
         videoDeviceAction->setCheckable(true);
+        videoDeviceAction->setData(QVariant(deviceName));
         if (cameraDevice.isEmpty()) {
             cameraDevice = deviceName;
             videoDeviceAction->setChecked(true);
