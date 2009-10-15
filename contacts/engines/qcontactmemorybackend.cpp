@@ -690,7 +690,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
         }
         break;
 
-        case QContactAbstractRequest::ContactIdFetchRequest:
+        case QContactAbstractRequest::ContactLocalIdFetchRequest:
         {
             QContactLocalIdFetchRequest* r = static_cast<QContactLocalIdFetchRequest*>(currentRequest);
             QContactFilter filter = r->filter();

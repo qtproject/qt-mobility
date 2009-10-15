@@ -102,12 +102,12 @@ void QContactRequestWorker::stop()
  *
  * \sa stop()
  * \sa processContactFetchRequest()
- * \sa processContactIdFetchRequest()
+ * \sa processContactLocalIdFetchRequest()
  * \sa processContactSaveRequest()
  * \sa processContactRemoveRequest()
- * \sa processContactGroupFetchRequest()
- * \sa processContactGroupSaveRequest()
- * \sa processContactGroupRemoveRequest()
+ * \sa processContactRelationshipFetchRequest()
+ * \sa processContactRelationshipSaveRequest()
+ * \sa processContactRelationshipRemoveRequest()
  * \sa processContactDetailDefinitionFetchRequest()
  * \sa processContactDetailDefinitionSaveRequest()
  * \sa processContactDetailDefinitionRemoveRequest()
@@ -142,8 +142,8 @@ void QContactRequestWorker::run()
             case QContactAbstractRequest::ContactFetchRequest:
                 processContactFetchRequest(static_cast<QContactFetchRequest*>(re->request));
                 break;
-            case QContactAbstractRequest::ContactIdFetchRequest:
-                processContactIdFetchRequest(static_cast<QContactIdFetchRequest*>(re->request));
+            case QContactAbstractRequest::ContactLocalIdFetchRequest:
+                processContactLocalIdFetchRequest(static_cast<QContactLocalIdFetchRequest*>(re->request));
                 break;
             case QContactAbstractRequest::ContactSaveRequest:
                 processContactSaveRequest(static_cast<QContactSaveRequest*>(re->request));
@@ -151,14 +151,14 @@ void QContactRequestWorker::run()
             case QContactAbstractRequest::ContactRemoveRequest:
                 processContactRemoveRequest(static_cast<QContactRemoveRequest*>(re->request));
                 break;
-            case QContactAbstractRequest::GroupFetchRequest:
-                processContactGroupFetchRequest(static_cast<QContactGroupFetchRequest*>(re->request));
+            case QContactAbstractRequest::RelationshipFetchRequest:
+                processContactRelationshipFetchRequest(static_cast<QContactRelationshipFetchRequest*>(re->request));
                 break;
-            case QContactAbstractRequest::GroupSaveRequest:
-                processContactGroupSaveRequest(static_cast<QContactGroupSaveRequest*>(re->request));
+            case QContactAbstractRequest::RelationshipSaveRequest:
+                processContactRelationshipSaveRequest(static_cast<QContactRelationshipSaveRequest*>(re->request));
                 break;
-            case QContactAbstractRequest::GroupRemoveRequest:
-                processContactGroupRemoveRequest(static_cast<QContactGroupRemoveRequest*>(re->request));
+            case QContactAbstractRequest::RelationshipRemoveRequest:
+                processContactRelationshipRemoveRequest(static_cast<QContactRelationshipRemoveRequest*>(re->request));
                 break;
             case QContactAbstractRequest::DetailDefinitionFetchRequest:
                 processContactDetailDefinitionFetchRequest(static_cast<QContactDetailDefinitionFetchRequest*>(re->request));
@@ -291,7 +291,7 @@ void QContactRequestWorker::processContactFetchRequest(QContactFetchRequest* req
         QList<QContactManager::Error> operationErrors;
         QList<QContact> requestedContacts;
 
-        QList<QUniqueId> requestedContactIds = req->manager()->contacts(filter, sorting);
+        QList<QContactLocalId> requestedContactIds = req->manager()->contacts(filter, sorting);
         operationError = req->manager()->error();
 
         QContactManager::Error tempError;
@@ -329,14 +329,14 @@ void QContactRequestWorker::processContactFetchRequest(QContactFetchRequest* req
  * Processes the QContactIdFetchRequest
  * \sa QContactIdFetchRequest
  */
-void QContactRequestWorker::processContactIdFetchRequest(QContactIdFetchRequest* req)
+void QContactRequestWorker::processContactLocalIdFetchRequest(QContactLocalIdFetchRequest* req)
 {
     if (req->manager()) {
         QContactFilter filter = req->filter();
         QList<QContactSortOrder> sorting = req->sorting();
 
         QContactManager::Error operationError = QContactManager::NoError;
-        QList<QUniqueId> requestedContactIds = req->manager()->contacts(filter, sorting);
+        QList<QContactLocalId> requestedContactIds = req->manager()->contacts(filter, sorting);
         operationError = req->manager()->error();
 
         QContactManagerEngine::updateRequest(req, requestedContactIds, operationError, QList<QContactManager::Error>(), QContactAbstractRequest::Finished);
@@ -382,7 +382,7 @@ void QContactRequestWorker::processContactRemoveRequest(QContactRemoveRequest* r
         QContactFilter filter = req->filter();
 
         QContactManager::Error operationError = QContactManager::NoError;
-        QList<QUniqueId> contactsToRemove = req->manager()->contacts(filter, QList<QContactSortOrder>());
+        QList<QContactLocalId> contactsToRemove = req->manager()->contacts(filter, QList<QContactSortOrder>());
         operationError = req->manager()->error();
     
         for (int i = 0; i < contactsToRemove.size(); i++) {
@@ -400,93 +400,7 @@ void QContactRequestWorker::processContactRemoveRequest(QContactRemoveRequest* r
         QContactManagerEngine::updateRequestStatus(req, operationError, dummy, QContactAbstractRequest::Finished);
     }
 }
-/*!
- * Processes the QContactGroupFetchRequest
- * \sa QContactGroupFetchRequest
- */
-void QContactRequestWorker::processContactGroupFetchRequest(QContactGroupFetchRequest* req)
-{
-    if (req->manager()) {
-        QContactManager::Error operationError = QContactManager::NoError;
-        QList<QContactManager::Error> operationErrors;
-        QList<QContactGroup> requestedGroups;
-        QList<QUniqueId> requestedGroupIds = req->ids();
-        if (requestedGroupIds.isEmpty()) {
-            requestedGroupIds = req->manager()->groups(); // all groups.
-            operationError = req->manager()->error();
-        }
 
-        QContactManager::Error tempError;
-        for (int i = 0; i < requestedGroupIds.size(); i++) {
-            QContactGroup current = req->manager()->group(requestedGroupIds.at(i));
-            tempError = req->manager()->error();
-            operationErrors.append(tempError);
-
-            // add the group to the result list.
-            requestedGroups.append(current);
-
-            if (tempError != QContactManager::NoError)
-                operationError = tempError;
-        }
-
-        // update the request with the results.
-        QContactManagerEngine::updateRequest(req, requestedGroups, operationError, operationErrors, QContactAbstractRequest::Finished);
-    }
-}
-/*!
- * Processes the QContactGroupSaveRequest
- * \sa QContactGroupSaveRequest
- */
-void QContactRequestWorker::processContactGroupSaveRequest(QContactGroupSaveRequest* req)
-{
-    if (req->manager()) {
-        QContactManager::Error operationError = QContactManager::NoError;
-        QList<QContactManager::Error> operationErrors;
-        QList<QContactGroup> groups = req->groups();
-        QList<QContactGroup> savedGroups;
-
-        for (int i = 0; i < groups.size(); i++) {
-            QContactManager::Error tempError;
-            QContactGroup current = groups.at(i);
-            req->manager()->saveGroup(&current);
-            tempError = req->manager()->error();
-            savedGroups.append(current);
-            operationErrors.append(tempError);
-
-            if (tempError != QContactManager::NoError)
-                operationError = tempError;
-        }
-
-        QContactManagerEngine::updateRequest(req, savedGroups, operationError, operationErrors, QContactAbstractRequest::Finished);
-    }
-}
-
-/*!
- * Processes the QContactGroupRemoveRequest
- * \sa QContactGroupRemoveRequest
- */
-void QContactRequestWorker::processContactGroupRemoveRequest(QContactGroupRemoveRequest* req)
-{
-    if (req->manager()) {
-        QList<QUniqueId> ids = req->ids();
-
-        QContactManager::Error operationError = QContactManager::NoError;
-        QList<QContactManager::Error> operationErrors;
-
-        for (int i = 0; i < ids.size(); i++) {
-            QContactManager::Error tempError;
-            req->manager()->removeGroup(ids.at(i));
-            tempError = req->manager()->error();
-            operationErrors.append(tempError);
-
-            if (tempError != QContactManager::NoError)
-                operationError = tempError;
-        }
-
-        // there are no results, so just emit our changes and update the status with any errors.
-        QContactManagerEngine::updateRequestStatus(req, operationError, operationErrors, QContactAbstractRequest::Finished);
-    }
-}
 
 /*!
  * Processes the QContactDetailDefinitionFetchRequest
@@ -574,6 +488,127 @@ void QContactRequestWorker::processContactDetailDefinitionRemoveRequest(QContact
     }
 }
 
+/*!
+ * Processes the QContactRelationshipFetchRequest
+ * \sa QContactRelationshipFetchRequest
+ */
+void QContactRequestWorker::processContactRelationshipFetchRequest(QContactRelationshipFetchRequest* req)
+{
+    if (req->manager()) {
+        QList<QContactManager::Error> operationErrors;
+        QList<QContactRelationship> allRelationships = req->manager()->relationships(QString(), QContactId(), QContactRelationshipFilter::Either);
+        QContactManager::Error operationError = req->manager()->error();
+        QList<QContactRelationship> requestedRelationships;
+
+        // first criteria: source contact id must be empty or must match
+        if (req->first() == QContactId()) {
+            // all relationships match this criteria (zero id denotes "any")
+            requestedRelationships = allRelationships;
+        } else {
+            for (int i = 0; i < allRelationships.size(); i++) {
+                QContactRelationship currRelationship = allRelationships.at(i);
+                if (req->first() == currRelationship.first()) {
+                    requestedRelationships.append(currRelationship);
+                }
+            }
+        }
+
+        // second criteria: relationship type must be empty or must match
+        if (!req->relationshipType().isEmpty()) {
+            allRelationships = requestedRelationships;
+            requestedRelationships.clear();
+            for (int i = 0; i < allRelationships.size(); i++) {
+                QContactRelationship currRelationship = allRelationships.at(i);
+                if (req->relationshipType() == currRelationship.relationshipType()) {
+                    requestedRelationships.append(currRelationship);
+                }
+            }
+        }
+
+        // third criteria: participant must be empty or must match (including role in relationship)
+        QString myUri = req->manager()->managerUri();
+        QContactId anonymousParticipant;
+        anonymousParticipant.setLocalId(QContactLocalId(0));
+        anonymousParticipant.setManagerUri(QString());
+        if (req->participant() != anonymousParticipant) {
+            allRelationships = requestedRelationships;
+            requestedRelationships.clear();
+            for (int i = 0; i < allRelationships.size(); i++) {
+                QContactRelationship currRelationship = allRelationships.at(i);
+                if ((req->participantRole() == QContactRelationshipFilter::Either || req->participantRole() == QContactRelationshipFilter::Second)
+                        && currRelationship.second() == req->participant()) {
+                    requestedRelationships.append(currRelationship);
+                } else if ((req->participantRole() == QContactRelationshipFilter::Either || req->participantRole() == QContactRelationshipFilter::First)
+                        && currRelationship.first() == req->participant()) {
+                    requestedRelationships.append(currRelationship);
+                }
+            }
+        }
+
+        // update the request with the results.
+        QContactManagerEngine::updateRequest(req, requestedRelationships, operationError, operationErrors, QContactAbstractRequest::Finished);
+    }
+}
+
+/*!
+ * Processes the QContactRelationshipRemoveRequest
+ * \sa QContactRelationshipRemoveRequest
+ */
+void QContactRequestWorker::processContactRelationshipRemoveRequest(QContactRelationshipRemoveRequest* req)
+{
+    if (req->manager()) {
+        QList<QContactManager::Error> operationErrors;
+        QList<QContactRelationship> matchingRelationships = req->manager()->relationships(req->relationshipType(), req->first(), QContactRelationshipFilter::First);
+        QContactManager::Error operationError = req->manager()->error();
+
+        for (int i = 0; i < matchingRelationships.size(); i++) {
+            QContactManager::Error tempError;
+            QContactRelationship possibleMatch = matchingRelationships.at(i);
+
+            // if the second criteria matches, or is default constructed id, then we have a match and should remove it.
+            if (req->second() == QContactId() || possibleMatch.second() == req->second()) {
+                req->manager()->removeRelationship(matchingRelationships.at(i));
+                tempError = req->manager()->error();
+                operationErrors.append(tempError);
+
+                if (tempError != QContactManager::NoError)
+                     operationError = tempError;
+            }
+        }
+
+        // there are no results, so just update the status with the error.
+        QContactManagerEngine::updateRequestStatus(req, operationError, operationErrors, QContactAbstractRequest::Finished);
+    }
+}
+
+/*!
+ * Processes the QContactRelationshipSaveRequest
+ * \sa QContactRelationshipSaveRequest
+ */
+void QContactRequestWorker::processContactRelationshipSaveRequest(QContactRelationshipSaveRequest* req)
+{
+    if (req->manager()) {
+        QContactManager::Error operationError = QContactManager::NoError;
+        QList<QContactManager::Error> operationErrors;
+        QList<QContactRelationship> requestRelationships = req->relationships();
+        QList<QContactRelationship> savedRelationships;
+
+        QContactManager::Error tempError;
+        for (int i = 0; i < requestRelationships.size(); i++) {
+            QContactRelationship current = requestRelationships.at(i);
+            req->manager()->saveRelationship(&current);
+            tempError = req->manager()->error();
+            savedRelationships.append(current);
+            operationErrors.append(tempError);
+
+            if (tempError != QContactManager::NoError)
+                operationError = tempError;
+        }
+
+        // update the request with the results.
+        QContactManagerEngine::updateRequest(req, savedRelationships, operationError, operationErrors, QContactAbstractRequest::Finished);
+    }
+}
 
 QContactRequestElement* QContactRequestWorkerData::takeFirstRequestElement()
 {

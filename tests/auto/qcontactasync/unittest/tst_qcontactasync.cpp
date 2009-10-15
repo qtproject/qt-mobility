@@ -362,7 +362,7 @@ void tst_QContactAsync::contactIdFetch()
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
     QContactLocalIdFetchRequest cfr;
-    QVERIFY(cfr.type() == QContactAbstractRequest::ContactIdFetchRequest);
+    QVERIFY(cfr.type() == QContactAbstractRequest::ContactLocalIdFetchRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!cfr.isActive());

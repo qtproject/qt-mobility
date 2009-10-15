@@ -138,7 +138,7 @@ public:
     static int compareVariant(const QVariant& first, const QVariant& second, Qt::CaseSensitivity sensitivity);
     static bool testFilter(const QContactFilter& filter, const QContact& contact);
     static bool validateActionFilter(const QContactFilter& filter);
-    static QList<QUniqueId> sortContacts(const QList<QContact>& contacts, const QList<QContactSortOrder>& sortOrders);
+    static QList<QContactLocalId> sortContacts(const QList<QContact>& contacts, const QList<QContactSortOrder>& sortOrders);
     static void setContactRelationships(QContact* contact, const QList<QContactRelationship>& relationships);
 
 private:

@@ -43,12 +43,12 @@
 class QContactRequestWorkerData;
 class QContactAbstractRequest;
 class QContactFetchRequest;
-class QContactIdFetchRequest;
+class QContactLocalIdFetchRequest;
 class QContactSaveRequest;
 class QContactRemoveRequest;
-class QContactGroupFetchRequest;
-class QContactGroupSaveRequest;
-class QContactGroupRemoveRequest;
+class QContactRelationshipFetchRequest;
+class QContactRelationshipSaveRequest;
+class QContactRelationshipRemoveRequest;
 class QContactDetailDefinitionFetchRequest;
 class QContactDetailDefinitionSaveRequest;
 class QContactDetailDefinitionRemoveRequest;
@@ -84,12 +84,12 @@ public:
 protected:
     /* Actual asynchronous requests process functions*/
     virtual void processContactFetchRequest(QContactFetchRequest* req);
-    virtual void processContactIdFetchRequest(QContactIdFetchRequest* req);
+    virtual void processContactLocalIdFetchRequest(QContactLocalIdFetchRequest* req);
     virtual void processContactSaveRequest(QContactSaveRequest* req);
     virtual void processContactRemoveRequest(QContactRemoveRequest* req );
-    virtual void processContactGroupFetchRequest(QContactGroupFetchRequest* req);
-    virtual void processContactGroupSaveRequest(QContactGroupSaveRequest* req);
-    virtual void processContactGroupRemoveRequest(QContactGroupRemoveRequest* req);
+    virtual void processContactRelationshipFetchRequest(QContactRelationshipFetchRequest* req);
+    virtual void processContactRelationshipSaveRequest(QContactRelationshipSaveRequest* req);
+    virtual void processContactRelationshipRemoveRequest(QContactRelationshipRemoveRequest* req);
     virtual void processContactDetailDefinitionFetchRequest(QContactDetailDefinitionFetchRequest* req);
     virtual void processContactDetailDefinitionSaveRequest(QContactDetailDefinitionSaveRequest* req);
     virtual void processContactDetailDefinitionRemoveRequest(QContactDetailDefinitionRemoveRequest* req);

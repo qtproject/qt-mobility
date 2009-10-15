@@ -1633,9 +1633,9 @@ void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& t
     sorted->append(toAdd);
 }
 
-QList<QUniqueId> QContactManagerEngine::sortContacts(const QList<QContact>& cs, const QList<QContactSortOrder>& sortOrders)
+QList<QContactLocalId> QContactManagerEngine::sortContacts(const QList<QContact>& cs, const QList<QContactSortOrder>& sortOrders)
 {
-    QList<QUniqueId> sortedIds;
+    QList<QContactLocalId> sortedIds;
     QList<QContact> sortedContacts;
     if (!sortOrders.isEmpty()) {
         foreach (const QContact& c, cs) {
@@ -1643,11 +1643,11 @@ QList<QUniqueId> QContactManagerEngine::sortContacts(const QList<QContact>& cs, 
         }
 
         foreach(const QContact c, sortedContacts) {
-            sortedIds.append(c.id());
+            sortedIds.append(c.localId());
         }
     } else {
         foreach(const QContact c, cs) {
-            sortedIds.append(c.id());
+            sortedIds.append(c.localId());
         }
     }
     return sortedIds;
@@ -1736,7 +1736,7 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
         }
         break;
 
-        case QContactAbstractRequest::ContactIdFetchRequest:
+        case QContactAbstractRequest::ContactLocalIdFetchRequest:
         {
             QContactLocalIdFetchRequest* r = static_cast<QContactLocalIdFetchRequest*>(req);
             emit r->progress(r, appendOnly);
@@ -1809,7 +1809,7 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    if (req->type() == QContactAbstractRequest::ContactIdFetchRequest) {
+    if (req->type() == QContactAbstractRequest::ContactLocalIdFetchRequest) {
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
         req->d_ptr->m_status = status;

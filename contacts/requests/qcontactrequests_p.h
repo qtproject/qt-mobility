@@ -133,7 +133,7 @@ public:
 
     QContactAbstractRequest::RequestType type() const
     {
-        return QContactAbstractRequest::ContactIdFetchRequest;
+        return QContactAbstractRequest::ContactLocalIdFetchRequest;
     }
 
     QContactFilter m_filter;
@@ -202,8 +202,6 @@ public:
 
     QStringList m_names;
 };
-
-///////////////////////
 
 class QContactRelationshipFetchRequestPrivate : public QContactAbstractRequestPrivate
 {

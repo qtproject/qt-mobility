@@ -94,10 +94,7 @@ private slots:
 
     void detailVariantFiltering();
     void detailVariantFiltering_data();
-#if 0
-    void groupMembershipFiltering();
-    void groupMembershipFiltering_data();
-#endif
+
     void intersectionFiltering();
     void intersectionFiltering_data();
 
@@ -2219,7 +2216,7 @@ void tst_QContactManagerFiltering::changelogFiltering_data()
             newMRow("Removed since after fourth", manager) << manager << contacts << removed << dc.addSecs(1) << "";
         } else {
             // Stop spam and asserts with a single row
-            newMRow("Unsupported", manager) << manager << QList<QUniqueId>() << added << QDateTime() << QString();
+            newMRow("Unsupported", manager) << manager << QList<QContactLocalId>() << added << QDateTime() << QString();
         }
     }
 }
