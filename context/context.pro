@@ -54,7 +54,7 @@ unix:!symbian {
 
 win32 {
     HEADERS += qsystemreadwritelock_p.h
-    SOURCES += sharedmemorylayer.cpp \
+    SOURCES += \
                qsystemreadwritelock.cpp \
                registrylayer_win.cpp
 
