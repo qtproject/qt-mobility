@@ -2,13 +2,17 @@ TEMPLATE = subdirs
 SUBDIRS += qvaluespace \
            qvaluespaceprovider \
            qvaluespacesubscriber \
-           qmallocpool \
-           qpacket \
-           qpacketprotocol \
 	   qcrmlparser
 
 unix|win32 {
-    !symbian: SUBDIRS+= \
+    !symbian:!maemo: SUBDIRS+= \
         qsystemreadwritelock \
         qsystemreadwritelock_oop
+}
+
+unix:!symbian:!maemo: {
+    SUBDIRS+= \
+           qpacket \
+           qmallocpool \
+           qpacketprotocol
 }

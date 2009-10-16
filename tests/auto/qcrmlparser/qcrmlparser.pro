@@ -10,6 +10,5 @@ SOURCES += ../../../context/qcrmlparser.cpp \
         tst_qcrmlparser.cpp
 DEFINES += TESTDATA_DIR=\\\"$$PWD/\\\"
 
-LIBS += -lQtPublishSubscribe
 symbian:TARGET.CAPABILITY = ALL \
     -TCB

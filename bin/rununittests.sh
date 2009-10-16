@@ -18,6 +18,7 @@ export PATH=.
 ./tst_qvaluespacesubscriber_oop
 ./tst_qsystemreadwritelock
 ./tst_qsystemreadwritelock_oop
+./tst_qcrmlparser
 
 cd $SAVED_PWD
 
