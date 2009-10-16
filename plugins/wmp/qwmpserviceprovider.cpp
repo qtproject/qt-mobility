@@ -39,20 +39,19 @@
 QStringList QWmpServiceProviderPlugin::keys() const
 {
     return QStringList()
-            << QLatin1String("mediaplayer")
+            << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER)
             << QLatin1String("windowsmediaplayer");
 }
 
 QMediaService *QWmpServiceProviderPlugin::create(const QString &key)
 {
-    if (QLatin1String("mediaplayer") == key) {
+    if (QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER) == key) {
         QByteArray providerKey = qgetenv("QT_MEDIAPLAYER_PROVIDER");
         if (!providerKey.isNull() && qstrcmp(providerKey.constData(), "windowsmediaplayer") == 0)
             return new QWmpPlayerService(QWmpPlayerService::RemoteEmbed);
 
         return new QWmpPlayerService(QWmpPlayerService::LocalEmbed);
     }
-
     else if (QLatin1String("windowsmediaplayer") == key)
         return new QWmpPlayerService(QWmpPlayerService::RemoteEmbed);
 

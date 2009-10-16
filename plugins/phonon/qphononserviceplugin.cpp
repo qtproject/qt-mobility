@@ -43,12 +43,12 @@
 
 QStringList QPhononServicePlugin::keys() const
 {
-    return QStringList() << "mediaplayer";
+    return QStringList() << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER);
 }
 
 QMediaService* QPhononServicePlugin::create(QString const& key)
 {
-    if (key == QLatin1String("mediaplayer"))
+    if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
         return new QPhononPlayerService;
 
     qDebug() << "unsupported key:" << key;

@@ -43,12 +43,12 @@
 
 QStringList AudioCaptureServicePlugin::keys() const
 {
-    return QStringList() << "audiosource";
+    return QStringList() << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE);
 }
 
 QMediaService* AudioCaptureServicePlugin::create(QString const& key)
 {
-    if (key == QLatin1String("audiosource"))
+    if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
         return new AudioCaptureService;
 
     qDebug() << "unsupported key:" << key;

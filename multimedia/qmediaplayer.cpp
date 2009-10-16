@@ -155,10 +155,10 @@ void QMediaPlayerPrivate::_q_updateMedia(const QMediaContent &media)
 static QMediaService *playerService(QMediaPlayer::Flags flags, QMediaServiceProvider *provider)
 {
     if (flags && QMediaPlayer::LowLatency)
-        return provider->requestService("mediaplayer",
+        return provider->requestService(Q_MEDIASERVICE_MEDIAPLAYER,
                                         QMediaServiceProviderHint(QMediaServiceProviderHint::LowLatencyPlayback));
     else
-        return provider->requestService("mediaplayer");
+        return provider->requestService(Q_MEDIASERVICE_MEDIAPLAYER);
 }
 
 
@@ -500,7 +500,7 @@ QtMedia::SupportEstimate QMediaPlayer::canPlay(const QString &mimeType,
                                                const QStringList& codecs,
                                                Flags flags)
 {
-    return QMediaServiceProvider::defaultServiceProvider()->canPlay(QByteArray("mediaplayer"),
+    return QMediaServiceProvider::defaultServiceProvider()->canPlay(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER),
                                                                     mimeType,
                                                                     codecs,
                                                                     flags);
