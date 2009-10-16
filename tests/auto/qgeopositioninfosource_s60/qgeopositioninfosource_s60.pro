@@ -1,5 +1,6 @@
 TEMPLATE = app
 CONFIG+=testcase
+TARGET=tst_qgeopositioninfosource_s60
 
 include (../../../common.pri)
 
