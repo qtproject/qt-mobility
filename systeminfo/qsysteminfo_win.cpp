@@ -72,11 +72,12 @@
 
 #ifdef Q_OS_WINCE
 //#include <af_irda.h>
-#include <vibrate.h>
+//#include <vibrate.h>
 //#include <Led_drvr.h>
 #include <simmgr.h>
 //#include <Ifapi.h>
 #include <Winbase.h>
+#include <Winuser.h>
 #endif
 
 #define _WCHAR_T_DEFINED
@@ -95,21 +96,31 @@ static WlanOpenHandleProto local_WlanOpenHandle = 0;
 //
 typedef DWORD (WINAPI *WlanCloseHandleProto)(HANDLE hClientHandle, PVOID pReserved);
 static WlanCloseHandleProto local_WlanCloseHandle = 0;
+
 //
+#if !defined(Q_OS_WINCE)
 typedef DWORD (WINAPI *WlanEnumInterfacesProto)
     (HANDLE hClientHandle, PVOID pReserved, PWLAN_INTERFACE_INFO_LIST* ppInterfaceList);
 static WlanEnumInterfacesProto local_WlanEnumInterfaces = 0;
+#endif
+
 //
+#if !defined(Q_OS_WINCE)
 typedef DWORD (WINAPI *WlanQueryInterfaceProto)
     (HANDLE hClientHandle, const GUID *pInterfaceGuid, WLAN_INTF_OPCODE OpCode, PVOID pReserved,
      PDWORD pdwDataSize, PVOID *ppData, PWLAN_OPCODE_VALUE_TYPE pWlanOpcodeValueType);
 static WlanQueryInterfaceProto local_WlanQueryInterface = 0;
+#endif
+
 //
+#if !defined(Q_OS_WINCE)
 typedef DWORD (WINAPI *WlanRegisterNotificationProto)
     (HANDLE hClientHandle, DWORD dwNotifSource, BOOL bIgnoreDuplicate,
      WLAN_NOTIFICATION_CALLBACK funcCallback, PVOID pCallbackContext,
      PVOID pReserved, PDWORD pdwPrevNotifSource);
 static WlanRegisterNotificationProto local_WlanRegisterNotification = 0;
+#endif
+
 //
 typedef VOID (WINAPI *WlanFreeMemoryProto)(PVOID pMemory);
 static WlanFreeMemoryProto local_WlanFreeMemory = 0;
@@ -287,6 +298,7 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
     switch(type) {
     case QSystemInfo::Os :
         {
+#if !defined(Q_OS_WINCE)
             OSVERSIONINFOEX versionInfo;
             versionInfo .dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 
@@ -296,6 +308,7 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
                     +QString::number(versionInfo.dwBuildNumber)+"."
                     +QString::number(versionInfo.wServicePackMajor)+"."
                     +QString::number(versionInfo.wServicePackMinor);
+#endif
         }
         break;
     case QSystemInfo::QtCore :
@@ -987,6 +1000,7 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
         break;
     case QSystemNetworkInfo::EthernetMode:
         {
+#if !defined(Q_OS_WINCE)
             WMIHelper *wHelper;
             wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
@@ -995,6 +1009,7 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
 
             QVariant v = wHelper->getWMIData();
             netname = v.toString();
+#endif
         }
         break;
     default:
@@ -1366,6 +1381,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 {
     QSystemDeviceInfo::InputMethodFlags methods;
 
+#if !defined(Q_OS_WINCE)
     int mouseResult = GetSystemMetrics(SM_CMOUSEBUTTONS);
     if(mouseResult > 0) {
         if((methods & QSystemDeviceInfo::Mouse) != QSystemDeviceInfo::Mouse) {
@@ -1380,6 +1396,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 
         }
     }
+#endif
     int keyboardType = GetKeyboardType(0);
     switch(keyboardType) {
     case 1:
@@ -1581,7 +1598,7 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
 {
 #ifdef Q_OS_WINCE
     SYSTEM_POWER_STATUS_EX status;
-    if(GetSystemPowerStatusEx(&statusEx, true) ) {
+    if(GetSystemPowerStatusEx(&status, true) ) {
         qWarning() <<"battery level" <</* status.ACLineStatus << status.BatteryFlag <<*/ status.BatteryLifePercent;
         return status.BatteryLifePercent;
 } else {
@@ -1605,7 +1622,7 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
     if(result == S_OK) {
         SimGetPhoneLockedState(handle,&lockedState);
         if(lockedState == SIM_LOCKEDSTATE_READY) {
-            return QSystemDeviceInfo::SingleAvailable;
+            return QSystemDeviceInfo::SingleSimAvailable;
         } else {
             return QSystemDeviceInfo::SimLocked;
         }
@@ -1661,8 +1678,11 @@ bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
 {
     if(screenSaverSecure)
         return false;
-
+#if !defined(Q_OS_WINCE)
     return SystemParametersInfo(SPI_SETSCREENSAVEACTIVE,true,0,SPIF_SENDWININICHANGE);
+#else
+    return false;
+#endif
 }
 
 bool QSystemScreenSaverPrivate::screenSaverInhibited()
