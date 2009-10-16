@@ -1,6 +1,6 @@
 TEMPLATE = lib
 TARGET = QtPublishSubscribe
-QT = core network
+QT = core network xml
 
 include(../common.pri)
 
@@ -54,7 +54,7 @@ unix:!symbian {
 
 win32 {
     HEADERS += qsystemreadwritelock_p.h
-    SOURCES += sharedmemorylayer.cpp \
+    SOURCES += \
                qsystemreadwritelock.cpp \
                registrylayer_win.cpp
 

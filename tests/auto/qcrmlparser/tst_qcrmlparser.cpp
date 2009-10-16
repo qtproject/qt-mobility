@@ -36,6 +36,11 @@
 #include <QtTest/QTest>
 #include <QDebug>
 #include <QDir>
+
+#if defined(Q_OS_SYMBIAN)
+# define TESTDATA_DIR "."
+#endif
+
 class tst_QCRMLParser : public QObject
 {
     Q_OBJECT
@@ -52,24 +57,24 @@ private:
 
 void tst_QCRMLParser::test()
 {
-QDir testData(TESTDATA_DIR "/testdata");
+    QDir testData(TESTDATA_DIR "/testdata");
 
-QCRMLParser parser;
-QList<KeyData> keyData;
-keyData = parser.parseQCRML("dontexist");
-QVERIFY(parser.error() == QCRMLParser::FileDoesNotExist);
-QVERIFY(keyData.count() == 0);
+    QCRMLParser parser;
+    QList<KeyData> keyData;
+    keyData = parser.parseQCRML("dontexist");
+    QVERIFY(parser.error() == QCRMLParser::FileDoesNotExist);
+    QVERIFY(keyData.count() == 0);
 
-keyData = parser.parseQCRML(testData.absoluteFilePath("test1.qcrml"));
+    keyData = parser.parseQCRML(testData.absoluteFilePath("test1.qcrml"));
 
-QVERIFY(verifyKeyData(keyData, "/sensors/accelerometer/x",
-                      Q_UINT64_C(0x4815162300000000)));
-QVERIFY(verifyKeyData(keyData, "/sensors/accelerometer/y",
-                      Q_UINT64_C(0x4815162300000001)));
-QVERIFY(verifyKeyData(keyData, "/sensors/accelerometer/z",
-                      Q_UINT64_C(0x4815162300000002)));
+    QVERIFY(verifyKeyData(keyData, "/sensors/accelerometer/x",
+                          Q_UINT64_C(0x4815162300000000)));
+    QVERIFY(verifyKeyData(keyData, "/sensors/accelerometer/y",
+                          Q_UINT64_C(0x4815162300000001)));
+    QVERIFY(verifyKeyData(keyData, "/sensors/accelerometer/z",
+                          Q_UINT64_C(0x4815162300000002)));
 
-QVERIFY(parser.error() == QCRMLParser::NoError);
+    QVERIFY(parser.error() == QCRMLParser::NoError);
 }
 
 void tst_QCRMLParser::keyRangeSequence()
