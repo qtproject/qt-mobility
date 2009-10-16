@@ -8,7 +8,17 @@ include(../../../common.pri)
 # Input
 SOURCES += ../../../context/qcrmlparser.cpp \ 
         tst_qcrmlparser.cpp
-DEFINES += TESTDATA_DIR=\\\"$$PWD/\\\"
 
-symbian:TARGET.CAPABILITY = ALL \
-    -TCB
+wince* {
+    DEFINES+= TESTDATA_DIR=\\\".\\\"
+}else:!symbian {
+    DEFINES += TESTDATA_DIR=\\\"$$PWD/\\\"
+}
+
+wince*|symbian*: {
+    addFiles.sources = testdata/*
+    addFiles.path = testdata
+    DEPLOYMENT += addFiles
+}
+
+symbian:TARGET.CAPABILITY = ALL -TCB
