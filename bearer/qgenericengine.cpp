@@ -52,8 +52,8 @@
 #ifdef Q_OS_WIN
 #include <winsock2.h>
 #include <mswsock.h>
-#include <ntddndis.h>
 #undef interface
+#include "qnetworksessionengine_win_p.h"
 #endif
 
 QT_BEGIN_NAMESPACE
