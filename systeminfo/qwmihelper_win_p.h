@@ -82,4 +82,5 @@ private:
   // QHash <QString, bool> initializedNamespaces;
 
 };
+#endif
 #endif // WMIHELPER_H
