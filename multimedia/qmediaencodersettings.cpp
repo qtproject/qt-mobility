@@ -228,6 +228,7 @@ public:
     QVideoEncoderSettingsPrivate() :
         isNull(true),
         bitrate(-1),
+        frameRate(0),
         quality(QtMedia::NormalQuality)
     {
     }
@@ -247,7 +248,7 @@ public:
     QString codec;
     int bitrate;
     QSize resolution;
-    QtMedia::FrameRate frameRate;
+    qreal frameRate;
     QtMedia::EncodingQuality quality;
 
 private:
@@ -279,9 +280,9 @@ bool QVideoEncoderSettings::operator==(const QVideoEncoderSettings &other) const
     return (d == other.d) ||
            (d->isNull == other.d->isNull &&
             d->bitrate == other.d->bitrate &&
-            d->frameRate == other.d->frameRate &&
             d->quality == other.d->quality &&
-            d->codec == other.d->codec);
+            d->codec == other.d->codec &&
+            qFuzzyCompare(d->frameRate, other.d->frameRate));
 }
 
 bool QVideoEncoderSettings::operator!=(const QVideoEncoderSettings &other) const
@@ -333,28 +334,22 @@ void QVideoEncoderSettings::setBitrate(int value)
 /*!
   Returns frame rate of video stream.
 */
-QtMedia::FrameRate QVideoEncoderSettings::frameRate() const
+qreal QVideoEncoderSettings::frameRate() const
 {
     return d->frameRate;
 }
 
 /*!
-  \fn QVideoEncoderControl::setFrameRate(QtMedia::FrameRate &rate)
+  \fn QVideoEncoderControl::setFrameRate(qreal &rate)
 
   Sets the video frame \a rate.
-  If a null frame rate (equals to 0/0) is passed, the default value should be used.
+  If a null frame rate is passed, the default value should be used.
 */
 
-void QVideoEncoderSettings::setFrameRate(QtMedia::FrameRate rate)
+void QVideoEncoderSettings::setFrameRate(qreal rate)
 {
     d->isNull = false;
     d->frameRate = rate;
-}
-
-void QVideoEncoderSettings::setFrameRate(int rate)
-{
-    d->isNull = false;
-    d->frameRate = QtMedia::FrameRate(rate,1);
 }
 
 /*!

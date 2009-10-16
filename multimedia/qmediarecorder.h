@@ -101,9 +101,9 @@ public:
     QSize maximumResolution() const;
     QList<QSize> supportedResolutions() const;
 
-    QtMedia::FrameRate minimumFrameRate();
-    QtMedia::FrameRate maximumFrameRate();
-    QList<QtMedia::FrameRate> supportedFrameRates() const;
+    qreal minimumFrameRate();
+    qreal maximumFrameRate();
+    QList<qreal> supportedFrameRates() const;
 
     QAudioEncoderSettings audioSettings() const;
     QVideoEncoderSettings videoSettings() const;

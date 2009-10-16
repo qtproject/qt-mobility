@@ -83,7 +83,7 @@ public:
 */
 
 QRadioTuner::QRadioTuner(QObject *parent, QMediaServiceProvider* provider):
-    QMediaObject(*new QRadioTunerPrivate, parent, provider->requestService("radio"))
+    QMediaObject(*new QRadioTunerPrivate, parent, provider->requestService(Q_MEDIASERVICE_RADIO))
 {
     Q_D(QRadioTuner);
 

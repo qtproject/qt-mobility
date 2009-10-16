@@ -144,7 +144,7 @@ void QCameraPrivate::initControls()
 */
 
 QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
-    QMediaObject(*new QCameraPrivate, parent, provider->requestService("camera"))
+    QMediaObject(*new QCameraPrivate, parent, provider->requestService(Q_MEDIASERVICE_CAMERA))
 {
     Q_D(QCamera);
     d->initControls();
@@ -152,7 +152,7 @@ QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
 
 QCamera::QCamera(const QByteArray& device, QObject *parent):
     QMediaObject(*new QCameraPrivate, parent,
-                  QMediaServiceProvider::defaultServiceProvider()->requestService("camera", QMediaServiceProviderHint(device)))
+                  QMediaServiceProvider::defaultServiceProvider()->requestService(Q_MEDIASERVICE_CAMERA, QMediaServiceProviderHint(device)))
 {
     Q_D(QCamera);
     d->initControls();
@@ -289,7 +289,7 @@ void QCamera::unlockFocus()
 
 QList<QByteArray> QCamera::availableDevices()
 {
-    return QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray("camera"));
+    return QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray(Q_MEDIASERVICE_CAMERA));
 }
 
 /*!
@@ -298,7 +298,7 @@ QList<QByteArray> QCamera::availableDevices()
 
 QString QCamera::deviceDescription(const QByteArray &device)
 {
-    return QMediaServiceProvider::defaultServiceProvider()->deviceDescription(QByteArray("camera"), device);
+    return QMediaServiceProvider::defaultServiceProvider()->deviceDescription(QByteArray(Q_MEDIASERVICE_CAMERA), device);
 }
 
 QCamera::State QCamera::state() const

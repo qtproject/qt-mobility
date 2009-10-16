@@ -66,11 +66,11 @@ QStringList QGstreamerServicePlugin::keys() const
 {
     return QStringList()
 #ifdef QMEDIA_GSTREAMER_PLAYER
-            << QLatin1String("mediaplayer")
+            << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER)
 #endif
 #ifdef QMEDIA_GSTREAMER_CAPTURE
-            << QLatin1String("audiosource")
-            << QLatin1String("camera")
+            << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE)
+            << QLatin1String(Q_MEDIASERVICE_CAMERA)
 #endif
             ;
 }
@@ -78,14 +78,14 @@ QStringList QGstreamerServicePlugin::keys() const
 QMediaService* QGstreamerServicePlugin::create(const QString &key)
 {
 #ifdef QMEDIA_GSTREAMER_PLAYER
-    if (key == QLatin1String("mediaplayer"))
+    if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
         return new QGstreamerPlayerService;
 #endif
 #ifdef QMEDIA_GSTREAMER_CAPTURE
-    if (key == QLatin1String("audiosource"))
+    if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
         return new QGstreamerCaptureService(key);
 
-    if (key == QLatin1String("camera"))
+    if (key == QLatin1String(Q_MEDIASERVICE_CAMERA))
         return new QGstreamerCaptureService(key);
 #endif
 
@@ -100,7 +100,7 @@ void QGstreamerServicePlugin::release(QMediaService *service)
 
 QList<QByteArray> QGstreamerServicePlugin::devices(const QByteArray &service) const
 {
-    if (service == "camera") {
+    if (service == Q_MEDIASERVICE_CAMERA) {
         if (m_cameraDevices.isEmpty())
             updateDevices();
 
@@ -112,7 +112,7 @@ QList<QByteArray> QGstreamerServicePlugin::devices(const QByteArray &service) co
 
 QString QGstreamerServicePlugin::deviceDescription(const QByteArray &service, const QByteArray &device)
 {
-    if (service == "camera") {
+    if (service == Q_MEDIASERVICE_CAMERA) {
         if (m_cameraDevices.isEmpty())
             updateDevices();
 

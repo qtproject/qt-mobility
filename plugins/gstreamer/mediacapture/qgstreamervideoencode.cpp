@@ -42,7 +42,7 @@
 QGstreamerVideoEncode::QGstreamerVideoEncode(QObject *parent)
     :QVideoEncoderControl(parent)
 {
-    m_frameRate = qMakePair<int,int>(-1,1);
+    m_frameRate = 0.0;
 
     QList<QByteArray> codecCandidates;
     codecCandidates << "video/h264" << "video/xvid" << "video/mpeg4" << "video/mpeg1" << "video/mpeg2" << "video/theora";
@@ -114,35 +114,29 @@ void QGstreamerVideoEncode::setResolution(const QSize &r)
     m_resolution = r;
 }
 
-QtMedia::FrameRate QGstreamerVideoEncode::frameRate() const
+qreal QGstreamerVideoEncode::frameRate() const
 {
     return m_frameRate;
 }
 
-QtMedia::FrameRate QGstreamerVideoEncode::minimumFrameRate() const
+qreal QGstreamerVideoEncode::minimumFrameRate() const
 {
-    return qMakePair<int,int>(1,1);
+    return 1.0;
 }
 
-QtMedia::FrameRate QGstreamerVideoEncode::maximumFrameRate() const
+qreal QGstreamerVideoEncode::maximumFrameRate() const
 {
-    return qMakePair<int,int>(30,1);
+    return 30.0;
 }
 
-QList< QtMedia::FrameRate > QGstreamerVideoEncode::supportedFrameRates() const
+QList< qreal > QGstreamerVideoEncode::supportedFrameRates() const
 {
-    QList<QtMedia::FrameRate> res;
-    res << qMakePair<int,int>(30,1);
-    res << qMakePair<int,int>(25,1);
-    res << qMakePair<int,int>(20,1);
-    res << qMakePair<int,int>(15,1);
-    res << qMakePair<int,int>(10,1);
-    res << qMakePair<int,int>(5,1);
-
+    QList<qreal> res;
+    res << 30.0 << 25.0 << 15.0 << 10.0 << 5.0;
     return res;
 }
 
-void QGstreamerVideoEncode::setFrameRate(const QtMedia::FrameRate &rate)
+void QGstreamerVideoEncode::setFrameRate(const qreal &rate)
 {
     m_frameRate = rate;
 }
@@ -246,6 +240,13 @@ GstElement *QGstreamerVideoEncode::createEncoder()
             QString option = it.key();
             QVariant value = it.value();
 
+            //skip the default values
+            if (option == QLatin1String("bitrate")) {
+                int bitrate = value.toInt();
+                if (bitrate <= 0)
+                    continue;
+            }
+
             if (option == QLatin1String("quality")) {
                 int qualityValue = qBound(int(QtMedia::VeryLowQuality), value.toInt(), int(QtMedia::VeryHighQuality));
 
@@ -322,7 +323,7 @@ GstElement *QGstreamerVideoEncode::createEncoder()
         }
     }
 
-    if (!m_resolution.isEmpty() || m_frameRate.first > 0) {
+    if (!m_resolution.isEmpty() || m_frameRate > 0.001) {
         GstCaps *caps = gst_caps_new_empty();
         QStringList structureTypes;
         structureTypes << "video/x-raw-yuv" << "video/x-raw-rgb";
@@ -335,8 +336,32 @@ GstElement *QGstreamerVideoEncode::createEncoder()
                 gst_structure_set(structure, "height", G_TYPE_INT, m_resolution.height(), NULL);
             }
 
-            if (m_frameRate.first > 0) {
-                gst_structure_set(structure, "framerate", GST_TYPE_FRACTION, m_frameRate.first, m_frameRate.second, NULL);
+            if (m_frameRate > 0.001) {
+                //convert to rational number
+                QList<int> denumCandidates;
+                denumCandidates << 1 << 2 << 3 << 5 << 10 << 1001 << 1000;
+
+                qreal error = 1.0;
+                int num = 1;
+                int denum = 1;
+
+                foreach (int curDenum, denumCandidates) {
+                    int curNum = qRound(m_frameRate*curDenum);
+                    qreal curError = qAbs(qreal(curNum)/curDenum - m_frameRate);
+
+                    if (curError < error) {
+                        error = curError;
+                        num = curNum;
+                        denum = curDenum;
+                    }
+
+                    if (curError < 1e-8)
+                        break;
+                }
+
+                //qDebug() << "frame rate:" << num << denum;
+
+                gst_structure_set(structure, "framerate", GST_TYPE_FRACTION, num, denum, NULL);
             }
 
             gst_caps_append_structure(caps,structure);

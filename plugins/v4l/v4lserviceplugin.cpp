@@ -45,15 +45,17 @@
 
 QStringList V4LServicePlugin::keys() const
 {
-    return QStringList() << QLatin1String("radio") << QLatin1String("camera");
+    return QStringList() <<
+            QLatin1String(Q_MEDIASERVICE_RADIO) <<
+            QLatin1String(Q_MEDIASERVICE_CAMERA);
 }
 
 QMediaService* V4LServicePlugin::create(QString const& key)
 {
-    if (key == "radio")
+    if (key == QLatin1String(Q_MEDIASERVICE_RADIO))
         return new V4LRadioService;
 
-    if (key == "camera")
+    if (key == QLatin1String(Q_MEDIASERVICE_CAMERA))
         return new V4LCameraService;
 
     qDebug() << "unsupported key:" << key;
@@ -67,7 +69,7 @@ void V4LServicePlugin::release(QMediaService *service)
 
 QList<QByteArray> V4LServicePlugin::devices(const QByteArray &service) const
 {
-    if (service == "camera") {
+    if (service == QLatin1String(Q_MEDIASERVICE_CAMERA)) {
         if (m_cameraDevices.isEmpty())
             updateDevices();
 
@@ -79,7 +81,7 @@ QList<QByteArray> V4LServicePlugin::devices(const QByteArray &service) const
 
 QString V4LServicePlugin::deviceDescription(const QByteArray &service, const QByteArray &device)
 {
-    if (service == "camera") {
+    if (service == QLatin1String(Q_MEDIASERVICE_CAMERA)) {
         if (m_cameraDevices.isEmpty())
             updateDevices();
 

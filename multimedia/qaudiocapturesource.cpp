@@ -82,7 +82,7 @@ public:
 */
 
 QAudioCaptureSource::QAudioCaptureSource(QObject *parent, QMediaServiceProvider *provider):
-    QMediaObject(*new QAudioCaptureSourcePrivate, parent, provider->requestService("audiosource"))
+    QMediaObject(*new QAudioCaptureSourcePrivate, parent, provider->requestService(Q_MEDIASERVICE_AUDIOSOURCE))
 {
     Q_D(QAudioCaptureSource);
 

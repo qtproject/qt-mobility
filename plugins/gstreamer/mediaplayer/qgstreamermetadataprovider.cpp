@@ -94,7 +94,7 @@ static const QGstreamerMetaDataKeyLookup qt_gstreamerMetaDataKeys[] =
     //{ QtMedia::PixelAspectRatio, 0 },
 
     // Video
-    //{ QtMedia::FrameRate, 0 },
+    //{ QtMedia::VideoFrameRate, 0 },
     //{ QtMedia::VideoBitRate, 0 },
     { QtMedia::VideoCodec, GST_TAG_VIDEO_CODEC },
 

@@ -108,7 +108,8 @@ public:
         m_supportedEncodeOptions.insert("video/H264", QStringList() << "quantizer" << "me" << "bframes");
         m_videoCodecs << "video/3gpp" << "video/H264";
         m_sizes << QSize(320,240) << QSize(640,480);
-        m_framerates << qMakePair<int,int>(30,1) << qMakePair<int,int>(15,1) << qMakePair<int,int>(1,1);
+        m_framerates << 30 << 15 << 1;
+        m_framerate = 0.0;
     }
     ~MockVideoEncodeProvider() {}
 
@@ -117,11 +118,11 @@ public:
     QSize maximumResolution() const { return QSize(640,480); }
     QList<QSize> supportedResolutions() const { return m_sizes; }
     void setResolution(const QSize &sz) { m_size = sz; }
-    QtMedia::FrameRate frameRate() const { return m_framerate; }
-    QtMedia::FrameRate minimumFrameRate() const { return qMakePair<int,int>(1,1); }
-    QtMedia::FrameRate maximumFrameRate() const { return qMakePair<int,int>(30,1); }
-    QList<QtMedia::FrameRate> supportedFrameRates() const { return m_framerates; }
-    void setFrameRate(const QtMedia::FrameRate &rate) { m_framerate = rate; }
+    qreal frameRate() const { return m_framerate; }
+    qreal minimumFrameRate() const { return 1.0; }
+    qreal maximumFrameRate() const { return 30.0; }
+    QList<qreal> supportedFrameRates() const { return m_framerates; }
+    void setFrameRate(const qreal &rate) { m_framerate = rate; }
     QStringList supportedVideoCodecs() const { return m_videoCodecs; }
     QString videoCodec() const { return m_vCodec; }
     bool setVideoCodec(const QString &codecName) { m_vCodec = codecName; return true; }
@@ -158,8 +159,8 @@ private:
 
     QSize m_size;
     QList<QSize> m_sizes;
-    QtMedia::FrameRate m_framerate;
-    QList<QtMedia::FrameRate> m_framerates;
+    qreal m_framerate;
+    QList<qreal> m_framerates;
 };
 
 class MockAudioEncodeProvider : public QAudioEncoderControl
@@ -675,10 +676,10 @@ void tst_QMediaRecorder::testVideoEncodeControl()
     QVERIFY(capture->minimumResolution() == QSize(320,240));
     QVERIFY(capture->maximumResolution() == QSize(640,480));
 
-    QList<QtMedia::FrameRate> rates = capture->supportedFrameRates();
+    QList<qreal> rates = capture->supportedFrameRates();
     QVERIFY(rates.count() == 3);
-    QVERIFY(capture->minimumFrameRate().first == 1);
-    QVERIFY(capture->maximumFrameRate().first == 30);
+    QVERIFY(qFuzzyCompare(capture->minimumFrameRate(), 1.0));
+    QVERIFY(qFuzzyCompare(capture->maximumFrameRate(), 30.0));
 
     QStringList vCodecs = capture->supportedVideoCodecs();
     QVERIFY(vCodecs.count() == 2);
@@ -705,7 +706,7 @@ void tst_QMediaRecorder::testEncodingSettings()
     QCOMPARE(videoSettings.codec(), QString());
     QCOMPARE(videoSettings.bitrate(), -1);
     QCOMPARE(videoSettings.resolution(), QSize());
-    QCOMPARE(videoSettings.frameRate(), QtMedia::FrameRate());
+    QCOMPARE(videoSettings.frameRate(), 0.0);
     QCOMPARE(videoSettings.quality(), QtMedia::NormalQuality);
 
     QString format = capture->format();
@@ -718,7 +719,7 @@ void tst_QMediaRecorder::testEncodingSettings()
 
     videoSettings.setCodec("video/3gpp");
     videoSettings.setBitrate(800);
-    videoSettings.setFrameRate(QtMedia::FrameRate(24,1));
+    videoSettings.setFrameRate(24);
     videoSettings.setResolution(QSize(800,600));
     videoSettings.setQuality(QtMedia::HighQuality);
 
@@ -826,11 +827,11 @@ void tst_QMediaRecorder::testVideoSettings()
     QVERIFY(!settings.isNull());
 
     settings = QVideoEncoderSettings();
-    QCOMPARE(settings.frameRate(), QtMedia::FrameRate());
-    settings.setFrameRate(QtMedia::FrameRate(30000,10001));
-    QCOMPARE(settings.frameRate(), QtMedia::FrameRate(30000,10001));
-    settings.setFrameRate(24);
-    QCOMPARE(settings.frameRate(), QtMedia::FrameRate(24,1));
+    QCOMPARE(settings.frameRate(), qreal());
+    settings.setFrameRate(30000.0/10001);
+    QVERIFY(qFuzzyCompare(settings.frameRate(),30000.0/10001));
+    settings.setFrameRate(24.0);
+    QVERIFY(qFuzzyCompare(settings.frameRate(),24.0));
     QVERIFY(!settings.isNull());
 
     settings = QVideoEncoderSettings();
@@ -846,7 +847,7 @@ void tst_QMediaRecorder::testVideoSettings()
     QCOMPARE(settings.codec(), QString());
     QCOMPARE(settings.bitrate(), -1);
     QCOMPARE(settings.quality(), QtMedia::NormalQuality);
-    QCOMPARE(settings.frameRate(), QtMedia::FrameRate());
+    QCOMPARE(settings.frameRate(), qreal());
     QCOMPARE(settings.resolution(), QSize());
 
     {
