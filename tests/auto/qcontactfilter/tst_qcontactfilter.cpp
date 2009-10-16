@@ -482,8 +482,8 @@ void tst_QContactFilter::detailFilter()
     QVERIFY(df.matchFlags() == 0);
     QVERIFY(df.value().isNull());
 
-    df.setMatchFlags(Qt::MatchExactly);
-    QVERIFY(df.matchFlags() == Qt::MatchExactly);
+    df.setMatchFlags(QContactFilter::MatchExactly);
+    QVERIFY(df.matchFlags() == QContactFilter::MatchExactly);
 
     df.setValue(5);
     QVERIFY(df.value() == 5);
@@ -535,8 +535,8 @@ void tst_QContactFilter::detailRangeFilter()
     QVERIFY(rf.maxValue().isNull());
     QVERIFY(rf.rangeFlags() == (QContactDetailRangeFilter::ExcludeUpper | QContactDetailRangeFilter::IncludeLower));
 
-    rf.setMatchFlags(Qt::MatchExactly);
-    QVERIFY(rf.matchFlags() == Qt::MatchExactly);
+    rf.setMatchFlags(QContactFilter::MatchExactly);
+    QVERIFY(rf.matchFlags() == QContactFilter::MatchExactly);
 
     rf.setRange(5, 10);
     QVERIFY(rf.minValue() == 5);

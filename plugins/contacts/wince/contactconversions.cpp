@@ -1169,7 +1169,7 @@ QString QContactWinCEEngine::convertFilterToQueryString(const QContactFilter& fi
             {
                 const QContactDetailFilter cdf(filter);
                 //XXX Only exact match can be supported?
-                if (cdf.matchFlags() == Qt::MatchExactly && cdf.value().isValid()) {
+                if (cdf.matchFlags() == QContactFilter::MatchExactly && cdf.value().isValid()) {
                     QList<CEPROPID> ids = convertToCEPropIds(cdf.detailDefinitionName(), cdf.detailFieldName());
                     if (!ids.isEmpty()) {
                         QStringList strList;
@@ -1188,7 +1188,7 @@ QString QContactWinCEEngine::convertFilterToQueryString(const QContactFilter& fi
             {
                 const QContactDetailRangeFilter cdf(filter);
                 //XXX Only exact match can be supported?
-                if (cdf.matchFlags() == Qt::MatchExactly && (cdf.minValue().isValid() || cdf.maxValue().isValid())) {
+                if (cdf.matchFlags() == QContactFilter::MatchExactly && (cdf.minValue().isValid() || cdf.maxValue().isValid())) {
                     QList<CEPROPID> ids = convertToCEPropIds(cdf.detailDefinitionName(), cdf.detailFieldName());
                     if (!ids.isEmpty()) {
                         const QString minComp = cdf.rangeFlags() & QContactDetailRangeFilter::ExcludeLower ? ">" : ">=";

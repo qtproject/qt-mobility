@@ -328,7 +328,7 @@ void tst_QContactManagerFiltering::detailStringFiltering()
     QContactDetailFilter df;
     df.setDetailDefinitionName(defname, fieldname);
     df.setValue(value);
-    df.setMatchFlags(Qt::MatchFlags(matchflags));
+    df.setMatchFlags(QContactFilter::MatchFlags(matchflags));
 
     if (cm->managerName() == "memory") {
         /* At this point, since we're using memory, assume the filter isn't really supported */
@@ -766,7 +766,7 @@ void tst_QContactManagerFiltering::rangeFiltering()
     QFETCH(QString, expected);
 
     QContactDetailRangeFilter::RangeFlags rangeflags = (QContactDetailRangeFilter::RangeFlags)rangeflagsi;
-    Qt::MatchFlags matchflags = (Qt::MatchFlags) matchflagsi;
+    QContactFilter::MatchFlags matchflags = (QContactFilter::MatchFlags) matchflagsi;
 
     QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
     QList<QContactLocalId> ids;

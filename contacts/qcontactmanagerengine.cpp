@@ -250,7 +250,7 @@ QList<QContactLocalId> QContactManagerEngine::contacts(const QString& contactTyp
     QContactDetailFilter df;
     df.setDetailDefinitionName(QContactType::DefinitionName, QContactType::FieldType);
     df.setValue(contactType);
-    df.setMatchFlags(Qt::MatchExactly);
+    df.setMatchFlags(QContactFilter::MatchExactly);
     return contacts(df, sortOrders, error);
 }
 
@@ -1348,14 +1348,14 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 }
 
                 /* Case sensitivity, for those parts that use it */
-                Qt::CaseSensitivity cs = (cdf.matchFlags() & Qt::MatchCaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
+                Qt::CaseSensitivity cs = (cdf.matchFlags() & QContactFilter::MatchCaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
 
                 /* See what flags are requested, since we're looking at a value */
-                if (cdf.matchFlags() & (Qt::MatchEndsWith | Qt::MatchStartsWith | Qt::MatchContains | Qt::MatchFixedString)) {
+                if (cdf.matchFlags() & (QContactFilter::MatchEndsWith | QContactFilter::MatchStartsWith | QContactFilter::MatchContains | QContactFilter::MatchFixedString)) {
                     /* We're strictly doing string comparisons here */
-                    bool matchStarts = (cdf.matchFlags() & 7) == Qt::MatchStartsWith;
-                    bool matchEnds = (cdf.matchFlags() & 7) == Qt::MatchEndsWith;
-                    bool matchContains = (cdf.matchFlags() & 7) == Qt::MatchContains;
+                    bool matchStarts = (cdf.matchFlags() & 7) == QContactFilter::MatchStartsWith;
+                    bool matchEnds = (cdf.matchFlags() & 7) == QContactFilter::MatchEndsWith;
+                    bool matchContains = (cdf.matchFlags() & 7) == QContactFilter::MatchContains;
 
                     /* Value equality test */
                     for(int j=0; j < details.count(); j++) {
@@ -1421,14 +1421,14 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 /* At this point we know that at least of testMin & testMax is true */
 
                 /* Case sensitivity, for those parts that use it */
-                Qt::CaseSensitivity cs = (cdf.matchFlags() & Qt::MatchCaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
+                Qt::CaseSensitivity cs = (cdf.matchFlags() & QContactFilter::MatchCaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
 
                 /* See what flags are requested, since we're looking at a value */
-                if (cdf.matchFlags() & (Qt::MatchEndsWith | Qt::MatchStartsWith | Qt::MatchContains | Qt::MatchFixedString)) {
+                if (cdf.matchFlags() & (QContactFilter::MatchEndsWith | QContactFilter::MatchStartsWith | QContactFilter::MatchContains | QContactFilter::MatchFixedString)) {
                     /* We're strictly doing string comparisons here */
-                    //bool matchStarts = (cdf.matchFlags() & 7) == Qt::MatchStartsWith;
-                    bool matchEnds = (cdf.matchFlags() & 7) == Qt::MatchEndsWith;
-                    bool matchContains = (cdf.matchFlags() & 7) == Qt::MatchContains;
+                    //bool matchStarts = (cdf.matchFlags() & 7) == QContactFilter::MatchStartsWith;
+                    bool matchEnds = (cdf.matchFlags() & 7) == QContactFilter::MatchEndsWith;
+                    bool matchContains = (cdf.matchFlags() & 7) == QContactFilter::MatchContains;
 
                     /* Min/Max and contains do not make sense */
                     if (matchContains)

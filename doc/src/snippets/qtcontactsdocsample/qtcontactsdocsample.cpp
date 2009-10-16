@@ -146,7 +146,7 @@ void matchCall(QContactManager* cm, const QString& incomingCallNbr)
     QContactDetailFilter phoneFilter;
     phoneFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
     phoneFilter.setValue(incomingCallNbr);
-    phoneFilter.setMatchFlags(Qt::MatchExactly);
+    phoneFilter.setMatchFlags(QContactFilter::MatchExactly);
 
     QList<QContactLocalId> matchingContacts = cm->contacts(phoneFilter);
     if (matchingContacts.size() == 0) {
@@ -263,7 +263,7 @@ void RequestExample::performRequest()
     QContactDetailFilter dfil;
     dfil.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
     dfil.setValue("Alice");
-    dfil.setMatchFlags(Qt::MatchExactly);
+    dfil.setMatchFlags(QContactFilter::MatchExactly);
 
     m_fetchRequest->setFilter(dfil);
     connect(m_fetchRequest, SIGNAL(progress(QContactFetchRequest*,bool)), this, SLOT(printContacts(QContactFetchRequest*,bool)));
