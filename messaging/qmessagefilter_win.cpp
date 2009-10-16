@@ -91,7 +91,7 @@ MapiFolderPtr MapiFolderIterator::next()
 
                     QMessage::StandardFolder folderType(folder->standardFolder());
                     if ((_standardFoldersInclude.isEmpty() || _standardFoldersInclude.contains(folderType))
-                        && (_standardFoldersExclude.isEmpty() || !_standardFoldersExclude.contains(folderType))) {
+                        && !_standardFoldersExclude.contains(folderType)) {
                         // This folder is the next one
                         return folder;
                     }
@@ -1399,10 +1399,12 @@ QMessageFilter QMessageFilter::byParentAccountId(const QMessageAccountFilter &fi
 
 QMessageFilter QMessageFilter::byStandardFolder(QMessage::StandardFolder folder, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(folder)
-    Q_UNUSED(cmp)
-    QMessageFilter result; // stub
-    result.d_ptr->_valid = false;
+    QMessageFilter result;
+    if (cmp == QMessageDataComparator::Equal)
+        result.d_ptr->_standardFoldersInclude += folder;
+    else
+        result.d_ptr->_standardFoldersExclude += folder;
+    result.d_ptr->_valid = false; // TODO testing.
     return result;
 }
 
