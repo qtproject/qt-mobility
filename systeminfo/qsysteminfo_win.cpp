@@ -630,12 +630,15 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
+#if !defined( Q_OS_WINCE)
     if(hWlan != 0)
          local_WlanCloseHandle(hWlan, 0);
+#endif
 }
 
 void QSystemNetworkInfoPrivate::startWifiCallback()
 {
+#if !defined( Q_OS_WINCE)
     if(networkStatus(QSystemNetworkInfo::WlanMode) != QSystemNetworkInfo::Connected
     && wlanCallbackInitialized){
         return;
@@ -661,6 +664,7 @@ void QSystemNetworkInfoPrivate::startWifiCallback()
     } else {
         wlanCallbackInitialized = true;
     }
+#endif
 }
 
 
@@ -1303,6 +1307,7 @@ qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 
 QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QString &driveVolume)
 {
+#if !defined( Q_OS_WINCE)
     uint result =  GetDriveType((WCHAR *)driveVolume.utf16());
     switch(result) {
     case 0:
@@ -1324,6 +1329,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
     case 6: //ramdisk
         break;
     };
+#endif
     return QSystemStorageInfo::NoDrive;
 }
 
