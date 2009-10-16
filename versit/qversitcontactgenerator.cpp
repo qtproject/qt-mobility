@@ -284,7 +284,13 @@ QContactDetail* QVersitContactGenerator::createTimeStamp(
     const QVersitProperty& property) const
 {
     QContactTimestamp* timeStamp = new QContactTimestamp();
-    QDateTime dateTime = QDateTime::fromString(QString::fromAscii(property.value()),Qt::ISODate);
+    QString val(QString::fromAscii(property.value()));
+    bool utc = (val.endsWith('Z',Qt::CaseInsensitive)) ? true: false;
+    if(utc)val.chop(1); // take away z from end;
+    QDateTime dateTime = (val.contains("-"))
+                       ? QDateTime::fromString(val,Qt::ISODate)
+                       : QDateTime::fromString(val,QString::fromAscii(versitTimeSpecIso8601Basic));
+    if(utc)dateTime.setTimeSpec(Qt::UTC);
     timeStamp->setLastModified(dateTime);
     return timeStamp;
 }

@@ -81,4 +81,7 @@ const char versitfavoriteIDId[] = "FAVOURITE";
 // Value separator
 const char versitValueSeparator[] = ",";
 
+// ISO-8601 basic format datetime spec
+const char versitTimeSpecIso8601Basic[] = "yyyyMMddThhmmss";
+
 #endif /* QVERSITDEFS_H_ */

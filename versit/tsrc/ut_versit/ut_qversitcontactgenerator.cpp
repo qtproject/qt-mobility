@@ -324,7 +324,7 @@ void UT_QVersitContactGenerator::testTimeStamp()
             contact.detail(QContactTimestamp::DefinitionName));    
     QCOMPARE(timeStamp.lastModified().toString(Qt::ISODate),QString::fromAscii(dateAndTimeValue));    
 
-    // Date and Time with utc offset    
+    // Date and Time : ISO 8601 extented format with utc offset
     QByteArray utcOffset = "Z";
     QByteArray dateAndTimeWithUtcValue = dateAndTimeValue+utcOffset;
     property.setValue(dateAndTimeWithUtcValue);
@@ -335,6 +335,31 @@ void UT_QVersitContactGenerator::testTimeStamp()
             contact.detail(QContactTimestamp::DefinitionName));
     QCOMPARE(timeStamp.lastModified().toString(Qt::ISODate),QString::fromAscii(dateAndTimeValue));
     QCOMPARE(timeStamp.lastModified().timeSpec(),Qt::UTC);
+
+    // Date and Time : ISO 8601 in basic format without utc offset
+    dateAndTimeValue = "19810520T235555";
+    property.setValue(dateAndTimeValue);
+    document = createDocumentWithProperty(property);
+    contact = mGenerator->generateContact(document);
+    timeStamp =
+        static_cast<QContactTimestamp>(
+            contact.detail(QContactTimestamp::DefinitionName));
+    QCOMPARE(timeStamp.lastModified().toString(QString::fromAscii(versitTimeSpecIso8601Basic)),
+                                                         QString::fromAscii(dateAndTimeValue));
+
+    // Date and Time : ISO 8601 in basic format with utc offset
+    dateAndTimeValue = "19810520T235555";
+    dateAndTimeWithUtcValue = dateAndTimeValue+utcOffset;
+    property.setValue(dateAndTimeWithUtcValue);
+    document = createDocumentWithProperty(property);
+    contact = mGenerator->generateContact(document);
+    timeStamp =
+        static_cast<QContactTimestamp>(
+            contact.detail(QContactTimestamp::DefinitionName));
+    QCOMPARE(timeStamp.lastModified().toString(QString::fromAscii(versitTimeSpecIso8601Basic)),
+                                                         QString::fromAscii(dateAndTimeValue));
+    QCOMPARE(timeStamp.lastModified().timeSpec(),Qt::UTC);
+
 
 }
 
