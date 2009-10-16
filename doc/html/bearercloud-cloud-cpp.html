@@ -73,6 +73,7 @@
                 this, SLOT(stateChanged(QNetworkSession::State)));
 
         setFlag(ItemIsMovable);
+        setFlag(ItemSendsGeometryChanges);
         setZValue(1);
 
         icon = new QGraphicsSvgItem(this);
@@ -209,7 +210,7 @@
     {
     }
 
-    QVariant Cloud::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &amp;value)
+    QVariant Cloud::itemChange(GraphicsItemChange change, const QVariant &amp;value)
     {
         switch (change) {
         case ItemPositionHasChanged:

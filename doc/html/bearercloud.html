@@ -115,6 +115,8 @@
                      radius * sin((count-1) * angle + offset[state]));
 
         addItem(item);
+
+        cloudMoved();
     }</pre>
 <p>The configurationRemoved() slot gets called when a network configuration is removed from the system.</p>
 <p>First we remove all references to the network configuration from the <i>configStates</i> and <i>configurations</i> member variables.</p>
@@ -129,6 +131,8 @@
 
         item-&gt;setFinalScale(0.0);
         item-&gt;setDeleteAfterAnimation(true);
+
+        cloudMoved();
     }</pre>
 <p>The Cloud object will take care of most of the work required when a network configuration changes. All we do in the configurationChanged() slot is update the <i>configStates</i> member variable.</p>
 <pre>    void BearerCloud::configurationChanged(const QNetworkConfiguration &amp;config)
@@ -137,6 +141,8 @@
             configStates.remove(state, config.identifier());
 
         configStates.insert(config.state(), config.identifier());
+
+        cloudMoved();
     }</pre>
 <a name="responding-to-changes"></a>
 <h2>Responding to changes</h2>
@@ -155,6 +161,7 @@
                 this, SLOT(stateChanged(QNetworkSession::State)));
 
         setFlag(ItemIsMovable);
+        setFlag(ItemSendsGeometryChanges);
         setZValue(1);
 
         icon = new QGraphicsSvgItem(this);
@@ -283,7 +290,7 @@
         }
     }</pre>
 <p>As we support the user dragging Cloud objects around we need to restart animations when the position of the Cloud object changes. This is accomplished by reimplementing the QGraphicsItem::itemChanged() function and calling the cloudMoved() function of the BearerCloud object.</p>
-<pre>    QVariant Cloud::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &amp;value)
+<pre>    QVariant Cloud::itemChange(GraphicsItemChange change, const QVariant &amp;value)
     {
         switch (change) {
         case ItemPositionHasChanged:
