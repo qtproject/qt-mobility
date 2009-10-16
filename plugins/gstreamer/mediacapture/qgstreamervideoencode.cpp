@@ -240,6 +240,13 @@ GstElement *QGstreamerVideoEncode::createEncoder()
             QString option = it.key();
             QVariant value = it.value();
 
+            //skip the default values
+            if (option == QLatin1String("bitrate")) {
+                int bitrate = value.toInt();
+                if (bitrate <= 0)
+                    continue;
+            }
+
             if (option == QLatin1String("quality")) {
                 int qualityValue = qBound(int(QtMedia::VeryLowQuality), value.toInt(), int(QtMedia::VeryHighQuality));
 
