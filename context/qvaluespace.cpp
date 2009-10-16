@@ -36,7 +36,6 @@
 #include "qvaluespacemanager_p.h"
 #include "qmallocpool_p.h"
 #include "qvaluespaceprovider.h"
-#include "qpacketprotocol_p.h"
 
 #include <QObject>
 #include <QMap>
