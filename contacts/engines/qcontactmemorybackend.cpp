@@ -219,7 +219,7 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
 
         /* And we need to check that the relationships are up-to-date or not modified */
         QList<QContactRelationship> orderedList = theContact->relationshipOrder();
-        if (!theContact->relationships() == orderedList) {
+        if (theContact->relationships() != orderedList) {
             // the user has modified the order of relationships; we may need to update the lists etc.
             QList<QContactRelationship> upToDateList = d->m_orderedRelationships.value(theContact->localId());
             if (upToDateList.size() != orderedList.size()) {
