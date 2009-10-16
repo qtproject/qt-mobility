@@ -41,6 +41,8 @@
 #include <QStringList>
 #include <QtCore/qmutex.h>
 #include <QtCore/private/qmutexpool_p.h>
+#include <QUuid>
+
 
 WMIHelper::WMIHelper(QObject * parent)
         : QObject(parent)
@@ -66,14 +68,17 @@ void WMIHelper::initializeWMI(const QString &wmiNamespace)
     HRESULT hres;
     wbemLocator = 0;
 
-    hres = CoCreateInstance(CLSID_WbemLocator,0,CLSCTX_INPROC_SERVER,
-                            IID_IWbemLocator, (LPVOID *) &wbemLocator);
+    QUuid wbemLocatorClsid = "4590f811-1d3a-11d0-891f-00aa004b2e24";
+    QUuid wbemLocatorIid = "dc12a687-737f-11cf-884d-00aa004b2e24";
+
+    hres = CoCreateInstance(wbemLocatorClsid,0,CLSCTX_INPROC_SERVER,
+                            wbemLocatorIid, (LPVOID *) &wbemLocator);
 
     if (hres == CO_E_NOTINITIALIZED) { // COM was not initialized
       //  neededCoInit = true;
         CoInitializeEx(0, COINIT_MULTITHREADED);
-        hres = CoCreateInstance(CLSID_WbemLocator,0,CLSCTX_INPROC_SERVER,
-                                IID_IWbemLocator, (LPVOID *) &wbemLocator);
+        hres = CoCreateInstance(wbemLocatorClsid,0,CLSCTX_INPROC_SERVER,
+                                wbemLocatorIid, (LPVOID *) &wbemLocator);
     }
 
     if (hres != S_OK) {
@@ -96,27 +101,18 @@ void WMIHelper::initializeWMI(const QString &wmiNamespace)
        qWarning() << "Could not set proxy blanket" << hres;
         return ;
     }
-
-    if(!initializedNamespaces.contains(wmiNamespace)) {
-        initializedNamespaces.insert(wmiNamespace, true);
-    } else {
-        initializedNamespaces[wmiNamespace] = true;
-    }
 }
 
 QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &className, const QStringList &classProperty)
 {
-
-    if(!initializedNamespaces.contains(wmiNamespace)) {
-        initializeWMI(wmiNamespace);
-    }
-
+    initializeWMI(wmiNamespace);
     HRESULT hres;
     QVariant returnVariant;
 
     ////
     ////////////////////////
-       IEnumWbemClassObject* wbemEnumerator = 0;
+      wbemEnumerator = 0;
+
     if (!m_conditional.isEmpty()) {
         if (m_conditional.left(1) != " ") {
             m_conditional.prepend(" ");
@@ -138,7 +134,6 @@ QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &class
     }
 
     ::SysFreeString(bstrQuery);
-//    SysFreeString(bstrWQL);
 
     ///////////////////////
     wbemCLassObject = 0;
@@ -230,5 +225,4 @@ void WMIHelper::setConditional(const QString &conditional)
 {
    m_conditional = conditional;
 }
-
 #endif

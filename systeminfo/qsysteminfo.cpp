@@ -322,8 +322,7 @@ Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)
 
 QSystemInfo::QSystemInfo(QObject *parent)
 {
-    QSystemInfoPrivate *sysPriv = sysinfoPrivate();
-//    d = new QSystemInfoPrivate(parent);
+    QSystemInfoPrivate *sysPriv = new QSystemInfoPrivate(parent);
     connect(sysPriv,SIGNAL(currentLanguageChanged(QString)),
             this,SIGNAL(currentLanguageChanged(QString)));
 }
@@ -391,7 +390,7 @@ Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
 
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
 {
-    QSystemNetworkInfoPrivate *d = netInfoPrivate();
+    QSystemNetworkInfoPrivate *d = new QSystemNetworkInfoPrivate(parent);
     connect(d,SIGNAL(currentMobileCountryCodeChanged(QString)),
             this,SIGNAL(currentMobileCountryCodeChanged(QString)));
 
@@ -557,7 +556,7 @@ Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
 
 QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
 {
-    QSystemStorageInfoPrivate *d = storageInfoPrivate();
+    QSystemStorageInfoPrivate *d = new QSystemStorageInfoPrivate(parent);
 }
 
 /*!
@@ -610,7 +609,7 @@ Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
 
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
 {
-    QSystemDeviceInfoPrivate *d = deviceInfoPrivate();
+    QSystemDeviceInfoPrivate *d = new QSystemDeviceInfoPrivate(parent);
     connect(d,SIGNAL(batteryLevelChanged(int)),
             this,SIGNAL(batteryLevelChanged(int)));
 
