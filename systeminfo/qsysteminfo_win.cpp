@@ -124,7 +124,8 @@ static BluetoothFindFirstRadio local_BluetoothFindFirstRadio=0;
 
 static void resolveLibrary()
 {
-    static volatile bool triedResolve = false;
+#if !defined( Q_OS_WINCE)
+            static volatile bool triedResolve = false;
 
     if (!triedResolve) {
 #ifndef QT_NO_THREAD
@@ -156,6 +157,7 @@ static void resolveLibrary()
             triedResolve = true;
         }
     }
+#endif
 }
 //
 
@@ -169,7 +171,7 @@ typedef struct _DISPLAY_BRIGHTNESS {
 } DISPLAY_BRIGHTNESS, *PDISPLAY_BRIGHTNESS;
 
 
-#if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
 static PWLAN_CONNECTION_ATTRIBUTES  getWifiConnectionAttributes()
 {
     DWORD version =  0;
@@ -349,7 +351,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     switch (feature) {
     case QSystemInfo::BluetoothFeature :
         {
-#if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
 //            WSADATA wsd;
 //            WSAStartup (MAKEWORD(1,0), &wsd);
 //
@@ -402,7 +404,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::CameraFeature :
         {
-#if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
 
             ICreateDevEnum *devEnum = NULL;
             IEnumMoniker *monikerEnum = NULL;
@@ -433,7 +435,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::IrFeature :
         {
-#if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
             WMIHelper *wHelper;
             wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
@@ -472,7 +474,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::UsbFeature :
         {
-#if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
             WMIHelper *wHelper;
             wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
@@ -534,7 +536,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         {
            //IOCTL_VIDEO_QUERY_AVAIL_MODES
 //VIDEO_MODE_INFORMATION vInfo;
-#if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
             WMIHelper *wHelper;
             wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
@@ -561,7 +563,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 Q_DECLARE_METATYPE(QSystemNetworkInfo::NetworkMode)
 Q_DECLARE_METATYPE(QSystemNetworkInfo::NetworkStatus)
 
-#if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
 
 void wlanNotificationCallback(PWLAN_NOTIFICATION_DATA pNotifyData, QSystemNetworkInfoPrivate *netInfo)
 {
@@ -763,7 +765,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         break;
     case QSystemNetworkInfo::WlanMode:
         {
-#if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
             PWLAN_CONNECTION_ATTRIBUTES connAtts = getWifiConnectionAttributes();
             if(connAtts != NULL) {
                 if(connAtts->isState  == wlan_interface_state_authenticating) {
@@ -781,7 +783,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         break;
     case QSystemNetworkInfo::EthernetMode:
         {
-#if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
             WMIHelper *wHelper;
             wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
@@ -799,7 +801,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         break;
         case QSystemNetworkInfo::BluetoothMode:
         {
-#if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
             WMIHelper *wHelper;
             wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
@@ -833,7 +835,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
     case QSystemNetworkInfo::WlanMode:
         {
 
-#if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
             DWORD version =  0;
             DWORD result;
 
@@ -889,7 +891,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         break;
     case QSystemNetworkInfo::EthernetMode:
         {
-#if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
             WMIHelper *wHelper;
             wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
@@ -965,7 +967,7 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
-#if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
             netname = "";
             PWLAN_CONNECTION_ATTRIBUTES connAtts = getWifiConnectionAttributes();
             if(connAtts != NULL) {
@@ -1014,7 +1016,7 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
             continue;
         }
 
-#if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
 
         unsigned long oid;
         DWORD bytesWritten;
@@ -1145,7 +1147,7 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
 //#if WINVER > 0x0600
-#if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
     WMIHelper *wHelper;
     wHelper = new WMIHelper(this);
     wHelper->setWmiNamespace("root/wmi");
@@ -1449,7 +1451,7 @@ QString QSystemDeviceInfoPrivate::imsi()
 QString QSystemDeviceInfoPrivate::manufacturer()
 {
    QString manu;
-#if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
     WMIHelper *wHelper;
     wHelper = new WMIHelper(this);
     wHelper->setWmiNamespace("root/cimv2");
@@ -1468,7 +1470,7 @@ QString QSystemDeviceInfoPrivate::manufacturer()
 QString QSystemDeviceInfoPrivate::model()
 {
    QString model;
-#if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
     WMIHelper *wHelper;
     wHelper = new WMIHelper(this);
     wHelper->setWmiNamespace("root/cimv2");
@@ -1545,7 +1547,7 @@ QString QSystemDeviceInfoPrivate::model()
 QString QSystemDeviceInfoPrivate::productName()
 {
    QString name;
-#if !defined( Q_CC_MINGW) || !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
     WMIHelper *wHelper;
     wHelper = new WMIHelper(this);
     wHelper->setWmiNamespace("root/cimv2");
