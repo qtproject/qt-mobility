@@ -187,7 +187,11 @@ QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 
 QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 {
-	return QString();   //TODO
+    QString imsi = DeviceInfo::instance()->subscriberInfo()->imsi();
+    if (imsi.length() >= 3) {
+        return imsi.left(3);
+    }
+	return QString();
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
