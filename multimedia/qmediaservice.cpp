@@ -128,17 +128,22 @@ bool QMediaService::setActiveEndpoint(QMediaService::MediaEndpoint endpointType,
     QAudioDeviceControl *audioDeviceControl =
                             qobject_cast<QAudioDeviceControl*>(control(QAudioDeviceControl_iid));
 
-    if (audioDeviceControl == 0)
+    if (audioDeviceControl == 0) {
         return false;
+    } else if (endpoint.isEmpty()) {
+        audioDeviceControl->setSelectedDevice(-1);
 
-    for (int i = audioDeviceControl->deviceCount() - 1; i >= 0; --i) {
-        if (endpoint == audioDeviceControl->name(i)) {
-            audioDeviceControl->setSelectedDevice(i);
-            return true;
+        return true;
+    } else {
+        for (int i = audioDeviceControl->deviceCount() - 1; i >= 0; --i) {
+            if (endpoint == audioDeviceControl->name(i)) {
+                audioDeviceControl->setSelectedDevice(i);
+
+                return true;
+            }
         }
+        return false;
     }
-
-    return false;
 }
 
 /*!
@@ -167,14 +172,14 @@ QString QMediaService::endpointDescription(QMediaService::MediaEndpoint endpoint
     Returns a list of endpoints available for the \a endpointType.
 */
 
-QList<QString> QMediaService::supportedEndpoints(QMediaService::MediaEndpoint endpointType) const
+QStringList QMediaService::supportedEndpoints(QMediaService::MediaEndpoint endpointType) const
 {
     Q_UNUSED(endpointType);
 
     QAudioDeviceControl *audioDeviceControl =
                             qobject_cast<QAudioDeviceControl*>(control(QAudioDeviceControl_iid));
 
-    QList<QString> endpoints;
+    QStringList endpoints;
 
     if (audioDeviceControl != 0) {
         for (int i = 0 ; i<audioDeviceControl->deviceCount(); ++i)

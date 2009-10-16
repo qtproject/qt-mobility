@@ -36,7 +36,7 @@
 #define QABSTRACTMEDIASERVICE_H
 
 #include <QtCore/qobject.h>
-#include <QtCore/qlist.h>
+#include <QtCore/qstringlist.h>
 
 #include <multimedia/qmediacontrol.h>
 
@@ -56,7 +56,7 @@ public:
     QString activeEndpoint(QMediaService::MediaEndpoint endpointType);
     bool setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
     QString endpointDescription(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
-    QList<QString> supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
+    QStringList supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
 
     virtual QMediaControl* control(const char *name) const = 0;
 
