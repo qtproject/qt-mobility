@@ -63,11 +63,11 @@ QVERIFY(keyData.count() == 0);
 keyData = parser.parseQCRML(testData.absoluteFilePath("test1.qcrml"));
 
 QVERIFY(verifyKeyData(keyData, "/sensors/accelerometer/x",
-                      0x4815162300000000));
+                      Q_UINT64_C(0x4815162300000000)));
 QVERIFY(verifyKeyData(keyData, "/sensors/accelerometer/y",
-                      0x4815162300000001));
+                      Q_UINT64_C(0x4815162300000001)));
 QVERIFY(verifyKeyData(keyData, "/sensors/accelerometer/z",
-                      0x4815162300000002));
+                      Q_UINT64_C(0x4815162300000002)));
 
 QVERIFY(parser.error() == QCRMLParser::NoError);
 }
@@ -80,7 +80,7 @@ void tst_QCRMLParser::keyRangeSequence()
     keyData = parser.parseQCRML(testData.absoluteFilePath("test2.qcrml"));
     QCOMPARE(keyData.count(), 763);
 
-    quint64 repoUID = (quint64)0x81531600000000;
+    quint64 repoUID = Q_UINT64_C(0x81531600000000);
 
     quint32 settingsIdentifier = 0x07000000;
     quint32 itemSettingIndex = 0x00010000;
@@ -107,7 +107,7 @@ void tst_QCRMLParser::bitmaskKey()
     keyData = parser.parseQCRML(testData.absoluteFilePath("test3.qcrml"));
     QCOMPARE(keyData.count(), 4);
 
-    quint64 uid = 0x1234567800000001;
+    quint64 uid = Q_UINT64_C(0x1234567800000001);
 
     QVERIFY(verifyKeyData(keyData, QString("/Dharma/Swan"), uid,1));
     QVERIFY(verifyKeyData(keyData, QString("/Dharma/Pearl"), uid,2));
