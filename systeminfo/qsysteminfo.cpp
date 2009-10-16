@@ -42,6 +42,9 @@
 #ifdef Q_OS_MAC
 #include "qsysteminfo_mac_p.h"
 #endif
+#ifdef Q_OS_SYMBIAN
+#include "qsysteminfo_s60_p.h"
+#endif
 
 #include <QStringList>
 #include <QSize>
@@ -324,12 +327,16 @@ information from the system.
 */
 
  /*!
+\fn QSystemInfo::QSystemInfo(QObject *parent)
    Constructs a QSystemInfo object with the given \a parent.
  */
+
+Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)
+
 QSystemInfo::QSystemInfo(QObject *parent)
 {
-    d = new QSystemInfoPrivate(parent);
-    connect(d,SIGNAL(currentLanguageChanged(QString)),
+    QSystemInfoPrivate *sysPriv = new QSystemInfoPrivate(parent);
+    connect(sysPriv,SIGNAL(currentLanguageChanged(QString)),
             this,SIGNAL(currentLanguageChanged(QString)));
 }
 
@@ -338,7 +345,6 @@ QSystemInfo::QSystemInfo(QObject *parent)
 */
 QSystemInfo::~QSystemInfo()
 {
-    delete d;
 }
 
 /*!
@@ -346,8 +352,7 @@ QSystemInfo::~QSystemInfo()
  */
 QString QSystemInfo::currentLanguage()
 {
-    QSystemInfoPrivate dp;
-    return dp.currentLanguage();
+    return sysinfoPrivate()->currentLanguage();
 }
 /*!
     Returns a QStringList of available Qt language translations in 2 letter ISO 639-1 format.
@@ -355,8 +360,7 @@ QString QSystemInfo::currentLanguage()
   */
 QStringList QSystemInfo::availableLanguages()
 {
-    QSystemInfoPrivate dp;
-    return dp.availableLanguages();
+    return sysinfoPrivate()->availableLanguages();
 }
 
 /*!
@@ -371,7 +375,7 @@ the API.
 */
 QString QSystemInfo::version(QSystemInfo::Version type, const QString &parameter)
 {
-    return d->version(type, parameter);
+    return sysinfoPrivate()->version(type, parameter);
 }
 
 /*!
@@ -379,8 +383,7 @@ QString QSystemInfo::version(QSystemInfo::Version type, const QString &parameter
 */
 QString QSystemInfo::currentCountryCode()
 {
-    QSystemInfoPrivate dp;
-    return dp.currentCountryCode();
+    return sysinfoPrivate()->currentCountryCode();
 }
 
 /*!
@@ -389,15 +392,18 @@ QString QSystemInfo::currentCountryCode()
 
 bool QSystemInfo::hasFeatureSupported(QSystemInfo::Feature feature)
 {
-    return d->hasFeatureSupported(feature);
+    return sysinfoPrivate()->hasFeatureSupported(feature);
 }
 
  /*!
+   \fn QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
    Constructs a QSystemNetworkInfo object with the given \a parent.
  */
+Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
+
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
 {
-    d = new QSystemNetworkInfoPrivate(parent);
+    QSystemNetworkInfoPrivate *d = new QSystemNetworkInfoPrivate(parent);
     connect(d,SIGNAL(currentMobileCountryCodeChanged(QString)),
             this,SIGNAL(currentMobileCountryCodeChanged(QString)));
 
@@ -422,14 +428,13 @@ QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
  */
 QSystemNetworkInfo::~QSystemNetworkInfo()
 {
-    delete d;
 }
 
 /*!
     Returns the status of the network \a mode.
 */
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetworkInfo::NetworkMode mode) {
-    return d->networkStatus(mode);
+    return netInfoPrivate()->networkStatus(mode);
 }
 
 /*!
@@ -441,8 +446,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetwo
 */
 int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
-    QSystemNetworkInfoPrivate dnp;
-    return dnp.networkSignalStrength(mode);
+    return netInfoPrivate()->networkSignalStrength(mode);
 }
 
 /*!
@@ -450,63 +454,56 @@ int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mo
 */
 int QSystemNetworkInfo::cellId()
 {
-    QSystemNetworkInfoPrivate dnp;
-    return dnp.cellId();
+    return netInfoPrivate()->cellId();
 }
 
 /*!
-    Returns the Location Area Code. In the case of none such as a Desktop, "No Mobile Network."
+    Returns the Location Area Code. In the case of none such as a Desktop, an empty string.
 */
 int QSystemNetworkInfo::locationAreaCode()
 {
-    QSystemNetworkInfoPrivate dnp;
-    return dnp.locationAreaCode();
+    return netInfoPrivate()->locationAreaCode();
 }
 
  /*!
-    Returns the current Mobile Country Code. In the case of none such as a Desktop, "No Mobile Network."
+    Returns the current Mobile Country Code. In the case of none such as a Desktop, an empty string.
 /*/
 QString QSystemNetworkInfo::currentMobileCountryCode()
 {
-    QSystemNetworkInfoPrivate dnp;
-    return dnp.currentMobileCountryCode();
+    return netInfoPrivate()->currentMobileCountryCode();
 }
 
 /*!
-    Returns the current Mobile Network Code. In the case of none such as a Desktop, "No Mobile Network."
+    Returns the current Mobile Network Code. In the case of none such as a Desktop, an empty string.
 */
 QString QSystemNetworkInfo::currentMobileNetworkCode()
 {
-    QSystemNetworkInfoPrivate dnp;
-    return dnp.currentMobileNetworkCode();
+    return netInfoPrivate()->currentMobileNetworkCode();
 }
 
 /*!
-    Returns the home Mobile Network Code. In the case of none such as a Desktop, "No Mobile Network."
+    Returns the home Mobile Network Code. In the case of none such as a Desktop, an empty string.
 */
 QString QSystemNetworkInfo::homeMobileCountryCode()
 {
-    QSystemNetworkInfoPrivate dnp;
-    return dnp.homeMobileCountryCode();
+    return netInfoPrivate()->homeMobileCountryCode();
 }
 
 /*!
-    Returns the home Mobile Country Code. In the case of none such as a Desktop, "No Mobile Network."
+    Returns the home Mobile Country Code. In the case of none such as a Desktop, an empty string.
 */
 QString QSystemNetworkInfo::homeMobileNetworkCode()
 {
-    QSystemNetworkInfoPrivate dnp;
-    return dnp.homeMobileNetworkCode();
+    return netInfoPrivate()->homeMobileNetworkCode();
 }
 
 /*!
   Returns the name of the operator for the network \a mode.  For wlan this returns the network's current SSID.
-In the case of no network such as a desktop, "No Operator".
+In the case of no network such as a desktop, an empty string.
 */
 QString QSystemNetworkInfo::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
-    QSystemNetworkInfoPrivate dnp;
-    return dnp.networkName(mode);
+    return netInfoPrivate()->networkName(mode);
 }
 
 /*!
@@ -514,7 +511,7 @@ QString QSystemNetworkInfo::networkName(QSystemNetworkInfo::NetworkMode mode)
   */
 QString QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
-    return d->macAddress(mode);
+    return netInfoPrivate()->macAddress(mode);
 }
 
 /*!
@@ -522,13 +519,16 @@ QString QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
   */
 QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
-    return d->interfaceForMode(mode);
+    return netInfoPrivate()->interfaceForMode(mode);
 }
 
 // display
  /*!
+   \fn QSystemDisplayInfo::QSystemDisplayInfo()
    Constructs a QSystemDisplayInfo object.
  */
+Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
+
 QSystemDisplayInfo::QSystemDisplayInfo()
 {
 }
@@ -550,8 +550,7 @@ QSystemDisplayInfo::~QSystemDisplayInfo()
 */
 int QSystemDisplayInfo::displayBrightness(int screen)
 {
-    QSystemDisplayInfoPrivate dp;
-    return dp.displayBrightness(screen);
+    return displayInfoPrivate()->displayBrightness(screen);
 }
 
 /*!
@@ -559,16 +558,18 @@ int QSystemDisplayInfo::displayBrightness(int screen)
 */
 int QSystemDisplayInfo::colorDepth(int screenNumber)
 {
-    QSystemDisplayInfoPrivate dp;
-    return dp.colorDepth(screenNumber);
+    return displayInfoPrivate()->colorDepth(screenNumber);
 }
 
  /*!
+   \fn QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
    Constructs a QSystemStorageInfo object with the given \a parent.
  */
+Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
+
 QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
 {
-    d = new QSystemStorageInfoPrivate(parent);
+    QSystemStorageInfoPrivate *d = new QSystemStorageInfoPrivate(parent);
 }
 
 /*!
@@ -576,7 +577,6 @@ QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
 */
 QSystemStorageInfo::~QSystemStorageInfo()
 {
-    delete d;
 }
 
 /*!
@@ -585,7 +585,7 @@ QSystemStorageInfo::~QSystemStorageInfo()
 */
 qlonglong QSystemStorageInfo::totalDiskSpace(const QString &volumeDrive)
 {
-    return d->totalDiskSpace(volumeDrive);
+    return storageInfoPrivate()->totalDiskSpace(volumeDrive);
 }
 
 /*!
@@ -594,7 +594,7 @@ in bytes.
 */
 qlonglong QSystemStorageInfo::availableDiskSpace(const QString &volumeDrive)
 {
-    return d->availableDiskSpace(volumeDrive);
+    return storageInfoPrivate()->availableDiskSpace(volumeDrive);
 }
 
 /*!
@@ -602,8 +602,7 @@ qlonglong QSystemStorageInfo::availableDiskSpace(const QString &volumeDrive)
 */
 QStringList QSystemStorageInfo::logicalDrives()
 {
-    QSystemStorageInfoPrivate dp;
-    return dp.logicalDrives();
+    return storageInfoPrivate()->logicalDrives();
 }
 
 /*!
@@ -611,17 +610,19 @@ QStringList QSystemStorageInfo::logicalDrives()
 */
 QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &driveVolume)
 {
-    return d->typeForDrive(driveVolume);
+    return storageInfoPrivate()->typeForDrive(driveVolume);
 }
 
 // device
  /*!
+   \fn QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
    Constructs a QSystemDeviceInfo with the given \a parent.
  */
+Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
+
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
 {
-
-    d = new QSystemDeviceInfoPrivate(parent);
+    QSystemDeviceInfoPrivate *d = new QSystemDeviceInfoPrivate(parent);
     connect(d,SIGNAL(batteryLevelChanged(int)),
             this,SIGNAL(batteryLevelChanged(int)));
 
@@ -643,7 +644,6 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
  */
 QSystemDeviceInfo::~QSystemDeviceInfo()
 {
-    delete d;
 }
 
 
@@ -652,15 +652,14 @@ QSystemDeviceInfo::~QSystemDeviceInfo()
 */
 QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfo::inputMethodType()
 {
- return d->inputMethodType();
+ return deviceInfoPrivate()->inputMethodType();
 }
 /*!
     Returns the International Mobile Equipment Identity (IMEI), or a null QString in the case of none.
 */
 QString QSystemDeviceInfo::imei()
 {
-    QSystemDeviceInfoPrivate dip;
-    return dip.imei();
+    return deviceInfoPrivate()->imei();
 }
 
 /*!
@@ -668,8 +667,7 @@ QString QSystemDeviceInfo::imei()
 */
 QString QSystemDeviceInfo::imsi()
 {
-    QSystemDeviceInfoPrivate dip;
-    return dip.imsi();
+    return deviceInfoPrivate()->imsi();
 }
 
 /*!
@@ -678,8 +676,7 @@ QString QSystemDeviceInfo::imsi()
 */
 QString QSystemDeviceInfo::manufacturer()
 {
-    QSystemDeviceInfoPrivate dip;
-    return dip.manufacturer();
+    return deviceInfoPrivate()->manufacturer();
 }
 
 /*!
@@ -689,8 +686,7 @@ QString QSystemDeviceInfo::manufacturer()
 */
 QString QSystemDeviceInfo::model()
 {
-    QSystemDeviceInfoPrivate dip;
-    return dip.model();
+    return deviceInfoPrivate()->model();
 }
 
 /*!
@@ -699,15 +695,14 @@ QString QSystemDeviceInfo::model()
 */
 QString QSystemDeviceInfo::productName()
 {
-    QSystemDeviceInfoPrivate dip;
-    return dip.productName();
+    return deviceInfoPrivate()->productName();
 }
 /*!
     Returns the battery charge level as percentage 1 - 100 scale.
 */
 int QSystemDeviceInfo::batteryLevel() const
 {
-    return d->batteryLevel();
+    return deviceInfoPrivate()->batteryLevel();
 }
 
   /*!
@@ -715,7 +710,18 @@ int QSystemDeviceInfo::batteryLevel() const
 */
 QSystemDeviceInfo::BatteryStatus QSystemDeviceInfo::batteryStatus()
 {
-    return d->batteryStatus();
+   int level = batteryLevel();
+    if(level < 4) {
+        return QSystemDeviceInfo::BatteryCritical;
+    }   else if(level < 11) {
+        return QSystemDeviceInfo::BatteryVeryLow;
+    }  else if(level < 41) {
+        return QSystemDeviceInfo::BatteryLow;
+    }   else if(level > 40) {
+        return QSystemDeviceInfo::BatteryNormal;
+    }
+
+    return QSystemDeviceInfo::NoBatteryLevel;
 }
 
 /*!
@@ -725,14 +731,14 @@ QSystemDeviceInfo::BatteryStatus QSystemDeviceInfo::batteryStatus()
 */
 QSystemDeviceInfo::SimStatus QSystemDeviceInfo::simStatus()
 {
-    return d->simStatus();
+    return deviceInfoPrivate()->simStatus();
 }
 /*!
   Returns true if the device is locked, otherwise false.
 */
 bool QSystemDeviceInfo::isDeviceLocked()
 {
-    return d->isDeviceLocked();
+    return deviceInfoPrivate()->isDeviceLocked();
 }
 
 /*!
@@ -742,7 +748,7 @@ bool QSystemDeviceInfo::isDeviceLocked()
 */
 QSystemDeviceInfo::Profile QSystemDeviceInfo::currentProfile()
 {
-    return d->currentProfile();
+    return deviceInfoPrivate()->currentProfile();
 }
 
 /*!
@@ -753,7 +759,7 @@ QSystemDeviceInfo::Profile QSystemDeviceInfo::currentProfile()
 */
 QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
 {
-    return d->currentPowerState();
+    return deviceInfoPrivate()->currentPowerState();
 }
 
 
@@ -764,6 +770,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
    On platforms where there is no one default screensaver mechanism, such as Linux, this class
    may not be available.
  */
+
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
 {
     d = new QSystemScreenSaverPrivate(parent);

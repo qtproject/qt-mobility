@@ -43,7 +43,7 @@ unix:!symbian:!maemo: {
            qpacketprotocol
 }
 
-!symbian:!wince*:SUBDIRS += qsysteminfo \                    #SystemInformation
+SUBDIRS += qsysteminfo \                    #SystemInformation
           qsystemdeviceinfo \
           qsystemdisplayinfo \
           qsystemstorageinfo \

@@ -15,7 +15,7 @@ win32:!wince* {
     for(p, TMP_SEARCHPATHS): exists($${p}/wmp.h): SUBDIRS *= wmp
 }
 
-unix:!mac {
+unix:!mac:!symbian {
     TMP_GST_LIBS = \
         gstreamer-0.10 >= 0.10.19 \
         gstreamer-base-0.10 >= 0.10.19 \

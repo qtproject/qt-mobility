@@ -1,5 +1,9 @@
 #include "dialog.h"
+#ifdef Q_OS_SYMBIAN
+#include "ui_dialog_s60.h"
+#else
 #include "ui_dialog.h"
+#endif
 #include <QDebug>
 #include <QDesktopWidget>
 #include <QMessageBox>
@@ -64,10 +68,9 @@ void Dialog::tabChanged(int index)
 
 void Dialog::setupGeneral()
 {
-    systemInfo = new QSystemInfo(this);
-    ui->curLanguageLineEdit->setText( systemInfo->currentLanguage());
-    ui->languagesComboBox->insertItems(0,systemInfo->availableLanguages());
-    ui->countryCodeLabel->setText(systemInfo->currentCountryCode());
+    ui->curLanguageLineEdit->setText( QSystemInfo::currentLanguage());
+    ui->languagesComboBox->insertItems(0,QSystemInfo::availableLanguages());
+    ui->countryCodeLabel->setText(QSystemInfo::currentCountryCode());
 }
 
 void Dialog::setupDevice()
@@ -130,18 +133,15 @@ void Dialog::setupDevice()
 
 void Dialog::setupDisplay()
 {
-    QSystemDisplayInfo di;
-    ui->brightnessLineEdit->setText(QString::number(di.displayBrightness(0)));
-    ui->colorDepthLineEdit->setText(QString::number(di.colorDepth((0))));
-    QDesktopWidget wid;
-    ui->resolutionLabel->setText(QString::number(wid.width())+"x"+QString::number(wid.height()));
-
+    ui->brightnessLineEdit->setText(QString::number(QSystemDisplayInfo::displayBrightness(0)));
+    ui->colorDepthLineEdit->setText(QString::number(QSystemDisplayInfo::colorDepth((0))));
 }
 
 void Dialog::setupStorage()
 {
     QSystemStorageInfo mi;
     ui->storageTreeWidget->clear();
+    ui->storageTreeWidget->header()->setResizeMode(QHeaderView::ResizeToContents);
 
     QStringList vols = mi.logicalDrives();
     foreach(QString volName, vols) {
@@ -195,6 +195,7 @@ void Dialog::setupNetwork()
     ui->homeMMCLabel->setText(ni->homeMobileCountryCode());
     ui->homeMNCLabel->setText(ni->homeMobileNetworkCode());
 }
+
 void Dialog::netStatusComboActivated(int index)
 {
     QString status;
@@ -497,4 +498,3 @@ void Dialog::displayNetworkStatus(QSystemNetworkInfo::NetworkStatus status)
     };
     ui->cellNetworkStatusLabel->setText(stat);
 }
-

@@ -146,6 +146,11 @@ private:
     QNetworkManagerInterfaceAccessPoint *accessPointIface;
 
     void setupNmConnections();
+    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
+    int getBluetoothRssi();
+    QString getBluetoothInfo(const QString &file);
+    bool isDefaultInterface(const QString &device);
+
 private Q_SLOTS:
     void nmPropertiesChanged( const QString &, QMap<QString,QVariant>);
     void nmAPPropertiesChanged( const QString &, QMap<QString,QVariant>);
@@ -184,7 +189,7 @@ public:
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume); //returns enum
 
 private:
-    QHash<QString, QString> mountEntriesHash;
+    QMap<QString, QString> mountEntriesMap;
     void mountEntries();
 
 };
@@ -209,7 +214,6 @@ public:
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
     int  batteryLevel() const;
-    QSystemDeviceInfo::BatteryStatus batteryStatus();
 
     QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
@@ -230,9 +234,11 @@ private:
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
+    void setupBluetooth();
 
 private Q_SLOTS:
     void halChanged(int,QVariantList);
+    void bluezPropertyChanged(const QString&, QDBusVariant);
 #endif
 };
 

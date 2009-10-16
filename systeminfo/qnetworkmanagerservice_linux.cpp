@@ -43,9 +43,6 @@
 #include <QDBusObjectPath>
 #include <QDBusPendingCall>
 
-#include <NetworkManager/NetworkManager.h>
-
-
 #include "qnetworkmanagerservice_linux_p.h"
 
 //Q_DECLARE_METATYPE(QList<uint>)

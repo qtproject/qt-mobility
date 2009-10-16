@@ -117,9 +117,6 @@ public:
 
 Q_SIGNALS:
     void currentLanguageChanged(const QString &);
-
-private:
-    QSystemInfoPrivate *d;
 };
 
 ////////
@@ -180,9 +177,6 @@ Q_SIGNALS:
    void currentMobileNetworkCodeChanged(const QString &);
    void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
-
-private:
-    QSystemNetworkInfoPrivate *d;
 };
 
 ////////
@@ -229,10 +223,6 @@ public:
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume); //returns enum
 
     //bool isDiskSpaceCritical(const QString &driveVolume);
-Q_SIGNALS:
-
-private:
-    QSystemStorageInfoPrivate *d;
 };
 
 ////////
@@ -320,10 +310,6 @@ Q_SIGNALS:
     void powerStateChanged(QSystemDeviceInfo::PowerState);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
-
-private:
-    QSystemDeviceInfoPrivate *d;
-
 
 };
 
