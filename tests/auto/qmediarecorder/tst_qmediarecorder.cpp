@@ -370,6 +370,8 @@ public:
         return m_position;
     }
 
+    void applySettings() {}
+
     using QMediaRecorderControl::error;
 
 public slots:

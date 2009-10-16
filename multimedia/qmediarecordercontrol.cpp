@@ -106,6 +106,15 @@ QMediaRecorderControl::~QMediaRecorderControl()
 */
 
 /*!
+    \fn void QMediaRecorderControl::applySettings()
+
+    This method is called after encoder configuration is done.
+    Encoder can load necessary resources at this point,
+    to reduce delay before recording is started.
+*/
+
+
+/*!
     \fn void QMediaRecorderControl::stateChanged(QMediaRecorder::State state)
 
     Signal emitted when \a state changed.

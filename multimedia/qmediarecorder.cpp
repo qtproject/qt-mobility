@@ -429,8 +429,8 @@ void QMediaRecorder::setEncodingSettings(const QAudioEncoderSettings &audioSetti
     if (d->formatControl)
         d->formatControl->setFormat(format);
 
-    //if (d->control)
-    //    d->control->applySettings();
+    if (d->control)
+        d->control->applySettings();
 }
 
 
