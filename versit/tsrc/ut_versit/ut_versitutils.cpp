@@ -219,64 +219,64 @@ void UT_VersitUtils::testUnfold()
     QCOMPARE(unfolded, VersitUtils::unfold(folded));     
 }
 
-void UT_VersitUtils::testContainsSpecialChars()
+void UT_VersitUtils::testShouldBeQuotedPrintableEncoded()
 {
     QByteArray basicText("sometext");
     
     // No special characters
-    QVERIFY(!VersitUtils::containsSpecialChars(basicText));
+    QVERIFY(!VersitUtils::shouldBeQuotedPrintableEncoded(basicText));
     
     // Special characters
     QByteArray textWithSpecialChars = basicText + '\n'; 
-    QVERIFY(VersitUtils::containsSpecialChars(textWithSpecialChars));
+    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
     
     textWithSpecialChars = basicText + '\r'; 
-    QVERIFY(VersitUtils::containsSpecialChars(textWithSpecialChars));
+    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
             
     textWithSpecialChars = basicText + '!';
-    QVERIFY(VersitUtils::containsSpecialChars(textWithSpecialChars));
+    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
     
     textWithSpecialChars = basicText + '"';
-    QVERIFY(VersitUtils::containsSpecialChars(textWithSpecialChars));
+    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
     
     textWithSpecialChars = basicText + '#';
-    QVERIFY(VersitUtils::containsSpecialChars(textWithSpecialChars));
+    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
     
     textWithSpecialChars = basicText + '$';
-    QVERIFY(VersitUtils::containsSpecialChars(textWithSpecialChars));
+    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
     
     textWithSpecialChars = basicText + '=';
-    QVERIFY(VersitUtils::containsSpecialChars(textWithSpecialChars));
+    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
     
     textWithSpecialChars = basicText + '@';
-    QVERIFY(VersitUtils::containsSpecialChars(textWithSpecialChars));    
+    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));    
     
     textWithSpecialChars = basicText + '[';
-    QVERIFY(VersitUtils::containsSpecialChars(textWithSpecialChars)); 
+    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars)); 
     
     textWithSpecialChars = basicText + '\\';
-    QVERIFY(VersitUtils::containsSpecialChars(textWithSpecialChars));
+    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
     
     textWithSpecialChars = basicText + ']';
-    QVERIFY(VersitUtils::containsSpecialChars(textWithSpecialChars));
+    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
     
     textWithSpecialChars = basicText + '^';
-    QVERIFY(VersitUtils::containsSpecialChars(textWithSpecialChars));
+    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
     
     textWithSpecialChars = basicText + '`';
-    QVERIFY(VersitUtils::containsSpecialChars(textWithSpecialChars));
+    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
     
     textWithSpecialChars = basicText + '{';
-    QVERIFY(VersitUtils::containsSpecialChars(textWithSpecialChars));    
+    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));    
 
     textWithSpecialChars = basicText + '|';
-    QVERIFY(VersitUtils::containsSpecialChars(textWithSpecialChars));
+    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
     
     textWithSpecialChars = basicText + '}';
-    QVERIFY(VersitUtils::containsSpecialChars(textWithSpecialChars));    
+    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));    
     
     textWithSpecialChars = basicText + '~';
-    QVERIFY(VersitUtils::containsSpecialChars(textWithSpecialChars));
+    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
 }
 
 void UT_VersitUtils::testEncodeQuotedPrintable()

@@ -49,7 +49,7 @@ private slots:
     void testParamValue();
     void testAddParam();
     void testUnfold();
-    void testContainsSpecialChars();
+    void testShouldBeQuotedPrintableEncoded();
     void testEncodeQuotedPrintable();
     void testDecodeQuotedPrintable();
     void testExtractPropertyName();

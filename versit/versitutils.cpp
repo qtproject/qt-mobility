@@ -89,31 +89,13 @@ int VersitUtils::countLeadingWhiteSpaces(const QByteArray& text, int pos)
 
 /*!
  * Checks whether /a text contains special characters
- * that may need to be encoded with Quoted-Printable encoding (RFC 1521).
+ * that should be encoded with Quoted-Printable encoding (RFC 1521).
  */
-bool VersitUtils::containsSpecialChars(const QByteArray& text)
+bool VersitUtils::shouldBeQuotedPrintableEncoded(const QByteArray& text)
 {
     for (int i=0; i<text.length(); i++) {
-        char currentChar = text[i];
-        if (currentChar == '\n' || 
-            currentChar == '\r' || 
-            currentChar == '!' || 
-            currentChar == '"' || 
-            currentChar == '#' || 
-            currentChar == '$' || 
-            currentChar == '=' || 
-            currentChar == '@' || 
-            currentChar == '[' || 
-            currentChar == '\\' || 
-            currentChar == ']' || 
-            currentChar == '^' || 
-            currentChar == '`' || 
-            currentChar == '{' ||
-            currentChar == '|' ||
-            currentChar == '}' || 
-            currentChar == '~') {
+        if (shouldBeQuotedPrintableEncoded(text[i]))
             return true;
-            }
     }
     return false;
 }
@@ -123,32 +105,14 @@ bool VersitUtils::containsSpecialChars(const QByteArray& text)
  * using Quoted-Printable encoding (RFC 1521).
  */
 QByteArray VersitUtils::encodeQuotedPrintable(QByteArray& text)
-{
-    QMap<char,QByteArray> encodingMap;
-    encodingMap.insert('\n', "=0A");
-    encodingMap.insert('\r', "=0D");
-    encodingMap.insert('!', "=21");
-    encodingMap.insert('"', "=22");
-    encodingMap.insert('#', "=23");
-    encodingMap.insert('$', "=24");
-    encodingMap.insert('=', "=3D");
-    encodingMap.insert('@', "=40");
-    encodingMap.insert('[', "=5B");
-    encodingMap.insert('\\', "=5C");
-    encodingMap.insert(']', "=5D");
-    encodingMap.insert('^', "=5E");
-    encodingMap.insert('`', "=60");
-    encodingMap.insert('{', "=7B");
-    encodingMap.insert('|', "=7C");
-    encodingMap.insert('}', "=7D");
-    encodingMap.insert('~', "=7E");
-    
+{    
     for (int i=0; i<text.length(); i++) {
         char currentChar = text[i];
-        QByteArray mappedString = encodingMap.value(currentChar);
-        if (mappedString.length() > 0) {
-            text.replace(i,1,mappedString);
-            i += 2;
+        if (shouldBeQuotedPrintableEncoded(currentChar)) {
+            char encodedStr[4];
+            sprintf(encodedStr, "=%02X", currentChar);    
+            text.replace(i,1,encodedStr);
+            i += 2;            
         }
     }
     return text;
@@ -308,4 +272,16 @@ QString VersitUtils::paramValue(const QByteArray& parameter)
         }    
     }
     return value;
+}
+
+/*!
+ * Checks whether the \a chr should be Quoted-Printable encoded (RFC 1521). 
+ */
+bool VersitUtils::shouldBeQuotedPrintableEncoded(char chr)
+{
+    return (chr < 32 || 
+            chr == '!' || chr == '"' || chr == '#' || chr == '$' || 
+            chr == '=' || chr == '@' || chr == '[' || chr == '\\' || 
+            chr == ']' || chr == '^' || chr == '`' ||
+            chr > 122 ); 
 }

@@ -44,7 +44,7 @@ class VersitUtils
 public:
     static QByteArray unfold(QByteArray& text);
     static int countLeadingWhiteSpaces(const QByteArray& text, int pos=0);
-    static bool containsSpecialChars(const QByteArray& text);
+    static bool shouldBeQuotedPrintableEncoded(const QByteArray& text);
     static QByteArray encodeQuotedPrintable(QByteArray& text);
     static QByteArray decodeQuotedPrintable(QByteArray& text);
     static int findHardLineBreakInQuotedPrintable(const QByteArray& encoded);
@@ -62,6 +62,7 @@ private:
         int length=-1);    
     static QString paramName(const QByteArray& parameter);
     static QString paramValue(const QByteArray& parameter);
+    static bool shouldBeQuotedPrintableEncoded(char chr);
     
 private:
     

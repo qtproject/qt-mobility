@@ -185,5 +185,5 @@ QByteArray QVersitWriter::encodeParameters(
 bool QVersitWriter::shouldBeQuotedPrintableEncoded(const QVersitProperty& property) const
 {
     return (!property.parameters().contains(QString::fromAscii("ENCODING")) &&
-            VersitUtils::containsSpecialChars(property.value())); 
+            VersitUtils::shouldBeQuotedPrintableEncoded(property.value())); 
 }
