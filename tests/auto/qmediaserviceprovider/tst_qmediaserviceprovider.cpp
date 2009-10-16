@@ -80,7 +80,7 @@ void tst_QMediaServiceProvider::testObtainService()
     QMediaService *service = 0;
 
     // Player
-    service = provider->requestService("mediaplayer");
+    service = provider->requestService(Q_MEDIASERVICE_MEDIAPLAYER);
     QVERIFY(service != 0);
     provider->releaseService(service);
 }
@@ -88,7 +88,7 @@ void tst_QMediaServiceProvider::testObtainService()
 void tst_QMediaServiceProvider::testCanPlay()
 {
     MockMediaServiceProvider mockProvider;
-    QCOMPARE(mockProvider.canPlay(QByteArray("mediaplayer"), "video/ogv", QStringList()),
+    QCOMPARE(mockProvider.canPlay(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER), "video/ogv", QStringList()),
              QtMedia::MaybeSupported);
 
     QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider();
@@ -96,7 +96,7 @@ void tst_QMediaServiceProvider::testCanPlay()
     if (provider == 0)
         QSKIP("No default provider", SkipSingle);
 
-    QCOMPARE(provider->canPlay(QByteArray("mediaplayer"), "video/ogv", QStringList()),
+    QCOMPARE(provider->canPlay(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER), "video/ogv", QStringList()),
              QtMedia::MaybeSupported);
 
     QCOMPARE(provider->canPlay(QByteArray("non existing service"), "video/ogv", QStringList()),
