@@ -828,14 +828,33 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
 
 
 /*!
- * Add the given \a contact to the database if it is a new contact,
- * or updates the existing contact. Returns false on failure, or true on
- * success.  If successful and the contact was a new contact, its UID should
- * be set to a new, valid id.
+ * Adds the given \a contact to the database if \a contact has a
+ * default-constructed id, or an id with the manager URI set to the URI of
+ * this manager and a local id of zero.
+ *
+ * If the manager URI of the id of the \a contact is neither empty nor equal to the URI of
+ * this manager, or local id of the \a contact is non-zero but does not exist in the
+ * manager, the operation will fail and \a error will be set to
+ * \c QContactManager::DoesNotExistError.
+ *
+ * Alternatively, the function will update the existing contact in the database if \a contact
+ * has a non-zero id and currently exists in the database.
  *
  * If the \a contact contains one or more details whose definitions have
- * not yet been saved with the manager, the operation will fail and the
- * manager will return \c QContactManager::UnsupportedError.
+ * not yet been saved with the manager, the operation will fail and \a error will be
+ * set to \c QContactManager::UnsupportedError.
+ *
+ * If the \a contact has had its relationships reordered, the manager
+ * will check to make sure that every relationship that the contact is currently
+ * involved in is included in the reordered list, and that no relationships which
+ * either do not involve the contact, or have not been saved in the manager are
+ * included in the list.  If these conditions are not met, the function will
+ * return \c false and \a error will be set to \c QContactManager::InvalidRelationshipError.
+ *
+ * Returns false on failure, or true on
+ * success.  On successful save of a contact with an id of zero, its
+ * id will be set to a new, valid id with the manager URI set to the URI of
+ * this manager, and the local id set to a new, valid local id.
  *
  * This function is called by the contacts framework in both the
  * single contact save and batch contact save, if the saveContacts
@@ -1569,11 +1588,12 @@ bool QContactManagerEngine::validateActionFilter(const QContactFilter& filter)
 }
 
 /*!
- * Sets the relationship cache in the given \a contact to \a relationships
+ * Sets the cached relationships in the given \a contact to \a relationships
  */
 void QContactManagerEngine::setContactRelationships(QContact* contact, const QList<QContactRelationship>& relationships)
 {
-    contact->d->m_relationships = relationships;
+    contact->d->m_relationshipsCache = relationships;
+    contact->d->m_reorderedRelationshipsCache = relationships;
 }
 
 

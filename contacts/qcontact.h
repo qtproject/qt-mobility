@@ -128,6 +128,8 @@ public:
     /* Relationships that this contact was involved in when it was retrieved from the manager */
     QList<QContactRelationship> relationships(const QString& relationshipType = QString()) const;
     QList<QContactId> relatedContacts(const QString& relationshipType = QString(), QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
+    void setRelationshipOrder(const QList<QContactRelationship>& reordered);
+    QList<QContactRelationship> relationshipOrder() const;
 
     /* Actions available to be performed on this contact */
     QStringList availableActions() const;

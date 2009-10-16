@@ -93,8 +93,9 @@ public:
     QString m_id;                                  // the id parameter value
 
     QList<QContact> m_contacts;                    // list of contacts
-    QList<QContactLocalId> m_contactIds;                 // list of contact Id's
+    QList<QContactLocalId> m_contactIds;           // list of contact Id's
     QList<QContactRelationship> m_relationships;   // list of contact relationships
+    QMap<QContactLocalId, QList<QContactRelationship> > m_orderedRelationships; // map of ordered lists of contact relationships
     QList<QString> m_definitionIds;                // list of definition types (id's)
     mutable QMap<QString, QContactDetailDefinition> m_definitions; // list of definitions.
     mutable QSet<QString> m_createOnlyIds; // a list of create only ids.

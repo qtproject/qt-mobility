@@ -268,21 +268,36 @@ QContact QContactManager::contact(const QContactLocalId& contactId) const
 }
 
 /*!
- * Add the given \a contact to the database if \a contact has an
- * id of zero, or update the existing contact in the database if \a contact
- * has a non-zero id and currently exists in the database, or fails
- * if the \a contact has a non-zero id which does not exist in the database.
- * Returns false on failure, or true on
- * success.  On successful save of a contact with an id of zero, its
- * id will be set to a new, valid id.
+ * Adds the given \a contact to the database if \a contact has a
+ * default-constructed id, or an id with the manager URI set to the URI of
+ * this manager and a local id of zero.
+ *
+ * If the manager URI of the id of the \a contact is neither empty nor equal to the URI of
+ * this manager, or local id of the \a contact is non-zero but does not exist in the
+ * manager, the operation will fail and calling error() will return
+ * \c QContactManager::DoesNotExistError.
+ *
+ * Alternatively, the function will update the existing contact in the database if \a contact
+ * has a non-zero id and currently exists in the database.
  *
  * If the \a contact contains one or more details whose definitions have
  * not yet been saved with the manager, the operation will fail and calling
  * error() will return \c QContactManager::UnsupportedError.
  *
- * If the id of the \a contact is non-zero but does not exist in the
- * manager, the operation will fail and calling error() will return
- * \c QContactManager::DoesNotExistError.
+ * If the \a contact has had its relationships reordered, the manager
+ * will check to make sure that every relationship that the contact is currently
+ * involved in is included in the reordered list, and that no relationships which
+ * either do not involve the contact, or have not been saved in the manager are
+ * included in the list.  If these conditions are not met, the function will
+ * return \c false and calling error() will return
+ * \c QContactManager::InvalidRelationshipError.
+ *
+ * Returns false on failure, or true on
+ * success.  On successful save of a contact with an id of zero, its
+ * id will be set to a new, valid id with the manager URI set to the URI of
+ * this manager, and the local id set to a new, valid local id.
+ *
+ * \sa managerUri()
  */
 bool QContactManager::saveContact(QContact* contact)
 {

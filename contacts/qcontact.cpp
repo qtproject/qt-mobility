@@ -452,12 +452,12 @@ QList<QContactRelationship> QContact::relationships(const QString& relationshipT
 {
     // if empty, then they want all relationships
     if (relationshipType.isEmpty())
-        return d->m_relationships;
+        return d->m_relationshipsCache;
 
     // otherwise, filter on type.
     QList<QContactRelationship> retn;
-    for (int i = 0; i < d->m_relationships.size(); i++) {
-        QContactRelationship curr = d->m_relationships.at(i);
+    for (int i = 0; i < d->m_relationshipsCache.size(); i++) {
+        QContactRelationship curr = d->m_relationshipsCache.at(i);
         if (curr.relationshipType() == relationshipType) {
             retn.append(curr);
         }
@@ -470,8 +470,8 @@ QList<QContactRelationship> QContact::relationships(const QString& relationshipT
 QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QContactRelationshipFilter::Role role) const
 {
     QList<QContactId> retn;
-    for (int i = 0; i < d->m_relationships.size(); i++) {
-        QContactRelationship curr = d->m_relationships.at(i);
+    for (int i = 0; i < d->m_relationshipsCache.size(); i++) {
+        QContactRelationship curr = d->m_relationshipsCache.at(i);
         if (curr.relationshipType() == relationshipType || relationshipType.isEmpty()) {
             // check that the other contacts fill the given role
             if (role == QContactRelationshipFilter::First) {
@@ -501,6 +501,34 @@ QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QCo
     }
 
     return removeDuplicates;
+}
+
+/*!
+ * Sets the order of importance of the relationships for this contact by saving an ordered list of relationships which involve the contact.
+ * The list must include all of the relationships in which the contact is involved, and must not include any relationships which do
+ * not involve the contact.  In order for the ordering preference to be persisted, the contact must be saved in its manager.
+ *
+ * It is possible that relationships will have been added or removed from the contact stored in the manager,
+ * thus rendering the relationship cache of the contact in memory stale.   If this happens, attempting to save the contact after reordering
+ * its relationships will result in an error occurring. The updated relationships list must be retrieved from the manager, reordered and set
+ * in the contact before the contact can be saved successfully.
+ *
+ * \sa relationships(), relationshipOrder()
+ */
+void QContact::setRelationshipOrder(const QList<QContactRelationship>& reordered)
+{
+    d->m_reorderedRelationshipsCache = reordered;
+}
+
+/*!
+ * Returns the ordered list of relationships in which the contact is involved.  By default, this list is equal to the cached
+ * list of relationships which is available by calling relationships().
+ *
+ * \sa setRelationshipOrder()
+ */
+QList<QContactRelationship> QContact::relationshipOrder() const
+{
+    return d->m_reorderedRelationshipsCache;
 }
 
 /*! Return a list of actions available to be performed on this contact */

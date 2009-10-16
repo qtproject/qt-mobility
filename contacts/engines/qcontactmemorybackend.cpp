@@ -168,11 +168,7 @@ QContact QContactMemoryEngine::contact(const QContactLocalId& contactId, QContac
         }
 
         // also, retrieve the current relationships the contact is involved with.
-        QContactManager::Error relationshipError;
-        QContactId participant;
-        participant.setManagerUri(managerUri());
-        participant.setLocalId(contactId);
-        QList<QContactRelationship> relationshipCache = relationships(QString(), participant, QContactRelationshipFilter::Either, relationshipError);
+        QList<QContactRelationship> relationshipCache = d->m_orderedRelationships.value(contactId);
         QContactManagerEngine::setContactRelationships(&retn, relationshipCache);
 
         // and return the contact
@@ -221,12 +217,18 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
         ts.setLastModified(QDateTime::currentDateTime());
         theContact->saveDetail(&ts);
 
+        /* And we need to check that the relationships are up-to-date or not modified */
+
+
         // Looks ok, so continue
         d->m_contacts.replace(index, *theContact);
         changeSet.changedContacts().insert(theContact->id().localId());
     } else {
         // id does not exist; if not zero, fail.
-        if (theContact->id() != QContactId()) {
+        QContactId newId;
+        newId.setManagerUri(managerUri());
+        if (theContact->id() != QContactId() && theContact->id() != newId) {
+            // the ID is not empty, and it doesn't identify an existing contact in our database either.
             error = QContactManager::DoesNotExistError;
             return false;
         }
@@ -238,16 +240,14 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
         theContact->saveDetail(&ts);
 
         // update the contact item - set its ID
-        QContactId newId;
         newId.setLocalId(++d->m_nextContactId);
-        newId.setManagerUri(managerUri());
         theContact->setId(newId);
 
         // finally, add the contact to our internal lists and return
-        d->m_contacts.append(*theContact);             // add contact to list
-        d->m_contactIds.append(theContact->id().localId());      // track the contact id.
+        d->m_contacts.append(*theContact);                   // add contact to list
+        d->m_contactIds.append(theContact->localId());  // track the contact id.
 
-        changeSet.addedContacts().insert(theContact->id().localId());
+        changeSet.addedContacts().insert(theContact->localId());
     }
 
     error = QContactManager::NoError;     // successful.
@@ -428,6 +428,7 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
     }
 
     // check to see if the relationship already exists in the database.  If so, replace.
+    // We do this because we don't want duplicates in our lists / maps of relationships.
     error = QContactManager::NoError;
     QList<QContactRelationship> allRelationships = d->m_relationships;
     for (int i = 0; i < allRelationships.size(); i++) {
@@ -439,7 +440,15 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
         }
     }
 
-    // no matching relationship; must be new.
+    // no matching relationship; must be new.  append it to lists in our map of relationships where required.
+    QList<QContactRelationship> firstRelationships = d->m_orderedRelationships.value(relationship->first().localId());
+    QList<QContactRelationship> secondRelationships = d->m_orderedRelationships.value(relationship->second().localId());
+    firstRelationships.append(*relationship);
+    secondRelationships.append(*relationship);
+    d->m_orderedRelationships.insert(relationship->first().localId(), firstRelationships);
+    d->m_orderedRelationships.insert(relationship->second().localId(), secondRelationships);
+
+    // finally, insert into our list of all relationships, and return.
     d->m_relationships.append(*relationship);
     return true;
 }
@@ -468,10 +477,19 @@ QList<QContactManager::Error> QContactMemoryEngine::saveRelationships(QList<QCon
 /*! \reimp */
 bool QContactMemoryEngine::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
 {
+    // attempt to remove it from our list of relationships.
     if (!d->m_relationships.removeOne(relationship)) {
         error = QContactManager::DoesNotExistError;
         return false;
     }
+
+    // if that worked, then we need to remove it from the two locations in our map, also.
+    QList<QContactRelationship> firstRelationships = d->m_orderedRelationships.value(relationship.first().localId());
+    QList<QContactRelationship> secondRelationships = d->m_orderedRelationships.value(relationship.second().localId());
+    firstRelationships.removeOne(relationship);
+    secondRelationships.removeOne(relationship);
+    d->m_orderedRelationships.insert(relationship.first().localId(), firstRelationships);
+    d->m_orderedRelationships.insert(relationship.second().localId(), secondRelationships);
 
     error = QContactManager::NoError;
     return true;
