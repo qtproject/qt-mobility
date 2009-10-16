@@ -50,12 +50,12 @@
 class QAbstractContactSorter
 {
 public:
-    virtual QList<QUniqueId> contacts(
+    virtual QList<QContactLocalId> contacts(
             const QList<QContactSortOrder>& sortOrders,
             QContactManager::Error& error) = 0;
 
-    virtual QList<QUniqueId> sort(
-        QList<QUniqueId> contactIds,
+    virtual QList<QContactLocalId> sort(
+        QList<QContactLocalId> contactIds,
         const QList<QContactSortOrder>& sortOrders,
         QContactManager::Error& error) = 0;
 

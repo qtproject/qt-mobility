@@ -57,6 +57,8 @@
  * This enum describes the possible features that a particular manager may support
  * \value Groups The manager supports all QContactGroup related operations, and emits the appropriate signals
  * \value ActionPreferences The manager supports saving preferred details per action per contact
+ * \value Relationships The manager supports at least some types of relationships between contacts
+ * \value ArbitraryRelationshipTypes The manager supports relationships of arbitrary types between contacts
  * \value MutableDefinitions The manager supports saving, updating or removing detail definitions.  Some built-in definitions may still be immutable
  * \value SelfContact The manager supports the concept of saving a contact which represents the current user
  * \value Anonymous The manager is isolated from other managers
@@ -101,4 +103,17 @@ QList<QVariant::Type> QContactManagerInfo::supportedDataTypes() const
 bool QContactManagerInfo::filterSupported(const QContactFilter& filter) const
 {
     return d->m_engine->filterSupported(filter);
+}
+
+/*!
+ * Returns the list of relationship types which are supported by this backend.
+ * If the backend does not support the \c QContactManagerInfo::Relationships feature, this list should
+ * be empty.  If the backend supports the \c QContactManagerInfo::Relationships feature and also
+ * supports the \c QContactManagerInfo::ArbitraryRelationshipTypes feature, the list will
+ * contain the natively supported (well-known) relationship types contained in the list, but clients
+ * are able to add relationships of any custom type also.
+ */
+QStringList QContactManagerInfo::supportedRelationshipTypes() const
+{
+    return d->m_engine->supportedRelationshipTypes();
 }

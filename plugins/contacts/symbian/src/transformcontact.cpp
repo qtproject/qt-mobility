@@ -98,8 +98,13 @@ QContact TransformContact::transformContactL(CContactItem &contact, CContactData
 {
 		// Create a new QContact
 		QContact newQtContact;
-		newQtContact.setId(contact.Id());
-
+		
+		QContactId newId;
+		//newId.setManagerUri(managerUri()); //fix this
+		newId.setLocalId(contact.Id());        
+		
+		newQtContact.setId(newId);
+		
 		// Iterate through the CContactItemFieldSet, creating
 		// new fields for the QContact
 		CContactItemFieldSet& fields(contact.CardFields());

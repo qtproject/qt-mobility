@@ -43,7 +43,7 @@ void SymbianPluginPerfomance::initTestCase()
     mCntMng = new QContactManager("symbian");
     
     // Remove all contacts from the database
-    QList<QUniqueId> cnt_ids = mCntMng->contacts();
+    QList<QContactLocalId> cnt_ids = mCntMng->contacts();
     mCntMng->removeContacts(&cnt_ids);
 }
 
@@ -81,7 +81,7 @@ void SymbianPluginPerfomance::createSimpleContacts()
 void SymbianPluginPerfomance::removeSimpleContacts()
 {
     // Remove N contacts
-    QList<QUniqueId> cnt_ids = mCntMng->contacts();
+    QList<QContactLocalId> cnt_ids = mCntMng->contacts();
     mTime.restart();
     mCntMng->removeContacts(&cnt_ids);
     int elapsed = mTime.elapsed();
@@ -167,7 +167,7 @@ void SymbianPluginPerfomance::createComplexContacts()
 
 void SymbianPluginPerfomance::sortContacts()
 {
-    QList<QUniqueId> cnt_ids;
+    QList<QContactLocalId> cnt_ids;
     QContactFilter filter;
     QContactSortOrder sortOrder;
     QContactSortOrder sortOrder1;
@@ -208,7 +208,7 @@ void SymbianPluginPerfomance::sortContacts()
 
 void SymbianPluginPerfomance::filterContacts()
 {
-    QList<QUniqueId> cnt_ids;
+    QList<QContactLocalId> cnt_ids;
     QContactIntersectionFilter intersectionFilter;
     
     // Landline
@@ -256,7 +256,7 @@ void SymbianPluginPerfomance::filterContacts()
 void SymbianPluginPerfomance::removeComplexContacts()
 {
     // Remove N contacts
-    QList<QUniqueId> cnt_ids = mCntMng->contacts();
+    QList<QContactLocalId> cnt_ids = mCntMng->contacts();
     mTime.restart();
     mCntMng->removeContacts(&cnt_ids);
     int elapsed = mTime.elapsed();

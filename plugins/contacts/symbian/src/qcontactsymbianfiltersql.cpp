@@ -57,12 +57,12 @@ QContactSymbianFilter::~QContactSymbianFilter()
 {
 }
 
-QList<QUniqueId> QContactSymbianFilter::contacts(
+QList<QContactLocalId> QContactSymbianFilter::contacts(
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
             QContactManager::Error& error)
 {
-    QList<QUniqueId> matches;
+    QList<QContactLocalId> matches;
 
     if (filter.type() == QContactFilter::ContactDetailFilter)
     {
@@ -75,7 +75,7 @@ QList<QUniqueId> QContactSymbianFilter::contacts(
             CContactIdArray* idArray = m_contactDatabase.MatchPhoneNumberL(commPtr, 7);
             CleanupStack::PushL(idArray);
             for(int i(0); i < idArray->Count(); i++)
-                matches.append(QUniqueId((*idArray)[i]));
+                matches.append(QContactLocalId((*idArray)[i]));
             CleanupStack::PopAndDestroy(idArray);
         } else {
             error = QContactManager::NotSupportedError;

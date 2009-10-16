@@ -58,8 +58,7 @@ class QContactData : public QSharedData
 public:
     QContactData()
         : QSharedData(),
-        m_id(0),
-        m_nextDetailId(1)
+        m_nextDetailId(3) // already two "must have" details: DisplayLabel and Type
     {
     }
 
@@ -67,19 +66,19 @@ public:
         : QSharedData(other),
         m_id(other.m_id),
         m_details(other.m_details),
+        m_relationships(other.m_relationships),
         m_preferences(other.m_preferences),
-        m_nextDetailId(other.m_nextDetailId),
-        m_groups(other.m_groups)
+        m_nextDetailId(other.m_nextDetailId)
     {
     }
 
     ~QContactData() {}
 
-    QUniqueId m_id;
+    QContactId m_id;
     QList<QContactDetail> m_details;
+    QList<QContactRelationship> m_relationships;
     QMap<QString, quint32> m_preferences;
     quint32 m_nextDetailId;
-    QList<QUniqueId> m_groups;
 };
 
 #endif

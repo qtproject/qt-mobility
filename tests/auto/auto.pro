@@ -16,7 +16,6 @@ SUBDIRS +=  qcontact\
             qcontactdetaildefinition\
             qcontactdetails\
             qcontactfilter\
-            qcontactgroup\
             qcontactmanager\
             qcontactmanagerplugins\
             qcontactmanagerfiltering\

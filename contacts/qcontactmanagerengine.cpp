@@ -35,7 +35,6 @@
 
 #include "qcontactdetaildefinition.h"
 #include "qcontactdetails.h"
-#include "qcontactgroup_p.h"
 #include "qcontactsortorder.h"
 #include "qcontactfilters.h"
 #include "qcontactaction.h"
@@ -44,6 +43,8 @@
 #include "qcontactabstractrequest_p.h"
 #include "qcontactrequests.h"
 #include "qcontactrequests_p.h"
+
+#include "qcontact_p.h"
 
 /*!
  * \class QContactManagerEngine
@@ -95,11 +96,11 @@
  * As it is possible that other processes (or other devices) may have caused the
  * changes, the timing can not be determined.
  *
- * \sa contactsAdded(), contactsChanged(), contactsRemoved(), groupsAdded(), groupsChanged(), groupsRemoved()
+ * \sa contactsAdded(), contactsChanged(), contactsRemoved()
  */
 
 /*!
- * \fn QContactManagerEngine::contactsAdded(const QList<QUniqueId>& contactIds);
+ * \fn QContactManagerEngine::contactsAdded(const QList<QContactLocalId>& contactIds);
  *
  * This signal is emitted some time after a set of contacts has been added to
  * this engine where the \l dataChanged() signal was not emitted for those changes.
@@ -113,7 +114,7 @@
  */
 
 /*!
- * \fn QContactManagerEngine::contactsChanged(const QList<QUniqueId>& contactIds);
+ * \fn QContactManagerEngine::contactsChanged(const QList<QContactLocalId>& contactIds);
  *
  * This signal is emitted some time after a set of contacts has been modified in
  * this engine where the \l dataChanged() signal was not emitted for those changes.
@@ -127,7 +128,7 @@
  */
 
 /*!
- * \fn QContactManagerEngine::contactsRemoved(const QList<QUniqueId>& contactIds);
+ * \fn QContactManagerEngine::contactsRemoved(const QList<QContactLocalId>& contactIds);
  *
  * This signal is emitted some time after a set of contacts has been removed from
  * this engine where the \l dataChanged() signal was not emitted for those changes.
@@ -140,58 +141,29 @@
  * \sa dataChanged()
  */
 
-
-/*!
- * \fn QContactManagerEngine::groupsAdded(const QList<QUniqueId>& groupIds);
- *
- * This signal is emitted some time after a set of contact groups has been added to
- * this engine where the \l dataChanged() signal was not emitted for those changes.
- * As it is possible that other processes (or other devices) may
- * have added the groups, the timing cannot be determined.
- *
- * The list of ids added is given by \a groupIds.  There may be one or more
- * ids in the list.
- *
- * \sa dataChanged()
- */
-
-/*!
- * \fn QContactManagerEngine::groupsChanged(const QList<QUniqueId>& groupIds);
- *
- * This signal is emitted some time after a set of contact groups has been modified in
- * this engine where the \l dataChanged() signal was not emitted for those changes.
- * As it is possible that other processes (or other devices) may
- * have modified the groups, the timing cannot be determined.
- *
- * The list of ids added is given by \a groupIds.  There may be one or more
- * ids in the list.
- *
- * \sa dataChanged()
- */
-
-/*!
- * \fn QContactManagerEngine::groupsRemoved(const QList<QUniqueId>& groupIds);
- *
- * This signal is emitted some time after a set of contact groups has been removed from
- * this engine where the \l dataChanged() signal was not emitted for those changes.
- * As it is possible that other processes (or other devices) may
- * have removed the groups, the timing cannot be determined.
- *
- * The list of ids added is given by \a groupIds.  There may be one or more
- * ids in the list.
- *
- * \sa dataChanged()
- */
-
+/*! Returns the manager name for this QContactManagerEngine */
+QString QContactManagerEngine::managerName() const
+{
+    return QString(QLatin1String("base"));
+}
 
 /*!
  * Returns the parameters with which this engine was constructed.  Note that
  * the engine may have discarded unused or invalid parameters at the time of
  * construction, and these will not be returned.
  */
-QMap<QString, QString> QContactManagerEngine::parameters() const
+QMap<QString, QString> QContactManagerEngine::managerParameters() const
 {
     return QMap<QString, QString>(); // default implementation requires no parameters.
+}
+
+/*!
+ * Returns the unique URI of this manager, which is built from the manager name and the parameters
+ * used to construct it.
+ */
+QString QContactManagerEngine::managerUri() const
+{
+    return QContactManager::buildUri(managerName(), managerParameters());
 }
 
 /*!
@@ -199,11 +171,11 @@ QMap<QString, QString> QContactManagerEngine::parameters() const
  *
  * Any errors encountered should be stored to \a error.
  */
-QList<QUniqueId> QContactManagerEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactManagerEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     Q_UNUSED(sortOrders);
     error = QContactManager::NotSupportedError;
-    return QList<QUniqueId>();
+    return QList<QContactLocalId>();
 }
 
 /*!
@@ -212,13 +184,13 @@ QList<QUniqueId> QContactManagerEngine::contacts(const QList<QContactSortOrder>&
  *
  * The default implementation will retrieve all contacts and test them with testFilter.
  */
-QList<QUniqueId> QContactManagerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactManagerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     /* Slow way */
-    QList<QUniqueId> ret;
+    QList<QContactLocalId> ret;
 
     /* Retrieve each contact.. . . */
-    const QList<QUniqueId>& all = contacts(sortOrders, error);
+    const QList<QContactLocalId>& all = contacts(sortOrders, error);
     if (error != QContactManager::NoError)
         return ret;
 
@@ -234,11 +206,24 @@ QList<QUniqueId> QContactManagerEngine::contacts(const QContactFilter& filter, c
 }
 
 /*!
+ * Returns a list of ids of contacts of the given \a contactType, sorted according to the given list of \a sortOrders.
+ * Any error which occurs is saved in \a error.
+ */
+QList<QContactLocalId> QContactManagerEngine::contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+{
+    QContactDetailFilter df;
+    df.setDetailDefinitionName(QContactType::DefinitionName, QContactType::FieldType);
+    df.setValue(contactType);
+    df.setMatchFlags(Qt::MatchExactly);
+    return contacts(df, sortOrders, error);
+}
+
+/*!
  * Returns the contact in the database identified by \a contactId
  *
  * Any errors encountered should be stored to \a error.
  */
-QContact QContactManagerEngine::contact(const QUniqueId& contactId, QContactManager::Error& error) const
+QContact QContactManagerEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
     Q_UNUSED(contactId);
     error = QContactManager::NotSupportedError;
@@ -256,7 +241,7 @@ QContact QContactManagerEngine::contact(const QUniqueId& contactId, QContactMana
  * \c QContactManager::NotSupportedError and the function will
  * return false.
  */
-bool QContactManagerEngine::setSelfContactId(const QUniqueId& contactId, QContactManager::Error& error)
+bool QContactManagerEngine::setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error)
 {
     Q_UNUSED(contactId);
     error = QContactManager::NotSupportedError;
@@ -270,10 +255,84 @@ bool QContactManagerEngine::setSelfContactId(const QUniqueId& contactId, QContac
  * the concept of a "self" contact, an invalid id will be returned
  * and the \a error will be set to \c QContactManager::DoesNotExistError.
  */
-QUniqueId QContactManagerEngine::selfContactId(QContactManager::Error& error) const
+QContactLocalId QContactManagerEngine::selfContactId(QContactManager::Error& error) const
 {
     error = QContactManager::DoesNotExistError;
-    return QUniqueId();
+    return QContactLocalId();
+}
+
+/*!
+ * Returns a list of relationships of the given \a relationshipType in which the contact identified by the given \a participantId participates in the given \a role.
+ * If \a participantId is the default-constructed id, \a role is ignored and all relationships of the given \a relationshipType are returned.
+ * If \a relationshipType is empty, relationships of any type are returned.
+ * If no relationships of the given \a relationshipType in which the contact identified by the given \a participantId is involved in the given \a role exists,
+ * \a error is set to QContactManager::DoesNotExistError.
+ */
+QList<QContactRelationship> QContactManagerEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
+{
+    Q_UNUSED(relationshipType);
+    Q_UNUSED(participantId);
+    Q_UNUSED(role);
+    error = QContactManager::NotSupportedError;
+    return QList<QContactRelationship>();
+}
+
+/*!
+ * Saves the given \a relationship in the database.  If the relationship already exists in the database, this function will
+ * return \c false and the \a error will be set to \c QContactManager::AlreadyExistsError.
+ * If the relationship is saved successfully, this function will return \c true and \a error will be set
+ * to \c QContactManager::NoError.  Note that relationships cannot be updated directly using this function; in order
+ * to update a relationship, you must remove the old relationship, make the required modifications, and then save it.
+ *
+ * The given relationship is invalid if it is circular (one of the destination contacts is also the source contact), or
+ * if it references a non-existent local contact (either source or destination).  If the given \a relationship is invalid,
+ * the function will return \c false and the \a error will be set to \c QContactManager::InvalidRelationshipError.
+ * If the given \a relationship could not be saved in the database (due to backend limitations)
+ * the function will return \c false and \a error will be set to \c QContactManager::NotSupportedError.
+ *
+ * If any destination contact manager URI is not set in the \a relationship, these will be
+ * automatically set to the URI of this manager, before the relationship is saved.
+ */
+bool QContactManagerEngine::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
+{
+    Q_UNUSED(relationship);
+    error = QContactManager::NotSupportedError;
+    return false;
+}
+
+/*!
+ * Saves the given \a relationships in the database and returns a list of error codes.  Any error which occurs will be saved in \a error.
+ */
+QList<QContactManager::Error> QContactManagerEngine::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
+{
+    Q_UNUSED(relationships);
+    error = QContactManager::NotSupportedError;
+    return QList<QContactManager::Error>();
+}
+
+/*!
+ * Removes the given \a relationship from the manager.  If the relationship exists in the manager, the relationship
+ * will be removed, the \a error will be set to \c QContactManager::NoError and this function will return true.  If no such
+ * relationship exists in the manager, the \a error will be set to \c QContactManager::DoesNotExistError and this function
+ * will return false.
+ *
+ * The priority of the relationship is ignored when determining existence of the relationship.
+ */
+bool QContactManagerEngine::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
+{
+    Q_UNUSED(relationship);
+    error = QContactManager::DoesNotExistError;
+    return false;
+}
+
+/*!
+ * Removes the given \a relationships from the database and returns a list of error codes.  Any error which occurs will be saved in \a error.
+ */
+QList<QContactManager::Error> QContactManagerEngine::removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
+{
+    Q_UNUSED(relationships);
+    error = QContactManager::DoesNotExistError;
+    return QList<QContactManager::Error>();
 }
 
 /*!
@@ -368,6 +427,14 @@ QList<QVariant::Type> QContactManagerEngine::supportedDataTypes() const
     return QList<QVariant::Type>();
 }
 
+/*!
+ * Returns the list of relationship types supported by this engine.
+ */
+QStringList QContactManagerEngine::supportedRelationshipTypes() const
+{
+    return QStringList();
+}
+
 /*! Returns the base schema definitions */
 QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions()
 {
@@ -387,10 +454,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     QVariantList subTypes;
 
     // sync target
+    d.setName(QContactSyncTarget::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactSyncTarget::DefinitionName);
     fields.insert(QContactSyncTarget::FieldSyncTarget, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
@@ -401,10 +468,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // timestamp
+    d.setName(QContactTimestamp::DefinitionName);
     fields.clear();
     f.dataType = QVariant::DateTime;
     f.allowableValues = QVariantList();
-    d.setName(QContactTimestamp::DefinitionName);
     fields.insert(QContactTimestamp::FieldModificationTimestamp, f);
     fields.insert(QContactTimestamp::FieldCreationTimestamp, f);
     f.dataType = QVariant::StringList;
@@ -415,11 +482,24 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     d.setAccessConstraint(QContactDetailDefinition::ReadOnly);
     retn.insert(d.name(), d);
 
+    // type
+    d.setName(QContactType::DefinitionName);
+    fields.clear();
+    f.dataType = QVariant::String;
+    subTypes.clear();
+    subTypes << QString(QLatin1String(QContactType::TypeContact)) << QString(QLatin1String(QContactType::TypeGroup));
+    f.allowableValues = subTypes;
+    fields.insert(QContactType::FieldType, f); // note: NO CONTEXT!!
+    d.setFields(fields);
+    d.setUnique(true);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+    retn.insert(d.name(), d);
+
     // guid
+    d.setName(QContactGuid::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactGuid::DefinitionName);
     fields.insert(QContactGuid::FieldGuid, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
@@ -430,10 +510,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // display label
+    d.setName(QContactDisplayLabel::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactDisplayLabel::DefinitionName);
     fields.insert(QContactDisplayLabel::FieldLabel, f);
     f.dataType = QVariant::Bool;
     f.allowableValues = QVariantList();
@@ -447,10 +527,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // email address
+    d.setName(QContactEmailAddress::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactEmailAddress::DefinitionName);
     fields.insert(QContactEmailAddress::FieldEmailAddress, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
@@ -461,10 +541,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // organisation
+    d.setName(QContactOrganization::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactOrganization::DefinitionName);
     fields.insert(QContactOrganization::FieldName, f);
     fields.insert(QContactOrganization::FieldLogo, f);
     fields.insert(QContactOrganization::FieldLocation, f);
@@ -479,10 +559,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // phone number
+    d.setName(QContactPhoneNumber::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactPhoneNumber::DefinitionName);
     fields.insert(QContactPhoneNumber::FieldNumber, f);
     f.dataType = QVariant::StringList; // can implement multiple subtypes
     subTypes.clear();
@@ -509,10 +589,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // anniversary
+    d.setName(QContactAnniversary::DefinitionName);
     fields.clear();
     f.dataType = QVariant::Date;
     f.allowableValues = QVariantList();
-    d.setName(QContactAnniversary::DefinitionName);
     fields.insert(QContactAnniversary::FieldOriginalDate, f);
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
@@ -538,10 +618,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // birthday
+    d.setName(QContactBirthday::DefinitionName);
     fields.clear();
     f.dataType = QVariant::Date;
     f.allowableValues = QVariantList();
-    d.setName(QContactBirthday::DefinitionName);
     fields.insert(QContactBirthday::FieldBirthday, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
@@ -552,10 +632,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // nickname
+    d.setName(QContactNickname::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactNickname::DefinitionName);
     fields.insert(QContactNickname::FieldNickname, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
@@ -580,10 +660,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // url
+    d.setName(QContactUrl::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactUrl::DefinitionName);
     fields.insert(QContactUrl::FieldUrl, f);
     f.dataType = QVariant::String; // only allowed to be a single subtype
     subTypes.clear();
@@ -600,10 +680,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // gender
+    d.setName(QContactGender::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
-    f.allowableValues = QVariantList() << QString(QLatin1String("Male")) << QString(QLatin1String("Female")) << QString(QLatin1String("Unspecified"));
-    d.setName(QContactGender::DefinitionName);
+    f.allowableValues = QVariantList() << QString(QLatin1String(QContactGender::GenderMale)) << QString(QLatin1String(QContactGender::GenderFemale)) << QString(QLatin1String(QContactGender::GenderUnspecified));
     fields.insert(QContactGender::FieldGender, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
@@ -614,9 +694,9 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // online account
+    d.setName(QContactOnlineAccount::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
-    d.setName(QContactOnlineAccount::DefinitionName);
     fields.insert(QContactOnlineAccount::FieldAccountUri, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
@@ -629,19 +709,20 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // presence
+    d.setName(QContactPresence::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
-    d.setName(QContactPresence::DefinitionName);
     fields.insert(QContactPresence::FieldAccountUri, f);
     fields.insert(QContactPresence::FieldNickname, f);
     fields.insert(QContactPresence::FieldStatusMessage, f);
     QVariantList presenceValues;
-    presenceValues << QString(QLatin1String("Available"));
-    presenceValues << QString(QLatin1String("Busy"));
-    presenceValues << QString(QLatin1String("Away"));
-    presenceValues << QString(QLatin1String("Extended Away"));
-    presenceValues << QString(QLatin1String("Unknown"));
-    presenceValues << QString(QLatin1String("Offline"));
+    presenceValues << QString(QLatin1String(QContactPresence::PresenceAvailable));
+    presenceValues << QString(QLatin1String(QContactPresence::PresenceHidden));
+    presenceValues << QString(QLatin1String(QContactPresence::PresenceBusy));
+    presenceValues << QString(QLatin1String(QContactPresence::PresenceAway));
+    presenceValues << QString(QLatin1String(QContactPresence::PresenceExtendedAway));
+    presenceValues << QString(QLatin1String(QContactPresence::PresenceUnknown));
+    presenceValues << QString(QLatin1String(QContactPresence::PresenceOffline));
     f.allowableValues = presenceValues;
     fields.insert(QContactPresence::FieldAccountUri, f);
     f.dataType = QVariant::StringList;
@@ -652,49 +733,11 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     d.setAccessConstraint(QContactDetailDefinition::ReadOnly);
     retn.insert(d.name(), d);
 
-    // relationship
-    fields.clear();
-    QVariantList relationshipTypes;
-    relationshipTypes << QString(QLatin1String("Is"));
-    relationshipTypes << QString(QLatin1String("Was"));
-    relationshipTypes << QString(QLatin1String("Father"));
-    relationshipTypes << QString(QLatin1String("Mother"));
-    relationshipTypes << QString(QLatin1String("Child"));
-    relationshipTypes << QString(QLatin1String("Son"));
-    relationshipTypes << QString(QLatin1String("Daughter"));
-    relationshipTypes << QString(QLatin1String("Sibling"));
-    relationshipTypes << QString(QLatin1String("Brother"));
-    relationshipTypes << QString(QLatin1String("Sister"));
-    relationshipTypes << QString(QLatin1String("Cousin"));
-    relationshipTypes << QString(QLatin1String("Friend"));
-    relationshipTypes << QString(QLatin1String("Spouse"));
-    relationshipTypes << QString(QLatin1String("Fiancee"));
-    relationshipTypes << QString(QLatin1String("Husband"));
-    relationshipTypes << QString(QLatin1String("Wife"));
-    relationshipTypes << QString(QLatin1String("Employer"));
-    relationshipTypes << QString(QLatin1String("Employee"));
-    relationshipTypes << QString(QLatin1String("Other"));
-    relationshipTypes << QString(QLatin1String("Unknown"));
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
-    d.setName(QContactRelationship::DefinitionName);
-    fields.insert(QContactRelationship::FieldRelatedContactUid, f);
-    fields.insert(QContactRelationship::FieldRelatedContactManagerUri, f);
-    f.allowableValues = relationshipTypes;
-    fields.insert(QContactRelationship::FieldRelationshipType, f);
-    f.dataType = QVariant::StringList;
-    f.allowableValues = contexts;
-    fields.insert(QContactDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-    retn.insert(d.name(), d);
-
     // avatar
+    d.setName(QContactAvatar::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactAvatar::DefinitionName);
     fields.insert(QContactAvatar::FieldAvatar, f);
     f.dataType = QVariant::String; // only allowed to be a single subtype
     subTypes.clear();
@@ -712,10 +755,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // geolocation
+    d.setName(QContactGeolocation::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactGeolocation::DefinitionName);
     fields.insert(QContactGeolocation::FieldLabel, f);
     f.dataType = QVariant::Double;
     fields.insert(QContactGeolocation::FieldLatitude, f);
@@ -736,10 +779,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // street address
+    d.setName(QContactAddress::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactAddress::DefinitionName);
     fields.insert(QContactAddress::FieldPostOfficeBox, f);
     fields.insert(QContactAddress::FieldStreet, f);
     fields.insert(QContactAddress::FieldLocality, f);
@@ -763,10 +806,10 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // name
+    d.setName(QContactName::DefinitionName);
     fields.clear();
     f.dataType = QVariant::String;
     f.allowableValues = QVariantList();
-    d.setName(QContactName::DefinitionName);
     fields.insert(QContactName::FieldPrefix, f);
     fields.insert(QContactName::FieldFirst, f);
     fields.insert(QContactName::FieldMiddle, f);
@@ -889,23 +932,6 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
         }
     }
 
-    // Check that any groups in the contact actually exist
-    if (contact.groups().count() > 0) {
-        QList<QUniqueId> allGroups = groups(error);
-        if (error == QContactManager::NoError) {
-            for (int i=0; i < contact.groups().count(); i++) {
-                QUniqueId groupId = contact.groups().at(i);
-                if (!allGroups.contains(groupId)) {
-                    error = QContactManager::DoesNotExistError;
-                    return false;
-                }
-            }
-        } else {
-            // pass the original error back
-            return false;
-        }
-    }
-
     return true;
 }
 
@@ -970,34 +996,8 @@ bool QContactManagerEngine::validateDefinition(const QContactDetailDefinition& d
 }
 
 /*!
- * Checks that the given \a group passes seems valid.
- * Saves any error that may occur during validation in \a error.
- *
- * This means:
- * - it has a name
- * - any contacts that are in the group exist
- *
- * Returns true if the group seems valid, false otherwise.
- */
-bool QContactManagerEngine::validateGroup(const QContactGroup& group, QContactManager::Error& error) const
-{
-    if (group.name().isEmpty()) {
-        error = QContactManager::BadArgumentError;
-        return false;
-    }
-
-    // Fetch a whole contact to test for existence?
-    for (int i=0; i < group.members().count(); i++) {
-        if (contact(group.members().at(i), error).isEmpty()) {
-            error = QContactManager::DoesNotExistError;
-            return false;
-        }
-    }
-    return true;
-}
-
-/*!
- * Remove the contact identified by \a contactId from the database.
+ * Remove the contact identified by \a contactId from the database,
+ * and removes the contact from any relationships in which it was involved.
  * Returns true if the contact was removed successfully, otherwise
  * returns false.
  *
@@ -1007,76 +1007,9 @@ bool QContactManagerEngine::validateGroup(const QContactGroup& group, QContactMa
  * Any errors encountered during this operation should be stored to
  * \a error.
  */
-bool QContactManagerEngine::removeContact(const QUniqueId& contactId, QContactManager::Error& error)
+bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
 {
     Q_UNUSED(contactId);
-    error = QContactManager::NotSupportedError;
-    return false;
-}
-
-/*!
- * Return the list of group ids present in this manager.
- *
- * Any errors encountered during this operation should be stored to
- * \a error.
- */
-QList<QUniqueId> QContactManagerEngine::groups(QContactManager::Error& error) const
-{
-    error = QContactManager::NotSupportedError;
-    return QList<QUniqueId>();
-}
-
-/*!
- * Returns the group which is identified by the given \a groupId,
- * or a default-constructed group if no such group exists
- *
- * Any errors encountered during this operation should be stored to
- * \a error.
- */
-QContactGroup QContactManagerEngine::group(const QUniqueId& groupId, QContactManager::Error& error) const
-{
-    Q_UNUSED(groupId);
-    error = QContactManager::NotSupportedError;
-    return QContactGroup();
-}
-
-/*!
- * Saves the group \a group in the database.  The id of the group is
- * used to determine the group to update.  If the group has no name set,
- * this function should fail.  If the group does not already
- * exist, it should be added to the database.
- *
- * Returns true on success, or false on failure.
- *
- * The backend must emit the appropriate signals to inform clients of changes
- * to the database resulting from this operation.
- *
- * Any errors encountered during this operation should be stored to
- * \a error.
- */
-bool QContactManagerEngine::saveGroup(QContactGroup* group, QContactManager::Error& error)
-{
-    error = QContactManager::NotSupportedError;
-    if (group == 0)
-        error = QContactManager::BadArgumentError;
-    return false;
-}
-
-/*!
- * Remove the group with the given id \a groupId from the database.
- *
- * Returns false if no group with that id exists, or the operation otherwise failed.
- * Returns true if the group was successfully deleted.
- *
- * The backend must emit the appropriate signals to inform clients of changes
- * to the database resulting from this operation.
- *
- * Any errors encountered during this operation should be stored to
- * \a error.
- */
-bool QContactManagerEngine::removeGroup(const QUniqueId& groupId, QContactManager::Error& error)
-{
-    Q_UNUSED(groupId);
     error = QContactManager::NotSupportedError;
     return false;
 }
@@ -1206,6 +1139,9 @@ QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact
  * id in the list will be retained but set to zero.  The id of contacts
  * that were not successfully removed will be left alone.
  *
+ * Any contact that was removed successfully will have been removed from
+ * any relationships in which it was involved.
+ *
  * The backend must emit the appropriate signals to inform clients of changes
  * to the database resulting from this operation.
  *
@@ -1214,17 +1150,17 @@ QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact
  *
  * \sa QContactManager::removeContact()
  */
-QList<QContactManager::Error> QContactManagerEngine::removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error)
+QList<QContactManager::Error> QContactManagerEngine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error)
 {
     QList<QContactManager::Error> ret;
     if (!contactIds) {
         error = QContactManager::BadArgumentError;
         return ret;
     } else {
-        QList<QUniqueId> removedList;
+        QList<QContactLocalId> removedList;
         QContactManager::Error functionError = QContactManager::NoError;
         for (int i = 0; i < contactIds->count(); i++) {
-            QUniqueId current = contactIds->at(i);
+            QContactLocalId current = contactIds->at(i);
             if (!removeContact(current, error)) {
                 functionError = error;
                 ret.append(functionError);
@@ -1300,6 +1236,7 @@ int QContactManagerEngine::compareVariant(const QVariant& first, const QVariant&
             return 0;
     }
 }
+
 /*!
  * Returns true if the supplied \a filter matches the supplied \a contact.
  *
@@ -1314,10 +1251,10 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
         case QContactFilter::DefaultFilter:
             return true;
 
-        case QContactFilter::IdListFilter:
+        case QContactFilter::LocalIdFilter:
             {
-                const QContactIdListFilter idf(filter);
-                if (idf.ids().contains(contact.id()))
+                const QContactLocalIdFilter idf(filter);
+                if (idf.ids().contains(contact.id().localId()))
                     return true;
             }
             // Fall through to end
@@ -1484,15 +1421,37 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             }
             break;
 
-        case QContactFilter::GroupMembershipFilter:
+        case QContactFilter::RelationshipFilter:
             {
-                // check the specified group for membership.
-                const QContactGroupMembershipFilter cgf(filter);
+                // first, build contact's uri - FIXME
+                QContactId contactUri = contact.id();
+                const QContactRelationshipFilter rf(filter);
+                QContactId participant = rf.otherParticipantId();
+                QList<QContactRelationship> allRelationships;
+                allRelationships = contact.relationships();
 
-                if (contact.groups().contains(cgf.groupId()))
-                    return true;
+                // now check to see that the role is correct.
+                foreach (const QContactRelationship& rel, allRelationships) {
+                    if (rf.role() == QContactRelationshipFilter::First) {
+                        if (rel.relationshipType() == rf.relationshipType() && rel.first() == contact.id() && rel.second() == participant) {
+                            return true;
+                        }
+                    } else if (rf.role() == QContactRelationshipFilter::Either) {
+                        if (rel.relationshipType() == rf.relationshipType()
+                                && ((rel.first() == contact.id() && rel.second() == participant)
+                                    || (rel.second() == contactUri))) {
+                            return true;
+                        }
+                    } else if (rf.role() == QContactRelationshipFilter::Second) {
+                        if (rel.relationshipType() == rf.relationshipType()
+                                && (rel.second() == contactUri)) {
+                            return true;
+                        }
+                    }
+                }
 
-                // Fall through to end
+                // if not found by now, it doesn't match the filter.
+                return false;
             }
             break;
 
@@ -1609,6 +1568,14 @@ bool QContactManagerEngine::validateActionFilter(const QContactFilter& filter)
     return true;
 }
 
+/*!
+ * Sets the relationship cache in the given \a contact to \a relationships
+ */
+void QContactManagerEngine::setContactRelationships(QContact* contact, const QList<QContactRelationship>& relationships)
+{
+    contact->d->m_relationships = relationships;
+}
+
 
 /*!
  * Compares two contacts (\a a and \a b) using the given list of \a sortOrders.  Returns a negative number if \a a should appear
@@ -1666,9 +1633,9 @@ void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& t
     sorted->append(toAdd);
 }
 
-QList<QUniqueId> QContactManagerEngine::sortContacts(const QList<QContact>& cs, const QList<QContactSortOrder>& sortOrders)
+QList<QContactLocalId> QContactManagerEngine::sortContacts(const QList<QContact>& cs, const QList<QContactSortOrder>& sortOrders)
 {
-    QList<QUniqueId> sortedIds;
+    QList<QContactLocalId> sortedIds;
     QList<QContact> sortedContacts;
     if (!sortOrders.isEmpty()) {
         foreach (const QContact& c, cs) {
@@ -1676,11 +1643,11 @@ QList<QUniqueId> QContactManagerEngine::sortContacts(const QList<QContact>& cs, 
         }
 
         foreach(const QContact c, sortedContacts) {
-            sortedIds.append(c.id());
+            sortedIds.append(c.localId());
         }
     } else {
         foreach(const QContact c, cs) {
-            sortedIds.append(c.id());
+            sortedIds.append(c.localId());
         }
     }
     return sortedIds;
@@ -1769,9 +1736,9 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
         }
         break;
 
-        case QContactAbstractRequest::ContactIdFetchRequest:
+        case QContactAbstractRequest::ContactLocalIdFetchRequest:
         {
-            QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*>(req);
+            QContactLocalIdFetchRequest* r = static_cast<QContactLocalIdFetchRequest*>(req);
             emit r->progress(r, appendOnly);
         }
         break;
@@ -1786,27 +1753,6 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
         case QContactAbstractRequest::ContactRemoveRequest:
         {
             QContactRemoveRequest* r = static_cast<QContactRemoveRequest*>(req);
-            emit r->progress(r);
-        }
-        break;
-
-        case QContactAbstractRequest::GroupFetchRequest:
-        {
-            QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
-            emit r->progress(r, appendOnly);
-        }
-        break;
-
-        case QContactAbstractRequest::GroupSaveRequest:
-        {
-            QContactGroupSaveRequest* r = static_cast<QContactGroupSaveRequest*>(req);
-            emit r->progress(r);
-        }
-        break;
-
-        case QContactAbstractRequest::GroupRemoveRequest:
-        {
-            QContactGroupRemoveRequest* r = static_cast<QContactGroupRemoveRequest*>(req);
             emit r->progress(r);
         }
         break;
@@ -1830,6 +1776,27 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
             QContactDetailDefinitionRemoveRequest* r = static_cast<QContactDetailDefinitionRemoveRequest*>(req);
             emit r->progress(r);
         }
+        break;
+
+        case QContactAbstractRequest::RelationshipFetchRequest:
+        {
+            QContactRelationshipFetchRequest* r = static_cast<QContactRelationshipFetchRequest*>(req);
+            emit r->progress(r, appendOnly);
+        }
+        break;
+
+        case QContactAbstractRequest::RelationshipSaveRequest:
+        {
+            QContactRelationshipSaveRequest* r = static_cast<QContactRelationshipSaveRequest*>(req);
+            emit r->progress(r);
+        }
+        break;
+
+        case QContactAbstractRequest::RelationshipRemoveRequest:
+        {
+            QContactRelationshipRemoveRequest* r = static_cast<QContactRelationshipRemoveRequest*>(req);
+            emit r->progress(r);
+        }
         // fall through.
 
         default: // unknown request type.
@@ -1840,15 +1807,15 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
 /*!
  * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability.  If the request is of a type which does not return a list of unique ids as a result, this function will return without doing anything.
  */
-void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QUniqueId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    if (req->type() == QContactAbstractRequest::ContactIdFetchRequest) {
+    if (req->type() == QContactAbstractRequest::ContactLocalIdFetchRequest) {
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
         req->d_ptr->m_status = status;
-        QContactIdFetchRequestPrivate* rd = static_cast<QContactIdFetchRequestPrivate*>(req->d_ptr);
+        QContactLocalIdFetchRequestPrivate* rd = static_cast<QContactLocalIdFetchRequestPrivate*>(req->d_ptr);
         rd->m_ids = result;
-        QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*>(req);
+        QContactLocalIdFetchRequest* r = static_cast<QContactLocalIdFetchRequest*>(req);
         emit r->progress(r, appendOnly);
     }
 }
@@ -1892,44 +1859,6 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
 }
 
 /*!
- * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability.  If the request is of a type which does not return a list of groups as a result, this function will return without doing anything.
- */
-void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactGroup>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
-{
-    switch (req->type()) {
-        case QContactAbstractRequest::GroupFetchRequest:
-        {
-            req->d_ptr->m_error = error;
-            req->d_ptr->m_errors = errors;
-            req->d_ptr->m_status = status;
-            QContactGroupFetchRequestPrivate* rd = static_cast<QContactGroupFetchRequestPrivate*>(req->d_ptr);
-            rd->m_groups = result;
-            QContactGroupFetchRequest* r = static_cast<QContactGroupFetchRequest*>(req);
-            emit r->progress(r, appendOnly);
-        }
-        break;
-
-        case QContactAbstractRequest::GroupSaveRequest:
-        {
-            req->d_ptr->m_error = error;
-            req->d_ptr->m_errors = errors;
-            req->d_ptr->m_status = status;
-            QContactGroupSaveRequestPrivate* rd = static_cast<QContactGroupSaveRequestPrivate*>(req->d_ptr);
-            rd->m_groups = result;
-            QContactGroupSaveRequest* r = static_cast<QContactGroupSaveRequest*>(req);
-            emit r->progress(r);
-        }
-        break;
-
-        default:
-        {
-            // this request type does not have a list of groups to update...
-            return;
-        }
-    }
-}
-
-/*!
  * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request.  If the request is of a type which does not return a list of detail definition as a result, this function will return without doing anything.
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
@@ -1957,6 +1886,30 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QM
         QContactDetailDefinitionFetchRequestPrivate* rd = static_cast<QContactDetailDefinitionFetchRequestPrivate*>(req->d_ptr);
         rd->m_definitions = result;
         QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
+        emit r->progress(r, appendOnly);
+    }
+}
+
+/*!
+ * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability.  If the request is of a type which does not return a list of contact relationships as a result, this function will return without doing anything.
+ */
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+{
+    if (req->type() == QContactAbstractRequest::RelationshipSaveRequest) {
+        req->d_ptr->m_error = error;
+        req->d_ptr->m_errors = errors;
+        req->d_ptr->m_status = status;
+        QContactRelationshipSaveRequestPrivate* rd = static_cast<QContactRelationshipSaveRequestPrivate*>(req->d_ptr);
+        rd->m_relationships = result;
+        QContactRelationshipSaveRequest* r = static_cast<QContactRelationshipSaveRequest*>(req);
+        emit r->progress(r);
+    } else if (req->type() == QContactAbstractRequest::RelationshipFetchRequest) {
+        req->d_ptr->m_error = error;
+        req->d_ptr->m_errors = errors;
+        req->d_ptr->m_status = status;
+        QContactRelationshipFetchRequestPrivate* rd = static_cast<QContactRelationshipFetchRequestPrivate*>(req->d_ptr);
+        rd->m_relationships = result;
+        QContactRelationshipFetchRequest* r = static_cast<QContactRelationshipFetchRequest*>(req);
         emit r->progress(r, appendOnly);
     }
 }

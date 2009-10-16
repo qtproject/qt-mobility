@@ -82,14 +82,14 @@ QContactSymbianFilter::~QContactSymbianFilter()
  * \a sortOrders The sort order to be used.
  * \a error On return, contains the possible error in filtering/sorting.
  */
-QList<QUniqueId> QContactSymbianFilter::contacts(
+QList<QContactLocalId> QContactSymbianFilter::contacts(
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
             QContactManager::Error& error)
 {
     // TODO: handle also sort orders
 
-    QList<QUniqueId> matches;
+    QList<QContactLocalId> matches;
     CContactIdArray* idArray(0);
 
     if (filter.type() == QContactFilter::ContactDetailFilter)
@@ -116,7 +116,7 @@ QList<QUniqueId> QContactSymbianFilter::contacts(
             else
             {
                 for(int i(0); i < idArray->Count(); i++) {
-                    matches.append(QUniqueId((*idArray)[i]));
+                    matches.append(QContactLocalId((*idArray)[i]));
                 }
             }
         }
@@ -150,7 +150,7 @@ QList<QUniqueId> QContactSymbianFilter::contacts(
             else
             {
                 for(int i = 0; i < idArray->Count(); i++) {
-                    matches.append(QUniqueId((*idArray)[i]));
+                    matches.append(QContactLocalId((*idArray)[i]));
                 }
             }
         }

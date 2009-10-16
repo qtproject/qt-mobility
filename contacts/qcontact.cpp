@@ -60,6 +60,11 @@
  */
 
 /*!
+ * \fn QList<T> QContact::details(const QString& fieldName, const QString& value) const
+ * Returns a list of details of the template type which match the \a fieldName and \a value criteria
+ */
+
+/*!
  * \fn T QContact::detail() const
  * Returns the first detail of the template type
  */
@@ -78,6 +83,9 @@ QContact::QContact()
     contactLabel.d->m_id = 1;
     contactLabel.setSynthesised(true);
     d->m_details.insert(0, contactLabel);
+    QContactType contactType;
+    contactType.setType(QContactType::TypeContact);
+    d->m_details.insert(1, contactType);
 }
 
 /*! Initializes this QContact from \a other */
@@ -90,21 +98,22 @@ QContact::QContact(const QContact& other)
  * Returns true if this QContact is empty, false if not.
  *
  * An empty QContact has an empty label and no extra details.
+ * The type of the contact is irrelevant.
  */
 bool QContact::isEmpty() const
 {
     /* Every contact has a display label field.. */
-    if (d->m_details.count() > 1)
+    if (d->m_details.count() > 2)
         return false;
 
-    /* We know we have one detail (a display label) */
+    /* We know we have two details (a display label and a type) */
     const QContactDisplayLabel& label = d->m_details.at(0);
     return label.label().isEmpty();
 }
 
 /*!
  * Removes all details of the contact.
- * This function does not modify the id or group membership of the contact.
+ * This function does not modify the id or type of the contact.
  * Calling isEmpty() after calling this function will return true.
  */
 void QContact::clearDetails()
@@ -128,40 +137,52 @@ QContact::~QContact()
 {
 }
 
-/*! Returns the QUniqueId that identifies this contact */
-QUniqueId QContact::id() const
+/*! Returns the QContactId that identifies this contact */
+QContactId QContact::id() const
 {
     return d->m_id;
 }
 
-/*!
- * Returns a list of QUniqueIds that identify any QContactGroups that
- * this contact is a member of.
- *
- * You should check that your \l QContactManager supports
- * groups.
- *
- * \sa QContactGroup
- */
-QList<QUniqueId> QContact::groups() const
+/*! Returns the QContactLocalId that identifies this contact within its manager */
+QContactLocalId QContact::localId() const
 {
-    return d->m_groups;
+    return d->m_id.localId();
 }
 
 /*!
- * Sets the list of QContactGroups that this contact is
- * a member of to those identified in \a groups.
- * Returns true if the contact was added to the groups
- * successfully, otherwise returns false.
+ * Returns the type of the contact.  Every contact has exactly one type which
+ * is either set manually (by saving a modified copy of the QCotnactType
+ * in the contact, or by calling \l setType()) or synthesised automatically.
  *
- * You should check that your \l QContactManager supports
- * groups.
- *
- * \sa QContactGroup
+ * \sa setType()
  */
-void QContact::setGroups(const QList<QUniqueId>& groups)
+QString QContact::type() const
 {
-    d->m_groups = groups;
+    // type is detail 1
+    QString type = d->m_details.at(1).value(QContactType::FieldType);
+    if (type.isEmpty())
+        return QString(QLatin1String(QContactType::TypeContact));
+    return type;
+}
+
+/*!
+ * Sets the type of the contact to the given \a type.
+ */
+void QContact::setType(const QString& type)
+{
+    // type is detail 1
+    QContactType newType;
+    newType.setType(type);
+    d->m_details[1] = newType;
+}
+
+/*!
+ * Sets the type of the contact to the given \a type.
+ */
+void QContact::setType(const QContactType& type)
+{
+    // type is detail 1
+    d->m_details[1] = type;
 }
 
 /*!
@@ -214,7 +235,7 @@ void QContact::setDisplayLabel(const QString& label)
  * Returns true if the \a id was set successfully, otherwise
  * returns false.
  */
-void QContact::setId(const QUniqueId& id)
+void QContact::setId(const QContactId& id)
 {
     d->m_id = id;
 }
@@ -254,6 +275,27 @@ QList<QContactDetail> QContact::details(const QString& definitionName) const
     return sublist;
 }
 
+/*! Returns a list of details of the given \a definitionName, \a fieldName and field \a value*/
+QList<QContactDetail> QContact::details(const QString& definitionName, const QString& fieldName, const QString& value) const
+{
+    // build the sub-list of matching details.
+    QList<QContactDetail> sublist;
+
+    // special case
+    if (fieldName.isEmpty()) {
+        sublist = details(definitionName);
+    } else {
+        for (int i = 0; i < d->m_details.size(); i++) {
+            const QContactDetail& existing = d->m_details.at(i);
+            if (definitionName == existing.definitionName() && existing.hasValue(fieldName) && value == existing.value(fieldName)) {
+                sublist.append(existing);
+            }
+        }
+    }
+
+    return sublist;
+}
+
 /*!
  * Saves the given \a detail in the list of stored details, and sets its Id.
  * If another detail of the same type and Id has been previously saved in
@@ -275,6 +317,13 @@ bool QContact::saveDetail(QContactDetail* detail)
     if (detail->definitionName() == QContactDisplayLabel::DefinitionName) {
         d->m_details[0] = *detail;
         detail->d->m_id = 1;
+        return true;
+    }
+
+    /* Also handle contact type specially */
+    if (detail->definitionName() == QContactType::DefinitionName) {
+        d->m_details[1] = *detail;
+        detail->d->m_id = 2;
         return true;
     }
 
@@ -320,6 +369,14 @@ bool QContact::removeDetail(QContactDetail* detail)
         QContactDisplayLabel l = d->m_details[0];
         l.setLabel(QString());
         d->m_details[0] = l;
+        return true;
+    }
+
+    // Check if this a type
+    if (detail->d->m_definitionName == QContactType::DefinitionName) {
+        QContactType type = d->m_details[1];
+        type.setType(QContactType::TypeContact);
+        d->m_details[1] = type;
         return true;
     }
 
@@ -388,6 +445,62 @@ QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) con
         delete implementations.at(i);
 
     return retn;
+}
+
+/*! Returns a list of relationships of the given \a relationshipType in which the contact was a participant at the time that it was retrieved from the manager */
+QList<QContactRelationship> QContact::relationships(const QString& relationshipType) const
+{
+    // if empty, then they want all relationships
+    if (relationshipType.isEmpty())
+        return d->m_relationships;
+
+    // otherwise, filter on type.
+    QList<QContactRelationship> retn;
+    for (int i = 0; i < d->m_relationships.size(); i++) {
+        QContactRelationship curr = d->m_relationships.at(i);
+        if (curr.relationshipType() == relationshipType) {
+            retn.append(curr);
+        }
+    }
+
+    return retn;
+}
+
+/*! Returns a list of ids of contacts which are related to this contact in a relationship of the given \a relationshipType, where those other contacts participate in the relationship in the given \a role */
+QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QContactRelationshipFilter::Role role) const
+{
+    QList<QContactId> retn;
+    for (int i = 0; i < d->m_relationships.size(); i++) {
+        QContactRelationship curr = d->m_relationships.at(i);
+        if (curr.relationshipType() == relationshipType || relationshipType.isEmpty()) {
+            // check that the other contacts fill the given role
+            if (role == QContactRelationshipFilter::First) {
+                if (curr.first() != d->m_id) {
+                    retn.append(curr.first());
+                }
+            } else if (role == QContactRelationshipFilter::Second) {
+                if (curr.first() == d->m_id) {
+                    retn.append(curr.second());
+                }
+            } else { // role == Either.
+                if (curr.first() == d->m_id) {
+                    retn.append(curr.second());
+                } else {
+                    retn.append(curr.first());
+                }
+            }
+        }
+    }
+
+    QList<QContactId> removeDuplicates;
+    for (int i = 0; i < retn.size(); i++) {
+        QContactId curr = retn.at(i);
+        if (!removeDuplicates.contains(curr)) {
+            removeDuplicates.append(curr);
+        }
+    }
+
+    return removeDuplicates;
 }
 
 /*! Return a list of actions available to be performed on this contact */

@@ -33,7 +33,6 @@
 #include <QDebug>
 
 #include "qcontact_p.h"
-#include "qcontactgroup_p.h"
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
 #include "qcontactchangeset.h"
@@ -134,10 +133,7 @@ void QContactWinCEEngine::deref()
         delete this;
 }
 
-
-
-
-QContact QContactWinCEEngine::contact(const QUniqueId& contactId, QContactManager::Error& error) const
+QContact QContactWinCEEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
     QContact ret;
 
@@ -185,22 +181,22 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
     SimpleComPointer<IItem> icontact;
     bool wasOld = false;
     // Figure out if this is a new or old contact
-    if (d->m_ids.contains(contact->id())) {
+    if (d->m_ids.contains(contact->localId())) {
         // update existing contact
-        HRESULT hr = d->m_app->GetItemFromOidEx(contact->id(), 0, &icontact);
+        HRESULT hr = d->m_app->GetItemFromOidEx(contact->localId(), 0, &icontact);
         if (SUCCEEDED(hr)) {
             wasOld = true;
         } else {
             if (HRESULT_CODE(hr) == ERROR_NOT_FOUND) {
                 // Well, doesn't exist any more
                 error = QContactManager::DoesNotExistError;
-                d->m_ids.removeAll(contact->id());
+                d->m_ids.removeAll(contact->localId());
             } else {
                 qDebug() << "Didn't get old contact" << HRESULT_CODE(hr);
                 error = QContactManager::UnspecifiedError;
             }
         }
-    } else if (contact->id() == 0) {
+    } else if (contact->localId() == 0) {
         // new contact!
         SimpleComPointer<IDispatch> idisp = 0;
         HRESULT hr = d->m_collection->Add(&idisp);
@@ -232,15 +228,15 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
                 hr = icontact->get_Oid(&oid);
                 if (SUCCEEDED(hr)) {
                     error = QContactManager::NoError; 
-                    QContact c = this->contact((QUniqueId)oid, error);
+                    QContact c = this->contact((QContactLocalId)oid, error);
                     
                     if (error == QContactManager::NoError) {
                         *contact = c;
                         if (wasOld) {
-                            cs.changedContacts().insert(contact->id());
+                            cs.changedContacts().insert(contact->localId());
                         } else {
-                            cs.addedContacts().insert(contact->id());
-                            d->m_ids.append(contact->id());
+                            cs.addedContacts().insert(contact->localId());
+                            d->m_ids.append(contact->localId());
                         }
                     }
 
@@ -262,7 +258,7 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
     return false;
 }
 
-bool QContactWinCEEngine::removeContact(const QUniqueId& contactId, QContactManager::Error& error)
+bool QContactWinCEEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
 {
     // Fetch an IItem* for this
     if (contactId != 0) {
@@ -308,7 +304,6 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(Q
     defns.remove(QContactTimestamp::DefinitionName);
     defns.remove(QContactGuid::DefinitionName);
     defns.remove(QContactGender::DefinitionName); // ? Surprising
-    defns.remove(QContactRelationship::DefinitionName); // XXX perhaps we should fake it
 
     // Remove the fields we don't support
 
@@ -387,7 +382,7 @@ bool QContactWinCEEngine::hasFeature(QContactManagerInfo::ManagerFeature feature
     if (feature == QContactManagerInfo::Anonymous)
         return true;
 
-    // Windows CE backend does not support Mutable Definitions, Groups or Action Preferences
+    // Windows CE backend does not support Mutable Definitions, Relationships or Action Preferences
     return false;
 }
 
@@ -428,7 +423,7 @@ bool QContactWinCEEngine::filterSupported(const QContactFilter& filter) const
     switch (filter.type()) {
         case QContactFilter::InvalidFilter:
         case QContactFilter::DefaultFilter:
-        case QContactFilter::IdListFilter:
+        case QContactFilter::LocalIdFilter:
         case QContactFilter::ContactDetailFilter:
         case QContactFilter::ContactDetailRangeFilter:
         case QContactFilter::ActionFilter:
