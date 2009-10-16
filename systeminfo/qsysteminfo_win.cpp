@@ -71,11 +71,11 @@
 #endif
 
 #ifdef Q_OS_WINCE
-#include <af_irda.h>
+//#include <af_irda.h>
 #include <vibrate.h>
-#include <Led_drvr.h>
+//#include <Led_drvr.h>
 #include <simmgr.h>
-#include <Ifapi.h>
+//#include <Ifapi.h>
 #include <Winbase.h>
 #endif
 
@@ -452,11 +452,11 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     case QSystemInfo::LedFeature :
         {
 #ifdef Q_OS_WINCE
-            NLED_COUNT_INFO info;
-            NLedDriverGetDeviceInfo(NLED_COUNT_INFO_ID,&info);
-            if(info > 0) {
-                    featureSupported = true;
-            }
+//            NLED_COUNT_INFO info;
+//            NLedDriverGetDeviceInfo(NLED_COUNT_INFO_ID,&info);
+//            if(info > 0) {
+//                    featureSupported = true;
+ //           }
 #else
 #endif
         }
@@ -490,10 +490,10 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     case QSystemInfo::VibFeature :
         {
 #ifdef Q_OS_WINCE
-            VIBRATEDEVICECAPS caps;
-            if(VibrateGetDeviceCaps(&caps) != 0) {
-                featureSupported = true;
-            }
+//            VIBRATEDEVICECAPS caps;
+//            if(VibrateGetDeviceCaps(&caps) != 0) {
+//                featureSupported = true;
+ //           }
 #else
 #endif
         }
@@ -522,12 +522,12 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     case QSystemInfo::LocationFeature :
         {
 #ifdef Q_OS_WINCE
-            HLOCATION location;
-            location = LocationOpen(LOCATION_FRAMEWORK_VERSION_CURRENT,NULL,0);
-            if(location != NULL) {
-                featureSupported = true;
-                LocationClose(location);
-            }
+//            HLOCATION location;
+//            location = LocationOpen(LOCATION_FRAMEWORK_VERSION_CURRENT,NULL,0);
+//            if(location != NULL) {
+//                featureSupported = true;
+//                LocationClose(location);
+//            }
 #else
 #endif
         }
