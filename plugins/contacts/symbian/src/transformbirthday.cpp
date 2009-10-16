@@ -82,3 +82,11 @@ bool TransformBirthday::supportsDetail(QString detailName) const
     }
     return ret;
 }
+
+QList<TUid> TransformBirthday::supportedSortingFieldTypes(QString detailFieldName) const
+{
+    QList<TUid> uids;
+    if( detailFieldName == QContactBirthday::FieldBirthday )
+        uids << KUidContactFieldBirthday;
+    return uids;
+}

@@ -6,25 +6,21 @@ CONFIG+=testcase
 include(../../../../common.pri)
 
 SOURCES  += tst_qcontactmanagerplugins.cpp
-LIBS += -lQtContacts
 
+qtAddLibrary(QtContacts)
 
 TESTDLLS = \
-    contacts_testdummy \
-    contacts_testotherdummy \
-    contacts_testdummycopy \
-    contacts_testdummyinvalid \
-    contacts_testdummyempty \
-    contacts_testdummymemory
+    $$mobilityDeployFilename(contacts_testdummy) \
+    $$mobilityDeployFilename(contacts_testotherdummy) \
+    $$mobilityDeployFilename(contacts_testdummycopy) \
+    $$mobilityDeployFilename(contacts_testdummyinvalid) \
+    $$mobilityDeployFilename(contacts_testdummyempty) \
+    $$mobilityDeployFilename(contacts_testdummymemory)
 
 # App local deployment
 symbian|wince* {
     symbian:QCONTACTMANAGER_PLUGINS_DEPLOY.sources = $$join(TESTDLLS, ".dll ", " ", ".dll")
-    wince* {
-        DLL_SUFFIX = ".dll"
-        CONFIG(debug, debug|release): DLL_SUFFIX="d.dll"
-        QCONTACTMANAGER_PLUGINS_DEPLOY.sources = $$join(TESTDLLS, "$$DLL_SUFFIX $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/plugins/contacts/", "$$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/plugins/contacts/", "$$DLL_SUFFIX")
-    }
+    wince*:QCONTACTMANAGER_PLUGINS_DEPLOY.sources = $$join(TESTDLLS, ".dll $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/plugins/contacts/", "$$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/plugins/contacts/", ".dll")
     QCONTACTMANAGER_PLUGINS_DEPLOY.path = ./plugins/contacts
     DEPLOYMENT += QCONTACTMANAGER_PLUGINS_DEPLOY
 }

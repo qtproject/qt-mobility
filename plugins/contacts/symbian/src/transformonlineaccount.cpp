@@ -150,3 +150,13 @@ bool TransformOnlineAccount::supportsDetail(QString detailName) const
     }
     return ret;
 }
+
+QList<TUid> TransformOnlineAccount::supportedSortingFieldTypes(QString detailFieldName) const
+{
+    QList<TUid> uids;
+    if (detailFieldName == QContactOnlineAccount::FieldAccountUri) {
+        uids << KUidContactFieldIMPP;
+        uids << KUidContactFieldSIPID;
+    }        
+    return uids;
+}

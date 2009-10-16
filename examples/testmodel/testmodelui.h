@@ -48,7 +48,7 @@
 #include <QWidget>
 #include <QListView>
 
-#include "qtcontactsglobal.h"  // for QUniqueId...
+#include "qtcontactsglobal.h"  // for QContactLocalId...
 #include "qcontactlistmodel.h"
 #include "filterdialog.h"
 
@@ -67,7 +67,7 @@ public:
     TestModelView(QContactManager* manager = 0);
     ~TestModelView();
 
-    QUniqueId currentId() const;
+    QContactLocalId currentId() const;
     QVariant currentData(QContactListModel::ContactDataRole role) const;
 
 private:

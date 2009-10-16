@@ -49,15 +49,15 @@
  * Enumerates the various possible types of asynchronous requests
  * \value InvalidRequest An invalid request
  * \value ContactFetchRequest A request to fetch a list of contacts
- * \value ContactIdFetchRequest A request to fetch a list of contact ids
+ * \value ContactLocalIdFetchRequest A request to fetch a list of local contact ids
  * \value ContactRemoveRequest A request to remove a list of contacts
  * \value ContactSaveRequest A request to save a list of contacts
  * \value DetailDefinitionFetchRequest A request to fetch a collection of detail definitions
  * \value DetailDefinitionRemoveRequest A request to remove a list of detail definitions
  * \value DetailDefinitionSaveRequest A request to save a list of detail definitions
- * \value GroupFetchRequest A request to fetch a list of groups
- * \value GroupRemoveRequest A request to remove a list of groups
- * \value GroupSaveRequest A request to save a list of groups
+ * \value RelationshipFetchRequest A request to fetch relationships between contacts
+ * \value RelationshipRemoveRequest A request to remove any relationships which match the request criteria
+ * \value RelationshipSaveRequest A request to save a list of relationships
  */
 
 /*!

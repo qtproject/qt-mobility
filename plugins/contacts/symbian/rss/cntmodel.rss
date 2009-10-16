@@ -311,8 +311,22 @@ RESOURCE ARRAY r_cntui_new_field_defns
 			category=EContactCategoryHome;
 			fieldName=qtn_phob_lbl_country_home;
 			},
-
-
+			FIELD   // Spouse
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldSpouseValue;
+			vCardMapping=KIntContactFieldVCardMapSpouse;
+			category=EContactCategoryHome;
+			fieldName=qtn_phob_lbl_spouse;
+			},
+			FIELD   // Children
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldChildrenValue;
+			vCardMapping=KIntContactFieldVCardMapChildren;
+			category=EContactCategoryHome;
+			fieldName=qtn_phob_lbl_children;
+			},
 // work related
       FIELD	// Job Title
 			{
@@ -385,6 +399,14 @@ RESOURCE ARRAY r_cntui_new_field_defns
       fieldStorageType=KStorageTypeText;
       contactFieldType=KUidContactFieldPhoneNumberValue;
       vCardMapping=KIntContactFieldVCardMapAssistantTel;
+      category=EContactCategoryWork;
+      fieldName=qtn_phob_lbl_number_assistant;
+      },
+      FIELD //Assistant name
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldAssistantValue;
+      vCardMapping=KIntContactFieldVCardMapAssistant;
       category=EContactCategoryWork;
       fieldName=qtn_phob_lbl_assistant_name;
       },
@@ -700,6 +722,18 @@ RESOURCE ARRAY r_cntui_new_field_defns
             // NOTE: Ringing tone is not imported or exported with PC Sync
 			flags=EContactFieldFlagDisabled;
 			},
+		FIELD	// Personal Video Ringing Tone Indication
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldVideoRingToneValue;
+            // NOTE: Ringing tone is not imported or exported in vCards
+			vCardMapping = KIntContactFieldVCardMapUnknown;
+			category = EContactCategoryNone;
+			fieldName = STRING_r_cntui_new_field_defns12;
+            // NOTE: Ringing tone is not imported or exported with PC Sync
+			flags=EContactFieldFlagDisabled;
+			},
+	
      // NOTE: There is no corresponding field in the contact model default template
 		FIELD	// Location privacy indicator
 			{
@@ -824,7 +858,32 @@ RESOURCE ARRAY r_cntui_new_field_defns
           };
       category=EContactCategoryNone;
       fieldName=qtn_phob_lbl_sip;
-      }
+      },
+    FIELD // Sync target
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldSyncTargetValue;
+      vCardMapping=KIntContactFieldVCardMapUnknown;
+      category=EContactCategoryNone;
+      fieldName=STRING_r_cntui_new_field_defns13;
+      },      
+    FIELD // Gender
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldGenderValue;
+      vCardMapping=KIntContactFieldVCardMapUnknown;
+      category=EContactCategoryNone;
+      fieldName=STRING_r_cntui_new_field_defns14;
+      },
+    FIELD // Anniversary
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldAnniversaryValue;
+      vCardMapping=KIntContactFieldVCardMapAnniversary;
+      category=EContactCategoryOther;
+      fieldName=STRING_r_cntui_new_field_defns66;
+      }  
+
     };
  }
 

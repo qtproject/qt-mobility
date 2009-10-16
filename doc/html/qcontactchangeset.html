@@ -24,15 +24,12 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#QContactChangeSet">QContactChangeSet</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#QContactChangeSet-2">QContactChangeSet</a></b> ( const QContactChangeSet &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#dtor.QContactChangeSet">~QContactChangeSet</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QUniqueId&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#addedContacts">addedContacts</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QUniqueId&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#addedGroups">addedGroups</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QUniqueId&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#changedContacts">changedContacts</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QUniqueId&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#changedGroups">changedGroups</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QContactLocalId&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#addedContacts">addedContacts</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QContactLocalId&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#changedContacts">changedContacts</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#clear">clear</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#dataChanged">dataChanged</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#emitSignals">emitSignals</a></b> ( QContactManagerEngine * <i>engine</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QUniqueId&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#removedContacts">removedContacts</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QUniqueId&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#removedGroups">removedGroups</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QContactLocalId&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#removedContacts">removedContacts</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#setDataChanged">setDataChanged</a></b> ( bool <i>dataChanged</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactChangeSet &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#operator-eq">operator=</a></b> ( const QContactChangeSet &amp; <i>other</i> )</td></tr>
 </table>
@@ -40,7 +37,7 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>Provides a simple API to simplify the emission of state-change signals from <a href="qcontactmanagerengine.html">QContactManagerEngine</a> implementations.</p>
-<p>This class can be utilised by backend implementations to ensure correct emission of the <a href="qcontactmanagerengine.html#dataChanged">QContactManagerEngine::dataChanged</a>(), <a href="qcontactmanagerengine.html#contactsAdded">QContactManagerEngine::contactsAdded</a>(), <a href="qcontactmanagerengine.html#contactsChanged">QContactManagerEngine::contactsChanged</a>(), <a href="qcontactmanagerengine.html#contactsRemoved">QContactManagerEngine::contactsRemoved</a>(), <a href="qcontactmanagerengine.html#groupsAdded">QContactManagerEngine::groupsAdded</a>(), <a href="qcontactmanagerengine.html#groupsChanged">QContactManagerEngine::groupsChanged</a>(), and <a href="qcontactmanagerengine.html#groupsRemoved">QContactManagerEngine::groupsRemoved</a>() signals.</p>
+<p>This class can be utilised by backend implementations to ensure correct emission of the <a href="qcontactmanagerengine.html#dataChanged">QContactManagerEngine::dataChanged</a>(), <a href="qcontactmanagerengine.html#contactsAdded">QContactManagerEngine::contactsAdded</a>(), <a href="qcontactmanagerengine.html#contactsChanged">QContactManagerEngine::contactsChanged</a>() and <a href="qcontactmanagerengine.html#contactsRemoved">QContactManagerEngine::contactsRemoved</a>().</p>
 <p>See also <a href="qcontactmanagerengine.html">QContactManagerEngine</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -50,14 +47,10 @@
 <p>Constructs a copy of the <i>other</i> change set</p>
 <h3 class="fn"><a name="dtor.QContactChangeSet"></a>QContactChangeSet::~QContactChangeSet ()</h3>
 <p>Frees the memory used by this change set</p>
-<h3 class="fn"><a name="addedContacts"></a><a href="http://qt.nokia.com/doc/4.5/qset.html">QSet</a>&lt;QUniqueId&gt; &amp; QContactChangeSet::addedContacts ()</h3>
+<h3 class="fn"><a name="addedContacts"></a><a href="http://qt.nokia.com/doc/4.5/qset.html">QSet</a>&lt;QContactLocalId&gt; &amp; QContactChangeSet::addedContacts ()</h3>
 <p>Returns a reference to the set of ids of contacts which have been added to the database.</p>
-<h3 class="fn"><a name="addedGroups"></a><a href="http://qt.nokia.com/doc/4.5/qset.html">QSet</a>&lt;QUniqueId&gt; &amp; QContactChangeSet::addedGroups ()</h3>
-<p>Returns a reference to the set of ids of groups which have been added to the database.</p>
-<h3 class="fn"><a name="changedContacts"></a><a href="http://qt.nokia.com/doc/4.5/qset.html">QSet</a>&lt;QUniqueId&gt; &amp; QContactChangeSet::changedContacts ()</h3>
+<h3 class="fn"><a name="changedContacts"></a><a href="http://qt.nokia.com/doc/4.5/qset.html">QSet</a>&lt;QContactLocalId&gt; &amp; QContactChangeSet::changedContacts ()</h3>
 <p>Returns a reference to the set of ids of contacts which have been changed in the database.</p>
-<h3 class="fn"><a name="changedGroups"></a><a href="http://qt.nokia.com/doc/4.5/qset.html">QSet</a>&lt;QUniqueId&gt; &amp; QContactChangeSet::changedGroups ()</h3>
-<p>Returns a reference to the set of ids of groups which have been changed in the database.</p>
 <h3 class="fn"><a name="clear"></a>void QContactChangeSet::clear ()</h3>
 <p>Clears all flags and sets of ids in this change set</p>
 <h3 class="fn"><a name="dataChanged"></a>bool QContactChangeSet::dataChanged ()</h3>
@@ -65,10 +58,8 @@
 <p>See also <a href="qcontactchangeset.html#setDataChanged">setDataChanged</a>().</p>
 <h3 class="fn"><a name="emitSignals"></a>void QContactChangeSet::emitSignals ( <a href="qcontactmanagerengine.html">QContactManagerEngine</a> * <i>engine</i> )</h3>
 <p>Emits the appropriate signals from the given <i>engine</i> given the state of the change set</p>
-<h3 class="fn"><a name="removedContacts"></a><a href="http://qt.nokia.com/doc/4.5/qset.html">QSet</a>&lt;QUniqueId&gt; &amp; QContactChangeSet::removedContacts ()</h3>
+<h3 class="fn"><a name="removedContacts"></a><a href="http://qt.nokia.com/doc/4.5/qset.html">QSet</a>&lt;QContactLocalId&gt; &amp; QContactChangeSet::removedContacts ()</h3>
 <p>Returns a reference to the set of ids of contacts which have been removed from the database.</p>
-<h3 class="fn"><a name="removedGroups"></a><a href="http://qt.nokia.com/doc/4.5/qset.html">QSet</a>&lt;QUniqueId&gt; &amp; QContactChangeSet::removedGroups ()</h3>
-<p>Returns a reference to the set of ids of groups which have been removed from the database.</p>
 <h3 class="fn"><a name="setDataChanged"></a>void QContactChangeSet::setDataChanged ( bool <i>dataChanged</i> )</h3>
 <p>Sets the data changed flag to <i>dataChanged</i>. If this is set to true prior to calling <a href="qcontactchangeset.html#emitSignals">emitSignals</a>(), only the <a href="qcontactmanagerengine.html#dataChanged">QContactManagerEngine::dataChanged</a>() signal will be emitted; otherwise, the appropriate finer-grained signals will be emitted.</p>
 <p>See also <a href="qcontactchangeset.html#dataChanged">dataChanged</a>().</p>

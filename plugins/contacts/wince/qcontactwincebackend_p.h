@@ -44,9 +44,7 @@
 //
 // We mean it.
 //
-
 #include <QSharedData>
-
 #include <windows.h>
 #include <pimstore.h>
 
@@ -58,7 +56,7 @@
 #include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
-
+#include "qcontactrequestworker_p.h"
 
 /*
  * Simple "smart" pointer for IUnknown management - takes ownership when assigning, calls release at dtor
@@ -162,9 +160,7 @@ public:
 
     ~QContactWinCEEngineData()
     {
-
     }
-
     QAtomicInt m_refCount;
 
     ComInit m_cominit;
@@ -179,7 +175,8 @@ public:
     PROPID m_emailmeta;
 
     // List of ids (OIDs are equiv to unique ids, yay)
-    QList<QUniqueId> m_ids;
+    QList<QContactLocalId> m_ids;
+    QContactRequestWorker m_requestWorker;
 };
 
 class QContactWinCEEngine : public QContactManagerEngine
@@ -194,25 +191,33 @@ public:
     void deref();
 
     /* Filtering */
-    QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
+    QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
     bool saveContact(QContact* contact, QContactManager::Error& error);
-    bool removeContact(const QUniqueId& contactId, QContactManager::Error& error);
+    bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
 
     /* Groups - Accessors and Mutators */
-    //QList<QUniqueId> groups(QContactManager::Error& error) const;
-    //QContactGroup group(const QUniqueId& groupId, QContactManager::Error& error) const;
+    //QList<QContactLocalId> groups(QContactManager::Error& error) const;
+    //QContactGroup group(const QContactLocalId& groupId, QContactManager::Error& error) const;
     //bool saveGroup(QContactGroup* group, QContactManager::Error& error);
-    //bool removeGroup(const QUniqueId& groupId, QContactManager::Error& error);
+    //bool removeGroup(const QContactLocalId& groupId, QContactManager::Error& error);
 
     /* Definitions */
     QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
 
+    /* Asynchronous Request Support */
+    void requestDestroyed(QContactAbstractRequest* req);
+    bool startRequest(QContactAbstractRequest* req);
+    bool cancelRequest(QContactAbstractRequest* req);
+    bool waitForRequestProgress(QContactAbstractRequest* req, int msecs);
+    bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
+
     /* Capabilities reporting */
     bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
+    bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
     /* Synthesise the display label of a contact */
@@ -224,8 +229,9 @@ private:
     QContact convertToQContact(IItem *contact) const;
     bool convertFromQContact(const QContact& contact, IItem* item, QContactManager::Error &error) const;
     void buildHashForContactDetailToPoomPropId() const;
+    bool convertP2QContacts(const SimpleComPointer<IPOutlookItemCollection>& collection, QList<QContact>* contacts) const;
     QString convertFilterToQueryString(const QContactFilter& filter) const;
-    QList<QUniqueId> convertP2QIdList(SimpleComPointer<IPOutlookItemCollection> collection) const;
+    QList<QContactLocalId> convertP2QIdList(const SimpleComPointer<IPOutlookItemCollection>& collection) const;
 };
 
 class Q_DECL_EXPORT ContactWinceFactory : public QObject, public QContactManagerEngineFactory

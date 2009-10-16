@@ -31,6 +31,7 @@
 **
 ****************************************************************************/
 #include "transformavatar.h"
+#include "cntmodelextuids.h"
 
 QList<CContactItemField *> TransformAvatar::transformDetailL(const QContactDetail &detail)
 {
@@ -41,7 +42,8 @@ QList<CContactItemField *> TransformAvatar::transformDetailL(const QContactDetai
 	
 	//supported subTypes
 	const QString& subTypeImage(QContactAvatar::SubTypeImage);
-	const QString& subTypeVideo(QContactAvatar::SubTypeVideo);
+	const QString& subTypeAudioRingtone(QContactAvatar::SubTypeAudioRingtone);
+	const QString& subTypeVideoRingtone(QContactAvatar::SubTypeVideoRingtone);
 	    
 	//create new field
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(avatar.avatar().utf16()));
@@ -54,11 +56,17 @@ QList<CContactItemField *> TransformAvatar::transformDetailL(const QContactDetai
 	    newField->SetMapping(KUidContactFieldVCardMapUnknown);
 	}
 
-    //ringing tone or video
-    else if (avatar.subType().compare(subTypeVideo) == 0) {
+    //audio ringtone
+    else if (avatar.subType().compare(subTypeAudioRingtone) == 0) {
         newField->AddFieldTypeL(KUidContactFieldRingTone);
 	    newField->SetMapping(KUidContactFieldVCardMapUnknown);
 	}
+	
+    //video ringtone
+    else if (avatar.subType().compare(subTypeVideoRingtone) == 0) {
+        newField->AddFieldTypeL(KUidContactFieldVideoRingTone);
+        newField->SetMapping(KUidContactFieldVCardMapUnknown);
+    }
     else {
         User::LeaveIfError(KErrNotSupported);
     }
@@ -83,8 +91,11 @@ QContactDetail *TransformAvatar::transformItemField(const CContactItemField& fie
         avatar->setSubType(QContactAvatar::SubTypeImage);
     }
 	else if (field.ContentType().ContainsFieldType(KUidContactFieldRingTone)) {
-        avatar->setSubType(QContactAvatar::SubTypeVideo);
+        avatar->setSubType(QContactAvatar::SubTypeAudioRingtone);
 	}
+    else if (field.ContentType().ContainsFieldType(KUidContactFieldVideoRingTone)) {
+        avatar->setSubType(QContactAvatar::SubTypeVideoRingtone);
+    }
 	
 	return avatar;
 }
@@ -93,7 +104,8 @@ bool TransformAvatar::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldPicture.iUid ||
-        fieldType == KUidContactFieldRingTone.iUid) {
+        fieldType == KUidContactFieldRingTone.iUid ||
+        fieldType == KUidContactFieldVideoRingTone.iUid) {
         ret = true;
     }
     return ret;
@@ -106,4 +118,10 @@ bool TransformAvatar::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> TransformAvatar::supportedSortingFieldTypes(QString /*detailFieldName*/) const
+{
+    // Sorting not supported
+    return QList<TUid>();
 }

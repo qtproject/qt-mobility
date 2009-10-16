@@ -33,14 +33,12 @@
 #include <QDebug>
 
 #include "qcontact_p.h"
-#include "qcontactgroup_p.h"
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
 #include "qcontactchangeset.h"
 
 #define INITGUID
 #include "qcontactwincebackend_p.h"
-
 
 /*
  * This file is most of the engine plumbing - conversion to/from POOM is in
@@ -70,7 +68,7 @@ QContactWinCEEngine::QContactWinCEEngine(const QMap<QString, QString>& , QContac
     error = QContactManager::NoError;
     
     buildHashForContactDetailToPoomPropId();
-
+    
     if (SUCCEEDED(d->m_cominit.hr())) {
         if (SUCCEEDED(CoCreateInstance(CLSID_Application, NULL,
                                        CLSCTX_INPROC_SERVER, IID_IPOutlookApp2,
@@ -105,6 +103,7 @@ QContactWinCEEngine::QContactWinCEEngine(const QMap<QString, QString>& , QContac
             }
         }
     }
+    d->m_requestWorker.start();
 }
 
 QContactWinCEEngine::QContactWinCEEngine(const QContactWinCEEngine& other)
@@ -134,51 +133,7 @@ void QContactWinCEEngine::deref()
         delete this;
 }
 
-QList<QUniqueId> QContactWinCEEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
-{
-    QString query = convertFilterToQueryString(filter);
-    
-    if (!query.isEmpty()) {
-        //Filtering contacts with POOM API
-        SimpleComPointer<IPOutlookItemCollection> collection;
-        HRESULT hr = d->m_collection->Restrict((BSTR)(query.constData()), &collection);
-
-        if (SUCCEEDED(hr)) {
-            //XXX sort the filtered items first
-            return convertP2QIdList(collection);
-        } else {
-            //Should we fail back to generic filtering here?
-            qDebug() << "Can't filter contacts" << HRESULT_CODE(hr);
-            error = QContactManager::UnspecifiedError;
-        }
-    }
-    //Fail back to generic filtering
-    return QContactManagerEngine::contacts(filter, sortOrders, error);
-}
-
-
-QList<QUniqueId> QContactWinCEEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
-{
-    //XXX   POOM doses not support multi sort orders
-
-    QList<QUniqueId> allCIds = d->m_ids;
-    error = QContactManager::NoError;
-
-    return d->m_ids;
-
-    // return the list sorted according to sortOrders
-    QContactManager::Error sortError;
-    QList<QContact> sorted;
-    QList<QUniqueId> sortedIds;
-    for (int i = 0; i < allCIds.size(); i++)
-        QContactManagerEngine::addSorted(&sorted, contact(allCIds.at(i), sortError), sortOrders);
-    for (int i = 0; i < sorted.size(); i++)
-        sortedIds.append(sorted.at(i).id());
-
-    return sortedIds;
-}
-
-QContact QContactWinCEEngine::contact(const QUniqueId& contactId, QContactManager::Error& error) const
+QContact QContactWinCEEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
     QContact ret;
 
@@ -226,22 +181,22 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
     SimpleComPointer<IItem> icontact;
     bool wasOld = false;
     // Figure out if this is a new or old contact
-    if (d->m_ids.contains(contact->id())) {
+    if (d->m_ids.contains(contact->localId())) {
         // update existing contact
-        HRESULT hr = d->m_app->GetItemFromOidEx(contact->id(), 0, &icontact);
+        HRESULT hr = d->m_app->GetItemFromOidEx(contact->localId(), 0, &icontact);
         if (SUCCEEDED(hr)) {
             wasOld = true;
         } else {
             if (HRESULT_CODE(hr) == ERROR_NOT_FOUND) {
                 // Well, doesn't exist any more
                 error = QContactManager::DoesNotExistError;
-                d->m_ids.removeAll(contact->id());
+                d->m_ids.removeAll(contact->localId());
             } else {
                 qDebug() << "Didn't get old contact" << HRESULT_CODE(hr);
                 error = QContactManager::UnspecifiedError;
             }
         }
-    } else if (contact->id() == 0) {
+    } else if (contact->localId() == 0) {
         // new contact!
         SimpleComPointer<IDispatch> idisp = 0;
         HRESULT hr = d->m_collection->Add(&idisp);
@@ -272,14 +227,18 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
                 long oid = 0;
                 hr = icontact->get_Oid(&oid);
                 if (SUCCEEDED(hr)) {
-                    contact->setId((QUniqueId)oid);
-                    if (wasOld) {
-                        cs.changedContacts().insert(contact->id());
-                    } else {
-                        cs.addedContacts().insert(contact->id());
-                        d->m_ids.append(contact->id());
+                    error = QContactManager::NoError; 
+                    QContact c = this->contact((QContactLocalId)oid, error);
+                    
+                    if (error == QContactManager::NoError) {
+                        *contact = c;
+                        if (wasOld) {
+                            cs.changedContacts().insert(contact->localId());
+                        } else {
+                            cs.addedContacts().insert(contact->localId());
+                            d->m_ids.append(contact->localId());
+                        }
                     }
-                    error = QContactManager::NoError;
 
                     cs.emitSignals(this);
                     return true;
@@ -299,7 +258,7 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
     return false;
 }
 
-bool QContactWinCEEngine::removeContact(const QUniqueId& contactId, QContactManager::Error& error)
+bool QContactWinCEEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
 {
     // Fetch an IItem* for this
     if (contactId != 0) {
@@ -345,7 +304,6 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(Q
     defns.remove(QContactTimestamp::DefinitionName);
     defns.remove(QContactGuid::DefinitionName);
     defns.remove(QContactGender::DefinitionName); // ? Surprising
-    defns.remove(QContactRelationship::DefinitionName); // XXX perhaps we should fake it
 
     // Remove the fields we don't support
 
@@ -386,6 +344,37 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(Q
     return defns;
 }
 
+
+/*! \reimp */
+void QContactWinCEEngine::requestDestroyed(QContactAbstractRequest* req)
+{
+    d->m_requestWorker.removeRequest(req);
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::startRequest(QContactAbstractRequest* req)
+{
+    return d->m_requestWorker.addRequest(req);
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::cancelRequest(QContactAbstractRequest* req)
+{
+    return  d->m_requestWorker.cancelRequest(req);
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::waitForRequestProgress(QContactAbstractRequest* req, int msecs)
+{
+    return d->m_requestWorker.waitRequest(req, msecs);
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::waitForRequestFinished(QContactAbstractRequest* req, int msecs)
+{
+    return d->m_requestWorker.waitRequest(req, msecs) && req->isFinished();
+}
+
 /*! \reimp */
 bool QContactWinCEEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
 {
@@ -393,13 +382,14 @@ bool QContactWinCEEngine::hasFeature(QContactManagerInfo::ManagerFeature feature
     if (feature == QContactManagerInfo::Anonymous)
         return true;
 
-    // Windows CE backend does not support Mutable Definitions, Groups or Action Preferences
+    // Windows CE backend does not support Mutable Definitions, Relationships or Action Preferences
     return false;
 }
 
 /* Synthesise the display label of a contact */
 QString QContactWinCEEngine::synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
+    Q_UNUSED(error)
     // The POOM API (well, lack thereof) makes this a bit strange.
     // It's basically just "Last, First" or "Company", if "FileAs" is not set.
     QContactName name = contact.detail<QContactName>();
@@ -427,6 +417,22 @@ QString QContactWinCEEngine::synthesiseDisplayLabel(const QContact& contact, QCo
     }
 }
 
+/*! \reimp */
+bool QContactWinCEEngine::filterSupported(const QContactFilter& filter) const
+{
+    switch (filter.type()) {
+        case QContactFilter::InvalidFilter:
+        case QContactFilter::DefaultFilter:
+        case QContactFilter::LocalIdFilter:
+        case QContactFilter::ContactDetailFilter:
+        case QContactFilter::ContactDetailRangeFilter:
+        case QContactFilter::ActionFilter:
+        case QContactFilter::IntersectionFilter:
+        case QContactFilter::UnionFilter:
+            return true;
+    }
+    return false;
+}
 /*!
  * Returns the list of data types supported by the WinCE engine
  */

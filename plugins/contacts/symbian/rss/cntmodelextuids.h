@@ -43,6 +43,30 @@ const TUid KUidContactFieldTopContact={KUidContactFieldTopContactValue};
  */
 const TUid KUidContactFieldIMPP={KUidContactFieldIMPPValue};
 
+/**
+ * Phonebook custom Field value.
+ * Video ringtone field type.
+ */
+const TUid KUidContactFieldVideoRingTone={KUidContactFieldVideoRingToneValue};
+
+/**
+ * Phonebook custom Field value.
+ * Sync target field type.
+ */
+const TUid KUidContactFieldSyncTarget={KUidContactFieldSyncTargetValue};
+
+/**
+ * Phonebook custom Field value.
+ * Gender field type.
+ */
+const TUid KUidContactFieldGender={KUidContactFieldGenderValue};
+
+// !! In case this is undefined on earlier platforms
+#ifndef KUidContactFieldGEOValue
+#define KUidContactFieldGEOValue            0x10274DB2
+const TUid KUidContactFieldGEO = {KUidContactFieldGEOValue};
+#endif
+
 #endif // CNTMODELEXTUIDS_HRH
 
 // End of File

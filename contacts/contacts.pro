@@ -2,6 +2,8 @@
 # Contacts Mobility API
 # #####################################################################
 TEMPLATE = lib
+
+# Target gets fixed up in common.pri
 TARGET = QtContacts
 DEFINES += BUILD_QTCONTACTS \
     QT_ASCII_CAST_WARNINGS
@@ -24,14 +26,16 @@ PUBLIC_HEADERS += \
     qcontactdetail.h \
     qcontactdetaildefinition.h \
     qcontactfilter.h \
-    qcontactgroup.h \
+    qcontactid.h \
     qcontactmanager.h \
     qcontactmanagerengine.h \
     qcontactmanagerenginefactory.h \
     qcontactmanagerinfo.h \
+    qcontactrelationship.h \
     qcontactsortorder.h \
     qtcontactsglobal.h \
-    qtcontacts.h
+    qtcontacts.h \
+    qcontactrequestworker.h
 
 # Private Headers
 PRIVATE_HEADERS += \
@@ -42,9 +46,10 @@ PRIVATE_HEADERS += \
     qcontactdetail_p.h \
     qcontactdetaildefinition_p.h \
     qcontactfilter_p.h \
-    qcontactgroup_p.h \
+    qcontactid_p.h \
     qcontactmanager_p.h \
-    qcontacts_p.h \
+    qcontactrelationship_p.h \
+    qcontactrequestworker_p.h \
     qcontactsortorder_p.h
 
 SOURCES += \
@@ -57,12 +62,14 @@ SOURCES += \
     qcontactdetail.cpp \
     qcontactdetaildefinition.cpp \
     qcontactfilter.cpp \
-    qcontactgroup.cpp \
+    qcontactid.cpp \
     qcontactmanager_p.cpp \
     qcontactmanager.cpp \
     qcontactmanagerengine.cpp \
     qcontactmanagerenginefactory.cpp \
     qcontactmanagerinfo.cpp \
+    qcontactrelationship.cpp \
+    qcontactrequestworker.cpp \
     qcontactsortorder.cpp
 
 HEADERS += \

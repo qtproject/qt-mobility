@@ -55,6 +55,7 @@ private slots:
     void templates();
     void contexts();
     void values();
+    void preferredActions();
 };
 
 tst_QContactDetail::tst_QContactDetail()
@@ -502,6 +503,27 @@ void tst_QContactDetail::values()
 
     /* Check removing a missing value */
     QVERIFY(!p.removeValue("does not exist"));
+}
+
+void tst_QContactDetail::preferredActions()
+{
+    QList<QContactActionDescriptor> prefs;
+    QContactActionDescriptor ad;
+    QContactDetail det;
+
+    ad.setActionName("test");
+    ad.setImplementationVersion(1);
+    ad.setVendorName("Nokia");
+
+    prefs.append(ad);
+
+    ad.setActionName("test-two");
+    ad.setImplementationVersion(1);
+    ad.setVendorName("Nokia");
+
+    prefs.append(ad);
+    det.setPreferredActions(prefs);
+    QVERIFY(det.preferredActions() == prefs);
 }
 
 

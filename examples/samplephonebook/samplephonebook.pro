@@ -10,9 +10,10 @@ DEPENDPATH += .
 INCLUDEPATH += .
 INCLUDEPATH += ../testmodel
 VPATH += ../testmodel
-LIBS += -lQtContacts
 
 include(../../common.pri)
+
+qtAddLibrary(QtContacts)
 
 # Input
 SOURCES +=  contactdetailsform.cpp \

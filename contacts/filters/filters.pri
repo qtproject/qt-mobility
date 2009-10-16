@@ -6,10 +6,10 @@ PUBLIC_HEADERS += \
     filters/qcontactdetailfilter.h \
     filters/qcontactdetailrangefilter.h \
     filters/qcontactfilters.h \
-    filters/qcontactgroupmembershipfilter.h \
-    filters/qcontactidlistfilter.h \
+    filters/qcontactlocalidfilter.h \
     filters/qcontactintersectionfilter.h \
     filters/qcontactinvalidfilter.h \
+    filters/qcontactrelationshipfilter.h \
     filters/qcontactunionfilter.h
 
 PRIVATE_HEADERS += \
@@ -17,18 +17,18 @@ PRIVATE_HEADERS += \
     filters/qcontactchangelogfilter_p.h \
     filters/qcontactdetailfilter_p.h \
     filters/qcontactdetailrangefilter_p.h \
-    filters/qcontactgroupmembershipfilter_p.h \
+    filters/qcontactlocalidfilter_p.h \
     filters/qcontactintersectionfilter_p.h \
-    filters/qcontactunionfilter_p.h \
-    filters/qcontactidlistfilter_p.h
+    filters/qcontactrelationshipfilter_p.h \
+    filters/qcontactunionfilter_p.h
 
 SOURCES += \
     filters/qcontactactionfilter.cpp \
     filters/qcontactchangelogfilter.cpp \
     filters/qcontactdetailfilter.cpp \
     filters/qcontactdetailrangefilter.cpp \
-    filters/qcontactgroupmembershipfilter.cpp \
+    filters/qcontactlocalidfilter.cpp \
     filters/qcontactintersectionfilter.cpp \
-    filters/qcontactunionfilter.cpp \
     filters/qcontactinvalidfilter.cpp \
-    filters/qcontactidlistfilter.cpp
+    filters/qcontactrelationshipfilter.cpp \
+    filters/qcontactunionfilter.cpp

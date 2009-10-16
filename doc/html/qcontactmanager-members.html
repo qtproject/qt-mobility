@@ -27,12 +27,13 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#connect">connect</a></b> ( const QObject *, const char *, const QObject *, const char *, Qt::ConnectionType )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#connect-2">connect</a></b> ( const QObject *, const char *, const char *, Qt::ConnectionType ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#connectNotify">connectNotify</a></b> ( const char * )</div></li>
-<li><div class="fn"><b><a href="qcontactmanager.html#contact">contact</a></b> ( const QUniqueId &amp; ) const : QContact</div></li>
-<li><div class="fn"><b><a href="qcontactmanager.html#contacts">contacts</a></b> ( const QList&lt;QContactSortOrder&gt; &amp; ) const : QList&lt;QUniqueId&gt;</div></li>
-<li><div class="fn"><b><a href="qcontactmanager.html#contacts-2">contacts</a></b> ( const QContactFilter &amp;, const QList&lt;QContactSortOrder&gt; &amp; ) const : QList&lt;QUniqueId&gt;</div></li>
-<li><div class="fn"><b><a href="qcontactmanager.html#contactsAdded">contactsAdded</a></b> ( const QList&lt;QUniqueId&gt; &amp; )</div></li>
-<li><div class="fn"><b><a href="qcontactmanager.html#contactsChanged">contactsChanged</a></b> ( const QList&lt;QUniqueId&gt; &amp; )</div></li>
-<li><div class="fn"><b><a href="qcontactmanager.html#contactsRemoved">contactsRemoved</a></b> ( const QList&lt;QUniqueId&gt; &amp; )</div></li>
+<li><div class="fn"><b><a href="qcontactmanager.html#contact">contact</a></b> ( const QContactLocalId &amp; ) const : QContact</div></li>
+<li><div class="fn"><b><a href="qcontactmanager.html#contacts">contacts</a></b> ( const QList&lt;QContactSortOrder&gt; &amp; ) const : QList&lt;QContactLocalId&gt;</div></li>
+<li><div class="fn"><b><a href="qcontactmanager.html#contacts-2">contacts</a></b> ( const QContactFilter &amp;, const QList&lt;QContactSortOrder&gt; &amp; ) const : QList&lt;QContactLocalId&gt;</div></li>
+<li><div class="fn"><b><a href="qcontactmanager.html#contacts-3">contacts</a></b> ( const QString &amp;, const QList&lt;QContactSortOrder&gt; &amp; ) const : QList&lt;QContactLocalId&gt;</div></li>
+<li><div class="fn"><b><a href="qcontactmanager.html#contactsAdded">contactsAdded</a></b> ( const QList&lt;QContactLocalId&gt; &amp; )</div></li>
+<li><div class="fn"><b><a href="qcontactmanager.html#contactsChanged">contactsChanged</a></b> ( const QList&lt;QContactLocalId&gt; &amp; )</div></li>
+<li><div class="fn"><b><a href="qcontactmanager.html#contactsRemoved">contactsRemoved</a></b> ( const QList&lt;QContactLocalId&gt; &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#customEvent">customEvent</a></b> ( QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#d_ptr-var">d_ptr</a></b> : </div></li>
 <li><div class="fn"><b><a href="qcontactmanager.html#dataChanged">dataChanged</a></b> ()</div></li>
@@ -54,46 +55,45 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#findChildren">findChildren</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#findChildren-2">findChildren</a></b> ( const QRegExp &amp; ) const</div></li>
 <li><div class="fn"><b><a href="qcontactmanager.html#fromUri">fromUri</a></b> ( const QString &amp;, QObject * ) : QContactManager *</div></li>
-<li><div class="fn"><b><a href="qcontactmanager.html#group">group</a></b> ( const QUniqueId &amp; ) const : QContactGroup</div></li>
-<li><div class="fn"><b><a href="qcontactmanager.html#groups">groups</a></b> () const : QList&lt;QUniqueId&gt;</div></li>
-<li><div class="fn"><b><a href="qcontactmanager.html#groupsAdded">groupsAdded</a></b> ( const QList&lt;QUniqueId&gt; &amp; )</div></li>
-</ul></td><td valign="top"><ul>
-<li><div class="fn"><b><a href="qcontactmanager.html#groupsChanged">groupsChanged</a></b> ( const QList&lt;QUniqueId&gt; &amp; )</div></li>
-<li><div class="fn"><b><a href="qcontactmanager.html#groupsRemoved">groupsRemoved</a></b> ( const QList&lt;QUniqueId&gt; &amp; )</div></li>
 <li><div class="fn"><b><a href="qcontactmanager.html#information">information</a></b> () const : QContactManagerInfo *</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#inherits">inherits</a></b> ( const char * ) const</div></li>
+</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#installEventFilter">installEventFilter</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#isWidgetType">isWidgetType</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#killTimer">killTimer</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="qcontactmanager.html#managerName">managerName</a></b> () const : QString</div></li>
 <li><div class="fn"><b><a href="qcontactmanager.html#managerParameters">managerParameters</a></b> () const : QMap&lt;QString, QString&gt;</div></li>
+<li><div class="fn"><b><a href="qcontactmanager.html#managerUri">managerUri</a></b> () const : QString</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#metaObject">metaObject</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#moveToThread">moveToThread</a></b> ( QThread * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#objectName-prop">objectName</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#parent">parent</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#property">property</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#receivers">receivers</a></b> ( const char * ) const</div></li>
-<li><div class="fn"><b><a href="qcontactmanager.html#removeContact">removeContact</a></b> ( const QUniqueId &amp; ) : bool</div></li>
-<li><div class="fn"><b><a href="qcontactmanager.html#removeContacts">removeContacts</a></b> ( QList&lt;QUniqueId&gt; * ) : QList&lt;QContactManager::Error&gt;</div></li>
+<li><div class="fn"><b><a href="qcontactmanager.html#relationships">relationships</a></b> ( const QContactId &amp;, QContactRelationshipFilter::Role ) const : QList&lt;QContactRelationship&gt;</div></li>
+<li><div class="fn"><b><a href="qcontactmanager.html#relationships-2">relationships</a></b> ( const QString &amp;, const QContactId &amp;, QContactRelationshipFilter::Role ) const : QList&lt;QContactRelationship&gt;</div></li>
+<li><div class="fn"><b><a href="qcontactmanager.html#removeContact">removeContact</a></b> ( const QContactLocalId &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qcontactmanager.html#removeContacts">removeContacts</a></b> ( QList&lt;QContactLocalId&gt; * ) : QList&lt;QContactManager::Error&gt;</div></li>
 <li><div class="fn"><b><a href="qcontactmanager.html#removeDetailDefinition">removeDetailDefinition</a></b> ( const QString &amp; ) : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#removeEventFilter">removeEventFilter</a></b> ( QObject * )</div></li>
-<li><div class="fn"><b><a href="qcontactmanager.html#removeGroup">removeGroup</a></b> ( const QUniqueId &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qcontactmanager.html#removeRelationship">removeRelationship</a></b> ( const QContactRelationship &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qcontactmanager.html#removeRelationships">removeRelationships</a></b> ( const QList&lt;QContactRelationship&gt; &amp; ) : QList&lt;QContactManager::Error&gt;</div></li>
 <li><div class="fn"><b><a href="qcontactmanager.html#saveContact">saveContact</a></b> ( QContact * ) : bool</div></li>
 <li><div class="fn"><b><a href="qcontactmanager.html#saveContacts">saveContacts</a></b> ( QList&lt;QContact&gt; * ) : QList&lt;QContactManager::Error&gt;</div></li>
 <li><div class="fn"><b><a href="qcontactmanager.html#saveDetailDefinition">saveDetailDefinition</a></b> ( const QContactDetailDefinition &amp; ) : bool</div></li>
-<li><div class="fn"><b><a href="qcontactmanager.html#saveGroup">saveGroup</a></b> ( QContactGroup * ) : bool</div></li>
-<li><div class="fn"><b><a href="qcontactmanager.html#selfContactId">selfContactId</a></b> () const : QUniqueId</div></li>
+<li><div class="fn"><b><a href="qcontactmanager.html#saveRelationship">saveRelationship</a></b> ( QContactRelationship * ) : bool</div></li>
+<li><div class="fn"><b><a href="qcontactmanager.html#saveRelationships">saveRelationships</a></b> ( QList&lt;QContactRelationship&gt; * ) : QList&lt;QContactManager::Error&gt;</div></li>
+<li><div class="fn"><b><a href="qcontactmanager.html#selfContactId">selfContactId</a></b> () const : QContactLocalId</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#sender">sender</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#objectName-prop">setObjectName</a></b> ( const QString &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#setParent">setParent</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#setProperty">setProperty</a></b> ( const char *, const QVariant &amp; )</div></li>
-<li><div class="fn"><b><a href="qcontactmanager.html#setSelfContactId">setSelfContactId</a></b> ( const QUniqueId &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qcontactmanager.html#setSelfContactId">setSelfContactId</a></b> ( const QContactLocalId &amp; ) : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#signalsBlocked">signalsBlocked</a></b> () const</div></li>
 <li><div class="fn"><b><a href="qcontactmanager.html#splitUri">splitUri</a></b> ( const QString &amp;, QString *, QMap&lt;QString, QString&gt; * ) : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#startTimer">startTimer</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#staticMetaObject-var">staticMetaObject</a></b> : </div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#staticQtMetaObject-var">staticQtMetaObject</a></b> : </div></li>
-<li><div class="fn"><b><a href="qcontactmanager.html#storeUri">storeUri</a></b> () const : QString</div></li>
 <li><div class="fn"><b><a href="qcontactmanager.html#synthesiseDisplayLabel">synthesiseDisplayLabel</a></b> ( const QContact &amp; ) const : QString</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#thread">thread</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#timerEvent">timerEvent</a></b> ( QTimerEvent * )</div></li>

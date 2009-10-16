@@ -70,10 +70,10 @@ class QContactMemoryEngineData : public QSharedData
 {
 public:
     QContactMemoryEngineData()
-    : m_refCount(QAtomicInt(1)),
-    m_nextContactId(1),
-    m_nextGroupId(1),
-    m_anonymous(false)
+        : QSharedData(),
+        m_refCount(QAtomicInt(1)),
+        m_nextContactId(1),
+        m_anonymous(false)
     {
     }
 
@@ -81,7 +81,6 @@ public:
         : QSharedData(other),
         m_refCount(QAtomicInt(1)),
         m_nextContactId(other.m_nextContactId),
-        m_nextGroupId(other.m_nextGroupId),
         m_anonymous(other.m_anonymous)
     {
     }
@@ -94,14 +93,15 @@ public:
     QString m_id;                                  // the id parameter value
 
     QList<QContact> m_contacts;                    // list of contacts
-    QMap<QUniqueId, QContactGroup> m_groups;       // map of group id to groups.
-    QList<QUniqueId> m_contactIds;                 // list of contact Id's
+    QList<QContactLocalId> m_contactIds;           // list of contact Id's
+    QList<QContactRelationship> m_relationships;   // list of contact relationships
+    QMap<QContactLocalId, QList<QContactRelationship> > m_orderedRelationships; // map of ordered lists of contact relationships
     QList<QString> m_definitionIds;                // list of definition types (id's)
     mutable QMap<QString, QContactDetailDefinition> m_definitions; // list of definitions.
     mutable QSet<QString> m_createOnlyIds; // a list of create only ids.
-    QUniqueId m_nextContactId;
-    QUniqueId m_nextGroupId;
-    bool m_anonymous;                               // Is this backend ever shared?
+    QContactLocalId m_nextContactId;
+    bool m_anonymous;                              // Is this backend ever shared?
+    QString m_engineName;                          // name of this engine as supplied by factory (memory)
 
     QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
 };
@@ -116,22 +116,24 @@ public:
     static QContactMemoryEngine *createMemoryEngine(const QMap<QString, QString>& parameters);
     void deref();
 
-    /* Parameter Reporting */
-    QMap<QString, QString> parameters() const;
+    /* URI reporting */
+    QString managerName() const;
+    QMap<QString, QString> managerParameters() const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
+    QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
     bool saveContact(QContact* contact, QContactManager::Error& error);
-    QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error);
-    bool removeContact(const QUniqueId& contactId, QContactManager::Error& error);
+    QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
+    bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
 
-    /* Groups - Accessors and Mutators */
-    QList<QUniqueId> groups(QContactManager::Error& error) const;
-    QContactGroup group(const QUniqueId& groupId, QContactManager::Error& error) const;
-    bool saveGroup(QContactGroup* group, QContactManager::Error& error);
-    bool removeGroup(const QUniqueId& groupId, QContactManager::Error& error);
+    /* Relationships - Accessors and Mutators */
+    QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
+    bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
+    QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
+    bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);
+    QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
@@ -158,10 +160,8 @@ private slots:
 
 private:
     /* Implement "signal coalescing" for batch functions via change set */
-    bool saveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error);
-    bool removeContact(const QUniqueId& contactId, QContactChangeSet& changeSet, QContactManager::Error& error);
-    bool saveGroup(QContactGroup* group, QContactChangeSet& changeSet, QContactManager::Error& error);
-    bool removeGroup(const QUniqueId& groupId, QContactChangeSet& changeSet, QContactManager::Error& error);
+    bool saveContact(QContact* theContact, QContactChangeSet& changeSet, QContactManager::Error& error);
+    bool removeContact(const QContactLocalId& contactId, QContactChangeSet& changeSet, QContactManager::Error& error);
     bool saveDetailDefinition(const QContactDetailDefinition& def, QContactChangeSet& changeSet, QContactManager::Error& error);
     bool removeDetailDefinition(const QString& definitionId, QContactChangeSet& changeSet, QContactManager::Error& error);
 

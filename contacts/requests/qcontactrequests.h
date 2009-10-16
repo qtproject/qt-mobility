@@ -41,12 +41,12 @@
 #include "qcontactdetaildefinitionremoverequest.h"
 #include "qcontactdetaildefinitionsaverequest.h"
 
-#include "qcontactgroupfetchrequest.h"
-#include "qcontactgroupremoverequest.h"
-#include "qcontactgroupsaverequest.h"
+#include "qcontactrelationshipfetchrequest.h"
+#include "qcontactrelationshipremoverequest.h"
+#include "qcontactrelationshipsaverequest.h"
 
 #include "qcontactfetchrequest.h"
-#include "qcontactidfetchrequest.h"
+#include "qcontactlocalidfetchrequest.h"
 #include "qcontactremoverequest.h"
 #include "qcontactsaverequest.h"
 

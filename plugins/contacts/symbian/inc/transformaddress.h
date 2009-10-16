@@ -42,6 +42,7 @@ protected:
 	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
 	bool supportsField(TUint32 fieldType) const;
 	bool supportsDetail(QString detailName) const;
+	QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const;
 };
 
 #endif

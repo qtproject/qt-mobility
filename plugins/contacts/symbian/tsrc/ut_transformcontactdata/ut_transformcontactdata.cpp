@@ -43,6 +43,12 @@
 #include "cntmodelextuids.h"
 #include "transformorganisation.h"
 #include "transformavatar.h"
+#include "transformsynctarget.h"
+#include "transformgender.h"
+#include "transformanniversary.h"
+#include "transformgeolocation.h"
+#include "transformnote.h"
+#include "transformfamily.h"
 
 #include <QtTest/QtTest>
 
@@ -127,8 +133,10 @@ void TestTransformContactData::executeTransformOrganisation()
 {
     validateTransformOrganisation(_L("dummycompany"), QString("dummycompany"),
                                   _L("dummydepartment"), QString("dummydepartment"),
-                                  _L("dummyjobtitle"), QString("dummyjobtitle"));
+                                  _L("dummyjobtitle"), QString("dummyjobtitle"),
+                                  _L("dummyassistant"), QString("dummyassistant"));
     validateTransformOrganisation(_L(""), QString(""),
+                                  _L(""), QString(""),
                                   _L(""), QString(""),
                                   _L(""), QString(""));
 }
@@ -137,6 +145,47 @@ void TestTransformContactData::executeTransformAvatar()
 {
     validateTransformAvatar(_L("dummyavatar"), QString("dummyavatar"));
     validateTransformAvatar(_L(""), QString(""));
+}
+
+void TestTransformContactData::executeTransformSyncTarget()
+{
+    validateTransformSyncTarget(_L("dummysynctarget"), QString("dummysynctarget"));
+    validateTransformSyncTarget(_L(""), QString(""));
+}
+
+void TestTransformContactData::executeTransformGender()
+{
+    validateTransformGender(_L("dummygender"), QString("dummygender"));
+    validateTransformGender(_L(""), QString(""));
+}
+
+void TestTransformContactData::executeTransformAnniversary()
+{
+    QDate dateDetail(2009, 9, 28);
+    validateTransformAnniversary(_L("2009-09-28,dummyevent"), dateDetail, QString("dummyevent"));
+    validateTransformAnniversary(_L("dummyevent"), QDate(), QString("dummyevent"));
+}
+
+void TestTransformContactData::executeTransformGeolocation()
+{
+    validateTransformGeolocation(_L("123.45,765.88"), 123.45, 765.88);
+    validateTransformGeolocation(_L("123.45,"), 123.45, -1);
+    validateTransformGeolocation(_L(",765.88"), -1, 765.88);
+    validateTransformGeolocation(_L(""), -1, -1);
+}
+
+void TestTransformContactData::executeTransformNote()
+{
+    validateTransformNote(_L("dummynote"), QString("dummynote"));
+    validateTransformNote(_L(""), QString(""));
+}
+
+void TestTransformContactData::executeTransformFamily()
+{
+    validateTransformFamily(_L("dummyspouse"), QString("dummyspouse"),
+                            _L("dummychild"), QString("dummychild"));
+    validateTransformFamily(_L(""), QString(""),
+                            _L(""), QString(""));
 }
 
 void TestTransformContactData::validateTransformEmail(TPtrC16 field, QString detail)
@@ -784,13 +833,15 @@ void TestTransformContactData::validateTransformOnlineAccount(TPtrC16 sipField, 
 
 void TestTransformContactData::validateTransformOrganisation(TPtrC16 companyField, QString companyDetail,
                                 TPtrC16 departmentField, QString departmentDetail,
-                                TPtrC16 jobtitleField, QString jobtitleDetail)
+                                TPtrC16 jobtitleField, QString jobtitleDetail,
+                                TPtrC16 assistantField, QString assistantDetail)
 {
     TransformContactData* transformOrganisation = new TransformOrganisation();
     QVERIFY(transformOrganisation != 0);
     QVERIFY(transformOrganisation->supportsField(KUidContactFieldCompanyName.iUid));
     QVERIFY(transformOrganisation->supportsField(KUidContactFieldDepartmentName.iUid));
     QVERIFY(transformOrganisation->supportsField(KUidContactFieldJobTitle.iUid));
+    QVERIFY(transformOrganisation->supportsField(KUidContactFieldAssistant.iUid));
     QVERIFY(transformOrganisation->supportsDetail(QContactOrganization::DefinitionName));
     
     validateContexts(transformOrganisation);
@@ -799,8 +850,9 @@ void TestTransformContactData::validateTransformOrganisation(TPtrC16 companyFiel
     organisation.setName(companyDetail);
     organisation.setDepartment(departmentDetail);
     organisation.setTitle(jobtitleDetail);
+    organisation.setAssistantName(assistantDetail);
     QList<CContactItemField *> fields = transformOrganisation->transformDetailL(organisation);
-    QVERIFY(fields.count() == 3);
+    QVERIFY(fields.count() == 4);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldCompanyName));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(companyField), 0);
@@ -810,6 +862,10 @@ void TestTransformContactData::validateTransformOrganisation(TPtrC16 companyFiel
     QVERIFY(fields.at(2)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(2)->ContentType().ContainsFieldType(KUidContactFieldJobTitle));
     QCOMPARE(fields.at(2)->TextStorage()->Text().CompareF(jobtitleField), 0);
+    QVERIFY(fields.at(3)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(3)->ContentType().ContainsFieldType(KUidContactFieldAssistant));
+    QCOMPARE(fields.at(3)->TextStorage()->Text().CompareF(assistantField), 0);
+
     
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldCompanyName);
     newField->TextStorage()->SetTextL(companyField);
@@ -842,6 +898,16 @@ void TestTransformContactData::validateTransformOrganisation(TPtrC16 companyFiel
     delete newField;
     newField = 0;
     
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldAssistant);
+    newField->TextStorage()->SetTextL(assistantField);
+    contactDetail = transformOrganisation->transformItemField(*newField, contact);
+    const QContactOrganization* organisationInfo4(static_cast<const QContactOrganization*>(contactDetail));
+    QCOMPARE(organisationInfo4->assistantName(), assistantDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
     delete transformOrganisation;
 }
 
@@ -851,6 +917,7 @@ void TestTransformContactData::validateTransformAvatar(TPtrC16 field, QString de
     QVERIFY(transformAvatar != 0);
     QVERIFY(transformAvatar->supportsField(KUidContactFieldPicture.iUid));
     QVERIFY(transformAvatar->supportsField(KUidContactFieldRingTone.iUid));
+    QVERIFY(transformAvatar->supportsField(KUidContactFieldVideoRingTone.iUid));
     QVERIFY(transformAvatar->supportsDetail(QContactAvatar::DefinitionName));
     
     validateContexts(transformAvatar);
@@ -866,11 +933,20 @@ void TestTransformContactData::validateTransformAvatar(TPtrC16 field, QString de
 
     QContactAvatar avatar2;
     avatar2.setAvatar(detail);
-    avatar2.setSubType(QContactAvatar::SubTypeVideo);
+    avatar2.setSubType(QContactAvatar::SubTypeAudioRingtone);
     fields = transformAvatar->transformDetailL(avatar2);
     QVERIFY(fields.count() == 1);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldRingTone));
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    
+    QContactAvatar avatar3;
+    avatar2.setAvatar(detail);
+    avatar2.setSubType(QContactAvatar::SubTypeVideoRingtone);
+    fields = transformAvatar->transformDetailL(avatar2);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVideoRingTone));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
     
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPicture);
@@ -890,13 +966,252 @@ void TestTransformContactData::validateTransformAvatar(TPtrC16 field, QString de
     contactDetail = transformAvatar->transformItemField(*newField, contact);
     const QContactAvatar* avatarInfo2(static_cast<const QContactAvatar*>(contactDetail));
     QCOMPARE(avatarInfo2->avatar(), detail);
-    QVERIFY(avatarInfo2->subType().contains(QContactAvatar::SubTypeVideo));
+    QVERIFY(avatarInfo2->subType().contains(QContactAvatar::SubTypeAudioRingtone));
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldVideoRingTone);
+    newField->TextStorage()->SetTextL(field);
+    contactDetail = transformAvatar->transformItemField(*newField, contact);
+    const QContactAvatar* avatarInfo3(static_cast<const QContactAvatar*>(contactDetail));
+    QCOMPARE(avatarInfo3->avatar(), detail);
+    QVERIFY(avatarInfo3->subType().contains(QContactAvatar::SubTypeVideoRingtone));
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;    
+    
+    delete transformAvatar; 
+}
+
+void TestTransformContactData::validateTransformSyncTarget(TPtrC16 field, QString detail)
+{
+    TransformContactData* transformSyncTarget = new TransformSyncTarget();
+    QVERIFY(transformSyncTarget != 0);
+    QVERIFY(transformSyncTarget->supportsField(KUidContactFieldSyncTarget.iUid));
+    QVERIFY(transformSyncTarget->supportsDetail(QContactSyncTarget::DefinitionName));
+    
+    validateContexts(transformSyncTarget);
+    
+    QContactSyncTarget syncTarget;
+    syncTarget.setSyncTarget(detail);
+    QList<CContactItemField *> fields = transformSyncTarget->transformDetailL(syncTarget);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldSyncTarget));
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSyncTarget);
+    newField->TextStorage()->SetTextL(field);
+    QContact contact;
+    QContactDetail* contactDetail = transformSyncTarget->transformItemField(*newField, contact);
+    const QContactSyncTarget* syncTargetInfo(static_cast<const QContactSyncTarget*>(contactDetail));
+    QCOMPARE(syncTargetInfo->syncTarget(), detail);
+        
+    delete contactDetail;
+    delete newField;
+    delete transformSyncTarget;
+}
+
+void TestTransformContactData::validateTransformGender(TPtrC16 field, QString detail)
+{
+    TransformContactData* transformGender = new TransformGender();
+    QVERIFY(transformGender != 0);
+    QVERIFY(transformGender->supportsField(KUidContactFieldGender.iUid));
+    QVERIFY(transformGender->supportsDetail(QContactGender::DefinitionName));
+    
+    validateContexts(transformGender);
+    
+    QContactGender gender;
+    gender.setGender(detail);
+    QList<CContactItemField *> fields = transformGender->transformDetailL(gender);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldGender));
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldGender);
+    newField->TextStorage()->SetTextL(field);
+    QContact contact;
+    QContactDetail* contactDetail = transformGender->transformItemField(*newField, contact);
+    const QContactGender* genderInfo(static_cast<const QContactGender*>(contactDetail));
+    QCOMPARE(genderInfo->gender(), detail);
+        
+    delete contactDetail;
+    delete newField;
+    delete transformGender;
+}
+
+void TestTransformContactData::validateTransformAnniversary(TPtrC16 field, QDate dateDetail, QString eventDetail)
+{
+    TransformContactData* transformAnniversary = new TransformAnniversary();
+    QVERIFY(transformAnniversary != 0);
+    QVERIFY(transformAnniversary->supportsField(KUidContactFieldAnniversary.iUid));
+    QVERIFY(transformAnniversary->supportsDetail(QContactAnniversary::DefinitionName));
+    
+    validateContexts(transformAnniversary);
+    
+    QContactAnniversary anniversary;
+    anniversary.setOriginalDate(dateDetail);
+    anniversary.setEvent(eventDetail);
+    QList<CContactItemField *> fields = transformAnniversary->transformDetailL(anniversary);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldAnniversary));
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldAnniversary);
+    newField->TextStorage()->SetTextL(field);
+    QContact contact;
+    QContactDetail* contactDetail = transformAnniversary->transformItemField(*newField, contact);
+    const QContactAnniversary* anniversaryInfo(static_cast<const QContactAnniversary*>(contactDetail));
+    QCOMPARE(anniversaryInfo->event(), eventDetail);
+    if (dateDetail.isValid()) {
+        QCOMPARE(anniversaryInfo->originalDate(), dateDetail);
+    }
+        
+    delete contactDetail;
+    delete newField;
+    delete transformAnniversary;  
+}
+
+void TestTransformContactData::validateTransformGeolocation(TPtrC16 field, double latitudeDetail, double longitudeDetail)
+{
+    TransformContactData* transformGeolocation = new TransformGeolocation();
+    QVERIFY(transformGeolocation != 0);
+    QVERIFY(transformGeolocation->supportsField(KUidContactFieldGEO.iUid));
+    QVERIFY(transformGeolocation->supportsDetail(QContactGeolocation::DefinitionName));
+    
+    validateContexts(transformGeolocation);
+    
+    QContactGeolocation geolocation;
+    geolocation.setLatitude(latitudeDetail);
+    geolocation.setLongitude(longitudeDetail);
+    QList<CContactItemField *> fields = transformGeolocation->transformDetailL(geolocation);
+    if (latitudeDetail >= 0.0 || longitudeDetail >= 0.0) {
+        QVERIFY(fields.count() == 1);
+        QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+        QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldGEO));
+        QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    }
+    else {
+        QVERIFY(fields.count() == 0);
+    }
+    
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldGEO);
+    newField->TextStorage()->SetTextL(field);
+    QContact contact;
+    QContactDetail* contactDetail = transformGeolocation->transformItemField(*newField, contact);
+    const QContactGeolocation* geolocationInfo(static_cast<const QContactGeolocation*>(contactDetail));
+    if (latitudeDetail >= 0.0 ) {
+        QCOMPARE(geolocationInfo->latitude(), latitudeDetail);
+    }
+    else {
+        QCOMPARE(geolocationInfo->latitude(), -1.0);
+    }
+
+    if (longitudeDetail > 0.0) {
+        QCOMPARE(geolocationInfo->longitude(), longitudeDetail);
+    }
+    else {
+        QCOMPARE(geolocationInfo->longitude(), -1.0);
+    }
+    
+    delete contactDetail;
+    delete newField;
+    delete transformGeolocation; 
+}
+
+void TestTransformContactData::validateTransformNote(TPtrC16 field, QString detail)
+{
+    TransformContactData* transformNote = new TransformNote();
+    QVERIFY(transformNote != 0);
+    QVERIFY(transformNote->supportsField(KUidContactFieldNote.iUid));
+    QVERIFY(transformNote->supportsDetail(QContactNote::DefinitionName));
+    
+    validateContexts(transformNote);
+    
+    QContactNote note;
+    note.setNote(detail);
+    QList<CContactItemField *> fields = transformNote->transformDetailL(note);
+    QVERIFY(fields.count() == 1);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldNote));
+    QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapNOTE);
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldNote);
+    newField->TextStorage()->SetTextL(field);
+    QContact contact;
+    QContactDetail* contactDetail = transformNote->transformItemField(*newField, contact);
+    const QContactNote* noteInfo(static_cast<const QContactNote*>(contactDetail));
+    QCOMPARE(noteInfo->note(), detail);
+        
+    delete contactDetail;
+    delete newField;
+    delete transformNote;
+}
+
+void TestTransformContactData::validateTransformFamily(TPtrC16 spouseField, QString spouseDetail,
+                             TPtrC16 childField, QString childDetail)
+{
+    TransformContactData* transformFamily = new TransformFamily();
+    QVERIFY(transformFamily != 0);
+    QVERIFY(transformFamily->supportsField(KUidContactFieldSpouse.iUid));
+    QVERIFY(transformFamily->supportsField(KUidContactFieldChildren.iUid));
+    QVERIFY(transformFamily->supportsDetail(QContactFamily::DefinitionName));
+    
+    validateContexts(transformFamily);
+    
+    QContactFamily family;
+    family.setSpouse(spouseDetail);
+    family.setChildren(QStringList(childDetail));
+    QList<CContactItemField *> fields = transformFamily->transformDetailL(family);
+    QVERIFY(fields.count() == 2);
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldSpouse));
+    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(spouseField), 0);
+    QVERIFY(fields.at(1)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(1)->ContentType().ContainsFieldType(KUidContactFieldChildren));
+    QCOMPARE(fields.at(1)->TextStorage()->Text().CompareF(childField), 0);
+    
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSpouse);
+    newField->TextStorage()->SetTextL(spouseField);
+    QContact contact;
+    QContactDetail* contactDetail = transformFamily->transformItemField(*newField, contact);
+    const QContactFamily* familyInfo1(static_cast<const QContactFamily*>(contactDetail));
+    QCOMPARE(familyInfo1->spouse(), spouseDetail);
     delete contactDetail;
     contactDetail = 0;
     delete newField;
     newField = 0;
     
-    delete transformAvatar; 
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldChildren);
+    newField->TextStorage()->SetTextL(childField);
+    contactDetail = transformFamily->transformItemField(*newField, contact);
+    contact.saveDetail(contactDetail);    
+    const QContactFamily* familyInfo2(static_cast<const QContactFamily*>(contactDetail));
+    QCOMPARE(familyInfo2->children().count(), 1);
+    QCOMPARE(familyInfo2->children().at(0), childDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldChildren);
+    newField->TextStorage()->SetTextL(childField);
+    contactDetail = transformFamily->transformItemField(*newField, contact);
+    const QContactFamily* familyInfo3(static_cast<const QContactFamily*>(contactDetail));
+    QCOMPARE(familyInfo3->children().count(), 2);
+    QCOMPARE(familyInfo3->children().at(1), childDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    delete transformFamily;
 }
 
 void TestTransformContactData::validateContexts(TransformContactData* transformContactData) const

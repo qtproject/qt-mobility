@@ -8,18 +8,20 @@ PUBLIC_HEADERS += \
     details/qcontactdetails.h \
     details/qcontactdisplaylabel.h \
     details/qcontactemailaddress.h \
+    details/qcontactfamily.h \
     details/qcontactgender.h \
     details/qcontactgeolocation.h \
     details/qcontactguid.h \
     details/qcontactname.h \
     details/qcontactnickname.h \
+    details/qcontactnote.h \
     details/qcontactonlineaccount.h \
     details/qcontactorganization.h \
     details/qcontactphonenumber.h \
     details/qcontactpresence.h \
-    details/qcontactrelationship.h \
     details/qcontactsynctarget.h \
     details/qcontacttimestamp.h \
+    details/qcontacttype.h \
     details/qcontacturl.h
 
 SOURCES += details/qcontactdetails.cpp

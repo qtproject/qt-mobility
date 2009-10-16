@@ -63,6 +63,7 @@ public:
     void deref();
 
     QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    QString managerName() const;
     bool startRequest(QContactAbstractRequest* req);
     bool cancelRequest(QContactAbstractRequest *req);
 };

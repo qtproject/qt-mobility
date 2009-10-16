@@ -65,7 +65,8 @@ public:
         : QSharedData(other),
         m_id(other.m_id),
         m_definitionName(other.m_definitionName),
-        m_values(other.m_values)
+        m_values(other.m_values),
+        m_preferredActions(other.m_preferredActions)
     {
     }
 
@@ -74,6 +75,7 @@ public:
     quint32 m_id; // internal, unique id.
     QString m_definitionName;
     QVariantMap m_values; // the value(s) stored in this field.
+    QList<QContactActionDescriptor> m_preferredActions;
 };
 
 #endif

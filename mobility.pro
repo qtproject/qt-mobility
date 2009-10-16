@@ -8,4 +8,4 @@ TEMPLATE = subdirs
 TARGET = 
 CONFIG += ordered
 include(common.pri)
-SUBDIRS += contacts plugins versit tests examples doc
+SUBDIRS += contacts plugins tests examples doc
