@@ -39,14 +39,15 @@ class TestSymbianEngine : public QObject
     Q_OBJECT
 
 private slots:
-    void initTestCase();
+    void initTestCase();    
     void cleanupTestCase();
     
     void testContactOperations();
     void testGroupOperations();
     void testSelfContactOperations();
-    void testFilterOperations();
-    void testDetailDefinitions();
+
+private:
+    void removeAllContacts();
 
 private:
     QContactSymbianEngineData   *m_engine;

@@ -41,11 +41,28 @@ void TestSymbianEngine::initTestCase()
 {
     QContactManager::Error error;
     m_engine = new QContactSymbianEngineData(error);
+    removeAllContacts();
 }
 
 void TestSymbianEngine::cleanupTestCase()
 {
+    removeAllContacts();
     delete m_engine;
+}
+
+void TestSymbianEngine::removeAllContacts()
+{
+    if(m_engine) {
+        // Empty cnt database
+        QContactManager::Error err = QContactManager::NoError;
+        QList<QContactSortOrder> sortOrders;
+        QContactChangeSet cs;
+        QList<QContactLocalId> cnts_ids = m_engine->contacts(sortOrders, err);
+        
+        for(int i=0; i<cnts_ids.count(); i++) {
+            m_engine->removeContact(cnts_ids[i], cs, err);
+        }
+    }
 }
 
 void TestSymbianEngine::testContactOperations()
@@ -67,20 +84,21 @@ void TestSymbianEngine::testContactOperations()
     QVERIFY(alice.localId() != 0);
     
     /* Retrieve a contact */
-    QContact c = m_engine->contact(alice.localId(), err);
+    QContactLocalId aid = alice.localId();
+    QContact c = m_engine->contact(aid, err);
     QVERIFY(&c != NULL);
-    QVERIFY(c.id() == alice.id());
+    QVERIFY(c.localId() == aid);
     QVERIFY(err == QContactManager::NoError);
     
     /* Update contact */
     // Create and save a contact
+    int details_before = c.details().count();
     QContactPhoneNumber number;
     number.setContexts("Home");
     number.setSubTypes("Mobile");
     number.setNumber("12345678");
-    c.setPreferredDetail("DialAction", number);
+    c.setPreferredDetail("call", number);
     c.saveDetail(&number);
-    int details_before = c.details().count();
     
     // update the contact
     QContactLocalId id = c.localId();
@@ -92,9 +110,6 @@ void TestSymbianEngine::testContactOperations()
     QVERIFY(c1.localId() == id);
     QVERIFY(c1.details().count() > details_before);
     QString str = c1.detail(QContactPhoneNumber::DefinitionName).definitionName();
-    QVERIFY(str == QContactPhoneNumber::DefinitionName);
-    str.clear();
-    str = c1.detailWithAction("DialAction").definitionName();
     QVERIFY(str == QContactPhoneNumber::DefinitionName);
     
     // Fetch a non existent contact
@@ -211,14 +226,6 @@ void TestSymbianEngine::testSelfContactOperations()
     m_engine->removeContact(own.localId(), cs, err);
     QVERIFY(!m_engine->selfContactId(err));
     QVERIFY(err == QContactManager::DoesNotExistError);
-}
-
-void TestSymbianEngine::testFilterOperations()
-{
-}
-
-void TestSymbianEngine::testDetailDefinitions()
-{
 }
 
 QTEST_MAIN(TestSymbianEngine);
