@@ -149,36 +149,10 @@
 */
 
 /*!
-    \fn QMessageServiceAction::countMessages(const QMessageFilter &filter, uint limit) const
+    \fn QMessageServiceAction::countMessages(const QMessageFilter &filter) const
     
     Emits via a messagesCounted() signal the number messages in the messaging 
     store matching \a filter.
-    
-    Unless \a limit is lower and not zero, in which case a count of \a limit will be emitted
-    via the messagesCounted() signal.
-    
-    Calling this function may result in the progressChanged() 
-    signal  being emitted multiple times. An emission of the progressChanged()
-    signal with a total of 0 indicates that the number of progress steps is
-    unknown.
-    
-    Returns true if the action can be initiated; otherwise returns false.
-    
-    Note: This function should not initiate network activity, instead only message data
-    already stored on the device will be used during evaluation of the function.
-    
-    \sa  QMessage, QMessageFilter, messagesCounted(), progressChanged(), queryMessages()
-*/
-
-/*!
-    \fn QMessageServiceAction::countMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, uint limit) const
-    
-    Emits via a messagesCounted() signal the number messages in the messaging 
-    store matching \a filter and with a body containing the string \a body using 
-    searching options \a options.
-    
-    Unless \a limit is lower and not zero, in which case a count of \a limit will be emitted
-    via the messagesCounted() signal.
     
     Calling this function may result in the progressChanged() 
     signal  being emitted multiple times. An emission of the progressChanged()

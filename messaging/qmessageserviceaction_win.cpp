@@ -299,19 +299,9 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
     return false; // stub
 }
 
-bool QMessageServiceAction::countMessages(const QMessageFilter &filter, uint limit) const
+bool QMessageServiceAction::countMessages(const QMessageFilter &filter) const
 {
     Q_UNUSED(filter);
-    Q_UNUSED(limit);
-    return false;
-}
-
-bool QMessageServiceAction::countMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, uint limit) const
-{
-    Q_UNUSED(filter);
-    Q_UNUSED(body);
-    Q_UNUSED(options);
-    Q_UNUSED(limit);
     return false;
 }
 
