@@ -2043,7 +2043,6 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
             qWarning() << "Unable to find the sent folder while constructing message";
         else if (!setMapiProperty(mapiMessage, PR_SENTMAIL_ENTRYID, sentFolder->entryId()))
             qWarning() << "Unable to set sent folder entry id on message";
-
 #endif
 
 

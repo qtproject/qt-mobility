@@ -303,7 +303,11 @@ bool QMessageStore::addMessage(QMessage *message)
             // Find the parent folder for this message
             QMessageFolderId folderId(message->parentFolderId());
             if (folderId.isValid()) {
+#ifdef _WIN32_WCE
+                mapiFolder = mapiStore->openFolder(lError,QMessageFolderIdPrivate::entryId(folderId));
+#else
                 mapiFolder = mapiStore->openFolderWithKey(lError, QMessageFolderIdPrivate::folderRecordKey(folderId));
+#endif
             } else {
                 mapiFolder = mapiStore->findFolder(lError, message->standardFolder());
             }
