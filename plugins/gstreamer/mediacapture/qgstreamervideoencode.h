@@ -56,11 +56,11 @@ public:
     QList<QSize> supportedResolutions() const;
     void setResolution(const QSize &);
 
-    QtMedia::FrameRate frameRate() const;
-    QtMedia::FrameRate minimumFrameRate() const;
-    QtMedia::FrameRate maximumFrameRate() const;
-    QList< QtMedia::FrameRate > supportedFrameRates() const;
-    void setFrameRate(const QtMedia::FrameRate &rate);
+    qreal frameRate() const;
+    qreal minimumFrameRate() const;
+    qreal maximumFrameRate() const;
+    QList< qreal > supportedFrameRates() const;
+    void setFrameRate(const qreal &rate);
 
     QStringList supportedVideoCodecs() const;
     QString videoCodecDescription(const QString &codecName) const;
@@ -90,7 +90,7 @@ private:
     QString m_codec;
     QMap<QString, QVariant> m_options;
     QSize m_resolution;
-    QtMedia::FrameRate m_frameRate;
+    qreal m_frameRate;
 };
 
 #endif

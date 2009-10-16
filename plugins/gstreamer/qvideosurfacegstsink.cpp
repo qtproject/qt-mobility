@@ -406,7 +406,7 @@ gboolean QVideoSurfaceGstSink::set_caps(GstBaseSink *base, GstCaps *caps)
         return TRUE;
     } else {
         const GstStructure *structure = gst_caps_get_structure(caps, 0);
-        
+
         //qDebug() << gst_caps_to_string(caps);
 
         QVideoFrame::PixelFormat pixelFormat = QVideoFrame::Format_Invalid;
@@ -452,7 +452,9 @@ gboolean QVideoSurfaceGstSink::set_caps(GstBaseSink *base, GstCaps *caps)
 
             QPair<int, int> rate;
             gst_structure_get_fraction(structure, "framerate", &rate.first, &rate.second);
-            format.setFrameRate(rate);
+
+            if (rate.second)
+                format.setFrameRate(qreal(rate.first)/rate.second);
 
             gint aspectNum = 0;
             gint aspectDenum = 0;

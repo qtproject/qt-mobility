@@ -126,10 +126,6 @@ namespace QtMedia
         HighQuality,
         VeryHighQuality
     };
-
-    typedef QPair<int, int> FrameRate;
 }
-
-//Q_DECLARE_METATYPE(QtMedia::FrameRate);
 
 #endif

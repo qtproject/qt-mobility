@@ -79,11 +79,11 @@ Settings::Settings(QMediaRecorder *mediaRecorder, QWidget *parent) :
     }
 
     ui->videoFramerateBox->addItem(tr("Default"));
-    QList<QtMedia::FrameRate> supportedFrameRates = mediaRecorder->supportedFrameRates();
-    QtMedia::FrameRate rate;
+    QList<qreal> supportedFrameRates = mediaRecorder->supportedFrameRates();
+    qreal rate;
     foreach(rate, supportedFrameRates) {
-        QString rateString = rate.second == 1 ? QString::number(rate.first) : QString("%1/%2").arg(rate.first).arg(rate.second);
-        ui->videoFramerateBox->addItem(rateString, QVariant::fromValue<QtMedia::FrameRate>(rate));
+        QString rateString = QString("%1").arg(rate, 0, 'f', 2);
+        ui->videoFramerateBox->addItem(rateString, QVariant(rate));
     }
 
     //containers
@@ -132,7 +132,7 @@ QVideoEncoderSettings Settings::videoSettings() const
     settings.setCodec(boxValue(ui->videoCodecBox).toString());
     settings.setQuality(QtMedia::EncodingQuality(ui->videoQualitySlider->value()));
     settings.setResolution(boxValue(ui->videoResolutionBox).toSize());
-    settings.setFrameRate(boxValue(ui->videoFramerateBox).value<QtMedia::FrameRate>());
+    settings.setFrameRate(boxValue(ui->videoFramerateBox).value<qreal>());
 
     return settings;
 }
@@ -145,8 +145,8 @@ void Settings::setVideoSettings(const QVideoEncoderSettings &videoSettings)
 
     //special case for frame rate
     for (int i=0; i<ui->videoFramerateBox->count(); i++) {
-        QtMedia::FrameRate itemRate = ui->videoFramerateBox->itemData(i).value<QtMedia::FrameRate>();
-        if ( itemRate == videoSettings.frameRate()) {
+        qreal itemRate = ui->videoFramerateBox->itemData(i).value<qreal>();
+        if (qFuzzyCompare(itemRate, videoSettings.frameRate())) {
             ui->videoFramerateBox->setCurrentIndex(i);
             break;
         }

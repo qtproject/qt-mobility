@@ -318,29 +318,29 @@ QList<QSize> QMediaRecorder::supportedResolutions() const
 /*!
   Returns the smallest frame rate, video encoder supports.
 */
-QtMedia::FrameRate QMediaRecorder::minimumFrameRate()
+qreal QMediaRecorder::minimumFrameRate()
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->minimumFrameRate() : QtMedia::FrameRate();
+           d_func()->videoControl->minimumFrameRate() : 0.0;
 }
 
 /*!
   Returns the largest frame rate, video encoder supports.
 */
-QtMedia::FrameRate QMediaRecorder::maximumFrameRate()
+qreal QMediaRecorder::maximumFrameRate()
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->maximumFrameRate() : QtMedia::FrameRate();
+           d_func()->videoControl->maximumFrameRate() : 0.0;
 }
 
 /*!
   Returns the list of frame rates if the video encoder supports only the limited set
   of video frame rates, otherwise returns an empty list.
 */
-QList< QtMedia::FrameRate > QMediaRecorder::supportedFrameRates() const
+QList< qreal > QMediaRecorder::supportedFrameRates() const
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->supportedFrameRates() : QList<QtMedia::FrameRate>();
+           d_func()->videoControl->supportedFrameRates() : QList<qreal>();
 }
 
 
@@ -504,11 +504,6 @@ void QMediaRecorder::stop()
     \fn QMediaRecorder::error(QMediaRecorder::Error error)
 
     Signal emitted when \a error changed.
-*/
-
-/*!
-    \typedef QtMedia::FrameRate
-
 */
 
 

@@ -57,11 +57,11 @@ public:
     virtual QList<QSize> supportedResolutions() const = 0;
     virtual void setResolution(const QSize &) = 0;
 
-    virtual QtMedia::FrameRate frameRate() const = 0;
-    virtual QtMedia::FrameRate minimumFrameRate() const = 0;
-    virtual QtMedia::FrameRate maximumFrameRate() const = 0;
-    virtual QList<QtMedia::FrameRate> supportedFrameRates() const = 0;
-    virtual void setFrameRate(const QtMedia::FrameRate &rate) = 0;
+    virtual qreal frameRate() const = 0;
+    virtual qreal minimumFrameRate() const = 0;
+    virtual qreal maximumFrameRate() const = 0;
+    virtual QList<qreal> supportedFrameRates() const = 0;
+    virtual void setFrameRate(const qreal &rate) = 0;
 
     virtual QStringList supportedVideoCodecs() const = 0;
     virtual QString videoCodec() const = 0;

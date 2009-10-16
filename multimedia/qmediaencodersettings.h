@@ -94,9 +94,8 @@ public:
     void setResolution(const QSize &);
     void setResolution(int width, int height);
 
-    QtMedia::FrameRate frameRate() const;
-    void setFrameRate(QtMedia::FrameRate rate);
-    void setFrameRate(int rate);
+    qreal frameRate() const;
+    void setFrameRate(qreal rate);
 
     int bitrate() const;
     void setBitrate(int bitrate);
