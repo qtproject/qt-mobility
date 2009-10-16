@@ -49,8 +49,11 @@ symbian:
 		    ../../inc/qcontactsymbianfilterdbms.h \
 		    ../../inc/qcontactsymbianfiltersql.h \
 		    ../../inc/qcontactsymbiansorterdbms.h \
-		    ../../inc/qabstractcontactsorter.h
-		    
+                    ../../inc/qabstractcontactsorter.h \
+                    ../../inc/cntrelationship.h \
+                    ../../inc/cntabstractrelationship.h \
+                    ../../inc/cntrelationshipgroup.h
+
 		SOURCES += ut_qcontactsymbianengine_p.cpp \
 				../../src/qcontactsymbianengine_p.cpp \
 		    ../../src/transformcontact.cpp \
@@ -73,8 +76,11 @@ symbian:
                     ../../src/transformfamily.cpp \
 		    ../../src/qcontactsymbianfilterdbms.cpp \
 		    ../../src/qcontactsymbiansorterdbms.cpp \
-		    ../../src/qcontactsymbianfiltersql.cpp
-		
+                    ../../src/qcontactsymbianfiltersql.cpp \
+                    ../../src/cntrelationship.cpp \
+                    ../../src/cntabstractrelationship.cpp \
+                    ../../src/cntrelationshipgroup.cpp
+
 		TARGET.CAPABILITY = ALL \
         -TCB
         
