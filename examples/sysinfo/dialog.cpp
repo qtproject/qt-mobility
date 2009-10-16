@@ -1,5 +1,9 @@
 #include "dialog.h"
+#ifdef Q_OS_SYMBIAN
+#include "ui_dialog_s60.h"
+#else
 #include "ui_dialog.h"
+#endif
 #include <QDebug>
 #include <QDesktopWidget>
 #include <QMessageBox>
