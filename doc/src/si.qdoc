@@ -130,22 +130,9 @@ The backend selection is expected to disappear once the API is integrated into Q
 \section2 Examples
 
 \list
-    \o Service Framework
-    \list
-        \o \l{File Manager Plugin Example}
-        \o \l{Bluetooth Transfer Plugin Example}
-        \o \l{Service Browser Example}
-    \endlist
-    \o Bearer Management
-    \list
-        \o \l{bearercloud}{Bearer Cloud}
-        \o \l{bearermonitor}{Bearer Monitor}
-    \endlist
-    \o Publish and Subscribe
-    \list
-        \o \l{publish-subscribe}{Publish and Subscribe}
-        \o \l{battery-charge}{Accessing Publish and Subscribe from QML}
-    \endlist
+    \o \l{File Manager Plugin Example}
+    \o \l{Bluetooth Transfer Plugin Example}
+    \o \l{Service Browser Example}
 \endlist
 
 */

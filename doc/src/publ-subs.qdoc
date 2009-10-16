@@ -84,7 +84,7 @@ applications.
 Nodes in the Value Space can be thought of as representing schema objects.
 Obviously this is a conceptual differentiation and not a physical one, as
 internally the Value Space is treated as one large tree.  By applying
-structured schema to the space "explorability" is increased.  For example,
+structured schema to the space "explore-ability" is increased.  For example,
 the \c {/Device/Buttons} schema can be defined as containing a value
 representing the number of mappable buttons on a device, and a sub-item for
 each adhering to the \c {MappableButton} schema.  The \c {MappableButton}
