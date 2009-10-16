@@ -100,7 +100,7 @@ void QGstreamerServicePlugin::release(QMediaService *service)
 
 QList<QByteArray> QGstreamerServicePlugin::devices(const QByteArray &service) const
 {
-    if (service == Q_MEDIASERVICE_CAMERA)
+    if (service == Q_MEDIASERVICE_CAMERA) {
         if (m_cameraDevices.isEmpty())
             updateDevices();
 
@@ -112,7 +112,7 @@ QList<QByteArray> QGstreamerServicePlugin::devices(const QByteArray &service) co
 
 QString QGstreamerServicePlugin::deviceDescription(const QByteArray &service, const QByteArray &device)
 {
-    if (service == Q_MEDIASERVICE_CAMERA))
+    if (service == Q_MEDIASERVICE_CAMERA) {
         if (m_cameraDevices.isEmpty())
             updateDevices();
 
