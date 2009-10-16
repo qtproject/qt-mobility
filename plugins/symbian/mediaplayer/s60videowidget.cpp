@@ -47,7 +47,8 @@ public:
     {
         setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         QPalette palette;
-        palette.setColor(QPalette::Background, Qt::black);
+        //palette.setColor(QPalette::Background, Qt::black);
+        palette.setColor(QPalette::Background, Qt::red);
         setPalette(palette);
     }
 
@@ -86,8 +87,9 @@ S60VideoWidgetControl::S60VideoWidgetControl(QObject *parent)
     //, m_videoSink(0)
     , m_widget(new S60VideoWidget)
 {
+    //qDebug() << "winId: " << m_widget->winId();
     m_widget->installEventFilter(this);
-    m_windowId = m_widget->winId();
+    //m_windowId = m_widget->winId();
 /*
     m_videoSink = gst_element_factory_make ("xvimagesink", NULL);
     if (m_videoSink) {
@@ -126,7 +128,7 @@ S60VideoWidgetControl::~S60VideoWidgetControl()
 
 bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 {
-    /*if (object == m_widget) {
+   /*if (object == m_widget) {
         if (e->type() == QEvent::ParentChange || e->type() == QEvent::Show) {
             WId newWId = m_widget->winId();
             if (newWId != m_windowId) {
@@ -148,8 +150,7 @@ bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
             // when reducing window size
             windowExposed();
         }
-    }
-*/
+    }*/
     return false;
 }
 

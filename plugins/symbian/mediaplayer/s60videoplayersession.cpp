@@ -192,27 +192,15 @@ bool S60VideoPlayerSession::isMuted() const
 
 void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
 {
-    qWarning()<<"setVideoRenderer";
-	m_renderer = qobject_cast<S60VideoRendererInterface*>(videoOutput);
-    //m_testWidget = qobject_cast<S60VideoWidgetControl*>(videoOutput);
-    //qDebug() << "winId: " << m_testWidget->videoWidget()->winId();
-	//m_renderer->winId();
+   // m_testWidget->videoWidget()->winId();
+   //qWarning()<<"setVideoRenderer";
+	//m_renderer = qobject_cast<S60VideoRendererInterface*>(videoOutput);
+    m_testWidget = qobject_cast<S60VideoWidgetControl*>(videoOutput);
+
     const TInt priority = 0;
     const TMdaPriorityPreference preference = EMdaPriorityPreferenceNone;
-
-    m_testWidget = qobject_cast<S60VideoWidgetControl*>(videoOutput);
-    QWidget* jep = new QWidget();
-    CCoeControl* const control = jep->winId();
-
-    CCoeEnv* const coeEnv = control->ControlEnv();
-    m_wsSession = &(coeEnv->WsSession());
-    m_screenDevice = coeEnv->ScreenDevice();
-    m_window = control->DrawableWindow();
-
-    m_windowRect = TRect(
-        control->DrawableWindow()->AbsPosition(),
-        control->DrawableWindow()->Size());
-      
+    
+    getNativeHandles();   
     m_clipRect = m_windowRect;
       
     TRAPD(err, 
@@ -225,6 +213,28 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
                                   m_windowRect, 
                                   m_clipRect)
          );
+}
+
+void S60VideoPlayerSession::getNativeHandles()
+{
+    qDebug() << "winId: " << m_testWidget->videoWidget()->winId();
+    //m_renderer->winId();
+
+    //m_testWidget = qobject_cast<S60VideoWidgetControl*>(videoOutput);
+    //QWidget* jep = new QWidget();
+    CCoeControl* const control =  m_testWidget->videoWidget()->winId();
+    qDebug() << control->IsVisible();
+
+    CCoeEnv* const coeEnv = control->ControlEnv();
+    m_wsSession = &(coeEnv->WsSession());
+    m_screenDevice = coeEnv->ScreenDevice();
+    m_window = control->DrawableWindow();
+
+    m_windowRect = TRect(
+        control->DrawableWindow()->AbsPosition(),
+        control->DrawableWindow()->Size());
+    
+    qDebug() << "h: " << m_clipRect.Height() << "w: " << m_clipRect.Width();     
 }
 
 bool S60VideoPlayerSession::isVideoAvailable() const
@@ -245,11 +255,11 @@ void S60VideoPlayerSession::play()
     }
     else
     {
-        QString fileName = m_url.toLocalFile();
-		qDebug() << fileName;
-        TPtrC str(reinterpret_cast<const TUint16*>(fileName.utf16()));
-        m_player->OpenFileL(str);
-        //m_player->OpenFileL(_L("c:\\Data\\testvideo.mp4"));
+        //QString fileName = m_url.toLocalFile();
+		//qDebug() << fileName;
+        //TPtrC str(reinterpret_cast<const TUint16*>(fileName.utf16()));
+        //m_player->OpenFileL(str);
+        m_player->OpenFileL(_L("c:\\Data\\testvideo.mp4"));
         //QString fileName = m_url.toLocalFile();
         //TPtrC str(reinterpret_cast<const TUint16*>(fileName.utf16()));
         //m_player->OpenFileL(str);
@@ -313,6 +323,17 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 {
     qDebug() << "Preparing to play with error: " << aError;
     m_player->Prepare();
+    getNativeHandles();
+    
+    TRAPD(err,
+          m_player->SetDisplayWindowL
+          (
+              *m_wsSession, *m_screenDevice,
+              *m_window,
+              m_windowRect, m_clipRect
+          )
+         );
+
 }
 
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)

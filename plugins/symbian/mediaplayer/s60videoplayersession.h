@@ -113,6 +113,9 @@ signals:
     void tagsChanged();
     void seekableChanged(bool);
 
+private: 
+    void getNativeHandles();
+    
 private slots:
     void getStreamsInfo();
     void setSeekable(bool);
