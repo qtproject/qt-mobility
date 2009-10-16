@@ -76,6 +76,9 @@ public:
     static void uheap_mark();
     static void uheap_mark_end();
 
+    static bool hasDefaultSource();
+    static bool hasDefaultMonitor();
+
     static QString addNmeaChecksumAndBreaks(const QString &sentence);
 
     static QString createRmcSentence(const QDateTime &dt);
