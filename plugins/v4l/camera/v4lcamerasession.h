@@ -44,6 +44,8 @@
 #include <QtMultimedia/qvideoframe.h>
 #include <QtMultimedia/qabstractvideosurface.h>
 
+#include "cameraformatconverter.h"
+
 class V4LVideoRenderer;
 
 struct video_buffer {
@@ -129,6 +131,8 @@ private:
     QSize m_windowSize;
     QList<QSize> resolutions;
     QList<unsigned int> formats;
+
+    CameraFormatConverter* converter;
 };
 
 #endif
