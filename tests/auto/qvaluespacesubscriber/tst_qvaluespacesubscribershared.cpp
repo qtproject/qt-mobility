@@ -434,10 +434,7 @@ void tst_QValueSpaceSubscriber::testConstructor()
     QValueSpaceSubscriber *subscriber = qvariant_cast<QValueSpaceSubscriber*>(testItem);
     QCOMPARE(subscriber->parent(), (QObject*)this);
     QCOMPARE(subscriber->value(), value);
-    QStringList list = subscriber->subPaths();
-    qDebug() << "Expected:" << subPaths.toSet();
-    qDebug() << "Actual:" << list.toSet();
-    QCOMPARE(list.toSet(), subPaths.toSet());
+    QCOMPARE(subscriber->subPaths().toSet(), subPaths.toSet());
     QCOMPARE(subscriber->path(), path);
     QCOMPARE(subscriber->value(relItemPath, 100).toInt(), expectedValue);
 }
@@ -518,10 +515,7 @@ void tst_QValueSpaceSubscriber::testPathChanges()
                   << "double" << "float" << "QChar";
 
     QCOMPARE(subscriber.path(), QLatin1String("/"));
-    QStringList list = subscriber.subPaths();
-    qDebug() << "Expected:" << rootPaths.toSet();
-    qDebug() << "Actual:" << list.toSet();
-    QCOMPARE(list.toSet(), rootPaths.toSet());
+    QCOMPARE(subscriber.subPaths().toSet(), rootPaths.toSet());
 
     subscriber.cd("home");
     QCOMPARE(subscriber.path(), QLatin1String("/home"));
@@ -876,9 +870,6 @@ void tst_QValueSpaceSubscriber::ipcRemoveKey()
     changeSpy.clear();
     QTRY_COMPARE(changeSpy.count(), 1);
 
-    QStringList paths = subscriber.subPaths();
-    if (!paths.isEmpty())
-        qDebug() << subscriber.subPaths();
     QVERIFY(subscriber.subPaths().isEmpty());
     QCOMPARE(subscriber.value("value", 6).toInt(), 6);
     QVERIFY(process.waitForFinished(10000));
