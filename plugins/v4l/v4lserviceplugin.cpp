@@ -69,7 +69,7 @@ void V4LServicePlugin::release(QMediaService *service)
 
 QList<QByteArray> V4LServicePlugin::devices(const QByteArray &service) const
 {
-    if (service == QLatin1String(Q_MEDIASERVICE_CAMERA))
+    if (service == QLatin1String(Q_MEDIASERVICE_CAMERA)) {
         if (m_cameraDevices.isEmpty())
             updateDevices();
 
@@ -81,7 +81,7 @@ QList<QByteArray> V4LServicePlugin::devices(const QByteArray &service) const
 
 QString V4LServicePlugin::deviceDescription(const QByteArray &service, const QByteArray &device)
 {
-    if (service == QLatin1String(Q_MEDIASERVICE_CAMERA))
+    if (service == QLatin1String(Q_MEDIASERVICE_CAMERA)) {
         if (m_cameraDevices.isEmpty())
             updateDevices();
 
