@@ -218,10 +218,30 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
         theContact->saveDetail(&ts);
 
         /* And we need to check that the relationships are up-to-date or not modified */
-
+        QList<QContactRelationship> orderedList = theContact->relationshipOrder();
+        if (!theContact->relationships() == orderedList) {
+            // the user has modified the order of relationships; we may need to update the lists etc.
+            QList<QContactRelationship> upToDateList = d->m_orderedRelationships.value(theContact->localId());
+            if (upToDateList.size() != orderedList.size()) {
+                // the cache was stale; relationships have been added or removed in the meantime.
+                error = QContactManager::InvalidRelationshipError;
+                return false;
+            }
+            
+            // size is the same, need to ensure that no invalid relationships are in the list.
+            for (int i = 0; i < orderedList.size(); i++) {
+                QContactRelationship currOrderedRel = orderedList.at(i);
+                if (!upToDateList.contains(currOrderedRel)) {
+                    // the cache was stale; relationships have been added and removed in the meantime.
+                    error = QContactManager::InvalidRelationshipError;
+                    return false;
+                }
+            }
+        }
 
         // Looks ok, so continue
         d->m_contacts.replace(index, *theContact);
+        d->m_orderedRelationships.insert(theContact->localId(), orderedList);
         changeSet.changedContacts().insert(theContact->id().localId());
     } else {
         // id does not exist; if not zero, fail.
