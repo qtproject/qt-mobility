@@ -58,13 +58,6 @@
 #include <winsock2.h>
 #include <mswsock.h>
 
-#ifdef Q_CC_MSVC
-#include <Wlanapi.h>
-#include <ntddndis.h>
-#else
-#include <ddk/ntddndis.h>
-#endif
-
 #include <QBasicTimer>
 
 
@@ -146,16 +139,17 @@ Q_SIGNALS:
    void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 private Q_SLOTS:
-   void nlaNetworkChanged();
    void networkStrengthTimeout();
    void networkStatusTimeout();
 private:
     quint32 wifiStrength;
     quint32 ethStrength;
-
+    HANDLE hWlan;
+    int timerMs;
    QBasicTimer netStrengthTimer;
-
-   QBasicTimer netStatusTimer;
+   bool isDefaultMode(QSystemNetworkInfo::NetworkMode mode);
+   void startWifiCallback();
+   bool wlanCallbackInitialized;
 
 };
 
@@ -215,8 +209,6 @@ public:
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
     int  batteryLevel() const;
-    QSystemDeviceInfo::BatteryStatus batteryStatus();
-
     QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();

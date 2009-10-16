@@ -71,6 +71,7 @@ private:
    IWbemLocator *wbemLocator;
    IWbemServices *wbemServices;
    IWbemClassObject *wbemCLassObject;
+   IEnumWbemClassObject *wbemEnumerator;
 
    QString m_className;
    QStringList m_classProperties;
@@ -78,7 +79,7 @@ private:
    QString m_wmiNamespace;
    QVariant  msVariantToQVariant(VARIANT msVariant, CIMTYPE variantType);
    void initializeWMI(const QString &wmiNamespace);
-   QHash <QString, bool> initializedNamespaces;
+  // QHash <QString, bool> initializedNamespaces;
 
 };
 #endif

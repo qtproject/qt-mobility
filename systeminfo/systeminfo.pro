@@ -1,6 +1,7 @@
 TEMPLATE = lib
 TARGET = QtSystemInfo
 
+
 QT+= network
 include(../common.pri)
 
@@ -10,7 +11,12 @@ PUBLIC_HEADERS += qsysteminfo.h \
 SOURCES += qsysteminfo.cpp
 DEFINES += QT_BUILD_SYSINFO_LIB \
     QT_MAKEDLL
+
+
 win32 {
+    contains(CONFIG,release) {
+       CONFIG-=console
+    }
     SOURCES += qsysteminfo_win.cpp 
     HEADERS += qsysteminfo_win_p.h 
 
@@ -18,18 +24,20 @@ win32 {
         SOURCES += qwmihelper_win.cpp
         HEADERS += qwmihelper_win_p.h
 
-        LIBS += Wlanapi.lib \
+        LIBS += \
             Ole32.lib \
             Strmiids.lib \
-            Bthprops.lib \
             User32.lib \
             Gdi32.lib \
             Ws2_32.lib \
-            Wbemuuid.lib \
+Iphlpapi.lib \
             Oleaut32.lib 
-#            Setupapi.lib
-          #LIBS += -lWs2
         }
+
+#            Wbemuuid.lib \
+#            Wlanapi.lib \
+#            Setupapi.lib
+#             Bthprops.lib \
 
     win32-g++ : {
         LIBS += -luser32 -lgdi32
@@ -76,7 +84,31 @@ unix: {
         }
     }
 
-    symbian::
+    symbian:{
+        INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+        DEPENDPATH += symbian
+        
+        SOURCES += qsysteminfo_s60.cpp \
+            telephonyinfo_s60.cpp
+
+        HEADERS += qsysteminfo_s60_p.h \
+            telephonyinfo_s60.h
+
+        LIBS += -lprofileengine \
+            -letel3rdparty \
+            -lsysutil \
+            -lcentralrepository \
+            -lcenrepnotifhandler
+
+        TARGET.CAPABILITY = ALL -TCB
+        TARGET.EPOCALLOWDLLDATA = 1
+        MMP_RULES += EXPORTUNFROZEN
+        
+
+        QtSystemInfoDeployment.sources = QtSystemInfo.dll
+        QtSystemInfoDeployment.path = /sys/bin
+        DEPLOYMENT += QtSystemInfoDeployment
+    }
 }
 
 HEADERS += $$PUBLIC_HEADERS 
