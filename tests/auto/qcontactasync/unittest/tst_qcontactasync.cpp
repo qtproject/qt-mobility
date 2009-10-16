@@ -96,11 +96,16 @@ private:
     Qt::HANDLE m_progressSlotThreadId;
 };
 
+typedef QList<QContactLocalId> QContactLocalIdList;
+Q_DECLARE_METATYPE(QContactLocalIdList);
+
 tst_QContactAsync::tst_QContactAsync()
 {
     // ensure we can load all of the plugins we need to.
     QString path = QApplication::applicationDirPath() + "/dummyplugin";
     QApplication::addLibraryPath(path);
+
+    qRegisterMetaType<QContactLocalIdList>("QList<QContactLocalId>");
 }
 
 tst_QContactAsync::~tst_QContactAsync()
