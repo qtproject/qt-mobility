@@ -26,10 +26,22 @@ PRIVATE_HEADERS += qlocationutils_p.h \
 symbian {
     PRIVATE_HEADERS += qgeopositioninfosource_s60_p.h \
                        qmlbackendao_s60_p.h \
-                       notificationcallback_s60_p.h
+                       notificationcallback_s60_p.h \
+                       qgeoareamonitor_s60_p.h \
+                       qmlbackendmonitorao_s60_p.h \
+                       qmlbackendmonitorcreatetriggerao_s60_p.h \
+                       qmlbackendmonitorcreatetrigger_s60_p.h \
+                       qmlbackendmonitorinfo_s60_p.h \
+                       qmlbackendtriggerchangeao_s60_p.h
 
     SOURCES += qgeopositioninfosource_s60.cpp \
-               qmlbackendao_s60.cpp
+               qmlbackendao_s60.cpp \
+               qgeoareamonitor_s60.cpp \
+               qmlbackendmonitorao_s60.cpp \
+               qmlbackendmonitorcreatetriggerao_s60.cpp \
+               qmlbackendmonitorcreatetrigger_s60.cpp \
+               qmlbackendmonitorinfo_s60.cpp \
+               qmlbackendtriggerchangeao_s60.cpp
 }
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
@@ -56,5 +68,9 @@ symbian {
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
     DEPLOYMENT += exportheaders
+
+    QtLocationDeployment.sources = QtLocation.dll
+    QtLocationDeployment.path = /sys/bin
+    DEPLOYMENT += QtLocationDeployment
 }
 
