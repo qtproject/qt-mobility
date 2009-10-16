@@ -75,6 +75,18 @@
  * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
+/*!
+ * \fn QContactManager::relationshipsAdded(const QList<QContactLocalId>& affectedContactIds)
+ * This signal is emitted at some point after relationships have been added to the manager which involve the contacts identified by \a affectedContactIds.
+ * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
+ */
+
+/*!
+ * \fn QContactManager::relationshipsRemoved(const QList<QContactLocalId>& affectedContactIds)
+ * This signal is emitted at some point after relationships have eben removed from the manager which involve the contacts identified by \a affectedContactIds.
+ * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
+ */
+
 
 /*!
     Returns a list of available manager ids that can be used when constructing
@@ -203,6 +215,8 @@ QContactManager::QContactManager(const QString& managerName, const QMap<QString,
     connect(d->m_engine, SIGNAL(contactsAdded(QList<QContactLocalId>)), this, SIGNAL(contactsAdded(QList<QContactLocalId>)));
     connect(d->m_engine, SIGNAL(contactsChanged(QList<QContactLocalId>)), this, SIGNAL(contactsChanged(QList<QContactLocalId>)));
     connect(d->m_engine, SIGNAL(contactsRemoved(QList<QContactLocalId>)), this, SIGNAL(contactsRemoved(QList<QContactLocalId>)));
+    connect(d->m_engine, SIGNAL(relationshipsAdded(QList<QContactLocalId>)), this, SIGNAL(relationshipsAdded(QList<QContactLocalId>)));
+    connect(d->m_engine, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)), this, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)));
 }
 
 /*! Frees the memory used by the QContactManager */
@@ -306,7 +320,7 @@ bool QContactManager::saveContact(QContact* contact)
 
 /*!
  * Remove the contact identified by \a contactId from the database,
- * and removes the contact from any relationships in which it was involved.
+ * and also removes any relationships in which the contact was involved.
  * Returns true if the contact was removed successfully, otherwise
  * returns false.
  */
@@ -345,8 +359,8 @@ QList<QContactManager::Error> QContactManager::saveContacts(QList<QContact>* con
  * id in the list will be retained but set to zero.  The id of contacts
  * that were not successfully removed will be left alone.
  *
- * Any contact that was removed successfully will have been removed from
- * any relationships in which it was involved.
+ * Any contact that was removed successfully will have the relationships
+ * in which it was involved removed also.
  *
  * \sa QContactManager::removeContact()
  */

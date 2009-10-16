@@ -138,6 +138,8 @@ signals:
     void contactsAdded(const QList<QContactLocalId>& contactIds);
     void contactsChanged(const QList<QContactLocalId>& contactIds);
     void contactsRemoved(const QList<QContactLocalId>& contactIds);
+    void relationshipsAdded(const QList<QContactLocalId>& affectedContactIds);
+    void relationshipsRemoved(const QList<QContactLocalId>& affectedContactIds);
 
 private:
     friend class QContactManagerData;

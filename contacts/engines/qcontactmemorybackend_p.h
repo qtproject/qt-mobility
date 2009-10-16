@@ -164,6 +164,8 @@ private:
     bool removeContact(const QContactLocalId& contactId, QContactChangeSet& changeSet, QContactManager::Error& error);
     bool saveDetailDefinition(const QContactDetailDefinition& def, QContactChangeSet& changeSet, QContactManager::Error& error);
     bool removeDetailDefinition(const QString& definitionId, QContactChangeSet& changeSet, QContactManager::Error& error);
+    bool saveRelationship(QContactRelationship* relationship, QContactChangeSet& changeSet, QContactManager::Error& error);
+    bool removeRelationship(const QContactRelationship& relationship, QContactChangeSet& changeSet, QContactManager::Error& error);
 
     QContactMemoryEngineData* d;
     static QMap<QString, QContactMemoryEngine*> engines;
