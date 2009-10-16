@@ -45,11 +45,12 @@ QT_BEGIN_NAMESPACE
 
 /*
     \class DatabaseManager
-    The database manager is responsible for receiving queries about
-    services and managing user and system scope databases in order to
+    \ingroup servicesfw
+    \brief The database manager is responsible for receiving queries
+    about services and managing user and system scope databases in order to
     respond to those queries.
 
-    It provides operations for
+    The DatabaseManager provides operations for
     - registering and unregistering services
     - querying for services and interfaces
     - setting and getting default interface implementations
@@ -76,6 +77,8 @@ QT_BEGIN_NAMESPACE
 */
 
 /*
+    \fn DatabaseManager::DatabaseManager()
+    
    Constructor
 */
 DatabaseManager::DatabaseManager()
@@ -85,6 +88,8 @@ DatabaseManager::DatabaseManager()
 }
 
 /*
+    \fn DatabaseManager::~DatabaseManager()
+    
    Destructor
 */
 DatabaseManager::~DatabaseManager()
@@ -94,6 +99,8 @@ DatabaseManager::~DatabaseManager()
 }
 
 /*
+    \fn bool DatabaseManager::registerService(ServiceMetaDataResults &service, DbScope scope)
+
     Adds the details \a  service into the service database corresponding to
     \a scope.
 
@@ -106,7 +113,9 @@ bool DatabaseManager::registerService(ServiceMetaDataResults &service, DbScope s
 }
 
 /*
-    Removes the details of \serviceName from the database corresponding to \a
+    \fn bool DatabaseManager::unregisterService(const QString &serviceName, DbScope scope)
+    
+    Removes the details of \a serviceName from the database corresponding to \a
     scope.
 
     Returns true if the operation succeeded, false otherwise.
@@ -118,6 +127,8 @@ bool DatabaseManager::unregisterService(const QString &serviceName, DbScope scop
 }
 
 /*
+    \fn QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServiceFilter &filter, DbScope scope)
+    
     Retrieves a list of interface descriptors that fulfill the constraints specified
     by \a filter at a given \a scope.
 
@@ -130,6 +141,8 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
 
 
 /*
+    \fn QStringList DatabaseManager::getServiceNames(const QString &interfaceName, DbScope scope)
+    
     Retrieves a list of the names of services that provide the interface
     specified by \a interfaceName.
 
@@ -141,6 +154,8 @@ QStringList DatabaseManager::getServiceNames(const QString &interfaceName, DbSco
 }
 
 /*
+    \fn  QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &interfaceName, DbScope scope)
+    
     Returns the default interface implementation descriptor for a given
     \a interfaceName and \a scope.
 
@@ -152,6 +167,8 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
 }
 
 /*
+    \fn  bool DatabaseManager::setInterfaceDefault(const QString &serviceName, const   QString &interfaceName, DbScope scope)
+
     Sets the default interface implemenation for \a interfaceName to the matching
     interface implementation provided by \a service.
 
@@ -167,6 +184,8 @@ bool DatabaseManager::setInterfaceDefault(const QString &serviceName, const
 }
 
 /*
+    \fn  bool DatabaseManager::setInterfaceDefault(const QServiceInterfaceDescriptor &descriptor, DbScope scope)
+    
     Sets the interface implementation specified by \a descriptor to be the default
     implementation for the particular interface specified in the descriptor.
 
@@ -179,6 +198,8 @@ bool DatabaseManager::setInterfaceDefault(const QServiceInterfaceDescriptor &des
 }
 
 /*
+    \fn  void DatabaseManager::setChangeNotificationsEnabled(DbScope scope, bool enabled)
+    
     Sets whether change notifications for added and removed services are
     \a enabled or not at a given \a scope.
 */

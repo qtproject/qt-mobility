@@ -1,6 +1,21 @@
 <!DOCTYPE DCF>
 <DCF ref="index.html" icon="qt-mobility-library.png" imagedir="../../gif" title="Qt Mobility Library Reference Documentation">
 <section ref="classes.html" title="Classes">
+    <section ref="databasemanager.html" title="DatabaseManager Class Reference">
+        <keyword ref="databasemanager.html">DatabaseManager</keyword>
+        <keyword ref="databasemanager.html#DbScope-enum">DbScope</keyword>
+        <keyword ref="databasemanager.html#getInterfaces">getInterfaces</keyword>
+        <keyword ref="databasemanager.html#getServiceNames">getServiceNames</keyword>
+        <keyword ref="databasemanager.html#interfaceDefault">interfaceDefault</keyword>
+        <keyword ref="databasemanager.html#lastError">lastError</keyword>
+        <keyword ref="databasemanager.html#registerService">registerService</keyword>
+        <keyword ref="databasemanager.html#serviceAdded">serviceAdded</keyword>
+        <keyword ref="databasemanager.html#serviceRemoved">serviceRemoved</keyword>
+        <keyword ref="databasemanager.html#setChangeNotificationsEnabled">setChangeNotificationsEnabled</keyword>
+        <keyword ref="databasemanager.html#setInterfaceDefault">setInterfaceDefault</keyword>
+        <keyword ref="databasemanager.html#unregisterService">unregisterService</keyword>
+        <section ref="databasemanager-members.html" title="List of all members"/>
+    </section>
     <section ref="qcontactdetaildefinition-field.html" title="Field Class Reference">
         <keyword ref="qcontactdetaildefinition-field.html">Field</keyword>
         <keyword ref="qcontactdetaildefinition-field.html#operator-not-eq">operator!=</keyword>
@@ -2564,6 +2579,9 @@
     </section>
     <section ref="service-frameworks.html" title="Qt Service Framework">
         <keyword ref="service-frameworks.html">Qt Service Framework</keyword>
+    </section>
+    <section ref="servicefw.html" title="Service Frameworks Classes">
+        <keyword ref="servicefw.html">Service Frameworks Classes</keyword>
     </section>
     <section ref="systeminfo.html" title="System Information">
         <keyword ref="systeminfo.html">System Information</keyword>

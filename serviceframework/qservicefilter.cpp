@@ -58,6 +58,7 @@ public:
 
 /*!
     \class QServiceFilter
+    \ingroup servicefw
     \brief The QServiceFilter class defines criteria for defining a sub-set of 
     all available services.
 
@@ -122,6 +123,8 @@ QServiceFilter::QServiceFilter(const QServiceFilter& other)
 }
 
 /*!
+    \fn  QServiceFilter::QServiceFilter(const QString& interfaceName, const QString& version, QServiceFilter::VersionMatchRule rule)
+    
     Creates a new filter object that matches all service
     implementations implementing \a interfaceName that match the specified
     \a version using the given \a rule.
@@ -145,6 +148,8 @@ QServiceFilter::~QServiceFilter()
 }
 
 /*!
+    \fn  QServiceFilter& QServiceFilter::operator=(const QServiceFilter& other)
+    
     Copies the content of the QServiceFilter object contained in 
     \a other into this one.
 */
@@ -163,6 +168,8 @@ QServiceFilter& QServiceFilter::operator=(const QServiceFilter& other)
 }
 
 /*!
+    \fn  void QServiceFilter::setServiceName(const QString& serviceName)
+    
     The filter only matches implementations which are provided by the service
     specified by \a serviceName.
 
@@ -174,6 +181,8 @@ void QServiceFilter::setServiceName(const QString& serviceName)
 }
 
 /*!
+    \fn  void QServiceFilter::setInterface(const QString &interfaceName, const QString& version, QServiceFilter::VersionMatchRule rule)
+    
     Sets the filter to match any interface implementation that implements
     \a interfaceName with version \a version. The version is matched
     according to the given \a rule. If \a version is not set, the filter matches any version of the
@@ -237,6 +246,8 @@ void QServiceFilter::setInterface(const QString &interfaceName, const QString& v
 }
 
 /*!
+    \fn  QString QServiceFilter::serviceName() const
+    
     Returns the service name for this filter.
 
     \sa setServiceName()
@@ -247,6 +258,8 @@ QString QServiceFilter::serviceName() const
 }
 
 /*!
+    \fn  QString QServiceFilter::interfaceName() const
+    
     Returns the interface name for this filter.
 
     \sa setInterface()
@@ -257,6 +270,8 @@ QString QServiceFilter::interfaceName() const
 }
 
 /*!
+    \fn  int QServiceFilter::interfaceMajorVersion() const
+    
     Returns the major interface version for this filter.
 
     \sa setInterface()
@@ -267,6 +282,8 @@ int QServiceFilter::interfaceMajorVersion() const
 }
 
 /*!
+    \fn  int QServiceFilter::interfaceMinorVersion() const
+    
     Returns the minor interface version for this filter.
 
     \sa setInterface()
@@ -277,6 +294,8 @@ int QServiceFilter::interfaceMinorVersion() const
 }
 
 /*!
+    \fn  void QServiceFilter::setCustomProperty(const QString& key, const QString& value)
+    
     The filter only matches implementations which have the custom property
     \a key with the given \a value. Such constraints are specified via the 
     \i{<customproperty>} tag within the service xml.
@@ -289,6 +308,8 @@ void QServiceFilter::setCustomProperty(const QString& key, const QString& value)
 }
 
 /*!
+    \fn  QString QServiceFilter::customProperty(const QString& key) const
+    
     Returns the value for the custom property \a key; otherwise
     returns a null string.
 
@@ -300,6 +321,8 @@ QString QServiceFilter::customProperty(const QString& key) const
 }
 
 /*!
+    \fn  void QServiceFilter::removeCustomProperty(const QString &key)
+    
     Removes the custom property \a key from the filter's set of constraints
 
     \sa clearCustomProperties(), setCustomProperty()
@@ -310,6 +333,8 @@ void QServiceFilter::removeCustomProperty(const QString &key)
 }
 
 /*!
+    \fn  void QServiceFilter::clearCustomProperties()
+    
     Clears all custom properties from the filter's set of constraints
 
     \sa removeCustomProperty()
@@ -320,6 +345,8 @@ void QServiceFilter::clearCustomProperties()
 }
 
 /*!
+    \fn  QServiceFilter::VersionMatchRule QServiceFilter::versionMatchRule() const
+    
     Returns the version match rule for this filter.
 
     \sa setInterface()
@@ -330,6 +357,8 @@ QServiceFilter::VersionMatchRule QServiceFilter::versionMatchRule() const
 }
 
 /*!
+    \fn  QList<QString> QServiceFilter::customKeys() const
+    
     Returns the list of custom keys which have been added to the filter.
 */
 QList<QString> QServiceFilter::customKeys() const
@@ -338,6 +367,8 @@ QList<QString> QServiceFilter::customKeys() const
 }
 
 /*!
+    \fn  void QServiceFilter::setCapabilities(QServiceFilter::CapabilityMatchRule rule, const QStringList& capabilities )
+    
     Sets the list of \a capabilities which are used to constrain
     searches for services. The capabilities are matched according
     to the given \a rule.
@@ -351,6 +382,8 @@ void QServiceFilter::setCapabilities(QServiceFilter::CapabilityMatchRule rule, c
 }
 
 /*!
+    \fn  QStringList QServiceFilter::capabilities() const
+    
     Returns the list of capabilities which are used to limit services searches.
 
     The filter matches any services that requires the given or less

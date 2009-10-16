@@ -58,6 +58,8 @@
 #include <QDBusPendingCallWatcher>
 #include <qnmdbushelper_p.h>
 
+QT_BEGIN_NAMESPACE
+
 typedef QMap< QString, QMap<QString,QVariant> > QNmSettingsMap;
 Q_DECLARE_METATYPE(QNmSettingsMap)
 typedef QList<quint32> ServerThing;
@@ -381,5 +383,7 @@ public:
 	QNetworkManagerIp4ConfigPrivate *d;    
 };
 ////
+
+QT_END_NAMESPACE
 
 #endif //QNETWORKMANAGERSERVICE_H

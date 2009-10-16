@@ -268,7 +268,7 @@ void tst_QAudioSource::testAudioSource()
 {
     audiosource = new QAudioSource(0, mockAudioSourceService);
 
-    QCOMPARE(audiosource->service(), mockAudioSourceService);
+    QCOMPARE(audiosource->service(), (QAbstractMediaService*)mockAudioSourceService);
 
     QVERIFY(audiosource->isValid());
 }

@@ -5,6 +5,9 @@
 ######################################################################
 
 
+# For symbian, we are not attempting to freeze APIs yet.
+symbian:MMP_RULES += "EXPORTUNFROZEN"
+
 CONFIG(debug, debug|release) {
     WAS_IN_DEBUG=debug
 } else {

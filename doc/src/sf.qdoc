@@ -39,6 +39,15 @@
 **
 ****************************************************************************/
 
+/*!
+    \group servicefw
+    \title Service Frameworks Classes
+
+    A set of APIs to that allows clients to discover and instantiate
+arbitrary services.
+
+*/
+
 
 /*!
 \page service-frameworks.html
@@ -406,22 +415,13 @@ way for the new service implementation.
 \section1 Examples
 
 \list
-    \o Service Framework
-    \list
-        \o \l{File Manager Plugin Example}
-        \o \l{Bluetooth Transfer Plugin Example}
-        \o \l{Service Browser Example}
-    \endlist
-    \o Bearer Management
-    \list
-        \o \l{bearercloud}{Bearer Cloud}
-        \o \l{bearermonitor}{Bearer Monitor}
-    \endlist
-    \o Publish and Subscribe
-    \list
-        \o \l{publish-subscribe}{Publish and Subscribe}
-        \o \l{battery-charge}{Accessing Publish and Subscribe from QML}
-    \endlist
+    \o \l{File Manager Plugin Example}
+    \o \l{Bluetooth Transfer Plugin Example}
+    \o \l{Service Browser Example}
 \endlist
+
+
+\section1 Main Classes
+\annotatedlist servicefw
 
 */

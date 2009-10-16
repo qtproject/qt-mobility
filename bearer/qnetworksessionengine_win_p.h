@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Nokia Corporation (qt-info@nokia.com)
+** Contact:  Nokia Corporation (qt-info@nokia.com)**
 **
 ** This file is part of the Qt Mobility Components.
 **
@@ -18,7 +18,7 @@
 ** Foundation and appearing in the file LICENSE.LGPL included in the
 ** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** will be met:  http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain
 ** additional rights. These rights are described in the Nokia Qt LGPL
@@ -30,17 +30,26 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QApplication>
 
-#include "bearermonitor.h"
+#ifndef QNETWORKSESSIONENGINE_WIN_P_H
+#define QNETWORKSESSIONENGINE_WIN_P_H
 
-int main(int argc, char *argv[])
-{
-    QApplication app(argc, argv);
+#ifdef Q_OS_WIN
+enum NDIS_MEDIUM {
+    NdisMedium802_3 = 0,
+};
 
-    BearerMonitor monitor;
-    monitor.show();
+enum NDIS_PHYSICAL_MEDIUM {
+    NdisPhysicalMediumWirelessLan = 1,
+    NdisPhysicalMediumBluetooth = 10,
+    NdisPhysicalMediumWiMax = 12,
+};
 
-    return app.exec();
-}
+#define OID_GEN_MEDIA_SUPPORTED 0x00010103
+#define OID_GEN_PHYSICAL_MEDIUM 0x00010202
 
+#define IOCTL_NDIS_QUERY_GLOBAL_STATS \
+    CTL_CODE(FILE_DEVICE_PHYSICAL_NETCARD, 0, METHOD_OUT_DIRECT, FILE_ANY_ACCESS)
+#endif
+
+#endif // QNETWORKSESSIONENGINE_WIN_P_H
