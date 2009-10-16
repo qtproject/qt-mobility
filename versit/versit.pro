@@ -36,7 +36,7 @@ HEADERS += \
     $$PUBLIC_HEADERS \
     $$PRIVATE_HEADERS
 
-LIBS += -lQtContacts
+qtAddLibrary(QtContacts)
 
 symbian { 
     TARGET.EPOCALLOWDLLDATA = 1

@@ -43,7 +43,7 @@ SOURCES += main.cpp \
         ../../qversitcontactconverter.cpp \
     ut_qversitcontactconverter.cpp
 
-LIBS += -lQtContacts
+qtAddLibrary(QtContacts)
 
 symbian: { 
     TARGET.CAPABILITY = ALL \
