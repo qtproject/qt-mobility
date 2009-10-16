@@ -28,13 +28,20 @@ symbian:SUBDIRS += qgeopositioninfosource_s60
 SUBDIRS += qvaluespace \                           #Publish and Subscribe
            qvaluespaceprovider \
            qvaluespacesubscriber \
-           qmallocpool \
-           qpacket \
-           qpacketprotocol
+	   qcrmlparser
 
-unix:!symbian:SUBDIRS += \
-                qsystemreadwritelock \
-                qsystemreadwritelock_oop
+unix|win32 {
+    !symbian:!maemo: SUBDIRS+= \
+        qsystemreadwritelock \
+        qsystemreadwritelock_oop
+}
+
+unix:!symbian:!maemo: {
+    SUBDIRS+= \
+           qpacket \
+           qmallocpool \
+           qpacketprotocol
+}
 
 !symbian:!wince*:SUBDIRS += qsysteminfo \                    #SystemInformation
           qsystemdeviceinfo \
@@ -76,4 +83,7 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
         qmessagestore \
         qmessagestorekeys \
         qmessage
+
 }
+
+

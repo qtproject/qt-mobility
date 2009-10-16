@@ -30,23 +30,24 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "bearerdialog.h"
+#include "bearermonitor.h"
 #include "sessionwidget.h"
 
 #include <QDebug>
-
 #ifdef Q_OS_WIN
 #include <winsock2.h>
 #undef interface
 #endif
 
-BearerDialog::BearerDialog(QWidget *parent)
-:   QDialog(parent)
+BearerMonitor::BearerMonitor(QWidget *parent)
+:   QWidget(parent)
 {
     setupUi(this);
     delete tabWidget->currentWidget();
     sessionGroup->hide();
-
+#if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE)	
+    setWindowState(Qt::WindowMaximized);
+#endif
     updateConfigurations();
 
     onlineStateChanged(!manager.allConfigurations(QNetworkConfiguration::Active).isEmpty());
@@ -93,7 +94,7 @@ BearerDialog::BearerDialog(QWidget *parent)
             this, SLOT(performScan()));
 }
 
-BearerDialog::~BearerDialog()
+BearerMonitor::~BearerMonitor()
 {
 }
 
@@ -107,7 +108,7 @@ static void updateItem(QTreeWidgetItem *item, const QNetworkConfiguration &confi
     item->setFont(0, font);
 }
 
-void BearerDialog::configurationAdded(const QNetworkConfiguration &config, QTreeWidgetItem *parent)
+void BearerMonitor::configurationAdded(const QNetworkConfiguration &config, QTreeWidgetItem *parent)
 {
     QTreeWidgetItem *item = new QTreeWidgetItem;
     updateItem(item, config);
@@ -123,7 +124,7 @@ void BearerDialog::configurationAdded(const QNetworkConfiguration &config, QTree
     }
 }
 
-void BearerDialog::configurationRemoved(const QNetworkConfiguration &config)
+void BearerMonitor::configurationRemoved(const QNetworkConfiguration &config)
 {
     for (int i = 0; i < treeWidget->topLevelItemCount(); ++i) {
         QTreeWidgetItem *item = treeWidget->topLevelItem(i);
@@ -135,7 +136,7 @@ void BearerDialog::configurationRemoved(const QNetworkConfiguration &config)
     }
 }
 
-void BearerDialog::configurationChanged(const QNetworkConfiguration &config)
+void BearerMonitor::configurationChanged(const QNetworkConfiguration &config)
 {
     for (int i = 0; i < treeWidget->topLevelItemCount(); ++i) {
         QTreeWidgetItem *item = treeWidget->topLevelItem(i);
@@ -154,7 +155,7 @@ void BearerDialog::configurationChanged(const QNetworkConfiguration &config)
     }
 }
 
-void BearerDialog::updateSnapConfiguration(QTreeWidgetItem *parent, const QNetworkConfiguration &snap)
+void BearerMonitor::updateSnapConfiguration(QTreeWidgetItem *parent, const QNetworkConfiguration &snap)
 {
     QMap<QString, QTreeWidgetItem *> itemMap;
     for (int i = 0; i < parent->childCount(); ++i) {
@@ -184,7 +185,7 @@ void BearerDialog::updateSnapConfiguration(QTreeWidgetItem *parent, const QNetwo
     itemMap.clear();
 }
 
-void BearerDialog::updateConfigurations()
+void BearerMonitor::updateConfigurations()
 {
     progressBar->hide();
     scanButton->show();
@@ -216,7 +217,7 @@ void BearerDialog::updateConfigurations()
         delete itemMap.value(id);
 }
 
-void BearerDialog::onlineStateChanged(bool isOnline)
+void BearerMonitor::onlineStateChanged(bool isOnline)
 {
     if (isOnline)
         onlineState->setText(tr("Online"));
@@ -225,7 +226,7 @@ void BearerDialog::onlineStateChanged(bool isOnline)
 }
 
 #ifdef Q_OS_WIN
-void BearerDialog::registerNetwork()
+void BearerMonitor::registerNetwork()
 {
     QTreeWidgetItem *item = treeWidget->currentItem();
 
@@ -246,7 +247,7 @@ void BearerDialog::registerNetwork()
         qDebug() << "WSASetService(RNRSERVICE_REGISTER) returned" << WSAGetLastError();
 }
 
-void BearerDialog::unregisterNetwork()
+void BearerMonitor::unregisterNetwork()
 {
     QTreeWidgetItem *item = treeWidget->currentItem();
 
@@ -268,7 +269,7 @@ void BearerDialog::unregisterNetwork()
 }
 #endif
 
-void BearerDialog::showConfigurationFor(QTreeWidgetItem *item)
+void BearerMonitor::showConfigurationFor(QTreeWidgetItem *item)
 {
     QString identifier;
 
@@ -337,7 +338,7 @@ void BearerDialog::showConfigurationFor(QTreeWidgetItem *item)
     configurationName->setText(conf.name());
 }
 
-void BearerDialog::createSessionFor(QTreeWidgetItem *item)
+void BearerMonitor::createSessionFor(QTreeWidgetItem *item)
 {
     const QString identifier = item->data(0, Qt::UserRole).toString();
 
@@ -352,14 +353,14 @@ void BearerDialog::createSessionFor(QTreeWidgetItem *item)
     sessionWidgets.append(session);
 }
 
-void BearerDialog::createNewSession()
+void BearerMonitor::createNewSession()
 {
     QTreeWidgetItem *item = treeWidget->currentItem();
 
     createSessionFor(item);
 }
 
-void BearerDialog::deleteSession()
+void BearerMonitor::deleteSession()
 {
     SessionWidget *session = qobject_cast<SessionWidget *>(tabWidget->currentWidget());
     if (session) {
@@ -372,10 +373,9 @@ void BearerDialog::deleteSession()
     }
 }
 
-void BearerDialog::performScan()
+void BearerMonitor::performScan()
 {
     scanButton->hide();
     progressBar->show();
     manager.updateConfigurations();
 }
-

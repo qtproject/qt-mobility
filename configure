@@ -12,6 +12,7 @@ BUILD_UNITTESTS=
 BUILD_EXAMPLES=
 RELEASEMODE=
 CONTACTS_PLUGIN=
+LINUX_TARGET=
 
 usage() 
 {
@@ -38,6 +39,8 @@ usage()
     echo "                    Compile the specified contacts API backend. Not selecting any backend"
     echo "                    will result in default selection for build platform"
     echo "                    options: symbian, wince, kabc, memory"
+    echo "-maemo ............ Build Qt Mobility for Maemo."
+    echo "                    (default: Desktop Linux)"
     
     rm config.in
     exit    
@@ -82,6 +85,9 @@ while [ "$#" -gt 0 ]; do
             CONTACTS_PLUGIN="$CONTACTS_PLUGIN $2"
             shift
             ;;
+        -maemo)
+            LINUX_TARGET=maemo 
+            ;;
         *)
             echo "Unknown option: $1"
             usage
@@ -95,6 +101,11 @@ if [ -z "$RELEASEMODE" ]; then
 fi
 echo "CONFIG += $RELEASEMODE" >> config.in
 echo "CONTACTS_BACKENDS = $CONTACTS_PLUGIN" >> config.in
+
+#do we build for Maemo?
+if [ -n "$LINUX_TARGET" ]; then
+    echo "CONFIG+=maemo" >> config.in
+fi
 
 #process PREFIX
 if [ -d "$QT_MOBILITY_PREFIX" ]; then

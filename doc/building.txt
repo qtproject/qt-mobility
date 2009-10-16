@@ -1,4 +1,4 @@
-The Bearer Management API requires at least Qt 4.5.
+The Bearer Management API requires at least Qt 4.6.
 
 Build instructions:
 

@@ -48,7 +48,7 @@ symbian: {
             -lefsrv \
             -lnetmeta
 
-    deploy.path = /
+    deploy.path = $${EPOCROOT}
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
     DEPLOYMENT += exportheaders
@@ -86,7 +86,8 @@ symbian: {
     }
 
     win32: {
-        HEADERS += qnlaengine_win_p.h
+        HEADERS += qnlaengine_win_p.h \
+                   qnetworksessionengine_win_p.h
 
         !wince*:HEADERS += qnativewifiengine_win_p.h
 

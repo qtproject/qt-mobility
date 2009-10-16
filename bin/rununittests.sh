@@ -49,6 +49,7 @@ LD_LIBRARY_PATH=$shell_path/../lib:$LD_LIBRARY_PATH
 ./tst_qvaluespacesubscriber_oop
 ./tst_qsystemreadwritelock
 ./tst_qsystemreadwritelock_oop
+./tst_qcrmlparser
 
 #QSystemInformation
 ./tst_qsystemdeviceinfo

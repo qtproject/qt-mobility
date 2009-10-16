@@ -30,15 +30,13 @@ tst_qlocationutils.exe
 tst_qnmeapositioninfosource.exe
 
 ::Publish and Subscribe
-tst_qmallocpool.exe
-tst_qpacket.exe
-tst_qpacketprotocol.exe
 tst_qvaluespace.exe
 tst_qvaluespaceprovider.exe
 tst_qvaluespacesubscriber.exe
 tst_qvaluespacesubscriber_oop.exe
 tst_qsystemreadwritelock.exe
 tst_qsystemreadwritelock_oop.exe
+tst_qcrmlparser.exe
 
 ::QSystemInformation
 tst_qsystemdeviceinfo.exe

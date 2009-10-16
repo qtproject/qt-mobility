@@ -18,3 +18,9 @@ include(../examples.pri)
 qtAddLibrary(QtBearer)
 
 CONFIG += console
+
+symbian {
+    BEARERLIB.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/QtBearer.dll
+    BEARERLIB.path = .
+    DEPLOYMENT += BEARERLIB
+}

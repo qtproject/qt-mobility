@@ -80,7 +80,7 @@ void tst_QMediaPlaylistNavigator::setPlaylist()
     QCOMPARE(playlist.size(), 0);
 
     navigator.setPlaylist(&playlist);
-    QCOMPARE(navigator.playlist(), &playlist);
+    QCOMPARE(navigator.playlist(), (QMediaPlaylistProvider*)&playlist);
     QCOMPARE(navigator.playlist()->size(), 0);
     QVERIFY(!navigator.playlist()->isReadOnly() );
 }
