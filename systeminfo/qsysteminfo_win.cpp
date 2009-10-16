@@ -63,21 +63,12 @@
 #include <locale.h>
 
 #if !defined( Q_CC_MINGW)
-#include "qwmihelper_win_p.h"
-
 #ifndef Q_OS_WINCE
-//#include <Bthsdpdef.h>
-//#include <BluetoothAPIs.h>
+#include "qwmihelper_win_p.h"
 #include <Wlanapi.h>
 #include <Dshow.h>
-
 #endif
 #endif
-
-#include <Iphlpapi.h>
-
-#include <Wtsapi32.h>
-
 
 #ifdef Q_OS_WINCE
 #include <af_irda.h>
