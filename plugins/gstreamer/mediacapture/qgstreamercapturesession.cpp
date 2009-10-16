@@ -240,7 +240,55 @@ GstElement *QGstreamerCaptureSession::buildVideoPreview()
     GstElement *previewElement = 0;
 
     if (m_videoPreviewFactory) {
-        previewElement = m_videoPreviewFactory->buildElement();
+        GstElement *bin = gst_bin_new("video-preview-bin");
+        GstElement *colorspace = gst_element_factory_make("ffmpegcolorspace", "ffmpegcolorspace-preview");
+        GstElement *capsFilter = gst_element_factory_make("capsfilter", "capsfilter-video-preview");
+        GstElement *preview = m_videoPreviewFactory->buildElement();
+
+        gst_bin_add_many(GST_BIN(bin), colorspace, capsFilter, preview,  NULL);
+        gst_element_link(colorspace,capsFilter);
+        gst_element_link(capsFilter,preview);
+
+        if (!m_videoEncodeControl->resolution().isEmpty() || m_videoEncodeControl->frameRate() > 0.001) {
+            QSize resolution = m_videoEncodeControl->resolution();
+            qreal frameRate = m_videoEncodeControl->frameRate();
+
+            GstCaps *caps = gst_caps_new_empty();
+            QStringList structureTypes;
+            structureTypes << "video/x-raw-yuv" << "video/x-raw-rgb";
+
+            foreach(const QString &structureType, structureTypes) {
+                GstStructure *structure = gst_structure_new(structureType.toAscii().constData(), NULL);
+
+                if (!resolution.isEmpty()) {
+                    gst_structure_set(structure, "width", G_TYPE_INT, resolution.width(), NULL);
+                    gst_structure_set(structure, "height", G_TYPE_INT, resolution.height(), NULL);
+                }
+
+                if (frameRate > 0.001) {
+                    QPair<int,int> rate = m_videoEncodeControl->rateAsRational();
+
+                    //qDebug() << "frame rate:" << num << denum;
+
+                    gst_structure_set(structure, "framerate", GST_TYPE_FRACTION, rate.first, rate.second, NULL);
+                }
+
+                gst_caps_append_structure(caps,structure);
+            }
+
+            qDebug() << "set video preview caps filter:" << gst_caps_to_string(caps);
+
+            g_object_set(G_OBJECT(capsFilter), "caps", caps, NULL);
+
+        }
+
+        // add ghostpads
+        GstPad *pad = gst_element_get_static_pad(colorspace, "sink");
+        Q_ASSERT(pad);
+        gst_element_add_pad(GST_ELEMENT(bin), gst_ghost_pad_new("videosink", pad));
+        gst_object_unref(GST_OBJECT(pad));
+
+        previewElement = bin;
     } else {
 #if 1
         previewElement = gst_element_factory_make("fakesink", "video-preview");

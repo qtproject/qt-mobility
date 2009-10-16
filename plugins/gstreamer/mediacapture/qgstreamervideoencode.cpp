@@ -337,31 +337,11 @@ GstElement *QGstreamerVideoEncode::createEncoder()
             }
 
             if (m_frameRate > 0.001) {
-                //convert to rational number
-                QList<int> denumCandidates;
-                denumCandidates << 1 << 2 << 3 << 5 << 10 << 1001 << 1000;
-
-                qreal error = 1.0;
-                int num = 1;
-                int denum = 1;
-
-                foreach (int curDenum, denumCandidates) {
-                    int curNum = qRound(m_frameRate*curDenum);
-                    qreal curError = qAbs(qreal(curNum)/curDenum - m_frameRate);
-
-                    if (curError < error) {
-                        error = curError;
-                        num = curNum;
-                        denum = curDenum;
-                    }
-
-                    if (curError < 1e-8)
-                        break;
-                }
+                QPair<int,int> rate = rateAsRational();
 
                 //qDebug() << "frame rate:" << num << denum;
 
-                gst_structure_set(structure, "framerate", GST_TYPE_FRACTION, num, denum, NULL);
+                gst_structure_set(structure, "framerate", GST_TYPE_FRACTION, rate.first, rate.second, NULL);
             }
 
             gst_caps_append_structure(caps,structure);
@@ -373,4 +353,35 @@ GstElement *QGstreamerVideoEncode::createEncoder()
     }
 
     return GST_ELEMENT(encoderBin);
+}
+
+QPair<int,int> QGstreamerVideoEncode::rateAsRational() const
+{
+    if (m_frameRate > 0.001) {
+        //convert to rational number
+        QList<int> denumCandidates;
+        denumCandidates << 1 << 2 << 3 << 5 << 10 << 1001 << 1000;
+
+        qreal error = 1.0;
+        int num = 1;
+        int denum = 1;
+
+        foreach (int curDenum, denumCandidates) {
+            int curNum = qRound(m_frameRate*curDenum);
+            qreal curError = qAbs(qreal(curNum)/curDenum - m_frameRate);
+
+            if (curError < error) {
+                error = curError;
+                num = curNum;
+                denum = curDenum;
+            }
+
+            if (curError < 1e-8)
+                break;
+        }
+
+        return QPair<int,int>(num,denum);
+    }
+
+    return QPair<int,int>();
 }

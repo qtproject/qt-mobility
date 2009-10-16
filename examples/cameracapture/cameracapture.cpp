@@ -125,6 +125,7 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
 
     videoWidget = new QVideoWidget(mediaRecorder);
     ui->stackedWidget->addWidget(videoWidget);
+    ui->previewCamera->setChecked(false);
 }
 
 
