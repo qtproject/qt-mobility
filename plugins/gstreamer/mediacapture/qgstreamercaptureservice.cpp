@@ -53,6 +53,8 @@
 
 #include "qgstreamervideowidget.h"
 
+#include <multimedia/qmediaserviceprovider.h>
+
 
 class QGstreamerVideoRendererWrapper : public QGstreamerElementFactory
 {
@@ -120,13 +122,29 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
         gst_init(NULL, NULL);
     }
 
-    if (service == QLatin1String("audiosource")) {
+    m_captureSession = 0;
+    m_cameraControl = 0;
+    m_metaDataControl = 0;
+
+    m_audioInputDevice = 0;
+    m_videoInputDevice = 0;
+
+    m_videoOutput = 0;
+#ifndef QT_NO_MULTIMEDIA
+    m_videoRenderer = 0;
+    m_videoRendererFactory = 0;
+    m_videoWindow = 0;
+    m_videoWindowFactory = 0;
+#endif
+    m_videoWidgetControl = 0;
+    m_videoWidgetFactory = 0;
+
+
+    if (service == Q_MEDIASERVICE_AUDIOSOURCE) {
         m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::Audio, this);
-        m_cameraControl = 0;
-        m_videoInputDevice = 0;
     }
 
-   if (service == QLatin1String("camera")) {
+   if (service == Q_MEDIASERVICE_CAMERA) {
         m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::AudioAndVideo, this);
         m_cameraControl = new QGstreamerCameraControl(m_captureSession);
         m_captureSession->setVideoInput(m_cameraControl);
@@ -162,7 +180,7 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
     m_audioInputDevice = new QGstreamerAudioInputDeviceControl(this);
     connect(m_audioInputDevice, SIGNAL(selectedDeviceChanged(QString)), m_captureSession, SLOT(setCaptureDevice(QString)));
 
-    if (m_audioInputDevice->deviceCount())
+    if (m_captureSession && m_audioInputDevice->deviceCount())
         m_captureSession->setCaptureDevice(m_audioInputDevice->name(m_audioInputDevice->selectedDevice()));
 
     m_metaDataControl = new QGstreamerCaptureMetaDataControl(this);

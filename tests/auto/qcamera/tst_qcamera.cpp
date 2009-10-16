@@ -589,14 +589,14 @@ void tst_QCamera::cleanupTestCase()
 
 void tst_QCamera::testAvailableDevices()
 {
-    int deviceCount = QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray("camera")).count();
+    int deviceCount = QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray(Q_MEDIASERVICE_CAMERA)).count();
 
     QVERIFY(QCamera::availableDevices().count() == deviceCount);
 }
 
 void tst_QCamera::testDeviceDescription()
 {
-    int deviceCount = QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray("camera")).count();
+    int deviceCount = QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray(Q_MEDIASERVICE_CAMERA)).count();
 
     if (deviceCount == 0)
         QVERIFY(QCamera::deviceDescription(QByteArray("random")).isNull());
@@ -608,7 +608,7 @@ void tst_QCamera::testDeviceDescription()
 
 void tst_QCamera::testCtorWithDevice()
 {
-    int deviceCount = QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray("camera")).count();
+    int deviceCount = QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray(Q_MEDIASERVICE_CAMERA)).count();
     QCamera *camera = 0;
 
     if (deviceCount == 0) {

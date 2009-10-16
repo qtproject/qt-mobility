@@ -106,7 +106,7 @@ void tst_QMediaServiceProvider::testCanPlay()
 void tst_QMediaServiceProvider::testDevices()
 {
     MockMediaServiceProvider mockProvider;
-    QVERIFY(mockProvider.devices(QByteArray("camera")).isEmpty());
+    QVERIFY(mockProvider.devices(QByteArray(Q_MEDIASERVICE_CAMERA)).isEmpty());
 
     QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider();
 
@@ -115,7 +115,7 @@ void tst_QMediaServiceProvider::testDevices()
 
     //how to test this properly?
     //it depends on plugins installed
-    //QVERIFY(!provider->devices(QByteArray("camera")).isEmpty());
+    //QVERIFY(!provider->devices(QByteArray(Q_MEDIASERVICE_CAMERA)).isEmpty());
 
     QVERIFY(provider->devices(QByteArray("non existing service")).isEmpty());
 }
