@@ -335,6 +335,8 @@ QSystemInfo::~QSystemInfo()
 }
 
 /*!
+  \property QSystemInfo::currentLanguage
+  \brief The current Language
     Returns the current language in 2 letter ISO 639-1 format.
  */
 QString QSystemInfo::currentLanguage()
@@ -342,6 +344,9 @@ QString QSystemInfo::currentLanguage()
     return sysinfoPrivate()->currentLanguage();
 }
 /*!
+  \property  QSystemInfo::availableLanguages
+  \brief List of available languages.
+
     Returns a QStringList of available Qt language translations in 2 letter ISO 639-1 format.
     If the Qt translations cannot be found, returns the current system language.
   */
@@ -366,6 +371,9 @@ QString QSystemInfo::version(QSystemInfo::Version type, const QString &parameter
 }
 
 /*!
+  \property  QSystemInfo::currentCountryCode
+  \brief The current locale country code.
+
     Returns the 2 letter ISO 3166-1 for the current country code.
 */
 QString QSystemInfo::currentCountryCode()
@@ -437,6 +445,8 @@ int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mo
 }
 
 /*!
+  \property QSystemNetworkInfo::cellId
+  \brief The devices Cell ID
     Returns the Cell ID of the connected tower or based station.
 */
 int QSystemNetworkInfo::cellId()
@@ -445,6 +455,9 @@ int QSystemNetworkInfo::cellId()
 }
 
 /*!
+  \property QSystemNetworkInfo::locationAreaCode
+  \brief The LAC.
+
     Returns the Location Area Code. In the case of none such as a Desktop, an empty string.
 */
 int QSystemNetworkInfo::locationAreaCode()
@@ -453,6 +466,9 @@ int QSystemNetworkInfo::locationAreaCode()
 }
 
  /*!
+   \property QSystemNetworkInfo::currentMobileCountryCode
+   \brief The current MCC.
+
     Returns the current Mobile Country Code. In the case of none such as a Desktop, an empty string.
 /*/
 QString QSystemNetworkInfo::currentMobileCountryCode()
@@ -461,6 +477,9 @@ QString QSystemNetworkInfo::currentMobileCountryCode()
 }
 
 /*!
+  \property QSystemNetworkInfo::currentMobileNetworkCode
+  \brief The current MNC.
+
     Returns the current Mobile Network Code. In the case of none such as a Desktop, an empty string.
 */
 QString QSystemNetworkInfo::currentMobileNetworkCode()
@@ -469,6 +488,9 @@ QString QSystemNetworkInfo::currentMobileNetworkCode()
 }
 
 /*!
+  \property QSystemNetworkInfo::homeMobileCountryCode
+  \brief The home MNC.
+
     Returns the home Mobile Network Code. In the case of none such as a Desktop, an empty string.
 */
 QString QSystemNetworkInfo::homeMobileCountryCode()
@@ -477,6 +499,9 @@ QString QSystemNetworkInfo::homeMobileCountryCode()
 }
 
 /*!
+  \property QSystemNetworkInfo::homeMobileNetworkCode
+  \brief The home MCC.
+
     Returns the home Mobile Country Code. In the case of none such as a Desktop, an empty string.
 */
 QString QSystemNetworkInfo::homeMobileNetworkCode()
@@ -585,6 +610,9 @@ qlonglong QSystemStorageInfo::availableDiskSpace(const QString &volumeDrive)
 }
 
 /*!
+  \property QSystemStorageInfo::logicalDrives
+  \brief The logical drives.
+
     Returns a QStringList of volumes or partitions.
 */
 QStringList QSystemStorageInfo::logicalDrives()
@@ -635,13 +663,20 @@ QSystemDeviceInfo::~QSystemDeviceInfo()
 
 
 /*!
+  \property QSystemDeviceInfo::inputMethodType
+  \brief The supported inputmethods.
+
     Returns the QSystemDeviceInfo::InputMethodFlags InputMethodType that the system uses.
 */
 QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfo::inputMethodType()
 {
  return deviceInfoPrivate()->inputMethodType();
 }
+
 /*!
+  \property QSystemDeviceInfo::imei
+  \brief The IMEI.
+
     Returns the International Mobile Equipment Identity (IMEI), or a null QString in the case of none.
 */
 QString QSystemDeviceInfo::imei()
@@ -650,6 +685,9 @@ QString QSystemDeviceInfo::imei()
 }
 
 /*!
+  \property QSystemDeviceInfo::imsi
+  \brief The IMSI.
+
     Returns the International Mobile Subscriber Identity (IMSI), or a null QString in the case of none.
 */
 QString QSystemDeviceInfo::imsi()
@@ -658,6 +696,9 @@ QString QSystemDeviceInfo::imsi()
 }
 
 /*!
+  \property QSystemDeviceInfo::manufacturer
+  \brief The manufacture's name.
+
     Returns the name of the manufacturer of this device. In the case of desktops, the name of the vendor
     of the motherboard.
 */
@@ -667,6 +708,9 @@ QString QSystemDeviceInfo::manufacturer()
 }
 
 /*!
+  \property QSystemDeviceInfo::model
+  \brief The model name.
+
     Returns the model information of the device. In the case of desktops where no
     model information is present, the CPU architect, such as i686, and machine type, such as Server,
     Desktop or Laptop.
@@ -677,6 +721,9 @@ QString QSystemDeviceInfo::model()
 }
 
 /*!
+  \property QSystemDeviceInfo::productName
+  \brief The product name.
+
     Returns the product name of the device. In the case where no product information is available,
 
 */
@@ -685,6 +732,9 @@ QString QSystemDeviceInfo::productName()
     return deviceInfoPrivate()->productName();
 }
 /*!
+  \property  QSystemDeviceInfo::batteryLevel
+  \brief The battery level.
+
     Returns the battery charge level as percentage 1 - 100 scale.
 */
 int QSystemDeviceInfo::batteryLevel() const
@@ -693,6 +743,9 @@ int QSystemDeviceInfo::batteryLevel() const
 }
 
   /*!
+    \property QSystemDeviceInfo::batteryStatus
+    \brief The battery status.
+
     Returns the battery charge status.
 */
 QSystemDeviceInfo::BatteryStatus QSystemDeviceInfo::batteryStatus()
@@ -721,6 +774,9 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfo::simStatus()
     return deviceInfoPrivate()->simStatus();
 }
 /*!
+  \property QSystemDeviceInfo::isDeviceLocked
+  \brief Device lock.
+
   Returns true if the device is locked, otherwise false.
 */
 bool QSystemDeviceInfo::isDeviceLocked()
@@ -792,6 +848,9 @@ bool QSystemScreenSaver::setScreenSaverInhibit()
 }
 
 /*!
+  \property QSystemScreenSaver::screenSaverInhibited
+  \brief Screensaver inhibited.
+
    Returns true if the screensaver is inhibited, otherwise false.
 */
 bool QSystemScreenSaver::screenSaverInhibited()
@@ -800,6 +859,9 @@ bool QSystemScreenSaver::screenSaverInhibited()
 }
 
 /*!
+  \property QSystemScreenSaver::isScreenLockOn
+  \brief screen lock on.
+
     Returns whether the systems screen lock is turned on.
 */
 bool QSystemScreenSaver::isScreenLockOn()
