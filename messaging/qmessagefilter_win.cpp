@@ -1404,7 +1404,6 @@ QMessageFilter QMessageFilter::byStandardFolder(QMessage::StandardFolder folder,
         result.d_ptr->_standardFoldersInclude += folder;
     else
         result.d_ptr->_standardFoldersExclude += folder;
-    result.d_ptr->_valid = false; // TODO testing.
     return result;
 }
 
