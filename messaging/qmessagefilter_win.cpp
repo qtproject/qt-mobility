@@ -204,6 +204,12 @@ QList<QMessageFilter> QMessageFilterPrivate::subFilters(const QMessageFilter &fi
     return result;
 }
 
+bool QMessageFilterPrivate::matchesMessage(const QMessageFilter &filter, const QMessageId &id)
+{
+    Q_UNUSED(filter);
+    Q_UNUSED(id);
+    return true;
+}
 
 MapiRestriction::MapiRestriction(const QMessageFilter &filter)
     :_notRestriction(0),
@@ -1404,7 +1410,6 @@ QMessageFilter QMessageFilter::byStandardFolder(QMessage::StandardFolder folder,
         result.d_ptr->_standardFoldersInclude += folder;
     else
         result.d_ptr->_standardFoldersExclude += folder;
-    result.d_ptr->_valid = false; // TODO testing.
     return result;
 }
 
