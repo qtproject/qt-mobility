@@ -428,6 +428,11 @@ QContactLocalId QContactSymbianEngineData::simPhonebookGroupId() const
  */
 bool QContactSymbianEngineData::setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& qtError)
 {
+    if (contactId <= 0) {
+        qtError = QContactManager::BadArgumentError;
+        return false;
+    }
+
     TContactItemId id(contactId);
     CContactItem* symContact = 0;
     TRAPD(err,
@@ -449,6 +454,9 @@ QContactLocalId QContactSymbianEngineData::selfContactId(QContactManager::Error&
 {
    qtError = QContactManager::NoError;
    QContactLocalId id(m_contactDatabase->OwnCardId());
+   if (id < 0) {
+       qtError = QContactManager::DoesNotExistError;
+   }
    return id;
 }
 
