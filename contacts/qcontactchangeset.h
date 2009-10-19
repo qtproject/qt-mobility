@@ -57,6 +57,8 @@ public:
     QSet<QContactLocalId>& addedContacts();
     QSet<QContactLocalId>& changedContacts();
     QSet<QContactLocalId>& removedContacts();
+    QSet<QContactLocalId>& addedRelationshipsContacts();
+    QSet<QContactLocalId>& removedRelationshipsContacts();
 
     void clear();
 

@@ -107,7 +107,7 @@
  * As it is possible that other processes (or other devices) may
  * have added the contacts, the timing cannot be determined.
  *
- * The list of ids added is given by \a contactIds.  There may be one or more
+ * The list of ids of contacts added is given by \a contactIds.  There may be one or more
  * ids in the list.
  *
  * \sa dataChanged()
@@ -121,7 +121,7 @@
  * As it is possible that other processes (or other devices) may
  * have modified the contacts, the timing cannot be determined.
  *
- * The list of ids added is given by \a contactIds.  There may be one or more
+ * The list of ids of changed contacts is given by \a contactIds.  There may be one or more
  * ids in the list.
  *
  * \sa dataChanged()
@@ -135,7 +135,35 @@
  * As it is possible that other processes (or other devices) may
  * have removed the contacts, the timing cannot be determined.
  *
- * The list of ids added is given by \a contactIds.  There may be one or more
+ * The list of ids of removed contacts is given by \a contactIds.  There may be one or more
+ * ids in the list.
+ *
+ * \sa dataChanged()
+ */
+
+/*!
+ * \fn QContactManagerEngine::relationshipsAdded(const QList<QContactLocalId>& affectedContactIds);
+ *
+ * This signal is emitted some time after a set of contacts has been added to
+ * this engine where the \l dataChanged() signal was not emitted for those changes.
+ * As it is possible that other processes (or other devices) may
+ * have added the contacts, the timing cannot be determined.
+ *
+ * The list of ids of affected contacts is given by \a affectedContactIds.  There may be one or more
+ * ids in the list.
+ *
+ * \sa dataChanged()
+ */
+
+/*!
+ * \fn QContactManagerEngine::relationshipsRemoved(const QList<QContactLocalId>& affectedContactIds);
+ *
+ * This signal is emitted some time after a set of relationships has been removed from
+ * this engine where the \l dataChanged() signal was not emitted for those changes.
+ * As it is possible that other processes (or other devices) may
+ * have removed the relationships, the timing cannot be determined.
+ *
+ * The list of ids of affected contacts is given by \a affectedContactIds.  There may be one or more
  * ids in the list.
  *
  * \sa dataChanged()

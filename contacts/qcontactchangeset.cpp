@@ -125,6 +125,27 @@ QSet<QContactLocalId>& QContactChangeSet::removedContacts()
 }
 
 /*!
+<<<<<<< HEAD:contacts/qcontactchangeset.cpp
+=======
+ * Returns a reference to the set of ids of contacts which have been affected
+ * by the addition of relationships to the database.
+ */
+QSet<QContactLocalId>& QContactChangeSet::addedRelationshipsContacts()
+{
+    return d->m_addedRelationships;
+}
+
+/*!
+ * Returns a reference to the set of ids of contacts which have been affected
+ * by the removal of relationships from the database.
+ */
+QSet<QContactLocalId>& QContactChangeSet::removedRelationshipsContacts()
+{
+    return d->m_removedRelationships;
+}
+
+/*!
+>>>>>>> 27eb44991303e15ea41e25958733430ea5239661:contacts/qcontactchangeset.cpp
  * Clears all flags and sets of ids in this change set
  */
 void QContactChangeSet::clear()
@@ -152,5 +173,9 @@ void QContactChangeSet::emitSignals(QContactManagerEngine *engine)
             emit engine->contactsChanged(d->m_changedContacts.toList());
         if (!d->m_removedContacts.isEmpty())
             emit engine->contactsRemoved(d->m_removedContacts.toList());
+        if (!d->m_addedRelationships.isEmpty())
+            emit engine->relationshipsAdded(d->m_addedRelationships.toList());
+        if (!d->m_removedRelationships.isEmpty())
+            emit engine->relationshipsRemoved(d->m_removedRelationships.toList());
     }
 }

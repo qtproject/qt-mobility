@@ -63,7 +63,9 @@ public:
         m_dataChanged(other.m_dataChanged),
         m_addedContacts(other.m_addedContacts),
         m_changedContacts(other.m_changedContacts),
-        m_removedContacts(other.m_removedContacts)
+        m_removedContacts(other.m_removedContacts),
+        m_addedRelationships(other.m_addedRelationships),
+        m_removedRelationships(other.m_removedRelationships)
     {
     }
 
@@ -75,6 +77,8 @@ public:
     QSet<QContactLocalId> m_addedContacts;
     QSet<QContactLocalId> m_changedContacts;
     QSet<QContactLocalId> m_removedContacts;
+    QSet<QContactLocalId> m_addedRelationships;
+    QSet<QContactLocalId> m_removedRelationships;
 };
 
 #endif

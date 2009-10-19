@@ -419,8 +419,7 @@ QList<QContactRelationship> QContactMemoryEngine::relationships(const QString& r
     return retn;
 }
 
-/*! \reimp */
-bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
+bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, QContactChangeSet& changeSet, QContactManager::Error& error)
 {
     // Attempt to validate the relationship.
     // first, check that the source contact exists
@@ -459,6 +458,7 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
             d->m_relationships.removeAt(i);
             d->m_relationships.insert(i, *relationship);
             return true;
+            // TODO: set error to AlreadyExistsError and return false?
         }
     }
 
@@ -469,6 +469,8 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
     secondRelationships.append(*relationship);
     d->m_orderedRelationships.insert(relationship->first().localId(), firstRelationships);
     d->m_orderedRelationships.insert(relationship->second().localId(), secondRelationships);
+    changeSet.addedRelationshipsContacts().insert(relationship->first().localId());
+    changeSet.addedRelationshipsContacts().insert(relationship->second().localId());
 
     // finally, insert into our list of all relationships, and return.
     d->m_relationships.append(*relationship);
@@ -476,13 +478,23 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
 }
 
 /*! \reimp */
+bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
+{
+    QContactChangeSet changeSet;
+    bool retn = saveRelationship(relationship, changeSet, error);
+    changeSet.emitSignals(this);
+    return retn;
+}
+
+/*! \reimp */
 QList<QContactManager::Error> QContactMemoryEngine::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
     QContactManager::Error functionError;
+    QContactChangeSet changeSet;
     QList<QContactManager::Error> retn;
     for (int i = 0; i < relationships->size(); i++) {
         QContactRelationship curr = relationships->at(i);
-        saveRelationship(&curr, functionError);
+        saveRelationship(&curr, changeSet, functionError);
         retn.append(functionError);
 
         // and replace the current relationship with the updated version.
@@ -493,11 +505,11 @@ QList<QContactManager::Error> QContactMemoryEngine::saveRelationships(QList<QCon
             error = functionError;
     }
 
+    changeSet.emitSignals(this);
     return retn;
 }
 
-/*! \reimp */
-bool QContactMemoryEngine::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
+bool QContactMemoryEngine::removeRelationship(const QContactRelationship& relationship, QContactChangeSet& changeSet, QContactManager::Error& error)
 {
     // attempt to remove it from our list of relationships.
     if (!d->m_relationships.removeOne(relationship)) {
@@ -513,8 +525,20 @@ bool QContactMemoryEngine::removeRelationship(const QContactRelationship& relati
     d->m_orderedRelationships.insert(relationship.first().localId(), firstRelationships);
     d->m_orderedRelationships.insert(relationship.second().localId(), secondRelationships);
 
+    // set our changes, and return.
+    changeSet.removedRelationshipsContacts().insert(relationship.first().localId());
+    changeSet.removedRelationshipsContacts().insert(relationship.second().localId());
     error = QContactManager::NoError;
     return true;
+}
+
+/*! \reimp */
+bool QContactMemoryEngine::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
+{
+    QContactChangeSet changeSet;
+    bool retn = removeRelationship(relationship, changeSet, error);
+    changeSet.emitSignals(this);
+    return retn;
 }
 
 /*! \reimp */
