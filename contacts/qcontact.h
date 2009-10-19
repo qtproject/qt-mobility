@@ -140,7 +140,7 @@ public:
     QList<QContactRelationship> relationshipOrder() const;
 
     /* Actions available to be performed on this contact */
-    QStringList availableActions() const;
+    QList<QContactActionDescriptor> availableActions() const;
 
     /* Preferences (eg, set a particular detail preferred for the SMS action) */
     bool setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail);

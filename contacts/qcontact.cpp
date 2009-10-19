@@ -436,23 +436,19 @@ QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) con
     // ascertain which details are supported by any implementation of the given action
     QList<QContactDetail> retn;
     QList<QContactActionDescriptor> descriptors = QContactManagerData::actionDescriptors(actionName);
-    QList<QContactAction*> implementations;
-    for (int i = 0; i < descriptors.size(); i++)
-        implementations.append(QContactManagerData::action(descriptors.at(i)));
-
-    for (int i = 0; i < d->m_details.size(); i++) {
-        QContactDetail detail = d->m_details.at(i);
-        for (int j = 0; j < implementations.size(); j++) {
-            QContactAction* aptr = implementations.at(j);
-            if (aptr->supportsDetail(detail)) {
+    for (int i = 0; i < descriptors.size(); i++) {
+        QContactAction *currImpl = QContactManagerData::action(descriptors.at(i));
+        for (int i = 0; i < d->m_details.size(); i++) {
+            QContactDetail detail = d->m_details.at(i);
+            if (currImpl->supportsDetail(detail)) {
                 retn.append(detail);
                 break;
             }
         }
-    }
 
-    for (int i = 0; i < implementations.size(); i++)
-        delete implementations.at(i);
+        // clean up
+        delete currImpl;
+    }
 
     return retn;
 }
@@ -542,25 +538,23 @@ QList<QContactRelationship> QContact::relationshipOrder() const
 }
 
 /*! Return a list of actions available to be performed on this contact */
-QStringList QContact::availableActions() const
+QList<QContactActionDescriptor> QContact::availableActions() const
 {
     // check every action implementation to see if it supports me.
-    QSet<QString> validActions;
+    QSet<QContactActionDescriptor> retn;
     QList<QContactActionDescriptor> descriptors = QContactManagerData::actionDescriptors();
-    QList<QContactAction*> implementations;
-    for (int i = 0; i < descriptors.size(); i++)
-        implementations.append(QContactManagerData::action(descriptors.at(i)));
+    for (int i = 0; i < descriptors.size(); i++) {
+        QContactActionDescriptor currDescriptor = descriptors.at(i);
+        QContactAction *currImpl = QContactManagerData::action(currDescriptor);
+        if (QContactManagerEngine::testFilter(currImpl->contactFilter(), *this)) {
+            retn.insert(currDescriptor);
+        }
 
-    for (int i = 0; i < implementations.size(); i++) {
-        QContactAction* aptr = implementations.at(i);
-        if (QContactManagerEngine::testFilter(aptr->contactFilter(), *this))
-            validActions.insert(aptr->actionDescriptor().actionName());
+        // clean up the implementation to avoid leak.
+        delete currImpl;
     }
 
-    for (int i = 0; i < implementations.size(); i++)
-        delete implementations.at(i);
-
-    return validActions.toList();
+    return retn.toList();
 }
 
 /*! Set a particular detail as the \a preferredDetail for a given \a actionName.  Returns true if the detail was successfully set as the preferred detail for the action identified by \a actionName, otherwise returns false  */
