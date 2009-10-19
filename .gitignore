@@ -20,6 +20,8 @@ moc_*.cpp
 build
 include/*
 config.pri
+config.in
+config.log
 mobility.prf
 bin/servicexmlgen*
 bin/servicefw*
@@ -29,6 +31,7 @@ bin/sysinfo*
 install/*
 lib/*
 *.app
+config.tests/networkmanager/networkmanager
 
 #Symbian specific
 *.mmp
