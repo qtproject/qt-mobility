@@ -218,25 +218,30 @@ void UT_QVersitWriter::testEncodeParameters()
              QByteArray(";ENCODING=QUOTED-PRINTABLE"));    
 }
 
-void UT_QVersitWriter::testShouldBeQuotedPrintableEncoded()
+void UT_QVersitWriter::testQuotedPrintableEncode()
 {
+    QByteArray encodedValue;
+    
     // The property doesn't contain ENCODING parameter, 
-    // no special characters in the value -> no need to use Quoted-Printable encode
+    // no special characters in the encodedValue -> no need to use Quoted-Printable encode
     QVersitProperty property;
     property.setName(QString::fromAscii("N"));
     property.setValue(QByteArray("Simpson;Homer"));
-    QVERIFY(!mWriter->shouldBeQuotedPrintableEncoded(property));
+    QVERIFY(!mWriter->quotedPrintableEncode(property,encodedValue));
+    QVERIFY(encodedValue == property.value());
     
     // The property doesn't contain ENCODING parameter,
-    // special characters in the value -> needs to be Quoted-Printable encoded
+    // special characters in the encodedValue -> needs to be Quoted-Printable encoded
     property.setName(QString::fromAscii("EMAIL"));
     property.setValue(QByteArray("homer@simpsons.com"));
-    QVERIFY(mWriter->shouldBeQuotedPrintableEncoded(property));    
+    QVERIFY(mWriter->quotedPrintableEncode(property,encodedValue));
+    QCOMPARE(QString::fromAscii(encodedValue), QString::fromAscii("homer=40simpsons.com"));
     
     // The property contains ENCODING parameter
     // -> Value should not be Quoted-Printable encoded
     property.setName(QString::fromAscii("PHOTO"));
     property.setValue(QByteArray("the data").toBase64());
     property.addParameter(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
-    QVERIFY(!mWriter->shouldBeQuotedPrintableEncoded(property));
+    QVERIFY(!mWriter->quotedPrintableEncode(property,encodedValue));
+    QVERIFY(encodedValue == property.value());
 }

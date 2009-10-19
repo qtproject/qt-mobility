@@ -69,7 +69,9 @@ private:
     QByteArray encodeParameters(
         const QMultiHash<QString,QString>& parameters,
         bool addQuotedPrintable=false);
-    bool shouldBeQuotedPrintableEncoded(const QVersitProperty& property) const;
+    bool quotedPrintableEncode(
+        const QVersitProperty& property,
+        QByteArray& value) const;
 
 private:
     QVersitWriterPrivate* d;

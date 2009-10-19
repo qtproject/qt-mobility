@@ -219,107 +219,66 @@ void UT_VersitUtils::testUnfold()
     QCOMPARE(unfolded, VersitUtils::unfold(folded));     
 }
 
-void UT_VersitUtils::testShouldBeQuotedPrintableEncoded()
+void UT_VersitUtils::testQuotedPrintableEncode()
 {
-    QByteArray basicText("sometext");
+    QByteArray encodedBytes;
     
-    // No special characters
-    QVERIFY(!VersitUtils::shouldBeQuotedPrintableEncoded(basicText));
-    
-    // Special characters
-    QByteArray textWithSpecialChars = basicText + '\n'; 
-    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
-    
-    textWithSpecialChars = basicText + '\r'; 
-    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
-            
-    textWithSpecialChars = basicText + '!';
-    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
-    
-    textWithSpecialChars = basicText + '"';
-    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
-    
-    textWithSpecialChars = basicText + '#';
-    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
-    
-    textWithSpecialChars = basicText + '$';
-    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
-    
-    textWithSpecialChars = basicText + '=';
-    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
-    
-    textWithSpecialChars = basicText + '@';
-    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));    
-    
-    textWithSpecialChars = basicText + '[';
-    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars)); 
-    
-    textWithSpecialChars = basicText + '\\';
-    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
-    
-    textWithSpecialChars = basicText + ']';
-    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
-    
-    textWithSpecialChars = basicText + '^';
-    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
-    
-    textWithSpecialChars = basicText + '`';
-    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
-    
-    textWithSpecialChars = basicText + '{';
-    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));    
-
-    textWithSpecialChars = basicText + '|';
-    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
-    
-    textWithSpecialChars = basicText + '}';
-    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));    
-    
-    textWithSpecialChars = basicText + '~';
-    QVERIFY(VersitUtils::shouldBeQuotedPrintableEncoded(textWithSpecialChars));
-}
-
-void UT_VersitUtils::testEncodeQuotedPrintable()
-{
     // Nothing to encode
     QByteArray nothingToEncode("nothing to encode");
-    QCOMPARE(nothingToEncode, VersitUtils::encodeQuotedPrintable(nothingToEncode));
+    QVERIFY(!VersitUtils::quotedPrintableEncode(nothingToEncode));
     
     // Special characters
-    QByteArray specialChar("\n");
-    QCOMPARE(VersitUtils::encodeQuotedPrintable(specialChar), QByteArray("=0A"));
-    specialChar = "\r";
-    QCOMPARE(VersitUtils::encodeQuotedPrintable(specialChar), QByteArray("=0D"));
-    specialChar = "!";
-    QCOMPARE(VersitUtils::encodeQuotedPrintable(specialChar), QByteArray("=21"));
-    specialChar = "\"";
-    QCOMPARE(VersitUtils::encodeQuotedPrintable(specialChar), QByteArray("=22"));
-    specialChar = "#";
-    QCOMPARE(VersitUtils::encodeQuotedPrintable(specialChar), QByteArray("=23"));
-    specialChar = "$";
-    QCOMPARE(VersitUtils::encodeQuotedPrintable(specialChar), QByteArray("=24"));
-    specialChar = "=";
-    QCOMPARE(VersitUtils::encodeQuotedPrintable(specialChar), QByteArray("=3D"));
-    specialChar = "@";
-    QCOMPARE(VersitUtils::encodeQuotedPrintable(specialChar), QByteArray("=40"));
-    specialChar = "[";
-    QCOMPARE(VersitUtils::encodeQuotedPrintable(specialChar), QByteArray("=5B"));
-    specialChar = "\\";
-    QCOMPARE(VersitUtils::encodeQuotedPrintable(specialChar), QByteArray("=5C"));
-    specialChar = "]";
-    QCOMPARE(VersitUtils::encodeQuotedPrintable(specialChar), QByteArray("=5D"));
-    specialChar = "^";
-    QCOMPARE(VersitUtils::encodeQuotedPrintable(specialChar), QByteArray("=5E"));
-    specialChar = "`";
-    QCOMPARE(VersitUtils::encodeQuotedPrintable(specialChar), QByteArray("=60"));
-    specialChar = "{";
-    QCOMPARE(VersitUtils::encodeQuotedPrintable(specialChar), QByteArray("=7B"));
-    specialChar = "|";
-    QCOMPARE(VersitUtils::encodeQuotedPrintable(specialChar), QByteArray("=7C"));
-    specialChar = "}";
-    QCOMPARE(VersitUtils::encodeQuotedPrintable(specialChar), QByteArray("=7D"));
-    specialChar = "~";
-    QCOMPARE(VersitUtils::encodeQuotedPrintable(specialChar), QByteArray("=7E"));
+    QByteArray inputOutput("\n");
+    QVERIFY(VersitUtils::quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QByteArray("=0A"));
+    inputOutput = "\r";
+    QVERIFY(VersitUtils::quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QByteArray("=0D"));
+    inputOutput = "!";
+    QVERIFY(VersitUtils::quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QByteArray("=21"));
+    inputOutput = "\"";
+    QVERIFY(VersitUtils::quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QByteArray("=22"));
+    inputOutput = "#";
+    QVERIFY(VersitUtils::quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QByteArray("=23"));
+    inputOutput = "$";
+    QVERIFY(VersitUtils::quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QByteArray("=24"));
+    inputOutput = "=";
+    QVERIFY(VersitUtils::quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QByteArray("=3D"));
+    inputOutput = "@";
+    QVERIFY(VersitUtils::quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QByteArray("=40"));
+    inputOutput = "[";
+    QVERIFY(VersitUtils::quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QByteArray("=5B"));
+    inputOutput = "\\";
+    QVERIFY(VersitUtils::quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QByteArray("=5C"));
+    inputOutput = "]";
+    QVERIFY(VersitUtils::quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QByteArray("=5D"));
+    inputOutput = "^";
+    QVERIFY(VersitUtils::quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QByteArray("=5E"));
+    inputOutput = "`";
+    QVERIFY(VersitUtils::quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QByteArray("=60"));
+    inputOutput = "{";
+    QVERIFY(VersitUtils::quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QByteArray("=7B"));
+    inputOutput = "|";
+    QVERIFY(VersitUtils::quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QByteArray("=7C"));
+    inputOutput = "}";
+    QVERIFY(VersitUtils::quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QByteArray("=7D"));
+    inputOutput = "~";
+    QVERIFY(VersitUtils::quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QByteArray("=7E"));
 }
 
 void UT_VersitUtils::testDecodeQuotedPrintable()
@@ -327,18 +286,21 @@ void UT_VersitUtils::testDecodeQuotedPrintable()
     // Soft line breaks
     QByteArray encoded("This=\r\n is =\r\none line.");
     QByteArray decoded("This is one line.");
-    QCOMPARE(VersitUtils::decodeQuotedPrintable(encoded), decoded);
+    VersitUtils::decodeQuotedPrintable(encoded);
+    QCOMPARE(encoded, decoded);
     
     // Characters recommended to be encoded according to RFC 1521:
     encoded = "To be decoded: =0A=0D=21=22=23=24=3D=40=5B=5C=5D=5E=60=7B=7C=7D=7E";
     decoded = "To be decoded: \n\r!\"#$=@[\\]^`{|}~";
-    QCOMPARE(VersitUtils::decodeQuotedPrintable(encoded), decoded);
+    VersitUtils::decodeQuotedPrintable(encoded);
+    QCOMPARE(encoded, decoded);
     
     // Other random characters encoded.
     // Some implementation may encode these too, as it is allowed.
     encoded = "=45=6E=63=6F=64=65=64 =64=61=74=61";
     decoded = "Encoded data";
-    QCOMPARE(VersitUtils::decodeQuotedPrintable(encoded), decoded);
+    VersitUtils::decodeQuotedPrintable(encoded);
+    QCOMPARE(encoded, decoded);
 }
 
 void UT_VersitUtils::testExtractPropertyName()

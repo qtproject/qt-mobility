@@ -88,40 +88,30 @@ int VersitUtils::countLeadingWhiteSpaces(const QByteArray& text, int pos)
 }
 
 /*!
- * Checks whether /a text contains special characters
- * that should be encoded with Quoted-Printable encoding (RFC 1521).
- */
-bool VersitUtils::shouldBeQuotedPrintableEncoded(const QByteArray& text)
-{
-    for (int i=0; i<text.length(); i++) {
-        if (shouldBeQuotedPrintableEncoded(text[i]))
-            return true;
-    }
-    return false;
-}
-
-/*!
  * Encodes special characters in /a text 
  * using Quoted-Printable encoding (RFC 1521).
+ * Returns true if at least one character was encoded.
  */
-QByteArray VersitUtils::encodeQuotedPrintable(QByteArray& text)
+bool VersitUtils::quotedPrintableEncode(QByteArray& text)
 {    
+    bool encoded = false;
     for (int i=0; i<text.length(); i++) {
         char currentChar = text[i];
         if (shouldBeQuotedPrintableEncoded(currentChar)) {
             char encodedStr[4];
             sprintf(encodedStr, "=%02X", currentChar);    
             text.replace(i,1,encodedStr);
-            i += 2;            
+            i += 2;
+            encoded = true;
         }
     }
-    return text;
+    return encoded;
 }
 
 /*!
  * Decodes Quoted-Printable encoded (RFC 1521) characters in /a text.
  */
-QByteArray VersitUtils::decodeQuotedPrintable(QByteArray& text)
+void VersitUtils::decodeQuotedPrintable(QByteArray& text)
 {
     // QString needed instead of QByteArray to use QRegExp
     QString textAsString(QString::fromAscii(text));
@@ -141,9 +131,7 @@ QByteArray VersitUtils::decodeQuotedPrintable(QByteArray& text)
         if (decoded)
             textAsString.replace(encodedCharAsString,decodedChar);
     }
-    
     text = textAsString.toAscii();
-    return text;
 }
 
 /*!

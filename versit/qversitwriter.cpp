@@ -129,12 +129,9 @@ QByteArray QVersitWriter::encodeVersitProperty(const QVersitProperty& property)
     encodedProperty.append(name.toAscii());
 
     QByteArray value(property.value());
-    bool quotedPrintableValue = shouldBeQuotedPrintableEncoded(property);
-    if (quotedPrintableValue) {
-        value = VersitUtils::encodeQuotedPrintable(value);   
-    }
+    bool valueQuotedPrintableEncoded = quotedPrintableEncode(property,value);
     QByteArray encodedParameters = 
-        encodeParameters(property.parameters(),quotedPrintableValue);
+        encodeParameters(property.parameters(),valueQuotedPrintableEncoded);
     encodedProperty.append(encodedParameters);
 
     encodedProperty.append(":");
@@ -180,10 +177,18 @@ QByteArray QVersitWriter::encodeParameters(
 }
 
 /*!
- * Checks whether the value of \a property should be Quoted-Printable encoded. 
+ * Encodes the \a value with Quoted-Printable encoding
+ * if it needs to be encoded and the parameters 
+ * of the \a property do not yet indicate encoding.  
  */
-bool QVersitWriter::shouldBeQuotedPrintableEncoded(const QVersitProperty& property) const
+bool QVersitWriter::quotedPrintableEncode(
+    const QVersitProperty& property,
+    QByteArray& value) const
 {
-    return (!property.parameters().contains(QString::fromAscii("ENCODING")) &&
-            VersitUtils::shouldBeQuotedPrintableEncoded(property.value())); 
+    bool encoded = false;
+    value = property.value();
+    if (!property.parameters().contains(QString::fromAscii("ENCODING"))) {
+        encoded = VersitUtils::quotedPrintableEncode(value);
+    }
+    return encoded;
 }

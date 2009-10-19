@@ -54,7 +54,7 @@ private slots: // Tests
     void testEncodeVersitDocument();
     void testEncodeVersitProperty();
     void testEncodeParameters();
-    void testShouldBeQuotedPrintableEncoded();
+    void testQuotedPrintableEncode();
 
 private: // Data
     QVersitWriter* mWriter;

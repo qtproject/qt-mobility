@@ -74,7 +74,6 @@ void UT_QVersitContactGenerator::testName()
     nameProperty.setValue(val.join(QString::fromAscii(";")).toAscii());
     document.addProperty(nameProperty);        
     QContact contact = mGenerator->generateContact(document);    
-    QCOMPARE(contact.details().count(),2);
     const QContactName& name = (QContactName)contact.detail(QContactName::DefinitionName);    
     QCOMPARE(name.last(),val[0]);
     QCOMPARE(name.first(),val[1]);
