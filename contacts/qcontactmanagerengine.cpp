@@ -372,19 +372,19 @@ QList<QContactManager::Error> QContactManagerEngine::removeRelationships(const Q
 }
 
 /*!
- * Synthesises the display label of the given \a contact in a platform specific manner.
+ * Synthesizes the display label of the given \a contact in a platform specific manner.
  * Any error that occurs will be stored in \a error.
- * Returns the synthesised display label.
+ * Returns the synthesized display label.
  */
-QString QContactManagerEngine::synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString QContactManagerEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
-    // synthesise the display name from the name of the contact, or, failing that, the organisation of the contact.
+    // synthesize the display name from the name of the contact, or, failing that, the organisation of the contact.
     error = QContactManager::NoError;
     QList<QContactDetail> allNames = contact.details(QContactName::DefinitionName);
 
     const QLatin1String space(" ");
 
-    // synthesise the display label from the name.
+    // synthesize the display label from the name.
     for (int i=0; i < allNames.size(); i++) {
         const QContactName& name = allNames.at(i);
 
@@ -553,7 +553,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactDisplayLabel::FieldLabel, f);
     f.dataType = QVariant::Bool;
     f.allowableValues = QVariantList();
-    fields.insert(QContactDisplayLabel::FieldSynthesised, f);
+    fields.insert(QContactDisplayLabel::FieldSynthesized, f);
     f.dataType = QVariant::StringList;
     f.allowableValues = contexts;
     fields.insert(QContactDetail::FieldContext, f);

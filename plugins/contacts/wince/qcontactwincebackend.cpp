@@ -401,7 +401,7 @@ bool QContactWinCEEngine::hasFeature(QContactManagerInfo::ManagerFeature feature
 }
 
 /* Synthesise the display label of a contact */
-QString QContactWinCEEngine::synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString QContactWinCEEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
     Q_UNUSED(error)
     // The POOM API (well, lack thereof) makes this a bit strange.

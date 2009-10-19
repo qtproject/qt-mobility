@@ -215,7 +215,7 @@ void tst_QContactManager::dumpContactDifferences(const QContact& ca, const QCont
 
     // Check the display label
     QCOMPARE(a.displayLabel().label(), b.displayLabel().label());
-    QCOMPARE(a.displayLabel().isSynthesised(), b.displayLabel().isSynthesised());
+    QCOMPARE(a.displayLabel().isSynthesized(), b.displayLabel().isSynthesized());
 
     // Now look at the rest
     QList<QContactDetail> aDetails = a.details();
@@ -290,7 +290,7 @@ bool tst_QContactManager::isSuperset(const QContact& ca, const QContact& cb)
 void tst_QContactManager::dumpContact(const QContact& contact)
 {
     QContactManager m;
-    qDebug() << "Contact: " << contact.id().localId() << "(" << m.synthesiseDisplayLabel(contact) << ")";
+    qDebug() << "Contact: " << contact.id().localId() << "(" << m.synthesizeDisplayLabel(contact) << ")";
     QList<QContactDetail> details = contact.details();
     foreach(QContactDetail d, details) {
         qDebug() << "  " << d.definitionName() << ":";
@@ -562,8 +562,8 @@ void tst_QContactManager::add()
     na.setLast("inWonderland");
     alice.saveDetail(&na);
     QContactDisplayLabel label = alice.displayLabel();
-    label.setLabel(cm->synthesiseDisplayLabel(alice));
-    label.setSynthesised(true);
+    label.setLabel(cm->synthesizeDisplayLabel(alice));
+    label.setSynthesized(true);
     alice.setDisplayLabel(label);
 
     QContactPhoneNumber ph;
@@ -666,7 +666,7 @@ void tst_QContactManager::add()
 
     QContactDisplayLabel testLabel;
     testLabel.setLabel("testlabel");
-    testLabel.setSynthesised(false);
+    testLabel.setSynthesized(false);
     megacontact.setDisplayLabel(testLabel);
     QVERIFY(cm->saveContact(&megacontact)); // must be able to save since built from definitions.
     QContact retrievedMegacontact = cm->contact(megacontact.id().localId());
@@ -1014,7 +1014,7 @@ void tst_QContactManager::invalidManager()
     nf.setLast("Lastname");
     foo.saveDetail(&nf);
 
-    QVERIFY(manager.synthesiseDisplayLabel(foo).isEmpty());
+    QVERIFY(manager.synthesizeDisplayLabel(foo).isEmpty());
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
     QVERIFY(manager.saveContact(&foo) == false);
@@ -1438,7 +1438,7 @@ void tst_QContactManager::nameSynthesis()
         c.saveDetail(&org2);
 
     // Finally!
-    QCOMPARE(cm.synthesiseDisplayLabel(c), expected);
+    QCOMPARE(cm.synthesizeDisplayLabel(c), expected);
 }
 
 void tst_QContactManager::contactValidation()
@@ -1980,7 +1980,7 @@ void tst_QContactManager::displayName()
 
     QVERIFY(cm->saveContact(&d));
 
-    QString synth = cm->synthesiseDisplayLabel(d);
+    QString synth = cm->synthesizeDisplayLabel(d);
 
     /*
      * The display label is not updated until you save the contact, or
@@ -1990,12 +1990,12 @@ void tst_QContactManager::displayName()
     QVERIFY(!d.isEmpty());
 
     QCOMPARE(d.displayLabel().label(), synth);
-    QVERIFY(d.displayLabel().isSynthesised() == true);
+    QVERIFY(d.displayLabel().isSynthesized() == true);
 
     /* Set something else */
     d.setDisplayLabel("The grand old duchess");
     QVERIFY(d.displayLabel().label() == "The grand old duchess");
-    QVERIFY(d.displayLabel().isSynthesised() == false);
+    QVERIFY(d.displayLabel().isSynthesized() == false);
 
     /* Remove the detail via removeDetail */
     QContactDisplayLabel old = d.displayLabel();
@@ -2010,7 +2010,7 @@ void tst_QContactManager::displayName()
     QVERIFY(!d.isEmpty());
 
     /* Make sure we go back to the old synth version */
-    QVERIFY(d.displayLabel().isSynthesised() == true);
+    QVERIFY(d.displayLabel().isSynthesized() == true);
     QCOMPARE(d.displayLabel().label(), synth);
 
     /* And delete the contact */

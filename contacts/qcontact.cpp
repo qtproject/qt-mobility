@@ -89,7 +89,7 @@ QContact::QContact()
     // insert the contact's name field.
     QContactDisplayLabel contactLabel;
     contactLabel.d->m_id = 1;
-    contactLabel.setSynthesised(true);
+    contactLabel.setSynthesized(true);
     d->m_details.insert(0, contactLabel);
     QContactType contactType; // and the type field.
     contactType.setType(QContactType::TypeContact);
@@ -129,7 +129,7 @@ void QContact::clearDetails()
     QContactType typeDet = d->m_details.at(1);
     QContactDisplayLabel dl = displayLabel();
     dl.setLabel(QString());
-    dl.setSynthesised(true);
+    dl.setSynthesized(true);
     d->m_details.clear();
     d->m_details.insert(0, dl);
     d->m_details.insert(1, typeDet);
@@ -162,7 +162,7 @@ QContactLocalId QContact::localId() const
 /*!
  * Returns the type of the contact.  Every contact has exactly one type which
  * is either set manually (by saving a modified copy of the QCotnactType
- * in the contact, or by calling \l setType()) or synthesised automatically.
+ * in the contact, or by calling \l setType()) or synthesized automatically.
  *
  * \sa setType()
  */
@@ -198,7 +198,7 @@ void QContact::setType(const QContactType& type)
 /*!
  * Returns the display label of the contact.  Every contact has exactly one display label
  * which is either set manually (by saving a modified copy of the QContactDisplayLabel
- * in the contact, or by calling \l setDisplayLabel()) or synthesised by the manager from
+ * in the contact, or by calling \l setDisplayLabel()) or synthesized by the manager from
  * which the contact is retrieved.
  *
  * \sa setDisplayLabel()
@@ -211,7 +211,7 @@ QContactDisplayLabel QContact::displayLabel() const
 /*!
  * Set the display label of the contact to \a label.
  *
- * The corresponding "synthesised" flag in this contact will be
+ * The corresponding "synthesized" flag in this contact will be
  * cleared.
  */
 void QContact::setDisplayLabel(const QContactDisplayLabel& label)
@@ -222,7 +222,7 @@ void QContact::setDisplayLabel(const QContactDisplayLabel& label)
 /*!
  * Set the display label of the contact to \a label.
  *
- * The corresponding "synthesised" flag in this contact will be
+ * The corresponding "synthesized" flag in this contact will be
  * cleared.
  */
 void QContact::setDisplayLabel(const QString& label)

@@ -86,7 +86,7 @@ public:
     void setType(const QString& type);
     void setType(const QContactType& type);
 
-    /* The (possibly synthesised) display label of the contact */
+    /* The (possibly synthesized) display label of the contact */
     QContactDisplayLabel displayLabel() const;
     void setDisplayLabel(const QContactDisplayLabel& label);
     void setDisplayLabel(const QString& label);

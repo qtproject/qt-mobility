@@ -114,8 +114,8 @@ public:
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts);       // batch API - save
     QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds);  // batch API - remove
 
-    /* Synthesise the display label of a contact */
-    QString synthesiseDisplayLabel(const QContact& contact) const;
+    /* Synthesize the display label of a contact */
+    QString synthesizeDisplayLabel(const QContact& contact) const;
 
     /* "Self" contact id (MyCard) */
     bool setSelfContactId(const QContactLocalId& contactId);

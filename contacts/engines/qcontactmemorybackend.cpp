@@ -166,12 +166,12 @@ QContact QContactMemoryEngine::contact(const QContactLocalId& contactId, QContac
         error = QContactManager::NoError;
         QContact retn = d->m_contacts.at(index);
 
-        // synthesise the display label if we need to.
+        // synthesize the display label if we need to.
         QContactDisplayLabel dl = retn.detail(QContactDisplayLabel::DefinitionName);
         if (dl.label().isEmpty()) {
             QContactManager::Error synthError;
-            dl.setLabel(synthesiseDisplayLabel(retn, synthError));
-            dl.setSynthesised(true);
+            dl.setLabel(synthesizeDisplayLabel(retn, synthError));
+            dl.setSynthesized(true);
             retn.saveDetail(&dl);
         }
 

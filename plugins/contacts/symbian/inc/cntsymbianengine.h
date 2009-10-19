@@ -106,8 +106,8 @@ public:
     bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
-    /* Synthesise the display label of a contact */
-    QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    /* Synthesize the display label of a contact */
+    QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 
     /* "Self" contact id (MyCard) */
     bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error);

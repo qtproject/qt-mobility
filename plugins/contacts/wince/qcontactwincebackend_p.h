@@ -230,8 +230,8 @@ public:
     bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
-    /* Synthesise the display label of a contact */
-    virtual QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    /* Synthesize the display label of a contact */
+    virtual QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 
 private:
     QSharedDataPointer<QContactWinCEEngineData> d;

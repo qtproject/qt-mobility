@@ -377,10 +377,10 @@ QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactLoca
     return d->m_engine->removeContacts(idList, d->m_error);
 }
 
-/*! Returns a display label for a \a contact which is synthesised from its details in a platform-specific manner */
-QString QContactManager::synthesiseDisplayLabel(const QContact& contact) const
+/*! Returns a display label for a \a contact which is synthesized from its details in a platform-specific manner */
+QString QContactManager::synthesizeDisplayLabel(const QContact& contact) const
 {
-    return d->m_engine->synthesiseDisplayLabel(contact, d->m_error);
+    return d->m_engine->synthesizeDisplayLabel(contact, d->m_error);
 }
 
 /*!

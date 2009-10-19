@@ -66,7 +66,7 @@ void MaliciousAsyncManagerEngine::deref()
     // does this leak?
 }
 
-QString MaliciousAsyncManagerEngine::synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString MaliciousAsyncManagerEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
     Q_UNUSED(contact);
     error = QContactManager::NotSupportedError;

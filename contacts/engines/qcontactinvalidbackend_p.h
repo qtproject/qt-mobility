@@ -69,7 +69,7 @@ public:
     QContactInvalidEngine();
     void deref();
     QString managerName() const;
-    QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 };
 
 #endif

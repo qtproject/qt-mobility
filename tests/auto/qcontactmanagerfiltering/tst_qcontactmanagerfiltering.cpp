@@ -2738,7 +2738,7 @@ void tst_QContactManagerFiltering::dumpContactDifferences(const QContact& ca, co
 
     // Check the display label
     QCOMPARE(a.displayLabel().label(), b.displayLabel().label());
-    QCOMPARE(a.displayLabel().isSynthesised(), b.displayLabel().isSynthesised());
+    QCOMPARE(a.displayLabel().isSynthesized(), b.displayLabel().isSynthesized());
 
     // Now look at the rest
     QList<QContactDetail> aDetails = a.details();
@@ -2815,7 +2815,7 @@ bool tst_QContactManagerFiltering::isSuperset(const QContact& ca, const QContact
 void tst_QContactManagerFiltering::dumpContact(const QContact& contact)
 {
     QContactManager m;
-    qDebug() << "Contact: " << contact.id().localId() << "(" << m.synthesiseDisplayLabel(contact) << ")";
+    qDebug() << "Contact: " << contact.id().localId() << "(" << m.synthesizeDisplayLabel(contact) << ")";
     QList<QContactDetail> details = contact.details();
     foreach(QContactDetail d, details) {
         qDebug() << "  " << d.definitionName() << ":";

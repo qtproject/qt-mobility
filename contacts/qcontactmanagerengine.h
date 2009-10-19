@@ -87,8 +87,8 @@ public:
     virtual bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
     virtual QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
 
-    /* Synthesise the display label of a contact */
-    virtual QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    /* Synthesize the display label of a contact */
+    virtual QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 
     /* "Self" contact id (MyCard) */
     virtual bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error);

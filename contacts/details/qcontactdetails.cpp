@@ -63,7 +63,7 @@
 
 /*!
  * \class QContactDisplayLabel
- * \brief The (possibly synthesised) display label of a contact
+ * \brief The (possibly synthesized) display label of a contact
  */
 
 /*!
@@ -685,10 +685,10 @@ Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldStatusMessage, "StatusMessage");
 Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::FieldLabel, "Label");
 
 /*!
- * \variable QContactDisplayLabel::FieldSynthesised
- * The constant key for the value which is stored in details of the QContactDisplayLabel type which describes whether the label was synthesised by a QContactManager or set manually.
+ * \variable QContactDisplayLabel::FieldSynthesized
+ * The constant key for the value which is stored in details of the QContactDisplayLabel type which describes whether the label was synthesized by a QContactManager or set manually.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::FieldSynthesised, "Synthesised");
+Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::FieldSynthesized, "Synthesized");
 
 /*!
  * \variable QContactTimestamp::FieldModificationTimestamp
@@ -1332,8 +1332,8 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
- * \fn QContactDisplayLabel::isSynthesised() const
- * Returns true if the display label was synthesised automatically by the manager backend
+ * \fn QContactDisplayLabel::isSynthesized() const
+ * Returns true if the display label was synthesized automatically by the manager backend
  */
 
 /*!
@@ -1347,8 +1347,8 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
- * \fn QContactDisplayLabel::setSynthesised(bool synthesised)
- * Sets the synthetic status of the display label to \a synthesised
+ * \fn QContactDisplayLabel::setSynthesized(bool synthesized)
+ * Sets the synthetic status of the display label to \a synthesized
  */
 
 /*!

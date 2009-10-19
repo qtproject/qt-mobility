@@ -832,10 +832,10 @@ QContact QContactWinCEEngine::convertToQContact(IItem *contact) const
     // Now, we need to check whether we got a display label
     QContactDisplayLabel label = ret.displayLabel();
     QContactManager::Error error;
-    QString synth = synthesiseDisplayLabel(ret, error);
+    QString synth = synthesizeDisplayLabel(ret, error);
     if (label.label().isEmpty() || label.label() == synth) {
         label.setLabel(synth);
-        label.setSynthesised(true);
+        label.setSynthesized(true);
         ret.saveDetail(&label);
     }
 
