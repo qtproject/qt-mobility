@@ -138,6 +138,7 @@ QMediaPlaylist::QMediaPlaylist(QMediaObject *mediaObject, QObject *parent)
 /*!
   Destroys the playlist.
   */
+
 QMediaPlaylist::~QMediaPlaylist()
 {
     delete d_ptr;

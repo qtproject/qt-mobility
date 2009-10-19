@@ -90,7 +90,7 @@ public:
     virtual void stop() = 0;
 
 Q_SIGNALS:
-    void currentSourceChanged(const QMediaContent& content);
+    void mediaChanged(const QMediaContent& content);
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
     void stateChanged(QMediaPlayer::State newState);

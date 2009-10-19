@@ -225,7 +225,7 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
 
     m_session->load(url);
 
-    emit currentSourceChanged(m_currentResource);
+    emit mediaChanged(m_currentResource);
 }
 
 void QGstreamerPlayerControl::setVideoOutput(QObject *output)

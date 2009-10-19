@@ -276,7 +276,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 */
 
 /*!
-    \fn QMediaPlayerControl::currentSourceChanged(const QMediaContent& content)
+    \fn QMediaPlayerControl::mediaChanged(const QMediaContent& content)
 
     Signals that the current media \a content has changed.
 */
