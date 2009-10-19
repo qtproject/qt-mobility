@@ -30,6 +30,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMESSAGEFILTERPRIVATE_H
+#define QMESSAGEFILTERPRIVATE_H
 #include "qmessagefilter.h"
 #if defined(Q_OS_WIN)
 #include "qmessagestore.h"
@@ -74,7 +76,7 @@ public:
     QMessageFilter *q_ptr;
     QMessageDataComparator::Options _options;
 #if defined(Q_OS_WIN)
-    enum Field { None = 0, Id, Type, Sender, Recipients, Subject, TimeStamp, ReceptionTimeStamp, Status, Priority, Size, CustomField, ParentAccountId, ParentFolderId, AncestorFolderIds };
+    enum Field { None = 0, Id, Type, SenderName, SenderAddress, Recipients, RecipientName, RecipientAddress, Subject, TimeStamp, ReceptionTimeStamp, Status, Priority, Size, CustomField, ParentAccountId, ParentFolderId, AncestorFolderIds };
     enum Comparator { Equality = 0, Relation, Inclusion };
     enum Operator { Identity = 0, And, Or, Not, Nand, Nor, OperatorEnd };
     QMessageFilterPrivate::Field _field;
@@ -99,15 +101,46 @@ public:
     QMessageFilter containerFiltersPart(); // returns a filter comprised of just the container filters
     QMessageFilter nonContainerFiltersPart(); // returns a filter comprised of everything but the container filters
 
-    static void filterTable(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, LPMAPITABLE);
     static QMessageFilter from(QMessageFilterPrivate::Field field, const QVariant &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFilter from(QMessageFilterPrivate::Field field, const QVariant &value, QMessageDataComparator::RelationComparator cmp);
     static QMessageFilter from(QMessageFilterPrivate::Field field, const QVariant &value, QMessageDataComparator::InclusionComparator cmp);
     static QMessageFilterPrivate* implementation(const QMessageFilter &filter);
 
-    static MapiFolderIterator folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, MapiStorePtr store);
-    static MapiStoreIterator storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, MapiSessionPtr session);
-
+    static MapiFolderIterator folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiStorePtr &store);
+    static MapiStoreIterator storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiSessionPtr &session);
+    static QList<QMessageFilter> subFilters(const QMessageFilter &filter);
 
 #endif
 };
+
+#if defined(Q_OS_WIN)
+class MapiRestriction {
+public:
+    MapiRestriction(const QMessageFilter &filter);
+    ~MapiRestriction();
+    void complement();
+    SRestriction *sRestriction();
+    bool isValid() { return _valid; }
+    bool isEmpty() { return _empty; }
+
+private:
+    SRestriction _restriction;
+    SRestriction _subRestriction[2];
+    SPropValue _keyProp;
+    SPropValue _keyProp2;
+    SRestriction *_notRestriction;
+    SRestriction *_recipientRestriction;
+    SPropValue *_keyProps;
+    SRestriction *_restrictions;
+#ifdef _WIN32_WCE
+    MapiEntryId *_recordKeys;
+#else
+    MapiRecordKey *_recordKeys;
+#endif
+    bool _valid;
+    bool _empty;
+    MapiRestriction *_left;
+    MapiRestriction *_right;
+};
+#endif
+#endif

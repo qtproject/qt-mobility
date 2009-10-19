@@ -50,17 +50,25 @@ public:
     QMessageId *q_ptr;
 
 #if defined(Q_OS_WIN)
-    MapiRecordKey _messageRecordKey;
-    MapiRecordKey _folderRecordKey;
-    MapiRecordKey _storeRecordKey;
+    mutable MapiRecordKey _messageRecordKey;
     MapiEntryId _entryId;
 
+#ifdef _WIN32_WCE
+    MapiEntryId _folderRecordKey;
+    MapiEntryId _storeRecordKey;
+    static QMessageId from(const MapiEntryId &storeId, const MapiEntryId &entryId, const MapiRecordKey &messageKey = MapiRecordKey(), const MapiEntryId &folderId  = MapiEntryId());
+    static MapiEntryId folderRecordKey(const QMessageId &id);
+    static MapiEntryId storeRecordKey(const QMessageId &id);
+#else
+    mutable MapiRecordKey _folderRecordKey;
+    MapiRecordKey _storeRecordKey;
     static QMessageId from(const MapiRecordKey &storeKey, const MapiEntryId &entryId, const MapiRecordKey &messageKey = MapiRecordKey(), const MapiRecordKey &folderKey  = MapiRecordKey());
+    static MapiRecordKey folderRecordKey(const QMessageId &id);
+    static MapiRecordKey storeRecordKey(const QMessageId &id);
+#endif
 
     static MapiEntryId entryId(const QMessageId &id);
     static MapiRecordKey messageRecordKey(const QMessageId &id);
-    static MapiRecordKey folderRecordKey(const QMessageId &id);
-    static MapiRecordKey storeRecordKey(const QMessageId &id);
 #endif
 };
 #endif

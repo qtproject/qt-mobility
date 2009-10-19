@@ -65,6 +65,7 @@ public:
     void setRecipient(const QString &recipient);
     Type type() const;
     void setType(Type type);
+    static void parseEmailAddress(const QString& emailAddress, QString *name, QString *address, QString *suffix = 0, bool *startDelimeterFound = 0, bool *endDelimeterFound = 0);
 
 private:
     QMessageAddressPrivate *d_ptr;

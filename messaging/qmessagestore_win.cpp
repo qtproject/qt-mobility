@@ -38,6 +38,7 @@
 #include "qmessageaccountid_p.h"
 #include "qmessageaccount_p.h"
 #include "winhelpers_p.h"
+#include <QCoreApplication>
 #include <qdebug.h>
 
 class QMessageStorePrivatePlatform : public QObject
@@ -53,14 +54,19 @@ public:
     QMessageStore::ErrorCode lastError;
 
     MapiSessionPtr session;
+
+private slots:
+    void appDestroyed();
 };
 
 QMessageStorePrivatePlatform::QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q)
-    :d_ptr(d), 
+    :d_ptr(d),
      q_ptr(q),
      lastError(QMessageStore::NoError),
      session(MapiSession::createSession(&lastError))
 {
+    connect(QCoreApplication::instance(), SIGNAL(destroyed()), this, SLOT(appDestroyed()));
+
     if (session && (lastError == QMessageStore::NoError)) {
         MapiSession *o(session.data());
         connect(o, SIGNAL(messageAdded(QMessageId, QMessageStore::NotificationFilterIdSet)), q, SIGNAL(messageAdded(QMessageId, QMessageStore::NotificationFilterIdSet)));
@@ -73,10 +79,21 @@ QMessageStorePrivatePlatform::~QMessageStorePrivatePlatform()
 {
 }
 
+void QMessageStorePrivatePlatform::appDestroyed()
+{
+    // We need to terminate our session before main finishes
+    session.clear();
+}
+
 QMessageStorePrivate::QMessageStorePrivate()
     :p_ptr(0),
      q_ptr(0)
 {
+}
+
+QMessageStorePrivate::~QMessageStorePrivate()
+{
+    delete p_ptr;
 }
 
 void QMessageStorePrivate::initialize(QMessageStore *store)
@@ -284,15 +301,19 @@ bool QMessageStore::addMessage(QMessage *message)
             MapiFolderPtr mapiFolder;
 
             // Find the parent folder for this message
-            QMessageFolder folder(message->parentFolderId());
-            if (folder.id().isValid()) {
-                mapiFolder = mapiStore->findFolder(lError, QMessageFolderIdPrivate::folderRecordKey(folder.id()));
+            QMessageFolderId folderId(message->parentFolderId());
+            if (folderId.isValid()) {
+#ifdef _WIN32_WCE
+                mapiFolder = mapiStore->openFolder(lError,QMessageFolderIdPrivate::entryId(folderId));
+#else
+                mapiFolder = mapiStore->openFolderWithKey(lError, QMessageFolderIdPrivate::folderRecordKey(folderId));
+#endif
             } else {
                 mapiFolder = mapiStore->findFolder(lError, message->standardFolder());
             }
 
             if (*lError == QMessageStore::NoError && !mapiFolder.isNull()) {
-                IMessage* mapiMessage = mapiFolder->createMessage(lError, *message, d_ptr->p_ptr->session, MapiFolder::DoNothing);
+                IMessage* mapiMessage = mapiFolder->createMessage(lError, *message, d_ptr->p_ptr->session);
                 if (*lError == QMessageStore::NoError) {
                     //set the new QMessageId
                     //we can only be guaranteed of an entry id after IMessage->SaveChanges has been called
@@ -304,7 +325,11 @@ bool QMessageStore::addMessage(QMessage *message)
                     if (HR_SUCCEEDED(rv) && (properties[0].ulPropTag == PR_RECORD_KEY) && (properties[1].ulPropTag == PR_ENTRYID)) {
                         MapiRecordKey recordKey(properties[0].Value.bin.lpb, properties[0].Value.bin.cb);
                         MapiEntryId entryId(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
+#ifdef _WIN32_WCE
+                        message->d_ptr->_id = QMessageIdPrivate::from(mapiFolder->storeEntryId(), entryId, recordKey, mapiFolder->entryId());
+#else
                         message->d_ptr->_id = QMessageIdPrivate::from(mapiFolder->storeKey(), entryId, recordKey, mapiFolder->recordKey());
+#endif
                         message->d_ptr->_modified = false;
 
                         MAPIFreeBuffer(properties);
@@ -341,7 +366,7 @@ bool QMessageStore::updateMessage(QMessage *message)
         d_ptr->p_ptr->lastError = QMessageStore::NoError;
     }
 
-    if (message && !message->id().isValid()) {
+    if (message && message->id().isValid()) {
         QMessageStore::ErrorCode* lError = &d_ptr->p_ptr->lastError;
 
         d_ptr->p_ptr->session->updateMessage(lError, *message);

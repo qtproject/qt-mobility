@@ -30,13 +30,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMESSAGEADDRESSHELPERPRIVATE_H
+#define QMESSAGEADDRESSHELPERPRIVATE_H
+#include <QString>
 
-#ifndef ADDRESSHELPER_H
-#define ADDRESSHELPER_H
-
-#include "qtmessaging.h"
-
-bool qContainsGroupSpecifier(const QString& input);
-void qParseMailbox(QString& input, QString& name, QString& address, QString& suffix);
+void qParseMailbox(QString& input, QString& name, QString& address, QString& suffix, bool& delimeterFound, bool& endDelimeterFound);
 
 #endif

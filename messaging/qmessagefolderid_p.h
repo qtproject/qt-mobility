@@ -51,13 +51,22 @@ public:
 public:
     QMessageFolderId *q_ptr;
 #if defined(Q_OS_WIN)
-    MapiRecordKey _folderRecordKey;
+
+#ifdef _WIN32_WCE
+    MapiEntryId _storeRecordKey;
+    static QMessageFolderId from(const MapiRecordKey &folderKey, const MapiEntryId &storeKey, const MapiEntryId &entryId);
+    static MapiEntryId storeRecordKey(const QMessageFolderId &id);
+#else
     MapiRecordKey _storeRecordKey;
-    MapiEntryId _entryId;
     static QMessageFolderId from(const MapiRecordKey &folderKey, const MapiRecordKey &storeKey, const MapiEntryId &entryId = MapiEntryId());
-    static MapiRecordKey folderRecordKey(const QMessageFolderId &id);
     static MapiRecordKey storeRecordKey(const QMessageFolderId &id);
+#endif
+
+    MapiEntryId _entryId;
+    MapiRecordKey _folderRecordKey;
+    static MapiRecordKey folderRecordKey(const QMessageFolderId &id);
     static MapiEntryId entryId(const QMessageFolderId &id);
+
 #endif
 };
 

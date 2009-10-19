@@ -66,44 +66,45 @@ typedef QList<IdSubjectPair> MessageIdSubjectList;
 
 class AccountsWidget : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 
 private:
-	class Loader : public QThread
-	{
-	public:
-		Loader(AccountsWidget* parent);
-		void run();
-	private:
-		AccountsWidget* m_parent;
-	};
+    class Loader : public QThread
+    {
+    public:
+        Loader(AccountsWidget* parent);
+        void run();
+    private:
+        AccountsWidget* m_parent;
+    };
 
 public:
-	AccountsWidget(QWidget* parent = 0);
-	QMessageAccountId currentAccount() const;
+    AccountsWidget(QWidget* parent = 0);
+    QMessageAccountId currentAccount() const;
+    bool isEmpty() const;
 
 protected:
-	void showEvent(QShowEvent* e);
-	void hideEvent(QHideEvent* e);
+    void showEvent(QShowEvent* e);
+    void hideEvent(QHideEvent* e);
 
 private slots:
-	void load();
-	void loadStarted();
-	void loadFinished();
+    void load();
+    void loadStarted();
+    void loadFinished();
 
 private:
-	void setupUi();
-	void setIds(const QMessageAccountIdList& ids);
-	QMessageAccountIdList ids() const;
+    void setupUi();
+    void setIds(const QMessageAccountIdList& ids);
+    QMessageAccountIdList ids() const;
 
 private:
-	QStackedLayout* m_stackedLayout;
-	QComboBox* m_accountsCombo;
-	QLabel* m_busyLabel;
+    QStackedLayout* m_stackedLayout;
+    QComboBox* m_accountsCombo;
+    QLabel* m_busyLabel;
 
-	Loader m_loader;
-	mutable QMutex m_loadMutex;
-	QMessageAccountIdList m_ids;
+    Loader m_loader;
+    mutable QMutex m_loadMutex;
+    QMessageAccountIdList m_ids;
 };
 
 AccountsWidget::Loader::Loader(AccountsWidget* parent)
@@ -116,7 +117,7 @@ m_parent(parent)
 void AccountsWidget::Loader::run()
 {
     QMessageAccountIdList ids = QMessageStore::instance()->queryAccounts();
-	m_parent->setIds(ids);
+    m_parent->setIds(ids);
 }
 
 AccountsWidget::AccountsWidget(QWidget* parent)
@@ -127,42 +128,48 @@ m_accountsCombo(0),
 m_busyLabel(0),
 m_loader(this)
 {
-	setupUi();
+    setupUi();
 
-	connect(&m_loader,SIGNAL(started()),this,SLOT(loadStarted()));
-	connect(&m_loader,SIGNAL(finished()),this,SLOT(loadFinished()));
+    connect(&m_loader,SIGNAL(started()),this,SLOT(loadStarted()));
+    connect(&m_loader,SIGNAL(finished()),this,SLOT(loadFinished()));
 }
 
 QMessageAccountId AccountsWidget::currentAccount() const
 {
-	QMessageAccountId result;
-	if(m_loader.isFinished() && m_accountsCombo->count())
-	{
-		int index = m_accountsCombo->currentIndex();
-		return ids().at(index);
-	}
+    QMessageAccountId result;
+    if(m_loader.isFinished() && m_accountsCombo->count())
+    {
+        int index = m_accountsCombo->currentIndex();
+        return ids().at(index);
+    }
 
-	return result;
+    return result;
 }
+
+bool AccountsWidget::isEmpty() const
+{
+	return m_accountsCombo->count() == 0;
+}
+
 void AccountsWidget::showEvent(QShowEvent* e)
 {
-	load();
-	QWidget::showEvent(e);
+    load();
+    QWidget::showEvent(e);
 }
 
 void AccountsWidget::hideEvent(QHideEvent* e)
 {
-	if(m_loader.isRunning())
+    if(m_loader.isRunning())
         m_loader.exit();
-	QWidget::hideEvent(e);
+    QWidget::hideEvent(e);
 }
 
 void AccountsWidget::load()
 {
-	static bool runonce = false;
-	if(!runonce)
-		m_loader.start();
-	runonce = true;
+    static bool runonce = false;
+    if(!runonce)
+        m_loader.start();
+    runonce = true;
 }
 
 void AccountsWidget::loadStarted()
@@ -170,24 +177,24 @@ void AccountsWidget::loadStarted()
 #ifndef _WIN32_WCE
     setCursor(Qt::BusyCursor);
 #endif
-	m_stackedLayout->setCurrentWidget(m_busyLabel);
+    m_stackedLayout->setCurrentWidget(m_busyLabel);
 }
 
 void AccountsWidget::loadFinished()
 {
-	m_accountsCombo->clear();
+    m_accountsCombo->clear();
 
-	QMessageAccountIdList accountIds = ids();
+    QMessageAccountIdList accountIds = ids();
 
-	if(!accountIds.isEmpty())
-	{
-		for(int i = 0; i < accountIds.count(); ++i)
-			m_accountsCombo->addItem(QString("%1 - %2").arg(i+1).arg(QMessageAccount(accountIds[i]).name()));
+    if(!accountIds.isEmpty())
+    {
+        for(int i = 0; i < accountIds.count(); ++i)
+            m_accountsCombo->addItem(QString("%1 - %2").arg(i+1).arg(QMessageAccount(accountIds[i]).name()));
 
-		m_stackedLayout->setCurrentWidget(m_accountsCombo);
-	}
-	else
-		m_busyLabel->setText("No accounts!");
+        m_stackedLayout->setCurrentWidget(m_accountsCombo);
+    }
+    else
+        m_busyLabel->setText("No accounts!");
 
 #ifndef _WIN32_WCE
     setCursor(Qt::ArrowCursor);
@@ -196,71 +203,71 @@ void AccountsWidget::loadFinished()
 
 void AccountsWidget::setupUi()
 {
-	m_stackedLayout = new QStackedLayout(this);
+    m_stackedLayout = new QStackedLayout(this);
 
-	m_accountsCombo = new QComboBox(this);
-	m_stackedLayout->addWidget(m_accountsCombo);
+    m_accountsCombo = new QComboBox(this);
+    m_stackedLayout->addWidget(m_accountsCombo);
 
-	m_busyLabel = new QLabel("Loading..");
-	m_stackedLayout->addWidget(m_busyLabel);
+    m_busyLabel = new QLabel("Loading..");
+    m_stackedLayout->addWidget(m_busyLabel);
 }
 
 void AccountsWidget::setIds(const QMessageAccountIdList& ids)
 {
-	QMutexLocker mutex(&m_loadMutex);
+    QMutexLocker mutex(&m_loadMutex);
 
-	m_ids = ids;
+    m_ids = ids;
 }
 
 QMessageAccountIdList AccountsWidget::ids() const
 {
-	QMutexLocker mutex(&m_loadMutex);
-	return m_ids;
+    QMutexLocker mutex(&m_loadMutex);
+    return m_ids;
 }
 
 class RecentMessagesWidget : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 
 private:
-	static const int MessageIdRole = Qt::UserRole + 1;
+    static const int MessageIdRole = Qt::UserRole + 1;
 
-	class Loader : public QThread
-	{
-	public:
-		Loader(RecentMessagesWidget* parent);
-		void run();
+    class Loader : public QThread
+    {
+    public:
+        Loader(RecentMessagesWidget* parent);
+        void run();
 
-	private:
-		RecentMessagesWidget* m_parent;
-	};
+    private:
+        RecentMessagesWidget* m_parent;
+    };
 
 public:
-	RecentMessagesWidget(QWidget* parent = 0);
+    RecentMessagesWidget(QWidget* parent = 0);
 
-	IdSubjectPair currentItem() const;
+    IdSubjectPair currentItem() const;
 
 protected:
-	void showEvent(QShowEvent* e);
-	void hideEvent(QHideEvent* e);
+    void showEvent(QShowEvent* e);
+    void hideEvent(QHideEvent* e);
 
 private slots:
-	void load();
-	void loadStarted();
-	void loadFinished();
+    void load();
+    void loadStarted();
+    void loadFinished();
 
 private:
-	void setupUi();
-	void setIds(const MessageIdSubjectList& list);
-	MessageIdSubjectList ids() const;
+    void setupUi();
+    void setIds(const MessageIdSubjectList& list);
+    MessageIdSubjectList ids() const;
 
 private:
-	QListWidget* m_messageListWidget;
-	QLabel* m_busyLabel;
-	QStackedLayout* m_layout;
-	Loader m_loader;
-	mutable QMutex m_loadMutex;
-	MessageIdSubjectList m_ids;
+    QListWidget* m_messageListWidget;
+    QLabel* m_busyLabel;
+    QStackedLayout* m_layout;
+    Loader m_loader;
+    mutable QMutex m_loadMutex;
+    MessageIdSubjectList m_ids;
 };
 
 RecentMessagesWidget::Loader::Loader(RecentMessagesWidget* parent)
@@ -274,7 +281,7 @@ void RecentMessagesWidget::Loader::run()
 {
     QMessageIdList lastTenMessages = QMessageStore::instance()->queryMessages(QMessageFilter(),QMessageOrdering::byReceptionTimeStamp(Qt::DescendingOrder),10,0);
 
-	MessageIdSubjectList ids;
+    MessageIdSubjectList ids;
 
     foreach(const QMessageId& id, lastTenMessages)
     {
@@ -283,7 +290,7 @@ void RecentMessagesWidget::Loader::run()
         ids.append(result);
     }
 
-	m_parent->setIds(ids);
+    m_parent->setIds(ids);
 }
 
 RecentMessagesWidget::RecentMessagesWidget(QWidget* parent)
@@ -294,39 +301,39 @@ m_busyLabel(0),
 m_layout(0),
 m_loader(this)
 {
-	setupUi();
-	connect(&m_loader,SIGNAL(started()),this,SLOT(loadStarted()));
-	connect(&m_loader,SIGNAL(finished()),this,SLOT(loadFinished()));
+    setupUi();
+    connect(&m_loader,SIGNAL(started()),this,SLOT(loadStarted()));
+    connect(&m_loader,SIGNAL(finished()),this,SLOT(loadFinished()));
 }
 
 IdSubjectPair RecentMessagesWidget::currentItem() const
 {
-	IdSubjectPair result;
+    IdSubjectPair result;
 
-	if(m_loader.isFinished() && !m_ids.isEmpty())
-		result = ids().at(m_messageListWidget->currentRow());
-	return result;
+    if(m_loader.isFinished() && !m_ids.isEmpty())
+        result = ids().at(m_messageListWidget->currentRow());
+    return result;
 }
 
 void RecentMessagesWidget::showEvent(QShowEvent* e)
 {
-	load();
-	QWidget::showEvent(e);
+    load();
+    QWidget::showEvent(e);
 }
 
 void RecentMessagesWidget::hideEvent(QHideEvent* e)
 {
-	if(m_loader.isRunning())
+    if(m_loader.isRunning())
         m_loader.exit();
-	QWidget::hideEvent(e);
+    QWidget::hideEvent(e);
 }
 
 void RecentMessagesWidget::load()
 {
-	static bool runonce = false;
-	if(!runonce)
-		m_loader.start();
-	runonce = true;
+    static bool runonce = false;
+    if(!runonce)
+        m_loader.start();
+    runonce = true;
 }
 
 void RecentMessagesWidget::loadStarted()
@@ -334,22 +341,22 @@ void RecentMessagesWidget::loadStarted()
 #ifndef _WIN32_WCE
     setCursor(Qt::BusyCursor);
 #endif
-	m_layout->setCurrentWidget(m_busyLabel);
+    m_layout->setCurrentWidget(m_busyLabel);
 }
 
 void RecentMessagesWidget::loadFinished()
 {
-	m_messageListWidget->clear();
+    m_messageListWidget->clear();
 
-	MessageIdSubjectList lastTenMessages = ids();
+    MessageIdSubjectList lastTenMessages = ids();
 
-	if(lastTenMessages.isEmpty())
-	{
-		m_busyLabel->setText("No messages found!");
-		return;
-	}
+    if(lastTenMessages.isEmpty())
+    {
+        m_busyLabel->setText("No messages found!");
+        return;
+    }
 
-    for(int index = lastTenMessages.count()-1; index >= 0; index--)
+    for(int index =  0 ; index <= lastTenMessages.count()-1; index++)
     {
         IdSubjectPair result(lastTenMessages[index]);
         QListWidgetItem* newItem = new QListWidgetItem(result.second);
@@ -365,28 +372,28 @@ void RecentMessagesWidget::loadFinished()
 
 void RecentMessagesWidget::setupUi()
 {
-	m_layout = new QStackedLayout(this);
+    m_layout = new QStackedLayout(this);
 
-	m_messageListWidget = new QListWidget(this);
-	m_layout->addWidget(m_messageListWidget);
+    m_messageListWidget = new QListWidget(this);
+    m_layout->addWidget(m_messageListWidget);
 
-	m_busyLabel = new QLabel("Loading...",this);
-	m_busyLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-	m_busyLabel->setFrameStyle(QFrame::Box);
-	m_layout->addWidget(m_busyLabel);
+    m_busyLabel = new QLabel("Loading...",this);
+    m_busyLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    m_busyLabel->setFrameStyle(QFrame::Box);
+    m_layout->addWidget(m_busyLabel);
 
 }
 
 void RecentMessagesWidget::setIds(const MessageIdSubjectList& list)
 {
-	QMutexLocker mutex(&m_loadMutex);
-	m_ids = list;
+    QMutexLocker mutex(&m_loadMutex);
+    m_ids = list;
 }
 
 MessageIdSubjectList RecentMessagesWidget::ids() const
 {
-	QMutexLocker mutex(&m_loadMutex);
-	return m_ids;
+    QMutexLocker mutex(&m_loadMutex);
+    return m_ids;
 }
 
 class ComposeSendWidget : public QWidget
@@ -410,8 +417,7 @@ private:
     QWidget* m_composeWidget;
     QLabel* m_busyLabel;
     QMessageServiceAction* m_service;
-	AccountsWidget* m_accountsWidget;
-    QMessageAccountIdList m_availableAccounts;
+    AccountsWidget* m_accountsWidget;
     QLineEdit* m_toEdit;
     QLineEdit* m_subjectEdit;
     QTextEdit* m_bodyEdit;
@@ -481,17 +487,17 @@ void ComposeSendWidget::setupUi()
     gl->addWidget(m_attachmentList,4,0,1,2);
     m_attachmentList->hide();
 
-	QAction* composeAction = new QAction("Compose",this);
-	connect(composeAction,SIGNAL(triggered()),this,SLOT(composeButtonClicked()));
+    QAction* composeAction = new QAction("Compose",this);
+    connect(composeAction,SIGNAL(triggered()),this,SLOT(composeButtonClicked()));
     addAction(composeAction);
-	QAction* sendAction = new QAction("Send",this);
-	connect(sendAction,SIGNAL(triggered()),this,SLOT(sendButtonClicked()));
+    QAction* sendAction = new QAction("Send",this);
+    connect(sendAction,SIGNAL(triggered()),this,SLOT(sendButtonClicked()));
     addAction(sendAction);
     QAction* separator = new QAction(this);
     separator->setSeparator(true);
     addAction(separator);
-	QAction* attachmentsAction = new QAction("Add attachment",this);
-	connect(attachmentsAction,SIGNAL(triggered()),this,SLOT(addAttachmentButtonClicked()));
+    QAction* attachmentsAction = new QAction("Add attachment",this);
+    connect(attachmentsAction,SIGNAL(triggered()),this,SLOT(addAttachmentButtonClicked()));
     addAction(attachmentsAction);
 }
 
@@ -499,24 +505,25 @@ QMessage ComposeSendWidget::constructQMessage() const
 {
     QMessage message;
 
-    if(m_availableAccounts.isEmpty())
+    if(m_accountsWidget->isEmpty())
     {
         QMessageBox::critical(const_cast<ComposeSendWidget*>(this),"No Accounts","Cannot send a message without any available accounts");
         return message;
     }
 
-	QMessageAccountId selectedAccountId = m_accountsWidget->currentAccount();
+    QMessageAccountId selectedAccountId = m_accountsWidget->currentAccount();
+
+    QMessageAddressList toList;
 
     foreach(QString s, m_toEdit->text().split(QRegExp("\\s")))
-    {
-        QMessageAddressList toList;
         toList.append(QMessageAddress(s,QMessageAddress::Email));
-        message.setTo(toList);
-    }
+
+    message.setTo(toList);
 
     message.setParentAccountId(selectedAccountId);
     message.setSubject(m_subjectEdit->text());
     message.setBody(m_bodyEdit->toPlainText());
+    message.setType(QMessage::Email);
     message.appendAttachments(m_attachmentList->attachments());
 
     return message;
@@ -566,7 +573,7 @@ m_service(service),
 m_showWidget(0),
 m_recentMessagesWidget(0)
 {
-	setupUi();
+    setupUi();
 }
 
 void ShowWidget::showButtonClicked()
@@ -575,7 +582,7 @@ void ShowWidget::showButtonClicked()
 
     if(m_recentMessagesWidget->currentItem().first.isValid())
     {
-		IdSubjectPair result = m_recentMessagesWidget->currentItem();
+        IdSubjectPair result = m_recentMessagesWidget->currentItem();
         QMessageId selectedId(result.first);
         m_service->show(selectedId);
     }
@@ -585,14 +592,14 @@ void ShowWidget::setupUi()
 {
     QVBoxLayout* vbl = new QVBoxLayout(this);
 
-	vbl->addWidget(new QLabel("Last 10 messages:",this));
+    vbl->addWidget(new QLabel("Last 10 messages:",this));
 
     m_recentMessagesWidget = new RecentMessagesWidget(this);
     vbl->addWidget(m_recentMessagesWidget);
 
-	QAction* showAction = new QAction("Show",this);
-	connect(showAction,SIGNAL(triggered()),this,SLOT(showButtonClicked()));
-	addAction(showAction);
+    QAction* showAction = new QAction("Show",this);
+    connect(showAction,SIGNAL(triggered()),this,SLOT(showButtonClicked()));
+    addAction(showAction);
 }
 
 class QueryWidget : public QWidget
@@ -622,55 +629,55 @@ m_tabWidget(0)
     connect(m_serviceAction,SIGNAL(stateChanged(QMessageServiceAction::State)),
             this,SLOT(serviceStateChanged(QMessageServiceAction::State)));
 
-	//example widgets
+    //example widgets
 
-	m_widgetStack = new QStackedWidget(this);
-	setCentralWidget(m_widgetStack);
+    m_widgetStack = new QStackedWidget(this);
+    setCentralWidget(m_widgetStack);
     m_widgetStack->addWidget(new ComposeSendWidget(m_serviceAction,this));
     m_widgetStack->addWidget(new ShowWidget(m_serviceAction,this));
     m_widgetStack->addWidget(new RetrieveWidget(m_serviceAction,this));
     m_widgetStack->addWidget(new QueryWidget(m_serviceAction,this));
 
-	//main menu
+    //main menu
 #ifndef _WIN32_WCE
     QMenu* fileMenu = new QMenu("File",this);
 #endif
 
-	int index = 0;
-	foreach(QAction* viewAction, QList<QAction*>() << new QAction("Compose\\Send",this)
-		                                           << new QAction("Show",this)
-												   << new QAction("Retrieve",this)
-												   << new QAction("Query",this))
-	{
-		connect(viewAction,SIGNAL(triggered()),this,SLOT(viewSelected()));
+    int index = 0;
+    foreach(QAction* viewAction, QList<QAction*>() << new QAction("Compose\\Send",this)
+                                                   << new QAction("Show",this)
+                                                   << new QAction("Retrieve",this)
+                                                   << new QAction("Query",this))
+    {
+        connect(viewAction,SIGNAL(triggered()),this,SLOT(viewSelected()));
 #ifndef _WIN32_WCE
         fileMenu->addAction(viewAction);
 #else
-		menuBar()->addAction(viewAction);
+        menuBar()->addAction(viewAction);
 #endif
-		viewAction->setData(index);
-		index++;
-	}
+        viewAction->setData(index);
+        index++;
+    }
 #ifndef _WIN32_WCE
     fileMenu->addSeparator();
 #else
-	menuBar()->addSeparator();
+    menuBar()->addSeparator();
 #endif
 
-	QAction* quitAction = new QAction("Quit",this);
-	connect(quitAction,SIGNAL(triggered()),qApp,SLOT(quit()));
+    QAction* quitAction = new QAction("Quit",this);
+    connect(quitAction,SIGNAL(triggered()),qApp,SLOT(quit()));
 #ifndef _WIN32_WCE
     fileMenu->addAction(quitAction);
     menuBar()->addMenu(fileMenu);
 #else
-	menuBar()->addAction(quitAction);
+    menuBar()->addAction(quitAction);
 #endif
 
-	QTimer::singleShot(0,this,SLOT(viewSelected()));
+    QTimer::singleShot(0,this,SLOT(viewSelected()));
 
-	//window properties
+    //window properties
 
-	setWindowTitle(WindowTitle);
+    setWindowTitle(WindowTitle);
     resize(WindowGeometry);
 }
 
@@ -692,21 +699,21 @@ void MainWindow::viewSelected()
 #endif
     }
 
-	QAction* senderAction = static_cast<QAction*>(sender());
-	if(senderAction)
-		m_widgetStack->setCurrentIndex(senderAction->data().toInt());
+    QAction* senderAction = static_cast<QAction*>(sender());
+    if(senderAction)
+        m_widgetStack->setCurrentIndex(senderAction->data().toInt());
 
-	bool currentViewHasActions = m_widgetStack->currentWidget() && !m_widgetStack->currentWidget()->actions().isEmpty();
+    bool currentViewHasActions = m_widgetStack->currentWidget() && !m_widgetStack->currentWidget()->actions().isEmpty();
     actionMenu->clear();
-	if(currentViewHasActions)
+    if(currentViewHasActions)
     {
         foreach(QAction* a, m_widgetStack->currentWidget()->actions())
-			actionMenu->addAction(a);
+            actionMenu->addAction(a);
     }
 #ifdef _WIN32_WCE
-	static QAction* leftSoftButton = new QAction("Action",this);
-	leftSoftButton->setMenu(actionMenu);
-	menuBar()->setDefaultAction(leftSoftButton);
+    static QAction* leftSoftButton = new QAction("Action",this);
+    leftSoftButton->setMenu(actionMenu);
+    menuBar()->setDefaultAction(leftSoftButton);
 #endif
 }
 

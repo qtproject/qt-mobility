@@ -37,6 +37,12 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessageaddress.html#setType">setType</a></b> ( Type <i>type</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Type </td><td class="memItemRight" valign="bottom"><b><a href="qmessageaddress.html#type">type</a></b> () const</td></tr>
 </table>
+<hr />
+<a name="static-public-members"></a>
+<h2>Static Public Members</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessageaddress.html#parseEmailAddress">parseEmailAddress</a></b> ( const QString &amp; <i>emailAddress</i>, QString * <i>name</i>, QString * <i>address</i>, QString * <i>suffix</i> = 0, bool * <i>startDelimeterFound</i> = 0, bool * <i>endDelimeterFound</i> = 0 )</td></tr>
+</table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -64,6 +70,12 @@
 <p>Constructs a copy of <i>other</i>.</p>
 <h3 class="fn"><a name="dtor.QMessageAddress"></a>QMessageAddress::~QMessageAddress ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the message address.</p>
+<h3 class="fn"><a name="parseEmailAddress"></a>void QMessageAddress::parseEmailAddress ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>emailAddress</i>, <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> * <i>name</i>, <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> * <i>address</i>, <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> * <i>suffix</i> = 0, bool * <i>startDelimeterFound</i> = 0, bool * <i>endDelimeterFound</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Parses an email address into name, address and suffix parts.</p>
+<p>* <i>name</i> is set to the name part of the email address. * <i>address</i> is set to the address part of the email address. * <i>suffix</i> is set to the suffix part of the email address.</p>
+<p>If the starting delimeter between the name and address part of the email address is found then * <i>startDelimeterFound</i> is set to true; otherwise * <i>startDelimeterFound</i> is set to false;</p>
+<p>If the starting delimeter is not found, then the parsing is ambiguous and both * <i>name</i> and * <i>address</i> will be set to the input <i>emailAddress</i>.</p>
+<p>If the ending delimeter of the address part of the email address is found then * <i>endDelimeterFound</i> is set to true; otherwise * <i>endDelimeterFound</i> is set to false;</p>
 <h3 class="fn"><a name="recipient"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMessageAddress::recipient () const</h3>
 <p>Returns the recipient.</p>
 <p>See also <a href="qmessageaddress.html#setRecipient">setRecipient</a>().</p>

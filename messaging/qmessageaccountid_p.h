@@ -46,12 +46,20 @@ public:
         :q_ptr(accountId)
     {
     }
-    
+
     QMessageAccountId *q_ptr;
 #if defined(Q_OS_WIN)
+
+#ifdef _WIN32_WCE
+    MapiEntryId _storeRecordKey;
+    static QMessageAccountId from(const MapiEntryId &storeKey);
+    static MapiEntryId storeRecordKey(const QMessageAccountId &id);
+#else
     MapiRecordKey _storeRecordKey;
     static QMessageAccountId from(const MapiRecordKey &storeKey);
     static MapiRecordKey storeRecordKey(const QMessageAccountId &id);
+#endif
+
 #endif
 };
 #endif

@@ -2380,6 +2380,14 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setType" fullname="QMessageAddress::setType" href="qmessageaddress.html#setType" location="qmessageaddress.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setType(Type type)">
                 <parameter left="Type" right="" name="type" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="parseEmailAddress" fullname="QMessageAddress::parseEmailAddress" href="qmessageaddress.html#parseEmailAddress" location="qmessageaddress.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="void" signature="parseEmailAddress(const QString &amp; emailAddress, QString * name, QString * address, QString * suffix, bool * startDelimeterFound, bool * endDelimeterFound)">
+                <parameter left="const QString &amp;" right="" name="emailAddress" default=""/>
+                <parameter left="QString *" right="" name="name" default=""/>
+                <parameter left="QString *" right="" name="address" default=""/>
+                <parameter left="QString *" right="" name="suffix" default="0"/>
+                <parameter left="bool *" right="" name="startDelimeterFound" default="0"/>
+                <parameter left="bool *" right="" name="endDelimeterFound" default="0"/>
+            </function>
         </class>
         <typedef access="public" threadsafety="unspecified" status="commendable" name="QMessageAddressList" href="#QMessageAddressList-typedef" location="qmessageaddress.h"/>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactSortOrder" href="qcontactsortorder.html" location="qcontactsortorder.h" bases="" module="">
@@ -4482,15 +4490,8 @@
                 <parameter left="uint" right="" name="limit" default="0"/>
                 <parameter left="uint" right="" name="offset" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="countMessages" fullname="QMessageServiceAction::countMessages" href="qmessageserviceaction.html#countMessages" location="qmessageserviceaction_qmf.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="countMessages(const QMessageFilter &amp; filter, uint limit) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="countMessages" fullname="QMessageServiceAction::countMessages" href="qmessageserviceaction.html#countMessages" location="qmessageserviceaction_qmf.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="countMessages(const QMessageFilter &amp; filter) const">
                 <parameter left="const QMessageFilter &amp;" right="" name="filter" default="QMessageFilter()"/>
-                <parameter left="uint" right="" name="limit" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="countMessages" fullname="QMessageServiceAction::countMessages" href="qmessageserviceaction.html#countMessages-2" location="qmessageserviceaction_qmf.cpp" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="2" type="bool" signature="countMessages(const QMessageFilter &amp; filter, const QString &amp; body, QFlags&lt;QMessageDataComparator::Option&gt; options, uint limit) const">
-                <parameter left="const QMessageFilter &amp;" right="" name="filter" default=""/>
-                <parameter left="const QString &amp;" right="" name="body" default=""/>
-                <parameter left="QFlags&lt;QMessageDataComparator::Option&gt;" right="" name="options" default="0"/>
-                <parameter left="uint" right="" name="limit" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="send" fullname="QMessageServiceAction::send" href="qmessageserviceaction.html#send" location="qmessageserviceaction_qmf.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="send(QMessage &amp; message)">
                 <parameter left="QMessage &amp;" right="" name="message" default=""/>

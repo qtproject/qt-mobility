@@ -16,7 +16,11 @@ PUBLIC_HEADERS += \
            qmessagefolderid.h \
            qmessageaccountid.h \
            qmessagecontentcontainer.h \ 
-           qmessageaddress.h \ 
+           qmessagecontentcontainer_p.h \
+           addresshelper_p.h \
+	   qmessageaddress.h \
+           qmessageaddress_p.h \
+           qmessage_p.h \ 
            qmessage.h \
            qmessagefolder.h \
            qmessageaccount.h \
@@ -52,7 +56,8 @@ SOURCES += qmessageid.cpp \
            qmessagefolderid.cpp \
            qmessageaccountid.cpp \
            qmessagecontentcontainer.cpp \
-           qmessageaddress.cpp \
+           addresshelper.cpp \
+	   qmessageaddress.cpp \
            qmessage.cpp \
            qmessagefolder.cpp \
            qmessageaccount.cpp \
