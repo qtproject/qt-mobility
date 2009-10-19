@@ -30,7 +30,6 @@ symbian {
                        qgeoareamonitor_s60_p.h \
                        qmlbackendmonitorao_s60_p.h \
                        qmlbackendmonitorcreatetriggerao_s60_p.h \
-                       qmlbackendmonitorcreatetrigger_s60_p.h \
                        qmlbackendmonitorinfo_s60_p.h \
                        qmlbackendtriggerchangeao_s60_p.h \
                        notificationmonitorcallback_s60_p.h
@@ -40,7 +39,6 @@ symbian {
                qgeoareamonitor_s60.cpp \
                qmlbackendmonitorao_s60.cpp \
                qmlbackendmonitorcreatetriggerao_s60.cpp \
-               qmlbackendmonitorcreatetrigger_s60.cpp \
                qmlbackendmonitorinfo_s60.cpp \
                qmlbackendtriggerchangeao_s60.cpp
 }
