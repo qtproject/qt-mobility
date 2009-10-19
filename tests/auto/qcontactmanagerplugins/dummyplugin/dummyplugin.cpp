@@ -41,7 +41,6 @@
 #define makename(x) makestr(x)
 
 #include "qcontact_p.h"
-#include "qcontactgroup_p.h"
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
 
@@ -54,12 +53,13 @@ public:
     DummyEngine& operator=(const DummyEngine& other);
     QContactManagerEngine* clone();
     void deref();
+    QString managerName() const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QUniqueId> contacts(QContactManager::Error& error) const;
-    QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
+    QList<QContactLocalId> contacts(QContactManager::Error& error) const;
+    QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
     bool saveContact(QContact* contact, bool batch, QContactManager::Error& error);
-    bool removeContact(const QUniqueId& contactId, bool batch, QContactManager::Error& error);
+    bool removeContact(const QContactLocalId& contactId, bool batch, QContactManager::Error& error);
 
     /* Capabilities reporting */
     QStringList capabilities() const;
@@ -124,9 +124,18 @@ void DummyEngine::deref()
     delete this;
 }
 
-QList<QUniqueId> DummyEngine::contacts(QContactManager::Error& error) const
+QString DummyEngine::managerName() const
 {
-    QList<QUniqueId> allCIds;
+#ifdef DUMMYPLUGINNAME
+    return QString(makename(DUMMYPLUGINNAME));
+#else
+    return QString();
+#endif
+}
+
+QList<QContactLocalId> DummyEngine::contacts(QContactManager::Error& error) const
+{
+    QList<QContactLocalId> allCIds;
 
     if (allCIds.count() > 0 && error == QContactManager::NoError)
         error = QContactManager::DoesNotExistError;
@@ -134,7 +143,7 @@ QList<QUniqueId> DummyEngine::contacts(QContactManager::Error& error) const
     return allCIds;
 }
 
-QContact DummyEngine::contact(const QUniqueId& contactId, QContactManager::Error& error) const
+QContact DummyEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
     Q_UNUSED(contactId);
     error = QContactManager::DoesNotExistError;
@@ -150,21 +159,24 @@ bool DummyEngine::saveContact(QContact* contact, bool batch, QContactManager::Er
     }
 
     // success!
-    contact->setId(5);
+    QContactId newId;
+    newId.setManagerUri(managerUri());
+    newId.setLocalId(5);
+    contact->setId(newId);
     error = QContactManager::NoError;
 
     // if we need to emit signals (ie, this isn't part of a batch operation)
     // then emit the correct one.
     if (!batch) {
-        QList<QUniqueId> emitList;
-        emitList.append(contact->id());
+        QList<QContactLocalId> emitList;
+        emitList.append(contact->id().localId());
         emit contactsAdded(emitList);
     }
 
     return true;
 }
 
-bool DummyEngine::removeContact(const QUniqueId& contactId, bool batch, QContactManager::Error& error)
+bool DummyEngine::removeContact(const QContactLocalId& contactId, bool batch, QContactManager::Error& error)
 {
     if (contactId != 5) {
         error = QContactManager::DoesNotExistError;
@@ -176,7 +188,7 @@ bool DummyEngine::removeContact(const QUniqueId& contactId, bool batch, QContact
     // if we need to emit signals (ie, this isn't part of a batch operation)
     // then emit the correct one.
     if (!batch) {
-        QList<QUniqueId> emitList;
+        QList<QContactLocalId> emitList;
         emitList.append(contactId);
         emit contactsRemoved(emitList);
     }
@@ -188,7 +200,7 @@ bool DummyEngine::removeContact(const QUniqueId& contactId, bool batch, QContact
 QStringList DummyEngine::capabilities() const
 {
     QStringList caplist;
-    caplist << "Groups" << "Locking" << "Batch" << "ReadOnly" << "Filtering" << "Sorting" << "Preferences";
+    caplist << "Locking" << "Batch" << "ReadOnly" << "Filtering" << "Sorting" << "Preferences";
     // ie, doesn't support: Changelog, Volatile, Asynchronous.
     return caplist;
 }

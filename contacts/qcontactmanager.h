@@ -43,8 +43,10 @@
 #include <QList>
 #include <QDateTime>
 
+#include "qtcontactsglobal.h"
 #include "qcontact.h"
-#include "qcontactgroup.h"
+#include "qcontactid.h"
+#include "qcontactrelationship.h"
 #include "qcontactmanagerinfo.h"
 #include "qcontactsortorder.h"
 
@@ -68,7 +70,7 @@ public:
 
     QString managerName() const;                       // e.g. "Symbian"
     QMap<QString, QString> managerParameters() const;  // e.g. "filename=private.db"
-    QString storeUri() const;                          // managerName + managerParameters
+    QString managerUri() const;                        // managerName + managerParameters
 
     static bool splitUri(const QString& uri, QString* managerName, QMap<QString, QString>* params);
     static QString buildUri(const QString& managerName, const QMap<QString, QString>& params);
@@ -79,6 +81,7 @@ public:
         DoesNotExistError,
         AlreadyExistsError,
         InvalidDetailError,
+        InvalidRelationshipError,
         LockedError,
         DetailAccessError,
         PermissionsError,
@@ -92,24 +95,31 @@ public:
     QContactManager::Error error() const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const;    // retrieve contact ids
-    QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve ids of contacts matching the filter
+    QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const;    // retrieve contact ids
+    QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve ids of contacts matching the filter
+    QList<QContactLocalId> contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve contacts of the given type
 
-    QContact contact(const QUniqueId& contactId) const;  // retrieve a contact
+    QContact contact(const QContactLocalId& contactId) const;  // retrieve a contact
 
     bool saveContact(QContact* contact);                 // note: MODIFIES contact (sets the contactId)
-    bool removeContact(const QUniqueId& contactId);      // remove the contact from the persistent store
+    bool removeContact(const QContactLocalId& contactId);      // remove the contact from the persistent store
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts);       // batch API - save
-    QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds);  // batch API - remove
+    QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds);  // batch API - remove
 
     /* Synthesise the display label of a contact */
     QString synthesiseDisplayLabel(const QContact& contact) const;
 
-    /* Groups - Accessors and Mutators */
-    QList<QUniqueId> groups() const;
-    QContactGroup group(const QUniqueId& groupId) const;
-    bool saveGroup(QContactGroup* group);
-    bool removeGroup(const QUniqueId& groupId);
+    /* "Self" contact id (MyCard) */
+    bool setSelfContactId(const QContactLocalId& contactId);
+    QContactLocalId selfContactId() const;
+
+    /* Relationships */
+    QList<QContactRelationship> relationships(const QContactId& participantId, QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
+    QList<QContactRelationship> relationships(const QString& relationshipType = QString(), const QContactId& participantId = QContactId(), QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
+    bool saveRelationship(QContactRelationship* relationship);
+    QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships);
+    bool removeRelationship(const QContactRelationship& relationship);
+    QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships);
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions() const;
@@ -124,12 +134,12 @@ public:
     static QStringList availableManagers();
 
 signals:
-    void contactsAdded(const QList<QUniqueId>& contactIds);
-    void contactsChanged(const QList<QUniqueId>& contactIds);
-    void contactsRemoved(const QList<QUniqueId>& contactIds);
-    void groupsAdded(const QList<QUniqueId>& groupIds);
-    void groupsChanged(const QList<QUniqueId>& groupIds);
-    void groupsRemoved(const QList<QUniqueId>& groupIds);
+    void dataChanged();
+    void contactsAdded(const QList<QContactLocalId>& contactIds);
+    void contactsChanged(const QList<QContactLocalId>& contactIds);
+    void contactsRemoved(const QList<QContactLocalId>& contactIds);
+    void relationshipsAdded(const QList<QContactLocalId>& affectedContactIds);
+    void relationshipsRemoved(const QList<QContactLocalId>& affectedContactIds);
 
 private:
     friend class QContactManagerData;

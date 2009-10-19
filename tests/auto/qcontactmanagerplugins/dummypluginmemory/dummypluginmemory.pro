@@ -17,5 +17,4 @@ DEFINES += DUMMYPLUGINNAME=memory
 
 SOURCES += ../dummyplugin/dummyplugin.cpp
 
-
 include(../../contacts_plugins.pri)

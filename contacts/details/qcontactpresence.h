@@ -51,12 +51,26 @@ public:
     const char* FieldNickname;
     const char* FieldPresence;
     const char* FieldStatusMessage;
+    const char* PresenceAvailable;
+    const char* PresenceHidden;
+    const char* PresenceBusy;
+    const char* PresenceAway;
+    const char* PresenceExtendedAway;
+    const char* PresenceUnknown;
+    const char* PresenceOffline;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPresence, "Presence")
     Q_DECLARE_LATIN1_LITERAL(FieldAccountUri, "AccountUri");
     Q_DECLARE_LATIN1_LITERAL(FieldNickname, "Nickname");
     Q_DECLARE_LATIN1_LITERAL(FieldPresence, "Presence");
     Q_DECLARE_LATIN1_LITERAL(FieldStatusMessage, "StatusMessage");
+    Q_DECLARE_LATIN1_LITERAL(PresenceAvailable, "Available");
+    Q_DECLARE_LATIN1_LITERAL(PresenceHidden, "Hidden");
+    Q_DECLARE_LATIN1_LITERAL(PresenceBusy, "Busy");
+    Q_DECLARE_LATIN1_LITERAL(PresenceAway, "Away");
+    Q_DECLARE_LATIN1_LITERAL(PresenceExtendedAway, "ExtendedAway");
+    Q_DECLARE_LATIN1_LITERAL(PresenceUnknown, "Unknown");
+    Q_DECLARE_LATIN1_LITERAL(PresenceOffline, "Offline");
 #endif
 
     void setAccountUri(const QString& accountUri) {setValue(FieldAccountUri, accountUri);}

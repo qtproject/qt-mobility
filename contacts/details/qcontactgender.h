@@ -47,9 +47,15 @@ public:
 #ifdef Q_QDOC
     const char* DefinitionName;
     const char* FieldGender;
+    const char* GenderMale;
+    const char* GenderFemale;
+    const char* GenderUnspecified;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGender, "Gender")
     Q_DECLARE_LATIN1_LITERAL(FieldGender, "Gender");
+    Q_DECLARE_LATIN1_LITERAL(GenderMale, "Male");
+    Q_DECLARE_LATIN1_LITERAL(GenderFemale, "Female");
+    Q_DECLARE_LATIN1_LITERAL(GenderUnspecified, "Unspecified");
 #endif
 
     void setGender(const QString& gender) {setValue(FieldGender, gender);}

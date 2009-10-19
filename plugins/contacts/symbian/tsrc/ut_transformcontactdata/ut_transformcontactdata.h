@@ -50,6 +50,17 @@ private slots:
 	void executeTransformNickname();
 	void executeTransformPhonenumber();
 	void executeTransformAddress();
+	void executeTransformUrl();
+	void executeTransformBithday();
+	void executeTransformOnlineAccount();
+	void executeTransformOrganisation();
+	void executeTransformAvatar();
+	void executeTransformSyncTarget();
+	void executeTransformGender();
+	void executeTransformAnniversary();
+	void executeTransformGeolocation();
+	void executeTransformNote();
+	void executeTransformFamily();
 	
 private:
     void validateTransformEmail(TPtrC16 field, QString detail);
@@ -66,5 +77,20 @@ private:
                                   TPtrC16 localityField, QString localityDetail,
                                   TPtrC16 regionField, QString regionDetail,
                                   TPtrC16 postOfficeBoxField, QString postOfficeBoxDetail);
+    void validateTransformUrl(TPtrC16 field, QString detail);
+    void validateTransformBirthday(TTime field, QDate detail);
+    void validateTransformOnlineAccount(TPtrC16 sipField, QString sipDetail);
+    void validateTransformOrganisation(TPtrC16 companyField, QString companyDetail,
+                                       TPtrC16 departmentField, QString departmentDetail,
+                                       TPtrC16 jobtitleField, QString jobtitleDetail,
+                                       TPtrC16 assistantField, QString assistantDetail);
+    void validateTransformAvatar(TPtrC16 field, QString detail);
+    void validateTransformSyncTarget(TPtrC16 field, QString detail);
+    void validateTransformGender(TPtrC16 field, QString detail);
+    void validateTransformAnniversary(TPtrC16 field, QDate dateDetail, QString eventDetail);
+    void validateTransformGeolocation(TPtrC16 field, double latitudeDetail, double longitudeDetail);
+    void validateTransformNote(TPtrC16 field, QString detail);
+    void validateTransformFamily(TPtrC16 spouseField, QString spouseDetail,
+                                 TPtrC16 childField, QString childDetail);
     void validateContexts(TransformContactData* transformContactData) const; 
 };

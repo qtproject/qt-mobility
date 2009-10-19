@@ -13,6 +13,8 @@ INCLUDEPATH += . ../../contacts \
                ../../contacts/filters
 
 
+qtAddLibrary(QtContacts)
+
 # Input
 SOURCES += main.cpp \
            testmodelui.cpp \

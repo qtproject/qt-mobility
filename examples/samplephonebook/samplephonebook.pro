@@ -13,6 +13,11 @@ INCLUDEPATH += . \
                ../../contacts/requests \
                ../../contacts/details 
 
+INCLUDEPATH += ../testmodel
+VPATH += ../testmodel
+
+
+qtAddLibrary(QtContacts)
 
 # Input
 SOURCES =  contactdetailsform.cpp \

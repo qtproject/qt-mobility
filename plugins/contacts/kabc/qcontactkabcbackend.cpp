@@ -37,8 +37,6 @@
 #include <QSettings>
 #include <QUuid>
 
-#include <QDebug>
-
 #include "qcontact_p.h"
 #include "qcontactgroup_p.h"
 #include "qcontactmanager.h"
@@ -190,7 +188,7 @@ void QContactKabcEngine::settingsFileChanged()
         foreach (const QString& defId, defIds) {
             definitions.beginGroup(defId);
             QContactDetailDefinition dd;
-            dd.setId(defId);
+            dd.setName(defId);
             dd.setUnique(definitions.value("unique").toBool());
             dd.setAccessConstraint(((QContactDetailDefinition::AccessConstraint)definitions.value("access").toUInt()));
 
@@ -235,9 +233,9 @@ QMap<QString, QString> QContactKabcEngine::parameters() const
     return params;
 }
 
-QList<QUniqueId> QContactKabcEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactKabcEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
-    QList<QUniqueId> allCIds;
+    QList<QContactLocalId> allCIds;
     error = QContactManager::NoError;
     KABC::Addressee::List allAddressees = d->ab->allAddressees();
     foreach (const KABC::Addressee& curr, allAddressees) {
@@ -247,7 +245,7 @@ QList<QUniqueId> QContactKabcEngine::contacts(const QList<QContactSortOrder>& so
     // return the list sorted according to sortOrders
     QContactManager::Error sortError;
     QList<QContact> sorted;
-    QList<QUniqueId> sortedIds;
+    QList<QContactLocalId> sortedIds;
     for (int i = 0; i < allCIds.size(); i++)
         QContactManagerEngine::addSorted(&sorted, contact(allCIds.at(i), sortError), sortOrders);
     for (int i = 0; i < sorted.size(); i++)
@@ -256,11 +254,11 @@ QList<QUniqueId> QContactKabcEngine::contacts(const QList<QContactSortOrder>& so
     return sortedIds;
 }
 
-QContact QContactKabcEngine::contact(const QUniqueId& contactId, QContactManager::Error& error) const
+QContact QContactKabcEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
     error = QContactManager::NoError;
-    if (d->m_QUniqueIdToKabcUid.contains(contactId)) {
-        KABC::Addressee corresponding = d->ab->findByUid(d->m_QUniqueIdToKabcUid.value(contactId));
+    if (d->m_QContactLocalIdToKabcUid.contains(contactId)) {
+        KABC::Addressee corresponding = d->ab->findByUid(d->m_QContactLocalIdToKabcUid.value(contactId));
         QContact ret = convertAddressee(corresponding);
         ret.setId(contactId);
         return ret;
@@ -270,7 +268,7 @@ QContact QContactKabcEngine::contact(const QUniqueId& contactId, QContactManager
     return QContact();
 }
 
-bool QContactKabcEngine::saveContact(QContact* contact, QSet<QUniqueId>& contactsAdded, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
+bool QContactKabcEngine::saveContact(QContact* contact, QSet<QContactLocalId>& contactsAdded, QSet<QContactLocalId>& contactsChanged, QSet<QContactLocalId>& groupsChanged, QContactManager::Error& error)
 {
     if (contact == 0) {
         error = QContactManager::BadArgumentError;
@@ -285,14 +283,14 @@ bool QContactKabcEngine::saveContact(QContact* contact, QSet<QUniqueId>& contact
 
     KABC::Ticket *ticket = d->ab->requestSaveTicket();
     KABC::Addressee converted = convertContact(*contact);
-    if (!d->m_QUniqueIdToKabcUid.contains(contact->id())) {
+    if (!d->m_QContactLocalIdToKabcUid.contains(contact->id())) {
         // new contact (or previously saved and removed)
         d->m_lastUsedId += 1;
         contact->setId(d->m_lastUsedId);
         converted.insertCustom("com.nokia.mobility.contacts.KAbcBackend", "id", QString::number(d->m_lastUsedId));
         QString newUuid = QUuid::createUuid().toString();
-        d->m_QUniqueIdToKabcUid.insert(d->m_lastUsedId, newUuid);
-        d->m_kabcUidToQUniqueId.insert(newUuid, contact->id());
+        d->m_QContactLocalIdToKabcUid.insert(d->m_lastUsedId, newUuid);
+        d->m_kabcUidToQContactLocalId.insert(newUuid, contact->id());
         QSettings definitions(d->m_settingsFile, QSettings::IniFormat);
         definitions.setValue("nextAvailableContactId", QString::number(d->m_lastUsedId + 1));
         contactsAdded.insert(contact->id());
@@ -302,10 +300,10 @@ bool QContactKabcEngine::saveContact(QContact* contact, QSet<QUniqueId>& contact
 
     // update groups if required.
     QContactManager::Error groupError;
-    QList<QUniqueId> allGroups = groups(groupError);
-    QList<QUniqueId> contactGroups = contact->groups();
+    QList<QContactLocalId> allGroups = groups(groupError);
+    QList<QContactLocalId> contactGroups = contact->groups();
     for (int i = 0; i < allGroups.size(); i++) {
-        QSet<QUniqueId> temp1, temp2, temp3;
+        QSet<QContactLocalId> temp1, temp2, temp3;
         QContactGroup curr = group(allGroups.at(i), groupError);
         if (contactGroups.contains(allGroups.at(i))) {
             // the contact should be part of this group
@@ -325,7 +323,7 @@ bool QContactKabcEngine::saveContact(QContact* contact, QSet<QUniqueId>& contact
     }
     
     // save to KABC database
-    converted.setUid(d->m_QUniqueIdToKabcUid.value(contact->id()));
+    converted.setUid(d->m_QContactLocalIdToKabcUid.value(contact->id()));
     d->ab->insertAddressee(converted);
     d->ab->save(ticket);
 
@@ -334,25 +332,25 @@ bool QContactKabcEngine::saveContact(QContact* contact, QSet<QUniqueId>& contact
     return true;
 }
 
-bool QContactKabcEngine::removeContact(const QUniqueId& contactId, QSet<QUniqueId>& contactsChanged, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
+bool QContactKabcEngine::removeContact(const QContactLocalId& contactId, QSet<QContactLocalId>& contactsChanged, QSet<QContactLocalId>& groupsChanged, QContactManager::Error& error)
 {
-    if (!d->m_QUniqueIdToKabcUid.contains(contactId)) {
+    if (!d->m_QContactLocalIdToKabcUid.contains(contactId)) {
         error = QContactManager::DoesNotExistError;
         return false;
     }
 
     KABC::Ticket *ticket = d->ab->requestSaveTicket();
-    d->ab->removeAddressee(d->ab->findByUid(d->m_QUniqueIdToKabcUid.value(contactId)));
-    d->m_kabcUidToQUniqueId.remove(d->m_QUniqueIdToKabcUid.value(contactId));
-    d->m_QUniqueIdToKabcUid.remove(contactId);
+    d->ab->removeAddressee(d->ab->findByUid(d->m_QContactLocalIdToKabcUid.value(contactId)));
+    d->m_kabcUidToQContactLocalId.remove(d->m_QContactLocalIdToKabcUid.value(contactId));
+    d->m_QContactLocalIdToKabcUid.remove(contactId);
     d->ab->save(ticket);
     error = QContactManager::NoError;
 
     // remove the contact from any groups it might have been in
     QContactManager::Error groupError;
-    QList<QUniqueId> allGroups = groups(groupError);
+    QList<QContactLocalId> allGroups = groups(groupError);
     for (int i = 0; i < allGroups.size(); i++) {
-        QSet<QUniqueId> temp1, temp2, temp3;
+        QSet<QContactLocalId> temp1, temp2, temp3;
         QContactGroup curr = group(allGroups.at(i), groupError);
         if (curr.hasMember(contactId)) {
             curr.removeMember(contactId);
@@ -367,13 +365,13 @@ bool QContactKabcEngine::removeContact(const QUniqueId& contactId, QSet<QUniqueI
 }
 
 /*
-QList<QUniqueId> QContactKabcEngine::groups(QContactManager::Error& error) const
+QList<QContactLocalId> QContactKabcEngine::groups(QContactManager::Error& error) const
 {
-    QList<QUniqueId> retn;
+    QList<QContactLocalId> retn;
     QList<KABC::DistributionList*> allKabcGroups = d->ab->allDistributionLists();
     for (int i = 0; i < allKabcGroups.count(); i++) {
         bool ok = true;
-        QUniqueId currId = allKabcGroups.at(i)->identifier().toUInt(&ok);
+        QContactLocalId currId = allKabcGroups.at(i)->identifier().toUInt(&ok);
         if (ok) {
             retn.append(currId);
         } else {
@@ -385,7 +383,7 @@ QList<QUniqueId> QContactKabcEngine::groups(QContactManager::Error& error) const
     return retn;
 }
 
-QContactGroup QContactKabcEngine::group(const QUniqueId& groupId, QContactManager::Error& error) const
+QContactGroup QContactKabcEngine::group(const QContactLocalId& groupId, QContactManager::Error& error) const
 {
     KABC::DistributionList* requested = 0; // = d->ab->findDistributionListByIdentifier(QString::number(groupId)); // doesn't work...
     QList<KABC::DistributionList*> allDL = d->ab->allDistributionLists();
@@ -457,8 +455,8 @@ bool QContactKabcEngine::saveGroup(QContactGroup* group, QContactManager::Error&
 
     // and set the new details.
     kabcGroup->setName(group->name());
-    QList<QUniqueId> members = group->members();
-    foreach(QUniqueId id, members) {
+    QList<QContactLocalId> members = group->members();
+    foreach(QContactLocalId id, members) {
         kabcGroup->insertEntry(convertContact(contact(id, error)));
     }
 
@@ -468,7 +466,7 @@ bool QContactKabcEngine::saveGroup(QContactGroup* group, QContactManager::Error&
     return true;
 }
 
-bool QContactKabcEngine::removeGroup(const QUniqueId& groupId, QContactManager::Error& error)
+bool QContactKabcEngine::removeGroup(const QContactLocalId& groupId, QContactManager::Error& error)
 {
     KABC::DistributionList* requested = 0; //d->ab->findDistributionListByIdentifier(QString::number(groupId));
     QList<KABC::DistributionList*> allDL = d->ab->allDistributionLists();
@@ -513,17 +511,17 @@ bool QContactKabcEngine::saveDetailDefinition(const QContactDetailDefinition& de
         return false;
     }
     if (!d->m_definitions.key(def, "").isEmpty())
-        removeDetailDefinition(def.id(), error);
-    d->m_definitions.insert(def.id(), def);
+        removeDetailDefinition(def.name(), error);
+    d->m_definitions.insert(def.name(), def);
 
     // we need to persist definitions.
     if (d->m_settingsWatcher)
         d->m_settingsWatcher->blockSignals(true);
     QSettings definitions(d->m_settingsFile, QSettings::IniFormat);
-    if (definitions.childGroups().contains(def.id()))
-        definitions.remove(def.id());
+    if (definitions.childGroups().contains(def.name()))
+        definitions.remove(def.name());
 
-    definitions.beginGroup(def.id());
+    definitions.beginGroup(def.name());
     definitions.setValue("unique", def.isUnique());
     definitions.setValue("access", def.accessConstraint());
     definitions.beginGroup("fields");
@@ -569,12 +567,8 @@ bool QContactKabcEngine::removeDetailDefinition(const QString& definitionId, QCo
 bool QContactKabcEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
 {
     switch (feature) {
-        case QContactManagerInfo::Batch:
         case QContactManagerInfo::ActionPreferences:
-        case QContactManagerInfo::ReadOnlyDetails:
-        case QContactManagerInfo::CreateOnlyDetails:
         case QContactManagerInfo::MutableDefinitions:
-        case QContactManagerInfo::Synchronous:
             return true;
         default:
             return false;
@@ -594,13 +588,13 @@ QList<QVariant::Type> QContactKabcEngine::supportedDataTypes() const
     return st;
 }
 
-QUniqueId QContactKabcEngine::getIdOfAddressee(const KABC::Addressee& addressee, QContactManager::Error& error) const
+QContactLocalId QContactKabcEngine::getIdOfAddressee(const KABC::Addressee& addressee, QContactManager::Error& error) const
 {
-    if (d->m_kabcUidToQUniqueId.contains(addressee.uid())) {
-        return d->m_kabcUidToQUniqueId.value(addressee.uid());
+    if (d->m_kabcUidToQContactLocalId.contains(addressee.uid())) {
+        return d->m_kabcUidToQContactLocalId.value(addressee.uid());
     } else {
         bool ok = true;
-        QUniqueId currId = addressee.custom("com.nokia.mobility.contacts.KAbcBackend", "id").toUInt(&ok);
+        QContactLocalId currId = addressee.custom("com.nokia.mobility.contacts.KAbcBackend", "id").toUInt(&ok);
         if (!ok) {
             // new contact that has been added through the native KABC API
             d->m_lastUsedId += 1;
@@ -614,13 +608,13 @@ QUniqueId QContactKabcEngine::getIdOfAddressee(const KABC::Addressee& addressee,
             definitions.setValue("nextAvailableContactId", QString::number(d->m_lastUsedId + 1));
         }
 
-        d->m_kabcUidToQUniqueId.insert(addressee.uid(), currId);
-        d->m_QUniqueIdToKabcUid.insert(currId, addressee.uid());
+        d->m_kabcUidToQContactLocalId.insert(addressee.uid(), currId);
+        d->m_QContactLocalIdToKabcUid.insert(currId, addressee.uid());
         return currId;
     }
 
     error = QContactManager::UnspecifiedError;
-    return QUniqueId();
+    return QContactLocalId();
 }
 
 QString QContactKabcEngine::escaped(const QString& input) const
@@ -657,16 +651,6 @@ QString QContactKabcEngine::convertDetail(const QContactDetail& detail, const QC
         retn += escaped(key);
         retn += "=";
         retn += escaped(vals.value(key).toString());
-        retn += ",";
-    }
-    retn.chop(1);
-    retn += ";";
-
-    QMap<QString, QString> attrs = detail.attributes();
-    foreach (const QString& key, attrs.keys()) {
-        retn += escaped(key);
-        retn += "=";
-        retn += escaped(attrs.value(key));
         retn += ",";
     }
     retn.chop(1);
@@ -827,8 +811,8 @@ QContactDetail QContactKabcEngine::convertCustomString(const QString& customStri
 
     // having parsed the definitionName, values and attributes, we build the detail.
     QContactDetail retn(definitionName);
-    retn.setValues(values);
-    retn.setAttributes(attrs);
+    foreach (const QString& fieldName, values.keys())
+        retn.setValue(fieldName, values.value(fieldName));
     return retn;
 }
 
@@ -998,32 +982,30 @@ QContact QContactKabcEngine::convertAddressee(const KABC::Addressee& a) const
         } else {
             // nope, no matching detail.  Scrape as much information as we can
             // from the KABC detail, and build and add our own.
-            QString context = "";
-            QString subtype = "";
+            QStringList contexts;
+            QStringList subtypes;
             if (kph.type() & KABC::PhoneNumber::Home)
-                context += QContactDetail::AttributeContextHome + ",";
+                contexts << QContactDetail::ContextHome;
             if (kph.type() & KABC::PhoneNumber::Work)
-                context += QContactDetail::AttributeContextWork + ",";
+                contexts << QContactDetail::ContextWork;
             if (kph.type() & KABC::PhoneNumber::Cell)
-                subtype += QContactPhoneNumber::AttributeSubTypeMobile + ",";
+                subtypes << QContactPhoneNumber::SubTypeMobile;
             if (kph.type() & KABC::PhoneNumber::Video)
-                subtype += QContactPhoneNumber::AttributeSubTypeVideo + ",";
+                subtypes << QContactPhoneNumber::SubTypeVideo;
             if (kph.type() & KABC::PhoneNumber::Car)
-                subtype += QContactPhoneNumber::AttributeSubTypeCar + ",";
+                subtypes << QContactPhoneNumber::SubTypeCar;
             if (kph.type() & KABC::PhoneNumber::Modem)
-                subtype += QContactPhoneNumber::AttributeSubTypeModem + ",";
+                subtypes << QContactPhoneNumber::SubTypeModem;
             if (kph.type() & KABC::PhoneNumber::Pager)
-                subtype += QContactPhoneNumber::AttributeSubTypePager + ",";
+                subtypes << QContactPhoneNumber::SubTypePager;
 
-            if (context.isEmpty())
-                context = QContactDetail::AttributeContextOther + ",";
-            if (subtype.isEmpty())
-                subtype = QContactPhoneNumber::AttributeSubTypeLandline + ",";
-            context.chop(1);
-            subtype.chop(1);            
+            if (contexts.isEmpty())
+                contexts << QContactDetail::ContextOther;
+            if (subtypes.isEmpty())
+                subtypes << QContactPhoneNumber::SubTypeLandline;
 
-            qph.setAttribute(QContactDetail::AttributeSubType, subtype);
-            qph.setAttribute(QContactDetail::AttributeContext, context);
+            qph.setSubTypes(subtypes);
+            qph.setContexts(contexts);
             retn.saveDetail(&qph);
         }
     }
@@ -1054,29 +1036,26 @@ QContact QContactKabcEngine::convertAddressee(const KABC::Addressee& a) const
         } else {
             // nope, no matching detail.  Scrape as much information as we can
             // from the KABC detail, and build and add our own.
-            QString context = "";
-            QString subtype = "";
+            QStringList contexts;
+            QStringList subtypes;
             if (kadr.type() & KABC::Address::Home)
-                context += QContactDetail::AttributeContextHome + ",";
+                contexts << QContactDetail::ContextHome;
             if (kadr.type() & KABC::Address::Work)
-                context += QContactDetail::AttributeContextWork + ",";
+                contexts << QContactDetail::ContextWork;
             if (kadr.type() & KABC::Address::Postal)
-                subtype += QContactAddress::AttributeSubTypePostal + ",";
+                subtypes << QContactAddress::SubTypePostal;
             if (kadr.type() & KABC::Address::Parcel)
-                subtype += QContactAddress::AttributeSubTypeParcel + ",";
+                subtypes << QContactAddress::SubTypeParcel;
             if (kadr.type() & KABC::Address::Dom)
-                subtype += QContactAddress::AttributeSubTypeDomestic + ",";
+                subtypes << QContactAddress::SubTypeDomestic;
             if (kadr.type() & KABC::Address::Intl)
-                subtype += QContactAddress::AttributeSubTypeInternational + ",";
+                subtypes << QContactAddress::SubTypeInternational;
 
-            if (context.isEmpty())
-                context = QContactDetail::AttributeContextOther + ",";
-            context.chop(1);
-            if (!subtype.isEmpty())
-                subtype.chop(1);
+            if (contexts.isEmpty())
+                contexts << QContactDetail::ContextOther;
 
-            qadr.setAttribute(QContactDetail::AttributeSubType, subtype);
-            qadr.setAttribute(QContactDetail::AttributeContext, context);
+            qadr.setSubTypes(subtypes);
+            qadr.setContexts(contexts);
 
             retn.saveDetail(&qadr);
         }
@@ -1227,7 +1206,7 @@ QContact QContactKabcEngine::convertAddressee(const KABC::Addressee& a) const
 KABC::Addressee QContactKabcEngine::convertContact(const QContact& contact) const
 {
     KABC::Addressee retn;
-    retn.setUid(d->m_QUniqueIdToKabcUid.value(contact.id())); 
+    retn.setUid(d->m_QContactLocalIdToKabcUid.value(contact.id()));
 
     foreach (const QContactDetail& det, contact.details()) {
         QString definitionName = det.definitionName();
@@ -1252,17 +1231,17 @@ KABC::Addressee QContactKabcEngine::convertContact(const QContact& contact) cons
             kadr.setCountry(det.value(QContactAddress::FieldCountry));
             kadr.setLabel(det.value(QContactAddress::FieldDisplayLabel));
 
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactAddress::AttributeSubTypeDomestic))
+            if (det.variantValue(QContactAddress::FieldSubTypes).toStringList().contains(QContactAddress::SubTypeDomestic))
                 typeFlags |= KABC::Address::Dom;
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactAddress::AttributeSubTypeInternational))
+            if (det.variantValue(QContactAddress::FieldSubTypes).toStringList().contains(QContactAddress::SubTypeInternational))
                 typeFlags |= KABC::Address::Intl;
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactAddress::AttributeSubTypePostal))
+            if (det.variantValue(QContactAddress::FieldSubTypes).toStringList().contains(QContactAddress::SubTypePostal))
                 typeFlags |= KABC::Address::Postal;
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactAddress::AttributeSubTypeParcel))
+            if (det.variantValue(QContactAddress::FieldSubTypes).toStringList().contains(QContactAddress::SubTypeParcel))
                 typeFlags |= KABC::Address::Parcel;
-            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextHome))
+            if (det.variantValue(QContactDetail::FieldContext).toStringList().contains(QContactDetail::ContextHome))
                 typeFlags |= KABC::Address::Home;
-            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextWork))
+            if (det.variantValue(QContactDetail::FieldContext).toStringList().contains(QContactDetail::ContextWork))
                 typeFlags |= KABC::Address::Work;
 
             kadr.setType(typeFlags);
@@ -1274,13 +1253,13 @@ KABC::Addressee QContactKabcEngine::convertContact(const QContact& contact) cons
             KABC::PhoneNumber::Type typeFlags = 0x00;
 
             phn.setNumber(det.value(QContactPhoneNumber::FieldNumber));
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeMobile))
+            if (det.variantValue(QContactPhoneNumber::FieldSubTypes).toStringList().contains(QContactPhoneNumber::SubTypeMobile))
                 typeFlags |= KABC::PhoneNumber::Cell;
-            if (det.attributes().value(QContactDetail::AttributeSubType).contains(QContactPhoneNumber::AttributeSubTypeVideo))
+            if (det.variantValue(QContactPhoneNumber::FieldSubTypes).toStringList().contains(QContactPhoneNumber::SubTypeVideo))
                 typeFlags |= KABC::PhoneNumber::Video;
-            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextHome))
+            if (det.variantValue(QContactDetail::FieldContext).toStringList().contains(QContactDetail::ContextHome))
                 typeFlags |= KABC::PhoneNumber::Home;
-            if (det.attributes().value(QContactDetail::AttributeContext).contains(QContactDetail::AttributeContextWork))
+            if (det.variantValue(QContactDetail::FieldContext).toStringList().contains(QContactDetail::ContextWork))
                 typeFlags |= KABC::PhoneNumber::Work;
 
             phn.setType(typeFlags);

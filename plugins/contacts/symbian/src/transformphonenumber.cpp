@@ -101,6 +101,25 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
         newField->SetMapping(KUidContactFieldVCardMapTEL);
 	    newField->AddFieldTypeL(KUidContactFieldVCardMapCAR);
 	}
+	
+	//DTMF
+	else if (subTypes.contains(QContactPhoneNumber::SubTypeDtmfMenu))
+	{
+        newField->AddFieldTypeL(KUidContactFieldDTMF);
+        newField->SetMapping(KUidContactFieldVCardMapUnknown);
+	}
+	
+	// assistant number
+    else if (subTypes.contains(QContactPhoneNumber::SubTypeAssistant))
+    {
+        newField->AddFieldTypeL(KUidContactFieldPhoneNumber);
+        newField->SetMapping(KUidContactFieldVCardMapAssistantTel);
+    }
+	
+	else
+	{
+        User::LeaveIfError(KErrNotSupported);
+	}
 	    
 	//contexts
 	setContextsL(phoneNumber, *newField);
@@ -138,9 +157,15 @@ QContactDetail *TransformPhoneNumber::transformItemField(const CContactItemField
         else if (field.ContentType().ContainsFieldType(KUidContactFieldVCardMapCAR)) {
             phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeCar);
         }
-    }
+        else if (field.ContentType().Mapping() == KUidContactFieldVCardMapAssistantTel) {
+            phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeAssistant);
+        }
+	}
     else if (field.ContentType().ContainsFieldType(KUidContactFieldFax)) {
         phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeFacsimile);
+    }
+    else if (field.ContentType().ContainsFieldType(KUidContactFieldDTMF)) {
+        phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeDtmfMenu);
     }
 	
 	// set context
@@ -155,7 +180,8 @@ bool TransformPhoneNumber::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldPhoneNumber.iUid ||
-        fieldType == KUidContactFieldFax.iUid)  {
+        fieldType == KUidContactFieldFax.iUid ||
+        fieldType == KUidContactFieldDTMF.iUid) {
         ret = true;
     }
     return ret;
@@ -168,4 +194,15 @@ bool TransformPhoneNumber::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> TransformPhoneNumber::supportedSortingFieldTypes(QString detailFieldName) const
+{
+    QList<TUid> uids;
+    if (detailFieldName == QContactPhoneNumber::FieldNumber) {
+        uids << KUidContactFieldPhoneNumber;
+        uids << KUidContactFieldFax;
+        uids << KUidContactFieldDTMF;
+    }
+    return uids;
 }

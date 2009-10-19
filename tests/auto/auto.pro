@@ -57,7 +57,6 @@ SUBDIRS +=  qcontact \                      #Contacts
             qcontactdetaildefinition \
             qcontactdetails \
             qcontactfilter \
-            qcontactgroup \
             qcontactmanager \
             qcontactmanagerplugins \
             qcontactmanagerfiltering
@@ -85,5 +84,3 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
         qmessage
 
 }
-
-

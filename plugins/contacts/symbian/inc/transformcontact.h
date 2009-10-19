@@ -53,6 +53,7 @@ public:
 	void transformContactL(
 	        QContact &contact,
 	        CContactItem &contactItem) const;
+	QList<TUid> supportedSortingFieldTypes( QString detailDefinitionName, QString detailFieldName );
 
 private:
 	enum ContactData
@@ -61,12 +62,26 @@ private:
 		Nickname,
 		PhoneNumber,
 		EmailAddress,
-		Address
+		Address,
+		URL,
+		OnlineAccount,
+		Birthday,
+		Organisation,
+		Avatar,
+		SyncTarget,
+		Gender,
+		Anniversary,
+		Geolocation,
+		Note,
+		Family
 	};
 	
 	void initializeTransformContactData();
 	QList<CContactItemField *> transformDetailL(const QContactDetail &detail) const;
 	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact) const;
+	
+	QContactDetail *transformGuidItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const;
+	QContactDetail *transformTimestampItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const;
 	
 private:
 	QMap<ContactData, TransformContactData*> m_transformContactData;

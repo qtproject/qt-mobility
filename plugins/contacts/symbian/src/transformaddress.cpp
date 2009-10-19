@@ -98,7 +98,7 @@ QList<CContactItemField *> TransformAddress::transformDetailL(const QContactDeta
 
 QContactDetail *TransformAddress::transformItemField(const CContactItemField& field, const QContact &contact)
 {
-    QContactAddress* address = new QContactAddress(contact.detail<QContactAddress>());
+    QContactAddress address;
     
     CContactTextField* storage = field.TextStorage();
     QString addressValue = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
@@ -107,39 +107,58 @@ QContactDetail *TransformAddress::transformItemField(const CContactItemField& fi
     for (int i = 0; i < fieldTypeCount; i++) {
         //country
         if (field.ContentType().FieldType(i) == KUidContactFieldCountry) {
-            address->setCountry(addressValue);
+            address.setCountry(addressValue);
         }
 
         //post code
         else if (field.ContentType().FieldType(i) == KUidContactFieldPostcode) {
-            address->setPostcode(addressValue);
+            address.setPostcode(addressValue);
         }
         
         //street
         else if (field.ContentType().FieldType(i) == KUidContactFieldAddress) {
-            address->setStreet(addressValue);
+            address.setStreet(addressValue);
         }
         
         //locality (city)
         else if (field.ContentType().FieldType(i) == KUidContactFieldLocality) {
-            address->setLocality(addressValue);
+            address.setLocality(addressValue);
         }
         
         //region
         else if (field.ContentType().FieldType(i) == KUidContactFieldRegion) {
-            address->setRegion(addressValue);
+            address.setRegion(addressValue);
         }
         
         //post office box
         else if (field.ContentType().FieldType(i) == KUidContactFieldPostOffice) {
-            address->setPostOfficeBox(addressValue);
+            address.setPostOfficeBox(addressValue);
         }
         else {
-            setContexts(field.ContentType().FieldType(i), *address);
+            setContexts(field.ContentType().FieldType(i), address);
         }
     }
     
-    return address;
+    // Find existing address details from contact
+    QContactDetail* detail = 0;
+    foreach( QContactAddress existingAddress, contact.details<QContactAddress>() )
+    {
+        // Do not merge if contexts don't match
+        if( existingAddress.contexts() != address.contexts() )
+            continue;
+        
+        // Merge detail with existing detail
+        detail = new QContactAddress( existingAddress );
+        foreach( QString key, address.values().keys() )
+            detail->setValue( key, address.value(key) );
+        break;
+    }
+    
+    // Create a new address detail if not merging 
+    if( !detail )
+        detail = new QContactAddress(address);
+    
+    return detail;
 }
 
 bool TransformAddress::supportsField(TUint32 fieldType) const
@@ -163,4 +182,29 @@ bool TransformAddress::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> TransformAddress::supportedSortingFieldTypes(QString detailFieldName) const
+{
+    QList<TUid> uids;
+    
+    if( detailFieldName == QContactAddress::FieldStreet )
+        return uids << KUidContactFieldAddress;
+    
+    if( detailFieldName == QContactAddress::FieldLocality )
+        return uids << KUidContactFieldLocality;
+    
+    if( detailFieldName == QContactAddress::FieldRegion )
+        return uids << KUidContactFieldRegion;
+    
+    if( detailFieldName == QContactAddress::FieldPostcode )
+        return uids << KUidContactFieldPostcode;
+    
+    if( detailFieldName == QContactAddress::FieldCountry )
+        return uids << KUidContactFieldCountry;  
+        
+    if( detailFieldName == QContactAddress::FieldPostOfficeBox )
+        return uids << KUidContactFieldPostOffice;
+    
+    return uids;
 }

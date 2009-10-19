@@ -13,6 +13,7 @@ DEPENDPATH += .
 INCLUDEPATH += .
 INCLUDEPATH += .\inc
 INCLUDEPATH += ..\..\inc
+INCLUDEPATH += ..\..\rss
 
 symbian:
 {
@@ -26,7 +27,17 @@ symbian:
 				../../inc/transformnickname.h \
 				../../inc/transformphonenumber.h \
 				../../inc/transformaddress.h \
-      
+				../../inc/transformurl.h \
+				../../inc/transformbirthday.h \
+				../../inc/transformonlineaccount.h \
+				../../inc/transformorganisation.h \
+				../../inc/transformavatar.h \
+				../../inc/transformsynctarget.h \
+                ../../inc/transformgender.h \
+                ../../inc/transformanniversary.h \
+                ../../inc/transformgeolocation.h \
+                ../../inc/transformnote.h \
+                ../../inc/transformfamily.h
 	
 	SOURCES += ut_transformcontactdata.cpp \ 
 				../../src/transformcontactdata.cpp \
@@ -35,6 +46,17 @@ symbian:
 				../../src/transformnickname.cpp \
 				../../src/transformphonenumber.cpp \
 				../../src/transformaddress.cpp \
+				../../src/transformurl.cpp \
+				../../src/transformbirthday.cpp \
+				../../src/transformonlineaccount.cpp \
+				../../src/transformorganisation.cpp \
+				../../src/transformavatar.cpp \
+				../../src/transformsynctarget.cpp \
+				../../src/transformgender.cpp \
+				../../src/transformanniversary.cpp \
+				../../src/transformgeolocation.cpp \
+				../../src/transformnote.cpp \
+				../../src/transformfamily.cpp
 
 	TARGET.CAPABILITY = ALL -TCB
   

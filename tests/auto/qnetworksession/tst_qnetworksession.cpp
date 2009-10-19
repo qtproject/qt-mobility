@@ -309,8 +309,8 @@ void tst_QNetworkSession::sessionOpenCloseStop()
         QVERIFY(!session.isActive());
         // session may be invalid if configuration is removed between when
         // sessionOpenCloseStop_data() is called and here.
-        QVERIFY(configuration.isValid() && (session.state() != QNetworkSession::Invalid) ||
-                !configuration.isValid() && (session.state() == QNetworkSession::Invalid));
+        QVERIFY((configuration.isValid() && (session.state() != QNetworkSession::Invalid)) ||
+                (!configuration.isValid() && (session.state() == QNetworkSession::Invalid)));
         QVERIFY(session.error() == QNetworkSession::UnknownSessionError);
     }
 

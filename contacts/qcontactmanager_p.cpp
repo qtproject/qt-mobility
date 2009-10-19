@@ -88,14 +88,13 @@ static void qContactsCleanEngines()
 
 void QContactManagerData::createEngine(const QString& managerName, const QMap<QString, QString>& parameters)
 {
-    m_managerName = managerName.isEmpty() ? QContactManager::availableManagers().value(0) : managerName;
-
-    if (m_managerName == QLatin1String("memory"))
+    QString builtManagerName = managerName.isEmpty() ? QContactManager::availableManagers().value(0) : managerName;
+    if (builtManagerName == QLatin1String("memory"))
         m_engine = QContactMemoryEngine::createMemoryEngine(parameters);
     else {
         /* Look for a factory */
         loadFactories();
-        QContactManagerEngineFactory *factory = m_engines.value(managerName);
+        QContactManagerEngineFactory *factory = m_engines.value(builtManagerName);
         m_error = QContactManager::NoError;
         if (factory)
             m_engine = factory->engine(parameters, m_error);
@@ -103,14 +102,11 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
             m_engine = 0;
 
         if (!m_engine) {
-            m_managerName = QLatin1String("invalid");
             if (m_error == QContactManager::NoError)
                 m_error = QContactManager::DoesNotExistError;
             m_engine = new QContactInvalidEngine(); // XXX share
         }
     }
-    m_params = m_engine->parameters();
-    m_uri = QContactManager::buildUri(m_managerName, parameters);
 }
 
 /* Plugin loader */
@@ -198,6 +194,7 @@ void QContactManagerData::loadFactories()
             QPluginLoader qpl(plugins.at(i));
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(qpl.instance());
             QContactActionFactory *g = qobject_cast<QContactActionFactory*>(qpl.instance());
+
             if (f) {
                 QString name = f->managerName();
                 qDebug() << "Dynamic: found an engine plugin" << f << "with name" << name;
@@ -228,6 +225,11 @@ void QContactManagerData::loadFactories()
                     m_actionmap.insertMulti(desc.actionName(), m_descriptors.count() - 1);
                     m_vendormap.insertMulti(desc.vendorName(), m_descriptors.count() - 1);
                 }
+            }
+
+            /* Debugging */
+            if (!f && !g) {
+                qDebug() << "Unknown plugin:" << qpl.errorString() << " [qobject:" << qpl.instance() << "]";
             }
         }
 
@@ -279,20 +281,6 @@ QList<QContactActionDescriptor> QContactManagerData::actionDescriptors(const QSt
 
     return descriptors;
 }
-
-//QList<QContactAction*> QContactManagerData::actions(const QString& actionName, const QString& vendorName, int implementationVersion)
-//{
-//    QList<QContactAction*> retn;
-//    QList<QContactActionDescriptor> descriptors = actionDescriptors(actionName, vendorName, implementationVersion);
-//
-//    /* Now loop over the valid descriptors */
-//    for (int j=0; j < descriptors.size(); j++) {
-//        const QContactActionDescriptor& descriptor = descriptors.at(j);
-//        retn += m_descriptormap.value(descriptor)->instance(descriptor);
-//    }
-//
-//    return retn;
-//}
 
 QContactAction* QContactManagerData::action(const QContactActionDescriptor& actionDescriptor)
 {

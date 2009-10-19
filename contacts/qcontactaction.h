@@ -50,16 +50,6 @@ class QTCONTACTS_EXPORT QContactAction : public QObject
     Q_OBJECT
 
 public:
-    virtual ~QContactAction() = 0;
-
-    virtual QContactActionDescriptor actionDescriptor() const = 0;          // the descriptor which uniquely identifies this action
-    virtual QVariantMap metadata() const = 0;                               // label, icon etc
-
-    virtual QContactFilter contactFilter(const QVariant& value = QVariant()) const = 0; // use for matching
-    virtual bool supportsDetail(const QContactDetail& detail) const = 0;    // whether this implementation supports the given detail
-    virtual QList<QContactDetail> supportedDetails(const QContact& contact) const;
-    virtual void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail()) = 0;
-
     /* return a list of names of actions which are available */
     static QStringList availableActions(const QString& vendorName = QString(), int implementationVersion = -1);
 
@@ -69,8 +59,33 @@ public:
     /* return a pointer to an implementation of the action identified by the given descriptor */
     static QContactAction* action(const QContactActionDescriptor& descriptor);
 
-    /* return a list of points to action implementations which match the given criteria */
-    //static QList<QContactAction*> actions(const QString& actionName = QString(), const QString& vendorName = QString(), int implementationVersion = -1);
+public:
+    virtual ~QContactAction() = 0;
+
+    virtual QContactActionDescriptor actionDescriptor() const = 0;          // the descriptor which uniquely identifies this action
+    virtual QVariantMap metadata() const = 0;                               // label, icon etc - under discussion!
+
+    virtual QContactFilter contactFilter(const QVariant& value = QVariant()) const = 0; // use for matching
+    virtual bool supportsDetail(const QContactDetail& detail) const = 0;    // whether this implementation supports the given detail
+    virtual QList<QContactDetail> supportedDetails(const QContact& contact) const;
+
+    /* Initiate the asynchronous action on the given contact (and optionally detail) */
+    virtual void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail()) = 0;
+
+    /* The possible states of an action */
+    enum Status {
+        Inactive = 0,      // operation not yet started
+        Autonomous,        // operation started, no further information available - name under discussion.
+        Active,            // operation started, not yet finished
+        Finished,          // operation successfully completed
+        FinishedWithError  // operation finished, but error occurred
+    };
+
+    /* Returns the most recently received result, or an invalid QVariantMap if no results received */
+    virtual QVariantMap result() const = 0;
+
+signals:
+    void progress(QContactAction::Status status, const QVariantMap& result);
 };
 
 #endif

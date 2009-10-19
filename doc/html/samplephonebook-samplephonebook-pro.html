@@ -28,6 +28,11 @@
                    ../../contacts/requests \
                    ../../contacts/details
 
+    INCLUDEPATH += ../testmodel
+    VPATH += ../testmodel
+
+    qtAddLibrary(QtContacts)
+
     # Input
     SOURCES =  contactdetailsform.cpp \
                 maindialogform_240_320.cpp \

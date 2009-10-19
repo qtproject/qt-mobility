@@ -35,7 +35,6 @@
 
 #include "qcontact_p.h"
 #include "qcontactfilter.h"
-#include "qcontactgroup_p.h"
 #include "qcontactdetaildefinition.h"
 #include "qcontactmanager_p.h"
 #include "qcontactmanagerinfo.h"
@@ -54,34 +53,42 @@
  */
 
 /*!
- * \fn QContactManager::contactsAdded(const QList<QUniqueId>& contactIds)
- * This signal is emitted at some point once the contacts identified by \a contactIds have been added to a datastore managed by this manager
+ * \fn QContactManager::dataChanged()
+ * signal is emitted by the manager if its internal state changes, and it is unable to determine the changes
+ * which occurred, or if the manager considers the changes to be radical enough to require clients to reload all data.
+ * If this signal is emitted, no other signals will be emitted for the associated changes.
  */
 
 /*!
- * \fn QContactManager::contactsChanged(const QList<QUniqueId>& contactIds)
- * This signal is emitted at some point once the contacts identified by \a contactIds have been modified in a datastore managed by this manager
+ * \fn QContactManager::contactsAdded(const QList<QContactLocalId>& contactIds)
+ * This signal is emitted at some point once the contacts identified by \a contactIds have been added to a datastore managed by this manager.
+ * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
- * \fn QContactManager::contactsRemoved(const QList<QUniqueId>& contactIds)
- * This signal is emitted at some point once the contacts identified by \a contactIds have been removed from a datastore managed by this manager
+ * \fn QContactManager::contactsChanged(const QList<QContactLocalId>& contactIds)
+ * This signal is emitted at some point once the contacts identified by \a contactIds have been modified in a datastore managed by this manager.
+ * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
- * \fn QContactManager::groupsAdded(const QList<QUniqueId>& groupIds)
- * This signal is emitted at some point once the groups identified by \a groupIds have been added to a datastore managed by this manager
+ * \fn QContactManager::contactsRemoved(const QList<QContactLocalId>& contactIds)
+ * This signal is emitted at some point once the contacts identified by \a contactIds have been removed from a datastore managed by this manager.
+ * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
- * \fn QContactManager::groupsChanged(const QList<QUniqueId>& groupIds)
- * This signal is emitted at some point once the groups identified by \a groupIds have been modified in a datastore managed by this manager
+ * \fn QContactManager::relationshipsAdded(const QList<QContactLocalId>& affectedContactIds)
+ * This signal is emitted at some point after relationships have been added to the manager which involve the contacts identified by \a affectedContactIds.
+ * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
- * \fn QContactManager::groupsRemoved(const QList<QUniqueId>& groupIds)
- * This signal is emitted at some point once the groups identified by \a groupIds have been removed from a datastore managed by this manager
+ * \fn QContactManager::relationshipsRemoved(const QList<QContactLocalId>& affectedContactIds)
+ * This signal is emitted at some point after relationships have eben removed from the manager which involve the contacts identified by \a affectedContactIds.
+ * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
+
 
 /*!
     Returns a list of available manager ids that can be used when constructing
@@ -206,12 +213,12 @@ QContactManager::QContactManager(const QString& managerName, const QMap<QString,
     d(new QContactManagerData)
 {
     d->createEngine(managerName, parameters);
-    connect(d->m_engine, SIGNAL(contactsAdded(QList<QUniqueId>)), this, SIGNAL(contactsAdded(QList<QUniqueId>)));
-    connect(d->m_engine, SIGNAL(contactsChanged(QList<QUniqueId>)), this, SIGNAL(contactsChanged(QList<QUniqueId>)));
-    connect(d->m_engine, SIGNAL(contactsRemoved(QList<QUniqueId>)), this, SIGNAL(contactsRemoved(QList<QUniqueId>)));
-    connect(d->m_engine, SIGNAL(groupsAdded(QList<QUniqueId>)), this, SIGNAL(groupsAdded(QList<QUniqueId>)));
-    connect(d->m_engine, SIGNAL(groupsChanged(QList<QUniqueId>)), this, SIGNAL(groupsChanged(QList<QUniqueId>)));
-    connect(d->m_engine, SIGNAL(groupsRemoved(QList<QUniqueId>)), this, SIGNAL(groupsRemoved(QList<QUniqueId>)));
+    connect(d->m_engine, SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
+    connect(d->m_engine, SIGNAL(contactsAdded(QList<QContactLocalId>)), this, SIGNAL(contactsAdded(QList<QContactLocalId>)));
+    connect(d->m_engine, SIGNAL(contactsChanged(QList<QContactLocalId>)), this, SIGNAL(contactsChanged(QList<QContactLocalId>)));
+    connect(d->m_engine, SIGNAL(contactsRemoved(QList<QContactLocalId>)), this, SIGNAL(contactsRemoved(QList<QContactLocalId>)));
+    connect(d->m_engine, SIGNAL(relationshipsAdded(QList<QContactLocalId>)), this, SIGNAL(relationshipsAdded(QList<QContactLocalId>)));
+    connect(d->m_engine, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)), this, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)));
 }
 
 /*! Frees the memory used by the QContactManager */
@@ -227,9 +234,10 @@ QContactManager::~QContactManager()
  * This enum specifies an error that occurred during the most recent operation:
  *
  * \value NoError The most recent operation was successful
- * \value DoesNotExistError The most recent operation failed because the requested contact, group or definition does not exist
- * \value AlreadyExistsError The most recent operation failed because the specified contact, group or definition already exists
+ * \value DoesNotExistError The most recent operation failed because the requested contact or detail definition does not exist
+ * \value AlreadyExistsError The most recent operation failed because the specified contact or detail definition already exists
  * \value InvalidDetailError The most recent operation failed because the specified contact contains details which do not conform to their definition
+ * \value InvalidRelationshipError The most recent operation failed because the specified relationship is circular or references an invalid local contact
  * \value LockedError The most recent operation failed because the datastore specified is currently locked
  * \value DetailAccessError The most recent operation failed because a detail was modified or removed and its access method does not allow that
  * \value PermissionsError The most recent operation failed because the caller does not have permission to perform the operation
@@ -246,7 +254,7 @@ QContactManager::Error QContactManager::error() const
 }
 
 /*! Return the list of added contact ids, sorted according to the given list of \a sortOrders */
-QList<QUniqueId> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders) const
+QList<QContactLocalId> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders) const
 {
     return d->m_engine->contacts(sortOrders, d->m_error);
 }
@@ -256,71 +264,71 @@ QList<QUniqueId> QContactManager::contacts(const QList<QContactSortOrder>& sortO
  *
  * Depending on the backend, this filtering operation may involve retrieving all the contacts.
  */
-QList<QUniqueId> QContactManager::contacts(const QContactFilter &filter, const QList<QContactSortOrder>& sortOrders) const
+QList<QContactLocalId> QContactManager::contacts(const QContactFilter &filter, const QList<QContactSortOrder>& sortOrders) const
 {
     return d->m_engine->contacts(filter, sortOrders, d->m_error);
 }
 
+/*! 
+ * Returns a list of ids of contacts of the given \a contactType, sorted according to the given list of \a sortOrders.
+ */
+QList<QContactLocalId> QContactManager::contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders) const
+{
+    return d->m_engine->contacts(contactType, sortOrders, d->m_error);
+}
+
 /*! Returns the contact in the database identified by \a contactId */
-QContact QContactManager::contact(const QUniqueId& contactId) const
+QContact QContactManager::contact(const QContactLocalId& contactId) const
 {
     return d->m_engine->contact(contactId, d->m_error);
 }
 
 /*!
- * Add the given \a contact to the database if \a contact has an
- * id of zero, or update the existing contact in the database if \a contact
- * has a non-zero id and currently exists in the database, or fails
- * if the \a contact has a non-zero id which does not exist in the database.
- * Returns false on failure, or true on
- * success.  On successful save of a contact with an id of zero, its
- * id will be set to a new, valid id.
+ * Adds the given \a contact to the database if \a contact has a
+ * default-constructed id, or an id with the manager URI set to the URI of
+ * this manager and a local id of zero.
+ *
+ * If the manager URI of the id of the \a contact is neither empty nor equal to the URI of
+ * this manager, or local id of the \a contact is non-zero but does not exist in the
+ * manager, the operation will fail and calling error() will return
+ * \c QContactManager::DoesNotExistError.
+ *
+ * Alternatively, the function will update the existing contact in the database if \a contact
+ * has a non-zero id and currently exists in the database.
  *
  * If the \a contact contains one or more details whose definitions have
  * not yet been saved with the manager, the operation will fail and calling
  * error() will return \c QContactManager::UnsupportedError.
  *
- * If the id of the \a contact is non-zero but does not exist in the
- * manager, the operation will fail and calling error() will return
- * \c QContactManager::DoesNotExistError.
+ * If the \a contact has had its relationships reordered, the manager
+ * will check to make sure that every relationship that the contact is currently
+ * involved in is included in the reordered list, and that no relationships which
+ * either do not involve the contact, or have not been saved in the manager are
+ * included in the list.  If these conditions are not met, the function will
+ * return \c false and calling error() will return
+ * \c QContactManager::InvalidRelationshipError.
+ *
+ * Returns false on failure, or true on
+ * success.  On successful save of a contact with an id of zero, its
+ * id will be set to a new, valid id with the manager URI set to the URI of
+ * this manager, and the local id set to a new, valid local id.
+ *
+ * \sa managerUri()
  */
 bool QContactManager::saveContact(QContact* contact)
 {
-    QSet<QUniqueId> added;
-    QSet<QUniqueId> changed;
-    QSet<QUniqueId> groups;
-
-    bool ret = d->m_engine->saveContact(contact, added, changed, groups, d->m_error);
-
-    /* Emit the signals from the engine, since it might be connected to multiple places */
-    if (!added.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "contactsAdded", Q_ARG(QList<QUniqueId>, added.toList()));
-    if (!changed.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "contactsChanged", Q_ARG(QList<QUniqueId>, changed.toList()));
-    if (!groups.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "groupsChanged", Q_ARG(QList<QUniqueId>, groups.toList()));
-
-    return ret;
+    return d->m_engine->saveContact(contact, d->m_error);
 }
 
 /*!
- * Remove the contact identified by \a contactId from the database.
+ * Remove the contact identified by \a contactId from the database,
+ * and also removes any relationships in which the contact was involved.
  * Returns true if the contact was removed successfully, otherwise
  * returns false.
  */
-bool QContactManager::removeContact(const QUniqueId& contactId)
+bool QContactManager::removeContact(const QContactLocalId& contactId)
 {
-    QSet<QUniqueId> removed;
-    QSet<QUniqueId> groups;
-
-    bool ret = d->m_engine->removeContact(contactId, removed, groups, d->m_error);
-
-    if (!removed.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "contactsRemoved", Q_ARG(QList<QUniqueId>, removed.toList()));
-    if (!groups.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "groupsChanged", Q_ARG(QList<QUniqueId>, groups.toList()));
-
-    return ret;
+    return d->m_engine->removeContact(contactId, d->m_error);
 }
 
 /*!
@@ -339,21 +347,7 @@ bool QContactManager::removeContact(const QUniqueId& contactId)
  */
 QList<QContactManager::Error> QContactManager::saveContacts(QList<QContact>* contactList)
 {
-    QSet<QUniqueId> added;
-    QSet<QUniqueId> changed;
-    QSet<QUniqueId> groups;
-
-    QList<QContactManager::Error> ret = d->m_engine->saveContacts(contactList, added, changed, groups, d->m_error);
-
-    /* Emit the signals from the engine, since it might be connected to multiple places */
-    if (!added.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "contactsAdded", Q_ARG(QList<QUniqueId>, added.toList()));
-    if (!changed.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "contactsChanged", Q_ARG(QList<QUniqueId>, changed.toList()));
-    if (!groups.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "groupsChanged", Q_ARG(QList<QUniqueId>, groups.toList()));
-
-    return ret;
+    return d->m_engine->saveContacts(contactList, d->m_error);
 }
 
 /*!
@@ -367,21 +361,14 @@ QList<QContactManager::Error> QContactManager::saveContacts(QList<QContact>* con
  * id in the list will be retained but set to zero.  The id of contacts
  * that were not successfully removed will be left alone.
  *
+ * Any contact that was removed successfully will have the relationships
+ * in which it was involved removed also.
+ *
  * \sa QContactManager::removeContact()
  */
-QList<QContactManager::Error> QContactManager::removeContacts(QList<QUniqueId>* idList)
+QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactLocalId>* idList)
 {
-    QSet<QUniqueId> removed;
-    QSet<QUniqueId> groups;
-
-    QList<QContactManager::Error> ret = d->m_engine->removeContacts(idList, removed, groups, d->m_error);
-
-    if (!removed.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "contactsRemoved", Q_ARG(QList<QUniqueId>, removed.toList()));
-    if (!groups.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "groupsChanged", Q_ARG(QList<QUniqueId>, groups.toList()));
-
-    return ret;
+    return d->m_engine->removeContacts(idList, d->m_error);
 }
 
 /*! Returns a display label for a \a contact which is synthesised from its details in a platform-specific manner */
@@ -390,59 +377,101 @@ QString QContactManager::synthesiseDisplayLabel(const QContact& contact) const
     return d->m_engine->synthesiseDisplayLabel(contact, d->m_error);
 }
 
-/*! Return the list of added group ids */
-QList<QUniqueId> QContactManager::groups() const
+/*!
+ * Sets the id of the "self" contact to the given \a contactId.
+ * Returns true if the "self" contact id was set successfully.
+ * If the given \a contactId does not identify a contact
+ * stored in this manager, the error will be set to
+ * \c QContactManager::DoesNotExistError and the function will
+ * return false; if the backend does not support the
+ * concept of a "self" contact then the error will be set to
+ * \c QContactManager::NotSupportedError and the function will
+ * return false.
+ */
+bool QContactManager::setSelfContactId(const QContactLocalId& contactId)
 {
-    return d->m_engine->groups(d->m_error);
-}
-
-/*! Returns the group which is identified by the given \a groupId, or a default-constructed group if no such group exists */
-QContactGroup QContactManager::group(const QUniqueId& groupId) const
-{
-    return d->m_engine->group(groupId, d->m_error);
+    return d->m_engine->setSelfContactId(contactId, d->m_error);
 }
 
 /*!
- * Saves the group \a group in the database.  The id of the group is
- * used to determine the group to update.  If the group has no name set,
- * this function will fail.  If the group does not already
- * exist, it is added to the database.
- *
- * Returns true on success, or false on failure.
+ * Returns the id of the "self" contact which has previously been set.
+ * If no "self" contact has been set, or if the self contact was removed
+ * from the manager after being set, or if the backend does not support
+ * the concept of a "self" contact, an invalid id will be returned
+ * and the error will be set to \c QContactManager::DoesNotExistError.
  */
-bool QContactManager::saveGroup(QContactGroup* group)
+QContactLocalId QContactManager::selfContactId() const
 {
-    QSet<QUniqueId> added;
-    QSet<QUniqueId> changed;
-    QSet<QUniqueId> contacts;
-
-    bool ret = d->m_engine->saveGroup(group, added, changed, contacts, d->m_error);
-
-    /* Emit the signals from the engine, since it might be connected to multiple places */
-    if (!added.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "groupsAdded", Q_ARG(QList<QUniqueId>, added.toList()));
-    if (!changed.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "groupsChanged", Q_ARG(QList<QUniqueId>, changed.toList()));
-    if (!contacts.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "contactsChanged", Q_ARG(QList<QUniqueId>, contacts.toList()));
-
-    return ret;
+    return d->m_engine->selfContactId(d->m_error);
 }
 
-/*! Remove the group with the given id \a groupId from the database.  Returns false if no group with that id exists, or the operation otherwise failed.  Returns true if the group was successfully deleted. */
-bool QContactManager::removeGroup(const QUniqueId& groupId)
+/*!
+ * Returns a list of relationships in which the contact identified by the given \a participantId participates in the given \a role.
+ * If \a participantId is the default-constructed id, \a role is ignored and all relationships are returned.
+ */
+QList<QContactRelationship> QContactManager::relationships(const QContactId& participantId, QContactRelationshipFilter::Role role) const
 {
-    QSet<QUniqueId> removed;
-    QSet<QUniqueId> contacts;
+    return d->m_engine->relationships(QString(), participantId, role, d->m_error);
+}
 
-    bool ret = d->m_engine->removeGroup(groupId, removed, contacts, d->m_error);
+/*!
+ * Returns a list of relationships of the given \a relationshipType in which the contact identified by the given \a participantId participates in the given \a role.
+ * If \a participantId is the default-constructed id, \a role is ignored and all relationships of the given \a relationshipType are returned.
+ * If \a relationshipType is empty, relationships of any type are returned.
+ */
+QList<QContactRelationship> QContactManager::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role) const
+{
+    return d->m_engine->relationships(relationshipType, participantId, role, d->m_error);
+}
 
-    if (!removed.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "groupsRemoved", Q_ARG(QList<QUniqueId>, removed.toList()));
-    if (!contacts.isEmpty())
-        QMetaObject::invokeMethod(d->m_engine, "contactsChanged", Q_ARG(QList<QUniqueId>, contacts.toList()));
+/*!
+ * Saves the given \a relationship in the database.  If the relationship already exists in the database, this function will
+ * return \c false and the error will be set to \c QContactManager::AlreadyExistsError.
+ * If the relationship is saved successfully, this function will return \c true and error will be set
+ * to \c QContactManager::NoError.  Note that relationships cannot be updated directly using this function; in order
+ * to update a relationship, you must remove the old relationship, make the required modifications, and then save it.
+ *
+ * The given relationship is invalid if it is circular (one of the destination contacts is also the source contact), or
+ * if it references a non-existent local contact (either source or destination).  If the given \a relationship is invalid,
+ * the function will return \c false and the error will be set to \c QContactManager::InvalidRelationshipError.
+ * If the given \a relationship could not be saved in the database (due to backend limitations)
+ * the function will return \c false and error will be set to \c QContactManager::NotSupportedError.
+ *
+ * If any destination contact manager URI is not set in the \a relationship, these will be
+ * automatically set to the URI of this manager, before the relationship is saved.
+ */
+bool QContactManager::saveRelationship(QContactRelationship* relationship)
+{
+    return d->m_engine->saveRelationship(relationship, d->m_error);
+}
 
-    return ret;
+/*!
+ * Saves the given \a relationships in the database and returns a list of error codes.
+ */
+QList<QContactManager::Error> QContactManager::saveRelationships(QList<QContactRelationship>* relationships)
+{
+    return d->m_engine->saveRelationships(relationships, d->m_error);
+}
+
+/*!
+ * Removes the given \a relationship from the manager.  If the relationship exists in the manager, the relationship
+ * will be removed, the error will be set to \c QContactManager::NoError and this function will return true.  If no such
+ * relationship exists in the manager, the error will be set to \c QContactManager::DoesNotExistError and this function
+ * will return false.
+ *
+ * The priority of the relationship is ignored when determining existence of the relationship.
+ */
+bool QContactManager::removeRelationship(const QContactRelationship& relationship)
+{
+    return d->m_engine->removeRelationship(relationship, d->m_error);
+}
+
+/*!
+ * Removes the given \a relationships from the database and returns a list of error codes.
+ */
+QList<QContactManager::Error> QContactManager::removeRelationships(const QList<QContactRelationship>& relationships)
+{
+    return d->m_engine->removeRelationships(relationships, d->m_error);
 }
 
 /*!
@@ -486,23 +515,22 @@ QContactManagerInfo* QContactManager::information() const
     return d->m_info;
 }
 
-/*! Returns the manager id for this QContactManager */
+/*! Returns the manager name for this QContactManager */
 QString QContactManager::managerName() const
 {
-    return d->m_managerName;
+    return d->m_engine->managerName();
 }
 
-/*! Return the parameters supplied to this QContactManager */
+/*! Return the parameters relevant to the creation of this QContactManager */
 QMap<QString, QString>QContactManager::managerParameters() const
 {
-    return d->m_params;
+    return d->m_engine->managerParameters();
 }
 
 /*!
- * Return the uri describing this QContactManager, including
- * managerName, managerStoreId and any parameters.
+ * Return the uri describing this QContactManager, consisting of the manager name and any parameters.
  */
-QString QContactManager::storeUri() const
+QString QContactManager::managerUri() const
 {
-    return d->m_uri;
+    return d->m_engine->managerUri();
 }

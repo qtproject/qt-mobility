@@ -46,12 +46,21 @@ QContactAction::~QContactAction()
   \class QContactAction
   \brief The QContactAction class provides an interface for performing an action on a QContact or QContactDetail.
    \ingroup contacts-main
- 
+
   An action is anything that can be performed on a contact, or a detail of a contact.  An example
   of an action might be "Send Email" or "Dial" or "Plot Navigation Route".  One action may be
   implemented by multiple vendors, and indeed one vendor may provide multiple implementations of
   the same action.  The name of an action identifies its semantics, while its implementation version
   distinguishes it from other implementations of the action by the same vendor.
+
+  Invocation of an action is asynchronous; at some stage after calling \l invokeAction() the
+  action instance will emit the \l progress() signal.  Any results of the action may be retrieved
+  by calling \l result().
+
+  Each instance of a QContactAction is created by a \l QContactActionFactory when
+  \l QContactActionFactory::instance() is called; the caller takes ownership of the action instance.
+ 
+  \sa QContactActionFactory
  */
 
 /*!
@@ -109,9 +118,40 @@ QList<QContactDetail> QContactAction::supportedDetails(const QContact& contact) 
 }
 
 /*!
- * \fn QContactAction::performAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
- * Performs the implemented action on the specified \a detail of the given \a contact, or on the first
+ * \fn QContactAction::invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+ * Initiates the implemented action on the specified \a detail of the given \a contact, or on the first
  * eligible detail saved in the contact if the given \a detail is empty.
+ * At some point after invocation, one or more \l progress() signals will be emitted by the action instance.
+ * The results of the action (if any) may be retrieved by calling \l result().
+ *
+ * \sa result(), progress()
+ */
+
+/*!
+ * \fn QContactAction::result() const
+ * Returns the result of the action, if any exists.  Calling this function prior to receiving the \l progress()
+ * signal will not return a meaningful result.
+ */
+
+/*!
+ * \enum QContactAction::Status
+ * Describes the current status of the asynchronous action operation
+ * \value Inactive The operation has not yet been initiated
+ * \value Autonomous The operation was initiated but no further information is or will be available
+ * \value Active The operation was initiated and is not yet finished
+ * \value Finished The operation successfully completed
+ * \value FinishedWithError The operation has finished, but an error occurred
+ */
+
+/*!
+ * \fn QContactAction::progress(QContactAction::Status status, const QVariantMap& result)
+ * This signal is emitted by an action instance whose functionality has been initiated with \l invokeAction().
+ * It provides clients with the current \a status of the action, and any \a result associated with the action.
+ * This signal must be emitted at least once by every action instance after \l invokeAction() is called.
+ *
+ * If the action implementation is incapable of reporting the status of the operation (for example, the
+ * action is implemented via a one-way IPC call) it should emit the progress signal with \a status
+ * set to \c QContactAction::Autonomous.
  */
 
 /*!
@@ -155,16 +195,3 @@ QContactAction* QContactAction::action(const QContactActionDescriptor& descripto
     QContactManagerData::loadFactories();
     return QContactManagerData::action(descriptor);
 }
-
-///*!
-// * Returns a list of pointers to instances of the action implementations of the given \a actionName which are provided by the
-// * given \a vendorName and are of the given \a implementationVersion.  If \a actionName is empty, a list of pointers to
-// * implementations of all actions are returned; if \a vendorName is empty, pointers to implementations provided by any vendor and
-// * of any implementation version are returned; if \a implementationVersion is empty, pointers to any implementations provided by the
-// * given \a vendorName of the given \a actionName are returned.
-// */
-//QList<QContactAction*> QContactAction::actions(const QString& actionName, const QString& vendorName, int implementationVersion)
-//{
-//    QContactManagerData::loadFactories();
-//    return QContactManagerData::actions(actionName, vendorName, implementationVersion);
-//}

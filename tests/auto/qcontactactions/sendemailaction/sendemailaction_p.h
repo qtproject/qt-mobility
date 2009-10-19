@@ -65,7 +65,11 @@ public:
 
     QContactFilter contactFilter(const QVariant& value) const;
     bool supportsDetail(const QContactDetail& detail) const;
-    void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail());
+    void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail());
+    QVariantMap result() const;
+
+private slots:
+    void performAction();
 };
 
 class Q_DECL_EXPORT QContactSendEmailActionFactory : public QContactActionFactory

@@ -47,7 +47,6 @@ class QTCONTACTS_EXPORT QContactAddress : public QContactDetail
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldDisplayLabel;
     const char* FieldStreet;
     const char* FieldLocality;
     const char* FieldRegion;
@@ -61,7 +60,6 @@ public:
     const char* SubTypeInternational;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAddress, "StreetAddress")
-    Q_DECLARE_LATIN1_LITERAL(FieldDisplayLabel, "DisplayLabel");
     Q_DECLARE_LATIN1_LITERAL(FieldStreet, "Street");
     Q_DECLARE_LATIN1_LITERAL(FieldLocality, "Locality");
     Q_DECLARE_LATIN1_LITERAL(FieldRegion, "Region");
@@ -75,8 +73,6 @@ public:
     Q_DECLARE_LATIN1_LITERAL(SubTypeInternational, "International");
 #endif
 
-    void setDisplayLabel(const QString& displayLabel) {setValue(FieldDisplayLabel, displayLabel);}
-    QString displayLabel() const;
     void setStreet(const QString& street) {setValue(FieldStreet, street);}
     QString street() const {return value(FieldStreet);}
     void setLocality(const QString& locality) {setValue(FieldLocality, locality);}
