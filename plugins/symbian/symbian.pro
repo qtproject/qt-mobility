@@ -3,7 +3,8 @@ CONFIG += plugin
 TARGET = QtMobilityMultimediaEngine
 PLUGIN_SUBDIR = mediaservice
 include (../../common.pri)
-LIBS += -lQtMedia
+LIBS += -lQtMedia -lcamerawrapper -lfbscli
+
 DEPENDPATH += .
 INCLUDEPATH += . \
     ../../multimedia
@@ -16,9 +17,7 @@ include(camera/camera_s60.pri)
 
 
 load(data_caging_paths)
-    pluginDep.sources = QtMobilityMultimediaEngine.dll
-    pluginDep.path = $$QT_PLUGINS_BASE_DIR\mediaservice    
+    pluginDep.sources = $$TARGET.dll
+    pluginDep.path = $$QT_PLUGINS_BASE_DIR\$$PLUGIN_SUBDIR    
     DEPLOYMENT += pluginDep    
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = ALL -TCB -DRM
-    MMP_RULES += EXPORTUNFROZEN

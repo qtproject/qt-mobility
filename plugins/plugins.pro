@@ -31,5 +31,5 @@ symbian: {
     SUBDIRS -= phonon
     SUBDIRS -= audiocapture
     SUBDIRS += symbian
-    MMP_RULES += EXPORTUNFROZEN
+    TARGET.EPOCALLOWDLLDATA = 1
 }

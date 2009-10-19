@@ -125,7 +125,7 @@ public:
     
     //added based on s60 camera needs
     void releaseImageBuffer();
-    bool startCamera(int index=0);
+    bool startCamera();
     void stopCamera();
     void capture();
     
@@ -180,8 +180,8 @@ private:
     QList<unsigned int> formats;
     
     //ADDED
-    CCameraEngine* iCameraEngine;
-    QSize iCaptureSize;
+    CCameraEngine* m_cameraEngine;
+    QSize m_captureSize;
     QSize iViewFinderSize;
     MVFProcessor* iVFProcessor;
     TInt m_deviceIndex; //index indication chosen camera device

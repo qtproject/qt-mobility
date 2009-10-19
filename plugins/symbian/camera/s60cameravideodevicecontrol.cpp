@@ -59,8 +59,9 @@ S60CameraVideoDeviceControl::~S60CameraVideoDeviceControl()
 int S60CameraVideoDeviceControl::deviceCount() const
 {
 	if (m_session) {
-		m_session->deviceCount();
+		return m_session->deviceCount();
 	}
+	return KErrNone;
 }
 
 QString S60CameraVideoDeviceControl::name(int index) const
@@ -86,6 +87,7 @@ int S60CameraVideoDeviceControl::defaultDevice() const
     if (m_session) {
             return m_session->defaultDevice();
         }
+	return KErrNone;
 }
 int S60CameraVideoDeviceControl::selectedDevice() const
 {

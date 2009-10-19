@@ -26,7 +26,6 @@ contains(QT_CONFIG, multimedia) {
 symbian { 
 SUBDIRS -= \
         qmediaplaylistnavigator \
-        qcamera \
         qmediaimageviewer \
         qmediapluginloader \
         qmediaserviceprovider \

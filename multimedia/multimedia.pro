@@ -122,11 +122,14 @@ contains(QT_CONFIG, multimedia) {
 }
 
 symbian: {
-    qtmobilitymultimedia.sources = QtMedia.dll
-    qtmobilitymultimedia.path = "/sys/bin"    
+    load(data_caging_paths)
+    qtmedia.sources = QtMedia.dll
+    qtmedia.path = "/sys/bin"
 
-    MMP_RULES += EXPORTUNFROZEN
-    DEPLOYMENT += qtmobilitymultimedia    
+    DEPLOYMENT += qtmedia
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
+
 }
+
+

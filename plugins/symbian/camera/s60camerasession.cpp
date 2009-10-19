@@ -41,46 +41,43 @@
 #include <fbs.h>
 
 S60CameraSession::S60CameraSession(QObject *parent)
-    :QObject(parent)
+    :QObject(parent), m_cameraEngine(NULL)
 {
     available = false;
     resolutions.clear();
     formats.clear();
+    m_captureSize = QSize(1600,1200); // some dummy default size
     m_state = QCamera::StoppedState;
-    m_windowSize = QSize(320,240);
+    m_windowSize = QSize(320,240); // default windows size for symbian devices
     pixelF = QVideoFrame::Format_RGB24;
+    m_deviceIndex = 0; 
     
 }
 
 S60CameraSession::~S60CameraSession()
 {
-    delete iCameraEngine;
-    iCameraEngine = NULL;
+    delete m_cameraEngine;
+    m_cameraEngine = NULL;
 }
-bool S60CameraSession::startCamera(int index)
+bool S60CameraSession::startCamera()
 {
-    
-    /*
-     * Try to start camera.
-     */
-    if (CCameraEngine::CamerasAvailable() > 0) {
-        if (!iCameraEngine) {
-            TRAP(iError, iCameraEngine = CCameraEngine::NewL(index, 0, this));
-        }
-        iCameraEngine->ReserveAndPowerOn();
-        iError = KErrNone;
-        m_deviceIndex = index;
-    }
-    else
-        iError = KErrNotSupported;
-    
+	if (m_cameraEngine) {
+		delete m_cameraEngine;
+		m_cameraEngine = NULL;
+		iError = KErrNone;
+	}
+	
+	TRAP(iError, m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this));
+	if (!iError) 
+		m_cameraEngine->ReserveAndPowerOn();
+	
     return (iError == KErrNone);
 }
 
 void S60CameraSession::stopCamera()
 {
-    if (iCameraEngine) {
-        iCameraEngine->ReleaseAndPowerOff();
+    if (m_cameraEngine) {
+        m_cameraEngine->ReleaseAndPowerOff();
         emit stateChanged(QCamera::StoppedState);
     }
 }
@@ -94,27 +91,27 @@ void S60CameraSession::capture()
      * the memory for the image to be captured. Then, a call to the CCamera::CaptureImage() 
      * captures the image.
      */
-    if (iCameraEngine)
+    if (m_cameraEngine)
     {
-        TSize size(iCaptureSize.width(), iCaptureSize.height());
+        TSize size(m_captureSize.width(), m_captureSize.height());
         // TODO check supported formats
         if(m_deviceIndex == 0)
         {
-            iCameraEngine->PrepareL(size);
-            iCameraEngine->CaptureL();
+            m_cameraEngine->PrepareL(size);
+            m_cameraEngine->CaptureL();
         }
         else
         {
-            iCameraEngine->PrepareL(size, CCamera::EFormatFbsBitmapColor64K);
-            iCameraEngine->CaptureL();
+            m_cameraEngine->PrepareL(size, CCamera::EFormatFbsBitmapColor64K);
+            m_cameraEngine->CaptureL();
         }
     }
 }
 
 bool S60CameraSession::deviceReady()
 {
-    if ( iCameraEngine )
-        return iCameraEngine->IsCameraReady();
+    if ( m_cameraEngine )
+        return m_cameraEngine->IsCameraReady();
     else
         return EFalse;
 }
@@ -310,8 +307,8 @@ qint64 S60CameraSession::position() const
 
 int S60CameraSession::state() const
 {
-    if (iCameraEngine ) {
-        if (iCameraEngine->State() > 0 )
+    if (m_cameraEngine ) {
+        if (m_cameraEngine->State() > 0 )
             return QCamera::ActiveState;
     }
     return QCamera::StoppedState;
@@ -362,7 +359,7 @@ void S60CameraSession::MceoCapturedDataReady(TDesC8* aData)
 
 void S60CameraSession::releaseImageBuffer()
 {
-    iCameraEngine->ReleaseImageBuffer();
+    m_cameraEngine->ReleaseImageBuffer();
 }
 
 void S60CameraSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
@@ -408,7 +405,7 @@ void S60CameraSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
                 format = QImage::Format_ARGB32;
                 break;
             default:
-                User::Leave( -1 );
+                //User::Leave( -1 );
                 break;
         }
 
@@ -436,13 +433,14 @@ void S60CameraSession::MceoViewFinderFrameReady(CFbsBitmap& aFrame)
         QImage image((uchar *)aFrame.DataAddress(), iViewFinderSize.width(), 
             iViewFinderSize.height(), bytesPerLine, QImage::Format_RGB32);
         iVFProcessor->ViewFinderFrameReady(image);     
-        iCameraEngine->ReleaseViewFinderBuffer();
+        m_cameraEngine->ReleaseViewFinderBuffer();
     }
 }
 
 void S60CameraSession::MceoHandleError(TCameraEngineError aErrorType, TInt aError)
 {   
     Q_UNUSED(aErrorType);
+    //EErrAutoFocusMode (-5)
     iError = aError;
 }
 
@@ -453,14 +451,7 @@ void S60CameraSession::setVFProcessor(MVFProcessor* VFProcessor)
 // For S60Cameravideodevicecontrol
 int S60CameraSession::deviceCount() const
 {
-    TInt camerasAvailable = 0;
-    camerasAvailable = 1;
-   
-/*    if (iCameraEngine) {
-           camerasAvailable = iCameraEngine->CamerasAvailable();
-       }
-  */ 
-    return camerasAvailable;
+    return CCameraEngine::CamerasAvailable();
 }
 /**
  * Some names for cameras with index
@@ -510,13 +501,13 @@ QIcon S60CameraSession::icon(int index) const
     // TODO what icons should returned here?
     // \epoc32\release\winscw\udeb\z\resource\apps\camcorder_aif.mif
     Q_UNUSED(index);
-    QString filename = QLatin1String("resource\\apps\\camcorder_aif.mif");
-    return QIcon( filename );
-    //return icon;
+    QString filename = QLatin1String("z:\\resource\\apps\\cameraapp_aif.mif");
+    return QIcon( );
 }
 int S60CameraSession::defaultDevice() const
 {
-    return 0;
+	const TInt defaultCameraDevice = 0;
+    return defaultCameraDevice;
 }
 int S60CameraSession::selectedDevice() const
 {
@@ -524,18 +515,9 @@ int S60CameraSession::selectedDevice() const
 }
 void S60CameraSession::setSelectedDevice(int index)
 {
-    // check whether we have camera at index in use already and we have enough cameras 
-    if (m_deviceIndex != index && deviceCount() >= index) {
-
-        delete iCameraEngine;
-        iCameraEngine = NULL;
-        TRAP(iError, iCameraEngine = CCameraEngine::NewL(index, 0, this));
-        iCameraEngine->ReserveAndPowerOn();
-        iError = KErrNone;
-        m_deviceIndex = index;
-        
-    }
-        
+    m_deviceIndex = index;
+    m_state = QCamera::StoppedState;
+    emit stateChanged( m_state );
 }
 
 /*
@@ -553,8 +535,8 @@ bool S60CameraSession::queryCurrentCameraInfo()
     //TCameraOrientation iOrientation;
     bool returnValue = false;
 
-    if (iCameraEngine) {
-        CCamera *camera = iCameraEngine->Camera();
+    if (m_cameraEngine) {
+        CCamera *camera = m_cameraEngine->Camera();
         if (camera) {
             camera->CameraInfo(m_info);
         }

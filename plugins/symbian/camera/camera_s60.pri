@@ -1,6 +1,5 @@
 INCLUDEPATH += $$PWD
-symbian:LIBS += -lcamerawrapper \
-    -lfbscli
+
 HEADERS += $$PWD/s60camerafocuscontrol.h \
     $$PWD/s60cameraexposurecontrol.h \
     $$PWD/s60cameracontrol.h \

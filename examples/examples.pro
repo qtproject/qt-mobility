@@ -6,3 +6,7 @@ SUBDIRS = \
         slideshow \
         streamplayer \
         audiorecorder
+        
+symbian: {
+         TARGET.CAPABILITY = MultimediaDD WriteUserData ReadUserData UserEnvironment
+}
