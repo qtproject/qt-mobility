@@ -2572,7 +2572,7 @@ QMessage::StandardFolder MapiStore::standardFolder(const MapiEntryId &entryId) c
 {
     QMap<QMessage::StandardFolder, MapiEntryId>::const_iterator it = _standardFolderId.begin(), end = _standardFolderId.end();
     for ( ; it != end; ++it) {
-        if (it.value() == entryId) {
+        if (_session.toStrongRef()->equal(it.value(), entryId)) {
             return it.key();
         }
     }
