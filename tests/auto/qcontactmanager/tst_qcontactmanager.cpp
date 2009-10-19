@@ -1041,9 +1041,9 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
     QVERIFY(manager.contacts(df).count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
-    QVERIFY(manager.contacts(f || f).count() == 0);
+    QVERIFY(manager.contacts(f | f).count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
-    QVERIFY(manager.contacts(df || df).count() == 0);
+    QVERIFY(manager.contacts(df | df).count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
     QVERIFY(manager.information()->filterSupported(f) == false);

@@ -178,11 +178,11 @@ void tst_QContactFilter::intersectionFilter()
     QContactIntersectionFilter bf;
     bf << df << df2;
 
-    QContactFilter f = df && df2;
+    QContactFilter f = df & df2;
 
     QVERIFY(bf == f);
 
-    QContactFilter f2 = bf && df3;
+    QContactFilter f2 = bf & df3;
     QVERIFY(f2.type() == QContactFilter::IntersectionFilter);
     QContactIntersectionFilter bf2 = f2;
     QVERIFY(bf2 == f2);
@@ -190,7 +190,7 @@ void tst_QContactFilter::intersectionFilter()
     QVERIFY(bf2.filters().at(0) == bf);
     QVERIFY(bf2.filters().at(1) == df3);
 
-    f2 = df3 && bf;
+    f2 = df3 & bf;
     QVERIFY(f2.type() == QContactFilter::IntersectionFilter);
     bf2 = f2;
     QVERIFY(bf2 == f2);
@@ -201,12 +201,12 @@ void tst_QContactFilter::intersectionFilter()
     /* Save this list */
     QList<QContactFilter> filterList = bf2.filters();
 
-    f2 = df && df2 && df3;
+    f2 = df & df2 & df3;
     QVERIFY(f2.type() == QContactFilter::IntersectionFilter);
     bf2 = f2;
     QVERIFY(bf2 == f2);
     QCOMPARE(bf2.filters().count(), 2);
-    QVERIFY(bf2.filters().at(0) == (df && df2));
+    QVERIFY(bf2.filters().at(0) == (df & df2));
     QVERIFY(bf2.filters().at(1) == df3);
 
     /* Self assignment should do nothing */
@@ -265,11 +265,11 @@ void tst_QContactFilter::unionFilter()
     QContactUnionFilter bf;
     bf << df << df2;
 
-    QContactFilter f = df || df2;
+    QContactFilter f = df | df2;
 
     QVERIFY(bf == f);
 
-    QContactFilter f2 = bf || df3;
+    QContactFilter f2 = bf | df3;
     QVERIFY(f2.type() == QContactFilter::UnionFilter);
     QContactUnionFilter bf2 = f2;
     QVERIFY(bf2 == f2);
@@ -278,7 +278,7 @@ void tst_QContactFilter::unionFilter()
     QVERIFY(bf2.filters().at(1) == df2);
     QVERIFY(bf2.filters().at(2) == df3);
 
-    f2 = df3 || bf;
+    f2 = df3 | bf;
     QVERIFY(f2.type() == QContactFilter::UnionFilter);
     bf2 = f2;
     QVERIFY(bf2 == f2);
@@ -290,7 +290,7 @@ void tst_QContactFilter::unionFilter()
     /* Save this list */
     QList<QContactFilter> filterList = bf2.filters();
 
-    f2 = df || df2 || df3;
+    f2 = df | df2 | df3;
     QVERIFY(f2.type() == QContactFilter::UnionFilter);
     bf2 = f2;
     QVERIFY(bf2 == f2);

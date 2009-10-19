@@ -1195,31 +1195,31 @@ void tst_QContactManagerFiltering::intersectionFiltering()
     QContactIntersectionFilter resultFilter;
     if (sX) {
         if (mY && eZ)
-            resultFilter = *x && *y && *z;
+            resultFilter = *x & *y & *z;
         else if (mZ && eY)
-            resultFilter = *x && *z && *y;
+            resultFilter = *x & *z & *y;
         else if (eY)
-            resultFilter = *x && *y;
+            resultFilter = *x & *y;
         else if (eZ)
-            resultFilter = *x && *z;
+            resultFilter = *x & *z;
     } else if (sY) {
         if (mX && eZ)
-            resultFilter = *y && *x && *z;
+            resultFilter = *y & *x & *z;
         else if (mZ && eX)
-            resultFilter = *y && *z && *x;
+            resultFilter = *y & *z & *x;
         else if (eX)
-            resultFilter = *y && *x;
+            resultFilter = *y & *x;
         else if (eZ)
-            resultFilter = *y && *z;
+            resultFilter = *y & *z;
     } else if (sZ) {
         if (mX && eY)
-            resultFilter = *z && *x && *y;
+            resultFilter = *z & *x & *y;
         else if (mY && eX)
-            resultFilter = *z && *y && *x;
+            resultFilter = *z & *y & *x;
         else if (eX)
-            resultFilter = *z && *x;
+            resultFilter = *z & *x;
         else if (eY)
-            resultFilter = *z && *y;
+            resultFilter = *z & *y;
     }
 
     QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
@@ -1638,31 +1638,31 @@ void tst_QContactManagerFiltering::unionFiltering()
     QContactUnionFilter resultFilter;
     if (sX) {
         if (mY && eZ)
-            resultFilter = *x || *y || *z;
+            resultFilter = *x | *y | *z;
         else if (mZ && eY)
-            resultFilter = *x || *z || *y;
+            resultFilter = *x | *z | *y;
         else if (eY)
-            resultFilter = *x || *y;
+            resultFilter = *x | *y;
         else if (eZ)
-            resultFilter = *x || *z;
+            resultFilter = *x | *z;
     } else if (sY) {
         if (mX && eZ)
-            resultFilter = *y || *x || *z;
+            resultFilter = *y | *x | *z;
         else if (mZ && eX)
-            resultFilter = *y || *z || *x;
+            resultFilter = *y | *z | *x;
         else if (eX)
-            resultFilter = *y || *x;
+            resultFilter = *y | *x;
         else if (eZ)
-            resultFilter = *y || *z;
+            resultFilter = *y | *z;
     } else if (sZ) {
         if (mX && eY)
-            resultFilter = *z || *x || *y;
+            resultFilter = *z | *x | *y;
         else if (mY && eX)
-            resultFilter = *z || *y || *x;
+            resultFilter = *z | *y | *x;
         else if (eX)
-            resultFilter = *z || *x;
+            resultFilter = *z | *x;
         else if (eY)
-            resultFilter = *z || *y;
+            resultFilter = *z | *y;
     }
 
     QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
@@ -2162,10 +2162,10 @@ void tst_QContactManagerFiltering::invalidFiltering()
     QVERIFY(ids.count() == 0);
 
     // Try unions/intersections of invalids too
-    ids = cm->contacts(f || f);
+    ids = cm->contacts(f | f);
     QVERIFY(ids.count() == 0);
 
-    ids = cm->contacts(f && f);
+    ids = cm->contacts(f & f);
     QVERIFY(ids.count() == 0);
 }
 
@@ -2192,11 +2192,11 @@ void tst_QContactManagerFiltering::allFiltering()
     QCOMPARE(output, expected);
 
     // Try unions/intersections of defaults
-    ids = cm->contacts(f || f);
+    ids = cm->contacts(f | f);
     output = convertIds(contacts, ids);
     QCOMPARE_UNSORTED(output, expected);
 
-    ids = cm->contacts(f && f);
+    ids = cm->contacts(f & f);
     output = convertIds(contacts, ids);
     QCOMPARE_UNSORTED(output, expected);
 }
@@ -2977,7 +2977,7 @@ public:
         df2.setValue(value);
 
         /* We like either doubles or integers */
-        return df || df2;
+        return df | df2;
     }
     bool supportsDetail(const QContactDetail& detail) const
     {
@@ -3162,7 +3162,7 @@ public:
         /* Slightly looser filter */
         QContactActionFilter af;
         af.setActionName("PairRecursive");
-        return af && QContactFilter() && af;
+        return af & QContactFilter() & af;
     }
 };
 
@@ -3183,7 +3183,7 @@ public:
         /* Slightly looser filter */
         QContactActionFilter af;
         af.setActionName("PairRecursive");
-        return af || QContactInvalidFilter() || af;
+        return af | QContactInvalidFilter() | af;
     }
 };
 

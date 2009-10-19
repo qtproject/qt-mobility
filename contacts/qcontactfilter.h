@@ -103,7 +103,7 @@ protected:
     QSharedDataPointer<QContactFilterPrivate> d_ptr;
 };
 
-const QTCONTACTS_EXPORT QContactFilter operator&&(const QContactFilter& left, const QContactFilter& right);
-const QTCONTACTS_EXPORT QContactFilter operator||(const QContactFilter& left, const QContactFilter& right);
+const QTCONTACTS_EXPORT QContactFilter operator&(const QContactFilter& left, const QContactFilter& right);
+const QTCONTACTS_EXPORT QContactFilter operator|(const QContactFilter& left, const QContactFilter& right);
 
 #endif
