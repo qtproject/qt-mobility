@@ -36,7 +36,6 @@
 #include <QStringList>
 
 #include <SysUtil.h>
-#include <f32file.h>
 
 
 //////// QSystemInfo
@@ -299,20 +298,50 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     : QObject(parent)
 {
+    iFs.Connect();
 }
 
 QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
+    iFs.Close();
 }
 
 qlonglong QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
-    return -1;
+    if (driveVolume.size() != 1) {
+        return -1;
+    }
+
+    TInt drive;
+    if (RFs::CharToDrive(TChar(driveVolume[0].toAscii()), drive) != KErrNone) {
+        return -1;
+    }
+
+    TVolumeInfo volumeInfo;
+    if (iFs.Volume(volumeInfo, drive) != KErrNone) {
+        return -1;
+    }
+
+    return volumeInfo.iSize;
 }
 
 qlonglong QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
-    return -1;
+    if (driveVolume.size() != 1) {
+        return -1;
+    }
+
+    TInt drive;
+    if (RFs::CharToDrive(TChar(driveVolume[0].toAscii()), drive) != KErrNone) {
+        return -1;
+    }
+
+    TVolumeInfo volumeInfo;
+    if (iFs.Volume(volumeInfo, drive) != KErrNone) {
+        return -1;
+    }
+
+    return volumeInfo.iFree;
 }
 
 QStringList QSystemStorageInfoPrivate::logicalDrives()

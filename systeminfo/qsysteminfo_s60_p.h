@@ -52,6 +52,8 @@
 #include "qsysinfoglobal.h"
 #include "qsysteminfo.h"
 
+#include <f32file.h>
+
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
@@ -151,6 +153,9 @@ public:
     qlonglong availableDiskSpace(const QString &driveVolume);
     static QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
+
+private:
+    RFs iFs;
 };
 
 //////// QSystemDeviceInfo
