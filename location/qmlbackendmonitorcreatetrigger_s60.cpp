@@ -200,7 +200,7 @@ bool  QMLBackendMonitorCreateTriggerAO::InitializeTrigger(QGeoAreaMonitorS60* aP
         CleanupStack::PopAndDestroy(trig );
         
         if(iTriggerCreation == TRUE)
-            iTriggerMonitorInfo->addMonitorTriggerInfo(aParent, triggerID);
+            iTriggerMonitorInfo->addMonitorTriggerInfo(aParent, triggerID, aType);
                
         return iTriggerCreation;
     }
