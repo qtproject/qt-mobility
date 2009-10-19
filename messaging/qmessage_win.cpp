@@ -503,6 +503,9 @@ void QMessage::appendAttachments(const QStringList &fileNames)
                 container->appendContent(attachment);
             }
         }
+
+        bool haveAttachments = !container->_attachments.isEmpty();
+        setStatus(QMessage::HasAttachments,haveAttachments);
     }
 }
 
@@ -512,6 +515,9 @@ void QMessage::clearAttachments()
 
     QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
     container->_attachments.clear();
+
+    bool haveAttachments = !container->_attachments.isEmpty();
+    setStatus(QMessage::HasAttachments,haveAttachments);
 }
 
 bool QMessage::isModified() const
