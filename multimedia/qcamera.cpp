@@ -150,6 +150,10 @@ QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
     d->initControls();
 }
 
+/*!
+    Construct a QCamera from device name \a device and \a parent.
+*/
+
 QCamera::QCamera(const QByteArray& device, QObject *parent):
     QMediaObject(*new QCameraPrivate, parent,
                   QMediaServiceProvider::defaultServiceProvider()->requestService(Q_MEDIASERVICE_CAMERA, QMediaServiceProviderHint(device)))
@@ -591,6 +595,21 @@ void QCamera::setAutoIsoSensitivity()
 }
 
 /*!
+    \property QCamera::shutterSpeed
+    \brief ?
+*/
+
+/*!
+    \property QCamera::isoSensitivity
+    \brief ?
+*/
+
+/*!
+    \property QCamera::aperture
+    \brief ?
+*/
+
+/*!
     Returns the current aperture as n F number.
 */
 
@@ -817,6 +836,8 @@ void QCamera::capture(const QString &file)
     \value ManualFocus          Manual focus mode.
     \value AutoFocus            One-shot auto focus mode.
     \value ContinuousFocus      Continuous auto focus mode.
+    \value InfinityFocus        ?
+    \value HyperfocalFocus      ?
 */
 
 /*!
@@ -919,10 +940,37 @@ void QCamera::capture(const QString &file)
 */
 
 /*!
+    \fn void QCamera::apertureChanged(qreal value)
+
+    Signal emitted when aperature changes to \a value.
+*/
+
+/*!
+    \fn void QCamera::apertureRangeChanged()
+
+    Signal emitted when aperature range has changed.
+*/
+
+/*!
+    \fn void QCamera::imageCaptured(const QString &fileName, const QImage &preview)
+
+    Signal emitted when image ready with \a fileName and \a preview.
+*/
+
+/*!
+    \fn void QCamera::isoSensitivityChanged(int value)
+
+    Signal emitted when sensitivity changes to \a value.
+*/
+
+/*!
     \enum QCamera::Error
 
     \value  NoError      No errors have occurred.
     \value  CameraError  An error has occurred.
+    \value  NotReadyToCaptureError System resource not available.
+    \value  InvalidRequestError System resource doesn't support functionality.
+    \value  ServiceMissingError No service available.
 */
 
 /*!

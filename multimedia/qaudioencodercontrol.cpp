@@ -70,6 +70,12 @@ QAudioEncoderControl::~QAudioEncoderControl()
 */
 
 /*!
+  \fn QString QAudioEncoderControl::audioCodec() const
+
+  Returns the current audio codec being used.
+*/
+
+/*!
   \fn QAudioEncoderControl::codecDescription(const QString &codec) const
 
   Returns description of audio \a codec.
@@ -144,6 +150,12 @@ QAudioEncoderControl::~QAudioEncoderControl()
 */
 
 /*!
+    \fn QAudioEncoderControl::setQuality(QtMedia::EncodingQuality quality)
+
+    Sets the quality value to \a quality.
+*/
+
+/*!
     \fn bool QAudioEncoderControl::setAudioCodec(const QString &codecName)
 
     Returns true if the audio codec is changed to \a codecName.
@@ -156,8 +168,20 @@ QAudioEncoderControl::~QAudioEncoderControl()
 */
 
 /*!
+    \fn int QAudioEncoderControl::bitrate() const
+
+    Returns the current bitrate being used.
+*/
+
+/*!
     \fn QAudioEncoderControl::setSampleRate(int sampleRate)
 
     Changes the sample rate to \a sampleRate.
+*/
+
+/*!
+    \fn int QAudioEncoderControl::sampleRate() const
+
+    Returns the current sample rate being used.
 */
 

@@ -217,11 +217,6 @@ void QAudioEncoderSettings::setQuality(QtMedia::EncodingQuality value)
     d->quality = value;
 }
 
-/*!
-  \class QVideoEncoderSettings
-*/
-
-
 class QVideoEncoderSettingsPrivate  : public QSharedData
 {
 public:
@@ -255,15 +250,36 @@ private:
     QVideoEncoderSettingsPrivate& operator=(const QVideoEncoderSettingsPrivate &other);
 };
 
+/*!
+  \class QVideoEncoderSettings
+  \ingroup multimedia
+
+  \preliminary
+  \brief The QVideoEncoderSettings class is use to pass around video stream information.
+
+*/
+
+/*!
+  Construct a QVideoEncoderSettings.
+*/
+
 QVideoEncoderSettings::QVideoEncoderSettings()
     :d(new QVideoEncoderSettingsPrivate)
 {
 }
 
+/*!
+  Construct a QVideoEncoderSettings from \a other
+*/
+
 QVideoEncoderSettings::QVideoEncoderSettings(const QVideoEncoderSettings& other)
     :d(other.d)
 {
 }
+
+/*!
+  Destroy this object.
+*/
 
 QVideoEncoderSettings::~QVideoEncoderSettings()
 {
@@ -340,7 +356,7 @@ qreal QVideoEncoderSettings::frameRate() const
 }
 
 /*!
-  \fn QVideoEncoderControl::setFrameRate(qreal &rate)
+  \fn QVideoEncoderSettings::setFrameRate(qreal rate)
 
   Sets the video frame \a rate.
   If a null frame rate is passed, the default value should be used.

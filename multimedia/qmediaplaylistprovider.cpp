@@ -252,3 +252,15 @@ void QMediaPlaylistProvider::shuffle()
   This signal is emitted when playlist items
   between \a start and \a end inclusive are changed.
 */
+
+/*!
+  \fn void QMediaPlaylistProvider::loaded()
+
+  Signal emitted when load process has finished and successful.
+*/
+
+/*!
+  \fn void QMediaPlaylistProvider::loadFailed(QMediaPlaylist::Error err, const QString& errorMessage)
+
+  Signal emitted when load process fails, returning \a err and \a errorMessage.
+*/

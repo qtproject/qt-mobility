@@ -250,5 +250,5 @@ QRadioTunerControl::~QRadioTunerControl()
 /*!
     \fn void QRadioTunerControl::error(QRadioTuner::Error err)
 
-    Signal emitted when an error has occurred.
+    Signal emitted when an error of \a err has occurred.
 */

@@ -164,7 +164,7 @@ static QMediaService *playerService(QMediaPlayer::Flags flags, QMediaServiceProv
 
 /*!
     Construct a QMediaPlayer that uses the playback service from \a provider,
-    parented to \a parent.
+    parented to \a parent and with \a flags.
 
     If a playback service is not specified the system default will be used.
 */

@@ -172,7 +172,13 @@ Set the metering mode to \a mode.
 */
 
 /*!
-  \fn QList<int> QCameraExposureControl::supportedIsoSenitivities() const
+  \fn int QCameraExposureControl::maximumIsoSensitivity() const
+
+  Returns the maximum iso sensitivity.
+*/
+
+/*!
+  \fn QList<int> QCameraExposureControl::supportedIsoSensitivities() const
 
   Returns the available sensitivities.
 */
@@ -202,6 +208,12 @@ Set the metering mode to \a mode.
   \fn qreal QCameraExposureControl::minimumAperture() const
 
   Returns the minimum aperture available.
+*/
+
+/*!
+  \fn qreal QCameraExposureControl::maximumAperture() const
+
+  Returns the maximum aperture available.
 */
 
 /*!
@@ -294,5 +306,11 @@ Set the metering mode to \a mode.
     \fn void QCameraExposureControl::shutterSpeedChanged(qreal value)
 
     Signal emitted when the shutter speed changes to \a value.
+*/
+
+/*!
+    \fn void QCameraExposureControl::isoSensitivityChanged(int value)
+
+    Signal emitted when sensitity value changes to \a value.
 */
 
