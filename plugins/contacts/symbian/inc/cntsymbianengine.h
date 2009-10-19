@@ -102,7 +102,7 @@ public:
     QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
 
     /* Capabilities reporting */
-    bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
+    bool hasFeature(QContactManager::ManagerFeature feature) const;
     bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 

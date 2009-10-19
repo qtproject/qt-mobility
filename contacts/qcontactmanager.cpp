@@ -45,7 +45,6 @@
 #include "qcontactfilter.h"
 #include "qcontactdetaildefinition.h"
 #include "qcontactmanager_p.h"
-#include "qcontactmanagerinfo.h"
 
 #include <QSharedData>
 #include <QPair>
@@ -230,7 +229,6 @@ QContactManager::QContactManager(const QString& managerName, const QMap<QString,
 /*! Frees the memory used by the QContactManager */
 QContactManager::~QContactManager()
 {
-    delete d->m_info;
     delete d;
 }
 
@@ -508,17 +506,58 @@ bool QContactManager::removeDetailDefinition(const QString& definitionName)
 }
 
 /*!
-    Returns an object describing the supported functionality of this QContactManager.
-
-    \sa QContactManagerInfo
+ * \enum QContactManager::ManagerFeature
+ * This enum describes the possible features that a particular manager may support
+ * \value Groups The manager supports all QContactGroup related operations, and emits the appropriate signals
+ * \value ActionPreferences The manager supports saving preferred details per action per contact
+ * \value Relationships The manager supports at least some types of relationships between contacts
+ * \value ArbitraryRelationshipTypes The manager supports relationships of arbitrary types between contacts
+ * \value MutableDefinitions The manager supports saving, updating or removing detail definitions.  Some built-in definitions may still be immutable
+ * \value SelfContact The manager supports the concept of saving a contact which represents the current user
+ * \value Anonymous The manager is isolated from other managers
  */
-QContactManagerInfo* QContactManager::information() const
+
+/*!
+ * Returns true if the given \a feature is supported by the manager
+ */
+bool QContactManager::hasFeature(QContactManager::ManagerFeature feature) const
 {
-    if (!d->m_info) {
-        d->m_info = new QContactManagerInfo;
-        d->m_info->d = d;
-    }
-    return d->m_info;
+    return d->m_engine->hasFeature(feature);
+}
+
+/*!
+ * Returns the list of data types supported by the manager
+ */
+QList<QVariant::Type> QContactManager::supportedDataTypes() const
+{
+    return d->m_engine->supportedDataTypes();
+}
+
+/*!
+ * Returns true if the given \a filter is supported natively by the
+ * manager, and false if the filter behaviour would be emulated.
+ *
+ * Note: In some cases, the behaviour of an unsupported filter
+ * cannot be emulated.  For example, a filter that requests contacts
+ * that have changed since a given time depends on having that information
+ * available.  In these cases, the filter will fail.
+ */
+bool QContactManager::filterSupported(const QContactFilter& filter) const
+{
+    return d->m_engine->filterSupported(filter);
+}
+
+/*!
+ * Returns the list of relationship types which are supported by this manager.
+ * If the backend does not support the \c QContactManager::Relationships feature, this list should
+ * be empty.  If the backend supports the \c QContactManager::Relationships feature and also
+ * supports the \c QContactManager::ArbitraryRelationshipTypes feature, the list will
+ * contain the natively supported (well-known) relationship types contained in the list, but clients
+ * are able to add relationships of any custom type also.
+ */
+QStringList QContactManager::supportedRelationshipTypes() const
+{
+    return d->m_engine->supportedRelationshipTypes();
 }
 
 /*! Returns the manager name for this QContactManager */

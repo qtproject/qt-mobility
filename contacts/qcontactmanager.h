@@ -55,7 +55,6 @@
 #include "qcontact.h"
 #include "qcontactid.h"
 #include "qcontactrelationship.h"
-#include "qcontactmanagerinfo.h"
 #include "qcontactsortorder.h"
 
 class QContactFilter;
@@ -136,7 +135,20 @@ public:
     bool removeDetailDefinition(const QString& definitionName);
 
     /* Functionality reporting */
-    QContactManagerInfo* information() const;
+    enum ManagerFeature {
+        Groups = 0,
+        ActionPreferences,
+        MutableDefinitions,
+        Relationships,
+        ArbitraryRelationshipTypes,
+        SelfContact,
+        Anonymous,
+        ChangeLogs
+    };
+    bool hasFeature(QContactManager::ManagerFeature feature) const;
+    bool filterSupported(const QContactFilter& filter) const;
+    QList<QVariant::Type> supportedDataTypes() const;
+    QStringList supportedRelationshipTypes() const;
 
     /* return a list of available backends for which a QContactManager can be constructed. */
     static QStringList availableManagers();

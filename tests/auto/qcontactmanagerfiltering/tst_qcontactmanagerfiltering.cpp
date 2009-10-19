@@ -332,7 +332,7 @@ void tst_QContactManagerFiltering::detailStringFiltering()
 
     if (cm->managerName() == "memory") {
         /* At this point, since we're using memory, assume the filter isn't really supported */
-        QVERIFY(cm->information()->filterSupported(df) == false);
+        QVERIFY(cm->filterSupported(df) == false);
     }
 
     ids = cm->contacts(df);
@@ -600,7 +600,7 @@ void tst_QContactManagerFiltering::detailVariantFiltering()
 
     if (cm->managerName() == "memory") {
         /* At this point, since we're using memory, assume the filter isn't really supported */
-        QVERIFY(cm->information()->filterSupported(df) == false);
+        QVERIFY(cm->filterSupported(df) == false);
     }
 
     ids = cm->contacts(df);
@@ -783,8 +783,7 @@ void tst_QContactManagerFiltering::rangeFiltering()
 
     if (cm->managerName() == "memory") {
         /* At this point, since we're using memory, assume the filter isn't really supported */
-        QContactManagerInfo *info = cm->information();
-        QVERIFY(info->filterSupported(drf) == false);
+        QVERIFY(cm->filterSupported(drf) == false);
     }
     ids = cm->contacts(drf);
 
@@ -2216,7 +2215,7 @@ void tst_QContactManagerFiltering::changelogFiltering_data()
     for (int i = 0; i < managers.size(); i++) {
         QContactManager *manager = managers.at(i);
 
-        if (manager->information()->hasFeature(QContactManagerInfo::ChangeLogs)) {
+        if (manager->hasFeature(QContactManager::ChangeLogs)) {
             QList<QContactLocalId> contacts = contactsAddedToManagers.values(manager);
             QContact a,b,c,d;
             a = manager->contact(contacts.at(0));
@@ -2278,7 +2277,7 @@ void tst_QContactManagerFiltering::changelogFiltering()
     QFETCH(QContactManager*, cm);
     QFETCH(QList<QContactLocalId>, contacts);
 
-    if (cm->information()->hasFeature(QContactManagerInfo::ChangeLogs)) {
+    if (cm->hasFeature(QContactManager::ChangeLogs)) {
         QList<QContactLocalId> ids;
 
         QContactChangeLogFilter clf((QContactChangeLogFilter::EventType)eventType);
@@ -2299,7 +2298,6 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
     QString definitionName, fieldName;
 
     // step one: search for an existing definition with a field of the specified type
-    QContactManagerInfo *info = cm->information();
     QMap<QString, QContactDetailDefinition> allDefs = cm->detailDefinitions();
     QStringList defNames = allDefs.keys();
     bool found = false;
@@ -2332,7 +2330,7 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
                 // step two: check to see whether the definition/field is natively filterable
                 QContactDetailFilter filter;
                 filter.setDetailDefinitionName(definitionName, fieldName);
-                bool isNativelyFilterable = info->filterSupported(filter);
+                bool isNativelyFilterable = cm->filterSupported(filter);
 
                 if (isNativelyFilterable) {
                     // we've found the optimal definition + field for our test.
@@ -2357,7 +2355,7 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
 
     // step three (or, if not step one): check to see whether the manager allows mutable definitions
     // no existing definition matched our requirements, but we might be able to add one that does.
-    if (info->supportedDataTypes().contains(type) && info->hasFeature(QContactManagerInfo::MutableDefinitions)) {
+    if (cm->supportedDataTypes().contains(type) && cm->hasFeature(QContactManager::MutableDefinitions)) {
         // ok, the manager does not have a definition matching our criteria, but we could probably add it.
         int defCount = detailDefinitionsAddedToManagers.values(cm).count();
         QString generatedDefinitionName = QString("x-nokia-mobility-contacts-test-definition-") + QString::number((defCount+1));
@@ -2397,7 +2395,7 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     QPair<QString, QString> defAndFieldNames;
     bool nativelyFilterable;
     // If the engine doesn't support changelogs, don't insert pauses.
-    bool supportsChangelog = cm->information()->hasFeature(QContactManagerInfo::ChangeLogs);
+    bool supportsChangelog = cm->hasFeature(QContactManager::ChangeLogs);
     int napTime = supportsChangelog ? 2000 : 1;
 
     /* String */

@@ -390,10 +390,10 @@ bool QContactWinCEEngine::waitForRequestFinished(QContactAbstractRequest* req, i
 }
 
 /*! \reimp */
-bool QContactWinCEEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
+bool QContactWinCEEngine::hasFeature(QContactManager::ManagerFeature feature) const
 {
     // The Windows CE backend is an "isolated" backend
-    if (feature == QContactManagerInfo::Anonymous)
+    if (feature == QContactManager::Anonymous)
         return true;
 
     // Windows CE backend does not support Mutable Definitions, Relationships or Action Preferences

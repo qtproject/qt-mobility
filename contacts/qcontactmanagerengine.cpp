@@ -438,7 +438,7 @@ QString QContactManagerEngine::synthesizeDisplayLabel(const QContact& contact, Q
 /*!
  * Returns true if the given \a feature is supported by this engine
  */
-bool QContactManagerEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
+bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature) const
 {
     Q_UNUSED(feature);
     return false;

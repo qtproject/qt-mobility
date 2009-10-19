@@ -49,7 +49,6 @@
 #include "qcontactmanager.h"                    // manager
 #include "qcontactmanagerengine.h"              // manager backend
 #include "qcontactmanagerenginefactory.h"       // manage backend instantiator
-#include "qcontactmanagerinfo.h"                // manager information
 #include "qcontact.h"                           // contact
 #include "qcontactid.h"                         // contact identifier
 #include "qcontactdetaildefinition.h"           // detail definition

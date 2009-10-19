@@ -1012,18 +1012,18 @@ void QContactMemoryEngine::performAsynchronousOperation()
 /*!
  * \reimp
  */
-bool QContactMemoryEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
+bool QContactMemoryEngine::hasFeature(QContactManager::ManagerFeature feature) const
 {
     switch (feature) {
-        case QContactManagerInfo::Groups:
-        case QContactManagerInfo::ActionPreferences:
-        case QContactManagerInfo::Relationships:
+        case QContactManager::Groups:
+        case QContactManager::ActionPreferences:
+        case QContactManager::Relationships:
             return true;
-        case QContactManagerInfo::ArbitraryRelationshipTypes:
+        case QContactManager::ArbitraryRelationshipTypes:
             return true;
-        case QContactManagerInfo::MutableDefinitions:
+        case QContactManager::MutableDefinitions:
             return true;
-        case QContactManagerInfo::Anonymous:
+        case QContactManager::Anonymous:
             return d->m_anonymous;
 
         default:

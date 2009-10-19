@@ -1046,8 +1046,8 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.contacts(df | df).count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
-    QVERIFY(manager.information()->filterSupported(f) == false);
-    QVERIFY(manager.information()->filterSupported(df) == false);
+    QVERIFY(manager.filterSupported(f) == false);
+    QVERIFY(manager.filterSupported(df) == false);
 
     QList<QContact> list;
     list << foo;
@@ -1091,13 +1091,9 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
     /* Capabilities */
-    QContactManagerInfo* info = manager.information();
-    QVERIFY(info->supportedDataTypes().count() == 0);
-    QVERIFY(!info->hasFeature(QContactManagerInfo::ActionPreferences));
-    QVERIFY(!info->hasFeature(QContactManagerInfo::MutableDefinitions));
-
-    /* See if we get the same pointer */
-    QVERIFY(info == manager.information());
+    QVERIFY(manager.supportedDataTypes().count() == 0);
+    QVERIFY(!manager.hasFeature(QContactManager::ActionPreferences));
+    QVERIFY(!manager.hasFeature(QContactManager::MutableDefinitions));
 }
 
 void tst_QContactManager::memoryManager()
@@ -1112,14 +1108,9 @@ void tst_QContactManager::memoryManager()
     params.insert("id", QString(""));
     QContactManager m5("memory", params); // should be another anonymous
 
-    QContactManagerInfo* info = m1.information();
-
-    QVERIFY(info->hasFeature(QContactManagerInfo::ActionPreferences));
-    QVERIFY(info->hasFeature(QContactManagerInfo::MutableDefinitions));
-    QVERIFY(info->hasFeature(QContactManagerInfo::Anonymous));
-
-    /* See if we get the same pointer */
-    QVERIFY(info == m1.information());
+    QVERIFY(m1.hasFeature(QContactManager::ActionPreferences));
+    QVERIFY(m1.hasFeature(QContactManager::MutableDefinitions));
+    QVERIFY(m1.hasFeature(QContactManager::Anonymous));
 
     // add a contact to each of m1, m2, m3
     QContact c;
@@ -1607,8 +1598,8 @@ void tst_QContactManager::signalEmission()
     QContactManager* m1 = QContactManager::fromUri(uri);
     QContactManager* m2 = QContactManager::fromUri(uri);
 
-    QVERIFY(m1->information()->hasFeature(QContactManagerInfo::Anonymous) ==
-        m2->information()->hasFeature(QContactManagerInfo::Anonymous));
+    QVERIFY(m1->hasFeature(QContactManager::Anonymous) ==
+        m2->hasFeature(QContactManager::Anonymous));
 
     qRegisterMetaType<QContactLocalId>("QContactLocalId");
     qRegisterMetaType<QList<QContactLocalId> >("QList<QContactLocalId>");
@@ -1744,7 +1735,7 @@ void tst_QContactManager::signalEmission()
     QTRY_COMPARE(spyCM.count(), 0);
 
     /* Now some cross manager testing */
-    if (!m1->information()->hasFeature(QContactManagerInfo::Anonymous)) {
+    if (!m1->hasFeature(QContactManager::Anonymous)) {
         // verify that signals are emitted for modifications made to other managers (same id).
         QContactName ncs = c.detail(QContactName::DefinitionName);
         ncs.setSuffix("Test");
@@ -1802,15 +1793,13 @@ void tst_QContactManager::detailDefinitions()
 {
     QFETCH(QString, uri);
     QContactManager* cm = QContactManager::fromUri(uri);
-
-    QContactManagerInfo* info = cm->information();
     QMap<QString, QContactDetailDefinition> defs = cm->detailDefinitions();
 
     /* Try to make a credible definition */
     QContactDetailDefinition newDef;
     QContactDetailDefinition::Field field;
     QMap<QString, QContactDetailDefinition::Field> fields;
-    field.dataType = info->supportedDataTypes().value(0);
+    field.dataType = cm->supportedDataTypes().value(0);
     fields.insert("New Value", field);
     newDef.setName("New Definition");
     newDef.setFields(fields);
@@ -1866,7 +1855,7 @@ void tst_QContactManager::detailDefinitions()
 
     /* XXX Multiply defined fields.. depends on semantics. */
 
-    if (info->hasFeature(QContactManagerInfo::MutableDefinitions)) {
+    if (cm->hasFeature(QContactManager::MutableDefinitions)) {
         /* First do some negative testing */
 
         /* Bad add class */
@@ -2025,7 +2014,7 @@ void tst_QContactManager::actionPreferences()
     QContactManager* cm = QContactManager::fromUri(uri);
 
     // early out if the manager doesn't support action preference saving.
-    if (!cm->information()->hasFeature(QContactManagerInfo::ActionPreferences)) {
+    if (!cm->hasFeature(QContactManager::ActionPreferences)) {
         delete cm;
         QSKIP("Manager does not support action preferences", SkipSingle);
     }
@@ -2116,7 +2105,8 @@ void tst_QContactManager::selfContactId()
     QContactLocalId selfContact = cm->selfContactId();
     
     // early out if the manager doesn't support self contact id saving
-    if (!cm->information()->hasFeature(QContactManagerInfo::SelfContact)) {
+    if (!cm->hasFeature(QContactManager::SelfContact)) {
+        // ensure that the error codes / return values are meaningful failures.
         QVERIFY(cm->error() == QContactManager::DoesNotExistError);
         QContactLocalId newSelfContact(123);
         QVERIFY(!cm->setSelfContactId(newSelfContact));
@@ -2236,7 +2226,13 @@ void tst_QContactManager::relationships()
     QFETCH(QString, uri);
     QContactManager* cm = QContactManager::fromUri(uri);
 
-    QStringList availableRelationshipTypes = cm->information()->supportedRelationshipTypes();
+    if (!cm->hasFeature(QContactManager::Relationships))
+        QSKIP("Skipping: This manager does not support relationships!", SkipSingle);
+
+    int totalRelationships = cm->relationships().size();
+    int totalManagerRelationships = cm->relationships(QContactRelationship::IsManagerOf).size();
+
+    QStringList availableRelationshipTypes = cm->supportedRelationshipTypes();
     if (availableRelationshipTypes.isEmpty()) {
         // if empty, but has the relationships feature, then it must support arbitrary types.
         // so, add a few types that we can use.
@@ -2447,7 +2443,7 @@ void tst_QContactManager::relationships()
     QVERIFY(source.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::First).isEmpty());
 
     // test arbitrary relationship types.
-    if (cm->information()->hasFeature(QContactManagerInfo::ArbitraryRelationshipTypes)) {
+    if (cm->hasFeature(QContactManager::ArbitraryRelationshipTypes)) {
         customRelationshipOne.setFirst(source.id());
         customRelationshipOne.setSecond(dest3.id());
         customRelationshipOne.setRelationshipType("test-arbitrary-relationship-type");
