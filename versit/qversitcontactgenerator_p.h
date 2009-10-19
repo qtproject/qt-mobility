@@ -35,22 +35,16 @@
 #define QVERSITCONTACTGENERATOR_P_H
 
 #include "qversitcontactgenerator.h"
-#include <qversitproperty.h>
-#include <qcontact.h>
-#include <qcontactdetail.h>
-#include <qcontactmanager.h>
-#include <qcontactname.h>
-#include <qcontactphonenumber.h>
-#include <qcontactemailaddress.h>
-#include <qcontactaddress.h>
-
-#include "qversitdefs.h"
+#include <QHash>
 
 class QVersitContactGeneratorPrivate
 {
 public:
     QVersitContactGeneratorPrivate() {}
     ~QVersitContactGeneratorPrivate() {}
+    
+    // Data
+    QHash<QString,QString> mContextMappings;    
 };
 
 #endif // QVERSITCONTACTGENERATOR_P_H

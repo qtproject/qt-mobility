@@ -54,9 +54,9 @@ private slots: // Tests
     void testEmail();
     void testUrl();
     void testUid();
-    void testExtractContexts();
     void testOrganization();
     void testTimeStamp();
+    void testExtractContexts();
     
 private: 
     

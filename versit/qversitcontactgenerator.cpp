@@ -53,6 +53,8 @@
 #include <qversitproperty.h>
 #include <qcontact.h>
 #include <qcontactdetail.h>
+#include <qcontactname.h>
+#include <qcontactphonenumber.h>
 #include <qcontactaddress.h>
 #include <qcontactemailaddress.h>
 #include <qcontactorganization.h>
@@ -65,6 +67,10 @@
 QVersitContactGenerator::QVersitContactGenerator()
 {
     d = new QVersitContactGeneratorPrivate();
+    d->mContextMappings.insert(
+        QString::fromAscii(versitContextWorkId),QContactDetail::ContextWork);
+    d->mContextMappings.insert(
+        QString::fromAscii(versitContextHomeId),QContactDetail::ContextHome);
 }
 
 QVersitContactGenerator::~QVersitContactGenerator()
@@ -107,9 +113,11 @@ QContact QVersitContactGenerator::generateContact(
             // NOP
         }
             
-        if (detail)
+        if (detail) {
+            detail->setContexts(extractContexts(property));
             contact.saveDetail(detail);
-    }  
+        }
+    } 
     return contact;
 }
 
@@ -140,7 +148,6 @@ QContactDetail* QVersitContactGenerator::createPhone(
     
     QStringList types = 
         property.parameters().values(QString::fromAscii(versitType));
-    phone->setContexts(extractContexts(types));
 
     QStringList subTypes;
     foreach (QString type, types){
@@ -186,7 +193,6 @@ QContactDetail* QVersitContactGenerator::createAddress(
     
     QStringList types = 
         property.parameters().values(QString::fromAscii(versitType));
-    address->setContexts(extractContexts(types));
     
     QStringList subTypes;
     foreach (QString type, types) {
@@ -246,9 +252,6 @@ QContactDetail* QVersitContactGenerator::createEmail(
 {
     QContactEmailAddress* email = new QContactEmailAddress();
     email->setEmailAddress(QString::fromAscii(property.value()));
-    QStringList types = 
-        property.parameters().values(QString::fromAscii(versitType));
-    email->setContexts(extractContexts(types));
     return email;
 }
 
@@ -260,9 +263,6 @@ QContactDetail* QVersitContactGenerator::createUrl(
 {
     QContactUrl* url = new QContactUrl();
     url->setUrl(QString::fromAscii(property.value()));
-    QStringList types = 
-        property.parameters().values(QString::fromAscii(versitType));    
-    url->setContexts(extractContexts(types));
     return url;
 }
 
@@ -284,13 +284,19 @@ QContactDetail* QVersitContactGenerator::createTimeStamp(
     const QVersitProperty& property) const
 {
     QContactTimestamp* timeStamp = new QContactTimestamp();
-    QString val(QString::fromAscii(property.value()));
-    bool utc = (val.endsWith('Z',Qt::CaseInsensitive)) ? true: false;
-    if(utc)val.chop(1); // take away z from end;
-    QDateTime dateTime = (val.contains("-"))
-                       ? QDateTime::fromString(val,Qt::ISODate)
-                       : QDateTime::fromString(val,QString::fromAscii(versitTimeSpecIso8601Basic));
-    if(utc)dateTime.setTimeSpec(Qt::UTC);
+    QString value(QString::fromAscii(property.value()));
+    bool utc = value.endsWith(QString::fromAscii("Z"),Qt::CaseInsensitive);
+    if (utc)
+        value.chop(1); // take away z from end;
+    QDateTime dateTime;
+    if (value.contains(QString::fromAscii("-"))) {
+        dateTime = QDateTime::fromString(value,Qt::ISODate);
+    }
+    else {
+        dateTime = QDateTime::fromString(value,QString::fromAscii(versitTimeSpecIso8601Basic));
+    }    
+    if (utc)
+        dateTime.setTimeSpec(Qt::UTC);
     timeStamp->setLastModified(dateTime);
     return timeStamp;
 }
@@ -299,21 +305,17 @@ QContactDetail* QVersitContactGenerator::createTimeStamp(
  * Extracts the list of contexts from \a types
  */
 QStringList QVersitContactGenerator::extractContexts(
-    const QStringList& types) const
+    const QVersitProperty& property) const
 {   
+    QStringList types = 
+        property.parameters().values(QString::fromAscii(versitType));
     QStringList contexts;
-    foreach (QString type, types) {
-        if (type == QString::fromAscii(versitContextHomeId)) {
-            contexts.append(QContactDetail::ContextHome);
-        }
-        else if (type == QString::fromAscii(versitContextWorkId)) {
-            contexts.append(QContactDetail::ContextWork);
-        }
-        else {
-            // NOP
-        }
+    foreach (QString type, types) {   
+        QString value = d->mContextMappings.value(type);
+        if (value.size() > 0)
+            contexts.append(value);
     }
-    return contexts;    
+    return contexts;
 }
 
 /*!
