@@ -92,7 +92,8 @@ unix: {
             -letel3rdparty \
             -lsysutil \
             -lcentralrepository \
-            -lcenrepnotifhandler
+            -lcenrepnotifhandler \
+            -lefsrv
 
         TARGET.CAPABILITY = ALL -TCB
         TARGET.EPOCALLOWDLLDATA = 1

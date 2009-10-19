@@ -138,34 +138,19 @@ public:
     static int colorDepth(int screen);
 };
 
-//////// QSystemMemoryInfo
-class QSystemMemoryInfoPrivate : public QObject
-{
-    Q_OBJECT
 
-public:
-
-    QSystemMemoryInfoPrivate(QObject *parent = 0);
-    virtual ~QSystemMemoryInfoPrivate();
-    
-    // memory
-    qint64 totalDiskSpace(const QString &driveVolume);
-    qint64 availableDiskSpace(const QString &driveVolume);
-    QStringList listOfVolumes();
-};
-
+//////// QSystemStorageInfo
 class QSystemStorageInfoPrivate : public QObject
 {
     Q_OBJECT
 
 public:
     QSystemStorageInfoPrivate(QObject *parent = 0);
-    virtual ~QSystemStorageInfoPrivate() {};
-    qlonglong totalDiskSpace(const QString &driveVolume) {return -1;}
-    qlonglong availableDiskSpace(const QString &driveVolume) {return -1;}
-    static QStringList logicalDrives() {return QStringList();}
-
-    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume) {return QSystemStorageInfo::NoDrive;};
+    virtual ~QSystemStorageInfoPrivate();
+    qlonglong totalDiskSpace(const QString &driveVolume);
+    qlonglong availableDiskSpace(const QString &driveVolume);
+    static QStringList logicalDrives();
+    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 };
 
 //////// QSystemDeviceInfo

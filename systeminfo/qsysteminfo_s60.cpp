@@ -36,6 +36,8 @@
 #include <QStringList>
 
 #include <SysUtil.h>
+#include <f32file.h>
+
 
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
@@ -293,35 +295,55 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     return -1;  //TODO
 }
 
-//////// QSystemMemoryInfo
-QSystemMemoryInfoPrivate::QSystemMemoryInfoPrivate(QObject *parent)
-    : QObject(parent)
-{
-}
-
-QSystemMemoryInfoPrivate::~QSystemMemoryInfoPrivate()
-{
-}
-
-qint64 QSystemMemoryInfoPrivate::availableDiskSpace(const QString &driveVolume)
-{
-    return -1;  //TODO
-}
-
-qint64 QSystemMemoryInfoPrivate::totalDiskSpace(const QString &driveVolume)
-{
-    return -1;  //TODO
-}
-
-QStringList QSystemMemoryInfoPrivate::listOfVolumes()
-{
-    return QStringList();   //TODO
-}
-
+//////// QSystemStorageInfo
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     : QObject(parent)
 {
 }
+
+QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
+{
+}
+
+qlonglong QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
+{
+    return -1;
+}
+
+qlonglong QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
+{
+    return -1;
+}
+
+QStringList QSystemStorageInfoPrivate::logicalDrives()
+{
+    QStringList logicalDrives;
+    RFs fsSession;
+    TRAPD(err,
+        User::LeaveIfError(fsSession.Connect());
+        CleanupClosePushL(fsSession);
+        TDriveList drivelist;
+        User::LeaveIfError(fsSession.DriveList(drivelist));
+        for (int i = 0; i < KMaxDrives; ++i) {
+            if (drivelist[i] != 0) {
+                TChar driveChar;
+                User::LeaveIfError(RFs::DriveToChar(i, driveChar));
+                logicalDrives << QChar(driveChar);
+            }
+        }
+        CleanupStack::PopAndDestroy(&fsSession);
+    )
+    if (err != KErrNone) {
+        return QStringList();
+    }
+    return logicalDrives;
+}
+
+QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QString &driveVolume)
+{
+    return QSystemStorageInfo::NoDrive;
+};
+
 
 //////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
