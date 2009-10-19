@@ -52,6 +52,7 @@
 #include "qcontactname.h"
 #include "qcontactdetailfilter.h"
 #include "qcontactphonenumber.h"
+#include "qcontactsymbianengine_p.h"
 
 // Telephony Configuration API
 // Keys under this category are used in defining telephony configuration.
@@ -96,6 +97,7 @@ QList<QContactLocalId> QContactSymbianFilter::contacts(
     {
         const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
 
+        // Phone numbers
         if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName
                 && (filterSupported(filter) == Supported
                 || filterSupported(filter) == SupportedPreFilterOnly))
@@ -110,8 +112,7 @@ QList<QContactLocalId> QContactSymbianFilter::contacts(
             TInt err = matchContacts(idArray, commPtr, matchLength);
             if(err != KErrNone)
             {
-                // TODO: map error code
-                error = QContactManager::UnspecifiedError;
+                QContactSymbianEngineData::transformError(err, error);
             }
             else
             {
@@ -120,32 +121,21 @@ QList<QContactLocalId> QContactSymbianFilter::contacts(
                 }
             }
         }
-        else if (detailFilter.detailDefinitionName() == QContactName::DefinitionName
-                && (filterSupported(filter) == Supported
-                // All the name pre-filters are implemented as "MatchContains"
-                || filterSupported(filter) == SupportedPreFilterOnly))
+        // Names
+        else if (filterSupported(filter) == Supported
+                // The pre-filters are implemented as "MatchContains"
+                || filterSupported(filter) == SupportedPreFilterOnly)
         {
             QString name((detailFilter.value()).toString());
             // TODO: this looks ugly
             TPtrC namePtr(reinterpret_cast<const TUint16*>(name.utf16()));
             TUid fieldUid(KNullUid);
-
-            if(detailFilter.detailFieldName() == QContactName::FieldPrefix)
-                fieldUid.iUid = KUidContactFieldPrefixNameValue;
-            else if(detailFilter.detailFieldName() == QContactName::FieldFirst)
-                fieldUid.iUid = KUidContactFieldGivenNameValue;
-            else if(detailFilter.detailFieldName() == QContactName::FieldMiddle)
-                fieldUid.iUid = KUidContactFieldAdditionalNameValue;
-            else if(detailFilter.detailFieldName() == QContactName::FieldLast)
-                fieldUid.iUid = KUidContactFieldFamilyNameValue;
-            else if(detailFilter.detailFieldName() == QContactName::FieldSuffix)
-                fieldUid.iUid = KUidContactFieldSuffixNameValue;
-
+            transformDetailFilter(detailFilter, fieldUid);
+            ASSERT(fieldUid != KNullUid);
             TInt err = findContacts(idArray, fieldUid, namePtr);
             if(err != KErrNone)
             {
-                // TODO: map error codes
-                error = QContactManager::UnspecifiedError;
+                QContactSymbianEngineData::transformError(err, error);
             }
             else
             {
@@ -154,8 +144,7 @@ QList<QContactLocalId> QContactSymbianFilter::contacts(
                 }
             }
         }
-        else
-        {
+        else {
             error = QContactManager::NotSupportedError;
         }
     }
@@ -210,7 +199,9 @@ QAbstractContactFilter::FilterSupport QContactSymbianFilter::filterSupported(con
                 filterSupported = SupportedPreFilterOnly;
         }
         // Names
-        else if (detailFilter.detailDefinitionName() == QContactName::DefinitionName) {
+        else if (detailFilter.detailDefinitionName() == QContactName::DefinitionName
+                || detailFilter.detailDefinitionName() == QContactNickname::DefinitionName
+                || detailFilter.detailDefinitionName() == QContactEmailAddress::DefinitionName) {
             Qt::MatchFlags supportedPreFilterFlags =
                 Qt::MatchExactly
                 & Qt::MatchStartsWith
@@ -226,6 +217,30 @@ QAbstractContactFilter::FilterSupport QContactSymbianFilter::filterSupported(con
         }
     }
     return filterSupported;
+}
+
+void QContactSymbianFilter::transformDetailFilter(
+        const QContactDetailFilter &detailFilter,
+        TUid& fieldUid)
+{
+    // TODO: Refactor to use the transform classes
+    // Names
+    if(detailFilter.detailFieldName() == QContactName::FieldPrefix)
+        fieldUid.iUid = KUidContactFieldPrefixNameValue;
+    else if(detailFilter.detailFieldName() == QContactName::FieldFirst)
+        fieldUid.iUid = KUidContactFieldGivenNameValue;
+    else if(detailFilter.detailFieldName() == QContactName::FieldMiddle)
+        fieldUid.iUid = KUidContactFieldAdditionalNameValue;
+    else if(detailFilter.detailFieldName() == QContactName::FieldLast)
+        fieldUid.iUid = KUidContactFieldFamilyNameValue;
+    else if(detailFilter.detailFieldName() == QContactName::FieldSuffix)
+        fieldUid.iUid = KUidContactFieldSuffixNameValue;
+    // Nick name
+    else if(detailFilter.detailDefinitionName() == QContactNickname::DefinitionName)
+        fieldUid.iUid = KUidContactFieldSecondNameValue;
+    // Email
+    else if(detailFilter.detailDefinitionName() == QContactEmailAddress::DefinitionName)
+        fieldUid.iUid = KUidContactFieldEMailValue;
 }
 
 /*!

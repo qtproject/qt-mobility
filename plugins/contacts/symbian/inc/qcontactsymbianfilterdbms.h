@@ -49,6 +49,7 @@
 
 class CContactDatabase;
 class CContactIdArray;
+class QContactDetailFilter;
 
 class QContactSymbianFilter : public QAbstractContactFilter
 {
@@ -64,6 +65,7 @@ public:
     QAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter);
 
 private:
+    void transformDetailFilter(const QContactDetailFilter &detailFilter, TUid& fieldUid);
     TInt findContacts(
             CContactIdArray*& idArray,
             const TUid fieldUid,
