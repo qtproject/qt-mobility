@@ -192,7 +192,7 @@ QVariant QWmpMetaData::metaData(QtMedia::MetaData key) const
                 return QSize(x.toInt(), y.toInt());
         }
         break;
-    case QtMedia::FrameRate:
+    case QtMedia::VideoFrameRate:
         break;
     default:
         for (int i = 0; i < count; ++i) {
