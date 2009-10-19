@@ -64,7 +64,7 @@ unix: {
     linux-*: {
         SOURCES += qsysteminfo_linux.cpp
         HEADERS += qsysteminfo_linux_p.h
-        contains(QT_CONFIG,dbus): {
+        contains(networkmanager_enabled, yes):contains(QT_CONFIG,dbus): {
             QT += dbus
             SOURCES += qhalservice_linux.cpp qnetworkmanagerservice_linux.cpp
             HEADERS += qhalservice_linux_p.h qnetworkmanagerservice_linux_p.h
