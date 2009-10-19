@@ -62,7 +62,8 @@ INSTALLS+=headers
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
-    INCLUDEPATH += $$EPOCROOT\epoc32\include\osextensions
+    INCLUDEPATH += $$EPOCROOT\epoc32\include\osextensions \
+                   $$EPOCROOT\epoc32\include\osextensions\LBTHeaders
     LIBS += -llbs
 
     deploy.path = $$EPOCROOT

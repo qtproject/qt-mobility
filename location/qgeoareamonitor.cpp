@@ -32,6 +32,10 @@
 ****************************************************************************/
 #include "qgeoareamonitor.h"
 
+#if defined(Q_OS_SYMBIAN)
+    #include "qgeoareamonitor_s60_p.h"
+#endif
+
 /*!
     \class QGeoAreaMonitor
     \brief The QGeoAreaMonitor class enables the detection of proximity changes for a specified set of coordinates.
@@ -152,8 +156,13 @@ qreal QGeoAreaMonitor::radius() const
 
     Returns 0 if the system has no support for position monitoring.
 */
-QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject * /*parent*/)
+QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject *parent)
 {
+#if defined(Q_OS_SYMBIAN)
+    return QGeoAreaMonitorS60::NewL(parent);
+#else
+    Q_UNUSED(parent);
+#endif
     return 0;
 }
 
