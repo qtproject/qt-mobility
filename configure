@@ -178,13 +178,13 @@ echo
 
 WHICH="$relpath/config.tests/tools/which.test"
 
-echo -n "Checking available Qt"
+printf "Checking available Qt"
 if ! "$WHICH" qmake 2>/dev/null 1>&2; then
-    echo -en >&2 " ... Not found\n\n" 
+    printf " ... Not found\n\n" >&2
     echo >&2 "Cannot find 'qmake' in your PATH.";
     echo >&2 "Aborting." 
 else
-    echo -en " ... "
+    printf " ... "
     qmake -query QT_VERSION
 fi
 
@@ -203,16 +203,16 @@ fi
 
 compileTest()
 {
-    echo -en "Checking $1"
+    printf "Checking $1"
     CURRENT_PWD=`pwd`
     cd "$relpath/config.tests/$2"
     rm -rf ./$2
     qmake >> "$CONFIG_LOG"
-    echo  -n " ."
+    printf  " ."
     "$MAKE" clean >> "$CONFIG_LOG"
-    echo -n "."
+    printf "."
     "$MAKE" >> "$CONFIG_LOG" 2>&1
-    echo -n ". "
+    printf ". "
     if ./$2 >> "$CONFIG_LOG" 2>&1; then
         echo "OK"
         echo "$2_enabled = yes" >> "$CONFIG_IN"
