@@ -64,7 +64,7 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
     INCLUDEPATH += $$EPOCROOT\epoc32\include\osextensions \
                    $$EPOCROOT\epoc32\include\LBTHeaders
-    LIBS += -llbs
+    LIBS += -llbs -llbt
 
     deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS
