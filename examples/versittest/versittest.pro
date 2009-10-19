@@ -13,7 +13,8 @@ HEADERS += versittest.h
 
 SOURCES += main.cpp versittest.cpp vcardcomparator.cpp testresultxmlparser.cpp
 
-LIBS += -lQtContacts -lQtVersit
+qtAddLibrary(QtContacts)
+qtAddLibrary(QtVersit)
 
 symbian: {
     TARGET.CAPABILITY = ALL -TCB
