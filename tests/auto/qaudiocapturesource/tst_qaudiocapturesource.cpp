@@ -41,7 +41,12 @@
 
 #include <QtTest/QtTest>
 #include <QDebug>
-#include <QAudioFormat>
+
+#ifndef QT_NO_MULTIMEDIA
+#include <QtMultimedia/qaudioformat.h>
+#else
+#include <multimedia/qaudioformat.h>
+#endif
 
 #include <multimedia/qaudiocapturesource.h>
 #include <multimedia/qaudioencodercontrol.h>

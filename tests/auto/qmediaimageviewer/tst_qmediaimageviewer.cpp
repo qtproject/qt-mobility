@@ -52,10 +52,13 @@
 #include <multimedia/qvideowidgetcontrol.h>
 
 #include <QtCore/qfile.h>
-#include <QtMultimedia/qabstractvideosurface.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
 #include <QtNetwork/qnetworkaccessmanager.h>
 #include <QtNetwork/qnetworkreply.h>
+
+#ifndef QT_NO_MULTIMEDIA
+#include <QtMultimedia/qabstractvideosurface.h>
+#include <QtMultimedia/qvideosurfaceformat.h>
+#endif
 
 class QtTestNetworkAccessManager;
 

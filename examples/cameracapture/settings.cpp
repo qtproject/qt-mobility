@@ -47,7 +47,7 @@
 #include <multimedia/qmediarecorder.h>
 #include <multimedia/qmediaservice.h>
 
-#include <QVideoSurfaceFormat>
+
 
 Settings::Settings(QMediaRecorder *mediaRecorder, QWidget *parent) :
     QDialog(parent),

@@ -100,6 +100,7 @@ private:
 #define QMediaImageViewerControl_iid "com.nokia.Qt.QMediaImageViewerControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QMediaImageViewerControl, QMediaImageViewerControl_iid)
 
+#ifndef QT_NO_MULTIMEDIA
 class QMediaImageViewerRenderer : public QVideoRendererControl
 {
     Q_OBJECT
@@ -119,6 +120,7 @@ private:
     QAbstractVideoSurface *m_surface;
     QImage m_image;
 };
+#endif
 
 class QMediaImageViewerWidget : public QWidget
 {
