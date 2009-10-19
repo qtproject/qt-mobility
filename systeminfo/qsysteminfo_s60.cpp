@@ -370,7 +370,39 @@ QStringList QSystemStorageInfoPrivate::logicalDrives()
 
 QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QString &driveVolume)
 {
-    return QSystemStorageInfo::NoDrive;
+    if (driveVolume.size() != 1) {
+        return QSystemStorageInfo::NoDrive;
+    }
+
+    TInt drive;
+    if (RFs::CharToDrive(TChar(driveVolume[0].toAscii()), drive) != KErrNone) {
+        return QSystemStorageInfo::NoDrive;
+    }
+
+    TDriveInfo driveInfo;
+    if (iFs.Drive(driveInfo, drive) != KErrNone) {
+        return QSystemStorageInfo::NoDrive;
+    }
+
+    switch (driveInfo.iType)
+    {
+        case EMediaNANDFlash:
+        case EMediaHardDisk:
+        case EMediaRam:
+        case EMediaRom:
+            return QSystemStorageInfo::InternalDrive;
+        case EMediaFloppy:
+        case EMediaFlash:
+            return QSystemStorageInfo::RemovableDrive;
+        case EMediaRemote:
+            return QSystemStorageInfo::RemoteDrive;
+        case EMediaCdRom:
+            return QSystemStorageInfo::CdromDrive;
+        case EMediaNotPresent:
+        case EMediaUnknown:
+        default:
+            return QSystemStorageInfo::NoDrive;
+    }
 };
 
 
