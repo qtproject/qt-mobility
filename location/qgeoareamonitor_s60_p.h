@@ -37,7 +37,7 @@
 
 #include "qgeoareamonitor.h"
 #include "qmlbackendmonitorao_s60_p.h"
-#include "notificationmonitorcallback.h"
+#include "notificationmonitorcallback_s60_p.h"
 #include "qmlbackendtriggerchangeao_s60_p.h"
 #include "qmlbackendmonitorcreatetriggerao_s60_p.h"
 

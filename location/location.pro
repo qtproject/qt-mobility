@@ -32,7 +32,8 @@ symbian {
                        qmlbackendmonitorcreatetriggerao_s60_p.h \
                        qmlbackendmonitorcreatetrigger_s60_p.h \
                        qmlbackendmonitorinfo_s60_p.h \
-                       qmlbackendtriggerchangeao_s60_p.h
+                       qmlbackendtriggerchangeao_s60_p.h \
+                       notificationmonitorcallback_s60_p.h
 
     SOURCES += qgeopositioninfosource_s60.cpp \
                qmlbackendao_s60.cpp \
