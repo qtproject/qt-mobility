@@ -40,7 +40,7 @@
 bool  QMLBackendMonitorCreateTriggerAO::InitializeTrigger(QGeoAreaMonitorS60* aParent ,
                                              enTriggerType aType,
                                              TCoordinate& aCoordinate,
-                                             TInt& aRadius)
+                                             qreal& aRadius)
 {
     TInt ret = KErrGeneral;
     
