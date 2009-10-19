@@ -1755,21 +1755,24 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
                         rv = messagesTable->QueryRows(1, 0, &rows);
                         if (HR_SUCCEEDED(rv)) {
                             if (rows->cRows == 1) {
-                                if (limit) {
-                                    --workingLimit;
-                                }
-
                                 LPSPropValue entryIdProp(&rows->aRow[0].lpProps[0]);
                                 LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[1]);
                                 MapiRecordKey recordKey(recordKeyProp->Value.bin.lpb, recordKeyProp->Value.bin.cb);
                                 MapiEntryId entryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
 #ifdef _WIN32_WCE
-                                result.append(QMessageIdPrivate::from(_store->entryId(), entryId, recordKey, _entryId));
+                                QMessageId id(QMessageIdPrivate::from(_store->entryId(), entryId, recordKey, _entryId));
 #else
-                                result.append(QMessageIdPrivate::from(_store->recordKey(), entryId, recordKey, _key));
+                                QMessageId id(QMessageIdPrivate::from(_store->recordKey(), entryId, recordKey, _key));
 #endif
-
                                 FreeProws(rows);
+
+                                if (!QMessageFilterPrivate::matchesMessage(filter, id))
+                                    continue;
+                                result.append(id);
+                                if (limit) {
+                                    --workingLimit;
+                                }
+
                                 if (limit && !workingLimit)
                                     break;
                             } else {
