@@ -57,6 +57,7 @@ private slots:
     void testEncodeParameters();
     void testEncodeUid();
     void testEncodeRev();
+    void testEncodeBirthDay();
     
 private: //Data
     QVersitContactConverter* mVersitContactConverter;

@@ -62,14 +62,15 @@ public:
 private: //Methods
 
     void encodeParameters(QVersitProperty& property, const QStringList& paramList);
-    void encodeFieldInfo(QVersitDocument& versitDocumen, const QContactDetail& detail) ; 
-    void encodeName(QVersitDocument& versitDocumen, const QContactDetail& detail );
-    void encodePhoneNumber(QVersitDocument& versitDocumen, const QContactDetail& detail );
-    void encodeEmailAddress(QVersitDocument& versitDocumen, const QContactDetail& detail );
-    void encodeStreetAddress(QVersitDocument& versitDocumen, const QContactDetail& detail );
-    void encodeUrl(QVersitDocument& versitDocumen, const QContactDetail& detail );
-    void encodeUid(QVersitDocument& versitDocumen, const QContactDetail& detail );
-    void encodeRev(QVersitDocument& versitDocumen, const QContactDetail& detail );
+    void encodeFieldInfo(QVersitDocument& versitDocument, const QContactDetail& detail) ;
+    void encodeName(QVersitDocument& versitDocument, const QContactDetail& detail );
+    void encodePhoneNumber(QVersitDocument& versitDocument, const QContactDetail& detail );
+    void encodeEmailAddress(QVersitDocument& versitDocument, const QContactDetail& detail );
+    void encodeStreetAddress(QVersitDocument& versitDocument, const QContactDetail& detail );
+    void encodeUrl(QVersitDocument& versitDocument, const QContactDetail& detail );
+    void encodeUid(QVersitDocument& versitDocument, const QContactDetail& detail );
+    void encodeRev(QVersitDocument& versitDocument, const QContactDetail& detail );
+    void encodeBirthDay(QVersitDocument& versitDocument, const QContactDetail& detail );
     
     const QHash<QString,QString>& getMappingTable();
 

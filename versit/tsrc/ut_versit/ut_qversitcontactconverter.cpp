@@ -43,6 +43,7 @@
 #include <qcontacturl.h>
 #include <qcontactguid.h>
 #include <qcontacttimestamp.h>
+#include <qcontactbirthday.h>
 
 #include "ut_qversitcontactconverter.h"
 #include "qversitcontactconverter.h"
@@ -381,6 +382,43 @@ void UT_QVersitContactConvertert::testEncodeRev()
     // Ensure Value exisit and matches.
     QCOMPARE(expectedValue, value );
 }
+
+
+
+void UT_QVersitContactConvertert::testEncodeBirthDay()
+{
+    QContact contact;
+    QDate date(2009,1,1);
+    QContactBirthday birthDay;
+
+    birthDay.setDate(date);
+
+    //API Permits setting up context but it should not be in Versit Doc
+    birthDay.setContexts(QContactDetail::ContextHome);
+
+    contact.saveDetail(&birthDay);
+
+    //Convert Contat Into Versit Document
+    QVersitDocument mVersitDocument = mVersitContactConverter->convertContact(contact);
+
+    //Ensure parameters does not exisit
+    QCOMPARE(0, mVersitDocument.properties().at(0).parameters().count());
+
+    //Ensure property Exisit
+    QCOMPARE(1, mVersitDocument.properties().count());
+
+    //Ensure property parameer exisit and matches.
+    QString propertyName = mVersitDocument.properties().at(0).name();
+    QString expectedPropertyName =
+                mVersitContactConverter->getMappingTable().value(QContactBirthday::DefinitionName);
+    QCOMPARE(propertyName, expectedPropertyName );
+
+    //Check property value
+    QString value = (mVersitDocument.properties().at(0).value() );
+    QString expectedValue = "2009-01-01";
+    QCOMPARE(expectedValue, value );
+}
+
 
 
 void UT_QVersitContactConvertert::testEncodeParameters()

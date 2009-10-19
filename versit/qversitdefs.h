@@ -51,6 +51,7 @@ const char versitUidId[] = "UID";
 const char versitType[] = "TYPE";
 const char versitOrganizationId[] = "ORG";
 const char versitRevisionId[] = "REV";
+const char versitBirthdayId[] = "BDAY";
 
 // Contexts:
 const char versitContextWorkId[] = "WORK";

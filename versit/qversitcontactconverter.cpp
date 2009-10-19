@@ -51,7 +51,7 @@
 #include <qcontactguid.h>
 #include <qcontacturl.h>
 #include <qcontacttimestamp.h>
-
+#include <qcontactbirthday.h>
 
 #include "qversitdefs.h"
 #include "qversitdocument.h"
@@ -118,19 +118,18 @@ void QVersitContactConverter::encodeFieldInfo(QVersitDocument& versitDocument,
     else if (detail.definitionName() == QContactAddress::DefinitionName){
         encodeStreetAddress(versitDocument, detail);
     }
-
     else if (detail.definitionName() == QContactGuid::DefinitionName){
         encodeUid(versitDocument, detail);
     }
-
     else if (detail.definitionName() == QContactUrl::DefinitionName){
         encodeUrl(versitDocument, detail);
     }
-
     else if (detail.definitionName() == QContactTimestamp::DefinitionName){
         encodeRev(versitDocument, detail);
     }
-
+    else if (detail.definitionName() == QContactBirthday::DefinitionName){
+        encodeBirthDay(versitDocument, detail);
+    }
 }
 
 
@@ -308,6 +307,26 @@ void QVersitContactConverter::encodeRev(QVersitDocument& versitDocument,
     if ( !value.size() ) {
      value = rev.created().toString(Qt::ISODate);
     }
+
+    QVersitProperty versitProperty;
+
+    //Add Values
+    versitProperty.setName(name);
+    versitProperty.setValue(value.toAscii());
+    versitDocument.addProperty(versitProperty);
+}
+
+
+/*!
+ * Encode BirthDay Field Information into the Versit Document
+ */
+
+void QVersitContactConverter::encodeBirthDay(QVersitDocument& versitDocument,
+                                              const QContactDetail& detail )
+{
+    QContactBirthday bday = static_cast<QContactBirthday >(detail);
+    QString name = d->mMappingTable.value(detail.definitionName());
+    QString value = bday.date().toString(Qt::ISODate);
 
     QVersitProperty versitProperty;
 

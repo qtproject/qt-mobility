@@ -46,6 +46,7 @@
 #include <qcontactphonenumber.h>
 #include <qcontactaddress.h>
 #include <qcontactorganization.h>
+#include <qcontactbirthday.h>
 #include "qversitdefs.h"
 
 
@@ -72,6 +73,7 @@ public:
                              QString::fromAscii(versitOrganizationId));
 
         mMappingTable.insert(QContactTimestamp::DefinitionName,QString::fromAscii(versitRevId));
+        mMappingTable.insert(QContactBirthday::DefinitionName,QString::fromAscii(versitBirthdayId));
 
         //Context Mapping
         mMappingTable.insert(QContactDetail::ContextWork,QString::fromAscii(versitContextWorkId));
