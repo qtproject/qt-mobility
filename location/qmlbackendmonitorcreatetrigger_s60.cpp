@@ -83,7 +83,7 @@ bool  QMLBackendMonitorCreateTriggerAO::InitializeTrigger(QGeoAreaMonitorS60* aP
         
         CLbtTriggerConditionArea* cond;
         
-        if (aType == ENTRY_TRIGGER)
+        if (aType == EntryTrigger)
         {
         //2: Construct a entry type of trigger condition    
          TRAP(ret,cond = CLbtTriggerConditionArea::NewL(  
@@ -91,7 +91,7 @@ bool  QMLBackendMonitorCreateTriggerAO::InitializeTrigger(QGeoAreaMonitorS60* aP
                 CLbtTriggerConditionArea::EFireOnEnter
             ));
         }
-        else if (aType == EXIT_TRIGGER)
+        else if (aType == ExitTrigger)
         {
             TRAP(ret,cond = CLbtTriggerConditionArea::NewL(  
                     trigArea, 
@@ -116,7 +116,7 @@ bool  QMLBackendMonitorCreateTriggerAO::InitializeTrigger(QGeoAreaMonitorS60* aP
         _LIT( KMyTriggerName, "ENTRY_TRIGGER" );
         TDesC triggerName(KMyTriggerName);
         
-        if(aType == EXIT_TRIGGER){
+        if(aType == ExitTrigger){
             _LIT( KMyTriggerName, "EXIT_TRIGGER" ); 
             triggerName = KMyTriggerName;
         }
@@ -233,7 +233,7 @@ bool  QMLBackendMonitorCreateTriggerAO::InitializeTrigger(QGeoAreaMonitorS60* aP
         //2: Construct a entry type of trigger condition    
         CLbtTriggerConditionArea* cond = NULL;
         
-        if (aType == ENTRY_TRIGGER)
+        if (aType == EntryTrigger)
         {
         //2: Construct a entry type of trigger condition    
          TRAP(ret,cond = CLbtTriggerConditionArea::NewL(  
@@ -241,7 +241,7 @@ bool  QMLBackendMonitorCreateTriggerAO::InitializeTrigger(QGeoAreaMonitorS60* aP
                 CLbtTriggerConditionArea::EFireOnEnter
             ));
         }
-        else if (aType == EXIT_TRIGGER)
+        else if (aType == ExitTrigger)
         {
             TRAP(ret,cond = CLbtTriggerConditionArea::NewL(  
                     trigArea, 
