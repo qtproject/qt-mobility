@@ -4,6 +4,7 @@ relconf=`basename $0`
 # the directory of this script is the "source tree"
 relpath=`dirname $0`
 relpath=`(cd "$relpath"; /bin/pwd)`
+CONFIG_IN="$relpath/config.in"
 QT_MOBILITY_PREFIX=$relpath/install
 QT_MOBILITY_INCLUDE=
 QT_MOBILITY_LIB=
@@ -42,13 +43,13 @@ usage()
     echo "-maemo ............ Build Qt Mobility for Maemo."
     echo "                    (default: Desktop Linux)"
     
-    rm config.in
+    rm "$CONFIG_IN"
     exit    
 }
 
 CONFIG_LOG="$relpath/config.log"
 rm -rf "$CONFIG_LOG"
-echo "CONFIG += silent"  > config.in
+echo "CONFIG += silent"  > "$CONFIG_IN"
 
 while [ "$#" -gt 0 ]; do
     case "$1" in 
@@ -101,12 +102,12 @@ done
 if [ -z "$RELEASEMODE" ]; then
     RELEASEMODE="debug"
 fi
-echo "CONFIG += $RELEASEMODE" >> config.in
-echo "CONTACTS_BACKENDS = $CONTACTS_PLUGIN" >> config.in
+echo "CONFIG += $RELEASEMODE" >> "$CONFIG_IN"
+echo "CONTACTS_BACKENDS = $CONTACTS_PLUGIN" >> "$CONFIG_IN"
 
 #do we build for Maemo?
 if [ -n "$LINUX_TARGET" ]; then
-    echo "CONFIG+=maemo" >> config.in
+    echo "CONFIG+=maemo" >> "$CONFIG_IN"
 fi
 
 #process PREFIX
@@ -118,7 +119,7 @@ else
     rm -rf "$QT_MOBILITY_PREFIX"
     QT_MOBILITY_PREFIX="$absPath"
 fi
-echo "QT_MOBILITY_PREFIX = $QT_MOBILITY_PREFIX" >> config.in
+echo "QT_MOBILITY_PREFIX = $QT_MOBILITY_PREFIX" >> "$CONFIG_IN"
 
 #process include path
 if [ -z "$QT_MOBILITY_INCLUDE" ]; then
@@ -131,7 +132,7 @@ else
     rm -rf "$QT_MOBILITY_INCLUDE"
     QT_MOBILITY_INCLUDE="$absPath"
 fi
-echo "QT_MOBILITY_INCLUDE = $QT_MOBILITY_INCLUDE" >> config.in
+echo "QT_MOBILITY_INCLUDE = $QT_MOBILITY_INCLUDE" >> "$CONFIG_IN"
 
 
 #process library path
@@ -145,7 +146,7 @@ else
     rm -rf "$QT_MOBILITY_LIB"
     QT_MOBILITY_LIB="$absPath"
 fi
-echo "QT_MOBILITY_LIB = $QT_MOBILITY_LIB" >> config.in
+echo "QT_MOBILITY_LIB = $QT_MOBILITY_LIB" >> "$CONFIG_IN"
 
 #process binary path
 if [ -z "$QT_MOBILITY_BIN" ]; then
@@ -158,28 +159,18 @@ else
     rm -rf "$QT_MOBILITY_BIN"
     QT_MOBILITY_BIN="$absPath"
 fi
-echo "QT_MOBILITY_BIN = $QT_MOBILITY_BIN" >> config.in
+echo "QT_MOBILITY_BIN = $QT_MOBILITY_BIN" >> "$CONFIG_IN"
 
 if [ -z "$BUILD_UNITTESTS" ]; then
-    echo "build_unit_tests = no" >> config.in
+    echo "build_unit_tests = no" >> "$CONFIG_IN"
 else
-    echo "build_unit_tests = yes" >> config.in
+    echo "build_unit_tests = yes" >> "$CONFIG_IN"
 fi
 
 if [ -z "$BUILD_EXAMPLES" ]; then
-    echo "build_examples = no" >> config.in
+    echo "build_examples = no" >> "$CONFIG_IN"
 else
-    echo "build_examples = yes" >> config.in
-fi
-
-#search for QMF. Enabled if QMF_LIBDIR and QMF_INCLUDEPATH are set enable messging on windows
-#TODO: convert into proper compile test
-if [ -z "$QMF_LIBDIR" ]; then
-    echo "qmf_enabled = no" >> config.in
-elif [ -z "$QMF_INCLUDEDIR" ]; then
-    echo "qmf_enabled = no" >> config.in
-else
-    echo "qmf_enabled = yes" >> config.in
+    echo "build_examples = yes" >> "$CONFIG_IN"
 fi
 
 echo "Configuring Qt Mobility"
@@ -224,17 +215,18 @@ compileTest()
     echo -n ". "
     if ./$2 >> "$CONFIG_LOG" 2>&1; then
         echo "OK"
+        echo "$2_enabled = yes" >> "$CONFIG_IN"
     else
-        echo "No Found"
+        echo "Not Found"
+        echo "$2_enabled = no" >> "$CONFIG_IN"
     fi
     cd "$CURRENT_PWD"
 }
 
+#compile tests
 compileTest QMF qmf
 compileTest NetworkManager networkmanager
 
-
-exit 1
 echo "Generating Mobility Headers..."
 #remove old headers
 rm -rf $relpath/include
@@ -248,7 +240,7 @@ $relpath/bin/syncheaders $relpath/include $relpath/contacts
 $relpath/bin/syncheaders $relpath/include $relpath/multimedia
 $relpath/bin/syncheaders $relpath/include $relpath/messaging
 
-mv config.in config.pri
+mv "$CONFIG_IN" config.pri
 
 echo "Running qmake..."
 if qmake -recursive; then
