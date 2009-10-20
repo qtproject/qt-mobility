@@ -57,6 +57,9 @@ public:
     ~QVersitContactGeneratorPrivate();
     
     QContactDetail* createContactDetail(const QVersitProperty& property) const;
+    
+private:
+    
     QContactDetail* createName(const QVersitProperty& property) const;
     QContactDetail* createPhone(const QVersitProperty& property) const;
     QContactDetail* createAddress(const QVersitProperty& property) const;
@@ -65,8 +68,7 @@ public:
     QContactDetail* createUrl(const QVersitProperty& property) const;
     QContactDetail* createUid(const QVersitProperty& property) const;
     QContactDetail* createTimeStamp(const QVersitProperty& property) const;
-    
-private:    
+    QContactDetail* createAnniversary(const QVersitProperty& property) const;
     QStringList extractContexts(const QVersitProperty& property) const;
     QStringList extractSubTypes(const QVersitProperty& property) const;
     QString takeFirst(QList<QByteArray>& list) const;    

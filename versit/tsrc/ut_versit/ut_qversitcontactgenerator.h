@@ -57,7 +57,8 @@ private slots: // Tests
     void testUid();
     void testOrganization();
     void testTimeStamp();
-    
+    void testAnniversary();
+
 private: 
     
     QVersitDocument createDocumentWithProperty(const QVersitProperty& property);

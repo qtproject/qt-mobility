@@ -52,6 +52,7 @@ const char versitRevisionId[] = "REV";
 const char versitBirthdayId[] = "BDAY";
 const char versitNoteId[] = "NOTE";
 const char versitGeoId[] = "GEO";
+const char versitAnniversaryId[] = "X-ANNIVERSARY";
 
 // Contexts
 const char versitContextWorkId[] = "WORK";
@@ -72,7 +73,8 @@ const char versitBbsId[] = "BBS";
 const char versitPagerId[] = "PAGER";
 
 // ISO-8601 basic format datetime spec
-const char versitTimeSpecIso8601Basic[] = "yyyyMMddThhmmss";
+const char versitDateTimeSpecIso8601Basic[] = "yyyyMMddThhmmss";
+const char versitDateSpecIso8601Basic[] = "yyyyMMdd";
 
 // TYPE parameter name
 const char versitType[] = "TYPE";

@@ -48,6 +48,7 @@
 #include <qcontactguid.h>
 #include <qcontactorganization.h>
 #include <qcontacttimestamp.h>
+#include <qcontactanniversary.h>
 
 
 void UT_QVersitContactGenerator::init()
@@ -345,7 +346,7 @@ void UT_QVersitContactGenerator::testTimeStamp()
     timeStamp =
         static_cast<QContactTimestamp>(
             contact.detail(QContactTimestamp::DefinitionName));
-    QCOMPARE(timeStamp.lastModified().toString(QString::fromAscii(versitTimeSpecIso8601Basic)),
+    QCOMPARE(timeStamp.lastModified().toString(QString::fromAscii(versitDateTimeSpecIso8601Basic)),
                                                          QString::fromAscii(dateAndTimeValue));
 
     // Date and Time : ISO 8601 in basic format with utc offset
@@ -357,9 +358,36 @@ void UT_QVersitContactGenerator::testTimeStamp()
     timeStamp =
         static_cast<QContactTimestamp>(
             contact.detail(QContactTimestamp::DefinitionName));
-    QCOMPARE(timeStamp.lastModified().toString(QString::fromAscii(versitTimeSpecIso8601Basic)),
+    QCOMPARE(timeStamp.lastModified().toString(QString::fromAscii(versitDateTimeSpecIso8601Basic)),
                                                          QString::fromAscii(dateAndTimeValue));
     QCOMPARE(timeStamp.lastModified().timeSpec(),Qt::UTC);
+}
+
+void UT_QVersitContactGenerator::testAnniversary()
+{
+    // Date : ISO 8601 extended format
+    QVersitProperty property;
+    property.setName(QString::fromAscii(versitAnniversaryId));
+    QByteArray dateValue("1981-05-20");
+    property.setValue(dateValue);
+    QVersitDocument document = createDocumentWithProperty(property);
+    QContact contact = mGenerator->generateContact(document);
+    QContactAnniversary anniversary =
+        static_cast<QContactAnniversary>(
+            contact.detail(QContactAnniversary::DefinitionName));
+    QCOMPARE(anniversary.originalDate().toString(Qt::ISODate),QString::fromAscii(dateValue));
+
+    // Date : ISO 8601 in basic format
+    dateValue = "19810520";
+    property.setValue(dateValue);
+    document = createDocumentWithProperty(property);
+    contact = mGenerator->generateContact(document);
+    anniversary =
+        static_cast<QContactAnniversary>(
+            contact.detail(QContactAnniversary::DefinitionName));
+    QCOMPARE(anniversary.originalDate().toString(QString::fromAscii(versitDateSpecIso8601Basic)),
+                                                          QString::fromAscii(dateValue));
+
 }
 
 QVersitDocument UT_QVersitContactGenerator::createDocumentWithProperty(
