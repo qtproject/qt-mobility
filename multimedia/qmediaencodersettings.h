@@ -56,11 +56,17 @@ public:
 
     bool isNull() const;
 
+    QtMedia::EncodingMode encodingMode() const;
+    void setEncodingMode(QtMedia::EncodingMode);
+
     QString codec() const;
     void setCodec(const QString& codec);
 
     int bitrate() const;
     void setBitrate(int bitrate);
+
+    int channels() const;
+    void setChannels(int channels);
 
     int sampleRate() const;
     void setSampleRate(int rate);
@@ -86,6 +92,9 @@ public:
     bool operator!=(const QVideoEncoderSettings &other) const;
 
     bool isNull() const;
+
+    QtMedia::EncodingMode encodingMode() const;
+    void setEncodingMode(QtMedia::EncodingMode);
 
     QString codec() const;
     void setCodec(const QString &);

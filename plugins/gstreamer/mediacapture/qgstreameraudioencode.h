@@ -58,30 +58,17 @@ public:
 
     QStringList supportedAudioCodecs() const;
     QString codecDescription(const QString &codecName) const;
-    bool setAudioCodec(const QString &codecName);
-    QString audioCodec() const;
-
-    int bitrate() const;
-    void setBitrate(int);
-
-    QtMedia::EncodingQuality quality() const;
-    void setQuality(QtMedia::EncodingQuality);
 
     QStringList supportedEncodingOptions(const QString &codec) const;
     QVariant encodingOption(const QString &codec, const QString &name) const;
     void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
 
-    int sampleRate() const { return m_sampleRate; }
-    void setSampleRate(int sampleRate) { m_sampleRate = sampleRate; }
     QList<int> supportedSampleRates() const;
-
-    int channels() const { return m_channels; }
-    void setChannels(int channels) { m_channels = channels; }
     QList<int> supportedChannelCounts() const;
-
-    int sampleSize() const { return m_sampleSize; }
-    void setSampleSize(int sampleSize) { m_sampleSize = sampleSize; }
     QList<int> supportedSampleSizes() const;
+
+    QAudioEncoderSettings audioSettings() const;
+    void setAudioSettings(const QAudioEncoderSettings&);
 
     GstElement *createEncoder();
 
@@ -91,12 +78,9 @@ private:
     QMap<QString,QString> m_codecDescriptions;
     QMap<QString,QStringList> m_codecOptions;
 
-    QMap<QString, QVariant> m_options;
-    QString m_codec;
+    QMap<QString, QMap<QString, QVariant> > m_options;
 
-    int m_sampleRate;
-    int m_channels;
-    int m_sampleSize;
+    QAudioEncoderSettings m_audioSettings;
 };
 
 #endif

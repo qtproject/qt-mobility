@@ -39,8 +39,10 @@ class QAudioEncoderSettingsPrivate  : public QSharedData
 public:
     QAudioEncoderSettingsPrivate() :
         isNull(true),
+        encodingMode(QtMedia::ConstantQualityEncoding),
         bitrate(-1),
         sampleRate(-1),
+        channels(-1),
         quality(QtMedia::NormalQuality)
     {
     }
@@ -48,17 +50,21 @@ public:
     QAudioEncoderSettingsPrivate(const QAudioEncoderSettingsPrivate &other):
         QSharedData(other),
         isNull(other.isNull),
+        encodingMode(other.encodingMode),
         codec(other.codec),
         bitrate(other.bitrate),
         sampleRate(other.sampleRate),
+        channels(other.channels),
         quality(other.quality)
     {
     }
 
     bool isNull;
+    QtMedia::EncodingMode encodingMode;
     QString codec;
     int bitrate;
     int sampleRate;
+    int channels;
     QtMedia::EncodingQuality quality;
 
 private:
@@ -117,8 +123,10 @@ bool QAudioEncoderSettings::operator==(const QAudioEncoderSettings &other) const
 {
     return (d == other.d) ||
            (d->isNull == other.d->isNull &&
+            d->encodingMode == other.d->encodingMode &&
             d->bitrate == other.d->bitrate &&
             d->sampleRate == other.d->sampleRate &&
+            d->channels == other.d->channels &&
             d->quality == other.d->quality &&
             d->codec == other.d->codec);
 }
@@ -139,6 +147,26 @@ bool QAudioEncoderSettings::operator!=(const QAudioEncoderSettings &other) const
 bool QAudioEncoderSettings::isNull() const
 {
     return d->isNull;
+}
+
+/*!
+  Returns the audio encoding mode.
+
+  \sa QtMedia::EncodingMode
+*/
+QtMedia::EncodingMode QAudioEncoderSettings::encodingMode() const
+{
+    return d->encodingMode;
+}
+
+/*!
+  Sets the audio encoding \a mode.
+
+  \sa encodingMode(), QtMedia::EncodingMode
+*/
+void QAudioEncoderSettings::setEncodingMode(QtMedia::EncodingMode mode)
+{
+    d->encodingMode = mode;
 }
 
 /*!
@@ -164,6 +192,25 @@ void QAudioEncoderSettings::setCodec(const QString& codec)
 int QAudioEncoderSettings::bitrate() const
 {
     return d->bitrate;
+}
+
+/*!
+  Returns the number of audio channels.
+*/
+int QAudioEncoderSettings::channels() const
+{
+    return d->channels;
+}
+
+/*!
+  Sets the number of audio \a channels.
+  The default channels number of -1 means the service will
+  choose the appropriate value.
+*/
+void QAudioEncoderSettings::setChannels(int channels)
+{
+    d->isNull = false;
+    d->channels = channels;
 }
 
 /*!
@@ -227,6 +274,7 @@ class QVideoEncoderSettingsPrivate  : public QSharedData
 public:
     QVideoEncoderSettingsPrivate() :
         isNull(true),
+        encodingMode(QtMedia::ConstantQualityEncoding),
         bitrate(-1),
         frameRate(0),
         quality(QtMedia::NormalQuality)
@@ -236,6 +284,7 @@ public:
     QVideoEncoderSettingsPrivate(const QVideoEncoderSettingsPrivate &other):
         QSharedData(other),
         isNull(other.isNull),
+        encodingMode(other.encodingMode),
         codec(other.codec),
         bitrate(other.bitrate),
         resolution(other.resolution),
@@ -245,6 +294,7 @@ public:
     }
 
     bool isNull;
+    QtMedia::EncodingMode encodingMode;
     QString codec;
     int bitrate;
     QSize resolution;
@@ -279,9 +329,11 @@ bool QVideoEncoderSettings::operator==(const QVideoEncoderSettings &other) const
 {
     return (d == other.d) ||
            (d->isNull == other.d->isNull &&
+            d->encodingMode == other.d->encodingMode &&
             d->bitrate == other.d->bitrate &&
             d->quality == other.d->quality &&
             d->codec == other.d->codec &&
+            d->resolution == other.d->resolution &&
             qFuzzyCompare(d->frameRate, other.d->frameRate));
 }
 
@@ -293,6 +345,27 @@ bool QVideoEncoderSettings::operator!=(const QVideoEncoderSettings &other) const
 bool QVideoEncoderSettings::isNull() const
 {
     return d->isNull;
+}
+
+/*!
+  Returns the video encoding mode.
+
+  \sa QtMedia::EncodingMode
+*/
+QtMedia::EncodingMode QVideoEncoderSettings::encodingMode() const
+{
+    return d->encodingMode;
+}
+
+/*!
+  Sets the video encoding \a mode.
+
+  \sa encodingMode(), QtMedia::EncodingMode
+*/
+void QVideoEncoderSettings::setEncodingMode(QtMedia::EncodingMode mode)
+{
+    d->isNull = false;
+    d->encodingMode = mode;
 }
 
 /*!

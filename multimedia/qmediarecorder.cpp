@@ -368,18 +368,8 @@ QString QMediaRecorder::videoCodecDescription(const QString &codec) const
 
 QAudioEncoderSettings QMediaRecorder::audioSettings() const
 {
-    QAudioEncoderSettings audioSettings;
-
-    //TODO: to be replaced with direct access to audi control settings
-
-    if (d_func()->audioControl) {
-        audioSettings.setCodec(d_func()->audioControl->audioCodec());
-        audioSettings.setBitrate(d_func()->audioControl->bitrate());
-        audioSettings.setSampleRate(d_func()->audioControl->sampleRate());
-        audioSettings.setQuality(d_func()->audioControl->quality());
-    }
-
-    return audioSettings;
+    return d_func()->audioControl ?
+           d_func()->audioControl->audioSettings() : QAudioEncoderSettings();
 }
 
 /*!
@@ -388,17 +378,8 @@ QAudioEncoderSettings QMediaRecorder::audioSettings() const
 
 QVideoEncoderSettings QMediaRecorder::videoSettings() const
 {
-    QVideoEncoderSettings videoSettings;
-
-    if (d_func()->videoControl) {
-        videoSettings.setCodec(d_func()->videoControl->videoCodec());
-        videoSettings.setBitrate(d_func()->videoControl->bitrate());
-        videoSettings.setResolution(d_func()->videoControl->resolution());
-        videoSettings.setFrameRate(d_func()->videoControl->frameRate());
-        videoSettings.setQuality(d_func()->videoControl->quality());
-    }
-
-    return videoSettings;
+    return d_func()->videoControl ?
+           d_func()->videoControl->videoSettings() : QVideoEncoderSettings();
 }
 
 /*!
@@ -411,20 +392,11 @@ void QMediaRecorder::setEncodingSettings(const QAudioEncoderSettings &audioSetti
 {
     Q_D(QMediaRecorder);
 
-    if (d->audioControl) {
-        d->audioControl->setAudioCodec(audioSettings.codec());
-        d->audioControl->setBitrate(audioSettings.bitrate());
-        d->audioControl->setSampleRate(audioSettings.sampleRate());
-        d->audioControl->setQuality(audioSettings.quality());
-    }
+    if (d->audioControl)
+        d->audioControl->setAudioSettings(audioSettings);
 
-    if (d->videoControl) {
-        d->videoControl->setVideoCodec(videoSettings.codec());
-        d->videoControl->setBitrate(videoSettings.bitrate());
-        d->videoControl->setResolution(videoSettings.resolution());
-        d->videoControl->setFrameRate(videoSettings.frameRate());
-        d->videoControl->setQuality(videoSettings.quality());
-    }
+    if (d->videoControl)
+        d->videoControl->setVideoSettings(videoSettings);
 
     if (d->formatControl)
         d->formatControl->setFormat(format);

@@ -50,45 +50,32 @@ public:
     {
         m_codecs << "audio/pcm" << "audio/mpeg";
         m_descriptions << "Pulse Code Modulation" << "mp3 format";
-        m_codec = "audio/pcm";
-        m_freq = 8000;
+        m_audioSettings.setCodec("audio/pcm");
+        m_audioSettings.setSampleRate(8000);
         m_freqs << 8000 << 11025 << 22050 << 44100;
-        m_freqRange = qMakePair(8000,44100);
-        m_channels = 1;
-        m_sampleSize = 8;
     }
 
     ~MockAudioEncoderControl() {}
 
     QStringList supportedAudioCodecs() const { return m_codecs; }
-    QString audioCodec() const { return m_codec; }
-    bool setAudioCodec(const QString &codecName) { m_codec = codecName; return true; }
     QString codecDescription(const QString &codecName) const { return m_descriptions.at(m_codecs.indexOf(codecName)); }
-    int bitrate() const { return 0; }
-    void setBitrate(int) {}
-    QtMedia::EncodingQuality quality() const { return QtMedia::NormalQuality; }
-    void setQuality(QtMedia::EncodingQuality) {}
+
     QStringList supportedEncodingOptions(const QString &) const { return QStringList() << "bitrate"; }
     QVariant encodingOption(const QString &, const QString &) const { return m_optionValue; }
     void setEncodingOption(const QString &, const QString &, const QVariant &value) { m_optionValue = value; }
-    int sampleRate() const { return m_freq; }
-    void setSampleRate(int sampleRate) { m_freq = sampleRate; }
+
     QList<int> supportedSampleRates() const { return m_freqs; }
-    int channels() const { return m_channels; }
-    void setChannels(int channels) { m_channels = channels; }
     QList<int> supportedChannelCounts() const { QList<int> list; list << 1 << 2; return list; }
-    int sampleSize() const { return m_sampleSize; }
-    void setSampleSize(int sampleSize) { m_sampleSize = sampleSize; }
-    QList<int> supportedSampleSizes() const { QList<int> list; list << 8 << 16; return list; }
+
+    QAudioEncoderSettings audioSettings() const { return m_audioSettings; }
+    void setAudioSettings(const QAudioEncoderSettings &settings) { m_audioSettings = settings;}
 
     QStringList m_codecs;
     QStringList m_descriptions;
-    QString m_codec;
-    int m_freq;
+
+    QAudioEncoderSettings m_audioSettings;
+
     QList<int> m_freqs;
-    QPair<int,int> m_freqRange;
-    int m_channels;
-    int m_sampleSize;
     QVariant m_optionValue;
 };
 

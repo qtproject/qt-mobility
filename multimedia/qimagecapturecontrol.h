@@ -47,10 +47,14 @@ public:
     ~QImageCaptureControl();
 
     virtual bool isReadyForCapture() const = 0;
+
+    //TODO: what's about raw+jpeg capture?
     virtual void capture(const QString &fileName) = 0;
 
 Q_SIGNALS:
     void readyForCaptureChanged(bool);
+
+    //TODO: it would be usefull to receive other image parameters, in addition to preview
     void imageCaptured(const QString &fileName, const QImage &preview);
 
 protected:

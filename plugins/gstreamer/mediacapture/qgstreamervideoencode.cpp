@@ -42,8 +42,6 @@
 QGstreamerVideoEncode::QGstreamerVideoEncode(QObject *parent)
     :QVideoEncoderControl(parent)
 {
-    m_frameRate = 0.0;
-
     QList<QByteArray> codecCandidates;
     codecCandidates << "video/h264" << "video/xvid" << "video/mpeg4" << "video/mpeg1" << "video/mpeg2" << "video/theora";
 
@@ -54,12 +52,12 @@ QGstreamerVideoEncode::QGstreamerVideoEncode(QObject *parent)
     m_elementNames["video/mpeg2"] = "ffenc_mpeg2video";
     m_elementNames["video/theora"] = "theoraenc";
 
-    m_codecOptions["video/h264"] = QStringList() << "quality" << "bitrate" << "quantizer";
-    m_codecOptions["video/xvid"] = QStringList() << "quality" << "bitrate" << "quantizer" << "profile";
-    m_codecOptions["video/mpeg4"] = QStringList() << "quality" << "bitrate" << "quantizer";
-    m_codecOptions["video/mpeg1"] = QStringList() << "quality" << "bitrate" << "quantizer";
-    m_codecOptions["video/mpeg2"] = QStringList() << "quality" << "bitrate" << "quantizer";
-    m_codecOptions["video/theora"] = QStringList() << "quality" << "bitrate";
+    m_codecOptions["video/h264"] = QStringList() << "quantizer";
+    m_codecOptions["video/xvid"] = QStringList() << "quantizer" << "profile";
+    m_codecOptions["video/mpeg4"] = QStringList() << "quantizer";
+    m_codecOptions["video/mpeg1"] = QStringList() << "quantizer";
+    m_codecOptions["video/mpeg2"] = QStringList() << "quantizer";
+    m_codecOptions["video/theora"] = QStringList();
 
     foreach( const QByteArray& codecName, codecCandidates ) {
         QByteArray elementName = m_elementNames[codecName];
@@ -74,16 +72,11 @@ QGstreamerVideoEncode::QGstreamerVideoEncode(QObject *parent)
     }
 
     if (!m_codecs.isEmpty())
-        setVideoCodec(m_codecs[0]);
+        m_videoSettings.setCodec(m_codecs[0]);
 }
 
 QGstreamerVideoEncode::~QGstreamerVideoEncode()
 {
-}
-
-QSize QGstreamerVideoEncode::resolution() const
-{
-    return m_resolution;
 }
 
 QSize QGstreamerVideoEncode::minimumResolution() const
@@ -109,16 +102,6 @@ QList<QSize> QGstreamerVideoEncode::supportedResolutions() const
     return res;
 }
 
-void QGstreamerVideoEncode::setResolution(const QSize &r)
-{
-    m_resolution = r;
-}
-
-qreal QGstreamerVideoEncode::frameRate() const
-{
-    return m_frameRate;
-}
-
 qreal QGstreamerVideoEncode::minimumFrameRate() const
 {
     return 1.0;
@@ -136,12 +119,6 @@ QList< qreal > QGstreamerVideoEncode::supportedFrameRates() const
     return res;
 }
 
-void QGstreamerVideoEncode::setFrameRate(const qreal &rate)
-{
-    m_frameRate = rate;
-}
-
-
 QStringList QGstreamerVideoEncode::supportedVideoCodecs() const
 {
     return m_codecs;
@@ -152,43 +129,6 @@ QString QGstreamerVideoEncode::videoCodecDescription(const QString &codecName) c
     return m_codecDescriptions.value(codecName);
 }
 
-QString QGstreamerVideoEncode::audioCodec() const
-{
-    return m_codec;
-}
-
-bool QGstreamerVideoEncode::setVideoCodec(const QString &codecName)
-{
-    m_codec = codecName;
-    return true;
-}
-
-QString QGstreamerVideoEncode::videoCodec() const
-{
-    return m_codec;
-}
-
-int QGstreamerVideoEncode::bitrate() const
-{
-    return m_options.value(QLatin1String("bitrate"), QVariant(int(-1))).toInt();
-}
-
-void QGstreamerVideoEncode::setBitrate(int value)
-{
-    setEncodingOption(m_codec, QLatin1String("bitrate"), QVariant(value));
-}
-
-QtMedia::EncodingQuality QGstreamerVideoEncode::quality() const
-{
-    return QtMedia::EncodingQuality(m_options.value(QLatin1String("quality"),
-                                                           QVariant(QtMedia::NormalQuality)).toInt());
-}
-
-void QGstreamerVideoEncode::setQuality(QtMedia::EncodingQuality value)
-{
-    setEncodingOption(m_codec, QLatin1String("quality"), QVariant(value));
-}
-
 QStringList QGstreamerVideoEncode::supportedEncodingOptions(const QString &codec) const
 {
     return m_codecOptions.value(codec);
@@ -196,14 +136,13 @@ QStringList QGstreamerVideoEncode::supportedEncodingOptions(const QString &codec
 
 QVariant QGstreamerVideoEncode::encodingOption(const QString &codec, const QString &name) const
 {
-    return codec == m_codec ? m_options.value(name) : QVariant();
+    return m_options[codec].value(name);
 }
 
 void QGstreamerVideoEncode::setEncodingOption(
         const QString &codec, const QString &name, const QVariant &value)
 {
-    if (codec == m_codec)
-        m_options.insert(name,value);
+    m_options[codec][name] = value;
 }
 
 GstElement *QGstreamerVideoEncode::createEncoder()
@@ -217,9 +156,10 @@ GstElement *QGstreamerVideoEncode::createEncoder()
     GstElement *colorspace = gst_element_factory_make("ffmpegcolorspace", NULL);
     gst_bin_add(encoderBin, colorspace);
 
-    qDebug() << "create encoder for video codec" << m_codec;
+    QString codec = m_videoSettings.codec();
+    qDebug() << "create encoder for video codec" << codec;
 
-    GstElement *encoderElement = gst_element_factory_make( m_elementNames.value(m_codec).constData(), "video-encoder");
+    GstElement *encoderElement = gst_element_factory_make( m_elementNames.value(codec).constData(), "video-encoder");
     gst_bin_add(encoderBin, encoderElement);
 
     gst_element_link_many(capsFilter, colorspace, encoderElement, NULL);
@@ -234,96 +174,95 @@ GstElement *QGstreamerVideoEncode::createEncoder()
     gst_object_unref(GST_OBJECT(pad));
 
     if (encoderElement) {
-        QMapIterator<QString,QVariant> it(m_options);
+        if (m_videoSettings.encodingMode() == QtMedia::ConstantQualityEncoding) {
+            QtMedia::EncodingQuality qualityValue = m_videoSettings.quality();
+
+            if (codec == QLatin1String("video/h264")) {
+                //constant quantizer mode
+                g_object_set(G_OBJECT(encoderElement), "pass", 4, NULL);
+                int qualityTable[] = {
+                    50, //VeryLow
+                    35, //Low
+                    21, //Normal
+                    15, //High
+                    8 //VeryHigh
+                };
+                g_object_set(G_OBJECT(encoderElement), "quantizer", qualityTable[qualityValue], NULL);
+            } else if (codec == QLatin1String("video/xvid")) {
+                //constant quantizer mode
+                g_object_set(G_OBJECT(encoderElement), "pass", 3, NULL);
+                int qualityTable[] = {
+                    32, //VeryLow
+                    12, //Low
+                    5, //Normal
+                    3, //High
+                    2 //VeryHigh
+                };
+                int quant = qualityTable[qualityValue];
+                g_object_set(G_OBJECT(encoderElement), "quantizer", quant, NULL);
+            } else if (codec == QLatin1String("video/mpeg4") ||
+                       codec == QLatin1String("video/mpeg1") ||
+                       codec == QLatin1String("video/mpeg2") ) {
+                //constant quantizer mode
+                g_object_set(G_OBJECT(encoderElement), "pass", 2, NULL);
+                //quant from 1 to 30, default ~3
+                double qualityTable[] = {
+                    20, //VeryLow
+                    8.0, //Low
+                    3.0, //Normal
+                    2.5, //High
+                    2.0 //VeryHigh
+                };
+                double quant = qualityTable[qualityValue];
+                g_object_set(G_OBJECT(encoderElement), "quantizer", quant, NULL);
+            } else if (codec == QLatin1String("video/theora")) {
+                int qualityTable[] = {
+                    8, //VeryLow
+                    16, //Low
+                    32, //Normal
+                    45, //High
+                    60 //VeryHigh
+                };
+                //quality from 0 to 63
+                int quality = qualityTable[qualityValue];
+                g_object_set(G_OBJECT(encoderElement), "quality", quality, NULL);
+            }
+        } else {
+            int bitrate = m_videoSettings.bitrate();
+            if (bitrate > 0) {
+                g_object_set(G_OBJECT(encoderElement), "bitrate", bitrate, NULL);
+            }
+        }
+
+        QMap<QString,QVariant> options = m_options.value(codec);
+        QMapIterator<QString,QVariant> it(options);
         while (it.hasNext()) {
             it.next();
             QString option = it.key();
             QVariant value = it.value();
 
-            //skip the default values
-            if (option == QLatin1String("bitrate")) {
-                int bitrate = value.toInt();
-                if (bitrate <= 0)
-                    continue;
+            switch (value.type()) {
+            case QVariant::Int:
+                g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toInt(), NULL);
+                break;
+            case QVariant::Bool:
+                g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toBool(), NULL);
+                break;
+            case QVariant::Double:
+                g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toDouble(), NULL);
+                break;
+            case QVariant::String:
+                g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toString().toUtf8().constData(), NULL);
+                break;
+            default:
+                qWarning() << "unsupported option type:" << option << value;
+                break;
             }
 
-            if (option == QLatin1String("quality")) {
-                int qualityValue = qBound(int(QtMedia::VeryLowQuality), value.toInt(), int(QtMedia::VeryHighQuality));
-
-                if (m_codec == QLatin1String("video/h264")) {
-                    //constant quantizer mode
-                    g_object_set(G_OBJECT(encoderElement), "pass", 4, NULL);
-                    int qualityTable[] = {
-                        50, //VeryLow
-                        35, //Low
-                        21, //Normal
-                        15, //High
-                        8 //VeryHigh
-                    };
-                    g_object_set(G_OBJECT(encoderElement), "quantizer", qualityTable[qualityValue], NULL);
-                } else if (m_codec == QLatin1String("video/xvid")) {
-                    //constant quantizer mode
-                    g_object_set(G_OBJECT(encoderElement), "pass", 3, NULL);
-                    int qualityTable[] = {
-                        32, //VeryLow
-                        12, //Low
-                        5, //Normal
-                        3, //High
-                        2 //VeryHigh
-                    };
-                    int quant = qualityTable[qualityValue];
-                    g_object_set(G_OBJECT(encoderElement), "quantizer", quant, NULL);
-                } else if (m_codec == QLatin1String("video/mpeg4") ||
-                           m_codec == QLatin1String("video/mpeg1") ||
-                           m_codec == QLatin1String("video/mpeg2") ) {
-                    //constant quantizer mode
-                    g_object_set(G_OBJECT(encoderElement), "pass", 2, NULL);
-                    //quant from 1 to 30, default ~3
-                    double qualityTable[] = {
-                        20, //VeryLow
-                        8.0, //Low
-                        3.0, //Normal
-                        2.5, //High
-                        2.0 //VeryHigh
-                    };
-                    double quant = qualityTable[qualityValue];
-                    g_object_set(G_OBJECT(encoderElement), "quantizer", quant, NULL);
-                } else if (m_codec == QLatin1String("video/theora")) {
-                    int qualityTable[] = {
-                        8, //VeryLow
-                        16, //Low
-                        32, //Normal
-                        45, //High
-                        60 //VeryHigh
-                    };
-                    //quality from 0 to 63
-                    int quality = qualityTable[qualityValue];
-                    g_object_set(G_OBJECT(encoderElement), "quality", quality, NULL);
-                }
-
-            } else {
-                switch (value.type()) {
-                case QVariant::Int:
-                    g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toInt(), NULL);
-                    break;
-                case QVariant::Bool:
-                    g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toBool(), NULL);
-                    break;
-                case QVariant::Double:
-                    g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toDouble(), NULL);
-                    break;
-                case QVariant::String:
-                    g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toString().toUtf8().constData(), NULL);
-                    break;
-                default:
-                    qWarning() << "unsupported option type:" << option << value;
-                    break;
-                }
-            }
         }
     }
 
-    if (!m_resolution.isEmpty() || m_frameRate > 0.001) {
+    if (!m_videoSettings.resolution().isEmpty() || m_videoSettings.frameRate() > 0.001) {
         GstCaps *caps = gst_caps_new_empty();
         QStringList structureTypes;
         structureTypes << "video/x-raw-yuv" << "video/x-raw-rgb";
@@ -331,12 +270,12 @@ GstElement *QGstreamerVideoEncode::createEncoder()
         foreach(const QString &structureType, structureTypes) {
             GstStructure *structure = gst_structure_new(structureType.toAscii().constData(), NULL);
 
-            if (!m_resolution.isEmpty()) {
-                gst_structure_set(structure, "width", G_TYPE_INT, m_resolution.width(), NULL);
-                gst_structure_set(structure, "height", G_TYPE_INT, m_resolution.height(), NULL);
+            if (!m_videoSettings.resolution().isEmpty()) {
+                gst_structure_set(structure, "width", G_TYPE_INT, m_videoSettings.resolution().width(), NULL);
+                gst_structure_set(structure, "height", G_TYPE_INT, m_videoSettings.resolution().height(), NULL);
             }
 
-            if (m_frameRate > 0.001) {
+            if (m_videoSettings.frameRate() > 0.001) {
                 QPair<int,int> rate = rateAsRational();
 
                 //qDebug() << "frame rate:" << num << denum;
@@ -357,7 +296,9 @@ GstElement *QGstreamerVideoEncode::createEncoder()
 
 QPair<int,int> QGstreamerVideoEncode::rateAsRational() const
 {
-    if (m_frameRate > 0.001) {
+    qreal frameRate = m_videoSettings.frameRate();
+
+    if (frameRate > 0.001) {
         //convert to rational number
         QList<int> denumCandidates;
         denumCandidates << 1 << 2 << 3 << 5 << 10 << 1001 << 1000;
@@ -367,8 +308,8 @@ QPair<int,int> QGstreamerVideoEncode::rateAsRational() const
         int denum = 1;
 
         foreach (int curDenum, denumCandidates) {
-            int curNum = qRound(m_frameRate*curDenum);
-            qreal curError = qAbs(qreal(curNum)/curDenum - m_frameRate);
+            int curNum = qRound(frameRate*curDenum);
+            qreal curError = qAbs(qreal(curNum)/curDenum - frameRate);
 
             if (curError < error) {
                 error = curError;

@@ -249,9 +249,10 @@ GstElement *QGstreamerCaptureSession::buildVideoPreview()
         gst_element_link(colorspace,capsFilter);
         gst_element_link(capsFilter,preview);
 
-        if (!m_videoEncodeControl->resolution().isEmpty() || m_videoEncodeControl->frameRate() > 0.001) {
-            QSize resolution = m_videoEncodeControl->resolution();
-            qreal frameRate = m_videoEncodeControl->frameRate();
+        QVideoEncoderSettings videoSettings = m_videoEncodeControl->videoSettings();
+        if (!videoSettings.resolution().isEmpty() || videoSettings.frameRate() > 0.001) {
+            QSize resolution = videoSettings.resolution();
+            qreal frameRate = videoSettings.frameRate();
 
             GstCaps *caps = gst_caps_new_empty();
             QStringList structureTypes;

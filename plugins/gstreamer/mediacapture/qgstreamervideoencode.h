@@ -50,32 +50,21 @@ public:
     QGstreamerVideoEncode(QObject *parent);
     virtual ~QGstreamerVideoEncode();
 
-    QSize resolution() const;
     QSize minimumResolution() const;
     QSize maximumResolution() const;
     QList<QSize> supportedResolutions() const;
-    void setResolution(const QSize &);
 
-    qreal frameRate() const;
     qreal minimumFrameRate() const;
     qreal maximumFrameRate() const;
     QList< qreal > supportedFrameRates() const;
-    void setFrameRate(const qreal &rate);
 
     QPair<int,int> rateAsRational() const;
 
     QStringList supportedVideoCodecs() const;
     QString videoCodecDescription(const QString &codecName) const;
 
-    QString videoCodec() const;
-    bool setVideoCodec(const QString &codecName);
-    QString audioCodec() const;
-
-    int bitrate() const;
-    void setBitrate(int);
-
-    QtMedia::EncodingQuality quality() const;
-    void setQuality(QtMedia::EncodingQuality);
+    QVideoEncoderSettings videoSettings() const;
+    void setVideoSettings(const QVideoEncoderSettings &settings);
 
     QStringList supportedEncodingOptions(const QString &codec) const;
     QVariant encodingOption(const QString &codec, const QString &name) const;
@@ -89,10 +78,8 @@ private:
     QMap<QString,QByteArray> m_elementNames;
     QMap<QString,QStringList> m_codecOptions;
 
-    QString m_codec;
-    QMap<QString, QVariant> m_options;
-    QSize m_resolution;
-    qreal m_frameRate;
+    QVideoEncoderSettings m_videoSettings;
+    QMap<QString, QMap<QString, QVariant> > m_options;
 };
 
 #endif

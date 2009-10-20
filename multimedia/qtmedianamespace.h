@@ -111,7 +111,8 @@ namespace QtMedia
         Subject
     };
 
-    enum SupportEstimate {
+    enum SupportEstimate
+    {
         NotSupported,
         MaybeSupported,
         ProbablySupported,
@@ -126,6 +127,15 @@ namespace QtMedia
         HighQuality,
         VeryHighQuality
     };
+
+    enum EncodingMode
+    {
+        ConstantQualityEncoding,
+        ConstantBitrateEncoding,
+        AverageBitrateEncoding,
+        TwoPassEncoding
+    };
+
 }
 
 #endif

@@ -51,29 +51,19 @@ class Q_MEDIA_EXPORT QVideoEncoderControl : public QMediaControl
 public:
     virtual ~QVideoEncoderControl();
 
-    virtual QSize resolution() const = 0;
     virtual QSize minimumResolution() const = 0;
     virtual QSize maximumResolution() const = 0;
     virtual QList<QSize> supportedResolutions() const = 0;
-    virtual void setResolution(const QSize &) = 0;
 
-    virtual qreal frameRate() const = 0;
     virtual qreal minimumFrameRate() const = 0;
     virtual qreal maximumFrameRate() const = 0;
     virtual QList<qreal> supportedFrameRates() const = 0;
-    virtual void setFrameRate(const qreal &rate) = 0;
 
     virtual QStringList supportedVideoCodecs() const = 0;
-    virtual QString videoCodec() const = 0;
-    virtual bool setVideoCodec(const QString &codecName) = 0;
-
     virtual QString videoCodecDescription(const QString &codecName) const = 0;
 
-    virtual int bitrate() const = 0;
-    virtual void setBitrate(int) = 0;
-
-    virtual QtMedia::EncodingQuality quality() const = 0;
-    virtual void setQuality(QtMedia::EncodingQuality) = 0;
+    virtual QVideoEncoderSettings videoSettings() const = 0;
+    virtual void setVideoSettings(const QVideoEncoderSettings &settings) = 0;
 
     virtual QStringList supportedEncodingOptions(const QString &codec) const = 0;
     virtual QVariant encodingOption(const QString &codec, const QString &name) const = 0;
