@@ -47,6 +47,8 @@
 #include <qcontactaddress.h>
 #include <qcontactorganization.h>
 #include <qcontactbirthday.h>
+#include <qcontactnote.h>
+#include <qcontactgeolocation.h>
 #include "qversitdefs.h"
 
 
@@ -74,6 +76,9 @@ public:
 
         mMappingTable.insert(QContactTimestamp::DefinitionName,QString::fromAscii(versitRevId));
         mMappingTable.insert(QContactBirthday::DefinitionName,QString::fromAscii(versitBirthdayId));
+
+        mMappingTable.insert(QContactNote::DefinitionName,QString::fromAscii(versitNoteId));
+        mMappingTable.insert(QContactGeolocation::DefinitionName,QString::fromAscii(versitGeoId));
 
         //Context Mapping
         mMappingTable.insert(QContactDetail::ContextWork,QString::fromAscii(versitContextWorkId));

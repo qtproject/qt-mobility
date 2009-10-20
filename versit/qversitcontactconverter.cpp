@@ -52,6 +52,8 @@
 #include <qcontacturl.h>
 #include <qcontacttimestamp.h>
 #include <qcontactbirthday.h>
+#include <qcontactnote.h>
+#include <qcontactgeolocation.h>
 
 #include "qversitdefs.h"
 #include "qversitdocument.h"
@@ -130,6 +132,13 @@ void QVersitContactConverter::encodeFieldInfo(QVersitDocument& versitDocument,
     else if (detail.definitionName() == QContactBirthday::DefinitionName){
         encodeBirthDay(versitDocument, detail);
     }
+    else if (detail.definitionName() == QContactGeolocation::DefinitionName){
+        encodeGeoLocation(versitDocument, detail);
+    }
+    else if (detail.definitionName() == QContactNote::DefinitionName){
+        encodeNote(versitDocument, detail);
+    }
+
 }
 
 
@@ -335,6 +344,52 @@ void QVersitContactConverter::encodeBirthDay(QVersitDocument& versitDocument,
     versitProperty.setValue(value.toAscii());
     versitDocument.addProperty(versitProperty);
 }
+
+
+
+/*!
+ * Encode Comment i.e. Note Field Information into the Versit Document
+ */
+
+void QVersitContactConverter::encodeNote(QVersitDocument& versitDocument,
+                                         const QContactDetail& detail )
+{
+    QContactNote contactNote = static_cast<QContactNote >(detail);
+    QString name = d->mMappingTable.value(detail.definitionName());
+    QString value = contactNote.note();
+
+    QVersitProperty versitProperty;
+
+    //Add Values
+    versitProperty.setName(name);
+    versitProperty.setValue(value.toAscii());
+    versitDocument.addProperty(versitProperty);
+}
+
+
+/*!
+ * Encode Geo Prpoperties Field Information into the Versit Document
+ */
+
+void QVersitContactConverter::encodeGeoLocation(QVersitDocument& versitDocument,
+                                                const QContactDetail& detail )
+{
+    QContactGeolocation geoLocation = static_cast<QContactGeolocation >(detail);
+    QString name = d->mMappingTable.value(detail.definitionName());
+
+    QString longitude, latitude;
+    QString value = longitude.setNum(geoLocation.longitude()) +
+                    QString::fromAscii(",") +
+                    latitude.setNum(geoLocation.latitude());
+
+    QVersitProperty versitProperty;
+
+    //Add Values
+    versitProperty.setName(name);
+    versitProperty.setValue(value.toAscii());
+    versitDocument.addProperty(versitProperty);
+}
+
 
 
 /*!

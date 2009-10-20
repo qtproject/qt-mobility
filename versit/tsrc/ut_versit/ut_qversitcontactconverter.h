@@ -58,6 +58,8 @@ private slots:
     void testEncodeUid();
     void testEncodeRev();
     void testEncodeBirthDay();
+    void testEncodeNote();
+    void testEncodeGeoLocation();
     
 private: //Data
     QVersitContactConverter* mVersitContactConverter;

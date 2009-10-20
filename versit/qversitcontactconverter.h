@@ -71,7 +71,9 @@ private: //Methods
     void encodeUid(QVersitDocument& versitDocument, const QContactDetail& detail );
     void encodeRev(QVersitDocument& versitDocument, const QContactDetail& detail );
     void encodeBirthDay(QVersitDocument& versitDocument, const QContactDetail& detail );
-    
+    void encodeNote(QVersitDocument& versitDocument, const QContactDetail& detail );
+    void encodeGeoLocation(QVersitDocument& versitDocument, const QContactDetail& detail );
+
     const QHash<QString,QString>& getMappingTable();
 
     

@@ -44,6 +44,8 @@
 #include <qcontactguid.h>
 #include <qcontacttimestamp.h>
 #include <qcontactbirthday.h>
+#include <qcontactnote.h>
+#include <qcontactgeolocation.h>
 
 #include "ut_qversitcontactconverter.h"
 #include "qversitcontactconverter.h"
@@ -419,7 +421,81 @@ void UT_QVersitContactConvertert::testEncodeBirthDay()
     QCOMPARE(expectedValue, value );
 }
 
+void UT_QVersitContactConvertert::testEncodeNote()
+{
+    QContact contact;
+    QString myNote("My Note");
+    QContactNote note;
 
+    note.setNote(myNote);
+
+    //API Permits setting up context but it should not be in Versit Doc
+    note.setContexts(QContactDetail::ContextHome);
+
+    contact.saveDetail(&note);
+
+    //Convert Contat Into Versit Document
+    QVersitDocument mVersitDocument = mVersitContactConverter->convertContact(contact);
+
+    //Ensure parameters does not exisit
+    QCOMPARE(0, mVersitDocument.properties().at(0).parameters().count());
+
+    //Ensure property Exisit
+    QCOMPARE(1, mVersitDocument.properties().count());
+
+    //Ensure property parameer exisit and matches.
+    QString propertyName = mVersitDocument.properties().at(0).name();
+    QString expectedPropertyName =
+                mVersitContactConverter->getMappingTable().value(QContactNote::DefinitionName);
+    QCOMPARE(propertyName, expectedPropertyName );
+
+    //Check property value
+    QString value = (mVersitDocument.properties().at(0).value() );
+    QCOMPARE(myNote, value );
+}
+
+void UT_QVersitContactConvertert::testEncodeGeoLocation()
+{
+    QContact contact;
+    QContactGeolocation geoLocation;
+
+    QString longitue = "99.9";
+    QString latitude = "98.9";
+    QString accuracy = "90.7";
+
+    geoLocation.setLongitude(longitue.toDouble());
+
+    geoLocation.setLatitude(latitude.toDouble());
+
+    // API Permit setting accuracy and other parameters which should be encoded.
+    geoLocation.setAccuracy(accuracy.toDouble());
+
+    //API Permits setting up context but it should not be in Versit Doc
+    geoLocation.setContexts(QContactDetail::ContextHome);
+
+    contact.saveDetail(&geoLocation);
+
+    //Convert Contat Into Versit Document
+    QVersitDocument mVersitDocument = mVersitContactConverter->convertContact(contact);
+
+    //Ensure parameters does not exisit
+    QCOMPARE(0, mVersitDocument.properties().at(0).parameters().count());
+
+    //Ensure property Exisit
+    QCOMPARE(1, mVersitDocument.properties().count());
+
+    //Ensure property parameer exisit and matches.
+    QString propertyName = mVersitDocument.properties().at(0).name();
+    QString expectedPropertyName =
+            mVersitContactConverter->getMappingTable().value(QContactGeolocation::DefinitionName);
+    QCOMPARE(propertyName, expectedPropertyName );
+
+    //Check property value
+    QString value = (mVersitDocument.properties().at(0).value() );
+    QString expectedValue;
+    expectedValue =  longitue + QString::fromAscii(",") + latitude;
+    QCOMPARE(expectedValue, value );
+}
 
 void UT_QVersitContactConvertert::testEncodeParameters()
 {
