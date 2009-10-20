@@ -1792,7 +1792,7 @@ private:
     QMap<QString, ReadHandle *> handles;
 
     void triggerTodo();
-    int todoTimer;
+    bool triggeredTodo;
     QPacket todo;
     QSet<QPacketProtocol *> connections;
 
@@ -1854,7 +1854,7 @@ struct SharedMemoryLayerClient : public QPacketProtocol
 };
 
 SharedMemoryLayer::SharedMemoryLayer()
-: type(Client), layer(0), lock(0), localLock(QMutex::Recursive), todoTimer(0),
+: type(Client), layer(0), lock(0), localLock(QMutex::Recursive), triggeredTodo(false),
   nextPackId(1), lastSentId(0), lastRecvId(0), valid(false),
   forceChangeCount(0), clientIndex(0),
   changedNodesCount(0),
@@ -2007,10 +2007,8 @@ void SharedMemoryLayer::doServerTransmit()
     QMutexLocker locker(&localLock);
 
     Q_ASSERT(Server == type);
-    if(todoTimer) {
-        killTimer(todoTimer);
-        todoTimer = 0;
-    }
+
+    triggeredTodo = false;
 
     QPacket others;
     others << (quint8)SHMLAYER_SYNC << (unsigned int)0;
@@ -2046,10 +2044,8 @@ void SharedMemoryLayer::doClientTransmit()
     QMutexLocker locker(&localLock);
 
     Q_ASSERT(Client == type);
-    if(todoTimer) {
-        killTimer(todoTimer);
-        todoTimer = 0;
-    }
+
+    triggeredTodo = false;
 
     if(!todo.isEmpty()) {
         todo << (quint8)SHMLAYER_DONE;
@@ -2654,10 +2650,10 @@ void SharedMemoryLayer::triggerTodo()
 {
     QMutexLocker locker(&localLock);
 
-    if(todoTimer || !valid)
+    if (triggeredTodo || !valid)
         return;
-    //qDebug() << "Trigger todo";
-    todoTimer = startTimer(0);
+
+    QCoreApplication::postEvent(this, new QTimerEvent(0), Qt::LowEventPriority);
 }
 
 void SharedMemoryLayer::setProperty(Handle, Properties)
