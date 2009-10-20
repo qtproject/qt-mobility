@@ -152,6 +152,16 @@ void QGstreamerVideoEncode::setEncodingOption(
     m_options[codec][name] = value;
 }
 
+QVideoEncoderSettings QGstreamerVideoEncode::videoSettings() const
+{
+    return m_videoSettings;
+}
+
+void QGstreamerVideoEncode::setVideoSettings(const QVideoEncoderSettings &settings)
+{
+    m_videoSettings = settings;
+}
+
 GstElement *QGstreamerVideoEncode::createEncoder()
 {
     GstBin *encoderBin = GST_BIN(gst_bin_new("video-encoder-bin"));
