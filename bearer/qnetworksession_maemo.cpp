@@ -318,7 +318,6 @@ void QNetworkSessionPrivate::updateState(QNetworkSession::State newState)
 		activeConfig.d->type = QNetworkConfiguration::InternetAccessPoint;
 	    }
 	    publicConfig.d->state = QNetworkConfiguration::Active;
-	    publicConfig.d->type = QNetworkConfiguration::InternetAccessPoint;
 	}
 
 	emit q->stateChanged(state);
