@@ -174,7 +174,7 @@ QList<QContactLocalId> QContactSymbianSorter::contactsL(const QList<QContactSort
 
 QList<QContactLocalId> QContactSymbianSorter::sortL(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders) const
 {
-    CContactIdArray* ids = CContactIdArray::NewL();
+    CContactIdArray* ids = CContactIdArray::NewLC();
     foreach(QContactLocalId id, contactIds)
         ids->AddL(id);
 
