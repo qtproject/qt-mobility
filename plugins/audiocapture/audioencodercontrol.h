@@ -45,6 +45,9 @@ public:
     void setSampleSize(int sampleSize);
     QList<int> supportedSampleSizes() const;
 
+    QAudioEncoderSettings audioSettings() const;
+    void setAudioSettings(const QAudioEncoderSettings&);
+
 private:
     AudioCaptureSession* m_session;
 };
