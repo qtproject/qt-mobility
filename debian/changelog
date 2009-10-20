@@ -2,6 +2,7 @@ libbearer (0.26) unstable; urgency=low
 
   * Fixed publicConfig and activeConfig handling in QNetworkSessionPrivate
   * Background connection flag name changed to "ConnectToBackground"
+  * When accessing lists in the code, make sure the list is not empty.
 
  -- Jukka Rissanen <jukka.rissanen@nokia.com>  Mon, 12 Oct 2009 13:57:15 +0300
 

@@ -55,8 +55,9 @@ class QNetworkConfigurationPrivate : public QSharedData
 {
 public:
     QNetworkConfigurationPrivate ()
-        : isValid(false), type(QNetworkConfiguration::Invalid), 
-          roamingSupported(false), purpose(QNetworkConfiguration::Unknown)
+	    : isValid(false), type(QNetworkConfiguration::Invalid), 
+	    roamingSupported(false), purpose(QNetworkConfiguration::Unknown),
+	    network_attrs(0), service_attrs(0)
     {
     }
 

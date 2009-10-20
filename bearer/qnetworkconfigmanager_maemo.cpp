@@ -526,7 +526,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    //cpPriv->name = iap_info.value().toString();
 	    cpPriv->name = saved_ap.value("name").toString();
 	    if (cpPriv->name.isEmpty())
-		if (ssid.size() > 0)
+		if (!ssid.isEmpty() && ssid.size() > 0)
 		    cpPriv->name = ssid.data();
 		else
 		    cpPriv->name = iap_id;
@@ -544,11 +544,11 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    accessPointConfigurations.insert(iap_id, ptr);
 
 #ifdef BEARER_MANAGEMENT_DEBUG
-	    qDebug("IAP: %s, name: %s, ssid: %s, added to known list", iap_id.toAscii().data(), cpPriv->name.toAscii().data(), ssid.size() ? ssid.data() : "-");
+	    qDebug("IAP: %s, name: %s, ssid: %s, added to known list", iap_id.toAscii().data(), cpPriv->name.toAscii().data(), !ssid.isEmpty() ? ssid.data() : "-");
 #endif
 	} else {
 #ifdef BEARER_MANAGEMENT_DEBUG
-	    qDebug("IAP: %s, ssid: %s, already exists in the known list", iap_id.toAscii().data(), ssid.size() ? ssid.data() : "-");
+	    qDebug("IAP: %s, ssid: %s, already exists in the known list", iap_id.toAscii().data(), !ssid.isEmpty() ? ssid.data() : "-");
 #endif
 	}
     }
@@ -567,14 +567,18 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    qWarning() << "Network scanning failed" << error;
 	} else {
 #ifdef BEARER_MANAGEMENT_DEBUG
-	    qDebug() << "Scan returned" << scanned.size() << "networks";
+	    if (!scanned.isEmpty())
+		qDebug() << "Scan returned" << scanned.size() << "networks";
+	    else
+		qDebug() << "Scan returned nothing.";
 #endif
 	}
     }
 
 
     /* This is skipped in the first update as scanned size is zero */
-    for (int i=0; i<scanned.size(); ++i) {
+    if (!scanned.isEmpty())
+      for (int i=0; i<scanned.size(); ++i) {
 	const Maemo::IcdScanResult ap = scanned.at(i); 
 
 	if (ap.scan.network_attrs & ICD_NW_ATTR_IAPNAME) {
@@ -602,23 +606,25 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 		 */
 		QList<SSIDInfo* > known_iaps = knownConfigs.values(priv->network_id);
 	    rescan_list:
-		for (int k=0; k<known_iaps.size(); ++k) {
-		    SSIDInfo *iap = known_iaps.at(k);
+		if (!known_iaps.isEmpty()) {
+		    for (int k=0; k<known_iaps.size(); ++k) {
+			SSIDInfo *iap = known_iaps.at(k);
 
 #ifdef BEARER_MANAGEMENT_DEBUG
-		    //qDebug() << "iap" << iap->iap_id << "security" << iap->wlan_security << "scan" << network_attrs_to_security(ap.scan.network_attrs);
+			//qDebug() << "iap" << iap->iap_id << "security" << iap->wlan_security << "scan" << network_attrs_to_security(ap.scan.network_attrs);
 #endif
 
-		    if (iap->wlan_security == 
-			network_attrs_to_security(ap.scan.network_attrs)) {
-			/* Remove IAP from the list */
-			knownConfigs.remove(priv->network_id, iap);
+			if (iap->wlan_security == 
+			    network_attrs_to_security(ap.scan.network_attrs)) {
+			    /* Remove IAP from the list */
+			    knownConfigs.remove(priv->network_id, iap);
 #ifdef BEARER_MANAGEMENT_DEBUG
-			qDebug() << "Removed IAP" << iap->iap_id << "from unknown config";
+			    qDebug() << "Removed IAP" << iap->iap_id << "from unknown config";
 #endif
-			known_iaps.removeAt(k);
-			delete iap;
-			goto rescan_list;
+			    known_iaps.removeAt(k);
+			    delete iap;
+			    goto rescan_list;
+			}
 		    }
 		}
 	    } else {
@@ -655,7 +661,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    item.d = ptr;
 	    emit configurationAdded(item);
 	}
-    }
+      }
 
 
     /* Remove non existing iaps since last update */
