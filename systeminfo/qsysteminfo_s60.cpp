@@ -384,25 +384,19 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
         return QSystemStorageInfo::NoDrive;
     }
 
-    switch (driveInfo.iType)
-    {
-        case EMediaNANDFlash:
-        case EMediaHardDisk:
-        case EMediaRam:
-        case EMediaRom:
-            return QSystemStorageInfo::InternalDrive;
-        case EMediaFloppy:
-        case EMediaFlash:
-            return QSystemStorageInfo::RemovableDrive;
-        case EMediaRemote:
-            return QSystemStorageInfo::RemoteDrive;
-        case EMediaCdRom:
-            return QSystemStorageInfo::CdromDrive;
-        case EMediaNotPresent:
-        case EMediaUnknown:
-        default:
-            return QSystemStorageInfo::NoDrive;
+    if (driveInfo.iType == EMediaRemote) {
+        return QSystemStorageInfo::RemoteDrive;
+    } else if (driveInfo.iType == EMediaCdRom) {
+        return QSystemStorageInfo::CdromDrive;
     }
+    
+    if (driveInfo.iDriveAtt & KDriveAttInternal) {
+        return QSystemStorageInfo::InternalDrive;
+    } else if (driveInfo.iDriveAtt & KDriveAttRemovable) {
+        return QSystemStorageInfo::RemovableDrive;
+    }
+
+    return QSystemStorageInfo::NoDrive;
 };
 
 
