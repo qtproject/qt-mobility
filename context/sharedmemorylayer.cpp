@@ -1355,6 +1355,8 @@ bool FixedMemoryTree::addWatchRecur(unsigned short node, const char * path,
         else
             newSubNode = newNode(path, sectionLen);
 
+        if (newSubNode == ROOT_VERSION_ENTRY)
+            return false;
 
         Node * const newNode = this->node(newSubNode);
         newNode->parent = node;
@@ -1444,6 +1446,8 @@ bool FixedMemoryTree::insertRecur(unsigned short node,
         else
             newSubNode = newNode(path, sectionLen);
 
+        if (newSubNode == ROOT_VERSION_ENTRY)
+            return false;
 
         Node * const newNode = this->node(newSubNode);
         newNode->parent = node;
@@ -1548,9 +1552,9 @@ unsigned int FixedMemoryTree::version(unsigned int entry)
 }
 
 /*!
-  Creates a new node of \a name (name length \a len) and sets a single \a watch
-  on it.
- */
+    Creates a new node of \a name (name length \a len) and sets a single \a watch on it.  Returns
+    ROOT_VERSION_ENTRY if the new node could not be created.
+*/
 unsigned short FixedMemoryTree::newNode(const char * name, unsigned int len,
                                         NodeWatch owner)
 {
@@ -1558,6 +1562,9 @@ unsigned short FixedMemoryTree::newNode(const char * name, unsigned int len,
 
     // Find an empty node entry
     unsigned int node = versionTable()->nxtFreeBlk;
+    if (node == ROOT_VERSION_ENTRY)
+        return node;
+
     // Reset the next free blk
     versionTable()->nxtFreeBlk = versionTable()->entries[node].nxtFreeBlk;
 
@@ -1588,10 +1595,10 @@ unsigned short FixedMemoryTree::newNode(const char * name, unsigned int len,
 }
 
 /*!
-  Creates a new node of \a name (name length \a len) and pre-fills it with
-  \a data of length \a dataLen owned by \a owner.  If \a owner is an invalid
-  owner, the node is a virtual node and not prefilled with data.
- */
+    Creates a new node of \a name (name length \a len) and pre-fills it with \a data of length
+    \a dataLen owned by \a owner.  If \a owner is an invalid owner, the node is a virtual node and
+    not prefilled with data.  Returns ROOT_VERSION_ENTRY if the new node could not be created.
+*/
 unsigned short FixedMemoryTree::newNode(const char * name, unsigned int len,
                                         NodeOwner owner, NodeDatum::Type type,
                                         const char * data, unsigned int dataLen)
@@ -1600,6 +1607,9 @@ unsigned short FixedMemoryTree::newNode(const char * name, unsigned int len,
 
     // Find an empty node entry
     unsigned int node = versionTable()->nxtFreeBlk;
+    if (node == ROOT_VERSION_ENTRY)
+        return node;
+
     // Reset the next free blk
     versionTable()->nxtFreeBlk = versionTable()->entries[node].nxtFreeBlk;
 
