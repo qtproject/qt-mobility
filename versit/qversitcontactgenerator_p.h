@@ -47,16 +47,18 @@
 
 #include <QHash>
 
+class QContact;
 class QContactDetail;
 class QVersitProperty;
+class QVersitDocument;
 
 class QVersitContactGeneratorPrivate
 {
 public:
     QVersitContactGeneratorPrivate();
     ~QVersitContactGeneratorPrivate();
-    
-    QContactDetail* createContactDetail(const QVersitProperty& property) const;
+
+    QContact generateContact(const QVersitDocument& versitDocument);
     
 private:
     
@@ -69,6 +71,8 @@ private:
     QContactDetail* createUid(const QVersitProperty& property) const;
     QContactDetail* createTimeStamp(const QVersitProperty& property) const;
     QContactDetail* createAnniversary(const QVersitProperty& property) const;
+    QContactDetail* createAvatar(const QVersitProperty& property,
+                                 const QVersitDocument& document) const;
     QStringList extractContexts(const QVersitProperty& property) const;
     QStringList extractSubTypes(const QVersitProperty& property) const;
     QString takeFirst(QList<QByteArray>& list) const;    

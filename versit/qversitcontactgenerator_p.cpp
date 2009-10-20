@@ -46,7 +46,9 @@
 #include <qcontactguid.h>
 #include <qcontacttimestamp.h>
 #include <qcontactanniversary.h>
+#include <qcontactavatar.h>
 #include <QHash>
+#include <QImage>
 
 /*!
  * Constructor.
@@ -92,49 +94,53 @@ QVersitContactGeneratorPrivate::~QVersitContactGeneratorPrivate()
 }
 
 /*!
- * Creates a QContactDetail from \a property.
- * Returns the created detail or NULL. 
+ * Generates a QContact from \a versitDocument.
  */
-QContactDetail* QVersitContactGeneratorPrivate::createContactDetail(
-    const QVersitProperty& property) const
+QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& versitDocument)
 {
-    QContactDetail* detail = 0;
-    if (property.name() == QString::fromAscii(versitNameId)) {
-        detail = createName(property);
+    QContact contact;
+    const QList<QVersitProperty> properties = versitDocument.properties();
+    foreach (QVersitProperty property, properties) {
+        QContactDetail* detail = 0;
+        if (property.name() == QString::fromAscii(versitNameId)) {
+            detail = createName(property);
+        }
+        else if (property.name() == QString::fromAscii(versitPhoneId)) {
+            detail = createPhone(property);
+        }
+        else if (property.name() == QString::fromAscii(versitAddressId)) {
+            detail = createAddress(property);
+        }
+        else if (property.name() == QString::fromAscii(versitOrganizationId)) {
+            detail = createOrganization(property);
+        }
+        else if (property.name() == QString::fromAscii(versitEmailId)) {
+            detail = createEmail(property);
+        }
+        else if (property.name() == QString::fromAscii(versitUrlId)) {
+            detail = createUrl(property);
+        }
+        else if (property.name() == QString::fromAscii(versitUidId)) {
+            detail = createUid(property);
+        }
+        else if (property.name() == QString::fromAscii(versitRevisionId)) {
+            detail = createTimeStamp(property);
+        }
+        else if (property.name() == QString::fromAscii(versitAnniversaryId)) {
+            detail = createAnniversary(property);
+        }
+        else if (property.name() == QString::fromAscii(versitPhotoId)) {
+            detail = createAvatar(property, versitDocument);
+        }
+        else {
+            // NOP
+        }
+        if (detail) {
+            detail->setContexts(extractContexts(property));
+            contact.saveDetail(detail);
+        }
     }
-    else if (property.name() == QString::fromAscii(versitPhoneId)) {
-        detail = createPhone(property);
-    }        
-    else if (property.name() == QString::fromAscii(versitAddressId)) {
-        detail = createAddress(property);
-    }
-    else if (property.name() == QString::fromAscii(versitOrganizationId)) {
-        detail = createOrganization(property);
-    }
-    else if (property.name() == QString::fromAscii(versitEmailId)) {
-        detail = createEmail(property);
-    }
-    else if (property.name() == QString::fromAscii(versitUrlId)) {
-        detail = createUrl(property);
-    }
-    else if (property.name() == QString::fromAscii(versitUidId)) {
-        detail = createUid(property);
-    }
-    else if (property.name() == QString::fromAscii(versitRevisionId)) {
-        detail = createTimeStamp(property);
-    }
-    else if (property.name() == QString::fromAscii(versitAnniversaryId)) {
-         detail = createAnniversary(property);
-    }
-    else {
-        // NOP
-    }
-        
-    if (detail) {
-        detail->setContexts(extractContexts(property));
-    }
-    
-    return detail;
+    return contact;
 }
 
 /*!
@@ -277,6 +283,50 @@ QContactDetail* QVersitContactGeneratorPrivate::createAnniversary(
                  : QDate::fromString(value,versitDateSpecIso8601Basic);
     anniversary->setOriginalDate(date);
     return anniversary;
+}
+
+/*!
+ * Creates a QContactAvatar from \a property
+ */
+QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
+    const QVersitProperty& property, const QVersitDocument& versitDocument) const
+{
+    QContactAvatar* avatar = new QContactAvatar();
+
+    // Image name: <FirstName><LastName>.<ext>
+    QString imgName(versitPhotoDir);
+    QVersitProperty nameProperty;
+    const QList<QVersitProperty> properties = versitDocument.properties();
+    foreach(const QVersitProperty& nameP, properties) {
+        if (nameP.name() == "N") {
+            nameProperty = nameP;
+            break;
+        }
+    }
+
+    QList<QByteArray> values = nameProperty.value().split(';');
+    imgName.append("/");
+    imgName.append(takeFirst(values));
+    imgName.append(takeFirst(values));
+    imgName.append(".");
+
+    // Image format
+    const QString format =
+            property.parameters().value(QString::fromAscii(versitType));
+
+    imgName.append(QString(format).toLower());
+
+    QByteArray value = property.value();
+
+    QImage image;
+    image.fromData(value);
+    image.save(imgName, format.toAscii());
+
+
+    avatar->setAvatar(imgName);
+    avatar->setSubType(QContactAvatar::SubTypeImage);
+
+    return avatar;
 }
 
 /*!

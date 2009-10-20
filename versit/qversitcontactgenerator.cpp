@@ -58,12 +58,5 @@ QVersitContactGenerator::~QVersitContactGenerator()
 QContact QVersitContactGenerator::generateContact(
     const QVersitDocument& versitDocument)
 {
-    QContact contact;
-    const QList<QVersitProperty> properties = versitDocument.properties();
-    foreach (QVersitProperty property, properties) {
-        QContactDetail* detail = d->createContactDetail(property);
-        if (detail)
-            contact.saveDetail(detail);
-    } 
-    return contact;
+    return d->generateContact(versitDocument);
 }

@@ -58,6 +58,7 @@ private slots: // Tests
     void testOrganization();
     void testTimeStamp();
     void testAnniversary();
+    void testCreateAvatar();
 
 private: 
     

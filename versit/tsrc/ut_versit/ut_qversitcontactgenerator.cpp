@@ -49,6 +49,7 @@
 #include <qcontactorganization.h>
 #include <qcontacttimestamp.h>
 #include <qcontactanniversary.h>
+#include <qcontactavatar.h>
 
 
 void UT_QVersitContactGenerator::init()
@@ -68,8 +69,8 @@ void UT_QVersitContactGenerator::testName()
     QVersitDocument document;
     QVersitProperty nameProperty;
     QStringList val;
-    val.append("Simpson");//FirstName
-    val.append("Homer");//LastName
+    val.append("Homer");//FirstName
+    val.append("Simpson");//LastName
     val.append("BellyBoy");//GivenName
     val.append("Dr");//PreFix
     val.append("MSc");//Suffix
@@ -387,6 +388,47 @@ void UT_QVersitContactGenerator::testAnniversary()
             contact.detail(QContactAnniversary::DefinitionName));
     QCOMPARE(anniversary.originalDate().toString(QString::fromAscii(versitDateSpecIso8601Basic)),
                                                           QString::fromAscii(dateValue));
+
+}
+
+void UT_QVersitContactGenerator::testCreateAvatar()
+{
+    QVersitProperty property;
+    property.setName(QString::fromAscii(versitPhotoId));
+    QByteArray value("R0lGODdhfgA4AOYAAAAAAK+vr62trVIxa6WlpZ+fnzEpCEpzlAha/0Kc74+PjyGMSuecKRhrtX9/fzExORBSjCEYCGtra2NjYyF7nDGE50JrhAg51qWtOTl7vee1MWu150o5e3PO/3sxcwAx/4R7GBgQOcDAwFoAQt61hJyMGHuUSpRKIf8A/wAY54yMjHtz");
+    property.setValue(value);
+    property.addParameter(QString::fromAscii(versitType),
+                          QString::fromAscii(versitPhotoGif));
+    QVersitDocument document = createDocumentWithProperty(property);
+
+    QVersitProperty nameProperty;
+    QStringList val;
+    val.append("Homer");//FirstName
+    val.append("Simpson");//LastName
+    val.append("BellyBoy");//GivenName
+    val.append("Mr.");//PreFix
+    val.append("MSc");//Suffix
+    nameProperty.setName(QString::fromAscii(versitNameId));
+    nameProperty.setValue(val.join(QString::fromAscii(";")).toAscii());
+
+    document.addProperty(nameProperty);
+    QContact contact = mGenerator->generateContact(document);
+
+    // PHOTO location: <dir>/<FirstName><LastName>.<ext>
+    QString fileName(versitPhotoDir);
+    fileName.append("/");
+    fileName.append(val[0]);
+    fileName.append(val[1]);
+    fileName.append(".");
+    QString ext = versitPhotoGif;
+    ext = ext.toLower();
+    fileName.append(ext);
+
+    QContactAvatar avatar =
+            static_cast<QContactAvatar>(
+                    contact.detail(QContactAvatar::DefinitionName));
+    QCOMPARE(avatar.avatar(), fileName);
+    QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
 
 }
 
