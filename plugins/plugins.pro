@@ -2,8 +2,6 @@ TEMPLATE = subdirs
 
 SUBDIRS = m3u
 
-contains(QT_CONFIG, phonon): SUBDIRS += phonon
-
 win32:!wince* {
     TMP_INCLUDE = $$quote($$(INCLUDE))
     TMP_SEARCHPATHS = $$split(TMP_INCLUDE, ";") $$QMAKE_INCDIR
@@ -24,5 +22,6 @@ unix:!mac {
     }
 
 } else {
+    contains(QT_CONFIG, phonon): SUBDIRS += phonon
     contains(QT_CONFIG, multimedia): SUBDIRS += audiocapture
 }
