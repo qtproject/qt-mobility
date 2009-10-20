@@ -54,6 +54,7 @@ const char versitRevisionId[] = "REV";
 const char versitBirthdayId[] = "BDAY";
 const char versitNoteId[] = "NOTE";
 const char versitGeoId[] = "GEO";
+const char versitAnniversaryId[] = "X-ANNIVERSARY";
 
 
 // Contexts:
@@ -86,6 +87,7 @@ const char versitfavoriteIDId[] = "FAVOURITE";
 const char versitValueSeparator[] = ",";
 
 // ISO-8601 basic format datetime spec
-const char versitTimeSpecIso8601Basic[] = "yyyyMMddThhmmss";
+const char versitDateTimeSpecIso8601Basic[] = "yyyyMMddThhmmss";
+const char versitDateSpecIso8601Basic[] = "yyyyMMdd";
 
 #endif /* QVERSITDEFS_H_ */

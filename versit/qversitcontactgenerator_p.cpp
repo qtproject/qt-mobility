@@ -60,6 +60,7 @@
 #include <qcontacturl.h>
 #include <qcontactguid.h>
 #include <qcontacttimestamp.h>
+#include <qcontactanniversary.h>
 #include <QHash>
 
 
@@ -247,12 +248,28 @@ QContactDetail* QVersitContactGeneratorPrivate::createTimeStamp(
         dateTime = QDateTime::fromString(value,Qt::ISODate);
     }
     else {
-        dateTime = QDateTime::fromString(value,QString::fromAscii(versitTimeSpecIso8601Basic));
+        dateTime = QDateTime::fromString(value,
+                        QString::fromAscii(versitDateTimeSpecIso8601Basic));
     }    
     if (utc)
         dateTime.setTimeSpec(Qt::UTC);
     timeStamp->setLastModified(dateTime);
     return timeStamp;
+}
+
+/*!
+ * Creates a QContactAnniversary from \a property
+ */
+QContactDetail* QVersitContactGeneratorPrivate::createAnniversary(
+    const QVersitProperty& property) const
+{
+    QContactAnniversary* anniversary = new QContactAnniversary();
+    QString value(QString::fromAscii(property.value()));
+    QDate date = ( value.contains(QString::fromAscii("-")))
+                 ? QDate::fromString(value,Qt::ISODate)
+                 : QDate::fromString(value,versitDateSpecIso8601Basic);
+    anniversary->setOriginalDate(date);
+    return anniversary;
 }
 
 /*!

@@ -64,6 +64,7 @@ public:
     QContactDetail* createUrl(const QVersitProperty& property) const;
     QContactDetail* createUid(const QVersitProperty& property) const;
     QContactDetail* createTimeStamp(const QVersitProperty& property) const;
+    QContactDetail* createAnniversary(const QVersitProperty& property) const;
     QStringList extractContexts(const QVersitProperty& property) const;
     QString takeFirst(QList<QByteArray>& list) const;    
     

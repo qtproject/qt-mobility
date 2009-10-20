@@ -101,8 +101,11 @@ QContact QVersitContactGenerator::generateContact(
         else if (property.name() == QString::fromAscii(versitUidId)) {
             detail = d->createUid(property);
         }
-         else if (property.name() == QString::fromAscii(versitRevisionId)) {
+        else if (property.name() == QString::fromAscii(versitRevisionId)) {
             detail = d->createTimeStamp(property);
+        }
+        else if (property.name() == QString::fromAscii(versitAnniversaryId)) {
+            detail = d->createAnniversary(property);
         }
         else {
             // NOP
