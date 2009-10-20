@@ -43,6 +43,9 @@
 #include <qvaluespacemanager_p.h>
 #include <qvaluespaceprovider.h>
 
+#include <QThread>
+#include <QVector>
+
 #include <QTest>
 #include <QDebug>
 #include <QSignalSpy>
@@ -96,6 +99,9 @@ private slots:
 
     void valuePermanence_data();
     void valuePermanence();
+
+    void threads_data();
+    void threads();
 
 private:
     int variantMetaTypeId;
@@ -458,6 +464,123 @@ void tst_QValueSpaceProvider::valuePermanence()
     }
 }
 
+class WriteThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    WriteThread(const QString &path, unsigned int count, QObject *parent = 0);
+
+    void runSequential() { run(); }
+
+protected:
+    void run();
+
+private:
+    QString path;
+    unsigned int count;
+    QValueSpaceProvider *provider;
+};
+
+WriteThread::WriteThread(const QString &path, unsigned int count, QObject *parent)
+:   QThread(parent), path(path), count(count)
+{
+    provider = new QValueSpaceProvider(path, this);
+}
+
+void WriteThread::run()
+{
+    const QString key("key%1");
+    const QString value("value%1");
+
+    for (unsigned int i = 0; i < count; ++i) {
+        provider->setAttribute(key.arg(i), value.arg(i));
+
+        usleep(100);
+    }
+
+    provider->sync();
+}
+
+void tst_QValueSpaceProvider::threads_data()
+{
+    QTest::addColumn<unsigned int>("threads");
+    QTest::addColumn<unsigned int>("count");
+    QTest::addColumn<bool>("sequential");
+
+    QTest::newRow("1 thread, 10 items, sequential") << uint(1) << uint(10) << true;
+    QTest::newRow("1 thread, 5000 items, sequential") << uint(1) << uint(5000) << true;
+    QTest::newRow("1 thread, 8000 items, sequential") << uint(1) << uint(8000) << true;
+    QTest::newRow("2 threads, 10 items, sequential") << uint(2) << uint(10) << true;
+    QTest::newRow("10 threads, 800 items, sequential") << uint(10) << uint(800) << true;
+    QTest::newRow("100 threads, 80 items, sequential") << uint(100) << uint(80) << true;
+}
+
+void tst_QValueSpaceProvider::threads()
+{
+    QFETCH(unsigned int, threads);
+    QFETCH(unsigned int, count);
+    QFETCH(bool, sequential);
+
+    QStringList expectedPaths;
+    for (unsigned int i = 0; i < threads; ++i)
+        expectedPaths.append(QString("thread%1").arg(i));
+
+    QHash<QString, QString> expectedValues;
+    for (unsigned int i = 0; i < count; ++i)
+        expectedValues.insert(QString("key%1").arg(i), QString("value%1").arg(i));
+
+    QValueSpaceSubscriber subscriber("/threads");
+
+    QVERIFY(subscriber.subPaths().isEmpty());
+
+    QVector<WriteThread *> writeThreads(threads);
+
+    // Create and start writer threads.
+    for (unsigned int i = 0; i < threads; ++i) {
+        writeThreads[i] = new WriteThread(QString("/threads/%1").arg(expectedPaths.at(i)), count);
+
+        if (sequential)
+            writeThreads[i]->runSequential();
+        else
+            writeThreads[i]->start();
+    }
+
+    if (!sequential) {
+        // Wait for writer threads to finish.
+        for (unsigned int i = 0; i < threads; ++i)
+            writeThreads[i]->wait();
+    }
+
+    qDebug() << "Published" << count << "items in" << threads
+             << "theads, totaling" << (threads * count);
+
+    // Verify Value Space
+    QStringList subPaths = subscriber.subPaths();
+    QVERIFY(subPaths.toSet() == expectedPaths.toSet());
+
+    while (!subPaths.isEmpty()) {
+        QValueSpaceSubscriber threadItem;
+        threadItem.setPath(&subscriber);
+        threadItem.cd(subPaths.takeFirst());
+
+        QStringList keys = threadItem.subPaths();
+
+        QVERIFY(keys.toSet() == expectedValues.keys().toSet());
+
+        while (!keys.isEmpty()) {
+            const QString key = keys.takeFirst();
+
+            QCOMPARE(threadItem.value(key).toString(), expectedValues.value(key));
+        }
+    }
+
+    // Delete writer threads.
+    for (unsigned int i = 0; i < threads; ++i)
+        delete writeThreads[i];
+
+    QVERIFY(subscriber.subPaths().isEmpty());
+}
 
 QTEST_MAIN(tst_QValueSpaceProvider)
 #include "tst_qvaluespaceprovider.moc"
