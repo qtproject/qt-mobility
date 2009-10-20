@@ -11,7 +11,10 @@ TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtcontacts_tracker)
 LIBS += -L/usr/lib 
-    
+
+MOC_DIR = .moc/
+OBJECTS_DIR = .obj/
+
 DEPENDPATH += .
 INCLUDEPATH += . 
 
