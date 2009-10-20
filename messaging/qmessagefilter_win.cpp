@@ -973,8 +973,13 @@ const QMessageFilter& QMessageFilter::operator&=(const QMessageFilter& other)
             result.d_ptr->_standardFoldersInclude = other.d_ptr->_standardFoldersInclude;
         } else {
             result.d_ptr->_standardFoldersInclude = this->d_ptr->_standardFoldersInclude;
-            if (!other.d_ptr->_standardFoldersInclude.isEmpty())
+            if (!other.d_ptr->_standardFoldersInclude.isEmpty()) {
                 result.d_ptr->_standardFoldersInclude &= other.d_ptr->_standardFoldersInclude;
+                if (result.d_ptr->_standardFoldersInclude.isEmpty()) {  // non-matching
+                    *this = ~QMessageFilter();
+                    return *this;
+                }
+            }
         }
         result.d_ptr->_standardFoldersExclude = this->d_ptr->_standardFoldersExclude;
         result.d_ptr->_standardFoldersExclude |= other.d_ptr->_standardFoldersExclude;
@@ -982,8 +987,13 @@ const QMessageFilter& QMessageFilter::operator&=(const QMessageFilter& other)
             result.d_ptr->_accountsInclude = other.d_ptr->_accountsInclude;
         } else {
             result.d_ptr->_accountsInclude = this->d_ptr->_accountsInclude;
-            if (!other.d_ptr->_accountsInclude.isEmpty())
+            if (!other.d_ptr->_accountsInclude.isEmpty()) {
                 result.d_ptr->_accountsInclude &= other.d_ptr->_accountsInclude;
+                if (result.d_ptr->_accountsInclude.isEmpty()) { // non-matching
+                    *this = ~QMessageFilter();
+                    return *this;
+                }
+            }
         }
         result.d_ptr->_accountsExclude = this->d_ptr->_accountsExclude;
         result.d_ptr->_accountsExclude |= other.d_ptr->_accountsExclude;
