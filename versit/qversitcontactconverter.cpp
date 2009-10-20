@@ -63,14 +63,6 @@ QVersitContactConverter::~QVersitContactConverter()
 }
 
 /*!
- * Get the error code
- */
-QVersitContactConverter::Error QVersitContactConverter::error() const
-{
-    return d->mError;
-}
-
-/*!
  * Returns the versit document corresponding to the \a contact 
  */
 QVersitDocument QVersitContactConverter::convertContact(const QContact& contact)

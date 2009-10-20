@@ -31,21 +31,6 @@
 **
 ****************************************************************************/
 
-/*!
- * \class QContact
- *
- * \brief The QContact class provides an addressbook contact.
- *
- * A QContact consists of zero or more details.
- *
- * An instance of the QContact class represents an in-memory contact,
- * and may not reflect the state of that contact found in persistent
- * storage until the appropriate synchronisation method is called
- * on the QContactManager (i.e., saveContact, removeContact).
- *
- * \sa QContactManager, QContactDetail
- */
-
 #include "qversitdefs.h"
 #include "qversitcontactgenerator_p.h"
 #include <qversitdocument.h>
@@ -60,19 +45,91 @@
 #include <qcontacturl.h>
 #include <qcontactguid.h>
 #include <qcontacttimestamp.h>
-#include <QHash>
 
-
+/*!
+ * Constructor.
+ */
 QVersitContactGeneratorPrivate::QVersitContactGeneratorPrivate()
 {
     mContextMappings.insert(
         QString::fromAscii(versitContextWorkId),QContactDetail::ContextWork);
     mContextMappings.insert(
         QString::fromAscii(versitContextHomeId),QContactDetail::ContextHome);
+    
+    mSubTypeMappings.insert(
+        QString::fromAscii(versitDomesticId),QContactAddress::SubTypeDomestic);
+    mSubTypeMappings.insert(
+        QString::fromAscii(versitInternationalId),QContactAddress::SubTypeInternational);
+    mSubTypeMappings.insert(
+        QString::fromAscii(versitPostalId),QContactAddress::SubTypePostal);
+    mSubTypeMappings.insert(
+        QString::fromAscii(versitParcelId),QContactAddress::SubTypeParcel);
+    mSubTypeMappings.insert(
+        QString::fromAscii(versitVoiceId),QContactPhoneNumber::SubTypeVoice);
+    mSubTypeMappings.insert(
+        QString::fromAscii(versitCellId),QContactPhoneNumber::SubTypeMobile);
+    mSubTypeMappings.insert(
+        QString::fromAscii(versitModemId),QContactPhoneNumber::SubTypeModem);
+    mSubTypeMappings.insert(
+        QString::fromAscii(versitCarId),QContactPhoneNumber::SubTypeCar);
+    mSubTypeMappings.insert(
+        QString::fromAscii(versitVideoId),QContactPhoneNumber::SubTypeVideo);
+    mSubTypeMappings.insert(
+        QString::fromAscii(versitFaxId),QContactPhoneNumber::SubTypeFacsimile);
+    mSubTypeMappings.insert(
+        QString::fromAscii(versitBbsId),QContactPhoneNumber::SubTypeBulletinBoardSystem);
+    mSubTypeMappings.insert(
+        QString::fromAscii(versitPagerId),QContactPhoneNumber::SubTypePager);
 }
 
+/*!
+ * Destructor.
+ */
 QVersitContactGeneratorPrivate::~QVersitContactGeneratorPrivate()
 {
+}
+
+/*!
+ * Creates a QContactDetail from \a property.
+ * Returns the created detail or NULL. 
+ */
+QContactDetail* QVersitContactGeneratorPrivate::createContactDetail(
+    const QVersitProperty& property) const
+{
+    QContactDetail* detail = 0;
+    if (property.name() == QString::fromAscii(versitNameId)) {
+        detail = createName(property);
+    }
+    else if (property.name() == QString::fromAscii(versitPhoneId)) {
+        detail = createPhone(property);
+    }        
+    else if (property.name() == QString::fromAscii(versitAddressId)) {
+        detail = createAddress(property);
+    }
+    else if (property.name() == QString::fromAscii(versitOrganizationId)) {
+        detail = createOrganization(property);
+    }
+    else if (property.name() == QString::fromAscii(versitEmailId)) {
+        detail = createEmail(property);
+    }
+    else if (property.name() == QString::fromAscii(versitUrlId)) {
+        detail = createUrl(property);
+    }
+    else if (property.name() == QString::fromAscii(versitUidId)) {
+        detail = createUid(property);
+    }
+     else if (property.name() == QString::fromAscii(versitRevisionId)) {
+        detail = createTimeStamp(property);
+    }
+    else {
+        // NOP
+    }
+        
+    if (detail) {
+        detail->setContexts(extractContexts(property));
+    }
+    
+    return detail;
 }
 
 /*!
@@ -99,41 +156,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createPhone(
 {
     QContactPhoneNumber* phone = new QContactPhoneNumber();
     phone->setNumber(QString::fromAscii(property.value()));
-    
-    QStringList types = 
-        property.parameters().values(QString::fromAscii(versitType));
-
-    QStringList subTypes;
-    foreach (QString type, types){
-        if (type == QString::fromAscii(versitVoiceId)){
-            subTypes += QContactPhoneNumber::SubTypeVoice;
-        }
-        else if (type == QString::fromAscii(versitCellId)){
-            subTypes += QContactPhoneNumber::SubTypeMobile;
-        }
-        else if (type == QString::fromAscii(versitModemId)){
-            subTypes += QContactPhoneNumber::SubTypeModem;
-        }
-        else if (type == QString::fromAscii(versitCarId)){
-            subTypes += QContactPhoneNumber::SubTypeCar;
-        }
-        else if (type == QString::fromAscii(versitVideoId)){
-            subTypes += QContactPhoneNumber::SubTypeVideo;
-        }
-        else if (type == QString::fromAscii(versitFaxId)){
-            subTypes += QContactPhoneNumber::SubTypeFacsimile;
-        }
-        else if (type == QString::fromAscii(versitBbsId)){
-            subTypes += QContactPhoneNumber::SubTypeBulletinBoardSystem;
-        }
-        else if (type == QString::fromAscii(versitPagerId)){
-            subTypes += QContactPhoneNumber::SubTypePager;
-        }         
-        else {
-            // NOP
-        }
-    }
-    phone->setSubTypes(subTypes);
+    phone->setSubTypes(extractSubTypes(property));
     return phone;
 }
 
@@ -145,38 +168,18 @@ QContactDetail* QVersitContactGeneratorPrivate::createAddress(
 {
     QContactAddress* address = new QContactAddress();
     
-    QStringList types = 
-        property.parameters().values(QString::fromAscii(versitType));
-    
-    QStringList subTypes;
-    foreach (QString type, types) {
-        if (type == QString::fromAscii(versitDomesticId)) {
-            subTypes.append(QContactAddress::SubTypeDomestic);
-        }
-        else if (type == QString::fromAscii(versitInternationalId)) {
-            subTypes.append(QContactAddress::SubTypeInternational);
-        }
-        else if (type == QString::fromAscii(versitPostalId)) {
-            subTypes.append(QContactAddress::SubTypePostal);
-        }
-        else if (type == QString::fromAscii(versitParcelId)) {
-            subTypes.append(QContactAddress::SubTypeParcel);
-        }
-        else {
-            // NOP
-        }
-    }
-    address->setSubTypes(subTypes);
-    
     QList<QByteArray> addressParts = property.value().split(';');
     address->setPostOfficeBox(takeFirst(addressParts));
+    // There is no setter for the Extended Address in QContactAddress:
     if (!addressParts.isEmpty())
-        addressParts.removeFirst(); // TODO: Where to set the Extended Address?
+        addressParts.removeFirst(); 
     address->setStreet(takeFirst(addressParts));
     address->setLocality(takeFirst(addressParts));
     address->setRegion(takeFirst(addressParts));
     address->setPostcode(takeFirst(addressParts));
     address->setCountry(takeFirst(addressParts));
+    
+    address->setSubTypes(extractSubTypes(property));
     
     return address;
 }
@@ -256,7 +259,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createTimeStamp(
 }
 
 /*!
- * Extracts the list of contexts from \a types
+ * Extracts the list of contexts from \a property
  */
 QStringList QVersitContactGeneratorPrivate::extractContexts(
     const QVersitProperty& property) const
@@ -266,10 +269,27 @@ QStringList QVersitContactGeneratorPrivate::extractContexts(
     QStringList contexts;
     foreach (QString type, types) {   
         QString value = mContextMappings.value(type);
-        if (value.size() > 0)
+        if (value.length() > 0)
             contexts.append(value);
     }
     return contexts;
+}
+
+/*!
+ * Extracts the list of subtypes from \a property
+ */
+QStringList QVersitContactGeneratorPrivate::extractSubTypes(
+    const QVersitProperty& property) const
+{
+    QStringList types = 
+        property.parameters().values(QString::fromAscii(versitType));
+    QStringList subTypes;
+    foreach (QString type, types) {
+        QString subType = mSubTypeMappings.value(type);
+        if (subType.length() > 0)
+            subTypes += subType;
+    }
+    return subTypes;
 }
 
 /*!

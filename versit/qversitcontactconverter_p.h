@@ -61,8 +61,7 @@ public:
     void encodeGeoLocation(QVersitProperty& property, const QContactDetail& detail);    
     
 public: // Data
-    QVersitContactConverter::Error mError;
-    QHash<QString,QString> mMappingTable;
+    QHash<QString,QString> mMappings;
 };
 
 #endif // QVERSITCONTACTCONVERTER_P_H

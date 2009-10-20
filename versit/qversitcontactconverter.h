@@ -46,11 +46,6 @@ public:
     QVersitContactConverter();
     ~QVersitContactConverter();
 
-    enum Error {
-        NoError = 0
-    };
-
-    Error error() const;
     QVersitDocument convertContact(const QContact& contact);
     
 private:

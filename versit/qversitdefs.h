@@ -33,9 +33,8 @@
 
 
 
-#ifndef QVERSITDEFS_H_
-#define QVERSITDEFS_H_
-
+#ifndef QVERSITDEFS_H
+#define QVERSITDEFS_H
 
 // vCard 2.1 constants.
 
@@ -48,25 +47,21 @@ const char versitAddressId[] = "ADR";
 const char versitUrlId[] = "URL";
 const char versitRevId[] = "REV";
 const char versitUidId[] = "UID";
-const char versitType[] = "TYPE";
 const char versitOrganizationId[] = "ORG";
 const char versitRevisionId[] = "REV";
 const char versitBirthdayId[] = "BDAY";
 const char versitNoteId[] = "NOTE";
 const char versitGeoId[] = "GEO";
 
-
-// Contexts:
+// Contexts
 const char versitContextWorkId[] = "WORK";
 const char versitContextHomeId[] = "HOME";
 
-// SubTypes for Addresses
+// Subtypes
 const char versitDomesticId[] = "DOM";
 const char versitInternationalId[] = "INTL";
 const char versitPostalId[] = "POSTAL";
 const char versitParcelId[] = "PARCEL";
-
-// SubTypes for Telephone
 const char versitVoiceId[] = "VOICE";
 const char versitCellId[] = "CELL";
 const char versitModemId[] = "MODEM";
@@ -76,16 +71,10 @@ const char versitFaxId[] = "FAX";
 const char versitBbsId[] = "BBS";
 const char versitPagerId[] = "PAGER";
 
-
-//SubTypes for the URL
-const char versithomePageId[] = "HOMEPAGE";
-const char versitfavoriteIDId[] = "FAVOURITE";
-
-
-// Value separator
-const char versitValueSeparator[] = ",";
-
 // ISO-8601 basic format datetime spec
 const char versitTimeSpecIso8601Basic[] = "yyyyMMddThhmmss";
 
-#endif /* QVERSITDEFS_H_ */
+// TYPE parameter name
+const char versitType[] = "TYPE";
+
+#endif // QVERSITDEFS_H

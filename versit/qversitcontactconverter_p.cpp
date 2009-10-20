@@ -49,51 +49,69 @@
 #include <qcontactgeolocation.h>
 
 /*!
- * Constructs a new contact converter
+ * Constructor.
  */
 QVersitContactConverterPrivate::QVersitContactConverterPrivate()
-    : mError(QVersitContactConverter::NoError)
 {                
-    // Field mappings
-    mMappingTable.insert(QContactName::DefinitionName,QString::fromAscii(versitNameId));
-    mMappingTable.insert(QContactEmailAddress::DefinitionName,QString::fromAscii(versitEmailId));  
-    mMappingTable.insert(QContactPhoneNumber::DefinitionName,QString::fromAscii(versitPhoneId));
-    mMappingTable.insert(QContactAddress::DefinitionName,QString::fromAscii(versitAddressId));
-    mMappingTable.insert(QContactUrl::DefinitionName,QString::fromAscii(versitUrlId));
-    mMappingTable.insert(QContactGuid::DefinitionName,QString::fromAscii(versitUidId));
-    mMappingTable.insert(QContactOrganization::DefinitionName,QString::fromAscii(versitOrganizationId));
-    mMappingTable.insert(QContactTimestamp::DefinitionName,QString::fromAscii(versitRevId));
-    mMappingTable.insert(QContactBirthday::DefinitionName,QString::fromAscii(versitBirthdayId));
-    mMappingTable.insert(QContactNote::DefinitionName,QString::fromAscii(versitNoteId));
-    mMappingTable.insert(QContactGeolocation::DefinitionName,QString::fromAscii(versitGeoId));
+    // Field names
+    mMappings.insert(
+        QContactName::DefinitionName,QString::fromAscii(versitNameId));
+    mMappings.insert(
+        QContactEmailAddress::DefinitionName,QString::fromAscii(versitEmailId));  
+    mMappings.insert(
+        QContactPhoneNumber::DefinitionName,QString::fromAscii(versitPhoneId));
+    mMappings.insert(
+        QContactAddress::DefinitionName,QString::fromAscii(versitAddressId));
+    mMappings.insert(
+        QContactUrl::DefinitionName,QString::fromAscii(versitUrlId));
+    mMappings.insert(
+        QContactGuid::DefinitionName,QString::fromAscii(versitUidId));
+    mMappings.insert(
+        QContactOrganization::DefinitionName,QString::fromAscii(versitOrganizationId));
+    mMappings.insert(
+        QContactTimestamp::DefinitionName,QString::fromAscii(versitRevId));
+    mMappings.insert(
+        QContactBirthday::DefinitionName,QString::fromAscii(versitBirthdayId));
+    mMappings.insert(
+        QContactNote::DefinitionName,QString::fromAscii(versitNoteId));
+    mMappings.insert(
+        QContactGeolocation::DefinitionName,QString::fromAscii(versitGeoId));
     
-    // Context mappings
-    mMappingTable.insert(QContactDetail::ContextWork,QString::fromAscii(versitContextWorkId));
-    mMappingTable.insert(QContactDetail::ContextHome,QString::fromAscii(versitContextHomeId));
+    // Contexts
+    mMappings.insert(
+        QContactDetail::ContextWork,QString::fromAscii(versitContextWorkId));
+    mMappings.insert(
+        QContactDetail::ContextHome,QString::fromAscii(versitContextHomeId));
     
-    /* Sub types for ADR */
-    mMappingTable.insert(QContactAddress::SubTypeDomestic,QString::fromAscii(versitDomesticId));
-    mMappingTable.insert(QContactAddress::SubTypeInternational,QString::fromAscii(versitInternationalId));
-    mMappingTable.insert(QContactAddress::SubTypePostal,QString::fromAscii(versitPostalId));
-    mMappingTable.insert(QContactAddress::SubTypeParcel,QString::fromAscii(versitParcelId));
-    
-    /* Sub types for TEL */
-    mMappingTable.insert(QContactPhoneNumber::SubTypeVoice,QString::fromAscii(versitVoiceId));
-    mMappingTable.insert(QContactPhoneNumber::SubTypeMobile,QString::fromAscii(versitCellId));
-    mMappingTable.insert(QContactPhoneNumber::SubTypeModem,QString::fromAscii(versitModemId));
-    mMappingTable.insert(QContactPhoneNumber::SubTypeCar,QString::fromAscii(versitCarId));
-    mMappingTable.insert(QContactPhoneNumber::SubTypeVideo,QString::fromAscii(versitVideoId));
-    
-    /* Sub types for URL */
-    mMappingTable.insert(QContactUrl::SubTypeHomePage, QString::fromAscii(versithomePageId));
-    mMappingTable.insert(QContactUrl::SubTypeFavourite, QString::fromAscii(versitfavoriteIDId));
-    mMappingTable.insert(QContactPhoneNumber::SubTypeFacsimile,QString::fromAscii(versitFaxId));
-    mMappingTable.insert(QContactPhoneNumber::SubTypeBulletinBoardSystem,QString::fromAscii(versitBbsId));
-    mMappingTable.insert(QContactPhoneNumber::SubTypePager,QString::fromAscii(versitPagerId));        
+    // Subtypes
+    mMappings.insert(
+        QContactAddress::SubTypeDomestic,QString::fromAscii(versitDomesticId));
+    mMappings.insert(
+        QContactAddress::SubTypeInternational,QString::fromAscii(versitInternationalId));
+    mMappings.insert(
+        QContactAddress::SubTypePostal,QString::fromAscii(versitPostalId));
+    mMappings.insert(
+        QContactAddress::SubTypeParcel,QString::fromAscii(versitParcelId));
+    mMappings.insert(
+        QContactPhoneNumber::SubTypeVoice,QString::fromAscii(versitVoiceId));
+    mMappings.insert(
+        QContactPhoneNumber::SubTypeMobile,QString::fromAscii(versitCellId));
+    mMappings.insert(
+        QContactPhoneNumber::SubTypeModem,QString::fromAscii(versitModemId));
+    mMappings.insert(
+        QContactPhoneNumber::SubTypeCar,QString::fromAscii(versitCarId));
+    mMappings.insert(
+        QContactPhoneNumber::SubTypeVideo,QString::fromAscii(versitVideoId));
+    mMappings.insert(
+        QContactPhoneNumber::SubTypeFacsimile,QString::fromAscii(versitFaxId));
+    mMappings.insert(
+        QContactPhoneNumber::SubTypeBulletinBoardSystem,QString::fromAscii(versitBbsId));
+    mMappings.insert(
+        QContactPhoneNumber::SubTypePager,QString::fromAscii(versitPagerId));            
 }
 
 /*!
- * Frees any memory in use by this contact converter
+ * Destructor.
  */
 QVersitContactConverterPrivate::~QVersitContactConverterPrivate()
 {
@@ -107,7 +125,7 @@ void QVersitContactConverterPrivate::encodeFieldInfo(
     const QContactDetail& detail)
 {
     QVersitProperty property;
-    property.setName(mMappingTable.value(detail.definitionName()));
+    property.setName(mMappings.value(detail.definitionName()));
     
     if (detail.definitionName() == QContactName::DefinitionName) {
         encodeName(property, detail);
@@ -214,8 +232,8 @@ void QVersitContactConverterPrivate::encodeUrl(
 {
     QContactUrl contactUrl = static_cast<QContactUrl>(detail);
     encodeParameters(property, contactUrl.contexts());
-    QStringList subTypes(contactUrl.subType());
-    encodeParameters(property, subTypes);
+    // The vCard specifications do not define any TYPEs for URL property.
+    // No need to try to convert the subtypes to TYPEs.
     property.setValue(contactUrl.url().toAscii());
 }
 
@@ -293,7 +311,7 @@ void QVersitContactConverterPrivate::encodeParameters(
     const QStringList& paramList)
 {
     foreach (QString type, paramList) {
-        QString parameterValue = mMappingTable.value(type);
+        QString parameterValue = mMappings.value(type);
         if (parameterValue.size())
             property.addParameter(QString::fromAscii(versitType),parameterValue);
     }

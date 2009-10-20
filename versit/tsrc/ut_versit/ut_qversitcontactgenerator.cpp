@@ -362,42 +362,6 @@ void UT_QVersitContactGenerator::testTimeStamp()
     QCOMPARE(timeStamp.lastModified().timeSpec(),Qt::UTC);
 }
 
-void UT_QVersitContactGenerator::testExtractContexts()
-{
-    QVersitProperty property;
-    
-    // Empty list
-    QStringList result = mGeneratorPrivate->extractContexts(property);
-    QVERIFY(result.isEmpty());
-    
-    // HOME
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
-    result = mGeneratorPrivate->extractContexts(property);
-    QCOMPARE(result.count(),1);
-    QVERIFY(result.contains(QContactDetail::ContextHome));
-    
-    // WORK
-    property.removeParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("WORK"));
-    result = mGeneratorPrivate->extractContexts(property);
-    QCOMPARE(result.count(),1);
-    QVERIFY(result.contains(QContactDetail::ContextWork));    
-    
-    // WORK and HOME
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
-    result = mGeneratorPrivate->extractContexts(property);
-    QCOMPARE(result.count(),2);
-    QVERIFY(result.contains(QContactDetail::ContextWork)); 
-    QVERIFY(result.contains(QContactDetail::ContextHome));
-    
-    // HOME and WORK and other items
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("OTHER"));
-    result = mGeneratorPrivate->extractContexts(property);
-    QCOMPARE(result.count(),2);
-    QVERIFY(result.contains(QContactDetail::ContextWork)); 
-    QVERIFY(result.contains(QContactDetail::ContextHome));
-}
-
 QVersitDocument UT_QVersitContactGenerator::createDocumentWithProperty(
     const QVersitProperty& property)
 {

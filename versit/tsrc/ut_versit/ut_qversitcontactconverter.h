@@ -47,9 +47,8 @@ class UT_QVersitContactConvertert : public QObject
 private slots:
     void init();
     void cleanup();
-    void error();
-    void convertContact();
-
+    
+    void testConvertContact();
     void testEncodeName();
     void testEncodePhoneNumber();
     void testEncodeEmailAddress();
