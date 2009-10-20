@@ -179,3 +179,22 @@ QList<int> AudioEncoderControl::supportedSampleSizes() const
     return sizes;
 }
 
+QAudioEncoderSettings AudioEncoderControl::audioSettings() const
+{
+    QAudioEncoderSettings settings;
+    settings.setCodec(audioCodec());
+    settings.setBitrate(bitrate());
+    settings.setQuality(quality());
+    settings.setSampleRate(sampleRate());
+    settings.setChannels(channels());
+    return settings;
+}
+
+void AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &settings)
+{
+    setAudioCodec(settings.codec());
+    setBitrate(settings.bitrate());
+    setQuality(settings.quality());
+    setSampleRate(settings.sampleRate());
+    setChannels(settings.channels());
+}

@@ -97,10 +97,9 @@ void QMediaPluginLoader::load()
                 }
 
                 continue;
-            }
-            else
+            } else {
                 qWarning() << "QMediaPluginLoader: Failed to load plugin: " << pluginLib << loader.errorString();
-
+            }
             delete o;
             loader.unload();
         }
