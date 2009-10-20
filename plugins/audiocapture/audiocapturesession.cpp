@@ -43,7 +43,7 @@
 #include <QtCore/qurl.h>
 #include <QtMultimedia/qaudiodeviceinfo.h>
 
-#include <multimedia/qmediarecorder.h>
+#include <qmediarecorder.h>
 
 #include "audiocapturesession.h"
 

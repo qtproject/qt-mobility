@@ -42,7 +42,7 @@
 #ifndef V4LVIDEODEVICECONTROL_H
 #define V4LVIDEODEVICECONTROL_H
 
-#include <multimedia/qvideodevicecontrol.h>
+#include <qvideodevicecontrol.h>
 
 class V4LCameraSession;
 

@@ -43,7 +43,7 @@
 #ifndef V4LSERVICEPLUGIN_H
 #define V4LSERVICEPLUGIN_H
 
-#include <multimedia/qmediaserviceproviderplugin.h>
+#include <qmediaserviceproviderplugin.h>
 
 class V4LServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
 {

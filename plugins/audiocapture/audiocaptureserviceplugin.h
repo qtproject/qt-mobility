@@ -43,7 +43,7 @@
 #ifndef AUDIOCAPTURESERVICEPLUGIN_H
 #define AUDIOCAPTURESERVICEPLUGIN_H
 
-#include <multimedia/qmediaserviceproviderplugin.h>
+#include <qmediaserviceproviderplugin.h>
 
 class AudioCaptureServicePlugin : public QMediaServiceProviderPlugin
 {

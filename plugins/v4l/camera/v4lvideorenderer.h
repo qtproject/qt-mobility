@@ -1,7 +1,7 @@
 #ifndef V4LVIDEORENDERER_H
 #define V4LVIDEORENDERER_H
 
-#include <multimedia/qvideorenderercontrol.h>
+#include <qvideorenderercontrol.h>
 #include "v4lcamerasession.h"
 
 class CameraFormatConverter;

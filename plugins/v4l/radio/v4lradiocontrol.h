@@ -46,7 +46,7 @@
 #include <QtCore/qtimer.h>
 #include <QtCore/qdatetime.h>
 
-#include <multimedia/qradiotunercontrol.h>
+#include <qradiotunercontrol.h>
 
 #include <linux/types.h>
 #include <linux/videodev2.h>

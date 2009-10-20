@@ -42,7 +42,7 @@
 #ifndef V4LVIDEOOUTPUTCONTROL_H
 #define V4LVIDEOOUTPUTCONTROL_H
 
-#include <multimedia/qvideooutputcontrol.h>
+#include <qvideooutputcontrol.h>
 
 class V4LVideoOutputControl : public QVideoOutputControl
 {

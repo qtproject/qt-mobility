@@ -44,7 +44,7 @@
 
 #include <QtCore/qobject.h>
 
-#include <multimedia/qmediaservice.h>
+#include <qmediaservice.h>
 
 class V4LCameraControl;
 class V4LCameraSession;

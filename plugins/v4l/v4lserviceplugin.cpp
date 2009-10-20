@@ -47,7 +47,7 @@
 #include "v4lcameraservice.h"
 #include "v4lradioservice.h"
 
-#include <multimedia/qmediaserviceprovider.h>
+#include <qmediaserviceprovider.h>
 
 
 QStringList V4LServicePlugin::keys() const

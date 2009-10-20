@@ -44,7 +44,7 @@
 
 #include <QStringList>
 
-#include <multimedia/qaudiodevicecontrol.h>
+#include <qaudiodevicecontrol.h>
 
 class AudioCaptureSession;
 

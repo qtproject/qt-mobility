@@ -1,7 +1,8 @@
 TEMPLATE = app
 CONFIG += example
 
-include (../../common.pri)
+INCLUDEPATH += ../../multimedia ../../multimedia/endpoints
+include(../examples.pri)
 
 qtAddLibrary(QtMedia)
 

@@ -44,7 +44,7 @@
 
 #include <QtGui>
 
-#include <multimedia/qradiotuner.h>
+#include <qradiotuner.h>
 
 class QLabel;
 class QPushButton;

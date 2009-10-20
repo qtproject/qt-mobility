@@ -47,7 +47,7 @@
 #include <QTime>
 #include <QUrl>
 
-#include <multimedia/qcamera.h>
+#include <qcamera.h>
 #include <QtMultimedia/qvideoframe.h>
 #include <QtMultimedia/qabstractvideosurface.h>
 
