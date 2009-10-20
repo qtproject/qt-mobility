@@ -138,7 +138,7 @@ void S60VideoPlayerSession::load(const QUrl &url)
 
 qint64 S60VideoPlayerSession::duration() const
 {
-    if (m_player)
+    if (m_player) 
         //m_duration = m_player->DurationL().Int64(); 
     return m_duration;
 }
@@ -201,7 +201,7 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
     const TMdaPriorityPreference preference = EMdaPriorityPreferenceNone;
     
     getNativeHandles();   
-    m_clipRect = m_windowRect;
+    //m_clipRect = m_windowRect;
       
     TRAPD(err, 
         m_player = CVideoPlayerUtility::NewL(*this, 
@@ -217,12 +217,17 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
 
 void S60VideoPlayerSession::getNativeHandles()
 {
-    qDebug() << "winId: " << m_testWidget->videoWidget()->winId();
+    qDebug() << "winId: " << m_testWidget->videoWidget()->effectiveWinId();
     //m_renderer->winId();
 
     //m_testWidget = qobject_cast<S60VideoWidgetControl*>(videoOutput);
     //QWidget* jep = new QWidget();
+   // CCoeControl* const control =  m_testWidget->videoWidget()->winId();
     CCoeControl* const control =  m_testWidget->videoWidget()->winId();
+    control->MakeVisible(ETrue);
+    control->SetSize(TSize(240,245));
+    control->SetPosition(TPoint(0,0));
+    control->ActivateL();
     qDebug() << control->IsVisible();
 
     CCoeEnv* const coeEnv = control->ControlEnv();
@@ -233,6 +238,7 @@ void S60VideoPlayerSession::getNativeHandles()
     m_windowRect = TRect(
         control->DrawableWindow()->AbsPosition(),
         control->DrawableWindow()->Size());
+    m_clipRect = m_windowRect;
     
     qDebug() << "h: " << m_clipRect.Height() << "w: " << m_clipRect.Width();     
 }
@@ -252,6 +258,8 @@ void S60VideoPlayerSession::play()
     if (m_state == QMediaPlayer::PausedState)
     {
         m_player->Play();
+        m_state = QMediaPlayer::PlayingState;
+        emit stateChanged(QMediaPlayer::PlayingState); 
     }
     else
     {
@@ -273,7 +281,6 @@ void S60VideoPlayerSession::pause()
     m_player->PauseL();
     m_state = QMediaPlayer::PausedState;
     emit stateChanged(QMediaPlayer::PausedState);
-
 }
 
 void S60VideoPlayerSession::stop()
@@ -323,9 +330,10 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 {
     qDebug() << "Preparing to play with error: " << aError;
     m_player->Prepare();
-    getNativeHandles();
+   // m_player->StartDirectScreenAccessL();
+    //getNativeHandles();
     
-    TRAPD(err,
+/*    TRAPD(err,
           m_player->SetDisplayWindowL
           (
               *m_wsSession, *m_screenDevice,
@@ -333,7 +341,7 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
               m_windowRect, m_clipRect
           )
          );
-
+*/
 }
 
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
@@ -352,6 +360,7 @@ void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
 void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
 {
     m_state = QMediaPlayer::StoppedState;
+    emit stateChanged(QMediaPlayer::StoppedState); 
     qDebug() << "Play completed with error: " << aError;
 }
 
