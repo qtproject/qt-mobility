@@ -35,10 +35,9 @@
 #define QVERSITCONTACTGENERATOR_H
 
 #include <qtversitglobal.h>
-#include <qversitdocument.h>
 #include <qcontact.h>
 
-
+class QVersitDocument;
 class QVersitContactGeneratorPrivate;
 
 class QTVERSIT_EXPORT QVersitContactGenerator
@@ -46,27 +45,12 @@ class QTVERSIT_EXPORT QVersitContactGenerator
 public:
     QVersitContactGenerator();
     ~QVersitContactGenerator();
-    // Generates a contact from a QVersitDocument
+    
     QContact generateContact(const QVersitDocument& versitDocument);
     
 private:
-    
-    QContactDetail* createName(const QVersitProperty& property) const;
-    QContactDetail* createPhone(const QVersitProperty& property) const;
-    QContactDetail* createAddress(const QVersitProperty& property) const;
-    QContactDetail* createOrganization(const QVersitProperty& property) const;
-    QContactDetail* createEmail(const QVersitProperty& property) const;
-    QContactDetail* createUrl(const QVersitProperty& property) const;
-    QContactDetail* createUid(const QVersitProperty& property) const;
-    QContactDetail* createTimeStamp(const QVersitProperty& property) const;
-
-    QStringList extractContexts(const QVersitProperty& property) const;
-    QString takeFirst(QList<QByteArray>& list) const;
-    
-private:
     QVersitContactGeneratorPrivate* d;
-    friend class UT_QVersitContactGenerator;
 };
 
-#endif
+#endif // QVERSITCONTACTGENERATOR_H
 

@@ -16,13 +16,15 @@ HEADERS += testresultxmlparser.h \
     ../../qversitdocument_p.h \
     ut_qversitdocument.h \
     ../../qversitcontactgenerator.h \
+    ../../qversitcontactgenerator_p.h \
     ut_qversitcontactgenerator.h \
     ut_versitutils.h \
     ../../qversitreader.h \
     ut_qversitreader.h \
     ../../qversitwriter.h \
     ut_qversitwriter.h \
-        ../../qversitcontactconverter.h \
+    ../../qversitcontactconverter.h \
+    ../../qversitcontactconverter_p.h \
     ut_qversitcontactconverter.h 
 
 
@@ -33,6 +35,7 @@ SOURCES += main.cpp \
     ../../qversitdocument.cpp \
     ut_qversitdocument.cpp \
     ../../qversitcontactgenerator.cpp \
+    ../../qversitcontactgenerator_p.cpp \
     ut_qversitcontactgenerator.cpp \
     ../../versitutils.cpp \
     ut_versitutils.cpp \
@@ -42,7 +45,8 @@ SOURCES += main.cpp \
     ../../qversitwriter.cpp \
     ../../qversitwriter_p.cpp \
     ut_qversitwriter.cpp \
-        ../../qversitcontactconverter.cpp \
+    ../../qversitcontactconverter.cpp \
+    ../../qversitcontactconverter_p.cpp \
     ut_qversitcontactconverter.cpp
 
 qtAddLibrary(QtContacts)

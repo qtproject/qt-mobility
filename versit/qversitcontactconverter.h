@@ -37,11 +37,8 @@
 #include <qtversitglobal.h>
 #include <qversitdocument.h>
 #include <qcontact.h>
-#include <QStringList>
-#include <QHash>
 
 class QVersitContactConverterPrivate;
-
 
 class QTVERSIT_EXPORT QVersitContactConverter
 {
@@ -54,34 +51,10 @@ public:
     };
 
     Error error() const;
-
-    // convert contact into a versit document.
     QVersitDocument convertContact(const QContact& contact);
     
-
-private: //Methods
-
-    void encodeParameters(QVersitProperty& property, const QStringList& paramList);
-    void encodeFieldInfo(QVersitDocument& versitDocument, const QContactDetail& detail) ;
-    void encodeName(QVersitDocument& versitDocument, const QContactDetail& detail );
-    void encodePhoneNumber(QVersitDocument& versitDocument, const QContactDetail& detail );
-    void encodeEmailAddress(QVersitDocument& versitDocument, const QContactDetail& detail );
-    void encodeStreetAddress(QVersitDocument& versitDocument, const QContactDetail& detail );
-    void encodeUrl(QVersitDocument& versitDocument, const QContactDetail& detail );
-    void encodeUid(QVersitDocument& versitDocument, const QContactDetail& detail );
-    void encodeRev(QVersitDocument& versitDocument, const QContactDetail& detail );
-    void encodeBirthDay(QVersitDocument& versitDocument, const QContactDetail& detail );
-    void encodeNote(QVersitDocument& versitDocument, const QContactDetail& detail );
-    void encodeGeoLocation(QVersitDocument& versitDocument, const QContactDetail& detail );
-
-    const QHash<QString,QString>& getMappingTable();
-
-    
 private:
-    QVersitContactConverterPrivate* d;
-    
-private:
-    friend class UT_QVersitContactConvertert;    
+    QVersitContactConverterPrivate* d;    
 };
 
-#endif
+#endif // QVERSITCONTACTCONVERTER_H

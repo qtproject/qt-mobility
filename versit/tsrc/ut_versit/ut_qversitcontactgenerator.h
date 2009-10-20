@@ -38,6 +38,7 @@
 #include <qversitdocument.h>
 
 class QVersitContactGenerator;
+class QVersitContactGeneratorPrivate;
 
 class UT_QVersitContactGenerator : public QObject
 {
@@ -64,6 +65,7 @@ private:
 
 private:
     QVersitContactGenerator* mGenerator;
+    QVersitContactGeneratorPrivate* mGeneratorPrivate;
 };
 
 #endif // UT_QVERSITCONTACTGENERATOR_H
