@@ -74,7 +74,7 @@ private:
     Maemo::IAPConf *iapconf;
     Maemo::IAPConf *iapconf2;
     Maemo::IAPConf *gprsiap;
-#define MAX_IAPS 50
+#define MAX_IAPS 10
     Maemo::IAPConf *iaps[MAX_IAPS];
     QProcess *icd_stub;
 #endif
