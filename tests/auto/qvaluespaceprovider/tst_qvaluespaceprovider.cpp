@@ -493,11 +493,8 @@ void WriteThread::run()
     const QString key("key%1");
     const QString value("value%1");
 
-    for (unsigned int i = 0; i < count; ++i) {
+    for (unsigned int i = 0; i < count; ++i)
         provider->setAttribute(key.arg(i), value.arg(i));
-
-        usleep(100);
-    }
 
     provider->sync();
 }
@@ -512,8 +509,19 @@ void tst_QValueSpaceProvider::threads_data()
     QTest::newRow("1 thread, 5000 items, sequential") << uint(1) << uint(5000) << true;
     QTest::newRow("1 thread, 8000 items, sequential") << uint(1) << uint(8000) << true;
     QTest::newRow("2 threads, 10 items, sequential") << uint(2) << uint(10) << true;
+    QTest::newRow("2 threads, 4000 items, sequential") << uint(2) << uint(4000) << true;
+    QTest::newRow("4 threads, 2000 items, sequential") << uint(4) << uint(2000) << true;
     QTest::newRow("10 threads, 800 items, sequential") << uint(10) << uint(800) << true;
     QTest::newRow("100 threads, 80 items, sequential") << uint(100) << uint(80) << true;
+
+    QTest::newRow("1 thread, 10 items") << uint(1) << uint(10) << false;
+    QTest::newRow("1 thread, 5000 items") << uint(1) << uint(5000) << false;
+    QTest::newRow("1 thread, 8000 items") << uint(1) << uint(8000) << false;
+    QTest::newRow("2 threads, 10 items") << uint(2) << uint(10) << false;
+    QTest::newRow("2 threads, 4000 items") << uint(2) << uint(4000) << false;
+    QTest::newRow("4 threads, 2000 items") << uint(4) << uint(2000) << false;
+    QTest::newRow("10 threads, 800 items") << uint(10) << uint(800) << false;
+    QTest::newRow("100 threads, 80 items") << uint(100) << uint(80) << false;
 }
 
 void tst_QValueSpaceProvider::threads()
