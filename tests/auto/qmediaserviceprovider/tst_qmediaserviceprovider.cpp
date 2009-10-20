@@ -66,7 +66,7 @@ class tst_QMediaServiceProvider : public QObject
 private slots:
     void testDefaultProviderAvailable();
     void testObtainService();
-    void testCanPlay();
+    void testHasSupport();
     void testDevices();
     void testProviderHints();
 };
@@ -92,10 +92,10 @@ void tst_QMediaServiceProvider::testObtainService()
     provider->releaseService(service);
 }
 
-void tst_QMediaServiceProvider::testCanPlay()
+void tst_QMediaServiceProvider::testHasSupport()
 {
     MockMediaServiceProvider mockProvider;
-    QCOMPARE(mockProvider.canPlay(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER), "video/ogv", QStringList()),
+    QCOMPARE(mockProvider.hasSupport(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER), "video/ogv", QStringList()),
              QtMedia::MaybeSupported);
 
     QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider();
@@ -103,10 +103,10 @@ void tst_QMediaServiceProvider::testCanPlay()
     if (provider == 0)
         QSKIP("No default provider", SkipSingle);
 
-    QCOMPARE(provider->canPlay(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER), "video/ogv", QStringList()),
+    QCOMPARE(provider->hasSupport(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER), "video/ogv", QStringList()),
              QtMedia::MaybeSupported);
 
-    QCOMPARE(provider->canPlay(QByteArray("non existing service"), "video/ogv", QStringList()),
+    QCOMPARE(provider->hasSupport(QByteArray("non existing service"), "video/ogv", QStringList()),
              QtMedia::NotSupported);
 }
 

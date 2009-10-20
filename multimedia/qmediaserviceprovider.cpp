@@ -275,7 +275,7 @@ public:
                                 qobject_cast<QMediaServiceSupportedFormatsInterface*>(currentPlugin);
 
                         if (iface)
-                            currentEstimate = iface->canPlay(hint.mimeType(), hint.codecs());
+                            currentEstimate = iface->hasSupport(hint.mimeType(), hint.codecs());
 
                         if (currentEstimate > estimate) {
                             estimate = currentEstimate;
@@ -312,7 +312,7 @@ public:
         }
     }
 
-    QtMedia::SupportEstimate canPlay(const QByteArray &serviceType,
+    QtMedia::SupportEstimate hasSupport(const QByteArray &serviceType,
                                      const QString &mimeType,
                                      const QStringList& codecs,
                                      int flags) const
@@ -340,7 +340,7 @@ public:
             }
 
             if (iface)
-                supportEstimate = qMax(supportEstimate, iface->canPlay(mimeType, codecs));
+                supportEstimate = qMax(supportEstimate, iface->hasSupport(mimeType, codecs));
             else
                 allServicesProvideInterface = false;
         }
@@ -388,13 +388,13 @@ public:
 Q_GLOBAL_STATIC(QPluginServiceProvider, pluginProvider);
 
 /*!
-    \fn QtMedia::SupportEstimate QMediaServiceProvider::canPlay(const QByteArray &type, const QString &mimeType, const QStringList& codecs, int flags) const
+    \fn QtMedia::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &type, const QString &mimeType, const QStringList& codecs, int flags) const
 
     Returns how confident the available service is that it can play media resources of the given mime \a type
     with content encoded with \a codecs. If multiple services with the same \a serviceType are
     available, the result from the most confident one is returned.
 */
-QtMedia::SupportEstimate QMediaServiceProvider::canPlay(const QByteArray &serviceType,
+QtMedia::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &serviceType,
                                                         const QString &mimeType,
                                                         const QStringList& codecs,
                                                         int flags) const

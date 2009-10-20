@@ -63,7 +63,7 @@ Q_DECLARE_INTERFACE(QMediaServiceProviderFactoryInterface, QMediaServiceProvider
 
 struct Q_MEDIA_EXPORT QMediaServiceSupportedFormatsInterface
 {
-    virtual QtMedia::SupportEstimate canPlay(const QString &mimeType, const QStringList& codecs) const = 0;
+    virtual QtMedia::SupportEstimate hasSupport(const QString &mimeType, const QStringList& codecs) const = 0;
 };
 #define QMediaServiceSupportedFormatsInterface_iid \
     "com.nokia.Qt.QMediaServiceSupportedFormatsInterface/1.0"

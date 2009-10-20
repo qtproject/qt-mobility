@@ -166,7 +166,7 @@ void QMediaPlayerPrivate::_q_error(int error, const QString &errorString)
 
 void QMediaPlayerPrivate::_q_updateMedia(const QMediaContent &media)
 {
-    if (control != 0) {       
+    if (control != 0) {
         const QMediaPlayer::State currentState = state;
 
         filterStates = true;
@@ -537,11 +537,11 @@ void QMediaPlayer::bind(QObject *obj)
     }
 }
 
-QtMedia::SupportEstimate QMediaPlayer::canPlay(const QString &mimeType,
+QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
                                                const QStringList& codecs,
                                                Flags flags)
 {
-    return QMediaServiceProvider::defaultServiceProvider()->canPlay(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER),
+    return QMediaServiceProvider::defaultServiceProvider()->hasSupport(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER),
                                                                     mimeType,
                                                                     codecs,
                                                                     flags);
