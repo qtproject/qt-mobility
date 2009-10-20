@@ -58,6 +58,9 @@ private slots: // Tests
     void testOrganization();
     void testTimeStamp();
     void testAnniversary();
+    void testBirthday();
+    void testGender();
+    void testNickname();
 
 private: 
     

@@ -52,7 +52,10 @@ const char versitRevisionId[] = "REV";
 const char versitBirthdayId[] = "BDAY";
 const char versitNoteId[] = "NOTE";
 const char versitGeoId[] = "GEO";
+const char versitNicknameId[] = "NICKNAME";
 const char versitAnniversaryId[] = "X-ANNIVERSARY";
+const char versitGenderId[] = "X-GENDER";
+
 
 // Contexts
 const char versitContextWorkId[] = "WORK";

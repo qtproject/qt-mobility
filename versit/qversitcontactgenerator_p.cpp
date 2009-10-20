@@ -46,6 +46,9 @@
 #include <qcontactguid.h>
 #include <qcontacttimestamp.h>
 #include <qcontactanniversary.h>
+#include <qcontactbirthday.h>
+#include <qcontactgender.h>
+#include <qcontactnickname.h>
 #include <QHash>
 
 /*!
@@ -125,6 +128,15 @@ QContactDetail* QVersitContactGeneratorPrivate::createContactDetail(
     }
     else if (property.name() == QString::fromAscii(versitAnniversaryId)) {
          detail = createAnniversary(property);
+    }
+    else if (property.name() == QString::fromAscii(versitBirthdayId)) {
+        detail = createBirthday(property);
+    }
+    else if (property.name() == QString::fromAscii(versitGenderId)) {
+        detail = createGender(property);
+    }
+    else if (property.name() == QString::fromAscii(versitNicknameId)) {
+        detail = createNicknames(property);
     }
     else {
         // NOP
@@ -277,6 +289,48 @@ QContactDetail* QVersitContactGeneratorPrivate::createAnniversary(
                  : QDate::fromString(value,versitDateSpecIso8601Basic);
     anniversary->setOriginalDate(date);
     return anniversary;
+}
+
+/*!
+ * Creates a QContactBirthday from \a property
+ */
+QContactDetail* QVersitContactGeneratorPrivate::createBirthday(
+    const QVersitProperty& property) const
+{
+    QContactBirthday* bday = new QContactBirthday();
+    QString value(QString::fromAscii(property.value()));
+    QDate date = ( value.contains(QString::fromAscii("-")))
+                 ? QDate::fromString(value,Qt::ISODate)
+                 : QDate::fromString(value,versitDateSpecIso8601Basic);
+    bday->setDate(date);
+    return bday;
+}
+
+/*!
+ * Creates a QContactGender from \a property
+ */
+QContactDetail* QVersitContactGeneratorPrivate::createGender(
+    const QVersitProperty& property) const
+{
+    QContactGender* gender = new QContactGender();
+    gender->setGender(QString::fromAscii(property.value()));
+    return gender;
+}
+
+/*!
+ * Creates multiple QContactNickname from \a property
+ */
+QContactDetail* QVersitContactGeneratorPrivate::createNicknames(
+    const QVersitProperty& property) const
+{
+    QList<QContactDetail*> nickNames;
+    QList<QByteArray> values = property.value().split(',');
+    foreach(QByteArray value,values){
+        QContactNickname* nickName = new QContactNickname();
+        nickName->setNickname(QString::fromAscii(value));
+        nickNames.append(nickName);
+    }
+    return (nickNames.count() > 0) ?nickNames.at(0):new QContactNickname();
 }
 
 /*!

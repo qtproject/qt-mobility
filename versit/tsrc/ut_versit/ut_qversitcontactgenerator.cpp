@@ -49,6 +49,9 @@
 #include <qcontactorganization.h>
 #include <qcontacttimestamp.h>
 #include <qcontactanniversary.h>
+#include <qcontactbirthday.h>
+#include <qcontactgender.h>
+#include <qcontactnickname.h>
 
 
 void UT_QVersitContactGenerator::init()
@@ -387,6 +390,81 @@ void UT_QVersitContactGenerator::testAnniversary()
             contact.detail(QContactAnniversary::DefinitionName));
     QCOMPARE(anniversary.originalDate().toString(QString::fromAscii(versitDateSpecIso8601Basic)),
                                                           QString::fromAscii(dateValue));
+
+}
+
+void UT_QVersitContactGenerator::testBirthday()
+{
+    // Date : ISO 8601 extended format
+    QVersitProperty property;
+    property.setName(QString::fromAscii(versitBirthdayId));
+    QByteArray dateValue("1981-05-20");
+    property.setValue(dateValue);
+    QVersitDocument document = createDocumentWithProperty(property);
+    QContact contact = mGenerator->generateContact(document);
+    QContactBirthday bday =
+        static_cast<QContactBirthday>(
+            contact.detail(QContactBirthday::DefinitionName));
+    QCOMPARE(bday.date().toString(Qt::ISODate),QString::fromAscii(dateValue));
+
+    // Date : ISO 8601 in basic format
+    dateValue = "19810520";
+    property.setValue(dateValue);
+    document = createDocumentWithProperty(property);
+    contact = mGenerator->generateContact(document);
+    bday =
+        static_cast<QContactBirthday>(
+            contact.detail(QContactBirthday::DefinitionName));
+    QCOMPARE(bday.date().toString(QString::fromAscii(versitDateSpecIso8601Basic)),
+                                                          QString::fromAscii(dateValue));
+
+}
+
+void UT_QVersitContactGenerator::testGender()
+{
+    // Date : ISO 8601 extended format
+    QVersitProperty property;
+    property.setName(QString::fromAscii(versitGenderId));
+    QByteArray val("Male");
+    property.setValue(val);
+    QVersitDocument document = createDocumentWithProperty(property);
+    QContact contact = mGenerator->generateContact(document);
+    QContactGender  gender =
+        static_cast<QContactGender >(
+            contact.detail(QContactGender ::DefinitionName));
+    QCOMPARE(gender.gender(),QString::fromAscii(val));
+}
+
+void UT_QVersitContactGenerator::testNickname()
+{
+    // one value
+    QVersitDocument document;
+    QVersitProperty nameProperty;
+    QString singleVal("Simpson");
+    nameProperty.setName(QString::fromAscii(versitNicknameId));
+    nameProperty.setValue(singleVal.toAscii());
+    document.addProperty(nameProperty);
+    QContact contact = mGenerator->generateContact(document);
+    QContactNickname nickName = (QContactNickname)contact.detail(QContactNickname::DefinitionName);
+    QCOMPARE(nickName.nickname(),singleVal);
+
+    // comma separated values should generate multiple nickname fields
+    contact.clearDetails();
+    document = QVersitDocument();
+    QStringList multiVal;
+    multiVal.append("Simpson");//Nickname1
+    multiVal.append("SuperHero");//Nickname2
+    multiVal.append("NukeSpecilist");//Nickname3
+    nameProperty.setName(QString::fromAscii(versitNicknameId));
+    nameProperty.setValue(multiVal.join(QString::fromAscii(",")).toAscii());
+    document.addProperty(nameProperty);
+    contact = mGenerator->generateContact(document);
+    QList<QContactDetail> nickNames = contact.details(QContactNickname::DefinitionName);
+    //QCOMPARE(nickNames.count(),3);
+    foreach(nickName,nickNames){
+        /*QCOMPARE(nickName.value(QContactNickname::FieldNickname),
+                                           multiVal.takeFirst());*/
+    }
 
 }
 

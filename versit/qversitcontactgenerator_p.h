@@ -69,6 +69,9 @@ private:
     QContactDetail* createUid(const QVersitProperty& property) const;
     QContactDetail* createTimeStamp(const QVersitProperty& property) const;
     QContactDetail* createAnniversary(const QVersitProperty& property) const;
+    QContactDetail* createBirthday(const QVersitProperty& property) const;
+    QContactDetail* createGender(const QVersitProperty& property) const;
+    QContactDetail* createNicknames(const QVersitProperty& property) const;
     QStringList extractContexts(const QVersitProperty& property) const;
     QStringList extractSubTypes(const QVersitProperty& property) const;
     QString takeFirst(QList<QByteArray>& list) const;    
