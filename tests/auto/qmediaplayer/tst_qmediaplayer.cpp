@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -36,9 +43,12 @@
 #include <QtCore/qdebug.h>
 #include <QtCore/qbuffer.h>
 
-#include <multimedia/qmediaplayercontrol.h>
-#include <multimedia/qmediaservice.h>
 #include <multimedia/qmediaplayer.h>
+#include <multimedia/qmediaplayercontrol.h>
+#include <multimedia/qmediaplaylist.h>
+#include <multimedia/qmediaservice.h>
+#include <multimedia/qmediastreamscontrol.h>
+
 
 class AutoConnection
 {
@@ -96,11 +106,21 @@ public:
     void setPlaybackRate(qreal rate) { if (rate != _playbackRate) emit playbackRateChanged(_playbackRate = rate); }
 
     QMediaContent media() const { return _media; }
-    void setMedia(const QMediaContent &content, QIODevice *stream) { _media = content; _stream = stream; }
+    void setMedia(const QMediaContent &content, QIODevice *stream)
+    {
+        _stream = stream;
+        _media = content;
+        if (_state != QMediaPlayer::StoppedState) {
+            _mediaStatus = _media.isNull() ? QMediaPlayer::NoMedia : QMediaPlayer::LoadingMedia;
+            emit stateChanged(_state = QMediaPlayer::StoppedState);
+            emit mediaStatusChanged(_mediaStatus);
+        }
+        emit mediaChanged(_media = content);
+    }
     QIODevice *mediaStream() const { return _stream; }
 
     void play() { if (_isValid && !_media.isNull() && _state != QMediaPlayer::PlayingState) emit stateChanged(_state = QMediaPlayer::PlayingState); }
-    void pause() { if (_isValid && !_media.isNull() && _state != QMediaPlayer::PausedState && _state != QMediaPlayer::StoppedState) emit stateChanged(_state = QMediaPlayer::PausedState); }
+    void pause() { if (_isValid && !_media.isNull() && _state != QMediaPlayer::PausedState) emit stateChanged(_state = QMediaPlayer::PausedState); }
     void stop() { if (_state != QMediaPlayer::StoppedState) emit stateChanged(_state = QMediaPlayer::StoppedState); }
 
     QMediaPlayer::State _state;
@@ -121,6 +141,37 @@ public:
     QString _errorString;
 };
 
+class MockStreamsControl : public QMediaStreamsControl
+{
+public:
+    MockStreamsControl(QObject *parent = 0) : QMediaStreamsControl(parent) {}
+
+    int streamCount() { return _streams.count(); }
+    void setStreamCount(int count) { _streams.resize(count); }
+
+    StreamType streamType(int index) { return _streams.at(index).type; }
+    void setStreamType(int index, StreamType type) { _streams[index].type = type; }
+
+    QVariant metaData(int index, QtMedia::MetaData key) {
+        return _streams.at(index).metaData.value(key); }
+    void setMetaData(int index, QtMedia::MetaData key, const QVariant &value) {
+        _streams[index].metaData.insert(key, value); }
+
+    bool isActive(int index) { return _streams.at(index).active; }
+    void setActive(int index, bool state) { _streams[index].active = state; }
+
+private:
+    struct Stream
+    {
+        Stream() : type(UnknownStream), active(false) {}
+        StreamType type;
+        QMap<QtMedia::MetaData, QVariant> metaData;
+        bool active;
+    };
+
+    QVector<Stream> _streams;
+};
+
 class MockPlayerService : public QMediaService
 {
     Q_OBJECT
@@ -129,11 +180,13 @@ public:
     MockPlayerService():QMediaService(0)
     {
         mockControl = new MockPlayerControl;
+        mockStreamsControl = new MockStreamsControl;
     }
 
     ~MockPlayerService()
     {
         delete mockControl;
+        delete mockStreamsControl;
     }
 
     QMediaControl* control(const char *iid) const
@@ -144,7 +197,13 @@ public:
         return 0;
     }
 
-    void setState(QMediaPlayer::State state) { mockControl->_state = state; }
+    void setState(QMediaPlayer::State state) { emit mockControl->stateChanged(mockControl->_state = state); }
+    void setState(QMediaPlayer::State state, QMediaPlayer::MediaStatus status) {
+        mockControl->_state = state;
+        mockControl->_mediaStatus = status;
+        emit mockControl->mediaStatusChanged(status);
+        emit mockControl->stateChanged(state);
+    }
     void setMediaStatus(QMediaPlayer::MediaStatus status) { emit mockControl->mediaStatusChanged(mockControl->_mediaStatus = status); }
     void setIsValid(bool isValid) { mockControl->_isValid = isValid; }
     void setMedia(QMediaContent media) { mockControl->_media = media; }
@@ -179,6 +238,7 @@ public:
     }
 
     MockPlayerControl *mockControl;
+    MockStreamsControl *mockStreamsControl;
 };
 
 class MockProvider : public QMediaServiceProvider
@@ -225,6 +285,7 @@ private slots:
     void testPause();
     void testStop();
     void testMediaStatus();
+    void testPlaylist();
 
 private:
     MockProvider *mockProvider;
@@ -630,14 +691,8 @@ void tst_QMediaPlayer::testPause()
         QCOMPARE(spy.count(), 0);
     }
     else {
-        if (state == QMediaPlayer::StoppedState) {
-            QCOMPARE(player->state(), QMediaPlayer::StoppedState);
-            QCOMPARE(spy.count(), 0);
-        }
-        else {
-            QCOMPARE(player->state(), QMediaPlayer::PausedState);
-            QCOMPARE(spy.count(), state == QMediaPlayer::PausedState ? 0 : 1);
-        }
+        QCOMPARE(player->state(), QMediaPlayer::PausedState);
+        QCOMPARE(spy.count(), state == QMediaPlayer::PausedState ? 0 : 1);
     }
 }
 
@@ -737,6 +792,155 @@ void tst_QMediaPlayer::testMediaStatus()
     QCOMPARE(statusSpy.count(), 6);
     QCOMPARE(qvariant_cast<QMediaPlayer::MediaStatus>(statusSpy.last().value(0)),
              QMediaPlayer::EndOfMedia);
+}
+
+void tst_QMediaPlayer::testPlaylist()
+{
+    QMediaContent content0(QUrl(QLatin1String("test://audio/song1.mp3")));
+    QMediaContent content1(QUrl(QLatin1String("test://audio/song2.mp3")));
+    QMediaContent content2(QUrl(QLatin1String("test://video/movie1.mp4")));
+    QMediaContent content3(QUrl(QLatin1String("test://video/movie2.mp4")));
+    QMediaContent content4(QUrl(QLatin1String("test://image/photo.jpg")));
+
+    mockService->setIsValid(true);
+    mockService->setState(QMediaPlayer::StoppedState, QMediaPlayer::NoMedia);
+
+    QMediaPlaylist *playlist = new QMediaPlaylist(player);
+
+    QSignalSpy stateSpy(player, SIGNAL(stateChanged(QMediaPlayer::State)));
+    QSignalSpy mediaSpy(player, SIGNAL(mediaChanged(QMediaContent)));
+
+    // Test the player does nothing with an empty playlist attached.
+    player->play();
+    QCOMPARE(player->state(), QMediaPlayer::StoppedState);
+    QCOMPARE(player->media(), QMediaContent());
+    QCOMPARE(stateSpy.count(), 0);
+    QCOMPARE(mediaSpy.count(), 0);
+
+    playlist->appendItem(content0);
+    playlist->appendItem(content1);
+    playlist->appendItem(content2);
+    playlist->appendItem(content3);
+
+    // Test changing the playlist position, changes the current media, but not the playing state.
+    playlist->setCurrentPosition(1);
+    QCOMPARE(player->media(), content1);
+    QCOMPARE(player->state(), QMediaPlayer::StoppedState);
+    QCOMPARE(stateSpy.count(), 0);
+    QCOMPARE(mediaSpy.count(), 1);
+
+    // Test playing starts with the current media.
+    player->play();
+    QCOMPARE(player->media(), content1);
+    QCOMPARE(player->state(), QMediaPlayer::PlayingState);
+    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(mediaSpy.count(), 1);
+
+    // Test pausing doesn't change the current media.
+    player->pause();
+    QCOMPARE(player->media(), content1);
+    QCOMPARE(player->state(), QMediaPlayer::PausedState);
+    QCOMPARE(stateSpy.count(), 2);
+    QCOMPARE(mediaSpy.count(), 1);
+
+    // Test stopping doesn't change the current media.
+    player->stop();
+    QCOMPARE(player->media(), content1);
+    QCOMPARE(player->state(), QMediaPlayer::StoppedState);
+    QCOMPARE(stateSpy.count(), 3);
+    QCOMPARE(mediaSpy.count(), 1);
+
+    // Test when the player service reaches the end of the current media, the player moves onto
+    // the next item without stopping.
+    player->play();
+    QCOMPARE(player->media(), content1);
+    QCOMPARE(player->state(), QMediaPlayer::PlayingState);
+    QCOMPARE(stateSpy.count(), 4);
+    QCOMPARE(mediaSpy.count(), 1);
+
+    mockService->setState(QMediaPlayer::StoppedState, QMediaPlayer::EndOfMedia);
+    QCOMPARE(player->media(), content2);
+    QCOMPARE(player->state(), QMediaPlayer::PlayingState);
+    QCOMPARE(stateSpy.count(), 4);
+    QCOMPARE(mediaSpy.count(), 2);
+
+    // Test skipping the current media doesn't change the state.
+    playlist->next();
+    QCOMPARE(player->media(), content3);
+    QCOMPARE(player->state(), QMediaPlayer::PlayingState);
+    QCOMPARE(stateSpy.count(), 4);
+    QCOMPARE(mediaSpy.count(), 3);
+
+    // Test changing the current media while paused doesn't change the state.
+    player->pause();
+    mockService->setMediaStatus(QMediaPlayer::BufferedMedia);
+    QCOMPARE(player->media(), content3);
+    QCOMPARE(player->state(), QMediaPlayer::PausedState);
+    QCOMPARE(stateSpy.count(), 5);
+    QCOMPARE(mediaSpy.count(), 3);
+
+    playlist->previous();
+    QCOMPARE(player->media(), content2);
+    QCOMPARE(player->state(), QMediaPlayer::PausedState);
+    QCOMPARE(stateSpy.count(), 5);
+    QCOMPARE(mediaSpy.count(), 4);
+
+    // Test changing the current media while stopped doesn't change the state.
+    player->stop();
+    mockService->setMediaStatus(QMediaPlayer::LoadedMedia);
+    QCOMPARE(player->media(), content2);
+    QCOMPARE(player->state(), QMediaPlayer::StoppedState);
+    QCOMPARE(stateSpy.count(), 6);
+    QCOMPARE(mediaSpy.count(), 4);
+
+    playlist->next();
+    QCOMPARE(player->media(), content3);
+    QCOMPARE(player->state(), QMediaPlayer::StoppedState);
+    QCOMPARE(stateSpy.count(), 6);
+    QCOMPARE(mediaSpy.count(), 5);
+
+    // Test the player is stopped and the current media cleared when it reaches the end of the last
+    // item in the playlist.
+    player->play();
+    QCOMPARE(player->media(), content3);
+    QCOMPARE(player->state(), QMediaPlayer::PlayingState);
+    QCOMPARE(stateSpy.count(), 7);
+    QCOMPARE(mediaSpy.count(), 5);
+
+    mockService->setState(QMediaPlayer::StoppedState, QMediaPlayer::EndOfMedia);
+    QCOMPARE(player->media(), QMediaContent());
+    QCOMPARE(player->state(), QMediaPlayer::StoppedState);
+    QCOMPARE(stateSpy.count(), 8);
+    QCOMPARE(mediaSpy.count(), 6);
+
+    // Test starts playing from the start of the playlist if there is no current media selected.
+    player->play();
+    QCOMPARE(player->media(), content0);
+    QCOMPARE(player->state(), QMediaPlayer::PlayingState);
+    QCOMPARE(stateSpy.count(), 9);
+    QCOMPARE(mediaSpy.count(), 7);
+
+    // Test deleting the playlist stops the player and clears the media it set.
+    delete playlist;
+    QCOMPARE(player->media(), QMediaContent());
+    QCOMPARE(player->state(), QMediaPlayer::StoppedState);
+    QCOMPARE(stateSpy.count(), 10);
+    QCOMPARE(mediaSpy.count(), 8);
+
+    // Test the player works as normal with the playlist removed.
+    player->play();
+    QCOMPARE(player->media(), QMediaContent());
+    QCOMPARE(player->state(), QMediaPlayer::StoppedState);
+    QCOMPARE(stateSpy.count(), 10);
+    QCOMPARE(mediaSpy.count(), 8);
+
+    player->setMedia(content1);
+    player->play();
+
+    QCOMPARE(player->media(), content1);
+    QCOMPARE(player->state(), QMediaPlayer::PlayingState);
+    QCOMPARE(stateSpy.count(), 11);
+    QCOMPARE(mediaSpy.count(), 9);
 }
 
 QTEST_MAIN(tst_QMediaPlayer)
