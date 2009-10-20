@@ -875,7 +875,6 @@ void QNetworkSessionPrivate::do_open()
 	 * signal is not emitted here.
 	 */
 
-	emit q->sessionOpened();
 	emit quitPendingWaitsForOpened();
 
     } else {
