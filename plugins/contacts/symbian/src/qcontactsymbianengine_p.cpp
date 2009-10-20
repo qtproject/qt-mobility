@@ -453,9 +453,14 @@ bool QContactSymbianEngineData::setSelfContactId(const QContactLocalId& contactI
 QContactLocalId QContactSymbianEngineData::selfContactId(QContactManager::Error& qtError) const
 {
    qtError = QContactManager::NoError;
-   QContactLocalId id(m_contactDatabase->OwnCardId());
-   if (id < 0) {
+   QContactLocalId id = 0;
+   
+   TContactItemId myCard = m_contactDatabase->OwnCardId();
+   if (myCard < 0) {
        qtError = QContactManager::DoesNotExistError;
+   }
+   else {
+       id = myCard;
    }
    return id;
 }
