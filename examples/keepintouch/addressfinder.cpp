@@ -132,14 +132,13 @@ void AddressFinder::searchMessages()
 
     QMessageFilter includeFilter(QMessageFilter::byTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual));
     QMessageFilter excludeFilter(QMessageFilter::byTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual));
-    // Would be faster and more accurate to just examine the sent folder, outgoingFilter also includes drafts.
-    QMessageFilter outgoingFilter(QMessageFilter::byStatus(QMessage::Incoming, QMessageDataComparator::Excludes));
+    QMessageFilter sentFilter(QMessageFilter::byStandardFolder(QMessage::SentFolder));
 
     // Search for messages containing addresses to exclude
-    service.queryMessages(outgoingFilter & excludeFilter);
+    service.queryMessages(sentFilter & excludeFilter);
 
     // Create the filter needed to locate messages to search for addresses
-    inclusionFilter = (outgoingFilter & includeFilter & ~excludeFilter);
+    inclusionFilter = (sentFilter & includeFilter & ~excludeFilter);
 }
 
 void AddressFinder::stateChanged(QMessageServiceAction::State s)
