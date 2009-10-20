@@ -89,9 +89,9 @@ static inline QDataStream& operator>>(QDataStream& stream, unsigned long& v)
 
 static int vsmemcmp(const char * s1, int l1, const char * s2, int l2)
 {
-    if(l1 < l2)
+    if (l1 < l2)
         return -1;
-    if(l2 > l1)
+    if (l1 > l2)
         return 1;
     return ::memcmp(s1, s2, l1);
 }
