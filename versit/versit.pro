@@ -31,7 +31,9 @@ SOURCES += qversitdocument.cpp \
     qversitwriter.cpp \
     qversitwriter_p.cpp \
     qversitcontactconverter.cpp \
+    qversitcontactconverter_p.cpp \    
     qversitcontactgenerator.cpp \
+    qversitcontactgenerator_p.cpp \    
     versitutils.cpp
 
 HEADERS += \

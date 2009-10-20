@@ -38,6 +38,7 @@
 #include <QObject>
 
 class QVersitContactConverter;
+class QVersitContactConverterPrivate;
 
 class UT_QVersitContactConvertert : public QObject                 
 {
@@ -61,8 +62,9 @@ private slots:
     void testEncodeNote();
     void testEncodeGeoLocation();
     
-private: //Data
-    QVersitContactConverter* mVersitContactConverter;
+private: // Data
+    QVersitContactConverter* mConverter;
+    QVersitContactConverterPrivate* mConverterPrivate;
 };
 
 #endif /* UT_QVERSITCONTACTCONVERTER_H_ */

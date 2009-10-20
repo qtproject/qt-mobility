@@ -34,16 +34,40 @@
 #ifndef QVERSITCONTACTGENERATOR_P_H
 #define QVERSITCONTACTGENERATOR_P_H
 
-#include "qversitcontactgenerator.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include <QHash>
+
+class QContactDetail;
+class QVersitProperty;
 
 class QVersitContactGeneratorPrivate
 {
 public:
-    QVersitContactGeneratorPrivate() {}
-    ~QVersitContactGeneratorPrivate() {}
+    QVersitContactGeneratorPrivate();
+    ~QVersitContactGeneratorPrivate();
     
-    // Data
+    QContactDetail* createName(const QVersitProperty& property) const;
+    QContactDetail* createPhone(const QVersitProperty& property) const;
+    QContactDetail* createAddress(const QVersitProperty& property) const;
+    QContactDetail* createOrganization(const QVersitProperty& property) const;
+    QContactDetail* createEmail(const QVersitProperty& property) const;
+    QContactDetail* createUrl(const QVersitProperty& property) const;
+    QContactDetail* createUid(const QVersitProperty& property) const;
+    QContactDetail* createTimeStamp(const QVersitProperty& property) const;
+    QStringList extractContexts(const QVersitProperty& property) const;
+    QString takeFirst(QList<QByteArray>& list) const;    
+    
+public: // Data    
     QHash<QString,QString> mContextMappings;    
 };
 

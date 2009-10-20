@@ -33,7 +33,8 @@
 
 #include "qversitdefs.h"
 #include "ut_qversitcontactgenerator.h"
-#include <qversitcontactgenerator.h>
+#include "qversitcontactgenerator.h"
+#include "qversitcontactgenerator_p.h"
 #include <qversitproperty.h>
 #include <qversitdocument.h>
 #include <QtTest/QtTest>
@@ -51,13 +52,14 @@
 
 void UT_QVersitContactGenerator::init()
 {    
-   mGenerator = new QVersitContactGenerator();
-   QVERIFY(mGenerator);
+    mGenerator = new QVersitContactGenerator();
+    mGeneratorPrivate = new QVersitContactGeneratorPrivate();
 }
 
 void UT_QVersitContactGenerator::cleanup()
 {
-   delete mGenerator;
+    delete mGeneratorPrivate;
+    delete mGenerator;
 }
 
 void UT_QVersitContactGenerator::testName()
@@ -365,32 +367,32 @@ void UT_QVersitContactGenerator::testExtractContexts()
     QVersitProperty property;
     
     // Empty list
-    QStringList result = mGenerator->extractContexts(property);
+    QStringList result = mGeneratorPrivate->extractContexts(property);
     QVERIFY(result.isEmpty());
     
     // HOME
     property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
-    result = mGenerator->extractContexts(property);
+    result = mGeneratorPrivate->extractContexts(property);
     QCOMPARE(result.count(),1);
     QVERIFY(result.contains(QContactDetail::ContextHome));
     
     // WORK
     property.removeParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
     property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("WORK"));
-    result = mGenerator->extractContexts(property);
+    result = mGeneratorPrivate->extractContexts(property);
     QCOMPARE(result.count(),1);
     QVERIFY(result.contains(QContactDetail::ContextWork));    
     
     // WORK and HOME
     property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
-    result = mGenerator->extractContexts(property);
+    result = mGeneratorPrivate->extractContexts(property);
     QCOMPARE(result.count(),2);
     QVERIFY(result.contains(QContactDetail::ContextWork)); 
     QVERIFY(result.contains(QContactDetail::ContextHome));
     
     // HOME and WORK and other items
     property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("OTHER"));
-    result = mGenerator->extractContexts(property);
+    result = mGeneratorPrivate->extractContexts(property);
     QCOMPARE(result.count(),2);
     QVERIFY(result.contains(QContactDetail::ContextWork)); 
     QVERIFY(result.contains(QContactDetail::ContextHome));
