@@ -32,6 +32,7 @@
 ****************************************************************************/
 #include <QDebug>
 
+#include <QMutex>
 #include "qcontact_p.h"
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
@@ -449,10 +450,23 @@ QList<QVariant::Type> QContactWinCEEngine::supportedDataTypes() const
     return st;
 }
 
+/* The default constructor of wince contact manager engine factory */
+ContactWinceFactory::ContactWinceFactory()
+:m_engine(0)
+{
+}
+
 /* Factory lives here in the basement */
 QContactManagerEngine* ContactWinceFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
-    return new QContactWinCEEngine(parameters, error);
+    if (!m_engine) {
+        QMutexLocker locker(&m_mutex);
+        if (!m_engine) {
+            m_engine = new QContactWinCEEngine(parameters, error);
+        }
+    }
+    m_engine->d->m_refCount.ref();
+    return m_engine;
 }
 
 QString ContactWinceFactory::managerName() const

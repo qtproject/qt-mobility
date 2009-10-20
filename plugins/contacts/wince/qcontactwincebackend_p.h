@@ -232,15 +232,22 @@ private:
     bool convertP2QContacts(const SimpleComPointer<IPOutlookItemCollection>& collection, QList<QContact>* contacts) const;
     QString convertFilterToQueryString(const QContactFilter& filter) const;
     QList<QContactLocalId> convertP2QIdList(const SimpleComPointer<IPOutlookItemCollection>& collection) const;
+
+    friend class ContactWinceFactory;
 };
 
+class QMutex;
 class Q_DECL_EXPORT ContactWinceFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
     Q_INTERFACES(QContactManagerEngineFactory)
-    public:
+public:
+    ContactWinceFactory();
         QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
         QString managerName() const;
+private:
+    QMutex m_mutex;
+    QContactWinCEEngine* m_engine;
 };
 
 #endif
