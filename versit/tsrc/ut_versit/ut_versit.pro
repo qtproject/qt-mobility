@@ -37,8 +37,10 @@ SOURCES += main.cpp \
     ../../versitutils.cpp \
     ut_versitutils.cpp \
     ../../qversitreader.cpp \
+    ../../qversitreader_p.cpp \
     ut_qversitreader.cpp \
     ../../qversitwriter.cpp \
+    ../../qversitwriter_p.cpp \
     ut_qversitwriter.cpp \
         ../../qversitcontactconverter.cpp \
     ut_qversitcontactconverter.cpp

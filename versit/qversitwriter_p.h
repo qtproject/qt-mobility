@@ -44,16 +44,28 @@
 //
 // We mean it.
 //
+
+#include <QByteArray>
 #include <QIODevice>
-#include "qversitdocument.h"
+#include <qversitdocument.h>
+#include <qversitproperty.h>
 
 class QVersitWriterPrivate
 {
 public:
-    QVersitWriterPrivate() :
-        mIoDevice(0)
-        {}
-    ~QVersitWriterPrivate() {}
+    QVersitWriterPrivate();
+    ~QVersitWriterPrivate();
+    
+    QByteArray encodeVersitDocument(const QVersitDocument& document);
+    QByteArray encodeVersitProperty(const QVersitProperty& property);
+    QByteArray encodeParameters(
+        const QMultiHash<QString,QString>& parameters,
+        bool addQuotedPrintable=false);
+    bool quotedPrintableEncode(
+        const QVersitProperty& property,
+        QByteArray& value) const;    
+
+public: // Data
     
     QIODevice* mIoDevice;
     QVersitDocument mVersitDocument;

@@ -27,7 +27,9 @@ PRIVATE_HEADERS += qversitdocument_p.h \
 SOURCES += qversitdocument.cpp \
     qversitproperty.cpp \
     qversitreader.cpp \
+    qversitreader_p.cpp \
     qversitwriter.cpp \
+    qversitwriter_p.cpp \
     qversitcontactconverter.cpp \
     qversitcontactgenerator.cpp \
     versitutils.cpp

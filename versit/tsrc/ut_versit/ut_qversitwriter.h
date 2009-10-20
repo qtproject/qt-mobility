@@ -37,6 +37,7 @@
 #include <QObject>
 
 class QVersitWriter;
+class QVersitWriterPrivate;
 
 
 class UT_QVersitWriter : public QObject                 
@@ -58,6 +59,7 @@ private slots: // Tests
 
 private: // Data
     QVersitWriter* mWriter;
+    QVersitWriterPrivate* mWriterPrivate;
 };
 
 #endif // UT_QVERSITWRITER_H

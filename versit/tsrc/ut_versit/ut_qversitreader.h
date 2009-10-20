@@ -37,6 +37,7 @@
 #include <QObject>
 
 class QVersitReader;
+class QVersitReaderPrivate;
 
 
 class UT_QVersitReader : public QObject                 
@@ -58,6 +59,7 @@ private slots: // Tests
 private: // Data
 
     QVersitReader* mReader;
+    QVersitReaderPrivate* mReaderPrivate;
 };
 
 #endif // UT_VERSITREADER_H

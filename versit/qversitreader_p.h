@@ -46,19 +46,25 @@
 // We mean it.
 //
 
+#include <QByteArray>
 #include <QIODevice>
 #include <QList>
 #include "qversitdocument.h"
+#include "qversitproperty.h"
 
 class QVersitReaderPrivate
 {
 public:
-    QVersitReaderPrivate() : m_iodevice(0), m_DocumentNestingLevel(0) { } 
-    ~QVersitReaderPrivate() {}
-
-    QIODevice* m_iodevice;
-    QList<QVersitDocument> m_versitDocuments;
-    int m_DocumentNestingLevel; // Depth in parsing nested versit documents
+    QVersitReaderPrivate(); 
+    ~QVersitReaderPrivate();
+    
+    QVersitDocument parseVersitDocument(QByteArray& text);
+    QVersitProperty parseNextVersitProperty(QByteArray& text);
+    bool containsSupportedVersion(const QVersitProperty& property) const;    
+    
+    QIODevice* mIoDevice;
+    QList<QVersitDocument> mVersitDocuments;
+    int mDocumentNestingLevel; // Depth in parsing nested versit documents
 };
 
 #endif // QVERSITREADER_P_H

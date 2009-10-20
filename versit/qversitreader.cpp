@@ -65,7 +65,7 @@ QVersitReader::~QVersitReader()
  */
 void QVersitReader::setDevice(QIODevice* device)
 {
-    d->m_iodevice = device;
+    d->mIoDevice = device;
 }
 
 /*!
@@ -73,7 +73,7 @@ void QVersitReader::setDevice(QIODevice* device)
  */
 QIODevice* QVersitReader::device() const
 {
-    return d->m_iodevice;
+    return d->mIoDevice;
 }
 
 /*!
@@ -81,16 +81,16 @@ QIODevice* QVersitReader::device() const
  */
 bool QVersitReader::start()
 {
-    if (d->m_iodevice) {
-        QByteArray input = d->m_iodevice->readAll();
+    if (d->mIoDevice) {
+        QByteArray input = d->mIoDevice->readAll();
         VersitUtils::unfold(input);
         while (input.length() > 0) {
-            QVersitDocument document = parseVersitDocument(input);
+            QVersitDocument document = d->parseVersitDocument(input);
             if (document.properties().count() > 0)
-                d->m_versitDocuments.append(document);
+                d->mVersitDocuments.append(document);
         }
     }
-    return (d->m_versitDocuments.count() > 0);
+    return (d->mVersitDocuments.count() > 0);
 }
 
 /*!
@@ -99,83 +99,5 @@ bool QVersitReader::start()
  */
 QList<QVersitDocument> QVersitReader::result() const
 {
-    return d->m_versitDocuments;
-}
-
-/*!
- * Parses a versit document and returns the resulting document object
- */
-QVersitDocument QVersitReader::parseVersitDocument(QByteArray& text) const
-{
-    d->m_DocumentNestingLevel++;
-    QVersitDocument document;
-    text = text.mid(VersitUtils::countLeadingWhiteSpaces(text));
-    QVersitProperty property = parseNextVersitProperty(text);
-    if (property.name() == QString::fromAscii("BEGIN") && 
-        property.value().trimmed().toUpper() == "VCARD") {
-        while (property.name().length() > 0 && 
-               property.name() != QString::fromAscii("END")) {
-            property = parseNextVersitProperty(text);   
-            if (!containsSupportedVersion(property)) {
-                d->m_DocumentNestingLevel--;
-                return QVersitDocument(); // return an empty document
-            }
-            if (property.name() != QString::fromAscii("VERSION") && 
-                property.name() != QString::fromAscii("END"))
-                document.addProperty(property);
-        }
-    }
-    d->m_DocumentNestingLevel--;
-    return document;
-}
-
-/*!
- * Parses a versit document and returns whether parsing succeeded.
- */
-QVersitProperty QVersitReader::parseNextVersitProperty(QByteArray& text) const
-{
-    QVersitProperty property;
-    property.setName(VersitUtils::extractPropertyName(text));
-    property.setParameters(VersitUtils::extractPropertyParams(text));
-    text = VersitUtils::extractPropertyValue(text); 
-    if (property.name() == QString::fromAscii("AGENT")) {
-        if (d->m_DocumentNestingLevel >= MAX_VERSIT_DOCUMENT_NESTING_DEPTH)
-            return property; // To prevent infinite recursion
-        property.setEmbeddedDocument(parseVersitDocument(text));
-    }
-    else {
-        int crlfPos = -1;
-        QString encoding(QString::fromAscii("ENCODING"));
-        QString quotedPrintable(QString::fromAscii("QUOTED-PRINTABLE"));
-        if (property.parameters().contains(encoding,quotedPrintable)) {
-            crlfPos = VersitUtils::findHardLineBreakInQuotedPrintable(text);
-            QByteArray value = text.left(crlfPos);
-            VersitUtils::decodeQuotedPrintable(value);
-            // Remove the encoding parameter as the value is now decoded
-            property.removeParameter(encoding,quotedPrintable);
-            property.setValue(value);
-        }
-        else {
-            crlfPos = text.indexOf("\r\n");
-            property.setValue(text.left(crlfPos));
-        }
-        text = text.mid(crlfPos+2); // +2 is for skipping the CRLF
-    }
-    return property;
-}
-
-/*!
- * Checks whether the VERSION property contains a supported version.
- */
-bool QVersitReader::containsSupportedVersion(const QVersitProperty& property) const
-{
-    bool valid = true;
-    if (property.name() == QString::fromAscii("VERSION")) {
-        QByteArray value = property.value().trimmed();
-        if (property.parameters().contains(
-                QString::fromAscii("ENCODING"),QString::fromAscii("BASE64")))
-            value = QByteArray::fromBase64(value);
-        valid = (value == "2.1");
-    } 
-    return valid;
+    return d->mVersitDocuments;
 }

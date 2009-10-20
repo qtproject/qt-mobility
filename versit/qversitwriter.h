@@ -36,9 +36,7 @@
 
 #include <QObject>
 #include <QIODevice>
-#include <QByteArray>
-#include "qversitdocument.h"
-#include "qversitproperty.h"
+#include <qversitdocument.h>
 
 class QVersitWriterPrivate;
 
@@ -64,20 +62,7 @@ signals:
     void progress(bool finished);
 
 private:
-    QByteArray encodeVersitDocument(const QVersitDocument& document);
-    QByteArray encodeVersitProperty(const QVersitProperty& property);
-    QByteArray encodeParameters(
-        const QMultiHash<QString,QString>& parameters,
-        bool addQuotedPrintable=false);
-    bool quotedPrintableEncode(
-        const QVersitProperty& property,
-        QByteArray& value) const;
-
-private:
     QVersitWriterPrivate* d;
-    
-private:
-    friend class UT_QVersitWriter;
 };
 
-#endif
+#endif // QVERSITWRITER_H

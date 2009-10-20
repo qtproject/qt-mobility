@@ -37,10 +37,8 @@
 #include <QObject>
 #include <qtversitglobal.h>
 #include <qversitdocument.h>
-#include <qversitproperty.h>
 
 class QIODevice;
-class QByteArray;
 class QVersitReaderPrivate;
 
 // reads QVersitDocument from iodevice
@@ -62,18 +60,9 @@ public:
 
 signals:
     void progress(bool finished);
-
-private:
-    
-    QVersitDocument parseVersitDocument(QByteArray& text) const;
-    QVersitProperty parseNextVersitProperty(QByteArray& text) const;
-    bool containsSupportedVersion(const QVersitProperty& property) const;
     
 private: // Data
-    QVersitReaderPrivate* d;
-    
-private:
-    friend class UT_QVersitReader;    
+    QVersitReaderPrivate* d;   
 };
 
 #endif // QVERSITREADER_H

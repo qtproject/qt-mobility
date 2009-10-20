@@ -71,4 +71,4 @@ private:
     QSharedDataPointer<QVersitPropertyPrivate> d;
 };
 
-#endif
+#endif // QVERSITPROPERTY_H

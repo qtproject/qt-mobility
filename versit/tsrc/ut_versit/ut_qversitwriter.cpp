@@ -33,6 +33,7 @@
 
 #include "ut_qversitwriter.h"
 #include "qversitwriter.h"
+#include "qversitwriter_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include <QtTest/QtTest>
@@ -41,10 +42,12 @@
 void UT_QVersitWriter::init()
 {
     mWriter = new QVersitWriter;
+    mWriterPrivate = new QVersitWriterPrivate;
 }
 
 void UT_QVersitWriter::cleanup()
 {
+    delete mWriterPrivate;
     delete mWriter;
 }
 
@@ -110,7 +113,7 @@ END:VCARD\r\n";
     property.setName(QString("TEL"));
     property.setValue(QByteArray("12347"));
     doc.addProperty(property);
-    QVERIFY(mWriter->encodeVersitDocument(doc) == vCardSimple);
+    QVERIFY(mWriterPrivate->encodeVersitDocument(doc) == vCardSimple);
 
     const char vCardAgent[] = 
 "BEGIN:VCARD\r\n\
@@ -136,7 +139,7 @@ END:VCARD\r\n";
     embeddedDocument.addProperty(embeddedProperty);
     property.setEmbeddedDocument(embeddedDocument);
     docAgent.addProperty(property);
-    QCOMPARE(QString::fromAscii(mWriter->encodeVersitDocument(docAgent)), QString::fromAscii(vCardAgent));
+    QCOMPARE(QString::fromAscii(mWriterPrivate->encodeVersitDocument(docAgent)), QString::fromAscii(vCardAgent));
 }
 
 
@@ -147,7 +150,7 @@ void UT_QVersitWriter::testEncodeVersitProperty()
     QVersitProperty property;
     property.setName(QString::fromAscii("N"));
     property.setValue(QByteArray("Simpson, Homer"));
-    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
+    QCOMPARE(mWriterPrivate->encodeVersitProperty(property), expectedResult);
     
     // With parameter(s). No special characters in the value.
     // -> No need to Quoted-Printable encode the value.
@@ -155,14 +158,14 @@ void UT_QVersitWriter::testEncodeVersitProperty()
     property.setName(QString::fromAscii("TEL"));
     property.setValue(QByteArray("123"));
     property.addParameter(QByteArray("TYPE"),QByteArray("HOME"));
-    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
+    QCOMPARE(mWriterPrivate->encodeVersitProperty(property), expectedResult);
     
     // With parameter(s). Special characters in the value.
     // -> The value needs to be Quoted-Printable encoded.
     expectedResult = "EMAIL;HOME;ENCODING=QUOTED-PRINTABLE:homer=40simpsons.com\r\n"; 
     property.setName(QString::fromAscii("EMAIL"));
     property.setValue(QByteArray("homer@simpsons.com"));
-    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
+    QCOMPARE(mWriterPrivate->encodeVersitProperty(property), expectedResult);
     
     // AGENT property with parameter
     expectedResult = 
@@ -183,7 +186,7 @@ END:VCARD\r\n\
     embProperty.setValue(QByteArray("Marge"));
     doc.addProperty(embProperty);
     agentProperty.setEmbeddedDocument(doc);
-    QCOMPARE(mWriter->encodeVersitProperty(agentProperty), QByteArray(expectedResult));
+    QCOMPARE(mWriterPrivate->encodeVersitProperty(agentProperty), QByteArray(expectedResult));
 }
 
 void UT_QVersitWriter::testEncodeParameters()
@@ -192,29 +195,29 @@ void UT_QVersitWriter::testEncodeParameters()
     
     // No parameters
     QMultiHash<QString,QString> parameters;
-    QCOMPARE(mWriter->encodeParameters(parameters), QByteArray());
+    QCOMPARE(mWriterPrivate->encodeParameters(parameters), QByteArray());
     
     // One parameter that is not a "TYPE" parameter
     parameters.insert(encodingParameterName,QString::fromAscii("8BIT"));
-    QCOMPARE(mWriter->encodeParameters(parameters), QByteArray(";ENCODING=8BIT"));
+    QCOMPARE(mWriterPrivate->encodeParameters(parameters), QByteArray(";ENCODING=8BIT"));
     
     // One parameter that is a "TYPE" parameter
     parameters.clear();
     parameters.insert(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
-    QCOMPARE(mWriter->encodeParameters(parameters), QByteArray(";HOME"));    
+    QCOMPARE(mWriterPrivate->encodeParameters(parameters), QByteArray(";HOME"));    
     
     // Two parameters
     parameters.insert(encodingParameterName,QString::fromAscii("7BIT"));    
-    QCOMPARE(mWriter->encodeParameters(parameters), QByteArray(";HOME;ENCODING=7BIT"));
+    QCOMPARE(mWriterPrivate->encodeParameters(parameters), QByteArray(";HOME;ENCODING=7BIT"));
     
     // Add ENCODING=QUOTED-PRINTABLE, not present in the parameters yet
     parameters.clear();
-    QCOMPARE(mWriter->encodeParameters(parameters,true), 
+    QCOMPARE(mWriterPrivate->encodeParameters(parameters,true), 
              QByteArray(";ENCODING=QUOTED-PRINTABLE"));
     
     // ENCODING=QUOTED-PRINTABLE in the parameters already, don't encode it twice
     parameters.insert(encodingParameterName,QString::fromAscii("QUOTED-PRINTABLE"));
-    QCOMPARE(mWriter->encodeParameters(parameters,true), 
+    QCOMPARE(mWriterPrivate->encodeParameters(parameters,true), 
              QByteArray(";ENCODING=QUOTED-PRINTABLE"));    
 }
 
@@ -227,14 +230,14 @@ void UT_QVersitWriter::testQuotedPrintableEncode()
     QVersitProperty property;
     property.setName(QString::fromAscii("N"));
     property.setValue(QByteArray("Simpson;Homer"));
-    QVERIFY(!mWriter->quotedPrintableEncode(property,encodedValue));
+    QVERIFY(!mWriterPrivate->quotedPrintableEncode(property,encodedValue));
     QVERIFY(encodedValue == property.value());
     
     // The property doesn't contain ENCODING parameter,
     // special characters in the encodedValue -> needs to be Quoted-Printable encoded
     property.setName(QString::fromAscii("EMAIL"));
     property.setValue(QByteArray("homer@simpsons.com"));
-    QVERIFY(mWriter->quotedPrintableEncode(property,encodedValue));
+    QVERIFY(mWriterPrivate->quotedPrintableEncode(property,encodedValue));
     QCOMPARE(QString::fromAscii(encodedValue), QString::fromAscii("homer=40simpsons.com"));
     
     // The property contains ENCODING parameter
@@ -242,6 +245,6 @@ void UT_QVersitWriter::testQuotedPrintableEncode()
     property.setName(QString::fromAscii("PHOTO"));
     property.setValue(QByteArray("the data").toBase64());
     property.addParameter(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
-    QVERIFY(!mWriter->quotedPrintableEncode(property,encodedValue));
+    QVERIFY(!mWriterPrivate->quotedPrintableEncode(property,encodedValue));
     QVERIFY(encodedValue == property.value());
 }
