@@ -531,6 +531,18 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
+    // group name
+    d.setName(QContactGroupName::DefinitionName);
+    fields.clear();
+    f.dataType = QVariant::String;
+    f.allowableValues = QVariantList();
+    fields.insert(QContactGroupName::FieldName, f);
+    // note: no context allowed.
+    d.setFields(fields);
+    d.setUnique(true); // only one allowed.
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint); // type=group only
+    retn.insert(d.name(), d);
+
     // guid
     d.setName(QContactGuid::DefinitionName);
     fields.clear();

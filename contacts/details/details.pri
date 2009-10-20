@@ -11,6 +11,7 @@ PUBLIC_HEADERS += \
     details/qcontactfamily.h \
     details/qcontactgender.h \
     details/qcontactgeolocation.h \
+    details/qcontactgroupname.h \
     details/qcontactguid.h \
     details/qcontactname.h \
     details/qcontactnickname.h \

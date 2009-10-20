@@ -54,6 +54,7 @@
 #include "qcontactfamily.h"
 #include "qcontactgender.h"
 #include "qcontactgeolocation.h"
+#include "qcontactgroupname.h"
 #include "qcontactguid.h"
 #include "qcontactname.h"
 #include "qcontactnickname.h"

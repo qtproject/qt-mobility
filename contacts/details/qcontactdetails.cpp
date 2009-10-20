@@ -82,6 +82,11 @@
  */
 
 /*!
+ * \class QContactGroupName
+ * \brief The name of the group which this contact represents
+ */
+
+/*!
  * \class QContactGuid
  * \brief The globally unique Id of a contact
  */
@@ -208,6 +213,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactTimestamp::DefinitionName, "Timestamp");
 Q_DEFINE_LATIN1_LITERAL(QContactType::DefinitionName, "Type");
 
 /*!
+ * \variable QContactGroupName::DefinitionName
+ * The constant string which identifies the definition of details which contain the name of the group that the contact represents
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGroupName::DefinitionName, "GroupName");
+
+/*!
  * \variable QContactGuid::DefinitionName
  * The constant string which identifies the definition of details which are globally unique identifiers
  */
@@ -303,6 +314,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactFamily::FieldSpouse, "Spouse");
  * The constant key for which the children names value is stored in details of the QContactFamily type
  */
 Q_DEFINE_LATIN1_LITERAL(QContactFamily::FieldChildren, "Children");
+
+/*!
+ * \variable QContactGroupName::FieldName
+ * The constant key for which the group name value is stored in details of the QContactGroupName type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGroupName::FieldName, "Name");
 
 /*!
  * \variable QContactGuid::FieldGuid
@@ -1219,6 +1236,16 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 /*!
  * \fn QContactGeolocation::timestamp() const
  * Returns the timestamp associated with the location stored in the detail
+ */
+
+/*!
+ * \fn QContactGroupName::name() const
+ * Returns the name of the group which this contact represents
+ */
+
+/*!
+ * \fn QContactGroupName::setName(const QString& groupName)
+ * Sets the name of the group which this contact represents to \a groupName
  */
 
 /*!
