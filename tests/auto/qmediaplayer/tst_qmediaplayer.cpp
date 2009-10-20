@@ -47,6 +47,7 @@
 #include <multimedia/qmediaplayercontrol.h>
 #include <multimedia/qmediaplaylist.h>
 #include <multimedia/qmediaservice.h>
+#include <multimedia/qmediastreamscontrol.h>
 
 
 class AutoConnection
@@ -140,6 +141,37 @@ public:
     QString _errorString;
 };
 
+class MockStreamsControl : public QMediaStreamsControl
+{
+public:
+    MockStreamsControl(QObject *parent = 0) : QMediaStreamsControl(parent) {}
+
+    int streamCount() { return _streams.count(); }
+    void setStreamCount(int count) { _streams.resize(count); }
+
+    StreamType streamType(int index) { return _streams.at(index).type; }
+    void setStreamType(int index, StreamType type) { _streams[index].type = type; }
+
+    QVariant metaData(int index, QtMedia::MetaData key) {
+        return _streams.at(index).metaData.value(key); }
+    void setMetaData(int index, QtMedia::MetaData key, const QVariant &value) {
+        _streams[index].metaData.insert(key, value); }
+
+    bool isActive(int index) { return _streams.at(index).active; }
+    void setActive(int index, bool state) { _streams[index].active = state; }
+
+private:
+    struct Stream
+    {
+        Stream() : type(UnknownStream), active(false) {}
+        StreamType type;
+        QMap<QtMedia::MetaData, QVariant> metaData;
+        bool active;
+    };
+
+    QVector<Stream> _streams;
+};
+
 class MockPlayerService : public QMediaService
 {
     Q_OBJECT
@@ -148,11 +180,13 @@ public:
     MockPlayerService():QMediaService(0)
     {
         mockControl = new MockPlayerControl;
+        mockStreamsControl = new MockStreamsControl;
     }
 
     ~MockPlayerService()
     {
         delete mockControl;
+        delete mockStreamsControl;
     }
 
     QMediaControl* control(const char *iid) const
@@ -204,6 +238,7 @@ public:
     }
 
     MockPlayerControl *mockControl;
+    MockStreamsControl *mockStreamsControl;
 };
 
 class MockProvider : public QMediaServiceProvider
