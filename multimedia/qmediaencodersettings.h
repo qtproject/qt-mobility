@@ -45,11 +45,12 @@
 #include <QtCore/qsharedpointer.h>
 #include <QtCore/qstring.h>
 #include <QtCore/qsize.h>
+#include <multimedia/qmultimediaglobal.h>
 #include <multimedia/qtmedianamespace.h>
 
 
 class QAudioEncoderSettingsPrivate;
-class QAudioEncoderSettings
+class Q_MEDIA_EXPORT QAudioEncoderSettings
 {
 public:
     QAudioEncoderSettings();
@@ -80,7 +81,7 @@ private:
 };
 
 class QVideoEncoderSettingsPrivate;
-class QVideoEncoderSettings
+class Q_MEDIA_EXPORT QVideoEncoderSettings
 {
 public:
     QVideoEncoderSettings();
