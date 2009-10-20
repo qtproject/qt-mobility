@@ -1766,7 +1766,7 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
 #endif
                                 FreeProws(rows);
 
-                                if (!QMessageFilterPrivate::matchesMessage(filter, id))
+                                if (!QMessageFilterPrivate::matchesMessage(filter, QMessage(id)))
                                     continue;
                                 result.append(id);
                                 if (limit) {
