@@ -107,9 +107,10 @@ void VersitTest::test()
         QVERIFY(in.open(QIODevice::ReadOnly));        
         QDir dir;
         if (!dir.exists(outputDirPath))
-            dir.mkdir(outputDirPath);
+            dir.mkdir(outputDirPath);        
         QFileInfo fileInfo = in.fileName();
         QFile out(outputDirPath+ "\\" + fileInfo.fileName());
+        out.remove();
         QVERIFY(out.open(QIODevice::ReadWrite));
         QBENCHMARK { executeTest(in,out); }
         in.close();
