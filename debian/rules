@@ -68,6 +68,9 @@ install: build
 	dh_installdirs
 	# Add here commands to install the package into debian/tmp
 	INSTALL_ROOT=$(CURDIR)/debian/tmp $(MAKE) install
+	# Package config file goes to wrong place by qmake
+	-mkdir -p $(CURDIR)/debian/tmp/usr/lib/pkgconfig
+	-mv $(CURDIR)/debian/tmp/usr/lib/*.pc $(CURDIR)/debian/tmp/usr/lib/pkgconfig
 
 # Build architecture-independent files here.
 binary-indep: build install
