@@ -47,6 +47,7 @@
 #include <QEventLoop>
 #include <QTimer>
 #include <QVariant>
+#include <QMutex>
 
 #ifdef Q_OS_WINCE
 #include <QThread>
@@ -198,6 +199,7 @@ private:
     void closeRegistryKey(RegistryHandle *handle);
     void pruneEmptyKeys(RegistryHandle *handle);
 
+    QMutex localLock;
     QString m_basePath;
     bool m_volatileKeys;
     RegistryCallback m_callback;
@@ -380,7 +382,8 @@ NonVolatileRegistryLayer *NonVolatileRegistryLayer::instance()
 }
 
 RegistryLayer::RegistryLayer(const QString &basePath, bool volatileKeys, RegistryCallback callback)
-:   m_basePath(basePath), m_volatileKeys(volatileKeys), m_callback(callback)
+:   localLock(QMutex::Recursive), m_basePath(basePath), m_volatileKeys(volatileKeys),
+    m_callback(callback)
 {
     // Ensure that the m_basePath key exists and is non-volatile.
     HKEY key;
@@ -424,6 +427,8 @@ bool RegistryLayer::startup(Type)
 
 bool RegistryLayer::value(Handle handle, QVariant *data)
 {
+    QMutexLocker locker(&localLock);
+
     RegistryHandle *rh = registryHandle(handle);
     if (!rh)
         return false;
@@ -433,6 +438,8 @@ bool RegistryLayer::value(Handle handle, QVariant *data)
 
 bool RegistryLayer::value(Handle handle, const QString &subPath, QVariant *data)
 {
+    QMutexLocker locker(&localLock);
+
     if (handle != InvalidHandle && !registryHandle(handle))
         return false;
 
@@ -546,6 +553,8 @@ bool RegistryLayer::value(Handle handle, const QString &subPath, QVariant *data)
 #define MAX_NAME_LENGTH 16383
 QSet<QString> RegistryLayer::children(Handle handle)
 {
+    QMutexLocker locker(&localLock);
+
     QSet<QString> foundChildren;
 
     RegistryHandle *rh = registryHandle(handle);
@@ -589,6 +598,8 @@ QSet<QString> RegistryLayer::children(Handle handle)
 
 QAbstractValueSpaceLayer::Handle RegistryLayer::item(Handle parent, const QString &path)
 {
+    QMutexLocker locker(&localLock);
+
     QString fullPath;
 
     // Fail on invalid path.
@@ -627,6 +638,8 @@ QAbstractValueSpaceLayer::Handle RegistryLayer::item(Handle parent, const QStrin
 
 void RegistryLayer::setProperty(Handle handle, Properties properties)
 {
+    QMutexLocker locker(&localLock);
+
     RegistryHandle *rh = registryHandle(handle);
     if (!rh)
         return;
@@ -722,6 +735,8 @@ void RegistryLayer::setProperty(Handle handle, Properties properties)
 
 void RegistryLayer::removeHandle(Handle handle)
 {
+    QMutexLocker locker(&localLock);
+
     RegistryHandle *rh = registryHandle(handle);
     if (!rh)
         return;
@@ -744,6 +759,8 @@ void RegistryLayer::removeHandle(Handle handle)
 
 void RegistryLayer::closeRegistryKey(RegistryHandle *handle)
 {
+    QMutexLocker locker(&localLock);
+
     if (!hKeys.contains(handle))
         return;
 
@@ -800,6 +817,8 @@ static LONG qRegDeleteTree(HKEY hKey, LPCTSTR lpSubKey)
 
 bool RegistryLayer::removeRegistryValue(RegistryHandle *handle, const QString &subPath)
 {
+    QMutexLocker locker(&localLock);
+
     QString path(subPath);
     while (path.endsWith(QLatin1Char('/')))
         path.chop(1);
@@ -890,6 +909,8 @@ bool RegistryLayer::setValue(QValueSpaceProvider *creator, Handle handle, const 
 bool RegistryLayer::setValue(QValueSpaceProvider *creator, Handle handle, const QString &subPath,
                              const QVariant &data)
 {
+    QMutexLocker locker(&localLock);
+
     RegistryHandle *rh = registryHandle(handle);
     if (!rh)
         return false;
@@ -1015,6 +1036,8 @@ bool RegistryLayer::setValue(QValueSpaceProvider *creator, Handle handle, const 
 
 void RegistryLayer::sync()
 {
+    QMutexLocker locker(&localLock);
+
     // Wait for change notification callbacks before returning
     QEventLoop loop;
     connect(this, SIGNAL(handleChanged(quintptr)), &loop, SLOT(quit()));
@@ -1031,6 +1054,7 @@ void RegistryLayer::sync()
     }
 
     if (wait) {
+        locker.unlock();
         QTimer::singleShot(1000, &loop, SLOT(quit()));
         loop.exec();
     }
@@ -1038,6 +1062,8 @@ void RegistryLayer::sync()
 
 void RegistryLayer::emitHandleChanged(void *k)
 {
+    QMutexLocker locker(&localLock);
+
     HKEY key = reinterpret_cast<HKEY>(k);
 
     QList<RegistryHandle *> changedHandles = hKeys.keys(key);
@@ -1150,6 +1176,8 @@ void RegistryLayer::emitHandleChanged(void *k)
 #ifdef Q_OS_WINCE
 void RegistryLayer::eventSignaled(void *handle)
 {
+    QMutexLocker locker(&localLock);
+
     HKEY key = waitHandles.key(QPair<::HANDLE, ::HANDLE>(handle, INVALID_HANDLE_VALUE), 0);
 
     if (key != 0)
@@ -1159,6 +1187,8 @@ void RegistryLayer::eventSignaled(void *handle)
 
 void RegistryLayer::openRegistryKey(RegistryHandle *handle)
 {
+    QMutexLocker locker(&localLock);
+
     if (!handle)
         return;
 
@@ -1208,6 +1238,8 @@ void RegistryLayer::openRegistryKey(RegistryHandle *handle)
 
 bool RegistryLayer::createRegistryKey(RegistryHandle *handle)
 {
+    QMutexLocker locker(&localLock);
+
     // Check if HKEY for this handle already exists.
     if (hKeys.contains(handle))
         return false;
@@ -1230,6 +1262,8 @@ bool RegistryLayer::createRegistryKey(RegistryHandle *handle)
 
 bool RegistryLayer::removeSubTree(QValueSpaceProvider *creator, Handle handle)
 {
+    QMutexLocker locker(&localLock);
+
     RegistryHandle *rh = registryHandle(handle);
     if (!rh)
         return false;
@@ -1260,6 +1294,8 @@ bool RegistryLayer::removeSubTree(QValueSpaceProvider *creator, Handle handle)
 
 void RegistryLayer::pruneEmptyKeys(RegistryHandle *handle)
 {
+    QMutexLocker locker(&localLock);
+
     if (!children(Handle(handle)).isEmpty())
         return;
 
@@ -1310,6 +1346,8 @@ bool RegistryLayer::removeValue(QValueSpaceProvider *creator,
                                 Handle handle,
                                 const QString &subPath)
 {
+    QMutexLocker locker(&localLock);
+
     QString fullPath;
 
     if (handle == InvalidHandle) {

@@ -326,9 +326,6 @@ struct QValueSpaceSubscriberPrivate
     QValueSpaceSubscriberPrivateProxy * connections;
 };
 
-#define VS_CALL_ASSERT Q_ASSERT(!QCoreApplication::instance() || \
-                            QCoreApplication::instance()->thread() == QThread::currentThread());
-
 /*!
     Constructs a QValueSpaceSubscriber with the specified \a parent that refers to the root path.
 
@@ -338,8 +335,6 @@ struct QValueSpaceSubscriberPrivate
 QValueSpaceSubscriber::QValueSpaceSubscriber(QObject *parent)
 :   QObject(parent)
 {
-    VS_CALL_ASSERT;
-
     d = new QValueSpaceSubscriberPrivate(QLatin1String("/"));
     d->AddRef();
 }
@@ -356,8 +351,6 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(QObject *parent)
 QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path, QObject *parent)
 :   QObject(parent)
 {
-    VS_CALL_ASSERT;
-
     d = new QValueSpaceSubscriberPrivate(path);
     d->AddRef();
 }
@@ -374,8 +367,6 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path, QObject *paren
 QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path, QObject *parent)
 :   QObject(parent)
 {
-    VS_CALL_ASSERT;
-
     d = new QValueSpaceSubscriberPrivate(QString::fromLatin1(path));
     d->AddRef();
 }
@@ -397,8 +388,6 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path,
                                  QObject *parent)
 :   QObject(parent)
 {
-    VS_CALL_ASSERT;
-
     d = new QValueSpaceSubscriberPrivate(path, filter);
     d->AddRef();
 }
@@ -420,8 +409,6 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path,
                                  QObject *parent)
 :   QObject(parent)
 {
-    VS_CALL_ASSERT;
-
     d = new QValueSpaceSubscriberPrivate(QString::fromLatin1(path), filter);
     d->AddRef();
 }
@@ -446,8 +433,6 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path,
                                              QObject *parent)
 :   QObject(parent)
 {
-    VS_CALL_ASSERT;
-
     d = new QValueSpaceSubscriberPrivate(path, uuid);
     d->AddRef();
 }
@@ -470,8 +455,6 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path,
 QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path, const QUuid &uuid, QObject *parent)
 :   QObject(parent)
 {
-    VS_CALL_ASSERT;
-
     d = new QValueSpaceSubscriberPrivate(QString::fromLatin1(path), uuid);
     d->AddRef();
 }
@@ -481,8 +464,6 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path, const QUuid &uuid
 */
 QValueSpaceSubscriber::~QValueSpaceSubscriber()
 {
-    VS_CALL_ASSERT;
-
     d->Release();
 }
 
@@ -496,8 +477,6 @@ QValueSpaceSubscriber::~QValueSpaceSubscriber()
 */
 void QValueSpaceSubscriber::setPath(const QString &path)
 {
-    VS_CALL_ASSERT;
-
     if (d->path == path)
         return;
 
@@ -519,8 +498,6 @@ void QValueSpaceSubscriber::setPath(const QString &path)
 */
 void QValueSpaceSubscriber::setPath(QValueSpaceSubscriber *subscriber)
 {
-    VS_CALL_ASSERT;
-
     d->Release();
 
     disconnect();
@@ -532,8 +509,6 @@ void QValueSpaceSubscriber::setPath(QValueSpaceSubscriber *subscriber)
 
 QString QValueSpaceSubscriber::path() const
 {
-    VS_CALL_ASSERT;
-
     return d->path;
 }
 
@@ -542,8 +517,6 @@ QString QValueSpaceSubscriber::path() const
 */
 void QValueSpaceSubscriber::cd(const QString &path)
 {
-    VS_CALL_ASSERT;
-
     if (path.startsWith(QLatin1Char('/')))
         setPath(path);
     else
@@ -555,8 +528,6 @@ void QValueSpaceSubscriber::cd(const QString &path)
 */
 void QValueSpaceSubscriber::cdUp()
 {
-    VS_CALL_ASSERT;
-
     if (d->path == QLatin1String("/"))
         return;
 
@@ -576,8 +547,6 @@ void QValueSpaceSubscriber::cdUp()
 */
 bool QValueSpaceSubscriber::isConnected() const
 {
-    VS_CALL_ASSERT;
-
     return !d->readers.isEmpty();
 }
 
@@ -597,8 +566,6 @@ bool QValueSpaceSubscriber::isConnected() const
 */
 QVariant QValueSpaceSubscriber::value(const QString & subPath, const QVariant &def) const
 {
-    VS_CALL_ASSERT;
-
     QVariant value;
     if (subPath.isEmpty()) {
         for (int ii = d->readers.count(); ii > 0; --ii) {
@@ -623,14 +590,11 @@ QVariant QValueSpaceSubscriber::value(const QString & subPath, const QVariant &d
 */
 QVariant QValueSpaceSubscriber::value(const char *subPath, const QVariant &def) const
 {
-    VS_CALL_ASSERT;
     return value(QString::fromLatin1(subPath), def);
 }
 
 QVariant QValueSpaceSubscriber::valuex(const QVariant &def) const
 {
-    VS_CALL_ASSERT;
-
     if (!d->connections || d->connections->connections.value(this) == 0)
         d->connect(this);
 
@@ -644,7 +608,6 @@ QVariant QValueSpaceSubscriber::valuex(const QVariant &def) const
 */
 void QValueSpaceSubscriber::connectNotify(const char *signal)
 {
-    VS_CALL_ASSERT;
     if (QLatin1String(signal) == SIGNAL(contentsChanged()))
         d->connect(this);
     else
@@ -659,7 +622,6 @@ void QValueSpaceSubscriber::connectNotify(const char *signal)
 */
 void QValueSpaceSubscriber::disconnectNotify(const char *signal)
 {
-    VS_CALL_ASSERT;
     if (QLatin1String(signal) == SIGNAL(contentsChanged()))
         d->disconnect(this);
     else
@@ -682,8 +644,6 @@ void QValueSpaceSubscriber::disconnectNotify(const char *signal)
 */
 QStringList QValueSpaceSubscriber::subPaths() const
 {
-    VS_CALL_ASSERT;
-
     QSet<QString> rv;
     for (int ii = 0; ii < d->readers.count(); ++ii)
         rv.unite(d->readers[ii].first->children(d->readers[ii].second));

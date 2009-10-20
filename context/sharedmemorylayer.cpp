@@ -53,7 +53,6 @@
 #include <QVariant>
 
 #include <QMutex>
-#include <QWaitCondition>
 #include <QSharedMemory>
 #include <QTime>
 
@@ -1789,6 +1788,7 @@ private:
     Type type;
     FixedMemoryTree * layer;
     QSystemReadWriteLock * lock;
+    QMutex localLock;
     QMap<QString, ReadHandle *> handles;
 
     void triggerTodo();
@@ -1854,7 +1854,7 @@ struct SharedMemoryLayerClient : public QPacketProtocol
 };
 
 SharedMemoryLayer::SharedMemoryLayer()
-: type(Client), layer(0), lock(0), todoTimer(0),
+: type(Client), layer(0), lock(0), localLock(QMutex::Recursive), todoTimer(0),
   nextPackId(1), lastSentId(0), lastRecvId(0), valid(false),
   forceChangeCount(0), clientIndex(0),
   changedNodesCount(0),
@@ -1882,6 +1882,8 @@ QString SharedMemoryLayer::name()
 static void ShmLayerNodeChanged(unsigned short, void *);
 bool SharedMemoryLayer::startup(Type type)
 {
+    QMutexLocker locker(&localLock);
+
     valid = false;
 
     Q_ASSERT(!layer);
@@ -1992,6 +1994,8 @@ void ALServerImpl::incomingConnection(quintptr socketDescriptor)
 
 void SharedMemoryLayer::timerEvent(QTimerEvent *)
 {
+    QMutexLocker locker(&localLock);
+
     if(Client == type)
         doClientTransmit();
     else
@@ -2000,6 +2004,8 @@ void SharedMemoryLayer::timerEvent(QTimerEvent *)
 
 void SharedMemoryLayer::doServerTransmit()
 {
+    QMutexLocker locker(&localLock);
+
     Q_ASSERT(Server == type);
     if(todoTimer) {
         killTimer(todoTimer);
@@ -2037,6 +2043,8 @@ void SharedMemoryLayer::doServerTransmit()
 
 void SharedMemoryLayer::doClientTransmit()
 {
+    QMutexLocker locker(&localLock);
+
     Q_ASSERT(Client == type);
     if(todoTimer) {
         killTimer(todoTimer);
@@ -2056,6 +2064,8 @@ Q_GLOBAL_STATIC(PathsOfInterest, pathsOfInterest);
 void SharedMemoryLayer::disconnected()
 {
     Q_ASSERT(sender());
+
+    QMutexLocker locker(&localLock);
 
     QPacketProtocol * protocol = (QPacketProtocol *)sender();
     protocol->disconnect();
@@ -2134,12 +2144,16 @@ static void ShmLayerNodeChanged(unsigned short node, void *ctxt)
 
 void SharedMemoryLayer::nodeChanged(unsigned short node)
 {
+    QMutexLocker locker(&localLock);
+
     if(changedNodesCount != VERSION_TABLE_ENTRIES)
         changedNodes[changedNodesCount++] = node;
 }
 
 void SharedMemoryLayer::readyRead()
 {
+    QMutexLocker locker(&localLock);
+
     Q_ASSERT(sender());
     QPacketProtocol * protocol = (QPacketProtocol *)sender();
 
@@ -2283,6 +2297,8 @@ void SharedMemoryLayer::readyRead()
 
 void SharedMemoryLayer::closeConnections()
 {
+    QMutexLocker locker(&localLock);
+
     QMutableSetIterator<QPacketProtocol *> i(connections);
     while (i.hasNext()) {
         delete i.next();
@@ -2292,6 +2308,8 @@ void SharedMemoryLayer::closeConnections()
 
 void SharedMemoryLayer::doClientEmit()
 {
+    QMutexLocker locker(&localLock);
+
     QMap<QString, ReadHandle *> cpy = handles;
     for(QMap<QString, ReadHandle *>::ConstIterator iter = cpy.begin();
             iter != cpy.end();
@@ -2354,6 +2372,8 @@ unsigned int SharedMemoryLayer::order()
 
 bool SharedMemoryLayer::value(Handle handle, QVariant *data)
 {
+    QMutexLocker locker(&localLock);
+
     if (!valid)
         return false;
     Q_ASSERT(layer);
@@ -2402,6 +2422,8 @@ bool SharedMemoryLayer::value(Handle handle, QVariant *data)
 bool SharedMemoryLayer::value(Handle handle, const QString &subPath,
                              QVariant *data)
 {
+    QMutexLocker locker(&localLock);
+
     Q_ASSERT(layer);
     Q_ASSERT(data);
     Q_ASSERT(!subPath.isEmpty());
@@ -2444,6 +2466,8 @@ bool SharedMemoryLayer::value(Handle handle, const QString &subPath,
 
 QSet<QString> SharedMemoryLayer::children(Handle handle)
 {
+    QMutexLocker locker(&localLock);
+
     Q_ASSERT(layer);
     ReadHandle * rhandle = rh(handle);
 
@@ -2494,6 +2518,8 @@ QValueSpace::LayerOptions SharedMemoryLayer::layerOptions() const
 
 SharedMemoryLayer::Handle SharedMemoryLayer::item(Handle parent, const QString &key)
 {
+    QMutexLocker locker(&localLock);
+
     Q_UNUSED(parent);
     Q_ASSERT(layer);
     Q_ASSERT(*key.constData() == QLatin1Char('/'));
@@ -2530,6 +2556,8 @@ SharedMemoryLayer::Handle SharedMemoryLayer::item(Handle parent, const QString &
 
 bool SharedMemoryLayer::refreshHandle(ReadHandle * handle)
 {
+    QMutexLocker locker(&localLock);
+
     Q_ASSERT(handle);
 
     ReadHandle old = *handle;
@@ -2613,6 +2641,8 @@ bool SharedMemoryLayer::refreshHandle(ReadHandle * handle)
 
 void SharedMemoryLayer::clearHandle(ReadHandle *handle)
 {
+    QMutexLocker locker(&localLock);
+
     handle->currentPath = 0;
     decNode(handle->currentNode);
     handle->currentNode = INVALID_HANDLE;
@@ -2622,6 +2652,8 @@ void SharedMemoryLayer::clearHandle(ReadHandle *handle)
 
 void SharedMemoryLayer::triggerTodo()
 {
+    QMutexLocker locker(&localLock);
+
     if(todoTimer || !valid)
         return;
     //qDebug() << "Trigger todo";
@@ -2635,6 +2667,8 @@ void SharedMemoryLayer::setProperty(Handle, Properties)
 
 void SharedMemoryLayer::removeHandle(Handle h)
 {
+    QMutexLocker locker(&localLock);
+
     Q_ASSERT(layer);
     Q_ASSERT(h && INVALID_HANDLE != h);
 
@@ -2652,6 +2686,8 @@ void SharedMemoryLayer::removeHandle(Handle h)
 
 void SharedMemoryLayer::updateStats()
 {
+    QMutexLocker locker(&localLock);
+
     if(!m_statPoolSize) {
         // Hasn't initialized stats!
         Q_ASSERT(layer);
@@ -2703,6 +2739,8 @@ void SharedMemoryLayer::updateStats()
 
 QList<NodeWatch> SharedMemoryLayer::watchers(const QByteArray &path)
 {
+    QMutexLocker locker(&localLock);
+
     Q_ASSERT(layer);
 
     lock->lockForRead();
@@ -2733,6 +2771,8 @@ QList<NodeWatch> SharedMemoryLayer::watchers(const QByteArray &path)
 void SharedMemoryLayer::doNotify(const QByteArray &path, const QPacketProtocol *protocol,
                                  bool interested)
 {
+    QMutexLocker locker(&localLock);
+
     bool sendNotification = false;
     if (interested) {
         if ((++(*pathsOfInterest())[path][protocol]) == 1)
@@ -2777,6 +2817,8 @@ void SharedMemoryLayer::doNotify(const QByteArray &path, const QPacketProtocol *
 
 void SharedMemoryLayer::doNotifyObject(unsigned long own, unsigned long protocol)
 {
+    QMutexLocker locker(&localLock);
+
     QList<QByteArray> paths = pathsOfInterest()->keys();
 
     for (int i = 0; i < paths.count(); ++i) {
@@ -2814,6 +2856,8 @@ void SharedMemoryLayer::doNotifyObject(unsigned long own, unsigned long protocol
 
 bool SharedMemoryLayer::setWatch(NodeWatch watch, const QByteArray &path)
 {
+    QMutexLocker locker(&localLock);
+
     if(path.count() > MAX_PATH_SIZE || path.startsWith("/.ValueSpace") || !valid)
         return false;
     Q_ASSERT(layer);
@@ -2834,6 +2878,8 @@ bool SharedMemoryLayer::setWatch(NodeWatch watch, const QByteArray &path)
 
 bool SharedMemoryLayer::doSetWatch(NodeWatch watch, const QByteArray &path)
 {
+    QMutexLocker locker(&localLock);
+
     Q_ASSERT(layer);
 
     lock->lockForWrite();
@@ -2848,6 +2894,8 @@ bool SharedMemoryLayer::doSetWatch(NodeWatch watch, const QByteArray &path)
 
 bool SharedMemoryLayer::remWatch(NodeWatch watch, const QByteArray &path)
 {
+    QMutexLocker locker(&localLock);
+
     if(path.count() > MAX_PATH_SIZE || !valid)
         return false;
     Q_ASSERT(layer);
@@ -2868,6 +2916,8 @@ bool SharedMemoryLayer::remWatch(NodeWatch watch, const QByteArray &path)
 
 bool SharedMemoryLayer::doRemWatch(NodeWatch watch, const QByteArray &path)
 {
+    QMutexLocker locker(&localLock);
+
     Q_ASSERT(layer);
 
     lock->lockForWrite();
@@ -2881,6 +2931,8 @@ bool SharedMemoryLayer::doRemWatch(NodeWatch watch, const QByteArray &path)
 bool SharedMemoryLayer::setItem(NodeOwner owner, const QByteArray &path,
                                const QVariant &val)
 {
+    QMutexLocker locker(&localLock);
+
     if(path.count() > MAX_PATH_SIZE || path.startsWith("/.ValueSpace") || !valid)
         return false;
     Q_ASSERT(layer);
@@ -2904,6 +2956,8 @@ bool SharedMemoryLayer::setItem(NodeOwner owner, const QByteArray &path,
 bool SharedMemoryLayer::doSetItem(NodeOwner owner, const QByteArray &path,
                                  const QVariant &val)
 {
+    QMutexLocker locker(&localLock);
+
     bool rv = false;
 
     lock->lockForWrite();
@@ -2991,6 +3045,8 @@ bool SharedMemoryLayer::doSetItem(NodeOwner owner, const QByteArray &path,
 
 bool SharedMemoryLayer::remItems(NodeOwner owner, const QByteArray &path)
 {
+    QMutexLocker locker(&localLock);
+
     if (!valid)
         return false;
     bool rv = false;
@@ -3011,6 +3067,8 @@ bool SharedMemoryLayer::remItems(NodeOwner owner, const QByteArray &path)
 
 bool SharedMemoryLayer::doRemItems(NodeOwner owner, const QByteArray &path)
 {
+    QMutexLocker locker(&localLock);
+
     if (!valid)
         return false;
     bool rv = false;
@@ -3057,6 +3115,8 @@ QString SharedMemoryLayer::socket() const
 
 void SharedMemoryLayer::sync()
 {
+    QMutexLocker locker(&localLock);
+
     if(Client == type) {
         Q_ASSERT(1 == connections.count());
 
@@ -3127,6 +3187,8 @@ QVariant SharedMemoryLayer::fromDatum(const NodeDatum * data)
 
 void SharedMemoryLayer::incNode(unsigned short node)
 {
+    QMutexLocker locker(&localLock);
+
     if(type == Server || node == INVALID_HANDLE)
         return;
 
@@ -3142,6 +3204,8 @@ void SharedMemoryLayer::incNode(unsigned short node)
 
 void SharedMemoryLayer::decNode(unsigned short node)
 {
+    QMutexLocker locker(&localLock);
+
     if(type == Server || node == INVALID_HANDLE)
         return;
 
@@ -3167,6 +3231,8 @@ Q_GLOBAL_STATIC(WatchObjects, watchObjects);
 void SharedMemoryLayer::doClientNotify(QValueSpaceProvider *provider, const QByteArray &path,
                                        bool interested)
 {
+    QMutexLocker locker(&localLock);
+
     // Invalid provider.
     if (!watchObjects()->contains(provider))
         return;
@@ -3194,6 +3260,8 @@ bool SharedMemoryLayer::supportsInterestNotification() const
 
 bool SharedMemoryLayer::notifyInterest(Handle handle, bool interested)
 {
+    QMutexLocker locker(&localLock);
+
     if (!valid)
         return false;
     Q_ASSERT(layer);
@@ -3216,6 +3284,8 @@ bool SharedMemoryLayer::notifyInterest(Handle handle, bool interested)
 bool SharedMemoryLayer::setValue(QValueSpaceProvider *creator, Handle handle, const QString &path,
                                  const QVariant &data)
 {
+    QMutexLocker locker(&localLock);
+
     ReadHandle *readHandle = reinterpret_cast<ReadHandle *>(handle);
 
     if (!handles.values().contains(readHandle))
@@ -3242,6 +3312,8 @@ bool SharedMemoryLayer::removeValue(QValueSpaceProvider *creator,
                                     Handle handle,
                                     const QString &path)
 {
+    QMutexLocker locker(&localLock);
+
     ReadHandle *readHandle = reinterpret_cast<ReadHandle *>(handle);
 
     if (!handles.values().contains(readHandle))
@@ -3266,6 +3338,8 @@ bool SharedMemoryLayer::removeValue(QValueSpaceProvider *creator,
 
 bool SharedMemoryLayer::removeSubTree(QValueSpaceProvider *creator, Handle handle)
 {
+    QMutexLocker locker(&localLock);
+
     ReadHandle *readHandle = reinterpret_cast<ReadHandle *>(handle);
 
     if (!handles.values().contains(readHandle))
@@ -3280,6 +3354,8 @@ bool SharedMemoryLayer::removeSubTree(QValueSpaceProvider *creator, Handle handl
 
 void SharedMemoryLayer::addWatch(QValueSpaceProvider *creator, Handle handle)
 {
+    QMutexLocker locker(&localLock);
+
     watchObjects()->insert(creator);
 
     ReadHandle *readHandle = reinterpret_cast<ReadHandle *>(handle);
@@ -3296,6 +3372,8 @@ void SharedMemoryLayer::addWatch(QValueSpaceProvider *creator, Handle handle)
 
 void SharedMemoryLayer::removeWatches(QValueSpaceProvider *creator, Handle parent)
 {
+    QMutexLocker locker(&localLock);
+
     watchObjects()->remove(creator);
 
     ReadHandle *readHandle = reinterpret_cast<ReadHandle *>(parent);
