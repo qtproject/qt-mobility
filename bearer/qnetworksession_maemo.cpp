@@ -884,7 +884,7 @@ void QNetworkSessionPrivate::setProperty(const QString& key, const QVariant& val
 }
 
 
-QVariant QNetworkSessionPrivate::property(const QString& key)
+QVariant QNetworkSessionPrivate::property(const QString& key) const
 {
     return properties.value(key);
 }
