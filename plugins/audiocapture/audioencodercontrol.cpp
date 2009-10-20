@@ -54,25 +54,54 @@ int AudioEncoderControl::bitrate() const
 
 void AudioEncoderControl::setBitrate(int value)
 {
+    QAudioFormat fmt = m_session->format();
+
+    if(value <= 8) {
+        // low, 8000Hz mono U8
+        fmt.setSampleType(QAudioFormat::UnSignedInt);
+        fmt.setSampleSize(8);
+        fmt.setFrequency(8000);
+        fmt.setChannels(1);
+
+    } else if(value <= 44) {
+        // medium, 22050Hz mono S16
+        fmt.setSampleType(QAudioFormat::SignedInt);
+        fmt.setSampleSize(16);
+        fmt.setFrequency(22050);
+        fmt.setChannels(1);
+
+    } else {
+        // high, 44100Hz mono S16
+        fmt.setSampleType(QAudioFormat::SignedInt);
+        fmt.setSampleSize(16);
+        fmt.setFrequency(44100);
+        fmt.setChannels(1);
+
+    }
+    m_session->setFormat(fmt);
 }
 
-int AudioEncoderControl::quality() const
+QtMedia::EncodingQuality AudioEncoderControl::quality() const
 {
-    return 0;
+    return QtMedia::NormalQuality;
 }
 
-void AudioEncoderControl::setQuality(int value)
+void AudioEncoderControl::setQuality(QtMedia::EncodingQuality value)
 {
+    Q_UNUSED(value)
 }
 
-QStringList AudioEncoderControl::supportedEncodingOptions() const
+QStringList AudioEncoderControl::supportedEncodingOptions(const QString &codec) const
 {
+    Q_UNUSED(codec)
+
     QStringList list;
     return list;
 }
 
-QVariant AudioEncoderControl::encodingOption(const QString &name) const
+QVariant AudioEncoderControl::encodingOption(const QString &codec, const QString &name) const
 {
+    Q_UNUSED(codec)
     if(qstrcmp(name.toLocal8Bit().constData(),"bitrate") == 0) {
         return QVariant(8000);
     }
@@ -80,8 +109,12 @@ QVariant AudioEncoderControl::encodingOption(const QString &name) const
     return QVariant();
 }
 
-void AudioEncoderControl::setEncodingOption(const QString &name, const QVariant &value)
+void AudioEncoderControl::setEncodingOption(
+        const QString &codec, const QString &name, const QVariant &value)
 {
+    Q_UNUSED(value)
+    Q_UNUSED(codec)
+
     QAudioFormat fmt = m_session->format();
 
     if(qstrcmp(name.toLocal8Bit().constData(),"bitrate") == 0) {
@@ -94,26 +127,21 @@ void AudioEncoderControl::setEncodingOption(const QString &name, const QVariant 
         qWarning()<<"option: "<<name<<" is an unknown option!";
 }
 
-int AudioEncoderControl::frequency() const
+int AudioEncoderControl::sampleRate() const
 {
     return m_session->format().frequency();
 }
 
-void AudioEncoderControl::setFrequency(int frequency)
+void AudioEncoderControl::setSampleRate(int sampleRate)
 {
     QAudioFormat fmt = m_session->format();
-    fmt.setFrequency(frequency);
+    fmt.setFrequency(sampleRate);
     m_session->setFormat(fmt);
 }
 
-QList<int> AudioEncoderControl::supportedFrequencies() const
+QList<int> AudioEncoderControl::supportedSampleRates() const
 {
     return m_session->deviceInfo()->supportedFrequencies();
-}
-
-QPair<int,int> AudioEncoderControl::supportedFrequencyRange() const
-{
-    return qMakePair<int,int>(8000, 48000);
 }
 
 int AudioEncoderControl::channels() const

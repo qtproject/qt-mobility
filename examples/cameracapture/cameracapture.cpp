@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,30 +17,34 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
 #include "cameracapture.h"
 #include "ui_cameracapture.h"
+#include "settings.h"
 
-#include <qabstractmediaservice.h>
+#include <qmediaservice.h>
 #include <qmediarecorder.h>
-#include <qaudiodevicecontrol.h>
-#include <qaudioencodercontrol.h>
-#include <qvideoencodercontrol.h>
-#include <qmediaformatcontrol.h>
 #include <qcamera.h>
 #include <qvideowidget.h>
 
@@ -51,84 +55,86 @@ CameraCapture::CameraCapture(QWidget *parent) :
     ui(new Ui::CameraCapture),
     mediaRecorder(0),
     camera(0),
-    service(0)
+    service(0),
+    videoWidget(0)
 {
     ui->setupUi(this);
 
-    camera = new QCamera;
+    //camera devices
+    QByteArray cameraDevice;
+
+    ui->actionCamera->setMenu(new QMenu(this));
+    QActionGroup *videoDevicesGroup = new QActionGroup(this);
+    videoDevicesGroup->setExclusive(true);
+    foreach(const QByteArray &deviceName, QCamera::availableDevices()) {
+        QString description = deviceName+" "+camera->deviceDescription(deviceName);
+        QAction *videoDeviceAction = new QAction(description, videoDevicesGroup);
+        videoDeviceAction->setCheckable(true);
+        videoDeviceAction->setData(QVariant(deviceName));
+        if (cameraDevice.isEmpty()) {
+            cameraDevice = deviceName;
+            videoDeviceAction->setChecked(true);
+        }
+        ui->actionCamera->menu()->addAction(videoDeviceAction);
+    }
+
+    connect(videoDevicesGroup, SIGNAL(triggered(QAction*)), this, SLOT(updateCameraDevice(QAction*)));
+
+    ui->actionAudio->setMenu(new QMenu(this));
+
+    setCamera(cameraDevice);
+}
+
+CameraCapture::~CameraCapture()
+{
+}
+
+void CameraCapture::setCamera(const QByteArray &cameraDevice)
+{
+    delete mediaRecorder;
+    delete videoWidget;
+    delete camera;
+
+    if (cameraDevice.isEmpty())
+        camera = new QCamera;
+    else
+        camera = new QCamera(cameraDevice);
+
     service = camera->service();
     mediaRecorder = new QMediaRecorder(camera);
 
-    Q_ASSERT(service);
+    //audio devices
+    ui->actionAudio->menu()->clear();
+    QActionGroup *audioDevicesGroup = new QActionGroup(this);
+    audioDevicesGroup->setExclusive(true);
+
+    foreach(const QString deviceName, service->supportedEndpoints(QMediaService::AudioDevice)) {
+        QString description = service->endpointDescription(QMediaService::AudioDevice, deviceName);
+        QAction *audioDeviceAction = new QAction(deviceName+" "+description, audioDevicesGroup);
+        audioDeviceAction->setData(QVariant(deviceName));
+        audioDeviceAction->setCheckable(true);
+
+        ui->actionAudio->menu()->addAction(audioDeviceAction);
+
+        if (service->activeEndpoint(QMediaService::AudioDevice) == deviceName)
+            audioDeviceAction->setChecked(true);
+    }
+
+    connect(audioDevicesGroup, SIGNAL(triggered(QAction*)), this, SLOT(updateAudioDevice(QAction*)));
+
 
     mediaRecorder->setSink(QUrl("test.mkv"));
 
     connect(mediaRecorder, SIGNAL(durationChanged(qint64)), this, SLOT(updateRecordTime()));
     connect(mediaRecorder, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(displayErrorMessage()));
 
-    //audio devices
-    foreach(const QString deviceName, service->supportedEndpoints(QAbstractMediaService::AudioInput)) {
-        QString description = service->endpointDescription(QAbstractMediaService::AudioInput, deviceName);
-        ui->audioInputDeviceBox->addItem(deviceName+" "+description, QVariant(deviceName));
-    }
+    camera->setMetaData(QtMedia::Title, QVariant(QLatin1String("Test Title")));
 
-    //camera devices
-    foreach(const QString deviceName, camera->devices()) {
-        ui->cameraDeviceBox->addItem(deviceName+" "+camera->deviceDescription(deviceName), QVariant(deviceName));
-    }
-
-    //audio codecs
-    foreach(const QString &codecName, mediaRecorder->supportedAudioCodecs()) {
-        QString description = mediaRecorder->audioCodecDescription(codecName);
-        ui->audioCodecBox->addItem(codecName+": "+description);
-        if (codecName == mediaRecorder->audioCodec())
-            ui->audioCodecBox->setCurrentIndex(ui->audioCodecBox->count()-1);
-    }
-
-    ui->audioQualitySlider->setValue(qRound(mediaRecorder->audioQuality()));
-
-    //video codecs
-    foreach(const QString &codecName, mediaRecorder->supportedVideoCodecs()) {
-        QString description = mediaRecorder->videoCodecDescription(codecName);
-        ui->videoCodecBox->addItem(codecName+": "+description);
-        if (codecName == mediaRecorder->videoCodec())
-            ui->videoCodecBox->setCurrentIndex(ui->videoCodecBox->count()-1);
-    }
-
-    ui->videoQualitySlider->setValue(qRound(mediaRecorder->videoQuality()));
-
-    ui->videoResolutionBox->addItem(tr("Default"));
-    QList<QSize> supportedResolutions = mediaRecorder->supportedResolutions();
-    foreach(const QSize &resolution, supportedResolutions) {
-        ui->videoResolutionBox->addItem(QString("%1x%2").arg(resolution.width()).arg(resolution.height()));
-    }
-
-    ui->videoFramerateBox->addItem(tr("Default"));
-    QList< QPair<int,int> > supportedFrameRates = mediaRecorder->supportedFrameRates();
-    QPair<int,int> rate;
-    foreach(rate, supportedFrameRates) {
-        ui->videoFramerateBox->addItem(QString("%1/%2").arg(rate.first).arg(rate.second));
-    }
-
-    //container format selection
-    foreach(const QString &formatName, mediaRecorder->supportedFormats()) {
-        QString description = mediaRecorder->formatDescription(formatName);
-        ui->containerFormatBox->addItem(formatName+": "+description);
-        if (formatName == mediaRecorder->format())
-            ui->containerFormatBox->setCurrentIndex(ui->containerFormatBox->count()-1);
-    }
-
-
-    camera->setMetaData(QAbstractMediaObject::Title, QVariant(QLatin1String("Test Title")));
-
-    QWidget *videoWidget = new QVideoWidget(mediaRecorder);
-    videoWidget->resize(640,480);
-    videoWidget->show();
+    videoWidget = new QVideoWidget(mediaRecorder);
+    ui->stackedWidget->addWidget(videoWidget);
+    ui->previewCamera->setChecked(false);
 }
 
-CameraCapture::~CameraCapture()
-{
-}
 
 void CameraCapture::updateRecordTime()
 {
@@ -136,67 +142,20 @@ void CameraCapture::updateRecordTime()
     ui->statusbar->showMessage(str);
 }
 
-void CameraCapture::setAudioInputDevice(int idx)
+void CameraCapture::settings()
 {
-    QString deviceName = ui->audioInputDeviceBox->itemData(idx).toString();
-    service->setActiveEndpoint(QAbstractMediaService::AudioInput, deviceName );
-}
+    Settings settingsDialog(mediaRecorder);
 
-void CameraCapture::setCameraDevice(int idx)
-{
-    camera->setDevice(ui->cameraDeviceBox->itemData(idx).toString());
-}
+    settingsDialog.setAudioSettings(mediaRecorder->audioSettings());
+    settingsDialog.setVideoSettings(mediaRecorder->videoSettings());
+    settingsDialog.setFormat(mediaRecorder->format());
 
-void CameraCapture::setAudioCodec(int idx)
-{
-    QString codecName = mediaRecorder->supportedAudioCodecs()[idx];
-    mediaRecorder->setAudioCodec(codecName);
-}
-
-void CameraCapture::setVideoCodec(int idx)
-{
-    QString codecName = mediaRecorder->supportedVideoCodecs()[idx];
-    mediaRecorder->setVideoCodec(codecName);
-}
-
-void CameraCapture::setAudioQuality(int value)
-{
-    mediaRecorder->setAudioQuality(value);
-}
-
-void CameraCapture::setVideoQuality(int value)
-{
-    mediaRecorder->setVideoQuality(value);
-}
-
-void CameraCapture::setContainerFormat(int idx)
-{
-    if (mediaRecorder)
-        mediaRecorder->setFormat(mediaRecorder->supportedFormats()[idx]);
-}
-
-void CameraCapture::setVideoResolution()
-{
-    QSize resolution;
-    QStringList resolutionParts = ui->videoResolutionBox->currentText().split('x');
-    if (resolutionParts.size() == 2) {
-        resolution.setWidth(resolutionParts[0].toInt());
-        resolution.setHeight(resolutionParts[1].toInt());
+    if (settingsDialog.exec()) {
+        mediaRecorder->setEncodingSettings(
+                settingsDialog.audioSettings(),
+                settingsDialog.videoSettings(),
+                settingsDialog.format());
     }
-
-    mediaRecorder->setResolution(resolution);
-}
-
-void CameraCapture::setVideoFramerate()
-{
-    QPair<int,int> frameRate = qMakePair<int,int>(-1,-1);
-    QStringList rateParts = ui->videoFramerateBox->currentText().split('/');
-    if (rateParts.size() == 2) {
-        frameRate.first = rateParts[0].toInt();
-        frameRate.second = rateParts[1].toInt();
-    }
-
-    mediaRecorder->setFrameRate(frameRate);
 }
 
 void CameraCapture::record()
@@ -226,4 +185,14 @@ void CameraCapture::enablePreview(bool enabled)
 void CameraCapture::displayErrorMessage()
 {
     QMessageBox::warning(this, "Capture error", mediaRecorder->errorString());
+}
+
+void CameraCapture::updateCameraDevice(QAction *action)
+{
+    setCamera(action->data().toByteArray());
+}
+
+void CameraCapture::updateAudioDevice(QAction *action)
+{
+    service->setActiveEndpoint(QMediaService::AudioDevice, action->data().toString());
 }

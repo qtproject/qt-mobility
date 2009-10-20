@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,23 +17,30 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
 #include <qvideowidgetcontrol.h>
-#include <qabstractmediacontrol_p.h>
+#include <qmediacontrol_p.h>
 
 /*!
     \class QVideoWidgetControl
@@ -46,7 +53,7 @@
     Constructs a new video widget control with the given \a parent.
 */
 QVideoWidgetControl::QVideoWidgetControl(QObject *parent)
-    :QAbstractMediaControl(parent)
+    :QMediaControl(parent)
 {
 }
 
@@ -58,54 +65,47 @@ QVideoWidgetControl::~QVideoWidgetControl()
 }
 
 /*!
-  \fn bool QVideoWidgetControl::isFullscreen() const
-  Returns true if the video  is shown using the complete screen.
+    \fn QVideoWidgetControl::isFullScreen() const
+
+    Returns true if the video is shown using the complete screen.
 */
 
 /*!
-  \fn void QVideoWidgetControl::setFullscreen(bool fullscreen)
-    Sets whether a video widget is in \a fullscreen mode.
+    \fn QVideoWidgetControl::setFullScreen(bool fullScreen)
+
+    Sets whether a video widget is in \a fullScreen mode.
 */
 
 /*!
-    \fn QVideoWidgetControl::fullscreenChanged(bool fullscreen)
+    \fn QVideoWidgetControl::fullScreenChanged(bool fullScreen)
 
-    Signals that the \a fullscreen state of a video widget has changed.
+    Signals that the \a fullScreen state of a video widget has changed.
 */
 
 /*!
-    \fn QVideoWidgetControl::aspectRatio() const
+    \fn QVideoWidgetControl::aspectRatioMode() const
 
-    Returns the aspect ratio policy for scaling the video.
+    Returns how video is scaled to fit the widget with respect to its aspect ratio.
 */
 
 /*!
-    \fn QVideoWidgetControl::setAspectRatio(QVideoWidget::AspectRatio ratio)
+    \fn QVideoWidgetControl::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 
-    Sets the aspect \a ratio policy for scaling the video.
+    Sets the aspect ratio \a mode which determines how video is scaled to the fit the widget with
+    respect to its aspect ratio.
 */
 
 /*!
-    \fn QVideoWidgetControl::customAspectRatio() const
+    \fn QVideoWidgetControl::brightness() const
 
-    Returns the a custom aspect ratio used to scale the video.
-*/
-
-/*!
-    \fn QVideoWidgetControl::setCustomAspectRatio(const QSize &ratio)
-
-    Sets a custom aspect \a ratio used to scale the video.
-*/
-
-/*!
-  \fn int QVideoWidgetControl::brightness() const
     Returns the brightness adjustment applied to a video.
 
     Valid brightness values range between -100 and 100, the default is 0.
 */
 
 /*!
-  \fn void QVideoWidgetControl::setBrightness(int brightness)
+    \fn QVideoWidgetControl::setBrightness(int brightness)
+
     Sets a \a brightness adjustment for a video.
 
     Valid brightness values range between -100 and 100, the default is 0.
@@ -118,14 +118,16 @@ QVideoWidgetControl::~QVideoWidgetControl()
 */
 
 /*!
-  \fn int QVideoWidgetControl::contrast() const
+    \fn QVideoWidgetControl::contrast() const
+
     Returns the contrast adjustment applied to a video.
 
     Valid contrast values range between -100 and 100, the default is 0.
 */
 
 /*!
-  \fn void QVideoWidgetControl::setContrast(int contrast)
+    \fn QVideoWidgetControl::setContrast(int contrast)
+
     Sets the contrast adjustment for a video widget to \a contrast.
 
     Valid contrast values range between -100 and 100, the default is 0.
@@ -139,14 +141,16 @@ QVideoWidgetControl::~QVideoWidgetControl()
 */
 
 /*!
-  \fn int QVideoWidgetControl::hue() const
+    \fn QVideoWidgetControl::hue() const
+
     Returns the hue adjustment applied to a video widget.
 
     Value hue values range between -100 and 100, the default is 0.
 */
 
 /*!
-  \fn void QVideoWidgetControl::setHue(int hue)
+    \fn QVideoWidgetControl::setHue(int hue)
+
     Sets a \a hue adjustment for a video widget.
 
     Valid hue values range between -100 and 100, the default is 0.
@@ -160,7 +164,8 @@ QVideoWidgetControl::~QVideoWidgetControl()
 */
 
 /*!
-  \fn int QVideoWidgetControl::saturation() const
+    \fn QVideoWidgetControl::saturation() const
+
     Returns the saturation adjustment applied to a video widget.
 
     Value saturation values range between -100 and 100, the default is 0.
@@ -168,7 +173,8 @@ QVideoWidgetControl::~QVideoWidgetControl()
 
 
 /*!
-  \fn void QVideoWidgetControl::setSaturation(int saturation)
+    \fn QVideoWidgetControl::setSaturation(int saturation)
+
     Sets a \a saturation adjustment for a video widget.
 
     Valid saturation values range between -100 and 100, the default is 0.

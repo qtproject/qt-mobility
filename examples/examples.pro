@@ -34,10 +34,10 @@ SUBDIRS += sysinfo
 
 #Multimedia
 SUBDIRS += player \
-        recorder \
         cameracapture \
         slideshow \
-        streamplayer
+        streamplayer \
+        audiorecorder
 
 #Messaging examples
 contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
@@ -47,4 +47,3 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
         sendmessage\
         serviceactions
 }
-

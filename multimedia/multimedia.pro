@@ -14,38 +14,36 @@ contains(QT_CONFIG, opengl): QT += opengl
 DEFINES += QT_BUILD_MEDIA_LIB
 
 HEADERS = \
-    qabstractmediacontrol.h \
-    qabstractmediacontrol_p.h \
-    qabstractmediaobject.h \
-    qabstractmediaobject_p.h \
-    qabstractmediaservice.h \
-    qabstractmediaservice_p.h  \
-    qaudiorecorderservice.h \
+    qmediacontrol.h \
+    qmediacontrol_p.h \
+    qmediaobject.h \
+    qmediaobject_p.h \
+    qmediaservice.h \
+    qmediaservice_p.h  \
     qlocalmediaplaylistprovider.h \
-    qmetadataprovidercontrol.h \
+    qmediaimageviewer.h \
+    qmediaimageviewerservice_p.h \
     qmediaplayer.h \
     qmediaplayercontrol.h \
-    qmediaplayerservice.h \
     qmediaplaylist.h \
     qmediaplaylist_p.h \
     qmediaplaylistnavigator.h \
     qmediaplaylistprovider.h \
     qmediaplaylistprovider_p.h \
     qmediaplaylistioplugin.h \
-    qmediaproviderfactory_p.h \
-    qmediasource.h \
+    qmediacontent.h \
     qmediaresource.h \
     qmediarecorder.h \
-    qmediarecorderservice.h \
+    qmediaencodersettings.h \
     qmediarecordercontrol.h \
     qmediaserviceprovider.h \
     qmediaserviceproviderplugin.h \
-    qmediaslideshow.h \
-    qmediaslideshowservice_p.h \
+    qmetadatacontrol.h \
+    qmediastreamscontrol.h \
     qmultimediaglobal.h \
-    qradioplayer.h \
-    qradioservice.h \
-    qradioplayercontrol.h \
+    qradiotuner.h \
+    qradiotunercontrol.h \
+    qtmedianamespace.h \
     qvideooutputcontrol.h \
     qvideowidget.h \
     qvideowidget_p.h \
@@ -55,45 +53,40 @@ HEADERS = \
     qvideoencodercontrol.h \
     qimageencodercontrol.h \
     qimagecapturecontrol.h \
-    qaudiosource.h \
-    qaudiosourceservice.h \
+    qaudiocapturesource.h \
     qcamera.h \
     qcameracontrol.h \
     qcameraexposurecontrol.h \
     qcamerafocuscontrol.h \
     qimageprocessingcontrol.h \
-    qcameraservice.h \
     qmediaformatcontrol.h \
     qmediaplaylistcontrol.h \
     qaudiodevicecontrol.h \
     qvideodevicecontrol.h \
     qmediapluginloader_p.h
 
-SOURCES = qabstractmediacontrol.cpp \
-    qabstractmediaobject.cpp \
-    qabstractmediaservice.cpp \
-    qaudiorecorderservice.cpp \
+SOURCES = qmediacontrol.cpp \
+    qmediaobject.cpp \
+    qmediaservice.cpp \
     qlocalmediaplaylistprovider.cpp \
-    qmetadataprovidercontrol.cpp \
+    qmediaimageviewer.cpp \
+    qmediaimageviewerservice.cpp \
     qmediaplayer.cpp \
     qmediaplayercontrol.cpp \
-    qmediaplayerservice.cpp \
     qmediaplaylist.cpp \
     qmediaplaylistioplugin.cpp \
     qmediaplaylistnavigator.cpp \
     qmediaplaylistprovider.cpp \
-    qmediaproviderfactory.cpp \
     qmediarecorder.cpp \
-    qmediarecorderservice.cpp \
+    qmediaencodersettings.cpp \
     qmediarecordercontrol.cpp \
-    qmediasource.cpp \
+    qmediacontent.cpp \
     qmediaresource.cpp \
     qmediaserviceprovider.cpp \
-    qmediaslideshow.cpp \
-    qmediaslideshowservice.cpp \
-    qradioplayer.cpp \
-    qradioservice.cpp \
-    qradioplayercontrol.cpp \
+    qmetadatacontrol.cpp \
+    qmediastreamscontrol.cpp \
+    qradiotuner.cpp \
+    qradiotunercontrol.cpp \
     qvideooutputcontrol.cpp \
     qvideowidget.cpp \
     qvideowindowcontrol.cpp \
@@ -102,14 +95,12 @@ SOURCES = qabstractmediacontrol.cpp \
     qvideoencodercontrol.cpp \
     qimageencodercontrol.cpp \
     qimagecapturecontrol.cpp \
-    qaudiosource.cpp \
-    qaudiosourceservice.cpp \
+    qaudiocapturesource.cpp \
     qcamera.cpp \
     qcameracontrol.cpp \
     qcameraexposurecontrol.cpp \
     qcamerafocuscontrol.cpp \
     qimageprocessingcontrol.cpp \
-    qcameraservice.cpp \
     qmediaformatcontrol.cpp \
     qmediaplaylistcontrol.cpp \
     qaudiodevicecontrol.cpp \
@@ -118,10 +109,12 @@ SOURCES = qabstractmediacontrol.cpp \
 
 contains(QT_CONFIG, multimedia) {
     HEADERS += \
+        qgraphicsvideoitem.h \
         qpaintervideosurface_p.h \
         qvideorenderercontrol.h
 
     SOURCES += \
+        qgraphicsvideoitem.cpp \
         qpaintervideosurface.cpp \
         qvideorenderercontrol.cpp
 } else {

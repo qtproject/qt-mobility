@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -40,10 +47,7 @@
 #include <math.h>
 
 QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
-    :QAudioEncoderControl(parent),
-    m_frequency(-1),
-    m_channels(-1),
-    m_sampleSize(-1)
+    :QAudioEncoderControl(parent)
 {
     QList<QByteArray> codecCandidates;
     codecCandidates << "audio/mpeg" << "audio/vorbis" << "audio/speex" << "audio/GSM";
@@ -53,10 +57,9 @@ QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
     m_elementNames["audio/speex"] = "speexenc";
     m_elementNames["audio/GSM"] = "gsmenc";
 
-
-    m_codecOptions["audio/vorbis"] = QStringList() << "quality" << "bitrate" << "min-bitrate" << "max-bitrate";
-    m_codecOptions["audio/mpeg"] = QStringList() << "quality" << "bitrate" << "mode" << "vbr";
-    m_codecOptions["audio/speex"] = QStringList() << "quality" << "bitrate" << "mode" << "vbr" << "vad" << "dtx";
+    m_codecOptions["audio/vorbis"] = QStringList() << "min-bitrate" << "max-bitrate";
+    m_codecOptions["audio/mpeg"] = QStringList() << "mode";
+    m_codecOptions["audio/speex"] = QStringList() << "mode" << "vbr" << "vad" << "dtx";
     m_codecOptions["audio/GSM"] = QStringList();
 
     foreach( const QByteArray& codecName, codecCandidates ) {
@@ -73,7 +76,7 @@ QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
     }
 
     if (!m_codecs.isEmpty())
-        setAudioCodec(m_codecs[0]);
+        m_audioSettings.setCodec(m_codecs[0]);
 }
 
 QGstreamerAudioEncode::~QGstreamerAudioEncode()
@@ -90,94 +93,51 @@ QString QGstreamerAudioEncode::codecDescription(const QString &codecName) const
     return m_codecDescriptions.value(codecName);
 }
 
-QString QGstreamerAudioEncode::audioCodec() const
+QStringList QGstreamerAudioEncode::supportedEncodingOptions(const QString &codec) const
 {
-    return m_codec;
+    return m_codecOptions.value(codec);
 }
 
-bool QGstreamerAudioEncode::setAudioCodec(const QString &codecName)
+QVariant QGstreamerAudioEncode::encodingOption(
+        const QString &codec, const QString &name) const
 {
-    m_codec = codecName;
-
-    //speex is optimised for a limited set of frequencies
-    if (codecName == QLatin1String("audio/speex") && m_frequency == -1) {
-        m_frequency = 32000;
-    }
-
-    return true;
+    return m_options[codec].value(name);
 }
 
-int QGstreamerAudioEncode::bitrate() const
+void QGstreamerAudioEncode::setEncodingOption(
+        const QString &codec, const QString &name, const QVariant &value)
 {
-    return m_options.value(QLatin1String("bitrate"), QVariant(int(-1))).toInt();
+    m_options[codec][name] = value;
 }
 
-void QGstreamerAudioEncode::setBitrate(int value)
-{
-    setEncodingOption(QLatin1String("bitrate"), QVariant(value));
-}
-
-int QGstreamerAudioEncode::quality() const
-{
-    return m_options.value(QLatin1String("quality"), QVariant(50)).toInt();
-}
-
-void QGstreamerAudioEncode::setQuality(int value)
-{
-    setEncodingOption(QLatin1String("quality"), QVariant(value));
-}
-
-QStringList QGstreamerAudioEncode::supportedEncodingOptions() const
-{
-    return m_codecOptions.value(m_codec);
-}
-
-QVariant QGstreamerAudioEncode::encodingOption(const QString &name) const
-{
-    return m_options.value(name);
-}
-
-void QGstreamerAudioEncode::setEncodingOption(const QString &name, const QVariant &value)
-{
-    m_options.insert(name,value);
-}
-
-QList<int> QGstreamerAudioEncode::supportedFrequencies() const
+QList<int> QGstreamerAudioEncode::supportedSampleRates() const
 {
     //TODO check element caps to find actual values
 
     return QList<int>();
 }
 
-QPair<int,int> QGstreamerAudioEncode::supportedFrequencyRange() const
+QAudioEncoderSettings QGstreamerAudioEncode::audioSettings() const
 {
-    //TODO check element caps to find actual values
-
-    return qMakePair<int,int>(8000, 48000);
+    return m_audioSettings;
 }
 
-QList<int> QGstreamerAudioEncode::supportedChannelCounts() const
+void QGstreamerAudioEncode::setAudioSettings(const QAudioEncoderSettings &settings)
 {
-    //TODO check element caps to find actual values
-
-    return QList<int>() << 1 << 2;
+    m_audioSettings = settings;
 }
 
-QList<int> QGstreamerAudioEncode::supportedSampleSizes() const
-{
-    //TODO check element caps to find actual values
-
-    return QList<int>() << 16;
-}
 
 
 GstElement *QGstreamerAudioEncode::createEncoder()
 {
+    QString codec = m_audioSettings.codec();
+
     GstBin * encoderBin = GST_BIN(gst_bin_new("audio-encoder-bin"));
     Q_ASSERT(encoderBin);
 
     GstElement *capsFilter = gst_element_factory_make("capsfilter", NULL);
-    GstElement *encoderElement = gst_element_factory_make(m_elementNames.value(m_codec).constData(), NULL);
+    GstElement *encoderElement = gst_element_factory_make(m_elementNames.value(codec).constData(), NULL);
 
     Q_ASSERT(encoderElement);
 
@@ -194,19 +154,15 @@ GstElement *QGstreamerAudioEncode::createEncoder()
     gst_element_add_pad(GST_ELEMENT(encoderBin), gst_ghost_pad_new("src", pad));
     gst_object_unref(GST_OBJECT(pad));
 
-    if (m_frequency > 0 || m_channels > 0 || m_sampleSize > 0) {
+    if (m_audioSettings.sampleRate() > 0 || m_audioSettings.channels() > 0) {
         GstCaps *caps = gst_caps_new_empty();
         GstStructure *structure = gst_structure_new("audio/x-raw-int", NULL);
 
-        if ( m_frequency > 0 )
-            gst_structure_set(structure, "rate", G_TYPE_INT, m_frequency, NULL );
+        if (m_audioSettings.sampleRate() > 0)
+            gst_structure_set(structure, "rate", G_TYPE_INT, m_audioSettings.sampleRate(), NULL );
 
-        if ( m_channels > 0 )
-            gst_structure_set(structure, "channels", G_TYPE_INT, m_channels, NULL );
-
-        if ( m_sampleSize > 0 )
-            gst_structure_set(structure, "width", G_TYPE_INT, m_sampleSize, NULL );
-
+        if (m_audioSettings.channels() > 0)
+            gst_structure_set(structure, "channels", G_TYPE_INT, m_audioSettings.channels(), NULL );
 
         gst_caps_append_structure(caps,structure);
 
@@ -216,51 +172,71 @@ GstElement *QGstreamerAudioEncode::createEncoder()
     }
 
     if (encoderElement) {
-        QMapIterator<QString,QVariant> it(m_options);
+        if (m_audioSettings.encodingMode() == QtMedia::ConstantQualityEncoding) {
+            QtMedia::EncodingQuality qualityValue = m_audioSettings.quality();
+
+            if (codec == QLatin1String("audio/vorbis")) {
+                double qualityTable[] = {
+                    0.1, //VeryLow
+                    0.3, //Low
+                    0.5, //Normal
+                    0.7, //High
+                    1.0 //VeryHigh
+                };
+                g_object_set(G_OBJECT(encoderElement), "quality", qualityTable[qualityValue], NULL);
+            } else if (codec == QLatin1String("audio/mpeg")) {
+                int presets[] = {
+                    1006, //VeryLow - Medium
+                    1006, //Low - Medium
+                    1001, //Normal - Standard
+                    1002, //High - Extreme
+                    1003 //VeryHigh - Insane
+                };
+
+                g_object_set(G_OBJECT(encoderElement), "preset", presets[qualityValue], NULL);
+            } else if (codec == QLatin1String("audio/speex")) {
+                //0-10 range with default 8
+                double qualityTable[] = {
+                    2, //VeryLow
+                    5, //Low
+                    8, //Normal
+                    9, //High
+                    10 //VeryHigh
+                };
+                g_object_set(G_OBJECT(encoderElement), "quality", qualityTable[qualityValue], NULL);
+            }
+        } else {
+            int bitrate = m_audioSettings.bitrate();
+            if (bitrate > 0) {
+                g_object_set(G_OBJECT(encoderElement), "bitrate", bitrate, NULL);
+            }
+        }
+
+        QMap<QString, QVariant> options = m_options.value(codec);
+        QMapIterator<QString,QVariant> it(options);
         while (it.hasNext()) {
             it.next();
             QString option = it.key();
             QVariant value = it.value();
 
-            if (option == QLatin1String("quality")) {
-                int qualityValue = value.toInt();
-
-                if (m_codec == QLatin1String("audio/vorbis")) {
-                    g_object_set(G_OBJECT(encoderElement), "quality", qualityValue/10.0, NULL);
-                } else if (m_codec == QLatin1String("audio/mpeg")) {
-                    int preset = 1006; // Medium
-                    if (qualityValue > 40)
-                        preset = 1001; // Standard
-                    if (qualityValue > 60)
-                        preset = 1002; // Extreme
-                    if (qualityValue > 80 )
-                        preset = 1003; // Insane
-                    g_object_set(G_OBJECT(encoderElement), "preset", preset, NULL);
-                } else if (m_codec == QLatin1String("audio/speex")) {
-                    //0-10 range with default 8
-                    double q = 10.0*pow(qualityValue/100.0, 0.32);
-                    g_object_set(G_OBJECT(encoderElement), "quality", q, NULL);
-                }
-
-            } else {
-                switch (value.type()) {
-                case QVariant::Int:
-                    g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toInt(), NULL);
-                    break;
-                case QVariant::Bool:
-                    g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toBool(), NULL);
-                    break;
-                case QVariant::Double:
-                    g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toDouble(), NULL);
-                    break;
-                case QVariant::String:
-                    g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toString().toUtf8().constData(), NULL);
-                    break;
-                default:
-                    qWarning() << "unsupported option type:" << option << value;
-                    break;
-                }
+            switch (value.type()) {
+            case QVariant::Int:
+                g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toInt(), NULL);
+                break;
+            case QVariant::Bool:
+                g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toBool(), NULL);
+                break;
+            case QVariant::Double:
+                g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toDouble(), NULL);
+                break;
+            case QVariant::String:
+                g_object_set(G_OBJECT(encoderElement), option.toAscii(), value.toString().toUtf8().constData(), NULL);
+                break;
+            default:
+                qWarning() << "unsupported option type:" << option << value;
+                break;
             }
+
         }
     }
 

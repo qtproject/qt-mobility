@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -35,12 +42,12 @@
 #ifndef QCAMERAEXPOSURECONTROL_H
 #define QCAMERAEXPOSURECONTROL_H
 
-#include <qabstractmediacontrol.h>
-#include <qabstractmediaobject.h>
+#include <qmediacontrol.h>
+#include <qmediaobject.h>
 
 #include <qcamera.h>
 
-class Q_MEDIA_EXPORT QCameraExposureControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QCameraExposureControl : public QMediaControl
 {
     Q_OBJECT
 
@@ -64,17 +71,23 @@ public:
     virtual QCamera::MeteringModes supportedMeteringModes() const = 0;
 
     virtual int isoSensitivity() const = 0;
-    virtual QPair<int, int> supportedIsoSensitivityRange() const = 0;
+    virtual int minimumIsoSensitivity() const = 0;
+    virtual int maximumIsoSensitivity() const = 0;
+    virtual QList<int> supportedIsoSensitivities() const = 0;
     virtual void setManualIsoSensitivity(int iso) = 0;
     virtual void setAutoIsoSensitivity() = 0;
 
     virtual qreal aperture() const = 0;
-    virtual QPair<qreal, qreal> supportedApertureRange() const = 0;
+    virtual qreal minimumAperture() const = 0;
+    virtual qreal maximumAperture() const = 0;
+    virtual QList<qreal> supportedApertures() const = 0;
     virtual void setManualAperture(qreal aperture) = 0;
     virtual void setAutoAperture() = 0;
 
     virtual qreal shutterSpeed() const = 0;
-    virtual QPair<qreal, qreal> supportedShutterSpeedRange() const = 0;
+    virtual qreal minimumShutterSpeed() const = 0;
+    virtual qreal maximumShutterSpeed() const = 0;
+    virtual QList<qreal> supportedShutterSpeeds() const = 0;
     virtual void setManualShutterSpeed(qreal seconds) = 0;
     virtual void setAutoShutterSpeed() = 0;
 
@@ -88,8 +101,13 @@ Q_SIGNALS:
     void exposureLocked();
     void flashReady(bool);
 
+    void apertureChanged(qreal);
+    void apertureRangeChanged();
+    void shutterSpeedChanged(qreal);
+    void isoSensitivityChanged(int);
+
 protected:
-    QCameraExposureControl(QObject* parent);
+    QCameraExposureControl(QObject* parent = 0);
 };
 
 #define QCameraExposureControl_iid "com.nokia.Qt.QCameraExposureControl/1.0"

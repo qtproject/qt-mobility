@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,23 +17,31 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
 #include <QtCore/qdebug.h>
 #include <QWidget>
+#include <QFile>
 
 #include <linux/types.h>
 #include <sys/time.h>
@@ -48,8 +56,11 @@
 #include <linux/videodev2.h>
 
 #include "v4lcamerasession.h"
-#include "v4lvideowidget.h"
+#include "v4lvideorenderer.h"
+#include "v4lvideobuffer.h"
 
+#include <QtMultimedia/qabstractvideobuffer.h>
+#include <QtMultimedia/qvideosurfaceformat.h>
 
 V4LCameraSession::V4LCameraSession(QObject *parent)
     :QObject(parent)
@@ -58,7 +69,7 @@ V4LCameraSession::V4LCameraSession(QObject *parent)
     resolutions.clear();
     formats.clear();
     m_state = QCamera::StoppedState;
-    m_device = "/dev/video0";
+    m_device = "/dev/video1";
 
     sfd = ::open(m_device.constData(), O_RDWR);
 
@@ -87,26 +98,23 @@ V4LCameraSession::V4LCameraSession(QObject *parent)
         sfd = -1;
     }
     m_output = 0;
+    m_surface = 0;
     m_windowSize = QSize(320,240);
-    pixelF = QVideoFrame::Format_RGB24;
+    pixelF = QVideoFrame::Format_RGB32;
 }
 
 V4LCameraSession::~V4LCameraSession()
 {
 }
 
+void V4LCameraSession::setSurface(QAbstractVideoSurface* surface)
+{
+    m_surface = surface;
+}
+
 bool V4LCameraSession::deviceReady()
 {
     return available;
-}
-
-void V4LCameraSession::setVideoOutput(QWidget* widget)
-{
-    qWarning()<<"qqqqqqqqqqqqqqqqqqqqqq";
-    m_output = qobject_cast<V4LVideoWidget*>(widget);
-    m_output->setBaseSize(m_windowSize);
-    m_output->setFrameSize(m_windowSize);
-    qWarning()<<widget->size();
 }
 
 int V4LCameraSession::framerate() const
@@ -297,8 +305,6 @@ QSize V4LCameraSession::frameSize() const
 void V4LCameraSession::setFrameSize(const QSize& s)
 {
     m_windowSize = s;
-    if(m_output)
-        m_output->setFrameSize(s);
 }
 
 void V4LCameraSession::setDevice(const QString &device)
@@ -328,6 +334,8 @@ QList<QVideoFrame::PixelFormat> V4LCameraSession::supportedPixelFormats()
                 list << QVideoFrame::Format_UYVY;
             else if(formats.at(i) == V4L2_PIX_FMT_RGB24)
                 list << QVideoFrame::Format_RGB24;
+            else if(formats.at(i) == V4L2_PIX_FMT_RGB32)
+                list << QVideoFrame::Format_RGB32;
             else if(formats.at(i) == V4L2_PIX_FMT_RGB565)
                 list << QVideoFrame::Format_RGB565;
         }
@@ -378,6 +386,7 @@ int V4LCameraSession::state() const
 {
     return int(m_state);
 }
+
 void V4LCameraSession::record()
 {
     sfd = ::open(m_device.constData(), O_RDWR);
@@ -399,6 +408,8 @@ void V4LCameraSession::record()
         fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
     if(pixelF == QVideoFrame::Format_RGB24)
         fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
+    if(pixelF == QVideoFrame::Format_RGB32)
+        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB32;
     if(pixelF == QVideoFrame::Format_RGB565)
         fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB565;
     if(pixelF == QVideoFrame::Format_UYVY)
@@ -406,6 +417,69 @@ void V4LCameraSession::record()
 
     fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
     ret = ::ioctl(sfd, VIDIOC_S_FMT, &fmt);
+
+    if(ret == -1) {
+        // Current format is not supported, try and find something that works!
+        int match = false;
+        QList<QVideoFrame::PixelFormat> fmts = supportedPixelFormats();
+        foreach(QVideoFrame::PixelFormat format, fmts) {
+            if (m_surface->isFormatSupported(QVideoSurfaceFormat(m_windowSize,format))) {
+                // found a match, use it!
+                match = true;
+                pixelF = format;
+                break;
+            }
+        }
+        if(!match) {
+            // no direct match up found, see if we can use the converter
+            if(m_surface->isFormatSupported(QVideoSurfaceFormat(m_windowSize,QVideoFrame::Format_RGB32))) {
+                // converter can convert YUYV->RGB565, UYVY->RGB565 and YUV420P->RGB565
+                if (pixelF == QVideoFrame::Format_YUYV || pixelF == QVideoFrame::Format_UYVY ||
+                    pixelF == QVideoFrame::Format_YUV420P) {
+                    match = true;
+                    converter = CameraFormatConverter::createFormatConverter(pixelF,m_windowSize.width(),
+                                                                             m_windowSize.height());
+                    qWarning()<<"found a converter match from: "<<pixelF<<" to RGB565";
+                }
+                if (!match) {
+                    // fallback, cant convert your format so set to one that I can get working!
+                    foreach(QVideoFrame::PixelFormat format, fmts) {
+                        if(format == QVideoFrame::Format_YUYV || format == QVideoFrame::Format_UYVY ||
+                                format == QVideoFrame::Format_YUV420P) {
+                            pixelF = format;
+                            match = true;
+                            converter = CameraFormatConverter::createFormatConverter(pixelF,m_windowSize.width(),
+                                    m_windowSize.height());
+                            qWarning()<<"fallback, convert from: "<<pixelF<<" to RGB565";
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if(match) {
+            // Make sure our match up really works!
+            if(pixelF == QVideoFrame::Format_YUYV)
+                fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
+            if(pixelF == QVideoFrame::Format_RGB24)
+                fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
+            if(pixelF == QVideoFrame::Format_RGB32)
+                fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB32;
+            if(pixelF == QVideoFrame::Format_RGB565)
+                fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB565;
+            if(pixelF == QVideoFrame::Format_UYVY)
+                fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_UYVY;
+            ret = ::ioctl(sfd, VIDIOC_S_FMT, &fmt);
+            if(ret == -1)
+                match = false;
+        }
+        if(!match) {
+            int err = errno;
+            qWarning() << "error setting camera format:" << strerror(err);
+            emit stateChanged(m_state = QCamera::StoppedState);
+            return;
+        }
+    }
 
     struct v4l2_requestbuffers req;
     memset(&req, 0, sizeof(req));
@@ -415,7 +489,7 @@ void V4LCameraSession::record()
     ret = ::ioctl(sfd, VIDIOC_REQBUFS, &req);
     if(ret == -1) {
         qWarning()<<"error allocating buffers";
-        emit stateChanged(QCamera::StoppedState);
+        emit stateChanged(m_state = QCamera::StoppedState);
         return;
     }
 
@@ -475,9 +549,25 @@ void V4LCameraSession::record()
     connect(notifier, SIGNAL(activated(int)), this, SLOT(captureFrame()));
     notifier->setEnabled(1);
 
-    m_state = QCamera::ActiveState;
-    emit stateChanged(QCamera::ActiveState);
-    timeStamp.restart();
+    if (!converter) {
+        QVideoSurfaceFormat requestedFormat(m_windowSize,pixelF);
+
+        bool check = m_surface->isFormatSupported(requestedFormat);
+
+        if(check) {
+            m_surface->start(requestedFormat);
+
+            m_state = QCamera::ActiveState;
+            emit stateChanged(QCamera::ActiveState);
+            timeStamp.restart();
+        }
+    } else {
+        QVideoSurfaceFormat requestedFormat(m_windowSize,QVideoFrame::Format_RGB32);
+        m_surface->start(requestedFormat);
+        m_state = QCamera::ActiveState;
+        emit stateChanged(QCamera::ActiveState);
+        timeStamp.restart();
+    }
 }
 
 void V4LCameraSession::pause()
@@ -511,10 +601,29 @@ void V4LCameraSession::stop()
             delete notifier;
             notifier = 0;
         }
+        // Dequeue remaining buffers
+        for(int i = 0;i < 4; ++i) {
+            v4l2_buffer buf;
+            memset(&buf, 0, sizeof(struct v4l2_buffer));
+            buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+            buf.memory = V4L2_MEMORY_MMAP;
+            buf.index = i;
+            if (ioctl(sfd, VIDIOC_QUERYBUF, &buf) == 0) {
+                if (buf.flags & V4L2_BUF_FLAG_QUEUED) {
+                    ::ioctl(sfd, VIDIOC_DQBUF, &buf);
+                }
+            }
+            munmap(buffers.at(buf.index).start,buf.length);
+        }
+
         ::close(sfd);
         sfd = -1;
         m_state = QCamera::StoppedState;
         emit stateChanged(m_state);
+
+        if(converter)
+            delete converter;
+        converter = 0;
     }
 }
 
@@ -532,13 +641,26 @@ void V4LCameraSession::captureFrame()
         return;
     }
 
-    //qWarning()<<"size: "<<buf.bytesused<<", time: "<<(quint64)buf.timestamp.tv_sec/1000000 + (quint64)buf.timestamp.tv_usec*1000000;;
+    //qWarning()<<"size: "<<buf.bytesused<<", time: "<<buf.timestamp.tv_sec;
 
-    if(m_output) {
-        m_output->setLength(buffers.at(buf.index).length);
-        m_output->setData((char*)buffers.at(buf.index).start);
-        m_output->repaint();
-    }
+    if(m_surface) {
+        if(converter) {
+            QImage image;
+            image = QImage(converter->convert((unsigned char*)buffers.at(buf.index).start,buf.bytesused),
+             m_windowSize.width(),m_windowSize.height(),QImage::Format_RGB16).convertToFormat(QImage::Format_RGB32);
+            //image.save("/tmp/test.bmp");
+            QVideoFrame frame(image);
+            m_surface->present(frame);
+            ret = ioctl(sfd, VIDIOC_QBUF, &buf);
 
-    ret = ioctl(sfd, VIDIOC_QBUF, &buf);
+        } else {
+            V4LVideoBuffer* packet = new V4LVideoBuffer((unsigned char*)buffers.at(buf.index).start, sfd, buf);
+            packet->setBytesPerLine(m_windowSize.width()*4);
+            QVideoFrame frame(packet,m_windowSize,pixelF);
+            frame.setStartTime(buf.timestamp.tv_sec);
+            m_surface->present(frame);
+        }
+
+    } else
+        ret = ioctl(sfd, VIDIOC_QBUF, &buf);
 }

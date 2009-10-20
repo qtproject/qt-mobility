@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -39,7 +46,7 @@
 #include <QDebug>
 
 QPhononMetaDataProvider::QPhononMetaDataProvider(Phonon::MediaObject *session, QObject *parent)
-    :QMetaDataProviderControl(parent), m_session(session), m_metaDataAvailable(false)
+    :QMetaDataControl(parent), m_session(session), m_metaDataAvailable(false)
 {
     connect(m_session, SIGNAL(metaDataChanged()), SLOT(updateTags()));
 }
@@ -58,27 +65,27 @@ bool QPhononMetaDataProvider::isWritable() const
     return false;
 }
 
-QVariant QPhononMetaDataProvider::metaData(QAbstractMediaObject::MetaData key) const
+QVariant QPhononMetaDataProvider::metaData(QtMedia::MetaData key) const
 {
     switch (key) {
-    case QAbstractMediaObject::ContributingArtist:
+    case QtMedia::ContributingArtist:
         return m_session->metaData(Phonon::ArtistMetaData);
-    case QAbstractMediaObject::AlbumTitle:
+    case QtMedia::AlbumTitle:
         return m_session->metaData(Phonon::AlbumMetaData);
-    case QAbstractMediaObject::Title:
+    case QtMedia::Title:
         return m_session->metaData(Phonon::TitleMetaData);
-    case QAbstractMediaObject::Date:
+    case QtMedia::Date:
         return m_session->metaData(Phonon::DateMetaData);
-    case QAbstractMediaObject::TrackNumber:
+    case QtMedia::TrackNumber:
         return m_session->metaData(Phonon::TracknumberMetaData);
-    case QAbstractMediaObject::Description:
+    case QtMedia::Description:
         return m_session->metaData(Phonon::DescriptionMetaData);
     default:
         return QVariant();
     }
 }
 
-void QPhononMetaDataProvider::setMetaData(QAbstractMediaObject::MetaData key, QVariant const &value)
+void QPhononMetaDataProvider::setMetaData(QtMedia::MetaData key, QVariant const &value)
 {
     Q_UNUSED(key);
     Q_UNUSED(value);

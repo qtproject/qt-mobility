@@ -5,11 +5,9 @@ PLUGIN_TYPE=mediaservice
 
 include (../../common.pri)
 
-DEFINES += AUDIOSERVICES
+qtAddLibrary(QtMedia)
 
 DEPENDPATH += .
-INCLUDEPATH += . \
-    ../../multimedia
 
 # Input
 HEADERS += audioencodercontrol.h \

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,27 +17,38 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
 #include <QtTest/QtTest>
 #include <QDebug>
+
 #include <qcameracontrol.h>
 #include <qcameraexposurecontrol.h>
 #include <qcamerafocuscontrol.h>
-#include <qcameraservice.h>
+#include <qimagecapturecontrol.h>
+#include <qimageencodercontrol.h>
+#include <qimageprocessingcontrol.h>
+#include <qmediaservice.h>
 #include <qcamera.h>
 
 
@@ -58,6 +69,28 @@ public:
     QCamera::State state() const { return m_state; }
 
     QCamera::State m_state;
+};
+
+class MockCaptureControl : public QImageCaptureControl
+{
+    Q_OBJECT
+public:
+    MockCaptureControl(QObject *parent = 0)
+        :QImageCaptureControl(parent)
+    {
+    }
+
+    ~MockCaptureControl()
+    {
+    }
+
+    bool isReadyForCapture() const { return true; }
+
+    void capture(const QString &fileName)
+    {
+        emit imageCaptured(fileName, QImage());
+    }
+
 };
 
 class MockCameraExposureControl : public QCameraExposureControl
@@ -148,10 +181,10 @@ public:
         return m_isoSensitivity;
     }
 
-    QPair<int, int> supportedIsoSensitivityRange() const
-    {
-        return qMakePair<int,int>(50, 3200);
-    }
+    int minimumIsoSensitivity() const {return 50;}
+    int maximumIsoSensitivity() const {return 3200;}
+    QList<int> supportedIsoSensitivities() const {return QList<int>();}
+
 
     void setManualIsoSensitivity(int iso)
     {
@@ -168,10 +201,10 @@ public:
         return m_aperture;
     }
 
-    QPair<qreal, qreal> supportedApertureRange() const
-    {
-        return qMakePair<qreal,qreal>(2.8, 16.0);
-    }
+    qreal minimumAperture() const {return 2.8;}
+    qreal maximumAperture() const {return 16.0;}
+    QList<qreal> supportedApertures() const {return QList<qreal>();}
+
     void setManualAperture(qreal aperture)
     {
         m_aperture = qBound<qreal>(2.8, aperture, 16.0);
@@ -187,10 +220,10 @@ public:
         return m_shutterSpeed;
     }
 
-    QPair<qreal, qreal> supportedShutterSpeedRange() const
-    {
-        return qMakePair<qreal,qreal>(0.001, 30.0);
-    }
+    qreal minimumShutterSpeed() const {return 0.001;}
+    qreal maximumShutterSpeed() const {return 30.0;}
+    QList<qreal> supportedShutterSpeeds() const {return QList<qreal>();}
+
     void setManualShutterSpeed(qreal shutterSpeed)
     {
         m_shutterSpeed = qBound<qreal>(0.001, shutterSpeed, 30.0);
@@ -331,12 +364,110 @@ private:
     QCamera::FocusMode m_focusMode;
 };
 
-class MockSimpleCameraService : public QCameraService
+class MockImageProcessingControl : public QImageProcessingControl
+{
+public:
+    MockImageProcessingControl(QObject *parent = 0)
+        : QImageProcessingControl(parent)
+        , m_supportedWhiteBalance(QCamera::WhiteBalanceAuto)
+        , m_contrast(0.0)
+        , m_saturation(0.0)
+        , m_sharpeningLevel(0.0)
+        , m_denoisingLevel(0.0)
+        , m_sharpeningSupported(false)
+        , m_denoisingSupported(true)
+    {
+    }
+
+    QCamera::WhiteBalanceMode whiteBalanceMode() const { return m_whiteBalanceMode; }
+    void setWhiteBalanceMode(QCamera::WhiteBalanceMode mode) { m_whiteBalanceMode = mode; }
+
+    QCamera::WhiteBalanceModes supportedWhiteBalanceModes() const {
+        return m_supportedWhiteBalance; }
+    void setSupportedWhiteBalanceModes(QCamera::WhiteBalanceModes modes) {
+        m_supportedWhiteBalance = modes; }
+
+    int manualWhiteBalance() const { return m_manualWhiteBalance; }
+    void setManualWhiteBalance(int colorTemperature) { m_manualWhiteBalance = colorTemperature; }
+
+    qreal contrast() const { return m_contrast; }
+    void setContrast(qreal value) { m_contrast = value; }
+
+    qreal saturation() const { return m_saturation; }
+    void setSaturation(qreal value) { m_saturation = value; }
+
+    bool isSharpeningSupported() const { return m_sharpeningSupported; }
+    void setSharpendingSupported(bool supported) { m_sharpeningSupported = supported; }
+
+    qreal sharpeningLevel() const { return m_sharpeningLevel; }
+    void setSharpeningLevel(qreal value) { m_sharpeningLevel = value; }
+
+    bool isDenoisingSupported() const { return m_denoisingSupported; }
+    void setDenoisingSupported(bool supported) { m_denoisingSupported = supported; }
+    qreal denoisingLevel() const { return m_denoisingLevel; }
+    void setDenoisingLevel(qreal value) { m_denoisingLevel = value; }
+
+private:
+    QCamera::WhiteBalanceMode m_whiteBalanceMode;
+    QCamera::WhiteBalanceModes m_supportedWhiteBalance;
+    int m_manualWhiteBalance;
+    qreal m_contrast;
+    qreal m_saturation;
+    qreal m_sharpeningLevel;
+    qreal m_denoisingLevel;
+    bool m_sharpeningSupported;
+    bool m_denoisingSupported;
+};
+
+class MockImageEncoderControl : public QImageEncoderControl
+{
+public:
+    MockImageEncoderControl(QObject *parent = 0)
+        : QImageEncoderControl(parent)
+        , m_quality(QtMedia::HighQuality)
+    {
+    }
+
+    QSize resolution() const { return m_resolution; }
+    void setResolution(const QSize &resolution) { m_resolution = resolution; }
+    QSize minimumResolution() const { return m_minimumResolution; }
+    void setMinimumResolution(const QSize &resolution) { m_minimumResolution = resolution; }
+    QSize maximumResolution() const { return m_maximumResolution; }
+    void setMaximumResolution(const QSize &resolution) { m_maximumResolution = resolution; }
+    QList<QSize> supportedResolutions() const { return m_supportedResolutions; }
+    void setSupportedResolutions(const QList<QSize> &resolutions) {
+        m_supportedResolutions = resolutions; }
+
+    QStringList supportedImageCodecs() const { return m_supportedCodecs; }
+    void setSupportedImageCodecs(const QStringList &codecs) { m_supportedCodecs = codecs; }
+    QString imageCodec() const { return m_imageCodec; }
+    bool setImageCodec(const QString &codecName) { m_imageCodec = codecName; return true; }
+
+    QString imageCodecDescription(const QString &codecName) const {
+        return m_codecDescriptions.value(codecName); }
+    void setImageCodecDescriptions(const QMap<QString, QString> &descriptions) {
+        m_codecDescriptions = descriptions; }
+
+    QtMedia::EncodingQuality quality() const { return m_quality; }
+    void setQuality(QtMedia::EncodingQuality quality) { m_quality = quality; }
+
+private:
+    QSize m_resolution;
+    QSize m_minimumResolution;
+    QSize m_maximumResolution;
+    QList<QSize> m_supportedResolutions;
+    QStringList m_supportedCodecs;
+    QString m_imageCodec;
+    QMap<QString, QString> m_codecDescriptions;
+    QtMedia::EncodingQuality m_quality;
+};
+
+class MockSimpleCameraService : public QMediaService
 {
     Q_OBJECT
 
 public:
-    MockSimpleCameraService(): QCameraService(0)
+    MockSimpleCameraService(): QMediaService(0)
     {
         mockControl = new MockCameraControl(this);
     }
@@ -345,7 +476,7 @@ public:
     {
     }
 
-    QAbstractMediaControl* control(const char *iid) const
+    QMediaControl* control(const char *iid) const
     {
         if (qstrcmp(iid, QCameraControl_iid) == 0)
             return mockControl;
@@ -356,23 +487,26 @@ public:
     MockCameraControl *mockControl;
 };
 
-class MockCameraService : public QCameraService
+class MockCameraService : public QMediaService
 {
     Q_OBJECT
 
 public:
-    MockCameraService(): QCameraService(0)
+    MockCameraService(): QMediaService(0)
     {
         mockControl = new MockCameraControl(this);
         mockExposureControl = new MockCameraExposureControl(this);
         mockFocusControl = new MockCameraFocusControl(this);
+        mockCaptureControl = new MockCaptureControl(this);
+        mockImageProcessingControl = new MockImageProcessingControl(this);
+        mockImageEncoderControl = new MockImageEncoderControl(this);
     }
 
     ~MockCameraService()
     {
     }
 
-    QAbstractMediaControl* control(const char *iid) const
+    QMediaControl* control(const char *iid) const
     {
         if (qstrcmp(iid, QCameraControl_iid) == 0)
             return mockControl;
@@ -383,14 +517,38 @@ public:
         if (qstrcmp(iid, QCameraFocusControl_iid) == 0)
             return mockFocusControl;
 
+        if (qstrcmp(iid, QImageCaptureControl_iid) == 0)
+            return mockCaptureControl;
+
+        if (qstrcmp(iid, QImageProcessingControl_iid) == 0)
+            return mockImageProcessingControl;
+
+        if (qstrcmp(iid, QImageEncoderControl_iid) == 0)
+            return mockImageEncoderControl;
+
         return 0;
     }
 
     MockCameraControl *mockControl;
+    MockCaptureControl *mockCaptureControl;
     MockCameraExposureControl *mockExposureControl;
     MockCameraFocusControl *mockFocusControl;
+    MockImageProcessingControl *mockImageProcessingControl;
+    MockImageEncoderControl *mockImageEncoderControl;
 };
 
+class MockProvider : public QMediaServiceProvider
+{
+public:
+    QMediaService *requestService(const QByteArray &, const QMediaServiceProviderHint &)
+    {
+        return service;
+    }
+
+    void releaseService(QMediaService *) {}
+
+    QMediaService *service;
+};
 
 
 class tst_QCamera: public QObject
@@ -401,38 +559,83 @@ public slots:
     void initTestCase();
     void cleanupTestCase();
 
-
 private slots:
+    void testAvailableDevices();
+    void testDeviceDescription();
+    void testCtorWithDevice();
     void testSimpleCamera();
     void testSimpleCameraWhiteBalance();
     void testSimpleCameraExposure();
     void testSimpleCameraFocus();
+    void testSimpleCameraCapture();
 
+    void testCameraWhiteBalance();
     void testCameraExposure();
     void testCameraFocus();
+    void testCameraCapture();
 
 private:
     MockSimpleCameraService  *mockSimpleCameraService;
+    MockProvider *provider;
 };
 
 void tst_QCamera::initTestCase()
 {
+    provider = new MockProvider;
     mockSimpleCameraService = new MockSimpleCameraService;
+    provider->service = mockSimpleCameraService;
+
+    qRegisterMetaType<QCamera::Error>();
 }
 
 void tst_QCamera::cleanupTestCase()
 {
     delete mockSimpleCameraService;
+    delete provider;
 }
 
+void tst_QCamera::testAvailableDevices()
+{
+    int deviceCount = QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray(Q_MEDIASERVICE_CAMERA)).count();
+
+    QVERIFY(QCamera::availableDevices().count() == deviceCount);
+}
+
+void tst_QCamera::testDeviceDescription()
+{
+    int deviceCount = QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray(Q_MEDIASERVICE_CAMERA)).count();
+
+    if (deviceCount == 0)
+        QVERIFY(QCamera::deviceDescription(QByteArray("random")).isNull());
+    else {
+        foreach (const QByteArray &device, QCamera::availableDevices())
+            QVERIFY(QCamera::deviceDescription(device).length() > 0);
+    }
+}
+
+void tst_QCamera::testCtorWithDevice()
+{
+    int deviceCount = QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray(Q_MEDIASERVICE_CAMERA)).count();
+    QCamera *camera = 0;
+
+    if (deviceCount == 0) {
+        camera = new QCamera("random");
+        QVERIFY(camera->error() == QCamera::ServiceMissingError);
+    }
+    else {
+        camera = new QCamera(QCamera::availableDevices().first());
+        QVERIFY(camera->error() == QCamera::NoError);
+    }
+
+    delete camera;
+}
 
 void tst_QCamera::testSimpleCamera()
 {
-    QCamera camera(0, mockSimpleCameraService);
+    QCamera camera(0, provider);
 
-    QCOMPARE(camera.service(), (QAbstractMediaService*)mockSimpleCameraService);
+    QCOMPARE(camera.service(), (QMediaService*)mockSimpleCameraService);
 
-    QVERIFY(camera.isValid());
     QCOMPARE(camera.state(), QCamera::StoppedState);
     camera.start();
     QCOMPARE(camera.state(), QCamera::ActiveState);
@@ -442,7 +645,7 @@ void tst_QCamera::testSimpleCamera()
 
 void tst_QCamera::testSimpleCameraWhiteBalance()
 {
-    QCamera camera(0, mockSimpleCameraService);
+    QCamera camera(0, provider);
 
     //only WhiteBalanceAuto is supported
     QCOMPARE(camera.supportedWhiteBalanceModes(), QCamera::WhiteBalanceAuto);
@@ -456,7 +659,7 @@ void tst_QCamera::testSimpleCameraWhiteBalance()
 
 void tst_QCamera::testSimpleCameraExposure()
 {
-    QCamera camera(0, mockSimpleCameraService);
+    QCamera camera(0, provider);
 
     QCOMPARE(camera.supportedExposureModes(), QCamera::ExposureAuto);
     QCOMPARE(camera.exposureMode(), QCamera::ExposureAuto);
@@ -479,24 +682,27 @@ void tst_QCamera::testSimpleCameraExposure()
     QCOMPARE(camera.exposureCompensation(), 0.0);
 
     QCOMPARE(camera.isoSensitivity(), -1);
-    QCOMPARE(camera.supportedIsoSensitivityRange().first, -1);
-    QCOMPARE(camera.supportedIsoSensitivityRange().second, -1);
+    QCOMPARE(camera.minimumIsoSensitivity(), -1);
+    QCOMPARE(camera.maximumIsoSensitivity(), -1);
+    QVERIFY(camera.supportedIsoSensitivities().isEmpty());
     camera.setManualIsoSensitivity(100);
     QCOMPARE(camera.isoSensitivity(), -1);
     camera.setAutoIsoSensitivity();
     QCOMPARE(camera.isoSensitivity(), -1);
 
     QVERIFY(camera.aperture() < 0);
-    QVERIFY(camera.supportedApertureRange().first < 0);
-    QVERIFY(camera.supportedApertureRange().second < 0);
+    QVERIFY(camera.minimumAperture() < 0);
+    QVERIFY(camera.maximumAperture() < 0);
+    QVERIFY(camera.supportedApertures().isEmpty());
     camera.setAutoAperture();
     QVERIFY(camera.aperture() < 0);
     camera.setManualAperture(5.6);
     QVERIFY(camera.aperture() < 0);
 
     QVERIFY(camera.shutterSpeed() < 0);
-    QVERIFY(camera.supportedShutterSpeedRange().first < 0);
-    QVERIFY(camera.supportedShutterSpeedRange().second < 0);
+    QVERIFY(camera.minimumShutterSpeed() < 0);
+    QVERIFY(camera.maximumShutterSpeed() < 0);
+    QVERIFY(camera.supportedShutterSpeeds().isEmpty());
     camera.setAutoShutterSpeed();
     QVERIFY(camera.shutterSpeed() < 0);
     camera.setManualShutterSpeed(1/128.0);
@@ -508,7 +714,7 @@ void tst_QCamera::testSimpleCameraExposure()
 
 void tst_QCamera::testSimpleCameraFocus()
 {
-    QCamera camera(0, mockSimpleCameraService);
+    QCamera camera(0, provider);
 
     QCOMPARE(camera.supportedFocusModes(), QCamera::AutoFocus);
     QCOMPARE(camera.focusMode(), QCamera::AutoFocus);
@@ -530,10 +736,72 @@ void tst_QCamera::testSimpleCameraFocus()
     QCOMPARE(camera.isFocusLocked(), true);
 }
 
+void tst_QCamera::testSimpleCameraCapture()
+{
+    QCamera camera(0, provider);
+
+    QVERIFY(!camera.isReadyForCapture());
+
+    QCOMPARE(camera.error(), QCamera::NoError);
+    QVERIFY(camera.errorString().isEmpty());
+
+    QSignalSpy errorSignal(&camera, SIGNAL(error(QCamera::Error)));
+    camera.capture(QString::fromLatin1("/dev/null"));
+    QCOMPARE(errorSignal.size(), 1);
+    QCOMPARE(camera.error(), QCamera::NotReadyToCaptureError);
+    QVERIFY(!camera.errorString().isEmpty());
+}
+
+void tst_QCamera::testCameraCapture()
+{
+    MockCameraService service;
+    provider->service = &service;
+    QCamera camera(0, provider);
+
+    QVERIFY(camera.isReadyForCapture());
+
+    QSignalSpy capturedSignal(&camera, SIGNAL(imageCaptured(QString,QImage)));
+    camera.capture(QString::fromLatin1("/dev/null"));
+    QCOMPARE(capturedSignal.size(), 1);
+    QCOMPARE(camera.error(), QCamera::NoError);
+}
+
+void tst_QCamera::testCameraWhiteBalance()
+{
+    QCamera::WhiteBalanceModes whiteBalanceModes
+            = QCamera::WhiteBalanceAuto
+            | QCamera::WhiteBalanceFlash
+            | QCamera::WhiteBalanceIncandescent;
+
+    MockCameraService service;
+    service.mockImageProcessingControl->setWhiteBalanceMode(QCamera::WhiteBalanceFlash);
+    service.mockImageProcessingControl->setSupportedWhiteBalanceModes(whiteBalanceModes);
+    service.mockImageProcessingControl->setManualWhiteBalance(34);
+
+    MockProvider provider;
+    provider.service = &service;
+
+    QCamera camera(0, &provider);
+
+    QCOMPARE(camera.whiteBalanceMode(), QCamera::WhiteBalanceFlash);
+    QCOMPARE(camera.supportedWhiteBalanceModes(), whiteBalanceModes);
+
+    camera.setWhiteBalanceMode(QCamera::WhiteBalanceIncandescent);
+    QCOMPARE(camera.whiteBalanceMode(), QCamera::WhiteBalanceIncandescent);
+
+    camera.setWhiteBalanceMode(QCamera::WhiteBalanceManual);
+    QCOMPARE(camera.whiteBalanceMode(), QCamera::WhiteBalanceManual);
+    QCOMPARE(camera.manualWhiteBalance(), 34);
+
+    camera.setManualWhiteBalance(432);
+    QCOMPARE(camera.manualWhiteBalance(), 432);
+}
+
 void tst_QCamera::testCameraExposure()
 {
     MockCameraService service;
-    QCamera camera(0, &service);
+    provider->service = &service;
+    QCamera camera(0, provider);
 
     QVERIFY(camera.supportedExposureModes() & QCamera::ExposureAuto);
     QCOMPARE(camera.exposureMode(), QCamera::ExposureAuto);
@@ -559,8 +827,8 @@ void tst_QCamera::testCameraExposure()
     camera.setExposureCompensation(2.0);
     QCOMPARE(camera.exposureCompensation(), 2.0);
 
-    int minIso = camera.supportedIsoSensitivityRange().first;
-    int maxIso = camera.supportedIsoSensitivityRange().second;
+    int minIso = camera.minimumIsoSensitivity();
+    int maxIso = camera.maximumIsoSensitivity();
     QVERIFY(camera.isoSensitivity() > 0);
     QVERIFY(minIso > 0);
     QVERIFY(maxIso > 0);
@@ -573,8 +841,8 @@ void tst_QCamera::testCameraExposure()
     camera.setAutoIsoSensitivity();
     QCOMPARE(camera.isoSensitivity(), 100);
 
-    qreal minAperture = camera.supportedApertureRange().first;
-    qreal maxAperture = camera.supportedApertureRange().second;
+    qreal minAperture = camera.minimumAperture();
+    qreal maxAperture = camera.maximumAperture();
     QVERIFY(minAperture > 0);
     QVERIFY(maxAperture > 0);
     QVERIFY(camera.aperture() >= minAperture);
@@ -591,8 +859,8 @@ void tst_QCamera::testCameraExposure()
     QCOMPARE(camera.aperture(), maxAperture);
 
 
-    qreal minShutterSpeed = camera.supportedShutterSpeedRange().first;
-    qreal maxShutterSpeed = camera.supportedShutterSpeedRange().second;
+    qreal minShutterSpeed = camera.minimumShutterSpeed();
+    qreal maxShutterSpeed = camera.maximumShutterSpeed();
     QVERIFY(minShutterSpeed > 0);
     QVERIFY(maxShutterSpeed > 0);
     QVERIFY(camera.shutterSpeed() >= minShutterSpeed);
@@ -620,7 +888,8 @@ void tst_QCamera::testCameraExposure()
 void tst_QCamera::testCameraFocus()
 {
     MockCameraService service;
-    QCamera camera(0, &service);
+    provider->service = &service;
+    QCamera camera(0, provider);
 
     QCOMPARE(camera.supportedFocusModes(), QCamera::AutoFocus | QCamera::ContinuousFocus);
     QCOMPARE(camera.focusMode(), QCamera::AutoFocus);

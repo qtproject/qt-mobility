@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -36,8 +43,8 @@
 
 #include "qvideowidget.h"
 
-#include "qabstractmediaobject.h"
-#include "qabstractmediaservice.h"
+#include "qmediaobject.h"
+#include "qmediaservice.h"
 #include "qvideooutputcontrol.h"
 #include "qvideowindowcontrol.h"
 #include "qvideowidgetcontrol.h"
@@ -53,9 +60,6 @@
 class tst_QVideoWidget : public QObject
 {
     Q_OBJECT
-public slots:
-    void init();
-
 private slots:
     void nullObject();
     void nullService();
@@ -64,10 +68,8 @@ private slots:
     void serviceDestroyed();
 
     void showWindowControl();
-    void eventFilterWindowControl();
-    void displayModeWindowControl();
+    void fullScreenWindowControl();
     void aspectRatioWindowControl();
-    void customPixelAspectRatioWindowControl();
     void sizeHintWindowControl_data() { sizeHint_data(); }
     void sizeHintWindowControl();
     void brightnessWindowControl_data() { color_data(); }
@@ -80,10 +82,8 @@ private slots:
     void saturationWindowControl();
 
     void showWidgetControl();
-    void eventFilterWidgetControl();
-    void displayModeWidgetControl();
+    void fullScreenWidgetControl();
     void aspectRatioWidgetControl();
-    void customPixelAspectRatioWidgetControl();
     void sizeHintWidgetControl_data() { sizeHint_data(); }
     void sizeHintWidgetControl();
     void brightnessWidgetControl_data() { color_data(); }
@@ -97,10 +97,8 @@ private slots:
 
 #ifndef QT_NO_MULTIMEDIA
     void showRendererControl();
-    void eventFilterRendererControl();
-    void displayModeRendererControl();
+    void fullScreenRendererControl();
     void aspectRatioRendererControl();
-    void customPixelAspectRatioRendererControl();
     void sizeHintRendererControl_data();
     void sizeHintRendererControl();
     void brightnessRendererControl_data() { color_data(); }
@@ -124,9 +122,8 @@ private:
     void color_data();
 };
 
-Q_DECLARE_METATYPE(QVideoWidget::AspectRatio)
+Q_DECLARE_METATYPE(QVideoWidget::AspectRatioMode)
 Q_DECLARE_METATYPE(const uchar *)
-Q_DECLARE_METATYPE(QVideoWidget::DisplayMode);
 
 class QtTestOutputControl : public QVideoOutputControl
 {
@@ -153,8 +150,8 @@ public:
         , m_brightness(0)
         , m_contrast(0)
         , m_saturation(0)
-        , m_aspectRatioMode(QVideoWidget::AspectRatioAuto)
-        , m_fullscreen(0)
+        , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
+        , m_fullScreen(0)
     {
     }
 
@@ -164,8 +161,8 @@ public:
     QRect displayRect() const { return m_displayRect; }
     void setDisplayRect(const QRect &rect) { m_displayRect = rect; }
 
-    bool isFullscreen() const { return m_fullscreen; }
-    void setFullscreen(bool fullscreen) { emit fullscreenChanged(m_fullscreen = fullscreen); }
+    bool isFullScreen() const { return m_fullScreen; }
+    void setFullScreen(bool fullScreen) { emit fullScreenChanged(m_fullScreen = fullScreen); }
 
     int repaintCount() const { return m_repaintCount; }
     void setRepaintCount(int count) { m_repaintCount = count; }
@@ -174,11 +171,8 @@ public:
     QSize nativeSize() const { return m_nativeSize; }
     void setNativeSize(const QSize &size) { m_nativeSize = size; emit nativeSizeChanged(); }
 
-    QVideoWidget::AspectRatio aspectRatio() const { return m_aspectRatioMode; }
-    void setAspectRatio(QVideoWidget::AspectRatio ratio) { m_aspectRatioMode = ratio; }
-
-    QSize customAspectRatio() const { return m_customRatio; }
-    void setCustomAspectRatio(const QSize &customRatio) { m_customRatio = customRatio; }
+    QVideoWidget::AspectRatioMode aspectRatioMode() const { return m_aspectRatioMode; }
+    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode) { m_aspectRatioMode = mode; }
 
     int brightness() const { return m_brightness; }
     void setBrightness(int brightness) { emit brightnessChanged(m_brightness = brightness); }
@@ -199,11 +193,10 @@ private:
     int m_contrast;
     int m_hue;
     int m_saturation;
-    QVideoWidget::AspectRatio m_aspectRatioMode;
+    QVideoWidget::AspectRatioMode m_aspectRatioMode;
     QRect m_displayRect;
     QSize m_nativeSize;
-    QSize m_customRatio;
-    bool m_fullscreen;
+    bool m_fullScreen;
 };
 
 class QtTestWidgetControl : public QVideoWidgetControl
@@ -214,19 +207,16 @@ public:
         , m_contrast(1.0)
         , m_hue(1.0)
         , m_saturation(1.0)
-        , m_aspectRatioMode(QVideoWidget::AspectRatioAuto)
-        , m_fullscreen(false)
+        , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
+        , m_fullScreen(false)
     {
     }
 
-    bool isFullscreen() const { return m_fullscreen; }
-    void setFullscreen(bool fullscreen) { emit fullscreenChanged(m_fullscreen = fullscreen); }
+    bool isFullScreen() const { return m_fullScreen; }
+    void setFullScreen(bool fullScreen) { emit fullScreenChanged(m_fullScreen = fullScreen); }
 
-    QVideoWidget::AspectRatio aspectRatio() const { return m_aspectRatioMode; }
-    void setAspectRatio(QVideoWidget::AspectRatio ratio) { m_aspectRatioMode = ratio; }
-
-    QSize customAspectRatio() const { return m_customRatio; }
-    void setCustomAspectRatio(const QSize &customRatio) { m_customRatio = customRatio; }
+    QVideoWidget::AspectRatioMode aspectRatioMode() const { return m_aspectRatioMode; }
+    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode) { m_aspectRatioMode = mode; }
 
     int brightness() const { return m_brightness; }
     void setBrightness(int brightness) { emit brightnessChanged(m_brightness = brightness); }
@@ -257,10 +247,9 @@ private:
     int m_contrast;
     int m_hue;
     int m_saturation;
-    QVideoWidget::AspectRatio m_aspectRatioMode;
-    QSize m_customRatio;
+    QVideoWidget::AspectRatioMode m_aspectRatioMode;
     QSize m_sizeHint;
-    bool m_fullscreen;
+    bool m_fullScreen;
 };
 
 #ifndef QT_NO_MULTIMEDIA
@@ -282,15 +271,16 @@ private:
 class QtTestRendererControl;
 #endif
 
-class QtTestVideoService : public QAbstractMediaService
+class QtTestVideoService : public QMediaService
 {
+    Q_OBJECT
 public:
     QtTestVideoService(
             QtTestOutputControl *output,
             QtTestWindowControl *window,
             QtTestWidgetControl *widget,
             QtTestRendererControl *renderer)
-        : QAbstractMediaService(0)
+        : QMediaService(0)
         , outputControl(output)
         , windowControl(window)
         , widgetControl(widget)
@@ -308,7 +298,7 @@ public:
 #endif
     }
 
-    QAbstractMediaControl *control(const char *name) const
+    QMediaControl *control(const char *name) const
     {
         if (qstrcmp(name, QVideoOutputControl_iid) == 0)
             return outputControl;
@@ -330,15 +320,17 @@ public:
     QtTestRendererControl *rendererControl;
 };
 
-class QtTestVideoObject : public QAbstractMediaObject
+class QtTestVideoObject : public QMediaObject
 {
+    Q_OBJECT
 public:
     QtTestVideoObject(
             QtTestWindowControl *window,
             QtTestWidgetControl *widget,
-            QtTestRendererControl *renderer)
-        : testService(new QtTestVideoService(new QtTestOutputControl, window, widget, renderer))
+            QtTestRendererControl *renderer):
+        QMediaObject(0, new QtTestVideoService(new QtTestOutputControl, window, widget, renderer))
     {
+        testService = qobject_cast<QtTestVideoService*>(service());
         QList<QVideoOutputControl::Output> outputs;
 
         if (window)
@@ -351,8 +343,9 @@ public:
         testService->outputControl->setAvailableOutputs(outputs);
     }
 
-    QtTestVideoObject(QtTestVideoService *service)
-        : testService(service)
+    QtTestVideoObject(QtTestVideoService *service):
+        QMediaObject(0, service),
+        testService(service)
     {
     }
 
@@ -361,47 +354,40 @@ public:
         delete testService;
     }
 
-    bool isValid() const { return true; }
-
-    QAbstractMediaService *service() const { return testService; }
-
     QtTestVideoService *testService;
 };
 
 class QtTestVideoWidget : public QVideoWidget
 {
 public:
-    QtTestVideoWidget(QAbstractMediaObject *object)
-        : QVideoWidget(object)
-        , keyPressCount(0)
-        , keyReleaseCount(0)
-        , mousePressCount(0)
-        , mouseReleaseCount(0)
-        , mouseDoubleClickCount(0)
-        , mouseMoveCount(0)
+    QtTestVideoWidget(QMediaObject *object, QWidget *parent = 0)
+        : QVideoWidget(object, parent)
+        , m_paintCount(0)
     {
     }
 
-    int keyPressCount;
-    int keyReleaseCount;
-    int mousePressCount;
-    int mouseReleaseCount;
-    int mouseDoubleClickCount;
-    int mouseMoveCount;
+    bool waitForPaint(int secs)
+    {
+        const int paintCount = m_paintCount;
+
+        QTestEventLoop::instance().enterLoop(secs);
+
+        return m_paintCount != paintCount;
+    }
 
 protected:
-    void keyPressEvent(QKeyEvent *e) { ++keyPressCount; e->accept(); }
-    void keyReleaseEvent(QKeyEvent *e) { ++keyReleaseCount;  e->accept(); }
-    void mousePressEvent(QMouseEvent *e) { ++mousePressCount;  e->accept(); }
-    void mouseReleaseEvent(QMouseEvent *e) { ++mouseReleaseCount;  e->accept(); }
-    void mouseDoubleClickEvent(QMouseEvent *e) { ++mouseDoubleClickCount;  e->accept(); }
-    void mouseMoveEvent(QMouseEvent *e) { ++mouseMoveCount;  e->accept(); }
-};
+    void paintEvent(QPaintEvent *event)
+    {
+        ++m_paintCount;
 
-void tst_QVideoWidget::init()
-{
-    qRegisterMetaType<QVideoWidget::DisplayMode>();
-}
+        QTestEventLoop::instance().exitLoop();
+
+        QVideoWidget::paintEvent(event);
+    }
+
+private:
+    int m_paintCount;
+};
 
 void tst_QVideoWidget::nullObject()
 {
@@ -409,8 +395,8 @@ void tst_QVideoWidget::nullObject()
 
     QVERIFY(widget.sizeHint().isEmpty());
 
-    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
-    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
+    widget.setFullScreen(true);
+    QCOMPARE(widget.isFullScreen(), true);
 
     {
         QSignalSpy spy(&widget, SIGNAL(brightnessChanged(int)));
@@ -487,8 +473,8 @@ void tst_QVideoWidget::nullService()
 
     QVERIFY(widget.sizeHint().isEmpty());
 
-    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
-    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
+    widget.setFullScreen(true);
+    QCOMPARE(widget.isFullScreen(), true);
 
     widget.setBrightness(100);
     QCOMPARE(widget.brightness(), 100);
@@ -511,8 +497,8 @@ void tst_QVideoWidget::nullOutputControl()
 
     QVERIFY(widget.sizeHint().isEmpty());
 
-    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
-    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
+    widget.setFullScreen(true);
+    QCOMPARE(widget.isFullScreen(), true);
 
     widget.setBrightness(100);
     QCOMPARE(widget.brightness(), 100);
@@ -535,8 +521,8 @@ void tst_QVideoWidget::noOutputs()
 
     QVERIFY(widget.sizeHint().isEmpty());
 
-    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
-    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
+    widget.setFullScreen(true);
+    QCOMPARE(widget.isFullScreen(), true);
 
     widget.setBrightness(100);
     QCOMPARE(widget.brightness(), 100);
@@ -574,8 +560,8 @@ void tst_QVideoWidget::serviceDestroyed()
     QCOMPARE(widget.hue(), 100);
     QCOMPARE(widget.saturation(), 100);
 
-    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
-    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
+    widget.setFullScreen(true);
+    QCOMPARE(widget.isFullScreen(), true);
 }
 
 void tst_QVideoWidget::showWindowControl()
@@ -583,7 +569,7 @@ void tst_QVideoWidget::showWindowControl()
     QtTestVideoObject object(new QtTestWindowControl, 0, 0);
     object.testService->windowControl->setNativeSize(QSize(240, 180));
 
-    QVideoWidget widget(&object);
+    QtTestVideoWidget widget(&object);
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
 
@@ -592,10 +578,8 @@ void tst_QVideoWidget::showWindowControl()
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::WindowOutput);
     QVERIFY(object.testService->windowControl->winId() != 0);
 
-    QCoreApplication::processEvents();
-
-    if (!QApplication::activeWindow())
-        QSKIP("window not yet activated", SkipSingle);
+    if (!widget.waitForPaint(1))
+        QSKIP("Didn't receive a paint event in a timely fashion", SkipSingle);
 
     QVERIFY(object.testService->windowControl->repaintCount() > 0);
 
@@ -614,12 +598,12 @@ void tst_QVideoWidget::showWidgetControl()
     widget.show();
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::WidgetOutput);
-    QVERIFY(object.testService->widgetControl->videoWidget()->isVisible());
+    QCOMPARE(object.testService->widgetControl->videoWidget()->isVisible(), true);
 
     widget.hide();
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
-    QVERIFY(!object.testService->widgetControl->videoWidget()->isVisible());
+    QCOMPARE(object.testService->widgetControl->videoWidget()->isVisible(), false);
 }
 
 #ifndef QT_NO_MULTIMEDIA
@@ -640,270 +624,62 @@ void tst_QVideoWidget::showRendererControl()
 }
 #endif
 
-void tst_QVideoWidget::eventFilterWindowControl()
-{
-    QtTestVideoObject object(new QtTestWindowControl, 0, 0);
-    object.testService->windowControl->setNativeSize(QSize(240, 180));
-
-    QtTestVideoWidget widget(&object);
-    widget.show();
-    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
-
-    QCoreApplication::processEvents();
-
-    QWidget *activeWindow = QApplication::activeWindow();
-
-    if (!activeWindow)
-        QSKIP("No active window", SkipSingle);
-
-    {
-        QKeyEvent e(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
-        QCoreApplication::sendEvent(activeWindow, &e);
-
-        QCOMPARE(widget.keyPressCount, 1);
-    } {
-        QKeyEvent e(QEvent::KeyRelease, Qt::Key_Enter, Qt::NoModifier);
-        QCoreApplication::sendEvent(activeWindow, &e);
-
-        QCOMPARE(widget.keyReleaseCount, 1);
-    } {
-        QMouseEvent e(
-                QEvent::MouseButtonPress,
-                QPoint(0, 0),
-                Qt::LeftButton,
-                Qt::NoButton,
-                Qt::NoModifier);
-        QCoreApplication::sendEvent(activeWindow, &e);
-
-        QCOMPARE(widget.mousePressCount, 1);
-    } {
-        QMouseEvent e(
-                QEvent::MouseMove,
-                QPoint(0, 0),
-                Qt::NoButton,
-                Qt::LeftButton,
-                Qt::NoModifier);
-        QCoreApplication::sendEvent(activeWindow, &e);
-
-        QCOMPARE(widget.mouseMoveCount, 1);
-    } {
-        QMouseEvent e(
-                QEvent::MouseButtonRelease,
-                QPoint(0, 0),
-                Qt::LeftButton,
-                Qt::NoButton,
-                Qt::NoModifier);
-        QCoreApplication::sendEvent(activeWindow, &e);
-
-        QCOMPARE(widget.mouseReleaseCount, 1);
-    } {
-        QMouseEvent e(
-                QEvent::MouseButtonDblClick,
-                QPoint(0, 0),
-                Qt::LeftButton,
-                Qt::NoButton,
-                Qt::NoModifier);
-        QCoreApplication::sendEvent(activeWindow, &e);
-
-        QCOMPARE(widget.mouseDoubleClickCount, 1);
-    }
-}
-
-void tst_QVideoWidget::eventFilterWidgetControl()
-{
-    QtTestVideoObject object(0, new QtTestWidgetControl, 0);
-
-    QtTestVideoWidget widget(&object);
-    widget.show();
-    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
-
-    QCoreApplication::processEvents();
-
-    QWidget *activeWindow = object.testService->widgetControl->videoWidget();
-
-    if (!activeWindow)
-        QSKIP("No active window", SkipSingle);
-
-    {
-        QKeyEvent e(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
-        QCoreApplication::sendEvent(activeWindow, &e);
-
-        QCOMPARE(widget.keyPressCount, 1);
-    } {
-        QKeyEvent e(QEvent::KeyRelease, Qt::Key_Enter, Qt::NoModifier);
-        QCoreApplication::sendEvent(activeWindow, &e);
-
-        QCOMPARE(widget.keyReleaseCount, 1);
-    } {
-        QMouseEvent e(
-                QEvent::MouseButtonPress,
-                QPoint(0, 0),
-                Qt::LeftButton,
-                Qt::NoButton,
-                Qt::NoModifier);
-        QCoreApplication::sendEvent(activeWindow, &e);
-
-        QCOMPARE(widget.mousePressCount, 1);
-    } {
-        QMouseEvent e(
-                QEvent::MouseMove,
-                QPoint(0, 0),
-                Qt::NoButton,
-                Qt::LeftButton,
-                Qt::NoModifier);
-        QCoreApplication::sendEvent(activeWindow, &e);
-
-        QCOMPARE(widget.mouseMoveCount, 1);
-    } {
-        QMouseEvent e(
-                QEvent::MouseButtonRelease,
-                QPoint(0, 0),
-                Qt::LeftButton,
-                Qt::NoButton,
-                Qt::NoModifier);
-        QCoreApplication::sendEvent(activeWindow, &e);
-
-        QCOMPARE(widget.mouseReleaseCount, 1);
-    } {
-        QMouseEvent e(
-                QEvent::MouseButtonDblClick,
-                QPoint(0, 0),
-                Qt::LeftButton,
-                Qt::NoButton,
-                Qt::NoModifier);
-        QCoreApplication::sendEvent(activeWindow, &e);
-
-        QCOMPARE(widget.mouseDoubleClickCount, 1);
-    }
-}
-
-#ifndef QT_NO_MULTIMEDIA
-void tst_QVideoWidget::eventFilterRendererControl()
-{
-    QtTestVideoObject object(0, 0, new QtTestRendererControl);
-
-    QtTestVideoWidget widget(&object);
-    widget.setMinimumSize(320, 240);
-    widget.show();
-    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
-
-    QCoreApplication::processEvents();
-
-    QWidget *activeWindow = QApplication::activeWindow();
-
-    if (!activeWindow)
-        QSKIP("No active window", SkipSingle);
-
-    {
-        QKeyEvent e(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
-        QCoreApplication::sendEvent(activeWindow, &e);
-
-        QCOMPARE(widget.keyPressCount, 1);
-    } {
-        QKeyEvent e(QEvent::KeyRelease, Qt::Key_Enter, Qt::NoModifier);
-        QCoreApplication::sendEvent(activeWindow, &e);
-
-        QCOMPARE(widget.keyReleaseCount, 1);
-    } {
-        QMouseEvent e(
-                QEvent::MouseButtonPress,
-                QPoint(0, 0),
-                Qt::LeftButton,
-                Qt::NoButton,
-                Qt::NoModifier);
-        QCoreApplication::sendEvent(activeWindow, &e);
-
-        QCOMPARE(widget.mousePressCount, 1);
-    } {
-        QMouseEvent e(
-                QEvent::MouseMove,
-                QPoint(0, 0),
-                Qt::NoButton,
-                Qt::LeftButton,
-                Qt::NoModifier);
-        QCoreApplication::sendEvent(activeWindow, &e);
-
-        QCOMPARE(widget.mouseMoveCount, 1);
-    } {
-        QMouseEvent e(
-                QEvent::MouseButtonRelease,
-                QPoint(0, 0),
-                Qt::LeftButton,
-                Qt::NoButton,
-                Qt::NoModifier);
-        QCoreApplication::sendEvent(activeWindow, &e);
-
-        QCOMPARE(widget.mouseReleaseCount, 1);
-    } {
-        QMouseEvent e(
-                QEvent::MouseButtonDblClick,
-                QPoint(0, 0),
-                Qt::LeftButton,
-                Qt::NoButton,
-                Qt::NoModifier);
-        QCoreApplication::sendEvent(activeWindow, &e);
-
-        QCOMPARE(widget.mouseDoubleClickCount, 1);
-    }
-}
-#endif
-
 void tst_QVideoWidget::aspectRatioWindowControl()
 {
     QtTestVideoObject object(new QtTestWindowControl, 0, 0);
-    object.testService->windowControl->setAspectRatio(QVideoWidget::AspectRatioWidget);
+    object.testService->windowControl->setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
 
     QVideoWidget widget(&object);
 
-    // Test the aspect ratio defaults to auto.
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioAuto);
+    // Test the aspect ratio defaults to keeping the aspect ratio.
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 
     // Test the control has been informed of the aspect ratio change, post show.
     widget.show();
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioAuto);
-    QCOMPARE(object.testService->windowControl->aspectRatio(), QVideoWidget::AspectRatioAuto);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
+    QCOMPARE(object.testService->windowControl->aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 
     // Test an aspect ratio change is enforced immediately while visible.
-    widget.setAspectRatio(QVideoWidget::AspectRatioWidget);
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioWidget);
-    QCOMPARE(object.testService->windowControl->aspectRatio(), QVideoWidget::AspectRatioWidget);
+    widget.setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
+    QCOMPARE(object.testService->windowControl->aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
 
     // Test an aspect ratio set while not visible is respected.
     widget.hide();
-    widget.setAspectRatio(QVideoWidget::AspectRatioCustom);
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioCustom);
+    widget.setAspectRatioMode(QVideoWidget::KeepAspectRatio);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
     widget.show();
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioCustom);
-    QCOMPARE(object.testService->windowControl->aspectRatio(), QVideoWidget::AspectRatioCustom);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
+    QCOMPARE(object.testService->windowControl->aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 }
 
 void tst_QVideoWidget::aspectRatioWidgetControl()
 {
     QtTestVideoObject object(0, new QtTestWidgetControl, 0);
-    object.testService->widgetControl->setAspectRatio(QVideoWidget::AspectRatioWidget);
+    object.testService->widgetControl->setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
 
     QVideoWidget widget(&object);
 
-    // Test the aspect ratio defaults to auto.
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioAuto);
+    // Test the aspect ratio defaults to keeping the aspect ratio.
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 
     // Test the control has been informed of the aspect ratio change, post show.
     widget.show();
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioAuto);
-    QCOMPARE(object.testService->widgetControl->aspectRatio(), QVideoWidget::AspectRatioAuto);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
+    QCOMPARE(object.testService->widgetControl->aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 
     // Test an aspect ratio change is enforced immediately while visible.
-    widget.setAspectRatio(QVideoWidget::AspectRatioWidget);
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioWidget);
-    QCOMPARE(object.testService->widgetControl->aspectRatio(), QVideoWidget::AspectRatioWidget);
+    widget.setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
+    QCOMPARE(object.testService->widgetControl->aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
 
     // Test an aspect ratio set while not visible is respected.
     widget.hide();
-    widget.setAspectRatio(QVideoWidget::AspectRatioCustom);
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioCustom);
+    widget.setAspectRatioMode(QVideoWidget::KeepAspectRatio);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
     widget.show();
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioCustom);
-    QCOMPARE(object.testService->widgetControl->aspectRatio(), QVideoWidget::AspectRatioCustom);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
+    QCOMPARE(object.testService->widgetControl->aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 }
 
 #ifndef QT_NO_MULTIMEDIA
@@ -913,107 +689,23 @@ void tst_QVideoWidget::aspectRatioRendererControl()
 
     QVideoWidget widget(&object);
 
-    // Test the aspect ratio defaults to auto.
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioAuto);
+    // Test the aspect ratio defaults to keeping the aspect ratio.
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 
     // Test the control has been informed of the aspect ratio change, post show.
     widget.show();
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioAuto);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 
     // Test an aspect ratio change is enforced immediately while visible.
-    widget.setAspectRatio(QVideoWidget::AspectRatioWidget);
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioWidget);
+    widget.setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
 
     // Test an aspect ratio set while not visible is respected.
     widget.hide();
-    widget.setAspectRatio(QVideoWidget::AspectRatioCustom);
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioCustom);
+    widget.setAspectRatioMode(QVideoWidget::KeepAspectRatio);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
     widget.show();
-    QCOMPARE(widget.aspectRatio(), QVideoWidget::AspectRatioCustom);
-}
-#endif
-
-void tst_QVideoWidget::customPixelAspectRatioWindowControl()
-{
-    QtTestVideoObject object(new QtTestWindowControl, 0, 0);
-    object.testService->windowControl->setCustomAspectRatio(QSize(4, 3));
-
-    QVideoWidget widget(&object);
-
-    // Test the aspect ratio defaults to auto.
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(1, 1));
-
-    // Test the control has been informed of the aspect ratio change, post show.
-    widget.show();
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(1, 1));
-    QCOMPARE(object.testService->windowControl->customAspectRatio(), QSize(1, 1));
-
-    // Test an aspect ratio change is enforced immediately while visible.
-    widget.setCustomPixelAspectRatio(QSize(4, 3));
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(4, 3));
-    QCOMPARE(object.testService->windowControl->customAspectRatio(), QSize(4, 3));
-
-    // Test an aspect ratio set while not visible is respected.
-    widget.hide();
-    widget.setCustomPixelAspectRatio(QSize(16, 9));
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(16, 9));
-    widget.show();
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(16, 9));
-    QCOMPARE(object.testService->windowControl->customAspectRatio(), QSize(16, 9));
-}
-
-void tst_QVideoWidget::customPixelAspectRatioWidgetControl()
-{
-    QtTestVideoObject object(0, new QtTestWidgetControl, 0);
-    object.testService->widgetControl->setCustomAspectRatio(QSize(4, 3));
-
-    QVideoWidget widget(&object);
-
-    // Test the aspect ratio defaults to auto.
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(1, 1));
-
-    // Test the control has been informed of the aspect ratio change, post show.
-    widget.show();
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(1, 1));
-    QCOMPARE(object.testService->widgetControl->customAspectRatio(), QSize(1, 1));
-
-    // Test an aspect ratio change is enforced immediately while visible.
-    widget.setCustomPixelAspectRatio(QSize(4, 3));
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(4, 3));
-    QCOMPARE(object.testService->widgetControl->customAspectRatio(), QSize(4, 3));
-
-    // Test an aspect ratio set while not visible is respected.
-    widget.hide();
-    widget.setCustomPixelAspectRatio(QSize(16, 9));
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(16, 9));
-    widget.show();
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(16, 9));
-    QCOMPARE(object.testService->widgetControl->customAspectRatio(), QSize(16, 9));
-}
-
-#ifndef QT_NO_MULTIMEDIA
-void tst_QVideoWidget::customPixelAspectRatioRendererControl()
-{
-    QtTestVideoObject object(0, new QtTestWidgetControl, 0);
-    QVideoWidget widget(&object);
-
-    // Test the aspect ratio defaults to auto.
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(1, 1));
-
-    // Test the control has been informed of the aspect ratio change, post show.
-    widget.show();
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(1, 1));
-
-    // Test an aspect ratio change is enforced immediately while visible.
-    widget.setCustomPixelAspectRatio(QSize(4, 3));
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(4, 3));
-
-    // Test an aspect ratio set while not visible is respected.
-    widget.hide();
-    widget.setCustomPixelAspectRatio(QSize(16, 9));
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(16, 9));
-    widget.show();
-    QCOMPARE(widget.customPixelAspectRatio(), QSize(16, 9));
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 }
 #endif
 
@@ -1059,15 +751,11 @@ void tst_QVideoWidget::sizeHintRendererControl_data()
     QTest::addColumn<QSize>("frameSize");
     QTest::addColumn<QRect>("viewport");
     QTest::addColumn<QSize>("pixelAspectRatio");
-    QTest::addColumn<QVideoWidget::AspectRatio>("aspectRatioMode");
-    QTest::addColumn<QSize>("customAspectRatio");
     QTest::addColumn<QSize>("expectedSize");
 
     QTest::newRow("640x480")
             << QSize(640, 480)
             << QRect(0, 0, 640, 480)
-            << QSize(1, 1)
-            << QVideoWidget::AspectRatioAuto
             << QSize(1, 1)
             << QSize(640, 480);
 
@@ -1075,33 +763,14 @@ void tst_QVideoWidget::sizeHintRendererControl_data()
             << QSize(800, 600)
             << QRect(80, 60, 640, 480)
             << QSize(1, 1)
-            << QVideoWidget::AspectRatioAuto
-            << QSize(1, 1)
             << QSize(640, 480);
 
     QTest::newRow("800x600, (80,60, 640x480) viewport, 4:3")
             << QSize(800, 600)
             << QRect(80, 60, 640, 480)
             << QSize(4, 3)
-            << QVideoWidget::AspectRatioAuto
-            << QSize(1, 1)
             << QSize(853, 480);
 
-    QTest::newRow("800x600, 4:3, custom 5:4")
-            << QSize(800, 600)
-            << QRect(0, 0, 800, 600)
-            << QSize(4, 3)
-            << QVideoWidget::AspectRatioCustom
-            << QSize(5, 4)
-            << QSize(1000, 600);
-
-    QTest::newRow("800x600, 4:3, custom 1:1")
-            << QSize(800, 600)
-            << QRect(0, 0, 800, 600)
-            << QSize(4, 3)
-            << QVideoWidget::AspectRatioCustom
-            << QSize(1, 1)
-            << QSize(800, 600);
 }
 
 void tst_QVideoWidget::sizeHintRendererControl()
@@ -1109,14 +778,10 @@ void tst_QVideoWidget::sizeHintRendererControl()
     QFETCH(QSize, frameSize);
     QFETCH(QRect, viewport);
     QFETCH(QSize, pixelAspectRatio);
-    QFETCH(QVideoWidget::AspectRatio, aspectRatioMode);
-    QFETCH(QSize, customAspectRatio);
     QFETCH(QSize, expectedSize);
 
     QtTestVideoObject object(0, 0, new QtTestRendererControl);
     QVideoWidget widget(&object);
-    widget.setAspectRatio(aspectRatioMode);
-    widget.setCustomPixelAspectRatio(customAspectRatio);
 
     widget.show();
 
@@ -1131,183 +796,194 @@ void tst_QVideoWidget::sizeHintRendererControl()
 
 #endif
 
-void tst_QVideoWidget::displayModeWindowControl()
+void tst_QVideoWidget::fullScreenWindowControl()
 {
     QtTestVideoObject object(new QtTestWindowControl, 0, 0);
     QVideoWidget widget(&object);
     widget.show();
 
-    QSignalSpy spy(&widget, SIGNAL(displayModeChanged(QVideoWidget::DisplayMode)));
+    QSignalSpy spy(&widget, SIGNAL(fullScreenChanged(bool)));
 
-    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
-
-    QCOMPARE(object.testService->windowControl->isFullscreen(), true);
-    QCOMPARE(widget.displayMode(), QVideoWidget::FullscreenDisplay);
+    // Test showing full screen with setFullScreen(true).
+    widget.setFullScreen(true);
+    QCOMPARE(object.testService->windowControl->isFullScreen(), true);
+    QCOMPARE(widget.isFullScreen(), true);
     QCOMPARE(spy.count(), 1);
-    QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(0).value(0)),
-             QVideoWidget::FullscreenDisplay);
+    QCOMPARE(spy.value(0).value(0).toBool(), true);
 
-    widget.setDisplayMode(QVideoWidget::WindowedDisplay);
-
-    QCOMPARE(object.testService->windowControl->isFullscreen(), false);
-    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
+    // Test returning to normal with setFullScreen(false).
+    widget.setFullScreen(false);
+    QCOMPARE(object.testService->windowControl->isFullScreen(), false);
+    QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 2);
-    QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(1).value(0)),
-             QVideoWidget::WindowedDisplay);
+    QCOMPARE(spy.value(1).value(0).toBool(), false);
 
-    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
+    // Test showing full screen with showFullScreen().
+    widget.showFullScreen();
+    QCOMPARE(object.testService->windowControl->isFullScreen(), true);
+    QCOMPARE(widget.isFullScreen(), true);
+    QCOMPARE(spy.count(), 3);
+    QCOMPARE(spy.value(2).value(0).toBool(), true);
 
-    QCoreApplication::processEvents();
+    // Test returning to normal with showNormal().
+    widget.showNormal();
+    QCOMPARE(object.testService->windowControl->isFullScreen(), false);
+    QCOMPARE(widget.isFullScreen(), false);
+    QCOMPARE(spy.count(), 4);
+    QCOMPARE(spy.value(3).value(0).toBool(), false);
 
-    if (QWidget *keyWidget = QApplication::activeWindow()) {
-        {   // Test non-escape key doesn't exit full-screen mode.
-            QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_5, Qt::NoModifier);
-            QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
-        }
-        QCOMPARE(object.testService->windowControl->isFullscreen(), true);
-        QCOMPARE(widget.displayMode(), QVideoWidget::FullscreenDisplay);
-        QCOMPARE(spy.count(), 3);
+    // Test setFullScreen(false) and showNormal() do nothing when isFullScreen() == false.
+    widget.setFullScreen(false);
+    QCOMPARE(object.testService->windowControl->isFullScreen(), false);
+    QCOMPARE(widget.isFullScreen(), false);
+    QCOMPARE(spy.count(), 4);
+    widget.showNormal();
+    QCOMPARE(object.testService->windowControl->isFullScreen(), false);
+    QCOMPARE(widget.isFullScreen(), false);
+    QCOMPARE(spy.count(), 4);
 
-        {   // Test escape key exits full-screen mode.
-            QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
-            QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
-        }
-        QCOMPARE(object.testService->windowControl->isFullscreen(), false);
-        QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
-        QCOMPARE(spy.count(), 4);
-        QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(3).value(0)),
-                 QVideoWidget::WindowedDisplay);
+    // Test setFullScreen(true) and showFullScreen() do nothing when isFullScreen() == true.
+    widget.showFullScreen();
+    widget.setFullScreen(true);
+    QCOMPARE(object.testService->windowControl->isFullScreen(), true);
+    QCOMPARE(widget.isFullScreen(), true);
+    QCOMPARE(spy.count(), 5);
+    widget.showFullScreen();
+    QCOMPARE(object.testService->windowControl->isFullScreen(), true);
+    QCOMPARE(widget.isFullScreen(), true);
+    QCOMPARE(spy.count(), 5);
 
-        {   // Test escape key doesn't enter full-screen mode.
-            QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
-            QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
-        }
-        QCOMPARE(object.testService->windowControl->isFullscreen(), false);
-        QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
-        QCOMPARE(spy.count(), 4);
-    } else {
-        qWarning("no active window");
-    }
+    // Test if the window control exits full screen mode, the widget follows suit.
+    object.testService->windowControl->setFullScreen(false);
+    QCOMPARE(widget.isFullScreen(), false);
+    QCOMPARE(spy.count(), 6);
+    QCOMPARE(spy.value(5).value(0).toBool(), false);
+
+    // Test if the window control enters full screen mode, the widget does nothing.
+    object.testService->windowControl->setFullScreen(false);
+    QCOMPARE(widget.isFullScreen(), false);
+    QCOMPARE(spy.count(), 6);
 }
 
-void tst_QVideoWidget::displayModeWidgetControl()
+void tst_QVideoWidget::fullScreenWidgetControl()
 {
     QtTestVideoObject object(0, new QtTestWidgetControl, 0);
     QVideoWidget widget(&object);
     widget.show();
 
-    QSignalSpy spy(&widget, SIGNAL(displayModeChanged(QVideoWidget::DisplayMode)));
+    QSignalSpy spy(&widget, SIGNAL(fullScreenChanged(bool)));
 
-    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
-
-    QCOMPARE(object.testService->widgetControl->isFullscreen(), true);
-    QCOMPARE(widget.displayMode(), QVideoWidget::FullscreenDisplay);
+    // Test showing full screen with setFullScreen(true).
+    widget.setFullScreen(true);
+    QCOMPARE(object.testService->widgetControl->isFullScreen(), true);
+    QCOMPARE(widget.isFullScreen(), true);
     QCOMPARE(spy.count(), 1);
-    QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(0).value(0)),
-             QVideoWidget::FullscreenDisplay);
+    QCOMPARE(spy.value(0).value(0).toBool(), true);
 
-    widget.setDisplayMode(QVideoWidget::WindowedDisplay);
-
-    QCOMPARE(object.testService->widgetControl->isFullscreen(), false);
-    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
+    // Test returning to normal with setFullScreen(false).
+    widget.setFullScreen(false);
+    QCOMPARE(object.testService->widgetControl->isFullScreen(), false);
+    QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 2);
-    QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(1).value(0)),
-             QVideoWidget::WindowedDisplay);
+    QCOMPARE(spy.value(1).value(0).toBool(), false);
 
-    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
-
-    {   // Test non-escape key doesn't exit full-screen mode.
-        QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_5, Qt::NoModifier);
-        QCoreApplication::sendEvent(
-                object.testService->widgetControl->videoWidget(), &keyPressEvent);
-    }
-    QCOMPARE(object.testService->widgetControl->isFullscreen(), true);
-    QCOMPARE(widget.displayMode(), QVideoWidget::FullscreenDisplay);
+    // Test showing full screen with showFullScreen().
+    widget.showFullScreen();
+    QCOMPARE(object.testService->widgetControl->isFullScreen(), true);
+    QCOMPARE(widget.isFullScreen(), true);
     QCOMPARE(spy.count(), 3);
+    QCOMPARE(spy.value(2).value(0).toBool(), true);
 
-    {   // Test escape key exits full-screen mode.
-        QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
-        QCoreApplication::sendEvent(
-                object.testService->widgetControl->videoWidget(), &keyPressEvent);
-    }
-    QCOMPARE(object.testService->widgetControl->isFullscreen(), false);
-    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
+    // Test returning to normal with showNormal().
+    widget.showNormal();
+    QCOMPARE(object.testService->widgetControl->isFullScreen(), false);
+    QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 4);
-    QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(3).value(0)),
-             QVideoWidget::WindowedDisplay);
+    QCOMPARE(spy.value(3).value(0).toBool(), false);
 
-    {   // Test escape key doesn't enter full-screen mode.
-        QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
-        QCoreApplication::sendEvent(
-                object.testService->widgetControl->videoWidget(), &keyPressEvent);
-    }
-    QCOMPARE(object.testService->widgetControl->isFullscreen(), false);
-    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
+    // Test setFullScreen(false) and showNormal() do nothing when isFullScreen() == false.
+    widget.setFullScreen(false);
+    QCOMPARE(object.testService->widgetControl->isFullScreen(), false);
+    QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 4);
+    widget.showNormal();
+    QCOMPARE(object.testService->widgetControl->isFullScreen(), false);
+    QCOMPARE(widget.isFullScreen(), false);
+    QCOMPARE(spy.count(), 4);
+
+    // Test setFullScreen(true) and showFullScreen() do nothing when isFullScreen() == true.
+    widget.showFullScreen();
+    widget.setFullScreen(true);
+    QCOMPARE(object.testService->widgetControl->isFullScreen(), true);
+    QCOMPARE(widget.isFullScreen(), true);
+    QCOMPARE(spy.count(), 5);
+    widget.showFullScreen();
+    QCOMPARE(object.testService->widgetControl->isFullScreen(), true);
+    QCOMPARE(widget.isFullScreen(), true);
+    QCOMPARE(spy.count(), 5);
+
+    // Test if the window control exits full screen mode, the widget follows suit.
+    object.testService->widgetControl->setFullScreen(false);
+    QCOMPARE(widget.isFullScreen(), false);
+    QCOMPARE(spy.count(), 6);
+    QCOMPARE(spy.value(5).value(0).toBool(), false);
+
+    // Test if the window control enters full screen mode, the widget does nothing.
+    object.testService->widgetControl->setFullScreen(false);
+    QCOMPARE(widget.isFullScreen(), false);
+    QCOMPARE(spy.count(), 6);
 }
 
 #ifndef QT_NO_MULTIMEDIA
 
-void tst_QVideoWidget::displayModeRendererControl()
+void tst_QVideoWidget::fullScreenRendererControl()
 {
     QtTestVideoObject object(0, 0, new QtTestRendererControl);
     QVideoWidget widget(&object);
     widget.show();
 
-    QSignalSpy spy(&widget, SIGNAL(displayModeChanged(QVideoWidget::DisplayMode)));
+    QSignalSpy spy(&widget, SIGNAL(fullScreenChanged(bool)));
 
-    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
-    QCoreApplication::processEvents();
-
-    QCOMPARE(widget.displayMode(), QVideoWidget::FullscreenDisplay);
+    // Test showing full screen with setFullScreen(true).
+    widget.setFullScreen(true);
+    QCOMPARE(widget.isFullScreen(), true);
     QCOMPARE(spy.count(), 1);
-    QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(0).value(0)),
-             QVideoWidget::FullscreenDisplay);
+    QCOMPARE(spy.value(0).value(0).toBool(), true);
 
-    widget.setDisplayMode(QVideoWidget::WindowedDisplay);
-    QCoreApplication::processEvents();
-
-    QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
+    // Test returning to normal with setFullScreen(false).
+    widget.setFullScreen(false);
+    QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 2);
-    QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(1).value(0)),
-             QVideoWidget::WindowedDisplay);
+    QCOMPARE(spy.value(1).value(0).toBool(), false);
 
-    widget.setDisplayMode(QVideoWidget::FullscreenDisplay);
-    QCoreApplication::processEvents();
-
-    QCOMPARE(widget.displayMode(), QVideoWidget::FullscreenDisplay);
+    // Test showing full screen with showFullScreen().
+    widget.showFullScreen();
+    QCOMPARE(widget.isFullScreen(), true);
     QCOMPARE(spy.count(), 3);
-    QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(2).value(0)),
-             QVideoWidget::FullscreenDisplay);
+    QCOMPARE(spy.value(2).value(0).toBool(), true);
 
-    if (QWidget *keyWidget = QApplication::activeWindow()) {
-        {   // Test non-escape key doesn't exit full-screen mode.
-            QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_5, Qt::NoModifier);
-            QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
-        }
-        QCOMPARE(widget.displayMode(), QVideoWidget::FullscreenDisplay);
-        QCOMPARE(spy.count(), 3);
-        QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(0).value(0)),
-                 QVideoWidget::FullscreenDisplay);
+    // Test returning to normal with showNormal().
+    widget.showNormal();
+    QCOMPARE(widget.isFullScreen(), false);
+    QCOMPARE(spy.count(), 4);
+    QCOMPARE(spy.value(3).value(0).toBool(), false);
 
-        {   // Test escape key exits full-screen mode.
-            QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
-            QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
-        }
-        QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
-        QCOMPARE(spy.count(), 4);
-        QCOMPARE(qvariant_cast<QVideoWidget::DisplayMode>(spy.value(3).value(0)),
-                 QVideoWidget::WindowedDisplay);
+    // Test setFullScreen(false) and showNormal() do nothing when isFullScreen() == false.
+    widget.setFullScreen(false);
+    QCOMPARE(widget.isFullScreen(), false);
+    QCOMPARE(spy.count(), 4);
+    widget.showNormal();
+    QCOMPARE(widget.isFullScreen(), false);
+    QCOMPARE(spy.count(), 4);
 
-        {   // Test escape key doesn't enter full-screen mode.
-            QKeyEvent keyPressEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
-            QCoreApplication::sendEvent(keyWidget, &keyPressEvent);
-        }
-        QCOMPARE(widget.displayMode(), QVideoWidget::WindowedDisplay);
-        QCOMPARE(spy.count(), 4);
-    } else {
-        qWarning("no active window");
-    }
+    // Test setFullScreen(true) and showFullScreen() do nothing when isFullScreen() == true.
+    widget.showFullScreen();
+    widget.setFullScreen(true);
+    QCOMPARE(widget.isFullScreen(), true);
+    QCOMPARE(spy.count(), 5);
+    widget.showFullScreen();
+    QCOMPARE(widget.isFullScreen(), true);
+    QCOMPARE(spy.count(), 5);
 }
 
 #endif
@@ -1971,7 +1647,7 @@ void tst_QVideoWidget::rendererPresent()
 
     QtTestVideoObject object(0, 0, new QtTestRendererControl);
 
-    QVideoWidget widget(&object);
+    QtTestVideoWidget widget(&object);
     widget.show();
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::RendererOutput);

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -44,7 +51,7 @@ public:
     QMediaPlaylistNullProvider() :QMediaPlaylistProvider() {}
     virtual ~QMediaPlaylistNullProvider() {}
     virtual int size() const {return 0;}
-    virtual QMediaSource media(int) const { return QMediaSource(); }
+    virtual QMediaContent media(int) const { return QMediaContent(); }
 };
 
 Q_GLOBAL_STATIC(QMediaPlaylistNullProvider, _q_nullMediaPlaylist)
@@ -56,6 +63,7 @@ public:
     QMediaPlaylistNavigatorPrivate()
         :playlist(0),
         currentPos(-1),
+        lastValidPos(-1),
         playbackMode(QMediaPlaylist::Linear),
         randomPositionsOffset(-1)
     {
@@ -63,8 +71,9 @@ public:
 
     QMediaPlaylistProvider *playlist;
     int currentPos;
+    int lastValidPos; //to be used with CurrentItemOnce playback mode
     QMediaPlaylist::PlaybackMode playbackMode;
-    QMediaSource currentItem;
+    QMediaContent currentItem;
 
     mutable QList<int> randomModePositions;
     mutable int randomPositionsOffset;
@@ -90,7 +99,7 @@ int QMediaPlaylistNavigatorPrivate::nextItemPos(int steps) const
 
     switch (playbackMode) {
         case QMediaPlaylist::CurrentItemOnce:
-            return -1;
+            return /*currentPos == -1 ? lastValidPos :*/ -1;
         case QMediaPlaylist::CurrentItemInLoop:
             return currentPos;
         case QMediaPlaylist::Linear:
@@ -135,12 +144,12 @@ int QMediaPlaylistNavigatorPrivate::previousItemPos(int steps) const
 
     switch (playbackMode) {
         case QMediaPlaylist::CurrentItemOnce:
-            return -1;
+            return /*currentPos == -1 ? lastValidPos :*/ -1;
         case QMediaPlaylist::CurrentItemInLoop:
             return currentPos;
         case QMediaPlaylist::Linear:
             {
-                int prevPos = currentPos - steps;
+                int prevPos = currentPos == -1 ? playlist->size() - steps : currentPos - steps;
                 return prevPos>=0 ? prevPos : -1;
             }
         case QMediaPlaylist::Loop:
@@ -266,7 +275,7 @@ void QMediaPlaylistNavigator::setPlaylist(QMediaPlaylistProvider *playlist)
     }
 
     if (!d->currentItem.isNull()) {
-        d->currentItem = QMediaSource();
+        d->currentItem = QMediaContent();
         emit activated(d->currentItem); //stop playback
     }
 }
@@ -277,14 +286,14 @@ void QMediaPlaylistNavigator::setPlaylist(QMediaPlaylistProvider *playlist)
 
   \sa currentPosition()
   */
-QMediaSource QMediaPlaylistNavigator::currentItem() const
+QMediaContent QMediaPlaylistNavigator::currentItem() const
 {
     return itemAt(d_func()->currentPos);
 }
 
 /*!
   */
-QMediaSource QMediaPlaylistNavigator::nextItem(int steps) const
+QMediaContent QMediaPlaylistNavigator::nextItem(int steps) const
 {
     return itemAt(nextPosition(steps));
 }
@@ -292,7 +301,7 @@ QMediaSource QMediaPlaylistNavigator::nextItem(int steps) const
 /*!
   */
 
-QMediaSource QMediaPlaylistNavigator::previousItem(int steps) const
+QMediaContent QMediaPlaylistNavigator::previousItem(int steps) const
 {
     return itemAt(previousPosition(steps));
 }
@@ -301,7 +310,7 @@ QMediaSource QMediaPlaylistNavigator::previousItem(int steps) const
   Returns the media source at playlist position \a pos or
   invalid media source object if \a pos is out the playlist positions range.
   */
-QMediaSource QMediaPlaylistNavigator::itemAt(int pos) const
+QMediaContent QMediaPlaylistNavigator::itemAt(int pos) const
 {
     return d_func()->playlist->media(pos);
 }
@@ -323,7 +332,7 @@ int QMediaPlaylistNavigator::currentPosition() const
 
   For example, for CurrentItemInLoop playback mode it's always the same as currentPosition().
 
-  If \a steps parameter is passed, the item position expected after \a step advance() actions returned.
+  If \a steps parameter is passed, the item position expected after \a step next() actions returned.
 
   \sa currentPosition(), previousPosition(int), PlaybackMode
   */
@@ -336,7 +345,7 @@ int QMediaPlaylistNavigator::nextPosition(int steps) const
   Returns the previously position in playlist.
   It's usually but not necessary currentPosition()-1 depending on playbackMode().
 
-  If \a steps parameter is passed, the item position expected after \a step back() actions returned.
+  If \a steps parameter is passed, the item position expected after \a step previous() actions returned.
 
   \sa nextPosition
   */
@@ -348,48 +357,35 @@ int QMediaPlaylistNavigator::previousPosition(int steps) const
 /*!
   Advance to the next item in the playlist.
 
-  \sa back(), seek(int), playbackMode()
+  \sa previous(), seek(int), playbackMode()
   */
-void QMediaPlaylistNavigator::advance()
+void QMediaPlaylistNavigator::next()
 {
     Q_D(QMediaPlaylistNavigator);
 
     int nextPos = d->nextItemPos();
-    if (nextPos >= 0) {
-        if ( playbackMode() == QMediaPlaylist::Random )
+
+    if ( playbackMode() == QMediaPlaylist::Random )
             d->randomPositionsOffset++;
 
-        jump(nextPos);
-
-        if (playbackMode() == QMediaPlaylist::CurrentItemInLoop ||
-            (playbackMode() == QMediaPlaylist::Loop && d->playlist->size() == 1)) {
-                emit activated(d->currentItem);
-        }
-    }
+    jump(nextPos);
 }
 
 /*!
   Advance to the previously item in the playlist,
   depending on playback mode.
 
-  \sa advance(), seek(int), playbackMode()
+  \sa next(), seek(int), playbackMode()
   */
-void QMediaPlaylistNavigator::back()
+void QMediaPlaylistNavigator::previous()
 {
     Q_D(QMediaPlaylistNavigator);
 
     int prevPos = d->previousItemPos();
-    if (prevPos >= 0) {
-        if ( playbackMode() == QMediaPlaylist::Random )
-            d->randomPositionsOffset--;
+    if ( playbackMode() == QMediaPlaylist::Random )
+        d->randomPositionsOffset--;
 
-        jump(prevPos);
-
-        if (playbackMode() == QMediaPlaylist::CurrentItemInLoop ||
-            (playbackMode() == QMediaPlaylist::Loop && d->playlist->size() == 1)) {
-                emit activated(d->currentItem);
-        }
-    }
+    jump(prevPos);
 }
 
 /*!
@@ -400,10 +396,13 @@ void QMediaPlaylistNavigator::jump(int pos)
 {
     Q_D(QMediaPlaylistNavigator);
 
-    if (pos<0 || pos>=d->playlist->size()) {
-        qWarning() << "Jump outside playlist range";
-        return;
+    if (pos<-1 || pos>=d->playlist->size()) {
+        qWarning() << "QMediaPlaylistNavigator: Jump outside playlist range";
+        pos = -1;
     }
+
+    if (pos != -1)
+        d->lastValidPos = pos;
 
     if (playbackMode() == QMediaPlaylist::Random) {
         if (d->randomModePositions[d->randomPositionsOffset] != pos) {
@@ -413,17 +412,18 @@ void QMediaPlaylistNavigator::jump(int pos)
         }
     }
 
+    if (pos != -1)
+        d->currentItem = d->playlist->media(pos);
+    else
+        d->currentItem = QMediaContent();
+
     if (pos != d->currentPos) {
         d->currentPos = pos;
         emit currentPositionChanged(d->currentPos);
         emit surroundingItemsChanged();
     }
 
-    QMediaSource src = d->playlist->media(pos);
-    if (src != d->currentItem) {
-        d->currentItem = src;
-        emit activated(src);
-    };
+    emit activated(d->currentItem);
 }
 
 /*!
@@ -470,7 +470,7 @@ void QMediaPlaylistNavigatorPrivate::_q_itemsChanged(int start, int end)
     Q_Q(QMediaPlaylistNavigator);
 
     if (currentPos >= start && currentPos<=end) {
-        QMediaSource src = playlist->media(currentPos);
+        QMediaContent src = playlist->media(currentPos);
         if (src != currentItem) {
             currentItem = src;
             emit q->activated(src);
@@ -482,7 +482,7 @@ void QMediaPlaylistNavigatorPrivate::_q_itemsChanged(int start, int end)
 }
 
 /*!
-    \fn void QMediaPlaylistNavigator::activated(const QMediaSource &source)
+    \fn void QMediaPlaylistNavigator::activated(const QMediaContent &content)
 
     Signal the playback of \a source should be started.
     it's usually related to change of the current item

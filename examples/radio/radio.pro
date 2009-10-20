@@ -1,7 +1,6 @@
 TEMPLATE = app
 CONFIG += example
 
-INCLUDEPATH += $$PWD/../../multimedia $$PWD/../../multimedia/endpoints
 include (../../common.pri)
 
 qtAddLibrary(QtMedia)

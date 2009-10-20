@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,24 +17,31 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
 
 #include <qmediaplaylistcontrol.h>
-#include <qabstractmediacontrol_p.h>
+#include <qmediacontrol_p.h>
 
 /*!
     \class QMediaPlaylistControl
@@ -43,17 +50,17 @@
     \preliminary
     \brief The QMediaPlaylistControl class is an abstract class for
     controling media playlist navigation, this is provided by a
-    QAbstractMediaService object, and is used by QMediaPlayer for
+    QMediaService object, and is used by QMediaPlayer for
     playback.
 
-    \sa QAbstractMediaService, QMediaPlayer
+    \sa QMediaService, QMediaPlayer
 */
 
 /*!
   Create a new playlist control object with the given \a parent.
 */
 QMediaPlaylistControl::QMediaPlaylistControl(QObject *parent):
-    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
+    QMediaControl(*new QMediaControlPrivate, parent)
 {
 }
 
@@ -99,7 +106,7 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 /*!
   \fn QMediaPlaylistControl::nextPosition(int step) const
 
-  Returns the position of item, which were current after calling advance()
+  Returns the position of item, which were current after calling next()
   \a step times.
 
   Returned value depends on the size of playlist, current position
@@ -111,20 +118,20 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 /*!
   \fn QMediaPlaylistControl::previousPosition(int step) const
 
-  Returns the position of item, which were current after calling back()
+  Returns the position of item, which were current after calling previous()
   \a step times.
 
   \sa QMediaPlaylist::playbackMode
 */
 
 /*!
-  \fn QMediaPlaylistControl::advance()
+  \fn QMediaPlaylistControl::next()
 
   Moves to the next item in playlist.
 */
 
 /*!
-  \fn QMediaPlaylistControl::back()
+  \fn QMediaPlaylistControl::previous()
 
   Returns to the previous item in playlist.
 */
@@ -148,7 +155,7 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 /*!
   \fn QMediaPlaylistControl::playlistProviderChanged()
 
-  Signal emited when the playlist provider is changed.
+  Signal emited when the playlist provider has changed.
 */
 
 /*!
@@ -162,3 +169,11 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 
   Signal emited when the playback \a mode is changed.
 */
+
+/*!
+  \fn QMediaPlaylistControl::currentMediaChanged(const QMediaContent& content)
+
+  Signal emitted when current media changes to \a content.
+*/
+
+

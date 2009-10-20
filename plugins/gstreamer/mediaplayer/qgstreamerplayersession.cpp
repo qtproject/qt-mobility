@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -37,7 +44,10 @@
 
 #include "qgstreamervideorendererinterface.h"
 
-#include <QDebug>
+#include <gst/gstvalue.h>
+
+#include <QtCore/qdatetime.h>
+#include <QtCore/qdebug.h>
 
 QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
     :QObject(parent),
@@ -96,6 +106,13 @@ void QGstreamerPlayerSession::load(const QUrl &url)
         emit tagsChanged();
 
         g_object_set(G_OBJECT(m_playbin), "uri", m_url.toString().toLocal8Bit().constData(), NULL);
+
+        if (!m_streamTypes.isEmpty()) {
+            m_streamProperties.clear();
+            m_streamTypes.clear();
+
+            emit streamsChanged();
+        }
     }
 }
 
@@ -115,12 +132,12 @@ qint64 QGstreamerPlayerSession::position() const
         return 0;
 }
 
-float QGstreamerPlayerSession::playbackRate() const
+qreal QGstreamerPlayerSession::playbackRate() const
 {
     return m_playbackRate;
 }
 
-void QGstreamerPlayerSession::setPlaybackRate(float rate)
+void QGstreamerPlayerSession::setPlaybackRate(qreal rate)
 {
     m_playbackRate = rate;
 
@@ -235,7 +252,6 @@ static void addTagToMap(const GstTagList *list,
 
     GValue val;
     val.g_type = 0;
-    //g_value_init(&val,G_TYPE_INVALID);
     gst_tag_list_copy_value(&val,list,tag);
 
     switch( G_VALUE_TYPE(&val) ) {
@@ -264,6 +280,25 @@ static void addTagToMap(const GstTagList *list,
             map->insert(QByteArray(tag), g_value_get_double(&val));
             break;
         default:
+            // GST_TYPE_DATE is a function, not a constant, so pull it out of the switch
+            if (G_VALUE_TYPE(&val) == GST_TYPE_DATE) {
+                const GDate *date = gst_value_get_date(&val);
+                if (g_date_valid(date)) {
+                    int year = g_date_get_year(date);
+                    int month = g_date_get_month(date);
+                    int day = g_date_get_day(date);
+                    map->insert(QByteArray(tag), QDate(year,month,day));
+                    if (!map->contains("year"))
+                        map->insert("year", year);
+                }
+            } else if (G_VALUE_TYPE(&val) == GST_TYPE_FRACTION) {
+                int nom = gst_value_get_fraction_numerator(&val);
+                int denom = gst_value_get_fraction_denominator(&val);
+
+                if (denom > 0) {
+                    map->insert(QByteArray(tag), double(nom)/denom);
+                }
+            }
             break;
     }
 
@@ -387,7 +422,7 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 
                             setSeekable(true);
 
-                            if (!qFuzzyCompare(m_playbackRate, float(1.0)))
+                            if (!qFuzzyCompare(m_playbackRate, qreal(1.0)))
                                 setPlaybackRate(m_playbackRate);
 
                             if (m_renderer)
@@ -479,19 +514,49 @@ void QGstreamerPlayerSession::getStreamsInfo()
     g_object_get(G_OBJECT(m_playbin), "stream-info", &streamInfo, NULL);
 
     bool haveVideo = false;
+    m_streamProperties.clear();
+    m_streamTypes.clear();
 
     for (; streamInfo != 0; streamInfo = g_list_next(streamInfo)) {
         gint        type;
+        gchar *languageCode = 0;
+
         GObject*    obj = G_OBJECT(streamInfo->data);
 
         g_object_get(obj, "type", &type, NULL);
+        g_object_get(obj, "language-code", &languageCode, NULL);
 
         if (type == GST_STREAM_TYPE_VIDEO)
             haveVideo = true;
+
+        QMediaStreamsControl::StreamType streamType = QMediaStreamsControl::UnknownStream;
+
+        switch (type) {
+        case GST_STREAM_TYPE_VIDEO:
+            streamType = QMediaStreamsControl::VideoStream;
+            break;
+        case GST_STREAM_TYPE_AUDIO:
+            streamType = QMediaStreamsControl::AudioStream;
+            break;
+        case GST_STREAM_TYPE_SUBPICTURE:
+            streamType = QMediaStreamsControl::SubPictureStream;
+            break;
+        default:
+            streamType = QMediaStreamsControl::UnknownStream;
+            break;
+        }
+
+        QMap<QtMedia::MetaData, QVariant> streamProperties;
+        streamProperties[QtMedia::Language] = QString::fromUtf8(languageCode);
+
+        m_streamProperties.append(streamProperties);
+        m_streamTypes.append(streamType);
     }
 
     if (haveVideo != m_videoAvailable) {
         m_videoAvailable = haveVideo;
         emit videoAvailabilityChanged(m_videoAvailable);
     }
+
+    emit streamsChanged();
 }

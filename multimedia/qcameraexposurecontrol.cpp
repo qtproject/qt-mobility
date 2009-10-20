@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,23 +17,30 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
 #include <qcameraexposurecontrol.h>
-#include  "qabstractmediacontrol_p.h"
+#include  "qmediacontrol_p.h"
 
 /*!
     \class QCameraExposureControl
@@ -51,7 +58,7 @@
 */
 
 QCameraExposureControl::QCameraExposureControl(QObject *parent):
-    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
+    QMediaControl(*new QMediaControlPrivate, parent)
 {
 }
 
@@ -166,11 +173,22 @@ Set the metering mode to \a mode.
   Returns the ISO sensitivity, or -1 if unknown.
 */
 
+/*!
+  \fn int QCameraExposureControl::minimumIsoSensitivity() const
+
+  Returns the minimum iso sensitivity.
+*/
 
 /*!
-  \fn QPair<int, int> QCameraExposureControl::supportedIsoSensitivityRange() const
+  \fn int QCameraExposureControl::maximumIsoSensitivity() const
 
-  Returns the available sensitivity ranges.
+  Returns the maximum iso sensitivity.
+*/
+
+/*!
+  \fn QList<int> QCameraExposureControl::supportedIsoSensitivities() const
+
+  Returns the available sensitivities.
 */
 
 
@@ -194,11 +212,22 @@ Set the metering mode to \a mode.
   Returns the aperture
 */
 
+/*!
+  \fn qreal QCameraExposureControl::minimumAperture() const
+
+  Returns the minimum aperture available.
+*/
 
 /*!
-  \fn QPair<qreal, qreal> QCameraExposureControl::supportedApertureRange() const
+  \fn qreal QCameraExposureControl::maximumAperture() const
 
-  Returns the supported aperture ranges.
+  Returns the maximum aperture available.
+*/
+
+/*!
+  \fn QList<qreal> QCameraExposureControl::supportedApertures() const
+
+  Returns the supported apertures.
 */
 
 
@@ -223,11 +252,16 @@ Set the metering mode to \a mode.
   Returns the shutter speed
 */
 
+/*!
+  \fn qreal QCameraExposureControl::maximumShutterSpeed() const
+
+  Returns the maximum shutter speed.
+*/
 
 /*!
-  \fn QPair<qreal, qreal> QCameraExposureControl::supportedShutterSpeedRange() const
+  \fn QList<qreal> QCameraExposureControl::supportedShutterSpeeds() const
 
-  Returns the available shutter speed ranges.
+  Returns the available shutter speeds.
 */
 
 
@@ -263,3 +297,28 @@ Set the metering mode to \a mode.
 
     Signal emitted when flash state changes, flash is charged \a ready.
 */
+
+/*!
+    \fn void QCameraExposureControl::apertureChanged(qreal value)
+
+    Signal emitted when the aperture value has changed to \a value.
+*/
+
+/*!
+    \fn void QCameraExposureControl::apertureRangeChanged()
+
+    Signal emitted when the aperture range has changed.
+*/
+
+/*!
+    \fn void QCameraExposureControl::shutterSpeedChanged(qreal value)
+
+    Signal emitted when the shutter speed changes to \a value.
+*/
+
+/*!
+    \fn void QCameraExposureControl::isoSensitivityChanged(int value)
+
+    Signal emitted when sensitity value changes to \a value.
+*/
+

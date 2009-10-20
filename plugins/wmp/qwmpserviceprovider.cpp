@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -36,27 +43,32 @@
 
 #include "qwmpplayerservice.h"
 
-QObject *QWmpServiceProvider::createObject(const char *iid) const
-{
-    if (qstrcmp(iid, QMediaPlayerService_iid) == 0)
-        return new QWmpPlayerService(QWmpPlayerService::LocalEmbed);
-    else if (qstrcmp(iid, QRemoteMediaPlayerService_iid) == 0)
-        return new QWmpPlayerService(QWmpPlayerService::RemoteEmbed);
-    return 0;
-}
-
 QStringList QWmpServiceProviderPlugin::keys() const
 {
     return QStringList()
-            << QLatin1String("mediaplayer")
+            << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER)
             << QLatin1String("windowsmediaplayer");
 }
 
-QMediaServiceProvider *QWmpServiceProviderPlugin::create(const QString &key)
+QMediaService *QWmpServiceProviderPlugin::create(const QString &key)
 {
-    if (key == QLatin1String("mediaplayer") || key == QLatin1String("windowsmediaplayer"))
-        return new QWmpServiceProvider;
+    if (QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER) == key) {
+        QByteArray providerKey = qgetenv("QT_MEDIAPLAYER_PROVIDER");
+        if (!providerKey.isNull() && qstrcmp(providerKey.constData(), "windowsmediaplayer") == 0)
+            return new QWmpPlayerService(QWmpPlayerService::RemoteEmbed);
+
+        return new QWmpPlayerService(QWmpPlayerService::LocalEmbed);
+    }
+    else if (QLatin1String("windowsmediaplayer") == key)
+        return new QWmpPlayerService(QWmpPlayerService::RemoteEmbed);
+
     return 0;
 }
+
+void QWmpServiceProviderPlugin::release(QMediaService *service)
+{
+    delete service;
+}
+
 
 Q_EXPORT_PLUGIN2(qwmp, QWmpServiceProviderPlugin);

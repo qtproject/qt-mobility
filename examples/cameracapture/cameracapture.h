@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -43,7 +50,7 @@ namespace Ui {
 
 class QMediaRecorder;
 class QCamera;
-class QAbstractMediaService;
+class QMediaService;
 
 class CameraCapture : public QMainWindow
 {
@@ -53,31 +60,29 @@ public:
     ~CameraCapture();
 
 private slots:
+    void setCamera(const QByteArray &cameraDevice);
+
     void updateRecordTime();
     void record();
     void pause();
     void stop();
 
-    void setAudioInputDevice(int idx);
-    void setCameraDevice(int idx);
-    void setAudioCodec(int idx);
-    void setVideoCodec(int idx);
-    void setContainerFormat(int idx);
-    void setAudioQuality(int value);
-    void setVideoQuality(int value);
-    void setVideoResolution();
-    void setVideoFramerate();
+    void settings();
 
     void displayErrorMessage();
 
     void enablePreview(bool);
+
+    void updateCameraDevice(QAction*);
+    void updateAudioDevice(QAction*);
 
 private:
     Ui::CameraCapture *ui;
 
     QMediaRecorder* mediaRecorder;
     QCamera *camera;
-    QAbstractMediaService *service;
+    QMediaService *service;
+    QWidget *videoWidget;
 };
 
 #endif

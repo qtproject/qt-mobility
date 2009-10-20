@@ -5,18 +5,16 @@
     Create a format converter
 */
 
-//CameraFormatConverter* CameraFormatConverter::createFormatConverter(QVideoFormat::Type format, int width, int height)
-CameraFormatConverter* CameraFormatConverter::createFormatConverter(int width, int height)
+CameraFormatConverter* CameraFormatConverter::createFormatConverter(QVideoFrame::PixelFormat format, int width, int height)
 {
-    return new YUVConverter(width,height);
-    //if(format == QVideoFormat::Frame_YUYV)
-    //    return new YUVConverter(format,width,height);
-    //else if(format == QVideoFormat::Frame_UYVY)
-    //    return new YUVConverter(format,width,height);
-    //else if(format == QVideoFormat::Frame_YUV420P)
-    //    return new YUVConverter(format,width,height);
-    //else
-    //    return new NullConverter;
+    if(format == QVideoFrame::Format_YUYV)
+        return new YUVConverter(format,width,height);
+    else if(format == QVideoFrame::Format_UYVY)
+        return new YUVConverter(format,width,height);
+    else if(format == QVideoFrame::Format_YUV420P)
+        return new YUVConverter(format,width,height);
+    else
+        return new NullConverter;
 }
 
 void CameraFormatConverter::releaseFormatConverter(CameraFormatConverter* converter)
@@ -31,36 +29,35 @@ unsigned char* NullConverter::convert(unsigned char* src, int len)
     Q_UNUSED(len)
     return src;
 }
-/*
-QList<QVideoFormat::Type> CameraFormatConverter::supportedFormats()
+
+QList<QVideoFrame::PixelFormat> CameraFormatConverter::supportedFormats()
 {
-    QList<QVideoFormat::Type> list;
-    list << QVideoFormat::Frame_RGB24 << QVideoFormat::Frame_YUYV << QVideoFormat::Frame_RGB32
-        << QVideoFormat::Frame_UYVY << QVideoFormat::Frame_YUV420P << QVideoFormat::Frame_RGB555;
+    QList<QVideoFrame::PixelFormat> list;
+    list << QVideoFrame::Format_RGB24 << QVideoFrame::Format_YUYV << QVideoFrame::Format_RGB32
+        << QVideoFrame::Format_UYVY << QVideoFrame::Format_YUV420P << QVideoFrame::Format_RGB555;
     return list;
 }
-*/
+
 // YUV
-//YUVConverter::YUVConverter(QVideoFormat::Type type,int width, int height):
-YUVConverter::YUVConverter(int width, int height):
-    //m_type(type),
+YUVConverter::YUVConverter(QVideoFrame::PixelFormat type,int width, int height):
+    m_type(type),
     m_width(width),
     m_height(height)
 {
     m_buf = new unsigned char[width * height * 2];
 
-    //if (m_type == QVideoFormat::Frame_YUYV) {
+    if (m_type == QVideoFrame::Format_YUYV) {
         // For YUY2 format use these to match (Y0-U0-Y1-V0)
         m_y1i=0;
         m_ui =1;
         m_y2i=2;
         m_vi =3;
-    //} else if(m_type == QVideoFormat::Frame_UYVY) {
-    //    m_y1i=1;
-    //    m_ui =0;
-    //    m_y2i=3;
-    //    m_vi =2;
-   // }
+    } else if(m_type == QVideoFrame::Format_UYVY) {
+        m_y1i=1;
+        m_ui =0;
+        m_y2i=3;
+        m_vi =2;
+    }
 }
 
 YUVConverter::~YUVConverter()
@@ -270,7 +267,7 @@ unsigned char* YUVConverter::convert(unsigned char* src, int len)
     dest++;\
     buf+= 4;\
 }
-    //if (m_type != QVideoFormat::Frame_YUV420P) {
+    if (m_type != QVideoFrame::Format_YUV420P) {
         register int n = (size + 7) / 8;
         switch(size & 7)
         {
@@ -284,9 +281,8 @@ unsigned char* YUVConverter::convert(unsigned char* src, int len)
             case 1:     CONV
                 } while(--n);
 	}
-    //} else {
+    } else {
         // for 320x240 use 353x288, only works for this res!!
-/*
 	int w = m_width;
 	int h = m_height;
         int Ysize = w * h;
@@ -304,7 +300,7 @@ unsigned char* YUVConverter::convert(unsigned char* src, int len)
 	    qWarning("buffer provided doesn't match expected size!!!");
 	}
     }
-*/
+
     return m_buf;
 
 }

@@ -1,7 +1,7 @@
 #ifndef AUDIOENCODERCONTROL_H
 #define AUDIOENCODERCONTROL_H
 
-#include "qaudioencodercontrol.h"
+#include <multimedia/qaudioencodercontrol.h>
 
 #include <QtCore/qstringlist.h>
 #include <QtCore/qmap.h>
@@ -26,17 +26,16 @@ public:
     int bitrate() const;
     void setBitrate(int);
 
-    int quality() const;
-    void setQuality(int);
+    QtMedia::EncodingQuality quality() const;
+    void setQuality(QtMedia::EncodingQuality);
 
-    QStringList supportedEncodingOptions() const;
-    QVariant encodingOption(const QString &name) const;
-    void setEncodingOption(const QString &name, const QVariant &value);
+    QStringList supportedEncodingOptions(const QString &codec) const;
+    QVariant encodingOption(const QString &codec, const QString &name) const;
+    void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
 
-    int frequency() const;
-    void setFrequency(int frequency);
-    QList<int> supportedFrequencies() const;
-    QPair<int,int> supportedFrequencyRange() const;
+    int sampleRate() const;
+    void setSampleRate(int sampleRate);
+    QList<int> supportedSampleRates() const;
 
     int channels() const;
     void setChannels(int channels);

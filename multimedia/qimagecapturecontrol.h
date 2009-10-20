@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -35,29 +42,30 @@
 #ifndef QIMAGECAPTURECONTROL_H
 #define QIMAGECAPTURECONTROL_H
 
-#include <qabstractmediacontrol.h>
+#include <qmediacontrol.h>
 
 class QImage;
 
-class Q_MEDIA_EXPORT QImageCaptureControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QImageCaptureControl : public QMediaControl
 {
     Q_OBJECT
+
 public:
     ~QImageCaptureControl();
 
-    virtual bool isReady() const = 0;
+    virtual bool isReadyForCapture() const = 0;
 
-    virtual void capture() = 0;
+    //TODO: what's about raw+jpeg capture?
     virtual void capture(const QString &fileName) = 0;
 
 Q_SIGNALS:
-    void readyStatusChanged(bool);
+    void readyForCaptureChanged(bool);
 
-    void imageCaptured(const QImage &frame);
+    //TODO: it would be usefull to receive other image parameters, in addition to preview
     void imageCaptured(const QString &fileName, const QImage &preview);
 
 protected:
-    QImageCaptureControl(QObject* parent);
+    QImageCaptureControl(QObject* parent = 0);
 };
 
 #define QImageCaptureControl_iid "com.nokia.Qt.QImageCaptureControl/1.0"

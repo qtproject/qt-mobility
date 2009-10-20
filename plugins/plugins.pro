@@ -6,6 +6,7 @@
 
 TEMPLATE = subdirs
 SUBDIRS += contacts
+SUBDIRS += m3u
 
 contains(QT_CONFIG, phonon): SUBDIRS += phonon
 
@@ -22,5 +23,12 @@ unix:!mac:!symbian {
         gstreamer-interfaces-0.10 >= 0.10.19 \
         gstreamer-audio-0.10 >= 0.10.19 \
         gstreamer-video-0.10 >= 0.10.19
-    system(pkg-config --exists \'$${TMP_GST_LIBS}\' --print-errors): SUBDIRS += gstreamer
+    system(pkg-config --exists \'$${TMP_GST_LIBS}\' --print-errors): {
+        SUBDIRS += gstreamer
+    } else {
+        contains(QT_CONFIG, multimedia): SUBDIRS += audiocapture v4l
+    }
+
+} else {
+    contains(QT_CONFIG, multimedia): SUBDIRS += audiocapture
 }

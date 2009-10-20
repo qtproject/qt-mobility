@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -39,18 +46,47 @@
 #include <QtCore/qplugin.h>
 #include <QtCore/qfactoryinterface.h>
 #include <qmultimediaglobal.h>
+#include <qmediaserviceprovider.h>
 
-class QMediaServiceProvider;
+class QMediaService;
 
 struct Q_MEDIA_EXPORT QMediaServiceProviderFactoryInterface : public QFactoryInterface
 {
     virtual QStringList keys() const = 0;
-    virtual QMediaServiceProvider* create(QString const& key) = 0;
+    virtual QMediaService* create(QString const& key) = 0;
+    virtual void release(QMediaService *service) = 0;
 };
-
 #define QMediaServiceProviderFactoryInterface_iid \
     "com.nokia.Qt.QMediaServiceProviderFactoryInterface/1.0"
 Q_DECLARE_INTERFACE(QMediaServiceProviderFactoryInterface, QMediaServiceProviderFactoryInterface_iid)
+
+
+struct Q_MEDIA_EXPORT QMediaServiceSupportedFormatsInterface
+{
+    virtual QtMedia::SupportEstimate hasSupport(const QString &mimeType, const QStringList& codecs) const = 0;
+};
+#define QMediaServiceSupportedFormatsInterface_iid \
+    "com.nokia.Qt.QMediaServiceSupportedFormatsInterface/1.0"
+Q_DECLARE_INTERFACE(QMediaServiceSupportedFormatsInterface, QMediaServiceSupportedFormatsInterface_iid)
+
+
+struct Q_MEDIA_EXPORT QMediaServiceSupportedDevicesInterface
+{
+    virtual QList<QByteArray> devices(const QByteArray &service) const = 0;
+    virtual QString deviceDescription(const QByteArray &service, const QByteArray &device) = 0;
+};
+#define QMediaServiceSupportedDevicesInterface_iid \
+    "com.nokia.Qt.QMediaServiceSupportedDevicesInterface/1.0"
+Q_DECLARE_INTERFACE(QMediaServiceSupportedDevicesInterface, QMediaServiceSupportedDevicesInterface_iid)
+
+struct Q_MEDIA_EXPORT QMediaServiceFeaturesInterface
+{
+    virtual QMediaServiceProviderHint::Features supportedFeatures(const QByteArray &service) const = 0;
+};
+#define QMediaServiceFeaturesInterface_iid \
+    "com.nokia.Qt.QMediaServiceFeaturesInterface/1.0"
+Q_DECLARE_INTERFACE(QMediaServiceFeaturesInterface, QMediaServiceFeaturesInterface_iid)
+
 
 class Q_MEDIA_EXPORT QMediaServiceProviderPlugin : public QObject, public QMediaServiceProviderFactoryInterface
 {
@@ -59,7 +95,8 @@ class Q_MEDIA_EXPORT QMediaServiceProviderPlugin : public QObject, public QMedia
 
 public:
     virtual QStringList keys() const = 0;
-    virtual QMediaServiceProvider* create(QString const& key) = 0;
+    virtual QMediaService* create(QString const& key) = 0;
+    virtual void release(QMediaService *service) = 0;
 };
 
 

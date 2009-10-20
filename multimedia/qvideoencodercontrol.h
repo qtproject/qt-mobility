@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -35,7 +42,7 @@
 #ifndef QVIDEOENCODERCONTROL_H
 #define QVIDEOENCODERCONTROL_H
 
-#include <qabstractmediacontrol.h>
+#include <qmediacontrol.h>
 #include <qmediarecorder.h>
 
 #include <QtCore/qpair.h>
@@ -44,43 +51,33 @@
 class QByteArray;
 class QStringList;
 
-class Q_MEDIA_EXPORT QVideoEncoderControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QVideoEncoderControl : public QMediaControl
 {
     Q_OBJECT
+
 public:
     virtual ~QVideoEncoderControl();
 
-    virtual QSize resolution() const = 0;
     virtual QSize minimumResolution() const = 0;
     virtual QSize maximumResolution() const = 0;
-    virtual QList<QSize> supportedResolutions() const;
-    virtual void setResolution(const QSize &) = 0;
+    virtual QList<QSize> supportedResolutions() const = 0;
 
-    virtual QMediaRecorder::FrameRate frameRate() const = 0;
-    virtual QMediaRecorder::FrameRate minimumFrameRate() const = 0;
-    virtual QMediaRecorder::FrameRate maximumFrameRate() const = 0;
-    virtual QList<QMediaRecorder::FrameRate> supportedFrameRates() const;
-    virtual void setFrameRate(const QMediaRecorder::FrameRate &rate) = 0;
+    virtual qreal minimumFrameRate() const = 0;
+    virtual qreal maximumFrameRate() const = 0;
+    virtual QList<qreal> supportedFrameRates() const = 0;
 
     virtual QStringList supportedVideoCodecs() const = 0;
-    virtual QString videoCodec() const = 0;
-    virtual bool setVideoCodec(const QString &codecName) = 0;
-
     virtual QString videoCodecDescription(const QString &codecName) const = 0;
 
+    virtual QVideoEncoderSettings videoSettings() const = 0;
+    virtual void setVideoSettings(const QVideoEncoderSettings &settings) = 0;
 
-    virtual int bitrate() const = 0;
-    virtual void setBitrate(int) = 0;
-
-    virtual int quality() const = 0;
-    virtual void setQuality(int) = 0;
-
-    virtual QStringList supportedEncodingOptions() const;
-    virtual QVariant encodingOption(const QString &name) const;
-    virtual void setEncodingOption(const QString &name, const QVariant &value);
+    virtual QStringList supportedEncodingOptions(const QString &codec) const = 0;
+    virtual QVariant encodingOption(const QString &codec, const QString &name) const = 0;
+    virtual void setEncodingOption(const QString &codec, const QString &name, const QVariant &value) = 0;
 
 protected:
-    QVideoEncoderControl(QObject *parent);
+    QVideoEncoderControl(QObject *parent = 0);
 };
 
 #define QVideoEncoderControl_iid "com.nokia.Qt.QVideoEncoderControl/1.0"

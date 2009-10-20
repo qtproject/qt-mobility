@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -37,35 +44,36 @@
 
 #include <QtCore/qobject.h>
 #include <QtCore/qtimer.h>
-#include <QTime>
+#include <QtCore/qdatetime.h>
 
-#include "qradioplayercontrol.h"
-#include "qradioplayer.h"
+#include <multimedia/qradiotunercontrol.h>
 
-#include "linux/videodev2.h"
+#include <linux/types.h>
+#include <linux/videodev2.h>
 
 class V4LRadioService;
 
-class V4LRadioControl : public QRadioPlayerControl
+class V4LRadioControl : public QRadioTunerControl
 {
     Q_OBJECT
 public:
     V4LRadioControl(QObject *parent = 0);
     ~V4LRadioControl();
 
-    QRadioPlayer::Band band() const;
-    void setBand(QRadioPlayer::Band b);
-    bool isSupportedBand(QRadioPlayer::Band b) const;
+    QRadioTuner::Band band() const;
+    void setBand(QRadioTuner::Band b);
+    bool isBandSupported(QRadioTuner::Band b) const;
 
     int frequency() const;
+    int frequencyStep(QRadioTuner::Band b) const;
+    QPair<int,int> frequencyRange(QRadioTuner::Band b) const;
     void setFrequency(int frequency);
 
     bool isStereo() const;
-    void setStereo(bool stereo);
+    QRadioTuner::StereoMode stereoMode() const;
+    void setStereoMode(QRadioTuner::StereoMode mode);
 
     int signalStrength() const;
-
-    qint64 duration() const;
 
     int volume() const;
     void setVolume(int volume);
@@ -76,10 +84,14 @@ public:
     bool isSearching() const;
     void cancelSearch();
 
-    bool isValid() const;
-
     void searchForward();
     void searchBackward();
+
+    void start();
+    void stop();
+
+    QRadioTuner::Error error() const;
+    QString errorString() const;
 
 private slots:
     void search();
@@ -91,6 +103,7 @@ private:
 
     int fd;
 
+    bool m_error;
     bool muted;
     bool stereo;
     bool low;
@@ -102,7 +115,7 @@ private:
     bool scanning;
     bool forward;
     QTimer* timer;
-    QRadioPlayer::Band   currentBand;
+    QRadioTuner::Band   currentBand;
     qint64 freqMin;
     qint64 freqMax;
     qint64 currentFreq;

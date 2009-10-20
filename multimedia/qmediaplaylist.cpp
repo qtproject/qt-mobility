@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -37,7 +44,7 @@
 #include <qmediaplaylistprovider.h>
 #include <qlocalmediaplaylistprovider.h>
 #include <qmediaplaylistioplugin.h>
-#include <qabstractmediaservice.h>
+#include <qmediaservice.h>
 #include <qmediaplaylistcontrol.h>
 #include <qmediaplayercontrol.h>
 
@@ -58,12 +65,12 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
     \ingroup multimedia
 
     \preliminary
-    \brief The QMediaPlaylist class provides a list of media sources to play.
+    \brief The QMediaPlaylist class provides a list of media content to play.
 
     Depending on playlist source implementation,
     most of playlist modifcation operations can be asynchronous.
 
-    \sa QMediaSource
+    \sa QMediaContent
 */
 
 
@@ -88,9 +95,10 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
 
 /*!
   Create a new playlist object for with the given \a parent.
-  If source is null, internal local memory playlist source will be created.
-  */
-QMediaPlaylist::QMediaPlaylist(QAbstractMediaObject *parent)
+  If \a mediaObject is null, internal local memory playlist source will be created.
+*/
+
+QMediaPlaylist::QMediaPlaylist(QMediaObject *mediaObject, QObject *parent)
     : QObject(parent)
     , d_ptr(new QMediaPlaylistPrivate)
 {
@@ -98,13 +106,15 @@ QMediaPlaylist::QMediaPlaylist(QAbstractMediaObject *parent)
 
     d->q_ptr = this;
 
-    if (parent)
-        d->control = qobject_cast<QMediaPlaylistControl*>(parent->service()->control(QMediaPlaylistControl_iid));
+    if (mediaObject)
+        d->control = qobject_cast<QMediaPlaylistControl*>(mediaObject->service()->control(QMediaPlaylistControl_iid));
 
     if (!d->control)
         d->control = new QLocalMediaPlaylistControl(this);
 
     QMediaPlaylistProvider *playlist = d->control->playlistProvider();
+    connect(playlist, SIGNAL(loadFailed(QMediaPlaylist::Error,QString)),
+            this, SLOT(_q_loadFailed(QMediaPlaylist::Error,QString)));
 
     connect(playlist, SIGNAL(itemsChanged(int,int)), this, SIGNAL(itemsChanged(int,int)));
     connect(playlist, SIGNAL(itemsAboutToBeInserted(int,int)), this, SIGNAL(itemsAboutToBeInserted(int,int)));
@@ -112,47 +122,26 @@ QMediaPlaylist::QMediaPlaylist(QAbstractMediaObject *parent)
     connect(playlist, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SIGNAL(itemsAboutToBeRemoved(int,int)));
     connect(playlist, SIGNAL(itemsRemoved(int,int)), this, SIGNAL(itemsRemoved(int,int)));
 
+    connect(playlist, SIGNAL(loaded()), this, SIGNAL(loaded()));
+
     connect(d->control, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)),
             this, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)));
-    connect(d->control, SIGNAL(playlistProviderChanged()),
-            this, SIGNAL(playlistProviderChanged()));
     connect(d->control, SIGNAL(playlistPositionChanged(int)),
             this, SIGNAL(playlistPositionChanged(int)));
-    connect(d->control, SIGNAL(currentMediaChanged(QMediaSource)),
-            this, SIGNAL(currentMediaChanged(QMediaSource)));
+    connect(d->control, SIGNAL(currentMediaChanged(QMediaContent)),
+            this, SIGNAL(currentMediaChanged(QMediaContent)));
 
-    if (parent)
-        parent->bind(this);
+    if (mediaObject)
+        mediaObject->bind(this);
 }
 
 /*!
   Destroys the playlist.
   */
+
 QMediaPlaylist::~QMediaPlaylist()
 {
     delete d_ptr;
-}
-
-/*!
-  Returns the playlist used by this media player.
-*/
-QMediaPlaylistProvider* QMediaPlaylist::playlistProvider() const
-{
-    return d_func()->playlist();
-}
-
-/*!
-  Set the playlist of this media player to \a mediaPlaylist.
-
-  In many cases it is possible just to use the playlist
-  constructed by player, but sometimes replacing the whole
-  playlist allows to avoid copyting of all the items bettween playlists.
-
-  Returns true if player can use this passed playlist; otherwise returns false.
-*/
-bool QMediaPlaylist::setPlaylistProvider(QMediaPlaylistProvider *playlist)
-{
-    return d_func()->control->setPlaylistProvider(playlist);
 }
 
 /*!
@@ -183,16 +172,16 @@ int QMediaPlaylist::currentPosition() const
 }
 
 /*!
-  Returns the current media source.
+  Returns the current media content.
 */
 
-QMediaSource QMediaPlaylist::currentMedia() const
+QMediaContent QMediaPlaylist::currentMedia() const
 {
     return d_func()->playlist()->media(currentPosition());
 }
 
 /*!
-  Returns the position of item, which were current after calling advance()
+  Returns the position of item, which were current after calling next()
   \a steps times.
 
   Returned value depends on the size of playlist, current position
@@ -206,7 +195,7 @@ int QMediaPlaylist::nextPosition(int steps) const
 }
 
 /*!
-  Returns the position of item, which were current after calling back()
+  Returns the position of item, which were current after calling previous()
   \a steps times.
 
   \sa QMediaPlaylist::playbackMode
@@ -247,33 +236,33 @@ bool QMediaPlaylist::isReadOnly() const
 }
 
 /*!
-  Returns the media source at index \a position in the playlist.
+  Returns the media content at index \a position in the playlist.
 */
 
-QMediaSource QMediaPlaylist::media(int position) const
+QMediaContent QMediaPlaylist::media(int position) const
 {
     return d_func()->playlist()->media(position);
 }
 
 /*!
-  Append the list of media \a source to the playlist.
+  Append the list of media \a content to the playlist.
 
   Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylist::appendItem(const QMediaSource &source)
+bool QMediaPlaylist::appendItem(const QMediaContent &content)
 {
-    return d_func()->control->playlistProvider()->appendItem(source);
+    return d_func()->control->playlistProvider()->appendItem(content);
 }
 
 /*!
-  Insert the media \a source to the playlist at position \a pos.
+  Insert the media \a content to the playlist at position \a pos.
 
   Returns true if the operation is successful, otherwise false.
 */
 
-bool QMediaPlaylist::insertItem(int pos, const QMediaSource &source)
+bool QMediaPlaylist::insertItem(int pos, const QMediaContent &content)
 {
-    return d_func()->playlist()->insertItem(pos, source);
+    return d_func()->playlist()->insertItem(pos, content);
 }
 
 /*!
@@ -335,11 +324,15 @@ bool QMediaPlaylistPrivate::writeItems(QMediaPlaylistWritter *writter)
 
   Returns true if playlist was loaded succesfully, otherwise returns false.
 */
-bool QMediaPlaylist::load(const QUrl &location, const char *format)
+void QMediaPlaylist::load(const QUrl &location, const char *format)
 {
     Q_D(QMediaPlaylist);
+
+    d->error = NoError;
+    d->errorString.clear();
+
     if (d->playlist()->load(location,format))
-        return true;
+        return;
 
     foreach (QString const& key, playlistIOLoader()->keys()) {
         QMediaPlaylistIOInterface* plugin = qobject_cast<QMediaPlaylistIOInterface*>(playlistIOLoader()->instance(key));
@@ -347,15 +340,17 @@ bool QMediaPlaylist::load(const QUrl &location, const char *format)
             QMediaPlaylistReader *reader = plugin->createReader(location,QByteArray(format));
             if (reader && d->readItems(reader)) {
                 delete reader;
-                delete plugin;
-                return true;
+                return;
             }
             delete reader;
         }
-        delete plugin;
     }
 
-    return false;
+    d->error = FormatNotSupportedError;
+    d->errorString = tr("Playlist format is not supported");
+    emit loadFailed();
+
+    return;
 }
 
 /*!
@@ -366,11 +361,15 @@ bool QMediaPlaylist::load(const QUrl &location, const char *format)
 
   Returns true if playlist was loaded succesfully, otherwise returns false.
 */
-bool QMediaPlaylist::load(QIODevice * device, const char *format)
+void QMediaPlaylist::load(QIODevice * device, const char *format)
 {
     Q_D(QMediaPlaylist);
+
+    d->error = NoError;
+    d->errorString.clear();
+
     if (d->playlist()->load(device,format))
-        return true;
+        return;
 
     foreach (QString const& key, playlistIOLoader()->keys()) {
         QMediaPlaylistIOInterface* plugin = qobject_cast<QMediaPlaylistIOInterface*>(playlistIOLoader()->instance(key));
@@ -378,15 +377,17 @@ bool QMediaPlaylist::load(QIODevice * device, const char *format)
             QMediaPlaylistReader *reader = plugin->createReader(device,QByteArray(format));
             if (reader && d->readItems(reader)) {
                 delete reader;
-                delete plugin;
-                return true;
+                return;
             }
             delete reader;
         }
-        delete plugin;
     }
 
-    return false;
+    d->error = FormatNotSupportedError;
+    d->errorString = tr("Playlist format is not supported");
+    emit loadFailed();
+
+    return;
 }
 
 /*!
@@ -398,15 +399,22 @@ bool QMediaPlaylist::load(QIODevice * device, const char *format)
 bool QMediaPlaylist::save(const QUrl &location, const char *format)
 {
     Q_D(QMediaPlaylist);
+
+    d->error = NoError;
+    d->errorString.clear();
+
     if (d->playlist()->save(location,format))
         return true;
 
     QFile file(location.toLocalFile());
 
-    if (file.open(QIODevice::WriteOnly | QIODevice::Truncate))
-        return save(&file, format);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        d->error = AccessDeniedError;
+        d->errorString = tr("The file could not be accessed.");
+        return false;
+    }
 
-    return false;
+    return save(&file, format);
 }
 
 /*!
@@ -417,6 +425,10 @@ bool QMediaPlaylist::save(const QUrl &location, const char *format)
 bool QMediaPlaylist::save(QIODevice * device, const char *format)
 {
     Q_D(QMediaPlaylist);
+
+    d->error = NoError;
+    d->errorString.clear();
+
     if (d->playlist()->save(device,format))
         return true;
 
@@ -426,15 +438,32 @@ bool QMediaPlaylist::save(QIODevice * device, const char *format)
             QMediaPlaylistWritter *writter = plugin->createWritter(device,QByteArray(format));
             if (writter && d->writeItems(writter)) {
                 delete writter;
-                delete plugin;
                 return true;
             }
             delete writter;
         }
-        delete plugin;
     }
 
+    d->error = FormatNotSupportedError;
+    d->errorString = tr("Playlist format is not supported.");
+
     return false;
+}
+
+/*!
+    Returns the last error condition.
+*/
+QMediaPlaylist::Error QMediaPlaylist::error() const
+{
+    return d_func()->error;
+}
+
+/*!
+    Returns the string describing the last error condition.
+*/
+QString QMediaPlaylist::errorString() const
+{
+    return d_func()->errorString;
 }
 
 /*!
@@ -447,23 +476,23 @@ void QMediaPlaylist::shuffle()
 
 
 /*!
-    Advance to the next media source in playlist.
+    Advance to the next media content in playlist.
 */
-void QMediaPlaylist::advance()
+void QMediaPlaylist::next()
 {
-    d_func()->control->advance();
+    d_func()->control->next();
 }
 
 /*!
-    Return to the previous media source in playlist.
+    Return to the previous media content in playlist.
 */
-void QMediaPlaylist::back()
+void QMediaPlaylist::previous()
 {
-    d_func()->control->back();
+    d_func()->control->previous();
 }
 
 /*!
-    Activate media source from playlist at position \a playlistPosition.
+    Activate media content from playlist at position \a playlistPosition.
 */
 
 void QMediaPlaylist::setCurrentPosition(int playlistPosition)
@@ -474,29 +503,23 @@ void QMediaPlaylist::setCurrentPosition(int playlistPosition)
 /*!
     \fn void QMediaPlaylist::itemsInserted(int start, int end)
 
-    This signal is emitted after media sources have been inserted into the playlist.
+    This signal is emitted after media has been inserted into the playlist.
     The new items are those between \a start and \a end inclusive.
  */
 
 /*!
     \fn void QMediaPlaylist::itemsRemoved(int start, int end)
 
-    This signal is emitted after media sources have been removed from the playlist.
+    This signal is emitted after media has been removed from the playlist.
     The removed items are those between \a start and \a end inclusive.
  */
 
 /*!
     \fn void QMediaPlaylist::itemsChanged(int start, int end)
 
-    This signal is emitted after media sources have been changed in the playlist
+    This signal is emitted after media has been changed in the playlist
     between \a start and \a end positions inclusive.
  */
-
-/*!
-    \fn void QMediaPlaylist::playlistProviderChanged()
-
-    Signal emitted when playlist provider has changed.
-*/
 
 /*!
     \fn void QMediaPlaylist::playlistPositionChanged(int position)
@@ -523,14 +546,9 @@ void QMediaPlaylist::setCurrentPosition(int playlistPosition)
 */
 
 /*!
-    \fn void QMediaPlaylist::currentMediaChanged(const QMediaSource &source)
+    \fn void QMediaPlaylist::currentMediaChanged(const QMediaContent &content)
 
-    Signal emitted when current media changes to \a source.
-*/
-
-/*!
-    \property QMediaPlaylist::playlistProvider
-    \brief Current playlist provider.
+    Signal emitted when current media changes to \a content.
 */
 
 /*!
@@ -540,7 +558,29 @@ void QMediaPlaylist::setCurrentPosition(int playlistPosition)
 
 /*!
     \property QMediaPlaylist::currentMedia
-    \brief Current media source.
+    \brief Current media content.
+*/
+
+/*!
+    \fn QMediaPlaylist::loaded()
+
+    Signal emitted when playlist finished loading.
+*/
+
+/*!
+    \fn QMediaPlaylist::loadFailed()
+
+    Signal emitted if failed to load playlist.
+*/
+
+/*!
+    \enum QMediaPlaylist::Error
+
+    \value NoError                 No errors.
+    \value FormatError             Format error.
+    \value FormatNotSupportedError Format not supported.
+    \value NetworkError            Network error.
+    \value AccessDeniedError       Access denied error.
 */
 
 #include "moc_qmediaplaylist.cpp"

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -44,7 +51,7 @@
     Constructs a new video window control with the given \a parent.
 */
 QVideoWindowControl::QVideoWindowControl(QObject *parent)
-    : QAbstractMediaControl(parent)
+    : QMediaControl(parent)
 {
 }
 
@@ -78,23 +85,23 @@ QVideoWindowControl::~QVideoWindowControl()
 */
 
 /*!
-    \fn QVideoWindowControl::isFullscreen() const
+    \fn QVideoWindowControl::isFullScreen() const
 
-    Identifies if a video overlay is a fullscreen overlay.
+    Identifies if a video overlay is a fullScreen overlay.
 
-    Returns true if the video overlay is fullscreen, and false otherwise.
+    Returns true if the video overlay is fullScreen, and false otherwise.
 */
 
 /*!
-    \fn QVideoWindowControl::setFullscreen(bool fullscreen)
+    \fn QVideoWindowControl::setFullScreen(bool fullScreen)
 
-    Sets whether a video overlay is a \a fullscreen overlay.
+    Sets whether a video overlay is a \a fullScreen overlay.
 */
 
 /*!
-    \fn QVideoWindowControl::fullscreenChanged(bool fullscreen)
+    \fn QVideoWindowControl::fullScreenChanged(bool fullScreen)
 
-    Signals that the \a fullscreen state of a video overlay has changed.
+    Signals that the \a fullScreen state of a video overlay has changed.
 */
 
 /*!
@@ -116,28 +123,18 @@ QVideoWindowControl::~QVideoWindowControl()
     Signals that the native dimensions of the video have changed.
 */
 
-/*!
-    \fn QVideoWindowControl::aspectRatio() const
 
-    Returns the aspect ratio policy for scaling the video.
+/*!
+    \fn QVideoWindowControl::aspectRatioMode() const
+
+    Returns how video is scaled to fit the display region with respect to its aspect ratio.
 */
 
 /*!
-    \fn QVideoWindowControl::setAspectRatio(QVideoWidget::AspectRatio ratio)
+    \fn QVideoWindowControl::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 
-    Sets the aspect \a ratio policy for scaling the video.
-*/
-
-/*!
-    \fn QVideoWindowControl::customAspectRatio() const
-
-    Returns the a custom aspect ratio used to scale the video.
-*/
-
-/*!
-    \fn QVideoWindowControl::setCustomAspectRatio(const QSize &ratio)
-
-    Sets a custom aspect \a ratio used to scale the video.
+    Sets the aspect ratio \a mode which determines how video is scaled to the fit the display region
+    with respect to its aspect ratio.
 */
 
 /*!
