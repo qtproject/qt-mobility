@@ -884,7 +884,7 @@ void QContactSymbianEngineData::removeGroupL(const QContactLocalId& groupId)
 	}
 	m_contactDatabase->DeleteContactL(TContactItemId(groupId));
 }
-
+#endif
 /*!
  * Private leaving implementation for simPhonebookGroupId
  */
@@ -892,7 +892,7 @@ QContactLocalId QContactSymbianEngineData::simPhonebookGroupIdL() const
 {
 	return m_contactDatabase->PhonebookGroupIdL();
 }
-
+#if 0
 /*!
  * Lists groups the contact is member of currently in the contact database.
  */
