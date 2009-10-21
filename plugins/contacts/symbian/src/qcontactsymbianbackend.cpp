@@ -61,15 +61,6 @@ QContactSymbianEngine::QContactSymbianEngine(const QMap<QString, QString>& /*par
 	
         connect(d, SIGNAL(contactChanged(QContactLocalId)),
                         this, SLOT(eventContactChanged(QContactLocalId)));
-	
-        connect(d, SIGNAL(groupAdded(QContactLocalId)),
-                        this, SLOT(eventGroupAdded(QContactLocalId)));
-	
-        connect(d, SIGNAL(groupRemoved(QContactLocalId)),
-                        this, SLOT(eventGroupRemoved(QContactLocalId)));
-	
-        connect(d, SIGNAL(groupChanged(QContactLocalId)),
-                        this, SLOT(eventGroupChanged(QContactLocalId)));
 }
 
 QContactSymbianEngine::QContactSymbianEngine(const QContactSymbianEngine& other)
@@ -312,47 +303,6 @@ QList<QContactManager::Error> QContactSymbianEngine::removeRelationships(const Q
 {
     return d->removeRelationships(relationships, error);
 }
-#if 0
-QList<QContactLocalId> QContactSymbianEngine::groups(QContactManager::Error& error) const
-{
-	return d->groups(error);
-}
-
-QContactGroup QContactSymbianEngine::group(const QContactLocalId& groupId, QContactManager::Error& error) const
-{
-	return d->group(groupId, error);
-}
-
-bool QContactSymbianEngine::saveGroup(QContactGroup* group, QContactManager::Error& error)
-{
-    QContactChangeSet changeSet;
-    bool ret = false;
-
-    if(group)
-    {
-        if (group->id() > 0) {
-            ret = d->updateGroup(*group, changeSet, error);
-        }
-        else {
-            ret = d->addGroup(*group, changeSet, error);
-        }
-    }
-    else
-    {
-        error = QContactManager::BadArgumentError;
-    }
-    changeSet.emitSignals(this);
-    return ret;
-}
-
-bool QContactSymbianEngine::removeGroup(const QContactLocalId& groupId, QContactManager::Error& error)
-{
-    QContactChangeSet changeSet;
-    bool ret = d->removeGroup(groupId, changeSet, error);
-    changeSet.emitSignals(this);
-    return ret;
-}
-#endif
 
 QMap<QString, QContactDetailDefinition> QContactSymbianEngine::detailDefinitions(QContactManager::Error& error) const
 {
@@ -483,47 +433,6 @@ void QContactSymbianEngine::eventContactChanged(const QContactLocalId &contactId
 
 	emit contactsChanged(contactList);
 }
-
-#if 0
-/*!
- * Private slot to receive events about added groups.
- *
- * \param groupId The new groups's ID.
- */
-void QContactSymbianEngine::eventGroupAdded(const QContactLocalId &groupId)
-{
-        QList<QContactLocalId> groupList;
-	groupList.append(groupId);
-
-	emit groupsAdded(groupList);
-}
-
-/*!
- * Private slot to receive events about deleted groups.
- *
- * \param groupId ID for the deleted contact group.
- */
-void QContactSymbianEngine::eventGroupRemoved(const QContactLocalId &groupId)
-{
-        QList<QContactLocalId> groupList;
-	groupList.append(groupId);
-
-	emit groupsRemoved(groupList);
-}
-
-/*!
- * Private slot to receive events about modified groups.
- *
- * \param ID for the group with modified data.
- */
-void QContactSymbianEngine::eventGroupChanged(const QContactLocalId &groupId)
-{
-        QList<QContactLocalId> groupList;
-	groupList.append(groupId);
-
-	emit groupsChanged(groupList);
-}
-#endif
 
 /* Factory lives here in the basement */
 QContactManagerEngine* QContactSymbianFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)

@@ -87,13 +87,7 @@ public:
     QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
     bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);
     QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
-#if 0
-    /* Groups - Accessors and Mutators */
-    QList<QContactLocalId> groups(QContactManager::Error& error) const;
-    QContactGroup group(const QContactLocalId& groupId, QContactManager::Error& error) const;
-    bool saveGroup(QContactGroup* group, QContactManager::Error& error);
-    bool removeGroup(const QContactLocalId& groupId, QContactManager::Error& error);
-#endif
+
     /* Definitions */
     QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
 
@@ -113,11 +107,6 @@ private slots:
         void eventContactAdded(const QContactLocalId &contactId);
         void eventContactRemoved(const QContactLocalId &contactId);
         void eventContactChanged(const QContactLocalId &contactId);
-#if 0
-        void eventGroupAdded(const QContactLocalId &groupId);
-        void eventGroupRemoved(const QContactLocalId &groupId);
-        void eventGroupChanged(const QContactLocalId &groupId);
-#endif
         
 private:
     void slowFilter(const QContactFilter& filter, const QList<QContactLocalId>& contacts, QList<QContactLocalId>& result, QContactManager::Error& error) const;
