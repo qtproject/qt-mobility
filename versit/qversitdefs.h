@@ -91,7 +91,14 @@ const char versitPhotoJpeg[] = "JPEG";
 // Default path to save the photos
 const char versitPhotoDir[] = "c:/data/photo";
 
-// TYPE parameter name
+// Encoding values
+const char versitEncoding7Bit[] = "7BIT";
+const char versitEncoding8Bit[] = "8BIT";
+const char versitEncodingQuotedPrintable[] = "QUOTED-PRINTABLE";
+const char versitEncodingBase64[] = "BASE64";
+
+// Parameters
 const char versitType[] = "TYPE";
+const char versitEncoding[] = "ENCODING";
 
 #endif // QVERSITDEFS_H

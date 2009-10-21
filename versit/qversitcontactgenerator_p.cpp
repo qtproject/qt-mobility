@@ -355,17 +355,34 @@ QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
     const QVersitProperty& property, const QVersitDocument& versitDocument) const
 {
     QContactAvatar* avatar = new QContactAvatar();
+    QString fileName;
 
-    // Image name: <FirstName><LastName>.<ext>
-    QString imgName(versitPhotoDir);
-    QVersitProperty nameProperty;
     const QList<QVersitProperty> properties = versitDocument.properties();
-    foreach(const QVersitProperty& nameP, properties) {
-        if (nameP.name() == QString::fromAscii("N")) {
-            nameProperty = nameP;
+    foreach(const QVersitProperty& nameProperty, properties) {
+        if (nameProperty.name() == QString::fromAscii("N")) {
+            fileName = saveImage(property, nameProperty);
             break;
         }
     }
+
+    if (!fileName.isEmpty()) {
+        avatar->setAvatar(fileName);
+        avatar->setSubType(QContactAvatar::SubTypeImage);
+    }
+
+    return avatar;
+}
+
+/*!
+ * Saves the image.
+ * Returns the image file name (including the path) if the image was successfully saved;
+ * otherwise returns a empty string.
+ */
+QString QVersitContactGeneratorPrivate::saveImage(const QVersitProperty& photoProperty,
+                                                  const QVersitProperty& nameProperty) const
+{
+    // Image name: <FirstName><LastName>.<ext>
+    QString imgName(versitPhotoDir);
 
     QList<QByteArray> values = nameProperty.value().split(';');
     imgName.append(QString::fromAscii("/"));
@@ -375,21 +392,22 @@ QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
 
     // Image format
     const QString format =
-            property.parameters().value(QString::fromAscii(versitType));
+            photoProperty.parameters().value(QString::fromAscii(versitType));
 
     imgName.append(QString(format).toLower());
 
-    QByteArray value = property.value();
+    const QString encoding =
+            photoProperty.parameters().value(QString::fromAscii(versitEncoding));
+
+    QByteArray value = photoProperty.value();
 
     QImage image;
-    image.fromData(value);
-    image.save(imgName, format.toAscii());
-
-
-    avatar->setAvatar(imgName);
-    avatar->setSubType(QContactAvatar::SubTypeImage);
-
-    return avatar;
+    image = QImage::fromData(QByteArray::fromBase64(value), format.toAscii());
+    if (image.save(imgName, format.toAscii())) {
+        return imgName;
+    } else {
+        return QString("");
+    }
 }
 
 /*!
