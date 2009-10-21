@@ -20,6 +20,6 @@ wince*|symbian {
 
 wince* {
     DEFINES += TESTDATA_DIR=\\\"./tst_qmediaimageviewer_images\\\"
-} else !symbian {
+} else: !symbian {
     DEFINES += TESTDATA_DIR=\\\"$$PWD/images\\\"
 }
