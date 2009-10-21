@@ -61,8 +61,10 @@ void applyFilterToRDFVariable(RDFVariable &variable,
                  && filt.detailFieldName() == QContactPhoneNumber::FieldNumber) {
                 RDFVariable rdfPhoneNumber;
                 rdfPhoneNumber = variable.property<nco::hasPhoneNumber>().property<nco::phoneNumber>();
-                // match with 7 last digits.
-                QString filterValue = filt.value().toString().right(7);
+                QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
+                int matchDigitCount = settings.value("phoneNumberMatchDigitCount", "7").toInt();
+                debug() << "match with:" << matchDigitCount;
+                QString filterValue = filt.value().toString().right(matchDigitCount);
                 rdfPhoneNumber.hasSuffix(filterValue);
             }
         }
