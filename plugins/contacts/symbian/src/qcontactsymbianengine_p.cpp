@@ -95,7 +95,7 @@ QContactSymbianEngineData::QContactSymbianEngineData(QContactManager::Error& err
     	m_transformContact = new TransformContact;
         m_contactFilter    = new QContactSymbianFilter(*m_contactDatabase);
         m_contactSorter    = new QContactSymbianSorter(*m_contactDatabase, *m_transformContact);
-        m_relationship     = new CntRelationship();
+        m_relationship     = new CntRelationship(m_contactDatabase);
         transformError(err, error);
     }
 }
@@ -284,27 +284,42 @@ bool QContactSymbianEngineData::removeContact(const QContactLocalId &id, QContac
 
 QList<QContactRelationship> QContactSymbianEngineData::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
 {
-    return m_relationship->relationships(relationshipType, participantId, role, error);
+    QList<QContactRelationship> returnValue;
+    TRAPD(symbianError, returnValue = m_relationship->relationshipsL(relationshipType, participantId, role, error));
+    transformError(symbianError, error);
+    return returnValue;
 }
 
 bool QContactSymbianEngineData::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
 {
-    return m_relationship->saveRelationship(relationship, error);
+    bool returnValue;
+    TRAPD(symbianError, returnValue = m_relationship->saveRelationshipL(relationship, error));
+    transformError(symbianError, error);
+    return returnValue;
 }
 
 QList<QContactManager::Error> QContactSymbianEngineData::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
-    return m_relationship->saveRelationships(relationships, error);
+    QList<QContactManager::Error> returnValue;
+    TRAPD(symbianError, returnValue = m_relationship->saveRelationshipsL(relationships, error));
+    transformError(symbianError, error);
+    return returnValue;
 }
 
 bool QContactSymbianEngineData::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
 {
-    return m_relationship->removeRelationship(relationship, error);
+    bool returnValue;
+    TRAPD(symbianError, returnValue = m_relationship->removeRelationshipL(relationship, error));
+    transformError(symbianError, error);
+    return returnValue;
 }
 
 QList<QContactManager::Error> QContactSymbianEngineData::removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
 {
-    return m_relationship->removeRelationships(relationships, error);
+    QList<QContactManager::Error> returnValue;
+    TRAPD(symbianError, returnValue = m_relationship->removeRelationshipsL(relationships, error));
+    transformError(symbianError, error);
+    return returnValue;
 }
 #if 0
 /* groups */
@@ -452,17 +467,17 @@ bool QContactSymbianEngineData::setSelfContactId(const QContactLocalId& contactI
  */
 QContactLocalId QContactSymbianEngineData::selfContactId(QContactManager::Error& qtError) const
 {
-   qtError = QContactManager::NoError;
-   QContactLocalId id = 0;
-   
-   TContactItemId myCard = m_contactDatabase->OwnCardId();
-   if (myCard < 0) {
-       qtError = QContactManager::DoesNotExistError;
-   }
-   else {
-       id = myCard;
-   }
-   return id;
+    qtError = QContactManager::NoError;
+    QContactLocalId id = 0;
+    
+    TContactItemId myCard = m_contactDatabase->OwnCardId();
+    if (myCard < 0) {
+        qtError = QContactManager::DoesNotExistError;
+    }
+    else {
+        id = myCard;
+    }
+    return id;
 }
 
 /*!
@@ -623,19 +638,41 @@ int QContactSymbianEngineData::countL() const
  */
 int QContactSymbianEngineData::addContactL(QContact &contact)
 {
-    // Create a new contact card.
-    CContactCard* contactItem = CContactCard::NewLC();
+    CContactItem* contactItem(0);
+    int id(0);
+    
+    //handle normal contact
+    if(contact.type() == QContactType::TypeContact)
+    {
+        // Create a new contact card.
+        contactItem = CContactCard::NewLC();
+        m_transformContact->transformContactL(contact, *contactItem);
+        // Add to the database
+        id = m_contactDatabase->AddNewContactL(*contactItem);
+        CleanupStack::PopAndDestroy(contactItem);
 
-    // convert QContact to CContactItem
-    m_transformContact->transformContactL(contact, *contactItem);
+    }
+    
+    //group contact
+    else if(contact.type() == QContactType::TypeGroup)
+    {
+        // Create a new group, which is added to the database
+        contactItem = m_contactDatabase->CreateContactGroupLC();
+        
+        //set the id for the contact, needed by update
+        id = contactItem->Id();
+        QContactId contactId;
+        contactId.setLocalId(QContactLocalId(id));
+        contact.setId(contactId);
 
-	// Add to the database
-	int id = m_contactDatabase->AddNewContactL(*contactItem);
-	CleanupStack::PopAndDestroy(contactItem);
-
-    // Update group memberships to contact database
-	//updateMemberOfGroupsL(contact);
-
+        //update contact, will add the fields to the already saved group
+        updateContactL(contact);
+        
+        CleanupStack::PopAndDestroy(contactItem);
+    }
+    
+    //else{ should this leave? }  
+  
     // Return the new ID.
 	return id;
 }
@@ -711,6 +748,9 @@ int QContactSymbianEngineData::removeContactL(QContactLocalId id)
     //TODO: in future QContactLocalId will be a class so this will need to be changed.
     TContactItemId cId = static_cast<TContactItemId>(id);
 #if 0
+    
+    //TODO: add code to remove all relationships.
+    
     QList<QContactLocalId> groupIds = memberOfGroupsL(cId);
     foreach (QContactLocalId id, groupIds)
     {

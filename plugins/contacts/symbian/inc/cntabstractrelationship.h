@@ -44,22 +44,28 @@
 
 #include <qtcontacts.h>
 
+#include <cntdb.h>
+
 class CntAbstractRelationship
 {
 public: 
-    explicit CntAbstractRelationship(const QString &relationshipType); 
+    explicit CntAbstractRelationship(CContactDatabase* contactDatabase, const QString &relationshipType); 
     virtual ~CntAbstractRelationship();
     
 public:
-    virtual QList<QContactRelationship> relationships(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
-    virtual bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
-    virtual QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
-    virtual bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);
-    virtual QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
+    virtual QList<QContactRelationship> relationshipsL(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error);
+    virtual bool saveRelationshipL(QContactRelationship* relationship, QContactManager::Error& error);
+    virtual QList<QContactManager::Error> saveRelationshipsL(QList<QContactRelationship>* relationships, QContactManager::Error& error);
+    virtual bool removeRelationshipL(const QContactRelationship& relationship, QContactManager::Error& error);
+    virtual QList<QContactManager::Error> removeRelationshipsL(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
     QString relationshipType() const {return m_relationshipType;}
 
+protected:
+    CContactDatabase* CntAbstractRelationship::database();
+    
 private:
     QString m_relationshipType;
+    CContactDatabase* m_contactDatabase;
 };
 
 #endif

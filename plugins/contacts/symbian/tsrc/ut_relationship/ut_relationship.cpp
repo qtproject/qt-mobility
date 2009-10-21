@@ -33,19 +33,102 @@
 
 #include "ut_relationship.h"
 #include "cntrelationship.h"
+#include <qtcontacts.h>
 
 #include <QtTest/QtTest>
 
 
 void TestRelationship::initTestCase()
 {
+    
 }
 
 void TestRelationship::cleanupTestCase()
 {
 }
 
-
+void TestRelationship::createGroupContact()
+{
+    QContactManager manager("symbian");
+    
+    //Create group contact
+    QContact groupContact;
+    groupContact.setType(QContactType::TypeGroup);
+        
+    QContactPhoneNumber number;
+    number.setNumber("1312313");
+    groupContact.saveDetail(&number);
+    
+    manager.saveContact(&groupContact);
+    QVERIFY(groupContact.localId() != 0);
+    
+    //Create contact 1
+    QContact contact;
+    contact.setType(QContactType::TypeContact);
+        
+    number.setNumber("1312313");
+    contact.saveDetail(&number);
+    
+    manager.saveContact(&contact);
+    QVERIFY(contact.localId() != 0);
+    
+    //Create contact 2
+    QContact contact2;
+    contact.setType(QContactType::TypeContact);
+    manager.saveContact(&contact2);
+    QVERIFY(contact2.localId() != 0);
+    
+    //Add contact 1 to group
+    QContactRelationship relationship; 
+    relationship.setRelationshipType(QContactRelationship::HasMember);
+    relationship.setFirst(groupContact.id());
+    relationship.setSecond(contact.id());
+    manager.saveRelationship(&relationship);
+    
+    //Add contact 2 to group
+    relationship.setSecond(contact2.id());
+    manager.saveRelationship(&relationship);
+    
+    
+    //retrieve the relationships
+    QList<QContactRelationship> relationshipList;
+    
+    //group
+    relationshipList = manager.relationships(groupContact.id(), QContactRelationshipFilter::First);
+    QVERIFY2(relationshipList.count() == 2, "group - First");
+    
+    relationshipList = manager.relationships(groupContact.id(), QContactRelationshipFilter::Second);
+    QVERIFY2(relationshipList.count() == 0, "group - Second");
+    
+    relationshipList = manager.relationships(groupContact.id(), QContactRelationshipFilter::Either);
+    QVERIFY2(relationshipList.count() == 2, "group - Either");
+    
+    
+    //contact 1
+    relationshipList = manager.relationships(contact.id(), QContactRelationshipFilter::First);
+    QVERIFY2(relationshipList.count() == 0, "contact - First");
+    
+    relationshipList = manager.relationships(contact.id(), QContactRelationshipFilter::Second);
+    QVERIFY2(relationshipList.count() == 1, "contact - Second");
+    
+    relationshipList = manager.relationships(contact.id(), QContactRelationshipFilter::Either);
+    QVERIFY2(relationshipList.count() == 1, "contact - Either");
+    
+    
+    //contact 2
+    relationshipList = manager.relationships(contact2.id(), QContactRelationshipFilter::First);
+    QVERIFY2(relationshipList.count() == 0, "contact - First");
+    
+    relationshipList = manager.relationships(contact2.id(), QContactRelationshipFilter::Second);
+    QVERIFY2(relationshipList.count() == 1, "contact - First");
+    
+    relationshipList = manager.relationships(contact2.id(), QContactRelationshipFilter::Either);
+    QVERIFY2(relationshipList.count() == 1, "contact - First");
+    
+    
+    
+}
+#if 0
 void TestRelationship::executeRelationships()
 {
     CntRelationship *rel = new CntRelationship;
@@ -106,5 +189,6 @@ void TestRelationship::executeRemoveRelationships()
     
     delete rel;
 }
+#endif
 
 QTEST_MAIN(TestRelationship);
