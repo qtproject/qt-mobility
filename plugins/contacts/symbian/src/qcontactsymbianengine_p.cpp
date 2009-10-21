@@ -247,7 +247,7 @@ bool QContactSymbianEngineData::updateContact(QContact& contact, QContactChangeS
     if(err == KErrNone)
     {
         //TODO: check what to do with groupsChanged
-        //changeSet.changedContacts().insert(contact.localId());
+        changeSet.changedContacts().insert(contact.localId());
         m_contactsChangedEmitted.append(contact.localId());
     }
     transformError(err, qtError);
@@ -290,34 +290,55 @@ QList<QContactRelationship> QContactSymbianEngineData::relationships(const QStri
     return returnValue;
 }
 
-bool QContactSymbianEngineData::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
+bool QContactSymbianEngineData::saveRelationship(QContactChangeSet *changeSet, QContactRelationship* relationship, QContactManager::Error& error)
 {
     bool returnValue(false);
-    TRAPD(symbianError, returnValue = m_relationship->saveRelationshipL(relationship, error));
+    
+    TRAPD(symbianError, returnValue = m_relationship->saveRelationshipL(&changeSet->addedRelationshipsContacts(), relationship, error));
+    
+    //add contacts to the list that shouldn't be emitted
+    m_contactsAddedEmitted += changeSet->addedRelationshipsContacts().toList();
+    
     transformError(symbianError, error);
     return returnValue;
 }
 
-QList<QContactManager::Error> QContactSymbianEngineData::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
+QList<QContactManager::Error> QContactSymbianEngineData::saveRelationships(QContactChangeSet *changeSet, QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
     QList<QContactManager::Error> returnValue;
-    TRAPD(symbianError, returnValue = m_relationship->saveRelationshipsL(relationships, error));
+    
+    TRAPD(symbianError, returnValue = m_relationship->saveRelationshipsL(&changeSet->addedRelationshipsContacts(), relationships, error));
+    
+    //add contacts to the list that shouldn't be emitted
+    m_contactsAddedEmitted += changeSet->addedRelationshipsContacts().toList();
+        
     transformError(symbianError, error);
     return returnValue;
 }
 
-bool QContactSymbianEngineData::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
+bool QContactSymbianEngineData::removeRelationship(QContactChangeSet *changeSet, const QContactRelationship& relationship, QContactManager::Error& error)
 {
     bool returnValue(false);
-    TRAPD(symbianError, returnValue = m_relationship->removeRelationshipL(relationship, error));
+    
+    TRAPD(symbianError, returnValue = m_relationship->removeRelationshipL(&changeSet->removedRelationshipsContacts(), relationship, error));
+    
+    //add contacts to the list that shouldn't be emitted
+    m_contactsRemovedEmitted += changeSet->removedRelationshipsContacts().toList();
+        
+    
     transformError(symbianError, error);
     return returnValue;
 }
 
-QList<QContactManager::Error> QContactSymbianEngineData::removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
+QList<QContactManager::Error> QContactSymbianEngineData::removeRelationships(QContactChangeSet *changeSet, const QList<QContactRelationship>& relationships, QContactManager::Error& error)
 {
     QList<QContactManager::Error> returnValue;
-    TRAPD(symbianError, returnValue = m_relationship->removeRelationshipsL(relationships, error));
+    
+    TRAPD(symbianError, returnValue = m_relationship->removeRelationshipsL(&changeSet->removedRelationshipsContacts(), relationships, error));
+    
+    //add contacts to the list that shouldn't be emitted
+     m_contactsRemovedEmitted += changeSet->removedRelationshipsContacts().toList();
+        
     transformError(symbianError, error);
     return returnValue;
 }

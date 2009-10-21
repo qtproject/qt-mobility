@@ -58,10 +58,10 @@ public:
 public:
     /* Relationships between contacts */
     QList<QContactRelationship> relationshipsL(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
-    bool saveRelationshipL(QContactRelationship* relationship, QContactManager::Error& error);
-    QList<QContactManager::Error> saveRelationshipsL(QList<QContactRelationship>* relationships, QContactManager::Error& error);
-    bool removeRelationshipL(const QContactRelationship& relationship, QContactManager::Error& error);
-    QList<QContactManager::Error> removeRelationshipsL(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
+    bool saveRelationshipL(QSet<QContactLocalId> *affectedContactIds, QContactRelationship* relationship, QContactManager::Error& error);
+    QList<QContactManager::Error> saveRelationshipsL(QSet<QContactLocalId> *affectedContactIds, QList<QContactRelationship>* relationships, QContactManager::Error& error);
+    bool removeRelationshipL(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship& relationship, QContactManager::Error& error);
+    QList<QContactManager::Error> removeRelationshipsL(QSet<QContactLocalId> *affectedContactIds, const QList<QContactRelationship>& relationships, QContactManager::Error& error);
 
 private:
     QMap<QString, CntAbstractRelationship *> m_relationshipMap;

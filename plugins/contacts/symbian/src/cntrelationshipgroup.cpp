@@ -51,9 +51,9 @@ CntRelationshipGroup::~CntRelationshipGroup()
 {
 }
 
-bool CntRelationshipGroup::saveRelationshipL(QContactRelationship* relationship, QContactManager::Error& error)
+bool CntRelationshipGroup::saveRelationshipL(QSet<QContactLocalId> *affectedContactIds, QContactRelationship* relationship, QContactManager::Error& error)
 {
-    bool returnValue;
+    bool returnValue(false);
     
     if(relationship->relationshipType() == this->relationshipType())
     {
@@ -61,6 +61,9 @@ bool CntRelationshipGroup::saveRelationshipL(QContactRelationship* relationship,
         QContactId contactId = relationship->second();
         
         database()->AddContactToGroupL(TContactItemId(contactId.localId()), TContactItemId(groupId.localId()));
+        
+        //add the group member to the list of affected contacts
+        affectedContactIds->insert(contactId.localId());
     }
 
     else
@@ -68,11 +71,13 @@ bool CntRelationshipGroup::saveRelationshipL(QContactRelationship* relationship,
         error = QContactManager::NotSupportedError;
         returnValue = false;
     }
+    
+    return returnValue;
 }
 
-bool CntRelationshipGroup::removeRelationshipL(const QContactRelationship& relationship, QContactManager::Error& error)
+bool CntRelationshipGroup::removeRelationshipL(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship& relationship, QContactManager::Error& error)
 {
-    bool returnValue;
+    bool returnValue(false);
     
     if(relationship.relationshipType() == this->relationshipType())
     {
@@ -88,6 +93,9 @@ bool CntRelationshipGroup::removeRelationshipL(const QContactRelationship& relat
         if(groupContact && contact)
         {
             database()->RemoveContactFromGroupL(TContactItemId(contactId.localId()), TContactItemId(groupId.localId()));
+            
+            //add the removed group member to the list of affected contacts
+            affectedContactIds->insert(contactId.localId());
         }
     }
 
@@ -143,8 +151,9 @@ QList<QContactRelationship> CntRelationshipGroup::relationshipsL(const QContactI
     //role is member of a group
     if(role == QContactRelationshipFilter::Second || role == QContactRelationshipFilter::Either)
     {
-        CContactCard* contact;
-        TRAPD( error, contact = static_cast<CContactCard*>( database()->ReadContactLC(TContactItemId(participantId.localId()))));
+        CContactCard* contact(0);
+        
+        TRAPD( error, contact = static_cast<CContactCard*>(database()->ReadContactLC(TContactItemId(participantId.localId()))));
         
         if(!error)
         {
