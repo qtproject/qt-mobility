@@ -126,41 +126,36 @@ void QVersitContactConverterPrivate::encodeFieldInfo(
 {
     QVersitProperty property;
     property.setName(mMappings.value(detail.definitionName()));
-    
+    bool addProperty = true;
+
     if (detail.definitionName() == QContactName::DefinitionName) {
         encodeName(property, detail);
-    }
-    else if (detail.definitionName() == QContactPhoneNumber::DefinitionName) {
+    } else if (detail.definitionName() == QContactPhoneNumber::DefinitionName) {
         encodePhoneNumber(property, detail);
-    }
-    else if (detail.definitionName() == QContactEmailAddress::DefinitionName) {
+    } else if (detail.definitionName() == QContactEmailAddress::DefinitionName) {
         encodeEmail(property, detail);
-    }
-    else if (detail.definitionName() == QContactAddress::DefinitionName) {
+    } else if (detail.definitionName() == QContactAddress::DefinitionName) {
         encodeAddress(property, detail);
-    }
-    else if (detail.definitionName() == QContactGuid::DefinitionName) {
+    } else if (detail.definitionName() == QContactGuid::DefinitionName) {
         encodeUid(property, detail);
-    }
-    else if (detail.definitionName() == QContactUrl::DefinitionName) {
+    } else if (detail.definitionName() == QContactUrl::DefinitionName) {
         encodeUrl(property, detail);
-    }
-    else if (detail.definitionName() == QContactTimestamp::DefinitionName) {
+    } else if (detail.definitionName() == QContactTimestamp::DefinitionName) {
         encodeRev(property, detail);
-    }
-    else if (detail.definitionName() == QContactBirthday::DefinitionName) {
+    } else if (detail.definitionName() == QContactBirthday::DefinitionName) {
         encodeBirthDay(property, detail);
-    }
-    else if (detail.definitionName() == QContactGeolocation::DefinitionName) {
+    } else if (detail.definitionName() == QContactGeolocation::DefinitionName) {
         encodeGeoLocation(property, detail);
-    }
-    else if (detail.definitionName() == QContactNote::DefinitionName) {
+    } else if (detail.definitionName() == QContactNote::DefinitionName) {
         encodeNote(property, detail);
+    } else if (detail.definitionName() == QContactOrganization::DefinitionName) {
+        addProperty = encodeOrganization(versitDocument, detail);
+    } else {
+        addProperty = false;
     }
-    else {
-        return;
-    }
-    versitDocument.addProperty(property);
+
+    if (addProperty)
+        versitDocument.addProperty(property);
 }
 
 /*!
@@ -287,9 +282,8 @@ void QVersitContactConverterPrivate::encodeNote(
 
 
 /*!
- * Encode Geo Prpoperties Field Information into the Versit Document
+ * Encode Geo property field information into the Versit Document
  */
-
 void QVersitContactConverterPrivate::encodeGeoLocation(
     QVersitProperty& property,
     const QContactDetail& detail)
@@ -301,6 +295,31 @@ void QVersitContactConverterPrivate::encodeGeoLocation(
                     QString::fromAscii(",") +
                     latitude.setNum(geoLocation.latitude());
     property.setValue(value.toAscii());
+}
+
+/*!
+ * Encode all the organization properties to the versit document
+ */
+bool QVersitContactConverterPrivate::encodeOrganization(
+     QVersitDocument& document,
+     const QContactDetail& detail)
+{
+    QContactOrganization organization = static_cast<QContactOrganization>(detail);
+    if (organization.title().length() > 0) {
+        QVersitProperty property;
+        property.setName(QString::fromAscii(versitTitleId));
+        property.setValue(organization.title().toAscii());
+        document.addProperty(property);
+    }
+    if (organization.name().length() > 0 || organization.department().length() > 0) {
+        QVersitProperty property;
+        property.setName(QString::fromAscii(versitOrganizationId));
+        QByteArray value =
+            organization.name().toAscii() + ";" +organization.department().toAscii();
+        property.setValue(value);
+        document.addProperty(property);
+    }
+    return false;
 }
 
 /*!

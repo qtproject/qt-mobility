@@ -50,6 +50,7 @@
 #include <qcontactbirthday.h>
 #include <qcontactnote.h>
 #include <qcontactgeolocation.h>
+#include <qcontactorganization.h>
 
 
 void UT_QVersitContactConvertert::init()
@@ -365,10 +366,10 @@ void UT_QVersitContactConvertert::testEncodeRev()
     contact.saveDetail(&p);
 
     mVersitDocument = mConverter->convertContact(contact);
-    value = (mVersitDocument.properties().at(0).value() );
+    value = QString::fromAscii(mVersitDocument.properties().at(0).value());
 
     // Ensure Value exisit and matches.
-    QCOMPARE(expectedValue, value );
+    QCOMPARE(expectedValue, value);
 }
 
 void UT_QVersitContactConvertert::testEncodeBirthDay()
@@ -459,25 +460,85 @@ void UT_QVersitContactConvertert::testEncodeGeoLocation()
     contact.saveDetail(&geoLocation);
 
     //Convert Contat Into Versit Document
-    QVersitDocument mVersitDocument = mConverter->convertContact(contact);
+    QVersitDocument versitDocument = mConverter->convertContact(contact);
 
     //Ensure parameters does not exisit
-    QCOMPARE(0, mVersitDocument.properties().at(0).parameters().count());
+    QCOMPARE(0, versitDocument.properties().at(0).parameters().count());
 
     //Ensure property Exisit
-    QCOMPARE(1, mVersitDocument.properties().count());
+    QCOMPARE(1, versitDocument.properties().count());
 
     //Ensure property parameer exisit and matches.
-    QString propertyName = mVersitDocument.properties().at(0).name();
+    QString propertyName = versitDocument.properties().at(0).name();
     QString expectedPropertyName =
         mConverterPrivate->mMappings.value(QContactGeolocation::DefinitionName);
     QCOMPARE(propertyName, expectedPropertyName);
 
     //Check property value
-    QString value = (mVersitDocument.properties().at(0).value() );
-    QString expectedValue;
-    expectedValue =  longitude + QString::fromAscii(",") + latitude;
+    QString value = (versitDocument.properties().at(0).value() );
+    QString expectedValue = longitude + QString::fromAscii(",") + latitude;
     QCOMPARE(expectedValue, value);
+}
+
+void UT_QVersitContactConvertert::testEncodeOrganization()
+{
+    QContact contact;
+    QContactOrganization organization;
+    QVersitDocument versitDocument;
+    QVersitProperty property;
+    QString title(QString::fromAscii("Developer"));
+    QString organizationName(QString::fromAscii("Nokia"));
+    QString department(QString::fromAscii("R&D"));
+
+    // TITLE
+    organization.setTitle(title);
+    contact.saveDetail(&organization);
+    versitDocument = mConverter->convertContact(contact);
+    QCOMPARE(versitDocument.properties().count(), 1);
+    property = versitDocument.properties().at(0);
+    QCOMPARE(property.name(), QString::fromAscii(versitTitleId));
+    QCOMPARE(QString::fromAscii(property.value()), title);
+
+    // ORG with name
+    organization.setTitle(QString());
+    organization.setName(QString::fromAscii("Nokia"));
+    contact.saveDetail(&organization);
+    versitDocument = mConverter->convertContact(contact);
+    QCOMPARE(versitDocument.properties().count(), 1);
+    property = versitDocument.properties().at(0);
+    QCOMPARE(property.name(), QString::fromAscii(versitOrganizationId));
+    QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("Nokia;"));
+
+    // ORG with department/unit
+    organization.setName(QString());
+    organization.setDepartment(QString::fromAscii("R&D"));
+    contact.saveDetail(&organization);
+    versitDocument = mConverter->convertContact(contact);
+    QCOMPARE(versitDocument.properties().count(), 1);
+    property = versitDocument.properties().at(0);
+    QCOMPARE(property.name(), QString::fromAscii(versitOrganizationId));
+    QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii(";R&D"));
+
+    // ORG with name and department/unit
+    organization.setName(QString::fromAscii("Nokia"));
+    contact.saveDetail(&organization);
+    versitDocument = mConverter->convertContact(contact);
+    QCOMPARE(versitDocument.properties().count(), 1);
+    property = versitDocument.properties().at(0);
+    QCOMPARE(property.name(), QString::fromAscii(versitOrganizationId));
+    QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("Nokia;R&D"));
+
+    // TITLE and ORG
+    organization.setTitle(QString::fromAscii("Developer"));
+    contact.saveDetail(&organization);
+    versitDocument = mConverter->convertContact(contact);
+    QCOMPARE(versitDocument.properties().count(), 2);
+    property = versitDocument.properties().at(0);
+    QCOMPARE(property.name(), QString::fromAscii(versitTitleId));
+    QCOMPARE(QString::fromAscii(property.value()), title);
+    property = versitDocument.properties().at(1);
+    QCOMPARE(property.name(), QString::fromAscii(versitOrganizationId));
+    QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("Nokia;R&D"));
 }
 
 void UT_QVersitContactConvertert::testEncodeParameters()
