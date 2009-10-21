@@ -58,7 +58,7 @@ const char versitTitleId[] = "TITLE";
 const char versitRoleId[] = "ROLE";
 const char versitAnniversaryId[] = "X-ANNIVERSARY";
 const char versitGenderId[] = "X-GENDER";
-
+const char versitSipId[] = "X-SIP";
 
 // Contexts
 const char versitContextWorkId[] = "WORK";
@@ -77,16 +77,18 @@ const char versitVideoId[] = "VIDEO";
 const char versitFaxId[] = "FAX";
 const char versitBbsId[] = "BBS";
 const char versitPagerId[] = "PAGER";
-
-// ISO-8601 basic format datetime spec
-const char versitDateTimeSpecIso8601Basic[] = "yyyyMMddThhmmss";
-const char versitDateSpecIso8601Basic[] = "yyyyMMdd";
-
 // SubTypes for photograph
 const char versitPhotoGif[] = "GIF";
 const char versitPhotoBmp[] = "BMP";
 const char versitPhotoTiff[] = "TIFF";
 const char versitPhotoJpeg[] = "JPEG";
+// Sub types for onlineaccount
+const char versitSwisId[] = "SWIS";
+const char versitSipSubTypeId[] = "SIP";
+
+// ISO-8601 basic format datetime spec
+const char versitDateTimeSpecIso8601Basic[] = "yyyyMMddThhmmss";
+const char versitDateSpecIso8601Basic[] = "yyyyMMdd";
 
 // Default path to save the photos
 const char versitPhotoDir[] = "c:/data/photo";

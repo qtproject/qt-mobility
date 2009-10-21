@@ -81,9 +81,11 @@ private:
                       const QVersitProperty& nameProperty) const;
     QContactDetail* createGeoLocation(const QVersitProperty& property) const;
     QContactDetail* createNote(const QVersitProperty& property) const;
+    QContactDetail* createOnlineAccount(const QVersitProperty& property) const;
     QStringList extractContexts(const QVersitProperty& property) const;
     QStringList extractSubTypes(const QVersitProperty& property) const;
     QString takeFirst(QList<QByteArray>& list) const;    
+    QString takeFirst(QList<QString>& list) const;
     
 private: // Data    
     QHash<QString,QString> mContextMappings;

@@ -55,6 +55,7 @@
 #include <qcontactavatar.h>
 #include <qcontactgeolocation.h>
 #include <qcontactnote.h>
+#include <qcontactonlineaccount.h>
 
 void UT_QVersitContactGenerator::init()
 {    
@@ -643,6 +644,68 @@ void UT_QVersitContactGenerator::testNote()
     contact = mGenerator->generateContact(document);
     note = (QContactNote)contact.detail(QContactNote::DefinitionName);
     QCOMPARE(note.note(),QString::fromAscii(val));
+}
+
+void UT_QVersitContactGenerator::testOnlineAccount()
+{
+    // no subtype
+    QVersitDocument document;
+    QVersitProperty nameProperty;
+    QByteArray val("sip:homer@wiserthanever.com");
+    nameProperty.setName(QString::fromAscii(versitSipId));
+    nameProperty.setValue(val);
+    document.addProperty(nameProperty);
+    QContact contact = mGenerator->generateContact(document);
+    QContactOnlineAccount online = (QContactOnlineAccount)contact.detail(QContactOnlineAccount::DefinitionName);
+    QCOMPARE(online.accountUri(),QString::fromAscii(val));
+
+    // with supported subtype : SIP
+    document = QVersitDocument();
+    nameProperty = QVersitProperty();
+    nameProperty.setName(QString::fromAscii(versitSipId));
+    nameProperty.setValue(val);
+    QString subTypeVal = "SIP";
+    QMultiHash<QString,QString> params;
+    params.insert(QString::fromAscii(versitType),subTypeVal);
+    nameProperty.setParameters(params);
+    document.addProperty(nameProperty);
+    contact = mGenerator->generateContact(document);
+    online = (QContactOnlineAccount)contact.detail(QContactOnlineAccount::DefinitionName);
+    QCOMPARE(online.accountUri(),QString::fromAscii(val));
+    QStringList subTypes = online.subTypes();
+    QCOMPARE(subTypes.count(),1);
+    QCOMPARE(online.subTypes().at(0),QContactOnlineAccount::SubTypeSip.operator QString());
+
+    // with supported subtype : VideoSharing
+    document = QVersitDocument();
+    nameProperty = QVersitProperty();
+    nameProperty.setName(QString::fromAscii(versitSipId));
+    nameProperty.setValue(val);
+    subTypeVal = "SWIS";
+    params.clear();
+    params.insert(QString::fromAscii(versitType),subTypeVal);
+    nameProperty.setParameters(params);
+    document.addProperty(nameProperty);
+    contact = mGenerator->generateContact(document);
+    online = (QContactOnlineAccount)contact.detail(QContactOnlineAccount::DefinitionName);
+    QCOMPARE(online.accountUri(),QString::fromAscii(val));
+    subTypes = online.subTypes();    
+    QCOMPARE(subTypes.count(),1);
+    QCOMPARE(online.subTypes().at(0),QContactOnlineAccount::SubTypeShareVideo.operator QString());
+
+    // with unsupported subtype : POC
+    document = QVersitDocument();
+    nameProperty = QVersitProperty();
+    nameProperty.setName(QString::fromAscii(versitSipId));
+    nameProperty.setValue(val);
+    subTypeVal = "POC";
+    params.clear();
+    params.insert(QString::fromAscii(versitType),subTypeVal);
+    nameProperty.setParameters(params);
+    document.addProperty(nameProperty);
+    contact = mGenerator->generateContact(document);
+    online = (QContactOnlineAccount)contact.detail(QContactOnlineAccount::DefinitionName);
+    QCOMPARE(online.isEmpty(),true);        
 }
 
 QVersitDocument UT_QVersitContactGenerator::createDocumentWithProperty(
