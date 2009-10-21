@@ -28,16 +28,14 @@ void applyFilterToRDFVariable(RDFVariable &variable,
 {
     if (filter.type() == QContactFilter::IdListFilter) {
         QContactIdListFilter filt = filter;
-        if( !filt.ids().isEmpty() )
-            variable.property<nco::contactUID>().isMemberOf(filt.ids());// = LiteralValue(filt.ids()[0]);
-        else
+        if (!filt.ids().isEmpty()) {
+            variable.property<nco::contactUID>().isMemberOf(filt.ids());
+        } else {
             warning() << Q_FUNC_INFO << "QContactIdListFilter idlist is empty";
+        }
     } else if (filter.type() == QContactFilter::ContactDetailFilter) {
         QContactDetailFilter filt = filter;
-        // TODO doesnt pass at the moment, check the reason
-
-        //if (filt.matchFlags() &  Qt::MatchExactly)
-        {
+        if (filt.matchFlags() == Qt::MatchExactly) {
             if ( QContactPhoneNumber::DefinitionName == filt.detailDefinitionName()
                  && QContactPhoneNumber::FieldNumber == filt.detailFieldName()) {
                 RDFVariable rdfPhoneNumber;
@@ -55,6 +53,17 @@ void applyFilterToRDFVariable(RDFVariable &variable,
             } else {
                 warning() << "QContactTrackerEngine: Unsupported QContactFilter::ContactDetail"
                     << filt.detailDefinitionName();
+            }
+        }
+        // TODO: change match flag as soon as qtmobility provides one
+        if (filt.matchFlags() == Qt::MatchEndsWith) {
+            if ( filt.detailDefinitionName() == QContactPhoneNumber::DefinitionName 
+                 && filt.detailFieldName() == QContactPhoneNumber::FieldNumber) {
+                RDFVariable rdfPhoneNumber;
+                rdfPhoneNumber = variable.property<nco::hasPhoneNumber>().property<nco::phoneNumber>();
+                // match with 7 last digits.
+                QString filterValue = filt.value().toString().right(7);
+                rdfPhoneNumber.hasSuffix(filterValue);
             }
         }
     } else if (filter.type() == QContactFilter::ChangeLogFilter) {
