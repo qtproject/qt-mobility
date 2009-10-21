@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-**
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -625,8 +625,8 @@ void tst_QMediaRecorder::testVideoEncodeControl()
 
     QList<qreal> rates = capture->supportedFrameRates();
     QVERIFY(rates.count() == 3);
-    QVERIFY(qFuzzyCompare(capture->minimumFrameRate(), 1.0));
-    QVERIFY(qFuzzyCompare(capture->maximumFrameRate(), 30.0));
+    QVERIFY(qFuzzyCompare(capture->minimumFrameRate(), qreal(1.0)));
+    QVERIFY(qFuzzyCompare(capture->maximumFrameRate(), qreal(30.0)));
 
     QStringList vCodecs = capture->supportedVideoCodecs();
     QVERIFY(vCodecs.count() == 2);
@@ -836,9 +836,9 @@ void tst_QMediaRecorder::testVideoSettings()
     settings = QVideoEncoderSettings();
     QCOMPARE(settings.frameRate(), qreal());
     settings.setFrameRate(30000.0/10001);
-    QVERIFY(qFuzzyCompare(settings.frameRate(),30000.0/10001));
+    QVERIFY(qFuzzyCompare(settings.frameRate(), qreal(30000.0/10001)));
     settings.setFrameRate(24.0);
-    QVERIFY(qFuzzyCompare(settings.frameRate(),24.0));
+    QVERIFY(qFuzzyCompare(settings.frameRate(), qreal(24.0)));
     QVERIFY(!settings.isNull());
 
     settings = QVideoEncoderSettings();
