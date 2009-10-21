@@ -317,17 +317,26 @@ bool QMessageStore::addMessage(QMessage *message)
                 if (*lError == QMessageStore::NoError) {
                     //set the new QMessageId
                     //we can only be guaranteed of an entry id after IMessage->SaveChanges has been called
-
+#ifdef _WIN32_WCE
+                    SizedSPropTagArray(1, columns) = {1, {PR_ENTRYID}};
+#else
                     SizedSPropTagArray(2, columns) = {2, {PR_RECORD_KEY, PR_ENTRYID}};
+#endif
                     SPropValue *properties(0);
                     ULONG count;
                     HRESULT rv = mapiMessage->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), 0, &count, &properties);
-                    if (HR_SUCCEEDED(rv) && (properties[0].ulPropTag == PR_RECORD_KEY) && (properties[1].ulPropTag == PR_ENTRYID)) {
-                        MapiRecordKey recordKey(properties[0].Value.bin.lpb, properties[0].Value.bin.cb);
-                        MapiEntryId entryId(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
 #ifdef _WIN32_WCE
+                    if (HR_SUCCEEDED(rv) && (properties[0].ulPropTag == PR_ENTRYID)) {
+#else
+                    if (HR_SUCCEEDED(rv) && (properties[0].ulPropTag == PR_RECORD_KEY) && (properties[1].ulPropTag == PR_ENTRYID)) {
+#endif
+#ifdef _WIN32_WCE
+                        MapiRecordKey recordKey;
+                        MapiEntryId entryId(properties[0].Value.bin.lpb, properties[0].Value.bin.cb);
                         message->d_ptr->_id = QMessageIdPrivate::from(mapiFolder->storeEntryId(), entryId, recordKey, mapiFolder->entryId());
 #else
+                        MapiRecordKey recordKey(properties[0].Value.bin.lpb, properties[0].Value.bin.cb);
+                        MapiEntryId entryId(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
                         message->d_ptr->_id = QMessageIdPrivate::from(mapiFolder->storeKey(), entryId, recordKey, mapiFolder->recordKey());
 #endif
                         message->d_ptr->_modified = false;
