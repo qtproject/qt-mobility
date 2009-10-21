@@ -43,10 +43,14 @@
 #include "qmessageaccountid_p.h"
 #include "qmessage_p.h"
 #include "qmessagestore_p.h"
-
-//TODO make all functions non-blocking and asynchronous
+#include "qmessagecontentcontainer_p.h"
+#ifdef _WIN32_WCE
+#include <cemapi.h>
+#endif
 
 using namespace WinHelpers;
+
+static const unsigned long SmsCharLimit = 160;
 
 class QMessageServiceActionPrivate : public QObject
 {
@@ -97,8 +101,119 @@ QMessageServiceActionPrivate::QMessageServiceActionPrivate(QMessageServiceAction
 {
 }
 
+static Lptstr createMCFRecipients(const QMessageAddressList& addressList, QMessageAddress::Type filterAddressType)
+{
+    QStringList temp;
+
+    foreach(const QMessageAddress& a, addressList)
+    {
+        if(a.type() == filterAddressType)
+            temp.append(a.recipient());
+    }
+
+    return temp.isEmpty() ? Lptstr(0) : LptstrFromQString(temp.join(";"));
+}
+
 bool QMessageServiceActionPrivate::send(const QMessage& message, bool showComposer)
 {
+#ifdef _WIN32_WCE
+    if(showComposer)
+    {
+        MAILCOMPOSEFIELDS mcf;
+        memset(&mcf,0,sizeof(mcf));
+
+        Lptstr accountName = LptstrFromQString(QMessageAccount(message.parentAccountId()).name());
+        Lptstr to;
+        Lptstr cc;
+        Lptstr bcc;
+        Lptstr subject;
+        Lptstr attachments;
+        Lptstr bodyText;
+
+        //account
+
+        mcf.pszAccount = accountName;
+        mcf.dwFlags = MCF_ACCOUNT_IS_NAME;
+
+        if(message.type() == QMessage::Email)
+        {
+            //recipients
+
+            to = createMCFRecipients(message.to(),QMessageAddress::Email);
+            cc = createMCFRecipients(message.cc(),QMessageAddress::Email);
+            bcc = createMCFRecipients(message.bcc(),QMessageAddress::Email);
+            mcf.pszTo = to;
+            mcf.pszCc = cc;
+            mcf.pszBcc = bcc;
+
+            //subject
+
+            subject = LptstrFromQString(message.subject());
+            mcf.pszSubject = subject;
+
+            //body
+
+            QMessageContentContainerId bodyId = message.bodyId();
+            if(bodyId.isValid())
+            {
+                const QMessageContentContainer& bodyContainer = message.find(bodyId);
+                bodyText = LptstrFromQString(bodyContainer.textContent());
+                mcf.pszBody = bodyText;
+            }
+
+            //attachments
+
+            if(message.status() & QMessage::HasAttachments)
+            {
+                QStringList attachmentList;
+
+                foreach(const QMessageContentContainerId& id, message.attachmentIds())
+                {
+                    const QMessageContentContainer& attachmentContainer = message.find(id);
+                    attachmentList.append(QMessageContentContainerPrivate::attachmentFilename(attachmentContainer));
+                }
+
+                mcf.cAttachments = attachmentList.count();
+                QChar nullChar(0);
+                attachments = LptstrFromQString(attachmentList.join(nullChar));
+                mcf.pszAttachments = attachments;
+            }
+        }
+        else if(message.type() == QMessage::Sms)
+        {
+            //recipients
+
+            to = createMCFRecipients(message.to(),QMessageAddress::Phone);
+            mcf.pszTo = to;
+
+            //body
+
+            QMessageContentContainerId bodyId = message.bodyId();
+            if(bodyId.isValid())
+            {
+                const QMessageContentContainer& bodyContainer = message.find(bodyId);
+                QString textContent = bodyContainer.textContent();
+                if(textContent.length() > SmsCharLimit)
+                    textContent.truncate(SmsCharLimit-1);
+                bodyText = LptstrFromQString(textContent);
+                mcf.pszBody = bodyText;
+            }
+        }
+        else
+            qWarning() << "Unsupported message type";
+
+       mcf.cbSize = sizeof(mcf);
+
+       if(FAILED(MailComposeMessage(&mcf)))
+       {
+           qWarning() << "MailComposeMessage failed";
+           return false;
+       }
+    }
+    else
+    {
+#endif
+
     MapiSessionPtr mapiSession(MapiSession::createSession(&_lastError));
     if (_lastError != QMessageStore::NoError)
     {
@@ -154,6 +269,7 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
         return false;
     }
 
+#ifndef _WIN32_WCE
     if(showComposer)
     {
         if(FAILED(mapiSession->showForm(mapiMessage,mapiFolder->folder(),mapiStore->store())))
@@ -165,6 +281,7 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
         }
     }
     else
+#endif
     {
         if(FAILED(mapiMessage->SubmitMessage(0)))
         {
@@ -180,11 +297,26 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
 
     mapiRelease(mapiMessage);
 
+#ifdef _WIN32_WCE
+    }
+#endif
+
     return true;
 }
 
 bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
 {
+#ifdef _WIN32_WCE
+    MapiEntryId entryId = QMessageIdPrivate::entryId(messageId);
+    LPENTRYID entryIdPtr(reinterpret_cast<LPENTRYID>(const_cast<char*>(entryId.data())));
+    if(FAILED(MailDisplayMessage(entryIdPtr,entryId.length())))
+    {
+        qWarning() << "MailDisplayMessage failed";
+        return false;
+    }
+    return true;
+
+#else
     if(!messageId.isValid())
     {
         _lastError = QMessageStore::InvalidId;
@@ -204,13 +336,8 @@ bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
     //messageId -> IMessage
 
     MapiEntryId entryId = QMessageIdPrivate::entryId(messageId);
-#ifdef _WIN32_WCE
-    MapiEntryId folderRecordKey = QMessageIdPrivate::folderRecordKey(messageId);
-    MapiEntryId storeRecordKey = QMessageIdPrivate::storeRecordKey(messageId);
-#else
     MapiRecordKey folderRecordKey = QMessageIdPrivate::folderRecordKey(messageId);
     MapiRecordKey storeRecordKey = QMessageIdPrivate::storeRecordKey(messageId);
-#endif
 
     MapiStorePtr mapiStore = mapiSession->findStore(&_lastError,QMessageAccountIdPrivate::from(storeRecordKey));
 
@@ -220,11 +347,7 @@ bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
         return false;
     }
 
-#ifdef _WIN32_WCE
-    MapiFolderPtr mapiFolder = mapiStore->openFolder(&_lastError,folderRecordKey);
-#else
     MapiFolderPtr mapiFolder = mapiStore->openFolderWithKey(&_lastError,folderRecordKey);
-#endif
 
     if( mapiFolder.isNull() || _lastError != QMessageStore::NoError ) {
         qWarning() << "Unable to get folder for the message";
@@ -251,6 +374,7 @@ bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
     mapiRelease(mapiMessage);
 
     return true;
+#endif
 }
 
 QMessageServiceAction::QMessageServiceAction(QObject *parent)

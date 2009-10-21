@@ -74,6 +74,7 @@ private:
     public:
         Loader(AccountsWidget* parent);
         void run();
+
     private:
         AccountsWidget* m_parent;
     };
@@ -414,11 +415,11 @@ private:
 
 private:
     QStackedLayout* m_layoutStack;
-    QWidget* m_composeWidget;
-    QLabel* m_busyLabel;
     QMessageServiceAction* m_service;
     AccountsWidget* m_accountsWidget;
     QLineEdit* m_toEdit;
+    QLineEdit* m_ccEdit;
+    QLineEdit* m_bccEdit;
     QLineEdit* m_subjectEdit;
     QTextEdit* m_bodyEdit;
     AttachmentListWidget* m_attachmentList;
@@ -428,11 +429,11 @@ ComposeSendWidget::ComposeSendWidget(QMessageServiceAction* service, QWidget* pa
 :
 QWidget(parent),
 m_layoutStack(0),
-m_composeWidget(0),
-m_busyLabel(0),
 m_service(service),
 m_accountsWidget(0),
 m_toEdit(0),
+m_ccEdit(0),
+m_bccEdit(0),
 m_subjectEdit(0),
 m_bodyEdit(0),
 m_attachmentList(0)
@@ -474,17 +475,29 @@ void ComposeSendWidget::setupUi()
     m_toEdit = new QLineEdit(this);
     gl->addWidget(m_toEdit,1,1);
 
+    QLabel* ccLabel = new QLabel("Cc:",this);
+    gl->addWidget(ccLabel,2,0);
+
+    m_ccEdit = new QLineEdit(this);
+    gl->addWidget(m_ccEdit,2,1);
+
+    QLabel* bccLabel = new QLabel("Bcc",this);
+    gl->addWidget(bccLabel,3,0);
+
+    m_bccEdit = new QLineEdit(this);
+    gl->addWidget(m_bccEdit,3,1);
+
     QLabel* subjectLabel = new QLabel("Subject:",this);
-    gl->addWidget(subjectLabel,2,0);
+    gl->addWidget(subjectLabel,4,0);
 
     m_subjectEdit = new QLineEdit(this);
-    gl->addWidget(m_subjectEdit,2,1);
+    gl->addWidget(m_subjectEdit,4,1);
 
     m_bodyEdit = new QTextEdit(this);
-    gl->addWidget(m_bodyEdit,3,0,1,2);
+    gl->addWidget(m_bodyEdit,5,0,1,2);
 
     m_attachmentList = new AttachmentListWidget(this);
-    gl->addWidget(m_attachmentList,4,0,1,2);
+    gl->addWidget(m_attachmentList,6,0,1,2);
     m_attachmentList->hide();
 
     QAction* composeAction = new QAction("Compose",this);
@@ -512,13 +525,21 @@ QMessage ComposeSendWidget::constructQMessage() const
     }
 
     QMessageAccountId selectedAccountId = m_accountsWidget->currentAccount();
-
+  
     QMessageAddressList toList;
+    QMessageAddressList ccList;
+    QMessageAddressList bccList;
 
     foreach(QString s, m_toEdit->text().split(QRegExp("\\s")))
         toList.append(QMessageAddress(s,QMessageAddress::Email));
+    foreach(QString s, m_ccEdit->text().split(QRegExp("\\s")))
+        ccList.append(QMessageAddress(s,QMessageAddress::Email));
+    foreach(QString s, m_bccEdit->text().split(QRegExp("\\s")))
+        bccList.append(QMessageAddress(s,QMessageAddress::Email));
 
     message.setTo(toList);
+    message.setCc(ccList);
+    message.setBcc(bccList);
 
     message.setParentAccountId(selectedAccountId);
     message.setSubject(m_subjectEdit->text());
@@ -560,9 +581,6 @@ private:
 
 private:
     QMessageServiceAction* m_service;
-    QStackedLayout* m_layoutStack;
-    QScrollArea* m_showWidget;
-    QLabel* m_busyLabel;
     RecentMessagesWidget* m_recentMessagesWidget;
 };
 
@@ -570,7 +588,6 @@ ShowWidget::ShowWidget(QMessageServiceAction* service, QWidget* parent)
 :
 QWidget(parent),
 m_service(service),
-m_showWidget(0),
 m_recentMessagesWidget(0)
 {
     setupUi();

@@ -86,9 +86,9 @@ public:
     Operator _operator;
     QMessageFilter *_left;
     QMessageFilter *_right;
-    wchar_t *_buffer; // TODO: Consider trying to move these into MapiRestriction
-    wchar_t *_buffer2;
     bool _valid;
+    bool _matchesRequired;
+    bool _restrictionPermitted;
 
     QSet<QMessage::StandardFolder> _standardFoldersInclude; // only match messages directly in one of these folders
     QSet<QMessage::StandardFolder> _standardFoldersExclude; // only match messages not directly in any of these folders
@@ -110,6 +110,12 @@ public:
     static MapiStoreIterator storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiSessionPtr &session);
     static QList<QMessageFilter> subFilters(const QMessageFilter &filter);
     static bool matchesMessage(const QMessageFilter &filter, const QMessage &message);
+
+    static bool QMessageFilterPrivate::restrictionPermitted(const QMessageFilter &filter);
+    static bool QMessageFilterPrivate::matchesMessageRequired(const QMessageFilter &filter);
+
+    static QMessageFilter QMessageFilterPrivate::bySender(const QString &value, QMessageDataComparator::InclusionComparator cmp);
+    static QMessageFilter QMessageFilterPrivate::bySender(const QString &value, QMessageDataComparator::EqualityComparator cmp);
 #endif
 };
 
@@ -137,6 +143,8 @@ private:
 #else
     MapiRecordKey *_recordKeys;
 #endif
+    wchar_t *_buffer;
+    wchar_t *_buffer2;
     bool _valid;
     bool _empty;
     MapiRestriction *_left;
