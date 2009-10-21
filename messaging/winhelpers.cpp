@@ -1491,19 +1491,19 @@ namespace WinHelpers {
     {
         QByteArray result("application/octet-stream");
 
-#ifndef _WIN32_WCE
         if (!extension.isEmpty()) {
+            // Create the extension string to search for
+            QString dotExtension(extension);
+            if (!dotExtension.startsWith('.')) {
+                dotExtension.prepend('.');
+            }
+
+            Lptstr ext = LptstrFromQString(dotExtension);
+
+#ifndef _WIN32_WCE
             IQueryAssociations *associations(0);
             HRESULT rv = AssocCreate(CLSID_QueryAssociations, IID_PPV_ARGS(&associations));
             if (HR_SUCCEEDED(rv)) {
-                // Create the extension string to search for
-                QString dotExtension(extension);
-                if (!dotExtension.startsWith('.')) {
-                    dotExtension.prepend('.');
-                }
-
-                Lptstr ext = LptstrFromQString(dotExtension);
-
                 rv = associations->Init(0, ext, 0, 0);
                 if (HR_SUCCEEDED(rv)) {
                     // Find the length of the content-type string
@@ -1524,9 +1524,27 @@ namespace WinHelpers {
                 }
                 mapiRelease(associations);
             }
+#else
+            // Find any registry entry for this extension
+            HKEY key = { 0 };
+            LONG rv = RegOpenKeyEx(HKEY_CLASSES_ROOT, ext, 0, 0, &key);
+            if (rv == ERROR_SUCCESS) {
+                WCHAR value[512] = { 0 };
+                DWORD valueBytes = sizeof(value);
+                rv = RegQueryValueEx(key, L"Content Type", 0, 0, reinterpret_cast<LPBYTE>(&value), &valueBytes);
+                if (rv == ERROR_SUCCESS) {
+                    if (valueBytes > 1) {
+                        result = QStringFromLpctstr(value).toLatin1();
+                    }
+                } else {
+                    qWarning() << "Unable to query key for extension:" << extension;
+                }
+
+                RegCloseKey(key);
+            }
+#endif
         }
 
-#endif
         return result;
     }
 
