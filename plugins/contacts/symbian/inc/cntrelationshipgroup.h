@@ -48,15 +48,21 @@
 class CntRelationshipGroup: public CntAbstractRelationship
 {
 public: 
-    CntRelationshipGroup();
+    CntRelationshipGroup(CContactDatabase* contactDatabase);
     virtual ~CntRelationshipGroup();
 
 public:
-    QList<QContactRelationship> relationships(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const{}
-    bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error){}
-    QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error){}
-    bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error){}
-    QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error){}
+    bool saveRelationshipL(QContactRelationship* relationship, QContactManager::Error& error);
+    bool removeRelationshipL(const QContactRelationship& relationship, QContactManager::Error& error);
+    QList<QContactRelationship> relationshipsL(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error);
+    
+#if 0
+    QList<QContactRelationship> relationshipsL(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const{}
+    
+    QList<QContactManager::Error> saveRelationshipsL(QList<QContactRelationship>* relationships, QContactManager::Error& error){}
+    bool removeRelationshipL(const QContactRelationship& relationship, QContactManager::Error& error){}
+    QList<QContactManager::Error> removeRelationshipsL(const QList<QContactRelationship>& relationships, QContactManager::Error& error){}
+#endif
 };
 
 #endif

@@ -42,9 +42,9 @@
 #include "cntrelationship.h"
 
 
-CntRelationship::CntRelationship() 
+CntRelationship::CntRelationship(CContactDatabase* contactDatabase) 
 {
-    CntAbstractRelationship *relationshipGroup = new CntRelationshipGroup;
+    CntAbstractRelationship *relationshipGroup = new CntRelationshipGroup(contactDatabase);
     m_relationshipMap.insert(relationshipGroup->relationshipType(), relationshipGroup);
 }
 
@@ -54,12 +54,12 @@ CntRelationship::~CntRelationship()
 
 
 /* Relationships between contacts */
-QList<QContactRelationship> CntRelationship::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
+QList<QContactRelationship> CntRelationship::relationshipsL(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
 {
     QList<QContactRelationship> returnValue;
     
     if(m_relationshipMap.contains(relationshipType)){
-        returnValue = m_relationshipMap.value(relationshipType)->relationships(participantId, role, error);
+        returnValue = m_relationshipMap.value(relationshipType)->relationshipsL(participantId, role, error);
     }
     else{
         error = QContactManager::NotSupportedError;
@@ -68,12 +68,12 @@ QList<QContactRelationship> CntRelationship::relationships(const QString& relati
     return returnValue;
 }
 
-bool CntRelationship::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
+bool CntRelationship::saveRelationshipL(QContactRelationship* relationship, QContactManager::Error& error)
 {
     bool returnValue(false);
             
     if(m_relationshipMap.contains(relationship->relationshipType())){
-        returnValue = m_relationshipMap.value(relationship->relationshipType())->saveRelationship(relationship, error);
+        returnValue = m_relationshipMap.value(relationship->relationshipType())->saveRelationshipL(relationship, error);
     }
     else{
         error = QContactManager::NotSupportedError;
@@ -83,38 +83,38 @@ bool CntRelationship::saveRelationship(QContactRelationship* relationship, QCont
 }
 
 
-QList<QContactManager::Error> CntRelationship::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
+QList<QContactManager::Error> CntRelationship::saveRelationshipsL(QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
     QList<QContactManager::Error> returnValue;
     
     for(int i = 0; i < relationships->count(); i++){
         QContactManager::Error error;
-        saveRelationship(&relationships->value(i), error);
+        saveRelationshipL(&relationships->value(i), error);
         returnValue.append(error);
     }
    
     return returnValue;
 }
 
-bool CntRelationship::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
+bool CntRelationship::removeRelationshipL(const QContactRelationship& relationship, QContactManager::Error& error)
 {
     bool returnValue;
     
     if(m_relationshipMap.contains(relationship.relationshipType())){
-        returnValue = m_relationshipMap.value(relationship.relationshipType())->removeRelationship(relationship, error);
+        returnValue = m_relationshipMap.value(relationship.relationshipType())->removeRelationshipL(relationship, error);
     }
     else{
         error = QContactManager::NotSupportedError;
     }
 }
 
-QList<QContactManager::Error> CntRelationship::removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
+QList<QContactManager::Error> CntRelationship::removeRelationshipsL(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
 {
     QList<QContactManager::Error> returnValue;
     
     for(int i = 0; i < relationships.count(); i++){
         QContactManager::Error error;
-        removeRelationship(relationships.at(i), error);
+        removeRelationshipL(relationships.at(i), error);
         returnValue.append(error);
     }
    

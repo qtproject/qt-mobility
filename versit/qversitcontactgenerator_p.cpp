@@ -358,17 +358,17 @@ QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
     QVersitProperty nameProperty;
     const QList<QVersitProperty> properties = versitDocument.properties();
     foreach(const QVersitProperty& nameP, properties) {
-        if (nameP.name() == "N") {
+        if (nameP.name() == QString::fromAscii("N")) {
             nameProperty = nameP;
             break;
         }
     }
 
     QList<QByteArray> values = nameProperty.value().split(';');
-    imgName.append("/");
+    imgName.append(QString::fromAscii("/"));
     imgName.append(takeFirst(values));
     imgName.append(takeFirst(values));
-    imgName.append(".");
+    imgName.append(QString::fromAscii("."));
 
     // Image format
     const QString format =

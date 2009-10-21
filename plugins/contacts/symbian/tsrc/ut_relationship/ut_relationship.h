@@ -47,11 +47,14 @@ private slots:
 	void initTestCase();
 	void cleanupTestCase();
 	
+	void createGroupContact();
+	#if 0
 	void executeRelationships();
 	void executeSaveRelationship();
 	void executeSaveRelationships();
 	void executeRemoveRelationship();
 	void executeRemoveRelationships();
+	#endif
 };
 
 #endif

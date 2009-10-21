@@ -41,14 +41,20 @@
 
 #include "cntabstractrelationship.h"
 
-CntAbstractRelationship::CntAbstractRelationship(const QString &relationshipType) : 
+CntAbstractRelationship::CntAbstractRelationship(CContactDatabase* contactDatabase, const QString &relationshipType) : 
+    m_contactDatabase(contactDatabase),
     m_relationshipType(relationshipType) 
 {}
     
 CntAbstractRelationship::~CntAbstractRelationship()
 {}
 
-QList<QContactRelationship> CntAbstractRelationship::relationships(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
+CContactDatabase* CntAbstractRelationship::database()
+{
+    return m_contactDatabase;
+}
+
+QList<QContactRelationship> CntAbstractRelationship::relationshipsL(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error)
 {
     error = QContactManager::NotSupportedError;
 
@@ -57,14 +63,14 @@ QList<QContactRelationship> CntAbstractRelationship::relationships(const QContac
 }
 
 
-bool CntAbstractRelationship::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
+bool CntAbstractRelationship::saveRelationshipL(QContactRelationship* relationship, QContactManager::Error& error)
 {
     error = QContactManager::NotSupportedError;
     return false;
 }
 
 
-QList<QContactManager::Error> CntAbstractRelationship::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
+QList<QContactManager::Error> CntAbstractRelationship::saveRelationshipsL(QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
     QList<QContactManager::Error> errorList;
     
@@ -75,13 +81,13 @@ QList<QContactManager::Error> CntAbstractRelationship::saveRelationships(QList<Q
     return errorList;
 }
 
-bool CntAbstractRelationship::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
+bool CntAbstractRelationship::removeRelationshipL(const QContactRelationship& relationship, QContactManager::Error& error)
 {
      error = QContactManager::NotSupportedError;
      return false;
 }
 
-QList<QContactManager::Error> CntAbstractRelationship::removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
+QList<QContactManager::Error> CntAbstractRelationship::removeRelationshipsL(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
 {
     QList<QContactManager::Error> errorList;
     

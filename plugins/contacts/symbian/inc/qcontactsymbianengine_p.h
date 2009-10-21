@@ -66,7 +66,7 @@ public:
 
 public:
     /* Access */
-        QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
 	QAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter) const;
 	bool sortOrderSupported(const QList<QContactSortOrder>& sortOrders) const;
     QContact contact(const QContactLocalId& contactId, QContactManager::Error& qtError) const;
@@ -83,15 +83,7 @@ public:
     QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
     bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);
     QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
-#if 0
-    /* Groups functionality */
-        QList<QContactLocalId> groups(QContactManager::Error& qtError) const;
-        QContactGroup group(const QContactLocalId& groupId, QContactManager::Error& qtError) const;
-	bool addGroup(QContactGroup& group, QContactChangeSet& changeSet, QContactManager::Error& qtError);
-	bool updateGroup(QContactGroup& group, QContactChangeSet& changeSet, QContactManager::Error& qtError);
-        bool removeGroup(const QContactLocalId& groupId, QContactChangeSet& changeSet, QContactManager::Error& qtError);
-#endif
-        
+
     QContactLocalId simPhonebookGroupId() const;
 
     /* "Self" contact id (MyCard) */
@@ -118,24 +110,13 @@ public:
 private:
 
 	// Leaving functions implementing CNTMODEL interaction.
-        QContact contactL(const QContactLocalId &id) const;
+    QContact contactL(const QContactLocalId &id) const;
 	int countL() const;
 
 	int addContactL(QContact &contact);
 	void updateContactL(QContact &contact);
     int removeContactL(QContactLocalId id);
 
-#if 0
-	//Leaving functions for groups functionality
-    QList<QContactLocalId> groupsL() const;
-    QContactGroup groupL(const QContactLocalId& groupId) const;
-	void addGroupL(QContactGroup& group);
-	void updateGroupL(QContactGroup& group);
-    void removeGroupL(const QContactLocalId& groupId);
-    QList<QContactLocalId> memberOfGroupsL(const TContactItemId contactId) const;
-    void updateMemberOfGroupsL(QContact contact);
-#endif
-    
     QContactLocalId simPhonebookGroupIdL() const;
     
 	//utility functions
