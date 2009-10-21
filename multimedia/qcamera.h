@@ -1,7 +1,7 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
-**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -39,25 +46,37 @@
 #include <QtCore/qpair.h>
 #include <QtCore/qsize.h>
 
-#include <qabstractmediacontrol.h>
-#include <qabstractmediaobject.h>
-#include <qabstractmediaservice.h>
+#include <qmediacontrol.h>
+#include <qmediaobject.h>
+#include <qmediaservice.h>
 
 #include <qmediaserviceprovider.h>
 
-class QCameraService;
 class QCameraControl;
 
 
 class QCameraPrivate;
-class Q_MEDIA_EXPORT QCamera : public QAbstractMediaObject
+class Q_MEDIA_EXPORT QCamera : public QMediaObject
 {
     Q_OBJECT
 
-    Q_ENUMS(State)
+    Q_ENUMS(State Error FocusStatus)
+
+    Q_PROPERTY(qreal aperture READ aperture WRITE setManualAperture NOTIFY apertureChanged)
+    Q_PROPERTY(qreal shutterSpeed READ shutterSpeed WRITE setManualShutterSpeed NOTIFY shutterSpeedChanged)
+    Q_PROPERTY(int isoSensitivity READ isoSensitivity WRITE setManualIsoSensitivity NOTIFY isoSensitivityChanged)
 
 public:
     enum State { ActiveState, StoppedState };
+
+    enum Error
+    {
+        NoError,
+        CameraError,
+        NotReadyToCaptureError,
+        InvalidRequestError,
+        ServiceMissingError
+    };
 
     enum FlashMode {
         FlashOff = 0x1,
@@ -70,8 +89,10 @@ public:
 
     enum FocusMode {
         ManualFocus = 0x1,
-        AutoFocus = 0x2,
-        ContinuousFocus = 0x4
+        HyperfocalFocus = 0x02,
+        InfinityFocus = 0x04,
+        AutoFocus = 0x8,
+        ContinuousFocus = 0x10
     };
     Q_DECLARE_FLAGS(FocusModes, FocusMode)
 
@@ -126,16 +147,14 @@ public:
     Q_DECLARE_FLAGS(WhiteBalanceModes, WhiteBalanceMode)
 
     Q_PROPERTY(QCamera::State state READ state NOTIFY stateChanged)
+    Q_PROPERTY(bool readyForCapture READ isReadyForCapture NOTIFY readyForCaptureChanged)
 
-    QCamera(QObject *parent = 0, QAbstractMediaService *service = 0);
+    QCamera(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
+    QCamera(const QByteArray& device, QObject *parent = 0);
     ~QCamera();
 
-    QStringList devices() const;
-    QString deviceDescription(const QString &device) const;
-    void setDevice(const QString& device);
-
-    bool isValid() const;
-    QAbstractMediaService* service() const;
+    static QList<QByteArray> availableDevices();
+    static QString deviceDescription(const QByteArray &device);
 
     void start();
     void stop();
@@ -174,17 +193,23 @@ public:
     void setManualWhiteBalance(int colorTemperature);
 
     int isoSensitivity() const;
-    QPair<int, int> supportedIsoSensitivityRange() const;
+    int minimumIsoSensitivity() const;
+    int maximumIsoSensitivity() const;
+    QList<int> supportedIsoSensitivities() const;
     void setManualIsoSensitivity(int iso);
     void setAutoIsoSensitivity();
 
     qreal aperture() const;
-    QPair<qreal, qreal> supportedApertureRange() const;
+    qreal minimumAperture() const;
+    qreal maximumAperture() const;
+    QList<qreal> supportedApertures() const;
     void setManualAperture(qreal aperture);
     void setAutoAperture();
 
     qreal shutterSpeed() const;
-    QPair<qreal, qreal> supportedShutterSpeedRange() const;
+    qreal minimumShutterSpeed() const;
+    qreal maximumShutterSpeed() const;
+    QList<qreal> supportedShutterSpeeds() const;
     void setManualShutterSpeed(qreal seconds);
     void setAutoShutterSpeed();
 
@@ -196,6 +221,11 @@ public:
     bool isExposureLocked() const;
     bool isFocusLocked() const;
 
+    bool isReadyForCapture() const;
+
+    Error error() const;
+    QString errorString() const;
+
 public Q_SLOTS:
     void lockExposure();
     void unlockExposure();
@@ -203,18 +233,31 @@ public Q_SLOTS:
     void lockFocus();
     void unlockFocus();
 
+    void capture(const QString &fileName);
+
 Q_SIGNALS:
     void flashReady(bool);
     void focusStatusChanged(QCamera::FocusStatus);
     void zoomValueChanged(qreal);
+
+    void apertureChanged(qreal);
+    void apertureRangeChanged();
+    void shutterSpeedChanged(qreal);
+    void isoSensitivityChanged(int);
+
     void exposureLocked();
     void focusLocked();
 
+    void readyForCaptureChanged(bool);
+    void imageCaptured(const QString &fileName, const QImage &preview);
+
     void stateChanged(QCamera::State);
+    void error(QCamera::Error);
 
 private:
     Q_DISABLE_COPY(QCamera)
     Q_DECLARE_PRIVATE(QCamera)
+    Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::FlashModes)
@@ -222,5 +265,9 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::FocusModes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::WhiteBalanceModes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::MeteringModes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::ExposureModes)
+
+Q_DECLARE_METATYPE(QCamera::State)
+Q_DECLARE_METATYPE(QCamera::Error)
+Q_DECLARE_METATYPE(QCamera::FocusStatus)
 
 #endif  // QCAMERA_H

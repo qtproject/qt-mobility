@@ -4,11 +4,10 @@ TARGET = $$qtLibraryTarget(mobapicontactspluginsymbian)
 PLUGIN_TYPE=contacts
 
 include(../../../common.pri)
-
 symbian: { 
     load(data_caging_paths)
 
-    TARGET.CAPABILITY = CAP_GENERAL_DLL
+    TARGET.CAPABILITY = ALL -TCB
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.UID3 = 0xE5E2F4B4
   
@@ -21,8 +20,7 @@ symbian: {
 	INCLUDEPATH += $$SOURCE_DIR/contacts/filters 
 	INCLUDEPATH += $$SOURCE_DIR/contacts/requests
 
-	
-    HEADERS += \
+  HEADERS += \
         $$PUBLIC_HEADERS \
         inc/qcontactsymbianbackend.h \
         inc/qcontactsymbianengine_p.h \
@@ -32,9 +30,28 @@ symbian: {
         inc/transformnickname.h \
         inc/transformphonenumber.h \
         inc/transformemail.h \
-        inc/transformaddress.h
+        inc/transformaddress.h \
+        inc/transformurl.h \
+        inc/transformbirthday.h \
+        inc/transformonlineaccount.h \
+        inc/transformorganisation.h \
+        inc/transformavatar.h \
+        inc/transformsynctarget.h \
+        inc/transformgender.h \
+        inc/transformanniversary.h \
+        inc/transformgeolocation.h \
+        inc/transformnote.h \
+        inc/transformfamily.h \  
+        inc/qabstractcontactfilter.h \
+        inc/qcontactsymbianfilterdbms.h \
+        inc/qcontactsymbianfiltersql.h \
+        inc/qabstractcontactsorter.h \
+        inc/qcontactsymbiansorterdbms.h \
+        inc/cntrelationship.h \
+        inc/cntabstractrelationship.h \
+        inc/cntrelationshipgroup.h
 
-    SOURCES += \
+  SOURCES += \
         src/qcontactsymbianbackend.cpp \
         src/qcontactsymbianengine_p.cpp \
         src/transformcontact.cpp \
@@ -43,25 +60,47 @@ symbian: {
         src/transformnickname.cpp \
         src/transformphonenumber.cpp \
         src/transformemail.cpp \
-        src/transformaddress.cpp
+        src/transformaddress.cpp \
+        src/transformurl.cpp \
+        src/transformbirthday.cpp \
+        src/transformonlineaccount.cpp \
+        src/transformorganisation.cpp \
+        src/transformavatar.cpp \
+        src/transformsynctarget.cpp \
+        src/transformgender.cpp \
+        src/transformanniversary.cpp \
+        src/transformgeolocation.cpp \
+        src/transformnote.cpp \
+        src/transformfamily.cpp \  
+        src/qcontactsymbianfilterdbms.cpp \
+        src/qcontactsymbianfiltersql.cpp \
+        src/qcontactsymbiansorterdbms.cpp \
+        src/cntrelationship.cpp \
+        src/cntabstractrelationship.cpp \
+        src/cntrelationshipgroup.cpp
 
-    qtAddLibbray(QtContacts)      
+    qtAddLibbray(QtContacts)
 
-    LIBS += -lcntmodel
+    LIBS += \
+        -lcntmodel \
+        -lcentralrepository \
 
     target.path = /sys/bin
     INSTALLS += target
 
+    exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
+        DEFINES += USE_CUSTOM_CNT_MODEL_FIELDS
+        cntmodelResourceFile = \
+            "START RESOURCE ../rss/cntmodel.rss" \
+            "TARGETPATH CONTACTS_RESOURCE_DIR" \
+            "END"
+        MMP_RULES += cntmodelResourceFile
+    }
 
-    cntmodelResourceFile = \
-      "START RESOURCE ../rss/cntmodel.rss" \
-      "TARGETPATH CONTACTS_RESOURCE_DIR" \
-      "END"
-    MMP_RULES += cntmodelResourceFile   
-  
     symbianplugin.sources = $${TARGET}.dll
     symbianplugin.path = /resource/qt/plugins/contacts
     DEPLOYMENT += symbianplugin
 }
+
 target.path=$$QT_MOBILITY_PREFIX/plugins/contacts
 INSTALLS+=target

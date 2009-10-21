@@ -9,7 +9,8 @@ TARGET = qtcontactsdocsample
 include(../../../../common.pri)
 DEPENDPATH += .
 INCLUDEPATH += .
-LIBS += -lQtContacts
+
+qtAddLibrary(QtContacts)
 
 SOURCES += qtcontactsdocsample.cpp
 HEADERS += requestexample.h

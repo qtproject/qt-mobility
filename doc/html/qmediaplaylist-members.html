@@ -16,12 +16,11 @@
 <p>This is the complete list of members for <a href="qmediaplaylist.html">QMediaPlaylist</a>, including inherited members.</p>
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
+<li><div class="fn">enum <b><a href="qmediaplaylist.html#Error-enum">Error</a></b></div></li>
 <li><div class="fn">enum <b><a href="qmediaplaylist.html#PlaybackMode-enum">PlaybackMode</a></b></div></li>
-<li><div class="fn"><b><a href="qmediaplaylist.html#QMediaPlaylist">QMediaPlaylist</a></b> ( QAbstractMediaObject * )</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#QMediaPlaylist">QMediaPlaylist</a></b> ( QMediaObject *, QObject * )</div></li>
 <li><div class="fn"><b><a href="qmediaplaylist.html#dtor.QMediaPlaylist">~QMediaPlaylist</a></b> ()</div></li>
-<li><div class="fn"><b><a href="qmediaplaylist.html#advance">advance</a></b> ()</div></li>
-<li><div class="fn"><b><a href="qmediaplaylist.html#appendItem">appendItem</a></b> ( const QMediaSource &amp; ) : bool</div></li>
-<li><div class="fn"><b><a href="qmediaplaylist.html#back">back</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#appendItem">appendItem</a></b> ( const QMediaContent &amp; ) : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#blockSignals">blockSignals</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#childEvent">childEvent</a></b> ( QChildEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#children">children</a></b> () const</div></li>
@@ -29,8 +28,8 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#connect">connect</a></b> ( const QObject *, const char *, const QObject *, const char *, Qt::ConnectionType )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#connect-2">connect</a></b> ( const QObject *, const char *, const char *, Qt::ConnectionType ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#connectNotify">connectNotify</a></b> ( const char * )</div></li>
-<li><div class="fn"><b><a href="qmediaplaylist.html#currentMedia-prop">currentMedia</a></b> () const : QMediaSource</div></li>
-<li><div class="fn"><b><a href="qmediaplaylist.html#currentMediaChanged">currentMediaChanged</a></b> ( const QMediaSource &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#currentMedia-prop">currentMedia</a></b> () const : QMediaContent</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#currentMediaChanged">currentMediaChanged</a></b> ( const QMediaContent &amp; )</div></li>
 <li><div class="fn"><b><a href="qmediaplaylist.html#currentPosition-prop">currentPosition</a></b> () const : int</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#customEvent">customEvent</a></b> ( QEvent * )</div></li>
 <li><div class="fn"><b><a href="qmediaplaylist.html#d_ptr-var">d_ptr</a></b> : QMediaPlaylistPrivate *</div></li>
@@ -43,13 +42,15 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#dumpObjectInfo">dumpObjectInfo</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#dumpObjectTree">dumpObjectTree</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#dynamicPropertyNames">dynamicPropertyNames</a></b> () const</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#error">error</a></b> () const : Error</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#errorString">errorString</a></b> () const : QString</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#event">event</a></b> ( QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#eventFilter">eventFilter</a></b> ( QObject *, QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#findChild">findChild</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#findChildren">findChildren</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#findChildren-2">findChildren</a></b> ( const QRegExp &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#inherits">inherits</a></b> ( const char * ) const</div></li>
-<li><div class="fn"><b><a href="qmediaplaylist.html#insertItem">insertItem</a></b> ( int, const QMediaSource &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#insertItem">insertItem</a></b> ( int, const QMediaContent &amp; ) : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#installEventFilter">installEventFilter</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qmediaplaylist.html#isEmpty">isEmpty</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="qmediaplaylist.html#isReadOnly">isReadOnly</a></b> () const : bool</div></li>
@@ -61,19 +62,21 @@
 <li><div class="fn"><b><a href="qmediaplaylist.html#itemsInserted">itemsInserted</a></b> ( int, int )</div></li>
 <li><div class="fn"><b><a href="qmediaplaylist.html#itemsRemoved">itemsRemoved</a></b> ( int, int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#killTimer">killTimer</a></b> ( int )</div></li>
-<li><div class="fn"><b><a href="qmediaplaylist.html#load">load</a></b> ( const QUrl &amp;, const char * ) : bool</div></li>
-<li><div class="fn"><b><a href="qmediaplaylist.html#load-2">load</a></b> ( QIODevice *, const char * ) : bool</div></li>
-<li><div class="fn"><b><a href="qmediaplaylist.html#media">media</a></b> ( int ) const : QMediaSource</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#load">load</a></b> ( const QUrl &amp;, const char * )</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#load-2">load</a></b> ( QIODevice *, const char * )</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#loadFailed">loadFailed</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#loaded">loaded</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#media">media</a></b> ( int ) const : QMediaContent</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#metaObject">metaObject</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#moveToThread">moveToThread</a></b> ( QThread * )</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#next">next</a></b> ()</div></li>
 <li><div class="fn"><b><a href="qmediaplaylist.html#nextPosition">nextPosition</a></b> ( int ) const : int</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#objectName-prop">objectName</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#parent">parent</a></b> () const</div></li>
 <li><div class="fn"><b><a href="qmediaplaylist.html#playbackMode-prop">playbackMode</a></b> () const : PlaybackMode</div></li>
 <li><div class="fn"><b><a href="qmediaplaylist.html#playbackModeChanged">playbackModeChanged</a></b> ( QMediaPlaylist::PlaybackMode )</div></li>
 <li><div class="fn"><b><a href="qmediaplaylist.html#playlistPositionChanged">playlistPositionChanged</a></b> ( int )</div></li>
-<li><div class="fn"><b><a href="qmediaplaylist.html#playlistProvider-prop">playlistProvider</a></b> () const : QMediaPlaylistProvider *</div></li>
-<li><div class="fn"><b><a href="qmediaplaylist.html#playlistProviderChanged">playlistProviderChanged</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qmediaplaylist.html#previous">previous</a></b> ()</div></li>
 <li><div class="fn"><b><a href="qmediaplaylist.html#previousPosition">previousPosition</a></b> ( int ) const : int</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#property">property</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#receivers">receivers</a></b> ( const char * ) const</div></li>
@@ -87,7 +90,6 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#objectName-prop">setObjectName</a></b> ( const QString &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#setParent">setParent</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qmediaplaylist.html#playbackMode-prop">setPlaybackMode</a></b> ( PlaybackMode )</div></li>
-<li><div class="fn"><b><a href="qmediaplaylist.html#playlistProvider-prop">setPlaylistProvider</a></b> ( QMediaPlaylistProvider * ) : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#setProperty">setProperty</a></b> ( const char *, const QVariant &amp; )</div></li>
 <li><div class="fn"><b><a href="qmediaplaylist.html#shuffle">shuffle</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#signalsBlocked">signalsBlocked</a></b> () const</div></li>

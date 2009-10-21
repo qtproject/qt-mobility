@@ -49,10 +49,10 @@
 #include "qcontactchangelogfilter.h"
 #include "qcontactdetailfilter.h"
 #include "qcontactdetailrangefilter.h"
-#include "qcontactgroupmembershipfilter.h"
+#include "qcontactlocalidfilter.h"
 #include "qcontactintersectionfilter.h"
-#include "qcontactunionfilter.h"
-#include "qcontactidlistfilter.h"
 #include "qcontactinvalidfilter.h"
+#include "qcontactrelationshipfilter.h"
+#include "qcontactunionfilter.h"
 
 #endif

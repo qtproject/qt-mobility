@@ -751,8 +751,8 @@
                 typestr.chop(1);
                 entry += typestr + &quot;:;;&quot; + det.value(QContactAddress::FieldStreet) + &quot;;&quot; + det.value(QContactAddress::FieldLocality) + &quot;;&quot; + det.value(QContactAddress::FieldRegion) + &quot;;&quot; + det.value(QContactAddress::FieldPostcode) + &quot;;&quot; + det.value(QContactAddress::FieldCountry);
                 vcard &lt;&lt; entry;
-                entry = &quot;LABEL;TYPE=&quot; + typestr + &quot;:&quot; + det.value(QContactAddress::FieldDisplayLabel);
-                vcard &lt;&lt; entry;
+                <span class="comment">//entry = &quot;LABEL;TYPE=&quot; + typestr + &quot;:&quot; + det.value(QContactAddress::FieldDisplayLabel);</span>
+                <span class="comment">//vcard &lt;&lt; entry;</span>
                 vcardFieldsWithValues &lt;&lt; &quot;ADR&quot;;
                 vcardFieldsWithValues &lt;&lt; &quot;LABEL&quot;;
                 customVcardFields &lt;&lt; convertDetail(contact, det, &quot;ADR&quot;);

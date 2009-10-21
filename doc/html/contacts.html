@@ -109,7 +109,7 @@
         phoneFilter.setValue(incomingCallNbr);
         phoneFilter.setMatchFlags(Qt::MatchExactly);
 
-        QList&lt;QUniqueId&gt; matchingContacts = cm-&gt;contacts(phoneFilter);
+        QList&lt;QContactLocalId&gt; matchingContacts = cm-&gt;contacts(phoneFilter);
         if (matchingContacts.size() == 0) {
             qDebug() &lt;&lt; &quot;Incoming call from unknown contact (&quot; &lt;&lt; incomingCallNbr &lt;&lt; &quot;)&quot;;
         } else {
@@ -127,7 +127,7 @@
 <p>The client retrieves the phone numbers of a contact, and displays the first one</p>
 <pre>    void viewSpecificDetail(QContactManager* cm)
     {
-        QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
+        QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
         QContact a = cm-&gt;contact(contactIds.first());
         QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
         if (cdl.isEmpty())
@@ -140,7 +140,7 @@
 <p>The client retrieves all of the details of a contact, and displays them</p>
 <pre>    void viewDetails(QContactManager* cm)
     {
-        QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
+        QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
         QContact a = cm-&gt;contact(contactIds.first());
         QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
         if (cdl.isEmpty())
@@ -189,7 +189,7 @@
 <p>The client retrieves a contact, modifies one of its details, adds a new detail, and then saves the contact back to the manager. Note that it uses the newly added field of the email address definition!</p>
 <pre>    void editView(QContactManager* cm)
     {
-        QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
+        QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
         QContact a = cm-&gt;contact(contactIds.first());
         QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
         if (cdl.isEmpty())
@@ -273,7 +273,7 @@
 <pre>    void loadManager()
     {
         QContactManager* cm = new QContactManager(&quot;KABC&quot;);
-        QList&lt;QUniqueId&gt; contactIds = cm-&gt;contacts();
+        QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
         if (!contactIds.isEmpty()) {
             QContact a = cm-&gt;contact(contactIds.first());
             QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
@@ -325,8 +325,7 @@
 <tr valign="top" class="odd"><th><a href="qcontactaction.html">QContactAction</a></th><td>Interface for performing an action on a QContact or QContactDetail</td></tr>
 <tr valign="top" class="even"><th><a href="qcontactdetail.html">QContactDetail</a></th><td>Access to a single, complete detail about a contact</td></tr>
 <tr valign="top" class="odd"><th><a href="qcontactdetaildefinition.html">QContactDetailDefinition</a></th><td>Supplies a definition of the semantics of the Details data representation and use</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactgroup.html">QContactGroup</a></th><td>Acts as a container for a list of contacts</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactmanager.html">QContactManager</a></th><td>Control over contacts and groups</td></tr>
+<tr valign="top" class="even"><th><a href="qcontactmanager.html">QContactManager</a></th><td>Control over contacts and groups</td></tr>
 </table></p>
 <a name="contact-details-leaf-classes"></a>
 <h4>&quot;Contact Details&quot; Leaf Classes</h4>
@@ -343,11 +342,11 @@
 <tr valign="top" class="odd"><th><a href="qcontactguid.html">QContactGuid</a></th><td>The globally unique Id of a contact</td></tr>
 <tr valign="top" class="even"><th><a href="qcontactname.html">QContactName</a></th><td>The name of a contact</td></tr>
 <tr valign="top" class="odd"><th><a href="qcontactnickname.html">QContactNickname</a></th><td>Nickname of a contact</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactonlineaccount.html">QContactOnlineAccount</a></th><td>Online account which the contact uses to communicate with friends and family</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactorganisation.html">QContactOrganisation</a></th><td>The details about an organization that the contact is either a part of, or stands for</td></tr>
+<tr valign="top" class="even"><th><a href="qcontactnote.html">QContactNote</a></th></tr>
+<tr valign="top" class="odd"><th><a href="qcontactonlineaccount.html">QContactOnlineAccount</a></th><td>Online account which the contact uses to communicate with friends and family</td></tr>
 <tr valign="top" class="even"><th><a href="qcontactphonenumber.html">QContactPhoneNumber</a></th><td>Phone number of a contact</td></tr>
 <tr valign="top" class="odd"><th><a href="qcontactpresence.html">QContactPresence</a></th><td>Supplies presence information relating to a QContactOnlineAccount of the contact</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactrelationship.html">QContactRelationship</a></th><td>Describes the relationship that this contact has to another</td></tr>
+<tr valign="top" class="even"><th><a href="qcontactrelationship.html">QContactRelationship</a></th></tr>
 <tr valign="top" class="odd"><th><a href="qcontactsynctarget.html">QContactSyncTarget</a></th><td>Supplies a sync target for a contact</td></tr>
 <tr valign="top" class="even"><th><a href="qcontacttimestamp.html">QContactTimestamp</a></th><td>Contains the creation and last-modified timestamp associated with the contact</td></tr>
 <tr valign="top" class="odd"><th><a href="qcontacturl.html">QContactUrl</a></th><td>Url associated with a contact</td></tr>
@@ -360,10 +359,6 @@
 <tr valign="top" class="odd"><th><a href="qcontactdetaildefinitionfetchrequest.html">QContactDetailDefinitionFetchRequest</a></th><td>Allows a client to asynchronously request detail definitions from a contacts store manager</td></tr>
 <tr valign="top" class="even"><th><a href="qcontactdetaildefinitionsaverequest.html">QContactDetailDefinitionSaveRequest</a></th><td>Allows a client to asynchronously request that certain detail definitions be saved in a contacts store</td></tr>
 <tr valign="top" class="odd"><th><a href="qcontactfetchrequest.html">QContactFetchRequest</a></th><td>Allows a client to asynchronously request contacts from a contacts store manager</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactgroupfetchrequest.html">QContactGroupFetchRequest</a></th><td>Allows a client to asynchronously request groups from a contacts store manager</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactgroupremoverequest.html">QContactGroupRemoveRequest</a></th><td>Allows a client to asynchronously request that certain groups be removed from a contacts store</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactgroupsaverequest.html">QContactGroupSaveRequest</a></th><td>Allows a client to asynchronously request that certain groups be saved to a contacts store</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactidfetchrequest.html">QContactIdFetchRequest</a></th><td>Allows a client to asynchronously request a list of contact ids from a contacts store manager</td></tr>
 <tr valign="top" class="even"><th><a href="qcontactremoverequest.html">QContactRemoveRequest</a></th><td>Allows a client to asynchronously request that certain contacts be removed from a contacts store</td></tr>
 <tr valign="top" class="odd"><th><a href="qcontactsaverequest.html">QContactSaveRequest</a></th><td>Allows a client to asynchronously request that certain contacts be saved to a contacts store</td></tr>
 </table></p>
@@ -374,10 +369,9 @@
 <tr valign="top" class="odd"><th><a href="qcontactchangelogfilter.html">QContactChangeLogFilter</a></th><td>Filter based around a contact timestamp criterion</td></tr>
 <tr valign="top" class="even"><th><a href="qcontactdetailfilter.html">QContactDetailFilter</a></th><td>Filter based around a detail value criterion</td></tr>
 <tr valign="top" class="odd"><th><a href="qcontactdetailrangefilter.html">QContactDetailRangeFilter</a></th><td>Filter based around a detail value range criterion</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactgroupmembershipfilter.html">QContactGroupMembershipFilter</a></th><td>Filter based around a group membership criterion</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactintersectionfilter.html">QContactIntersectionFilter</a></th><td>Filter which intersects the results of other filters</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactinvalidfilter.html">QContactInvalidFilter</a></th><td>Matches no contacts</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactunionfilter.html">QContactUnionFilter</a></th><td>Filter which unions the results of other filters</td></tr>
+<tr valign="top" class="even"><th><a href="qcontactintersectionfilter.html">QContactIntersectionFilter</a></th><td>Filter which intersects the results of other filters</td></tr>
+<tr valign="top" class="odd"><th><a href="qcontactinvalidfilter.html">QContactInvalidFilter</a></th><td>Matches no contacts</td></tr>
+<tr valign="top" class="even"><th><a href="qcontactunionfilter.html">QContactUnionFilter</a></th><td>Filter which unions the results of other filters</td></tr>
 </table></p>
 <p>A client can also request that the results of such a selection be sorted, by passing a <a href="qcontactsortorder.html">QContactSortOrder</a> (or list of sort orders) to the manager.</p>
 <a name="actions"></a>

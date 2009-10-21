@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -134,6 +141,9 @@ bool QGstreamerVideoWidgetControl::eventFilter(QObject *object, QEvent *e)
             WId newWId = m_widget->winId();
             if (newWId != m_windowId) {
                 m_windowId = newWId;
+                // Even if we have created a winId at this point, other X applications
+                // need to be aware of it.
+                QApplication::syncX();
                 setOverlay();
             }
         }
@@ -162,9 +172,6 @@ void QGstreamerVideoWidgetControl::precessNewStream()
 void QGstreamerVideoWidgetControl::setOverlay()
 {
     if (m_videoSink && GST_IS_X_OVERLAY(m_videoSink)) {
-        // Even if we have created a winId at this point, other X applications
-        // need to be aware of it.
-        QApplication::syncX();
         gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(m_videoSink), m_windowId);
     }
 }
@@ -201,7 +208,6 @@ void QGstreamerVideoWidgetControl::updateNativeVideoSize()
 
 void QGstreamerVideoWidgetControl::windowExposed()
 {
-    QApplication::syncX();
     if (m_videoSink && GST_IS_X_OVERLAY(m_videoSink))
         gst_x_overlay_expose(GST_X_OVERLAY(m_videoSink));
 }
@@ -211,54 +217,44 @@ QWidget *QGstreamerVideoWidgetControl::videoWidget()
     return m_widget;
 }
 
-QVideoWidget::AspectRatio QGstreamerVideoWidgetControl::aspectRatio() const
+QVideoWidget::AspectRatioMode QGstreamerVideoWidgetControl::aspectRatioMode() const
 {
     return m_aspectRatioMode;
 }
 
-QSize QGstreamerVideoWidgetControl::customAspectRatio() const
-{
-    return m_customAspectRatio;
-}
-
-void QGstreamerVideoWidgetControl::setAspectRatio(QVideoWidget::AspectRatio ratio)
+void QGstreamerVideoWidgetControl::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 {
     if (m_videoSink) {
         g_object_set(G_OBJECT(m_videoSink),
                      "force-aspect-ratio",
-                     (ratio == QVideoWidget::AspectRatioAuto),
+                     (mode == QVideoWidget::KeepAspectRatio),
                      (const char*)NULL);
     }
 
-    m_aspectRatioMode = ratio;
+    m_aspectRatioMode = mode;
 }
 
-void QGstreamerVideoWidgetControl::setCustomAspectRatio(const QSize &ratio)
-{
-    m_customAspectRatio = ratio;
-}
-
-bool QGstreamerVideoWidgetControl::isFullscreen() const
+bool QGstreamerVideoWidgetControl::isFullScreen() const
 {
     return m_widget->isFullScreen();
 }
 
-void QGstreamerVideoWidgetControl::setFullscreen(bool fullscreen)
+void QGstreamerVideoWidgetControl::setFullScreen(bool fullScreen)
 {
-    if (fullscreen) {
+    if (fullScreen) {
         m_widget->setWindowFlags(m_widget->windowFlags() | Qt::Window | Qt::WindowStaysOnTopHint);
         m_widget->setWindowState(m_widget->windowState() | Qt::WindowFullScreen);
 
         m_widget->show();
 
-        emit fullscreenChanged(m_widget->isFullScreen());
+        emit fullScreenChanged(m_widget->isFullScreen());
     } else {
         m_widget->setWindowFlags(m_widget->windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
         m_widget->setWindowState(m_widget->windowState() & ~Qt::WindowFullScreen);
 
         m_widget->show();
 
-        emit fullscreenChanged(m_widget->isFullScreen());
+        emit fullScreenChanged(m_widget->isFullScreen());
     }
 }
 

@@ -3,4 +3,6 @@ TARGET =
 
 CONFIG += ordered
 
-SUBDIRS += ut_transformcontactdata
+SUBDIRS += ut_transformcontactdata \
+           performance \
+           ut_qcontactsymbianengine_p

@@ -53,6 +53,12 @@ void QContactInvalidEngine::deref()
 }
 
 /*! \reimp */
+QString QContactInvalidEngine::managerName() const
+{
+    return QString(QLatin1String("invalid"));
+}
+
+/*! \reimp */
 QString QContactInvalidEngine::synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
     Q_UNUSED(contact);

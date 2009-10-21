@@ -1,7 +1,7 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
-**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -36,101 +43,146 @@
 
 #include <qcamera.h>
 
-#include <qabstractmediaobject_p.h>
+#include <qmediaobject_p.h>
 #include <qcameracontrol.h>
 #include <qcameraexposurecontrol.h>
 #include <qcamerafocuscontrol.h>
-#include <qcameraservice.h>
 #include <qmediarecordercontrol.h>
 #include <qimageprocessingcontrol.h>
+#include <qimagecapturecontrol.h>
+#include <qvideodevicecontrol.h>
 
 /*!
     \class QCamera
     \ingroup multimedia
 
     \preliminary
-    \brief
-
-    \sa
+    \brief The QCamera class provides interface for system
+    camera devices.
 */
 
-/*!
-    \a internal
-*/
 
-QCameraService* createCameraService()
+class QCameraPrivate : public QMediaObjectPrivate
 {
-    QMediaServiceProvider *provider = defaultServiceProvider("camera");
-    QObject *object = provider ? provider->createObject(QCameraService_iid) : 0;
+    Q_DECLARE_PUBLIC(QCamera)
 
-    if (object != 0) {
-        QCameraService *service = qobject_cast<QCameraService*>(object);
-
-        if (service)
-            return service;
-
-        delete object;
-    }
-
-    return 0;
-}
-
-class QCameraPrivate : public QAbstractMediaObjectPrivate
-{
 public:
-    QAbstractMediaService *service;
+    void initControls();
+
     QCameraControl *control;
     QCameraExposureControl *exposureControl;
     QCameraFocusControl *focusControl;
     QImageProcessingControl *imageControl;
-    bool ownService;
+    QImageCaptureControl *captureControl;
+
+    QCamera::Error error;
+    QString errorString;
+
+    void _q_error(int error, const QString &errorString);
 };
 
-/*!
-    Construct a QCamera from \a service with \a parent.
-*/
-
-QCamera::QCamera(QObject *parent, QAbstractMediaService *service):
-    QAbstractMediaObject(*new QCameraPrivate, parent)
+void QCameraPrivate::_q_error(int error, const QString &errorString)
 {
-    Q_D(QCamera);
+    Q_Q(QCamera);
+
+    this->error = QCamera::Error(error);
+    this->errorString = errorString;
+
+    emit q->error(this->error);
+}
+
+void QCameraPrivate::initControls()
+{
+    Q_Q(QCamera);
 
     if (service) {
-        d->service = service;
-        d->ownService = false;
+        control = qobject_cast<QCameraControl *>(service->control(QCameraControl_iid));
+        exposureControl = qobject_cast<QCameraExposureControl *>(service->control(QCameraExposureControl_iid));
+        focusControl = qobject_cast<QCameraFocusControl *>(service->control(QCameraFocusControl_iid));
+        imageControl = qobject_cast<QImageProcessingControl *>(service->control(QImageProcessingControl_iid));
+        captureControl = qobject_cast<QImageCaptureControl *>(service->control(QImageCaptureControl_iid));
+
+        q->connect(control, SIGNAL(stateChanged(QCamera::State)), q, SIGNAL(stateChanged(QCamera::State)));
+        q->connect(control, SIGNAL(error(int,QString)), q, SLOT(_q_error(int,QString)));
+
+        error = QCamera::NoError;
     } else {
-        d->service = createCameraService();
-        d->ownService = true;
+        control = 0;
+        exposureControl = 0;
+        focusControl = 0;
+        imageControl = 0;
+        captureControl = 0;
+
+        error = QCamera::ServiceMissingError;
+        errorString = QCamera::tr("The camera service is missing");
     }
 
-    Q_ASSERT(d->service != 0);
+    if (exposureControl) {
+        q->connect(exposureControl, SIGNAL(flashReady(bool)), q, SIGNAL(flashReady(bool)));
+        q->connect(exposureControl, SIGNAL(exposureLocked()), q, SIGNAL(exposureLocked()));
 
-    if (d->service) {
-        d->control = qobject_cast<QCameraControl *>(d->service->control(QCameraControl_iid));
-        d->exposureControl = qobject_cast<QCameraExposureControl *>(d->service->control(QCameraExposureControl_iid));
-        d->focusControl = qobject_cast<QCameraFocusControl *>(d->service->control(QCameraFocusControl_iid));
-        d->imageControl = qobject_cast<QImageProcessingControl *>(d->service->control(QImageProcessingControl_iid));
-
-        connect(d->control, SIGNAL(stateChanged(QCamera::State)), this, SIGNAL(stateChanged(QCamera::State)));
-
-        registerService(d->service);
-    } else {
-        d->control = 0;
-        d->exposureControl = 0;
-        d->focusControl = 0;
-        d->imageControl = 0;
+        q->connect(exposureControl, SIGNAL(apertureChanged(qreal)),
+                q, SIGNAL(apertureChanged(qreal)));
+        q->connect(exposureControl, SIGNAL(apertureRangeChanged()),
+                q, SIGNAL(apertureRangeChanged()));
+        q->connect(exposureControl, SIGNAL(shutterSpeedChanged(qreal)),
+                q, SIGNAL(shutterSpeedChanged(qreal)));
+        q->connect(exposureControl, SIGNAL(isoSensitivityChanged(int)),
+                q, SIGNAL(isoSensitivityChanged(int)));
     }
 
-    if (d->exposureControl) {
-        connect(d->exposureControl, SIGNAL(flashReady(bool)), this, SIGNAL(flashReady(bool)));
-        connect(d->exposureControl, SIGNAL(exposureLocked()), this, SIGNAL(exposureLocked()));
+    if (focusControl) {
+        q->connect(focusControl, SIGNAL(focusStatusChanged(QCamera::FocusStatus)),
+                q, SIGNAL(focusStatusChanged(QCamera::FocusStatus)));
+        q->connect(focusControl, SIGNAL(zoomValueChanged(qreal)), q, SIGNAL(zoomValueChanged(qreal)));
+        q->connect(focusControl, SIGNAL(focusLocked()), q, SIGNAL(focusLocked()));
     }
 
-    if (d->focusControl) {
-        connect(d->focusControl, SIGNAL(focusStatusChanged(QCamera::FocusStatus)),
-                this, SIGNAL(focusStatusChanged(QCamera::FocusStatus)));
-        connect(d->focusControl, SIGNAL(zoomValueChanged(qreal)), this, SIGNAL(zoomValueChanged(qreal)));
-        connect(d->focusControl, SIGNAL(focusLocked()), this, SIGNAL(focusLocked()));
+    if (captureControl) {
+        q->connect(captureControl, SIGNAL(imageCaptured(QString,QImage)),
+                q, SIGNAL(imageCaptured(QString,QImage)));
+        q->connect(captureControl, SIGNAL(readyForCaptureChanged(bool)),
+                q, SIGNAL(readyForCaptureChanged(bool)));
+    }
+}
+
+/*!
+    Construct a QCamera from service \a provider and \a parent.
+*/
+
+QCamera::QCamera(QObject *parent, QMediaServiceProvider *provider):
+    QMediaObject(*new QCameraPrivate, parent, provider->requestService(Q_MEDIASERVICE_CAMERA))
+{
+    Q_D(QCamera);
+    d->initControls();
+}
+
+/*!
+    Construct a QCamera from device name \a device and \a parent.
+*/
+
+QCamera::QCamera(const QByteArray& device, QObject *parent):
+    QMediaObject(*new QCameraPrivate, parent,
+                  QMediaServiceProvider::defaultServiceProvider()->requestService(Q_MEDIASERVICE_CAMERA, QMediaServiceProviderHint(device)))
+{
+    Q_D(QCamera);
+    d->initControls();
+
+    if (d->service != 0) {
+        //pass device name to service
+        QVideoDeviceControl *deviceControl =
+                qobject_cast<QVideoDeviceControl*>(d->service->control(QVideoDeviceControl_iid));
+
+        if (deviceControl) {
+            QString deviceName(device);
+
+            for (int i=0; i<deviceControl->deviceCount(); i++) {
+                if (deviceControl->name(i) == deviceName) {
+                    deviceControl->setSelectedDevice(i);
+                    break;
+                }
+            }
+        }
     }
 }
 
@@ -140,30 +192,46 @@ QCamera::QCamera(QObject *parent, QAbstractMediaService *service):
 
 QCamera::~QCamera()
 {
-    Q_D(QCamera);
-
-    registerService(0);
-
-    if (d->ownService) {
-        delete d->service;
-        d->service = 0;
-    }
 }
 
 /*!
-    Start camera.
+    Returns the error state of the object.
+*/
+
+QCamera::Error QCamera::error() const
+{
+    return d_func()->error;
+}
+
+QString QCamera::errorString() const
+{
+    return d_func()->errorString;
+}
+
+/*!
+    Starts the camera.
+
+    This can involve powering up the camera device and can be asynchronyous.
+
+    State is changed to QCamera::ActiveState if camera is started
+    succesfuly, otherwise error() signal is emited.
 */
 
 void QCamera::start()
 {
     Q_D(QCamera);
 
-    if(d->control)
+    if (d->control)
         d->control->start();
+    else {
+        d->errorString = tr("The camera service is missing");
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                    Q_ARG(QCamera::Error, QCamera::ServiceMissingError));
+    }
 }
 
 /*!
-    Stop camera.
+    Stops the camera.
 */
 
 void QCamera::stop()
@@ -227,39 +295,21 @@ void QCamera::unlockFocus()
 }
 
 /*!
-    Returns a list of camera device's available.
+    Returns a list of camera device's available from the default service provider.
 */
 
-QStringList QCamera::devices() const
+QList<QByteArray> QCamera::availableDevices()
 {
-    if(d_func()->service)
-        return d_func()->service->supportedEndpoints(QAbstractMediaService::VideoInput);
-
-    return QStringList();
-}
-
-/*!
-    Set the camera device being used to \a device
-*/
-
-void QCamera::setDevice(const QString& device)
-{
-    Q_D(QCamera);
-
-    if (d->service)
-        d->service->setActiveEndpoint(QAbstractMediaService::VideoInput, device);
+    return QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray(Q_MEDIASERVICE_CAMERA));
 }
 
 /*!
     Returns the description of the \a device.
 */
 
-QString QCamera::deviceDescription(const QString &device) const
+QString QCamera::deviceDescription(const QByteArray &device)
 {
-    if (d_func()->service)
-        return d_func()->service->endpointDescription(QAbstractMediaService::VideoInput, device);
-    else
-        return device;
+    return QMediaServiceProvider::defaultServiceProvider()->deviceDescription(QByteArray(Q_MEDIASERVICE_CAMERA), device);
 }
 
 QCamera::State QCamera::state() const
@@ -268,15 +318,6 @@ QCamera::State QCamera::state() const
         return (QCamera::State)d_func()->control->state();
 
     return QCamera::StoppedState;
-}
-
-/*!
-    Returns true if camera device available.
-*/
-
-bool QCamera::isValid() const
-{
-    return d_func()->control != NULL;
 }
 
 /*!
@@ -515,12 +556,29 @@ int QCamera::isoSensitivity() const
 }
 
 /*!
-    Returns the sensitivity ranges available.
+    Returns the smallest supported ISO sensitivity.
 */
-
-QPair<int, int> QCamera::supportedIsoSensitivityRange() const
+int QCamera::minimumIsoSensitivity() const
 {
-    return d_func()->exposureControl ? d_func()->exposureControl->supportedIsoSensitivityRange() : qMakePair<int,int>(-1,-1);
+    return d_func()->exposureControl ? d_func()->exposureControl->minimumIsoSensitivity() : -1;
+}
+
+/*!
+    Returns the largest supported ISO sensitivity.
+*/
+int QCamera::maximumIsoSensitivity() const
+{
+    return d_func()->exposureControl ? d_func()->exposureControl->maximumIsoSensitivity() : -1;
+}
+
+/*!
+    Returns the list of ISO senitivities if camera supports
+    only fixed set of ISO sensitivity values, otherwise returns an empty list.
+*/
+QList<int> QCamera::supportedIsoSensitivities() const
+{
+    return d_func()->exposureControl ? d_func()->exposureControl->supportedIsoSensitivities()
+                                     : QList<int>();
 }
 
 /*!
@@ -544,7 +602,22 @@ void QCamera::setAutoIsoSensitivity()
 }
 
 /*!
-    Returns the current aperture.
+    \property QCamera::shutterSpeed
+    \brief ?
+*/
+
+/*!
+    \property QCamera::isoSensitivity
+    \brief ?
+*/
+
+/*!
+    \property QCamera::aperture
+    \brief ?
+*/
+
+/*!
+    Returns the current aperture as n F number.
 */
 
 qreal QCamera::aperture() const
@@ -553,12 +626,36 @@ qreal QCamera::aperture() const
 }
 
 /*!
-    Returns the supported aperture ranges available.
+    Returns the smallest supported aperture as an F number,
+    corresponding to wide open lens.
+    For example if the camera lenses supports aperture range from
+    F/1.4 to F/32, the minumum aperture value will be 1.4,
+    the maximum - 32
 */
-
-QPair<qreal, qreal> QCamera::supportedApertureRange() const
+qreal QCamera::minimumAperture() const
 {
-    return d_func()->exposureControl ? d_func()->exposureControl->supportedApertureRange() : qMakePair<qreal,qreal>(-1,-1);
+    return d_func()->exposureControl ? d_func()->exposureControl->minimumAperture() : -1.0;
+}
+
+/*!
+    Returns the largest supported aperture.
+
+    \sa minimumAperture()
+    \sa aperture()
+*/
+qreal QCamera::maximumAperture() const
+{
+    return d_func()->exposureControl ? d_func()->exposureControl->maximumAperture() : -1.0;
+}
+
+/*!
+    Returns the list of apertures if camera supports
+    only fixed set of aperture values, otherwise returns an empty list.
+*/
+QList<qreal> QCamera::supportedApertures() const
+{
+    return d_func()->exposureControl ? \
+           d_func()->exposureControl->supportedApertures() : QList<qreal>();
 }
 
 /*!
@@ -582,7 +679,7 @@ void QCamera::setAutoAperture()
 }
 
 /*!
-    Return the current shutter speed.
+    Return the current shutter speed in seconds.
 */
 
 qreal QCamera::shutterSpeed() const
@@ -590,13 +687,33 @@ qreal QCamera::shutterSpeed() const
     return d_func()->exposureControl ? d_func()->exposureControl->shutterSpeed() : -1;
 }
 
-/*!
-    Return the shutter speed ranges available.
-*/
 
-QPair<qreal, qreal> QCamera::supportedShutterSpeedRange() const
+/*!
+    Returns the smallest supported shutter speed.
+*/
+qreal QCamera::minimumShutterSpeed() const
 {
-    return d_func()->exposureControl ? d_func()->exposureControl->supportedShutterSpeedRange() : qMakePair<qreal,qreal>(-1,-1);
+    return d_func()->exposureControl ? d_func()->exposureControl->minimumShutterSpeed() : -1.0;
+}
+
+/*!
+    Returns the largest supported shutter speed.
+
+    \sa shutterSpeed()
+*/
+qreal QCamera::maximumShutterSpeed() const
+{
+    return d_func()->exposureControl ? d_func()->exposureControl->maximumShutterSpeed() : -1.0;
+}
+
+/*!
+    Returns the list of shutter speed values if camera supports
+    only fixed set of shutter speed values, otherwise returns an empty list.
+*/
+QList<qreal> QCamera::supportedShutterSpeeds() const
+{
+    return d_func()->exposureControl ?
+            d_func()->exposureControl->supportedShutterSpeeds() : QList<qreal>();
 }
 
 /*!
@@ -675,12 +792,32 @@ bool QCamera::isFocusLocked() const
 }
 
 /*!
-    Returns the session object being controlled by this recorder.
+  \property QCamera::readyForCapture
+   Indicates the camera is ready to capture an image immediately.
 */
 
-QAbstractMediaService *QCamera::service() const
+bool QCamera::isReadyForCapture() const
 {
-    return d_func()->service;
+    return d_func()->captureControl ? d_func()->captureControl->isReadyForCapture() : false;
+}
+
+/*!
+    Capture the image and save it to file.
+    This operation is asynchronous in majority of cases,
+    followed by signal QCamera::imageCaptured() or error()
+*/
+void QCamera::capture(const QString &file)
+{
+    Q_D(QCamera);
+
+    if (d->captureControl) {
+        d->captureControl->capture(file);
+    } else {
+        d->error = NotReadyToCaptureError;
+        d->errorString = tr("Device does not support images capture.");
+
+        emit error(d->error);
+    }
 }
 
 
@@ -706,6 +843,8 @@ QAbstractMediaService *QCamera::service() const
     \value ManualFocus          Manual focus mode.
     \value AutoFocus            One-shot auto focus mode.
     \value ContinuousFocus      Continuous auto focus mode.
+    \value InfinityFocus        ?
+    \value HyperfocalFocus      ?
 */
 
 /*!
@@ -807,3 +946,45 @@ QAbstractMediaService *QCamera::service() const
     Signal emitted when zoom value changes to new \a value.
 */
 
+/*!
+    \fn void QCamera::apertureChanged(qreal value)
+
+    Signal emitted when aperature changes to \a value.
+*/
+
+/*!
+    \fn void QCamera::apertureRangeChanged()
+
+    Signal emitted when aperature range has changed.
+*/
+
+/*!
+    \fn void QCamera::imageCaptured(const QString &fileName, const QImage &preview)
+
+    Signal emitted when image ready with \a fileName and \a preview.
+*/
+
+/*!
+    \fn void QCamera::isoSensitivityChanged(int value)
+
+    Signal emitted when sensitivity changes to \a value.
+*/
+
+/*!
+    \enum QCamera::Error
+
+    \value  NoError      No errors have occurred.
+    \value  CameraError  An error has occurred.
+    \value  NotReadyToCaptureError System resource not available.
+    \value  InvalidRequestError System resource doesn't support functionality.
+    \value  ServiceMissingError No service available.
+*/
+
+/*!
+    \fn void QCamera::error(QCamera::Error value)
+
+    Signal emitted when error state changes to \a value.
+*/
+
+
+#include "moc_qcamera.cpp"

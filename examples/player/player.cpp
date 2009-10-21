@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -36,8 +43,9 @@
 
 #include "playercontrols.h"
 #include "playlistmodel.h"
+#include "videowidget.h"
 
-#include <qabstractmediaservice.h>
+#include <qmediaservice.h>
 #include <qmediaplaylist.h>
 
 #include <QtGui>
@@ -60,15 +68,12 @@ Player::Player(QWidget *parent)
             this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
 
-    videoWidget = new QVideoWidget(player);
-
-    connect(videoWidget, SIGNAL(displayModeChanged(QVideoWidget::DisplayMode)),
-            this, SLOT(displayModeChanged(QVideoWidget::DisplayMode)));
+    videoWidget = new VideoWidget(player);
 
     playlistModel = new PlaylistModel(this);
     playlistModel->setPlaylist(playlist);
 
-    playlistView = new QTableView;
+    playlistView = new QListView;
     playlistView->setModel(playlistModel);
     playlistView->setCurrentIndex(playlistModel->index(playlist->currentPosition(), 0));
 
@@ -91,24 +96,27 @@ Player::Player(QWidget *parent)
     connect(controls, SIGNAL(play()), player, SLOT(play()));
     connect(controls, SIGNAL(pause()), player, SLOT(pause()));
     connect(controls, SIGNAL(stop()), player, SLOT(stop()));
-    connect(controls, SIGNAL(next()), playlist, SLOT(advance()));
-    connect(controls, SIGNAL(previous()), playlist, SLOT(back()));
+    connect(controls, SIGNAL(next()), playlist, SLOT(next()));
+    connect(controls, SIGNAL(previous()), playlist, SLOT(previous()));
     connect(controls, SIGNAL(changeVolume(int)), player, SLOT(setVolume(int)));
     connect(controls, SIGNAL(changeMuting(bool)), player, SLOT(setMuted(bool)));
-    connect(controls, SIGNAL(changeRate(float)), player, SLOT(setPlaybackRate(float)));
+    connect(controls, SIGNAL(changeRate(qreal)), player, SLOT(setPlaybackRate(qreal)));
 
     connect(player, SIGNAL(stateChanged(QMediaPlayer::State)),
             controls, SLOT(setState(QMediaPlayer::State)));
     connect(player, SIGNAL(volumeChanged(int)), controls, SLOT(setVolume(int)));
     connect(player, SIGNAL(mutingChanged(bool)), controls, SLOT(setMuted(bool)));
 
-    QPushButton *fullscreenButton = new QPushButton(tr("Fullscreen"));
-    fullscreenButton->setCheckable(true);
+    QPushButton *fullScreenButton = new QPushButton(tr("FullScreen"));
+    fullScreenButton->setCheckable(true);
 
-    connect(fullscreenButton, SIGNAL(clicked(bool)), this, SLOT(setFullscreen(bool)));
-    connect(this, SIGNAL(fullscreenChanged(bool)), fullscreenButton, SLOT(setChecked(bool)));
-
-    fullscreenButton->setEnabled(videoWidget != 0);
+    if (videoWidget != 0) {
+        connect(fullScreenButton, SIGNAL(clicked(bool)), videoWidget, SLOT(setFullScreen(bool)));
+        connect(videoWidget, SIGNAL(fullScreenChanged(bool)),
+                fullScreenButton, SLOT(setChecked(bool)));
+    } else {
+        fullScreenButton->setEnabled(false);
+    }
 
     QPushButton *colorButton = new QPushButton(tr("Color Options..."));
     if (videoWidget)
@@ -116,27 +124,24 @@ Player::Player(QWidget *parent)
     else
         colorButton->setEnabled(false);
 
+    QBoxLayout *displayLayout = new QHBoxLayout;
+    if (videoWidget)
+        displayLayout->addWidget(videoWidget, 2);
+    else
+        displayLayout->addWidget(coverLabel, 2);
+    displayLayout->addWidget(playlistView);
+
     QBoxLayout *controlLayout = new QHBoxLayout;
     controlLayout->setMargin(0);
     controlLayout->addWidget(openButton);
     controlLayout->addStretch(1);
     controlLayout->addWidget(controls);
     controlLayout->addStretch(1);
-    controlLayout->addWidget(fullscreenButton);
+    controlLayout->addWidget(fullScreenButton);
     controlLayout->addWidget(colorButton);
 
     QBoxLayout *layout = new QVBoxLayout;
-    if (videoWidget) {
-        QSplitter *splitter = new QSplitter(Qt::Vertical);
-
-        splitter->addWidget(videoWidget);
-        splitter->addWidget(playlistView);
-
-        layout->addWidget(splitter);
-    } else {
-        layout->addWidget(coverLabel, 0, Qt::AlignCenter);
-        layout->addWidget(playlistView);
-    }
+    layout->addLayout(displayLayout);
     layout->addWidget(slider);
     layout->addLayout(controlLayout);
 
@@ -153,14 +158,8 @@ Player::~Player()
 void Player::open()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames();
-
-    foreach (QString const &fileName, fileNames) {
-#ifndef Q_OS_WIN
-        playlist->appendItem(QMediaSource(QUrl(QLatin1String("file://") + fileName)));
-#else
-        playlist->appendItem(QMediaSource(QUrl(QLatin1String("file:///") + fileName)));
-#endif
-    }
+    foreach (QString const &fileName, fileNames)
+        playlist->appendItem(QUrl::fromLocalFile(fileName));
 }
 
 void Player::durationChanged(qint64 duration)
@@ -175,14 +174,14 @@ void Player::positionChanged(qint64 progress)
 
 void Player::metaDataChanged()
 {
-    //qDebug() << "update metadata" << player->metaData(QAbstractMediaObject::Title).toString();
+    //qDebug() << "update metadata" << player->metaData(QtMedia::Title).toString();
     if (player->isMetaDataAvailable()) {
         setTrackInfo(QString("%1 - %2")
-                .arg(player->metaData(QAbstractMediaObject::AlbumArtist).toString())
-                .arg(player->metaData(QAbstractMediaObject::Title).toString()));
+                .arg(player->metaData(QtMedia::AlbumArtist).toString())
+                .arg(player->metaData(QtMedia::Title).toString()));
 
         if (coverLabel) {
-            QUrl uri = player->metaData(QAbstractMediaObject::CoverArtUriLarge).value<QUrl>();
+            QUrl uri = player->metaData(QtMedia::CoverArtUriLarge).value<QUrl>();
 
             coverLabel->setPixmap(!uri.isEmpty()
                     ? QPixmap(uri.toString())
@@ -272,17 +271,6 @@ void Player::setStatusInfo(const QString &info)
         setWindowTitle(QString("%1 | %2").arg(trackInfo).arg(statusInfo));
     else
         setWindowTitle(trackInfo);
-}
-
-void Player::setFullscreen(bool fullscreen)
-{
-    videoWidget->setDisplayMode(
-            fullscreen ? QVideoWidget::FullscreenDisplay : QVideoWidget::WindowedDisplay);
-}
-
-void Player::displayModeChanged(QVideoWidget::DisplayMode mode)
-{
-    emit fullscreenChanged(mode == QVideoWidget::FullscreenDisplay);
 }
 
 void Player::showColorDialog()

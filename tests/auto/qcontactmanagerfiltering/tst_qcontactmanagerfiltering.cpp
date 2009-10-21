@@ -47,7 +47,7 @@
 
 Q_DECLARE_METATYPE(QVariant)
 Q_DECLARE_METATYPE(QContactManager*)
-Q_DECLARE_METATYPE(QList<QUniqueId>)
+Q_DECLARE_METATYPE(QList<QContactLocalId>)
 
 /*
  * Global variables:
@@ -71,11 +71,11 @@ private:
     bool isSuperset(const QContact& ca, const QContact& cb);
 
     QPair<QString, QString> definitionAndField(QContactManager *cm, QVariant::Type type, bool *nativelyFilterable);
-    QList<QUniqueId> prepareModel(QContactManager* cm); // add the standard contacts
-    QString convertIds(QList<QUniqueId> allIds, QList<QUniqueId> ids); // convert back to "abcd"
+    QList<QContactLocalId> prepareModel(QContactManager* cm); // add the standard contacts
+    QString convertIds(QList<QContactLocalId> allIds, QList<QContactLocalId> ids); // convert back to "abcd"
 
     QMap<QContactManager*, QMap<QString, QPair<QString, QString> > > defAndFieldNamesForTypePerManager;
-    QMultiMap<QContactManager*, QUniqueId> contactsAddedToManagers;
+    QMultiMap<QContactManager*, QContactLocalId> contactsAddedToManagers;
     QMultiMap<QContactManager*, QString> detailDefinitionsAddedToManagers;
     QList<QContactManager*> managers;
 
@@ -94,9 +94,6 @@ private slots:
 
     void detailVariantFiltering();
     void detailVariantFiltering_data();
-
-    void groupMembershipFiltering();
-    void groupMembershipFiltering_data();
 
     void intersectionFiltering();
     void intersectionFiltering_data();
@@ -149,7 +146,7 @@ tst_QContactManagerFiltering::tst_QContactManagerFiltering()
 
     // for each manager that we wish to test, prepare the model.
     foreach (QContactManager* cm, managers) {
-        QList<QUniqueId> addedContacts = prepareModel(cm);
+        QList<QContactLocalId> addedContacts = prepareModel(cm);
         if (addedContacts != contactsAddedToManagers.values(cm)) {
             qDebug() << "prepareModel returned:" << addedContacts;
             qDebug() << "contactsAdded are:    " << contactsAddedToManagers.values(cm);
@@ -164,8 +161,8 @@ tst_QContactManagerFiltering::~tst_QContactManagerFiltering()
 {
     // first, remove any contacts that we've added to any managers.
     foreach (QContactManager* manager, managers) {
-        QList<QUniqueId> contactIds = contactsAddedToManagers.values(manager);
-        foreach (const QUniqueId& cid, contactIds) {
+        QList<QContactLocalId> contactIds = contactsAddedToManagers.values(manager);
+        foreach (const QContactLocalId& cid, contactIds) {
             manager->removeContact(cid);
         }
     }
@@ -186,12 +183,13 @@ tst_QContactManagerFiltering::~tst_QContactManagerFiltering()
     defAndFieldNamesForTypePerManager.clear();
 }
 
-QString tst_QContactManagerFiltering::convertIds(QList<QUniqueId> allIds, QList<QUniqueId> ids)
+QString tst_QContactManagerFiltering::convertIds(QList<QContactLocalId> allIds, QList<QContactLocalId> ids)
 {
     QString ret;
-    /* Expected is of the form "abcd".. */
+    /* Expected is of the form "abcd".. it's possible that there are some extra contacts */
     for (int i = 0; i < ids.size(); i++) {
-        ret += ('a' + allIds.indexOf(ids.at(i)));
+        if (allIds.indexOf(ids.at(i)) >= 0)
+            ret += ('a' + allIds.indexOf(ids.at(i)));
     }
 
     return ret;
@@ -276,16 +274,18 @@ void tst_QContactManagerFiltering::detailStringFiltering()
     QFETCH(QString, expected);
     QFETCH(int, matchflags);
 
-    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
-    QList<QUniqueId> ids;
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> ids;
 
     QContactDetailFilter df;
     df.setDetailDefinitionName(defname, fieldname);
     df.setValue(value);
     df.setMatchFlags(Qt::MatchFlags(matchflags));
 
-    /* At this point, since we're using memory, assume the filter isn't really supported */
-    QVERIFY(cm->information()->filterSupported(df) == false);
+    if (cm->managerName() == "memory") {
+        /* At this point, since we're using memory, assume the filter isn't really supported */
+        QVERIFY(cm->information()->filterSupported(df) == false);
+    }
 
     ids = cm->contacts(df);
 
@@ -382,12 +382,12 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
         /*
          * Dates
          * A has QDate(1988, 1, 26)
-         * B has QDate(1492, 5, 5)
-         * D has QDate(1770, 10, 1)
+         * B has QDate(2492, 5, 5)
+         * D has QDate(2770, 10, 1)
          */
         const QDate ad(1988, 1, 26);
-        const QDate bd(1492, 5, 5);
-        const QDate dd(1770, 10, 1);
+        const QDate bd(2492, 5, 5);
+        const QDate dd(2770, 10, 1);
 
         defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Date");
         if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
@@ -399,10 +399,16 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
             QTest::newRow("date value (wrong field, no match)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(QDate(2100,5,13)) << es;
             newMRow("date value", manager) << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(ad) << "a";
             QTest::newRow("date value (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(ad) << es;
-            QTest::newRow("date value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(bd)<< "b";
             QTest::newRow("date value 2 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(bd) << es;
-            QTest::newRow("date value 3") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(dd)<< "d";
             QTest::newRow("date value 3 (wrong field)") << manager << defAndFieldNames.first << "x-nokia-mobility-contacts-test-invalidFieldName" << true << QVariant(dd) << es;
+            /*
+             * POOM date type only supports the date range:1900-2999
+             * http://msdn.microsoft.com/en-us/library/aa908155.aspx
+             */
+            if (manager->managerName() != "wince") {
+                QTest::newRow("date value 2") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(bd)<< "b";
+                QTest::newRow("date value 3") << manager << defAndFieldNames.first << defAndFieldNames.second << true << QVariant(dd)<< "d";
+            }
         }
 
         /*
@@ -536,16 +542,18 @@ void tst_QContactManagerFiltering::detailVariantFiltering()
     QFETCH(QVariant, value);
     QFETCH(QString, expected);
 
-    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
-    QList<QUniqueId> ids;
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> ids;
 
     QContactDetailFilter df;
     df.setDetailDefinitionName(defname, fieldname);
     if (setValue)
         df.setValue(value);
 
-    /* At this point, since we're using memory, assume the filter isn't really supported */
-    QVERIFY(cm->information()->filterSupported(df) == false);
+    if (cm->managerName() == "memory") {
+        /* At this point, since we're using memory, assume the filter isn't really supported */
+        QVERIFY(cm->information()->filterSupported(df) == false);
+    }
 
     ids = cm->contacts(df);
 
@@ -712,8 +720,8 @@ void tst_QContactManagerFiltering::rangeFiltering()
     QContactDetailRangeFilter::RangeFlags rangeflags = (QContactDetailRangeFilter::RangeFlags)rangeflagsi;
     Qt::MatchFlags matchflags = (Qt::MatchFlags) matchflagsi;
 
-    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
-    QList<QUniqueId> ids;
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> ids;
 
     /* Build the range filter */
     QContactDetailRangeFilter drf;
@@ -725,72 +733,15 @@ void tst_QContactManagerFiltering::rangeFiltering()
     if (setmfs)
         drf.setMatchFlags(matchflags);
 
-    /* At this point, since we're using memory, assume the filter isn't really supported */
-    QContactManagerInfo *info = cm->information();
-    QVERIFY(info->filterSupported(drf) == false);
-
+    if (cm->managerName() == "memory") {
+        /* At this point, since we're using memory, assume the filter isn't really supported */
+        QContactManagerInfo *info = cm->information();
+        QVERIFY(info->filterSupported(drf) == false);
+    }
     ids = cm->contacts(drf);
 
     QString output = convertIds(contacts, ids);
     QCOMPARE(output, expected);
-}
-
-void tst_QContactManagerFiltering::groupMembershipFiltering_data()
-{
-    QTest::addColumn<QContactManager *>("cm");
-    QTest::addColumn<QString>("expectedone");
-    QTest::addColumn<QString>("expectedtwo");
-
-    QString es; // empty string.
-
-    for (int i = 0; i < managers.size(); i++) {
-        QContactManager *manager = managers.at(i);
-        QTest::newRow("1") << manager << "abcd" << es;
-        QTest::newRow("2") << manager << "abcd" << "abcd";
-        QTest::newRow("3") << manager << "ad" << "ab";
-        QTest::newRow("4") << manager << es << "c";
-    }
-}
-
-void tst_QContactManagerFiltering::groupMembershipFiltering()
-{
-    QFETCH(QContactManager*, cm);
-    QFETCH(QString, expectedone);
-    QFETCH(QString, expectedtwo);
-
-    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
-    QList<QUniqueId> idsone, idstwo;
-
-    QContactGroup g1, g2;
-    g1.setName("GroupOne");
-    g2.setName("GroupTwo");
-
-    // add the specified members to the specified groups
-    for (int i = 0; i < expectedone.size(); i++)
-        g1.addMember(contacts.at(expectedone.at(i).toLower().toAscii() - 'a'));
-    for (int i = 0; i < expectedtwo.size(); i++)
-        g2.addMember(contacts.at(expectedtwo.at(i).toLower().toAscii() - 'a'));
-
-    // save them to the manager.
-    cm->saveGroup(&g1);
-    cm->saveGroup(&g2);
-
-    // build the group membership filters
-    QContactGroupMembershipFilter cg1f, cg2f;
-    cg1f.setGroupId(g1.id());
-    cg2f.setGroupId(g2.id());
-
-    /* At this point, since we're using memory, assume the filter isn't really supported */
-    QVERIFY(cm->information()->filterSupported(cg1f) == false);
-
-    idsone = cm->contacts(cg1f);
-    idstwo = cm->contacts(cg2f);
-
-    QString output = convertIds(contacts, idsone);
-    QCOMPARE(output, expectedone);
-
-    output = convertIds(contacts, idstwo);
-    QCOMPARE(output, expectedtwo);
 }
 
 void tst_QContactManagerFiltering::intersectionFiltering_data()
@@ -1223,8 +1174,8 @@ void tst_QContactManagerFiltering::intersectionFiltering()
             resultFilter = *z && *y;
     }
 
-    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
-    QList<QUniqueId> ids;
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> ids;
 
     ids = cm->contacts(resultFilter);
 
@@ -1666,8 +1617,8 @@ void tst_QContactManagerFiltering::unionFiltering()
             resultFilter = *z || *y;
     }
 
-    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
-    QList<QUniqueId> ids;
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> ids;
 
     ids = cm->contacts(resultFilter);
 
@@ -1731,8 +1682,8 @@ void tst_QContactManagerFiltering::sorting()
     Qt::SortOrder direction = (Qt::SortOrder)directioni;
     QContactSortOrder::BlankPolicy blankpolicy = (QContactSortOrder::BlankPolicy)blankpolicyi;
 
-    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
-    QList<QUniqueId> ids;
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> ids;
 
     /* Build the sort order */
     QContactSortOrder s;
@@ -1743,6 +1694,21 @@ void tst_QContactManagerFiltering::sorting()
 
     ids = cm->contacts(s);
     QString output = convertIds(contacts, ids);
+
+    // It's possible to get some contacts back in an arbitrary order (since we single sort)
+    // so we need to handle the case where e, f & g come back in any order [with first name]
+
+    // so we just make sure that e,f,g appear once in the output, and remove f,g from both strings
+    if (defname == QContactName::DefinitionName && fieldname == QContactName::FieldFirst) {
+        QVERIFY(output.count('e') == 1);
+        QVERIFY(output.count('f') == 1);
+        QVERIFY(output.count('g') == 1);
+        output.remove('f');
+        output.remove('g');
+        expected.remove('f');
+        expected.remove('g');
+    }
+
     QCOMPARE(output, expected);
 
     /* Now do a check with a filter involved; the filter should not affect the sort order */
@@ -1750,6 +1716,15 @@ void tst_QContactManagerFiltering::sorting()
     presenceName.setDetailDefinitionName(QContactName::DefinitionName);
     ids = cm->contacts(presenceName, s);
     output = convertIds(contacts, ids);
+
+    if (defname == QContactName::DefinitionName && fieldname == QContactName::FieldFirst) {
+        QVERIFY(output.count('e') == 1);
+        QVERIFY(output.count('f') == 1);
+        QVERIFY(output.count('g') == 1);
+        output.remove('f');
+        output.remove('g');
+    }
+
     QCOMPARE(output, expected);
 }
 
@@ -1768,6 +1743,7 @@ void tst_QContactManagerFiltering::multiSorting_data()
     QTest::addColumn<int>("ssdirectioni");
 
     QTest::addColumn<QString>("expected");
+    QTest::addColumn<bool>("efgunstable");
 
 
     QString es;
@@ -1785,61 +1761,61 @@ void tst_QContactManagerFiltering::multiSorting_data()
         QTest::newRow("1") << manager
                            << true << namedef << firstname << (int)(Qt::AscendingOrder)
                            << true << namedef << lastname << (int)(Qt::AscendingOrder)
-                           << "abcdefg";
+                           << "abcdefg" << false;
         QTest::newRow("2") << manager
                            << true << namedef << firstname << (int)(Qt::AscendingOrder)
                            << true << namedef << lastname << (int)(Qt::DescendingOrder)
-                           << "abcdgfe";
+                           << "abcdgfe" << false;
         QTest::newRow("3") << manager
                            << true << namedef << firstname << (int)(Qt::DescendingOrder)
                            << true << namedef << lastname << (int)(Qt::AscendingOrder)
-                           << "efgdcba";
+                           << "efgdcba" << false;
         QTest::newRow("4") << manager
                            << true << namedef << firstname << (int)(Qt::DescendingOrder)
                            << true << namedef << lastname << (int)(Qt::DescendingOrder)
-                           << "gfedcba";
+                           << "gfedcba" << false;
 
         QTest::newRow("5") << manager
                            << true << namedef << firstname << (int)(Qt::AscendingOrder)
                            << false << namedef << lastname << (int)(Qt::AscendingOrder)
-                           << "abcdefg";
+                           << "abcdefg" << true;
 
         QTest::newRow("5b") << manager
                            << true << namedef << firstname << (int)(Qt::AscendingOrder)
                            << true << es << es << (int)(Qt::AscendingOrder)
-                           << "abcdefg";
+                           << "abcdefg" << true;
 
         QTest::newRow("6") << manager
                            << false << namedef << firstname << (int)(Qt::AscendingOrder)
                            << true << namedef << lastname << (int)(Qt::AscendingOrder)
-                           << "bacdefg";
+                           << "bacdefg" << false;
 
         QTest::newRow("7") << manager
                            << false << namedef << firstname << (int)(Qt::AscendingOrder)
                            << false << namedef << lastname << (int)(Qt::AscendingOrder)
-                           << "abcdefg";
+                           << "abcdefg" << false; // XXX Isn't this totally unstable?
 
         if (!stringDefAndFieldNames.first.isEmpty() && !stringDefAndFieldNames.second.isEmpty()) {
             QTest::newRow("8") << manager
                                << true << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder)
                                << false << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::DescendingOrder)
-                               << "eabcdgf";
+                               << "eabcdgf" << false;
 
             QTest::newRow("8b") << manager
                                << true << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder)
                                << false << es << es << (int)(Qt::DescendingOrder)
-                               << "eabcdgf";
+                               << "eabcdgf" << false;
         }
 
         QTest::newRow("9") << manager
                            << true << phonedef << numberfield << (int)(Qt::AscendingOrder)
                            << true << namedef << lastname << (int)(Qt::DescendingOrder)
-                           << "abgfedc";
+                           << "abgfedc" << false;
 
         QTest::newRow("10") << manager
                             << true << namedef << firstname << (int)(Qt::AscendingOrder)
                             << true << namedef << firstname << (int)(Qt::DescendingOrder)
-                            << "abcdefg";
+                            << "abcdefg" << true;
 
     }
 }
@@ -1856,11 +1832,12 @@ void tst_QContactManagerFiltering::multiSorting()
     QFETCH(QString, ssfieldname);
     QFETCH(int, ssdirectioni);
     QFETCH(QString, expected);
+    QFETCH(bool, efgunstable);
 
     Qt::SortOrder fsdirection = (Qt::SortOrder)fsdirectioni;
     Qt::SortOrder ssdirection = (Qt::SortOrder)ssdirectioni;
 
-    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
 
     /* Build the sort orders */
     QContactSortOrder fs;
@@ -1875,8 +1852,21 @@ void tst_QContactManagerFiltering::multiSorting()
     if (secondsort)
         sortOrders.append(ss);
 
-    QList<QUniqueId> ids = cm->contacts(sortOrders);
+    QList<QContactLocalId> ids = cm->contacts(sortOrders);
     QString output = convertIds(contacts, ids);
+
+    // Just like the single sort test, we might get some contacts back in indeterminate order
+    // (but their relative position with other contacts should not change)
+    if (efgunstable) {
+        QVERIFY(output.count('e') == 1);
+        QVERIFY(output.count('f') == 1);
+        QVERIFY(output.count('g') == 1);
+        output.remove('f');
+        output.remove('g');
+        expected.remove('f');
+        expected.remove('g');
+    }
+
     QCOMPARE(output, expected);
 }
 
@@ -1932,54 +1922,79 @@ void tst_QContactManagerFiltering::actionFiltering_data()
     QString es;
     QVariant ev;
 
+
     for (int i = 0; i < managers.size(); i++) {
         QContactManager *manager = managers.at(i);
+        QPair<QString, QString> booleanDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Bool");
+        QPair<QString, QString> integerDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
+        QPair<QString, QString> dateDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Date");
 
-        QTest::newRow("empty (any action matches)") << manager << es << es << -1 << ev << "abcd";
         newMRow("bad actionname", manager) << manager << "No such action" << es << -1 << ev << es;
         newMRow("bad vendor", manager) << manager << es << "Vendor missing" << -1 << ev << es;
+
+        QString expected;
+        if ( (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) 
+             ||
+             (!booleanDefAndFieldNames.first.isEmpty() && !booleanDefAndFieldNames.second.isEmpty()) ){
+                 expected = "abcd";
+        } else if (!dateDefAndFieldNames.first.isEmpty() && !dateDefAndFieldNames.second.isEmpty()) {
+            expected = "abd";
+        } else {
+            /* contact a,b have phone number, so at least phone number action can match them */
+            expected = "ab";
+        }
+
+        QTest::newRow("empty (any action matches)") << manager << es << es << -1 << ev << expected;
         /* versions are ignored if vendors are not specified */
-        newMRow("ignored version", manager) << manager << es << es << 793434 << ev << "abcd";
+        newMRow("ignored version", manager) << manager << es << es << 793434 << ev << expected;
 
-        newMRow("Number", manager) << manager << "Number" << es << -1 << ev << "abcd";
-        QTest::newRow("Number (IntegerCo)") << manager << "Number" << "IntegerCo" << -1 << ev << "abc";
-        QTest::newRow("Number (NumberCo)") << manager << "Number" << "NumberCo" << -1 << ev << "abcd";
-        QTest::newRow("Number (BooleanCo)") << manager << "Number" << "BooleanCo" << -1 << ev << es;
+        if (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) {
+            newMRow("Number", manager) << manager << "Number" << es << -1 << ev << "abcd";
+            QTest::newRow("Number (IntegerCo)") << manager << "Number" << "IntegerCo" << -1 << ev << "abc";
+            QTest::newRow("Number (NumberCo)") << manager << "Number" << "NumberCo" << -1 << ev << "abcd";
+            QTest::newRow("Number (BooleanCo)") << manager << "Number" << "BooleanCo" << -1 << ev << es;
 
-        QTest::newRow("Number (IntegerCo, good version)") << manager << "Number" << "IntegerCo" << 5 << ev << "abc";
-        QTest::newRow("Number (NumberCo, good version)") << manager << "Number" << "NumberCo" << 42 << ev << "abcd";
+            QTest::newRow("Number (IntegerCo, good version)") << manager << "Number" << "IntegerCo" << 5 << ev << "abc";
+            QTest::newRow("Number (NumberCo, good version)") << manager << "Number" << "NumberCo" << 42 << ev << "abcd";
 
-        QTest::newRow("Number (IntegerCo, bad version)") << manager << "Number" << "IntegerCo" << 345345 << ev << es;
-        QTest::newRow("Number (NumberCo, bad version)") << manager << "Number" << "NumberCo" << 7547544 << ev << es;
+            QTest::newRow("Number (IntegerCo, bad version)") << manager << "Number" << "IntegerCo" << 345345 << ev << es;
+            QTest::newRow("Number (NumberCo, bad version)") << manager << "Number" << "NumberCo" << 7547544 << ev << es;
 
-        /* versions are ignored if vendors are not specified */
-        QTest::newRow("Number (ignored version)") << manager << "Number" << es << 345345 << ev << "abcd";
+            /* versions are ignored if vendors are not specified */
+            QTest::newRow("Number (ignored version)") << manager << "Number" << es << 345345 << ev << "abcd";
 
-        /* Vendor specific */
-        newMRow("NumberCo", manager) << manager << es << "NumberCo" << -1 << ev << "abcd";
-        QTest::newRow("NumberCo (good version)") << manager << es << "NumberCo" << 42 << ev << "abcd";
-        QTest::newRow("NumberCo (bad version)") << manager << es << "NumberCo" << 41 << ev << es;
+            /* Vendor specific */
+            newMRow("NumberCo", manager) << manager << es << "NumberCo" << -1 << ev << "abcd";
+            QTest::newRow("NumberCo (good version)") << manager << es << "NumberCo" << 42 << ev << "abcd";
+            QTest::newRow("NumberCo (bad version)") << manager << es << "NumberCo" << 41 << ev << es;
 
-        newMRow("IntegerCo", manager) << manager << es << "IntegerCo" << -1 << ev << "abc";
-        QTest::newRow("IntegerCo (good version)") << manager << es << "IntegerCo" << 5 << ev << "abc";
-        QTest::newRow("IntegerCo (bad version)") << manager << es << "IntegerCo" << 41 << ev << es;
+            newMRow("IntegerCo", manager) << manager << es << "IntegerCo" << -1 << ev << "abc";
+            QTest::newRow("IntegerCo (good version)") << manager << es << "IntegerCo" << 5 << ev << "abc";
+            QTest::newRow("IntegerCo (bad version)") << manager << es << "IntegerCo" << 41 << ev << es;
+        }
 
+        if (!booleanDefAndFieldNames.first.isEmpty() && !booleanDefAndFieldNames.second.isEmpty()) {
+            /* Boolean testing */
+            newMRow("Boolean action", manager) << manager << "Boolean" << es << -1 << ev << "a";
+            newMRow("BooleanCo", manager) << manager << es << "BooleanCo" << -1 << ev << "a";
+            QTest::newRow("BooleanCo (good version)") << manager << es << "BooleanCo" << 3 << ev << "a";
+            QTest::newRow("BooleanCo (bad version)") << manager << es << "BooleanCo" << 3234243 << ev << es;
+        }
 
-        /* Boolean testing */
-        newMRow("Boolean action", manager) << manager << "Boolean" << es << -1 << ev << "a";
-        newMRow("BooleanCo", manager) << manager << es << "BooleanCo" << -1 << ev << "a";
-        QTest::newRow("BooleanCo (good version)") << manager << es << "BooleanCo" << 3 << ev << "a";
-        QTest::newRow("BooleanCo (bad version)") << manager << es << "BooleanCo" << 3234243 << ev << es;
+        if (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) {
+            /* Value filtering */
+            QTest::newRow("Any action matching 20") << manager << es << es << -1 << QVariant(20) << "b";
+            QTest::newRow("Any action matching 4.0") << manager << es << es << -1 << QVariant(4.0) << "bc";
+            QTest::newRow("NumberCo with 20") << manager << es << "NumberCo" << -1 << QVariant(20) << "b";
+            QTest::newRow("NumberCo with 4.0") << manager << es << "NumberCo" << -1 << QVariant(4.0) << "bc";
+            QTest::newRow("IntegerCo with 20") << manager << es << "IntegerCo" << -1 << QVariant(20) << "b";
+            QTest::newRow("IntegerCo with 4.0") << manager << es << "IntegerCo" << -1 << QVariant(4.0) << es;
+        }
 
-        /* Value filtering */
-        QTest::newRow("Any action matching 20") << manager << es << es << -1 << QVariant(20) << "b";
-        QTest::newRow("Any action matching 4.0") << manager << es << es << -1 << QVariant(4.0) << "bc";
-        QTest::newRow("NumberCo with 20") << manager << es << "NumberCo" << -1 << QVariant(20) << "b";
-        QTest::newRow("NumberCo with 4.0") << manager << es << "NumberCo" << -1 << QVariant(4.0) << "bc";
-        QTest::newRow("IntegerCo with 20") << manager << es << "IntegerCo" << -1 << QVariant(20) << "b";
-        QTest::newRow("IntegerCo with 4.0") << manager << es << "IntegerCo" << -1 << QVariant(4.0) << es;
-        newMRow("Boolean action matching true", manager) << manager << es << "BooleanCo" << -1 << QVariant(true) << "a";
-        newMRow("Boolean action matching false", manager) << manager << es << "BooleanCo" << -1 << QVariant(false) << es;
+        if (!booleanDefAndFieldNames.first.isEmpty() && !booleanDefAndFieldNames.second.isEmpty()) {
+            newMRow("Boolean action matching true", manager) << manager << es << "BooleanCo" << -1 << QVariant(true) << "a";
+            newMRow("Boolean action matching false", manager) << manager << es << "BooleanCo" << -1 << QVariant(false) << es;
+        }
 
         /* Recursive filtering */
         QTest::newRow("Recursive action 1") << manager << "IntersectionRecursive" << es << -1 << QVariant(false) << es;
@@ -1998,20 +2013,21 @@ void tst_QContactManagerFiltering::actionFiltering()
     QFETCH(int, version);
     QFETCH(QVariant, value);
     QFETCH(QString, expected);
-
+    
     /* Load the definition and field names for the various variant types for the current manager */
     defAndFieldNamesForTypeForActions = defAndFieldNamesForTypePerManager.value(cm);
+    if (!defAndFieldNamesForTypeForActions.isEmpty()) {
+        QContactActionFilter af;
+        af.setActionName(actionName);
+        af.setValue(value);
+        af.setVendor(vendorName, version);
 
-    QContactActionFilter af;
-    af.setActionName(actionName);
-    af.setValue(value);
-    af.setVendor(vendorName, version);
+        QList<QContactLocalId> ids = cm->contacts(af);
+        QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
 
-    QList<QUniqueId> ids = cm->contacts(af);
-    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
-
-    QString output = convertIds(contacts, ids);
-    QCOMPARE(output, expected);
+        QString output = convertIds(contacts, ids);
+        QCOMPARE(output, expected);
+    }
 }
 
 void tst_QContactManagerFiltering::idListFiltering_data()
@@ -2040,13 +2056,13 @@ void tst_QContactManagerFiltering::idListFiltering()
     QFETCH(QString, input);
     QFETCH(QString, expected);
 
-    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
-    QList<QUniqueId> ids;
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> ids;
 
     // 3 extra ids that (hopefully) won't exist
-    QUniqueId e = 0x54555657;
-    QUniqueId f = 0x96969696;
-    QUniqueId g = 0x44335566;
+    QContactLocalId e = 0x54555657;
+    QContactLocalId f = 0x96969696;
+    QContactLocalId g = 0x44335566;
 
     /* Convert the input to a list of ids */
     foreach(QChar c, input) {
@@ -2067,7 +2083,7 @@ void tst_QContactManagerFiltering::idListFiltering()
     }
 
     /* And do the search */
-    QContactIdListFilter idf;
+    QContactLocalIdFilter idf;
     idf.setIds(ids);
 
     // now reuse ids
@@ -2091,9 +2107,9 @@ void tst_QContactManagerFiltering::invalidFiltering()
 {
     QFETCH(QContactManager*, cm);
 
-    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
     QContactInvalidFilter f; // invalid
-    QList<QUniqueId> ids = cm->contacts(f);
+    QList<QContactLocalId> ids = cm->contacts(f);
     QVERIFY(ids.count() == 0);
 
     // Try unions/intersections of invalids too
@@ -2118,23 +2134,28 @@ void tst_QContactManagerFiltering::allFiltering()
 {
     QFETCH(QContactManager*, cm);
 
-    QList<QUniqueId> contacts = contactsAddedToManagers.values(cm);
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
     QContactFilter f; // default = permissive
-    QList<QUniqueId> ids = cm->contacts(f);
+    QList<QContactLocalId> ids = cm->contacts(f);
     QVERIFY(ids.count() == contacts.size());
+    QString output = convertIds(contacts, ids);
+    QString expected = convertIds(contacts, contacts); // :)
+    QCOMPARE(output, expected);
 
     // Try unions/intersections of defaults
     ids = cm->contacts(f || f);
-    QVERIFY(ids.count() == contacts.size());
+    output = convertIds(contacts, ids);
+    QCOMPARE(output, expected);
 
     ids = cm->contacts(f && f);
-    QVERIFY(ids.count() == contacts.size());
+    output = convertIds(contacts, ids);
+    QCOMPARE(output, expected);
 }
 
 void tst_QContactManagerFiltering::changelogFiltering_data()
 {
     QTest::addColumn<QContactManager *>("cm");
-    QTest::addColumn<QList<QUniqueId> >("contacts");
+    QTest::addColumn<QList<QContactLocalId> >("contacts");
     QTest::addColumn<int>("eventType");
     QTest::addColumn<QDateTime>("since");
     QTest::addColumn<QString>("expected");
@@ -2145,52 +2166,58 @@ void tst_QContactManagerFiltering::changelogFiltering_data()
 
     for (int i = 0; i < managers.size(); i++) {
         QContactManager *manager = managers.at(i);
-        QList<QUniqueId> contacts = contactsAddedToManagers.values(manager);
-        QContact a,b,c,d;
-        a = manager->contact(contacts.at(0));
-        b = manager->contact(contacts.at(1));
-        c = manager->contact(contacts.at(2));
-        d = manager->contact(contacts.at(3));
 
-        QDateTime ac = a.detail<QContactTimestamp>().created();
-        QDateTime bc = b.detail<QContactTimestamp>().created();
-        QDateTime cc = c.detail<QContactTimestamp>().created();
-        QDateTime dc = d.detail<QContactTimestamp>().created();
+        if (manager->information()->hasFeature(QContactManagerInfo::ChangeLogs)) {
+            QList<QContactLocalId> contacts = contactsAddedToManagers.values(manager);
+            QContact a,b,c,d;
+            a = manager->contact(contacts.at(0));
+            b = manager->contact(contacts.at(1));
+            c = manager->contact(contacts.at(2));
+            d = manager->contact(contacts.at(3));
 
-        QDateTime am = a.detail<QContactTimestamp>().lastModified();
-        QDateTime bm = b.detail<QContactTimestamp>().lastModified();
-        QDateTime cm = c.detail<QContactTimestamp>().lastModified();
-        QDateTime dm = d.detail<QContactTimestamp>().lastModified();
+            QDateTime ac = a.detail<QContactTimestamp>().created();
+            QDateTime bc = b.detail<QContactTimestamp>().created();
+            QDateTime cc = c.detail<QContactTimestamp>().created();
+            QDateTime dc = d.detail<QContactTimestamp>().created();
 
-        newMRow("Added since before start", manager) << manager << contacts << added << ac.addSecs(-1) << "abcdefg";
-        newMRow("Added since first", manager) << manager << contacts << added << ac << "abcdefg";
-        newMRow("Added since second", manager) << manager << contacts << added << bc << "bcdefg";
-        newMRow("Added since third", manager) << manager << contacts << added << cc << "cdefg";
-        newMRow("Added since fourth", manager) << manager << contacts << added << dc << "defg";
-        newMRow("Added since after fourth", manager) << manager << contacts << added << dc.addSecs(1) << "efg";
-        newMRow("Added since first changed", manager) << manager << contacts << added << am << "";
-        newMRow("Added since second changed", manager) << manager << contacts << added << bm << "";
-        newMRow("Added since third changed", manager) << manager << contacts << added << cm << "";
-        newMRow("Added since fourth changed", manager) << manager << contacts << added << cm << "";
+            QDateTime am = a.detail<QContactTimestamp>().lastModified();
+            QDateTime bm = b.detail<QContactTimestamp>().lastModified();
+            QDateTime cm = c.detail<QContactTimestamp>().lastModified();
+            QDateTime dm = d.detail<QContactTimestamp>().lastModified();
 
-        newMRow("Changed since before start", manager) << manager << contacts << changed << ac.addSecs(-1) << "abcdefg";
-        newMRow("Changed since first", manager) << manager << contacts << changed << ac << "abcdefg";
-        newMRow("Changed since second", manager) << manager << contacts << changed << bc << "abcdefg";
-        newMRow("Changed since third", manager) << manager << contacts << changed << cc << "abcdefg";
-        newMRow("Changed since fourth", manager) << manager << contacts << changed << dc << "abcdefg";
-        newMRow("Changed since after fourth", manager) << manager << contacts << changed << dc.addSecs(1) << "abcefg";
-        newMRow("Changed since first changed", manager) << manager << contacts << changed << am << "a";
-        newMRow("Changed since second changed", manager) << manager << contacts << changed << bm << "ab";
-        newMRow("Changed since third changed", manager) << manager << contacts << changed << cm << "abc";
-        newMRow("Changed since fourth changed", manager) << manager << contacts << changed << dm << "abcdefg";
+            newMRow("Added since before start", manager) << manager << contacts << added << ac.addSecs(-1) << "abcdefg";
+            newMRow("Added since first", manager) << manager << contacts << added << ac << "abcdefg";
+            newMRow("Added since second", manager) << manager << contacts << added << bc << "bcdefg";
+            newMRow("Added since third", manager) << manager << contacts << added << cc << "cdefg";
+            newMRow("Added since fourth", manager) << manager << contacts << added << dc << "defg";
+            newMRow("Added since after fourth", manager) << manager << contacts << added << dc.addSecs(1) << "efg";
+            newMRow("Added since first changed", manager) << manager << contacts << added << am << "";
+            newMRow("Added since second changed", manager) << manager << contacts << added << bm << "";
+            newMRow("Added since third changed", manager) << manager << contacts << added << cm << "";
+            newMRow("Added since fourth changed", manager) << manager << contacts << added << cm << "";
 
-        // These are currently useless..
-        newMRow("Removed since before start", manager) << manager << contacts << removed << ac.addSecs(-1) << "";
-        newMRow("Removed since first", manager) << manager << contacts << removed << ac << "";
-        newMRow("Removed since second", manager) << manager << contacts << removed << bc << "";
-        newMRow("Removed since third", manager) << manager << contacts << removed << cc << "";
-        newMRow("Removed since fourth", manager) << manager << contacts << removed << dc << "";
-        newMRow("Removed since after fourth", manager) << manager << contacts << removed << dc.addSecs(1) << "";
+            newMRow("Changed since before start", manager) << manager << contacts << changed << ac.addSecs(-1) << "abcdefg";
+            newMRow("Changed since first", manager) << manager << contacts << changed << ac << "abcdefg";
+            newMRow("Changed since second", manager) << manager << contacts << changed << bc << "abcdefg";
+            newMRow("Changed since third", manager) << manager << contacts << changed << cc << "abcdefg";
+            newMRow("Changed since fourth", manager) << manager << contacts << changed << dc << "abcdefg";
+            newMRow("Changed since after fourth", manager) << manager << contacts << changed << dc.addSecs(1) << "abcefg";
+            newMRow("Changed since first changed", manager) << manager << contacts << changed << am << "a";
+            newMRow("Changed since second changed", manager) << manager << contacts << changed << bm << "ab";
+            newMRow("Changed since third changed", manager) << manager << contacts << changed << cm << "abc";
+            newMRow("Changed since fourth changed", manager) << manager << contacts << changed << dm << "abcdefg";
+
+            // These are currently useless..
+            newMRow("Removed since before start", manager) << manager << contacts << removed << ac.addSecs(-1) << "";
+            newMRow("Removed since first", manager) << manager << contacts << removed << ac << "";
+            newMRow("Removed since second", manager) << manager << contacts << removed << bc << "";
+            newMRow("Removed since third", manager) << manager << contacts << removed << cc << "";
+            newMRow("Removed since fourth", manager) << manager << contacts << removed << dc << "";
+            newMRow("Removed since after fourth", manager) << manager << contacts << removed << dc.addSecs(1) << "";
+        } else {
+            // Stop spam and asserts with a single row
+            newMRow("Unsupported", manager) << manager << QList<QContactLocalId>() << added << QDateTime() << QString();
+        }
     }
 }
 
@@ -2200,17 +2227,21 @@ void tst_QContactManagerFiltering::changelogFiltering()
     QFETCH(QDateTime, since);
     QFETCH(QString, expected);
     QFETCH(QContactManager*, cm);
-    QFETCH(QList<QUniqueId>, contacts);
+    QFETCH(QList<QContactLocalId>, contacts);
 
-    QList<QUniqueId> ids;
+    if (cm->information()->hasFeature(QContactManagerInfo::ChangeLogs)) {
+        QList<QContactLocalId> ids;
 
-    QContactChangeLogFilter clf((QContactChangeLogFilter::EventType)eventType);
-    clf.setSince(since);
+        QContactChangeLogFilter clf((QContactChangeLogFilter::EventType)eventType);
+        clf.setSince(since);
 
-    ids = cm->contacts(clf);
+        ids = cm->contacts(clf);
 
-    QString output = convertIds(contacts, ids);
-    QCOMPARE(output, expected);
+        QString output = convertIds(contacts, ids);
+        QCOMPARE(output, expected);
+    } else {
+        QSKIP("Changelogs not supported by this manager.", SkipSingle);
+    }
 }
 
 QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContactManager *cm, QVariant::Type type, bool *nativelyFilterable)
@@ -2301,7 +2332,7 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
             detailDefinitionsAddedToManagers.insert(cm, definitionName); // cleanup stack.
         }
     } else {
-        qWarning() << "Unable to perform tests involving detail values of the" << type << "type: not supported by manager.";
+        qWarning() << "Unable to perform tests involving detail values of the" << type << "type: not supported by manager:" << cm->managerName();
     }
 
     result.first = definitionName;
@@ -2310,87 +2341,112 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
     return result;
 }
 
-QList<QUniqueId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
+QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
 {
     /* Discover the definition and field names required for testing */
     QMap<QString, QPair<QString, QString> > definitionDetails; // per value type string
     QPair<QString, QString> defAndFieldNames;
     bool nativelyFilterable;
+    // If the engine doesn't support changelogs, don't insert pauses.
+    bool supportsChangelog = cm->information()->hasFeature(QContactManagerInfo::ChangeLogs);
+    int napTime = supportsChangelog ? 2000 : 1;
 
     /* String */
     defAndFieldNames = definitionAndField(cm, QVariant::String, &nativelyFilterable);
-    definitionDetails.insert("String", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("String", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* Integer */
     defAndFieldNames = definitionAndField(cm, QVariant::Int, &nativelyFilterable);
-    definitionDetails.insert("Integer", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("Integer", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* Date time detail */
     defAndFieldNames = definitionAndField(cm, QVariant::DateTime, &nativelyFilterable);
-    definitionDetails.insert("DateTime", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("DateTime", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* double detail */
     defAndFieldNames = definitionAndField(cm, QVariant::Double, &nativelyFilterable);
-    definitionDetails.insert("Double", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("Double", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* bool */
     defAndFieldNames = definitionAndField(cm, QVariant::Bool, &nativelyFilterable);
-    definitionDetails.insert("Bool", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("Bool", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* long long */
     defAndFieldNames = definitionAndField(cm, QVariant::LongLong, &nativelyFilterable);
-    definitionDetails.insert("LongLong", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("LongLong", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* unsigned long long */
     defAndFieldNames = definitionAndField(cm, QVariant::ULongLong, &nativelyFilterable);
-    definitionDetails.insert("ULongLong", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("ULongLong", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* date */
     defAndFieldNames = definitionAndField(cm, QVariant::Date, &nativelyFilterable);
-    definitionDetails.insert("Date", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("Date", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* time */
     defAndFieldNames = definitionAndField(cm, QVariant::Time, &nativelyFilterable);
-    definitionDetails.insert("Time", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("Time", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* uint */
     defAndFieldNames = definitionAndField(cm, QVariant::UInt, &nativelyFilterable);
-    definitionDetails.insert("UInt", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("UInt", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
     /* char */
     defAndFieldNames = definitionAndField(cm, QVariant::Char, &nativelyFilterable);
-    definitionDetails.insert("Char", defAndFieldNames);
-    defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        definitionDetails.insert("Char", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+    }
     defAndFieldNames.first = QString();
     defAndFieldNames.second = QString();
 
@@ -2447,7 +2503,7 @@ QList<QUniqueId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
     boool.setValue(definitionDetails.value("Bool").second, false);
     ullong.setValue(definitionDetails.value("ULongLong").second, (qulonglong) 80000000000LL); // 80B
     uintt.setValue(definitionDetails.value("UInt").second, 4000000000u); // 4B
-    date.setValue(definitionDetails.value("Date").second, QDate(1492, 5, 5));
+    date.setValue(definitionDetails.value("Date").second, QDate(2492, 5, 5));
     time.setValue(definitionDetails.value("Time").second, QTime(15,52,23,0));
     charr.setValue(definitionDetails.value("Char").second, QVariant(QChar('b')));
 
@@ -2504,7 +2560,7 @@ QList<QUniqueId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
     dubble.setValue(definitionDetails.value("Double").second, -128.0);
     llong.setValue(definitionDetails.value("LongLong").second, (qlonglong)-14000000000LL);
     uintt.setValue(definitionDetails.value("UInt").second, 3000000000u); // 3B
-    date.setValue(definitionDetails.value("Date").second, QDate(1770, 10, 1));
+    date.setValue(definitionDetails.value("Date").second, QDate(2770, 10, 1));
 
     d.saveDetail(&name);
     if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())
@@ -2521,13 +2577,13 @@ QList<QUniqueId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
     qDebug() << "Generating contacts with different timestamps, please wait..";
     int originalContactCount = cm->contacts().count();
     Q_ASSERT(cm->saveContact(&a));
-    QTest::qSleep(2000);
+    QTest::qSleep(napTime);
     Q_ASSERT(cm->saveContact(&b));
-    QTest::qSleep(2000);
+    QTest::qSleep(napTime);
     Q_ASSERT(cm->saveContact(&c));
-    QTest::qSleep(2000);
+    QTest::qSleep(napTime);
     Q_ASSERT(cm->saveContact(&d));
-    QTest::qSleep(2000);
+    QTest::qSleep(napTime);
 
     /* Now add some contacts specifically for multisorting */
     QContact e,f,g;
@@ -2549,50 +2605,50 @@ QList<QUniqueId> tst_QContactManagerFiltering::prepareModel(QContactManager *cm)
     Q_ASSERT(cm->contacts().count() == originalContactCount);
 
     /* Ensure the last modified times are different */
-    QTest::qSleep(2000);
+    QTest::qSleep(napTime);
     c.setDisplayLabel("Clarence");
     cm->saveContact(&c);
-    QTest::qSleep(2000);
+    QTest::qSleep(napTime);
     b.setDisplayLabel("Boris");
     cm->saveContact(&b);
-    QTest::qSleep(2000);
+    QTest::qSleep(napTime);
     a.setDisplayLabel("Albert");
     cm->saveContact(&a);
-    QTest::qSleep(2000);
+    QTest::qSleep(napTime);
 
     /* Add our newly saved contacts to our internal list of added contacts */
-    contactsAddedToManagers.insert(cm, g.id());
-    contactsAddedToManagers.insert(cm, f.id());
-    contactsAddedToManagers.insert(cm, e.id());
-    contactsAddedToManagers.insert(cm, d.id());
-    contactsAddedToManagers.insert(cm, c.id());
-    contactsAddedToManagers.insert(cm, b.id());
-    contactsAddedToManagers.insert(cm, a.id());
+    contactsAddedToManagers.insert(cm, g.id().localId());
+    contactsAddedToManagers.insert(cm, f.id().localId());
+    contactsAddedToManagers.insert(cm, e.id().localId());
+    contactsAddedToManagers.insert(cm, d.id().localId());
+    contactsAddedToManagers.insert(cm, c.id().localId());
+    contactsAddedToManagers.insert(cm, b.id().localId());
+    contactsAddedToManagers.insert(cm, a.id().localId());
 
     /* Reload the contacts to pick up any changes */
-    a = cm->contact(a.id());
-    b = cm->contact(b.id());
-    c = cm->contact(c.id());
-    d = cm->contact(d.id());
-    e = cm->contact(e.id());
-    f = cm->contact(f.id());
-    g = cm->contact(g.id());
+    a = cm->contact(a.id().localId());
+    b = cm->contact(b.id().localId());
+    c = cm->contact(c.id().localId());
+    d = cm->contact(d.id().localId());
+    e = cm->contact(e.id().localId());
+    f = cm->contact(f.id().localId());
+    g = cm->contact(g.id().localId());
 
-    QList<QUniqueId> list;
+    QList<QContactLocalId> list;
     if (!a.isEmpty())
-        list << a.id();
+        list << a.id().localId();
     if (!b.isEmpty())
-        list << b.id();
+        list << b.id().localId();
     if (!c.isEmpty())
-        list << c.id();
+        list << c.id().localId();
     if (!d.isEmpty())
-        list << d.id();
+        list << d.id().localId();
     if (!e.isEmpty())
-        list << e.id();
+        list << e.id().localId();
     if (!f.isEmpty())
-        list << f.id();
+        list << f.id().localId();
     if (!g.isEmpty())
-        list << g.id();
+        list << g.id().localId();
     return list;
 }
 
@@ -2685,7 +2741,7 @@ bool tst_QContactManagerFiltering::isSuperset(const QContact& ca, const QContact
 void tst_QContactManagerFiltering::dumpContact(const QContact& contact)
 {
     QContactManager m;
-    qDebug() << "Contact: " << contact.id() << "(" << m.synthesiseDisplayLabel(contact) << ")";
+    qDebug() << "Contact: " << contact.id().localId() << "(" << m.synthesiseDisplayLabel(contact) << ")";
     QList<QContactDetail> details = contact.details();
     foreach(QContactDetail d, details) {
         qDebug() << "  " << d.definitionName() << ":";
@@ -2696,9 +2752,9 @@ void tst_QContactManagerFiltering::dumpContact(const QContact& contact)
 void tst_QContactManagerFiltering::dumpContacts()
 {
     QContactManager m;
-    QList<QUniqueId> ids = m.contacts();
+    QList<QContactLocalId> ids = m.contacts();
 
-    foreach(QUniqueId id, ids) {
+    foreach(QContactLocalId id, ids) {
         QContact c = m.contact(id);
         dumpContact(c);
     }
@@ -2730,11 +2786,96 @@ public:
                 && !detail.variantValue(defAndFieldNamesForTypeForActions.value("Integer").second).isNull();
     }
 
-    void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+    void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
     {
         Q_UNUSED(contact);
         Q_UNUSED(detail);
         // Well, do something
+        emit progress(QContactAction::Finished, QVariantMap());
+    }
+
+    QVariantMap result() const
+    {
+        return QVariantMap();
+    }
+};
+
+/* Static actions for testing matching */
+class QPhoneNumberAction : public QContactAction
+{
+    Q_OBJECT
+
+public:
+    QPhoneNumberAction() {}
+    ~QPhoneNumberAction() {}
+
+    QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("PhoneNumber", "PhoneNumberCo", 4); }
+    QVariantMap metadata() const {return QVariantMap();}
+
+    QContactFilter contactFilter(const QVariant& value) const
+    {
+        QContactDetailFilter df;
+        df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+        df.setValue(value);
+        return df;
+    }
+    bool supportsDetail(const QContactDetail& detail) const
+    {
+        return detail.definitionName() == QContactPhoneNumber::DefinitionName
+                && !detail.variantValue(QContactPhoneNumber::FieldNumber).isNull();
+    }
+
+    void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+    {
+        Q_UNUSED(contact);
+        Q_UNUSED(detail);
+        // Well, do something
+        emit progress(QContactAction::Finished, QVariantMap());
+    }
+
+    QVariantMap result() const
+    {
+        return QVariantMap();
+    }
+};
+
+/* Static actions for testing matching */
+class QDateAction : public QContactAction
+{
+    Q_OBJECT
+
+public:
+    QDateAction() {}
+    ~QDateAction() {}
+
+    QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Date", "DateCo", 9); }
+    QVariantMap metadata() const {return QVariantMap();}
+
+    QContactFilter contactFilter(const QVariant& value) const
+    {
+        QContactDetailFilter df;
+        QPair<QString, QString> defAndFieldName = defAndFieldNamesForTypeForActions.value("Date");
+        df.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
+        df.setValue(value);
+        return df;
+    }
+    bool supportsDetail(const QContactDetail& detail) const
+    {
+        return detail.definitionName() == defAndFieldNamesForTypeForActions.value("Date").first
+                && !detail.variantValue(defAndFieldNamesForTypeForActions.value("Date").second).isNull();
+    }
+
+    void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+    {
+        Q_UNUSED(contact);
+        Q_UNUSED(detail);
+        // Well, do something
+        emit progress(QContactAction::Finished, QVariantMap());
+    }
+
+    QVariantMap result() const
+    {
+        return QVariantMap();
     }
 };
 
@@ -2779,11 +2920,17 @@ public:
         return false;
     }
 
-    void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+    void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
     {
         Q_UNUSED(contact);
         Q_UNUSED(detail);
         // Well, do something
+        emit progress(QContactAction::Finished, QVariantMap());
+    }
+
+    QVariantMap result() const
+    {
+        return QVariantMap();
     }
 };
 
@@ -2817,11 +2964,17 @@ public:
                 && (detail.value<bool>(defAndFieldNamesForTypeForActions.value("Bool").second) == true);
     }
 
-    void performAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+    void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
     {
         Q_UNUSED(contact);
         Q_UNUSED(detail);
         // Well, do something
+        emit progress(QContactAction::Finished, QVariantMap());
+    }
+
+    QVariantMap result() const
+    {
+        return QVariantMap();
     }
 };
 
@@ -2849,9 +3002,14 @@ public:
     {
         return false;
     }
-    void performAction(const QContact&, const QContactDetail&)
+    void invokeAction(const QContact&, const QContactDetail&)
     {
+        emit progress(QContactAction::Finished, QVariantMap());
+    }
 
+    QVariantMap result() const
+    {
+        return QVariantMap();
     }
 };
 
@@ -2976,6 +3134,8 @@ public:
         ret << QContactActionDescriptor("Number", "NumberCo", 42)
                 << QContactActionDescriptor("Number", "IntegerCo", 5)
                 << QContactActionDescriptor("Boolean", "BooleanCo", 3)
+                << QContactActionDescriptor("Date", "DateCo", 9)
+                << QContactActionDescriptor("PhoneNumber", "PhoneNumberCo", 4)
                 << QContactActionDescriptor("Recursive", "RecursiveCo", 3)
                 << QContactActionDescriptor("Recursive", "RecursiveCo", 4)
                 << QContactActionDescriptor("PairRecursive", "RecursiveCo", 3)
@@ -2995,6 +3155,10 @@ public:
                 return new QNumberAction;
         } else if (descriptor.actionName() == "Boolean") {
             return new QBooleanAction;
+        } else if (descriptor.actionName() == "Date") {
+            return new QDateAction;
+        } else if (descriptor.actionName() == "PhoneNumber") {
+            return new QPhoneNumberAction;
         } else if (descriptor.actionName() == "Recursive") {
             if (descriptor.implementationVersion() == 3)
                 return new RecursiveAction;

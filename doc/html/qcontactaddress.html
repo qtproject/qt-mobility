@@ -23,13 +23,11 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#country">country</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#displayLabel">displayLabel</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#locality">locality</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#postOfficeBox">postOfficeBox</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#postcode">postcode</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#region">region</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#setCountry">setCountry</a></b> ( const QString &amp; <i>country</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#setDisplayLabel">setDisplayLabel</a></b> ( const QString &amp; <i>displayLabel</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#setLocality">setLocality</a></b> ( const QString &amp; <i>locality</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#setPostOfficeBox">setPostOfficeBox</a></b> ( const QString &amp; <i>postOfficeBox</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#setPostcode">setPostcode</a></b> ( const QString &amp; <i>postcode</i> )</td></tr>
@@ -41,7 +39,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#subTypes">subTypes</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>15 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
+<li><div bar="2" class="fn"></div>17 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
 </ul>
 <hr />
 <a name="public-variables"></a>
@@ -49,7 +47,6 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#DefinitionName-var">DefinitionName</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#FieldCountry-var">FieldCountry</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#FieldDisplayLabel-var">FieldDisplayLabel</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#FieldLocality-var">FieldLocality</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#FieldPostOfficeBox-var">FieldPostOfficeBox</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaddress.html#FieldPostcode-var">FieldPostcode</a></b></td></tr>
@@ -74,9 +71,6 @@
 <h3 class="fn"><a name="country"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactAddress::country () const</h3>
 <p>Returns the country segment of the address stored in this detail</p>
 <p>See also <a href="qcontactaddress.html#setCountry">setCountry</a>().</p>
-<h3 class="fn"><a name="displayLabel"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactAddress::displayLabel () const</h3>
-<p>Returns the display (formatted) label of the address stored in this detail. If no display label has been explicitly set for the detail, it is synthesised in a platform specific manner</p>
-<p>See also <a href="qcontactaddress.html#setDisplayLabel">setDisplayLabel</a>().</p>
 <h3 class="fn"><a name="locality"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactAddress::locality () const</h3>
 <p>Returns the locality segment of the address stored in this detail</p>
 <p>See also <a href="qcontactaddress.html#setLocality">setLocality</a>().</p>
@@ -92,9 +86,6 @@
 <h3 class="fn"><a name="setCountry"></a>void QContactAddress::setCountry ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>country</i> )</h3>
 <p>Sets the country segment of the address stored in this detail to <i>country</i></p>
 <p>See also <a href="qcontactaddress.html#country">country</a>().</p>
-<h3 class="fn"><a name="setDisplayLabel"></a>void QContactAddress::setDisplayLabel ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>displayLabel</i> )</h3>
-<p>Sets the display label of the address stored in this detail to <i>displayLabel</i></p>
-<p>See also <a href="qcontactaddress.html#displayLabel">displayLabel</a>().</p>
 <h3 class="fn"><a name="setLocality"></a>void QContactAddress::setLocality ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>locality</i> )</h3>
 <p>Sets the locality segment of the address stored in this detail to <i>locality</i></p>
 <p>See also <a href="qcontactaddress.html#locality">locality</a>().</p>
@@ -127,8 +118,6 @@
 <p>The constant string which identifies the definition of details which are street addresses</p>
 <h3 class="fn"><a name="FieldCountry-var"></a>const char * QContactAddress::FieldCountry</h3>
 <p>The constant key for which the country value is stored in details of the <a href="qcontactaddress.html">QContactAddress</a> type</p>
-<h3 class="fn"><a name="FieldDisplayLabel-var"></a>const char * QContactAddress::FieldDisplayLabel</h3>
-<p>The constant key for which the display label value is stored in details of the <a href="qcontactaddress.html">QContactAddress</a> type</p>
 <h3 class="fn"><a name="FieldLocality-var"></a>const char * QContactAddress::FieldLocality</h3>
 <p>The constant key for which the locality value is stored in details of the <a href="qcontactaddress.html">QContactAddress</a> type</p>
 <h3 class="fn"><a name="FieldPostOfficeBox-var"></a>const char * QContactAddress::FieldPostOfficeBox</h3>

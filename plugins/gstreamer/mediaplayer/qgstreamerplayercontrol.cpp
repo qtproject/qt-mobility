@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -129,12 +136,19 @@ bool QGstreamerPlayerControl::isSeekable() const
     return m_session->isSeekable();
 }
 
-float QGstreamerPlayerControl::playbackRate() const
+QPair<qint64, qint64> QGstreamerPlayerControl::seekRange() const
+{
+    return m_session->isSeekable()
+            ? qMakePair<qint64, qint64>(0, m_session->duration())
+            : qMakePair<qint64, qint64>(0, 0);
+}
+
+qreal QGstreamerPlayerControl::playbackRate() const
 {
     return m_session->playbackRate();
 }
 
-void QGstreamerPlayerControl::setPlaybackRate(float rate)
+void QGstreamerPlayerControl::setPlaybackRate(qreal rate)
 {
     m_session->setPlaybackRate(rate);
 }
@@ -175,7 +189,7 @@ void QGstreamerPlayerControl::setMuted(bool muted)
     m_session->setMuted(muted);
 }
 
-QMediaSource QGstreamerPlayerControl::media() const
+QMediaContent QGstreamerPlayerControl::media() const
 {
     return m_currentResource;
 }
@@ -185,7 +199,7 @@ const QIODevice *QGstreamerPlayerControl::mediaStream() const
     return m_stream;
 }
 
-void QGstreamerPlayerControl::setMedia(const QMediaSource &source, QIODevice *stream)
+void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *stream)
 {
     m_session->stop();
 
@@ -196,7 +210,7 @@ void QGstreamerPlayerControl::setMedia(const QMediaSource &source, QIODevice *st
         m_stream = 0;
     }
 
-    m_currentResource = source;
+    m_currentResource = content;
     m_stream = stream;
 
     QUrl url;
@@ -205,13 +219,13 @@ void QGstreamerPlayerControl::setMedia(const QMediaSource &source, QIODevice *st
         if (m_stream->isReadable() && openFifo()) {
             url = QUrl(QString(QLatin1String("fd://%1")).arg(m_fifoFd[0]));
         }
-    } else if (!source.isNull()) {
-        url = source.contentUri();
+    } else if (!content.isNull()) {
+        url = content.canonicalUri();
     }
 
     m_session->load(url);
 
-    emit currentSourceChanged(m_currentResource);
+    emit mediaChanged(m_currentResource);
 }
 
 void QGstreamerPlayerControl::setVideoOutput(QObject *output)

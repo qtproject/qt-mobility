@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -42,9 +49,9 @@ QEvrVideoOverlay::QEvrVideoOverlay(HINSTANCE evrHwnd)
     , ptrMFCreateVideoPresenter(0)
     , m_presenter(0)
     , m_displayControl(0)
-    , m_aspectRatioMode(QVideoWidget::AspectRatioAuto)
+    , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
     , m_winId(0)
-    , m_fullscreen(0)
+    , m_fullScreen(0)
 {
     ptrMFCreateVideoPresenter = reinterpret_cast<PtrMFCreateVideoPresenter>(
             GetProcAddress(m_evrHwnd, "MFCreateVideoPresenter"));
@@ -91,15 +98,14 @@ void QEvrVideoOverlay::setDisplayRect(const QRect &rect)
     m_displayRect = rect;
 }
 
-bool QEvrVideoOverlay::isFullscreen() const
+bool QEvrVideoOverlay::isFullScreen() const
 {
-    return m_fullscreen;
+    return m_fullScreen;
 }
 
-void QEvrVideoOverlay::setFullscreen(bool fullscreen)
+void QEvrVideoOverlay::setFullScreen(bool fullScreen)
 {
-    if (m_displayControl && m_displayControl->SetFullscreen(fullscreen) == S_OK)
-        emit fullscreenChanged(m_fullscreen = fullscreen);
+    emit fullScreenChanged(m_fullScreen = fullScreen);
 }
 
 QSize QEvrVideoOverlay::nativeSize() const
@@ -113,42 +119,35 @@ QSize QEvrVideoOverlay::nativeSize() const
     }
 }
 
-QVideoWidget::AspectRatio QEvrVideoOverlay::aspectRatio() const
+QVideoWidget::AspectRatioMode QEvrVideoOverlay::aspectRatioMode() const
 {
     return m_aspectRatioMode;
 }
 
-void QEvrVideoOverlay::setAspectRatio(QVideoWidget::AspectRatio ratio)
+void QEvrVideoOverlay::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 {
-	switch (ratio) {
-	case QVideoWidget::AspectRatioAuto:
-		if (m_displayControl)
-			m_displayControl->SetAspectRatioMode(MFVideoARMode_PreservePicture);
+    switch (mode) {
+    case QVideoWidget::KeepAspectRatio:
+            if (m_displayControl)
+                    m_displayControl->SetAspectRatioMode(MFVideoARMode_PreservePicture);
 
-		m_aspectRatioMode = ratio;
-		break;
-	case QVideoWidget::AspectRatioWidget:
-		if (m_displayControl)
-			m_displayControl->SetAspectRatioMode(MFVideoARMode_None);
+            m_aspectRatioMode = mode;
+            break;
+    case QVideoWidget::IgnoreAspectRatio:
+            if (m_displayControl)
+                    m_displayControl->SetAspectRatioMode(MFVideoARMode_None);
 
-		m_aspectRatioMode = ratio;
-		break;
-	default:
-		break;
-	}
-}
-
-QSize QEvrVideoOverlay::customAspectRatio() const
-{
-    return QSize();
-}
-
-void QEvrVideoOverlay::setCustomAspectRatio(const QSize &)
-{
+            m_aspectRatioMode = mode;
+            break;
+    default:
+            break;
+    }
 }
 
 void QEvrVideoOverlay::repaint()
 {
+    if (m_displayControl)
+        m_displayControl->RepaintVideo();
 }
 
 int QEvrVideoOverlay::brightness() const

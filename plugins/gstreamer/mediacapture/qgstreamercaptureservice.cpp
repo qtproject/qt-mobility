@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -52,6 +59,8 @@
 #endif
 
 #include "qgstreamervideowidget.h"
+
+#include <qmediaserviceprovider.h>
 
 
 class QGstreamerVideoRendererWrapper : public QGstreamerElementFactory
@@ -111,8 +120,8 @@ private:
 };
 
 
-QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObject *parent)
-    :QCameraService(parent)
+QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObject *parent):
+    QMediaService(parent)
 {
     static bool initialized = false;
     if (!initialized) {
@@ -120,13 +129,29 @@ QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObjec
         gst_init(NULL, NULL);
     }
 
-    if (QLatin1String(interface) == QLatin1String(QAudioRecorderService_iid)) {
+    m_captureSession = 0;
+    m_cameraControl = 0;
+    m_metaDataControl = 0;
+
+    m_audioInputDevice = 0;
+    m_videoInputDevice = 0;
+
+    m_videoOutput = 0;
+#ifndef QT_NO_MULTIMEDIA
+    m_videoRenderer = 0;
+    m_videoRendererFactory = 0;
+    m_videoWindow = 0;
+    m_videoWindowFactory = 0;
+#endif
+    m_videoWidgetControl = 0;
+    m_videoWidgetFactory = 0;
+
+
+    if (service == Q_MEDIASERVICE_AUDIOSOURCE) {
         m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::Audio, this);
-        m_cameraControl = 0;
-        m_videoInputDevice = 0;
     }
 
-    if (QLatin1String(interface) == QLatin1String(QCameraService_iid)) {
+   if (service == Q_MEDIASERVICE_CAMERA) {
         m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::AudioAndVideo, this);
         m_cameraControl = new QGstreamerCameraControl(m_captureSession);
         m_captureSession->setVideoInput(m_cameraControl);
@@ -134,6 +159,9 @@ QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObjec
 
         connect(m_videoInputDevice, SIGNAL(selectedDeviceChanged(QString)),
                 m_cameraControl, SLOT(setDevice(QString)));
+
+        if (m_videoInputDevice->deviceCount())
+            m_cameraControl->setDevice(m_videoInputDevice->name(m_videoInputDevice->selectedDevice()));
     }
 
     m_videoOutput = new QGstreamerVideoOutputControl(this);
@@ -159,6 +187,9 @@ QGstreamerCaptureService::QGstreamerCaptureService(const char *interface, QObjec
     m_audioInputDevice = new QGstreamerAudioInputDeviceControl(this);
     connect(m_audioInputDevice, SIGNAL(selectedDeviceChanged(QString)), m_captureSession, SLOT(setCaptureDevice(QString)));
 
+    if (m_captureSession && m_audioInputDevice->deviceCount())
+        m_captureSession->setCaptureDevice(m_audioInputDevice->name(m_audioInputDevice->selectedDevice()));
+
     m_metaDataControl = new QGstreamerCaptureMetaDataControl(this);
     connect(m_metaDataControl, SIGNAL(metaDataChanged(QMap<QByteArray,QVariant>)),
             m_captureSession, SLOT(setMetaData(QMap<QByteArray,QVariant>)));
@@ -168,7 +199,7 @@ QGstreamerCaptureService::~QGstreamerCaptureService()
 {
 }
 
-QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
+QMediaControl *QGstreamerCaptureService::control(const char *name) const
 {
     if (qstrcmp(name, QVideoOutputControl_iid) == 0)
         return m_videoOutput;
@@ -205,7 +236,7 @@ QAbstractMediaControl *QGstreamerCaptureService::control(const char *name) const
     if (qstrcmp(name,QCameraControl_iid) == 0)
         return m_cameraControl;
 
-    if (qstrcmp(name,QMetaDataProviderControl_iid) == 0)
+    if (qstrcmp(name,QMetaDataControl_iid) == 0)
         return m_metaDataControl;
 
     return 0;

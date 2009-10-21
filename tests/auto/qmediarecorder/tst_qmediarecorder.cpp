@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,31 +17,39 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
 #include <QtTest/QtTest>
 #include <QDebug>
-#include <qabstractmediaobject.h>
-#include <qabstractmediacontrol.h>
-#include <qabstractmediaservice.h>
+#include <qmediaobject.h>
+#include <qmediacontrol.h>
+#include <qmediaservice.h>
 #include <qmediarecordercontrol.h>
 #include <qmediarecorder.h>
 #include <qaudiodevicecontrol.h>
 #include <qaudioencodercontrol.h>
 #include <qmediaformatcontrol.h>
+#include <qvideoencodercontrol.h>
 
 #ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qaudioformat.h>
@@ -58,9 +66,11 @@ public:
     {
         m_supportedFormats.append("wav");
         m_supportedFormats.append("mp3");
+        m_supportedFormats.append("mov");
 
         m_descriptions.insert("wav", "WAV format");
         m_descriptions.insert("mp3", "MP3 format");
+        m_descriptions.insert("mov", "MOV format");
     }
 
     virtual ~MockMediaFormatControl() {};
@@ -92,6 +102,62 @@ private:
     QString m_format;
 };
 
+class MockVideoEncodeProvider : public QVideoEncoderControl
+{
+    Q_OBJECT
+public:
+    MockVideoEncodeProvider(QObject *parent):
+        QVideoEncoderControl(parent)
+    {
+        m_supportedEncodeOptions.insert("video/3gpp", QStringList() << "quantizer" << "me");
+        m_supportedEncodeOptions.insert("video/H264", QStringList() << "quantizer" << "me" << "bframes");
+        m_videoCodecs << "video/3gpp" << "video/H264";
+        m_sizes << QSize(320,240) << QSize(640,480);
+        m_framerates << 30 << 15 << 1;
+    }
+    ~MockVideoEncodeProvider() {}
+
+    QVideoEncoderSettings videoSettings() const { return m_videoSettings; }
+    void setVideoSettings(const QVideoEncoderSettings &settings) { m_videoSettings = settings; };
+
+    QSize minimumResolution() const { return QSize(320,240); }
+    QSize maximumResolution() const { return QSize(640,480); }
+    QList<QSize> supportedResolutions() const { return m_sizes; }
+
+
+    qreal minimumFrameRate() const { return 1.0; }
+    qreal maximumFrameRate() const { return 30.0; }
+    QList<qreal> supportedFrameRates() const { return m_framerates; }
+
+    QStringList supportedVideoCodecs() const { return m_videoCodecs; }
+    QString videoCodecDescription(const QString &codecName) const { return codecName; }
+
+    QStringList supportedEncodingOptions(const QString &codec) const
+    {
+        return m_supportedEncodeOptions.value(codec);
+    }
+
+    QVariant encodingOption(const QString &codec, const QString &name) const
+    {
+        return m_encodeOptions[codec].value(name);
+    }
+
+    void setEncodingOption(const QString &codec, const QString &name, const QVariant &value)
+    {
+        m_encodeOptions[codec][name] = value;
+    }
+
+private:
+    QVideoEncoderSettings m_videoSettings;
+
+    QMap<QString, QStringList> m_supportedEncodeOptions;
+    QMap< QString, QMap<QString, QVariant> > m_encodeOptions;
+
+    QStringList m_videoCodecs;
+    QList<QSize> m_sizes;
+    QList<qreal> m_framerates;
+};
+
 class MockAudioEncodeProvider : public QAudioEncoderControl
 {
     Q_OBJECT
@@ -100,121 +166,61 @@ public:
         QAudioEncoderControl(parent)
     {
         m_codecs << "audio/pcm" << "audio/mpeg";
-        m_index = 0;
-        m_encodeIdx = 0;
-        m_encodeName.append("speex");
-        m_encodeOptions.append(QStringList() << "quality" << "bitrate" << "mode" << "vbr" << "vad" << "dtx");
-        m_encodeName.append("mp3");
-        m_encodeOptions.append(QStringList() << "quality" << "bitrate" << "mode" << "vbr");
-        m_bitrate = 128;
-        m_quality = 50;
-        m_frequency = -1;
-        m_sampleSize = -1;
-        m_channels = -1;
+        m_supportedEncodeOptions.insert("audio/pcm", QStringList());
+        m_supportedEncodeOptions.insert("audio/mpeg", QStringList() << "quality" << "bitrate" << "mode" << "vbr");
+        m_audioSettings.setCodec("audio/pcm");
+        m_audioSettings.setBitrate(128*1024);
     }
 
     ~MockAudioEncodeProvider() {}
 
-    int frequency() const { return m_frequency; }
-    void setFrequency(int frequency) { m_frequency = frequency; }
-    QList<int> supportedFrequencies() const { return QList<int>() << 44100; }
-    QPair<int,int> supportedFrequencyRange() const { return qMakePair<int,int>(44100,44100); }
+    QAudioEncoderSettings audioSettings() const { return m_audioSettings; }
+    void setAudioSettings(const QAudioEncoderSettings &settings) { m_audioSettings = settings; }
 
-    int channels() const { return m_channels; }
-    void setChannels(int channels) { m_channels = channels; }
+    QList<int> supportedSampleRates() const { return QList<int>() << 44100; }
     QList<int> supportedChannelCounts() const { return QList<int>() << 2; }
-
-    int sampleSize() const { return m_sampleSize; }
-    void setSampleSize(int sampleSize) { m_sampleSize = sampleSize; }
-    QList<int> supportedSampleSizes() const { return QList<int>() << 16; }
 
     QStringList supportedAudioCodecs() const
     {
         return m_codecs;
     }
 
-    QString audioCodec() const
-    {
-        return m_codecs.at(m_index);
-    }
-
-    bool setAudioCodec(const QString &codecName)
-    {
-        if(qstrcmp(codecName.toLocal8Bit().constData(),"audio/pcm")==0) {
-            m_index = 0;
-            return true;
-
-        } else if(qstrcmp(codecName.toLocal8Bit().constData(),"audio/mpeg")==0){
-            m_index = 1;
-            return true;
-        }
-        return false;
-    }
-
     QString codecDescription(const QString &codecName) const
     {
-        if(qstrcmp(codecName.toLocal8Bit().constData(),"audio/pcm")==0)
+        if (codecName == "audio/pcm")
             return QString("Pulse Code Modulation");
-        if(qstrcmp(codecName.toLocal8Bit().constData(),"audio/mpeg")==0)
+
+        if (codecName == "audio/mpeg")
             return QString("MP3 audio format");
 
         return QString();
     }
 
-    int bitrate() const
+
+    QStringList supportedEncodingOptions(const QString &codec) const
     {
-        return m_bitrate;
+        return m_supportedEncodeOptions.value(codec);
     }
 
-    void setBitrate(int bitrate)
+    QVariant encodingOption(const QString &codec, const QString &name) const
     {
-        m_bitrate = bitrate;
+        return m_encodeOptions[codec].value(name);
     }
 
-    int quality() const
+    void setEncodingOption(const QString &codec, const QString &name, const QVariant &value)
     {
-        return m_quality;
-    }
-
-    void setQuality(int qual)
-    {
-        m_quality = qual;
-    }
-
-    QStringList supportedEncodingOptions() const
-    {
-        return m_encodeOptions.at(m_encodeIdx);
-    }
-
-    QVariant encodingOption(const QString &name) const
-    {
-        Q_UNUSED(name);
-        //TODO?
-        return QVariant();
-    }
-
-    void setEncodingOption(const QString &name, const QVariant &value)
-    {
-        //TODO?
-        Q_UNUSED(name);
-        Q_UNUSED(value);
+        m_encodeOptions[codec][name] = value;
     }
 
 private:
-    int m_frequency;
-    int m_channels;
-    int m_sampleSize;
+    QAudioEncoderSettings m_audioSettings;
 
     QStringList  m_codecs;
     QStringList  m_codecsDesc;
-    int          m_bitrate;
-    int        m_quality;
 
-    QList<QString>  m_encodeName;
-    QList<QStringList> m_encodeOptions;
+    QMap<QString, QStringList> m_supportedEncodeOptions;
+    QMap< QString, QMap<QString, QVariant> > m_encodeOptions;
 
-    int          m_index;
-    int          m_encodeIdx;
 };
 
 class MockAudioDeviceProvider : public QAudioDeviceControl
@@ -309,6 +315,10 @@ public:
         return m_position;
     }
 
+    void applySettings() {}
+
+    using QMediaRecorderControl::error;
+
 public slots:
     void record()
     {
@@ -337,61 +347,53 @@ public:
     qint64     m_position;
 };
 
-class MockService : public QAbstractMediaService
+class MockService : public QMediaService
 {
     Q_OBJECT
 public:
-    MockService(QObject *parent, QAbstractMediaControl *control):
-        QAbstractMediaService(parent),
-        mockControl(control)
+    MockService(QObject *parent, QMediaControl *control):
+        QMediaService(parent),
+        mockControl(control),
+        hasControls(true)
     {
         mockAudioDeviceControl = new MockAudioDeviceProvider(parent);
         mockAudioEncodeControl = new MockAudioEncodeProvider(parent);
         mockFormatControl = new MockMediaFormatControl(parent);
+        mockVideoEncodeControl = new MockVideoEncodeProvider(parent);
     }
 
-    QAbstractMediaControl* control(const char * name) const
+    QMediaControl* control(const char *name) const
     {
-        if(qstrcmp(name,QAudioEncoderControl_iid) == 0)
+        if(hasControls && qstrcmp(name,QAudioEncoderControl_iid) == 0)
             return mockAudioEncodeControl;
-        if(qstrcmp(name,QAudioDeviceControl_iid) == 0)
+        if(hasControls && qstrcmp(name,QAudioDeviceControl_iid) == 0)
             return mockAudioDeviceControl;
-        if(qstrcmp(name,QMediaRecorderControl_iid) == 0)
+        if(hasControls && qstrcmp(name,QMediaRecorderControl_iid) == 0)
             return mockControl;
-        if(qstrcmp(name,QMediaFormatControl_iid) == 0)
+        if(hasControls && qstrcmp(name,QMediaFormatControl_iid) == 0)
             return mockFormatControl;
-
+        if(hasControls && qstrcmp(name,QVideoEncoderControl_iid) == 0)
+            return mockVideoEncodeControl;
 
         return 0;
     }
 
-    QAbstractMediaControl   *mockControl;
+    QMediaControl   *mockControl;
     QAudioDeviceControl     *mockAudioDeviceControl;
     QAudioEncoderControl    *mockAudioEncodeControl;
     QMediaFormatControl     *mockFormatControl;
+    QVideoEncoderControl    *mockVideoEncodeControl;
+    bool hasControls;
 };
 
-class MockObject : public QAbstractMediaObject
+class MockObject : public QMediaObject
 {
     Q_OBJECT
 public:
-    MockObject(QObject *parent, QAbstractMediaControl *control):
-        QAbstractMediaObject(parent),
-        mockService(new MockService(this, control))
+    MockObject(QObject *parent, MockService *service):
+        QMediaObject(parent, service)
     {
     }
-
-    bool isValid() const
-    {
-        return true;
-    }
-
-    QAbstractMediaService* service() const
-    {
-        return mockService;
-    }
-
-    QAbstractMediaService *mockService;
 };
 
 class tst_QMediaRecorder: public QObject
@@ -399,39 +401,157 @@ class tst_QMediaRecorder: public QObject
     Q_OBJECT
 
 public slots:
-    void init();
-    void cleanup();
+    void initTestCase();
+    void cleanupTestCase();
 
 private slots:
+    void testNullService();
+    void testNullControls();
+    void testError();
     void testSink();
     void testRecord();
     void testAudioDeviceControl();
     void testAudioEncodeControl();
     void testMediaFormatsControl();
+    void testVideoEncodeControl();
+    void testEncodingSettings();
+    void testAudioSettings();
+    void testVideoSettings();
 
 private:
     QAudioEncoderControl* encode;
     QAudioDeviceControl* audio;
     MockObject      *object;
+    MockService		*service;
     MockProvider    *mock;
     QMediaRecorder  *capture;
+    QVideoEncoderControl* videoEncode;
 };
 
-void tst_QMediaRecorder::init()
+Q_DECLARE_METATYPE(QMediaRecorder::Error);
+
+void tst_QMediaRecorder::initTestCase()
 {
     qRegisterMetaType<QMediaRecorder::State>("QMediaRecorder::State");
+    qRegisterMetaType<QMediaRecorder::Error>();
 
     mock = new MockProvider(this);
-    object = new MockObject(this, mock);
+    service = new MockService(this, mock);
+    object = new MockObject(this, service);
     capture = new QMediaRecorder(object);
-    QVERIFY(capture->isValid());
+
     audio = qobject_cast<QAudioDeviceControl*>(capture->service()->control(QAudioDeviceControl_iid));
     encode = qobject_cast<QAudioEncoderControl*>(capture->service()->control(QAudioEncoderControl_iid));
+    videoEncode = qobject_cast<QVideoEncoderControl*>(capture->service()->control(QVideoEncoderControl_iid));
 }
 
-void tst_QMediaRecorder::cleanup()
+void tst_QMediaRecorder::cleanupTestCase()
 {
     delete capture;
+    delete object;
+    delete service;
+    delete mock;
+}
+
+void tst_QMediaRecorder::testNullService()
+{
+    const QString id(QLatin1String("application/x-format"));
+
+    MockObject object(0, 0);
+    QMediaRecorder recorder(&object);
+
+    QCOMPARE(recorder.sink(), QUrl());
+    QCOMPARE(recorder.state(), QMediaRecorder::StoppedState);
+    QCOMPARE(recorder.error(), QMediaRecorder::NoError);
+    QCOMPARE(recorder.duration(), qint64(0));
+    QCOMPARE(recorder.supportedFormats(), QStringList());
+    QCOMPARE(recorder.formatDescription(id), QString());
+    QCOMPARE(recorder.supportedAudioCodecs(), QStringList());
+    QCOMPARE(recorder.audioCodecDescription(id), QString());
+    QCOMPARE(recorder.supportedAudioSampleRates(), QList<int>());
+    QCOMPARE(recorder.supportedVideoCodecs(), QStringList());
+    QCOMPARE(recorder.videoCodecDescription(id), QString());
+    QCOMPARE(recorder.minimumResolution(), QSize());
+    QCOMPARE(recorder.maximumResolution(), QSize());
+    QCOMPARE(recorder.supportedResolutions(), QList<QSize>());
+    QCOMPARE(recorder.audioSettings(), QAudioEncoderSettings());
+    QCOMPARE(recorder.videoSettings(), QVideoEncoderSettings());
+    QCOMPARE(recorder.format(), QString());
+}
+
+void tst_QMediaRecorder::testNullControls()
+{
+    const QString id(QLatin1String("application/x-format"));
+
+    MockService service(0, 0);
+    service.hasControls = false;
+    MockObject object(0, &service);
+    QMediaRecorder recorder(&object);
+
+    QCOMPARE(recorder.sink(), QUrl());
+    QCOMPARE(recorder.state(), QMediaRecorder::StoppedState);
+    QCOMPARE(recorder.error(), QMediaRecorder::NoError);
+    QCOMPARE(recorder.duration(), qint64(0));
+    QCOMPARE(recorder.supportedFormats(), QStringList());
+    QCOMPARE(recorder.formatDescription(id), QString());
+    QCOMPARE(recorder.supportedAudioCodecs(), QStringList());
+    QCOMPARE(recorder.audioCodecDescription(id), QString());
+    QCOMPARE(recorder.supportedAudioSampleRates(), QList<int>());
+    QCOMPARE(recorder.supportedVideoCodecs(), QStringList());
+    QCOMPARE(recorder.videoCodecDescription(id), QString());
+    QCOMPARE(recorder.minimumResolution(), QSize());
+    QCOMPARE(recorder.maximumResolution(), QSize());
+    QCOMPARE(recorder.supportedResolutions(), QList<QSize>());
+    QCOMPARE(recorder.audioSettings(), QAudioEncoderSettings());
+    QCOMPARE(recorder.videoSettings(), QVideoEncoderSettings());
+    QCOMPARE(recorder.format(), QString());
+
+    QAudioEncoderSettings audio;
+    audio.setCodec(id);
+    audio.setQuality(QtMedia::LowQuality);
+
+    QVideoEncoderSettings video;
+    video.setCodec(id);
+    video.setResolution(640, 480);
+
+    recorder.setEncodingSettings(audio, video, id);
+
+    QCOMPARE(recorder.audioSettings(), QAudioEncoderSettings());
+    QCOMPARE(recorder.videoSettings(), QVideoEncoderSettings());
+    QCOMPARE(recorder.format(), QString());
+
+    QSignalSpy spy(&recorder, SIGNAL(stateChanged(QMediaRecorder::State)));
+
+    recorder.record();
+    QCOMPARE(recorder.state(), QMediaRecorder::StoppedState);
+    QCOMPARE(recorder.error(), QMediaRecorder::NoError);
+    QCOMPARE(spy.count(), 0);
+
+    recorder.pause();
+    QCOMPARE(recorder.state(), QMediaRecorder::StoppedState);
+    QCOMPARE(recorder.error(), QMediaRecorder::NoError);
+    QCOMPARE(spy.count(), 0);
+
+    recorder.stop();
+    QCOMPARE(recorder.state(), QMediaRecorder::StoppedState);
+    QCOMPARE(recorder.error(), QMediaRecorder::NoError);
+    QCOMPARE(spy.count(), 0);
+}
+
+void tst_QMediaRecorder::testError()
+{
+    const QString errorString(QLatin1String("format error"));
+
+    QSignalSpy spy(capture, SIGNAL(error(QMediaRecorder::Error)));
+
+    QCOMPARE(capture->error(), QMediaRecorder::NoError);
+    QCOMPARE(capture->errorString(), QString());
+
+    mock->error(QMediaRecorder::FormatError, errorString);
+    QCOMPARE(capture->error(), QMediaRecorder::FormatError);
+    QCOMPARE(capture->errorString(), errorString);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(qvariant_cast<QMediaRecorder::Error>(spy.last().value(0)), QMediaRecorder::FormatError);
 }
 
 void tst_QMediaRecorder::testSink()
@@ -479,32 +599,343 @@ void tst_QMediaRecorder::testAudioEncodeControl()
 {
     QStringList codecs = capture->supportedAudioCodecs();
     QVERIFY(codecs.count() == 2);
-    QVERIFY(capture->setAudioCodec("audio/mpeg"));
-    QVERIFY(capture->audioCodec() == QString("audio/mpeg"));
     QVERIFY(capture->audioCodecDescription("audio/pcm") == "Pulse Code Modulation");
-    QCOMPARE(capture->audioQuality(), 50);
-    capture->setAudioQuality(1);
-    QCOMPARE(capture->audioQuality(), 1);
-    capture->setAudioBitrate(64);
-    QVERIFY(capture->audioBitrate() == 64);
-    QStringList options = encode->supportedEncodingOptions();
-    QCOMPARE(options.count(), 6);
-    encode->setEncodingOption("mp3",QStringList() << "bitrate" << "vbr");
+    QStringList options = encode->supportedEncodingOptions("audio/mpeg");
+    QCOMPARE(options.count(), 4);
+    QVERIFY(encode->encodingOption("audio/mpeg","bitrate").isNull());
+    encode->setEncodingOption("audio/mpeg", "bitrate", QString("vbr"));
+    QCOMPARE(encode->encodingOption("audio/mpeg","bitrate").toString(), QString("vbr"));
 }
 
 void tst_QMediaRecorder::testMediaFormatsControl()
 {
-    QCOMPARE(capture->supportedFormats(), QStringList() << "wav" << "mp3");
-    capture->setFormat("wav");
-    QCOMPARE(capture->format(), QString("wav"));
-    capture->setFormat("mp3");
-    QCOMPARE(capture->format(), QString("mp3"));
-    capture->setFormat("ogg");
-    QCOMPARE(capture->format(), QString("mp3"));
+    QCOMPARE(capture->supportedFormats(), QStringList() << "wav" << "mp3" << "mov");
 
     QCOMPARE(capture->formatDescription("wav"), QString("WAV format"));
     QCOMPARE(capture->formatDescription("mp3"), QString("MP3 format"));
     QCOMPARE(capture->formatDescription("ogg"), QString());
+}
+
+void tst_QMediaRecorder::testVideoEncodeControl()
+{
+    QList<QSize> sizes = capture->supportedResolutions();
+    QVERIFY(sizes.count() == 2);
+    QVERIFY(capture->minimumResolution() == QSize(320,240));
+    QVERIFY(capture->maximumResolution() == QSize(640,480));
+
+    QList<qreal> rates = capture->supportedFrameRates();
+    QVERIFY(rates.count() == 3);
+    QVERIFY(qFuzzyCompare(capture->minimumFrameRate(), 1.0));
+    QVERIFY(qFuzzyCompare(capture->maximumFrameRate(), 30.0));
+
+    QStringList vCodecs = capture->supportedVideoCodecs();
+    QVERIFY(vCodecs.count() == 2);
+    QCOMPARE(capture->videoCodecDescription("video/3gpp"), QString("video/3gpp"));
+
+    QStringList options = videoEncode->supportedEncodingOptions("video/3gpp");
+    QCOMPARE(options.count(), 2);
+
+    QVERIFY(encode->encodingOption("video/3gpp","me").isNull());
+    encode->setEncodingOption("video/3gpp", "me", QString("dia"));
+    QCOMPARE(encode->encodingOption("video/3gpp","me").toString(), QString("dia"));
+
+}
+
+void tst_QMediaRecorder::testEncodingSettings()
+{
+    QAudioEncoderSettings audioSettings = capture->audioSettings();
+    QCOMPARE(audioSettings.codec(), QString("audio/pcm"));
+    QCOMPARE(audioSettings.bitrate(), 128*1024);
+    QCOMPARE(audioSettings.sampleRate(), -1);
+    QCOMPARE(audioSettings.quality(), QtMedia::NormalQuality);
+    QCOMPARE(audioSettings.channels(), -1);
+
+    QCOMPARE(audioSettings.encodingMode(), QtMedia::ConstantQualityEncoding);
+
+    QVideoEncoderSettings videoSettings = capture->videoSettings();
+    QCOMPARE(videoSettings.codec(), QString());
+    QCOMPARE(videoSettings.bitrate(), -1);
+    QCOMPARE(videoSettings.resolution(), QSize());
+    QCOMPARE(videoSettings.frameRate(), 0.0);
+    QCOMPARE(videoSettings.quality(), QtMedia::NormalQuality);
+    QCOMPARE(videoSettings.encodingMode(), QtMedia::ConstantQualityEncoding);
+
+    QString format = capture->format();
+    QCOMPARE(format, QString());
+
+    audioSettings.setCodec("audio/mpeg");
+    audioSettings.setSampleRate(44100);
+    audioSettings.setBitrate(256*1024);
+    audioSettings.setQuality(QtMedia::HighQuality);
+    audioSettings.setEncodingMode(QtMedia::AverageBitrateEncoding);
+
+    videoSettings.setCodec("video/3gpp");
+    videoSettings.setBitrate(800);
+    videoSettings.setFrameRate(24*1024);
+    videoSettings.setResolution(QSize(800,600));
+    videoSettings.setQuality(QtMedia::HighQuality);
+    audioSettings.setEncodingMode(QtMedia::TwoPassEncoding);
+
+    format = QString("mov");
+
+    capture->setEncodingSettings(audioSettings,videoSettings,format);
+
+    QCOMPARE(capture->audioSettings(), audioSettings);
+    QCOMPARE(capture->videoSettings(), videoSettings);
+    QCOMPARE(capture->format(), format);
+}
+
+void tst_QMediaRecorder::testAudioSettings()
+{
+    QAudioEncoderSettings settings;
+    QVERIFY(settings.isNull());
+    QVERIFY(settings == QAudioEncoderSettings());
+
+    QCOMPARE(settings.codec(), QString());
+    settings.setCodec(QLatin1String("codecName"));
+    QCOMPARE(settings.codec(), QLatin1String("codecName"));
+    QVERIFY(!settings.isNull());
+    QVERIFY(settings != QAudioEncoderSettings());
+
+    settings = QAudioEncoderSettings();
+    QCOMPARE(settings.bitrate(), -1);
+    settings.setBitrate(128000);
+    QCOMPARE(settings.bitrate(), 128000);
+    QVERIFY(!settings.isNull());
+
+    settings = QAudioEncoderSettings();
+    QCOMPARE(settings.quality(), QtMedia::NormalQuality);
+    settings.setQuality(QtMedia::HighQuality);
+    QCOMPARE(settings.quality(), QtMedia::HighQuality);
+    QVERIFY(!settings.isNull());
+
+    settings = QAudioEncoderSettings();
+    QCOMPARE(settings.sampleRate(), -1);
+    settings.setSampleRate(44100);
+    QCOMPARE(settings.sampleRate(), 44100);
+    QVERIFY(!settings.isNull());
+
+    settings = QAudioEncoderSettings();
+    QCOMPARE(settings.channels(), -1);
+    settings.setChannels(2);
+    QCOMPARE(settings.channels(), 2);
+    QVERIFY(!settings.isNull());
+
+    settings = QAudioEncoderSettings();
+    QVERIFY(settings.isNull());
+    QCOMPARE(settings.codec(), QString());
+    QCOMPARE(settings.bitrate(), -1);
+    QCOMPARE(settings.quality(), QtMedia::NormalQuality);
+    QCOMPARE(settings.sampleRate(), -1);
+
+    {
+        QAudioEncoderSettings settings1;
+        QAudioEncoderSettings settings2;
+        QCOMPARE(settings2, settings1);
+
+        settings2 = settings1;
+        QCOMPARE(settings2, settings1);
+        QVERIFY(settings2.isNull());
+
+        settings1.setQuality(QtMedia::HighQuality);
+
+        QVERIFY(settings2.isNull());
+        QVERIFY(!settings1.isNull());
+        QVERIFY(settings1 != settings2);
+    }
+
+    {
+        QAudioEncoderSettings settings1;
+        QAudioEncoderSettings settings2(settings1);
+        QCOMPARE(settings2, settings1);
+
+        settings2 = settings1;
+        QCOMPARE(settings2, settings1);
+        QVERIFY(settings2.isNull());
+
+        settings1.setQuality(QtMedia::HighQuality);
+
+        QVERIFY(settings2.isNull());
+        QVERIFY(!settings1.isNull());
+        QVERIFY(settings1 != settings2);
+    }
+
+    QAudioEncoderSettings settings1;
+    settings1.setBitrate(1);
+    QAudioEncoderSettings settings2;
+    settings2.setBitrate(1);
+    QVERIFY(settings1 == settings2);
+    settings2.setBitrate(2);
+    QVERIFY(settings1 != settings2);
+
+    settings1 = QAudioEncoderSettings();
+    settings1.setChannels(1);
+    settings2 = QAudioEncoderSettings();
+    settings2.setChannels(1);
+    QVERIFY(settings1 == settings2);
+    settings2.setChannels(2);
+    QVERIFY(settings1 != settings2);
+
+    settings1 = QAudioEncoderSettings();
+    settings1.setCodec("codec1");
+    settings2 = QAudioEncoderSettings();
+    settings2.setCodec("codec1");
+    QVERIFY(settings1 == settings2);
+    settings2.setCodec("codec2");
+    QVERIFY(settings1 != settings2);
+
+    settings1 = QAudioEncoderSettings();
+    settings1.setEncodingMode(QtMedia::ConstantBitrateEncoding);
+    settings2 = QAudioEncoderSettings();
+    settings2.setEncodingMode(QtMedia::ConstantBitrateEncoding);
+    QVERIFY(settings1 == settings2);
+    settings2.setEncodingMode(QtMedia::TwoPassEncoding);
+    QVERIFY(settings1 != settings2);
+
+    settings1 = QAudioEncoderSettings();
+    settings1.setQuality(QtMedia::NormalQuality);
+    settings2 = QAudioEncoderSettings();
+    settings2.setQuality(QtMedia::NormalQuality);
+    QVERIFY(settings1 == settings2);
+    settings2.setQuality(QtMedia::LowQuality);
+    QVERIFY(settings1 != settings2);
+
+    settings1 = QAudioEncoderSettings();
+    settings1.setSampleRate(1);
+    settings2 = QAudioEncoderSettings();
+    settings2.setSampleRate(1);
+    QVERIFY(settings1 == settings2);
+    settings2.setSampleRate(2);
+    QVERIFY(settings1 != settings2);
+}
+
+void tst_QMediaRecorder::testVideoSettings()
+{
+    QVideoEncoderSettings settings;
+    QVERIFY(settings.isNull());
+    QVERIFY(settings == QVideoEncoderSettings());
+
+    QCOMPARE(settings.codec(), QString());
+    settings.setCodec(QLatin1String("codecName"));
+    QCOMPARE(settings.codec(), QLatin1String("codecName"));
+    QVERIFY(!settings.isNull());
+    QVERIFY(settings != QVideoEncoderSettings());
+
+    settings = QVideoEncoderSettings();
+    QCOMPARE(settings.bitrate(), -1);
+    settings.setBitrate(128000);
+    QCOMPARE(settings.bitrate(), 128000);
+    QVERIFY(!settings.isNull());
+
+    settings = QVideoEncoderSettings();
+    QCOMPARE(settings.quality(), QtMedia::NormalQuality);
+    settings.setQuality(QtMedia::HighQuality);
+    QCOMPARE(settings.quality(), QtMedia::HighQuality);
+    QVERIFY(!settings.isNull());
+
+    settings = QVideoEncoderSettings();
+    QCOMPARE(settings.frameRate(), qreal());
+    settings.setFrameRate(30000.0/10001);
+    QVERIFY(qFuzzyCompare(settings.frameRate(),30000.0/10001));
+    settings.setFrameRate(24.0);
+    QVERIFY(qFuzzyCompare(settings.frameRate(),24.0));
+    QVERIFY(!settings.isNull());
+
+    settings = QVideoEncoderSettings();
+    QCOMPARE(settings.resolution(), QSize());
+    settings.setResolution(QSize(320,240));
+    QCOMPARE(settings.resolution(), QSize(320,240));
+    settings.setResolution(800,600);
+    QCOMPARE(settings.resolution(), QSize(800,600));
+    QVERIFY(!settings.isNull());
+
+    settings = QVideoEncoderSettings();
+    QVERIFY(settings.isNull());
+    QCOMPARE(settings.codec(), QString());
+    QCOMPARE(settings.bitrate(), -1);
+    QCOMPARE(settings.quality(), QtMedia::NormalQuality);
+    QCOMPARE(settings.frameRate(), qreal());
+    QCOMPARE(settings.resolution(), QSize());
+
+    {
+        QVideoEncoderSettings settings1;
+        QVideoEncoderSettings settings2;
+        QCOMPARE(settings2, settings1);
+
+        settings2 = settings1;
+        QCOMPARE(settings2, settings1);
+        QVERIFY(settings2.isNull());
+
+        settings1.setQuality(QtMedia::HighQuality);
+
+        QVERIFY(settings2.isNull());
+        QVERIFY(!settings1.isNull());
+        QVERIFY(settings1 != settings2);
+    }
+
+    {
+        QVideoEncoderSettings settings1;
+        QVideoEncoderSettings settings2(settings1);
+        QCOMPARE(settings2, settings1);
+
+        settings2 = settings1;
+        QCOMPARE(settings2, settings1);
+        QVERIFY(settings2.isNull());
+
+        settings1.setQuality(QtMedia::HighQuality);
+
+        QVERIFY(settings2.isNull());
+        QVERIFY(!settings1.isNull());
+        QVERIFY(settings1 != settings2);
+    }
+
+    QVideoEncoderSettings settings1;
+    settings1.setBitrate(1);
+    QVideoEncoderSettings settings2;
+    settings2.setBitrate(1);
+    QVERIFY(settings1 == settings2);
+    settings2.setBitrate(2);
+    QVERIFY(settings1 != settings2);
+
+    settings1 = QVideoEncoderSettings();
+    settings1.setResolution(800,600);
+    settings2 = QVideoEncoderSettings();
+    settings2.setResolution(QSize(800,600));
+    QVERIFY(settings1 == settings2);
+    settings2.setResolution(QSize(400,300));
+    QVERIFY(settings1 != settings2);
+
+    settings1 = QVideoEncoderSettings();
+    settings1.setCodec("codec1");
+    settings2 = QVideoEncoderSettings();
+    settings2.setCodec("codec1");
+    QVERIFY(settings1 == settings2);
+    settings2.setCodec("codec2");
+    QVERIFY(settings1 != settings2);
+
+    settings1 = QVideoEncoderSettings();
+    settings1.setEncodingMode(QtMedia::ConstantBitrateEncoding);
+    settings2 = QVideoEncoderSettings();
+    settings2.setEncodingMode(QtMedia::ConstantBitrateEncoding);
+    QVERIFY(settings1 == settings2);
+    settings2.setEncodingMode(QtMedia::TwoPassEncoding);
+    QVERIFY(settings1 != settings2);
+
+    settings1 = QVideoEncoderSettings();
+    settings1.setQuality(QtMedia::NormalQuality);
+    settings2 = QVideoEncoderSettings();
+    settings2.setQuality(QtMedia::NormalQuality);
+    QVERIFY(settings1 == settings2);
+    settings2.setQuality(QtMedia::LowQuality);
+    QVERIFY(settings1 != settings2);
+
+    settings1 = QVideoEncoderSettings();
+    settings1.setFrameRate(1);
+    settings2 = QVideoEncoderSettings();
+    settings2.setFrameRate(1);
+    QVERIFY(settings1 == settings2);
+    settings2.setFrameRate(2);
+    QVERIFY(settings1 != settings2);
 }
 
 QTEST_MAIN(tst_QMediaRecorder)

@@ -51,6 +51,8 @@ public:
     const char* SubTypeImage;
     const char* SubTypeVideo;
     const char* SubTypeTexturedMesh;
+    const char* SubTypeAudioRingtone;
+    const char* SubTypeVideoRingtone;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAvatar, "Avatar")
     Q_DECLARE_LATIN1_LITERAL(FieldAvatar, "Avatar");
@@ -58,6 +60,8 @@ public:
     Q_DECLARE_LATIN1_LITERAL(SubTypeImage, "Image");
     Q_DECLARE_LATIN1_LITERAL(SubTypeVideo, "Video");
     Q_DECLARE_LATIN1_LITERAL(SubTypeTexturedMesh, "TexturedMesh");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeAudioRingtone, "AudioRingtone");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeVideoRingtone, "VideoRingtone");
 #endif
 
     void setAvatar(const QString& avatarPath) {setValue(FieldAvatar, avatarPath);}

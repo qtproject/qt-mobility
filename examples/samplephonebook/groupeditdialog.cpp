@@ -89,10 +89,10 @@ GroupEditDialog::GroupEditDialog(QWidget *parent, QContactManager *contactManage
 void GroupEditDialog::repopulateGroupList()
 {
     listWidget->clear();
-    QList<QUniqueId> grpList = cm->groups();
+    QList<QContactLocalId> grpList = cm->contacts(QString(QLatin1String(QContactType::TypeGroup)));
     for (int index=0; index < grpList.count(); index++){
-        QContactGroup grp = cm->group(grpList[index]);
-        QListWidgetItem *item = new QListWidgetItem(grp.name(), listWidget);
+        QContact grp = cm->contact(grpList[index]);
+        QListWidgetItem *item = new QListWidgetItem(grp.displayLabel().label(), listWidget);
         // store the group ID as Qt::UserRole + 1
         item->setData(Qt::UserRole + 1, grpList[index]);
     }
@@ -107,19 +107,20 @@ void GroupEditDialog::show()
 void GroupEditDialog::addButtonClicked()
 {
     if (!groupNameEdit->text().isEmpty()){
-        QContactGroup grp;
+        QContact grp;
+        grp.setType(QContactType::TypeGroup);
         bool result;
-        grp.setName(groupNameEdit->text());
-        result = cm->saveGroup(&grp);
+        grp.setDisplayLabel(groupNameEdit->text());
+        result = cm->saveContact(&grp);
 
         if (!result){
             QMessageBox::information(this, tr("Group Add"),
-                tr("Failed to add Group '%1'.").arg(grp.name()));
+                tr("Failed to add Group '%1'.").arg(grp.displayLabel().label()));
         }else{
             repopulateGroupList();
             // select the added group name
             for (int index = 0; index < listWidget->count();index++){
-                if (listWidget->item(index)->data(Qt::UserRole + 1).toUInt() == grp.id()){
+                if (listWidget->item(index)->data(Qt::UserRole + 1).toUInt() == grp.id().localId()){
                     listWidget->setCurrentItem(listWidget->item(index));
                     break;
                 }
@@ -136,12 +137,12 @@ void GroupEditDialog::addButtonClicked()
 void GroupEditDialog::saveButtonClicked()
 {
     if (listWidget->currentItem()){
-        QUniqueId grpID = listWidget->currentItem()->data(Qt::UserRole + 1).toUInt();
-        QContactGroup grp = cm->group(grpID);
+        QContactLocalId grpID = listWidget->currentItem()->data(Qt::UserRole + 1).toUInt();
+        QContact grp = cm->contact(grpID);
         bool result = false;
         if (!grp.isEmpty()){
-            grp.setName(groupNameEdit->text());
-	    result = cm->saveGroup(&grp);
+            grp.setDisplayLabel(groupNameEdit->text());
+            result = cm->saveContact(&grp);
         }
         if (!result){
             QMessageBox::information(this, tr("Save Group"),
@@ -150,7 +151,7 @@ void GroupEditDialog::saveButtonClicked()
             repopulateGroupList();
             // select the group name again
             for (int index = 0; index < listWidget->count();index++){
-                if (listWidget->item(index)->data(Qt::UserRole + 1).toUInt() == grp.id()){
+                if (listWidget->item(index)->data(Qt::UserRole + 1).toUInt() == grp.id().localId()){
                     listWidget->setCurrentItem(listWidget->item(index));
                     break;
                 }
@@ -163,8 +164,8 @@ void GroupEditDialog::deleteButtonClicked()
 {
     if (listWidget->currentItem()){
         int lastCurrentRow = listWidget->currentRow();
-        QUniqueId grpID = listWidget->currentItem()->data(Qt::UserRole + 1).toUInt();
-        if (!cm->removeGroup(grpID)){
+        QContactLocalId grpID = listWidget->currentItem()->data(Qt::UserRole + 1).toUInt();
+        if (!cm->removeContact(grpID)){
             QMessageBox::information(this, tr("Remove Group"),
                 tr("Failed to removed Group '%1'.").arg(listWidget->currentItem()->text()));
         }else{

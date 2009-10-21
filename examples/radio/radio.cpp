@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,36 +17,40 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
 #include "radio.h"
 
-#include <qabstractmediaservice.h>
-#include <qradioplayercontrol.h>
-
 #include <QtGui>
 
 Radio::Radio()
 {
-    player = new QRadioPlayer;
-    connect(player,SIGNAL(frequencyChanged(int)),this,SLOT(freqChanged(int)));
-    connect(player,SIGNAL(signalStrengthChanged(int)),this,SLOT(signalChanged(int)));
+    radio = new QRadioTuner;
+    connect(radio,SIGNAL(frequencyChanged(int)),this,SLOT(freqChanged(int)));
+    connect(radio,SIGNAL(signalStrengthChanged(int)),this,SLOT(signalChanged(int)));
 
-    if(player->isSupportedBand(QRadioPlayer::FM))
-        player->setBand(QRadioPlayer::FM);
+    if(radio->isBandSupported(QRadioTuner::FM))
+        radio->setBand(QRadioTuner::FM);
     else {
         qWarning()<<"Currently only works for FM";
         exit(0);
@@ -60,7 +64,7 @@ Radio::Radio()
     layout->addLayout(topBar);
 
     freq = new QLabel;
-    freq->setText(QString("%1 kHz").arg(player->frequency()/1000));
+    freq->setText(QString("%1 kHz").arg(radio->frequency()/1000));
     topBar->addWidget(freq);
 
     signal = new QLabel;
@@ -69,8 +73,8 @@ Radio::Radio()
 
     volumeSlider = new QSlider(Qt::Vertical,this);
     volumeSlider->setRange(0,100);
-    qWarning()<<player->volume();
-    volumeSlider->setValue(player->volume());
+    qWarning()<<radio->volume();
+    volumeSlider->setValue(radio->volume());
     connect(volumeSlider,SIGNAL(valueChanged(int)),this,SLOT(updateVolume(int)));
     topBar->addWidget(volumeSlider);
 
@@ -99,6 +103,8 @@ Radio::Radio()
     window->setLayout(layout);
     setCentralWidget(window);
     window->show();
+
+    radio->start();
 }
 
 Radio::~Radio()
@@ -107,36 +113,36 @@ Radio::~Radio()
 
 void Radio::freqUp()
 {
-    int f = player->frequency();
-    f = f + 5000;
-    player->setFrequency(f);
+    int f = radio->frequency();
+    f = f + radio->frequencyStep(QRadioTuner::FM);
+    radio->setFrequency(f);
 }
 
 void Radio::freqDown()
 {
-    int f = player->frequency();
-    f = f - 5000;
-    player->setFrequency(f);
+    int f = radio->frequency();
+    f = f - radio->frequencyStep(QRadioTuner::FM);
+    radio->setFrequency(f);
 }
 
 void Radio::searchUp()
 {
-    player->searchForward();
+    radio->searchForward();
 }
 
 void Radio::searchDown()
 {
-    player->searchBackward();
+    radio->searchBackward();
 }
 
-void Radio::freqChanged(int f)
+void Radio::freqChanged(int)
 {
-    freq->setText(QString("%1 kHz").arg(player->frequency()/1000));
+    freq->setText(QString("%1 kHz").arg(radio->frequency()/1000));
 }
 
-void Radio::signalChanged(int s)
+void Radio::signalChanged(int)
 {
-    if(player->signalStrength() > 25)
+    if(radio->signalStrength() > 25)
         signal->setText(tr("Got Signal"));
     else
         signal->setText(tr("No Signal"));
@@ -144,6 +150,6 @@ void Radio::signalChanged(int s)
 
 void Radio::updateVolume(int v)
 {
-    player->setVolume(v);
+    radio->setVolume(v);
 }
 

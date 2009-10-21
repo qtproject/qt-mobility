@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,68 +17,120 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
 #include <QtCore/qstring.h>
 #include <QtCore/qdebug.h>
+#include <QtCore/QFile>
 
 #include "v4lserviceplugin.h"
-//#include "v4lcameraservice.h"
+#include "v4lcameraservice.h"
 #include "v4lradioservice.h"
-
-#include <qradioplayercontrol.h>
 
 #include <qmediaserviceprovider.h>
 
 
-class V4LProvider : public QMediaServiceProvider
-{
-    Q_OBJECT
-public:
-    QObject* createObject(const char *interface) const
-    {
-        if (qstrcmp(interface,QRadioService_iid) == 0)
-            return new V4LRadioService;
-
-        //if (qstrcmp(interface,QCameraService_iid) == 0)
-        //    return new V4LCameraService;
-
-        return 0;
-    }
-};
-
 QStringList V4LServicePlugin::keys() const
 {
-    QStringList list;
-    list << QLatin1String("radio");
-    //list << QLatin1String("camera");
-    return list;
+    return QStringList() <<
+            QLatin1String(Q_MEDIASERVICE_RADIO) <<
+            QLatin1String(Q_MEDIASERVICE_CAMERA);
 }
 
-QMediaServiceProvider* V4LServicePlugin::create(QString const& key)
+QMediaService* V4LServicePlugin::create(QString const& key)
 {
-    //if (key == QLatin1String("radio") || key == QLatin1String("camera"))
-    if (key == QLatin1String("radio"))
-        return new V4LProvider;
+    if (key == QLatin1String(Q_MEDIASERVICE_RADIO))
+        return new V4LRadioService;
+
+    if (key == QLatin1String(Q_MEDIASERVICE_CAMERA))
+        return new V4LCameraService;
 
     qDebug() << "unsupported key:" << key;
     return 0;
 }
 
-#include "v4lserviceplugin.moc"
+void V4LServicePlugin::release(QMediaService *service)
+{
+    delete service;
+}
+
+QList<QByteArray> V4LServicePlugin::devices(const QByteArray &service) const
+{
+    if (service == Q_MEDIASERVICE_CAMERA) {
+        if (m_cameraDevices.isEmpty())
+            updateDevices();
+
+        return m_cameraDevices;
+    }
+
+    return QList<QByteArray>();
+}
+
+QString V4LServicePlugin::deviceDescription(const QByteArray &service, const QByteArray &device)
+{
+    if (service == Q_MEDIASERVICE_CAMERA) {
+        if (m_cameraDevices.isEmpty())
+            updateDevices();
+
+        for (int i=0; i<m_cameraDevices.count(); i++)
+            if (m_cameraDevices[i] == device)
+                return m_cameraDescriptions[i];
+    }
+
+    return QString();
+}
+
+void V4LServicePlugin::updateDevices() const
+{
+    m_cameraDevices.clear();
+    m_cameraDescriptions.clear();
+
+    QString name;
+    QFile video0("/sys/class/video4linux/video0/name");
+    if (video0.exists()) {
+        m_cameraDevices.append("v4l:/dev/video0");
+        char str[30];
+        memset(str,0,30);
+        video0.open(QIODevice::ReadOnly);
+        video0.read(str,30);
+        name = QString(str);
+        m_cameraDescriptions.append(name.simplified());
+        video0.close();
+    }
+
+    QFile video1("/sys/class/video4linux/video1/name");
+    if (video0.exists()) {
+        m_cameraDevices.append("v4l:/dev/video1");
+        char str[30];
+        memset(str,0,30);
+        video1.open(QIODevice::ReadOnly);
+        video1.read(str,30);
+        name = QString(str);
+        m_cameraDescriptions.append(name.simplified());
+        video1.close();
+    }
+}
+
 
 Q_EXPORT_PLUGIN2(v4lengine, V4LServicePlugin);
 

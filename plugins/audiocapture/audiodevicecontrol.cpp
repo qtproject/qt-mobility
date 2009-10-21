@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -82,13 +89,10 @@ QIcon AudioDeviceControl::icon(int index) const
 
 int AudioDeviceControl::defaultDevice() const
 {
-    QAudioDeviceId idx = QAudioDeviceInfo::defaultInputDevice();
-    QList<QAudioDeviceId> devices;
-    //QAudioDeviceInfo idx = QAudioDeviceInfo::defaultInputDevice();
-    //QList<QAudioDeviceInfo> devices;
+    QAudioDeviceInfo idx = QAudioDeviceInfo::defaultInputDevice();
+    QList<QAudioDeviceInfo> devices;
     devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
     QString devName = QAudioDeviceInfo(idx).deviceName();
-    //QString devName = QAudioDeviceInfo(idx).deviceName();
     for(int i=0;i<m_names.count();i++) {
         if(qstrcmp(devName.toLocal8Bit().constData(),
                     m_names.at(i).toLocal8Bit().constData()) == 0)
@@ -118,14 +122,11 @@ void AudioDeviceControl::update()
     m_names.clear();
     m_descriptions.clear();
 
-    QList<QAudioDeviceId> devices;
-    //QList<QAudioDeviceInfo> devices;
+    QList<QAudioDeviceInfo> devices;
     devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
     for(int i = 0; i < devices.size(); ++i) {
-        m_names.append(QAudioDeviceInfo(devices.at(i)).deviceName());
-        m_descriptions.append(QAudioDeviceInfo(devices.at(i)).deviceName());
-        //m_names.append(devices.at(i).deviceName());
-        //m_descriptions.append(devices.at(i).deviceName());
+        m_names.append(devices.at(i).deviceName());
+        m_descriptions.append(devices.at(i).deviceName());
     }
     m_device = QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice()).deviceName();
 }

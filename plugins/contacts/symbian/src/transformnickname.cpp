@@ -89,3 +89,11 @@ bool TransformNickname::supportsDetail(QString detailName) const
     }
     return ret;
 }
+
+QList<TUid> TransformNickname::supportedSortingFieldTypes(QString detailFieldName) const
+{
+    QList<TUid> uids;
+    if (detailFieldName == QContactNickname::FieldNickname)
+        uids << KUidContactFieldSecondName;
+    return uids;
+}

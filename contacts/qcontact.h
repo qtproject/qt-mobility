@@ -47,6 +47,9 @@
 #include "qcontactdetail.h"
 #include "qcontactdetaildefinition.h"
 #include "qcontactdisplaylabel.h"
+#include "qcontactrelationship.h"
+#include "qcontactrelationshipfilter.h"
+#include "qcontacttype.h"
 
 class QContactManager;
 class QContactData;
@@ -65,13 +68,15 @@ public:
     bool operator==(const QContact &other) const;
     bool operator!=(const QContact &other) const {return !(other == *this);}
 
-    /* Local ID */
-    QUniqueId id() const;
-    void setId(const QUniqueId& id);
+    /* Unique ID */
+    QContactId id() const;
+    void setId(const QContactId& id);
+    QContactLocalId localId() const;
 
-    /* Group IDs */
-    QList<QUniqueId> groups() const;
-    void setGroups(const QList<QUniqueId> & groupIds);
+    /* Type - contact, group, metacontact, ... */
+    QString type() const;
+    void setType(const QString& type);
+    void setType(const QContactType& type);
 
     /* The (possibly synthesised) display label of the contact */
     QContactDisplayLabel displayLabel() const;
@@ -97,6 +102,19 @@ public:
             ret.append(T(prop));
         return ret;
     }
+    
+    /* Templated (type-specific) detail retrieval base on given detail field name and field value */
+    template<typename T> QList<T> details(const QString& fieldName, const QString& value) const
+    {
+        QList<QContactDetail> props = details(T::DefinitionName, fieldName, value);
+        QList<T> ret;
+        foreach(QContactDetail prop, props)
+            ret.append(T(prop));
+        return ret;
+    }
+    
+    /* Detail retrieval base on given detail definition name, field name and field value */
+    QList<QContactDetail> details(const QString& definitionName, const QString& fieldName, const QString& value) const;
 
     template<typename T> T detail() const
     {
@@ -106,6 +124,12 @@ public:
     /* generic detail addition/removal functions */
     bool saveDetail(QContactDetail* detail);   // modifies the detail - sets its ID if detail already exists
     bool removeDetail(QContactDetail* detail); // modifies the detail - unsets its ID
+
+    /* Relationships that this contact was involved in when it was retrieved from the manager */
+    QList<QContactRelationship> relationships(const QString& relationshipType = QString()) const;
+    QList<QContactId> relatedContacts(const QString& relationshipType = QString(), QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
+    void setRelationshipOrder(const QList<QContactRelationship>& reordered);
+    QList<QContactRelationship> relationshipOrder() const;
 
     /* Actions available to be performed on this contact */
     QStringList availableActions() const;
@@ -118,6 +142,7 @@ public:
 private:
     friend class QContactManager;
     friend class QContactManagerData;
+    friend class QContactManagerEngine;
 
     QSharedDataPointer<QContactData> d;
 };

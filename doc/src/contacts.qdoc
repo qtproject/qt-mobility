@@ -249,7 +249,6 @@ To build the library, run \tt qmake and \tt make.
 
 \annotatedlist contacts-main
 
-
 \section2 "Contact Details" Leaf Classes
 
 Several subclasses of \l{QContactDetail} are provided as part of the
@@ -259,7 +258,6 @@ choose not to support one or more of these subclasses as they appear here;
 they may offer their own which provide similar functionality.
 
 \annotatedlist contacts-details
-
 
 Each of these subclasses provide access to information stored in fields which
 are listed in the \l{Qt Contacts Schema}{schema}.
@@ -271,7 +269,6 @@ functionality provided by a manager backend. The asynchronous API is
 offered through subclasses of the \l{QContactAbstractRequest} class:
 
 \annotatedlist contacts-requests
-
 
 \section2 Contact Selection
 

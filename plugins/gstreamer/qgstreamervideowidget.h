@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -56,14 +63,11 @@ public:
 
     QWidget *videoWidget();
 
-    QVideoWidget::AspectRatio aspectRatio() const;
-    QSize customAspectRatio() const;
+    QVideoWidget::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
 
-    void setAspectRatio(QVideoWidget::AspectRatio ratio);
-    void setCustomAspectRatio(const QSize &customRatio);
-
-    bool isFullscreen() const;
-    void setFullscreen(bool fullscreen);
+    bool isFullScreen() const;
+    void setFullScreen(bool fullScreen);
 
     int brightness() const;
     void setBrightness(int brightness);
@@ -90,8 +94,7 @@ private:
     GstElement *m_videoSink;
     QGstreamerVideoWidget *m_widget;
     WId m_windowId;
-    QVideoWidget::AspectRatio m_aspectRatioMode;
-    QSize m_customAspectRatio;
+    QVideoWidget::AspectRatioMode m_aspectRatioMode;
 };
 
 #endif // QGSTREAMERVIDEOWIDGET_H

@@ -1,7 +1,7 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
-**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -35,51 +42,38 @@
 #ifndef QAUDIOENCODERCONTROL_H
 #define QAUDIOENCODERCONTROL_H
 
-#include <qabstractmediacontrol.h>
+#include <qmediacontrol.h>
+#include <qmediarecorder.h>
 #include <QtCore/qlist.h>
 #include <QtCore/qpair.h>
+
 
 class QAudioFormat;
 class QStringList;
 
 
-class Q_MEDIA_EXPORT QAudioEncoderControl : public QAbstractMediaControl
+class Q_MEDIA_EXPORT QAudioEncoderControl : public QMediaControl
 {
     Q_OBJECT
+
 public:
     virtual ~QAudioEncoderControl();
 
     virtual QStringList supportedAudioCodecs() const = 0;
-    virtual QString audioCodec() const = 0;
-    virtual bool setAudioCodec(const QString &codecName) = 0;
-
     virtual QString codecDescription(const QString &codecName) const = 0;
 
-    virtual int bitrate() const = 0;
-    virtual void setBitrate(int) = 0;
+    virtual QList<int> supportedSampleRates() const = 0;
 
-    virtual int quality() const = 0;
-    virtual void setQuality(int) = 0;
+    virtual QAudioEncoderSettings audioSettings() const = 0;
+    virtual void setAudioSettings(const QAudioEncoderSettings&) = 0;
 
-    virtual QStringList supportedEncodingOptions() const;
-    virtual QVariant encodingOption(const QString &name) const;
-    virtual void setEncodingOption(const QString &name, const QVariant &value);
-
-    virtual int frequency() const = 0;
-    virtual void setFrequency(int frequency) = 0;
-    virtual QList<int> supportedFrequencies() const = 0;
-    virtual QPair<int,int> supportedFrequencyRange() const = 0;
-
-    virtual int channels() const = 0;
-    virtual void setChannels(int channels) = 0;
-    virtual QList<int> supportedChannelCounts() const = 0;
-
-    virtual int sampleSize() const = 0;
-    virtual void setSampleSize(int sampleSize) = 0;
-    virtual QList<int> supportedSampleSizes() const = 0;
+    virtual QStringList supportedEncodingOptions(const QString &codec) const = 0;
+    virtual QVariant encodingOption(const QString &codec, const QString &name) const = 0;
+    virtual void setEncodingOption(
+            const QString &codec, const QString &name, const QVariant &value) = 0;
 
 protected:
-    QAudioEncoderControl(QObject *parent);
+    QAudioEncoderControl(QObject *parent = 0);
 };
 
 #define QAudioEncoderControl_iid "com.nokia.Qt.QAudioEncoderControl/1.0"

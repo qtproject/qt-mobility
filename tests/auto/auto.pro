@@ -57,24 +57,32 @@ SUBDIRS +=  qcontact \                      #Contacts
             qcontactdetaildefinition \
             qcontactdetails \
             qcontactfilter \
-            qcontactgroup \
             qcontactmanager \
             qcontactmanagerplugins \
             qcontactmanagerfiltering
 
-SUBDIRS += \           #Multimedia
-        qabstractmediaobject \
-        qabstractmediaservice \
+
+SUBDIRS += \             #Multimedia
+        qaudiocapturesource \
+        qcamera \
+        qmediaimageviewer \
+        qmediaobject \
+        qmediaplayer \
         qmediaplaylist \
         qmediaplaylistnavigator \
-        qmediaresource \
-        qmediasource \
-        qvideowidget \
-        qmediaplayer \
-        qradioplayer \
+        qmediapluginloader \
         qmediarecorder \
-        qaudiosource \
-        qcamera
+        qmediaresource \
+        qmediaservice \
+        qmediaserviceprovider \
+        qmediacontent \
+        qradiotuner \
+        qvideowidget
+
+contains(QT_CONFIG, multimedia) {
+    SUBDIRS += \
+            qgraphicsvideoitem
+}
 
 #Messaging
 contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
@@ -85,5 +93,3 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
         qmessage
 
 }
-
-

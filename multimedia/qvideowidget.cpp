@@ -1,7 +1,7 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
-**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -17,25 +17,32 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
 #include <qvideowidget_p.h>
 
-#include <qabstractmediaobject.h>
-#include <qabstractmediaservice.h>
+#include <qmediaobject.h>
+#include <qmediaservice.h>
 #include <qvideooutputcontrol.h>
 #include <qvideowindowcontrol.h>
 #include <qvideowidgetcontrol.h>
@@ -77,61 +84,25 @@ void QVideoWidgetControlBackend::setSaturation(int saturation)
     m_widgetControl->setSaturation(saturation);
 }
 
-void QVideoWidgetControlBackend::setDisplayMode(QVideoWidget::DisplayMode mode)
+void QVideoWidgetControlBackend::setFullScreen(bool fullScreen)
 {
-    m_widgetControl->setFullscreen(mode == QVideoWidget::FullscreenDisplay);
+    m_widgetControl->setFullScreen(fullScreen);
 }
 
-void QVideoWidgetControlBackend::setAspectRatio(QVideoWidget::AspectRatio ratio)
-{
-    m_widgetControl->setAspectRatio(ratio);
 
-    emit aspectRatioModeChanged(m_widgetControl->aspectRatio());
+QVideoWidget::AspectRatioMode QVideoWidgetControlBackend::aspectRatioMode() const
+{
+    return m_widgetControl->aspectRatioMode();
 }
 
-void QVideoWidgetControlBackend::setCustomPixelAspectRatio(const QSize &customRatio)
+void QVideoWidgetControlBackend::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 {
-    m_widgetControl->setCustomAspectRatio(customRatio);
-
-    emit customAspectRatioChanged(m_widgetControl->customAspectRatio());
+    m_widgetControl->setAspectRatioMode(mode);
 }
 
 QWidget *QVideoWidgetControlBackend::widget()
 {
     return m_widgetControl->videoWidget();
-}
-
-QFullScreenVideoWidget::QFullScreenVideoWidget(QWidget *parent)
-    : QWidget(parent)
-{
-}
-
-QFullScreenVideoWidget::~QFullScreenVideoWidget()
-{
-}
-
-void QFullScreenVideoWidget::setDisplayMode(QVideoWidget::DisplayMode mode)
-{
-     if (mode == QVideoWidget::FullscreenDisplay) {
-        setWindowFlags(windowFlags() | Qt::Window | Qt::WindowStaysOnTopHint);
-        setWindowState(windowState() | Qt::WindowFullScreen);
-
-        show();
-
-        emit displayModeChanged(m_displayMode = mode);
-    } else {
-        setWindowFlags(windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
-        setWindowState(windowState() & ~Qt::WindowFullScreen);
-
-        show();
-
-        emit displayModeChanged(m_displayMode = mode);
-    }
-}
-
-QWidget *QFullScreenVideoWidget::widget()
-{
-    return this;
 }
 
 #ifndef QT_NO_MULTIMEDIA
@@ -168,7 +139,6 @@ QVideoRendererWidget::QVideoRendererWidget(QVideoRendererControl *control, QWidg
 #else
     , m_surface(new QPainterVideoSurface)
 #endif
-    , m_displayMode(QVideoWidget::WindowedDisplay)
 {
     connect(m_surface, SIGNAL(frameChanged()), SLOT(update()));
     connect(m_surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)), SLOT(dimensionsChanged()));
@@ -182,9 +152,12 @@ QVideoRendererWidget::QVideoRendererWidget(QVideoRendererControl *control, QWidg
 
 QVideoRendererWidget::~QVideoRendererWidget()
 {
-    m_rendererControl->setSurface(0);
-
     delete m_surface;
+}
+
+void QVideoRendererWidget::clearSurface()
+{
+    m_rendererControl->setSurface(0);
 }
 
 void QVideoRendererWidget::setBrightness(int brightness)
@@ -215,36 +188,21 @@ void QVideoRendererWidget::setSaturation(int saturation)
     emit saturationChanged(saturation);
 }
 
-void QVideoRendererWidget::setAspectRatio(QVideoWidget::AspectRatio mode)
+QVideoWidget::AspectRatioMode QVideoRendererWidget::aspectRatioMode() const
+{
+    return m_aspectRatioMode;
+}
+
+void QVideoRendererWidget::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 {
     m_aspectRatioMode = mode;
 
     updateGeometry();
-
-    emit aspectRatioModeChanged(m_aspectRatioMode);
-}
-
-void QVideoRendererWidget::setCustomPixelAspectRatio(const QSize &ratio)
-{
-    m_aspectRatio = ratio;
-
-    updateGeometry();
-
-    emit customAspectRatioChanged(m_aspectRatio);
 }
 
 QSize QVideoRendererWidget::sizeHint() const
 {
-    if (m_aspectRatioMode == QVideoWidget::AspectRatioCustom) {
-        QVideoSurfaceFormat format = m_surface->surfaceFormat();
-
-        QSize size = format.viewport().size();
-        size.setWidth(size.width() * m_aspectRatio.width() / m_aspectRatio.height());
-
-        return size;
-    } else {
-        return m_surface->surfaceFormat().sizeHint();
-    }
+    return m_surface->surfaceFormat().sizeHint();
 }
 
 void QVideoRendererWidget::paintEvent(QPaintEvent *event)
@@ -268,12 +226,10 @@ QRect QVideoRendererWidget::displayRect() const
 {
     QRect displayRect = rect();
 
-    if (m_aspectRatioMode != QVideoWidget::AspectRatioWidget) {
+    if (m_aspectRatioMode != QVideoWidget::IgnoreAspectRatio) {
         QVideoSurfaceFormat format = m_surface->surfaceFormat();
 
-        QSize aspectRatio = m_aspectRatioMode == QVideoWidget::AspectRatioCustom
-                ? m_aspectRatio
-                : format.pixelAspectRatio();
+        QSize aspectRatio = format.pixelAspectRatio();
 
         QSize size = format.viewport().size();
         size.rwidth() *= aspectRatio.width();
@@ -289,23 +245,9 @@ QRect QVideoRendererWidget::displayRect() const
     return displayRect;
 }
 
-void QVideoRendererWidget::setDisplayMode(QVideoWidget::DisplayMode mode)
+void QVideoRendererWidget::setFullScreen(bool fullScreen)
 {
-     if (mode == QVideoWidget::FullscreenDisplay) {
-        setWindowFlags(windowFlags() | Qt::Window | Qt::WindowStaysOnTopHint);
-        setWindowState(windowState() | Qt::WindowFullScreen);
-
-        show();
-
-        emit displayModeChanged(m_displayMode = mode);
-    } else {
-        setWindowFlags(windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
-        setWindowState(windowState() & ~Qt::WindowFullScreen);
-
-        show();
-
-        emit displayModeChanged(m_displayMode = mode);
-    }
+     Q_UNUSED(fullScreen);
 }
 
 QWidget *QVideoRendererWidget::widget()
@@ -316,7 +258,7 @@ QWidget *QVideoRendererWidget::widget()
 #endif
 
 QVideoWindowWidget::QVideoWindowWidget(QVideoWindowControl *control, QWidget *parent)
-    : QFullScreenVideoWidget(parent)
+    : QWidget(parent)
     , m_windowControl(control)
 {
 }
@@ -345,25 +287,24 @@ void QVideoWindowWidget::setSaturation(int saturation)
     m_windowControl->setSaturation(saturation);
 }
 
-void QVideoWindowWidget::setDisplayMode(QVideoWidget::DisplayMode mode)
+void QVideoWindowWidget::setFullScreen(bool fullScreen)
 {
-    m_windowControl->setFullscreen(mode == QVideoWidget::FullscreenDisplay);
-
-    QFullScreenVideoWidget::setDisplayMode(mode);
+    m_windowControl->setFullScreen(fullScreen);
 }
 
-void QVideoWindowWidget::setAspectRatio(QVideoWidget::AspectRatio ratio)
+QVideoWidget::AspectRatioMode QVideoWindowWidget::aspectRatioMode() const
 {
-    m_windowControl->setAspectRatio(ratio);
-
-    emit aspectRatioModeChanged(m_windowControl->aspectRatio());
+    return m_windowControl->aspectRatioMode();
 }
 
-void QVideoWindowWidget::setCustomPixelAspectRatio(const QSize &customRatio)
+void QVideoWindowWidget::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 {
-    m_windowControl->setCustomAspectRatio(customRatio);
+    m_windowControl->setAspectRatioMode(mode);
+}
 
-    emit customAspectRatioChanged(m_windowControl->customAspectRatio());
+QWidget *QVideoWindowWidget::widget()
+{
+    return this;
 }
 
 QSize QVideoWindowWidget::sizeHint() const
@@ -376,12 +317,12 @@ void QVideoWindowWidget::setVisible(bool visible)
     if (visible)
         m_windowControl->setWinId(winId());
 
-    QFullScreenVideoWidget::setVisible(visible);
+    QWidget::setVisible(visible);
 }
 
 void QVideoWindowWidget::moveEvent(QMoveEvent *event)
 {
-    QFullScreenVideoWidget::moveEvent(event);
+    QWidget::moveEvent(event);
 
     QRect displayRect = rect();
     displayRect.moveTo(mapTo(nativeParentWidget(), displayRect.topLeft()));
@@ -391,7 +332,7 @@ void QVideoWindowWidget::moveEvent(QMoveEvent *event)
 
 void QVideoWindowWidget::resizeEvent(QResizeEvent *event)
 {
-    QFullScreenVideoWidget::resizeEvent(event);
+    QWidget::resizeEvent(event);
 
     QRect displayRect = rect();
     displayRect.moveTo(mapTo(nativeParentWidget(), displayRect.topLeft()));
@@ -415,8 +356,7 @@ void QVideoWidgetPrivate::setCurrentBackend(QVideoWidgetBackendInterface *backen
         currentBackend->setContrast(contrast);
         currentBackend->setHue(hue);
         currentBackend->setSaturation(saturation);
-        currentBackend->setAspectRatio(aspectRatio);
-        currentBackend->setCustomPixelAspectRatio(customPixelAspectRatio);
+        currentBackend->setAspectRatioMode(aspectRatioMode);
     }
     layout->setCurrentWidget(currentBackend->widget());
 }
@@ -464,74 +404,70 @@ void QVideoWidgetPrivate::_q_saturationChanged(int s)
 }
 
 
-void QVideoWidgetPrivate::_q_fullScreenChanged(bool fullscreen)
+void QVideoWidgetPrivate::_q_fullScreenChanged(bool fullScreen)
 {
-    _q_displayModeChanged(fullscreen
-            ? QVideoWidget::FullscreenDisplay
-            : QVideoWidget::WindowedDisplay);
+    if (!fullScreen && q_func()->isFullScreen())
+        q_func()->showNormal();
 }
 
-void QVideoWidgetPrivate::_q_displayModeChanged(QVideoWidget::DisplayMode mode)
-{
-    if (mode != displayMode) {
-        if (mode == QVideoWidget::WindowedDisplay) {
-            layout->activate();
-        }
-
-        emit q_func()->displayModeChanged(displayMode = mode);
-    }
-}
-
-
-void QVideoWidgetPrivate::_q_aspectRatioModeChanged(QVideoWidget::AspectRatio mode)
-{
-    aspectRatio = mode;
-}
-
-void QVideoWidgetPrivate::_q_customAspectRatioChanged(const QSize &ratio)
-{
-    customPixelAspectRatio = ratio;
-}
 
 /*!
     \class QVideoWidget
-    \brief The QVideoWidget class provides a widget which displays video produced by a media
+    \preliminary
+
+    \brief The QVideoWidget class provides a widget which presents video produced by a media
     object.
     \ingroup multimedia
-    
-    \preliminary
+
+    A video widget presents video produced by the media object passed to it in it's constructor.
+    Any media object that produces video can be used as the source for a video widget, but only
+    one video output can be attached to a media object at a time.
+
+    \code
+    int main(int argc, char *argv[])
+    {
+        QApplication app(argc, argv);
+
+        QMediaPlayer player;
+
+        QVideoWidget widget(&player);
+        widget.show();
+
+        player.setMedia(QUrl("http://example.com/movie.mp4"));
+        player.play();
+
+        return app.exec();
+    }
+    \endcode
+
+    \sa QMediaObject, QMediaPlayer, QGraphicsVideoItem
 */
 
 /*!
-    \enum QVideoWidget::DisplayMode
-
-    Specifies whether video is displayed full screen, or is confined to a window.
-
-    \value WindowedDisplay Video is displayed within a window.
-    \value FullscreenDisplay Video is displayed full screen.
-*/
-
-/*!
-    \enum QVideoWidget::AspectRatio
+    \enum QVideoWidget::AspectRatioMode
 
     Specfies how video is scaled with respect to its aspect ratio.
 
-    \value AspectRatioAuto The aspect ratio is repected, and the video is letter-boxed.
-    \value AspectRatioWidget The aspect ratio is ignored and the video stretched to fit the widget.
-    \value AspectRatioCustom The video is stretched to a specified aspect ratio and letter-boxed.
+    \value IgnoreAspectRatio The video is scaled to fill the widget ignoring its aspect ratio.
+    \value KeepAspectRatio The video is scaled to the largest rectangle that will fit within the
+    widget's dimensions while still retaining its original aspect ratio.
 */
 
 /*!
     Constructs a new widget with the given \a parent which displays video produced by a media
     \a object.
 */
-QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
+QVideoWidget::QVideoWidget(QMediaObject *object, QWidget *parent)
     : QWidget(parent, 0)
     , d_ptr(new QVideoWidgetPrivate)
 {
     Q_D(QVideoWidget);
 
     d->q_ptr = this;
+
+    QPalette palette = QWidget::palette();
+    palette.setColor(QPalette::Window, Qt::black);
+    setPalette(palette);
 
     if (object)
         d->service = object->service();
@@ -553,7 +489,6 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
         d->widgetBackend = new QVideoWidgetControlBackend(widgetControl);
 
         QWidget *widget = d->widgetBackend->widget();
-        widget->installEventFilter(this);
 
         d->layout->addWidget(widget);
 
@@ -561,19 +496,13 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
         connect(widgetControl, SIGNAL(contrastChanged(int)), SLOT(_q_contrastChanged(int)));
         connect(widgetControl, SIGNAL(hueChanged(int)), SLOT(_q_hueChanged(int)));
         connect(widgetControl, SIGNAL(saturationChanged(int)), SLOT(_q_saturationChanged(int)));
-        connect(widgetControl, SIGNAL(fullscreenChanged(bool)), SLOT(_q_fullScreenChanged(bool)));
-
-        connect(d->widgetBackend, SIGNAL(aspectRatioModeChanged(QVideoWidget::AspectRatio)),
-                SLOT(_q_aspectRatioModeChanged(QVideoWidget::AspectRatio)));
-        connect(d->widgetBackend, SIGNAL(customAspectRatioChanged(QSize)),
-                SLOT(_q_customAspectRatioChanged(QSize)));
+        connect(widgetControl, SIGNAL(fullScreenChanged(bool)), SLOT(_q_fullScreenChanged(bool)));
     } else {
         QVideoWindowControl *windowControl = qobject_cast<QVideoWindowControl *>(
                 d->service->control(QVideoWindowControl_iid));
 
         if (windowControl != 0) {
             d->windowBackend = new QVideoWindowWidget(windowControl);
-            d->windowBackend->installEventFilter(this);
 
             d->layout->addWidget(d->windowBackend);
 
@@ -581,15 +510,8 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
             connect(windowControl, SIGNAL(contrastChanged(int)), SLOT(_q_contrastChanged(int)));
             connect(windowControl, SIGNAL(hueChanged(int)), SLOT(_q_hueChanged(int)));
             connect(windowControl, SIGNAL(saturationChanged(int)), SLOT(_q_saturationChanged(int)));
-            connect(windowControl, SIGNAL(fullscreenChanged(bool)),
+            connect(windowControl, SIGNAL(fullScreenChanged(bool)),
                     SLOT(_q_fullScreenChanged(bool)));
-
-            connect(d->windowBackend, SIGNAL(displayModeChanged(QVideoWidget::DisplayMode)),
-                    SLOT(_q_displayModeChanged(QVideoWidget::DisplayMode)));
-            connect(d->windowBackend, SIGNAL(aspectRatioModeChanged(QVideoWidget::AspectRatio)),
-                    SLOT(_q_aspectRatioModeChanged(QVideoWidget::AspectRatio)));
-            connect(d->windowBackend, SIGNAL(customAspectRatioChanged(QSize)),
-                    SLOT(_q_customAspectRatioChanged(QSize)));
         }
 #ifndef QT_NO_MULTIMEDIA
         QVideoRendererControl *rendererControl = qobject_cast<QVideoRendererControl *>(
@@ -597,7 +519,6 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
 
         if (rendererControl != 0) {
             d->rendererBackend = new QVideoRendererWidget(rendererControl);
-            d->rendererBackend->installEventFilter(this);
 
             d->layout->addWidget(d->rendererBackend);
 
@@ -608,13 +529,6 @@ QVideoWidget::QVideoWidget(QAbstractMediaObject *object, QWidget *parent)
             connect(d->rendererBackend, SIGNAL(hueChanged(int)), SLOT(_q_hueChanged(int)));
             connect(d->rendererBackend, SIGNAL(saturationChanged(int)),
                     SLOT(_q_saturationChanged(int)));
-
-            connect(d->rendererBackend, SIGNAL(displayModeChanged(QVideoWidget::DisplayMode)),
-                    SLOT(_q_displayModeChanged(QVideoWidget::DisplayMode)));
-            connect(d->rendererBackend, SIGNAL(aspectRatioModeChanged(QVideoWidget::AspectRatio)),
-                    SLOT(_q_aspectRatioModeChanged(QVideoWidget::AspectRatio)));
-            connect(d->rendererBackend, SIGNAL(customAspectRatioChanged(QSize)),
-                    SLOT(_q_customAspectRatioChanged(QSize)));
         }
 #endif
     }
@@ -641,87 +555,57 @@ QVideoWidget::~QVideoWidget()
         }
         delete d_ptr->windowBackend;
 #ifndef QT_NO_MULTIMEDIA
-        delete d_ptr->rendererBackend;
+        if (d_ptr->rendererBackend) {
+            d_ptr->rendererBackend->clearSurface();
+
+            delete d_ptr->rendererBackend;
+        }
 #endif
     }
     delete d_ptr;
 }
 
 /*!
-    \property QVideoWidget::aspectRatio
-    \brief whether the aspect ratio of the video is respected.
+    \property QVideoWidget::aspectRatioMode
+    \brief how video is scaled with respect to its aspect ratio.
 */
-QVideoWidget::AspectRatio QVideoWidget::aspectRatio() const
+
+QVideoWidget::AspectRatioMode QVideoWidget::aspectRatioMode() const
 {
-    return d_func()->aspectRatio;
+    return d_func()->aspectRatioMode;
 }
 
-void QVideoWidget::setAspectRatio(QVideoWidget::AspectRatio ratio)
+void QVideoWidget::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 {
     Q_D(QVideoWidget);
 
-    if (d->currentBackend)
-        d->currentBackend->setAspectRatio(ratio);
+    if (d->currentBackend) {
+        d->currentBackend->setAspectRatioMode(mode);
+        d->aspectRatioMode = d->currentBackend->aspectRatioMode();
+    } else {
+        d->aspectRatioMode = mode;
+    }
+}
+
+/*!
+    \property QVideoWidget::fullScreen
+    \brief whether video display is confined to a window or is fullScreen.
+*/
+
+void QVideoWidget::setFullScreen(bool fullScreen)
+{
+    if (fullScreen)
+        showFullScreen();
     else
-        d->aspectRatio = ratio;
+        showNormal();
 }
 
 /*!
-    \fn QVideoWidget::aspectRatioChanged(QVideoWidget::AspectRatio ratio)
+    \fn QVideoWidget::fullScreenChanged(bool fullScreen)
 
-    Signals that the aspect \a ratio scaling mode of a video widget has changed.
-*/
+    Signals that the \a fullScreen mode of a video widget has changed.
 
-/*!
-    \property QVideoWidget::customPixelAspectRatio
-    \brief an overriding pixel aspect ratio.
-
-    This aspect ratio is only used if the aspectRatio() mode is AspectRatioCustom.
-*/
-
-QSize QVideoWidget::customPixelAspectRatio() const
-{
-    return d_func()->customPixelAspectRatio;
-}
-
-void QVideoWidget::setCustomPixelAspectRatio(const QSize &customRatio)
-{
-    Q_D(QVideoWidget);
-
-    if (d->currentBackend)
-        d->currentBackend->setCustomPixelAspectRatio(customRatio);
-    else
-        d->customPixelAspectRatio = customRatio;
-}
-
-/*!
-    \fn QVideoWidget::customPixelAspectRatioChanged(const QSize &ratio)
-
-    Signals that the override pixel aspect \a ratio of a video widget has changed.
-*/
-
-/*!
-    \property QVideoWidget::displayMode
-    \brief whether video display is confined to a window or is fullscreen.
-*/
-
-QVideoWidget::DisplayMode QVideoWidget::displayMode() const
-{
-    return d_func()->displayMode;
-}
-
-void QVideoWidget::setDisplayMode(DisplayMode mode)
-{
-    Q_D(QVideoWidget);
-
-    if (d->currentBackend)
-        d->currentBackend->setDisplayMode(mode);
-}
-
-/*!
-    \fn QVideoWidget::displayModeChanged(QVideoWidget::DisplayMode mode)
-
-    Signals that the display \a mode of a video widget has changed.
+    \sa fullScreen
 */
 
 /*!
@@ -752,6 +636,8 @@ void QVideoWidget::setBrightness(int brightness)
     \fn QVideoWidget::brightnessChanged(int brightness)
 
     Signals that a video widgets's \a brightness adjustment has changed.
+
+    \sa brightness
 */
 
 /*!
@@ -783,6 +669,8 @@ void QVideoWidget::setContrast(int contrast)
     \fn QVideoWidget::contrastChanged(int contrast)
 
     Signals that a video widgets's \a contrast adjustment has changed.
+
+    \sa contrast
 */
 
 /*!
@@ -790,12 +678,6 @@ void QVideoWidget::setContrast(int contrast)
     \brief an adjustment to the hue of displayed video.
 
     Valid hue values range between -100 and 100, the default is 0.
-*/
-
-/*!
-    \fn QVideoWidget::hueChanged(int hue)
-
-    Signals that a video widgets's \a hue has changed.
 */
 
 int QVideoWidget::hue() const
@@ -814,6 +696,14 @@ void QVideoWidget::setHue(int hue)
     else if (d->hue != boundedHue)
         emit hueChanged(d->hue = boundedHue);
 }
+
+/*!
+    \fn QVideoWidget::hueChanged(int hue)
+
+    Signals that a video widgets's \a hue has changed.
+
+    \sa hue
+*/
 
 /*!
     \property QVideoWidget::saturation
@@ -841,34 +731,42 @@ void QVideoWidget::setSaturation(int saturation)
 }
 
 /*!
+    \fn QVideoWidget::saturationChanged(int saturation)
+
+    Signals that a video widgets's \a saturation has changed.
+
+    \sa saturation
+*/
+
+/*!
     \reimp
+    \internal
 */
 
 void QVideoWidget::setVisible(bool visible)
 {
     Q_D(QVideoWidget);
 
-    if (d->service == 0 || d->outputControl == 0) {
-        visible = false;
-    } else if (visible) {
-        if (d->widgetBackend != 0) {
-            d->setCurrentBackend(d->widgetBackend);
-            d->outputControl->setOutput(QVideoOutputControl::WidgetOutput);
-        } else if (d->windowBackend != 0
-                && (window() == 0 || !window()->testAttribute(Qt::WA_DontShowOnScreen))) {
-            d->setCurrentBackend(d->windowBackend);
-            d->outputControl->setOutput(QVideoOutputControl::WindowOutput);
+    if (d->outputControl != 0) {
+        if (visible) {
+            if (d->widgetBackend != 0) {
+                d->setCurrentBackend(d->widgetBackend);
+                d->outputControl->setOutput(QVideoOutputControl::WidgetOutput);
+            } else if (d->windowBackend != 0
+                    && (window() == 0 || !window()->testAttribute(Qt::WA_DontShowOnScreen))) {
+                d->setCurrentBackend(d->windowBackend);
+                d->outputControl->setOutput(QVideoOutputControl::WindowOutput);
 #ifndef QT_NO_MULTIMEDIA
-        } else if (d->rendererBackend != 0) {
-            d->setCurrentBackend(d->rendererBackend);
-            d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
+            } else if (d->rendererBackend != 0) {
+                d->setCurrentBackend(d->rendererBackend);
+                d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
 #endif
+            } else {
+                d->outputControl->setOutput(QVideoOutputControl::NoOutput);
+            }
         } else {
             d->outputControl->setOutput(QVideoOutputControl::NoOutput);
-            visible = false;
         }
-    } else {
-        d->outputControl->setOutput(QVideoOutputControl::NoOutput);
     }
 
     QWidget::setVisible(visible);
@@ -876,38 +774,32 @@ void QVideoWidget::setVisible(bool visible)
 
 /*!
     \reimp
+    \internal
 */
 
-bool QVideoWidget::eventFilter(QObject *, QEvent *e)
-{
-    switch (e->type()) {
-    case QEvent::KeyPress:
-    case QEvent::KeyRelease:
-    case QEvent::MouseButtonDblClick:
-    case QEvent::MouseButtonPress:
-    case QEvent::MouseButtonRelease:
-    case QEvent::MouseMove:
-        return event(e);
-    default:
-        return false;
-    }
-}
-
-/*!
-    \reimp
-*/
-void QVideoWidget::keyPressEvent(QKeyEvent *event)
+bool QVideoWidget::event(QEvent *event)
 {
     Q_D(QVideoWidget);
 
-    event->ignore();
-    if (event->key() == Qt::Key_Escape && d->displayMode == FullscreenDisplay) {
-        setDisplayMode(WindowedDisplay);
+    if (event->type() == QEvent::WindowStateChange) {
+        if (windowState() & Qt::WindowFullScreen) {
+            if (d->currentBackend)
+                d->currentBackend->setFullScreen(true);
+            setWindowFlags(windowFlags() | Qt::Window | Qt::WindowStaysOnTopHint);
+            showFullScreen();
 
-        event->accept();
-    } else {
-        event->ignore();
+            if (!d->wasFullScreen)
+                emit fullScreenChanged(d->wasFullScreen = true);
+        } else {
+            if (d->currentBackend)
+                d->currentBackend->setFullScreen(false);
+            setWindowFlags(windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
+
+            if (d->wasFullScreen)
+                emit fullScreenChanged(d->wasFullScreen = false);
+        }
     }
+    return QWidget::event(event);
 }
 
 #include "moc_qvideowidget.cpp"

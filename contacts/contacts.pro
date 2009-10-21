@@ -2,6 +2,8 @@
 # Contacts Mobility API
 # #####################################################################
 TEMPLATE = lib
+
+# Target gets fixed up in common.pri
 TARGET = QtContacts
 DEFINES += BUILD_QTCONTACTS \
     QT_ASCII_CAST_WARNINGS
@@ -20,29 +22,34 @@ PUBLIC_HEADERS += \
     qcontactaction.h \
     qcontactactiondescriptor.h \
     qcontactactionfactory.h \
+    qcontactchangeset.h \
     qcontactdetail.h \
     qcontactdetaildefinition.h \
     qcontactfilter.h \
-    qcontactgroup.h \
+    qcontactid.h \
     qcontactmanager.h \
     qcontactmanagerengine.h \
     qcontactmanagerenginefactory.h \
     qcontactmanagerinfo.h \
+    qcontactrelationship.h \
     qcontactsortorder.h \
     qtcontactsglobal.h \
-    qtcontacts.h
+    qtcontacts.h \
+    qcontactrequestworker.h
 
 # Private Headers
 PRIVATE_HEADERS += \
     qcontact_p.h \
     qcontactabstractrequest_p.h \
     qcontactactiondescriptor_p.h \
+    qcontactchangeset_p.h \
     qcontactdetail_p.h \
     qcontactdetaildefinition_p.h \
     qcontactfilter_p.h \
-    qcontactgroup_p.h \
+    qcontactid_p.h \
     qcontactmanager_p.h \
-    qcontacts_p.h \
+    qcontactrelationship_p.h \
+    qcontactrequestworker_p.h \
     qcontactsortorder_p.h
 
 SOURCES += \
@@ -51,15 +58,18 @@ SOURCES += \
     qcontactaction.cpp \
     qcontactactiondescriptor.cpp \
     qcontactactionfactory.cpp \
+    qcontactchangeset.cpp \
     qcontactdetail.cpp \
     qcontactdetaildefinition.cpp \
     qcontactfilter.cpp \
-    qcontactgroup.cpp \
+    qcontactid.cpp \
     qcontactmanager_p.cpp \
     qcontactmanager.cpp \
     qcontactmanagerengine.cpp \
     qcontactmanagerenginefactory.cpp \
     qcontactmanagerinfo.cpp \
+    qcontactrelationship.cpp \
+    qcontactrequestworker.cpp \
     qcontactsortorder.cpp
 
 HEADERS += \
@@ -68,7 +78,7 @@ HEADERS += \
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = CAP_GENERAL_DLL
+    TARGET.CAPABILITY = ALL -TCB
 
     deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS
@@ -80,5 +90,4 @@ symbian {
         BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
     }
 }
-include(../common.pri)
 include(../features/deploy.pri)

@@ -11,7 +11,7 @@
 *
 * Contributors:
 *
-* Description: 
+* Description:
 *     This file contains private declarations for resources of PbkEng.dll.
 *     The file can be included in C++ or resource file.
 *
@@ -21,10 +21,10 @@
 #ifndef CNTMODELEXTUIDS_HRH
 #define CNTMODELEXTUIDS_HRH
 
-//  CONSTANTS  
+//  CONSTANTS
 
 /**
- * Storage type for thumbnail fields. 
+ * Storage type for thumbnail fields.
  * Currently filename link is the default.
  */
 #define KPbkThumbnailFieldStorageType KStorageTypeStore
@@ -49,9 +49,21 @@
 
 /**
  * Phonebook custom Field value.
- * Geo field type.
+ * Video ringtone field type.
  */
-#define KUidContactFieldGeoValue        	0x200100E5
+#define KUidContactFieldVideoRingToneValue	0x200100E5
+
+/**
+ * Phonebook custom Field value.
+ * Sync target field type.
+ */
+#define KUidContactFieldSyncTargetValue		0x200100E6
+
+/**
+ * Phonebook custom Field value.
+ * Gender field type.
+ */
+#define KUidContactFieldGenderValue		0x200100E7
 
 #endif // CNTMODELEXTUIDS_HRH
 

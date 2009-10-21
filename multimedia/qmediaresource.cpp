@@ -1,7 +1,7 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
-**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -45,19 +52,6 @@
 */
 
 /*!
-    \enum QMediaResource::ResourceRole
-
-    Identifies the role of a resource in relation to a media item.
-
-    \value ContentRole The resource refers to the content of a media item.
-    \value PreviewRole The resource refers to a preview of a media item.
-    \value PosterRole The resource refers to a still image to be displayed in place of an unloaded
-    video.
-    \value CoverArtRole The resource refers to cover art for a media item.
-    \value ThumbnailRole The resource refers to a thumbnail image for a media item.
-*/
-
-/*!
     \typedef QMediaResourceList
 
     Synonym for \c QList<QMediaResource>
@@ -71,22 +65,12 @@ QMediaResource::QMediaResource()
 }
 
 /*!
-    Constructs a media resource with the given \a role from a \a uri.
+    Constructs a media resource with the given \a mimeType from a \a uri.
 */
-QMediaResource::QMediaResource(const QUrl &uri, ResourceRole role)
+QMediaResource::QMediaResource(const QUrl &uri, const QString &mimeType)
 {
     values.insert(Uri, qVariantFromValue(uri));
-    values.insert(Role, int(role));
-}
-
-/*!
-    Constructs a media resource with the given \a role and MIME \a type from a \a uri.
-*/
-QMediaResource::QMediaResource(const QUrl &uri, const QString &type, ResourceRole role)
-{
-    values.insert(Uri, qVariantFromValue(uri));
-    values.insert(MimeType, type);
-    values.insert(Role, int(role));
+    values.insert(MimeType, mimeType);
 }
 
 /*!
@@ -154,14 +138,6 @@ QUrl QMediaResource::uri() const
 }
 
 /*!
-    Returns the role of a media resource.
-*/
-QMediaResource::ResourceRole QMediaResource::role() const
-{
-    return ResourceRole(values.value(Role, int(ContentRole)).toInt());
-}
-
-/*!
     Returns the MIME type of a media resource.
 
     This may be null if the MIME type is unknown.
@@ -169,6 +145,27 @@ QMediaResource::ResourceRole QMediaResource::role() const
 QString QMediaResource::mimeType() const
 {
     return qvariant_cast<QString>(values.value(MimeType));
+}
+
+/*!
+    Returns the language of a media resource as an ISO 639-2 code.
+
+    This may be null if the language is unknown.
+*/
+QString QMediaResource::language() const
+{
+    return qvariant_cast<QString>(values.value(Language));
+}
+
+/*!
+    Sets the \a language of a media resource.
+*/
+void QMediaResource::setLanguage(const QString &language)
+{
+    if (!language.isNull())
+        values.insert(Language, language);
+    else
+        values.remove(Language);
 }
 
 /*!
@@ -394,26 +391,4 @@ void QMediaResource::setResolution(int width, int height)
         values.insert(Resolution, QSize(width, height));
     else
         values.remove(Resolution);
-}
-
-/*!
-    Returns the color depth in bits per pixel of a media resource.
-
-    This may be zero if the color depth is unknown, or the resource contains no pixel data (i.e. the
-    resource is an audio stream.
-*/
-int QMediaResource::bitsPerPixel() const
-{
-    return qvariant_cast<int>(values.value(BitsPerPixel));
-}
-
-/*!
-    Sets the color depth in \a bits per pixel of a media resource.
-*/
-void QMediaResource::setBitsPerPixel(int bits)
-{
-    if (bits != 0)
-        values.insert(BitsPerPixel, bits);
-    else
-        values.remove(BitsPerPixel);
 }

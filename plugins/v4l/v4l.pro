@@ -9,9 +9,6 @@ include (../../common.pri)
 qtAddLibrary(QtMedia)
 
 DEPENDPATH += .
-INCLUDEPATH += . \
-    ../../multimedia \
-    ../../multimedia/endpoints
 
 HEADERS += v4lserviceplugin.h
 SOURCES += v4lserviceplugin.cpp

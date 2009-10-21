@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,17 +17,24 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -41,6 +48,7 @@
 #include <qmediarecorder.h>
 
 #include <gst/gsttagsetter.h>
+#include <gst/gstversion.h>
 
 #include <QDebug>
 #include <QUrl>
@@ -162,6 +170,9 @@ GstElement *QGstreamerCaptureSession::buildAudioSrc()
     if (m_audioInputFactory)
         audioSrc = m_audioInputFactory->buildElement();
     else {
+#ifdef QT_QWS_N810
+        audioSrc = gst_element_factory_make("dsppcmsrc", "audio_src");
+#else
         QString elementName = "alsasrc";
         QString device;
 
@@ -175,6 +186,7 @@ GstElement *QGstreamerCaptureSession::buildAudioSrc()
         audioSrc = gst_element_factory_make(elementName.toAscii().constData(), "audio_src");
         if (audioSrc && !device.isEmpty())
             g_object_set(G_OBJECT(audioSrc), "device", device.toLocal8Bit().constData(), NULL);
+#endif
     }
 
     if (!audioSrc) {
@@ -235,7 +247,56 @@ GstElement *QGstreamerCaptureSession::buildVideoPreview()
     GstElement *previewElement = 0;
 
     if (m_videoPreviewFactory) {
-        previewElement = m_videoPreviewFactory->buildElement();
+        GstElement *bin = gst_bin_new("video-preview-bin");
+        GstElement *colorspace = gst_element_factory_make("ffmpegcolorspace", "ffmpegcolorspace-preview");
+        GstElement *capsFilter = gst_element_factory_make("capsfilter", "capsfilter-video-preview");
+        GstElement *preview = m_videoPreviewFactory->buildElement();
+
+        gst_bin_add_many(GST_BIN(bin), colorspace, capsFilter, preview,  NULL);
+        gst_element_link(colorspace,capsFilter);
+        gst_element_link(capsFilter,preview);
+
+        QVideoEncoderSettings videoSettings = m_videoEncodeControl->videoSettings();
+        if (!videoSettings.resolution().isEmpty() || videoSettings.frameRate() > 0.001) {
+            QSize resolution = videoSettings.resolution();
+            qreal frameRate = videoSettings.frameRate();
+
+            GstCaps *caps = gst_caps_new_empty();
+            QStringList structureTypes;
+            structureTypes << "video/x-raw-yuv" << "video/x-raw-rgb";
+
+            foreach(const QString &structureType, structureTypes) {
+                GstStructure *structure = gst_structure_new(structureType.toAscii().constData(), NULL);
+
+                if (!resolution.isEmpty()) {
+                    gst_structure_set(structure, "width", G_TYPE_INT, resolution.width(), NULL);
+                    gst_structure_set(structure, "height", G_TYPE_INT, resolution.height(), NULL);
+                }
+
+                if (frameRate > 0.001) {
+                    QPair<int,int> rate = m_videoEncodeControl->rateAsRational();
+
+                    //qDebug() << "frame rate:" << num << denum;
+
+                    gst_structure_set(structure, "framerate", GST_TYPE_FRACTION, rate.first, rate.second, NULL);
+                }
+
+                gst_caps_append_structure(caps,structure);
+            }
+
+            qDebug() << "set video preview caps filter:" << gst_caps_to_string(caps);
+
+            g_object_set(G_OBJECT(capsFilter), "caps", caps, NULL);
+
+        }
+
+        // add ghostpads
+        GstPad *pad = gst_element_get_static_pad(colorspace, "sink");
+        Q_ASSERT(pad);
+        gst_element_add_pad(GST_ELEMENT(bin), gst_ghost_pad_new("videosink", pad));
+        gst_object_unref(GST_OBJECT(pad));
+
+        previewElement = bin;
     } else {
 #if 1
         previewElement = gst_element_factory_make("fakesink", "video-preview");
@@ -374,7 +435,9 @@ bool QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
     dumpGraph( QString("rebuild_graph_%1_%2").arg(m_pipelineMode).arg(newMode) );
     if (m_encodeBin) {
         QString fileName = QString("rebuild_graph_encode_%1_%2").arg(m_pipelineMode).arg(newMode);
+#if (GST_VERSION_MAJOR >= 0) && (GST_VERSION_MINOR >= 10) && (GST_VERSION_MICRO >= 19)
         _gst_debug_bin_to_dot_file(GST_BIN(m_encodeBin), GST_DEBUG_GRAPH_SHOW_ALL, fileName.toAscii());
+#endif
     }
 
     if (ok) {
@@ -398,9 +461,11 @@ bool QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
 
 void QGstreamerCaptureSession::dumpGraph(const QString &fileName)
 {
+#if (GST_VERSION_MAJOR >= 0) && (GST_VERSION_MINOR >= 10) && (GST_VERSION_MICRO >= 19)
     _gst_debug_bin_to_dot_file(GST_BIN(m_pipeline),
                                GstDebugGraphDetails(/*GST_DEBUG_GRAPH_SHOW_ALL |*/ GST_DEBUG_GRAPH_SHOW_MEDIA_TYPE | GST_DEBUG_GRAPH_SHOW_NON_DEFAULT_PARAMS | GST_DEBUG_GRAPH_SHOW_STATES),
                                fileName.toAscii());
+#endif
 }
 
 QUrl QGstreamerCaptureSession::sink() const

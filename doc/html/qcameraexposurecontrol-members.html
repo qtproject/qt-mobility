@@ -19,6 +19,8 @@
 <li><div class="fn"><b><a href="qcameraexposurecontrol.html#QCameraExposureControl">QCameraExposureControl</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qcameraexposurecontrol.html#dtor.QCameraExposureControl">~QCameraExposureControl</a></b> ()</div></li>
 <li><div class="fn"><b><a href="qcameraexposurecontrol.html#aperture">aperture</a></b> () const : qreal</div></li>
+<li><div class="fn"><b><a href="qcameraexposurecontrol.html#apertureChanged">apertureChanged</a></b> ( qreal )</div></li>
+<li><div class="fn"><b><a href="qcameraexposurecontrol.html#apertureRangeChanged">apertureRangeChanged</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#blockSignals">blockSignals</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#childEvent">childEvent</a></b> ( QChildEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#children">children</a></b> () const</div></li>
@@ -26,7 +28,7 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#connect-2">connect</a></b> ( const QObject *, const char *, const char *, Qt::ConnectionType ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#connectNotify">connectNotify</a></b> ( const char * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#customEvent">customEvent</a></b> ( QEvent * )</div></li>
-<li><div class="fn"><b><a href="qabstractmediacontrol.html#d_ptr-var">d_ptr</a></b> : QAbstractMediaControlPrivate *</div></li>
+<li><div class="fn"><b><a href="qmediacontrol.html#d_ptr-var">d_ptr</a></b> : QMediaControlPrivate *</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#deleteLater">deleteLater</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#destroyed">destroyed</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#disconnect">disconnect</a></b> ( const QObject *, const char *, const QObject *, const char * )</div></li>
@@ -52,11 +54,18 @@
 <li><div class="fn"><b><a href="qcameraexposurecontrol.html#isFlashReady">isFlashReady</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#isWidgetType">isWidgetType</a></b> () const</div></li>
 <li><div class="fn"><b><a href="qcameraexposurecontrol.html#isoSensitivity">isoSensitivity</a></b> () const : int</div></li>
+<li><div class="fn"><b><a href="qcameraexposurecontrol.html#isoSensitivityChanged">isoSensitivityChanged</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#killTimer">killTimer</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="qcameraexposurecontrol.html#lockExposure">lockExposure</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qcameraexposurecontrol.html#maximumAperture">maximumAperture</a></b> () const : qreal</div></li>
+<li><div class="fn"><b><a href="qcameraexposurecontrol.html#maximumIsoSensitivity">maximumIsoSensitivity</a></b> () const : int</div></li>
 </ul></td><td valign="top"><ul>
+<li><div class="fn"><b><a href="qcameraexposurecontrol.html#maximumShutterSpeed">maximumShutterSpeed</a></b> () const : qreal</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#metaObject">metaObject</a></b> () const</div></li>
 <li><div class="fn"><b><a href="qcameraexposurecontrol.html#meteringMode">meteringMode</a></b> () const : QCamera::MeteringMode</div></li>
+<li><div class="fn"><b><a href="qcameraexposurecontrol.html#minimumAperture">minimumAperture</a></b> () const : qreal</div></li>
+<li><div class="fn"><b><a href="qcameraexposurecontrol.html#minimumIsoSensitivity">minimumIsoSensitivity</a></b> () const : int</div></li>
+<li><div class="fn"><b><a href="qcameraexposurecontrol.html#minimumShutterSpeed">minimumShutterSpeed</a></b> () const : qreal</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#moveToThread">moveToThread</a></b> ( QThread * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#objectName-prop">objectName</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#parent">parent</a></b> () const</div></li>
@@ -78,16 +87,17 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#setParent">setParent</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#setProperty">setProperty</a></b> ( const char *, const QVariant &amp; )</div></li>
 <li><div class="fn"><b><a href="qcameraexposurecontrol.html#shutterSpeed">shutterSpeed</a></b> () const : qreal</div></li>
+<li><div class="fn"><b><a href="qcameraexposurecontrol.html#shutterSpeedChanged">shutterSpeedChanged</a></b> ( qreal )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#signalsBlocked">signalsBlocked</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#startTimer">startTimer</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#staticMetaObject-var">staticMetaObject</a></b> : </div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#staticQtMetaObject-var">staticQtMetaObject</a></b> : </div></li>
-<li><div class="fn"><b><a href="qcameraexposurecontrol.html#supportedApertureRange">supportedApertureRange</a></b> () const : QPair&lt;qreal, qreal&gt;</div></li>
+<li><div class="fn"><b><a href="qcameraexposurecontrol.html#supportedApertures">supportedApertures</a></b> () const : QList&lt;qreal&gt;</div></li>
 <li><div class="fn"><b><a href="qcameraexposurecontrol.html#supportedExposureModes">supportedExposureModes</a></b> () const : QCamera::ExposureModes</div></li>
 <li><div class="fn"><b><a href="qcameraexposurecontrol.html#supportedFlashModes">supportedFlashModes</a></b> () const : QCamera::FlashModes</div></li>
-<li><div class="fn"><b><a href="qcameraexposurecontrol.html#supportedIsoSensitivityRange">supportedIsoSensitivityRange</a></b> () const : QPair&lt;int, int&gt;</div></li>
+<li><div class="fn"><b><a href="qcameraexposurecontrol.html#supportedIsoSensitivities">supportedIsoSensitivities</a></b> () const : QList&lt;int&gt;</div></li>
 <li><div class="fn"><b><a href="qcameraexposurecontrol.html#supportedMeteringModes">supportedMeteringModes</a></b> () const : QCamera::MeteringModes</div></li>
-<li><div class="fn"><b><a href="qcameraexposurecontrol.html#supportedShutterSpeedRange">supportedShutterSpeedRange</a></b> () const : QPair&lt;qreal, qreal&gt;</div></li>
+<li><div class="fn"><b><a href="qcameraexposurecontrol.html#supportedShutterSpeeds">supportedShutterSpeeds</a></b> () const : QList&lt;qreal&gt;</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#thread">thread</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#timerEvent">timerEvent</a></b> ( QTimerEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#tr">tr</a></b> ( const char *, const char *, int )</div></li>

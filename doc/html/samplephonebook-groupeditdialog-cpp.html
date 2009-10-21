@@ -102,10 +102,10 @@
     void GroupEditDialog::repopulateGroupList()
     {
         listWidget-&gt;clear();
-        QList&lt;QUniqueId&gt; grpList = cm-&gt;groups();
+        QList&lt;QContactLocalId&gt; grpList = cm-&gt;contacts(QString(QLatin1String(QContactType::TypeGroup)));
         for (int index=0; index &lt; grpList.count(); index++){
-            QContactGroup grp = cm-&gt;group(grpList[index]);
-            QListWidgetItem *item = new QListWidgetItem(grp.name(), listWidget);
+            QContact grp = cm-&gt;contact(grpList[index]);
+            QListWidgetItem *item = new QListWidgetItem(grp.displayLabel().label(), listWidget);
             <span class="comment">// store the group ID as Qt::UserRole + 1</span>
             item-&gt;setData(Qt::UserRole + 1, grpList[index]);
         }
@@ -120,19 +120,20 @@
     void GroupEditDialog::addButtonClicked()
     {
         if (!groupNameEdit-&gt;text().isEmpty()){
-            QContactGroup grp;
+            QContact grp;
+            grp.setType(QContactType::TypeGroup);
             bool result;
-            grp.setName(groupNameEdit-&gt;text());
-            result = cm-&gt;saveGroup(&amp;grp);
+            grp.setDisplayLabel(groupNameEdit-&gt;text());
+            result = cm-&gt;saveContact(&amp;grp);
 
             if (!result){
                 QMessageBox::information(this, tr(&quot;Group Add&quot;),
-                    tr(&quot;Failed to add Group '%1'.&quot;).arg(grp.name()));
+                    tr(&quot;Failed to add Group '%1'.&quot;).arg(grp.displayLabel().label()));
             }else{
                 repopulateGroupList();
                 <span class="comment">// select the added group name</span>
                 for (int index = 0; index &lt; listWidget-&gt;count();index++){
-                    if (listWidget-&gt;item(index)-&gt;data(Qt::UserRole + 1).toUInt() == grp.id()){
+                    if (listWidget-&gt;item(index)-&gt;data(Qt::UserRole + 1).toUInt() == grp.id().localId()){
                         listWidget-&gt;setCurrentItem(listWidget-&gt;item(index));
                         break;
                     }
@@ -149,12 +150,12 @@
     void GroupEditDialog::saveButtonClicked()
     {
         if (listWidget-&gt;currentItem()){
-            QUniqueId grpID = listWidget-&gt;currentItem()-&gt;data(Qt::UserRole + 1).toUInt();
-            QContactGroup grp = cm-&gt;group(grpID);
+            QContactLocalId grpID = listWidget-&gt;currentItem()-&gt;data(Qt::UserRole + 1).toUInt();
+            QContact grp = cm-&gt;contact(grpID);
             bool result = false;
             if (!grp.isEmpty()){
-                grp.setName(groupNameEdit-&gt;text());
-                result = cm-&gt;saveGroup(&amp;grp);
+                grp.setDisplayLabel(groupNameEdit-&gt;text());
+                result = cm-&gt;saveContact(&amp;grp);
             }
             if (!result){
                 QMessageBox::information(this, tr(&quot;Save Group&quot;),
@@ -163,7 +164,7 @@
                 repopulateGroupList();
                 <span class="comment">// select the group name again</span>
                 for (int index = 0; index &lt; listWidget-&gt;count();index++){
-                    if (listWidget-&gt;item(index)-&gt;data(Qt::UserRole + 1).toUInt() == grp.id()){
+                    if (listWidget-&gt;item(index)-&gt;data(Qt::UserRole + 1).toUInt() == grp.id().localId()){
                         listWidget-&gt;setCurrentItem(listWidget-&gt;item(index));
                         break;
                     }
@@ -176,8 +177,8 @@
     {
         if (listWidget-&gt;currentItem()){
             int lastCurrentRow = listWidget-&gt;currentRow();
-            QUniqueId grpID = listWidget-&gt;currentItem()-&gt;data(Qt::UserRole + 1).toUInt();
-            if (!cm-&gt;removeGroup(grpID)){
+            QContactLocalId grpID = listWidget-&gt;currentItem()-&gt;data(Qt::UserRole + 1).toUInt();
+            if (!cm-&gt;removeContact(grpID)){
                 QMessageBox::information(this, tr(&quot;Remove Group&quot;),
                     tr(&quot;Failed to removed Group '%1'.&quot;).arg(listWidget-&gt;currentItem()-&gt;text()));
             }else{

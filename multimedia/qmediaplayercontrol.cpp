@@ -1,7 +1,7 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
-**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -17,23 +17,30 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
 #include <qmediaplayercontrol.h>
-#include <qabstractmediacontrol_p.h>
+#include <qmediacontrol_p.h>
 #include <qmediaplayer.h>
 
 
@@ -44,10 +51,10 @@
 
     \preliminary
     \brief The QMediaPlayerControl class provides an abstract class for
-    controling media playback, this is provided by a QAbstractMediaService
+    controling media playback, this is provided by a QMediaService
     object, and is used by QMediaPlayer for playback.
 
-    \sa QAbstractMediaService, QMediaPlayer
+    \sa QMediaService, QMediaPlayer
 */
 
 /*!
@@ -61,7 +68,7 @@ QMediaPlayerControl::~QMediaPlayerControl()
     Constructs a new media player control with the given \a parent.
 */
 QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
-    QAbstractMediaControl(*new QAbstractMediaControlPrivate, parent)
+    QMediaControl(*new QMediaControlPrivate, parent)
 {
 }
 
@@ -220,13 +227,30 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 */
 
 /*!
-    \fn QMediaPlayerControl::playbackRate() const
+    \fn QMediaPlayerControl::seekRange() const
+
+    Returns the range in milliseconds the player can seek to.
+    Usually for local files this this range equals to [0..duration()]
+    or [0..0] if seeking is not supported, but for network sources
+    it means the buffered part of media.
+*/
+
+/*!
+    \fn QMediaPlayerControl::seekRangeChanged(const QPair<qint64,qint64>& range)
+
+    Signals that the media seek \a range has changed.
+
+    \sa QMediaPlayerControl::seekRange()
+*/
+
+/*!
+    \fn qreal QMediaPlayerControl::playbackRate() const
 
     Returns the rate of playback.
 */
 
 /*!
-    \fn QMediaPlayerControl::setPlaybackRate(float rate)
+    \fn QMediaPlayerControl::setPlaybackRate(qreal rate)
 
     Sets the \a rate of playback.
 */
@@ -246,7 +270,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 */
 
 /*!
-    \fn QMediaPlayerControl::setMedia(const QMediaSource &media, QIODevice *stream)
+    \fn QMediaPlayerControl::setMedia(const QMediaContent &media, QIODevice *stream)
 
     Sets the current \a media source.  If a \a stream is supplied; data will be read from that
     instead of attempting to resolve the media source.  The media source may still be used to
@@ -254,9 +278,9 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 */
 
 /*!
-    \fn QMediaPlayerControl::currentSourceChanged(const QMediaSource& source)
+    \fn QMediaPlayerControl::mediaChanged(const QMediaContent& content)
 
-    Signals that the current media \a source has changed.
+    Signals that the current media \a content has changed.
 */
 
 /*!
@@ -295,3 +319,11 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 
     Signals that an \a error has occurred.  The \a errorString provides a more detailed explanation.
 */
+
+/*!
+    \fn QMediaPlayerControl::playbackRateChanged(qreal rate)
+
+    Signal emitted when playback rate changes to \a rate.
+*/
+
+

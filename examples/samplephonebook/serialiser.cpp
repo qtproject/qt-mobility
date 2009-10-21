@@ -736,8 +736,8 @@ QStringList Serialiser::convertContact(const QContact& contact)
             typestr.chop(1);
             entry += typestr + ":;;" + det.value(QContactAddress::FieldStreet) + ";" + det.value(QContactAddress::FieldLocality) + ";" + det.value(QContactAddress::FieldRegion) + ";" + det.value(QContactAddress::FieldPostcode) + ";" + det.value(QContactAddress::FieldCountry);
             vcard << entry;
-            entry = "LABEL;TYPE=" + typestr + ":" + det.value(QContactAddress::FieldDisplayLabel);
-            vcard << entry;
+            //entry = "LABEL;TYPE=" + typestr + ":" + det.value(QContactAddress::FieldDisplayLabel);
+            //vcard << entry;
             vcardFieldsWithValues << "ADR";
             vcardFieldsWithValues << "LABEL";
             customVcardFields << convertDetail(contact, det, "ADR");

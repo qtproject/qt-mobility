@@ -2,7 +2,7 @@
 #define CAMERAFORMATCONVERTER_H
 
 #include <QList>
-//#include <QVideoFormat>
+#include <QtMultimedia/qvideoframe.h>
 
 /*
  * convert something to RGB32 / RGB16
@@ -16,10 +16,9 @@ public:
 
     virtual unsigned char* convert(unsigned char* src, int len) = 0;
 
-    //static CameraFormatConverter* createFormatConverter(QVideoFormat::Type format, int width, int height);
-    static CameraFormatConverter* createFormatConverter(int width, int height);
+    static CameraFormatConverter* createFormatConverter(QVideoFrame::PixelFormat format, int width, int height);
     static void releaseFormatConverter(CameraFormatConverter* converter);
-    //static QList<QVideoFormat::Type> supportedFormats();
+    static QList<QVideoFrame::PixelFormat> supportedFormats();
 };
 
 
@@ -34,15 +33,14 @@ public:
 class YUVConverter : public CameraFormatConverter
 {
 public:
-    //YUVConverter(QVideoFormat::Type type, int width, int height);
-    YUVConverter(int width, int height);
+    YUVConverter(QVideoFrame::PixelFormat type, int width, int height);
     virtual ~YUVConverter();
 
     virtual unsigned char* convert(unsigned char* src, int len);
 
 private:
 
-    //QVideoFormat::Type    m_type;
+    QVideoFrame::PixelFormat    m_type;
     int             m_width;
     int             m_height;
     unsigned char*  m_buf;

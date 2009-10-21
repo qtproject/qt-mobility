@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -17,31 +17,38 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-** Nokia at http://qt.nokia.com/contact.
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
 #include <QtCore/qvariant.h>
 #include <QtCore/qdebug.h>
-#include <QtGui/qwidget.h>
 #include <QtCore/qfile.h>
+#include <QtGui/qwidget.h>
 
 #include "v4lradioservice.h"
 #include "v4lradiocontrol.h"
 
-V4LRadioService::V4LRadioService(QObject *parent)
-    : QRadioService(parent)
+V4LRadioService::V4LRadioService(QObject *parent):
+    QMediaService(parent)
 {
     m_control = new V4LRadioControl(this);
 }
@@ -50,50 +57,50 @@ V4LRadioService::~V4LRadioService()
 {
 }
 
-QAbstractMediaControl *V4LRadioService::control(const char* name) const
+QMediaControl *V4LRadioService::control(const char* name) const
 {
     Q_UNUSED(name)
 
     return m_control;
 }
 
-bool V4LRadioService::isEndpointSupported(QAbstractMediaService::MediaEndpoint endpointType)
+bool V4LRadioService::isEndpointSupported(QMediaService::MediaEndpoint endpointType)
 {
+    Q_UNUSED(endpointType)
+
     return false;
 }
 
-void V4LRadioService::setInputStream(QIODevice* stream)
+QList<QString> V4LRadioService::activeEndpoints(QMediaService::MediaEndpoint endpointType)
 {
+    Q_UNUSED(endpointType)
+
+    QList<QString> list;
+    return list;
 }
 
-QIODevice* V4LRadioService::inputStream() const
+bool V4LRadioService::setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint)
 {
-    return 0;
-}
+    Q_UNUSED(endpointType)
+    Q_UNUSED(endpoint)
 
-void V4LRadioService::setOutputStream(QIODevice* stream)
-{
-}
-
-QIODevice* V4LRadioService::outputStream() const
-{
-    return 0;
-}
-
-QString V4LRadioService::activeEndpoint(QAbstractMediaService::MediaEndpoint endpointType)
-{
-    return QByteArray();
-}
-
-bool V4LRadioService::setActiveEndpoint(QAbstractMediaService::MediaEndpoint endpointType, const QString& endpoint)
-{
     return true;
 }
 
-QList<QString> V4LRadioService::supportedEndpoints(QAbstractMediaService::MediaEndpoint endpointType) const
+QList<QString> V4LRadioService::supportedEndpoints(QMediaService::MediaEndpoint endpointType) const
 {
+    Q_UNUSED(endpointType)
+
     QList<QString> list;
     //TODO
     return list;
+}
+
+QString V4LRadioService::endpointDescription(QMediaService::MediaEndpoint endpointType, const QString& endpoint)
+{
+    Q_UNUSED(endpointType)
+    Q_UNUSED(endpoint)
+
+    return QString();
 }
 

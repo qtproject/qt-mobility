@@ -4,12 +4,11 @@ TARGET = $$qtLibraryTarget(audioengine)
 PLUGIN_TYPE=mediaservice
 
 include (../../common.pri)
+INCLUDEPATH += ../../multimedia
 
-DEFINES += AUDIOSERVICES
+qtAddLibrary(QtMedia)
 
 DEPENDPATH += .
-INCLUDEPATH += . \
-    ../../multimedia
 
 # Input
 HEADERS += audioencodercontrol.h \
