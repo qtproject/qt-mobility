@@ -77,6 +77,7 @@ private:
     QContactDetail* createNicknames(const QVersitProperty& property) const;
     QContactDetail* createAvatar(const QVersitProperty& property,
                                  const QVersitDocument& document) const;
+    QContactDetail* createGeoLocation(const QVersitProperty& property) const;
     QStringList extractContexts(const QVersitProperty& property) const;
     QStringList extractSubTypes(const QVersitProperty& property) const;
     QString takeFirst(QList<QByteArray>& list) const;    

@@ -53,6 +53,7 @@
 #include <qcontactgender.h>
 #include <qcontactnickname.h>
 #include <qcontactavatar.h>
+#include <qcontactgeolocation.h>
 
 void UT_QVersitContactGenerator::init()
 {    
@@ -533,6 +534,41 @@ void UT_QVersitContactGenerator::testCreateAvatar()
                     contact.detail(QContactAvatar::DefinitionName));
     QCOMPARE(avatar.avatar(), fileName);
     QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
+}
+
+void UT_QVersitContactGenerator::testGeo()
+{
+    // one value
+    QVersitDocument document;
+    QVersitProperty nameProperty;
+    QStringList val;    
+    val.append("18.53");// Longtitude
+    val.append("45.32"); // Latitude
+    nameProperty.setName(QString::fromAscii(versitGeoId));
+    nameProperty.setValue(val.join(",").toAscii());
+    document.addProperty(nameProperty);
+    QContact contact = mGenerator->generateContact(document);
+    QContactGeolocation geo = (QContactGeolocation)contact.detail(QContactGeolocation::DefinitionName);
+    QString str;
+    str.setNum(geo.longitude(),'.',2);
+    QCOMPARE(str,val[0]);
+    str.setNum(geo.latitude(),'.',2);
+    QCOMPARE(str,val[1]);
+
+    // some negative values
+    document = QVersitDocument();
+    nameProperty = QVersitProperty();
+    val.append("18.53");// Longtitude
+    val.append("-45.32"); // Latitude
+    nameProperty.setName(QString::fromAscii(versitGeoId));
+    nameProperty.setValue(val.join(",").toAscii());
+    document.addProperty(nameProperty);
+    contact = mGenerator->generateContact(document);
+    geo = (QContactGeolocation)contact.detail(QContactGeolocation::DefinitionName);
+    str.setNum(geo.longitude(),'.',2);
+    QCOMPARE(str,val[0]);
+    str.setNum(geo.latitude(),'.',2);
+    QCOMPARE(str,val[1]);
 }
 
 QVersitDocument UT_QVersitContactGenerator::createDocumentWithProperty(

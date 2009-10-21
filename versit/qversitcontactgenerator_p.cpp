@@ -50,6 +50,7 @@
 #include <qcontactgender.h>
 #include <qcontactnickname.h>
 #include <qcontactavatar.h>
+#include <qcontactgeolocation.h>
 #include <QHash>
 #include <QImage>
 
@@ -133,6 +134,8 @@ QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& 
             detail = createGender(property);
         } else if (property.name() == QString::fromAscii(versitNicknameId)) {
             detail = createNicknames(property);
+        } else if (property.name() == QString::fromAscii(versitGeoId)){
+            detail = createGeoLocation(property);
         } else {
             // NOP
         }
@@ -387,6 +390,19 @@ QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
     avatar->setSubType(QContactAvatar::SubTypeImage);
 
     return avatar;
+}
+
+/*!
+ * Creates a QContactGeolocation from \a property
+ */
+QContactDetail* QVersitContactGeneratorPrivate::createGeoLocation(
+    const QVersitProperty& property) const
+{
+    QContactGeolocation* geo = new QContactGeolocation();
+    QList<QByteArray> values = property.value().split(',');
+    geo->setLongitude(takeFirst(values).toDouble());
+    geo->setLatitude(takeFirst(values).toDouble());
+    return geo;
 }
 
 /*!
