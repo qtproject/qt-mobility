@@ -58,7 +58,8 @@ public:
     void encodeRev(QVersitProperty& property, const QContactDetail& detail);
     void encodeBirthDay(QVersitProperty& property, const QContactDetail& detail);
     void encodeNote(QVersitProperty& property, const QContactDetail& detail);
-    void encodeGeoLocation(QVersitProperty& property, const QContactDetail& detail);    
+    void encodeGeoLocation(QVersitProperty& property, const QContactDetail& detail);
+    bool encodeOrganization(QVersitDocument& document, const QContactDetail& detail);
     
 public: // Data
     QHash<QString,QString> mMappings;
