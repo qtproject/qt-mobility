@@ -53,9 +53,12 @@ const char versitBirthdayId[] = "BDAY";
 const char versitNoteId[] = "NOTE";
 const char versitGeoId[] = "GEO";
 const char versitNicknameId[] = "NICKNAME";
+const char versitPhotoId[] = "PHOTO";
+const char versitTitleId[] = "TITLE";
+const char versitRoleId[] = "ROLE";
 const char versitAnniversaryId[] = "X-ANNIVERSARY";
 const char versitGenderId[] = "X-GENDER";
-const char versitPhotoId[] = "PHOTO";
+
 
 // Contexts
 const char versitContextWorkId[] = "WORK";

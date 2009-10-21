@@ -169,9 +169,9 @@ void UT_QVersitContactGenerator::testOrganization()
     QContact contact;
     QVersitDocument document;
     QVersitProperty property;
-    property.setName(QString::fromAscii(versitOrganizationId));
     
-    // Empty value for the organization
+    // ORG: Empty value for the organization
+    property.setName(QString::fromAscii(versitOrganizationId));
     document = createDocumentWithProperty(property);
     contact = mGenerator->generateContact(document);
     QContactOrganization org = 
@@ -179,7 +179,7 @@ void UT_QVersitContactGenerator::testOrganization()
     QCOMPARE(org.name(),QString());
     QCOMPARE(org.department(),QString());
 
-    // Organization with one seprator
+    // ORG: Organization with one seprator
     property.setValue(QByteArray(";"));
     document = createDocumentWithProperty(property);
     contact = mGenerator->generateContact(document);
@@ -187,7 +187,7 @@ void UT_QVersitContactGenerator::testOrganization()
     QCOMPARE(org.name(),QString::fromAscii(""));
     QCOMPARE(org.department(),QString::fromAscii(""));
     
-    // Organization with just seprators
+    // ORG: Organization with just separators
     property.setValue(QByteArray(";;;"));
     document = createDocumentWithProperty(property);
     contact = mGenerator->generateContact(document);
@@ -195,21 +195,49 @@ void UT_QVersitContactGenerator::testOrganization()
     QCOMPARE(org.name(),QString::fromAscii(""));
     QCOMPARE(org.department(),QString::fromAscii(";;"));
     
-    // Organization with one Organizational Unit
-    property.setValue(QByteArray("Nokia Oyj;R&D"));
+    // ORG: Organization with one Organizational Unit
+    property.setValue(QByteArray("Nokia;R&D"));
     document = createDocumentWithProperty(property);
     contact = mGenerator->generateContact(document);
     org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
-    QCOMPARE(org.name(),QString::fromAscii("Nokia Oyj"));
+    QCOMPARE(org.name(),QString::fromAscii("Nokia"));
     QCOMPARE(org.department(),QString::fromAscii("R&D"));
     
-    // Organization with one Organizational Unit
+    // ORG: Organization with one Organizational Unit
     property.setValue(QByteArray("ABC, Inc.;North American Division;Devices;Marketing"));
     document = createDocumentWithProperty(property);
     contact = mGenerator->generateContact(document);
     org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
     QCOMPARE(org.name(),QString::fromAscii("ABC, Inc."));
     QCOMPARE(org.department(),QString::fromAscii("North American Division;Devices;Marketing"));
+
+    // TITLE
+    property.setName(QString::fromAscii(versitTitleId));
+    QByteArray titleValue("Hacker");
+    property.setValue(titleValue);
+    document = createDocumentWithProperty(property);
+    contact = mGenerator->generateContact(document);
+    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
+    QCOMPARE(org.title(),QString::fromAscii(titleValue));
+
+    // ORG and TITLE
+    property.setName(QString::fromAscii(versitOrganizationId));
+    property.setValue(QByteArray("Nokia;R&D"));
+    document.addProperty(property);
+    contact = mGenerator->generateContact(document);
+    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
+    QCOMPARE(org.title(),QString::fromAscii(titleValue));
+    QCOMPARE(org.department(),QString::fromAscii("R&D"));
+    QCOMPARE(org.name(),QString::fromAscii("Nokia"));
+
+    // ROLE
+    property.setName(QString::fromAscii(versitRoleId));
+    QByteArray roleValue("Very important manager and proud of it");
+    property.setValue(roleValue);
+    document = createDocumentWithProperty(property);
+    contact = mGenerator->generateContact(document);
+    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
+    QVERIFY(org.isEmpty());
 }
 
 void UT_QVersitContactGenerator::testTel()

@@ -107,50 +107,42 @@ QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& 
         QContactDetail* detail = 0;
         if (property.name() == QString::fromAscii(versitNameId)) {
             detail = createName(property);
-        }
-        else if (property.name() == QString::fromAscii(versitPhoneId)) {
+        } else if (property.name() == QString::fromAscii(versitPhoneId)) {
             detail = createPhone(property);
-        }
-        else if (property.name() == QString::fromAscii(versitAddressId)) {
+        } else if (property.name() == QString::fromAscii(versitAddressId)) {
             detail = createAddress(property);
-        }
-        else if (property.name() == QString::fromAscii(versitOrganizationId)) {
-            detail = createOrganization(property);
-        }
-        else if (property.name() == QString::fromAscii(versitEmailId)) {
+        } else if (property.name() == QString::fromAscii(versitTitleId) ||
+                   property.name() == QString::fromAscii(versitRoleId) ||
+                   property.name() == QString::fromAscii(versitOrganizationId)) {
+            detail = createOrganization(property,contact);
+        } else if (property.name() == QString::fromAscii(versitEmailId)) {
             detail = createEmail(property);
-        }
-        else if (property.name() == QString::fromAscii(versitUrlId)) {
+        } else if (property.name() == QString::fromAscii(versitUrlId)) {
             detail = createUrl(property);
-        }
-        else if (property.name() == QString::fromAscii(versitUidId)) {
+        } else if (property.name() == QString::fromAscii(versitUidId)) {
             detail = createUid(property);
-        }
-        else if (property.name() == QString::fromAscii(versitRevisionId)) {
+        } else if (property.name() == QString::fromAscii(versitRevisionId)) {
             detail = createTimeStamp(property);
-        }
-        else if (property.name() == QString::fromAscii(versitAnniversaryId)) {
+        } else if (property.name() == QString::fromAscii(versitAnniversaryId)) {
             detail = createAnniversary(property);
-        }
-        else if (property.name() == QString::fromAscii(versitPhotoId)) {
+        } else if (property.name() == QString::fromAscii(versitPhotoId)) {
             detail = createAvatar(property, versitDocument);
-        }
-        else if (property.name() == QString::fromAscii(versitBirthdayId)) {
+        } else if (property.name() == QString::fromAscii(versitBirthdayId)) {
             detail = createBirthday(property);
-        }
-        else if (property.name() == QString::fromAscii(versitGenderId)) {
+        } else if (property.name() == QString::fromAscii(versitGenderId)) {
             detail = createGender(property);
-        }
-        else if (property.name() == QString::fromAscii(versitNicknameId)) {
+        } else if (property.name() == QString::fromAscii(versitNicknameId)) {
             detail = createNicknames(property);
-        }
-        else {
+        } else {
             // NOP
         }
 
         if (detail) {
-            detail->setContexts(extractContexts(property));
+            QStringList contexts(extractContexts(property));
+            if (!contexts.empty())
+                detail->setContexts(contexts);
             contact.saveDetail(detail);
+            delete detail;
         }
     }
     return contact;
@@ -209,18 +201,31 @@ QContactDetail* QVersitContactGeneratorPrivate::createAddress(
 }
 
 QContactDetail* QVersitContactGeneratorPrivate::createOrganization(
-    const QVersitProperty& property) const
+    const QVersitProperty& property,
+    const QContact& contact) const
 {
-    QContactOrganization* org = new QContactOrganization();
-    
-    // TODO: now assuming that only the ORG part is present
-    QByteArray value = property.value();
-    int firstSemic = value.indexOf(";");
-    QByteArray orgName = value.left(firstSemic);
-    QByteArray orgUnit = value.mid(firstSemic+1,value.size());
-    
-    org->setName(QString::fromAscii(orgName));
-    org->setDepartment(QString::fromAscii(orgUnit));
+    QContactOrganization* org = 0;
+    QContactDetail detail = contact.detail(QContactOrganization::DefinitionName);
+
+    if (detail.isEmpty()) {
+        org = new QContactOrganization;
+    } else {
+        org = new QContactOrganization(static_cast<QContactOrganization>(detail));
+    }
+
+    if (property.name() == QString::fromAscii(versitTitleId)) {
+        org->setTitle(QString::fromAscii(property.value()));
+    } else if (property.name() == QString::fromAscii(versitRoleId)) {
+        // TODO: QContactOrganization does not support setting this subtype yet.
+    } else if (property.name() == QString::fromAscii(versitOrganizationId)) {
+        QByteArray value = property.value();
+        int firstSemic = value.indexOf(";");
+        org->setName(QString::fromAscii(value.left(firstSemic)));
+        QByteArray orgUnit = value.mid(firstSemic+1,value.size());
+        org->setDepartment(QString::fromAscii(orgUnit));
+    } else {
+        // NOP
+    }
     
     return org;
 }
