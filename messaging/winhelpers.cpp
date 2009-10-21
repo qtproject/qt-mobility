@@ -1766,7 +1766,7 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
 #endif
                                 FreeProws(rows);
 
-                                if (!QMessageFilterPrivate::matchesMessage(filter, id))
+                                if (!QMessageFilterPrivate::matchesMessage(filter, QMessage(id)))
                                     continue;
                                 result.append(id);
                                 if (limit) {
@@ -3412,7 +3412,8 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                     case PR_MESSAGE_DELIVERY_TIME:
                         msg->setReceivedDate(fromFileTime(prop.Value.ft));
                         break;
-                    case PR_TRANSPORT_MESSAGE_HEADERS:
+                    case PR_RECEIVED_BY_ENTRYID: // fall through
+                    case PR_END_DATE:
                         // This message must have come from an external source
                         flags |= QMessage::Incoming;
                         break;
