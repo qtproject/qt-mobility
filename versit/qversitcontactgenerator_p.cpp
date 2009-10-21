@@ -377,7 +377,7 @@ QString QVersitContactGeneratorPrivate::saveImage(const QVersitProperty& photoPr
                                                   const QVersitProperty& nameProperty) const
 {
     // Image name: <FirstName><LastName>.<ext>
-    QString imgName(versitPhotoDir);
+    QString imgName(mImagePath);
 
     QList<QByteArray> values = nameProperty.value().split(';');
     imgName.append(QString::fromAscii("/"));

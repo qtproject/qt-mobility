@@ -46,6 +46,8 @@ class UT_QVersitContactGenerator : public QObject
 
 private slots: // Tests
     
+    void initTestCase();
+    void cleanupTestCase();
     void init();
     void cleanup();
     

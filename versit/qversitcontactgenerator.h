@@ -45,6 +45,9 @@ class QTVERSIT_EXPORT QVersitContactGenerator
 public:
     QVersitContactGenerator();
     ~QVersitContactGenerator();
+
+    void setImagePath(const QString& path);
+    QString imagePath() const;
     
     QContact generateContact(const QVersitDocument& versitDocument);
     

@@ -60,3 +60,19 @@ QContact QVersitContactGenerator::generateContact(
 {
     return d->generateContact(versitDocument);
 }
+
+/*!
+ * Sets the \a path where the contact photo will be saved.
+ */
+void QVersitContactGenerator::setImagePath(const QString& path)
+{
+    d->mImagePath = path;
+}
+
+/*!
+ * Returns the path where the contact photo will be saved.
+ */
+QString QVersitContactGenerator::imagePath() const
+{
+    return d->mImagePath;
+}
