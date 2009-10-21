@@ -155,10 +155,14 @@ QContact QContactSymbianEngine::contact(const QContactLocalId& contactId, QConta
 {
     QContact contact = d->contact(contactId, error);
 
-    // Synthesize display label (the label it is not saved to the contact
-    // database and thus not modifiable by a client).
-    if(error == QContactManager::NoError)
+    // Set manager uri and synthesize display label (the label it is not
+    // saved to the contact database and thus not modifiable by a client).
+    if(error == QContactManager::NoError) {
+        QContactId contactId = contact.id();
+        contactId.setManagerUri(managerUri());
+        contact.setId(contactId);
         updateDisplayLabel(contact);
+    }
 
     return contact;
 }
@@ -218,12 +222,11 @@ bool QContactSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& 
             updateDisplayLabel(*contact);
     }
     else { //create new contact
-        QContactId newId;
-        newId.setManagerUri(managerUri());
-        contact->setId(newId);
         ret = d->addContact(*contact, changeSet, error);
         if (ret) {
-            ASSERT(contact->localId());
+            QContactId newContactId = contact->id();
+            newContactId.setManagerUri(managerUri());
+            contact->setId(newContactId);
             updateDisplayLabel(*contact);
         }
     }
