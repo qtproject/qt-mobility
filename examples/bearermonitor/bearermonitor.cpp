@@ -34,9 +34,14 @@
 #include "sessionwidget.h"
 
 #include <QDebug>
+
 #ifdef Q_OS_WIN
 #include <winsock2.h>
 #undef interface
+
+#ifndef NS_NLA
+#define NS_NLA 15
+#endif
 #endif
 
 BearerMonitor::BearerMonitor(QWidget *parent)
