@@ -91,3 +91,5 @@ symbian {
     }
 }
 
+include(../features/deploy.pri)
+

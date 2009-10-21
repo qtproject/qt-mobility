@@ -67,7 +67,8 @@ SOURCE_DIR = $$PWD
         !testplugin:DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/plugins/contacts
 
         # And since we're a plugin, add the base lib path to the lib dirs
-        LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin  #link against base dir as well
+        LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin
+        mac:contains(QT_CONFIG,qt_framework):LIBS += -F$$OUTPUT_DIR/build/$$SUBDIRPART/bin
     }
     MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
     RCC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/rcc
@@ -82,7 +83,8 @@ SOURCE_DIR = $$PWD
     MOC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/moc
     RCC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/rcc
 
-    LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin  #link against library that we test
+    LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin
+    mac:contains(QT_CONFIG,qt_framework):LIBS += -F$$OUTPUT_DIR/build/$$SUBDIRPART/bin
 }
 
 INCLUDEPATH *= $$MOC_DIR
