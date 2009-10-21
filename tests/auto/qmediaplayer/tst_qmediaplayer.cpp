@@ -459,7 +459,7 @@ void tst_QMediaPlayer::testMedia()
     QBuffer stream;
     player->setMedia(mediaContent, &stream);
     QCOMPARE(player->media(), mediaContent);
-    QCOMPARE(player->mediaStream(), &stream);
+    QCOMPARE((QBuffer*)player->mediaStream(), &stream);
 }
 
 void tst_QMediaPlayer::testDuration()
