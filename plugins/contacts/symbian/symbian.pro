@@ -54,7 +54,8 @@ symbian: {
       inc/qcontactsymbiansorterdbms.h \
       inc/cntrelationship.h \
       inc/cntabstractrelationship.h \
-      inc/cntrelationshipgroup.h
+      inc/cntrelationshipgroup.h \
+      inc/cntsymbianfiltersqlhelper.h
       
   SOURCES += \
   		src/qcontactsymbianbackend.cpp \
@@ -82,12 +83,14 @@ symbian: {
       src/qcontactsymbiansorterdbms.cpp \
       src/cntrelationship.cpp \
       src/cntabstractrelationship.cpp \
-      src/cntrelationshipgroup.cpp
+      src/cntrelationshipgroup.cpp \
+      src/cntsymbianfiltersqlhelper.cpp
       
   LIBS += \
   				-lcntmodel \
   				-lcentralrepository \
-  				-lQtContacts 
+  				-lQtContacts \
+  				-lestor
 
 	target.path = /sys/bin
 	INSTALLS += target
