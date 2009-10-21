@@ -45,6 +45,7 @@
 // We mean it.
 //
 
+#include <QDateTime>
 #include <QHash>
 
 class QContact;
@@ -86,7 +87,11 @@ private:
     QStringList extractSubTypes(const QVersitProperty& property) const;
     QString takeFirst(QList<QByteArray>& list) const;    
     QString takeFirst(QList<QString>& list) const;
+    QDateTime parseDateTime(const QByteArray& text, const QByteArray& format) const;
     
+public: // Data
+    QString mImagePath;
+
 private: // Data    
     QHash<QString,QString> mContextMappings;
     QHash<QString,QString> mSubTypeMappings;

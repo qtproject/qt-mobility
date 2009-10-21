@@ -34,6 +34,7 @@
 #include "qversitcontactconverter_p.h"
 #include "qversitdefs.h"
 
+#include <QFile>
 #include <qcontact.h>
 #include <qcontactdetail.h>
 #include <qcontactname.h>
@@ -47,6 +48,8 @@
 #include <qcontactbirthday.h>
 #include <qcontactnote.h>
 #include <qcontactgeolocation.h>
+#include <qcontactavatar.h>
+
 
 /*!
  * Constructor.
@@ -76,6 +79,8 @@ QVersitContactConverterPrivate::QVersitContactConverterPrivate()
         QContactNote::DefinitionName,QString::fromAscii(versitNoteId));
     mMappings.insert(
         QContactGeolocation::DefinitionName,QString::fromAscii(versitGeoId));
+    mMappings.insert(
+        QContactAvatar::DefinitionName,QString::fromAscii(versitPhotoId));
     
     // Contexts
     mMappings.insert(
@@ -107,7 +112,13 @@ QVersitContactConverterPrivate::QVersitContactConverterPrivate()
     mMappings.insert(
         QContactPhoneNumber::SubTypeBulletinBoardSystem,QString::fromAscii(versitBbsId));
     mMappings.insert(
-        QContactPhoneNumber::SubTypePager,QString::fromAscii(versitPagerId));            
+        QContactPhoneNumber::SubTypePager,QString::fromAscii(versitPagerId));
+    mMappings.insert(
+        QContactAvatar::SubTypeImage,QString::fromAscii(versitPagerId));
+
+    //Media Types.
+    mMappings.insert(
+        QString::fromAscii(versitJPEGExtenId),QString::fromAscii(versitPhotoJpeg));
 }
 
 /*!
@@ -150,7 +161,9 @@ void QVersitContactConverterPrivate::encodeFieldInfo(
         encodeNote(property, detail);
     } else if (detail.definitionName() == QContactOrganization::DefinitionName) {
         addProperty = encodeOrganization(versitDocument, detail);
-    } else {
+    } else if (detail.definitionName() == QContactAvatar::DefinitionName){
+        addProperty = encodeEmbeddedContent(property, detail);
+    }else {
         addProperty = false;
     }
 
@@ -282,7 +295,7 @@ void QVersitContactConverterPrivate::encodeNote(
 
 
 /*!
- * Encode Geo property field information into the Versit Document
+ * Encode Geo Prpoperties Field Information into the Versit Document
  */
 void QVersitContactConverterPrivate::encodeGeoLocation(
     QVersitProperty& property,
@@ -320,6 +333,53 @@ bool QVersitContactConverterPrivate::encodeOrganization(
         document.addProperty(property);
     }
     return false;
+}
+
+
+
+/*!
+ * Encode Embedded Content into the Versit Document
+ */
+
+bool QVersitContactConverterPrivate::encodeEmbeddedContent(QVersitProperty& property,
+                                                           const QContactDetail& detail )
+{
+    bool encodeProperty = false;
+    QContactAvatar contactAvatar = static_cast<QContactAvatar >(detail);
+    QString avatarPath = contactAvatar.avatar();
+    QString avatarExt = avatarPath.section('.', -1).toUpper();
+    QString avatarFormat = mMappings.value( avatarExt );
+
+    if ( !avatarFormat.size())
+        avatarFormat = avatarExt;
+
+    if ( mMappings.contains(contactAvatar.subType()) &&
+         avatarFormat.size()) {
+
+        encodeProperty = true;
+        QString name = mMappings.value(contactAvatar.subType());
+        QByteArray value;
+
+        QFile avtarFile;
+        avtarFile.setFileName(avatarPath);
+        if ( avtarFile.open(QIODevice::ReadOnly )) {
+            value = avtarFile.readAll().toBase64();
+            property.addParameter(QString::fromAscii(versitType),avatarFormat);
+            property.addParameter(QString::fromAscii(versitEncoding),
+                                  QString::fromAscii(versitEncodingBase64));
+        }
+        else {
+            value = avatarPath.toAscii();
+            property.addParameter(QString::fromAscii(versitValue),versitUrlId);
+            property.addParameter(QString::fromAscii(versitType),avatarFormat);
+        }
+
+        //Add Values
+        property.setName(name);
+        property.setValue(value);
+    }
+
+    return encodeProperty;
 }
 
 /*!

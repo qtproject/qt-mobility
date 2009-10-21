@@ -59,6 +59,7 @@ const char versitRoleId[] = "ROLE";
 const char versitAnniversaryId[] = "X-ANNIVERSARY";
 const char versitGenderId[] = "X-GENDER";
 const char versitSipId[] = "X-SIP";
+const char versitSoundId[] = "SOUND";
 
 // Contexts
 const char versitContextWorkId[] = "WORK";
@@ -86,12 +87,12 @@ const char versitPhotoJpeg[] = "JPEG";
 const char versitSwisId[] = "SWIS";
 const char versitSipSubTypeId[] = "SIP";
 
+// Format Conversion
+const char versitJPEGExtenId[] = "JPG";
+
 // ISO-8601 basic format datetime spec
 const char versitDateTimeSpecIso8601Basic[] = "yyyyMMddThhmmss";
 const char versitDateSpecIso8601Basic[] = "yyyyMMdd";
-
-// Default path to save the photos
-const char versitPhotoDir[] = "c:/data/photo";
 
 // Encoding values
 const char versitEncoding7Bit[] = "7BIT";
@@ -101,6 +102,11 @@ const char versitEncodingBase64[] = "BASE64";
 
 // Parameters
 const char versitType[] = "TYPE";
+
+// VALUE parameter name
+const char versitValue[] = "VALUE";
+
+// Encoding Type.
 const char versitEncoding[] = "ENCODING";
 
 #endif // QVERSITDEFS_H

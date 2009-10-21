@@ -60,6 +60,7 @@ public:
     void encodeNote(QVersitProperty& property, const QContactDetail& detail);
     void encodeGeoLocation(QVersitProperty& property, const QContactDetail& detail);
     bool encodeOrganization(QVersitDocument& document, const QContactDetail& detail);
+    bool encodeEmbeddedContent(QVersitProperty& property,const QContactDetail& detail );
     
 public: // Data
     QHash<QString,QString> mMappings;

@@ -213,6 +213,9 @@ QContactDetail* QVersitContactGeneratorPrivate::createAddress(
     return address;
 }
 
+/*!
+ * Creates a QContactOrganization from \a property and adds it to the \a document
+ */
 QContactDetail* QVersitContactGeneratorPrivate::createOrganization(
     const QVersitProperty& property,
     const QContact& contact) const
@@ -283,18 +286,11 @@ QContactDetail* QVersitContactGeneratorPrivate::createTimeStamp(
     const QVersitProperty& property) const
 {
     QContactTimestamp* timeStamp = new QContactTimestamp();
-    QString value(QString::fromAscii(property.value()));
-    bool utc = value.endsWith(QString::fromAscii("Z"),Qt::CaseInsensitive);
+    QByteArray value(property.value());
+    bool utc = (value.endsWith("Z") || value.endsWith("z"));
     if (utc)
         value.chop(1); // take away z from end;
-    QDateTime dateTime;
-    if (value.contains(QString::fromAscii("-"))) {
-        dateTime = QDateTime::fromString(value,Qt::ISODate);
-    }
-    else {
-        dateTime = QDateTime::fromString(value,
-                        QString::fromAscii(versitDateTimeSpecIso8601Basic));
-    }    
+    QDateTime dateTime = parseDateTime(value,versitDateTimeSpecIso8601Basic);
     if (utc)
         dateTime.setTimeSpec(Qt::UTC);
     timeStamp->setLastModified(dateTime);
@@ -308,11 +304,9 @@ QContactDetail* QVersitContactGeneratorPrivate::createAnniversary(
     const QVersitProperty& property) const
 {
     QContactAnniversary* anniversary = new QContactAnniversary();
-    QString value(QString::fromAscii(property.value()));
-    QDate date = ( value.contains(QString::fromAscii("-")))
-                 ? QDate::fromString(value,Qt::ISODate)
-                 : QDate::fromString(value,versitDateSpecIso8601Basic);
-    anniversary->setOriginalDate(date);
+    QDateTime dateTime =
+        parseDateTime(property.value(),versitDateSpecIso8601Basic);
+    anniversary->setOriginalDate(dateTime.date());
     return anniversary;
 }
 
@@ -323,11 +317,9 @@ QContactDetail* QVersitContactGeneratorPrivate::createBirthday(
     const QVersitProperty& property) const
 {
     QContactBirthday* bday = new QContactBirthday();
-    QString value(QString::fromAscii(property.value()));
-    QDate date = ( value.contains(QString::fromAscii("-")))
-                 ? QDate::fromString(value,Qt::ISODate)
-                 : QDate::fromString(value,versitDateSpecIso8601Basic);
-    bday->setDate(date);
+    QDateTime dateTime =
+        parseDateTime(property.value(),versitDateSpecIso8601Basic);
+    bday->setDate(dateTime.date());
     return bday;
 }
 
@@ -416,7 +408,7 @@ QString QVersitContactGeneratorPrivate::saveImage(const QVersitProperty& photoPr
                                                   const QVersitProperty& nameProperty) const
 {
     // Image name: <FirstName><LastName>.<ext>
-    QString imgName(versitPhotoDir);
+    QString imgName(mImagePath);
 
     QList<QByteArray> values = nameProperty.value().split(';');
     imgName.append(QString::fromAscii("/"));
@@ -527,4 +519,21 @@ QString QVersitContactGeneratorPrivate::takeFirst(QList<QString>& list) const
     if (!list.isEmpty())
         first = list.takeFirst();
     return first;
+}
+
+/*!
+ * Parses a date and time from text
+ */
+QDateTime QVersitContactGeneratorPrivate::parseDateTime(
+    const QByteArray& text,
+    const QByteArray& format) const
+{
+    QDateTime dateTime;
+    QString value(QString::fromAscii(text));
+    if (text.contains("-")) {
+        dateTime = QDateTime::fromString(value,Qt::ISODate);
+    } else {
+        dateTime = QDateTime::fromString(value, QString::fromAscii(format));
+    }
+    return dateTime;
 }

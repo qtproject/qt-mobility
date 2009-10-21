@@ -47,6 +47,8 @@ class UT_QVersitContactConvertert : public QObject
 private slots:
     void init();
     void cleanup();
+    void initTestCase();
+    void cleanupTestCase();
     
     void testConvertContact();
     void testEncodeName();
@@ -61,10 +63,12 @@ private slots:
     void testEncodeNote();
     void testEncodeGeoLocation();
     void testEncodeOrganization();
+    void testEncodeEmbeddedContent();
     
 private: // Data
     QVersitContactConverter* mConverter;
     QVersitContactConverterPrivate* mConverterPrivate;
+    QString mTestFileName;
 };
 
 #endif /* UT_QVERSITCONTACTCONVERTER_H_ */
