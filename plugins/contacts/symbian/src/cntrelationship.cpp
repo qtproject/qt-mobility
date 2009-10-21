@@ -68,12 +68,12 @@ QList<QContactRelationship> CntRelationship::relationshipsL(const QString& relat
     return returnValue;
 }
 
-bool CntRelationship::saveRelationshipL(QContactRelationship* relationship, QContactManager::Error& error)
+bool CntRelationship::saveRelationshipL(QSet<QContactLocalId> *affectedContactIds, QContactRelationship* relationship, QContactManager::Error& error)
 {
     bool returnValue(false);
             
     if(m_relationshipMap.contains(relationship->relationshipType())){
-        returnValue = m_relationshipMap.value(relationship->relationshipType())->saveRelationshipL(relationship, error);
+        returnValue = m_relationshipMap.value(relationship->relationshipType())->saveRelationshipL(affectedContactIds, relationship, error);
     }
     else{
         error = QContactManager::NotSupportedError;
@@ -83,38 +83,40 @@ bool CntRelationship::saveRelationshipL(QContactRelationship* relationship, QCon
 }
 
 
-QList<QContactManager::Error> CntRelationship::saveRelationshipsL(QList<QContactRelationship>* relationships, QContactManager::Error& error)
+QList<QContactManager::Error> CntRelationship::saveRelationshipsL(QSet<QContactLocalId> *affectedContactIds, QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
     QList<QContactManager::Error> returnValue;
     
     for(int i = 0; i < relationships->count(); i++){
         QContactManager::Error error;
-        saveRelationshipL(&relationships->value(i), error);
+        saveRelationshipL(affectedContactIds, &relationships->value(i), error);
         returnValue.append(error);
     }
    
     return returnValue;
 }
 
-bool CntRelationship::removeRelationshipL(const QContactRelationship& relationship, QContactManager::Error& error)
+bool CntRelationship::removeRelationshipL(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship& relationship, QContactManager::Error& error)
 {
-    bool returnValue;
+    bool returnValue(false);
     
     if(m_relationshipMap.contains(relationship.relationshipType())){
-        returnValue = m_relationshipMap.value(relationship.relationshipType())->removeRelationshipL(relationship, error);
+        returnValue = m_relationshipMap.value(relationship.relationshipType())->removeRelationshipL(affectedContactIds, relationship, error);
     }
     else{
         error = QContactManager::NotSupportedError;
     }
+    
+    return returnValue;
 }
 
-QList<QContactManager::Error> CntRelationship::removeRelationshipsL(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
+QList<QContactManager::Error> CntRelationship::removeRelationshipsL(QSet<QContactLocalId> *affectedContactIds, const QList<QContactRelationship>& relationships, QContactManager::Error& error)
 {
     QList<QContactManager::Error> returnValue;
     
     for(int i = 0; i < relationships.count(); i++){
         QContactManager::Error error;
-        removeRelationshipL(relationships.at(i), error);
+        removeRelationshipL(affectedContactIds, relationships.at(i), error);
         returnValue.append(error);
     }
    

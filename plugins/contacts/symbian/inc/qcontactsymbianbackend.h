@@ -109,7 +109,9 @@ private slots:
         void eventContactAdded(const QContactLocalId &contactId);
         void eventContactRemoved(const QContactLocalId &contactId);
         void eventContactChanged(const QContactLocalId &contactId);
-
+        void eventRelationshipAdded(const QContactLocalId &contactId);
+        void eventRelationshipRemoved(const QContactLocalId &contactId);
+        
 private:
     QList<QContactLocalId> slowFilter(const QContactFilter& filter, const QList<QContactLocalId>& contacts, QContactManager::Error& error) const;
     QList<QContactLocalId> slowSort(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;

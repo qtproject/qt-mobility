@@ -37,6 +37,17 @@
 
 #include <QtTest/QtTest>
 
+#define QTRY_COMPARE(__expr, __expected) \
+    do { \
+        const int __step = 50; \
+        const int __timeout = 10000; \
+        QTest::qWait(10); \
+        for (int __i = 0; __i < __timeout && ((__expr) != (__expected)); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QCOMPARE(__expr, __expected); \
+    } while(0)
+
 
 void TestRelationship::initTestCase()
 {
@@ -83,7 +94,11 @@ void TestRelationship::createGroupContact()
     relationship.setRelationshipType(QContactRelationship::HasMember);
     relationship.setFirst(groupContact.id());
     relationship.setSecond(contact.id());
+    
+    QSignalSpy spySaveRelationship(&manager, SIGNAL(relationshipsAdded(const QList<QContactLocalId>& affectedContactIds)));
+    //QSignalSpy spyRemoveRelationship(&manager, SIGNAL(relationshipsRemoved(const QList<QContactLocalId>& affectedContactIds)));
     manager.saveRelationship(&relationship);
+    QTRY_COMPARE(spySaveRelationship.count(), 1); 
     
     //Add contact 2 to group
     relationship.setSecond(contact2.id());
