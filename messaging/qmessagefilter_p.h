@@ -76,7 +76,7 @@ public:
     QMessageFilter *q_ptr;
     QMessageDataComparator::Options _options;
 #if defined(Q_OS_WIN)
-    enum Field { None = 0, Id, Type, SenderName, SenderAddress, Recipients, RecipientName, RecipientAddress, Subject, TimeStamp, ReceptionTimeStamp, Status, Priority, Size, CustomField, ParentAccountId, ParentFolderId, AncestorFolderIds };
+    enum Field { None = 0, Id, Type, Sender, SenderName, SenderAddress, Recipients, RecipientName, RecipientAddress, Subject, TimeStamp, ReceptionTimeStamp, Status, Priority, Size, ParentAccountId, ParentFolderId, AncestorFolderIds };
     enum Comparator { Equality = 0, Relation, Inclusion };
     enum Operator { Identity = 0, And, Or, Not, Nand, Nor, OperatorEnd };
     QMessageFilterPrivate::Field _field;
@@ -109,7 +109,7 @@ public:
     static MapiFolderIterator folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiStorePtr &store);
     static MapiStoreIterator storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiSessionPtr &session);
     static QList<QMessageFilter> subFilters(const QMessageFilter &filter);
-
+    static bool matchesMessage(const QMessageFilter &filter, const QMessage &message);
 #endif
 };
 

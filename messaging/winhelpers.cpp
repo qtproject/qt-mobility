@@ -1755,21 +1755,24 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
                         rv = messagesTable->QueryRows(1, 0, &rows);
                         if (HR_SUCCEEDED(rv)) {
                             if (rows->cRows == 1) {
-                                if (limit) {
-                                    --workingLimit;
-                                }
-
                                 LPSPropValue entryIdProp(&rows->aRow[0].lpProps[0]);
                                 LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[1]);
                                 MapiRecordKey recordKey(recordKeyProp->Value.bin.lpb, recordKeyProp->Value.bin.cb);
                                 MapiEntryId entryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
 #ifdef _WIN32_WCE
-                                result.append(QMessageIdPrivate::from(_store->entryId(), entryId, recordKey, _entryId));
+                                QMessageId id(QMessageIdPrivate::from(_store->entryId(), entryId, recordKey, _entryId));
 #else
-                                result.append(QMessageIdPrivate::from(_store->recordKey(), entryId, recordKey, _key));
+                                QMessageId id(QMessageIdPrivate::from(_store->recordKey(), entryId, recordKey, _key));
 #endif
-
                                 FreeProws(rows);
+
+                                if (!QMessageFilterPrivate::matchesMessage(filter, QMessage(id)))
+                                    continue;
+                                result.append(id);
+                                if (limit) {
+                                    --workingLimit;
+                                }
+
                                 if (limit && !workingLimit)
                                     break;
                             } else {
@@ -2043,7 +2046,6 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
             qWarning() << "Unable to find the sent folder while constructing message";
         else if (!setMapiProperty(mapiMessage, PR_SENTMAIL_ENTRYID, sentFolder->entryId()))
             qWarning() << "Unable to set sent folder entry id on message";
-
 #endif
 
 
@@ -2573,7 +2575,7 @@ QMessage::StandardFolder MapiStore::standardFolder(const MapiEntryId &entryId) c
 {
     QMap<QMessage::StandardFolder, MapiEntryId>::const_iterator it = _standardFolderId.begin(), end = _standardFolderId.end();
     for ( ; it != end; ++it) {
-        if (it.value() == entryId) {
+        if (_session.toStrongRef()->equal(it.value(), entryId)) {
             return it.key();
         }
     }
@@ -3410,7 +3412,8 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                     case PR_MESSAGE_DELIVERY_TIME:
                         msg->setReceivedDate(fromFileTime(prop.Value.ft));
                         break;
-                    case PR_TRANSPORT_MESSAGE_HEADERS:
+                    case PR_RECEIVED_BY_ENTRYID: // fall through
+                    case PR_END_DATE:
                         // This message must have come from an external source
                         flags |= QMessage::Incoming;
                         break;
