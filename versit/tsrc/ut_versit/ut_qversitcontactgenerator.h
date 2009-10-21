@@ -61,8 +61,9 @@ private slots: // Tests
     void testBirthday();
     void testGender();
     void testNickname();
-    void testCreateAvatar();
+    void testAvatar();
     void testGeo();
+    void testNote();
 
 private: 
     

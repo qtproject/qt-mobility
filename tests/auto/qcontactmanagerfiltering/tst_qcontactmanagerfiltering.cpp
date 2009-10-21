@@ -217,18 +217,31 @@ void tst_QContactManagerFiltering::detailStringFiltering_data()
 
     QString name = QContactName::DefinitionName;
     QString firstname = QContactName::FieldFirst;
+    QString lastname = QContactName::FieldLast;
+    QString middlename = QContactName::FieldMiddle;
+    QString prefixname = QContactName::FieldPrefix;
+    QString suffixname = QContactName::FieldSuffix;
+    QString nickname = QContactNickname::DefinitionName;
+    QString emailaddr = QContactEmailAddress::DefinitionName;
+    QString emailfield = QContactEmailAddress::FieldEmailAddress;
 
     for (int i = 0; i < managers.size(); i++) {
         QContactManager *manager = managers.at(i);
+        newMRow("Name == Aaro", manager) << manager << name << firstname << QVariant("Aaro") << 0 << es;
         newMRow("Name == Aaron", manager) << manager << name << firstname << QVariant("Aaron") << 0 << "a";
         newMRow("Name == aaron", manager) << manager << name << firstname << QVariant("aaron") << 0 << "a";
         newMRow("Name == Aaron, case sensitive", manager) << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchCaseSensitive) << "a";
         newMRow("Name == aaron, case sensitive", manager) << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchCaseSensitive) << es;
 
+        newMRow("Name == A, begins", manager) << manager << name << firstname << QVariant("A") << (int)(Qt::MatchStartsWith) << "a";
         newMRow("Name == Aaron, begins", manager) << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchStartsWith) << "a";
         newMRow("Name == aaron, begins", manager) << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchStartsWith) << "a";
         newMRow("Name == Aaron, begins, case sensitive", manager) << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << "a";
         newMRow("Name == aaron, begins, case sensitive", manager) << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchStartsWith | Qt::MatchCaseSensitive) << es;
+        newMRow("Name == Aaron1, begins", manager) << manager << name << firstname << QVariant("Aaron1") << (int)(Qt::MatchStartsWith) << es;
+        newMRow("Last name == A, begins", manager) << manager << name << lastname << QVariant("A") << (int)(Qt::MatchStartsWith) << "abc";
+        newMRow("Last name == Aaronson, begins", manager) << manager << name << lastname << QVariant("Aaronson") << (int)(Qt::MatchStartsWith) << "a";
+        newMRow("Last Name == Aaronson1, begins", manager) << manager << name << lastname << QVariant("Aaronson1") << (int)(Qt::MatchStartsWith) << es;
 
         newMRow("Name == Aar, begins", manager) << manager << name << firstname << QVariant("Aar") << (int)(Qt::MatchStartsWith) << "a";
         newMRow("Name == aar, begins", manager) << manager << name << firstname << QVariant("aar") << (int)(Qt::MatchStartsWith) << "a";
@@ -244,11 +257,22 @@ void tst_QContactManagerFiltering::detailStringFiltering_data()
         newMRow("Name == ARON, ends", manager) << manager << name << firstname << QVariant("ARON") << (int)(Qt::MatchEndsWith) << "a";
         newMRow("Name == aron, ends, case sensitive", manager) << manager << name << firstname << QVariant("aron") << (int)(Qt::MatchEndsWith | Qt::MatchCaseSensitive) << "a";
         newMRow("Name == ARON, ends, case sensitive", manager) << manager << name << firstname << QVariant("ARON") << (int)(Qt::MatchEndsWith | Qt::MatchCaseSensitive) << es;
+        newMRow("Last name == n, ends", manager) << manager << name << lastname << QVariant("n") << (int)(Qt::MatchEndsWith) << "abc";
 
         newMRow("Name == Aaron, fixed", manager) << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchFixedString) << "a";
         newMRow("Name == aaron, fixed", manager) << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchFixedString) << "a";
         newMRow("Name == Aaron, fixed, case sensitive", manager) << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchFixedString | Qt::MatchCaseSensitive) << "a";
         newMRow("Name == aaron, fixed, case sensitive", manager) << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchFixedString | Qt::MatchCaseSensitive) << es;
+
+        // middle name, prefix, suffix, nickname
+        newMRow("MName == Arne", manager) << manager << name << middlename << QVariant("Arne") << (int)(Qt::MatchContains) << "a";
+        newMRow("Prefix == Sir", manager) << manager << name << prefixname << QVariant("Sir") << (int)(Qt::MatchContains) << "a";
+        newMRow("Suffix == Dr.", manager) << manager << name << suffixname << QVariant("Dr.") << (int)(Qt::MatchContains) << "a";
+        newMRow("Nickname == Sir Aaron", manager) << manager << nickname << es << QVariant("Sir Aaron") << (int)(Qt::MatchContains) << "a";
+
+        // email
+        newMRow("Email == Aaron@Aaronson.com", manager) << manager << emailaddr << emailfield << QVariant("Aaron@Aaronson.com") << 0 << "a";
+        newMRow("Email == Aaron@Aaronsen.com", manager) << manager << emailaddr << emailfield << QVariant("Aaron@Aaronsen.com") << 0 << es;
 
         /* Converting other types to strings */
         QPair<QString, QString> defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
@@ -1714,7 +1738,9 @@ void tst_QContactManagerFiltering::sorting()
     /* Now do a check with a filter involved; the filter should not affect the sort order */
     QContactDetailFilter presenceName;
     presenceName.setDetailDefinitionName(QContactName::DefinitionName);
+
     ids = cm->contacts(presenceName, s);
+
     output = convertIds(contacts, ids);
 
     if (defname == QContactName::DefinitionName && fieldname == QContactName::FieldFirst) {
@@ -1933,7 +1959,7 @@ void tst_QContactManagerFiltering::actionFiltering_data()
         newMRow("bad vendor", manager) << manager << es << "Vendor missing" << -1 << ev << es;
 
         QString expected;
-        if ( (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) 
+        if ( (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty())
              ||
              (!booleanDefAndFieldNames.first.isEmpty() && !booleanDefAndFieldNames.second.isEmpty()) ){
                  expected = "abcd";
@@ -2013,7 +2039,7 @@ void tst_QContactManagerFiltering::actionFiltering()
     QFETCH(int, version);
     QFETCH(QVariant, value);
     QFETCH(QString, expected);
-    
+
     /* Load the definition and field names for the various variant types for the current manager */
     defAndFieldNamesForTypeForActions = defAndFieldNamesForTypePerManager.value(cm);
     if (!defAndFieldNamesForTypeForActions.isEmpty()) {
@@ -2468,6 +2494,13 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
 
     name.setFirst("Aaron");
     name.setLast("Aaronson");
+    name.setMiddle("Arne");
+    name.setPrefix("Sir");
+    name.setSuffix("Dr.");
+    QContactNickname nick;
+    nick.setNickname("Sir Aaron");
+    QContactEmailAddress emailAddr;
+    emailAddr.setEmailAddress("Aaron@Aaronson.com");
     number.setNumber("555-1212");
     string.setValue(definitionDetails.value("String").second, "Aaron Aaronson");
     integer.setValue(definitionDetails.value("Integer").second, 10);
@@ -2478,6 +2511,8 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     time.setValue(definitionDetails.value("Time").second, QTime(16,52,23,0));
 
     a.saveDetail(&name);
+    a.saveDetail(&nick);
+    a.saveDetail(&emailAddr);
     a.saveDetail(&number);
     if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())
         a.saveDetail(&string);
@@ -2494,6 +2529,7 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     if (!definitionDetails.value("Time").first.isEmpty() && !definitionDetails.value("Time").second.isEmpty())
         a.saveDetail(&time);
 
+    name = QContactName();
     name.setFirst("Bob");
     name.setLast("Aaronsen");
     number.setNumber("555-3456");

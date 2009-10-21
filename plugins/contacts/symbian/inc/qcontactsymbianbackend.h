@@ -103,13 +103,16 @@ public:
     bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error);
     QContactLocalId selfContactId(QContactManager::Error& error) const;
 
+    QString managerName() const;
+
 private slots:
         void eventContactAdded(const QContactLocalId &contactId);
         void eventContactRemoved(const QContactLocalId &contactId);
         void eventContactChanged(const QContactLocalId &contactId);
-        
+
 private:
-    void slowFilter(const QContactFilter& filter, const QList<QContactLocalId>& contacts, QList<QContactLocalId>& result, QContactManager::Error& error) const;
+    QList<QContactLocalId> slowFilter(const QContactFilter& filter, const QList<QContactLocalId>& contacts, QContactManager::Error& error) const;
+    QList<QContactLocalId> slowSort(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     bool doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error);
     void updateDisplayLabel(QContact& contact) const;
     QContactSymbianEngineData *d;
