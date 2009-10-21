@@ -2407,6 +2407,7 @@ MapiFolderPtr MapiStore::openFolderWithKey(QMessageStore::ErrorCode *lastError, 
 
 bool MapiStore::supports(ULONG featureFlag) const
 {
+#ifndef _WIN32_WCE
     LONG supportMask(0);
 
     if (getMapiProperty(store(), PR_STORE_SUPPORT_MASK, &supportMask)) {
@@ -2416,6 +2417,12 @@ bool MapiStore::supports(ULONG featureFlag) const
         qWarning() << "Unable to query store support mask.";
 
     return false;
+#else
+    // We can't query the store support, so just assume that the feature is supported
+    return true;
+
+    Q_UNUSED(featureFlag)
+#endif
 }
 
 IMessage *MapiStore::openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId)
