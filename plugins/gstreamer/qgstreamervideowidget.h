@@ -95,6 +95,7 @@ private:
     QGstreamerVideoWidget *m_widget;
     WId m_windowId;
     QVideoWidget::AspectRatioMode m_aspectRatioMode;
+    bool m_fullScreen;
 };
 
 #endif // QGSTREAMERVIDEOWIDGET_H

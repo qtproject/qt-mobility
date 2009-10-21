@@ -97,6 +97,7 @@ QGstreamerVideoWidgetControl::QGstreamerVideoWidgetControl(QObject *parent)
     : QVideoWidgetControl(parent)
     , m_videoSink(0)
     , m_widget(new QGstreamerVideoWidget)
+    , m_fullScreen(false)
 {
     m_widget->installEventFilter(this);
     m_windowId = m_widget->winId();
@@ -236,26 +237,12 @@ void QGstreamerVideoWidgetControl::setAspectRatioMode(QVideoWidget::AspectRatioM
 
 bool QGstreamerVideoWidgetControl::isFullScreen() const
 {
-    return m_widget->isFullScreen();
+    return m_fullScreen;
 }
 
 void QGstreamerVideoWidgetControl::setFullScreen(bool fullScreen)
 {
-    if (fullScreen) {
-        m_widget->setWindowFlags(m_widget->windowFlags() | Qt::Window | Qt::WindowStaysOnTopHint);
-        m_widget->setWindowState(m_widget->windowState() | Qt::WindowFullScreen);
-
-        m_widget->show();
-
-        emit fullScreenChanged(m_widget->isFullScreen());
-    } else {
-        m_widget->setWindowFlags(m_widget->windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
-        m_widget->setWindowState(m_widget->windowState() & ~Qt::WindowFullScreen);
-
-        m_widget->show();
-
-        emit fullScreenChanged(m_widget->isFullScreen());
-    }
+    emit fullScreenChanged(m_fullScreen =  fullScreen);
 }
 
 int QGstreamerVideoWidgetControl::brightness() const
