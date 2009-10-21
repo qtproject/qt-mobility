@@ -23,6 +23,17 @@
 using namespace SopranoLive;
 using namespace hcontacts;
 
+void matchPhoneNumberFromEnd(RDFVariable &variable, QContactDetailFilter &filter)
+{
+    RDFVariable rdfPhoneNumber;
+    rdfPhoneNumber = variable.property<nco::hasPhoneNumber>().property<nco::phoneNumber>();
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
+    int matchDigitCount = settings.value("phoneNumberMatchDigitCount", "7").toInt();
+    debug() << "match with:" << matchDigitCount;
+    QString filterValue = filter.value().toString().right(matchDigitCount);
+    rdfPhoneNumber.hasSuffix(filterValue);
+}
+
 void applyFilterToRDFVariable(RDFVariable &variable,
         const QContactFilter &filter)
 {
@@ -59,13 +70,7 @@ void applyFilterToRDFVariable(RDFVariable &variable,
         if (filt.matchFlags() == Qt::MatchEndsWith) {
             if ( filt.detailDefinitionName() == QContactPhoneNumber::DefinitionName 
                  && filt.detailFieldName() == QContactPhoneNumber::FieldNumber) {
-                RDFVariable rdfPhoneNumber;
-                rdfPhoneNumber = variable.property<nco::hasPhoneNumber>().property<nco::phoneNumber>();
-                QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
-                int matchDigitCount = settings.value("phoneNumberMatchDigitCount", "7").toInt();
-                debug() << "match with:" << matchDigitCount;
-                QString filterValue = filt.value().toString().right(matchDigitCount);
-                rdfPhoneNumber.hasSuffix(filterValue);
+                matchPhoneNumberFromEnd(variable, filt);
             }
         }
     } else if (filter.type() == QContactFilter::ChangeLogFilter) {
