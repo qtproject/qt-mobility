@@ -198,12 +198,20 @@ QString QMessageFolderId::toString() const
 
 bool QMessageFolderId::isValid() const
 {
+#ifdef _WIN32_WCE
+    return (d_ptr && !d_ptr->_entryId.isEmpty() && !d_ptr->_storeRecordKey.isEmpty());
+#else
     return (d_ptr && !d_ptr->_folderRecordKey.isEmpty() && !d_ptr->_storeRecordKey.isEmpty());
+#endif
 }
 
 uint qHash(const QMessageFolderId &id)
 {
+#ifdef _WIN32_WCE
+    return (qHash(id.d_ptr->_entryId) ^ qHash(id.d_ptr->_storeRecordKey));
+#else
     return (qHash(id.d_ptr->_folderRecordKey) ^ qHash(id.d_ptr->_storeRecordKey));
+#endif
 }
 
 #endif
