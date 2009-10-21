@@ -122,7 +122,7 @@ bool QMessageAccountFilter::isEmpty() const
 
 bool QMessageAccountFilter::isSupported() const
 {
-    return true; // TODO: Implement
+    return true;
 }
 
 QMessageAccountFilter QMessageAccountFilter::operator~() const
