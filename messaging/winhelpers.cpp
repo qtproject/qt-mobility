@@ -935,12 +935,13 @@ namespace {
                         textFormat = EDITOR_FORMAT_HTML;
                     }
 
+#ifndef _WIN32_WCE
                     // Mark this message as formatted
                     if (!setMapiProperty(message, PR_MSG_EDITOR_FORMAT, textFormat)) {
                         qWarning() << "Unable to set message editor format in message.";
                         *lastError = QMessageStore::FrameworkFault;
                     }
-
+#endif
                     IStream *os(0);
                     rv = message->OpenProperty(PR_RTF_COMPRESSED, &IID_IStream, STGM_CREATE | STGM_WRITE, MAPI_CREATE | MAPI_MODIFY, reinterpret_cast<LPUNKNOWN*>(&os));
                     if (HR_SUCCEEDED(rv)) {
@@ -973,12 +974,6 @@ namespace {
                         *lastError = QMessageStore::FrameworkFault;
                     }
                 } else {
-                    // Mark this message as plain text
-                    LONG textFormat(EDITOR_FORMAT_PLAINTEXT);
-                    if (!setMapiProperty(message, PR_MSG_EDITOR_FORMAT, textFormat)) {
-                        qWarning() << "Unable to set message editor format in message.";
-                        *lastError = QMessageStore::FrameworkFault;
-                    }
 #ifdef _WIN32_WCE
                     // Stream the body in...
                     LPSTREAM pstm = NULL;
@@ -986,6 +981,13 @@ namespace {
                     pstm->Write(body.utf16(),body.count()* sizeof(WCHAR), NULL);
                     pstm->Release();
 #else
+                    // Mark this message as plain text
+                    LONG textFormat(EDITOR_FORMAT_PLAINTEXT);
+                    if (!setMapiProperty(message, PR_MSG_EDITOR_FORMAT, textFormat)) {
+                        qWarning() << "Unable to set message editor format in message.";
+                        *lastError = QMessageStore::FrameworkFault;
+                    }
+
                     if (!setMapiProperty(message, PR_BODY, body)) {
                         qWarning() << "Unable to set body in message.";
                         *lastError = QMessageStore::FrameworkFault;
