@@ -61,6 +61,7 @@ SOURCE_DIR = $$PWD
     OBJECTS_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET
     !plugin:!testplugin {
         DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin
+        mac:contains(QT_CONFIG,qt_framework):LIBS += -F$$OUTPUT_DIR/build/$$SUBDIRPART/bin
     } else {
         # This is where plugins get built
         testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/plugins/contacts
