@@ -532,6 +532,9 @@ QVideoWidget::QVideoWidget(QMediaObject *object, QWidget *parent)
 #endif
     }
 
+    d->nonFullScreenFlags = windowFlags() & (Qt::SubWindow | Qt::Window);
+
+
     setLayout(d->layout);
 }
 
@@ -593,10 +596,42 @@ void QVideoWidget::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 
 void QVideoWidget::setFullScreen(bool fullScreen)
 {
-    if (fullScreen)
-        showFullScreen();
-    else
-        showNormal();
+    Q_D(QVideoWidget);
+
+    Qt::WindowFlags flags = windowFlags();
+    if (fullScreen) {
+        if (!isFullScreen()) {
+            if (d->currentBackend)
+                d->currentBackend->setFullScreen(false);
+
+            //we only update that value if it is not already fullscreen
+            d->nonFullScreenFlags = flags & (Qt::Window | Qt::SubWindow);
+            flags |= Qt::Window;
+            flags ^= Qt::SubWindow;
+            setWindowFlags(flags);
+#ifdef Q_WS_X11
+            // This works around a bug with Compiz
+            // as the window must be visible before we can set the state
+            show();
+            raise();
+            setWindowState( windowState() | Qt::WindowFullScreen ); // set
+#else
+            setWindowState( windowState() | Qt::WindowFullScreen ); // set
+            show();
+#endif
+        }
+    } else if (isFullScreen()) {
+        flags ^= (Qt::Window | Qt::SubWindow); //clear the flags...
+        flags |= d->nonFullScreenFlags; //then we reset the flags (window and subwindow)
+        setWindowFlags(flags);
+        setWindowState( windowState()  ^ Qt::WindowFullScreen ); // reset
+        show();
+    }
+
+    //if (fullScreen)
+    //    showFullScreen();
+    //else
+    //    showNormal();
 }
 
 /*!
@@ -784,15 +819,12 @@ bool QVideoWidget::event(QEvent *event)
         if (windowState() & Qt::WindowFullScreen) {
             if (d->currentBackend)
                 d->currentBackend->setFullScreen(true);
-            setWindowFlags(windowFlags() | Qt::Window | Qt::WindowStaysOnTopHint);
-            showFullScreen();
 
             if (!d->wasFullScreen)
                 emit fullScreenChanged(d->wasFullScreen = true);
         } else {
-            if (d->currentBackend)
-                d->currentBackend->setFullScreen(false);
-            setWindowFlags(windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
+            //if (d->currentBackend)
+            //    d->currentBackend->setFullScreen(false);
 
             if (d->wasFullScreen)
                 emit fullScreenChanged(d->wasFullScreen = false);

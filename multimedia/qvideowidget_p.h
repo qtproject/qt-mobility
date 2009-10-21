@@ -246,6 +246,7 @@ public:
     int hue;
     int saturation;
     QVideoWidget::AspectRatioMode aspectRatioMode;
+    Qt::WindowFlags nonFullScreenFlags;
     bool wasFullScreen;
 
     void setCurrentBackend(QVideoWidgetBackendInterface *backend);
