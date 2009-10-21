@@ -51,6 +51,7 @@
 #include <qcontactnote.h>
 #include <qcontactgeolocation.h>
 #include <qcontactorganization.h>
+#include <qcontactavatar.h>
 
 
 void UT_QVersitContactConvertert::init()
@@ -64,6 +65,27 @@ void UT_QVersitContactConvertert::cleanup()
     delete mConverterPrivate;
     delete mConverter;
 }
+
+
+void UT_QVersitContactConvertert::initTestCase()
+{
+    //create dummy file.
+    QDir dir = QDir::current();
+    mTestFileName = dir.filePath("versitTest001.jpg");
+    QFile testFile(dir.filePath(mTestFileName));
+
+    if ( testFile.open( QIODevice::ReadWrite ) ) {
+        QTextStream stream( &testFile );
+        stream << "HHH KKK UUU NNN OOO PPP GGG NNN KKK OOO UUU PPP III" << endl;
+    }
+}
+
+void UT_QVersitContactConvertert::cleanupTestCase()
+{
+    QDir dir = QDir::current();
+    dir.remove(mTestFileName);
+}
+
 
 void UT_QVersitContactConvertert::testConvertContact()
 {
@@ -539,6 +561,81 @@ void UT_QVersitContactConvertert::testEncodeOrganization()
     property = versitDocument.properties().at(1);
     QCOMPARE(property.name(), QString::fromAscii(versitOrganizationId));
     QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("Nokia;R&D"));
+}
+
+
+
+void UT_QVersitContactConvertert::testEncodeEmbeddedContent()
+{
+    QContact contact;
+    QContactAvatar contactAvatar;
+
+    // Test1: Web URL
+    const QString url = "http://www.myhome.com/test.jpg";
+    contactAvatar.setAvatar(url);
+    contactAvatar.setSubType(QContactAvatar::SubTypeImage);
+    contact.saveDetail(&contactAvatar);
+    QVersitDocument mVersitDocument = mConverter->convertContact(contact);
+
+    //Media type, and source type are encoded.
+    QCOMPARE(2, mVersitDocument.properties().at(0).parameters().count());
+    
+    QVERIFY(mVersitDocument.properties().at(0).parameters().contains(versitType, versitPhotoJpeg));
+    QVERIFY(mVersitDocument.properties().at(0).parameters().contains(versitValue, versitUrlId));
+    
+    //Check property Name
+    QString propertyName = mVersitDocument.properties().at(0).name();
+    QString expectedPropertyName =
+        mConverterPrivate->mMappings.value(QContactAvatar::SubTypeImage);
+    QCOMPARE(propertyName, expectedPropertyName);
+
+    //Check property value
+    QString value = (mVersitDocument.properties().at(0).value() );
+    QCOMPARE(url, value);
+
+    // Test 2: Local Media
+    contactAvatar.setAvatar(mTestFileName);
+    contactAvatar.setSubType(QContactAvatar::SubTypeImage);
+    contact.saveDetail(&contactAvatar);
+    mVersitDocument = mConverter->convertContact(contact);
+
+    //Media type, source encoding is encoded i.e. base64
+    QCOMPARE(2, mVersitDocument.properties().at(0).parameters().count());
+
+    QVERIFY(mVersitDocument.properties().at(0).parameters().contains(
+            QString::fromAscii(versitType), QString::fromAscii(versitPhotoJpeg)));
+
+    QVERIFY(mVersitDocument.properties().at(0).parameters().contains(
+            QString::fromAscii(versitEncoding), QString::fromAscii(versitEncodingBase64)));
+
+    //Ensure value1 is not URL
+    QString value1 = (mVersitDocument.properties().at(0).value() );
+    QEXPECT_FAIL(url.toAscii(), value1.toAscii(), Continue);
+
+
+    // Test3: New Media Format will be encoded also
+    const QString testUrl = "http://www.myhome.com/test.ggg";
+    contactAvatar.setAvatar(testUrl);
+    contactAvatar.setSubType(QContactAvatar::SubTypeImage);
+    contact.saveDetail(&contactAvatar);
+    mVersitDocument = mConverter->convertContact(contact);
+
+    QCOMPARE(1, mVersitDocument.properties().count());
+    QCOMPARE(2, mVersitDocument.properties().at(0).parameters().count());
+
+    // New File Format is encoded as a type.
+    QVERIFY(mVersitDocument.properties().at(0).parameters().contains(versitType, "GGG"));
+    QVERIFY(mVersitDocument.properties().at(0).parameters().contains(versitValue, versitUrlId));
+
+
+    // Test4: UnSupported Media Type, properties and parameters are not encoded
+    const QString testUrl2 = "http://www.myhome.com/test.jpg";
+    contactAvatar.setAvatar(testUrl2);
+    // un-supported media type is encoded
+    contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
+    contact.saveDetail(&contactAvatar);
+    mVersitDocument = mConverter->convertContact(contact);
+    QCOMPARE(0, mVersitDocument.properties().count());
 }
 
 void UT_QVersitContactConvertert::testEncodeParameters()
