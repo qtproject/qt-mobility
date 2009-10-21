@@ -171,5 +171,13 @@
     app does not need to be concerned with the underlying protocol, where the
     servers are, the hardware peculiarities with networking and other low
     level details.
+
+    \section1 System Information
+
+    An API to discover system related information and capabilities. Information
+    available will cover software version numbers, hardware features,
+    network connection types and status, display, data storage devices,
+    device information and the screensaver.
+    
 */
 
