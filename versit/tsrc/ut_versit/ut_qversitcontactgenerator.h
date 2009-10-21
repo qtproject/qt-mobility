@@ -63,6 +63,7 @@ private slots: // Tests
     void testNickname();
     void testCreateAvatar();
     void testGeo();
+    void testNote();
 
 private: 
     

@@ -54,6 +54,7 @@
 #include <qcontactnickname.h>
 #include <qcontactavatar.h>
 #include <qcontactgeolocation.h>
+#include <qcontactnote.h>
 
 void UT_QVersitContactGenerator::init()
 {    
@@ -538,7 +539,7 @@ void UT_QVersitContactGenerator::testCreateAvatar()
 
 void UT_QVersitContactGenerator::testGeo()
 {
-    // one value
+    // some positive values
     QVersitDocument document;
     QVersitProperty nameProperty;
     QStringList val;    
@@ -569,6 +570,34 @@ void UT_QVersitContactGenerator::testGeo()
     QCOMPARE(str,val[0]);
     str.setNum(geo.latitude(),'.',2);
     QCOMPARE(str,val[1]);
+}
+
+void UT_QVersitContactGenerator::testNote()
+{
+    // single line value
+    QVersitDocument document;
+    QVersitProperty nameProperty;
+    QByteArray val("I will not sleep at my work -Bart");
+    nameProperty.setName(QString::fromAscii(versitNoteId));
+    nameProperty.setValue(val);
+    document.addProperty(nameProperty);
+    QContact contact = mGenerator->generateContact(document);
+    QContactNote note = (QContactNote)contact.detail(QContactNote::DefinitionName);
+    QCOMPARE(note.note(),QString::fromAscii(val));
+
+    // Multiline value and quoted printable encoding
+    document = QVersitDocument();
+    nameProperty = QVersitProperty();
+    val = QByteArray("My Dad acts like he belongs,=0D=0AHe belongs in the zoo.=0D=0A");
+    nameProperty.setName(QString::fromAscii(versitNoteId));
+    nameProperty.setValue(val);
+    QMultiHash<QString,QString> params;
+    params.insert(QString::fromAscii("QUOTED-PRINTABLE"),QString::fromAscii(val));
+    nameProperty.setParameters(params);
+    document.addProperty(nameProperty);
+    contact = mGenerator->generateContact(document);
+    note = (QContactNote)contact.detail(QContactNote::DefinitionName);
+    QCOMPARE(note.note(),QString::fromAscii(val));
 }
 
 QVersitDocument UT_QVersitContactGenerator::createDocumentWithProperty(

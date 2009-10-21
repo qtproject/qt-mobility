@@ -51,6 +51,7 @@
 #include <qcontactnickname.h>
 #include <qcontactavatar.h>
 #include <qcontactgeolocation.h>
+#include <qcontactnote.h>
 #include <QHash>
 #include <QImage>
 
@@ -136,6 +137,8 @@ QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& 
             detail = createNicknames(property);
         } else if (property.name() == QString::fromAscii(versitGeoId)){
             detail = createGeoLocation(property);
+        } else if (property.name() == QString::fromAscii(versitNoteId)){
+            detail = createNote(property);
         } else {
             // NOP
         }
@@ -404,6 +407,20 @@ QContactDetail* QVersitContactGeneratorPrivate::createGeoLocation(
     geo->setLatitude(takeFirst(values).toDouble());
     return geo;
 }
+
+
+/*!
+ * Creates a QContactNote from \a property
+ */
+QContactDetail* QVersitContactGeneratorPrivate::createNote(
+    const QVersitProperty& property) const
+{
+    QContactNote* note = new QContactNote();
+    QString val = QString::fromAscii(property.value());
+    note->setNote(val);
+    return note;
+}
+
 
 /*!
  * Extracts the list of contexts from \a types
