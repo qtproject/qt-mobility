@@ -55,10 +55,10 @@ QContactSymbianEngine::QContactSymbianEngine(const QMap<QString, QString>& /*par
 	// Connect database observer events appropriately.
         connect(d, SIGNAL(contactAdded(QContactLocalId)),
                         this, SLOT(eventContactAdded(QContactLocalId)));
-	
+
         connect(d, SIGNAL(contactRemoved(QContactLocalId)),
                         this, SLOT(eventContactRemoved(QContactLocalId)));
-	
+
         connect(d, SIGNAL(contactChanged(QContactLocalId)),
                         this, SLOT(eventContactChanged(QContactLocalId)));
 }
@@ -108,17 +108,24 @@ QList<QContactLocalId> QContactSymbianEngine::contacts(
     if (filterSupport == QAbstractContactFilter::Supported) {
         // Filter supported, use as the result directly
         result = d->contacts(filter, sortOrders, error);
+        // If sorting is not supported, we need to fallback to slow sorting
+        if(!d->sortOrderSupported(sortOrders))
+            result = slowSort(result, sortOrders, error);
     } else if (filterSupport == QAbstractContactFilter::SupportedPreFilterOnly) {
         // Filter only does pre-filtering and may include false positives
         QList<QContactLocalId> contacts = d->contacts(filter, sortOrders, error);
         if(error == QContactManager::NoError)
-            slowFilter(filter, contacts, result, error);
+            result = slowFilter(filter, contacts, error);
+        // If sorting is not supported, we need to fallback to slow sorting
+        if(!d->sortOrderSupported(sortOrders))
+            result = slowSort(result, sortOrders, error);
     } else {
         // Filter not supported; fetch all contacts and remove false positives
-        // one-by-one
+        // one-by-one. Note: this is reeeeaally slow. Both sorting and
+        // filtering are done the slow way.
         QList<QContactLocalId> sortedIds = contacts(sortOrders,error);
         if(error == QContactManager::NoError)
-            slowFilter(filter, sortedIds, result, error);
+            result = slowFilter(filter, sortedIds, error);
     }
     return result;
 }
@@ -128,27 +135,18 @@ QList<QContactLocalId> QContactSymbianEngine::contacts(const QList<QContactSortO
     // Check if sorting is supported by backend
     if(d->sortOrderSupported(sortOrders))
         return d->contacts(sortOrders,error);
-        
-    // Backend does not support this sorting. 
+
+    // Backend does not support this sorting.
     // Fall back to slow QContact-level sorting method.
-    
+
     // Get unsorted contact ids
     QList<QContactSortOrder> noSortOrders;
-    QList<QContactLocalId> unsortedIds = d->contacts(noSortOrders,error);
-    if( error != QContactManager::NoError )
+    QList<QContactLocalId> unsortedIds = d->contacts(noSortOrders, error);
+    if (error != QContactManager::NoError)
         return QList<QContactLocalId>();
 
-    // Get unsorted contacts
-    QList<QContact> unsortedContacts;
-    foreach( QContactLocalId id, unsortedIds ) {
-        QContact c = contact(id, error);
-        if (error != QContactManager::NoError)
-            return QList<QContactLocalId>();
-        unsortedContacts << c;
-    }
-    
     // Sort contacts
-    return QContactManagerEngine::sortContacts( unsortedContacts, sortOrders );
+    return slowSort(unsortedIds, sortOrders, error);
 }
 
 QContact QContactSymbianEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
@@ -199,20 +197,38 @@ QList<QContactManager::Error> QContactSymbianEngine::saveContacts(QList<QContact
     return ret;
 }
 
-void QContactSymbianEngine::slowFilter(
+QList<QContactLocalId> QContactSymbianEngine::slowFilter(
         const QContactFilter& filter,
         const QList<QContactLocalId>& contacts,
-        QList<QContactLocalId>& result,
         QContactManager::Error& error
         ) const
 {
+    QList<QContactLocalId> result;
     for (int i(0); i < contacts.count(); i++) {
         QContactLocalId contactid = contacts.at(i);
         // Check if this is a false positive. If not, add to the result set.
         if(QContactManagerEngine::testFilter(filter, d->contact(contactid, error)))
             result << contactid;
     }
+    return result;
 }
+
+QList<QContactLocalId> QContactSymbianEngine::slowSort(
+        const QList<QContactLocalId>& contactIds,
+        const QList<QContactSortOrder>& sortOrders,
+        QContactManager::Error& error) const
+{
+    // Get unsorted contacts
+    QList<QContact> unsortedContacts;
+    foreach (QContactLocalId id, contactIds) {
+        QContact c = contact(id, error);
+        if (error != QContactManager::NoError)
+            return QList<QContactLocalId>();
+        unsortedContacts << c;
+    }
+    return QContactManagerEngine::sortContacts(unsortedContacts, sortOrders);
+}
+
 bool QContactSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error)
 {
     bool ret = false;
@@ -405,7 +421,7 @@ QList<QVariant::Type> QContactSymbianEngine::supportedDataTypes() const
  */
 void QContactSymbianEngine::eventContactAdded(const QContactLocalId &contactId)
 {
-        QList<QContactLocalId> contactList;
+    QList<QContactLocalId> contactList;
 	contactList.append(contactId);
 
 	emit contactsAdded(contactList);
@@ -418,7 +434,7 @@ void QContactSymbianEngine::eventContactAdded(const QContactLocalId &contactId)
  */
 void QContactSymbianEngine::eventContactRemoved(const QContactLocalId &contactId)
 {
-        QList<QContactLocalId> contactList;
+    QList<QContactLocalId> contactList;
 	contactList.append(contactId);
 
 	emit contactsRemoved(contactList);
@@ -431,10 +447,15 @@ void QContactSymbianEngine::eventContactRemoved(const QContactLocalId &contactId
  */
 void QContactSymbianEngine::eventContactChanged(const QContactLocalId &contactId)
 {
-        QList<QContactLocalId> contactList;
+    QList<QContactLocalId> contactList;
 	contactList.append(contactId);
 
 	emit contactsChanged(contactList);
+}
+
+QString QContactSymbianEngine::managerName() const
+{
+    return QString("symbian");
 }
 
 /* Factory lives here in the basement */
@@ -447,8 +468,5 @@ QString QContactSymbianFactory::managerName() const
 {
     return QString("symbian");
 }
-
-
-
 
 Q_EXPORT_PLUGIN2(mobapicontactspluginsymbian, QContactSymbianFactory);

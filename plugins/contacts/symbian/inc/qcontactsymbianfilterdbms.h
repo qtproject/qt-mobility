@@ -50,6 +50,9 @@
 class CContactDatabase;
 class CContactIdArray;
 class QContactDetailFilter;
+class QAbstractContactSorter;
+class TransformContact;
+class CContactItemFieldDef;
 
 class QContactSymbianFilter : public QAbstractContactFilter
 {
@@ -65,20 +68,22 @@ public:
     QAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter);
 
 private:
-    void transformDetailFilter(const QContactDetailFilter &detailFilter, TUid& fieldUid);
+    void transformDetailFilterL(const QContactDetailFilter& detailFilter, CContactItemFieldDef*& fieldDef);
     TInt findContacts(
             CContactIdArray*& idArray,
-            const TUid fieldUid,
+            const CContactItemFieldDef& fieldDef,
             const TDesC& text) const;
     CContactIdArray* findContactsL(
-            const TUid fieldUid,
+            const CContactItemFieldDef& fieldDef,
             const TDesC& text) const;
     TInt matchContacts(
             CContactIdArray*& idArray,
             const TDesC& phoneNumber,
             const TInt matchLength);
     void getMatchLengthL(TInt& matchLength);
-    CContactDatabase& m_contactDatabase;
+    CContactDatabase &m_contactDatabase;
+    QAbstractContactSorter *m_contactSorter;
+    TransformContact *m_transformContact;
 };
 
 #endif /*__SYMBIAN_CNTMODEL_USE_SQLITE__*/
