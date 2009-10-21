@@ -114,7 +114,7 @@ QVersitContactConverterPrivate::QVersitContactConverterPrivate()
     mMappings.insert(
         QContactPhoneNumber::SubTypePager,QString::fromAscii(versitPagerId));
     mMappings.insert(
-        QContactAvatar::SubTypeImage,QString::fromAscii(versitPagerId));
+        QContactAvatar::SubTypeImage,QString::fromAscii(versitPhotoId));
 
     //Media Types.
     mMappings.insert(

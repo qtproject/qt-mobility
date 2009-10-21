@@ -141,6 +141,7 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
     QList<QContact> contacts;
     QVersitContactGenerator generator;
     foreach (QVersitDocument document, mReader->result()) {
+        generator.setImagePath("/data/testvcards");
         QContact contact = generator.generateContact(document);
         if (mSaveContacts)
             QVERIFY(mContactManager->saveContact(&contact));

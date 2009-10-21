@@ -380,7 +380,6 @@ QContactDetail* QVersitContactGeneratorPrivate::createOnlineAccount(
 QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
     const QVersitProperty& property, const QVersitDocument& versitDocument) const
 {
-    QContactAvatar* avatar = new QContactAvatar();
     QString fileName;
 
     const QList<QVersitProperty> properties = versitDocument.properties();
@@ -392,11 +391,13 @@ QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
     }
 
     if (!fileName.isEmpty()) {
+        QContactAvatar* avatar = new QContactAvatar();
         avatar->setAvatar(fileName);
         avatar->setSubType(QContactAvatar::SubTypeImage);
+        return avatar;
+    } else {
+        return 0;
     }
-
-    return avatar;
 }
 
 /*!
