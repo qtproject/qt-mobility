@@ -38,7 +38,10 @@
 #include "qtmessaging.h"
 #include "../support/support.h"
 
-#if defined(Q_OS_SYMBIAN)
+#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) && defined(_WIN32_WCE))
+# if defined(TESTDATA_DIR)
+#  undef TESTDATA_DIR
+# endif
 # define TESTDATA_DIR "."
 #endif
 
@@ -210,10 +213,11 @@ void tst_QMessageStore::testFolder_data()
     QTest::addColumn<QString>("parentFolderPath");
     QTest::addColumn<QString>("displayNameResult");
 
-    QTest::newRow("Inbox") << "Inbox" << "Inbox" << "" << "Inbox";
-    QTest::newRow("Drafts") << "Drafts" << "" << "" << "Drafts";
-    QTest::newRow("Archived") << "Inbox/Archived" << "Archived" << "Inbox" << "Archived";
-    QTest::newRow("Backup") << "Inbox/Archived/Backup" << "Backup" << "Inbox/Archived" << "Backup";
+	// Note: on Win CE, we can't use 'Inbox' 'Drafts' etc., becuase they're added automatically by the system
+    QTest::newRow("Inbox") << "Unbox" << "Unbox" << "" << "Unbox";
+    QTest::newRow("Drafts") << "Crafts" << "" << "" << "Crafts";
+    QTest::newRow("Archived") << "Unbox/Archived" << "Archived" << "Unbox" << "Archived";
+    QTest::newRow("Backup") << "Unbox/Archived/Backup" << "Backup" << "Unbox/Archived" << "Backup";
 }
 
 void tst_QMessageStore::testFolder()

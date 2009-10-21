@@ -3283,18 +3283,34 @@ QMessageFolder MapiSession::folder(QMessageStore::ErrorCode *lastError, const QM
     MapiEntryId entryId(QMessageFolderIdPrivate::entryId(id));
     MapiFolderPtr folder = mapiStore->openFolder(lastError, entryId);
     if (folder && (*lastError == QMessageStore::NoError)) {
-        SizedSPropTagArray(3, columns) = {3, {PR_DISPLAY_NAME, PR_RECORD_KEY, PR_PARENT_ENTRYID}};
+#ifndef _WIN32_WCE
+        SizedSPropTagArray(3, columns) = {3, {PR_DISPLAY_NAME, PR_PARENT_ENTRYID, PR_RECORD_KEY}};
+#else
+        SizedSPropTagArray(2, columns) = {2, {PR_DISPLAY_NAME, PR_PARENT_ENTRYID}};
+#endif
         SPropValue *properties(0);
         ULONG count;
         HRESULT rv = folder->folder()->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties);
         if (HR_SUCCEEDED(rv)) {
             QString displayName(QStringFromLpctstr(properties[0].Value.LPSZ));
-            MapiRecordKey folderKey(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
-            MapiEntryId parentEntryId(properties[2].Value.bin.lpb, properties[2].Value.bin.cb);
+            MapiEntryId parentEntryId(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
+#ifndef _WIN32_WCE
+            MapiRecordKey folderKey(properties[2].Value.bin.lpb, properties[2].Value.bin.cb);
+#else
+            MapiRecordKey folderKey;
+#endif
 
             MAPIFreeBuffer(properties);
 
             QMessageFolderId folderId(QMessageFolderIdPrivate::from(folderKey, storeRecordKey, entryId));
+
+#ifdef _WIN32_WCE
+            if (equal(parentEntryId, storeRoot->entryId())) {
+                // This folder is a direct child of the root folder
+                QMessageAccountId accountId(QMessageAccountIdPrivate::from(storeRecordKey));
+                return QMessageFolderPrivate::from(folderId, accountId, storeRoot->id(), displayName, displayName);
+            }
+#endif
 
             QStringList path;
             path.append(displayName);
@@ -3308,22 +3324,28 @@ QMessageFolder MapiSession::folder(QMessageStore::ErrorCode *lastError, const QM
                    (ancestorFolder && (*lastError == QMessageStore::NoError))) {
                 SPropValue *ancestorProperties(0);
                 if (ancestorFolder->folder()->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &ancestorProperties) == S_OK) {
-                    SPropValue &ancestorRecordKeyProp(ancestorProperties[1]);
+#ifndef _WIN32_WCE
+                    SPropValue &ancestorRecordKeyProp(ancestorProperties[2]);
                     MapiRecordKey ancestorRecordKey(ancestorRecordKeyProp.Value.bin.lpb, ancestorRecordKeyProp.Value.bin.cb);
+                    bool reachedRoot(ancestorRecordKey == storeRoot->recordKey());
+#else
+                    MapiRecordKey ancestorRecordKey;
+                    bool reachedRoot(equal(ancestorEntryId, storeRoot->entryId()));
+#endif
 
                     if (ancestorEntryId == parentEntryId) {
                         // This ancestor is the parent of the folder being retrieved, create a QMessageFolderId for the parent
                         parentId = QMessageFolderIdPrivate::from(ancestorRecordKey, storeRecordKey, parentEntryId);
                     }
 
-                    SPropValue &entryIdProp(ancestorProperties[2]);
+                    SPropValue &entryIdProp(ancestorProperties[1]);
                     ancestorEntryId = MapiEntryId(entryIdProp.Value.bin.lpb, entryIdProp.Value.bin.cb);
 
                     QString ancestorName(QStringFromLpctstr(ancestorProperties[0].Value.LPSZ));
 
                     MAPIFreeBuffer(ancestorProperties);
 
-                    if (ancestorRecordKey == storeRoot->recordKey()) {
+                    if (reachedRoot) {
                         // Reached the root and have a complete path for the folder being retrieved
                         QMessageAccountId accountId(QMessageAccountIdPrivate::from(storeRecordKey));
                         return QMessageFolderPrivate::from(folderId, accountId, parentId, displayName, path.join("/"));

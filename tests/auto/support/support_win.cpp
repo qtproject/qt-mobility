@@ -423,6 +423,25 @@ QByteArray objectProperty(IMAPIProp *object, ULONG tag)
     return result;
 }
 
+QString stringProperty(IMAPIProp *object, ULONG tag)
+{
+    QString result;
+
+    if (object) {
+        SPropValue *prop(0);
+        HRESULT rv = HrGetOneProp(object, tag, &prop);
+        if (HR_SUCCEEDED(rv)) {
+            result = QString::fromUtf16(reinterpret_cast<quint16*>(prop->Value.LPSZ));
+
+            MAPIFreeBuffer(prop);
+        } else if (rv != MAPI_E_NOT_FOUND) {
+            qWarning() << "stringProperty: HrGetOneProp failed";
+        }
+    }
+
+    return result;
+}
+
 ULONG createNamedProperty(IMAPIProp *object, const QString &name)
 {
     ULONG result = 0;
@@ -836,16 +855,25 @@ QList<QByteArray> subFolderEntryIds(IMAPIFolder *folder)
         IMAPITable *hierarchyTable(0);
         HRESULT rv = folder->GetHierarchyTable(MAPI_UNICODE, &hierarchyTable);
         if (HR_SUCCEEDED(rv)) {
-
+#ifndef _WIN32_WCE
             SizedSPropTagArray(2, cols) = {2, {PR_OBJECT_TYPE, PR_ENTRYID}};
+#else
+            SizedSPropTagArray(1, cols) = {1, {PR_ENTRYID}};
+#endif
 
-            QueryAllRows qar(hierarchyTable, reinterpret_cast<LPSPropTagArray>(&cols), NULL, NULL);
+            QueryAllRows qar(hierarchyTable, reinterpret_cast<LPSPropTagArray>(&cols), NULL, NULL, false);
             while(qar.query()) {
                 for (uint n = 0; n < qar.rows()->cRows; ++n) {
+#ifndef _WIN32_WCE
                     if ((qar.rows()->aRow[n].lpProps[0].ulPropTag == PR_OBJECT_TYPE) &&
                         (qar.rows()->aRow[n].lpProps[0].Value.l == MAPI_FOLDER)) {
                         result.append(binaryResult(qar.rows()->aRow[n].lpProps[1]));
                     }
+#else
+                    if (qar.rows()->aRow[n].lpProps[0].ulPropTag == PR_ENTRYID) {
+                        result.append(binaryResult(qar.rows()->aRow[n].lpProps[0]));
+                    }
+#endif
                 }
             }
 
@@ -859,7 +887,7 @@ QList<QByteArray> subFolderEntryIds(IMAPIFolder *folder)
     return result;
 }
 
-IMAPIFolder *subFolder(const QString &path, IMAPIFolder *folder)
+IMAPIFolder *subFolder(const QString &path, IMAPIFolder *folder, const QString &rootPath)
 {
     IMAPIFolder *result(0);
 
@@ -868,16 +896,27 @@ IMAPIFolder *subFolder(const QString &path, IMAPIFolder *folder)
         foreach (const QByteArray &entryId, subFolderEntryIds(folder)) {
             IMAPIFolder *childFolder = openFolder(entryId, folder);
             if (childFolder) {
+                QString childPath;
+
+#ifndef _WIN32_WCE
                 ULONG tag = getNamedPropertyTag(childFolder, "path");
                 if (tag) {
-                    QString childPath(getNamedProperty(childFolder, tag));
-                    if (childPath == path) {
-                        // This is the folder we're looking for
-                        result = childFolder;
-                    } else if (path.startsWith(childPath)) {
-                        // This must be a parent of the folder we're looking for
-                        result = subFolder(path, childFolder);
-                    }
+                    childPath = getNamedProperty(childFolder, tag);
+                }
+#else
+                // Folders do not support named properties on CE...
+                if (!rootPath.isEmpty()) {
+                    childPath = rootPath + '/';
+                }
+                childPath += stringProperty(childFolder, PR_DISPLAY_NAME);
+#endif
+
+                if (childPath == path) {
+                    // This is the folder we're looking for
+                    result = childFolder;
+                } else if (path.startsWith(childPath)) {
+                    // This must be a parent of the folder we're looking for
+                    result = subFolder(path, childFolder, childPath);
                 }
 
                 if (childFolder != result) {
@@ -892,6 +931,10 @@ IMAPIFolder *subFolder(const QString &path, IMAPIFolder *folder)
     }
 
     return result;
+
+#ifndef _WIN32_WCE
+    Q_UNUSED(rootPath)
+#endif
 }
 
 IMAPIFolder *createFolder(const QString &name, IMAPIFolder *folder)
@@ -1186,7 +1229,7 @@ QMessageFolderId addFolder(const Parameters &params)
                 if (folder) {
                     // Find the parent folder for the new folder
                     if (!parentPath.isEmpty()) {
-                        IMAPIFolder *parentFolder = subFolder(parentPath, folder);
+                        IMAPIFolder *parentFolder = subFolder(parentPath, folder, QString());
                         folder->Release();
                         folder = parentFolder;
                     }
