@@ -217,6 +217,107 @@ namespace {
         return HR_SUCCEEDED(HrSetOneProp(object, &prop));
     }
 
+    //used in preference to HrQueryAllRows
+    //as per: http://blogs.msdn.com/stephen_griffin/archive/2009/03/23/try-not-to-query-all-rows.aspx
+
+    class QueryAllRows
+    {
+        static const int BatchSize = 20;
+        public:
+        QueryAllRows(LPMAPITABLE ptable,
+                LPSPropTagArray ptaga,
+                LPSRestriction pres,
+                LPSSortOrderSet psos,
+                bool setPosition = true);
+        ~QueryAllRows();
+
+        bool query();
+        LPSRowSet rows() const;
+        QMessageStore::ErrorCode lastError() const;
+
+        private:
+        LPMAPITABLE m_table;
+        LPSPropTagArray m_tagArray;
+        LPSRestriction m_restriction;
+        LPSSortOrderSet m_sortOrderSet;
+        LPSRowSet m_rows;
+        QMessageStore::ErrorCode m_lastError;
+    };
+
+    QueryAllRows::QueryAllRows(LPMAPITABLE ptable,
+                               LPSPropTagArray ptaga,
+                               LPSRestriction pres,
+                               LPSSortOrderSet psos,
+                               bool setPosition)
+    :
+        m_table(ptable),
+        m_tagArray(ptaga),
+        m_restriction(pres),
+        m_sortOrderSet(psos),
+        m_rows(0),
+        m_lastError(QMessageStore::NoError)
+    {
+        bool initFailed = false;
+
+#ifndef _WIN32_WCE
+        unsigned long flags = TBL_BATCH;
+#else
+        unsigned long flags = 0;
+#endif
+
+        if(m_tagArray)
+            initFailed |= FAILED(m_table->SetColumns(m_tagArray, flags));
+
+        if(m_restriction)
+            initFailed |= FAILED(m_table->Restrict(m_restriction, flags));
+
+        if(m_sortOrderSet)
+            initFailed |= FAILED(m_table->SortTable(m_sortOrderSet, flags));
+
+        if(setPosition) {
+            if(initFailed |= FAILED(m_table->SeekRow(BOOKMARK_BEGINNING,0, NULL)))
+                qWarning() << "SeekRow function failed. Ensure it's not being called on hierarchy tables or message stores tables";                     
+        }
+
+        if(initFailed) 
+            m_lastError = QMessageStore::ContentInaccessible;
+    }
+
+    QueryAllRows::~QueryAllRows()
+    {
+        FreeProws(m_rows);
+        m_rows = 0;
+    }
+
+    bool QueryAllRows::query()
+    {
+        if(m_lastError != QMessageStore::NoError)
+            return false;
+
+        FreeProws(m_rows);
+        m_rows = 0;
+        m_lastError = QMessageStore::NoError;
+
+        bool failed = FAILED(m_table->QueryRows( QueryAllRows::BatchSize, NULL, &m_rows));
+
+        if(failed)
+            m_lastError = QMessageStore::ContentInaccessible;
+
+        if(failed || m_rows && !m_rows->cRows) return false;
+
+        return true;
+    }
+
+    LPSRowSet QueryAllRows::rows() const
+    {
+        return m_rows;
+    }
+
+    QMessageStore::ErrorCode QueryAllRows::lastError() const
+    {
+        return m_lastError;
+    }
+
     ADRLIST *createAddressList(int count, int propertyCount)
     {
         ADRLIST *list(0);
@@ -789,6 +890,10 @@ namespace {
 
     void replaceMessageRecipients(QMessageStore::ErrorCode *lastError, const QMessage &source, IMessage *message, IMAPISession *session)
     {
+#ifdef _WIN32_WCE
+        // For CE, the only available option is to replace the existing list
+        HRESULT rv;
+#else
         // Find any existing recipients and remove them
         IMAPITable *recipientsTable(0);
         HRESULT rv = message->GetRecipientTable(MAPI_UNICODE, &recipientsTable);
@@ -801,38 +906,29 @@ namespace {
                     if (list) {
                         int index = 0;
                         SizedSPropTagArray(1, columns) = {1, {PR_ROWID}};
-                        rv = recipientsTable->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0);
-                        if (HR_SUCCEEDED(rv)) {
-                            SRowSet *rows(0);
-                            while (*lastError == QMessageStore::NoError) {
-                                if (recipientsTable->QueryRows(1, 0, &rows) == S_OK) {
-                                    if (rows->cRows == 0) {
-                                        FreeProws(rows);
-                                        break;
-                                    } else if (rows->cRows == 1) {
-                                        // Add this row's ID to the removal list
-                                        ADRENTRY &entry(list->aEntries[index]);
-                                        entry.rgPropVals[0].ulPropTag = PR_ROWID;
-                                        entry.rgPropVals[0].Value.l = rows->aRow[0].lpProps[0].Value.l;
-                                        ++index;
-                                    }
-                                    FreeProws(rows);
-                                } else {
-                                    *lastError = QMessageStore::ContentInaccessible;
-                                    qWarning() << "Unable to query rows for recipient table";
-                                }
-                            }
 
-                            if (*lastError == QMessageStore::NoError) {
-                                rv = message->ModifyRecipients(MODRECIP_REMOVE, list);
-                                if (HR_FAILED(rv)) {
-                                    qWarning() << "Unable to clear address list for message.";
-                                    *lastError = QMessageStore::FrameworkFault;
+                        QueryAllRows qar(recipientsTable, reinterpret_cast<LPSPropTagArray>(&columns), 0, 0);
+                        while (qar.query()) {
+                            for (uint n = 0; n < qar.rows()->cRows; ++n) {
+                                ULONG rowId = qar.rows()->aRow[n].lpProps[0].Value.l;
+                                if (rowId) {
+                                    // Add this row's ID to the removal list
+                                    ADRENTRY &entry(list->aEntries[index]);
+                                    entry.rgPropVals[0].ulPropTag = PR_ROWID;
+                                    entry.rgPropVals[0].Value.l = rowId;
+                                    ++index;
                                 }
                             }
+                        }
+
+                        if (qar.lastError() != QMessageStore::NoError) {
+                            *lastError = qar.lastError();
                         } else {
-                            *lastError = QMessageStore::ContentInaccessible;
-                            qWarning() << "Unable to set columns for recipient table";
+                            rv = message->ModifyRecipients(MODRECIP_REMOVE, list);
+                            if (HR_FAILED(rv)) {
+                                qWarning() << "Unable to clear address list for message.";
+                                *lastError = QMessageStore::FrameworkFault;
+                            }
                         }
 
                         destroyAddressList(list, QList<LPTSTR>());
@@ -848,10 +944,12 @@ namespace {
 
             mapiRelease(recipientsTable);
         } else {
-            qWarning() << "Unable to get recipients table from message.";
-            if(rv != MAPI_E_NO_RECIPIENTS)
+            if (rv != MAPI_E_NO_RECIPIENTS) {
                 *lastError = QMessageStore::FrameworkFault;
+                qWarning() << "Unable to get recipients table from message.";
+            }
         }
+#endif
 
         if (*lastError == QMessageStore::NoError) {
             // Add the current message recipients
@@ -1069,106 +1167,6 @@ namespace {
                 }
             }
         }
-    }
-
-    //used in preference to HrQueryAllRows
-    //as per: http://blogs.msdn.com/stephen_griffin/archive/2009/03/23/try-not-to-query-all-rows.aspx
-
-    class QueryAllRows
-    {
-        static const int BatchSize = 20;
-        public:
-        QueryAllRows(LPMAPITABLE ptable,
-                LPSPropTagArray ptaga,
-                LPSRestriction pres,
-                LPSSortOrderSet psos,
-                bool setPosition = true);
-        ~QueryAllRows();
-
-        bool query();
-        LPSRowSet rows() const;
-        QMessageStore::ErrorCode lastError() const;
-
-        private:
-        LPMAPITABLE m_table;
-        LPSPropTagArray m_tagArray;
-        LPSRestriction m_restriction;
-        LPSSortOrderSet m_sortOrderSet;
-        LPSRowSet m_rows;
-        QMessageStore::ErrorCode m_lastError;
-    };
-
-    QueryAllRows::QueryAllRows(LPMAPITABLE ptable,
-                               LPSPropTagArray ptaga,
-                               LPSRestriction pres,
-                               LPSSortOrderSet psos,
-                               bool setPosition)
-    :
-        m_table(ptable),
-        m_tagArray(ptaga),
-        m_restriction(pres),
-        m_sortOrderSet(psos),
-        m_rows(0),
-        m_lastError(QMessageStore::NoError)
-    {
-        bool initFailed = false;
-
-#ifndef _WIN32_WCE
-        unsigned long flags = TBL_BATCH;
-#else
-        unsigned long flags = 0;
-#endif
-
-        initFailed |= FAILED(m_table->SetColumns(m_tagArray, flags));
-
-        if(m_restriction)
-            initFailed |= FAILED(m_table->Restrict(m_restriction, flags));
-
-        if(m_sortOrderSet)
-            initFailed |= FAILED(m_table->SortTable(m_sortOrderSet, flags));
-
-        if(setPosition) {
-            if(initFailed |= FAILED(m_table->SeekRow(BOOKMARK_BEGINNING,0, NULL)))
-                qWarning() << "SeekRow function failed. Ensure it's not being called on hierarchy tables or message stores tables";                     
-        }
-
-        if(initFailed) 
-            m_lastError = QMessageStore::ContentInaccessible;
-    }
-
-    QueryAllRows::~QueryAllRows()
-    {
-        FreeProws(m_rows);
-        m_rows = 0;
-    }
-
-    bool QueryAllRows::query()
-    {
-        if(m_lastError != QMessageStore::NoError)
-            return false;
-
-        FreeProws(m_rows);
-        m_rows = 0;
-        m_lastError = QMessageStore::NoError;
-
-        bool failed = FAILED(m_table->QueryRows( QueryAllRows::BatchSize, NULL, &m_rows));
-
-        if(failed)
-            m_lastError = QMessageStore::ContentInaccessible;
-
-        if(failed || m_rows && !m_rows->cRows) return false;
-
-        return true;
-    }
-
-    LPSRowSet QueryAllRows::rows() const
-    {
-        return m_rows;
-    }
-
-    QMessageStore::ErrorCode QueryAllRows::lastError() const
-    {
-        return m_lastError;
     }
 
     struct FolderHeapNode
@@ -3546,49 +3544,68 @@ bool MapiSession::updateMessageRecipients(QMessageStore::ErrorCode *lastError, Q
             IMAPITable *recipientsTable(0);
             HRESULT rv = message->GetRecipientTable(0, &recipientsTable);
             if (HR_SUCCEEDED(rv)) {
-                SizedSPropTagArray(3, rcpCols) = {3, { PR_DISPLAY_NAME, PR_EMAIL_ADDRESS, PR_RECIPIENT_TYPE}};
-
                 QMessageAddressList to;
                 QMessageAddressList cc;
                 QMessageAddressList bcc;
 
+#ifndef _WIN32_WCE
+                SizedSPropTagArray(3, rcpCols) = {3, { PR_DISPLAY_NAME, PR_EMAIL_ADDRESS, PR_RECIPIENT_TYPE}};
+
                 QueryAllRows qar(recipientsTable, reinterpret_cast<LPSPropTagArray>(&rcpCols), 0, 0);
+#else
+                // CE does not support SetColumns on recipient tables
+                QueryAllRows qar(recipientsTable, 0, 0, 0, false);
+#endif
 
                 while(qar.query()) {
                     for (uint n = 0; n < qar.rows()->cRows; ++n) {
-                        QMessageAddressList *list = 0;
+                        QString name;
+                        QString address;
+                        LONG type(0);
 
                         SPropValue *props = qar.rows()->aRow[n].lpProps;
-                        switch (props[2].Value.l) {
-                        case MAPI_TO:
-                            list = &to;
-                            break;
-                        case MAPI_CC:
-                            list = &cc;
-                            break;
-                        case MAPI_BCC:
-                            list = &bcc;
-                            break;
-                        default:
-                            break;
+#ifndef _WIN32_WCE
+                        if (props[0].ulPropTag == PR_DISPLAY_NAME)
+                            name = QStringFromLpctstr(props[0].Value.LPSZ);
+                        if (props[1].ulPropTag == PR_EMAIL_ADDRESS)
+                            address = QStringFromLpctstr(props[1].Value.LPSZ);
+                        if (props[1].ulPropTag == PR_RECIPIENT_TYPE)
+                            type = props[2].Value.l;
+#else
+                        for (uint i = 0; i < qar.rows()->aRow[n].cValues; ++i) {
+                            if (props[i].ulPropTag == PR_DISPLAY_NAME) {
+                                name = QStringFromLpctstr(props[i].Value.LPSZ);
+                            } else if (props[i].ulPropTag == PR_EMAIL_ADDRESS) {
+                                address = QStringFromLpctstr(props[i].Value.LPSZ);
+                            } else if (props[i].ulPropTag == PR_RECIPIENT_TYPE){
+                                type = props[i].Value.l;
+                            }
                         }
+#endif
 
-                        if (list) {
-                            QString name;
-                            QString address;
+                        if (!name.isEmpty() || !address.isEmpty()) {
+                            QMessageAddressList *list = 0;
 
-                            if (props[0].ulPropTag == PR_DISPLAY_NAME)
-                                name = QStringFromLpctstr(qar.rows()->aRow[n].lpProps[0].Value.LPSZ);
-                            if (props[1].ulPropTag == PR_EMAIL_ADDRESS)
-                                address = QStringFromLpctstr(qar.rows()->aRow[n].lpProps[1].Value.LPSZ);
+                            switch (type) {
+                            case MAPI_TO:
+                                list = &to;
+                                break;
+                            case MAPI_CC:
+                                list = &cc;
+                                break;
+                            case MAPI_BCC:
+                                list = &bcc;
+                                break;
+                            default:
+                                break;
+                            }
 
-                            if (!name.isEmpty() || ! address.isEmpty()) {
+                            if (list) {
                                 list->append(createAddress(name, address));
                             }
                         }
                     }
                 }
-
 
                 if (!to.isEmpty()) {
                     msg->setTo(to);
@@ -3604,13 +3621,12 @@ bool MapiSession::updateMessageRecipients(QMessageStore::ErrorCode *lastError, Q
                     msg->d_ptr->_modified = false;
                 }
 
-                if(qar.lastError() != QMessageStore::NoError)
-                {
+                if (qar.lastError() != QMessageStore::NoError) {
                     *lastError = qar.lastError();
                     result = false;
-                }
-                else
+                } else {
                     result = true;
+                }
 
                 mapiRelease(recipientsTable);
 
