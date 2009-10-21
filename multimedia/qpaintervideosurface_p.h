@@ -72,6 +72,8 @@
 # endif
 #endif
 
+class QVideoSurfacePainter;
+
 class Q_MEDIA_EXPORT QPainterVideoSurface : public QAbstractVideoSurface
 {
     Q_OBJECT
@@ -107,80 +109,49 @@ public:
 
     void paint(QPainter *painter, const QRect &rect);
 
+#ifndef QT_NO_OPENGL
+    const QGLContext *glContext() const;
+    void setGLContext(QGLContext *context);
+
+    enum ShaderType
+    {
+        NoShaders = 0x00,
+        FragmentProgramShader = 0x01
+    };
+
+    Q_DECLARE_FLAGS(ShaderTypes, ShaderType);
+
+    ShaderTypes supportedShaderTypes() const;
+
+    ShaderType shaderType() const;
+    void setShaderType(ShaderType type);
+#endif
+
 Q_SIGNALS:
     void frameChanged();
 
 private:
+    void createPainter();
+
+    QVideoSurfacePainter *m_painter;
 #ifndef QT_NO_OPENGL
-protected:
-    explicit QPainterVideoSurface(const QGLContext *context, QObject *parent = 0);
-
-    virtual void makeCurrent() {}
-    virtual void doneCurrent() {}
-
-private:
-    void initRgbTextureInfo(GLenum internalFormat, GLuint format, const QSize &size);
-    void initYuv420PTextureInfo(const QSize &size);
-    void initYv12TextureInfo(const QSize &size);
-
-    void updateColorMatrix();
-
-    typedef void (APIENTRY *_glProgramStringARB) (GLenum, GLenum, GLsizei, const GLvoid *);
-    typedef void (APIENTRY *_glBindProgramARB) (GLenum, GLuint);
-    typedef void (APIENTRY *_glDeleteProgramsARB) (GLsizei, const GLuint *);
-    typedef void (APIENTRY *_glGenProgramsARB) (GLsizei, GLuint *);
-    typedef void (APIENTRY *_glProgramLocalParameter4fARB) (
-            GLenum, GLuint, GLfloat, GLfloat, GLfloat, GLfloat);
-    typedef void (APIENTRY *_glActiveTexture) (GLenum);
-
-    _glProgramStringARB glProgramStringARB;
-    _glBindProgramARB glBindProgramARB;
-    _glDeleteProgramsARB glDeleteProgramsARB;
-    _glGenProgramsARB glGenProgramsARB;
-    _glProgramLocalParameter4fARB glProgramLocalParameter4fARB;
-    _glActiveTexture glActiveTexture;
-
-    enum ShaderSupport
-    {
-        ShadersUnsupported,
-        ShadersSupported
-    };
-
-    ShaderSupport m_shaderSupport;
-
-    GLenum m_textureFormat;
-    GLuint m_textureInternalFormat;
-    int m_textureCount;
-    GLuint m_textureIds[3];
-    int m_textureWidths[3];
-    int m_textureHeights[3];
-    int m_textureOffsets[3];
-    GLuint m_shaderId;
+    QGLContext *m_glContext;
+    ShaderTypes m_shaderTypes;
+    ShaderType m_shaderType;
 #endif
-
     int m_brightness;
     int m_contrast;
     int m_hue;
     int m_saturation;
 
-    QVideoFrame m_frame;
-    QAbstractVideoBuffer::HandleType m_handleType;
     QVideoFrame::PixelFormat m_pixelFormat;
-    QImage::Format m_imageFormat;
-    QSize m_imageSize;
+    QSize m_frameSize;
     QRect m_sourceRect;
-    QMatrix4x4 m_colorMatrix;
-    bool m_colorMatrixDirty;
+    bool m_colorsDirty;
     bool m_ready;
 };
 
-
-#ifndef QT_NO_OPENGL
-# ifdef QT_TMP_APIENTRY
-#  undef APIENTRY
-#  undef QT_TMP_APIENTRY
-# endif
-#endif
+Q_DECLARE_OPERATORS_FOR_FLAGS(QPainterVideoSurface::ShaderTypes)
 
 #endif
 

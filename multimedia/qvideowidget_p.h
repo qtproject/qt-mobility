@@ -108,23 +108,6 @@ private:
 
 class QVideoRendererControl;
 
-#ifndef QT_NO_OPENGL
-class QGLWidgetVideoSurface : public QPainterVideoSurface
-{
-    Q_OBJECT
-public:
-    explicit QGLWidgetVideoSurface(QGLWidget *widget, QObject *parent = 0);
-
-protected:
-    void makeCurrent();
-    void doneCurrent();
-
-private:
-    QGLWidget *m_widget;
-};
-
-#endif
-
 class QVideoRendererWidget
 #ifndef QT_NO_OPENGL
     : public QGLWidget
