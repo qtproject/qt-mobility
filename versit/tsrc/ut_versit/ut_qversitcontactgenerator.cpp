@@ -58,26 +58,23 @@
 #include <qcontactonlineaccount.h>
 #include <QDir>
 
-QString testImagePath(QString::fromAscii("random98354_dir76583_ut_versit_photo"));
+QString testImageRelativePath(QString::fromAscii("random98354_dir76583_ut_versit_photo"));
 
 void UT_QVersitContactGenerator::initTestCase()
 {
     // Create the directory to store the image
     QDir dir;
-    if (!dir.exists(testImagePath)) {
-        dir.mkdir(testImagePath);
-        dir.cd(testImagePath);
+    if (!dir.exists(testImageRelativePath)) {
+        dir.mkdir(testImageRelativePath);
     }
 }
 
 void UT_QVersitContactGenerator::cleanupTestCase()
 {
     QDir dir;
-    QString absolutePath = dir.absolutePath();
-    QString dirName = dir.dirName();
 
-    if (dir.exists(testImagePath)) {
-        dir.cd(testImagePath);
+    if (dir.exists(testImageRelativePath)) {
+        dir.cd(testImageRelativePath);
         // remove all the files first
         QStringList allFiles;
         allFiles << "*";
@@ -86,7 +83,7 @@ void UT_QVersitContactGenerator::cleanupTestCase()
             dir.remove(file);
         }
         dir.cdUp();
-        dir.rmdir(testImagePath);
+        dir.rmdir(testImageRelativePath);
     }
 }
 
@@ -594,7 +591,7 @@ void UT_QVersitContactGenerator::testAvatar()
     nameProperty.setName(QString::fromAscii(versitNameId));
     nameProperty.setValue(val.join(QString::fromAscii(";")).toAscii());
     document.addProperty(nameProperty);
-    mGenerator->setImagePath(testImagePath);
+    mGenerator->setImagePath(testImageRelativePath);
     QContact contact = mGenerator->generateContact(document);
 
     // PHOTO location: <dir>/<FirstName><LastName>.<ext>

@@ -47,9 +47,10 @@
 #include <qversitcontactgenerator.h>
 #include <qversitcontactconverter.h>
 
-const QString inputDirPath = "c:\\data\\testvcards\\in";
-const QString excludeFieldsFileName = "c:\\data\\testvcards\\excludefields.txt";
-const QString outputDirPath = "c:\\data\\testvcards\\out";
+const QString inputDirPath = "/data/testvcards/in";
+const QString excludeFieldsFileName = "/data/testvcards/excludefields.txt";
+const QString outputDirPath = "/data/testvcards/out";
+const QString imagePath = "/data/testvcards/photos";
 
 VersitTest::VersitTest() 
     : QObject(), mSaveContacts(false)
@@ -77,6 +78,10 @@ void VersitTest::initTestCase()
         excludeFieldsFile.close();
     }
     mContactManager = new QContactManager(QString::fromAscii("symbian"));
+
+    if (!dir.exists(imagePath)) {
+        dir.mkdir(imagePath);
+    }
 }
 
 void VersitTest::cleanupTestCase()
@@ -84,6 +89,19 @@ void VersitTest::cleanupTestCase()
     delete mContactManager;
     delete mExcludedFields;
     mFiles.clear();
+
+    QDir dir;
+    if (dir.exists(imagePath)) {
+        dir.cd(imagePath);
+        // remove all the files first
+        QStringList allFiles;
+        allFiles << "*";
+        QStringList fileList = dir.entryList(allFiles, QDir::Files);
+        foreach (QString file, fileList) {
+            dir.remove(file);
+        }
+        dir.rmdir(imagePath);
+    }
 }
 
 void VersitTest::init()
@@ -141,7 +159,7 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
     QList<QContact> contacts;
     QVersitContactGenerator generator;
     foreach (QVersitDocument document, mReader->result()) {
-        generator.setImagePath("/data/testvcards");
+        generator.setImagePath(imagePath);
         QContact contact = generator.generateContact(document);
         if (mSaveContacts)
             QVERIFY(mContactManager->saveContact(&contact));
