@@ -38,7 +38,10 @@ symbian: load(data_caging_paths)
 # For symbian, we are not attempting to freeze APIs yet.
 symbian:MMP_RULES += "EXPORTUNFROZEN"
 
-CONFIG(debug, debug|release) {
+# All frameworks (debug and release) go in the same directory
+mac:contains(TEMPLATE,.*lib):contains(QT_CONFIG,qt_framework):contains(TARGET,Qt.*) {
+    SUBDIRPART = Release
+} else:CONFIG(debug, debug|release) {
     SUBDIRPART = Debug
 } else {
     SUBDIRPART = Release
@@ -55,13 +58,15 @@ symbian:CONTACTS_BACKENDS += symbian
 OUTPUT_DIR = $$PWD
 SOURCE_DIR = $$PWD
 
+mac:MOBILITY_FRAMEWORK_PATH=$$OUTPUT_DIR/build/Release/bin
+
 #test whether we have a unit test
 !testcase {
     # Normal library/plugin/example code
     OBJECTS_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET
     !plugin:!testplugin {
         DESTDIR = $$OUTPUT_DIR/build/$$SUBDIRPART/bin
-        mac:contains(QT_CONFIG,qt_framework):LIBS += -F$$OUTPUT_DIR/build/$$SUBDIRPART/bin
+        mac:contains(QT_CONFIG,qt_framework):LIBS += -F$$MOBILITY_FRAMEWORK_PATH
     } else {
         # This is where plugins get built
         testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/plugins/contacts
@@ -69,7 +74,7 @@ SOURCE_DIR = $$PWD
 
         # And since we're a plugin, add the base lib path to the lib dirs
         LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin
-        mac:contains(QT_CONFIG,qt_framework):LIBS += -F$$OUTPUT_DIR/build/$$SUBDIRPART/bin
+        mac:contains(QT_CONFIG,qt_framework):LIBS += -F$$MOBILITY_FRAMEWORK_PATH
     }
     MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
     RCC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/rcc
@@ -85,7 +90,7 @@ SOURCE_DIR = $$PWD
     RCC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/rcc
 
     LIBS += -L$$OUTPUT_DIR/build/$$SUBDIRPART/bin
-    mac:contains(QT_CONFIG,qt_framework):LIBS += -F$$OUTPUT_DIR/build/$$SUBDIRPART/bin
+    mac:contains(QT_CONFIG,qt_framework):LIBS += -F$$MOBILITY_FRAMEWORK_PATH
 }
 
 INCLUDEPATH *= $$MOC_DIR
