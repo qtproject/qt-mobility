@@ -1081,7 +1081,8 @@ namespace {
         QueryAllRows(LPMAPITABLE ptable,
                 LPSPropTagArray ptaga,
                 LPSRestriction pres,
-                LPSSortOrderSet psos);
+                LPSSortOrderSet psos,
+                bool setPosition = true);
         ~QueryAllRows();
 
         bool query();
@@ -1100,7 +1101,8 @@ namespace {
     QueryAllRows::QueryAllRows(LPMAPITABLE ptable,
                                LPSPropTagArray ptaga,
                                LPSRestriction pres,
-                               LPSSortOrderSet psos)
+                               LPSSortOrderSet psos,
+                               bool setPosition)
     :
         m_table(ptable),
         m_tagArray(ptaga),
@@ -1111,9 +1113,10 @@ namespace {
     {
         bool initFailed = false;
 
-        unsigned long flags = 0;
 #ifndef _WIN32_WCE
-        flags = TBL_BATCH;
+        unsigned long flags = TBL_BATCH;
+#else
+        unsigned long flags = 0;
 #endif
 
         initFailed |= FAILED(m_table->SetColumns(m_tagArray, flags));
@@ -1124,10 +1127,13 @@ namespace {
         if(m_sortOrderSet)
             initFailed |= FAILED(m_table->SortTable(m_sortOrderSet, flags));
 
-        if(FAILED(m_table->SeekRow(BOOKMARK_BEGINNING,0, NULL)))
-            qWarning() << "SeekRow function failed. Ensure it's not being called on hierarchy tables or message stores tables";
+        if(setPosition) {
+            if(initFailed |= FAILED(m_table->SeekRow(BOOKMARK_BEGINNING,0, NULL)))
+                qWarning() << "SeekRow function failed. Ensure it's not being called on hierarchy tables or message stores tables";                     
+        }
 
-        if(initFailed) m_lastError = QMessageStore::ContentInaccessible;
+        if(initFailed) 
+            m_lastError = QMessageStore::ContentInaccessible;
     }
 
     QueryAllRows::~QueryAllRows()
@@ -2825,7 +2831,7 @@ MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const Q
     enum { defaultStoreColumn = 0, entryIdColumn, recordKeyColumn };
     SizedSPropTagArray(nCols, columns) = {nCols, {PR_DEFAULT_STORE, PR_ENTRYID, PR_RECORD_KEY}};
 
-    QueryAllRows qar(mapiMessageStoresTable, reinterpret_cast<LPSPropTagArray>(&columns), 0, 0);
+    QueryAllRows qar(mapiMessageStoresTable, reinterpret_cast<LPSPropTagArray>(&columns), 0, 0, false);
 
     while(qar.query()) {
         for (uint n = 0; n < qar.rows()->cRows; ++n) {
@@ -2867,7 +2873,7 @@ QList<MapiStorePtr> MapiSession::allStores(QMessageStore::ErrorCode *lastError, 
     } else {
         SizedSPropTagArray(1, columns) = {1, {PR_ENTRYID}};
 
-        QueryAllRows qar(mapiMessageStoresTable, reinterpret_cast<LPSPropTagArray>(&columns), 0, 0);
+        QueryAllRows qar(mapiMessageStoresTable, reinterpret_cast<LPSPropTagArray>(&columns), 0, 0, false);
 
         while (qar.query()) {
             for (uint n = 0; n < qar.rows()->cRows; ++n) {
