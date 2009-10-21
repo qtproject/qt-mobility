@@ -45,6 +45,7 @@
 // We mean it.
 //
 
+#include <QDateTime>
 #include <QHash>
 
 class QContact;
@@ -80,7 +81,8 @@ private:
     QContactDetail* createGeoLocation(const QVersitProperty& property) const;
     QStringList extractContexts(const QVersitProperty& property) const;
     QStringList extractSubTypes(const QVersitProperty& property) const;
-    QString takeFirst(QList<QByteArray>& list) const;    
+    QString takeFirst(QList<QByteArray>& list) const;
+    QDateTime parseDateTime(const QByteArray& text, const QByteArray& format) const;
     
 private: // Data    
     QHash<QString,QString> mContextMappings;
