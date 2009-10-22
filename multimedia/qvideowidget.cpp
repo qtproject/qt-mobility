@@ -123,9 +123,12 @@ QVideoRendererWidget::QVideoRendererWidget(QVideoRendererControl *control, QWidg
     palette.setColor(QPalette::Background, Qt::black);
     setPalette(palette);
 
-#ifndef QT_NO_OPENGL
+#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
     m_surface->setGLContext(const_cast<QGLContext *>(context()));
-    m_surface->setShaderType(QPainterVideoSurface::FragmentProgramShader);
+    if (m_surface->supportedShaderTypes() & QPainterVideoSurface::GlslShader)
+        m_surface->setShaderType(QPainterVideoSurface::GlslShader);
+    else
+        m_surface->setShaderType(QPainterVideoSurface::FragmentProgramShader);
 #endif
 
     m_rendererControl->setSurface(m_surface);

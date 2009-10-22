@@ -64,14 +64,7 @@
 
 #include <multimedia/qmultimediaglobal.h>
 
-#ifndef QT_NO_OPENGL
-# include <QtOpenGL/qgl.h>
-# ifndef APIENTRY
-#  define APIENTRY
-#  define QT_TMP_APIENTRY
-# endif
-#endif
-
+class QGLContext;
 class QVideoSurfacePainter;
 
 class Q_MEDIA_EXPORT QPainterVideoSurface : public QAbstractVideoSurface
@@ -109,14 +102,15 @@ public:
 
     void paint(QPainter *painter, const QRect &rect);
 
-#ifndef QT_NO_OPENGL
+#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
     const QGLContext *glContext() const;
     void setGLContext(QGLContext *context);
 
     enum ShaderType
     {
         NoShaders = 0x00,
-        FragmentProgramShader = 0x01
+        FragmentProgramShader = 0x01,
+        GlslShader = 0x02
     };
 
     Q_DECLARE_FLAGS(ShaderTypes, ShaderType);
@@ -134,7 +128,7 @@ private:
     void createPainter();
 
     QVideoSurfacePainter *m_painter;
-#ifndef QT_NO_OPENGL
+#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
     QGLContext *m_glContext;
     ShaderTypes m_shaderTypes;
     ShaderType m_shaderType;
