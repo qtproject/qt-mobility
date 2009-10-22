@@ -251,7 +251,6 @@ void QNetworkConfigurationManagerPrivate::registerPlatformCapabilities()
 {
     capFlags |= QNetworkConfigurationManager::BearerManagement;
     capFlags |= QNetworkConfigurationManager::DataStatistics;
-    capFlags |= QNetworkConfigurationManager::SystemSessionSupport;
     capFlags |= QNetworkConfigurationManager::ForcedRoaming;
 }
 
