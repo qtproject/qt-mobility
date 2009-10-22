@@ -186,8 +186,9 @@ QTrackerContactIdFetchRequest::QTrackerContactIdFetchRequest(QContactAbstractReq
     Q_UNUSED(sorting)
 
     RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
-    RDFSelect quer;
+    applyFilterToRDFVariable(RDFContact, r->filter());
 
+    RDFSelect quer;
     quer.addColumn("contact_uri", RDFContact);
     quer.addColumn("contactId", RDFContact.property<nco::contactUID> ());
     query = ::tracker()->modelQuery(quer);
@@ -368,7 +369,9 @@ void QTrackerContactIdFetchRequest::modelUpdated()
         QUniqueId id = query->index(i, 1).data().toUInt(&ok);
         if (ok) {
             // Append only, if we have a valid contact id
-            result.append(id);
+            // and it's not already added
+            if (!result.contains(id))
+                result.append(id);
         }
     }
 
