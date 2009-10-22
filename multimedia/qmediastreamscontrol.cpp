@@ -42,11 +42,100 @@
 #include "qmediastreamscontrol.h"
 #include "qmediacontrol_p.h"
 
+/*!
+    \class QMediaStreamsControl
+    \preliminary
+    \brief The QMediaStreamsControl class provides an media streams selector control.
+
+    The QMediaStreamsControl class provides descriptions of the media streams available
+    and allows one to be selected as the currently played.
+
+    The interface name of QMediaStreamsControl is \c com.nokia.Qt.MediaStreamsControl as
+    defined in QMediaStreamsControl_iid.
+*/
+
+/*!
+    \macro QMediaStreamsControl_iid
+
+    \c com.nokia.Qt.MediaStreamsControl
+
+    Defines the interface name of QMediaStreamsControl.
+
+    \relates QMediaStreamsControl
+*/
+
+/*!
+    Constructs a new media streams control with the given \a parent.
+*/
 QMediaStreamsControl::QMediaStreamsControl(QObject *parent)
     :QMediaControl(*new QMediaControlPrivate, parent)
 {
 }
 
+/*!
+    Destroys a media streams control.
+*/
 QMediaStreamsControl::~QMediaStreamsControl()
 {
 }
+
+/*!
+  \enum QMediaStreamControl::StreamType
+
+  Media stream type.
+
+  \value QMediaStreamControl::AudioStream Audio stream.
+  \value QMediaStreamControl::VideoStream Video stream.
+  \value QMediaStreamControl::SubPictureStream Subpicture or teletext stream.
+  \value QMediaStreamControl::UnknownStream The stream type is unknown.
+*/
+
+/*!
+\fn QMediaStreamsControl::streamCount()
+
+Returns the number of media streams.
+*/
+
+/*!
+\fn QMediaStreamsControl::streamType(int stream)
+
+Return the type of media \a stream.
+*/
+
+/*!
+\fn QMediaStreamsControl::metaData(int stream, QtMedia::MetaData key)
+
+Returns the metadata value associated with media \a stream.
+
+Useful metadata keya are QtMedia::Title, QtMedia::Description and QtMedia::Language.
+*/
+
+/*!
+\fn QMediaStreamsControl::isActive(int stream)
+
+Returns true if the media \a stream is active.
+*/
+
+/*!
+\fn QMediaStreamsControl::setActive(int stream, bool state)
+
+Calling setActive(stream, true) activates the media stream,
+and since in most cases playback of only one stream of certain
+type is supported, currently active stream of the same type
+will be disactivated.
+
+Calling setActive(stream, false) with a currently active
+stream passed turns off playback of corresponding stream type.
+*/
+
+/*!
+\fn QMediaStreamsControl::streamsChanged()
+
+The signal is emited when the available streams list is changed.
+*/
+
+/*!
+\fn QMediaStreamsControl::activeStreamsChanged()
+
+The signal is emited when the active streams list is changed.
+*/
