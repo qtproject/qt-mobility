@@ -720,7 +720,7 @@ void UT_QVersitContactGenerator::testOnlineAccount()
     nameProperty = QVersitProperty();
     nameProperty.setName(QString::fromAscii(versitSipId));
     nameProperty.setValue(val);
-    subTypeVal = "SWIS";
+    subTypeVal = QString::fromAscii("SWIS");
     params.clear();
     params.insert(QString::fromAscii(versitType),subTypeVal);
     nameProperty.setParameters(params);
@@ -737,7 +737,7 @@ void UT_QVersitContactGenerator::testOnlineAccount()
     nameProperty = QVersitProperty();
     nameProperty.setName(QString::fromAscii(versitSipId));
     nameProperty.setValue(val);
-    subTypeVal = "POC";
+    subTypeVal = QString::fromAscii("POC");
     params.clear();
     params.insert(QString::fromAscii(versitType),subTypeVal);
     nameProperty.setParameters(params);
