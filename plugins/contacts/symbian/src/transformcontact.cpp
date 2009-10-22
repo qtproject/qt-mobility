@@ -205,11 +205,11 @@ QList<TUid> TransformContact::supportedSortingFieldTypes( QString detailDefiniti
 QList<CContactItemField *> TransformContact::transformDetailL(const QContactDetail &detail) const
 {
 	QList<CContactItemField *> itemFieldList;
-	QString detailName(detail.definitionName());
+	QScopedPointer<QString> detailName(new QString(detail.definitionName()));
 
 	QMap<ContactData, TransformContactData*>::const_iterator i = m_transformContactData.constBegin();
 	while (i != m_transformContactData.constEnd()) {
-        if (i.value()->supportsDetail(detailName)) {
+        if (i.value()->supportsDetail(*detailName)) {
             itemFieldList = i.value()->transformDetailL(detail);
             break;
 	    }

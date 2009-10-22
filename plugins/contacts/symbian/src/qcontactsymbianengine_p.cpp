@@ -229,8 +229,6 @@ bool QContactSymbianEngineData::addContact(QContact& contact, QContactChangeSet&
     {
         QContactId contactId;
         contactId.setLocalId(id);
-        //contactId.setManagerUri() //needs to be fixed
-        
         contact.setId(contactId);
         //TODO: check what to do with groupsChanged
         changeSet.addedContacts().insert(id);
