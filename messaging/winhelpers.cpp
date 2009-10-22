@@ -3892,6 +3892,8 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
                 IMAPITable *attachmentsTable(0);
                 HRESULT rv = message->GetAttachmentTable(0, &attachmentsTable);
                 if (HR_SUCCEEDED(rv)) {
+                    QMap<LONG, QMessageContentContainer> attachments;
+
                     // Find the properties of these attachments
                     SizedSPropTagArray(7, attCols) = {7, { PR_ATTACH_NUM,
                                                            PR_ATTACH_EXTENSION,
@@ -3968,23 +3970,33 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
                             container->_name = filename.toAscii();
                             container->_size = size;
 
-                            messageContainer->appendContent(attachment);
-                        }
-
-                        if (!isModified) {
-                            msg->d_ptr->_modified = false;
+                            attachments[number] = attachment;
                         }
                     }
 
-                    if(qar.lastError() != QMessageStore::NoError)
+                    if (qar.lastError() != QMessageStore::NoError) {
                         *lastError = qar.lastError();
-                    else
+                    } else {
+                        if (!attachments.isEmpty()) {
+                            // Add the message attachments in numbered order
+                            QMap<LONG, QMessageContentContainer>::iterator it = attachments.begin(), end = attachments.end();
+                            for ( ; it != end; ++it) {
+                                messageContainer->appendContent(it.value());
+                            }
+
+                            if (!isModified) {
+                                msg->d_ptr->_modified = false;
+                            }
+                        }
+
                         result = true;
+                    }
 
                     mapiRelease(attachmentsTable);
-                }
-                else
+                } else {
                     *lastError = QMessageStore::ContentInaccessible;
+                    qWarning() << "Unable to access attachments table.";
+                }
 
                 mapiRelease(message);
             }
