@@ -220,7 +220,6 @@ bool QContactTrackerEngine::waitForRequestFinished(QContactAbstractRequest* req,
 bool QContactTrackerEngine::saveContact( QContact* contact, QContactManager::Error& error)
 {
     // Signal emitted from TrackerChangeListener
-    bool newOne = contact->id() == 0;
     QContactSaveRequest request;
     QList<QContact> contacts(QList<QContact>()<<*contact);
     request.setContacts(contacts);
@@ -237,10 +236,8 @@ bool QContactTrackerEngine::saveContact( QContact* contact, QContactManager::Err
         return false;
 }
 
-bool QContactTrackerEngine::removeContact(const QUniqueId& contactId, QSet<QUniqueId>& contactsRemoved, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
+bool QContactTrackerEngine::removeContact(const QUniqueId& contactId, QContactManager::Error& error)
 {
-    Q_UNUSED(groupsChanged)
-    contactsRemoved.clear();
     error = QContactManager::NoError;
 
     // TODO: Do with LiveNodes when they support strict querying.
@@ -263,7 +260,6 @@ bool QContactTrackerEngine::removeContact(const QUniqueId& contactId, QSet<QUniq
     }
     ncoContact->remove();
 
-    contactsRemoved << contactId;
     return true;
 }
 
@@ -295,10 +291,8 @@ QList<QContactManager::Error> QContactTrackerEngine::saveContacts(QList<QContact
     return errorList;
 }
 
-QList<QContactManager::Error> QContactTrackerEngine::removeContacts(QList<QUniqueId>* contactIds, QSet<QUniqueId>& contactsRemoved, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error)
+QList<QContactManager::Error> QContactTrackerEngine::removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error)
 {
-    groupsChanged.clear();
-    contactsRemoved.clear();
     QList<QContactManager::Error> errors;
     error = QContactManager::NoError;
 
@@ -309,12 +303,8 @@ QList<QContactManager::Error> QContactTrackerEngine::removeContacts(QList<QUniqu
 
     for (int i = 0; i < contactIds->count(); i++) {
         QContactManager::Error lastError;
-        QSet<QUniqueId> removedCs;
-        QSet<QUniqueId> changedGs;
-        removeContact(contactIds->at(i),removedCs, changedGs, lastError);
+        removeContact(contactIds->at(i), lastError);
         errors.append(lastError);
-        contactsRemoved += removedCs;
-        groupsChanged += changedGs;
         if (lastError == QContactManager::NoError) {
             (*contactIds)[i] = 0;
         }

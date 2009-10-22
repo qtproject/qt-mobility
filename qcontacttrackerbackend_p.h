@@ -87,8 +87,8 @@ public:
 
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
 
-    bool removeContact(const QUniqueId& contactId, QSet<QUniqueId>& contactsRemoved, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
-    QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds, QSet<QUniqueId>& contactsRemoved, QSet<QUniqueId>& groupsChanged, QContactManager::Error& error);
+    bool removeContact(const QUniqueId& contactId, QContactManager::Error& error);
+    QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error);
 
     /* Groups - Accessors and Mutators */
     QList<QUniqueId> groups() const;
