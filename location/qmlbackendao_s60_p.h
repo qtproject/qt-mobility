@@ -31,23 +31,24 @@
 **
 ****************************************************************************/
 
-#ifndef QMLBACKENDAO_S60_P_H
-#define QMLBACKENDAO_S60_P_H
+
+#ifndef QMLBACKENDAO_H
+#define QMLBACKENDAO_H
 
 #include <e32base.h>	// For CActive, link against: euser.lib
 #include <lbs.h>
 #include <lbscommon.h>
 
 #include "qgeopositioninfosource.h"
-//#include "QGeoPositionInfoSourceS60.h"
+//#include "qgeopositioninfosources60.h"
 
 class CQGeoPositionInfoSourceS60 ;
 
 // Types of request 
 enum RequestType{ 
-    REQ_REG_UPDATE = 1,  // Regular updates
-    REQ_ONCE_UPDATE,     // request update
-    REQ_DEV_STATUS       // device updates
+    RegularUpdate = 1,  // Regular updates
+    OnceUpdate,     // request update
+    DeviceStatus       // device updates
     };
 
 // 
@@ -58,53 +59,50 @@ public:
     ~CQMLBackendAO();
 
     // Two-phased constructor.
-    static CQMLBackendAO* NewL(CQGeoPositionInfoSourceS60 *requester, 
-                                RequestType  requestType, TPositionModuleId  modId = TUid::Uid(0));
+    static CQMLBackendAO* NewL( CQGeoPositionInfoSourceS60 *aRequester, 
+                                RequestType  aRequestType, TPositionModuleId  aModId = TUid::Uid(0) 
+                               );
 
     // Two-phased constructor.
-    static CQMLBackendAO* NewLC(CQGeoPositionInfoSourceS60 *requester, 
-            RequestType  requestType, TPositionModuleId  modID);
+    static CQMLBackendAO* NewLC( CQGeoPositionInfoSourceS60 *aRequester, 
+            RequestType  aRequestType, TPositionModuleId  aModID );
     
     // checks any pending request in activeobject 
-    bool IsRequestPending(); 
+    bool isRequestPending(); 
     
     // Async call to get notifications about device status.
-    void NotifyDeviceStatus(TPositionModuleStatusEventBase &aStatusEvent) ;
+    void notifyDeviceStatus( TPositionModuleStatusEventBase &aStatusEvent ) ;
     
     // requesting for position update once
-    void requestUpdate(TInt aTimeout);
+    void requestUpdate( int aTimeout );
     
     // cancels an outstanding update request
-    void CancelUpdate();
+    void cancelUpdate();
     
     // Sets an interval in millisecs for regular notifications 
-    int setUpdateInterval ( int msec );
+    int setUpdateInterval ( int aMilliSec );
     
     void startUpdates();
      
 
-public:
-    // New functions
-    // Function for making the initial request
-    void StartL(TTimeIntervalMicroSeconds32 aDelay);
 
 private:
     // C++ constructor
     CQMLBackendAO();
 
     // Second-phase constructor
-    TInt CQMLBackendAO::ConstructL(CQGeoPositionInfoSourceS60 *requester, RequestType  requestType, 
-                                                                          TPositionModuleId  modId);
+    TInt CQMLBackendAO::ConstructL( CQGeoPositionInfoSourceS60 *aRequester, RequestType  aRequestType, 
+                                                                          TPositionModuleId  aModId );
     
     // Device Notifications are handled
-    bool handleDeviceNotification (int error);
+    void handleDeviceNotification ( int aError );
 
     // regular position notifications are handled
-    bool handlePosUpdateNotification (int error);
+    void handlePosUpdateNotification ( int aError );
 
     void CancelAll();
     
-    bool InitializePosInfo();
+    bool initializePosInfo();
     
 private:
     // From CActive
@@ -116,17 +114,8 @@ private:
 
     // Override to handle leaves from RunL(). Default implementation causes
     // the active scheduler to panic.
-    int RunError(int aError);
+    int RunError( int aError );
 
-private:
-    enum TQMLBackendAOState
-        {
-        EUninitialized, // Uninitialized
-        EInitialized, // Initalized
-        EError
-        // Error condition
-        };
-    
 private:
     
     // Request is a device or a regular
@@ -142,4 +131,4 @@ private:
 
     };
 
-#endif // QMLBACKENDAO_S60_P_H
+#endif // QMLBACKENDAO_H

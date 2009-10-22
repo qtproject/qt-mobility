@@ -32,8 +32,8 @@
 ****************************************************************************/
 
 
-#ifndef QMLBACKENDMONITORCREATETRIGGERAO_S60_P_H
-#define QMLBACKENDMONITORCREATETRIGGERAO_S60_P_H
+#ifndef QMLBACKENDMONITORCREATETRIGGER_H_
+#define QMLBACKENDMONITORCREATETRIGGER_H_
 
 #include "qmlbackendmonitorao_s60_p.h"
 #include "qgeoareamonitor_s60_p.h"
@@ -87,4 +87,4 @@ private:
     }; 
 
 
-#endif /* QMLBACKENDMONITORCREATETRIGGERAO_H */
+#endif /* QMLBACKENDMONITORCREATETRIGGER_H_ */
