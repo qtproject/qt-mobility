@@ -80,11 +80,11 @@ binary-indep: build install
 binary-arch: build install
 	dh_testdir
 	dh_testroot
+        # Debug symbols need to be copied separately as qmake strips them automagically during install
+	-cp -p $(CURDIR)/build/Release/bin/libQtBearer.so.1.0.0 $(CURDIR)/debian/tmp/usr/lib
 	dh_install --sourcedir=debian/tmp
 	dh_link
 	dh_strip --dbg-package=libbearer
-        # Debug symbols need to be copied separately
-	cp -p $(CURDIR)/build/Debug/bin/libQtBearer.so.1.0.0 $(CURDIR)/debian/libbearer-dbg/usr/lib/debug/usr/lib
 	dh_compress
 	dh_fixperms
 	dh_makeshlibs
