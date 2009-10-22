@@ -69,9 +69,14 @@ QMap<QString, QPair<QString, QString> > defAndFieldNamesForTypeForActions;
  * where no sort order is implied.
  * TODO: use this instead of QCOMPARE in the various filtering tests!
  */
-#define QCOMPARE_UNSORTED(output, expected) QVERIFY(output.size() == expected.size()); \
-                                            for (int i = 0; i < output.size(); i++) { \
-                                                QVERIFY(expected.contains(output.at(i))); \
+#define QCOMPARE_UNSORTED(output, expected) if (output.size() != expected.size()) { \
+                                                QCOMPARE(output, expected); \
+                                            } else { \
+                                                for (int i = 0; i < output.size(); i++) { \
+                                                    if (!expected.contains(output.at(i))) { \
+                                                        QCOMPARE(output, expected); \
+                                                    } \
+                                                } \
                                             }
 
 class tst_QContactManagerFiltering : public QObject
@@ -333,7 +338,7 @@ void tst_QContactManagerFiltering::detailStringFiltering()
 
     QString output = convertIds(contacts, ids);
     QEXPECT_FAIL("integer == 20", "Not sure if this should pass or fail", Continue);
-    QCOMPARE(output, expected);
+    QCOMPARE_UNSORTED(output, expected);
 }
 
 void tst_QContactManagerFiltering::detailVariantFiltering_data()
@@ -600,7 +605,7 @@ void tst_QContactManagerFiltering::detailVariantFiltering()
     ids = cm->contacts(df);
 
     QString output = convertIds(contacts, ids);
-    QCOMPARE(output, expected);
+    QCOMPARE_UNSORTED(output, expected);
 }
 
 void tst_QContactManagerFiltering::rangeFiltering_data()
@@ -783,7 +788,7 @@ void tst_QContactManagerFiltering::rangeFiltering()
     ids = cm->contacts(drf);
 
     QString output = convertIds(contacts, ids);
-    QCOMPARE(output, expected);
+    QCOMPARE_UNSORTED(output, expected);
 }
 
 void tst_QContactManagerFiltering::intersectionFiltering_data()
@@ -1222,7 +1227,7 @@ void tst_QContactManagerFiltering::intersectionFiltering()
     ids = cm->contacts(resultFilter);
 
     QString output = convertIds(contacts, ids);
-    QCOMPARE(output, expected);
+    QCOMPARE_UNSORTED(output, expected);
 
     delete x;
     if (y) delete y;
@@ -1665,7 +1670,7 @@ void tst_QContactManagerFiltering::unionFiltering()
     ids = cm->contacts(resultFilter);
 
     QString output = convertIds(contacts, ids);
-    QCOMPARE(output, expected);
+    QCOMPARE_UNSORTED(output, expected);
 
     delete x;
     if (y) delete y;
@@ -2070,7 +2075,7 @@ void tst_QContactManagerFiltering::actionFiltering()
         QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
 
         QString output = convertIds(contacts, ids);
-        QCOMPARE(output, expected);
+        QCOMPARE_UNSORTED(output, expected);
     }
 }
 
@@ -2188,11 +2193,11 @@ void tst_QContactManagerFiltering::allFiltering()
     // Try unions/intersections of defaults
     ids = cm->contacts(f || f);
     output = convertIds(contacts, ids);
-    QCOMPARE(output, expected);
+    QCOMPARE_UNSORTED(output, expected);
 
     ids = cm->contacts(f && f);
     output = convertIds(contacts, ids);
-    QCOMPARE(output, expected);
+    QCOMPARE_UNSORTED(output, expected);
 }
 
 void tst_QContactManagerFiltering::changelogFiltering_data()
@@ -2281,7 +2286,7 @@ void tst_QContactManagerFiltering::changelogFiltering()
         ids = cm->contacts(clf);
 
         QString output = convertIds(contacts, ids);
-        QCOMPARE(output, expected);
+        QCOMPARE(output, expected); // unsorted? or sorted?
     } else {
         QSKIP("Changelogs not supported by this manager.", SkipSingle);
     }
