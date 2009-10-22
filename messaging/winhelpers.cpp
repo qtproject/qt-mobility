@@ -3571,7 +3571,7 @@ bool MapiSession::updateMessageRecipients(QMessageStore::ErrorCode *lastError, Q
                             name = QStringFromLpctstr(props[0].Value.LPSZ);
                         if (props[1].ulPropTag == PR_EMAIL_ADDRESS)
                             address = QStringFromLpctstr(props[1].Value.LPSZ);
-                        if (props[1].ulPropTag == PR_RECIPIENT_TYPE)
+                        if (props[2].ulPropTag == PR_RECIPIENT_TYPE)
                             type = props[2].Value.l;
 #else
                         for (uint i = 0; i < qar.rows()->aRow[n].cValues; ++i) {
