@@ -56,6 +56,16 @@ Q_DECLARE_METATYPE(QList<QContactLocalId>)
 QMap<QString, QPair<QString, QString> > defAndFieldNamesForTypeForActions;
 
 
+/*
+ * We use this code to compare the output and expected lists of filtering
+ * where no sort order is implied.
+ * TODO: use this instead of QCOMPARE in the various filtering tests!
+ */
+#define QCOMPARE_UNSORTED(output, expected) QVERIFY(output.size() == expected.size()); \
+                                            for (int i = 0; i < output.size(); i++) { \
+                                                QVERIFY(expected.contains(output.at(i))); \
+                                            }
+
 class tst_QContactManagerFiltering : public QObject
 {
 Q_OBJECT
@@ -2112,11 +2122,10 @@ void tst_QContactManagerFiltering::idListFiltering()
     QContactLocalIdFilter idf;
     idf.setIds(ids);
 
-    // now reuse ids
+    /* Retrieve contacts matching the filter, and compare (unsorted) output */
     ids = cm->contacts(idf);
-
     QString output = convertIds(contacts, ids);
-    QCOMPARE(output, expected);
+    QCOMPARE_UNSORTED(output, expected);
 }
 
 void tst_QContactManagerFiltering::invalidFiltering_data()
