@@ -60,6 +60,10 @@
 #include <QtMultimedia/qvideosurfaceformat.h>
 #endif
 
+#if defined(Q_OS_SYMBIAN)
+# define TESTDATA_DIR "./tst_qmediaimageviewer_images"
+#endif
+
 class QtTestNetworkAccessManager;
 
 class tst_QMediaImageViewer : public QObject
@@ -757,7 +761,7 @@ void tst_QMediaImageViewer::rendererControl()
     QVERIFY(rendererControl != 0);
 
     rendererControl->setSurface(&surface);
-    QCOMPARE(rendererControl->surface(), &surface);
+    QCOMPARE(rendererControl->surface(), (QAbstractVideoSurface *)&surface);
 
     outputControl->setOutput(QVideoOutputControl::RendererOutput);
 

@@ -335,7 +335,7 @@ void tst_QAudioCaptureSource::testAudioSource()
 {
     audiosource = new QAudioCaptureSource(0, mockProvider);
 
-    QCOMPARE(audiosource->service(), mockAudioSourceService);
+    QCOMPARE(audiosource->service(),(QMediaService *) mockAudioSourceService);
 }
 
 void tst_QAudioCaptureSource::testOptions()
