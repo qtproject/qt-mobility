@@ -2,6 +2,7 @@
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 **
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
