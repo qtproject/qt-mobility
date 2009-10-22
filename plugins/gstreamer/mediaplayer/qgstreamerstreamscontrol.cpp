@@ -74,8 +74,16 @@ bool QGstreamerStreamsControl::isActive(int streamNumber)
 
 void QGstreamerStreamsControl::setActive(int streamNumber, bool state)
 {
-    //only one active stream of certain type is supported.
-    m_session->setActiveStream(m_session->streamType(streamNumber),
-                               state ? streamNumber : -1 );
+    QMediaStreamsControl::StreamType type = m_session->streamType(streamNumber);
+    if (type == QMediaStreamsControl::UnknownStream)
+        return;
+
+    if (state)
+        m_session->setActiveStream(type, streamNumber);
+    else {
+        //only one active stream of certain type is supported
+        if (m_session->activeStream(type) == streamNumber)
+            m_session->setActiveStream(type, -1);
+    }
 }
 
