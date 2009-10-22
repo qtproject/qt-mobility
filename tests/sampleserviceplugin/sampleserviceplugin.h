@@ -41,7 +41,6 @@
 #ifndef SAMPLESERVICEPLUGIN_H
 #define SAMPLESERVICEPLUGIN_H
 
-#include <QtTest/QtTest>
 #include <QObject>
 #include <qserviceplugininterface.h>
 #include <qserviceinterfacedescriptor.h>

@@ -113,6 +113,10 @@ wince* {
     CONTACTS_PLUGINS_DEPLOYMENT.path = plugins/contacts
 
     DEPLOYMENT += CONTACTS_DEPLOYMENT CONTACTS_PLUGINS_DEPLOYMENT
+    
+    SFW_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/$$mobilityDeployFilename(QtServiceFramework.dll)
+    SFW_DEPLOYMENT.path = .
+    DEPLOYMENT += SFW_DEPLOYMENT
 }
 
 symbian {
@@ -126,7 +130,6 @@ symbian {
 
     # Engine plugins should be installed in their own .pro
     DEPLOYMENT += CONTACTS_DEPLOYMENT
-    
     TARGET.CAPABILITY = ALL -TCB
 }
 

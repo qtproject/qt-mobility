@@ -53,10 +53,10 @@
 // We mean it.
 //
 
-#include "servicemetadata_p.h"
-#include "qservicefilter.h"
 #include <QtSql>
 #include <QList>
+#include "servicemetadata_p.h"
+#include "qservicefilter.h"
 #include "dberror_p.h"
 #include "qserviceglobal.h"
 
