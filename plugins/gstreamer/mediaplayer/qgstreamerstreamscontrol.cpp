@@ -69,10 +69,13 @@ QVariant QGstreamerStreamsControl::metaData(int streamNumber, QtMedia::MetaData 
 
 bool QGstreamerStreamsControl::isActive(int streamNumber)
 {
-    return false;
+    return streamNumber != -1 && streamNumber == m_session->activeStream(streamType(streamNumber));
 }
 
 void QGstreamerStreamsControl::setActive(int streamNumber, bool state)
 {
+    //only one active stream of certain type is supported.
+    m_session->setActiveStream(m_session->streamType(streamNumber),
+                               state ? streamNumber : -1 );
 }
 

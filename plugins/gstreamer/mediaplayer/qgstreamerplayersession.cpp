@@ -150,6 +150,49 @@ void QGstreamerPlayerSession::setPlaybackRate(qreal rate)
 
 }
 
+
+int QGstreamerPlayerSession::activeStream(QMediaStreamsControl::StreamType streamType) const
+{
+    int streamNumber = -1;
+    if (m_playbin) {
+        switch (streamType) {
+        case QMediaStreamsControl::AudioStream:
+            g_object_set(G_OBJECT(m_playbin), "current-audio", streamNumber, NULL);
+            break;
+        case QMediaStreamsControl::VideoStream:
+            g_object_set(G_OBJECT(m_playbin), "current-video", streamNumber, NULL);
+            break;
+        case QMediaStreamsControl::SubPictureStream:
+            g_object_set(G_OBJECT(m_playbin), "current-text", streamNumber, NULL);
+            break;
+        default:
+            break;
+        }
+    }
+
+    return streamNumber;
+}
+
+void QGstreamerPlayerSession::setActiveStream(QMediaStreamsControl::StreamType streamType, int streamNumber)
+{
+    if (m_playbin) {
+        switch (streamType) {
+        case QMediaStreamsControl::AudioStream:
+            g_object_get(G_OBJECT(m_playbin), "current-audio", &streamNumber, NULL);
+            break;
+        case QMediaStreamsControl::VideoStream:
+            g_object_get(G_OBJECT(m_playbin), "current-video", &streamNumber, NULL);
+            break;
+        case QMediaStreamsControl::SubPictureStream:
+            g_object_get(G_OBJECT(m_playbin), "current-text", &streamNumber, NULL);
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+
 bool QGstreamerPlayerSession::isBuffering() const
 {
     return false;
