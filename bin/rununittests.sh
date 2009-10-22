@@ -13,7 +13,7 @@ if [ ! -d "$shell_path/../build/tests/bin" ]; then
 fi
 cd $shell_path/../build/tests/bin
 
-LD_LIBRARY_PATH=$shell_path/../lib:$LD_LIBRARY_PATH
+#LD_LIBRARY_PATH=$shell_path/../lib:$LD_LIBRARY_PATH
 
 #service framework
 ./tst_qserviceinterfacedescriptor

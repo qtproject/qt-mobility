@@ -22,9 +22,9 @@ symbian|wince* {
 
     wince* {
         SFWTEST_PLUGIN_DEPLOY.sources = \
-                $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/tst_sfw_sampleserviceplugin.dll \
-                $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/tst_sfw_sampleserviceplugin2.dll \
-                $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/tst_sfw_testservice2plugin.dll
+                $$OUTPUT_DIR/build/tests/bin/plugins/$$mobilityDeployFilename(tst_sfw_sampleserviceplugin).dll \
+                $$OUTPUT_DIR/build/tests/bin/plugins/$$mobilityDeployFilename(tst_sfw_sampleserviceplugin2).dll \
+                $$OUTPUT_DIR/build/tests/bin/plugins/$$mobilityDeployFilename(tst_sfw_testservice2plugin).dll
         SFWTEST_PLUGIN_DEPLOY.path = .
         DEPLOYMENT += SFWTEST_PLUGIN_DEPLOY
     }

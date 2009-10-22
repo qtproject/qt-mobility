@@ -30,7 +30,7 @@ win32 {
 }
 
 wince* {
-    DEPLOYLACKEY.sources = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/vsiTestLackey.exe
+    DEPLOYLACKEY.sources = $$OUTPUT_DIR/build/tests/bin/vsiTestLackey.exe
     DEPLOYLACKEY.path = .
     DEPLOYMENT += DEPLOYLACKEY
 }

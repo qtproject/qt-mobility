@@ -17,7 +17,7 @@ symbian {
 }
 
 wince* {
-    DEPLOYLACKEY.sources = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/lackey.exe
+    DEPLOYLACKEY.sources = $$OUTPUT_DIR/build/tests/bin/lackey.exe
     DEPLOYLACKEY.path = .
     DEPLOYMENT += DEPLOYLACKEY
 }

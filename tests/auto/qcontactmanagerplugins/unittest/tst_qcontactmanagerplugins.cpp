@@ -163,7 +163,7 @@ tst_QContactManagerPlugins::~tst_QContactManagerPlugins()
 void tst_QContactManagerPlugins::init()
 {
     /* Add a path to our plugin path */
-    QString path = QApplication::applicationDirPath() + "/dummyplugin";
+    const QString path = QApplication::applicationDirPath();
     QApplication::addLibraryPath(path);
     QApplication::addLibraryPath(path); // Test the plugin path deduplication code
     QApplication::addLibraryPath("/"); // strictly to test a cdUp :/

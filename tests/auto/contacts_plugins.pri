@@ -30,10 +30,6 @@ wince* {
     INSTALLS += target
 }
 
-!symbian:!wince* {
-    DESTDIR = $$replace(DESTDIR, /plugins/contacts, /dummyplugin/plugins/contacts)
-}
-
 # Add this too
 qtAddLibrary(QtContacts)
 

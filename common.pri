@@ -114,7 +114,7 @@ wince* {
 
     DEPLOYMENT += CONTACTS_DEPLOYMENT CONTACTS_PLUGINS_DEPLOYMENT
     
-    SFW_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/$$mobilityDeployFilename(QtServiceFramework.dll)
+    SFW_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/$$mobilityDeployFilename(QtServiceFramework).dll
     SFW_DEPLOYMENT.path = .
     DEPLOYMENT += SFW_DEPLOYMENT
 }
