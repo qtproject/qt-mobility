@@ -55,14 +55,6 @@ public:
     bool saveRelationshipL(QSet<QContactLocalId> *affectedContactIds, QContactRelationship* relationship, QContactManager::Error& error);
     bool removeRelationshipL(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship& relationship, QContactManager::Error& error);
     QList<QContactRelationship> relationshipsL(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error);
-    
-#if 0
-    QList<QContactRelationship> relationshipsL(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const{}
-    
-    QList<QContactManager::Error> saveRelationshipsL(QSet<QContactLocalId> *affectedContactIds, QList<QContactRelationship>* relationships, QContactManager::Error& error){}
-    bool removeRelationshipL(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship& relationship, QContactManager::Error& error){}
-    QList<QContactManager::Error> removeRelationshipsL(QSet<QContactLocalId> *affectedContactIds, const QList<QContactRelationship>& relationships, QContactManager::Error& error){}
-#endif
 };
 
 #endif

@@ -78,14 +78,14 @@ bool CntAbstractRelationship::saveRelationshipL(QSet<QContactLocalId> *affectedC
 
 QList<QContactManager::Error> CntAbstractRelationship::saveRelationshipsL(QSet<QContactLocalId> *affectedContactIds, QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
-    Q_UNUSED(affectedContactIds);
+    Q_UNUSED(error);
     
-    error = QContactManager::NotSupportedError;
-    
+    QContactManager::Error singleError(QContactManager::NoError);
     QList<QContactManager::Error> errorList;
     
     for(int i = 0; i < relationships->count(); i++ ){
-        errorList.append(QContactManager::NotSupportedError);
+        saveRelationshipL(affectedContactIds, &relationships->value(i), singleError);
+        errorList.append(singleError);
     }    
     
     return errorList;
@@ -102,14 +102,14 @@ bool CntAbstractRelationship::removeRelationshipL(QSet<QContactLocalId> *affecte
 
 QList<QContactManager::Error> CntAbstractRelationship::removeRelationshipsL(QSet<QContactLocalId> *affectedContactIds, const QList<QContactRelationship>& relationships, QContactManager::Error& error)
 {
-    Q_UNUSED(affectedContactIds);
+    Q_UNUSED(error);
     
-    error = QContactManager::NotSupportedError;
-    
+    QContactManager::Error singleError(QContactManager::NoError);
     QList<QContactManager::Error> errorList;
     
     for(int i = 0; i < relationships.count(); i++ ){
-        errorList.append(QContactManager::NotSupportedError);
+        removeRelationshipL(affectedContactIds, relationships.at(i), singleError);
+        errorList.append(singleError);
     }    
     
     return errorList;

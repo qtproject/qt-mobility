@@ -183,6 +183,3 @@ QList<QContactRelationship> CntRelationshipGroup::relationshipsL(const QContactI
     
     return returnValue;
 }
-
-//TODO: add all the group code here
-
