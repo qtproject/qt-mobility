@@ -204,7 +204,7 @@ bool QContactTrackerEngine::waitForRequestFinished(QContactAbstractRequest* req,
     }
     QTime t;
     t.start();
-    while(t.elapsed() < msecs || msecs != 0) // 0 for infinite
+    while(t.elapsed() < msecs || msecs == 0) // 0 for infinite
     {
         usleep(10000);
         QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
