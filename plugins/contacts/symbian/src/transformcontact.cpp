@@ -74,6 +74,14 @@ TransformContact::TransformContact()
 
 TransformContact::~TransformContact()
 {
+    QMap<ContactData, TransformContactData*>::iterator itr;
+
+    for (itr = m_transformContactData.begin(); itr != m_transformContactData.end(); ++itr)
+    {
+        TransformContactData* value = itr.value();
+        delete value;
+        value = 0;
+    }
 }
 
 void TransformContact::initializeTransformContactData()

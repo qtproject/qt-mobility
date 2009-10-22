@@ -65,8 +65,9 @@ protected:
     CContactDatabase* CntAbstractRelationship::database();
     
 private:
-    QString m_relationshipType;
     CContactDatabase* m_contactDatabase;
+    QString m_relationshipType;
+    
 };
 
 #endif

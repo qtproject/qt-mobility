@@ -50,6 +50,14 @@ CntRelationship::CntRelationship(CContactDatabase* contactDatabase)
 
 CntRelationship::~CntRelationship()
 {
+    QMap<QString, CntAbstractRelationship *>::iterator itr; 
+    
+    for (itr = m_relationshipMap.begin(); itr != m_relationshipMap.end(); ++itr)
+    {
+        CntAbstractRelationship* value = itr.value();
+        delete value;
+        value = 0;
+    }
 }
 
 
