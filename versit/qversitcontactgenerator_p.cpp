@@ -1,6 +1,7 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -20,13 +21,20 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please
-** contact Nokia at http://qt.nokia.com/contact.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -52,6 +60,7 @@
 #include <qcontactavatar.h>
 #include <qcontactgeolocation.h>
 #include <qcontactnote.h>
+#include <qcontactonlineaccount.h>
 #include <QHash>
 #include <QImage>
 
@@ -89,6 +98,10 @@ QVersitContactGeneratorPrivate::QVersitContactGeneratorPrivate()
         QString::fromAscii(versitBbsId),QContactPhoneNumber::SubTypeBulletinBoardSystem);
     mSubTypeMappings.insert(
         QString::fromAscii(versitPagerId),QContactPhoneNumber::SubTypePager);
+    mSubTypeMappings.insert(
+        QString::fromAscii(versitSipSubTypeId),QContactOnlineAccount::SubTypeSip);
+    mSubTypeMappings.insert(
+        QString::fromAscii(versitSwisId),QContactOnlineAccount::SubTypeShareVideo);
 }
 
 /*!
@@ -139,6 +152,8 @@ QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& 
             detail = createGeoLocation(property);
         } else if (property.name() == QString::fromAscii(versitNoteId)){
             detail = createNote(property);
+        } else if (property.name() == QString::fromAscii(versitSipId)){
+            detail = createOnlineAccount(property);
         } else {
             // NOP
         }
@@ -344,12 +359,35 @@ QContactDetail* QVersitContactGeneratorPrivate::createNicknames(
 }
 
 /*!
+ * Creates a QContactOnlineAccount from \a property
+ */
+QContactDetail* QVersitContactGeneratorPrivate::createOnlineAccount(
+    const QVersitProperty& property) const
+{    
+    QContactOnlineAccount* onlineAccount = new QContactOnlineAccount();
+    QMultiHash<QString,QString> params = property.parameters();
+    QList<QString> values = params.values();
+    const QString subTypeVal = takeFirst(values);    
+    if(!subTypeVal.isEmpty()){
+        const QString fieldKey = mSubTypeMappings.value(subTypeVal);
+        if(!fieldKey.isEmpty()){
+            onlineAccount->setSubTypes(fieldKey);
+        }else{
+            // Discard : if subtype is not empty and subtype is not found in mapping table
+            delete onlineAccount;
+            return 0;
+        }
+    }
+    onlineAccount->setAccountUri(QString::fromAscii(property.value()));    
+    return onlineAccount;
+}
+
+/*!
  * Creates a QContactAvatar from \a property
  */
 QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
     const QVersitProperty& property, const QVersitDocument& versitDocument) const
 {
-    QContactAvatar* avatar = new QContactAvatar();
     QString fileName;
 
     const QList<QVersitProperty> properties = versitDocument.properties();
@@ -361,11 +399,13 @@ QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
     }
 
     if (!fileName.isEmpty()) {
+        QContactAvatar* avatar = new QContactAvatar();
         avatar->setAvatar(fileName);
         avatar->setSubType(QContactAvatar::SubTypeImage);
+        return avatar;
+    } else {
+        return 0;
     }
-
-    return avatar;
 }
 
 /*!
@@ -377,7 +417,7 @@ QString QVersitContactGeneratorPrivate::saveImage(const QVersitProperty& photoPr
                                                   const QVersitProperty& nameProperty) const
 {
     // Image name: <FirstName><LastName>.<ext>
-    QString imgName(versitPhotoDir);
+    QString imgName(mImagePath);
 
     QList<QByteArray> values = nameProperty.value().split(';');
     imgName.append(QString::fromAscii("/"));
@@ -476,6 +516,18 @@ QString QVersitContactGeneratorPrivate::takeFirst(QList<QByteArray>& list) const
     if (!list.isEmpty())
         first = QString::fromAscii(list.takeFirst());
     return first; 
+}
+
+/*!
+ * Takes the first value in \a list and converts it to a QString.
+ * An empty QString is returned, if the list is empty.
+ */
+QString QVersitContactGeneratorPrivate::takeFirst(QList<QString>& list) const
+{
+    QString first;
+    if (!list.isEmpty())
+        first = list.takeFirst();
+    return first;
 }
 
 /*!

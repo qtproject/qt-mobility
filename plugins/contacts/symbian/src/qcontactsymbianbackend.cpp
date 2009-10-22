@@ -1,6 +1,7 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -20,13 +21,20 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please
-** contact Nokia at http://qt.nokia.com/contact.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -300,27 +308,64 @@ QList<QContactManager::Error> QContactSymbianEngine::removeContacts(QList<QConta
 
 QList<QContactRelationship> QContactSymbianEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
 {
+    //retrieve the relationships
     return d->relationships(relationshipType, participantId, role, error);
 }
 
 bool QContactSymbianEngine::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
 {
-    return d->saveRelationship(relationship, error);
+    //affected contacts
+    QContactChangeSet changeSet;
+    
+    //save the relationship
+    bool returnValue = d->saveRelationship(&changeSet, relationship, error);
+    
+    //emit signals
+    changeSet.emitSignals(this);
+    
+    return returnValue;
 }
 
 QList<QContactManager::Error> QContactSymbianEngine::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
-    return d->saveRelationships(relationships, error);
+    //affected contacts
+    QContactChangeSet changeSet;
+    
+    //save the relationships
+    QList<QContactManager::Error> returnValue = d->saveRelationships(&changeSet, relationships, error);
+    
+    //emit signals
+    changeSet.emitSignals(this);
+        
+    return returnValue;
 }
 
 bool QContactSymbianEngine::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
 {
-    return d->removeRelationship(relationship, error);
+    //affected contacts
+    QContactChangeSet changeSet;
+    
+    //remove the relationship
+    bool returnValue = d->removeRelationship(&changeSet, relationship, error);
+    
+    //emit signals
+    changeSet.emitSignals(this);
+            
+    return returnValue;
 }
 
 QList<QContactManager::Error> QContactSymbianEngine::removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
 {
-    return d->removeRelationships(relationships, error);
+    //affected contacts
+    QContactChangeSet changeSet;
+    
+    //remove the relationships
+    QList<QContactManager::Error> returnValue = d->removeRelationships(&changeSet, relationships, error);
+    
+    //emit signals
+    changeSet.emitSignals(this);
+            
+    return returnValue;
 }
 
 QMap<QString, QContactDetailDefinition> QContactSymbianEngine::detailDefinitions(QContactManager::Error& error) const
@@ -451,6 +496,32 @@ void QContactSymbianEngine::eventContactChanged(const QContactLocalId &contactId
 	contactList.append(contactId);
 
 	emit contactsChanged(contactList);
+}
+
+/*!
+ * Private slot to receive events about added relationships.
+ *
+ * \param contactId the added contact
+ */
+void QContactSymbianEngine::eventRelationshipAdded(const QContactLocalId &contactId)
+{
+    QList<QContactLocalId> contactList;
+    contactList.append(contactId);
+    
+    emit relationshipsAdded(contactList);
+}
+
+/*!
+ * Private slot to receive events about removed relationships.
+ *
+ * \param contactId the modified contact from relationship
+ */
+void QContactSymbianEngine::eventRelationshipRemoved(const QContactLocalId &contactId)
+{
+    QList<QContactLocalId> contactList;
+    contactList.append(contactId);
+
+    emit relationshipsRemoved(contactList);
 }
 
 QString QContactSymbianEngine::managerName() const

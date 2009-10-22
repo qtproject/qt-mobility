@@ -1,6 +1,7 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -20,13 +21,20 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please
-** contact Nokia at http://qt.nokia.com/contact.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -58,8 +66,8 @@ const char versitTitleId[] = "TITLE";
 const char versitRoleId[] = "ROLE";
 const char versitAnniversaryId[] = "X-ANNIVERSARY";
 const char versitGenderId[] = "X-GENDER";
+const char versitSipId[] = "X-SIP";
 const char versitSoundId[] = "SOUND";
-
 
 // Contexts
 const char versitContextWorkId[] = "WORK";
@@ -78,22 +86,23 @@ const char versitVideoId[] = "VIDEO";
 const char versitFaxId[] = "FAX";
 const char versitBbsId[] = "BBS";
 const char versitPagerId[] = "PAGER";
-
-// Format Conversion
-const char versitJPEGExtenId[] = "JPG";
-
-// ISO-8601 basic format datetime spec
-const char versitDateTimeSpecIso8601Basic[] = "yyyyMMddThhmmss";
-const char versitDateSpecIso8601Basic[] = "yyyyMMdd";
-
 // SubTypes for photograph
 const char versitPhotoGif[] = "GIF";
 const char versitPhotoBmp[] = "BMP";
 const char versitPhotoTiff[] = "TIFF";
 const char versitPhotoJpeg[] = "JPEG";
+const char versitAudioWave[] = "WAVE";
+// Sub types for onlineaccount
+const char versitSwisId[] = "SWIS";
+const char versitSipSubTypeId[] = "SIP";
 
-// Default path to save the photos
-const char versitPhotoDir[] = "c:/data/photo";
+// Format Conversion
+const char versitJPEGExtenId[] = "JPG";
+const char versitWAVEExtenId[] = "WAV";
+
+// ISO-8601 basic format datetime spec
+const char versitDateTimeSpecIso8601Basic[] = "yyyyMMddThhmmss";
+const char versitDateSpecIso8601Basic[] = "yyyyMMdd";
 
 // Encoding values
 const char versitEncoding7Bit[] = "7BIT";
@@ -107,7 +116,7 @@ const char versitType[] = "TYPE";
 // VALUE parameter name
 const char versitValue[] = "VALUE";
 
-//Encoding Type.
+// Encoding Type.
 const char versitEncoding[] = "ENCODING";
 
 #endif // QVERSITDEFS_H

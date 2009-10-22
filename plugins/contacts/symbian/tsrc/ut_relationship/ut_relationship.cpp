@@ -1,6 +1,7 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -20,13 +21,20 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please
-** contact Nokia at http://qt.nokia.com/contact.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -36,6 +44,17 @@
 #include <qtcontacts.h>
 
 #include <QtTest/QtTest>
+
+#define QTRY_COMPARE(__expr, __expected) \
+    do { \
+        const int __step = 50; \
+        const int __timeout = 10000; \
+        QTest::qWait(10); \
+        for (int __i = 0; __i < __timeout && ((__expr) != (__expected)); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QCOMPARE(__expr, __expected); \
+    } while(0)
 
 
 void TestRelationship::initTestCase()
@@ -83,7 +102,11 @@ void TestRelationship::createGroupContact()
     relationship.setRelationshipType(QContactRelationship::HasMember);
     relationship.setFirst(groupContact.id());
     relationship.setSecond(contact.id());
+    
+    QSignalSpy spySaveRelationship(&manager, SIGNAL(relationshipsAdded(const QList<QContactLocalId>& affectedContactIds)));
+    //QSignalSpy spyRemoveRelationship(&manager, SIGNAL(relationshipsRemoved(const QList<QContactLocalId>& affectedContactIds)));
     manager.saveRelationship(&relationship);
+    QTRY_COMPARE(spySaveRelationship.count(), 1); 
     
     //Add contact 2 to group
     relationship.setSecond(contact2.id());

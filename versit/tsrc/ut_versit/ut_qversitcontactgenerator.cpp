@@ -1,6 +1,7 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -20,13 +21,20 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please
-** contact Nokia at http://qt.nokia.com/contact.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -55,6 +63,37 @@
 #include <qcontactavatar.h>
 #include <qcontactgeolocation.h>
 #include <qcontactnote.h>
+#include <qcontactonlineaccount.h>
+#include <QDir>
+
+QString testImageRelativePath(QString::fromAscii("random98354_dir76583_ut_versit_photo"));
+
+void UT_QVersitContactGenerator::initTestCase()
+{
+    // Create the directory to store the image
+    QDir dir;
+    if (!dir.exists(testImageRelativePath)) {
+        dir.mkdir(testImageRelativePath);
+    }
+}
+
+void UT_QVersitContactGenerator::cleanupTestCase()
+{
+    QDir dir;
+
+    if (dir.exists(testImageRelativePath)) {
+        dir.cd(testImageRelativePath);
+        // remove all the files first
+        QStringList allFiles;
+        allFiles << "*";
+        QStringList fileList = dir.entryList(allFiles, QDir::Files);
+        foreach (QString file, fileList) {
+            dir.remove(file);
+        }
+        dir.cdUp();
+        dir.rmdir(testImageRelativePath);
+    }
+}
 
 void UT_QVersitContactGenerator::init()
 {    
@@ -502,8 +541,6 @@ void UT_QVersitContactGenerator::testAvatar()
     QVersitProperty property;
     property.setName(QString::fromAscii(versitPhotoId));
 
-    //const char img[] = "/9j/4AAQSkZJRgABAgAAZABkAAD/7AARRHVja3kAAQAEAAAAHgAA/+4ADkFkb2JlAGTAAAAAAf/bAIQAEAsLCwwLEAwMEBcPDQ8XGxQQEBQbHxcXFxcXHx4XGhoaGhceHiMlJyUjHi8vMzMvL0BAQEBAQEBAQEBAQEBAQAERDw8RExEVEhIVFBEUERQaFBYWFBomGhocGhomMCMeHh4eIzArLicnJy4rNTUwMDU1QEA/QEBAQEBAQEBAQEBA/8AAEQgBhAGGAwEiAAIRAQMRAf/EAT8AAAEFAQEBAQEBAAAAAAAAAAMAAQIEBQYHCAkKCwEAAQUBAQEBAQEAAAAAAAAAAQACAwQFBgcICQoLEAABBAEDAgQCBQcGCAUDDDMBAAIRAwQhEjEFQVFhEyJxgTIGFJGhsUIjJBVSwWIzNHKC0UMHJZJT8OHxY3M1FqKygyZEk1RkRcKjdDYX0lXiZfKzhMPTdePzRieUpIW0lcTU5PSltcXV5fVWZnaGlqa2xtbm9jdHV2d3h5ent8fX5/cRAAICAQIEBAMEBQYHBwYFNQEAAhEDITESBEFRYXEiEwUygZEUobFCI8FS0fAzJGLhcoKSQ1MVY3M08SUGFqKygwcmNcLSRJNUoxdkRVU2dGXi8rOEw9N14/NGlKSFtJXE1OT0pbXF1eX1VmZ2hpamtsbW5vYnN0dXZ3eHl6e3x//aAAwDAQACEQMRAD8A9ASSSSUpJJJJSkkkklKSSSSUpJJJJSkkkklKSSSSUpJJJJSkySdJSkkkklKSTEgCToFXfmN4qG8/vfmpk8kMY4pyER4pESdg2Uyouvudy6PIaIck8mVSn8TxDSMZT/BkGE9S6UhJZwPgpCx7fouITY/FIdcch5G0+z2LoJKozKePpCR+KsMtZYPadfBW8PNYcukZa/unQscoSjuzSSSU61ZOmSSUpOkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUmTpJKUkkkkpSSSSSlJJJJKUmMwY5TpJKW+KdJJJSkkkklKSSSSUpJJJJSkkkklKSSSSUpJJJJSlC21lTC95gD7yfAJrbWUsL3nTsO5PgFQc99r/Ut0I+gzs0f3qvzPMxwRs6yPyxXwgZHwZWWWXGX6N7Vj+PiopJLCy5Z5JcUzZ/ls2QABQVKSSUqNSkkpS7pBSk4JBkaFMkiNCpt05AdDX6HsUdZoVqi/hjz8CtXk+esjHlP92Z/IsOTH1j9jYSSSWmwrpJJJKWSTpJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSZJS6SZJJS6hZYyphe8w0JWWMqYXvMNCoPe+54ss0A+gzw8z5qDmeZhghZ1kflj3XwgZHwU577X+pZpH0G/uj+9MU6ZYGTJLJIzkbJbIAGgUkm+CSYldMU6ZJS6SSRRUpKUkkEKCfwTJyips0XzDHn4FWFncFWaL59j+exWpyXO7Ysp8IyP5FhyY+obKSZOtRhUkmSSUo6J0ySSl0kkklKSSSSUpJJJJSkkydJSkkkklKSSSSUpJJJJSkkkklKSSTJKXSSSSUpJJJJSkydJJSkkkklKULLGVsL3mGjkpWWMrYXvMNHJVCx77n77NAPoM/d8z5qDmOYhhjZ1kflj3XwgZHwXe917979Gt+g3w8z5pikmKwcuWWWZnM2T/ACpsAAaBSSZP5qNcrskmSRUukkmSUukmTpKUmSS7pKXSSSSUpOEyQ4SQ2qL5hj+exVhZoKtUXz7H89itTkudusWU+EZH8iw5MfUNhOmSB7HQrUYV0kkklKSSSSUpJJJJSkkkySlJ0ydJSkkkklLJJ0klKSSSSUpJJJJSkkkklKSSSSUpJJJJSkkkySl1GyxlbC95ho5KT3traXvMNbqSs+yx17979GD+bZ4fyj5/kUHMcxDDDilqT8se66EDI+CrLHXvD3jaxv0GeHmfNMkUv4rBy5Z5ZmczZP5dg2gABQUkkkmKWTpcpu6CVJ0yUIqUEikkgFKSSS7JKUU0aynKSRUpJL4JIqUlKSRQUpOCmTpKbWPfPsf8irAEd5WaPFWqL59jjr2K1eR526xZT4RkfyLBkx9R9WykmTrUYVJJJJKUkkkkpSSSZJS6ZOkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpZJJJJS6i97a2l7zDRyUnOaxpc4w0aklZ9trshwcdK26sYf+qKh5jmIYYcUtSflj3K6EDI+C9ljr3bne1g1Yz/AL87zTJJlgZcs8sjOZsn8PANkAAUFSkl3STErJJ0kkqTJJ0lKCZOkkpZOmSQCl0ySXgipSdMnCClk6ZLxSUumT9vgmRKl0xTpIKXTeaSSSG3RfPsfz2KOs2YKt0X7va7nsVrclzt1iynXaMj+RYcmOtQ2EkydabCpMnSSUpJJJJSkkkklKSSSSUpJJJJSkkkklKSSSSUpJJJJSkkkklKUXOaxpc4w0akpOc1jS5xho1JKoW2uyHAnSoataeSf3j/AAUOfPDDDilv+jHuV0ImRVba7IcCdKhq1nj/ACnJkkywM2aeWZnM/wBg7BsgACgpJJJMSpIJJJJW4ST8pJKUmSSSUpLskkgpQTpJkVKSTpklKSSS0QUpKUkklL/BMnSRUpJJJBSkkkklKTzCZJG0Nyi/d7Xc9j4oyzgSCrdF272u+l281rclznFWLIfVtGR6+BYMmOtQnSSSWkxKSTJ0lKSSSSUpJJJJSkkkklKSSSSUpJJJJSkkkklKTOc1rS5xho1JKTnNa0ucYaNSSqF1xyD3FQ+i0/neZUWfPDDDil9B1JXRiZFa612Q7XSkfRafzv5R/gmSSWBmyyyzM5nyHQDs2QABQUmSCXkokq7JJFJJSktUkkUqS7JJgSgpdN3SSSUukkmSUpLsnSRUpMl2SKClJAzPlol4pAaz3KSlJJdkkqUukAkkipSZJP3QUpJKUgkhSSSSKVJwSDKZJBDcou3ja76X5UdZoMGQrlN28bT9Lt5rY5LneMDFkPq2jI9fA+LBkx1qEySYGU60WJSZOkkpSSSSSlJJJJKUkkmSUukkkkpSYkAEkwByUiQ0FzjAGpJWfdecg6aUjgd3eZ8lFnzwww4pHyHUldGBkdFXXHIOmlI+iP3z4ny8EySSwc2aeWZnI+Q6AdmzEACgskUkioUqSSSCKlJJJJKUklwmSSukkmQtSkk6YJKUn/IkkipZOkkkFKKSRS+CClJk6ZFSkzdRMR5HlOnSUpJJMkpdJIJJIUl2SSQClFLukkipXZJIcJIJUnBI45S7JkdtkN2m4PG0/S/KjLNBIII0KuU3B4g/SC2OS5zjrHkPr/Rl+9/awZMdajZMmTpLQYlk6SSSlJJJJKUmTpJKUmc5rWlzjDRqSUnODWlzjAGpJWfdc7II7Ujhvd3mf7lDnzwww4pfSPUldCBkf2quuOSY4pHA/f8AM+XkmTJLAzZp5p8cz5DoB2DZAAFBdMl8UyjXLykmSSCl+ySSSSFJJd0ySl5STJJFK6ZL4pd0ipScpJuySl0gkmRUueUu6ZJJS4STJIKXSTJtS4eABn5wipcGZjtoUu6SSVKXCXdMn7JKUklOqSClJJd0vFJCuUkgkUkqSSS7/BJCkuySSKlJ2kgyOUx/FJCyCpvU3CwQfpIqzWuIII0IV2m4WCDo7wWzyXOe4BjyH1jY/vf2tfJjrUbJUkkloMakkkklKTOc1rS5xho1JKdZ+Tab7XVj+aq0P8p/n5N/Kos+aOLGZy6bDuV0Y8Rpa652QeCKR9Fp5d5lR7J0lz+bNPLMzmfLsPJsgACgskkko0rJJFOklYpdk6ZLqpdJJJJCkkkoSSsknTJKUnSTJKXSSKSSlkinSRUpMkn7pKW7pcJJaoKUkknSClkkuyXZFSk6ZOgpZJJJKlKTpJSipSSSSClJJeCSKlJJd0klKKSSbugpdSaSDIKikjqDaG9TcLBB0cirOa4tIIOqvVP9Rgd37ra5HmzlHtz+eI0P7w/i18kK1GzNJJJXmNha/wBOp7/3Wl33CVmY4IpZOpIlx8zqfxK0cljn41rG/Scxwb8SIWdQ4OqY7xaD+CzPihPDjHS5fsZsP6X0SJk6SyWZbukkkkpSXCSRSSpJJJJSkkvgnSQsklKSVqUl3SS5KSVJJJIoUlokkkVKShJJJSku6SSCVQkkkihbVOkkUkqTd06SRUrskkkgpSZOkUVKShJJJCkuyUpd0lKS8UkklK0SSSSUpKEkgEFK7JJBOkpQCsYrjuLfESq6Pij3k+SscoSOYx1+8syfKW2kkkuhaylmPq9C11fDHEur+B1I+RWmh21MuZtePMHuD4hQczgGbGYbEaxPivhPhPh1aISU30W1nUbm/vD+IUPyrCyYcmM1OJH5fa2AQdQbUmTpKIhKuySSSNFSkycpIKWhOkmSUrRIhJJJSkkkiipSSSSSlBIpJJKUEkku6SlJJJeSSlu6dJJJKkkkkkKSSS7pFSkkkikpXdJMOU8oJUlKSSSFJJJIqUnTBOgpSSSUI0eylJJJFKipQ4S1nyS7Jwx7tAJlIRkdACT4KtZXMevayTyVGrGiHP8AuR1q8jycoH3cgo/ox6+ZYMkwdAukkktNiUkkkkpSaAeQnSSUx2t8B9yW1vgFJJCh2Va21vgE21vgPuUkkqHZVsHV1uEFoKoZFZxrWQZqsMNnkO5j5rSVPqYnHaf3baz97w3+Kg5rBDJilcRxRiTE9bC/HIiQF6HRCmTplzzZUknTd0lKS7wkl3SSpJJOihbukkkgpSSSXdFSkgkkEkq7BJJJJCk0J0u6RUpJJNqkpdIpJFBSgkkEiklSXdLskkhSXdOm7JFS7ROg7q7XQxo1EuVWnWxvxV5afw3DCXFkkBIxNC2HLIigFbW+ASgeCdJa1BhWgeCW1vgE6SVBTHa3wH3J4jhOklQUpJJJJSkkkklKSSSSUpJJJJSydJJJSkkkklKVLq0/YXkdn1H7rGK6qnU9cJ48XMH/AE2psxcJDvEpjuPNARqU2qdILmG2oJk5TBJSkkkkVK7p0ydJSySSSCVSkkkUUKTBOkklR4KYmEh/vS8+UlLlIpJkFLpJJBFCkjykkkpZOkkgLSpJIpJIUNEkoTpKZ0/zjfiryo0fzrfir62Phf8ANT/v/sYM3zDyUkkktFiUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlKl1b+gP/r1f+fGK6qfVRODYPNn/AFbUzJ/Nz/ulMfmHmEPdMnTLmW2umSShFSkkkigpSdN2SKKlBJLhJJKkiYH8EgmPdDopfukmSRUqE4SSSUpJMkgpQTpJh+VFS6RSSSQpJJJJSkkkklKSSThBTOj+dar6oUfzjfir62Phf83P+/8AsYM3zDyUkkktFiUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlKp1T+hP+LP8Aq2q2qfVhOBaPNn/VtTcnyS/ulMdx5oO6SR5SXMNtSSRSRUqNZSKSXdJSkkkklKSCSSXVSkoS7peKSVk6bukgpdJLtCXwSUt8Ekk6Slkk5CZJS/ZJJI90UK7pJJIFKkgkkkhXZOm8kuCBHxKKklP8434q+qFP842PFX1r/C/5uf8AeH5MGbceSkkklosSkkkklKSSSSUpJJJJSkkkklKSSSSUpJJJJSkkkklKSSSSUpU+qmMGz4sH3vaFcVLq8/YXR+/V93qsTcmkJH+qV0fmHmEXdMl/FLuuYbSkkkkVKTJykAgpXKSSSKleSSSSCVJJJJKUUydJJSkkkklLFIJ4lMkpdJIJIqUkkkUkLJ0ydBK6ZJI+aKFDxTlLsmSUkp/nW/FX1Qp/nW/FX1r/AAv+bn/f/YwZtx5KSSSWixKSSSSUsnSSSUpJJJJSkkkklKSSSSUpJJJJSkkkklKSSSSUpU+qQcJ08bq5/wA9quKn1Uxgv/rV/wDnxqZkNY5n+qfyTH5h5hCkmSXMttSSXkkipR4SS5EJIJUkkkihXdJJIIJUkl2SRUpJJJBSpSSSSUpLzTJ0lKhMnTJKXSSKSKlk6ZOAgpSRSSKKF0yRPZJAqSU/zrfir6z6f5xvxWgtf4X/ADc/7/7GDNuPJSSSS0mJSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkmTpKUkkkkpSSSSSlKn1QTg2DzZ/wBW1XFT6q7bhPP8qv8AGxqbk+SX90pj8w80J8UkjymXMNtSSSSKlJFJJBSkkkkVKSSlJJKkkkklKSSSSUryShN3ToKV2TJJ4SUpNynTcJKX7Jk6SKllIJgnSCCtKZOkglSSZOOUrUzp/nW/FaCz6f51vxWgtf4X/Nz/ALwa+bceSkkklpMSkkkklKSSSSUsnSSSUpJJJJSkkkklKSSSSUpJJJJSkkkklKVLqwnAs+LD9z2lXVU6n/QrPiz/AKtqZk+SX90pj8w8wgOpKZOkuZbaySSSKlJJJJKV8EkkklKSSSSStwl/BOkkpSQSKSSld0ikkUuilJk4S7oKUEycpklLpk6ZEqXCSQSSQpJJJBKx4SCSceKSmVX863wkLRWfT/ON+IWgtf4X8mT+8Gvm3HkpJJJaTEpJJJJSkkkklKSSSSUpJJJJSkkkklKSSSSUpJJJJSkkkklKVPqv9Bf/AFq//PjVcVTqn9Dd/WZ/1bUzJ/Nz/un8l0fmHmEB0lJLul4LmW0pMUkkVK7Jk6SSVcpJJJBCu6SSSCVBJJLsihSSSRSUpJJJJS6ZJJJSkku6UIKUkkkipSRSSKSlJBJJLqpSQSSGiCWdP8434rQVCn+cb8VfWv8AC/kyf3g18248lJJJLSYlJJJJKUkkkkpSSSSSlJJJJKUkkmSUukmTpKUkkkkpSSSSSlKp1QxhPPg6ufh6jZVtCyavXx7Kv32kD49k2YuMh3BCYmiD2LSSUa3b2Bx0PDh4HupQuZIINHcNtZJOl2QUpMnASRUsEkkkgpRS7pJ0lLJJ4TJKV2SSSQKlFJJLskpSSXknRUskkE6Sld1FOlCSlJJd0/dJSySRlJJSil2S7p+2iCmdOtrfir6p4rSX7uzVcW18MiRilL96Wn0a+U+ryCkkklfY1JJJJKUkkkkpZOkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkppZOM5rjbUJDtXsHj+8EEEH5crSUXVVv+k0E+Ko8zyEcsjOB4JHfsWWOWhR1aCSufZqvA/el9mq8/vVT/AEZm7w+0/wAF/ux8Wmkrn2arwP3pfZqvA/el/ozN+9D7T/BXux8Wmkrn2arwP3pfZavA/eh/ozN+9D7T/BXux8WmkrYxax4p/stXn96X+jM/eH2n+Cvdj4tNLurn2Wrz+9L7LV5/el/o3P3h9p/gr3Y+LTShXPstXn96b7LV5/el/ozP3h9v9ivdj4tSEoVv7JV5/el9lr8/vS/0bn7w+3+xXux8Wokrf2WrzS+y1+aX+jc/eH2/2K92Pi1Elc+y1+aX2Wvz+9L/AEbn7w+3+xXux8Wmkrf2Wrz+9P8AZa/P70v9G5+8Pt/sV7sfFppamfBXPstXn96b7LVM6/el/o3P3h9pV7sfFqJK39lr8Sl9lq8/vS/0bn7w+3+xXux8WopMY5xAaJVsY1Q7T8UQNDRAEBSY/hk7/WSiB/V1KDmHQMa6xW2B8yppJLUhGMIiMRQiKDATepUkkknKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlk6SSSlk6SSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKf/Z";
-    //const char img[]   = "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2MBERISGBUYLxoaL2NCOEJjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY//AABEIAGAASAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/ANNEQoJFwRWvps0I4JAPauathcQg7fmQ9VoHmmQiMkd8UhnV6mRtgPGPMFc0ciRsEAVIxulti8khKjoM9DVSRPPwAeQaipHmi0NaMr3RIbg557UmDjkGi5tgkvfy8556kVIbmAcean/fVZ0afIrBJ3I+emDxUYiO/BB2n2qf7TB/z2T/AL6pv2qD/nsn/fVbCMfxJ1gHsf6Vz+2t3xE4aWDaQRtJBFYW5vU01sT1OtS/kA4Y09biUvFKHIYZ5rKDcVbtmzCvsTTA0IruVr2SEtlNpYCpYbsWssRlYHnDEis2Bv8AiY5HdCKh1J2MyqDwBmkNuxPdaoZHYKFwGOPpWddahcoQYpCq9MYFR9yWPfpUd4AUGBjmmTcT+1bz/nufyFH9qXn/AD3P5CqZGDRgA0WFclnuJrlgZWLkDA4qtsf+4fyqwG4xwB9KZx/eH5UDiaO7tmrdo37r8apSjEjD0NWLM/I31oYyxAf9NT3BH6U29DSPlVOMelEP/H5H9TVg3LJx5JYA4yDVRjdkzdkZ8VuSDuVgc8cGo79NioucHrzVyW4kd8rG6D0zVHUSXMRbOdpH603GxmpOWhRkGOcg03NO20baktIbmm5qTZ7U3Z7Ui0atwuJ3+tSWy5Vhjg1MYPMmZicqTx71q6Tpvnv5jriJe3rSGO0rTBj7RKv+6D/Oobq0jEsmNy/N/CeK6XYAvA4FZ7xK4yyg55pXfQUlcwTZruOZpD+NWbe0jMWNgbB43c1pfZos52ChIwGIAwO1SnL7TDlS2KP2SP8A55r+VH2VP7i/lWgUpNlUOxQ+zL/dH5UfZl/uj8q0PKo8qmgKdlYtczbQMIPvGuijhWNAiDCgYAp1tbJbxCNB06n1qXbUgQsvymqBU+lapXis6U7CQe1AEBFNJANKWDZ55qFwcigB4fmngZqOOEnmrCRkUACinYp4Q0uw1SA1NtGKk20mKgoZjiqlxaLKxbJB9qukVCRzTAofYCD8rjHuKcLNQcnk1cNJQSQCFQOlO8sVLRigCLZTtlP207bVIbP/2Q==";
     const char img[] =
 "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEABALDA4MChAODQ4SERATGCgaGBYWGDEj"
 "JR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2MBERISGBUY"
@@ -561,12 +598,12 @@ void UT_QVersitContactGenerator::testAvatar()
     val.append("MSc");//Suffix
     nameProperty.setName(QString::fromAscii(versitNameId));
     nameProperty.setValue(val.join(QString::fromAscii(";")).toAscii());
-
     document.addProperty(nameProperty);
+    mGenerator->setImagePath(testImageRelativePath);
     QContact contact = mGenerator->generateContact(document);
 
     // PHOTO location: <dir>/<FirstName><LastName>.<ext>
-    QString fileName(versitPhotoDir);
+    QString fileName(mGenerator->imagePath());
     fileName.append(QString::fromAscii("/"));
     fileName.append(val[0]);
     fileName.append(val[1]);
@@ -580,6 +617,9 @@ void UT_QVersitContactGenerator::testAvatar()
                     contact.detail(QContactAvatar::DefinitionName));
     QCOMPARE(avatar.avatar(), fileName);
     QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
+
+    QDir dir;
+    QVERIFY(dir.exists(fileName));
 }
 
 void UT_QVersitContactGenerator::testGeo()
@@ -643,6 +683,68 @@ void UT_QVersitContactGenerator::testNote()
     contact = mGenerator->generateContact(document);
     note = (QContactNote)contact.detail(QContactNote::DefinitionName);
     QCOMPARE(note.note(),QString::fromAscii(val));
+}
+
+void UT_QVersitContactGenerator::testOnlineAccount()
+{
+    // no subtype
+    QVersitDocument document;
+    QVersitProperty nameProperty;
+    QByteArray val("sip:homer@wiserthanever.com");
+    nameProperty.setName(QString::fromAscii(versitSipId));
+    nameProperty.setValue(val);
+    document.addProperty(nameProperty);
+    QContact contact = mGenerator->generateContact(document);
+    QContactOnlineAccount online = (QContactOnlineAccount)contact.detail(QContactOnlineAccount::DefinitionName);
+    QCOMPARE(online.accountUri(),QString::fromAscii(val));
+
+    // with supported subtype : SIP
+    document = QVersitDocument();
+    nameProperty = QVersitProperty();
+    nameProperty.setName(QString::fromAscii(versitSipId));
+    nameProperty.setValue(val);
+    QString subTypeVal = "SIP";
+    QMultiHash<QString,QString> params;
+    params.insert(QString::fromAscii(versitType),subTypeVal);
+    nameProperty.setParameters(params);
+    document.addProperty(nameProperty);
+    contact = mGenerator->generateContact(document);
+    online = (QContactOnlineAccount)contact.detail(QContactOnlineAccount::DefinitionName);
+    QCOMPARE(online.accountUri(),QString::fromAscii(val));
+    QStringList subTypes = online.subTypes();
+    QCOMPARE(subTypes.count(),1);
+    QCOMPARE(online.subTypes().at(0),QContactOnlineAccount::SubTypeSip.operator QString());
+
+    // with supported subtype : VideoSharing
+    document = QVersitDocument();
+    nameProperty = QVersitProperty();
+    nameProperty.setName(QString::fromAscii(versitSipId));
+    nameProperty.setValue(val);
+    subTypeVal = "SWIS";
+    params.clear();
+    params.insert(QString::fromAscii(versitType),subTypeVal);
+    nameProperty.setParameters(params);
+    document.addProperty(nameProperty);
+    contact = mGenerator->generateContact(document);
+    online = (QContactOnlineAccount)contact.detail(QContactOnlineAccount::DefinitionName);
+    QCOMPARE(online.accountUri(),QString::fromAscii(val));
+    subTypes = online.subTypes();    
+    QCOMPARE(subTypes.count(),1);
+    QCOMPARE(online.subTypes().at(0),QContactOnlineAccount::SubTypeShareVideo.operator QString());
+
+    // with unsupported subtype : POC
+    document = QVersitDocument();
+    nameProperty = QVersitProperty();
+    nameProperty.setName(QString::fromAscii(versitSipId));
+    nameProperty.setValue(val);
+    subTypeVal = "POC";
+    params.clear();
+    params.insert(QString::fromAscii(versitType),subTypeVal);
+    nameProperty.setParameters(params);
+    document.addProperty(nameProperty);
+    contact = mGenerator->generateContact(document);
+    online = (QContactOnlineAccount)contact.detail(QContactOnlineAccount::DefinitionName);
+    QCOMPARE(online.isEmpty(),true);        
 }
 
 QVersitDocument UT_QVersitContactGenerator::createDocumentWithProperty(
