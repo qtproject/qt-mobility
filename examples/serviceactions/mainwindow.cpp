@@ -715,8 +715,7 @@ void MainWindow::viewSelected()
         menuBar()->addMenu(actionMenu);
 #endif
     }
-
-    QAction* senderAction = static_cast<QAction*>(sender());
+    QAction* senderAction = qobject_cast<QAction*>(sender());
     if(senderAction)
         m_widgetStack->setCurrentIndex(senderAction->data().toInt());
 
