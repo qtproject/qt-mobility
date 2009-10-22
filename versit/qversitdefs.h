@@ -91,12 +91,14 @@ const char versitPhotoGif[] = "GIF";
 const char versitPhotoBmp[] = "BMP";
 const char versitPhotoTiff[] = "TIFF";
 const char versitPhotoJpeg[] = "JPEG";
+const char versitAudioWave[] = "WAVE";
 // Sub types for onlineaccount
 const char versitSwisId[] = "SWIS";
 const char versitSipSubTypeId[] = "SIP";
 
 // Format Conversion
 const char versitJPEGExtenId[] = "JPG";
+const char versitWAVEExtenId[] = "WAV";
 
 // ISO-8601 basic format datetime spec
 const char versitDateTimeSpecIso8601Basic[] = "yyyyMMddThhmmss";

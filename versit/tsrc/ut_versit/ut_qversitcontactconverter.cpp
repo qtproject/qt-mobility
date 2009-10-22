@@ -79,19 +79,29 @@ void UT_QVersitContactConvertert::initTestCase()
 {
     //create dummy file.
     QDir dir = QDir::current();
-    mTestFileName = dir.filePath("versitTest001.jpg");
-    QFile testFile(dir.filePath(mTestFileName));
+    mTestPhotoFile = dir.filePath("versitTest001.jpg");
+    mTestAudioFile = dir.filePath("versitTest001.wav");
+    QFile testPhotoFile(dir.filePath(mTestPhotoFile));
+    QFile testAudioFile(dir.filePath(mTestAudioFile));
 
-    if ( testFile.open( QIODevice::ReadWrite ) ) {
-        QTextStream stream( &testFile );
+    if ( testPhotoFile.open( QIODevice::ReadWrite ) ) {
+        QTextStream stream( &testPhotoFile );
         stream << "HHH KKK UUU NNN OOO PPP GGG NNN KKK OOO UUU PPP III" << endl;
     }
+    testPhotoFile.close();
+
+    if ( testAudioFile.open( QIODevice::ReadWrite ) ) {
+        QTextStream stream( &testPhotoFile );
+        stream << "HHH KKK UUU NNN OOO PPP GGG NNN KKK OOO UUU PPP III" << endl;
+    }
+    testAudioFile.close();
 }
 
 void UT_QVersitContactConvertert::cleanupTestCase()
 {
     QDir dir = QDir::current();
-    dir.remove(mTestFileName);
+    dir.remove(mTestPhotoFile);
+    dir.remove(mTestAudioFile);
 }
 
 
@@ -601,8 +611,8 @@ void UT_QVersitContactConvertert::testEncodeEmbeddedContent()
     QString value = (mVersitDocument.properties().at(0).value() );
     QCOMPARE(url, value);
 
-    // Test 2: Local Media
-    contactAvatar.setAvatar(mTestFileName);
+    // Test 2: Local Media PHOTO
+    contactAvatar.setAvatar(mTestPhotoFile);
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
     contact.saveDetail(&contactAvatar);
     mVersitDocument = mConverter->convertContact(contact);
@@ -620,8 +630,26 @@ void UT_QVersitContactConvertert::testEncodeEmbeddedContent()
     QString value1 = (mVersitDocument.properties().at(0).value() );
     QEXPECT_FAIL(url.toAscii(), value1.toAscii(), Continue);
 
+    // Test 3: Local Media SOUND
+    contactAvatar.setAvatar(mTestAudioFile);
+    contactAvatar.setSubType(QContactAvatar::SubTypeAudioRingtone);
+    contact.saveDetail(&contactAvatar);
+    mVersitDocument = mConverter->convertContact(contact);
 
-    // Test3: New Media Format will be encoded also
+    //Media type, source encoding is encoded i.e. base64
+    QCOMPARE(2, mVersitDocument.properties().at(0).parameters().count());
+
+    QVERIFY(mVersitDocument.properties().at(0).parameters().contains(
+            QString::fromAscii(versitType), QString::fromAscii(versitAudioWave)));
+
+    QVERIFY(mVersitDocument.properties().at(0).parameters().contains(
+            QString::fromAscii(versitEncoding), QString::fromAscii(versitEncodingBase64)));
+
+    //Ensure value1 is not URL
+    QString value2 = (mVersitDocument.properties().at(0).value() );
+    QEXPECT_FAIL(url.toAscii(), value1.toAscii(), Continue);
+
+    // Test4: New Media Format will be encoded also
     const QString testUrl = "http://www.myhome.com/test.ggg";
     contactAvatar.setAvatar(testUrl);
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
@@ -635,8 +663,7 @@ void UT_QVersitContactConvertert::testEncodeEmbeddedContent()
     QVERIFY(mVersitDocument.properties().at(0).parameters().contains(versitType, "GGG"));
     QVERIFY(mVersitDocument.properties().at(0).parameters().contains(versitValue, versitUrlId));
 
-
-    // Test4: UnSupported Media Type, properties and parameters are not encoded
+    // Test5: UnSupported Media Type, properties and parameters are not encoded
     const QString testUrl2 = "http://www.myhome.com/test.jpg";
     contactAvatar.setAvatar(testUrl2);
     // un-supported media type is encoded

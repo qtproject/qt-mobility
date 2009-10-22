@@ -76,7 +76,7 @@ private slots:
 private: // Data
     QVersitContactConverter* mConverter;
     QVersitContactConverterPrivate* mConverterPrivate;
-    QString mTestFileName;
+    QString mTestPhotoFile, mTestAudioFile;
 };
 
 #endif /* UT_QVERSITCONTACTCONVERTER_H_ */

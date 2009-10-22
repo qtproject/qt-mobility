@@ -124,9 +124,16 @@ QVersitContactConverterPrivate::QVersitContactConverterPrivate()
     mMappings.insert(
         QContactAvatar::SubTypeImage,QString::fromAscii(versitPhotoId));
 
+    // Sound is mapped to the Contact Audio Ringingtones that was the nearest match
+    // field for the Sound
+    mMappings.insert(
+        QContactAvatar::SubTypeAudioRingtone,QString::fromAscii(versitSoundId));
+
     //Media Types.
     mMappings.insert(
         QString::fromAscii(versitJPEGExtenId),QString::fromAscii(versitPhotoJpeg));
+    mMappings.insert(
+        QString::fromAscii(versitWAVEExtenId),QString::fromAscii(versitAudioWave));
 }
 
 /*!
