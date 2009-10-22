@@ -152,7 +152,7 @@ echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PRO
 echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
 
 
-:copy %PROJECT_CONFIG% %PROJECT_PWD%config.pri
+copy %PROJECT_CONFIG% %PROJECT_PWD%config.pri
 del %PROJECT_CONFIG%
 
 echo Checking available Qt
