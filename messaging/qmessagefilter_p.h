@@ -117,6 +117,7 @@ public:
     static MapiFolderIterator folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiStorePtr &store);
     static MapiStoreIterator storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiSessionPtr &session);
     static QList<QMessageFilter> subfilters(const QMessageFilter &filter);
+    static bool isNonMatching(const QMessageFilter &filter); // Possibly should be in public QMessageFilter API
     static bool matchesMessage(const QMessageFilter &filter, const QMessage &message);
 
     static bool QMessageFilterPrivate::restrictionPermitted(const QMessageFilter &filter);

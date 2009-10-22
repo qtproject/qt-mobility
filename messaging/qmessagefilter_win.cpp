@@ -242,6 +242,13 @@ bool QMessageFilterPrivate::containsSenderSubfilter(const QMessageFilter &filter
     return result;
 }
 
+bool QMessageFilterPrivate::isNonMatching(const QMessageFilter &filter)
+{
+    return (filter.d_ptr->containerFiltersAreEmpty() 
+        && (filter.d_ptr->_field == QMessageFilterPrivate::None)
+        && (filter.d_ptr->_operator == QMessageFilterPrivate::Not));
+}
+
 bool QMessageFilterPrivate::matchesMessage(const QMessageFilter &filter, const QMessage &message)
 {
     bool negate(false);
@@ -254,6 +261,7 @@ bool QMessageFilterPrivate::matchesMessage(const QMessageFilter &filter, const Q
         qWarning("matchesMessage: Invalid filter application attempted.");
         return false;
     }
+
     if (filter.d_ptr->_options & QMessageDataComparator::FullWord) {
         qWarning("matchesMessage: Full word matching not supported on MAPI platforms.");
         return false;
@@ -1205,6 +1213,13 @@ const QMessageFilter& QMessageFilter::operator&=(const QMessageFilter& other)
     }
     if (other.isEmpty())
         return *this;
+    if (QMessageFilterPrivate::isNonMatching(*this)) {
+        return *this;
+    }
+    if (QMessageFilterPrivate::isNonMatching(other)) {
+        *this = other;
+        return *this;
+    }
     if (!d_ptr->_valid || !other.d_ptr->_valid) {
         d_ptr->_valid = false;
         return *this;
@@ -1291,6 +1306,13 @@ const QMessageFilter& QMessageFilter::operator|=(const QMessageFilter& other)
         return *this;
     if (other.isEmpty()) {
         *this = other;
+        return *this;
+    }
+    if (QMessageFilterPrivate::isNonMatching(*this)) {
+        *this = other;
+        return *this;
+    }
+    if (QMessageFilterPrivate::isNonMatching(other)) {
         return *this;
     }
 
@@ -1427,20 +1449,41 @@ QMessageFilter QMessageFilter::byId(const QMessageFilter &filter, QMessageDataCo
     return result;
 }
 
+// For the type filters the assumption is made that there is one store, default SMS store (QMessageAccount) that contains
+//  only SMS messages, and all other stores (QMessageAccounts) contain only email messages.
 QMessageFilter QMessageFilter::byType(QMessage::Type type, QMessageDataComparator::EqualityComparator cmp)
 {
-    // Not implemented
-    QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::Type, QVariant(type), cmp)); // stub
-    result.d_ptr->_valid = false; // Not natively implementable
-    return result;
+    if (cmp == QMessageDataComparator::Equal)
+        return QMessageFilter::byType(type, QMessageDataComparator::Includes);
+    return QMessageFilter::byType(type, QMessageDataComparator::Excludes);
 }
 
-QMessageFilter QMessageFilter::byType(QMessage::TypeFlags type, QMessageDataComparator::InclusionComparator cmp)
+QMessageFilter QMessageFilter::byType(QMessage::TypeFlags aType, QMessageDataComparator::InclusionComparator cmp)
 {
-    // Not implemented
-    QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::Type, QVariant(type), cmp)); // stub
-    result.d_ptr->_valid = false; // Not natively implementable
-    return result;
+    QMessage::TypeFlags type(aType & (QMessage::Sms | QMessage::Email)); // strip Mms, Xmpp
+    if (type == QMessage::Sms) {
+        if (cmp == QMessageDataComparator::Includes) {
+            return QMessageFilter::byParentAccountId(QMessageAccount::defaultAccount(QMessage::Sms), QMessageDataComparator::Equal);
+        } else {
+            return QMessageFilter::byParentAccountId(QMessageAccount::defaultAccount(QMessage::Sms), QMessageDataComparator::NotEqual);
+        }
+    }
+    if (type == QMessage::Email) {
+        if (cmp == QMessageDataComparator::Includes) {
+            return QMessageFilter::byParentAccountId(QMessageAccount::defaultAccount(QMessage::Sms), QMessageDataComparator::NotEqual);
+        } else {
+            return QMessageFilter::byParentAccountId(QMessageAccount::defaultAccount(QMessage::Sms), QMessageDataComparator::Equal);
+        }
+    }
+    if (type == (QMessage::Sms | QMessage::Email)) {
+        if (cmp == QMessageDataComparator::Includes)
+            return QMessageFilter(); // inclusion, match all
+        return ~QMessageFilter(); // exclusion, match none
+    }
+    // Mms/Xmpp only
+    if (cmp == QMessageDataComparator::Includes)
+        return ~QMessageFilter(); // mms only inclusion, match none
+    return QMessageFilter(); // mms only exclusion, match all
 }
 
 QMessageFilter QMessageFilter::bySender(const QString &value, QMessageDataComparator::EqualityComparator cmp)
