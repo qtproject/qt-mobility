@@ -2368,6 +2368,26 @@
         <keyword ref="qservicefilter.html#operator-eq">operator=</keyword>
         <section ref="qservicefilter-members.html" title="List of all members"/>
     </section>
+    <section ref="qserviceinterfacedescriptor.html" title="QServiceInterfaceDescriptor Class Reference">
+        <keyword ref="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">PropertyKey</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::ServiceDescription</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::InterfaceDescription</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::Capabilities</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::Location</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#customProperty">customProperty</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#inSystemScope">inSystemScope</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#interfaceName">interfaceName</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#isValid">isValid</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#majorVersion">majorVersion</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#minorVersion">minorVersion</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#property">property</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#serviceName">serviceName</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#operator-eq">operator=</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#operator-eq-eq">operator==</keyword>
+        <section ref="qserviceinterfacedescriptor-members.html" title="List of all members"/>
+    </section>
     <section ref="qservicemanager.html" title="QServiceManager Class Reference">
         <keyword ref="qservicemanager.html">QServiceManager</keyword>
         <keyword ref="qservicemanager.html#Error-enum">Error</keyword>

@@ -48,7 +48,7 @@
 
 QT_BEGIN_NAMESPACE
 
-/*
+/*!
     \class QServiceInterfaceDescriptor
     \ingroup servicefw
     \brief The QServiceInterfaceDescriptor class identifies a service implementation.
@@ -83,7 +83,7 @@ QT_BEGIN_NAMESPACE
     \sa QServiceFilter, QServiceManager
 */
 
-/*
+/*!
     \enum QServiceInterfaceDescriptor::PropertyKey
 
     This enum describes the possible property types which can be attached
@@ -103,7 +103,7 @@ QT_BEGIN_NAMESPACE
                                         implementation.
 */
 
-/*
+/*!
     Creates a new QServiceInterfaceDescriptor.
 */
 QServiceInterfaceDescriptor::QServiceInterfaceDescriptor()
@@ -111,7 +111,7 @@ QServiceInterfaceDescriptor::QServiceInterfaceDescriptor()
 {
 }
 
-/*
+/*!
     Destroys the QServiceInterfaceDescriptor object.
 */
 QServiceInterfaceDescriptor::~QServiceInterfaceDescriptor()
@@ -120,7 +120,7 @@ QServiceInterfaceDescriptor::~QServiceInterfaceDescriptor()
         delete d;
 }
 
-/*
+/*!
     Creates a copy of QServiceInterfaceDescriptor contained in \a other.
 */
 QServiceInterfaceDescriptor::QServiceInterfaceDescriptor(const QServiceInterfaceDescriptor& other)
@@ -129,7 +129,7 @@ QServiceInterfaceDescriptor::QServiceInterfaceDescriptor(const QServiceInterface
     (*this) = other; //use assignment operator
 }
 
-/*
+/*!
     \fn  QServiceInterfaceDescriptor& QServiceInterfaceDescriptor::operator=(const QServiceInterfaceDescriptor& other)
     
     Copies the content of the QServiceInterfaceDescriptor object contained 
@@ -151,7 +151,7 @@ QServiceInterfaceDescriptor& QServiceInterfaceDescriptor::operator=(const QServi
     return *this;
 }
 
-/*
+/*!
     \fn bool QServiceInterfaceDescriptor::operator==(const QServiceInterfaceDescriptor& other) const
     
     Compares a QServiceInterfaceDescriptor to \a other. Returns true if they 
@@ -170,14 +170,14 @@ bool QServiceInterfaceDescriptor::operator==(const QServiceInterfaceDescriptor& 
     return false;
 }
 
-/*
+/*!
     \fn bool QServiceInterfaceDescriptor::operator!=(const QServiceInterfaceDescriptor& other) const
 
     Compares a QServiceInterfaceDescriptor to \a other. Returns true
     if they are not equal and false otherwise.
 */
 
-/*
+/*!
     \fn bool QServiceInterfaceDescriptor::isValid() const
     
     Returns true if this descriptor is valid; otherwise returns false.
@@ -187,7 +187,7 @@ bool QServiceInterfaceDescriptor::isValid() const
     return d ? true : false;
 }
 
-/*
+/*!
     \fn  bool QServiceInterfaceDescriptor::inSystemScope() const
     
     Returns true if this implementation is provided for all users on the system.
@@ -199,7 +199,7 @@ bool QServiceInterfaceDescriptor::inSystemScope() const
     return d ? d->systemScope : false;
 }
 
-/*
+/*!
     \fn  QString QServiceInterfaceDescriptor::serviceName() const
     
     Returns the name of service that provides this implementation.
@@ -209,7 +209,7 @@ QString QServiceInterfaceDescriptor::serviceName() const
     return d ? d->serviceName : QString();
 }
 
-/*
+/*!
     \fn  QString QServiceInterfaceDescriptor::interfaceName() const
     
     Returns the name of the interface that is implemented.
@@ -219,7 +219,7 @@ QString QServiceInterfaceDescriptor::interfaceName() const
     return d ? d->interfaceName : QString();
 }
 
-/*
+/*!
     \fn  int QServiceInterfaceDescriptor::majorVersion() const
     
     Returns the version of the interface. 
@@ -233,7 +233,7 @@ int QServiceInterfaceDescriptor::majorVersion() const
     return d ? d->major : -1;
 }
 
-/*
+/*!
     \fn  int QServiceInterfaceDescriptor::minorVersion() const
     
     Returns the version of the implementation. 
@@ -243,7 +243,7 @@ int QServiceInterfaceDescriptor::minorVersion() const
     return d ? d->minor : -1;
 }
 
-/*
+/*!
     \fn  QVariant QServiceInterfaceDescriptor::property(QServiceInterfaceDescriptor::PropertyKey key) const
     
     Returns the value for the property \a key; otherwise returns 
@@ -256,7 +256,7 @@ QVariant QServiceInterfaceDescriptor::property(QServiceInterfaceDescriptor::Prop
     return QVariant();
 }
 
-/*
+/*!
     \fn  QString QServiceInterfaceDescriptor::customProperty(const QString& key) const
     
     Returns the value for the custom property \a key; otherwise 
@@ -302,7 +302,7 @@ QDataStream &operator>>(QDataStream &in, QServiceInterfaceDescriptor::PropertyKe
     k = (QServiceInterfaceDescriptor::PropertyKey)key;
     return in;
 }
-/* 
+/*! 
     \fn QDataStream &operator<<(QDataStream &out, const QServiceInterfaceDescriptor &dc)
     \relates QServiceInterfaceDescriptor
 
@@ -330,7 +330,7 @@ QDataStream &operator<<(QDataStream &out, const QServiceInterfaceDescriptor &dc)
     return out;
 }
 
-/*
+/*!
     \fn QDataStream &operator>>(QDataStream &in, QServiceInterfaceDescriptor &dc)
     \relates QServiceInterfaceDescriptor
 
