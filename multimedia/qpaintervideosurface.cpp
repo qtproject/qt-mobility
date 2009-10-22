@@ -937,6 +937,11 @@ void QPainterVideoSurface::paint(QPainter *painter, const QRect &rect)
     if (!isStarted()) {
         painter->fillRect(rect, QBrush(Qt::black));
     } else {
+        if (m_colorsDirty) {
+            m_painter->updateColors(m_brightness, m_contrast, m_hue, m_saturation);
+            m_colorsDirty = false;
+        }
+
         QAbstractVideoSurface::Error error = m_painter->paint(rect, painter, m_sourceRect);
 
         if (error != QAbstractVideoSurface::NoError) {
