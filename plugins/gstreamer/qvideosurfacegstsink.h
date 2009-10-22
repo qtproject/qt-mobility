@@ -74,8 +74,11 @@ private slots:
     void queuedStop();
     void queuedRender();
 
+    void supportedFormatsChanged();
+
 private:
     QPointer<QAbstractVideoSurface> m_surface;
+    QList<QVideoFrame::PixelFormat> m_supportedPixelFormats;
     QMutex m_mutex;
     QWaitCondition m_setupCondition;
     QWaitCondition m_renderCondition;

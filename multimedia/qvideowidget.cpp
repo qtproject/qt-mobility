@@ -107,26 +107,6 @@ QWidget *QVideoWidgetControlBackend::widget()
 
 #ifndef QT_NO_MULTIMEDIA
 
-#ifndef QT_NO_OPENGL
-
-QGLWidgetVideoSurface::QGLWidgetVideoSurface(QGLWidget *widget, QObject *parent)
-    : QPainterVideoSurface(widget->context(), parent)
-    , m_widget(widget)
-{
-}
-
-void QGLWidgetVideoSurface::makeCurrent()
-{
-    m_widget->makeCurrent();
-}
-
-void QGLWidgetVideoSurface::doneCurrent()
-{
-    m_widget->doneCurrent();
-}
-
-#endif
-
 QVideoRendererWidget::QVideoRendererWidget(QVideoRendererControl *control, QWidget *parent)
 #ifndef QT_NO_OPENGL
     : QGLWidget(parent)
@@ -134,11 +114,7 @@ QVideoRendererWidget::QVideoRendererWidget(QVideoRendererControl *control, QWidg
     : QWidget(parent)
 #endif
     , m_rendererControl(control)
-#ifndef QT_NO_OPENGL
-    , m_surface(new QGLWidgetVideoSurface(this))
-#else
     , m_surface(new QPainterVideoSurface)
-#endif
 {
     connect(m_surface, SIGNAL(frameChanged()), SLOT(update()));
     connect(m_surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)), SLOT(dimensionsChanged()));
@@ -146,6 +122,11 @@ QVideoRendererWidget::QVideoRendererWidget(QVideoRendererControl *control, QWidg
     QPalette palette;
     palette.setColor(QPalette::Background, Qt::black);
     setPalette(palette);
+
+#ifndef QT_NO_OPENGL
+    m_surface->setGLContext(const_cast<QGLContext *>(context()));
+    m_surface->setShaderType(QPainterVideoSurface::FragmentProgramShader);
+#endif
 
     m_rendererControl->setSurface(m_surface);
 }
