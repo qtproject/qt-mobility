@@ -67,15 +67,15 @@ const QByteArray alternateCharset("UTF-16");
 template<typename T1, typename T2>
 void approximateCompare(const T1 &actual, const T2 &expected, const T2 &variance, int line)
 {
-    if (!((expected - variance) < actual) ||
-        !(actual < (expected + variance))) {
+    if (!((expected - variance) <= actual) ||
+        !(actual <= (expected + variance))) {
         qWarning() << "at line:" << line;
         qWarning() << "\tactual:" << actual;
         qWarning() << "\texpected:" << expected;
         qWarning() << "\tvariance:" << variance;
     }
-    QVERIFY((expected - variance) < actual);
-    QVERIFY(actual < (expected + variance));
+    QVERIFY((expected - variance) <= actual);
+    QVERIFY(actual <= (expected + variance));
 }
 #define QAPPROXIMATECOMPARE(a,e,v) approximateCompare(a,e,v,(__LINE__))
 
@@ -405,7 +405,7 @@ void tst_QMessageStore::testMessage_data()
         << "Last HTML message..."
         << QByteArray("multipart")
         << QByteArray("mixed")
-        << 5120u
+        << 4096u
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
         << QByteArray("html")
