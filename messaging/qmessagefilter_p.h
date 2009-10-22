@@ -84,7 +84,7 @@ public:
     QMessageFilter *q_ptr;
     QMessageDataComparator::Options _options;
 #if defined(Q_OS_WIN)
-    enum Field { None = 0, Id, Type, Sender, SenderName, SenderAddress, Recipients, RecipientName, RecipientAddress, Subject, TimeStamp, ReceptionTimeStamp, Status, Priority, Size, ParentAccountId, ParentFolderId, AncestorFolderIds };
+    enum Field { None = 0, Id, Type, Sender, SenderName, SenderAddress, Recipients, RecipientName, RecipientAddress, Subject, TimeStamp, ReceptionTimeStamp, Status, Priority, Size, ParentAccountId, ParentFolderId, AncestorFolderIds, MessageFilter, AccountFilter, FolderFilter, AncestorFilter };
     enum Comparator { Equality = 0, Relation, Inclusion };
     enum Operator { Identity = 0, And, Or, Not, Nand, Nor, OperatorEnd };
     QMessageFilterPrivate::Field _field;
@@ -97,6 +97,11 @@ public:
     bool _valid;
     bool _matchesRequired;
     bool _restrictionPermitted;
+    QMessageFilter *_messageFilter;
+    QMessageAccountFilter *_accountFilter;
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+    QMessageFolderFilter *_folderFilter;
+#endif
 
     QSet<QMessage::StandardFolder> _standardFoldersInclude; // only match messages directly in one of these folders
     QSet<QMessage::StandardFolder> _standardFoldersExclude; // only match messages not directly in any of these folders
@@ -117,6 +122,8 @@ public:
     static MapiFolderIterator folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiStorePtr &store);
     static MapiStoreIterator storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiSessionPtr &session);
     static QList<QMessageFilter> subfilters(const QMessageFilter &filter);
+    static QMessageFilter preprocess(const QMessageFilter &filter);
+    static void preprocess(QMessageFilter *filter);
     static bool isNonMatching(const QMessageFilter &filter); // Possibly should be in public QMessageFilter API
     static bool matchesMessage(const QMessageFilter &filter, const QMessage &message);
 

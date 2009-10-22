@@ -212,6 +212,69 @@ QList<QMessageFilter> QMessageFilterPrivate::subfilters(const QMessageFilter &fi
     return result;
 }
 
+// Several filters require QMessageStore::queryX to be called to evaluate filter member variables, 
+// namely byIds(const QMessageFilter &, ...), byParentAccountId(const QMessageAccountFilter &, ...), 
+// byFolderIds(const QMessageFolderFilter &, ...), byAncestorFolderIds(const QMessageFolderFilter &, ...)
+QMessageFilter QMessageFilterPrivate::preprocess(const QMessageFilter &filter)
+{
+    QMessageFilter result(filter);
+    QMessageFilterPrivate::preprocess(&result);
+    return result;
+}
+
+void QMessageFilterPrivate::preprocess(QMessageFilter *filter)
+{
+    if (!filter)
+        return;
+
+    QMessageDataComparator::InclusionComparator incl(static_cast<QMessageDataComparator::InclusionComparator>(filter->d_ptr->_comparatorValue));
+    bool inclusion(incl == QMessageDataComparator::Includes);
+    QMessageFilter result;
+    if (inclusion) {
+        result = ~QMessageFilter();
+    }
+    if (filter->d_ptr->_field == MessageFilter) {
+        QMessageIdList ids(QMessageStore::instance()->queryMessages(*filter->d_ptr->_messageFilter));
+        result = QMessageFilter::byId(ids, incl);
+    } else if (filter->d_ptr->_field == AccountFilter) {
+        QMessageAccountIdList ids(QMessageStore::instance()->queryAccounts(*filter->d_ptr->_accountFilter));
+        foreach(QMessageAccountId id, ids) {
+            if (inclusion) {
+                result |= QMessageFilter::byParentAccountId(id);
+            } else {
+                result &= QMessageFilter::byParentAccountId(id, QMessageDataComparator::NotEqual);
+            }
+        }
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+    } else if (filter->d_ptr->_field == FolderFilter) {
+        QMessageFolderIdList ids(QMessageStore::instance()->queryFolders(*filter->d_ptr->_folderFilter));
+        foreach(QMessageFolderId id, ids) {
+            if (inclusion) {
+                result |= QMessageFilter::byParentFolderId(id);
+            } else {
+                result &= QMessageFilter::byParentFolderId(id, QMessageDataComparator::NotEqual);
+            }
+        }
+    } else if (filter->d_ptr->_field == AncestorFilter) {
+        QMessageFolderIdList ids(QMessageStore::instance()->queryFolders(*filter->d_ptr->_folderFilter));
+        foreach(QMessageFolderId id, ids) {
+            if (inclusion) {
+                result |= QMessageFilter::byAncestorFolderIds(id);
+            } else {
+                result &= QMessageFilter::byAncestorFolderIds(id, QMessageDataComparator::Excludes);
+            }
+        }
+#endif
+    } else {
+        preprocess(filter->d_ptr->_left);
+        preprocess(filter->d_ptr->_right);
+        return;
+    }
+    if (filter->d_ptr->_operator == Not) // must be Not or Identity
+        result = ~result;
+    *filter = result;
+}
+
 bool QMessageFilterPrivate::restrictionPermitted(const QMessageFilter &filter)
 {
     bool result(filter.d_ptr->_restrictionPermitted);
@@ -263,6 +326,7 @@ bool QMessageFilterPrivate::matchesMessage(const QMessageFilter &filter, const Q
     }
 
     if (filter.d_ptr->_options & QMessageDataComparator::FullWord) {
+        // TODO: Document Full word matching is not supported on MAPI
         qWarning("matchesMessage: Full word matching not supported on MAPI platforms.");
         return false;
     }
@@ -953,6 +1017,11 @@ QMessageFilterPrivate::QMessageFilterPrivate(QMessageFilter *messageFilter)
      _matchesRequired(false),
      _restrictionPermitted(true),
 #endif
+    _messageFilter(0),
+    _accountFilter(0),
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+    _folderFilter(0),
+#endif
      _complex(false)
 {
 }
@@ -963,6 +1032,12 @@ QMessageFilterPrivate::~QMessageFilterPrivate()
     _left = 0;
     delete _right;
     _right = 0;
+    delete _messageFilter;
+    _messageFilter = 0;
+    delete _accountFilter;
+    _accountFilter = 0;
+    delete _folderFilter;
+    _folderFilter = 0;
 }
 
 bool QMessageFilterPrivate::containerFiltersAreEmpty()
@@ -1004,6 +1079,14 @@ QMessageFilter QMessageFilterPrivate::nonContainerFiltersPart()
         result.d_ptr->_right = new QMessageFilter(*_right);
     result.d_ptr->_matchesRequired = _matchesRequired;
     result.d_ptr->_restrictionPermitted = _restrictionPermitted;
+    if (_messageFilter)
+        result.d_ptr->_messageFilter = new QMessageFilter(*_messageFilter);
+    if (_accountFilter)
+        result.d_ptr->_accountFilter = new QMessageAccountFilter(*_accountFilter);
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+    if (_folderFilter)
+        result.d_ptr->_folderFilter = new QMessageFolderFilter(*_folderFilter);
+#endif
     result.d_ptr->_valid = _valid;
     result.d_ptr->_complex = _complex;
     return result;
@@ -1048,6 +1131,20 @@ QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
     d_ptr->_complex = other.d_ptr->_complex;
     d_ptr->_matchesRequired = other.d_ptr->_matchesRequired;
     d_ptr->_restrictionPermitted = other.d_ptr->_restrictionPermitted;
+    delete d_ptr->_messageFilter;
+    d_ptr->_messageFilter = 0;
+    delete d_ptr->_accountFilter;
+    d_ptr->_accountFilter = 0;
+    delete d_ptr->_folderFilter;
+    d_ptr->_folderFilter = 0;
+    if (other.d_ptr->_messageFilter)
+        d_ptr->_messageFilter = new QMessageFilter(*other.d_ptr->_messageFilter);
+    if (other.d_ptr->_accountFilter)
+        d_ptr->_accountFilter = new QMessageAccountFilter(*other.d_ptr->_accountFilter);
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+    if (other.d_ptr->_folderFilter)
+        d_ptr->_folderFilter = new QMessageFolderFilter(*other.d_ptr->_folderFilter);
+#endif
 
     if (other.d_ptr->_left)
         d_ptr->_left = new QMessageFilter(*other.d_ptr->_left);
@@ -1371,6 +1468,26 @@ bool QMessageFilter::operator==(const QMessageFilter& other) const
         return false;
     if (other.d_ptr->_restrictionPermitted != d_ptr->_restrictionPermitted)
         return false;
+    if (other.d_ptr->_messageFilter || d_ptr->_messageFilter) {
+        if (!other.d_ptr->_messageFilter
+            || !d_ptr->_messageFilter
+            || !(*other.d_ptr->_messageFilter == *d_ptr->_messageFilter))
+            return false;
+    }
+    if (other.d_ptr->_accountFilter || d_ptr->_accountFilter) {
+        if (!other.d_ptr->_accountFilter
+            || !d_ptr->_accountFilter
+            || !(*other.d_ptr->_accountFilter == *d_ptr->_accountFilter))
+            return false;
+    }
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+    if (other.d_ptr->_folderFilter || d_ptr->_folderFilter) {
+        if (!other.d_ptr->_folderFilter
+            || !d_ptr->_folderFilter
+            || !(*other.d_ptr->_folderFilter == *d_ptr->_folderFilter))
+            return false;
+    }
+#endif
 
     if (d_ptr->_operator == QMessageFilterPrivate::Identity) {
         if (other.d_ptr->_operator != QMessageFilterPrivate::Identity)
@@ -1441,11 +1558,11 @@ QMessageFilter QMessageFilter::byId(const QMessageIdList &ids, QMessageDataCompa
 
 QMessageFilter QMessageFilter::byId(const QMessageFilter &filter, QMessageDataComparator::InclusionComparator cmp)
 {
-    // Not implemented
-    Q_UNUSED(filter)
-    Q_UNUSED(cmp)
-    QMessageFilter result; // stub
-    result.d_ptr->_valid = false; // Will require synchronous filter evaluation
+    // Not tested
+    QMessageFilter result;
+    result.d_ptr->_field = QMessageFilterPrivate::MessageFilter;
+    result.d_ptr->_messageFilter = new QMessageFilter(filter);
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
     return result;
 }
 
@@ -1723,11 +1840,11 @@ QMessageFilter QMessageFilter::byParentAccountId(const QMessageAccountId &id, QM
 
 QMessageFilter QMessageFilter::byParentAccountId(const QMessageAccountFilter &filter, QMessageDataComparator::InclusionComparator cmp)
 {
-    // Not implemented
-    Q_UNUSED(filter)
-    Q_UNUSED(cmp)
-    QMessageFilter result; // stub
-    // Not natively implementable?
+    QMessageFilter result;
+    result.d_ptr->_field = QMessageFilterPrivate::AccountFilter;
+    result.d_ptr->_accountFilter = new QMessageAccountFilter(filter);
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
+    // Not implemented, TODO
     result.d_ptr->_valid = false;
     return result;
 }
@@ -1747,18 +1864,18 @@ QMessageFilter QMessageFilter::byParentFolderId(const QMessageFolderId &id, QMes
 {
     // Not implemented
     QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::ParentFolderId, QVariant(id.toString()), cmp)); // stub
-    // Not natively implementable?
+    // Not natively implementable?, TODO
     result.d_ptr->_valid = false;
     return result;
 }
 
 QMessageFilter QMessageFilter::byParentFolderId(const QMessageFolderFilter &filter, QMessageDataComparator::InclusionComparator cmp)
 {
-    // Not implemented
-    Q_UNUSED(filter)
-    Q_UNUSED(cmp)
-    QMessageFilter result; // stub
-    // Not natively implementable?
+    QMessageFilter result;
+    result.d_ptr->_field = QMessageFilterPrivate::FolderFilter;
+    result.d_ptr->_folderFilter = new QMessageFolderFilter(filter);
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
+    // Not implemented, TODO
     result.d_ptr->_valid = false;
     return result;
 }
@@ -1767,18 +1884,18 @@ QMessageFilter QMessageFilter::byAncestorFolderIds(const QMessageFolderId &id, Q
 {
     // Not implemented
     QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::AncestorFolderIds, QVariant(id.toString()), cmp));
-    // Not natively implementable?
+    // Not natively implementable?, TODO
     result.d_ptr->_valid = false;
     return result;
 }
 
 QMessageFilter QMessageFilter::byAncestorFolderIds(const QMessageFolderFilter &filter, QMessageDataComparator::InclusionComparator cmp)
 {
-    // Not implemented
-    Q_UNUSED(filter)
-    Q_UNUSED(cmp)
-    QMessageFilter result; // stub
-    // Not natively implementable?
+    QMessageFilter result;
+    result.d_ptr->_field = QMessageFilterPrivate::AncestorFilter;
+    result.d_ptr->_folderFilter = new QMessageFolderFilter(filter);
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
+    // Not implemented, TODO
     result.d_ptr->_valid = false;
     return result;
 }

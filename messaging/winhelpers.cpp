@@ -4036,8 +4036,9 @@ QByteArray MapiSession::attachmentData(QMessageStore::ErrorCode *lastError, cons
 QMessageIdList MapiSession::queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
 {
     QList<FolderHeapNodePtr> folderNodes;
+    QMessageFilter processedFilter(QMessageFilterPrivate::preprocess(filter));
 
-    foreach (QMessageFilter subfilter, QMessageFilterPrivate::subfilters(filter)) {
+    foreach (QMessageFilter subfilter, QMessageFilterPrivate::subfilters(processedFilter)) {
         MapiStoreIterator storeIt(QMessageFilterPrivate::storeIterator(subfilter, lastError, _self.toStrongRef()));
         for (MapiStorePtr store(storeIt.next()); store && store->isValid(); store = storeIt.next()) {
             MapiFolderIterator folderIt(QMessageFilterPrivate::folderIterator(subfilter, lastError, store));
