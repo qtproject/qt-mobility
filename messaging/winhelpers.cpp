@@ -483,6 +483,10 @@ namespace {
                         ulRead = attachmentStream.readRawData(static_cast<char*>(pData), BUF_SIZE);
                     }
 
+                    ULARGE_INTEGER uli = { 0 };
+                    uli.LowPart = ulWritten;
+                    os->SetSize(uli);
+
                     os->Commit(STGC_DEFAULT);
 
                     mapiRelease(os);
@@ -603,21 +607,29 @@ namespace {
 
     bool writeStream(QMessageStore::ErrorCode *lastError, IStream *os, const void *address, ULONG bytes)
     {
-        ULONG written(0);
-        HRESULT rv = os->Write(address, bytes, &written);
+        ULARGE_INTEGER uli = { 0 };
+        uli.LowPart = bytes;
+
+        HRESULT rv = os->SetSize(uli);
         if (HR_SUCCEEDED(rv)) {
-            if (written < bytes) {
-                qWarning() << "Only wrote partial data to output stream.";
-            } else {
-                rv = os->Commit(STGC_DEFAULT);
-                if (HR_SUCCEEDED(rv)) {
-                    return true;
+            ULONG written(0);
+            rv = os->Write(address, bytes, &written);
+            if (HR_SUCCEEDED(rv)) {
+                if (written < bytes) {
+                    qWarning() << "Only wrote partial data to output stream.";
                 } else {
-                    qWarning() << "Unable to commit write to output stream.";
+                    rv = os->Commit(STGC_DEFAULT);
+                    if (HR_SUCCEEDED(rv)) {
+                        return true;
+                    } else {
+                        qWarning() << "Unable to commit write to output stream.";
+                    }
                 }
+            } else {
+                qWarning() << "Unable to write data to output stream.";
             }
         } else {
-            qWarning() << "Unable to write data to output stream.";
+            qWarning() << "Unable to resize output stream.";
         }
 
         *lastError = QMessageStore::FrameworkFault;
@@ -1083,7 +1095,7 @@ namespace {
                     IStream *os(0);
                     HRESULT rv = message->OpenProperty(PR_BODY_HTML_A, 0, STGM_WRITE, MAPI_MODIFY | MAPI_CREATE,(LPUNKNOWN*)&os);
                     if (HR_SUCCEEDED(rv)) {
-                        QByteArray body(bodyContent.content());
+                        QByteArray body(bodyContent.textContent().toLatin1());
                         writeStream(lastError, os, body.data(), body.count());
 
                         mapiRelease(os);
@@ -1093,7 +1105,7 @@ namespace {
                     }
 #else
                 if ((subType == "rtf") || (subType == "html")) {
-	                QString body(bodyContent.textContent());
+                    QString body(bodyContent.textContent());
                     LONG textFormat(EDITOR_FORMAT_RTF);
                     if (subType == "html") {
                         // Encode the HTML within RTF
@@ -3492,6 +3504,7 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                             msg->d_ptr->_contentFormat = EDITOR_FORMAT_HTML;
                         } else if (prop.Value.l & MSGSTATUS_HAS_PR_CE_MIME_TEXT) {
                             // TODO...
+                            // This is how MS proivders store HTML, as per http://msdn.microsoft.com/en-us/library/bb446140.aspx
                         }
 #endif
                         break;
@@ -3721,12 +3734,18 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
 #ifndef _WIN32_WCE
                 ULONG bodyProperty(PR_BODY_HTML);
 #else
+                // Correct variants discussed at http://blogs.msdn.com/raffael/archive/2008/09/08/mapi-on-windows-mobile-6-programmatically-retrieve-mail-body-sample-code.aspx
                 ULONG bodyProperty(PR_BODY_HTML_A);
 #endif
                 HRESULT rv = message->OpenProperty(bodyProperty, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
                 if (HR_SUCCEEDED(rv)) {
                     messageBody = readStream(lastError, is);
                     bodySubType = "html";
+
+#ifdef _WIN32_WCE
+                    // Encode the ASCII text into UTF-16
+                    messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(decodeContent(messageBody, "Latin-1"));
+#endif
                 }
             }
 
