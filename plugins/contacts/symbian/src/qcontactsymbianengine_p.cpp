@@ -227,6 +227,10 @@ bool QContactSymbianEngineData::addContact(QContact& contact, QContactChangeSet&
     TRAP(err, QT_TRYCATCH_LEAVING(id = addContactL(contact)));
     if(err == KErrNone)
     {
+        QContactId contactId;
+        contactId.setLocalId(id);
+        contact.setId(contactId);
+    
         changeSet.addedContacts().insert(id);
         m_contactsAddedEmitted.append(id);
     }
