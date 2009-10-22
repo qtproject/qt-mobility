@@ -378,7 +378,7 @@ private:
     MapiSession(QMessageStore::ErrorCode *lastError);
 
     IMsgStore *openMapiStore(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId, bool cachedMode = true) const;
-    IMessage *openMapiMessage(QMessageStore::ErrorCode *lastError, const QMessageId &id) const;
+    IMessage *openMapiMessage(QMessageStore::ErrorCode *lastError, const QMessageId &id, MapiStorePtr *storePtr = 0) const;
 
     void addRecipients(LPMESSAGE message, const QMessageAddressList& addressList, unsigned long mapiAddressType);
     void addAttachment(LPMESSAGE message, const QMessageContentContainer& attachmentContainer);

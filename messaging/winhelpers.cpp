@@ -43,6 +43,10 @@
 #define DELETE_HARD_DELETE ((ULONG) 0x00000010)
 #endif
 
+#ifndef STORE_HTML_OK
+#define STORE_HTML_OK ((ULONG)0x00010000)
+#endif
+
 #ifndef PR_IPM_DRAFTS_ENTRYID
 #define PR_IPM_DRAFTS_ENTRYID ((ULONG)0x36D7) //undocumented for outlook versions < 2007
 #endif
@@ -589,6 +593,29 @@ namespace {
         return result;
     }
 
+    bool writeStream(QMessageStore::ErrorCode *lastError, IStream *os, const void *address, ULONG bytes)
+    {
+        ULONG written(0);
+        HRESULT rv = os->Write(address, bytes, &written);
+        if (HR_SUCCEEDED(rv)) {
+            if (written < bytes) {
+                qWarning() << "Only wrote partial data to output stream.";
+            } else {
+                rv = os->Commit(STGC_DEFAULT);
+                if (HR_SUCCEEDED(rv)) {
+                    return true;
+                } else {
+                    qWarning() << "Unable to commit write to output stream.";
+                }
+            }
+        } else {
+            qWarning() << "Unable to write data to output stream.";
+        }
+
+        *lastError = QMessageStore::FrameworkFault;
+        return false;
+    }
+
     QString decodeContent(const QByteArray &data, const QByteArray &charset, int length = -1)
     {
         QString result;
@@ -891,6 +918,8 @@ namespace {
     void replaceMessageRecipients(QMessageStore::ErrorCode *lastError, const QMessage &source, IMessage *message, IMAPISession *session)
     {
 #ifdef _WIN32_WCE
+        Q_UNUSED(session)
+
         // For CE, the only available option is to replace the existing list
         HRESULT rv;
 #else
@@ -1008,20 +1037,55 @@ namespace {
         }
     }
 
-    void replaceMessageBody(QMessageStore::ErrorCode *lastError, const QMessage &source, IMessage *message)
+    void replaceMessageBody(QMessageStore::ErrorCode *lastError, const QMessage &source, IMessage *message, const MapiStorePtr &store)
     {
         // Remove any preexisting body elements
+#ifndef _WIN32_WCE
         SizedSPropTagArray(2, props) = {2, {PR_BODY, PR_RTF_COMPRESSED}};
+#else
+        SizedSPropTagArray(2, props) = {2, {PR_BODY_HTML_A, PR_BODY_W}};
+#endif
         HRESULT rv = message->DeleteProps(reinterpret_cast<LPSPropTagArray>(&props), 0);
+#ifdef _WIN32_WCE
+        if (rv == E_FAIL) {
+            // On CE, deleting nonexisting properties fails... assume that they're not present
+            rv = S_OK;
+        }
+#endif
         if (HR_SUCCEEDED(rv)) {
             // Insert the current body data
             QMessageContentContainerId bodyId(source.bodyId());
             if (bodyId.isValid()) {
                 QMessageContentContainer bodyContent(source.find(bodyId));
                 QByteArray subType(bodyContent.contentSubType().toLower());
-                QString body(bodyContent.textContent());
 
+#ifdef _WIN32_WCE
+                if (subType == "rtf") {
+                    // CE does not support RTF; just store it as plain text
+                    subType = "plain";
+                } else if (subType == "html") {
+                    // If the store doesn't support HTML then fallback to text
+                    if (!store->supports(STORE_HTML_OK)) {
+                        subType = "plain";
+                        qWarning() << "Store does not support HTML.";
+                    }
+                }
+
+                if (subType == "html") {
+                    IStream *os(0);
+                    HRESULT rv = message->OpenProperty(PR_BODY_HTML_A, 0, STGM_WRITE, MAPI_MODIFY | MAPI_CREATE,(LPUNKNOWN*)&os);
+                    if (HR_SUCCEEDED(rv)) {
+                        QByteArray body(bodyContent.content());
+                        writeStream(lastError, os, body.data(), body.count());
+
+                        mapiRelease(os);
+                    } else {
+                        qWarning() << "Unable to write HTML to body";
+                        *lastError = QMessageStore::FrameworkFault;
+                    }
+#else
                 if ((subType == "rtf") || (subType == "html")) {
+	                QString body(bodyContent.textContent());
                     LONG textFormat(EDITOR_FORMAT_RTF);
                     if (subType == "html") {
                         // Encode the HTML within RTF
@@ -1033,31 +1097,19 @@ namespace {
                         textFormat = EDITOR_FORMAT_HTML;
                     }
 
-#ifndef _WIN32_WCE
                     // Mark this message as formatted
                     if (!setMapiProperty(message, PR_MSG_EDITOR_FORMAT, textFormat)) {
                         qWarning() << "Unable to set message editor format in message.";
                         *lastError = QMessageStore::FrameworkFault;
                     }
-#endif
+
                     IStream *os(0);
                     rv = message->OpenProperty(PR_RTF_COMPRESSED, &IID_IStream, STGM_CREATE | STGM_WRITE, MAPI_CREATE | MAPI_MODIFY, reinterpret_cast<LPUNKNOWN*>(&os));
                     if (HR_SUCCEEDED(rv)) {
                         IStream *compressor(0);
-#ifndef _WIN32_WCE
                         rv = WrapCompressedRTFStream(os, MAPI_MODIFY, &compressor);
                         if (HR_SUCCEEDED(rv)) {
-                            compressor->Write(body.utf16(), body.length() * sizeof(TCHAR), 0);
-                            rv = compressor->Commit(STGC_DEFAULT);
-                            if (HR_SUCCEEDED(rv)) {
-                                if (HR_FAILED(os->Commit(STGC_DEFAULT))) {
-                                    qWarning() << "Unable to commit write to compressed RTF stream.";
-                                    *lastError = QMessageStore::FrameworkFault;
-                                }
-                            } else {
-                                qWarning() << "Unable to commit write to RTF compressor stream.";
-                                *lastError = QMessageStore::FrameworkFault;
-                            }
+                            writeStream(lastError, compressor, body.utf16(), body.length() * sizeof(TCHAR));
 
                             compressor->Release();
                         } else {
@@ -1066,18 +1118,25 @@ namespace {
                         }
 
                         os->Release();
-#endif
                     } else {
                         qWarning() << "Unable to open compressed RTF stream for write.";
                         *lastError = QMessageStore::FrameworkFault;
                     }
+#endif
                 } else {
+                    QString body(bodyContent.textContent());
+
 #ifdef _WIN32_WCE
-                    // Stream the body in...
-                    LPSTREAM pstm = NULL;
-                    HRESULT hr = message->OpenProperty(PR_BODY, NULL, STGM_WRITE, MAPI_MODIFY,(LPUNKNOWN*)&pstm);
-                    pstm->Write(body.utf16(),body.count()* sizeof(WCHAR), NULL);
-                    pstm->Release();
+                    IStream *os(0);
+                    HRESULT rv = message->OpenProperty(PR_BODY_W, 0, STGM_WRITE, MAPI_MODIFY | MAPI_CREATE,(LPUNKNOWN*)&os);
+                    if (HR_SUCCEEDED(rv)) {
+                        writeStream(lastError, os, body.utf16(), body.count() * sizeof(WCHAR));
+
+                        mapiRelease(os);
+                    } else {
+                        qWarning() << "Unable to write text to body";
+                        *lastError = QMessageStore::FrameworkFault;
+                    }
 #else
                     // Mark this message as plain text
                     LONG textFormat(EDITOR_FORMAT_PLAINTEXT);
@@ -2077,18 +2136,18 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
             replaceMessageRecipients(lastError, source, mapiMessage, session->session());
         }
         if (*lastError == QMessageStore::NoError) {
-            replaceMessageBody(lastError, source, mapiMessage);
+            replaceMessageBody(lastError, source, mapiMessage, _store);
         }
         if (*lastError == QMessageStore::NoError) {
             replaceMessageAttachments(lastError, source, mapiMessage, saveOption );
         }
-        if (*lastError == QMessageStore::NoError && saveOption == SavePropertyChanges ) {
 #ifndef _WIN32_WCE //unsupported
+        if (*lastError == QMessageStore::NoError && saveOption == SavePropertyChanges ) {
             if (HR_FAILED(mapiMessage->SaveChanges(0))) {
                 qWarning() << "Unable to save changes for message.";
             }
-#endif
         }
+#endif
         if (*lastError != QMessageStore::NoError) {
             mapiRelease(mapiMessage);
         }
@@ -2407,22 +2466,14 @@ MapiFolderPtr MapiStore::openFolderWithKey(QMessageStore::ErrorCode *lastError, 
 
 bool MapiStore::supports(ULONG featureFlag) const
 {
-#ifndef _WIN32_WCE
     LONG supportMask(0);
 
     if (getMapiProperty(store(), PR_STORE_SUPPORT_MASK, &supportMask)) {
         return supportMask & featureFlag;
     }
-    else
-        qWarning() << "Unable to query store support mask.";
 
-    return false;
-#else
-    // We can't query the store support, so just assume that the feature is supported
+    // Otherwise, we can't query the store support, so just assume that the feature is supported
     return true;
-
-    Q_UNUSED(featureFlag)
-#endif
 }
 
 IMessage *MapiStore::openMessage(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId)
@@ -3044,7 +3095,7 @@ QMessageAccountId MapiSession::defaultAccountId(QMessageStore::ErrorCode *lastEr
     return QMessageAccountId();
 }
 
-IMessage *MapiSession::openMapiMessage(QMessageStore::ErrorCode *lastError, const QMessageId &id) const
+IMessage *MapiSession::openMapiMessage(QMessageStore::ErrorCode *lastError, const QMessageId &id, MapiStorePtr *storePtr) const
 {
     IMessage *message(0);
 
@@ -3059,7 +3110,11 @@ IMessage *MapiSession::openMapiMessage(QMessageStore::ErrorCode *lastError, cons
         MapiEntryId entryId(QMessageIdPrivate::entryId(id));
 
         message = mapiStore->openMessage(lastError, entryId);
-        if (*lastError != QMessageStore::NoError) {
+        if (*lastError == QMessageStore::NoError) {
+            if (storePtr) {
+                *storePtr = mapiStore;
+            }
+        } else {
             qWarning() << "Invalid message entryId:" << entryId.toBase64();
             mapiRelease(message);
         }
@@ -3102,32 +3157,18 @@ MapiRecordKey MapiSession::folderRecordKey(QMessageStore::ErrorCode *lastError, 
 {
     MapiRecordKey result;
 
-    IMessage *message = openMapiMessage(lastError, id);
+    MapiStorePtr store;
+    IMessage *message = openMapiMessage(lastError, id, &store);
     if (*lastError == QMessageStore::NoError) {
-        // Find the other properties of this store
-        SizedSPropTagArray(2, columns) = {2, {PR_STORE_ENTRYID, PR_PARENT_ENTRYID}};
-        SPropValue *properties(0);
-        ULONG count;
-        HRESULT rv = message->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties);
-        if (HR_SUCCEEDED(rv)) {
-            if ((properties[0].ulPropTag == PR_STORE_ENTRYID) && (properties[1].ulPropTag == PR_PARENT_ENTRYID)) {
-                MapiEntryId storeId(properties[0].Value.bin.lpb, properties[0].Value.bin.cb);
-                MapiEntryId folderId(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
-
-                MapiStorePtr store = openStore(lastError, storeId, true);
-                if (*lastError == QMessageStore::NoError) {
-                    MapiFolderPtr folder = store->openFolder(lastError, folderId);
-                    if (*lastError == QMessageStore::NoError) {
-                        result = folder->recordKey();
-                    }
-                }
-            } else {
-                qWarning() << "Unable to extract store and folder entry IDs from message.";
+        // Find the parent folder for the message
+        MapiEntryId folderId;
+        if (getMapiProperty(message, PR_PARENT_ENTRYID, &folderId)) {
+            MapiFolderPtr folder = store->openFolder(lastError, folderId);
+            if (*lastError == QMessageStore::NoError) {
+                result = folder->recordKey();
             }
-
-            MAPIFreeBuffer(properties);
         } else {
-            qWarning() << "Unable to query store and folder entry IDs from message.";
+            qWarning() << "Unable to query folder entry ID from message.";
         }
 
         mapiRelease(message);
@@ -3144,30 +3185,12 @@ MapiEntryId MapiSession::folderEntryId(QMessageStore::ErrorCode *lastError, cons
 
     IMessage *message = openMapiMessage(lastError, id);
     if (*lastError == QMessageStore::NoError) {
-        // Find the other properties of this store
-        SizedSPropTagArray(2, columns) = {2, {PR_STORE_ENTRYID, PR_PARENT_ENTRYID}};
-        SPropValue *properties(0);
-        ULONG count;
-        HRESULT rv = message->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties);
-        if (HR_SUCCEEDED(rv)) {
-            if ((properties[0].ulPropTag == PR_STORE_ENTRYID) && (properties[1].ulPropTag == PR_PARENT_ENTRYID)) {
-                MapiEntryId storeId(properties[0].Value.bin.lpb, properties[0].Value.bin.cb);
-                MapiEntryId folderId(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
-
-                MapiStorePtr store = openStore(lastError, storeId, true);
-                if (*lastError == QMessageStore::NoError) {
-                    MapiFolderPtr folder = store->openFolder(lastError, folderId);
-                    if (*lastError == QMessageStore::NoError) {
-                        result = folder->entryId();
-                    }
-                }
-            } else {
-                qWarning() << "Unable to extract store and folder entry IDs from message.";
-            }
-
-            MAPIFreeBuffer(properties);
+        // Find the parent folder for the message
+        MapiEntryId folderId;
+        if (getMapiProperty(message, PR_PARENT_ENTRYID, &folderId)) {
+            result = folderId;
         } else {
-            qWarning() << "Unable to query store and folder entry IDs from message.";
+            qWarning() << "Unable to query folder entry ID from message.";
         }
 
         mapiRelease(message);
@@ -3400,10 +3423,15 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
         bool isModified(msg->d_ptr->_modified);
         msg->d_ptr->_elementsPresent.properties = 1;
 
-        IMessage *message = openMapiMessage(lastError, msg->id());
+        MapiStorePtr store;
+        IMessage *message = openMapiMessage(lastError, msg->id(), &store);
         if (*lastError == QMessageStore::NoError) {
-            SizedSPropTagArray(15, msgCols) = {15, { PR_RECORD_KEY,
-                                                     PR_PARENT_ENTRYID,
+#ifndef _WIN32_WCE
+            const int np = 14;
+#else
+            const int np = 12;
+#endif
+            SizedSPropTagArray(np, msgCols) = {np, { PR_PARENT_ENTRYID,
                                                      PR_MESSAGE_FLAGS,
                                                      PR_MSG_STATUS,
                                                      PR_MESSAGE_CLASS,
@@ -3414,12 +3442,12 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                                                      PR_TRANSPORT_MESSAGE_HEADERS,
                                                      PR_HASATTACH,
                                                      PR_SUBJECT,
+#ifndef _WIN32_WCE
                                                      PR_MSG_EDITOR_FORMAT,
                                                      PR_RTF_IN_SYNC,
-#ifdef _WIN32_WCE
-                                                     PR_CONTENT_LENGTH
-#else
                                                      PR_MESSAGE_SIZE
+#else
+                                                     PR_CONTENT_LENGTH
 #endif
                                                      }};
             ULONG count = 0;
@@ -3449,6 +3477,15 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                         if (prop.Value.l & (MSGSTATUS_DELMARKED | MSGSTATUS_REMOTE_DELETE)) {
                             flags |= QMessage::Removed;
                         }
+#ifdef _WIN32_WCE
+                        if (prop.Value.l & MSGSTATUS_HAS_PR_BODY) {
+                            msg->d_ptr->_contentFormat = EDITOR_FORMAT_PLAINTEXT;
+                        } else if (prop.Value.l & MSGSTATUS_HAS_PR_BODY_HTML) {
+                            msg->d_ptr->_contentFormat = EDITOR_FORMAT_HTML;
+                        } else if (prop.Value.l & MSGSTATUS_HAS_PR_CE_MIME_TEXT) {
+                            // TODO...
+                        }
+#endif
                         break;
                     case PR_MESSAGE_CLASS:
                         messageClass = QStringFromLpctstr(prop.Value.LPSZ);
@@ -3476,16 +3513,16 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                     case PR_HASATTACH:
                         msg->d_ptr->_hasAttachments = (prop.Value.b != FALSE);
                         break;
+#ifndef _WIN32_WCE
                     case PR_MSG_EDITOR_FORMAT:
                         msg->d_ptr->_contentFormat = prop.Value.l;
                         break;
                     case PR_RTF_IN_SYNC:
                         msg->d_ptr->_rtfInSync = (prop.Value.b != FALSE);;
                         break;
-#ifdef _WIN32_WCE
-                    case PR_CONTENT_LENGTH:
-#else
                     case PR_MESSAGE_SIZE:
+#else
+                    case PR_CONTENT_LENGTH:
 #endif
                         // Increase the size estimate by a third to allow for transfer encoding
                         QMessagePrivate::setSize(*msg, prop.Value.ul * 4 / 3);
@@ -3503,16 +3540,7 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                 }
 
                 if (!parentEntryId.isEmpty()) {
-#ifdef _WIN32_WCE
-                    MapiEntryId storeRecordKey(QMessageIdPrivate::storeRecordKey(msg->id()));
-#else
-                    MapiRecordKey storeRecordKey(QMessageIdPrivate::storeRecordKey(msg->id()));
-#endif
-
-                    MapiStorePtr mapiStore(findStore(lastError, QMessageAccountIdPrivate::from(storeRecordKey)));
-                    if (*lastError == QMessageStore::NoError) {
-                        QMessagePrivate::setStandardFolder(*msg, mapiStore->standardFolder(parentEntryId));
-                    }
+                    QMessagePrivate::setStandardFolder(*msg, store->standardFolder(parentEntryId));
                 }
 
                 if (!isModified) {
@@ -3663,158 +3691,150 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
         QByteArray messageBody;
         QByteArray bodySubType;
 
-        IMessage *message(0);
-
-#ifdef _WIN32_WCE
-        MapiEntryId storeRecordKey(QMessageIdPrivate::storeRecordKey(msg->id()));
-#else
-        MapiRecordKey storeRecordKey(QMessageIdPrivate::storeRecordKey(msg->id()));
-#endif
-
-        MapiStorePtr mapiStore(findStore(lastError, QMessageAccountIdPrivate::from(storeRecordKey)));
+        MapiStorePtr store;
+        IMessage *message = openMapiMessage(lastError, msg->id(), &store);
         if (*lastError == QMessageStore::NoError) {
-            MapiEntryId entryId(QMessageIdPrivate::entryId(msg->id()));
+            IStream *is(0);
+            LONG contentFormat(msg->d_ptr->_contentFormat);
 
-            message = mapiStore->openMessage(lastError, entryId);
-            if (*lastError != QMessageStore::NoError) {
-                qWarning() << "Invalid message entryId:" << entryId.toBase64();
-            } else {
-                IStream *is(0);
-                LONG contentFormat(msg->d_ptr->_contentFormat);
+            if (contentFormat == EDITOR_FORMAT_DONTKNOW) {
+                // Attempt to read HTML first
+                contentFormat = EDITOR_FORMAT_HTML;
+            }
 
-                if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
-                    HRESULT rv = message->OpenProperty(PR_BODY, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
-                    if (HR_SUCCEEDED(rv)) {
-                        messageBody = readStream(lastError, is);
-                        bodySubType = "plain";
-                    }
-                } else if (contentFormat == EDITOR_FORMAT_HTML) {
-                    // See if there is a body HTML property
-                    HRESULT rv = message->OpenProperty(PR_BODY_HTML, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
-                    if (HR_SUCCEEDED(rv)) {
-                        messageBody = readStream(lastError, is);
-                        bodySubType = "html";
-                    }
+            if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
+                HRESULT rv = message->OpenProperty(PR_BODY, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+                if (HR_SUCCEEDED(rv)) {
+                    messageBody = readStream(lastError, is);
+                    bodySubType = "plain";
                 }
-
-                if (bodySubType.isEmpty()) {
-                    if (!msg->d_ptr->_rtfInSync) {
-                        // See if we need to sync the RTF
+            } else if (contentFormat == EDITOR_FORMAT_HTML) {
+                // See if there is a body HTML property
 #ifndef _WIN32_WCE
-                        if (!mapiStore->supports(STORE_RTF_OK)) {
-                            BOOL updated(FALSE);
-                            HRESULT rv = RTFSync(message, RTF_SYNC_BODY_CHANGED, &updated);
-                            if (HR_SUCCEEDED(rv)) {
-                                if (updated) {
-                                    if (HR_FAILED(message->SaveChanges(0))) {
-                                        qWarning() << "Unable to save changes after synchronizing RTF.";
-                                    }
-                                }
-                            } else {
-                                qWarning() << "Unable to synchronize RTF.";
-                            }
-                        }
+                ULONG bodyProperty(PR_BODY_HTML);
+#else
+                ULONG bodyProperty(PR_BODY_HTML_A);
 #endif
-                    }
+                HRESULT rv = message->OpenProperty(bodyProperty, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+                if (HR_SUCCEEDED(rv)) {
+                    messageBody = readStream(lastError, is);
+                    bodySubType = "html";
+                }
+            }
 
-                    // Either the body is in RTF, or we need to read the RTF to know that it is text...
-                    HRESULT rv = message->OpenProperty(PR_RTF_COMPRESSED, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
-                    if (HR_SUCCEEDED(rv)) {
-#ifndef _WIN32_WCE
-                        IStream *decompressor(0);
-                        if (WrapCompressedRTFStream(is, 0, &decompressor) == S_OK) {
-                            ULONG bytes = 0;
-                            char buffer[BUFSIZ] = { 0 };
-                            do {
-                                decompressor->Read(buffer, BUFSIZ, &bytes);
-                                messageBody.append(buffer, bytes);
-                            } while (bytes == BUFSIZ);
-
-                            decompressor->Release();
-
-                            if (contentFormat == EDITOR_FORMAT_DONTKNOW) {
-                                // Inspect the message content to see if we can tell what is in it
-                                QString initialText = decodeContent(messageBody, "utf-16", 256);
-                                if (!initialText.isEmpty()) {
-                                    if (initialText.indexOf("\\fromtext") != -1) {
-                                        // This message originally contained text
-                                        contentFormat = EDITOR_FORMAT_PLAINTEXT;
-
-                                        // See if we can get the plain text version instead
-                                        IStream *ts(0);
-                                        rv = message->OpenProperty(PR_BODY, &IID_IStream, STGM_READ, 0, (IUnknown**)&ts);
-                                        if (HR_SUCCEEDED(rv)) {
-                                            messageBody = readStream(lastError, ts);
-                                            bodySubType = "plain";
-
-                                            ts->Release();
-                                        } else {
-                                            qWarning() << "Unable to prefer plain text body.";
-                                        }
-                                    } else if (initialText.indexOf("\\fromhtml1") != -1) {
-                                        // This message originally contained text
-                                        contentFormat = EDITOR_FORMAT_HTML;
-                                    }
+#ifndef _WIN32_WCE // RTF not supported
+            if (bodySubType.isEmpty()) {
+                if (!msg->d_ptr->_rtfInSync) {
+                    // See if we need to sync the RTF
+                    if (!store->supports(STORE_RTF_OK)) {
+                        BOOL updated(FALSE);
+                        HRESULT rv = RTFSync(message, RTF_SYNC_BODY_CHANGED, &updated);
+                        if (HR_SUCCEEDED(rv)) {
+                            if (updated) {
+                                if (HR_FAILED(message->SaveChanges(0))) {
+                                    qWarning() << "Unable to save changes after synchronizing RTF.";
                                 }
-                            }
-
-                            if (bodySubType.isEmpty()) {
-                                if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
-                                    messageBody = extractPlainText(decodeContent(messageBody, "utf-16"));
-                                    bodySubType = "plain";
-                                } else if (contentFormat == EDITOR_FORMAT_HTML) {
-                                    QString html = extractHtml(decodeContent(messageBody, "utf-16"));
-                                    messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(html.constData(), html.length());
-                                    bodySubType = "html";
-                                }
-                            }
-
-                            if (bodySubType.isEmpty()) {
-                                // I guess we must have RTF
-                                bodySubType = "rtf";
                             }
                         } else {
-                            *lastError = QMessageStore::ContentInaccessible;
-                            qWarning() << "Unable to decompress RTF";
-                            bodySubType = "plain";
+                            qWarning() << "Unable to synchronize RTF.";
                         }
-#endif
-                    } else {
-                        bodySubType = "unknown";
                     }
                 }
 
-                mapiRelease(is);
+                // Either the body is in RTF, or we need to read the RTF to know that it is text...
+                HRESULT rv = message->OpenProperty(PR_RTF_COMPRESSED, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+                if (HR_SUCCEEDED(rv)) {
+                    IStream *decompressor(0);
+                    if (WrapCompressedRTFStream(is, 0, &decompressor) == S_OK) {
+                        ULONG bytes = 0;
+                        char buffer[BUFSIZ] = { 0 };
+                        do {
+                            decompressor->Read(buffer, BUFSIZ, &bytes);
+                            messageBody.append(buffer, bytes);
+                        } while (bytes == BUFSIZ);
 
-                if (*lastError == QMessageStore::NoError) {
-                    QMessageContentContainerPrivate *messageContainer(((QMessageContentContainer *)(msg))->d_ptr);
+                        decompressor->Release();
 
-                    if (!msg->d_ptr->_hasAttachments) {
-                        // Make the body the entire content of the message
-                        messageContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
-                        msg->d_ptr->_bodyId = QMessageContentContainerPrivate::bodyContentId();
-                    } else {
-                        // Add the message body data as the first part
-                        QMessageContentContainer bodyPart;
-                        {
-                            QMessageContentContainerPrivate *bodyContainer(((QMessageContentContainer *)(&bodyPart))->d_ptr);
-                            bodyContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
+                        if (contentFormat == EDITOR_FORMAT_DONTKNOW) {
+                            // Inspect the message content to see if we can tell what is in it
+                            QString initialText = decodeContent(messageBody, "utf-16", 256);
+                            if (!initialText.isEmpty()) {
+                                if (initialText.indexOf("\\fromtext") != -1) {
+                                    // This message originally contained text
+                                    contentFormat = EDITOR_FORMAT_PLAINTEXT;
+
+                                    // See if we can get the plain text version instead
+                                    IStream *ts(0);
+                                    rv = message->OpenProperty(PR_BODY, &IID_IStream, STGM_READ, 0, (IUnknown**)&ts);
+                                    if (HR_SUCCEEDED(rv)) {
+                                        messageBody = readStream(lastError, ts);
+                                        bodySubType = "plain";
+
+                                        ts->Release();
+                                    } else {
+                                        qWarning() << "Unable to prefer plain text body.";
+                                    }
+                                } else if (initialText.indexOf("\\fromhtml1") != -1) {
+                                    // This message originally contained text
+                                    contentFormat = EDITOR_FORMAT_HTML;
+                                }
+                            }
                         }
 
-                        messageContainer->setContentType(QByteArray("multipart"), QByteArray("mixed"), QByteArray());
-                        msg->d_ptr->_bodyId = messageContainer->appendContent(bodyPart);
-                    }
+                        if (bodySubType.isEmpty()) {
+                            if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
+                                messageBody = extractPlainText(decodeContent(messageBody, "utf-16"));
+                                bodySubType = "plain";
+                            } else if (contentFormat == EDITOR_FORMAT_HTML) {
+                                QString html = extractHtml(decodeContent(messageBody, "utf-16"));
+                                messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(html.constData(), html.length());
+                                bodySubType = "html";
+                            }
+                        }
 
-                    if (!isModified) {
-                        msg->d_ptr->_modified = false;
+                        if (bodySubType.isEmpty()) {
+                            // I guess we must have RTF
+                            bodySubType = "rtf";
+                        }
+                    } else {
+                        *lastError = QMessageStore::ContentInaccessible;
+                        qWarning() << "Unable to decompress RTF";
+                        bodySubType = "plain";
                     }
-                    result = true;
+                } else {
+                    bodySubType = "unknown";
                 }
-
-                mapiRelease(message);
             }
-        } else {
-            qWarning() << "Invalid store recordKey:" << storeRecordKey.toBase64();
+#endif
+
+            mapiRelease(is);
+
+            if (*lastError == QMessageStore::NoError) {
+                QMessageContentContainerPrivate *messageContainer(((QMessageContentContainer *)(msg))->d_ptr);
+
+                if (!msg->d_ptr->_hasAttachments) {
+                    // Make the body the entire content of the message
+                    messageContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
+                    msg->d_ptr->_bodyId = QMessageContentContainerPrivate::bodyContentId();
+                } else {
+                    // Add the message body data as the first part
+                    QMessageContentContainer bodyPart;
+                    {
+                        QMessageContentContainerPrivate *bodyContainer(((QMessageContentContainer *)(&bodyPart))->d_ptr);
+                        bodyContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
+                    }
+
+                    messageContainer->setContentType(QByteArray("multipart"), QByteArray("mixed"), QByteArray());
+                    msg->d_ptr->_bodyId = messageContainer->appendContent(bodyPart);
+                }
+
+                if (!isModified) {
+                    msg->d_ptr->_modified = false;
+                }
+                result = true;
+            }
+
+            mapiRelease(message);
         }
     }
 
@@ -4000,7 +4020,8 @@ QMessageIdList MapiSession::queryMessages(QMessageStore::ErrorCode *lastError, c
 
 void MapiSession::updateMessage(QMessageStore::ErrorCode* lastError, const QMessage& source)
 {
-    IMessage *mapiMessage = openMapiMessage(lastError, source.id());
+    MapiStorePtr store;
+    IMessage *mapiMessage = openMapiMessage(lastError, source.id(), &store);
     if (*lastError == QMessageStore::NoError) {
         // Update the stored properties
         if (*lastError == QMessageStore::NoError) {
@@ -4010,18 +4031,18 @@ void MapiSession::updateMessage(QMessageStore::ErrorCode* lastError, const QMess
             replaceMessageRecipients(lastError, source, mapiMessage, _mapiSession);
         }
         if (*lastError == QMessageStore::NoError) {
-            replaceMessageBody(lastError, source, mapiMessage);
+            replaceMessageBody(lastError, source, mapiMessage, store);
         }
         if (*lastError == QMessageStore::NoError) {
             replaceMessageAttachments(lastError, source, mapiMessage);
         }
-        if (*lastError == QMessageStore::NoError) {
 #ifndef _WIN32_WCE //unsupported
+        if (*lastError == QMessageStore::NoError) {
             if (HR_FAILED(mapiMessage->SaveChanges(0))) {
                 qWarning() << "Unable to save changes for message.";
             }
-#endif
         }
+#endif
 
         mapiRelease(mapiMessage);
     }
@@ -4034,7 +4055,6 @@ void MapiSession::removeMessages(QMessageStore::ErrorCode *lastError, const QMes
 #else
     typedef QPair<MapiRecordKey, MapiRecordKey> FolderKey;
 #endif
-
 
     QMap<FolderKey, QMessageIdList> folderMessageIds;
 
