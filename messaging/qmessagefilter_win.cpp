@@ -194,7 +194,7 @@ MapiStoreIterator QMessageFilterPrivate::storeIterator(const QMessageFilter &fil
     return MapiStoreIterator(session->allStores(lastError), filter.d_ptr->_accountsInclude, filter.d_ptr->_accountsExclude);
 }
 
-QList<QMessageFilter> QMessageFilterPrivate::subFilters(const QMessageFilter &filter)
+QList<QMessageFilter> QMessageFilterPrivate::subfilters(const QMessageFilter &filter)
 {
     QList<QMessageFilter> result;
     QList<QMessageFilter> queue;
@@ -229,6 +229,16 @@ bool QMessageFilterPrivate::matchesMessageRequired(const QMessageFilter &filter)
         result |= QMessageFilterPrivate::matchesMessageRequired(*filter.d_ptr->_left);
     if (filter.d_ptr->_right)
         result |= QMessageFilterPrivate::matchesMessageRequired(*filter.d_ptr->_right);
+    return result;
+}
+
+bool QMessageFilterPrivate::containsSenderSubfilter(const QMessageFilter &filter)
+{
+    bool result(filter.d_ptr->_field == QMessageFilterPrivate::Sender);
+    if (filter.d_ptr->_left)
+        result |= QMessageFilterPrivate::containsSenderSubfilter(*filter.d_ptr->_left);
+    if (filter.d_ptr->_right)
+        result |= QMessageFilterPrivate::containsSenderSubfilter(*filter.d_ptr->_right);
     return result;
 }
 
@@ -1071,8 +1081,8 @@ QMessageFilter QMessageFilter::operator~() const
         int op = static_cast<int>(d_ptr->_operator) + static_cast<int>(QMessageFilterPrivate::Not);
         op = op % static_cast<int>(QMessageFilterPrivate::OperatorEnd);
         result.d_ptr->_operator = static_cast<QMessageFilterPrivate::Operator>(op);
-        if (result.d_ptr->_field == QMessageFilterPrivate::Sender) {
-            result.d_ptr->_restrictionPermitted = false; // Can't complement sender restriction
+        if (QMessageFilterPrivate::containsSenderSubfilter(*this)) {
+            result.d_ptr->_restrictionPermitted = false; // Can't simply complement sender restriction
         }
     } else if (d_ptr->_complex) {
         // A filter can be in one of two forms, either
