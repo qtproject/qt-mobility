@@ -36,6 +36,38 @@
 #include <QRegExp>
 
 /*!
+ * Folds \a text by making all lines \a maxChars long.
+ */
+QByteArray VersitUtils::fold(QByteArray& text, int maxChars)
+{
+    char previousChar = 0;
+    int charsSinceLastLineBreak = 0;
+    for (int i=0; i<text.length(); i++) {
+         char currentChar = text[i];
+         if (previousChar == '\r' && currentChar == '\n') {
+             charsSinceLastLineBreak = 0;
+             previousChar = 0;
+         } else {
+             char nextChar = 0;
+             if (i != text.length()-1)
+                 nextChar == text[i+1];
+             if (charsSinceLastLineBreak == maxChars &&
+                 (currentChar != '\r' && nextChar != '\n')) {
+                 text.insert(i,"\r\n ");
+                 charsSinceLastLineBreak = 1; // space
+                 // Skip the added CRLF, for-loop increment i++ skips the space:
+                 i += 2;
+                 previousChar = 0;
+             } else {
+                 charsSinceLastLineBreak++;
+                 previousChar = currentChar;
+             }
+         }
+    }
+    return text;
+}
+
+/*!
  * Unfolds \a text by removing all the CRLFs followed immediately 
  * by any number of whitespaces.
  */
@@ -98,9 +130,9 @@ bool VersitUtils::quotedPrintableEncode(QByteArray& text)
     for (int i=0; i<text.length(); i++) {
         char currentChar = text[i];
         if (shouldBeQuotedPrintableEncoded(currentChar)) {
-            char encodedStr[4];
-            sprintf(encodedStr, "=%02X", currentChar);    
-            text.replace(i,1,encodedStr);
+            QString encodedStr;
+            encodedStr.sprintf("=%02X",currentChar);
+            text.replace(i,1,encodedStr.toAscii());
             i += 2;
             encoded = true;
         }

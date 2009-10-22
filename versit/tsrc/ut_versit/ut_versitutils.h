@@ -48,6 +48,7 @@ private slots:
     void testParamName();
     void testParamValue();
     void testAddParam();
+    void testFold();
     void testUnfold();
     void testQuotedPrintableEncode();
     void testDecodeQuotedPrintable();

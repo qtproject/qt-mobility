@@ -35,6 +35,7 @@
 #include "versitutils.h"
 #include <QStringList>
 
+#define MAX_CHARS_FOR_LINE 76
 
 /*! Constructs a writer. */
 QVersitWriterPrivate::QVersitWriterPrivate() : mIoDevice(0)
@@ -61,6 +62,7 @@ QByteArray QVersitWriterPrivate::encodeVersitDocument(const QVersitDocument& doc
     }
     encodedDocument.append("END:VCARD\r\n");
     
+    VersitUtils::fold(encodedDocument,MAX_CHARS_FOR_LINE);
     return encodedDocument;
 }
 

@@ -42,6 +42,7 @@
 class VersitUtils                
 {
 public:
+    static QByteArray fold(QByteArray& text, int maxChars);
     static QByteArray unfold(QByteArray& text);
     static int countLeadingWhiteSpaces(const QByteArray& text, int pos=0);
     static bool quotedPrintableEncode(QByteArray& text);
