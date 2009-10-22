@@ -65,7 +65,9 @@
 #if !defined( Q_CC_MINGW)
 #ifndef Q_OS_WINCE
 #include "qwmihelper_win_p.h"
-#include <Wlanapi.h>
+//#include <Wlanapi.h>
+#include <sdkddkver.h>
+#include <ntddndis.h>
 #include <Dshow.h>
 #endif
 #endif
@@ -79,6 +81,219 @@
 #include <Winbase.h>
 #include <Winuser.h>
 #endif
+
+
+
+#define WLAN_MAX_NAME_LENGTH 256
+#define DOT11_SSID_MAX_LENGTH 32
+#define WLAN_NOTIFICATION_SOURCE_ALL 0x0000ffff
+
+enum WLAN_INTF_OPCODE {
+    wlan_intf_opcode_autoconf_start = 0x000000000,
+    wlan_intf_opcode_autoconf_enabled,
+    wlan_intf_opcode_background_scan_enabled,
+    wlan_intf_opcode_media_streaming_mode,
+    wlan_intf_opcode_radio_state,
+    wlan_intf_opcode_bss_type,
+    wlan_intf_opcode_interface_state,
+    wlan_intf_opcode_current_connection,
+    wlan_intf_opcode_channel_number,
+    wlan_intf_opcode_supported_infrastructure_auth_cipher_pairs,
+    wlan_intf_opcode_supported_adhoc_auth_cipher_pairs,
+    wlan_intf_opcode_supported_country_or_region_string_list,
+    wlan_intf_opcode_current_operation_mode,
+    wlan_intf_opcode_supported_safe_mode,
+    wlan_intf_opcode_certified_safe_mode,
+    wlan_intf_opcode_autoconf_end = 0x0fffffff,
+    wlan_intf_opcode_msm_start = 0x10000100,
+    wlan_intf_opcode_statistics,
+    wlan_intf_opcode_rssi,
+    wlan_intf_opcode_msm_end = 0x1fffffff,
+    wlan_intf_opcode_security_start = 0x20010000,
+    wlan_intf_opcode_security_end = 0x2fffffff,
+    wlan_intf_opcode_ihv_start = 0x30000000,
+    wlan_intf_opcode_ihv_end = 0x3fffffff
+};
+
+enum WLAN_OPCODE_VALUE_TYPE {
+    wlan_opcode_value_type_query_only = 0,
+    wlan_opcode_value_type_set_by_group_policy,
+    wlan_opcode_value_type_set_by_user,
+    wlan_opcode_value_type_invalid
+};
+
+enum WLAN_INTERFACE_STATE {
+    wlan_interface_state_not_ready = 0,
+    wlan_interface_state_connected,
+    wlan_interface_state_ad_hoc_network_formed,
+    wlan_interface_state_disconnecting,
+    wlan_interface_state_disconnected,
+    wlan_interface_state_associating,
+    wlan_interface_state_discovering,
+    wlan_interface_state_authenticating
+};
+
+struct WLAN_INTERFACE_INFO {
+    GUID InterfaceGuid;
+    WCHAR strInterfaceDescription[WLAN_MAX_NAME_LENGTH];
+    WLAN_INTERFACE_STATE isState;
+};
+
+struct WLAN_INTERFACE_INFO_LIST {
+    DWORD dwNumberOfItems;
+    DWORD dwIndex;
+    WLAN_INTERFACE_INFO InterfaceInfo[1];
+};
+
+struct WLAN_NOTIFICATION_DATA {
+    DWORD NotificationSource;
+    DWORD NotificationCode;
+    GUID InterfaceGuid;
+    DWORD dwDataSize;
+    PVOID pData;
+};
+
+enum WLAN_CONNECTION_MODE {
+    wlan_connection_mode_profile = 0,
+    wlan_connection_mode_temporary_profile,
+    wlan_connection_mode_discovery_secure,
+    wlan_connection_mode_discovery_unsecure,
+    wlan_connection_mode_auto,
+    wlan_connection_mode_invalid
+};
+
+#if ((NTDDI_VERSION >= NTDDI_VISTA) || NDIS_SUPPORT_NDIS6)
+#else
+    enum DOT11_PHY_TYPE {
+        dot11_phy_type_unknown = 0,
+        dot11_phy_type_any = dot11_phy_type_unknown,
+        dot11_phy_type_fhss = 1,
+        dot11_phy_type_dsss = 2,
+        dot11_phy_type_irbaseband = 3,
+        dot11_phy_type_ofdm = 4,
+        dot11_phy_type_hrdsss = 5,
+        dot11_phy_type_erp = 6,
+        dot11_phy_type_ht = 7,
+        dot11_phy_type_IHV_start = 0x80000000,
+        dot11_phy_type_IHV_end = 0xffffffff
+    };
+
+
+enum DOT11_AUTH_ALGORITHM {
+    DOT11_AUTH_ALGO_80211_OPEN = 1,
+    DOT11_AUTH_ALGO_80211_SHARED_KEY = 2,
+    DOT11_AUTH_ALGO_WPA = 3,
+    DOT11_AUTH_ALGO_WPA_PSK = 4,
+    DOT11_AUTH_ALGO_WPA_NONE = 5,
+    DOT11_AUTH_ALGO_RSNA = 6,
+    DOT11_AUTH_ALGO_RSNA_PSK = 7,
+    DOT11_AUTH_ALGO_IHV_START = 0x80000000,
+    DOT11_AUTH_ALGO_IHV_END = 0xffffffff
+};
+
+
+enum DOT11_CIPHER_ALGORITHM {
+    DOT11_CIPHER_ALGO_NONE = 0x00,
+    DOT11_CIPHER_ALGO_WEP40 = 0x01,
+    DOT11_CIPHER_ALGO_TKIP = 0x02,
+    DOT11_CIPHER_ALGO_CCMP = 0x04,
+    DOT11_CIPHER_ALGO_WEP104 = 0x05,
+    DOT11_CIPHER_ALGO_WPA_USE_GROUP = 0x100,
+    DOT11_CIPHER_ALGO_RSN_USE_GROUP = 0x100,
+    DOT11_CIPHER_ALGO_WEP = 0x101,
+    DOT11_CIPHER_ALGO_IHV_START = 0x80000000,
+    DOT11_CIPHER_ALGO_IHV_END = 0xffffffff
+};
+
+
+enum DOT11_BSS_TYPE {
+    dot11_BSS_type_infrastructure = 1,
+    dot11_BSS_type_independent = 2,
+    dot11_BSS_type_any = 3
+};
+
+
+struct DOT11_SSID {
+    ULONG uSSIDLength;
+    UCHAR ucSSID[DOT11_SSID_MAX_LENGTH];
+};
+#endif
+
+typedef UCHAR DOT11_MAC_ADDRESS[6];
+
+struct WLAN_ASSOCIATION_ATTRIBUTES {
+    DOT11_SSID dot11Ssid;
+    DOT11_BSS_TYPE dot11BssType;
+    DOT11_MAC_ADDRESS dot11Bssid;
+    DOT11_PHY_TYPE dot11PhyType;
+    ULONG uDot11PhyIndex;
+    ULONG wlanSignalQuality;
+    ULONG ulRxRate;
+    ULONG ulTxRate;
+};
+
+struct WLAN_SECURITY_ATTRIBUTES {
+    BOOL bSecurityEnabled;
+    BOOL bOneXEnabled;
+    DOT11_AUTH_ALGORITHM dot11AuthAlgorithm;
+    DOT11_CIPHER_ALGORITHM dot11CipherAlgorithm;
+};
+
+struct WLAN_CONNECTION_ATTRIBUTES {
+    WLAN_INTERFACE_STATE isState;
+    WLAN_CONNECTION_MODE wlanConnectionMode;
+    WCHAR strProfileName[WLAN_MAX_NAME_LENGTH];
+    WLAN_ASSOCIATION_ATTRIBUTES wlanAssociationAttributes;
+    WLAN_SECURITY_ATTRIBUTES wlanSecurityAttributes;
+};
+
+enum WLAN_NOTIFICATION_ACM {
+    wlan_notification_acm_start = 0,
+    wlan_notification_acm_autoconf_enabled,
+    wlan_notification_acm_autoconf_disabled,
+    wlan_notification_acm_background_scan_enabled,
+    wlan_notification_acm_background_scan_disabled,
+    wlan_notification_acm_bss_type_change,
+    wlan_notification_acm_power_setting_change,
+    wlan_notification_acm_scan_complete,
+    wlan_notification_acm_scan_fail,
+    wlan_notification_acm_connection_start,
+    wlan_notification_acm_connection_complete,
+    wlan_notification_acm_connection_attempt_fail,
+    wlan_notification_acm_filter_list_change,
+    wlan_notification_acm_interface_arrival,
+    wlan_notification_acm_interface_removal,
+    wlan_notification_acm_profile_change,
+    wlan_notification_acm_profile_name_change,
+    wlan_notification_acm_profiles_exhausted,
+    wlan_notification_acm_network_not_available,
+    wlan_notification_acm_network_available,
+    wlan_notification_acm_disconnecting,
+    wlan_notification_acm_disconnected,
+    wlan_notification_acm_adhoc_network_state_change,
+    wlan_notification_acm_end
+};
+
+enum _WLAN_NOTIFICATION_MSM {
+    wlan_notification_msm_start = 0,
+    wlan_notification_msm_associating,
+    wlan_notification_msm_associated,
+    wlan_notification_msm_authenticating,
+    wlan_notification_msm_connected,
+    wlan_notification_msm_roaming_start,
+    wlan_notification_msm_roaming_end,
+    wlan_notification_msm_radio_state_change,
+    wlan_notification_msm_signal_quality_change,
+    wlan_notification_msm_disassociating,
+    wlan_notification_msm_disconnected,
+    wlan_notification_msm_peer_join,
+    wlan_notification_msm_peer_leave,
+    wlan_notification_msm_adapter_removal,
+    wlan_notification_msm_adapter_operation_mode_change,
+    wlan_notification_msm_end
+};
+
+typedef void (WINAPI *WLAN_NOTIFICATION_CALLBACK) (WLAN_NOTIFICATION_DATA *, PVOID);
 
 #define _WCHAR_T_DEFINED
 #define _TIME64_T_DEFINED
@@ -100,20 +315,14 @@ static WlanCloseHandleProto local_WlanCloseHandle = 0;
 //
 #if !defined(Q_OS_WINCE)
 typedef DWORD (WINAPI *WlanEnumInterfacesProto)
-    (HANDLE hClientHandle, PVOID pReserved, PWLAN_INTERFACE_INFO_LIST* ppInterfaceList);
+    (HANDLE hClientHandle, PVOID pReserved, WLAN_INTERFACE_INFO_LIST **ppInterfaceList);
 static WlanEnumInterfacesProto local_WlanEnumInterfaces = 0;
-#endif
 
-//
-#if !defined(Q_OS_WINCE)
 typedef DWORD (WINAPI *WlanQueryInterfaceProto)
     (HANDLE hClientHandle, const GUID *pInterfaceGuid, WLAN_INTF_OPCODE OpCode, PVOID pReserved,
-     PDWORD pdwDataSize, PVOID *ppData, PWLAN_OPCODE_VALUE_TYPE pWlanOpcodeValueType);
+     PDWORD pdwDataSize, PVOID *ppData, WLAN_OPCODE_VALUE_TYPE *pWlanOpcodeValueType);
 static WlanQueryInterfaceProto local_WlanQueryInterface = 0;
-#endif
 
-//
-#if !defined(Q_OS_WINCE)
 typedef DWORD (WINAPI *WlanRegisterNotificationProto)
     (HANDLE hClientHandle, DWORD dwNotifSource, BOOL bIgnoreDuplicate,
      WLAN_NOTIFICATION_CALLBACK funcCallback, PVOID pCallbackContext,
@@ -183,14 +392,14 @@ typedef struct _DISPLAY_BRIGHTNESS {
 
 
 #if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
-static PWLAN_CONNECTION_ATTRIBUTES  getWifiConnectionAttributes()
+static WLAN_CONNECTION_ATTRIBUTES *getWifiConnectionAttributes()
 {
     DWORD version =  0;
     HANDLE clientHandle = NULL;
     DWORD result;
-    PWLAN_CONNECTION_ATTRIBUTES  connAtts = NULL;
+    WLAN_CONNECTION_ATTRIBUTES  *connAtts = NULL;
 
-    PWLAN_INTERFACE_INFO_LIST interfacesInfoList = NULL;
+    WLAN_INTERFACE_INFO_LIST *interfacesInfoList = NULL;
     result = local_WlanOpenHandle( 2, NULL, &version, &clientHandle );
     if( result != ERROR_SUCCESS) {
 //       qWarning() << "Error opening Wlanapi" << result ;
@@ -208,7 +417,7 @@ static PWLAN_CONNECTION_ATTRIBUTES  getWifiConnectionAttributes()
     }
 
     for( uint i = 0; i < interfacesInfoList->dwNumberOfItems; i++ ) {
-        PWLAN_INTERFACE_INFO interfaceInfo = &interfacesInfoList->InterfaceInfo[i];
+        WLAN_INTERFACE_INFO *interfaceInfo = &interfacesInfoList->InterfaceInfo[i];
         GUID& guid = interfaceInfo->InterfaceGuid;
         WLAN_INTERFACE_STATE wlanInterfaceState = interfaceInfo->isState;
 
@@ -578,7 +787,7 @@ Q_DECLARE_METATYPE(QSystemNetworkInfo::NetworkStatus)
 
 #if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
 
-void wlanNotificationCallback(PWLAN_NOTIFICATION_DATA pNotifyData, QSystemNetworkInfoPrivate *netInfo)
+void wlanNotificationCallback(WLAN_NOTIFICATION_DATA *pNotifyData, QSystemNetworkInfoPrivate *netInfo)
 {
     // xp only supports disconnected and complete
    // qWarning() << __FUNCTION__ << pNotifyData->NotificationCode;
@@ -783,7 +992,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
     case QSystemNetworkInfo::WlanMode:
         {
 #if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
-            PWLAN_CONNECTION_ATTRIBUTES connAtts = getWifiConnectionAttributes();
+            WLAN_CONNECTION_ATTRIBUTES *connAtts = getWifiConnectionAttributes();
             if(connAtts != NULL) {
                 if(connAtts->isState  == wlan_interface_state_authenticating) {
                     local_WlanFreeMemory(connAtts);
@@ -856,7 +1065,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
             DWORD version =  0;
             DWORD result;
 
-            PWLAN_INTERFACE_INFO_LIST interfacesInfoList = NULL;
+            WLAN_INTERFACE_INFO_LIST *interfacesInfoList = NULL;
             if (hWlan ==0) {
                 result = local_WlanOpenHandle( 2, NULL, &version, &hWlan );
                 if( result != ERROR_SUCCESS ) {
@@ -874,7 +1083,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
             }
 
             for( uint i = 0; i < interfacesInfoList->dwNumberOfItems; i++ ) {
-                PWLAN_INTERFACE_INFO interfaceInfo = &interfacesInfoList->InterfaceInfo[i];
+                WLAN_INTERFACE_INFO *interfaceInfo = &interfacesInfoList->InterfaceInfo[i];
                 GUID& guid = interfaceInfo->InterfaceGuid;
                 WLAN_INTERFACE_STATE wlanInterfaceState = interfaceInfo->isState;
 
@@ -884,7 +1093,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
                 }
 
                 ULONG size = 0;
-                PWLAN_CONNECTION_ATTRIBUTES  connAtts = NULL;
+                WLAN_CONNECTION_ATTRIBUTES  *connAtts = NULL;
                 result = local_WlanQueryInterface( hWlan, &guid,  wlan_intf_opcode_current_connection, NULL, &size, (PVOID*) &connAtts, NULL );
 
                 if( result != ERROR_SUCCESS ) {
@@ -986,7 +1195,7 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
         {
 #if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
             netname = "";
-            PWLAN_CONNECTION_ATTRIBUTES connAtts = getWifiConnectionAttributes();
+            WLAN_CONNECTION_ATTRIBUTES *connAtts = getWifiConnectionAttributes();
             if(connAtts != NULL) {
                 DOT11_SSID ssid;
                 ssid = connAtts->wlanAssociationAttributes.dot11Ssid;
