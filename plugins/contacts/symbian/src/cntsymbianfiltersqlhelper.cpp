@@ -280,7 +280,7 @@ void CntSymbianFilterSqlHelper::updateSqlQueryForDetailFilter(const QContactFilt
 
     //Get the field id for the detail field name
     TransformContact transformContact;
-    quint32 fieldId = transformContact.GetIdForDetailL(cdf.detailDefinitionName(),cdf.detailFieldName());
+    quint32 fieldId; // = transformContact.GetIdForDetailL(cdf.detailDefinitionName(),cdf.detailFieldName());
     QString sqlDbTableColumnName;
     //Get the corresponding column name 
     convertFieldIdToSqlDbColumnName(fieldId,sqlDbTableColumnName );
