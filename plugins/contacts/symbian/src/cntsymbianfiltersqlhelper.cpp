@@ -76,13 +76,9 @@ const TInt KDefaultPackagerSize = 3514; //Observed Techview Golden template size
 /*!
  * The constructor
  */
-CntSymbianFilterSqlHelper::CntSymbianFilterSqlHelper() :
-                            m_buffer(0),
-                            m_bufPtr(0,0,0),
-                            m_isDbInitialized(false)
+CntSymbianFilterSqlHelper::CntSymbianFilterSqlHelper()
 {
-    // Create the database column mapping
-    createDatabaseColumnMap();
+   m_srvConnection = new CntSrvConnection();
 }
 
 /*!
@@ -90,8 +86,7 @@ CntSymbianFilterSqlHelper::CntSymbianFilterSqlHelper() :
  */
 CntSymbianFilterSqlHelper::~CntSymbianFilterSqlHelper()
 {
-    delete m_buffer;
-    RHandleBase::Close();
+    delete m_srvConnection;
 }
 
 /*!
@@ -101,52 +96,18 @@ CntSymbianFilterSqlHelper::~CntSymbianFilterSqlHelper()
  * \a error On return, contains the possible error.
  * \return the list of matched contact ids
  */
-QList<QContactLocalId> CntSymbianFilterSqlHelper::SearchContactsL(const QContactFilter& filter, 
+QList<QContactLocalId> CntSymbianFilterSqlHelper::searchContacts(const QContactFilter& filter, 
                                                                   QContactManager::Error& error)
 {
-    // Initialize the database
-    if (!m_isDbInitialized) {
-        InitializeDbL();
-    }
-
     // Create swl query from the filters
     QString sqlQuery;
     createSqlQuery(filter, sqlQuery, error);
 
-    QList<QContactLocalId> list;
     if( error != QContactManager::NoError) {
         return QList<QContactLocalId>();
     }
-
-    // Fetch results from the server
-    TPtrC namePtr(reinterpret_cast<const TUint16*>(sqlQuery.utf16()));
-    TIpcArgs args;
-
-    args.Set(0, &GetReceivingBufferL());
-    args.Set(1, &namePtr);
-    TInt newBuffSize = SendReceive(KCntSearchResultIdLists, args);
-    User::LeaveIfError(newBuffSize);
-    if (newBuffSize > 0)
-        {
-        args.Set(0, &GetReceivingBufferL(newBuffSize));
-        args.Set(1,&namePtr);
-        User::LeaveIfError(newBuffSize = SendReceive(KCntSearchResultIdLists, args));     
-        }
-
-    // Unpack the contact ids into an list
-    return UnpackCntIdArrayL();
-}
-
-/*!
- * Initialize the database
- */
-void CntSymbianFilterSqlHelper::InitializeDbL()
-{
-    m_buffer = CBufFlat::NewL(1 << KGranularityRank);
-    m_maxBufferSize = KDefaultPackagerSize;
-    ConnectSrvL();
-    OpenDatabaseL();
-    m_isDbInitialized = true;
+    // Query the database
+    return m_srvConnection->searchContacts(sqlQuery, error);
 }
 
 /*!
@@ -160,7 +121,6 @@ void CntSymbianFilterSqlHelper::createSqlQuery(const QContactFilter& filter,
                                                  QString& sqlQuery,
                                                  QContactManager::Error& error)
 {
-    
     //Check if it is a single filter
     bool IsOneLevelFilter  = isSingleFilter(filter,error);
     if( error != QContactManager::NoError) {  
@@ -343,110 +303,10 @@ void  CntSymbianFilterSqlHelper::createDatabaseColumnMap()
 void CntSymbianFilterSqlHelper::convertFieldIdToSqlDbColumnName(const quint32 fieldId,
                                                                 QString& sqlDbTableColumnName )
 {
-
     if(fieldId == KUidContactFieldGivenName.iUid) {
         sqlDbTableColumnName += "first_name";
     } else {
         sqlDbTableColumnName += "last_name";
     }
-}
-
-/*!
- * Connect to / create a cntsrv server session
- */
-void CntSymbianFilterSqlHelper::ConnectSrvL()
-{
-    // Assume the server is already running and attempt to create a session
-    // with a maximum of KAsyncMessageSlots message slots.
-    TInt err = CreateSession(KCntServerName,Version(),KAsyncMessageSlots);
-    
-    // Server is not running
-    if(err == KErrNotFound) {
-        // Use the RProcess API to start the server.
-        RProcess server;
-        User::LeaveIfError(server.Create(KCntServerExe,KNullDesC));
-        
-        //Enforce server to be at system default priority EPriorityForeground
-        server.SetPriority(EPriorityForeground);
-        
-        // Synchronise with the server.
-        TRequestStatus reqStatus;
-        server.Rendezvous(reqStatus);
-        server.Resume();
-        
-        // Server will call the reciprocal static synchronisation call.
-        User::WaitForRequest(reqStatus);
-        server.Close();
-        User::LeaveIfError(reqStatus.Int());
-        
-        // Create the server session.
-        User::LeaveIfError(CreateSession(KCntServerName,Version(),KAsyncMessageSlots));
-    } else {
-        User::LeaveIfError(err);
-    }
-}
-
-/*!
- * Open database
- */
-void CntSymbianFilterSqlHelper::OpenDatabaseL()
-{
-    TIpcArgs args;
-    args.Set(0, &KNullDesC);
-    User::LeaveIfError(SendReceive(KCntOpenDataBase, args));
-}
-
-/*!
- * Version of cntsrv
- */
-TVersion CntSymbianFilterSqlHelper::Version() const
-{
-    return(TVersion(KCntServerMajorVersionNumber,
-                    KCntServerMinorVersionNumber,
-                    KCntServerBuildVersionNumber));
-}
-
-/*!
- * Get the buffer reference to be used for IPC
- * 
- * \a size size of the receiving buffer
- * \return a reference to the beginning of the buffer
- */
-TDes8& CntSymbianFilterSqlHelper::GetReceivingBufferL(int size) const
-{
-    if(size > m_buffer->Size()) {
-        // Find next divisable by granularity size value.
-        (size >>= KGranularityRank)++;
-        m_maxBufferSize = size <<= 8;
-        m_buffer->ResizeL(m_maxBufferSize);
-    
-    } else if(!size && m_buffer->Size() < m_maxBufferSize) {
-        // Use the stored default size.
-        m_buffer->ResizeL(m_maxBufferSize);
-    }
-    // The location of the whole buffer may have changed, because reallocation
-    // may have taken place. Update both buffer pointers.
-    m_bufPtr.Set(m_buffer->Ptr(0));
-    return m_bufPtr;
-}
-
-/*!
- * Unpack results from a buffer stream and store in a list
- * 
- * \return list of matched contact ids
- */
-QList<QContactLocalId> CntSymbianFilterSqlHelper::UnpackCntIdArrayL() const
-{
-    RBufReadStream readStream;
-    QList<QContactLocalId> list;
-    TContactItemId item;
-        
-    readStream.Open(*m_buffer);
-    int count = readStream.ReadInt32L();
-    for (int i=0; i<count; i++) {
-        readStream >> item;
-        list.append(item);
-    }
-    return list;
 }
 

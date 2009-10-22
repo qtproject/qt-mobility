@@ -38,16 +38,15 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef CNTSYMBIANFILTERSQLHELPER_H
-#define CNTSYMBIANFILTERSQLHELPER_H
+#ifndef CNTSRVCONNECTION_H
+#define CNTSRVCONNECTION_H
 
 // System includes
+#include <e32std.h>
+#include <cntdb.h>
+#include <qcontactmanager.h>
 
 // User includes
-#include "qcontactdetailfilter.h"
-#include "qcontactphonenumber.h"
-#include "qcontactmanager.h"
-#include "cntsrvconnection.h"
 
 // Forward declarations
 
@@ -55,37 +54,34 @@
 
 // Constants
 
-class CntSymbianFilterSqlHelper
+class CntSrvConnection : public RSessionBase
 {
 public:
-    CntSymbianFilterSqlHelper();
-    ~CntSymbianFilterSqlHelper();
-
-public:
-    /*Generic functions for all filters*/
-    QList<QContactLocalId> searchContacts(const QContactFilter& filter, 
-                                           QContactManager::Error& error);
+    /*Constructor and destructor*/
+    CntSrvConnection();
+    ~CntSrvConnection();
     
+public:
+    /* QT like functions */
+    QList<QContactLocalId> searchContacts(const QString& searchQuery, 
+                                         QContactManager::Error& error);
+
 private:
-    void createSqlQuery(const QContactFilter& filter,
-                          QString& sqlQuery,
-                          QContactManager::Error& error);
-    /* Return true if this filter is leaf filter*/ 
-    bool isSingleFilter(const QContactFilter& filter, 
-                             QContactManager::Error& error) const;
-    /*Local helper functions used for creating the sql query */
-    void updateSqlQueryForSingleFilter(const QContactFilter& filter,
-                                       QString& sqlQuery,
-                                       QContactManager::Error& error);
-    void updateSqlQueryForDetailFilter(const QContactFilter& filter,
-                                       QString& sqlQuery,
-                                       QContactManager::Error& error);
-    void initializeTransformContactData();
-    void createDatabaseColumnMap();
-    void convertFieldIdToSqlDbColumnName(const quint32 fieldId,
-                                         QString& sqlDbTableColumnName );
+    /* Symbian Leaving functions */
+    QList<QContactLocalId> searchContactsL(const TDesC& aSearchQuery);
+    void ConnectSrvL();
+    void OpenDatabaseL();
+    TVersion Version() const;
+    TDes8& GetReceivingBufferL(TInt aSize=0);
+    QList<QContactLocalId> UnpackCntIdArrayL();
+    void transformError(TInt symbianError, QContactManager::Error& qtError);
+
 private:
-    CntSrvConnection* m_srvConnection;
+    /* member varibles */ 
+    CBufFlat* m_buffer;
+    TInt m_maxBufferSize;
+    TPtr8 m_bufPtr;
+    bool m_isInitialized;
 };
 
-#endif//CNTSYMBIANFILTERSQLHELPER_H
+#endif //CNTSRVCONNECTION_H
