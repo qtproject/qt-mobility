@@ -116,11 +116,12 @@ public:
 
     static MapiFolderIterator folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiStorePtr &store);
     static MapiStoreIterator storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiSessionPtr &session);
-    static QList<QMessageFilter> subFilters(const QMessageFilter &filter);
+    static QList<QMessageFilter> subfilters(const QMessageFilter &filter);
     static bool matchesMessage(const QMessageFilter &filter, const QMessage &message);
 
     static bool QMessageFilterPrivate::restrictionPermitted(const QMessageFilter &filter);
     static bool QMessageFilterPrivate::matchesMessageRequired(const QMessageFilter &filter);
+    static bool QMessageFilterPrivate::containsSenderSubfilter(const QMessageFilter &filter);
 
     static QMessageFilter QMessageFilterPrivate::bySender(const QString &value, QMessageDataComparator::InclusionComparator cmp);
     static QMessageFilter QMessageFilterPrivate::bySender(const QString &value, QMessageDataComparator::EqualityComparator cmp);

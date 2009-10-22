@@ -4037,13 +4037,13 @@ QMessageIdList MapiSession::queryMessages(QMessageStore::ErrorCode *lastError, c
 {
     QList<FolderHeapNodePtr> folderNodes;
 
-    foreach (QMessageFilter subFilter, QMessageFilterPrivate::subFilters(filter)) {
-        MapiStoreIterator storeIt(QMessageFilterPrivate::storeIterator(subFilter, lastError, _self.toStrongRef()));
+    foreach (QMessageFilter subfilter, QMessageFilterPrivate::subfilters(filter)) {
+        MapiStoreIterator storeIt(QMessageFilterPrivate::storeIterator(subfilter, lastError, _self.toStrongRef()));
         for (MapiStorePtr store(storeIt.next()); store && store->isValid(); store = storeIt.next()) {
-            MapiFolderIterator folderIt(QMessageFilterPrivate::folderIterator(subFilter, lastError, store));
+            MapiFolderIterator folderIt(QMessageFilterPrivate::folderIterator(subfilter, lastError, store));
             for (MapiFolderPtr folder(folderIt.next()); folder && folder->isValid(); folder = folderIt.next()) {
                 QList<QMessageFilter> orderingFilters;
-                orderingFilters.append(subFilter);
+                orderingFilters.append(subfilter);
                 foreach(QMessageFilter orderingFilter, QMessageOrderingPrivate::normalize(orderingFilters, ordering)) {
                     folderNodes.append(FolderHeapNodePtr(new FolderHeapNode(folder, orderingFilter)));
                 }
