@@ -3,6 +3,7 @@
 set QT_MOBILITY_PREFIX= C:\QtMobility
 set PROJECT_PWD= %~dp0
 set PROJECT_CONFIG= %~dp0config.in
+set PROJECT_LOG= %~dp0config.log
 set RELEASEMODE=release
 set QT_MOBILITY_LIB=
 set BUILD_UNITTESTS=no
@@ -10,6 +11,7 @@ set BUILD_EXAMPLES=no
 set CONTACTS_PLUGIN=
 set VC_TEMPLATE_OPTION=
 
+if exist "%PROJECT_LOG%" del %PROJECT_LOG%
 if exist "%PROJECT_CONFIG%" del %PROJECT_CONFIG%
 echo CONFIG += silent > %PROJECT_CONFIG%
 
@@ -149,8 +151,56 @@ echo isEmpty($$QT_MOBILITY_INCLUDE):QT_MOBILITY_INCLUDE=$$QT_MOBILITY_PREFIX/inc
 echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
 
-copy %PROJECT_CONFIG% %PROJECT_PWD%config.pri
+
+:copy %PROJECT_CONFIG% %PROJECT_PWD%config.pri
 del %PROJECT_CONFIG%
+
+echo Checking available Qt
+qmake -v >> %PROJECT_LOG% 2>&1
+if errorlevel 1 goto qmakeNotFound
+goto qmakeFound
+:qmakeNotFound
+echo ... Not found  >> %PROJECT_LOG% 2>&1
+echo >&2 "Cannot find 'qmake' in your PATH."
+echo >&2 "Aborting." 
+goto exitTag
+
+:qmakeFound
+qmake -query QT_VERSION
+
+echo Checking for nmake...
+nmake /? >> %PROJECT_LOG% 2>&1
+if errorlevel 1 goto mingw
+echo       Using nmake
+set MAKE=nmake
+goto testingMake
+
+:mingw
+echo Checking for mingw32-make...
+mingw32-make -v >> %PROJECT_LOG% 2>&1
+if errorlevel 1 goto gnumake
+echo       Using mingw32-make
+set MAKE=mingw32-make
+goto testingMake
+
+:gnumake
+echo Checking for GNU make...
+make -v >> %PROJECT_LOG% 2>&1
+if errorlevel 1 goto gnumake
+echo       Using GNU make
+set MAKE=make
+goto testingMake
+
+echo >&2 "Cannot find 'nmake', 'mingw32-make' or 'make' in your PATH"
+echo >&2 "Aborting."
+
+goto exitTag
+
+:testingMake
+
+echo.
+REM compile tests go here. We don't have anything to test for at this stage.
+
 
 echo "Generating Mobility Headers..."
 rd /s /q %PROJECT_PWD%\include
@@ -164,7 +214,16 @@ perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\contac
 perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\multimedia
 perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\messaging
 
+echo.
 echo Running qmake...
 qmake -recursive %VC_TEMPLATE_OPTION%
+if errorlevel 1 goto qmakeRecError
+echo.
+echo configure has finished. You may run %MAKE% to build the project now.
+goto exitTag
+
+:qmakeRecError
+echo.
+echo configure failed.
 
 :exitTag
