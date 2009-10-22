@@ -191,18 +191,17 @@ void QVideoSurfaceRasterPainter::updateColors(int, int, int, int)
 # define APIENTRYP *
 #endif
 
-# ifndef GL_TEXTURE0
+#ifndef GL_TEXTURE0
 #  define GL_TEXTURE0    0x84C0
 #  define GL_TEXTURE1    0x84C1
 #  define GL_TEXTURE2    0x84C2
-# endif
-# ifndef GL_PROGRAM_ERROR_STRING_ARB
-#  define GL_PROGRAM_ERROR_STRING_ARB       0x8874
 #endif
+#ifndef GL_PROGRAM_ERROR_STRING_ARB
+#  define GL_PROGRAM_ERROR_STRING_ARB       0x8874
 #endif
 
 #ifndef GL_UNSIGNED_SHORT_5_6_5
-#define GL_UNSIGNED_SHORT_5_6_5 33635
+#  define GL_UNSIGNED_SHORT_5_6_5 33635
 #endif
 
 class QVideoSurfaceGLPainter : public QVideoSurfacePainter
@@ -737,8 +736,9 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::paint(
     }
     return QAbstractVideoSurface::NoError;
 }
-#endif
 
+#endif
+#endif
 
 /*!
     \class QPainterVideoSurface
