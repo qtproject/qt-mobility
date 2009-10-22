@@ -57,8 +57,7 @@
 #include "transformcontact.h"
 #include "qabstractcontactfilter.h"
 
-//remember to remove this in the code and just return a normal list
-//typedef QList<QContactLocalId> QContactLocalIdIterator;
+
 
 class QContactChangeSet;
 class QAbstractContactFilter;
@@ -94,8 +93,6 @@ public:
     bool removeRelationship(QContactChangeSet *changeSet, const QContactRelationship& relationship, QContactManager::Error& error);
     QList<QContactManager::Error> removeRelationships(QContactChangeSet *changeSet, const QList<QContactRelationship>& relationships, QContactManager::Error& error);
 
-    QContactLocalId simPhonebookGroupId() const;
-
     /* "Self" contact id (MyCard) */
     bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& qtError);
     QContactLocalId selfContactId(QContactManager::Error& qtError) const;
@@ -109,9 +106,8 @@ signals:
     void contactAdded(const QContactLocalId &contactId);
     void contactRemoved(const QContactLocalId &contactId);
     void contactChanged(const QContactLocalId &contactId);
-    void groupAdded(const QContactLocalId &contactId);
-    void groupRemoved(const QContactLocalId &contactId);
-    void groupChanged(const QContactLocalId &contactId);
+    void relationshipAdded(const QContactLocalId &contactId);
+    void relationshipRemoved(const QContactLocalId &contactId);
     
 public:
     // Utility function to convert symbian error to QContactManager error
@@ -126,13 +122,7 @@ private:
 	int addContactL(QContact &contact);
 	void updateContactL(QContact &contact);
     int removeContactL(QContactLocalId id);
-
-    QContactLocalId simPhonebookGroupIdL() const;
-    
-	//utility functions
-    CContactGroup* fetchCGroup(const QContactLocalId& id) const;
-    bool isGroup(const QContactLocalId& id) const;
-
+   
 private:
 	CContactDatabase* m_contactDatabase;
 #ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__

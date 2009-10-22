@@ -227,10 +227,6 @@ bool QContactSymbianEngineData::addContact(QContact& contact, QContactChangeSet&
     TRAP(err, QT_TRYCATCH_LEAVING(id = addContactL(contact)));
     if(err == KErrNone)
     {
-        QContactId contactId;
-        contactId.setLocalId(id);
-        contact.setId(contactId);
-        //TODO: check what to do with groupsChanged
         changeSet.addedContacts().insert(id);
         m_contactsAddedEmitted.append(id);
     }
@@ -350,19 +346,6 @@ QList<QContactManager::Error> QContactSymbianEngineData::removeRelationships(QCo
 }
 
 /*!
- * Return the contact group ID of the built-in SIM phonebook contacts group
- *
- * \return a unique id relating the SIM phonebook group or 0 if it fails
- */
-QContactLocalId QContactSymbianEngineData::simPhonebookGroupId() const
-{
-        QContactLocalId val = 0;
-	// simPhonebookGroupIdL() can't throw c++ exception
-	TRAP_IGNORE(val = simPhonebookGroupIdL());
-	return val;
-}
-
-/*!
  * Assigns some contact to be a "my card" contact
  *
  * \param contactId The id of contact to be set up as a "my card" contact.
@@ -445,19 +428,19 @@ void QContactSymbianEngineData::HandleDatabaseEventL(TContactDbObserverEvent aEv
         if(m_contactsAddedEmitted.contains(id))
             m_contactsAddedEmitted.removeOne(id);
         else
-            emit groupAdded(id);
+            emit relationshipAdded(id);
 		break;
 	case EContactDbObserverEventGroupDeleted:
         if(m_contactsRemovedEmitted.contains(id))
             m_contactsRemovedEmitted.removeOne(id);
         else
-            emit groupRemoved(id);
+            emit relationshipRemoved(id);
         break;
 	case EContactDbObserverEventGroupChanged:
         if(m_contactsChangedEmitted.contains(id))
             m_contactsChangedEmitted.removeOne(id);
         else
-            emit groupChanged(id);
+            emit contactChanged(id); //group is a contact
         break;
 	default:
 		break; // ignore other events
@@ -539,10 +522,6 @@ QContact QContactSymbianEngineData::contactL(const QContactLocalId &contactId) c
 
 	// Convert to a QContact
 	QContact contact = m_transformContact->transformContactL(*symContact, *m_contactDatabase);
-
-	// Read group membership
-    //QList<QContactLocalId> groups = memberOfGroupsL(id);
-    //contact.setGroups(groups);
 
     CleanupStack::PopAndDestroy(symContact);
 
@@ -654,13 +633,5 @@ int QContactSymbianEngineData::removeContactL(QContactLocalId id)
 
 
 	return 0;
-}
-
-/*!
- * Private leaving implementation for simPhonebookGroupId
- */
-QContactLocalId QContactSymbianEngineData::simPhonebookGroupIdL() const
-{
-	return m_contactDatabase->PhonebookGroupIdL();
 }
 

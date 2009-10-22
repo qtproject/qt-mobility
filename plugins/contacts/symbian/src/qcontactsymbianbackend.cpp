@@ -54,21 +54,29 @@
 #include "qcontactsymbianengine_p.h"
 #include "qcontactchangeset.h"
 
-QContactSymbianEngine::QContactSymbianEngine(const QMap<QString, QString>& /*parameters*/, QContactManager::Error& error)
+QContactSymbianEngine::QContactSymbianEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
-  error = QContactManager::NoError;
+    Q_UNUSED(parameters);
+    
+    error = QContactManager::NoError;
 
-  d = new QContactSymbianEngineData(error);
+    d = new QContactSymbianEngineData(error);
 
-	// Connect database observer events appropriately.
-        connect(d, SIGNAL(contactAdded(QContactLocalId)),
-                        this, SLOT(eventContactAdded(QContactLocalId)));
-
-        connect(d, SIGNAL(contactRemoved(QContactLocalId)),
-                        this, SLOT(eventContactRemoved(QContactLocalId)));
-
-        connect(d, SIGNAL(contactChanged(QContactLocalId)),
-                        this, SLOT(eventContactChanged(QContactLocalId)));
+    // Connect database observer events appropriately.
+    connect(d, SIGNAL(contactAdded(QContactLocalId)),
+        this, SLOT(eventContactAdded(QContactLocalId)));
+    
+    connect(d, SIGNAL(contactRemoved(QContactLocalId)),
+        this, SLOT(eventContactRemoved(QContactLocalId)));
+    
+    connect(d, SIGNAL(contactChanged(QContactLocalId)),
+        this, SLOT(eventContactChanged(QContactLocalId)));
+    
+    connect(d, SIGNAL(relationshipAdded(QContactLocalId)),
+        this, SLOT(eventRelationshipRemoved(QContactLocalId)));
+    
+    connect(d, SIGNAL(relationshipRemoved(QContactLocalId)),
+        this, SLOT(eventRelationshipRemoved(QContactLocalId)));
 }
 
 QContactSymbianEngine::QContactSymbianEngine(const QContactSymbianEngine& other)

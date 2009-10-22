@@ -107,11 +107,20 @@ QContact TransformContact::transformContactL(CContactItem &contact, CContactData
 		// Create a new QContact
 		QContact newQtContact;
 		
+		//set contact id
 		QContactId newId;
-		//newId.setManagerUri(managerUri()); //fix this
 		newId.setLocalId(contact.Id());        
-		
 		newQtContact.setId(newId);
+
+		// set the corect type 
+        if (contact.Type() == KUidContactGroup)
+        {
+            newQtContact.setType(QContactType::TypeGroup);
+        }   
+        else
+        {
+            newQtContact.setType(QContactType::TypeContact);
+        }
 		
 		// Iterate through the CContactItemFieldSet, creating
 		// new fields for the QContact
