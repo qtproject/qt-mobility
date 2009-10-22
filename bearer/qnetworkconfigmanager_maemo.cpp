@@ -471,6 +471,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	cpPriv->type = QNetworkConfiguration::UserChoice;
 	cpPriv->purpose = QNetworkConfiguration::Unknown;
 	cpPriv->roamingSupported = false;
+	cpPriv->manager = this;
 	QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
 	userChoiceConfigurations.insert(cpPriv->id, ptr);
     }
@@ -539,6 +540,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    cpPriv->service_type = saved_ap.value("service_type").toString();
 	    cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
 	    cpPriv->state = QNetworkConfiguration::Defined;
+	    cpPriv->manager = this;
 
 	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
 	    accessPointConfigurations.insert(iap_id, ptr);
@@ -646,6 +648,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	    cpPriv->service_id = ap.scan.service_id;
 	    cpPriv->service_type = ap.scan.service_type;
 	    cpPriv->service_attrs = ap.scan.service_attrs;
+	    cpPriv->manager = this;
 
 	    cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
 	    cpPriv->state = QNetworkConfiguration::Undefined;

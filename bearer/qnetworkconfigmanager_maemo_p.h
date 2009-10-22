@@ -54,6 +54,7 @@
 
 #include <qnetworkconfigmanager.h>
 #include <qnetworkconfiguration_maemo_p.h>
+#include <qnetworksession_maemo_p.h>
 
 #include <QHash>
 #include <QStringList>
@@ -121,6 +122,7 @@ public:
     uint32_t getNetworkAttrs(bool is_iap_id, QString& iap_id,
 			     QString& iap_type, QString security_method);
     void configChanged(QNetworkConfigurationPrivate *ptr, bool added);
+    friend class QNetworkSessionPrivate;
 
 public slots:
     void updateConfigurations();
