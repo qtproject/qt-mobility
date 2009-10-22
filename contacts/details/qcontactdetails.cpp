@@ -112,8 +112,8 @@ contact.
  */
 
 /*!
-   \class QContactOrganisation
-   \brief The QContactOrganisation class provides the details about an
+   \class QContactOrganization
+   \brief The QContactOrganization class provides the details about an
     organization that the contact is either a part of, or stands for.
    \ingroup contacts-details
 */
