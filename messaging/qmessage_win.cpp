@@ -494,6 +494,7 @@ void QMessage::appendAttachments(const QStringList &fileNames)
             if (existingBodyId == QMessageContentContainerPrivate::bodyContentId()) {
                 // The body content is in the message itself - move it to become the first attachment
                 QMessageContentContainer newBody(*this);
+                newBody.setDerivedMessage(0);
 
                 container->setContentType("multipart", "mixed", "");
                 d_ptr->_bodyId = container->prependContent(newBody);
