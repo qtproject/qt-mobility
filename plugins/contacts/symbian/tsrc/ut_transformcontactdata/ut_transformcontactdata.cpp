@@ -40,23 +40,25 @@
 ****************************************************************************/
 
 #include "ut_transformcontactdata.h"
-#include "transformemail.h"
-#include "transformname.h"
-#include "transformnickname.h"
-#include "transformphonenumber.h"
-#include "transformaddress.h"
-#include "transformurl.h"
-#include "transformbirthday.h"
-#include "transformonlineaccount.h"
+
+#include "cnttransformemail.h"
+#include "cnttransformname.h"
+#include "cnttransformnickname.h"
+#include "cnttransformphonenumber.h"
+#include "cnttransformaddress.h"
+#include "cnttransformurl.h"
+#include "cnttransformbirthday.h"
+#include "cnttransformonlineaccount.h"
+#include "cnttransformorganisation.h"
+#include "cnttransformavatar.h"
+#include "cnttransformsynctarget.h"
+#include "cnttransformgender.h"
+#include "cnttransformanniversary.h"
+#include "cnttransformgeolocation.h"
+#include "cnttransformnote.h"
+#include "cnttransformfamily.h"
+
 #include "cntmodelextuids.h"
-#include "transformorganisation.h"
-#include "transformavatar.h"
-#include "transformsynctarget.h"
-#include "transformgender.h"
-#include "transformanniversary.h"
-#include "transformgeolocation.h"
-#include "transformnote.h"
-#include "transformfamily.h"
 
 #include <QtTest/QtTest>
 

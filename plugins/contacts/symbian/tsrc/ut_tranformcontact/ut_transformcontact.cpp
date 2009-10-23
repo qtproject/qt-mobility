@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "ut_transformcontact.h"
-#include "transformcontact.h"
+#include "cnttransformcontact.h"
 
 #include <QtTest/QtTest>
 
@@ -58,16 +58,22 @@ void TestTransformContact::executeTransformSymbianContact()
 {
 	TransformContact transformContact;
 
+#if 0 /*BELOW CODE DOESN'T TEST ANYTHING*/
+
 	//empty contact
 	CContactCard* symContact = CContactCard::NewLC();
 	QContact qcontact = transformContact.transformContact(*symContact);
 	CleanupStack::PopAndDestroy(symContact);
+#endif
+
 }
 
 void TestTransformContact::executeTransformQtContact()
 {
+    
 	TransformContact transformContact;
-	
+
+#if 0 /*BELOW CODE DOESN'T TEST ANYTHING*/
 	//empty contact
 	QContact contact;
 	CContactItem *contactItem = transformContact.transformContact(contact);
@@ -82,6 +88,7 @@ void TestTransformContact::executeTransformQtContact()
 	contactItem = transformContact.transformContact(contact);
 	//validate data
 	delete contactItem;
+#endif
 }
 
 

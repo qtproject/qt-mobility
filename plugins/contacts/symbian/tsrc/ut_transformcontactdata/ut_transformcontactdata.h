@@ -43,7 +43,7 @@
 #include <cntdb.h>
 #include <cntitem.h>
 #include <qtcontacts.h>
-#include "transformcontactdata.h"
+#include "cnttransformcontactdata.h"
 
 class TestTransformContactData : public QObject
 {
