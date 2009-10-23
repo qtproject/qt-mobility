@@ -119,4 +119,8 @@ const char versitValue[] = "VALUE";
 // Encoding Type.
 const char versitEncoding[] = "ENCODING";
 
+// www. exception type const
+const char versitConstWWW[] = "WWW.";
+
+
 #endif // QVERSITDEFS_H

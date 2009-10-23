@@ -69,6 +69,7 @@ public:
     void encodeGeoLocation(QVersitProperty& property, const QContactDetail& detail);
     bool encodeOrganization(QVersitDocument& document, const QContactDetail& detail);
     bool encodeEmbeddedContent(QVersitProperty& property,const QContactDetail& detail );
+    bool isVaildRemoteURL(const QString& resouceIdentifier );
     
 public: // Data
     QHash<QString,QString> mMappings;

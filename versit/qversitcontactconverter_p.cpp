@@ -43,6 +43,7 @@
 #include "qversitdefs.h"
 
 #include <QFile>
+#include <QUrl>
 #include <qcontact.h>
 #include <qcontactdetail.h>
 #include <qcontactname.h>
@@ -371,19 +372,20 @@ bool QVersitContactConverterPrivate::encodeEmbeddedContent(QVersitProperty& prop
     if ( mMappings.contains(contactAvatar.subType()) &&
          avatarFormat.size()) {
 
-        encodeProperty = true;
         QString name = mMappings.value(contactAvatar.subType());
         QByteArray value;
 
         QFile avtarFile;
         avtarFile.setFileName(avatarPath);
         if ( avtarFile.open(QIODevice::ReadOnly )) {
+            encodeProperty = true;
             value = avtarFile.readAll().toBase64();
             property.addParameter(QString::fromAscii(versitType),avatarFormat);
             property.addParameter(QString::fromAscii(versitEncoding),
                                   QString::fromAscii(versitEncodingBase64));
         }
-        else {
+        else if (isVaildRemoteURL( avatarPath )) {
+            encodeProperty = true;
             value = avatarPath.toAscii();
             property.addParameter(QString::fromAscii(versitValue),versitUrlId);
             property.addParameter(QString::fromAscii(versitType),avatarFormat);
@@ -409,4 +411,19 @@ void QVersitContactConverterPrivate::encodeParameters(
         if (parameterValue.size())
             property.addParameter(QString::fromAscii(versitType),parameterValue);
     }
+}
+
+
+
+/*!
+ * Check if the Remote resouce represents a Valid remote resouce
+ */
+bool QVersitContactConverterPrivate::isVaildRemoteURL(const QString& resouceIdentifier )
+{
+    QUrl remoteResouce(resouceIdentifier);
+    if ( ( !remoteResouce.scheme().isEmpty() &&
+         !remoteResouce.host().isEmpty()) ||
+         resouceIdentifier.contains(QString::fromAscii(versitConstWWW), Qt::CaseInsensitive))
+        return true;
+    return false;
 }
