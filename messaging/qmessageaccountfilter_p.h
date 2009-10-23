@@ -39,7 +39,9 @@
 **
 ****************************************************************************/
 #include "qmessageaccountfilter.h"
+#ifdef Q_OS_WIN
 #include "winhelpers_p.h"
+#endif
 
 #include <QSet>
 
