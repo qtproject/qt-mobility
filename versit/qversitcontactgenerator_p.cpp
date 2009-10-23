@@ -448,7 +448,7 @@ QString QVersitContactGeneratorPrivate::saveImage(const QVersitProperty& photoPr
 
     QImage image;
     image = QImage::fromData(QByteArray::fromBase64(value), format.toAscii());
-    if (image.save(imgName, format.toAscii())) {
+    if (image.save(imgName, format.toAscii(), 0)) {
         return imgName;
     } else {
         return QString("");
