@@ -39,16 +39,48 @@
 **
 ****************************************************************************/
 #include "qmessageaccountfilter.h"
+#include "winhelpers_p.h"
+
+#include <QSet>
 
 class QMessageAccountFilterPrivate
 {
     Q_DECLARE_PUBLIC(QMessageAccountFilter)
 
 public:
+    enum Criterion { None = 0, IdEquality, IdInclusion, NameEquality, NameInclusion };
+
     QMessageAccountFilterPrivate(QMessageAccountFilter *accountFilter)
-        :q_ptr(accountFilter)
+        : q_ptr(accountFilter),
+          _criterion(None),
+          _equality(QMessageDataComparator::Equal),
+          _inclusion(QMessageDataComparator::Includes),
+          _options(0)
     {
     }
 
     QMessageAccountFilter *q_ptr;
+
+    QMessageAccountFilterPrivate &operator=(const QMessageAccountFilterPrivate &other)
+    {
+        _criterion = other._criterion;
+        _ids = other._ids;
+        _name = other._name;
+        _equality = other._equality;
+        _inclusion = other._inclusion;
+        _options = other._options;
+
+        return *this;
+    }
+
+    Criterion _criterion;
+    QSet<QMessageAccountId> _ids;
+    QString _name;
+    QMessageDataComparator::EqualityComparator _equality;
+    QMessageDataComparator::InclusionComparator _inclusion;
+    QMessageDataComparator::Options _options;
+
+#ifdef Q_OS_WIN
+    static bool matchesStore(const QMessageAccountFilter &filter, const MapiStorePtr &store);
+#endif
 };
