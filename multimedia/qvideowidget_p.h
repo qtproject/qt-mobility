@@ -144,6 +144,10 @@ Q_SIGNALS:
     void saturationChanged(int saturation);
 
 protected:
+#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
+	void initializeGL();
+#endif
+
     void paintEvent(QPaintEvent *event);
 
 private Q_SLOTS:
