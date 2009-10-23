@@ -538,11 +538,11 @@ QMessage ComposeSendWidget::constructQMessage() const
     QMessageAddressList ccList;
     QMessageAddressList bccList;
 
-    foreach(QString s, m_toEdit->text().split(QRegExp("\\s")))
+    foreach(QString s, m_toEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts))
         toList.append(QMessageAddress(s,QMessageAddress::Email));
-    foreach(QString s, m_ccEdit->text().split(QRegExp("\\s")))
+    foreach(QString s, m_ccEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts))
         ccList.append(QMessageAddress(s,QMessageAddress::Email));
-    foreach(QString s, m_bccEdit->text().split(QRegExp("\\s")))
+    foreach(QString s, m_bccEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts))
         bccList.append(QMessageAddress(s,QMessageAddress::Email));
 
     message.setTo(toList);
