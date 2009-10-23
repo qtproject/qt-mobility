@@ -42,111 +42,181 @@
 #include "qmessageaccountfilter_p.h"
 
 
+bool QMessageAccountFilterPrivate::matchesStore(const QMessageAccountFilter &filter, const MapiStorePtr &store)
+{
+    QMessageAccountFilterPrivate *f(filter.d_ptr);
+
+    if ((f->_criterion == IdEquality) || (f->_criterion == IdInclusion)) {
+        QMessageAccountId storeId(store->id());
+
+        if (f->_criterion == IdEquality) {
+            bool idEqual(storeId == *f->_ids.begin());
+            return (f->_equality == QMessageDataComparator::Equal ? idEqual : !idEqual);
+        } else {
+            bool idPresent(f->_ids.contains(storeId));
+            return (f->_inclusion == QMessageDataComparator::Includes ? idPresent : !idPresent);
+        }
+    } else if ((f->_criterion == NameEquality) || (f->_criterion == NameInclusion)) {
+        QString storeName(store->name());
+
+        if (f->_criterion == NameEquality) {
+            // TODO: Apply options
+            bool nameEqual(storeName == f->_name);
+            return (f->_equality == QMessageDataComparator::Equal ? nameEqual : !nameEqual);
+        } else {
+            bool namePartialMatch(storeName.contains(f->_name));
+            return (f->_inclusion == QMessageDataComparator::Includes ? namePartialMatch : !namePartialMatch);
+        }
+    } else { // None
+        return (f->_equality == QMessageDataComparator::Equal);
+    }
+}
+
 QMessageAccountFilter::QMessageAccountFilter()
+    : d_ptr(new QMessageAccountFilterPrivate(this))
 {
 }
 
 QMessageAccountFilter::QMessageAccountFilter(const QMessageAccountFilter &other)
+    : d_ptr(new QMessageAccountFilterPrivate(this))
 {
-    Q_UNUSED(other)
+    this->operator=(other);
 }
 
 QMessageAccountFilter::~QMessageAccountFilter()
 {
+    delete d_ptr;
 }
 
 QMessageAccountFilter& QMessageAccountFilter::operator=(const QMessageAccountFilter& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    *d_ptr = *other.d_ptr;
+    return *this;
 }
 
 void QMessageAccountFilter::setOptions(QMessageDataComparator::Options options)
 {
-    Q_UNUSED(options)
+    d_ptr->_options = options;
 }
 
 QMessageDataComparator::Options QMessageAccountFilter::options() const
 {
-    return 0;
+    return d_ptr->_options;
 }
 
 bool QMessageAccountFilter::isEmpty() const
 {
-    return false; // stub
+    return ((d_ptr->_criterion == QMessageAccountFilterPrivate::None) && 
+            (d_ptr->_equality == QMessageDataComparator::Equal));
 }
 
 bool QMessageAccountFilter::isSupported() const
 {
-    return false; // TODO: Implement
+    return true;
 }
 
 QMessageAccountFilter QMessageAccountFilter::operator~() const
 {
-    return QMessageAccountFilter(); // stub
+    QMessageAccountFilter result(*this);
+
+    // Reverse the sense of the comparator
+    if ((d_ptr->_criterion == QMessageAccountFilterPrivate::IdEquality) || 
+        (d_ptr->_criterion == QMessageAccountFilterPrivate::NameEquality) ||
+        (d_ptr->_criterion == QMessageAccountFilterPrivate::None)) {
+        result.d_ptr->_equality = (result.d_ptr->_equality == QMessageDataComparator::Equal ? QMessageDataComparator::NotEqual : QMessageDataComparator::Equal);
+    } else if ((d_ptr->_criterion == QMessageAccountFilterPrivate::IdInclusion) ||
+               (d_ptr->_criterion == QMessageAccountFilterPrivate::NameInclusion)) {
+        result.d_ptr->_inclusion = (result.d_ptr->_inclusion == QMessageDataComparator::Includes ? QMessageDataComparator::Excludes : QMessageDataComparator::Includes); 
+    }
+
+    return result;
 }
 
 QMessageAccountFilter QMessageAccountFilter::operator&(const QMessageAccountFilter& other) const
 {
+    // TODO: Not yet implemented
     Q_UNUSED(other)
     return QMessageAccountFilter(); // stub
 }
 
 QMessageAccountFilter QMessageAccountFilter::operator|(const QMessageAccountFilter& other) const
 {
+    // TODO: Not yet implemented
     Q_UNUSED(other)
     return QMessageAccountFilter(); // stub
 }
 
 const QMessageAccountFilter& QMessageAccountFilter::operator&=(const QMessageAccountFilter& other)
 {
-    Q_UNUSED(other)
+    *this = this->operator&(other);
     return *this;
 }
 
 const QMessageAccountFilter& QMessageAccountFilter::operator|=(const QMessageAccountFilter& other)
 {
-    Q_UNUSED(other)
+    *this = this->operator|(other);
     return *this;
 }
 
 bool QMessageAccountFilter::operator==(const QMessageAccountFilter& other) const
 {
-    Q_UNUSED(other)
-    return false; // stub
+    return ((d_ptr->_criterion == other.d_ptr->_criterion) &&
+            (d_ptr->_equality == other.d_ptr->_equality) &&
+            (d_ptr->_inclusion == other.d_ptr->_inclusion) &&
+            (d_ptr->_ids == other.d_ptr->_ids) && 
+            (d_ptr->_name == other.d_ptr->_name));
 }
 
 QMessageAccountFilter QMessageAccountFilter::byId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(id)
-    Q_UNUSED(cmp)
-    return QMessageAccountFilter(); // stub
+    QMessageAccountFilter result;
+    result.d_ptr->_ids.insert(id);
+    result.d_ptr->_equality = cmp;
+    result.d_ptr->_criterion = QMessageAccountFilterPrivate::IdEquality;
+    return result;
 }
 
 QMessageAccountFilter QMessageAccountFilter::byId(const QMessageAccountIdList &ids, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(ids)
-    Q_UNUSED(cmp)
-    return QMessageAccountFilter(); // stub
+    QMessageAccountFilter result;
+    result.d_ptr->_ids = ids.toSet();
+    result.d_ptr->_inclusion = cmp;
+    result.d_ptr->_criterion = QMessageAccountFilterPrivate::IdInclusion;
+    return result;
 }
 
 QMessageAccountFilter QMessageAccountFilter::byId(const QMessageAccountFilter &filter, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(cmp)
-    return QMessageAccountFilter(); // stub
+    QMessageAccountFilter result;
+    *result.d_ptr = *filter.d_ptr;
+    if (cmp == QMessageDataComparator::Excludes) {
+        // Invert the sense of comparison
+        if ((result.d_ptr->_criterion == QMessageAccountFilterPrivate::IdEquality) || 
+            (result.d_ptr->_criterion == QMessageAccountFilterPrivate::NameEquality) ||
+            (result.d_ptr->_criterion == QMessageAccountFilterPrivate::None)) {
+            result.d_ptr->_equality = (result.d_ptr->_equality == QMessageDataComparator::Equal ? QMessageDataComparator::NotEqual : QMessageDataComparator::Equal);
+        } else if ((result.d_ptr->_criterion == QMessageAccountFilterPrivate::IdInclusion) ||
+                   (result.d_ptr->_criterion == QMessageAccountFilterPrivate::NameInclusion)) {
+            result.d_ptr->_inclusion = (result.d_ptr->_inclusion == QMessageDataComparator::Includes ? QMessageDataComparator::Excludes : QMessageDataComparator::Includes); 
+        }
+    }
+    return result;
 }
 
 QMessageAccountFilter QMessageAccountFilter::byName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageAccountFilter(); // stub
+    QMessageAccountFilter result;
+    result.d_ptr->_name = value;
+    result.d_ptr->_equality = cmp;
+    result.d_ptr->_criterion = QMessageAccountFilterPrivate::NameEquality;
+    return result;
 }
 
 QMessageAccountFilter QMessageAccountFilter::byName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageAccountFilter(); // stub
+    QMessageAccountFilter result;
+    result.d_ptr->_name = value;
+    result.d_ptr->_inclusion = cmp;
+    result.d_ptr->_criterion = QMessageAccountFilterPrivate::NameInclusion;
+    return result;
 }
