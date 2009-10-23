@@ -73,10 +73,12 @@
 #if !defined( Q_CC_MINGW)
 #ifndef Q_OS_WINCE
 #include "qwmihelper_win_p.h"
-//#include <Wlanapi.h>
-#include <sdkddkver.h>
+//new version of ntddndis.h include windot11.h which clashes with some
+//of our redefinitions below
+#define __WINDOT11_H__
 #include <ntddndis.h>
-#include <Dshow.h>
+#undef __WINDOT11_H__
+//#include <Dshow.h>
 #endif
 #endif
 
@@ -92,9 +94,63 @@
 
 
 
+
 #define WLAN_MAX_NAME_LENGTH 256
 #define DOT11_SSID_MAX_LENGTH 32
 #define WLAN_NOTIFICATION_SOURCE_ALL 0x0000ffff
+//#define OID_GEN_MEDIA_SUPPORTED 0x00010103
+
+/*typedef enum _NDIS_MEDIUM
+{
+    NdisMedium802_3,
+    NdisMedium802_5,
+    NdisMediumFddi,
+    NdisMediumWan,
+    NdisMediumLocalTalk,
+    NdisMediumDix,              // defined for convenience, not a real medium
+    NdisMediumArcnetRaw,
+    NdisMediumArcnet878_2,
+    NdisMediumAtm,
+    NdisMediumWirelessWan,
+    NdisMediumIrda,
+    NdisMediumBpc,
+    NdisMediumCoWan,
+    NdisMedium1394,
+    NdisMediumInfiniBand,
+    NdisMediumTunnel,
+    NdisMediumNative802_11,
+    NdisMediumLoopback,
+    NdisMediumMax               // Not a real medium, defined as an upper-bound
+} NDIS_MEDIUM, *PNDIS_MEDIUM;
+
+
+//
+// Physical Medium Type definitions. Used with OID_GEN_PHYSICAL_MEDIUM.
+//
+typedef enum _NDIS_PHYSICAL_MEDIUM
+{
+    NdisPhysicalMediumUnspecified,
+    NdisPhysicalMediumWirelessLan,
+    NdisPhysicalMediumCableModem,
+    NdisPhysicalMediumPhoneLine,
+    NdisPhysicalMediumPowerLine,
+    NdisPhysicalMediumDSL,      // includes ADSL and UADSL (G.Lite)
+    NdisPhysicalMediumFibreChannel,
+    NdisPhysicalMedium1394,
+    NdisPhysicalMediumWirelessWan,
+    NdisPhysicalMediumNative802_11,
+    NdisPhysicalMediumBluetooth,
+    NdisPhysicalMediumInfiniband,
+    NdisPhysicalMediumWiMax,
+    NdisPhysicalMediumUWB,
+    NdisPhysicalMedium802_3,
+    NdisPhysicalMedium802_5,
+    NdisPhysicalMediumIrda,
+    NdisPhysicalMediumWiredWAN,
+    NdisPhysicalMediumWiredCoWan,
+    NdisPhysicalMediumOther,
+    NdisPhysicalMediumMax       // Not a real physical type, defined as an upper-bound
+} NDIS_PHYSICAL_MEDIUM, *PNDIS_PHYSICAL_MEDIUM;*/
 
 enum WLAN_INTF_OPCODE {
     wlan_intf_opcode_autoconf_start = 0x000000000,
@@ -170,9 +226,7 @@ enum WLAN_CONNECTION_MODE {
     wlan_connection_mode_invalid
 };
 
-#if ((NTDDI_VERSION >= NTDDI_VISTA) || NDIS_SUPPORT_NDIS6)
-#else
-    enum DOT11_PHY_TYPE {
+enum DOT11_PHY_TYPE {
         dot11_phy_type_unknown = 0,
         dot11_phy_type_any = dot11_phy_type_unknown,
         dot11_phy_type_fhss = 1,
@@ -225,7 +279,7 @@ struct DOT11_SSID {
     ULONG uSSIDLength;
     UCHAR ucSSID[DOT11_SSID_MAX_LENGTH];
 };
-#endif
+
 
 typedef UCHAR DOT11_MAC_ADDRESS[6];
 
@@ -636,7 +690,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         {
 #if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
 
-            ICreateDevEnum *devEnum = NULL;
+            /*ICreateDevEnum *devEnum = NULL;
             IEnumMoniker *monikerEnum = NULL;
             QUuid qSystemDeviceEnumClsid(0x62BE5D10,0x60EB,0x11d0,0xBD,0x3B,0x00,0xA0,0xC9,0x11,0xCE,0x86);
             QUuid qCreateDevEnumIid = "29840822-5B84-11D0-BD3B-00A0C911CE86";
@@ -654,7 +708,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
                 } else {
                  //   qWarning() << "Not available";
                 }
-            }
+            }*/
 #endif
         }
         break;
@@ -920,7 +974,7 @@ void QSystemNetworkInfoPrivate::emitNetworkStatusChanged(QSystemNetworkInfo::Net
     }
 }
 
-void QSystemNetworkInfoPrivate::emitNetworkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode,int strength)
+void QSystemNetworkInfoPrivate::emitNetworkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode,int /*strength*/)
 {
     //qWarning() << __FUNCTION__ << mode << strength;
     switch(QSysInfo::WindowsVersion) {
@@ -1157,7 +1211,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         break;
     case QSystemNetworkInfo::BluetoothMode:
         break;
-        case QSystemNetworkInfo::WimaxMode:
+    case QSystemNetworkInfo::WimaxMode:
         break;
     };
     return -1;
@@ -1327,6 +1381,7 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
                     }
                 }
                 break;
+#ifdef NDIS_SUPPORT_NDIS6
             case NdisPhysicalMediumWiMax:
                 {
                     if(mode == QSystemNetworkInfo::WimaxMode) {
@@ -1334,6 +1389,7 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
                     }
                 }
                 break;
+#endif
             };
         }
 #endif
@@ -1380,7 +1436,7 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 {
 }
 
-int QSystemDisplayInfoPrivate::displayBrightness(int screen)
+int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
 {
 //#if WINVER > 0x0600
 #if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
@@ -1606,6 +1662,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 
         }
     }
+# if defined(SM_TABLETPC)
     int tabletResult = GetSystemMetrics(SM_TABLETPC);
     if(tabletResult > 0) {
         if((methods & QSystemDeviceInfo::SingleTouch) != QSystemDeviceInfo::SingleTouch) {
@@ -1613,6 +1670,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 
         }
     }
+# endif
 #endif
     int keyboardType = GetKeyboardType(0);
     switch(keyboardType) {
