@@ -416,19 +416,25 @@ QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
 QString QVersitContactGeneratorPrivate::saveImage(const QVersitProperty& photoProperty,
                                                   const QVersitProperty& nameProperty) const
 {
-    // Image name: <FirstName><LastName>.<ext>
+    if (mImagePath.isEmpty()) {
+        return QString("");
+    }
+
+    // Image name: <FirstName><LastName>_<RandomNumber>.<ext>
     QString imgName(mImagePath);
 
     QList<QByteArray> values = nameProperty.value().split(';');
     imgName.append(QString::fromAscii("/"));
     imgName.append(takeFirst(values));
     imgName.append(takeFirst(values));
-    imgName.append(QString::fromAscii("."));
 
+    imgName.append(QString::fromAscii("_"));
+    imgName.append(QString::number(qrand()));
+
+    imgName.append(QString::fromAscii("."));
     // Image format
     const QString format =
             photoProperty.parameters().value(QString::fromAscii(versitType));
-
     imgName.append(QString(format).toLower());
 
     const QString encoding =

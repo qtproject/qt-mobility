@@ -71,7 +71,9 @@ private slots: // Tests
     void testBirthday();
     void testGender();
     void testNickname();
-    void testAvatar();
+    void testAvatarJpegStored();
+    void testAvatarJpegTwoContactsWithSameName();
+    void testAvatarJpegNonexistentPath();
     void testGeo();
     void testNote();
     void testOnlineAccount();
@@ -79,6 +81,8 @@ private slots: // Tests
 private: 
     
     QVersitDocument createDocumentWithProperty(const QVersitProperty& property);
+    QVersitDocument createDocumentWithNameAndPhoto(const QByteArray& name, const char image[],
+                                                   const QString& photoType, const QString& encoding);
 
 private:
     QVersitContactGenerator* mGenerator;
