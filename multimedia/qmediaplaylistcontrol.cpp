@@ -46,6 +46,7 @@
 /*!
     \class QMediaPlaylistControl
     \ingroup multimedia
+    \ingroup multimedia-serv
 
     \preliminary
     \brief The QMediaPlaylistControl class is an abstract class for

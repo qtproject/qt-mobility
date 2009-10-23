@@ -45,6 +45,7 @@
 /*!
     \class QImageProcessingControl
     \ingroup multimedia
+    \ingroup multimedia-serv
 
     \preliminary
     \brief The QImageProcessingControl class provides an abstract class

@@ -75,7 +75,7 @@ void QMediaObjectPrivate::_q_notify()
     \ingroup multimedia
 
     \preliminary
-    \brief The base Multimedia object.
+    \brief The QMediaObject class is the base Multimedia object.
 
     \sa QMediaService, QMediaControl
 */

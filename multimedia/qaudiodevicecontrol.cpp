@@ -45,6 +45,7 @@
     \class QAudioDeviceControl
     \preliminary
     \brief The QAudioDeviceControl class provides an audio input/output device selector media control.
+    \ingroup multimedia-serv
 
     The QAudioDeviceControl class provides descriptions of the audio devices available on a system
     and allows one to be selected as the input/outut of a media service.

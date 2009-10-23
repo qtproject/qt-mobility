@@ -45,6 +45,7 @@
     \class QVideoDeviceControl
     \preliminary
     \brief The QVideoDeviceControl class provides an video device selector media control.
+    \ingroup multimedia-serv
 
     The QVideoDeviceControl class provides descriptions of the video devices available on a system
     and allows one to be selected as the  endpoint of a media service.

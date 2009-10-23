@@ -46,6 +46,7 @@
 /*!
     \class QAudioEncoderControl
     \ingroup multimedia
+    \ingroup multimedia-serv
 
     \preliminary
     

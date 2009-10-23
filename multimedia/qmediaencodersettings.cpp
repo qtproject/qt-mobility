@@ -83,7 +83,7 @@ private:
   \ingroup multimedia
 
   \preliminary
-  \brief The QAudioEncoderSettings class is use to pass around audio stream information.
+  \brief The QAudioEncoderSettings class is used to pass around audio stream information.
 
 */
 

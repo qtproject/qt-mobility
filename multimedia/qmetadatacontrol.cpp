@@ -49,7 +49,7 @@
     \ingroup multimedia-serv
 
     \preliminary
-    \brief The QMetaDataProviderControl class is an abstract class to
+    \brief The QMetaDataControl class is an abstract class to
     provide meta-data information about your Multimedia object.
 */
 

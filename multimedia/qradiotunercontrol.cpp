@@ -46,9 +46,11 @@
 /*!
     \class QRadioTunerControl
     \ingroup multimedia
+    \ingroup multimedia-serv
 
     \preliminary
-    \brief The abstract class for controlling the tuning of analog radio devices.
+    \brief The QRadioTunerControl class is an abstract class for controlling
+    the tuning of analog radio devices.
 
     \sa QMediaService, QRadioTuner
 */

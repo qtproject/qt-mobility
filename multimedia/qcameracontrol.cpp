@@ -45,6 +45,7 @@
 /*!
     \class QCameraControl
     \ingroup multimedia
+    \ingroup multimedia-serv
 
     \preliminary
     \brief The QCameraControl class provides control of still or video cameras, this is supplied
