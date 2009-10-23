@@ -262,7 +262,6 @@ void TestQGeoPositionInfoSource::lastKnownPosition()
     int time_out = 20000;
     m_source->setUpdateInterval(time_out);
     m_source->startUpdates();
-    //QTRY_COMPARE_WITH_TIMEOUT(spy.count(),1,30000);
 
     // Use QEventLoop instead of qWait() to ensure we stop as soon as a
     // position is emitted (otherwise the lastKnownPosition() may have
@@ -407,8 +406,6 @@ void TestQGeoPositionInfoSource::requestUpdate_validTimeout()
 
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     m_source->requestUpdate(20000);
-    //Q_WAIT(spyUpdate.count(), 1, 20000);
-    //QCOMPARE(spyUpdate.count(),1);
     QTRY_COMPARE_WITH_TIMEOUT(spyUpdate.count(), 1, 20000);
     spyUpdate.clear();
 }
@@ -420,8 +417,6 @@ void TestQGeoPositionInfoSource::requestUpdate_timeoutLessThanMinimumInterval()
 
     QSignalSpy spyTimeout(m_source, SIGNAL(requestTimeout()));
     m_source->requestUpdate(1);
-    //Q_WAIT(spyTimeout.count(), 1, 10);
-    //QCOMPARE(spyTimeout.count(), 1);
     QTRY_COMPARE_WITH_TIMEOUT(spyTimeout.count(), 1, 10);
     spyTimeout.clear();
 }
@@ -433,13 +428,9 @@ void TestQGeoPositionInfoSource::requestUpdate_repeatedCalls()
 
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     m_source->requestUpdate(20000);
-    //Q_WAIT(spyUpdate.count(), 1, 20000);
-    //QCOMPARE(spyUpdate.count(), 1);
     QTRY_COMPARE_WITH_TIMEOUT(spyUpdate.count(), 1, 20000);
     spyUpdate.clear();
     m_source->requestUpdate(20000);
-    //Q_WAIT(spyUpdate.count(), 1, 20000);
-    //QCOMPARE(spyUpdate.count(),1);
     QTRY_COMPARE_WITH_TIMEOUT(spyUpdate.count(), 1, 20000);
     spyUpdate.clear();
 }
