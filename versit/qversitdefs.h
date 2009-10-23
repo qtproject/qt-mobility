@@ -122,5 +122,8 @@ const char versitEncoding[] = "ENCODING";
 // www. exception type const
 const char versitConstWWW[] = "WWW.";
 
+//ISO 8601 Extended Format suffix
+const char versitISOFormatSuffix[] = "Z";
+
 
 #endif // QVERSITDEFS_H

@@ -63,7 +63,7 @@ public:
     void encodeAddress(QVersitProperty& property, const QContactDetail& detail);
     void encodeUrl(QVersitProperty& property, const QContactDetail& detail);
     void encodeUid(QVersitProperty& property, const QContactDetail& detail);
-    void encodeRev(QVersitProperty& property, const QContactDetail& detail);
+    bool encodeRev(QVersitProperty& property, const QContactDetail& detail);
     void encodeBirthDay(QVersitProperty& property, const QContactDetail& detail);
     void encodeNote(QVersitProperty& property, const QContactDetail& detail);
     void encodeGeoLocation(QVersitProperty& property, const QContactDetail& detail);

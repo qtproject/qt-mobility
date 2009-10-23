@@ -370,6 +370,7 @@ void UT_QVersitContactConvertert::testEncodeRev()
     QContact contact;
     QContactTimestamp p;
     QDateTime changeRev = QDateTime::fromString("M1d1y200906:01:02", "'M'M'd'd'y'yyyyhh:mm:ss");
+    changeRev.setTimeSpec(Qt::UTC);
 
     p.setLastModified(changeRev);
 
@@ -395,11 +396,11 @@ void UT_QVersitContactConvertert::testEncodeRev()
 
     //Check property value
     QString value = (versitDocument.properties().at(0).value());
-    QString expectedValue = QString::fromAscii("2009-01-01T06:01:02");
-    QCOMPARE(expectedValue, value);
+    QString expValueUTCEncoded = QString::fromAscii("2009-01-01T06:01:02Z");
+    QCOMPARE(expValueUTCEncoded, value);
 
 
-    // Test 2: If Modified Data does not Exist than Date of Contact Created will be used.
+    // Test 2: If Modified Data does not Exist than date of contact created will be used.
     QDateTime emptyTime;
     p.setLastModified(emptyTime);
     p.setCreated(changeRev);
@@ -409,7 +410,32 @@ void UT_QVersitContactConvertert::testEncodeRev()
     value = QString::fromAscii(versitDocument.properties().at(0).value());
 
     // Ensure Value exisit and matches.
-    QCOMPARE(expectedValue, value);
+    QCOMPARE(expValueUTCEncoded, value);
+
+
+    // Test 3: Modified Date but Local Time spec not UTC
+    QDateTime localTime;
+    p.setLastModified(changeRev);
+    p.setCreated(localTime);
+    changeRev.setTimeSpec(Qt::LocalTime);
+    contact.saveDetail(&p);
+
+    versitDocument = mConverter->convertContact(contact);
+    value = QString::fromAscii(versitDocument.properties().at(0).value());
+
+    // Ensure Value exisit and matches.
+    QString expValueEncoded = QString::fromAscii("2009-01-01T06:01:02");
+    QCOMPARE(expValueUTCEncoded, value);
+
+
+    // Test 4: Empty Date Entry No Created / Modified Date.
+    p.setLastModified(emptyTime);
+    p.setCreated(emptyTime);
+    changeRev.setTimeSpec(Qt::LocalTime);
+    contact.saveDetail(&p);
+
+    versitDocument = mConverter->convertContact(contact);
+    QCOMPARE(0, versitDocument.properties().count());
 }
 
 void UT_QVersitContactConvertert::testEncodeBirthDay()
