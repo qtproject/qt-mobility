@@ -157,7 +157,7 @@ QMessageAccountId AccountsWidget::currentAccount() const
 
 bool AccountsWidget::isEmpty() const
 {
-	return m_accountsCombo->count() == 0;
+    return m_accountsCombo->count() == 0;
 }
 
 void AccountsWidget::showEvent(QShowEvent* e)
@@ -217,7 +217,7 @@ void AccountsWidget::setupUi()
     m_accountsCombo = new QComboBox(this);
     m_stackedLayout->addWidget(m_accountsCombo);
 
-    m_busyLabel = new QLabel("Loading..");
+    m_busyLabel = new QLabel("Loading...");
     m_stackedLayout->addWidget(m_busyLabel);
 }
 
@@ -533,27 +533,42 @@ QMessage ComposeSendWidget::constructQMessage() const
     }
 
     QMessageAccountId selectedAccountId = m_accountsWidget->currentAccount();
-  
+    QMessageAccount selectedAccount(selectedAccountId);
+    bool composingSms = selectedAccount.name() == "SMS";
+
     QMessageAddressList toList;
     QMessageAddressList ccList;
     QMessageAddressList bccList;
 
-    foreach(QString s, m_toEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts))
-        toList.append(QMessageAddress(s,QMessageAddress::Email));
-    foreach(QString s, m_ccEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts))
-        ccList.append(QMessageAddress(s,QMessageAddress::Email));
-    foreach(QString s, m_bccEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts))
-        bccList.append(QMessageAddress(s,QMessageAddress::Email));
+    QMessageAddress::Type addressType = QMessageAddress::Email;
+    if(composingSms)
+    {
+        addressType = QMessageAddress::Phone;
+        message.setType(QMessage::Sms);
+    }
 
+    foreach(QString s, m_toEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts))
+        toList.append(QMessageAddress(s,addressType));
     message.setTo(toList);
-    message.setCc(ccList);
-    message.setBcc(bccList);
+
+    if(!composingSms)
+    {
+        foreach(QString s, m_ccEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts))
+            ccList.append(QMessageAddress(s,QMessageAddress::Email));
+        message.setCc(ccList);
+
+        foreach(QString s, m_bccEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts))
+            bccList.append(QMessageAddress(s,QMessageAddress::Email));
+        message.setBcc(bccList);
+        message.setSubject(m_subjectEdit->text());
+
+        message.setType(QMessage::Email);
+
+        message.appendAttachments(m_attachmentList->attachments());
+    }
 
     message.setParentAccountId(selectedAccountId);
-    message.setSubject(m_subjectEdit->text());
     message.setBody(m_bodyEdit->toPlainText());
-    message.setType(QMessage::Email);
-    message.appendAttachments(m_attachmentList->attachments());
 
     return message;
 }

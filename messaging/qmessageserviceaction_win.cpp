@@ -202,7 +202,10 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
                 const QMessageContentContainer& bodyContainer = message.find(bodyId);
                 QString textContent = bodyContainer.textContent();
                 if(textContent.length() > SmsCharLimit)
-                    textContent.truncate(SmsCharLimit-1);
+                {
+                    textContent.truncate(SmsCharLimit);
+                    qWarning() << "SMS messages may not exceed " << SmsCharLimit << " characters. Body trucated.";
+                }
                 bodyText = LptstrFromQString(textContent);
                 mcf.pszBody = bodyText;
             }
