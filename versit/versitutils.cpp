@@ -76,10 +76,17 @@ QByteArray VersitUtils::fold(QByteArray& text, int maxChars)
 }
 
 /*!
- * Unfolds \a text by removing all the CRLFs followed immediately 
- * by any number of whitespaces.
+ * Unfolds \a text by replacing all the CRLFs followed immediately
+ * by any number of whitespaces with a single whitespace.
+ * Note that this kind of unfolding is incorrect,
+ * but required by mistake in vCard 2.1 specification.
+ * RFCs 2425/2426 (vCard 3.0) fix this problem
+ * by stating that folding is done by adding
+ * a CRLF followed by a single SPACE or a TAB.
+ * For vCard 3.0 unfolding is done completely removing
+ * CRLF + SPACE and CRLF + TAB combinations.
  */
-QByteArray VersitUtils::unfold(QByteArray& text)
+QByteArray VersitUtils::unfoldVCard21(QByteArray& text)
 {
     char previousChar = 0;
     char previousOfThePreviousChar = 0;

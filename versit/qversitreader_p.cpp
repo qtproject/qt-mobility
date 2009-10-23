@@ -112,7 +112,11 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(QByteArray& text)
         }
         else {
             crlfPos = text.indexOf("\r\n");
-            property.setValue(text.left(crlfPos));
+            QByteArray value = text.left(crlfPos);
+            QString base64(QString::fromAscii("BASE64"));
+            if (property.parameters().contains(encoding,base64))
+                value.replace(' ',""); // Remove the spaces left by vCard 2.1 unfolding
+            property.setValue(value);
         }
         text = text.mid(crlfPos+2); // +2 is for skipping the CRLF
     }

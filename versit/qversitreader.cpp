@@ -91,7 +91,7 @@ bool QVersitReader::start()
 {
     if (d->mIoDevice) {
         QByteArray input = d->mIoDevice->readAll();
-        VersitUtils::unfold(input);
+        VersitUtils::unfoldVCard21(input);
         while (input.length() > 0) {
             QVersitDocument document = d->parseVersitDocument(input);
             if (document.properties().count() > 0)
