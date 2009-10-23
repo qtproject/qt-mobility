@@ -67,6 +67,7 @@ class QGenericEngine;
 class QNlaEngine;
 class QNativeWifiEngine;
 class QNmWifiEngine;
+class QCoreWlanEngine;
 #endif
 
 
@@ -144,6 +145,9 @@ private:
 #ifdef BACKEND_NM
     QNmWifiEngine *nmWifi;
 #endif
+#ifdef Q_OS_DARWIN
+    QCoreWlanEngine *coreWifi;
+#endif
 
     uint onlineConfigurations;
 
@@ -154,6 +158,7 @@ private:
         NlaUpdating = 0x04,
         NativeWifiUpdating = 0x08,
         NmUpdating = 0x20,
+        CoreWifiUpdating = 0x40,
     };
     Q_DECLARE_FLAGS(EngineUpdateState, EngineUpdate)
 
