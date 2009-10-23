@@ -76,6 +76,7 @@ public:
 
 private:
     Phonon::VideoWidget *m_videoWidget;
+    bool m_isFullscreen;
     QVideoWidget::AspectRatioMode m_aspectRatioMode;
 };
 
