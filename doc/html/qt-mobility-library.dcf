@@ -1037,6 +1037,29 @@
         <keyword ref="qcontactonlineaccount.html#SubTypeXmpp-var">SubTypeXmpp</keyword>
         <section ref="qcontactonlineaccount-members.html" title="List of all members"/>
     </section>
+    <section ref="qcontactorganization.html" title="QContactOrganization Class Reference">
+        <keyword ref="qcontactorganization.html">QContactOrganization</keyword>
+        <keyword ref="qcontactorganization.html#assistantName">assistantName</keyword>
+        <keyword ref="qcontactorganization.html#department">department</keyword>
+        <keyword ref="qcontactorganization.html#location">location</keyword>
+        <keyword ref="qcontactorganization.html#logo">logo</keyword>
+        <keyword ref="qcontactorganization.html#name">name</keyword>
+        <keyword ref="qcontactorganization.html#setAssistantName">setAssistantName</keyword>
+        <keyword ref="qcontactorganization.html#setDepartment">setDepartment</keyword>
+        <keyword ref="qcontactorganization.html#setLocation">setLocation</keyword>
+        <keyword ref="qcontactorganization.html#setLogo">setLogo</keyword>
+        <keyword ref="qcontactorganization.html#setName">setName</keyword>
+        <keyword ref="qcontactorganization.html#setTitle">setTitle</keyword>
+        <keyword ref="qcontactorganization.html#title">title</keyword>
+        <keyword ref="qcontactorganization.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactorganization.html#FieldAssistantName-var">FieldAssistantName</keyword>
+        <keyword ref="qcontactorganization.html#FieldDepartment-var">FieldDepartment</keyword>
+        <keyword ref="qcontactorganization.html#FieldLocation-var">FieldLocation</keyword>
+        <keyword ref="qcontactorganization.html#FieldLogo-var">FieldLogo</keyword>
+        <keyword ref="qcontactorganization.html#FieldName-var">FieldName</keyword>
+        <keyword ref="qcontactorganization.html#FieldTitle-var">FieldTitle</keyword>
+        <section ref="qcontactorganization-members.html" title="List of all members"/>
+    </section>
     <section ref="qcontactphonenumber.html" title="QContactPhoneNumber Class Reference">
         <keyword ref="qcontactphonenumber.html">QContactPhoneNumber</keyword>
         <keyword ref="qcontactphonenumber.html#number">number</keyword>

@@ -78,7 +78,7 @@ To build the library, run \tt qmake and \tt make.
 
 \section2 Main classes
 
-\annotatedlist multimedia-main
+\annotatedlist multimedia
 
 
 \section2 Classes for service implementers.

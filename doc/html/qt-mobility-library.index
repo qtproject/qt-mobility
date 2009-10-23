@@ -4628,6 +4628,39 @@
                 <parameter left="QContactRemoveRequest *" right="" name="self" default=""/>
             </function>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QContactOrganization" href="qcontactorganization.html" location="qcontactorganization.h" bases="QContactDetail" module="">
+            <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactOrganization::DefinitionName" href="qcontactorganization.html#DefinitionName-var" location="qcontactorganization.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldName" fullname="QContactOrganization::FieldName" href="qcontactorganization.html#FieldName-var" location="qcontactorganization.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldLogo" fullname="QContactOrganization::FieldLogo" href="qcontactorganization.html#FieldLogo-var" location="qcontactorganization.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldDepartment" fullname="QContactOrganization::FieldDepartment" href="qcontactorganization.html#FieldDepartment-var" location="qcontactorganization.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldLocation" fullname="QContactOrganization::FieldLocation" href="qcontactorganization.html#FieldLocation-var" location="qcontactorganization.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldTitle" fullname="QContactOrganization::FieldTitle" href="qcontactorganization.html#FieldTitle-var" location="qcontactorganization.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldAssistantName" fullname="QContactOrganization::FieldAssistantName" href="qcontactorganization.html#FieldAssistantName-var" location="qcontactorganization.h" type="const char *" static="false"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setName" fullname="QContactOrganization::setName" href="qcontactorganization.html#setName" location="qcontactorganization.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setName(const QString &amp; name)">
+                <parameter left="const QString &amp;" right="" name="name" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QContactOrganization::name" href="qcontactorganization.html#name" location="qcontactorganization.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="name() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setLogo" fullname="QContactOrganization::setLogo" href="qcontactorganization.html#setLogo" location="qcontactorganization.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLogo(const QString &amp; logo)">
+                <parameter left="const QString &amp;" right="" name="logo" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="logo" fullname="QContactOrganization::logo" href="qcontactorganization.html#logo" location="qcontactorganization.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="logo() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDepartment" fullname="QContactOrganization::setDepartment" href="qcontactorganization.html#setDepartment" location="qcontactorganization.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDepartment(const QString &amp; department)">
+                <parameter left="const QString &amp;" right="" name="department" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="department" fullname="QContactOrganization::department" href="qcontactorganization.html#department" location="qcontactorganization.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="department() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setLocation" fullname="QContactOrganization::setLocation" href="qcontactorganization.html#setLocation" location="qcontactorganization.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLocation(const QString &amp; location)">
+                <parameter left="const QString &amp;" right="" name="location" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="location" fullname="QContactOrganization::location" href="qcontactorganization.html#location" location="qcontactorganization.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="location() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setTitle" fullname="QContactOrganization::setTitle" href="qcontactorganization.html#setTitle" location="qcontactorganization.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setTitle(const QString &amp; title)">
+                <parameter left="const QString &amp;" right="" name="title" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="title" fullname="QContactOrganization::title" href="qcontactorganization.html#title" location="qcontactorganization.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="title() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setAssistantName" fullname="QContactOrganization::setAssistantName" href="qcontactorganization.html#setAssistantName" location="qcontactorganization.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAssistantName(const QString &amp; assistantName)">
+                <parameter left="const QString &amp;" right="" name="assistantName" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="assistantName" fullname="QContactOrganization::assistantName" href="qcontactorganization.html#assistantName" location="qcontactorganization.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="assistantName() const"/>
+        </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageContentContainerId" href="qmessagecontentcontainerid.html" location="qmessagecontentcontainerid.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageContentContainerId" fullname="QMessageContentContainerId::QMessageContentContainerId" href="qmessagecontentcontainerid.html#QMessageContentContainerId" location="qmessagecontentcontainerid_qmf.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageContentContainerId()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageContentContainerId" fullname="QMessageContentContainerId::QMessageContentContainerId" href="qmessagecontentcontainerid.html#QMessageContentContainerId-2" location="qmessagecontentcontainerid_qmf.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageContentContainerId(const QMessageContentContainerId &amp; other)">
@@ -5614,6 +5647,7 @@
             <contents name="messaging" title="Messaging" level="1"/>
             <contents name="multimedia" title="Multimedia" level="1"/>
             <contents name="service-framework" title="Service Framework" level="1"/>
+            <contents name="system-information" title="System Information" level="1"/>
         </page>
         <page access="public" status="commendable" name="servicebrowser" href="servicebrowser.html" subtype="example" title="Service Browser Example" fulltitle="Service Browser Example" subtitle="" location="servicebrowser.qdoc">
             <contents name="servicebrowser-class-definition" title="ServiceBrowser Class Definition" level="1"/>
