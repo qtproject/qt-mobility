@@ -48,7 +48,7 @@
 #define QTRY_COMPARE(__expr, __expected) \
     do { \
         const int __step = 50; \
-        const int __timeout = 10000; \
+        const int __timeout = 1000; \
         QTest::qWait(10); \
         for (int __i = 0; __i < __timeout && ((__expr) != (__expected)); __i+=__step) { \
             QTest::qWait(__step); \
@@ -59,7 +59,8 @@
 
 void TestRelationship::initTestCase()
 {
-    
+    qRegisterMetaType<QContactLocalId>("QContactLocalId");
+    qRegisterMetaType<QList<QContactLocalId> >("QList<QContactLocalId>");  
 }
 
 void TestRelationship::cleanupTestCase()
@@ -69,6 +70,8 @@ void TestRelationship::cleanupTestCase()
 void TestRelationship::createGroupContact()
 {
     QContactManager manager("symbian");
+    QList<QContactLocalId> contactIds = manager.contacts();
+    manager.removeContacts(&contactIds);
     
     //Create group contact
     QContact groupContact;
@@ -97,13 +100,22 @@ void TestRelationship::createGroupContact()
     manager.saveContact(&contact2);
     QVERIFY(contact2.localId() != 0);
     
+    //retrieve contacts
+    QList<QContactLocalId> groupIds = manager.contacts(QContactType::TypeGroup);
+    QVERIFY(groupIds.count() == 1);
+    
+    for(int i = 0; i < groupIds.count(); i++)
+        qDebug() << groupIds.at(i);
+    
+    
     //Add contact 1 to group
     QContactRelationship relationship; 
     relationship.setRelationshipType(QContactRelationship::HasMember);
     relationship.setFirst(groupContact.id());
     relationship.setSecond(contact.id());
     
-    QSignalSpy spySaveRelationship(&manager, SIGNAL(relationshipsAdded(const QList<QContactLocalId>& affectedContactIds)));
+                                               
+    QSignalSpy spySaveRelationship(&manager, SIGNAL(relationshipsAdded(QList<QContactLocalId>)));
     //QSignalSpy spyRemoveRelationship(&manager, SIGNAL(relationshipsRemoved(const QList<QContactLocalId>& affectedContactIds)));
     manager.saveRelationship(&relationship);
     QTRY_COMPARE(spySaveRelationship.count(), 1); 
@@ -113,39 +125,42 @@ void TestRelationship::createGroupContact()
     manager.saveRelationship(&relationship);
     
     
+    
+    
     //retrieve the relationships
     QList<QContactRelationship> relationshipList;
     
     //group
-    relationshipList = manager.relationships(groupContact.id(), QContactRelationshipFilter::First);
+    relationshipList = manager.relationships(QLatin1String(QContactRelationship::HasMember), groupContact.id(), QContactRelationshipFilter::First);
+    qDebug() << "relationship count groups :" << relationshipList.count();
     QVERIFY2(relationshipList.count() == 2, "group - First");
     
-    relationshipList = manager.relationships(groupContact.id(), QContactRelationshipFilter::Second);
+    relationshipList = manager.relationships(QLatin1String(QContactRelationship::HasMember), groupContact.id(), QContactRelationshipFilter::Second);
     QVERIFY2(relationshipList.count() == 0, "group - Second");
     
-    relationshipList = manager.relationships(groupContact.id(), QContactRelationshipFilter::Either);
+    relationshipList = manager.relationships(QLatin1String(QContactRelationship::HasMember), groupContact.id(), QContactRelationshipFilter::Either);
     QVERIFY2(relationshipList.count() == 2, "group - Either");
     
     
     //contact 1
-    relationshipList = manager.relationships(contact.id(), QContactRelationshipFilter::First);
+    relationshipList = manager.relationships(QLatin1String(QContactRelationship::HasMember), contact.id(), QContactRelationshipFilter::First);
     QVERIFY2(relationshipList.count() == 0, "contact - First");
     
-    relationshipList = manager.relationships(contact.id(), QContactRelationshipFilter::Second);
+    relationshipList = manager.relationships(QLatin1String(QContactRelationship::HasMember), contact.id(), QContactRelationshipFilter::Second);
     QVERIFY2(relationshipList.count() == 1, "contact - Second");
     
-    relationshipList = manager.relationships(contact.id(), QContactRelationshipFilter::Either);
+    relationshipList = manager.relationships(QLatin1String(QContactRelationship::HasMember), contact.id(), QContactRelationshipFilter::Either);
     QVERIFY2(relationshipList.count() == 1, "contact - Either");
     
     
     //contact 2
-    relationshipList = manager.relationships(contact2.id(), QContactRelationshipFilter::First);
+    relationshipList = manager.relationships(QLatin1String(QContactRelationship::HasMember), contact2.id(), QContactRelationshipFilter::First);
     QVERIFY2(relationshipList.count() == 0, "contact - First");
     
-    relationshipList = manager.relationships(contact2.id(), QContactRelationshipFilter::Second);
+    relationshipList = manager.relationships(QLatin1String(QContactRelationship::HasMember), contact2.id(), QContactRelationshipFilter::Second);
     QVERIFY2(relationshipList.count() == 1, "contact - First");
     
-    relationshipList = manager.relationships(contact2.id(), QContactRelationshipFilter::Either);
+    relationshipList = manager.relationships(QLatin1String(QContactRelationship::HasMember), contact2.id(), QContactRelationshipFilter::Either);
     QVERIFY2(relationshipList.count() == 1, "contact - First");
     
     

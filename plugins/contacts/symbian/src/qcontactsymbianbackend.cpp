@@ -165,6 +165,25 @@ QList<QContactLocalId> QContactSymbianEngine::contacts(const QList<QContactSortO
     return slowSort(unsortedIds, sortOrders, error);
 }
 
+QList<QContactLocalId> QContactSymbianEngine::contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+{
+    QList<QContactLocalId> contactIds;
+    
+    //retrieve contacts
+    if(contactType == QContactType::TypeContact)
+    {
+        contactIds = contacts(sortOrders, error);
+    }
+    
+    //retrieve groups
+    else if(contactType == QContactType::TypeGroup)
+    {
+        contactIds = d->groups(sortOrders, error);
+    }
+    
+    return contactIds;
+}
+
 QContact QContactSymbianEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
     QContact contact = d->contact(contactId, error);

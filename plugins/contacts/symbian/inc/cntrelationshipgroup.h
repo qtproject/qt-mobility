@@ -52,9 +52,14 @@ public:
     virtual ~CntRelationshipGroup();
 
 public:
+    QList<QContactRelationship> relationshipsL(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error);
     bool saveRelationshipL(QSet<QContactLocalId> *affectedContactIds, QContactRelationship* relationship, QContactManager::Error& error);
     bool removeRelationshipL(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship& relationship, QContactManager::Error& error);
-    QList<QContactRelationship> relationshipsL(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error);
+    
+    
+private:
+    void fetchGroupMembersL(const QContactId& participantId, QList<QContactRelationship> *relationships);
+    void fetchMemberOfGroupsL(const QContactId& participantId, QList<QContactRelationship> *relationships);
 };
 
 #endif

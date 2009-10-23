@@ -42,6 +42,8 @@
 #include "cntrelationshipgroup.h"
 #include <cntitem.h>
 
+#include <QDebug>
+
 CntRelationshipGroup::CntRelationshipGroup(CContactDatabase* contactDatabase) : 
     CntAbstractRelationship(contactDatabase, QContactRelationship::HasMember)
 {
@@ -86,8 +88,8 @@ bool CntRelationshipGroup::removeRelationshipL(QSet<QContactLocalId> *affectedCo
         QContactId contactId = relationship.second();
         
         //read the contacts from the database
-        CContactItem* groupContact = database()->ReadContactL(groupId.localId());
-        CContactItem* contact      = database()->ReadContactL(contactId.localId());
+        CContactItem* groupContact = database()->ReadContactLC(groupId.localId());
+        CContactItem* contact      = database()->ReadContactLC(contactId.localId());
         
         //if both found remove the contact from the group
         if(groupContact && contact)
@@ -97,6 +99,9 @@ bool CntRelationshipGroup::removeRelationshipL(QSet<QContactLocalId> *affectedCo
             //add the removed group member to the list of affected contacts
             affectedContactIds->insert(contactId.localId());
         }
+        
+        CleanupStack::PopAndDestroy(groupContact);
+        CleanupStack::PopAndDestroy(contact);
     }
 
     else
@@ -111,75 +116,99 @@ bool CntRelationshipGroup::removeRelationshipL(QSet<QContactLocalId> *affectedCo
 //retrieve all the groups that the contact is part of
 QList<QContactRelationship> CntRelationshipGroup::relationshipsL(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) 
 {
-    QList<QContactRelationship> returnValue;
-    QContactRelationship relationship;
-    relationship.setRelationshipType(QContactRelationship::HasMember);
+    Q_UNUSED(error);
     
-    //role is group
+    QList<QContactRelationship> returnValue;
+    
+    //role is a group
     if(role == QContactRelationshipFilter::First || role == QContactRelationshipFilter::Either)
     {
-        CContactGroup* groupContact(0); 
-        
-        TRAPD( error, groupContact = static_cast<CContactGroup*>( database()->ReadContactLC(TContactItemId(participantId.localId()))));
-        
-        if(!error)
-        {
-            const CContactIdArray *idArray = groupContact->ItemsContained();
-           
-            QContactId groupId;
-            
-            //loop through all the contacts and add them to the list
-            for(int i = 0; i < idArray->Count(); i++ )
-            {
-                //set participant id as first id
-                relationship.setFirst(participantId);
-                
-                //set the manager uri
-                groupId.setManagerUri(participantId.managerUri());
-                    
-                groupId.setLocalId(idArray->operator[](i));
-                relationship.setSecond(groupId);
-                
-                returnValue << relationship;
-            }
-            
-            CleanupStack::PopAndDestroy(groupContact);
-        }
-         
+        fetchGroupMembersL(participantId, &returnValue);
     }
     
     //role is member of a group
     if(role == QContactRelationshipFilter::Second || role == QContactRelationshipFilter::Either)
     {
-        CContactCard* contact(0);
-        
-        TRAPD( error, contact = static_cast<CContactCard*>(database()->ReadContactLC(TContactItemId(participantId.localId()))));
-        
-        if(!error)
-        {
-            const CContactIdArray *idArray = contact->GroupsJoined();
-            
-            QContactId groupId;
-            
-            //loop through all the contacts and add them to the list
-            for(int i = 0; i < idArray->Count(); i++ )
-            {
-                //set the manager uri
-                groupId.setManagerUri(participantId.managerUri());
-                groupId.setLocalId(idArray->operator[](i));
-               
-                //set the group as first
-                relationship.setFirst(groupId);
-                
-                //set participant id as member of group
-                relationship.setSecond(participantId);
-                            
-                returnValue << relationship;
-            }
-            
-            CleanupStack::PopAndDestroy(contact);
-        }
+        fetchMemberOfGroupsL(participantId, &returnValue);
     }
     
     return returnValue;
+}
+
+void CntRelationshipGroup::fetchGroupMembersL(const QContactId& participantId, QList<QContactRelationship> *relationships)
+{
+    //fetch the contact item from the database
+    CContactItem *contactItem = database()->ReadContactLC(participantId.localId());
+    
+    //make sure it's a group
+    if(contactItem && contactItem->Type() == KUidContactGroup)
+    {
+        //cast the contact to a group
+        CContactGroup *groupContact = static_cast<CContactGroup*>( contactItem );
+    
+        //create the relationship
+        QContactRelationship relationship;
+        relationship.setRelationshipType(QContactRelationship::HasMember);
+    
+        //get the group contacts
+        const CContactIdArray *idArray = groupContact->ItemsContained();
+       
+        QContactId groupId;
+        
+        //loop through all the contacts and add them to the list
+        for(int i = 0; i < idArray->Count(); i++ )
+        {
+            //set participant id as first id
+            relationship.setFirst(participantId);
+            
+            //set the manager uri
+            groupId.setManagerUri(participantId.managerUri());
+                
+            groupId.setLocalId(idArray->operator[](i));
+            relationship.setSecond(groupId);
+            
+            *relationships << relationship;
+        }
+    }
+
+    CleanupStack::PopAndDestroy(contactItem);
+}
+
+
+void CntRelationshipGroup::fetchMemberOfGroupsL(const QContactId& participantId, QList<QContactRelationship> *relationships)
+{
+    CContactItem *contactItem = database()->ReadContactLC(TContactItemId(participantId.localId()));
+  
+    //verify that we havea a contact
+    if(contactItem)
+    {
+        //cast the contact item to base class for groups and contacts
+        CContactItemPlusGroup *contact = static_cast<CContactItemPlusGroup *>(contactItem);
+        
+        //create the relationship
+        QContactRelationship relationship;
+        relationship.setRelationshipType(QContactRelationship::HasMember);
+            
+        const CContactIdArray *idArray = contact->GroupsJoined();
+        
+        QContactId groupId;
+        
+        //loop through all the contacts and add them to the list
+        for(int i = 0; i < idArray->Count(); i++ )
+        {
+           //set the manager uri
+           groupId.setManagerUri(participantId.managerUri());
+           groupId.setLocalId(idArray->operator[](i));
+          
+           //set the group as first
+           relationship.setFirst(groupId);
+           
+           //set participant id as member of group
+           relationship.setSecond(participantId);
+                       
+           *relationships << relationship;
+        }
+    }
+
+    CleanupStack::PopAndDestroy(contactItem);
 }

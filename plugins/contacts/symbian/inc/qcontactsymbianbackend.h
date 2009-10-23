@@ -83,6 +83,8 @@ public:
     /* Contacts - Accessors and Mutators */
     QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContactLocalId> contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    
     QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
     bool saveContact(QContact* contact, QContactManager::Error& error);
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);

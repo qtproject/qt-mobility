@@ -209,6 +209,42 @@ QList<QContactLocalId> QContactSymbianEngineData::contacts( const QList<QContact
     return m_contactSorter->contacts( sortOrders, qtError );
 }
 
+/* groups */
+
+/*!
+ * Return a list of group UIDs.
+ *
+ * \param qtError Qt error code.
+ * \return List of group IDs.
+ */
+QList<QContactLocalId> QContactSymbianEngineData::groups(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& qtError) const
+{
+    // See QT_TRYCATCH_LEAVING note at the begginning of this file
+    QContactLocalIdList *list = new QContactLocalIdList();
+    TRAPD(err, QT_TRYCATCH_LEAVING(*list = groupsL()));
+    transformError(err, qtError);
+    return *QScopedPointer<QContactLocalIdList>(list);
+}
+
+/*!
+ * Private leaving implementation for groups
+ */
+QList<QContactLocalId> QContactSymbianEngineData::groupsL() const
+{
+    QList<QContactLocalId> list;
+    CContactIdArray* cIdList = m_contactDatabase->GetGroupIdListL();
+    CleanupStack::PushL(cIdList);
+    const int count = cIdList->Count();
+    for (int i = 0; i < count; ++i)
+    {
+        list.append(QContactLocalId((*cIdList)[i]));
+    }
+    CleanupStack::PopAndDestroy(cIdList);
+    return list;
+}
+
+
+
 /* add/update/delete */
 
 /*!
@@ -290,62 +326,53 @@ bool QContactSymbianEngineData::removeContact(const QContactLocalId &id, QContac
 
 QList<QContactRelationship> QContactSymbianEngineData::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
 {
-    QList<QContactRelationship> returnValue;
-    TRAPD(symbianError, returnValue = m_relationship->relationshipsL(relationshipType, participantId, role, error));
-    transformError(symbianError, error);
+    //retrieve the relationships
+    QList<QContactRelationship> returnValue = m_relationship->relationships(relationshipType, participantId, role, error);
+    
     return returnValue;
 }
 
 bool QContactSymbianEngineData::saveRelationship(QContactChangeSet *changeSet, QContactRelationship* relationship, QContactManager::Error& error)
 {
-    bool returnValue(false);
-    
-    TRAPD(symbianError, returnValue = m_relationship->saveRelationshipL(&changeSet->addedRelationshipsContacts(), relationship, error));
+    //save the relationship
+    bool returnValue = m_relationship->saveRelationship(&changeSet->addedRelationshipsContacts(), relationship, error);
     
     //add contacts to the list that shouldn't be emitted
     m_contactsAddedEmitted += changeSet->addedRelationshipsContacts().toList();
     
-    transformError(symbianError, error);
     return returnValue;
 }
 
 QList<QContactManager::Error> QContactSymbianEngineData::saveRelationships(QContactChangeSet *changeSet, QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
-    QList<QContactManager::Error> returnValue;
-    
-    TRAPD(symbianError, returnValue = m_relationship->saveRelationshipsL(&changeSet->addedRelationshipsContacts(), relationships, error));
+    //save the relationships
+    QList<QContactManager::Error> returnValue = m_relationship->saveRelationships(&changeSet->addedRelationshipsContacts(), relationships, error);
     
     //add contacts to the list that shouldn't be emitted
     m_contactsAddedEmitted += changeSet->addedRelationshipsContacts().toList();
         
-    transformError(symbianError, error);
     return returnValue;
 }
 
 bool QContactSymbianEngineData::removeRelationship(QContactChangeSet *changeSet, const QContactRelationship& relationship, QContactManager::Error& error)
 {
-    bool returnValue(false);
-    
-    TRAPD(symbianError, returnValue = m_relationship->removeRelationshipL(&changeSet->removedRelationshipsContacts(), relationship, error));
+    //remove the relationship
+    bool returnValue = m_relationship->removeRelationship(&changeSet->removedRelationshipsContacts(), relationship, error);
     
     //add contacts to the list that shouldn't be emitted
     m_contactsRemovedEmitted += changeSet->removedRelationshipsContacts().toList();
         
-    
-    transformError(symbianError, error);
     return returnValue;
 }
 
 QList<QContactManager::Error> QContactSymbianEngineData::removeRelationships(QContactChangeSet *changeSet, const QList<QContactRelationship>& relationships, QContactManager::Error& error)
 {
-    QList<QContactManager::Error> returnValue;
-    
-    TRAPD(symbianError, returnValue = m_relationship->removeRelationshipsL(&changeSet->removedRelationshipsContacts(), relationships, error));
+    //remove the relationships
+    QList<QContactManager::Error> returnValue = m_relationship->removeRelationships(&changeSet->removedRelationshipsContacts(), relationships, error);
     
     //add contacts to the list that shouldn't be emitted
-     m_contactsRemovedEmitted += changeSet->removedRelationshipsContacts().toList();
+    m_contactsRemovedEmitted += changeSet->removedRelationshipsContacts().toList();
         
-    transformError(symbianError, error);
     return returnValue;
 }
 
