@@ -30,7 +30,6 @@
 <li><div class="fn"></div>QMessageAccountId <b><a href="qmessagefolder.html#parentAccountId">parentAccountId</a></b> () const</li>
 <li><div class="fn"></div>QMessageFolderId <b><a href="qmessagefolder.html#parentFolderId">parentFolderId</a></b> () const</li>
 <li><div class="fn"></div>QString <b><a href="qmessagefolder.html#path">path</a></b> () const</li>
-<li><div class="fn"></div>const QMessageFolder &amp; <b><a href="qmessagefolder.html#operator-eq">operator=</a></b> ( const QMessageFolder &amp; <i>other</i> )</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -46,7 +45,6 @@
 <p>Constructor that creates a <a href="qmessagefolder.html">QMessageFolder</a> by loading the data from the messaging store as specified by the <a href="qmessagefolderid.html">QMessageFolderId</a> <i>id</i>. If the folder does not exist in the messaging store, then this constructor will create an empty and invalid <a href="qmessagefolder.html">QMessageFolder</a>.</p>
 <h3 class="fn"><a name="QMessageFolder-3"></a>QMessageFolder::QMessageFolder ( const QMessageFolder &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<p>See also <a href="qmessagefolder.html#operator-eq">operator=</a>().</p>
 <h3 class="fn"><a name="dtor.QMessageFolder"></a>QMessageFolder::~QMessageFolder ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the <a href="qmessagefolder.html">QMessageFolder</a> object.</p>
 <h3 class="fn"><a name="displayName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMessageFolder::displayName () const</h3>
@@ -59,8 +57,6 @@
 <p>Returns the identifier of the parent folder. This folder is a root folder if the parent identifier is invalid.</p>
 <h3 class="fn"><a name="path"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMessageFolder::path () const</h3>
 <p>Returns the path of the folder.</p>
-<h3 class="fn"><a name="operator-eq"></a>const QMessageFolder &amp; QMessageFolder::operator= ( const QMessageFolder &amp; <i>other</i> )</h3>
-<p>Assign the value of the <a href="qmessagefolder.html">QMessageFolder</a> <i>other</i> to this.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

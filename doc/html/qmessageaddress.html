@@ -34,8 +34,11 @@
 <li><div class="fn"></div>void <b><a href="qmessageaddress.html#setRecipient">setRecipient</a></b> ( const QString &amp; <i>recipient</i> )</li>
 <li><div class="fn"></div>void <b><a href="qmessageaddress.html#setType">setType</a></b> ( Type <i>type</i> )</li>
 <li><div class="fn"></div>Type <b><a href="qmessageaddress.html#type">type</a></b> () const</li>
-<li><div class="fn"></div>const QMessageAddress &amp; <b><a href="qmessageaddress.html#operator-eq">operator=</a></b> ( const QMessageAddress &amp; <i>other</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qmessageaddress.html#operator-eq-eq">operator==</a></b> ( const QMessageAddress &amp; <i>other</i> ) const</li>
+</ul>
+<a name="static-public-members"></a>
+<h3>Static Public Members</h3>
+<ul>
+<li><div class="fn"></div>void <b><a href="qmessageaddress.html#parseEmailAddress">parseEmailAddress</a></b> ( const QString &amp; <i>emailAddress</i>, QString * <i>name</i>, QString * <i>address</i>, QString * <i>suffix</i> = 0, bool * <i>startDelimeterFound</i> = 0, bool * <i>endDelimeterFound</i> = 0 )</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -62,9 +65,14 @@
 <p>Constructs a message address with the given recipient <i>recipient</i> and type <i>type</i>.</p>
 <h3 class="fn"><a name="QMessageAddress-3"></a>QMessageAddress::QMessageAddress ( const QMessageAddress &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<p>See also <a href="qmessageaddress.html#operator-eq">operator=</a>().</p>
 <h3 class="fn"><a name="dtor.QMessageAddress"></a>QMessageAddress::~QMessageAddress ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the message address.</p>
+<h3 class="fn"><a name="parseEmailAddress"></a>void QMessageAddress::parseEmailAddress ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>emailAddress</i>, <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> * <i>name</i>, <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> * <i>address</i>, <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> * <i>suffix</i> = 0, bool * <i>startDelimeterFound</i> = 0, bool * <i>endDelimeterFound</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Parses an email address into name, address and suffix parts.</p>
+<p>* <i>name</i> is set to the name part of the email address. * <i>address</i> is set to the address part of the email address. * <i>suffix</i> is set to the suffix part of the email address.</p>
+<p>If the starting delimeter between the name and address part of the email address is found then * <i>startDelimeterFound</i> is set to true; otherwise * <i>startDelimeterFound</i> is set to false;</p>
+<p>If the starting delimeter is not found, then the parsing is ambiguous and both * <i>name</i> and * <i>address</i> will be set to the input <i>emailAddress</i>.</p>
+<p>If the ending delimeter of the address part of the email address is found then * <i>endDelimeterFound</i> is set to true; otherwise * <i>endDelimeterFound</i> is set to false;</p>
 <h3 class="fn"><a name="recipient"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMessageAddress::recipient () const</h3>
 <p>Returns the recipient.</p>
 <p>See also <a href="qmessageaddress.html#setRecipient">setRecipient</a>().</p>
@@ -77,10 +85,6 @@
 <h3 class="fn"><a name="type"></a><a href="qmessageaddress.html#Type-enum">Type</a> QMessageAddress::type () const</h3>
 <p>Returns the type of the message address.</p>
 <p>See also <a href="qmessageaddress.html#setType">setType</a>().</p>
-<h3 class="fn"><a name="operator-eq"></a>const QMessageAddress &amp; QMessageAddress::operator= ( const QMessageAddress &amp; <i>other</i> )</h3>
-<p>Assign the value of the <a href="qmessageaddress.html">QMessageAddress</a> <i>other</i> to this.</p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QMessageAddress::operator== ( const QMessageAddress &amp; <i>other</i> ) const</h3>
-<p>Returns true if the message address is equal to that contained by <i>other</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

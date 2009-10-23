@@ -28,30 +28,19 @@
 <li><div class="fn"></div><a href="qmessage.html#QMessage-3">QMessage</a> ( const QMessage &amp; )</li>
 <li><div class="fn"></div><a href="qmessage.html#dtor.QMessage">~QMessage</a> ()</li>
 <li><div class="fn"></div><a href="qmessage.html#appendAttachments">appendAttachments</a> ( const QStringList &amp; )</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#appendContent">appendContent</a> ( const QMessageContentContainer &amp; ) : QMessageContentContainerId</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#appendHeaderField">appendHeaderField</a> ( const QByteArray &amp;, const QString &amp; )</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#appendHeaderField-2">appendHeaderField</a> ( const QByteArray &amp;, const QByteArray &amp; )</li>
-<li><div class="fn"></div><a href="qmessage.html#attachments">attachments</a> () const : QMessageContentContainerIdList</li>
+<li><div class="fn"></div><a href="qmessage.html#attachmentIds">attachmentIds</a> () const : QMessageContentContainerIdList</li>
 <li><div class="fn"></div><a href="qmessage.html#bcc">bcc</a> () const : QMessageAddressList</li>
-<li><div class="fn"></div><a href="qmessage.html#body">body</a> () const : QMessageContentContainerId</li>
+<li><div class="fn"></div><a href="qmessage.html#bodyId">bodyId</a> () const : QMessageContentContainerId</li>
 <li><div class="fn"></div><a href="qmessage.html#cc">cc</a> () const : QMessageAddressList</li>
 <li><div class="fn"></div><a href="qmessage.html#clearAttachments">clearAttachments</a> ()</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#clearContents">clearContents</a> ()</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#containerDataModified">containerDataModified</a> () const : bool</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#containerId">containerId</a> () const : QMessageContentContainerId</li>
 <li><div class="fn"></div><a href="qmessagecontentcontainer.html#contains">contains</a> ( const QMessageContentContainerId &amp; ) const : bool</li>
 <li><div class="fn"></div><a href="qmessagecontentcontainer.html#content">content</a> () const : QByteArray</li>
 <li><div class="fn"></div><a href="qmessagecontentcontainer.html#contentCharset">contentCharset</a> () const : QByteArray</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#contentFileName">contentFileName</a> () const : QByteArray</li>
 <li><div class="fn"></div><a href="qmessagecontentcontainer.html#contentIds">contentIds</a> () const : QMessageContentContainerIdList</li>
 <li><div class="fn"></div><a href="qmessagecontentcontainer.html#contentSubType">contentSubType</a> () const : QByteArray</li>
 <li><div class="fn"></div><a href="qmessagecontentcontainer.html#contentType">contentType</a> () const : QByteArray</li>
 <li><div class="fn"></div><a href="qmessage.html#createResponseMessage">createResponseMessage</a> ( ResponseType ) const : QMessage</li>
-<li><div class="fn"></div><a href="qmessage.html#customField">customField</a> ( const QString &amp; ) const : QString</li>
-<li><div class="fn"></div><a href="qmessage.html#customFields">customFields</a> () const : QStringList</li>
-<li><div class="fn"></div><a href="qmessage.html#d_ptr-var">d_ptr</a> : QMessagePrivate *</li>
 <li><div class="fn"></div><a href="qmessage.html#date">date</a> () const : QDateTime</li>
-<li><div class="fn"></div><a href="qmessage.html#destinationPort">destinationPort</a> () : uint</li>
 <li><div class="fn"></div><a href="qmessagecontentcontainer.html#find">find</a> ( const QMessageContentContainerId &amp; ) const : QMessageContentContainer</li>
 <li><div class="fn"></div><a href="qmessage.html#from">from</a> () const : QMessageAddress</li>
 <li><div class="fn"></div><a href="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</a> ( Type, const QByteArray &amp; ) : QMessage</li>
@@ -62,42 +51,23 @@
 <li><div class="fn"></div><a href="qmessage.html#id">id</a> () const : QMessageId</li>
 <li><div class="fn"></div><a href="qmessagecontentcontainer.html#isContentAvailable">isContentAvailable</a> () const : bool</li>
 <li><div class="fn"></div><a href="qmessage.html#isModified">isModified</a> () const : bool</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#messageId">messageId</a> () const : QMessageId</li>
-<li><div class="fn"></div><a href="qmessage.html#originatorPort">originatorPort</a> () : uint</li>
+</ul></td><td valign="top"><ul>
 <li><div class="fn"></div><a href="qmessage.html#parentAccountId">parentAccountId</a> () const : QMessageAccountId</li>
 <li><div class="fn"></div><a href="qmessage.html#parentFolderId">parentFolderId</a> () const : QMessageFolderId</li>
-</ul></td><td valign="top"><ul>
 <li><div class="fn"></div><a href="qmessage.html#preferredCharsetFor">preferredCharsetFor</a> ( const QString &amp; ) : QByteArray</li>
 <li><div class="fn"></div><a href="qmessage.html#preferredCharsets">preferredCharsets</a> () : QList&lt;QByteArray&gt;</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#prependContent">prependContent</a> ( const QMessageContentContainer &amp; ) : QMessageContentContainerId</li>
 <li><div class="fn"></div><a href="qmessage.html#priority">priority</a> () const : Priority</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#readContentFrom">readContentFrom</a> ( QDataStream &amp; )</li>
 <li><div class="fn"></div><a href="qmessage.html#receivedDate">receivedDate</a> () const : QDateTime</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#removeContent">removeContent</a> ( const QMessageContentContainerId &amp; )</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#replaceContent">replaceContent</a> ( const QMessageContentContainerId &amp;, const QMessageContentContainer &amp; )</li>
 <li><div class="fn"></div><a href="qmessage.html#setBcc">setBcc</a> ( const QMessageAddressList &amp; )</li>
 <li><div class="fn"></div><a href="qmessage.html#setBody">setBody</a> ( const QString &amp;, const QByteArray &amp; )</li>
 <li><div class="fn"></div><a href="qmessage.html#setBody-2">setBody</a> ( QTextStream &amp;, const QByteArray &amp; )</li>
 <li><div class="fn"></div><a href="qmessage.html#setCc">setCc</a> ( const QMessageAddressList &amp; )</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#setContent">setContent</a> ( const QString &amp; )</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#setContent-2">setContent</a> ( const QByteArray &amp; )</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#setContentCharset">setContentCharset</a> ( const QByteArray &amp; )</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#setContentFileName">setContentFileName</a> ( const QByteArray &amp; )</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#setContentFromFile">setContentFromFile</a> ( const QString &amp; )</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#setContentSubType">setContentSubType</a> ( const QByteArray &amp; )</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#setContentType">setContentType</a> ( const QByteArray &amp; )</li>
-<li><div class="fn"></div><a href="qmessage.html#setCustomField">setCustomField</a> ( const QString &amp;, const QString &amp; )</li>
 <li><div class="fn"></div><a href="qmessage.html#setDate">setDate</a> ( const QDateTime &amp; )</li>
-<li><div class="fn"></div><a href="qmessage.html#setDestinationPort">setDestinationPort</a> ( uint )</li>
 <li><div class="fn"></div><a href="qmessage.html#setFrom">setFrom</a> ( const QMessageAddress &amp; )</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#setHeaderField">setHeaderField</a> ( const QByteArray &amp;, const QString &amp; )</li>
-<li><div class="fn"></div><a href="qmessagecontentcontainer.html#setHeaderField-2">setHeaderField</a> ( const QByteArray &amp;, const QByteArray &amp; )</li>
-<li><div class="fn"></div><a href="qmessage.html#setOriginatorPort">setOriginatorPort</a> ( uint )</li>
 <li><div class="fn"></div><a href="qmessage.html#setParentAccountId">setParentAccountId</a> ( const QMessageAccountId &amp; )</li>
 <li><div class="fn"></div><a href="qmessage.html#setPreferredCharsets">setPreferredCharsets</a> ( const QList&lt;QByteArray&gt; &amp; )</li>
 <li><div class="fn"></div><a href="qmessage.html#setPriority">setPriority</a> ( Priority )</li>
 <li><div class="fn"></div><a href="qmessage.html#setReceivedDate">setReceivedDate</a> ( const QDateTime &amp; )</li>
-<li><div class="fn"></div><a href="qmessage.html#setStandardFolder">setStandardFolder</a> ( StandardFolder )</li>
 <li><div class="fn"></div><a href="qmessage.html#setStatus">setStatus</a> ( StatusFlags )</li>
 <li><div class="fn"></div><a href="qmessage.html#setStatus-2">setStatus</a> ( Status, bool )</li>
 <li><div class="fn"></div><a href="qmessage.html#setSubject">setSubject</a> ( const QString &amp; )</li>
@@ -108,6 +78,7 @@
 <li><div class="fn"></div><a href="qmessage.html#standardFolder">standardFolder</a> () const : StandardFolder</li>
 <li><div class="fn"></div><a href="qmessage.html#status">status</a> () const : StatusFlags</li>
 <li><div class="fn"></div><a href="qmessage.html#subject">subject</a> () const : QString</li>
+<li><div class="fn"></div><a href="qmessagecontentcontainer.html#suggestedFileName">suggestedFileName</a> () const : QByteArray</li>
 <li><div class="fn"></div><a href="qmessagecontentcontainer.html#textContent">textContent</a> () const : QString</li>
 <li><div class="fn"></div><a href="qmessage.html#to">to</a> () const : QMessageAddressList</li>
 <li><div class="fn"></div><a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a> () const : QByteArray</li>
@@ -115,7 +86,6 @@
 <li><div class="fn"></div><a href="qmessage.html#type">type</a> () const : Type</li>
 <li><div class="fn"></div><a href="qmessagecontentcontainer.html#writeContentTo">writeContentTo</a> ( QDataStream &amp; ) const</li>
 <li><div class="fn"></div><a href="qmessagecontentcontainer.html#writeTextContentTo">writeTextContentTo</a> ( QTextStream &amp; ) const</li>
-<li><div class="fn"></div><a href="qmessage.html#operator-eq">operator=</a> ( const QMessage &amp; ) : const QMessage &amp;</li>
 </ul>
 </td></tr>
 </table></p>
