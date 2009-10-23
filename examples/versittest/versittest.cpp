@@ -55,10 +55,10 @@
 #include <qversitcontactgenerator.h>
 #include <qversitcontactconverter.h>
 
-const QString inputDirPath = "/data/testvcards/in";
+const QString inputDirPath = "c:/data/testvcards/in";
 const QString excludeFieldsFileName = "/data/testvcards/excludefields.txt";
-const QString outputDirPath = "/data/testvcards/out";
-const QString imagePath = "/data/testvcards/photos";
+const QString outputDirPath = "c:/data/testvcards/out";
+const QString imagePath = "c:/data/testvcards/photos";
 
 VersitTest::VersitTest() 
     : QObject(), mSaveContacts(false)

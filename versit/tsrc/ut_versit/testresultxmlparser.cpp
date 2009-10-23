@@ -85,21 +85,22 @@ bool TestResultXmlParser::startElement(
     const QString& qName, 
     const QXmlAttributes& atts)
 {
-    if (qName == testFunctionElement) {
+    if (qName == QString::fromAscii(testFunctionElement)) {
         mTestCount++;
         mCurrentTestName = atts.value(nameAttr);
         return true;
     }
-    if (qName == incidentElement) {
+    if (qName == QString::fromAscii(incidentElement)) {
         mParsingIncidentElement = true;
-        if (atts.value(typeAttr) == attrValueFail) {
+        if (atts.value(typeAttr) == QString::fromAscii(attrValueFail)) {
             mCurrentTestFailed = true;
             mCurrentTestFile = atts.value(fileAttr);
             mCurrentTestFailureLine = atts.value(lineAttr).toInt();
         }
         return true;
     }
-    mParsingDescriptionElement = (qName == descriptionElement);
+    mParsingDescriptionElement =
+        (qName == QString::fromAscii(descriptionElement));
     return true;
 }
 
@@ -112,12 +113,12 @@ bool TestResultXmlParser::endElement(
     const QString& /*localName*/,
     const QString& qName)
 {
-    if (qName == incidentElement) {
+    if (qName == QString::fromAscii(incidentElement)) {
         mParsingIncidentElement = false;
         mCurrentTestFailed = false;
         return true;
     }
-    if (qName == descriptionElement) {
+    if (qName == QString::fromAscii(descriptionElement)) {
         mParsingDescriptionElement = false;
     }    
     return true;
@@ -132,15 +133,15 @@ bool TestResultXmlParser::characters(const QString& ch)
     if (mParsingIncidentElement && 
         mParsingDescriptionElement &&
         mCurrentTestFailed) {
-        QString testResult = mCurrentTestName + " failed:\n";
+        QByteArray testResult = mCurrentTestName.toAscii() + " failed:\n";
         testResult += "File: ";
-        testResult += mCurrentTestFile;
+        testResult += mCurrentTestFile.toAscii();
         testResult += "\n";
         testResult += "Line: ";
-        testResult += QString::number(mCurrentTestFailureLine);
+        testResult += QByteArray::number(mCurrentTestFailureLine);
         testResult += "\n";
         testResult += "Reason: ";
-        testResult += ch;
+        testResult += ch.toAscii();
         testResult += "\n";
         mErrors->append(testResult);
     }

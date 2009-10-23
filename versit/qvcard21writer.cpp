@@ -64,13 +64,13 @@ QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
     // Quoted-Printable encode the value and add Quoted-Pritable parameter, if necessary
     QByteArray value(property.value());
     bool valueQuotedPrintableEncoded = quotedPrintableEncode(property,value);
-    QString encodingParameterName(QString::fromAscii("ENCODING"));
-    QString quotedPrintableValue(QString::fromAscii("QUOTED-PRINTABLE"));
+    QString encoding(QString::fromAscii("ENCODING"));
+    QString quotedPrintable(QString::fromAscii("QUOTED-PRINTABLE"));
     QMultiHash<QString,QString> parameters = property.parameters();
     if (valueQuotedPrintableEncoded &&
-        !parameters.contains(encodingParameterName,quotedPrintableValue)) {
+        !parameters.contains(encoding,quotedPrintable)) {
          // Add the encoding parameter to the copy, not to the actual property
-         parameters.insert(encodingParameterName,quotedPrintableValue);
+         parameters.insert(encoding,quotedPrintable);
     }
 
     // Encode parameters
@@ -83,7 +83,13 @@ QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
         QVersitDocument embeddedDocument = property.embeddedDocument();
         encodedProperty.append(encodeVersitDocument(embeddedDocument));
     } else {
-        encodedProperty.append(value);
+        if (parameters.contains(encoding,QString::fromAscii("BASE64"))) {
+            // One extra folding before the value and
+            // one extra line break after the value are needed in vCard 2.1
+            encodedProperty += "\r\n " + value + "\r\n";
+        } else {
+            encodedProperty += value;
+        }
     }
     encodedProperty.append("\r\n");
 

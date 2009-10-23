@@ -58,10 +58,10 @@ void UT_QVCard21Writer::cleanup()
 void UT_QVCard21Writer::testEncodeVersitProperty()
 {
     // No parameters
-    QByteArray expectedResult = "N:Simpson, Homer\r\n"; 
+    QByteArray expectedResult = "FN:Homer Simpson\r\n";
     QVersitProperty property;
-    property.setName(QString::fromAscii("N"));
-    property.setValue(QByteArray("Simpson, Homer"));
+    property.setName(QString::fromAscii("FN"));
+    property.setValue(QByteArray("Homer Simpson"));
     QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
     
     // With parameter(s). No special characters in the value.
@@ -74,31 +74,41 @@ void UT_QVCard21Writer::testEncodeVersitProperty()
     
     // With parameter(s). Special characters in the value.
     // -> The value needs to be Quoted-Printable encoded.
-    expectedResult = "EMAIL;HOME;ENCODING=QUOTED-PRINTABLE:homer=40simpsons.com\r\n"; 
+    expectedResult = "EMAIL;HOME;ENCODING=QUOTED-PRINTABLE:homer=40simpsons.com\r\n";
     property.setName(QString::fromAscii("EMAIL"));
     property.setValue(QByteArray("homer@simpsons.com"));
     QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
     
     // AGENT property with parameter
     expectedResult = 
-"AGENT;X-WIFE:\r\n\
+"AGENT;X-PARAMETER=VALUE:\r\n\
 BEGIN:VCARD\r\n\
 VERSION:2.1\r\n\
-N:Marge\r\n\
+FN:Secret Agent\r\n\
 END:VCARD\r\n\
 \r\n";
-    QVersitProperty agentProperty;
-    agentProperty.setName(QString("AGENT"));
-    QMultiHash<QString,QString> params;
-    params.insert(QString("TYPE"), QString("X-WIFE"));
-    agentProperty.setParameters(params);
-    QVersitDocument doc;
-    QVersitProperty embProperty;
-    embProperty.setName(QString("N"));
-    embProperty.setValue(QByteArray("Marge"));
-    doc.addProperty(embProperty);
-    agentProperty.setEmbeddedDocument(doc);
-    QCOMPARE(mWriter->encodeVersitProperty(agentProperty), QByteArray(expectedResult));
+    property.setParameters(QMultiHash<QString,QString>());
+    property.setName(QString::fromAscii("AGENT"));
+    property.setValue(QByteArray());
+    property.addParameter(QByteArray("X-PARAMETER"),QByteArray("VALUE"));
+    QVersitDocument document;
+    QVersitProperty embeddedProperty;
+    embeddedProperty.setName(QString("FN"));
+    embeddedProperty.setValue(QByteArray("Secret Agent"));
+    document.addProperty(embeddedProperty);
+    property.setEmbeddedDocument(document);
+    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
+
+    // Value is base64 encoded.
+    // Check that the extra folding and the line break are added
+    QByteArray value = QByteArray("value").toBase64();
+    expectedResult = "PHOTO;ENCODING=BASE64:\r\n " + value + "\r\n\r\n";
+    property.setParameters(QMultiHash<QString,QString>());
+    property.setName(QString::fromAscii("PHOTO"));
+    property.setValue(value);
+    property.addParameter(QByteArray("ENCODING"),QByteArray("BASE64"));
+    QCOMPARE(QString(mWriter->encodeVersitProperty(property)), QString(expectedResult));
+
 }
 
 void UT_QVCard21Writer::testEncodeParameter()
