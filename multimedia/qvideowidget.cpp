@@ -521,7 +521,6 @@ QVideoWidget::QVideoWidget(QMediaObject *object, QWidget *parent)
 
     d->nonFullScreenFlags = windowFlags() & (Qt::SubWindow | Qt::Window);
 
-
     setLayout(d->layout);
 }
 
@@ -799,9 +798,11 @@ bool QVideoWidget::event(QEvent *event)
             if (d->currentBackend)
                 d->currentBackend->setFullScreen(false);
 
-            flags ^= (Qt::Window | Qt::SubWindow); //clear the flags...
-            flags |= d->nonFullScreenFlags; //then we reset the flags (window and subwindow)
-            setWindowFlags(flags);
+            if (isVisible()) {
+                flags ^= (Qt::Window | Qt::SubWindow); //clear the flags...
+                flags |= d->nonFullScreenFlags; //then we reset the flags (window and subwindow)
+                setWindowFlags(flags);
+            }
 
             if (d->wasFullScreen)
                 emit fullScreenChanged(d->wasFullScreen = false);
