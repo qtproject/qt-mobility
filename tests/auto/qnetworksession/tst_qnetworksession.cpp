@@ -535,6 +535,8 @@ void tst_QNetworkSession::sessionOpenCloseStop()
         QVERIFY(!session2.isActive());
 
         if (!errorSpy2.isEmpty()) {
+	    QVERIFY(!errorSpy.isEmpty());
+
             // check for SessionAbortedError
             QNetworkSession::SessionError error =
                 qvariant_cast<QNetworkSession::SessionError>(errorSpy.first().at(0));
@@ -630,8 +632,10 @@ void tst_QNetworkSession::sessionOpenCloseStop()
             }
 
 #ifndef Q_CC_NOKIAX86
-            if (!roamedSuccessfully)
+#ifndef MAEMO
+	    if (!roamedSuccessfully)
                 QVERIFY(!errorSpy.isEmpty());
+#endif
 #endif
             QVERIFY(errorSpy2.isEmpty());
 
