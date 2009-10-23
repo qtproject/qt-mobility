@@ -445,7 +445,10 @@ void QNetworkSessionPrivate::syncStateWithInterface()
 	    QObject::connect(mgr, SIGNAL(configurationChanged(QNetworkConfiguration)),
 			    this, SLOT(configurationChanged(QNetworkConfiguration)));
 	} else {
-	    qWarning()<<"Manager object not set when trying to connect configurationChanged signal.";
+	    qWarning()<<"Manager object not set when trying to connect configurationChanged signal. Your configuration object is not correctly setup, did you remember to call manager.updateConfigurations() before creating session object?";
+	    state = QNetworkSession::Invalid;
+	    lastError = QNetworkSession::UnknownSessionError;
+	    return;
 	}
     }
 
