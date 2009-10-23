@@ -64,6 +64,7 @@
 #include <qcontactgeolocation.h>
 #include <qcontactnote.h>
 #include <qcontactonlineaccount.h>
+#include <qcontactfamily.h>
 #include <QDir>
 
 QString testImageRelativePath(QString::fromAscii("random98354_dir76583_ut_versit_photo"));
@@ -805,6 +806,60 @@ void UT_QVersitContactGenerator::testOnlineAccount()
     contact = mGenerator->generateContact(document);
     online = (QContactOnlineAccount)contact.detail(QContactOnlineAccount::DefinitionName);
     QCOMPARE(online.isEmpty(),true);
+}
+
+void UT_QVersitContactGenerator::testFamily()
+{
+    // Interesting : kid but no wife :)
+    QVersitDocument document;
+    QVersitProperty nameProperty;
+    QByteArray val("Maggie"); // one is enough
+    nameProperty.setName(QString::fromAscii(versitChildrenId));
+    nameProperty.setValue(val);
+    document.addProperty(nameProperty);
+    QContact contact = mGenerator->generateContact(document);
+    QContactFamily family = (QContactFamily)contact.detail(QContactFamily::DefinitionName);
+    QStringList childrens = family.children();
+    QCOMPARE(childrens.count(),1); // ensure no other kids in list
+    QCOMPARE(family.spouse(),QString()); // make sure no wife
+    QCOMPARE(childrens[0],QString::fromAscii(val)); // ensure it is your kid
+
+    // Critical : wife but no kids , happy hours
+    document = QVersitDocument();
+    nameProperty = QVersitProperty();
+    nameProperty.setName(QString::fromAscii(versitSpouseId));
+    val = "March";
+    nameProperty.setValue(val);
+    document.addProperty(nameProperty);
+    contact = mGenerator->generateContact(document);
+    family = (QContactFamily)contact.detail(QContactFamily::DefinitionName);
+    childrens = family.children();
+    QCOMPARE(childrens.count(),0); // list should be empty as you know
+    QCOMPARE(family.spouse(),QString::fromAscii(val)); // make sure thats your wife:(
+
+    // Hopeless : couple of kids and wife
+    document = QVersitDocument();
+    // Add kids first
+    nameProperty = QVersitProperty();
+    nameProperty.setName(QString::fromAscii(versitChildrenId));
+    QStringList kidsVal;
+    kidsVal.append("Bart");
+    kidsVal.append("Liisa");
+    kidsVal.append("Maggie");
+    nameProperty.setValue(kidsVal.join(",").toAscii());
+    document.addProperty(nameProperty);
+    // Add wife next
+    val = "March";
+    nameProperty = QVersitProperty();
+    nameProperty.setName(QString::fromAscii(versitSpouseId));
+    nameProperty.setValue(val);
+    document.addProperty(nameProperty);
+    contact = mGenerator->generateContact(document);
+    family = (QContactFamily)contact.detail(QContactFamily::DefinitionName);
+    childrens = family.children();
+    QCOMPARE(childrens.count(),3); // too late , count them now.
+    QCOMPARE(childrens.join(","),kidsVal.join(",")); // painfull but ensure they are your kids
+    QCOMPARE(family.spouse(),QString::fromAscii(val)); // make sure thats your wife:(
 }
 
 QVersitDocument UT_QVersitContactGenerator::createDocumentWithProperty(

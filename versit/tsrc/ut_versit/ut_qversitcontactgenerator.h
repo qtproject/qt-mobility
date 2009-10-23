@@ -77,6 +77,7 @@ private slots: // Tests
     void testGeo();
     void testNote();
     void testOnlineAccount();
+    void testFamily();
 
 private: 
     

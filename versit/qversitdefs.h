@@ -64,10 +64,14 @@ const char versitNicknameId[] = "NICKNAME";
 const char versitPhotoId[] = "PHOTO";
 const char versitTitleId[] = "TITLE";
 const char versitRoleId[] = "ROLE";
+const char versitSoundId[] = "SOUND";
+
+// Extented fields ( X-Fields)
 const char versitAnniversaryId[] = "X-ANNIVERSARY";
 const char versitGenderId[] = "X-GENDER";
 const char versitSipId[] = "X-SIP";
-const char versitSoundId[] = "SOUND";
+const char versitSpouseId[] = "X-SPOUSE";
+const char versitChildrenId[] = "X-CHILDREN";
 
 // Contexts
 const char versitContextWorkId[] = "WORK";

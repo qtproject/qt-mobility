@@ -61,6 +61,7 @@
 #include <qcontactgeolocation.h>
 #include <qcontactnote.h>
 #include <qcontactonlineaccount.h>
+#include <qcontactfamily.h>
 #include <QHash>
 #include <QImage>
 
@@ -154,6 +155,9 @@ QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& 
             detail = createNote(property);
         } else if (property.name() == QString::fromAscii(versitSipId)){
             detail = createOnlineAccount(property);
+        } else if (property.name() == QString::fromAscii(versitSpouseId) ||
+                   property.name() == QString::fromAscii(versitChildrenId)){
+            detail = createFamily(property,contact);
         } else {
             // NOP
         }
@@ -475,6 +479,24 @@ QContactDetail* QVersitContactGeneratorPrivate::createNote(
     QString val = QString::fromAscii(property.value());
     note->setNote(val);
     return note;
+}
+
+
+/*!
+ * Creates a QContactFamily from \a property
+ */
+QContactDetail* QVersitContactGeneratorPrivate::createFamily(
+    const QVersitProperty& property,const QContact& contact)const
+{
+    QString val = QString::fromAscii(property.value());
+    QContactFamily family = static_cast<QContactFamily>
+                                   (contact.detail(QContactFamily::DefinitionName));
+    if(property.name() == QString::fromAscii(versitSpouseId)){
+        family.setSpouse(val);
+    }else if (property.name() == QString::fromAscii(versitChildrenId)){
+        family.setChildren(val.split(","));
+    }
+    return new QContactDetail((QContactDetail)family);
 }
 
 
