@@ -61,7 +61,6 @@ symbian {
                qmlbackendmonitorcreatetriggerao_s60.cpp \
                qmlbackendmonitorinfo_s60.cpp \
                qmlbackendtriggerchangeao_s60.cpp
-        }
     }
 }
 
