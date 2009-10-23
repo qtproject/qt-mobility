@@ -79,6 +79,7 @@
 #include "qmessageaccount_p.h"
 #include "qmessageordering_p.h"
 #include "qmessageaccountfilter_p.h"
+#include "qmessagefolderfilter_p.h"
 #include "qmessagefilter_p.h"
 
 #include <QCoreApplication>
@@ -2089,6 +2090,52 @@ QMessageFolderId MapiFolder::id() const
 }
 #endif
 
+QMessageAccountId MapiFolder::accountId() const
+{
+    return _store->id();
+}
+
+QMessageFolderId MapiFolder::parentId() const
+{
+    MapiEntryId parentEntryId;
+    if (getMapiProperty(_folder, PR_PARENT_ENTRYID, &parentEntryId)) {
+        QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+        MapiFolderPtr parent(_store->openFolder(&ignoredError, parentEntryId));
+        if (!parent.isNull()) {
+            return parent->id();
+        }
+    }
+
+    return QMessageFolderId();
+}
+
+QList<QMessageFolderId> MapiFolder::ancestorIds() const
+{
+    QList<QMessageFolderId> result;
+
+    QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+    MapiFolderPtr root(_store->rootFolder(&ignoredError));
+
+    if (ignoredError == QMessageStore::NoError) {
+        MapiFolderPtr current = _self.toStrongRef();
+        MapiSessionPtr session = _store->session();
+
+        while ((ignoredError == QMessageStore::NoError) && !session->equal(current->entryId(), root->entryId())) {
+            // Find the parent of this folder and append to the list of ancestors
+            MapiEntryId parentEntryId;
+            if (getMapiProperty(current->_folder, PR_PARENT_ENTRYID, &parentEntryId)) {
+                QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+                current = _store->openFolder(&ignoredError, parentEntryId);
+                if (!current.isNull() && !session->equal(current->entryId(), root->entryId())) {
+                    result.append(current->id());
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
 MapiRecordKey MapiFolder::storeKey() const
 {
     return _store->recordKey();
@@ -2304,7 +2351,7 @@ MapiEntryId MapiStore::standardFolderId(QMessageStore::ErrorCode *lastError, QMe
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
-QMessageFolderIdList MapiStore::folderIds(QMessageStore::ErrorCode *lastError)
+QMessageFolderIdList MapiStore::folderIds(QMessageStore::ErrorCode *lastError) const
 {
     QMessageFolderIdList folderIds;
 
@@ -2359,6 +2406,71 @@ QMessageFolder MapiStore::folderFromId(QMessageStore::ErrorCode *lastError, cons
     return result;
 }
 #endif
+
+QList<MapiFolderPtr> MapiStore::filterFolders(QMessageStore::ErrorCode *lastError, const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering) const
+{
+    Q_UNUSED(ordering)
+
+    QList<MapiFolderPtr> result;
+
+#ifndef _WIN32_WCE
+    MapiFolderPtr root(rootFolder(lastError));
+    if (*lastError == QMessageStore::NoError) {
+        IMAPITable *folderTable(0);
+        HRESULT rv = root->_folder->GetHierarchyTable(CONVENIENT_DEPTH | MAPI_UNICODE, &folderTable);
+        if (HR_SUCCEEDED(rv)) {
+            SizedSPropTagArray(5, columns) = {5, {PR_ENTRYID, PR_IS_NEWSGROUP, PR_IS_NEWSGROUP_ANCHOR, PR_EXTENDED_FOLDER_FLAGS, PR_FOLDER_TYPE}};
+            QueryAllRows qar(folderTable, reinterpret_cast<LPSPropTagArray>(&columns), 0, 0, false);
+            while (qar.query()) {
+                for (uint n = 0; n < qar.rows()->cRows; ++n) {
+                    SPropValue *props = qar.rows()->aRow[n].lpProps;
+
+                    bool isNewsGroup = (props[1].ulPropTag == PR_IS_NEWSGROUP && props[1].Value.b);
+                    bool isNewsGroupAnchor = (props[2].ulPropTag == PR_IS_NEWSGROUP_ANCHOR && props[2].Value.b);
+                    bool special(isNewsGroup || isNewsGroupAnchor);
+
+                    // Skip slow folders, necessary evil
+                    if (props[3].ulPropTag == PR_EXTENDED_FOLDER_FLAGS) {
+                        QByteArray extendedFlags(reinterpret_cast<const char*>(props[3].Value.bin.lpb), props[3].Value.bin.cb);
+                        if (extendedFlags[2] & 8) { // Synchronization issues, skip like Outlook
+                            special = true;
+                        }
+                    } else if (props[4].ulPropTag == PR_FOLDER_TYPE) {
+                        if (props[4].Value.ul != FOLDER_GENERIC) {
+                            special = true;
+                        }
+                    } else {
+                        special = true;
+                    }
+
+                    if (!special) {
+                        MapiEntryId entryId(props[0].Value.bin.lpb, props[0].Value.bin.cb);
+                        MapiFolderPtr folder(openFolder(lastError, entryId));
+                        if (QMessageFolderFilterPrivate::matchesFolder(filter, folder)) {
+                            result.append(folder);
+                        }
+                    }
+                }
+            }
+
+            *lastError = qar.lastError();
+
+            mapiRelease(folderTable);
+        }
+    }
+#else
+    // Windows mobile does not support CONVENIENT_DEPTH...
+    foreach (const QMessageFolderId &folderId, folderIds(lastError)) {
+        MapiEntryId entryId = QMessageFolderIdPrivate::entryId(folderId);
+        MapiFolderPtr folder(openFolder(lastError, entryId));
+        if (QMessageFolderFilterPrivate::matchesFolder(filter, folder)) {
+            result.append(folder);
+        }
+    }
+#endif
+
+    return result;
+}
 
 MapiEntryId MapiStore::messageEntryId(QMessageStore::ErrorCode *lastError, const MapiRecordKey &folderKey, const MapiRecordKey &messageKey)
 {
@@ -2431,6 +2543,7 @@ MapiFolderPtr MapiStore::openFolderWithKey(QMessageStore::ErrorCode *lastError, 
             result = root;
         } else {
             IMAPITable *folderTable(0);
+            // TODO: this won't work on windows mobile:
             HRESULT rv = root->_folder->GetHierarchyTable(CONVENIENT_DEPTH | MAPI_UNICODE, &folderTable);
             if (HR_SUCCEEDED(rv)) {
                 // Find the entry ID corresponding to this recordKey
@@ -2572,6 +2685,11 @@ QMessageAddress MapiStore::address() const
 
 
     return result;
+}
+
+MapiSessionPtr MapiStore::session() const
+{
+    return _session.toStrongRef();
 }
 
 MapiFolderPtr MapiStore::rootFolder(QMessageStore::ErrorCode *lastError) const
@@ -2937,7 +3055,8 @@ MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const Q
     return result;
 }
 
-QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastError, const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset, bool cachedMode) const
+template<typename Predicate, typename Ordering>
+QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastError, Predicate predicate, Ordering ordering, uint limit, uint offset, bool cachedMode) const
 {
     Q_UNUSED(ordering)
 
@@ -2961,13 +3080,13 @@ QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastErro
                 MapiEntryId entryId(qar.rows()->aRow[n].lpProps[0].Value.bin.lpb, qar.rows()->aRow[n].lpProps[0].Value.bin.cb);
                 MapiStorePtr store(openStore(lastError, entryId, cachedMode));
                 if (!store.isNull()) {
-                    // We only want stores that contain private messages
 #ifndef _WIN32_WCE
+                    // We only want stores that contain private messages
                     if (!store->supports(STORE_PUBLIC_FOLDERS)) {
                         continue;
                     }
 #endif
-                    if (QMessageAccountFilterPrivate::matchesStore(filter, store)) {
+                    if (predicate(store)) {
                         result.append(store);
                     }
                 }
@@ -2987,9 +3106,68 @@ QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastErro
     }
 }
 
+QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastError, const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset, bool cachedMode) const
+{
+    struct AccountFilterPredicate
+    {
+        const QMessageAccountFilter &_filter;
+
+        AccountFilterPredicate(const QMessageAccountFilter &filter) : _filter(filter) {}
+
+        bool operator()(const MapiStorePtr &store) const
+        {
+            return QMessageAccountFilterPrivate::matchesStore(_filter, store);
+        }
+    };
+
+    AccountFilterPredicate pred(filter);
+    return filterStores<const AccountFilterPredicate&, const QMessageAccountOrdering &>(lastError, pred, ordering, limit, offset, cachedMode);
+}
+
+QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastError, const QMessageFolderFilter &filter, bool cachedMode) const
+{
+    struct FolderFilterPredicate
+    {
+        const QMessageFolderFilter &_filter;
+
+        FolderFilterPredicate(const QMessageFolderFilter &filter) : _filter(filter) {}
+
+        bool operator()(const MapiStorePtr &store) const
+        {
+            return QMessageFolderFilterPrivate::matchesStore(_filter, store);
+        }
+    };
+
+    FolderFilterPredicate pred(filter);
+    return filterStores<const FolderFilterPredicate&, const QMessageAccountOrdering &>(lastError, pred, QMessageAccountOrdering(), 0, 0, cachedMode);
+}
+
 QList<MapiStorePtr> MapiSession::allStores(QMessageStore::ErrorCode *lastError, bool cachedMode) const
 {
     return filterStores(lastError, QMessageAccountFilter(), QMessageAccountOrdering(), 0, 0, cachedMode);
+}
+
+QList<MapiFolderPtr> MapiSession::filterFolders(QMessageStore::ErrorCode *lastError, const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset, bool cachedMode) const
+{
+    Q_UNUSED(ordering)
+
+    QList<MapiFolderPtr> result;
+    if (!_mapiSession) {
+        Q_ASSERT(_mapiSession);
+        *lastError = QMessageStore::FrameworkFault;
+        return result;
+    }
+
+    foreach (const MapiStorePtr &store, filterStores(lastError, filter, cachedMode)) {
+        result.append(store->filterFolders(lastError, filter, ordering));
+    }
+
+    // TODO: do better than this
+    if (offset) {
+        return result.mid(offset, (limit ? limit : -1));
+    } else {
+        return result;
+    }
 }
 
 IMsgStore *MapiSession::openMapiStore(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId, bool cachedMode) const

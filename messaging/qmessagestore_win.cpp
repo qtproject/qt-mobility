@@ -177,27 +177,19 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset) const
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(ordering)
-
     QMessageFolderIdList result;
 
     if (!d_ptr->p_ptr->session) {
         d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
         return result;
-    } else {
-        d_ptr->p_ptr->lastError = QMessageStore::NoError;
     }
 
-    foreach (const MapiStorePtr &store, d_ptr->p_ptr->session->allStores(&d_ptr->p_ptr->lastError)) {
-        result.append(store->folderIds(&d_ptr->p_ptr->lastError));
+    d_ptr->p_ptr->lastError = QMessageStore::NoError;
+    foreach (const MapiFolderPtr &folder, d_ptr->p_ptr->session->filterFolders(&d_ptr->p_ptr->lastError, filter, ordering, limit, offset)) {
+        result.append(folder->id());
     }
 
-    if (offset) {
-        return result.mid(offset, (limit ? limit : -1));
-    } else {
-        return result;
-    }
+    return result;
 }
 #endif
 

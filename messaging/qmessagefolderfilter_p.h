@@ -40,16 +40,75 @@
 ****************************************************************************/
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderfilter.h"
+#include "winhelpers_p.h"
+
+#include <QSet>
 
 class QMessageFolderFilterPrivate
 {
     Q_DECLARE_PUBLIC(QMessageFolderFilter)
 public:
+    enum Criterion { 
+        None = 0, 
+        IdEquality, 
+        IdInclusion, 
+        NameEquality, 
+        NameInclusion, 
+        PathEquality, 
+        PathInclusion, 
+        AccountEquality, 
+        AccountInclusion, 
+        ParentEquality, 
+        ParentInclusion,
+        AncestorInclusion
+    };
+
     QMessageFolderFilterPrivate(QMessageFolderFilter *folderFilter)
-        :q_ptr(folderFilter)
+        : q_ptr(folderFilter),
+          _criterion(None),
+          _equality(QMessageDataComparator::Equal),
+          _inclusion(QMessageDataComparator::Includes),
+          _options(0)
     {
     }
 
     QMessageFolderFilter *q_ptr;
+
+    QMessageFolderFilterPrivate &operator=(const QMessageFolderFilterPrivate &other)
+    {
+        _criterion = other._criterion;
+        _ids = other._ids;
+        _accountIds = other._accountIds;
+        _value = other._value;
+        _equality = other._equality;
+        _inclusion = other._inclusion;
+        _options = other._options;
+
+        return *this;
+    }
+
+    bool operator==(const QMessageFolderFilterPrivate &other) const
+    {
+        return ((_criterion == other._criterion) &&
+                (_ids == other._ids) &&
+                (_accountIds == other._accountIds) &&
+                (_value == other._value) &&
+                (_equality == other._equality) &&
+                (_inclusion == other._inclusion) &&
+                (_options == other._options));
+    }
+
+    Criterion _criterion;
+    QSet<QMessageFolderId> _ids;
+    QSet<QMessageAccountId> _accountIds;
+    QString _value;
+    QMessageDataComparator::EqualityComparator _equality;
+    QMessageDataComparator::InclusionComparator _inclusion;
+    QMessageDataComparator::Options _options;
+
+#ifdef Q_OS_WIN
+    static bool matchesStore(const QMessageFolderFilter &filter, const MapiStorePtr &store);
+    static bool matchesFolder(const QMessageFolderFilter &filter, const MapiFolderPtr &folder);
+#endif
 };
 #endif
