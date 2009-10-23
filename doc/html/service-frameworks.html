@@ -163,8 +163,8 @@
 <p>New services can be added and removed at any time via <a href="qservicemanager.html#addService">QServiceManager::addService</a>() and <a href="qservicemanager.html#removeService">QServiceManager::removeService</a>().</p>
 <a name="identifying-services"></a>
 <h3>Identifying Services</h3>
-<p>Each implementation is identified by a service name, an interface name and its version. This information is encapsulated by QServiceInterfaceDescriptor which can be used to request references to service objects.</p>
-<p><a href="qservicefilter.html">QServiceFilter</a> simplifies the lookup of already installed services. Developers specifies the criteria used during the meta data lookup. The subsequent example demonstrates the interaction between QServiceInterfaceDescriptor and <a href="qservicefilter.html">QServiceFilter</a> by creating references to all services that implement the interface <i>com.nokia.qt.ILocation</i>:</p>
+<p>Each implementation is identified by a service name, an interface name and its version. This information is encapsulated by <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> which can be used to request references to service objects.</p>
+<p><a href="qservicefilter.html">QServiceFilter</a> simplifies the lookup of already installed services. Developers specifies the criteria used during the meta data lookup. The subsequent example demonstrates the interaction between <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> and <a href="qservicefilter.html">QServiceFilter</a> by creating references to all services that implement the interface <i>com.nokia.qt.ILocation</i>:</p>
 <pre>        QServiceManager mgr;
         QServiceFilter filter;
         filter.setInterfaceName(&quot;com.nokia.qt.ILocation&quot;);
@@ -195,8 +195,9 @@
 <tr valign="top" class="odd"><th><a href="qabstractsecuritysession.html">QAbstractSecuritySession</a></th><td>Generic mechanism to enable permission checks for services</td></tr>
 <tr valign="top" class="even"><th><a href="qservicecontext.html">QServiceContext</a></th><td>Context information to services</td></tr>
 <tr valign="top" class="odd"><th><a href="qservicefilter.html">QServiceFilter</a></th><td>Defines criteria for defining a sub-set of all available services</td></tr>
-<tr valign="top" class="even"><th><a href="qservicemanager.html">QServiceManager</a></th><td>Enables the loading of service plugins and the (de)registration of services</td></tr>
-<tr valign="top" class="odd"><th><a href="qserviceplugininterface.html">QServicePluginInterface</a></th><td>Defines the interface that every plug-in based service must implement</td></tr>
+<tr valign="top" class="even"><th><a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a></th><td>Identifies a service implementation</td></tr>
+<tr valign="top" class="odd"><th><a href="qservicemanager.html">QServiceManager</a></th><td>Enables the loading of service plugins and the (de)registration of services</td></tr>
+<tr valign="top" class="even"><th><a href="qserviceplugininterface.html">QServicePluginInterface</a></th><td>Defines the interface that every plug-in based service must implement</td></tr>
 </table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

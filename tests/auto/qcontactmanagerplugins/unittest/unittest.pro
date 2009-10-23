@@ -26,7 +26,7 @@ TESTDLLS = \
 # App local deployment
 symbian|wince* {
     symbian:QCONTACTMANAGER_PLUGINS_DEPLOY.sources = $$join(TESTDLLS, ".dll ", " ", ".dll")
-    wince*:QCONTACTMANAGER_PLUGINS_DEPLOY.sources = $$join(TESTDLLS, ".dll $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/plugins/contacts/", "$$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/plugins/contacts/", ".dll")
+    wince*:QCONTACTMANAGER_PLUGINS_DEPLOY.sources = $$join(TESTDLLS, ".dll $$OUTPUT_DIR/build/tests/bin/plugins/contacts/", "$$OUTPUT_DIR/build/tests/bin/plugins/contacts/", ".dll")
     QCONTACTMANAGER_PLUGINS_DEPLOY.path = ./plugins/contacts
     DEPLOYMENT += QCONTACTMANAGER_PLUGINS_DEPLOY
 }

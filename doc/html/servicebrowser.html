@@ -112,8 +112,8 @@
 
         ...
     }</pre>
-<p>To create the list of interface implementations in the bottom-left pane, we call <a href="qservicemanager.html#findInterfaces">QServiceManager::findInterfaces</a>() to get a list of QServiceInterfaceDescriptor objects. If a particular service has been selected in the top-left pane, we call <a href="qservicemanager.html#findInterfaces">QServiceManager::findInterfaces</a>() with the name of that service as the argument, so that it will only return the interface implementations provided by that service. Otherwise, it is called with no argument to retrieve a list of all implementations provided by all registered services.</p>
-<p>The example maps each entry in the interface implementations list to its corresponding QServiceInterfaceDescriptor object using the <a href="http://qt.nokia.com/doc/4.5/qlistwidgetitem.html#setData">QListWidgetItem::setData</a>() method.</p>
+<p>To create the list of interface implementations in the bottom-left pane, we call <a href="qservicemanager.html#findInterfaces">QServiceManager::findInterfaces</a>() to get a list of <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> objects. If a particular service has been selected in the top-left pane, we call <a href="qservicemanager.html#findInterfaces">QServiceManager::findInterfaces</a>() with the name of that service as the argument, so that it will only return the interface implementations provided by that service. Otherwise, it is called with no argument to retrieve a list of all implementations provided by all registered services.</p>
+<p>The example maps each entry in the interface implementations list to its corresponding <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> object using the <a href="http://qt.nokia.com/doc/4.5/qlistwidgetitem.html#setData">QListWidgetItem::setData</a>() method.</p>
 <p>Note how we also call QServiceManager::defaultServiceInterface() to determine whether an interface implementation is the default for that interface.</p>
 <pre>    void ServiceBrowser::reloadAttributesList()
     {
@@ -179,7 +179,7 @@
     QMetaObject::invokeMethod(interfaceImpl, &quot;copyFile&quot;,
                               Q_ARG(QString, &quot;path/to/file.txt&quot;),
                               Q_ARG(QString, &quot;new/path/to/file.txt&quot;));</pre>
-<p>Of course, the <a href="qservicemanager.html#loadInterface">QServiceManager::loadInterface</a>() call here assumes the FileManagerStorage implementation is the default for the com.nokia.qt.examples.FileStorage interface. Otherwise, it would have to pass a QServiceInterfaceDescriptor object to <a href="qservicemanager.html#loadInterface">QServiceManager::loadInterface</a>() instead of just the interface name to ensure the correct implementation is loaded.</p>
+<p>Of course, the <a href="qservicemanager.html#loadInterface">QServiceManager::loadInterface</a>() call here assumes the FileManagerStorage implementation is the default for the com.nokia.qt.examples.FileStorage interface. Otherwise, it would have to pass a <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> object to <a href="qservicemanager.html#loadInterface">QServiceManager::loadInterface</a>() instead of just the interface name to ensure the correct implementation is loaded.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

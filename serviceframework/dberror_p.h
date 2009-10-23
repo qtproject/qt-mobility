@@ -56,6 +56,7 @@
 #include <QString>
 #include "qserviceglobal.h"
 
+QT_BEGIN_NAMESPACE
 class Q_SFW_EXPORT DBError
 {
     public:
@@ -97,5 +98,6 @@ class Q_SFW_EXPORT DBError
         QString m_text;
         ErrorCode m_error;
 };
+QT_END_NAMESPACE
 
 #endif  //DBERROR_H

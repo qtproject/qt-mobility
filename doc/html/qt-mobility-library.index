@@ -3690,6 +3690,49 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="filters" fullname="QContactIntersectionFilter::filters" href="qcontactintersectionfilter.html#filters" location="qcontactintersectionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactFilter&gt;" signature="filters() const"/>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QServiceInterfaceDescriptor" href="qserviceinterfacedescriptor.html" location="qserviceinterfacedescriptor.h" bases="" module="">
+            <contents name="namespaces" title="Namespaces" level="1"/>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="PropertyKey" fullname="QServiceInterfaceDescriptor::PropertyKey" href="qserviceinterfacedescriptor.html#PropertyKey-enum" location="qserviceinterfacedescriptor.h">
+                <value name="Capabilities" value="0"/>
+                <value name="Location" value="1"/>
+                <value name="ServiceDescription" value="2"/>
+                <value name="InterfaceDescription" value="3"/>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QServiceInterfaceDescriptor" fullname="QServiceInterfaceDescriptor::QServiceInterfaceDescriptor" href="qserviceinterfacedescriptor.html#QServiceInterfaceDescriptor" location="qserviceinterfacedescriptor.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QServiceInterfaceDescriptor()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QServiceInterfaceDescriptor" fullname="QServiceInterfaceDescriptor::QServiceInterfaceDescriptor" href="qserviceinterfacedescriptor.html#QServiceInterfaceDescriptor-2" location="qserviceinterfacedescriptor.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QServiceInterfaceDescriptor(const QServiceInterfaceDescriptor &amp; other)">
+                <parameter left="const QServiceInterfaceDescriptor &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QServiceInterfaceDescriptor" fullname="QServiceInterfaceDescriptor::~QServiceInterfaceDescriptor" href="qserviceinterfacedescriptor.html#dtor.QServiceInterfaceDescriptor" location="qserviceinterfacedescriptor.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QServiceInterfaceDescriptor()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QServiceInterfaceDescriptor::operator=" href="qserviceinterfacedescriptor.html#operator=" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="QServiceInterfaceDescriptor &amp;" signature="operator=(const QServiceInterfaceDescriptor &amp; other)">
+                <parameter left="const QServiceInterfaceDescriptor &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QServiceInterfaceDescriptor::operator==" href="qserviceinterfacedescriptor.html#operator==" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QServiceInterfaceDescriptor &amp; other) const">
+                <parameter left="const QServiceInterfaceDescriptor &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator!=" fullname="QServiceInterfaceDescriptor::operator!=" href="qserviceinterfacedescriptor.html#operator!=" location="qserviceinterfacedescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator!=(const QServiceInterfaceDescriptor &amp; other) const">
+                <parameter left="const QServiceInterfaceDescriptor &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="serviceName" fullname="QServiceInterfaceDescriptor::serviceName" href="qserviceinterfacedescriptor.html#serviceName" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="serviceName() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="interfaceName" fullname="QServiceInterfaceDescriptor::interfaceName" href="qserviceinterfacedescriptor.html#interfaceName" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="interfaceName() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="majorVersion" fullname="QServiceInterfaceDescriptor::majorVersion" href="qserviceinterfacedescriptor.html#majorVersion" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="majorVersion() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="minorVersion" fullname="QServiceInterfaceDescriptor::minorVersion" href="qserviceinterfacedescriptor.html#minorVersion" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="minorVersion() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QServiceInterfaceDescriptor::isValid" href="qserviceinterfacedescriptor.html#isValid" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="inSystemScope" fullname="QServiceInterfaceDescriptor::inSystemScope" href="qserviceinterfacedescriptor.html#inSystemScope" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="inSystemScope() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="property" fullname="QServiceInterfaceDescriptor::property" href="qserviceinterfacedescriptor.html#property" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="property(QServiceInterfaceDescriptor::PropertyKey key) const">
+                <parameter left="QServiceInterfaceDescriptor::PropertyKey" right="" name="key" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="customProperty" fullname="QServiceInterfaceDescriptor::customProperty" href="qserviceinterfacedescriptor.html#customProperty" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="customProperty(const QString &amp; key) const">
+                <parameter left="const QString &amp;" right="" name="key" default=""/>
+            </function>
+        </class>
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qserviceinterfacedescriptor.html#operator&lt;&lt;-79" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="79" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceInterfaceDescriptor &amp; dc)">
+            <parameter left="QDataStream &amp;" right="" name="out" default=""/>
+            <parameter left="const QServiceInterfaceDescriptor &amp;" right="" name="dc" default=""/>
+        </function>
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qserviceinterfacedescriptor.html#operator&gt;&gt;-74" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="74" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; in, QServiceInterfaceDescriptor &amp; dc)">
+            <parameter left="QDataStream &amp;" right="" name="in" default=""/>
+            <parameter left="QServiceInterfaceDescriptor &amp;" right="" name="dc" default=""/>
+        </function>
         <class access="public" threadsafety="unspecified" status="commendable" name="QNmeaPositionInfoSource" href="qnmeapositioninfosource.html" location="qnmeapositioninfosource.h" bases="QGeoPositionInfoSource" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="UpdateMode" fullname="QNmeaPositionInfoSource::UpdateMode" href="qnmeapositioninfosource.html#UpdateMode-enum" location="qnmeapositioninfosource.h">
                 <value name="RealTimeMode" value="1"/>
