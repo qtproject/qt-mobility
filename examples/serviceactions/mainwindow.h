@@ -58,6 +58,11 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget* parent = 0, Qt::WindowFlags f = 0);
 
+#ifdef _WIN32_WCE
+protected:
+    bool eventFilter(QObject* source, QEvent* e);
+#endif
+
 private slots:
     void serviceStateChanged(QMessageServiceAction::State state);
     void viewSelected();
