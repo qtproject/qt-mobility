@@ -73,6 +73,16 @@ public:
         return *this;
     }
 
+    bool operator==(const QMessageAccountFilterPrivate &other)
+    {
+        return ((_criterion == other._criterion) &&
+                (_ids == other._ids) &&
+                (_name == other._name) &&
+                (_equality == other._equality) &&
+                (_inclusion == other._inclusion) &&
+                (_options == other._options));
+    }
+
     Criterion _criterion;
     QSet<QMessageAccountId> _ids;
     QString _name;
@@ -84,3 +94,4 @@ public:
     static bool matchesStore(const QMessageAccountFilter &filter, const MapiStorePtr &store);
 #endif
 };
+

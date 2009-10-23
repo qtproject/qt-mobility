@@ -45,7 +45,6 @@
 #include "qmessagefolderid_p.h"
 #include "qmessageaccountid_p.h"
 #include "qmessageaccount_p.h"
-#include "qmessageaccountfilter_p.h"
 #include "winhelpers_p.h"
 #include <QCoreApplication>
 #include <qdebug.h>
@@ -204,30 +203,19 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &fil
 
 QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset) const
 {
-    Q_UNUSED(ordering)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
-
     QMessageAccountIdList result;
 
     if (!d_ptr->p_ptr->session) {
         d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
         return result;
-    } else {
-        d_ptr->p_ptr->lastError = QMessageStore::NoError;
     }
 
-    foreach (const MapiStorePtr &store, d_ptr->p_ptr->session->allStores(&d_ptr->p_ptr->lastError)) {
-        if (QMessageAccountFilterPrivate::matchesStore(filter, store)) {
-            result.append(QMessageAccountId(store->id()));
-        }
+    d_ptr->p_ptr->lastError = QMessageStore::NoError;
+    foreach (const MapiStorePtr &store, d_ptr->p_ptr->session->filterStores(&d_ptr->p_ptr->lastError, filter, ordering, limit, offset)) {
+        result.append(store->id());
     }
 
-    if (offset) {
-        return result.mid(offset, (limit ? limit : -1));
-    } else {
-        return result;
-    }
+    return result;
 }
 
 int QMessageStore::countMessages(const QMessageFilter& filter) const

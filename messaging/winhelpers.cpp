@@ -78,6 +78,7 @@
 #include "qmessagefolder_p.h"
 #include "qmessageaccount_p.h"
 #include "qmessageordering_p.h"
+#include "qmessageaccountfilter_p.h"
 #include "qmessagefilter_p.h"
 
 #include <QCoreApplication>
@@ -2936,8 +2937,10 @@ MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const Q
     return result;
 }
 
-QList<MapiStorePtr> MapiSession::allStores(QMessageStore::ErrorCode *lastError, bool cachedMode) const
+QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastError, const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset, bool cachedMode) const
 {
+    Q_UNUSED(ordering)
+
     QList<MapiStorePtr> result;
     if (!_mapiSession) {
         Q_ASSERT(_mapiSession);
@@ -2960,9 +2963,13 @@ QList<MapiStorePtr> MapiSession::allStores(QMessageStore::ErrorCode *lastError, 
                 if (!store.isNull()) {
                     // We only want stores that contain private messages
 #ifndef _WIN32_WCE
-                    if(!store->supports(STORE_PUBLIC_FOLDERS))
+                    if (!store->supports(STORE_PUBLIC_FOLDERS)) {
+                        continue;
+                    }
 #endif
+                    if (QMessageAccountFilterPrivate::matchesStore(filter, store)) {
                         result.append(store);
+                    }
                 }
             }
         }
@@ -2972,7 +2979,17 @@ QList<MapiStorePtr> MapiSession::allStores(QMessageStore::ErrorCode *lastError, 
         mapiRelease(mapiMessageStoresTable);
     }
 
-    return result;
+    // TODO: do better than this
+    if (offset) {
+        return result.mid(offset, (limit ? limit : -1));
+    } else {
+        return result;
+    }
+}
+
+QList<MapiStorePtr> MapiSession::allStores(QMessageStore::ErrorCode *lastError, bool cachedMode) const
+{
+    return filterStores(lastError, QMessageAccountFilter(), QMessageAccountOrdering(), 0, 0, cachedMode);
 }
 
 IMsgStore *MapiSession::openMapiStore(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId, bool cachedMode) const

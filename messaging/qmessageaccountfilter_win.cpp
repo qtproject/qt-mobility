@@ -41,6 +41,22 @@
 #include "qmessageaccountfilter.h"
 #include "qmessageaccountfilter_p.h"
 
+namespace {
+
+void invertComparator(QMessageAccountFilterPrivate &f)
+{
+	// Invert the sense of comparison
+    if ((f._criterion == QMessageAccountFilterPrivate::None) || 
+        (f._criterion == QMessageAccountFilterPrivate::IdEquality) ||
+        (f._criterion == QMessageAccountFilterPrivate::NameEquality)) {
+        f._equality = (f._equality == QMessageDataComparator::Equal ? QMessageDataComparator::NotEqual : QMessageDataComparator::Equal);
+    } else if ((f._criterion == QMessageAccountFilterPrivate::IdInclusion) ||
+               (f._criterion == QMessageAccountFilterPrivate::NameInclusion)) {
+        f._inclusion = (f._inclusion == QMessageDataComparator::Includes ? QMessageDataComparator::Excludes : QMessageDataComparator::Includes); 
+    }
+}
+
+}
 
 bool QMessageAccountFilterPrivate::matchesStore(const QMessageAccountFilter &filter, const MapiStorePtr &store)
 {
@@ -118,17 +134,7 @@ bool QMessageAccountFilter::isSupported() const
 QMessageAccountFilter QMessageAccountFilter::operator~() const
 {
     QMessageAccountFilter result(*this);
-
-    // Reverse the sense of the comparator
-    if ((d_ptr->_criterion == QMessageAccountFilterPrivate::IdEquality) || 
-        (d_ptr->_criterion == QMessageAccountFilterPrivate::NameEquality) ||
-        (d_ptr->_criterion == QMessageAccountFilterPrivate::None)) {
-        result.d_ptr->_equality = (result.d_ptr->_equality == QMessageDataComparator::Equal ? QMessageDataComparator::NotEqual : QMessageDataComparator::Equal);
-    } else if ((d_ptr->_criterion == QMessageAccountFilterPrivate::IdInclusion) ||
-               (d_ptr->_criterion == QMessageAccountFilterPrivate::NameInclusion)) {
-        result.d_ptr->_inclusion = (result.d_ptr->_inclusion == QMessageDataComparator::Includes ? QMessageDataComparator::Excludes : QMessageDataComparator::Includes); 
-    }
-
+    invertComparator(*result.d_ptr);
     return result;
 }
 
@@ -160,11 +166,7 @@ const QMessageAccountFilter& QMessageAccountFilter::operator|=(const QMessageAcc
 
 bool QMessageAccountFilter::operator==(const QMessageAccountFilter& other) const
 {
-    return ((d_ptr->_criterion == other.d_ptr->_criterion) &&
-            (d_ptr->_equality == other.d_ptr->_equality) &&
-            (d_ptr->_inclusion == other.d_ptr->_inclusion) &&
-            (d_ptr->_ids == other.d_ptr->_ids) && 
-            (d_ptr->_name == other.d_ptr->_name));
+    return (*d_ptr == *other.d_ptr);
 }
 
 QMessageAccountFilter QMessageAccountFilter::byId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
@@ -191,14 +193,7 @@ QMessageAccountFilter QMessageAccountFilter::byId(const QMessageAccountFilter &f
     *result.d_ptr = *filter.d_ptr;
     if (cmp == QMessageDataComparator::Excludes) {
         // Invert the sense of comparison
-        if ((result.d_ptr->_criterion == QMessageAccountFilterPrivate::IdEquality) || 
-            (result.d_ptr->_criterion == QMessageAccountFilterPrivate::NameEquality) ||
-            (result.d_ptr->_criterion == QMessageAccountFilterPrivate::None)) {
-            result.d_ptr->_equality = (result.d_ptr->_equality == QMessageDataComparator::Equal ? QMessageDataComparator::NotEqual : QMessageDataComparator::Equal);
-        } else if ((result.d_ptr->_criterion == QMessageAccountFilterPrivate::IdInclusion) ||
-                   (result.d_ptr->_criterion == QMessageAccountFilterPrivate::NameInclusion)) {
-            result.d_ptr->_inclusion = (result.d_ptr->_inclusion == QMessageDataComparator::Includes ? QMessageDataComparator::Excludes : QMessageDataComparator::Includes); 
-        }
+        invertComparator(*result.d_ptr);
     }
     return result;
 }
@@ -220,3 +215,4 @@ QMessageAccountFilter QMessageAccountFilter::byName(const QString &value, QMessa
     result.d_ptr->_criterion = QMessageAccountFilterPrivate::NameInclusion;
     return result;
 }
+
