@@ -257,8 +257,8 @@ QVideoSurfaceGLPainter::QVideoSurfaceGLPainter(QGLContext *context)
     , m_textureCount(0)
     , m_yuv(false)
 {
-    context->makeCurrent();
-    glActiveTexture = (_glActiveTexture) context->getProcAddress(QLatin1String("glActiveTexture"));
+    m_context->makeCurrent();
+    glActiveTexture = (_glActiveTexture)m_context->getProcAddress(QLatin1String("glActiveTexture"));
 }
 
 QVideoSurfaceGLPainter::~QVideoSurfaceGLPainter()
@@ -805,7 +805,7 @@ private:
 QVideoSurfaceGlslPainter::QVideoSurfaceGlslPainter(QGLContext *context)
     : QVideoSurfaceGLPainter(context)
 {
-    context->doneCurrent();
+    m_context->doneCurrent();
 
     m_imagePixelFormats
             << QVideoFrame::Format_RGB32
@@ -1298,10 +1298,13 @@ void QPainterVideoSurface::setShaderType(ShaderType type)
     }
 }
 
+#endif
+
 void QPainterVideoSurface::createPainter()
 {
     Q_ASSERT(!m_painter);
 
+#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
     switch (m_shaderType) {
 #ifndef QT_OPENGL_ES
     case FragmentProgramShader:
@@ -1317,6 +1320,8 @@ void QPainterVideoSurface::createPainter()
         m_painter = new QVideoSurfaceRasterPainter;
         break;
     }
+#else
+    m_painter = new QVideoSurfaceRasterPainter;
+#endif
 }
 
-#endif
