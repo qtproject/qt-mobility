@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITWRITER_P_H
-#define QVERSITWRITER_P_H
+#ifndef QVCARD21WRITER_H
+#define QVCARD21WRITER_H
 
 //
 //  W A R N I N G
@@ -53,36 +53,23 @@
 // We mean it.
 //
 
-#include <QByteArray>
-#include <QIODevice>
-#include <qversitdocument.h>
-#include <qversitproperty.h>
+#include "qversitwriter_p.h"
 
-class QVersitWriterPrivate
+class QVCard21Writer : public QVersitWriterPrivate
 {
 public:
-    virtual ~QVersitWriterPrivate();
-    
-    QByteArray encodeVersitDocument(const QVersitDocument& document);
-    QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters);
+    QVCard21Writer();
+    ~QVCard21Writer();
 
-protected: // To be implemented in each of the subclasses
-    virtual QByteArray encodeVersitProperty(const QVersitProperty& property) = 0;
-    virtual QByteArray encodeParameter(const QString& name, const QString& value) = 0;
+protected: // From QVersitWriterPrivate
 
-public: // Data 
-    QIODevice* mIoDevice;
-    QVersitDocument mVersitDocument;
+    QByteArray encodeVersitProperty(const QVersitProperty& property);
+    QByteArray encodeParameter(const QString& name, const QString& value);
 
-protected: // Constructors
-    QVersitWriterPrivate(const QByteArray& documentType, const QByteArray& version);
+private: // New functions
+    bool quotedPrintableEncode(const QVersitProperty& property, QByteArray& value) const;
 
-private: // Constructors
-    QVersitWriterPrivate();
-
-private: // Data
-    QByteArray mDocumentType;
-    QByteArray mVersion;
+    friend class UT_QVCard21Writer;
 };
 
-#endif // QVERSITWRITER_P_H
+#endif // QVCARD21WRITER_H

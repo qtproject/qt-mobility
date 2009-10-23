@@ -23,6 +23,7 @@ HEADERS += testresultxmlparser.h \
     ut_qversitreader.h \
     ../../qversitwriter.h \
     ut_qversitwriter.h \
+    ut_qvcard21writer.h \
     ../../qversitcontactconverter.h \
     ../../qversitcontactconverter_p.h \
     ut_qversitcontactconverter.h 
@@ -45,6 +46,8 @@ SOURCES += main.cpp \
     ../../qversitwriter.cpp \
     ../../qversitwriter_p.cpp \
     ut_qversitwriter.cpp \
+    ../../qvcard21writer.cpp \
+    ut_qvcard21writer.cpp \
     ../../qversitcontactconverter.cpp \
     ../../qversitcontactconverter_p.cpp \
     ut_qversitcontactconverter.cpp

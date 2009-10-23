@@ -61,9 +61,7 @@ private slots: // Tests
     void testDevice();    
     void testStart();
     void testEncodeVersitDocument();
-    void testEncodeVersitProperty();
     void testEncodeParameters();
-    void testQuotedPrintableEncode();
 
 private: // Data
     QVersitWriter* mWriter;

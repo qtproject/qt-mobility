@@ -39,50 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITWRITER_P_H
-#define QVERSITWRITER_P_H
+#ifndef UT_QVCARD21WRITER_H
+#define UT_QVCARD21WRITER_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <QObject>
 
-#include <QByteArray>
-#include <QIODevice>
-#include <qversitdocument.h>
-#include <qversitproperty.h>
+class QVCard21Writer;
 
-class QVersitWriterPrivate
+
+class UT_QVCard21Writer : public QObject
 {
-public:
-    virtual ~QVersitWriterPrivate();
+     Q_OBJECT
     
-    QByteArray encodeVersitDocument(const QVersitDocument& document);
-    QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters);
+private slots: // Tests
 
-protected: // To be implemented in each of the subclasses
-    virtual QByteArray encodeVersitProperty(const QVersitProperty& property) = 0;
-    virtual QByteArray encodeParameter(const QString& name, const QString& value) = 0;
+    void init();
+    void cleanup();
 
-public: // Data 
-    QIODevice* mIoDevice;
-    QVersitDocument mVersitDocument;
-
-protected: // Constructors
-    QVersitWriterPrivate(const QByteArray& documentType, const QByteArray& version);
-
-private: // Constructors
-    QVersitWriterPrivate();
+    void testEncodeVersitProperty();
+    void testEncodeParameter();
+    void testQuotedPrintableEncode();
 
 private: // Data
-    QByteArray mDocumentType;
-    QByteArray mVersion;
+    QVCard21Writer* mWriter;
 };
 
-#endif // QVERSITWRITER_P_H
+#endif // UT_QVCARD21WRITER_H

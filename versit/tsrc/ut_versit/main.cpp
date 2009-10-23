@@ -47,6 +47,7 @@
 #include "ut_versitutils.h"
 #include "ut_qversitreader.h"
 #include "ut_qversitwriter.h"
+#include "ut_qvcard21writer.h"
 
 #include <QtTest/QtTest>
 
@@ -97,8 +98,14 @@ int main(int /*argc*/, char** /*argv[]*/)
     resultFileName = QString::fromAscii("c:/ut_versitWriter.xml");
     args.replace(args.count()-1,resultFileName);    
     QTest::qExec(&ut_versitWriter, args);
-    parser.parseAndPrintResults(resultFileName,true);
+    parser.parseAndPrintResults(resultFileName);
     
+    UT_QVCard21Writer ut_vcard21Writer;
+    resultFileName = QString::fromAscii("c:/ut_vcard21Writer.xml");
+    args.replace(args.count()-1,resultFileName);
+    QTest::qExec(&ut_vcard21Writer, args);
+    parser.parseAndPrintResults(resultFileName,true);
+
     printf("Press any key...\n");
     getchar(); 
 

@@ -46,7 +46,16 @@
 #define MAX_CHARS_FOR_LINE 76
 
 /*! Constructs a writer. */
-QVersitWriterPrivate::QVersitWriterPrivate() : mIoDevice(0)
+QVersitWriterPrivate::QVersitWriterPrivate()
+    : mIoDevice(0)
+{
+}
+
+/*! Constructs a writer. */
+QVersitWriterPrivate::QVersitWriterPrivate(
+    const QByteArray& documentType,
+    const QByteArray& version)
+    : mIoDevice(0), mDocumentType(documentType), mVersion(version)
 {
 }
 
@@ -56,94 +65,38 @@ QVersitWriterPrivate::~QVersitWriterPrivate()
 }
 
 /*!
- * Encodes the \a document to text. 
- */
+* Encodes the \a document to text.
+*/
 QByteArray QVersitWriterPrivate::encodeVersitDocument(const QVersitDocument& document)
 {
     QList<QVersitProperty> properties = document.properties();
     QByteArray encodedDocument;
-    
-    encodedDocument.append("BEGIN:VCARD\r\n");
-    encodedDocument.append("VERSION:2.1\r\n");
+
+    encodedDocument += "BEGIN:" + mDocumentType + "\r\n";
+    encodedDocument += "VERSION:" + mVersion + "\r\n";
     foreach (QVersitProperty property, properties) {
         encodedDocument.append(encodeVersitProperty(property));
     }
-    encodedDocument.append("END:VCARD\r\n");
-    
+    encodedDocument += "END:" + mDocumentType + "\r\n";
+
     VersitUtils::fold(encodedDocument,MAX_CHARS_FOR_LINE);
     return encodedDocument;
-}
-
-/*!
- * Encodes the \a property to text. 
- */
-QByteArray QVersitWriterPrivate::encodeVersitProperty(const QVersitProperty& property)
-{
-    QByteArray encodedProperty;
-    QString name = property.name();    
-    encodedProperty.append(name.toAscii());
-
-    QByteArray value(property.value());
-    bool valueQuotedPrintableEncoded = quotedPrintableEncode(property,value);
-    QByteArray encodedParameters = 
-        encodeParameters(property.parameters(),valueQuotedPrintableEncoded);
-    encodedProperty.append(encodedParameters);
-
-    encodedProperty.append(":");
-    if (name == QString::fromAscii("AGENT")) {
-        encodedProperty.append("\r\n");
-        QVersitDocument embeddedDocument = property.embeddedDocument();
-        encodedProperty.append(encodeVersitDocument(embeddedDocument));
-    } else {
-        encodedProperty.append(value);
-    }
-    encodedProperty.append("\r\n");
-
-    return encodedProperty;
 }
 
 /*!
  * Encodes the \a parameters to text. 
  */
 QByteArray QVersitWriterPrivate::encodeParameters(
-    const QMultiHash<QString,QString>& parameters,
-    bool addQuotedPrintable)
+    const QMultiHash<QString,QString>& parameters)
 {
-    QByteArray encodedParameters;
-    QString typeParameterName(QString::fromAscii("TYPE"));
+    QByteArray encodedParameters;  
     QList<QString> names = parameters.uniqueKeys();
     foreach (QString name, names) {
         QStringList values = parameters.values(name);
         foreach (QString value, values) {
             encodedParameters.append(";");
-            if (name != typeParameterName) {
-                encodedParameters.append(name.toAscii());
-                encodedParameters.append("=");
-            }
-            encodedParameters.append(value.toAscii());
+            encodedParameters.append(encodeParameter(name,value));
         } 
     }
-    QString encodingParameterName(QString::fromAscii("ENCODING"));
-    QString quotedPrintableValue(QString::fromAscii("QUOTED-PRINTABLE"));
-    if (addQuotedPrintable && 
-        !parameters.contains(encodingParameterName,quotedPrintableValue))
-        encodedParameters.append(";ENCODING=QUOTED-PRINTABLE");
     return encodedParameters;
-}
-
-/*!
- * Encodes the \a value with Quoted-Printable encoding
- * if it needs to be encoded and the parameters 
- * of the \a property do not yet indicate encoding.  
- */
-bool QVersitWriterPrivate::quotedPrintableEncode(
-    const QVersitProperty& property,
-    QByteArray& value) const
-{
-    bool encoded = false;
-    value = property.value();
-    if (!property.parameters().contains(QString::fromAscii("ENCODING"))) {
-        encoded = VersitUtils::quotedPrintableEncode(value);
-    }
-    return encoded;
 }

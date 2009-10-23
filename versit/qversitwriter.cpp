@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qversitwriter.h"
-#include "qversitwriter_p.h"
+#include "qvcard21writer.h"
 #include "versitutils.h"
 
 #include <QStringList>
@@ -57,7 +57,7 @@
 /*! Constructs a writer. */
 QVersitWriter::QVersitWriter() 
 {
-    d = new QVersitWriterPrivate;
+    d = new QVCard21Writer;
 }
 
 /*! Destroys a writer. */
