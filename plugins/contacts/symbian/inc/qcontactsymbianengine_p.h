@@ -54,7 +54,7 @@
 #include "qtcontactsglobal.h"
 #include "qcontactmanager.h"
 
-#include "transformcontact.h"
+#include "cnttransformcontact.h"
 #include "qabstractcontactfilter.h"
 
 

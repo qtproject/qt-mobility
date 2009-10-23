@@ -44,7 +44,7 @@
 #include <cntdb.h>
 #include <cntdef.h>
 #include <cntfield.h>
-#include "transformcontact.h"
+#include "cnttransformcontact.h"
 #include "qcontactsymbianengine_p.h"
 
 typedef QList<QContactLocalId> QContactLocalIdList;

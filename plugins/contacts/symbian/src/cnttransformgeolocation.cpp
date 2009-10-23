@@ -1,0 +1,147 @@
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+#include "cnttransformgeolocation.h"
+#include "cntmodelextuids.h"
+
+const char separator = ',';
+
+QList<CContactItemField *> TransformGeolocation::transformDetailL(const QContactDetail &detail)
+{
+	QList<CContactItemField *> fieldList;
+
+	//cast to geolocation
+	const QContactGeolocation &geolocation(static_cast<const QContactGeolocation&>(detail));
+
+	//create new field
+	QString formattedGeolocation;
+	if (geolocation.latitude() >= 0.0) {
+        formattedGeolocation.append(QString::number(geolocation.latitude()));
+	}
+	formattedGeolocation.append(separator);
+    if (geolocation.longitude() >= 0.0) {
+         formattedGeolocation.append(QString::number(geolocation.longitude()));
+    }
+
+    if (formattedGeolocation.length() > 1) {
+        TPtrC fieldText(reinterpret_cast<const TUint16*>(formattedGeolocation.utf16()));
+        CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldGEO);
+        newField->TextStorage()->SetTextL(fieldText);
+        newField->SetMapping(KUidContactFieldVCardMapGEO);
+
+        //contexts
+        setContextsL(geolocation, *newField);
+
+        fieldList.append(newField);
+        CleanupStack::Pop(newField);
+    }
+
+	return fieldList;
+}
+
+QContactDetail *TransformGeolocation::transformItemField(const CContactItemField& field, const QContact &contact)
+{
+	Q_UNUSED(contact);
+
+	QContactGeolocation *geolocation = new QContactGeolocation();
+
+	CContactTextField* storage = field.TextStorage();
+	QString unformattedGeolocation = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
+	int separatorPos = unformattedGeolocation.indexOf(separator);
+
+	// parse latitude
+	bool latitudeSet = false;
+	if (separatorPos > 0) {
+        bool ok = false;
+        double latitude = unformattedGeolocation.left(separatorPos).toDouble(&ok);
+        if (ok) {
+            geolocation->setLatitude(latitude);
+            latitudeSet = true;
+        }
+	}
+	if (!latitudeSet) {
+        geolocation->setLatitude(-1);
+	}
+
+	// parse longitude
+	bool longitudeSet = false;
+	if (separatorPos >= 0 && separatorPos != unformattedGeolocation.length()-1) {
+        bool ok = false;
+        double longitude = unformattedGeolocation.right(unformattedGeolocation.length()-separatorPos-1).toDouble(&ok);
+        if (ok) {
+            geolocation->setLongitude(longitude);
+            longitudeSet = true;
+        }
+	}
+	if (!longitudeSet) {
+        geolocation->setLongitude(-1);
+	}
+
+    // set context
+    for (int i = 0; i < field.ContentType().FieldTypeCount(); i++) {
+        setContexts(field.ContentType().FieldType(i), *geolocation);
+    }
+
+	return geolocation;
+}
+
+bool TransformGeolocation::supportsField(TUint32 fieldType) const
+{
+    bool ret = false;
+    if (fieldType == KUidContactFieldGEO.iUid) {
+        ret = true;
+    }
+    return ret;
+}
+
+bool TransformGeolocation::supportsDetail(QString detailName) const
+{
+    bool ret = false;
+    if (detailName == QContactGeolocation::DefinitionName) {
+        ret = true;
+    }
+    return ret;
+}
+
+QList<TUid> TransformGeolocation::supportedSortingFieldTypes(QString /*detailFieldName*/) const
+{
+    // Sorting not supported
+    return QList<TUid>();
+}

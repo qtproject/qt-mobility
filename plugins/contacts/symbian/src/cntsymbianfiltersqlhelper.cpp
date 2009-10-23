@@ -45,7 +45,7 @@
 //user includes
 #include "cntsymbianfiltersqlhelper.h"
 #include "qcontactdetailfilter.h"
-#include "transformcontact.h"
+#include "cnttransformcontact.h"
 
 // Constants
 // To be removed. Should be defined in a header file
