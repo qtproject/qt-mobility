@@ -53,9 +53,9 @@ Iphlpapi.lib \
 #        "C:\Program Files\Microsoft SDKs\Windows\v6.1\Include"
 
     wince*:LIBS += aygshell.lib \
-        Nleddrv.lib \
+#        Nleddrv.lib \
         cellcore.lib \
-        Ifapi.lib \
+#        Ifapi.lib \
         Coredll.lib
 }
 
