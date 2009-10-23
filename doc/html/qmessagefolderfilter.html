@@ -30,8 +30,6 @@
 <li><div class="fn"></div>void <b><a href="qmessagefolderfilter.html#setOptions">setOptions</a></b> ( QMessageDataComparator::Options <i>options</i> )</li>
 <li><div class="fn"></div>QMessageFolderFilter <b><a href="qmessagefolderfilter.html#operator-and">operator&amp;</a></b> ( const QMessageFolderFilter &amp; <i>other</i> ) const</li>
 <li><div class="fn"></div>const QMessageFolderFilter &amp; <b><a href="qmessagefolderfilter.html#operator-and-eq">operator&amp;=</a></b> ( const QMessageFolderFilter &amp; <i>other</i> )</li>
-<li><div class="fn"></div>const QMessageFolderFilter &amp; <b><a href="qmessagefolderfilter.html#operator-eq">operator=</a></b> ( const QMessageFolderFilter &amp; <i>other</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qmessagefolderfilter.html#operator-eq-eq">operator==</a></b> ( const QMessageFolderFilter &amp; <i>other</i> ) const</li>
 <li><div class="fn"></div>QMessageFolderFilter <b><a href="qmessagefolderfilter.html#operator-7c">operator|</a></b> ( const QMessageFolderFilter &amp; <i>other</i> ) const</li>
 <li><div class="fn"></div>const QMessageFolderFilter &amp; <b><a href="qmessagefolderfilter.html#operator-7c-eq">operator|=</a></b> ( const QMessageFolderFilter &amp; <i>other</i> )</li>
 <li><div class="fn"></div>QMessageFolderFilter <b><a href="qmessagefolderfilter.html#operator-7e">operator~</a></b> () const</li>
@@ -68,7 +66,6 @@
 <p>See also <a href="qmessagefolderfilter.html#isEmpty">isEmpty</a>().</p>
 <h3 class="fn"><a name="QMessageFolderFilter-2"></a>QMessageFolderFilter::QMessageFolderFilter ( const QMessageFolderFilter &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<p>See also <a href="qmessagefolderfilter.html#operator-eq">operator=</a>().</p>
 <h3 class="fn"><a name="dtor.QMessageFolderFilter"></a>QMessageFolderFilter::~QMessageFolderFilter ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the filter.</p>
 <h3 class="fn"><a name="byAncestorFolderIds"></a>QMessageFolderFilter QMessageFolderFilter::byAncestorFolderIds ( const <a href="qmessagefolderid.html">QMessageFolderId</a> &amp; <i>id</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
@@ -128,10 +125,6 @@
 <p>Returns a filter that is the logical AND of this filter and the value of filter <i>other</i>.</p>
 <h3 class="fn"><a name="operator-and-eq"></a>const QMessageFolderFilter &amp; QMessageFolderFilter::operator&amp;= ( const QMessageFolderFilter &amp; <i>other</i> )</h3>
 <p>Performs a logical AND with this filter and the filter <i>other</i> and assigns the result to this filter.</p>
-<h3 class="fn"><a name="operator-eq"></a>const QMessageFolderFilter &amp; QMessageFolderFilter::operator= ( const QMessageFolderFilter &amp; <i>other</i> )</h3>
-<p>Assign the value of the <a href="qmessagefolderfilter.html">QMessageFolderFilter</a> <i>other</i> to this.</p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QMessageFolderFilter::operator== ( const QMessageFolderFilter &amp; <i>other</i> ) const</h3>
-<p>Returns <tt>true</tt> if the value of this filter is the same as the filter <i>other</i>. Returns <tt>false</tt> otherwise.</p>
 <h3 class="fn"><a name="operator-7c"></a>QMessageFolderFilter QMessageFolderFilter::operator| ( const QMessageFolderFilter &amp; <i>other</i> ) const</h3>
 <p>Returns a filter that is the logical OR of this filter and the value of filter <i>other</i>.</p>
 <h3 class="fn"><a name="operator-7c-eq"></a>const QMessageFolderFilter &amp; QMessageFolderFilter::operator|= ( const QMessageFolderFilter &amp; <i>other</i> )</h3>

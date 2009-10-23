@@ -27,8 +27,6 @@
 <li><div class="fn"></div><b><a href="qmessageid.html#dtor.QMessageId">~QMessageId</a></b> ()</li>
 <li><div class="fn"></div>bool <b><a href="qmessageid.html#isValid">isValid</a></b> () const</li>
 <li><div class="fn"></div>QString <b><a href="qmessageid.html#toString">toString</a></b> () const</li>
-<li><div class="fn"></div>QMessageId &amp; <b><a href="qmessageid.html#operator-eq">operator=</a></b> ( const QMessageId &amp; <i>other</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qmessageid.html#operator-eq-eq">operator==</a></b> ( const QMessageId &amp; <i>other</i> ) const</li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -56,10 +54,6 @@
 <p>Returns the string representation of this identifier.</p>
 <p>A null string should be returned if and only if the identifier is invalid.</p>
 <p>String representations of identifiers should not be used to test for equality, instead the equality operator should be used.</p>
-<h3 class="fn"><a name="operator-eq"></a>QMessageId &amp; QMessageId::operator= ( const QMessageId &amp; <i>other</i> )</h3>
-<p>Assigns <i>other</i> to this identifier and returns a reference to this identifier.</p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QMessageId::operator== ( const QMessageId &amp; <i>other</i> ) const</h3>
-<p>Returns true if this identifier and the <i>other</i> identifier are identical; otherwise returns false.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

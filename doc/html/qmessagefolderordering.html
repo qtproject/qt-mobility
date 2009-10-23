@@ -28,8 +28,6 @@
 <li><div class="fn"></div>bool <b><a href="qmessagefolderordering.html#isSupported">isSupported</a></b> () const</li>
 <li><div class="fn"></div>QMessageFolderOrdering <b><a href="qmessagefolderordering.html#operator-2b">operator+</a></b> ( const QMessageFolderOrdering &amp; <i>other</i> ) const</li>
 <li><div class="fn"></div>QMessageFolderOrdering &amp; <b><a href="qmessagefolderordering.html#operator-2b-eq">operator+=</a></b> ( const QMessageFolderOrdering &amp; <i>other</i> )</li>
-<li><div class="fn"></div>const QMessageFolderOrdering &amp; <b><a href="qmessagefolderordering.html#operator-eq">operator=</a></b> ( const QMessageFolderOrdering &amp; <i>other</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qmessagefolderordering.html#operator-eq-eq">operator==</a></b> ( const QMessageFolderOrdering &amp; <i>other</i> ) const</li>
 </ul>
 <a name="static-public-members"></a>
 <h3>Static Public Members</h3>
@@ -52,7 +50,6 @@
 <p>The result of combining two empty keys is an empty ordering.</p>
 <h3 class="fn"><a name="QMessageFolderOrdering-2"></a>QMessageFolderOrdering::QMessageFolderOrdering ( const QMessageFolderOrdering &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<p>See also <a href="qmessagefolderordering.html#operator-eq">operator=</a>().</p>
 <h3 class="fn"><a name="dtor.QMessageFolderOrdering"></a>QMessageFolderOrdering::~QMessageFolderOrdering ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the ordering.</p>
 <h3 class="fn"><a name="byDisplayName"></a>QMessageFolderOrdering QMessageFolderOrdering::byDisplayName ( <a href="http://qt.nokia.com/doc/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
@@ -71,10 +68,6 @@
 <h3 class="fn"><a name="operator-2b-eq"></a>QMessageFolderOrdering &amp; QMessageFolderOrdering::operator+= ( const QMessageFolderOrdering &amp; <i>other</i> )</h3>
 <p>Appends the value of the ordering <i>other</i> with the value of this ordering and assigns the result to this ordering.</p>
 <p>This function determines sorting precedence.</p>
-<h3 class="fn"><a name="operator-eq"></a>const QMessageFolderOrdering &amp; QMessageFolderOrdering::operator= ( const QMessageFolderOrdering &amp; <i>other</i> )</h3>
-<p>Assign the value of the <a href="qmessagefolderordering.html">QMessageFolderOrdering</a> <i>other</i> to this.</p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QMessageFolderOrdering::operator== ( const QMessageFolderOrdering &amp; <i>other</i> ) const</h3>
-<p>Returns <tt>true</tt> if the value of this ordering is the same as the ordering <i>other</i>. Returns <tt>false</tt> otherwise.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

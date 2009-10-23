@@ -26,8 +26,6 @@
 <li><div class="fn"></div>virtual <b><a href="qmessageaccountordering.html#dtor.QMessageAccountOrdering">~QMessageAccountOrdering</a></b> ()</li>
 <li><div class="fn"></div>bool <b><a href="qmessageaccountordering.html#isEmpty">isEmpty</a></b> () const</li>
 <li><div class="fn"></div>bool <b><a href="qmessageaccountordering.html#isSupported">isSupported</a></b> () const</li>
-<li><div class="fn"></div>const QMessageAccountOrdering &amp; <b><a href="qmessageaccountordering.html#operator-eq">operator=</a></b> ( const QMessageAccountOrdering &amp; <i>other</i> )</li>
-<li><div class="fn"></div>bool <b><a href="qmessageaccountordering.html#operator-eq-eq">operator==</a></b> ( const QMessageAccountOrdering &amp; <i>other</i> ) const</li>
 </ul>
 <a name="static-public-members"></a>
 <h3>Static Public Members</h3>
@@ -49,7 +47,6 @@
 <p>The result of combining two empty keys is an empty ordering.</p>
 <h3 class="fn"><a name="QMessageAccountOrdering-2"></a>QMessageAccountOrdering::QMessageAccountOrdering ( const QMessageAccountOrdering &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<p>See also <a href="qmessageaccountordering.html#operator-eq">operator=</a>().</p>
 <h3 class="fn"><a name="dtor.QMessageAccountOrdering"></a>QMessageAccountOrdering::~QMessageAccountOrdering ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the ordering.</p>
 <h3 class="fn"><a name="byName"></a>QMessageAccountOrdering QMessageAccountOrdering::byName ( <a href="http://qt.nokia.com/doc/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
@@ -59,10 +56,6 @@
 <p>Returns true if the ordering remains empty after default construction; otherwise returns false.</p>
 <h3 class="fn"><a name="isSupported"></a>bool QMessageAccountOrdering::isSupported () const</h3>
 <p>Returns true if the ordering is supported on the current platform; otherwise returns false.</p>
-<h3 class="fn"><a name="operator-eq"></a>const QMessageAccountOrdering &amp; QMessageAccountOrdering::operator= ( const QMessageAccountOrdering &amp; <i>other</i> )</h3>
-<p>Assign the value of the <a href="qmessageaccountordering.html">QMessageAccountOrdering</a> <i>other</i> to this.</p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QMessageAccountOrdering::operator== ( const QMessageAccountOrdering &amp; <i>other</i> ) const</h3>
-<p>Returns <tt>true</tt> if the value of this ordering is the same as the ordering <i>other</i>. Returns <tt>false</tt> otherwise.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

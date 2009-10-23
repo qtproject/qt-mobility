@@ -898,7 +898,7 @@ namespace {
                 unsigned long msgType  = 0;
                 if(source.type() == QMessage::Email)
                     msgType = MSGSTATUS_RECTYPE_SMTP;
-                else if(msgType == QMessage::Sms)
+                else if(source.type() == QMessage::Sms)
                     msgType = MSGSTATUS_RECTYPE_SMS;
                 else
                     qWarning() << "Unrecognized message type";

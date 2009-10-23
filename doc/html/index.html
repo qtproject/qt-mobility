@@ -107,6 +107,7 @@
 <h3>Messaging Services</h3>
 <p>The library provides the <a href="qmessageserviceaction.html">QMessageServiceAction</a> class, which provides an interface to communicate with the system's native messaging services, including sending messages, retrieving message data, and composing or showing a message using a native application.</p>
 <p>Service actions communciate their operational status by emitting signals.</p>
+<p>Functions outside the <a href="qmessageserviceaction.html">QMessageServiceAction</a> class should not invoke network activity. That is only <a href="qmessageserviceaction.html">QMessageServiceAction</a> functions should be responsible for initiating network activity.</p>
 <a name="concurrent-access-to-messaging-data"></a>
 <h3>Concurrent Access to Messaging Data</h3>
 <p>The library provides a level of concurrent access to messaging data by multiple clients.</p>
