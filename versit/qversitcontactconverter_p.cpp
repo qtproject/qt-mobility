@@ -168,7 +168,7 @@ void QVersitContactConverterPrivate::encodeFieldInfo(
     } else if (detail.definitionName() == QContactUrl::DefinitionName) {
         encodeUrl(property, detail);
     } else if (detail.definitionName() == QContactTimestamp::DefinitionName) {
-        encodeRev(property, detail);
+        addProperty = encodeRev(property, detail);
     } else if (detail.definitionName() == QContactBirthday::DefinitionName) {
         encodeBirthDay(property, detail);
     } else if (detail.definitionName() == QContactGeolocation::DefinitionName) {
@@ -275,16 +275,40 @@ void QVersitContactConverterPrivate::encodeUid(
 /*!
  * Encode REV Field Information into the Versit Document
  */
-void QVersitContactConverterPrivate::encodeRev(
+bool QVersitContactConverterPrivate::encodeRev(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
     QContactTimestamp  rev = static_cast<QContactTimestamp>(detail);
-    QString value = rev.lastModified().toString(Qt::ISODate);
-    if (value.size() == 0)
-        value = rev.created().toString(Qt::ISODate);
+    QString value;
+    bool encode = false;
+
+    if ( rev.lastModified().toString(Qt::ISODate).size() ) {
+        encode = true;
+        if ( rev.lastModified().timeSpec() == Qt::UTC ) {
+            value = rev.lastModified().toString(Qt::ISODate) +
+                QString::fromAscii(versitISOFormatSuffix);
+        }
+        else {
+            value = rev.lastModified().toString(Qt::ISODate);
+        }
+    }
+
+    else if ( rev.created().toString(Qt::ISODate).size()) {
+        encode = true;
+        if ( rev.created().timeSpec() == Qt::UTC ) {
+            value = rev.created().toString(Qt::ISODate) +
+                QString::fromAscii(versitISOFormatSuffix);
+        }
+        else {
+            value = rev.created().toString(Qt::ISODate);
+        }
+    }
     property.setValue(value.toAscii());
+    return encode;
 }
+
+
 
 /*!
  * Encode BirthDay Field Information into the Versit Document
