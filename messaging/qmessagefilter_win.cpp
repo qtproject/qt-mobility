@@ -1558,7 +1558,6 @@ QMessageFilter QMessageFilter::byId(const QMessageIdList &ids, QMessageDataCompa
 
 QMessageFilter QMessageFilter::byId(const QMessageFilter &filter, QMessageDataComparator::InclusionComparator cmp)
 {
-    // Not tested
     QMessageFilter result;
     result.d_ptr->_field = QMessageFilterPrivate::MessageFilter;
     result.d_ptr->_messageFilter = new QMessageFilter(filter);
@@ -1844,8 +1843,6 @@ QMessageFilter QMessageFilter::byParentAccountId(const QMessageAccountFilter &fi
     result.d_ptr->_field = QMessageFilterPrivate::AccountFilter;
     result.d_ptr->_accountFilter = new QMessageAccountFilter(filter);
     result.d_ptr->_comparatorValue = static_cast<int>(cmp);
-    // Not implemented, TODO
-    result.d_ptr->_valid = false;
     return result;
 }
 
