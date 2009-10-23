@@ -38,11 +38,12 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "../testqgeopositioninfosource_p.h"
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication app(argc, argv);
     TestQGeoPositionInfoSource *test = TestQGeoPositionInfoSource::createDefaultSourceTest();
     return QTest::qExec(test, argc, argv);
 }
-

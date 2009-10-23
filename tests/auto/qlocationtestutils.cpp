@@ -62,8 +62,11 @@ bool QLocationTestUtils::hasDefaultSource()
 {
 #if defined(Q_OS_SYMBIAN) && defined(QT_LOCATION_S60_MONITORING)
     return true;
+#elif defined (Q_OS_WINCE)
+    return true;
+#else 
+    return false;    
 #endif
-    return false;
 }
 
 bool QLocationTestUtils::hasDefaultMonitor()

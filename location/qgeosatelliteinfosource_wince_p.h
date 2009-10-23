@@ -39,11 +39,45 @@
 **
 ****************************************************************************/
 
-#include "../testqgeosatelliteinfosource_p.h"
+#ifndef QGEOSATELLITEINFOSOURCE_WINCE_P_H
+#define QGEOSATELLITEINFOSOURCE_WINCE_P_H
 
-int main(int argc, char *argv[])
+#include <qgeosatelliteinfosource.h>
+
+#include "qgeoinfothread_wince_p.h"
+
+class QGeoSatelliteInfoValidator : public QGeoInfoValidator
 {
-    QCoreApplication app(argc, argv);
-    TestQGeoSatelliteInfoSource *test = TestQGeoSatelliteInfoSource::createDefaultSourceTest();
-    return QTest::qExec(test, argc, argv);
-}
+public:
+    QGeoSatelliteInfoValidator();
+    ~QGeoSatelliteInfoValidator();
+
+    bool valid(const GPS_POSITION &data) const;
+};
+
+class QGeoSatelliteInfoSourceWinCE : public QGeoSatelliteInfoSource
+{
+    Q_OBJECT
+
+public:
+    enum {
+        // The interval at which the periodic updates will occur.
+        DefaultUpdateInterval = 5000
+    };
+
+    explicit QGeoSatelliteInfoSourceWinCE(QObject *parent = 0);
+    ~QGeoSatelliteInfoSourceWinCE();
+
+public slots:
+    void startUpdates();
+    void stopUpdates();
+    void requestUpdate(int timeout = 0);
+
+private slots:
+    void dataUpdated(GPS_POSITION data);
+
+private:
+    QGeoInfoThreadWinCE *infoThread;
+};
+
+#endif //#ifndef QGEOSATELLITEINFOSOURCE_WINCE_P_H
