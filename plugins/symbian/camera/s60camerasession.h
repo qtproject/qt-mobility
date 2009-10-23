@@ -55,14 +55,6 @@ struct video_buffer {
     size_t length;
 };
 
-// CLASS DECLARATION
-class MVFProcessor
-{
-public:
-      virtual void ViewFinderFrameReady(const QImage& image) = 0;
-};
-
-
 class S60CameraSession : public QObject, public MCameraEngineObserver
 {
     Q_OBJECT
@@ -113,7 +105,8 @@ public:
     QList<QVideoFrame::PixelFormat> supportedPixelFormats();
     QVideoFrame::PixelFormat pixelFormat() const;
     void setPixelFormat(QVideoFrame::PixelFormat fmt);
-    QList<QSize> supportedResolutions();
+    QList<QSize> supportedVideoResolutions();
+    QList<QSize> supportedCaptureSizes();
 
     // media control
     bool setSink(const QUrl &sink);
@@ -154,7 +147,6 @@ protected:
     void MceoHandleError(TCameraEngineError aErrorType, TInt aError);
     
 private:
-    void setVFProcessor(MVFProcessor* VFProcessor);
     bool queryCurrentCameraInfo();
     
 Q_SIGNALS:
@@ -183,7 +175,6 @@ private:
     CCameraEngine* m_cameraEngine;
     QSize m_captureSize;
     QSize iViewFinderSize;
-    MVFProcessor* iVFProcessor;
     TInt m_deviceIndex; //index indication chosen camera device
     mutable int iError;
     // information about camera

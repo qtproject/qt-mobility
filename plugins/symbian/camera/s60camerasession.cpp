@@ -37,7 +37,6 @@
 #include <QWidget>
 
 #include "s60camerasession.h"
-//#include "s60videowidget.h"
 #include <fbs.h>
 
 S60CameraSession::S60CameraSession(QObject *parent)
@@ -48,7 +47,7 @@ S60CameraSession::S60CameraSession(QObject *parent)
     formats.clear();
     m_captureSize = QSize(1600,1200); // some dummy default size
     m_state = QCamera::StoppedState;
-    m_windowSize = QSize(320,240); // default windows size for symbian devices
+    m_windowSize = QSize(320/3,240/3); // default windows size for symbian devices
     pixelF = QVideoFrame::Format_RGB24;
     m_deviceIndex = 0; 
     
@@ -93,6 +92,7 @@ void S60CameraSession::capture()
      */
     if (m_cameraEngine)
     {
+		// TODO: not yet support for ImageEncodeControl
         TSize size(m_captureSize.width(), m_captureSize.height());
         // TODO check supported formats
         if(m_deviceIndex == 0)
@@ -118,11 +118,7 @@ bool S60CameraSession::deviceReady()
 
 void S60CameraSession::setVideoOutput(QWidget* widget)
 {
-    qWarning()<<"Testingtesting";
-//    m_output = qobject_cast<S60VideoWidget*>(widget);
-//    m_output->setBaseSize(m_windowSize);
-    //m_output->setFrameSize(m_windowSize);
-    qWarning()<<widget->size();
+    qWarning()<<"Testing";
 }
 
 int S60CameraSession::framerate() const
@@ -263,7 +259,7 @@ void S60CameraSession::setFrameSize(const QSize& s)
 QList<QVideoFrame::PixelFormat> S60CameraSession::supportedPixelFormats()
 {
     QList<QVideoFrame::PixelFormat> list;
-
+    //TODO: add supportedformats 
     return list;
 }
 
@@ -277,15 +273,36 @@ void S60CameraSession::setPixelFormat(QVideoFrame::PixelFormat fmt)
     pixelF = fmt;
 }
 
-QList<QSize> S60CameraSession::supportedResolutions()
+QList<QSize> S60CameraSession::supportedVideoResolutions()
 {
     QList<QSize> list;
-
-    if(available) {
-        list << resolutions;
+    // if we have cameraengine loaded and we can update camerainfo
+    if (m_cameraEngine && queryCurrentCameraInfo) {
+		CCamera *camera = m_cameraEngine->Camera();
+		for (int i=0; i < m_info.iNumVideoFrameSizesSupported; i++) {
+			TSize size;
+			// TODO check formats
+			camera->EnumerateVideoFrameSizes(size,i, CCamera::EFormatFbsBitmapColor16MU );
+			list << QSize(size.iWidth, size.iHeight);
+		}
     }
-
     return list;
+}
+
+QList<QSize> S60CameraSession::supportedCaptureSizes()
+{
+	QList<QSize> list;
+	// if we have cameraengine loaded and we can update camerainfo
+	if (m_cameraEngine && queryCurrentCameraInfo) {
+		CCamera *camera = m_cameraEngine->Camera();
+		for (int i=0; i < m_info.iNumImageSizesSupported; i++) {
+			TSize size;
+			// TODO check formats
+			camera->EnumerateCaptureSizes(size,i, CCamera::EFormatFbsBitmapColor16MU );
+			list << QSize(size.iWidth, size.iHeight);
+		}
+	}
+	return list;
 }
 
 bool S60CameraSession::setSink(const QUrl &sink)
@@ -343,6 +360,14 @@ void S60CameraSession::captureFrame()
 void S60CameraSession::MceoCameraReady()
 {
     emit stateChanged(QCamera::ActiveState);
+    if (m_cameraEngine) {
+		TSize size (m_windowSize.width(), m_windowSize.height());
+		iError = KErrNone; 
+		TRAP(iError, m_cameraEngine->StartViewFinderL(size));
+		if (iError) {
+			// TODO add error emitting to cameracontrol
+		}
+    }
 }
 
 void S60CameraSession::MceoFocusComplete()
@@ -353,8 +378,9 @@ void S60CameraSession::MceoFocusComplete()
 
 void S60CameraSession::MceoCapturedDataReady(TDesC8* aData)
 {
-    Q_UNUSED(aData);
-    //emit q->captureCompleted(QByteArray::fromRawData((const char *)aData->Ptr(), aData->Length()));
+	QImage snapImage = QImage::fromData((const uchar *)aData->Ptr(), aData->Length());
+	emit imageCaptured(m_sink.toLocalFile(), snapImage  );
+	releaseImageBuffer();
 }
 
 void S60CameraSession::releaseImageBuffer()
@@ -419,22 +445,22 @@ void S60CameraSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
         aBitmap = NULL;
 
         emit imageCaptured(m_sink.toLocalFile(), *snapImage);
-        
+        releaseImageBuffer();
     }
     //todo error handling
 }
 
 void S60CameraSession::MceoViewFinderFrameReady(CFbsBitmap& aFrame)
 {
-    if (iVFProcessor)
-    {
-        int bytesPerLine = aFrame.ScanLineLength(iViewFinderSize.width(),
-            aFrame.DisplayMode());
-        QImage image((uchar *)aFrame.DataAddress(), iViewFinderSize.width(), 
+	int bytesPerLine = aFrame.ScanLineLength(iViewFinderSize.width(), aFrame.DisplayMode());
+    QImage image((uchar *)aFrame.DataAddress(), iViewFinderSize.width(), 
             iViewFinderSize.height(), bytesPerLine, QImage::Format_RGB32);
-        iVFProcessor->ViewFinderFrameReady(image);     
-        m_cameraEngine->ReleaseViewFinderBuffer();
-    }
+    
+    emit imageCaptured("", image);
+    
+    if (m_cameraEngine)
+    	m_cameraEngine->ReleaseViewFinderBuffer();
+    
 }
 
 void S60CameraSession::MceoHandleError(TCameraEngineError aErrorType, TInt aError)
@@ -444,10 +470,6 @@ void S60CameraSession::MceoHandleError(TCameraEngineError aErrorType, TInt aErro
     iError = aError;
 }
 
-void S60CameraSession::setVFProcessor(MVFProcessor* VFProcessor)
-{
-    iVFProcessor = VFProcessor;
-}
 // For S60Cameravideodevicecontrol
 int S60CameraSession::deviceCount() const
 {
@@ -482,10 +504,10 @@ QString S60CameraSession::description(int index) const
     QString cameraDesc;
     switch (index) {
         case 0:
-            cameraDesc = QLatin1String("Primary camera description");
+            cameraDesc = QLatin1String("Main camera");
         break;
         case 1:
-            cameraDesc = QLatin1String("Secondary camera description");
+            cameraDesc = QLatin1String("front camera ");
         break;
         case 2:
             cameraDesc = QLatin1String("Tertiary camera description");

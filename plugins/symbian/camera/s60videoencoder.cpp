@@ -47,7 +47,7 @@ QSize S60VideoEncoder::resolution() const
 QSize S60VideoEncoder::minimumResolution() const
 {
     QSize minimumSize;
-    QList<QSize> sizes = m_session->supportedResolutions();
+    QList<QSize> sizes = m_session->supportedVideoResolutions();
 
     minimumSize = sizes.first();
 
@@ -62,7 +62,7 @@ QSize S60VideoEncoder::minimumResolution() const
 QSize S60VideoEncoder::maximumResolution() const
 {
     QSize maxSize;
-    QList<QSize> sizes = m_session->supportedResolutions();
+    QList<QSize> sizes = m_session->supportedVideoResolutions();
 
     maxSize = sizes.first();
 
