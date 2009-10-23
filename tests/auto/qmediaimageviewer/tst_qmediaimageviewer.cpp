@@ -74,6 +74,7 @@ private slots:
     void setMedia();
     void setInvalidMedia();
     void playlist();
+    void elapsedTime();
     void outputControl();
     void widgetControl();
 #ifndef QT_NO_MULTIMEDIA
@@ -495,9 +496,6 @@ void tst_QMediaImageViewer::playlist()
     QMediaImageViewer viewer;
     viewer.setTimeout(250);
 
-    QVideoWidget widget(&viewer);
-    widget.show();
-
     connect(&viewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
             &QTestEventLoop::instance(), SLOT(exitLoop()));
 
@@ -634,6 +632,85 @@ void tst_QMediaImageViewer::playlist()
     QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
     QCOMPARE(playlist.currentPosition(), 0);
     QCOMPARE(viewer.media(), imageMedia);
+}
+
+void tst_QMediaImageViewer::elapsedTime()
+{
+    QMediaContent imageMedia(imageUri("image.png"));
+
+    QMediaImageViewer viewer;
+    viewer.setTimeout(250);
+    viewer.setNotifyInterval(150);
+
+    QSignalSpy spy(&viewer, SIGNAL(elapsedTimeChanged(int)));
+
+    connect(&viewer, SIGNAL(elapsedTimeChanged(int)),
+            &QTestEventLoop::instance(), SLOT(exitLoop()));
+
+
+    QMediaPlaylist playlist(&viewer);
+    playlist.appendItem(imageMedia);
+
+    QCOMPARE(viewer.elapsedTime(), 0);
+
+    QTestEventLoop::instance().enterLoop(2);
+    QCOMPARE(spy.count(), 0);
+
+    viewer.play();
+    QCOMPARE(viewer.elapsedTime(), 0);
+
+    // Emits an initial elapsed time at 0 milliseconds signal when the image is loaded.
+    QTestEventLoop::instance().enterLoop(1);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(spy.last().value(0).toInt(), 0);
+
+    // Emits a scheduled signal after the notify interval is up. The exact time will be a little
+    // fuzzy.
+    QTestEventLoop::instance().enterLoop(2);
+    QCOMPARE(spy.count(), 2);
+    QVERIFY(spy.last().value(0).toInt() != 0);
+
+    // Pausing will emit a signal with the elapsed time when paused.
+    viewer.pause();
+    QCOMPARE(spy.count(), 3);
+    QCOMPARE(viewer.elapsedTime(), spy.last().value(0).toInt());
+
+    // No elapsed time signals will be emitted while paused.
+    QTestEventLoop::instance().enterLoop(2);
+    QCOMPARE(spy.count(), 3);
+
+    disconnect(&viewer, SIGNAL(elapsedTimeChanged(int)),
+            &QTestEventLoop::instance(), SLOT(exitLoop()));
+
+    connect(&viewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
+        &QTestEventLoop::instance(), SLOT(exitLoop()));
+
+    // Play until end.
+    viewer.play();
+    QTestEventLoop::instance().enterLoop(2);
+
+    // Verify at least two more signals are emitted.
+    // The second to last at the instant the timeout expired, and the last as it's reset when the
+    // current media is cleared.
+    QVERIFY(spy.count() >= 5);
+    QCOMPARE(spy.value(spy.count() - 2).value(0).toInt(), 250);
+    QCOMPARE(spy.value(spy.count() - 1).value(0).toInt(), 0);
+
+
+
+    viewer.play();
+    QTestEventLoop::instance().enterLoop(2);
+
+    // Test extending the timeout applies to an already loaded image.
+    viewer.setTimeout(10000);
+    QTestEventLoop::instance().enterLoop(2);
+    QCOMPARE(viewer.state(), QMediaImageViewer::PlayingState);
+
+    // Test reducing the timeout applies to an already loaded image.
+    viewer.setTimeout(1000);
+    QTestEventLoop::instance().enterLoop(2);
+    QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
+
 }
 
 void tst_QMediaImageViewer::outputControl()

@@ -58,7 +58,7 @@ class QMediaImageViewerPrivate : public QMediaObjectPrivate
 public:
     QMediaImageViewerPrivate():
         viewerControl(0), playlist(0),
-        state(QMediaImageViewer::StoppedState), timeout(3000)
+        state(QMediaImageViewer::StoppedState), timeout(3000), pauseTime(0)
     {
     }
 
@@ -70,7 +70,7 @@ public:
     QMediaPlaylist *playlist;
     QMediaImageViewer::State state;
     int timeout;
-    int delta;
+    int pauseTime;
     QTime time;
     QBasicTimer timer;
     QMediaContent media;
@@ -87,8 +87,10 @@ void QMediaImageViewerPrivate::_q_mediaStatusChanged(QMediaImageViewer::MediaSta
         if (state == QMediaImageViewer::PlayingState) {
             time.start();
             timer.start(qMax(0, timeout), q_func());
+            q_func()->addPropertyWatch("elapsedTime");
         }
         emit q_func()->mediaStatusChanged(status);
+        emit q_func()->elapsedTimeChanged(0);
         break;
     case QMediaImageViewer::InvalidMedia:
         emit q_func()->mediaStatusChanged(status);
@@ -102,7 +104,7 @@ void QMediaImageViewerPrivate::_q_mediaStatusChanged(QMediaImageViewer::MediaSta
 void QMediaImageViewerPrivate::_q_playlistMediaChanged(const QMediaContent &content)
 {
     media = content;
-    delta = 0;
+    pauseTime = 0;
 
     viewerControl->showMedia(media);
 
@@ -224,8 +226,13 @@ void QMediaImageViewer::setMedia(const QMediaContent &media)
     Q_D(QMediaImageViewer);
 
     d->media = media;
-    d->delta = 0;
-    d->timer.stop();
+
+    if (d->timer.isActive()) {
+        d->pauseTime = 0;
+        d->timer.stop();
+        removePropertyWatch("elapsedTime");
+        emit elapsedTimeChanged(0);
+    }
 
     if (d->state != QMediaImageViewer::StoppedState)
         emit stateChanged(d->state = QMediaImageViewer::StoppedState);
@@ -243,7 +250,8 @@ void QMediaImageViewer::setMedia(const QMediaContent &media)
 
 /*!
     \property QMediaImageViewer::timeout
-    \brief the amount of time an image is displayed for before moving to the next image.
+    \brief the amount of time in milliseconds an image is displayed for before moving to the next
+    image.
 */
 
 int QMediaImageViewer::timeout() const
@@ -256,7 +264,43 @@ void QMediaImageViewer::setTimeout(int timeout)
     Q_D(QMediaImageViewer);
 
     d->timeout = qMax(0, timeout);
+
+    if (d->timer.isActive())
+        d->timer.start(qMax(0, d->timeout - d->pauseTime - d->time.elapsed()), this);
 }
+
+/*!
+    \property QMediaImageViewer::elapsedTime
+    \brief the amount of time in milliseconds that has elapsed since the current image was loaded.
+
+    The elapsed time only increases while the image viewer is in the PlayingState.  If stopped the
+    elapsed time will be reset to 0.
+*/
+
+int QMediaImageViewer::elapsedTime() const
+{
+    Q_D(const QMediaImageViewer);
+
+    int elapsedTime = d->pauseTime;
+
+    if (d->timer.isActive())
+        elapsedTime += d->time.elapsed();
+
+    return elapsedTime;
+}
+
+/*!
+    \fn QMediaImageViewer::elapsedTimeChanged(int tme)
+
+    Signals that the amount of \a time in milliseconds since the current image was loaded has
+    changed.
+
+    This signal is emitted at a regular interval when the image viewer is in the PlayingState and
+    an image is loaded.  The notification interval is controlled by the QMediaObject::notifyInterval
+    property.
+
+    \sa timeout, QMediaObject::notifyInterval
+*/
 
 /*!
     \internal
@@ -301,7 +345,7 @@ void QMediaImageViewer::play()
             break;
         case LoadedMedia:
             d->time.start();
-            d->timer.start(qMax(0, d->timeout - d->delta), this);
+            d->timer.start(qMax(0, d->timeout - d->pauseTime), this);
             break;
         }
 
@@ -322,11 +366,13 @@ void QMediaImageViewer::pause()
 
     if (d->state == PlayingState) {
         if (d->viewerControl->mediaStatus() == LoadedMedia) {
-            d->delta = d->timeout - d->time.elapsed();
+            d->pauseTime += d->timeout - d->time.elapsed();
             d->timer.stop();
+            removePropertyWatch("elapsedTime");
         }
 
         emit stateChanged(d->state = PausedState);
+        emit elapsedTimeChanged(d->pauseTime);
     }
 }
 
@@ -343,12 +389,14 @@ void QMediaImageViewer::stop()
     switch (d->state) {
     case PlayingState:
         d->timer.stop();
+        removePropertyWatch("elapsedTime");
         // fall through.
     case PausedState:
-        d->delta = 0;
+        d->pauseTime = 0;
         d->state = QMediaImageViewer::StoppedState;
 
         emit stateChanged(d->state);
+        emit elapsedTimeChanged(0);
         break;
     case StoppedState:
         break;
@@ -364,12 +412,16 @@ void QMediaImageViewer::timerEvent(QTimerEvent *event)
 
     if (event->timerId() == d->timer.timerId()) {
         d->timer.stop();
+        removePropertyWatch("elapsedTime");
+        emit elapsedTimeChanged(d->pauseTime = d->timeout);
 
         Q_ASSERT(d->playlist);
         d->playlist->next();
 
         if (d->playlist->currentPosition() < 0) {
+            d->pauseTime = 0;
             emit stateChanged(d->state = StoppedState);
+            emit elapsedTimeChanged(0);
         }
     } else {
         QMediaObject::timerEvent(event);
