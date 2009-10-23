@@ -4,6 +4,19 @@ QT = core
 
 include(../common.pri)
 
+#S60 area monitoring must be switched on explicitly, it requires
+#LBT headers and binaries
+#DEFINES += QT_LOCATION_S60_MONITORING
+
+defineTest(enable_s60_lbt) {
+    defines = $$DEFINES
+    contains(defines, QT_LOCATION_S60_MONITORING) {
+        return(true)
+    }
+    return(false)
+}
+
+
 DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 
 INCLUDEPATH += .
@@ -26,21 +39,30 @@ PRIVATE_HEADERS += qlocationutils_p.h \
 symbian {
     PRIVATE_HEADERS += qgeopositioninfosource_s60_p.h \
                        qmlbackendao_s60_p.h \
-                       notificationcallback_s60_p.h \
+                       notificationcallback_s60_p.h 
+
+    enable_s60_lbt() { 
+        PRIVATE_HEADERS += \
                        qgeoareamonitor_s60_p.h \
                        qmlbackendmonitorao_s60_p.h \
                        qmlbackendmonitorcreatetriggerao_s60_p.h \
                        qmlbackendmonitorinfo_s60_p.h \
                        qmlbackendtriggerchangeao_s60_p.h \
                        notificationmonitorcallback_s60_p.h
+    }
 
     SOURCES += qgeopositioninfosource_s60.cpp \
-               qmlbackendao_s60.cpp \
+               qmlbackendao_s60.cpp
+
+    enable_s60_lbt() { 
+        SOURCES += \
                qgeoareamonitor_s60.cpp \
                qmlbackendmonitorao_s60.cpp \
                qmlbackendmonitorcreatetriggerao_s60.cpp \
                qmlbackendmonitorinfo_s60.cpp \
                qmlbackendtriggerchangeao_s60.cpp
+        }
+    }
 }
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS

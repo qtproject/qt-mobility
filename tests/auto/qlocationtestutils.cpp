@@ -52,7 +52,7 @@ void QLocationTestUtils::uheap_mark_end()
 
 bool QLocationTestUtils::hasDefaultSource()
 {
-#if defined(Q_OS_SYMBIAN)
+#if defined(Q_OS_SYMBIAN) && defined(QT_LOCATION_S60_MONITORING)
     return true;
 #endif
     return false;
