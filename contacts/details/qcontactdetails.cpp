@@ -119,7 +119,7 @@ contact.
 */
 /*!
    \class QContactNote
-   \brief A note associated with a contact
+   \brief The QContactNote class supplies a note associated with a contact
    \ingroup contacts-details
 */
 
@@ -166,7 +166,7 @@ corresponding online account
 
 /*!
  * \class QContactType
- * \brief Describes the type of the contact
+ * \brief The QContactType class describes the type of the contact.
  */
 
 
