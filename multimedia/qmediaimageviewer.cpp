@@ -50,6 +50,7 @@
 
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qtextstream.h>
+#include <QtCore/qdatetime.h>
 
 class QMediaImageViewerPrivate : public QMediaObjectPrivate
 {
@@ -61,6 +62,7 @@ public:
     {
     }
 
+    void _q_mediaStatusChanged(QMediaImageViewer::MediaStatus status);
     void _q_playlistMediaChanged(const QMediaContent &content);
     void _q_playlistDestroyed(QObject *playlist);
 
@@ -68,13 +70,39 @@ public:
     QMediaPlaylist *playlist;
     QMediaImageViewer::State state;
     int timeout;
+    int delta;
+    QTime time;
     QBasicTimer timer;
     QMediaContent media;
 };
 
+void QMediaImageViewerPrivate::_q_mediaStatusChanged(QMediaImageViewer::MediaStatus status)
+{
+    switch (status) {
+    case QMediaImageViewer::NoMedia:
+    case QMediaImageViewer::LoadingMedia:
+        emit q_func()->mediaStatusChanged(status);
+        break;
+    case QMediaImageViewer::LoadedMedia:
+        if (state == QMediaImageViewer::PlayingState) {
+            time.start();
+            timer.start(qMax(0, timeout), q_func());
+        }
+        emit q_func()->mediaStatusChanged(status);
+        break;
+    case QMediaImageViewer::InvalidMedia:
+        emit q_func()->mediaStatusChanged(status);
+
+        if (state == QMediaImageViewer::PlayingState)
+            playlist->next();
+        break;
+    }
+}
+
 void QMediaImageViewerPrivate::_q_playlistMediaChanged(const QMediaContent &content)
 {
     media = content;
+    delta = 0;
 
     viewerControl->showMedia(media);
 
@@ -131,7 +159,7 @@ QMediaImageViewer::QMediaImageViewer(QObject *parent)
             d->service->control(QMediaImageViewerControl_iid));
 
     connect(d->viewerControl, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
-            this, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)));
+            this, SLOT(_q_mediaStatusChanged(QMediaImageViewer::MediaStatus)));
 }
 
 /*!
@@ -196,6 +224,7 @@ void QMediaImageViewer::setMedia(const QMediaContent &media)
     Q_D(QMediaImageViewer);
 
     d->media = media;
+    d->delta = 0;
     d->timer.stop();
 
     if (d->state != QMediaImageViewer::StoppedState)
@@ -261,11 +290,20 @@ void QMediaImageViewer::play()
     Q_D(QMediaImageViewer);
 
     if (d->playlist && d->playlist->size() > 0 && d->state != PlayingState) {
-        if (d->timeout >= 0)
-            d->timer.start(d->timeout, this);
-
         d->state = PlayingState;
-        d->playlist->next();
+
+        switch (d->viewerControl->mediaStatus()) {
+        case NoMedia:
+        case InvalidMedia:
+            d->playlist->next();
+            break;
+        case LoadingMedia:
+            break;
+        case LoadedMedia:
+            d->time.start();
+            d->timer.start(qMax(0, d->timeout - d->delta), this);
+            break;
+        }
 
         if (d->state == QMediaImageViewer::PlayingState)
             emit stateChanged(d->state);
@@ -275,14 +313,18 @@ void QMediaImageViewer::play()
 /*!
     Pauses a slide show.
 
-    The current index is retained.
+    The current index and elapsed time are retained.  If resumed, the current image will be
+    displayed for the remainder of the time out period before the next image is loaded.
 */
 void QMediaImageViewer::pause()
 {
     Q_D(QMediaImageViewer);
 
     if (d->state == PlayingState) {
-        d->timer.stop();
+        if (d->viewerControl->mediaStatus() == LoadedMedia) {
+            d->delta = d->timeout - d->time.elapsed();
+            d->timer.stop();
+        }
 
         emit stateChanged(d->state = PausedState);
     }
@@ -291,7 +333,8 @@ void QMediaImageViewer::pause()
 /*!
     Stops a slide show.
 
-    This will reset the current index and media to null states.
+    The current index is retained, but the elapsed time is discarded.  If resumed, the current
+    image will be displayed for the full time out period before the next image is loaded.
 */
 void QMediaImageViewer::stop()
 {
@@ -302,10 +345,9 @@ void QMediaImageViewer::stop()
         d->timer.stop();
         // fall through.
     case PausedState:
+        d->delta = 0;
         d->state = QMediaImageViewer::StoppedState;
 
-        if (d->playlist)
-            d->playlist->setCurrentPosition(-1);
         emit stateChanged(d->state);
         break;
     case StoppedState:
@@ -321,13 +363,12 @@ void QMediaImageViewer::timerEvent(QTimerEvent *event)
     Q_D(QMediaImageViewer);
 
     if (event->timerId() == d->timer.timerId()) {
-        Q_ASSERT(d->playlist);
+        d->timer.stop();
 
+        Q_ASSERT(d->playlist);
         d->playlist->next();
 
         if (d->playlist->currentPosition() < 0) {
-            d->timer.stop();
-
             emit stateChanged(d->state = StoppedState);
         }
     } else {

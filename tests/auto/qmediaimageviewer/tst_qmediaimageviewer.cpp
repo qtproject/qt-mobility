@@ -569,12 +569,16 @@ void tst_QMediaImageViewer::playlist()
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
     QCOMPARE(playlist.currentPosition(), 1);
 
-    // Resuming playback moves progress directly to the next image.
+    // Resuming playback does not immediately progress to the next item
     viewer.play();
     QCOMPARE(viewer.state(), QMediaImageViewer::PlayingState);
-    QCOMPARE(stateSpy.count(), 3);
-    QCOMPARE(qvariant_cast<QMediaImageViewer::State>(stateSpy.value(2).value(0)),
-             QMediaImageViewer::PlayingState);
+    QCOMPARE(qvariant_cast<QMediaImageViewer::State>(stateSpy.value(1).value(0)),
+             QMediaImageViewer::PausedState);
+    QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
+    QCOMPARE(playlist.currentPosition(), 1);
+
+    // Time out causes progression to next image, which starts loading.
+    QTestEventLoop::instance().enterLoop(2);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
     QCOMPARE(playlist.currentPosition(), 2);
     QCOMPARE(viewer.media(), coverArtMedia);
@@ -594,7 +598,7 @@ void tst_QMediaImageViewer::playlist()
     QCOMPARE(playlist.currentPosition(), -1);
     QCOMPARE(viewer.media(), QMediaContent());
 
-    // Paused, no time out.
+    // Stopped, no time out.
     QTestEventLoop::instance().enterLoop(2);
     QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::NoMedia);
@@ -615,21 +619,21 @@ void tst_QMediaImageViewer::playlist()
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
     QCOMPARE(playlist.currentPosition(), 0);
 
-    // Stop ends progress and removed
+    // Stop ends progress, but retains current index.
     viewer.stop();
     QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
     QCOMPARE(stateSpy.count(), 6);
     QCOMPARE(qvariant_cast<QMediaImageViewer::State>(stateSpy.value(5).value(0)),
              QMediaImageViewer::StoppedState);
-    QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::NoMedia);
-    QCOMPARE(playlist.currentPosition(), -1);
-    QCOMPARE(viewer.media(), QMediaContent());
+    QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
+    QCOMPARE(playlist.currentPosition(), 0);
+    QCOMPARE(viewer.media(), imageMedia);
 
     // Stoppped, No time out.
     QTestEventLoop::instance().enterLoop(2);
     QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
-    QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::NoMedia);
-    QCOMPARE(playlist.currentPosition(), -1);
+    QCOMPARE(playlist.currentPosition(), 0);
+    QCOMPARE(viewer.media(), imageMedia);
 }
 
 void tst_QMediaImageViewer::outputControl()
