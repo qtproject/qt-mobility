@@ -33,4 +33,6 @@ symbian: {
                         ReadDeviceData \
                         WriteDeviceData \
                         AllFiles \
+    # Security check done in the cntsrv
+    TARGET.SID = 0x20022EF9
 }
