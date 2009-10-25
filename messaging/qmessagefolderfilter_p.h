@@ -40,8 +40,9 @@
 ****************************************************************************/
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderfilter.h"
+#ifdef Q_OS_WIN
 #include "winhelpers_p.h"
-
+#endif
 #include <QSet>
 
 class QMessageFolderFilterPrivate
