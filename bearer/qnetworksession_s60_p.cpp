@@ -321,6 +321,7 @@ void QNetworkSessionPrivate::open()
         }
         newState(QNetworkSession::Connecting);
     } else if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
+        iKnownConfigsBeforeConnectionStart = ((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager)->accessPointConfigurations.keys();
         iConnection.Start(iStatus);
         if (!IsActive()) {
             SetActive();
@@ -703,10 +704,15 @@ QNetworkConfiguration QNetworkSessionPrivate::activeConfiguration(TUint32 iapId)
         //              => If mappingName matches, clone has been found
         QNetworkConfiguration pt;
         pt.d = ((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager)->accessPointConfigurations.value(QString::number(qHash(iapId)));
-        for (int i=0; i < children.count(); i++) {
-            if (children[i].d.data()->mappingName == pt.d.data()->mappingName) {
-                return children[i];
+        if (pt.d) {
+            for (int i=0; i < children.count(); i++) {
+                if (children[i].d.data()->mappingName == pt.d.data()->mappingName) {
+                    return children[i];
+                }
             }
+        } else {
+            // Given IAP Id was not found from known IAPs array
+            return QNetworkConfiguration();
         }
 
         // Matching IAP was not found from used SNAP
@@ -723,6 +729,30 @@ QNetworkConfiguration QNetworkSessionPrivate::activeConfiguration(TUint32 iapId)
             pt.d = ((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager)->accessPointConfigurations.value(QString::number(qHash(iapId)));
             if (pt.d) {
                 return pt;
+            } else {
+                // Check if new (WLAN) IAP was created in IAP/SNAP dialog
+                // 1. Sync internal configurations array to commsdb first
+                ((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager)->updateConfigurations();
+                // 2. Check if new configuration was created during connection creation
+                QList<QString> knownConfigs = ((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager)->accessPointConfigurations.keys();
+                if (knownConfigs.count() > iKnownConfigsBeforeConnectionStart.count()) {
+                    // Configuration count increased => new configuration was created
+                    // => Search new, created configuration
+                    QString newIapId;
+                    for (int i=0; i < iKnownConfigsBeforeConnectionStart.count(); i++) {
+                        if (knownConfigs[i] != iKnownConfigsBeforeConnectionStart[i]) {
+                            newIapId = knownConfigs[i];
+                            break;
+                        }
+                    }
+                    if (newIapId.isEmpty()) {
+                        newIapId = knownConfigs[knownConfigs.count()-1];
+                    }
+                    pt.d = ((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager)->accessPointConfigurations.value(newIapId);
+                    if (pt.d) {
+                        return pt;
+                    }
+                }
             }
         }
         return QNetworkConfiguration();
@@ -748,7 +778,7 @@ void QNetworkSessionPrivate::RunL()
                 ifreq ifr;
                 strcpy(ifr.ifr_name, nameAsByteArray.constData());
 
-                TInt error = iDynamicSetdefaultif(&ifr);
+                error = iDynamicSetdefaultif(&ifr);
             }
             
             if (error != KErrNone) {
@@ -785,6 +815,17 @@ void QNetworkSessionPrivate::RunL()
             }
             break;
         case KErrNotFound: // Connection failed
+            isActive = false;
+            activeConfig = QNetworkConfiguration();
+            serviceConfig = QNetworkConfiguration();
+            iError = QNetworkSession::InvalidConfigurationError;
+            emit q->error(iError);
+            Cancel();
+            if (ipConnectionNotifier) {
+                ipConnectionNotifier->StopNotifications();
+            }
+            syncStateWithInterface();
+            break;
         case KErrCancel: // Connection attempt cancelled
         case KErrAlreadyExists: // Connection already exists
         default:

@@ -26,6 +26,7 @@ symbian: {
         LIBS += -lcmmanager
     } else {
         message("Building without SNAP support")
+	LIBS += -lapengine
     }
     
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
@@ -38,7 +39,6 @@ symbian: {
                qnetworksession_s60_p.cpp
                
     LIBS += -lcommdb \
-            -lapengine \
             -lapsettingshandlerui \
             -lconnmon \
             -lcentralrepository \

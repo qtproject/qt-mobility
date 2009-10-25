@@ -512,13 +512,28 @@ void tst_QNetworkSession::sessionOpenCloseStop()
                             state = qvariant_cast<QNetworkSession::State>(stateChangedSpy.at(1).at(0));
                             if (state == QNetworkSession::Connected) {
                                 roamedSuccessfully = true;
-                                session.close();
-                                QTRY_VERIFY(session.state() == QNetworkSession::Disconnected);
                                 QTRY_VERIFY(session2.state() == QNetworkSession::Disconnected);
                             }
                         }
                     }
+                    if (roamedSuccessfully) {
+                        QString configId = session.property("ActiveConfigurationIdentifier").toString();
+                        QNetworkConfiguration config = manager.configurationFromIdentifier(configId); 
+                        QNetworkSession session3(config);
+                        QSignalSpy errorSpy3(&session3, SIGNAL(error(QNetworkSession::SessionError)));
+                        QSignalSpy sessionOpenedSpy3(&session3, SIGNAL(sessionOpened()));
+                        
+                        session3.open();
+                        session3.waitForOpened();
+                        
+                        if (session.isActive())
+                            QVERIFY(!sessionOpenedSpy3.isEmpty() || !errorSpy3.isEmpty());
+                        
+                        session.stop();
 
+                        QTRY_VERIFY(session.state() == QNetworkSession::Disconnected);
+                        QTRY_VERIFY(session3.state() == QNetworkSession::Disconnected);
+                    }
 #ifndef Q_CC_NOKIAX86
                     if (!roamedSuccessfully)
                         QVERIFY(!errorSpy.isEmpty());
