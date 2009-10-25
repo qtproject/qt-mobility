@@ -55,16 +55,14 @@
 #define STORE_HTML_OK ((ULONG)0x00010000)
 #endif
 
-#ifndef PR_IPM_DRAFTS_ENTRYID
-#define PR_IPM_DRAFTS_ENTRYID ((ULONG)0x36D7) //undocumented for outlook versions < 2007
-#endif
-
 #ifndef PR_IS_NEWSGROUP
 #define PR_IS_NEWSGROUP PROP_TAG( PT_BOOLEAN, 0x6697 )
 #endif
+
 #ifndef PR_IS_NEWSGROUP_ANCHOR
 #define PR_IS_NEWSGROUP_ANCHOR PROP_TAG( PT_BOOLEAN, 0x6696 )
 #endif
+
 #ifndef PR_EXTENDED_FOLDER_FLAGS
 #define PR_EXTENDED_FOLDER_FLAGS PROP_TAG( PT_BINARY, 0x36DA )
 #endif
@@ -2155,7 +2153,7 @@ static unsigned long commonFolderMap(QMessage::StandardFolder folder)
 
     if(!init)
     {
-        propertyMap.insert(QMessage::DraftsFolder,PROP_TAG(PT_BINARY,PR_IPM_DRAFTS_ENTRYID));
+        propertyMap.insert(QMessage::DraftsFolder,PROP_TAG(PT_BINARY,0x36D7));
         propertyMap.insert(QMessage::TrashFolder,PROP_TAG(PT_BINARY,0x35E3));
         propertyMap.insert(QMessage::OutboxFolder,PROP_TAG(PT_BINARY,0x35E2));
         propertyMap.insert(QMessage::SentFolder,PROP_TAG(PT_BINARY,0x35E4));
@@ -2256,10 +2254,10 @@ MapiStore::MapiStore(const MapiSessionPtr &session, IMsgStore *store, const Mapi
      _adviseConnection(0)
 {
     // Find which standard folders the store contains
-    foreach (QMessage::StandardFolder sf, QList<QMessage::StandardFolder>() << QMessage::InboxFolder 
-                                                                            << QMessage::DraftsFolder 
-                                                                            << QMessage::TrashFolder 
-                                                                            << QMessage::SentFolder 
+    foreach (QMessage::StandardFolder sf, QList<QMessage::StandardFolder>() << QMessage::InboxFolder
+                                                                            << QMessage::DraftsFolder
+                                                                            << QMessage::TrashFolder
+                                                                            << QMessage::SentFolder
                                                                             << QMessage::OutboxFolder) {
         QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
         MapiEntryId entryId(standardFolderId(&ignoredError, sf));
@@ -2339,13 +2337,36 @@ MapiEntryId MapiStore::standardFolderId(QMessageStore::ErrorCode *lastError, QMe
     if (sf == QMessage::InboxFolder) {
         result = receiveFolderId(lastError);
     } else {
+        IMAPIProp* source = _store;
+        MapiFolderPtr rf;
+
+#ifndef _WIN32_WCE
+        //the drafts entryid can only be queried on the inbox or root folder.
+
+        if(sf == QMessage::DraftsFolder) {
+            rf = receiveFolder(lastError);
+            if(*lastError != QMessageStore::NoError) {
+                //inbox failed, try root folder.
+                rf = rootFolder(lastError);
+                if(*lastError != QMessageStore::NoError)
+                {
+                    qWarning() << "Query for standard folder " << sf << " failed on store: " << name();
+                    return result;
+                }
+            }
+            source = rf->folder();
+        }
+#endif
+
         MapiEntryId entryId;
-        if (getMapiProperty(_store, commonFolderMap(sf), &entryId)) {
+        if (getMapiProperty(source, commonFolderMap(sf), &entryId)) {
             result = entryId;
         } else {
             *lastError = QMessageStore::ContentInaccessible;
+            qWarning() << "Query for standard folder " << sf << " failed on store: " << name();
         }
     }
+
 
     return result;
 }
