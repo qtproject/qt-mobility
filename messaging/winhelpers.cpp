@@ -3082,7 +3082,7 @@ QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastErro
                 if (!store.isNull()) {
 #ifndef _WIN32_WCE
                     // We only want stores that contain private messages
-                    if (!store->supports(STORE_PUBLIC_FOLDERS)) {
+                    if (store->supports(STORE_PUBLIC_FOLDERS)) {
                         continue;
                     }
 #endif
