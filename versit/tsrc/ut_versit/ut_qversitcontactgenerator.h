@@ -76,6 +76,7 @@ private slots: // Tests
     void testAvatarJpegTwoContactsWithSameName();
     void testAvatarJpegNonexistentPath();
     void testAvatarUrl();
+    void testAvatarQuotedPrintableEncodedPhoto();
     void testGeo();
     void testNote();
     void testOnlineAccount();

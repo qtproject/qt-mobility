@@ -67,14 +67,14 @@
 #include <qcontactfamily.h>
 #include <QDir>
 
-QString testImageRelativePath(QString::fromAscii("random98354_dir76583_ut_versit_photo"));
+QString imageRelativeTestPath(QString::fromAscii("random98354_dir76583_ut_versit_photo"));
 
 void UT_QVersitContactGenerator::initTestCase()
 {
     // Create the directory to store the image
     QDir dir;
-    if (!dir.exists(testImageRelativePath)) {
-        dir.mkdir(testImageRelativePath);
+    if (!dir.exists(imageRelativeTestPath)) {
+        dir.mkdir(imageRelativeTestPath);
     }
 }
 
@@ -82,8 +82,8 @@ void UT_QVersitContactGenerator::cleanupTestCase()
 {
     QDir dir;
 
-    if (dir.exists(testImageRelativePath)) {
-        dir.cd(testImageRelativePath);
+    if (dir.exists(imageRelativeTestPath)) {
+        dir.cd(imageRelativeTestPath);
         // remove all the files first
         QStringList allFiles;
         allFiles << "*";
@@ -92,7 +92,7 @@ void UT_QVersitContactGenerator::cleanupTestCase()
             dir.remove(file);
         }
         dir.cdUp();
-        dir.rmdir(testImageRelativePath);
+        dir.rmdir(imageRelativeTestPath);
     }
 }
 
@@ -594,7 +594,7 @@ void UT_QVersitContactGenerator::testAvatarJpegStored()
             createDocumentWithNameAndPhoto(name, img,
                                            versitPhotoJpeg, versitEncodingBase64);
 
-    mGenerator->setImagePath(testImageRelativePath);
+    mGenerator->setImagePath(imageRelativeTestPath);
     QContact contact = mGenerator->generateContact(document);
 
     // PHOTO location: <dir>/<FirstName><LastName>.<ext>
@@ -641,7 +641,7 @@ void UT_QVersitContactGenerator::testAvatarGifStored()
             createDocumentWithNameAndPhoto(name, img,
                                            versitPhotoGif, versitEncodingBase64);
 
-    mGenerator->setImagePath(testImageRelativePath);
+    mGenerator->setImagePath(imageRelativeTestPath);
     QContact contact = mGenerator->generateContact(document);
 
     QString fileName(mGenerator->imagePath());
@@ -688,7 +688,7 @@ void UT_QVersitContactGenerator::testAvatarJpegTwoContactsWithSameName()
             createDocumentWithNameAndPhoto(name, img,
                                            versitPhotoJpeg, versitEncodingBase64);
 
-    mGenerator->setImagePath(testImageRelativePath);
+    mGenerator->setImagePath(imageRelativeTestPath);
     QContact contact1 = mGenerator->generateContact(document1);
     QContact contact2 = mGenerator->generateContact(document2);
     QContactAvatar avatar1 =
@@ -747,6 +747,46 @@ void UT_QVersitContactGenerator::testAvatarUrl()
                     contact.detail(QContactAvatar::DefinitionName));
     QCOMPARE(avatar.avatar(), QString::fromAscii("file:///jgpublic.gif"));
     QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
+}
+
+void UT_QVersitContactGenerator::testAvatarQuotedPrintableEncodedPhoto()
+{
+    const char img[] =
+"R0lGODlhEgASAIAAAAA=0D=0A="
+"AAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G=0D=0A="
+"wEtxUmlPzRDnzYGfN3KBaKGT6rDmGxQAOw==";
+
+    QStringList val;
+    val.append("Sam");//FirstName
+    val.append("Johnes");//LastName
+    val.append("Ervin");//GivenName
+    val.append("Mr.");//PreFix
+    val.append("MSc");//Suffix
+    QByteArray name = val.join(QString::fromAscii(";")).toAscii();
+    QVersitDocument document =
+            createDocumentWithNameAndPhoto(name, img,
+                                           versitPhotoGif,
+                                           versitEncodingQuotedPrintable);
+
+    mGenerator->setImagePath(imageRelativeTestPath);
+    QContact contact = mGenerator->generateContact(document);
+
+        // PHOTO location: <dir>/<FirstName><LastName>.<ext>
+    QString fileName(mGenerator->imagePath());
+    fileName.append(QString::fromAscii("/"));
+    fileName.append(val[0]);
+    fileName.append(val[1]);
+    fileName.append(QString::fromAscii("."));
+    QString ext = versitPhotoGif;
+    ext = ext.toLower();
+    fileName.append(ext);
+
+    QContactDetail detail = contact.detail(QContactAvatar::DefinitionName);
+    QVERIFY(!detail.isEmpty());
+    QContactAvatar avatar = static_cast<QContactAvatar>(detail);
+    QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
+    QDir dir;
+    QVERIFY(dir.exists(avatar.avatar()));
 }
 
 void UT_QVersitContactGenerator::testGeo()

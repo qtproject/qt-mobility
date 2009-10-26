@@ -426,7 +426,13 @@ QString QVersitContactGeneratorPrivate::saveImage(const QVersitProperty& photoPr
     image.setFileName(imgName);
 
     if (image.open(QIODevice::WriteOnly)) {
-        if (image.write(QByteArray::fromBase64(value)) > 0) {
+        qint64 writeResult = -1;
+        if (encoding == QString::fromAscii(versitEncodingBase64)) {
+            writeResult = image.write(QByteArray::fromBase64(value));
+        } else if (encoding == QString::fromAscii(versitEncodingQuotedPrintable)) {
+            writeResult = image.write(value);
+        }
+        if (writeResult > 0) {
             ret = imgName;
         }
     }
