@@ -64,7 +64,7 @@ int main(int /*argc*/, char** /*argv[]*/)
     QTest::qExec(&ut_versitContactGenerator, args);
     parser.parseAndPrintResults(resultFileName);
 
-    UT_QVersitContactConvertert ut_versitContactconverter;
+    UT_QVersitContactConverter ut_versitContactconverter;
     resultFileName = QString::fromAscii("c:/ut_versitContactconverter.xml");
     args.replace(args.count()-1,resultFileName);
     QTest::qExec(&ut_versitContactconverter, args);

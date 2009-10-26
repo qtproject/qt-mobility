@@ -41,9 +41,6 @@
 
 #include "qversitcontactconverter_p.h"
 #include "qversitdefs.h"
-
-#include <QFile>
-#include <QUrl>
 #include <qcontact.h>
 #include <qcontactdetail.h>
 #include <qcontactname.h>
@@ -61,6 +58,10 @@
 #include <qcontactgender.h>
 #include <qcontactnickname.h>
 #include <qcontactanniversary.h>
+#include <QFile>
+#include <QUrl>
+#include <QBuffer>
+#include <QImageWriter>
 
 /*!
  * Constructor.
@@ -196,7 +197,7 @@ void QVersitContactConverterPrivate::encodeFieldInfo(
     } else if (detail.definitionName() == QContactAvatar::DefinitionName){
         addProperty = encodeEmbeddedContent(property, detail);
     } else if (detail.definitionName() == QContactAnniversary::DefinitionName) {
-        encodAniversary(property, detail);
+        encodeAnniversary(property, detail);
     } else if (detail.definitionName() == QContactNickname::DefinitionName) {
         encodeNickName(property, detail);
     } else if (detail.definitionName() == QContactGender::DefinitionName) {
@@ -403,41 +404,41 @@ bool QVersitContactConverterPrivate::encodeOrganization(
  * Encode Embedded Content into the Versit Document
  */
 
-bool QVersitContactConverterPrivate::encodeEmbeddedContent(QVersitProperty& property,
-                                                           const QContactDetail& detail )
+bool QVersitContactConverterPrivate::encodeEmbeddedContent(
+    QVersitProperty& property,
+    const QContactDetail& detail)
 {
     bool encodeProperty = false;
-    QContactAvatar contactAvatar = static_cast<QContactAvatar >(detail);
-    QString avatarPath = contactAvatar.avatar();
-    QString avatarExt = avatarPath.section('.', -1).toUpper();
-    QString avatarFormat = mMappings.value( avatarExt );
+    QContactAvatar contactAvatar = static_cast<QContactAvatar>(detail);
+    QString filePath = contactAvatar.avatar();
+    QString fileExtension = filePath.section('.', -1).toUpper();
+    QString format = mMappings.value(fileExtension);
 
-    if ( !avatarFormat.size())
-        avatarFormat = avatarExt;
+    if (!format.size())
+        format = fileExtension;
 
-    if ( mMappings.contains(contactAvatar.subType()) &&
-         avatarFormat.size()) {
-
+    if (mMappings.contains(contactAvatar.subType()) && format.size()) {
         QString name = mMappings.value(contactAvatar.subType());
         QByteArray value;
-
-        QFile avtarFile;
-        avtarFile.setFileName(avatarPath);
-        if ( avtarFile.open(QIODevice::ReadOnly )) {
+        QFile file;
+        file.setFileName(filePath);
+        if (file.open(QIODevice::ReadOnly)) {
             encodeProperty = true;
-            value = avtarFile.readAll().toBase64();
-            property.addParameter(QString::fromAscii(versitType),avatarFormat);
+            value = file.readAll();
+            if (contactAvatar.subType() == QContactAvatar::SubTypeImage)
+                emit scale(filePath,value);
+            value = value.toBase64();
+            property.addParameter(QString::fromAscii(versitType),format);
             property.addParameter(QString::fromAscii(versitEncoding),
                                   QString::fromAscii(versitEncodingBase64));
-        }
-        else if (isValidRemoteUrl( avatarPath )) {
+        } else if (isValidRemoteUrl(filePath)) {
             encodeProperty = true;
-            value = avatarPath.toAscii();
+            value = filePath.toAscii();
             property.addParameter(QString::fromAscii(versitValue),versitUrlId);
-            property.addParameter(QString::fromAscii(versitType),avatarFormat);
+            property.addParameter(QString::fromAscii(versitType),format);
+        } else {
+            // The file has been removed. Don't encode the path to a local file.
         }
-
-        //Add Values
         property.setName(name);
         property.setValue(value);
     }
@@ -471,10 +472,10 @@ void QVersitContactConverterPrivate::encodeNickName(
 /*!
  * Encode Aniverssary information into Versit Document
  */
-void QVersitContactConverterPrivate::encodAniversary(
-        QVersitProperty& property,
-        const QContactDetail& detail ) {
-
+void QVersitContactConverterPrivate::encodeAnniversary(
+    QVersitProperty& property,
+    const QContactDetail& detail)
+{
     QContactAnniversary aniversary = static_cast<QContactAnniversary>(detail);
     QStringList subtypeList;
     subtypeList.append(aniversary.subType());
@@ -497,11 +498,10 @@ void QVersitContactConverterPrivate::encodeParameters(
     }
 }
 
-
 /*!
  * Check if the Remote resouce represents a Valid remote resouce
  */
-bool QVersitContactConverterPrivate::isValidRemoteUrl(const QString& resouceIdentifier )
+bool QVersitContactConverterPrivate::isValidRemoteUrl(const QString& resouceIdentifier)
 {
     QUrl remoteResouce(resouceIdentifier);
     if ( ( !remoteResouce.scheme().isEmpty() &&

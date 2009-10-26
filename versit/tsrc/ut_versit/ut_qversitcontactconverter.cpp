@@ -65,20 +65,20 @@
 #include <qcontactanniversary.h>
 
 
-void UT_QVersitContactConvertert::init()
+void UT_QVersitContactConverter::init()
 {
     mConverter = new QVersitContactConverter();
     mConverterPrivate = new QVersitContactConverterPrivate();
 }
 
-void UT_QVersitContactConvertert::cleanup()
+void UT_QVersitContactConverter::cleanup()
 {
     delete mConverterPrivate;
     delete mConverter;
 }
 
 
-void UT_QVersitContactConvertert::initTestCase()
+void UT_QVersitContactConverter::initTestCase()
 {
     //create dummy file.
     QDir dir = QDir::current();
@@ -100,7 +100,7 @@ void UT_QVersitContactConvertert::initTestCase()
     testAudioFile.close();
 }
 
-void UT_QVersitContactConvertert::cleanupTestCase()
+void UT_QVersitContactConverter::cleanupTestCase()
 {
     QDir dir = QDir::current();
     dir.remove(mTestPhotoFile);
@@ -108,7 +108,7 @@ void UT_QVersitContactConvertert::cleanupTestCase()
 }
 
 
-void UT_QVersitContactConvertert::testConvertContact()
+void UT_QVersitContactConverter::testConvertContact()
 {
     QContact contact;
 
@@ -129,7 +129,7 @@ void UT_QVersitContactConvertert::testConvertContact()
     QCOMPARE(2, versitDocument.properties().count());
 }
 
-void UT_QVersitContactConvertert::testEncodeName()
+void UT_QVersitContactConverter::testEncodeName()
 {
     QContact contact;
 
@@ -172,7 +172,7 @@ void UT_QVersitContactConvertert::testEncodeName()
     QCOMPARE(expectedValue, value );
 }
 
-void UT_QVersitContactConvertert::testEncodePhoneNumber()
+void UT_QVersitContactConverter::testEncodePhoneNumber()
 {
     QContact contact;
 
@@ -209,7 +209,7 @@ void UT_QVersitContactConvertert::testEncodePhoneNumber()
     QCOMPARE(expectedValue, value );
 }
 
-void UT_QVersitContactConvertert::testEncodeEmailAddress()
+void UT_QVersitContactConverter::testEncodeEmailAddress()
 {
     QContact contact;
 
@@ -248,7 +248,7 @@ void UT_QVersitContactConvertert::testEncodeEmailAddress()
 
 }
 
-void UT_QVersitContactConvertert::testEncodeStreetAddress()
+void UT_QVersitContactConverter::testEncodeStreetAddress()
 {
     QContact contact;
 
@@ -296,7 +296,7 @@ void UT_QVersitContactConvertert::testEncodeStreetAddress()
     QCOMPARE(expectedValue, value );
 }
 
-void UT_QVersitContactConvertert::testEncodeUrl()
+void UT_QVersitContactConverter::testEncodeUrl()
 {
     QContact contact;
 
@@ -333,7 +333,7 @@ void UT_QVersitContactConvertert::testEncodeUrl()
     QCOMPARE(expectedValue, value );
 }
 
-void UT_QVersitContactConvertert::testEncodeUid()
+void UT_QVersitContactConverter::testEncodeUid()
 {
     QContact contact;
 
@@ -368,7 +368,7 @@ void UT_QVersitContactConvertert::testEncodeUid()
     QCOMPARE(expectedValue, value);
 }
 
-void UT_QVersitContactConvertert::testEncodeRev()
+void UT_QVersitContactConverter::testEncodeRev()
 {
     QContact contact;
     QContactTimestamp p;
@@ -441,7 +441,7 @@ void UT_QVersitContactConvertert::testEncodeRev()
     QCOMPARE(0, versitDocument.properties().count());
 }
 
-void UT_QVersitContactConvertert::testEncodeBirthDay()
+void UT_QVersitContactConverter::testEncodeBirthDay()
 {
     QContact contact;
     QDate date(2009,1,1);
@@ -475,7 +475,7 @@ void UT_QVersitContactConvertert::testEncodeBirthDay()
     QCOMPARE(expectedValue, value);
 }
 
-void UT_QVersitContactConvertert::testEncodeNote()
+void UT_QVersitContactConverter::testEncodeNote()
 {
     QContact contact;
     QString myNote = QString::fromAscii("My Note");
@@ -507,7 +507,7 @@ void UT_QVersitContactConvertert::testEncodeNote()
     QCOMPARE(myNote, value);
 }
 
-void UT_QVersitContactConvertert::testEncodeGeoLocation()
+void UT_QVersitContactConverter::testEncodeGeoLocation()
 {
     QContact contact;
     QContactGeolocation geoLocation;
@@ -549,7 +549,7 @@ void UT_QVersitContactConvertert::testEncodeGeoLocation()
     QCOMPARE(expectedValue, value);
 }
 
-void UT_QVersitContactConvertert::testEncodeOrganization()
+void UT_QVersitContactConverter::testEncodeOrganization()
 {
     QContact contact;
     QContactOrganization organization;
@@ -612,7 +612,7 @@ void UT_QVersitContactConvertert::testEncodeOrganization()
 
 
 
-void UT_QVersitContactConvertert::testEncodeEmbeddedContent()
+void UT_QVersitContactConverter::testEncodeEmbeddedContent()
 {
     QContact contact;
     QContactAvatar contactAvatar;
@@ -626,7 +626,6 @@ void UT_QVersitContactConvertert::testEncodeEmbeddedContent()
 
     //Media type, and source type are encoded.
     QCOMPARE(2, versitDocument.properties().at(0).parameters().count());
-    
     QVERIFY(versitDocument.properties().at(0).parameters().contains(versitType, versitPhotoJpeg));
     QVERIFY(versitDocument.properties().at(0).parameters().contains(versitValue, versitUrlId));
     
@@ -637,14 +636,19 @@ void UT_QVersitContactConvertert::testEncodeEmbeddedContent()
     QCOMPARE(propertyName, expectedPropertyName);
 
     //Check property value
-    QString value = (versitDocument.properties().at(0).value() );
-    QCOMPARE(url, value);
+    QString value = versitDocument.properties().at(0).value();
+    QCOMPARE(url,value);
 
     // Test 2: Local Media PHOTO
     contactAvatar.setAvatar(mTestPhotoFile);
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
     contact.saveDetail(&contactAvatar);
+    QSignalSpy signalSpy(mConverter, SIGNAL(scale(const QString&,QByteArray&)));
     versitDocument = mConverter->convertContact(contact);
+    QCOMPARE(signalSpy.count(),1);
+    QList<QVariant> arguments = signalSpy.takeFirst();
+    QCOMPARE(arguments.count(),2);
+    QCOMPARE(arguments.at(0).toString(),mTestPhotoFile);
 
     //Media type, source encoding is encoded i.e. base64
     QCOMPARE(2, versitDocument.properties().at(0).parameters().count());
@@ -702,7 +706,7 @@ void UT_QVersitContactConvertert::testEncodeEmbeddedContent()
     QCOMPARE(0, versitDocument.properties().count());
 }
 
-void UT_QVersitContactConvertert::testEncodeParameters()
+void UT_QVersitContactConverter::testEncodeParameters()
 {
     QContact contact;
 
@@ -738,7 +742,7 @@ void UT_QVersitContactConvertert::testEncodeParameters()
     QVERIFY(versitDocument.properties().at(0).parameters().contains(versitType, versitVideoId));
 }
 
-void UT_QVersitContactConvertert::testIsValidRemoteUrl()
+void UT_QVersitContactConverter::testIsValidRemoteUrl()
 {
     QContact contact;
     QContactAvatar contactAvatar;
@@ -789,7 +793,7 @@ void UT_QVersitContactConvertert::testIsValidRemoteUrl()
 }
 
 
-void UT_QVersitContactConvertert::testEncodeGender()
+void UT_QVersitContactConverter::testEncodeGender()
 {
     QContact contact;
     QContactGender gender;
@@ -820,7 +824,7 @@ void UT_QVersitContactConvertert::testEncodeGender()
     QCOMPARE(QString(QLatin1String(QContactGender::GenderMale)), value);
 }
 
-void UT_QVersitContactConvertert::testEncodeNickName()
+void UT_QVersitContactConverter::testEncodeNickName()
 {
     QContact contact;
     QContactNickname nickName;
@@ -853,7 +857,7 @@ void UT_QVersitContactConvertert::testEncodeNickName()
 
 }
 
-void UT_QVersitContactConvertert::testEncodAniversary()
+void UT_QVersitContactConverter::testEncodAniversary()
 {
     QContact contact;
     QContactAnniversary aniversersary;

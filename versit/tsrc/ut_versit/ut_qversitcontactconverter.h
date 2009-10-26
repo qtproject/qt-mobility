@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVERSITCONTACTCONVERTER_H_
-#define UT_QVERSITCONTACTCONVERTER_H_
+#ifndef UT_QVERSITCONTACTCONVERTER_H
+#define UT_QVERSITCONTACTCONVERTER_H
 
 
 #include <QObject>
@@ -48,7 +48,7 @@
 class QVersitContactConverter;
 class QVersitContactConverterPrivate;
 
-class UT_QVersitContactConvertert : public QObject                 
+class UT_QVersitContactConverter : public QObject
 {
     Q_OBJECT
     
@@ -84,4 +84,4 @@ private: // Data
     QString mTestPhotoFile, mTestAudioFile;
 };
 
-#endif /* UT_QVERSITCONTACTCONVERTER_H_ */
+#endif // UT_QVERSITCONTACTCONVERTER_H

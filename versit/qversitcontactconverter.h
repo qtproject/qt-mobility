@@ -45,17 +45,24 @@
 #include <qtversitglobal.h>
 #include <qversitdocument.h>
 #include <qcontact.h>
+#include <QObject>
+#include <QImage>
 
 class QVersitContactConverterPrivate;
 
-class QTVERSIT_EXPORT QVersitContactConverter
+class QTVERSIT_EXPORT QVersitContactConverter : public QObject
 {
+    Q_OBJECT
+
 public:
     QVersitContactConverter();
     ~QVersitContactConverter();
 
     QVersitDocument convertContact(const QContact& contact);
-    
+
+signals:
+    void scale(const QString& imageFileName, QByteArray& imageData);
+
 private:
     QVersitContactConverterPrivate* d;    
 };

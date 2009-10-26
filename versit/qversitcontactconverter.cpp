@@ -61,6 +61,8 @@
 QVersitContactConverter::QVersitContactConverter()
     : d(new QVersitContactConverterPrivate())
 {
+    connect(d, SIGNAL(scale(const QString&,QByteArray&)),
+            this, SIGNAL(scale(const QString&,QByteArray&)));
 }
 
 /*!
