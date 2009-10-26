@@ -303,9 +303,6 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
         }
     }
 
-    if(!mapiSession->flushQueues())
-        qWarning() << "MAPI flush queues failed.";
-
     mapiRelease(mapiMessage);
 
 #ifdef _WIN32_WCE

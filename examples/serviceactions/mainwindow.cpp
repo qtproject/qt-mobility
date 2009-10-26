@@ -438,7 +438,7 @@ private slots:
 
 private:
     void setupUi();
-    QMessage constructQMessage() const;
+    QMessage constructQMessage(bool asHtml = false) const;
 
 private:
     QStackedLayout* m_layoutStack;
@@ -454,6 +454,7 @@ private:
     QTextEdit* m_bodyEdit;
     AttachmentListWidget* m_attachmentList;
     QAction* m_attachmentsAction;
+    QAction* m_sendAsHTMLAction;
 };
 
 ComposeSendWidget::ComposeSendWidget(QMessageServiceAction* service, QWidget* parent)
@@ -471,7 +472,8 @@ m_subjectEdit(0),
 m_subjectLabel(0),
 m_bodyEdit(0),
 m_attachmentList(0),
-m_attachmentsAction(0)
+m_attachmentsAction(0),
+m_sendAsHTMLAction(0)
 {
     setupUi();
 }
@@ -484,7 +486,8 @@ void ComposeSendWidget::composeButtonClicked()
 
 void ComposeSendWidget::sendButtonClicked()
 {
-    QMessage message(constructQMessage());
+    bool asHtml = (sender() == m_sendAsHTMLAction);
+    QMessage message(constructQMessage(asHtml));
     m_service->send(message);
 }
 
@@ -506,6 +509,7 @@ void ComposeSendWidget::accountChanged()
     }
 
     m_attachmentsAction->setEnabled(!isSmsAccount);
+    m_sendAsHTMLAction->setEnabled(!isSmsAccount);
 #endif
 }
 
@@ -557,6 +561,9 @@ void ComposeSendWidget::setupUi()
     QAction* sendAction = new QAction("Send",this);
     connect(sendAction,SIGNAL(triggered()),this,SLOT(sendButtonClicked()));
     addAction(sendAction);
+    m_sendAsHTMLAction = new QAction("Send as HTML",this);
+    connect(m_sendAsHTMLAction,SIGNAL(triggered()),this,SLOT(sendButtonClicked()));
+    addAction(m_sendAsHTMLAction);
     QAction* separator = new QAction(this);
     separator->setSeparator(true);
     addAction(separator);
@@ -565,7 +572,7 @@ void ComposeSendWidget::setupUi()
     addAction(m_attachmentsAction);
 }
 
-QMessage ComposeSendWidget::constructQMessage() const
+QMessage ComposeSendWidget::constructQMessage(bool asHtml) const
 {
     QMessage message;
 
@@ -615,7 +622,14 @@ QMessage ComposeSendWidget::constructQMessage() const
     }
 
     message.setParentAccountId(selectedAccountId);
-    message.setBody(m_bodyEdit->toPlainText());
+
+    if(!composingSms && asHtml) {
+        //create html body
+        QString htmlBody("<html><head><title></title></head><body><h2 align=center>%1</h2><hr>%2</body></html>");
+        message.setBody(htmlBody.arg(message.subject()).arg(m_bodyEdit->toPlainText()),"text/html");
+    }
+    else
+        message.setBody(m_bodyEdit->toPlainText());
 
     return message;
 }

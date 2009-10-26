@@ -288,10 +288,10 @@ namespace {
 
         if(setPosition) {
             if(initFailed |= FAILED(m_table->SeekRow(BOOKMARK_BEGINNING,0, NULL)))
-                qWarning() << "SeekRow function failed. Ensure it's not being called on hierarchy tables or message stores tables";                     
+                qWarning() << "SeekRow function failed. Ensure it's not being called on hierarchy tables or message stores tables";
         }
 
-        if(initFailed) 
+        if(initFailed)
             m_lastError = QMessageStore::ContentInaccessible;
     }
 
@@ -3446,76 +3446,6 @@ MapiEntryId MapiSession::folderEntryId(QMessageStore::ErrorCode *lastError, cons
 }
 
 #endif
-
-bool MapiSession::flushQueues()
-{
-    LPMAPISTATUS  pStat = 0;    //MAPI Status Pointer
-    LPMAPITABLE     pTbl  = 0;
-    HRESULT         hRes;
-    SRestriction    sres;
-    SPropValue      spv;
-    ULONG           ulObjType = 0;
-
-    const static SizedSPropTagArray(2,sptCols) = {2,PR_RESOURCE_TYPE,PR_ENTRYID};
-
-    if (FAILED(hRes = _mapiSession->GetStatusTable(0,&pTbl)))
-    {
-        mapiRelease(pTbl);
-        return false;
-    }
-
-    sres.rt = RES_PROPERTY;
-    sres.res.resProperty.relop     = RELOP_EQ;
-    sres.res.resProperty.ulPropTag = PR_RESOURCE_TYPE;
-    sres.res.resProperty.lpProp    = &spv;
-
-    spv.ulPropTag = PR_RESOURCE_TYPE;
-    spv.Value.l   = MAPI_SPOOLER;
-
-    QueryAllRows qar(pTbl,
-            (LPSPropTagArray) &sptCols,
-            &sres,
-            0);
-
-    if(!qar.query())
-        goto Quit;
-
-    if (!qar.rows()->cRows || PR_ENTRYID != qar.rows()->aRow[0].lpProps[1].ulPropTag)
-    {
-        hRes = MAPI_E_NOT_FOUND;
-        goto Quit;
-    }
-
-    hRes =  _mapiSession->OpenEntry(qar.rows()->aRow[0].lpProps[1].Value.bin.cb,
-            (LPENTRYID)qar.rows()->aRow[0].lpProps[1].Value.bin.lpb,
-            NULL,
-            MAPI_BEST_ACCESS,
-            &ulObjType,
-            (LPUNKNOWN *)&(*pStat));
-
-    if (FAILED(hRes) || MAPI_STATUS != ulObjType)
-    {
-        hRes = hRes ? hRes : MAPI_E_INVALID_OBJECT;
-        goto Quit;
-    }
-
-    if(pStat) //if we successfully got a status pointer call FlushQueues on it.
-    {
-        if(FAILED(pStat->FlushQueues(NULL, 0, NULL, FLUSH_UPLOAD | FLUSH_DOWNLOAD)))
-        {
-            qWarning() << "Failed to flush MAPI queues";
-            goto Quit;
-        }
-    }
-    else goto Quit;
-
-    mapiRelease(pStat);
-    return true;
-
-Quit:
-    if (pTbl) pTbl -> Release();
-    return false;
-}
 
 bool MapiSession::equal(const MapiEntryId &lhs, const MapiEntryId &rhs) const
 {
