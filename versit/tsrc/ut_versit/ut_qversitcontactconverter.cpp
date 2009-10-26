@@ -738,7 +738,7 @@ void UT_QVersitContactConvertert::testEncodeParameters()
     QVERIFY(versitDocument.properties().at(0).parameters().contains(versitType, versitVideoId));
 }
 
-void UT_QVersitContactConvertert::testIsVaildRemoteUrl()
+void UT_QVersitContactConvertert::testIsValidRemoteUrl()
 {
     QContact contact;
     QContactAvatar contactAvatar;

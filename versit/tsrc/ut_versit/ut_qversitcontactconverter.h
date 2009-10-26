@@ -72,7 +72,7 @@ private slots:
     void testEncodeGeoLocation();
     void testEncodeOrganization();
     void testEncodeEmbeddedContent();
-    void testIsVaildRemoteUrl();
+    void testIsValidRemoteUrl();
     void testEncodeGender();
     void testEncodeNickName();
     void testEncodAniversary();

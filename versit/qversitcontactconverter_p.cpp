@@ -133,13 +133,13 @@ QVersitContactConverterPrivate::QVersitContactConverterPrivate()
     mMappings.insert(
         QContactAnniversary::SubTypeWedding,QContactAnniversary::SubTypeWedding);
     mMappings.insert(
-        QContactAnniversary::SubTypeEngagement,QContactAnniversary::SubTypeWedding);
+        QContactAnniversary::SubTypeEngagement,QContactAnniversary::SubTypeEngagement);
     mMappings.insert(
-        QContactAnniversary::SubTypeHouse,QContactAnniversary::SubTypeWedding);
+        QContactAnniversary::SubTypeHouse,QContactAnniversary::SubTypeHouse);
     mMappings.insert(
-        QContactAnniversary::SubTypeEmployment,QContactAnniversary::SubTypeWedding);
+        QContactAnniversary::SubTypeEmployment,QContactAnniversary::SubTypeEmployment);
     mMappings.insert(
-        QContactAnniversary::SubTypeMemorial,QContactAnniversary::SubTypeWedding);
+        QContactAnniversary::SubTypeMemorial,QContactAnniversary::SubTypeMemorial);
 
     // Sound is mapped to the Contact Audio Ringingtones that was the nearest match
     // field for the Sound
