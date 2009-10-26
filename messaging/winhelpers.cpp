@@ -1375,7 +1375,19 @@ namespace {
         }
     }
 
-    QMessageIdList filterMessages(QMessageStore::ErrorCode *lastError, QList<FolderHeapNodePtr> &folderNodes, const QMessageOrdering &ordering, uint limit, uint offset)
+    bool bodyMatches(const QMessage &message, const QString &body, QMessageDataComparator::Options options)
+    {
+        if (body.isEmpty())
+            return true;
+
+        QMessageContentContainer bodyContainer(message.find(message.bodyId()));
+        if (options & QMessageDataComparator::CaseSensitive) {
+            return bodyContainer.textContent().contains(body, Qt::CaseSensitive);
+        }
+        return bodyContainer.textContent().contains(body, Qt::CaseInsensitive);
+    }
+
+    QMessageIdList filterMessages(QMessageStore::ErrorCode *lastError, QList<FolderHeapNodePtr> &folderNodes, const QMessageOrdering &ordering, uint limit, uint offset, const QString &body = QString(), QMessageDataComparator::Options options = 0)
     {
         QMessageIdList result;
         QHash<QMessageId, bool> avoidDuplicates; // For complex filters it's necessary to check for duplicates
@@ -1394,7 +1406,7 @@ namespace {
             if (*lastError != QMessageStore::NoError)
                 return result;
 
-            if (!avoidDuplicates.contains(front.id())) {
+            if (!avoidDuplicates.contains(front.id()) && bodyMatches(front, body, options)) {
                 avoidDuplicates.insert(front.id(), true);
                 if (count >= 0) {
                     result.append(front.id());
@@ -4247,7 +4259,7 @@ QByteArray MapiSession::attachmentData(QMessageStore::ErrorCode *lastError, cons
     return result;
 }
 
-QMessageIdList MapiSession::queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
+QMessageIdList MapiSession::queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset, const QString &body, QMessageDataComparator::Options options) const
 {
     QList<FolderHeapNodePtr> folderNodes;
     QMessageFilter processedFilter(QMessageFilterPrivate::preprocess(filter));
@@ -4269,7 +4281,7 @@ QMessageIdList MapiSession::queryMessages(QMessageStore::ErrorCode *lastError, c
     if (*lastError != QMessageStore::NoError)
         return QMessageIdList();
 
-    return filterMessages(lastError, folderNodes, ordering, limit, offset);
+    return filterMessages(lastError, folderNodes, ordering, limit, offset, body, options);
 }
 
 void MapiSession::updateMessage(QMessageStore::ErrorCode* lastError, const QMessage& source)
