@@ -63,7 +63,7 @@
 #include <qcontactonlineaccount.h>
 #include <qcontactfamily.h>
 #include <QHash>
-#include <QImage>
+#include <QFile>
 
 /*!
  * Constructor.
@@ -394,11 +394,18 @@ QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
 {
     QString fileName;
 
-    const QList<QVersitProperty> properties = versitDocument.properties();
-    foreach(const QVersitProperty& nameProperty, properties) {
-        if (nameProperty.name() == QString::fromAscii("N")) {
-            fileName = saveImage(property, nameProperty);
-            break;
+    const QString valueParam =
+            property.parameters().value(QString::fromAscii(versitValue));
+    if (valueParam == QString("URL")) {
+        fileName = QString::fromAscii(property.value());
+    } else {
+        // the photo will be saved to the file system
+        const QList<QVersitProperty> properties = versitDocument.properties();
+        foreach(const QVersitProperty& nameProperty, properties) {
+            if (nameProperty.name() == QString::fromAscii("N")) {
+                fileName = saveImage(property, nameProperty);
+                break;
+            }
         }
     }
 
@@ -420,8 +427,10 @@ QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
 QString QVersitContactGeneratorPrivate::saveImage(const QVersitProperty& photoProperty,
                                                   const QVersitProperty& nameProperty) const
 {
+    QString ret;
+
     if (mImagePath.isEmpty()) {
-        return QString("");
+        return ret;
     }
 
     // Image name: <FirstName><LastName>_<RandomNumber>.<ext>
@@ -446,13 +455,15 @@ QString QVersitContactGeneratorPrivate::saveImage(const QVersitProperty& photoPr
 
     QByteArray value = photoProperty.value();
 
-    QImage image;
-    image = QImage::fromData(QByteArray::fromBase64(value), format.toAscii());
-    if (image.save(imgName, format.toAscii(), 0)) {
-        return imgName;
-    } else {
-        return QString("");
+    QFile image;
+    image.setFileName(imgName);
+
+    if (image.open(QIODevice::WriteOnly)) {
+        if (image.write(QByteArray::fromBase64(value)) > 0) {
+            ret = imgName;
+        }
     }
+    return ret;
 }
 
 /*!

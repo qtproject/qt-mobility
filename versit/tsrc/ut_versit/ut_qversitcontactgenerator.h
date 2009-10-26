@@ -72,8 +72,10 @@ private slots: // Tests
     void testGender();
     void testNickname();
     void testAvatarJpegStored();
+    void testAvatarGifStored();
     void testAvatarJpegTwoContactsWithSameName();
     void testAvatarJpegNonexistentPath();
+    void testAvatarUrl();
     void testGeo();
     void testNote();
     void testOnlineAccount();

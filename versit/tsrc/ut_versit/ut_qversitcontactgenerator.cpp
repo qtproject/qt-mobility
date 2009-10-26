@@ -623,6 +623,52 @@ void UT_QVersitContactGenerator::testAvatarJpegStored()
     QVERIFY(dir.exists(avatar.avatar()));
 }
 
+void UT_QVersitContactGenerator::testAvatarGifStored()
+{
+    const char img[] =
+"R0lGODlhEgASAIAAAAAAAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G"
+"wEtxUmlPzRDnzYGfN3KBaKGT6rDmGxQAOw==";
+
+    QStringList val;
+    val.append("Homer");//FirstName
+    val.append("Simpson");//LastName
+    val.append("BellyBoy");//GivenName
+    val.append("Mr.");//PreFix
+    val.append("MSc");//Suffix
+
+    QByteArray name = val.join(QString::fromAscii(";")).toAscii();
+    QVersitDocument document =
+            createDocumentWithNameAndPhoto(name, img,
+                                           versitPhotoGif, versitEncodingBase64);
+
+    mGenerator->setImagePath(testImageRelativePath);
+    QContact contact = mGenerator->generateContact(document);
+
+    QString fileName(mGenerator->imagePath());
+    fileName.append(QString::fromAscii("/"));
+    fileName.append(val[0]);
+    fileName.append(val[1]);
+    fileName.append(QString::fromAscii("."));
+    QString ext = versitPhotoGif;
+    ext = ext.toLower();
+    fileName.append(ext);
+    
+    QContactDetail detail = contact.detail(QContactAvatar::DefinitionName);
+    QVERIFY(!detail.isEmpty());
+
+    // Take out the random part from the original file name
+    QContactAvatar avatar = static_cast<QContactAvatar>(detail);
+    int underscore = avatar.avatar().lastIndexOf("_");
+    QString avatarNameOnly = avatar.avatar().left(underscore);
+    avatarNameOnly.append(QString::fromAscii("."));
+    avatarNameOnly.append(ext);
+    QCOMPARE(avatarNameOnly, fileName);
+    QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
+
+    QDir dir;
+    QVERIFY(dir.exists(avatar.avatar()));
+}
+
 void UT_QVersitContactGenerator::testAvatarJpegTwoContactsWithSameName()
 {
     // Create 2 contacts with the same name.
@@ -681,6 +727,26 @@ void UT_QVersitContactGenerator::testAvatarJpegNonexistentPath()
 
     QDir dir(mGenerator->imagePath());
     QVERIFY(!dir.exists());
+}
+
+void UT_QVersitContactGenerator::testAvatarUrl()
+{
+    QVersitProperty property;
+    property.setName(QString::fromAscii(versitPhotoId));
+    QByteArray value("file:///jgpublic.gif");
+    property.setValue(value);
+    property.addParameter(QString::fromAscii(versitValue),
+                          QString::fromAscii("URL"));
+
+    QVersitDocument document;
+    document.addProperty(property);
+
+    QContact contact = mGenerator->generateContact(document);
+    QContactAvatar avatar =
+            static_cast<QContactAvatar>(
+                    contact.detail(QContactAvatar::DefinitionName));
+    QCOMPARE(avatar.avatar(), QString::fromAscii("file:///jgpublic.gif"));
+    QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
 }
 
 void UT_QVersitContactGenerator::testGeo()
@@ -880,8 +946,12 @@ QVersitDocument UT_QVersitContactGenerator::createDocumentWithNameAndPhoto(
 
     QByteArray value(image);
     property.setValue(value);
-    property.addParameter(QString::fromAscii(versitType), photoType);
-    property.addParameter(QString::fromAscii(versitEncoding), encoding);
+    if (photoType != QString()) {
+        property.addParameter(QString::fromAscii(versitType), photoType);
+    }
+    if (encoding != QString()) {
+        property.addParameter(QString::fromAscii(versitEncoding), encoding);
+    }
     document.addProperty(property);
 
     QVersitProperty nameProperty;
