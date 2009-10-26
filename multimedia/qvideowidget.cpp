@@ -405,26 +405,21 @@ void QVideoWidgetPrivate::_q_fullScreenChanged(bool fullScreen)
     \brief The QVideoWidget class provides a widget which presents video produced by a media
     object.
 
-    A video widget presents video produced by the media object passed to it in it's constructor.
-    Any media object that produces video can be used as the source for a video widget, but only
-    one video output can be attached to a media object at a time.
+    Attaching a QVideoWidget to a QMediaObject allows it to display the video or image output
+    of that media object.  A QVideoWidget is attached to media object by passing a pointer to
+    the QMediaObject in its constructor, and detached by destroying the QVideoWidget.
 
     \code
-    int main(int argc, char *argv[])
-    {
-        QApplication app(argc, argv);
+        player = new QMediaPlayer;
 
-        QMediaPlayer player;
+        widget = new QVideoWidget(player);
+        widget->show();
 
-        QVideoWidget widget(&player);
-        widget.show();
-
-        player.setMedia(QUrl("http://example.com/movie.mp4"));
-        player.play();
-
-        return app.exec();
-    }
+        player->setMedia(QUrl("http://example.com/movie.mp4"));
+        player->play();
     \endcode
+
+    \bold {Note}: Only a single display output can be attached to a media object at one time.
 
     \sa QMediaObject, QMediaPlayer, QGraphicsVideoItem
 */
@@ -440,8 +435,9 @@ void QVideoWidgetPrivate::_q_fullScreenChanged(bool fullScreen)
 */
 
 /*!
-    Constructs a new widget with the given \a parent which displays video produced by a media
-    \a object.
+    Constructs a new widget which displays video produced by a media \a object.
+
+    The \a parent is passed to QWidget.
 */
 QVideoWidget::QVideoWidget(QMediaObject *object, QWidget *parent)
     : QWidget(parent, 0)
