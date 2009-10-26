@@ -50,11 +50,14 @@
 #include <gst/gsttagsetter.h>
 #include <gst/gstversion.h>
 
-#include <QDebug>
-#include <QUrl>
-#include <QSet>
+#include <QtCore/qdebug.h>
+#include <QtCore/qurl.h>
+#include <QtCore/qset.h>
 #include <QCoreApplication>
 #include <QtCore/qmetaobject.h>
+#include <QtCore/qfile.h>
+
+#include <QtGui/qimage.h>
 
 #define gstRef(element) { gst_object_ref(GST_OBJECT(element)); gst_object_sink(GST_OBJECT(element)); }
 #define gstUnref(element) { if (element) { gst_object_unref(GST_OBJECT(element)); element = 0; } }
@@ -78,7 +81,9 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
      m_videoTee(0),
      m_videoPreviewQueue(0),
      m_videoPreview(0),
-     m_encodeBin(0)
+     m_imageCaptureBin(0),
+     m_encodeBin(0),
+     m_passImage(false)
 {
     m_pipeline = gst_pipeline_new("media-capture-pipeline");
     gstRef(m_pipeline);
@@ -320,6 +325,89 @@ GstElement *QGstreamerCaptureSession::buildVideoPreview()
     return previewElement;
 }
 
+
+static gboolean passImageFilter(GstElement *element,
+                                GstBuffer *buffer,
+                                void *appdata)
+{
+    Q_UNUSED(element);
+    Q_UNUSED(buffer);
+
+    QGstreamerCaptureSession *session = (QGstreamerCaptureSession *)appdata;
+    if (session->m_passImage) {
+        session->m_passImage = false;
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
+static gboolean saveImageFilter(GstElement *element,
+                                GstBuffer *buffer,
+                                GstPad *pad,
+                                void *appdata)
+{
+    Q_UNUSED(element);
+    Q_UNUSED(pad);
+    QGstreamerCaptureSession *session = (QGstreamerCaptureSession *)appdata;
+
+    QString fileName = session->m_imageFileName;
+
+    if (!fileName.isEmpty()) {
+        QFile f(fileName);
+        if (f.open(QFile::WriteOnly)) {
+            f.write((const char *)buffer->data, buffer->size);
+            f.close();
+
+            static int signalIndex = session->metaObject()->indexOfSignal("imageCaptured(QString,QImage)");
+            session->metaObject()->method(signalIndex).invoke(session,
+                                                              Qt::QueuedConnection,
+                                                              Q_ARG(QString,fileName),
+                                                              Q_ARG(QImage,QImage()));
+        }
+    }
+
+    return TRUE;
+}
+
+GstElement *QGstreamerCaptureSession::buildImageCapture()
+{
+    GstElement *bin = gst_bin_new("image-capture-bin");
+    GstElement *queue = gst_element_factory_make("queue", "queue-image-capture");
+    GstElement *colorspace = gst_element_factory_make("ffmpegcolorspace", "ffmpegcolorspace-image-capture");
+    GstElement *encoder = gst_element_factory_make("jpegenc", "image-encoder");
+    GstElement *sink = gst_element_factory_make("fakesink","sink-image-capture");
+
+    GstPad *pad = gst_element_get_static_pad(queue, "src");
+    Q_ASSERT(pad);
+    gst_pad_add_buffer_probe(pad, G_CALLBACK(passImageFilter), this);
+
+    g_object_set(G_OBJECT(sink), "signal-handoffs", TRUE, NULL);
+    g_signal_connect(G_OBJECT(sink), "handoff",
+                     G_CALLBACK(saveImageFilter), this);
+
+    gst_bin_add_many(GST_BIN(bin), queue, colorspace, encoder, sink,  NULL);
+    gst_element_link_many(queue, colorspace, encoder, sink, NULL);
+
+    // add ghostpads
+    pad = gst_element_get_static_pad(queue, "sink");
+    Q_ASSERT(pad);
+    gst_element_add_pad(GST_ELEMENT(bin), gst_ghost_pad_new("imagesink", pad));
+    gst_object_unref(GST_OBJECT(pad));
+
+    m_passImage = true;
+    m_imageFileName = QString();
+
+    return bin;
+}
+
+void QGstreamerCaptureSession::captureImage(const QString &fileName)
+{
+    m_imageFileName = fileName;
+    m_passImage = true;
+}
+
+
 #define REMOVE_ELEMENT(element) { if (element) {gst_bin_remove(GST_BIN(m_pipeline), element); element = 0;} }
 
 bool QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMode newMode)
@@ -333,6 +421,7 @@ bool QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
     REMOVE_ELEMENT(m_videoPreviewQueue);
     REMOVE_ELEMENT(m_videoTee);
     REMOVE_ELEMENT(m_encodeBin);
+    REMOVE_ELEMENT(m_imageCaptureBin);
 
     bool ok = true;
 
@@ -354,14 +443,22 @@ bool QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
             }
             if (m_captureMode & Video) {
                 m_videoSrc = buildVideoSrc();
+                m_videoTee = gst_element_factory_make("tee", "video-preview-tee");
+                m_videoPreviewQueue = gst_element_factory_make("queue", "video-preview-queue");
                 m_videoPreview = buildVideoPreview();
+                m_imageCaptureBin = buildImageCapture();
 
-                ok &= m_videoSrc != 0;
-                ok &= m_videoPreview != 0;
+                ok &= m_videoSrc && m_videoTee && m_videoPreviewQueue && m_videoPreview && m_imageCaptureBin;
 
-                if (m_videoSrc && m_videoPreview) {
-                    gst_bin_add_many(GST_BIN(m_pipeline), m_videoSrc, m_videoPreview, NULL);
-                    ok &= gst_element_link(m_videoSrc, m_videoPreview);
+                if (ok) {
+                    gst_bin_add_many(GST_BIN(m_pipeline), m_videoSrc, m_videoTee,
+                                     m_videoPreviewQueue, m_videoPreview,
+                                     m_imageCaptureBin, NULL);
+
+                    ok &= gst_element_link(m_videoSrc, m_videoTee);
+                    ok &= gst_element_link(m_videoTee, m_videoPreviewQueue);
+                    ok &= gst_element_link(m_videoPreviewQueue, m_videoPreview);
+                    ok &= gst_element_link(m_videoTee, m_imageCaptureBin);
                 }
             }
             break;

@@ -39,36 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef QIMAGECAPTURECONTROL_H
-#define QIMAGECAPTURECONTROL_H
+#include "qgstreamerimagecapturecontrol.h"
+#include <QtCore/QDebug>
 
-#include <multimedia/qmediacontrol.h>
-
-class QImage;
-
-class Q_MEDIA_EXPORT QImageCaptureControl : public QMediaControl
+QGstreamerImageCaptureControl::QGstreamerImageCaptureControl(QGstreamerCaptureSession *session)
+    :QImageCaptureControl(session), m_session(session), m_ready(false)
 {
-    Q_OBJECT
+    connect(m_session, SIGNAL(stateChanged(QGstreamerCaptureSession::State)), SLOT(updateState()));
+    connect(m_session, SIGNAL(imageCaptured(QString,QImage)), this, SIGNAL(imageCaptured(QString,QImage)));
+}
 
-public:
-    ~QImageCaptureControl();
+QGstreamerImageCaptureControl::~QGstreamerImageCaptureControl()
+{
+}
 
-    virtual bool isReadyForCapture() const = 0;
+bool QGstreamerImageCaptureControl::isReadyForCapture() const
+{
+    return m_ready;
+}
 
-    virtual void capture(const QString &fileName) = 0;
+void QGstreamerImageCaptureControl::capture(const QString &fileName)
+{
+    m_session->captureImage(fileName);
+}
 
-Q_SIGNALS:
-    void readyForCaptureChanged(bool);
-
-    void imageCaptured(const QString &fileName, const QImage &preview);
-
-protected:
-    QImageCaptureControl(QObject* parent = 0);
-};
-
-#define QImageCaptureControl_iid "com.nokia.Qt.QImageCaptureControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QImageCaptureControl, QImageCaptureControl_iid)
-
-#endif  // QMEDIAPLAYERCONTROL_H
-
-
+void QGstreamerImageCaptureControl::updateState()
+{
+    bool ready = m_session->state() == QGstreamerCaptureSession::PreviewState;
+    if (m_ready != ready) {
+        emit readyForCaptureChanged(m_ready = ready);
+    }
+}

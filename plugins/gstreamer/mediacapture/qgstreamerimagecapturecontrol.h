@@ -39,36 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QIMAGECAPTURECONTROL_H
-#define QIMAGECAPTURECONTROL_H
 
-#include <multimedia/qmediacontrol.h>
+#ifndef QGSTREAMERIMAGECAPTURECONTROL_H
+#define QGSTREAMERIMAGECAPTURECONTROL_H
 
-class QImage;
+#include <multimedia/qimagecapturecontrol.h>
+#include "qgstreamercapturesession.h"
 
-class Q_MEDIA_EXPORT QImageCaptureControl : public QMediaControl
+class QGstreamerImageCaptureControl : public QImageCaptureControl
 {
     Q_OBJECT
-
 public:
-    ~QImageCaptureControl();
+    QGstreamerImageCaptureControl(QGstreamerCaptureSession *session);
+    virtual ~QGstreamerImageCaptureControl();
 
-    virtual bool isReadyForCapture() const = 0;
+    bool isReadyForCapture() const;
+    void capture(const QString &fileName);
 
-    virtual void capture(const QString &fileName) = 0;
+private slots:
+    void updateState();
 
-Q_SIGNALS:
-    void readyForCaptureChanged(bool);
-
-    void imageCaptured(const QString &fileName, const QImage &preview);
-
-protected:
-    QImageCaptureControl(QObject* parent = 0);
+private:
+    QGstreamerCaptureSession *m_session;
+    bool m_ready;
 };
 
-#define QImageCaptureControl_iid "com.nokia.Qt.QImageCaptureControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QImageCaptureControl, QImageCaptureControl_iid)
-
-#endif  // QMEDIAPLAYERCONTROL_H
-
-
+#endif // QGSTREAMERCAPTURECORNTROL_H

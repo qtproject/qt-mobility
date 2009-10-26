@@ -59,6 +59,7 @@ class QGstreamerVideoOverlay;
 class QGstreamerVideoWidgetControl;
 class QGstreamerElementFactory;
 class QGstreamerCaptureMetaDataControl;
+class QGstreamerImageCaptureControl;
 
 class QGstreamerCaptureService : public QMediaService
 {
@@ -92,6 +93,7 @@ private:
 #endif
     QGstreamerVideoWidgetControl *m_videoWidgetControl;
     QGstreamerElementFactory *m_videoWidgetFactory;
+    QGstreamerImageCaptureControl *m_imageCaptureControl;
 };
 
 #endif // QGSTREAMERCAPTURESERVICE_H
