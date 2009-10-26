@@ -52,7 +52,20 @@
     this is provided by a QMediaService object,
     and is used by QMediaPlayer for playback.
 
-    \sa QMediaService, QMediaPlayer
+    The interface name of QMediaPlaylistControl is \c com.nokia.Qt.QMediaPlaylistControl/1.0 as
+    defined in QMediaPlaylistControl_iid.
+
+    \sa QMediaService::control(), QMediaPlayer
+*/
+
+/*!
+    \macro QMediaPlaylistControl_iid
+
+    \c com.nokia.Qt.QMediaPlaylistControl/1.0
+
+    Defines the interface name of the QMediaPlaylistControl class.
+
+    \relates QMediaPlaylistControl
 */
 
 /*!

@@ -51,9 +51,21 @@
     \brief The abstract class for controling audio encoding parameters, this is provided
     by a QMediaService object, and is used by QMediaRecorder.
 
-    \sa QMediaService, QMediaRecorder
+    The interface name of QAudioEncoderControl is \c com.nokia.Qt.QAudioEncoderControl/1.0 as
+    defined in QAudioEncoderControl_iid.
+
+    \sa QMediaService::control(), QMediaRecorder
 */
 
+/*!
+    \macro QAudioEncoderControl_iid
+
+    \c com.nokia.Qt.AudioEncoderControl/1.0
+
+    Defines the interface name of the QAudioEncoderControl class.
+
+    \relates QAudioEncoderControl
+*/
 
 /*!
   Create a new audio encode control object with the given \a parent.

@@ -50,7 +50,20 @@
     \brief The abstract class for controling still or video cameras, this is provided
     by a QMediaService object, and is used by QCamera.
 
-    \sa QMediaService, QCamera
+    The interface name of QCameraControl is \c com.nokia.Qt.QCameraControl/1.0 as
+    defined in QCameraControl_iid.
+
+    \sa QMediaService::control(), QCamera
+*/
+
+/*!
+    \macro QCameraControl_iid
+
+    \c com.nokia.Qt.QCameraControl/1.0
+
+    Defines the interface name of the QCameraControl class.
+
+    \relates QCameraControl
 */
 
 /*!

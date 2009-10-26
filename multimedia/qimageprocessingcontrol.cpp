@@ -50,7 +50,20 @@
     \brief The abstract class for controling image processing parameters,
     like white balance, contrast, saturation, sharpening and denoising.
     
-    \sa QMediaService, QCamera
+    The interface name of QImageProcessingControl is \c com.nokia.Qt.QImageProcessingControl/1.0 as
+    defined in QImageProcessingControl_iid.
+
+    \sa QMediaService::control(), QCamera
+*/
+
+/*!
+    \macro QImageProcessingControl_iid
+
+    \c com.nokia.Qt.QImageProcessingControl/1.0
+
+    Defines the interface name of the QImageProcessingControl class.
+
+    \relates QImageProcessingControl
 */
 
 /*!

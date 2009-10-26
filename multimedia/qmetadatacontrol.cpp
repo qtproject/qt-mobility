@@ -49,7 +49,33 @@
 
     \preliminary
     \brief Implement this class to provide meta-data information about your Multimedia object.
+
+    The interface name of QMetaDataControl is \c com.nokia.Qt.QMetaDataControl/1.0 as
+    defined in QMetaDataControl_iid.
+
+    \sa QMediaService::control()
 */
+
+/*!
+    \macro QMetaDataControl_iid
+
+    \c com.nokia.Qt.QMetaDataControl/1.0
+
+    Defines the interface name of the QMetaDataControl class.
+
+    \relates QMetaDataControl
+*/
+
+/*!
+    Construct a QMetaDataControl with \a parent. This class is meant as a base class
+    for service specific meta data providers so this constructor is protected.
+*/
+
+QMetaDataControl::QMetaDataControl(QObject *parent):
+    QMediaControl(*new QMediaControlPrivate, parent)
+{
+}
+
 
 /*!
     Destroy the meta-data object.
@@ -124,14 +150,3 @@ QMetaDataControl::~QMetaDataControl()
     Signal a change in the writable status of meta-data, \a writable will be
     true if meta-data elements can be added or adjusted.
 */
-
-/*!
-    Construct a QMetaDataControl with \a parent. This class is meant as s base class
-    for service specific metaData providers so this constructor is protected.
-*/
-
-QMetaDataControl::QMetaDataControl(QObject *parent):
-    QMediaControl(*new QMediaControlPrivate, parent)
-{
-}
-

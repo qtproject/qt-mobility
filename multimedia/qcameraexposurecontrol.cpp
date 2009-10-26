@@ -49,7 +49,20 @@
     \preliminary
     \brief Media control for exposure related camera parameters.
 
-    \sa QCamera
+    The interface name of QCameraExposureControl is \c com.nokia.Qt.QCameraExposureControl/1.0 as
+    defined in QCameraExposureControl_iid.
+
+    \sa QMediaService::control(), QCamera
+*/
+
+/*!
+    \macro QCameraExposureControl_iid
+
+    \c com.nokia.Qt.QCameraExposureControl/1.0
+
+    Defines the interface name of the QCameraExposureControl class.
+
+    \relates QCameraExposureControl
 */
 
 /*!

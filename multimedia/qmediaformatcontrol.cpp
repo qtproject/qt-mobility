@@ -42,6 +42,26 @@
 
 #include <multimedia/qmediaformatcontrol.h>
 
+/*!
+    \class QMediaFormatControl
+    \preliminary
+
+    The interface name of QMediaFormatControl is \c com.nokia.Qt.QMediaFormatControl/1.0 as
+    defined in QMediaFormatControl_iid.
+
+    \sa QMediaService::control()
+*/
+
+/*!
+    \macro QMediaFormatControl_iid
+
+    \c com.nokia.Qt.QMediaFormatControl/1.0
+
+    Defines the interface name of the QMediaFormatControl class.
+
+    \relates QMediaFormatControl
+*/
+
 QMediaFormatControl::QMediaFormatControl(QObject *parent)
     :QMediaControl(parent)
 {
