@@ -382,8 +382,6 @@ public:
 
     IMAPISession* session() const { return _mapiSession; }
 
-    bool flushQueues();
-
     QMessageStore::NotificationFilterId registerNotificationFilter(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter);
     void unregisterNotificationFilter(QMessageStore::ErrorCode *lastError, QMessageStore::NotificationFilterId filterId);
 
