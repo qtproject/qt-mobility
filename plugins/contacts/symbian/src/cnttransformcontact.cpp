@@ -185,15 +185,6 @@ void TransformContact::transformContactL(
 	// Copy all fields to the Symbian contact.
 	QList<QContactDetail> detailList(contact.details());
 
-/*
-	// If no name details exist, parse possible display label as name
-	if(!hasNameDetail(detailList) && hasDisplayLabel(detailList)) {
-	    QContactName name;
-	    name.setFirst("First");
-	    name.setLast("Last");
-	    detailList.append(name);
-	}
-*/
 	// Iterate through the contact details in the QContact
 	const int detailCount(detailList.count());
 
