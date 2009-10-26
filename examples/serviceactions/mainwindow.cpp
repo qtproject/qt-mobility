@@ -509,6 +509,7 @@ void ComposeSendWidget::accountChanged()
     }
 
     m_attachmentsAction->setEnabled(!isSmsAccount);
+    m_sendAsHTMLAction->setEnabled(!isSmsAccount);
 #endif
 }
 
@@ -621,6 +622,7 @@ QMessage ComposeSendWidget::constructQMessage(bool asHtml) const
     }
 
     message.setParentAccountId(selectedAccountId);
+
     if(!composingSms && asHtml) {
         //create html body
         QString htmlBody("<html><head><title></title></head><body><h2 align=center>%1</h2><hr>%2</body></html>");
