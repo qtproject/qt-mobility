@@ -288,10 +288,10 @@ namespace {
 
         if(setPosition) {
             if(initFailed |= FAILED(m_table->SeekRow(BOOKMARK_BEGINNING,0, NULL)))
-                qWarning() << "SeekRow function failed. Ensure it's not being called on hierarchy tables or message stores tables";                     
+                qWarning() << "SeekRow function failed. Ensure it's not being called on hierarchy tables or message stores tables";
         }
 
-        if(initFailed) 
+        if(initFailed)
             m_lastError = QMessageStore::ContentInaccessible;
     }
 
