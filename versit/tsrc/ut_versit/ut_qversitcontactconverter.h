@@ -72,7 +72,11 @@ private slots:
     void testEncodeGeoLocation();
     void testEncodeOrganization();
     void testEncodeEmbeddedContent();
-    void testIsVaildRemoteURL();
+    void testIsVaildRemoteUrl();
+    void testEncodeGender();
+    void testEncodeNickName();
+    void testEncodAniversary();
+
     
 private: // Data
     QVersitContactConverter* mConverter;

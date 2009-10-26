@@ -58,7 +58,9 @@
 #include <qcontactnote.h>
 #include <qcontactgeolocation.h>
 #include <qcontactavatar.h>
-
+#include <qcontactgender.h>
+#include <qcontactnickname.h>
+#include <qcontactanniversary.h>
 
 /*!
  * Constructor.
@@ -89,7 +91,11 @@ QVersitContactConverterPrivate::QVersitContactConverterPrivate()
     mMappings.insert(
         QContactGeolocation::DefinitionName,QString::fromAscii(versitGeoId));
     mMappings.insert(
-        QContactAvatar::DefinitionName,QString::fromAscii(versitPhotoId));
+        QContactGender::DefinitionName,QString::fromAscii(versitGenderId));
+    mMappings.insert(
+        QContactNickname::DefinitionName,QString::fromAscii(versitNicknameId));
+    mMappings.insert(
+        QContactAnniversary::DefinitionName,QString::fromAscii(versitAnniversaryId));
     
     // Contexts
     mMappings.insert(
@@ -124,6 +130,16 @@ QVersitContactConverterPrivate::QVersitContactConverterPrivate()
         QContactPhoneNumber::SubTypePager,QString::fromAscii(versitPagerId));
     mMappings.insert(
         QContactAvatar::SubTypeImage,QString::fromAscii(versitPhotoId));
+    mMappings.insert(
+        QContactAnniversary::SubTypeWedding,QContactAnniversary::SubTypeWedding);
+    mMappings.insert(
+        QContactAnniversary::SubTypeEngagement,QContactAnniversary::SubTypeWedding);
+    mMappings.insert(
+        QContactAnniversary::SubTypeHouse,QContactAnniversary::SubTypeWedding);
+    mMappings.insert(
+        QContactAnniversary::SubTypeEmployment,QContactAnniversary::SubTypeWedding);
+    mMappings.insert(
+        QContactAnniversary::SubTypeMemorial,QContactAnniversary::SubTypeWedding);
 
     // Sound is mapped to the Contact Audio Ringingtones that was the nearest match
     // field for the Sound
@@ -179,6 +195,12 @@ void QVersitContactConverterPrivate::encodeFieldInfo(
         addProperty = encodeOrganization(versitDocument, detail);
     } else if (detail.definitionName() == QContactAvatar::DefinitionName){
         addProperty = encodeEmbeddedContent(property, detail);
+    } else if (detail.definitionName() == QContactAnniversary::DefinitionName) {
+        encodAniversary(property, detail);
+    } else if (detail.definitionName() == QContactNickname::DefinitionName) {
+        encodeNickName(property, detail);
+    } else if (detail.definitionName() == QContactGender::DefinitionName) {
+        encodeGender(property, detail);
     }else {
         addProperty = false;
     }
@@ -408,7 +430,7 @@ bool QVersitContactConverterPrivate::encodeEmbeddedContent(QVersitProperty& prop
             property.addParameter(QString::fromAscii(versitEncoding),
                                   QString::fromAscii(versitEncodingBase64));
         }
-        else if (isVaildRemoteURL( avatarPath )) {
+        else if (isValidRemoteUrl( avatarPath )) {
             encodeProperty = true;
             value = avatarPath.toAscii();
             property.addParameter(QString::fromAscii(versitValue),versitUrlId);
@@ -422,6 +444,44 @@ bool QVersitContactConverterPrivate::encodeEmbeddedContent(QVersitProperty& prop
 
     return encodeProperty;
 }
+
+
+/*!
+ * Encode gender property information into Versit Document
+ */
+void QVersitContactConverterPrivate::encodeGender(
+        QVersitProperty& property,const
+        QContactDetail& detail ) {
+
+    QContactGender gender = static_cast<QContactGender>(detail);
+    property.setValue(gender.gender().toAscii());
+}
+
+/*!
+ * Encode Nick name property information into the Versit Document
+ */
+void QVersitContactConverterPrivate::encodeNickName(
+        QVersitProperty& property,
+        const QContactDetail& detail ) {
+
+    QContactNickname nick = static_cast<QContactNickname>(detail);
+    property.setValue(nick.nickname().toAscii());
+}
+
+/*!
+ * Encode Aniverssary information into Versit Document
+ */
+void QVersitContactConverterPrivate::encodAniversary(
+        QVersitProperty& property,
+        const QContactDetail& detail ) {
+
+    QContactAnniversary aniversary = static_cast<QContactAnniversary>(detail);
+    QStringList subtypeList;
+    subtypeList.append(aniversary.subType());
+    encodeParameters(property, subtypeList);
+    property.setValue(aniversary.originalDate().toString(Qt::ISODate).toAscii());
+}
+
 
 /*!
  * Encode Parameter for versit property if its supported in Versit Document 
@@ -438,11 +498,10 @@ void QVersitContactConverterPrivate::encodeParameters(
 }
 
 
-
 /*!
  * Check if the Remote resouce represents a Valid remote resouce
  */
-bool QVersitContactConverterPrivate::isVaildRemoteURL(const QString& resouceIdentifier )
+bool QVersitContactConverterPrivate::isValidRemoteUrl(const QString& resouceIdentifier )
 {
     QUrl remoteResouce(resouceIdentifier);
     if ( ( !remoteResouce.scheme().isEmpty() &&

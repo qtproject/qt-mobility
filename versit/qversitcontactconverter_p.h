@@ -69,7 +69,10 @@ public:
     void encodeGeoLocation(QVersitProperty& property, const QContactDetail& detail);
     bool encodeOrganization(QVersitDocument& document, const QContactDetail& detail);
     bool encodeEmbeddedContent(QVersitProperty& property,const QContactDetail& detail );
-    bool isVaildRemoteURL(const QString& resouceIdentifier );
+    void encodeGender( QVersitProperty& property,const QContactDetail& detail );
+    void encodeNickName( QVersitProperty& property,const QContactDetail& detail );
+    void encodAniversary( QVersitProperty& property,const QContactDetail& detail );
+    bool isValidRemoteUrl(const QString& resouceIdentifier );
     
 public: // Data
     QHash<QString,QString> mMappings;

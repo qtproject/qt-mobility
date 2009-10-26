@@ -60,6 +60,9 @@
 #include <qcontactgeolocation.h>
 #include <qcontactorganization.h>
 #include <qcontactavatar.h>
+#include <qcontactgender.h>
+#include <qcontactnickname.h>
+#include <qcontactanniversary.h>
 
 
 void UT_QVersitContactConvertert::init()
@@ -735,7 +738,7 @@ void UT_QVersitContactConvertert::testEncodeParameters()
     QVERIFY(versitDocument.properties().at(0).parameters().contains(versitType, versitVideoId));
 }
 
-void UT_QVersitContactConvertert::testIsVaildRemoteURL()
+void UT_QVersitContactConvertert::testIsVaildRemoteUrl()
 {
     QContact contact;
     QContactAvatar contactAvatar;
@@ -783,4 +786,110 @@ void UT_QVersitContactConvertert::testIsVaildRemoteURL()
     contact.saveDetail(&contactAvatar);
     versitDocument = mConverter->convertContact(contact);
     QCOMPARE(0, versitDocument.properties().count());
+}
+
+
+void UT_QVersitContactConvertert::testEncodeGender()
+{
+    QContact contact;
+    QContactGender gender;
+    gender.setGender(QContactGender::GenderMale);
+
+    //API Permits setting up context but it should not be in Versit Doc
+    gender.setContexts(QContactGender::ContextHome);
+
+    contact.saveDetail(&gender);
+
+    //Convert Contat Into Versit Document
+    QVersitDocument versitDocument = mConverter->convertContact(contact);
+
+    //Ensure parameters does not exisit
+    QCOMPARE(0, versitDocument.properties().at(0).parameters().count());
+
+    //Ensure property Exisit
+    QCOMPARE(1, versitDocument.properties().count());
+
+    //Ensure property parameer exisit and matches.
+    QString propertyName = versitDocument.properties().at(0).name();
+    QString expectedPropertyName =
+        mConverterPrivate->mMappings.value(QContactGender::DefinitionName);
+    QCOMPARE(propertyName, expectedPropertyName);
+
+    //Check property value
+    QString value = versitDocument.properties().at(0).value();
+    QCOMPARE(QString(QLatin1String(QContactGender::GenderMale)), value);
+}
+
+void UT_QVersitContactConvertert::testEncodeNickName()
+{
+    QContact contact;
+    QContactNickname nickName;
+    QString nick("Simpson");
+    nickName.setNickname(nick);
+
+    //API Permits setting up context but it should not be in Versit Doc
+    nickName.setContexts(QContactDetail::ContextHome);
+
+    contact.saveDetail(&nickName);
+
+    //Convert Contat Into Versit Document
+    QVersitDocument versitDocument = mConverter->convertContact(contact);
+
+    //Ensure parameters does not exisit
+    QCOMPARE(0, versitDocument.properties().at(0).parameters().count());
+
+    //Ensure property Exisit
+    QCOMPARE(1, versitDocument.properties().count());
+
+    //Ensure property parameer exisit and matches.
+    QString propertyName = versitDocument.properties().at(0).name();
+    QString expectedPropertyName =
+        mConverterPrivate->mMappings.value(QContactNickname::DefinitionName);
+    QCOMPARE(propertyName, expectedPropertyName);
+
+    //Check property value
+    QString value = versitDocument.properties().at(0).value();
+    QCOMPARE(nick, value);
+
+}
+
+void UT_QVersitContactConvertert::testEncodAniversary()
+{
+    QContact contact;
+    QContactAnniversary aniversersary;
+    QDate date(2009,1,1);
+    aniversersary.setOriginalDate(date);
+
+    //API Permits setting up context but it should not be in Versit Doc
+    aniversersary.setContexts(QContactDetail::ContextHome);
+
+    // Set Sub Types for the Aniversary
+    aniversersary.setSubType(QContactAnniversary::SubTypeWedding);
+
+    // Save Contact Detail
+    contact.saveDetail(&aniversersary);
+
+    //Convert Contat Into Versit Document
+    QVersitDocument versitDocument = mConverter->convertContact(contact);
+
+    //Ensure parameters only one parameter exisit
+    QCOMPARE(1, versitDocument.properties().at(0).parameters().count());
+
+    //Ensure property Exisit
+    QCOMPARE(1, versitDocument.properties().count());
+
+    //Ensure property parameer exisit and matches.
+    QString propertyName = versitDocument.properties().at(0).name();
+    QString expectedPropertyName =
+        mConverterPrivate->mMappings.value(QContactAnniversary::DefinitionName);
+    QCOMPARE(propertyName, expectedPropertyName);
+
+    //Check property value
+    QString expectedValue = QString::fromAscii("2009-01-01");
+    QString value = versitDocument.properties().at(0).value();
+    QCOMPARE(expectedValue, value);
+
+    // Ensure Sub types matches.
+    QVERIFY(versitDocument.properties().at(0).parameters().contains(versitType,
+            QString(QLatin1String(QContactAnniversary::SubTypeWedding)).toUpper()));
 }
