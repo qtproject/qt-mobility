@@ -45,30 +45,28 @@
 #else
 #include "ui_dialog.h"
 #endif
-#include <QDebug>
-#include <QDesktopWidget>
 #include <QMessageBox>
-
-#include <qsysteminfo.h>
-
 
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::Dialog)
+    ui(new Ui::Dialog),
+    systemInfo(NULL), di(NULL), saver(NULL)
 {
     ui->setupUi(this);
     setupGeneral();
 
-
     connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
-   connect(ui->versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
-   connect(ui->featureComboBox,SIGNAL(activated(int)), this,SLOT(getFeature(int)));
+    connect(ui->versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
+    connect(ui->featureComboBox,SIGNAL(activated(int)), this,SLOT(getFeature(int)));
 
 }
 
 Dialog::~Dialog()
 {
     delete ui;
+    delete systemInfo;
+    delete di;
+    delete saver;
 }
 
 void Dialog::changeEvent(QEvent *e)
@@ -85,6 +83,43 @@ void Dialog::changeEvent(QEvent *e)
 
 void Dialog::tabChanged(int index)
 {
+#ifdef Q_OS_SYMBIAN
+    switch(index) {
+    case 0:
+        setupGeneral();
+        break;
+    case 1:
+        setupGeneral();
+        break;
+    case 2:
+        setupDevice();
+        break;
+    case 3:
+        setupDevice();
+        break;
+    case 4:
+        setupDevice();
+        break;
+    case 5:
+        setupDisplay();
+        break;
+    case 6:
+        setupStorage();
+        break;
+    case 7:
+        setupNetwork();
+        break;
+    case 8:
+        setupNetwork();
+        break;
+    case 9:
+        setupNetwork();
+        break;
+    case 10:
+        setupSaver();
+        break;
+    };
+#else
     switch(index) {
     case 0:
         setupGeneral();
@@ -101,21 +136,25 @@ void Dialog::tabChanged(int index)
     case 4:
         setupNetwork();
         break;
-        case 5:
+    case 5:
         setupSaver();
         break;
     };
+#endif
 }
 
 void Dialog::setupGeneral()
 {
-    ui->curLanguageLineEdit->setText( QSystemInfo::currentLanguage());
-    ui->languagesComboBox->insertItems(0,QSystemInfo::availableLanguages());
-    ui->countryCodeLabel->setText(QSystemInfo::currentCountryCode());
+    delete systemInfo;
+    systemInfo = new QSystemInfo(this);
+    ui->curLanguageLineEdit->setText( systemInfo->currentLanguage());
+    ui->languagesComboBox->insertItems(0,systemInfo->availableLanguages());
+    ui->countryCodeLabel->setText(systemInfo->currentCountryCode());
 }
 
 void Dialog::setupDevice()
 {
+    delete di;
     di = new QSystemDeviceInfo(this);
     ui->batteryLevelBar->setValue(di->batteryLevel());
 
@@ -174,8 +213,10 @@ void Dialog::setupDevice()
 
 void Dialog::setupDisplay()
 {
-    ui->brightnessLineEdit->setText(QString::number(QSystemDisplayInfo::displayBrightness(0)));
-    ui->colorDepthLineEdit->setText(QString::number(QSystemDisplayInfo::colorDepth((0))));
+    QSystemDisplayInfo di;
+    ui->brightnessLineEdit->setText(QString::number(di.displayBrightness(0)));
+    ui->colorDepthLineEdit->setText(QString::number(di.colorDepth((0))));
+
 }
 
 void Dialog::setupStorage()
@@ -236,7 +277,6 @@ void Dialog::setupNetwork()
     ui->homeMMCLabel->setText(ni->homeMobileCountryCode());
     ui->homeMNCLabel->setText(ni->homeMobileNetworkCode());
 }
-
 void Dialog::netStatusComboActivated(int index)
 {
     QString status;
@@ -378,6 +418,7 @@ void Dialog::getFeature(int index)
 
 void Dialog::setupSaver()
 {
+    delete saver;
     saver = new QSystemScreenSaver(this);
     bool saverEnabled = saver->screenSaverInhibited();
 
