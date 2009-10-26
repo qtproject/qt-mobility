@@ -2350,7 +2350,6 @@ MapiEntryId MapiStore::standardFolderId(QMessageStore::ErrorCode *lastError, QMe
                 rf = rootFolder(lastError);
                 if(*lastError != QMessageStore::NoError)
                 {
-                    qWarning() << "Query for standard folder " << sf << " failed on store: " << name();
                     return result;
                 }
             }
@@ -2363,7 +2362,6 @@ MapiEntryId MapiStore::standardFolderId(QMessageStore::ErrorCode *lastError, QMe
             result = entryId;
         } else {
             *lastError = QMessageStore::ContentInaccessible;
-            qWarning() << "Query for standard folder " << sf << " failed on store: " << name();
         }
     }
 
