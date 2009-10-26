@@ -246,47 +246,52 @@ void UT_VersitUtils::testUnfold()
     
     // Single space
     QByteArray folded("unfol\r\n ded\r\n");
-    QByteArray unfolded("unfol ded\r\n");
-    QCOMPARE(unfolded, VersitUtils::unfoldVCard21(folded));
+    QByteArray unfolded("unfolded\r\n");
+    QCOMPARE(unfolded, VersitUtils::unfold(folded));
 
     // Multiple spaces
-    folded = "unfol\r\n   ded\r\n";
-    QCOMPARE(unfolded, VersitUtils::unfoldVCard21(folded));
+    folded = "unfol\r\n  ded\r\n";
+    unfolded = "unfol ded\r\n";
+    QCOMPARE(unfolded, VersitUtils::unfold(folded));
 
     // Single tab
     folded = "unfol\r\n\tded\r\n";
-    QCOMPARE(unfolded, VersitUtils::unfoldVCard21(folded));
+    unfolded = "unfolded\r\n";
+    QCOMPARE(unfolded, VersitUtils::unfold(folded));
 
     // Multiple tabs
     folded = "unfol\r\n\t\tded\r\n";
-    QCOMPARE(unfolded, VersitUtils::unfoldVCard21(folded));
+    unfolded = "unfol\tded\r\n";
+    QCOMPARE(unfolded, VersitUtils::unfold(folded));
     
     // One space and one tab
     folded = "unfol\r\n \tded\r\n";
-    QCOMPARE(unfolded, VersitUtils::unfoldVCard21(folded));
+    QCOMPARE(unfolded, VersitUtils::unfold(folded));
     
     // One tab and one space
     folded = "unfol\r\n\t ded\r\n";
-    QCOMPARE(unfolded, VersitUtils::unfoldVCard21(folded));
+    unfolded = "unfol ded\r\n";
+    QCOMPARE(unfolded, VersitUtils::unfold(folded));
     
     // Multiple spaces and tabs
     folded = "unfol\r\n\t \t  \t\t ded\r\n";
-    QCOMPARE(unfolded, VersitUtils::unfoldVCard21(folded));
+    unfolded = "unfol \t  \t\t ded\r\n";
+    QCOMPARE(unfolded, VersitUtils::unfold(folded));
     
     // Two foldings
     folded = "un\r\n\tfol\r\n ded\r\n";
-    unfolded = "un fol ded\r\n";
-    QCOMPARE(unfolded, VersitUtils::unfoldVCard21(folded));
+    unfolded = "unfolded\r\n";
+    QCOMPARE(unfolded, VersitUtils::unfold(folded));
 
     // Three foldings
-    folded = "un\r\n fol\r\n\tde\r\n \t d\r\n";
-    unfolded = "un fol de d\r\n";
-    QCOMPARE(unfolded, VersitUtils::unfoldVCard21(folded));
+    folded = "un\r\n fol\r\n\tde\r\n d\r\n";
+    unfolded = "unfolded\r\n";
+    QCOMPARE(unfolded, VersitUtils::unfold(folded));
     
     // Two actual lines containing foldings
     folded = "li\r\n\tne1\r\nl\r\n ine2\r\n";
-    unfolded = "li ne1\r\nl ine2\r\n";
-    QCOMPARE(unfolded, VersitUtils::unfoldVCard21(folded));
+    unfolded = "line1\r\nline2\r\n";
+    QCOMPARE(unfolded, VersitUtils::unfold(folded));
 }
 
 void UT_VersitUtils::testQuotedPrintableEncode()
