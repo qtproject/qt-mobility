@@ -114,22 +114,22 @@ QContact TransformContact::transformContactL(CContactItem &contact, CContactData
 {
 		// Create a new QContact
 		QContact newQtContact;
-		
+
 		//set contact id
 		QContactId newId;
-		newId.setLocalId(contact.Id());        
+		newId.setLocalId(contact.Id());
 		newQtContact.setId(newId);
 
-		// set the corect type 
+		// set the corect type
         if (contact.Type() == KUidContactGroup)
         {
             newQtContact.setType(QContactType::TypeGroup);
-        }   
+        }
         else
         {
             newQtContact.setType(QContactType::TypeContact);
         }
-		
+
 		// Iterate through the CContactItemFieldSet, creating
 		// new fields for the QContact
 		CContactItemFieldSet& fields(contact.CardFields());
@@ -185,6 +185,15 @@ void TransformContact::transformContactL(
 	// Copy all fields to the Symbian contact.
 	QList<QContactDetail> detailList(contact.details());
 
+/*
+	// If no name details exist, parse possible display label as name
+	if(!hasNameDetail(detailList) && hasDisplayLabel(detailList)) {
+	    QContactName name;
+	    name.setFirst("First");
+	    name.setLast("Last");
+	    detailList.append(name);
+	}
+*/
 	// Iterate through the contact details in the QContact
 	const int detailCount(detailList.count());
 
@@ -209,7 +218,7 @@ QList<TUid> TransformContact::supportedSortingFieldTypes( QString detailDefiniti
     QList<TUid> uids;
     QMap<ContactData, TransformContactData*>::const_iterator i = m_transformContactData.constBegin();
     while (i != m_transformContactData.constEnd()) {
-        if (i.value()->supportsDetail(detailDefinitionName)) { 
+        if (i.value()->supportsDetail(detailDefinitionName)) {
             uids = i.value()->supportedSortingFieldTypes(detailFieldName);
             if( uids.count() )
                 break;
@@ -222,17 +231,18 @@ QList<TUid> TransformContact::supportedSortingFieldTypes( QString detailDefiniti
 QList<CContactItemField *> TransformContact::transformDetailL(const QContactDetail &detail) const
 {
 	QList<CContactItemField *> itemFieldList;
-	QScopedPointer<QString> detailName(new QString(detail.definitionName()));
+	if(!detail.isEmpty()) {
+        QScopedPointer<QString> detailName(new QString(detail.definitionName()));
 
-	QMap<ContactData, TransformContactData*>::const_iterator i = m_transformContactData.constBegin();
-	while (i != m_transformContactData.constEnd()) {
-        if (i.value()->supportsDetail(*detailName)) {
-            itemFieldList = i.value()->transformDetailL(detail);
-            break;
-	    }
-        ++i;
-    }
-
+        QMap<ContactData, TransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+        while (i != m_transformContactData.constEnd()) {
+            if (i.value()->supportsDetail(*detailName)) {
+                itemFieldList = i.value()->transformDetailL(detail);
+                break;
+            }
+            ++i;
+        }
+	}
 	return itemFieldList;
 }
 
