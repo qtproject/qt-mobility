@@ -922,7 +922,7 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 
 void QSystemNetworkInfoPrivate::startWifiCallback()
 {
-#if !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
     if(networkStatus(QSystemNetworkInfo::WlanMode) != QSystemNetworkInfo::Connected
     && wlanCallbackInitialized){
         return;
@@ -1271,7 +1271,7 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
         break;
     case QSystemNetworkInfo::EthernetMode:
         {
-#if !defined(Q_OS_WINCE)
+#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
             WMIHelper *wHelper;
             wHelper = new WMIHelper(this);
             wHelper->setWmiNamespace("root/cimv2");
