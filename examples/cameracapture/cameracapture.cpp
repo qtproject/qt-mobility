@@ -100,6 +100,8 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
     else
         camera = new QCamera(cameraDevice);
 
+    connect(camera, SIGNAL(stateChanged(QCamera::State)), this, SLOT(updateCameraState(QCamera::State)));
+
     service = camera->service();
     mediaRecorder = new QMediaRecorder(camera);
 
@@ -122,7 +124,6 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
 
     connect(audioDevicesGroup, SIGNAL(triggered(QAction*)), this, SLOT(updateAudioDevice(QAction*)));
 
-
     mediaRecorder->setSink(QUrl("test.mkv"));
 
     connect(mediaRecorder, SIGNAL(durationChanged(qint64)), this, SLOT(updateRecordTime()));
@@ -132,7 +133,11 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
 
     videoWidget = new QVideoWidget(mediaRecorder);
     ui->stackedWidget->addWidget(videoWidget);
-    ui->previewCamera->setChecked(false);
+
+    updateCameraState(camera->state());
+
+    connect(camera, SIGNAL(readyForCaptureChanged(bool)), ui->imageCaptureBox, SLOT(setEnabled(bool)));
+    connect(camera, SIGNAL(imageCaptured(QString,QImage)), this, SLOT(processCapturedImage(QString,QImage)));
 }
 
 
@@ -140,6 +145,11 @@ void CameraCapture::updateRecordTime()
 {
     QString str = QString("Recorded %1 sec").arg(mediaRecorder->duration()/1000);
     ui->statusbar->showMessage(str);
+}
+
+void CameraCapture::processCapturedImage(const QString& fname, const QImage& img)
+{
+    qDebug() << "image captured:" << fname;
 }
 
 void CameraCapture::settings()
@@ -174,13 +184,41 @@ void CameraCapture::stop()
     mediaRecorder->stop();
 }
 
-void CameraCapture::enablePreview(bool enabled)
+void CameraCapture::takeImage()
 {
-    if (enabled)
-        camera->start();
-    else
-        camera->stop();
+    camera->capture(QDateTime::currentDateTime().toString(Qt::ISODate)+".jpg");
 }
+
+void CameraCapture::toggleCamera()
+{
+    if (camera->state() == QCamera::ActiveState)
+        camera->stop();
+    else
+        camera->start();
+}
+
+void CameraCapture::updateCameraState(QCamera::State state)
+{
+    if (state == QCamera::ActiveState) {
+        ui->actionCamera->setEnabled(false);
+        ui->actionAudio->setEnabled(false);
+        ui->actionSettings->setEnabled(false);
+
+        ui->startCameraButton->setText(tr("Stop Camera"));
+        ui->startCameraButton->setChecked(true);
+        ui->videoCaptureBox->setEnabled(true);
+    } else {
+        ui->actionCamera->setEnabled(true);
+        ui->actionAudio->setEnabled(true);
+        ui->actionSettings->setEnabled(true);
+
+        ui->startCameraButton->setText(tr("Start Camera"));
+        ui->startCameraButton->setChecked(false);
+        ui->imageCaptureBox->setEnabled(false);
+        ui->videoCaptureBox->setEnabled(false);
+    }
+}
+
 
 void CameraCapture::displayErrorMessage()
 {

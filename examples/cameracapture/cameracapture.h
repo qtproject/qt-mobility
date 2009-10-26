@@ -42,6 +42,8 @@
 #ifndef RECORDER_H
 #define RECORDER_H
 
+#include <multimedia/qcamera.h>
+
 namespace Ui {
     class CameraCapture;
 }
@@ -62,19 +64,26 @@ public:
 private slots:
     void setCamera(const QByteArray &cameraDevice);
 
-    void updateRecordTime();
+    void toggleCamera();
+
     void record();
     void pause();
     void stop();
+
+    void takeImage();
 
     void settings();
 
     void displayErrorMessage();
 
-    void enablePreview(bool);
-
     void updateCameraDevice(QAction*);
     void updateAudioDevice(QAction*);
+
+    void updateCameraState(QCamera::State);
+
+    void updateRecordTime();
+
+    void processCapturedImage(const QString& fname, const QImage& img);
 
 private:
     Ui::CameraCapture *ui;
