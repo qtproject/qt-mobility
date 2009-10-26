@@ -306,37 +306,36 @@ void QNetworkSessionPrivate::updateState(QNetworkSession::State newState)
 
 	if (state == QNetworkSession::Disconnected) {
 	    isActive = false;
-	    currentNetworkInterface = QString();
-	    if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
+	    currentNetworkInterface.clear();
+	    if (publicConfig.type() == QNetworkConfiguration::UserChoice)
 		activeConfig.d->state = QNetworkConfiguration::Defined;
-	    } else {
-		publicConfig.d->state = QNetworkConfiguration::Defined;
-	    }
+	    publicConfig.d->state = QNetworkConfiguration::Defined;
 
 	} else if (state == QNetworkSession::Connected) {
 	    isActive = true;
 	    if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
 		activeConfig.d->state = QNetworkConfiguration::Active;
 		activeConfig.d->type = QNetworkConfiguration::InternetAccessPoint;
-	    } else {
-		publicConfig.d->state = QNetworkConfiguration::Active;
-		publicConfig.d->type = QNetworkConfiguration::InternetAccessPoint;
 	    }
+	    publicConfig.d->state = QNetworkConfiguration::Active;
 	}
 
-	emit q->stateChanged(state);
+	emit q->stateChanged(newState);
     }
 }
 
 
-QString QNetworkSessionPrivate::updateIdentifier(QString &newId)
+void QNetworkSessionPrivate::updateIdentifier(QString &newId)
 {
     if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
 	activeConfig.d->network_attrs |= ICD_NW_ATTR_IAPNAME;
-	return (activeConfig.d->id = newId);
+	activeConfig.d->id = newId;
     } else {
 	publicConfig.d->network_attrs |= ICD_NW_ATTR_IAPNAME;
-	return (publicConfig.d->id = newId);
+	if (publicConfig.d->id != newId) {
+	    qWarning() << "Your config id changed from" << publicConfig.d->id << "to" << newId;
+	    publicConfig.d->id = newId;
+	}
     }
 }
 
@@ -398,100 +397,203 @@ quint64 QNetworkSessionPrivate::activeTime() const
 }
 
 
-/* This is called by QNetworkSession constructor */
+QNetworkConfiguration& QNetworkSessionPrivate::copyConfig(QNetworkConfiguration &fromConfig, QNetworkConfiguration &toConfig)
+{
+    QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
+    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
+    toConfig.d = ptr;
+
+    toConfig.d->name = fromConfig.d->name;
+    toConfig.d->isValid = fromConfig.d->isValid;
+    // Note that we do not copy id field here as the publicConfig does
+    // not contain a valid IAP id.
+    toConfig.d->state = fromConfig.d->state;
+    toConfig.d->type = fromConfig.d->type;
+    toConfig.d->roamingSupported = fromConfig.d->roamingSupported;
+    toConfig.d->purpose = fromConfig.d->purpose;
+    toConfig.d->network_id = fromConfig.d->network_id;
+    toConfig.d->iap_type = fromConfig.d->iap_type;
+    toConfig.d->network_attrs = fromConfig.d->network_attrs;
+    toConfig.d->service_type = fromConfig.d->service_type;
+    toConfig.d->service_id = fromConfig.d->service_id;
+    toConfig.d->service_attrs = fromConfig.d->service_attrs;
+    toConfig.d->manager = fromConfig.d->manager;
+
+    return toConfig;
+}
+
+
+/* This is called by QNetworkSession constructor and it updates the current
+ * state of the configuration.
+ */
 void QNetworkSessionPrivate::syncStateWithInterface()
 {
-    bool get_state = true;
-
     /* Start to listen Icd status messages. */
     icdListener()->setup(this);
 
-    connect(&manager, SIGNAL(updateCompleted()), this, SLOT(networkConfigurationsChanged()));
-    connect(&manager, SIGNAL(configurationChanged(QNetworkConfiguration)),
-            this, SLOT(configurationChanged(QNetworkConfiguration)));
+    /* Initially we are not active although the configuration might be in
+     * connected state.
+     */
+    isActive = false;
+    opened = false;
+
+    QObject::connect(&manager, SIGNAL(updateCompleted()), this, SLOT(networkConfigurationsChanged()));
+
+    if (publicConfig.d.data()) {
+	QNetworkConfigurationManagerPrivate* mgr = (QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager;
+	if (mgr) {
+	    QObject::connect(mgr, SIGNAL(configurationChanged(QNetworkConfiguration)),
+			    this, SLOT(configurationChanged(QNetworkConfiguration)));
+	} else {
+	    qWarning()<<"Manager object not set when trying to connect configurationChanged signal. Your configuration object is not correctly setup, did you remember to call manager.updateConfigurations() before creating session object?";
+	    state = QNetworkSession::Invalid;
+	    lastError = QNetworkSession::UnknownSessionError;
+	    return;
+	}
+    }
 
     state = QNetworkSession::Invalid;
     lastError = QNetworkSession::UnknownSessionError;
 
     switch (publicConfig.type()) {
     case QNetworkConfiguration::InternetAccessPoint:
-        activeConfig = publicConfig;
+	activeConfig = publicConfig;
         break;
     case QNetworkConfiguration::ServiceNetwork:
-        serviceConfig = publicConfig;
+	serviceConfig = publicConfig;
 	break;
     case QNetworkConfiguration::UserChoice:
-        activeConfig = publicConfig; /* active config will contain correct data
-				      * after open() has succeeded
-				      */
+	// active config will contain correct data after open() has succeeded
+	copyConfig(publicConfig, activeConfig);
+
+	/* We create new configuration that holds the actual configuration
+	 * returned by icd. This way publicConfig still contains the
+	 * original user specified configuration.
+	 *
+	 * Note that the new activeConfig configuration is not inserted
+	 * to configurationManager as manager class will get the newly
+	 * connected configuration from gconf when the IAP is saved.
+	 * This configuration manager update is done by IapMonitor class.
+	 * If the ANY connection fails in open(), then the configuration
+	 * data is not saved to gconf and will not be added to
+	 * configuration manager IAP list.
+	 */
+#ifdef BEARER_MANAGEMENT_DEBUG
+	qDebug()<<"New configuration created for" << publicConfig.identifier();
+#endif
 	break;
     default:
-	get_state = false;
-	break;
+	/* Invalid configuration, no point continuing */
+	return;
     }
 
+    if (!activeConfig.isValid())
+	return;
 
     /* Get the initial state from icd */
     Maemo::Icd icd;
     QList<Maemo::IcdStateResult> state_results;
 
-    /* Update the active config from first connection */
-    if (get_state &&
-	icd.state(state_results) &&
-	state_results.size()>0) {
+    /* Update the active config from first connection, this is ok as icd
+     * supports only one connection anyway.
+     */
+    if (icd.state(state_results) && !state_results.isEmpty()) {
 
-	switch (state_results.first().state) {
-	case ICD_STATE_DISCONNECTED:
-	    state = QNetworkSession::Disconnected;
-	    if (activeConfig.d)
-		activeConfig.d->isValid = true;
-	    break;
-	case ICD_STATE_CONNECTING:
-	    state = QNetworkSession::Connecting;
-	    if (activeConfig.d)
-		activeConfig.d->isValid = true;
-	    break;
-	case ICD_STATE_CONNECTED:
-	    if (!state_results.first().error.isEmpty())
-		break;
-	    state = QNetworkSession::Connected;
-	    if (activeConfig.d) {
-		activeConfig.d->network_id = state_results.first().params.network_id;
-		activeConfig.d->id = activeConfig.d->network_id;
-		activeConfig.d->network_attrs = state_results.first().params.network_attrs;
-		activeConfig.d->iap_type = state_results.first().params.network_type;
-		activeConfig.d->service_type = state_results.first().params.service_type;
-		activeConfig.d->service_id = state_results.first().params.service_id;
-		activeConfig.d->service_attrs = state_results.first().params.service_attrs;
-		activeConfig.d->type = QNetworkConfiguration::InternetAccessPoint;
-		activeConfig.d->state = QNetworkConfiguration::Active;
-		activeConfig.d->isValid = true;
-		currentNetworkInterface = get_network_interface();
+	/* If we did not get full state back, then we are not
+	 * connected and can skip the next part.
+	 */
+	if (!(state_results.first().params.network_attrs == 0 &&
+		state_results.first().params.network_id.isEmpty())) {
 
-		Maemo::IAPConf iap_name(activeConfig.d->id);
-		QString name_value = iap_name.value("name").toString();
-		if (!name_value.isEmpty())
-		    activeConfig.d->name = name_value;
-		else
-		    activeConfig.d->name = activeConfig.d->id;
-	    } else {
+	    /* If we try to connect to specific IAP and we get results back
+	     * that tell the icd is actually connected to another IAP,
+	     * then do not update current state etc.
+	     */
+	    if (!(publicConfig.type() != QNetworkConfiguration::UserChoice &&
+		    publicConfig.d->id != state_results.first().params.network_id)) {
+
+		switch (state_results.first().state) {
+		case ICD_STATE_DISCONNECTED:
+		    state = QNetworkSession::Disconnected;
+		    if (activeConfig.d.data())
+			activeConfig.d->isValid = true;
+		    break;
+		case ICD_STATE_CONNECTING:
+		    state = QNetworkSession::Connecting;
+		    if (activeConfig.d.data())
+			activeConfig.d->isValid = true;
+		    break;
+		case ICD_STATE_CONNECTED:
+		    {
+			if (!state_results.first().error.isEmpty())
+			    break;
+
+			state = QNetworkSession::Connected;
+			activeConfig.d->network_id = state_results.first().params.network_id;
+			activeConfig.d->id = activeConfig.d->network_id;
+			activeConfig.d->network_attrs = state_results.first().params.network_attrs;
+			activeConfig.d->iap_type = state_results.first().params.network_type;
+			activeConfig.d->service_type = state_results.first().params.service_type;
+			activeConfig.d->service_id = state_results.first().params.service_id;
+			activeConfig.d->service_attrs = state_results.first().params.service_attrs;
+			activeConfig.d->type = QNetworkConfiguration::InternetAccessPoint;
+			activeConfig.d->state = QNetworkConfiguration::Active;
+			activeConfig.d->isValid = true;
+			currentNetworkInterface = get_network_interface();
+
+			Maemo::IAPConf iap_name(activeConfig.d->id);
+			QString name_value = iap_name.value("name").toString();
+			if (!name_value.isEmpty())
+			    activeConfig.d->name = name_value;
+			else
+			    activeConfig.d->name = activeConfig.d->id;
+
+
+			// Add the new active configuration to manager or update the old config
+			QNetworkConfigurationManagerPrivate *mgr = (QNetworkConfigurationManagerPrivate*)activeConfig.d.data()->manager;
+			if (!(mgr->accessPointConfigurations.contains(activeConfig.d->id))) {
+			    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr = activeConfig.d;
+			    mgr->accessPointConfigurations.insert(activeConfig.d->id, ptr);
+
+			    QNetworkConfiguration item;
+			    item.d = ptr;
+			    emit mgr->configurationAdded(item);
+
 #ifdef BEARER_MANAGEMENT_DEBUG
-		qDebug()<<"activeConfig is not correct";
+			    //qDebug()<<"New configuration"<<activeConfig.d->id<<"added to manager in sync";
 #endif
+
+			} else {
+			    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = mgr->accessPointConfigurations.take(activeConfig.d->id);
+			    priv = activeConfig.d;
+			    mgr->accessPointConfigurations.insert(activeConfig.d->id, priv);
+			    mgr->configurationChanged((QNetworkConfigurationPrivate*)priv.data());
+
+#ifdef BEARER_MANAGEMENT_DEBUG
+			    //qDebug()<<"Existing configuration"<<activeConfig.d->id<<"updated in manager in sync";
+#endif
+			}
+
+		    }
+		    break;
+
+		case ICD_STATE_DISCONNECTING:
+		    state = QNetworkSession::Closing;
+		    if (activeConfig.d.data())
+			activeConfig.d->isValid = true;
+		    break;
+		default:
+		    break;
+		}
 	    }
-	    break;
-	case ICD_STATE_DISCONNECTING:
-	    state = QNetworkSession::Closing;
-	    if (activeConfig.d)
-		activeConfig.d->isValid = true;
-	    break;
-	default:
-	    break;
+	} else {
+#ifdef BEARER_MANAGEMENT_DEBUG
+	    qDebug() << "status_req tells icd is not connected";
+#endif
 	}
     } else {
 #ifdef BEARER_MANAGEMENT_DEBUG
-	if (get_state)
-	    qDebug() << "status_req did not return any results from icd";
+	qDebug() << "status_req did not return any results from icd";
 #endif
     }
 
@@ -538,14 +640,29 @@ void QNetworkSessionPrivate::updateStateFromServiceNetwork()
 }
 
 
+void QNetworkSessionPrivate::clearConfiguration(QNetworkConfiguration &config)
+{
+    config.d->network_id.clear();
+    config.d->iap_type.clear();
+    config.d->network_attrs = 0;
+    config.d->service_type.clear();
+    config.d->service_id.clear();
+    config.d->service_attrs = 0;
+}
+
+
 void QNetworkSessionPrivate::updateStateFromActiveConfig()
 {
     QNetworkSession::State oldState = state;
 
     bool newActive = false;
 
+    if (!activeConfig.d.data())
+	return;
+
     if (!activeConfig.isValid()) {
         state = QNetworkSession::Invalid;
+	clearConfiguration(activeConfig);
     } else if ((activeConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
         state = QNetworkSession::Connected;
         newActive = opened;
@@ -555,6 +672,7 @@ void QNetworkSessionPrivate::updateStateFromActiveConfig()
         state = QNetworkSession::NotAvailable;
     } else if ((activeConfig.state() & QNetworkConfiguration::Undefined) == QNetworkConfiguration::Undefined) {
         state = QNetworkSession::NotAvailable;
+	clearConfiguration(activeConfig);
     }
 
     bool oldActive = isActive;
@@ -562,11 +680,25 @@ void QNetworkSessionPrivate::updateStateFromActiveConfig()
 
     if (!oldActive && isActive)
         emit quitPendingWaitsForOpened();
+
     if (oldActive && !isActive)
         emit q->sessionClosed();
 
-    if (oldState != state)
+    if (oldState != state) {
         emit q->stateChanged(state);
+
+	if (state == QNetworkSession::Disconnected) {
+#ifdef BEARER_MANAGEMENT_DEBUG
+	    //qDebug()<<"session aborted error emitted for"<<activeConfig.identifier();
+#endif
+	    lastError = QNetworkSession::SessionAbortedError;
+	    emit q->error(lastError);
+	}
+    }
+
+#ifdef BEARER_MANAGEMENT_DEBUG
+    //qDebug()<<"oldState ="<<oldState<<" state ="<<state<<" oldActive ="<<oldActive<<" newActive ="<<newActive<<" opened ="<<opened;
+#endif
 }
 
 
@@ -638,10 +770,11 @@ void QNetworkSessionPrivate::open()
     } else if (!isActive) {
 
 	if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
-	    // Caller is trying to connect to default IAP.
-	    // At this time we will not know the IAP details so we just
-	    // connect and update the active config when the IAP is
-	    // connected.
+	    /* Caller is trying to connect to default IAP.
+	     * At this time we will not know the IAP details so we just
+	     * connect and update the active config when the IAP is
+	     * connected.
+	     */
 	    opened = true;
             state = QNetworkSession::Connecting;
             emit q->stateChanged(state);
@@ -649,8 +782,9 @@ void QNetworkSessionPrivate::open()
 	    return;
 	}
 
-	// User is connecting to one specific IAP. If that IAP is not
-	// in discovered state we cannot continue.
+	/* User is connecting to one specific IAP. If that IAP is not
+	 * in discovered state we cannot continue.
+	 */
         if ((activeConfig.state() & QNetworkConfiguration::Discovered) !=
             QNetworkConfiguration::Discovered) {
             lastError =QNetworkSession::InvalidConfigurationError;
@@ -670,6 +804,9 @@ void QNetworkSessionPrivate::open()
         isActive = (activeConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active;
         if (isActive)
             emit quitPendingWaitsForOpened();
+    } else {
+	/* We seem to be active so inform caller */
+	emit quitPendingWaitsForOpened();
     }
 }
 
@@ -710,7 +847,7 @@ void QNetworkSessionPrivate::do_open()
 	QList<Maemo::ConnectParams> params;
 	Maemo::ConnectParams param;
 	param.connect.service_type = config->d->service_type;
-	param.connect.service_attrs = config->d->service_attrs = 0; // TODO: This should be initialized somewhere else
+	param.connect.service_attrs = config->d->service_attrs;
 	param.connect.service_id = config->d->service_id;
 	param.connect.network_type = config->d->iap_type;
 	param.connect.network_attrs = config->d->network_attrs;
@@ -721,7 +858,13 @@ void QNetworkSessionPrivate::do_open()
 	params.append(param);
 
 #ifdef BEARER_MANAGEMENT_DEBUG
-	qDebug("connecting to %s/%s/0x%x/%s/0x%x/%s", param.connect.network_id.data(), param.connect.network_type.toAscii().constData(), param.connect.network_attrs, param.connect.service_type.toAscii().constData(), param.connect.service_attrs, param.connect.service_id.toAscii().constData());
+	qDebug("connecting to %s/%s/0x%x/%s/0x%x/%s",
+	    param.connect.network_id.data(),
+	    param.connect.network_type.toAscii().constData(),
+	    param.connect.network_attrs,
+	    param.connect.service_type.toAscii().constData(),
+	    param.connect.service_attrs,
+	    param.connect.service_id.toAscii().constData());
 #endif
 	st = icd.connect(flags, params, connect_result);
     }
@@ -735,12 +878,31 @@ void QNetworkSessionPrivate::do_open()
 	    qDebug() << "connect to"<< iap << "failed, result is empty";
 #endif
 	    updateState(QNetworkSession::Disconnected);
+	    emit quitPendingWaitsForOpened();
+	    emit q->error(QNetworkSession::InvalidConfigurationError);
+	    if (publicConfig.type() == QNetworkConfiguration::UserChoice)
+		cleanupAnyConfiguration();
+	    return;
+	}
+
+	/* If the user tried to connect to some specific connection (foo)
+	 * and we were already connected to some other connection (bar),
+	 * then we cannot activate this session although icd has a valid
+	 * connection to somewhere.
+	 */
+	if ((publicConfig.type() != QNetworkConfiguration::UserChoice) &&
+	    (connected_iap != config->identifier())) {
+	    updateState(QNetworkSession::Disconnected);
+	    emit quitPendingWaitsForOpened();
 	    emit q->error(QNetworkSession::InvalidConfigurationError);
 	    return;
 	}
 
+
 	/* Did we connect to non saved IAP? */
 	if (!(config->d->network_attrs & ICD_NW_ATTR_IAPNAME)) {
+	    /* Because the connection succeeded, the IAP is now known.
+	     */
 	    config->d->network_attrs |= ICD_NW_ATTR_IAPNAME;
 	    config->d->id = connected_iap;
 	}
@@ -773,7 +935,63 @@ void QNetworkSessionPrivate::do_open()
 	qDebug() << "connected to" << result << config->d->name << "at" << currentNetworkInterface;
 #endif
 
-	emit q->sessionOpened();
+	/* We first check if the configuration already exists in the manager
+	 * and if it is not found there, we then insert it. Note that this
+	 * is only done for user choice config only because it can be missing
+	 * from config manager list.
+	 */
+
+	if (publicConfig.d->type == QNetworkConfiguration::UserChoice) {
+
+#ifdef BEARER_MANAGEMENT_DEBUG
+#if 0
+	    QList<QNetworkConfiguration> configs;
+	    QNetworkConfigurationManagerPrivate *conPriv = (QNetworkConfigurationManagerPrivate*)config->d.data()->manager;
+	    QList<QString> cpsIdents = conPriv->accessPointConfigurations.keys();
+	    foreach( QString ii, cpsIdents) {
+		QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> p = 
+		    conPriv->accessPointConfigurations.value(ii);
+		QNetworkConfiguration pt;
+		pt.d = conPriv->accessPointConfigurations.value(ii);
+		configs << pt;
+	    }
+
+	    int all = configs.count();
+	    qDebug() << "All configurations:" << all;
+	    foreach(QNetworkConfiguration p, configs) {
+		qDebug() << p.name() <<":  isvalid->" <<p.isValid() << " type->"<< p.type() << 
+		    " roaming->" << p.roamingAvailable() << "identifier->" << p.identifier() <<
+		    " purpose->" << p.purpose() << " state->" << p.state();
+	    }
+#endif
+#endif
+
+
+	    QNetworkConfigurationManagerPrivate *mgr = (QNetworkConfigurationManagerPrivate*)config->d.data()->manager;
+            if (!mgr->accessPointConfigurations.contains(result)) {
+		QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr = config->d;
+		mgr->accessPointConfigurations.insert(result, ptr);
+
+		QNetworkConfiguration item;
+		item.d = ptr;
+		emit mgr->configurationAdded(item);
+
+#ifdef BEARER_MANAGEMENT_DEBUG
+		//qDebug()<<"New configuration"<<result<<"added to manager in open";
+#endif
+
+	    } else {
+		QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = mgr->accessPointConfigurations.take(result);
+		priv = config->d;
+		mgr->accessPointConfigurations.insert(result, priv);
+		mgr->configurationChanged((QNetworkConfigurationPrivate*)priv.data());
+
+#ifdef BEARER_MANAGEMENT_DEBUG
+		//qDebug()<<"Existing configuration"<<result<<"updated in manager in open";
+#endif
+	    }
+	}
+
 	emit quitPendingWaitsForOpened();
 
     } else {
@@ -781,9 +999,21 @@ void QNetworkSessionPrivate::do_open()
 	qDebug() << "connect to"<< iap << "failed, status:" << connect_result.status;
 #endif
 	updateState(QNetworkSession::Disconnected);
+	if (publicConfig.type() == QNetworkConfiguration::UserChoice)
+	    cleanupAnyConfiguration();
 	emit quitPendingWaitsForOpened();
 	emit q->error(QNetworkSession::UnknownSessionError);
     }
+}
+
+
+void QNetworkSessionPrivate::cleanupAnyConfiguration()
+{
+#ifdef BEARER_MANAGEMENT_DEBUG
+    qDebug()<<"Removing configuration created for" << activeConfig.d->id;
+#endif
+    activeConfig.d.reset();
+    activeConfig = publicConfig;
 }
 
 
@@ -816,12 +1046,24 @@ void QNetworkSessionPrivate::stop()
 #endif
 	    icd.disconnect(ICD_CONNECTION_FLAG_APPLICATION_EVENT);
 	    startTime = QDateTime();
-	    updateState(QNetworkSession::Disconnected);
-        }
 
-        opened = false;
-        isActive = false;
-        emit q->sessionClosed();
+	    /* Note that the state will go disconnected in
+	     * updateStateFromActiveConfig() which gets called after
+	     * configurationChanged is emitted (below).
+	     */
+
+	    activeConfig.d->state = QNetworkConfiguration::Discovered;
+	    QNetworkConfigurationManagerPrivate *mgr = (QNetworkConfigurationManagerPrivate*)activeConfig.d.data()->manager;
+	    mgr->configurationChanged((QNetworkConfigurationPrivate*)activeConfig.d.data());
+
+	    opened = false;
+	    isActive = false;
+
+        } else {
+	    opened = false;
+	    isActive = false;
+	    emit q->sessionClosed();
+	}
     }
 }
 

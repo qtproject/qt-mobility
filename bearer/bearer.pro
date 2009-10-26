@@ -78,13 +78,16 @@ symbian: {
 	documentation.path = $$[QT_INSTALL_PREFIX]/share/doc/libbearer
  	documentation.files = doc/html
 
-	INSTALLS += target headers documentation
-
-	PKGCONFIG += glib-2.0 dbus-glib-1 gconf-2.0 osso-ic conninet 
+	PKGCONFIG += glib-2.0 dbus-glib-1 gconf-2.0 osso-ic conninet
 	DEFINES += MAEMO
 
-	# TODO: how to remove debian build dirs
-	#QMAKE_DISTCLEAN += ../debian/libbearer ../debian/libbearer-dbg ../debian/libbearer-dev ../debian/libbearer-doc ../debian/libbearer-examples ../debian/libbearer-test ../debian/tmp ../debian/files ../debian/*.substvars ../debian/*.debhelper
+	CONFIG += create_pc create_prl
+	QMAKE_PKGCONFIG_REQUIRES = glib-2.0 dbus-glib-1 gconf-2.0 osso-ic conninet
+	pkgconfig.path = $$[QT_INSTALL_PREFIX]/lib/pkgconfig
+	pkgconfig.files = QtBearer.pc
+
+	INSTALLS += pkgconfig target headers documentation
+
     } else {
 
         DEFINES += BEARER_ENGINE

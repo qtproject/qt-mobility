@@ -82,7 +82,7 @@ private:
     Maemo::IAPConf *iapconf;
     Maemo::IAPConf *iapconf2;
     Maemo::IAPConf *gprsiap;
-#define MAX_IAPS 50
+#define MAX_IAPS 10
     Maemo::IAPConf *iaps[MAX_IAPS];
     QProcess *icd_stub;
 #endif
@@ -546,6 +546,8 @@ void tst_QNetworkSession::sessionOpenCloseStop()
         QVERIFY(!session2.isActive());
 
         if (!errorSpy2.isEmpty()) {
+	    QVERIFY(!errorSpy.isEmpty());
+
             // check for SessionAbortedError
             QNetworkSession::SessionError error =
                 qvariant_cast<QNetworkSession::SessionError>(errorSpy.first().at(0));

@@ -136,6 +136,10 @@ private:
     // Either a copy of publicConfig or one of serviceConfig.children().
     QNetworkConfiguration activeConfig;
 
+    QNetworkConfiguration& copyConfig(QNetworkConfiguration &fromConfig, QNetworkConfiguration &toConfig);
+    void clearConfiguration(QNetworkConfiguration &config);
+    void cleanupAnyConfiguration();
+
     QNetworkSession::State state;
     bool isActive;
     bool opened;
@@ -151,7 +155,7 @@ private:
     QString currentNetworkInterface;
     friend class IcdListener;
     void updateState(QNetworkSession::State);
-    QString updateIdentifier(QString &newId);
+    void updateIdentifier(QString &newId);
     quint64 getStatistics(bool sent) const;
     void cleanupSession(void);
 };

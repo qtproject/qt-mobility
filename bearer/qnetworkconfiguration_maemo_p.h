@@ -55,8 +55,9 @@ class QNetworkConfigurationPrivate : public QSharedData
 {
 public:
     QNetworkConfigurationPrivate ()
-        : isValid(false), type(QNetworkConfiguration::Invalid), 
-          roamingSupported(false), purpose(QNetworkConfiguration::Unknown)
+	    : isValid(false), type(QNetworkConfiguration::Invalid), 
+	    roamingSupported(false), purpose(QNetworkConfiguration::Unknown),
+	    network_attrs(0), service_attrs(0), manager(0)
     {
     }
 
@@ -85,6 +86,8 @@ public:
     QString service_type;
     QString service_id;
     uint32_t service_attrs;
+
+    QNetworkConfigurationManagerPrivate *manager;
 
 private:
 
