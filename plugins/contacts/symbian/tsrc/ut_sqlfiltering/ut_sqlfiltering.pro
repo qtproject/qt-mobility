@@ -5,7 +5,6 @@ TEMPLATE = app
 TARGET = 
 QT += testlib
 CONFIG += qtestlib
-CONFIG += testcase
 
 DEFINES += PBK_UNIT_TEST
 DEPENDPATH += .
@@ -15,29 +14,26 @@ INCLUDEPATH += ..\..\inc
 INCLUDEPATH += ..\..\rss
 INCLUDEPATH += ..\..\..\..\contacts
 INCLUDEPATH += ..\..\..\..\..\contacts
-
 include(../tsrc.pri)
 
 symbian:
-{ 
-    load(data_caging_paths)
-    
+ { 
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     
     # Input
-    HEADERS += ut_qcontactsymbianengine_p.h \
+    HEADERS += ut_sqlfiltering.h \
             $$SYMBIAN_HEADERS
-    
-    SOURCES += ut_qcontactsymbianengine_p.cpp \
-            $$SYMBIAN_SOURCES
+            
+    SOURCES += ut_sqlfiltering.cpp \
+            $$SYMBIAN_SOURCES            
             
     TARGET.CAPABILITY = ALL \
-            -TCB
+        -TCB
     # Security check done in the cntsrv
     TARGET.SID = 0x20022EF9
     
     LIBS += \
         -lcntmodel \
         -lQtContacts \
-        -lcentralrepository
+		-lestor
 }

@@ -268,6 +268,7 @@ void CntSrvConnection::transformError(TInt symbianError,
             break;
         }
         case KErrAccessDenied:
+        case KErrPermissionDenied:
         {
             qtError = QContactManager::PermissionsError;
             break;

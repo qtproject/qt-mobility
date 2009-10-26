@@ -508,6 +508,7 @@ void QContactSymbianEngineData::transformError(TInt symbianError, QContactManage
             break;
         }
         case KErrAccessDenied:
+        case KErrPermissionDenied:
         {
             qtError = QContactManager::PermissionsError;
             break;
