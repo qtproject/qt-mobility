@@ -62,6 +62,7 @@
 #include <qcontactnickname.h>
 #include <qcontactanniversary.h>
 #include <qcontactonlineaccount.h>
+#include <qcontactfamily.h>
 
 /*!
  * Constructor.
@@ -211,6 +212,8 @@ void QVersitContactConverterPrivate::encodeFieldInfo(
         encodeGender(property, detail);
     } else if (detail.definitionName() == QContactOnlineAccount::DefinitionName) {
         addProperty = encodeOnlineAccount(property, detail);
+    }else if (detail.definitionName() == QContactFamily::DefinitionName) {
+        addProperty = encodeFamily(versitDocument, detail);
     }else {
         addProperty = false;
     }
@@ -532,6 +535,31 @@ bool QVersitContactConverterPrivate::encodeOnlineAccount(
     return encode;
 }
 
+
+/*!
+ * Encode family versit property if its supported in Versit Document
+ */
+bool QVersitContactConverterPrivate::encodeFamily(
+        QVersitDocument& document,
+        const QContactDetail& detail )
+{
+    QContactFamily family = static_cast<QContactFamily>(detail);
+
+    if ( family.spouse().size() ) {
+        QVersitProperty property;
+        property.setName(QString::fromAscii(versitSpouseId));
+        property.setValue(family.spouse().toAscii());
+        document.addProperty(property);
+    }
+
+    if ( family.children().size() ) {
+        QVersitProperty property;
+        property.setName(QString::fromAscii(versitChildrenId));
+        property.setValue(family.children().join(",").toAscii());
+        document.addProperty(property);
+    }
+    return false;
+}
 
 
 /*!

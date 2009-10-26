@@ -64,6 +64,7 @@
 #include <qcontactnickname.h>
 #include <qcontactanniversary.h>
 #include <qcontactonlineaccount.h>
+#include <qcontactfamily.h>
 
 
 void UT_QVersitContactConvertert::init()
@@ -936,3 +937,64 @@ void UT_QVersitContactConvertert::testEncodOnlineAccount()
     versitDocument = mConverter->convertContact(contact);
     QCOMPARE(0, versitDocument.properties().count());
 }
+
+
+
+void UT_QVersitContactConvertert::testEncodeFamily()
+{
+    QContact contact;
+    QContactFamily family;
+
+    //Test1: No Spouce No Family
+    family.setContexts(QContactDetail::ContextHome);
+    contact.saveDetail(&family);
+    //Convert Contat Into Versit Document
+    QVersitDocument versitDocument = mConverter->convertContact(contact);
+    QCOMPARE(0, versitDocument.properties().count());
+
+    //Test2: Only Spouce.
+    QString spouce = "ABC";
+    family.setSpouse(spouce);
+    contact.saveDetail(&family);
+    //Convert Contat Into Versit Document
+    versitDocument = mConverter->convertContact(contact);
+
+    //Ensure property Exisit
+    QCOMPARE(1, versitDocument.properties().count());
+    //Ensure no parameters exisit,
+    QCOMPARE(0, versitDocument.properties().at(0).parameters().count());
+    QString propertyName = versitDocument.properties().at(0).name();
+    QCOMPARE(propertyName, QString::fromAscii(versitSpouseId));
+
+    QString value (versitDocument.properties().at(0).value() );
+    QCOMPARE(spouce, value );
+
+
+    //Test3: Spouce with few childerns
+    QStringList childerns;
+    childerns << "A" << "B" ;
+    family.setChildren(childerns);
+    family.setSpouse(spouce);
+    contact.saveDetail(&family);
+    versitDocument = mConverter->convertContact(contact);
+
+    //Ensure property Exisit
+    QCOMPARE(2, versitDocument.properties().count());
+    //Ensure no parameters exisit,
+    QCOMPARE(0, versitDocument.properties().at(0).parameters().count());
+
+    //Ensure property parameer exisit and matches.
+    QString propertyName1 = versitDocument.properties().at(0).name();
+    QCOMPARE(propertyName1, QString::fromAscii(versitSpouseId));
+
+    QString value1 (versitDocument.properties().at(0).value() );
+    QCOMPARE(spouce, value1 );
+
+    QString propertyName2 = versitDocument.properties().at(1).name();
+    QCOMPARE(propertyName2, QString::fromAscii(versitChildrenId));
+
+    QString value2 (versitDocument.properties().at(1).value() );
+    QString expected = "A,B";
+    QCOMPARE(expected, value2 );
+}
+
