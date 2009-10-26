@@ -160,7 +160,8 @@ QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& 
             detail = createAvatar(property, versitDocument);
         } else if (property.name() == QString::fromAscii(versitBirthdayId)) {
             detail = createBirthday(property);
-        } else if (property.name() == QString::fromAscii(versitNicknameId)) {
+        } else if (property.name() == QString::fromAscii(versitNicknameId)||
+                   property.name() == QString::fromAscii(versitNicknameXId)) {
             detail = createNicknames(property);
         } else if (property.name() == QString::fromAscii(versitGeoId)){
             detail = createGeoLocation(property);

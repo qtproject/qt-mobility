@@ -845,6 +845,7 @@ void UT_QVersitContactConvertert::testEncodeNickName()
 
     //Ensure property parameer exisit and matches.
     QString propertyName = versitDocument.properties().at(0).name();
+    QCOMPARE(propertyName, QString::fromAscii(versitNicknameXId));
     QString expectedPropertyName =
         mConverterPrivate->mMappings.value(QContactNickname::DefinitionName);
     QCOMPARE(propertyName, expectedPropertyName);

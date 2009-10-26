@@ -70,6 +70,7 @@ const char versitSipId[] = "X-SIP";
 const char versitSoundId[] = "SOUND";
 const char versitSpouseId[] = "X-SPOUSE";
 const char versitChildrenId[] = "X-CHILDREN";
+const char versitNicknameXId[] = "X-NICKNAME";
 
 // Contexts
 const char versitContextWorkId[] = "WORK";

@@ -95,7 +95,7 @@ QVersitContactConverterPrivate::QVersitContactConverterPrivate()
     mMappings.insert(
         QContactGender::DefinitionName,QString::fromAscii(versitGenderId));
     mMappings.insert(
-        QContactNickname::DefinitionName,QString::fromAscii(versitNicknameId));
+        QContactNickname::DefinitionName,QString::fromAscii(versitNicknameXId));
     mMappings.insert(
         QContactAnniversary::DefinitionName,QString::fromAscii(versitAnniversaryId));
     

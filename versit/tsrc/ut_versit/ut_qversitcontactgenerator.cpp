@@ -557,6 +557,16 @@ void UT_QVersitContactGenerator::testNickname()
         /*QCOMPARE(nickName.value(QContactNickname::FieldNickname),
                                            multiVal.takeFirst());*/
     }
+
+    // X-NICKNAME
+    document = QVersitDocument();
+    nameProperty = QVersitProperty();
+    nameProperty.setName(QString::fromAscii(versitNicknameXId));
+    nameProperty.setValue(singleVal.toAscii());
+    document.addProperty(nameProperty);
+    contact = mGenerator->generateContact(document);
+    nickName = (QContactNickname)contact.detail(QContactNickname::DefinitionName);
+    QCOMPARE(nickName.nickname(),singleVal);
 }
 
 void UT_QVersitContactGenerator::testAvatarJpegStored()
