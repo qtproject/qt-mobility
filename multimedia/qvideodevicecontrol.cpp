@@ -51,7 +51,6 @@
 
     The interface name of QVideoDeviceControl is \c com.nokia.Qt.VideoDeviceControl as
     defined in QVideoDeviceControl_iid.
-
 */
 
 /*!
