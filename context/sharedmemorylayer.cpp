@@ -55,6 +55,7 @@
 #include <QMutex>
 #include <QSharedMemory>
 #include <QTime>
+#include <QThread>
 
 QT_BEGIN_NAMESPACE
 
@@ -1717,6 +1718,8 @@ private slots:
     void readyRead();
     void closeConnections();
 
+    void doClientSync();
+
 protected:
     virtual void timerEvent(QTimerEvent *);
 
@@ -3111,31 +3114,37 @@ QString SharedMemoryLayer::socket() const
 
 void SharedMemoryLayer::sync()
 {
-    QMutexLocker locker(&localLock);
-
-    if(Client == type) {
-        Q_ASSERT(1 == connections.count());
-
-        unsigned int waitId = lastSentId;
-
-        if(lastRecvId >= waitId)
-            return; // Done
-
-        // Send any outstanding messages
-        doClientTransmit();
-
-        // Get transmission socket
-        QLocalSocket * socket =
-            static_cast<QLocalSocket *>((*connections.begin())->device());
-        socket->flush();
-
-        // Wait
-        while(QLocalSocket::UnconnectedState != socket->state() &&
-              waitId > lastRecvId)
-            socket->waitForReadyRead(-1);
+    if (type == Client) {
+        if (QThread::currentThread() != thread())
+            QMetaObject::invokeMethod(this, "doClientSync", Qt::BlockingQueuedConnection);
+        else
+            doClientSync();
     } else {
         doServerTransmit();
     }
+}
+
+void SharedMemoryLayer::doClientSync()
+{
+    QMutexLocker locker(&localLock);
+
+    Q_ASSERT(1 == connections.count());
+
+    unsigned int waitId = lastSentId;
+
+    if (lastRecvId >= waitId)
+        return; // Done
+
+    // Send any outstanding messages
+    doClientTransmit();
+
+    // Get transmission socket
+    QLocalSocket *socket = static_cast<QLocalSocket *>((*connections.begin())->device());
+    socket->flush();
+
+    // Wait
+    while (QLocalSocket::UnconnectedState != socket->state() && waitId > lastRecvId)
+        socket->waitForReadyRead(-1);
 }
 
 QVariant SharedMemoryLayer::fromDatum(const NodeDatum * data)
