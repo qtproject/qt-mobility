@@ -48,7 +48,7 @@ QList<CContactItemField *> TransformBirthday::transformDetailL(const QContactDet
 	const QContactBirthday &birthday(static_cast<const QContactUrl&>(detail));
 	
 	//create new field
-	TDateTime dateTime(birthday.date().year(), TMonth(birthday.date().month() - 1), birthday.date().day(), 0, 0, 0, 0);
+	TDateTime dateTime(birthday.date().year(), TMonth(birthday.date().month() - 1), birthday.date().day() - 1, 0, 0, 0, 0);
 	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeDateTime, KUidContactFieldBirthday);
  	newField->DateTimeStorage()->SetTime(dateTime);
 	newField->SetMapping(KUidContactFieldVCardMapBDAY);
@@ -67,7 +67,7 @@ QContactDetail *TransformBirthday::transformItemField(const CContactItemField& f
 	
 	CContactDateField* storage = field.DateTimeStorage();
 	TTime time(storage->Time());
-	QDate qDate(time.DateTime().Year(), time.DateTime().Month() + 1, time.DateTime().Day());
+	QDate qDate(time.DateTime().Year(), time.DateTime().Month() + 1, time.DateTime().Day() + 1);
 	birthday->setDate(qDate);
 	
 	return birthday;
