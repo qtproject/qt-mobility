@@ -97,6 +97,7 @@ const char versitAudioWave[] = "WAVE";
 // Sub types for onlineaccount
 const char versitSwisId[] = "SWIS";
 const char versitSipSubTypeId[] = "SIP";
+const char versitVoipId[] = "VOIP";
 
 // Format Conversion
 const char versitJPEGExtenId[] = "JPG";

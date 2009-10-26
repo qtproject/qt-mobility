@@ -63,6 +63,7 @@
 #include <qcontactgender.h>
 #include <qcontactnickname.h>
 #include <qcontactanniversary.h>
+#include <qcontactonlineaccount.h>
 
 
 void UT_QVersitContactConvertert::init()
@@ -892,4 +893,46 @@ void UT_QVersitContactConvertert::testEncodAniversary()
     // Ensure Sub types matches.
     QVERIFY(versitDocument.properties().at(0).parameters().contains(versitType,
             QString(QLatin1String(QContactAnniversary::SubTypeWedding)).toUpper()));
+}
+
+
+void UT_QVersitContactConvertert::testEncodOnlineAccount()
+{
+    QContact contact;
+    QContactOnlineAccount onlineAccount;
+
+    //Test1:  Valid SWIS Account.
+    QString testUri = "sip:abc@temp.com";
+    onlineAccount.setAccountUri(testUri);
+    onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeShareVideo);
+    onlineAccount.setContexts(QContactDetail::ContextHome);
+    contact.saveDetail(&onlineAccount);
+    
+    //Convert Contat Into Versit Document
+    QVersitDocument versitDocument = mConverter->convertContact(contact);
+
+    //Ensure parameters exisit, i.e. home and swiss
+    QCOMPARE(2, versitDocument.properties().at(0).parameters().count());
+    QVERIFY(versitDocument.properties().at(0).parameters().contains(
+            versitType, versitContextHomeId));
+    QVERIFY(versitDocument.properties().at(0).parameters().contains(
+            versitType, versitSwisId));
+
+    //Ensure property Exisit
+    QCOMPARE(1, versitDocument.properties().count());
+
+    //Ensure property parameer exisit and matches.
+    QString propertyName = versitDocument.properties().at(0).name();
+    QCOMPARE(propertyName, QString::fromAscii(versitSipId));
+
+    //Check property value
+    QString value = versitDocument.properties().at(0).value();
+    QCOMPARE(testUri, value);
+
+    //Test2: InValid Sub Type Value is not encoded.
+    onlineAccount.setAccountUri(testUri);
+    onlineAccount.setSubTypes("INVALIDSUBTYPE");
+    contact.saveDetail(&onlineAccount);
+    versitDocument = mConverter->convertContact(contact);
+    QCOMPARE(0, versitDocument.properties().count());
 }

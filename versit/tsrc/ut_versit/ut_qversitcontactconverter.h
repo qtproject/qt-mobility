@@ -76,6 +76,7 @@ private slots:
     void testEncodeGender();
     void testEncodeNickName();
     void testEncodAniversary();
+    void testEncodOnlineAccount();
 
     
 private: // Data
