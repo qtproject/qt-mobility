@@ -1159,6 +1159,11 @@ void QMessageFilter::setOptions(QMessageDataComparator::Options options)
     if (d_ptr->_options & QMessageDataComparator::FullWord) {
         qWarning("Full word matching not supported on MAPI platforms.");
         d_ptr->_valid = false;
+    } else {
+        if (d_ptr->_left)
+            d_ptr->_left->setOptions(options);
+        if (d_ptr->_right)
+            d_ptr->_right->setOptions(options);
     }
 }
 
@@ -1605,6 +1610,8 @@ QMessageFilter QMessageFilter::byType(QMessage::TypeFlags aType, QMessageDataCom
 QMessageFilter QMessageFilter::bySender(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::Sender, QVariant(value), cmp));
+    if (cmp != QMessageDataComparator::Equal)
+        result.d_ptr->_restrictionPermitted = false;
     result.d_ptr->_matchesRequired = true;
     return result;
 }
@@ -1648,6 +1655,8 @@ QMessageFilter QMessageFilter::bySender(const QString &value, QMessageDataCompar
 {
     QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::Sender, QVariant(value), cmp));
     result.d_ptr->_matchesRequired = true;
+    if (cmp != QMessageDataComparator::Includes)
+        result.d_ptr->_restrictionPermitted = false;
     return result;
 }
 
