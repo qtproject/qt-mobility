@@ -75,10 +75,12 @@ public:
 public slots:
     void completed();
     void reportMatchingIds();
+    void reportMessagesCounted();
 
 signals:
     void stateChanged(QMessageServiceAction::State);
     void messagesFound(const QMessageIdList&);
+    void messagesCounted(int);
     void progressChanged(uint, uint);
 
 public:
@@ -86,6 +88,7 @@ public:
     bool _active;
     QMessageStore::ErrorCode _lastError;
     QMessageIdList _candidateIds;
+    int _count;
     QMessageServiceAction::State _state;
 };
 
@@ -99,6 +102,12 @@ void QMessageServiceActionPrivate::completed()
 void QMessageServiceActionPrivate::reportMatchingIds()
 {
     emit messagesFound(_candidateIds);
+    completed();
+}
+
+void QMessageServiceActionPrivate::reportMessagesCounted()
+{
+    emit messagesCounted(_count);
     completed();
 }
 
@@ -393,6 +402,8 @@ QMessageServiceAction::QMessageServiceAction(QObject *parent)
         this, SIGNAL(stateChanged(QMessageServiceAction::State)));
     connect(d_ptr, SIGNAL(messagesFound(const QMessageIdList&)),
         this, SIGNAL(messagesFound(const QMessageIdList&)));
+    connect(d_ptr, SIGNAL(messagesCounted(int)),
+        this, SIGNAL(messagesCounted(int)));
     connect(d_ptr, SIGNAL(progressChanged(uint, uint)),
         this, SIGNAL(progressChanged(uint, uint)));
 }
@@ -422,18 +433,35 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QM
 
 bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
 {
-    Q_UNUSED(filter);
-    Q_UNUSED(body);
-    Q_UNUSED(options)
-    Q_UNUSED(ordering);
-    Q_UNUSED(limit);
-    Q_UNUSED(offset);
-    return false; // stub
+    if (d_ptr->_active) {
+        qWarning() << "Action is currently busy";
+        return false;
+    }
+    d_ptr->_active = true;
+    d_ptr->_candidateIds = QMessageStore::instance()->queryMessages(filter, body, options, ordering, limit, offset);
+    d_ptr->_lastError = QMessageStore::instance()->lastError();
+
+    if (d_ptr->_lastError == QMessageStore::NoError) {
+        QTimer::singleShot(0, d_ptr, SLOT(reportMatchingIds()));
+        return true;
+    }
+    return false;
 }
 
 bool QMessageServiceAction::countMessages(const QMessageFilter &filter) const
 {
-    Q_UNUSED(filter);
+    if (d_ptr->_active) {
+        qWarning() << "Action is currently busy";
+        return false;
+    }
+    d_ptr->_active = true;
+    d_ptr->_count = QMessageStore::instance()->queryMessages(filter).count();
+    d_ptr->_lastError = QMessageStore::instance()->lastError();
+
+    if (d_ptr->_lastError == QMessageStore::NoError) {
+        QTimer::singleShot(0, d_ptr, SLOT(reportMessagesCounted()));
+        return true;
+    }
     return false;
 }
 
