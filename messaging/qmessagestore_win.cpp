@@ -45,6 +45,7 @@
 #include "qmessagefolderid_p.h"
 #include "qmessageaccountid_p.h"
 #include "qmessageaccount_p.h"
+#include "qmessagecontentcontainer.h"
 #include "winhelpers_p.h"
 #include <QCoreApplication>
 #include <qdebug.h>
@@ -157,21 +158,22 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(ordering)
-    Q_UNUSED(body)
-    Q_UNUSED(options)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
     QMessageIdList result;
 
-    // TODO - perform this query
-
-    if (offset) {
-        return result.mid(offset, (limit ? limit : -1));
-    } else {
+    if (options & QMessageDataComparator::FullWord) {
+        d_ptr->p_ptr->lastError = QMessageStore::NotYetImplemented;
         return result;
     }
+
+    if (!d_ptr->p_ptr->session) {
+        d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
+        return result;
+    } else {
+        d_ptr->p_ptr->lastError = QMessageStore::NoError;
+        result = d_ptr->p_ptr->session->queryMessages(&d_ptr->p_ptr->lastError, filter, ordering, limit, offset, body, options);
+    }
+
+    return result;
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
