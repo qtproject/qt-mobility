@@ -3,4 +3,4 @@ SUBDIRS += qnetworkconfigmanager \
            qnetworkconfiguration
 
 win32:SUBDIRS += qnetworksession
-!mac:unix:SUBDIRS += qnetworksession
+unix:SUBDIRS += qnetworksession

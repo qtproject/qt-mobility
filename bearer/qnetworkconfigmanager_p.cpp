@@ -1,6 +1,7 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -20,13 +21,20 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please
-** contact Nokia at http://qt.nokia.com/contact.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -42,6 +50,9 @@
 #endif
 #if defined(BACKEND_NM)
 #include "qnmwifiengine_unix_p.h"
+#endif
+#ifdef Q_OS_DARWIN
+#include "qcorewlanengine_mac_p.h"
 #endif
 
 #include <QtCore/qdebug.h>
@@ -217,6 +228,13 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
         updateState = NotUpdating;
         onlineConfigurations = 0;
 
+#if defined (Q_OS_DARWIN)
+        coreWifi = QCoreWlanEngine::instance();
+        if (coreWifi) {
+            connect(coreWifi, SIGNAL(configurationsChanged()),
+                    this, SLOT(updateConfigurations()));
+        }
+#else
 #if defined(BACKEND_NM)
         nmWifi = QNmWifiEngine::instance();
         if (nmWifi) {
@@ -231,6 +249,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
             }
 #if defined(BACKEND_NM)
         }
+#endif
 #endif
 
 #ifdef Q_OS_WIN
@@ -254,6 +273,10 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 
     QNetworkSessionEngine *engine = qobject_cast<QNetworkSessionEngine *>(sender());
     if (updateState & Updating && engine) {
+#if defined (Q_OS_DARWIN)
+        if (engine == coreWifi)
+            updateState &= ~CoreWifiUpdating;
+#else
 #if defined(BACKEND_NM)
         if (engine == nmWifi)
             updateState &= ~NmUpdating;
@@ -263,6 +286,8 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
         if (engine == generic)
             updateState &= ~GenericUpdating;
 #endif
+#endif
+
 #ifdef Q_OS_WIN
         else if (engine == nla)
             updateState &= ~NlaUpdating;
@@ -274,6 +299,10 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
     }
     QList<QNetworkSessionEngine *> engines;
     if (firstUpdate) {
+#if defined (Q_OS_DARWIN)
+        if (coreWifi)
+            engines << coreWifi;
+#else
 #if defined(BACKEND_NM)
         if (nmWifi)
             engines << nmWifi;
@@ -283,6 +312,8 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
         if (generic)
             engines << generic;
 #endif
+#endif
+
 #ifdef Q_OS_WIN
         if (nla)
             engines << nla;
@@ -377,7 +408,12 @@ QNetworkConfiguration QNetworkConfigurationManagerPrivate::defaultConfiguration(
 void QNetworkConfigurationManagerPrivate::performAsyncConfigurationUpdate()
 {
     updateState = Updating;
-
+#if defined (Q_OS_DARWIN)
+    if (coreWifi) {
+        updateState |= CoreWifiUpdating;
+        coreWifi->requestUpdate();
+    }
+#else
 #if defined(BACKEND_NM)
     if (nmWifi) {
         updateState |= NmUpdating;
@@ -391,6 +427,7 @@ void QNetworkConfigurationManagerPrivate::performAsyncConfigurationUpdate()
         updateState |= GenericUpdating;
         generic->requestUpdate();
     }
+#endif
 #endif
 #ifdef Q_OS_WIN
     if (nla) {

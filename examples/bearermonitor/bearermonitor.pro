@@ -1,11 +1,12 @@
-HEADERS = bearerdialog.h \
-          sessionwidget.h
+HEADERS = sessionwidget.h \
+          bearermonitor.h
 
 SOURCES = main.cpp \
-          bearerdialog.cpp \
+          bearermonitor.cpp \
           sessionwidget.cpp
-
-FORMS = bearerdialog.ui \
+          
+FORMS = bearermonitor_240_320.ui \
+        bearermonitor_640_480.ui \
         sessionwidget.ui
 
 TARGET = bearermonitor
@@ -24,3 +25,15 @@ CONFIG += console
 
 include(../examples.pri)
 
+symbian {
+    BEARERLIB.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/QtBearer.dll
+    BEARERLIB.path = .
+    DEPLOYMENT += BEARERLIB
+}
+
+macx: {
+    #LIBS += -framework QtBearer
+    contains(CONFIG, debug) {
+        CONFIG -= app_bundle
+     }
+}

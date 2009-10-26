@@ -88,7 +88,7 @@
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QNetworkConfiguration::InternetAccessPoint</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The configuration specifies the details for a single access point. Note that configurations of type InternetAccessPoint may be part of other QNetworkConfigurations of type ServiceNetwork.</td></tr>
 <tr><td valign="top"><tt>QNetworkConfiguration::ServiceNetwork</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The configuration is based on a group of QNetworkConfigurations of type InternetAccessPoint. All group members can reach the same target network. This type of configuration is a mandatory requirement for roaming enabled network sessions. On some platforms this form of configuration may also be called Service Network Access Point (SNAP).</td></tr>
-<tr><td valign="top"><tt>QNetworkConfiguration::UserChoice</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The configuration is a placeholder which will be resolved to an actual configuration by the platform when a session is opened.</td></tr>
+<tr><td valign="top"><tt>QNetworkConfiguration::UserChoice</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The configuration is a placeholder which will be resolved to an actual configuration by the platform when a session is opened. Depending on the platform the selection may generate a popup dialog asking the user for his preferred choice.</td></tr>
 <tr><td valign="top"><tt>QNetworkConfiguration::Invalid</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The configuration is invalid.</td></tr>
 </table></p>
 <hr />

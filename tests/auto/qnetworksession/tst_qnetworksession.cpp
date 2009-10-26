@@ -1,6 +1,7 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -20,13 +21,20 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please
-** contact Nokia at http://qt.nokia.com/contact.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -413,7 +421,10 @@ void tst_QNetworkSession::sessionOpenCloseStop()
     {
         QVERIFY(session.configuration() == configuration);
         QVERIFY(!session.isActive());
-        QVERIFY(session.state() != QNetworkSession::Invalid);
+        // session may be invalid if configuration is removed between when
+        // sessionOpenCloseStop_data() is called and here.
+        QVERIFY(configuration.isValid() && (session.state() != QNetworkSession::Invalid) ||
+                !configuration.isValid() && (session.state() == QNetworkSession::Invalid));
         QVERIFY(session.error() == QNetworkSession::UnknownSessionError);
     }
 
@@ -580,10 +591,10 @@ void tst_QNetworkSession::sessionOpenCloseStop()
                 QFAIL("Error stopping session.");
             }
         } else if (!sessionClosedSpy2.isEmpty()) {
-            bool roamedSuccessfully = false;        
-        
             if (expectStateChange) {
                 if (configuration.type() == QNetworkConfiguration::ServiceNetwork) {
+                    bool roamedSuccessfully = false;
+
                     QCOMPARE(stateChangedSpy2.count(), 4);
 
                     QNetworkSession::State state =
@@ -607,12 +618,32 @@ void tst_QNetworkSession::sessionOpenCloseStop()
                             state = qvariant_cast<QNetworkSession::State>(stateChangedSpy.at(1).at(0));
                             if (state == QNetworkSession::Connected) {
                                 roamedSuccessfully = true;
-                                session.close();
-                                QTRY_VERIFY(session.state() == QNetworkSession::Disconnected);
                                 QTRY_VERIFY(session2.state() == QNetworkSession::Disconnected);
                             }
                         }
                     }
+                    if (roamedSuccessfully) {
+                        QString configId = session.property("ActiveConfigurationIdentifier").toString();
+                        QNetworkConfiguration config = manager.configurationFromIdentifier(configId); 
+                        QNetworkSession session3(config);
+                        QSignalSpy errorSpy3(&session3, SIGNAL(error(QNetworkSession::SessionError)));
+                        QSignalSpy sessionOpenedSpy3(&session3, SIGNAL(sessionOpened()));
+                        
+                        session3.open();
+                        session3.waitForOpened();
+                        
+                        if (session.isActive())
+                            QVERIFY(!sessionOpenedSpy3.isEmpty() || !errorSpy3.isEmpty());
+                        
+                        session.stop();
+
+                        QTRY_VERIFY(session.state() == QNetworkSession::Disconnected);
+                        QTRY_VERIFY(session3.state() == QNetworkSession::Disconnected);
+                    }
+#ifndef Q_CC_NOKIAX86
+                    if (!roamedSuccessfully)
+                        QVERIFY(!errorSpy.isEmpty());
+#endif
                 } else {
                     QCOMPARE(stateChangedSpy2.count(), 2);
 
@@ -629,10 +660,6 @@ void tst_QNetworkSession::sessionOpenCloseStop()
                 QVERIFY(session2.state() == QNetworkSession::Disconnected);
             }
 
-#ifndef Q_CC_NOKIAX86
-            if (!roamedSuccessfully)
-                QVERIFY(!errorSpy.isEmpty());
-#endif
             QVERIFY(errorSpy2.isEmpty());
 
             ++inProcessSessionManagementCount;

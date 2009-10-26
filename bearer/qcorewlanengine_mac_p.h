@@ -38,29 +38,63 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "xqlistwidget.h"
 
-XQListWidget::XQListWidget(QWidget* parent) : QListWidget(parent)
-{    
-}
+#ifndef QCOREWLANENGINE_P_H
+#define QCOREWLANENGINE_P_H
 
-void XQListWidget::keyPressEvent(QKeyEvent* event)
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qnetworksessionengine_p.h"
+#include <QMap>
+#include <QTimer>
+QT_BEGIN_NAMESPACE
+
+class QNetworkConfigurationPrivate;
+
+class QCoreWlanEngine : public QNetworkSessionEngine
 {
-    switch (event->key())
-    {
-        case Qt::Key_Left:
-        {
-            focusPreviousChild();
-            break;
-        }
-        case Qt::Key_Right:
-        {
-            focusNextChild();
-            break;
-        }
-        default: 
-        {
-            QListWidget::keyPressEvent(event);
-        }
-    }
-}
+    Q_OBJECT
+
+public:
+    QCoreWlanEngine(QObject *parent = 0);
+    ~QCoreWlanEngine();
+
+    QList<QNetworkConfigurationPrivate *> getConfigurations(bool *ok = 0);
+    QString getInterfaceFromId(const QString &id);
+    bool hasIdentifier(const QString &id);
+
+    QString bearerName(const QString &id);
+
+    void connectToId(const QString &id);
+    void disconnectFromId(const QString &id);
+
+    void requestUpdate();
+
+    static QCoreWlanEngine *instance();
+    static bool getAllScInterfaces();
+
+private:
+    bool isWifiReady(const QString &dev);
+    QMap<uint, QString> configurationInterface;
+    QTimer pollTimer;
+    QList<QNetworkConfigurationPrivate *> scanForSsids(const QString &interfaceName);
+
+    QList<QNetworkConfigurationPrivate *> getWlanProfiles(const QString &interfaceName);
+
+    QList<QNetworkConfigurationPrivate *> getWifiConfigurations();
+    bool isKnownSsid(const QString &interfaceName, const QString &ssid);
+};
+
+QT_END_NAMESPACE
+
+#endif
+

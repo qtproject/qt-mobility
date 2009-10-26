@@ -26,6 +26,7 @@ symbian: {
         LIBS += -lcmmanager
     } else {
         message("Building without SNAP support")
+	LIBS += -lapengine
     }
     
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
@@ -38,7 +39,6 @@ symbian: {
                qnetworksession_s60_p.cpp
                
     LIBS += -lcommdb \
-            -lapengine \
             -lapsettingshandlerui \
             -lconnmon \
             -lcentralrepository \
@@ -118,7 +118,8 @@ symbian: {
         }
 
         win32: {
-            HEADERS += qnlaengine_win_p.h
+            HEADERS += qnlaengine_win_p.h \
+                   qnetworksessionengine_win_p.h
 
             !wince*:HEADERS += qnativewifiengine_win_p.h
 
@@ -129,6 +130,13 @@ symbian: {
             !wince*:LIBS += -lWs2_32
             wince*:LIBS += -lWs2
         }
+    }
+    macx: {
+        HEADERS += qcorewlanengine_mac_p.h
+        SOURCES+= qcorewlanengine_mac.mm
+       # CONFIG-=app_bundle
+#CONFIG+=lib_bundle
+        LIBS += -framework CoreWLAN
     }
 }
 

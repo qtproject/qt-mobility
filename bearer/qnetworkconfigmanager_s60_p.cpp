@@ -1,6 +1,7 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -20,13 +21,20 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please
-** contact Nokia at http://qt.nokia.com/contact.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -34,10 +42,6 @@
 #include "qnetworkconfigmanager_s60_p.h"
 
 #include <commdb.h>
-#include <aputils.h>
-#include <apaccesspointitem.h>
-#include <apdatahandler.h>
-#include <aputils.h> 
 #include <cdbcols.h>
 #include <d32dbms.h>
 
@@ -48,6 +52,10 @@
     #include <cmpluginwlandef.h>
     #include <cmpluginpacketdatadef.h>
     #include <cmplugindialcommondefs.h>
+#else
+    #include <apaccesspointitem.h>
+    #include <apdatahandler.h>
+    #include <aputils.h> 
 #endif
 
 QT_BEGIN_NAMESPACE
@@ -152,9 +160,10 @@ void QNetworkConfigurationManagerPrivate::registerPlatformCapabilities()
 
 void QNetworkConfigurationManagerPrivate::performAsyncConfigurationUpdate()
 {
-    if (!iInitOk) {
+    if (!iInitOk || iUpdateGoingOn) {
         return;
     }
+    iUpdateGoingOn = true;
 
     stopCommsDatabaseNotifications();
     updateConfigurations(); // Synchronous call
@@ -450,55 +459,7 @@ QNetworkConfigurationPrivate* QNetworkConfigurationManagerPrivate::configFromCon
     CleanupStack::Pop(cpPriv);
     return cpPriv;
 }
-#endif
-
-QNetworkConfiguration QNetworkConfigurationManagerPrivate::defaultConfiguration()
-{
-    QNetworkConfiguration config;
-
-    if (iInitOk) {
-        stopCommsDatabaseNotifications();
-        TRAP_IGNORE(config = defaultConfigurationL());
-        startCommsDatabaseNotifications();
-    }
-
-    return config;
-}
-
-QNetworkConfiguration QNetworkConfigurationManagerPrivate::defaultConfigurationL()
-{
-    QNetworkConfiguration item;
-
-#ifdef SNAP_FUNCTIONALITY_AVAILABLE
-    // Check Default Connection (SNAP or IAP)
-    TCmDefConnValue defaultConnectionValue;
-    iCmManager.ReadDefConnL(defaultConnectionValue);
-    if (defaultConnectionValue.iType == ECmDefConnDestination) {
-        QString iface = QString::number(qHash(defaultConnectionValue.iId+KValueThatWillBeAddedToSNAPId));
-        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = snapConfigurations.value(iface);
-        if (priv.data() != 0) {
-            item.d = priv;
-        }
-    } else if (defaultConnectionValue.iType == ECmDefConnConnectionMethod) {
-        QString iface = QString::number(qHash(defaultConnectionValue.iId));
-        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(iface);
-        if (priv.data() != 0) {
-            item.d = priv;
-        }
-    } 
-#endif
-    
-    if (!item.isValid()) {
-        QString iface = QString::number(qHash(KUserChoiceIAPId));
-        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = userChoiceConfigurations.value(iface);
-        if (priv.data() != 0) {
-            item.d = priv;
-        }
-    }
-    
-    return item;
-}
-
+#else
 bool QNetworkConfigurationManagerPrivate::readNetworkConfigurationValuesFromCommsDb(
         TUint32 aApId, QNetworkConfigurationPrivate* apNetworkConfiguration)
 {
@@ -569,6 +530,54 @@ void QNetworkConfigurationManagerPrivate::readNetworkConfigurationValuesFromComm
     CleanupStack::PopAndDestroy(pAPItem);
     CleanupStack::PopAndDestroy(pDataHandler);
 }
+#endif
+
+QNetworkConfiguration QNetworkConfigurationManagerPrivate::defaultConfiguration()
+{
+    QNetworkConfiguration config;
+
+    if (iInitOk) {
+        stopCommsDatabaseNotifications();
+        TRAP_IGNORE(config = defaultConfigurationL());
+        startCommsDatabaseNotifications();
+    }
+
+    return config;
+}
+
+QNetworkConfiguration QNetworkConfigurationManagerPrivate::defaultConfigurationL()
+{
+    QNetworkConfiguration item;
+
+#ifdef SNAP_FUNCTIONALITY_AVAILABLE
+    // Check Default Connection (SNAP or IAP)
+    TCmDefConnValue defaultConnectionValue;
+    iCmManager.ReadDefConnL(defaultConnectionValue);
+    if (defaultConnectionValue.iType == ECmDefConnDestination) {
+        QString iface = QString::number(qHash(defaultConnectionValue.iId+KValueThatWillBeAddedToSNAPId));
+        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = snapConfigurations.value(iface);
+        if (priv.data() != 0) {
+            item.d = priv;
+        }
+    } else if (defaultConnectionValue.iType == ECmDefConnConnectionMethod) {
+        QString iface = QString::number(qHash(defaultConnectionValue.iId));
+        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(iface);
+        if (priv.data() != 0) {
+            item.d = priv;
+        }
+    } 
+#endif
+    
+    if (!item.isValid()) {
+        QString iface = QString::number(qHash(KUserChoiceIAPId));
+        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = userChoiceConfigurations.value(iface);
+        if (priv.data() != 0) {
+            item.d = priv;
+        }
+    }
+    
+    return item;
+}
 
 void QNetworkConfigurationManagerPrivate::updateActiveAccessPoints()
 {
@@ -629,6 +638,7 @@ void QNetworkConfigurationManagerPrivate::updateAvailableAccessPoints()
 
 void QNetworkConfigurationManagerPrivate::accessPointScanningReady(TBool scanSuccessful, TConnMonIapInfo iapInfo)
 {
+    iUpdateGoingOn = false;
     if (scanSuccessful) {
         QList<QString> unavailableConfigs = accessPointConfigurations.keys();
         

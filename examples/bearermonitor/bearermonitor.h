@@ -1,6 +1,7 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -20,33 +21,44 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please
-** contact Nokia at http://qt.nokia.com/contact.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
-#include "ui_bearerdialog.h"
+#ifndef BEARERMONITOR_H
+#define BEARERMONITOR_H
 
 #include <qnetworkconfigmanager.h>
 #include <qnetworksession.h>
-
-#include <QDialog>
+#if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE)	
+#include "ui_bearermonitor_240_320.h"
+#else
+#include "ui_bearermonitor_640_480.h"
+#endif
 
 class SessionWidget;
 
-class BearerDialog : public QDialog, public Ui_BearerDialog
+class BearerMonitor : public QWidget, public Ui_BearerMonitor
 {
     Q_OBJECT
 
 public:
-    BearerDialog(QWidget *parent = 0);
-    ~BearerDialog();
+    BearerMonitor(QWidget *parent = 0);
+    ~BearerMonitor();
 
 private slots:
     void configurationAdded(const QNetworkConfiguration &config, QTreeWidgetItem *parent = 0);
@@ -75,3 +87,4 @@ private:
     QList<SessionWidget *> sessionWidgets;
 };
 
+#endif //BEARERMONITOR_H
