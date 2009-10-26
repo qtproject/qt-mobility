@@ -55,6 +55,7 @@
 
 #include <QDateTime>
 #include <QHash>
+#include <QPair>
 
 class QContact;
 class QContactDetail;
@@ -76,23 +77,19 @@ private:
     QContactDetail* createAddress(const QVersitProperty& property) const;
     QContactDetail* createOrganization(const QVersitProperty& property,
                                        const QContact& contact) const;
-    QContactDetail* createEmail(const QVersitProperty& property) const;
-    QContactDetail* createUrl(const QVersitProperty& property) const;
-    QContactDetail* createUid(const QVersitProperty& property) const;
     QContactDetail* createTimeStamp(const QVersitProperty& property) const;
     QContactDetail* createAnniversary(const QVersitProperty& property) const;
     QContactDetail* createBirthday(const QVersitProperty& property) const;
-    QContactDetail* createGender(const QVersitProperty& property) const;
     QContactDetail* createNicknames(const QVersitProperty& property) const;
     QContactDetail* createAvatar(const QVersitProperty& property,
                                  const QVersitDocument& document) const;
     QString saveImage(const QVersitProperty& photoProperty,
                       const QVersitProperty& nameProperty) const;
     QContactDetail* createGeoLocation(const QVersitProperty& property) const;
-    QContactDetail* createNote(const QVersitProperty& property) const;
     QContactDetail* createOnlineAccount(const QVersitProperty& property) const;
     QContactDetail* createFamily(const QVersitProperty& property,
                                  const QContact& contact)const;
+    QContactDetail* createNameValueDetail(const QVersitProperty& property) const;
     QStringList extractContexts(const QVersitProperty& property) const;
     QStringList extractSubTypes(const QVersitProperty& property) const;
     QString takeFirst(QList<QByteArray>& list) const;    
@@ -102,7 +99,8 @@ private:
 public: // Data
     QString mImagePath;
 
-private: // Data    
+private: // Data
+    QHash<QString,QPair<QString,QString> > mDetailMappings;
     QHash<QString,QString> mContextMappings;
     QHash<QString,QString> mSubTypeMappings;
 };
