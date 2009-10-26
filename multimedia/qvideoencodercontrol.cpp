@@ -64,7 +64,7 @@
 */
 
 /*!
-  Create a new video encoder control object with the given \a parent.
+    Create a new video encoder control object with the given \a parent.
 */
 QVideoEncoderControl::QVideoEncoderControl(QObject *parent)
     :QMediaControl(parent)
@@ -72,92 +72,102 @@ QVideoEncoderControl::QVideoEncoderControl(QObject *parent)
 }
 
 /*!
-  Destroys the video encode control.
+    Destroys a video encoder control.
 */
 QVideoEncoderControl::~QVideoEncoderControl()
 {
 }
 
-
 /*!
-  \fn QVideoEncoderControl::minimumResolution() const
+    \fn QVideoEncoderControl::minimumResolution() const
 
-  Returns the smallest resolution, video encoder supports.
+    Returns the minium resolution a video encoder supports.
 
-  \sa resolution
+    \sa QVideoEncoderSettings::resolution()
 */
 
 /*!
-  \fn QVideoEncoderControl::maximumResolution() const
+    \fn QVideoEncoderControl::maximumResolution() const
 
-  Returns the largest resolution, video encoder supports.
+    Returns the maximum resolution a video encoder supports.
 
-  \sa resolution
+    \sa QVideoEncoderSettings::resolution()
 */
 
 /*!
-  \fn QVideoEncoderControl::minimumFrameRate() const
+    \fn QVideoEncoderControl::minimumFrameRate() const
 
-  Returns the smallest frame rate, video encoder supports.
+    Returns the minimum frame rate a video encoder supports.
 
-  \sa frameRate
+    \sa QVideoEncoderSettings::frameRate()
 */
 
 /*!
-  \fn QVideoEncoderControl::maximumFrameRate() const
+    \fn QVideoEncoderControl::maximumFrameRate() const
 
-  Returns the largest frame rate, video encoder supports.
+    Returns the maximum frame rate a video encoder supports.
 
-  \sa frameRate
+    \sa QVideoEncoderSettings::frameRate()
 */
 
 /*!
-  \fn QVideoEncoderControl::supportedVideoCodecs() const
+    \fn QVideoEncoderControl::supportedVideoCodecs() const
 
-  Returns the list of supported video codec names.
+    Returns the list of supported video codecs.
 */
 
 /*!
-  \fn QVideoEncoderControl::videoCodecDescription(const QString &codec) const
+    \fn QVideoEncoderControl::videoCodecDescription(const QString &codec) const
 
-  Returns description of video \a codec.
-*/
-
-
-/*!
-  \fn QVideoEncoderControl::supportedEncodingOptions(const QString &codec) const
-
-  Returns the list of supported video \a codec encoding options.
-
-  The list and meaninng of options is system depended.
+    Returns a description of a video \a codec.
 */
 
 /*!
-  \fn QVideoEncoderControl::encodingOption(const QString &codec, const QString &option) const
+    \fn QVideoEncoderControl::supportedEncodingOptions(const QString &codec) const
 
-  Returns value of video \a codec \a option.
+    Returns a list of supported encoding options for a video \a codec.
+
+    The names and types of the options in the list is system dependent.
 */
 
 /*!
-  \fn QVideoEncoderControl::setEncodingOption(const QString &codec, const QString &option, const QVariant &value)
+    \fn QVideoEncoderControl::encodingOption(const QString &codec, const QString &option) const
 
-  Set the \a codec specific \a option to \a value.
+    Returns the value of a video \a codec \a option.
 */
 
 /*!
-  \fn QVideoEncoderControl::supportedResolutions() const
+    \fn QVideoEncoderControl::setEncodingOption(const QString &codec, const QString &option, const QVariant &value)
 
-  Returns the list of resolutions if the video encoder supports only the limited set
-  of video frame sizes, otherwise returns an empty list.
-
-  \sa resolution(), minimumResolution(), maximumResolution()
+    Sets the \a value of a \a codec specific \a option.
 */
 
 /*!
-  \fn QVideoEncoderControl::supportedFrameRates() const
+    \fn QVideoEncoderControl::supportedResolutions() const
 
-  Returns the list of frame rates if the video encoder supports only the limited set
-  of video frame rates, otherwise returns an empty list.
+    Returns a list of specific supported resolutions.  If the encoder supports arbitrary resolutions
+    within the minimum and maximum range, then an empty list is returned.
 
-  \sa frameRate
+    \sa QVideoEncoderSettings::resolution(), minimumResolution(), maximumResolution()
+*/
+
+/*!
+    \fn QVideoEncoderControl::supportedFrameRates() const
+
+    Returns the list of frame rates if the video encoder supports only the limited set
+    of video frame rates, otherwise returns an empty list.
+
+    \sa QVideoEncoderSettings::frameRate()
+*/
+
+/*!
+    \fn QVideoEncoderControl::videoSettings() const
+
+    Returns the selected video encoder settings.
+*/
+
+/*!
+    \fn QVideoEncoderControl::setVideoSettings(const QVideoEncoderSettings &settings)
+
+    Sets the selected video encoder \a settings.
 */

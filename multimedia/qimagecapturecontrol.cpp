@@ -44,6 +44,7 @@
 
 /*!
     \class QImageCaptureControl
+    \brief The QImageCaptureControl provides a control interface for image capture services.
     \preliminary
 
     The interface name of QImageCaptureControl is \c com.nokia.Qt.QImageCaptureControl/1.0 as
@@ -63,7 +64,7 @@
 */
 
 /*!
-  Create a new image capture control object with the given \a parent
+    Constructs a new image capture control object with the given \a parent
 */
 QImageCaptureControl::QImageCaptureControl(QObject *parent)
     :QMediaControl(parent)
@@ -71,9 +72,35 @@ QImageCaptureControl::QImageCaptureControl(QObject *parent)
 }
 
 /*!
-  Destroys the image encode control.
+    Destroys an image capture control.
 */
 QImageCaptureControl::~QImageCaptureControl()
 {
 }
+
+/*!
+    \fn QImageCaptureControl::isReadyForCapture() const
+
+    Identifies if a capture control is ready to perform a capture.
+
+    Returns true if the control is ready; and false if it is not.
+*/
+
+/*!
+    \fn QImageCaptureControl::readyForCaptureChanged(bool ready)
+
+    Signals that a capture control's \a ready state has changed.
+*/
+
+/*!
+    \fn QImageCaptureControl::capture(const QString &fileName)
+
+    Initiates the capture of an image to \a fileName.
+*/
+
+/*!
+    \fn QImageCaptureControl::imageCaptured(const QString &fileName, const QImage &preview)
+
+    Signals that an image has been captured to \a fileName and a \a preview is available.
+*/
 

@@ -45,10 +45,10 @@
 /*!
     \class QMediaStreamsControl
     \preliminary
-    \brief The QMediaStreamsControl class provides an media streams selector control.
+    \brief The QMediaStreamsControl class provides a media stream selection control.
 
-    The QMediaStreamsControl class provides descriptions of the media streams available
-    and allows one to be selected as the currently played.
+    The QMediaStreamsControl class provides descriptions of the available media streams
+    and allows individual streams to be activated and deactivated.
 
     The interface name of QMediaStreamsControl is \c com.nokia.Qt.MediaStreamsControl as
     defined in QMediaStreamsControl_iid.
@@ -82,62 +82,61 @@ QMediaStreamsControl::~QMediaStreamsControl()
 }
 
 /*!
-  \enum QMediaStreamControl::StreamType
+  \enum QMediaStreamsControl::StreamType
 
   Media stream type.
 
-  \value QMediaStreamControl::AudioStream Audio stream.
-  \value QMediaStreamControl::VideoStream Video stream.
-  \value QMediaStreamControl::SubPictureStream Subpicture or teletext stream.
-  \value QMediaStreamControl::UnknownStream The stream type is unknown.
+  \value AudioStream Audio stream.
+  \value VideoStream Video stream.
+  \value SubPictureStream Subpicture or teletext stream.
+  \value UnknownStream The stream type is unknown.
+  \value DataStream
 */
 
 /*!
-\fn QMediaStreamsControl::streamCount()
+    \fn QMediaStreamsControl::streamCount()
 
-Returns the number of media streams.
+    Returns the number of media streams.
 */
 
 /*!
-\fn QMediaStreamsControl::streamType(int stream)
+    \fn QMediaStreamsControl::streamType(int stream)
 
-Return the type of media \a stream.
+    Return the type of a media \a stream.
 */
 
 /*!
-\fn QMediaStreamsControl::metaData(int stream, QtMedia::MetaData key)
+    \fn QMediaStreamsControl::metaData(int stream, QtMedia::MetaData key)
 
-Returns the metadata value associated with media \a stream.
+    Returns the meta-data value of \a key for a given \a stream.
 
-Useful metadata keya are QtMedia::Title, QtMedia::Description and QtMedia::Language.
+    Useful metadata keya are QtMedia::Title, QtMedia::Description and QtMedia::Language.
 */
 
 /*!
-\fn QMediaStreamsControl::isActive(int stream)
+    \fn QMediaStreamsControl::isActive(int stream)
 
-Returns true if the media \a stream is active.
+    Returns true if the media \a stream is active.
 */
 
 /*!
-\fn QMediaStreamsControl::setActive(int stream, bool state)
+    \fn QMediaStreamsControl::setActive(int stream, bool state)
 
-Calling setActive(stream, true) activates the media stream,
-and since in most cases playback of only one stream of certain
-type is supported, currently active stream of the same type
-will be disactivated.
+    Sets the active \a state of a media \a stream.
 
-Calling setActive(stream, false) with a currently active
-stream passed turns off playback of corresponding stream type.
+    Setting the active state of a media stream to true will activate it.  If any other stream
+    of the same type was previously active it will be deactivated. Setting the active state fo a
+    media stream to false will deactivate it.
 */
 
 /*!
-\fn QMediaStreamsControl::streamsChanged()
+    \fn QMediaStreamsControl::streamsChanged()
 
-The signal is emited when the available streams list is changed.
+    The signal is emited when the available streams list is changed.
 */
 
 /*!
-\fn QMediaStreamsControl::activeStreamsChanged()
+    \fn QMediaStreamsControl::activeStreamsChanged()
 
-The signal is emited when the active streams list is changed.
+    The signal is emited when the active streams list is changed.
 */
