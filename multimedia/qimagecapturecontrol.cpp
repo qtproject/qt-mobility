@@ -43,6 +43,26 @@
 #include <QtCore/qstringlist.h>
 
 /*!
+    \class QImageCaptureControl
+    \preliminary
+
+    The interface name of QImageCaptureControl is \c com.nokia.Qt.QImageCaptureControl/1.0 as
+    defined in QImageCaptureControl_iid.
+
+    \sa QMediaService::control()
+*/
+
+/*!
+    \macro QImageCaptureControl_iid
+
+    \c com.nokia.Qt.QImageCaptureControl/1.0
+
+    Defines the interface name of the QImageCaptureControl class.
+
+    \relates QImageCaptureControl
+*/
+
+/*!
   Create a new image capture control object with the given \a parent
 */
 QImageCaptureControl::QImageCaptureControl(QObject *parent)

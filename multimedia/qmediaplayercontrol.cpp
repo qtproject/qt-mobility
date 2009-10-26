@@ -52,7 +52,20 @@
     \brief The abstract class for controling media playback, this is provided
     by a QMediaService object, and is used by QMediaPlayer for playback.
 
-    \sa QMediaService, QMediaPlayer
+    The interface name of QMediaPlayerControl is \c com.nokia.Qt.QMediaPlayerControl/1.0 as
+    defined in QMediaPlayerControl_iid.
+
+    \sa QMediaService::control(), QMediaPlayer
+*/
+
+/*!
+    \macro QMediaPlayerControl_iid
+
+    \c com.nokia.Qt.QMediaPlayerControl/1.0
+
+    Defines the interface name of the QMediaPlayerControl class.
+
+    \relates QMediaPlayerControl
 */
 
 /*!

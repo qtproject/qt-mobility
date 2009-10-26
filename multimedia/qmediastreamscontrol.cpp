@@ -52,6 +52,8 @@
 
     The interface name of QMediaStreamsControl is \c com.nokia.Qt.MediaStreamsControl as
     defined in QMediaStreamsControl_iid.
+
+    \sa QMediaService::control()
 */
 
 /*!
@@ -59,7 +61,7 @@
 
     \c com.nokia.Qt.MediaStreamsControl
 
-    Defines the interface name of QMediaStreamsControl.
+    Defines the interface name of the QMediaStreamsControl class.
 
     \relates QMediaStreamsControl
 */

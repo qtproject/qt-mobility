@@ -43,6 +43,26 @@
 #include <QtCore/qstringlist.h>
 
 /*!
+    \class QImageEncoderControl
+    \preliminary
+
+    The interface name of QCameraControl is \c com.nokia.Qt.QCameraControl/1.0 as
+    defined in QCameraControl_iid.
+
+    \sa QMediaService::control()
+*/
+
+/*!
+    \macro QImageEncoderControl_iid
+
+    \c com.nokia.Qt.QImageEncoderControl/1.0
+
+    Defines the interface name of the QImageEncoderControl class.
+
+    \relates QImageEncoderControl
+*/
+
+/*!
   Create a new image encode control object with the given \a parent
 */
 QImageEncoderControl::QImageEncoderControl(QObject *parent)

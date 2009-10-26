@@ -44,7 +44,27 @@
 #include <QtCore/qvariant.h>
 
 /*!
-  Create a new video encode control object with the given \a parent.
+    \class QVideoEncoderControl
+    \preliminary
+
+    The interface name of QVideoEncoderControl is \c com.nokia.Qt.QVideoEncoderControl/1.0 as
+    defined in QVideoEncoderControl_iid.
+
+    \sa QMediaService::control()
+*/
+
+/*!
+    \macro QVideoEncoderControl_iid
+
+    \c com.nokia.Qt.QVideoEncoderControl/1.0
+
+    Defines the interface name of the QVideoEncoderControl class.
+
+    \relates QVideoEncoderControl
+*/
+
+/*!
+  Create a new video encoder control object with the given \a parent.
 */
 QVideoEncoderControl::QVideoEncoderControl(QObject *parent)
     :QMediaControl(parent)

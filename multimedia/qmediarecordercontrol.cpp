@@ -49,8 +49,21 @@
     \preliminary
     \brief
 
-    \sa QMediaRecorder
+    The interface name of QMediaRecorderControl is \c com.nokia.Qt.QMediaRecorderControl/1.0 as
+    defined in QMediaRecorderControl_iid.
 
+    \sa QMediaService::control(), QMediaRecorder
+
+*/
+
+/*!
+    \macro QMediaRecorderControl_iid
+
+    \c com.nokia.Qt.QMediaRecorderControl/1.0
+
+    Defines the interface name of the QMediaRecorderControl class.
+
+    \relates QMediaRecorderControl
 */
 
 /*!
