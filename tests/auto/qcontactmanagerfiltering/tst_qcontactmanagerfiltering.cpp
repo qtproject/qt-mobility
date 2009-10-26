@@ -2634,13 +2634,17 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
 
     qDebug() << "Generating contacts with different timestamps, please wait..";
     int originalContactCount = cm->contacts().count();
-    Q_ASSERT(cm->saveContact(&a));
+    bool successfulSave = cm->saveContact(&a);
+    Q_ASSERT(successfulSave);
     QTest::qSleep(napTime);
-    Q_ASSERT(cm->saveContact(&b));
+    successfulSave = cm->saveContact(&b);
+    Q_ASSERT(successfulSave);
     QTest::qSleep(napTime);
-    Q_ASSERT(cm->saveContact(&c));
+    successfulSave = cm->saveContact(&c);
+    Q_ASSERT(successfulSave);
     QTest::qSleep(napTime);
-    Q_ASSERT(cm->saveContact(&d));
+    successfulSave = cm->saveContact(&d);
+    Q_ASSERT(successfulSave);
     QTest::qSleep(napTime);
 
     /* Now add some contacts specifically for multisorting */
@@ -2656,9 +2660,12 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     f.saveDetail(&n);
     n.setLast("Smithy");
     g.saveDetail(&n);
-    Q_ASSERT(cm->saveContact(&e));
-    Q_ASSERT(cm->saveContact(&f));
-    Q_ASSERT(cm->saveContact(&g));
+    successfulSave = cm->saveContact(&e);
+    Q_ASSERT(successfulSave);
+    successfulSave = cm->saveContact(&f);
+    Q_ASSERT(successfulSave);
+    successfulSave = cm->saveContact(&g);
+    Q_ASSERT(successfulSave);
     originalContactCount += 7;
     Q_ASSERT(cm->contacts().count() == originalContactCount);
 

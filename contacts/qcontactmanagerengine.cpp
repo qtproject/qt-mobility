@@ -54,6 +54,8 @@
 
 #include "qcontact_p.h"
 
+#include <QDebug>
+
 /*!
  * \class QContactManagerEngine
  * \preliminary
