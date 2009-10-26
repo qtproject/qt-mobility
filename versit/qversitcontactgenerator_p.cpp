@@ -143,15 +143,15 @@ QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& 
     foreach (QVersitProperty property, properties) {
         QContactDetail* detail = 0;
         if (property.name() == QString::fromAscii(versitNameId)) {
-            detail = createName(property);
+            detail = createName(property,contact);
         } else if (property.name() == QString::fromAscii(versitPhoneId)) {
             detail = createPhone(property);
         } else if (property.name() == QString::fromAscii(versitAddressId)) {
             detail = createAddress(property);
-        } else if (property.name() == QString::fromAscii(versitTitleId) ||
-                   property.name() == QString::fromAscii(versitRoleId) ||
-                   property.name() == QString::fromAscii(versitOrganizationId)) {
-            detail = createOrganization(property,contact);
+        } else if (property.name() == QString::fromAscii(versitTitleId)){
+            detail = createOrganization(property);
+        } else if (property.name() == QString::fromAscii(versitOrganizationId)) {
+            detail = createOrganization(property);
         } else if (property.name() == QString::fromAscii(versitRevisionId)) {
             detail = createTimeStamp(property);
         } else if (property.name() == QString::fromAscii(versitAnniversaryId)) {
@@ -188,8 +188,13 @@ QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& 
  * Creates a QContactName from \a property
  */
 QContactDetail* QVersitContactGeneratorPrivate::createName(
-    const QVersitProperty& property) const
+    const QVersitProperty& property,const QContact& contact) const
 {
+    // Restrict only one name can exist, if multiple than choose first
+    // and discard rest
+    if( !contact.detail(QContactName::DefinitionName).isEmpty()){
+        return 0;
+    }
     QContactName* name = new QContactName();
     QList<QByteArray> values = property.value().split(';');
     name->setLast(takeFirst(values));
@@ -240,22 +245,11 @@ QContactDetail* QVersitContactGeneratorPrivate::createAddress(
  * Creates a QContactOrganization from \a property and adds it to the \a document
  */
 QContactDetail* QVersitContactGeneratorPrivate::createOrganization(
-    const QVersitProperty& property,
-    const QContact& contact) const
+        const QVersitProperty& property)const
 {
-    QContactOrganization* org = 0;
-    QContactDetail detail = contact.detail(QContactOrganization::DefinitionName);
-
-    if (detail.isEmpty()) {
-        org = new QContactOrganization;
-    } else {
-        org = new QContactOrganization(static_cast<QContactOrganization>(detail));
-    }
-
+    QContactOrganization* org = new QContactOrganization;
     if (property.name() == QString::fromAscii(versitTitleId)) {
         org->setTitle(QString::fromAscii(property.value()));
-    } else if (property.name() == QString::fromAscii(versitRoleId)) {
-        // TODO: QContactOrganization does not support setting this subtype yet.
     } else if (property.name() == QString::fromAscii(versitOrganizationId)) {
         QByteArray value = property.value();
         int firstSemic = value.indexOf(";");
@@ -263,7 +257,8 @@ QContactDetail* QVersitContactGeneratorPrivate::createOrganization(
         QByteArray orgUnit = value.mid(firstSemic+1,value.size());
         org->setDepartment(QString::fromAscii(orgUnit));
     } else {
-        // NOP
+        delete org;
+        org = 0;
     }
     
     return org;
@@ -426,13 +421,7 @@ QString QVersitContactGeneratorPrivate::saveImage(const QVersitProperty& photoPr
     image.setFileName(imgName);
 
     if (image.open(QIODevice::WriteOnly)) {
-        qint64 writeResult = -1;
-        if (encoding == QString::fromAscii(versitEncodingBase64)) {
-            writeResult = image.write(QByteArray::fromBase64(value));
-        } else if (encoding == QString::fromAscii(versitEncodingQuotedPrintable)) {
-            writeResult = image.write(value);
-        }
-        if (writeResult > 0) {
+        if (image.write(QByteArray::fromBase64(value)) > 0) {
             ret = imgName;
         }
     }

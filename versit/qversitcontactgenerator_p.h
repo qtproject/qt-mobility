@@ -72,11 +72,11 @@ public:
     
 private:
     
-    QContactDetail* createName(const QVersitProperty& property) const;
+    QContactDetail* createName(const QVersitProperty& property,
+                                const QContact& contact ) const;
     QContactDetail* createPhone(const QVersitProperty& property) const;
     QContactDetail* createAddress(const QVersitProperty& property) const;
-    QContactDetail* createOrganization(const QVersitProperty& property,
-                                       const QContact& contact) const;
+    QContactDetail* createOrganization(const QVersitProperty& property) const;
     QContactDetail* createTimeStamp(const QVersitProperty& property) const;
     QContactDetail* createAnniversary(const QVersitProperty& property) const;
     QContactDetail* createBirthday(const QVersitProperty& property) const;

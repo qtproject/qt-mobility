@@ -122,7 +122,29 @@ void UT_QVersitContactGenerator::testName()
     nameProperty.setValue(val.join(QString::fromAscii(";")).toAscii());
     document.addProperty(nameProperty);        
     QContact contact = mGenerator->generateContact(document);    
-    const QContactName& name = (QContactName)contact.detail(QContactName::DefinitionName);    
+    QContactName name = (QContactName)contact.detail(QContactName::DefinitionName);
+    QCOMPARE(name.last(),val[0]);
+    QCOMPARE(name.first(),val[1]);
+    QCOMPARE(name.middle(),val[2]);
+    QCOMPARE(name.prefix(),val[3]);
+    QCOMPARE(name.suffix(),val[4]);
+
+    // Multiple Names , first one will be picked and rest will be discarded
+    nameProperty = QVersitProperty();
+    QStringList val_2;
+    val_2.append("FakeHomer");//FirstName
+    val_2.append("FakeSimpson");//LastName
+    val_2.append("FakeBellyBoy");//GivenName
+    val_2.append("FakeDr");//PreFix
+    val_2.append("FakeMSc");//Suffix
+    nameProperty.setName(QString::fromAscii(versitNameId));
+    nameProperty.setValue(val_2.join(QString::fromAscii(";")).toAscii());
+    document.addProperty(nameProperty);
+    contact = mGenerator->generateContact(document);
+    QList<QContactDetail> names = contact.details(QContactName::DefinitionName);
+    QCOMPARE(names.count(),1);
+    // val_2 should be discarded , so check for val
+    name = (QContactName)names[0];
     QCOMPARE(name.last(),val[0]);
     QCOMPARE(name.first(),val[1]);
     QCOMPARE(name.middle(),val[2]);
@@ -265,10 +287,10 @@ void UT_QVersitContactGenerator::testOrganization()
     // ORG and TITLE
     property.setName(QString::fromAscii(versitOrganizationId));
     property.setValue(QByteArray("Nokia;R&D"));
+    document = createDocumentWithProperty(property);
     document.addProperty(property);
     contact = mGenerator->generateContact(document);
-    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
-    QCOMPARE(org.title(),QString::fromAscii(titleValue));
+    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));    
     QCOMPARE(org.department(),QString::fromAscii("R&D"));
     QCOMPARE(org.name(),QString::fromAscii("Nokia"));
 
