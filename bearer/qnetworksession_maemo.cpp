@@ -1012,7 +1012,6 @@ void QNetworkSessionPrivate::cleanupAnyConfiguration()
 #ifdef BEARER_MANAGEMENT_DEBUG
     qDebug()<<"Removing configuration created for" << activeConfig.d->id;
 #endif
-    activeConfig.d.reset();
     activeConfig = publicConfig;
 }
 
