@@ -63,6 +63,8 @@
 #include <qcontactgender.h>
 #include <qcontactnickname.h>
 #include <qcontactanniversary.h>
+#include <qcontactonlineaccount.h>
+#include <qcontactfamily.h>
 
 
 void UT_QVersitContactConverter::init()
@@ -847,6 +849,7 @@ void UT_QVersitContactConverter::testEncodeNickName()
 
     //Ensure property parameer exisit and matches.
     QString propertyName = versitDocument.properties().at(0).name();
+    QCOMPARE(propertyName, QString::fromAscii(versitNicknameXId));
     QString expectedPropertyName =
         mConverterPrivate->mMappings.value(QContactNickname::DefinitionName);
     QCOMPARE(propertyName, expectedPropertyName);
@@ -897,3 +900,106 @@ void UT_QVersitContactConverter::testEncodAniversary()
     QVERIFY(versitDocument.properties().at(0).parameters().contains(versitType,
             QString(QLatin1String(QContactAnniversary::SubTypeWedding)).toUpper()));
 }
+
+
+void UT_QVersitContactConverter::testEncodOnlineAccount()
+{
+    QContact contact;
+    QContactOnlineAccount onlineAccount;
+
+    //Test1:  Valid SWIS Account.
+    QString testUri = "sip:abc@temp.com";
+    onlineAccount.setAccountUri(testUri);
+    onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeShareVideo);
+    onlineAccount.setContexts(QContactDetail::ContextHome);
+    contact.saveDetail(&onlineAccount);
+    
+    //Convert Contat Into Versit Document
+    QVersitDocument versitDocument = mConverter->convertContact(contact);
+
+    //Ensure parameters exisit, i.e. home and swiss
+    QCOMPARE(2, versitDocument.properties().at(0).parameters().count());
+    QVERIFY(versitDocument.properties().at(0).parameters().contains(
+            versitType, versitContextHomeId));
+    QVERIFY(versitDocument.properties().at(0).parameters().contains(
+            versitType, versitSwisId));
+
+    //Ensure property Exisit
+    QCOMPARE(1, versitDocument.properties().count());
+
+    //Ensure property parameer exisit and matches.
+    QString propertyName = versitDocument.properties().at(0).name();
+    QCOMPARE(propertyName, QString::fromAscii(versitSipId));
+
+    //Check property value
+    QString value = versitDocument.properties().at(0).value();
+    QCOMPARE(testUri, value);
+
+    //Test2: InValid Sub Type Value is not encoded.
+    onlineAccount.setAccountUri(testUri);
+    onlineAccount.setSubTypes("INVALIDSUBTYPE");
+    contact.saveDetail(&onlineAccount);
+    versitDocument = mConverter->convertContact(contact);
+    QCOMPARE(0, versitDocument.properties().count());
+}
+
+
+
+void UT_QVersitContactConverter::testEncodeFamily()
+{
+    QContact contact;
+    QContactFamily family;
+
+    //Test1: No Spouce No Family
+    family.setContexts(QContactDetail::ContextHome);
+    contact.saveDetail(&family);
+    //Convert Contat Into Versit Document
+    QVersitDocument versitDocument = mConverter->convertContact(contact);
+    QCOMPARE(0, versitDocument.properties().count());
+
+    //Test2: Only Spouce.
+    QString spouce = "ABC";
+    family.setSpouse(spouce);
+    contact.saveDetail(&family);
+    //Convert Contat Into Versit Document
+    versitDocument = mConverter->convertContact(contact);
+
+    //Ensure property Exisit
+    QCOMPARE(1, versitDocument.properties().count());
+    //Ensure no parameters exisit,
+    QCOMPARE(0, versitDocument.properties().at(0).parameters().count());
+    QString propertyName = versitDocument.properties().at(0).name();
+    QCOMPARE(propertyName, QString::fromAscii(versitSpouseId));
+
+    QString value (versitDocument.properties().at(0).value() );
+    QCOMPARE(spouce, value );
+
+
+    //Test3: Spouce with few childerns
+    QStringList childerns;
+    childerns << "A" << "B" ;
+    family.setChildren(childerns);
+    family.setSpouse(spouce);
+    contact.saveDetail(&family);
+    versitDocument = mConverter->convertContact(contact);
+
+    //Ensure property Exisit
+    QCOMPARE(2, versitDocument.properties().count());
+    //Ensure no parameters exisit,
+    QCOMPARE(0, versitDocument.properties().at(0).parameters().count());
+
+    //Ensure property parameer exisit and matches.
+    QString propertyName1 = versitDocument.properties().at(0).name();
+    QCOMPARE(propertyName1, QString::fromAscii(versitSpouseId));
+
+    QString value1 (versitDocument.properties().at(0).value() );
+    QCOMPARE(spouce, value1 );
+
+    QString propertyName2 = versitDocument.properties().at(1).name();
+    QCOMPARE(propertyName2, QString::fromAscii(versitChildrenId));
+
+    QString value2 (versitDocument.properties().at(1).value() );
+    QString expected = "A,B";
+    QCOMPARE(expected, value2 );
+}
+

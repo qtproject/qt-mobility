@@ -70,6 +70,7 @@ const char versitSipId[] = "X-SIP";
 const char versitSoundId[] = "SOUND";
 const char versitSpouseId[] = "X-SPOUSE";
 const char versitChildrenId[] = "X-CHILDREN";
+const char versitNicknameXId[] = "X-NICKNAME";
 
 // Contexts
 const char versitContextWorkId[] = "WORK";
@@ -97,6 +98,7 @@ const char versitAudioWave[] = "WAVE";
 // Sub types for onlineaccount
 const char versitSwisId[] = "SWIS";
 const char versitSipSubTypeId[] = "SIP";
+const char versitVoipId[] = "VOIP";
 
 // Format Conversion
 const char versitJPEGExtenId[] = "JPG";

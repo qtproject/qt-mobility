@@ -58,6 +58,8 @@
 #include <qcontactgender.h>
 #include <qcontactnickname.h>
 #include <qcontactanniversary.h>
+#include <qcontactonlineaccount.h>
+#include <qcontactfamily.h>
 #include <QFile>
 #include <QUrl>
 #include <QBuffer>
@@ -94,7 +96,7 @@ QVersitContactConverterPrivate::QVersitContactConverterPrivate()
     mMappings.insert(
         QContactGender::DefinitionName,QString::fromAscii(versitGenderId));
     mMappings.insert(
-        QContactNickname::DefinitionName,QString::fromAscii(versitNicknameId));
+        QContactNickname::DefinitionName,QString::fromAscii(versitNicknameXId));
     mMappings.insert(
         QContactAnniversary::DefinitionName,QString::fromAscii(versitAnniversaryId));
     
@@ -141,6 +143,13 @@ QVersitContactConverterPrivate::QVersitContactConverterPrivate()
         QContactAnniversary::SubTypeEmployment,QContactAnniversary::SubTypeEmployment);
     mMappings.insert(
         QContactAnniversary::SubTypeMemorial,QContactAnniversary::SubTypeMemorial);
+    mMappings.insert(
+        QContactOnlineAccount::SubTypeSip,QString::fromAscii(versitSipSubTypeId));
+    mMappings.insert(
+        QContactOnlineAccount::SubTypeShareVideo,QString::fromAscii(versitSwisId));
+    mMappings.insert(
+        QContactOnlineAccount::SubTypeInternet,QString::fromAscii(versitVoipId));
+
 
     // Sound is mapped to the Contact Audio Ringingtones that was the nearest match
     // field for the Sound
@@ -202,6 +211,10 @@ void QVersitContactConverterPrivate::encodeFieldInfo(
         encodeNickName(property, detail);
     } else if (detail.definitionName() == QContactGender::DefinitionName) {
         encodeGender(property, detail);
+    } else if (detail.definitionName() == QContactOnlineAccount::DefinitionName) {
+        addProperty = encodeOnlineAccount(property, detail);
+    }else if (detail.definitionName() == QContactFamily::DefinitionName) {
+        addProperty = encodeFamily(versitDocument, detail);
     }else {
         addProperty = false;
     }
@@ -331,8 +344,6 @@ bool QVersitContactConverterPrivate::encodeRev(
     return encode;
 }
 
-
-
 /*!
  * Encode BirthDay Field Information into the Versit Document
  */
@@ -355,7 +366,6 @@ void QVersitContactConverterPrivate::encodeNote(
     QContactNote contactNote = static_cast<QContactNote>(detail);
     property.setValue(contactNote.note().toAscii());
 }
-
 
 /*!
  * Encode Geo Prpoperties Field Information into the Versit Document
@@ -398,12 +408,9 @@ bool QVersitContactConverterPrivate::encodeOrganization(
     return false;
 }
 
-
-
 /*!
  * Encode Embedded Content into the Versit Document
  */
-
 bool QVersitContactConverterPrivate::encodeEmbeddedContent(
     QVersitProperty& property,
     const QContactDetail& detail)
@@ -497,6 +504,57 @@ void QVersitContactConverterPrivate::encodeParameters(
             property.addParameter(QString::fromAscii(versitType),parameterValue);
     }
 }
+
+/*!
+ * Encode online account information into the Versit Document
+ */
+bool QVersitContactConverterPrivate::encodeOnlineAccount(
+        QVersitProperty& property,
+        const QContactDetail& detail )
+{
+    bool encode = false;
+    QContactOnlineAccount onlinAccount = static_cast<QContactOnlineAccount>(detail);
+    QStringList subTypes = onlinAccount.subTypes();
+
+    if ( subTypes.contains(QContactOnlineAccount::SubTypeSip) ||
+         subTypes.contains(QContactOnlineAccount::SubTypeInternet) ||
+         subTypes.contains(QContactOnlineAccount::SubTypeShareVideo) ) {
+
+        encode = true;
+        encodeParameters(property, onlinAccount.subTypes());
+        encodeParameters(property, onlinAccount.contexts());
+        property.setName(QString::fromAscii(versitSipId));
+        property.setValue(onlinAccount.accountUri().toAscii());
+    }
+    return encode;
+}
+
+
+/*!
+ * Encode family versit property if its supported in Versit Document
+ */
+bool QVersitContactConverterPrivate::encodeFamily(
+        QVersitDocument& document,
+        const QContactDetail& detail )
+{
+    QContactFamily family = static_cast<QContactFamily>(detail);
+
+    if ( family.spouse().size() ) {
+        QVersitProperty property;
+        property.setName(QString::fromAscii(versitSpouseId));
+        property.setValue(family.spouse().toAscii());
+        document.addProperty(property);
+    }
+
+    if ( family.children().size() ) {
+        QVersitProperty property;
+        property.setName(QString::fromAscii(versitChildrenId));
+        property.setValue(family.children().join(",").toAscii());
+        document.addProperty(property);
+    }
+    return false;
+}
+
 
 /*!
  * Check if the Remote resouce represents a Valid remote resouce
