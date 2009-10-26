@@ -73,6 +73,7 @@ public:
     void encodeNickName( QVersitProperty& property,const QContactDetail& detail );
     void encodAniversary( QVersitProperty& property,const QContactDetail& detail );
     bool encodeOnlineAccount( QVersitProperty& property,const QContactDetail& detail );
+    bool encodeFamily( QVersitDocument& document,const QContactDetail& detail );
     bool isValidRemoteUrl(const QString& resouceIdentifier );
     
 public: // Data
