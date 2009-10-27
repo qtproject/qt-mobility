@@ -204,14 +204,32 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
 {
-    //TODO implement this function
-    Q_UNUSED(filter)
-    Q_UNUSED(ordering)
-    Q_UNUSED(body)
-    Q_UNUSED(options)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
-    return QMessageIdList(); // stub
+    if (filter.options() != 0) {
+        d_ptr->_error = QMessageStore::NotYetImplemented;
+        return QMessageIdList();
+    }
+    
+    d_ptr->_error = QMessageStore::NoError;
+    QMessageIdList ids(convert(d_ptr->_store->queryMessages(convert(filter), convert(ordering))));
+    
+    Qt::CaseSensitivity searchOptions(Qt::CaseInsensitive);
+    if (options & QMessageDataComparator::CaseSensitive) {
+        searchOptions = Qt::CaseSensitive;
+    }
+    
+    QMessageIdList result;
+    foreach (QMessageId id, ids) {
+        QMessage message(id);
+        QMessageContentContainer bodyContainer(message.find(message.bodyId()));
+        if (bodyContainer.textContent().contains(body, searchOptions)) {
+            result.append(id);
+            if (limit && ((uint)result.count() >= offset + limit)) {
+                break;
+            }
+        }
+    }
+    
+    return result.mid(offset, (limit ? limit : -1));
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
