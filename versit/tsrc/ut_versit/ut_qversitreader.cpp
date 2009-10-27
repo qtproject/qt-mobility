@@ -147,7 +147,7 @@ void UT_QVersitReader::testParseNextVersitProperty()
     vCard.append("VERSION:2.1\r\n");
     vCard.append("N:Homer\r\n");
     vCard.append("PHOTO;ENCODING=BASE64: U\t XQgaX MgZ\t3Jl YXQh\r\n\r\n");
-    vCard.append("EMAIL;Encoding=Quoted-Printable:homer=40simp=\r\nsons.com\r\n");
+    vCard.append("HOME.Springfield.EMAIL;Encoding=Quoted-Printable:homer=40simp=\r\nsons.com\r\n");
     vCard.append("AGENT:\r\nBEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\r\n");
     vCard.append("End:VCARD\r\n");
     
@@ -170,6 +170,9 @@ void UT_QVersitReader::testParseNextVersitProperty()
     QCOMPARE(property.value(),QByteArray("UXQgaXMgZ3JlYXQh"));
 
     property = mReaderPrivate->parseNextVersitProperty(vCard);
+    QStringList propertyGroup(QString::fromAscii("HOME"));
+    propertyGroup.append(QString::fromAscii("Springfield").toUpper());
+    QCOMPARE(property.groups(),propertyGroup);
     QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
     QCOMPARE(0,property.parameters().count());
     QCOMPARE(property.value(),QByteArray("homer@simpsons.com"));

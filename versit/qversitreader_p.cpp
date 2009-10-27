@@ -92,7 +92,7 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(QByteArray& text)
     QVersitProperty property;
     QPair<QStringList,QString> groupsAndName =
         VersitUtils::extractPropertyGroupsAndName(text);
-    // TODO: set groups
+    property.setGroups(groupsAndName.first);
     property.setName(groupsAndName.second);
     property.setParameters(VersitUtils::extractPropertyParams(text));
     text = VersitUtils::extractPropertyValue(text); 

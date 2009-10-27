@@ -58,14 +58,27 @@ void UT_QVersitProperty::cleanup()
 
 void UT_QVersitProperty::testGroup()
 {
-    // Name in upper case
-    QString group(QString::fromAscii("GROUP_NAME"));
-    mVersitProperty->setGroup(group);
-    QCOMPARE(mVersitProperty->group(), group);
+    // One group name in upper case
+    QStringList group(QString::fromAscii("GROUP_NAME"));
+    mVersitProperty->setGroups(group);
+    QCOMPARE(mVersitProperty->groups(), group);
 
-    // Name in lower case, converted automatically to upper case
-    mVersitProperty->setGroup(QString::fromAscii("group_name"));
-    QCOMPARE(mVersitProperty->group(), group);
+    // Group name in lower case, converted automatically to upper case
+    QStringList groupLowercase(QString::fromAscii("group_name"));
+    mVersitProperty->setGroups(groupLowercase);
+    QCOMPARE(mVersitProperty->groups(), group);
+
+    // Several groups
+    QStringList groupList;
+    groupList.append(QString::fromAscii("GROUP1"));
+    groupList.append(QString::fromAscii("Group2"));
+    groupList.append(QString::fromAscii("group3"));
+    mVersitProperty->setGroups(groupList);
+    QStringList expectedGroupList;
+    foreach (QString g, groupList) {
+        expectedGroupList.append(g.toUpper());
+    }
+    QCOMPARE(mVersitProperty->groups(), expectedGroupList);
 }
 
 void UT_QVersitProperty::testName()

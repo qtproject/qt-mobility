@@ -67,19 +67,22 @@ QVersitProperty& QVersitProperty::operator=(const QVersitProperty& other)
 }
 
 /*!
-  * Sets the group
+  * Sets the groups in the property.
   */
-void QVersitProperty::setGroup(const QString& group)
+void QVersitProperty::setGroups(const QStringList& groups)
 {
-    d->mGroup = group.toUpper();
+    d->mGroups.clear();
+    foreach (QString group, groups) {
+        d->mGroups.append(group.toUpper());
+    }
 }
 
 /*!
-  * Retreives the group
+  * Retreives the groups from the property.
   */
-QString QVersitProperty::group() const
+QStringList QVersitProperty::groups() const
 {
-    return d->mGroup;
+    return d->mGroups;
 }
 
 /*!
