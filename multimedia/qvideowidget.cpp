@@ -184,6 +184,8 @@ QSize QVideoRendererWidget::sizeHint() const
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
 void QVideoRendererWidget::initializeGL()
 {
+    makeCurrent();
+
     m_surface->setGLContext(const_cast<QGLContext *>(context()));
     if (m_surface->supportedShaderTypes() & QPainterVideoSurface::GlslShader)
         m_surface->setShaderType(QPainterVideoSurface::GlslShader);
