@@ -58,7 +58,7 @@ QByteArray VersitUtils::fold(QByteArray& text, int maxChars)
          } else {
              char nextChar = 0;
              if (i != text.length()-1)
-                 nextChar == text[i+1];
+                 nextChar = text[i+1];
              if (charsSinceLastLineBreak == maxChars &&
                  (currentChar != '\r' && nextChar != '\n')) {
                  text.insert(i,"\r\n ");

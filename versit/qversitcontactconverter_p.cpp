@@ -418,7 +418,7 @@ bool QVersitContactConverterPrivate::encodeEmbeddedContent(
     bool encodeProperty = false;
     QContactAvatar contactAvatar = static_cast<QContactAvatar>(detail);
     QString filePath = contactAvatar.avatar();
-    QString fileExtension = filePath.section('.', -1).toUpper();
+    QString fileExtension = filePath.section(QChar('.'), -1).toUpper();
     QString format = mMappings.value(fileExtension);
 
     if (!format.size())
@@ -441,8 +441,10 @@ bool QVersitContactConverterPrivate::encodeEmbeddedContent(
         } else if (isValidRemoteUrl(filePath)) {
             encodeProperty = true;
             value = filePath.toAscii();
-            property.addParameter(QString::fromAscii(versitValue),versitUrlId);
-            property.addParameter(QString::fromAscii(versitType),format);
+            property.addParameter(
+                QString::fromAscii(versitValue),QString::fromAscii(versitUrlId));
+            property.addParameter(
+                QString::fromAscii(versitType),format);
         } else {
             // The file has been removed. Don't encode the path to a local file.
         }
@@ -549,7 +551,8 @@ bool QVersitContactConverterPrivate::encodeFamily(
     if ( family.children().size() ) {
         QVersitProperty property;
         property.setName(QString::fromAscii(versitChildrenId));
-        property.setValue(family.children().join(",").toAscii());
+        QString children = family.children().join(QString::fromAscii(","));
+        property.setValue(children.toAscii());
         document.addProperty(property);
     }
     return false;

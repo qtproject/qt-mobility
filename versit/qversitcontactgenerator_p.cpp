@@ -359,7 +359,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
 
     const QString valueParam =
             property.parameters().value(QString::fromAscii(versitValue));
-    if (valueParam == QString("URL")) {
+    if (valueParam == QString::fromAscii("URL")) {
         fileName = QString::fromAscii(property.value());
     } else {
         // the photo will be saved to the file system
@@ -455,7 +455,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createFamily(
     if (property.name() == QString::fromAscii(versitSpouseId)) {
         family.setSpouse(val);
     } else if (property.name() == QString::fromAscii(versitChildrenId)) {
-        family.setChildren(val.split(","));
+        family.setChildren(val.split(QString::fromAscii(",")));
     }
     return new QContactDetail(family);
 }
