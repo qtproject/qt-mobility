@@ -1,7 +1,7 @@
 TARGET=tst_servicedatabase
 QT = core sql
 INCLUDEPATH += ../../../serviceframework
-
+DEPENDPATH += ../../../serviceframework 
 
 wince*|symbian*: {
     addFiles.sources = testdata/*
@@ -20,7 +20,7 @@ CONFIG+=testcase
 include(../../../common.pri)
 
 # Input 
-SOURCES += tst_servicedatabase.cpp
+SOURCES += tst_servicedatabase.cpp \
 
 LIBS += -lQtServiceFramework
 
@@ -29,9 +29,10 @@ symbian {
         "$${LITERAL_HASH}ifdef WINSCW" \
         "LIBRARY SFWDatabaseManagerServer.lib" \
         "$${LITERAL_HASH}endif"
-
+	DEFINES += QT_NODLL
     MMP_RULES += libBlock
-
+    SOURCES += servicedatabase.cpp
+    HEADERS += servicedatabase_p.h
     TARGET.CAPABILITY = ALL -TCB
 }
 
