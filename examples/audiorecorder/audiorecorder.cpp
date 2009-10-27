@@ -129,6 +129,8 @@ AudioRecorder::AudioRecorder()
 
 AudioRecorder::~AudioRecorder()
 {
+    delete capture;
+    delete audiosource;
 }
 
 void AudioRecorder::updateProgress(qint64 pos)
