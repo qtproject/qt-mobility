@@ -103,41 +103,48 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
     connect(camera, SIGNAL(stateChanged(QCamera::State)), this, SLOT(updateCameraState(QCamera::State)));
 
     service = camera->service();
-    mediaRecorder = new QMediaRecorder(camera);
+
 
     //audio devices
     ui->actionAudio->menu()->clear();
     QActionGroup *audioDevicesGroup = new QActionGroup(this);
     audioDevicesGroup->setExclusive(true);
 
-    foreach(const QString deviceName, service->supportedEndpoints(QMediaService::AudioDevice)) {
-        QString description = service->endpointDescription(QMediaService::AudioDevice, deviceName);
-        QAction *audioDeviceAction = new QAction(deviceName+" "+description, audioDevicesGroup);
-        audioDeviceAction->setData(QVariant(deviceName));
-        audioDeviceAction->setCheckable(true);
+    if (service) {
+        mediaRecorder = new QMediaRecorder(camera);
 
-        ui->actionAudio->menu()->addAction(audioDeviceAction);
+        foreach(const QString deviceName, service->supportedEndpoints(QMediaService::AudioDevice)) {
+            QString description = service->endpointDescription(QMediaService::AudioDevice, deviceName);
+            QAction *audioDeviceAction = new QAction(deviceName+" "+description, audioDevicesGroup);
+            audioDeviceAction->setData(QVariant(deviceName));
+            audioDeviceAction->setCheckable(true);
 
-        if (service->activeEndpoint(QMediaService::AudioDevice) == deviceName)
-            audioDeviceAction->setChecked(true);
+            ui->actionAudio->menu()->addAction(audioDeviceAction);
+
+            if (service->activeEndpoint(QMediaService::AudioDevice) == deviceName)
+                audioDeviceAction->setChecked(true);
+        }
+
+        connect(audioDevicesGroup, SIGNAL(triggered(QAction*)), this, SLOT(updateAudioDevice(QAction*)));
+
+        mediaRecorder->setSink(QUrl("test.mkv"));
+
+        connect(mediaRecorder, SIGNAL(durationChanged(qint64)), this, SLOT(updateRecordTime()));
+        connect(mediaRecorder, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(displayErrorMessage()));
+
+        camera->setMetaData(QtMedia::Title, QVariant(QLatin1String("Test Title")));
+
+        videoWidget = new QVideoWidget(mediaRecorder);
+        ui->stackedWidget->addWidget(videoWidget);
+    } else {
+        qWarning() << "Camera service is not available";
     }
-
-    connect(audioDevicesGroup, SIGNAL(triggered(QAction*)), this, SLOT(updateAudioDevice(QAction*)));
-
-    mediaRecorder->setSink(QUrl("test.mkv"));
-
-    connect(mediaRecorder, SIGNAL(durationChanged(qint64)), this, SLOT(updateRecordTime()));
-    connect(mediaRecorder, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(displayErrorMessage()));
-
-    camera->setMetaData(QtMedia::Title, QVariant(QLatin1String("Test Title")));
-
-    videoWidget = new QVideoWidget(mediaRecorder);
-    ui->stackedWidget->addWidget(videoWidget);
 
     updateCameraState(camera->state());
 
     connect(camera, SIGNAL(readyForCaptureChanged(bool)), ui->imageCaptureBox, SLOT(setEnabled(bool)));
     connect(camera, SIGNAL(imageCaptured(QString,QImage)), this, SLOT(processCapturedImage(QString,QImage)));
+
 }
 
 
@@ -216,6 +223,13 @@ void CameraCapture::updateCameraState(QCamera::State state)
         ui->startCameraButton->setChecked(false);
         ui->imageCaptureBox->setEnabled(false);
         ui->videoCaptureBox->setEnabled(false);
+    }
+
+    if (camera->service()) {
+        ui->startCameraButton->setEnabled(true);
+    } else {
+        ui->startCameraButton->setEnabled(false);
+        ui->startCameraButton->setText(tr("Camera is not available"));
     }
 }
 
