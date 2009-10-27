@@ -166,7 +166,7 @@ QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& 
             detail = createBirthday(property);
         } else if (property.name() == QString::fromAscii(versitNicknameId)||
                    property.name() == QString::fromAscii(versitNicknameXId)) {
-            detail = createNicknames(property);
+            createNicknames(property,contact);
         } else if (property.name() == QString::fromAscii(versitGeoId)){
             detail = createGeoLocation(property);
         } else if (property.name() == QString::fromAscii(versitSipId)){
@@ -335,19 +335,19 @@ QContactDetail* QVersitContactGeneratorPrivate::createBirthday(
 }
 
 /*!
- * Creates multiple QContactNickname from \a property
+ * Creates QContactNicknames from \a property and adds them to \a contact
  */
-QContactDetail* QVersitContactGeneratorPrivate::createNicknames(
-    const QVersitProperty& property) const
+void QVersitContactGeneratorPrivate::createNicknames(
+    const QVersitProperty& property,
+    QContact& contact) const
 {
-    QList<QContactDetail*> nickNames;
     QList<QByteArray> values = property.value().split(',');
-    foreach(QByteArray value,values){
+    foreach(QByteArray value,values) {
         QContactNickname* nickName = new QContactNickname();
         nickName->setNickname(QString::fromAscii(value));
-        nickNames.append(nickName);
+        contact.saveDetail(nickName);
+        delete nickName;
     }
-    return (nickNames.count() > 0) ?nickNames.at(0):new QContactNickname();
 }
 
 /*!
@@ -360,11 +360,11 @@ QContactDetail* QVersitContactGeneratorPrivate::createOnlineAccount(
     QMultiHash<QString,QString> params = property.parameters();
     QList<QString> values = params.values();
     const QString subTypeVal = takeFirst(values);    
-    if(!subTypeVal.isEmpty()){
+    if (!subTypeVal.isEmpty()) {
         const QString fieldKey = mSubTypeMappings.value(subTypeVal);
-        if(!fieldKey.isEmpty()){
+        if (!fieldKey.isEmpty()) {
             onlineAccount->setSubTypes(fieldKey);
-        }else{
+        } else {
             // Discard : if subtype is not empty and subtype is not found in mapping table
             delete onlineAccount;
             return 0;
@@ -378,12 +378,14 @@ QContactDetail* QVersitContactGeneratorPrivate::createOnlineAccount(
  * Creates a QContactAvatar from \a property
  */
 QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
-    const QVersitProperty& property, const QVersitDocument& versitDocument) const
+    const QVersitProperty& property,
+    const QVersitDocument& versitDocument) const
 {
     QString fileName;
 
     const QString valueParam =
-            property.parameters().value(QString::fromAscii(versitValue));
+        property.parameters().value(QString::fromAscii(versitValue));
+
     if (valueParam == QString::fromAscii("URL")) {
         fileName = QString::fromAscii(property.value());
     } else {
@@ -402,64 +404,61 @@ QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
         }
     }
 
+    QContactAvatar* avatar = 0;
     if (!fileName.isEmpty()) {
-        QContactAvatar* avatar = new QContactAvatar();
+        avatar = new QContactAvatar();
         avatar->setAvatar(fileName);
         avatar->setSubType(QContactAvatar::SubTypeImage);
-        return avatar;
-    } else {
-        return 0;
     }
+
+    return avatar;
 }
 
 /*!
  * Saves the image.
- * Returns the image file name (including the path) if the image was successfully saved;
+ * Returns the image file name (including the path)
+ * if the image was successfully saved;
  * otherwise returns a empty string.
  * The image is saved with the following name:
  * <imageName>_<randomNumber>.<ext>
  */
-QString QVersitContactGeneratorPrivate::saveImage(const QVersitProperty& imageProperty,
-                                                  QString& imageName) const
+QString QVersitContactGeneratorPrivate::saveImage(
+    const QVersitProperty& imageProperty,
+    const QString& imageName) const
 {
-    QString ret;
+    if (mImagePath.isEmpty())
+        return QString();
 
-    if (mImagePath.isEmpty()) {
-        return ret;
-    }
+    QString fileName(imageName);
+    fileName.append(QString::fromAscii("_"));
+    fileName.append(QString::number(qrand()));
+    fileName.append(QString::fromAscii("."));
 
-    imageName.append(QString::fromAscii("_"));
-    imageName.append(QString::number(qrand()));
-
-    imageName.append(QString::fromAscii("."));
     // Image format
     const QString format =
-            imageProperty.parameters().value(QString::fromAscii(versitType));
-    imageName.append(QString(format).toLower());
-
+        imageProperty.parameters().value(QString::fromAscii(versitType));
+    fileName.append(QString(format).toLower());
     const QString encoding =
-            imageProperty.parameters().value(QString::fromAscii(versitEncoding));
+        imageProperty.parameters().value(QString::fromAscii(versitEncoding));
 
-    QByteArray value = imageProperty.value();
-
-    QFile image;
-    image.setFileName(imageName);
-
-    if (image.open(QIODevice::WriteOnly)) {
-        qint64 writeResult = -1;
-        // assumes that only two encodings are possible: Base64 and quoted-printable
+    QFile image(fileName);
+    qint64 bytesSaved = -1;
+    if (image.open(QIODevice::WriteOnly)) {   
+        // Assumes that only two encodings are possible: Base64 and Quoted-Printable
         if (!encoding.isEmpty()) {
             // Base64 encoding
-            writeResult = image.write(QByteArray::fromBase64(value));
+            bytesSaved = image.write(QByteArray::fromBase64(imageProperty.value()));
         } else {
-            // quoted-printable encoding is parsed already in the reader
-            writeResult = image.write(value);
-        }
-        if (writeResult > 0) {
-            ret = imageName;
+            // Quoted-Printable encoding is parsed already in the reader
+            bytesSaved = image.write(imageProperty.value());
         }
     }
-    return ret;
+
+    if (bytesSaved <= 0) {
+        fileName.clear();
+    }
+
+    return fileName;
 }
 
 /*!

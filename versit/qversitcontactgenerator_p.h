@@ -81,11 +81,12 @@ private:
     QContactDetail* createTimeStamp(const QVersitProperty& property) const;
     QContactDetail* createAnniversary(const QVersitProperty& property) const;
     QContactDetail* createBirthday(const QVersitProperty& property) const;
-    QContactDetail* createNicknames(const QVersitProperty& property) const;
+    void createNicknames(const QVersitProperty& property,
+                         QContact& contact) const;
     QContactDetail* createAvatar(const QVersitProperty& property,
                                  const QVersitDocument& document) const;
     QString saveImage(const QVersitProperty& photoProperty,
-                      QString& imageName) const;
+                      const QString& imageName) const;
     QContactDetail* createGeoLocation(const QVersitProperty& property) const;
     QContactDetail* createOnlineAccount(const QVersitProperty& property) const;
     QContactDetail* createFamily(const QVersitProperty& property,

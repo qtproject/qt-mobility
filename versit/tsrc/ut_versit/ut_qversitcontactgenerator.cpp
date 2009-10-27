@@ -583,7 +583,7 @@ void UT_QVersitContactGenerator::testNickname()
     // one value
     QVersitDocument document;
     QVersitProperty nameProperty;
-    QString singleVal("Simpson");
+    QString singleVal("Homie");
     nameProperty.setName(QString::fromAscii(versitNicknameId));
     nameProperty.setValue(singleVal.toAscii());
     document.addProperty(nameProperty);
@@ -595,19 +595,22 @@ void UT_QVersitContactGenerator::testNickname()
     contact.clearDetails();
     document = QVersitDocument();
     QStringList multiVal;
-    multiVal.append("Simpson");//Nickname1
-    multiVal.append("SuperHero");//Nickname2
-    multiVal.append("NukeSpecilist");//Nickname3
+    multiVal.append("Homie");
+    multiVal.append("SuperHero");
+    multiVal.append("NukeSpecialist");
     nameProperty.setName(QString::fromAscii(versitNicknameId));
     nameProperty.setValue(multiVal.join(QString::fromAscii(",")).toAscii());
     document.addProperty(nameProperty);
     contact = mGenerator->generateContact(document);
     QList<QContactDetail> nickNames = contact.details(QContactNickname::DefinitionName);
-    //QCOMPARE(nickNames.count(),3);
-    foreach(nickName,nickNames){
-        /*QCOMPARE(nickName.value(QContactNickname::FieldNickname),
-                                           multiVal.takeFirst());*/
-    }
+    QCOMPARE(nickNames.count(),3);
+    nickName = static_cast<QContactNickname>(nickNames[0]);
+    QCOMPARE(nickName.nickname(),QString::fromAscii("Homie"));
+    nickName = static_cast<QContactNickname>(nickNames[1]);
+    QCOMPARE(nickName.nickname(),QString::fromAscii("SuperHero"));
+    nickName = static_cast<QContactNickname>(nickNames[2]);
+    QCOMPARE(nickName.nickname(),QString::fromAscii("NukeSpecialist"));
+
 
     // X-NICKNAME
     document = QVersitDocument();
@@ -616,7 +619,9 @@ void UT_QVersitContactGenerator::testNickname()
     nameProperty.setValue(singleVal.toAscii());
     document.addProperty(nameProperty);
     contact = mGenerator->generateContact(document);
-    nickName = (QContactNickname)contact.detail(QContactNickname::DefinitionName);
+    nickName =
+        static_cast<QContactNickname>(
+            contact.detail(QContactNickname::DefinitionName));
     QCOMPARE(nickName.nickname(),singleVal);
 }
 
