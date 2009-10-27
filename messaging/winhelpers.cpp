@@ -3652,7 +3652,7 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
 #endif
             SizedSPropTagArray(np, msgCols) = {np, { PR_PARENT_ENTRYID,
                                                      PR_MESSAGE_FLAGS,
-                                                     PR_MESSAGE_STATUS,
+                                                     PR_MSG_STATUS,
                                                      PR_MESSAGE_CLASS,
                                                      PR_SENDER_NAME,
                                                      PR_SENDER_EMAIL_ADDRESS,
