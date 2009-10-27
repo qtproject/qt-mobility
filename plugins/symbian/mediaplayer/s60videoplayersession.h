@@ -79,13 +79,6 @@ public:
     QMap<QByteArray ,QVariant> tags() const { return m_tags; }
     QMap<QString,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }
     int streamCount() const { return m_streamProperties.count(); }
-
-    // From MVideoPlayerUtilityObserver
-    virtual void MvpuoOpenComplete(TInt aError);
-    virtual void MvpuoPrepareComplete(TInt aError);
-    virtual void MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError);
-    virtual void MvpuoPlayComplete(TInt aError);
-    virtual void MvpuoEvent(const TMMFEvent &aEvent);
     
 public slots:
     void load(const QUrl &url);
@@ -116,6 +109,13 @@ signals:
 private: 
     void getNativeHandles();
     
+private: // From MVideoPlayerUtilityObserver
+    void MvpuoOpenComplete(TInt aError);
+    void MvpuoPrepareComplete(TInt aError);
+    void MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError);
+    void MvpuoPlayComplete(TInt aError);
+    void MvpuoEvent(const TMMFEvent &aEvent);
+    
 private slots:
     void getStreamsInfo();
     void setSeekable(bool);
@@ -123,23 +123,22 @@ private slots:
 private:
     void setMediaStatus(QMediaPlayer::MediaStatus);
 
-    CVideoPlayerUtility*                m_player;
-    S60VideoWidgetControl*              m_testWidget;
-    RWsSession*                         m_wsSession;
-    CWsScreenDevice*                    m_screenDevice;
-    RWindowBase*                        m_window;
-    TRect                               m_windowRect;
-    TRect                               m_clipRect;
-        
-    QSize                               m_frameSize;
-    qint64                              m_totalTime;
-    
+    CVideoPlayerUtility* m_player;
+    S60VideoWidgetControl* m_testWidget;
+    RWsSession* m_wsSession;
+    CWsScreenDevice* m_screenDevice;
+    RWindowBase* m_window;
+    TRect m_windowRect;
+    TRect m_clipRect;
+    QSize m_frameSize;
+    qint64 m_totalTime;    
     QUrl m_url;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;
     QMap<QByteArray, QVariant> m_tags;
     QList< QMap<QString,QVariant> > m_streamProperties;
     S60VideoRendererInterface *m_renderer;
+    
     int m_volume;
     qreal m_playbackRate;
     bool m_muted;

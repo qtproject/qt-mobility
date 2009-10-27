@@ -41,73 +41,6 @@ struct S60VideoMetaDataKeyLookup
     QMediaObject::MetaData key;
     const char *token;
 };
-/*
-static const QGstreamerMetaDataKeyLookup qt_gstreamerMetaDataKeys[] =
-{
-    { QMediaObject::Title, GST_TAG_TITLE },
-    //{ QMediaObject::SubTitle, 0 },
-    //{ QMediaObject::Author, 0 },
-    { QMediaObject::Comment, GST_TAG_COMMENT },
-    { QMediaObject::Description, GST_TAG_DESCRIPTION },
-    //{ QMediaObject::Category, 0 },
-    { QMediaObject::Genre, GST_TAG_GENRE },
-    { QMediaObject::Year, "year" },
-    //{ QMediaObject::UserRating, 0 },
-
-    { QMediaObject::Language, GST_TAG_LANGUAGE_CODE },
-
-    { QMediaObject::Publisher, GST_TAG_ORGANIZATION },
-    { QMediaObject::Copyright, GST_TAG_COPYRIGHT },
-    //{ QMediaObject::ParentalRating, 0 },
-    //{ QMediaObject::RatingOrganisation, 0 },
-
-    // Media
-    //{ QMediaObject::Size, 0 },
-    //{ QMediaObject::MediaType, 0 },
-    { QMediaObject::Duration, GST_TAG_DURATION },
-
-    // Audio
-    { QMediaObject::AudioBitrate, GST_TAG_BITRATE },
-    { QMediaObject::AudioCodec, GST_TAG_AUDIO_CODEC },
-    //{ QMediaObject::Channels, 0 },
-    //{ QMediaObject::Frequency, 0 },
-
-    // Music
-    { QMediaObject::AlbumTitle, GST_TAG_ALBUM },
-    { QMediaObject::AlbumArtist,  GST_TAG_ARTIST},
-    { QMediaObject::ContributingArtist, GST_TAG_PERFORMER },
-    { QMediaObject::Composer, GST_TAG_COMPOSER },
-    //{ QMediaObject::Conductor, 0 },
-    //{ QMediaObject::Lyrics, 0 },
-    //{ QMediaObject::Mood, 0 },
-    { QMediaObject::TrackNumber, GST_TAG_TRACK_NUMBER },
-
-    //{ QMediaObject::CoverArtUriSmall, 0 },
-    //{ QMediaObject::CoverArtUriLarge, 0 },
-
-    // Image/Video
-    //{ QMediaObject::Resolution, 0 },
-    //{ QMediaObject::PixelAspectRatio, 0 },
-
-    // Video
-    //{ QMediaObject::FrameRate, 0 },
-    //{ QMediaObject::VideoBitRate, 0 },
-    { QMediaObject::VideoCodec, GST_TAG_VIDEO_CODEC },
-
-    //{ QMediaObject::PosterUri, 0 },
-
-    // Movie
-    //{ QMediaObject::ChapterNumber, 0 },
-    //{ QMediaObject::Director, 0 },
-    { QMediaObject::LeadPerformer, GST_TAG_PERFORMER },
-    //{ QMediaObject::Writer, 0 },
-
-    // Photos
-    //{ QMediaObject::CameraManufacturer, 0 },
-    //{ QMediaObject::CameraModel, 0 },
-    //{ QMediaObject::Event, 0 },
-    //{ QMediaObject::Subject, 0 }
-};*/
 
 S60VideoMetaDataProvider::S60VideoMetaDataProvider(S60VideoPlayerSession *session, QObject *parent)
     : QMetaDataProviderControl(parent), m_session(session)
@@ -131,15 +64,6 @@ bool S60VideoMetaDataProvider::isWritable() const
 
 QVariant S60VideoMetaDataProvider::metaData(QMediaObject::MetaData key) const
 {
-/*
-    static const int count = sizeof(qt_gstreamerMetaDataKeys) / sizeof(QGstreamerMetaDataKeyLookup);
-
-    for (int i = 0; i < count; ++i) {
-        if (qt_gstreamerMetaDataKeys[i].key == key) {
-            return m_session->tags().value(QByteArray(qt_gstreamerMetaDataKeys[i].token));
-        }
-    }
-*/
     return QVariant();
 }
 

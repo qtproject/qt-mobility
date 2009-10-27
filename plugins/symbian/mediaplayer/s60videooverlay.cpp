@@ -42,24 +42,15 @@
 S60VideoOverlay::S60VideoOverlay(QObject *parent)
     : QVideoWindowControl(parent)
     , m_surface(new S60VideoSurface)
-    //, m_videoSink(reinterpret_cast<GstElement*>(QVideoSurfaceGstSink::createSink(m_surface)))
     , m_aspectRatioMode(QVideoWidget::AspectRatioAuto)
     , m_fullScreen(false)
 {
-    /*if (m_videoSink) {
-        gst_object_ref(GST_OBJECT(m_videoSink)); //Take ownership
-        gst_object_sink(GST_OBJECT(m_videoSink));
-    }*/
-
     connect(m_surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)),
             this, SLOT(surfaceFormatChanged()));
 }
 
 S60VideoOverlay::~S60VideoOverlay()
 {
-   /* if (m_videoSink)
-        gst_object_unref(GST_OBJECT(m_videoSink));
-*/
     delete m_surface;
 }
 
@@ -180,11 +171,6 @@ QAbstractVideoSurface *S60VideoOverlay::surface() const
 {
     return m_surface;
 }
-
-/*GstElement *QGstreamerVideoOverlay::videoSink()
-{
-    return m_videoSink;
-}*/
 
 void S60VideoOverlay::surfaceFormatChanged()
 {

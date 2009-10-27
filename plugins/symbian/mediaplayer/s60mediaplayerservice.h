@@ -36,11 +36,9 @@
 #define S60VIDEOPLAYERSERVICE_H
 
 #include <QtCore/qobject.h>
-//#include <QtCore/qiodevice.h>
 
 #include <multimedia/qmediaservice.h>
-
-#include "s60videoplayeroutputcontrol.h"
+#include <multimedia/qvideooutputcontrol.h>
 
 class QMediaMetaData;
 class QMediaPlayerControl;

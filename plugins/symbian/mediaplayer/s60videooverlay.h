@@ -86,8 +86,6 @@ public:
 
     QAbstractVideoSurface *surface() const;
 
-    //GstElement *videoSink();
-
 private slots:
     void surfaceFormatChanged();
 
@@ -95,7 +93,6 @@ private:
     void setScaledDisplayRect();
 
     S60VideoSurface *m_surface;
-    //GstElement *m_videoSink;
     QVideoWidget::AspectRatio m_aspectRatioMode;
     QRect m_displayRect;
     QSize m_aspectRatio;

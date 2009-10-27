@@ -85,19 +85,10 @@ public Q_SLOTS:
 
     void setVolume(int volume);
     void setMuted(bool muted);
-/*
-private Q_SLOTS:
-    void writeFifo();
-    void fifoReadyWrite(int socket);
 
 private:
-    bool openFifo();
-    void closeFifo();
-*/
-private:
     S60VideoPlayerSession *m_session;
-    QMediaSource m_currentResource;
-    
+    QMediaSource m_currentResource; 
     QIODevice *m_stream;
 };
 

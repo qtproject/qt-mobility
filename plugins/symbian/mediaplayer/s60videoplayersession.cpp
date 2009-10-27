@@ -50,9 +50,6 @@ S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
     :QObject(parent),
      m_state(QMediaPlayer::StoppedState),
      m_mediaStatus(QMediaPlayer::UnknownMediaStatus),
-     //m_busHelper(0),
-     //m_playbin(0),
-     //m_bus(0),
      m_renderer(0),
      m_volume(100),
      m_playbackRate(1.0),
@@ -64,66 +61,8 @@ S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
      m_wsSession(0),
      m_screenDevice(0),
      m_window(0)
-{
-    //TRACE_CONTEXT(VideoPlayer::VideoPlayer, EVideoApi);
-    //TRACE_ENTRY_0();
-
-    /*if (!m_videoOutput) {
-        m_dummyVideoOutput.reset(new VideoOutput(0));
-    }
-
-    videoOutput().setObserver(this);
-    */
-    
+{    
     m_frameSize = QSize(320,240);
-   /*const TInt priority = 0;
-    const TMdaPriorityPreference preference = EMdaPriorityPreferenceNone;
-
-    //getNativeWindowSystemHandles();
-
-    // TODO: is this the correct way to handle errors which occur when
-    // creating a Symbian object in the constructor of a Qt object?
-    
-    // TODO: check whether videoOutput is visible?  If not, then the 
-    // corresponding window will not be active, meaning that the 
-    // clipping region will be set to empty and the video will not be
-    // visible.  If this is the case, we should set m_mmfOutputChangePending
-    // and respond to future showEvents from the videoOutput widget.
-    
-    //VideoOutput& output = videoOutput();  
-    //QWidget* jep = new QWidget();
-    CCoeControl* const control = jep->winId();
-
-    CCoeEnv* const coeEnv = control->ControlEnv();
-    m_wsSession = &(coeEnv->WsSession());
-    m_screenDevice = coeEnv->ScreenDevice();
-    m_window = control->DrawableWindow();
-*/
- /* #ifdef _DEBUG
-      QScopedPointer<ObjectDump::QDumper> dumper(new ObjectDump::QDumper);
-      dumper->setPrefix("Phonon::MMF"); // to aid searchability of logs
-      ObjectDump::addDefaultAnnotators(*dumper);
-      TRACE_0("Dumping VideoOutput:");
-      dumper->dumpObject(output);
-  #endif*/
-/*
-    m_windowRect = TRect(
-        control->DrawableWindow()->AbsPosition(),
-        control->DrawableWindow()->Size());
-      
-    m_clipRect = m_windowRect;
-      
-    TRAPD(err, 
-        m_player = CVideoPlayerUtility::NewL(*this, 
-                                  priority, 
-                                  preference, 
-                                  *m_wsSession, 
-                                  *m_screenDevice, 
-                                  *m_window, 
-                                  m_windowRect, 
-                                  m_clipRect)
-         );
-    */
 }
 
 S60VideoPlayerSession::~S60VideoPlayerSession()
@@ -160,15 +99,6 @@ qreal S60VideoPlayerSession::playbackRate() const
 void S60VideoPlayerSession::setPlaybackRate(qreal rate)
 {
     m_playbackRate = rate;
-/*
-    if (m_playbin) {
-        gst_element_seek(m_playbin, rate, GST_FORMAT_TIME,
-                         GstSeekFlags(GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT),
-                         GST_SEEK_TYPE_NONE,0,
-                         GST_SEEK_TYPE_NONE,0 );
-    }
-    */
-
 }
 
 bool S60VideoPlayerSession::isBuffering() const
@@ -193,16 +123,12 @@ bool S60VideoPlayerSession::isMuted() const
 
 void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
 {
-   // m_testWidget->videoWidget()->winId();
-   //qWarning()<<"setVideoRenderer";
-	//m_renderer = qobject_cast<S60VideoRendererInterface*>(videoOutput);
     m_testWidget = qobject_cast<S60VideoWidgetControl*>(videoOutput);
 
     const TInt priority = 0;
     const TMdaPriorityPreference preference = EMdaPriorityPreferenceNone;
     
     getNativeHandles();   
-    //m_clipRect = m_windowRect;
       
     TRAPD(err, 
         m_player = CVideoPlayerUtility::NewL(*this, 
@@ -218,18 +144,14 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
 
 void S60VideoPlayerSession::getNativeHandles()
 {
-    qDebug() << "winId: " << m_testWidget->videoWidget()->effectiveWinId();
-    //m_renderer->winId();
-
-    //m_testWidget = qobject_cast<S60VideoWidgetControl*>(videoOutput);
-    //QWidget* jep = new QWidget();
-   // CCoeControl* const control =  m_testWidget->videoWidget()->winId();
     CCoeControl* const control =  m_testWidget->videoWidget()->winId();
     control->MakeVisible(ETrue);
-    control->SetSize(TSize(240,245));
-    control->SetPosition(TPoint(0,0));
+    qDebug() << "h: " << m_testWidget->videoWidget()->winId()->Size().iHeight <<  "v: " << m_testWidget->videoWidget()->winId()->Size().iWidth;
+    qDebug() << "h: " << m_testWidget->videoWidget()->winId()->Size().iHeight <<  "v: " << m_testWidget->videoWidget()->winId()->Size().iWidth;
+    //control->SetSize(TSize(240,245));
+    //control->SetPosition(TPoint(0,-50));
+    qDebug() << "x: " <<control->Position().iX  << "y: " << control->Position().iY;
     control->ActivateL();
-    qDebug() << control->IsVisible();
 
     CCoeEnv* const coeEnv = control->ControlEnv();
     m_wsSession = &(coeEnv->WsSession());
@@ -265,12 +187,7 @@ void S60VideoPlayerSession::play()
     else
     {
         QString fileName = QDir::toNativeSeparators(m_url.toString());
-		qDebug() << fileName;
         TPtrC str(reinterpret_cast<const TUint16*>(fileName.utf16()));
-        //m_player->OpenFileL(str);
-        //m_player->OpenFileL(_L("c:\\Data\\testvideo.mp4"));
-        //QString fileName = m_url.toLocalFile();
-        //TPtrC str(reinterpret_cast<const TUint16*>(fileName.utf16()));
         m_player->OpenFileL(str);
         m_state = QMediaPlayer::PlayingState;
         emit stateChanged(QMediaPlayer::PlayingState);        
@@ -331,25 +248,12 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 {
     qDebug() << "Preparing to play with error: " << aError;
     m_player->Prepare();
-   // m_player->StartDirectScreenAccessL();
-    //getNativeHandles();
-    
-/*    TRAPD(err,
-          m_player->SetDisplayWindowL
-          (
-              *m_wsSession, *m_screenDevice,
-              *m_window,
-              m_windowRect, m_clipRect
-          )
-         );
-*/
 }
 
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {
     qDebug() << "Starting to play with error: " << aError;
     m_player->Play();
-    //m_totalTime = m_player->DurationL();
 }
 
 void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)

@@ -67,13 +67,12 @@ S60MediaPlayerService::S60MediaPlayerService(QObject *parent):
 #endif
     m_videoWidget = new S60VideoWidgetControl(this);
 
-    m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>() << QVideoOutputControl::WidgetOutput);
-/*#ifndef QT_NO_MULTIMEDIA
+    m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>() 
+#ifndef QT_NO_MULTIMEDIA
             << QVideoOutputControl::RendererOutput
             << QVideoOutputControl::WindowOutput
 #endif
-*/
-           
+            << QVideoOutputControl::WidgetOutput);
 }
 
 S60MediaPlayerService::~S60MediaPlayerService()

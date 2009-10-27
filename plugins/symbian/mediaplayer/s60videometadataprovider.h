@@ -42,6 +42,7 @@ class S60VideoPlayerSession;
 class S60VideoMetaDataProvider : public QMetaDataProviderControl
 {
     Q_OBJECT
+    
 public:
     S60VideoMetaDataProvider(S60VideoPlayerSession *session, QObject *parent);
     virtual ~S60VideoMetaDataProvider();
@@ -62,4 +63,4 @@ private:
     S60VideoPlayerSession *m_session;
 };
 
-#endif // QGSTREAMERMETADATAPROVIDER_H
+#endif // S60VIDEOMETADATAPROVIDER_H

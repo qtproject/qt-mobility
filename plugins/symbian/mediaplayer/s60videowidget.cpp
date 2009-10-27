@@ -39,23 +39,29 @@
 #include <QtGui/qapplication.h>
 #include <QtGui/qpainter.h>
 
+#include <coemain.h>    // For CCoeEnv
+#include <coecntrl.h>
+#include <w32std.h>
+
 class S60VideoWidget : public QWidget
 {
 public:
     S60VideoWidget(QWidget *parent = 0)
         :QWidget(parent)
     {
-        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        //setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored); 
         QPalette palette;
-        //palette.setColor(QPalette::Background, Qt::black);
-        palette.setColor(QPalette::Background, Qt::red);
+        palette.setColor(QPalette::Background, Qt::black);
         setPalette(palette);
+        qDebug() << size();
     }
 
     virtual ~S60VideoWidget() {}
 
     QSize sizeHint() const
     {
+        qDebug() << m_nativeSize;
         return m_nativeSize;
     }
 
@@ -89,27 +95,7 @@ S60VideoWidgetControl::S60VideoWidgetControl(QObject *parent)
 {
     //qDebug() << "winId: " << m_widget->winId();
     m_widget->installEventFilter(this);
-    //m_windowId = m_widget->winId();
-/*
-    m_videoSink = gst_element_factory_make ("xvimagesink", NULL);
-    if (m_videoSink) {
-        // Check if the xv sink is usable
-        if (gst_element_set_state(m_videoSink, GST_STATE_READY) != GST_STATE_CHANGE_SUCCESS) {
-            gst_object_unref(GST_OBJECT(m_videoSink));
-            m_videoSink = 0;
-        } else {
-            gst_element_set_state(m_videoSink, GST_STATE_NULL);
-
-            g_object_set(G_OBJECT(m_videoSink), "force-aspect-ratio", 1, (const char*)NULL);
-        }
-    }
-
-    if (!m_videoSink)
-        m_videoSink = gst_element_factory_make ("ximagesink", NULL);
-
-    gst_object_ref (GST_OBJECT (m_videoSink)); //Take ownership
-    gst_object_sink (GST_OBJECT (m_videoSink));
-*/
+    //m_windowId = m_widget->effectiveWinId();
 }
 
 S60VideoWidgetControl::~S60VideoWidgetControl()
@@ -128,9 +114,10 @@ S60VideoWidgetControl::~S60VideoWidgetControl()
 
 bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 {
-   /*if (object == m_widget) {
+
+  /* if (object == m_widget) {
         if (e->type() == QEvent::ParentChange || e->type() == QEvent::Show) {
-            WId newWId = m_widget->winId();
+            WId newWId = m_widget->effectiveWinId();
             if (newWId != m_windowId) {
                 m_windowId = newWId;
                 // Even if we have created a winId at this point, other X applications

@@ -51,7 +51,6 @@ public:
     S60VideoWidgetControl(QObject *parent = 0);
     virtual ~S60VideoWidgetControl();
 
-    //GstElement *videoSink();
     void precessNewStream();
 
     QWidget *videoWidget();
@@ -87,7 +86,6 @@ public slots:
 private:
     void windowExposed();
 
-    //GstElement *m_videoSink;
     S60VideoWidget *m_widget;
     WId m_windowId;
     QVideoWidget::AspectRatio m_aspectRatioMode;
