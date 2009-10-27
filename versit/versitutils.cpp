@@ -187,25 +187,35 @@ int VersitUtils::findHardLineBreakInQuotedPrintable(const QByteArray& encoded)
 }
 
 /*!
- * Extracts the name of the property.
+ * Extracts the groups and the name of the property.
  */
-QString VersitUtils::extractPropertyName(const QByteArray& property)
+QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(
+    const QByteArray& property)
 {
-    QString name;
-    int nameLength = 0;
+    QPair<QStringList,QString> groupsAndName;
+    int length = 0;
     char previousChar = 0;
     for (int i=0; i < property.length(); i++) {
         char currentChar = property[i];
         if ((currentChar == ';' && previousChar != '\\') || 
             currentChar == ':') {
-            nameLength = i;
+            length = i;
             break;
         }
         previousChar = currentChar;
     }
-    if (nameLength > 0)
-        name = QString::fromAscii(property.left(nameLength).trimmed());
-    return name;
+    if (length > 0) {
+        QString trimmedGroupsAndName =
+            QString::fromAscii(property.left(length).trimmed());
+        QStringList parts = trimmedGroupsAndName.split(QChar('.'));
+        if (parts.count() > 1) {
+            groupsAndName.second = parts.takeLast();
+            groupsAndName.first = parts;
+        } else {
+            groupsAndName.second = trimmedGroupsAndName;
+        }
+    }
+    return groupsAndName;
 }
 
 /*!

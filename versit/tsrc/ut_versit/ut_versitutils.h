@@ -60,7 +60,7 @@ private slots:
     void testUnfold();
     void testQuotedPrintableEncode();
     void testDecodeQuotedPrintable();
-    void testExtractPropertyName();
+    void testExtractPropertyGroupsAndName();
     void testExtractPropertyValue();
     void testExtractPropertyParams();
 };

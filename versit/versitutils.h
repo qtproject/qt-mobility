@@ -44,6 +44,9 @@
 #define VERSITUTILS_H
 
 #include <QByteArray>
+#include <QPair>
+#include <QString>
+#include <QStringList>
 #include <QMultiHash>
 
 
@@ -56,7 +59,8 @@ public:
     static bool quotedPrintableEncode(QByteArray& text);
     static void decodeQuotedPrintable(QByteArray& text);
     static int findHardLineBreakInQuotedPrintable(const QByteArray& encoded);
-    static QString extractPropertyName(const QByteArray& property);
+    static QPair<QStringList,QString> extractPropertyGroupsAndName(
+        const QByteArray& property);
     static QByteArray extractPropertyValue(const QByteArray& property);
     static QMultiHash<QString,QString> extractPropertyParams(
         const QByteArray& property);

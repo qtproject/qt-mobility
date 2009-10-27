@@ -378,53 +378,71 @@ void UT_VersitUtils::testDecodeQuotedPrintable()
     QCOMPARE(encoded, decoded);
 }
 
-void UT_VersitUtils::testExtractPropertyName()
+void UT_VersitUtils::testExtractPropertyGroupsAndName()
 {
-    QByteArray property("TEL");
-    QString propertyName("TEL");
+    QPair<QStringList,QString> groupsAndName;
 
     // Empty string
-    QCOMPARE(QString(), VersitUtils::extractPropertyName(QByteArray()));
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(QByteArray());
+    QCOMPARE(groupsAndName.first.count(),0);
+    QCOMPARE(groupsAndName.second,QString());
     
-    // No value -> returns empty string
-    QCOMPARE(QString(), VersitUtils::extractPropertyName(property));
+    // No value -> returns empty string and no groups
+    QByteArray property("TEL");
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(property);
+    QCOMPARE(groupsAndName.first.count(),0);
+    QCOMPARE(groupsAndName.second,QString());
     
     // Simple name and value
     property = "TEL:123";
-    QCOMPARE(propertyName, VersitUtils::extractPropertyName(property));
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(property);
+    QCOMPARE(groupsAndName.first.count(),0);
+    QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
 
     // One whitespace before colon
     property = "TEL :123";
-    QCOMPARE(propertyName, VersitUtils::extractPropertyName(property));
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(property);
+    QCOMPARE(groupsAndName.first.count(),0);
+    QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
 
     // Several whitespaces before colon
     property = "TEL \t  :123";
-    QCOMPARE(propertyName, VersitUtils::extractPropertyName(property));    
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(property);
+    QCOMPARE(groupsAndName.first.count(),0);
+    QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
 
     // Name contains a group
-    property = "group1.X-property:x";
-    propertyName = QString::fromAscii("group1.X-property");
-    QCOMPARE(propertyName, VersitUtils::extractPropertyName(property));     
+    property = "group1.TEL:1234";
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(property);
+    QCOMPARE(groupsAndName.first.count(),1);
+    QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group1"));
+    QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
     
     // Name contains more than one group
-    property = "group1.group2.X-property:x";
-    propertyName = QString::fromAscii("group1.group2.X-property");
-    QCOMPARE(propertyName, VersitUtils::extractPropertyName(property));     
+    property = "group1.group2.TEL:12345";
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(property);
+    QCOMPARE(groupsAndName.first.count(),2);
+    QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group1"));
+    QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group2"));
+    QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
 
     // Property contains one parameter
     property = "TEL;WORK:123";
-    propertyName = QString::fromAscii("TEL");
-    QCOMPARE(propertyName, VersitUtils::extractPropertyName(property));    
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(property);
+    QCOMPARE(groupsAndName.first.count(),0);
+    QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
 
     // Property contains several parameters
     property = "EMAIL;INTERNET;ENCODING=QUOTED-PRINTABLE:user=40ovi.com";
-    propertyName = QString::fromAscii("EMAIL");
-    QCOMPARE(propertyName, VersitUtils::extractPropertyName(property));
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(property);
+    QCOMPARE(groupsAndName.first.count(),0);
+    QCOMPARE(groupsAndName.second,QString::fromAscii("EMAIL"));
     
     // Name contains an escaped semicolon
     property = "X-proper\\;ty:value";
-    propertyName = QString::fromAscii("X-proper\\;ty");
-    QCOMPARE(propertyName, VersitUtils::extractPropertyName(property));     
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(property);
+    QCOMPARE(groupsAndName.first.count(),0);
+    QCOMPARE(groupsAndName.second,QString::fromAscii("X-proper\\;ty"));
 }
 
 void UT_VersitUtils::testExtractPropertyValue()

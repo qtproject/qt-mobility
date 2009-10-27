@@ -509,7 +509,6 @@ QContactDetail* QVersitContactGeneratorPrivate::createNameValueDetail(
     return detail;
 }
 
-
 /*!
  * Extracts the list of contexts from \a types
  */
