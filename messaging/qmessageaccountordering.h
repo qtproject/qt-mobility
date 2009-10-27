@@ -42,6 +42,7 @@
 #define QMESSAGEACCOUNTORDERING_H
 #include <Qt>
 #include <qmessageglobal.h>
+#include <qstring.h>
 
 class QMessageAccountOrderingPrivate;
 

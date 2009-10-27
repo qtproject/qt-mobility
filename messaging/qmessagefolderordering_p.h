@@ -38,6 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMESSAGEFOLDERORDERINGPRIVATE_H
+#define QMESSAGEFOLDERORDERINGPRIVATE_H
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderordering.h"
 
@@ -53,4 +55,5 @@ public:
 
     QMessageFolderOrdering *q_ptr;
 };
+#endif
 #endif

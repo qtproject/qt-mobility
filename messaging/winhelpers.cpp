@@ -75,6 +75,7 @@
 #include "qmessagecontentcontainer_p.h"
 #include "qmessagefolder_p.h"
 #include "qmessageaccount_p.h"
+#include "qmessageaccountordering_p.h"
 #include "qmessageordering_p.h"
 #include "qmessageaccountfilter_p.h"
 #include "qmessagefolderfilter_p.h"
@@ -1455,7 +1456,6 @@ namespace {
     {
         return eventType();
     }
-
 }
 
 namespace WinHelpers {
@@ -1685,6 +1685,38 @@ namespace WinHelpers {
 
         return result;
     }
+
+    class StoreSortHelper {
+    public:
+        StoreSortHelper(const QMessageAccountOrdering *ordering, MapiStorePtr storePtr)
+            :_ordering(ordering),
+             _storePtr(storePtr)
+        {}
+
+        MapiStorePtr store()
+        {
+            return _storePtr;
+        }
+
+        StoreSortHelper& operator=(const StoreSortHelper &other) {
+            if (&other == this)
+                return *this;
+            _ordering = other._ordering;
+            _storePtr = other._storePtr;
+            return *this;
+        }
+
+        bool operator<(const StoreSortHelper &other) const
+        {
+            bool result (_storePtr->name() < other._storePtr->name());
+            if (QMessageAccountOrderingPrivate::order(*_ordering) == Qt::DescendingOrder)
+                result = !result;
+            return result;
+        }
+    private:
+        const QMessageAccountOrdering *_ordering;
+        MapiStorePtr _storePtr;
+    };
 }
 
 using namespace WinHelpers;
@@ -3089,8 +3121,6 @@ MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const Q
 template<typename Predicate, typename Ordering>
 QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastError, Predicate predicate, Ordering ordering, uint limit, uint offset, bool cachedMode) const
 {
-    Q_UNUSED(ordering)
-
     QList<MapiStorePtr> result;
     if (!_mapiSession) {
         Q_ASSERT(_mapiSession);
@@ -3127,6 +3157,19 @@ QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastErro
         *lastError = qar.lastError();
 
         mapiRelease(mapiMessageStoresTable);
+    }
+
+    if (!ordering.isEmpty()) {
+        QList<StoreSortHelper> accountList;
+        foreach (MapiStorePtr storePtr, result) {
+            accountList.append(StoreSortHelper(&ordering, storePtr));
+        }
+        qSort(accountList.begin(), accountList.end());
+        result.clear();
+        foreach (StoreSortHelper alt, accountList) {
+            result.append(alt.store());
+        }
+        accountList.clear();
     }
 
     // TODO: do better than this

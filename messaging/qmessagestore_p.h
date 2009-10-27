@@ -38,6 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMESSAGESTOREPRIVATE_H
+#define QMESSAGESTOREPRIVATE_H
 #include "qmessagestore.h"
 
 class QMessageStorePrivatePlatform;
@@ -55,3 +57,4 @@ public:
     QMessageStore *q_ptr;
     QMessageStorePrivatePlatform *p_ptr;
 };
+#endif

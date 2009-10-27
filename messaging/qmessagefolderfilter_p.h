@@ -38,6 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMESSAGEFOLDERFILTERPRIVATE_H
+#define QMESSAGEFOLDERFILTERPRIVATE_H
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderfilter.h"
 #ifdef Q_OS_WIN
@@ -112,4 +114,5 @@ public:
     static bool matchesFolder(const QMessageFolderFilter &filter, const MapiFolderPtr &folder);
 #endif
 };
+#endif
 #endif

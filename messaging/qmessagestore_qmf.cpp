@@ -204,6 +204,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
 {
+    //TODO implement this function
     Q_UNUSED(filter)
     Q_UNUSED(ordering)
     Q_UNUSED(body)
