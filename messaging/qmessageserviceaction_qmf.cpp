@@ -269,7 +269,7 @@ QMessageServiceAction::~QMessageServiceAction()
 
 bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
 {
-    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::Pending))) {
+    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::InProgress))) {
         qWarning() << "Action is currently busy";
         return false;
     }
@@ -301,7 +301,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
         return queryMessages(filter, ordering, limit, offset);
     }
 
-    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::Pending))) {
+    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::InProgress))) {
         qWarning() << "Action is currently busy";
         return false;
     }
@@ -342,7 +342,7 @@ bool QMessageServiceAction::countMessages(const QMessageFilter &filter) const
 
 bool QMessageServiceAction::send(QMessage &message)
 {
-    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::Pending))) {
+    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::InProgress))) {
         qWarning() << "Action is currently busy";
         return false;
     }
@@ -405,7 +405,7 @@ bool QMessageServiceAction::send(QMessage &message)
 
 bool QMessageServiceAction::compose(const QMessage &message)
 {
-    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::Pending))) {
+    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::InProgress))) {
         qWarning() << "Action is currently busy";
         return false;
     }
@@ -421,7 +421,7 @@ bool QMessageServiceAction::compose(const QMessage &message)
 
 bool QMessageServiceAction::retrieveHeader(const QMessageId& id)
 {
-    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::Pending))) {
+    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::InProgress))) {
         qWarning() << "Action is currently busy";
         return false;
     }
@@ -443,7 +443,7 @@ bool QMessageServiceAction::retrieveHeader(const QMessageId& id)
 
 bool QMessageServiceAction::retrieveBody(const QMessageId& id)
 {
-    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::Pending))) {
+    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::InProgress))) {
         qWarning() << "Action is currently busy";
         return false;
     }
@@ -464,7 +464,7 @@ bool QMessageServiceAction::retrieveBody(const QMessageId& id)
 
 bool QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
 {
-    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::Pending))) {
+    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::InProgress))) {
         qWarning() << "Action is currently busy";
         return false;
     }
@@ -485,7 +485,7 @@ bool QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
 
 bool QMessageServiceAction::show(const QMessageId& id)
 {
-    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::Pending))) {
+    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::InProgress))) {
         qWarning() << "Action is currently busy";
         return false;
     }
@@ -501,7 +501,7 @@ bool QMessageServiceAction::show(const QMessageId& id)
 
 bool QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
 {
-    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::Pending))) {
+    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::InProgress))) {
         qWarning() << "Action is currently busy";
         return false;
     }
