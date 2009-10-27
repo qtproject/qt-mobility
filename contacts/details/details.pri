@@ -5,13 +5,13 @@ PUBLIC_HEADERS += \
     details/qcontactanniversary.h \
     details/qcontactavatar.h \
     details/qcontactbirthday.h \
+    details/qcontactcustomlabel.h \
     details/qcontactdetails.h \
     details/qcontactdisplaylabel.h \
     details/qcontactemailaddress.h \
     details/qcontactfamily.h \
     details/qcontactgender.h \
     details/qcontactgeolocation.h \
-    details/qcontactgroupname.h \
     details/qcontactguid.h \
     details/qcontactname.h \
     details/qcontactnickname.h \

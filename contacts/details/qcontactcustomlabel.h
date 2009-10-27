@@ -32,8 +32,8 @@
 ****************************************************************************/
 
 
-#ifndef QCONTACTGROUPNAME_H
-#define QCONTACTGROUPNAME_H
+#ifndef QCONTACTCUSTOMLABEL_H
+#define QCONTACTCUSTOMLABEL_H
 
 #include <QString>
 
@@ -42,19 +42,19 @@
 #include "qcontact.h"
 
 /* Leaf class */
-class QTCONTACTS_EXPORT QContactGroupName : public QContactDetail
+class QTCONTACTS_EXPORT QContactCustomLabel : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldName;
+    const char* FieldLabel;
 #else
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGroupName, "GroupName")
-    Q_DECLARE_LATIN1_LITERAL(FieldName, "Name");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactCustomLabel, "CustomLabel")
+    Q_DECLARE_LATIN1_LITERAL(FieldLabel, "Label");
 #endif
 
-    void setName(const QString& groupName) {setValue(FieldName, groupName);}
-    QString name() const {return value(FieldName);}
+    void setLabel(const QString& label) {setValue(FieldLabel, label);}
+    QString label() const {return value(FieldLabel);}
 };
 
 #endif

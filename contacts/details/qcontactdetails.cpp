@@ -82,8 +82,8 @@
  */
 
 /*!
- * \class QContactGroupName
- * \brief The name of the group which this contact represents
+ * \class QContactCustomLabel
+ * \brief A custom label which a user may set for the contact
  */
 
 /*!
@@ -213,10 +213,10 @@ Q_DEFINE_LATIN1_LITERAL(QContactTimestamp::DefinitionName, "Timestamp");
 Q_DEFINE_LATIN1_LITERAL(QContactType::DefinitionName, "Type");
 
 /*!
- * \variable QContactGroupName::DefinitionName
- * The constant string which identifies the definition of details which contain the name of the group that the contact represents
+ * \variable QContactCustomLabel::DefinitionName
+ * The constant string which identifies the definition of details which contain a custom label for the contact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGroupName::DefinitionName, "GroupName");
+Q_DEFINE_LATIN1_LITERAL(QContactCustomLabel::DefinitionName, "CustomLabel");
 
 /*!
  * \variable QContactGuid::DefinitionName
@@ -316,10 +316,10 @@ Q_DEFINE_LATIN1_LITERAL(QContactFamily::FieldSpouse, "Spouse");
 Q_DEFINE_LATIN1_LITERAL(QContactFamily::FieldChildren, "Children");
 
 /*!
- * \variable QContactGroupName::FieldName
- * The constant key for which the group name value is stored in details of the QContactGroupName type
+ * \variable QContactCustomLabel::FieldLabel
+ * The constant key for which the custom label value is stored in details of the QContactCustomLabel type
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGroupName::FieldName, "Name");
+Q_DEFINE_LATIN1_LITERAL(QContactCustomLabel::FieldLabel, "Label");
 
 /*!
  * \variable QContactGuid::FieldGuid
@@ -1239,13 +1239,13 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
- * \fn QContactGroupName::name() const
- * Returns the name of the group which this contact represents
+ * \fn QContactCustomLabel::label() const
+ * Returns the custom label which has been set for this contact
  */
 
 /*!
- * \fn QContactGroupName::setName(const QString& groupName)
- * Sets the name of the group which this contact represents to \a groupName
+ * \fn QContactCustomLabel::setLabel(const QString& label)
+ * Sets the custom label of this contact to \a label
  */
 
 /*!
