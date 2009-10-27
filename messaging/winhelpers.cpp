@@ -3609,7 +3609,7 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
 #endif
             SizedSPropTagArray(np, msgCols) = {np, { PR_PARENT_ENTRYID,
                                                      PR_MESSAGE_FLAGS,
-                                                     PR_MSG_STATUS,
+                                                     PR_MESSAGE_STATUS,
                                                      PR_MESSAGE_CLASS,
                                                      PR_SENDER_NAME,
                                                      PR_SENDER_EMAIL_ADDRESS,
@@ -3874,126 +3874,135 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
         MapiStorePtr store;
         IMessage *message = openMapiMessage(lastError, msg->id(), &store);
         if (*lastError == QMessageStore::NoError) {
-            IStream *is(0);
-            LONG contentFormat(msg->d_ptr->_contentFormat);
 
-            if (contentFormat == EDITOR_FORMAT_DONTKNOW) {
-                // Attempt to read HTML first
-                contentFormat = EDITOR_FORMAT_HTML;
+            //SMS body stored in subject on CEMAPI
+            if(store->types() & QMessage::Sms)
+            {
+                messageBody.append(reinterpret_cast<const char*>(msg->subject().utf16()),msg->subject().count()*sizeof(quint16));
+                bodySubType = "plain";
             }
+            else
+            {
+                IStream *is(0);
+                LONG contentFormat(msg->d_ptr->_contentFormat);
 
-            if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
-                HRESULT rv = message->OpenProperty(PR_BODY, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
-                if (HR_SUCCEEDED(rv)) {
-                    messageBody = readStream(lastError, is);
-                    bodySubType = "plain";
-                }
-            } else if (contentFormat == EDITOR_FORMAT_HTML) {
-                // See if there is a body HTML property
-#ifndef _WIN32_WCE
-                ULONG bodyProperty(PR_BODY_HTML);
-#else
-                // Correct variants discussed at http://blogs.msdn.com/raffael/archive/2008/09/08/mapi-on-windows-mobile-6-programmatically-retrieve-mail-body-sample-code.aspx
-                ULONG bodyProperty(PR_BODY_HTML_A);
-#endif
-                HRESULT rv = message->OpenProperty(bodyProperty, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
-                if (HR_SUCCEEDED(rv)) {
-                    messageBody = readStream(lastError, is);
-                    bodySubType = "html";
-
-#ifdef _WIN32_WCE
-                    // Encode the ASCII text into UTF-16
-                    messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(decodeContent(messageBody, "Latin-1"));
-#endif
-                }
-            }
-
-#ifndef _WIN32_WCE // RTF not supported
-            if (bodySubType.isEmpty()) {
-                if (!msg->d_ptr->_rtfInSync) {
-                    // See if we need to sync the RTF
-                    if (!store->supports(STORE_RTF_OK)) {
-                        BOOL updated(FALSE);
-                        HRESULT rv = RTFSync(message, RTF_SYNC_BODY_CHANGED, &updated);
-                        if (HR_SUCCEEDED(rv)) {
-                            if (updated) {
-                                if (HR_FAILED(message->SaveChanges(0))) {
-                                    qWarning() << "Unable to save changes after synchronizing RTF.";
-                                }
-                            }
-                        } else {
-                            qWarning() << "Unable to synchronize RTF.";
-                        }
-                    }
+                if (contentFormat == EDITOR_FORMAT_DONTKNOW) {
+                    // Attempt to read HTML first
+                    contentFormat = EDITOR_FORMAT_HTML;
                 }
 
-                // Either the body is in RTF, or we need to read the RTF to know that it is text...
-                HRESULT rv = message->OpenProperty(PR_RTF_COMPRESSED, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
-                if (HR_SUCCEEDED(rv)) {
-                    IStream *decompressor(0);
-                    if (WrapCompressedRTFStream(is, 0, &decompressor) == S_OK) {
-                        ULONG bytes = 0;
-                        char buffer[BUFSIZ] = { 0 };
-                        do {
-                            decompressor->Read(buffer, BUFSIZ, &bytes);
-                            messageBody.append(buffer, bytes);
-                        } while (bytes == BUFSIZ);
-
-                        decompressor->Release();
-
-                        if (contentFormat == EDITOR_FORMAT_DONTKNOW) {
-                            // Inspect the message content to see if we can tell what is in it
-                            QString initialText = decodeContent(messageBody, "utf-16", 256);
-                            if (!initialText.isEmpty()) {
-                                if (initialText.indexOf("\\fromtext") != -1) {
-                                    // This message originally contained text
-                                    contentFormat = EDITOR_FORMAT_PLAINTEXT;
-
-                                    // See if we can get the plain text version instead
-                                    IStream *ts(0);
-                                    rv = message->OpenProperty(PR_BODY, &IID_IStream, STGM_READ, 0, (IUnknown**)&ts);
-                                    if (HR_SUCCEEDED(rv)) {
-                                        messageBody = readStream(lastError, ts);
-                                        bodySubType = "plain";
-
-                                        ts->Release();
-                                    } else {
-                                        qWarning() << "Unable to prefer plain text body.";
-                                    }
-                                } else if (initialText.indexOf("\\fromhtml1") != -1) {
-                                    // This message originally contained text
-                                    contentFormat = EDITOR_FORMAT_HTML;
-                                }
-                            }
-                        }
-
-                        if (bodySubType.isEmpty()) {
-                            if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
-                                messageBody = extractPlainText(decodeContent(messageBody, "utf-16"));
-                                bodySubType = "plain";
-                            } else if (contentFormat == EDITOR_FORMAT_HTML) {
-                                QString html = extractHtml(decodeContent(messageBody, "utf-16"));
-                                messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(html.constData(), html.length());
-                                bodySubType = "html";
-                            }
-                        }
-
-                        if (bodySubType.isEmpty()) {
-                            // I guess we must have RTF
-                            bodySubType = "rtf";
-                        }
-                    } else {
-                        *lastError = QMessageStore::ContentInaccessible;
-                        qWarning() << "Unable to decompress RTF";
+                if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
+                    HRESULT rv = message->OpenProperty(PR_BODY, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+                    if (HR_SUCCEEDED(rv)) {
+                        messageBody = readStream(lastError, is);
                         bodySubType = "plain";
                     }
-                } else {
-                    bodySubType = "unknown";
-                }
-            }
-#endif
+                } else if (contentFormat == EDITOR_FORMAT_HTML) {
+                    // See if there is a body HTML property
+    #ifndef _WIN32_WCE
+                    ULONG bodyProperty(PR_BODY_HTML);
+    #else
+                    // Correct variants discussed at http://blogs.msdn.com/raffael/archive/2008/09/08/mapi-on-windows-mobile-6-programmatically-retrieve-mail-body-sample-code.aspx
+                    ULONG bodyProperty(PR_BODY_HTML_A);
+    #endif
+                    HRESULT rv = message->OpenProperty(bodyProperty, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+                    if (HR_SUCCEEDED(rv)) {
+                        messageBody = readStream(lastError, is);
+                        bodySubType = "html";
 
-            mapiRelease(is);
+    #ifdef _WIN32_WCE
+                        // Encode the ASCII text into UTF-16
+                        messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(decodeContent(messageBody, "Latin-1"));
+    #endif
+                    }
+                }
+
+    #ifndef _WIN32_WCE // RTF not supported
+                if (bodySubType.isEmpty()) {
+                    if (!msg->d_ptr->_rtfInSync) {
+                        // See if we need to sync the RTF
+                        if (!store->supports(STORE_RTF_OK)) {
+                            BOOL updated(FALSE);
+                            HRESULT rv = RTFSync(message, RTF_SYNC_BODY_CHANGED, &updated);
+                            if (HR_SUCCEEDED(rv)) {
+                                if (updated) {
+                                    if (HR_FAILED(message->SaveChanges(0))) {
+                                        qWarning() << "Unable to save changes after synchronizing RTF.";
+                                    }
+                                }
+                            } else {
+                                qWarning() << "Unable to synchronize RTF.";
+                            }
+                        }
+                    }
+
+                    // Either the body is in RTF, or we need to read the RTF to know that it is text...
+                    HRESULT rv = message->OpenProperty(PR_RTF_COMPRESSED, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+                    if (HR_SUCCEEDED(rv)) {
+                        IStream *decompressor(0);
+                        if (WrapCompressedRTFStream(is, 0, &decompressor) == S_OK) {
+                            ULONG bytes = 0;
+                            char buffer[BUFSIZ] = { 0 };
+                            do {
+                                decompressor->Read(buffer, BUFSIZ, &bytes);
+                                messageBody.append(buffer, bytes);
+                            } while (bytes == BUFSIZ);
+
+                            decompressor->Release();
+
+                            if (contentFormat == EDITOR_FORMAT_DONTKNOW) {
+                                // Inspect the message content to see if we can tell what is in it
+                                QString initialText = decodeContent(messageBody, "utf-16", 256);
+                                if (!initialText.isEmpty()) {
+                                    if (initialText.indexOf("\\fromtext") != -1) {
+                                        // This message originally contained text
+                                        contentFormat = EDITOR_FORMAT_PLAINTEXT;
+
+                                        // See if we can get the plain text version instead
+                                        IStream *ts(0);
+                                        rv = message->OpenProperty(PR_BODY, &IID_IStream, STGM_READ, 0, (IUnknown**)&ts);
+                                        if (HR_SUCCEEDED(rv)) {
+                                            messageBody = readStream(lastError, ts);
+                                            bodySubType = "plain";
+
+                                            ts->Release();
+                                        } else {
+                                            qWarning() << "Unable to prefer plain text body.";
+                                        }
+                                    } else if (initialText.indexOf("\\fromhtml1") != -1) {
+                                        // This message originally contained text
+                                        contentFormat = EDITOR_FORMAT_HTML;
+                                    }
+                                }
+                            }
+
+                            if (bodySubType.isEmpty()) {
+                                if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
+                                    messageBody = extractPlainText(decodeContent(messageBody, "utf-16"));
+                                    bodySubType = "plain";
+                                } else if (contentFormat == EDITOR_FORMAT_HTML) {
+                                    QString html = extractHtml(decodeContent(messageBody, "utf-16"));
+                                    messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(html.constData(), html.length());
+                                    bodySubType = "html";
+                                }
+                            }
+
+                            if (bodySubType.isEmpty()) {
+                                // I guess we must have RTF
+                                bodySubType = "rtf";
+                            }
+                        } else {
+                            *lastError = QMessageStore::ContentInaccessible;
+                            qWarning() << "Unable to decompress RTF";
+                            bodySubType = "plain";
+                        }
+                    } else {
+                        bodySubType = "unknown";
+                    }
+                }
+    #endif
+                mapiRelease(is);
+            }
 
             if (*lastError == QMessageStore::NoError) {
                 QMessageContentContainerPrivate *messageContainer(((QMessageContentContainer *)(msg))->d_ptr);
