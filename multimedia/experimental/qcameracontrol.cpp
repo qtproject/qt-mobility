@@ -39,47 +39,79 @@
 **
 ****************************************************************************/
 
-#ifndef QIMAGEPROCESSINGCONTROL_H
-#define QIMAGEPROCESSINGCONTROL_H
+#include <multimedia/experimental/qcameracontrol.h>
+#include  "qmediacontrol_p.h"
 
-#include <multimedia/qmediacontrol.h>
-#include <multimedia/qmediaobject.h>
+/*!
+    \class QCameraControl
+    \ingroup multimedia
 
-#include <multimedia/qcamera.h>
+    \preliminary
+    \brief The abstract class for controling still or video cameras, this is provided
+    by a QMediaService object, and is used by QCamera.
 
-class Q_MEDIA_EXPORT QImageProcessingControl : public QMediaControl
+    The interface name of QCameraControl is \c com.nokia.Qt.QCameraControl/1.0 as
+    defined in QCameraControl_iid.
+
+    \sa QMediaService::control(), QCamera
+*/
+
+/*!
+    \macro QCameraControl_iid
+
+    \c com.nokia.Qt.QCameraControl/1.0
+
+    Defines the interface name of the QCameraControl class.
+
+    \relates QCameraControl
+*/
+
+/*!
+    Constructs a camera control object with \a parent.
+*/
+
+QCameraControl::QCameraControl(QObject *parent):
+    QMediaControl(*new QMediaControlPrivate, parent)
 {
-    Q_OBJECT
+}
 
-public:
-    ~QImageProcessingControl();
+/*!
+    Destruct the camera control object.
+*/
 
-    virtual QCamera::WhiteBalanceMode whiteBalanceMode() const = 0;
-    virtual void setWhiteBalanceMode(QCamera::WhiteBalanceMode mode) = 0;
-    virtual QCamera::WhiteBalanceModes supportedWhiteBalanceModes() const = 0;
-    virtual int manualWhiteBalance() const = 0;
-    virtual void setManualWhiteBalance(int colorTemperature) = 0;
+QCameraControl::~QCameraControl()
+{
+}
 
-    virtual qreal contrast() const = 0;
-    virtual void setContrast(qreal value) = 0;
+/*!
+    \fn QCameraControl::start()
+    Start the camera service.
+*/
 
-    virtual qreal saturation() const = 0;
-    virtual void setSaturation(qreal value) = 0;
+/*!
+    \fn QCameraControl::stop()
 
-    virtual bool isSharpeningSupported() const = 0;
-    virtual qreal sharpeningLevel() const = 0;
-    virtual void setSharpeningLevel(qreal value) = 0;
+    Stop the camera service.
+*/
 
-    virtual bool isDenoisingSupported() const = 0;
-    virtual qreal denoisingLevel() const = 0;
-    virtual void setDenoisingLevel(qreal value) = 0;
+/*!
+    \fn QCameraControl::state() const
 
-protected:
-    QImageProcessingControl(QObject* parent = 0);
-};
+    Returns the state of the camera service.
 
-#define QImageProcessingControl_iid "com.nokia.Qt.QImageProcessingControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QImageProcessingControl, QImageProcessingControl_iid)
+    \sa QCamera::state
+*/
 
-#endif
+/*!
+    \fn void QCameraControl::stateChanged(QCamera::State state)
+
+    Signal emitted when \a state changes state.
+*/
+
+/*!
+    \fn void QCameraControl::error(int error, const QString &errorString)
+
+    Signal emitted when an error occurs with error code \a error and
+    a description of the error \a errorString.
+*/
 

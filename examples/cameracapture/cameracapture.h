@@ -42,7 +42,7 @@
 #ifndef RECORDER_H
 #define RECORDER_H
 
-#include <multimedia/qcamera.h>
+#include <multimedia/experimental/qcamera.h>
 
 namespace Ui {
     class CameraCapture;

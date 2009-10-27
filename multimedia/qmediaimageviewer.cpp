@@ -64,7 +64,7 @@ public:
 
     void _q_mediaStatusChanged(QMediaImageViewer::MediaStatus status);
     void _q_playlistMediaChanged(const QMediaContent &content);
-    void _q_playlistDestroyed(QObject *playlist);
+    void _q_playlistDestroyed();
 
     QMediaImageViewerControl *viewerControl;
     QMediaPlaylist *playlist;
@@ -111,15 +111,13 @@ void QMediaImageViewerPrivate::_q_playlistMediaChanged(const QMediaContent &cont
     emit q_func()->mediaChanged(media);
 }
 
-void QMediaImageViewerPrivate::_q_playlistDestroyed(QObject *object)
+void QMediaImageViewerPrivate::_q_playlistDestroyed()
 {
-    if (object == playlist) {
-        playlist = 0;
-        timer.stop();
+    playlist = 0;
+    timer.stop();
 
-        if (state != QMediaImageViewer::StoppedState)
-            emit q_func()->stateChanged(state = QMediaImageViewer::StoppedState);
-    }
+    if (state != QMediaImageViewer::StoppedState)
+        emit q_func()->stateChanged(state = QMediaImageViewer::StoppedState);
 }
 
 /*!
@@ -362,8 +360,7 @@ void QMediaImageViewer::bind(QObject *object)
 
             connect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
                     this, SLOT(_q_playlistMediaChanged(QMediaContent)));
-            connect(d->playlist, SIGNAL(destroyed(QObject*)),
-                    this, SLOT(_q_playlistDestroyed(QObject *)));
+            connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
         }
     }
 }

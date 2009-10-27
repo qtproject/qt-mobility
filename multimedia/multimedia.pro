@@ -12,7 +12,7 @@ contains(QT_CONFIG, opengl): QT += opengl
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MEDIA_LIB
 
-HEADERS = \
+HEADERS += \
     qmediacontrol.h \
     qmediacontrol_p.h \
     qmediaobject.h \
@@ -51,20 +51,14 @@ HEADERS = \
     qaudioencodercontrol.h \
     qvideoencodercontrol.h \
     qimageencodercontrol.h \
-    qimagecapturecontrol.h \
     qaudiocapturesource.h \
-    qcamera.h \
-    qcameracontrol.h \
-    qcameraexposurecontrol.h \
-    qcamerafocuscontrol.h \
-    qimageprocessingcontrol.h \
     qmediaformatcontrol.h \
     qmediaplaylistcontrol.h \
     qaudiodevicecontrol.h \
     qvideodevicecontrol.h \
     qmediapluginloader_p.h
 
-SOURCES = qmediacontrol.cpp \
+SOURCES += qmediacontrol.cpp \
     qmediaobject.cpp \
     qmediaservice.cpp \
     qlocalmediaplaylistprovider.cpp \
@@ -93,13 +87,7 @@ SOURCES = qmediacontrol.cpp \
     qaudioencodercontrol.cpp \
     qvideoencodercontrol.cpp \
     qimageencodercontrol.cpp \
-    qimagecapturecontrol.cpp \
     qaudiocapturesource.cpp \
-    qcamera.cpp \
-    qcameracontrol.cpp \
-    qcameraexposurecontrol.cpp \
-    qcamerafocuscontrol.cpp \
-    qimageprocessingcontrol.cpp \
     qmediaformatcontrol.cpp \
     qmediaplaylistcontrol.cpp \
     qaudiodevicecontrol.cpp \
@@ -127,3 +115,5 @@ symbian {
     DEPLOYMENT += QtMediaDeployment
     TARGET.CAPABILITY = ALL -TCB
 }
+
+include (experimental/experimental.pri)

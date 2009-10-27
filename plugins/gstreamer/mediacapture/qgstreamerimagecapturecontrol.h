@@ -43,7 +43,7 @@
 #ifndef QGSTREAMERIMAGECAPTURECONTROL_H
 #define QGSTREAMERIMAGECAPTURECONTROL_H
 
-#include <multimedia/qimagecapturecontrol.h>
+#include <multimedia/experimental/qimagecapturecontrol.h>
 #include "qgstreamercapturesession.h"
 
 class QGstreamerImageCaptureControl : public QImageCaptureControl
