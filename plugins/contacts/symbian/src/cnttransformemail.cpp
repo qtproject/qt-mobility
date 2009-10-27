@@ -106,3 +106,25 @@ QList<TUid> TransformEmail::supportedSortingFieldTypes(QString detailFieldName) 
         uids << KUidContactFieldEMail;
     return uids;
 }
+
+/*!
+ * Checks whether the subtype is supported
+ *
+ * \a subType The subtype to be checked
+ * \return True if this subtype is supported 
+ */ 
+bool TransformEmail::supportsSubType(const QString& subType) const 
+{
+    return false;
+}
+
+/*!
+ * Returns the filed id corresponding to a field
+ *
+ * \a fieldName The name of the supported field
+ * \return fieldId for the fieldName, 0  if not supported 
+ */ 
+quint32 TransformEmail::getIdForField(const QString& fieldName) const 
+{
+    return 0;
+}

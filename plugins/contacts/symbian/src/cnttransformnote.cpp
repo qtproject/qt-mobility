@@ -97,3 +97,25 @@ QList<TUid> TransformNote::supportedSortingFieldTypes(QString detailFieldName) c
         uids << KUidContactFieldNote;
     return uids;
 }
+
+/*!
+ * Checks whether the subtype is supported
+ *
+ * \a subType The subtype to be checked
+ * \return True if this subtype is supported 
+ */ 
+bool TransformNote::supportsSubType(const QString& subType) const 
+{
+    return false;
+}
+
+/*!
+ * Returns the filed id corresponding to a field
+ *
+ * \a fieldName The name of the supported field
+ * \return fieldId for the fieldName, 0  if not supported 
+ */ 
+quint32 TransformNote::getIdForField(const QString& fieldName) const 
+{
+    return 0;
+}

@@ -133,3 +133,26 @@ QList<TUid> TransformAvatar::supportedSortingFieldTypes(QString /*detailFieldNam
     // Sorting not supported
     return QList<TUid>();
 }
+
+
+/*!
+ * Checks whether the subtype is supported
+ *
+ * \a subType The subtype to be checked
+ * \return True if this subtype is supported 
+ */ 
+bool TransformAvatar::supportsSubType(const QString& subType) const 
+{
+    return false;
+}
+
+/*!
+ * Returns the filed id corresponding to a field
+ *
+ * \a fieldName The name of the supported field
+ * \return fieldId for the fieldName, 0  if not supported 
+ */ 
+quint32 TransformAvatar::getIdForField(const QString& fieldName) const 
+{
+    return 0;
+}

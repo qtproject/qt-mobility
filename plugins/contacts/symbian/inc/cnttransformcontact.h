@@ -62,7 +62,7 @@ public:
 	        QContact &contact,
 	        CContactItem &contactItem) const;
 	QList<TUid> supportedSortingFieldTypes( QString detailDefinitionName, QString detailFieldName );
-
+    TUint32 GetIdForDetailL(const QContactDetailFilter& detailFilter,bool& isSubtype) const;
 private:
 	enum ContactData
 	{

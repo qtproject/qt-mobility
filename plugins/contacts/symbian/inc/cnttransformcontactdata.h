@@ -67,6 +67,8 @@ public:
 	virtual bool supportsField(TUint32 fieldType) const = 0;
 	virtual bool supportsDetail(QString detailName) const = 0;
 	virtual QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const = 0;
+	virtual bool supportsSubType(const QString& detailName) const  = 0;
+	virtual quint32 getIdForField(const QString& detailName) const = 0; 
 };
 
 #endif

@@ -240,21 +240,39 @@ void CntSymbianFilterSqlHelper::updateSqlQueryForDetailFilter(const QContactFilt
 
     //Get the field id for the detail field name
     TransformContact transformContact;
-    quint32 fieldId; // = transformContact.GetIdForDetailL(cdf.detailDefinitionName(),cdf.detailFieldName());
-    QString sqlDbTableColumnName;
-    //Get the corresponding column name 
-    convertFieldIdToSqlDbColumnName(fieldId,sqlDbTableColumnName );
+    bool isSubType;
+    quint32 fieldId  = transformContact.GetIdForDetailL(cdf, isSubType);
+    if(fieldId){
+        // Id supported, get the corresponding column name 
+        QString sqlDbTableColumnName;
+        convertFieldIdToSqlDbColumnName(fieldId,sqlDbTableColumnName );
+        if(isSubType) {
+            sqlQuery += sqlDbTableColumnName;
+            sqlQuery += " not NULL ";
+        } else {
+            //Get the value and update it to the query
+            sqlQuery += "'";
+            sqlQuery +=  cdf.value().toString();
+            sqlQuery += "%";
+            sqlQuery += "'";
+            error = QContactManager::NoError;
+            
 
-    //Update the query
-    sqlQuery += sqlDbTableColumnName; 
-    sqlQuery += " like ";
+        
+         }
+        
+        
+    } else {
+        // Id not supported
+        error = QContactManager::BadArgumentError;
+    
+    
+    }
+        
 
-    //Get the value and update it to the query
-    sqlQuery += "'";
-    sqlQuery +=  cdf.value().toString();
-    sqlQuery += "%";
-    sqlQuery += "'";
-    error = QContactManager::NoError;
+    
+
+
 }
 
 /*!

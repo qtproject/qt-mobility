@@ -59,7 +59,7 @@ class CntSymbianFilterSqlHelper
 {
 public:
     CntSymbianFilterSqlHelper();
-    ~CntSymbianFilterSqlHelper();
+    virtual ~CntSymbianFilterSqlHelper();
 
 public:
     /*Generic functions for all filters*/

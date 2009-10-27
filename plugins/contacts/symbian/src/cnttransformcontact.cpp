@@ -219,6 +219,42 @@ QList<TUid> TransformContact::supportedSortingFieldTypes( QString detailDefiniti
     return uids;
 }
 
+TUint32 TransformContact::GetIdForDetailL(const QContactDetailFilter& detailFilter, bool& isSubtype) const
+    {
+    isSubtype = false;
+    QString defnitionName = detailFilter.detailDefinitionName();
+    QString fieldName = detailFilter.detailFieldName();
+    QString fieldValue = detailFilter.value().toString();
+    quint32 fieldId = 0;
+    
+    QMap<ContactData, TransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+    while (i != m_transformContactData.constEnd()) {
+    
+        if (i.value()->supportsDetail(defnitionName)){ 
+            // This definition is supported, 
+            // so check if there is a subtype defined
+        
+            if (i.value()->supportsSubType(fieldName)){
+            
+               // subtype supported, so value contains the field to be checked
+                fieldId  = i.value()->getIdForField(fieldValue);
+                isSubtype = true;
+        
+            } else {
+                // subtype not supported, so field itself should be passed  
+                fieldId  = i.value()->getIdForField(fieldName);
+                isSubtype = false;
+            }
+        
+            break;
+        }
+        ++i;
+    }
+    return fieldId;
+
+    }
+
+
 QList<CContactItemField *> TransformContact::transformDetailL(const QContactDetail &detail) const
 {
 	QList<CContactItemField *> itemFieldList;
