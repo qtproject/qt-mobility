@@ -427,13 +427,13 @@ bool QVersitContactConverterPrivate::encodeEmbeddedContent(
     if (mMappings.contains(contactAvatar.subType()) && format.size()) {
         QString name = mMappings.value(contactAvatar.subType());
         QByteArray value;
-        QFile file;
-        file.setFileName(filePath);
+        QFile file(filePath);
         if (file.open(QIODevice::ReadOnly)) {
             encodeProperty = true;
-            value = file.readAll();
             if (contactAvatar.subType() == QContactAvatar::SubTypeImage)
                 emit scale(filePath,value);
+            if (value.length() == 0)
+                value = file.readAll(); // Image not scaled
             value = value.toBase64();
             property.addParameter(QString::fromAscii(versitType),format);
             property.addParameter(QString::fromAscii(versitEncoding),

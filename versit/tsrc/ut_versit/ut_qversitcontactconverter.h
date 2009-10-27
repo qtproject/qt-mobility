@@ -52,6 +52,9 @@ class UT_QVersitContactConverter : public QObject
 {
     Q_OBJECT
     
+public slots:
+    void scale(const QString& imageFileName, QByteArray& imageData);
+
 private slots:
     void init();
     void cleanup();
@@ -75,7 +78,7 @@ private slots:
     void testIsValidRemoteUrl();
     void testEncodeGender();
     void testEncodeNickName();
-    void testEncodAniversary();
+    void testEncodeAnniversary();
     void testEncodOnlineAccount();
     void testEncodeFamily();
 
@@ -83,7 +86,10 @@ private slots:
 private: // Data
     QVersitContactConverter* mConverter;
     QVersitContactConverterPrivate* mConverterPrivate;
-    QString mTestPhotoFile, mTestAudioFile;
+    QString mTestPhotoFile;
+    QString mTestAudioFile;
+    bool mScaleSignalEmitted;
+    QByteArray mSimulatedImageData;
 };
 
 #endif // UT_QVERSITCONTACTCONVERTER_H
