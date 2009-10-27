@@ -86,6 +86,9 @@ public:
 
 Q_SIGNALS:
     void currentLanguageChanged(const QString &);
+
+private:
+    QLocale::Language TLanguageToQLocale(TLanguage language) const;
 };
 
 //////// QSystemNetworkInfo

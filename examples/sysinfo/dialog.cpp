@@ -148,6 +148,7 @@ void Dialog::setupGeneral()
     delete systemInfo;
     systemInfo = new QSystemInfo(this);
     ui->curLanguageLineEdit->setText( systemInfo->currentLanguage());
+    ui->languagesComboBox->clear();
     ui->languagesComboBox->insertItems(0,systemInfo->availableLanguages());
     ui->countryCodeLabel->setText(systemInfo->currentCountryCode());
 }

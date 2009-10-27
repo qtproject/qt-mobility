@@ -44,7 +44,7 @@
 #include <QStringList>
 
 #include <SysUtil.h>
-
+#include <ptiengine.h>
 
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
@@ -58,12 +58,143 @@ QSystemInfoPrivate::~QSystemInfoPrivate()
 
 QString QSystemInfoPrivate::currentLanguage() const
 {
-    return QString();   //TODO
+    QString lang = QLocale::system().name().left(2);
+    if(lang.isEmpty() || lang == "C") {
+        lang = "en";
+    }
+    return lang;
 }
 
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
-    return QStringList();   //TODO
+    QStringList languages;
+    TRAPD(err,
+    CPtiEngine *ptiEngine = CPtiEngine::NewL();
+    CleanupStack::PushL(ptiEngine);
+    RArray<TInt> languageCodes;
+    CleanupClosePushL(languageCodes);
+    ptiEngine->GetAvailableLanguagesL(languageCodes);
+    for (int i = 0; i < languageCodes.Count(); ++i) {
+        QLocale::Language language(TLanguageToQLocale(TLanguage(languageCodes[i])));
+        QString lang = QLocale(language).name().left(2);
+        if(lang.isEmpty() || lang == "C") {
+            lang = "en";
+        }
+        languages << lang;
+    }
+    CleanupStack::PopAndDestroy(2, ptiEngine);
+    )
+    return languages;
+}
+
+QLocale::Language QSystemInfoPrivate::TLanguageToQLocale(TLanguage language) const
+{
+    switch (language) {
+        case ELangAmerican: 
+        case ELangCanadianEnglish:
+        case ELangInternationalEnglish:
+        case ELangSouthAfricanEnglish:
+        case ELangAustralian:
+        case ELangEnglish: return QLocale::English;
+        case ELangSwissFrench:
+        case ELangInternationalFrench:
+        case ELangCanadianFrench:
+        case ELangBelgianFrench:
+        case ELangFrench: return QLocale::French;
+        case ELangSwissGerman:
+        case ELangAustrian:
+        case ELangGerman: return QLocale::German;
+        case ELangInternationalSpanish:
+        case ELangLatinAmericanSpanish:
+        case ELangSpanish: return QLocale::Spanish;
+        case ELangItalian: return QLocale::Italian;
+        case ELangFinlandSwedish:
+        case ELangSwedish: return QLocale::Swedish;
+        case ELangDanish: return QLocale::Danish;
+        case ELangNorwegian: return QLocale::Norwegian;
+        case ELangFinnish: return QLocale::Finnish;
+        case ELangPortuguese: return QLocale::Portuguese;
+        case ELangCyprusTurkish:
+        case ELangTurkish: return QLocale::Turkish;
+        case ELangIcelandic: return QLocale::Icelandic;
+        case ELangRussian: return QLocale::Russian;
+        case ELangHungarian: return QLocale::Hungarian;
+        case ELangBelgianFlemish:
+        case ELangDutch: return QLocale::Dutch;
+        case ELangNewZealand: return QLocale::Maori;
+        case ELangCzech: return QLocale::Czech;
+        case ELangSlovak: return QLocale::Slovak;
+        case ELangPolish: return QLocale::Polish;
+        case ELangSlovenian: return QLocale::Slovenian;
+        case ELangTaiwanChinese:
+        case ELangHongKongChinese:
+        case ELangPrcChinese: return QLocale::Chinese;
+        case ELangJapanese: return QLocale::Japanese;
+        case ELangThai: return QLocale::Thai;
+        case ELangAfrikaans: return QLocale::Afrikaans;
+        case ELangAlbanian: return QLocale::Albanian;
+        case ELangAmharic: return QLocale::Amharic;
+        case ELangArabic: return QLocale::Arabic;
+        case ELangArmenian: return QLocale::Armenian;
+        case ELangTagalog: return QLocale::Tagalog;
+        case ELangBelarussian:
+        case ELangBengali:  return QLocale::Bengali;
+        case ELangBulgarian: return QLocale::Bulgarian;
+        case ELangBurmese: return QLocale::Burmese;
+        case ELangCatalan: return QLocale::Catalan;
+        case ELangCroatian: return QLocale::Croatian;
+        case ELangEstonian: return QLocale::Estonian;
+        case ELangFarsi: return QLocale::Persian;
+        case ELangScotsGaelic: return QLocale::Gaelic;
+        case ELangGeorgian: return QLocale::Georgian;
+        case ELangGreek:
+        case ELangCyprusGreek: return QLocale::Greek;
+        case ELangGujarati: return QLocale::Gujarati;
+        case ELangHebrew: return QLocale::Hebrew;
+        case ELangHindi: return QLocale::Hindi;
+        case ELangIndonesian: return QLocale::Indonesian;
+        case ELangIrish: return QLocale::Irish;
+        case ELangSwissItalian: return QLocale::Italian;
+        case ELangKannada: return QLocale::Kannada;
+        case ELangKazakh: return QLocale::Kazakh;
+        case ELangKhmer: return QLocale::Cambodian;
+        case ELangKorean: return QLocale::Korean;
+        case ELangLao: return QLocale::Laothian;
+        case ELangLatvian: return QLocale::Latvian;
+        case ELangLithuanian: return QLocale::Lithuanian;
+        case ELangMacedonian: return QLocale::Macedonian;
+        case ELangMalay: return QLocale::Malay;
+        case ELangMalayalam: return QLocale::Malayalam;
+        case ELangMarathi: return QLocale::Marathi;
+        case ELangMoldavian: return QLocale::Moldavian;
+        case ELangMongolian: return QLocale::Mongolian;
+        case ELangNorwegianNynorsk: return QLocale::NorwegianNynorsk;
+        case ELangBrazilianPortuguese: return QLocale::Portuguese;
+        case ELangPunjabi: return QLocale::Punjabi;
+        case ELangRomanian: return QLocale::Romanian;
+        case ELangSerbian: return QLocale::Serbian;
+        case ELangSomali: return QLocale::Somali;
+        case ELangSwahili: return QLocale::Swahili;
+        case ELangTamil: return QLocale::Tamil;
+        case ELangTelugu: return QLocale::Telugu;
+        case ELangTibetan: return QLocale::Tibetan;
+        case ELangTigrinya: return QLocale::Tigrinya;
+        case ELangTurkmen: return QLocale::Turkmen;
+        case ELangUkrainian: return QLocale::Ukrainian;
+        case ELangUrdu: return QLocale::Urdu;
+        case ELangVietnamese: return QLocale::Vietnamese;
+        case ELangWelsh: return QLocale::Welsh;
+        case ELangZulu: return QLocale::Zulu;
+        case ELangSinhalese:
+        case ELangTest:
+        case ELangReserved1:
+        case ELangReserved2:
+        case ELangOther:
+        case ELangNone:
+        default:
+            break;
+    }
+    return QLocale::C;
 }
 
 QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)

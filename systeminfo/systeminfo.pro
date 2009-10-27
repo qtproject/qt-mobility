@@ -100,7 +100,8 @@ unix: {
             -lsysutil \
             -lcentralrepository \
             -lcenrepnotifhandler \
-            -lefsrv
+            -lefsrv \
+            -lptiengine
 
         TARGET.CAPABILITY = ALL -TCB
         TARGET.EPOCALLOWDLLDATA = 1
