@@ -267,7 +267,7 @@ void UT_QVersitContactGenerator::testOrganization()
     QCOMPARE(org.name(),QString::fromAscii("Nokia"));
     QCOMPARE(org.department(),QString::fromAscii("R&D"));
     
-    // ORG: Organization with one Organizational Unit
+    // ORG: Organization with more Organizational Units
     property.setValue(QByteArray("ABC, Inc.;North American Division;Devices;Marketing"));
     document = createDocumentWithProperty(property);
     contact = mGenerator->generateContact(document);
@@ -294,6 +294,56 @@ void UT_QVersitContactGenerator::testOrganization()
     QCOMPARE(org.department(),QString::fromAscii("R&D"));
     QCOMPARE(org.name(),QString::fromAscii("Nokia"));
 
+    // ORG and LOGO (and TITLE)
+    property.setName(QString::fromAscii(versitLogoId));
+    const char img[] =
+"R0lGODlhEgASAIAAAAAAAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G"
+"wEtxUmlPzRDnzYGfN3KBaKGT6rDmGxQAOw==";
+    QByteArray logo(img);
+    property.setValue(logo);
+    property.addParameter(QString::fromAscii(versitType),
+                          versitPhotoGif);
+    property.addParameter(QString::fromAscii(versitEncoding),
+                          versitEncodingBase64);
+    document.addProperty(property);
+
+    mGenerator->setImagePath(imageRelativeTestPath);
+    contact = mGenerator->generateContact(document);
+    // There should be now 3 contact details:
+    // for title, for org name and for logo
+    QList<QContactDetail> details = contact.details(QContactOrganization::DefinitionName);
+    QVERIFY(!details.isEmpty());
+    QCOMPARE(details.size(), 3);
+    QString orgLogo;
+    QString orgName;
+    foreach (QContactDetail detail, details) {
+        org = static_cast<QContactOrganization>(detail);
+        if (!org.logo().isEmpty()) {
+            orgLogo = org.logo();
+        }
+        if (!org.name().isEmpty()) {
+            orgName = org.name();
+        }
+    }
+    QVERIFY(!orgLogo.isEmpty());
+    // Logo file name: <OrgName>_<randomNum>.<ext>
+    QString logoFileName(mGenerator->imagePath());
+    logoFileName.append(QString::fromAscii("/"));
+    logoFileName.append(orgName);
+    logoFileName.append(QString::fromAscii("."));
+    QString ext = versitPhotoGif;
+    ext = ext.toLower();
+    logoFileName.append(ext);
+    // Take out the random part from the original file name
+    int underscore = orgLogo.lastIndexOf("_");
+    QVERIFY(underscore != -1);
+    QString orgNameOnly = orgLogo.left(underscore);
+    orgNameOnly.append(QString::fromAscii("."));
+    orgNameOnly.append(ext);
+    QCOMPARE(orgNameOnly, logoFileName);
+    QString randomPart = orgLogo.right(underscore);
+    QVERIFY(randomPart != QString());
+
     // ROLE
     property.setName(QString::fromAscii(versitRoleId));
     QByteArray roleValue("Very important manager and proud of it");
@@ -302,6 +352,7 @@ void UT_QVersitContactGenerator::testOrganization()
     contact = mGenerator->generateContact(document);
     org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
     QVERIFY(org.isEmpty());
+
 }
 
 void UT_QVersitContactGenerator::testTel()
@@ -781,11 +832,15 @@ void UT_QVersitContactGenerator::testAvatarUrl()
     QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
 }
 
-void UT_QVersitContactGenerator::testAvatarQuotedPrintableEncodedPhoto()
+void UT_QVersitContactGenerator::testAvatarEncoding()
 {
+    // Tests only quoted-printable encoding.
+    // Assumes that this is the only other encoding supported in PHOTO.
+    // In versit property the image is already decoded by the reader.
+
     const char img[] =
-"R0lGODlhEgASAIAAAAA=0D=0A="
-"AAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G=0D=0A="
+"R0lGODlhEgASAIAAAAA"
+"AAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G"
 "wEtxUmlPzRDnzYGfN3KBaKGT6rDmGxQAOw==";
 
     QStringList val;
@@ -1010,7 +1065,7 @@ QVersitDocument UT_QVersitContactGenerator::createDocumentWithProperty(
 
 QVersitDocument UT_QVersitContactGenerator::createDocumentWithNameAndPhoto(
         const QByteArray& name, const char image[],
-        const QString& photoType, const QString& encoding)
+        const QString& imageType, const QString& encoding)
 {
     QVersitDocument document;
     QVersitProperty property;
@@ -1018,8 +1073,8 @@ QVersitDocument UT_QVersitContactGenerator::createDocumentWithNameAndPhoto(
 
     QByteArray value(image);
     property.setValue(value);
-    if (photoType != QString()) {
-        property.addParameter(QString::fromAscii(versitType), photoType);
+    if (imageType != QString()) {
+        property.addParameter(QString::fromAscii(versitType), imageType);
     }
     if (encoding != QString()) {
         property.addParameter(QString::fromAscii(versitEncoding), encoding);

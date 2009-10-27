@@ -76,7 +76,8 @@ private:
                                 const QContact& contact ) const;
     QContactDetail* createPhone(const QVersitProperty& property) const;
     QContactDetail* createAddress(const QVersitProperty& property) const;
-    QContactDetail* createOrganization(const QVersitProperty& property) const;
+    QContactDetail* createOrganization(const QVersitProperty& property,
+                                       const QVersitDocument& versitDocument) const;
     QContactDetail* createTimeStamp(const QVersitProperty& property) const;
     QContactDetail* createAnniversary(const QVersitProperty& property) const;
     QContactDetail* createBirthday(const QVersitProperty& property) const;
@@ -84,7 +85,7 @@ private:
     QContactDetail* createAvatar(const QVersitProperty& property,
                                  const QVersitDocument& document) const;
     QString saveImage(const QVersitProperty& photoProperty,
-                      const QVersitProperty& nameProperty) const;
+                      QString& imageName) const;
     QContactDetail* createGeoLocation(const QVersitProperty& property) const;
     QContactDetail* createOnlineAccount(const QVersitProperty& property) const;
     QContactDetail* createFamily(const QVersitProperty& property,
