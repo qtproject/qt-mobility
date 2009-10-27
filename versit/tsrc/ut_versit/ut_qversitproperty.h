@@ -57,6 +57,7 @@ private slots:
 
 private slots: //test methods
 
+    void testGroup();
     void testName();
     void testParameters();
     void testValue();

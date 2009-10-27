@@ -67,6 +67,22 @@ QVersitProperty& QVersitProperty::operator=(const QVersitProperty& other)
 }
 
 /*!
+  * Sets the group
+  */
+void QVersitProperty::setGroup(const QString& group)
+{
+    d->mGroup = group.toUpper();
+}
+
+/*!
+  * Retreives the group
+  */
+QString QVersitProperty::group() const
+{
+    return d->mGroup;
+}
+
+/*!
  * Sets the name of the property
  */
 void QVersitProperty::setName(const QString& name)

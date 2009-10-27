@@ -58,6 +58,7 @@ public:
     
     QVersitPropertyPrivate(const QVersitPropertyPrivate& other) 
         : QSharedData(other),
+        mGroup(other.mGroup),
         mName(other.mName),
         mParameters(other.mParameters),
         mValue(other.mValue),
@@ -67,6 +68,7 @@ public:
     
     ~QVersitPropertyPrivate() {}
     
+    QString mGroup;
     QString mName;
     QMultiHash<QString,QString> mParameters;
     QByteArray mValue;

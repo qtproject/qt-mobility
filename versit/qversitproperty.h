@@ -60,6 +60,9 @@ public:
     
     QVersitProperty& operator=(const QVersitProperty& other);
 
+    void setGroup(const QString& group);
+    QString group() const;
+
     void setName(const QString& name);
     QString name() const;
 
