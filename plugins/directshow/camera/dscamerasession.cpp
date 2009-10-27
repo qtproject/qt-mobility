@@ -464,6 +464,8 @@ void DSCameraSession::stop()
 
     stopStream();
     opened = false;
+    m_state = QCamera::StoppedState;
+    emit stateChanged(QCamera::StoppedState);
 }
 
 void DSCameraSession::captureFrame()
