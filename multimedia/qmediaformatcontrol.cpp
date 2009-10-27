@@ -62,11 +62,42 @@
     \relates QMediaFormatControl
 */
 
+/*!
+    Constructs a new media format control with the given \a parent.
+*/
 QMediaFormatControl::QMediaFormatControl(QObject *parent)
     :QMediaControl(parent)
 {
 }
 
+/*!
+    Destroys a media format control.
+*/
 QMediaFormatControl::~QMediaFormatControl()
 {
 }
+
+
+/*!
+    \fn QMediaFormatControl::supportedFormats() const
+
+    Returns a list of supported format MIME types.
+*/
+
+/*!
+    \fn QMediaFormatControl::format() const
+
+    Returns the MIME type of the selected format.
+*/
+
+/*!
+    \fn QMediaFormatControl::setFormat(const QString &mimeType)
+
+    Sets the current format to the format identified by the given \a mimeType.
+*/
+
+/*!
+    \fn QMediaFormatControl::formatDescription(const QString &mimeType) const
+
+    Returns a description of the format identified by the given \a mimeType.
+*/

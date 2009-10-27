@@ -265,6 +265,12 @@ Set the metering mode to \a mode.
 */
 
 /*!
+    \fn qreal QCameraExposureControl::minimumShutterSpeed() const
+
+    Returns the maximum shutter speed.
+*/
+
+/*!
   \fn qreal QCameraExposureControl::maximumShutterSpeed() const
 
   Returns the maximum shutter speed.
