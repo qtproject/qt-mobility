@@ -70,13 +70,15 @@ public:
     void encodeNote(QVersitProperty& property, const QContactDetail& detail);
     void encodeGeoLocation(QVersitProperty& property, const QContactDetail& detail);
     bool encodeOrganization(QVersitDocument& document, const QContactDetail& detail);
-    bool encodeEmbeddedContent(QVersitProperty& property,const QContactDetail& detail);
+    bool encodeEmbeddedContent(const QString& resoucePath, QVersitProperty& property,
+                               bool performScaling);
     void encodeGender(QVersitProperty& property,const QContactDetail& detail);
     void encodeNickName(QVersitProperty& property,const QContactDetail& detail);
     void encodeAnniversary(QVersitProperty& property,const QContactDetail& detail);
     bool encodeOnlineAccount(QVersitProperty& property,const QContactDetail& detail);
     bool encodeFamily(QVersitDocument& document,const QContactDetail& detail);
     bool isValidRemoteUrl(const QString& resouceIdentifier);
+    bool encodeAvatar(QVersitProperty& property,const QContactDetail& detail );
     
 signals:
     void scale(const QString& imageFileName, QByteArray& imageData);

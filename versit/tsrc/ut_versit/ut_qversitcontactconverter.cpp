@@ -624,8 +624,95 @@ void UT_QVersitContactConverter::testEncodeOrganization()
     property = versitDocument.properties().at(1);
     QCOMPARE(property.name(), QString::fromAscii(versitOrganizationId));
     QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("Nokia;R&D"));
+
+    // ORG LOGO Test1: LOGO as remote Resouce
+    mScaleSignalEmitted = false;
+
+    const QString url = "http://www.myhome.com/test.jpg";
+    contact = QContact();
+    organization = QContactOrganization();
+    organization.setLogo(url);
+    contact.saveDetail(&organization);
+    versitDocument = mConverter->convertContact(contact);
+    QVERIFY(!mScaleSignalEmitted);
+
+    //Media type, and source type are encoded.
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
+
+    QVERIFY(versitDocument.properties().at(0).parameters().contains(versitType, versitPhotoJpeg));
+    QVERIFY(versitDocument.properties().at(0).parameters().contains(versitValue, versitUrlId));
+
+    //Check property Name
+    QString propertyName = versitDocument.properties().at(0).name();
+    QCOMPARE(propertyName, QString::fromAscii(versitLogoId));
+
+    //Check property value
+    QString value = (versitDocument.properties().at(0).value() );
+    QCOMPARE(value, url);
+
+
+    // ORG LOGO Test2: LOGO File.
+    contact = QContact();
+    organization = QContactOrganization();
+    organization = QContactOrganization();
+    organization.setLogo(mTestPhotoFile);
+    contact.saveDetail(&organization);
+    versitDocument = mConverter->convertContact(contact);
+    QVERIFY(mScaleSignalEmitted);
+
+    //Media type, source encoding is encoded i.e. base64
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
+
+    QVERIFY(versitDocument.properties().at(0).parameters().contains(
+            QString::fromAscii(versitType), QString::fromAscii(versitPhotoJpeg)));
+
+    QVERIFY(versitDocument.properties().at(0).parameters().contains(
+            QString::fromAscii(versitEncoding), QString::fromAscii(versitEncodingBase64)));
+
+    //Ensure value1 is not URL
+    QString value1 = (versitDocument.properties().at(0).value() );
+    QEXPECT_FAIL(value1.toAscii(), url.toAscii(), Continue);
 }
 
+
+void UT_QVersitContactConverter::testEncodeAvatar()
+{
+    QContact contact;
+    QContactAvatar contactAvatar;
+
+    mScaleSignalEmitted = false;
+
+    // Test1: Web URL
+    const QString url = "http://www.myhome.com/test.jpg";
+    contactAvatar.setAvatar(url);
+    contactAvatar.setSubType(QContactAvatar::SubTypeImage);
+    contact.saveDetail(&contactAvatar);
+    QVersitDocument versitDocument = mConverter->convertContact(contact);
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
+    QVERIFY(!mScaleSignalEmitted);
+
+
+    // Test 2: Local Media PHOTO
+    contactAvatar.setAvatar(mTestPhotoFile);
+    contactAvatar.setSubType(QContactAvatar::SubTypeImage);
+    contact.saveDetail(&contactAvatar);
+    versitDocument = mConverter->convertContact(contact);
+    QVERIFY(mScaleSignalEmitted);
+
+    //Media type, source encoding is encoded i.e. base64
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
+
+    // Test3: UnSupported Media Type, properties and parameters are not encoded
+    mScaleSignalEmitted = false;
+    const QString testUrl2 = "http://www.myhome.com/test.jpg";
+    contactAvatar.setAvatar(testUrl2);
+    // un-supported media type is encoded
+    contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
+    contact.saveDetail(&contactAvatar);
+    versitDocument = mConverter->convertContact(contact);
+    QCOMPARE(versitDocument.properties().count(), 0);
+    QVERIFY(!mScaleSignalEmitted);
+}
 
 
 void UT_QVersitContactConverter::testEncodeEmbeddedContent()
