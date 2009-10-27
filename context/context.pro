@@ -1,6 +1,6 @@
 TEMPLATE = lib
 TARGET = QtPublishSubscribe
-QT = core network
+QT = core network xml
 
 include(../common.pri)
 
@@ -12,15 +12,13 @@ PUBLIC_HEADERS += qcontextglobal.h \
            qvaluespaceprovider.h \
            qvaluespacesubscriber.h
 
-PRIVATE_HEADERS += qpacketprotocol_p.h \
-           qmallocpool_p.h \
+PRIVATE_HEADERS += \
            qvaluespace_p.h \
            qvaluespacemanager_p.h
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
-SOURCES += qpacketprotocol.cpp \
-           qmallocpool.cpp \
+SOURCES += \
            qvaluespace.cpp \
            qvaluespacemanager.cpp \
            qvaluespaceprovider.cpp \
@@ -29,23 +27,35 @@ SOURCES += qpacketprotocol.cpp \
 symbian {
     HEADERS += qcrmlparser_p.h
     SOURCES += qcrmlparser.cpp
-    deploy.path = /
+    deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
     DEPLOYMENT += exportheaders
 
     MMP_RULES += "EXPORTUNFROZEN"
+    TARGET.CAPABILITY = ALL -TCB
 }
 
 unix:!symbian {
-    HEADERS += qsystemreadwritelock_p.h
-    SOURCES += sharedmemorylayer.cpp \
-               qsystemreadwritelock.cpp
+    maemo {
+        DEFINES += Q_WS_MAEMO_6
+        SOURCES += contextkitlayer.cpp
+        CONFIG += link_pkgconfig
+        PKGCONFIG += contextsubscriber-1.0 QtDBus
+    } else {
+        HEADERS += qsystemreadwritelock_p.h \
+           	   qmallocpool_p.h \
+		   qpacketprotocol_p.h
+        SOURCES += sharedmemorylayer.cpp \
+           	   qmallocpool.cpp \
+                   qsystemreadwritelock.cpp \
+		   qpacketprotocol.cpp
+    }
 }
 
 win32 {
     HEADERS += qsystemreadwritelock_p.h
-    SOURCES += sharedmemorylayer.cpp \
+    SOURCES += \
                qsystemreadwritelock.cpp \
                registrylayer_win.cpp
 
