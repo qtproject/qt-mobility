@@ -244,7 +244,7 @@ bool QContactRequestWorker::removeRequest(QContactAbstractRequest* req)
 }
 
 /*!
- * Update the request's status to QContactAbstractRequest::Cancelling, returns true if sucessful, false if not.
+ * Update the status of the given request \a req to QContactAbstractRequest::Cancelling, returns true if sucessful, false if not.
  * \sa addRequest()
  */
 bool QContactRequestWorker::cancelRequest(QContactAbstractRequest* req)
@@ -259,7 +259,7 @@ bool QContactRequestWorker::cancelRequest(QContactAbstractRequest* req)
 }
 
 /*!
- * Blocks the caller until the request has been completed by the worker thread or worker thread signals that more partial results 
+ * Blocks the caller until the given request \a req has been completed by the worker thread or worker thread signals that more partial results
  * are available for the request, or until \a msecs milliseconds has elapsed.
  * If \a msecs is zero, this function will block indefinitely.
  * Returns true if the request was cancelled or completed successfully within the given period, otherwise false. 
@@ -285,7 +285,7 @@ bool QContactRequestWorker::waitRequest(QContactAbstractRequest* req, int msecs)
 }
 
 /*!
- * Processes the QContactFetchRequest
+ * Processes the QContactFetchRequest \a req
  * \sa QContactFetchRequest
  */
 void QContactRequestWorker::processContactFetchRequest(QContactFetchRequest* req)
@@ -334,8 +334,8 @@ void QContactRequestWorker::processContactFetchRequest(QContactFetchRequest* req
 }
 
 /*!
- * Processes the QContactIdFetchRequest
- * \sa QContactIdFetchRequest
+ * Processes the QContactLocalIdFetchRequest \a req
+ * \sa QContactLocalIdFetchRequest
  */
 void QContactRequestWorker::processContactLocalIdFetchRequest(QContactLocalIdFetchRequest* req)
 {
@@ -352,7 +352,7 @@ void QContactRequestWorker::processContactLocalIdFetchRequest(QContactLocalIdFet
 }
 
 /*!
- * Processes the QContactSaveRequest
+ * Processes the QContactSaveRequest \a req
  * \sa QContactSaveRequest
  */
 void QContactRequestWorker::processContactSaveRequest(QContactSaveRequest* req)
@@ -376,7 +376,7 @@ void QContactRequestWorker::processContactSaveRequest(QContactSaveRequest* req)
 }
 
 /*!
- * Processes the QContactRemoveRequest
+ * Processes the QContactRemoveRequest \a req
  * \sa QContactRemoveRequest
  */
 void QContactRequestWorker::processContactRemoveRequest(QContactRemoveRequest* req )
@@ -411,7 +411,7 @@ void QContactRequestWorker::processContactRemoveRequest(QContactRemoveRequest* r
 
 
 /*!
- * Processes the QContactDetailDefinitionFetchRequest
+ * Processes the QContactDetailDefinitionFetchRequest \a req
  * \sa QContactDetailDefinitionFetchRequest
  */
 void QContactRequestWorker::processContactDetailDefinitionFetchRequest(QContactDetailDefinitionFetchRequest* req)
@@ -442,7 +442,7 @@ void QContactRequestWorker::processContactDetailDefinitionFetchRequest(QContactD
     }
 }
 /*!
- * Processes the QContactDetailDefinitionSaveRequest
+ * Processes the QContactDetailDefinitionSaveRequest \a req
  * \sa QContactDetailDefinitionSaveRequest
  */
 void QContactRequestWorker::processContactDetailDefinitionSaveRequest(QContactDetailDefinitionSaveRequest* req)
@@ -470,7 +470,7 @@ void QContactRequestWorker::processContactDetailDefinitionSaveRequest(QContactDe
     }
 }
 /*!
- * Processes the QContactDetailDefinitionRemoveRequest
+ * Processes the QContactDetailDefinitionRemoveRequest \a req
  * \sa QContactDetailDefinitionRemoveRequest
  */
 void QContactRequestWorker::processContactDetailDefinitionRemoveRequest(QContactDetailDefinitionRemoveRequest* req)
@@ -497,7 +497,7 @@ void QContactRequestWorker::processContactDetailDefinitionRemoveRequest(QContact
 }
 
 /*!
- * Processes the QContactRelationshipFetchRequest
+ * Processes the QContactRelationshipFetchRequest \a req
  * \sa QContactRelationshipFetchRequest
  */
 void QContactRequestWorker::processContactRelationshipFetchRequest(QContactRelationshipFetchRequest* req)
@@ -559,7 +559,7 @@ void QContactRequestWorker::processContactRelationshipFetchRequest(QContactRelat
 }
 
 /*!
- * Processes the QContactRelationshipRemoveRequest
+ * Processes the QContactRelationshipRemoveRequest \a req
  * \sa QContactRelationshipRemoveRequest
  */
 void QContactRequestWorker::processContactRelationshipRemoveRequest(QContactRelationshipRemoveRequest* req)
@@ -590,7 +590,7 @@ void QContactRequestWorker::processContactRelationshipRemoveRequest(QContactRela
 }
 
 /*!
- * Processes the QContactRelationshipSaveRequest
+ * Processes the QContactRelationshipSaveRequest \a req
  * \sa QContactRelationshipSaveRequest
  */
 void QContactRequestWorker::processContactRelationshipSaveRequest(QContactRelationshipSaveRequest* req)
@@ -629,6 +629,7 @@ QContactRequestElement* QContactRequestWorkerData::takeFirstRequestElement()
         return m_requestQueue.head();
     return 0;
 }
+
 void QContactRequestWorkerData::cleanUpFinishedRequests(bool waitForAll)
 {
     QList<QContactRequestElement*> deleteAll;

@@ -1689,6 +1689,7 @@ void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& t
     sorted->append(toAdd);
 }
 
+/*! Sorts the given list of contacts \a cs according to the provided \a sortOrders */
 QList<QContactLocalId> QContactManagerEngine::sortContacts(const QList<QContact>& cs, const QList<QContactSortOrder>& sortOrders)
 {
     QList<QContactLocalId> sortedIds;
