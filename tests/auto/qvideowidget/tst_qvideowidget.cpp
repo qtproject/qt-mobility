@@ -392,6 +392,9 @@ void tst_QVideoWidget::nullObject()
     widget.setFullScreen(true);
     QCOMPARE(widget.isFullScreen(), true);
 
+    widget.setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
+
     {
         QSignalSpy spy(&widget, SIGNAL(brightnessChanged(int)));
 
@@ -469,6 +472,9 @@ void tst_QVideoWidget::nullService()
 
     widget.setFullScreen(true);
     QCOMPARE(widget.isFullScreen(), true);
+
+    widget.setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
 
     widget.setBrightness(100);
     QCOMPARE(widget.brightness(), 100);
