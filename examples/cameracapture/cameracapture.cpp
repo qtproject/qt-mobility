@@ -87,6 +87,9 @@ CameraCapture::CameraCapture(QWidget *parent) :
 
 CameraCapture::~CameraCapture()
 {
+    delete mediaRecorder;
+    delete videoWidget;
+    delete camera;
 }
 
 void CameraCapture::setCamera(const QByteArray &cameraDevice)

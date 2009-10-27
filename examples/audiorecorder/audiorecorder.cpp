@@ -129,6 +129,8 @@ AudioRecorder::AudioRecorder()
 
 AudioRecorder::~AudioRecorder()
 {
+    delete capture;
+    delete audiosource;
 }
 
 void AudioRecorder::updateProgress(qint64 pos)
@@ -154,11 +156,13 @@ void AudioRecorder::deviceChanged(int idx)
 
 void AudioRecorder::codecChanged(int idx)
 {
+    Q_UNUSED(idx);
     //capture->setAudioCodec(codecsBox->itemText(idx));
 }
 
 void AudioRecorder::qualityChanged(int idx)
 {
+    Q_UNUSED(idx);
     /*
     if(capture->audioCodec().compare("audio/pcm") == 0) {
         if(qualityBox->itemText(idx).compare("Low") == 0) {

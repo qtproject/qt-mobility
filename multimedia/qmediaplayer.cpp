@@ -537,6 +537,12 @@ void QMediaPlayer::bind(QObject *obj)
     }
 }
 
+/*!
+    Returns the level of support a media player has for a \a mimeType and a set of \a codecs.
+
+    The \a flags argument allows additional requirements such as performance indicators to be
+    specified.
+*/
 QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
                                                const QStringList& codecs,
                                                Flags flags)
