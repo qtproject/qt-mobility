@@ -58,8 +58,16 @@ QVCard21Writer::~QVCard21Writer()
  */
 QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
 {
+    QByteArray encodedProperty;
+    QStringList groups = property.groups();
+    if (!groups.isEmpty()) {
+        QString group = groups.join(".");
+        encodedProperty.append(group.toAscii());
+        encodedProperty.append(".");
+    }
+
     QString name = property.name();
-    QByteArray encodedProperty(name.toAscii());
+    encodedProperty.append(name.toAscii());
 
     // Quoted-Printable encode the value and add Quoted-Pritable parameter, if necessary
     QByteArray value(property.value());

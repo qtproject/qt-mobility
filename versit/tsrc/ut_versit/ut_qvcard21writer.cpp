@@ -66,10 +66,13 @@ void UT_QVCard21Writer::testEncodeVersitProperty()
     
     // With parameter(s). No special characters in the value.
     // -> No need to Quoted-Printable encode the value.
-    expectedResult = "TEL;HOME:123\r\n"; 
+    expectedResult = "TEL;HOME:123\r\n";
+
     property.setName(QString::fromAscii("TEL"));
     property.setValue(QByteArray("123"));
     property.addParameter(QByteArray("TYPE"),QByteArray("HOME"));
+    QByteArray encodedProperty = mWriter->encodeVersitProperty(property);
+    QCOMPARE(QString::fromAscii(encodedProperty), QString::fromAscii(expectedResult));
     QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
     
     // With parameter(s). Special characters in the value.
@@ -77,7 +80,8 @@ void UT_QVCard21Writer::testEncodeVersitProperty()
     expectedResult = "EMAIL;HOME;ENCODING=QUOTED-PRINTABLE:homer=40simpsons.com\r\n";
     property.setName(QString::fromAscii("EMAIL"));
     property.setValue(QByteArray("homer@simpsons.com"));
-    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
+    QCOMPARE(QString::fromAscii(mWriter->encodeVersitProperty(property)),
+             QString::fromAscii(expectedResult));
     
     // AGENT property with parameter
     expectedResult = 
@@ -102,7 +106,10 @@ END:VCARD\r\n\
     // Value is base64 encoded.
     // Check that the extra folding and the line break are added
     QByteArray value = QByteArray("value").toBase64();
-    expectedResult = "PHOTO;ENCODING=BASE64:\r\n " + value + "\r\n\r\n";
+    expectedResult = "Springfield.HOUSE.PHOTO;ENCODING=BASE64:\r\n " + value + "\r\n\r\n";
+    QStringList groups(QString::fromAscii("Springfield"));
+    groups.append(QString::fromAscii("HOUSE"));
+    property.setGroups(groups);
     property.setParameters(QMultiHash<QString,QString>());
     property.setName(QString::fromAscii("PHOTO"));
     property.setValue(value);

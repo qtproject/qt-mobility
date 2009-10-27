@@ -171,7 +171,7 @@ void UT_QVersitReader::testParseNextVersitProperty()
 
     property = mReaderPrivate->parseNextVersitProperty(vCard);
     QStringList propertyGroup(QString::fromAscii("HOME"));
-    propertyGroup.append(QString::fromAscii("Springfield").toUpper());
+    propertyGroup.append(QString::fromAscii("Springfield"));
     QCOMPARE(property.groups(),propertyGroup);
     QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
     QCOMPARE(0,property.parameters().count());

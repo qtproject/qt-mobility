@@ -73,7 +73,7 @@ void QVersitProperty::setGroups(const QStringList& groups)
 {
     d->mGroups.clear();
     foreach (QString group, groups) {
-        d->mGroups.append(group.toUpper());
+        d->mGroups.append(group);
     }
 }
 
