@@ -1430,6 +1430,11 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
+ * \fn QContactOrganization::setAssistantName(const QString& assistantName)
+ * Sets the name of the default assistant of contacts belonging to this organization to \a assistantName
+ */
+
+/*!
  * \fn QContactOrganization::assistantName() const
  * Returns the name of the default assistant of contacts belonging to this organization
  */
