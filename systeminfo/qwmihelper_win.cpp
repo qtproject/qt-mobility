@@ -43,7 +43,7 @@
 #define _WIN32_DCOM
 #include "qwmihelper_win_p.h"
 #include <QDebug>
-#include "ObjBase.h"
+#include <ObjBase.h>
 #include <Wbemidl.h>
 #include <Oleauto.h>
 #include <QStringList>
