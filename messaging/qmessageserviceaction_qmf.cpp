@@ -262,6 +262,7 @@ QMessageServiceAction::QMessageServiceAction(QObject *parent)
     : QObject(parent),
       d_ptr(new QMessageServiceActionPrivate)
 {
+    QMessageStore::instance(); // Prime the store TODO: Please review Matt (and Pending->InProgress change)
     connect(d_ptr, SIGNAL(stateChanged(QMessageServiceAction::State)), 
             this, SIGNAL(stateChanged(QMessageServiceAction::State)));
     connect(d_ptr, SIGNAL(messagesFound(QMessageIdList)), 
