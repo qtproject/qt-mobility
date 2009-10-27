@@ -203,6 +203,9 @@ QCamera::Error QCamera::error() const
     return d_func()->error;
 }
 
+/*!
+    Returns a string describing a camera's error state.
+*/
 QString QCamera::errorString() const
 {
     return d_func()->errorString;
@@ -607,6 +610,12 @@ void QCamera::setAutoIsoSensitivity()
 */
 
 /*!
+    \fn QCamera::shutterSpeedChanged(qreal speed)
+
+    Signals that a camera's shutter \a speed has changed.
+*/
+
+/*!
     \property QCamera::isoSensitivity
     \brief ?
 */
@@ -802,7 +811,13 @@ bool QCamera::isReadyForCapture() const
 }
 
 /*!
-    Capture the image and save it to file.
+    \fn QCamera::readyForCaptureChanged(bool ready)
+
+    Signals that a camera's \a ready for capture state has changed.
+*/
+
+/*!
+    Capture the image and save it to \a file.
     This operation is asynchronous in majority of cases,
     followed by signal QCamera::imageCaptured() or error()
 */

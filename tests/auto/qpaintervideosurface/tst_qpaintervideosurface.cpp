@@ -425,6 +425,7 @@ void tst_QPainterVideoSurface::shaderType()
 {
     QPainterVideoSurface surface;
     QGLWidget widget;
+    widget.makeCurrent();
 
     QCOMPARE(surface.shaderType(), QPainterVideoSurface::NoShaders);
     QCOMPARE(surface.supportedShaderTypes(), QPainterVideoSurface::NoShaders);
@@ -505,6 +506,8 @@ void tst_QPainterVideoSurface::shaderTypeStarted()
     QFETCH(QPainterVideoSurface::ShaderType, shaderType);
 
     QGLWidget widget;
+    widget.makeCurrent();
+
     QPainterVideoSurface surface;
 
     surface.setGLContext(const_cast<QGLContext *>(widget.context()));
@@ -693,6 +696,8 @@ void tst_QPainterVideoSurface::shaderSupportedFormat()
     QFETCH(bool, supportedFormat);
 
     QGLWidget widget;
+    widget.makeCurrent();
+
     QPainterVideoSurface surface;
     surface.setGLContext(const_cast<QGLContext *>(widget.context()));
 
@@ -804,6 +809,8 @@ void tst_QPainterVideoSurface::shaderPresent()
     QFETCH(int, bytesPerLineB);
 
     QGLWidget widget;
+    widget.makeCurrent();
+
     QPainterVideoSurface surface;
     surface.setGLContext(const_cast<QGLContext *>(widget.context()));
 
