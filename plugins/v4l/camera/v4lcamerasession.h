@@ -116,8 +116,11 @@ public:
 
     void setSurface(QAbstractVideoSurface* surface);
 
+    void captureImage(const QString &fileName);
+
 Q_SIGNALS:
     void stateChanged(QCamera::State);
+    void imageCaptured(const QString &fileName, const QImage &img);
 
 private Q_SLOTS:
     void captureFrame();
@@ -140,6 +143,8 @@ private:
     QList<unsigned int> formats;
 
     CameraFormatConverter* converter;
+
+    QString m_snapshot;
 };
 
 #endif
