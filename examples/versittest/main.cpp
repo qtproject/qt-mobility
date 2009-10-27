@@ -46,17 +46,27 @@
 
 int main(int argc, char** argv)
 {   
-    bool saveContacts = false; 
+    bool saveContacts = false;
+    int scaledImageHeight = 0;
+    int scaledImageWidth = 0;
     for (int i=0; i < argc; i++) {
         QString argStr(QString::fromAscii(argv[i]));
-        if (argStr == QString::fromAscii("save"))
+        if (argStr == QString::fromAscii("save")) {
             saveContacts = true;
+        } else {
+            // Scaling height and width
+            QStringList list = argStr.split('x');
+            if (!list.isEmpty())
+                scaledImageHeight = list.takeFirst().toInt();
+            if (!list.isEmpty())
+                scaledImageWidth = list.takeFirst().toInt();
+        }
     }
     TestResultXmlParser parser;
     QString resultFileName("c:/QVersitTestResults.xml");
     QStringList args;
     printf("Running tests...\n");
-    VersitTest versitTest(saveContacts);
+    VersitTest versitTest(saveContacts,scaledImageHeight,scaledImageWidth);
     args << "versittest" << "-xml" << "-o" << resultFileName;
     QTest::qExec(&versitTest, args);
     parser.parseAndPrintResults(resultFileName,true);

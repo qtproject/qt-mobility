@@ -55,19 +55,36 @@
 #include <qversitcontactgenerator.h>
 #include <qversitcontactconverter.h>
 
-const QString inputDirPath = "c:/data/testvcards/in";
+const QString inputDirPath = "/data/testvcards/in";
 const QString excludeFieldsFileName = "/data/testvcards/excludefields.txt";
-const QString outputDirPath = "c:/data/testvcards/out";
-const QString imagePath = "c:/data/testvcards/photos";
+const QString outputDirPath = "/data/testvcards/out";
+const QString imagePath = "/data/testvcards/photos";
 
-VersitTest::VersitTest() 
-    : QObject(), mSaveContacts(false)
+VersitTest::VersitTest() :
+    QObject(),
+    mSaveContacts(false),
+    mScaledImageHeight(0),
+    mScaledImageWidth(0)
 {   
 }
 
-VersitTest::VersitTest(bool saveContacts) 
-    : QObject(), mSaveContacts(saveContacts)
+VersitTest::VersitTest(bool saveContacts,int scaledImageHeight,int scaledImageWidth) :
+    QObject(),
+    mSaveContacts(saveContacts),
+    mScaledImageHeight(scaledImageHeight),
+    mScaledImageWidth(scaledImageWidth)
 {
+}
+
+void VersitTest::scale(const QString& imageFileName, QByteArray& imageData)
+{
+    if (mScaledImageHeight > 0 && mScaledImageWidth > 0) {
+        QImage image(imageFileName);
+        image = image.scaled(mScaledImageHeight,mScaledImageWidth);
+        QBuffer imageBuffer(&imageData);
+        QByteArray fileExtension = imageFileName.section('.',-1).toUpper().toAscii();
+        image.save(&imageBuffer,fileExtension.constData());
+    }
 }
 
 void VersitTest::initTestCase()
@@ -89,7 +106,7 @@ void VersitTest::initTestCase()
 
     if (!dir.exists(imagePath)) {
         dir.mkdir(imagePath);
-    }
+    }    
 }
 
 void VersitTest::cleanupTestCase()
@@ -97,19 +114,6 @@ void VersitTest::cleanupTestCase()
     delete mContactManager;
     delete mExcludedFields;
     mFiles.clear();
-
-    QDir dir;
-    if (dir.exists(imagePath)) {
-        dir.cd(imagePath);
-        // remove all the files first
-        QStringList allFiles;
-        allFiles << "*";
-        QStringList fileList = dir.entryList(allFiles, QDir::Files);
-        foreach (QString file, fileList) {
-            dir.remove(file);
-        }
-        dir.rmdir(imagePath);
-    }
 }
 
 void VersitTest::init()
@@ -177,6 +181,9 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
     // Convert back to QVersitDocuments
     QList<QVersitDocument> documents;
     QVersitContactConverter converter;
+    connect(&converter, SIGNAL(scale(const QString&,QByteArray&)),
+            this, SLOT(scale(const QString&,QByteArray&)));
+
     foreach (QContact contact, contacts) {
         documents.append(converter.convertContact(contact));
     }
