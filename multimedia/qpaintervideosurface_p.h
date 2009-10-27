@@ -85,19 +85,19 @@ public:
 
     bool present(const QVideoFrame &frame);
 
-    int brightness() const { return m_brightness; }
+    int brightness() const;
     void setBrightness(int brightness);
 
-    int contrast() const { return m_contrast; }
+    int contrast() const;
     void setContrast(int contrast);
 
-    int hue() const { return m_hue; }
+    int hue() const;
     void setHue(int hue);
 
-    int saturation() const { return m_saturation; }
+    int saturation() const;
     void setSaturation(int saturation);
 
-    bool isReady() const { return m_ready; }
+    bool isReady() const;
     void setReady(bool ready);
 
     void paint(QPainter *painter, const QRect &rect);
