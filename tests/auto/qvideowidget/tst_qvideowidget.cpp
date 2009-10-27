@@ -45,6 +45,7 @@
 
 #include "multimedia/qmediaobject.h"
 #include "multimedia/qmediaservice.h"
+#include "multimedia/qpaintervideosurface_p.h"
 #include "multimedia/qvideooutputcontrol.h"
 #include "multimedia/qvideowindowcontrol.h"
 #include "multimedia/qvideowidgetcontrol.h"
@@ -109,6 +110,8 @@ private slots:
     void hueRendererControl();
     void saturationRendererControl_data() { color_data(); }
     void saturationRendererControl();
+
+    void paintRendererControl();
 #endif
 
 private:
@@ -1388,6 +1391,49 @@ void tst_QVideoWidget::saturationRendererControl()
     widget.setSaturation(value);
     QCOMPARE(widget.saturation(), expectedValue);
     QCOMPARE(spy.count(), 1);
+}
+
+static const uchar rgb32ImageData[] =
+{
+    0x00, 0xff, 0xff, 0x00, 0x00, 0x00, 0xff, 0x00,
+    0x00, 0xff, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00
+};
+
+void tst_QVideoWidget::paintRendererControl()
+{
+    QtTestVideoObject object(0, 0, new QtTestRendererControl);
+
+    QVideoWidget widget(&object);
+    widget.show();
+
+    QPainterVideoSurface *surface = qobject_cast<QPainterVideoSurface *>(
+            object.testService->rendererControl->surface());
+
+    QVideoSurfaceFormat format(QSize(2, 2), QVideoFrame::Format_RGB32);
+
+    QVERIFY(surface->start(format));
+    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isReady(), true);
+
+    QTestEventLoop::instance().enterLoop(1);
+
+    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isReady(), true);
+
+    QVideoFrame frame(sizeof(rgb32ImageData), QSize(2, 2), 8, QVideoFrame::Format_RGB32);
+
+    frame.map(QAbstractVideoBuffer::WriteOnly);
+    memcpy(frame.bits(), rgb32ImageData, frame.numBytes());
+    frame.unmap();
+
+    QVERIFY(surface->present(frame));
+    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isReady(), false);
+
+    QTestEventLoop::instance().enterLoop(1);
+
+    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isReady(), true);
 }
 
 #endif
