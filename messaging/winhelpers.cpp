@@ -1417,7 +1417,11 @@ namespace {
             }
         }
 
-        return result.mid(offset, (limit ? limit : -1));
+        if (offset) {
+            return result.mid(offset, (limit ? limit : -1));
+        } else {
+            return result;
+        }
     }
 
     class NotifyEvent : public QEvent
@@ -3168,7 +3172,12 @@ QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastErro
         accountList.clear();
     }
 
-    result.mid(offset, (limit ? limit : -1));
+    // TODO: do better than this
+    if (offset) {
+        return result.mid(offset, (limit ? limit : -1));
+    } else {
+        return result;
+    }
 }
 
 QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastError, const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset, bool cachedMode) const
@@ -3227,7 +3236,12 @@ QList<MapiFolderPtr> MapiSession::filterFolders(QMessageStore::ErrorCode *lastEr
         result.append(store->filterFolders(lastError, filter, ordering));
     }
 
-    return result.mid(offset, (limit ? limit : -1));
+    // TODO: do better than this
+    if (offset) {
+        return result.mid(offset, (limit ? limit : -1));
+    } else {
+        return result;
+    }
 }
 
 IMsgStore *MapiSession::openMapiStore(QMessageStore::ErrorCode *lastError, const MapiEntryId &entryId, bool cachedMode) const
