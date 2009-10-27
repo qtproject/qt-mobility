@@ -448,9 +448,9 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
 /*!
     \enum QMediaServiceProviderHint::Type
 
-    \value Null               TODO
-    \value ContentType        TODO
-    \value Device             TODO
-    \value SupportedFeatures  TODO
+    \value Null               En empty hint, use the default service.
+    \value ContentType        Select media service most suitable for certain content type.
+    \value Device             Select media service which supports certain device.
+    \value SupportedFeatures  Select media service supporting the set of optional features.
 */
 
