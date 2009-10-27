@@ -43,7 +43,7 @@
 #ifndef V4LIMAGECAPTURECONTROL_H
 #define V4LIMAGECAPTURECONTROL_H
 
-#include <multimedia/qimagecapturecontrol.h>
+#include <multimedia/experimental/qimagecapturecontrol.h>
 #include "v4lcamerasession.h"
 
 class V4LImageCaptureControl : public QImageCaptureControl
