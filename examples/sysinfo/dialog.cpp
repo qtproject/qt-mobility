@@ -1,16 +1,51 @@
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
 #include "dialog.h"
-#include <QDebug>
-#include <QDesktopWidget>
-#include <QMessageBox>
-
-#include <qsysteminfo.h>
-
 #ifdef Q_OS_SYMBIAN
 #include "ui_dialog_s60.h"
 #else
 #include "ui_dialog.h"
 #endif
-
+#include <QMessageBox>
 
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
@@ -19,7 +54,6 @@ Dialog::Dialog(QWidget *parent) :
 {
     ui->setupUi(this);
     setupGeneral();
-
 
     connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
     connect(ui->versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
@@ -97,7 +131,7 @@ void Dialog::tabChanged(int index)
         setupDisplay();
         break;
     case 3:
-        setupMemory();
+        setupStorage();
         break;
     case 4:
         setupNetwork();
@@ -182,8 +216,6 @@ void Dialog::setupDisplay()
     QSystemDisplayInfo di;
     ui->brightnessLineEdit->setText(QString::number(di.displayBrightness(0)));
     ui->colorDepthLineEdit->setText(QString::number(di.colorDepth((0))));
-    QDesktopWidget wid;
-    ui->resolutionLabel->setText(QString::number(wid.width())+"x"+QString::number(wid.height()));
 
 }
 
@@ -191,6 +223,7 @@ void Dialog::setupStorage()
 {
     QSystemStorageInfo mi;
     ui->storageTreeWidget->clear();
+    ui->storageTreeWidget->header()->setResizeMode(QHeaderView::ResizeToContents);
 
     QStringList vols = mi.logicalDrives();
     foreach(QString volName, vols) {
@@ -566,4 +599,3 @@ void Dialog::displayNetworkStatus(QSystemNetworkInfo::NetworkStatus status)
     };
     ui->cellNetworkStatusLabel->setText(stat);
 }
-

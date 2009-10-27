@@ -36,23 +36,23 @@
         <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::DualSimAvailable</keyword>
         <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::SimLocked</keyword>
         <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::SingleSimAvailable</keyword>
+        <keyword ref="qsystemdeviceinfo.html#batteryLevel-prop">batteryLevel</keyword>
+        <keyword ref="qsystemdeviceinfo.html#batteryStatus-prop">batteryStatus</keyword>
         <keyword ref="qsystemdeviceinfo.html#currentPowerState-prop">currentPowerState</keyword>
         <keyword ref="qsystemdeviceinfo.html#currentProfile-prop">currentProfile</keyword>
+        <keyword ref="qsystemdeviceinfo.html#imei-prop">imei</keyword>
+        <keyword ref="qsystemdeviceinfo.html#imsi-prop">imsi</keyword>
+        <keyword ref="qsystemdeviceinfo.html#inputMethodType-prop">inputMethodType</keyword>
+        <keyword ref="qsystemdeviceinfo.html#isDeviceLocked-prop">isDeviceLocked</keyword>
+        <keyword ref="qsystemdeviceinfo.html#manufacturer-prop">manufacturer</keyword>
+        <keyword ref="qsystemdeviceinfo.html#model-prop">model</keyword>
+        <keyword ref="qsystemdeviceinfo.html#productName-prop">productName</keyword>
         <keyword ref="qsystemdeviceinfo.html#simStatus-prop">simStatus</keyword>
-        <keyword ref="qsystemdeviceinfo.html#batteryLevel">batteryLevel</keyword>
         <keyword ref="qsystemdeviceinfo.html#batteryLevelChanged">batteryLevelChanged</keyword>
-        <keyword ref="qsystemdeviceinfo.html#batteryStatus">batteryStatus</keyword>
         <keyword ref="qsystemdeviceinfo.html#batteryStatusChanged">batteryStatusChanged</keyword>
         <keyword ref="qsystemdeviceinfo.html#bluetoothStateChanged">bluetoothStateChanged</keyword>
         <keyword ref="qsystemdeviceinfo.html#currentProfileChanged">currentProfileChanged</keyword>
-        <keyword ref="qsystemdeviceinfo.html#imei">imei</keyword>
-        <keyword ref="qsystemdeviceinfo.html#imsi">imsi</keyword>
-        <keyword ref="qsystemdeviceinfo.html#inputMethodType">inputMethodType</keyword>
-        <keyword ref="qsystemdeviceinfo.html#isDeviceLocked">isDeviceLocked</keyword>
-        <keyword ref="qsystemdeviceinfo.html#manufacturer">manufacturer</keyword>
-        <keyword ref="qsystemdeviceinfo.html#model">model</keyword>
         <keyword ref="qsystemdeviceinfo.html#powerStateChanged">powerStateChanged</keyword>
-        <keyword ref="qsystemdeviceinfo.html#productName">productName</keyword>
         <section ref="qsystemdeviceinfo-members.html" title="List of all members"/>
     </section>
     <section ref="qsystemdisplayinfo.html" title="QSystemDisplayInfo Class Reference">
@@ -88,9 +88,9 @@
         <keyword ref="qsysteminfo.html#Version-enum">QSystemInfo::ServiceProvider</keyword>
         <keyword ref="qsysteminfo.html#Version-enum">QSystemInfo::NetscapePlugin</keyword>
         <keyword ref="qsysteminfo.html#Version-enum">QSystemInfo::WebApp</keyword>
-        <keyword ref="qsysteminfo.html#availableLanguages">availableLanguages</keyword>
-        <keyword ref="qsysteminfo.html#currentCountryCode">currentCountryCode</keyword>
-        <keyword ref="qsysteminfo.html#currentLanguage">currentLanguage</keyword>
+        <keyword ref="qsysteminfo.html#availableLanguages-prop">availableLanguages</keyword>
+        <keyword ref="qsysteminfo.html#currentCountryCode-prop">currentCountryCode</keyword>
+        <keyword ref="qsysteminfo.html#currentLanguage-prop">currentLanguage</keyword>
         <keyword ref="qsysteminfo.html#currentLanguageChanged">currentLanguageChanged</keyword>
         <keyword ref="qsysteminfo.html#hasFeatureSupported">hasFeatureSupported</keyword>
         <keyword ref="qsysteminfo.html#version">version</keyword>
@@ -118,15 +118,15 @@
         <keyword ref="qsystemnetworkinfo.html#NetworkStatus-enum">QSystemNetworkInfo::UndefinedStatus</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkStatus-enum">QSystemNetworkInfo::Denied</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkStatus-enum">QSystemNetworkInfo::EmergencyOnly</keyword>
-        <keyword ref="qsystemnetworkinfo.html#cellId">cellId</keyword>
-        <keyword ref="qsystemnetworkinfo.html#currentMobileCountryCode">currentMobileCountryCode</keyword>
+        <keyword ref="qsystemnetworkinfo.html#cellId-prop">cellId</keyword>
+        <keyword ref="qsystemnetworkinfo.html#currentMobileCountryCode-prop">currentMobileCountryCode</keyword>
+        <keyword ref="qsystemnetworkinfo.html#currentMobileNetworkCode-prop">currentMobileNetworkCode</keyword>
+        <keyword ref="qsystemnetworkinfo.html#homeMobileCountryCode-prop">homeMobileCountryCode</keyword>
+        <keyword ref="qsystemnetworkinfo.html#homeMobileNetworkCode-prop">homeMobileNetworkCode</keyword>
+        <keyword ref="qsystemnetworkinfo.html#locationAreaCode-prop">locationAreaCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#currentMobileCountryCodeChanged">currentMobileCountryCodeChanged</keyword>
-        <keyword ref="qsystemnetworkinfo.html#currentMobileNetworkCode">currentMobileNetworkCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#currentMobileNetworkCodeChanged">currentMobileNetworkCodeChanged</keyword>
-        <keyword ref="qsystemnetworkinfo.html#homeMobileCountryCode">homeMobileCountryCode</keyword>
-        <keyword ref="qsystemnetworkinfo.html#homeMobileNetworkCode">homeMobileNetworkCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#interfaceForMode">interfaceForMode</keyword>
-        <keyword ref="qsystemnetworkinfo.html#locationAreaCode">locationAreaCode</keyword>
         <keyword ref="qsystemnetworkinfo.html#macAddress">macAddress</keyword>
         <keyword ref="qsystemnetworkinfo.html#networkModeChanged">networkModeChanged</keyword>
         <keyword ref="qsystemnetworkinfo.html#networkName">networkName</keyword>
@@ -139,8 +139,8 @@
     </section>
     <section ref="qsystemscreensaver.html" title="QSystemScreenSaver Class Reference">
         <keyword ref="qsystemscreensaver.html">QSystemScreenSaver</keyword>
-        <keyword ref="qsystemscreensaver.html#isScreenLockOn">isScreenLockOn</keyword>
-        <keyword ref="qsystemscreensaver.html#screenSaverInhibited">screenSaverInhibited</keyword>
+        <keyword ref="qsystemscreensaver.html#isScreenLockOn-prop">isScreenLockOn</keyword>
+        <keyword ref="qsystemscreensaver.html#screenSaverInhibited-prop">screenSaverInhibited</keyword>
         <keyword ref="qsystemscreensaver.html#setScreenSaverInhibit">setScreenSaverInhibit</keyword>
         <section ref="qsystemscreensaver-members.html" title="List of all members"/>
     </section>
@@ -152,8 +152,8 @@
         <keyword ref="qsystemstorageinfo.html#DriveType-enum">QSystemStorageInfo::NoDrive</keyword>
         <keyword ref="qsystemstorageinfo.html#DriveType-enum">QSystemStorageInfo::CdromDrive</keyword>
         <keyword ref="qsystemstorageinfo.html#DriveType-enum">QSystemStorageInfo::RemoteDrive</keyword>
+        <keyword ref="qsystemstorageinfo.html#logicalDrives-prop">logicalDrives</keyword>
         <keyword ref="qsystemstorageinfo.html#availableDiskSpace">availableDiskSpace</keyword>
-        <keyword ref="qsystemstorageinfo.html#logicalDrives">logicalDrives</keyword>
         <keyword ref="qsystemstorageinfo.html#totalDiskSpace">totalDiskSpace</keyword>
         <keyword ref="qsystemstorageinfo.html#typeForDrive">typeForDrive</keyword>
         <section ref="qsystemstorageinfo-members.html" title="List of all members"/>

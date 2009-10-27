@@ -1,6 +1,7 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -20,13 +21,20 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please
-** contact Nokia at http://qt.nokia.com/contact.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -45,10 +53,11 @@
 #include <QTimer>
 #include <QDir>
 #include <QTimer>
+#include <QMapIterator>
 
 #if !defined(QT_NO_DBUS)
 #include <qhalservice_linux_p.h>
-#include "qnetworkmanagerservice_linux_p.h"
+#include <qnetworkmanagerservice_linux_p.h>
 #include <QtDBus>
 #include <QDBusConnection>
 #include <QDBusError>
@@ -62,10 +71,14 @@
 
 #include <locale.h>
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #include <sys/vfs.h>
 #include <mntent.h>
+#include <sys/stat.h>
+
+#include <bluetooth/bluetooth.h>
+#include <bluetooth/hci.h>
+#include <bluetooth/hci_lib.h>
 
 #ifdef Q_WS_X11
 #include <QX11Info>
@@ -346,25 +359,19 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     switch (feature) {
     case QSystemInfo::BluetoothFeature :
         {
-#if !defined(QT_NO_DBUS)
-            QHalInterface iface;
-
-            QStringList list = iface.getAllDevices();
-            if(!list.isEmpty()) {
-                foreach(QString dev, list) {
-                    QHalDeviceInterface *halIfaceDevice = new QHalDeviceInterface(dev);
-                    if (halIfaceDevice->isValid()) {
-                        return halIfaceDevice->propertyExists("bluetooth_hci.originating_device");
-                        return true;
-                    }
+            QString sysPath = "/sys/class/bluetooth/";
+            QDir sysDir(sysPath);
+            QStringList filters;
+            filters << "*";
+            QStringList sysList = sysDir.entryList( filters ,QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+            foreach(QString dir, sysList) {
+                QFileInfo btFile(sysPath + dir+"/address");
+                if(btFile.exists()) {
+                    return true;
                 }
             }
-
-#else
-            featureSupported = hasSysFeature("bluetooth");
-#endif
         }
-        break;
+    break;
     case QSystemInfo::CameraFeature :
         {
 #if !defined(QT_NO_DBUS)
@@ -579,14 +586,14 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
                         emit networkStatusChanged(QSystemNetworkInfo::EthernetMode, QSystemNetworkInfo::Connected);
                     }
                     if(nmState == NM_DEVICE_STATE_DISCONNECTED) {
-                        emit networkNameChanged(QSystemNetworkInfo::EthernetMode, "No network");
+                        emit networkNameChanged(QSystemNetworkInfo::EthernetMode, "");
                         emit networkStatusChanged(QSystemNetworkInfo::EthernetMode, QSystemNetworkInfo::NoNetworkAvailable);
                     }
                     if(nmState == NM_DEVICE_STATE_PREPARE
                        || nmState == NM_DEVICE_STATE_CONFIG
                        || nmState == NM_DEVICE_STATE_NEED_AUTH
                       /* || nmState == NM_DEVICE_IP_CONFIG*/) {
-                        emit networkNameChanged(QSystemNetworkInfo::EthernetMode, "No network");
+                        emit networkNameChanged(QSystemNetworkInfo::EthernetMode, "");
                         emit networkStatusChanged(QSystemNetworkInfo::EthernetMode, QSystemNetworkInfo::Searching);
                     }
 
@@ -614,13 +621,13 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
                        || nmState == NM_DEVICE_STATE_UNAVAILABLE
                        || nmState == NM_DEVICE_STATE_FAILED) {
                         emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::NoNetworkAvailable);
-                        emit networkNameChanged(QSystemNetworkInfo::WlanMode, "No network");
+                        emit networkNameChanged(QSystemNetworkInfo::WlanMode, "");
                     }
                     if(nmState == NM_DEVICE_STATE_PREPARE
                        || nmState == NM_DEVICE_STATE_CONFIG
                        || nmState == NM_DEVICE_STATE_NEED_AUTH
                        /*|| nmState == NM_DEVICE_IP_CONFIG*/) {
-                        emit networkNameChanged(QSystemNetworkInfo::WlanMode, "No network");
+                        emit networkNameChanged(QSystemNetworkInfo::WlanMode, "");
                         emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::Searching);
                     }
                 }
@@ -720,11 +727,46 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
             }
         }
         break;
+        case QSystemNetworkInfo::BluetoothMode:
+        {
+#if !defined(QT_NO_DBUS)
+            return getBluetoothNetStatus();
+#endif
+       }
+        break;
     default:
         break;
     };
     return QSystemNetworkInfo::UndefinedStatus;
 }
+
+#if !defined(QT_NO_DBUS)
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::getBluetoothNetStatus()
+{
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    QDBusInterface *connectionInterface;
+    connectionInterface = new QDBusInterface("org.bluez",
+                                             "/org/bluez/network",
+                                             "org.bluez.network.Manager",
+                                             dbusConnection);
+    if (connectionInterface->isValid()) {
+
+        QDBusReply<  QStringList > reply = connectionInterface->call("ListConnections");
+        if (reply.isValid()) {
+            if(reply.value().count() > 0) {
+                return QSystemNetworkInfo::Connected;
+            } else {
+                return QSystemNetworkInfo::NoNetworkAvailable;
+            }
+
+        } else {
+            qWarning() << "NOT" << reply.error();
+        }
+       }
+       return QSystemNetworkInfo::UndefinedStatus;
+   }
+#endif
+
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
@@ -773,6 +815,13 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
             }
         }
         break;
+        case QSystemNetworkInfo::BluetoothMode:
+        {
+#if !defined(QT_NO_DBUS)
+            return getBluetoothRssi();
+#endif
+        }
+        break;
     default:
         break;
     };
@@ -793,29 +842,28 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
 // Mobile Country Code
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
-    return "No Mobile Network";
+    return QString();
 }
 
 // Mobile Network Code
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
-    return "No Mobile Network";
+    return QString();
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 {
-    return "No Mobile Network";
+    return QString();
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
-    return "No Mobile Network";
+    return QString();
 }
 
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
-    qWarning() << Q_FUNC_INFO << mode;
-    QString netname = "No network available";
+    QString netname = "";
 
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
@@ -864,7 +912,28 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
         break;
     case QSystemNetworkInfo::EthernetMode:
         {
+            QFile resFile("/etc/resolv.conf");
+            if(resFile.exists()) {
+                if(resFile.exists() && resFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                    QString line;
+                    QTextStream in(&resFile);
+                    do {
+                        line = in.readLine();
+                        if(line.contains("domain")) {
+                            netname = line.section(" ",1,1); //guessing here
+                        }
+                } while (!line.isNull());
+                resFile.close();
+            }
         }
+    }
+    break;
+        case QSystemNetworkInfo::BluetoothMode:
+            {
+    #if !defined(QT_NO_DBUS)
+        netname = getBluetoothInfo("name");
+#endif
+    }
         break;
     default:
         break;
@@ -917,6 +986,13 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
             }
         }
         break;
+        case QSystemNetworkInfo::BluetoothMode:
+        {
+#if !defined(QT_NO_DBUS)
+            return getBluetoothInfo("address");
+#endif
+        }
+        break;
     default:
         break;
     };
@@ -925,6 +1001,80 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
+#if !defined(QT_NO_DBUS)
+    switch(mode) {
+    case QSystemNetworkInfo::WlanMode:
+        {
+            QHalInterface iface;
+            if (iface.isValid()) {
+                QStringList list = iface.findDeviceByCapability("net.80211");
+                if(!list.isEmpty()) {
+                    foreach(QString netDev, list) {
+                        QString deviceName ;
+                        QHalDeviceInterface ifaceDevice(netDev);
+                        deviceName  = ifaceDevice.getPropertyString("net.interface");
+                        if(list.count() > 1) {
+                            QString baseFIle = "/sys/class/net/" + deviceName+"/operstate";
+                            QFile rx(baseFIle);
+                            if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                                QString operatingState;
+                                QTextStream in(&rx);
+                                in >> operatingState;
+                                rx.close();
+                                if(!operatingState.contains("unknown")
+                                    || !operatingState.contains("down")) {
+                                    if(isDefaultInterface(deviceName))
+                                        return QNetworkInterface::interfaceFromName(deviceName);
+                                }
+                            }
+                        } else {
+                            return QNetworkInterface::interfaceFromName(deviceName);
+                        }
+                    }
+                }
+            }
+        }
+        break;
+    case QSystemNetworkInfo::EthernetMode:
+        {
+            QHalInterface iface;
+            if (iface.isValid()) {
+                QStringList list = iface.findDeviceByCapability("net.80203");
+                if(!list.isEmpty()) {
+                    foreach(QString netDev, list) {
+                        QString deviceName ;
+                        QHalDeviceInterface ifaceDevice(netDev);
+                        deviceName  = ifaceDevice.getPropertyString("net.interface");
+                        if(list.count() > 1) {
+                            QString baseFIle = "/sys/class/net/" + deviceName+"/operstate";
+                            QFile rx(baseFIle);
+                            if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                                QString operatingState;
+                                QTextStream in(&rx);
+                                in >> operatingState;
+                                rx.close();
+                                if(!operatingState.contains("unknown")
+                                    || !operatingState.contains("down")) {                                    
+                                    if(isDefaultInterface(deviceName))
+                                        return QNetworkInterface::interfaceFromName(deviceName);
+                                }
+                            }
+                        } else {
+                            return QNetworkInterface::interfaceFromName(deviceName);
+                        }
+                    }
+                }
+            }
+        }
+        break;
+        case QSystemNetworkInfo::BluetoothMode:
+        {
+        }
+        break;
+    default:
+        break;
+    };
+#else
     QString result;
     QString baseSysDir = "/sys/class/net/";
     QDir eDir(baseSysDir);
@@ -935,30 +1085,95 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
         if(!devfi.exists()) {
             continue;
         }
+        QString baseFIle = "/sys/class/net/" + devFile+"/operstate";
+        QFile rx(baseFIle);
+        if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QString operatingState;
+            QTextStream in(&rx);
+            in >> operatingState;
+            rx.close();
+            if(operatingState.contains("unknown")) {
+                continue;
+            }
+        }
         switch(mode) {
         case QSystemNetworkInfo::WlanMode:
             {
-                qWarning() << devFile;
                 QFileInfo fi(devFile + "/wireless");
                 if(fi.exists()) {
                     return QNetworkInterface::interfaceFromName(dir);
                 }
             }
             break;
-        case QSystemNetworkInfo::EthernetMode:
-            {
+            case QSystemNetworkInfo::EthernetMode:
+                {
                 QFileInfo fi(devFile + "/wireless");
                 if(!fi.exists()) {
                     return QNetworkInterface::interfaceFromName(dir);
                 }
             }
             break;
+            case QSystemNetworkInfo::BluetoothMode:
+            {
+
+            }
+            break;
+
             default:
             break;
         };
     }
+#endif
     return QNetworkInterface();
 }
+
+#if !defined(QT_NO_DBUS)
+bool QSystemNetworkInfoPrivate::isDefaultInterface(const QString &deviceName)
+{
+    QFile routeFilex("/proc/net/route");
+    if(routeFilex.exists() && routeFilex.open(QIODevice::ReadOnly
+                                              | QIODevice::Text)) {
+        QTextStream rin(&routeFilex);
+        QString line = rin.readLine();
+        while (!line.isNull()) {
+            QString lineSection = line.section("\t",2,2,QString::SectionSkipEmpty);
+            if(lineSection != "00000000" && lineSection!="Gateway")
+                if(line.section("\t",0,0,QString::SectionSkipEmpty) == deviceName) {
+                routeFilex.close();
+                return true;
+            }
+            line = rin.readLine();
+        }
+    }
+    routeFilex.close();
+    return false;
+}
+
+int QSystemNetworkInfoPrivate::getBluetoothRssi()
+{
+    return 0;
+}
+
+QString QSystemNetworkInfoPrivate::getBluetoothInfo(const QString &file)
+{
+    QString sysPath = "/sys/class/bluetooth/";
+    QDir sysDir(sysPath);
+    QStringList filters;
+    filters << "*";
+    QStringList sysList = sysDir.entryList( filters ,QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+    foreach(QString dir, sysList) {
+        QFile btFile(sysPath + dir+"/"+file);
+        if(btFile.exists()) {
+            if (btFile.open(QIODevice::ReadOnly)) {
+                QTextStream btFileStream(&btFile);
+                QString line = btFileStream.readAll();
+                return line.simplified();
+            }
+        }
+    }
+    return QString();
+}
+#endif
 
 //////// QSystemDisplayInfo
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
@@ -1085,20 +1300,19 @@ qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
     mountEntries();
     struct statfs fs;
-    if(statfs(mountEntriesHash[driveVolume].toLatin1(), &fs ) ==0 ) {
-        long blockSize = fs.f_bsize;
-        long availBlocks = fs.f_bavail;
-        return (double)availBlocks * blockSize;
-    }
+    if(statfs(mountEntriesMap[driveVolume].toLatin1(), &fs ) == 0 ) {
+                long blockSize = fs.f_bsize;
+                long availBlocks = fs.f_bavail;
+                return (double)availBlocks * blockSize;
+            }
     return 0;
 }
 
 qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
     mountEntries();
-    mountEntriesHash[driveVolume];
     struct statfs fs;
-    if(statfs(mountEntriesHash[driveVolume].toLatin1(), &fs ) == 0 ) {
+    if(statfs(mountEntriesMap[driveVolume].toLatin1(), &fs ) == 0 ) {
         long blockSize = fs.f_bsize;
         long totalBlocks = fs.f_blocks;
         return (double)totalBlocks * blockSize;
@@ -1118,17 +1332,56 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
                 QHalDeviceInterface ifaceDevice(vol);
                 if(driveVolume == ifaceDevice.getPropertyString("block.device")) {
                     QHalDeviceInterface ifaceDeviceParent(ifaceDevice.getPropertyString("info.parent"), this);
-                    if(ifaceDeviceParent.getPropertyBool("storage.removable")) {
+
+                    if(ifaceDeviceParent.getPropertyBool("storage.removable")
+                        ||  ifaceDeviceParent.getPropertyString("storage.drive_type") != "disk") {
                         return QSystemStorageInfo::RemovableDrive;
+                        break;
                     } else {
-                        return QSystemStorageInfo::InternalDrive;
+                         return QSystemStorageInfo::InternalDrive;
                     }
                 }
             }
         }
 #endif
     } else {
+        //no hal need to manually read sys file for block device
+        QString dmFile;
 
+        if(driveVolume.contains("mapper")) {
+            struct stat stat_buf;
+            stat( driveVolume.toLatin1(), &stat_buf);
+            //                    qWarning() << "Device number"
+            //                            << ((stat_buf.st_rdev >> 8) & 0377)
+            //                            << (stat_buf.st_rdev & 0377);
+
+            dmFile = QString("/sys/block/dm-%1/removable").arg(stat_buf.st_rdev & 0377);
+
+        } else {
+
+            dmFile = driveVolume.section("/",2,3);
+            if (dmFile.left(3) == "mmc") { //assume this dev is removable sd/mmc card.
+                return QSystemStorageInfo::RemovableDrive;
+            }
+
+            if(dmFile.length() > 3) { //if device has number, we need the 'parent' device
+                dmFile.chop(1);
+                if (dmFile.right(1) == "p") //get rid of partition number
+                    dmFile.chop(1);
+            }
+            dmFile = "/sys/block/"+dmFile+"/removable";
+        }
+
+        QFile file(dmFile);
+        if (!file.open(QIODevice::ReadOnly)) {
+            qWarning() << "Could not open sys file";
+        } else {
+            QTextStream sysinfo(&file);
+            QString line = sysinfo.readAll();
+            if(line.contains("1")) {
+                return QSystemStorageInfo::RemovableDrive;
+            }
+        }
     }
     return QSystemStorageInfo::InternalDrive;
 }
@@ -1136,26 +1389,36 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
 QStringList QSystemStorageInfoPrivate::logicalDrives()
 {
     mountEntries();
-    return mountEntriesHash.keys();
+    return mountEntriesMap.keys();
 }
 
 void QSystemStorageInfoPrivate::mountEntries()
 {
-    mountEntriesHash.clear();
-    FILE *mntfp = setmntent( "/proc/mounts", "r" );
+    mountEntriesMap.clear();
+    FILE *mntfp = setmntent( _PATH_MOUNTED/*_PATH_MNTTAB*//*"/proc/mounts"*/, "r" );
     mntent *me = getmntent(mntfp);
     while(me != NULL) {
         struct statfs fs;
         if(statfs(me->mnt_dir, &fs ) ==0 ) {
-            long blockSize = fs.f_bsize;
-            long totalBlocks = fs.f_blocks;
-            double total = (double)totalBlocks * blockSize;
-            if(total > 0 && !mountEntriesHash.keys().contains(me->mnt_dir)) {
-//                qWarning() << me->mnt_type;
-                mountEntriesHash[me->mnt_fsname] = me->mnt_dir;
+            QString num;
+            // weed out a few types
+            if ( fs.f_type != 0x01021994 //tmpfs
+                 && fs.f_type != 0x9fa0 //procfs
+                 && fs.f_type != 0x1cd1 //
+                 && fs.f_type != 0x62656572
+                 && fs.f_type != 0xabababab // ???
+                 && fs.f_type != 0x52654973
+                 && fs.f_type != 0x42494e4d
+                 && fs.f_type != 0x64626720
+                 && fs.f_type != 0x73636673 //securityfs
+                 && fs.f_type != 0x65735543 //fusectl
+                 ) {
+                if(!mountEntriesMap.keys().contains(me->mnt_dir)
+                    && QString(me->mnt_fsname).contains("/dev")) {
+                    mountEntriesMap[me->mnt_fsname] = me->mnt_dir;
+                }
             }
         }
-
         me = getmntent(mntfp);
     }
     endmntent(mntfp);
@@ -1168,6 +1431,13 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
 {
     halIsAvailable = halAvailable();
     setConnection();
+ #if !defined(QT_NO_DBUS)
+    setupBluetooth();
+#endif
+}
+
+QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
+{
 }
 
 void QSystemDeviceInfoPrivate::setConnection()
@@ -1231,9 +1501,6 @@ void QSystemDeviceInfoPrivate::setConnection()
     }
 }
 
-QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
-{
-}
 
 #if !defined(QT_NO_DBUS)
 void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
@@ -1561,23 +1828,6 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
     return 0;
 }
 
-QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
-{
-    int level = batteryLevel();
-    if(level < 4) {
-        return QSystemDeviceInfo::BatteryCritical;
-    }   else if(level < 11) {
-        return QSystemDeviceInfo::BatteryVeryLow;
-    }  else if(level < 41) {
-        return QSystemDeviceInfo::BatteryLow;
-    }   else if(level > 40) {
-        return QSystemDeviceInfo::BatteryNormal;
-    }
-
-    return QSystemDeviceInfo::NoBatteryLevel;
-}
-
-
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
     return QSystemDeviceInfo::SimNotAvailable;
@@ -1585,7 +1835,6 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
-    qWarning() << __FUNCTION__;
     return false;
 }
 
@@ -1641,6 +1890,45 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
         return QSystemDeviceInfo::WallPower;
  }
 
+#if !defined(QT_NO_DBUS)
+ void QSystemDeviceInfoPrivate::setupBluetooth()
+ {
+     QDBusConnection dbusConnection = QDBusConnection::systemBus();
+     QDBusInterface *connectionInterface;
+     connectionInterface = new QDBusInterface("org.bluez",
+                                              "/",
+                                              "org.bluez.Manager",
+                                              dbusConnection);
+     if (connectionInterface->isValid()) {
+
+         QDBusReply<  QDBusObjectPath > reply = connectionInterface->call("DefaultAdapter");
+         if (reply.isValid()) {
+             QDBusInterface *adapterInterface;
+             adapterInterface = new QDBusInterface("org.bluez",
+                                                   reply.value().path(),
+                                                   "org.bluez.Adapter",
+                                                   dbusConnection);
+             if (adapterInterface->isValid()) {
+                 if (!dbusConnection.connect("org.bluez",
+                                           reply.value().path(),
+                                            "org.bluez.Adapter",
+                                            "PropertyChanged",
+                                            this,SLOT(bluezPropertyChanged(QString, QDBusVariant)))) {
+                     qWarning() << "bluez could not connect signal";
+                 }
+             }
+         }
+     }
+ }
+#endif
+
+#if !defined(QT_NO_DBUS)
+ void QSystemDeviceInfoPrivate::bluezPropertyChanged(const QString &str, QDBusVariant v)
+ {
+     qWarning() << str << v.variant().toBool();
+     emit bluetoothStateChanged(v.variant().toBool());
+ }
+#endif
 
  //////////////
  ///////

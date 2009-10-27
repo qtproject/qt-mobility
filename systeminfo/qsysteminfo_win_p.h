@@ -1,6 +1,7 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -20,13 +21,20 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please
-** contact Nokia at http://qt.nokia.com/contact.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -57,13 +65,6 @@
 
 #include <winsock2.h>
 #include <mswsock.h>
-
-#ifdef Q_CC_MSVC
-#include <Wlanapi.h>
-#include <ntddndis.h>
-#else
-#include <ddk/ntddndis.h>
-#endif
 
 #include <QBasicTimer>
 
@@ -146,16 +147,17 @@ Q_SIGNALS:
    void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 private Q_SLOTS:
-   void nlaNetworkChanged();
    void networkStrengthTimeout();
    void networkStatusTimeout();
 private:
     quint32 wifiStrength;
     quint32 ethStrength;
-
+    HANDLE hWlan;
+    int timerMs;
    QBasicTimer netStrengthTimer;
-
-   QBasicTimer netStatusTimer;
+   bool isDefaultMode(QSystemNetworkInfo::NetworkMode mode);
+   void startWifiCallback();
+   bool wlanCallbackInitialized;
 
 };
 
@@ -215,8 +217,6 @@ public:
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
     int  batteryLevel() const;
-    QSystemDeviceInfo::BatteryStatus batteryStatus();
-
     QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();

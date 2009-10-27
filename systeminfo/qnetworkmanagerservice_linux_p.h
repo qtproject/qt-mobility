@@ -1,6 +1,7 @@
 /****************************************************************************
 **
-** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -20,13 +21,20 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please
-** contact Nokia at http://www.qtsoftware.com/contact.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -43,9 +51,7 @@
 // version without notice, or even be removed.
 //
 // We mean it.
-//
 
-#include <NetworkManager/NetworkManager.h>
 #include <QtDBus>
 #include <QDBusConnection>
 #include <QDBusError>
@@ -59,6 +65,45 @@
 #include <QDBusObjectPath>
 #include <QDBusContext>
 #include <QMap>
+typedef enum NMDeviceType
+{
+    DEVICE_TYPE_UNKNOWN = 0,
+    DEVICE_TYPE_802_3_ETHERNET,
+    DEVICE_TYPE_802_11_WIRELESS,
+    DEVICE_TYPE_GSM,
+    DEVICE_TYPE_CDMA
+} NMDeviceType;
+
+typedef enum
+{
+    NM_DEVICE_STATE_UNKNOWN = 0,
+    NM_DEVICE_STATE_UNMANAGED,
+    NM_DEVICE_STATE_UNAVAILABLE,
+    NM_DEVICE_STATE_DISCONNECTED,
+    NM_DEVICE_STATE_PREPARE,
+    NM_DEVICE_STATE_CONFIG,
+    NM_DEVICE_STATE_NEED_AUTH,
+    NM_DEVICE_STATE_IP_CONFIG,
+    NM_DEVICE_STATE_ACTIVATED,
+    NM_DEVICE_STATE_FAILED
+} NMDeviceState;
+
+#define	NM_DBUS_SERVICE			"org.freedesktop.NetworkManager"
+
+#define	NM_DBUS_PATH				        "/org/freedesktop/NetworkManager"
+#define	NM_DBUS_INTERFACE			        "org.freedesktop.NetworkManager"
+#define	NM_DBUS_INTERFACE_DEVICE	        NM_DBUS_INTERFACE ".Device"
+#define NM_DBUS_INTERFACE_DEVICE_WIRED      NM_DBUS_INTERFACE_DEVICE ".Wired"
+#define NM_DBUS_INTERFACE_DEVICE_WIRELESS   NM_DBUS_INTERFACE_DEVICE ".Wireless"
+#define NM_DBUS_PATH_ACCESS_POINT           NM_DBUS_PATH "/AccessPoint"
+#define NM_DBUS_INTERFACE_ACCESS_POINT      NM_DBUS_INTERFACE ".AccessPoint"
+
+#define NM_DBUS_PATH_SETTINGS             "/org/freedesktop/NetworkManagerSettings"
+
+#define NM_DBUS_IFACE_SETTINGS_CONNECTION "org.freedesktop.NetworkManagerSettings.Connection"
+#define NM_DBUS_IFACE_SETTINGS            "org.freedesktop.NetworkManagerSettings"
+#define NM_DBUS_INTERFACE_ACTIVE_CONNECTION NM_DBUS_INTERFACE ".Connection.Active"
+#define NM_DBUS_INTERFACE_IP4_CONFIG        NM_DBUS_INTERFACE ".IP4Config"
 
 typedef QMap< QString, QMap<QString,QVariant> > QNmSettingsMap;
 Q_DECLARE_METATYPE(QNmSettingsMap)

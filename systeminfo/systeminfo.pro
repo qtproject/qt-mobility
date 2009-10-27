@@ -3,6 +3,7 @@ TARGET = QtSystemInfo
 DEPENDPATH += .
 INCLUDEPATH += .
 
+
 QT+= network
 # Input
 HEADERS += qsysteminfo.h \
@@ -10,7 +11,12 @@ HEADERS += qsysteminfo.h \
 SOURCES += qsysteminfo.cpp
 DEFINES += QT_BUILD_SYSINFO_LIB \
     QT_MAKEDLL
+
+
 win32 {
+    contains(CONFIG,release) {
+       CONFIG-=console
+    }
     SOURCES += qsysteminfo_win.cpp 
     HEADERS += qsysteminfo_win_p.h 
 
@@ -18,18 +24,20 @@ win32 {
         SOURCES += qwmihelper_win.cpp
         HEADERS += qwmihelper_win_p.h
 
-        LIBS += Wlanapi.lib \
+        LIBS += \
             Ole32.lib \
             Strmiids.lib \
-            Bthprops.lib \
             User32.lib \
             Gdi32.lib \
             Ws2_32.lib \
-            Wbemuuid.lib \
+Iphlpapi.lib \
             Oleaut32.lib 
-#            Setupapi.lib
-          #LIBS += -lWs2
         }
+
+#            Wbemuuid.lib \
+#            Wlanapi.lib \
+#            Setupapi.lib
+#             Bthprops.lib \
 
     win32-g++ : {
         LIBS += -luser32 -lgdi32
@@ -45,9 +53,9 @@ win32 {
 #        "C:\Program Files\Microsoft SDKs\Windows\v6.1\Include"
 
     wince*:LIBS += aygshell.lib \
-        Nleddrv.lib \
+#        Nleddrv.lib \
         cellcore.lib \
-        Ifapi.lib \
+#        Ifapi.lib \
         Coredll.lib
 }
 
@@ -77,8 +85,7 @@ unix: {
 
 }
 
-    symbian::
-    {
+    symbian:{
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
         DEPENDPATH += symbian
         
