@@ -862,6 +862,9 @@ void tst_QContactAsync::definitionRemove()
 {
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
+    if (!cm->information()->hasFeature(QContactManagerInfo::MutableDefinitions)) {
+       QSKIP("This contact manager doest not support mutable definitions, can't remove a definition!", SkipSingle);
+    }
     QContactDetailDefinitionRemoveRequest drr;
     QVERIFY(drr.type() == QContactAbstractRequest::DetailDefinitionRemoveRequest);
 
@@ -1008,6 +1011,11 @@ void tst_QContactAsync::definitionSave()
 {
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
+    
+    if (!cm->information()->hasFeature(QContactManagerInfo::MutableDefinitions)) {
+       QSKIP("This contact manager doest not support mutable definitions, can't save a definition!", SkipSingle);
+    }
+    
     QContactDetailDefinitionSaveRequest dsr;
     QVERIFY(dsr.type() == QContactAbstractRequest::DetailDefinitionSaveRequest);
 
