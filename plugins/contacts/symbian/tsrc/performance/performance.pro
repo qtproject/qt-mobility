@@ -19,10 +19,7 @@ symbian:
     HEADERS += performance.h
     SOURCES += performance.cpp
     TARGET.CAPABILITY = ALL \
-        -TCB
-    # Security check done in the cntsrv
-    TARGET.SID = 0x20022EF9
-    
+        -TCB    
     LIBS += \
         -lcntmodel \
         -lQtContacts
