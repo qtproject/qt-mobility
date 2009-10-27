@@ -3637,6 +3637,9 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
 
                 QMessage::StatusFlags flags(0);
 
+                //assumption that stores support only a single message type
+                msg->d_ptr->_type = store->types() & QMessage::Sms ? QMessage::Sms : QMessage::Email;
+
                 for (ULONG n = 0; n < count; ++n) {
                     SPropValue &prop(properties[n]);
 

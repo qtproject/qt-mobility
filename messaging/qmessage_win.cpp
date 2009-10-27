@@ -220,6 +220,7 @@ QMessageId QMessage::id() const
 
 QMessage::Type QMessage::type() const
 {
+    d_ptr->ensurePropertiesPresent(const_cast<QMessage*>(this));
     return d_ptr->_type;
 }
 
