@@ -56,14 +56,14 @@
 
 AddressFinder::AddressFinder(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags),
+      tabWidget(0),
       includePeriod(0),
       excludePeriod(0),
       searchAction(0),
       searchButton(0),
-      addressCombo(0),
-      messageList(0),
-      tabWidget(0)
-{
+      addressList(0),
+      messageCombo(0)
+ {
     setupUi();
 
     connect(&service, SIGNAL(stateChanged(QMessageServiceAction::State)), this, SLOT(stateChanged(QMessageServiceAction::State)));
@@ -97,10 +97,10 @@ void AddressFinder::addressSelected(const QString &address)
     QString name;
     QString addressOnly;
     QMessageAddress::parseEmailAddress(address, &name, &addressOnly);
-    messageList->clear();
+    messageCombo->clear();
 
     foreach (const QString &message, addressMessages[addressOnly]) {
-        messageList->addItem(new QListWidgetItem(message));
+        messageCombo->addItem(message);
     }
 }
 
@@ -108,8 +108,8 @@ void AddressFinder::searchMessages()
 {
     setSearchActionEnabled(false);
 
-    addressCombo->clear();
-    messageList->clear();
+    addressList->clear();
+    messageCombo->clear();
     excludedAddresses.clear();
     includedAddresses.clear();
     addressMessages.clear();
@@ -213,7 +213,7 @@ void AddressFinder::continueSearch()
                 qDebug() << "Exclude" << addressOnly;
                 QStringList &messages = addressMessages[addressOnly];
                 if (messages.isEmpty()) {
-                    addressCombo->addItem(recipient);
+                    addressList->addItem(recipient);
                 }
                 messages.append(details);
             }
@@ -227,7 +227,8 @@ void AddressFinder::continueSearch()
 #ifdef _WIN32_WCE
         tabChanged(1);
 #endif
-        addressSelected(addressCombo->currentText());
+        if (addressList->currentItem())
+            addressSelected(addressList->currentItem()->text());
     }
 }
 
@@ -296,8 +297,8 @@ void AddressFinder::setupUi()
     connect(searchButton, SIGNAL(clicked()), this, SLOT(searchMessages()), Qt::QueuedConnection);
 #endif
 
-    addressCombo = new QComboBox(this);
-    connect(addressCombo, SIGNAL(activated(QString)), this, SLOT(addressSelected(QString)));
+    addressList = new QListWidget(this);
+    connect(addressList, SIGNAL(currentTextChanged(QString)), this, SLOT(addressSelected(QString)));
 
 #ifdef _WIN32_WCE
     QWidget* resultsWidget = new QWidget(this);
@@ -310,7 +311,7 @@ void AddressFinder::setupUi()
     QGroupBox *addressGroup = new QGroupBox(tr("Address"));
     addressGroup->setAlignment(Qt::AlignLeft);
     addressGroup->setLayout(new QVBoxLayout);
-    addressGroup->layout()->addWidget(addressCombo);
+    addressGroup->layout()->addWidget(addressList);
     resultsLayout->addWidget(addressGroup);
 
     QGroupBox *messageGroup = new QGroupBox(tr("Messages"));
@@ -318,9 +319,8 @@ void AddressFinder::setupUi()
     messageGroup->setLayout(new QHBoxLayout);
     resultsLayout->addWidget(messageGroup);
 
-    messageList = new QListWidget;
-    messageList->setSelectionMode(QAbstractItemView::NoSelection);
-    messageGroup->layout()->addWidget(messageList);
+    messageCombo = new QComboBox;
+    messageGroup->layout()->addWidget(messageCombo);
 
     searchAction = new QAction("Search",this);
     inputGroup->addAction(searchAction);
