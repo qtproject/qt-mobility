@@ -43,10 +43,10 @@
 QList<CContactItemField *> CntTransformOrganisation::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList;
-	
+
 	//cast to orgenisation
     const QContactOrganization &orgDetails(static_cast<const QContactOrganization&>(detail));
-	
+
 	//Company
     TPtrC fieldTextCompany(reinterpret_cast<const TUint16*>(orgDetails.name().utf16()));
 	CContactItemField* company = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldCompanyName);
@@ -54,7 +54,7 @@ QList<CContactItemField *> CntTransformOrganisation::transformDetailL(const QCon
 	company->SetMapping(KUidContactFieldVCardMapORG);
 	fieldList.append(company);
 	CleanupStack::Pop(company);
-	
+
 	//Department
 	TPtrC fieldTextDepartment(reinterpret_cast<const TUint16*>(orgDetails.department().utf16()));
 	CContactItemField* department = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldDepartmentName);
@@ -70,7 +70,7 @@ QList<CContactItemField *> CntTransformOrganisation::transformDetailL(const QCon
 	jobTitle->SetMapping(KUidContactFieldVCardMapTITLE);
 	fieldList.append(jobTitle);
 	CleanupStack::Pop(jobTitle);
-	
+
 	//Assistant name
     TPtrC fieldTextAssistantName(reinterpret_cast<const TUint16*>(orgDetails.assistantName().utf16()));
     CContactItemField* assistantName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldAssistant);
@@ -80,38 +80,38 @@ QList<CContactItemField *> CntTransformOrganisation::transformDetailL(const QCon
     CleanupStack::Pop(assistantName);
 
 	return fieldList;
-}	
+}
 
 
 QContactDetail *CntTransformOrganisation::transformItemField(const CContactItemField& field, const QContact &contact)
 {
     QContactOrganization *organisation = new QContactOrganization(contact.detail<QContactOrganization>());
-	
+
 	CContactTextField* storage = field.TextStorage();
 	QString orgDetail = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
-	
+
 	for (int i = 0; i < field.ContentType().FieldTypeCount(); i++) {
 		//Company
 		if (field.ContentType().FieldType(i) == KUidContactFieldCompanyName) {
             organisation->setName(orgDetail);
 		}
-		
+
 		//Department
 		else if (field.ContentType().FieldType(i) == KUidContactFieldDepartmentName) {
             organisation->setDepartment(orgDetail);
 		}
-		
+
 		//Job title
 		else if (field.ContentType().FieldType(i) == KUidContactFieldJobTitle) {
             organisation->setTitle(orgDetail);
 		}
-		
+
 	    //Assistant name
 	    else if (field.ContentType().FieldType(i) == KUidContactFieldAssistant) {
             organisation->setAssistantName(orgDetail);
 	    }
 	}
-	
+
 	return organisation;
 }
 
@@ -139,19 +139,19 @@ bool CntTransformOrganisation::supportsDetail(QString detailName) const
 QList<TUid> CntTransformOrganisation::supportedSortingFieldTypes(QString detailFieldName) const
 {
     QList<TUid> uids;
-    
+
     if (detailFieldName == QContactOrganization::FieldName)
         return uids << KUidContactFieldCompanyName;
-    
+
     if (detailFieldName == QContactOrganization::FieldDepartment)
         return uids << KUidContactFieldDepartmentName;
-    
+
     if (detailFieldName == QContactOrganization::FieldTitle)
-        return uids << KUidContactFieldJobTitle;  
-        
+        return uids << KUidContactFieldJobTitle;
+
     if (detailFieldName == QContactOrganization::FieldAssistantName)
         return uids << KUidContactFieldAssistant;
-   
+
     return uids;
 }
 
@@ -160,9 +160,9 @@ QList<TUid> CntTransformOrganisation::supportedSortingFieldTypes(QString detailF
  * Checks whether the subtype is supported
  *
  * \a subType The subtype to be checked
- * \return True if this subtype is supported 
- */ 
-bool CntTransformOrganisation::supportsSubType(const QString& subType) const 
+ * \return True if this subtype is supported
+ */
+bool CntTransformOrganisation::supportsSubType(const QString& subType) const
 {
     return false;
 }
@@ -171,9 +171,36 @@ bool CntTransformOrganisation::supportsSubType(const QString& subType) const
  * Returns the filed id corresponding to a field
  *
  * \a fieldName The name of the supported field
- * \return fieldId for the fieldName, 0  if not supported 
- */ 
-quint32 CntTransformOrganisation::getIdForField(const QString& fieldName) const 
+ * \return fieldId for the fieldName, 0  if not supported
+ */
+quint32 CntTransformOrganisation::getIdForField(const QString& fieldName) const
 {
     return 0;
+}
+
+/*!
+ * Adds the detail definitions for the details this transform class supports.
+ *
+ * \a definitions On return, the supported detail definitions have been added.
+ */
+void CntTransformOrganisation::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+{
+    QMap<QString, QContactDetailDefinition::Field> fields;
+    QContactDetailDefinition::Field f;
+    QContactDetailDefinition d;
+
+    d.setName(QContactOrganization::DefinitionName);
+    fields.clear();
+    f.dataType = QVariant::String;
+    f.allowableValues = QVariantList();
+    fields.insert(QContactOrganization::FieldName, f);
+    fields.insert(QContactOrganization::FieldDepartment, f);
+    fields.insert(QContactOrganization::FieldTitle, f);
+    fields.insert(QContactOrganization::FieldAssistantName, f);
+
+    d.setFields(fields);
+    d.setUnique(false);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+
+    definitions.insert(d.name(), d);
 }

@@ -226,26 +226,26 @@ TUint32 CntTransformContact::GetIdForDetailL(const QContactDetailFilter& detailF
     QString fieldName = detailFilter.detailFieldName();
     QString fieldValue = detailFilter.value().toString();
     quint32 fieldId = 0;
-    
+
     QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
     while (i != m_transformContactData.constEnd()) {
-    
-        if (i.value()->supportsDetail(defnitionName)){ 
-            // This definition is supported, 
+
+        if (i.value()->supportsDetail(defnitionName)){
+            // This definition is supported,
             // so check if there is a subtype defined
-        
+
             if (i.value()->supportsSubType(fieldName)){
-            
+
                // subtype supported, so value contains the field to be checked
                 fieldId  = i.value()->getIdForField(fieldValue);
                 isSubtype = true;
-        
+
             } else {
-                // subtype not supported, so field itself should be passed  
+                // subtype not supported, so field itself should be passed
                 fieldId  = i.value()->getIdForField(fieldName);
                 isSubtype = false;
             }
-        
+
             break;
         }
         ++i;
@@ -254,6 +254,16 @@ TUint32 CntTransformContact::GetIdForDetailL(const QContactDetailFilter& detailF
 
     }
 
+QMap<QString, QContactDetailDefinition> CntTransformContact::detailDefinitions(QContactManager::Error& error) const
+{
+    QMap<QString, QContactDetailDefinition> defMap;
+    QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+    while (i != m_transformContactData.constEnd()) {
+        i.value()->detailDefinitions(defMap);
+        i++;
+    }
+    return defMap;
+}
 
 QList<CContactItemField *> CntTransformContact::transformDetailL(const QContactDetail &detail) const
 {

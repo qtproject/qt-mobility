@@ -42,17 +42,17 @@
 
 QList<CContactItemField *> CntTransformUrl::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList; 
-	
+	QList<CContactItemField *> fieldList;
+
 	//cast to url
 	const QContactUrl &url(static_cast<const QContactUrl&>(detail));
-	
+
 	//create new field
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(url.url().utf16()));
 	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldUrl);
  	newField->TextStorage()->SetTextL(fieldText);
 	newField->SetMapping(KUidContactFieldVCardMapURL);
-	
+
 	QString subType = url.subType();
 	const QString& subTypeHomePage(QContactUrl::SubTypeHomePage);
 	if (subType.length() != 0 && subType.compare(subTypeHomePage) != 0)
@@ -62,30 +62,30 @@ QList<CContactItemField *> CntTransformUrl::transformDetailL(const QContactDetai
 
 	//contexts
 	setContextsL(url, *newField);
-	
+
 	fieldList.append(newField);
 	CleanupStack::Pop(newField);
-		
+
 	return fieldList;
 }
 
 QContactDetail *CntTransformUrl::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
-	
+
 	QContactUrl *url = new QContactUrl();
-	
+
 	CContactTextField* storage = field.TextStorage();
 	QString urlString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
-	
+
 	url->setUrl(urlString);
 	url->setSubType(QContactUrl::SubTypeHomePage);
-	
+
 	for (int i = 0; i < field.ContentType().FieldTypeCount(); i++)
 	{
 		setContexts(field.ContentType().FieldType(i), *url);
 	}
-	
+
 	return url;
 }
 
@@ -111,7 +111,7 @@ QList<TUid> CntTransformUrl::supportedSortingFieldTypes(QString detailFieldName)
 {
     QList<TUid> uids;
     if (detailFieldName == QContactUrl::FieldUrl)
-        uids << KUidContactFieldUrl;   
+        uids << KUidContactFieldUrl;
     return uids;
 }
 
@@ -119,9 +119,9 @@ QList<TUid> CntTransformUrl::supportedSortingFieldTypes(QString detailFieldName)
  * Checks whether the subtype is supported
  *
  * \a subType The subtype to be checked
- * \return True if this subtype is supported 
- */ 
-bool CntTransformUrl::supportsSubType(const QString& subType) const 
+ * \return True if this subtype is supported
+ */
+bool CntTransformUrl::supportsSubType(const QString& subType) const
 {
     return false;
 }
@@ -130,9 +130,52 @@ bool CntTransformUrl::supportsSubType(const QString& subType) const
  * Returns the filed id corresponding to a field
  *
  * \a fieldName The name of the supported field
- * \return fieldId for the fieldName, 0  if not supported 
- */ 
-quint32 CntTransformUrl::getIdForField(const QString& fieldName) const 
+ * \return fieldId for the fieldName, 0  if not supported
+ */
+quint32 CntTransformUrl::getIdForField(const QString& fieldName) const
 {
     return 0;
+}
+
+/*!
+ * Adds the detail definitions for the details this transform class supports.
+ *
+ * \a definitions On return, the supported detail definitions have been added.
+ */
+void CntTransformUrl::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+{
+    QMap<QString, QContactDetailDefinition::Field> fields;
+    QContactDetailDefinition::Field f;
+    QContactDetailDefinition d;
+    QVariantList subTypes;
+
+    // fields
+    d.setName(QContactUrl::DefinitionName);
+    fields.clear();
+    f.dataType = QVariant::String;
+    f.allowableValues = QVariantList();
+    fields.insert(QContactUrl::FieldUrl, f);
+
+    // Sub-types
+    f.dataType = QVariant::String; // only allowed to be a single subtype
+    subTypes.clear();
+    subTypes << QString(QLatin1String(QContactUrl::SubTypeHomePage));
+    f.allowableValues = subTypes;
+    fields.insert(QContactUrl::FieldSubType, f);
+
+    // Contexts
+    /* TODO: does not work for some reason:
+tst_QContactManager::add(mgr='symbian') A contact had extra detail: "Url" QMap(("Context", QVariant(QStringList, ("HomePage") ) ) ( "SubType" ,  QVariant(QString, "HomePage") ) ( "Url" ,  QVariant(QString, "Url") ) )
+tst_QContactManager::add(mgr='symbian') B contact had extra detail: "Url" QMap(("SubType", QVariant(QString, "HomePage") ) ( "Url" ,  QVariant(QString, "Url") ) )
+
+    f.dataType = QVariant::StringList;
+    f.allowableValues << QString(QLatin1String(QContactDetail::ContextHome)) << QString(QLatin1String(QContactDetail::ContextWork)) << QString(QLatin1String(QContactDetail::ContextOther));
+    fields.insert(QContactDetail::FieldContext, f);
+    */
+
+    d.setFields(fields);
+    d.setUnique(false);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+
+    definitions.insert(d.name(), d);
 }

@@ -43,11 +43,11 @@
 
 QList<CContactItemField *> CntTransformGender::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList; 
-	
+	QList<CContactItemField *> fieldList;
+
 	//cast to gender
 	const QContactGender &gender(static_cast<const QContactGender&>(detail));
-	
+
 	//create new field
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(gender.gender().utf16()));
 	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldGender);
@@ -56,19 +56,19 @@ QList<CContactItemField *> CntTransformGender::transformDetailL(const QContactDe
 
 	fieldList.append(newField);
 	CleanupStack::Pop(newField);
-		
+
 	return fieldList;
 }
 
 QContactDetail *CntTransformGender::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
-	
+
 	QContactGender *gender = new QContactGender();
-	
+
 	CContactTextField* storage = field.TextStorage();
 	QString genderInfo = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
-	
+
 	gender->setGender(genderInfo);
 	return gender;
 }
@@ -103,9 +103,9 @@ QList<TUid> CntTransformGender::supportedSortingFieldTypes(QString detailFieldNa
  * Checks whether the subtype is supported
  *
  * \a subType The subtype to be checked
- * \return True if this subtype is supported 
- */ 
-bool CntTransformGender::supportsSubType(const QString& subType) const 
+ * \return True if this subtype is supported
+ */
+bool CntTransformGender::supportsSubType(const QString& subType) const
 {
     return false;
 }
@@ -114,9 +114,32 @@ bool CntTransformGender::supportsSubType(const QString& subType) const
  * Returns the filed id corresponding to a field
  *
  * \a fieldName The name of the supported field
- * \return fieldId for the fieldName, 0  if not supported 
- */ 
-quint32 CntTransformGender::getIdForField(const QString& fieldName) const 
+ * \return fieldId for the fieldName, 0  if not supported
+ */
+quint32 CntTransformGender::getIdForField(const QString& fieldName) const
 {
     return 0;
+}
+
+/*!
+ * Adds the detail definitions for the details this transform class supports.
+ *
+ * \a definitions On return, the supported detail definitions have been added.
+ */
+void CntTransformGender::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+{
+    QMap<QString, QContactDetailDefinition::Field> fields;
+    QContactDetailDefinition::Field f;
+    QContactDetailDefinition d;
+
+    d.setName(QContactGender::DefinitionName);
+    f.dataType = QVariant::String;
+    f.allowableValues = QVariantList() << QString(QLatin1String(QContactGender::GenderMale)) << QString(QLatin1String(QContactGender::GenderFemale)) << QString(QLatin1String(QContactGender::GenderUnspecified));
+    fields.insert(QContactGender::FieldGender, f);
+
+    d.setFields(fields);
+    d.setUnique(true);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+
+    definitions.insert(d.name(), d);
 }

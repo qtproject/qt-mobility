@@ -42,11 +42,11 @@
 
 QList<CContactItemField *> CntTransformNote::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList; 
-	
+	QList<CContactItemField *> fieldList;
+
 	//cast to note
 	const QContactNote &note(static_cast<const QContactNote&>(detail));
-	
+
 	//create new field
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(note.note().utf16()));
 	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldNote);
@@ -55,19 +55,19 @@ QList<CContactItemField *> CntTransformNote::transformDetailL(const QContactDeta
 
 	fieldList.append(newField);
 	CleanupStack::Pop(newField);
-		
+
 	return fieldList;
 }
 
 QContactDetail *CntTransformNote::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
-	
+
 	QContactNote *note = new QContactNote();
-	
+
 	CContactTextField* storage = field.TextStorage();
 	QString noteString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
-	
+
 	note->setNote(noteString);
 	return note;
 }
@@ -102,9 +102,9 @@ QList<TUid> CntTransformNote::supportedSortingFieldTypes(QString detailFieldName
  * Checks whether the subtype is supported
  *
  * \a subType The subtype to be checked
- * \return True if this subtype is supported 
- */ 
-bool CntTransformNote::supportsSubType(const QString& subType) const 
+ * \return True if this subtype is supported
+ */
+bool CntTransformNote::supportsSubType(const QString& subType) const
 {
     return false;
 }
@@ -113,9 +113,32 @@ bool CntTransformNote::supportsSubType(const QString& subType) const
  * Returns the filed id corresponding to a field
  *
  * \a fieldName The name of the supported field
- * \return fieldId for the fieldName, 0  if not supported 
- */ 
-quint32 CntTransformNote::getIdForField(const QString& fieldName) const 
+ * \return fieldId for the fieldName, 0  if not supported
+ */
+quint32 CntTransformNote::getIdForField(const QString& fieldName) const
 {
     return 0;
+}
+
+/*!
+ * Adds the detail definitions for the details this transform class supports.
+ *
+ * \a definitions On return, the supported detail definitions have been added.
+ */
+void CntTransformNote::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+{
+    QMap<QString, QContactDetailDefinition::Field> fields;
+    QContactDetailDefinition::Field f;
+    QContactDetailDefinition d;
+
+    f.dataType = QVariant::String;
+    f.allowableValues = QVariantList();
+    d.setName(QContactNote::DefinitionName);
+    fields.insert(QContactNote::FieldNote, f);
+
+    d.setFields(fields);
+    d.setUnique(false);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+
+    definitions.insert(d.name(), d);
 }

@@ -42,11 +42,11 @@
 
 QList<CContactItemField *> CntTransformEmail::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList; 
-	
+	QList<CContactItemField *> fieldList;
+
 	//cast to email
 	const QContactEmailAddress &email(static_cast<const QContactEmailAddress&>(detail));
-	
+
 	//create new field
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(email.emailAddress().utf16()));
 	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldEMail);
@@ -55,29 +55,29 @@ QList<CContactItemField *> CntTransformEmail::transformDetailL(const QContactDet
 
 	//contexts
 	setContextsL(email, *newField);
-	
+
 	fieldList.append(newField);
 	CleanupStack::Pop(newField);
-		
+
 	return fieldList;
 }
 
 QContactDetail *CntTransformEmail::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
-	
+
 	QContactEmailAddress *email = new QContactEmailAddress();
-	
+
 	CContactTextField* storage = field.TextStorage();
 	QString emailAddress = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
-	
+
 	email->setEmailAddress(emailAddress);
-	
+
 	for (int i = 0; i < field.ContentType().FieldTypeCount(); i++)
 	{
 		setContexts(field.ContentType().FieldType(i), *email);
 	}
-	
+
 	return email;
 }
 
@@ -111,9 +111,9 @@ QList<TUid> CntTransformEmail::supportedSortingFieldTypes(QString detailFieldNam
  * Checks whether the subtype is supported
  *
  * \a subType The subtype to be checked
- * \return True if this subtype is supported 
- */ 
-bool CntTransformEmail::supportsSubType(const QString& subType) const 
+ * \return True if this subtype is supported
+ */
+bool CntTransformEmail::supportsSubType(const QString& subType) const
 {
     return false;
 }
@@ -122,9 +122,37 @@ bool CntTransformEmail::supportsSubType(const QString& subType) const
  * Returns the filed id corresponding to a field
  *
  * \a fieldName The name of the supported field
- * \return fieldId for the fieldName, 0  if not supported 
- */ 
-quint32 CntTransformEmail::getIdForField(const QString& fieldName) const 
+ * \return fieldId for the fieldName, 0  if not supported
+ */
+quint32 CntTransformEmail::getIdForField(const QString& fieldName) const
 {
     return 0;
+}
+
+/*!
+ * Adds the detail definitions for the details this transform class supports.
+ *
+ * \a definitions On return, the supported detail definitions have been added.
+ */
+void CntTransformEmail::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+{
+    QMap<QString, QContactDetailDefinition::Field> fields;
+    QContactDetailDefinition::Field f;
+    QContactDetailDefinition d;
+
+    d.setName(QContactEmailAddress::DefinitionName);
+    f.dataType = QVariant::String;
+    f.allowableValues = QVariantList();
+    fields.insert(QContactEmailAddress::FieldEmailAddress, f);
+    f.dataType = QVariant::StringList;
+
+    // Contexts
+    f.allowableValues << QString(QLatin1String(QContactDetail::ContextHome)) << QString(QLatin1String(QContactDetail::ContextWork)) << QString(QLatin1String(QContactDetail::ContextOther));
+    fields.insert(QContactDetail::FieldContext, f);
+
+    d.setFields(fields);
+    d.setUnique(false);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+
+    definitions.insert(d.name(), d);
 }

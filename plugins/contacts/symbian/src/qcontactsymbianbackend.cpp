@@ -57,7 +57,7 @@
 QContactSymbianEngine::QContactSymbianEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
     Q_UNUSED(parameters);
-    
+
     error = QContactManager::NoError;
 
     d = new QContactSymbianEngineData(error);
@@ -65,16 +65,16 @@ QContactSymbianEngine::QContactSymbianEngine(const QMap<QString, QString>& param
     // Connect database observer events appropriately.
     connect(d, SIGNAL(contactAdded(QContactLocalId)),
         this, SLOT(eventContactAdded(QContactLocalId)));
-    
+
     connect(d, SIGNAL(contactRemoved(QContactLocalId)),
         this, SLOT(eventContactRemoved(QContactLocalId)));
-    
+
     connect(d, SIGNAL(contactChanged(QContactLocalId)),
         this, SLOT(eventContactChanged(QContactLocalId)));
-    
+
     connect(d, SIGNAL(relationshipAdded(QContactLocalId)),
         this, SLOT(eventRelationshipRemoved(QContactLocalId)));
-    
+
     connect(d, SIGNAL(relationshipRemoved(QContactLocalId)),
         this, SLOT(eventRelationshipRemoved(QContactLocalId)));
 }
@@ -168,19 +168,19 @@ QList<QContactLocalId> QContactSymbianEngine::contacts(const QList<QContactSortO
 QList<QContactLocalId> QContactSymbianEngine::contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     QList<QContactLocalId> contactIds;
-    
+
     //retrieve contacts
     if(contactType == QContactType::TypeContact)
     {
         contactIds = contacts(sortOrders, error);
     }
-    
+
     //retrieve groups
     else if(contactType == QContactType::TypeGroup)
     {
         contactIds = d->groups(sortOrders, error);
     }
-    
+
     return contactIds;
 }
 
@@ -267,12 +267,22 @@ QList<QContactLocalId> QContactSymbianEngine::slowSort(
 bool QContactSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error)
 {
     bool ret = false;
-    if (contact->id().managerUri() == managerUri() && contact->localId()) { //save contact
-        ret = d->updateContact(*contact, changeSet, error);
-        if (ret)
-            updateDisplayLabel(*contact);
-    }
-    else { //create new contact
+    // Check parameters
+    if(!contact) {
+        error = QContactManager::BadArgumentError;
+        ret = false;
+    // Update an existing contact
+    } else if(contact->localId()) {
+        if(contact->id().managerUri() == managerUri()) {
+            ret = d->updateContact(*contact, changeSet, error);
+            if (ret)
+                updateDisplayLabel(*contact);
+        } else {
+            error = QContactManager::BadArgumentError;
+            ret = false;
+        }
+    // Create new contact
+    } else {
         ret = d->addContact(*contact, changeSet, error);
         if (ret) {
             QContactId newContactId = contact->id();
@@ -343,13 +353,13 @@ bool QContactSymbianEngine::saveRelationship(QContactRelationship* relationship,
 {
     //affected contacts
     QContactChangeSet changeSet;
-    
+
     //save the relationship
     bool returnValue = d->saveRelationship(&changeSet, relationship, error);
-    
+
     //emit signals
     changeSet.emitSignals(this);
-    
+
     return returnValue;
 }
 
@@ -357,13 +367,13 @@ QList<QContactManager::Error> QContactSymbianEngine::saveRelationships(QList<QCo
 {
     //affected contacts
     QContactChangeSet changeSet;
-    
+
     //save the relationships
     QList<QContactManager::Error> returnValue = d->saveRelationships(&changeSet, relationships, error);
-    
+
     //emit signals
     changeSet.emitSignals(this);
-        
+
     return returnValue;
 }
 
@@ -371,13 +381,13 @@ bool QContactSymbianEngine::removeRelationship(const QContactRelationship& relat
 {
     //affected contacts
     QContactChangeSet changeSet;
-    
+
     //remove the relationship
     bool returnValue = d->removeRelationship(&changeSet, relationship, error);
-    
+
     //emit signals
     changeSet.emitSignals(this);
-            
+
     return returnValue;
 }
 
@@ -385,13 +395,13 @@ QList<QContactManager::Error> QContactSymbianEngine::removeRelationships(const Q
 {
     //affected contacts
     QContactChangeSet changeSet;
-    
+
     //remove the relationships
     QList<QContactManager::Error> returnValue = d->removeRelationships(&changeSet, relationships, error);
-    
+
     //emit signals
     changeSet.emitSignals(this);
-            
+
     return returnValue;
 }
 
@@ -399,12 +409,11 @@ QMap<QString, QContactDetailDefinition> QContactSymbianEngine::detailDefinitions
 {
     error = QContactManager::NoError;
 
-    // get default constraints schema
-    QMap<QString, QContactDetailDefinition> defMap = QContactManagerEngine::schemaDefinitions();
+    // Get the supported detail definitions from the contact transformer
+    CntTransformContact *transformContact = new CntTransformContact;
+    QMap<QString, QContactDetailDefinition> defMap = transformContact->detailDefinitions(error);
+    delete transformContact;
 
-    // update default constraints
-    defMap[QContactName::DefinitionName].setUnique(true);
-    defMap[QContactNickname::DefinitionName].setUnique(true);
     return defMap;
 }
 
@@ -534,7 +543,7 @@ void QContactSymbianEngine::eventRelationshipAdded(const QContactLocalId &contac
 {
     QList<QContactLocalId> contactList;
     contactList.append(contactId);
-    
+
     emit relationshipsAdded(contactList);
 }
 

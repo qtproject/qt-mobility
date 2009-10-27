@@ -45,10 +45,10 @@
 QList<CContactItemField *> CntTransformNickname::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList;
-	
+
 	//cast to name
 	const QContactNickname &name(static_cast<const QContactNickname &>(detail));
-	
+
 	//Prefix
 	TPtrC fieldTextPrefix(reinterpret_cast<const TUint16*>(name.nickname().utf16()));
 	CContactItemField* nickname = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldSecondName);
@@ -56,18 +56,18 @@ QList<CContactItemField *> CntTransformNickname::transformDetailL(const QContact
 	nickname->SetMapping(KUidContactFieldVCardMapSECONDNAME);
 	fieldList.append(nickname);
 	CleanupStack::Pop(nickname);
-	
+
 	return fieldList;
-}	
+}
 
 
 QContactDetail *CntTransformNickname::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	QContactNickname *name = new QContactNickname(contact.detail<QContactNickname>());
-	
+
 	CContactTextField* storage = field.TextStorage();
 	QString nameValue = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
-	
+
 	for (int i = 0; i < field.ContentType().FieldTypeCount(); i++)
 	{
 		//Prefix
@@ -76,7 +76,7 @@ QContactDetail *CntTransformNickname::transformItemField(const CContactItemField
 			name->setNickname(nameValue);
 		}
 	}
-	
+
 	return name;
 }
 
@@ -110,9 +110,9 @@ QList<TUid> CntTransformNickname::supportedSortingFieldTypes(QString detailField
  * Checks whether the subtype is supported
  *
  * \a subType The subtype to be checked
- * \return True if this subtype is supported 
- */ 
-bool CntTransformNickname::supportsSubType(const QString& subType) const 
+ * \return True if this subtype is supported
+ */
+bool CntTransformNickname::supportsSubType(const QString& subType) const
 {
     return false;
 }
@@ -121,9 +121,32 @@ bool CntTransformNickname::supportsSubType(const QString& subType) const
  * Returns the filed id corresponding to a field
  *
  * \a fieldName The name of the supported field
- * \return fieldId for the fieldName, 0  if not supported 
- */ 
-quint32 CntTransformNickname::getIdForField(const QString& fieldName) const 
+ * \return fieldId for the fieldName, 0  if not supported
+ */
+quint32 CntTransformNickname::getIdForField(const QString& fieldName) const
 {
     return 0;
+}
+
+/*!
+ * Adds the detail definitions for the details this transform class supports.
+ *
+ * \a definitions On return, the supported detail definitions have been added.
+ */
+void CntTransformNickname::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+{
+    QMap<QString, QContactDetailDefinition::Field> fields;
+    QContactDetailDefinition::Field f;
+    QContactDetailDefinition d;
+
+    d.setName(QContactNickname::DefinitionName);
+    f.dataType = QVariant::String;
+    f.allowableValues = QVariantList();
+    fields.insert(QContactNickname::FieldNickname, f);
+
+    d.setFields(fields);
+    d.setUnique(false);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+
+    definitions.insert(d.name(), d);
 }
