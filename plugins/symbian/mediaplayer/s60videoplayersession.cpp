@@ -44,6 +44,7 @@
 #include <w32std.h>
 
 #include <QWidget>
+#include <QDir>
 
 S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
     :QObject(parent),
@@ -263,14 +264,14 @@ void S60VideoPlayerSession::play()
     }
     else
     {
-        //QString fileName = m_url.toLocalFile();
-		//qDebug() << fileName;
-        //TPtrC str(reinterpret_cast<const TUint16*>(fileName.utf16()));
+        QString fileName = QDir::toNativeSeparators(m_url.toString());
+		qDebug() << fileName;
+        TPtrC str(reinterpret_cast<const TUint16*>(fileName.utf16()));
         //m_player->OpenFileL(str);
-        m_player->OpenFileL(_L("c:\\Data\\testvideo.mp4"));
+        //m_player->OpenFileL(_L("c:\\Data\\testvideo.mp4"));
         //QString fileName = m_url.toLocalFile();
         //TPtrC str(reinterpret_cast<const TUint16*>(fileName.utf16()));
-        //m_player->OpenFileL(str);
+        m_player->OpenFileL(str);
         m_state = QMediaPlayer::PlayingState;
         emit stateChanged(QMediaPlayer::PlayingState);        
     }
