@@ -38,6 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMESSAGEORDERINGPRIVATE_H
+#define QMESSAGEORDERINGPRIVATE_H
 #include "qmessageordering.h"
 #if defined(Q_OS_WIN)
 #include "qmessagestore.h"
@@ -66,3 +68,4 @@ public:
     static QList<QMessageFilter> normalize(const QList<QMessageFilter> &filters, const QMessageOrdering &ordering);
 #endif
 };
+#endif

@@ -38,6 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMESSAGEACCOUNTFILTERPRIVATE_H
+#define QMESSAGEACCOUNTFILTERPRIVATE_H
 #include "qmessageaccountfilter.h"
 #ifdef Q_OS_WIN
 #include "winhelpers_p.h"
@@ -75,4 +77,4 @@ public:
     static bool matchesStore(const QMessageAccountFilter &filter, const MapiStorePtr &store);
 #endif
 };
-
+#endif
