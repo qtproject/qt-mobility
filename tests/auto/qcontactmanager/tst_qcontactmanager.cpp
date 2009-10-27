@@ -2373,7 +2373,15 @@ void tst_QContactManager::relationships()
     QVERIFY(batchRetrieve.contains(br2));
     QVERIFY(batchRetrieve.contains(br3));
 
+    // remove a single relationship
+    QVERIFY(cm->removeRelationship(br3));
+    batchRetrieve = cm->relationships(source.id(), QContactRelationshipFilter::First);
+    QVERIFY(batchRetrieve.contains(br1));
+    QVERIFY(batchRetrieve.contains(br2));
+    QVERIFY(!batchRetrieve.contains(br3)); // has already been removed.
+
     // now ensure that the batch remove works and we get returned to the original state.
+    batchList.removeOne(br3);
     cm->removeRelationships(batchList);
     QVERIFY(cm->error() == QContactManager::NoError);
     QCOMPARE(cm->relationships(source.id(), QContactRelationshipFilter::First), currentRelationships);
