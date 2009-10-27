@@ -145,6 +145,7 @@ private slots:
     void selfContactId();
     void detailOrders();
     void relationships();
+    void contactType();
 
     /* Tests that take no data */
     void contactValidation();
@@ -169,6 +170,7 @@ private slots:
     void selfContactId_data() {addManagers();}
     void detailOrders_data() {addManagers();}
     void relationships_data() {addManagers();}
+    void contactType_data() {addManagers();}
 };
 
 tst_QContactManager::tst_QContactManager()
@@ -2348,10 +2350,82 @@ void tst_QContactManager::relationships()
         QVERIFY(dest3.relationships("test-arbitrary-relationship-type").contains(customRelationshipOne));
     }
 
+    // finally, test batch API
+    QList<QContactRelationship> currentRelationships = cm->relationships(source.id(), QContactRelationshipFilter::First);
+    QList<QContactRelationship> batchList;
+    QContactRelationship br1, br2, br3;
+    br1.setFirst(source.id());
+    br1.setSecond(dest2.id());
+    br1.setRelationshipType(QContactRelationship::HasMember);
+    br2.setFirst(source.id());
+    br2.setSecond(dest3.id());
+    br2.setRelationshipType(QContactRelationship::HasMember);
+    br3.setFirst(source.id());
+    br3.setSecond(dest3.id());
+    br3.setRelationshipType(QContactRelationship::IsAssistantOf);
+    batchList << br1 << br2 << br3;
+    cm->saveRelationships(&batchList);
+    QVERIFY(cm->error() == QContactManager::NoError);
+
+    // ensure that the batch save worked properly
+    QList<QContactRelationship> batchRetrieve = cm->relationships(source.id(), QContactRelationshipFilter::First);
+    QVERIFY(batchRetrieve.contains(br1));
+    QVERIFY(batchRetrieve.contains(br2));
+    QVERIFY(batchRetrieve.contains(br3));
+
+    // now ensure that the batch remove works and we get returned to the original state.
+    cm->removeRelationships(batchList);
+    QVERIFY(cm->error() == QContactManager::NoError);
+    QCOMPARE(cm->relationships(source.id(), QContactRelationshipFilter::First), currentRelationships);
+
     // now clean up and remove our dests.
     cm->removeContact(source.localId());
     cm->removeContact(dest2.localId());
     cm->removeContact(dest3.localId());
+}
+
+void tst_QContactManager::contactType()
+{
+    QFETCH(QString, uri);
+    QContactManager* cm = QContactManager::fromUri(uri);
+
+    if (!cm->information()->hasFeature(QContactManagerInfo::Groups))
+        QSKIP("Skipping: This manager does not support group contacts!", SkipSingle);
+
+    QContact g1, g2, c;
+    g1.setType(QContactType::TypeGroup);
+    g2.setType(QContactType::TypeGroup);
+
+    QContactPhoneNumber g1p, g2p, cp;
+    g1p.setNumber("22222");
+    g2p.setNumber("11111");
+    cp.setNumber("33333");
+
+    g1.saveDetail(&g1p);
+    g2.saveDetail(&g2p);
+    c.saveDetail(&cp);
+
+    QVERIFY(cm->saveContact(&g1));
+    QVERIFY(cm->saveContact(&g2));
+    QVERIFY(cm->saveContact(&c));
+
+    // test that the accessing by type works properly
+    QVERIFY(cm->contacts(QContactType::TypeGroup).contains(g1.localId()));
+    QVERIFY(cm->contacts(QContactType::TypeGroup).contains(g2.localId()));
+    QVERIFY(!cm->contacts(QContactType::TypeGroup).contains(c.localId()));
+
+    QList<QContactSortOrder> sortOrders;
+    QContactSortOrder byPhoneNumber;
+    byPhoneNumber.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    sortOrders.append(byPhoneNumber);
+
+    // and ensure that sorting works properly with typed contacts also
+    QList<QContactLocalId> sortedIds = cm->contacts(QContactType::TypeGroup, sortOrders);
+    QVERIFY(sortedIds.indexOf(g2.localId()) < sortedIds.indexOf(g1.localId()));
+
+    cm->removeContact(g1.localId());
+    cm->removeContact(g2.localId());
+    cm->removeContact(c.localId());
 }
 
 QTEST_MAIN(tst_QContactManager)
