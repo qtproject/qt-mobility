@@ -2776,8 +2776,8 @@ bool tst_QContactManagerFiltering::isSuperset(const QContact& ca, const QContact
     // returns true if contact ca is a superset of contact cb
     // we use this test instead of equality because dynamic information
     // such as presence/location, and synthesised information such as
-    // display label, may differ between a contact in memory and the
-    // contact in the managed store.
+    // display label and (possibly) type, may differ between a contact
+    // in memory and the contact in the managed store.
 
     QContact a(ca);
     QContact b(cb);
@@ -2796,9 +2796,17 @@ bool tst_QContactManagerFiltering::isSuperset(const QContact& ca, const QContact
         }
     }
 
+    // check for contact type updates
+    if (!a.type().isEmpty())
+        if (!b.type().isEmpty())
+            if (a.type() != b.type())
+                return false; // nonempty type is different.
+
     // Now check to see if b has any details remaining; if so, a is not a superset.
-    // Note that the DisplayLabel can never be removed.
-    if (b.details().size() > 1 || (b.details().size() == 1 && b.details().value(0).definitionName() != QContactDisplayLabel::DefinitionName))
+    // Note that the DisplayLabel and Type can never be removed.
+    if (b.details().size() > 2
+            || (b.details().size() == 2 && (b.details().value(0).definitionName() != QContactDisplayLabel::DefinitionName
+                                            || b.details().value(1).definitionName() != QContactType::DefinitionName)))
         return false;
     return true;
 }
