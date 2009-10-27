@@ -59,7 +59,7 @@ public:
     ~QContactTrackerEngineData() {}
 
     QAtomicInt m_refCount;
-    mutable QUniqueId m_lastUsedId;
+    mutable QContactLocalId m_lastUsedId;
     mutable QMap<QString, QContactDetailDefinition> m_definitions;
     mutable QMap<QContactAbstractRequest*, QTrackerContactAsyncRequest*> m_requests;
 };
@@ -77,22 +77,18 @@ public:
     void deref();
 
     /* Filtering */
-    QList<QUniqueId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QUniqueId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QContact contact(const QUniqueId& contactId, QContactManager::Error& error) const;
+    QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
 
     bool saveContact(QContact* contact, QContactManager::Error& error);
 
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
 
-    bool removeContact(const QUniqueId& contactId, QContactManager::Error& error);
-    QList<QContactManager::Error> removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error);
-
-    /* Groups - Accessors and Mutators */
-    QList<QUniqueId> groups() const;
-    QContactGroup group(const QUniqueId& groupId) const;
+    bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
+    QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
@@ -106,8 +102,8 @@ public:
     bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
 
     /* Capabilities reporting */
-    QStringList capabilities() const;
-    QStringList fastFilterableDefinitions() const;
+    bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
+    bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
 
@@ -115,7 +111,7 @@ private:
     //called from both constructors, connecting to all contact NodeList changes signals
     void connectToSignals();
     RDFVariable contactDetail2Rdf(const RDFVariable& rdfContact, const QString& definitionName, const QString& fieldName) const;
-    QContact contact_impl(const QUniqueId& contactId, QContactManager::Error& error) const;
+    QContact contact_impl(const QContactLocalId& contactId, QContactManager::Error& error) const;
 private:
     QSharedDataPointer<QContactTrackerEngineData> d;
     const QString contactArchiveFile;

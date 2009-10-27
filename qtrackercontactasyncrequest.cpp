@@ -37,12 +37,12 @@ void matchPhoneNumberFromEnd(RDFVariable &variable, QContactDetailFilter &filter
 void applyFilterToRDFVariable(RDFVariable &variable,
         const QContactFilter &filter)
 {
-    if (filter.type() == QContactFilter::IdListFilter) {
-        QContactIdListFilter filt = filter;
+    if (filter.type() == QContactFilter::LocalIdFilter) {
+        QContactLocalIdFilter filt = filter;
         if (!filt.ids().isEmpty()) {
             variable.property<nco::contactUID>().isMemberOf(filt.ids());
         } else {
-            warning() << Q_FUNC_INFO << "QContactIdListFilter idlist is empty";
+            warning() << Q_FUNC_INFO << "QContactLocalIdFilter idlist is empty";
         }
     } else if (filter.type() == QContactFilter::ContactDetailFilter) {
         QContactDetailFilter filt = filter;
@@ -178,8 +178,8 @@ QTrackerContactIdFetchRequest::QTrackerContactIdFetchRequest(QContactAbstractReq
     parent->updateRequestStatus(request, QContactManager::NoError, dummy,
                                 QContactAbstractRequest::Active);
 
-    Q_ASSERT( req->type() == QContactAbstractRequest::ContactIdFetchRequest );
-    QContactIdFetchRequest* r = static_cast<QContactIdFetchRequest*> (req);
+    Q_ASSERT( req->type() == QContactAbstractRequest::ContactLocalIdFetchRequest );
+    QContactLocalIdFetchRequest* r = static_cast<QContactLocalIdFetchRequest*> (req);
     QContactFilter filter = r->filter();
     QList<QContactSortOrder> sorting = r->sorting();
     Q_UNUSED(filter)
@@ -289,7 +289,7 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(QContactAbstractRequest
         }
     }
 
-    QList<QUniqueId> ids;
+    QList<QContactLocalId> ids;
     RDFVariable RDFContact1 = RDFVariable::fromType<nco::PersonContact>();
     applyFilterToRDFVariable(RDFContact1, r->filter());
     RDFSelect quer;
@@ -362,11 +362,11 @@ void QTrackerContactIdFetchRequest::modelUpdated()
 {
     // fastest way to get this working. refactor
     QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *>(parent());
-    QList<QUniqueId> result;
+    QList<QContactLocalId> result;
     // for now this only serves get all contacts
     for(int i = 0; i < query->rowCount(); i++) {
         bool ok;
-        QUniqueId id = query->index(i, 1).data().toUInt(&ok);
+        QContactLocalId id = query->index(i, 1).data().toUInt(&ok);
         if (ok) {
             // Append only, if we have a valid contact id
             // and it's not already added
@@ -408,9 +408,10 @@ void QTrackerContactFetchRequest::contactsReady()
         QContact contact; // one we will be filling with this row
         int column = 0;
 
-        contact.setId(query->index(i, column++).data().toUInt());
+        QContactId id; id.setLocalId(query->index(i, column++).data().toUInt());
+        contact.setId(id);
         bool ok;
-        QUniqueId contactid = query->index(i, 0).data().toUInt(&ok);
+        QContactLocalId contactid = query->index(i, 0).data().toUInt(&ok);
         if (!ok) {
             // Got an invalid contact id, skip the whole result
             continue;
@@ -422,7 +423,7 @@ void QTrackerContactFetchRequest::contactsReady()
                 index = it.value();
                 contact = result[index];
             }
-            Q_ASSERT(query->index(i, 0).data().toUInt() == contact.id());
+            Q_ASSERT(query->index(i, 0).data().toUInt() == contact.localId());
         }
 
 
@@ -529,7 +530,7 @@ void QTrackerContactFetchRequest::contactsReady()
         if (index < result.size() && index >= 0) {
             result[index] = contact;
         } else {
-            resultLookup[contact.id()] = result.size();
+            resultLookup[contact.localId()] = result.size();
             result.append(contact);
         }
     }
@@ -627,10 +628,10 @@ void QTrackerContactFetchRequest::processQueryPhoneNumbers(SopranoLive::LiveNode
         }
 
         QString subtype = rdfPhoneType2QContactSubtype(queryPhoneNumbers->index(i, 2).data().toString());
-        QUniqueId contactid = queryPhoneNumbers->index(i, 0).data().toUInt();
+        QContactLocalId contactid = queryPhoneNumbers->index(i, 0).data().toUInt();
         // TODO replace this lookup with something faster
         for (int j = 0; j < contacts.size(); j++) {
-            if (contacts[j].id() == contactid ) {
+            if (contacts[j].localId() == contactid ) {
                 QContactPhoneNumber number;
                 if( affiliationNumbers )
                     number.setContexts(QContactPhoneNumber::ContextWork);
@@ -670,10 +671,10 @@ void QTrackerContactFetchRequest::processQueryEmailAddresses( SopranoLive::LiveN
         }
 
         //QString subtype = rdfPhoneType2QContactSubtype(queryEmailAddresses->index(i, 2).data().toString());
-        QUniqueId contactid = queryEmailAddresses->index(i, 0).data().toUInt();
+        QContactLocalId contactid = queryEmailAddresses->index(i, 0).data().toUInt();
         // TODO replace this lookup with something faster
         for (int j = 0; j < contacts.size(); j++) {
-            if( contacts[j].id() == contactid ) {
+            if( contacts[j].localId() == contactid ) {
                 QContactEmailAddress email;
                 if( affiliationEmails )
                     email.setContexts(QContactEmailAddress::ContextWork);
@@ -701,10 +702,10 @@ void QTrackerContactFetchRequest::processQueryIMAccounts(SopranoLive::LiveNodes 
             << queryIMAccounts->index(i, 2).data().toString()
             << queryIMAccounts->index(i, 3).data().toString();
 
-        QUniqueId contactid = queryIMAccounts->index(i, 0).data().toUInt();
+        QContactLocalId contactid = queryIMAccounts->index(i, 0).data().toUInt();
         // TODO replace this lookup with something faster
         for (int j = 0; j < contacts.size(); j++) {
-            if (contacts[j].id() == contactid ) {
+            if (contacts[j].localId() == contactid ) {
                 // TODo replace when QtMobility guys implement support for IMAccount
                 QContactOnlineAccount account;
                 if (affiliationAccounts)

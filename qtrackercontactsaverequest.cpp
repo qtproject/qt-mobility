@@ -78,7 +78,7 @@ void QTrackerContactSaveRequest::saveContact(QContact &contact)
     Live<nco::PersonContact> ncoContact;
     RDFServicePtr service = cLive.service();
 
-    if(contact.id() == 0) {
+    if(contact.localId() == 0) {
         // Save new contact. compute ID
         bool ok;
         QSettings definitions(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
@@ -87,24 +87,24 @@ void QTrackerContactSaveRequest::saveContact(QContact &contact)
         definitions.setValue("nextAvailableContactId", QString::number(++m_lastUsedId));
 
         ncoContact = service->liveNode(QUrl("contact:"+(QString::number(m_lastUsedId))));
-
-        contact.setId(m_lastUsedId);
+        QContactId id; id.setLocalId(m_lastUsedId);
+        contact.setId(id);
         ncoContact->setContactUID(QString::number(m_lastUsedId));
         ncoContact->setContentCreated(QDateTime::currentDateTime());
     }  else {
-        ncoContact = service->liveNode(QUrl("contact:"+QString::number(contact.id())));
+        ncoContact = service->liveNode(QUrl("contact:"+QString::number(contact.localId())));
         //  disabled because of 141727 - it breaks the transaction
         //  ncoContact->setContentLastModified(QDateTime::currentDateTime());
     }
 
     // if there are work related details, need to be saved to Affiliation.
     if( QTrackerContactSaveRequest::contactHasWorkRelatedDetails(contact))
-        addAffiliation(service, contact.id());
+        addAffiliation(service, contact.localId());
 
     // Add a special tag for contact added from addressbook, not from fb, telepathy etc.
     // this is important when returning contacts to sync team
     RDFVariable rdfContact = RDFVariable::fromType<nco::PersonContact>();
-    rdfContact.property<nco::contactUID>() = LiteralValue(QString::number(contact.id()));
+    rdfContact.property<nco::contactUID>() = LiteralValue(QString::number(contact.localId()));
     addTag(service, rdfContact, "addressbook");
 
     saveContactDetails( service, ncoContact, contact);
@@ -158,7 +158,7 @@ bool QTrackerContactSaveRequest::contactHasWorkRelatedDetails(const QContact &c)
 }
 
 // create nco::Affiliation if there is not one already in tracker
-void QTrackerContactSaveRequest::addAffiliation(RDFServicePtr service, QUniqueId contactId)
+void QTrackerContactSaveRequest::addAffiliation(RDFServicePtr service, QContactLocalId contactId)
 {
     RDFVariable contact = RDFVariable::fromType<nco::PersonContact>();
     contact.property<nco::contactUID> () = LiteralValue(QString::number(contactId));
@@ -186,7 +186,7 @@ void QTrackerContactSaveRequest::saveContactDetails( RDFServicePtr service,
 
     // all the rest might need to save to PersonContact and to Affiliation contact
     RDFVariable rdfPerson = RDFVariable::fromType<nco::PersonContact>();
-    rdfPerson.property<nco::contactUID>() = LiteralValue(QString::number(contact.id()));
+    rdfPerson.property<nco::contactUID>() = LiteralValue(QString::number(contact.localId()));
 
     // Delete all existing phone numbers - office and home
     deletePhoneNumbers(service, rdfPerson);
@@ -199,7 +199,7 @@ void QTrackerContactSaveRequest::saveContactDetails( RDFServicePtr service,
         RDFVariable rdfAffiliation;
         RDFVariable rdfPerson1;
         rdfPerson1.property<nco::hasAffiliation>() = rdfAffiliation;
-        rdfPerson1.property<nco::contactUID>() = LiteralValue(QString::number(contact.id()));
+        rdfPerson1.property<nco::contactUID>() = LiteralValue(QString::number(contact.localId()));
 
         QList<QContactDetail> workDetails;
         QList<QContactDetail> homeDetails;

@@ -19,7 +19,7 @@
 #include <QtTracker/Tracker>
 
 
-QUniqueId url2UniqueId(const QString &contactUrl);
+QContactLocalId url2UniqueId(const QString &contactUrl);
 
 /*!
  * Helper class to handle multiple async queries at the same time inside TrackerChangeListener.
@@ -64,9 +64,9 @@ public:
 
 signals:
     // signals are with the same semantics as in QContactManagerEngine
-    void contactsAdded(const QList<QUniqueId>& contactIds);
-    void contactsChanged(const QList<QUniqueId>& contactIds);
-    void contactsRemoved(const QList<QUniqueId>& contactIds);
+    void contactsAdded(const QList<QContactLocalId>& contactIds);
+    void contactsChanged(const QList<QContactLocalId>& contactIds);
+    void contactsRemoved(const QList<QContactLocalId>& contactIds);
 
 private slots:
     void subjectsAdded(const QStringList &subjects);

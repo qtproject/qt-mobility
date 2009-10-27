@@ -20,7 +20,6 @@
 #include <QSet>
 
 #include "qcontact_p.h"
-#include "qcontactgroup_p.h"
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
 #include "debuglevel.h"
@@ -61,9 +60,9 @@ QContactTrackerEngine::QContactTrackerEngine(const QContactTrackerEngine& other)
 void QContactTrackerEngine::connectToSignals()
 {
     TrackerChangeListener *listener = new TrackerChangeListener(this);
-    connect(listener, SIGNAL(contactsAdded(const QList<QUniqueId>&)), SIGNAL(contactsAdded(const QList<QUniqueId>&)));
-    connect(listener, SIGNAL(contactsChanged(const QList<QUniqueId>&)), SIGNAL(contactsChanged(const QList<QUniqueId>&)));
-    connect(listener, SIGNAL(contactsRemoved(const QList<QUniqueId>&)), SIGNAL(contactsRemoved(const QList<QUniqueId>&)));
+    connect(listener, SIGNAL(contactsAdded(const QList<QContactLocalId>&)), SIGNAL(contactsAdded(const QList<QContactLocalId>&)));
+    connect(listener, SIGNAL(contactsChanged(const QList<QContactLocalId>&)), SIGNAL(contactsChanged(const QList<QContactLocalId>&)));
+    connect(listener, SIGNAL(contactsRemoved(const QList<QContactLocalId>&)), SIGNAL(contactsRemoved(const QList<QContactLocalId>&)));
 }
 
 QContactTrackerEngine& QContactTrackerEngine::operator=(const QContactTrackerEngine& other)
@@ -89,11 +88,11 @@ void QContactTrackerEngine::deref()
         delete this;
 }
 
-QList<QUniqueId> QContactTrackerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactTrackerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
 
     // TODO Implement sorting
-    QList<QUniqueId> ids;
+    QList<QContactLocalId> ids;
     RDFVariable rdfContact = RDFVariable::fromType<nco::PersonContact>();
     if (filter.type() == QContactFilter::ChangeLogFilter) {
         const QContactChangeLogFilter& clFilter = static_cast<const QContactChangeLogFilter&>(filter);
@@ -129,11 +128,11 @@ QList<QUniqueId> QContactTrackerEngine::contacts(const QContactFilter& filter, c
     return ids;
 }
 
-QList<QUniqueId> QContactTrackerEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactTrackerEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     Q_UNUSED(sortOrders)
 
-    QList<QUniqueId> ids;
+    QList<QContactLocalId> ids;
     RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
     RDFSelect query;
 
@@ -148,17 +147,17 @@ QList<QUniqueId> QContactTrackerEngine::contacts(const QList<QContactSortOrder>&
     return ids;
 }
 
-QContact QContactTrackerEngine::contact(const QUniqueId& contactId, QContactManager::Error& error ) const
+QContact QContactTrackerEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error ) const
 {
     warning() << "QContactManager::contact()" << "api is not supported for tracker plugin. Please use asynchronous API QContactFetchRequest.";
     return contact_impl(contactId, error);
 }
 // used in tests, removed warning while decided if to provide sync api. Until then customers are advised to use async
-QContact QContactTrackerEngine::contact_impl(const QUniqueId& contactId, QContactManager::Error& error ) const
+QContact QContactTrackerEngine::contact_impl(const QContactLocalId& contactId, QContactManager::Error& error ) const
 {
     // the rest of the code is for internal usage, unit tests etc.
-    QContactIdListFilter idlist;
-    QList<QUniqueId> ids; ids << contactId;
+    QContactLocalIdFilter idlist;
+    QList<QContactLocalId> ids; ids << contactId;
     idlist.setIds(ids);
     QContactFetchRequest request;
     QStringList fields;
@@ -236,7 +235,7 @@ bool QContactTrackerEngine::saveContact( QContact* contact, QContactManager::Err
         return false;
 }
 
-bool QContactTrackerEngine::removeContact(const QUniqueId& contactId, QContactManager::Error& error)
+bool QContactTrackerEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
 {
     error = QContactManager::NoError;
 
@@ -291,7 +290,7 @@ QList<QContactManager::Error> QContactTrackerEngine::saveContacts(QList<QContact
     return errorList;
 }
 
-QList<QContactManager::Error> QContactTrackerEngine::removeContacts(QList<QUniqueId>* contactIds, QContactManager::Error& error)
+QList<QContactManager::Error> QContactTrackerEngine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error)
 {
     QList<QContactManager::Error> errors;
     error = QContactManager::NoError;
@@ -315,17 +314,6 @@ QList<QContactManager::Error> QContactTrackerEngine::removeContacts(QList<QUniqu
 
     // emit signals removed as they are fired from QContactManager
     return errors;
-}
-
-QList<QUniqueId> QContactTrackerEngine::groups() const
-{
-    return QList<QUniqueId>();
-}
-
-QContactGroup QContactTrackerEngine::group(const QUniqueId& groupId) const
-{
-    Q_UNUSED(groupId)
-    return QContactGroup();
 }
 
 QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions(QContactManager::Error& error) const
@@ -398,27 +386,54 @@ bool QContactTrackerEngine::removeDetailDefinition(const QContactDetailDefinitio
     return false;
 }
 
-
-/*! Returns the capabilities of the in-memory engine. */
-QStringList QContactTrackerEngine::capabilities() const
+/*!
+ * \reimp
+ */
+bool QContactTrackerEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
 {
-    // TODO: Check capabilities for Tracker backend.
-    QStringList caplist;
-    caplist << "Groups" << "Locking" << "Batch" << "ReadOnly" << "Filtering" << "Sorting" << "Preferences";
-    // ie, doesn't support: Changelog, Volatile, Asynchronous.
-    return caplist;
+    switch (feature) {
+        case QContactManagerInfo::Groups:
+        case QContactManagerInfo::ActionPreferences:
+        case QContactManagerInfo::Relationships:
+            return true;
+        case QContactManagerInfo::ArbitraryRelationshipTypes:
+            return true;
+        case QContactManagerInfo::MutableDefinitions:
+            return true;
+        case QContactManagerInfo::ChangeLogs:
+            return true;
+        default:
+            return false;
+    }
 }
 
+
 /*!
- * Returns a list of definition identifiers which are natively (fast) filterable
+ * \reimp
+ */
+/*!
+ * Definition identifiers which are natively (fast) filterable
  * on the default backend store managed by the manager from which the capabilities object was accessed
  */
-QStringList QContactTrackerEngine::fastFilterableDefinitions() const
+bool QContactTrackerEngine::filterSupported(const QContactFilter& filter) const
 {
-    // TODO: Check definitions for Tracker backend.
-    QStringList fastlist;
-    fastlist << "Name::First" << "Name::Last" << "PhoneNumber::PhoneNumber" << "EmailAddress::EmailAddress";
-    return fastlist;
+    switch (filter.type()) {
+        case QContactFilter::InvalidFilter:
+        case QContactFilter::DefaultFilter:
+        case QContactFilter::LocalIdFilter:
+        case QContactFilter::ContactDetailFilter:
+        case QContactFilter::ContactDetailRangeFilter:
+        case QContactFilter::ActionFilter:
+        case QContactFilter::ChangeLogFilter:
+        case QContactFilter::RelationshipFilter:
+
+// not yet done
+//        case QContactFilter::IntersectionFilter:
+//        case QContactFilter::UnionFilter:
+            return true;
+        default:
+            return false;
+    }
 }
 
 /*!
@@ -431,7 +446,6 @@ QList<QVariant::Type> QContactTrackerEngine::supportedDataTypes() const
     st.append(QVariant::String);
     st.append(QVariant::Date);
     st.append(QVariant::DateTime);
-
     return st;
 }
 
@@ -500,7 +514,7 @@ bool QContactTrackerEngine::startRequest(QContactAbstractRequest* req)
     QTrackerContactAsyncRequest *request = 0;
     switch (req->type())
     {
-        case QContactAbstractRequest::ContactIdFetchRequest:
+        case QContactAbstractRequest::ContactLocalIdFetchRequest:
             request = new QTrackerContactIdFetchRequest(req, this);
             break;
         case QContactAbstractRequest::ContactFetchRequest:

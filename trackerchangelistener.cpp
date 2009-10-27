@@ -55,11 +55,11 @@ TrackerChangeListener::~TrackerChangeListener()
 // TEMPORARY here we'll for now extract ids from tracker contact URI.
 // In future need nonblocking async way to get contact ids from tracker contact urls
 // let's see which signals will be used from libqttracker
-QUniqueId url2UniqueId(const QString &contactUrl)
+QContactLocalId url2UniqueId(const QString &contactUrl)
 {
     QRegExp rx("(\\d+)");
     bool conversion = false;
-    QUniqueId id = 0;
+    QContactLocalId id = 0;
     if( rx.indexIn(contactUrl) != -1 )
     {
         id = rx.cap(1).toUInt(&conversion, 10);
@@ -72,7 +72,7 @@ QUniqueId url2UniqueId(const QString &contactUrl)
 
 void TrackerChangeListener::subjectsAdded(const QStringList &subjects)
 {
-    QList<QUniqueId> added;
+    QList<QContactLocalId> added;
     foreach(const QString &uri, subjects)
     {
         added << url2UniqueId(uri);
@@ -83,7 +83,7 @@ void TrackerChangeListener::subjectsAdded(const QStringList &subjects)
 
 void TrackerChangeListener::subjectsRemoved(const QStringList &subjects)
 {
-    QList<QUniqueId> added;
+    QList<QContactLocalId> added;
     foreach(const QString &uri, subjects)
     {
         added << url2UniqueId(uri);
@@ -95,7 +95,7 @@ void TrackerChangeListener::subjectsRemoved(const QStringList &subjects)
 // TODO data changed for full query
 void TrackerChangeListener::subjectsChanged(const QStringList &subjects)
 {
-    QList<QUniqueId> added;
+    QList<QContactLocalId> added;
     foreach(const QString &uri, subjects)
     {
         added << url2UniqueId(uri);
@@ -140,7 +140,7 @@ void TrackerChangeListener::imQueryReady(AsyncQuery* req)
     if( pendingQueries.contains(req))
     {
         QSharedPointer<AsyncQuery> query = pendingQueries.take(req);
-        QSet<QUniqueId> contactsChangedPresence;
+        QSet<QContactLocalId> contactsChangedPresence;
         for(int i=0; i<query->nodes->rowCount(); i++) {
             contactsChangedPresence << query->nodes->index(i, 0).data().toUInt();
         }

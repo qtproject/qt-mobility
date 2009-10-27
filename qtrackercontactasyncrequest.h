@@ -67,7 +67,7 @@ protected:
 };
 
 /*!
- * Running QContactIdFetchRequest. Doing the async tracker query and when data is ready setting the
+ * Running QContactLocalIdFetchRequest. Doing the async tracker query and when data is ready setting the
  * finished status of request. \sa QTrackerContactIdFetchRequest
  */
 class QTrackerContactIdFetchRequest : public QObject, public QTrackerContactAsyncRequest
