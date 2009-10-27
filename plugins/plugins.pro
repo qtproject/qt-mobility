@@ -7,7 +7,8 @@ win32:!wince* {
     TMP_SEARCHPATHS = $$split(TMP_INCLUDE, ";") $$QMAKE_INCDIR
     for(p, TMP_SEARCHPATHS): exists($${p}/wmp.h): SUBDIRS *= wmp
     for(p, TMP_SEARCHPATHS): exists($${p}/dshow.h) {
-        exists($${p}/strsafe.h): SUBDIRS *= directshow
+        win32-msvc2005: SUBDIRS *= directshow
+        win32-msvc2008: SUBDIRS *= directshow
     }
 }
 
