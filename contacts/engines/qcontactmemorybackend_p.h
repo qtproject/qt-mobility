@@ -79,6 +79,7 @@ public:
     QContactMemoryEngineData()
         : QSharedData(),
         m_refCount(QAtomicInt(1)),
+        m_selfContactId(0),
         m_nextContactId(1),
         m_anonymous(false)
     {
@@ -87,6 +88,7 @@ public:
     QContactMemoryEngineData(const QContactMemoryEngineData& other)
         : QSharedData(other),
         m_refCount(QAtomicInt(1)),
+        m_selfContactId(other.m_selfContactId),
         m_nextContactId(other.m_nextContactId),
         m_anonymous(other.m_anonymous)
     {
@@ -99,6 +101,7 @@ public:
     QAtomicInt m_refCount;
     QString m_id;                                  // the id parameter value
 
+    QContactLocalId m_selfContactId;               // the "MyCard" contact id
     QList<QContact> m_contacts;                    // list of contacts
     QList<QContactLocalId> m_contactIds;           // list of contact Id's
     QList<QContactRelationship> m_relationships;   // list of contact relationships
@@ -126,6 +129,10 @@ public:
     /* URI reporting */
     QString managerName() const;
     QMap<QString, QString> managerParameters() const;
+
+    /* "Self" contact id (MyCard) */
+    bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error);
+    QContactLocalId selfContactId(QContactManager::Error& error) const;
 
     /* Contacts - Accessors and Mutators */
     QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;

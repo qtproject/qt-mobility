@@ -160,6 +160,7 @@ signals:
     void contactsRemoved(const QList<QContactLocalId>& contactIds);
     void relationshipsAdded(const QList<QContactLocalId>& affectedContactIds);
     void relationshipsRemoved(const QList<QContactLocalId>& affectedContactIds);
+    void selfContactIdChanged(const QContactLocalId& oldId, const QContactLocalId& newId); // need both? or just new?
 
 private:
     friend class QContactManagerData;

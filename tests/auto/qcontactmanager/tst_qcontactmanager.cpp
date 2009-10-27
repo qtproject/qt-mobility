@@ -2100,46 +2100,39 @@ void tst_QContactManager::selfContactId()
 {
     QFETCH(QString, uri);
     QContactManager* cm = QContactManager::fromUri(uri);
-    
-    // Get self contact
-    QContactLocalId selfContact = cm->selfContactId();
-    
+
     // early out if the manager doesn't support self contact id saving
+    QContactLocalId selfContact = cm->selfContactId();
     if (!cm->hasFeature(QContactManager::SelfContact)) {
         // ensure that the error codes / return values are meaningful failures.
         QVERIFY(cm->error() == QContactManager::DoesNotExistError);
-        QContactLocalId newSelfContact(123);
-        QVERIFY(!cm->setSelfContactId(newSelfContact));
+        QVERIFY(!cm->setSelfContactId(QContactLocalId(123)));
         QVERIFY(cm->error() == QContactManager::NotSupportedError);
         QSKIP("Manager does not support the concept of a self-contact", SkipSingle);
     }
 
-    if (selfContact == 0) {
-        QVERIFY(cm->error() == QContactManager::DoesNotExistError);
+    // create a new "self" contact and retrieve its Id
+    QVERIFY(cm->error() == QContactManager::NoError || cm->error() == QContactManager::DoesNotExistError);
+    QContact self;
+    QContactPhoneNumber selfPhn;
+    selfPhn.setNumber("12345");
+    self.saveDetail(&selfPhn);
+    bool success = cm->saveContact(&self);
+    QContactLocalId newSelfContact = self.localId();
+
+    if (!success) {
+        QSKIP("Unable to save the generated self contact", SkipSingle);
+        return;
     }
-    else {
-        QVERIFY(cm->error() == QContactManager::NoError);
-    }
-    
-    // Create a new contact
-    QContact c;
-    QContactName n;
-    n.setFirst("selfcontact");
-    QVERIFY(c.saveDetail(&n));
-    QVERIFY(cm->saveContact(&c));
-    
-    // Set it as self contact
-    QVERIFY(cm->setSelfContactId(c.localId()));
+
+    QSignalSpy spy(cm, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
+    cm->setSelfContactId(newSelfContact);
+    QVERIFY(cm->selfContactId() == newSelfContact);
     QVERIFY(cm->error() == QContactManager::NoError);
-    QVERIFY(cm->selfContactId() == c.localId());
-    QVERIFY(cm->error() == QContactManager::NoError);
-    
-    // Remove the self contact
-    QVERIFY(cm->removeContact(c.localId()));
-    QVERIFY(cm->selfContactId() == 0);
-    QVERIFY(cm->error() == QContactManager::DoesNotExistError);
-    
-    delete cm;
+    cm->removeContact(self.localId());
+    QVERIFY(cm->selfContactId() == QContactLocalId(0)); // ensure reset after removed.
+    cm->setSelfContactId(selfContact); // reset to original state.
+    QVERIFY(spy.count() == 2); // ensure that the signals were emitted correctly.
 }
 
 QList<QContactDetail> tst_QContactManager::removeAllDefaultDetails(const QList<QContactDetail>& details)

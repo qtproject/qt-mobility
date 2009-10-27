@@ -144,6 +144,32 @@ QMap<QString, QString> QContactMemoryEngine::managerParameters() const
 }
 
 /*! \reimp */
+bool QContactMemoryEngine::setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error)
+{
+    if (contactId == QContactLocalId(0) || d->m_contactIds.contains(contactId)) {
+        error = QContactManager::NoError;
+        QContactLocalId oldId = d->m_selfContactId;
+        d->m_selfContactId = contactId;
+
+        // XXX TODO: use changeset for this?
+        emit selfContactIdChanged(oldId, contactId);
+        return true;
+    }
+
+    error = QContactManager::DoesNotExistError;
+    return false;
+}
+
+/*! \reimp */
+QContactLocalId QContactMemoryEngine::selfContactId(QContactManager::Error& error) const
+{
+    error = QContactManager::DoesNotExistError;
+    if (d->m_selfContactId != QContactLocalId(0))
+        error = QContactManager::NoError;
+    return d->m_selfContactId;
+}
+
+/*! \reimp */
 QList<QContactLocalId> QContactMemoryEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     // TODO: this needs to be done properly...
@@ -351,6 +377,10 @@ bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QCont
     d->m_contacts.removeAt(index);
     d->m_contactIds.removeAt(index);
     error = QContactManager::NoError;
+
+    // and if it was the self contact, reset the self contact id
+    if (contactId == d->m_selfContactId)
+        d->m_selfContactId = QContactLocalId(0);
 
     changeSet.removedContacts().insert(contactId);
     return true;
@@ -1025,6 +1055,8 @@ bool QContactMemoryEngine::hasFeature(QContactManager::ManagerFeature feature) c
             return true;
         case QContactManager::Anonymous:
             return d->m_anonymous;
+        case QContactManager::SelfContact:
+            return true;
 
         default:
             return false;
