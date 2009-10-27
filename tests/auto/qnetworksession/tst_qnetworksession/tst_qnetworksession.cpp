@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include <QtTest/QtTest>
-#include "../qbearertestcommon.h"
+#include "../../qbearertestcommon.h"
 #include <qnetworkconfigmanager.h>
 #include <qnetworksession.h>
 
@@ -68,6 +68,8 @@ private slots:
     void sessionOpenCloseStop_data();
     void sessionOpenCloseStop();
 
+    void outOfProcessSession();
+
 private:
     QNetworkConfigurationManager manager;
 
@@ -78,6 +80,7 @@ void tst_QNetworkSession::initTestCase()
 {
     qRegisterMetaType<QNetworkSession::State>("QNetworkSession::State");
     qRegisterMetaType<QNetworkSession::SessionError>("QNetworkSession::SessionError");
+    qRegisterMetaType<QNetworkConfiguration>("QNetworkConfiguration");
 
     inProcessSessionManagementCount = 0;
 
@@ -648,6 +651,88 @@ void tst_QNetworkSession::sessionOpenCloseStop()
                 QFAIL("Timeout waiting for session to close.");
             }
         }
+    }
+}
+
+QDebug operator<<(QDebug debug, const QList<QNetworkConfiguration> &list)
+{
+    debug.nospace() << "( ";
+    foreach (const QNetworkConfiguration &config, list)
+        debug.nospace() << config.identifier() << ", ";
+    debug.nospace() << ")\n";
+    return debug;
+}
+
+void tst_QNetworkSession::outOfProcessSession()
+{
+    QNetworkConfigurationManager manager;
+
+    QList<QNetworkConfiguration> before = manager.allConfigurations(QNetworkConfiguration::Active);
+
+    QSignalSpy spy(&manager, SIGNAL(configurationChanged(QNetworkConfiguration)));
+
+    QProcess lackey;
+    lackey.start("qnetworksessionlackey");
+    QVERIFY(lackey.waitForStarted());
+
+    do {
+        lackey.waitForReadyRead();
+        QByteArray output = lackey.readLine().trimmed();
+
+        if (output.startsWith("Started session ")) {
+            QString identifier = QString::fromLocal8Bit(output.mid(16).constData());
+
+            QNetworkConfiguration changed;
+
+            do {
+                QTRY_VERIFY(!spy.isEmpty());
+
+                changed = qvariant_cast<QNetworkConfiguration>(spy.takeFirst().at(0));
+
+            } while (changed.identifier() != identifier);
+
+            QVERIFY((changed.state() & QNetworkConfiguration::Active) ==
+                    QNetworkConfiguration::Active);
+
+            QVERIFY(!before.contains(changed));
+
+            QList<QNetworkConfiguration> after =
+                manager.allConfigurations(QNetworkConfiguration::Active);
+
+            QVERIFY(after.contains(changed));
+
+            spy.clear();
+
+            lackey.write("stop\n");
+
+            do {
+                QTRY_VERIFY(!spy.isEmpty());
+
+                changed = qvariant_cast<QNetworkConfiguration>(spy.takeFirst().at(0));
+            } while (changed.identifier() != identifier);
+
+            QVERIFY((changed.state() & QNetworkConfiguration::Active) !=
+                    QNetworkConfiguration::Active);
+
+            QList<QNetworkConfiguration> afterStop =
+                    manager.allConfigurations(QNetworkConfiguration::Active);
+
+            QVERIFY(!afterStop.contains(changed));
+
+            lackey.waitForFinished();
+        }
+    } while (lackey.state() == QProcess::Running);
+
+    switch (lackey.exitCode()) {
+    case 0:
+        break;
+    case 1:
+        QSKIP("No discovered configurations found.", SkipAll);
+        break;
+    case 2:
+        QSKIP("Lackey could not start session.", SkipAll);
+    default:
+        QSKIP("Lackey failed", SkipAll);
     }
 }
 
