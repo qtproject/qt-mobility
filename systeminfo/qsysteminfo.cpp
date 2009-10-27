@@ -329,8 +329,9 @@ QT_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)
 
 QSystemInfo::QSystemInfo(QObject *parent)
+    : QObject(parent)
 {
-    QSystemInfoPrivate *sysPriv = new QSystemInfoPrivate(parent);
+    QSystemInfoPrivate *sysPriv = sysinfoPrivate();
     connect(sysPriv,SIGNAL(currentLanguageChanged(QString)),
             this,SIGNAL(currentLanguageChanged(QString)));
 }
@@ -405,8 +406,9 @@ bool QSystemInfo::hasFeatureSupported(QSystemInfo::Feature feature)
 Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
 
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
+    : QObject(parent)
 {
-    QSystemNetworkInfoPrivate *d = new QSystemNetworkInfoPrivate(parent);
+    QSystemNetworkInfoPrivate *d = netInfoPrivate();
     connect(d,SIGNAL(currentMobileCountryCodeChanged(QString)),
             this,SIGNAL(currentMobileCountryCodeChanged(QString)));
 
@@ -549,7 +551,8 @@ QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::Netwo
  */
 Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
 
-QSystemDisplayInfo::QSystemDisplayInfo()
+QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
+    : QObject(parent)
 {
 }
 
@@ -588,8 +591,8 @@ int QSystemDisplayInfo::colorDepth(int screenNumber)
 Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
 
 QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
+    : QObject(parent)
 {
-    QSystemStorageInfoPrivate *d = new QSystemStorageInfoPrivate(parent);
 }
 
 /*!
@@ -644,8 +647,9 @@ QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &dr
 Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
 
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
+    : QObject(parent)
 {
-    QSystemDeviceInfoPrivate *d = new QSystemDeviceInfoPrivate(parent);
+    QSystemDeviceInfoPrivate *d = deviceInfoPrivate();
     connect(d,SIGNAL(batteryLevelChanged(int)),
             this,SIGNAL(batteryLevelChanged(int)));
 
@@ -823,6 +827,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
  */
 
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
+    : QObject(parent)
 {
     d = new QSystemScreenSaverPrivate(parent);
     screenSaverIsInhibited = screenSaverInhibited();

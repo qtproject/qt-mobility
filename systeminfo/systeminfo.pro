@@ -26,7 +26,7 @@ win32 {
 
         LIBS += \
             Ole32.lib \
-            Strmiids.lib \
+    #        Strmiids.lib \
             User32.lib \
             Gdi32.lib \
             Ws2_32.lib \
