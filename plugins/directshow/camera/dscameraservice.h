@@ -44,6 +44,7 @@ class DSCameraSession;
 class DSVideoOutputControl;
 class DSVideoDeviceControl;
 class DSVideoRendererControl;
+class DSImageCaptureControl;
 
 class DSCameraService : public QMediaService
 {
@@ -61,6 +62,7 @@ private:
     DSVideoOutputControl   *m_videoOutput;
     DSVideoDeviceControl   *m_videoDevice;
     DSVideoRendererControl *m_videoRenderer;
+    DSImageCaptureControl  *m_imageCapture;
     QByteArray m_device;
 };
 

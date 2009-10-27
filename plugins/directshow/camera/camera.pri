@@ -6,6 +6,7 @@ HEADERS += \
     $$PWD/dsvideorenderer.h \
     $$PWD/dsvideooutputcontrol.h \
     $$PWD/dsvideodevicecontrol.h \
+    $$PWD/dsimagecapturecontrol.h \
     $$PWD/dscamerasession.h
 
 SOURCES += \
@@ -14,6 +15,7 @@ SOURCES += \
     $$PWD/dsvideorenderer.cpp \
     $$PWD/dsvideooutputcontrol.cpp \
     $$PWD/dsvideodevicecontrol.cpp \
+    $$PWD/dsimagecapturecontrol.cpp \
     $$PWD/dscamerasession.cpp
 
 INCLUDEPATH += $(DXSDK_DIR)/include
