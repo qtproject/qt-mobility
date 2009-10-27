@@ -142,7 +142,7 @@ void UT_QVersitContactConverter::testConvertContact()
     QVersitDocument versitDocument = mConverter->convertContact(contact);
     
     // Ensure versit document is created with properties.
-    QCOMPARE(2, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 2);
 }
 
 void UT_QVersitContactConverter::testEncodeName()
@@ -171,10 +171,10 @@ void UT_QVersitContactConverter::testEncodeName()
     versitDocument = mConverter->convertContact(contact);
 
     //Ensure Context parameter is not encoded.
-    QCOMPARE(0, versitDocument.properties().at(0).parameters().count());
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 0);
     
     //Ensure versit document is created with properties.
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
     
     //Check for the property Name
     QString propertyName = versitDocument.properties().at(0).name();
@@ -185,7 +185,7 @@ void UT_QVersitContactConverter::testEncodeName()
     //Ensure value of properties contains all the infomation encoded
     QString value (versitDocument.properties().at(0).value() );
     QString expectedValue = "HH;Heiddo;A;Mr.;";
-    QCOMPARE(expectedValue, value );
+    QCOMPARE(value, expectedValue);
 }
 
 void UT_QVersitContactConverter::testEncodePhoneNumber()
@@ -204,10 +204,10 @@ void UT_QVersitContactConverter::testEncodePhoneNumber()
     QVersitDocument versitDocument = mConverter->convertContact(contact);
 
     //Ensure versit document is created with properties
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
 
     //Ensure Only Valid params are encoded
-    QCOMPARE(2, versitDocument.properties().at(0).parameters().count());
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
 
     //Ensure Valid parameters exisit
     QVERIFY(versitDocument.properties().at(0).parameters().contains(versitType, versitContextHomeId));
@@ -222,7 +222,7 @@ void UT_QVersitContactConverter::testEncodePhoneNumber()
     //Check property value
     QString value (versitDocument.properties().at(0).value() );
     QString expectedValue = "12345678";
-    QCOMPARE(expectedValue, value );
+    QCOMPARE(value, expectedValue);
 }
 
 void UT_QVersitContactConverter::testEncodeEmailAddress()
@@ -243,10 +243,10 @@ void UT_QVersitContactConverter::testEncodeEmailAddress()
     versitDocument = mConverter->convertContact(contact);
 
     //Ensure versit document is created with properties
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
 
     //Ensure Only Valid params are encoded
-    QCOMPARE(1, versitDocument.properties().at(0).parameters().count());
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 1);
 
     //Ensure Valid parameters exisit
     QVERIFY(versitDocument.properties().at(0).parameters().contains(versitType, versitContextHomeId));
@@ -260,7 +260,7 @@ void UT_QVersitContactConverter::testEncodeEmailAddress()
     //Check value 
     QString value (versitDocument.properties().at(0).value() );
     QString expectedValue = "test@test";
-    QCOMPARE(expectedValue, value );
+    QCOMPARE(value, expectedValue);
 
 }
 
@@ -287,10 +287,10 @@ void UT_QVersitContactConverter::testEncodeStreetAddress()
     versitDocument= mConverter->convertContact(contact);
     
     //Ensure versit document is created with properties
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
 
     //Ensure Only Valid params are encoded
-    QCOMPARE(2, versitDocument.properties().at(0).parameters().count());
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
 
     //Ensure Valid parameters exisit
     QVERIFY(versitDocument.properties().at(0).parameters().contains(versitType, versitContextHomeId));
@@ -309,7 +309,7 @@ void UT_QVersitContactConverter::testEncodeStreetAddress()
     //Locality  + ";" + Region  + ";" + Postal Code  + ";" + Country
 
     QString expectedValue = ";;HKKI 1X 90;Helsinki;;00440;Finland";
-    QCOMPARE(expectedValue, value );
+    QCOMPARE(value, expectedValue);
 }
 
 void UT_QVersitContactConverter::testEncodeUrl()
@@ -328,10 +328,10 @@ void UT_QVersitContactConverter::testEncodeUrl()
     QVersitDocument versitDocument = mConverter->convertContact(contact);
 
     //Ensure property Exisit
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
 
     //Ensure Only Valid params are encoded
-    QCOMPARE(1, versitDocument.properties().at(0).parameters().count());
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 1);
 
     //Ensure Valid parameters exisit
     QVERIFY(versitDocument.properties().at(0).parameters().contains(versitType, versitContextHomeId));
@@ -346,7 +346,7 @@ void UT_QVersitContactConverter::testEncodeUrl()
     //Check property value
     QString value (versitDocument.properties().at(0).value());
     QString expectedValue = "http://www.myhome.com";
-    QCOMPARE(expectedValue, value );
+    QCOMPARE(value, expectedValue);
 }
 
 void UT_QVersitContactConverter::testEncodeUid()
@@ -366,10 +366,10 @@ void UT_QVersitContactConverter::testEncodeUid()
     QVersitDocument versitDocument = mConverter->convertContact(contact);
 
     //Ensure parameters does not exisit
-    QCOMPARE(0, versitDocument.properties().at(0).parameters().count());
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 0);
 
     //Ensure property Exisit
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
 
     //Ensure valud value exist for the parameters.
 
@@ -381,7 +381,7 @@ void UT_QVersitContactConverter::testEncodeUid()
     //Check property value
     QString value (versitDocument.properties().at(0).value());
     QString expectedValue = "0101222";
-    QCOMPARE(expectedValue, value);
+    QCOMPARE(value, expectedValue);
 }
 
 void UT_QVersitContactConverter::testEncodeRev()
@@ -402,10 +402,10 @@ void UT_QVersitContactConverter::testEncodeRev()
     QVersitDocument versitDocument = mConverter->convertContact(contact);
 
     //Ensure parameters does not exisit
-    QCOMPARE(0, versitDocument.properties().at(0).parameters().count());
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 0);
 
     //Ensure property Exisit
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
 
     //Ensure property parameer exisit and matches.
     QString propertyName = versitDocument.properties().at(0).name();
@@ -416,7 +416,7 @@ void UT_QVersitContactConverter::testEncodeRev()
     //Check property value
     QString value = (versitDocument.properties().at(0).value());
     QString expValueUTCEncoded = QString::fromAscii("2009-01-01T06:01:02Z");
-    QCOMPARE(expValueUTCEncoded, value);
+    QCOMPARE(value, expValueUTCEncoded);
 
 
     // Test 2: If Modified Data does not Exist than date of contact created will be used.
@@ -429,7 +429,7 @@ void UT_QVersitContactConverter::testEncodeRev()
     value = QString::fromAscii(versitDocument.properties().at(0).value());
 
     // Ensure Value exisit and matches.
-    QCOMPARE(expValueUTCEncoded, value);
+    QCOMPARE(value, expValueUTCEncoded);
 
 
     // Test 3: Modified Date but Local Time spec not UTC
@@ -444,7 +444,7 @@ void UT_QVersitContactConverter::testEncodeRev()
 
     // Ensure Value exisit and matches.
     QString expValueEncoded = QString::fromAscii("2009-01-01T06:01:02");
-    QCOMPARE(expValueUTCEncoded, value);
+    QCOMPARE(value, expValueUTCEncoded);
 
 
     // Test 4: Empty Date Entry No Created / Modified Date.
@@ -454,7 +454,7 @@ void UT_QVersitContactConverter::testEncodeRev()
     contact.saveDetail(&p);
 
     versitDocument = mConverter->convertContact(contact);
-    QCOMPARE(0, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 0);
 }
 
 void UT_QVersitContactConverter::testEncodeBirthDay()
@@ -474,10 +474,10 @@ void UT_QVersitContactConverter::testEncodeBirthDay()
     QVersitDocument versitDocument = mConverter->convertContact(contact);
 
     //Ensure parameters does not exisit
-    QCOMPARE(0, versitDocument.properties().at(0).parameters().count());
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 0);
 
     //Ensure property Exisit
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
 
     //Ensure property parameer exisit and matches.
     QString propertyName = versitDocument.properties().at(0).name();
@@ -488,7 +488,7 @@ void UT_QVersitContactConverter::testEncodeBirthDay()
     //Check property value
     QString value = (versitDocument.properties().at(0).value());
     QString expectedValue = QString::fromAscii("2009-01-01");
-    QCOMPARE(expectedValue, value);
+    QCOMPARE(value, expectedValue);
 }
 
 void UT_QVersitContactConverter::testEncodeNote()
@@ -507,10 +507,10 @@ void UT_QVersitContactConverter::testEncodeNote()
     QVersitDocument versitDocument = mConverter->convertContact(contact);
 
     //Ensure parameters does not exisit
-    QCOMPARE(0, versitDocument.properties().at(0).parameters().count());
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 0);
 
     //Ensure property Exisit
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
 
     //Ensure property parameer exisit and matches.
     QString propertyName = versitDocument.properties().at(0).name();
@@ -520,7 +520,7 @@ void UT_QVersitContactConverter::testEncodeNote()
 
     //Check property value
     QString value = versitDocument.properties().at(0).value();
-    QCOMPARE(myNote, value);
+    QCOMPARE(value, myNote);
 }
 
 void UT_QVersitContactConverter::testEncodeGeoLocation()
@@ -548,10 +548,10 @@ void UT_QVersitContactConverter::testEncodeGeoLocation()
     QVersitDocument versitDocument = mConverter->convertContact(contact);
 
     //Ensure parameters does not exisit
-    QCOMPARE(0, versitDocument.properties().at(0).parameters().count());
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 0);
 
     //Ensure property Exisit
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
 
     //Ensure property parameer exisit and matches.
     QString propertyName = versitDocument.properties().at(0).name();
@@ -562,7 +562,7 @@ void UT_QVersitContactConverter::testEncodeGeoLocation()
     //Check property value
     QString value = (versitDocument.properties().at(0).value() );
     QString expectedValue = longitude + QString::fromAscii(",") + latitude;
-    QCOMPARE(expectedValue, value);
+    QCOMPARE(value, expectedValue);
 }
 
 void UT_QVersitContactConverter::testEncodeOrganization()
@@ -794,8 +794,8 @@ void UT_QVersitContactConverter::testEncodeEmbeddedContent()
     contact.saveDetail(&contactAvatar);
     versitDocument = mConverter->convertContact(contact);
     QVERIFY(!mScaleSignalEmitted);
-    QCOMPARE(1, versitDocument.properties().count());
-    QCOMPARE(2, versitDocument.properties().at(0).parameters().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
     QVERIFY(versitDocument.properties().at(0).parameters().contains(versitType, "GGG"));
     QVERIFY(versitDocument.properties().at(0).parameters().contains(versitValue, versitUrlId));
 
@@ -806,7 +806,7 @@ void UT_QVersitContactConverter::testEncodeEmbeddedContent()
     contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
     contact.saveDetail(&contactAvatar);
     versitDocument = mConverter->convertContact(contact);
-    QCOMPARE(0, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 0);
 }
 
 void UT_QVersitContactConverter::testEncodeParameters()
@@ -835,10 +835,10 @@ void UT_QVersitContactConverter::testEncodeParameters()
     QVersitDocument versitDocument = mConverter->convertContact(contact);
 
     //Ensure property Exisit
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
 
     //Ensure Only Valid params are encoded
-    QCOMPARE(2, versitDocument.properties().at(0).parameters().count());
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
 
     //Ensure Valid parameters exisit
     QVERIFY(versitDocument.properties().at(0).parameters().contains(versitType, versitCellId));
@@ -857,7 +857,7 @@ void UT_QVersitContactConverter::testIsValidRemoteUrl()
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
     contact.saveDetail(&contactAvatar);
     versitDocument = mConverter->convertContact(contact);
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
 
 
     // Test2: FTP URL
@@ -866,7 +866,7 @@ void UT_QVersitContactConverter::testIsValidRemoteUrl()
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
     contact.saveDetail(&contactAvatar);
     versitDocument = mConverter->convertContact(contact);
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
 
 
     // Test3: NEW Protocol URL
@@ -875,7 +875,7 @@ void UT_QVersitContactConverter::testIsValidRemoteUrl()
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
     contact.saveDetail(&contactAvatar);
     versitDocument = mConverter->convertContact(contact);
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
 
 
     // Test4: URL without schem
@@ -884,7 +884,7 @@ void UT_QVersitContactConverter::testIsValidRemoteUrl()
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
     contact.saveDetail(&contactAvatar);
     versitDocument = mConverter->convertContact(contact);
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
 
     // Test5: File Name but File does not Exisit
     url = QString::fromAscii("c:/filedoesnotexisit.jok");
@@ -892,7 +892,7 @@ void UT_QVersitContactConverter::testIsValidRemoteUrl()
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
     contact.saveDetail(&contactAvatar);
     versitDocument = mConverter->convertContact(contact);
-    QCOMPARE(0, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 0);
 }
 
 
@@ -911,10 +911,10 @@ void UT_QVersitContactConverter::testEncodeGender()
     QVersitDocument versitDocument = mConverter->convertContact(contact);
 
     //Ensure parameters does not exisit
-    QCOMPARE(0, versitDocument.properties().at(0).parameters().count());
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 0);
 
     //Ensure property Exisit
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
 
     //Ensure property parameer exisit and matches.
     QString propertyName = versitDocument.properties().at(0).name();
@@ -924,7 +924,7 @@ void UT_QVersitContactConverter::testEncodeGender()
 
     //Check property value
     QString value = versitDocument.properties().at(0).value();
-    QCOMPARE(QString(QLatin1String(QContactGender::GenderMale)), value);
+    QCOMPARE(value, QString(QLatin1String(QContactGender::GenderMale)));
 }
 
 void UT_QVersitContactConverter::testEncodeNickName()
@@ -943,10 +943,10 @@ void UT_QVersitContactConverter::testEncodeNickName()
     QVersitDocument versitDocument = mConverter->convertContact(contact);
 
     //Ensure parameters does not exisit
-    QCOMPARE(0, versitDocument.properties().at(0).parameters().count());
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 0);
 
     //Ensure property Exisit
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
 
     //Ensure property parameer exisit and matches.
     QString propertyName = versitDocument.properties().at(0).name();
@@ -957,7 +957,7 @@ void UT_QVersitContactConverter::testEncodeNickName()
 
     //Check property value
     QString value = versitDocument.properties().at(0).value();
-    QCOMPARE(nick, value);
+    QCOMPARE(value, nick);
 
 }
 
@@ -981,10 +981,10 @@ void UT_QVersitContactConverter::testEncodeAnniversary()
     QVersitDocument versitDocument = mConverter->convertContact(contact);
 
     //Ensure parameters only one parameter exisit
-    QCOMPARE(1, versitDocument.properties().at(0).parameters().count());
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 1);
 
     //Ensure property Exisit
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
 
     //Ensure property parameer exisit and matches.
     QString propertyName = versitDocument.properties().at(0).name();
@@ -995,7 +995,7 @@ void UT_QVersitContactConverter::testEncodeAnniversary()
     //Check property value
     QString expectedValue = QString::fromAscii("2009-01-01");
     QString value = versitDocument.properties().at(0).value();
-    QCOMPARE(expectedValue, value);
+    QCOMPARE(value, expectedValue);
 
     // Ensure Sub types matches.
     QVERIFY(versitDocument.properties().at(0).parameters().contains(versitType,
@@ -1019,14 +1019,14 @@ void UT_QVersitContactConverter::testEncodOnlineAccount()
     QVersitDocument versitDocument = mConverter->convertContact(contact);
 
     //Ensure parameters exisit, i.e. home and swiss
-    QCOMPARE(2, versitDocument.properties().at(0).parameters().count());
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
     QVERIFY(versitDocument.properties().at(0).parameters().contains(
             versitType, versitContextHomeId));
     QVERIFY(versitDocument.properties().at(0).parameters().contains(
             versitType, versitSwisId));
 
     //Ensure property Exisit
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
 
     //Ensure property parameer exisit and matches.
     QString propertyName = versitDocument.properties().at(0).name();
@@ -1034,14 +1034,14 @@ void UT_QVersitContactConverter::testEncodOnlineAccount()
 
     //Check property value
     QString value = versitDocument.properties().at(0).value();
-    QCOMPARE(testUri, value);
+    QCOMPARE(value, testUri);
 
     //Test2: InValid Sub Type Value is not encoded.
     onlineAccount.setAccountUri(testUri);
     onlineAccount.setSubTypes("INVALIDSUBTYPE");
     contact.saveDetail(&onlineAccount);
     versitDocument = mConverter->convertContact(contact);
-    QCOMPARE(0, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 0);
 }
 
 
@@ -1056,7 +1056,7 @@ void UT_QVersitContactConverter::testEncodeFamily()
     contact.saveDetail(&family);
     //Convert Contat Into Versit Document
     QVersitDocument versitDocument = mConverter->convertContact(contact);
-    QCOMPARE(0, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 0);
 
     //Test2: Only Spouce.
     QString spouce = "ABC";
@@ -1066,14 +1066,14 @@ void UT_QVersitContactConverter::testEncodeFamily()
     versitDocument = mConverter->convertContact(contact);
 
     //Ensure property Exisit
-    QCOMPARE(1, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 1);
     //Ensure no parameters exisit,
     QCOMPARE(0, versitDocument.properties().at(0).parameters().count());
     QString propertyName = versitDocument.properties().at(0).name();
     QCOMPARE(propertyName, QString::fromAscii(versitSpouseId));
 
     QString value (versitDocument.properties().at(0).value() );
-    QCOMPARE(spouce, value );
+    QCOMPARE(value, spouce);
 
 
     //Test3: Spouce with few childerns
@@ -1085,22 +1085,22 @@ void UT_QVersitContactConverter::testEncodeFamily()
     versitDocument = mConverter->convertContact(contact);
 
     //Ensure property Exisit
-    QCOMPARE(2, versitDocument.properties().count());
+    QCOMPARE(versitDocument.properties().count(), 2);
     //Ensure no parameters exisit,
-    QCOMPARE(0, versitDocument.properties().at(0).parameters().count());
+    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 0);
 
     //Ensure property parameer exisit and matches.
     QString propertyName1 = versitDocument.properties().at(0).name();
     QCOMPARE(propertyName1, QString::fromAscii(versitSpouseId));
 
     QString value1 (versitDocument.properties().at(0).value() );
-    QCOMPARE(spouce, value1 );
+    QCOMPARE(value1, spouce);
 
     QString propertyName2 = versitDocument.properties().at(1).name();
     QCOMPARE(propertyName2, QString::fromAscii(versitChildrenId));
 
     QString value2 (versitDocument.properties().at(1).value() );
     QString expected = "A,B";
-    QCOMPARE(expected, value2 );
+    QCOMPARE(value2, expected);
 }
 
