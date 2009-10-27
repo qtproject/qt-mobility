@@ -229,7 +229,11 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
         }
     }
     
-    return result.mid(offset, (limit ? limit : -1));
+    if (offset) {
+        return result.mid(offset, (limit ? limit : -1));
+    } else {
+        return result;
+    }
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER

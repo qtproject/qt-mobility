@@ -294,8 +294,10 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QM
 
 bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
 {
-    //TODO: Support options
-    Q_UNUSED(options)
+    if (options) {
+        //TODO: Support options
+        return false;
+    }
 
     if (body.isEmpty()) {
         return queryMessages(filter, ordering, limit, offset);
