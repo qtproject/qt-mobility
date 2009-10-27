@@ -40,10 +40,10 @@
 ****************************************************************************/
 
 #ifndef Q_CC_MINGW
+#define _WIN32_DCOM
 #include "qwmihelper_win_p.h"
 #include <QDebug>
-
-#include <Objbase.h>
+#include "ObjBase.h"
 #include <Wbemidl.h>
 #include <Oleauto.h>
 #include <QStringList>
