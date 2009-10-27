@@ -290,6 +290,14 @@ bool QMessageStore::addMessage(QMessage *message)
 
         MapiStorePtr mapiStore = d_ptr->p_ptr->session->findStore(lError,message->parentAccountId(),false);
         if (*lError == QMessageStore::NoError && !mapiStore.isNull()) {
+
+            //check store/message type compatibility
+            if(!(mapiStore->types() & message->type()))
+            {
+                *lError = QMessageStore::ConstraintFailure;
+                return false;
+            }
+
             MapiFolderPtr mapiFolder;
 
             // Find the parent folder for this message
@@ -366,6 +374,21 @@ bool QMessageStore::updateMessage(QMessage *message)
     } else {
         d_ptr->p_ptr->lastError = QMessageStore::NoError;
     }
+
+    //check store/message type compatibility
+    if(MapiStorePtr mapiStore = d_ptr->p_ptr->session->findStore(&d_ptr->p_ptr->lastError,message->parentAccountId()))
+    {
+        if(!(mapiStore->types() & message->type()))
+        {
+            d_ptr->p_ptr->lastError = QMessageStore::ConstraintFailure;
+            return false;
+        }
+    }
+    else{
+        qWarning() << "Unable to retrieve MAPI store for message at update";
+        return false;
+    }
+
 
     if (message && message->id().isValid()) {
         QMessageStore::ErrorCode* lError = &d_ptr->p_ptr->lastError;
