@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qimageprocessingcontrol.h>
+#include <multimedia/experimental/qimageprocessingcontrol.h>
 #include  "qmediacontrol_p.h"
 
 /*!

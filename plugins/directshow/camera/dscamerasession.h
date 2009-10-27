@@ -40,7 +40,7 @@
 #include <QUrl>
 #include <QMutex>
 
-#include <multimedia/qcamera.h>
+#include <multimedia/experimental/qcamera.h>
 #include <QtMultimedia/qvideoframe.h>
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideosurfaceformat.h>

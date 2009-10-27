@@ -45,7 +45,7 @@
 
 #include <multimedia/qmediaservice.h>
 #include <multimedia/qmediarecorder.h>
-#include <multimedia/qcamera.h>
+#include <multimedia/experimental/qcamera.h>
 #include <multimedia/qvideowidget.h>
 
 #include <QtGui>

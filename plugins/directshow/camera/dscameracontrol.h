@@ -36,7 +36,7 @@
 #define DSCAMERACONTROL_H
 
 #include <QtCore/qobject.h>
-#include <multimedia/qcameracontrol.h>
+#include <multimedia/experimental/qcameracontrol.h>
 
 class DSCameraService;
 class DSCameraSession;

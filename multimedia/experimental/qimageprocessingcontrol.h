@@ -39,52 +39,47 @@
 **
 ****************************************************************************/
 
-#ifndef QCAMERAFOCUSCONTROL_H
-#define QCAMERAFOCUSCONTROL_H
+#ifndef QIMAGEPROCESSINGCONTROL_H
+#define QIMAGEPROCESSINGCONTROL_H
 
 #include <multimedia/qmediacontrol.h>
 #include <multimedia/qmediaobject.h>
 
-#include <multimedia/qcamera.h>
+#include <multimedia/experimental/qcamera.h>
 
-class Q_MEDIA_EXPORT QCameraFocusControl : public QMediaControl
+class Q_MEDIA_EXPORT QImageProcessingControl : public QMediaControl
 {
     Q_OBJECT
 
 public:
-    ~QCameraFocusControl();
+    ~QImageProcessingControl();
 
-    virtual QCamera::FocusMode focusMode() const = 0;
-    virtual void setFocusMode(QCamera::FocusMode mode) = 0;
-    virtual QCamera::FocusModes supportedFocusModes() const = 0;
-    virtual QCamera::FocusStatus focusStatus() const = 0;
+    virtual QCamera::WhiteBalanceMode whiteBalanceMode() const = 0;
+    virtual void setWhiteBalanceMode(QCamera::WhiteBalanceMode mode) = 0;
+    virtual QCamera::WhiteBalanceModes supportedWhiteBalanceModes() const = 0;
+    virtual int manualWhiteBalance() const = 0;
+    virtual void setManualWhiteBalance(int colorTemperature) = 0;
 
-    virtual bool macroFocusingEnabled() const = 0;
-    virtual bool isMacroFocusingSupported() const = 0;
-    virtual void setMacroFocusingEnabled(bool) = 0;
+    virtual qreal contrast() const = 0;
+    virtual void setContrast(qreal value) = 0;
 
-    virtual qreal maximumOpticalZoom() const = 0;
-    virtual qreal maximumDigitalZoom() const = 0;
-    virtual qreal zoomValue() const = 0;
-    virtual void zoomTo(qreal value) = 0;
+    virtual qreal saturation() const = 0;
+    virtual void setSaturation(qreal value) = 0;
 
-    virtual bool isFocusLocked() const = 0;
+    virtual bool isSharpeningSupported() const = 0;
+    virtual qreal sharpeningLevel() const = 0;
+    virtual void setSharpeningLevel(qreal value) = 0;
 
-public Q_SLOTS:
-    virtual void lockFocus() = 0;
-    virtual void unlockFocus() = 0;
-
-Q_SIGNALS:
-    void zoomValueChanged(qreal);
-    void focusStatusChanged(QCamera::FocusStatus);
-    void focusLocked();
+    virtual bool isDenoisingSupported() const = 0;
+    virtual qreal denoisingLevel() const = 0;
+    virtual void setDenoisingLevel(qreal value) = 0;
 
 protected:
-    QCameraFocusControl(QObject* parent = 0);
+    QImageProcessingControl(QObject* parent = 0);
 };
 
-#define QCameraFocusControl_iid "com.nokia.Qt.QCameraFocusingControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QCameraFocusControl, QCameraFocusControl_iid)
+#define QImageProcessingControl_iid "com.nokia.Qt.QImageProcessingControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QImageProcessingControl, QImageProcessingControl_iid)
 
-#endif  // QCAMERAFOCUSCONTROL_H
+#endif
 

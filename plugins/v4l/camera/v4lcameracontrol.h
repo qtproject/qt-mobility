@@ -43,7 +43,7 @@
 #define V4LCAMERACONTROL_H
 
 #include <QtCore/qobject.h>
-#include <multimedia/qcameracontrol.h>
+#include <multimedia/experimental/qcameracontrol.h>
 
 class V4LCameraService;
 class V4LCameraSession;

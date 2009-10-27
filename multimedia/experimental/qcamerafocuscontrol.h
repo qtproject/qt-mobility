@@ -39,79 +39,52 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qcameracontrol.h>
-#include  "qmediacontrol_p.h"
+#ifndef QCAMERAFOCUSCONTROL_H
+#define QCAMERAFOCUSCONTROL_H
 
-/*!
-    \class QCameraControl
-    \ingroup multimedia
+#include <multimedia/qmediacontrol.h>
+#include <multimedia/qmediaobject.h>
 
-    \preliminary
-    \brief The abstract class for controling still or video cameras, this is provided
-    by a QMediaService object, and is used by QCamera.
+#include <multimedia/experimental/qcamera.h>
 
-    The interface name of QCameraControl is \c com.nokia.Qt.QCameraControl/1.0 as
-    defined in QCameraControl_iid.
-
-    \sa QMediaService::control(), QCamera
-*/
-
-/*!
-    \macro QCameraControl_iid
-
-    \c com.nokia.Qt.QCameraControl/1.0
-
-    Defines the interface name of the QCameraControl class.
-
-    \relates QCameraControl
-*/
-
-/*!
-    Constructs a camera control object with \a parent.
-*/
-
-QCameraControl::QCameraControl(QObject *parent):
-    QMediaControl(*new QMediaControlPrivate, parent)
+class Q_MEDIA_EXPORT QCameraFocusControl : public QMediaControl
 {
-}
+    Q_OBJECT
 
-/*!
-    Destruct the camera control object.
-*/
+public:
+    ~QCameraFocusControl();
 
-QCameraControl::~QCameraControl()
-{
-}
+    virtual QCamera::FocusMode focusMode() const = 0;
+    virtual void setFocusMode(QCamera::FocusMode mode) = 0;
+    virtual QCamera::FocusModes supportedFocusModes() const = 0;
+    virtual QCamera::FocusStatus focusStatus() const = 0;
 
-/*!
-    \fn QCameraControl::start()
-    Start the camera service.
-*/
+    virtual bool macroFocusingEnabled() const = 0;
+    virtual bool isMacroFocusingSupported() const = 0;
+    virtual void setMacroFocusingEnabled(bool) = 0;
 
-/*!
-    \fn QCameraControl::stop()
+    virtual qreal maximumOpticalZoom() const = 0;
+    virtual qreal maximumDigitalZoom() const = 0;
+    virtual qreal zoomValue() const = 0;
+    virtual void zoomTo(qreal value) = 0;
 
-    Stop the camera service.
-*/
+    virtual bool isFocusLocked() const = 0;
 
-/*!
-    \fn QCameraControl::state() const
+public Q_SLOTS:
+    virtual void lockFocus() = 0;
+    virtual void unlockFocus() = 0;
 
-    Returns the state of the camera service.
+Q_SIGNALS:
+    void zoomValueChanged(qreal);
+    void focusStatusChanged(QCamera::FocusStatus);
+    void focusLocked();
 
-    \sa QCamera::state
-*/
+protected:
+    QCameraFocusControl(QObject* parent = 0);
+};
 
-/*!
-    \fn void QCameraControl::stateChanged(QCamera::State state)
+#define QCameraFocusControl_iid "com.nokia.Qt.QCameraFocusingControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QCameraFocusControl, QCameraFocusControl_iid)
 
-    Signal emitted when \a state changes state.
-*/
-
-/*!
-    \fn void QCameraControl::error(int error, const QString &errorString)
-
-    Signal emitted when an error occurs with error code \a error and
-    a description of the error \a errorString.
-*/
+#endif  // QCAMERAFOCUSCONTROL_H
 

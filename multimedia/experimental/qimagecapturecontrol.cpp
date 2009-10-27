@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qimagecapturecontrol.h>
+#include <multimedia/experimental/qimagecapturecontrol.h>
 #include <QtCore/qstringlist.h>
 
 /*!
