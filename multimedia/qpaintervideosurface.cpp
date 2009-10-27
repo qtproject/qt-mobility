@@ -548,7 +548,7 @@ QVideoSurfaceArbFpPainter::QVideoSurfaceArbFpPainter(QGLContext *context)
 
     m_context->doneCurrent();
 
-    Q_ASSERT(glActiveTextureARB);
+    Q_ASSERT(glActiveTexture);
     Q_ASSERT(glProgramStringARB);
     Q_ASSERT(glBindProgramARB);
     Q_ASSERT(glDeleteProgramsARB);
@@ -823,7 +823,7 @@ QVideoSurfaceGlslPainter::QVideoSurfaceGlslPainter(QGLContext *context)
 {
     m_context->doneCurrent();
 
-    Q_ASSERT(glActiveTextureARB);
+    Q_ASSERT(glActiveTexture);
 
     m_imagePixelFormats
             << QVideoFrame::Format_RGB32
