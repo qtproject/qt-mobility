@@ -107,7 +107,7 @@ private:
     Q_DECLARE_PRIVATE(QMediaImageViewer)
     Q_PRIVATE_SLOT(d_func(), void _q_mediaStatusChanged(QMediaImageViewer::MediaStatus))
     Q_PRIVATE_SLOT(d_func(), void _q_playlistMediaChanged(const QMediaContent &))
-    Q_PRIVATE_SLOT(d_func(), void _q_playlistDestroyed(QObject *))
+    Q_PRIVATE_SLOT(d_func(), void _q_playlistDestroyed())
 };
 
 #endif
