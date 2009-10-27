@@ -65,13 +65,14 @@ class QContactDetailDefinitionData : public QSharedData
 {
 public:
     QContactDetailDefinitionData()
-        : QSharedData(),
-        m_unique(false)
+        : m_constraint(QContactDetailDefinition::NoConstraint),
+          m_unique(false)
     {
     }
 
     QContactDetailDefinitionData(const QContactDetailDefinitionData& other)
         : QSharedData(other),
+        m_constraint(other.m_constraint),
         m_name(other.m_name),
         m_unique(other.m_unique),
         m_fields(other.m_fields)
@@ -80,9 +81,10 @@ public:
 
     ~QContactDetailDefinitionData() {}
 
+    QContactDetailDefinition::AccessConstraint m_constraint;
     QString m_name;
     bool m_unique;
-    QMap<QString, QContactDetailDefinitionField> m_fields;
+    QMap<QString, QContactDetailDefinition::Field> m_fields;
 };
 
 #endif
