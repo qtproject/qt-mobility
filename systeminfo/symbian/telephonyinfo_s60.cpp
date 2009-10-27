@@ -167,7 +167,7 @@ CBatteryInfo::CBatteryInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
     m_previousBatteryLevel = m_batteryLevel;
 
     m_powerState = m_batteryInfoV1.iStatus;
-    m_previousBatteryStatus = m_powerState;
+    m_previousPowerState = m_powerState;
     
     m_initializing = false;
 
@@ -184,14 +184,14 @@ void CBatteryInfo::RunL()
 
         foreach (MTelephonyInfoObserver *observer, m_observers) {
             if (m_batteryLevel != m_previousBatteryLevel) {
-                m_previousBatteryLevel = m_batteryLevel;
                 observer->batteryLevelChanged();
             }
-            if (m_powerState != m_previousBatteryStatus) {
-                m_previousBatteryStatus = m_powerState;
+            if (m_powerState != m_previousPowerState) {
                 observer->powerStateChanged();
             }
         }
+        m_previousBatteryLevel = m_batteryLevel;
+        m_previousPowerState = m_powerState;
         startMonitoring();
     }
 }
@@ -207,12 +207,12 @@ void CBatteryInfo::DoCancel()
 
 int CBatteryInfo::batteryLevel() const
 {
-    return m_previousBatteryLevel;
+    return m_batteryLevel;
 }
 
-CTelephony::TBatteryStatus CBatteryInfo::batteryStatus() const
+CTelephony::TBatteryStatus CBatteryInfo::powerState() const
 {
-    return m_previousBatteryStatus;
+    return m_powerState;
 }
 
 void CBatteryInfo::startMonitoring()
@@ -275,10 +275,10 @@ void CCellNetworkInfo::RunL()
             if (m_networkName != m_previousNetworkName) {
                 observer->networkNameChanged();
             }
-            m_previousNetworkId = m_networkId;
-            m_previousCountryCode = m_countryCode;
-            m_previousNetworkName = m_networkName;
         }
+        m_previousNetworkId = m_networkId;
+        m_previousCountryCode = m_countryCode;
+        m_previousNetworkName = m_networkName;
         startMonitoring();
     }
 }
@@ -346,10 +346,10 @@ void CCellNetworkRegistrationInfo::RunL()
 
         foreach (MTelephonyInfoObserver *observer, m_observers) {
             if (m_networkStatus != m_previousNetworkStatus) {
-                m_previousNetworkStatus = m_networkStatus;
                 observer->cellNetworkStatusChanged();
             }
         }
+        m_previousNetworkStatus = m_networkStatus;
         startMonitoring();
     }
 }
@@ -398,13 +398,13 @@ void CCellSignalStrengthInfo::RunL()
     } else {
         m_cellNetworkSignalStrength = m_signalStrengthV1.iSignalStrength;
         m_signalBar = m_signalStrengthV1.iBar;
-                
+
         if (m_signalBar != m_previousSignalBar) {
-            m_previousSignalBar = m_signalBar;
             foreach (MTelephonyInfoObserver *observer, m_observers) {
                 observer->cellNetworkSignalStrengthChanged();
             }
         }
+        m_previousSignalBar = m_signalBar;
         startMonitoring();
     }
 }

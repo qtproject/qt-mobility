@@ -433,9 +433,9 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 
 QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 {
-    CTelephony::TBatteryStatus batteryStatus = DeviceInfo::instance()->batteryInfo()->batteryStatus();
+    CTelephony::TBatteryStatus powerState = DeviceInfo::instance()->batteryInfo()->powerState();
 
-    switch (batteryStatus) {
+    switch (powerState) {
         case CTelephony::EPoweredByBattery:
             return QSystemDeviceInfo::BatteryPower;
 

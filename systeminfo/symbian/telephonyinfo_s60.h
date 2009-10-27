@@ -154,7 +154,7 @@ protected:
 
 public:
     int batteryLevel() const;
-    CTelephony::TBatteryStatus batteryStatus() const;
+    CTelephony::TBatteryStatus powerState() const;
 
 private:
     bool m_initializing;
@@ -165,8 +165,8 @@ private:
     int m_batteryLevel;
     int m_previousBatteryLevel;
 
-    CTelephony::TBatteryStatus m_previousBatteryStatus;
     CTelephony::TBatteryStatus m_powerState;
+    CTelephony::TBatteryStatus m_previousPowerState;
 };
 
 class CCellNetworkInfo : public CTelephonyInfo
