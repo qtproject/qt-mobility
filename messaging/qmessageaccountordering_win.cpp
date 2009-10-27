@@ -41,44 +41,60 @@
 #include "qmessageaccountordering.h"
 #include "qmessageaccountordering_p.h"
 
-
-QMessageAccountOrdering::QMessageAccountOrdering()
+QMessageAccountOrderingPrivate::QMessageAccountOrderingPrivate(QMessageAccountOrdering *ordering)
+    :q_ptr(ordering),
+    _empty(true),
+    _order(Qt::AscendingOrder)
 {
 }
 
-QMessageAccountOrdering::QMessageAccountOrdering(const QMessageAccountOrdering &other)
+QMessageAccountOrdering::QMessageAccountOrdering()
+    :d_ptr(new QMessageAccountOrderingPrivate(this))
 {
-    Q_UNUSED(other)
 }
 
 QMessageAccountOrdering::~QMessageAccountOrdering()
 {
+    delete d_ptr;
+    d_ptr = 0;
+}
+
+QMessageAccountOrdering::QMessageAccountOrdering(const QMessageAccountOrdering &other)
+    :d_ptr(new QMessageAccountOrderingPrivate(this))
+{
+    this->operator=(other);
 }
 
 bool QMessageAccountOrdering::isEmpty() const
 {
-    return false; // stub
+    return d_ptr->_empty;
 }
 
 bool QMessageAccountOrdering::isSupported() const
 {
-    return false; // stub
+    return true;
 }
 
 bool QMessageAccountOrdering::operator==(const QMessageAccountOrdering& other) const
 {
-    Q_UNUSED(other)
-    return false; // stub
+    return ((d_ptr->_empty == other.d_ptr->_empty) &&
+            (d_ptr->_order == other.d_ptr->_order) &&
+            (d_ptr->_empty == other.d_ptr->_empty));
 }
 
 QMessageAccountOrdering& QMessageAccountOrdering::operator=(const QMessageAccountOrdering& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        *d_ptr = *other.d_ptr;
+    }
+
+    return *this;
 }
 
 QMessageAccountOrdering QMessageAccountOrdering::byName(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageAccountOrdering(); // stub
+    QMessageAccountOrdering result;
+    result.d_ptr->_empty = false;
+    result.d_ptr->_order = order;
+    return result;
 }
