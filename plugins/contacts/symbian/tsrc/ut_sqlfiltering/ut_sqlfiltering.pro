@@ -33,5 +33,6 @@ symbian:
     LIBS += \
         -lcntmodel \
         -lQtContacts \
+        -lcentralrepository \
 		-lestor
 }
