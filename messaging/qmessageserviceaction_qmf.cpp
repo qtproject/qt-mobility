@@ -97,6 +97,7 @@ signals:
     void stateChanged(QMessageServiceAction::State);
     void progressChanged(uint, uint);
     void messagesFound(const QMessageIdList&);
+    void messagesCounted(int);
 
 protected slots:
     void transmitActivityChanged(QMailServiceAction::Activity a);
@@ -104,6 +105,7 @@ protected slots:
     void statusChanged(const QMailServiceAction::Status &s);
     void completed();
     void reportMatchingIds();
+    void reportMatchingCount();
     void findMatchingIds();
     void testNextMessage();
 
@@ -210,6 +212,12 @@ void QMessageServiceActionPrivate::reportMatchingIds()
     completed();
 }
 
+void QMessageServiceActionPrivate::reportMatchingCount()
+{
+    emit messagesCounted(_candidateIds.count());
+    completed();
+}
+
 void QMessageServiceActionPrivate::findMatchingIds()
 {
     int required = ((_offset + _limit) - _matchingIds.count());
@@ -258,6 +266,8 @@ QMessageServiceAction::QMessageServiceAction(QObject *parent)
             this, SIGNAL(stateChanged(QMessageServiceAction::State)));
     connect(d_ptr, SIGNAL(messagesFound(QMessageIdList)), 
             this, SIGNAL(messagesFound(QMessageIdList)));
+    connect(d_ptr, SIGNAL(messagesCounted(int)), 
+            this, SIGNAL(messagesCounted(int)));
     connect(d_ptr, SIGNAL(progressChanged(uint, uint)), 
             this, SIGNAL(progressChanged(uint, uint)));
 }
@@ -337,8 +347,26 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
 
 bool QMessageServiceAction::countMessages(const QMessageFilter &filter) const
 {
-    // TODO: Implement this
-    Q_UNUSED(filter);
+    if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::InProgress))) {
+        qWarning() << "Action is currently busy";
+        return false;
+    }
+    d_ptr->_active = 0;
+    
+    d_ptr->_candidateIds = QMailStore::instance()->queryMessages(convert(filter));
+    d_ptr->_error = convert(QMailStore::instance()->lastError());
+
+    if (d_ptr->_error == QMessageStore::NoError) {
+        d_ptr->_lastFilter = QMessageFilter();
+        d_ptr->_lastOrdering = QMessageOrdering();
+        d_ptr->_match = QString();
+        d_ptr->_limit = 0;
+        d_ptr->_offset = 0;
+        d_ptr->_matchingIds.clear();
+        QTimer::singleShot(0, d_ptr, SLOT(reportMatchingCount()));
+        return true;
+    }
+
     return false;
 }
 
