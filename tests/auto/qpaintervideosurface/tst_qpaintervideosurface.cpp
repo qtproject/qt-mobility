@@ -52,6 +52,8 @@ class tst_QPainterVideoSurface : public QObject
 {
     Q_OBJECT
 private slots:
+    void colors();
+
     void supportedFormat_data();
     void supportedFormat();
 
@@ -70,12 +72,32 @@ private slots:
     void shaderPresent_data();
     void shaderPresent();
 #endif
-
-
 };
 
 Q_DECLARE_METATYPE(const uchar *)
 Q_DECLARE_METATYPE(QPainterVideoSurface::ShaderType);
+
+void tst_QPainterVideoSurface::colors()
+{
+    QPainterVideoSurface surface;
+
+    QCOMPARE(surface.brightness(), 0);
+    QCOMPARE(surface.contrast(), 0);
+    QCOMPARE(surface.hue(), 0);
+    QCOMPARE(surface.saturation(), 0);
+
+    surface.setBrightness(56);
+    QCOMPARE(surface.brightness(), 56);
+
+    surface.setContrast(43);
+    QCOMPARE(surface.contrast(), 43);
+
+    surface.setHue(-84);
+    QCOMPARE(surface.hue(), -84);
+
+    surface.setSaturation(100);
+    QCOMPARE(surface.saturation(), 100);
+}
 
 static const uchar rgb32ImageData[] =
 {
@@ -327,7 +349,8 @@ void tst_QPainterVideoSurface::present()
     QVideoSurfaceFormat formatA(frameSizeA, pixelFormatA);
 
     QVERIFY(surface.start(formatA));
-    QVERIFY(surface.isStarted());
+    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isReady(), true);
 
     QVideoFrame frameA(bytesA, frameSizeA, bytesPerLineA, pixelFormatA);
 
@@ -335,7 +358,8 @@ void tst_QPainterVideoSurface::present()
     memcpy(frameA.bits(), frameDataA, frameA.numBytes());
     frameA.unmap();
 
-    QCOMPARE(surface.present(frameA), true);
+    QVERIFY(surface.present(frameA));
+    QCOMPARE(surface.isReady(), false);
     QCOMPARE(frameSpy.count(), 1);
 
     {
@@ -343,20 +367,23 @@ void tst_QPainterVideoSurface::present()
         surface.paint(&painter, QRect(0, 0, 320, 240));
     }
     QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isReady(), false);
 
     // Not ready.
-    QCOMPARE(surface.present(frameA), false);
+    QVERIFY(!surface.present(frameA));
     QCOMPARE(frameSpy.count(), 1);
 
     surface.setReady(true);
-    QCOMPARE(surface.present(frameA), true);
+    QCOMPARE(surface.isReady(), true);
+    QVERIFY(surface.present(frameA));
     QCOMPARE(frameSpy.count(), 2);
 
     // Try switching to a different format after starting.
     QVideoSurfaceFormat formatB(frameSizeB, pixelFormatB);
 
     QVERIFY(surface.start(formatB));
-    QVERIFY(surface.isStarted());
+    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isReady(), true);
 
     QVideoFrame frameB(bytesB, frameSizeB, bytesPerLineB, pixelFormatB);
 
@@ -365,6 +392,7 @@ void tst_QPainterVideoSurface::present()
     frameB.unmap();
 
     QVERIFY(surface.present(frameB));
+    QCOMPARE(surface.isReady(), false);
     QCOMPARE(frameSpy.count(), 3);
 
     {
@@ -375,16 +403,19 @@ void tst_QPainterVideoSurface::present()
 
     surface.stop();
 
-    QVERIFY(!surface.isStarted());
+    QCOMPARE(surface.isStarted(), false);
+    QCOMPARE(surface.isReady(), false);
 
     // Try presenting a frame while stopped.
     QVERIFY(!surface.present(frameB));
+    QCOMPARE(surface.isReady(), false);
     QCOMPARE(surface.error(), QAbstractVideoSurface::StoppedError);
 
     // Try presenting a frame with a different format.
     QVERIFY(surface.start(formatB));
     QVERIFY(!surface.present(frameA));
-    QVERIFY(!surface.isStarted());
+    QCOMPARE(surface.isStarted(), false);
+    QCOMPARE(surface.isReady(), false);
     QCOMPARE(surface.error(), QAbstractVideoSurface::IncorrectFormatError);
 }
 
@@ -794,7 +825,8 @@ void tst_QPainterVideoSurface::shaderPresent()
     QVideoSurfaceFormat formatA(frameSizeA, pixelFormatA);
 
     QVERIFY(surface.start(formatA));
-    QVERIFY(surface.isStarted());
+    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isReady(), true);
 
     QVideoFrame frameA(bytesA, frameSizeA, bytesPerLineA, pixelFormatA);
 
@@ -802,7 +834,8 @@ void tst_QPainterVideoSurface::shaderPresent()
     memcpy(frameA.bits(), frameDataA, frameA.numBytes());
     frameA.unmap();
 
-    QCOMPARE(surface.present(frameA), true);
+    QVERIFY(surface.present(frameA));
+    QCOMPARE(surface.isReady(), false);
     QCOMPARE(frameSpy.count(), 1);
 
 
@@ -816,18 +849,20 @@ void tst_QPainterVideoSurface::shaderPresent()
     QCOMPARE(surface.isStarted(), true);
 
     // Not ready.
-    QCOMPARE(surface.present(frameA), false);
+    QVERIFY(!surface.present(frameA));
     QCOMPARE(frameSpy.count(), 1);
 
     surface.setReady(true);
-    QCOMPARE(surface.present(frameA), true);
+    QCOMPARE(surface.isReady(), true);
+    QVERIFY(surface.present(frameA));
     QCOMPARE(frameSpy.count(), 2);
 
     // Try switching to a different format after starting.
     QVideoSurfaceFormat formatB(frameSizeB, pixelFormatB);
 
     QVERIFY(surface.start(formatB));
-    QVERIFY(surface.isStarted());
+    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isReady(), true);
 
     QVideoFrame frameB(bytesB, frameSizeB, bytesPerLineB, pixelFormatB);
 
@@ -836,6 +871,7 @@ void tst_QPainterVideoSurface::shaderPresent()
     frameB.unmap();
 
     QVERIFY(surface.present(frameB));
+    QCOMPARE(surface.isReady(), false);
     QCOMPARE(frameSpy.count(), 3);
 
     {
@@ -845,20 +881,23 @@ void tst_QPainterVideoSurface::shaderPresent()
         widget.doneCurrent();
     }
 
-    QVERIFY(surface.isStarted());
+    QCOMPARE(surface.isStarted(), true);
 
     surface.stop();
 
-    QVERIFY(!surface.isStarted());
+    QCOMPARE(surface.isStarted(), false);
+    QCOMPARE(surface.isReady(), false);
 
     // Try presenting a frame while stopped.
     QVERIFY(!surface.present(frameB));
+    QCOMPARE(surface.isReady(), false);
     QCOMPARE(surface.error(), QAbstractVideoSurface::StoppedError);
 
     // Try presenting a frame with a different format.
     QVERIFY(surface.start(formatB));
     QVERIFY(!surface.present(frameA));
-    QVERIFY(!surface.isStarted());
+    QCOMPARE(surface.isStarted(), false);
+    QCOMPARE(surface.isReady(), false);
     QCOMPARE(surface.error(), QAbstractVideoSurface::IncorrectFormatError);
 }
 
