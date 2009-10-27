@@ -39,38 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef V4LCAMERASERVICE_H
-#define V4LCAMERASERVICE_H
 
-#include <QtCore/qobject.h>
+#ifndef DSIMAGECAPTURECONTROL_H
+#define DSIMAGECAPTURECONTROL_H
 
-#include <multimedia/qmediaservice.h>
+#include <multimedia/experimental/qimagecapturecontrol.h>
+#include "dscamerasession.h"
 
-class V4LCameraControl;
-class V4LCameraSession;
-class V4LVideoOutputControl;
-class V4LVideoDeviceControl;
-class V4LVideoRendererControl;
-class V4LImageCaptureControl;
-
-class V4LCameraService : public QMediaService
+class DSImageCaptureControl : public QImageCaptureControl
 {
     Q_OBJECT
-
 public:
-    V4LCameraService(QObject *parent = 0);
-    ~V4LCameraService();
+    DSImageCaptureControl(DSCameraSession *session);
+    virtual ~DSImageCaptureControl();
 
-    QMediaControl *control(const char *name) const;
+    bool isReadyForCapture() const;
+    void capture(const QString &fileName);
+
+private slots:
+    void updateState();
 
 private:
-    V4LCameraControl        *m_control;
-    V4LCameraSession        *m_session;
-    V4LVideoOutputControl   *m_videoOutput;
-    V4LVideoDeviceControl   *m_videoDevice;
-    V4LVideoRendererControl *m_videoRenderer;
-    V4LImageCaptureControl  *m_imageCapture;
-    QByteArray m_device;
+    DSCameraSession *m_session;
+    bool m_ready;
 };
 
-#endif
+#endif // DSCAPTURECONTROL_H

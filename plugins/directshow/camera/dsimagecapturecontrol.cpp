@@ -39,38 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef V4LCAMERASERVICE_H
-#define V4LCAMERASERVICE_H
+#include "dsimagecapturecontrol.h"
+#include <QtCore/QDebug>
 
-#include <QtCore/qobject.h>
-
-#include <multimedia/qmediaservice.h>
-
-class V4LCameraControl;
-class V4LCameraSession;
-class V4LVideoOutputControl;
-class V4LVideoDeviceControl;
-class V4LVideoRendererControl;
-class V4LImageCaptureControl;
-
-class V4LCameraService : public QMediaService
+DSImageCaptureControl::DSImageCaptureControl(DSCameraSession *session)
+    :QImageCaptureControl(session), m_session(session), m_ready(false)
 {
-    Q_OBJECT
+    connect(m_session, SIGNAL(stateChanged(QCamera::State)), SLOT(updateState()));
+    connect(m_session, SIGNAL(imageCaptured(QString,QImage)), this, SIGNAL(imageCaptured(QString,QImage)));
+}
 
-public:
-    V4LCameraService(QObject *parent = 0);
-    ~V4LCameraService();
+DSImageCaptureControl::~DSImageCaptureControl()
+{
+}
 
-    QMediaControl *control(const char *name) const;
+bool DSImageCaptureControl::isReadyForCapture() const
+{
+    return m_ready;
+}
 
-private:
-    V4LCameraControl        *m_control;
-    V4LCameraSession        *m_session;
-    V4LVideoOutputControl   *m_videoOutput;
-    V4LVideoDeviceControl   *m_videoDevice;
-    V4LVideoRendererControl *m_videoRenderer;
-    V4LImageCaptureControl  *m_imageCapture;
-    QByteArray m_device;
-};
+void DSImageCaptureControl::capture(const QString &fileName)
+{
+    m_session->captureImage(fileName);
+}
 
-#endif
+void DSImageCaptureControl::updateState()
+{
+    bool ready = m_session->state() == QCamera::ActiveState;
+    if(m_ready != ready)
+        emit readyForCaptureChanged(m_ready = ready);
+}

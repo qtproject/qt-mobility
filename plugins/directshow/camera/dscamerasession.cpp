@@ -171,6 +171,11 @@ DSCameraSession::~DSCameraSession()
         delete StillCapCB;
 }
 
+void DSCameraSession::captureImage(const QString &fileName)
+{
+    m_snapshot = fileName;
+}
+
 void DSCameraSession::setSurface(QAbstractVideoSurface* surface)
 {
     m_surface = surface;
@@ -464,6 +469,8 @@ void DSCameraSession::stop()
 
     stopStream();
     opened = false;
+    m_state = QCamera::StoppedState;
+    emit stateChanged(QCamera::StoppedState);
 }
 
 void DSCameraSession::captureFrame()
@@ -477,6 +484,10 @@ void DSCameraSession::captureFrame()
         if(pixelF == QVideoFrame::Format_RGB24) {
             image = QImage(frames.at(0)->buffer,m_windowSize.width(),m_windowSize.height(),
                     QImage::Format_RGB888).rgbSwapped().mirrored(true);
+        }
+        if(m_snapshot.length() > 0) {
+            image.save(m_snapshot,"JPG");
+            m_snapshot.clear();
         }
 
         QVideoFrame frame(image);

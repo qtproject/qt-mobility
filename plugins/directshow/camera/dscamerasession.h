@@ -129,6 +129,8 @@ public:
 
     void setSurface(QAbstractVideoSurface* surface);
 
+    void captureImage(const QString &fileName);
+
     AM_MEDIA_TYPE StillMediaType;
     QList<video_buffer*> frames;
     SampleGrabberCallbackPrivate* StillCapCB;
@@ -137,6 +139,7 @@ public:
 
 Q_SIGNALS:
     void stateChanged(QCamera::State);
+    void imageCaptured(const QString &fileName, const QImage &img);
 
 private Q_SLOTS:
     void captureFrame();
@@ -170,6 +173,8 @@ private:
     IAMVideoControl* pVideoControl;
     IAMVideoProcAmp* pProcAmp;
     IAMCameraControl* pCameraControl;
+
+    QString m_snapshot;
 
 protected:
     HRESULT GetPin(IBaseFilter *pFilter,PIN_DIRECTION PinDir,IPin **ppPin);

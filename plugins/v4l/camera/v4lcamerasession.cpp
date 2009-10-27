@@ -107,6 +107,11 @@ V4LCameraSession::~V4LCameraSession()
 {
 }
 
+void V4LCameraSession::captureImage(const QString &fileName)
+{
+    m_snapshot = fileName;
+}
+
 void V4LCameraSession::setSurface(QAbstractVideoSurface* surface)
 {
     m_surface = surface;
@@ -648,7 +653,10 @@ void V4LCameraSession::captureFrame()
             QImage image;
             image = QImage(converter->convert((unsigned char*)buffers.at(buf.index).start,buf.bytesused),
              m_windowSize.width(),m_windowSize.height(),QImage::Format_RGB16).convertToFormat(QImage::Format_RGB32);
-            //image.save("/tmp/test.bmp");
+            if(m_snapshot.length() > 0) {
+                image.save(m_snapshot,"JPG");
+                m_snapshot.clear();
+            }
             QVideoFrame frame(image);
             m_surface->present(frame);
             ret = ioctl(sfd, VIDIOC_QBUF, &buf);
