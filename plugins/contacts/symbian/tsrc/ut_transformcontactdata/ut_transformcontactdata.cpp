@@ -63,144 +63,144 @@
 #include <QtTest/QtTest>
 
 
-void TestTransformContactData::initTestCase()
+void TestCntTransformContactData::initTestCase()
 {
 }
 
-void TestTransformContactData::cleanupTestCase()
+void TestCntTransformContactData::cleanupTestCase()
 {
 }
 
-void TestTransformContactData::executeTransformEmail()
+void TestCntTransformContactData::executeCntTransformEmail()
 {
-    validateTransformEmail(_L("dummyemail"), QString("dummyemail"));
-    validateTransformEmail(_L(""), QString(""));
+    validateCntTransformEmail(_L("dummyemail"), QString("dummyemail"));
+    validateCntTransformEmail(_L(""), QString(""));
 }
 
-void TestTransformContactData::executeTransformName()
+void TestCntTransformContactData::executeCntTransformName()
 {
-    validateTransformName(_L("dummyprefix"), QString("dummyprefix"),
+    validateCntTransformName(_L("dummyprefix"), QString("dummyprefix"),
                           _L("dummyfirst"), QString("dummyfirst"),
                           _L("dummymiddle"), QString("dummymiddle"),
                           _L("dummylast"), QString("dummylast"),
                           _L("dummysuffix"), QString("dummysuffix"));
-    validateTransformName(_L(""), QString(""),
+    validateCntTransformName(_L(""), QString(""),
                           _L(""), QString(""),
                           _L(""), QString(""),
                           _L(""), QString(""),
                           _L(""), QString(""));
 }
 
-void TestTransformContactData::executeTransformNickname()
+void TestCntTransformContactData::executeCntTransformNickname()
 {
-    validateTransformNickname(_L("dummynickname"), QString("dummynickname"));
-    validateTransformNickname(_L(""), QString(""));
+    validateCntTransformNickname(_L("dummynickname"), QString("dummynickname"));
+    validateCntTransformNickname(_L(""), QString(""));
 }
 
-void TestTransformContactData::executeTransformPhonenumber()
+void TestCntTransformContactData::executeCntTransformPhonenumber()
 {
-    validateTransformPhonenumber(_L("dummyphonenumber"), QString("dummyphonenumber"));
-    validateTransformPhonenumber(_L(""), QString(""));
+    validateCntTransformPhonenumber(_L("dummyphonenumber"), QString("dummyphonenumber"));
+    validateCntTransformPhonenumber(_L(""), QString(""));
 }
 
-void TestTransformContactData::executeTransformAddress()
+void TestCntTransformContactData::executeCntTransformAddress()
 {
-    validateTransformAddress(_L("dummycountry"), QString("dummycountry"),
+    validateCntTransformAddress(_L("dummycountry"), QString("dummycountry"),
                              _L("dummypostcode"), QString("dummypostcode"),
                              _L("dummystreet"), QString("dummystreet"),
                              _L("dummylocality"), QString("dummylocality"),
                              _L("dummyregion"), QString("dummyregion"),
                              _L("dummypostofficebox"), QString("dummypostofficebox"));
-    validateTransformAddress(_L(""), QString(""),
+    validateCntTransformAddress(_L(""), QString(""),
                              _L(""), QString(""),
                              _L(""), QString(""),
                              _L(""), QString(""),
                              _L(""), QString(""),
                              _L(""), QString(""));
 }
-void TestTransformContactData::executeTransformUrl()
+void TestCntTransformContactData::executeCntTransformUrl()
 {
-    validateTransformUrl(_L("dummyurl"), QString("dummyurl"));
-    validateTransformUrl(_L(""), QString(""));
+    validateCntTransformUrl(_L("dummyurl"), QString("dummyurl"));
+    validateCntTransformUrl(_L(""), QString(""));
 }
 
-void TestTransformContactData::executeTransformBithday()
+void TestCntTransformContactData::executeCntTransformBithday()
 {
     TDateTime dateTime(2009, ESeptember, 28, 0, 0, 0, 0);
     TTime field(dateTime);
     QDate detail(2009, 9, 28);
     
-    validateTransformBirthday(field, detail);
+    validateCntTransformBirthday(field, detail);
 }
 
-void TestTransformContactData::executeTransformOnlineAccount()
+void TestCntTransformContactData::executeCntTransformOnlineAccount()
 {
-    validateTransformOnlineAccount(_L("dummysip"), QString("dummysip"));
-    validateTransformOnlineAccount(_L(""), QString(""));
+    validateCntTransformOnlineAccount(_L("dummysip"), QString("dummysip"));
+    validateCntTransformOnlineAccount(_L(""), QString(""));
 }
 
-void TestTransformContactData::executeTransformOrganisation()
+void TestCntTransformContactData::executeCntTransformOrganisation()
 {
-    validateTransformOrganisation(_L("dummycompany"), QString("dummycompany"),
+    validateCntTransformOrganisation(_L("dummycompany"), QString("dummycompany"),
                                   _L("dummydepartment"), QString("dummydepartment"),
                                   _L("dummyjobtitle"), QString("dummyjobtitle"),
                                   _L("dummyassistant"), QString("dummyassistant"));
-    validateTransformOrganisation(_L(""), QString(""),
+    validateCntTransformOrganisation(_L(""), QString(""),
                                   _L(""), QString(""),
                                   _L(""), QString(""),
                                   _L(""), QString(""));
 }
 
-void TestTransformContactData::executeTransformAvatar()
+void TestCntTransformContactData::executeCntTransformAvatar()
 {
-    validateTransformAvatar(_L("dummyavatar"), QString("dummyavatar"));
-    validateTransformAvatar(_L(""), QString(""));
+    validateCntTransformAvatar(_L("dummyavatar"), QString("dummyavatar"));
+    validateCntTransformAvatar(_L(""), QString(""));
 }
 
-void TestTransformContactData::executeTransformSyncTarget()
+void TestCntTransformContactData::executeCntTransformSyncTarget()
 {
-    validateTransformSyncTarget(_L("dummysynctarget"), QString("dummysynctarget"));
-    validateTransformSyncTarget(_L(""), QString(""));
+    validateCntTransformSyncTarget(_L("dummysynctarget"), QString("dummysynctarget"));
+    validateCntTransformSyncTarget(_L(""), QString(""));
 }
 
-void TestTransformContactData::executeTransformGender()
+void TestCntTransformContactData::executeCntTransformGender()
 {
-    validateTransformGender(_L("dummygender"), QString("dummygender"));
-    validateTransformGender(_L(""), QString(""));
+    validateCntTransformGender(_L("dummygender"), QString("dummygender"));
+    validateCntTransformGender(_L(""), QString(""));
 }
 
-void TestTransformContactData::executeTransformAnniversary()
+void TestCntTransformContactData::executeCntTransformAnniversary()
 {
     QDate dateDetail(2009, 9, 28);
-    validateTransformAnniversary(_L("2009-09-28,dummyevent"), dateDetail, QString("dummyevent"));
-    validateTransformAnniversary(_L("dummyevent"), QDate(), QString("dummyevent"));
+    validateCntTransformAnniversary(_L("2009-09-28,dummyevent"), dateDetail, QString("dummyevent"));
+    validateCntTransformAnniversary(_L("dummyevent"), QDate(), QString("dummyevent"));
 }
 
-void TestTransformContactData::executeTransformGeolocation()
+void TestCntTransformContactData::executeCntTransformGeolocation()
 {
-    validateTransformGeolocation(_L("123.45,765.88"), 123.45, 765.88);
-    validateTransformGeolocation(_L("123.45,"), 123.45, -1);
-    validateTransformGeolocation(_L(",765.88"), -1, 765.88);
-    validateTransformGeolocation(_L(""), -1, -1);
+    validateCntTransformGeolocation(_L("123.45,765.88"), 123.45, 765.88);
+    validateCntTransformGeolocation(_L("123.45,"), 123.45, -1);
+    validateCntTransformGeolocation(_L(",765.88"), -1, 765.88);
+    validateCntTransformGeolocation(_L(""), -1, -1);
 }
 
-void TestTransformContactData::executeTransformNote()
+void TestCntTransformContactData::executeCntTransformNote()
 {
-    validateTransformNote(_L("dummynote"), QString("dummynote"));
-    validateTransformNote(_L(""), QString(""));
+    validateCntTransformNote(_L("dummynote"), QString("dummynote"));
+    validateCntTransformNote(_L(""), QString(""));
 }
 
-void TestTransformContactData::executeTransformFamily()
+void TestCntTransformContactData::executeCntTransformFamily()
 {
-    validateTransformFamily(_L("dummyspouse"), QString("dummyspouse"),
+    validateCntTransformFamily(_L("dummyspouse"), QString("dummyspouse"),
                             _L("dummychild"), QString("dummychild"));
-    validateTransformFamily(_L(""), QString(""),
+    validateCntTransformFamily(_L(""), QString(""),
                             _L(""), QString(""));
 }
 
-void TestTransformContactData::validateTransformEmail(TPtrC16 field, QString detail)
+void TestCntTransformContactData::validateCntTransformEmail(TPtrC16 field, QString detail)
 {
-    TransformContactData* transformEmail = new TransformEmail();
+    CntTransformContactData* transformEmail = new CntTransformEmail();
     QVERIFY(transformEmail != 0);
     QVERIFY(transformEmail->supportsField(KUidContactFieldEMail.iUid));
     QVERIFY(transformEmail->supportsDetail(QContactEmailAddress::DefinitionName));
@@ -227,13 +227,13 @@ void TestTransformContactData::validateTransformEmail(TPtrC16 field, QString det
     delete transformEmail;
 }
 
-void TestTransformContactData::validateTransformName(TPtrC16 prefixField, QString prefixDetail,
+void TestCntTransformContactData::validateCntTransformName(TPtrC16 prefixField, QString prefixDetail,
                            TPtrC16 firstnameField, QString firstnameDetail,
                            TPtrC16 middlenameField, QString middlenameDetail,
                            TPtrC16 lastnameField, QString lastnameDetail,
                            TPtrC16 suffixField, QString suffixDetail)
 {
-    TransformContactData* transformName = new TransformName();
+    CntTransformContactData* transformName = new CntTransformName();
     QVERIFY(transformName != 0);
     QVERIFY(transformName->supportsField(KUidContactFieldPrefixName.iUid));
     QVERIFY(transformName->supportsField(KUidContactFieldGivenName.iUid));
@@ -322,9 +322,9 @@ void TestTransformContactData::validateTransformName(TPtrC16 prefixField, QStrin
     delete transformName;
 }
 
-void TestTransformContactData::validateTransformNickname(TPtrC16 field, QString detail)
+void TestCntTransformContactData::validateCntTransformNickname(TPtrC16 field, QString detail)
 {
-    TransformContactData* transformNickname = new TransformNickname();
+    CntTransformContactData* transformNickname = new CntTransformNickname();
     QVERIFY(transformNickname != 0);
     QVERIFY(transformNickname->supportsField(KUidContactFieldSecondName.iUid));
     QVERIFY(transformNickname->supportsDetail(QContactNickname::DefinitionName));
@@ -351,9 +351,9 @@ void TestTransformContactData::validateTransformNickname(TPtrC16 field, QString 
     delete transformNickname;
 }
 
-void TestTransformContactData::validateTransformPhonenumber(TPtrC16 field, QString detail)
+void TestCntTransformContactData::validateCntTransformPhonenumber(TPtrC16 field, QString detail)
 {
-    TransformContactData* transformPhoneNumber = new TransformPhoneNumber();
+    CntTransformContactData* transformPhoneNumber = new CntTransformPhoneNumber();
     QVERIFY(transformPhoneNumber != 0);
     QVERIFY(transformPhoneNumber->supportsField(KUidContactFieldPhoneNumber.iUid));
     QVERIFY(transformPhoneNumber->supportsField(KUidContactFieldFax.iUid));
@@ -563,14 +563,14 @@ void TestTransformContactData::validateTransformPhonenumber(TPtrC16 field, QStri
     delete transformPhoneNumber; 
 }
 
-void TestTransformContactData::validateTransformAddress(TPtrC16 countryField, QString countryDetail,
+void TestCntTransformContactData::validateCntTransformAddress(TPtrC16 countryField, QString countryDetail,
                               TPtrC16 postcodeField, QString postcodeDetail,
                               TPtrC16 streetField, QString streetDetail,
                               TPtrC16 localityField, QString localityDetail,
                               TPtrC16 regionField, QString regionDetail,
                               TPtrC16 postOfficeBoxField, QString postOfficeBoxDetail)
 {
-    TransformContactData* transformAddress = new TransformAddress();
+    CntTransformContactData* transformAddress = new CntTransformAddress();
     QVERIFY(transformAddress != 0);
     QVERIFY(transformAddress->supportsField(KUidContactFieldCountry.iUid));
     QVERIFY(transformAddress->supportsField(KUidContactFieldPostcode.iUid));
@@ -674,9 +674,9 @@ void TestTransformContactData::validateTransformAddress(TPtrC16 countryField, QS
     delete transformAddress;
 }
 
-void TestTransformContactData::validateTransformUrl(TPtrC16 field, QString detail)
+void TestCntTransformContactData::validateCntTransformUrl(TPtrC16 field, QString detail)
 {
-    TransformContactData* transformUrl = new TransformUrl();
+    CntTransformContactData* transformUrl = new CntTransformUrl();
     QVERIFY(transformUrl != 0);
     QVERIFY(transformUrl->supportsField(KUidContactFieldUrl.iUid));
     QVERIFY(transformUrl->supportsDetail(QContactUrl::DefinitionName));
@@ -704,9 +704,9 @@ void TestTransformContactData::validateTransformUrl(TPtrC16 field, QString detai
     delete transformUrl;
 }
 
-void TestTransformContactData::validateTransformBirthday(TTime field, QDate detail)
+void TestCntTransformContactData::validateCntTransformBirthday(TTime field, QDate detail)
 {
-    TransformContactData* transformBirthday = new TransformBirthday();
+    CntTransformContactData* transformBirthday = new CntTransformBirthday();
     QVERIFY(transformBirthday != 0);
     QVERIFY(transformBirthday->supportsField(KUidContactFieldBirthday.iUid));
     QVERIFY(transformBirthday->supportsDetail(QContactBirthday::DefinitionName));
@@ -737,9 +737,9 @@ void TestTransformContactData::validateTransformBirthday(TTime field, QDate deta
     delete transformBirthday;  
 }
 
-void TestTransformContactData::validateTransformOnlineAccount(TPtrC16 sipField, QString sipDetail)
+void TestCntTransformContactData::validateCntTransformOnlineAccount(TPtrC16 sipField, QString sipDetail)
 {
-    TransformContactData* transformOnlineAccount = new TransformOnlineAccount();
+    CntTransformContactData* transformOnlineAccount = new CntTransformOnlineAccount();
     QVERIFY(transformOnlineAccount != 0);
     QVERIFY(transformOnlineAccount->supportsField(KUidContactFieldSIPID.iUid));
     QVERIFY(transformOnlineAccount->supportsField(KUidContactFieldIMPP.iUid));
@@ -841,12 +841,12 @@ void TestTransformContactData::validateTransformOnlineAccount(TPtrC16 sipField, 
     delete transformOnlineAccount;
 }
 
-void TestTransformContactData::validateTransformOrganisation(TPtrC16 companyField, QString companyDetail,
+void TestCntTransformContactData::validateCntTransformOrganisation(TPtrC16 companyField, QString companyDetail,
                                 TPtrC16 departmentField, QString departmentDetail,
                                 TPtrC16 jobtitleField, QString jobtitleDetail,
                                 TPtrC16 assistantField, QString assistantDetail)
 {
-    TransformContactData* transformOrganisation = new TransformOrganisation();
+    CntTransformContactData* transformOrganisation = new CntTransformOrganisation();
     QVERIFY(transformOrganisation != 0);
     QVERIFY(transformOrganisation->supportsField(KUidContactFieldCompanyName.iUid));
     QVERIFY(transformOrganisation->supportsField(KUidContactFieldDepartmentName.iUid));
@@ -921,9 +921,9 @@ void TestTransformContactData::validateTransformOrganisation(TPtrC16 companyFiel
     delete transformOrganisation;
 }
 
-void TestTransformContactData::validateTransformAvatar(TPtrC16 field, QString detail)
+void TestCntTransformContactData::validateCntTransformAvatar(TPtrC16 field, QString detail)
 {
-    TransformContactData* transformAvatar = new TransformAvatar();
+    CntTransformContactData* transformAvatar = new CntTransformAvatar();
     QVERIFY(transformAvatar != 0);
     QVERIFY(transformAvatar->supportsField(KUidContactFieldPicture.iUid));
     QVERIFY(transformAvatar->supportsField(KUidContactFieldRingTone.iUid));
@@ -996,9 +996,9 @@ void TestTransformContactData::validateTransformAvatar(TPtrC16 field, QString de
     delete transformAvatar; 
 }
 
-void TestTransformContactData::validateTransformSyncTarget(TPtrC16 field, QString detail)
+void TestCntTransformContactData::validateCntTransformSyncTarget(TPtrC16 field, QString detail)
 {
-    TransformContactData* transformSyncTarget = new TransformSyncTarget();
+    CntTransformContactData* transformSyncTarget = new CntTransformSyncTarget();
     QVERIFY(transformSyncTarget != 0);
     QVERIFY(transformSyncTarget->supportsField(KUidContactFieldSyncTarget.iUid));
     QVERIFY(transformSyncTarget->supportsDetail(QContactSyncTarget::DefinitionName));
@@ -1025,9 +1025,9 @@ void TestTransformContactData::validateTransformSyncTarget(TPtrC16 field, QStrin
     delete transformSyncTarget;
 }
 
-void TestTransformContactData::validateTransformGender(TPtrC16 field, QString detail)
+void TestCntTransformContactData::validateCntTransformGender(TPtrC16 field, QString detail)
 {
-    TransformContactData* transformGender = new TransformGender();
+    CntTransformContactData* transformGender = new CntTransformGender();
     QVERIFY(transformGender != 0);
     QVERIFY(transformGender->supportsField(KUidContactFieldGender.iUid));
     QVERIFY(transformGender->supportsDetail(QContactGender::DefinitionName));
@@ -1054,9 +1054,9 @@ void TestTransformContactData::validateTransformGender(TPtrC16 field, QString de
     delete transformGender;
 }
 
-void TestTransformContactData::validateTransformAnniversary(TPtrC16 field, QDate dateDetail, QString eventDetail)
+void TestCntTransformContactData::validateCntTransformAnniversary(TPtrC16 field, QDate dateDetail, QString eventDetail)
 {
-    TransformContactData* transformAnniversary = new TransformAnniversary();
+    CntTransformContactData* transformAnniversary = new CntTransformAnniversary();
     QVERIFY(transformAnniversary != 0);
     QVERIFY(transformAnniversary->supportsField(KUidContactFieldAnniversary.iUid));
     QVERIFY(transformAnniversary->supportsDetail(QContactAnniversary::DefinitionName));
@@ -1087,9 +1087,9 @@ void TestTransformContactData::validateTransformAnniversary(TPtrC16 field, QDate
     delete transformAnniversary;  
 }
 
-void TestTransformContactData::validateTransformGeolocation(TPtrC16 field, double latitudeDetail, double longitudeDetail)
+void TestCntTransformContactData::validateCntTransformGeolocation(TPtrC16 field, double latitudeDetail, double longitudeDetail)
 {
-    TransformContactData* transformGeolocation = new TransformGeolocation();
+    CntTransformContactData* transformGeolocation = new CntTransformGeolocation();
     QVERIFY(transformGeolocation != 0);
     QVERIFY(transformGeolocation->supportsField(KUidContactFieldGEO.iUid));
     QVERIFY(transformGeolocation->supportsDetail(QContactGeolocation::DefinitionName));
@@ -1134,9 +1134,9 @@ void TestTransformContactData::validateTransformGeolocation(TPtrC16 field, doubl
     delete transformGeolocation; 
 }
 
-void TestTransformContactData::validateTransformNote(TPtrC16 field, QString detail)
+void TestCntTransformContactData::validateCntTransformNote(TPtrC16 field, QString detail)
 {
-    TransformContactData* transformNote = new TransformNote();
+    CntTransformContactData* transformNote = new CntTransformNote();
     QVERIFY(transformNote != 0);
     QVERIFY(transformNote->supportsField(KUidContactFieldNote.iUid));
     QVERIFY(transformNote->supportsDetail(QContactNote::DefinitionName));
@@ -1164,10 +1164,10 @@ void TestTransformContactData::validateTransformNote(TPtrC16 field, QString deta
     delete transformNote;
 }
 
-void TestTransformContactData::validateTransformFamily(TPtrC16 spouseField, QString spouseDetail,
+void TestCntTransformContactData::validateCntTransformFamily(TPtrC16 spouseField, QString spouseDetail,
                              TPtrC16 childField, QString childDetail)
 {
-    TransformContactData* transformFamily = new TransformFamily();
+    CntTransformContactData* transformFamily = new CntTransformFamily();
     QVERIFY(transformFamily != 0);
     QVERIFY(transformFamily->supportsField(KUidContactFieldSpouse.iUid));
     QVERIFY(transformFamily->supportsField(KUidContactFieldChildren.iUid));
@@ -1224,7 +1224,7 @@ void TestTransformContactData::validateTransformFamily(TPtrC16 spouseField, QStr
     delete transformFamily;
 }
 
-void TestTransformContactData::validateContexts(TransformContactData* transformContactData) const
+void TestCntTransformContactData::validateContexts(CntTransformContactData* transformContactData) const
 {
     QContactDetail detail1;
     transformContactData->setContexts(KUidContactFieldVCardMapHOME, detail1);
@@ -1249,4 +1249,4 @@ void TestTransformContactData::validateContexts(TransformContactData* transformC
     itemField = 0;
 }
 
-QTEST_MAIN(TestTransformContactData);
+QTEST_MAIN(TestCntTransformContactData);

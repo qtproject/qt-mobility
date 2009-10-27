@@ -142,7 +142,7 @@ private:
     QList<QContactLocalId> m_contactsAddedEmitted;
     QList<QContactLocalId> m_contactsChangedEmitted;
     QList<QContactLocalId> m_contactsRemovedEmitted;
-    TransformContact       *m_transformContact;
+    CntTransformContact       *m_transformContact;
     QAbstractContactFilter* m_contactFilter;
     QAbstractContactSorter* m_contactSorter;
     CntRelationship        *m_relationship;

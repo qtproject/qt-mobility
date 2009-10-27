@@ -41,7 +41,7 @@
 #include "cnttransformavatar.h"
 #include "cntmodelextuids.h"
 
-QList<CContactItemField *> TransformAvatar::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformAvatar::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList; 
 	
@@ -85,7 +85,7 @@ QList<CContactItemField *> TransformAvatar::transformDetailL(const QContactDetai
 	return fieldList;
 }
 
-QContactDetail *TransformAvatar::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformAvatar::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
 	
@@ -108,7 +108,7 @@ QContactDetail *TransformAvatar::transformItemField(const CContactItemField& fie
 	return avatar;
 }
 
-bool TransformAvatar::supportsField(TUint32 fieldType) const
+bool CntTransformAvatar::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldPicture.iUid ||
@@ -119,7 +119,7 @@ bool TransformAvatar::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformAvatar::supportsDetail(QString detailName) const
+bool CntTransformAvatar::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactAvatar::DefinitionName) {
@@ -128,7 +128,7 @@ bool TransformAvatar::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformAvatar::supportedSortingFieldTypes(QString /*detailFieldName*/) const
+QList<TUid> CntTransformAvatar::supportedSortingFieldTypes(QString /*detailFieldName*/) const
 {
     // Sorting not supported
     return QList<TUid>();
@@ -141,7 +141,7 @@ QList<TUid> TransformAvatar::supportedSortingFieldTypes(QString /*detailFieldNam
  * \a subType The subtype to be checked
  * \return True if this subtype is supported 
  */ 
-bool TransformAvatar::supportsSubType(const QString& subType) const 
+bool CntTransformAvatar::supportsSubType(const QString& subType) const 
 {
     return false;
 }
@@ -152,7 +152,7 @@ bool TransformAvatar::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported 
  */ 
-quint32 TransformAvatar::getIdForField(const QString& fieldName) const 
+quint32 CntTransformAvatar::getIdForField(const QString& fieldName) const 
 {
     return 0;
 }

@@ -42,7 +42,7 @@
 
 #include <QDebug>
 
-QList<CContactItemField *> TransformNickname::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformNickname::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList;
 	
@@ -61,7 +61,7 @@ QList<CContactItemField *> TransformNickname::transformDetailL(const QContactDet
 }	
 
 
-QContactDetail *TransformNickname::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformNickname::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	QContactNickname *name = new QContactNickname(contact.detail<QContactNickname>());
 	
@@ -80,7 +80,7 @@ QContactDetail *TransformNickname::transformItemField(const CContactItemField& f
 	return name;
 }
 
-bool TransformNickname::supportsField(TUint32 fieldType) const
+bool CntTransformNickname::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldSecondName.iUid) {
@@ -89,7 +89,7 @@ bool TransformNickname::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformNickname::supportsDetail(QString detailName) const
+bool CntTransformNickname::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactNickname::DefinitionName) {
@@ -98,7 +98,7 @@ bool TransformNickname::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformNickname::supportedSortingFieldTypes(QString detailFieldName) const
+QList<TUid> CntTransformNickname::supportedSortingFieldTypes(QString detailFieldName) const
 {
     QList<TUid> uids;
     if (detailFieldName == QContactNickname::FieldNickname)
@@ -112,7 +112,7 @@ QList<TUid> TransformNickname::supportedSortingFieldTypes(QString detailFieldNam
  * \a subType The subtype to be checked
  * \return True if this subtype is supported 
  */ 
-bool TransformNickname::supportsSubType(const QString& subType) const 
+bool CntTransformNickname::supportsSubType(const QString& subType) const 
 {
     return false;
 }
@@ -123,7 +123,7 @@ bool TransformNickname::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported 
  */ 
-quint32 TransformNickname::getIdForField(const QString& fieldName) const 
+quint32 CntTransformNickname::getIdForField(const QString& fieldName) const 
 {
     return 0;
 }

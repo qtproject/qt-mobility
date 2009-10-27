@@ -43,7 +43,7 @@
 
 #include "cnttransformcontactdata.h"
 
-class TransformNote : public TransformContactData
+class CntTransformNote : public CntTransformContactData
 {
 protected:
 	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);

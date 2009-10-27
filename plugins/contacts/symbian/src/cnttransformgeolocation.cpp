@@ -43,7 +43,7 @@
 
 const char separator = ',';
 
-QList<CContactItemField *> TransformGeolocation::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformGeolocation::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList;
 
@@ -76,7 +76,7 @@ QList<CContactItemField *> TransformGeolocation::transformDetailL(const QContact
 	return fieldList;
 }
 
-QContactDetail *TransformGeolocation::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformGeolocation::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
 
@@ -122,7 +122,7 @@ QContactDetail *TransformGeolocation::transformItemField(const CContactItemField
 	return geolocation;
 }
 
-bool TransformGeolocation::supportsField(TUint32 fieldType) const
+bool CntTransformGeolocation::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldGEO.iUid) {
@@ -131,7 +131,7 @@ bool TransformGeolocation::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformGeolocation::supportsDetail(QString detailName) const
+bool CntTransformGeolocation::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactGeolocation::DefinitionName) {
@@ -140,7 +140,7 @@ bool TransformGeolocation::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformGeolocation::supportedSortingFieldTypes(QString /*detailFieldName*/) const
+QList<TUid> CntTransformGeolocation::supportedSortingFieldTypes(QString /*detailFieldName*/) const
 {
     // Sorting not supported
     return QList<TUid>();
@@ -152,7 +152,7 @@ QList<TUid> TransformGeolocation::supportedSortingFieldTypes(QString /*detailFie
  * \a subType The subtype to be checked
  * \return True if this subtype is supported 
  */ 
-bool TransformGeolocation::supportsSubType(const QString& subType) const 
+bool CntTransformGeolocation::supportsSubType(const QString& subType) const 
 {
     return false;
 }
@@ -163,7 +163,7 @@ bool TransformGeolocation::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported 
  */ 
-quint32 TransformGeolocation::getIdForField(const QString& fieldName) const 
+quint32 CntTransformGeolocation::getIdForField(const QString& fieldName) const 
 {
     return 0;
 }

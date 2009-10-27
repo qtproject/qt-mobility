@@ -41,7 +41,7 @@
 #include "cnttransformonlineaccount.h"
 #include "cntmodelextuids.h"
 
-QList<CContactItemField *> TransformOnlineAccount::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList; 
 	
@@ -107,7 +107,7 @@ QList<CContactItemField *> TransformOnlineAccount::transformDetailL(const QConta
 	return fieldList;
 }
 
-QContactDetail *TransformOnlineAccount::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformOnlineAccount::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
 	
@@ -139,7 +139,7 @@ QContactDetail *TransformOnlineAccount::transformItemField(const CContactItemFie
 	return onlineAccount;
 }
 
-bool TransformOnlineAccount::supportsField(TUint32 fieldType) const
+bool CntTransformOnlineAccount::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldSIPID.iUid ||
@@ -150,7 +150,7 @@ bool TransformOnlineAccount::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformOnlineAccount::supportsDetail(QString detailName) const
+bool CntTransformOnlineAccount::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactOnlineAccount::DefinitionName) {
@@ -159,7 +159,7 @@ bool TransformOnlineAccount::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformOnlineAccount::supportedSortingFieldTypes(QString detailFieldName) const
+QList<TUid> CntTransformOnlineAccount::supportedSortingFieldTypes(QString detailFieldName) const
 {
     QList<TUid> uids;
     if (detailFieldName == QContactOnlineAccount::FieldAccountUri) {
@@ -176,7 +176,7 @@ QList<TUid> TransformOnlineAccount::supportedSortingFieldTypes(QString detailFie
  * \a subType The subtype to be checked
  * \return True if this subtype is supported 
  */ 
-bool TransformOnlineAccount::supportsSubType(const QString& subType) const 
+bool CntTransformOnlineAccount::supportsSubType(const QString& subType) const 
 {
     return false;
 }
@@ -187,7 +187,7 @@ bool TransformOnlineAccount::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported 
  */ 
-quint32 TransformOnlineAccount::getIdForField(const QString& fieldName) const 
+quint32 CntTransformOnlineAccount::getIdForField(const QString& fieldName) const 
 {
     return 0;
 }

@@ -43,7 +43,7 @@
 
 #include "cnttransformcontactdata.h"
 
-class TransformPhoneNumber : public TransformContactData
+class CntTransformPhoneNumber : public CntTransformContactData
 {
 protected:
 	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);

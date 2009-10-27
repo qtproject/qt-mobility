@@ -40,7 +40,7 @@
 ****************************************************************************/
 #include "cnttransformorganisation.h"
 
-QList<CContactItemField *> TransformOrganisation::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformOrganisation::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList;
 	
@@ -83,7 +83,7 @@ QList<CContactItemField *> TransformOrganisation::transformDetailL(const QContac
 }	
 
 
-QContactDetail *TransformOrganisation::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformOrganisation::transformItemField(const CContactItemField& field, const QContact &contact)
 {
     QContactOrganization *organisation = new QContactOrganization(contact.detail<QContactOrganization>());
 	
@@ -115,7 +115,7 @@ QContactDetail *TransformOrganisation::transformItemField(const CContactItemFiel
 	return organisation;
 }
 
-bool TransformOrganisation::supportsField(TUint32 fieldType) const
+bool CntTransformOrganisation::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldCompanyName.iUid ||
@@ -127,7 +127,7 @@ bool TransformOrganisation::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformOrganisation::supportsDetail(QString detailName) const
+bool CntTransformOrganisation::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactOrganization::DefinitionName) {
@@ -136,7 +136,7 @@ bool TransformOrganisation::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformOrganisation::supportedSortingFieldTypes(QString detailFieldName) const
+QList<TUid> CntTransformOrganisation::supportedSortingFieldTypes(QString detailFieldName) const
 {
     QList<TUid> uids;
     
@@ -162,7 +162,7 @@ QList<TUid> TransformOrganisation::supportedSortingFieldTypes(QString detailFiel
  * \a subType The subtype to be checked
  * \return True if this subtype is supported 
  */ 
-bool TransformOrganisation::supportsSubType(const QString& subType) const 
+bool CntTransformOrganisation::supportsSubType(const QString& subType) const 
 {
     return false;
 }
@@ -173,7 +173,7 @@ bool TransformOrganisation::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported 
  */ 
-quint32 TransformOrganisation::getIdForField(const QString& fieldName) const 
+quint32 CntTransformOrganisation::getIdForField(const QString& fieldName) const 
 {
     return 0;
 }

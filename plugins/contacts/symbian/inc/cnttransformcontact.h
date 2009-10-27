@@ -49,12 +49,12 @@
 #include <cntdef.h>
 #include <cntitem.h>
 
-class TransformContactData;
-class TransformContact
+class CntTransformContactData;
+class CntTransformContact
 {
 public:
-	TransformContact();
-	virtual ~TransformContact();
+	CntTransformContact();
+	virtual ~CntTransformContact();
 
 public:
 	QContact transformContactL(CContactItem &contact, CContactDatabase &contactDatabase) const;
@@ -84,7 +84,7 @@ private:
 		Family
 	};
 	
-	void initializeTransformContactData();
+	void initializeCntTransformContactData();
 	QList<CContactItemField *> transformDetailL(const QContactDetail &detail) const;
 	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact) const;
 	
@@ -92,7 +92,7 @@ private:
 	QContactDetail *transformTimestampItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const;
 	
 private:
-	QMap<ContactData, TransformContactData*> m_transformContactData;
+	QMap<ContactData, CntTransformContactData*> m_transformContactData;
 };
 
 #endif /* TRANSFORMCONCTACT_H_ */

@@ -237,7 +237,7 @@ QList<QContactLocalId> CntSrvConnection::UnpackCntIdArrayL()
     return list;
 }
 
-/*! Transform a Symbian contact error id to QContactManager::Error.
+/*! CntTransform a Symbian contact error id to QContactManager::Error.
  *
  * \param symbianError Symbian error.
  * \param QtError Qt error.

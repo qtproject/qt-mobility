@@ -40,7 +40,7 @@
 ****************************************************************************/
 #include "cnttransformbirthday.h"
 
-QList<CContactItemField *> TransformBirthday::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformBirthday::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList; 
 	
@@ -59,7 +59,7 @@ QList<CContactItemField *> TransformBirthday::transformDetailL(const QContactDet
 	return fieldList;
 }
 
-QContactDetail *TransformBirthday::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformBirthday::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
 	
@@ -73,7 +73,7 @@ QContactDetail *TransformBirthday::transformItemField(const CContactItemField& f
 	return birthday;
 }
 
-bool TransformBirthday::supportsField(TUint32 fieldType) const
+bool CntTransformBirthday::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldBirthday.iUid) {
@@ -82,7 +82,7 @@ bool TransformBirthday::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformBirthday::supportsDetail(QString detailName) const
+bool CntTransformBirthday::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactBirthday::DefinitionName) {
@@ -91,7 +91,7 @@ bool TransformBirthday::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformBirthday::supportedSortingFieldTypes(QString detailFieldName) const
+QList<TUid> CntTransformBirthday::supportedSortingFieldTypes(QString detailFieldName) const
 {
     QList<TUid> uids;
     if( detailFieldName == QContactBirthday::FieldBirthday )
@@ -106,7 +106,7 @@ QList<TUid> TransformBirthday::supportedSortingFieldTypes(QString detailFieldNam
  * \a subType The subtype to be checked
  * \return True if this subtype is supported 
  */ 
-bool TransformBirthday::supportsSubType(const QString& subType) const 
+bool CntTransformBirthday::supportsSubType(const QString& subType) const 
 {
     return false;
 }
@@ -117,7 +117,7 @@ bool TransformBirthday::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported 
  */ 
-quint32 TransformBirthday::getIdForField(const QString& fieldName) const 
+quint32 CntTransformBirthday::getIdForField(const QString& fieldName) const 
 {
     return 0;
 }

@@ -42,7 +42,7 @@
 
 const char separator = ',';
 
-QList<CContactItemField *> TransformFamily::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformFamily::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList; 
 	
@@ -70,7 +70,7 @@ QList<CContactItemField *> TransformFamily::transformDetailL(const QContactDetai
 	return fieldList;
 }
 
-QContactDetail *TransformFamily::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformFamily::transformItemField(const CContactItemField& field, const QContact &contact)
 {
     QContactFamily *family = new QContactFamily(contact.detail<QContactFamily>());
 	
@@ -94,7 +94,7 @@ QContactDetail *TransformFamily::transformItemField(const CContactItemField& fie
 	return family;
 }
 
-bool TransformFamily::supportsField(TUint32 fieldType) const
+bool CntTransformFamily::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldSpouse.iUid ||
@@ -104,7 +104,7 @@ bool TransformFamily::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformFamily::supportsDetail(QString detailName) const
+bool CntTransformFamily::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactFamily::DefinitionName) {
@@ -113,7 +113,7 @@ bool TransformFamily::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformFamily::supportedSortingFieldTypes(QString /*detailFieldName*/) const
+QList<TUid> CntTransformFamily::supportedSortingFieldTypes(QString /*detailFieldName*/) const
 {
     // Sorting not supported
     return QList<TUid>();
@@ -125,7 +125,7 @@ QList<TUid> TransformFamily::supportedSortingFieldTypes(QString /*detailFieldNam
  * \a subType The subtype to be checked
  * \return True if this subtype is supported 
  */ 
-bool TransformFamily::supportsSubType(const QString& subType) const 
+bool CntTransformFamily::supportsSubType(const QString& subType) const 
 {
     return false;
 }
@@ -136,7 +136,7 @@ bool TransformFamily::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported 
  */ 
-quint32 TransformFamily::getIdForField(const QString& fieldName) const 
+quint32 CntTransformFamily::getIdForField(const QString& fieldName) const 
 {
     return 0;
 }

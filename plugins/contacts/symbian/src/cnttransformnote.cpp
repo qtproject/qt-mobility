@@ -40,7 +40,7 @@
 ****************************************************************************/
 #include "cnttransformnote.h"
 
-QList<CContactItemField *> TransformNote::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformNote::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList; 
 	
@@ -59,7 +59,7 @@ QList<CContactItemField *> TransformNote::transformDetailL(const QContactDetail 
 	return fieldList;
 }
 
-QContactDetail *TransformNote::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformNote::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
 	
@@ -72,7 +72,7 @@ QContactDetail *TransformNote::transformItemField(const CContactItemField& field
 	return note;
 }
 
-bool TransformNote::supportsField(TUint32 fieldType) const
+bool CntTransformNote::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldNote.iUid) {
@@ -81,7 +81,7 @@ bool TransformNote::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformNote::supportsDetail(QString detailName) const
+bool CntTransformNote::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactNote::DefinitionName) {
@@ -90,7 +90,7 @@ bool TransformNote::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformNote::supportedSortingFieldTypes(QString detailFieldName) const
+QList<TUid> CntTransformNote::supportedSortingFieldTypes(QString detailFieldName) const
 {
     QList<TUid> uids;
     if (detailFieldName == QContactNote::FieldNote)
@@ -104,7 +104,7 @@ QList<TUid> TransformNote::supportedSortingFieldTypes(QString detailFieldName) c
  * \a subType The subtype to be checked
  * \return True if this subtype is supported 
  */ 
-bool TransformNote::supportsSubType(const QString& subType) const 
+bool CntTransformNote::supportsSubType(const QString& subType) const 
 {
     return false;
 }
@@ -115,7 +115,7 @@ bool TransformNote::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported 
  */ 
-quint32 TransformNote::getIdForField(const QString& fieldName) const 
+quint32 CntTransformNote::getIdForField(const QString& fieldName) const 
 {
     return 0;
 }

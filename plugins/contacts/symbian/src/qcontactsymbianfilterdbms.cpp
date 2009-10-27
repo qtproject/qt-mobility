@@ -69,8 +69,8 @@ QContactSymbianFilter::QContactSymbianFilter(CContactDatabase& contactDatabase):
     m_transformContact(0),
     m_contactSorter(0)
 {
-    // TODO: take TransformContact ref as a parameter?
-    m_transformContact = new TransformContact;
+    // TODO: take CntTransformContact ref as a parameter?
+    m_transformContact = new CntTransformContact;
     m_contactSorter = new QContactSymbianSorter(m_contactDatabase, *m_transformContact);
 }
 

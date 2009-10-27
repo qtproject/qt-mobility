@@ -49,7 +49,7 @@
 #include <cntdef.h>
 #include <cntitem.h>
 
-class TransformContactData : public QObject
+class CntTransformContactData : public QObject
 {
 	 Q_OBJECT
 

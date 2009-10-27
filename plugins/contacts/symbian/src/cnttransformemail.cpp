@@ -40,7 +40,7 @@
 ****************************************************************************/
 #include "cnttransformemail.h"
 
-QList<CContactItemField *> TransformEmail::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformEmail::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList; 
 	
@@ -62,7 +62,7 @@ QList<CContactItemField *> TransformEmail::transformDetailL(const QContactDetail
 	return fieldList;
 }
 
-QContactDetail *TransformEmail::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformEmail::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
 	
@@ -81,7 +81,7 @@ QContactDetail *TransformEmail::transformItemField(const CContactItemField& fiel
 	return email;
 }
 
-bool TransformEmail::supportsField(TUint32 fieldType) const
+bool CntTransformEmail::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldEMail.iUid) {
@@ -90,7 +90,7 @@ bool TransformEmail::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformEmail::supportsDetail(QString detailName) const
+bool CntTransformEmail::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactEmailAddress::DefinitionName) {
@@ -99,7 +99,7 @@ bool TransformEmail::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformEmail::supportedSortingFieldTypes(QString detailFieldName) const
+QList<TUid> CntTransformEmail::supportedSortingFieldTypes(QString detailFieldName) const
 {
     QList<TUid> uids;
     if( detailFieldName == QContactEmailAddress::FieldEmailAddress )
@@ -113,7 +113,7 @@ QList<TUid> TransformEmail::supportedSortingFieldTypes(QString detailFieldName) 
  * \a subType The subtype to be checked
  * \return True if this subtype is supported 
  */ 
-bool TransformEmail::supportsSubType(const QString& subType) const 
+bool CntTransformEmail::supportsSubType(const QString& subType) const 
 {
     return false;
 }
@@ -124,7 +124,7 @@ bool TransformEmail::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported 
  */ 
-quint32 TransformEmail::getIdForField(const QString& fieldName) const 
+quint32 CntTransformEmail::getIdForField(const QString& fieldName) const 
 {
     return 0;
 }

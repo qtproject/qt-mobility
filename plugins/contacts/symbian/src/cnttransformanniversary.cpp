@@ -42,7 +42,7 @@
 
 const char separator = ',';
 
-QList<CContactItemField *> TransformAnniversary::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformAnniversary::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList; 
 	
@@ -70,7 +70,7 @@ QList<CContactItemField *> TransformAnniversary::transformDetailL(const QContact
 	return fieldList;
 }
 
-QContactDetail *TransformAnniversary::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformAnniversary::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
 	
@@ -98,7 +98,7 @@ QContactDetail *TransformAnniversary::transformItemField(const CContactItemField
 	return anniversary;
 }
 
-bool TransformAnniversary::supportsField(TUint32 fieldType) const
+bool CntTransformAnniversary::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldAnniversary.iUid) {
@@ -107,7 +107,7 @@ bool TransformAnniversary::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformAnniversary::supportsDetail(QString detailName) const
+bool CntTransformAnniversary::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactAnniversary::DefinitionName) {
@@ -116,7 +116,7 @@ bool TransformAnniversary::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformAnniversary::supportedSortingFieldTypes(QString /*detailFieldName*/) const
+QList<TUid> CntTransformAnniversary::supportedSortingFieldTypes(QString /*detailFieldName*/) const
 {
     // Sorting not supported
     return QList<TUid>();
@@ -128,7 +128,7 @@ QList<TUid> TransformAnniversary::supportedSortingFieldTypes(QString /*detailFie
  * \a subType The subtype to be checked
  * \return True if this subtype is supported 
  */ 
-bool TransformAnniversary::supportsSubType(const QString& subType) const 
+bool CntTransformAnniversary::supportsSubType(const QString& subType) const 
 {
     return false;
 }
@@ -139,7 +139,7 @@ bool TransformAnniversary::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported 
  */ 
-quint32 TransformAnniversary::getIdForField(const QString& fieldName) const 
+quint32 CntTransformAnniversary::getIdForField(const QString& fieldName) const 
 {
     return 0;
 }

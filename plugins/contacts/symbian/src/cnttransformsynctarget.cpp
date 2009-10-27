@@ -41,7 +41,7 @@
 #include "cnttransformsynctarget.h"
 #include "cntmodelextuids.h"
 
-QList<CContactItemField *> TransformSyncTarget::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformSyncTarget::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList; 
 	
@@ -60,7 +60,7 @@ QList<CContactItemField *> TransformSyncTarget::transformDetailL(const QContactD
 	return fieldList;
 }
 
-QContactDetail *TransformSyncTarget::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformSyncTarget::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
 	
@@ -73,7 +73,7 @@ QContactDetail *TransformSyncTarget::transformItemField(const CContactItemField&
 	return syncTarget;
 }
 
-bool TransformSyncTarget::supportsField(TUint32 fieldType) const
+bool CntTransformSyncTarget::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldSyncTarget.iUid) {
@@ -82,7 +82,7 @@ bool TransformSyncTarget::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformSyncTarget::supportsDetail(QString detailName) const
+bool CntTransformSyncTarget::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactSyncTarget::DefinitionName) {
@@ -91,7 +91,7 @@ bool TransformSyncTarget::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformSyncTarget::supportedSortingFieldTypes(QString detailFieldName) const
+QList<TUid> CntTransformSyncTarget::supportedSortingFieldTypes(QString detailFieldName) const
 {
     QList<TUid> uids;
     if (detailFieldName == QContactSyncTarget::FieldSyncTarget)
@@ -106,7 +106,7 @@ QList<TUid> TransformSyncTarget::supportedSortingFieldTypes(QString detailFieldN
  * \a subType The subtype to be checked
  * \return True if this subtype is supported 
  */ 
-bool TransformSyncTarget::supportsSubType(const QString& subType) const 
+bool CntTransformSyncTarget::supportsSubType(const QString& subType) const 
 {
     return false;
 }
@@ -117,7 +117,7 @@ bool TransformSyncTarget::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported 
  */ 
-quint32 TransformSyncTarget::getIdForField(const QString& fieldName) const 
+quint32 CntTransformSyncTarget::getIdForField(const QString& fieldName) const 
 {
     return 0;
 }

@@ -40,7 +40,7 @@
 ****************************************************************************/
 #include "cnttransformphonenumber.h"
 
-QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformPhoneNumber::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList; 
 	
@@ -138,7 +138,7 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
 	return fieldList;
 }
 
-QContactDetail *TransformPhoneNumber::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformPhoneNumber::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
 	
@@ -184,7 +184,7 @@ QContactDetail *TransformPhoneNumber::transformItemField(const CContactItemField
 	return phoneNumber;
 }
 
-bool TransformPhoneNumber::supportsField(TUint32 fieldType) const
+bool CntTransformPhoneNumber::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldPhoneNumber.iUid ||
@@ -195,7 +195,7 @@ bool TransformPhoneNumber::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformPhoneNumber::supportsDetail(QString detailName) const
+bool CntTransformPhoneNumber::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactPhoneNumber::DefinitionName) {
@@ -204,7 +204,7 @@ bool TransformPhoneNumber::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformPhoneNumber::supportedSortingFieldTypes(QString detailFieldName) const
+QList<TUid> CntTransformPhoneNumber::supportedSortingFieldTypes(QString detailFieldName) const
 {
     QList<TUid> uids;
     if (detailFieldName == QContactPhoneNumber::FieldNumber) {
@@ -221,7 +221,7 @@ QList<TUid> TransformPhoneNumber::supportedSortingFieldTypes(QString detailField
  * \a subType The subtype to be checked
  * \return True if this subtype is supported 
  */ 
-bool TransformPhoneNumber::supportsSubType(const QString& subType) const 
+bool CntTransformPhoneNumber::supportsSubType(const QString& subType) const 
 {
     if(QContactPhoneNumber::FieldSubTypes  == subType)
         return true;
@@ -235,7 +235,7 @@ bool TransformPhoneNumber::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported 
  */ 
-quint32 TransformPhoneNumber::getIdForField(const QString& fieldName) const 
+quint32 CntTransformPhoneNumber::getIdForField(const QString& fieldName) const 
 {
     return 0;
 }

@@ -40,7 +40,7 @@
 ****************************************************************************/
 #include "cnttransformaddress.h"
 
-QList<CContactItemField *> TransformAddress::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformAddress::transformDetailL(const QContactDetail &detail)
 {
     QList<CContactItemField *> fieldList; 
     
@@ -104,7 +104,7 @@ QList<CContactItemField *> TransformAddress::transformDetailL(const QContactDeta
     return fieldList;
 }
 
-QContactDetail *TransformAddress::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformAddress::transformItemField(const CContactItemField& field, const QContact &contact)
 {
     QContactAddress address;
     
@@ -169,7 +169,7 @@ QContactDetail *TransformAddress::transformItemField(const CContactItemField& fi
     return detail;
 }
 
-bool TransformAddress::supportsField(TUint32 fieldType) const
+bool CntTransformAddress::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldCountry.iUid ||
@@ -183,7 +183,7 @@ bool TransformAddress::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformAddress::supportsDetail(QString detailName) const
+bool CntTransformAddress::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactAddress::DefinitionName) {
@@ -192,7 +192,7 @@ bool TransformAddress::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformAddress::supportedSortingFieldTypes(QString detailFieldName) const
+QList<TUid> CntTransformAddress::supportedSortingFieldTypes(QString detailFieldName) const
 {
     QList<TUid> uids;
     
@@ -223,7 +223,7 @@ QList<TUid> TransformAddress::supportedSortingFieldTypes(QString detailFieldName
  * \a subType The subtype to be checked
  * \return True if this subtype is supported 
  */ 
-bool TransformAddress::supportsSubType(const QString& subType) const 
+bool CntTransformAddress::supportsSubType(const QString& subType) const 
 {
     return false;
 }
@@ -234,7 +234,7 @@ bool TransformAddress::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported 
  */ 
-quint32 TransformAddress::getIdForField(const QString& fieldName) const 
+quint32 CntTransformAddress::getIdForField(const QString& fieldName) const 
 {
     return 0;
 }

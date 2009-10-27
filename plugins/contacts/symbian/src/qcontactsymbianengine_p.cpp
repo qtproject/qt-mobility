@@ -100,7 +100,7 @@ QContactSymbianEngineData::QContactSymbianEngineData(QContactManager::Error& err
         TRAP(err, m_contactDatabase->AddObserverL(*this));
 #endif
 
-    	m_transformContact = new TransformContact;
+    	m_transformContact = new CntTransformContact;
         m_contactFilter    = new QContactSymbianFilter(*m_contactDatabase);
         m_contactSorter    = new QContactSymbianSorter(*m_contactDatabase, *m_transformContact);
         m_relationship     = new CntRelationship(m_contactDatabase);
@@ -478,7 +478,7 @@ void QContactSymbianEngineData::HandleDatabaseEventL(TContactDbObserverEvent aEv
 	}
 }
 
-/*! Transform a Symbian contact error id to QContactManager::Error.
+/*! CntTransform a Symbian contact error id to QContactManager::Error.
  *
  * \param symbianError Symbian error.
  * \param QtError Qt error.

@@ -44,7 +44,7 @@
 #include <cntitem.h>
 #include <qtcontacts.h>
 
-class TestTransformContact : public QObject
+class TestCntTransformContact : public QObject
 {
     Q_OBJECT
 
@@ -52,8 +52,8 @@ private slots:
 	void initTestCase();
 	void cleanupTestCase();
 	
-	void executeTransformSymbianContact();
-	void executeTransformQtContact();
+	void executeCntTransformSymbianContact();
+	void executeCntTransformQtContact();
 	
 private: //validate results
 	void validateQContactEmpty(const QContact& contact) const;

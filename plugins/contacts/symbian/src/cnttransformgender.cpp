@@ -41,7 +41,7 @@
 #include "cnttransformgender.h"
 #include "cntmodelextuids.h"
 
-QList<CContactItemField *> TransformGender::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformGender::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList; 
 	
@@ -60,7 +60,7 @@ QList<CContactItemField *> TransformGender::transformDetailL(const QContactDetai
 	return fieldList;
 }
 
-QContactDetail *TransformGender::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformGender::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
 	
@@ -73,7 +73,7 @@ QContactDetail *TransformGender::transformItemField(const CContactItemField& fie
 	return gender;
 }
 
-bool TransformGender::supportsField(TUint32 fieldType) const
+bool CntTransformGender::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldGender.iUid) {
@@ -82,7 +82,7 @@ bool TransformGender::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformGender::supportsDetail(QString detailName) const
+bool CntTransformGender::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactGender::DefinitionName) {
@@ -91,7 +91,7 @@ bool TransformGender::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformGender::supportedSortingFieldTypes(QString detailFieldName) const
+QList<TUid> CntTransformGender::supportedSortingFieldTypes(QString detailFieldName) const
 {
     QList<TUid> uids;
     if( detailFieldName == QContactGender::FieldGender )
@@ -105,7 +105,7 @@ QList<TUid> TransformGender::supportedSortingFieldTypes(QString detailFieldName)
  * \a subType The subtype to be checked
  * \return True if this subtype is supported 
  */ 
-bool TransformGender::supportsSubType(const QString& subType) const 
+bool CntTransformGender::supportsSubType(const QString& subType) const 
 {
     return false;
 }
@@ -116,7 +116,7 @@ bool TransformGender::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported 
  */ 
-quint32 TransformGender::getIdForField(const QString& fieldName) const 
+quint32 CntTransformGender::getIdForField(const QString& fieldName) const 
 {
     return 0;
 }

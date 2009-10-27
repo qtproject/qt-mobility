@@ -40,7 +40,7 @@
 ****************************************************************************/
 #include "cnttransformurl.h"
 
-QList<CContactItemField *> TransformUrl::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformUrl::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList; 
 	
@@ -69,7 +69,7 @@ QList<CContactItemField *> TransformUrl::transformDetailL(const QContactDetail &
 	return fieldList;
 }
 
-QContactDetail *TransformUrl::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformUrl::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
 	
@@ -89,7 +89,7 @@ QContactDetail *TransformUrl::transformItemField(const CContactItemField& field,
 	return url;
 }
 
-bool TransformUrl::supportsField(TUint32 fieldType) const
+bool CntTransformUrl::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldUrl.iUid) {
@@ -98,7 +98,7 @@ bool TransformUrl::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformUrl::supportsDetail(QString detailName) const
+bool CntTransformUrl::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactUrl::DefinitionName) {
@@ -107,7 +107,7 @@ bool TransformUrl::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformUrl::supportedSortingFieldTypes(QString detailFieldName) const
+QList<TUid> CntTransformUrl::supportedSortingFieldTypes(QString detailFieldName) const
 {
     QList<TUid> uids;
     if (detailFieldName == QContactUrl::FieldUrl)
@@ -121,7 +121,7 @@ QList<TUid> TransformUrl::supportedSortingFieldTypes(QString detailFieldName) co
  * \a subType The subtype to be checked
  * \return True if this subtype is supported 
  */ 
-bool TransformUrl::supportsSubType(const QString& subType) const 
+bool CntTransformUrl::supportsSubType(const QString& subType) const 
 {
     return false;
 }
@@ -132,7 +132,7 @@ bool TransformUrl::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported 
  */ 
-quint32 TransformUrl::getIdForField(const QString& fieldName) const 
+quint32 CntTransformUrl::getIdForField(const QString& fieldName) const 
 {
     return 0;
 }
