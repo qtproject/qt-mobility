@@ -205,7 +205,7 @@ Q_OBJECT
 
 public:
 
-    QSystemDisplayInfo();
+    QSystemDisplayInfo(QObject *parent = 0);
     ~QSystemDisplayInfo();
 
      //TODO: to Qt QDesktopWidget
