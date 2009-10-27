@@ -6,7 +6,9 @@ win32:!wince* {
     TMP_INCLUDE = $$quote($$(INCLUDE))
     TMP_SEARCHPATHS = $$split(TMP_INCLUDE, ";") $$QMAKE_INCDIR
     for(p, TMP_SEARCHPATHS): exists($${p}/wmp.h): SUBDIRS *= wmp
-    for(p, TMP_SEARCHPATHS): exists($${p}/dshow.h): SUBDIRS *= directshow
+    for(p, TMP_SEARCHPATHS): exists($${p}/dshow.h) {
+        exists($${p}/strsafe.h): SUBDIRS *= directshow
+    }
 }
 
 unix:!mac {
