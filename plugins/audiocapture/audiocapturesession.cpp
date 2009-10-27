@@ -153,7 +153,11 @@ QUrl AudioCaptureSession::sink() const
 bool AudioCaptureSession::setSink(const QUrl& sink)
 {
     m_sink = sink;
-    file.setFileName(sink.toLocalFile());
+    if(sink.toLocalFile().length() > 0)
+        file.setFileName(sink.toLocalFile());
+    else
+        file.setFileName(sink.toString());
+
     return true;
 }
 
