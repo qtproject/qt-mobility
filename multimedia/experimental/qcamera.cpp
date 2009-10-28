@@ -59,6 +59,19 @@
     \preliminary
     \brief The QCamera class provides interface for system
     camera devices.
+
+    QCamera can be used with QVideoWidget for viewfinder display
+    and QMediaRecorder for video recording.
+
+    \code
+        camera = new QCamera;
+        viewFinder = new QVideoWidget(camera);
+        viewFinder->show();
+
+        recorder = QMediaRecorder(camera);
+
+        camera->start();
+    \endcode
 */
 
 

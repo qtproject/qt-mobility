@@ -812,7 +812,7 @@ QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
 /*!
     \fn void QMediaPlayer::videoAvailabilityChanged(bool videoAvailable)
 
-    Signal the availability of visual cntent has changed to \a videoAvailable.
+    Signal the availability of visual content has changed to \a videoAvailable.
 */
 
 /*!
@@ -824,7 +824,10 @@ QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
 /*!
     \enum QMediaPlayer::Flag
 
-    \value LowLatency   TODO
+    \value LowLatency
+            The player is expected to be used with simple audio formats,
+            but playback should start without significant delay.
+            Such playback service can be used for beeps, ringtones, etc.
 */
 
 #include "moc_qmediaplayer.cpp"

@@ -66,7 +66,20 @@
     \ingroup multimedia
 
     \preliminary
-    \brief
+    \brief The QMediaRecorder class is used for the recording of media content.
+
+    The QMediaRecorder class is a high level media recording class.
+    It's not intended to be used alone but for accessing the media
+    recording functions of other media objects, like QRadioTuner,
+    QCamera or QAudioCaptureSource.
+
+    \code
+    audioSource = new QAudioCaptureSource;
+    recorder = new QMediaRecorder(audioSource);
+
+    recorder->setOutputLocation(QUrl::fromLocalFile(fileName));
+    recorder->record();
+    \endcode
 
     \sa
 */
