@@ -60,6 +60,8 @@ CameraCapture::CameraCapture(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    outputDir = QDir::currentPath();
+
     //camera devices
     QByteArray cameraDevice;
 
@@ -197,7 +199,16 @@ void CameraCapture::stop()
 
 void CameraCapture::takeImage()
 {
-    camera->capture(QDateTime::currentDateTime().toString(Qt::ISODate)+".jpg");
+    int lastImage = 0;
+    foreach( QString fileName, outputDir.entryList(QStringList() << "img_*.jpg") ) {
+        int imgNumber = fileName.mid(4, fileName.size()-8).toInt();
+        lastImage = qMax(lastImage, imgNumber);
+    }
+
+    camera->capture(QString("img_%1.jpg").arg(lastImage+1,
+                                              4, //fieldWidth
+                                              10,
+                                              QLatin1Char('0')));
 }
 
 void CameraCapture::toggleCamera()

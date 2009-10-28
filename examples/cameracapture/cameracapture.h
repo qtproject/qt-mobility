@@ -49,6 +49,7 @@ namespace Ui {
 }
 
 #include <QMainWindow>
+#include <QDir>
 
 class QMediaRecorder;
 class QCamera;
@@ -88,6 +89,7 @@ private slots:
 private:
     Ui::CameraCapture *ui;
 
+    QDir outputDir;
     QMediaRecorder* mediaRecorder;
     QCamera *camera;
     QMediaService *service;
