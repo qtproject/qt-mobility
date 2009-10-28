@@ -225,7 +225,6 @@ void AudioCaptureSession::record()
                 header.data.descriptor.size = 0xFFFFFFFF;
                 file.write((char*)&header,sizeof(CombinedHeader));
 
-                qWarning()<<"TODO:write header";
                 m_audioInput->start(qobject_cast<QIODevice*>(&file));
             } else {
                 qWarning()<<"can't open source, failed";
@@ -250,8 +249,6 @@ void AudioCaptureSession::stop()
 {
     if(m_audioInput) {
         m_audioInput->stop();
-        //TODO: finish up wav file (update length) if wavFile true
-        qWarning()<<"TODO: finish";
         file.close();
         m_position = 0;
     }
