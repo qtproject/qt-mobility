@@ -75,7 +75,23 @@
         player->play();
     \endcode
 
-    \sa QMediaObject, QMediaService
+    QVideoWidget can be used with QMediaPlayer for video rendering and QMediaPlaylist
+    for accessing playlist functionality.
+
+    \code
+        player = new QMediaPlayer;
+
+        playlist = new QMediaPlaylist(player);
+        playlist->append(QUrl("http://example.com/movie1.mp4"));
+        playlist->append(QUrl("http://example.com/movie2.mp4"));
+
+        widget = new QVideoWidget(player);
+        widget->show();
+
+        player->play();
+    \endcode
+
+    \sa QMediaObject, QMediaService, QVideoWidget, QMediaPlaylist
 */
 
 class QMediaPlayerPrivate : public QMediaObjectPrivate

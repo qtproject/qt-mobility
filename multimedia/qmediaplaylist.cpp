@@ -67,6 +67,24 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
     \preliminary
     \brief The QMediaPlaylist class provides a list of media content to play.
 
+    QMediaPlaylist is intended to be used with other media objects,
+    like QMediaPlayer or QMediaImageViewer.
+    QMediaPlaylist allows to access the service intrinsic playlist functionality
+    if available, otherwise it provides the the local memory playlist implementation.
+
+\code
+    player = new QMediaPlayer;
+
+    playlist = new QMediaPlaylist(player);
+    playlist->append(QUrl("http://example.com/movie1.mp4"));
+    playlist->append(QUrl("http://example.com/movie2.mp4"));
+    playlist->append(QUrl("http://example.com/movie3.mp4"));
+
+    playlist->setCurrentPosition(1);
+
+    player->play();
+\endcode
+
     Depending on playlist source implementation,
     most of playlist modifcation operations can be asynchronous.
 
@@ -95,7 +113,8 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
 
 /*!
   Create a new playlist object for with the given \a parent.
-  If \a mediaObject is null, internal local memory playlist source will be created.
+  If \a mediaObject is null or doesn't have an intrinsic playlist,
+  internal local memory playlist source will be created.
 */
 
 QMediaPlaylist::QMediaPlaylist(QMediaObject *mediaObject, QObject *parent)
@@ -575,6 +594,8 @@ void QMediaPlaylist::setCurrentPosition(int playlistPosition)
 
 /*!
     \enum QMediaPlaylist::Error
+
+    This enum describes the QMediaPlaylist error codes.
 
     \value NoError                 No errors.
     \value FormatError             Format error.
