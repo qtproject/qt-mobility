@@ -45,6 +45,7 @@
 #include "qversitdocument.h"
 #include <QSharedData>
 #include <QString>
+#include <QStringList>
 #include <QMultiHash>
 #include <QByteArray>
 
@@ -58,6 +59,7 @@ public:
     
     QVersitPropertyPrivate(const QVersitPropertyPrivate& other) 
         : QSharedData(other),
+        mGroups(other.mGroups),
         mName(other.mName),
         mParameters(other.mParameters),
         mValue(other.mValue),
@@ -67,6 +69,7 @@ public:
     
     ~QVersitPropertyPrivate() {}
     
+    QStringList mGroups;
     QString mName;
     QMultiHash<QString,QString> mParameters;
     QByteArray mValue;

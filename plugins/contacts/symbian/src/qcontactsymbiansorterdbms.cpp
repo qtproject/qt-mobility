@@ -62,7 +62,7 @@ typedef QList<QContactLocalId> QContactLocalIdList;
 // the called function or the return value of the function is placed to the
 // variable.
 
-QContactSymbianSorter::QContactSymbianSorter(CContactDatabase& contactDatabase,TransformContact& transformContact):
+QContactSymbianSorter::QContactSymbianSorter(CContactDatabase& contactDatabase,CntTransformContact& transformContact):
     m_contactDatabase(contactDatabase),
     m_transformContact(transformContact)
 {

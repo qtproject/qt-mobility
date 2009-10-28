@@ -80,10 +80,11 @@ private:
                                        const QVersitDocument& versitDocument) const;
     QContactDetail* createTimeStamp(const QVersitProperty& property) const;
     QContactDetail* createAnniversary(const QVersitProperty& property) const;
-    QContactDetail* createBirthday(const QVersitProperty& property) const;
-    QContactDetail* createNicknames(const QVersitProperty& property) const;
+    QContactDetail* createBirthday(const QVersitProperty& property) const;    
     QContactDetail* createImageAvatar(const QVersitProperty& property,
-                                      const QVersitDocument& doc) const;    
+                                      const QVersitDocument& doc) const;
+    void createNicknames(const QVersitProperty& property,
+                         QContact& contact) const;    
     QContactDetail* createGeoLocation(const QVersitProperty& property) const;
     QContactDetail* createOnlineAccount(const QVersitProperty& property) const;
     QContactDetail* createFamily(const QVersitProperty& property,

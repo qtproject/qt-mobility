@@ -45,6 +45,7 @@
 #include <qtversitglobal.h>
 #include <qversitdocument.h>
 #include <QString>
+#include <QStringList>
 #include <QMultiHash>
 #include <QByteArray>
 #include <QSharedDataPointer>
@@ -59,6 +60,9 @@ public:
     ~QVersitProperty();
     
     QVersitProperty& operator=(const QVersitProperty& other);
+
+    void setGroups(const QStringList& groups);
+    QStringList groups() const;
 
     void setName(const QString& name);
     QString name() const;

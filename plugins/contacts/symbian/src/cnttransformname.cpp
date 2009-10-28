@@ -42,13 +42,13 @@
 
 #include <QDebug>
 
-QList<CContactItemField *> TransformName::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformName::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList;
-	
+
 	//cast to name
 	const QContactName &name(static_cast<const QContactName&>(detail));
-	
+
 	//Prefix
 	TPtrC fieldTextPrefix(reinterpret_cast<const TUint16*>(name.prefix().utf16()));
 	CContactItemField* prefix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldPrefixName);
@@ -56,7 +56,7 @@ QList<CContactItemField *> TransformName::transformDetailL(const QContactDetail 
 	prefix->SetMapping(KUidContactFieldVCardMapUnusedN);
 	fieldList.append(prefix);
 	CleanupStack::Pop(prefix);
-	
+
 	//First Name
 	TPtrC fieldTextFirstName(reinterpret_cast<const TUint16*>(name.first().utf16()));
 	CContactItemField* firstName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldGivenName);
@@ -72,7 +72,7 @@ QList<CContactItemField *> TransformName::transformDetailL(const QContactDetail 
 	middleName->SetMapping(KUidContactFieldVCardMapUnusedN);
 	fieldList.append(middleName);
 	CleanupStack::Pop(middleName);
-	
+
 	//Last Name
 	TPtrC fieldTextLastName(reinterpret_cast<const TUint16*>(name.last().utf16()));
 	CContactItemField* lastName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldFamilyName);
@@ -80,7 +80,7 @@ QList<CContactItemField *> TransformName::transformDetailL(const QContactDetail 
 	lastName->SetMapping(KUidContactFieldVCardMapUnusedN);
 	fieldList.append(lastName);
 	CleanupStack::Pop(lastName);
-	
+
 	//Suffix
 	TPtrC fieldTextSuffix(reinterpret_cast<const TUint16*>(name.suffix().utf16()));
 	CContactItemField* suffix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldSuffixName);
@@ -88,18 +88,18 @@ QList<CContactItemField *> TransformName::transformDetailL(const QContactDetail 
 	suffix->SetMapping(KUidContactFieldVCardMapUnusedN);
 	fieldList.append(suffix);
 	CleanupStack::Pop(suffix);
-	
+
 	return fieldList;
-}	
+}
 
 
-QContactDetail *TransformName::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformName::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	QContactName *name = new QContactName(contact.detail<QContactName>());
-	
+
 	CContactTextField* storage = field.TextStorage();
 	QString nameValue = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
-	
+
 	for (int i = 0; i < field.ContentType().FieldTypeCount(); i++)
 	{
 		//Prefix
@@ -107,36 +107,36 @@ QContactDetail *TransformName::transformItemField(const CContactItemField& field
 		{
 			name->setPrefix(nameValue);
 		}
-		
+
 		//First name
 		else if (field.ContentType().FieldType(i) == KUidContactFieldGivenName)
 		{
 			name->setFirst(nameValue);
 		}
-		
+
 		//Middle name
 		else if (field.ContentType().FieldType(i) == KUidContactFieldAdditionalName)
 		{
 			name->setMiddle(nameValue);
 		}
-		
+
 		//Last name
 		else if (field.ContentType().FieldType(i) == KUidContactFieldFamilyName)
 		{
 			name->setLast(nameValue);
 		}
-		
+
 		//Suffix
 		else if (field.ContentType().FieldType(i) == KUidContactFieldSuffixName)
 		{
 			name->setSuffix(nameValue);
 		}
 	}
-	
+
 	return name;
 }
 
-bool TransformName::supportsField(TUint32 fieldType) const
+bool CntTransformName::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldPrefixName.iUid ||
@@ -149,7 +149,7 @@ bool TransformName::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformName::supportsDetail(QString detailName) const
+bool CntTransformName::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactName::DefinitionName) {
@@ -158,25 +158,25 @@ bool TransformName::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformName::supportedSortingFieldTypes(QString detailFieldName) const
+QList<TUid> CntTransformName::supportedSortingFieldTypes(QString detailFieldName) const
 {
     QList<TUid> uids;
-    
+
     if (detailFieldName == QContactName::FieldPrefix)
         return uids << KUidContactFieldPrefixName;
-    
+
     if (detailFieldName == QContactName::FieldFirst)
         return uids << KUidContactFieldGivenName;
-    
+
     if (detailFieldName == QContactName::FieldMiddle)
         return uids << KUidContactFieldAdditionalName;
-    
+
     if (detailFieldName == QContactName::FieldLast)
         return uids << KUidContactFieldFamilyName;
-        
+
     if (detailFieldName == QContactName::FieldSuffix)
         return uids << KUidContactFieldSuffixName;
-    
+
     return uids;
 }
 
@@ -184,9 +184,9 @@ QList<TUid> TransformName::supportedSortingFieldTypes(QString detailFieldName) c
  * Checks whether the subtype is supported
  *
  * \a subType The subtype to be checked
- * \return True if this subtype is supported 
- */ 
-bool TransformName::supportsSubType(const QString& subType) const 
+ * \return True if this subtype is supported
+ */
+bool CntTransformName::supportsSubType(const QString& subType) const
 {
     return false;
 }
@@ -195,9 +195,36 @@ bool TransformName::supportsSubType(const QString& subType) const
  * Returns the filed id corresponding to a field
  *
  * \a fieldName The name of the supported field
- * \return fieldId for the fieldName, 0  if not supported 
- */ 
-quint32 TransformName::getIdForField(const QString& fieldName) const 
+ * \return fieldId for the fieldName, 0  if not supported
+ */
+quint32 CntTransformName::getIdForField(const QString& fieldName) const
 {
     return 0;
+}
+
+/*!
+ * Adds the detail definitions for the details this transform class supports.
+ *
+ * \a definitions On return, the supported detail definitions have been added.
+ */
+void CntTransformName::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+{
+    QMap<QString, QContactDetailDefinition::Field> fields;
+    QContactDetailDefinition::Field f;
+    QContactDetailDefinition d;
+
+    // name
+    d.setName(QContactName::DefinitionName);
+    f.dataType = QVariant::String;
+    f.allowableValues = QVariantList();
+    fields.insert(QContactName::FieldPrefix, f);
+    fields.insert(QContactName::FieldFirst, f);
+    fields.insert(QContactName::FieldMiddle, f);
+    fields.insert(QContactName::FieldLast, f);
+    fields.insert(QContactName::FieldSuffix, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+
+    definitions.insert(d.name(), d);
 }

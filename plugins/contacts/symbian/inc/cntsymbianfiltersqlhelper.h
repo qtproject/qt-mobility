@@ -80,7 +80,7 @@ private:
     void updateSqlQueryForDetailFilter(const QContactFilter& filter,
                                        QString& sqlQuery,
                                        QContactManager::Error& error);
-    void initializeTransformContactData();
+    void initializeCntTransformContactData();
     void createDatabaseColumnMap();
     void convertFieldIdToSqlDbColumnName(const quint32 fieldId,
                                          QString& sqlDbTableColumnName );

@@ -49,12 +49,12 @@
 #include <cntdef.h>
 #include <cntitem.h>
 
-class TransformContactData;
-class TransformContact
+class CntTransformContactData;
+class CntTransformContact
 {
 public:
-	TransformContact();
-	virtual ~TransformContact();
+	CntTransformContact();
+	virtual ~CntTransformContact();
 
 public:
 	QContact transformContactL(CContactItem &contact, CContactDatabase &contactDatabase) const;
@@ -63,6 +63,9 @@ public:
 	        CContactItem &contactItem) const;
 	QList<TUid> supportedSortingFieldTypes( QString detailDefinitionName, QString detailFieldName );
     TUint32 GetIdForDetailL(const QContactDetailFilter& detailFilter,bool& isSubtype) const;
+    QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
+    QContactDetail *transformGuidItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const;
+    QContactDetail *transformTimestampItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const;
 private:
 	enum ContactData
 	{
@@ -83,16 +86,13 @@ private:
 		Note,
 		Family
 	};
-	
-	void initializeTransformContactData();
+
+	void initializeCntTransformContactData();
 	QList<CContactItemField *> transformDetailL(const QContactDetail &detail) const;
 	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact) const;
-	
-	QContactDetail *transformGuidItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const;
-	QContactDetail *transformTimestampItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const;
-	
+
 private:
-	QMap<ContactData, TransformContactData*> m_transformContactData;
+	QMap<ContactData, CntTransformContactData*> m_transformContactData;
 };
 
 #endif /* TRANSFORMCONCTACT_H_ */

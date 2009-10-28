@@ -40,16 +40,16 @@
 ****************************************************************************/
 #include "cnttransformphonenumber.h"
 
-QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformPhoneNumber::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList; 
-	
+	QList<CContactItemField *> fieldList;
+
 	//cast to phonenumber
 	const QContactPhoneNumber &phoneNumber(static_cast<const QContactPhoneNumber&>(detail));
-	
+
 	//get the subType
 	QStringList subTypes = phoneNumber.subTypes();
-	
+
 	//create new field
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(phoneNumber.number().utf16()));
 	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText);
@@ -61,7 +61,7 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
 		newField->AddFieldTypeL(KUidContactFieldPhoneNumber);
 		newField->SetMapping(KUidContactFieldVCardMapTEL);
 	}
-	
+
 	//landline
 	else if (subTypes.contains(QContactPhoneNumber::SubTypeLandline))
 	{
@@ -69,7 +69,7 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
 		newField->SetMapping(KUidContactFieldVCardMapTEL);
 		newField->AddFieldTypeL(KUidContactFieldVCardMapVOICE);
 	}
-	
+
 	//mobile
 	else if	(subTypes.contains(QContactPhoneNumber::SubTypeMobile))
 	{
@@ -77,7 +77,7 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
 		newField->SetMapping(KUidContactFieldVCardMapTEL);
 		newField->AddFieldTypeL(KUidContactFieldVCardMapCELL);
 	}
-	
+
 	//fax
 	else if	(subTypes.contains(QContactPhoneNumber::SubTypeFacsimile))
 	{
@@ -85,7 +85,7 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
 		newField->SetMapping(KUidContactFieldVCardMapTEL);
 		newField->AddFieldTypeL(KUidContactFieldVCardMapFAX);
 	}
-	
+
 	//pager
 	else if (subTypes.contains(QContactPhoneNumber::SubTypePager))
 	{
@@ -101,7 +101,7 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
 	    newField->SetMapping(KUidContactFieldVCardMapTEL);
 	    newField->AddFieldTypeL(KUidContactFieldVCardMapBBS);
 	}
-	
+
 	//car
 	else if (subTypes.contains(QContactPhoneNumber::SubTypeCar))
 	{
@@ -109,44 +109,44 @@ QList<CContactItemField *> TransformPhoneNumber::transformDetailL(const QContact
         newField->SetMapping(KUidContactFieldVCardMapTEL);
 	    newField->AddFieldTypeL(KUidContactFieldVCardMapCAR);
 	}
-	
+
 	//DTMF
 	else if (subTypes.contains(QContactPhoneNumber::SubTypeDtmfMenu))
 	{
         newField->AddFieldTypeL(KUidContactFieldDTMF);
         newField->SetMapping(KUidContactFieldVCardMapUnknown);
 	}
-	
+
 	// assistant number
     else if (subTypes.contains(QContactPhoneNumber::SubTypeAssistant))
     {
         newField->AddFieldTypeL(KUidContactFieldPhoneNumber);
         newField->SetMapping(KUidContactFieldVCardMapAssistantTel);
     }
-	
+
 	else
 	{
         User::LeaveIfError(KErrNotSupported);
 	}
-	    
+
 	//contexts
 	setContextsL(phoneNumber, *newField);
-	
+
 	fieldList.append(newField);
 	CleanupStack::Pop(newField);
-	
+
 	return fieldList;
 }
 
-QContactDetail *TransformPhoneNumber::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformPhoneNumber::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
-	
+
 	QContactPhoneNumber *phoneNumber = new QContactPhoneNumber();
-	
+
 	CContactTextField* storage = field.TextStorage();
 	QString number = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
-	
+
 	phoneNumber->setNumber(number);
 
 	if (field.ContentType().ContainsFieldType(KUidContactFieldPhoneNumber)) {
@@ -175,16 +175,16 @@ QContactDetail *TransformPhoneNumber::transformItemField(const CContactItemField
     else if (field.ContentType().ContainsFieldType(KUidContactFieldDTMF)) {
         phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeDtmfMenu);
     }
-	
+
 	// set context
 	for (int i = 0; i < field.ContentType().FieldTypeCount(); i++) {
         setContexts(field.ContentType().FieldType(i), *phoneNumber);
 	}
-	
+
 	return phoneNumber;
 }
 
-bool TransformPhoneNumber::supportsField(TUint32 fieldType) const
+bool CntTransformPhoneNumber::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldPhoneNumber.iUid ||
@@ -195,7 +195,7 @@ bool TransformPhoneNumber::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformPhoneNumber::supportsDetail(QString detailName) const
+bool CntTransformPhoneNumber::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactPhoneNumber::DefinitionName) {
@@ -204,7 +204,7 @@ bool TransformPhoneNumber::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformPhoneNumber::supportedSortingFieldTypes(QString detailFieldName) const
+QList<TUid> CntTransformPhoneNumber::supportedSortingFieldTypes(QString detailFieldName) const
 {
     QList<TUid> uids;
     if (detailFieldName == QContactPhoneNumber::FieldNumber) {
@@ -219,9 +219,9 @@ QList<TUid> TransformPhoneNumber::supportedSortingFieldTypes(QString detailField
  * Checks whether the subtype is supported
  *
  * \a subType The subtype to be checked
- * \return True if this subtype is supported 
- */ 
-bool TransformPhoneNumber::supportsSubType(const QString& subType) const 
+ * \return True if this subtype is supported
+ */
+bool CntTransformPhoneNumber::supportsSubType(const QString& subType) const
 {
     if(QContactPhoneNumber::FieldSubTypes  == subType)
         return true;
@@ -233,9 +233,57 @@ bool TransformPhoneNumber::supportsSubType(const QString& subType) const
  * Returns the filed id corresponding to a field
  *
  * \a fieldName The name of the supported field
- * \return fieldId for the fieldName, 0  if not supported 
- */ 
-quint32 TransformPhoneNumber::getIdForField(const QString& fieldName) const 
+ * \return fieldId for the fieldName, 0  if not supported
+ */
+quint32 CntTransformPhoneNumber::getIdForField(const QString& fieldName) const
 {
     return 0;
+}
+
+/*!
+ * Adds the detail definitions for the details this transform class supports.
+ *
+ * \a definitions On return, the supported detail definitions have been added.
+ */
+void CntTransformPhoneNumber::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+{
+    QMap<QString, QContactDetailDefinition::Field> fields;
+    QContactDetailDefinition::Field f;
+    QContactDetailDefinition d;
+    QVariantList subTypes;
+
+    d.setName(QContactPhoneNumber::DefinitionName);
+    fields.clear();
+    f.dataType = QVariant::String;
+    f.allowableValues = QVariantList();
+    fields.insert(QContactPhoneNumber::FieldNumber, f);
+
+    // Sub-types
+    f.dataType = QVariant::StringList; // can implement multiple subtypes
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeAssistant));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeBulletinBoardSystem));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeCar));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeDtmfMenu));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeFacsimile));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeLandline));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeMobile));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypePager));
+    f.allowableValues = subTypes;
+    fields.insert(QContactPhoneNumber::FieldSubTypes, f);
+
+    // Contexts
+    /* TODO: does not work for some reason:
+tst_QContactManager::add(mgr='symbian') A contact had extra detail: "PhoneNumber" QMap(("Context", QVariant(QStringList, ("Assistant") ) ) ( "PhoneNumber" ,  QVariant(QString, "PhoneNumber") ) ( "SubTypes" ,  QVariant(QStringList, ("Assistant") ) ) )
+tst_QContactManager::add(mgr='symbian') B contact had extra detail: "PhoneNumber" QMap(("PhoneNumber", QVariant(QString, "PhoneNumber") ) ( "SubTypes" ,  QVariant(QStringList, ("Assistant") ) ) )
+
+    f.dataType = QVariant::StringList;
+    f.allowableValues << QString(QLatin1String(QContactDetail::ContextHome)) << QString(QLatin1String(QContactDetail::ContextWork)) << QString(QLatin1String(QContactDetail::ContextOther));
+    fields.insert(QContactDetail::FieldContext, f);
+    */
+
+    d.setFields(fields);
+    d.setUnique(false);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+
+    definitions.insert(d.name(), d);
 }

@@ -51,14 +51,14 @@ QByteArray VersitUtils::fold(QByteArray& text, int maxChars)
     char previousChar = 0;
     int charsSinceLastLineBreak = 0;
     for (int i=0; i<text.length(); i++) {
-         char currentChar = text[i];
+         char currentChar = text.at(i);
          if (previousChar == '\r' && currentChar == '\n') {
              charsSinceLastLineBreak = 0;
              previousChar = 0;
          } else {
              char nextChar = 0;
              if (i != text.length()-1)
-                 nextChar = text[i+1];
+                 nextChar = text.at(i+1);
              if (charsSinceLastLineBreak == maxChars &&
                  (currentChar != '\r' && nextChar != '\n')) {
                  text.insert(i,"\r\n ");
@@ -84,7 +84,7 @@ QByteArray VersitUtils::unfold(QByteArray& text)
     char previousChar = 0;
     char previousOfThePreviousChar = 0;
     for (int i=0; i<text.length(); i++) {
-        char currentChar = text[i];
+        char currentChar = text.at(i);
         if ((currentChar == ' ' || currentChar == '\t') && 
              previousChar == '\n' &&
              previousOfThePreviousChar == '\r') {
@@ -110,7 +110,7 @@ int VersitUtils::countLeadingWhiteSpaces(const QByteArray& text, int pos)
     int whiteSpaceCount = 0;
     bool nonWhiteSpaceFound = false;
     for (int i=pos; i<text.length() && !nonWhiteSpaceFound; i++) {
-        char currentChar = text[i];
+        char currentChar = text.at(i);
         if (currentChar == ' ' || 
             currentChar == '\t' || 
             currentChar == '\r' || 
@@ -133,7 +133,7 @@ bool VersitUtils::quotedPrintableEncode(QByteArray& text)
 {    
     bool encoded = false;
     for (int i=0; i<text.length(); i++) {
-        char currentChar = text[i];
+        char currentChar = text.at(i);
         if (shouldBeQuotedPrintableEncoded(currentChar)) {
             QString encodedStr;
             encodedStr.sprintf("=%02X",currentChar);
@@ -172,6 +172,61 @@ void VersitUtils::decodeQuotedPrintable(QByteArray& text)
 }
 
 /*!
+ * Performs backslash escaping for line breaks (CRLFs),
+ * semicolons, commas and colons according to RFC 2426.
+ */
+bool VersitUtils::backSlashEscape(QByteArray& text)
+{
+    bool escaped = false;
+    bool withinQuotes = false;
+    char previousChar = 0;
+    for (int i=0; i < text.length(); i++) {
+        char currentChar = text.at(i);
+        if (previousChar != '\\' && !withinQuotes) {
+            if (currentChar == ';' || currentChar == ':' || currentChar == ',') {
+                text.insert(i,'\\');
+                i++;
+                escaped = true;
+            } else if (previousChar == '\r' || currentChar == '\n') {
+                text.replace(i-1,2,"\\n");
+                escaped = true;
+            } else {
+                // NOP
+            }
+        }
+        if (currentChar == '"')
+            withinQuotes = !withinQuotes;
+        previousChar = currentChar;
+    }
+    return escaped;
+}
+
+/*!
+ * Removes backslash escaping for line breaks (CRLFs),
+ * semicolons, commas and colons according to RFC 2426.
+ */
+void VersitUtils::removeBackSlashEscaping(QByteArray& text)
+{
+    char previousChar = 0;
+    bool withinQuotes = false;
+    for (int i=0; i < text.length(); i++) {
+        char currentChar = text.at(i);
+        if (previousChar == '\\' && !withinQuotes) {
+            if (currentChar == ';' || currentChar == ':' || currentChar == ',') {
+                text.remove(i-1,1);
+            } else if (currentChar == 'n' || currentChar == 'N') {
+                text.replace(i-1,2,"\r\n");
+            } else {
+                // NOP
+            }
+        }
+        if (currentChar == '"')
+            withinQuotes = !withinQuotes;
+        previousChar = currentChar;
+    }
+}
+
+/*!
  * Finds the position of the first non-soft line break 
  * in a Quoted-Printable encoded string.
  */
@@ -180,32 +235,42 @@ int VersitUtils::findHardLineBreakInQuotedPrintable(const QByteArray& encoded)
     int crlfIndex = encoded.indexOf("\r\n");
     if (crlfIndex <= 0)
         return -1;
-    while (crlfIndex > 0 && encoded[crlfIndex-1] == '=') {
+    while (crlfIndex > 0 && encoded.at(crlfIndex-1) == '=') {
         crlfIndex = encoded.indexOf("\r\n",crlfIndex+2);
     }
     return crlfIndex;
 }
 
 /*!
- * Extracts the name of the property.
+ * Extracts the groups and the name of the property.
  */
-QString VersitUtils::extractPropertyName(const QByteArray& property)
+QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(
+    const QByteArray& property)
 {
-    QString name;
-    int nameLength = 0;
+    QPair<QStringList,QString> groupsAndName;
+    int length = 0;
     char previousChar = 0;
     for (int i=0; i < property.length(); i++) {
-        char currentChar = property[i];
+        char currentChar = property.at(i);
         if ((currentChar == ';' && previousChar != '\\') || 
             currentChar == ':') {
-            nameLength = i;
+            length = i;
             break;
         }
         previousChar = currentChar;
     }
-    if (nameLength > 0)
-        name = QString::fromAscii(property.left(nameLength).trimmed());
-    return name;
+    if (length > 0) {
+        QString trimmedGroupsAndName =
+            QString::fromAscii(property.left(length).trimmed());
+        QStringList parts = trimmedGroupsAndName.split(QString::fromAscii("."));
+        if (parts.count() > 1) {
+            groupsAndName.second = parts.takeLast();
+            groupsAndName.first = parts;
+        } else {
+            groupsAndName.second = trimmedGroupsAndName;
+        }
+    }
+    return groupsAndName;
 }
 
 /*!
@@ -235,7 +300,7 @@ QMultiHash<QString,QString> VersitUtils::extractPropertyParams(
         int paramStartIndex = -1;
         char previousChar = 0;
         for (int i=0; i < nameAndParamsString.length(); i++) {
-            char currentChar = nameAndParamsString[i];
+            char currentChar = nameAndParamsString.at(i);
             if (currentChar == ';' && previousChar != '\\') {
                 int length = i-paramStartIndex;
                 addParam(params,nameAndParamsString,paramStartIndex,length);

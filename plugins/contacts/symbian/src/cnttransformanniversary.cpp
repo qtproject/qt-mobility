@@ -42,13 +42,13 @@
 
 const char separator = ',';
 
-QList<CContactItemField *> TransformAnniversary::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformAnniversary::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList; 
-	
+	QList<CContactItemField *> fieldList;
+
 	//cast to anniversary
 	const QContactAnniversary &anniversary(static_cast<const QContactAnniversary&>(detail));
-	
+
 	//create new field
 	QString formattedAnniversary;
 	if (anniversary.originalDate().isValid()) {
@@ -58,7 +58,7 @@ QList<CContactItemField *> TransformAnniversary::transformDetailL(const QContact
         formattedAnniversary.append(separator);
 	}
 	formattedAnniversary.append(anniversary.event());
-	
+
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(formattedAnniversary.utf16()));
 	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldAnniversary);
  	newField->TextStorage()->SetTextL(fieldText);
@@ -66,16 +66,16 @@ QList<CContactItemField *> TransformAnniversary::transformDetailL(const QContact
 
 	fieldList.append(newField);
 	CleanupStack::Pop(newField);
-		
+
 	return fieldList;
 }
 
-QContactDetail *TransformAnniversary::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformAnniversary::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
-	
+
 	QContactAnniversary *anniversary = new QContactAnniversary();
-	
+
 	CContactTextField* storage = field.TextStorage();
 	QString unformattedAnniversary = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
 	int separatorPos = unformattedAnniversary.indexOf(separator);
@@ -88,7 +88,7 @@ QContactDetail *TransformAnniversary::transformItemField(const CContactItemField
             dateFound = true;
         }
 	}
-	
+
 	if (dateFound) {
         anniversary->setEvent(unformattedAnniversary.right(unformattedAnniversary.length()-separatorPos-1));
 	}
@@ -98,7 +98,7 @@ QContactDetail *TransformAnniversary::transformItemField(const CContactItemField
 	return anniversary;
 }
 
-bool TransformAnniversary::supportsField(TUint32 fieldType) const
+bool CntTransformAnniversary::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldAnniversary.iUid) {
@@ -107,7 +107,7 @@ bool TransformAnniversary::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformAnniversary::supportsDetail(QString detailName) const
+bool CntTransformAnniversary::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactAnniversary::DefinitionName) {
@@ -116,7 +116,7 @@ bool TransformAnniversary::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformAnniversary::supportedSortingFieldTypes(QString /*detailFieldName*/) const
+QList<TUid> CntTransformAnniversary::supportedSortingFieldTypes(QString /*detailFieldName*/) const
 {
     // Sorting not supported
     return QList<TUid>();
@@ -126,9 +126,9 @@ QList<TUid> TransformAnniversary::supportedSortingFieldTypes(QString /*detailFie
  * Checks whether the subtype is supported
  *
  * \a subType The subtype to be checked
- * \return True if this subtype is supported 
- */ 
-bool TransformAnniversary::supportsSubType(const QString& subType) const 
+ * \return True if this subtype is supported
+ */
+bool CntTransformAnniversary::supportsSubType(const QString& subType) const
 {
     return false;
 }
@@ -137,9 +137,32 @@ bool TransformAnniversary::supportsSubType(const QString& subType) const
  * Returns the filed id corresponding to a field
  *
  * \a fieldName The name of the supported field
- * \return fieldId for the fieldName, 0  if not supported 
- */ 
-quint32 TransformAnniversary::getIdForField(const QString& fieldName) const 
+ * \return fieldId for the fieldName, 0  if not supported
+ */
+quint32 CntTransformAnniversary::getIdForField(const QString& fieldName) const
 {
     return 0;
+}
+
+/*!
+ * Adds the detail definitions for the details this transform class supports.
+ *
+ * \a definitions On return, the supported detail definitions have been added.
+ */
+void CntTransformAnniversary::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+{
+    QMap<QString, QContactDetailDefinition::Field> fields;
+    QContactDetailDefinition::Field f;
+    QContactDetailDefinition d;
+
+    d.setName(QContactAnniversary::DefinitionName);
+    f.dataType = QVariant::Date;
+    f.allowableValues = QVariantList();
+    fields.insert(QContactAnniversary::FieldOriginalDate, f);
+    fields.insert(QContactAnniversary::FieldEvent, f);
+
+    d.setFields(fields);
+    d.setUnique(true);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+    definitions.insert(d.name(), d);
 }

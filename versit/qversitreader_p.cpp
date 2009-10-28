@@ -90,7 +90,10 @@ QVersitDocument QVersitReaderPrivate::parseVersitDocument(QByteArray& text)
 QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(QByteArray& text)
 {
     QVersitProperty property;
-    property.setName(VersitUtils::extractPropertyName(text));
+    QPair<QStringList,QString> groupsAndName =
+        VersitUtils::extractPropertyGroupsAndName(text);
+    property.setGroups(groupsAndName.first);
+    property.setName(groupsAndName.second);
     property.setParameters(VersitUtils::extractPropertyParams(text));
     text = VersitUtils::extractPropertyValue(text); 
     if (property.name() == QString::fromAscii("AGENT")) {

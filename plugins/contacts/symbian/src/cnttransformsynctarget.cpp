@@ -41,13 +41,13 @@
 #include "cnttransformsynctarget.h"
 #include "cntmodelextuids.h"
 
-QList<CContactItemField *> TransformSyncTarget::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformSyncTarget::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList; 
-	
+	QList<CContactItemField *> fieldList;
+
 	//cast to sync target
 	const QContactSyncTarget &syncTarget(static_cast<const QContactSyncTarget&>(detail));
-	
+
 	//create new field
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(syncTarget.syncTarget().utf16()));
 	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldSyncTarget);
@@ -56,24 +56,24 @@ QList<CContactItemField *> TransformSyncTarget::transformDetailL(const QContactD
 
 	fieldList.append(newField);
 	CleanupStack::Pop(newField);
-		
+
 	return fieldList;
 }
 
-QContactDetail *TransformSyncTarget::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformSyncTarget::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
-	
+
 	QContactSyncTarget *syncTarget = new QContactSyncTarget();
-	
+
 	CContactTextField* storage = field.TextStorage();
 	QString syncTargetString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
-	
+
 	syncTarget->setSyncTarget(syncTargetString);
 	return syncTarget;
 }
 
-bool TransformSyncTarget::supportsField(TUint32 fieldType) const
+bool CntTransformSyncTarget::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldSyncTarget.iUid) {
@@ -82,7 +82,7 @@ bool TransformSyncTarget::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformSyncTarget::supportsDetail(QString detailName) const
+bool CntTransformSyncTarget::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactSyncTarget::DefinitionName) {
@@ -91,11 +91,11 @@ bool TransformSyncTarget::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformSyncTarget::supportedSortingFieldTypes(QString detailFieldName) const
+QList<TUid> CntTransformSyncTarget::supportedSortingFieldTypes(QString detailFieldName) const
 {
     QList<TUid> uids;
     if (detailFieldName == QContactSyncTarget::FieldSyncTarget)
-        uids << KUidContactFieldSyncTarget;   
+        uids << KUidContactFieldSyncTarget;
     return uids;
 }
 
@@ -104,9 +104,9 @@ QList<TUid> TransformSyncTarget::supportedSortingFieldTypes(QString detailFieldN
  * Checks whether the subtype is supported
  *
  * \a subType The subtype to be checked
- * \return True if this subtype is supported 
- */ 
-bool TransformSyncTarget::supportsSubType(const QString& subType) const 
+ * \return True if this subtype is supported
+ */
+bool CntTransformSyncTarget::supportsSubType(const QString& subType) const
 {
     return false;
 }
@@ -115,9 +115,33 @@ bool TransformSyncTarget::supportsSubType(const QString& subType) const
  * Returns the filed id corresponding to a field
  *
  * \a fieldName The name of the supported field
- * \return fieldId for the fieldName, 0  if not supported 
- */ 
-quint32 TransformSyncTarget::getIdForField(const QString& fieldName) const 
+ * \return fieldId for the fieldName, 0  if not supported
+ */
+quint32 CntTransformSyncTarget::getIdForField(const QString& fieldName) const
 {
     return 0;
+}
+
+/*!
+ * Adds the detail definitions for the details this transform class supports.
+ *
+ * \a definitions On return, the supported detail definitions have been added.
+ */
+void CntTransformSyncTarget::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+{
+    QMap<QString, QContactDetailDefinition::Field> fields;
+    QContactDetailDefinition::Field f;
+    QContactDetailDefinition d;
+
+    d.setName(QContactSyncTarget::DefinitionName);
+    fields.clear();
+    f.dataType = QVariant::String;
+    f.allowableValues = QVariantList();
+    fields.insert(QContactSyncTarget::FieldSyncTarget, f);
+
+    d.setFields(fields);
+    d.setUnique(true);
+    d.setAccessConstraint(QContactDetailDefinition::CreateOnly);
+
+    definitions.insert(d.name(), d);
 }

@@ -43,7 +43,7 @@
 
 const char separator = ',';
 
-QList<CContactItemField *> TransformGeolocation::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformGeolocation::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList;
 
@@ -76,7 +76,7 @@ QList<CContactItemField *> TransformGeolocation::transformDetailL(const QContact
 	return fieldList;
 }
 
-QContactDetail *TransformGeolocation::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformGeolocation::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
 
@@ -122,7 +122,7 @@ QContactDetail *TransformGeolocation::transformItemField(const CContactItemField
 	return geolocation;
 }
 
-bool TransformGeolocation::supportsField(TUint32 fieldType) const
+bool CntTransformGeolocation::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldGEO.iUid) {
@@ -131,7 +131,7 @@ bool TransformGeolocation::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformGeolocation::supportsDetail(QString detailName) const
+bool CntTransformGeolocation::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactGeolocation::DefinitionName) {
@@ -140,7 +140,7 @@ bool TransformGeolocation::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformGeolocation::supportedSortingFieldTypes(QString /*detailFieldName*/) const
+QList<TUid> CntTransformGeolocation::supportedSortingFieldTypes(QString /*detailFieldName*/) const
 {
     // Sorting not supported
     return QList<TUid>();
@@ -150,9 +150,9 @@ QList<TUid> TransformGeolocation::supportedSortingFieldTypes(QString /*detailFie
  * Checks whether the subtype is supported
  *
  * \a subType The subtype to be checked
- * \return True if this subtype is supported 
- */ 
-bool TransformGeolocation::supportsSubType(const QString& subType) const 
+ * \return True if this subtype is supported
+ */
+bool CntTransformGeolocation::supportsSubType(const QString& subType) const
 {
     return false;
 }
@@ -161,9 +161,52 @@ bool TransformGeolocation::supportsSubType(const QString& subType) const
  * Returns the filed id corresponding to a field
  *
  * \a fieldName The name of the supported field
- * \return fieldId for the fieldName, 0  if not supported 
- */ 
-quint32 TransformGeolocation::getIdForField(const QString& fieldName) const 
+ * \return fieldId for the fieldName, 0  if not supported
+ */
+quint32 CntTransformGeolocation::getIdForField(const QString& fieldName) const
 {
     return 0;
+}
+
+/*!
+ * Adds the detail definitions for the details this transform class supports.
+ *
+ * \a definitions On return, the supported detail definitions have been added.
+ */
+void CntTransformGeolocation::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+{
+    QMap<QString, QContactDetailDefinition::Field> fields;
+    QContactDetailDefinition::Field f;
+    QContactDetailDefinition d;
+
+    // Geolocation fields
+    d.setName(QContactGeolocation::DefinitionName);
+    fields.clear();
+    f.dataType = QVariant::String;
+    f.allowableValues = QVariantList();
+    fields.insert(QContactGeolocation::FieldLabel, f);
+    f.dataType = QVariant::Double;
+    fields.insert(QContactGeolocation::FieldLatitude, f);
+    fields.insert(QContactGeolocation::FieldLongitude, f);
+    /*
+    TODO:
+    fields.insert(QContactGeolocation::FieldAccuracy, f);
+    fields.insert(QContactGeolocation::FieldAltitude, f);
+    fields.insert(QContactGeolocation::FieldAltitudeAccuracy, f);
+    fields.insert(QContactGeolocation::FieldSpeed, f);
+    fields.insert(QContactGeolocation::FieldHeading, f);
+    f.dataType = QVariant::DateTime;
+    fields.insert(QContactGeolocation::FieldTimestamp, f);
+    */
+
+    // Contexts
+    f.dataType = QVariant::StringList;
+    f.allowableValues << QString(QLatin1String(QContactDetail::ContextHome)) << QString(QLatin1String(QContactDetail::ContextWork)) << QString(QLatin1String(QContactDetail::ContextOther));
+    fields.insert(QContactDetail::FieldContext, f);
+
+    d.setFields(fields);
+    d.setUnique(false);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+
+    definitions.insert(d.name(), d);
 }

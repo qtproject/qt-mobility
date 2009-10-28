@@ -41,16 +41,16 @@
 #include "cnttransformonlineaccount.h"
 #include "cntmodelextuids.h"
 
-QList<CContactItemField *> TransformOnlineAccount::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList; 
-	
+	QList<CContactItemField *> fieldList;
+
 	//cast to phonenumber
 	const QContactOnlineAccount &onlineAccount(static_cast<const QContactOnlineAccount&>(detail));
-	
+
 	//get the subType
 	QStringList subTypes = onlineAccount.subTypes();
-	
+
 	//create new field
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(onlineAccount.accountUri().utf16()));
 	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText);
@@ -61,14 +61,14 @@ QList<CContactItemField *> TransformOnlineAccount::transformDetailL(const QConta
 	{
         User::LeaveIfError(KErrArgument);
 	}
-	
+
 	// online account
 	else if (subTypes.contains(QContactOnlineAccount::SubTypeXmpp))
 	{
         newField->AddFieldTypeL(KUidContactFieldIMPP);
         newField->SetMapping(KUidContactFieldVCardMapUnknown);
 	}
-	
+
 	//internet
 	else if (subTypes.contains(QContactOnlineAccount::SubTypeInternet))
 	{
@@ -76,7 +76,7 @@ QList<CContactItemField *> TransformOnlineAccount::transformDetailL(const QConta
 		newField->SetMapping(KUidContactFieldVCardMapSIPID);
 		newField->AddFieldTypeL(KUidContactFieldVCardMapVOIP);
 	}
-	
+
 	//share video
 	else if	(subTypes.contains(QContactOnlineAccount::SubTypeShareVideo))
 	{
@@ -84,7 +84,7 @@ QList<CContactItemField *> TransformOnlineAccount::transformDetailL(const QConta
 		newField->SetMapping(KUidContactFieldVCardMapSIPID);
 		newField->AddFieldTypeL(KUidContactFieldVCardMapSWIS);
 	}
-	
+
 	//sip
 	else if	(subTypes.contains(QContactOnlineAccount::SubTypeSip))
 	{
@@ -92,30 +92,30 @@ QList<CContactItemField *> TransformOnlineAccount::transformDetailL(const QConta
 		newField->SetMapping(KUidContactFieldVCardMapSIPID);
 		newField->AddFieldTypeL(KUidContactFieldVCardMapSIPID);
 	}
-	
+
 	else
 	{
         User::LeaveIfError(KErrNotSupported);
 	}
-	    
+
 	//contexts
 	setContextsL(onlineAccount, *newField);
-	
+
 	fieldList.append(newField);
 	CleanupStack::Pop(newField);
-	
+
 	return fieldList;
 }
 
-QContactDetail *TransformOnlineAccount::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformOnlineAccount::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
-	
+
 	QContactOnlineAccount *onlineAccount = new QContactOnlineAccount();
-	
+
 	CContactTextField* storage = field.TextStorage();
 	QString onlineAccountString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
-	
+
 	onlineAccount->setAccountUri(onlineAccountString);
 
     if (field.ContentType().ContainsFieldType(KUidContactFieldIMPP)) {
@@ -135,22 +135,22 @@ QContactDetail *TransformOnlineAccount::transformItemField(const CContactItemFie
 	for (int i = 0; i < field.ContentType().FieldTypeCount(); i++) {
         setContexts(field.ContentType().FieldType(i), *onlineAccount);
 	}
-	
+
 	return onlineAccount;
 }
 
-bool TransformOnlineAccount::supportsField(TUint32 fieldType) const
+bool CntTransformOnlineAccount::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldSIPID.iUid ||
-        fieldType == KUidContactFieldIMPP.iUid ) 
+        fieldType == KUidContactFieldIMPP.iUid )
     {
         ret = true;
     }
     return ret;
 }
 
-bool TransformOnlineAccount::supportsDetail(QString detailName) const
+bool CntTransformOnlineAccount::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactOnlineAccount::DefinitionName) {
@@ -159,13 +159,13 @@ bool TransformOnlineAccount::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformOnlineAccount::supportedSortingFieldTypes(QString detailFieldName) const
+QList<TUid> CntTransformOnlineAccount::supportedSortingFieldTypes(QString detailFieldName) const
 {
     QList<TUid> uids;
     if (detailFieldName == QContactOnlineAccount::FieldAccountUri) {
         uids << KUidContactFieldIMPP;
         uids << KUidContactFieldSIPID;
-    }        
+    }
     return uids;
 }
 
@@ -174,9 +174,9 @@ QList<TUid> TransformOnlineAccount::supportedSortingFieldTypes(QString detailFie
  * Checks whether the subtype is supported
  *
  * \a subType The subtype to be checked
- * \return True if this subtype is supported 
- */ 
-bool TransformOnlineAccount::supportsSubType(const QString& subType) const 
+ * \return True if this subtype is supported
+ */
+bool CntTransformOnlineAccount::supportsSubType(const QString& subType) const
 {
     return false;
 }
@@ -185,9 +185,55 @@ bool TransformOnlineAccount::supportsSubType(const QString& subType) const
  * Returns the filed id corresponding to a field
  *
  * \a fieldName The name of the supported field
- * \return fieldId for the fieldName, 0  if not supported 
- */ 
-quint32 TransformOnlineAccount::getIdForField(const QString& fieldName) const 
+ * \return fieldId for the fieldName, 0  if not supported
+ */
+quint32 CntTransformOnlineAccount::getIdForField(const QString& fieldName) const
 {
     return 0;
+}
+
+/*!
+ * Adds the detail definitions for the details this transform class supports.
+ *
+ * \a definitions On return, the supported detail definitions have been added.
+ */
+void CntTransformOnlineAccount::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+{
+    QMap<QString, QContactDetailDefinition::Field> fields;
+    QContactDetailDefinition::Field f;
+    QContactDetailDefinition d;
+    QVariantList subTypes;
+
+    // fields
+    d.setName(QContactOnlineAccount::DefinitionName);
+    fields.clear();
+    f.dataType = QVariant::String;
+    fields.insert(QContactOnlineAccount::FieldAccountUri, f);
+    f.allowableValues = QVariantList(); // allow any subtypes!
+    fields.insert(QContactOnlineAccount::FieldSubTypes, f);
+
+    // sub-types
+    f.dataType = QVariant::StringList; // can implement multiple subtypes
+    subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeXmpp));
+    subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeInternet));
+    subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeShareVideo));
+    subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeSip));
+    f.allowableValues = subTypes;
+    fields.insert(QContactPhoneNumber::FieldSubTypes, f);
+
+    // Contexts
+    /* TODO: does not work for some reason:
+tst_QContactManager::add(mgr='symbian') A contact had extra detail: "OnlineAccount" QMap(("AccountUri", QVariant(QString, "AccountUri") ) ( "Context" ,  QVariant(QStringList, ("Xmpp") ) ) ( "SubTypes" ,  QVariant(QStringList, ("Xmpp") ) ) )
+tst_QContactManager::add(mgr='symbian') B contact had extra detail: "OnlineAccount" QMap(("AccountUri", QVariant(QString, "AccountUri") ) ( "SubTypes" ,  QVariant(QStringList, ("Xmpp") ) ) )
+
+    f.dataType = QVariant::StringList;
+    f.allowableValues << QString(QLatin1String(QContactDetail::ContextHome)) << QString(QLatin1String(QContactDetail::ContextWork)) << QString(QLatin1String(QContactDetail::ContextOther));
+    fields.insert(QContactDetail::FieldContext, f);
+     */
+
+    d.setFields(fields);
+    d.setUnique(false);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+
+    definitions.insert(d.name(), d);
 }

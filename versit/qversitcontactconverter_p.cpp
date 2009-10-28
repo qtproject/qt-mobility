@@ -158,9 +158,21 @@ QVersitContactConverterPrivate::QVersitContactConverterPrivate()
 
     //Media Types.
     mMappings.insert(
-        QString::fromAscii(versitJPEGExtenId),QString::fromAscii(versitPhotoJpeg));
+        QString::fromAscii(versitJPEGExtenId),QString::fromAscii(versitFormatJpeg));
     mMappings.insert(
-        QString::fromAscii(versitWAVEExtenId),QString::fromAscii(versitAudioWave));
+        QString::fromAscii(versitWAVEExtenId),QString::fromAscii(versitFormatWave));
+    mMappings.insert(
+        QString::fromAscii(versitPICTExtenId),QString::fromAscii(versitFormatPict));
+    mMappings.insert(
+        QString::fromAscii(versitTIFFExtenId),QString::fromAscii(versitFormatWave));
+    mMappings.insert(
+        QString::fromAscii(versitMPEGExtenId),QString::fromAscii(versitFormatMpeg));
+    mMappings.insert(
+        QString::fromAscii(versitMPEG2ExtenId),QString::fromAscii(versitFormatMpeg2));
+    mMappings.insert(
+        QString::fromAscii(versitQTIMEExtenId),QString::fromAscii(versitFormatQtime));
+    mMappings.insert(
+        QString::fromAscii(versitAIFFExtenId),QString::fromAscii(versitFormatAiff));
 }
 
 /*!
@@ -204,7 +216,7 @@ void QVersitContactConverterPrivate::encodeFieldInfo(
     } else if (detail.definitionName() == QContactOrganization::DefinitionName) {
         addProperty = encodeOrganization(versitDocument, detail);
     } else if (detail.definitionName() == QContactAvatar::DefinitionName){
-        addProperty = encodeEmbeddedContent(property, detail);
+        addProperty = encodeAvatar(property, detail);
     } else if (detail.definitionName() == QContactAnniversary::DefinitionName) {
         encodeAnniversary(property, detail);
     } else if (detail.definitionName() == QContactNickname::DefinitionName) {
@@ -405,54 +417,87 @@ bool QVersitContactConverterPrivate::encodeOrganization(
         property.setValue(value);
         document.addProperty(property);
     }
+    if (organization.logo().length() > 0) {
+        QVersitProperty property;
+        bool scaling = true;
+        if ( encodeEmbeddedContent( organization.logo(), property, scaling )) {
+            property.setName(QString::fromAscii(versitLogoId));
+            document.addProperty(property);
+        }
+    }
     return false;
 }
 
+
+
+/*!
+ * Encode Avatar Content into the Versit Document
+ */
+
+bool QVersitContactConverterPrivate::encodeAvatar(QVersitProperty& property,
+                                               const QContactDetail& detail )
+{
+    bool encode = false;
+    bool scaling = false;
+    QContactAvatar contactAvatar = static_cast<QContactAvatar >(detail);
+    QString resoucePath = contactAvatar.avatar();
+
+    if ( mMappings.contains(contactAvatar.subType())) {
+        scaling = contactAvatar.subType() == QContactAvatar::SubTypeImage;
+        encode = encodeEmbeddedContent(resoucePath, property, scaling);
+
+        if (encode)
+            property.setName(mMappings.value(contactAvatar.subType()));
+    }
+    return encode;
+}
+
+
+
+
 /*!
  * Encode Embedded Content into the Versit Document
+ *
  */
-bool QVersitContactConverterPrivate::encodeEmbeddedContent(
-    QVersitProperty& property,
-    const QContactDetail& detail)
+
+bool QVersitContactConverterPrivate::encodeEmbeddedContent( const QString& resoucePath,
+                                                            QVersitProperty& property,
+                                                            bool performScaling )
 {
-    bool encodeProperty = false;
-    QContactAvatar contactAvatar = static_cast<QContactAvatar>(detail);
-    QString filePath = contactAvatar.avatar();
-    QString fileExtension = filePath.section(QChar('.'), -1).toUpper();
-    QString format = mMappings.value(fileExtension);
+    bool encodeContent = false;
+    QString resouceExt = resoucePath.section('.', -1).toUpper();
+    QString resouceFormat = mMappings.value( resouceExt );
 
-    if (!format.size())
-        format = fileExtension;
+    if ( !resouceFormat.size())
+        resouceFormat = resouceExt;
 
-    if (mMappings.contains(contactAvatar.subType()) && format.size()) {
-        QString name = mMappings.value(contactAvatar.subType());
+    if ( resouceFormat.size()) {
         QByteArray value;
-        QFile file(filePath);
-        if (file.open(QIODevice::ReadOnly)) {
-            encodeProperty = true;
-            if (contactAvatar.subType() == QContactAvatar::SubTypeImage)
-                emit scale(filePath,value);
+        QFile resouceFile(resoucePath);
+        if ( resouceFile.open(QIODevice::ReadOnly )) {
+            encodeContent = true;
+            if (performScaling)
+                emit scale(resoucePath,value);
             if (value.length() == 0)
-                value = file.readAll(); // Image not scaled
+                value = resouceFile.readAll(); // Image not scaled
             value = value.toBase64();
-            property.addParameter(QString::fromAscii(versitType),format);
+            property.addParameter(QString::fromAscii(versitType),resouceFormat);
             property.addParameter(QString::fromAscii(versitEncoding),
                                   QString::fromAscii(versitEncodingBase64));
-        } else if (isValidRemoteUrl(filePath)) {
-            encodeProperty = true;
-            value = filePath.toAscii();
-            property.addParameter(
-                QString::fromAscii(versitValue),QString::fromAscii(versitUrlId));
-            property.addParameter(
-                QString::fromAscii(versitType),format);
+        }
+        else if (isValidRemoteUrl( resoucePath )) {
+            encodeContent = true;
+            value = resoucePath.toAscii();
+            property.addParameter(QString::fromAscii(versitValue),versitUrlId);
+            property.addParameter(QString::fromAscii(versitType),resouceFormat);
         } else {
             // The file has been removed. Don't encode the path to a local file.
         }
-        property.setName(name);
+
+        //Add Values
         property.setValue(value);
     }
-
-    return encodeProperty;
+    return encodeContent;
 }
 
 

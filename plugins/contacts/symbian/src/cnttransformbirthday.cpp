@@ -40,40 +40,40 @@
 ****************************************************************************/
 #include "cnttransformbirthday.h"
 
-QList<CContactItemField *> TransformBirthday::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformBirthday::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList; 
-	
+	QList<CContactItemField *> fieldList;
+
 	//cast to birthday
 	const QContactBirthday &birthday(static_cast<const QContactUrl&>(detail));
-	
+
 	//create new field
 	TDateTime dateTime(birthday.date().year(), TMonth(birthday.date().month() - 1), birthday.date().day() - 1, 0, 0, 0, 0);
 	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeDateTime, KUidContactFieldBirthday);
  	newField->DateTimeStorage()->SetTime(dateTime);
 	newField->SetMapping(KUidContactFieldVCardMapBDAY);
-	
+
 	fieldList.append(newField);
 	CleanupStack::Pop(newField);
-		
+
 	return fieldList;
 }
 
-QContactDetail *TransformBirthday::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformBirthday::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
-	
+
 	QContactBirthday *birthday = new QContactBirthday();
-	
+
 	CContactDateField* storage = field.DateTimeStorage();
 	TTime time(storage->Time());
 	QDate qDate(time.DateTime().Year(), time.DateTime().Month() + 1, time.DateTime().Day() + 1);
 	birthday->setDate(qDate);
-	
+
 	return birthday;
 }
 
-bool TransformBirthday::supportsField(TUint32 fieldType) const
+bool CntTransformBirthday::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldBirthday.iUid) {
@@ -82,7 +82,7 @@ bool TransformBirthday::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformBirthday::supportsDetail(QString detailName) const
+bool CntTransformBirthday::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactBirthday::DefinitionName) {
@@ -91,7 +91,7 @@ bool TransformBirthday::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformBirthday::supportedSortingFieldTypes(QString detailFieldName) const
+QList<TUid> CntTransformBirthday::supportedSortingFieldTypes(QString detailFieldName) const
 {
     QList<TUid> uids;
     if( detailFieldName == QContactBirthday::FieldBirthday )
@@ -104,9 +104,9 @@ QList<TUid> TransformBirthday::supportedSortingFieldTypes(QString detailFieldNam
  * Checks whether the subtype is supported
  *
  * \a subType The subtype to be checked
- * \return True if this subtype is supported 
- */ 
-bool TransformBirthday::supportsSubType(const QString& subType) const 
+ * \return True if this subtype is supported
+ */
+bool CntTransformBirthday::supportsSubType(const QString& subType) const
 {
     return false;
 }
@@ -115,9 +115,32 @@ bool TransformBirthday::supportsSubType(const QString& subType) const
  * Returns the filed id corresponding to a field
  *
  * \a fieldName The name of the supported field
- * \return fieldId for the fieldName, 0  if not supported 
- */ 
-quint32 TransformBirthday::getIdForField(const QString& fieldName) const 
+ * \return fieldId for the fieldName, 0  if not supported
+ */
+quint32 CntTransformBirthday::getIdForField(const QString& fieldName) const
 {
     return 0;
+}
+
+/*!
+ * Adds the detail definitions for the details this transform class supports.
+ *
+ * \a definitions On return, the supported detail definitions have been added.
+ */
+void CntTransformBirthday::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+{
+    QMap<QString, QContactDetailDefinition::Field> fields;
+    QContactDetailDefinition::Field f;
+    QContactDetailDefinition d;
+
+    d.setName(QContactBirthday::DefinitionName);
+    f.dataType = QVariant::Date;
+    f.allowableValues = QVariantList();
+    fields.insert(QContactBirthday::FieldBirthday, f);
+
+    d.setFields(fields);
+    d.setUnique(true);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+
+    definitions.insert(d.name(), d);
 }

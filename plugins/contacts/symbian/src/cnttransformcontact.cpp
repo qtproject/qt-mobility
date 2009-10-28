@@ -67,50 +67,50 @@
 
 #include <QDebug>
 
-TransformContact::TransformContact()
+CntTransformContact::CntTransformContact()
 {
-	initializeTransformContactData();
+	initializeCntTransformContactData();
 }
 
-TransformContact::~TransformContact()
+CntTransformContact::~CntTransformContact()
 {
-    QMap<ContactData, TransformContactData*>::iterator itr;
+    QMap<ContactData, CntTransformContactData*>::iterator itr;
 
     for (itr = m_transformContactData.begin(); itr != m_transformContactData.end(); ++itr)
     {
-        TransformContactData* value = itr.value();
+        CntTransformContactData* value = itr.value();
         delete value;
         value = 0;
     }
 }
 
-void TransformContact::initializeTransformContactData()
+void CntTransformContact::initializeCntTransformContactData()
 {
 	//These can be added to normal list, if we loop through it.
-	m_transformContactData.insert(Name, new TransformName);
-	m_transformContactData.insert(Nickname, new TransformNickname);
-	m_transformContactData.insert(PhoneNumber, new TransformPhoneNumber);
-	m_transformContactData.insert(EmailAddress, new TransformEmail);
-	m_transformContactData.insert(Address, new TransformAddress);
-	m_transformContactData.insert(URL, new TransformUrl);
-	m_transformContactData.insert(Birthday, new TransformBirthday);
-	m_transformContactData.insert(OnlineAccount, new TransformOnlineAccount);
-	m_transformContactData.insert(Organisation, new TransformOrganisation);
-	m_transformContactData.insert(Avatar, new TransformAvatar);
-	m_transformContactData.insert(SyncTarget, new TransformSyncTarget);
-	m_transformContactData.insert(Gender, new TransformGender);
-	m_transformContactData.insert(Anniversary, new TransformAnniversary);
-	m_transformContactData.insert(Note, new TransformNote);
-	m_transformContactData.insert(Family, new TransformFamily);
+	m_transformContactData.insert(Name, new CntTransformName);
+	m_transformContactData.insert(Nickname, new CntTransformNickname);
+	m_transformContactData.insert(PhoneNumber, new CntTransformPhoneNumber);
+	m_transformContactData.insert(EmailAddress, new CntTransformEmail);
+	m_transformContactData.insert(Address, new CntTransformAddress);
+	m_transformContactData.insert(URL, new CntTransformUrl);
+	m_transformContactData.insert(Birthday, new CntTransformBirthday);
+	m_transformContactData.insert(OnlineAccount, new CntTransformOnlineAccount);
+	m_transformContactData.insert(Organisation, new CntTransformOrganisation);
+	m_transformContactData.insert(Avatar, new CntTransformAvatar);
+	m_transformContactData.insert(SyncTarget, new CntTransformSyncTarget);
+	m_transformContactData.insert(Gender, new CntTransformGender);
+	m_transformContactData.insert(Anniversary, new CntTransformAnniversary);
+	m_transformContactData.insert(Note, new CntTransformNote);
+	m_transformContactData.insert(Family, new CntTransformFamily);
 #ifdef USE_CUSTOM_CNT_MODEL_FIELDS
 	// TODO: what are the other fields to be hidden behind the custom field flag?
 	// i.e. the fields that are not supported in pre-10.1 platforms?
-	m_transformContactData.insert(Geolocation, new TransformGeolocation);
+	m_transformContactData.insert(Geolocation, new CntTransformGeolocation);
 #endif
 }
 
 
-QContact TransformContact::transformContactL(CContactItem &contact, CContactDatabase &contactDatabase) const
+QContact CntTransformContact::transformContactL(CContactItem &contact, CContactDatabase &contactDatabase) const
 {
 		// Create a new QContact
 		QContact newQtContact;
@@ -169,13 +169,13 @@ QContact TransformContact::transformContactL(CContactItem &contact, CContactData
 		return newQtContact;
 }
 
-/*! Transform a QContact into a Symbian CContactItem.
+/*! CntTransform a QContact into a Symbian CContactItem.
  *  This will convert all supported fields to the CContactItem format.
  *
  * \param contact A reference to a QContact to be converted.
  * \param contactItem A reference to the CContactItem to add the fields to.
 */
-void TransformContact::transformContactL(
+void CntTransformContact::transformContactL(
         QContact &contact,
         CContactItem &contactItem) const
 {
@@ -204,10 +204,10 @@ void TransformContact::transformContactL(
 	CleanupStack::Pop(fieldSet);
 }
 
-QList<TUid> TransformContact::supportedSortingFieldTypes( QString detailDefinitionName, QString detailFieldName )
+QList<TUid> CntTransformContact::supportedSortingFieldTypes( QString detailDefinitionName, QString detailFieldName )
 {
     QList<TUid> uids;
-    QMap<ContactData, TransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+    QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
     while (i != m_transformContactData.constEnd()) {
         if (i.value()->supportsDetail(detailDefinitionName)) {
             uids = i.value()->supportedSortingFieldTypes(detailFieldName);
@@ -219,33 +219,33 @@ QList<TUid> TransformContact::supportedSortingFieldTypes( QString detailDefiniti
     return uids;
 }
 
-TUint32 TransformContact::GetIdForDetailL(const QContactDetailFilter& detailFilter, bool& isSubtype) const
+TUint32 CntTransformContact::GetIdForDetailL(const QContactDetailFilter& detailFilter, bool& isSubtype) const
     {
     isSubtype = false;
     QString defnitionName = detailFilter.detailDefinitionName();
     QString fieldName = detailFilter.detailFieldName();
     QString fieldValue = detailFilter.value().toString();
     quint32 fieldId = 0;
-    
-    QMap<ContactData, TransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+
+    QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
     while (i != m_transformContactData.constEnd()) {
-    
-        if (i.value()->supportsDetail(defnitionName)){ 
-            // This definition is supported, 
+
+        if (i.value()->supportsDetail(defnitionName)){
+            // This definition is supported,
             // so check if there is a subtype defined
-        
+
             if (i.value()->supportsSubType(fieldName)){
-            
+
                // subtype supported, so value contains the field to be checked
                 fieldId  = i.value()->getIdForField(fieldValue);
                 isSubtype = true;
-        
+
             } else {
-                // subtype not supported, so field itself should be passed  
+                // subtype not supported, so field itself should be passed
                 fieldId  = i.value()->getIdForField(fieldName);
                 isSubtype = false;
             }
-        
+
             break;
         }
         ++i;
@@ -254,14 +254,24 @@ TUint32 TransformContact::GetIdForDetailL(const QContactDetailFilter& detailFilt
 
     }
 
+QMap<QString, QContactDetailDefinition> CntTransformContact::detailDefinitions(QContactManager::Error& error) const
+{
+    QMap<QString, QContactDetailDefinition> defMap;
+    QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+    while (i != m_transformContactData.constEnd()) {
+        i.value()->detailDefinitions(defMap);
+        i++;
+    }
+    return defMap;
+}
 
-QList<CContactItemField *> TransformContact::transformDetailL(const QContactDetail &detail) const
+QList<CContactItemField *> CntTransformContact::transformDetailL(const QContactDetail &detail) const
 {
 	QList<CContactItemField *> itemFieldList;
 	if(!detail.isEmpty()) {
         QScopedPointer<QString> detailName(new QString(detail.definitionName()));
 
-        QMap<ContactData, TransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+        QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
         while (i != m_transformContactData.constEnd()) {
             if (i.value()->supportsDetail(*detailName)) {
                 itemFieldList = i.value()->transformDetailL(detail);
@@ -273,12 +283,12 @@ QList<CContactItemField *> TransformContact::transformDetailL(const QContactDeta
 	return itemFieldList;
 }
 
-QContactDetail *TransformContact::transformItemField(const CContactItemField& field, const QContact &contact) const
+QContactDetail *CntTransformContact::transformItemField(const CContactItemField& field, const QContact &contact) const
 {
 	QContactDetail *detail(0);
 	TUint32 fieldType(field.ContentType().FieldType(0).iUid);
 
-	QMap<ContactData, TransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+	QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
 	while (i != m_transformContactData.constEnd()) {
         if (i.value()->supportsField(fieldType)) {
             detail = i.value()->transformItemField(field, contact);
@@ -290,7 +300,7 @@ QContactDetail *TransformContact::transformItemField(const CContactItemField& fi
 	return detail;
 }
 
-QContactDetail* TransformContact::transformGuidItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const
+QContactDetail* CntTransformContact::transformGuidItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const
 {
     QContactGuid *guidDetail = 0;
     QString guid = QString::fromUtf16(contactItem.UidStringL(contactDatabase.MachineId()).Ptr(),
@@ -303,7 +313,7 @@ QContactDetail* TransformContact::transformGuidItemFieldL(CContactItem &contactI
     return guidDetail;
 }
 
-QContactDetail* TransformContact::transformTimestampItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const
+QContactDetail* CntTransformContact::transformTimestampItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const
 {
     QContactTimestamp *timestampDetail = 0;
 

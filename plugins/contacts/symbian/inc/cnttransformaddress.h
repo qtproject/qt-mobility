@@ -43,7 +43,7 @@
 
 #include "cnttransformcontactdata.h"
 
-class TransformAddress : public TransformContactData
+class CntTransformAddress : public CntTransformContactData
 {
 protected:
 	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
@@ -51,8 +51,9 @@ protected:
 	bool supportsField(TUint32 fieldType) const;
 	bool supportsDetail(QString detailName) const;
 	QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const;
-    bool supportsSubType(const QString& subType) const ;
-    quint32 getIdForField(const QString& fieldName) const ;
+    bool supportsSubType(const QString& subType) const;
+    quint32 getIdForField(const QString& fieldName) const;
+    void detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const;
 };
 
 #endif

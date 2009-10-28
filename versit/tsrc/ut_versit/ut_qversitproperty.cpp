@@ -56,6 +56,22 @@ void UT_QVersitProperty::cleanup()
    delete mVersitProperty;
 }
 
+void UT_QVersitProperty::testGroup()
+{
+    // One group
+    QStringList group(QString::fromAscii("GROUP_NAME"));
+    mVersitProperty->setGroups(group);
+    QCOMPARE(mVersitProperty->groups(), group);
+
+    // Several groups
+    QStringList groupList;
+    groupList.append(QString::fromAscii("GROUP1"));
+    groupList.append(QString::fromAscii("Group2"));
+    groupList.append(QString::fromAscii("group3"));
+    mVersitProperty->setGroups(groupList);
+    QCOMPARE(mVersitProperty->groups(), groupList);
+}
+
 void UT_QVersitProperty::testName()
 {
     // Name in upper case

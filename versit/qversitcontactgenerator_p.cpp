@@ -166,7 +166,7 @@ QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& 
             detail = createBirthday(property);
         } else if (property.name() == QString::fromAscii(versitNicknameId)||
                    property.name() == QString::fromAscii(versitNicknameXId)) {
-            detail = createNicknames(property);
+            createNicknames(property,contact);
         } else if (property.name() == QString::fromAscii(versitGeoId)){
             detail = createGeoLocation(property);
         } else if (property.name() == QString::fromAscii(versitSipId)){
@@ -330,19 +330,19 @@ QContactDetail* QVersitContactGeneratorPrivate::createBirthday(
 }
 
 /*!
- * Creates multiple QContactNickname from \a property
+ * Creates QContactNicknames from \a property and adds them to \a contact
  */
-QContactDetail* QVersitContactGeneratorPrivate::createNicknames(
-    const QVersitProperty& property) const
+void QVersitContactGeneratorPrivate::createNicknames(
+    const QVersitProperty& property,
+    QContact& contact) const
 {
-    QList<QContactDetail*> nickNames;
     QList<QByteArray> values = property.value().split(',');
-    foreach(QByteArray value,values){
+    foreach(QByteArray value,values) {
         QContactNickname* nickName = new QContactNickname();
         nickName->setNickname(QString::fromAscii(value));
-        nickNames.append(nickName);
+        contact.saveDetail(nickName);
+        delete nickName;
     }
-    return (nickNames.count() > 0) ?nickNames.at(0):new QContactNickname();
 }
 
 /*!
@@ -355,11 +355,11 @@ QContactDetail* QVersitContactGeneratorPrivate::createOnlineAccount(
     QMultiHash<QString,QString> params = property.parameters();
     QList<QString> values = params.values();
     const QString subTypeVal = takeFirst(values);    
-    if(!subTypeVal.isEmpty()){
+    if (!subTypeVal.isEmpty()) {
         const QString fieldKey = mSubTypeMappings.value(subTypeVal);
-        if(!fieldKey.isEmpty()){
+        if (!fieldKey.isEmpty()) {
             onlineAccount->setSubTypes(fieldKey);
-        }else{
+        } else {
             // Discard : if subtype is not empty and subtype is not found in mapping table
             delete onlineAccount;
             return 0;
@@ -378,7 +378,8 @@ QContactDetail* QVersitContactGeneratorPrivate::createImageAvatar(
     QString fileName;
 
     const QString valueParam =
-            property.parameters().value(QString::fromAscii(versitValue));
+        property.parameters().value(QString::fromAscii(versitValue));
+
     if (valueParam == QString::fromAscii("URL")) {
         fileName = QString::fromAscii(property.value());
     } else {
@@ -402,6 +403,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createImageAvatar(
 }
 
 /*!
+
  * Creates a QContactAvatar from \a property
  */
 QContactDetail* QVersitContactGeneratorPrivate::createSoundAvatar(

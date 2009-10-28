@@ -42,13 +42,13 @@
 
 #include <QDebug>
 
-QList<CContactItemField *> TransformNickname::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformNickname::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList;
-	
+
 	//cast to name
 	const QContactNickname &name(static_cast<const QContactNickname &>(detail));
-	
+
 	//Prefix
 	TPtrC fieldTextPrefix(reinterpret_cast<const TUint16*>(name.nickname().utf16()));
 	CContactItemField* nickname = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldSecondName);
@@ -56,18 +56,18 @@ QList<CContactItemField *> TransformNickname::transformDetailL(const QContactDet
 	nickname->SetMapping(KUidContactFieldVCardMapSECONDNAME);
 	fieldList.append(nickname);
 	CleanupStack::Pop(nickname);
-	
+
 	return fieldList;
-}	
+}
 
 
-QContactDetail *TransformNickname::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformNickname::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	QContactNickname *name = new QContactNickname(contact.detail<QContactNickname>());
-	
+
 	CContactTextField* storage = field.TextStorage();
 	QString nameValue = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
-	
+
 	for (int i = 0; i < field.ContentType().FieldTypeCount(); i++)
 	{
 		//Prefix
@@ -76,11 +76,11 @@ QContactDetail *TransformNickname::transformItemField(const CContactItemField& f
 			name->setNickname(nameValue);
 		}
 	}
-	
+
 	return name;
 }
 
-bool TransformNickname::supportsField(TUint32 fieldType) const
+bool CntTransformNickname::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldSecondName.iUid) {
@@ -89,7 +89,7 @@ bool TransformNickname::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformNickname::supportsDetail(QString detailName) const
+bool CntTransformNickname::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactNickname::DefinitionName) {
@@ -98,7 +98,7 @@ bool TransformNickname::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformNickname::supportedSortingFieldTypes(QString detailFieldName) const
+QList<TUid> CntTransformNickname::supportedSortingFieldTypes(QString detailFieldName) const
 {
     QList<TUid> uids;
     if (detailFieldName == QContactNickname::FieldNickname)
@@ -110,9 +110,9 @@ QList<TUid> TransformNickname::supportedSortingFieldTypes(QString detailFieldNam
  * Checks whether the subtype is supported
  *
  * \a subType The subtype to be checked
- * \return True if this subtype is supported 
- */ 
-bool TransformNickname::supportsSubType(const QString& subType) const 
+ * \return True if this subtype is supported
+ */
+bool CntTransformNickname::supportsSubType(const QString& subType) const
 {
     return false;
 }
@@ -121,9 +121,32 @@ bool TransformNickname::supportsSubType(const QString& subType) const
  * Returns the filed id corresponding to a field
  *
  * \a fieldName The name of the supported field
- * \return fieldId for the fieldName, 0  if not supported 
- */ 
-quint32 TransformNickname::getIdForField(const QString& fieldName) const 
+ * \return fieldId for the fieldName, 0  if not supported
+ */
+quint32 CntTransformNickname::getIdForField(const QString& fieldName) const
 {
     return 0;
+}
+
+/*!
+ * Adds the detail definitions for the details this transform class supports.
+ *
+ * \a definitions On return, the supported detail definitions have been added.
+ */
+void CntTransformNickname::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+{
+    QMap<QString, QContactDetailDefinition::Field> fields;
+    QContactDetailDefinition::Field f;
+    QContactDetailDefinition d;
+
+    d.setName(QContactNickname::DefinitionName);
+    f.dataType = QVariant::String;
+    f.allowableValues = QVariantList();
+    fields.insert(QContactNickname::FieldNickname, f);
+
+    d.setFields(fields);
+    d.setUnique(false);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+
+    definitions.insert(d.name(), d);
 }

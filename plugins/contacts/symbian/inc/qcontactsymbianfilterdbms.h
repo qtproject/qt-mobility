@@ -51,7 +51,7 @@ class CContactDatabase;
 class CContactIdArray;
 class QContactDetailFilter;
 class QAbstractContactSorter;
-class TransformContact;
+class CntTransformContact;
 class CContactItemFieldDef;
 
 class QContactSymbianFilter : public QAbstractContactFilter
@@ -83,7 +83,7 @@ private:
     void getMatchLengthL(TInt& matchLength);
     CContactDatabase &m_contactDatabase;
     QAbstractContactSorter *m_contactSorter;
-    TransformContact *m_transformContact;
+    CntTransformContact *m_transformContact;
 };
 
 #endif /*__SYMBIAN_CNTMODEL_USE_SQLITE__*/

@@ -41,7 +41,7 @@
 
 #include "cnttransformcontactdata.h"
 
-void TransformContactData::setContexts(const TUid &fieldType, QContactDetail &detail)
+void CntTransformContactData::setContexts(const TUid &fieldType, QContactDetail &detail)
 {
 	if (fieldType == KUidContactFieldVCardMapHOME)
 	{
@@ -54,7 +54,7 @@ void TransformContactData::setContexts(const TUid &fieldType, QContactDetail &de
 	}
 }
 
-void TransformContactData::setContextsL(const QContactDetail &detail, CContactItemField &field)
+void CntTransformContactData::setContextsL(const QContactDetail &detail, CContactItemField &field)
 {
 	QStringList contexts = detail.contexts();
 	

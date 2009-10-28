@@ -45,18 +45,18 @@
 #include <QtTest/QtTest>
 
 
-void TestTransformContact::initTestCase()
+void TestCntTransformContact::initTestCase()
 {
 }
 
-void TestTransformContact::cleanupTestCase()
+void TestCntTransformContact::cleanupTestCase()
 {
 }
 
 
-void TestTransformContact::executeTransformSymbianContact()
+void TestCntTransformContact::executeCntTransformSymbianContact()
 {
-	TransformContact transformContact;
+	CntTransformContact transformContact;
 
 #if 0 /*BELOW CODE DOESN'T TEST ANYTHING*/
 
@@ -68,10 +68,10 @@ void TestTransformContact::executeTransformSymbianContact()
 
 }
 
-void TestTransformContact::executeTransformQtContact()
+void TestCntTransformContact::executeCntTransformQtContact()
 {
     
-	TransformContact transformContact;
+	CntTransformContact transformContact;
 
 #if 0 /*BELOW CODE DOESN'T TEST ANYTHING*/
 	//empty contact
@@ -94,21 +94,21 @@ void TestTransformContact::executeTransformQtContact()
 
 //======================================================================================================//
 //Validate QContact
-void TestTransformContact::validateQContactEmpty(const QContact& contact) const
+void TestCntTransformContact::validateQContactEmpty(const QContact& contact) const
 {
 }
 
-void TestTransformContact::validateQContactPhoneNumber(const QContact& contact) const
+void TestCntTransformContact::validateQContactPhoneNumber(const QContact& contact) const
 {
 }
 
 
 //======================================================================================================//
-void TestTransformContact::validateSymbianContactEmpty(const CContactItem& contactItem) const
+void TestCntTransformContact::validateSymbianContactEmpty(const CContactItem& contactItem) const
 {
 }
 
-void TestTransformContact::validateSymbianContactPhoneNumber(const CContactItem& contactItem) const
+void TestCntTransformContact::validateSymbianContactPhoneNumber(const CContactItem& contactItem) const
 {
 }
 
@@ -117,4 +117,4 @@ void TestTransformContact::validateSymbianContactPhoneNumber(const CContactItem&
 
 	
 
-QTEST_MAIN(TestTransformContact);
+QTEST_MAIN(TestCntTransformContact);

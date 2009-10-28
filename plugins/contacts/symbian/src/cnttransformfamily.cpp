@@ -42,13 +42,13 @@
 
 const char separator = ',';
 
-QList<CContactItemField *> TransformFamily::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformFamily::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList; 
-	
+	QList<CContactItemField *> fieldList;
+
 	//cast to family
 	const QContactFamily &family(static_cast<const QContactFamily&>(detail));
-	
+
     //spouse
     TPtrC fieldSpouse(reinterpret_cast<const TUint16*>(family.spouse().utf16()));
     CContactItemField* spouse = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldSpouse);
@@ -56,7 +56,7 @@ QList<CContactItemField *> TransformFamily::transformDetailL(const QContactDetai
     spouse->SetMapping(KUidContactFieldVCardMapSpouse);
     fieldList.append(spouse);
     CleanupStack::Pop(spouse);
-    
+
     //children
     foreach(QString childName, family.children()) {
         TPtrC fieldChild(reinterpret_cast<const TUint16*>(childName.utf16()));
@@ -64,16 +64,16 @@ QList<CContactItemField *> TransformFamily::transformDetailL(const QContactDetai
         child->TextStorage()->SetTextL(fieldChild);
         child->SetMapping(KUidContactFieldVCardMapChildren);
         fieldList.append(child);
-        CleanupStack::Pop(child); 
+        CleanupStack::Pop(child);
     }
 
 	return fieldList;
 }
 
-QContactDetail *TransformFamily::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformFamily::transformItemField(const CContactItemField& field, const QContact &contact)
 {
     QContactFamily *family = new QContactFamily(contact.detail<QContactFamily>());
-	
+
 	CContactTextField* storage = field.TextStorage();
 	QString familyString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
 
@@ -82,7 +82,7 @@ QContactDetail *TransformFamily::transformItemField(const CContactItemField& fie
 	    if (field.ContentType().FieldType(i) == KUidContactFieldSpouse) {
             family->setSpouse(familyString);
 	    }
-	        
+
 	    //Children
 	    else if (field.ContentType().FieldType(i) == KUidContactFieldChildren) {
             QStringList childrenList = family->children();
@@ -90,11 +90,11 @@ QContactDetail *TransformFamily::transformItemField(const CContactItemField& fie
             family->setChildren(childrenList);
 	    }
 	}
-	
+
 	return family;
 }
 
-bool TransformFamily::supportsField(TUint32 fieldType) const
+bool CntTransformFamily::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldSpouse.iUid ||
@@ -104,7 +104,7 @@ bool TransformFamily::supportsField(TUint32 fieldType) const
     return ret;
 }
 
-bool TransformFamily::supportsDetail(QString detailName) const
+bool CntTransformFamily::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactFamily::DefinitionName) {
@@ -113,7 +113,7 @@ bool TransformFamily::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> TransformFamily::supportedSortingFieldTypes(QString /*detailFieldName*/) const
+QList<TUid> CntTransformFamily::supportedSortingFieldTypes(QString /*detailFieldName*/) const
 {
     // Sorting not supported
     return QList<TUid>();
@@ -123,9 +123,9 @@ QList<TUid> TransformFamily::supportedSortingFieldTypes(QString /*detailFieldNam
  * Checks whether the subtype is supported
  *
  * \a subType The subtype to be checked
- * \return True if this subtype is supported 
- */ 
-bool TransformFamily::supportsSubType(const QString& subType) const 
+ * \return True if this subtype is supported
+ */
+bool CntTransformFamily::supportsSubType(const QString& subType) const
 {
     return false;
 }
@@ -134,11 +134,32 @@ bool TransformFamily::supportsSubType(const QString& subType) const
  * Returns the filed id corresponding to a field
  *
  * \a fieldName The name of the supported field
- * \return fieldId for the fieldName, 0  if not supported 
- */ 
-quint32 TransformFamily::getIdForField(const QString& fieldName) const 
+ * \return fieldId for the fieldName, 0  if not supported
+ */
+quint32 CntTransformFamily::getIdForField(const QString& fieldName) const
 {
     return 0;
 }
 
+/*!
+ * Adds the detail definitions for the details this transform class supports.
+ *
+ * \a definitions On return, the supported detail definitions have been added.
+ */
+void CntTransformFamily::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+{
+    QMap<QString, QContactDetailDefinition::Field> fields;
+    QContactDetailDefinition::Field f;
+    QContactDetailDefinition d;
 
+    d.setName(QContactFamily::DefinitionName);
+    f.dataType = QVariant::String;
+    f.allowableValues = QVariantList();
+    fields.insert(QContactFamily::FieldSpouse, f);
+    fields.insert(QContactFamily::FieldChildren, f);
+
+    d.setFields(fields);
+    d.setUnique(true);
+
+    definitions.insert(d.name(), d);
+}

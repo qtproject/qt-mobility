@@ -81,6 +81,7 @@ private slots:
     void testEncodeAnniversary();
     void testEncodOnlineAccount();
     void testEncodeFamily();
+    void testEncodeAvatar();
 
     
 private: // Data

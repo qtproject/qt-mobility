@@ -378,53 +378,167 @@ void UT_VersitUtils::testDecodeQuotedPrintable()
     QCOMPARE(encoded, decoded);
 }
 
-void UT_VersitUtils::testExtractPropertyName()
+void UT_VersitUtils::testBackSlashEscape()
 {
-    QByteArray property("TEL");
-    QString propertyName("TEL");
+    // Empty string
+    QByteArray input;
+    QVERIFY(!VersitUtils::backSlashEscape(input));
+    QCOMPARE(input,QByteArray());
+
+    // Nothing to escape in the string
+    input = "Nothing to escape";
+    QVERIFY(!VersitUtils::backSlashEscape(input));
+    QCOMPARE(QString::fromAscii(input),QString::fromAscii("Nothing to escape"));
+
+    // Line break in the beginning
+    input = "\r\n input";
+    QVERIFY(VersitUtils::backSlashEscape(input));
+    QCOMPARE(QString::fromAscii(input),QString::fromAscii("\\n input"));
+
+    // Line break in the end
+    input = "input\r\n";
+    QVERIFY(VersitUtils::backSlashEscape(input));
+    QCOMPARE(QString::fromAscii(input),QString::fromAscii("input\\n"));
+
+    // Semicolon in the beginning
+    input = ";input";
+    QVERIFY(VersitUtils::backSlashEscape(input));
+    QCOMPARE(QString::fromAscii(input),QString::fromAscii("\\;input"));
+
+    // Semicolon in the end
+    input = "input;";
+    QVERIFY(VersitUtils::backSlashEscape(input));
+    QCOMPARE(QString::fromAscii(input),QString::fromAscii("input\\;"));
+
+    // Colon in the beginning
+    input = ":input";
+    QVERIFY(VersitUtils::backSlashEscape(input));
+    QCOMPARE(QString::fromAscii(input),QString::fromAscii("\\:input"));
+
+    // Colon in the end
+    input = "input:";
+    QVERIFY(VersitUtils::backSlashEscape(input));
+    QCOMPARE(QString::fromAscii(input),QString::fromAscii("input\\:"));
+
+    // Comma in the beginning
+    input = ",input";
+    QVERIFY(VersitUtils::backSlashEscape(input));
+    QCOMPARE(QString::fromAscii(input),QString::fromAscii("\\,input"));
+
+    // Comma in the end
+    input = "input,";
+    QVERIFY(VersitUtils::backSlashEscape(input));
+    QCOMPARE(QString::fromAscii(input),QString::fromAscii("input\\,"));
+
+    // Line break, semicolon, colon and comma in the middle of the string
+    input = "These should be escaped \r\n ; : ,";
+    QVERIFY(VersitUtils::backSlashEscape(input));
+    QCOMPARE(QString::fromAscii(input),
+             QString::fromAscii("These should be escaped \\n \\; \\: \\,"));
+
+    // Escaping not done for an already escaped string
+    QVERIFY(!VersitUtils::backSlashEscape(input));
+    QCOMPARE(QString::fromAscii(input),
+             QString::fromAscii("These should be escaped \\n \\; \\: \\,"));
+
+    // Don't escape special characters within quotes
+    input = "Quoted \"\r\n ; : ,\"";
+    QVERIFY(!VersitUtils::backSlashEscape(input));
+    QCOMPARE(QString::fromAscii(input),
+             QString::fromAscii("Quoted \"\r\n ; : ,\""));
+
+}
+
+void UT_VersitUtils::testRemoveBackSlashEscaping()
+{
+    // Empty string
+    QByteArray input;
+    VersitUtils::removeBackSlashEscaping(input);
+    QCOMPARE(input,QByteArray());
+
+    // Nothing to escape in the string
+    input = "Nothing to escape";
+    VersitUtils::removeBackSlashEscaping(input);
+    QCOMPARE(QString::fromAscii(input),QString::fromAscii("Nothing to escape"));
+
+    // Line break, semicolon, colon and comma in the string
+    input = "These should be unescaped \\n \\N \\; \\: \\,";
+    VersitUtils::removeBackSlashEscaping(input);
+    QCOMPARE(QString::fromAscii(input),
+             QString::fromAscii("These should be unescaped \r\n \r\n ; : ,"));
+
+    // Don't remove escaping within quotes
+    input = "Quoted \"\\n \\N \\; \\: \\,\"";
+    QVERIFY(!VersitUtils::backSlashEscape(input));
+    QCOMPARE(QString::fromAscii(input),
+             QString::fromAscii("Quoted \"\\n \\N \\; \\: \\,\""));
+}
+
+void UT_VersitUtils::testExtractPropertyGroupsAndName()
+{
+    QPair<QStringList,QString> groupsAndName;
 
     // Empty string
-    QCOMPARE(QString(), VersitUtils::extractPropertyName(QByteArray()));
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(QByteArray());
+    QCOMPARE(groupsAndName.first.count(),0);
+    QCOMPARE(groupsAndName.second,QString());
     
-    // No value -> returns empty string
-    QCOMPARE(QString(), VersitUtils::extractPropertyName(property));
+    // No value -> returns empty string and no groups
+    QByteArray property("TEL");
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(property);
+    QCOMPARE(groupsAndName.first.count(),0);
+    QCOMPARE(groupsAndName.second,QString());
     
     // Simple name and value
     property = "TEL:123";
-    QCOMPARE(propertyName, VersitUtils::extractPropertyName(property));
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(property);
+    QCOMPARE(groupsAndName.first.count(),0);
+    QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
 
     // One whitespace before colon
     property = "TEL :123";
-    QCOMPARE(propertyName, VersitUtils::extractPropertyName(property));
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(property);
+    QCOMPARE(groupsAndName.first.count(),0);
+    QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
 
     // Several whitespaces before colon
     property = "TEL \t  :123";
-    QCOMPARE(propertyName, VersitUtils::extractPropertyName(property));    
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(property);
+    QCOMPARE(groupsAndName.first.count(),0);
+    QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
 
     // Name contains a group
-    property = "group1.X-property:x";
-    propertyName = QString::fromAscii("group1.X-property");
-    QCOMPARE(propertyName, VersitUtils::extractPropertyName(property));     
+    property = "group1.TEL:1234";
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(property);
+    QCOMPARE(groupsAndName.first.count(),1);
+    QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group1"));
+    QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
     
     // Name contains more than one group
-    property = "group1.group2.X-property:x";
-    propertyName = QString::fromAscii("group1.group2.X-property");
-    QCOMPARE(propertyName, VersitUtils::extractPropertyName(property));     
+    property = "group1.group2.TEL:12345";
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(property);
+    QCOMPARE(groupsAndName.first.count(),2);
+    QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group1"));
+    QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group2"));
+    QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
 
     // Property contains one parameter
     property = "TEL;WORK:123";
-    propertyName = QString::fromAscii("TEL");
-    QCOMPARE(propertyName, VersitUtils::extractPropertyName(property));    
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(property);
+    QCOMPARE(groupsAndName.first.count(),0);
+    QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
 
     // Property contains several parameters
     property = "EMAIL;INTERNET;ENCODING=QUOTED-PRINTABLE:user=40ovi.com";
-    propertyName = QString::fromAscii("EMAIL");
-    QCOMPARE(propertyName, VersitUtils::extractPropertyName(property));
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(property);
+    QCOMPARE(groupsAndName.first.count(),0);
+    QCOMPARE(groupsAndName.second,QString::fromAscii("EMAIL"));
     
     // Name contains an escaped semicolon
     property = "X-proper\\;ty:value";
-    propertyName = QString::fromAscii("X-proper\\;ty");
-    QCOMPARE(propertyName, VersitUtils::extractPropertyName(property));     
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(property);
+    QCOMPARE(groupsAndName.first.count(),0);
+    QCOMPARE(groupsAndName.second,QString::fromAscii("X-proper\\;ty"));
 }
 
 void UT_VersitUtils::testExtractPropertyValue()
