@@ -50,7 +50,7 @@
 
 
 //static member of the QMLBackendMonitorAO object holding the address of the object
-QMLBackendMonitorAO* QMLBackendMonitorAO::iBackendMonitorAO = NULL;  
+QMLBackendMonitorAO* QMLBackendMonitorAO::iBackendMonitorAO = NULL;
 
 //static member of the QMLBackendMonitorAO object maintaining the reference count
 TInt QMLBackendMonitorAO::refCount = 0;
@@ -58,102 +58,94 @@ TInt QMLBackendMonitorAO::refCount = 0;
 //request for notification of the trigger fired events
 void QMLBackendMonitorAO::NotifyFiredEvent()
 {
-    if(!IsActive())     
-    {
-             iLbt.NotifyTriggerFired( iTriggerInfo, iStatus );
-             SetActive();
+    if (!IsActive()) {
+        iLbt.NotifyTriggerFired(iTriggerInfo, iStatus);
+        SetActive();
     }
 }
 
-//static function called prior to the destruction of the 
+//static function called prior to the destruction of the
 //singleton QMLBackendMonitorAO object
 void QMLBackendMonitorAO::DeleteAO(QGeoAreaMonitorS60* aParent)
-    {
+{
     //decrement the reference count
     refCount--;
-    if(refCount == 0)
-        {
+    if (refCount == 0) {
         delete iBackendMonitorAO;
         iBackendMonitorAO = NULL;
-        }
     }
+}
 
 QMLBackendMonitorAO::~QMLBackendMonitorAO()
 {
-    Cancel();           
+    Cancel();
     delete iTriggerMonitorInfo; //deletes the CBackendMonitorInfo object holding the linked list
     iLbt.Close();   //closes the subsession
-} 
+}
 
 
 void  QMLBackendMonitorAO::DoCancel()
 {
-    if(IsActive())  //if request is still active,cancel the CancelNotifyTriggerFired request
-    {
-         iLbt.CancelNotifyTriggerFired(); 
+    if (IsActive()) { //if request is still active,cancel the CancelNotifyTriggerFired request
+        iLbt.CancelNotifyTriggerFired();
     }
 }
 
 void QMLBackendMonitorAO::RunL()
 {
-    switch( iStatus.Int())
-    {
-    case KErrNone :
-        //retrieve the triggerInfo corresponding to iTriggerInfo.iTriggerId
-        CMonitorTriggerInfo* triggerInfo = iTriggerMonitorInfo->getMonitorTriggerInfo(
-                                                                iTriggerInfo.iTriggerId);
-        if(triggerInfo)
-            {
-            //callback called only if generated for the current AO - Trigger ID
-            (triggerInfo->iParent)->handleTriggerEvent( iTriggerInfo.iFiredPositionInfo ,
-                                                        triggerInfo->iType);
+    switch (iStatus.Int()) {
+        case KErrNone :
+            //retrieve the triggerInfo corresponding to iTriggerInfo.iTriggerId
+            CMonitorTriggerInfo* triggerInfo = iTriggerMonitorInfo->getMonitorTriggerInfo(
+                                                   iTriggerInfo.iTriggerId);
+            if (triggerInfo) {
+                //callback called only if generated for the current AO - Trigger ID
+                (triggerInfo->iParent)->handleTriggerEvent(iTriggerInfo.iFiredPositionInfo ,
+                        triggerInfo->iType);
             }
-        break;
-    default :
-        break; 
+            break;
+        default :
+            break;
     }
-    
-    //request for any trigger fired event, for any triggers owned by the client 
+
+    //request for any trigger fired event, for any triggers owned by the client
     NotifyFiredEvent();
 }
 
 QMLBackendMonitorAO* QMLBackendMonitorAO::NewL(RLbtServer &aLbt)
 {
     //increment the reference count
-   refCount++;
-   if(!iBackendMonitorAO)
-       {
-       iBackendMonitorAO = QMLBackendMonitorAO::NewLC(aLbt);
-       CleanupStack::Pop();
-       }
-   return iBackendMonitorAO;
+    refCount++;
+    if (!iBackendMonitorAO) {
+        iBackendMonitorAO = QMLBackendMonitorAO::NewLC(aLbt);
+        CleanupStack::Pop();
+    }
+    return iBackendMonitorAO;
 }
 
 QMLBackendMonitorAO* QMLBackendMonitorAO::NewLC(RLbtServer &aLbtServer)
 {
-    QMLBackendMonitorAO *self = new (ELeave) QMLBackendMonitorAO;
+    QMLBackendMonitorAO *self = new(ELeave) QMLBackendMonitorAO;
     CleanupStack::PushL(self);
-    self->ConstructL(aLbtServer); 
-    if(!self->isValid())
-        {
+    self->ConstructL(aLbtServer);
+    if (!self->isValid()) {
         delete self;
         self = NULL;
-        }
+    }
     return self;
 }
 
 void QMLBackendMonitorAO::ConstructL(RLbtServer &aLbtServ)
-    {
-    if(iLbt.Open(aLbtServ) == KErrNone) //opens the subsession
-        {
-        subsessionCreated = TRUE; 
+{
+    if (iLbt.Open(aLbtServ) == KErrNone) { //opens the subsession
+        subsessionCreated = TRUE;
         iTriggerMonitorInfo = CBackendMonitorInfo::NewL();
-        }
     }
+}
 
-QMLBackendMonitorAO::QMLBackendMonitorAO() 
-                    :CActive(EPriorityStandard), // Standard priority
-                     subsessionCreated(FALSE)
+QMLBackendMonitorAO::QMLBackendMonitorAO()
+        :CActive(EPriorityStandard), // Standard priority
+        subsessionCreated(FALSE)
 {
     CActiveScheduler::Add(this);
 }

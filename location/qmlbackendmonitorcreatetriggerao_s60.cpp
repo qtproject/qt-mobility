@@ -45,10 +45,10 @@
 #include "qmlbackendmonitorcreatetriggerao_s60_p.h"
 
 //Sets the radius of the monitoring area, to  aRadius.If the Radius is less than the MinimumTriggerAreaSize(),
-//then aRadius will be set to MinimumTriggerAreaSize() supported by the LBT implementation.If the aRadius is 
+//then aRadius will be set to MinimumTriggerAreaSize() supported by the LBT implementation.If the aRadius is
 //greater than the MinimumTriggerAreaSize() it is unaltered.
 TInt QMLBackendMonitorCreateTriggerAO::getRadius(qreal& aRadius)
-    {
+{
     TInt ret = KErrNone;
 
     qreal minimumRadius;
@@ -58,267 +58,249 @@ TInt QMLBackendMonitorCreateTriggerAO::getRadius(qreal& aRadius)
     //gets the triggering System Setting
     TRAP(ret,iLbt.GetTriggeringSystemSettingsL(triggerSettings));
 
-    if( ret != KErrNone)
+    if (ret != KErrNone)
         return ret;
 
     minimumRadius = triggerSettings.MinimumTriggerAreaSize();
 
-    if(aRadius < minimumRadius)
+    if (aRadius < minimumRadius)
         aRadius = minimumRadius;
 
-    return ret;   
-    }
+    return ret;
+}
 
 //creates a trigger of type aType(EntryTrigger/ExitTrigger), with the coordinates and radius as
 //supplied in the argument
 bool  QMLBackendMonitorCreateTriggerAO::InitializeTrigger(QGeoAreaMonitorS60* aParent ,
-                                             enTriggerType aType,
-                                             TCoordinate& aCoordinate,
-                                             qreal& aRadius)
-{ 
+        enTriggerType aType,
+        TCoordinate& aCoordinate,
+        qreal& aRadius)
+{
     TInt ret = KErrGeneral;
-        
+
     TLbtTriggerId triggerID = NULL;
-       
+
     //try retrieving the trigger information from the linked list corresponding to the aParent and aType
     CMonitorTriggerInfo* triggerInfo = iTriggerMonitorInfo->getMonitorTriggerInfo(aParent, aType);
-    
+
     //if no triggerinfo available in the linked list
-    if(triggerInfo ==  NULL)
-    {
-        //Define the triggering area  
+    if (triggerInfo ==  NULL) {
+        //Define the triggering area
         CLbtGeoCircle* trigArea = NULL;
-        
+
         TRAP(ret,trigArea = CLbtGeoCircle::NewL(
-                aCoordinate ,//center coordinate  
-                aRadius               //radius in meters. If 
-                     //NaN is used, Location
-                     //Triggering Server will
-                     //use minimal size of trigger 
-                     //area as the radius of the 
-                     //trigger
-            ));   
-          
-        if( (ret != KErrNone)|| !trigArea )
+                                aCoordinate ,//center coordinate
+                                aRadius               //radius in meters. If
+                                //NaN is used, Location
+                                //Triggering Server will
+                                //use minimal size of trigger
+                                //area as the radius of the
+                                //trigger
+                            ));
+
+        if ((ret != KErrNone)|| !trigArea)
             return FALSE;
-        
-        CleanupStack::PushL( trigArea);   
-        
+
+        CleanupStack::PushL(trigArea);
+
         CLbtTriggerConditionArea* cond;
-        
-        if (aType == EntryTrigger)
-        {
-        //2: Construct a entry type of trigger condition    
-         TRAP(ret,cond = CLbtTriggerConditionArea::NewL(  
-                trigArea, 
-                CLbtTriggerConditionArea::EFireOnEnter
-            ));
+
+        if (aType == EntryTrigger) {
+            //2: Construct a entry type of trigger condition
+            TRAP(ret,cond = CLbtTriggerConditionArea::NewL(
+                                trigArea,
+                                CLbtTriggerConditionArea::EFireOnEnter
+                            ));
+        } else if (aType == ExitTrigger) {
+            TRAP(ret,cond = CLbtTriggerConditionArea::NewL(
+                                trigArea,
+                                CLbtTriggerConditionArea::EFireOnExit
+                            ));
         }
-        else if (aType == ExitTrigger)
-        {
-            TRAP(ret,cond = CLbtTriggerConditionArea::NewL(  
-                    trigArea, 
-                    CLbtTriggerConditionArea::EFireOnExit
-                ));
-        }
-        
-        CleanupStack::Pop( trigArea ); //ownership of trigArea is transferred.
-        
-        if( (ret != KErrNone) || !cond)
-            {
+
+        CleanupStack::Pop(trigArea);   //ownership of trigArea is transferred.
+
+        if ((ret != KErrNone) || !cond) {
             CleanupStack::PopAndDestroy(trigArea);
             return FALSE;
-            }
-        CleanupStack::PushL( cond );
-        
+        }
+        CleanupStack::PushL(cond);
+
         RRequestorStack reqStack;
-        
-        CleanupClosePushL( reqStack );
-        
-        //trigger name.   
-        _LIT( KMyTriggerName, "EntryTrigger" );
+
+        CleanupClosePushL(reqStack);
+
+        //trigger name.
+        _LIT(KMyTriggerName, "EntryTrigger");
         TDesC triggerName(KMyTriggerName);
-        
-        if(aType == ExitTrigger){
-            _LIT( KMyTriggerName, "ExitTrigger" ); 
+
+        if (aType == ExitTrigger) {
+            _LIT(KMyTriggerName, "ExitTrigger");
             triggerName = KMyTriggerName;
         }
-        
-        //Construct requestor
-        _LIT( KMyRequestorName, "QTLBTBackend" ); //Application name used as requestor identifier
-        
-        CRequestor *req = NULL;
-        
-        TRAP(ret,req = CRequestor::NewL(
-                CRequestorBase::ERequestorService, 
-                CRequestorBase::EFormatApplication,
-                KMyRequestorName 
-            ));
-        
-        CleanupStack::PushL(req);
-        
-        if( (ret != KErrNone) || !req)
-            {
-            CleanupStack::PopAndDestroy( &reqStack );
-            CleanupStack::PopAndDestroy( cond );
-            return FALSE;
-            }
-        
-        TRAP(ret,reqStack.AppendL( req ));
-        
-        CleanupStack::Pop( req );
-        
-        if(ret != KErrNone)
-            {
-            CleanupStack::PopAndDestroy( &reqStack );
-            CleanupStack::PopAndDestroy( cond );
-            return FALSE;
-            }
-        
-        TUid managerUid = TUid::Uid( 0 );
-        
-        CLbtSessionTrigger* trig = NULL;
-        
-        TRAP(ret,trig =  CLbtSessionTrigger::NewL( 
-                triggerName,
-                CLbtTriggerEntry::EStateDisabled,
-                reqStack,
-                managerUid,
-                cond 
-            ));
-        
-        CleanupStack::PopAndDestroy( &reqStack );
-       
-        CleanupStack::Pop( cond );
-        
-	trig->SetTimeToRearm(0);	
 
-        if( (ret!= KErrNone) || (!trig)) 
-            { 
+        //Construct requestor
+        _LIT(KMyRequestorName, "QTLBTBackend");   //Application name used as requestor identifier
+
+        CRequestor *req = NULL;
+
+        TRAP(ret,req = CRequestor::NewL(
+                           CRequestorBase::ERequestorService,
+                           CRequestorBase::EFormatApplication,
+                           KMyRequestorName
+                       ));
+
+        CleanupStack::PushL(req);
+
+        if ((ret != KErrNone) || !req) {
+            CleanupStack::PopAndDestroy(&reqStack);
             CleanupStack::PopAndDestroy(cond);
             return FALSE;
-            }
-        
+        }
+
+        TRAP(ret,reqStack.AppendL(req));
+
+        CleanupStack::Pop(req);
+
+        if (ret != KErrNone) {
+            CleanupStack::PopAndDestroy(&reqStack);
+            CleanupStack::PopAndDestroy(cond);
+            return FALSE;
+        }
+
+        TUid managerUid = TUid::Uid(0);
+
+        CLbtSessionTrigger* trig = NULL;
+
+        TRAP(ret,trig =  CLbtSessionTrigger::NewL(
+                             triggerName,
+                             CLbtTriggerEntry::EStateDisabled,
+                             reqStack,
+                             managerUid,
+                             cond
+                         ));
+
+        CleanupStack::PopAndDestroy(&reqStack);
+
+        CleanupStack::Pop(cond);
+
+        trig->SetTimeToRearm(0);
+
+        if ((ret!= KErrNone) || (!trig)) {
+            CleanupStack::PopAndDestroy(cond);
+            return FALSE;
+        }
+
         CleanupStack::PushL(trig);
-        
+
         //iLbt.CreateTrigger(*trig, triggerID, ETrue, iStatus);
-         
+
         //CleanupStack::PopAndDestroy(trig );
-                
-        TRAP(ret,iActiveSchedulerwait = new (ELeave) CActiveSchedulerWait); 
-        
-        if((ret!=KErrNone) || !iActiveSchedulerwait) 
-            {
+
+        TRAP(ret,iActiveSchedulerwait = new(ELeave) CActiveSchedulerWait);
+
+        if ((ret!=KErrNone) || !iActiveSchedulerwait) {
             CleanupStack::PopAndDestroy(trig);
             return FALSE;
-            }
-        
+        }
+
         iTriggerCreation = FALSE;
-        
+
         //create a trigger asynchronously
         iLbt.CreateTrigger(*trig, triggerID, ETrue, iStatus);
-        
+
         SetActive();
-        
+
         //wait till the iActiveSchedularwait->AsyncStop() is called in RunL
         iActiveSchedulerwait->Start();
-        
+
         delete iActiveSchedulerwait;
-        
-        CleanupStack::PopAndDestroy(trig );
-        
+
+        CleanupStack::PopAndDestroy(trig);
+
         //if the trigger creation is successful, add the triggerinfo to the linked list
-        if(iTriggerCreation == TRUE)
+        if (iTriggerCreation == TRUE)
             iTriggerMonitorInfo->addMonitorTriggerInfo(aParent, triggerID,aType);
-               
+
         return iTriggerCreation;
-    }
-    else        //triggerinfo available in the linked list 
-    {
-           
+    } else {     //triggerinfo available in the linked list
+
         CLbtSessionTrigger* trig = NULL;
-       
-        //Define the triggering area 
+
+        //Define the triggering area
         CLbtGeoCircle* trigArea = NULL;
-        
+
         TRAP(ret,trigArea = CLbtGeoCircle::NewL(
-                aCoordinate ,   //center coordinate  
-                aRadius          //radius in meters. If 
-                                 //NaN is used, Location
-                                 //Triggering Server will
-                                 //use minimal size of trigger 
-                                 //area as the radius of the 
-                                 //trigger
-            ));   
-        
-        if( (ret!=KErrNone) || (!trigArea))
-            {
-               
-                return FALSE;
-            }
-        
-        CleanupStack::PushL( trigArea);    
-        
-        //2: Construct a entry type of trigger condition    
+                                aCoordinate ,   //center coordinate
+                                aRadius          //radius in meters. If
+                                //NaN is used, Location
+                                //Triggering Server will
+                                //use minimal size of trigger
+                                //area as the radius of the
+                                //trigger
+                            ));
+
+        if ((ret!=KErrNone) || (!trigArea)) {
+
+            return FALSE;
+        }
+
+        CleanupStack::PushL(trigArea);
+
+        //2: Construct a entry type of trigger condition
         CLbtTriggerConditionArea* cond = NULL;
-        
-        if (aType == EntryTrigger)
-        {
-        //2: Construct a entry type of trigger condition    
-         TRAP(ret,cond = CLbtTriggerConditionArea::NewL(  
-                trigArea, 
-                CLbtTriggerConditionArea::EFireOnEnter
-            ));
+
+        if (aType == EntryTrigger) {
+            //2: Construct a entry type of trigger condition
+            TRAP(ret,cond = CLbtTriggerConditionArea::NewL(
+                                trigArea,
+                                CLbtTriggerConditionArea::EFireOnEnter
+                            ));
+        } else if (aType == ExitTrigger) {
+            TRAP(ret,cond = CLbtTriggerConditionArea::NewL(
+                                trigArea,
+                                CLbtTriggerConditionArea::EFireOnExit
+                            ));
         }
-        else if (aType == ExitTrigger)
-        {
-            TRAP(ret,cond = CLbtTriggerConditionArea::NewL(  
-                    trigArea, 
-                    CLbtTriggerConditionArea::EFireOnExit
-                ));
+
+        CleanupStack::Pop(trigArea);   //ownership of trigArea is transferred.
+
+        if ((ret != KErrNone) || !cond) {
+            CleanupStack::PopAndDestroy(trigArea);
+            return FALSE;
         }
-        
-        CleanupStack::Pop( trigArea ); //ownership of trigArea is transferred.
-             
-        if( (ret != KErrNone) || !cond)
-                  {
-                  CleanupStack::PopAndDestroy(trigArea);
-                  return FALSE;
-                  }
-        
-        CleanupStack::PushL( cond );
-        
+
+        CleanupStack::PushL(cond);
+
         //create a session trigger
         TRAP(ret ,trig = CLbtSessionTrigger::NewL());
-        
-        if( (ret!= KErrNone) || (!trig)) 
-                  { 
-                  CleanupStack::PopAndDestroy(cond);
-                  return FALSE;
-                  }
-        
+
+        if ((ret!= KErrNone) || (!trig)) {
+            CleanupStack::PopAndDestroy(cond);
+            return FALSE;
+        }
+
         //set the condition for the trigger
-        trig->SetCondition( cond);
-        
+        trig->SetCondition(cond);
+
         CleanupStack::Pop(cond);
-        
+
         CleanupStack::PushL(trig);
-        
-        //set the trigger ID 
+
+        //set the trigger ID
         trig->SetId(triggerInfo->iTriggerID);
-        
+
         //update the trigger with the new condition in LBT server
-        TRAP(ret,iLbt.UpdateTriggerL(*trig, CLbtTriggerEntry::EAttributeCondition, ELbtTrue ));
-       
-        CleanupStack::PopAndDestroy(trig );
-       
-       
-        if(ret!= KErrNone)
-                   {
-                   return FALSE;;
-                   }
- 
-        return TRUE;        
+        TRAP(ret,iLbt.UpdateTriggerL(*trig, CLbtTriggerEntry::EAttributeCondition, ELbtTrue));
+
+        CleanupStack::PopAndDestroy(trig);
+
+
+        if (ret!= KErrNone) {
+            return FALSE;;
+        }
+
+        return TRUE;
     }
 }
 
@@ -327,26 +309,24 @@ QMLBackendMonitorCreateTriggerAO::~QMLBackendMonitorCreateTriggerAO()
 {
     Cancel();
     iLbt.Close();   //closes the subsession
-} 
+}
 
 
 void  QMLBackendMonitorCreateTriggerAO::DoCancel()
 {
-    if(!IsActive())
-    {
-    iActiveSchedulerwait->AsyncStop();  
+    if (!IsActive()) {
+        iActiveSchedulerwait->AsyncStop();
     }
 }
 
 void QMLBackendMonitorCreateTriggerAO::RunL()
 {
-    switch( iStatus.Int())
-    {
-    case KErrNone :      
-        iTriggerCreation = TRUE;
-        break;
-    default :
-        break; 
+    switch (iStatus.Int()) {
+        case KErrNone :
+            iTriggerCreation = TRUE;
+            break;
+        default :
+            break;
     }
     //stops the AO, waiting in the iActiveSchedulerwait->Start()
     iActiveSchedulerwait->AsyncStop();
@@ -356,7 +336,7 @@ QMLBackendMonitorCreateTriggerAO* QMLBackendMonitorCreateTriggerAO::NewL(QGeoAre
 {
 
     QMLBackendMonitorCreateTriggerAO* self = QMLBackendMonitorCreateTriggerAO::
-                                             NewLC(aParent,aLbt);
+            NewLC(aParent,aLbt);
     CleanupStack::Pop();
 
     return self;
@@ -364,30 +344,28 @@ QMLBackendMonitorCreateTriggerAO* QMLBackendMonitorCreateTriggerAO::NewL(QGeoAre
 
 QMLBackendMonitorCreateTriggerAO* QMLBackendMonitorCreateTriggerAO::NewLC(QGeoAreaMonitorS60* aParent , RLbtServer &aLbtServer)
 {
-    QMLBackendMonitorCreateTriggerAO *self = new (ELeave) QMLBackendMonitorCreateTriggerAO;
+    QMLBackendMonitorCreateTriggerAO *self = new(ELeave) QMLBackendMonitorCreateTriggerAO;
     CleanupStack::PushL(self);
-    self->ConstructL(aLbtServer); 
-    if(!self->isValid())
-        {
+    self->ConstructL(aLbtServer);
+    if (!self->isValid()) {
         delete self;
         self = NULL;
-        }
+    }
     return self;
 }
 
 void QMLBackendMonitorCreateTriggerAO::ConstructL(RLbtServer &aLbtServ)
-    {
-    if(iLbt.Open(aLbtServ) == KErrNone)         //opens the subseesion
-        {
-        subsessionCreated = TRUE; 
-        //get the singleton object of CBackendMonitorInfo class 
-        iTriggerMonitorInfo = CBackendMonitorInfo::NewL();  
-        } 
+{
+    if (iLbt.Open(aLbtServ) == KErrNone) {      //opens the subseesion
+        subsessionCreated = TRUE;
+        //get the singleton object of CBackendMonitorInfo class
+        iTriggerMonitorInfo = CBackendMonitorInfo::NewL();
     }
+}
 
-QMLBackendMonitorCreateTriggerAO::QMLBackendMonitorCreateTriggerAO() 
-                    :CActive(EPriorityStandard), // Standard priority
-                     subsessionCreated(FALSE),iTriggerCreation(FALSE)
+QMLBackendMonitorCreateTriggerAO::QMLBackendMonitorCreateTriggerAO()
+        :CActive(EPriorityStandard), // Standard priority
+        subsessionCreated(FALSE),iTriggerCreation(FALSE)
 {
     CActiveScheduler::Add(this);        //add AO to the Schedular
 }
@@ -395,22 +373,21 @@ QMLBackendMonitorCreateTriggerAO::QMLBackendMonitorCreateTriggerAO()
 //Enables/Disables the trigger state depending on the aStatus
 void QMLBackendMonitorCreateTriggerAO::SetTriggerState(QGeoAreaMonitorS60* aParent,enTriggerType aType,bool aStatus)
 {
-    //retrieve the triggerinfo from the linked list from the supplied aPrent and aType 
+    //retrieve the triggerinfo from the linked list from the supplied aPrent and aType
     CMonitorTriggerInfo* triggerInfo = iTriggerMonitorInfo->getMonitorTriggerInfo(aParent, aType);
-     
-    if (aStatus == true){
+
+    if (aStatus == true) {
         TRAPD(err, iLbt.SetTriggerStateL(triggerInfo->iTriggerID, CLbtTriggerEntry::EStateEnabled, ELbtTrue));
-    }
-    else{
+    } else {
         TRAPD(err, iLbt.SetTriggerStateL(triggerInfo->iTriggerID, CLbtTriggerEntry::EStateDisabled, ELbtTrue));
     }
 }
 
-//checks whether trigger is Initialized. The trigger entry corresponding to the aParent and aType is 
+//checks whether trigger is Initialized. The trigger entry corresponding to the aParent and aType is
 //searched in the linked list
 bool QMLBackendMonitorCreateTriggerAO::isTriggerInitialized(QGeoAreaMonitorS60* aParent ,enTriggerType aType)
-    {
+{
     CMonitorTriggerInfo* triggerInfo = iTriggerMonitorInfo->getMonitorTriggerInfo(aParent, aType);
 
     return (triggerInfo != NULL) ? TRUE : FALSE;
-    }
+}

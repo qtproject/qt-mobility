@@ -56,130 +56,127 @@
 //forward declaration
 class CQMLBackendAO;
 
-class CPosMethodInfo 
+class CPosMethodInfo
 {
-    public: 
-    // A unique id for the positioning module 
+public:
+    // A unique id for the positioning module
     TPositionModuleId  mUid;
-    
+
     // Positioning Module (satellite/ non-satellite)
     QGeoPositionInfoSource::PositioningMethod  mPosMethod;
 
-    // 
+    //
     int  mStatus;
-    
+
     // time to first and next fix from the location server
     TTimeIntervalMicroSeconds  mTimeToFirstFix;
     TTimeIntervalMicroSeconds  mTimeToNextFix;
-    
-    // Accuracy 
+
+    // Accuracy
     double mHorizontalAccuracy;
-    
+
     // Flags whether the positioning technology is currently available or not.
-    bool mIsAvailable;    
+    bool mIsAvailable;
 };
 
 
 /**
  *  CQGeoPositionInfoSourceS60
- * 
+ *
  */
 class CQGeoPositionInfoSourceS60 : public INotificationCallback,
-                                   public QGeoPositionInfoSource
-                                   
-    {
+        public QGeoPositionInfoSource
+
+{
 public:
     // Constructors and destructor
     /**
      * Destructor.
      */
-    ~CQGeoPositionInfoSourceS60( );
+    ~CQGeoPositionInfoSourceS60();
 
     /**
      * Two-phased constructor.
      */
-    static CQGeoPositionInfoSourceS60* NewL( QObject* aParent );
+    static CQGeoPositionInfoSourceS60* NewL(QObject* aParent);
 
     /**
      * Two-phased constructor.
      */
-    static CQGeoPositionInfoSourceS60* NewLC( QObject* aParent );
-    
+    static CQGeoPositionInfoSourceS60* NewLC(QObject* aParent);
+
     /**
      * returns the last known position
      */
-    QGeoPositionInfo lastKnownPosition ( bool aFromSatellitePositioningMethodsOnly = false ) const;
+    QGeoPositionInfo lastKnownPosition(bool aFromSatellitePositioningMethodsOnly = false) const;
 
     /**
-     * returns the minimum update interval 
+     * returns the minimum update interval
      */
-    int minimumUpdateInterval () const;
+    int minimumUpdateInterval() const;
 
     /**
      * Sets the preferred PositioningMethod, if available
      * otherwise sets the default poistioning mmethod
      */
-    void setPreferredPositioningMethods ( PositioningMethods aMethods );
+    void setPreferredPositioningMethods(PositioningMethods aMethods);
 
     /**
      * Sets the interval for the regular position notifications
      */
-    void setUpdateInterval ( int aMilliSec );
+    void setUpdateInterval(int aMilliSec);
 
     /**
-     * Returns the supported Positioning Methods 
+     * Returns the supported Positioning Methods
      */
-    PositioningMethods supportedPositioningMethods () const {
-            return mSupportedMethods;
+    PositioningMethods supportedPositioningMethods() const {
+        return mSupportedMethods;
     }
 
     /**
-     * Notification methods from active object. 
+     * Notification methods from active object.
      * Notifies device status, position value, and status
-     */    
-    void updateDeviceStatus( void ) ;
+     */
+    void updateDeviceStatus(void) ;
 
     /**
      * Update the position info
      */
-    void updatePosition( HPositionGenericInfo* aPosInfo, int aError );
-    
+    void updatePosition(HPositionGenericInfo* aPosInfo, int aError);
+
 
     /**
      * Gets the handle of the PositionServer
      */
     RPositionServer& getPositionServer();
-    
+
     /*
      * checks whether the object is valid
      */
-    inline TBool isValid()
-        {
-        if( mDevStatusUpdateAO && mRegUpdateAO )
+    inline TBool isValid() {
+        if (mDevStatusUpdateAO && mRegUpdateAO)
             return TRUE;
-        else 
+        else
             return FALSE;
-        }
+    }
 
-    inline TPositionModuleId getCurrentPositonModuleID()
-        {
+    inline TPositionModuleId getCurrentPositonModuleID() {
         return mCurrentModuleId;
-        }
+    }
 
-    inline TPositionModuleId getRequestUpdateModuleID()
-        {
+    inline TPositionModuleId getRequestUpdateModuleID() {
         return mReqModuleId;
-        }
-    
+    }
+
 public slots :
     // for request update
-    void requestUpdate ( int timeout = 5000 );
+    void requestUpdate(int timeout = 5000);
 
     // starts the regular updates
-    virtual void startUpdates (); 
+    virtual void startUpdates();
 
     // stops the regular updates
-    virtual void stopUpdates ();
+    virtual void stopUpdates();
 
 
 private:
@@ -187,82 +184,82 @@ private:
     /**
      * Constructor for performing 1st stage construction
      */
-    CQGeoPositionInfoSourceS60( QObject* aParent = 0 );
+    CQGeoPositionInfoSourceS60(QObject* aParent = 0);
 
     /**
      * EPOC default constructor for performing 2nd stage construction
      */
     void ConstructL();
 
-    void updateStatus( TPositionModuleInfo aModInfo, TInt aStatus );
-    
-    void updateAvailableTypes( void );
-    
+    void updateStatus(TPositionModuleInfo aModInfo, TInt aStatus);
+
+    void updateAvailableTypes(void);
+
     //get the index of the module in the List array
-    TInt checkModule( TPositionModuleId aId ) const;
-    
+    TInt checkModule(TPositionModuleId aId) const;
+
     //get the index of the position module based on the preferred methods
-    TInt getIndexPositionModule(TUint8 aBits, PositioningMethods aPosMethods = AllPositioningMethods ) const;
-    
-    //get the more accuarte method with time to first fix < than timeout 
-    TInt getMoreAccurateMethod( TInt aTimeout, TUint8 aBits );
-    
-    QGeoPositionInfo getLastknownPositionS60( TPositionModuleId aModuleID ) const;
-   
-    void TPositionInfo2QGeoPositionInfo(HPositionGenericInfo *mPosInfo, 
-                                                    QGeoPositionInfo& posUpdate);
+    TInt getIndexPositionModule(TUint8 aBits, PositioningMethods aPosMethods = AllPositioningMethods) const;
+
+    //get the more accuarte method with time to first fix < than timeout
+    TInt getMoreAccurateMethod(TInt aTimeout, TUint8 aBits);
+
+    QGeoPositionInfo getLastknownPositionS60(TPositionModuleId aModuleID) const;
+
+    void TPositionInfo2QGeoPositionInfo(HPositionGenericInfo *mPosInfo,
+                                        QGeoPositionInfo& posUpdate);
 
 protected:
-	void connectNotify(const char *aSignal);
-		
-	void disconnectNotify(const char *aSignal);
-		
+    void connectNotify(const char *aSignal);
+
+    void disconnectNotify(const char *aSignal);
+
 private:
     /**
     * Active object for requestUpdate
     */
     CQMLBackendAO * mReqUpdateAO;
-    
+
     /**
     *prvmoduleID
     */
     TPositionModuleId mReqModuleId;
-    
+
     /**
     * Active object for device status updates
-    */               
+    */
     CQMLBackendAO * mDevStatusUpdateAO;
-    
+
     /**
      * Positioner server
      */
-    RPositionServer mPositionServer;  
-    
-    
+    RPositionServer mPositionServer;
+
+
     /**
     * Active object for regular updates.
-    */                       
+    */
     CQMLBackendAO * mRegUpdateAO;
-    
+
     /**
     *  list of supported position methods
-    */  
+    */
     CPosMethodInfo mList[MAX_SIZE];
-    
+
     PositioningMethods mSupportedMethods;
-    
+
     PositioningMethod mCurrentMethod;
-    
+
     /**
     *  current module ID
     */
     TPositionModuleId mCurrentModuleId;
-    
+
     /**
      * maintaiss the size of thr CPosMethodInfo array
      */
     int mListSize;
-    
+
     /*
      * query for the status
      */
@@ -272,11 +269,11 @@ private:
      * maintain the startUpdates status
      */
     TBool mStartUpdates;
-    
+
     /*
      * flags for the modules
-     */    
+     */
     TUint8  mModuleFlags;
-    };
+};
 
 #endif // CQGEOPOSITIONINFOSOURCES60_H

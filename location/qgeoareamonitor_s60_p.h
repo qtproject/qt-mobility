@@ -56,46 +56,45 @@
 
 /**
  *  QGeoAreaMonitorS60
- * 
+ *
  */
 class QGeoAreaMonitorS60 : public INotificationMonitorCallback,
-                                   public QGeoAreaMonitor
-                                   
+        public QGeoAreaMonitor
+
 {
 public :
     static QGeoAreaMonitorS60* NewL(QObject *parent = 0);
     void setCenter(const QGeoCoordinate &coordinate);
     void setRadius(qreal radius);
-    void handleTriggerEvent(TPositionInfo aPosInfo, enTriggerType aStatus);  
-    void handleTriggerChangeEvent(TLbtTriggerChangeEventType aEvent, 
-                                  CLbtTriggerInfo* aInfo, TLbtTriggerId aId);  
+    void handleTriggerEvent(TPositionInfo aPosInfo, enTriggerType aStatus);
+    void handleTriggerChangeEvent(TLbtTriggerChangeEventType aEvent,
+                                  CLbtTriggerInfo* aInfo, TLbtTriggerId aId);
     ~QGeoAreaMonitorS60();
-    
+
     /*
      * checks whether the object is valid
      */
-    TBool isValid()
-    {
-    if( iTriggerAO && iNotifyTriggerAO && iTriggerCreateAO)
-        return TRUE;
-    else 
-        return FALSE;
+    TBool isValid() {
+        if (iTriggerAO && iNotifyTriggerAO && iTriggerCreateAO)
+            return TRUE;
+        else
+            return FALSE;
     }
-    
+
 private:
     static QGeoAreaMonitorS60* NewLC(QObject* parent);
-    
+
     void ConstructL();
     QGeoAreaMonitorS60(QObject* aParent = 0);
-    void setMonitoredArea ( const QGeoCoordinate & aCoordinate, qreal aRadius );
-    void TPositionInfoToQGeoPositionInfo(TPositionInfo& aPosInfo, QGeoPositionInfo& aQInfo); 
-    int QCoordinateToTCoordinate(const QGeoCoordinate& aQCoord, TCoordinate& aTCoord); 
-    
+    void setMonitoredArea(const QGeoCoordinate & aCoordinate, qreal aRadius);
+    void TPositionInfoToQGeoPositionInfo(TPositionInfo& aPosInfo, QGeoPositionInfo& aQInfo);
+    int QCoordinateToTCoordinate(const QGeoCoordinate& aQCoord, TCoordinate& aTCoord);
+
 private slots:
-    
+
     void  connectNotify(const char* signal);
     void  disconnectNotify(const char* signal);
-    
+
 private:
     RLbtServer lbtServ;
     QMLBackendMonitorAO *iTriggerAO;

@@ -53,23 +53,24 @@ class CBackendMonitorInfo;
 
 #include <lbt.h>
 
-enum enTriggerType{ EntryTrigger, 
-                    ExitTrigger, 
-                    NotifyChangesTrigger,
-                    InvalidTrigger = -1};
+enum enTriggerType { EntryTrigger,
+                     ExitTrigger,
+                     NotifyChangesTrigger,
+                     InvalidTrigger = -1
+                   };
 
 class QGeoAreaMonitorS60;
 
 class QMLBackendMonitorAO : public CActive
-    {
-public :  
+{
+public :
     static QMLBackendMonitorAO* NewL(RLbtServer &aLbtServer);
 
     static void DeleteAO(QGeoAreaMonitorS60* aParent);
 
     void NotifyFiredEvent();
 
-    void  DoCancel();   
+    void  DoCancel();
 
     void RunL();
 
@@ -83,7 +84,9 @@ private :
 
     void ConstructL(RLbtServer &aLbtServ);
 
-    bool isValid() {return subsessionCreated && (iTriggerMonitorInfo!=NULL);}
+    bool isValid() {
+        return subsessionCreated && (iTriggerMonitorInfo!=NULL);
+    }
 private:
     //Design change
     static QMLBackendMonitorAO* iBackendMonitorAO;      //single instance for access from all the QGeoAreaMonitorS60 objects
@@ -96,9 +99,9 @@ private:
 
     bool subsessionCreated; //check for the successful creation of the subsession
 
-    RLbt iLbt;  //subsession 
+    RLbt iLbt;  //subsession
 
-    }; 
+};
 
 
 #endif /* QMLBACKENDMONITORAO_H_ */

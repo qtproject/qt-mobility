@@ -56,29 +56,31 @@ class QGeoAreaMonitorS60;
 
 
 class QMLBackendTriggerChangeAO : public CActive
-    {
-public :  
+{
+public :
 
     static QMLBackendTriggerChangeAO* NewL(RLbtServer& aLbtServ);
     static void DeleteAO();
     void NotifyChangeEvent();
-    void  DoCancel();   
+    void  DoCancel();
     void RunL();
 
 private :
     QMLBackendTriggerChangeAO();
     ~QMLBackendTriggerChangeAO();
-    inline bool isValid() { return subsessionCreated && (iTriggerMonitorInfo!=NULL); }
+    inline bool isValid() {
+        return subsessionCreated && (iTriggerMonitorInfo!=NULL);
+    }
     void ConstructL(RLbtServer& albtServ);
 
     static QMLBackendTriggerChangeAO* instance;
     CBackendMonitorInfo*  iTriggerMonitorInfo;  //single instance of the CBackendMonitorInfo object
     TLbtTriggerChangeEvent iTriggerChangeEvent;
     bool subsessionCreated;
-    static TInt refCount;		
+    static TInt refCount;
     RLbt iLbt;
 
-}; 
+};
 
 
 #endif /* QMLBACKENDMONITORAO_H_ */

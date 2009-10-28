@@ -43,7 +43,7 @@
 #ifndef NOTIFICATIONCALLBACK_H
 #define NOTIFICATIONCALLBACK_H
 
-#include <e32base.h>	// For CActive, link against: euser.lib
+#include <e32base.h>    // For CActive, link against: euser.lib
 #include <lbs.h>
 #include <lbscommon.h>
 
@@ -52,8 +52,8 @@ class INotificationCallback
 {
 public:
 
-    virtual void updateDeviceStatus( void ) = 0 ;
-    
-    virtual void updatePosition( HPositionGenericInfo  *mPosInfo, int error ) = 0 ;
+    virtual void updateDeviceStatus(void) = 0 ;
+
+    virtual void updatePosition(HPositionGenericInfo  *mPosInfo, int error) = 0 ;
 };
 #endif // NOTIFICATIONCALLBACK_H
