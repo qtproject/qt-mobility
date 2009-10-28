@@ -39,11 +39,55 @@
 **
 ****************************************************************************/
 
-#include "../testqgeopositioninfosource_p.h"
+#ifndef QMLBACKENDMONITORINFO_H_
+#define QMLBACKENDMONITORINFO_H_
 
-int main(int argc, char *argv[])
-{
-    QCoreApplication app(argc, argv);
-    TestQGeoPositionInfoSource *test = TestQGeoPositionInfoSource::createDefaultSourceTest();
-    return QTest::qExec(test, argc, argv);
-}
+#include "qmlbackendmonitorao_s60_p.h"
+
+
+//linked list information structure
+struct CMonitorTriggerInfo
+    {
+    QGeoAreaMonitorS60* iParent;
+    
+    TLbtTriggerId iTriggerID;
+    
+    enum  enTriggerType iType;
+    
+    CMonitorTriggerInfo* next;
+    };
+
+
+class CBackendMonitorInfo   :  public CBase 
+    {
+public :
+    
+    static CBackendMonitorInfo  *NewL();
+    
+    //return CMonitorTriggerInfo from TriggerID
+    CMonitorTriggerInfo* getMonitorTriggerInfo(TLbtTriggerId aTrigID);
+    
+    //return CMonitorTriggerInfo from the QGeoAreaMonitorS60
+    CMonitorTriggerInfo* getMonitorTriggerInfo(QGeoAreaMonitorS60* aParent,enTriggerType aType);
+    
+    //return the header of the linked list
+    inline CMonitorTriggerInfo* getMonitorTriggerInfo() { return iMonitorInfo; }
+    
+    //add the entry and exit trigger info to the list
+    bool addMonitorTriggerInfo(QGeoAreaMonitorS60* aParent,TLbtTriggerId aTriggerID,enTriggerType aType);  
+    
+    //remove the CMonitorTriggerInfo corresponding to the TriggerID 
+    void removeMonitorTriggerInfo(TLbtTriggerId aTrigID);
+    
+    
+    ~CBackendMonitorInfo();
+private :  
+        
+    CBackendMonitorInfo() : iMonitorInfo(NULL) { }
+    
+    CMonitorTriggerInfo*  iMonitorInfo;
+    
+    static CBackendMonitorInfo* iBackendMonitorInfo;
+    };
+
+#endif /* QMLBACKENDMONITORINFO_H_ */

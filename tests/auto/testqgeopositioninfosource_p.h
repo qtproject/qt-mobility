@@ -17,12 +17,12 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
+** packaging of this file. Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef TESTQGEOPOSITIONINFOSOURCE_P_H
 #define TESTQGEOPOSITIONINFOSOURCE_P_H
 
@@ -95,25 +96,27 @@ private slots:
     void minimumUpdateInterval();
 
     void startUpdates_testIntervals();
-
+    void startUpdates_testIntervalChangesWhileRunning();
     void startUpdates_testDefaultInterval();
-
     void startUpdates_testZeroInterval();
+    void startUpdates_moreThanOnce();
 
     void stopUpdates();
-
     void stopUpdates_withoutStart();
 
     void requestUpdate();
     void requestUpdate_data();
 
     void requestUpdate_validTimeout();
-
+    void requestUpdate_defaultTimeout();
     void requestUpdate_timeoutLessThanMinimumInterval();
-
     void requestUpdate_repeatedCalls();
+    void requestUpdate_overlappingCalls();
 
-    void requestUpdate_withUpdateInterval();
+    void requestUpdateAfterStartUpdates_ZeroInterval();
+    void requestUpdateAfterStartUpdates_SmallInterval();
+    void requestUpdateBeforeStartUpdates_ZeroInterval();
+    void requestUpdateBeforeStartUpdates_SmallInterval();
 };
 
 

@@ -40,6 +40,10 @@
 ****************************************************************************/
 #include "qgeoareamonitor.h"
 
+#if defined(Q_OS_SYMBIAN)
+    #include "qgeoareamonitor_s60_p.h"
+#endif
+
 /*!
     \class QGeoAreaMonitor
     \brief The QGeoAreaMonitor class enables the detection of proximity changes for a specified set of coordinates.
@@ -133,6 +137,9 @@ QGeoCoordinate QGeoAreaMonitor::center() const
     \property QGeoAreaMonitor::radius
     \brief This property holds the radius of the area to be monitored, in meters.
 
+    If the specified radius is less than the minimum supported radius, the
+    radius is set to the minimum radius.
+
     When this property is set, if the center coordinate has already been set and
     the current position is within the monitored area, areaEntered()
     is emitted immediately.
@@ -158,8 +165,13 @@ qreal QGeoAreaMonitor::radius() const
 
     Returns 0 if the system has no support for position monitoring.
 */
-QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject * /*parent*/)
+QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject *parent)
 {
+#if defined(Q_OS_SYMBIAN) && defined(QT_LOCATION_S60_MONITORING)
+    return QGeoAreaMonitorS60::NewL(parent);
+#else
+    Q_UNUSED(parent);
+#endif
     return 0;
 }
 

@@ -39,21 +39,66 @@
 **
 ****************************************************************************/
 
+#ifndef QMLBACKENDMONITORAO_H_
+#define QMLBACKENDMONITORAO_H_
 
-#ifndef NOTIFICATIONCALLBACK_H
-#define NOTIFICATIONCALLBACK_H
-
-#include <e32base.h>	// For CActive, link against: euser.lib
+#include <e32base.h>    // For CActive, link against: euser.lib
 #include <lbs.h>
 #include <lbscommon.h>
+#include <lbtsessiontrigger.h>
+
+#include "qgeoareamonitor.h"
+
+class CBackendMonitorInfo;
+
+#include <lbt.h>
+
+enum enTriggerType{ EntryTrigger, 
+                    ExitTrigger, 
+                    NotifyChangesTrigger,
+                    InvalidTrigger = -1};
+
+class QGeoAreaMonitorS60;
+
+class QMLBackendMonitorAO : public CActive
+    {
+public :  
+    static QMLBackendMonitorAO* NewL(RLbtServer &aLbtServer);
+
+    static void DeleteAO(QGeoAreaMonitorS60* aParent);
+
+    void NotifyFiredEvent();
+
+    void  DoCancel();   
+
+    void RunL();
 
 
-class INotificationCallback
-{
-public:
+private :
+    QMLBackendMonitorAO();
 
-    virtual void updateDeviceStatus( void ) = 0 ;
-    
-    virtual void updatePosition( HPositionGenericInfo  *mPosInfo, int error ) = 0 ;
-};
-#endif // NOTIFICATIONCALLBACK_H
+    ~QMLBackendMonitorAO();
+
+    static QMLBackendMonitorAO* NewLC(RLbtServer &aLbt);
+
+    void ConstructL(RLbtServer &aLbtServ);
+
+    bool isValid() {return subsessionCreated && (iTriggerMonitorInfo!=NULL);}
+private:
+    //Design change
+    static QMLBackendMonitorAO* iBackendMonitorAO;      //single instance for access from all the QGeoAreaMonitorS60 objects
+
+    CBackendMonitorInfo*  iTriggerMonitorInfo;  //single instance of the CBackendMonitorInfo object
+
+    static TInt refCount;   //count : number of monitors created by the clients
+
+    TLbtTriggerFireInfo iTriggerInfo;   //info of the fired event
+
+    bool subsessionCreated; //check for the successful creation of the subsession
+
+    RLbt iLbt;  //subsession 
+
+    }; 
+
+
+#endif /* QMLBACKENDMONITORAO_H_ */

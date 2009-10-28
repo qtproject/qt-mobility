@@ -17,12 +17,12 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights. These rights are described in the Nokia Qt LGPL Exception
+** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
@@ -39,11 +39,23 @@
 **
 ****************************************************************************/
 
-#include "../testqgeosatelliteinfosource_p.h"
 
-int main(int argc, char *argv[])
+#ifndef NOTIFICATIONMONITORCALLBACK_H_
+#define NOTIFICATIONMONITORCALLBACK_H_
+
+#include <e32base.h>    // For CActive, link against: euser.lib
+#include <lbs.h>
+
+class INotificationMonitorCallback
 {
-    QCoreApplication app(argc, argv);
-    TestQGeoSatelliteInfoSource *test = TestQGeoSatelliteInfoSource::createDefaultSourceTest();
-    return QTest::qExec(test, argc, argv);
-}
+public:
+    //callback called for trigger change event
+    virtual void handleTriggerEvent(TPositionInfo aPosInfo, enTriggerType aStatus) =0;
+    
+    //callback called for the trigger properties change event
+    virtual void handleTriggerChangeEvent(TLbtTriggerChangeEventType aEvent, 
+                                    CLbtTriggerInfo* aInfo, TLbtTriggerId aId) =0;  
+
+};
+
+#endif /* NOTIFICATIONMONITORCALLBACK_H_ */

@@ -17,12 +17,12 @@
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights. These rights are described in the Nokia Qt LGPL Exception
+** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
@@ -39,11 +39,46 @@
 **
 ****************************************************************************/
 
-#include "../testqgeosatelliteinfosource_p.h"
+#ifndef QMLBACKENDTRIGGERCHANGEAO_H_
+#define QMLBACKENDTRIGGERCHANGEAO_H_
 
-int main(int argc, char *argv[])
-{
-    QCoreApplication app(argc, argv);
-    TestQGeoSatelliteInfoSource *test = TestQGeoSatelliteInfoSource::createDefaultSourceTest();
-    return QTest::qExec(test, argc, argv);
-}
+#include <e32base.h>    // For CActive, link against: euser.lib
+#include <lbs.h>
+#include <lbscommon.h>
+#include <lbtsessiontrigger.h>
+
+#include "qgeoareamonitor.h"
+#include "qgeoareamonitor_s60_p.h"
+
+#include <lbt.h>
+
+class QGeoAreaMonitorS60;
+
+
+class QMLBackendTriggerChangeAO : public CActive
+    {
+public :  
+
+    static QMLBackendTriggerChangeAO* NewL(RLbtServer& aLbtServ);
+    static void DeleteAO();
+    void NotifyChangeEvent();
+    void  DoCancel();   
+    void RunL();
+
+private :
+    QMLBackendTriggerChangeAO();
+    ~QMLBackendTriggerChangeAO();
+    inline bool isValid() { return subsessionCreated && (iTriggerMonitorInfo!=NULL); }
+    void ConstructL(RLbtServer& albtServ);
+
+    static QMLBackendTriggerChangeAO* instance;
+    CBackendMonitorInfo*  iTriggerMonitorInfo;  //single instance of the CBackendMonitorInfo object
+    TLbtTriggerChangeEvent iTriggerChangeEvent;
+    bool subsessionCreated;
+    static TInt refCount;		
+    RLbt iLbt;
+
+}; 
+
+
+#endif /* QMLBACKENDMONITORAO_H_ */

@@ -58,6 +58,25 @@ void QLocationTestUtils::uheap_mark_end()
 #endif
 }
 
+bool QLocationTestUtils::hasDefaultSource()
+{
+#if defined(Q_OS_SYMBIAN) && defined(QT_LOCATION_S60_MONITORING)
+    return true;
+#elif defined (Q_OS_WINCE)
+    return true;
+#else 
+    return false;    
+#endif
+}
+
+bool QLocationTestUtils::hasDefaultMonitor()
+{
+#if defined(Q_OS_SYMBIAN)
+    return true;
+#endif
+    return false;
+}
+
 QString QLocationTestUtils::addNmeaChecksumAndBreaks(const QString &sentence)
 {
     Q_ASSERT(sentence[0] == '$' && sentence[sentence.length()-1] == '*');

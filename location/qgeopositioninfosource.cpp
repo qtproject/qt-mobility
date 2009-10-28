@@ -38,10 +38,12 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qgeopositioninfosource.h"
+#include <qgeopositioninfosource.h>
 
 #if defined(Q_OS_SYMBIAN)
 #   include "qgeopositioninfosource_s60_p.h"
+#elif defined(Q_OS_WINCE)
+#   include "qgeopositioninfosource_wince_p.h"
 #endif
 
 /*!
@@ -100,8 +102,8 @@ public:
 */
 
 QGeoPositionInfoSource::QGeoPositionInfoSource(QObject *parent)
-    : QObject(parent),
-      d(new QGeoPositionInfoSourcePrivate)
+        : QObject(parent),
+        d(new QGeoPositionInfoSourcePrivate)
 {
     d->interval = 0;
     d->methods = 0;
@@ -177,6 +179,8 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
 {
 #if defined(Q_OS_SYMBIAN)
     return CQGeoPositionInfoSourceS60::NewL(parent);
+#elif defined(Q_OS_WINCE)
+    return new QGeoPositionInfoSourceWinCE(parent);
 #else
     Q_UNUSED(parent);
 #endif
@@ -207,7 +211,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
     \property QGeoPositionInfoSource::minimumUpdateInterval
     \brief This property holds the minimum time (in milliseconds) required to retrieve a position update.
 
-    This is the minimum value accepted by setUpdateInterval() and 
+    This is the minimum value accepted by setUpdateInterval() and
     requestUpdate().
 */
 
