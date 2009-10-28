@@ -67,6 +67,9 @@
 #include <qcontactfamily.h>
 #include <QDir>
 
+
+const char testGIFFormatd[] = "GIF";
+
 QString imageRelativeTestPath(QString::fromAscii("random98354_dir76583_ut_versit_photo"));
 
 void UT_QVersitContactGenerator::initTestCase()
@@ -302,7 +305,7 @@ void UT_QVersitContactGenerator::testOrganization()
     QByteArray logo(img);
     property.setValue(logo);
     property.addParameter(QString::fromAscii(versitType),
-                          versitPhotoGif);
+                          QString::fromAscii(testGIFFormatd));
     property.addParameter(QString::fromAscii(versitEncoding),
                           versitEncodingBase64);
     document.addProperty(property);
@@ -331,7 +334,7 @@ void UT_QVersitContactGenerator::testOrganization()
     logoFileName.append(QString::fromAscii("/"));
     logoFileName.append(orgName);
     logoFileName.append(QString::fromAscii("."));
-    QString ext = versitPhotoGif;
+    QString ext = QString::fromAscii(testGIFFormatd);
     ext = ext.toLower();
     logoFileName.append(ext);
     // Take out the random part from the original file name
@@ -680,7 +683,7 @@ void UT_QVersitContactGenerator::testAvatarJpegStored()
     QByteArray name = val.join(QString::fromAscii(";")).toAscii();
     QVersitDocument document =
             createDocumentWithNameAndPhoto(name, img,
-                                           versitPhotoJpeg, versitEncodingBase64);
+                                           versitFormatJpeg, versitEncodingBase64);
 
     mGenerator->setImagePath(imageRelativeTestPath);
     QContact contact = mGenerator->generateContact(document);
@@ -691,7 +694,7 @@ void UT_QVersitContactGenerator::testAvatarJpegStored()
     fileName.append(val[0]);
     fileName.append(val[1]);
     fileName.append(QString::fromAscii("."));
-    QString ext = versitPhotoJpeg;
+    QString ext = QString::fromAscii(versitFormatJpeg);
     ext = ext.toLower();
     fileName.append(ext);
 
@@ -727,7 +730,7 @@ void UT_QVersitContactGenerator::testAvatarGifStored()
     QByteArray name = val.join(QString::fromAscii(";")).toAscii();
     QVersitDocument document =
             createDocumentWithNameAndPhoto(name, img,
-                                           versitPhotoGif, versitEncodingBase64);
+                                           QString::fromAscii(testGIFFormatd), versitEncodingBase64);
 
     mGenerator->setImagePath(imageRelativeTestPath);
     QContact contact = mGenerator->generateContact(document);
@@ -737,7 +740,7 @@ void UT_QVersitContactGenerator::testAvatarGifStored()
     fileName.append(val[0]);
     fileName.append(val[1]);
     fileName.append(QString::fromAscii("."));
-    QString ext = versitPhotoGif;
+    QString ext = QString::fromAscii(testGIFFormatd);
     ext = ext.toLower();
     fileName.append(ext);
     
@@ -771,10 +774,10 @@ void UT_QVersitContactGenerator::testAvatarJpegTwoContactsWithSameName()
     QByteArray name = val.join(QString::fromAscii(";")).toAscii();
     QVersitDocument document1 =
             createDocumentWithNameAndPhoto(name, img,
-                                           versitPhotoJpeg, versitEncodingBase64);
+                                           versitFormatJpeg, versitEncodingBase64);
     QVersitDocument document2 =
             createDocumentWithNameAndPhoto(name, img,
-                                           versitPhotoJpeg, versitEncodingBase64);
+                                           versitFormatJpeg, versitEncodingBase64);
 
     mGenerator->setImagePath(imageRelativeTestPath);
     QContact contact1 = mGenerator->generateContact(document1);
@@ -805,7 +808,7 @@ void UT_QVersitContactGenerator::testAvatarJpegNonexistentPath()
     QByteArray name = val.join(QString::fromAscii(";")).toAscii();
     QVersitDocument document =
             createDocumentWithNameAndPhoto(name, img,
-                                           versitPhotoJpeg, versitEncodingBase64);
+                                           versitFormatJpeg, versitEncodingBase64);
 
     mGenerator->setImagePath("some_nonexistent/path/anywhere543");
     QContact contact = mGenerator->generateContact(document);
@@ -821,7 +824,7 @@ void UT_QVersitContactGenerator::testAvatarUrl()
 {
     QVersitProperty property;
     property.setName(QString::fromAscii(versitPhotoId));
-    QByteArray value("file:///jgpublic.gif");
+    QByteArray value("file:///jgpublic.");
     property.setValue(value);
     property.addParameter(QString::fromAscii(versitValue),
                           QString::fromAscii("URL"));
@@ -833,7 +836,7 @@ void UT_QVersitContactGenerator::testAvatarUrl()
     QContactAvatar avatar =
             static_cast<QContactAvatar>(
                     contact.detail(QContactAvatar::DefinitionName));
-    QCOMPARE(avatar.avatar(), QString::fromAscii("file:///jgpublic.gif"));
+    QCOMPARE(avatar.avatar(), QString::fromAscii("file:///jgpublic."));
     QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
 }
 
@@ -857,7 +860,7 @@ void UT_QVersitContactGenerator::testAvatarEncoding()
     QByteArray name = val.join(QString::fromAscii(";")).toAscii();
     QVersitDocument document =
             createDocumentWithNameAndPhoto(name, img,
-                                           versitPhotoGif,
+                                           QString::fromAscii(testGIFFormatd),
                                            versitEncodingQuotedPrintable);
 
     mGenerator->setImagePath(imageRelativeTestPath);
@@ -869,7 +872,7 @@ void UT_QVersitContactGenerator::testAvatarEncoding()
     fileName.append(val[0]);
     fileName.append(val[1]);
     fileName.append(QString::fromAscii("."));
-    QString ext = versitPhotoGif;
+    QString ext = QString::fromAscii(testGIFFormatd);
     ext = ext.toLower();
     fileName.append(ext);
 

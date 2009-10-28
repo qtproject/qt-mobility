@@ -90,20 +90,33 @@ const char versitVideoId[] = "VIDEO";
 const char versitFaxId[] = "FAX";
 const char versitBbsId[] = "BBS";
 const char versitPagerId[] = "PAGER";
-// SubTypes for photograph
-const char versitPhotoGif[] = "GIF";
-const char versitPhotoBmp[] = "BMP";
-const char versitPhotoTiff[] = "TIFF";
-const char versitPhotoJpeg[] = "JPEG";
-const char versitAudioWave[] = "WAVE";
+
+// SubTypes for photograph and audio
+const char versitJPEGExtenId[] = "JPG";
+const char versitWAVEExtenId[] = "WAV";
+const char versitPICTExtenId[] = "PCT";
+const char versitTIFFExtenId[] = "TIF";
+const char versitMPEGExtenId[] = "MPG";
+const char versitMPEG2ExtenId[] = "M2P";
+const char versitQTIMEExtenId[] = "QT";
+const char versitAIFFExtenId[] = "AIF";
+
 // Sub types for onlineaccount
 const char versitSwisId[] = "SWIS";
 const char versitSipSubTypeId[] = "SIP";
 const char versitVoipId[] = "VOIP";
 
-// Format Conversion
-const char versitJPEGExtenId[] = "JPG";
-const char versitWAVEExtenId[] = "WAV";
+// Known Extenssion Formats for Versit
+const char versitFormatJpeg[] = "JPEG";
+const char versitFormatWave[] = "WAVE";
+const char versitFormatPict[] = "PICT";
+const char versitFormatTiff[] = "TIFF";
+const char versitFormatMpeg[] = "MPEG";
+const char versitFormatMpeg2[] = "MPEG2";
+const char versitFormatQtime[] = "QTIME";
+const char versitFormatAiff[] = "AIFF";
+
+
 
 // ISO-8601 basic format datetime spec
 const char versitDateTimeSpecIso8601Basic[] = "yyyyMMddThhmmss";

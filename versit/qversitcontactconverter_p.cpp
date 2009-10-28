@@ -158,9 +158,21 @@ QVersitContactConverterPrivate::QVersitContactConverterPrivate()
 
     //Media Types.
     mMappings.insert(
-        QString::fromAscii(versitJPEGExtenId),QString::fromAscii(versitPhotoJpeg));
+        QString::fromAscii(versitJPEGExtenId),QString::fromAscii(versitFormatJpeg));
     mMappings.insert(
-        QString::fromAscii(versitWAVEExtenId),QString::fromAscii(versitAudioWave));
+        QString::fromAscii(versitWAVEExtenId),QString::fromAscii(versitFormatWave));
+    mMappings.insert(
+        QString::fromAscii(versitPICTExtenId),QString::fromAscii(versitFormatPict));
+    mMappings.insert(
+        QString::fromAscii(versitTIFFExtenId),QString::fromAscii(versitFormatWave));
+    mMappings.insert(
+        QString::fromAscii(versitMPEGExtenId),QString::fromAscii(versitFormatMpeg));
+    mMappings.insert(
+        QString::fromAscii(versitMPEG2ExtenId),QString::fromAscii(versitFormatMpeg2));
+    mMappings.insert(
+        QString::fromAscii(versitQTIMEExtenId),QString::fromAscii(versitFormatQtime));
+    mMappings.insert(
+        QString::fromAscii(versitAIFFExtenId),QString::fromAscii(versitFormatAiff));
 }
 
 /*!

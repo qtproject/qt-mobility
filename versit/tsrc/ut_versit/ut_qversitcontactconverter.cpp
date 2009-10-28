@@ -639,7 +639,7 @@ void UT_QVersitContactConverter::testEncodeOrganization()
     //Media type, and source type are encoded.
     QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
 
-    QVERIFY(versitDocument.properties().at(0).parameters().contains(versitType, versitPhotoJpeg));
+    QVERIFY(versitDocument.properties().at(0).parameters().contains(versitType, versitFormatJpeg));
     QVERIFY(versitDocument.properties().at(0).parameters().contains(versitValue, versitUrlId));
 
     //Check property Name
@@ -664,7 +664,7 @@ void UT_QVersitContactConverter::testEncodeOrganization()
     QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
 
     QVERIFY(versitDocument.properties().at(0).parameters().contains(
-            QString::fromAscii(versitType), QString::fromAscii(versitPhotoJpeg)));
+            QString::fromAscii(versitType), QString::fromAscii(versitFormatJpeg)));
 
     QVERIFY(versitDocument.properties().at(0).parameters().contains(
             QString::fromAscii(versitEncoding), QString::fromAscii(versitEncodingBase64)));
@@ -729,7 +729,7 @@ void UT_QVersitContactConverter::testEncodeEmbeddedContent()
     QVERIFY(!mScaleSignalEmitted);
     QVersitProperty photoProperty = versitDocument.properties().at(0);
     QCOMPARE(photoProperty.parameters().count(), 2);
-    QVERIFY(photoProperty.parameters().contains(versitType,versitPhotoJpeg));
+    QVERIFY(photoProperty.parameters().contains(versitType,versitFormatJpeg));
     QVERIFY(photoProperty.parameters().contains(versitValue,versitUrlId));
     QString expectedPropertyName =
         mConverterPrivate->mMappings.value(QContactAvatar::SubTypeImage);
@@ -746,7 +746,7 @@ void UT_QVersitContactConverter::testEncodeEmbeddedContent()
     QCOMPARE(photoProperty.parameters().count(), 2);
     QVERIFY(photoProperty.parameters().contains(
         QString::fromAscii(versitType),
-        QString::fromAscii(versitPhotoJpeg)));
+        QString::fromAscii(versitFormatJpeg)));
     QVERIFY(photoProperty.parameters().contains(
         QString::fromAscii(versitEncoding),
         QString::fromAscii(versitEncodingBase64)));
@@ -764,7 +764,7 @@ void UT_QVersitContactConverter::testEncodeEmbeddedContent()
     QCOMPARE(photoProperty.parameters().count(), 2);
     QVERIFY(photoProperty.parameters().contains(
         QString::fromAscii(versitType),
-        QString::fromAscii(versitPhotoJpeg)));
+        QString::fromAscii(versitFormatJpeg)));
     QVERIFY(photoProperty.parameters().contains(
         QString::fromAscii(versitEncoding),
         QString::fromAscii(versitEncodingBase64)));
@@ -781,7 +781,7 @@ void UT_QVersitContactConverter::testEncodeEmbeddedContent()
     QCOMPARE(soundProperty.parameters().count(), 2);
     QVERIFY(soundProperty.parameters().contains(
         QString::fromAscii(versitType),
-        QString::fromAscii(versitAudioWave)));
+        QString::fromAscii(versitFormatWave)));
     QVERIFY(soundProperty.parameters().contains(
         QString::fromAscii(versitEncoding),
         QString::fromAscii(versitEncodingBase64)));
