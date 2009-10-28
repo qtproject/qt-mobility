@@ -71,6 +71,15 @@ class Q_AUTOTEST_EXPORT QPainterVideoSurface : public QAbstractVideoSurface
 {
     Q_OBJECT
 public:
+
+    enum ShaderType
+    {
+        NoShaders = 0x00,
+        FragmentProgramShader = 0x01,
+        GlslShader = 0x02
+    };
+    Q_DECLARE_FLAGS(ShaderTypes, ShaderType)
+
     explicit QPainterVideoSurface(QObject *parent = 0);
     ~QPainterVideoSurface();
 
@@ -105,18 +114,7 @@ public:
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
     const QGLContext *glContext() const;
     void setGLContext(QGLContext *context);
-
-    enum ShaderType
-    {
-        NoShaders = 0x00,
-        FragmentProgramShader = 0x01,
-        GlslShader = 0x02
-    };
-
-    Q_DECLARE_FLAGS(ShaderTypes, ShaderType);
-
     ShaderTypes supportedShaderTypes() const;
-
     ShaderType shaderType() const;
     void setShaderType(ShaderType type);
 #endif

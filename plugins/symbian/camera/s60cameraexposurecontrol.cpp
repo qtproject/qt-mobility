@@ -150,10 +150,19 @@ int S60CameraExposureControl::isoSensitivity() const
 {
     return 0;
 }
-
-QPair<int, int> S60CameraExposureControl::supportedIsoSensitivityRange() const
+int S60CameraExposureControl::minimumIsoSensitivity() const
 {
-    return qMakePair<int,int>(-1,-1);
+    return 0;
+}
+int S60CameraExposureControl::maximumIsoSensitivity() const
+{
+    return 3200;
+}
+QList<int> S60CameraExposureControl::supportedIsoSensitivities () const
+{
+    QList<int> res;
+    res << 100;
+    return res;
 }
 
 void S60CameraExposureControl::setManualIsoSensitivity(int iso)
@@ -170,9 +179,11 @@ qreal S60CameraExposureControl::aperture() const
     return -1.0;
 }
 
-QPair<qreal, qreal> S60CameraExposureControl::supportedApertureRange() const
+QList<qreal> S60CameraExposureControl::supportedApertures() const
 {
-    return qMakePair<qreal,qreal>(-1,-1);
+    QList<qreal> res;
+    res << 2.8 << 16.0;
+    return res;
 }
 
 void S60CameraExposureControl::setManualAperture(qreal aperture)
@@ -183,15 +194,37 @@ void S60CameraExposureControl::setManualAperture(qreal aperture)
 void S60CameraExposureControl::setAutoAperture()
 {
 }
+qreal S60CameraExposureControl::minimumAperture() const
+{
+    return 2.8;
+}
+
+qreal S60CameraExposureControl::maximumAperture() const
+{
+    return 16.0;
+}
 
 qreal S60CameraExposureControl::shutterSpeed() const
 {
     return -1;
 }
-
-QPair<qreal, qreal> S60CameraExposureControl::supportedShutterSpeedRange() const
+qreal S60CameraExposureControl::minimumShutterSpeed() const
 {
-    return qMakePair<qreal,qreal>(-1,-1);
+    return 0.001;
+}
+
+qreal S60CameraExposureControl::maximumShutterSpeed() const
+{
+    return 30.0;
+}
+/*
+  Returns the list of shutter speed values if camera supports only fixed set of shutter speed values,
+  otherwise returns an empty list.
+ */
+QList<qreal> S60CameraExposureControl::supportedShutterSpeeds() const
+{
+    QList<qreal> res;
+    return res;
 }
 
 void S60CameraExposureControl::setManualShutterSpeed(qreal seconds)

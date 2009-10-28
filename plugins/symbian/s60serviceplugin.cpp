@@ -37,7 +37,7 @@
 
 
 #include "s60serviceplugin.h"
-#include "s60radioservice.h"
+#include "s60radiotunerservice.h"
 #include "s60cameraservice.h"
 
 QStringList S60ServicePlugin::keys() const
@@ -51,7 +51,7 @@ QStringList S60ServicePlugin::keys() const
 QMediaService* S60ServicePlugin::create(QString const& key)
 {
     if (key == QLatin1String("radio")) 
-        return new S60RadioService;
+        return new S60RadioTunerService;
     else if (key == QLatin1String("camera"))
         return new S60CameraService;
 

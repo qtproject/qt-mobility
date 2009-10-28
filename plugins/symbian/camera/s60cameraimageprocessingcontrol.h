@@ -54,9 +54,9 @@ public:
     QCamera::WhiteBalanceModes supportedWhiteBalanceModes() const;
     int manualWhiteBalance() const;
     void setManualWhiteBalance(int colorTemperature);
-    
+
     qreal contrast() const;
-    void setContrast(qreal value) const;
+    void setContrast(qreal value);
 
     qreal saturation() const;
     void setSaturation(qreal value);

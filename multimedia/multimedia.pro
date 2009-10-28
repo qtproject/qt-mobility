@@ -123,13 +123,10 @@ contains(QT_CONFIG, multimedia) {
 
 symbian: {
     load(data_caging_paths)
+
     qtmedia.sources = QtMedia.dll
     qtmedia.path = "/sys/bin"
-
     DEPLOYMENT += qtmedia
-    TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = ALL -TCB
-
 }
 
 

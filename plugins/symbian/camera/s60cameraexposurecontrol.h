@@ -72,18 +72,24 @@ public:
     void setManualWhiteBalance(int colorTemperature);
     //end move
     int isoSensitivity() const;
-    QPair<int, int> supportedIsoSensitivityRange() const;
+    int minimumIsoSensitivity() const;
+    int maximumIsoSensitivity() const;
+    QList<int> supportedIsoSensitivities () const;
     void setManualIsoSensitivity(int iso);
     void setAutoIsoSensitivity();
 
     qreal aperture() const;
-    QPair< qreal,  qreal> supportedApertureRange() const;
+    qreal minimumAperture() const;
+    qreal maximumAperture() const;
+    QList<qreal> supportedApertures () const;
     void setManualAperture( qreal aperture);
     void setAutoAperture();
 
     qreal shutterSpeed() const;
-    QPair< qreal,  qreal> supportedShutterSpeedRange() const;
-    void setManualShutterSpeed( qreal seconds);
+    qreal minimumShutterSpeed() const;
+    qreal maximumShutterSpeed() const;
+    QList<qreal> supportedShutterSpeeds() const;
+    void setManualShutterSpeed(qreal seconds);
     void setAutoShutterSpeed();
 
     bool isExposureLocked() const;

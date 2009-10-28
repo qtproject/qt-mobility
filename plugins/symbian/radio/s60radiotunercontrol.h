@@ -32,34 +32,38 @@
 **
 ****************************************************************************/
 
-#ifndef S60RADIOCONTROL_H
-#define S60RADIOCONTROL_H
+#ifndef S60RADIOTUNERCONTROL_H
+#define S60RADIOTUNERCONTROL_H
 
 #include <QtCore/qobject.h>
 #include <QtCore/qtimer.h>
 #include <QTime>
 
-#include "qradioplayercontrol.h"
-#include "qradioplayer.h"
+#include "qradiotunercontrol.h"
+#include "qradiotuner.h"
 
-class S60RadioService;
+class S60RadioTunerService;
 
-class S60RadioControl : public QRadioPlayerControl
+class S60RadioTunerControl : public QRadioTunerControl
 {
     Q_OBJECT
 public:
-    S60RadioControl(QObject *parent = 0);
-    ~S60RadioControl();
+    S60RadioTunerControl(QObject *parent = 0);
+    ~S60RadioTunerControl();
 
-    QRadioPlayer::Band band() const;
-    void setBand(QRadioPlayer::Band b);
-    bool isSupportedBand(QRadioPlayer::Band b) const;
+    QRadioTuner::Band band() const;
+    void setBand(QRadioTuner::Band b);
+    bool isBandSupported(QRadioTuner::Band b) const;
 
     int frequency() const;
+    int frequencyStep(QRadioTuner::Band b) const;
+    QPair<int,int> frequencyRange(QRadioTuner::Band b) const;
     void setFrequency(int frequency);
 
     bool isStereo() const;
-    void setStereo(bool stereo);
+    QRadioTuner::StereoMode stereoMode() const;
+    void setStereoMode(QRadioTuner::StereoMode mode);
+
 
     int signalStrength() const;
 
@@ -72,12 +76,17 @@ public:
     void setMuted(bool muted);
 
     bool isSearching() const;
+    void searchForward();
+    void searchBackward();
     void cancelSearch();
 
     bool isValid() const;
 
-    void searchForward();
-    void searchBackward();
+    void start();
+    void stop();
+
+    QRadioTuner::Error error() const;
+    QString errorString() const;
 
 private slots:
     void search();
@@ -87,8 +96,8 @@ private:
     void setVol(int v);
     int  getVol();
 
-    bool muted;
-    bool stereo;
+    bool m_muted;
+    bool m_stereo;
     bool low;
     bool available;
     int  tuners;
@@ -98,7 +107,7 @@ private:
     bool scanning;
     bool forward;
     QTimer* timer;
-    QRadioPlayer::Band   currentBand;
+    QRadioTuner::Band   currentBand;
     qint64 freqMin;
     qint64 freqMax;
     qint64 currentFreq;

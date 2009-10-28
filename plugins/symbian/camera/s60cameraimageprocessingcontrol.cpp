@@ -82,7 +82,7 @@ void S60CameraImageProcessingControl::setManualWhiteBalance(int colorTemperature
     Q_UNUSED(colorTemperature)
 }
 
-void S60CameraImageProcessingControl::setContrast(qreal value) const
+void S60CameraImageProcessingControl::setContrast(qreal value)
 {
     Q_UNUSED(value);
 }

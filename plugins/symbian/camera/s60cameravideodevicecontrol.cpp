@@ -39,6 +39,9 @@
 #include <QtCore/qstring.h>
 #include <QtGui/qicon.h>
 
+const int defaultCameraDevice = 0;
+const int defaultCameraDeviceCount = 0;
+
 S60CameraVideoDeviceControl::S60CameraVideoDeviceControl(QObject *parent)
     :QVideoDeviceControl(parent)
 {
@@ -58,47 +61,55 @@ S60CameraVideoDeviceControl::~S60CameraVideoDeviceControl()
 
 int S60CameraVideoDeviceControl::deviceCount() const
 {
-	if (m_session) {
-		return m_session->deviceCount();
-	}
-	return KErrNone;
+    if (m_session) {
+        return m_session->deviceCount();
+    }
+    return defaultCameraDeviceCount;
 }
 
 QString S60CameraVideoDeviceControl::name(int index) const
 {
-	if (m_session) {
-		return m_session->name(index);
-	}
+    QString deviceName = QString();
+    if (m_session) {
+        deviceName = m_session->name(index);
+    }
+    return deviceName;
+
 }
 QString S60CameraVideoDeviceControl::description(int index) const
 {
-	if (m_session) {
-		return m_session->description(index);
-	}
+    QString deviceDesc = QString();
+    if (m_session) {
+        deviceDesc = m_session->description(index);
+    }
+    return deviceDesc;
 }
 QIcon S60CameraVideoDeviceControl::icon(int index) const
 {
-	if (m_session) {
-		return m_session->icon(index);
-	}
+    QIcon deviceIcon = QIcon();
+    if (m_session) {
+        deviceIcon =  m_session->icon(index);
+    }
+    return deviceIcon;
 }
 int S60CameraVideoDeviceControl::defaultDevice() const
 {
     if (m_session) {
-            return m_session->defaultDevice();
-        }
-	return KErrNone;
+        return m_session->defaultDevice();
+    }
+    return defaultCameraDevice;
 }
 int S60CameraVideoDeviceControl::selectedDevice() const
 {
     if (m_session) {
-            return m_session->selectedDevice();
-        }
+       return m_session->selectedDevice();
+    }
+    return defaultCameraDevice;
 }
-//public Q_SLOTS:
+
 void S60CameraVideoDeviceControl::setSelectedDevice(int index)
 {
     if (m_session) {
-            m_session->setSelectedDevice(index);
-        }
+        m_session->setSelectedDevice(index);
+    }
 }

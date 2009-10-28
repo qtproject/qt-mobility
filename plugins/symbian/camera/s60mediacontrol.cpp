@@ -73,6 +73,15 @@ qint64 S60MediaControl::duration() const
 {
     return m_session->position();
 }
+/*
+This method is called after encoder configuration is done.
+Encoder can load necessary resources at this point,
+to reduce delay before recording is started.
+*/
+void S60MediaControl::applySettings()
+{
+
+}
 
 void S60MediaControl::record()
 {

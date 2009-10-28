@@ -2,14 +2,14 @@ TEMPLATE = subdirs
 
 SUBDIRS = m3u
 
-win32:!wince* {
+win32:!wince*:!symbian {
 
     TMP_INCLUDE = $$quote($$(INCLUDE))
     TMP_SEARCHPATHS = $$split(TMP_INCLUDE, ";") $$QMAKE_INCDIR
     for(p, TMP_SEARCHPATHS): exists($${p}/wmp.h): SUBDIRS *= wmp
 }
 
-unix:!mac {
+unix:!mac:!symbian {
     TMP_GST_LIBS = \
         gstreamer-0.10 >= 0.10.19 \
         gstreamer-base-0.10 >= 0.10.19 \
@@ -31,5 +31,4 @@ symbian: {
     SUBDIRS -= phonon
     SUBDIRS -= audiocapture
     SUBDIRS += symbian
-    TARGET.EPOCALLOWDLLDATA = 1
 }

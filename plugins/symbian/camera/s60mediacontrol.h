@@ -59,6 +59,9 @@ public:
 
     qint64 duration() const;
 
+    void applySettings();
+
+
 public slots:
     void record();
     void pause();

@@ -32,21 +32,21 @@
 **
 ****************************************************************************/
 
-#ifndef S60RADIOSERVICE_H
-#define S60RADIOSERVICE_H
+#ifndef S60RADIOTUNERSERVICE_H
+#define S60RADIOTUNERSERVICE_H
 
 #include <QtCore/qobject.h>
 
 #include <multimedia/qmediaservice.h>
 
-class S60RadioControl;
+class S60RadioTunerControl;
 
-class S60RadioService : public QMediaService
+class S60RadioTunerService : public QMediaService
 {
     Q_OBJECT
 public:
-    S60RadioService(QObject *parent = 0);
-    ~S60RadioService();
+    S60RadioTunerService(QObject *parent = 0);
+    ~S60RadioTunerService();
 
     QMediaControl *control(const char* name) const;
 
@@ -62,7 +62,7 @@ public:
     bool setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
     QList<QString> supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
 private:
-    S60RadioControl *m_control;
+    S60RadioTunerControl *m_control;
 };
 
 #endif

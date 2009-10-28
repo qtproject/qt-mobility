@@ -15,8 +15,3 @@ INCLUDEPATH += . \
 HEADERS += qm3uhandler.h
 SOURCES += main.cpp \
            qm3uhandler.cpp
-
-symbian: {
-# EPOCALLOWDLLDATA have to set true because Qt macros has initialised global data
-TARGET.EPOCALLOWDLLDATA=1
-}

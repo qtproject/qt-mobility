@@ -32,19 +32,19 @@
 **
 ****************************************************************************/
 
-#include "s60radiocontrol.h"
-#include "s60radioservice.h"
+#include "s60radiotunercontrol.h"
+#include "s60radiotunerservice.h"
 
 #include <QtCore/qdebug.h>
 
-S60RadioControl::S60RadioControl(QObject *parent)
-    :QRadioPlayerControl(parent)
+S60RadioTunerControl::S60RadioTunerControl(QObject *parent)
+    :QRadioTunerControl(parent)
 {
     initRadio();
-    muted = false;
-    stereo = false;
+    m_muted = false;
+    m_stereo = false;
     sig = 0;
-    currentBand = QRadioPlayer::FM;
+    currentBand = QRadioTuner::FM;
     step = 100000;
     scanning = false;
     playTime.restart();
@@ -54,28 +54,28 @@ S60RadioControl::S60RadioControl(QObject *parent)
     timer->start();
 }
 
-S60RadioControl::~S60RadioControl()
+S60RadioTunerControl::~S60RadioTunerControl()
 {
     timer->stop();
 }
 
-QRadioPlayer::Band S60RadioControl::band() const
+QRadioTuner::Band S60RadioTunerControl::band() const
 {
     return currentBand;
 }
 
-bool S60RadioControl::isSupportedBand(QRadioPlayer::Band b) const
+bool S60RadioTunerControl::isBandSupported(QRadioTuner::Band b) const
 {
-    QRadioPlayer::Band bnd = (QRadioPlayer::Band)b;
+    QRadioTuner::Band bnd = (QRadioTuner::Band)b;
     switch(bnd) {
-        case QRadioPlayer::FM:
+        case QRadioTuner::FM:
             if(freqMin <= 87500000 && freqMax >= 108000000)
                 return true;
             break;
-        case QRadioPlayer::LW:
+        case QRadioTuner::LW:
             if(freqMin <= 148500 && freqMax >= 283500)
                 return true;
-        case QRadioPlayer::AM:
+        case QRadioTuner::AM:
             if(freqMin <= 520000 && freqMax >= 1610000)
                 return true;
         default:
@@ -86,97 +86,138 @@ bool S60RadioControl::isSupportedBand(QRadioPlayer::Band b) const
     return false;
 }
 
-void S60RadioControl::setBand(QRadioPlayer::Band b)
+void S60RadioTunerControl::setBand(QRadioTuner::Band b)
 {
-	//TODO COMMON CODE, NOT SYMBIAN SPESIFIC?
 
-    if(freqMin <= 87500000 && freqMax >= 108000000 && b == QRadioPlayer::FM) {
+    if(freqMin <= 87500000 && freqMax >= 108000000 && b == QRadioTuner::FM) {
         // FM 87.5 to 108.0 MHz, except Japan 76-90 MHz
-        currentBand =  (QRadioPlayer::Band)b;
+        currentBand =  (QRadioTuner::Band)b;
         step = 100000; // 100kHz steps
         emit bandChanged(currentBand);
 
-    } else if(freqMin <= 148500 && freqMax >= 283500 && b == QRadioPlayer::LW) {
+    } else if(freqMin <= 148500 && freqMax >= 283500 && b == QRadioTuner::LW) {
         // LW 148.5 to 283.5 kHz, 9kHz channel spacing (Europe, Africa, Asia)
-        currentBand =  (QRadioPlayer::Band)b;
+        currentBand =  (QRadioTuner::Band)b;
         step = 1000; // 1kHz steps
         emit bandChanged(currentBand);
 
-    } else if(freqMin <= 520000 && freqMax >= 1610000 && b == QRadioPlayer::AM) {
+    } else if(freqMin <= 520000 && freqMax >= 1610000 && b == QRadioTuner::AM) {
         // AM 520 to 1610 kHz, 9 or 10kHz channel spacing, extended 1610 to 1710 kHz
-        currentBand =  (QRadioPlayer::Band)b;
+        currentBand =  (QRadioTuner::Band)b;
         step = 1000; // 1kHz steps
         emit bandChanged(currentBand);
 
-    } else if(freqMin <= 1711000 && freqMax >= 30000000 && b == QRadioPlayer::SW) {
+    } else if(freqMin <= 1711000 && freqMax >= 30000000 && b == QRadioTuner::SW) {
         // SW 1.711 to 30.0 MHz, divided into 15 bands. 5kHz channel spacing
-        currentBand =  (QRadioPlayer::Band)b;
+        currentBand =  (QRadioTuner::Band)b;
         step = 500; // 500Hz steps
         emit bandChanged(currentBand);
     }
     playTime.restart();
 }
 
-int S60RadioControl::frequency() const
+int S60RadioTunerControl::frequency() const
 {
     return currentFreq;
 }
 
-void S60RadioControl::setFrequency(int frequency)
+void S60RadioTunerControl::setFrequency(int frequency)
 {
+    Q_UNUSED(frequency);
+}
+int S60RadioTunerControl::frequencyStep(QRadioTuner::Band b) const
+{
+    //FIXME These should be in api?
+    int step = 0;
+
+    if(b == QRadioTuner::FM)
+        step = 100000; // 100kHz steps
+    else if(b == QRadioTuner::LW)
+        step = 1000; // 1kHz steps
+    else if(b == QRadioTuner::AM)
+        step = 1000; // 1kHz steps
+    else if(b == QRadioTuner::SW)
+        step = 500; // 500Hz steps
+
+    return step;
 }
 
-bool S60RadioControl::isStereo() const
+QPair<int,int> S60RadioTunerControl::frequencyRange(QRadioTuner::Band b) const
 {
-    return stereo;
+    //FIXME These should be in api?
+    if(b == QRadioTuner::AM)
+        return qMakePair<int,int>(520000,1710000);
+    else if(b == QRadioTuner::FM)
+        return qMakePair<int,int>(87500000,108000000);
+    else if(b == QRadioTuner::SW)
+        return qMakePair<int,int>(1711111,30000000);
+    else if(b == QRadioTuner::LW)
+        return qMakePair<int,int>(148500,283500);
+
+    return qMakePair<int,int>(0,0);
 }
 
-void S60RadioControl::setStereo(bool stereo)
+bool S60RadioTunerControl::isStereo() const
 {
+    return m_stereo;
+}
+
+QRadioTuner::StereoMode S60RadioTunerControl::stereoMode() const
+{
+    return QRadioTuner::Auto;
+}
+
+void S60RadioTunerControl::setStereoMode(QRadioTuner::StereoMode mode)
+{
+    m_stereo = true;
+
+    if(mode == QRadioTuner::ForceMono)
+        m_stereo = false;
 
 }
 
-int S60RadioControl::signalStrength() const
-{
-	return 0;
-}
-
-qint64 S60RadioControl::duration() const
-{
-    return playTime.elapsed();
-}
-
-int S60RadioControl::volume() const
+int S60RadioTunerControl::signalStrength() const
 {
     return 0;
 }
 
-void S60RadioControl::setVolume(int volume)
+qint64 S60RadioTunerControl::duration() const
 {
+    return playTime.elapsed();
 }
 
-bool S60RadioControl::isMuted() const
+int S60RadioTunerControl::volume() const
 {
-    return muted;
+    return 0;
 }
 
-void S60RadioControl::setMuted(bool muted)
+void S60RadioTunerControl::setVolume(int volume)
 {
-
+    Q_UNUSED(volume);
 }
 
-bool S60RadioControl::isSearching() const
+bool S60RadioTunerControl::isMuted() const
+{
+    return m_muted;
+}
+
+void S60RadioTunerControl::setMuted(bool muted)
+{
+    m_muted = muted;
+}
+
+bool S60RadioTunerControl::isSearching() const
 {
     //TODO
     return false;
 }
 
-void S60RadioControl::cancelSearch()
+void S60RadioTunerControl::cancelSearch()
 {
     //TODO
 }
 
-void S60RadioControl::searchForward()
+void S60RadioTunerControl::searchForward()
 {
     // Scan up
     if(scanning) {
@@ -187,7 +228,7 @@ void S60RadioControl::searchForward()
     forward  = true;
 }
 
-void S60RadioControl::searchBackward()
+void S60RadioTunerControl::searchBackward()
 {
     // Scan down
     if(scanning) {
@@ -199,14 +240,13 @@ void S60RadioControl::searchBackward()
     timer->start();
 }
 
-void S60RadioControl::search()
+void S60RadioTunerControl::search()
 {
     int signal = signalStrength();
     if(sig != signal) {
         sig = signal;
         emit signalStrengthChanged(sig);
     }
-    emit durationChanged(playTime.elapsed());
 
     if(!scanning) return;
 
@@ -216,25 +256,43 @@ void S60RadioControl::search()
         setFrequency(currentFreq-step);
     }
     emit signalStrengthChanged(signalStrength());
+
 }
 
-bool S60RadioControl::isValid() const
+bool S60RadioTunerControl::isValid() const
 {
     return available;
 }
 
-bool S60RadioControl::initRadio()
+bool S60RadioTunerControl::initRadio()
 {
     return true;
 }
 
-void S60RadioControl::setVol(int v)
+void S60RadioTunerControl::setVol(int v)
 {
+    Q_UNUSED(v);
 }
 
-int S60RadioControl::getVol()
+int S60RadioTunerControl::getVol()
 {
-
     return 0;
 }
+void S60RadioTunerControl::start()
+{
 
+}
+
+void S60RadioTunerControl::stop()
+{
+
+}
+
+QRadioTuner::Error S60RadioTunerControl::error() const
+{
+    return QRadioTuner::NoError;
+}
+QString S60RadioTunerControl::errorString() const
+{
+    return QString();
+}

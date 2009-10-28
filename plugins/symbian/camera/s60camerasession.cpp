@@ -361,12 +361,12 @@ void S60CameraSession::MceoCameraReady()
 {
     emit stateChanged(QCamera::ActiveState);
     if (m_cameraEngine) {
-		TSize size (m_windowSize.width(), m_windowSize.height());
-		iError = KErrNone; 
-		TRAP(iError, m_cameraEngine->StartViewFinderL(size));
-		if (iError) {
-			// TODO add error emitting to cameracontrol
-		}
+        TSize size (m_windowSize.width(), m_windowSize.height());
+        iError = KErrNone;
+        TRAP(iError, m_cameraEngine->StartViewFinderL(size));
+        if (iError) {
+                // TODO add error emitting to cameracontrol
+        }
     }
 }
 

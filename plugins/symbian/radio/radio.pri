@@ -1,10 +1,10 @@
 INCLUDEPATH += $$PWD
 
 HEADERS += \
-    $$PWD/s60radiocontrol.h \
-    $$PWD/s60radioservice.h
+    $$PWD/s60radiotunercontrol.h \
+    $$PWD/s60radiotunerservice.h
 
 SOURCES += \
-    $$PWD/s60radiocontrol.cpp \
-    $$PWD/s60radioservice.cpp
+    $$PWD/s60radiotunercontrol.cpp \
+    $$PWD/s60radiotunerservice.cpp
 

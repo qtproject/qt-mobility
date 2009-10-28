@@ -37,60 +37,60 @@
 #include <QtGui/qwidget.h>
 #include <QtCore/qfile.h>
 
-#include "s60radioservice.h"
-#include "s60radiocontrol.h"
+#include "s60radiotunerservice.h"
+#include "s60radiotunercontrol.h"
 
-S60RadioService::S60RadioService(QObject *parent)
+S60RadioTunerService::S60RadioTunerService(QObject *parent)
     : QMediaService(parent)
 {
-    m_control = new S60RadioControl(this);
+    m_control = new S60RadioTunerControl(this);
 }
 
-S60RadioService::~S60RadioService()
+S60RadioTunerService::~S60RadioTunerService()
 {
 }
 
-QMediaControl *S60RadioService::control(const char* name) const
+QMediaControl *S60RadioTunerService::control(const char* name) const
 {
     Q_UNUSED(name)
 
     return m_control;
 }
 
-bool S60RadioService::isEndpointSupported(QMediaService::MediaEndpoint endpointType)
+bool S60RadioTunerService::isEndpointSupported(QMediaService::MediaEndpoint endpointType)
 {
     return false;
 }
 
-void S60RadioService::setInputStream(QIODevice* stream)
+void S60RadioTunerService::setInputStream(QIODevice* stream)
 {
 }
 
-QIODevice* S60RadioService::inputStream() const
-{
-    return 0;
-}
-
-void S60RadioService::setOutputStream(QIODevice* stream)
-{
-}
-
-QIODevice* S60RadioService::outputStream() const
+QIODevice* S60RadioTunerService::inputStream() const
 {
     return 0;
 }
 
-QString S60RadioService::activeEndpoint(QMediaService::MediaEndpoint endpointType)
+void S60RadioTunerService::setOutputStream(QIODevice* stream)
+{
+}
+
+QIODevice* S60RadioTunerService::outputStream() const
+{
+    return 0;
+}
+
+QString S60RadioTunerService::activeEndpoint(QMediaService::MediaEndpoint endpointType)
 {
     return QByteArray();
 }
 
-bool S60RadioService::setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint)
+bool S60RadioTunerService::setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint)
 {
     return true;
 }
 
-QList<QString> S60RadioService::supportedEndpoints(QMediaService::MediaEndpoint endpointType) const
+QList<QString> S60RadioTunerService::supportedEndpoints(QMediaService::MediaEndpoint endpointType) const
 {
     QList<QString> list;
     //TODO
