@@ -257,7 +257,6 @@ QVideoSurfaceGLPainter::QVideoSurfaceGLPainter(QGLContext *context)
     , m_textureCount(0)
     , m_yuv(false)
 {
-    m_context->makeCurrent();
     glActiveTexture = (_glActiveTexture)m_context->getProcAddress(QLatin1String("glActiveTexture"));
 }
 
@@ -322,8 +321,6 @@ QAbstractVideoSurface::Error QVideoSurfaceGLPainter::setCurrentFrame(const QVide
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         }
         m_frame.unmap();
-
-        m_context->doneCurrent();
     } else {
         return QAbstractVideoSurface::ResourceError;
     }
@@ -546,8 +543,6 @@ QVideoSurfaceArbFpPainter::QVideoSurfaceArbFpPainter(QGLContext *context)
     glProgramLocalParameter4fARB = (_glProgramLocalParameter4fARB) m_context->getProcAddress(
                 QLatin1String("glProgramLocalParameter4fARB"));
 
-    m_context->doneCurrent();
-
     m_imagePixelFormats
             << QVideoFrame::Format_RGB32
             << QVideoFrame::Format_ARGB32
@@ -650,7 +645,6 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::start(const QVideoSurfac
             }
         }
     }
-    m_context->doneCurrent();
 
     return error;
 }
@@ -666,8 +660,6 @@ void QVideoSurfaceArbFpPainter::stop()
     m_textureCount = 0;
     m_programId = 0;
     m_handleType = QAbstractVideoBuffer::NoHandle;
-
-    m_context->doneCurrent();
 }
 
 QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::paint(
@@ -821,8 +813,6 @@ QVideoSurfaceGlslPainter::QVideoSurfaceGlslPainter(QGLContext *context)
     : QVideoSurfaceGLPainter(context)
     , m_program(context)
 {
-    m_context->doneCurrent();
-
     m_imagePixelFormats
             << QVideoFrame::Format_RGB32
             << QVideoFrame::Format_ARGB32
@@ -900,7 +890,6 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::start(const QVideoSurface
         if (m_handleType == QAbstractVideoBuffer::NoHandle)
             glGenTextures(m_textureCount, m_textureIds);
     }
-    m_context->doneCurrent();
 
     return error;
 }
@@ -915,8 +904,6 @@ void QVideoSurfaceGlslPainter::stop()
 
     m_textureCount = 0;
     m_handleType = QAbstractVideoBuffer::NoHandle;
-
-    m_context->doneCurrent();
 }
 
 QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
@@ -1258,10 +1245,7 @@ void QPainterVideoSurface::setGLContext(QGLContext *context)
         if (QGLShaderProgram::hasShaderPrograms(m_glContext)
                 && extensions.contains("ARB_shader_objects"))
             m_shaderTypes |= GlslShader;
-
-        m_glContext->doneCurrent();
     }
-
 
     ShaderType type = (m_shaderType & m_shaderTypes)
             ? m_shaderType
@@ -1343,11 +1327,13 @@ void QPainterVideoSurface::createPainter()
 #ifndef QT_OPENGL_ES
     case FragmentProgramShader:
         Q_ASSERT(m_glContext);
+        m_glContext->makeCurrent();
         m_painter = new QVideoSurfaceArbFpPainter(m_glContext);
         break;
 #endif
     case GlslShader:
         Q_ASSERT(m_glContext);
+        m_glContext->makeCurrent();
         m_painter = new QVideoSurfaceGlslPainter(m_glContext);
         break;
     default:

@@ -52,6 +52,9 @@ class tst_QPainterVideoSurface : public QObject
 {
     Q_OBJECT
 private slots:
+    void cleanup() {}
+    void cleanupTestCase() {}
+
     void colors();
 
     void supportedFormat_data();
@@ -823,10 +826,6 @@ void tst_QPainterVideoSurface::shaderPresent()
     if (surface.shaderType() != shaderType)
         QSKIP("Shader type couldn't be set", SkipSingle);
 
-    widget.makeCurrent();
-    QGLFramebufferObject image(320, 240);
-    widget.doneCurrent();
-
     QSignalSpy frameSpy(&surface, SIGNAL(frameChanged()));
 
     const QList<QVideoFrame::PixelFormat> pixelFormats = surface.supportedPixelFormats();
@@ -847,12 +846,9 @@ void tst_QPainterVideoSurface::shaderPresent()
     QCOMPARE(surface.isReady(), false);
     QCOMPARE(frameSpy.count(), 1);
 
-
     {
-        widget.makeCurrent();
-        QPainter painter(&image);
+        QPainter painter(&widget);
         surface.paint(&painter, QRect(0, 0, 320, 240));
-        widget.doneCurrent();
     }
 
     QCOMPARE(surface.isStarted(), true);
@@ -884,10 +880,8 @@ void tst_QPainterVideoSurface::shaderPresent()
     QCOMPARE(frameSpy.count(), 3);
 
     {
-        widget.makeCurrent();
-        QPainter painter(&image);
+        QPainter painter(&widget);
         surface.paint(&painter, QRect(0, 0, 320, 240));
-        widget.doneCurrent();
     }
 
     QCOMPARE(surface.isStarted(), true);
