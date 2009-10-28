@@ -58,6 +58,8 @@ public:
     static int countLeadingWhiteSpaces(const QByteArray& text, int pos=0);
     static bool quotedPrintableEncode(QByteArray& text);
     static void decodeQuotedPrintable(QByteArray& text);
+    static bool backSlashEscape(QByteArray& text);
+    static void removeBackSlashEscaping(QByteArray& text);
     static int findHardLineBreakInQuotedPrintable(const QByteArray& encoded);
     static QPair<QStringList,QString> extractPropertyGroupsAndName(
         const QByteArray& property);
