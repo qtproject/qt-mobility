@@ -214,19 +214,38 @@ void tst_QGraphicsVideoItem::nullService()
 
     QtTestVideoObject object(service);
 
-    QGraphicsVideoItem item(&object);
+    QGraphicsVideoItem *item = new QGraphicsVideoItem(&object);
 
-    QVERIFY(item.boundingRect().isEmpty());
+    QVERIFY(item->boundingRect().isEmpty());
 
+    item->hide();
+    item->show();
+
+    QGraphicsScene graphicsScene;
+    graphicsScene.addItem(item);
+    QGraphicsView graphicsView(&graphicsScene);
+    graphicsView.show();
+
+    QTestEventLoop::instance().enterLoop(1);
 }
 
 void tst_QGraphicsVideoItem::nullOutputControl()
 {
     QtTestVideoObject object(new QtTestVideoService(0, 0));
 
-    QGraphicsVideoItem item(&object);
+    QGraphicsVideoItem *item = new QGraphicsVideoItem(&object);
 
-    QVERIFY(item.boundingRect().isEmpty());
+    QVERIFY(item->boundingRect().isEmpty());
+
+    item->hide();
+    item->show();
+
+    QGraphicsScene graphicsScene;
+    graphicsScene.addItem(item);
+    QGraphicsView graphicsView(&graphicsScene);
+    graphicsView.show();
+
+    QTestEventLoop::instance().enterLoop(1);
 }
 
 void tst_QGraphicsVideoItem::noOutputs()
@@ -234,9 +253,21 @@ void tst_QGraphicsVideoItem::noOutputs()
     QtTestRendererControl *control = 0;
     QtTestVideoObject object(control);
 
-    QGraphicsVideoItem item(&object);
+    QGraphicsVideoItem *item = new QGraphicsVideoItem(&object);
 
-    QVERIFY(item.boundingRect().isEmpty());
+    QVERIFY(item->boundingRect().isEmpty());
+
+    item->hide();
+    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+    item->show();
+    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+
+    QGraphicsScene graphicsScene;
+    graphicsScene.addItem(item);
+    QGraphicsView graphicsView(&graphicsScene);
+    graphicsView.show();
+
+    QTestEventLoop::instance().enterLoop(1);
 }
 
 void tst_QGraphicsVideoItem::serviceDestroyed()

@@ -60,7 +60,7 @@ AudioRecorder::AudioRecorder()
     capture = new QMediaRecorder(audiosource);
 
     // set a default file
-    capture->setSink(QUrl("test.raw"));
+    capture->setOutputLocation(QUrl("test.raw"));
 
     QWidget *window = new QWidget;
     QGridLayout* layout = new QGridLayout;
@@ -206,5 +206,5 @@ void AudioRecorder::selectOutputFile()
         fileNames = dialog.selectedFiles();
 
     if(fileNames.size() > 0)
-        capture->setSink(QUrl(fileNames.first()));
+        capture->setOutputLocation(QUrl(fileNames.first()));
 }

@@ -571,113 +571,114 @@ void tst_QPainterVideoSurface::shaderSupportedFormat_data()
     QTest::addColumn<bool>("supportedPixelFormat");
     QTest::addColumn<bool>("supportedFormat");
 
-    QList<QPainterVideoSurface::ShaderType> types;
+    QList<QPair<QPainterVideoSurface::ShaderType, QByteArray> > types;
 #ifndef QT_OPENGL_ES
-    types << QPainterVideoSurface::FragmentProgramShader;
+    types << qMakePair(QPainterVideoSurface::FragmentProgramShader, QByteArray("ARBfp: "));
 #endif
-    types << QPainterVideoSurface::GlslShader;
+    types << qMakePair(QPainterVideoSurface::GlslShader, QByteArray("GLSL"));
 
-    foreach (QPainterVideoSurface::ShaderType type, types) {
-        QTest::newRow("rgb32 640x480")
-                << type
+    QPair<QPainterVideoSurface::ShaderType, QByteArray> type;
+    foreach (type, types) {
+        QTest::newRow((type.second + "rgb32 640x480").constData())
+                << type.first
                 << QAbstractVideoBuffer::NoHandle
                 << QVideoFrame::Format_RGB32
                 << QSize(640, 480)
                 << true
                 << true;
-        QTest::newRow("rgb32 -640x480")
-                << type
+        QTest::newRow((type.second + "rgb32 -640x480").constData())
+                << type.first
                 << QAbstractVideoBuffer::NoHandle
                 << QVideoFrame::Format_RGB32
                 << QSize(-640, 480)
                 << true
                 << false;
-        QTest::newRow("rgb565 0x0")
-                << type
+        QTest::newRow((type.second + "rgb565 0x0").constData())
+                << type.first
                 << QAbstractVideoBuffer::NoHandle
                 << QVideoFrame::Format_RGB565
                 << QSize(0, 0)
                 << true
                 << false;
-        QTest::newRow("rgb24 1024x768")
-                << type
+        QTest::newRow((type.second + "rgb24 1024x768").constData())
+                << type.first
                 << QAbstractVideoBuffer::NoHandle
                 << QVideoFrame::Format_RGB24
                 << QSize(1024, 768)
                 << false
                 << false;
-        QTest::newRow("rgb24 -1024x-768")
-                << type
+        QTest::newRow((type.second + "rgb24 -1024x-768").constData())
+                << type.first
                 << QAbstractVideoBuffer::NoHandle
                 << QVideoFrame::Format_RGB24
                 << QSize(-1024, -768)
                 << false
                 << false;
-        QTest::newRow("YUV420P 640x480")
-                << type
+        QTest::newRow((type.second + "YUV420P 640x480").constData())
+                << type.first
                 << QAbstractVideoBuffer::NoHandle
                 << QVideoFrame::Format_YUV420P
                 << QSize(640, 480)
                 << true
                 << true;
-        QTest::newRow("YUV420P 640x-480")
-                << type
+        QTest::newRow((type.second + "YUV420P 640x-480").constData())
+                << type.first
                 << QAbstractVideoBuffer::NoHandle
                 << QVideoFrame::Format_YUV420P
                 << QSize(640, -480)
                 << true
                 << false;
-        QTest::newRow("Y8 640x480")
-                << type
+        QTest::newRow((type.second + "Y8 640x480").constData())
+                << type.first
                 << QAbstractVideoBuffer::NoHandle
                 << QVideoFrame::Format_Y8
                 << QSize(640, 480)
                 << false
                 << false;
-        QTest::newRow("Texture: rgb32 640x480")
-                << type
+        QTest::newRow((type.second + "Texture: rgb32 640x480").constData())
+                << type.first
                 << QAbstractVideoBuffer::GLTextureHandle
                 << QVideoFrame::Format_RGB32
                 << QSize(640, 480)
                 << true
                 << true;
-        QTest::newRow("Texture: rgb32 -640x480")
-                << type
+        QTest::newRow((type.second + "Texture: rgb32 -640x480").constData())
+                << type.first
                 << QAbstractVideoBuffer::GLTextureHandle
                 << QVideoFrame::Format_RGB32
                 << QSize(-640, 480)
                 << true
                 << false;
-        QTest::newRow("Texture: rgb565 0x0")
-                << type
+        QTest::newRow((type.second + "Texture: rgb565 0x0").constData())
+                << type.first
                 << QAbstractVideoBuffer::GLTextureHandle
                 << QVideoFrame::Format_RGB565
                 << QSize(0, 0)
                 << true
                 << false;
-        QTest::newRow("Texture: rgb24 1024x768")
-                << type
+        QTest::newRow((type.second + "Texture: rgb24 1024x768").constData())
+                << type.first
                 << QAbstractVideoBuffer::GLTextureHandle
                 << QVideoFrame::Format_RGB24
                 << QSize(1024, 768)
                 << false
                 << false;
-        QTest::newRow("Texture: rgb24 -1024x-768")
-                << type
+        QTest::newRow((type.second + "Texture: rgb24 -1024x-768").constData())
+                << type.first
                 << QAbstractVideoBuffer::GLTextureHandle
                 << QVideoFrame::Format_RGB24
                 << QSize(-1024, -768)
                 << false
                 << false;
-        QTest::newRow("Texture: YUV420P 640x480")
-                << type
+        QTest::newRow((type.second + "Texture: YUV420P 640x480").constData())
+                << type.first
                 << QAbstractVideoBuffer::GLTextureHandle
                 << QVideoFrame::Format_YUV420P
                 << QSize(640, 480)
                 << false
                 << false;
-        QTest::newRow("Texture: YUV420P 640x-480")
-                << type
+        QTest::newRow((type.second + "Texture: YUV420P 640x-480").constData())
+                << type.first
                 << QAbstractVideoBuffer::GLTextureHandle
                 << QVideoFrame::Format_YUV420P
                 << QSize(640, -480)
@@ -733,15 +734,16 @@ void tst_QPainterVideoSurface::shaderPresent_data()
     QTest::addColumn<int>("bytesB");
     QTest::addColumn<int>("bytesPerLineB");
 
-    QList<QPainterVideoSurface::ShaderType> types;
+    QList<QPair<QPainterVideoSurface::ShaderType, QByteArray> > types;
 #ifndef QT_OPENGL_ES
-    types << QPainterVideoSurface::FragmentProgramShader;
+    types << qMakePair(QPainterVideoSurface::FragmentProgramShader, QByteArray("ARBfp: "));
 #endif
-    types << QPainterVideoSurface::GlslShader;
+    types << qMakePair(QPainterVideoSurface::GlslShader, QByteArray("GLSL: "));
 
-    foreach (QPainterVideoSurface::ShaderType type, types) {
-        QTest::newRow("rgb32 -> argb32")
-                << type
+    QPair<QPainterVideoSurface::ShaderType, QByteArray> type;
+    foreach (type, types) {
+        QTest::newRow((type.second + "rgb32 -> argb32").constData())
+                << type.first
                 << QVideoFrame::Format_RGB32
                 << QSize(2, 2)
                 << static_cast<const uchar *>(rgb32ImageData)
@@ -753,8 +755,8 @@ void tst_QPainterVideoSurface::shaderPresent_data()
                 << int(sizeof(argb32ImageData))
                 << 8;
 
-        QTest::newRow("rgb32 -> rgb565")
-                << type
+        QTest::newRow((type.second + "rgb32 -> rgb565").constData())
+                << type.first
                 << QVideoFrame::Format_RGB32
                 << QSize(2, 2)
                 << static_cast<const uchar *>(rgb32ImageData)
@@ -766,8 +768,8 @@ void tst_QPainterVideoSurface::shaderPresent_data()
                 << int(sizeof(rgb565ImageData))
                 << 4;
 
-        QTest::newRow("rgb32 -> yuv420p")
-                << type
+        QTest::newRow((type.second + "rgb32 -> yuv420p").constData())
+                << type.first
                 << QVideoFrame::Format_RGB32
                 << QSize(2, 2)
                 << static_cast<const uchar *>(rgb32ImageData)
@@ -779,8 +781,8 @@ void tst_QPainterVideoSurface::shaderPresent_data()
                 << int(sizeof(yuvPlanarImageData))
                 << 8;
 
-        QTest::newRow("yv12 -> rgb32")
-                << type
+        QTest::newRow((type.second + "yv12 -> rgb32").constData())
+                << type.first
                 << QVideoFrame::Format_YV12
                 << QSize(8, 8)
                 << static_cast<const uchar *>(yuvPlanarImageData)

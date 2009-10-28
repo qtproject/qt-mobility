@@ -173,12 +173,12 @@ QString AudioCaptureSession::audioCodec() const
     return m_format.codec();
 }
 
-QUrl AudioCaptureSession::sink() const
+QUrl AudioCaptureSession::outputLocation() const
 {
     return m_sink;
 }
 
-bool AudioCaptureSession::setSink(const QUrl& sink)
+bool AudioCaptureSession::setOutputLocation(const QUrl& sink)
 {
     m_sink = sink;
     if(sink.toLocalFile().length() > 0)

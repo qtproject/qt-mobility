@@ -56,8 +56,8 @@ public:
     AudioMediaRecorderControl(QObject *parent = 0);
     ~AudioMediaRecorderControl();
 
-    QUrl sink() const;
-    bool setSink(const QUrl &sink);
+    QUrl outputLocation() const;
+    bool setOutputLocation(const QUrl &sink);
 
     QMediaRecorder::State state() const;
 

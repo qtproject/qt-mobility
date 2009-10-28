@@ -71,8 +71,8 @@ public:
     bool setAudioCodec(const QString &codecName);
     QString audioCodec() const;
 
-    QUrl sink() const;
-    bool setSink(const QUrl& sink);
+    QUrl outputLocation() const;
+    bool setOutputLocation(const QUrl& sink);
     qint64 position() const;
     int state() const;
     void record();

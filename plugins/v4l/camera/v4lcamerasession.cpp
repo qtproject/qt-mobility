@@ -370,14 +370,14 @@ QList<QSize> V4LCameraSession::supportedResolutions()
     return list;
 }
 
-bool V4LCameraSession::setSink(const QUrl &sink)
+bool V4LCameraSession::setOutputLocation(const QUrl &sink)
 {
     m_sink = sink;
 
     return true;
 }
 
-QUrl V4LCameraSession::sink() const
+QUrl V4LCameraSession::outputLocation() const
 {
     return m_sink;
 }

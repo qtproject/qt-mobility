@@ -411,14 +411,14 @@ QList<QSize> DSCameraSession::supportedResolutions(QVideoFrame::PixelFormat form
     return resolutions.value(format);
 }
 
-bool DSCameraSession::setSink(const QUrl &sink)
+bool DSCameraSession::setOutputLocation(const QUrl &sink)
 {
     m_sink = sink;
 
     return true;
 }
 
-QUrl DSCameraSession::sink() const
+QUrl DSCameraSession::outputLocation() const
 {
     return m_sink;
 }
