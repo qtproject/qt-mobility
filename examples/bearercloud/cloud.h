@@ -50,6 +50,7 @@ class QGraphicsSvgItem;
 class Cloud : public QObject, public QGraphicsItem
 {
     Q_OBJECT
+    Q_INTERFACES(QGraphicsItem)
 
 public:
     Cloud(const QNetworkConfiguration &config, QGraphicsItem *parent = 0);
