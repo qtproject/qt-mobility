@@ -8,10 +8,6 @@ SUBDIRS = qgeocoordinate \
           qlocationutils \
           qnmeapositioninfosource 
 
-symbian {          
-    SUBDIRS += qgeopositioninfosource_s60 
-}
-
 wince* {
     SUBDIRS += qgeoinfosources_wince
 }
