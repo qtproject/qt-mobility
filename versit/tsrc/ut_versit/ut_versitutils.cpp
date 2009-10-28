@@ -104,7 +104,11 @@ void UT_VersitUtils::testParamName()
 
     // Both name and value, no spaces after the name
     param = "TYPE=WORK";
-    QCOMPARE(QString::fromAscii("TYPE"), VersitUtils::paramName(param));    
+    QCOMPARE(QString::fromAscii("TYPE"), VersitUtils::paramName(param));
+
+    // Value contains escaped characters
+    param = "X-A\\;B\\,C\\:D=VALUE";
+    QCOMPARE(QString::fromAscii("X-A;B,C:D"), VersitUtils::paramName(param));
 }
 
 void UT_VersitUtils::testParamValue()
@@ -131,6 +135,10 @@ void UT_VersitUtils::testParamValue()
     // Both name and value, no spaces before the value
     param = "ENCODING=QUOTED-PRINTABLE";
     QCOMPARE(QString::fromAscii("QUOTED-PRINTABLE"), VersitUtils::paramValue(param));
+
+    // Value contains escaped characters
+    param = "X-PARAM=1\\;2\\,3\\:4";
+    QCOMPARE(QString::fromAscii("1;2,3:4"), VersitUtils::paramValue(param));
 }
 
 void UT_VersitUtils::testAddParam()
@@ -595,7 +603,7 @@ void UT_VersitUtils::testExtractPropertyParams()
     params = VersitUtils::extractPropertyParams(property);
     QCOMPARE(1, params.count());
     QCOMPARE(1, params.values(QString::fromAscii("TYPE")).count());
-    QCOMPARE(QString::fromAscii("para\\;meter"), params.values(QString::fromAscii("TYPE"))[0]);
+    QCOMPARE(QString::fromAscii("para;meter"), params.values(QString::fromAscii("TYPE"))[0]);
     
     // Two parameters of the same type
     property = "TEL;HOME;VOICE:123";

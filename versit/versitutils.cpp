@@ -340,8 +340,11 @@ QString VersitUtils::paramName(const QByteArray& parameter)
      if (parameter.trimmed().length() == 0)
          return QString();
      int equalsIndex = parameter.indexOf('=');
-     if (equalsIndex > 0)
-         return QString::fromAscii(parameter.left(equalsIndex).trimmed());
+     if (equalsIndex > 0) {
+         QByteArray name = parameter.left(equalsIndex).trimmed();
+         removeBackSlashEscaping(name);
+         return QString::fromAscii(name);
+     }
      return QString::fromAscii("TYPE");
 }
 
@@ -350,18 +353,19 @@ QString VersitUtils::paramName(const QByteArray& parameter)
  */
 QString VersitUtils::paramValue(const QByteArray& parameter)
 {
-    QString value(QString::fromAscii(parameter));
+    QByteArray value(parameter);
     int equalsIndex = parameter.indexOf('=');
     if (equalsIndex > 0) {
         if (equalsIndex == parameter.length()-1) {
-            value = QString();
+            value = QByteArray();
         }
         else {
             int valueLength = parameter.length() - (equalsIndex + 1);
-            value = QString::fromAscii(parameter.right(valueLength).trimmed());
+            value = parameter.right(valueLength).trimmed();
         }    
     }
-    return value;
+    removeBackSlashEscaping(value);
+    return QString::fromAscii(value);
 }
 
 /*!
