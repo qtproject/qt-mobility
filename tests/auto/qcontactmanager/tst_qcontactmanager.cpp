@@ -2340,12 +2340,15 @@ void tst_QContactManager::relationships()
     customRelationshipOne.setSecond(dest2Uri);
     QVERIFY(cm->saveRelationship(&customRelationshipOne));
 
+    // attempt to save the relationship again.  XXX TODO: what should the result be?  currently succeeds (overwrites)
+    int relationshipCount = cm->relationships().count();
+    QVERIFY(cm->saveRelationship(&customRelationshipOne));    // succeeds, but just overwrites
+    QCOMPARE(relationshipCount, cm->relationships().count()); // shouldn't change; save should have overwritten.
+
     // removing the source contact should result in removal of the relationship.
     QCOMPARE(cm->relationships().size(), (totalRelationships + 1));
     QVERIFY(cm->removeContact(source.id().localId()));
     QCOMPARE(cm->relationships().size(), totalRelationships); // the relationship should have been removed.
-
-    // TODO: negative tests (ie, circular relationships, duplicates, etc.. should result in error)
 
     // now ensure that qcontact relationship caching works as required - perhaps this should be in tst_QContact?
     source.setId(QContactId());         // reset id so we can resave
@@ -2544,6 +2547,12 @@ void tst_QContactManager::relationships()
     maliciousRel.setSecond(dest2.id());       // a valid destination contact
     maliciousRel.setRelationshipType(availableRelationshipTypes.at(0));
     QVERIFY(!cm->saveRelationship(&maliciousRel));
+
+    // remove the nonexistent relationship
+    relationshipCount = cm->relationships().count();
+    QVERIFY(!cm->removeRelationship(maliciousRel));         // does not exist; fail remove.
+    QVERIFY(cm->error() == QContactManager::DoesNotExistError);
+    QCOMPARE(cm->relationships().count(), relationshipCount); // should be unchanged.
 
     // now clean up and remove our dests.
     QVERIFY(cm->removeContact(source.localId()));
