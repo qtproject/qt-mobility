@@ -317,7 +317,7 @@ QCoreWlanEngine *QCoreWlanEngine::instance()
 QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QString &interfaceName)
 {
     QList<QNetworkConfigurationPrivate *> foundConfigs;
-#if defined(MAC_SDK_10_6)
+//#if defined(MAC_SDK_10_6)
     NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
 
     CWInterface *currentInterface = [CWInterface interfaceWithName:qstringToNSString(interfaceName)];
@@ -337,12 +337,9 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
             cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
             cpPriv->serviceInterface = QNetworkInterface::interfaceFromName(nsstringToQString([[CWInterface interface]  name]));
 
-            QNetworkConfiguration::StateFlags state = QNetworkConfiguration::Undefined;
-
             CWWirelessProfile *networkProfile = apNetwork.wirelessProfile;
             CW8021XProfile *userNetworkProfile = networkProfile.user8021XProfile;
             if(!userNetworkProfile) {
-                state |= QNetworkConfiguration::Defined;
             } else {
                 qWarning() <<"Has profile!" ;
             }
@@ -356,8 +353,11 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
                 if(isKnownSsid(cpPriv->serviceInterface.name(), networkSsid)) {
                     cpPriv->state =  QNetworkConfiguration::Discovered;
                 } else {
-                    cpPriv->state =  QNetworkConfiguration::Undefined;
+                    cpPriv->state =  QNetworkConfiguration::Defined;
                 }
+            }
+            if(!cpPriv->state) {
+                cpPriv->state = QNetworkConfiguration::Undefined;
             }
             if([[apNetwork securityMode ] intValue]== kCWSecurityModeOpen)
                 cpPriv->purpose = QNetworkConfiguration::Public;
@@ -370,7 +370,7 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
                 <<nsstringToQString([err domain]);
     }
     [autoreleasepool release];
-#endif
+//#endif
     return foundConfigs;
 }
 
