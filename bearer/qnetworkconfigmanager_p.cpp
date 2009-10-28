@@ -51,7 +51,7 @@
 #if defined(BACKEND_NM)
 #include "qnmwifiengine_unix_p.h"
 #endif
-#ifdef Q_OS_DARWIN
+#ifdef Q_OS_DARWIN1
 #include "qcorewlanengine_mac_p.h"
 #endif
 
@@ -228,7 +228,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
         updateState = NotUpdating;
         onlineConfigurations = 0;
 
-#if defined (Q_OS_DARWIN)
+#if defined (Q_OS_DARWIN1)
         coreWifi = QCoreWlanEngine::instance();
         if (coreWifi) {
             connect(coreWifi, SIGNAL(configurationsChanged()),
@@ -273,7 +273,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 
     QNetworkSessionEngine *engine = qobject_cast<QNetworkSessionEngine *>(sender());
     if (updateState & Updating && engine) {
-#if defined (Q_OS_DARWIN)
+#if defined (Q_OS_DARWIN1)
         if (engine == coreWifi)
             updateState &= ~CoreWifiUpdating;
 #else
@@ -299,7 +299,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
     }
     QList<QNetworkSessionEngine *> engines;
     if (firstUpdate) {
-#if defined (Q_OS_DARWIN)
+#if defined (Q_OS_DARWIN1)
         if (coreWifi)
             engines << coreWifi;
 #else
@@ -408,7 +408,7 @@ QNetworkConfiguration QNetworkConfigurationManagerPrivate::defaultConfiguration(
 void QNetworkConfigurationManagerPrivate::performAsyncConfigurationUpdate()
 {
     updateState = Updating;
-#if defined (Q_OS_DARWIN)
+#if defined (Q_OS_DARWIN1)
     if (coreWifi) {
         updateState |= CoreWifiUpdating;
         coreWifi->requestUpdate();
