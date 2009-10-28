@@ -46,7 +46,10 @@
 #include "qtmessaging.h"
 #include "../support/support.h"
 
-#if defined(Q_OS_SYMBIAN)
+#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) && defined(_WIN32_WCE))
+# if defined(TESTDATA_DIR)
+#  undef TESTDATA_DIR
+# endif
 # define TESTDATA_DIR "."
 #endif
 
@@ -64,15 +67,15 @@ const QByteArray alternateCharset("UTF-16");
 template<typename T1, typename T2>
 void approximateCompare(const T1 &actual, const T2 &expected, const T2 &variance, int line)
 {
-    if (!((expected - variance) < actual) ||
-        !(actual < (expected + variance))) {
+    if (!((expected - variance) <= actual) ||
+        !(actual <= (expected + variance))) {
         qWarning() << "at line:" << line;
         qWarning() << "\tactual:" << actual;
         qWarning() << "\texpected:" << expected;
         qWarning() << "\tvariance:" << variance;
     }
-    QVERIFY((expected - variance) < actual);
-    QVERIFY(actual < (expected + variance));
+    QVERIFY((expected - variance) <= actual);
+    QVERIFY(actual <= (expected + variance));
 }
 #define QAPPROXIMATECOMPARE(a,e,v) approximateCompare(a,e,v,(__LINE__))
 
@@ -218,10 +221,11 @@ void tst_QMessageStore::testFolder_data()
     QTest::addColumn<QString>("parentFolderPath");
     QTest::addColumn<QString>("displayNameResult");
 
-    QTest::newRow("Inbox") << "Inbox" << "Inbox" << "" << "Inbox";
-    QTest::newRow("Drafts") << "Drafts" << "" << "" << "Drafts";
-    QTest::newRow("Archived") << "Inbox/Archived" << "Archived" << "Inbox" << "Archived";
-    QTest::newRow("Backup") << "Inbox/Archived/Backup" << "Backup" << "Inbox/Archived" << "Backup";
+	// Note: on Win CE, we can't use 'Inbox' 'Drafts' etc., becuase they're added automatically by the system
+    QTest::newRow("Inbox") << "Unbox" << "Unbox" << "" << "Unbox";
+    QTest::newRow("Drafts") << "Crafts" << "" << "" << "Crafts";
+    QTest::newRow("Archived") << "Unbox/Archived" << "Archived" << "Unbox" << "Archived";
+    QTest::newRow("Backup") << "Unbox/Archived/Backup" << "Backup" << "Unbox/Archived" << "Backup";
 }
 
 void tst_QMessageStore::testFolder()
@@ -401,7 +405,7 @@ void tst_QMessageStore::testMessage_data()
         << "Last HTML message..."
         << QByteArray("multipart")
         << QByteArray("mixed")
-        << 5120u
+        << 4096u
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
         << QByteArray("html")

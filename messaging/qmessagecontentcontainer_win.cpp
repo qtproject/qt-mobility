@@ -91,7 +91,6 @@ QString attachmentTextContent(const QMessageId &id, ULONG number, const QByteArr
             }
         }
     }
-
     return result;
 }
 

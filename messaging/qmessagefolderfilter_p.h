@@ -38,18 +38,75 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMESSAGEFOLDERFILTERPRIVATE_H
+#define QMESSAGEFOLDERFILTERPRIVATE_H
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderfilter.h"
+#ifdef Q_OS_WIN
+#include "winhelpers_p.h"
+#include "qmessagestore.h"
+#endif
+#include <QSet>
 
 class QMessageFolderFilterPrivate
 {
     Q_DECLARE_PUBLIC(QMessageFolderFilter)
 public:
-    QMessageFolderFilterPrivate(QMessageFolderFilter *folderFilter)
-        :q_ptr(folderFilter)
-    {
-    }
+    enum Criterion { 
+        None = 0, 
+        IdEquality, 
+        IdInclusion, 
+        NameEquality, 
+        NameInclusion, 
+        PathEquality, 
+        PathInclusion, 
+        AccountEquality, 
+        AccountInclusion, 
+        ParentEquality, 
+        ParentInclusion,
+        AncestorInclusion,
+        ParentAccountFilter,
+        ParentFolderFilter,
+        AncestorFolderFilter
+    };
 
+    enum Operator { 
+        Identity = 0, 
+        And, 
+        Or, 
+        Not, 
+        Nand, 
+        Nor, 
+        OperatorEnd 
+    };
+
+    QMessageFolderFilterPrivate(QMessageFolderFilter *folderFilter);
+    ~QMessageFolderFilterPrivate();
     QMessageFolderFilter *q_ptr;
+
+    QMessageFolderFilterPrivate &operator=(const QMessageFolderFilterPrivate &other);
+    bool operator==(const QMessageFolderFilterPrivate &other) const;
+
+    Operator _operator;
+    Criterion _criterion;
+    QSet<QMessageFolderId> _ids;
+    QSet<QMessageAccountId> _accountIds;
+    QString _value;
+    QMessageDataComparator::EqualityComparator _equality;
+    QMessageDataComparator::InclusionComparator _inclusion;
+    QMessageDataComparator::Options _options;
+    bool _valid;
+    QList<QMessageFolderFilter*> _arguments; // for bool ops
+    QMessageAccountFilter *_accountFilter;
+    QMessageFolderFilter *_folderFilter;
+
+#ifdef Q_OS_WIN
+    static QMessageFolderFilter preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, const QMessageFolderFilter &filter);
+    static void preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFolderFilter *filter);
+    static bool matchesStore(const QMessageFolderFilter &filter, const MapiStorePtr &store);
+    static bool matchesFolder(const QMessageFolderFilter &filter, const MapiFolderPtr &folder);
+    static bool QMessageFolderFilterPrivate::isNonMatching(const QMessageFolderFilter &filter);
+#endif
 };
+#endif
 #endif

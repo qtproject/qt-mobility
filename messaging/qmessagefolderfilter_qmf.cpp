@@ -133,7 +133,7 @@ bool QMessageFolderFilter::isEmpty() const
 
 bool QMessageFolderFilter::isSupported() const
 {
-    return true; // TODO: Implement
+    return true;
 }
 
 QMessageFolderFilter QMessageFolderFilter::operator~() const

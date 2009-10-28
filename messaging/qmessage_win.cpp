@@ -220,6 +220,7 @@ QMessageId QMessage::id() const
 
 QMessage::Type QMessage::type() const
 {
+    d_ptr->ensurePropertiesPresent(const_cast<QMessage*>(this));
     return d_ptr->_type;
 }
 
@@ -494,6 +495,7 @@ void QMessage::appendAttachments(const QStringList &fileNames)
             if (existingBodyId == QMessageContentContainerPrivate::bodyContentId()) {
                 // The body content is in the message itself - move it to become the first attachment
                 QMessageContentContainer newBody(*this);
+                newBody.setDerivedMessage(0);
 
                 container->setContentType("multipart", "mixed", "");
                 d_ptr->_bodyId = container->prependContent(newBody);
@@ -511,6 +513,9 @@ void QMessage::appendAttachments(const QStringList &fileNames)
                 container->appendContent(attachment);
             }
         }
+
+        bool haveAttachments = !container->_attachments.isEmpty();
+        setStatus(QMessage::HasAttachments,haveAttachments);
     }
 }
 
@@ -520,6 +525,9 @@ void QMessage::clearAttachments()
 
     QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
     container->_attachments.clear();
+
+    bool haveAttachments = !container->_attachments.isEmpty();
+    setStatus(QMessage::HasAttachments,haveAttachments);
 }
 
 bool QMessage::isModified() const
