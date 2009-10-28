@@ -101,7 +101,8 @@ unix: {
             -lcentralrepository \
             -lcenrepnotifhandler \
             -lefsrv \
-            -lptiengine
+            -lptiengine \
+            -lfeatdiscovery
 
         TARGET.CAPABILITY = ALL -TCB
         TARGET.EPOCALLOWDLLDATA = 1

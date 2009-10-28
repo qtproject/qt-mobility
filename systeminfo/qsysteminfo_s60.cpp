@@ -47,7 +47,9 @@
 
 #include <SysUtil.h>
 #include <ptiengine.h>
-
+#include <FeatDiscovery.h>
+#include <featureinfo.h>
+ 
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
     : QObject(parent)
@@ -246,7 +248,31 @@ QString QSystemInfoPrivate::currentCountryCode() const
 
 bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
-    return false;   //TODO
+    TInt featureId = 0;
+    switch (feature) {
+        case QSystemInfo::BluetoothFeature: featureId = KFeatureIdBt; break;
+        case QSystemInfo::CameraFeature: featureId = KFeatureIdCamera; break;
+        case QSystemInfo::IrFeature: featureId = KFeatureIdIrda; break;
+        case QSystemInfo::MemcardFeature: featureId = KFeatureIdMmc; break;
+        case QSystemInfo::UsbFeature: featureId = KFeatureIdUsb; break;
+        case QSystemInfo::WlanFeature: featureId = KFeatureIdProtocolWlan; break;
+        case QSystemInfo::LocationFeature: featureId = KFeatureIdLocationFrameworkCore; break;
+        case QSystemInfo::SimFeature:
+        {
+            return true;
+        }
+        case QSystemInfo::FmradioFeature:
+        case QSystemInfo::VibFeature:
+        case QSystemInfo::LedFeature:
+        case QSystemInfo::VideoOutFeature:
+        case QSystemInfo::HapticsFeature:
+        default:
+            return false;
+    }
+
+    bool isFeatureSupported = false;
+    TRAP_IGNORE(isFeatureSupported = CFeatureDiscovery::IsFeatureSupportedL(featureId);)
+    return isFeatureSupported;
 }
 
 //////// QSystemNetworkInfo
