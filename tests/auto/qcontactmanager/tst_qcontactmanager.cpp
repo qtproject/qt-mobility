@@ -2516,6 +2516,35 @@ void tst_QContactManager::relationships()
     maliciousRel.setRelationshipType("nokia-test-invalid-relationship-type");
     QVERIFY(!cm->saveRelationship(&maliciousRel));
 
+    // attempt to save a circular relationship
+    maliciousRel.setFirst(source.id());
+    maliciousRel.setSecond(source.id());
+    maliciousRel.setRelationshipType(availableRelationshipTypes.at(0));
+    QVERIFY(!cm->saveRelationship(&maliciousRel));
+
+    // more negative testing, but force manager to recognise the empty URI
+    QContactId circularId = source.id();
+    circularId.setManagerUri(QString());
+    maliciousRel.setFirst(circularId);
+    maliciousRel.setSecond(circularId);
+    maliciousRel.setRelationshipType(availableRelationshipTypes.at(0));
+    QVERIFY(!cm->saveRelationship(&maliciousRel));
+    maliciousRel.setFirst(source.id());
+    maliciousRel.setSecond(circularId);
+    maliciousRel.setRelationshipType(availableRelationshipTypes.at(0));
+    QVERIFY(!cm->saveRelationship(&maliciousRel));
+    maliciousRel.setFirst(circularId);
+    maliciousRel.setSecond(source.id());
+    maliciousRel.setRelationshipType(availableRelationshipTypes.at(0));
+    QVERIFY(!cm->saveRelationship(&maliciousRel));
+
+    // attempt to save a relationship where the source contact comes from another manager
+    circularId.setManagerUri("test-nokia-invalid-manager-uri");
+    maliciousRel.setFirst(circularId);   // an invalid source contact
+    maliciousRel.setSecond(dest2.id());       // a valid destination contact
+    maliciousRel.setRelationshipType(availableRelationshipTypes.at(0));
+    QVERIFY(!cm->saveRelationship(&maliciousRel));
+
     // now clean up and remove our dests.
     QVERIFY(cm->removeContact(source.localId()));
     QVERIFY(cm->removeContact(dest2.localId()));
