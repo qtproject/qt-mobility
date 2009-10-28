@@ -548,13 +548,6 @@ QVideoSurfaceArbFpPainter::QVideoSurfaceArbFpPainter(QGLContext *context)
 
     m_context->doneCurrent();
 
-    Q_ASSERT(glActiveTexture);
-    Q_ASSERT(glProgramStringARB);
-    Q_ASSERT(glBindProgramARB);
-    Q_ASSERT(glDeleteProgramsARB);
-    Q_ASSERT(glGenProgramsARB);
-    Q_ASSERT(glProgramLocalParameter4fARB);
-
     m_imagePixelFormats
             << QVideoFrame::Format_RGB32
             << QVideoFrame::Format_ARGB32
@@ -829,8 +822,6 @@ QVideoSurfaceGlslPainter::QVideoSurfaceGlslPainter(QGLContext *context)
     , m_program(context)
 {
     m_context->doneCurrent();
-
-    Q_ASSERT(glActiveTexture);
 
     m_imagePixelFormats
             << QVideoFrame::Format_RGB32
@@ -1257,14 +1248,15 @@ void QPainterVideoSurface::setGLContext(QGLContext *context)
     if (m_glContext) {
         m_glContext->makeCurrent();
 
-#ifndef QT_OPENGL_ES
         const QByteArray extensions(reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS)));
+#ifndef QT_OPENGL_ES
 
         if (extensions.contains("ARB_fragment_program"))
             m_shaderTypes |= FragmentProgramShader;
 #endif
 
-        if (QGLShaderProgram::hasShaderPrograms(m_glContext))
+        if (QGLShaderProgram::hasShaderPrograms(m_glContext)
+                && extensions.contains("ARB_shader_objects"))
             m_shaderTypes |= GlslShader;
 
         m_glContext->doneCurrent();
