@@ -59,6 +59,8 @@ private slots:
     void removeItems();
     void currentItem();
     void saveAndLoad();
+    void playbackMode();
+    void playbackMode_data();
 
 private:
     QMediaContent content1;
@@ -230,8 +232,6 @@ void tst_QMediaPlaylist::removeItems()
 
 void tst_QMediaPlaylist::saveAndLoad()
 {
-
-
     QMediaPlaylist playlist;
     playlist.appendItem(content1);
     playlist.appendItem(content2);
@@ -243,7 +243,6 @@ void tst_QMediaPlaylist::saveAndLoad()
     QBuffer buffer;
     buffer.open(QBuffer::ReadWrite);
 
-
     bool res = playlist.save(&buffer, "unsupported_format");
     QVERIFY(!res);
     QVERIFY(playlist.error() != QMediaPlaylist::NoError);
@@ -254,7 +253,6 @@ void tst_QMediaPlaylist::saveAndLoad()
     QCOMPARE(errorSignal.size(), 1);
     QVERIFY(playlist.error() != QMediaPlaylist::NoError);
     QVERIFY(!playlist.errorString().isEmpty());
-
 
     //it's necessary to ensure the m3u plugin is loaded for this test
     /*
@@ -274,6 +272,57 @@ void tst_QMediaPlaylist::saveAndLoad()
     QCOMPARE(playlist.media(3), playlist2.media(3));
     */
 
+}
+
+void tst_QMediaPlaylist::playbackMode_data()
+{
+    QTest::addColumn<QMediaPlaylist::PlaybackMode>("playbackMode");
+    QTest::addColumn<int>("expectedPrevious");
+    QTest::addColumn<int>("pos");
+    QTest::addColumn<int>("expectedNext");
+
+    QTest::newRow("Linear, 0") << QMediaPlaylist::Linear << -1 << 0 << 1;
+    QTest::newRow("Linear, 1") << QMediaPlaylist::Linear << 0 << 1 << 2;
+    QTest::newRow("Linear, 2") << QMediaPlaylist::Linear << 1 << 2 << -1;
+
+    QTest::newRow("Loop, 0") << QMediaPlaylist::Loop << 2 << 0 << 1;
+    QTest::newRow("Loop, 1") << QMediaPlaylist::Loop << 0 << 1 << 2;
+    QTest::newRow("Lopp, 2") << QMediaPlaylist::Loop << 1 << 2 << 0;
+
+    QTest::newRow("ItemOnce, 1") << QMediaPlaylist::CurrentItemOnce << -1 << 1 << -1;
+    QTest::newRow("ItemInLoop, 1") << QMediaPlaylist::CurrentItemInLoop << 1 << 1 << 1;
+
+}
+
+void tst_QMediaPlaylist::playbackMode()
+{
+    QFETCH(QMediaPlaylist::PlaybackMode, playbackMode);
+    QFETCH(int, expectedPrevious);
+    QFETCH(int, pos);
+    QFETCH(int, expectedNext);
+
+    QMediaPlaylist playlist;
+    playlist.appendItem(content1);
+    playlist.appendItem(content2);
+    playlist.appendItem(content3);
+
+    QCOMPARE(playlist.playbackMode(), QMediaPlaylist::Linear);
+    QCOMPARE(playlist.currentPosition(), -1);
+
+    playlist.setPlaybackMode(playbackMode);
+    QCOMPARE(playlist.playbackMode(), playbackMode);
+
+    playlist.setCurrentPosition(pos);
+    QCOMPARE(playlist.currentPosition(), pos);
+    QCOMPARE(playlist.nextPosition(), expectedNext);
+    QCOMPARE(playlist.previousPosition(), expectedPrevious);
+
+    playlist.next();
+    QCOMPARE(playlist.currentPosition(), expectedNext);
+
+    playlist.setCurrentPosition(pos);
+    playlist.previous();
+    QCOMPARE(playlist.currentPosition(), expectedPrevious);
 }
 
 QTEST_MAIN(tst_QMediaPlaylist)
