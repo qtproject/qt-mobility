@@ -142,6 +142,11 @@ void QContactWinCEEngine::deref()
         delete this;
 }
 
+QString QContactWinCEEngine::managerName() const
+{
+    return QString("wince");
+}
+
 QContact QContactWinCEEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
     QContact ret;

@@ -197,6 +197,7 @@ public:
     ~QContactWinCEEngine();
     QContactWinCEEngine& operator=(const QContactWinCEEngine& other);
     void deref();
+    QString managerName() const;
 
     /* Filtering */
     QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
