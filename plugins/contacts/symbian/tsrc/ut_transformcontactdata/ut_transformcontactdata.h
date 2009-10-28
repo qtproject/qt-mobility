@@ -71,34 +71,34 @@ private slots:
 	void executeCntTransformFamily();
 	
 private:
-    void validateCntTransformEmail(TPtrC16 field, QString detail);
-    void validateCntTransformName(TPtrC16 prefixField, QString prefixDetail,
+    void validateCntTransformEmailL(TPtrC16 field, QString detail);
+    void validateCntTransformNameL(TPtrC16 prefixField, QString prefixDetail,
                                TPtrC16 firstnameField, QString firstnameDetail,
                                TPtrC16 middlenameField, QString middlenameDetail,
                                TPtrC16 lastnameField, QString lastnameDetail,
                                TPtrC16 suffixField, QString suffixDetail);
-    void validateCntTransformNickname(TPtrC16 field, QString detail);
-    void validateCntTransformPhonenumber(TPtrC16 field, QString detail);
-    void validateCntTransformAddress(TPtrC16 countryField, QString countryDetail,
+    void validateCntTransformNicknameL(TPtrC16 field, QString detail);
+    void validateCntTransformPhonenumberL(TPtrC16 field, QString detail);
+    void validateCntTransformAddressL(TPtrC16 countryField, QString countryDetail,
                                   TPtrC16 postcodeField, QString postcodeDetail,
                                   TPtrC16 streetField, QString streetDetail,
                                   TPtrC16 localityField, QString localityDetail,
                                   TPtrC16 regionField, QString regionDetail,
                                   TPtrC16 postOfficeBoxField, QString postOfficeBoxDetail);
-    void validateCntTransformUrl(TPtrC16 field, QString detail);
-    void validateCntTransformBirthday(TTime field, QDate detail);
-    void validateCntTransformOnlineAccount(TPtrC16 sipField, QString sipDetail);
-    void validateCntTransformOrganisation(TPtrC16 companyField, QString companyDetail,
+    void validateCntTransformUrlL(TPtrC16 field, QString detail);
+    void validateCntTransformBirthdayL(TTime field, QDate detail);
+    void validateCntTransformOnlineAccountL(TPtrC16 sipField, QString sipDetail);
+    void validateCntTransformOrganisationL(TPtrC16 companyField, QString companyDetail,
                                        TPtrC16 departmentField, QString departmentDetail,
                                        TPtrC16 jobtitleField, QString jobtitleDetail,
                                        TPtrC16 assistantField, QString assistantDetail);
-    void validateCntTransformAvatar(TPtrC16 field, QString detail);
-    void validateCntTransformSyncTarget(TPtrC16 field, QString detail);
-    void validateCntTransformGender(TPtrC16 field, QString detail);
-    void validateCntTransformAnniversary(TPtrC16 field, QDate dateDetail, QString eventDetail);
-    void validateCntTransformGeolocation(TPtrC16 field, double latitudeDetail, double longitudeDetail);
-    void validateCntTransformNote(TPtrC16 field, QString detail);
-    void validateCntTransformFamily(TPtrC16 spouseField, QString spouseDetail,
+    void validateCntTransformAvatarL(TPtrC16 field, QString detail);
+    void validateCntTransformSyncTargetL(TPtrC16 field, QString detail);
+    void validateCntTransformGenderL(TPtrC16 field, QString detail);
+    void validateCntTransformAnniversaryL(TPtrC16 field, QDate dateDetail, QString eventDetail);
+    void validateCntTransformGeolocationL(TPtrC16 field, double latitudeDetail, double longitudeDetail);
+    void validateCntTransformNoteL(TPtrC16 field, QString detail);
+    void validateCntTransformFamilyL(TPtrC16 spouseField, QString spouseDetail,
                                  TPtrC16 childField, QString childDetail);
-    void validateContexts(CntTransformContactData* transformContactData) const; 
+    void validateContextsL(CntTransformContactData* transformContactData) const; 
 };
