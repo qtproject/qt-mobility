@@ -605,7 +605,7 @@ QString QVersitContactGeneratorPrivate::createFileName(
     foreach(const QVersitProperty& p,doc.properties()){
         if(p.name() == QString::fromAscii(preferredField)){
             QString val = QString::fromAscii(p.value());
-            names = val.split(';');
+            names = val.split(QString::fromAscii(";"));
         }
     }
     return QString(mImagePath +
@@ -617,5 +617,5 @@ QString QVersitContactGeneratorPrivate::createFileName(
                    QString::fromAscii("_") +
                    QString::number(qrand()) +
                    QString::fromAscii(".") +
-                   extension).replace(' ',"");// remove all white spaces
+                   extension).replace(QString::fromAscii(" "),QString::fromAscii(""));// remove all white spaces
 }

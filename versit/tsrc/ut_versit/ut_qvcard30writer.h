@@ -39,57 +39,28 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITWRITER_P_H
-#define QVERSITWRITER_P_H
+#ifndef UT_QVCARD30WRITER_H
+#define UT_QVCARD30WRITER_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <QObject>
 
-#include <QByteArray>
-#include <QIODevice>
-#include <qversitdocument.h>
-#include <qversitproperty.h>
+class QVCard30Writer;
 
-class QVersitWriterPrivate
+
+class UT_QVCard30Writer : public QObject
 {
-public:
-    virtual ~QVersitWriterPrivate();  
-    QByteArray encodeVersitDocument(const QVersitDocument& document);
+     Q_OBJECT
+    
+private slots: // Tests
 
-public: // Data
-    QIODevice* mIoDevice;
-    QVersitDocument mVersitDocument;
+    void init();
+    void cleanup();
 
-protected: // To be implemented in each of the subclasses
-    virtual QByteArray encodeVersitProperty(const QVersitProperty& property) = 0;
-
-    virtual QByteArray encodeParameter(
-        const QString& name,
-        const QString& value) const = 0;
-
-protected: // Constructors
-    QVersitWriterPrivate(const QByteArray& documentType, const QByteArray& version);
-
-protected: // New functions
-    QByteArray encodeGroupsAndName(const QVersitProperty& property) const;
-    QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters) const;
-
-private: // Constructors
-    QVersitWriterPrivate();
+    void testEncodeVersitProperty();
+    void testEncodeParameter();
 
 private: // Data
-    QByteArray mDocumentType;
-    QByteArray mVersion;
-
-    friend class UT_QVersitWriter;
+    QVCard30Writer* mWriter;
 };
 
-#endif // QVERSITWRITER_P_H
+#endif // UT_QVCARD30WRITER_H

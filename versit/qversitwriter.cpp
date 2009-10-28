@@ -41,6 +41,7 @@
 
 #include "qversitwriter.h"
 #include "qvcard21writer.h"
+#include "qvcard30writer.h"
 #include "versitutils.h"
 
 #include <QStringList>
@@ -66,12 +67,34 @@ QVersitWriter::~QVersitWriter()
     delete d;
 }
 
-// input:
+/*!
+ * Set the versit document to be written and
+ * selects the writer implementation based on the versit document type.
+ */
 void QVersitWriter::setVersitDocument(const QVersitDocument& versitDocument)
 {
+    QVersitWriterPrivate* updatedWriter = 0;
+    switch (versitDocument.versitType()) {
+        case QVersitDocument::VCard21:
+            updatedWriter = new QVCard21Writer;
+            break;
+        case QVersitDocument::VCard30:
+            updatedWriter = new QVCard30Writer;
+            break;
+        default:
+            break;
+    }
+    if (updatedWriter) {
+        updatedWriter->mIoDevice = d->mIoDevice;
+        delete d;
+        d = updatedWriter;
+    }
     d->mVersitDocument = versitDocument;
 }
 
+/*!
+ * Returns the current versit document.
+ */
 QVersitDocument QVersitWriter::versitDocument() const
 {
     return d->mVersitDocument;

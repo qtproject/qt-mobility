@@ -48,6 +48,7 @@
 #include "ut_qversitreader.h"
 #include "ut_qversitwriter.h"
 #include "ut_qvcard21writer.h"
+#include "ut_qvcard30writer.h"
 
 #include <QtTest/QtTest>
 
@@ -104,6 +105,12 @@ int main(int /*argc*/, char** /*argv[]*/)
     resultFileName = QString::fromAscii("c:/ut_vcard21Writer.xml");
     args.replace(args.count()-1,resultFileName);
     QTest::qExec(&ut_vcard21Writer, args);
+    parser.parseAndPrintResults(resultFileName);
+
+    UT_QVCard30Writer ut_vcard30Writer;
+    resultFileName = QString::fromAscii("c:/ut_vcard30Writer.xml");
+    args.replace(args.count()-1,resultFileName);
+    QTest::qExec(&ut_vcard30Writer, args);
     parser.parseAndPrintResults(resultFileName,true);
 
     printf("Press any key...\n");

@@ -81,7 +81,7 @@ public:
     QContact contact(const QContactLocalId& contactId, QContactManager::Error& qtError) const;
 	
     //Groups
-    QList<QContactLocalId> QContactSymbianEngineData::groups(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& qtError) const;
+    QList<QContactLocalId> groups(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& qtError) const;
     
     //Filter & sort order
     QAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter) const;

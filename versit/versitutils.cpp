@@ -173,7 +173,7 @@ void VersitUtils::decodeQuotedPrintable(QByteArray& text)
 
 /*!
  * Performs backslash escaping for line breaks (CRLFs),
- * semicolons, commas and colons according to RFC 2426.
+ * semicolons and commas according to RFC 2426.
  */
 bool VersitUtils::backSlashEscape(QByteArray& text)
 {
@@ -183,7 +183,7 @@ bool VersitUtils::backSlashEscape(QByteArray& text)
     for (int i=0; i < text.length(); i++) {
         char currentChar = text.at(i);
         if (previousChar != '\\' && !withinQuotes) {
-            if (currentChar == ';' || currentChar == ':' || currentChar == ',') {
+            if (currentChar == ';' || currentChar == ',') {
                 text.insert(i,'\\');
                 i++;
                 escaped = true;
@@ -203,7 +203,7 @@ bool VersitUtils::backSlashEscape(QByteArray& text)
 
 /*!
  * Removes backslash escaping for line breaks (CRLFs),
- * semicolons, commas and colons according to RFC 2426.
+ * semicolons and commas according to RFC 2426.
  */
 void VersitUtils::removeBackSlashEscaping(QByteArray& text)
 {
@@ -212,7 +212,7 @@ void VersitUtils::removeBackSlashEscaping(QByteArray& text)
     for (int i=0; i < text.length(); i++) {
         char currentChar = text.at(i);
         if (previousChar == '\\' && !withinQuotes) {
-            if (currentChar == ';' || currentChar == ':' || currentChar == ',') {
+            if (currentChar == ';' || currentChar == ',') {
                 text.remove(i-1,1);
             } else if (currentChar == 'n' || currentChar == 'N') {
                 text.replace(i-1,2,"\r\n");
@@ -340,8 +340,11 @@ QString VersitUtils::paramName(const QByteArray& parameter)
      if (parameter.trimmed().length() == 0)
          return QString();
      int equalsIndex = parameter.indexOf('=');
-     if (equalsIndex > 0)
-         return QString::fromAscii(parameter.left(equalsIndex).trimmed());
+     if (equalsIndex > 0) {
+         QByteArray name = parameter.left(equalsIndex).trimmed();
+         removeBackSlashEscaping(name);
+         return QString::fromAscii(name);
+     }
      return QString::fromAscii("TYPE");
 }
 
@@ -350,18 +353,19 @@ QString VersitUtils::paramName(const QByteArray& parameter)
  */
 QString VersitUtils::paramValue(const QByteArray& parameter)
 {
-    QString value(QString::fromAscii(parameter));
+    QByteArray value(parameter);
     int equalsIndex = parameter.indexOf('=');
     if (equalsIndex > 0) {
         if (equalsIndex == parameter.length()-1) {
-            value = QString();
+            value = QByteArray();
         }
         else {
             int valueLength = parameter.length() - (equalsIndex + 1);
-            value = QString::fromAscii(parameter.right(valueLength).trimmed());
+            value = parameter.right(valueLength).trimmed();
         }    
     }
-    return value;
+    removeBackSlashEscaping(value);
+    return QString::fromAscii(value);
 }
 
 /*!

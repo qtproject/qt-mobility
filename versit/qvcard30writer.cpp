@@ -39,57 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITWRITER_P_H
-#define QVERSITWRITER_P_H
+#include "qvcard30writer.h"
+#include "versitutils.h"
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <QByteArray>
-#include <QIODevice>
-#include <qversitdocument.h>
-#include <qversitproperty.h>
-
-class QVersitWriterPrivate
+/*! Constructs a writer. */
+QVCard30Writer::QVCard30Writer()
+    : QVersitWriterPrivate(QByteArray("VCARD"),QByteArray("3.0"))
 {
-public:
-    virtual ~QVersitWriterPrivate();  
-    QByteArray encodeVersitDocument(const QVersitDocument& document);
+}
 
-public: // Data
-    QIODevice* mIoDevice;
-    QVersitDocument mVersitDocument;
+/*! Destroys a writer. */
+QVCard30Writer::~QVCard30Writer()
+{
+}
 
-protected: // To be implemented in each of the subclasses
-    virtual QByteArray encodeVersitProperty(const QVersitProperty& property) = 0;
+/*!
+ * Encodes the \a property to text. 
+ */
+QByteArray QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
+{
+    QByteArray encodedProperty(encodeGroupsAndName(property));
+    encodedProperty.append(encodeParameters(property.parameters()));
+    encodedProperty.append(":");
+    QByteArray value(property.value());
+    if (property.name() == QString::fromAscii("AGENT")) {
+        QVersitDocument embeddedDocument = property.embeddedDocument();
+        value = encodeVersitDocument(embeddedDocument);
+        VersitUtils::backSlashEscape(value);
+    }
+    encodedProperty.append(value);
+    encodedProperty.append("\r\n");
+    return encodedProperty;
+}
 
-    virtual QByteArray encodeParameter(
-        const QString& name,
-        const QString& value) const = 0;
-
-protected: // Constructors
-    QVersitWriterPrivate(const QByteArray& documentType, const QByteArray& version);
-
-protected: // New functions
-    QByteArray encodeGroupsAndName(const QVersitProperty& property) const;
-    QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters) const;
-
-private: // Constructors
-    QVersitWriterPrivate();
-
-private: // Data
-    QByteArray mDocumentType;
-    QByteArray mVersion;
-
-    friend class UT_QVersitWriter;
-};
-
-#endif // QVERSITWRITER_P_H
+/*!
+ * Returns an encoded parameter of a versit property.
+ */
+QByteArray QVCard30Writer::encodeParameter(
+    const QString& name,
+    const QString& value) const
+{
+    QByteArray encodedParameter(name.toAscii());
+    if (name.length() > 0 && value.length() > 0)
+        encodedParameter.append("=");
+    encodedParameter.append(value.toAscii());
+    VersitUtils::backSlashEscape(encodedParameter);
+    return encodedParameter;
+}
