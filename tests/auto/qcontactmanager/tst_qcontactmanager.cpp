@@ -2493,10 +2493,43 @@ void tst_QContactManager::relationships()
     QVERIFY(cm->error() == QContactManager::NoError);
     QCOMPARE(cm->relationships(source.id(), QContactRelationshipFilter::First), currentRelationships);
 
+    // attempt to save relationships between an existing source but non-existent destination
+    QContactId nonexistentDest;
+    quint32 idSeed = 0x5544;
+    QContactLocalId nonexistentLocalId = QContactLocalId(idSeed);
+    nonexistentDest.setManagerUri(cm->managerUri());
+    while (true) {
+        nonexistentLocalId = cm->contact(nonexistentLocalId).localId();
+        if (nonexistentLocalId == QContactLocalId(0)) {
+            // found a "spare" local id (no contact with that id)
+            break;
+        }
+
+        // keep looking...
+        idSeed += 1;
+        nonexistentLocalId = QContactLocalId(idSeed);
+        QVERIFY(nonexistentLocalId != QContactLocalId(0)); // integer overflow check.
+    }
+    nonexistentDest.setLocalId(nonexistentLocalId);
+    maliciousRel.setFirst(source.id());
+    maliciousRel.setSecond(nonexistentDest);
+    maliciousRel.setRelationshipType("nokia-test-invalid-relationship-type");
+    QVERIFY(!cm->saveRelationship(&maliciousRel));
+
     // now clean up and remove our dests.
-    cm->removeContact(source.localId());
-    cm->removeContact(dest2.localId());
-    cm->removeContact(dest3.localId());
+    QVERIFY(cm->removeContact(source.localId()));
+    QVERIFY(cm->removeContact(dest2.localId()));
+    QVERIFY(cm->removeContact(dest3.localId()));
+
+    // attempt to save relationships with nonexistent contacts
+    QVERIFY(!cm->saveRelationship(&br1));
+    QVERIFY(cm->error() == QContactManager::InvalidRelationshipError);
+    cm->saveRelationships(&batchList);
+    QVERIFY(cm->error() == QContactManager::InvalidRelationshipError);
+    QVERIFY(!cm->removeRelationship(br1));
+    QVERIFY(cm->error() == QContactManager::DoesNotExistError);
+    cm->removeRelationships(batchList);
+    QVERIFY(cm->error() == QContactManager::DoesNotExistError);
 }
 
 void tst_QContactManager::contactType()
