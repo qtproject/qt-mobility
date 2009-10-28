@@ -2086,9 +2086,6 @@ void tst_QContactManager::changeSet()
     QVERIFY(cs.changedContacts().contains(id));
 
     QVERIFY(cs.dataChanged() == false);
-    cs.setDataChanged(true);
-    QVERIFY(cs.dataChanged() == true);
-
     QContactChangeSet cs2;
     cs2 = cs;
     QVERIFY(cs.addedContacts() == cs2.addedContacts());
@@ -2096,12 +2093,16 @@ void tst_QContactManager::changeSet()
 
     cs2.clear();
     QVERIFY(cs.addedContacts() != cs2.addedContacts());
-    QVERIFY(cs.dataChanged() != cs2.dataChanged());
 
     QContactChangeSet cs3(cs2);
-    QVERIFY(cs.dataChanged() != cs3.dataChanged());
     QVERIFY(cs.addedContacts() != cs3.addedContacts());
     QVERIFY(cs2.addedContacts() == cs3.addedContacts());
+
+    cs.setDataChanged(true);
+    QVERIFY(cs.dataChanged() == true);
+    QVERIFY(cs.dataChanged() != cs2.dataChanged());
+    QVERIFY(cs.dataChanged() != cs3.dataChanged());
+    cs.emitSignals(0);
 }
 
 void tst_QContactManager::selfContactId()

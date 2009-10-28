@@ -133,8 +133,6 @@ QSet<QContactLocalId>& QContactChangeSet::removedContacts()
 }
 
 /*!
-<<<<<<< HEAD:contacts/qcontactchangeset.cpp
-=======
  * Returns a reference to the set of ids of contacts which have been affected
  * by the addition of relationships to the database.
  */
@@ -153,7 +151,6 @@ QSet<QContactLocalId>& QContactChangeSet::removedRelationshipsContacts()
 }
 
 /*!
->>>>>>> 27eb44991303e15ea41e25958733430ea5239661:contacts/qcontactchangeset.cpp
  * Clears all flags and sets of ids in this change set
  */
 void QContactChangeSet::clear()
@@ -162,6 +159,8 @@ void QContactChangeSet::clear()
     d->m_addedContacts.clear();
     d->m_changedContacts.clear();
     d->m_removedContacts.clear();
+    d->m_addedRelationships.clear();
+    d->m_removedRelationships.clear();
 }
 
 /*!
