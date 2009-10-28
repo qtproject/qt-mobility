@@ -61,7 +61,7 @@ QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
     QByteArray encodedProperty;
     QStringList groups = property.groups();
     if (!groups.isEmpty()) {
-        QString group = groups.join(".");
+        QString group = groups.join(QString::fromAscii("."));
         encodedProperty.append(group.toAscii());
         encodedProperty.append(".");
     }
