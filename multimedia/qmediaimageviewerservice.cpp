@@ -243,17 +243,15 @@ QList<QVideoOutputControl::Output> QMediaImageViewerOutputControl::availableOutp
 
 void QMediaImageViewerOutputControl::setOutput(Output output)
 {
-    if (output != m_output) {
-        switch (output) {
+    switch (output) {
 #ifndef QT_NO_MULTIMEDIA
-        case RendererOutput:
+    case RendererOutput:
 #endif
-        case WidgetOutput:
-            emit m_output = output;
-            break;
-        default:
-            m_output = NoOutput;
-        }
+    case WidgetOutput:
+        emit m_output = output;
+        break;
+    default:
+        m_output = NoOutput;
     }
     emit outputChanged(m_output);
 }
@@ -295,7 +293,7 @@ void QMediaImageViewerServicePrivate::_q_outputChanged(QVideoOutputControl::Outp
     if (output != QVideoOutputControl::WidgetOutput)
         widget->showImage(QImage());
 #ifndef QT_NO_MULTIMEDIA
-    else if (output != QVideoOutputControl::RendererOutput)
+    if (output != QVideoOutputControl::RendererOutput)
         rendererControl->showImage(QImage());
 #endif
 
@@ -449,36 +447,22 @@ void QMediaImageViewerControlPrivate::loadImage()
 
     QNetworkAccessManager *network = service->networkManager();
 
-    if (!network) {
-        qWarning("QMediaImageViewerControlPrivate: No network manager");
+    while (!possibleResources.isEmpty() && !headReply && !getReply) {
+        currentMedia = possibleResources.takeFirst();
 
-        possibleResources.clear();
-    } else {
-        while (!possibleResources.isEmpty() && !headReply && !getReply) {
-            currentMedia = possibleResources.takeFirst();
+        QUrl uri = currentMedia.uri();
+        QString mimeType = currentMedia.mimeType();
 
-            QUrl uri = currentMedia.uri();
-            QString mimeType = currentMedia.mimeType();
+        if (isImageType(uri, mimeType)) {
+            getReply = network->get(QNetworkRequest(uri));
+            QObject::connect(getReply, SIGNAL(finished()), q_func(), SLOT(_q_getFinished()));
 
-            if (isImageType(uri, mimeType)) {
-                getReply = network->get(QNetworkRequest(uri));
+            status = QMediaImageViewer::LoadingMedia;
+        } else if (mimeType.isEmpty() && uri.scheme() != QLatin1String("file")) {
+            headReply = network->head(QNetworkRequest(currentMedia.uri()));
+            QObject::connect(headReply, SIGNAL(finished()), q_func(), SLOT(_q_headFinished()));
 
-                if (getReply) {
-                    status = QMediaImageViewer::LoadingMedia;
-
-                    QObject::connect(
-                            getReply, SIGNAL(finished()), q_func(), SLOT(_q_getFinished()));
-                }
-            } else if (mimeType.isEmpty() && uri.scheme() != QLatin1String("file")) {
-                headReply = network->head(QNetworkRequest(currentMedia.uri()));
-
-                if (headReply) {
-                    status = QMediaImageViewer::LoadingMedia;
-                    
-                    QObject::connect(
-                            headReply, SIGNAL(finished()), q_func(), SLOT(_q_headFinished()));
-                }
-            }
+            status = QMediaImageViewer::LoadingMedia;
         }
     }
 
@@ -587,9 +571,9 @@ void QMediaImageViewerControl::showMedia(const QMediaContent &media)
 
     d->media = media;
     d->currentMedia = QMediaResource();
+    d->cancelRequests();
 
     if (media.isNull()) {
-        d->cancelRequests();
         d->service->d_func()->clear();
 
         d->status = QMediaImageViewer::NoMedia;

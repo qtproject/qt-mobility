@@ -72,6 +72,7 @@ private slots:
     void timeout();
     void setMedia_data();
     void setMedia();
+    void setConsecutiveMedia();
     void setInvalidMedia();
     void playlist();
     void multiplePlaylists();
@@ -401,6 +402,62 @@ void tst_QMediaImageViewer::setMedia()
 
     QTestEventLoop::instance().enterLoop(2);
 
+    QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
+}
+
+void tst_QMediaImageViewer::setConsecutiveMedia()
+{
+    QMediaContent fileMedia1(imageUri("image.png"));
+    QMediaContent fileMedia2(imageUri("coverart.png"));
+    QMediaContent networkMedia1(QUrl(QLatin1String("test://image/png?id=1")));
+    QMediaContent networkMedia2(QUrl(QLatin1String("test://image/png?id=2")));
+
+    QMediaImageViewer viewer;
+
+    connect(&viewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
+            &QTestEventLoop::instance(), SLOT(exitLoop()));
+
+    viewer.setMedia(fileMedia1);
+    viewer.setMedia(fileMedia2);
+
+    QCOMPARE(viewer.media(), fileMedia2);
+    QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
+
+    QTestEventLoop::instance().enterLoop(2);
+    QCOMPARE(viewer.media(), fileMedia2);
+    QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
+
+    QMediaImageViewerService *service = qobject_cast<QMediaImageViewerService *>(viewer.service());
+    service->setNetworkManager(m_network);
+
+    viewer.setMedia(networkMedia1);
+    viewer.setMedia(networkMedia2);
+
+    QCOMPARE(viewer.media(), networkMedia2);
+    QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
+
+    QTestEventLoop::instance().enterLoop(2);
+    QCOMPARE(viewer.media(), networkMedia2);
+    QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
+
+    viewer.setMedia(fileMedia1);
+    viewer.setMedia(networkMedia2);
+
+    QCOMPARE(viewer.media(), networkMedia2);
+    QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
+
+    QTestEventLoop::instance().enterLoop(2);
+    QCOMPARE(viewer.media(), networkMedia2);
+    QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
+
+    viewer.setMedia(networkMedia1);
+    viewer.setMedia(fileMedia2);
+
+    QCOMPARE(viewer.media(), fileMedia2);
+    QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
+
+    QTestEventLoop::instance().enterLoop(2);
+    QCOMPARE(viewer.media(), fileMedia2);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
 }
 
@@ -941,6 +998,9 @@ void tst_QMediaImageViewer::widgetControl()
         QCOMPARE(fullScreenSpy.value(1).value(0).toBool(), false);
     }
 
+    widget->show();
+    QTestEventLoop::instance().enterLoop(1);
+
     // Load an image so the viewer has some dimensions to work with.
     viewer.setMedia(QMediaContent(imageUri("image.png")));
 
@@ -954,14 +1014,24 @@ void tst_QMediaImageViewer::widgetControl()
 
     QCOMPARE(widget->sizeHint(), QSize(75, 50));
 
+    widget->update();
+    QTestEventLoop::instance().enterLoop(1);
+
     widgetControl->setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
     QCOMPARE(widgetControl->aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
+
+    QTestEventLoop::instance().enterLoop(1);
+
+    viewer.setMedia(QMediaContent());
+    QTestEventLoop::instance().enterLoop(1);
 }
 
 #ifndef QT_NO_MULTIMEDIA
 void tst_QMediaImageViewer::rendererControl()
 {
-    QtTestVideoSurface surface;
+    QtTestVideoSurface surfaceA;
+    QtTestVideoSurface surfaceB;
+    QAbstractVideoSurface *nullSurface = 0;
 
     QMediaImageViewer viewer;
 
@@ -978,8 +1048,8 @@ void tst_QMediaImageViewer::rendererControl()
             service->control(QVideoRendererControl_iid));
     QVERIFY(rendererControl != 0);
 
-    rendererControl->setSurface(&surface);
-    QCOMPARE(rendererControl->surface(), &surface);
+    rendererControl->setSurface(&surfaceA);
+    QCOMPARE(rendererControl->surface(), &surfaceA);
 
     outputControl->setOutput(QVideoOutputControl::RendererOutput);
 
@@ -993,21 +1063,62 @@ void tst_QMediaImageViewer::rendererControl()
     if (viewer.mediaStatus() != QMediaImageViewer::LoadedMedia)
         QSKIP("failed to load test image", SkipSingle);
 
-    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surfaceA.isStarted(), true);
 
-    QVideoSurfaceFormat format = surface.surfaceFormat();
+    {
+        QVideoSurfaceFormat format = surfaceA.surfaceFormat();
+        QCOMPARE(format.handleType(), QAbstractVideoBuffer::NoHandle);
+        QCOMPARE(format.pixelFormat(), QVideoFrame::Format_RGB32);
+        QCOMPARE(format.frameSize(), QSize(75, 50));
+
+        QVideoFrame frame = surfaceA.frame();
+        QCOMPARE(frame.handleType(), QAbstractVideoBuffer::NoHandle);
+        QCOMPARE(frame.pixelFormat(), QVideoFrame::Format_RGB32);
+        QCOMPARE(frame.size(), QSize(75, 50));
+    }
+    // Test clearing the output stops the video surface.
+    outputControl->setOutput(QVideoOutputControl::NoOutput);
+    QCOMPARE(surfaceA.isStarted(), false);
+
+    // Test reseting the output restarts it.
+    outputControl->setOutput(QVideoOutputControl::RendererOutput);
+    {
+        QVideoSurfaceFormat format = surfaceA.surfaceFormat();
+        QCOMPARE(format.handleType(), QAbstractVideoBuffer::NoHandle);
+        QCOMPARE(format.pixelFormat(), QVideoFrame::Format_RGB32);
+        QCOMPARE(format.frameSize(), QSize(75, 50));
+
+        QVideoFrame frame = surfaceA.frame();
+        QCOMPARE(frame.handleType(), QAbstractVideoBuffer::NoHandle);
+        QCOMPARE(frame.pixelFormat(), QVideoFrame::Format_RGB32);
+        QCOMPARE(frame.size(), QSize(75, 50));
+    }
+
+    // Test changing the surface while viewing an image stops the old surface and starts
+    // the new one and presents the image.
+    rendererControl->setSurface(&surfaceB);
+    QCOMPARE(rendererControl->surface(), &surfaceB);
+
+    QCOMPARE(surfaceA.isStarted(), false);
+    QCOMPARE(surfaceB.isStarted(), true);
+
+    QVideoSurfaceFormat format = surfaceB.surfaceFormat();
     QCOMPARE(format.handleType(), QAbstractVideoBuffer::NoHandle);
     QCOMPARE(format.pixelFormat(), QVideoFrame::Format_RGB32);
     QCOMPARE(format.frameSize(), QSize(75, 50));
 
-    QVideoFrame frame = surface.frame();
+    QVideoFrame frame = surfaceB.frame();
     QCOMPARE(frame.handleType(), QAbstractVideoBuffer::NoHandle);
     QCOMPARE(frame.pixelFormat(), QVideoFrame::Format_RGB32);
     QCOMPARE(frame.size(), QSize(75, 50));
 
+    // Test setting null media stops the surface.
     viewer.setMedia(QMediaContent());
+    QCOMPARE(surfaceB.isStarted(), false);
 
-    QCOMPARE(surface.isStarted(), false);
+    // Test the renderer control accepts a null surface.
+    rendererControl->setSurface(0);
+    QCOMPARE(rendererControl->surface(), nullSurface);
 }
 #endif
 
