@@ -47,25 +47,6 @@
 #include "qcontactdetailfilter.h"
 #include "cnttransformcontact.h"
 
-// Constants
-// To be removed. Should be defined in a header file
-#define KCntSearchResultIdLists 99
-#define KCntOpenDataBase 100 // = KCapabilityReadUserData
-
-_LIT(KCntServerExe,"CNTSRV.EXE");   // Name of the exe for the Contacts server.
-_LIT(KCntServerName,"CNTSRV");  // Name used to connect a session 
-                                // to the Contacts server.
-
-/** Maximum number of asynchronous IPC calls. */
-const TInt KAsyncMessageSlots=6;
-
-/* Contacts server version number. */ 
-const TInt KCntServerMajorVersionNumber=1;
-const TInt KCntServerMinorVersionNumber=1;
-const TInt KCntServerBuildVersionNumber=1;
-
-const TInt KGranularityRank = 8; //2^8 = 256 bytes
-const TInt KDefaultPackagerSize = 3514; //Observed Techview Golden template size.
 
 //Class documentation go here:
 /*!
