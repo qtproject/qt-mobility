@@ -2463,6 +2463,23 @@ void tst_QContactManager::relationships()
     source = cm->contact(source.localId());                      // reload the contact
     QCOMPARE(source.relationshipOrder(), orderedRelationships);  // ensure that it was persisted.
 
+    // now lets try a negative reordering test: adding relationships which don't exist in the database.
+    QContactRelationship maliciousRel;
+    maliciousRel.setFirst(source.id());
+    maliciousRel.setSecond(dest2.id());
+    maliciousRel.setRelationshipType("test-nokia-invalid-relationship-type");
+    orderedRelationships << maliciousRel;
+    source.setRelationshipOrder(orderedRelationships);
+    QVERIFY(!cm->saveContact(&source));
+    QVERIFY(cm->error() == QContactManager::InvalidRelationshipError);
+    orderedRelationships.removeOne(br3);
+    source.setRelationshipOrder(orderedRelationships);
+    QVERIFY(!cm->saveContact(&source));
+    QVERIFY(cm->error() == QContactManager::InvalidRelationshipError);
+    source.setRelationshipOrder(QList<QContactRelationship>());
+    QVERIFY(!cm->saveContact(&source));
+    QVERIFY(cm->error() == QContactManager::InvalidRelationshipError);
+
     // remove a single relationship
     QVERIFY(cm->removeRelationship(br3));
     batchRetrieve = cm->relationships(source.id(), QContactRelationshipFilter::First);
