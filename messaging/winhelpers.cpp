@@ -73,13 +73,14 @@
 #include "qmessageaccountid_p.h"
 #include "qmessage_p.h"
 #include "qmessagecontentcontainer_p.h"
-#include "qmessagefolder_p.h"
-#include "qmessageaccount_p.h"
-#include "qmessageaccountordering_p.h"
-#include "qmessageordering_p.h"
-#include "qmessageaccountfilter_p.h"
-#include "qmessagefolderfilter_p.h"
 #include "qmessagefilter_p.h"
+#include "qmessageordering_p.h"
+#include "qmessagefolder_p.h"
+#include "qmessagefolderfilter_p.h"
+#include "qmessagefolderordering_p.h"
+#include "qmessageaccount_p.h"
+#include "qmessageaccountfilter_p.h"
+#include "qmessageaccountordering_p.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -1717,6 +1718,43 @@ namespace WinHelpers {
         const QMessageAccountOrdering *_ordering;
         MapiStorePtr _storePtr;
     };
+
+    class FolderSortHelper {
+    public:
+        FolderSortHelper(const QMessageFolderOrdering *ordering, MapiFolderPtr folderPtr, const QMessageFolder &folder)
+            :_ordering(ordering),
+             _folderPtr(folderPtr),
+             _folder(folder)
+        {}
+
+        MapiFolderPtr mapiFolderPtr()
+        {
+            return _folderPtr;
+        }
+
+        QMessageFolder folder()
+        {
+            return _folder;
+        }
+
+        FolderSortHelper& operator=(const FolderSortHelper &other) {
+            if (&other == this)
+                return *this;
+            _ordering = other._ordering;
+            _folderPtr = other._folderPtr;
+            _folder = other._folder;
+            return *this;
+        }
+
+        bool operator<(const FolderSortHelper &other) const
+        {
+            return QMessageFolderOrderingPrivate::lessthan(*_ordering, _folder, other._folder);
+        }
+    private:
+        const QMessageFolderOrdering *_ordering;
+        MapiFolderPtr _folderPtr;
+        QMessageFolder _folder;
+    };
 }
 
 using namespace WinHelpers;
@@ -2476,7 +2514,7 @@ QList<MapiFolderPtr> MapiStore::filterFolders(QMessageStore::ErrorCode *lastErro
 
     QList<MapiFolderPtr> result;
 
-#ifndef _WIN32_WCE
+#if 0 //(was ifndef _WIN32_WCE) TODO: fix issue with GetHierarchyTable only returning top level folders
     MapiFolderPtr root(rootFolder(lastError));
     if (*lastError == QMessageStore::NoError) {
         IMAPITable *folderTable(0);
@@ -3121,6 +3159,11 @@ MapiStorePtr MapiSession::findStore(QMessageStore::ErrorCode *lastError, const Q
 template<typename Predicate, typename Ordering>
 QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastError, Predicate predicate, Ordering ordering, uint limit, uint offset, bool cachedMode) const
 {
+    if (!predicate._filter.isSupported()) {
+        *lastError = QMessageStore::ConstraintFailure;
+        return QList<MapiStorePtr>();
+    }
+
     QList<MapiStorePtr> result;
     if (!_mapiSession) {
         Q_ASSERT(_mapiSession);
@@ -3223,6 +3266,10 @@ QList<MapiStorePtr> MapiSession::allStores(QMessageStore::ErrorCode *lastError, 
 
 QList<MapiFolderPtr> MapiSession::filterFolders(QMessageStore::ErrorCode *lastError, const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset, bool cachedMode) const
 {
+    if (!filter.isSupported()) {
+        *lastError = QMessageStore::ConstraintFailure;
+        return QList<MapiFolderPtr>();
+    }
     Q_UNUSED(ordering)
 
     QList<MapiFolderPtr> result;
@@ -3234,6 +3281,24 @@ QList<MapiFolderPtr> MapiSession::filterFolders(QMessageStore::ErrorCode *lastEr
 
     foreach (const MapiStorePtr &store, filterStores(lastError, filter, cachedMode)) {
         result.append(store->filterFolders(lastError, filter, ordering));
+    }
+
+    if (!ordering.isEmpty()) {
+        QList<FolderSortHelper> folderList;
+        foreach (MapiFolderPtr folderPtr, result) {
+            QMessageFolder orderFolder(folder(lastError, folderPtr->id()));
+            if (*lastError != QMessageStore::NoError) {
+                folderList.clear();
+                break;
+            }
+            folderList.append(FolderSortHelper(&ordering, folderPtr, orderFolder));
+        }
+        qSort(folderList.begin(), folderList.end());
+        result.clear();
+        foreach (FolderSortHelper helper, folderList) {
+            result.append(helper.mapiFolderPtr());
+        }
+        folderList.clear();
     }
 
     // TODO: do better than this
@@ -4246,6 +4311,11 @@ QByteArray MapiSession::attachmentData(QMessageStore::ErrorCode *lastError, cons
 
 QMessageIdList MapiSession::queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset, const QString &body, QMessageDataComparator::Options options) const
 {
+    if (!filter.isSupported()) {
+        *lastError = QMessageStore::ConstraintFailure;
+        return QMessageIdList();
+    }
+
     QList<FolderHeapNodePtr> folderNodes;
     QMessageFilter processedFilter(QMessageFilterPrivate::preprocess(filter));
 
