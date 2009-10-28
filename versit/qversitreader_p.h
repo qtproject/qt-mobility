@@ -67,8 +67,22 @@ public:
     ~QVersitReaderPrivate();
     
     QVersitDocument parseVersitDocument(QByteArray& text);
-    QVersitProperty parseNextVersitProperty(QByteArray& text);
-    bool containsSupportedVersion(const QVersitProperty& property) const;    
+
+    QVersitProperty parseNextVersitProperty(
+        QVersitDocument::VersitType versitType,
+        QByteArray& text);
+
+    void parseVCard21PropertyValue(
+        QByteArray& text,
+        QVersitProperty& property);
+
+    void parseVCard30PropertyValue(
+        QByteArray& text,
+        QVersitProperty& property);
+
+    bool setVersionFromProperty(
+        QVersitDocument& document,
+        const QVersitProperty& property) const;
     
     QIODevice* mIoDevice;
     QList<QVersitDocument> mVersitDocuments;

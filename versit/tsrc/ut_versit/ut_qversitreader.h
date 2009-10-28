@@ -60,8 +60,9 @@ private slots: // Tests
     void testDevice();
     void testStart();
     void testResult();
-    void testContainsSupportedVersion();
-    void testParseNextVersitProperty();
+    void testSetVersionFromProperty();
+    void testParseNextVersitPropertyVCard21();
+    void testParseNextVersitPropertyVCard30();
     void testParseVersitDocument();     
 
 private: // Data
