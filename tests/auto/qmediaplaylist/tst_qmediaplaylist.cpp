@@ -61,6 +61,7 @@ private slots:
     void saveAndLoad();
     void playbackMode();
     void playbackMode_data();
+    void shuffle();
 
 private:
     QMediaContent content1;
@@ -323,6 +324,27 @@ void tst_QMediaPlaylist::playbackMode()
     playlist.setCurrentPosition(pos);
     playlist.previous();
     QCOMPARE(playlist.currentPosition(), expectedPrevious);
+}
+
+void tst_QMediaPlaylist::shuffle()
+{
+    QMediaPlaylist playlist;
+    QList<QMediaContent> contentList;
+
+    for (int i=0; i<100; i++) {
+        QMediaContent content(QUrl(QString::number(i)));
+        contentList.append(content);
+        playlist.appendItem(content);
+    }
+
+    playlist.shuffle();
+
+    QList<QMediaContent> shuffledContentList;
+    for (int i=0; i<playlist.size(); i++)
+        shuffledContentList.append(playlist.media(i));
+
+    QVERIFY(contentList != shuffledContentList);
+
 }
 
 QTEST_MAIN(tst_QMediaPlaylist)
