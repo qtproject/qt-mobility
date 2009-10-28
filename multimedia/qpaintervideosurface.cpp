@@ -607,6 +607,7 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::start(const QVideoSurfac
         case QVideoFrame::Format_RGB32:
         case QVideoFrame::Format_RGB565:
         case QVideoFrame::Format_ARGB32:
+            m_yuv = false;
             m_textureCount = 1;
             program = qt_arbfp_rgbShaderProgram;
             break;
@@ -788,7 +789,8 @@ static const char *qt_glsl_rgbShaderProgram =
         "void main(void)\n"
         "{\n"
         "    highp vec4 color = vec4(texture2D(texRgb, gl_TexCoord[0].st).rgb, 1.0);\n"
-        "    gl_FragColor = colorMatrix * color;\n"
+        "    color = colorMatrix * color;\n"
+        "    gl_FragColor = vec4(color.rgb, texture2D(texRgb, gl_TexCoord[0].st).a);\n"
         "}\n";
 
 // Paints a YUV420P or YV12 frame.
@@ -799,7 +801,11 @@ static const char *qt_glsl_yuvPlanarShaderProgram =
         "uniform mediump mat4 colorMatrix;\n"
         "void main(void)\n"
         "{\n"
-        "    highp vec4 color = vec4(texture2D(texY, gl_TexCoord[0].st).r, texture2D(texU, gl_TexCoord[0].st).r, texture2D(texV, gl_TexCoord[0].st).r, 1.0);\n"
+        "    highp vec4 color = vec4(\n"
+        "           texture2D(texY, gl_TexCoord[0].st).r,\n"
+        "           texture2D(texU, gl_TexCoord[0].st).r,\n"
+        "           texture2D(texV, gl_TexCoord[0].st).r,\n"
+        "           1.0);\n"
         "    gl_FragColor = colorMatrix * color;\n"
         "}\n";
 
@@ -820,6 +826,7 @@ private:
 
 QVideoSurfaceGlslPainter::QVideoSurfaceGlslPainter(QGLContext *context)
     : QVideoSurfaceGLPainter(context)
+    , m_program(context)
 {
     m_context->doneCurrent();
 
@@ -877,6 +884,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::start(const QVideoSurface
         case QVideoFrame::Format_RGB32:
         case QVideoFrame::Format_RGB565:
         case QVideoFrame::Format_ARGB32:
+            m_yuv = false;
             m_textureCount = 1;
             fragmentProgram = qt_glsl_rgbShaderProgram;
             break;
