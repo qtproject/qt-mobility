@@ -170,7 +170,7 @@ bool QMessageAccountFilterPrivate::matchesStore(const QMessageAccountFilter &fil
         result = false;
         Q_ASSERT(f->_arguments.count());
         foreach(QMessageAccountFilter *subfilter, f->_arguments) {
-            if (!f->matchesStore(*subfilter, store)) {
+            if (f->matchesStore(*subfilter, store)) {
                 result = true;
                 break;
             }
@@ -266,6 +266,12 @@ QMessageAccountFilter QMessageAccountFilter::operator|(const QMessageAccountFilt
 
 const QMessageAccountFilter& QMessageAccountFilter::operator&=(const QMessageAccountFilter& other)
 {
+    if (!d_ptr->_valid || !other.d_ptr->_valid) {
+        QMessageAccountFilter result;
+        result.d_ptr->_valid = false;
+        *this = result;
+        return *this;
+    }
 
     if (&other == this)
         return *this;
@@ -283,13 +289,6 @@ const QMessageAccountFilter& QMessageAccountFilter::operator&=(const QMessageAcc
         return *this;
     }
 
-    if (!d_ptr->_valid || !other.d_ptr->_valid) {
-        QMessageAccountFilter result;
-        result.d_ptr->_valid = false;
-        *this = result;
-        return *this;
-    }
-
     if (d_ptr->_operator != QMessageAccountFilterPrivate::And) {
         QMessageAccountFilter result;
         result.d_ptr->_operator = QMessageAccountFilterPrivate::And;
@@ -302,6 +301,13 @@ const QMessageAccountFilter& QMessageAccountFilter::operator&=(const QMessageAcc
 
 const QMessageAccountFilter& QMessageAccountFilter::operator|=(const QMessageAccountFilter& other)
 {
+    if (!d_ptr->_valid || !other.d_ptr->_valid) {
+        QMessageAccountFilter result;
+        result.d_ptr->_valid = false;
+        *this = result;
+        return *this;
+    }
+
     if (&other == this)
         return *this;
     if (isEmpty())
@@ -315,13 +321,6 @@ const QMessageAccountFilter& QMessageAccountFilter::operator|=(const QMessageAcc
         return *this;
     }
     if (QMessageAccountFilterPrivate::isNonMatching(other)) {
-        return *this;
-    }
-
-    if (!d_ptr->_valid || !other.d_ptr->_valid) {
-        QMessageAccountFilter result;
-        result.d_ptr->_valid = false;
-        *this = result;
         return *this;
     }
 
