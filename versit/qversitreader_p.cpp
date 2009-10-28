@@ -65,13 +65,14 @@ QVersitDocument QVersitReaderPrivate::parseVersitDocument(QByteArray& text)
     mDocumentNestingLevel++;
     QVersitDocument document;
     text = text.mid(VersitUtils::countLeadingWhiteSpaces(text));
-    QVersitProperty property = parseNextVersitProperty(text);
+    QVersitProperty property =
+        parseNextVersitProperty(document.versitType(),text);
     if (property.name() == QString::fromAscii("BEGIN") && 
         property.value().trimmed().toUpper() == "VCARD") {
         while (property.name().length() > 0 && 
                property.name() != QString::fromAscii("END")) {
-            property = parseNextVersitProperty(text);   
-            if (!containsSupportedVersion(property)) {
+            property = parseNextVersitProperty(document.versitType(),text);
+            if (!setVersionFromProperty(document,property)) {
                 mDocumentNestingLevel--;
                 return QVersitDocument(); // return an empty document
             }
@@ -87,7 +88,9 @@ QVersitDocument QVersitReaderPrivate::parseVersitDocument(QByteArray& text)
 /*!
  * Parses a versit document and returns whether parsing succeeded.
  */
-QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(QByteArray& text)
+QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(
+    QVersitDocument::VersitType versitType,
+    QByteArray& text)
 {
     QVersitProperty property;
     QPair<QStringList,QString> groupsAndName =
@@ -95,13 +98,28 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(QByteArray& text)
     property.setGroups(groupsAndName.first);
     property.setName(groupsAndName.second);
     property.setParameters(VersitUtils::extractPropertyParams(text));
-    text = VersitUtils::extractPropertyValue(text); 
+    text = VersitUtils::extractPropertyValue(text);
+    if (versitType == QVersitDocument::VCard21)
+        parseVCard21PropertyValue(text,property);
+    else if (versitType == QVersitDocument::VCard30)
+        parseVCard30PropertyValue(text,property);
+    else
+        return QVersitProperty(); // type not supported
+    return property;
+}
+
+/*!
+ * Parses the property value according to vCard 2.1 syntax.
+ */
+void QVersitReaderPrivate::parseVCard21PropertyValue(
+    QByteArray& text,
+    QVersitProperty& property)
+{
     if (property.name() == QString::fromAscii("AGENT")) {
         if (mDocumentNestingLevel >= MAX_VERSIT_DOCUMENT_NESTING_DEPTH)
-            return property; // To prevent infinite recursion
+            return; // To prevent infinite recursion
         property.setEmbeddedDocument(parseVersitDocument(text));
-    }
-    else {
+    } else {
         int crlfPos = -1;
         QString encoding(QString::fromAscii("ENCODING"));
         QString quotedPrintable(QString::fromAscii("QUOTED-PRINTABLE"));
@@ -112,8 +130,7 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(QByteArray& text)
             // Remove the encoding parameter as the value is now decoded
             property.removeParameter(encoding,quotedPrintable);
             property.setValue(value);
-        }
-        else {
+        } else {
             crlfPos = text.indexOf("\r\n");
             QByteArray value = text.left(crlfPos);
             QString base64(QString::fromAscii("BASE64"));
@@ -126,13 +143,34 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(QByteArray& text)
         }
         text = text.mid(crlfPos+2); // +2 is for skipping the CRLF
     }
-    return property;
 }
 
 /*!
- * Checks whether the VERSION property contains a supported version.
+ * Parses the property value according to vCard 3.0 syntax.
  */
-bool QVersitReaderPrivate::containsSupportedVersion(const QVersitProperty& property) const
+void QVersitReaderPrivate::parseVCard30PropertyValue(
+    QByteArray& text,
+    QVersitProperty& property)
+{
+    int crlfPos = text.indexOf("\r\n");
+    QByteArray value = text.left(crlfPos);
+    VersitUtils::removeBackSlashEscaping(value);
+    if (property.name() == QString::fromAscii("AGENT")) {
+        if (mDocumentNestingLevel >= MAX_VERSIT_DOCUMENT_NESTING_DEPTH)
+            return; // To prevent infinite recursion
+        property.setEmbeddedDocument(parseVersitDocument(value));
+    } else {
+        property.setValue(value);
+    }
+    text = text.mid(crlfPos+2); // +2 is for skipping the CRLF
+}
+
+/*!
+ * Sets version to \a document if \a property contains a supported version.
+ */
+bool QVersitReaderPrivate::setVersionFromProperty(
+    QVersitDocument& document,
+    const QVersitProperty& property) const
 {
     bool valid = true;
     if (property.name() == QString::fromAscii("VERSION")) {
@@ -140,7 +178,13 @@ bool QVersitReaderPrivate::containsSupportedVersion(const QVersitProperty& prope
         if (property.parameters().contains(
                 QString::fromAscii("ENCODING"),QString::fromAscii("BASE64")))
             value = QByteArray::fromBase64(value);
-        valid = (value == "2.1");
+        if (value == "2.1") {
+            document.setVersitType(QVersitDocument::VCard21);
+        } else if (value == "3.0") {
+            document.setVersitType(QVersitDocument::VCard30);         
+        } else {
+            valid = false;
+        }
     } 
     return valid;
 }

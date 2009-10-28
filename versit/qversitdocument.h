@@ -58,7 +58,8 @@ public:
     QVersitDocument& operator=(const QVersitDocument& other);
     
     enum VersitType {
-        VCard21 = 0
+        VCard21,
+        VCard30
     };
 
     // metadata about the versit document itself.

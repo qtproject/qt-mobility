@@ -38,37 +38,13 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QCONTACTSYMBIANTRANSFORMERROR_H
+#define QCONTACTSYMBIANTRANSFORMERROR_H
 
-#ifndef UT_QVERSITREADER_H
-#define UT_QVERSITREADER_H
+#include <e32err.h>
+#include "qcontactmanager.h"
 
-#include <QObject>
+void qContactSymbianTransformError(TInt symbianError, QContactManager::Error& qtError);
 
-class QVersitReader;
-class QVersitReaderPrivate;
+#endif
 
-
-class UT_QVersitReader : public QObject                 
-{
-     Q_OBJECT
-    
-private slots: // Tests
-
-    void init();
-    void cleanup();
-    
-    void testDevice();
-    void testStart();
-    void testResult();
-    void testSetVersionFromProperty();
-    void testParseNextVersitPropertyVCard21();
-    void testParseNextVersitPropertyVCard30();
-    void testParseVersitDocument();     
-
-private: // Data
-
-    QVersitReader* mReader;
-    QVersitReaderPrivate* mReaderPrivate;
-};
-
-#endif // UT_VERSITREADER_H

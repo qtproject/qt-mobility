@@ -44,6 +44,7 @@
 
 //user includes
 #include "cntsrvconnection.h"
+#include "qcontactsymbiantransformerror.h"
 
 // Constants
 // To be removed. Should be defined in a header file
@@ -97,7 +98,7 @@ QList<QContactLocalId> CntSrvConnection::searchContacts(const QString& sqlQuery,
     QList<QContactLocalId> list;
     TPtrC queryPtr(reinterpret_cast<const TUint16*>(sqlQuery.utf16()));
     TRAPD(err, list = searchContactsL(queryPtr));
-    transformError(err, error);
+    qContactSymbianTransformError(err, error);
     return list;
 }
 
@@ -236,63 +237,3 @@ QList<QContactLocalId> CntSrvConnection::UnpackCntIdArrayL()
     }
     return list;
 }
-
-/*! CntTransform a Symbian contact error id to QContactManager::Error.
- *
- * \param symbianError Symbian error.
- * \param QtError Qt error.
-*/
-void CntSrvConnection::transformError(TInt symbianError, 
-                                      QContactManager::Error& qtError)
-{
-    switch(symbianError)
-    {
-        case KErrNone:
-        {
-            qtError = QContactManager::NoError;
-            break;
-        }
-        case KErrNotFound:
-        {
-            qtError = QContactManager::DoesNotExistError;
-            break;
-        }
-        case KErrAlreadyExists:
-        {
-            qtError = QContactManager::AlreadyExistsError;
-            break;
-        }
-        case KErrLocked:
-        {
-            qtError = QContactManager::LockedError;
-            break;
-        }
-        case KErrAccessDenied:
-        case KErrPermissionDenied:
-        {
-            qtError = QContactManager::PermissionsError;
-            break;
-        }
-        case KErrNoMemory:
-        {
-            qtError = QContactManager::OutOfMemoryError;
-            break;
-        }
-        case KErrNotSupported:
-        {
-            qtError = QContactManager::NotSupportedError;
-            break;
-        }
-        case KErrArgument:
-        {
-            qtError = QContactManager::BadArgumentError;
-            break;
-        }
-        default:
-        {
-            qtError = QContactManager::UnspecifiedError;
-            break;
-        }
-    }
-}
-

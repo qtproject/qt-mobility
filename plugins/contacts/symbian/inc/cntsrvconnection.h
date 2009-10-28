@@ -74,7 +74,6 @@ private:
     TVersion Version() const;
     TDes8& GetReceivingBufferL(TInt aSize=0);
     QList<QContactLocalId> UnpackCntIdArrayL();
-    void transformError(TInt symbianError, QContactManager::Error& qtError);
 
 private:
     /* member varibles */ 
