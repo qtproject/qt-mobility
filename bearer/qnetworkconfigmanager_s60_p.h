@@ -99,12 +99,13 @@ private:
                                          QNetworkConfiguration::StateFlags newState);
     bool changeConfigurationStateAtMaxTo(QExplicitlySharedDataPointer<QNetworkConfigurationPrivate>& sharedData,
                                           QNetworkConfiguration::StateFlags newState);
+#ifdef SNAP_FUNCTIONALITY_AVAILABLE
+    QNetworkConfigurationPrivate* configFromConnectionMethodL(RCmConnectionMethod& connectionMethod);
+#else
     bool readNetworkConfigurationValuesFromCommsDb(
             TUint32 aApId, QNetworkConfigurationPrivate* apNetworkConfiguration);
     void readNetworkConfigurationValuesFromCommsDbL(
             TUint32 aApId, QNetworkConfigurationPrivate* apNetworkConfiguration);
-#ifdef SNAP_FUNCTIONALITY_AVAILABLE
-    QNetworkConfigurationPrivate* configFromConnectionMethodL(RCmConnectionMethod& connectionMethod);
 #endif    
     
     void updateConfigurationsL();
@@ -143,6 +144,7 @@ private: // Data
     TBool              iWaitingCommsDatabaseNotifications;
     TBool              iOnline;
     TBool              iInitOk;
+    TBool              iUpdateGoingOn;
 
     
     AccessPointsAvailabilityScanner* ipAccessPointsAvailabilityScanner;

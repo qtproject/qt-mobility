@@ -49,9 +49,6 @@
 
 #include <QtCore/qdebug.h>
 
-#include <winsock2.h>
-#include <mswsock.h>
-#undef interface
 #include "qnetworksessionengine_win_p.h"
 
 QT_BEGIN_NAMESPACE
@@ -413,7 +410,7 @@ QNetworkConfigurationPrivate *QNlaThread::parseQuerySet(const WSAQUERYSET *query
 {
     QNetworkConfigurationPrivate *cpPriv = new QNetworkConfigurationPrivate;
 
-    cpPriv->name = QString::fromUtf16(querySet->lpszServiceInstanceName);
+    cpPriv->name = QString::fromWCharArray(querySet->lpszServiceInstanceName);
     cpPriv->isValid = true;
     cpPriv->id = QString::number(qHash(QLatin1String("NLA:") + cpPriv->name));
     cpPriv->state = QNetworkConfiguration::Defined;

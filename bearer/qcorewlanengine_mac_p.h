@@ -39,52 +39,62 @@
 **
 ****************************************************************************/
 
-#ifndef BEARERMONITOR_H
-#define BEARERMONITOR_H
+#ifndef QCOREWLANENGINE_P_H
+#define QCOREWLANENGINE_P_H
 
-#include <qnetworkconfigmanager.h>
-#include <qnetworksession.h>
-#if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE)	
-#include "ui_bearermonitor_240_320.h"
-#else
-#include "ui_bearermonitor_640_480.h"
-#endif
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-class SessionWidget;
+#include "qnetworksessionengine_p.h"
+#include <QMap>
+#include <QTimer>
+QT_BEGIN_NAMESPACE
 
-class BearerMonitor : public QWidget, public Ui_BearerMonitor
+class QNetworkConfigurationPrivate;
+
+class QCoreWlanEngine : public QNetworkSessionEngine
 {
     Q_OBJECT
 
 public:
-    BearerMonitor(QWidget *parent = 0);
-    ~BearerMonitor();
+    QCoreWlanEngine(QObject *parent = 0);
+    ~QCoreWlanEngine();
 
-private slots:
-    void configurationAdded(const QNetworkConfiguration &config, QTreeWidgetItem *parent = 0);
-    void configurationRemoved(const QNetworkConfiguration &config);
-    void configurationChanged(const QNetworkConfiguration &config);
-    void updateSnapConfiguration(QTreeWidgetItem *parent, const QNetworkConfiguration &snap);
-    void updateConfigurations();
+    QList<QNetworkConfigurationPrivate *> getConfigurations(bool *ok = 0);
+    QString getInterfaceFromId(const QString &id);
+    bool hasIdentifier(const QString &id);
 
-    void onlineStateChanged(bool isOnline);
+    QString bearerName(const QString &id);
 
-#ifdef Q_OS_WIN
-    void registerNetwork();
-    void unregisterNetwork();
-#endif
+    void connectToId(const QString &id);
+    void disconnectFromId(const QString &id);
 
-    void showConfigurationFor(QTreeWidgetItem *item);
+    void requestUpdate();
 
-    void createSessionFor(QTreeWidgetItem *item);
-    void createNewSession();
-    void deleteSession();
-
-    void performScan();
+    static QCoreWlanEngine *instance();
+    static bool getAllScInterfaces();
 
 private:
-    QNetworkConfigurationManager manager;
-    QList<SessionWidget *> sessionWidgets;
+    bool isWifiReady(const QString &dev);
+    QMap<uint, QString> configurationInterface;
+    QTimer pollTimer;
+    QList<QNetworkConfigurationPrivate *> scanForSsids(const QString &interfaceName);
+
+    QList<QNetworkConfigurationPrivate *> getWlanProfiles(const QString &interfaceName);
+
+    QList<QNetworkConfigurationPrivate *> getWifiConfigurations();
+    bool isKnownSsid(const QString &interfaceName, const QString &ssid);
 };
 
-#endif //BEARERMONITOR_H
+QT_END_NAMESPACE
+
+#endif
+

@@ -222,6 +222,7 @@ void BearerEx::configurationChanged(const QNetworkConfiguration & config)
 void BearerEx::configurationsUpdateCompleted()
 {
     QMessageBox msgBox;
+    msgBox.setStandardButtons(QMessageBox::Close);
     msgBox.setText("Configurations update completed.");
     msgBox.exec();
 }
@@ -331,6 +332,7 @@ void SessionTab::on_sendRequestButton_clicked()
         m_httpRequestOngoing = true;
     } else {
         QMessageBox msgBox;
+        msgBox.setStandardButtons(QMessageBox::Close);
         msgBox.setText("QHttp not created.\nCreate QHttp First.");
         msgBox.exec();
     }
@@ -512,6 +514,7 @@ void SessionTab::error(QNetworkSession::SessionError error)
 {
     QListWidgetItem* listItem = new QListWidgetItem();
     QMessageBox msgBox;
+    msgBox.setStandardButtons(QMessageBox::Close);
     
     QString errorString;
     switch (error)
@@ -544,6 +547,7 @@ void SessionTab::done(bool error)
     m_httpRequestOngoing = false;
 
     QMessageBox msgBox;
+    msgBox.setStandardButtons(QMessageBox::Close);
     if (error) {
         msgBox.setText("HTTP request failed.");
     } else {

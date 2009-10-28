@@ -13,7 +13,7 @@ SUBDIRS += databasemanager \                #service framework
 
 SUBDIRS += qnetworkconfigmanager \          #Bearer management
            qnetworkconfiguration \
-           qnetworksession \
+           qnetworksession
 
 SUBDIRS += qgeocoordinate \                 #Location
           qgeopositioninfo \
@@ -23,6 +23,7 @@ SUBDIRS += qgeocoordinate \                 #Location
           qgeoareamonitor \
           qlocationutils \
           qnmeapositioninfosource 
+
 symbian:SUBDIRS += qgeopositioninfosource_s60 
 
 SUBDIRS += qvaluespace \                           #Publish and Subscribe
