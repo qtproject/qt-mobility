@@ -2375,6 +2375,7 @@ void tst_QContactManager::relationships()
     // now refresh the contacts
     dest3 = cm->contact(dest3.localId());
     dest2 = cm->contact(dest2.localId());
+    source = cm->contact(source.localId());
 
     // and test again.
     QVERIFY(!dest3.relationships().contains(customRelationshipOne));
@@ -2383,6 +2384,9 @@ void tst_QContactManager::relationships()
         QVERIFY(dest3.relationships().contains(customRelationshipTwo));
     }
     QVERIFY(dest2.relatedContacts().contains(source.id()));
+    QVERIFY(dest2.relatedContacts(availableRelationshipTypes.at(0)).contains(source.id()));
+    QVERIFY(dest2.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::First).contains(source.id()));
+    QVERIFY(dest2.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::Second).isEmpty());
     QVERIFY(dest2.relationships().contains(customRelationshipOne));
     if (availableRelationshipTypes.size() > 1) {
         QVERIFY(!dest2.relationships().contains(customRelationshipTwo));
@@ -2393,6 +2397,7 @@ void tst_QContactManager::relationships()
         QVERIFY(!dest3.relationships(availableRelationshipTypes.at(0)).contains(customRelationshipTwo));
         QVERIFY(dest3.relationships(availableRelationshipTypes.at(1)).contains(customRelationshipTwo));
         QVERIFY(!dest3.relationships(availableRelationshipTypes.at(1)).contains(customRelationshipOne));
+        QVERIFY(dest3.relatedContacts(availableRelationshipTypes.at(1)).contains(source.id()));
     }
 
     QVERIFY(dest2.relationships(availableRelationshipTypes.at(0)).contains(customRelationshipOne));
@@ -2414,6 +2419,12 @@ void tst_QContactManager::relationships()
     }
     QVERIFY(!dest2.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::Second).contains(source.id()));
     QVERIFY(dest2.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::First).contains(source.id()));
+
+    QVERIFY(source.relatedContacts(QString(), QContactRelationshipFilter::First).isEmpty()); // source is always the first, so this should be empty.
+    QVERIFY(source.relatedContacts(QString(), QContactRelationshipFilter::Second).contains(dest2.id()));
+    QVERIFY(source.relatedContacts(QString(), QContactRelationshipFilter::Either).contains(dest2.id()));
+    QVERIFY(source.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::Second).contains(dest2.id()));
+    QVERIFY(source.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::First).isEmpty());
 
     // test arbitrary relationship types.
     if (cm->information()->hasFeature(QContactManagerInfo::ArbitraryRelationshipTypes)) {
