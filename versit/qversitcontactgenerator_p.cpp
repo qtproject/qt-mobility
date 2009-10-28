@@ -161,7 +161,7 @@ QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& 
         } else if (property.name() == QString::fromAscii(versitAnniversaryId)) {
             detail = createAnniversary(property);
         } else if (property.name() == QString::fromAscii(versitPhotoId)) {
-            detail = createAvatar(property, versitDocument);
+            detail = createImageAvatar(property, versitDocument);
         } else if (property.name() == QString::fromAscii(versitBirthdayId)) {
             detail = createBirthday(property);
         } else if (property.name() == QString::fromAscii(versitNicknameId)||
@@ -174,6 +174,8 @@ QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& 
         } else if (property.name() == QString::fromAscii(versitSpouseId) ||
                    property.name() == QString::fromAscii(versitChildrenId)){
             detail = createFamily(property,contact);
+        } else if (property.name() == QString::fromAscii(versitSoundId)){
+            detail = createSoundAvatar(property,versitDocument);
         } else {
             detail = createNameValueDetail(property);
         }
@@ -263,21 +265,15 @@ QContactDetail* QVersitContactGeneratorPrivate::createOrganization(
         QByteArray orgUnit = value.mid(firstSemic+1,value.size());
         org->setDepartment(QString::fromAscii(orgUnit));
     } else if (property.name() == QString::fromAscii(versitLogoId)) {
-        QString logoFileName;
-        const QList<QVersitProperty> properties = versitDocument.properties();
-        QString orgName(mImagePath);
-        orgName.append(QString::fromAscii("/"));
-        foreach (const QVersitProperty& orgProperty, properties) {
-            if (orgProperty.name() == QString::fromAscii(versitOrganizationId)) {
-                QByteArray value = orgProperty.value();
-                QString name = value.left(value.indexOf(";"));
-                orgName.append(name);
-                break;
-            }
-        }
-        logoFileName = saveImage(property, orgName);
-        if (!logoFileName.isEmpty()) {
-            org->setLogo(logoFileName);
+        const QString extension =
+            property.parameters().value(QString::fromAscii(versitType)).toLower();
+        const QString encoding =
+            property.parameters().value(QString::fromAscii(versitEncoding));
+        QString fileName = saveFile(createFileName(versitDocument,extension,versitOrganizationId),
+                            property.value(),
+                            encoding);
+        if (!fileName.isEmpty()) {
+            org->setLogo(fileName);
         } else {
             delete org;
             org = 0;
@@ -285,8 +281,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createOrganization(
     } else {
         delete org;
         org = 0;
-    }
-    
+    }    
     return org;
 }
 
@@ -377,8 +372,8 @@ QContactDetail* QVersitContactGeneratorPrivate::createOnlineAccount(
 /*!
  * Creates a QContactAvatar from \a property
  */
-QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
-    const QVersitProperty& property, const QVersitDocument& versitDocument) const
+QContactDetail* QVersitContactGeneratorPrivate::createImageAvatar(
+    const QVersitProperty& property, const QVersitDocument& doc) const
 {
     QString fileName;
 
@@ -388,78 +383,87 @@ QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
         fileName = QString::fromAscii(property.value());
     } else {
         // the photo will be saved to the file system
-        const QList<QVersitProperty> properties = versitDocument.properties();
-        foreach(const QVersitProperty& nameProperty, properties) {
-            if (nameProperty.name() == QString::fromAscii(versitNameId)) {
-                QString imgName(mImagePath);
-                QList<QByteArray> values = nameProperty.value().split(';');
-                imgName.append(QString::fromAscii("/"));
-                imgName.append(takeFirst(values));
-                imgName.append(takeFirst(values));
-                fileName = saveImage(property, imgName);
-                break;
-            }
-        }
+        // Image format
+        const QString extension =
+            property.parameters().value(QString::fromAscii(versitType)).toLower();
+        const QString encoding =
+            property.parameters().value(QString::fromAscii(versitEncoding));
+        fileName = saveFile(createFileName(doc,extension),
+                            property.value(),
+                            encoding);
     }
-
+    QContactAvatar* avatar = 0;
     if (!fileName.isEmpty()) {
-        QContactAvatar* avatar = new QContactAvatar();
+        avatar = new QContactAvatar();
         avatar->setAvatar(fileName);
-        avatar->setSubType(QContactAvatar::SubTypeImage);
-        return avatar;
-    } else {
-        return 0;
+        avatar->setSubType(QContactAvatar::SubTypeImage);        
     }
+    return avatar;
 }
 
 /*!
- * Saves the image.
- * Returns the image file name (including the path) if the image was successfully saved;
- * otherwise returns a empty string.
- * The image is saved with the following name:
- * <imageName>_<randomNumber>.<ext>
+ * Creates a QContactAvatar from \a property
  */
-QString QVersitContactGeneratorPrivate::saveImage(const QVersitProperty& imageProperty,
-                                                  QString& imageName) const
+QContactDetail* QVersitContactGeneratorPrivate::createSoundAvatar(
+        const QVersitProperty& property, const QVersitDocument& doc) const
 {
-    QString ret;
-
-    if (mImagePath.isEmpty()) {
-        return ret;
+    QString fileName;    
+    QString extension;
+    QString encoding;
+    const QMultiHash<QString,QString> params = property.parameters();
+    foreach(const QString key,params.keys()){
+        const QString value = params.value(key);
+        if(key == QString::fromAscii(versitValue) && value == QString::fromAscii("URL")){
+            fileName = QString::fromAscii(property.value());
+            break;
+        }else if(key == QString::fromAscii(versitType)){
+            if(value == QString::fromAscii("WAVE")){
+                extension = QString::fromAscii("wav");
+            }else if(value == QString::fromAscii("PCM")){
+                extension = QString::fromAscii("pcm");
+            }else if(value == QString::fromAscii("AIFF")){
+                extension = QString::fromAscii("aiff");
+            }
+        }else if(key == QString::fromAscii(versitEncoding) &&
+                 value == QString::fromAscii("BASE64")){
+            encoding = value;
+        }
+    }
+    if(!extension.isEmpty()){
+        fileName = saveFile(createFileName(doc,extension),property.value(),encoding);
     }
 
-    imageName.append(QString::fromAscii("_"));
-    imageName.append(QString::number(qrand()));
+    QContactAvatar* avatar = 0;
+    if (!fileName.isEmpty()) {
+        avatar = new QContactAvatar();
+        avatar->setAvatar(fileName);
+        avatar->setSubType(QContactAvatar::SubTypeAudioRingtone);
+    }
+    return avatar;
+}
 
-    imageName.append(QString::fromAscii("."));
-    // Image format
-    const QString format =
-            imageProperty.parameters().value(QString::fromAscii(versitType));
-    imageName.append(QString(format).toLower());
-
-    const QString encoding =
-            imageProperty.parameters().value(QString::fromAscii(versitEncoding));
-
-    QByteArray value = imageProperty.value();
-
-    QFile image;
-    image.setFileName(imageName);
-
-    if (image.open(QIODevice::WriteOnly)) {
-        qint64 writeResult = -1;
-        // assumes that only two encodings are possible: Base64 and quoted-printable
-        if (!encoding.isEmpty()) {
-            // Base64 encoding
-            writeResult = image.write(QByteArray::fromBase64(value));
-        } else {
+/*!
+ * Saves the content into given fileName based on encoding.
+ * Returns the absolute file name if content successfully saved;
+ * otherwise returns a empty string. 
+ */
+QString QVersitContactGeneratorPrivate::saveFile(const QString& fileName,
+                                                 const QByteArray& content,
+                                                 const QString& encoding) const
+{
+    QFile file;
+    file.setFileName(fileName);
+    qint64 writeResult = -1;
+    if (file.open(QIODevice::WriteOnly)) {
+        if( encoding == QString::fromAscii("BASE64")){
+            writeResult = file.write(QByteArray::fromBase64(content));
+        }else {
+            // default assumption
             // quoted-printable encoding is parsed already in the reader
-            writeResult = image.write(value);
-        }
-        if (writeResult > 0) {
-            ret = imageName;
+            writeResult = file.write(content);
         }
     }
-    return ret;
+    return (writeResult > 0) ? fileName : QString();
 }
 
 /*!
@@ -509,7 +513,6 @@ QContactDetail* QVersitContactGeneratorPrivate::createNameValueDetail(
     }
     return detail;
 }
-
 
 /*!
  * Extracts the list of contexts from \a types
@@ -584,4 +587,32 @@ QDateTime QVersitContactGeneratorPrivate::parseDateTime(
         dateTime = QDateTime::fromString(value, QString::fromAscii(format));
     }
     return dateTime;
+}
+
+/*!
+ * returns new absolute filename with
+ * <prefixed_filepath>\<lastname>_<firstname>_<random_no>.<ext>
+ */
+QString QVersitContactGeneratorPrivate::createFileName(                        
+                        const QVersitDocument& doc,
+                        const QString& extension,
+                        const char* preferredField)const
+{    
+    QStringList names;
+    foreach(const QVersitProperty& p,doc.properties()){
+        if(p.name() == QString::fromAscii(preferredField)){
+            QString val = QString::fromAscii(p.value());
+            names = val.split(';');
+        }
+    }
+    return QString(mImagePath +
+                   ( mImagePath.endsWith(QString::fromAscii("/"))
+                                         ? QString() : QString::fromAscii("/")) +
+                   ((names.count() > 0) ? names[0] : QString()) +
+                   QString::fromAscii("_") +
+                   ((names.count() > 1) ? names[1] : QString()) +
+                   QString::fromAscii("_") +
+                   QString::number(qrand()) +
+                   QString::fromAscii(".") +
+                   extension).replace(' ',"");// remove all white spaces
 }

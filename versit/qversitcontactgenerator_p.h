@@ -56,6 +56,7 @@
 #include <QDateTime>
 #include <QHash>
 #include <QPair>
+#include "qversitdefs.h"
 
 class QContact;
 class QContactDetail;
@@ -71,7 +72,6 @@ public:
     QContact generateContact(const QVersitDocument& versitDocument);
     
 private:
-    
     QContactDetail* createName(const QVersitProperty& property,
                                 const QContact& contact ) const;
     QContactDetail* createPhone(const QVersitProperty& property) const;
@@ -82,20 +82,28 @@ private:
     QContactDetail* createAnniversary(const QVersitProperty& property) const;
     QContactDetail* createBirthday(const QVersitProperty& property) const;
     QContactDetail* createNicknames(const QVersitProperty& property) const;
-    QContactDetail* createAvatar(const QVersitProperty& property,
-                                 const QVersitDocument& document) const;
-    QString saveImage(const QVersitProperty& photoProperty,
-                      QString& imageName) const;
+    QContactDetail* createImageAvatar(const QVersitProperty& property,
+                                      const QVersitDocument& doc) const;    
     QContactDetail* createGeoLocation(const QVersitProperty& property) const;
     QContactDetail* createOnlineAccount(const QVersitProperty& property) const;
     QContactDetail* createFamily(const QVersitProperty& property,
                                  const QContact& contact)const;
     QContactDetail* createNameValueDetail(const QVersitProperty& property) const;
+    QContactDetail* createSoundAvatar(const QVersitProperty& property,
+                                      const QVersitDocument& doc) const;
     QStringList extractContexts(const QVersitProperty& property) const;
     QStringList extractSubTypes(const QVersitProperty& property) const;
+
+private: // utilities
     QString takeFirst(QList<QByteArray>& list) const;    
     QString takeFirst(QList<QString>& list) const;
-    QDateTime parseDateTime(const QByteArray& text, const QByteArray& format) const;
+    QDateTime parseDateTime(const QByteArray& text, const QByteArray& format) const;    
+    QString createFileName(const QVersitDocument& doc,
+                           const QString& extension,
+                           const char* preferredField = versitNameId)const;
+    QString saveFile(const QString& fileName,
+                     const QByteArray& content,
+                     const QString& encoding) const;
     
 public: // Data
     QString mImagePath;

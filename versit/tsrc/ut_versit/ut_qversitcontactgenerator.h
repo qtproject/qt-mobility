@@ -81,11 +81,12 @@ private slots: // Tests
     void testNote();
     void testOnlineAccount();
     void testFamily();
+    void testSound();
 
 private: 
     
     QVersitDocument createDocumentWithProperty(const QVersitProperty& property);
-    QVersitDocument createDocumentWithNameAndPhoto(const QByteArray& name, const char image[],
+    QVersitDocument createDocumentWithNameAndPhoto(const QByteArray& name, QByteArray image,
                                                    const QString& photoType, const QString& encoding);
 
 private:
