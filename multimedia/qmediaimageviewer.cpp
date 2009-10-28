@@ -95,8 +95,11 @@ void QMediaImageViewerPrivate::_q_mediaStatusChanged(QMediaImageViewer::MediaSta
     case QMediaImageViewer::InvalidMedia:
         emit q_func()->mediaStatusChanged(status);
 
-        if (state == QMediaImageViewer::PlayingState)
+        if (state == QMediaImageViewer::PlayingState) {
             playlist->next();
+            if (playlist->currentPosition() < 0)
+                emit q_func()->stateChanged(state = QMediaImageViewer::StoppedState);
+        }
         break;
     }
 }
@@ -384,6 +387,8 @@ void QMediaImageViewer::play()
         case NoMedia:
         case InvalidMedia:
             d->playlist->next();
+            if (d->playlist->currentPosition() < 0)
+                d->state = StoppedState;
             break;
         case LoadingMedia:
             break;
@@ -393,7 +398,7 @@ void QMediaImageViewer::play()
             break;
         }
 
-        if (d->state == QMediaImageViewer::PlayingState)
+        if (d->state == PlayingState)
             emit stateChanged(d->state);
     }
 }

@@ -727,6 +727,7 @@ void tst_QMediaImageViewer::invalidPlaylist()
     QMediaPlaylist playlist(&viewer);
     playlist.appendItem(invalidMedia);
     playlist.appendItem(imageMedia);
+    playlist.appendItem(invalidMedia);
 
     // Test play initially tries to load the first invalid image.
     viewer.play();
@@ -749,6 +750,25 @@ void tst_QMediaImageViewer::invalidPlaylist()
              QMediaImageViewer::InvalidMedia);
     QCOMPARE(qvariant_cast<QMediaImageViewer::MediaStatus>(statusSpy.value(2).value(0)),
              QMediaImageViewer::LoadingMedia);
+
+    // Test if the last image is invalid, the image viewer is stopped.
+    playlist.next();
+    QTestEventLoop::instance().enterLoop(2);
+    QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
+    QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::NoMedia);
+    QCOMPARE(playlist.currentPosition(), -1);
+    QCOMPARE(stateSpy.count(), 2);
+
+    playlist.setCurrentPosition(2);
+    QTestEventLoop::instance().enterLoop(2);
+
+    // Test play immediately moves to the next item if the current one is invalid, and no state
+    // change signals are emitted if the viewer never effectively moves from the StoppedState.
+    viewer.play();
+    QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
+    QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::NoMedia);
+    QCOMPARE(playlist.currentPosition(), -1);
+    QCOMPARE(stateSpy.count(), 2);
 }
 
 void tst_QMediaImageViewer::elapsedTime()
