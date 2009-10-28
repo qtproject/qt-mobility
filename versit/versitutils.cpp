@@ -173,7 +173,7 @@ void VersitUtils::decodeQuotedPrintable(QByteArray& text)
 
 /*!
  * Performs backslash escaping for line breaks (CRLFs),
- * semicolons, commas and colons according to RFC 2426.
+ * semicolons and commas according to RFC 2426.
  */
 bool VersitUtils::backSlashEscape(QByteArray& text)
 {
@@ -183,7 +183,7 @@ bool VersitUtils::backSlashEscape(QByteArray& text)
     for (int i=0; i < text.length(); i++) {
         char currentChar = text.at(i);
         if (previousChar != '\\' && !withinQuotes) {
-            if (currentChar == ';' || currentChar == ':' || currentChar == ',') {
+            if (currentChar == ';' || currentChar == ',') {
                 text.insert(i,'\\');
                 i++;
                 escaped = true;
@@ -203,7 +203,7 @@ bool VersitUtils::backSlashEscape(QByteArray& text)
 
 /*!
  * Removes backslash escaping for line breaks (CRLFs),
- * semicolons, commas and colons according to RFC 2426.
+ * semicolons and commas according to RFC 2426.
  */
 void VersitUtils::removeBackSlashEscaping(QByteArray& text)
 {
@@ -212,7 +212,7 @@ void VersitUtils::removeBackSlashEscaping(QByteArray& text)
     for (int i=0; i < text.length(); i++) {
         char currentChar = text.at(i);
         if (previousChar == '\\' && !withinQuotes) {
-            if (currentChar == ';' || currentChar == ':' || currentChar == ',') {
+            if (currentChar == ';' || currentChar == ',') {
                 text.remove(i-1,1);
             } else if (currentChar == 'n' || currentChar == 'N') {
                 text.replace(i-1,2,"\r\n");

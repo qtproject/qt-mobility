@@ -222,7 +222,7 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard30()
     vCard.append("FN:Homer\r\n");
     vCard.append("PHOTO;ENCODING=B:UXQgaXMgZ3JlYXQh\r\n");
     vCard.append("EMAIL:homer@simpsons.com\r\n");
-    vCard.append("AGENT:BEGIN\\:VCARD\\nFN\\:Marge\\nEND\\:VCARD\\n\r\n");
+    vCard.append("AGENT:BEGIN:VCARD\\nFN:Marge\\nEND:VCARD\\n\r\n");
     vCard.append("End:VCARD\r\n");
 
     QVersitProperty property = mReaderPrivate->parseNextVersitProperty(type,vCard);

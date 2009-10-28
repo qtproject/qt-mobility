@@ -75,7 +75,7 @@ void UT_QVCard30Writer::testEncodeVersitProperty()
     
     // AGENT property
     expectedResult =
-        "AGENT:BEGIN\\:VCARD\\nVERSION\\:3.0\\nFN\\:Secret Agent\\nEND\\:VCARD\\n\r\n";
+        "AGENT:BEGIN:VCARD\\nVERSION:3.0\\nFN:Secret Agent\\nEND:VCARD\\n\r\n";
     property.setParameters(QMultiHash<QString,QString>());
     property.setName(QString::fromAscii("AGENT"));
     property.setValue(QByteArray());
@@ -108,8 +108,8 @@ void UT_QVCard30Writer::testEncodeParameter()
 
     // Parameter with characters that require backslash escaping
     name = QString::fromAscii("X-A;B");
-    value = QString::fromAscii("C:D");
-    result = "X-A\\;B=C\\:D";
+    value = QString::fromAscii("C,D");
+    result = "X-A\\;B=C\\,D";
     QCOMPARE(
         QString::fromAscii(mWriter->encodeParameter(name,value)),
         QString::fromAscii(result));
