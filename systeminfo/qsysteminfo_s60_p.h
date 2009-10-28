@@ -89,6 +89,7 @@ Q_SIGNALS:
 
 private:
     QString TLanguageToISO639_1(TLanguage language) const;
+    QString S60Version() const;
 };
 
 //////// QSystemNetworkInfo

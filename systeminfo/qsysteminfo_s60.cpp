@@ -42,6 +42,8 @@
 #include "qsysteminfo_s60_p.h"
 
 #include <QStringList>
+#include <QDir>
+#include <QRegExp>
 
 #include <SysUtil.h>
 #include <ptiengine.h>
@@ -193,7 +195,47 @@ QString QSystemInfoPrivate::TLanguageToISO639_1(TLanguage language) const
 
 QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
-    return QString();   //TODO
+    switch (type) {
+        case QSystemInfo::Os:
+        {
+            return S60Version();
+        }
+        case QSystemInfo::QtCore:
+        {
+            return qVersion();
+        }
+        case QSystemInfo::Firmware:
+        {
+            QString versionText;
+            TBuf<KSysUtilVersionTextLength> versionBuf;
+            if (SysUtil::GetSWVersion(versionBuf) == KErrNone) {
+                versionText = QString::fromUtf16(versionBuf.Ptr(), versionBuf.Length());
+            }
+            return versionText.split("\n").at(0);
+        }
+        case QSystemInfo::WrtCore:  //Not available
+        case QSystemInfo::Webkit:   //Not available
+        case QSystemInfo::ServiceFramework: //Not available
+        case QSystemInfo::WrtExtensions:    //Not available
+        case QSystemInfo::ServiceProvider:  //Not available
+        case QSystemInfo::NetscapePlugin:   //Not available
+        case QSystemInfo::WebApp:   //Not available
+        default:
+            return QString();
+    }
+}
+
+QString QSystemInfoPrivate::S60Version() const
+{
+    QDir romInstallDir("z:\\system\\install\\");
+    QStringList files = romInstallDir.entryList(QStringList("Series60v*.sis"), QDir::Files, QDir::Name | QDir::Reversed);
+    if (files.size() > 0) {
+        QRegExp rx("Series60v(.*).sis");
+        if (rx.indexIn(files[0]) > -1) {
+            return rx.cap(1);
+        }
+    }
+    return QString();
 }
 
 QString QSystemInfoPrivate::currentCountryCode() const
