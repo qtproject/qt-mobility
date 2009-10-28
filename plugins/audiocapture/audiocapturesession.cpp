@@ -60,6 +60,7 @@ AudioCaptureSession::AudioCaptureSession(QObject *parent):
     m_format.setSampleSize(8);
     m_format.setSampleType(QAudioFormat::UnSignedInt);
     m_format.setCodec("audio/pcm");
+    wavFile = false;
 }
 
 AudioCaptureSession::~AudioCaptureSession()
@@ -83,7 +84,12 @@ QAudioFormat AudioCaptureSession::format() const
 bool AudioCaptureSession::isFormatSupported(const QAudioFormat &format) const
 {
     if(m_deviceInfo) {
-        return m_deviceInfo->isFormatSupported(format);
+        if(format.codec().contains(QLatin1String("audio/x-wav"))) {
+            QAudioFormat fmt = format;
+            fmt.setCodec("audio/pcm");
+            return m_deviceInfo->isFormatSupported(fmt);
+        } else
+            return m_deviceInfo->isFormatSupported(format);
     }
     return false;
 }
@@ -91,8 +97,16 @@ bool AudioCaptureSession::isFormatSupported(const QAudioFormat &format) const
 bool AudioCaptureSession::setFormat(const QAudioFormat &format)
 {
     if(m_deviceInfo) {
-        if(m_deviceInfo->isFormatSupported(format)) {
-            m_format = format;
+
+        QAudioFormat fmt = format;
+
+        if(format.codec().contains(QLatin1String("audio/x-wav"))) {
+            wavFile = true;
+            fmt.setCodec("audio/pcm");
+        }
+
+        if(m_deviceInfo->isFormatSupported(fmt)) {
+            m_format = fmt;
             if(m_audioInput) delete m_audioInput;
             m_audioInput = 0;
             QList<QAudioDeviceInfo> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
@@ -115,6 +129,7 @@ QStringList AudioCaptureSession::supportedAudioCodecs() const
     QStringList list;
     if(m_deviceInfo) {
         list = m_deviceInfo->supportedCodecs();
+        list << "audio/x-wav";
     }
     return list;
 }
@@ -124,6 +139,8 @@ QString AudioCaptureSession::codecDescription(const QString &codecName)
     if(m_deviceInfo) {
         if(qstrcmp(codecName.toLocal8Bit().constData(),"audio/pcm") == 0)
             return QString(tr("Pulse Code Modulation"));
+        if(qstrcmp(codecName.toLocal8Bit().constData(),"audio/x-wav") == 0)
+            return QString(tr("WAV file format"));
     }
     return QString();
 }
@@ -132,8 +149,16 @@ bool AudioCaptureSession::setAudioCodec(const QString &codecName)
 {
     if(m_deviceInfo) {
         QStringList codecs = m_deviceInfo->supportedCodecs();
+        codecs << "audio/x-wav";
         if(codecs.contains(codecName)) {
-            m_format.setCodec(codecName);
+            if(codecName.contains(QLatin1String("audio/x-wav"))) {
+                m_format.setCodec("audio/pcm");
+                wavFile = true;
+            } else {
+                wavFile = false;
+                m_format.setCodec(codecName);
+            }
+
             return true;
         }
     }
@@ -142,6 +167,9 @@ bool AudioCaptureSession::setAudioCodec(const QString &codecName)
 
 QString AudioCaptureSession::audioCodec() const
 {
+    if(wavFile)
+        return QString("audio/x-wav");
+
     return m_format.codec();
 }
 
@@ -180,6 +208,23 @@ void AudioCaptureSession::record()
     if(m_audioInput) {
         if(m_state == QMediaRecorder::StoppedState) {
             if(file.open(QIODevice::WriteOnly)) {
+                //TODO: write wav header id wavFile true
+
+                memset(&header,0,sizeof(CombinedHeader));
+                memcpy(header.riff.descriptor.id,"RIFF",4);
+                memcpy(header.riff.type,"WAVE",4);
+                memcpy(header.wave.descriptor.id,"fmt ",4);
+                header.wave.descriptor.size = 16;
+                header.wave.audioFormat = 1; // for PCM data
+                header.wave.sampleRate = m_format.frequency();
+                header.wave.byteRate = m_format.frequency();
+                header.wave.bitsPerSample = m_format.sampleSize();
+                header.wave.numChannels = m_format.channels();
+                header.wave.blockAlign = 1;
+                memcpy(header.data.descriptor.id,"data",4);
+                header.data.descriptor.size = 0xFFFFFFFF;
+                file.write((char*)&header,sizeof(CombinedHeader));
+
                 m_audioInput->start(qobject_cast<QIODevice*>(&file));
             } else {
                 qWarning()<<"can't open source, failed";
