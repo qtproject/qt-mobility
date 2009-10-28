@@ -135,7 +135,7 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
 
     connect(audioDevicesGroup, SIGNAL(triggered(QAction*)), this, SLOT(updateAudioDevice(QAction*)));
 
-    mediaRecorder->setSink(QUrl("test.mkv"));
+    mediaRecorder->setOutputLocation(QUrl("test.mkv"));
 
     connect(mediaRecorder, SIGNAL(durationChanged(qint64)), this, SLOT(updateRecordTime()));
     connect(mediaRecorder, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(displayErrorMessage()));

@@ -176,22 +176,22 @@ QMediaRecorder::~QMediaRecorder()
 }
 
 /*!
-    Returns the sink being used.
+    Returns the output location being used.
 */
 
-QUrl QMediaRecorder::sink() const
+QUrl QMediaRecorder::outputLocation() const
 {
-    return d_func()->control ? d_func()->control->sink() : QUrl();
+    return d_func()->control ? d_func()->control->outputLocation() : QUrl();
 }
 
 /*!
-    Returns true if set of sink being used to \a sink is successful.
+    Sets the output \a location and returns true if this operation was successful.
 */
 
-bool QMediaRecorder::setSink(const QUrl &sink)
+bool QMediaRecorder::setOutputLocation(const QUrl &location)
 {
     Q_D(QMediaRecorder);
-    return d->control ? d->control->setSink(sink) : false;
+    return d->control ? d->control->setOutputLocation(location) : false;
 }
 
 /*!

@@ -293,12 +293,12 @@ public:
     m_state(QMediaRecorder::StoppedState),
     m_position(0) {}
 
-    QUrl sink() const
+    QUrl outputLocation() const
     {
         return m_sink;
     }
 
-    bool setSink(const QUrl &sink)
+    bool setOutputLocation(const QUrl &sink)
     {
         m_sink = sink;
         return true;
@@ -459,7 +459,7 @@ void tst_QMediaRecorder::testNullService()
     MockObject object(0, 0);
     QMediaRecorder recorder(&object);
 
-    QCOMPARE(recorder.sink(), QUrl());
+    QCOMPARE(recorder.outputLocation(), QUrl());
     QCOMPARE(recorder.state(), QMediaRecorder::StoppedState);
     QCOMPARE(recorder.error(), QMediaRecorder::NoError);
     QCOMPARE(recorder.duration(), qint64(0));
@@ -490,7 +490,7 @@ void tst_QMediaRecorder::testNullControls()
     MockObject object(0, &service);
     QMediaRecorder recorder(&object);
 
-    QCOMPARE(recorder.sink(), QUrl());
+    QCOMPARE(recorder.outputLocation(), QUrl());
     QCOMPARE(recorder.state(), QMediaRecorder::StoppedState);
     QCOMPARE(recorder.error(), QMediaRecorder::NoError);
     QCOMPARE(recorder.duration(), qint64(0));
@@ -511,8 +511,8 @@ void tst_QMediaRecorder::testNullControls()
     QCOMPARE(recorder.videoSettings(), QVideoEncoderSettings());
     QCOMPARE(recorder.format(), QString());
 
-    recorder.setSink(QUrl("file://test/save/file.mp4"));
-    QCOMPARE(recorder.sink(), QUrl());
+    recorder.setOutputLocation(QUrl("file://test/save/file.mp4"));
+    QCOMPARE(recorder.outputLocation(), QUrl());
 
     QAudioEncoderSettings audio;
     audio.setCodec(id);
@@ -564,8 +564,8 @@ void tst_QMediaRecorder::testError()
 
 void tst_QMediaRecorder::testSink()
 {
-    capture->setSink(QUrl("test.tmp"));
-    QUrl s = capture->sink();
+    capture->setOutputLocation(QUrl("test.tmp"));
+    QUrl s = capture->outputLocation();
     QCOMPARE(s.toString(), QString("test.tmp"));
 }
 

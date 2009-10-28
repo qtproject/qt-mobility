@@ -119,8 +119,8 @@ public:
 
     // media control
 
-    bool setSink(const QUrl &sink);
-    QUrl sink() const;
+    bool setOutputLocation(const QUrl &sink);
+    QUrl outputLocation() const;
     qint64 position() const;
     int state() const;
     void record();

@@ -54,14 +54,14 @@ QGstreamerRecorderControl::~QGstreamerRecorderControl()
 {
 }
 
-QUrl QGstreamerRecorderControl::sink() const
+QUrl QGstreamerRecorderControl::outputLocation() const
 {
-    return m_session->sink();
+    return m_session->outputLocation();
 }
 
-bool QGstreamerRecorderControl::setSink(const QUrl &sink)
+bool QGstreamerRecorderControl::setOutputLocation(const QUrl &sink)
 {
-    m_session->setSink(sink);
+    m_session->setOutputLocation(sink);
     return true;
 }
 
