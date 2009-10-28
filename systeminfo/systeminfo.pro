@@ -26,7 +26,7 @@ win32 {
 
         LIBS += \
             Ole32.lib \
-            Strmiids.lib \
+    #        Strmiids.lib \
             User32.lib \
             Gdi32.lib \
             Ws2_32.lib \
@@ -53,9 +53,9 @@ Iphlpapi.lib \
 #        "C:\Program Files\Microsoft SDKs\Windows\v6.1\Include"
 
     wince*:LIBS += aygshell.lib \
-        Nleddrv.lib \
+#        Nleddrv.lib \
         cellcore.lib \
-        Ifapi.lib \
+#        Ifapi.lib \
         Coredll.lib
 }
 
@@ -98,7 +98,8 @@ unix: {
             -letel3rdparty \
             -lsysutil \
             -lcentralrepository \
-            -lcenrepnotifhandler
+            -lcenrepnotifhandler \
+            -lefsrv
 
         TARGET.CAPABILITY = ALL -TCB
         TARGET.EPOCALLOWDLLDATA = 1
