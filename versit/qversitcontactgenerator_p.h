@@ -72,39 +72,37 @@ public:
     QContact generateContact(const QVersitDocument& versitDocument);
     
 private:
-    QContactDetail* createName(const QVersitProperty& property,
-                                const QContact& contact ) const;
+    QContactDetail* createName(
+        const QVersitProperty& property,
+        const QContact& contact) const;
     QContactDetail* createPhone(const QVersitProperty& property) const;
     QContactDetail* createAddress(const QVersitProperty& property) const;
-    QContactDetail* createOrganization(const QVersitProperty& property,
-                                       const QVersitDocument& versitDocument) const;
+    QContactDetail* createOrganization(
+        const QVersitProperty& property,
+        const QVersitDocument& document) const;
     QContactDetail* createTimeStamp(const QVersitProperty& property) const;
     QContactDetail* createAnniversary(const QVersitProperty& property) const;
     QContactDetail* createBirthday(const QVersitProperty& property) const;    
-    QContactDetail* createImageAvatar(const QVersitProperty& property,
-                                      const QVersitDocument& doc) const;
-    void createNicknames(const QVersitProperty& property,
-                         QContact& contact) const;    
+    QContactDetail* createAvatar(
+        const QVersitProperty& property,
+        const QString& subType) const;
+    void createNicknames(
+        const QVersitProperty& property,
+        QContact& contact) const;
     QContactDetail* createGeoLocation(const QVersitProperty& property) const;
     QContactDetail* createOnlineAccount(const QVersitProperty& property) const;
-    QContactDetail* createFamily(const QVersitProperty& property,
-                                 const QContact& contact)const;
+    QContactDetail* createFamily(
+        const QVersitProperty& property,
+        const QContact& contact)const;
     QContactDetail* createNameValueDetail(const QVersitProperty& property) const;
-    QContactDetail* createSoundAvatar(const QVersitProperty& property,
-                                      const QVersitDocument& doc) const;
+
+private: // Utilities
     QStringList extractContexts(const QVersitProperty& property) const;
     QStringList extractSubTypes(const QVersitProperty& property) const;
-
-private: // utilities
     QString takeFirst(QList<QByteArray>& list) const;    
     QString takeFirst(QList<QString>& list) const;
     QDateTime parseDateTime(const QByteArray& text, const QByteArray& format) const;    
-    QString createFileName(const QVersitDocument& doc,
-                           const QString& extension,
-                           const char* preferredField = versitNameId)const;
-    QString saveFile(const QString& fileName,
-                     const QByteArray& content,
-                     const QString& encoding) const;
+    QString saveContentToFile(const QVersitProperty& property) const;
     
 public: // Data
     QString mImagePath;

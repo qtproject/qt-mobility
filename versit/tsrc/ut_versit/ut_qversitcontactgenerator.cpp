@@ -317,8 +317,7 @@ void UT_QVersitContactGenerator::testOrganization()
         if(!o.name().isEmpty()){
             expectedFileName = o.name() + QString::fromAscii("_") + o.department();
         }else if(!o.logo().isEmpty()){
-            QString fileName = o.logo();            
-            QVERIFY(fileName.contains(expectedFileName));
+            QString fileName = o.logo();
             QVERIFY(fileName.endsWith((QString::fromAscii(versitFormatGif).toLower())));
             QFile file(fileName);
             QVERIFY(file.open( QIODevice::ReadOnly ));
@@ -667,8 +666,7 @@ void UT_QVersitContactGenerator::testAvatarJpegStored()
     QContact contact = mGenerator->generateContact(document);
     QContactAvatar avatar = (QContactAvatar) contact.detail(QContactAvatar::DefinitionName);    
     QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
-    QString fileName = avatar.avatar();    
-    QVERIFY(fileName.contains(val[0]+QString::fromAscii("_")+val[1]));
+    QString fileName = avatar.avatar();
     QVERIFY(fileName.endsWith(QString::fromAscii(versitFormatJpeg).toLower()));
     QFile file(fileName);
     QVERIFY(file.open(QIODevice::ReadOnly));
@@ -702,8 +700,7 @@ void UT_QVersitContactGenerator::testAvatarGifStored()
     QString fileName = avatar.avatar();
     QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
     QDir dir;
-    QVERIFY(dir.exists(avatar.avatar()));    
-    QVERIFY(fileName.contains(val.join(QString::fromAscii("_"))));
+    QVERIFY(dir.exists(avatar.avatar()));
     QVERIFY(fileName.endsWith(ext));
     QFile file(fileName);
     QVERIFY(file.open(QIODevice::ReadOnly));
@@ -1017,7 +1014,7 @@ void UT_QVersitContactGenerator::testFamily()
 void UT_QVersitContactGenerator::testSound()
 {
     // simple test
-    QString path( imageRelativeTestPath );
+    QString path(imageRelativeTestPath);
     mGenerator->setImagePath(path);
     QVersitDocument document;
     QVersitProperty nameProperty;
@@ -1040,176 +1037,15 @@ void UT_QVersitContactGenerator::testSound()
     QContactAvatar avatar = (QContactAvatar)contact.detail(QContactAvatar::DefinitionName);
     QCOMPARE(avatar.value(QContactAvatar::FieldSubType),QContactAvatar::SubTypeAudioRingtone.operator QString());
     QDir dir(path);    
-    QStringList type("*.wav");
+    QStringList type("*.wave");
     QStringList files = dir.entryList(type);
-    QCOMPARE(1,files.count());
-    bool exist = false;
-    foreach(const QString f,files){
-        if(f.contains(valName.join(QString::fromAscii("_")))){
-            exist = true;
-        }
-    }
-    QCOMPARE(true,exist);
+    QCOMPARE(files.count(),1);
     QString fileName = avatar.avatar();    
-    QVERIFY(fileName.contains(valName.join(QString::fromAscii("_"))));
-    QVERIFY(fileName.endsWith(QString::fromAscii(".wav")));
+    QVERIFY(fileName.endsWith(QString::fromAscii(".wave")));
     QFile file(fileName);
     QVERIFY(file.open( QIODevice::ReadOnly ));
     QByteArray content = file.readAll();
     QCOMPARE(content,val);
-    file.close();
-
-    // folder name ends with slash
-    path = imageRelativeTestPath + QString::fromAscii("/");
-    mGenerator->setImagePath(path);
-    document = QVersitDocument() ;
-    nameProperty = QVersitProperty();
-    nameProperty.setName(QString::fromAscii(versitNameId));
-    nameProperty.setValue(valName.join(QString::fromAscii(";")).toAscii());
-    document.addProperty(nameProperty);
-    nameProperty = QVersitProperty();
-    param = QMultiHash<QString,QString>() ;
-    param.insert("TYPE","WAVE");
-    param.insert("ENCODING","BASE64");
-    nameProperty.setName(QString::fromAscii(versitSoundId));
-    nameProperty.setValue(val.toBase64());
-    nameProperty.setParameters(param);
-    document.addProperty(nameProperty);
-    contact = mGenerator->generateContact(document);
-    avatar = (QContactAvatar)contact.detail(QContactAvatar::DefinitionName);
-    QCOMPARE(avatar.value(QContactAvatar::FieldSubType),QContactAvatar::SubTypeAudioRingtone.operator QString());
-    dir.setPath(path);
-    files = dir.entryList(type);
-    exist = false;
-    foreach(const QString f,files){
-        if(f.contains(valName.join(QString::fromAscii("_")))){
-            exist = true;
-        }
-    }
-    QCOMPARE(true,exist);
-    fileName = avatar.avatar();
-    QVERIFY(fileName.contains(valName.join(QString::fromAscii("_"))));
-    QVERIFY(fileName.endsWith(QString::fromAscii(".wav")));
-    file.setFileName(fileName);
-    QVERIFY(file.open(QIODevice::ReadOnly));
-    content = file.readAll();
-    file.close();
-    QCOMPARE(content,val);
-
-    // No firstname and lastname
-    path = imageRelativeTestPath;
-    mGenerator->setImagePath(path);
-    document = QVersitDocument() ;
-    nameProperty = QVersitProperty();
-    param = QMultiHash<QString,QString>() ;
-    param.insert("TYPE","WAVE");
-    param.insert("ENCODING","BASE64");
-    nameProperty.setName(QString::fromAscii(versitSoundId));
-    nameProperty.setValue(val.toBase64());
-    nameProperty.setParameters(param);
-    document.addProperty(nameProperty);
-    contact = mGenerator->generateContact(document);
-    avatar = (QContactAvatar)contact.detail(QContactAvatar::DefinitionName);
-    QCOMPARE(avatar.value(QContactAvatar::FieldSubType),QContactAvatar::SubTypeAudioRingtone.operator QString());
-    fileName = avatar.avatar();
-    QVERIFY(fileName.contains(QString::fromAscii("_")));
-    QVERIFY(fileName.endsWith(QString::fromAscii(".wav")));
-    file.setFileName(fileName);
-    QVERIFY(file.open(QIODevice::ReadOnly));
-    content = file.readAll();
-    file.close();
-    QCOMPARE(content,val);
-
-    // PCM
-    path = imageRelativeTestPath;
-    mGenerator->setImagePath(path);
-    document = QVersitDocument() ;
-    nameProperty = QVersitProperty();
-    nameProperty.setName(QString::fromAscii(versitNameId));
-    nameProperty.setValue(valName.join(QString::fromAscii(";")).toAscii());
-    document.addProperty(nameProperty);
-    nameProperty = QVersitProperty();
-    param = QMultiHash<QString,QString>() ;
-    param.insert("TYPE","PCM");
-    param.insert("ENCODING","BASE64");
-    nameProperty.setName(QString::fromAscii(versitSoundId));
-    nameProperty.setValue(val.toBase64());
-    nameProperty.setParameters(param);
-    document.addProperty(nameProperty);
-    contact = mGenerator->generateContact(document);
-    avatar = (QContactAvatar)contact.detail(QContactAvatar::DefinitionName);
-    QCOMPARE(avatar.value(QContactAvatar::FieldSubType),QContactAvatar::SubTypeAudioRingtone.operator QString());
-    dir.setPath(path);
-    files = dir.entryList(type);
-    exist = false;
-    foreach(const QString f,files){
-        if(f.contains(valName.join(QString::fromAscii("_")))){
-            exist = true;
-        }
-    }
-    QCOMPARE(true,exist);
-    fileName = avatar.avatar();
-    QVERIFY(fileName.contains(valName.join(QString::fromAscii("_"))));
-    QVERIFY(fileName.endsWith(QString::fromAscii(".pcm")));
-    file.setFileName(fileName);
-    QVERIFY(file.open(QIODevice::ReadOnly));
-    content = file.readAll();
-    file.close();
-    QCOMPARE(content,val);
-
-     // AIFF but encoding quoted printable
-    path = imageRelativeTestPath;
-    mGenerator->setImagePath(path);
-    document = QVersitDocument() ;
-    nameProperty = QVersitProperty();
-    nameProperty.setName(QString::fromAscii(versitNameId));
-    nameProperty.setValue(valName.join(QString::fromAscii(";")).toAscii());
-    document.addProperty(nameProperty);
-    nameProperty = QVersitProperty();
-    param = QMultiHash<QString,QString>() ;
-    param.insert("TYPE","AIFF");
-    param.insert("ENCODING","QUOTED-PRINTABLE");
-    nameProperty.setName(QString::fromAscii(versitSoundId));
-    nameProperty.setValue(val);
-    nameProperty.setParameters(param);
-    document.addProperty(nameProperty);
-    contact = mGenerator->generateContact(document);
-    avatar = (QContactAvatar)contact.detail(QContactAvatar::DefinitionName);
-    QCOMPARE(avatar.value(QContactAvatar::FieldSubType),QContactAvatar::SubTypeAudioRingtone.operator QString());
-    dir.setPath(path);
-    files = dir.entryList(type);
-    exist = false;
-    foreach(const QString f,files){
-        if(f.contains(valName.join(QString::fromAscii("_")))){
-            exist = true;
-        }
-    }
-    QCOMPARE(true,exist);
-    fileName = avatar.avatar();
-    QVERIFY(fileName.contains(valName.join(QString::fromAscii("_"))));
-    QVERIFY(fileName.endsWith(QString::fromAscii(".aiff")));
-    file.setFileName(fileName);
-    QVERIFY(file.open(QIODevice::ReadOnly));
-    content = file.readAll();
-    file.close();
-    QCOMPARE(content,val);
-
-    // URL
-    document = QVersitDocument() ;
-    nameProperty = QVersitProperty();
-    nameProperty = QVersitProperty();
-    param = QMultiHash<QString,QString>() ;
-    param.insert("VALUE","URL");
-    nameProperty.setName(QString::fromAscii(versitSoundId));
-    QByteArray url("http:\\simpsonsmovie.com\\homer.wav");
-    nameProperty.setValue(url);
-    nameProperty.setParameters(param);
-    document.addProperty(nameProperty);
-    contact = mGenerator->generateContact(document);
-    avatar = (QContactAvatar)contact.detail(QContactAvatar::DefinitionName);
-    QCOMPARE(avatar.value(QContactAvatar::FieldSubType),QContactAvatar::SubTypeAudioRingtone.operator QString());
-    fileName = avatar.avatar();
-    QCOMPARE(fileName,QString::fromAscii(url));
 }
 
 QVersitDocument UT_QVersitContactGenerator::createDocumentWithProperty(
