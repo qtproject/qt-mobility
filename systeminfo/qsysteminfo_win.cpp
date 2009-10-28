@@ -78,16 +78,11 @@
 #define __WINDOT11_H__
 #include <ntddndis.h>
 #undef __WINDOT11_H__
-//#include <Dshow.h>
 #endif
 #endif
 
 #ifdef Q_OS_WINCE
-//#include <af_irda.h>
-//#include <vibrate.h>
-//#include <Led_drvr.h>
 #include <simmgr.h>
-//#include <Ifapi.h>
 #include <Winbase.h>
 #include <Winuser.h>
 #endif
@@ -98,59 +93,6 @@
 #define WLAN_MAX_NAME_LENGTH 256
 #define DOT11_SSID_MAX_LENGTH 32
 #define WLAN_NOTIFICATION_SOURCE_ALL 0x0000ffff
-//#define OID_GEN_MEDIA_SUPPORTED 0x00010103
-
-/*typedef enum _NDIS_MEDIUM
-{
-    NdisMedium802_3,
-    NdisMedium802_5,
-    NdisMediumFddi,
-    NdisMediumWan,
-    NdisMediumLocalTalk,
-    NdisMediumDix,              // defined for convenience, not a real medium
-    NdisMediumArcnetRaw,
-    NdisMediumArcnet878_2,
-    NdisMediumAtm,
-    NdisMediumWirelessWan,
-    NdisMediumIrda,
-    NdisMediumBpc,
-    NdisMediumCoWan,
-    NdisMedium1394,
-    NdisMediumInfiniBand,
-    NdisMediumTunnel,
-    NdisMediumNative802_11,
-    NdisMediumLoopback,
-    NdisMediumMax               // Not a real medium, defined as an upper-bound
-} NDIS_MEDIUM, *PNDIS_MEDIUM;
-
-
-//
-// Physical Medium Type definitions. Used with OID_GEN_PHYSICAL_MEDIUM.
-//
-typedef enum _NDIS_PHYSICAL_MEDIUM
-{
-    NdisPhysicalMediumUnspecified,
-    NdisPhysicalMediumWirelessLan,
-    NdisPhysicalMediumCableModem,
-    NdisPhysicalMediumPhoneLine,
-    NdisPhysicalMediumPowerLine,
-    NdisPhysicalMediumDSL,      // includes ADSL and UADSL (G.Lite)
-    NdisPhysicalMediumFibreChannel,
-    NdisPhysicalMedium1394,
-    NdisPhysicalMediumWirelessWan,
-    NdisPhysicalMediumNative802_11,
-    NdisPhysicalMediumBluetooth,
-    NdisPhysicalMediumInfiniband,
-    NdisPhysicalMediumWiMax,
-    NdisPhysicalMediumUWB,
-    NdisPhysicalMedium802_3,
-    NdisPhysicalMedium802_5,
-    NdisPhysicalMediumIrda,
-    NdisPhysicalMediumWiredWAN,
-    NdisPhysicalMediumWiredCoWan,
-    NdisPhysicalMediumOther,
-    NdisPhysicalMediumMax       // Not a real physical type, defined as an upper-bound
-} NDIS_PHYSICAL_MEDIUM, *PNDIS_PHYSICAL_MEDIUM;*/
 
 enum WLAN_INTF_OPCODE {
     wlan_intf_opcode_autoconf_start = 0x000000000,
