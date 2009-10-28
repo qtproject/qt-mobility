@@ -185,6 +185,7 @@ public:
     // List of ids (OIDs are equiv to unique ids, yay)
     QList<QContactLocalId> m_ids;
     QContactRequestWorker m_requestWorker;
+    QString m_engineName;
 };
 
 class QContactWinCEEngine : public QContactManagerEngine
@@ -192,7 +193,7 @@ class QContactWinCEEngine : public QContactManagerEngine
     Q_OBJECT
 
 public:
-    QContactWinCEEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
+    QContactWinCEEngine(const QString& engineName, const QMap<QString, QString>& parameters, QContactManager::Error& error);
     QContactWinCEEngine(const QContactWinCEEngine& other);
     ~QContactWinCEEngine();
     QContactWinCEEngine& operator=(const QContactWinCEEngine& other);
