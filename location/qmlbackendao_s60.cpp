@@ -47,389 +47,371 @@
 
 // constructor
 CQMLBackendAO::CQMLBackendAO() :
-    CActive(EPriorityStandard), // Standard priority
-    mPosInfo(NULL),
-    mRequester(NULL),
-    mRequestType(RequestType(0)) 
-    {
-    }
+        CActive(EPriorityStandard), // Standard priority
+        mPosInfo(NULL),
+        mRequester(NULL),
+        mRequestType(RequestType(0))
+{
+}
 
 //
 //
 //
-CQMLBackendAO* CQMLBackendAO::NewLC( CQGeoPositionInfoSourceS60 *aRequester, 
-                            RequestType  aRequestType, TPositionModuleId  aModId )
-    {
-    CQMLBackendAO* self = new (ELeave) CQMLBackendAO();
+CQMLBackendAO* CQMLBackendAO::NewLC(CQGeoPositionInfoSourceS60 *aRequester,
+                                    RequestType  aRequestType, TPositionModuleId  aModId)
+{
+    CQMLBackendAO* self = new(ELeave) CQMLBackendAO();
     CleanupStack::PushL(self);
     self->ConstructL(aRequester, aRequestType, aModId);
     return self;
-    }
+}
 
 //
 //
 //
-CQMLBackendAO* CQMLBackendAO::NewL(CQGeoPositionInfoSourceS60 *aRequester, 
-                            RequestType  aRequestType, TPositionModuleId  aModId)
-    {
+CQMLBackendAO* CQMLBackendAO::NewL(CQGeoPositionInfoSourceS60 *aRequester,
+                                   RequestType  aRequestType, TPositionModuleId  aModId)
+{
     CQMLBackendAO* self = CQMLBackendAO::NewLC(aRequester, aRequestType, aModId);
     CleanupStack::Pop(); // self;
     return self;
-    }
+}
 
 //
 //
 //
-TInt CQMLBackendAO::ConstructL(CQGeoPositionInfoSourceS60 *aRequester, RequestType  aRequestType, 
-                                                                      TPositionModuleId  aModId)
-    {
+TInt CQMLBackendAO::ConstructL(CQGeoPositionInfoSourceS60 *aRequester, RequestType  aRequestType,
+                               TPositionModuleId  aModId)
+{
     TInt error = KErrNone;
-    
+
     mRequester = aRequester;
-    
+
     mRequestType = aRequestType;
-    
-    
-    
-    if( (mRequestType == RegularUpdate) || (mRequestType == OnceUpdate) )
-        {
-		RPositionServer &PosServer = mRequester->getPositionServer();
+
+
+
+    if ((mRequestType == RegularUpdate) || (mRequestType == OnceUpdate)) {
+        RPositionServer &PosServer = mRequester->getPositionServer();
         error  =  mPositioner.Open(PosServer,aModId);
 
-        if( error != KErrNone  )
+        if (error != KErrNone)
             return error;
 
         CleanupClosePushL(mPositioner);
 
-        error = mPositioner.SetRequestor( CRequestor::ERequestorService ,
-                CRequestor::EFormatApplication, _L("QTmobility_Location"));
+        error = mPositioner.SetRequestor(CRequestor::ERequestorService ,
+                                         CRequestor::EFormatApplication, _L("QTmobility_Location"));
 
         CleanupStack::Pop(1);
 
-        if( error != KErrNone  )
+        if (error != KErrNone)
             return error;
-          
-        }
-       
-    CActiveScheduler::Add(this); // Add to scheduler
-    
-    return error;
+
     }
 
-// 
+    CActiveScheduler::Add(this); // Add to scheduler
+
+    return error;
+}
+
+//
 CQMLBackendAO::~CQMLBackendAO()
-    {
+{
     Cancel();
-    
-    if( (mRequestType == OnceUpdate) || (mRequestType == RegularUpdate) )
-        {
+
+    if ((mRequestType == OnceUpdate) || (mRequestType == RegularUpdate)) {
         //close the subsession
         mPositioner.Close();
-        
-        if( mPosInfo)
-            {
+
+        if (mPosInfo) {
             mPosInfo->ClearRequestedFields();
 
             mPosInfo->ClearPositionData();
             //delete the HPositionGenericInfo
             delete mPosInfo;
         }
-        }
-    else if(mRequestType == DeviceStatus)
-        {
+    } else if (mRequestType == DeviceStatus) {
         //done only by the position server Active Object
         RPositionServer &posServer = mRequester->getPositionServer();
         posServer.Close();
-        }
     }
+}
 
 //
 void CQMLBackendAO::DoCancel()
-    {
+{
     CancelAll();
-    }
+}
 
 
 //
 void CQMLBackendAO::RunL()
-    {
-     switch(mRequestType)
-	{
-	case DeviceStatus :
-				handleDeviceNotification(iStatus.Int());
-				break;
-	case RegularUpdate :
-	case OnceUpdate:
-				handlePosUpdateNotification(iStatus.Int());
-				break;
-	default 	    :
-                break;
-	}	
+{
+    switch (mRequestType) {
+        case DeviceStatus :
+            handleDeviceNotification(iStatus.Int());
+            break;
+        case RegularUpdate :
+        case OnceUpdate:
+            handlePosUpdateNotification(iStatus.Int());
+            break;
+        default         :
+            break;
     }
+}
 
 //
-TInt CQMLBackendAO::RunError( TInt aError )
-    {
+TInt CQMLBackendAO::RunError(TInt aError)
+{
     return aError;
-    }
+}
 
 
-// checks any pending request in activeobject 
+// checks any pending request in activeobject
 bool CQMLBackendAO::isRequestPending()
-    {
-        if(IsActive())
-            return true;
-        else
-            return false;
-    }
+{
+    if (IsActive())
+        return true;
+    else
+        return false;
+}
 
 
 
 // Async call to get notifications about device status.
-void CQMLBackendAO::notifyDeviceStatus( TPositionModuleStatusEventBase &aStatusEvent )
-    {
+void CQMLBackendAO::notifyDeviceStatus(TPositionModuleStatusEventBase &aStatusEvent)
+{
     RPositionServer& PosServ = mRequester->getPositionServer();
-    
+
     //register for device status events
     TPositionModuleStatusEventBase::TModuleEvent RequestedEvents(
-                                   TPositionModuleStatusEventBase::EEventDeviceStatus);
-    
+        TPositionModuleStatusEventBase::EEventDeviceStatus);
+
     aStatusEvent.SetRequestedEvents(RequestedEvents);
-    
+
     PosServ.NotifyModuleStatusEvent(aStatusEvent,iStatus);
-    
+
     SetActive();
-        
-    }
+
+}
 
 void CQMLBackendAO::CancelAll()
-    {
+{
     TInt error;
- 
-        if(mRequestType == DeviceStatus)
-            {
-            RPositionServer &PosServer = mRequester->getPositionServer();
-            error = PosServer.CancelRequest(EPositionServerNotifyModuleStatusEvent);
-            }
-        else if( (mRequestType == OnceUpdate) || (mRequestType == RegularUpdate) )
-            {
-            mPositioner.CancelRequest(EPositionerNotifyPositionUpdate);
-            }
-    
+
+    if (mRequestType == DeviceStatus) {
+        RPositionServer &PosServer = mRequester->getPositionServer();
+        error = PosServer.CancelRequest(EPositionServerNotifyModuleStatusEvent);
+    } else if ((mRequestType == OnceUpdate) || (mRequestType == RegularUpdate)) {
+        mPositioner.CancelRequest(EPositionerNotifyPositionUpdate);
     }
 
-//Initialize the posInfo with appropriate fields 
+}
+
+//Initialize the posInfo with appropriate fields
 bool CQMLBackendAO::initializePosInfo()
-    {
-    if( !mPosInfo )
-        {
+{
+    if (!mPosInfo) {
         mPosInfo = HPositionGenericInfo::New();
-        
-        if(mPosInfo == NULL)
+
+        if (mPosInfo == NULL)
             return FALSE;
-        }
-    else
-        {
+    } else {
         mPosInfo->ClearRequestedFields();
-        
+
         mPosInfo->ClearPositionData();
-        }
+    }
     RPositionServer posServer;
     TPositionModuleInfo moduleInfo;
     TInt error = KErrNone;
-    
+
     //get the posiiton server
     posServer = mRequester->getPositionServer();
-    
+
     //retrieve the module id used by the posiitoner
-    if( mRequestType == RegularUpdate )
+    if (mRequestType == RegularUpdate)
         error = posServer.GetModuleInfoById(mRequester->getCurrentPositonModuleID(), moduleInfo);
-    else if( mRequestType == OnceUpdate )
+    else if (mRequestType == OnceUpdate)
         error = posServer.GetModuleInfoById(mRequester->getRequestUpdateModuleID(), moduleInfo);
-    
+
     if (error == KErrNone) {
-        
+
         //get capabilities of the module
         TPositionModuleInfo::TCapabilities caps = moduleInfo.Capabilities();
-      
+
         if (caps & TPositionModuleInfo::ECapabilitySatellite) {
-                mPosInfo->SetRequestedField(EPositionFieldSatelliteNumInView);
-                mPosInfo->SetRequestedField(EPositionFieldSatelliteNumUsed);
+            mPosInfo->SetRequestedField(EPositionFieldSatelliteNumInView);
+            mPosInfo->SetRequestedField(EPositionFieldSatelliteNumUsed);
         }
-        
+
         if (caps & TPositionModuleInfo::ECapabilitySpeed) {
-                mPosInfo->SetRequestedField(EPositionFieldHorizontalSpeed);
-                mPosInfo->SetRequestedField(EPositionFieldVerticalSpeed);
+            mPosInfo->SetRequestedField(EPositionFieldHorizontalSpeed);
+            mPosInfo->SetRequestedField(EPositionFieldVerticalSpeed);
         }
         if (caps & TPositionModuleInfo::ECapabilityCompass) {
-                mPosInfo->SetRequestedField(EPositionFieldMagneticCourseError);
-                mPosInfo->SetRequestedField(EPositionFieldHeading);
+            mPosInfo->SetRequestedField(EPositionFieldMagneticCourseError);
+            mPosInfo->SetRequestedField(EPositionFieldHeading);
         }
         return TRUE;
     }
     return FALSE;
-    }
+}
 
 //requestUpdate : request for position update once
-void CQMLBackendAO::requestUpdate( int aTimeout )
-    {
+void CQMLBackendAO::requestUpdate(int aTimeout)
+{
     TPositionUpdateOptions  aPosOption;
-    
+
     TInt ret = FALSE;
-    
+
     TInt error = mPositioner.GetUpdateOptions(aPosOption);
-    
+
     aPosOption.SetUpdateInterval(TTimeIntervalMicroSeconds(0));
-    
+
     aPosOption.SetUpdateTimeOut(TTimeIntervalMicroSeconds(aTimeout * 1000));
-    
+
     mPositioner.SetUpdateOptions(aPosOption);
-    
+
     //setUpdateInterval(aTimeout);
     startUpdates();
-    }
+}
 
 
-//    
-void CQMLBackendAO::cancelUpdate()
-    {
-    Cancel();
-    
-    }
-
-    
 //
-void CQMLBackendAO::handleDeviceNotification ( int aError )
-    {
-    switch(aError)
-        {
-        //NotifyPositionModulestatusEvent successfully completed
+void CQMLBackendAO::cancelUpdate()
+{
+    Cancel();
+
+}
+
+
+//
+void CQMLBackendAO::handleDeviceNotification(int aError)
+{
+    switch (aError) {
+            //NotifyPositionModulestatusEvent successfully completed
         case KErrNone :
-            
-        //module not found    
+
+            //module not found
         case KErrNotFound :
             mRequester->updateDeviceStatus();
             break;
-            
-        //request has been successfully cancelled    
+
+            //request has been successfully cancelled
         case KErrCancel :
             break;
-            
-        //unrecoverabe errors    
-        default : 
+
+            //unrecoverabe errors
+        default :
             break;
-        }
     }
+}
 
 
 //
-void CQMLBackendAO::handlePosUpdateNotification ( int aError )
-    {
-    switch(aError)
-        {
-        //NotifyPositionUpdate successfully completed 
+void CQMLBackendAO::handlePosUpdateNotification(int aError)
+{
+    switch (aError) {
+            //NotifyPositionUpdate successfully completed
         case KErrNone :
-            
-        //Posiiton Module is unable to return any position information    
+
+            //Posiiton Module is unable to return any position information
         case KPositionQualityLoss :
-        
-        //requested information could not be retrieved within the maximum peroid    
+
+            //requested information could not be retrieved within the maximum peroid
         case KErrTimedOut:
-            
+
             HPositionGenericInfo *positionInfo = NULL;
 
             positionInfo = HPositionGenericInfo::New();
 
-            if(positionInfo == NULL)
-                return;  
-            
-            //copy the buffer contents into a new HPositionGenericInfo buffer,to be used 
+            if (positionInfo == NULL)
+                return;
+
+            //copy the buffer contents into a new HPositionGenericInfo buffer,to be used
             //for creating QGeoPositionInfo object later
             memcpy(positionInfo , mPosInfo , mPosInfo->BufferSize());
 
-            //if regUpdateAO, request for the next update 
-            if(mRequestType == RegularUpdate)
-                {
+            //if regUpdateAO, request for the next update
+            if (mRequestType == RegularUpdate) {
                 initializePosInfo();
-                mPositioner.NotifyPositionUpdate( *mPosInfo , iStatus);
+                mPositioner.NotifyPositionUpdate(*mPosInfo , iStatus);
                 SetActive();
-                }
+            }
 
             //KErrTimedOut should not be emited for regular update
-            if( (aError!= KErrTimedOut) || (mRequestType != RegularUpdate))
+            if ((aError!= KErrTimedOut) || (mRequestType != RegularUpdate))
                 mRequester->updatePosition(positionInfo,aError);
 
             delete positionInfo;
-                
+
             break;
-        
-        //request was successfully cancelled    
+
+            //request was successfully cancelled
         case KErrCancel :
             break;
-        
+
         default :
             break;
 
-        }
     }
+}
 
 //////////////////////////////////////////////////////////////
 // Sets the interval for getting the regular notification   //
 // the time interval set is in milli seconds                      //
 //////////////////////////////////////////////////////////////
-int CQMLBackendAO::setUpdateInterval ( int aMilliSec )
-    {
+int CQMLBackendAO::setUpdateInterval(int aMilliSec)
+{
     int minimumUpdateInterval = 0;
     TInt64 mUpdateInterval = 0 ;
-    
-    if(mRequester)
-    minimumUpdateInterval = mRequester->minimumUpdateInterval();
-    
+
+    if (mRequester)
+        minimumUpdateInterval = mRequester->minimumUpdateInterval();
+
     // if the current requesttype is  regular updates
     // then set the updateinterval otherwise ignore
     //if(mRequestType != REQ_REG_UPDATE)
     //    return;
-    
+
     TPositionUpdateOptions  aPosOption;
-    
+
     TInt error = mPositioner.GetUpdateOptions(aPosOption);
-    
+
     // TTimeIntervalMicroSeconds is converted seconds
     TInt currentUpdateInterval  = aPosOption.UpdateInterval().Int64() / 1000;
 
-    // If msec is not 0 and is less than the value returned by minimumUpdateInterval(), 
+    // If msec is not 0 and is less than the value returned by minimumUpdateInterval(),
     // the interval will be set to the minimum interval.
-    if( aMilliSec != 0 && aMilliSec <= minimumUpdateInterval)
-        {
-            mUpdateInterval = minimumUpdateInterval;       
-        }
-        
+    if (aMilliSec != 0 && aMilliSec <= minimumUpdateInterval) {
+        mUpdateInterval = minimumUpdateInterval;
+    }
+
     // if the same value is being set then just ignore it.
-    if( currentUpdateInterval == aMilliSec )
-        {   
-            if( aMilliSec != mUpdateInterval )
-                mUpdateInterval = aMilliSec;
-            return mUpdateInterval;
-        }
-  
+    if (currentUpdateInterval == aMilliSec) {
+        if (aMilliSec != mUpdateInterval)
+            mUpdateInterval = aMilliSec;
+        return mUpdateInterval;
+    }
+
     // if Zero or above minimum value will be set.
-    if(aMilliSec == 0 || aMilliSec > minimumUpdateInterval )
-    {     
-        mUpdateInterval = aMilliSec;     
+    if (aMilliSec == 0 || aMilliSec > minimumUpdateInterval) {
+        mUpdateInterval = aMilliSec;
     }
 
     // will set Either zero, minimum or +ve value
     // seconds converted to TTimeIntervalMicroSeconds
-    aPosOption.SetUpdateInterval(TTimeIntervalMicroSeconds (mUpdateInterval * 1000));
+    aPosOption.SetUpdateInterval(TTimeIntervalMicroSeconds(mUpdateInterval * 1000));
     error = mPositioner.SetUpdateOptions(aPosOption);
-    
+
     return mUpdateInterval;
-    }    
+}
 
 void CQMLBackendAO::startUpdates()
-    {
+{
     initializePosInfo();
-    mPositioner.NotifyPositionUpdate( *mPosInfo , iStatus);
-    if(!IsActive())
-    SetActive();
-    }
+    mPositioner.NotifyPositionUpdate(*mPosInfo , iStatus);
+    if (!IsActive())
+        SetActive();
+}

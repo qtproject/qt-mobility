@@ -55,22 +55,22 @@
 class QGeoAreaMonitorS60;
 
 class QMLBackendMonitorCreateTriggerAO : public CActive
-    {
-public :  
+{
+public :
     static QMLBackendMonitorCreateTriggerAO* NewL(QGeoAreaMonitorS60* aParent , RLbtServer &aLbtServer);
 
     bool  InitializeTrigger(QGeoAreaMonitorS60* aParent ,enTriggerType aType,TCoordinate& aCoordinate,qreal& aRadius);
 
     bool isTriggerInitialized(QGeoAreaMonitorS60* aParent ,enTriggerType aType);
 
-    void  DoCancel();   
+    void  DoCancel();
 
     void RunL();
 
     void SetTriggerState(QGeoAreaMonitorS60* aParent,enTriggerType aType,bool aStatus);
 
     TInt getRadius(qreal& radius);
-    
+
     ~QMLBackendMonitorCreateTriggerAO();
 private :
     QMLBackendMonitorCreateTriggerAO();
@@ -79,20 +79,22 @@ private :
 
     void ConstructL(RLbtServer &aLbtServ);
 
-    bool isValid() {return subsessionCreated && (iTriggerMonitorInfo!=NULL);}
+    bool isValid() {
+        return subsessionCreated && (iTriggerMonitorInfo!=NULL);
+    }
 private:
 
     CBackendMonitorInfo*  iTriggerMonitorInfo;  //single instance of the CBackendMonitorInfo object
 
     CActiveSchedulerWait* iActiveSchedulerwait;
-    
+
     bool subsessionCreated; //check for the successful creation of the subsession
 
     bool iTriggerCreation;
-    
-    RLbt iLbt;  //subsession 
 
-    }; 
+    RLbt iLbt;  //subsession
+
+};
 
 
 #endif /* QMLBACKENDMONITORCREATETRIGGER_H_ */

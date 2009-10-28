@@ -44,124 +44,114 @@
 
 //singleton class object
 CBackendMonitorInfo* CBackendMonitorInfo::iBackendMonitorInfo = NULL;
-    
+
 CBackendMonitorInfo* CBackendMonitorInfo::NewL()
-    {
-    if(!iBackendMonitorInfo)
+{
+    if (!iBackendMonitorInfo)
         iBackendMonitorInfo = new CBackendMonitorInfo;
-    
+
     return iBackendMonitorInfo;
-    }
+}
 
 //returns the CMonitorTriggerInfo info based on the aTrigID
 CMonitorTriggerInfo* CBackendMonitorInfo::getMonitorTriggerInfo(TLbtTriggerId aTrigID)
-    {
+{
     CMonitorTriggerInfo* currentNode = NULL;
     currentNode = iMonitorInfo;
-    while(currentNode && (currentNode->iTriggerID != aTrigID))
-        { 
+    while (currentNode && (currentNode->iTriggerID != aTrigID)) {
         currentNode = currentNode->next;
-        }
-    return currentNode;
     }
+    return currentNode;
+}
 
 //returns the CMonitorTriggerInfo info based on the aParent,aType from the linked list
 CMonitorTriggerInfo* CBackendMonitorInfo::getMonitorTriggerInfo(QGeoAreaMonitorS60* aParent,enTriggerType aType)
-    {
+{
     CMonitorTriggerInfo* currentNode = NULL;
     currentNode = iMonitorInfo;
-    while(currentNode)
-        { 
-        if((currentNode->iParent == aParent) && (currentNode->iType == aType))
+    while (currentNode) {
+        if ((currentNode->iParent == aParent) && (currentNode->iType == aType))
             break;
-        
+
         currentNode = currentNode->next;
-        }
-    return currentNode;
     }
+    return currentNode;
+}
 
 //creates and adds a new CMonitorTriggerInfo object to the end of linked list
 bool CBackendMonitorInfo::addMonitorTriggerInfo(QGeoAreaMonitorS60* aParent,TLbtTriggerId aTriggerID,enTriggerType aType)
-    {
+{
     CMonitorTriggerInfo* currentNode = NULL;
-        
-    CMonitorTriggerInfo* temp = new CMonitorTriggerInfo; 
-    
-     if( !temp )
-        {
+
+    CMonitorTriggerInfo* temp = new CMonitorTriggerInfo;
+
+    if (!temp) {
         return FALSE;
-        }
-    
+    }
+
     temp->iTriggerID = aTriggerID;
     temp->iParent = aParent;
     temp->iType = aType;
     temp->next = NULL;
-      
+
     currentNode = iMonitorInfo;
-    
-    while(currentNode && (currentNode->next != NULL)) 
+
+    while (currentNode && (currentNode->next != NULL))
         currentNode = currentNode->next;
-    
-    if(!currentNode)
-        {
+
+    if (!currentNode) {
         iMonitorInfo = temp;
-        }
-    else
-        {
+    } else {
         currentNode->next = temp;
-        }
-    
-    return TRUE;
     }
+
+    return TRUE;
+}
 
 //deletes the node corresponding to aTrigID
 void CBackendMonitorInfo::removeMonitorTriggerInfo(TLbtTriggerId aTrigID)
-    {
+{
     CMonitorTriggerInfo* currentNode = NULL;
 
     CMonitorTriggerInfo* prevNode = NULL;
-    
+
     currentNode = prevNode = iMonitorInfo;
-    
-    while(currentNode && (currentNode->iTriggerID != aTrigID))
-        {
+
+    while (currentNode && (currentNode->iTriggerID != aTrigID)) {
         prevNode = currentNode;
         currentNode = currentNode->next;
-        }
-    
-    if( currentNode == NULL)
-        return;
-    
-    else if ( currentNode == iMonitorInfo)
-        {
-        iMonitorInfo = currentNode->next;
-        }
-   
-    else 
-        {
-        prevNode->next = currentNode->next;
-        }
-    
-    delete currentNode; 
     }
+
+    if (currentNode == NULL)
+        return;
+
+    else if (currentNode == iMonitorInfo) {
+        iMonitorInfo = currentNode->next;
+    }
+
+    else {
+        prevNode->next = currentNode->next;
+    }
+
+    delete currentNode;
+}
 
 //deletes all the nodes in the linked list
 CBackendMonitorInfo::~CBackendMonitorInfo()
-    {
+{
     CMonitorTriggerInfo* currentNode = NULL;
     CMonitorTriggerInfo* prevNode = NULL;
-    
+
     prevNode = iMonitorInfo;
-    
-    while(prevNode)
-        {
+
+    while (prevNode) {
         currentNode = prevNode;
         prevNode = prevNode->next;
         delete currentNode;
-        }
-    
+    }
+
     iMonitorInfo = NULL;
     iBackendMonitorInfo = NULL;
-    }
+}
 
 

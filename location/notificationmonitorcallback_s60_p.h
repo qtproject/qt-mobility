@@ -51,10 +51,10 @@ class INotificationMonitorCallback
 public:
     //callback called for trigger change event
     virtual void handleTriggerEvent(TPositionInfo aPosInfo, enTriggerType aStatus) =0;
-    
+
     //callback called for the trigger properties change event
-    virtual void handleTriggerChangeEvent(TLbtTriggerChangeEventType aEvent, 
-                                    CLbtTriggerInfo* aInfo, TLbtTriggerId aId) =0;  
+    virtual void handleTriggerChangeEvent(TLbtTriggerChangeEventType aEvent,
+                                          CLbtTriggerInfo* aInfo, TLbtTriggerId aId) =0;
 
 };
 
