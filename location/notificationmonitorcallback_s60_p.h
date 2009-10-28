@@ -39,44 +39,23 @@
 **
 ****************************************************************************/
 
-#include "qcontactgroupremoverequest.h"
-#include "qcontactrequests_p.h"
 
-/*!
-  \class QContactGroupRemoveRequest
-  \brief The QContactGroupRemoveRequest class allows a client to asynchronously
-    request that certain groups be removed from a contacts store.
-   \ingroup contacts-requests
- */
+#ifndef NOTIFICATIONMONITORCALLBACK_H_
+#define NOTIFICATIONMONITORCALLBACK_H_
 
-/*!
- * \fn QContactGroupRemoveRequest::progress(QContactGroupRemoveRequest* self)
- * This signal is emitted when some progress has been made on the request, causing either a change of
- * status or an update of results, or both.  It identifies which request the signal originated from
- * by including a pointer to \a self.
- */
+#include <e32base.h>    // For CActive, link against: euser.lib
+#include <lbs.h>
 
-/*! Constructs a new group remove request */
-QContactGroupRemoveRequest::QContactGroupRemoveRequest()
-    : QContactAbstractRequest(new QContactGroupRemoveRequestPrivate)
+class INotificationMonitorCallback
 {
-}
+public:
+    //callback called for trigger change event
+    virtual void handleTriggerEvent(TPositionInfo aPosInfo, enTriggerType aStatus) =0;
 
-/*! Cleans up the memory in use by this group remove request */
-QContactGroupRemoveRequest::~QContactGroupRemoveRequest()
-{
-}
+    //callback called for the trigger properties change event
+    virtual void handleTriggerChangeEvent(TLbtTriggerChangeEventType aEvent,
+                                          CLbtTriggerInfo* aInfo, TLbtTriggerId aId) =0;
 
-/*! Sets the list of ids of the groups which will be removed by this request to \a ids */
-void QContactGroupRemoveRequest::setIds(const QList<QUniqueId>& ids)
-{
-    Q_D(QContactGroupRemoveRequest);
-    d->m_ids = ids;
-}
+};
 
-/*! Returns the list of ids of the groups which will be removed by this request */
-QList<QUniqueId> QContactGroupRemoveRequest::ids() const
-{
-    Q_D(const QContactGroupRemoveRequest);
-    return d->m_ids;
-}
+#endif /* NOTIFICATIONMONITORCALLBACK_H_ */

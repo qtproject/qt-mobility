@@ -9,4 +9,4 @@ CONFIG+= testcase
 
 include(../../../../common.pri)
 
-LIBS += -lQtBearer
+qtAddLibrary(QtBearer)

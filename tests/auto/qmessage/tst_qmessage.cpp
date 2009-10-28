@@ -45,7 +45,10 @@
 #include "qtmessaging.h"
 #include "../support/support.h"
 
-#if defined(Q_OS_SYMBIAN)
+#if defined(Q_OS_SYMBIAN) || (defined(Q_OS_WIN) && defined(_WIN32_WCE))
+# if defined(TESTDATA_DIR)
+#  undef TESTDATA_DIR
+# endif
 # define TESTDATA_DIR "."
 #endif
 
@@ -881,10 +884,13 @@ void tst_QMessage::testPreferredCharsets_data()
     const QChar koreanChars[] = { 0xd55c };
     const QString koreanText(koreanChars, 1);
 
+#ifndef _WIN32_WCE
+    // Qt for Win CE does not appear to include EUC-KR support...
     QTest::newRow("euc-kr")
         << koreanText
         << QByteArray("EUC-KR")
         << QByteArray("EUC-KR");
+#endif
 
     const QChar arabicChars[] = { 0x0636 };
     const QString mixedText(koreanText + QString(arabicChars, 1));

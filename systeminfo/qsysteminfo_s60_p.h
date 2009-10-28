@@ -60,6 +60,8 @@
 #include "qsysinfoglobal.h"
 #include "qsysteminfo.h"
 
+#include <f32file.h>
+
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
@@ -87,7 +89,7 @@ Q_SIGNALS:
 };
 
 //////// QSystemNetworkInfo
-class QSystemNetworkInfoPrivate : public QObject
+class QSystemNetworkInfoPrivate : public QObject, public MTelephonyInfoObserver
 {
     Q_OBJECT
 
@@ -113,12 +115,23 @@ public:
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
 Q_SIGNALS:
-   void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
-   void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int);
-   void currentMobileCountryCodeChanged(const QString &);
-   void currentMobileNetworkCodeChanged(const QString &);
-   void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
-   void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
+    void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int);
+    void currentMobileCountryCodeChanged(const QString &);
+    void currentMobileNetworkCodeChanged(const QString &);
+    void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
+    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+
+protected:  //from MTelephonyInfoObserver
+    void batteryLevelChanged(){};
+    void powerStateChanged(){};
+
+    void countryCodeChanged();
+    void networkCodeChanged();
+    void networkNameChanged();
+
+    void cellNetworkSignalStrengthChanged();
+    void cellNetworkStatusChanged();
 };
 
 //////// QSystemDisplayInfo
@@ -135,34 +148,22 @@ public:
     static int colorDepth(int screen);
 };
 
-//////// QSystemMemoryInfo
-class QSystemMemoryInfoPrivate : public QObject
-{
-    Q_OBJECT
 
-public:
-
-    QSystemMemoryInfoPrivate(QObject *parent = 0);
-    virtual ~QSystemMemoryInfoPrivate();
-    
-    // memory
-    qint64 totalDiskSpace(const QString &driveVolume);
-    qint64 availableDiskSpace(const QString &driveVolume);
-    QStringList listOfVolumes();
-};
-
+//////// QSystemStorageInfo
 class QSystemStorageInfoPrivate : public QObject
 {
     Q_OBJECT
 
 public:
     QSystemStorageInfoPrivate(QObject *parent = 0);
-    virtual ~QSystemStorageInfoPrivate() {};
-    qlonglong totalDiskSpace(const QString &driveVolume) {return -1;}
-    qlonglong availableDiskSpace(const QString &driveVolume) {return -1;}
-    static QStringList logicalDrives() {return QStringList();}
+    virtual ~QSystemStorageInfoPrivate();
+    qlonglong totalDiskSpace(const QString &driveVolume);
+    qlonglong availableDiskSpace(const QString &driveVolume);
+    static QStringList logicalDrives();
+    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
-    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume) {return QSystemStorageInfo::NoDrive;};
+private:
+    RFs iFs;
 };
 
 //////// QSystemDeviceInfo
@@ -203,8 +204,15 @@ Q_SIGNALS:
     void powerStateChanged(QSystemDeviceInfo::PowerState);
 
 protected:  //from MTelephonyInfoObserver
-    void batteryStatusChanged();
     void batteryLevelChanged();
+    void powerStateChanged();
+    
+    void countryCodeChanged(){};
+    void networkCodeChanged(){};
+    void networkNameChanged(){};
+
+    void cellNetworkSignalStrengthChanged(){};
+    void cellNetworkStatusChanged(){};
 };
 
 //////// QSystemScreenSaver
@@ -223,6 +231,7 @@ public:
 //////// DeviceInfo (singleton)
 class DeviceInfo
 {
+
 public:
     static DeviceInfo *instance()
     {
@@ -240,7 +249,6 @@ public:
         }
         return m_phoneInfo;
     }
-    
 
     CSubscriberInfo *subscriberInfo()
     {
@@ -257,15 +265,44 @@ public:
         }
         return m_batteryInfo;
     }
+    
+    CCellNetworkInfo *cellNetworkInfo()
+    {
+        if (!m_cellNetworkInfo) {
+            m_cellNetworkInfo = new CCellNetworkInfo(*m_telephony);
+        }
+        return m_cellNetworkInfo;
+    }
+    
+    CCellNetworkRegistrationInfo *cellNetworkRegistrationInfo()
+    {
+        if (!m_cellNetworkRegistrationInfo) {
+            m_cellNetworkRegistrationInfo = new CCellNetworkRegistrationInfo(*m_telephony);
+        }
+        return m_cellNetworkRegistrationInfo;
+    }
+    
+    CCellSignalStrengthInfo *cellSignalStrenghtInfo()
+    {
+        if (!m_cellSignalStrengthInfo) {
+            m_cellSignalStrengthInfo = new CCellSignalStrengthInfo(*m_telephony);
+        }
+        return m_cellSignalStrengthInfo;
+    }
 
 private:
-    DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_batteryInfo(NULL)
+    DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_batteryInfo(NULL),
+        m_cellNetworkInfo(NULL), m_cellNetworkRegistrationInfo(NULL),
+        m_cellSignalStrengthInfo(NULL)
     {
         m_telephony = CTelephony::NewL();
     };
 
     ~DeviceInfo()
     {
+        delete m_cellSignalStrengthInfo;
+        delete m_cellNetworkRegistrationInfo;
+        delete m_cellNetworkInfo;
         delete m_batteryInfo;
         delete m_subscriberInfo;
         delete m_phoneInfo;
@@ -278,6 +315,9 @@ private:
     CPhoneInfo *m_phoneInfo;
     CSubscriberInfo *m_subscriberInfo;
     CBatteryInfo *m_batteryInfo;
+    CCellNetworkInfo *m_cellNetworkInfo;
+    CCellNetworkRegistrationInfo *m_cellNetworkRegistrationInfo;
+    CCellSignalStrengthInfo *m_cellSignalStrengthInfo;
 };
 
 QT_END_NAMESPACE

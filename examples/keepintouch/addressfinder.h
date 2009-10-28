@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #ifndef ADDRESSFINDER_H
 #define ADDRESSFINDER_H
 
@@ -85,8 +84,8 @@ private:
     QAction* searchAction;
     QPushButton *searchButton;
 
-    QComboBox*  addressCombo;
-    QListWidget *messageList;
+    QListWidget*  addressList;
+    QComboBox *messageCombo;
 
     QMessageServiceAction service;
 

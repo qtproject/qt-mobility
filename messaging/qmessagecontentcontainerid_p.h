@@ -38,6 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMESSAGECONTENTCONTAINERIDPRIVATE_H
+#define QMESSAGECONTENTCONTAINERIDPRIVATE_H
 #include "qmessagecontentcontainerid.h"
 
 class QMessageContentContainerIdPrivate
@@ -47,3 +49,4 @@ public:
     {
     }
 };
+#endif

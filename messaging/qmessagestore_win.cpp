@@ -45,6 +45,7 @@
 #include "qmessagefolderid_p.h"
 #include "qmessageaccountid_p.h"
 #include "qmessageaccount_p.h"
+#include "qmessagecontentcontainer.h"
 #include "winhelpers_p.h"
 #include <QCoreApplication>
 #include <qdebug.h>
@@ -157,75 +158,58 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(ordering)
-    Q_UNUSED(body)
-    Q_UNUSED(options)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
     QMessageIdList result;
 
-    // TODO - perform this query
-
-    if (offset) {
-        return result.mid(offset, (limit ? limit : -1));
-    } else {
+    if (options & QMessageDataComparator::FullWord) {
+        d_ptr->p_ptr->lastError = QMessageStore::NotYetImplemented;
         return result;
     }
+
+    if (!d_ptr->p_ptr->session) {
+        d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
+        return result;
+    } else {
+        d_ptr->p_ptr->lastError = QMessageStore::NoError;
+        result = d_ptr->p_ptr->session->queryMessages(&d_ptr->p_ptr->lastError, filter, ordering, limit, offset, body, options);
+    }
+
+    return result;
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset) const
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(ordering)
-
     QMessageFolderIdList result;
 
     if (!d_ptr->p_ptr->session) {
         d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
         return result;
-    } else {
-        d_ptr->p_ptr->lastError = QMessageStore::NoError;
     }
 
-    foreach (const MapiStorePtr &store, d_ptr->p_ptr->session->allStores(&d_ptr->p_ptr->lastError)) {
-        result.append(store->folderIds(&d_ptr->p_ptr->lastError));
+    d_ptr->p_ptr->lastError = QMessageStore::NoError;
+    foreach (const MapiFolderPtr &folder, d_ptr->p_ptr->session->filterFolders(&d_ptr->p_ptr->lastError, filter, ordering, limit, offset)) {
+        result.append(folder->id());
     }
 
-    if (offset) {
-        return result.mid(offset, (limit ? limit : -1));
-    } else {
-        return result;
-    }
+    return result;
 }
 #endif
 
 QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset) const
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(ordering)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
-
     QMessageAccountIdList result;
 
     if (!d_ptr->p_ptr->session) {
         d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
         return result;
-    } else {
-        d_ptr->p_ptr->lastError = QMessageStore::NoError;
     }
 
-    foreach (const MapiStorePtr &store, d_ptr->p_ptr->session->allStores(&d_ptr->p_ptr->lastError)) {
-        result.append(QMessageAccountId(store->id()));
+    d_ptr->p_ptr->lastError = QMessageStore::NoError;
+    foreach (const MapiStorePtr &store, d_ptr->p_ptr->session->filterStores(&d_ptr->p_ptr->lastError, filter, ordering, limit, offset)) {
+        result.append(store->id());
     }
 
-    if (offset) {
-        return result.mid(offset, (limit ? limit : -1));
-    } else {
-        return result;
-    }
+    return result;
 }
 
 int QMessageStore::countMessages(const QMessageFilter& filter) const
@@ -306,6 +290,14 @@ bool QMessageStore::addMessage(QMessage *message)
 
         MapiStorePtr mapiStore = d_ptr->p_ptr->session->findStore(lError,message->parentAccountId(),false);
         if (*lError == QMessageStore::NoError && !mapiStore.isNull()) {
+
+            //check store/message type compatibility
+            if(!(mapiStore->types() & message->type()))
+            {
+                *lError = QMessageStore::ConstraintFailure;
+                return false;
+            }
+
             MapiFolderPtr mapiFolder;
 
             // Find the parent folder for this message
@@ -325,17 +317,26 @@ bool QMessageStore::addMessage(QMessage *message)
                 if (*lError == QMessageStore::NoError) {
                     //set the new QMessageId
                     //we can only be guaranteed of an entry id after IMessage->SaveChanges has been called
-
+#ifdef _WIN32_WCE
+                    SizedSPropTagArray(1, columns) = {1, {PR_ENTRYID}};
+#else
                     SizedSPropTagArray(2, columns) = {2, {PR_RECORD_KEY, PR_ENTRYID}};
+#endif
                     SPropValue *properties(0);
                     ULONG count;
                     HRESULT rv = mapiMessage->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), 0, &count, &properties);
-                    if (HR_SUCCEEDED(rv) && (properties[0].ulPropTag == PR_RECORD_KEY) && (properties[1].ulPropTag == PR_ENTRYID)) {
-                        MapiRecordKey recordKey(properties[0].Value.bin.lpb, properties[0].Value.bin.cb);
-                        MapiEntryId entryId(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
 #ifdef _WIN32_WCE
+                    if (HR_SUCCEEDED(rv) && (properties[0].ulPropTag == PR_ENTRYID)) {
+#else
+                    if (HR_SUCCEEDED(rv) && (properties[0].ulPropTag == PR_RECORD_KEY) && (properties[1].ulPropTag == PR_ENTRYID)) {
+#endif
+#ifdef _WIN32_WCE
+                        MapiRecordKey recordKey;
+                        MapiEntryId entryId(properties[0].Value.bin.lpb, properties[0].Value.bin.cb);
                         message->d_ptr->_id = QMessageIdPrivate::from(mapiFolder->storeEntryId(), entryId, recordKey, mapiFolder->entryId());
 #else
+                        MapiRecordKey recordKey(properties[0].Value.bin.lpb, properties[0].Value.bin.cb);
+                        MapiEntryId entryId(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
                         message->d_ptr->_id = QMessageIdPrivate::from(mapiFolder->storeKey(), entryId, recordKey, mapiFolder->recordKey());
 #endif
                         message->d_ptr->_modified = false;
@@ -373,6 +374,21 @@ bool QMessageStore::updateMessage(QMessage *message)
     } else {
         d_ptr->p_ptr->lastError = QMessageStore::NoError;
     }
+
+    //check store/message type compatibility
+    if(MapiStorePtr mapiStore = d_ptr->p_ptr->session->findStore(&d_ptr->p_ptr->lastError,message->parentAccountId()))
+    {
+        if(!(mapiStore->types() & message->type()))
+        {
+            d_ptr->p_ptr->lastError = QMessageStore::ConstraintFailure;
+            return false;
+        }
+    }
+    else{
+        qWarning() << "Unable to retrieve MAPI store for message at update";
+        return false;
+    }
+
 
     if (message && message->id().isValid()) {
         QMessageStore::ErrorCode* lError = &d_ptr->p_ptr->lastError;

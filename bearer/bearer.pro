@@ -99,13 +99,13 @@ symbian: {
         !wince*:LIBS += -lWs2_32
         wince*:LIBS += -lWs2
     }
-    macx: {
-        HEADERS += qcorewlanengine_mac_p.h
-        SOURCES+= qcorewlanengine_mac.mm
-       # CONFIG-=app_bundle
-#CONFIG+=lib_bundle
-        LIBS += -framework CoreWLAN
-    }
+#macx: {
+#        HEADERS += qcorewlanengine_mac_p.h
+#        SOURCES+= qcorewlanengine_mac.mm
+        #CONFIG-=app_bundle
+        #CONFIG+=lib_bundle
+#        LIBS += -framework CoreWLAN
+#    }
 }
 
 include (../features/deploy.pri)

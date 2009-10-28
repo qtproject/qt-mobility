@@ -67,15 +67,23 @@ void tst_qgeopositioninfo_messageHandler(QtMsgType type, const char *msg)
 QList<qreal> tst_qgeopositioninfo_qrealTestValues()
 {
     QList<qreal> values;
+
+// the following platforms use float for qreal
+#if !defined(QT_NO_FPU) && !defined(QT_ARCH_ARM) && !defined(QT_ARCH_WINDOWSCE) && !defined(QT_ARCH_SYMBIAN) 
     if (qreal(DBL_MIN) == DBL_MIN)
         values << DBL_MIN;
+#endif
 
     values << FLT_MIN;
     values << -1.0 << 0.0 << 1.0;
     values << FLT_MAX;
 
+// the following platforms use float for qreal
+#if !defined(QT_NO_FPU) && !defined(QT_ARCH_ARM) && !defined(QT_ARCH_WINDOWSCE) && !defined(QT_ARCH_SYMBIAN) 
     if (qreal(DBL_MAX) == DBL_MAX)
         values << DBL_MAX;
+#endif
+
     return values;
 }
 

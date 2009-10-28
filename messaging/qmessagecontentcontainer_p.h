@@ -76,7 +76,7 @@ public:
     QString _textContent;
     QString _filename;
 
-    QMessageContentContainerPrivate() 
+    QMessageContentContainerPrivate()
         : _message(0),
           _container(&_part)
     {
@@ -320,6 +320,10 @@ public:
         _name = fi.fileName().toLatin1();
         _size = fi.size();
 
+        //set the attachment filepath
+
+        _filename = attachmentPath;
+
         //set the mime-type
 
         QByteArray mimeType;
@@ -370,6 +374,11 @@ public:
     static QMessageContentContainerId bodyContentId()
     {
         return QMessageContentContainerId(QString::number(0));
+    }
+
+    static QString attachmentFilename(const QMessageContentContainer& container)
+    {
+        return container.d_ptr->_filename;
     }
 };
 #endif

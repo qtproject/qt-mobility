@@ -7,7 +7,9 @@ include (../../../common.pri)
 INCLUDEPATH += ../../../location
 
 # Input 
-SOURCES += tst_qgeoareamonitor.cpp
+HEADERS += ../qlocationtestutils_p.h
+SOURCES += tst_qgeoareamonitor.cpp \
+           ../qlocationtestutils.cpp
 
 qtAddLibrary(QtLocation)
 

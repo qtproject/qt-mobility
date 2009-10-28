@@ -38,15 +38,19 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMESSAGEACCOUNTORDERINGPRIVATE_H
+#define QMESSAGEACCOUNTORDERINGPRIVATE_H
 #include "qmessageaccountordering.h"
+#include "qstring.h"
 
 class QMessageAccountOrderingPrivate
 {
 public:
-    QMessageAccountOrderingPrivate(QMessageAccountOrdering *ordering)
-        :q_ptr(ordering)
-    {
-    }
+    QMessageAccountOrderingPrivate(QMessageAccountOrdering *ordering);
 
+    bool _empty;
+    Qt::SortOrder _order;
     QMessageAccountOrdering *q_ptr;
+    static Qt::SortOrder order(const QMessageAccountOrdering &ordering) { return ordering.d_ptr->_order; }
 };
+#endif

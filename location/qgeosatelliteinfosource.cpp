@@ -38,8 +38,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qgeosatelliteinfosource.h"
+#include <qgeosatelliteinfosource.h>
 
+#if defined(Q_OS_WINCE)
+#   include "qgeosatelliteinfosource_wince_p.h"
+#endif
 
 /*!
     \class QGeoSatelliteInfoSource
@@ -47,8 +50,8 @@
     \ingroup location
 
     The static function QGeoSatelliteInfoSource::createDefaultSource() creates a default
-    satellite data source that is appropriate for the platform, if one is 
-    available. Otherwise, QGeoSatelliteInfoSource can be subclassed to create an 
+    satellite data source that is appropriate for the platform, if one is
+    available. Otherwise, QGeoSatelliteInfoSource can be subclassed to create an
     appropriate custom source of satellite data.
 
     Call startUpdates() and stopUpdates() to start and stop regular updates,
@@ -61,18 +64,23 @@
     Creates a source with the specified \a parent.
 */
 QGeoSatelliteInfoSource::QGeoSatelliteInfoSource(QObject *parent)
-    : QObject(parent)
+        : QObject(parent)
 {
 }
 
 /*!
-    Creates and returns a source with the specified \a parent that reads 
+    Creates and returns a source with the specified \a parent that reads
     from the system's default source of satellite update information.
 
     Returns 0 if the system has no default source.
 */
-QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject * /*parent*/)
+QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *parent)
 {
+#if defined(Q_OS_WINCE)
+    return new QGeoSatelliteInfoSourceWinCE(parent);
+#else
+    Q_UNUSED(parent);
+#endif
     return 0;
 }
 
@@ -102,7 +110,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject * 
 /*!
     \fn virtual void QGeoSatelliteInfoSource::startUpdates() = 0;
 
-    Starts emitting updates at regular intervals. The updates will be 
+    Starts emitting updates at regular intervals. The updates will be
     provided whenever new satellite information becomes available.
 
     \sa satellitesInViewUpdated(), satellitesInUseUpdated()
