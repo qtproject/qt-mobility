@@ -96,7 +96,7 @@ private slots:
     void newConfigurationActivated();
 
     void stateChanged(QNetworkSession::State);
-    void deviceStateChanged(QNetworkSession::State state);
+    void deviceStateChanged(quint32 state);
 
     void configurationAdded(const QNetworkConfiguration &config);
     void aPPropertiesChanged( QMap<QString,QVariant> map);
