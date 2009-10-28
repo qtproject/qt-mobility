@@ -2512,6 +2512,8 @@ QList<MapiFolderPtr> MapiStore::filterFolders(QMessageStore::ErrorCode *lastErro
 {
     QList<MapiFolderPtr> result;
     QMessageFolderFilter filter(QMessageFolderFilterPrivate::preprocess(lastError, _session, afilter));
+    if (*lastError != QMessageStore::NoError)
+        return result;
 
 #if 0 //(was ifndef _WIN32_WCE) TODO: fix issue with GetHierarchyTable only returning top level folders
     MapiFolderPtr root(rootFolder(lastError));

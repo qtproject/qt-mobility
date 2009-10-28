@@ -268,12 +268,12 @@ void QMessageFolderFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError
         result = ~QMessageFolderFilter();
     }
     if (filter->d_ptr->_criterion == ParentAccountFilter) {
-        QMessageAccountIdList ids(QMessageStore::instance()->queryAccounts(*filter->d_ptr->_accountFilter));
-        foreach(QMessageAccountId id, ids) {
+        QList<MapiStorePtr> stores(session->filterStores(lastError, *filter->d_ptr->_accountFilter));
+        foreach(MapiStorePtr store, stores) {
             if (inclusion) {
-                result |= QMessageFolderFilter::byParentAccountId(id);
+                result |= QMessageFolderFilter::byParentAccountId(store->id());
             } else {
-                result &= QMessageFolderFilter::byParentAccountId(id, QMessageDataComparator::NotEqual);
+                result &= QMessageFolderFilter::byParentAccountId(store->id(), QMessageDataComparator::NotEqual);
             }
         }
     } else if (filter->d_ptr->_criterion == ParentFolderFilter) {
@@ -286,12 +286,12 @@ void QMessageFolderFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError
             }
         }
     } else if (filter->d_ptr->_criterion == AncestorFolderFilter) {
-        QMessageFolderIdList ids(QMessageStore::instance()->queryFolders(*filter->d_ptr->_folderFilter));
-        foreach(QMessageFolderId id, ids) {
+        QList<MapiFolderPtr> folders(session->filterFolders(lastError, *filter->d_ptr->_folderFilter));
+        foreach(MapiFolderPtr folder, folders) {
             if (inclusion) {
-                result |= QMessageFolderFilter::byAncestorFolderIds(id);
+                result |= QMessageFolderFilter::byAncestorFolderIds(folder->id());
             } else {
-                result &= QMessageFolderFilter::byAncestorFolderIds(id, QMessageDataComparator::Excludes);
+                result &= QMessageFolderFilter::byAncestorFolderIds(folder->id(), QMessageDataComparator::Excludes);
             }
         }
     } else {
