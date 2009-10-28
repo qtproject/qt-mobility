@@ -42,18 +42,25 @@
 #define QMESSAGEFOLDERORDERINGPRIVATE_H
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderordering.h"
+#include "qmessagefolder.h"
+#include "qpair.h"
 
 class QMessageFolderOrderingPrivate
 {
     Q_DECLARE_PUBLIC(QMessageFolderOrdering)
 
 public:
+    enum Field { Name = 0, Path };
+
     QMessageFolderOrderingPrivate(QMessageFolderOrdering *ordering)
         :q_ptr(ordering)
     {
     }
 
     QMessageFolderOrdering *q_ptr;
+    QList<QPair<Field, Qt::SortOrder> > _fieldOrderList;
+    
+    static bool QMessageFolderOrderingPrivate::lessthan(const QMessageFolderOrdering &ordering, const QMessageFolder &left, const QMessageFolder &right);
 };
 #endif
 #endif
