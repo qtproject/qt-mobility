@@ -124,10 +124,6 @@ private:
         quint32     byteRate;
         quint16     blockAlign;
         quint16     bitsPerSample;
-        quint32     xFreq1;
-        chunk       fact;
-        quint32     xfact;
-        chunk       data;
     };
 
     struct DATAHeader
