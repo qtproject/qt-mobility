@@ -465,7 +465,7 @@ bool QVersitContactConverterPrivate::encodeEmbeddedContent( const QString& resou
                                                             bool performScaling )
 {
     bool encodeContent = false;
-    QString resouceExt = resoucePath.section('.', -1).toUpper();
+    QString resouceExt = resoucePath.section(QString::fromAscii("."), -1).toUpper();
     QString resouceFormat = mMappings.value( resouceExt );
 
     if ( !resouceFormat.size())
@@ -488,7 +488,7 @@ bool QVersitContactConverterPrivate::encodeEmbeddedContent( const QString& resou
         else if (isValidRemoteUrl( resoucePath )) {
             encodeContent = true;
             value = resoucePath.toAscii();
-            property.addParameter(QString::fromAscii(versitValue),versitUrlId);
+            property.addParameter(QString::fromAscii(versitValue), QString::fromAscii(versitUrlId));
             property.addParameter(QString::fromAscii(versitType),resouceFormat);
         } else {
             // The file has been removed. Don't encode the path to a local file.

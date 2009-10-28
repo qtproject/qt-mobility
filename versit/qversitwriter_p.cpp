@@ -92,7 +92,7 @@ QByteArray QVersitWriterPrivate::encodeGroupsAndName(
     QByteArray encodedGroupAndName;
     QStringList groups = property.groups();
     if (!groups.isEmpty()) {
-        QString groupAsString = groups.join(".");
+        QString groupAsString = groups.join(QString::fromAscii("."));
         encodedGroupAndName.append(groupAsString.toAscii());
         encodedGroupAndName.append(".");
     }
