@@ -198,7 +198,7 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
 
 QString QSystemInfoPrivate::currentCountryCode() const
 {
-    return QString();   //TODO
+    return QLocale::system().name().mid(3,2);
 }
 
 
