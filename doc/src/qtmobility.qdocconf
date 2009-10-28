@@ -43,7 +43,9 @@ versionsym              = "QtMobility 1.0"
 base                    = file:./doc/html
 
 defines                 = Q_QDOC \
-                          __cplusplus
+                          __cplusplus \
+                          QMESSAGING_OPTIONAL \
+                          QMESSAGING_OPTIONAL_FOLDER
 
 examples.fileextensions = "*.cpp *.h *.svg"
 

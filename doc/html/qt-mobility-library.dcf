@@ -1891,6 +1891,7 @@
         <keyword ref="qmessage.html#id">id</keyword>
         <keyword ref="qmessage.html#isModified">isModified</keyword>
         <keyword ref="qmessage.html#parentAccountId">parentAccountId</keyword>
+        <keyword ref="qmessage.html#parentFolderId">parentFolderId</keyword>
         <keyword ref="qmessage.html#preferredCharsetFor">preferredCharsetFor</keyword>
         <keyword ref="qmessage.html#preferredCharsets">preferredCharsets</keyword>
         <keyword ref="qmessage.html#priority">priority</keyword>
@@ -2015,8 +2016,10 @@
     </section>
     <section ref="qmessagefilter.html" title="QMessageFilter Class Reference">
         <keyword ref="qmessagefilter.html">QMessageFilter</keyword>
+        <keyword ref="qmessagefilter.html#byAncestorFolderIds">byAncestorFolderIds</keyword>
         <keyword ref="qmessagefilter.html#byId">byId</keyword>
         <keyword ref="qmessagefilter.html#byParentAccountId">byParentAccountId</keyword>
+        <keyword ref="qmessagefilter.html#byParentFolderId">byParentFolderId</keyword>
         <keyword ref="qmessagefilter.html#byPriority">byPriority</keyword>
         <keyword ref="qmessagefilter.html#byReceptionTimeStamp">byReceptionTimeStamp</keyword>
         <keyword ref="qmessagefilter.html#byRecipients">byRecipients</keyword>
@@ -2037,6 +2040,51 @@
         <keyword ref="qmessagefilter.html#operator-7c-eq">operator|=</keyword>
         <keyword ref="qmessagefilter.html#operator-7e">operator~</keyword>
         <section ref="qmessagefilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmessagefolder.html" title="QMessageFolder Class Reference">
+        <keyword ref="qmessagefolder.html">QMessageFolder</keyword>
+        <keyword ref="qmessagefolder.html#displayName">displayName</keyword>
+        <keyword ref="qmessagefolder.html#id">id</keyword>
+        <keyword ref="qmessagefolder.html#parentAccountId">parentAccountId</keyword>
+        <keyword ref="qmessagefolder.html#parentFolderId">parentFolderId</keyword>
+        <keyword ref="qmessagefolder.html#path">path</keyword>
+        <section ref="qmessagefolder-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmessagefolderfilter.html" title="QMessageFolderFilter Class Reference">
+        <keyword ref="qmessagefolderfilter.html">QMessageFolderFilter</keyword>
+        <keyword ref="qmessagefolderfilter.html#byAncestorFolderIds">byAncestorFolderIds</keyword>
+        <keyword ref="qmessagefolderfilter.html#byDisplayName">byDisplayName</keyword>
+        <keyword ref="qmessagefolderfilter.html#byId">byId</keyword>
+        <keyword ref="qmessagefolderfilter.html#byParentAccountId">byParentAccountId</keyword>
+        <keyword ref="qmessagefolderfilter.html#byParentFolderId">byParentFolderId</keyword>
+        <keyword ref="qmessagefolderfilter.html#byPath">byPath</keyword>
+        <keyword ref="qmessagefolderfilter.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qmessagefolderfilter.html#isSupported">isSupported</keyword>
+        <keyword ref="qmessagefolderfilter.html#options">options</keyword>
+        <keyword ref="qmessagefolderfilter.html#setOptions">setOptions</keyword>
+        <keyword ref="qmessagefolderfilter.html#operator-and">operator&amp;</keyword>
+        <keyword ref="qmessagefolderfilter.html#operator-and-eq">operator&amp;=</keyword>
+        <keyword ref="qmessagefolderfilter.html#operator-7c">operator|</keyword>
+        <keyword ref="qmessagefolderfilter.html#operator-7c-eq">operator|=</keyword>
+        <keyword ref="qmessagefolderfilter.html#operator-7e">operator~</keyword>
+        <section ref="qmessagefolderfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmessagefolderid.html" title="QMessageFolderId Class Reference">
+        <keyword ref="qmessagefolderid.html">QMessageFolderId</keyword>
+        <keyword ref="qmessagefolderid.html#isValid">isValid</keyword>
+        <keyword ref="qmessagefolderid.html#toString">toString</keyword>
+        <keyword ref="qmessagefolderid.html#operator-eq">operator=</keyword>
+        <section ref="qmessagefolderid-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmessagefolderordering.html" title="QMessageFolderOrdering Class Reference">
+        <keyword ref="qmessagefolderordering.html">QMessageFolderOrdering</keyword>
+        <keyword ref="qmessagefolderordering.html#byDisplayName">byDisplayName</keyword>
+        <keyword ref="qmessagefolderordering.html#byPath">byPath</keyword>
+        <keyword ref="qmessagefolderordering.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qmessagefolderordering.html#isSupported">isSupported</keyword>
+        <keyword ref="qmessagefolderordering.html#operator-2b">operator+</keyword>
+        <keyword ref="qmessagefolderordering.html#operator-2b-eq">operator+=</keyword>
+        <section ref="qmessagefolderordering-members.html" title="List of all members"/>
     </section>
     <section ref="qmessageid.html" title="QMessageId Class Reference">
         <keyword ref="qmessageid.html">QMessageId</keyword>
@@ -2104,6 +2152,8 @@
         <keyword ref="qmessagestore.html#account">account</keyword>
         <keyword ref="qmessagestore.html#addMessage">addMessage</keyword>
         <keyword ref="qmessagestore.html#countAccounts">countAccounts</keyword>
+        <keyword ref="qmessagestore.html#countFolders">countFolders</keyword>
+        <keyword ref="qmessagestore.html#folder">folder</keyword>
         <keyword ref="qmessagestore.html#instance">instance</keyword>
         <keyword ref="qmessagestore.html#lastError">lastError</keyword>
         <keyword ref="qmessagestore.html#message">message</keyword>
@@ -2111,6 +2161,7 @@
         <keyword ref="qmessagestore.html#messageRemoved">messageRemoved</keyword>
         <keyword ref="qmessagestore.html#messageUpdated">messageUpdated</keyword>
         <keyword ref="qmessagestore.html#queryAccounts">queryAccounts</keyword>
+        <keyword ref="qmessagestore.html#queryFolders">queryFolders</keyword>
         <keyword ref="qmessagestore.html#registerNotificationFilter">registerNotificationFilter</keyword>
         <keyword ref="qmessagestore.html#removeMessage">removeMessage</keyword>
         <keyword ref="qmessagestore.html#removeMessages">removeMessages</keyword>
