@@ -1042,6 +1042,7 @@ void UT_QVersitContactGenerator::testSound()
     QDir dir(path);    
     QStringList type("*.wav");
     QStringList files = dir.entryList(type);
+    QCOMPARE(1,files.count());
     bool exist = false;
     foreach(const QString f,files){
         if(f.contains(valName.join(QString::fromAscii("_")))){

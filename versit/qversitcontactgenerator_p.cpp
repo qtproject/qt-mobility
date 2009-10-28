@@ -465,6 +465,7 @@ QString QVersitContactGeneratorPrivate::saveFile(const QString& fileName,
             writeResult = file.write(content);
         }
     }
+    file.close();
     return (writeResult > 0) ? fileName : QString();
 }
 
