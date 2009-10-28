@@ -2508,11 +2508,10 @@ QMessageFolder MapiStore::folderFromId(QMessageStore::ErrorCode *lastError, cons
 }
 #endif
 
-QList<MapiFolderPtr> MapiStore::filterFolders(QMessageStore::ErrorCode *lastError, const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering) const
+QList<MapiFolderPtr> MapiStore::filterFolders(QMessageStore::ErrorCode *lastError, const QMessageFolderFilter &afilter) const
 {
-    Q_UNUSED(ordering)
-
     QList<MapiFolderPtr> result;
+    QMessageFolderFilter filter(QMessageFolderFilterPrivate::preprocess(lastError, _session, afilter));
 
 #if 0 //(was ifndef _WIN32_WCE) TODO: fix issue with GetHierarchyTable only returning top level folders
     MapiFolderPtr root(rootFolder(lastError));
@@ -3270,7 +3269,6 @@ QList<MapiFolderPtr> MapiSession::filterFolders(QMessageStore::ErrorCode *lastEr
         *lastError = QMessageStore::ConstraintFailure;
         return QList<MapiFolderPtr>();
     }
-    Q_UNUSED(ordering)
 
     QList<MapiFolderPtr> result;
     if (!_mapiSession) {
@@ -3280,7 +3278,7 @@ QList<MapiFolderPtr> MapiSession::filterFolders(QMessageStore::ErrorCode *lastEr
     }
 
     foreach (const MapiStorePtr &store, filterStores(lastError, filter, cachedMode)) {
-        result.append(store->filterFolders(lastError, filter, ordering));
+        result.append(store->filterFolders(lastError, filter));
     }
 
     if (!ordering.isEmpty()) {

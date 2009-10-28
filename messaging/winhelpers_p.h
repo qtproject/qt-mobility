@@ -248,7 +248,7 @@ public:
     QMessageFolder folderFromId(QMessageStore::ErrorCode *lastError, const QMessageFolderId &folderId);
 #endif
 
-    QList<MapiFolderPtr> filterFolders(QMessageStore::ErrorCode *lastError, const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering) const;
+    QList<MapiFolderPtr> filterFolders(QMessageStore::ErrorCode *lastError, const QMessageFolderFilter &filter) const;
 
     MapiEntryId messageEntryId(QMessageStore::ErrorCode *lastError, const MapiRecordKey &folderKey, const MapiRecordKey &messageKey);
 
@@ -344,7 +344,7 @@ public:
 
     QList<MapiStorePtr> allStores(QMessageStore::ErrorCode *lastError, bool cachedMode = true) const;
 
-    QList<MapiFolderPtr> filterFolders(QMessageStore::ErrorCode *lastError, const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset, bool cachedMode = true) const;
+    QList<MapiFolderPtr> filterFolders(QMessageStore::ErrorCode *lastError, const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering = QMessageFolderOrdering(), uint limit = 0, uint offset = 0, bool cachedMode = true) const;
 
     MapiStorePtr openStore(QMessageStore::ErrorCode *lastError, const MapiEntryId& id, bool cachedMode = true) const;
     MapiStorePtr openStoreWithKey(QMessageStore::ErrorCode *lastError, const MapiRecordKey& key, bool cachedMode = true) const;
