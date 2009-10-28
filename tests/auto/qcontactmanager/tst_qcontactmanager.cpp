@@ -133,6 +133,7 @@ private slots:
     void nameSynthesis();
 
     /* Tests that are run on all managers */
+    void metadata();
     void nullIdOperations();
     void add();
     void update();
@@ -158,6 +159,7 @@ private slots:
     /* data providers (mostly all engines) */
     void uriParsing_data(); // Special data
     void nameSynthesis_data(); // Special data
+    void metadata_data() {addManagers();}
     void nullIdOperations_data() {addManagers();}
     void add_data() {addManagers();}
     void update_data() {addManagers();}
@@ -363,6 +365,15 @@ void tst_QContactManager::addManagers()
             QTest::newRow(QString("mgr='%1', params").arg(mgr).toLatin1().constData()) << QContactManager::buildUri(mgr, params);
         }
     }
+}
+
+
+void tst_QContactManager::metadata()
+{
+    // ensure that the backend is publishing its metadata (name / parameters / uri) correctly
+    QFETCH(QString, uri);
+    QContactManager* cm = QContactManager::fromUri(uri);
+    QVERIFY(QContactManager::buildUri(cm->managerName(), cm->managerParameters()) == cm->managerUri());
 }
 
 
@@ -2286,7 +2297,8 @@ void tst_QContactManager::relationships()
         QVERIFY(retrieveList.isEmpty());
         QVERIFY(cm->error() == QContactManager::NotSupportedError);
 
-        QSKIP("Skipping: This manager does not support relationships!", SkipSingle);
+        //QSKIP("Skipping: This manager does not support relationships!", SkipSingle);
+        return;
     }
 
     int totalRelationships = cm->relationships().size();
