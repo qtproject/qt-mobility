@@ -60,7 +60,9 @@ public:
     QMessageFolderOrdering *q_ptr;
     QList<QPair<Field, Qt::SortOrder> > _fieldOrderList;
     
-    static bool QMessageFolderOrderingPrivate::lessthan(const QMessageFolderOrdering &ordering, const QMessageFolder &left, const QMessageFolder &right);
+#if defined(Q_OS_WIN)
+    static bool lessthan(const QMessageFolderOrdering &ordering, const QMessageFolder &left, const QMessageFolder &right);
+#endif
 };
 #endif
 #endif
