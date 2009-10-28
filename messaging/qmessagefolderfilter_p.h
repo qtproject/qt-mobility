@@ -63,44 +63,30 @@ public:
         AccountInclusion, 
         ParentEquality, 
         ParentInclusion,
-        AncestorInclusion
+        AncestorInclusion,
+        ParentAccountFilter,
+        ParentFolderFilter,
+        AncestorFolderFilter
     };
 
-    QMessageFolderFilterPrivate(QMessageFolderFilter *folderFilter)
-        : q_ptr(folderFilter),
-          _criterion(None),
-          _equality(QMessageDataComparator::Equal),
-          _inclusion(QMessageDataComparator::Includes),
-          _options(0)
-    {
-    }
+    enum Operator { 
+        Identity = 0, 
+        And, 
+        Or, 
+        Not, 
+        Nand, 
+        Nor, 
+        OperatorEnd 
+    };
 
+    QMessageFolderFilterPrivate(QMessageFolderFilter *folderFilter);
+    ~QMessageFolderFilterPrivate();
     QMessageFolderFilter *q_ptr;
 
-    QMessageFolderFilterPrivate &operator=(const QMessageFolderFilterPrivate &other)
-    {
-        _criterion = other._criterion;
-        _ids = other._ids;
-        _accountIds = other._accountIds;
-        _value = other._value;
-        _equality = other._equality;
-        _inclusion = other._inclusion;
-        _options = other._options;
+    QMessageFolderFilterPrivate &operator=(const QMessageFolderFilterPrivate &other);
+    bool operator==(const QMessageFolderFilterPrivate &other) const;
 
-        return *this;
-    }
-
-    bool operator==(const QMessageFolderFilterPrivate &other) const
-    {
-        return ((_criterion == other._criterion) &&
-                (_ids == other._ids) &&
-                (_accountIds == other._accountIds) &&
-                (_value == other._value) &&
-                (_equality == other._equality) &&
-                (_inclusion == other._inclusion) &&
-                (_options == other._options));
-    }
-
+    Operator _operator;
     Criterion _criterion;
     QSet<QMessageFolderId> _ids;
     QSet<QMessageAccountId> _accountIds;
@@ -108,10 +94,17 @@ public:
     QMessageDataComparator::EqualityComparator _equality;
     QMessageDataComparator::InclusionComparator _inclusion;
     QMessageDataComparator::Options _options;
+    bool _valid;
+    QList<QMessageFolderFilter*> _arguments; // for bool ops
+    QMessageAccountFilter *_accountFilter;
+    QMessageFolderFilter *_folderFilter;
 
 #ifdef Q_OS_WIN
+    static QMessageFolderFilter preprocess(const QMessageFolderFilter &filter);
+    static void preprocess(QMessageFolderFilter *filter);
     static bool matchesStore(const QMessageFolderFilter &filter, const MapiStorePtr &store);
     static bool matchesFolder(const QMessageFolderFilter &filter, const MapiFolderPtr &folder);
+    static bool QMessageFolderFilterPrivate::isNonMatching(const QMessageFolderFilter &filter);
 #endif
 };
 #endif
