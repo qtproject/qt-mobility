@@ -2204,16 +2204,11 @@ void tst_QContactManager::relationships()
     QFETCH(QString, uri);
     QContactManager* cm = QContactManager::fromUri(uri);
 
-    if (!cm->information()->hasFeature(QContactManagerInfo::Relationships))
-        QSKIP("Skipping: This manager does not support relationships!", SkipSingle);
-
-    int totalRelationships = cm->relationships().size();
-    int totalManagerRelationships = cm->relationships(QContactRelationship::IsManagerOf).size();
-
     QStringList availableRelationshipTypes = cm->information()->supportedRelationshipTypes();
     if (availableRelationshipTypes.isEmpty()) {
         // if empty, but has the relationships feature, then it must support arbitrary types.
         // so, add a few types that we can use.
+        // if it doesn't support relationships, then it doesn't matter anyway.
         availableRelationshipTypes.append(QContactRelationship::IsManagerOf);
         availableRelationshipTypes.append(QContactRelationship::IsSpouseOf);
         availableRelationshipTypes.append(QContactRelationship::IsAssistantOf);
@@ -2221,16 +2216,81 @@ void tst_QContactManager::relationships()
 
     QContact source;
     QContact dest1, dest2, dest3;
+    QContactPhoneNumber n1, n2, n3;
+    n1.setNumber("1");
+    n2.setNumber("2");
+    n3.setNumber("3");
 
     source.setDisplayLabel("Source");
-    dest1.setDisplayLabel("Destination One");
-    dest2.setDisplayLabel("Destination Two");
-    dest3.setDisplayLabel("Destination Three");
+    dest1.saveDetail(&n1);
+    dest2.saveDetail(&n2);
+    dest3.saveDetail(&n3);
 
     cm->saveContact(&source);
     cm->saveContact(&dest1);
     cm->saveContact(&dest2);
     cm->saveContact(&dest3);
+
+    if (!cm->information()->hasFeature(QContactManagerInfo::Relationships)) {
+        // ensure that the operations all fail as required.
+        QContactRelationship r1, r2, r3;
+        r1.setFirst(source.id());
+        r1.setSecond(dest1.id());
+        r1.setRelationshipType(availableRelationshipTypes.at(0));
+        r2.setFirst(source.id());
+        r2.setSecond(dest2.id());
+        r2.setRelationshipType(availableRelationshipTypes.at(0));
+        r3.setFirst(source.id());
+        r3.setSecond(dest3.id());
+        r3.setRelationshipType(availableRelationshipTypes.at(0));
+
+        QList<QContactRelationship> batchList;
+        batchList << r2 << r3;
+
+        // test save and remove
+        QVERIFY(!cm->saveRelationship(&r1));
+        QVERIFY(cm->error() == QContactManager::NotSupportedError);
+        QVERIFY(!cm->removeRelationship(r1));
+        QVERIFY(cm->error() == QContactManager::NotSupportedError);
+        QVERIFY(cm->saveRelationships(&batchList).isEmpty());
+        QVERIFY(cm->error() == QContactManager::NotSupportedError);
+        QVERIFY(cm->removeRelationships(batchList).isEmpty());
+        QVERIFY(cm->error() == QContactManager::NotSupportedError);
+
+        // test retrieval
+        QList<QContactRelationship> retrieveList;
+        retrieveList = cm->relationships(source.id(), QContactRelationshipFilter::First);
+        QVERIFY(retrieveList.isEmpty());
+        QVERIFY(cm->error() == QContactManager::NotSupportedError);
+        retrieveList = cm->relationships(source.id(), QContactRelationshipFilter::Second);
+        QVERIFY(retrieveList.isEmpty());
+        QVERIFY(cm->error() == QContactManager::NotSupportedError);
+        retrieveList = cm->relationships(source.id()); // Either
+        QVERIFY(retrieveList.isEmpty());
+        QVERIFY(cm->error() == QContactManager::NotSupportedError);
+
+
+        retrieveList = cm->relationships(availableRelationshipTypes.at(0), source.id(), QContactRelationshipFilter::First);
+        QVERIFY(retrieveList.isEmpty());
+        QVERIFY(cm->error() == QContactManager::NotSupportedError);
+        retrieveList = cm->relationships(availableRelationshipTypes.at(0), source.id(), QContactRelationshipFilter::Second);
+        QVERIFY(retrieveList.isEmpty());
+        QVERIFY(cm->error() == QContactManager::NotSupportedError);
+        retrieveList = cm->relationships(availableRelationshipTypes.at(0), source.id(), QContactRelationshipFilter::Either);
+        QVERIFY(retrieveList.isEmpty());
+        QVERIFY(cm->error() == QContactManager::NotSupportedError);
+        retrieveList = cm->relationships(availableRelationshipTypes.at(0), source.id());
+        QVERIFY(retrieveList.isEmpty());
+        QVERIFY(cm->error() == QContactManager::NotSupportedError);
+        retrieveList = cm->relationships(availableRelationshipTypes.at(0));
+        QVERIFY(retrieveList.isEmpty());
+        QVERIFY(cm->error() == QContactManager::NotSupportedError);
+
+        QSKIP("Skipping: This manager does not support relationships!", SkipSingle);
+    }
+
+    int totalRelationships = cm->relationships().size();
+    int totalManagerRelationships = cm->relationships(QContactRelationship::IsManagerOf).size();
 
     QContactId dest1Uri = dest1.id();
     QContactId dest1EmptyUri;

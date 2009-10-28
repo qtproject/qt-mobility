@@ -612,7 +612,9 @@ void tst_QContact::type()
     QVERIFY(c.type() == QString(QLatin1String(QContactType::TypeContact)));
     QVERIFY(c.isEmpty() == true); // type doesn't affect emptiness
 
-    c.setType(QContactType::TypeGroup);
+    QContactType groupType;
+    groupType.setType(QString(QLatin1String(QContactType::TypeGroup)));
+    c.setType(groupType);
     QVERIFY(c.type() == QString(QLatin1String(QContactType::TypeGroup)));
 }
 
