@@ -41,7 +41,7 @@ symbian {
                        qmlbackendao_s60_p.h \
                        notificationcallback_s60_p.h 
 
-    enable_s60_lbt() { 
+    enable_s60_lbt() {
         PRIVATE_HEADERS += \
                        qgeoareamonitor_s60_p.h \
                        qmlbackendmonitorao_s60_p.h \
@@ -54,7 +54,7 @@ symbian {
     SOURCES += qgeopositioninfosource_s60.cpp \
                qmlbackendao_s60.cpp
 
-    enable_s60_lbt() { 
+    enable_s60_lbt() {
         SOURCES += \
                qgeoareamonitor_s60.cpp \
                qmlbackendmonitorao_s60.cpp \
@@ -90,7 +90,10 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
     INCLUDEPATH += $$EPOCROOT\epoc32\include\osextensions \
                    $$EPOCROOT\epoc32\include\LBTHeaders
-    LIBS += -llbs -llbt
+    LIBS += -llbs
+    enable_s60_lbt() {
+        LIBS += -llbt
+    }
 
     deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS
