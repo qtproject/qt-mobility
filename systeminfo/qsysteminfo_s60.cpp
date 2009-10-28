@@ -49,6 +49,7 @@
 #include <ptiengine.h>
 #include <FeatDiscovery.h>
 #include <featureinfo.h>
+#include <hwrmvibra.h> 
  
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
@@ -261,8 +262,15 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         {
             return true;
         }
-        case QSystemInfo::FmradioFeature:
+        case QSystemInfo::FmradioFeature:   //Not available in public SDK
         case QSystemInfo::VibFeature:
+        {
+            TRAPD(err,
+                CHWRMVibra *vibra = CHWRMVibra::NewLC();
+                CleanupStack::PopAndDestroy(vibra);
+            )
+            return err == KErrNone;
+        }
         case QSystemInfo::LedFeature:
         case QSystemInfo::VideoOutFeature:
         case QSystemInfo::HapticsFeature:

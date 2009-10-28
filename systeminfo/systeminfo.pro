@@ -102,7 +102,8 @@ unix: {
             -lcenrepnotifhandler \
             -lefsrv \
             -lptiengine \
-            -lfeatdiscovery
+            -lfeatdiscovery \
+            -lhwrmvibraclient
 
         TARGET.CAPABILITY = ALL -TCB
         TARGET.EPOCALLOWDLLDATA = 1
