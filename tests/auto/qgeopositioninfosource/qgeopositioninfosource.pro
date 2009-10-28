@@ -5,6 +5,7 @@ TARGET=tst_qgeopositioninfosource
 include (../../../common.pri)
 
 INCLUDEPATH += ../../../location
+DEPENDPATH += ../../../buid/Debug/bin
 
 # Input 
 HEADERS += ../qlocationtestutils_p.h \

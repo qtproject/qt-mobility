@@ -64,6 +64,15 @@ symbian {
     }
 }
 
+wince* {
+    PRIVATE_HEADERS += qgeopositioninfosource_wince_p.h \
+                       qgeosatelliteinfosource_wince_p.h \
+                       qgeoinfothread_wince_p.h
+    SOURCES += qgeopositioninfosource_wince.cpp \
+               qgeosatelliteinfosource_wince.cpp \
+               qgeoinfothread_wince.cpp
+}
+
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 SOURCES +=  qlocationutils.cpp \
@@ -95,3 +104,6 @@ symbian {
     DEPLOYMENT += QtLocationDeployment
 }
 
+wince* {
+	LIBS += -lgpsapi
+}

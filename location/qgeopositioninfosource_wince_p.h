@@ -39,11 +39,52 @@
 **
 ****************************************************************************/
 
-#include "../testqgeosatelliteinfosource_p.h"
+#ifndef QGEOPOSITIONINFOSOURCE_WINCE_P_H
+#define QGEOPOSITIONINFOSOURCE_WINCE_P_H
 
-int main(int argc, char *argv[])
+#include <qgeopositioninfosource.h>
+
+#include "qgeoinfothread_wince_p.h"
+
+class QGeoPositionInfoValidator : public QGeoInfoValidator
 {
-    QCoreApplication app(argc, argv);
-    TestQGeoSatelliteInfoSource *test = TestQGeoSatelliteInfoSource::createDefaultSourceTest();
-    return QTest::qExec(test, argc, argv);
-}
+public:
+    QGeoPositionInfoValidator();
+    ~QGeoPositionInfoValidator();
+
+    bool valid(const GPS_POSITION &data) const;
+};
+
+class QGeoPositionInfoSourceWinCE : public QGeoPositionInfoSource
+{
+    Q_OBJECT
+
+public:
+    enum {
+        // The minimum acceptable interval for periodic updates.
+        MinimumUpdateInterval = 100
+    };
+
+    explicit QGeoPositionInfoSourceWinCE(QObject *parent = 0);
+    ~QGeoPositionInfoSourceWinCE();
+
+    void setUpdateInterval(int msec);
+    void setPreferredPositioningMethods(PositioningMethods methods);
+    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
+    PositioningMethods supportedPositioningMethods() const;
+    int minimumUpdateInterval() const;
+
+public slots:
+    virtual void startUpdates();
+    virtual void stopUpdates();
+    virtual void requestUpdate(int timeout = 0);
+
+private slots:
+    void dataUpdated(GPS_POSITION data);
+
+private:
+    QGeoPositionInfo lastPosition;
+    QGeoInfoThreadWinCE *infoThread;
+};
+
+#endif //#ifndef QGEOPOSITIONINFOSOURCE_WINCE_P_H

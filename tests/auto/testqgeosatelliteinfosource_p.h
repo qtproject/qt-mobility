@@ -39,11 +39,63 @@
 **
 ****************************************************************************/
 
-#include "../testqgeosatelliteinfosource_p.h"
+#ifndef TESTQGEOSATELLITEINFOSOURCE_H
+#define TESTQGEOSATELLITEINFOSOURCE_H
 
-int main(int argc, char *argv[])
+#include <QTest>
+#include <QObject>
+
+class QGeoSatelliteInfoSource;
+
+class TestQGeoSatelliteInfoSource : public QObject
 {
-    QCoreApplication app(argc, argv);
-    TestQGeoSatelliteInfoSource *test = TestQGeoSatelliteInfoSource::createDefaultSourceTest();
-    return QTest::qExec(test, argc, argv);
-}
+    Q_OBJECT
+
+public:
+    TestQGeoSatelliteInfoSource(QObject *parent = 0);
+
+    static TestQGeoSatelliteInfoSource *createDefaultSourceTest();
+
+protected:
+    virtual QGeoSatelliteInfoSource *createTestSource() = 0;
+
+    // MUST be called by subclasses if they override respective test slots
+    void base_initTestCase();
+    void base_init();
+    void base_cleanup();
+    void base_cleanupTestCase();
+
+
+private slots:
+    void initTestCase();
+    void init();
+    void cleanup();
+    void cleanupTestCase();
+
+    void constructor_withParent();
+    void constructor_noParent();
+
+    void createDefaultSource();
+
+    void startUpdates();
+    void startUpdates_moreThanOnce();
+    void stopUpdates();
+    void stopUpdates_withoutStart();
+
+    void requestUpdate();
+    void requestUpdate_data();
+
+    void requestUpdate_validTimeout();
+    void requestUpdate_defaultTimeout();
+    void requestUpdate_repeatedCalls();
+    void requestUpdate_overlappingCalls();
+
+    void requestUpdateBeforeStartUpdates();
+    void requestUpdateAfterStartUpdates();
+
+private:
+    QGeoSatelliteInfoSource *m_source;
+    bool m_testingDefaultSource;
+};
+
+#endif // #ifndef TESTQGEOSATELLITEINFOSOURCE_H

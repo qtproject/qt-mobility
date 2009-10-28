@@ -51,7 +51,7 @@ SOURCE_DIR = $$PWD
 }
 
 wince* {
-    LOCATION.sources = $OUTPUT_DIR/lib/QtLocation.dll
+    LOCATION.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/QtLocation.dll
     LOCATION.path = .
     DEPLOYMENT += LOCATION
 }
