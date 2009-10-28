@@ -28,7 +28,8 @@ SYMBIAN_HEADERS += \
         ../../inc/cntabstractrelationship.h \
         ../../inc/cntrelationshipgroup.h \
         ../../inc/cntsymbianfiltersqlhelper.h \
-        ../../inc/cntsrvconnection.h
+        ../../inc/cntsrvconnection.h \
+        ../../inc/qcontactsymbiantransformerror.h
 
 SYMBIAN_SOURCES += \
         ../../src/qcontactsymbianengine_p.cpp \
@@ -57,4 +58,5 @@ SYMBIAN_SOURCES += \
         ../../src/cntabstractrelationship.cpp \
         ../../src/cntrelationshipgroup.cpp \
         ../../src/cntsymbianfiltersqlhelper.cpp \
-        ../../src/cntsrvconnection.cpp
+        ../../src/cntsrvconnection.cpp \
+        ../../src/qcontactsymbiantransformerror.cpp
