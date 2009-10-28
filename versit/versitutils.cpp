@@ -48,27 +48,27 @@
  */
 QByteArray VersitUtils::fold(QByteArray& text, int maxChars)
 {
-    char previousChar = 0;
+    char previous = 0;
     int charsSinceLastLineBreak = 0;
     for (int i=0; i<text.length(); i++) {
-         char currentChar = text.at(i);
-         if (previousChar == '\r' && currentChar == '\n') {
+         char current = text.at(i);
+         if (previous == '\r' && current == '\n') {
              charsSinceLastLineBreak = 0;
-             previousChar = 0;
+             previous = 0;
          } else {
-             char nextChar = 0;
+             char next = 0;
              if (i != text.length()-1)
-                 nextChar = text.at(i+1);
+                 next = text.at(i+1);
              if (charsSinceLastLineBreak == maxChars &&
-                 (currentChar != '\r' && nextChar != '\n')) {
+                 (current != '\r' && next != '\n')) {
                  text.insert(i,"\r\n ");
                  charsSinceLastLineBreak = 1; // space
                  // Skip the added CRLF, for-loop increment i++ skips the space:
                  i += 2;
-                 previousChar = 0;
+                 previous = 0;
              } else {
                  charsSinceLastLineBreak++;
-                 previousChar = currentChar;
+                 previous = current;
              }
          }
     }
@@ -81,21 +81,21 @@ QByteArray VersitUtils::fold(QByteArray& text, int maxChars)
  */
 QByteArray VersitUtils::unfold(QByteArray& text)
 {
-    char previousChar = 0;
-    char previousOfThePreviousChar = 0;
+    char previous = 0;
+    char previousOfTheprevious = 0;
     for (int i=0; i<text.length(); i++) {
-        char currentChar = text.at(i);
-        if ((currentChar == ' ' || currentChar == '\t') && 
-             previousChar == '\n' &&
-             previousOfThePreviousChar == '\r') {
+        char current = text.at(i);
+        if ((current == ' ' || current == '\t') &&
+             previous == '\n' &&
+             previousOfTheprevious == '\r') {
             text.replace(i-2,3,QByteArray());
-            previousChar = 0;
-            previousOfThePreviousChar = 0;
+            previous = 0;
+            previousOfTheprevious = 0;
             i--;
         }
         else {
-            previousOfThePreviousChar = previousChar;
-            previousChar = currentChar;
+            previousOfTheprevious = previous;
+            previous = current;
         }
     }
     return text;
@@ -110,11 +110,11 @@ int VersitUtils::countLeadingWhiteSpaces(const QByteArray& text, int pos)
     int whiteSpaceCount = 0;
     bool nonWhiteSpaceFound = false;
     for (int i=pos; i<text.length() && !nonWhiteSpaceFound; i++) {
-        char currentChar = text.at(i);
-        if (currentChar == ' ' || 
-            currentChar == '\t' || 
-            currentChar == '\r' || 
-            currentChar == '\n') {
+        char current = text.at(i);
+        if (current == ' ' ||
+            current == '\t' ||
+            current == '\r' ||
+            current == '\n') {
             whiteSpaceCount++;
         }
         else {
@@ -133,10 +133,10 @@ bool VersitUtils::quotedPrintableEncode(QByteArray& text)
 {    
     bool encoded = false;
     for (int i=0; i<text.length(); i++) {
-        char currentChar = text.at(i);
-        if (shouldBeQuotedPrintableEncoded(currentChar)) {
+        char current = text.at(i);
+        if (shouldBeQuotedPrintableEncoded(current)) {
             QString encodedStr;
-            encodedStr.sprintf("=%02X",currentChar);
+            encodedStr.sprintf("=%02X",current);
             text.replace(i,1,encodedStr.toAscii());
             i += 2;
             encoded = true;
@@ -173,56 +173,61 @@ void VersitUtils::decodeQuotedPrintable(QByteArray& text)
 
 /*!
  * Performs backslash escaping for line breaks (CRLFs),
- * semicolons and commas according to RFC 2426.
+ * semicolons, backslashes and commas according to RFC 2426.
  */
 bool VersitUtils::backSlashEscape(QByteArray& text)
 {
     bool escaped = false;
     bool withinQuotes = false;
-    char previousChar = 0;
+    char previous = 0;
     for (int i=0; i < text.length(); i++) {
-        char currentChar = text.at(i);
-        if (previousChar != '\\' && !withinQuotes) {
-            if (currentChar == ';' || currentChar == ',') {
+        char current = text.at(i);
+        if (previous != '\\' && !withinQuotes) {
+            char next = 0;
+            if (i != text.length()-1)
+                 next = text.at(i+1);
+            if (current == ';' || current == ',' ||
+                (current == '\\' &&
+                 next != '\\' && next != ';' && next != ',' && next != 'n')) {
                 text.insert(i,'\\');
                 i++;
                 escaped = true;
-            } else if (previousChar == '\r' || currentChar == '\n') {
+            } else if (previous == '\r' && current == '\n') {
                 text.replace(i-1,2,"\\n");
                 escaped = true;
             } else {
                 // NOP
             }
         }
-        if (currentChar == '"')
+        if (current == '"')
             withinQuotes = !withinQuotes;
-        previousChar = currentChar;
+        previous = current;
     }
     return escaped;
 }
 
 /*!
  * Removes backslash escaping for line breaks (CRLFs),
- * semicolons and commas according to RFC 2426.
+ * semicolons, backslashes and commas according to RFC 2426.
  */
 void VersitUtils::removeBackSlashEscaping(QByteArray& text)
 {
-    char previousChar = 0;
+    char previous = 0;
     bool withinQuotes = false;
     for (int i=0; i < text.length(); i++) {
-        char currentChar = text.at(i);
-        if (previousChar == '\\' && !withinQuotes) {
-            if (currentChar == ';' || currentChar == ',') {
+        char current = text.at(i);
+        if (previous == '\\' && !withinQuotes) {
+            if (current == ';' || current == ',' || current == '\\') {
                 text.remove(i-1,1);
-            } else if (currentChar == 'n' || currentChar == 'N') {
+            } else if (current == 'n' || current == 'N') {
                 text.replace(i-1,2,"\r\n");
             } else {
                 // NOP
             }
         }
-        if (currentChar == '"')
+        if (current == '"')
             withinQuotes = !withinQuotes;
-        previousChar = currentChar;
+        previous = current;
     }
 }
 
@@ -249,15 +254,15 @@ QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(
 {
     QPair<QStringList,QString> groupsAndName;
     int length = 0;
-    char previousChar = 0;
+    char previous = 0;
     for (int i=0; i < property.length(); i++) {
-        char currentChar = property.at(i);
-        if ((currentChar == ';' && previousChar != '\\') || 
-            currentChar == ':') {
+        char current = property.at(i);
+        if ((current == ';' && previous != '\\') ||
+            current == ':') {
             length = i;
             break;
         }
-        previousChar = currentChar;
+        previous = current;
     }
     if (length > 0) {
         QString trimmedGroupsAndName =
@@ -298,15 +303,15 @@ QMultiHash<QString,QString> VersitUtils::extractPropertyParams(
     if (colonIndex > 0) {
         QByteArray nameAndParamsString = property.left(colonIndex);
         int paramStartIndex = -1;
-        char previousChar = 0;
+        char previous = 0;
         for (int i=0; i < nameAndParamsString.length(); i++) {
-            char currentChar = nameAndParamsString.at(i);
-            if (currentChar == ';' && previousChar != '\\') {
+            char current = nameAndParamsString.at(i);
+            if (current == ';' && previous != '\\') {
                 int length = i-paramStartIndex;
                 addParam(params,nameAndParamsString,paramStartIndex,length);
                 paramStartIndex = i+1;
             }
-            previousChar = currentChar;
+            previous = current;
         }
         // Add the last parameter before the colon
         addParam(params,nameAndParamsString,paramStartIndex);
