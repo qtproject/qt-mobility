@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include <QtTest/QtTest>
 #include "../qbearertestcommon.h"
 #include "qnetworkconfiguration.h"

@@ -22,9 +22,15 @@ win32:!wince*:LIBS += -lWs2_32
 wince*:LIBS += -lWs2
 
 CONFIG += console
-
 symbian {
     BEARERLIB.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/QtBearer.dll
     BEARERLIB.path = .
     DEPLOYMENT += BEARERLIB
+}
+
+macx: {
+    #LIBS += -framework QtBearer
+    contains(CONFIG, debug) {
+        CONFIG -= app_bundle
+     }
 }

@@ -13,7 +13,7 @@ SUBDIRS += databasemanager \                #service framework
 
 SUBDIRS += qnetworkconfigmanager \          #Bearer management
            qnetworkconfiguration \
-           qnetworksession \
+           qnetworksession
 
 SUBDIRS += qgeocoordinate \                 #Location
           qgeopositioninfo \

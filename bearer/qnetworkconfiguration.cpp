@@ -139,7 +139,9 @@ QT_BEGIN_NAMESPACE
                                 platforms this form of configuration may also be called Service
                                 Network Access Point (SNAP).
     \value UserChoice           The configuration is a placeholder which will be resolved to an
-                                actual configuration by the platform when a session is opened.
+                                actual configuration by the platform when a session is opened. Depending
+                                on the platform the selection may generate a popup dialog asking the user
+                                for his preferred choice.
     \value Invalid              The configuration is invalid.
 */
 

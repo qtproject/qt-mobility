@@ -178,6 +178,8 @@ private: // data
     TInt iALREnabled;
     TBool iALRUpgradingConnection;
     
+    QList<QString> iKnownConfigsBeforeConnectionStart;
+    
     TUint32 iOldRoamingIap;
     TUint32 iNewRoamingIap;
 

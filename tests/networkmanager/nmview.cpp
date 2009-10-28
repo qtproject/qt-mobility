@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "nmview.h"
 
 #include <QLabel>
@@ -501,6 +502,8 @@ void NMView::readSettings()
 
 void NMView::printConnectionDetails(const QString& service)
 {
+    Q_UNUSED(service);
+
 //
 //    qWarning() << __FUNCTION__ << service;
 //
@@ -577,6 +580,8 @@ void NMView::getNetworkDevices()
 
 void NMView::connectionItemActivated( QTreeWidgetItem * item, int col )
 {
+    Q_UNUSED(col);
+
     qWarning() <<__FUNCTION__<< item->text(0);
     QDBusInterface iface(NM_DBUS_SERVICE,
                          NM_DBUS_PATH,
@@ -611,6 +616,9 @@ void NMView::connectionItemActivated( QTreeWidgetItem * item, int col )
 
 void NMView::deviceItemActivated( QTreeWidgetItem * item , int section)
 {
+    Q_UNUSED(item);
+    Q_UNUSED(section);
+
   //  qWarning() << item->text(section) << item->text(4);
     //if(item->text(4) == "Wireless") findAccessPoints(item->text(0));
 }
@@ -866,7 +874,7 @@ void NMView::netManagerState(quint32 state)
     };
 }
 
-void NMView::deviceStateChanged(QNetworkSession::State state)
+void NMView::deviceStateChanged(quint32 state)
 {
   qWarning() << __FUNCTION__ << state;
     switch(state) {
@@ -1018,8 +1026,5 @@ void NMView::networkSessionError(QNetworkSession::SessionError error)
         break;
     };
 
- int ret = QMessageBox::warning(this, tr("NMView"),
-                               errorStr,
-                                QMessageBox::Ok);
-
+    QMessageBox::warning(this, tr("NMView"), errorStr, QMessageBox::Ok);
 }

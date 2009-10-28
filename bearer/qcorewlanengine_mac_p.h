@@ -39,58 +39,62 @@
 **
 ****************************************************************************/
 
-#include <qnetworkconfiguration.h>
-#include <qnetworksession.h>
+#ifndef QCOREWLANENGINE_P_H
+#define QCOREWLANENGINE_P_H
 
-#include <QGraphicsItem>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-class QGraphicsTextItem;
-class QGraphicsSvgItem;
+#include "qnetworksessionengine_p.h"
+#include <QMap>
+#include <QTimer>
+QT_BEGIN_NAMESPACE
 
-class Cloud : public QObject, public QGraphicsItem
+class QNetworkConfigurationPrivate;
+
+class QCoreWlanEngine : public QNetworkSessionEngine
 {
     Q_OBJECT
-    Q_INTERFACES(QGraphicsItem)
 
 public:
-    Cloud(const QNetworkConfiguration &config, QGraphicsItem *parent = 0);
-    ~Cloud();
+    QCoreWlanEngine(QObject *parent = 0);
+    ~QCoreWlanEngine();
 
-    enum { Type = UserType + 1 };
-    int type() const { return Type; }
+    QList<QNetworkConfigurationPrivate *> getConfigurations(bool *ok = 0);
+    QString getInterfaceFromId(const QString &id);
+    bool hasIdentifier(const QString &id);
 
-    void setFinalScale(qreal factor);
-    void setDeleteAfterAnimation(bool deleteAfter);
+    QString bearerName(const QString &id);
 
-    void calculateForces();
+    void connectToId(const QString &id);
+    void disconnectFromId(const QString &id);
 
-    bool advance();
-    QRectF boundingRect() const;
-    void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *);
+    void requestUpdate();
 
-    static qreal getRadiusForState(QNetworkConfiguration::StateFlags state);
-
-protected:
-    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-
-private Q_SLOTS:
-    void stateChanged(QNetworkSession::State state);
-    void newConfigurationActivated();
+    static QCoreWlanEngine *instance();
+    static bool getAllScInterfaces();
 
 private:
-    QNetworkConfiguration configuration;
-    QNetworkSession *session;
+    bool isWifiReady(const QString &dev);
+    QMap<uint, QString> configurationInterface;
+    QTimer pollTimer;
+    QList<QNetworkConfigurationPrivate *> scanForSsids(const QString &interfaceName);
 
-    QGraphicsTextItem *text;
-    QGraphicsSvgItem *icon;
+    QList<QNetworkConfigurationPrivate *> getWlanProfiles(const QString &interfaceName);
 
-    qreal finalOpacity;
-    qreal finalScale;
-    qreal currentScale;
-
-    QPointF newPos;
-
-    bool deleteAfterAnimation;
+    QList<QNetworkConfigurationPrivate *> getWifiConfigurations();
+    bool isKnownSsid(const QString &interfaceName, const QString &ssid);
 };
+
+QT_END_NAMESPACE
+
+#endif
 

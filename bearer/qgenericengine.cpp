@@ -50,9 +50,6 @@
 #include <QtCore/qdebug.h>
 
 #ifdef Q_OS_WIN
-#include <winsock2.h>
-#include <mswsock.h>
-#undef interface
 #include "qnetworksessionengine_win_p.h"
 #endif
 
