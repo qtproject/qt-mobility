@@ -57,10 +57,9 @@ private slots: // Tests
     void init();
     void cleanup();
 
-    void testVersitDocument();
     void testDevice();    
     void testStart();
-    void testEncodeVersitDocument();
+    void testEncodeGroupsAndName();
     void testEncodeParameters();
 
 private: // Data

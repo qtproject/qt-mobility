@@ -59,13 +59,6 @@ void UT_QVersitWriter::cleanup()
     delete mWriter;
 }
 
-void UT_QVersitWriter::testVersitDocument()
-{
-    QVersitDocument doc;
-    mWriter->setVersitDocument(doc);
-    QCOMPARE(doc.versitType(), QVersitDocument::VCard21);
-}
-
 void UT_QVersitWriter::testDevice()
 {
     // No device
@@ -81,75 +74,74 @@ void UT_QVersitWriter::testStart()
 {
     QVERIFY(!mWriter->start());
     
-    //device set, document not set
+    // Device set, document not set
     QBuffer buffer;
     mWriter->setDevice(&buffer);
     buffer.open(QBuffer::ReadWrite);
     QVERIFY(!mWriter->start());
 
-    //document set, device not set
+    // Document set, device not set
     mWriter->setDevice(0);
-    QVersitDocument doc;
-    QVersitProperty prop;
-    prop.setName(QString("FN"));
-    prop.setValue("John Smith");
-    doc.addProperty(prop);
-    doc.addProperty(prop);
-    mWriter->setVersitDocument(doc);
+    QVersitDocument document;
+    QVersitProperty property;
+    property.setName(QString("FN"));
+    property.setValue(QByteArray("Homer"));
+    document.addProperty(property);
+    mWriter->setVersitDocument(document);
     QVERIFY(!mWriter->start());
 
-    //both document and device are set
-    mWriter->setDevice(&buffer);
+    // vCard 2.1
+    const char vCard21[] =
+"BEGIN:VCARD\r\n\
+VERSION:2.1\r\n\
+FN:Homer\r\n\
+END:VCARD\r\n";
+    document.setVersitType(QVersitDocument::VCard21);
+    mWriter->setVersitDocument(document);
     buffer.open(QBuffer::ReadWrite);
+    mWriter->setDevice(&buffer);
     QVERIFY(mWriter->start());
+    buffer.seek(0);
+    QByteArray result(buffer.readAll());
+    QCOMPARE(QString::fromAscii(result),QString::fromAscii(vCard21));
+
+    // vCard 3.0
+    const char vCard30[] =
+"BEGIN:VCARD\r\n\
+VERSION:3.0\r\n\
+FN:Homer\r\n\
+END:VCARD\r\n";
+    document.setVersitType(QVersitDocument::VCard30);
+    mWriter->setVersitDocument(document);
+    buffer.reset();
+    mWriter->setDevice(&buffer);
+    QVERIFY(mWriter->start());
+    buffer.seek(0);
+    result = buffer.readAll();
+    QCOMPARE(QString::fromAscii(result),QString::fromAscii(vCard30));
+
 }
 
-void UT_QVersitWriter::testEncodeVersitDocument()
+void UT_QVersitWriter::testEncodeGroupsAndName()
 {
-    const char vCardSimple[] = 
-"BEGIN:VCARD\r\n\
-VERSION:2.1\r\n\
-N:Homer\r\n\
-TEL:12347\r\n\
-END:VCARD\r\n";
-    QVersitDocument doc;
-    doc.setVersitType(QVersitDocument::VCard21);
     QVersitProperty property;
-    property.setName(QString("N"));
-    property.setValue(QByteArray("Homer"));
-    doc.addProperty(property);
-    property.setName(QString("TEL"));
-    property.setValue(QByteArray("12347"));
-    doc.addProperty(property);
-    QVERIFY(mWriterPrivate->encodeVersitDocument(doc) == vCardSimple);
 
-    const char vCardAgent[] = 
-"BEGIN:VCARD\r\n\
-VERSION:2.1\r\n\
-N:Homer\r\n\
-EMAIL;ENCODING=QUOTED-PRINTABLE:homer=40simpsons.com\r\n\
-AGENT:\r\nBEGIN:VCARD\r\nVERSION:2.1\r\nN:Marge\r\nEND:VCARD\r\n\r\n\
-END:VCARD\r\n";
-    QVersitDocument docAgent;
-    docAgent.setVersitType(QVersitDocument::VCard21);
-    property.setName(QString::fromAscii("N"));
-    property.setValue(QByteArray("Homer"));
-    docAgent.addProperty(property);
-    property.setName(QString::fromAscii("EMAIL"));
-    property.setValue(QByteArray("homer@simpsons.com"));
-    docAgent.addProperty(property);
-    property.setName(QString("AGENT"));
-    property.setValue(QByteArray());
-    QVersitDocument embeddedDocument;
-    QVersitProperty embeddedProperty;
-    embeddedProperty.setName(QString::fromAscii("N"));
-    embeddedProperty.setValue(QByteArray("Marge"));
-    embeddedDocument.addProperty(embeddedProperty);
-    property.setEmbeddedDocument(embeddedDocument);
-    docAgent.addProperty(property);
-    QCOMPARE(
-        QString::fromAscii(mWriterPrivate->encodeVersitDocument(docAgent)),
-        QString::fromAscii(vCardAgent));
+    // No groups
+    property.setName(QString::fromAscii("name"));
+    QByteArray result("NAME");
+    QCOMPARE(mWriterPrivate->encodeGroupsAndName(property),result);
+
+    // One group
+    property.setGroups(QStringList(QString::fromAscii("group")));
+    result = "group.NAME";
+    QCOMPARE(mWriterPrivate->encodeGroupsAndName(property),result);
+
+    // Two groups
+    QStringList groups(QString::fromAscii("group1"));
+    groups.append(QString::fromAscii("group2"));
+    property.setGroups(groups);
+    result = "group1.group2.NAME";
+    QCOMPARE(mWriterPrivate->encodeGroupsAndName(property),result);
 }
 
 void UT_QVersitWriter::testEncodeParameters()

@@ -170,12 +170,14 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
     // Convert to QContacts
     QList<QContact> contacts;
     QVersitContactGenerator generator;
+    QList<QVersitDocument::VersitType> documentTypes;
     foreach (QVersitDocument document, mReader->result()) {
         generator.setImagePath(imagePath);
         QContact contact = generator.generateContact(document);
         if (mSaveContacts)
             QVERIFY(mContactManager->saveContact(&contact));
         contacts.append(contact);
+        documentTypes.append(document.versitType());
     }    
     
     // Convert back to QVersitDocuments
@@ -185,7 +187,10 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
             this, SLOT(scale(const QString&,QByteArray&)));
 
     foreach (QContact contact, contacts) {
-        documents.append(converter.convertContact(contact));
+        QVersitDocument document = converter.convertContact(contact);
+        if (!documentTypes.isEmpty())
+            document.setVersitType(documentTypes.takeFirst());
+        documents.append(document);
     }
     
     // Encode and write to output

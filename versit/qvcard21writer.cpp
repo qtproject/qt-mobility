@@ -58,16 +58,7 @@ QVCard21Writer::~QVCard21Writer()
  */
 QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
 {
-    QByteArray encodedProperty;
-    QStringList groups = property.groups();
-    if (!groups.isEmpty()) {
-        QString group = groups.join(".");
-        encodedProperty.append(group.toAscii());
-        encodedProperty.append(".");
-    }
-
-    QString name = property.name();
-    encodedProperty.append(name.toAscii());
+    QByteArray encodedProperty(encodeGroupsAndName(property));
 
     // Quoted-Printable encode the value and add Quoted-Pritable parameter, if necessary
     QByteArray value(property.value());
@@ -86,7 +77,7 @@ QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
 
     // Encode value
     encodedProperty.append(":");
-    if (name == QString::fromAscii("AGENT")) {
+    if (property.name() == QString::fromAscii("AGENT")) {
         encodedProperty.append("\r\n");
         QVersitDocument embeddedDocument = property.embeddedDocument();
         encodedProperty.append(encodeVersitDocument(embeddedDocument));
@@ -109,7 +100,7 @@ QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
  */
 QByteArray QVCard21Writer::encodeParameter(
     const QString& name,
-    const QString& value)
+    const QString& value) const
 {
     QByteArray encodedParameter;
     QString typeParameterName(QString::fromAscii("TYPE"));

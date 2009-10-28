@@ -84,10 +84,27 @@ QByteArray QVersitWriterPrivate::encodeVersitDocument(const QVersitDocument& doc
 }
 
 /*!
+ * Encodes the groups and name in the \a property to text.
+ */
+QByteArray QVersitWriterPrivate::encodeGroupsAndName(
+    const QVersitProperty& property) const
+{
+    QByteArray encodedGroupAndName;
+    QStringList groups = property.groups();
+    if (!groups.isEmpty()) {
+        QString groupAsString = groups.join(".");
+        encodedGroupAndName.append(groupAsString.toAscii());
+        encodedGroupAndName.append(".");
+    }
+    encodedGroupAndName.append(property.name().toAscii());
+    return encodedGroupAndName;
+}
+
+/*!
  * Encodes the \a parameters to text. 
  */
 QByteArray QVersitWriterPrivate::encodeParameters(
-    const QMultiHash<QString,QString>& parameters)
+    const QMultiHash<QString,QString>& parameters) const
 {
     QByteArray encodedParameters;  
     QList<QString> names = parameters.uniqueKeys();
