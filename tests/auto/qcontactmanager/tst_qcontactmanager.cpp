@@ -2422,7 +2422,7 @@ void tst_QContactManager::relationships()
         QVERIFY(dest3.relationships("test-arbitrary-relationship-type").contains(customRelationshipOne));
     }
 
-    // finally, test batch API
+    // test batch API and ordering in contacts
     QList<QContactRelationship> currentRelationships = cm->relationships(source.id(), QContactRelationshipFilter::First);
     QList<QContactRelationship> batchList;
     QContactRelationship br1, br2, br3;
@@ -2436,14 +2436,32 @@ void tst_QContactManager::relationships()
     br3.setSecond(dest3.id());
     br3.setRelationshipType(QContactRelationship::IsAssistantOf);
     batchList << br1 << br2 << br3;
+
+    // ensure that the batch save works properly
     cm->saveRelationships(&batchList);
     QVERIFY(cm->error() == QContactManager::NoError);
-
-    // ensure that the batch save worked properly
     QList<QContactRelationship> batchRetrieve = cm->relationships(source.id(), QContactRelationshipFilter::First);
     QVERIFY(batchRetrieve.contains(br1));
     QVERIFY(batchRetrieve.contains(br2));
     QVERIFY(batchRetrieve.contains(br3));
+
+    // test relationship ordering in the contact
+    source = cm->contact(source.localId());
+    QList<QContactRelationship> cachedRelationships = source.relationships();
+    QList<QContactRelationship> orderedRelationships = source.relationshipOrder();
+    QCOMPARE(cachedRelationships, orderedRelationships); // initially, should be the same
+    QVERIFY(orderedRelationships.contains(br1));
+    QVERIFY(orderedRelationships.contains(br2));
+    QVERIFY(orderedRelationships.contains(br3));
+
+    // ensure that the reordering works as required.
+    QContactRelationship temp1 = orderedRelationships.takeAt(0); // now fiddle with the order
+    QContactRelationship temp2 = orderedRelationships.at(0);     // this is the new first relationship
+    orderedRelationships.insert(2, temp1);                       // and save the old first back at position 3.
+    source.setRelationshipOrder(orderedRelationships);           // set the new relationship order
+    cm->saveContact(&source);                                    // save the contact to persist the new order
+    source = cm->contact(source.localId());                      // reload the contact
+    QCOMPARE(source.relationshipOrder(), orderedRelationships);  // ensure that it was persisted.
 
     // remove a single relationship
     QVERIFY(cm->removeRelationship(br3));
