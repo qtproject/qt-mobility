@@ -41,6 +41,7 @@
 
 #include "cntrelationship.h"
 #include "qcontactsymbianengine_p.h"
+#include "qcontactsymbiantransformerror.h"
 
 
 CntRelationship::CntRelationship(CContactDatabase* contactDatabase) 
@@ -78,7 +79,7 @@ QList<QContactRelationship> CntRelationship::relationships(const QString& relati
         
         //if error translate it into a qt error
         if (symbianError){
-            QContactSymbianEngineData::transformError(symbianError, error);
+            qContactSymbianTransformError(symbianError, error);
         }
     }
     else{
@@ -102,7 +103,7 @@ bool CntRelationship::saveRelationship(QSet<QContactLocalId> *affectedContactIds
         
         //if symbian error translate it into a qt error
         if (!symbianError){
-            QContactSymbianEngineData::transformError(symbianError, error);
+            qContactSymbianTransformError(symbianError, error);
         }
     }
     else{
@@ -144,7 +145,7 @@ bool CntRelationship::removeRelationship(QSet<QContactLocalId> *affectedContactI
         
         //if symbian error translate it into a qt error
         if (!symbianError){
-            QContactSymbianEngineData::transformError(symbianError, error);
+            qContactSymbianTransformError(symbianError, error);
         }
     }
     else{

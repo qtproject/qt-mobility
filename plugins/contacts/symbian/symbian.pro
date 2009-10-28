@@ -56,7 +56,8 @@ symbian: {
       inc/cntabstractrelationship.h \
       inc/cntrelationshipgroup.h \
       inc/cntsymbianfiltersqlhelper.h \
-      inc/cntsrvconnection.h
+      inc/cntsrvconnection.h \
+      inc/qcontactsymbiantransformerror.h
       
   SOURCES += \
   		src/qcontactsymbianbackend.cpp \
@@ -86,7 +87,8 @@ symbian: {
       src/cntabstractrelationship.cpp \
       src/cntrelationshipgroup.cpp \
       src/cntsymbianfiltersqlhelper.cpp \
-      src/cntsrvconnection.cpp
+      src/cntsrvconnection.cpp \
+      src/qcontactsymbiantransformerror.cpp
       
   LIBS += \
   				-lcntmodel \

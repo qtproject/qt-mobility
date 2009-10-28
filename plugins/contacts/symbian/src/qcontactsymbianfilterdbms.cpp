@@ -42,6 +42,7 @@
 #ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
 
 #include "qcontactsymbianfilterdbms.h"
+#include "qcontactsymbiantransformerror.h"
 
 #include <cntdb.h>
 #include <cntfield.h>
@@ -121,7 +122,7 @@ QList<QContactLocalId> QContactSymbianFilter::contacts(
             TInt err = matchContacts(idArray, commPtr, matchLength);
             if(err != KErrNone)
             {
-                QContactSymbianEngineData::transformError(err, error);
+                qContactSymbianTransformError(err, error);
             }
         }
         // Names
@@ -134,12 +135,12 @@ QList<QContactLocalId> QContactSymbianFilter::contacts(
             CContactItemFieldDef *fieldDef(0);
             TRAPD(err, transformDetailFilterL(detailFilter, fieldDef));
             if(err != KErrNone){
-                QContactSymbianEngineData::transformError(err, error);
+                qContactSymbianTransformError(err, error);
             } else {
                 Q_ASSERT_X(fieldDef->Count() > 0, "QContactSymbianFilter", "Illegal field def");
                 TInt err = findContacts(idArray, *fieldDef, namePtr);
                 if(err != KErrNone)
-                    QContactSymbianEngineData::transformError(err, error);
+                    qContactSymbianTransformError(err, error);
             }
             delete fieldDef;
         } else {

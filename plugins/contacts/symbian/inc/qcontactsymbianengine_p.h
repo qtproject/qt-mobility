@@ -116,10 +116,6 @@ signals:
     void contactChanged(const QContactLocalId &contactId);
     void relationshipAdded(const QContactLocalId &contactId);
     void relationshipRemoved(const QContactLocalId &contactId);
-    
-public:
-    // Utility function to convert symbian error to QContactManager error
-    static void transformError(TInt symbianError, QContactManager::Error& qtError);
 
 private:
 

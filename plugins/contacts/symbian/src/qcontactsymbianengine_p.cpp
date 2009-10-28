@@ -52,6 +52,7 @@
 #include "qcontactsymbianfiltersql.h"
 #include "qcontactsymbiansorterdbms.h"
 #include "cntrelationship.h"
+#include "qcontactsymbiantransformerror.h"
 
 #include <QDebug>
 
@@ -85,7 +86,7 @@ QContactSymbianEngineData::QContactSymbianEngineData(QContactManager::Error& err
     //If database didn't open successfully return error
     if(err != KErrNone)
     {
-        transformError(err, error);
+        qContactSymbianTransformError(err, error);
     }
 
     //Database opened successfully
@@ -104,7 +105,7 @@ QContactSymbianEngineData::QContactSymbianEngineData(QContactManager::Error& err
         m_contactFilter    = new QContactSymbianFilter(*m_contactDatabase);
         m_contactSorter    = new QContactSymbianSorter(*m_contactDatabase, *m_transformContact);
         m_relationship     = new CntRelationship(m_contactDatabase);
-        transformError(err, error);
+        qContactSymbianTransformError(err, error);
     }
 }
 
@@ -161,7 +162,7 @@ QContact QContactSymbianEngineData::contact(const QContactLocalId& contactId, QC
     // See QT_TRYCATCH_LEAVING note at the begginning of this file
     QContact* contact = new QContact();
     TRAPD(err, QT_TRYCATCH_LEAVING(*contact = contactL(contactId)));
-    transformError(err, qtError);
+    qContactSymbianTransformError(err, qtError);
     return *QScopedPointer<QContact>(contact);
 }
 
@@ -222,7 +223,7 @@ QList<QContactLocalId> QContactSymbianEngineData::groups(const QList<QContactSor
     // See QT_TRYCATCH_LEAVING note at the begginning of this file
     QContactLocalIdList *list = new QContactLocalIdList();
     TRAPD(err, QT_TRYCATCH_LEAVING(*list = groupsL()));
-    transformError(err, qtError);
+    qContactSymbianTransformError(err, qtError);
     return *QScopedPointer<QContactLocalIdList>(list);
 }
 
@@ -266,7 +267,7 @@ bool QContactSymbianEngineData::addContact(QContact& contact, QContactChangeSet&
         changeSet.addedContacts().insert(id);
         m_contactsAddedEmitted.append(id);
     }
-    transformError(err, qtError);
+    qContactSymbianTransformError(err, qtError);
 
 	return (err==KErrNone);
 }
@@ -288,7 +289,7 @@ bool QContactSymbianEngineData::updateContact(QContact& contact, QContactChangeS
         changeSet.changedContacts().insert(contact.localId());
         m_contactsChangedEmitted.append(contact.localId());
     }
-    transformError(err, qtError);
+    qContactSymbianTransformError(err, qtError);
     return (err==KErrNone);
 }
 
@@ -315,7 +316,7 @@ bool QContactSymbianEngineData::removeContact(const QContactLocalId &id, QContac
         changeSet.removedContacts().insert(id);
         m_contactsRemovedEmitted.append(id);
     }
-    transformError(err, qtError);
+    qContactSymbianTransformError(err, qtError);
 	return (err==KErrNone);
 }
 /* relationships */
@@ -393,7 +394,7 @@ bool QContactSymbianEngineData::setSelfContactId(const QContactLocalId& contactI
         m_contactDatabase->SetOwnCardL(*symContact);
         );
     delete symContact;
-    transformError(err, qtError);
+    qContactSymbianTransformError(err, qtError);
     return (err==KErrNone);
 }
 
@@ -471,64 +472,6 @@ void QContactSymbianEngineData::HandleDatabaseEventL(TContactDbObserverEvent aEv
         break;
 	default:
 		break; // ignore other events
-	}
-}
-
-/*! CntTransform a Symbian contact error id to QContactManager::Error.
- *
- * \param symbianError Symbian error.
- * \param QtError Qt error.
-*/
-void QContactSymbianEngineData::transformError(TInt symbianError, QContactManager::Error& qtError)
-{
-	switch(symbianError)
-	{
-		case KErrNone:
-		{
-			qtError = QContactManager::NoError;
-			break;
-		}
-		case KErrNotFound:
-	    {
-	        qtError = QContactManager::DoesNotExistError;
-	        break;
-	    }
-        case KErrAlreadyExists:
-        {
-            qtError = QContactManager::AlreadyExistsError;
-            break;
-        }
-        case KErrLocked:
-        {
-            qtError = QContactManager::LockedError;
-            break;
-        }
-        case KErrAccessDenied:
-        case KErrPermissionDenied:
-        {
-            qtError = QContactManager::PermissionsError;
-            break;
-        }
-        case KErrNoMemory:
-        {
-            qtError = QContactManager::OutOfMemoryError;
-            break;
-        }
-        case KErrNotSupported:
-        {
-            qtError = QContactManager::NotSupportedError;
-            break;
-        }
-        case KErrArgument:
-        {
-            qtError = QContactManager::BadArgumentError;
-            break;
-        }
-		default:
-		{
-			qtError = QContactManager::UnspecifiedError;
-			break;
-		}
 	}
 }
 

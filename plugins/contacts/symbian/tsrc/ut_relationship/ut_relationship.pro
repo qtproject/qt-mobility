@@ -23,12 +23,14 @@ symbian:
 	HEADERS +=  ut_relationship.h \
 				../../inc/cntrelationship.h \
 				../../inc/cntabstractrelationship.h \
-      	        ../../inc/cntrelationshipgroup.h
+				../../inc/cntrelationshipgroup.h \
+				../../inc/qcontactsymbiantransformerror.h
       
 	SOURCES += ut_relationship.cpp \ 
 				../../src/cntrelationship.cpp \
 				../../src/cntabstractrelationship.cpp \
-      	        ../../src/cntrelationshipgroup.cpp
+				../../src/cntrelationshipgroup.cpp \
+				../../src/qcontactsymbiantransformerror.cpp
       
 	TARGET.CAPABILITY = ALL -TCB
   
