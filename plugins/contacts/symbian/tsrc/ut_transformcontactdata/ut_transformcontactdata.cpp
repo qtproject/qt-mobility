@@ -73,129 +73,160 @@ void TestCntTransformContactData::cleanupTestCase()
 
 void TestCntTransformContactData::executeCntTransformEmail()
 {
-    validateCntTransformEmail(_L("dummyemail"), QString("dummyemail"));
-    validateCntTransformEmail(_L(""), QString(""));
+    TRAPD(err, validateCntTransformEmail(_L("dummyemail"), QString("dummyemail"));
+        validateCntTransformEmail(_L(""), QString(""));
+        );
+    QVERIFY(err == 0);
 }
 
 void TestCntTransformContactData::executeCntTransformName()
 {
-    validateCntTransformName(_L("dummyprefix"), QString("dummyprefix"),
+    TRAPD(err, validateCntTransformName(_L("dummyprefix"), QString("dummyprefix"),
                           _L("dummyfirst"), QString("dummyfirst"),
                           _L("dummymiddle"), QString("dummymiddle"),
                           _L("dummylast"), QString("dummylast"),
                           _L("dummysuffix"), QString("dummysuffix"));
-    validateCntTransformName(_L(""), QString(""),
+        validateCntTransformName(_L(""), QString(""),
                           _L(""), QString(""),
                           _L(""), QString(""),
                           _L(""), QString(""),
                           _L(""), QString(""));
+        );
+    QVERIFY(err == 0);
 }
 
 void TestCntTransformContactData::executeCntTransformNickname()
 {
-    validateCntTransformNickname(_L("dummynickname"), QString("dummynickname"));
-    validateCntTransformNickname(_L(""), QString(""));
+    TRAPD(err, validateCntTransformNickname(_L("dummynickname"), QString("dummynickname"));
+        validateCntTransformNickname(_L(""), QString(""));
+        );
+    QVERIFY(err == 0);
 }
 
 void TestCntTransformContactData::executeCntTransformPhonenumber()
 {
-    validateCntTransformPhonenumber(_L("dummyphonenumber"), QString("dummyphonenumber"));
-    validateCntTransformPhonenumber(_L(""), QString(""));
+    TRAPD(err, validateCntTransformPhonenumber(_L("dummyphonenumber"), QString("dummyphonenumber"));
+        validateCntTransformPhonenumber(_L(""), QString(""));
+        );
+    QVERIFY(err == 0);
 }
 
 void TestCntTransformContactData::executeCntTransformAddress()
 {
-    validateCntTransformAddress(_L("dummycountry"), QString("dummycountry"),
+    TRAPD(err, validateCntTransformAddress(_L("dummycountry"), QString("dummycountry"),
                              _L("dummypostcode"), QString("dummypostcode"),
                              _L("dummystreet"), QString("dummystreet"),
                              _L("dummylocality"), QString("dummylocality"),
                              _L("dummyregion"), QString("dummyregion"),
                              _L("dummypostofficebox"), QString("dummypostofficebox"));
-    validateCntTransformAddress(_L(""), QString(""),
+        validateCntTransformAddress(_L(""), QString(""),
                              _L(""), QString(""),
                              _L(""), QString(""),
                              _L(""), QString(""),
                              _L(""), QString(""),
                              _L(""), QString(""));
+        );
+    QVERIFY(err == 0);
 }
 void TestCntTransformContactData::executeCntTransformUrl()
 {
-    validateCntTransformUrl(_L("dummyurl"), QString("dummyurl"));
-    validateCntTransformUrl(_L(""), QString(""));
+    TRAPD(err, validateCntTransformUrl(_L("dummyurl"), QString("dummyurl"));
+        validateCntTransformUrl(_L(""), QString(""));
+        );
+    QVERIFY(err == 0);
 }
 
 void TestCntTransformContactData::executeCntTransformBithday()
 {
-    TDateTime dateTime(2009, ESeptember, 28, 0, 0, 0, 0);
+    TDateTime dateTime(2009, ESeptember, 27, 0, 0, 0, 0);
     TTime field(dateTime);
     QDate detail(2009, 9, 28);
     
-    validateCntTransformBirthday(field, detail);
+    TRAPD(err, validateCntTransformBirthday(field, detail););
+    QVERIFY(err == 0);
 }
 
 void TestCntTransformContactData::executeCntTransformOnlineAccount()
 {
-    validateCntTransformOnlineAccount(_L("dummysip"), QString("dummysip"));
-    validateCntTransformOnlineAccount(_L(""), QString(""));
+    TRAPD(err, validateCntTransformOnlineAccount(_L("dummysip"), QString("dummysip"));
+        validateCntTransformOnlineAccount(_L(""), QString(""));
+        );
+    QVERIFY(err == 0);
 }
 
 void TestCntTransformContactData::executeCntTransformOrganisation()
 {
-    validateCntTransformOrganisation(_L("dummycompany"), QString("dummycompany"),
+    TRAPD(err, validateCntTransformOrganisation(_L("dummycompany"), QString("dummycompany"),
                                   _L("dummydepartment"), QString("dummydepartment"),
                                   _L("dummyjobtitle"), QString("dummyjobtitle"),
                                   _L("dummyassistant"), QString("dummyassistant"));
-    validateCntTransformOrganisation(_L(""), QString(""),
+        validateCntTransformOrganisation(_L(""), QString(""),
                                   _L(""), QString(""),
                                   _L(""), QString(""),
                                   _L(""), QString(""));
+        );
+    QVERIFY(err == 0);
 }
 
 void TestCntTransformContactData::executeCntTransformAvatar()
 {
-    validateCntTransformAvatar(_L("dummyavatar"), QString("dummyavatar"));
-    validateCntTransformAvatar(_L(""), QString(""));
+    TRAPD(err, validateCntTransformAvatar(_L("dummyavatar"), QString("dummyavatar"));
+        validateCntTransformAvatar(_L(""), QString(""));
+        );
+    QVERIFY(err == 0);
 }
 
 void TestCntTransformContactData::executeCntTransformSyncTarget()
 {
-    validateCntTransformSyncTarget(_L("dummysynctarget"), QString("dummysynctarget"));
-    validateCntTransformSyncTarget(_L(""), QString(""));
+    TRAPD(err, validateCntTransformSyncTarget(_L("dummysynctarget"), QString("dummysynctarget"));
+        validateCntTransformSyncTarget(_L(""), QString(""));
+        );
+    QVERIFY(err == 0);
 }
 
 void TestCntTransformContactData::executeCntTransformGender()
 {
-    validateCntTransformGender(_L("dummygender"), QString("dummygender"));
-    validateCntTransformGender(_L(""), QString(""));
+    TRAPD(err, validateCntTransformGender(_L("dummygender"), QString("dummygender"));
+        validateCntTransformGender(_L(""), QString(""));
+        );
+    QVERIFY(err == 0);
 }
 
 void TestCntTransformContactData::executeCntTransformAnniversary()
 {
     QDate dateDetail(2009, 9, 28);
-    validateCntTransformAnniversary(_L("2009-09-28,dummyevent"), dateDetail, QString("dummyevent"));
-    validateCntTransformAnniversary(_L("dummyevent"), QDate(), QString("dummyevent"));
+    TRAPD(err, validateCntTransformAnniversary(_L("2009-09-28,dummyevent"), dateDetail, QString("dummyevent"));
+        validateCntTransformAnniversary(_L("dummyevent"), QDate(), QString("dummyevent"));
+        );
+    QVERIFY(err == 0);
 }
 
 void TestCntTransformContactData::executeCntTransformGeolocation()
 {
-    validateCntTransformGeolocation(_L("123.45,765.88"), 123.45, 765.88);
-    validateCntTransformGeolocation(_L("123.45,"), 123.45, -1);
-    validateCntTransformGeolocation(_L(",765.88"), -1, 765.88);
-    validateCntTransformGeolocation(_L(""), -1, -1);
+    TRAPD(err, validateCntTransformGeolocation(_L("123.45,765.88"), 123.45, 765.88);
+        validateCntTransformGeolocation(_L("123.45,"), 123.45, -1);
+        validateCntTransformGeolocation(_L(",765.88"), -1, 765.88);
+        validateCntTransformGeolocation(_L(""), -1, -1);
+        );
+    QVERIFY(err == 0);
 }
 
 void TestCntTransformContactData::executeCntTransformNote()
 {
-    validateCntTransformNote(_L("dummynote"), QString("dummynote"));
-    validateCntTransformNote(_L(""), QString(""));
+    TRAPD(err, validateCntTransformNote(_L("dummynote"), QString("dummynote"));
+        validateCntTransformNote(_L(""), QString(""));
+        );
+    QVERIFY(err == 0);
 }
 
 void TestCntTransformContactData::executeCntTransformFamily()
 {
-    validateCntTransformFamily(_L("dummyspouse"), QString("dummyspouse"),
+    TRAPD(err, validateCntTransformFamily(_L("dummyspouse"), QString("dummyspouse"),
                             _L("dummychild"), QString("dummychild"));
-    validateCntTransformFamily(_L(""), QString(""),
+        validateCntTransformFamily(_L(""), QString(""),
                             _L(""), QString(""));
+        );
+    QVERIFY(err == 0);
 }
 
 void TestCntTransformContactData::validateCntTransformEmail(TPtrC16 field, QString detail)
@@ -721,7 +752,7 @@ void TestCntTransformContactData::validateCntTransformBirthday(TTime field, QDat
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldBirthday));
     QCOMPARE(fields.at(0)->DateTimeStorage()->Time().DateTime().Year(), detail.year());
     QCOMPARE(fields.at(0)->DateTimeStorage()->Time().DateTime().Month() + 1, detail.month());
-    QCOMPARE(fields.at(0)->DateTimeStorage()->Time().DateTime().Day(), detail.day());
+    QCOMPARE(fields.at(0)->DateTimeStorage()->Time().DateTime().Day() + 1, detail.day());
     
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeDateTime, KUidContactFieldBirthday);
     newField->DateTimeStorage()->SetTime(field);
@@ -730,7 +761,7 @@ void TestCntTransformContactData::validateCntTransformBirthday(TTime field, QDat
     const QContactBirthday* birthdayInfo(static_cast<const QContactBirthday*>(contactDetail));
     QCOMPARE(birthdayInfo->date().year(), field.DateTime().Year());
     QCOMPARE(birthdayInfo->date().month(), field.DateTime().Month() + 1);
-    QCOMPARE(birthdayInfo->date().day(), field.DateTime().Day());
+    QCOMPARE(birthdayInfo->date().day(), field.DateTime().Day() + 1);
         
     delete contactDetail;
     delete newField;
