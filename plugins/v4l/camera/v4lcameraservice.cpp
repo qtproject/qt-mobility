@@ -50,6 +50,9 @@
 #include "v4lvideooutputcontrol.h"
 #include "v4lvideodevicecontrol.h"
 #include "v4limagecapturecontrol.h"
+#include "v4lmediaformatcontrol.h"
+#include "v4lvideoencode.h"
+#include "v4lrecordercontrol.h"
 
 V4LCameraService::V4LCameraService(QObject *parent):
     QMediaService(parent)
@@ -66,6 +69,12 @@ V4LCameraService::V4LCameraService(QObject *parent):
 
     m_imageCapture = new V4LImageCaptureControl(m_session);
 
+    m_formatControl = new V4LMediaFormatControl(m_session);
+
+    m_videoEncode = new V4LVideoEncode(m_session);
+
+    m_recorderControl = new V4LRecorderControl(m_session);
+
     m_device = QByteArray("/dev/video1");
 }
 
@@ -77,6 +86,9 @@ V4LCameraService::~V4LCameraService()
     delete m_videoDevice;
     delete m_videoRenderer;
     delete m_imageCapture;
+    delete m_formatControl;
+    delete m_videoEncode;
+    delete m_recorderControl;
 }
 
 QMediaControl *V4LCameraService::control(const char *name) const
@@ -95,6 +107,15 @@ QMediaControl *V4LCameraService::control(const char *name) const
 
     if (qstrcmp(name, QImageCaptureControl_iid) == 0)
         return m_imageCapture;
+
+    if (qstrcmp(name, QMediaFormatControl_iid) == 0)
+        return m_formatControl;
+
+    if (qstrcmp(name, QVideoEncoderControl_iid) == 0)
+        return m_videoEncode;
+
+    if (qstrcmp(name, QMediaRecorderControl_iid) == 0)
+        return m_recorderControl;
 
     return 0;
 }

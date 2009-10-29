@@ -39,44 +39,14 @@
 **
 ****************************************************************************/
 
-#ifndef V4LCAMERASERVICE_H
-#define V4LCAMERASERVICE_H
+#include "v4lmediaformatcontrol.h"
 
-#include <QtCore/qobject.h>
-
-#include <multimedia/qmediaservice.h>
-
-class V4LCameraControl;
-class V4LCameraSession;
-class V4LVideoOutputControl;
-class V4LVideoDeviceControl;
-class V4LVideoRendererControl;
-class V4LImageCaptureControl;
-class V4LMediaFormatControl;
-class V4LVideoEncode;
-class V4LRecorderControl;
-
-class V4LCameraService : public QMediaService
+V4LMediaFormatControl::V4LMediaFormatControl(QObject *parent)
+    :QMediaFormatControl(parent)
 {
-    Q_OBJECT
+    m_format = "mpeg";
+    m_supportedFormats.append("mpeg");
+    setFormat(m_supportedFormats[0]);
+}
 
-public:
-    V4LCameraService(QObject *parent = 0);
-    ~V4LCameraService();
 
-    QMediaControl *control(const char *name) const;
-
-private:
-    V4LCameraControl        *m_control;
-    V4LCameraSession        *m_session;
-    V4LVideoOutputControl   *m_videoOutput;
-    V4LVideoDeviceControl   *m_videoDevice;
-    V4LVideoRendererControl *m_videoRenderer;
-    V4LImageCaptureControl  *m_imageCapture;
-    V4LMediaFormatControl   *m_formatControl;
-    V4LVideoEncode          *m_videoEncode;
-    V4LRecorderControl      *m_recorderControl;
-    QByteArray m_device;
-};
-
-#endif

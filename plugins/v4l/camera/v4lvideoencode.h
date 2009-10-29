@@ -39,44 +39,51 @@
 **
 ****************************************************************************/
 
-#ifndef V4LCAMERASERVICE_H
-#define V4LCAMERASERVICE_H
+#ifndef V4LVIDEOENCODE_H
+#define V4LVIDEOENCODE_H
 
-#include <QtCore/qobject.h>
-
-#include <multimedia/qmediaservice.h>
-
-class V4LCameraControl;
+#include <multimedia/qvideoencodercontrol.h>
 class V4LCameraSession;
-class V4LVideoOutputControl;
-class V4LVideoDeviceControl;
-class V4LVideoRendererControl;
-class V4LImageCaptureControl;
-class V4LMediaFormatControl;
-class V4LVideoEncode;
-class V4LRecorderControl;
 
-class V4LCameraService : public QMediaService
+#include <QtCore/qstringlist.h>
+#include <QtCore/qmap.h>
+
+class V4LVideoEncode : public QVideoEncoderControl
 {
     Q_OBJECT
-
 public:
-    V4LCameraService(QObject *parent = 0);
-    ~V4LCameraService();
+    V4LVideoEncode(QObject *parent);
+    virtual ~V4LVideoEncode();
 
-    QMediaControl *control(const char *name) const;
+    QSize minimumResolution() const;
+    QSize maximumResolution() const;
+    QList<QSize> supportedResolutions() const;
+
+    qreal minimumFrameRate() const;
+    qreal maximumFrameRate() const;
+    QList< qreal > supportedFrameRates() const;
+
+    QPair<int,int> rateAsRational() const;
+
+    QStringList supportedVideoCodecs() const;
+    QString videoCodecDescription(const QString &codecName) const;
+
+    QVideoEncoderSettings videoSettings() const;
+    void setVideoSettings(const QVideoEncoderSettings &settings);
+
+    QStringList supportedEncodingOptions(const QString &codec) const;
+    QVariant encodingOption(const QString &codec, const QString &name) const;
+    void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
 
 private:
-    V4LCameraControl        *m_control;
-    V4LCameraSession        *m_session;
-    V4LVideoOutputControl   *m_videoOutput;
-    V4LVideoDeviceControl   *m_videoDevice;
-    V4LVideoRendererControl *m_videoRenderer;
-    V4LImageCaptureControl  *m_imageCapture;
-    V4LMediaFormatControl   *m_formatControl;
-    V4LVideoEncode          *m_videoEncode;
-    V4LRecorderControl      *m_recorderControl;
-    QByteArray m_device;
+    V4LCameraSession *m_session;
+    QStringList m_codecs;
+    QMap<QString,QString> m_codecDescriptions;
+    QMap<QString,QByteArray> m_elementNames;
+    QMap<QString,QStringList> m_codecOptions;
+
+    QVideoEncoderSettings m_videoSettings;
+    QMap<QString, QMap<QString, QVariant> > m_options;
 };
 
 #endif

@@ -45,7 +45,7 @@
 V4LImageCaptureControl::V4LImageCaptureControl(V4LCameraSession *session)
     :QImageCaptureControl(session), m_session(session), m_ready(false)
 {
-    connect(m_session, SIGNAL(stateChanged(QCamera::State)), SLOT(updateState()));
+    connect(m_session, SIGNAL(stateChanged(QMediaRecorder::State)), SLOT(updateState()));
     connect(m_session, SIGNAL(imageCaptured(QString,QImage)), this, SIGNAL(imageCaptured(QString,QImage)));
 }
 
@@ -65,7 +65,7 @@ void V4LImageCaptureControl::capture(const QString &fileName)
 
 void V4LImageCaptureControl::updateState()
 {
-    bool ready = m_session->state() == QCamera::ActiveState;
+    bool ready = m_session->state() == QMediaRecorder::RecordingState;
     if(m_ready != ready)
         emit readyForCaptureChanged(m_ready = ready);
 }

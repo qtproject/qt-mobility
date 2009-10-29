@@ -68,8 +68,10 @@ V4LCameraSession::V4LCameraSession(QObject *parent)
     available = false;
     resolutions.clear();
     formats.clear();
-    m_state = QCamera::StoppedState;
+    m_state = QMediaRecorder::StoppedState;
     m_device = "/dev/video1";
+    preview = false;
+    toFile = false;
 
     sfd = ::open(m_device.constData(), O_RDWR);
 
@@ -315,7 +317,7 @@ void V4LCameraSession::setFrameSize(const QSize& s)
 void V4LCameraSession::setDevice(const QString &device)
 {
     available = false;
-    m_state = QCamera::StoppedState;
+    m_state = QMediaRecorder::StoppedState;
     m_device = QByteArray(device.toLocal8Bit().constData());
 
     sfd = ::open(m_device.constData(), O_RDWR);
@@ -387,17 +389,34 @@ qint64 V4LCameraSession::position() const
     return timeStamp.elapsed();
 }
 
-int V4LCameraSession::state() const
+QMediaRecorder::State V4LCameraSession::state() const
 {
-    return int(m_state);
+    return m_state;
+}
+
+void V4LCameraSession::previewMode(bool value)
+{
+    preview = value;
+}
+
+void V4LCameraSession::captureToFile(bool value)
+{
+    toFile = value;
 }
 
 void V4LCameraSession::record()
 {
+    if(sfd > 0) {
+        emit stateChanged(m_state);
+        return;
+    }
+
     sfd = ::open(m_device.constData(), O_RDWR);
+
     if(sfd == -1) {
         qWarning()<<"can't open v4l "<<m_device;
-        emit stateChanged(QCamera::StoppedState);
+        m_state = QMediaRecorder::StoppedState;
+        emit stateChanged(m_state);
         return;
     }
 
@@ -481,7 +500,8 @@ void V4LCameraSession::record()
         if(!match) {
             int err = errno;
             qWarning() << "error setting camera format:" << strerror(err);
-            emit stateChanged(m_state = QCamera::StoppedState);
+            m_state = QMediaRecorder::StoppedState;
+            emit stateChanged(m_state);
             return;
         }
     }
@@ -494,7 +514,7 @@ void V4LCameraSession::record()
     ret = ::ioctl(sfd, VIDIOC_REQBUFS, &req);
     if(ret == -1) {
         qWarning()<<"error allocating buffers";
-        emit stateChanged(m_state = QCamera::StoppedState);
+        emit stateChanged(m_state = QMediaRecorder::StoppedState);
         return;
     }
 
@@ -507,7 +527,7 @@ void V4LCameraSession::record()
         ret = ::ioctl(sfd, VIDIOC_QUERYBUF, &buf);
         if(ret == -1) {
             qWarning()<<"error allocating buffers";
-            emit stateChanged(QCamera::StoppedState);
+            emit stateChanged(QMediaRecorder::StoppedState);
             return;
         }
         void* mmap_data = ::mmap(0,buf.length,PROT_READ | PROT_WRITE,MAP_SHARED,sfd,buf.m.offset);
@@ -515,7 +535,7 @@ void V4LCameraSession::record()
             qWarning()<<"can't mmap video data";
             ::close(sfd);
             sfd = -1;
-            emit stateChanged(QCamera::StoppedState);
+            emit stateChanged(QMediaRecorder::StoppedState);
             return;
         }
         video_buffer  v4l_buf;
@@ -536,7 +556,7 @@ void V4LCameraSession::record()
             qWarning()<<"can't mmap video data";
             ::close(sfd);
             sfd = -1;
-            emit stateChanged(QCamera::StoppedState);
+            emit stateChanged(m_state = QMediaRecorder::StoppedState);
             return;
         }
     }
@@ -547,7 +567,7 @@ void V4LCameraSession::record()
         qWarning()<<"can't start capture";
         ::close(sfd);
         sfd = -1;
-        emit stateChanged(QCamera::StoppedState);
+        emit stateChanged(m_state = QMediaRecorder::StoppedState);
         return;
     }
     notifier = new QSocketNotifier(sfd, QSocketNotifier::Read, this);
@@ -562,15 +582,14 @@ void V4LCameraSession::record()
         if(check) {
             m_surface->start(requestedFormat);
 
-            m_state = QCamera::ActiveState;
-            emit stateChanged(QCamera::ActiveState);
+            m_state = QMediaRecorder::RecordingState;
+            emit stateChanged(m_state);
             timeStamp.restart();
         }
     } else {
         QVideoSurfaceFormat requestedFormat(m_windowSize,QVideoFrame::Format_RGB32);
         m_surface->start(requestedFormat);
-        m_state = QCamera::ActiveState;
-        emit stateChanged(QCamera::ActiveState);
+        emit stateChanged(m_state = QMediaRecorder::RecordingState);
         timeStamp.restart();
     }
 }
@@ -589,7 +608,7 @@ void V4LCameraSession::pause()
         }
         ::close(sfd);
         sfd = -1;
-        m_state = QCamera::StoppedState;
+        m_state = QMediaRecorder::PausedState;
         emit stateChanged(m_state);
     }
 }
@@ -623,13 +642,15 @@ void V4LCameraSession::stop()
 
         ::close(sfd);
         sfd = -1;
-        m_state = QCamera::StoppedState;
+        m_state = QMediaRecorder::StoppedState;
         emit stateChanged(m_state);
 
         if(converter)
             delete converter;
         converter = 0;
     }
+    if(m_file.isOpen())
+        m_file.close();
 }
 
 void V4LCameraSession::captureFrame()
@@ -657,8 +678,21 @@ void V4LCameraSession::captureFrame()
                 image.save(m_snapshot,"JPG");
                 m_snapshot.clear();
             }
-            QVideoFrame frame(image);
-            m_surface->present(frame);
+            if(m_sink.toString().length() > 0 && toFile) {
+                // save to file
+                if(!m_file.isOpen()) {
+                    if(m_sink.toLocalFile().length() > 0)
+                        m_file.setFileName(m_sink.toLocalFile());
+                    else
+                        m_file.setFileName(m_sink.toString());
+                    m_file.open(QIODevice::WriteOnly);
+                }
+                image.save(qobject_cast<QIODevice*>(&m_file),"JPG");
+            }
+            if(preview) {
+                QVideoFrame frame(image);
+                m_surface->present(frame);
+            }
             ret = ioctl(sfd, VIDIOC_QBUF, &buf);
 
         } else {

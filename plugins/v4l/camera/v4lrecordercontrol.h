@@ -39,44 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef V4LCAMERASERVICE_H
-#define V4LCAMERASERVICE_H
 
-#include <QtCore/qobject.h>
+#ifndef V4LCAPTURECONTROL_H
+#define V4LCAPTURECONTROL_H
 
-#include <multimedia/qmediaservice.h>
+#include <multimedia/qmediarecordercontrol.h>
+#include "v4lcamerasession.h"
 
-class V4LCameraControl;
-class V4LCameraSession;
-class V4LVideoOutputControl;
-class V4LVideoDeviceControl;
-class V4LVideoRendererControl;
-class V4LImageCaptureControl;
-class V4LMediaFormatControl;
-class V4LVideoEncode;
-class V4LRecorderControl;
-
-class V4LCameraService : public QMediaService
+class V4LRecorderControl : public QMediaRecorderControl
 {
     Q_OBJECT
+    Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
 
 public:
-    V4LCameraService(QObject *parent = 0);
-    ~V4LCameraService();
+    V4LRecorderControl(V4LCameraSession *session);
+    virtual ~V4LRecorderControl();
 
-    QMediaControl *control(const char *name) const;
+    QUrl outputLocation() const;
+    bool setOutputLocation(const QUrl &sink);
+
+    QMediaRecorder::State state() const;
+
+    qint64 duration() const;
+
+    void applySettings() {}
+
+public slots:
+    void record();
+    void pause();
+    void stop();
+
+private slots:
+    void updateState(QMediaRecorder::State state);
 
 private:
-    V4LCameraControl        *m_control;
-    V4LCameraSession        *m_session;
-    V4LVideoOutputControl   *m_videoOutput;
-    V4LVideoDeviceControl   *m_videoDevice;
-    V4LVideoRendererControl *m_videoRenderer;
-    V4LImageCaptureControl  *m_imageCapture;
-    V4LMediaFormatControl   *m_formatControl;
-    V4LVideoEncode          *m_videoEncode;
-    V4LRecorderControl      *m_recorderControl;
-    QByteArray m_device;
+    V4LCameraSession *m_session;
+    QMediaRecorder::State m_state;
 };
 
-#endif
+#endif // V4LCAPTURECONTROL_H

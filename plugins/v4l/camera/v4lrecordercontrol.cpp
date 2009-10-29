@@ -39,44 +39,64 @@
 **
 ****************************************************************************/
 
-#ifndef V4LCAMERASERVICE_H
-#define V4LCAMERASERVICE_H
+#include "v4lrecordercontrol.h"
+#include <QtCore/QDebug>
 
-#include <QtCore/qobject.h>
-
-#include <multimedia/qmediaservice.h>
-
-class V4LCameraControl;
-class V4LCameraSession;
-class V4LVideoOutputControl;
-class V4LVideoDeviceControl;
-class V4LVideoRendererControl;
-class V4LImageCaptureControl;
-class V4LMediaFormatControl;
-class V4LVideoEncode;
-class V4LRecorderControl;
-
-class V4LCameraService : public QMediaService
+V4LRecorderControl::V4LRecorderControl(V4LCameraSession *session)
+    :QMediaRecorderControl(session), m_session(session), m_state(QMediaRecorder::StoppedState)
 {
-    Q_OBJECT
+    connect(m_session, SIGNAL(stateChanged(QMediaRecorder::State)), SLOT(updateState(QMediaRecorder::State)));
+    //connect(m_session, SIGNAL(error(int,QString)), SIGNAL(error(int,QString)));
+    //connect(m_session, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
+}
 
-public:
-    V4LCameraService(QObject *parent = 0);
-    ~V4LCameraService();
+V4LRecorderControl::~V4LRecorderControl()
+{
+}
 
-    QMediaControl *control(const char *name) const;
+QUrl V4LRecorderControl::outputLocation() const
+{
+    return m_session->outputLocation();
+}
 
-private:
-    V4LCameraControl        *m_control;
-    V4LCameraSession        *m_session;
-    V4LVideoOutputControl   *m_videoOutput;
-    V4LVideoDeviceControl   *m_videoDevice;
-    V4LVideoRendererControl *m_videoRenderer;
-    V4LImageCaptureControl  *m_imageCapture;
-    V4LMediaFormatControl   *m_formatControl;
-    V4LVideoEncode          *m_videoEncode;
-    V4LRecorderControl      *m_recorderControl;
-    QByteArray m_device;
-};
+bool V4LRecorderControl::setOutputLocation(const QUrl &sink)
+{
+    m_session->setOutputLocation(sink);
+    return true;
+}
 
-#endif
+
+QMediaRecorder::State V4LRecorderControl::state() const
+{
+    return m_session->state();
+}
+
+void V4LRecorderControl::updateState(QMediaRecorder::State newState)
+{
+    if (m_state != newState) {
+        m_state = newState;
+        emit stateChanged(m_state);
+    }
+}
+
+qint64 V4LRecorderControl::duration() const
+{
+    return m_session->position();
+}
+
+void V4LRecorderControl::record()
+{
+    m_session->previewMode(true);
+    m_session->captureToFile(true);
+    m_session->record();
+}
+
+void V4LRecorderControl::pause()
+{
+    m_session->pause();
+}
+
+void V4LRecorderControl::stop()
+{
+    m_session->stop();
+}
