@@ -169,8 +169,9 @@ void tst_QMediaPlaylist::currentItem()
     QCOMPARE(playlist.previousPosition(), 0);
     QCOMPARE(playlist.previousPosition(2), -1);
 
-    //warning is expected, jump outsize of playlist range
+    QTest::ignoreMessage(QtWarningMsg, "QMediaPlaylistNavigator: Jump outside playlist range ");
     playlist.setCurrentPosition(2);
+
     QCOMPARE(playlist.currentPosition(), -1);
     QCOMPARE(playlist.currentMedia(), QMediaContent());
 }
