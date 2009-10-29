@@ -49,7 +49,8 @@
 #include <ptiengine.h>
 #include <FeatDiscovery.h>
 #include <featureinfo.h>
-#include <hwrmvibra.h> 
+#include <hwrmvibra.h>
+#include <AknUtils.h>
  
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
@@ -260,20 +261,25 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         case QSystemInfo::LocationFeature: featureId = KFeatureIdLocationFrameworkCore; break;
         case QSystemInfo::SimFeature:
         {
-            return true;
+            return true;    //Always true in S60
         }
-        case QSystemInfo::FmradioFeature:   //Not available in public SDK
         case QSystemInfo::VibFeature:
         {
             TRAPD(err,
+                //Leaves with KErrNotSupported if device doesn't support vibration feature.
                 CHWRMVibra *vibra = CHWRMVibra::NewLC();
                 CleanupStack::PopAndDestroy(vibra);
             )
             return err == KErrNone;
         }
-        case QSystemInfo::LedFeature:
-        case QSystemInfo::VideoOutFeature:
         case QSystemInfo::HapticsFeature:
+        {
+            //TODO: Do something with the AVKON dependency
+            return AknLayoutUtils::PenEnabled();
+        }
+        case QSystemInfo::FmradioFeature:   //Not available in public SDK
+        case QSystemInfo::LedFeature:
+        case QSystemInfo::VideoOutFeature:  //Accessory monitor available from S60 5.x onwards
         default:
             return false;
     }

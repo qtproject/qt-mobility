@@ -103,7 +103,8 @@ unix: {
             -lefsrv \
             -lptiengine \
             -lfeatdiscovery \
-            -lhwrmvibraclient
+            -lhwrmvibraclient \
+            -lavkon     #Used by AknLayoutUtils::PenEnabled(). Try to remove this dependency.
 
         TARGET.CAPABILITY = ALL -TCB
         TARGET.EPOCALLOWDLLDATA = 1
