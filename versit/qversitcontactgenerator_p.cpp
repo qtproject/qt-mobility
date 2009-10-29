@@ -124,6 +124,9 @@ QVersitContactGeneratorPrivate::QVersitContactGeneratorPrivate()
         QString::fromAscii(versitSipSubTypeId),QContactOnlineAccount::SubTypeSip);
     mSubTypeMappings.insert(
         QString::fromAscii(versitSwisId),QContactOnlineAccount::SubTypeShareVideo);
+
+    mTypeFileExtensionMappings.insert(
+        QString::fromAscii(versitFormatWave),QString::fromAscii(versitWAVEExtenId));
 }
 
 /*!
@@ -265,7 +268,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createOrganization(
         QByteArray orgUnit = value.mid(firstSemic+1,value.size());
         org->setDepartment(QString::fromAscii(orgUnit));
     } else if (property.name() == QString::fromAscii(versitLogoId)) {
-        QString fileName = saveContentToFile(property);
+        QString fileName = saveContentToFile(mImagePath,property);
         if (!fileName.isEmpty()) {
             org->setLogo(fileName);
         } else {
@@ -375,8 +378,12 @@ QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
     const QString valueParam =
         property.parameters().value(QString::fromAscii(versitValue));
 
-    if (valueParam != QString::fromAscii("URL"))
-        value = saveContentToFile(property);
+    if (valueParam != QString::fromAscii("URL")) {
+        QString path = mImagePath;
+        if (subType == QContactAvatar::SubTypeAudioRingtone)
+            path = mAudioClipPath;
+        value = saveContentToFile(path,property);
+    }
 
     QContactAvatar* avatar = 0;
     if (!value.isEmpty()) {
@@ -514,26 +521,30 @@ QDateTime QVersitContactGeneratorPrivate::parseDateTime(
  *
  */
 QString QVersitContactGeneratorPrivate::saveContentToFile(
+    const QString& path,
     const QVersitProperty& property) const
 {
-    const QString encoding =
+    QString encoding =
         property.parameters().value(QString::fromAscii(versitEncoding));
     QByteArray content = property.value();
 
-    const QString extension =
-        property.parameters().value(QString::fromAscii(versitType)).toLower();
+    QString type =
+        property.parameters().value(QString::fromAscii(versitType));
+    // Use the type parameter value as it is, if not found in the mapping table
+    QString extension = mTypeFileExtensionMappings.value(type,type);
 
-    QString fileName(mImagePath);
-    fileName += QString::fromAscii("/");
+    QString fileName(path);
+    if (!path.endsWith(QString::fromAscii("/")))
+        fileName += QString::fromAscii("/");
     fileName += QString::number(qrand());
     fileName += QString::fromAscii(".");
-    fileName += extension;
+    fileName += extension.toLower();
 
     QFile file(fileName);
     qint64 writeResult = -1;
     if (file.open(QIODevice::WriteOnly)) {
-        if (encoding == QString::fromAscii("BASE64") ||
-            encoding == QString::fromAscii("b")) {
+        if (encoding == QString::fromAscii(versitEncodingBase64) ||
+            encoding == QString::fromAscii(versitEncodingBinary)) {
             writeResult = file.write(QByteArray::fromBase64(property.value()));
         } else {
             // default assumption

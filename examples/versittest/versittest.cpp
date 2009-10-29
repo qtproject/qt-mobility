@@ -58,7 +58,7 @@
 const QString inputDirPath = "/data/testvcards/in";
 const QString excludeFieldsFileName = "/data/testvcards/excludefields.txt";
 const QString outputDirPath = "/data/testvcards/out";
-const QString imagePath = "/data/testvcards/photos";
+const QString imageAndAudioClipPath = "/data/testvcards/images_and_audio";
 
 VersitTest::VersitTest() :
     QObject(),
@@ -104,8 +104,8 @@ void VersitTest::initTestCase()
     }
     mContactManager = new QContactManager(QString::fromAscii("symbian"));
 
-    if (!dir.exists(imagePath)) {
-        dir.mkdir(imagePath);
+    if (!dir.exists(imageAndAudioClipPath)) {
+        dir.mkdir(imageAndAudioClipPath);
     }    
 }
 
@@ -172,7 +172,8 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
     QVersitContactGenerator generator;
     QList<QVersitDocument::VersitType> documentTypes;
     foreach (QVersitDocument document, mReader->result()) {
-        generator.setImagePath(imagePath);
+        generator.setImagePath(imageAndAudioClipPath);
+        generator.setAudioClipPath(imageAndAudioClipPath);
         QContact contact = generator.generateContact(document);
         if (mSaveContacts)
             QVERIFY(mContactManager->saveContact(&contact));

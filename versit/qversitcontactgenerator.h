@@ -57,6 +57,9 @@ public:
     void setImagePath(const QString& path);
     QString imagePath() const;
     
+    void setAudioClipPath(const QString& path);
+    QString audioClipPath() const;
+
     QContact generateContact(const QVersitDocument& versitDocument);
     
 private:

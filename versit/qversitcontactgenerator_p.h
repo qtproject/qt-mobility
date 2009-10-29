@@ -102,15 +102,19 @@ private: // Utilities
     QString takeFirst(QList<QByteArray>& list) const;    
     QString takeFirst(QList<QString>& list) const;
     QDateTime parseDateTime(const QByteArray& text, const QByteArray& format) const;    
-    QString saveContentToFile(const QVersitProperty& property) const;
+    QString saveContentToFile(
+        const QString& path,
+        const QVersitProperty& property) const;
     
 public: // Data
     QString mImagePath;
+    QString mAudioClipPath;
 
 private: // Data
     QHash<QString,QPair<QString,QString> > mDetailMappings;
     QHash<QString,QString> mContextMappings;
     QHash<QString,QString> mSubTypeMappings;
+    QHash<QString,QString> mTypeFileExtensionMappings;
 };
 
 #endif // QVERSITCONTACTGENERATOR_P_H

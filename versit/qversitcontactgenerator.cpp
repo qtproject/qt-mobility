@@ -70,7 +70,7 @@ QContact QVersitContactGenerator::generateContact(
 }
 
 /*!
- * Sets the \a path where the contact photo will be saved.
+ * Sets the \a path where the contact photos will be saved.
  */
 void QVersitContactGenerator::setImagePath(const QString& path)
 {
@@ -78,9 +78,25 @@ void QVersitContactGenerator::setImagePath(const QString& path)
 }
 
 /*!
- * Returns the path where the contact photo will be saved.
+ * Returns the path where the contact photos will be saved.
  */
 QString QVersitContactGenerator::imagePath() const
 {
     return d->mImagePath;
+}
+
+/*!
+ * Sets the \a path where the contact related audio clips will be saved.
+ */
+void QVersitContactGenerator::setAudioClipPath(const QString& path)
+{
+    d->mAudioClipPath = path;
+}
+
+/*!
+ * Returns the path where the contact related audio clips will be saved.
+ */
+QString QVersitContactGenerator::audioClipPath() const
+{
+    return d->mAudioClipPath;
 }

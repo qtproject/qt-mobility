@@ -129,6 +129,7 @@ const char versitEncoding7Bit[] = "7BIT";
 const char versitEncoding8Bit[] = "8BIT";
 const char versitEncodingQuotedPrintable[] = "QUOTED-PRINTABLE";
 const char versitEncodingBase64[] = "BASE64";
+const char versitEncodingBinary[] = "B";
 
 // Parameters
 const char versitType[] = "TYPE";
