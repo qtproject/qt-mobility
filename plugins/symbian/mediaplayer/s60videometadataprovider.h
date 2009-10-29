@@ -35,11 +35,11 @@
 #ifndef S60VIDEOMETADATAPROVIDER_H
 #define S60VIDEOMETADATAPROVIDER_H
 
-#include <multimedia/qmetadataprovidercontrol.h>
+#include <multimedia/qmetadatacontrol.h>
 
 class S60VideoPlayerSession;
 
-class S60VideoMetaDataProvider : public QMetaDataProviderControl
+class S60VideoMetaDataProvider : public QMetaDataControl
 {
     Q_OBJECT
     
@@ -50,8 +50,8 @@ public:
     bool isMetaDataAvailable() const;
     bool isWritable() const;
 
-    QVariant metaData(QMediaObject::MetaData key) const;
-    void setMetaData(QMediaObject::MetaData key, const QVariant &value);
+    QVariant metaData(QtMedia::MetaData key) const;
+    void setMetaData(QtMedia::MetaData key, const QVariant &value);
 
     QVariant extendedMetaData(const QString &key) const ;
     void setExtendedMetaData(const QString &key, const QVariant &value);

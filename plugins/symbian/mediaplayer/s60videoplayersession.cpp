@@ -140,6 +140,7 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
                                   m_windowRect, 
                                   m_clipRect)
          );
+    // TODO: m_player->SetDisplayWindowL();
 }
 
 void S60VideoPlayerSession::getNativeHandles()

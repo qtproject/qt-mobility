@@ -111,6 +111,13 @@ bool S60VideoPlayerControl::isSeekable() const
     return m_session->isSeekable();
 }
 
+QPair<qint64, qint64> S60VideoPlayerControl::seekRange() const
+{
+    return m_session->isSeekable()
+            ? qMakePair<qint64, qint64>(0, m_session->duration())
+            : qMakePair<qint64, qint64>(0, 0);
+}
+
 qreal S60VideoPlayerControl::playbackRate() const
 {
     return m_session->playbackRate();
@@ -151,7 +158,7 @@ void S60VideoPlayerControl::setMuted(bool muted)
     m_session->setMuted(muted);
 }
 
-QMediaSource S60VideoPlayerControl::media() const
+QMediaContent S60VideoPlayerControl::media() const
 {
     return m_currentResource;
 }
@@ -161,7 +168,7 @@ const QIODevice *S60VideoPlayerControl::mediaStream() const
     return m_stream;
 }
 
-void S60VideoPlayerControl::setMedia(const QMediaSource &source, QIODevice *stream)
+void S60VideoPlayerControl::setMedia(const QMediaContent &source, QIODevice *stream)
 {
     Q_UNUSED(stream)
     m_session->stop();
@@ -169,12 +176,12 @@ void S60VideoPlayerControl::setMedia(const QMediaSource &source, QIODevice *stre
     
     QUrl url;
     if (!source.isNull()) {
-        url = source.contentUri();
+        url = source.canonicalUri();
     }
 
     m_session->load(url);
 
-    emit currentSourceChanged(m_currentResource);
+    emit mediaChanged(m_currentResource);
 }
 
 void S60VideoPlayerControl::setVideoOutput(QObject *output)

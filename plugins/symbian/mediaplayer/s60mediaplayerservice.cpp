@@ -84,7 +84,7 @@ QMediaControl *S60MediaPlayerService::control(const char *name) const
     if (qstrcmp(name,QMediaPlayerControl_iid) == 0)
         return m_control;
 
-    if (qstrcmp(name,QMetaDataProviderControl_iid) == 0)
+    if (qstrcmp(name,QMetaDataControl_iid) == 0)
         return m_metaData;
 
     if (qstrcmp(name, QVideoOutputControl_iid) == 0)

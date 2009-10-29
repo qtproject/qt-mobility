@@ -64,9 +64,9 @@ public:
 
     QSize nativeSize() const;
 
-    QVideoWidget::AspectRatio aspectRatio() const;
-    void setAspectRatio(QVideoWidget::AspectRatio ratio);
-
+	QVideoWidget::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+	
     QSize customAspectRatio() const;
     void setCustomAspectRatio(const QSize &customRatio);
 
@@ -93,7 +93,7 @@ private:
     void setScaledDisplayRect();
 
     S60VideoSurface *m_surface;
-    QVideoWidget::AspectRatio m_aspectRatioMode;
+    QVideoWidget::AspectRatioMode m_aspectRatioMode;
     QRect m_displayRect;
     QSize m_aspectRatio;
     bool m_fullScreen;

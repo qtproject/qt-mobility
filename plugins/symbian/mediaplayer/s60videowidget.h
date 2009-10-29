@@ -43,22 +43,19 @@ class S60VideoWidget;
 
 class S60VideoWidgetControl
         : public QVideoWidgetControl
-        , public S60VideoRendererInterface
 {
     Q_OBJECT
-    Q_INTERFACES(S60VideoRendererInterface)
+	
 public:
     S60VideoWidgetControl(QObject *parent = 0);
     virtual ~S60VideoWidgetControl();
 
-    void precessNewStream();
-
     QWidget *videoWidget();
 
-    QVideoWidget::AspectRatio aspectRatio() const;
+    QVideoWidget::AspectRatioMode aspectRatioMode() const;
     QSize customAspectRatio() const;
 
-    void setAspectRatio(QVideoWidget::AspectRatio ratio);
+    void setAspectRatioMode(QVideoWidget::AspectRatioMode ratio);
     void setCustomAspectRatio(const QSize &customRatio);
 
     bool isFullScreen() const;
@@ -88,7 +85,7 @@ private:
 
     S60VideoWidget *m_widget;
     WId m_windowId;
-    QVideoWidget::AspectRatio m_aspectRatioMode;
+    QVideoWidget::AspectRatioMode m_aspectRatioMode;
     QSize m_customAspectRatio;
 };
 

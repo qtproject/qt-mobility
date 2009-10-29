@@ -38,12 +38,12 @@
 
 struct S60VideoMetaDataKeyLookup
 {
-    QMediaObject::MetaData key;
+    QtMedia::MetaData key;
     const char *token;
 };
 
 S60VideoMetaDataProvider::S60VideoMetaDataProvider(S60VideoPlayerSession *session, QObject *parent)
-    : QMetaDataProviderControl(parent), m_session(session)
+    : QMetaDataControl(parent), m_session(session)
 {
     connect(m_session, SIGNAL(tagsChanged()), SLOT(updateTags()));
 }
@@ -62,12 +62,12 @@ bool S60VideoMetaDataProvider::isWritable() const
     return false;
 }
 
-QVariant S60VideoMetaDataProvider::metaData(QMediaObject::MetaData key) const
+QVariant S60VideoMetaDataProvider::metaData(QtMedia::MetaData key) const
 {
     return QVariant();
 }
 
-void S60VideoMetaDataProvider::setMetaData(QMediaObject::MetaData key, QVariant const &value)
+void S60VideoMetaDataProvider::setMetaData(QtMedia::MetaData key, QVariant const &value)
 {
     Q_UNUSED(key);
     Q_UNUSED(value);

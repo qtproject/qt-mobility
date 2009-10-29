@@ -33,7 +33,6 @@
 ****************************************************************************/
 
 #include "s60videooverlay.h"
-//#include "qvideosurfacegstsink.h"
 
 #include <QtMultimedia/qvideosurfaceformat.h>
 
@@ -42,7 +41,7 @@
 S60VideoOverlay::S60VideoOverlay(QObject *parent)
     : QVideoWindowControl(parent)
     , m_surface(new S60VideoSurface)
-    , m_aspectRatioMode(QVideoWidget::AspectRatioAuto)
+    , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
     , m_fullScreen(false)
 {
     connect(m_surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)),
@@ -76,12 +75,12 @@ void S60VideoOverlay::setDisplayRect(const QRect &rect)
     setScaledDisplayRect();
 }
 
-QVideoWidget::AspectRatio S60VideoOverlay::aspectRatio() const
+QVideoWidget::AspectRatioMode S60VideoOverlay::aspectRatioMode() const
 {
     return m_aspectRatioMode;
 }
 
-void S60VideoOverlay::setAspectRatio(QVideoWidget::AspectRatio ratio)
+void S60VideoOverlay::setAspectRatioMode(QVideoWidget::AspectRatioMode ratio)
 {
     m_aspectRatioMode = ratio;
 
@@ -182,7 +181,7 @@ void S60VideoOverlay::surfaceFormatChanged()
 void S60VideoOverlay::setScaledDisplayRect()
 {
     switch (m_aspectRatioMode) {
-    case QVideoWidget::AspectRatioAuto:
+    case QVideoWidget::KeepAspectRatio:
         {
             QSize size = m_surface->surfaceFormat().viewport().size();
 
@@ -194,20 +193,8 @@ void S60VideoOverlay::setScaledDisplayRect()
             m_surface->setDisplayRect(rect);
         }
         break;
-    case QVideoWidget::AspectRatioWidget:
+    case QVideoWidget::IgnoreAspectRatio:
         m_surface->setDisplayRect(m_displayRect);
-        break;
-    case QVideoWidget::AspectRatioCustom:
-        {
-            QSize size = m_aspectRatio;
-
-            size.scale(m_surface->surfaceFormat().viewport().size(), Qt::KeepAspectRatio);
-
-            QRect rect(QPoint(0, 0), size);
-            rect.moveCenter(m_displayRect.center());
-
-            m_surface->setDisplayRect(rect);
-        }
         break;
     };
 }
