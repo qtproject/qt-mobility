@@ -43,11 +43,11 @@
 
 #include <QObject>
 
-#include <cntdb.h>
-#include <cntitem.h>
-#include <qtcontacts.h>
+class QContactManager;
+class CntRelationship;
+class CContactDatabase;
 
-class TestRelationship : public QObject
+class TestCntRelationship : public QObject
 {
     Q_OBJECT
 
@@ -55,14 +55,21 @@ private slots:
 	void initTestCase();
 	void cleanupTestCase();
 	
-	void createGroupContact();
-	#if 0
-	void executeRelationships();
-	void executeSaveRelationship();
-	void executeSaveRelationships();
-	void executeRemoveRelationship();
-	void executeRemoveRelationships();
-	#endif
+	void init();
+	void cleanup();
+	
+	void invalidRelationship();
+	void validGroupRelationship();
+	void validGroupRelationships();
+	void invalidGroupRelationship();
+	void invalidFirstContactGroupRelationship();
+	void invalidSecondContactGroupRelationship();
+	void invalidFirstAndSecondContactGroupRelationship();
+	
+private: 
+     QContactManager  *m_manager;
+     CContactDatabase *m_database;
+     CntRelationship  *m_relationship;
 };
 
 #endif

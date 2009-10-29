@@ -6,31 +6,35 @@ TEMPLATE = app
 TARGET = 
 
 QT += testlib
-CONFIG  += qtestlib \
-           symbian_test
-#DEFINES += PBK_UNIT_TEST
+CONFIG  += qtestlib
 
 DEPENDPATH += .
+DEPENDPATH += ../../src
+DEPENDPATH += ../../inc
+DEPENDPATH += ../tsrc/ut_relationship
+DEPENDPATH +=  tsrc/ut_relationship
 INCLUDEPATH += .
-INCLUDEPATH += .\inc
-INCLUDEPATH += ..\..\inc
+INCLUDEPATH += ..\tsrc\ut_cntrelationship
+INCLUDEPATH +=  tsrc\ut_cntrelationship
 
 symbian:
 {
 	INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 	
 	# Input
-	HEADERS +=  ut_relationship.h \
+	HEADERS +=  ut_cntrelationship.h \
+				../../qcontactsymbiantransformerror.h \ 
 				../../inc/cntrelationship.h \
 				../../inc/cntabstractrelationship.h \
-				../../inc/cntrelationshipgroup.h \
-				../../inc/qcontactsymbiantransformerror.h
+      	        ../../inc/cntrelationshipgroup.h \
+      	         
       
-	SOURCES += ut_relationship.cpp \ 
+	SOURCES += ut_cntrelationship.cpp \ 
+	            ../../src/qcontactsymbiantransformerror.cpp \ 
 				../../src/cntrelationship.cpp \
 				../../src/cntabstractrelationship.cpp \
-				../../src/cntrelationshipgroup.cpp \
-				../../src/qcontactsymbiantransformerror.cpp
+      	        ../../src/cntrelationshipgroup.cpp  
+ 
       
 	TARGET.CAPABILITY = ALL -TCB
   

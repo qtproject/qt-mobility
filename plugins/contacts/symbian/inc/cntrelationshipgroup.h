@@ -58,6 +58,7 @@ public:
     
     
 private:
+    void isGroupMemberL(const CContactItem* contactItem, const TContactItemId groupId) const;
     void fetchGroupMembersL(const QContactId& participantId, QList<QContactRelationship> *relationships);
     void fetchMemberOfGroupsL(const QContactId& participantId, QList<QContactRelationship> *relationships);
 };
