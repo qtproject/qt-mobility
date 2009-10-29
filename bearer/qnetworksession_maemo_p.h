@@ -136,7 +136,7 @@ private:
     // Either a copy of publicConfig or one of serviceConfig.children().
     QNetworkConfiguration activeConfig;
 
-    QNetworkConfiguration& copyConfig(QNetworkConfiguration &fromConfig, QNetworkConfiguration &toConfig);
+    QNetworkConfiguration& copyConfig(QNetworkConfiguration &fromConfig, QNetworkConfiguration &toConfig, bool deepCopy = true);
     void clearConfiguration(QNetworkConfiguration &config);
     void cleanupAnyConfiguration();
 

@@ -397,11 +397,13 @@ quint64 QNetworkSessionPrivate::activeTime() const
 }
 
 
-QNetworkConfiguration& QNetworkSessionPrivate::copyConfig(QNetworkConfiguration &fromConfig, QNetworkConfiguration &toConfig)
+QNetworkConfiguration& QNetworkSessionPrivate::copyConfig(QNetworkConfiguration &fromConfig, QNetworkConfiguration &toConfig, bool deepCopy)
 {
-    QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
-    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
-    toConfig.d = ptr;
+    if (deepCopy) {
+        QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
+        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
+        toConfig.d = ptr;
+    }
 
     toConfig.d->name = fromConfig.d->name;
     toConfig.d->isValid = fromConfig.d->isValid;
@@ -509,8 +511,8 @@ void QNetworkSessionPrivate::syncStateWithInterface()
 	     * that tell the icd is actually connected to another IAP,
 	     * then do not update current state etc.
 	     */
-	    if (!(publicConfig.type() != QNetworkConfiguration::UserChoice &&
-		    publicConfig.d->id != state_results.first().params.network_id)) {
+	    if (publicConfig.type() == QNetworkConfiguration::UserChoice ||
+		    publicConfig.d->id == state_results.first().params.network_id) {
 
 		switch (state_results.first().state) {
 		case ICD_STATE_DISCONNECTED:
@@ -527,6 +529,17 @@ void QNetworkSessionPrivate::syncStateWithInterface()
 		    {
 			if (!state_results.first().error.isEmpty())
 			    break;
+                        
+                        const QString id = state_results.first().params.network_id;
+
+			QNetworkConfigurationManagerPrivate *mgr = (QNetworkConfigurationManagerPrivate*)activeConfig.d.data()->manager;
+			if (mgr->accessPointConfigurations.contains(id)) {
+                            //we don't want the copied data if the config is already known by the manager
+                            //just reuse it so that existing references to the old data get the same update
+			    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = mgr->accessPointConfigurations.value(activeConfig.d->id);
+                            activeConfig.d = priv;
+                        }
+
 
 			state = QNetworkSession::Connected;
 			activeConfig.d->network_id = state_results.first().params.network_id;
@@ -550,7 +563,7 @@ void QNetworkSessionPrivate::syncStateWithInterface()
 
 
 			// Add the new active configuration to manager or update the old config
-			QNetworkConfigurationManagerPrivate *mgr = (QNetworkConfigurationManagerPrivate*)activeConfig.d.data()->manager;
+			mgr = (QNetworkConfigurationManagerPrivate*)activeConfig.d.data()->manager;
 			if (!(mgr->accessPointConfigurations.contains(activeConfig.d->id))) {
 			    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr = activeConfig.d;
 			    mgr->accessPointConfigurations.insert(activeConfig.d->id, ptr);
@@ -564,11 +577,7 @@ void QNetworkSessionPrivate::syncStateWithInterface()
 #endif
 
 			} else {
-			    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = mgr->accessPointConfigurations.take(activeConfig.d->id);
-			    priv = activeConfig.d;
-			    mgr->accessPointConfigurations.insert(activeConfig.d->id, priv);
-			    mgr->configurationChanged((QNetworkConfigurationPrivate*)priv.data());
-
+			    mgr->configurationChanged((QNetworkConfigurationPrivate*)(activeConfig.d.data()));
 #ifdef BEARER_MANAGEMENT_DEBUG
 			    //qDebug()<<"Existing configuration"<<activeConfig.d->id<<"updated in manager in sync";
 #endif
@@ -830,11 +839,11 @@ void QNetworkSessionPrivate::do_open()
 
     Maemo::IcdConnectResult connect_result;
     Maemo::Icd icd(ICD_LONG_CONNECT_TIMEOUT);
-    QNetworkConfiguration *config;
+    QNetworkConfiguration config;
     if (publicConfig.type() == QNetworkConfiguration::UserChoice)
-	config = &activeConfig;
+	config = activeConfig;
     else
-	config = &publicConfig;
+	config = publicConfig;
 
     if (iap == OSSO_IAP_ANY) {
 #ifdef BEARER_MANAGEMENT_DEBUG
@@ -846,15 +855,15 @@ void QNetworkSessionPrivate::do_open()
 
 	QList<Maemo::ConnectParams> params;
 	Maemo::ConnectParams param;
-	param.connect.service_type = config->d->service_type;
-	param.connect.service_attrs = config->d->service_attrs;
-	param.connect.service_id = config->d->service_id;
-	param.connect.network_type = config->d->iap_type;
-	param.connect.network_attrs = config->d->network_attrs;
-	if (config->d->network_attrs & ICD_NW_ATTR_IAPNAME)
+	param.connect.service_type = config.d->service_type;
+	param.connect.service_attrs = config.d->service_attrs;
+	param.connect.service_id = config.d->service_id;
+	param.connect.network_type = config.d->iap_type;
+	param.connect.network_attrs = config.d->network_attrs;
+	if (config.d->network_attrs & ICD_NW_ATTR_IAPNAME)
 	    param.connect.network_id = QByteArray(iap.toLatin1());
 	else
-	    param.connect.network_id = config->d->network_id;
+	    param.connect.network_id = config.d->network_id;
 	params.append(param);
 
 #ifdef BEARER_MANAGEMENT_DEBUG
@@ -891,7 +900,7 @@ void QNetworkSessionPrivate::do_open()
 	 * connection to somewhere.
 	 */
 	if ((publicConfig.type() != QNetworkConfiguration::UserChoice) &&
-	    (connected_iap != config->identifier())) {
+	    (connected_iap != config.identifier())) {
 	    updateState(QNetworkSession::Disconnected);
 	    emit quitPendingWaitsForOpened();
 	    emit q->error(QNetworkSession::InvalidConfigurationError);
@@ -900,18 +909,18 @@ void QNetworkSessionPrivate::do_open()
 
 
 	/* Did we connect to non saved IAP? */
-	if (!(config->d->network_attrs & ICD_NW_ATTR_IAPNAME)) {
+	if (!(config.d->network_attrs & ICD_NW_ATTR_IAPNAME)) {
 	    /* Because the connection succeeded, the IAP is now known.
 	     */
-	    config->d->network_attrs |= ICD_NW_ATTR_IAPNAME;
-	    config->d->id = connected_iap;
+	    config.d->network_attrs |= ICD_NW_ATTR_IAPNAME;
+	    config.d->id = connected_iap;
 	}
 
 	/* User might have changed the IAP name when a new IAP was saved */
-	Maemo::IAPConf iap_name(config->d->id);
+	Maemo::IAPConf iap_name(config.d->id);
 	QString name = iap_name.value("name").toString();
 	if (!name.isEmpty())
-	    config->d->name = name;
+	    config.d->name = name;
 
 	bearer_name = connect_result.connect.network_type;
 	if (bearer_name == "WLAN_INFRA" ||
@@ -922,9 +931,9 @@ void QNetworkSessionPrivate::do_open()
 	else
 	    currentBearerName = bearer_name;
 
-	config->d->isValid = true;
-	config->d->state = QNetworkConfiguration::Active;
-	config->d->type = QNetworkConfiguration::InternetAccessPoint;
+	config.d->isValid = true;
+	config.d->state = QNetworkConfiguration::Active;
+	config.d->type = QNetworkConfiguration::InternetAccessPoint;
 
 	startTime = QDateTime::currentDateTime();
 	updateState(QNetworkSession::Connected);
@@ -932,7 +941,7 @@ void QNetworkSessionPrivate::do_open()
 	currentNetworkInterface = get_network_interface();
 
 #ifdef BEARER_MANAGEMENT_DEBUG
-	qDebug() << "connected to" << result << config->d->name << "at" << currentNetworkInterface;
+	qDebug() << "connected to" << result << config.d->name << "at" << currentNetworkInterface;
 #endif
 
 	/* We first check if the configuration already exists in the manager
@@ -946,7 +955,7 @@ void QNetworkSessionPrivate::do_open()
 #ifdef BEARER_MANAGEMENT_DEBUG
 #if 0
 	    QList<QNetworkConfiguration> configs;
-	    QNetworkConfigurationManagerPrivate *conPriv = (QNetworkConfigurationManagerPrivate*)config->d.data()->manager;
+	    QNetworkConfigurationManagerPrivate *conPriv = (QNetworkConfigurationManagerPrivate*)config.d.data()->manager;
 	    QList<QString> cpsIdents = conPriv->accessPointConfigurations.keys();
 	    foreach( QString ii, cpsIdents) {
 		QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> p = 
@@ -966,10 +975,9 @@ void QNetworkSessionPrivate::do_open()
 #endif
 #endif
 
-
-	    QNetworkConfigurationManagerPrivate *mgr = (QNetworkConfigurationManagerPrivate*)config->d.data()->manager;
+	    QNetworkConfigurationManagerPrivate *mgr = (QNetworkConfigurationManagerPrivate*)config.d.data()->manager;
             if (!mgr->accessPointConfigurations.contains(result)) {
-		QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr = config->d;
+		QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr = config.d;
 		mgr->accessPointConfigurations.insert(result, ptr);
 
 		QNetworkConfiguration item;
@@ -981,10 +989,13 @@ void QNetworkSessionPrivate::do_open()
 #endif
 
 	    } else {
-		QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = mgr->accessPointConfigurations.take(result);
-		priv = config->d;
-		mgr->accessPointConfigurations.insert(result, priv);
-		mgr->configurationChanged((QNetworkConfigurationPrivate*)priv.data());
+		QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = mgr->accessPointConfigurations.value(result);
+		QNetworkConfiguration reference;
+		reference.d = priv;
+                copyConfig(config, reference, false);
+                config = reference;
+                activeConfig = reference;
+		mgr->configurationChanged((QNetworkConfigurationPrivate*)(config.d.data()));
 
 #ifdef BEARER_MANAGEMENT_DEBUG
 		//qDebug()<<"Existing configuration"<<result<<"updated in manager in open";

@@ -1,3 +1,12 @@
+libbearer (0.27) unstable; urgency=low
+
+  * Do not crash in session class if the caller has not called
+    manager.updateConfigurations() beforehand
+  * Fixes when handling shared QNetworkConfiguration pointers in
+    session class
+
+ -- Jukka Rissanen <jukka.rissanen@nokia.com>  Mon, 26 Oct 2009 10:44:10 +0200
+
 libbearer (0.26) unstable; urgency=low
 
   * Fixed publicConfig and activeConfig handling in QNetworkSessionPrivate
