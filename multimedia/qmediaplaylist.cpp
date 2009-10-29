@@ -125,11 +125,19 @@ QMediaPlaylist::QMediaPlaylist(QMediaObject *mediaObject, QObject *parent)
 
     d->q_ptr = this;
 
-    if (mediaObject)
-        d->control = qobject_cast<QMediaPlaylistControl*>(mediaObject->service()->control(QMediaPlaylistControl_iid));
+    QMediaService *service = mediaObject
+            ? mediaObject->service()
+            : 0;
 
-    if (!d->control)
+    if (service)
+        d->control = qobject_cast<QMediaPlaylistControl*>(service->control(QMediaPlaylistControl_iid));
+
+    if (!d->control) {
         d->control = new QLocalMediaPlaylistControl(this);
+
+        if (mediaObject)
+            mediaObject->bind(this);
+    }
 
     QMediaPlaylistProvider *playlist = d->control->playlistProvider();
     connect(playlist, SIGNAL(loadFailed(QMediaPlaylist::Error,QString)),
@@ -149,9 +157,6 @@ QMediaPlaylist::QMediaPlaylist(QMediaObject *mediaObject, QObject *parent)
             this, SIGNAL(playlistPositionChanged(int)));
     connect(d->control, SIGNAL(currentMediaChanged(QMediaContent)),
             this, SIGNAL(currentMediaChanged(QMediaContent)));
-
-    if (mediaObject)
-        mediaObject->bind(this);
 }
 
 /*!

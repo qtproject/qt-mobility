@@ -104,7 +104,6 @@ public:
         , control(0)
         , state(QMediaPlayer::StoppedState)
         , error(QMediaPlayer::NoError)
-        , hasPlaylistControl(false)
         , filterStates(false)
         , playlist(0)
     {}
@@ -114,7 +113,6 @@ public:
     QMediaPlayer::State state;
     QMediaPlayer::Error error;
     QString errorString;
-    bool hasPlaylistControl;
     bool filterStates;
 
     QMediaPlaylist *playlist;
@@ -182,39 +180,36 @@ void QMediaPlayerPrivate::_q_error(int error, const QString &errorString)
 
 void QMediaPlayerPrivate::_q_updateMedia(const QMediaContent &media)
 {
-    if (control != 0) {
-        const QMediaPlayer::State currentState = state;
+    const QMediaPlayer::State currentState = state;
 
-        filterStates = true;
-        control->setMedia(media, 0);
+    filterStates = true;
+    control->setMedia(media, 0);
 
-        if (!media.isNull()) {
-            switch (currentState) {
-            case QMediaPlayer::PlayingState:
-                control->play();
-                break;
-            case QMediaPlayer::PausedState:
-                control->pause();
-                break;
-            default:
-                break;
-            }
+    if (!media.isNull()) {
+        switch (currentState) {
+        case QMediaPlayer::PlayingState:
+            control->play();
+            break;
+        case QMediaPlayer::PausedState:
+            control->pause();
+            break;
+        default:
+            break;
         }
-        filterStates = false;
-
-        state = control->state();
-
-        if (state != currentState)
-            emit q_func()->stateChanged(state);
     }
+    filterStates = false;
+
+    state = control->state();
+
+    if (state != currentState)
+        emit q_func()->stateChanged(state);
 }
 
 void QMediaPlayerPrivate::_q_playlistDestroyed()
 {
     playlist = 0;
 
-    if (control != 0)
-        control->setMedia(QMediaContent(), 0);
+    control->setMedia(QMediaContent(), 0);
 }
 
 static QMediaService *playerService(QMediaPlayer::Flags flags, QMediaServiceProvider *provider)
@@ -267,8 +262,6 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaSer
 
             if (d->control->mediaStatus() == StalledMedia || d->control->mediaStatus() == BufferingMedia)
                 addPropertyWatch("bufferStatus");
-
-            d->hasPlaylistControl = (d->service->control(QMediaPlaylistControl_iid) != 0);
         }
     }
 }
@@ -538,10 +531,7 @@ void QMediaPlayer::bind(QObject *obj)
 {
     Q_D(QMediaPlayer);
 
-    if (d->control == 0)
-        return;
-
-    if (!d->hasPlaylistControl) {
+    if (d->control != 0) {
         QMediaPlaylist *playlist = qobject_cast<QMediaPlaylist*>(obj);
 
         if (playlist) {
