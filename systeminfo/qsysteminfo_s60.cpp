@@ -51,6 +51,7 @@
 #include <featureinfo.h>
 #include <hwrmvibra.h>
 #include <AknUtils.h>
+#include <W32STD.H>
  
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
@@ -506,7 +507,37 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 
 int QSystemDisplayInfoPrivate::colorDepth(int screen)
 {
-    return -1;  //TODO
+    int depth = 0;
+    TRAP_IGNORE(
+        RWsSession ws;
+        User::LeaveIfError(ws.Connect());
+        CleanupClosePushL(ws);
+        CWsScreenDevice *wsScreenDevice = new CWsScreenDevice(ws);
+        CleanupStack::PushL(wsScreenDevice);
+        User::LeaveIfError(wsScreenDevice->Construct(screen));
+        TDisplayMode mode = wsScreenDevice->DisplayMode();
+        switch (mode) {
+            case EGray2: depth = 1; break;
+            case EGray4: depth = 2; break;
+            case EGray16:
+            case EColor16: depth = 4; break;
+            case EGray256:
+            case EColor256: depth = 8; break;
+            case EColor4K: depth = 12; break;
+            case EColor64K: depth = 16; break;
+            case EColor16M:
+            case EColor16MA: depth = 24; break;
+            case EColor16MU: depth = 32; break;
+            case ENone:
+            case ERgb:
+            case EColorLast:
+            default: depth = 0;
+                break;
+        }
+        CleanupStack::PopAndDestroy(2, &ws);
+    )
+    
+    return depth;
 }
 
 //////// QSystemStorageInfo
