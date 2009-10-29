@@ -85,6 +85,7 @@ private:
     QContactDetail* createBirthday(const QVersitProperty& property) const;    
     QContactDetail* createAvatar(
         const QVersitProperty& property,
+        const QVersitDocument& versitDocument,
         const QString& subType) const;
     void createNicknames(
         const QVersitProperty& property,
@@ -105,6 +106,7 @@ private: // Utilities
     QString saveContentToFile(
         const QString& path,
         const QVersitProperty& property) const;
+    QString getFirstAndLastName(const QVersitDocument& document) const;
     
 public: // Data
     QString mImagePath;

@@ -319,6 +319,8 @@ void UT_QVersitContactGenerator::testOrganization()
         }else if(!o.logo().isEmpty()){
             QString fileName = o.logo();
             QVERIFY(fileName.endsWith((QString::fromAscii(versitFormatGif).toLower())));
+            QVERIFY(fileName.contains(imageAndAudioClipPath + QString::fromAscii("/")));
+             //                         +
             QFile file(fileName);
             QVERIFY(file.open( QIODevice::ReadOnly ));
             QByteArray content = file.readAll();
@@ -666,6 +668,7 @@ void UT_QVersitContactGenerator::testAvatarJpegStored()
         static_cast<QContactAvatar>(contact.detail(QContactAvatar::DefinitionName));
     QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
     QString fileName = avatar.avatar();
+    QVERIFY(fileName.contains(nameValues.at(0) + nameValues.at(1)));
     QVERIFY(fileName.endsWith(QString::fromAscii(versitFormatJpeg).toLower()));
     QFile file(fileName);
     QVERIFY(file.open(QIODevice::ReadOnly));
@@ -697,6 +700,7 @@ void UT_QVersitContactGenerator::testAvatarGifStored()
     QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
     QDir dir;
     QVERIFY(dir.exists(avatar.avatar()));
+    QVERIFY(fileName.contains(nameValues.at(0) + nameValues.at(1)));
     QVERIFY(fileName.endsWith(ext));
     QFile file(fileName);
     QVERIFY(file.open(QIODevice::ReadOnly));

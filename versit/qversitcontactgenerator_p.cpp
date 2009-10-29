@@ -164,7 +164,7 @@ QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& 
         } else if (property.name() == QString::fromAscii(versitAnniversaryId)) {
             detail = createAnniversary(property);
         } else if (property.name() == QString::fromAscii(versitPhotoId)) {
-            detail = createAvatar(property,QContactAvatar::SubTypeImage);
+            detail = createAvatar(property,versitDocument,QContactAvatar::SubTypeImage);
         } else if (property.name() == QString::fromAscii(versitBirthdayId)) {
             detail = createBirthday(property);
         } else if (property.name() == QString::fromAscii(versitNicknameId)||
@@ -178,7 +178,7 @@ QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& 
                    property.name() == QString::fromAscii(versitChildrenId)){
             detail = createFamily(property,contact);
         } else if (property.name() == QString::fromAscii(versitSoundId)){
-            detail = createAvatar(property,QContactAvatar::SubTypeAudioRingtone);
+            detail = createAvatar(property,versitDocument,QContactAvatar::SubTypeAudioRingtone);
         } else {
             detail = createNameValueDetail(property);
         }
@@ -268,7 +268,10 @@ QContactDetail* QVersitContactGeneratorPrivate::createOrganization(
         QByteArray orgUnit = value.mid(firstSemic+1,value.size());
         org->setDepartment(QString::fromAscii(orgUnit));
     } else if (property.name() == QString::fromAscii(versitLogoId)) {
-        QString fileName = saveContentToFile(mImagePath,property);
+        QString path(mImagePath);
+        if (!path.endsWith(QString::fromAscii("/")))
+            path += QString::fromAscii("/");
+        QString fileName = saveContentToFile(path,property);
         if (!fileName.isEmpty()) {
             org->setLogo(fileName);
         } else {
@@ -371,6 +374,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createOnlineAccount(
  */
 QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
     const QVersitProperty& property,
+    const QVersitDocument& versitDocument,
     const QString& subType) const
 {
     QString value(property.value());
@@ -379,10 +383,13 @@ QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
         property.parameters().value(QString::fromAscii(versitValue));
 
     if (valueParam != QString::fromAscii("URL")) {
-        QString path = mImagePath;
+        QString pathAndName(mImagePath);
         if (subType == QContactAvatar::SubTypeAudioRingtone)
-            path = mAudioClipPath;
-        value = saveContentToFile(path,property);
+            pathAndName = mAudioClipPath;
+        if (!pathAndName.endsWith(QString::fromAscii("/")))
+            pathAndName += QString::fromAscii("/");
+        pathAndName += getFirstAndLastName(versitDocument);
+        value = saveContentToFile(pathAndName,property);
     }
 
     QContactAvatar* avatar = 0;
@@ -521,7 +528,7 @@ QDateTime QVersitContactGeneratorPrivate::parseDateTime(
  *
  */
 QString QVersitContactGeneratorPrivate::saveContentToFile(
-    const QString& path,
+    const QString& pathAndName,
     const QVersitProperty& property) const
 {
     QString encoding =
@@ -533,9 +540,7 @@ QString QVersitContactGeneratorPrivate::saveContentToFile(
     // Use the type parameter value as it is, if not found in the mapping table
     QString extension = mTypeFileExtensionMappings.value(type,type);
 
-    QString fileName(path);
-    if (!path.endsWith(QString::fromAscii("/")))
-        fileName += QString::fromAscii("/");
+    QString fileName(pathAndName);
     fileName += QString::number(qrand());
     fileName += QString::fromAscii(".");
     fileName += extension.toLower();
@@ -555,3 +560,20 @@ QString QVersitContactGeneratorPrivate::saveContentToFile(
     file.close();
     return (writeResult > 0) ? fileName : QString();
 }
+
+QString QVersitContactGeneratorPrivate::getFirstAndLastName
+        (const QVersitDocument& document) const
+{
+    QString name;
+    const QList<QVersitProperty> properties = document.properties();
+    foreach(const QVersitProperty& nameProperty, properties) {
+        if (nameProperty.name() == QString::fromAscii(versitNameId)) {
+            QList<QByteArray> values = nameProperty.value().split(';');
+            name.append(takeFirst(values));
+            name.append(takeFirst(values));
+            break;
+        }
+    }
+    return name;
+}
+
