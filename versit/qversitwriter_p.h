@@ -70,17 +70,14 @@ public: // Data
 
 protected: // To be implemented in each of the subclasses
     virtual QByteArray encodeVersitProperty(const QVersitProperty& property) = 0;
-
-    virtual QByteArray encodeParameter(
-        const QString& name,
-        const QString& value) const = 0;
+    virtual QByteArray encodeParameters(
+        const QMultiHash<QString,QString>& parameters) const = 0;
 
 protected: // Constructors
     QVersitWriterPrivate(const QByteArray& documentType, const QByteArray& version);
 
 protected: // New functions
     QByteArray encodeGroupsAndName(const QVersitProperty& property) const;
-    QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters) const;
 
 private: // Constructors
     QVersitWriterPrivate();

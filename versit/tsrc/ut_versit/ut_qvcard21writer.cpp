@@ -118,31 +118,36 @@ END:VCARD\r\n\
 
 }
 
-void UT_QVCard21Writer::testEncodeParameter()
+void UT_QVCard21Writer::testEncodeParameters()
 {
-    // Empty name and value
-    QString name;
-    QString value;
-    QByteArray result;
-    QCOMPARE(
-        QString::fromAscii(mWriter->encodeParameter(name,value)),
-        QString::fromAscii(result));
+    QString typeParameterName(QString::fromAscii("TYPE"));
+    QString encodingParameterName(QString::fromAscii("ENCODING"));
 
-    // TYPE parameter -> name not encoded
-    name = QString::fromAscii("TYPE");
-    value = QString::fromAscii("HOME");
-    result = "HOME";
-    QCOMPARE(
-        QString::fromAscii(mWriter->encodeParameter(name,value)),
-        QString::fromAscii(result));
+    // No parameters
+    QMultiHash<QString,QString> parameters;
+    QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
+             QString());
 
-    // Other that TYPE parameter -> name encoded
-    name = QString::fromAscii("ENCODING");
-    value = QString::fromAscii("BASE64");
-    result = "ENCODING=BASE64";
-    QCOMPARE(
-        QString::fromAscii(mWriter->encodeParameter(name,value)),
-        QString::fromAscii(result));
+    // One TYPE parameter
+    parameters.insert(typeParameterName,QString::fromAscii("HOME"));
+    QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
+             QString::fromAscii(";HOME"));
+
+    // Two TYPE parameters
+    parameters.insert(typeParameterName,QString::fromAscii("VOICE"));
+    QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
+             QString::fromAscii(";VOICE;HOME"));
+
+    // One ENCODING parameter
+    parameters.clear();
+    parameters.insert(encodingParameterName,QString::fromAscii("8BIT"));
+    QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
+             QString::fromAscii(";ENCODING=8BIT"));
+
+    // Two parameters
+    parameters.insert(QString::fromAscii("X-PARAM"),QString::fromAscii("VALUE"));
+    QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
+             QString::fromAscii(";X-PARAM=VALUE;ENCODING=8BIT"));
 }
 
 void UT_QVCard21Writer::testQuotedPrintableEncode()

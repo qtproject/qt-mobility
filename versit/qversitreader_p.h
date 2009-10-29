@@ -72,11 +72,11 @@ public:
         QVersitDocument::VersitType versitType,
         QByteArray& text);
 
-    void parseVCard21PropertyValue(
+    void parseVCard21Property(
         QByteArray& text,
         QVersitProperty& property);
 
-    void parseVCard30PropertyValue(
+    void parseVCard30Property(
         QByteArray& text,
         QVersitProperty& property);
 

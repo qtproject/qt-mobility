@@ -97,24 +97,24 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(
         VersitUtils::extractPropertyGroupsAndName(text);
     property.setGroups(groupsAndName.first);
     property.setName(groupsAndName.second);
-    property.setParameters(VersitUtils::extractPropertyParams(text));
-    text = VersitUtils::extractPropertyValue(text);
     if (versitType == QVersitDocument::VCard21)
-        parseVCard21PropertyValue(text,property);
+        parseVCard21Property(text,property);
     else if (versitType == QVersitDocument::VCard30)
-        parseVCard30PropertyValue(text,property);
+        parseVCard30Property(text,property);
     else
         return QVersitProperty(); // type not supported
     return property;
 }
 
 /*!
- * Parses the property value according to vCard 2.1 syntax.
+ * Parses the property according to vCard 2.1 syntax.
  */
-void QVersitReaderPrivate::parseVCard21PropertyValue(
+void QVersitReaderPrivate::parseVCard21Property(
     QByteArray& text,
     QVersitProperty& property)
 {
+    property.setParameters(VersitUtils::extractVCard21PropertyParams(text));
+    text = VersitUtils::extractPropertyValue(text);
     if (property.name() == QString::fromAscii("AGENT")) {
         if (mDocumentNestingLevel >= MAX_VERSIT_DOCUMENT_NESTING_DEPTH)
             return; // To prevent infinite recursion
@@ -146,12 +146,14 @@ void QVersitReaderPrivate::parseVCard21PropertyValue(
 }
 
 /*!
- * Parses the property value according to vCard 3.0 syntax.
+ * Parses the property according to vCard 3.0 syntax.
  */
-void QVersitReaderPrivate::parseVCard30PropertyValue(
+void QVersitReaderPrivate::parseVCard30Property(
     QByteArray& text,
     QVersitProperty& property)
 {
+    property.setParameters(VersitUtils::extractVCard30PropertyParams(text));
+    text = VersitUtils::extractPropertyValue(text);
     int crlfPos = text.indexOf("\r\n");
     QByteArray value = text.left(crlfPos);
     VersitUtils::removeBackSlashEscaping(value);

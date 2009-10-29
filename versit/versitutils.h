@@ -64,18 +64,21 @@ public:
     static QPair<QStringList,QString> extractPropertyGroupsAndName(
         const QByteArray& property);
     static QByteArray extractPropertyValue(const QByteArray& property);
-    static QMultiHash<QString,QString> extractPropertyParams(
+    static QMultiHash<QString,QString> extractVCard21PropertyParams(
         const QByteArray& property);
-    
+    static QMultiHash<QString,QString> extractVCard30PropertyParams(
+        const QByteArray& property);
+
 private:
     
-    static void addParam(
-        QMultiHash<QString,QString>& params,
-        const QByteArray& originalString,
+    static QList<QByteArray> extractParams(const QByteArray& property);
+    static QList<QByteArray> extractParts(const QByteArray& text, char separator);
+    static QByteArray extractPart(
+        const QByteArray& text,
         int startPosition, 
-        int length=-1);    
-    static QString paramName(const QByteArray& parameter);
-    static QString paramValue(const QByteArray& parameter);
+        int length=-1);
+    static QByteArray paramName(const QByteArray& parameter);
+    static QByteArray paramValue(const QByteArray& parameter);
     static bool shouldBeQuotedPrintableEncoded(char chr);
     
 private:

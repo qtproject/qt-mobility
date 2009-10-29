@@ -295,68 +295,120 @@ QByteArray VersitUtils::extractPropertyValue(const QByteArray& property)
  * Extracts the property parameters as a QMultiHash.
  * The parameters without names are added as "TYPE" parameters.
  */
-QMultiHash<QString,QString> VersitUtils::extractPropertyParams(
+QMultiHash<QString,QString> VersitUtils::extractVCard21PropertyParams(
     const QByteArray& property)
 {
-    QMultiHash<QString,QString> params;    
+    QMultiHash<QString,QString> result;
+    QList<QByteArray> params = extractParams(property);
+    foreach (QByteArray param, params) {
+        QString name = QString::fromAscii(paramName(param));
+        QString value = QString::fromAscii(paramValue(param));
+        result.insertMulti(name,value);
+    }
+    return result;
+}
+
+/*!
+ * Extracts the property parameters as a QMultiHash.
+ * The parameters without names are added as "TYPE" parameters.
+ */
+QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(
+    const QByteArray& property)
+{
+    QMultiHash<QString,QString> result;
+    QList<QByteArray> params = extractParams(property);
+    foreach (QByteArray param, params) {
+        QByteArray name = paramName(param);
+        removeBackSlashEscaping(name);
+        QByteArray values = paramValue(param);
+        QList<QByteArray> valueList = extractParts(values,',');
+        while (!valueList.isEmpty()) {
+            QByteArray value(valueList.takeLast());
+            removeBackSlashEscaping(value);
+            result.insertMulti(QString::fromAscii(name),QString::fromAscii(value));
+        }
+    }
+    return result;
+}
+
+/*!
+ * Extracts the parameters as delimited by semicolons.
+ */
+QList<QByteArray> VersitUtils::extractParams(const QByteArray& property)
+{
+    QList<QByteArray> params;
     int colonIndex = property.indexOf(':');
     if (colonIndex > 0) {
         QByteArray nameAndParamsString = property.left(colonIndex);
-        int paramStartIndex = -1;
-        char previous = 0;
-        for (int i=0; i < nameAndParamsString.length(); i++) {
-            char current = nameAndParamsString.at(i);
-            if (current == ';' && previous != '\\') {
-                int length = i-paramStartIndex;
-                addParam(params,nameAndParamsString,paramStartIndex,length);
-                paramStartIndex = i+1;
-            }
-            previous = current;
-        }
-        // Add the last parameter before the colon
-        addParam(params,nameAndParamsString,paramStartIndex);
+        params = extractParts(nameAndParamsString,';');
+        if (!params.isEmpty())
+            params.removeFirst(); // Remove property name
     }
     return params;
 }
 
 /*!
- * Adds a parameter into /a params from a substring
- * limited by /a startPosition and /a length
+ * Extracts the parts separated by separator
+ * discarding the separators escaped with a backslash
  */
-void VersitUtils::addParam(
-    QMultiHash<QString,QString>& params,
-    const QByteArray& originalString, 
+QList<QByteArray> VersitUtils::extractParts(
+    const QByteArray& text,
+    char separator)
+{
+    QList<QByteArray> parts;
+    int partStartIndex = 0;
+    char previous = 0;
+    for (int i=0; i<text.length(); i++) {
+        char current = text.at(i);
+        if (current == separator && previous != '\\') {
+            int length = i-partStartIndex;
+            QByteArray part = extractPart(text,partStartIndex,length);
+            if (part.length() > 0)
+                parts.append(part);
+            partStartIndex = i+1;
+        }
+        previous = current;
+    }
+    // Add the last or only part
+    QByteArray part = extractPart(text,partStartIndex);
+    if (part.length() > 0)
+        parts.append(part);
+    return parts;
+}
+
+/*!
+ * Extracts a substring limited by /a startPosition and /a length.
+ */
+QByteArray VersitUtils::extractPart(
+    const QByteArray& text,
     int startPosition, 
     int length)
 {
-    QByteArray paramString;
+    QByteArray part;
     if (startPosition >= 0)
-        paramString = originalString.mid(startPosition,length).trimmed();
-    if (paramString.length() > 0)
-        params.insertMulti(paramName(paramString),paramValue(paramString));
+        part = text.mid(startPosition,length).trimmed();
+    return part;
 }
 
 /*!
  * Extracts the name of the parameter.
  * No name is interpreted as an implicit "TYPE".
  */
-QString VersitUtils::paramName(const QByteArray& parameter)
+QByteArray VersitUtils::paramName(const QByteArray& parameter)
 {
      if (parameter.trimmed().length() == 0)
-         return QString();
+         return QByteArray();
      int equalsIndex = parameter.indexOf('=');
      if (equalsIndex > 0) {
-         QByteArray name = parameter.left(equalsIndex).trimmed();
-         removeBackSlashEscaping(name);
-         return QString::fromAscii(name);
+         return parameter.left(equalsIndex).trimmed();
      }
-     return QString::fromAscii("TYPE");
+     return QByteArray("TYPE");
 }
 
 /*!
  * Extracts the value of the parameter
  */
-QString VersitUtils::paramValue(const QByteArray& parameter)
+QByteArray VersitUtils::paramValue(const QByteArray& parameter)
 {
     QByteArray value(parameter);
     int equalsIndex = parameter.indexOf('=');
@@ -369,8 +421,7 @@ QString VersitUtils::paramValue(const QByteArray& parameter)
             value = parameter.right(valueLength).trimmed();
         }    
     }
-    removeBackSlashEscaping(value);
-    return QString::fromAscii(value);
+    return value;
 }
 
 /*!

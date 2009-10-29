@@ -88,30 +88,41 @@ void UT_QVCard30Writer::testEncodeVersitProperty()
     QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
 }
 
-void UT_QVCard30Writer::testEncodeParameter()
+void UT_QVCard30Writer::testEncodeParameters()
 {
-    // Empty name and value
-    QString name;
-    QString value;
-    QByteArray result;
-    QCOMPARE(
-        QString::fromAscii(mWriter->encodeParameter(name,value)),
-        QString::fromAscii(result));
+    QString typeParameterName(QString::fromAscii("TYPE"));
+    QString encodingParameterName(QString::fromAscii("ENCODING"));
 
-    // Normal parameter
-    name = QString::fromAscii("TYPE");
-    value = QString::fromAscii("HOME");
-    result = "TYPE=HOME";
-    QCOMPARE(
-        QString::fromAscii(mWriter->encodeParameter(name,value)),
-        QString::fromAscii(result));
+    // No parameters
+    QMultiHash<QString,QString> parameters;
+    QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
+             QString());
+
+    // One TYPE parameter
+    parameters.insert(typeParameterName,QString::fromAscii("HOME"));
+    QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
+             QString::fromAscii(";TYPE=HOME"));
+
+    // Two TYPE parameters
+    parameters.insert(typeParameterName,QString::fromAscii("VOICE"));
+    QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
+             QString::fromAscii(";TYPE=VOICE,HOME"));
+
+    // One ENCODING parameter
+    parameters.clear();
+    parameters.insert(encodingParameterName,QString::fromAscii("8BIT"));
+    QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
+             QString::fromAscii(";ENCODING=8BIT"));
+
+    // Two parameters
+    parameters.insert(QString::fromAscii("X-PARAM"),QString::fromAscii("VALUE"));
+    QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
+             QString::fromAscii(";X-PARAM=VALUE;ENCODING=8BIT"));
 
     // Parameter with characters that require backslash escaping
-    name = QString::fromAscii("X-A;B");
-    value = QString::fromAscii("C,D");
-    result = "X-A\\;B=C\\,D";
-    QCOMPARE(
-        QString::fromAscii(mWriter->encodeParameter(name,value)),
-        QString::fromAscii(result));
+    parameters.clear();
+    parameters.insert(QString::fromAscii("X-P;ARAM"),QString::fromAscii("VA,LUE"));
+    QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
+             QString::fromAscii(";X-P\\;ARAM=VA\\,LUE"));
 }
 

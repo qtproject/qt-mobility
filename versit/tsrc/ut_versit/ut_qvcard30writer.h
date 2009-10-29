@@ -57,7 +57,7 @@ private slots: // Tests
     void cleanup();
 
     void testEncodeVersitProperty();
-    void testEncodeParameter();
+    void testEncodeParameters();
 
 private: // Data
     QVCard30Writer* mWriter;
