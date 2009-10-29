@@ -61,6 +61,10 @@
 
     \tableofcontents
 
+    \raw HTML
+    <a href="classlists.html">List of Mobility Classes and Functions</a>
+    \endraw
+
     \section1 Mobility Component APIs
 
     \annotatedlist  mobility
