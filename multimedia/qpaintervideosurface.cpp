@@ -987,7 +987,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
 QPainterVideoSurface::QPainterVideoSurface(QObject *parent)
     : QAbstractVideoSurface(parent)
     , m_painter(0)
-#ifndef QT_NO_OPENGL
+#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
     , m_glContext(0)
     , m_shaderTypes(NoShaders)
     , m_shaderType(NoShaders)

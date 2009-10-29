@@ -145,7 +145,9 @@ private:
     bool m_ready;
 };
 
+#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QPainterVideoSurface::ShaderTypes)
+#endif
 
 #endif
 
