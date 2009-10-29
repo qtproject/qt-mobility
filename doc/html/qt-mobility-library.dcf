@@ -2850,11 +2850,26 @@
     </section>
 </section>
 <section ref="overviews.html" title="Overviews">
+    <section ref="functions.html" title="All Functions">
+        <keyword ref="functions.html">All Functions</keyword>
+    </section>
+    <section ref="classes.html" title="All Qt Mobility Classes">
+        <keyword ref="classes.html">All Qt Mobility Classes</keyword>
+    </section>
+    <section ref="annotated.html" title="Annotated Class List">
+        <keyword ref="annotated.html">Annotated Class List</keyword>
+    </section>
     <section ref="bearer-management.html" title="Bearer Management">
         <keyword ref="bearer-management.html">Bearer Management</keyword>
     </section>
+    <section ref="classlists.html" title="Class and Function Documentation">
+        <keyword ref="classlists.html">Class and Function Documentation</keyword>
+    </section>
     <section ref="contacts.html" title="Contacts">
         <keyword ref="contacts.html">Contacts</keyword>
+    </section>
+    <section ref="hierarchy.html" title="Inheritance Hierarchy">
+        <keyword ref="hierarchy.html">Inheritance Hierarchy</keyword>
     </section>
     <section ref="location-overview.html" title="Location">
         <keyword ref="location-overview.html">Location</keyword>

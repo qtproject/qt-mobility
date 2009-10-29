@@ -5760,6 +5760,14 @@
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoDeviceControl_iid" href="qvideodevicecontrol.html#QVideoDeviceControl_iid" location="qvideodevicecontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoDeviceControl" type="" signature="QVideoDeviceControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoRendererControl_iid" href="qvideorenderercontrol.html#QVideoRendererControl_iid" location="qvideorenderercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoRendererControl" type="" signature="QVideoRendererControl_iid()"/>
+        <page access="public" status="commendable" name="classlists" href="classlists.html" subtype="group" title="Class and Function Documentation" fulltitle="Class and Function Documentation" subtitle="" location="classes.qdoc">
+            <contents name="class-lists" title="Class Lists" level="2"/>
+            <contents name="function-lists" title="Function Lists" level="2"/>
+        </page>
+        <page access="public" status="commendable" name="classes.html" href="classes.html" subtype="page" title="All Qt Mobility Classes" fulltitle="All Qt Mobility Classes" subtitle="" location="classes.qdoc"/>
+        <page access="public" status="commendable" name="annotated.html" href="annotated.html" subtype="page" title="Annotated Class List" fulltitle="Annotated Class List" subtitle="" location="classes.qdoc"/>
+        <page access="public" status="commendable" name="hierarchy.html" href="hierarchy.html" subtype="page" title="Inheritance Hierarchy" fulltitle="Inheritance Hierarchy" subtitle="" location="classes.qdoc"/>
+        <page access="public" status="commendable" name="functions.html" href="functions.html" subtype="page" title="All Functions" fulltitle="All Functions" subtitle="" location="classes.qdoc"/>
         <page access="public" status="commendable" name="contacts.html" href="contacts.html" subtype="page" title="Contacts" fulltitle="Contacts" subtitle="" location="contacts.qdoc">
             <contents name="introduction" title="Introduction" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
