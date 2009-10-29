@@ -120,4 +120,12 @@ contains(QT_CONFIG, multimedia) {
     HEADERS += qaudioformat.h
     SOURCES += qaudioformat.cpp
 }
-symbian {    load(data_caging_paths)    QtMediaDeployment.sources = QtMedia.dll    QtMediaDeployment.path = /sys/bin    DEPLOYMENT += QtMediaDeployment    TARGET.CAPABILITY = ALL -TCB}include (experimental/experimental.pri)
+symbian {
+    load(data_caging_paths)
+    QtMediaDeployment.sources = QtMedia.dll
+    QtMediaDeployment.path = /sys/bin
+    DEPLOYMENT += QtMediaDeployment
+    TARGET.CAPABILITY = ALL -TCB
+}
+
+include (experimental/experimental.pri)
