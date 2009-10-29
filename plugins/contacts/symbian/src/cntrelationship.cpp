@@ -42,13 +42,20 @@
 #include "cntrelationship.h"
 #include "qcontactsymbiantransformerror.h"
 
-
+/*!
+ * Constructor
+ *
+ * \a contactDatabase CContactDatabase with established connection to the database
+ */ 
 CntRelationship::CntRelationship(CContactDatabase* contactDatabase) 
 {
     CntAbstractRelationship *relationshipGroup = new CntRelationshipGroup(contactDatabase);
     m_relationshipMap.insert(relationshipGroup->relationshipType(), relationshipGroup);
 }
 
+/*!
+ * Destructor
+ */
 CntRelationship::~CntRelationship()
 {
     QMap<QString, CntAbstractRelationship *>::iterator itr; 
@@ -62,7 +69,14 @@ CntRelationship::~CntRelationship()
 }
 
 
-/* Relationships between contacts */
+/* !
+ * Retrive the contacts relationships
+ * 
+ * \a relationshipType The type of the relationship
+ * \a participantId The contact id
+ * \a role The contact role
+ * \a error Error returned
+ */
 QList<QContactRelationship> CntRelationship::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
 {
     QList<QContactRelationship> returnValue;
@@ -88,6 +102,13 @@ QList<QContactRelationship> CntRelationship::relationships(const QString& relati
     return returnValue;
 }
 
+/* !
+ * Save the relationship
+ * 
+ * \a affectedContactIds will include the affected contact ids 
+ * \a relationship to be saved
+ * \a error Error returned
+ */
 bool CntRelationship::saveRelationship(QSet<QContactLocalId> *affectedContactIds, QContactRelationship* relationship, QContactManager::Error& error)
 {
     bool returnValue(false);
@@ -114,7 +135,13 @@ bool CntRelationship::saveRelationship(QSet<QContactLocalId> *affectedContactIds
     return returnValue;
 }
 
-
+/* !
+ * Save many relationships
+ * 
+ * \a affectedContactIds will include the affected contact ids 
+ * \a relationships to be saved
+ * \return a list of errors
+ */
 QList<QContactManager::Error> CntRelationship::saveRelationships(QSet<QContactLocalId> *affectedContactIds, QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
     Q_UNUSED(error);
@@ -133,6 +160,14 @@ QList<QContactManager::Error> CntRelationship::saveRelationships(QSet<QContactLo
     return returnValue;
 }
 
+/* !
+ * Remove the relationship
+ * 
+ * \a affectedContactIds will include the affected contact ids 
+ * \a relationship to be removed
+ * \a error Error returned
+ * \return true if no error otherwise false
+ */
 bool CntRelationship::removeRelationship(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship& relationship, QContactManager::Error& error)
 {
     bool returnValue(false);
@@ -157,6 +192,13 @@ bool CntRelationship::removeRelationship(QSet<QContactLocalId> *affectedContactI
     return returnValue;
 }
 
+/* !
+ * Remove many relationships
+ * 
+ * \a affectedContactIds will include the affected contact ids 
+ * \a relationships to be removed
+ * \return a list of errors
+ */
 QList<QContactManager::Error> CntRelationship::removeRelationships(QSet<QContactLocalId> *affectedContactIds, const QList<QContactRelationship>& relationships, QContactManager::Error& error)
 {
     Q_UNUSED(error);
