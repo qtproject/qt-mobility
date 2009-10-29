@@ -45,8 +45,11 @@
 
 #include <QtGui/qapplication.h>
 #include <QtMultimedia/qvideosurfaceformat.h>
+
+#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
 #include <QtOpenGL/qgl.h>
 #include <QtOpenGL/qglframebufferobject.h>
+#endif
 
 class tst_QPainterVideoSurface : public QObject
 {
