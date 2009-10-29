@@ -43,7 +43,7 @@
 
 #include "qtcontacts.h"
 #include "qcontactchangeset.h"
-
+#include "qcontactmanager_p.h"
 
 // Eventually these will make it into qtestcase.h
 // but we might need to tweak the timeout values here.
@@ -120,6 +120,9 @@ private:
     bool isSuperset(const QContact& ca, const QContact& cb);
     QList<QContactDetail> removeAllDefaultDetails(const QList<QContactDetail>& details);
     void addManagers(); // add standard managers to the data
+
+    QContactManagerDataHolder managerDataHolder;
+
 public slots:
     void init();
     void cleanup();

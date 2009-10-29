@@ -43,6 +43,7 @@
 
 #include <QCoreApplication>
 #include "qtcontacts.h"
+#include "qcontactmanager_p.h" //QContactManagerDataHolder
 
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -102,6 +103,7 @@ private:
 
     Qt::HANDLE m_mainThreadId;
     Qt::HANDLE m_progressSlotThreadId;
+    QContactManagerDataHolder managerDataHolder;
 };
 
 typedef QList<QContactLocalId> QContactLocalIdList;

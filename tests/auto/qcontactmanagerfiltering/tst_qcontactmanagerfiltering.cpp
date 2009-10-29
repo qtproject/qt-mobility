@@ -43,7 +43,7 @@
 #include <QtTest/QtTest>
 
 #include "qtcontacts.h"
-
+#include "qcontactmanager_p.h" //QContactManagerDataHolder
 //TESTED_CLASS=
 //TESTED_FILES=
 
@@ -101,6 +101,7 @@ private:
     QMultiMap<QContactManager*, QContactLocalId> contactsAddedToManagers;
     QMultiMap<QContactManager*, QString> detailDefinitionsAddedToManagers;
     QList<QContactManager*> managers;
+    QContactManagerDataHolder managerDataHolder;
 
     QTestData& newMRow(const char *tag, QContactManager *cm);
 

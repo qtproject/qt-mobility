@@ -60,6 +60,9 @@ public:
     tst_QContactManagerPlugins();
     virtual ~tst_QContactManagerPlugins();
 
+private:
+    QContactManagerDataHolder managerDataHolder;
+
 public slots:
     void init();
     void cleanup();
