@@ -114,6 +114,7 @@ QList<TUid> CntTransformNickname::supportedSortingFieldTypes(QString detailField
  */
 bool CntTransformNickname::supportsSubType(const QString& subType) const
 {
+	  Q_UNUSED(subType);
     return false;
 }
 
@@ -125,7 +126,10 @@ bool CntTransformNickname::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformNickname::getIdForField(const QString& fieldName) const
 {
-    return 0;
+    if (QContactNickname::FieldNickname == fieldName)
+       return KUidContactFieldSecondName.iUid;
+    else 
+       return 0;
 }
 
 /*!

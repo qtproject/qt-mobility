@@ -115,6 +115,7 @@ QList<TUid> CntTransformEmail::supportedSortingFieldTypes(QString detailFieldNam
  */
 bool CntTransformEmail::supportsSubType(const QString& subType) const
 {
+    Q_UNUSED(subType);
     return false;
 }
 
@@ -126,7 +127,10 @@ bool CntTransformEmail::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformEmail::getIdForField(const QString& fieldName) const
 {
-    return 0;
+    if (QContactEmailAddress::FieldEmailAddress == fieldName)
+        return KUidContactFieldEMail.iUid;
+    else 
+        return 0;
 }
 
 /*!

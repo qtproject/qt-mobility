@@ -237,7 +237,34 @@ bool CntTransformPhoneNumber::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformPhoneNumber::getIdForField(const QString& fieldName) const
 {
-    return 0;
+    if (QContactPhoneNumber::FieldNumber  == fieldName)
+        return 0;
+    else if (QContactPhoneNumber::SubTypeLandline == fieldName)
+        return 0;
+    else if (QContactPhoneNumber::SubTypeMobile == fieldName)
+        return 0;
+    else if (QContactPhoneNumber::SubTypeFacsimile == fieldName)
+        return KUidContactFieldFax.iUid;
+    else if (QContactPhoneNumber::SubTypePager == fieldName)
+        return 0;
+    else if (QContactPhoneNumber::SubTypeVoice == fieldName)
+        return 0;
+    else if (QContactPhoneNumber::SubTypeModem == fieldName)
+        return 0;
+    else if (QContactPhoneNumber::SubTypeVideo == fieldName)
+        return 0;
+    else if (QContactPhoneNumber::SubTypeCar == fieldName)
+        return 0;
+    else if (QContactPhoneNumber::SubTypeBulletinBoardSystem == fieldName)
+        return 0;
+    else if (QContactPhoneNumber::SubTypeMessagingCapable == fieldName)
+        return 0;
+    else if (QContactPhoneNumber::SubTypeAssistant == fieldName)
+        return 0;
+    else if (QContactPhoneNumber::SubTypeMessagingCapable == fieldName)
+        return KUidContactFieldDTMF.iUid;
+    else 
+        return 0;
 }
 
 /*!

@@ -106,6 +106,7 @@ QList<TUid> CntTransformNote::supportedSortingFieldTypes(QString detailFieldName
  */
 bool CntTransformNote::supportsSubType(const QString& subType) const
 {
+    Q_UNUSED(subType);
     return false;
 }
 
@@ -117,7 +118,10 @@ bool CntTransformNote::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformNote::getIdForField(const QString& fieldName) const
 {
-    return 0;
+   if (QContactNote::FieldNote == fieldName)
+       return KUidContactFieldNote.iUid;
+   else 
+       return 0;
 }
 
 /*!

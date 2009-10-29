@@ -123,7 +123,11 @@ QList<TUid> CntTransformUrl::supportedSortingFieldTypes(QString detailFieldName)
  */
 bool CntTransformUrl::supportsSubType(const QString& subType) const
 {
-    return false;
+    if(QContactUrl::FieldSubType  == subType)
+       return true;
+   else
+       return false;
+
 }
 
 /*!
@@ -134,7 +138,15 @@ bool CntTransformUrl::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformUrl::getIdForField(const QString& fieldName) const
 {
-    return 0;
+ if (QContactUrl::FieldUrl == fieldName)
+        return 0;
+    else if (QContactUrl::SubTypeHomePage == fieldName)
+        return 0;
+    else if (QContactUrl::SubTypeFavourite == fieldName)
+        return 0;
+    else 
+        return 0;
+
 }
 
 /*!

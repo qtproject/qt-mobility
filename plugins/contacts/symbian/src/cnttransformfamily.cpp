@@ -127,6 +127,7 @@ QList<TUid> CntTransformFamily::supportedSortingFieldTypes(QString /*detailField
  */
 bool CntTransformFamily::supportsSubType(const QString& subType) const
 {
+    Q_UNUSED(subType);
     return false;
 }
 
@@ -138,7 +139,12 @@ bool CntTransformFamily::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformFamily::getIdForField(const QString& fieldName) const
 {
-    return 0;
+    if (QContactFamily::FieldSpouse == fieldName)
+        return KUidContactFieldSpouse.iUid;
+    else if (QContactFamily::FieldChildren == fieldName)
+        return KUidContactFieldChildren.iUid;
+    else 
+        return 0;
 }
 
 /*!

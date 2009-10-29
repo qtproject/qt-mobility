@@ -130,7 +130,10 @@ QList<TUid> CntTransformAnniversary::supportedSortingFieldTypes(QString /*detail
  */
 bool CntTransformAnniversary::supportsSubType(const QString& subType) const
 {
-    return false;
+    if(QContactAnniversary::FieldSubType  == subType)
+       return true;
+    else
+       return false;
 }
 
 /*!
@@ -141,7 +144,24 @@ bool CntTransformAnniversary::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformAnniversary::getIdForField(const QString& fieldName) const
 {
-    return 0;
+    if (QContactAnniversary::FieldCalendarId  == fieldName)
+        return 0;
+    else if (QContactAnniversary::FieldOriginalDate == fieldName)
+        return 0;
+    else if (QContactAnniversary::FieldEvent == fieldName)
+        return 0;
+    else if (QContactAnniversary::SubTypeWedding == fieldName)
+        return 0;
+    else if (QContactAnniversary::SubTypeEngagement == fieldName)
+        return 0;
+    else if (QContactAnniversary::SubTypeHouse == fieldName)
+        return 0;
+    else if (QContactAnniversary::SubTypeEmployment == fieldName)
+        return 0;
+    else if (QContactAnniversary::SubTypeMemorial == fieldName)
+        return 0;
+    else 
+        return 0;
 }
 
 /*!

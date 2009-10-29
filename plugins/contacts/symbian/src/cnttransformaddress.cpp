@@ -225,7 +225,10 @@ QList<TUid> CntTransformAddress::supportedSortingFieldTypes(QString detailFieldN
  */
 bool CntTransformAddress::supportsSubType(const QString& subType) const
 {
-    return false;
+    if(QContactAddress::FieldSubTypes  == subType)
+       return true;
+    else
+       return false;
 }
 
 /*!
@@ -236,7 +239,29 @@ bool CntTransformAddress::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformAddress::getIdForField(const QString& fieldName) const
 {
-    return 0;
+       
+    if (QContactAddress::FieldStreet  == fieldName)
+        return KUidContactFieldAddress.iUid;
+    else if (QContactAddress::FieldLocality == fieldName)
+        return KUidContactFieldLocality.iUid;
+    else if (QContactAddress::FieldRegion == fieldName)
+        return KUidContactFieldRegion.iUid;
+    else if (QContactAddress::FieldPostcode == fieldName)
+        return KUidContactFieldPostcode.iUid;
+    else if (QContactAddress::FieldCountry == fieldName)
+         return KUidContactFieldCountry.iUid;
+    else if (QContactAddress::FieldPostOfficeBox == fieldName)
+        return KUidContactFieldPostOffice.iUid;
+    else if (QContactAddress::SubTypeParcel == fieldName)
+        return 0;
+    else if (QContactAddress::SubTypePostal == fieldName)
+        return 0;
+    else if (QContactAddress::SubTypeDomestic == fieldName)
+        return 0;
+    else if (QContactAddress::SubTypeInternational == fieldName)
+        return 0;
+    else 
+        return 0;
 }
 
 /*!

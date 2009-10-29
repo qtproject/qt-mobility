@@ -143,7 +143,10 @@ QList<TUid> CntTransformAvatar::supportedSortingFieldTypes(QString /*detailField
  */
 bool CntTransformAvatar::supportsSubType(const QString& subType) const
 {
-    return false;
+    if(QContactAvatar::FieldSubType  == subType)
+      return true;
+    else
+      return false;
 }
 
 /*!
@@ -154,7 +157,20 @@ bool CntTransformAvatar::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformAvatar::getIdForField(const QString& fieldName) const
 {
-    return 0;
+   if (QContactAvatar::FieldAvatar  == fieldName)
+        return 0;
+    else if (QContactAvatar::SubTypeImage == fieldName)
+        return 0;
+    else if (QContactAvatar::SubTypeVideo == fieldName)
+        return 0;
+    else if (QContactAvatar::SubTypeTexturedMesh == fieldName)
+        return 0;
+    else if (QContactAvatar::SubTypeAudioRingtone == fieldName)
+        return 0;
+    else if (QContactAvatar::SubTypeVideoRingtone == fieldName)
+        return 0;
+    else 
+        return 0;
 }
 
 /*!

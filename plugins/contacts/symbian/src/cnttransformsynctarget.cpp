@@ -108,6 +108,7 @@ QList<TUid> CntTransformSyncTarget::supportedSortingFieldTypes(QString detailFie
  */
 bool CntTransformSyncTarget::supportsSubType(const QString& subType) const
 {
+	  Q_UNUSED(subType);
     return false;
 }
 
@@ -119,7 +120,10 @@ bool CntTransformSyncTarget::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformSyncTarget::getIdForField(const QString& fieldName) const
 {
-    return 0;
+    if (QContactSyncTarget::FieldSyncTarget == fieldName)
+        return KUidContactFieldSyncTarget.iUid;
+    else 
+        return 0;
 }
 
 /*!
