@@ -103,6 +103,7 @@ symbian: {
         SOURCES+= qcorewlanengine_mac.mm
        # CONFIG-=app_bundle
         #CONFIG+=lib_bundle
+        LIBS += -framework Foundation -framework SystemConfiguration
 
 # change this to /Developer/SDKs/MacOSX10.6.sdk
 # if you want to compile for 10.6 with CoreWLAN framework

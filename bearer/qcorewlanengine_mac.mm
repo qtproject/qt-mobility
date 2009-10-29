@@ -317,7 +317,7 @@ QCoreWlanEngine *QCoreWlanEngine::instance()
 QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QString &interfaceName)
 {
     QList<QNetworkConfigurationPrivate *> foundConfigs;
-//#if defined(MAC_SDK_10_6)
+#if defined(MAC_SDK_10_6)
     NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
 
     CWInterface *currentInterface = [CWInterface interfaceWithName:qstringToNSString(interfaceName)];
@@ -370,7 +370,7 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
                 <<nsstringToQString([err domain]);
     }
     [autoreleasepool release];
-//#endif
+#endif
     return foundConfigs;
 }
 
