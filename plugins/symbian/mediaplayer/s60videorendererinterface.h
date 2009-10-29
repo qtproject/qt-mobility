@@ -43,7 +43,6 @@ class S60VideoRendererInterface
 {
 public:
     virtual ~S60VideoRendererInterface();
-    //virtual GstElement *videoSink() = 0;
     virtual void precessNewStream() {}
 };
 

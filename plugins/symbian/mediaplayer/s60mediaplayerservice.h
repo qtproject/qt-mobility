@@ -36,7 +36,7 @@
 #define S60VIDEOPLAYERSERVICE_H
 
 #include <QtCore/qobject.h>
-#include <QtCore/qiodevice.h>
+//#include <QtCore/qiodevice.h>
 
 #include <multimedia/qmediaservice.h>
 
@@ -53,10 +53,10 @@ class S60VideoPlayerControl;
 class S60VideoMetaDataProvider;
 class S60VideoWidgetControl;
 
-//#ifndef QT_NO_MULTIMEDIA
-//class S60VideoRenderer;
-//class S60VideoOverlay;
-//#endif
+#ifndef QT_NO_MULTIMEDIA
+class S60VideoRenderer;
+class S60VideoOverlay;
+#endif
 
 class QMediaPlaylistNavigator;
 
@@ -77,10 +77,10 @@ private:
     S60VideoPlayerOutputControl *m_videoOutput;
     S60VideoPlayerSession *m_session;
     S60VideoMetaDataProvider *m_metaData;   
-//#ifndef QT_NO_MULTIMEDIA
-//    S60VideoRenderer *m_videoRenderer;
-//    S60VideoOverlay *m_videoWindow;
-//#endif
+#ifndef QT_NO_MULTIMEDIA
+    S60VideoRenderer *m_videoRenderer;
+    S60VideoOverlay *m_videoWindow;
+#endif
     S60VideoWidgetControl *m_videoWidget;
 };
 

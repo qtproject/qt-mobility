@@ -43,11 +43,10 @@
 #include "s60videoplayeroutputcontrol.h"
 #include "s60videowidget.h"
 
-//#ifndef QT_NO_MULTIMEDIA
-//#include "qgstreamervideooverlay.h"
-//#include "qgstreamervideorenderer.h"
-//#endif
-
+#ifndef QT_NO_MULTIMEDIA
+#include "s60videooverlay.h"
+#include "s60videorenderer.h"
+#endif
 
 #include <multimedia/qmediaplaylistnavigator.h>
 #include <multimedia/qmediaplaylist.h>
@@ -56,23 +55,24 @@ S60MediaPlayerService::S60MediaPlayerService(QObject *parent):
      QMediaService(parent)
 {
     m_session = new S60VideoPlayerSession(this);
-    //m_control = new S60VideoPlayerControl(m_session, this);
+    m_control = new S60VideoPlayerControl(m_session, this);
     m_metaData = new S60VideoMetaDataProvider(m_session, this);
     m_videoOutput = new S60VideoPlayerOutputControl(this);
     connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
             this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
-//#ifndef QT_NO_MULTIMEDIA
-//    m_videoRenderer = new S60VideoVideoRenderer(this);
-//    m_videoWindow = new S60VideoVideoOverlay(this);
-//#endif
+#ifndef QT_NO_MULTIMEDIA
+    m_videoRenderer = new S60VideoRenderer(this);
+    m_videoWindow = new S60VideoOverlay(this);
+#endif
     m_videoWidget = new S60VideoWidgetControl(this);
 
-    m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>());
-//#ifndef QT_NO_MULTIMEDIA
-//            << QVideoOutputControl::RendererOutput
-//            << QVideoOutputControl::WindowOutput
-//#endif
-//            << QVideoOutputControl::WidgetOutput);
+    m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>()
+#ifndef QT_NO_MULTIMEDIA
+            << QVideoOutputControl::RendererOutput
+            << QVideoOutputControl::WindowOutput
+#endif
+	<< QVideoOutputControl::WidgetOutput);
+           
 }
 
 S60MediaPlayerService::~S60MediaPlayerService()
@@ -93,13 +93,13 @@ QMediaControl *S60MediaPlayerService::control(const char *name) const
     if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
         return m_videoWidget;
 
-//#ifndef QT_NO_MULTIMEDIA
-//    if (qstrcmp(name, QVideoRendererControl_iid) == 0)
-//        return m_videoRenderer;
-//
-//    if (qstrcmp(name, QVideoWindowControl_iid) == 0)
-//        return m_videoWindow;
-//#endif
+#ifndef QT_NO_MULTIMEDIA
+    if (qstrcmp(name, QVideoRendererControl_iid) == 0)
+        return m_videoRenderer;
+
+    if (qstrcmp(name, QVideoWindowControl_iid) == 0)
+        return m_videoWindow;
+#endif
 
     return 0;
 
@@ -111,7 +111,7 @@ void S60MediaPlayerService::videoOutputChanged(QVideoOutputControl::Output outpu
     case QVideoOutputControl::NoOutput:
         m_control->setVideoOutput(0);
         break;
-/*
+
 #ifndef QT_NO_MULTIMEDIA
     case QVideoOutputControl::RendererOutput:
         m_control->setVideoOutput(m_videoRenderer);
@@ -120,7 +120,7 @@ void S60MediaPlayerService::videoOutputChanged(QVideoOutputControl::Output outpu
         m_control->setVideoOutput(m_videoWindow);
         break;
 #endif
-*/
+
     case QVideoOutputControl::WidgetOutput:
         m_control->setVideoOutput(m_videoWidget);
         break;

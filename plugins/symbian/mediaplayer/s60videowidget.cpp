@@ -39,11 +39,6 @@
 #include <QtGui/qapplication.h>
 #include <QtGui/qpainter.h>
 
-//#include <X11/Xlib.h>
-//#include <gst/gst.h>
-//#include <gst/interfaces/xoverlay.h>
-//#include <gst/interfaces/propertyprobe.h>
-
 class S60VideoWidget : public QWidget
 {
 public:
@@ -120,6 +115,7 @@ S60VideoWidgetControl::~S60VideoWidgetControl()
 //    if (m_videoSink)
 //        gst_object_unref(GST_OBJECT(m_videoSink));
 
+ 
     delete m_widget;
 }
 
@@ -159,7 +155,7 @@ bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 
 void S60VideoWidgetControl::precessNewStream()
 {
-    ///setOverlay();
+    setOverlay();
     //QMetaObject::invokeMethod(this, "updateNativeVideoSize", Qt::QueuedConnection);
 }
 

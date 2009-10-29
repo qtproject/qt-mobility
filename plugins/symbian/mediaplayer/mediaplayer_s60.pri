@@ -23,7 +23,6 @@ SOURCES += \
     $$PWD/s60videometadataprovider.cpp \
 	$$PWD/S60videoplayeroutputcontrol.cpp \
 	$$PWD/S60videowidget.cpp \
-    $$PWD/S60videowidget.cpp \
     $$PWD/s60videosurface.cpp \
     $$PWD/s60videooverlay.cpp \
     $$PWD/s60videorenderer.cpp \

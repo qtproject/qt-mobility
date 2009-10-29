@@ -37,16 +37,16 @@
 
 #include <multimedia/qvideowidgetcontrol.h>
 
-//#include "qgstreamervideorendererinterface.h"
+#include "s60videorendererinterface.h"
 
 class S60VideoWidget;
 
 class S60VideoWidgetControl
         : public QVideoWidgetControl
-        //, public QGstreamerVideoRendererInterface
+        , public S60VideoRendererInterface
 {
     Q_OBJECT
-    //Q_INTERFACES(QGstreamerVideoRendererInterface)
+    Q_INTERFACES(S60VideoRendererInterface)
 public:
     S60VideoWidgetControl(QObject *parent = 0);
     virtual ~S60VideoWidgetControl();

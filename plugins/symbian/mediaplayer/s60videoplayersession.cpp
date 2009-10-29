@@ -34,12 +34,16 @@
 
 #include "s60videoplayersession.h"
 
-//#include "qgstreamervideorendererinterface.h"
-
-//#include <gst/gstvalue.h>
+#include "s60videorendererinterface.h"
 
 #include <QtCore/qdatetime.h>
 #include <QtCore/qdebug.h>
+
+#include <coemain.h>    // For CCoeEnv
+#include <coecntrl.h>
+#include <w32std.h>
+
+#include <QWidget>
 
 S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
     :QObject(parent),
@@ -48,7 +52,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
      //m_busHelper(0),
      //m_playbin(0),
      //m_bus(0),
-     //m_renderer(0),
+     m_renderer(0),
      m_volume(100),
      m_playbackRate(1.0),
      m_muted(false),
@@ -69,7 +73,9 @@ S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
 
     videoOutput().setObserver(this);
     */
-    const TInt priority = 0;
+    
+    m_frameSize = QSize(320,240);
+   /*const TInt priority = 0;
     const TMdaPriorityPreference preference = EMdaPriorityPreferenceNone;
 
     //getNativeWindowSystemHandles();
@@ -83,8 +89,31 @@ S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
     // visible.  If this is the case, we should set m_mmfOutputChangePending
     // and respond to future showEvents from the videoOutput widget.
     
+    //VideoOutput& output = videoOutput();  
+    //QWidget* jep = new QWidget();
+    CCoeControl* const control = jep->winId();
+
+    CCoeEnv* const coeEnv = control->ControlEnv();
+    m_wsSession = &(coeEnv->WsSession());
+    m_screenDevice = coeEnv->ScreenDevice();
+    m_window = control->DrawableWindow();
+*/
+ /* #ifdef _DEBUG
+      QScopedPointer<ObjectDump::QDumper> dumper(new ObjectDump::QDumper);
+      dumper->setPrefix("Phonon::MMF"); // to aid searchability of logs
+      ObjectDump::addDefaultAnnotators(*dumper);
+      TRACE_0("Dumping VideoOutput:");
+      dumper->dumpObject(output);
+  #endif*/
+/*
+    m_windowRect = TRect(
+        control->DrawableWindow()->AbsPosition(),
+        control->DrawableWindow()->Size());
+      
+    m_clipRect = m_windowRect;
+      
     TRAPD(err, 
-        CVideoPlayerUtility::NewL(*this, 
+        m_player = CVideoPlayerUtility::NewL(*this, 
                                   priority, 
                                   preference, 
                                   *m_wsSession, 
@@ -93,6 +122,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
                                   m_windowRect, 
                                   m_clipRect)
          );
+    */
 }
 
 S60VideoPlayerSession::~S60VideoPlayerSession()
@@ -102,26 +132,23 @@ S60VideoPlayerSession::~S60VideoPlayerSession()
 
 void S60VideoPlayerSession::load(const QUrl &url)
 {
-    //m_player->OpenFileL(file));
+    m_url = url.toLocalFile();
+    qDebug() << m_url;
 }
 
 qint64 S60VideoPlayerSession::duration() const
 {
-    //m_player->DurationL(); 
+    if (m_player)
+        //m_duration = m_player->DurationL().Int64(); 
     return m_duration;
 }
 
 qint64 S60VideoPlayerSession::position() const
 {
-    //m_player->PositionL()
-   /* GstFormat   format = GST_FORMAT_TIME;
-    gint64      position = 0;
-
-    if ( m_playbin && gst_element_query_position(m_playbin, &format, &position))
-        return position / 1000000;
-    else
-        return 0;*/
-    return 0;
+    qint64 position = 0;
+    if (m_player)
+        position = m_player->PositionL().Int64();
+    return position;
 }
 
 qreal S60VideoPlayerSession::playbackRate() const
@@ -165,11 +192,39 @@ bool S60VideoPlayerSession::isMuted() const
 
 void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
 {
-   /* m_renderer = qobject_cast<QGstreamerVideoRendererInterface*>(videoOutput);
-    if (m_renderer)
-        g_object_set(G_OBJECT(m_playbin), "video-sink", m_renderer->videoSink(), NULL);
-    else
-        g_object_set(G_OBJECT(m_playbin), "video-sink", 0, NULL);*/
+    qWarning()<<"setVideoRenderer";
+	m_renderer = qobject_cast<S60VideoRendererInterface*>(videoOutput);
+    //m_testWidget = qobject_cast<S60VideoWidgetControl*>(videoOutput);
+    //qDebug() << "winId: " << m_testWidget->videoWidget()->winId();
+	//m_renderer->winId();
+    const TInt priority = 0;
+    const TMdaPriorityPreference preference = EMdaPriorityPreferenceNone;
+
+    m_testWidget = qobject_cast<S60VideoWidgetControl*>(videoOutput);
+    QWidget* jep = new QWidget();
+    CCoeControl* const control = jep->winId();
+
+    CCoeEnv* const coeEnv = control->ControlEnv();
+    m_wsSession = &(coeEnv->WsSession());
+    m_screenDevice = coeEnv->ScreenDevice();
+    m_window = control->DrawableWindow();
+
+    m_windowRect = TRect(
+        control->DrawableWindow()->AbsPosition(),
+        control->DrawableWindow()->Size());
+      
+    m_clipRect = m_windowRect;
+      
+    TRAPD(err, 
+        m_player = CVideoPlayerUtility::NewL(*this, 
+                                  priority, 
+                                  preference, 
+                                  *m_wsSession, 
+                                  *m_screenDevice, 
+                                  *m_window, 
+                                  m_windowRect, 
+                                  m_clipRect)
+         );
 }
 
 bool S60VideoPlayerSession::isVideoAvailable() const
@@ -184,120 +239,55 @@ bool S60VideoPlayerSession::isSeekable() const
 
 void S60VideoPlayerSession::play()
 {
-    /*if (m_playbin) {
-        if (gst_element_set_state(m_playbin, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
-            qWarning() << "GStreamer; Unable to play -" << m_url.toString();
-            m_state = QMediaPlayer::StoppedState;
-            m_mediaStatus = QMediaPlayer::InvalidMedia;
-
-            emit stateChanged(m_state);
-            emit mediaStatusChanged(m_mediaStatus);
-        }
-    }*/
+    if (m_state == QMediaPlayer::PausedState)
+    {
+        m_player->Play();
+    }
+    else
+    {
+        QString fileName = m_url.toLocalFile();
+		qDebug() << fileName;
+        TPtrC str(reinterpret_cast<const TUint16*>(fileName.utf16()));
+        m_player->OpenFileL(str);
+        //m_player->OpenFileL(_L("c:\\Data\\testvideo.mp4"));
+        //QString fileName = m_url.toLocalFile();
+        //TPtrC str(reinterpret_cast<const TUint16*>(fileName.utf16()));
+        //m_player->OpenFileL(str);
+        m_state = QMediaPlayer::PlayingState;
+        emit stateChanged(QMediaPlayer::PlayingState);        
+    }
 }
 
 void S60VideoPlayerSession::pause()
 {
-    /*if (m_playbin)
-        gst_element_set_state(m_playbin, GST_STATE_PAUSED);*/
+    m_player->PauseL();
+    m_state = QMediaPlayer::PausedState;
+    emit stateChanged(QMediaPlayer::PausedState);
+
 }
 
 void S60VideoPlayerSession::stop()
 {
-    /*if (m_playbin) {
-        gst_element_set_state(m_playbin, GST_STATE_NULL);
-
-        //we have to do it here, since gstreamer will not emit bus messages any more
-        if (m_state != QMediaPlayer::StoppedState)
-            emit stateChanged(m_state = QMediaPlayer::StoppedState);
-    }*/
+    m_player->Stop();
+    m_state = QMediaPlayer::StoppedState;
+    emit stateChanged(QMediaPlayer::StoppedState);
 }
 
 void S60VideoPlayerSession::seek(qint64 ms)
 {
-    /*if (m_playbin) {
-        gint64  position = (gint64)ms * 1000000;
-        gst_element_seek_simple(m_playbin, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH, position);
-    }*/
+    m_player->SetPositionL(ms);
 }
 
 void S60VideoPlayerSession::setVolume(int volume)
 {
-    /*m_volume = volume;
-    emit volumeChanged(m_volume);
-
-    if (!m_muted && m_playbin)
-        g_object_set(G_OBJECT(m_playbin), "volume", m_volume/100.0, NULL);
-    */
+    m_player->SetVolumeL(volume);
 }
 
 void S60VideoPlayerSession::setMuted(bool muted)
 {
-    /*m_muted = muted;
-    g_object_set(G_OBJECT(m_playbin), "volume", (m_muted ? 0 : m_volume/100.0), NULL);
-    */
+    if (muted)
+        m_player->SetVolumeL(0);
 }
-/*
-static void addTagToMap(const GstTagList *list,
-                        const gchar *tag,
-                        gpointer user_data)
-{
-    QMap<QByteArray, QVariant> *map = reinterpret_cast<QMap<QByteArray, QVariant>* >(user_data);
-
-    GValue val;
-    val.g_type = 0;
-    gst_tag_list_copy_value(&val,list,tag);
-
-    switch( G_VALUE_TYPE(&val) ) {
-        case G_TYPE_STRING:
-        {
-            const gchar *str_value = g_value_get_string(&val);
-            map->insert(QByteArray(tag), QString::fromUtf8(str_value));
-            break;
-        }
-        case G_TYPE_INT:
-            map->insert(QByteArray(tag), g_value_get_int(&val));
-            break;
-        case G_TYPE_UINT:
-            map->insert(QByteArray(tag), g_value_get_uint(&val));
-            break;
-        case G_TYPE_LONG:
-            map->insert(QByteArray(tag), qint64(g_value_get_long(&val)));
-            break;
-        case G_TYPE_BOOLEAN:
-            map->insert(QByteArray(tag), g_value_get_boolean(&val));
-            break;
-        case G_TYPE_CHAR:
-            map->insert(QByteArray(tag), g_value_get_char(&val));
-            break;
-        case G_TYPE_DOUBLE:
-            map->insert(QByteArray(tag), g_value_get_double(&val));
-            break;
-        default:
-            // GST_TYPE_DATE is a function, not a constant, so pull it out of the switch
-            if (G_VALUE_TYPE(&val) == GST_TYPE_DATE) {
-                const GDate *date = gst_value_get_date(&val);
-                if (g_date_valid(date)) {
-                    int year = g_date_get_year(date);
-                    int month = g_date_get_month(date);
-                    int day = g_date_get_day(date);
-                    map->insert(QByteArray(tag), QDate(year,month,day));
-                    if (!map->contains("year"))
-                        map->insert("year", year);
-                }
-            } else if (G_VALUE_TYPE(&val) == GST_TYPE_FRACTION) {
-                int nom = gst_value_get_fraction_numerator(&val);
-                int denom = gst_value_get_fraction_denominator(&val);
-
-                if (denom > 0) {
-                    map->insert(QByteArray(tag), double(nom)/denom);
-                }
-            }
-            break;
-    }
-
-    g_value_unset(&val);
-}*/
 
 void S60VideoPlayerSession::setSeekable(bool seekable)
 {
@@ -314,280 +304,37 @@ void S60VideoPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
         emit mediaStatusChanged(status);
     }
 }
-/*
-bool QGstreamerPlayerSession::processSyncMessage(const QGstreamerMessage &message)
-{
-    GstMessage* gm = message.rawMessage();
-
-    if (gm &&
-        GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ELEMENT &&
-        gst_structure_has_name(gm->structure, "prepare-xwindow-id"))
-    {
-        if (m_renderer)
-            m_renderer->precessNewStream();
-        return true;
-    }
-
-    return false;
-}*/
-/*
-void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
-{
-    GstMessage* gm = message.rawMessage();
-
-    if (gm == 0) {
-        // Null message, query current position
-        quint32 newPos = position();
-
-        if (newPos/1000 != m_lastPosition) {
-            m_lastPosition = newPos/1000;
-            emit positionChanged(newPos);
-        }
-
-    } else {
-        //tag message comes from elements inside playbin, not from playbin itself
-        if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_TAG) {
-            //qDebug() << "tag message";
-            GstTagList *tag_list;
-            gst_message_parse_tag(gm, &tag_list);
-            gst_tag_list_foreach(tag_list, addTagToMap, &m_tags);
-
-            //qDebug() << m_tags;
-
-            emit tagsChanged();
-        }
-
-        if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_playbin)) {
-            switch (GST_MESSAGE_TYPE(gm))  {
-            case GST_MESSAGE_DURATION:
-                break;
-
-            case GST_MESSAGE_STATE_CHANGED:
-                {
-                    GstState    oldState;
-                    GstState    newState;
-                    GstState    pending;
-
-                    gst_message_parse_state_changed(gm, &oldState, &newState, &pending);
-
-                   QStringList states;
-                    states << "GST_STATE_VOID_PENDING" <<  "GST_STATE_NULL" << "GST_STATE_READY" << "GST_STATE_PAUSED" << "GST_STATE_PLAYING";
-
-                    qDebug() << QString("state changed: old: %1  new: %2  pending: %3") \
-                            .arg(states[oldState]) \
-                            .arg(states[newState]) \
-                            .arg(states[pending]);
-                    switch (newState) {
-                    case GST_STATE_VOID_PENDING:
-                    case GST_STATE_NULL:
-                        setMediaStatus(QMediaPlayer::UnknownMediaStatus);
-                        setSeekable(false);
-                        if (m_state != QMediaPlayer::StoppedState)
-                            emit stateChanged(m_state = QMediaPlayer::StoppedState);
-                        break;
-                    case GST_STATE_READY:
-                        setMediaStatus(QMediaPlayer::LoadedMedia);
-                        setSeekable(false);
-                        if (m_state != QMediaPlayer::StoppedState)
-                            emit stateChanged(m_state = QMediaPlayer::StoppedState);
-                        break;
-                    case GST_STATE_PAUSED:
-                        //don't emit state changes for intermediate states
-                        if (m_state != QMediaPlayer::PausedState && pending == GST_STATE_VOID_PENDING)
-                            emit stateChanged(m_state = QMediaPlayer::PausedState);
-
-                        setMediaStatus(QMediaPlayer::LoadedMedia);
-
-                        //check for seekable
-                        if (oldState == GST_STATE_READY) {
-                            
-                                //gst_element_seek_simple doesn't work reliably here, have to find a better solution
-
-                                GstFormat   format = GST_FORMAT_TIME;
-                                gint64      position = 0;
-                                bool seekable = false;
-                                if (gst_element_query_position(m_playbin, &format, &position)) {
-                                    seekable = gst_element_seek_simple(m_playbin, format, GST_SEEK_FLAG_NONE, position);
-                                }
-
-                                setSeekable(seekable);
-                                
-
-                            setSeekable(true);
-
-                            if (!qFuzzyCompare(m_playbackRate, qreal(1.0)))
-                                setPlaybackRate(m_playbackRate);
-
-                            if (m_renderer)
-                                m_renderer->precessNewStream();
-
-                        }
-
-
-                        break;
-                    case GST_STATE_PLAYING:
-                        if (oldState == GST_STATE_PAUSED)
-                            getStreamsInfo();
-
-                        if (m_state != QMediaPlayer::PlayingState)
-                            emit stateChanged(m_state = QMediaPlayer::PlayingState);
-                        break;
-                    }
-                }
-                break;
-
-            case GST_MESSAGE_EOS:
-                if (m_state != QMediaPlayer::StoppedState)
-                    emit stateChanged(m_state = QMediaPlayer::StoppedState);
-
-                setMediaStatus(QMediaPlayer::EndOfMedia);
-
-                emit playbackFinished();
-                break;
-
-            case GST_MESSAGE_TAG:
-            case GST_MESSAGE_STREAM_STATUS:
-            case GST_MESSAGE_UNKNOWN:
-            case GST_MESSAGE_ERROR:
-            case GST_MESSAGE_WARNING:
-            case GST_MESSAGE_INFO:
-                break;
-            case GST_MESSAGE_BUFFERING:
-                setMediaStatus(QMediaPlayer::BufferingMedia);
-                break;
-            case GST_MESSAGE_STATE_DIRTY:
-            case GST_MESSAGE_STEP_DONE:
-            case GST_MESSAGE_CLOCK_PROVIDE:
-            case GST_MESSAGE_CLOCK_LOST:
-            case GST_MESSAGE_NEW_CLOCK:
-            case GST_MESSAGE_STRUCTURE_CHANGE:
-            case GST_MESSAGE_APPLICATION:
-            case GST_MESSAGE_ELEMENT:
-            case GST_MESSAGE_SEGMENT_START:
-            case GST_MESSAGE_SEGMENT_DONE:
-            case GST_MESSAGE_LATENCY:
-#if (GST_VERSION_MAJOR >= 0) &&  (GST_VERSION_MINOR >= 10) && (GST_VERSION_MICRO >= 13)
-            case GST_MESSAGE_ASYNC_START:
-            case GST_MESSAGE_ASYNC_DONE:
-#if GST_VERSION_MICRO >= 23
-            case GST_MESSAGE_REQUEST_STATE:
-#endif
-#endif
-            case GST_MESSAGE_ANY:
-                break;
-            }
-        }
-    }
-}
-*/
 
 void S60VideoPlayerSession::getStreamsInfo()
 {
-    /*GstFormat   format = GST_FORMAT_TIME;
-    gint64      duration = 0;
-
-    if (gst_element_query_duration(m_playbin, &format, &duration)) {
-        int newDuration = duration / 1000000;
-        if (m_duration != newDuration) {
-            m_duration = newDuration;
-            emit durationChanged(m_duration);
-        }
-    }
-
-    //check if video is available:
-    enum {
-        GST_STREAM_TYPE_UNKNOWN,
-        GST_STREAM_TYPE_AUDIO,
-        GST_STREAM_TYPE_VIDEO,
-        GST_STREAM_TYPE_TEXT,
-        GST_STREAM_TYPE_SUBPICTURE,
-        GST_STREAM_TYPE_ELEMENT
-    };
-
-    GList*      streamInfo;
-    g_object_get(G_OBJECT(m_playbin), "stream-info", &streamInfo, NULL);
-
-    bool haveVideo = false;
-
-    for (; streamInfo != 0; streamInfo = g_list_next(streamInfo)) {
-        gint        type;
-        GObject*    obj = G_OBJECT(streamInfo->data);
-
-        g_object_get(obj, "type", &type, NULL);
-
-        if (type == GST_STREAM_TYPE_VIDEO)
-            haveVideo = true;
-    }
-
-    if (haveVideo != m_videoAvailable) {
-        m_videoAvailable = haveVideo;
-        emit videoAvailabilityChanged(m_videoAvailable);
-    }*/
 }
 
 void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 {
+    qDebug() << "Preparing to play with error: " << aError;
     m_player->Prepare();
 }
 
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {
+    qDebug() << "Starting to play with error: " << aError;
     m_player->Play();
-    //User::LeaveIfError(aError);
-
-    // Get frame size
-    //TSize size;
-    //m_player->VideoFrameSizeL(size);
-    //m_frameSize = QSize(size.iWidth, size.iHeight);
-
-    // Get duration
-    //m_totalTime = toMilliSeconds(m_player->DurationL());
+    //m_totalTime = m_player->DurationL();
 }
 
 void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
 {
+    Q_UNUSED(aFrame);
+    Q_UNUSED(aError);
 }
 
 void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
 {
+    m_state = QMediaPlayer::StoppedState;
+    qDebug() << "Play completed with error: " << aError;
 }
 
 void S60VideoPlayerSession::MvpuoEvent(const TMMFEvent &aEvent)
 {
+    Q_UNUSED(aEvent);
 }
-
-/*
-    TRACE_CONTEXT(VideoPlayer::getNativeWindowSystemHandles, EVideoInternal);
-    TRACE_ENTRY_0();
-
-    VideoOutput& output = videoOutput();
-    CCoeControl* const control = output.winId();
-
-    CCoeEnv* const coeEnv = control->ControlEnv();
-    m_wsSession = &(coeEnv->WsSession());
-    m_screenDevice = coeEnv->ScreenDevice();
-    m_window = control->DrawableWindow();
-
-#ifdef _DEBUG
-    QScopedPointer<ObjectDump::QDumper> dumper(new ObjectDump::QDumper);
-    dumper->setPrefix("Phonon::MMF"); // to aid searchability of logs
-    ObjectDump::addDefaultAnnotators(*dumper);
-    TRACE_0("Dumping VideoOutput:");
-    dumper->dumpObject(output);
-#endif
-
-    m_windowRect = TRect(
-        control->DrawableWindow()->AbsPosition(),
-        control->DrawableWindow()->Size());
-    
-    m_clipRect = m_windowRect;
-
-    TRACE("windowRect            %d %d - %d %d",
-        m_windowRect.iTl.iX, m_windowRect.iTl.iY,
-        m_windowRect.iBr.iX, m_windowRect.iBr.iY);
-    TRACE("clipRect              %d %d - %d %d",
-        m_clipRect.iTl.iX, m_clipRect.iTl.iY,
-        m_clipRect.iBr.iX, m_clipRect.iBr.iY);
-    
-    TRACE_EXIT_0();
-*/

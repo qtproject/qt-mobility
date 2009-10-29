@@ -40,10 +40,6 @@
 #include <QtGui/qwidget.h>
 #include <QtMultimedia/qabstractvideosurface.h>
 
-//#include <X11/Xlib.h>
-//#include <X11/extensions/Xv.h>
-//#include <X11/extensions/Xvlib.h>
-
 class S60VideoSurface : public QAbstractVideoSurface
 {
     Q_OBJECT

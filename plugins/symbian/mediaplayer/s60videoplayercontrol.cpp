@@ -42,22 +42,10 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>
 
-//#include <sys/types.h>
-//#include <sys/stat.h>
-//#include <fcntl.h>
-//#include <unistd.h>
-
 S60VideoPlayerControl::S60VideoPlayerControl(S60VideoPlayerSession *session, QObject *parent)
     : QMediaPlayerControl(parent)
     , m_session(session)
-    //, m_stream(0)
-    //, m_fifoNotifier(0)
-    //, m_fifoCanWrite(false)
-    //, m_bufferSize(0)
-    //, m_bufferOffset(0)
 {
-   // m_fifoFd[0] = -1;
-    //m_fifoFd[1] = -1;
 
     connect(m_session, SIGNAL(positionChanged(qint64)),
             this, SIGNAL(positionChanged(qint64)));
@@ -81,12 +69,7 @@ S60VideoPlayerControl::S60VideoPlayerControl(S60VideoPlayerSession *session, QOb
 
 S60VideoPlayerControl::~S60VideoPlayerControl()
 {
-    /*if (m_fifoFd[0] >= 0) {
-        ::close(m_fifoFd[0]);
-        ::close(m_fifoFd[1]);
-        m_fifoFd[0] = -1;
-        m_fifoFd[1] = -1;
-    }*/
+
 }
 
 qint64 S60VideoPlayerControl::position() const
@@ -187,7 +170,17 @@ const QIODevice *S60VideoPlayerControl::mediaStream() const
 
 void S60VideoPlayerControl::setMedia(const QMediaSource &source, QIODevice *stream)
 {
-/*
+    m_session->stop();
+    m_currentResource = source;
+    
+    QUrl url;
+    if (!source.isNull()) {
+        url = source.contentUri();
+    }
+
+    m_session->load(url);
+
+	/*
     m_session->stop();
 
     if (m_stream) {
