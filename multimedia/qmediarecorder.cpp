@@ -189,6 +189,11 @@ QMediaRecorder::~QMediaRecorder()
 }
 
 /*!
+    \property QMediaRecorder::outputLocation
+    \brief Destination location of media content.
+*/
+
+/*!
     Returns the output location being used.
 */
 
