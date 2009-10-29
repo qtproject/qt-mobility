@@ -52,8 +52,15 @@ class CActiveSchedulerWait;
 class MTelephonyInfoObserver
 {
 public:
-    virtual void batteryStatusChanged() = 0;
     virtual void batteryLevelChanged() = 0;
+    virtual void powerStateChanged() = 0;
+
+    virtual void countryCodeChanged() = 0;
+    virtual void networkCodeChanged() = 0;
+    virtual void networkNameChanged() = 0;
+
+    virtual void cellNetworkSignalStrengthChanged() = 0;
+    virtual void cellNetworkStatusChanged() = 0;
 };
 
 class CTelephonyInfo : public CActive
@@ -147,7 +154,7 @@ protected:
 
 public:
     int batteryLevel() const;
-    CTelephony::TBatteryStatus batteryStatus() const;
+    CTelephony::TBatteryStatus powerState() const;
 
 private:
     bool m_initializing;
@@ -158,8 +165,94 @@ private:
     int m_batteryLevel;
     int m_previousBatteryLevel;
 
-    CTelephony::TBatteryStatus m_previousBatteryStatus;
-    CTelephony::TBatteryStatus m_batteryStatus;
+    CTelephony::TBatteryStatus m_powerState;
+    CTelephony::TBatteryStatus m_previousPowerState;
+};
+
+class CCellNetworkInfo : public CTelephonyInfo
+{
+public:
+    CCellNetworkInfo(CTelephony &telephony);
+    void startMonitoring();
+
+protected:
+    void RunL();
+    void DoCancel();
+
+public:
+    int cellId() const;
+	int locationAreaCode() const;
+
+    QString countryCode() const;
+    QString networkCode() const;
+    QString networkName() const;
+
+private:
+    bool m_initializing;
+
+    CTelephony::TNetworkInfoV1Pckg m_networkInfoV1Pckg;
+    CTelephony::TNetworkInfoV1 m_networkInfoV1;
+
+    int m_cellId;
+    int m_locationAreaCode;
+
+    QString m_networkId;
+    QString m_previousNetworkId;
+
+    QString m_countryCode;
+    QString m_previousCountryCode;
+    
+    QString m_networkName;
+    QString m_previousNetworkName;
+};
+
+class CCellNetworkRegistrationInfo : public CTelephonyInfo
+{
+public:
+    CCellNetworkRegistrationInfo(CTelephony &telephony);
+    void startMonitoring();
+
+protected:
+    void RunL();
+    void DoCancel();
+
+public:
+    CTelephony::TRegistrationStatus cellNetworkStatus() const;
+
+private:
+    bool m_initializing;
+
+    CTelephony::TNetworkRegistrationV1Pckg m_networkRegistrationV1Pckg;
+    CTelephony::TNetworkRegistrationV1 m_networkRegistrationV1;
+
+    CTelephony::TRegistrationStatus m_networkStatus;
+    CTelephony::TRegistrationStatus m_previousNetworkStatus;
+};
+
+class CCellSignalStrengthInfo : public CTelephonyInfo
+{
+public:
+    CCellSignalStrengthInfo(CTelephony &telephony);
+    void startMonitoring();
+
+protected:
+    void RunL();
+    void DoCancel();
+
+public:
+    int cellNetworkSignalStrength() const;
+
+private:
+    bool m_initializing;
+
+    CTelephony::TSignalStrengthV1Pckg m_signalStrengthV1Pckg;
+    CTelephony::TSignalStrengthV1 m_signalStrengthV1;
+
+    int m_cellNetworkSignalStrength;
+    int m_previousCellNetworkSignalStrength;
+
+    int m_signalBar;
+    int m_previousSignalBar;
 };
 
 #endif //DEVICEINFO_H

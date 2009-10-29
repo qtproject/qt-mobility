@@ -51,6 +51,9 @@
 #if defined(BACKEND_NM)
 #include "qnmwifiengine_unix_p.h"
 #endif
+#ifdef Q_OS_DARWIN1
+#include "qcorewlanengine_mac_p.h"
+#endif
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qtimer.h>
@@ -225,6 +228,13 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
         updateState = NotUpdating;
         onlineConfigurations = 0;
 
+#if defined (Q_OS_DARWIN1)
+        coreWifi = QCoreWlanEngine::instance();
+        if (coreWifi) {
+            connect(coreWifi, SIGNAL(configurationsChanged()),
+                    this, SLOT(updateConfigurations()));
+        }
+#else
 #if defined(BACKEND_NM)
         nmWifi = QNmWifiEngine::instance();
         if (nmWifi) {
@@ -239,6 +249,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
             }
 #if defined(BACKEND_NM)
         }
+#endif
 #endif
 
 #ifdef Q_OS_WIN
@@ -262,6 +273,10 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 
     QNetworkSessionEngine *engine = qobject_cast<QNetworkSessionEngine *>(sender());
     if (updateState & Updating && engine) {
+#if defined (Q_OS_DARWIN1)
+        if (engine == coreWifi)
+            updateState &= ~CoreWifiUpdating;
+#else
 #if defined(BACKEND_NM)
         if (engine == nmWifi)
             updateState &= ~NmUpdating;
@@ -271,6 +286,8 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
         if (engine == generic)
             updateState &= ~GenericUpdating;
 #endif
+#endif
+
 #ifdef Q_OS_WIN
         else if (engine == nla)
             updateState &= ~NlaUpdating;
@@ -282,6 +299,10 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
     }
     QList<QNetworkSessionEngine *> engines;
     if (firstUpdate) {
+#if defined (Q_OS_DARWIN1)
+        if (coreWifi)
+            engines << coreWifi;
+#else
 #if defined(BACKEND_NM)
         if (nmWifi)
             engines << nmWifi;
@@ -291,6 +312,8 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
         if (generic)
             engines << generic;
 #endif
+#endif
+
 #ifdef Q_OS_WIN
         if (nla)
             engines << nla;
@@ -385,7 +408,12 @@ QNetworkConfiguration QNetworkConfigurationManagerPrivate::defaultConfiguration(
 void QNetworkConfigurationManagerPrivate::performAsyncConfigurationUpdate()
 {
     updateState = Updating;
-
+#if defined (Q_OS_DARWIN1)
+    if (coreWifi) {
+        updateState |= CoreWifiUpdating;
+        coreWifi->requestUpdate();
+    }
+#else
 #if defined(BACKEND_NM)
     if (nmWifi) {
         updateState |= NmUpdating;
@@ -399,6 +427,7 @@ void QNetworkConfigurationManagerPrivate::performAsyncConfigurationUpdate()
         updateState |= GenericUpdating;
         generic->requestUpdate();
     }
+#endif
 #endif
 #ifdef Q_OS_WIN
     if (nla) {

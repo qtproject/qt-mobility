@@ -38,17 +38,43 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMESSAGEACCOUNTFILTERPRIVATE_H
+#define QMESSAGEACCOUNTFILTERPRIVATE_H
 #include "qmessageaccountfilter.h"
+#ifdef Q_OS_WIN
+#include "winhelpers_p.h"
+#endif
+
+#include <QSet>
 
 class QMessageAccountFilterPrivate
 {
     Q_DECLARE_PUBLIC(QMessageAccountFilter)
 
 public:
-    QMessageAccountFilterPrivate(QMessageAccountFilter *accountFilter)
-        :q_ptr(accountFilter)
-    {
-    }
+    enum Criterion { None = 0, IdEquality, IdInclusion, NameEquality, NameInclusion };
+    enum Operator { Identity = 0, And, Or, Not, Nand, Nor, OperatorEnd };
 
+    QMessageAccountFilterPrivate(QMessageAccountFilter *accountFilter);
+    ~QMessageAccountFilterPrivate();
     QMessageAccountFilter *q_ptr;
+
+#ifdef Q_OS_WIN
+    QMessageAccountFilterPrivate &operator=(const QMessageAccountFilterPrivate &other);
+    bool operator==(const QMessageAccountFilterPrivate &other);
+    static bool isNonMatching(const QMessageAccountFilter &filter);
+
+    Operator _operator;
+    Criterion _criterion;
+    QSet<QMessageAccountId> _ids;
+    QString _name;
+    QMessageDataComparator::EqualityComparator _equality;
+    QMessageDataComparator::InclusionComparator _inclusion;
+    QMessageDataComparator::Options _options;
+    bool _valid;
+    QList<QMessageAccountFilter*> _arguments; // for bool ops
+
+    static bool matchesStore(const QMessageAccountFilter &filter, const MapiStorePtr &store);
+#endif
 };
+#endif

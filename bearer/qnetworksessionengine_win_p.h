@@ -53,7 +53,79 @@
 // We mean it.
 //
 
-#ifdef Q_OS_WIN
+#include <winsock2.h>
+#include <mswsock.h>
+#undef interface
+#include <winioctl.h>
+
+#ifndef NS_NLA
+
+#define NS_NLA 15
+
+enum NLA_BLOB_DATA_TYPE {
+    NLA_RAW_DATA = 0,
+    NLA_INTERFACE = 1,
+    NLA_802_1X_LOCATION = 2,
+    NLA_CONNECTIVITY = 3,
+    NLA_ICS = 4
+};
+
+enum NLA_CONNECTIVITY_TYPE {
+    NLA_NETWORK_AD_HOC = 0,
+    NLA_NETWORK_MANAGED = 1,
+    NLA_NETWORK_UNMANAGED = 2,
+    NLA_NETWORK_UNKNOWN = 3
+};
+
+enum NLA_INTERNET {
+    NLA_INTERNET_UNKNOWN = 0,
+    NLA_INTERNET_NO = 1,
+    NLA_INTERNET_YES = 2
+};
+
+struct NLA_BLOB {
+    struct {
+        NLA_BLOB_DATA_TYPE type;
+        DWORD dwSize;
+        DWORD nextOffset;
+    } header;
+
+    union {
+        // NLA_RAW_DATA
+        CHAR rawData[1];
+
+        // NLA_INTERFACE
+        struct {
+            DWORD dwType;
+            DWORD dwSpeed;
+            CHAR adapterName[1];
+        } interfaceData;
+
+        // NLA_802_1X_LOCATION
+        struct {
+            CHAR information[1];
+        } locationData;
+
+        // NLA_CONNECTIVITY
+        struct {
+            NLA_CONNECTIVITY_TYPE type;
+            NLA_INTERNET internet;
+        } connectivity;
+
+        // NLA_ICS
+        struct {
+            struct {
+                DWORD speed;
+                DWORD type;
+                DWORD state;
+                WCHAR machineName[256];
+                WCHAR sharedAdapterName[256];
+            } remote;
+        } ICS;
+    } data;
+};
+#endif
+
 enum NDIS_MEDIUM {
     NdisMedium802_3 = 0,
 };
@@ -69,6 +141,5 @@ enum NDIS_PHYSICAL_MEDIUM {
 
 #define IOCTL_NDIS_QUERY_GLOBAL_STATS \
     CTL_CODE(FILE_DEVICE_PHYSICAL_NETCARD, 0, METHOD_OUT_DIRECT, FILE_ANY_ACCESS)
-#endif
 
 #endif // QNETWORKSESSIONENGINE_WIN_P_H

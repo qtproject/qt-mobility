@@ -42,6 +42,7 @@
 #include "qmessage_p.h"
 
 #include <QTextCodec>
+#include <QDebug>
 
 namespace {
 
@@ -593,6 +594,8 @@ QByteArray QMessage::preferredCharsetFor(const QString &text)
     foreach (const QByteArray &name, charsets) {
         if (QTextCodec* codec = QTextCodec::codecForName(name)) {
             codecs.append(codec);
+        } else {
+            qWarning() << "No codec is available for:" << name;
         }
     }
 

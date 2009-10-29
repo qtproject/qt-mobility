@@ -38,6 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMESSAGEADDRESSPRIVATE_H
+#define QMESSAGEADDRESSPRIVATE_H
 #include "qmessageaddress.h"
 
 class QMessageAddressPrivate
@@ -55,3 +57,4 @@ public:
     QMessageAddress::Type type;
     QString recipient;
 };
+#endif

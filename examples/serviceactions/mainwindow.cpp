@@ -82,6 +82,7 @@ private:
     public:
         Loader(AccountsWidget* parent);
         void run();
+
     private:
         AccountsWidget* m_parent;
     };
@@ -89,7 +90,11 @@ private:
 public:
     AccountsWidget(QWidget* parent = 0);
     QMessageAccountId currentAccount() const;
+    QString currentAccountName() const;
     bool isEmpty() const;
+
+signals:
+    void accountChanged();
 
 protected:
     void showEvent(QShowEvent* e);
@@ -154,9 +159,16 @@ QMessageAccountId AccountsWidget::currentAccount() const
     return result;
 }
 
+QString AccountsWidget::currentAccountName() const
+{
+    if(m_loader.isFinished() && m_accountsCombo->count())
+        return m_accountsCombo->itemData(m_accountsCombo->currentIndex()).toString();
+    return QString();
+}
+
 bool AccountsWidget::isEmpty() const
 {
-	return m_accountsCombo->count() == 0;
+    return m_accountsCombo->count() == 0;
 }
 
 void AccountsWidget::showEvent(QShowEvent* e)
@@ -197,7 +209,10 @@ void AccountsWidget::loadFinished()
     if(!accountIds.isEmpty())
     {
         for(int i = 0; i < accountIds.count(); ++i)
-            m_accountsCombo->addItem(QString("%1 - %2").arg(i+1).arg(QMessageAccount(accountIds[i]).name()));
+        {
+            QMessageAccount account(accountIds[i]);
+            m_accountsCombo->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.name());
+        }
 
         m_stackedLayout->setCurrentWidget(m_accountsCombo);
     }
@@ -215,8 +230,9 @@ void AccountsWidget::setupUi()
 
     m_accountsCombo = new QComboBox(this);
     m_stackedLayout->addWidget(m_accountsCombo);
+    connect(m_accountsCombo,SIGNAL(currentIndexChanged(int)),this,SIGNAL(accountChanged()));
 
-    m_busyLabel = new QLabel("Loading..");
+    m_busyLabel = new QLabel("Loading...");
     m_stackedLayout->addWidget(m_busyLabel);
 }
 
@@ -411,39 +427,53 @@ class ComposeSendWidget : public QWidget
 public:
     ComposeSendWidget(QMessageServiceAction* service, QWidget* parent = 0);
 
+signals:
+    void actionsChanged();
+
 private slots:
     void composeButtonClicked();
     void sendButtonClicked();
     void addAttachmentButtonClicked();
+    void accountChanged();
 
 private:
     void setupUi();
-    QMessage constructQMessage() const;
+    QMessage constructQMessage(bool asHtml = false) const;
 
 private:
     QStackedLayout* m_layoutStack;
-    QWidget* m_composeWidget;
-    QLabel* m_busyLabel;
     QMessageServiceAction* m_service;
     AccountsWidget* m_accountsWidget;
     QLineEdit* m_toEdit;
+    QLineEdit* m_ccEdit;
+    QLabel* m_ccLabel;
+    QLineEdit* m_bccEdit;
+    QLabel* m_bccLabel;
     QLineEdit* m_subjectEdit;
+    QLabel* m_subjectLabel;
     QTextEdit* m_bodyEdit;
     AttachmentListWidget* m_attachmentList;
+    QAction* m_attachmentsAction;
+    QAction* m_sendAsHTMLAction;
 };
 
 ComposeSendWidget::ComposeSendWidget(QMessageServiceAction* service, QWidget* parent)
 :
 QWidget(parent),
 m_layoutStack(0),
-m_composeWidget(0),
-m_busyLabel(0),
 m_service(service),
 m_accountsWidget(0),
 m_toEdit(0),
+m_ccEdit(0),
+m_ccLabel(0),
+m_bccEdit(0),
+m_bccLabel(0),
 m_subjectEdit(0),
+m_subjectLabel(0),
 m_bodyEdit(0),
-m_attachmentList(0)
+m_attachmentList(0),
+m_attachmentsAction(0),
+m_sendAsHTMLAction(0)
 {
     setupUi();
 }
@@ -456,7 +486,8 @@ void ComposeSendWidget::composeButtonClicked()
 
 void ComposeSendWidget::sendButtonClicked()
 {
-    QMessage message(constructQMessage());
+    bool asHtml = (sender() == m_sendAsHTMLAction);
+    QMessage message(constructQMessage(asHtml));
     m_service->send(message);
 }
 
@@ -464,6 +495,22 @@ void ComposeSendWidget::addAttachmentButtonClicked()
 {
     QStringList filenames = QFileDialog::getOpenFileNames(this,tr("Select attachments"));
     m_attachmentList->addAttachments(filenames);
+}
+
+void ComposeSendWidget::accountChanged()
+{
+#ifdef _WIN32_WCE
+    bool isSmsAccount = m_accountsWidget->currentAccountName() == "SMS";
+
+    foreach(QWidget* emailSpecificWidget , QList<QWidget*>() << m_bccEdit << m_bccLabel <<
+                                                                m_ccEdit <<  m_ccLabel <<
+                                                                m_subjectEdit << m_subjectLabel) {
+        emailSpecificWidget->setVisible(!isSmsAccount);
+    }
+
+    m_attachmentsAction->setEnabled(!isSmsAccount);
+    m_sendAsHTMLAction->setEnabled(!isSmsAccount);
+#endif
 }
 
 void ComposeSendWidget::setupUi()
@@ -475,6 +522,7 @@ void ComposeSendWidget::setupUi()
 
     m_accountsWidget = new AccountsWidget(this);
     gl->addWidget(m_accountsWidget,0,1);
+    connect(m_accountsWidget,SIGNAL(accountChanged()),this,SLOT(accountChanged()));
 
     QLabel* toLabel = new QLabel("To:",this);
     gl->addWidget(toLabel,1,0);
@@ -482,17 +530,29 @@ void ComposeSendWidget::setupUi()
     m_toEdit = new QLineEdit(this);
     gl->addWidget(m_toEdit,1,1);
 
-    QLabel* subjectLabel = new QLabel("Subject:",this);
-    gl->addWidget(subjectLabel,2,0);
+    m_ccLabel = new QLabel("Cc:",this);
+    gl->addWidget(m_ccLabel,2,0);
+
+    m_ccEdit = new QLineEdit(this);
+    gl->addWidget(m_ccEdit,2,1);
+
+    m_bccLabel = new QLabel("Bcc",this);
+    gl->addWidget(m_bccLabel,3,0);
+
+    m_bccEdit = new QLineEdit(this);
+    gl->addWidget(m_bccEdit,3,1);
+
+    m_subjectLabel = new QLabel("Subject:",this);
+    gl->addWidget(m_subjectLabel,4,0);
 
     m_subjectEdit = new QLineEdit(this);
-    gl->addWidget(m_subjectEdit,2,1);
+    gl->addWidget(m_subjectEdit,4,1);
 
     m_bodyEdit = new QTextEdit(this);
-    gl->addWidget(m_bodyEdit,3,0,1,2);
+    gl->addWidget(m_bodyEdit,5,0,1,2);
 
     m_attachmentList = new AttachmentListWidget(this);
-    gl->addWidget(m_attachmentList,4,0,1,2);
+    gl->addWidget(m_attachmentList,6,0,1,2);
     m_attachmentList->hide();
 
     QAction* composeAction = new QAction("Compose",this);
@@ -501,15 +561,18 @@ void ComposeSendWidget::setupUi()
     QAction* sendAction = new QAction("Send",this);
     connect(sendAction,SIGNAL(triggered()),this,SLOT(sendButtonClicked()));
     addAction(sendAction);
+    m_sendAsHTMLAction = new QAction("Send as HTML",this);
+    connect(m_sendAsHTMLAction,SIGNAL(triggered()),this,SLOT(sendButtonClicked()));
+    addAction(m_sendAsHTMLAction);
     QAction* separator = new QAction(this);
     separator->setSeparator(true);
     addAction(separator);
-    QAction* attachmentsAction = new QAction("Add attachment",this);
-    connect(attachmentsAction,SIGNAL(triggered()),this,SLOT(addAttachmentButtonClicked()));
-    addAction(attachmentsAction);
+    m_attachmentsAction = new QAction("Add attachment",this);
+    connect(m_attachmentsAction,SIGNAL(triggered()),this,SLOT(addAttachmentButtonClicked()));
+    addAction(m_attachmentsAction);
 }
 
-QMessage ComposeSendWidget::constructQMessage() const
+QMessage ComposeSendWidget::constructQMessage(bool asHtml) const
 {
     QMessage message;
 
@@ -520,19 +583,53 @@ QMessage ComposeSendWidget::constructQMessage() const
     }
 
     QMessageAccountId selectedAccountId = m_accountsWidget->currentAccount();
+#ifdef _WIN32_WCE
+    QMessageAccount selectedAccount(selectedAccountId);
+    bool composingSms = selectedAccount.name() == "SMS";
+#else
+    bool composingSms = false;
+#endif
 
     QMessageAddressList toList;
+    QMessageAddressList ccList;
+    QMessageAddressList bccList;
 
-    foreach(QString s, m_toEdit->text().split(QRegExp("\\s")))
-        toList.append(QMessageAddress(s,QMessageAddress::Email));
+    QMessageAddress::Type addressType = QMessageAddress::Email;
+    if(composingSms)
+    {
+        addressType = QMessageAddress::Phone;
+        message.setType(QMessage::Sms);
+    }
 
+    foreach(QString s, m_toEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts))
+        toList.append(QMessageAddress(s,addressType));
     message.setTo(toList);
 
+    if(!composingSms)
+    {
+        foreach(QString s, m_ccEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts))
+            ccList.append(QMessageAddress(s,QMessageAddress::Email));
+        message.setCc(ccList);
+
+        foreach(QString s, m_bccEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts))
+            bccList.append(QMessageAddress(s,QMessageAddress::Email));
+        message.setBcc(bccList);
+        message.setSubject(m_subjectEdit->text());
+
+        message.setType(QMessage::Email);
+
+        message.appendAttachments(m_attachmentList->attachments());
+    }
+
     message.setParentAccountId(selectedAccountId);
-    message.setSubject(m_subjectEdit->text());
-    message.setBody(m_bodyEdit->toPlainText());
-    message.setType(QMessage::Email);
-    message.appendAttachments(m_attachmentList->attachments());
+
+    if(!composingSms && asHtml) {
+        //create html body
+        QString htmlBody("<html><head><title></title></head><body><h2 align=center>%1</h2><hr>%2</body></html>");
+        message.setBody(htmlBody.arg(message.subject()).arg(m_bodyEdit->toPlainText()),"text/html");
+    }
+    else
+        message.setBody(m_bodyEdit->toPlainText());
 
     return message;
 }
@@ -568,9 +665,6 @@ private:
 
 private:
     QMessageServiceAction* m_service;
-    QStackedLayout* m_layoutStack;
-    QScrollArea* m_showWidget;
-    QLabel* m_busyLabel;
     RecentMessagesWidget* m_recentMessagesWidget;
 };
 
@@ -578,7 +672,6 @@ ShowWidget::ShowWidget(QMessageServiceAction* service, QWidget* parent)
 :
 QWidget(parent),
 m_service(service),
-m_showWidget(0),
 m_recentMessagesWidget(0)
 {
     setupUi();
@@ -641,10 +734,16 @@ m_tabWidget(0)
 
     m_widgetStack = new QStackedWidget(this);
     setCentralWidget(m_widgetStack);
-    m_widgetStack->addWidget(new ComposeSendWidget(m_serviceAction,this));
-    m_widgetStack->addWidget(new ShowWidget(m_serviceAction,this));
-    m_widgetStack->addWidget(new RetrieveWidget(m_serviceAction,this));
-    m_widgetStack->addWidget(new QueryWidget(m_serviceAction,this));
+
+    foreach(QWidget* exampleWidget, QWidgetList() << new ComposeSendWidget(m_serviceAction,this)
+                                                  << new ShowWidget(m_serviceAction,this)
+                                                  << new RetrieveWidget(m_serviceAction,this)
+                                                  << new QueryWidget(m_serviceAction,this)) {
+        m_widgetStack->addWidget(exampleWidget);
+#ifdef _WIN32_WCE
+        exampleWidget->installEventFilter(this);
+#endif
+    }
 
     //main menu
 #ifndef _WIN32_WCE
@@ -689,6 +788,16 @@ m_tabWidget(0)
     resize(WindowGeometry);
 }
 
+#ifdef _WIN32_WCE
+bool MainWindow::eventFilter(QObject* source, QEvent* e)
+{
+    bool actionChanged = (m_widgetStack->currentWidget() == source) && e->type() == QEvent::ActionChanged;
+    if(actionChanged)
+        viewSelected(); //update the menu items
+    return false;
+}
+#endif
+
 void MainWindow::serviceStateChanged(QMessageServiceAction::State state)
 {
     if(state == QMessageServiceAction::Failed)
@@ -706,8 +815,7 @@ void MainWindow::viewSelected()
         menuBar()->addMenu(actionMenu);
 #endif
     }
-
-    QAction* senderAction = static_cast<QAction*>(sender());
+    QAction* senderAction = qobject_cast<QAction*>(sender());
     if(senderAction)
         m_widgetStack->setCurrentIndex(senderAction->data().toInt());
 

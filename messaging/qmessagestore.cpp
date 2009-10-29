@@ -353,7 +353,7 @@
     and messageUpdated() signals.  Returns an identifier value that can be used to identify the 
     reason that a signal was emitted, and to unregister the filter at a later time.
 
-    The filter is applied to the state of the data after the occurrence of the event for which 
+    The \a filter is applied to the state of the data after the occurrence of the event for which 
     a notification may be emitted.
 
     \sa unregisterNotificationFilter(), messageAdded(), messageRemoved(), messageUpdated()

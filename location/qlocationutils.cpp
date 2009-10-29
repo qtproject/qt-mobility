@@ -164,7 +164,7 @@ static void qlocationutils_readRmc(const char *data, int size, QGeoPositionInfo 
             info->setProperty(QGeoPositionInfo::Heading, qreal(value));
     }
     if (parts.count() > 11 && parts[11].count() == 1
-            && (parts[11][0] == 'E' || parts[11][0] == 'W') ) {
+            && (parts[11][0] == 'E' || parts[11][0] == 'W')) {
         value = parts[10].toDouble(&parsed);
         if (parsed) {
             if (parts[11][0] == 'W')
@@ -287,11 +287,11 @@ bool QLocationUtils::hasValidNmeaChecksum(const char *data, int size)
     int result = 0;
     for (int i=1; i<asteriskIndex; i++)
         result ^= data[i];
-/*
-    char calc[CSUM_LEN + 1];
-    ::snprintf(calc, CSUM_LEN + 1, "%02x", result);
-    return ::strncmp(calc, &data[asteriskIndex+1], 2) == 0;
-    */
+    /*
+        char calc[CSUM_LEN + 1];
+        ::snprintf(calc, CSUM_LEN + 1, "%02x", result);
+        return ::strncmp(calc, &data[asteriskIndex+1], 2) == 0;
+        */
 
     QString s;
     s.sprintf("%02x", result);
@@ -323,8 +323,8 @@ bool QLocationUtils::getNmeaTime(const QByteArray &bytes, QTime *time)
 
 bool QLocationUtils::getNmeaLatLong(const QByteArray &latString, char latDirection, const QByteArray &lngString, char lngDirection, double *lat, double *lng)
 {
-    if ( (latDirection != 'N' && latDirection != 'S')
-            || (lngDirection != 'E' && lngDirection != 'W') ) {
+    if ((latDirection != 'N' && latDirection != 'S')
+            || (lngDirection != 'E' && lngDirection != 'W')) {
         return false;
     }
 

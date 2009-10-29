@@ -53,13 +53,19 @@
     ** $QT_END_LICENSE$
     **
     ****************************************************************************/</span>
+
     #include &quot;bearermonitor.h&quot;
     #include &quot;sessionwidget.h&quot;
 
     #include &lt;QDebug&gt;
+
     #ifdef Q_OS_WIN
     #include &lt;winsock2.h&gt;
     #undef interface
+
+    #ifndef NS_NLA
+    #define NS_NLA 15
+    #endif
     #endif
 
     BearerMonitor::BearerMonitor(QWidget *parent)

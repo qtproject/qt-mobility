@@ -51,10 +51,14 @@
 #include "qmessageaccountid_p.h"
 #include "qmessage_p.h"
 #include "qmessagestore_p.h"
-
-//TODO make all functions non-blocking and asynchronous
+#include "qmessagecontentcontainer_p.h"
+#ifdef _WIN32_WCE
+#include <cemapi.h>
+#endif
 
 using namespace WinHelpers;
+
+static const unsigned long SmsCharLimit = 160;
 
 class QMessageServiceActionPrivate : public QObject
 {
@@ -71,10 +75,12 @@ public:
 public slots:
     void completed();
     void reportMatchingIds();
+    void reportMessagesCounted();
 
 signals:
     void stateChanged(QMessageServiceAction::State);
     void messagesFound(const QMessageIdList&);
+    void messagesCounted(int);
     void progressChanged(uint, uint);
 
 public:
@@ -82,6 +88,7 @@ public:
     bool _active;
     QMessageStore::ErrorCode _lastError;
     QMessageIdList _candidateIds;
+    int _count;
     QMessageServiceAction::State _state;
 };
 
@@ -98,6 +105,12 @@ void QMessageServiceActionPrivate::reportMatchingIds()
     completed();
 }
 
+void QMessageServiceActionPrivate::reportMessagesCounted()
+{
+    emit messagesCounted(_count);
+    completed();
+}
+
 QMessageServiceActionPrivate::QMessageServiceActionPrivate(QMessageServiceAction* parent)
     :q_ptr(parent),
      _active(false),
@@ -105,8 +118,122 @@ QMessageServiceActionPrivate::QMessageServiceActionPrivate(QMessageServiceAction
 {
 }
 
+static Lptstr createMCFRecipients(const QMessageAddressList& addressList, QMessageAddress::Type filterAddressType)
+{
+    QStringList temp;
+
+    foreach(const QMessageAddress& a, addressList)
+    {
+        if(a.type() == filterAddressType)
+            temp.append(a.recipient());
+    }
+
+    return temp.isEmpty() ? Lptstr(0) : LptstrFromQString(temp.join(";"));
+}
+
 bool QMessageServiceActionPrivate::send(const QMessage& message, bool showComposer)
 {
+#ifdef _WIN32_WCE
+    if(showComposer)
+    {
+        MAILCOMPOSEFIELDS mcf;
+        memset(&mcf,0,sizeof(mcf));
+
+        Lptstr accountName = LptstrFromQString(QMessageAccount(message.parentAccountId()).name());
+        Lptstr to;
+        Lptstr cc;
+        Lptstr bcc;
+        Lptstr subject;
+        Lptstr attachments;
+        Lptstr bodyText;
+
+        //account
+
+        mcf.pszAccount = accountName;
+        mcf.dwFlags = MCF_ACCOUNT_IS_NAME;
+
+        if(message.type() == QMessage::Email)
+        {
+            //recipients
+
+            to = createMCFRecipients(message.to(),QMessageAddress::Email);
+            cc = createMCFRecipients(message.cc(),QMessageAddress::Email);
+            bcc = createMCFRecipients(message.bcc(),QMessageAddress::Email);
+            mcf.pszTo = to;
+            mcf.pszCc = cc;
+            mcf.pszBcc = bcc;
+
+            //subject
+
+            subject = LptstrFromQString(message.subject());
+            mcf.pszSubject = subject;
+
+            //body
+
+            QMessageContentContainerId bodyId = message.bodyId();
+            if(bodyId.isValid())
+            {
+                const QMessageContentContainer& bodyContainer = message.find(bodyId);
+                bodyText = LptstrFromQString(bodyContainer.textContent());
+                mcf.pszBody = bodyText;
+            }
+
+            //attachments
+
+            if(message.status() & QMessage::HasAttachments)
+            {
+                QStringList attachmentList;
+
+                foreach(const QMessageContentContainerId& id, message.attachmentIds())
+                {
+                    const QMessageContentContainer& attachmentContainer = message.find(id);
+                    attachmentList.append(QMessageContentContainerPrivate::attachmentFilename(attachmentContainer));
+                }
+
+                mcf.cAttachments = attachmentList.count();
+                QChar nullChar(0);
+                attachments = LptstrFromQString(attachmentList.join(nullChar));
+                mcf.pszAttachments = attachments;
+            }
+        }
+        else if(message.type() == QMessage::Sms)
+        {
+            //recipients
+
+            to = createMCFRecipients(message.to(),QMessageAddress::Phone);
+            mcf.pszTo = to;
+
+            //body
+
+            QMessageContentContainerId bodyId = message.bodyId();
+            if(bodyId.isValid())
+            {
+                const QMessageContentContainer& bodyContainer = message.find(bodyId);
+                QString textContent = bodyContainer.textContent();
+                if(textContent.length() > SmsCharLimit)
+                {
+                    textContent.truncate(SmsCharLimit);
+                    qWarning() << "SMS messages may not exceed " << SmsCharLimit << " characters. Body trucated.";
+                }
+                bodyText = LptstrFromQString(textContent);
+                mcf.pszBody = bodyText;
+            }
+        }
+        else
+            qWarning() << "Unsupported message type";
+
+       mcf.cbSize = sizeof(mcf);
+
+       if(FAILED(MailComposeMessage(&mcf)))
+       {
+           qWarning() << "MailComposeMessage failed";
+           return false;
+       }
+    }
+    else
+    {
+#endif
+
     MapiSessionPtr mapiSession(MapiSession::createSession(&_lastError));
     if (_lastError != QMessageStore::NoError)
     {
@@ -162,6 +289,7 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
         return false;
     }
 
+#ifndef _WIN32_WCE
     if(showComposer)
     {
         if(FAILED(mapiSession->showForm(mapiMessage,mapiFolder->folder(),mapiStore->store())))
@@ -173,6 +301,7 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
         }
     }
     else
+#endif
     {
         if(FAILED(mapiMessage->SubmitMessage(0)))
         {
@@ -183,16 +312,28 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
         }
     }
 
-    if(!mapiSession->flushQueues())
-        qWarning() << "MAPI flush queues failed.";
-
     mapiRelease(mapiMessage);
+
+#ifdef _WIN32_WCE
+    }
+#endif
 
     return true;
 }
 
 bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
 {
+#ifdef _WIN32_WCE
+    MapiEntryId entryId = QMessageIdPrivate::entryId(messageId);
+    LPENTRYID entryIdPtr(reinterpret_cast<LPENTRYID>(const_cast<char*>(entryId.data())));
+    if(FAILED(MailDisplayMessage(entryIdPtr,entryId.length())))
+    {
+        qWarning() << "MailDisplayMessage failed";
+        return false;
+    }
+    return true;
+
+#else
     if(!messageId.isValid())
     {
         _lastError = QMessageStore::InvalidId;
@@ -212,13 +353,8 @@ bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
     //messageId -> IMessage
 
     MapiEntryId entryId = QMessageIdPrivate::entryId(messageId);
-#ifdef _WIN32_WCE
-    MapiEntryId folderRecordKey = QMessageIdPrivate::folderRecordKey(messageId);
-    MapiEntryId storeRecordKey = QMessageIdPrivate::storeRecordKey(messageId);
-#else
     MapiRecordKey folderRecordKey = QMessageIdPrivate::folderRecordKey(messageId);
     MapiRecordKey storeRecordKey = QMessageIdPrivate::storeRecordKey(messageId);
-#endif
 
     MapiStorePtr mapiStore = mapiSession->findStore(&_lastError,QMessageAccountIdPrivate::from(storeRecordKey));
 
@@ -228,11 +364,7 @@ bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
         return false;
     }
 
-#ifdef _WIN32_WCE
-    MapiFolderPtr mapiFolder = mapiStore->openFolder(&_lastError,folderRecordKey);
-#else
     MapiFolderPtr mapiFolder = mapiStore->openFolderWithKey(&_lastError,folderRecordKey);
-#endif
 
     if( mapiFolder.isNull() || _lastError != QMessageStore::NoError ) {
         qWarning() << "Unable to get folder for the message";
@@ -259,6 +391,7 @@ bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
     mapiRelease(mapiMessage);
 
     return true;
+#endif
 }
 
 QMessageServiceAction::QMessageServiceAction(QObject *parent)
@@ -269,6 +402,8 @@ QMessageServiceAction::QMessageServiceAction(QObject *parent)
         this, SIGNAL(stateChanged(QMessageServiceAction::State)));
     connect(d_ptr, SIGNAL(messagesFound(const QMessageIdList&)),
         this, SIGNAL(messagesFound(const QMessageIdList&)));
+    connect(d_ptr, SIGNAL(messagesCounted(int)),
+        this, SIGNAL(messagesCounted(int)));
     connect(d_ptr, SIGNAL(progressChanged(uint, uint)),
         this, SIGNAL(progressChanged(uint, uint)));
 }
@@ -298,18 +433,35 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QM
 
 bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
 {
-    Q_UNUSED(filter);
-    Q_UNUSED(body);
-    Q_UNUSED(options)
-    Q_UNUSED(ordering);
-    Q_UNUSED(limit);
-    Q_UNUSED(offset);
-    return false; // stub
+    if (d_ptr->_active) {
+        qWarning() << "Action is currently busy";
+        return false;
+    }
+    d_ptr->_active = true;
+    d_ptr->_candidateIds = QMessageStore::instance()->queryMessages(filter, body, options, ordering, limit, offset);
+    d_ptr->_lastError = QMessageStore::instance()->lastError();
+
+    if (d_ptr->_lastError == QMessageStore::NoError) {
+        QTimer::singleShot(0, d_ptr, SLOT(reportMatchingIds()));
+        return true;
+    }
+    return false;
 }
 
 bool QMessageServiceAction::countMessages(const QMessageFilter &filter) const
 {
-    Q_UNUSED(filter);
+    if (d_ptr->_active) {
+        qWarning() << "Action is currently busy";
+        return false;
+    }
+    d_ptr->_active = true;
+    d_ptr->_count = QMessageStore::instance()->queryMessages(filter).count();
+    d_ptr->_lastError = QMessageStore::instance()->lastError();
+
+    if (d_ptr->_lastError == QMessageStore::NoError) {
+        QTimer::singleShot(0, d_ptr, SLOT(reportMessagesCounted()));
+        return true;
+    }
     return false;
 }
 

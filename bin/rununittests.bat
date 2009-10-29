@@ -1,3 +1,4 @@
+<<<<<<< HEAD:bin/rununittests.bat
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
 :: Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
@@ -83,9 +84,9 @@ tst_qcrmlparser.exe
 tst_qsystemdeviceinfo.exe
 tst_qsystemdisplayinfo.exe
 tst_qsysteminfo.exe
-tst_qsystemmemoryinfo.exe
 tst_qsystemnetworkinfo.exe
 tst_qsystemscreensaver.exe
+tst_qsystemstorageinfo.exe
 
 cd %SAVED_PWD%
 

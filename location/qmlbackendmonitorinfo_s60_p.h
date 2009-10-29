@@ -39,50 +39,56 @@
 **
 ****************************************************************************/
 
-#include "qcontactgroupmembershipfilter.h"
-#include "qcontactgroupmembershipfilter_p.h"
-#include "qcontactfilter_p.h"
-#include "qcontactmanager.h"
+#ifndef QMLBACKENDMONITORINFO_H_
+#define QMLBACKENDMONITORINFO_H_
 
-/*!
-  \class QContactGroupMembershipFilter
-  \brief The QContactGroupMembershipFilter class provides a filter based around a group membership criterion.
-   \ingroup contacts-filters
- 
-  It may be used to select contacts which are members of a particular group
- */
+#include "qmlbackendmonitorao_s60_p.h"
 
-Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactGroupMembershipFilter);
 
-/*!
- * \fn QContactGroupMembershipFilter::QContactGroupMembershipFilter(const QContactFilter& other)
- * Constructs a copy of \a other if possible, otherwise constructs a new group membership filter
- */
+//linked list information structure
+struct CMonitorTriggerInfo {
+    QGeoAreaMonitorS60* iParent;
 
-/*!
- * Constructs a new group membership filter
- */
-QContactGroupMembershipFilter::QContactGroupMembershipFilter()
-    : QContactFilter(new QContactGroupMembershipFilterPrivate)
+    TLbtTriggerId iTriggerID;
+
+    enum  enTriggerType iType;
+
+    CMonitorTriggerInfo* next;
+};
+
+
+class CBackendMonitorInfo   :  public CBase
 {
-}
+public :
 
-/*!
- * Sets the id of the group to which a contact must belong in order to match this filter to \a id
- * \sa groupId()
- */
-void QContactGroupMembershipFilter::setGroupId(const QUniqueId& id)
-{
-    Q_D(QContactGroupMembershipFilter);
-    d->m_id = id;
-}
+    static CBackendMonitorInfo  *NewL();
 
-/*!
- * Returns the id of the group to which a contact must belong in order to match this filter
- * \sa setGroupId()
- */
-QUniqueId QContactGroupMembershipFilter::groupId() const
-{
-    Q_D(const QContactGroupMembershipFilter);
-    return d->m_id;
-}
+    //return CMonitorTriggerInfo from TriggerID
+    CMonitorTriggerInfo* getMonitorTriggerInfo(TLbtTriggerId aTrigID);
+
+    //return CMonitorTriggerInfo from the QGeoAreaMonitorS60
+    CMonitorTriggerInfo* getMonitorTriggerInfo(QGeoAreaMonitorS60* aParent,enTriggerType aType);
+
+    //return the header of the linked list
+    inline CMonitorTriggerInfo* getMonitorTriggerInfo() {
+        return iMonitorInfo;
+    }
+
+    //add the entry and exit trigger info to the list
+    bool addMonitorTriggerInfo(QGeoAreaMonitorS60* aParent,TLbtTriggerId aTriggerID,enTriggerType aType);
+
+    //remove the CMonitorTriggerInfo corresponding to the TriggerID
+    void removeMonitorTriggerInfo(TLbtTriggerId aTrigID);
+
+
+    ~CBackendMonitorInfo();
+private :
+
+    CBackendMonitorInfo() : iMonitorInfo(NULL) { }
+
+    CMonitorTriggerInfo*  iMonitorInfo;
+
+    static CBackendMonitorInfo* iBackendMonitorInfo;
+};
+
+#endif /* QMLBACKENDMONITORINFO_H_ */

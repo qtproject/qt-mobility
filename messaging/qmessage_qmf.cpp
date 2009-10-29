@@ -536,7 +536,7 @@ void QMessage::setBody(const QString &bodyText, const QByteArray &mimeType)
 
 void QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
 {
-    // TODO: use QMailMessage stream variants
+    // Note we have to read the data from the stream, in order to determine the relevant charset
     setBody(in.readAll(), mimeType);
 }
 

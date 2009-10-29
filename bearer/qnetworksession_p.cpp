@@ -50,7 +50,9 @@
 #ifdef Q_OS_WIN32
 #include "qnativewifiengine_win_p.h"
 #endif
-
+#ifdef Q_OS_DARWIN1
+#include "qcorewlanengine_mac_p.h"
+#endif
 #include <QtCore/qstringlist.h>
 #include <QtCore/qdebug.h>
 #include <QtCore/qmutex.h>
@@ -98,7 +100,12 @@ static QNetworkSessionEngine *getEngineFromId(const QString &id)
             return nmwiifi;
     }
 #endif
+#ifdef Q_OS_DARWIN1
+    QCoreWlanEngine *coreWifi = QCoreWlanEngine::instance();
+    if (coreWifi && coreWifi->hasIdentifier(id))
+        return coreWifi;
 
+#endif
     QGenericEngine *generic = QGenericEngine::instance();
     if (generic && generic->hasIdentifier(id))
         return generic;

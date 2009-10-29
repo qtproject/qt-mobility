@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef BEARERMONITOR_H
 #define BEARERMONITOR_H
 

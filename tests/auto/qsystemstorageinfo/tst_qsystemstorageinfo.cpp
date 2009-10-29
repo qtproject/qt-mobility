@@ -91,7 +91,13 @@ void tst_QSystemStorageInfo::tst_typeForDrive()
     QSystemStorageInfo mi;
     QStringList volList = mi.logicalDrives();
     foreach(QString vol, volList) {
-        QVERIFY(mi.typeForDrive(vol) != QSystemStorageInfo::NoDrive);
+        QSystemStorageInfo::DriveType type = mi.typeForDrive(vol);
+
+        QVERIFY(type == QSystemStorageInfo::NoDrive
+                || type == QSystemStorageInfo::CdromDrive
+                || type == QSystemStorageInfo::InternalDrive
+                || type == QSystemStorageInfo::RemoteDrive
+                || type == QSystemStorageInfo::RemovableDrive);
     }
 }
 

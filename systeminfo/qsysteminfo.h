@@ -46,6 +46,7 @@
 #include <QSize>
 #include <QPair>
 #include <QString>
+#include <QStringList>
 #include <QNetworkInterface>
 QT_BEGIN_HEADER
 
@@ -63,6 +64,9 @@ class QSystemDisplayInfoPrivate;
 class Q_SYSINFO_EXPORT QSystemInfo : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString currentLanguage READ currentLanguage)
+    Q_PROPERTY(QStringList availableLanguages READ availableLanguages)
+    Q_PROPERTY(QString currentCountryCode READ currentCountryCode)
     Q_ENUMS(Version)
     Q_ENUMS(Feature)
 
@@ -133,6 +137,13 @@ class  Q_SYSINFO_EXPORT QSystemNetworkInfo : public QObject
     Q_OBJECT
     Q_ENUMS(NetworkStatus)
     Q_ENUMS(NetworkMode)
+    Q_PROPERTY(int cellId READ cellId)
+    Q_PROPERTY(int locationAreaCode READ locationAreaCode)
+    Q_PROPERTY(QString currentMobileCountryCode READ currentMobileCountryCode)
+    Q_PROPERTY(QString currentMobileNetworkCode READ currentMobileNetworkCode)
+    Q_PROPERTY(QString homeMobileCountryCode READ homeMobileCountryCode)
+    Q_PROPERTY(QString homeMobileNetworkCode READ homeMobileNetworkCode)
+
 
 public:
 
@@ -188,20 +199,19 @@ Q_SIGNALS:
 };
 
 ////////
-class  Q_SYSINFO_EXPORT QSystemDisplayInfo
+class  Q_SYSINFO_EXPORT QSystemDisplayInfo : public QObject
 {
+Q_OBJECT
 
 public:
 
-    QSystemDisplayInfo();
+    QSystemDisplayInfo(QObject *parent = 0);
     ~QSystemDisplayInfo();
 
      //TODO: to Qt QDesktopWidget
     static int displayBrightness(int screen);
      //TODO: to Qt QDesktopWidget
     static int colorDepth(int screen);
-
-
 };
 
 
@@ -209,6 +219,7 @@ public:
 class  Q_SYSINFO_EXPORT QSystemStorageInfo : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QStringList logicalDrives READ logicalDrives)
     Q_ENUMS(DriveType)
 
 public:
@@ -240,6 +251,17 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_PROPERTY(Profile currentProfile READ currentProfile)
     Q_PROPERTY(PowerState currentPowerState READ currentPowerState)
     Q_PROPERTY(SimStatus simStatus READ simStatus)
+    Q_PROPERTY(BatteryStatus batteryStatus READ batteryStatus)
+    Q_PROPERTY(InputMethodFlags inputMethodType READ inputMethodType)
+
+    Q_PROPERTY(QString imei READ imei)
+    Q_PROPERTY(QString imsi READ imsi)
+    Q_PROPERTY(QString manufacturer READ manufacturer)
+    Q_PROPERTY(QString model READ model)
+    Q_PROPERTY(QString productName READ productName)
+    Q_PROPERTY(int batteryLevel READ batteryLevel)
+    Q_PROPERTY(bool isDeviceLocked READ isDeviceLocked)
+
 
     Q_ENUMS(BatteryLevel)
     Q_ENUMS(PowerState)
@@ -328,6 +350,8 @@ class  Q_SYSINFO_EXPORT QSystemScreenSaver : public QObject
 {
     Q_OBJECT
     Q_ENUMS(ScreenSaverState)
+    Q_PROPERTY(bool screenSaverInhibited READ screenSaverInhibited)
+    Q_PROPERTY(bool isScreenLockOn READ isScreenLockOn)
 
 public:
 

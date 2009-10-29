@@ -194,7 +194,7 @@ MapiStoreIterator QMessageFilterPrivate::storeIterator(const QMessageFilter &fil
     return MapiStoreIterator(session->allStores(lastError), filter.d_ptr->_accountsInclude, filter.d_ptr->_accountsExclude);
 }
 
-QList<QMessageFilter> QMessageFilterPrivate::subFilters(const QMessageFilter &filter)
+QList<QMessageFilter> QMessageFilterPrivate::subfilters(const QMessageFilter &filter)
 {
     QList<QMessageFilter> result;
     QList<QMessageFilter> queue;
@@ -212,20 +212,358 @@ QList<QMessageFilter> QMessageFilterPrivate::subFilters(const QMessageFilter &fi
     return result;
 }
 
+// Several filters require QMessageStore::queryX to be called to evaluate filter member variables, 
+// namely byIds(const QMessageFilter &, ...), byParentAccountId(const QMessageAccountFilter &, ...), 
+// byFolderIds(const QMessageFolderFilter &, ...), byAncestorFolderIds(const QMessageFolderFilter &, ...)
+QMessageFilter QMessageFilterPrivate::preprocess(const QMessageFilter &filter)
+{
+    QMessageFilter result(filter);
+    QMessageFilterPrivate::preprocess(&result);
+    return result;
+}
 
-MapiRestriction::MapiRestriction(const QMessageFilter &filter)
+void QMessageFilterPrivate::preprocess(QMessageFilter *filter)
+{
+    if (!filter)
+        return;
+
+    QMessageDataComparator::InclusionComparator incl(static_cast<QMessageDataComparator::InclusionComparator>(filter->d_ptr->_comparatorValue));
+    bool inclusion(incl == QMessageDataComparator::Includes);
+    QMessageFilter result;
+    if (inclusion) {
+        result = ~QMessageFilter();
+    }
+    if (filter->d_ptr->_field == MessageFilter) {
+        QMessageIdList ids(QMessageStore::instance()->queryMessages(*filter->d_ptr->_messageFilter));
+        result = QMessageFilter::byId(ids, incl);
+    } else if (filter->d_ptr->_field == AccountFilter) {
+        QMessageAccountIdList ids(QMessageStore::instance()->queryAccounts(*filter->d_ptr->_accountFilter));
+        foreach(QMessageAccountId id, ids) {
+            if (inclusion) {
+                result |= QMessageFilter::byParentAccountId(id);
+            } else {
+                result &= QMessageFilter::byParentAccountId(id, QMessageDataComparator::NotEqual);
+            }
+        }
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+    } else if (filter->d_ptr->_field == FolderFilter) {
+        QMessageFolderIdList ids(QMessageStore::instance()->queryFolders(*filter->d_ptr->_folderFilter));
+        foreach(QMessageFolderId id, ids) {
+            if (inclusion) {
+                result |= QMessageFilter::byParentFolderId(id);
+            } else {
+                result &= QMessageFilter::byParentFolderId(id, QMessageDataComparator::NotEqual);
+            }
+        }
+    } else if (filter->d_ptr->_field == AncestorFilter) {
+        QMessageFolderIdList ids(QMessageStore::instance()->queryFolders(*filter->d_ptr->_folderFilter));
+        foreach(QMessageFolderId id, ids) {
+            if (inclusion) {
+                result |= QMessageFilter::byAncestorFolderIds(id);
+            } else {
+                result &= QMessageFilter::byAncestorFolderIds(id, QMessageDataComparator::Excludes);
+            }
+        }
+#endif
+    } else {
+        preprocess(filter->d_ptr->_left);
+        preprocess(filter->d_ptr->_right);
+        return;
+    }
+    if (filter->d_ptr->_operator == Not) // must be Not or Identity
+        result = ~result;
+    *filter = result;
+}
+
+bool QMessageFilterPrivate::restrictionPermitted(const QMessageFilter &filter)
+{
+    bool result(filter.d_ptr->_restrictionPermitted);
+    if (filter.d_ptr->_left)
+        result &= QMessageFilterPrivate::restrictionPermitted(*filter.d_ptr->_left);
+    if (filter.d_ptr->_right)
+        result &= QMessageFilterPrivate::restrictionPermitted(*filter.d_ptr->_right);
+    return result;
+}
+
+bool QMessageFilterPrivate::matchesMessageRequired(const QMessageFilter &filter)
+{
+    bool result(filter.d_ptr->_matchesRequired);
+    if (filter.d_ptr->_left)
+        result |= QMessageFilterPrivate::matchesMessageRequired(*filter.d_ptr->_left);
+    if (filter.d_ptr->_right)
+        result |= QMessageFilterPrivate::matchesMessageRequired(*filter.d_ptr->_right);
+    return result;
+}
+
+bool QMessageFilterPrivate::containsSenderSubfilter(const QMessageFilter &filter)
+{
+    bool result(filter.d_ptr->_field == QMessageFilterPrivate::Sender);
+    if (filter.d_ptr->_left)
+        result |= QMessageFilterPrivate::containsSenderSubfilter(*filter.d_ptr->_left);
+    if (filter.d_ptr->_right)
+        result |= QMessageFilterPrivate::containsSenderSubfilter(*filter.d_ptr->_right);
+    return result;
+}
+
+bool QMessageFilterPrivate::isNonMatching(const QMessageFilter &filter)
+{
+    return (filter.d_ptr->containerFiltersAreEmpty() 
+        && (filter.d_ptr->_field == QMessageFilterPrivate::None)
+        && (filter.d_ptr->_operator == QMessageFilterPrivate::Not));
+}
+
+bool QMessageFilterPrivate::matchesMessage(const QMessageFilter &filter, const QMessage &message)
+{
+    bool negate(false);
+    bool result(true);
+
+    if (!QMessageFilterPrivate::matchesMessageRequired(filter))
+        return true;
+
+    if (!filter.d_ptr->_valid) {
+        qWarning("matchesMessage: Invalid filter application attempted.");
+        return false;
+    }
+
+    if (filter.d_ptr->_options & QMessageDataComparator::FullWord) {
+        // TODO: Document Full word matching is not supported on MAPI
+        qWarning("matchesMessage: Full word matching not supported on MAPI platforms.");
+        return false;
+    }
+
+    switch (filter.d_ptr->_operator) {
+    case QMessageFilterPrivate::Not: // fall through
+    case QMessageFilterPrivate::Nand: // fall through
+    case QMessageFilterPrivate::Nor:
+        negate = true;
+        break;
+    default:
+        break;
+    } //end switch
+
+    switch (filter.d_ptr->_operator) {
+    case QMessageFilterPrivate::And: // fall through
+    case QMessageFilterPrivate::Nand:
+        result = matchesMessage(*filter.d_ptr->_left, message) & matchesMessage(*filter.d_ptr->_left, message);
+        break;
+    case QMessageFilterPrivate::Nor: // fall through
+    case QMessageFilterPrivate::Or:
+        result = matchesMessage(*filter.d_ptr->_left, message) | matchesMessage(*filter.d_ptr->_left, message);
+        break;
+    case QMessageFilterPrivate::Not: // fall through
+    case QMessageFilterPrivate::Identity: {
+        switch (filter.d_ptr->_field) {
+        case QMessageFilterPrivate::None:
+            break;
+        case QMessageFilterPrivate::Recipients: // fall through
+        case QMessageFilterPrivate::Sender: // fall through
+        case QMessageFilterPrivate::Subject: {
+            QString value(filter.d_ptr->_value.toString());
+            QStringList messageStrings;
+            QString tmp;
+            bool caseSensitive(filter.d_ptr->_options & QMessageDataComparator::CaseSensitive);
+            if (!caseSensitive) {
+                value = value.toLower();
+            }
+
+            if (filter.d_ptr->_field == QMessageFilterPrivate::Recipients) {
+                QMessageAddressList addresses(message.to() + message.cc() + message.bcc());
+                foreach(QMessageAddress address, addresses) {
+                    tmp = address.recipient();
+                    if (!caseSensitive) {
+                        tmp = tmp.toLower();
+                    }
+                    messageStrings.append(tmp);
+                }
+            } else if (filter.d_ptr->_field == QMessageFilterPrivate::Sender) {
+                tmp = message.from().recipient();
+                if (!caseSensitive) {
+                    tmp = tmp.toLower();
+                }
+                messageStrings.append(tmp);
+            } else { // Subject
+                tmp = message.subject();
+                if (!caseSensitive) {
+                    tmp = tmp.toLower();
+                }
+                messageStrings.append(tmp);
+            }
+
+            if (filter.d_ptr->_comparatorType == QMessageFilterPrivate::Relation) {
+                qWarning("matchesMessage: Unhandled restriction criteria, comparator type relation");
+                break;
+            } else if (filter.d_ptr->_comparatorType == QMessageFilterPrivate::Equality) {
+                if (static_cast<QMessageDataComparator::EqualityComparator>(filter.d_ptr->_comparatorValue) != QMessageDataComparator::Equal) {
+                    negate = !negate;
+                }
+            } else if (filter.d_ptr->_comparatorType == QMessageFilterPrivate::Inclusion) {
+                if (static_cast<QMessageDataComparator::InclusionComparator>(filter.d_ptr->_comparatorValue) == QMessageDataComparator::Excludes) {
+                    negate = !negate;
+                }
+            } else { // Unknown comparator type
+                qWarning("matchesMessage: Unhandled restriction criteria, string comparator type unknown");
+                break;
+            }
+
+            result = false;
+            foreach(QString str, messageStrings) {
+                if ((filter.d_ptr->_comparatorType == QMessageFilterPrivate::Equality)
+                    && (str == value)) {
+                    result = true;
+                    break;
+                } else if ((filter.d_ptr->_comparatorType == QMessageFilterPrivate::Inclusion)
+                    && (str.contains(value))) {
+                    result = true;
+                    break;
+                }
+            }
+            break;
+        }
+        case QMessageFilterPrivate::TimeStamp: // fall through
+        case QMessageFilterPrivate::ReceptionTimeStamp: {
+            QDateTime value(filter.d_ptr->_value.toDateTime());
+            QDateTime date;
+            if (filter.d_ptr->_field == QMessageFilterPrivate::TimeStamp) {
+                date = message.date();
+            } else { // ReceptionTimeStamp
+                date = message.receivedDate();
+            }
+
+            if (filter.d_ptr->_comparatorType == QMessageFilterPrivate::Relation) {
+                QMessageDataComparator::RelationComparator cmp(static_cast<QMessageDataComparator::RelationComparator>(filter.d_ptr->_comparatorValue));
+                switch (cmp) {
+                case QMessageDataComparator::LessThan:
+                    result = (date < value);
+                    break;
+                case QMessageDataComparator::LessThanEqual:
+                    result = (date <= value);
+                    break;
+                case QMessageDataComparator::GreaterThan:
+                    result = (date > value);
+                    break;
+                case QMessageDataComparator::GreaterThanEqual:
+                    result = (date >= value);
+                    break;
+                }
+            } else if (filter.d_ptr->_comparatorType == QMessageFilterPrivate::Equality) {
+                if (static_cast<QMessageDataComparator::EqualityComparator>(filter.d_ptr->_comparatorValue) != QMessageDataComparator::Equal) {
+                    negate = !negate;
+                }
+                result = (date == value);
+            } else { // Inclusion
+                qWarning("matchesMessage: Unhandled restriction criteria, timestamp comparator type");
+                break;
+            }
+
+            break;
+        }
+        case QMessageFilterPrivate::Priority: {
+            QMessage::Priority priority(static_cast<QMessage::Priority>(filter.d_ptr->_value.toInt()));
+            if (filter.d_ptr->_comparatorType == QMessageFilterPrivate::Equality) {
+                if (static_cast<QMessageDataComparator::EqualityComparator>(filter.d_ptr->_comparatorValue) != QMessageDataComparator::Equal) {
+                    negate = !negate;
+                }
+                result = (message.priority() == priority);
+            } else { // Not equality
+                qWarning("matchesMessage: Unhandled restriction criteria, priority comparator type");
+            }
+            break;
+        }
+        case QMessageFilterPrivate::Size: {
+            int value(filter.d_ptr->_value.toInt());
+            int size(message.size());
+
+            if (filter.d_ptr->_comparatorType == QMessageFilterPrivate::Relation) {
+                QMessageDataComparator::RelationComparator cmp(static_cast<QMessageDataComparator::RelationComparator>(filter.d_ptr->_comparatorValue));
+                switch (cmp) {
+                case QMessageDataComparator::LessThan:
+                    result = (size < value);
+                    break;
+                case QMessageDataComparator::LessThanEqual:
+                    result = (size <= value);
+                    break;
+                case QMessageDataComparator::GreaterThan:
+                    result = (size > value);
+                    break;
+                case QMessageDataComparator::GreaterThanEqual:
+                    result = (size >= value);
+                    break;
+                }
+            } else if (filter.d_ptr->_comparatorType == QMessageFilterPrivate::Equality) {
+                if (static_cast<QMessageDataComparator::EqualityComparator>(filter.d_ptr->_comparatorValue) != QMessageDataComparator::Equal) {
+                    negate = !negate;
+                }
+                result = (size == value);
+            } else { // Inclusion
+                qWarning("matchesMessage: Unhandled restriction criteria, size comparator type");
+                break;
+            }
+
+            break;
+        }
+        case QMessageFilterPrivate::Status: {
+            QMessage::Status value(static_cast<QMessage::Status>(filter.d_ptr->_value.toUInt()));
+            QMessage::StatusFlags statusFlags(message.status());
+
+            if (filter.d_ptr->_comparatorType == QMessageFilterPrivate::Equality) {
+                if (static_cast<QMessageDataComparator::EqualityComparator>(filter.d_ptr->_comparatorValue) != QMessageDataComparator::Equal) {
+                    negate = !negate;
+                }
+                result = (statusFlags == value);
+            } else if (filter.d_ptr->_comparatorType == QMessageFilterPrivate::Inclusion) {
+                if (static_cast<QMessageDataComparator::InclusionComparator>(filter.d_ptr->_comparatorValue) == QMessageDataComparator::Excludes) {
+                    negate = !negate;
+                }
+                result = (statusFlags & value);
+            } else {
+                qWarning("matchesMessage: Unhandled restriction criteria, status comparator type");
+                break;
+            }
+            break;
+        }
+        case QMessageFilterPrivate::Id: {
+            QStringList strIds(filter.d_ptr->_value.toStringList());
+            QMessageId messageId(message.id());
+            QMessageIdList ids;
+            foreach(QString str, strIds) {
+                ids.append(QMessageId(str));
+            }
+            result = ids.contains(messageId);
+            break;
+        }
+        case QMessageFilterPrivate::ParentAccountId: // fall through
+        case QMessageFilterPrivate::Type: // fall through
+        case QMessageFilterPrivate::ParentFolderId: // fall through
+        case QMessageFilterPrivate::AncestorFolderIds: // fall through
+            // These should all be satisfied (and toplevel with complements fully distributed hence no negation)
+            return true;
+            break;
+        }
+    }
+    } //end switch
+
+    if (negate)
+        result = !result;
+    return result;
+}
+
+MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
     :_notRestriction(0),
      _recipientRestriction(0),
      _keyProps(0),
      _restrictions(0),
      _recordKeys(0),
+     _buffer(0),
+     _buffer2(0),
      _valid(false),
      _empty(false),
      _left(0),
      _right(0)
 {
     // TODO: Could refactor this code so that different Operators/Fields each have a separate class, with a separate constructor
-    QMessageFilterPrivate *d_ptr(QMessageFilterPrivate::implementation(filter));
+    QMessageFilter filter;
+    QMessageFilterPrivate *d_ptr(QMessageFilterPrivate::implementation(aFilter));
+
     if (!d_ptr->_valid) {
         qWarning("Invalid filter application ignored.");
         return;
@@ -233,6 +571,38 @@ MapiRestriction::MapiRestriction(const QMessageFilter &filter)
     if (d_ptr->_options & QMessageDataComparator::FullWord) {
         qWarning("Full word matching not supported on MAPI platforms.");
         return;
+    }
+
+    if (!QMessageFilterPrivate::restrictionPermitted(aFilter)) {
+        _valid = true;
+        _empty = true;
+        return;
+    }
+
+    if (d_ptr->_field == QMessageFilterPrivate::Sender) {
+        QString value(d_ptr->_value.toString());
+        switch (d_ptr->_comparatorType) {
+        case QMessageFilterPrivate::Equality: {
+            filter = QMessageFilterPrivate::bySender(value, static_cast<QMessageDataComparator::EqualityComparator>(d_ptr->_comparatorValue));
+            break;
+        }
+        case QMessageFilterPrivate::Inclusion: {
+            filter = QMessageFilterPrivate::bySender(value, static_cast<QMessageDataComparator::InclusionComparator>(d_ptr->_comparatorValue));
+            break;
+        }
+        default: { // Relation
+            qWarning("Unhandled restriction criteria");
+            return;
+        }
+        }
+        if (d_ptr->_operator == QMessageFilterPrivate::Not) {
+            // Can't complement sender restriction
+            qWarning("Unhandled restriction criteria");
+            return;
+        }
+        d_ptr = QMessageFilterPrivate::implementation(filter);
+    } else {
+        filter = aFilter;
     }
 
     if (d_ptr->_operator != QMessageFilterPrivate::Identity) {
@@ -307,7 +677,7 @@ MapiRestriction::MapiRestriction(const QMessageFilter &filter)
     // Identity or Not filter type
 
     // Handle Recipients as a special case
-#if 1
+#if 0 // This MAPI Restriction is producing incorrect results
     if ((d_ptr->_field == QMessageFilterPrivate::RecipientName)
        || (d_ptr->_field == QMessageFilterPrivate::RecipientAddress)) {
 
@@ -336,8 +706,8 @@ MapiRestriction::MapiRestriction(const QMessageFilter &filter)
             _keyProp.ulPropTag = PR_SMTP_ADDRESS;
         }
 
-        QStringToWCharArray(d_ptr->_value.toString(), &d_ptr->_buffer); 
-        _keyProp.Value.LPSZ = d_ptr->_buffer;
+        QStringToWCharArray(d_ptr->_value.toString(), &_buffer); 
+        _keyProp.Value.LPSZ = _buffer;
 
         bool negation(false);
         switch (d_ptr->_comparatorType) {
@@ -394,8 +764,8 @@ MapiRestriction::MapiRestriction(const QMessageFilter &filter)
         }
 
         QString subj(d_ptr->_value.toString());
-        QStringToWCharArray(subj, &d_ptr->_buffer); 
-        _keyProp.Value.LPSZ = d_ptr->_buffer;
+        QStringToWCharArray(subj, &_buffer); 
+        _keyProp.Value.LPSZ = _buffer;
 
         bool negation(false);
         switch (d_ptr->_comparatorType) {
@@ -477,15 +847,6 @@ MapiRestriction::MapiRestriction(const QMessageFilter &filter)
             _keyProp.ulPropTag = PR_CLIENT_SUBMIT_TIME;
             QDateTime dt(d_ptr->_value.toDateTime());
             QDateTimeToFileTime(dt, &_keyProp.Value.ft);
-            _valid = true;
-            break;
-        }
-        case QMessageFilterPrivate::Subject: {
-            _restriction.res.resProperty.ulPropTag = PR_SUBJECT;
-            _keyProp.ulPropTag = PR_SUBJECT;
-            QString subj(d_ptr->_value.toString());
-            QStringToWCharArray(subj, &d_ptr->_buffer);
-            _keyProp.Value.LPSZ = d_ptr->_buffer;
             _valid = true;
             break;
         }
@@ -591,58 +952,6 @@ MapiRestriction::MapiRestriction(const QMessageFilter &filter)
                 return;
             }
         }
-#if 1
-        if (d_ptr->_field == QMessageFilterPrivate::Recipients) {
-            _restriction.rt = RES_SUBRESTRICTION;
-            _restriction.res.resSub.ulSubObject = PR_MESSAGE_RECIPIENTS;
-
-            QString email(d_ptr->_value.toString()); // TODO split the string into name and address
-            QString name; // TODO find name part
-//            name = email; // TODO remove these two lines of debugging code.
-//            email = "";
-            if (name.isEmpty()) {
-                _restriction.res.resSub.lpRes = &_subRestriction[1];
-            } else if (email.isEmpty()) {
-                _restriction.res.resSub.lpRes = &_subRestriction[0];
-            } else {
-                _recipientRestriction = new SRestriction;
-                _recipientRestriction->rt = RES_AND;
-                _recipientRestriction->res.resAnd.cRes = 2;
-                _recipientRestriction->res.resAnd.lpRes = &_subRestriction[0];
-                _restriction.res.resSub.lpRes = _recipientRestriction;
-            }
-
-            // Name
-            _subRestriction[0].rt = RES_CONTENT;
-            if (d_ptr->_options & QMessageDataComparator::FullWord)
-                _subRestriction[0].res.resContent.ulFuzzyLevel = FL_FULLSTRING;
-            else
-                _subRestriction[0].res.resContent.ulFuzzyLevel = FL_SUBSTRING;
-            if ((d_ptr->_options & QMessageDataComparator::CaseSensitive) == 0)
-                _subRestriction[0].res.resContent.ulFuzzyLevel |= FL_IGNORECASE;
-            _subRestriction[0].res.resContent.ulPropTag = PR_DISPLAY_NAME;
-            _subRestriction[0].res.resContent.lpProp = &_keyProp;
-            _keyProp.ulPropTag = PR_DISPLAY_NAME;
-            QStringToWCharArray(name, &d_ptr->_buffer);
-            _keyProp.Value.LPSZ = d_ptr->_buffer;
-
-            // Email
-            _subRestriction[1].rt = RES_CONTENT;
-            if (d_ptr->_options & QMessageDataComparator::FullWord)
-                _subRestriction[1].res.resContent.ulFuzzyLevel = FL_FULLSTRING;
-            else
-                _subRestriction[1].res.resContent.ulFuzzyLevel = FL_SUBSTRING;
-            if ((d_ptr->_options & QMessageDataComparator::CaseSensitive) == 0)
-                _subRestriction[1].res.resContent.ulFuzzyLevel |= FL_IGNORECASE;
-            _subRestriction[1].res.resContent.ulPropTag = PR_SMTP_ADDRESS; // PR_EMAIL_ADDRESS returns unsatisfactory results
-            _subRestriction[1].res.resContent.lpProp = &_keyProp2;
-            _keyProp2.ulPropTag = PR_SMTP_ADDRESS;
-            QStringToWCharArray(email, &d_ptr->_buffer2);
-            _keyProp2.Value.LPSZ = d_ptr->_buffer2;
-            _valid = true;
-            break;
-        }
-#endif
         qWarning("Unhandled restriction criteria");
         break;
     }
@@ -679,6 +988,10 @@ MapiRestriction::~MapiRestriction()
     _left = 0;
     delete _right;
     _right = 0;
+    delete _buffer;
+    _buffer = 0;
+    delete _buffer2;
+    _buffer2 = 0;
 }
 
 SRestriction *MapiRestriction::sRestriction()
@@ -696,23 +1009,35 @@ QMessageFilterPrivate::QMessageFilterPrivate(QMessageFilter *messageFilter)
      _operator(Identity),
      _left(0),
      _right(0),
-     _buffer(0),
-     _buffer2(0),
      _valid(true),
+#ifdef _WIN32_WCE
+     _matchesRequired(true),
+     _restrictionPermitted(false),
+#else
+     _matchesRequired(false),
+     _restrictionPermitted(true),
+#endif
+    _messageFilter(0),
+    _accountFilter(0),
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+    _folderFilter(0),
+#endif
      _complex(false)
 {
 }
 
 QMessageFilterPrivate::~QMessageFilterPrivate()
 {
-    delete _buffer;
-    _buffer = 0;
-    delete _buffer2;
-    _buffer2 = 0;
     delete _left;
     _left = 0;
     delete _right;
     _right = 0;
+    delete _messageFilter;
+    _messageFilter = 0;
+    delete _accountFilter;
+    _accountFilter = 0;
+    delete _folderFilter;
+    _folderFilter = 0;
 }
 
 bool QMessageFilterPrivate::containerFiltersAreEmpty()
@@ -752,8 +1077,16 @@ QMessageFilter QMessageFilterPrivate::nonContainerFiltersPart()
         result.d_ptr->_left = new QMessageFilter(*_left);
     if (_right)
         result.d_ptr->_right = new QMessageFilter(*_right);
-    result.d_ptr->_buffer = 0;
-    result.d_ptr->_buffer2 = 0;
+    result.d_ptr->_matchesRequired = _matchesRequired;
+    result.d_ptr->_restrictionPermitted = _restrictionPermitted;
+    if (_messageFilter)
+        result.d_ptr->_messageFilter = new QMessageFilter(*_messageFilter);
+    if (_accountFilter)
+        result.d_ptr->_accountFilter = new QMessageAccountFilter(*_accountFilter);
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+    if (_folderFilter)
+        result.d_ptr->_folderFilter = new QMessageFolderFilter(*_folderFilter);
+#endif
     result.d_ptr->_valid = _valid;
     result.d_ptr->_complex = _complex;
     return result;
@@ -790,14 +1123,28 @@ QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
     d_ptr->_comparatorType = other.d_ptr->_comparatorType;
     d_ptr->_comparatorValue = other.d_ptr->_comparatorValue;
     d_ptr->_operator = other.d_ptr->_operator;
-    d_ptr->_buffer = 0; // Delay construction of buffer until it is used
-    d_ptr->_buffer2 = 0;
     d_ptr->_valid = other.d_ptr->_valid;
     d_ptr->_standardFoldersInclude = other.d_ptr->_standardFoldersInclude;
     d_ptr->_standardFoldersExclude = other.d_ptr->_standardFoldersExclude;
     d_ptr->_accountsInclude = other.d_ptr->_accountsInclude;
     d_ptr->_accountsExclude = other.d_ptr->_accountsExclude;
     d_ptr->_complex = other.d_ptr->_complex;
+    d_ptr->_matchesRequired = other.d_ptr->_matchesRequired;
+    d_ptr->_restrictionPermitted = other.d_ptr->_restrictionPermitted;
+    delete d_ptr->_messageFilter;
+    d_ptr->_messageFilter = 0;
+    delete d_ptr->_accountFilter;
+    d_ptr->_accountFilter = 0;
+    delete d_ptr->_folderFilter;
+    d_ptr->_folderFilter = 0;
+    if (other.d_ptr->_messageFilter)
+        d_ptr->_messageFilter = new QMessageFilter(*other.d_ptr->_messageFilter);
+    if (other.d_ptr->_accountFilter)
+        d_ptr->_accountFilter = new QMessageAccountFilter(*other.d_ptr->_accountFilter);
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+    if (other.d_ptr->_folderFilter)
+        d_ptr->_folderFilter = new QMessageFolderFilter(*other.d_ptr->_folderFilter);
+#endif
 
     if (other.d_ptr->_left)
         d_ptr->_left = new QMessageFilter(*other.d_ptr->_left);
@@ -812,6 +1159,11 @@ void QMessageFilter::setOptions(QMessageDataComparator::Options options)
     if (d_ptr->_options & QMessageDataComparator::FullWord) {
         qWarning("Full word matching not supported on MAPI platforms.");
         d_ptr->_valid = false;
+    } else {
+        if (d_ptr->_left)
+            d_ptr->_left->setOptions(options);
+        if (d_ptr->_right)
+            d_ptr->_right->setOptions(options);
     }
 }
 
@@ -839,6 +1191,9 @@ QMessageFilter QMessageFilter::operator~() const
         int op = static_cast<int>(d_ptr->_operator) + static_cast<int>(QMessageFilterPrivate::Not);
         op = op % static_cast<int>(QMessageFilterPrivate::OperatorEnd);
         result.d_ptr->_operator = static_cast<QMessageFilterPrivate::Operator>(op);
+        if (QMessageFilterPrivate::containsSenderSubfilter(*this)) {
+            result.d_ptr->_restrictionPermitted = false; // Can't simply complement sender restriction
+        }
     } else if (d_ptr->_complex) {
         // A filter can be in one of two forms, either
         // 1) An account and/or standard folder restriction &'d with a 'native' filter part 
@@ -960,6 +1315,13 @@ const QMessageFilter& QMessageFilter::operator&=(const QMessageFilter& other)
     }
     if (other.isEmpty())
         return *this;
+    if (QMessageFilterPrivate::isNonMatching(*this)) {
+        return *this;
+    }
+    if (QMessageFilterPrivate::isNonMatching(other)) {
+        *this = other;
+        return *this;
+    }
     if (!d_ptr->_valid || !other.d_ptr->_valid) {
         d_ptr->_valid = false;
         return *this;
@@ -975,8 +1337,13 @@ const QMessageFilter& QMessageFilter::operator&=(const QMessageFilter& other)
             result.d_ptr->_standardFoldersInclude = other.d_ptr->_standardFoldersInclude;
         } else {
             result.d_ptr->_standardFoldersInclude = this->d_ptr->_standardFoldersInclude;
-            if (!other.d_ptr->_standardFoldersInclude.isEmpty())
+            if (!other.d_ptr->_standardFoldersInclude.isEmpty()) {
                 result.d_ptr->_standardFoldersInclude &= other.d_ptr->_standardFoldersInclude;
+                if (result.d_ptr->_standardFoldersInclude.isEmpty()) {  // non-matching
+                    *this = ~QMessageFilter();
+                    return *this;
+                }
+            }
         }
         result.d_ptr->_standardFoldersExclude = this->d_ptr->_standardFoldersExclude;
         result.d_ptr->_standardFoldersExclude |= other.d_ptr->_standardFoldersExclude;
@@ -984,8 +1351,13 @@ const QMessageFilter& QMessageFilter::operator&=(const QMessageFilter& other)
             result.d_ptr->_accountsInclude = other.d_ptr->_accountsInclude;
         } else {
             result.d_ptr->_accountsInclude = this->d_ptr->_accountsInclude;
-            if (!other.d_ptr->_accountsInclude.isEmpty())
+            if (!other.d_ptr->_accountsInclude.isEmpty()) {
                 result.d_ptr->_accountsInclude &= other.d_ptr->_accountsInclude;
+                if (result.d_ptr->_accountsInclude.isEmpty()) { // non-matching
+                    *this = ~QMessageFilter();
+                    return *this;
+                }
+            }
         }
         result.d_ptr->_accountsExclude = this->d_ptr->_accountsExclude;
         result.d_ptr->_accountsExclude |= other.d_ptr->_accountsExclude;
@@ -1036,6 +1408,13 @@ const QMessageFilter& QMessageFilter::operator|=(const QMessageFilter& other)
         return *this;
     if (other.isEmpty()) {
         *this = other;
+        return *this;
+    }
+    if (QMessageFilterPrivate::isNonMatching(*this)) {
+        *this = other;
+        return *this;
+    }
+    if (QMessageFilterPrivate::isNonMatching(other)) {
         return *this;
     }
 
@@ -1089,6 +1468,31 @@ bool QMessageFilter::operator==(const QMessageFilter& other) const
 
     if (other.d_ptr->_operator != d_ptr->_operator)
         return false;
+
+    if (other.d_ptr->_matchesRequired != d_ptr->_matchesRequired)
+        return false;
+    if (other.d_ptr->_restrictionPermitted != d_ptr->_restrictionPermitted)
+        return false;
+    if (other.d_ptr->_messageFilter || d_ptr->_messageFilter) {
+        if (!other.d_ptr->_messageFilter
+            || !d_ptr->_messageFilter
+            || !(*other.d_ptr->_messageFilter == *d_ptr->_messageFilter))
+            return false;
+    }
+    if (other.d_ptr->_accountFilter || d_ptr->_accountFilter) {
+        if (!other.d_ptr->_accountFilter
+            || !d_ptr->_accountFilter
+            || !(*other.d_ptr->_accountFilter == *d_ptr->_accountFilter))
+            return false;
+    }
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+    if (other.d_ptr->_folderFilter || d_ptr->_folderFilter) {
+        if (!other.d_ptr->_folderFilter
+            || !d_ptr->_folderFilter
+            || !(*other.d_ptr->_folderFilter == *d_ptr->_folderFilter))
+            return false;
+    }
+#endif
 
     if (d_ptr->_operator == QMessageFilterPrivate::Identity) {
         if (other.d_ptr->_operator != QMessageFilterPrivate::Identity)
@@ -1159,32 +1563,62 @@ QMessageFilter QMessageFilter::byId(const QMessageIdList &ids, QMessageDataCompa
 
 QMessageFilter QMessageFilter::byId(const QMessageFilter &filter, QMessageDataComparator::InclusionComparator cmp)
 {
-    // Not implemented
-    Q_UNUSED(filter)
-    Q_UNUSED(cmp)
-    QMessageFilter result; // stub
-    result.d_ptr->_valid = false; // Will require synchronous filter evaluation
+    QMessageFilter result;
+    result.d_ptr->_field = QMessageFilterPrivate::MessageFilter;
+    result.d_ptr->_messageFilter = new QMessageFilter(filter);
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
     return result;
 }
 
+// For the type filters the assumption is made that there is one store, default SMS store (QMessageAccount) that contains
+//  only SMS messages, and all other stores (QMessageAccounts) contain only email messages.
 QMessageFilter QMessageFilter::byType(QMessage::Type type, QMessageDataComparator::EqualityComparator cmp)
 {
-    // Not implemented
-    QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::Type, QVariant(type), cmp)); // stub
-    result.d_ptr->_valid = false; // Not natively implementable
-    return result;
+    if (cmp == QMessageDataComparator::Equal)
+        return QMessageFilter::byType(type, QMessageDataComparator::Includes);
+    return QMessageFilter::byType(type, QMessageDataComparator::Excludes);
 }
 
-QMessageFilter QMessageFilter::byType(QMessage::TypeFlags type, QMessageDataComparator::InclusionComparator cmp)
+QMessageFilter QMessageFilter::byType(QMessage::TypeFlags aType, QMessageDataComparator::InclusionComparator cmp)
 {
-    // Not implemented
-    QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::Type, QVariant(type), cmp)); // stub
-    result.d_ptr->_valid = false; // Not natively implementable
-    return result;
+    QMessage::TypeFlags type(aType & (QMessage::Sms | QMessage::Email)); // strip Mms, Xmpp
+    if (type == QMessage::Sms) {
+        if (cmp == QMessageDataComparator::Includes) {
+            return QMessageFilter::byParentAccountId(QMessageAccount::defaultAccount(QMessage::Sms), QMessageDataComparator::Equal);
+        } else {
+            return QMessageFilter::byParentAccountId(QMessageAccount::defaultAccount(QMessage::Sms), QMessageDataComparator::NotEqual);
+        }
+    }
+    if (type == QMessage::Email) {
+        if (cmp == QMessageDataComparator::Includes) {
+            return QMessageFilter::byParentAccountId(QMessageAccount::defaultAccount(QMessage::Sms), QMessageDataComparator::NotEqual);
+        } else {
+            return QMessageFilter::byParentAccountId(QMessageAccount::defaultAccount(QMessage::Sms), QMessageDataComparator::Equal);
+        }
+    }
+    if (type == (QMessage::Sms | QMessage::Email)) {
+        if (cmp == QMessageDataComparator::Includes)
+            return QMessageFilter(); // inclusion, match all
+        return ~QMessageFilter(); // exclusion, match none
+    }
+    // Mms/Xmpp only
+    if (cmp == QMessageDataComparator::Includes)
+        return ~QMessageFilter(); // mms only inclusion, match none
+    return QMessageFilter(); // mms only exclusion, match all
 }
 
 QMessageFilter QMessageFilter::bySender(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
+    QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::Sender, QVariant(value), cmp));
+    if (cmp != QMessageDataComparator::Equal)
+        result.d_ptr->_restrictionPermitted = false;
+    result.d_ptr->_matchesRequired = true;
+    return result;
+}
+
+QMessageFilter QMessageFilterPrivate::bySender(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+{
+    // Note: An additional matchesMessages check is reqruired, this rule is too liberal and results in a superset or the correct result set being returned
     QString sender(value);
     QString name;
     QString address;
@@ -1192,8 +1626,10 @@ QMessageFilter QMessageFilter::bySender(const QString &value, QMessageDataCompar
     bool startDelimeterFound;
     QMessageAddress::parseEmailAddress(sender, &name, &address, &suffix, &startDelimeterFound);
     if (startDelimeterFound) {
-        QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::SenderName, QVariant(name), QMessageDataComparator::Equal));
-        result &= QMessageFilterPrivate::from(QMessageFilterPrivate::SenderAddress, QVariant(address), QMessageDataComparator::Equal);
+        QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::SenderAddress, QVariant(address), QMessageDataComparator::Equal));
+        // An exact match requires a Suffix comparision (which is not supported by MAPI) rather than just an Includes
+        // Furthermore this seems to trigger some kind of MAPI restriction bug, results are being missed, so comment out for now
+        // result &= QMessageFilterPrivate::from(QMessageFilterPrivate::SenderName, QVariant(name), QMessageDataComparator::Equal);
         if (cmp == QMessageDataComparator::Equal) {
             return result;
         } else {
@@ -1202,9 +1638,11 @@ QMessageFilter QMessageFilter::bySender(const QString &value, QMessageDataCompar
     } else {
         // value could be name or address, both are set by parseEmailAddress to the same value
         QMessageFilter result1(QMessageFilterPrivate::from(QMessageFilterPrivate::SenderName, QVariant(name), QMessageDataComparator::Equal));
-        result1 &= QMessageFilterPrivate::from(QMessageFilterPrivate::SenderAddress, QVariant(""), QMessageDataComparator::Equal);
+        // Seems to trigger some kind of MAPI restriction bug, results are being missed, so comment out for now
+        //result1 &= QMessageFilterPrivate::from(QMessageFilterPrivate::SenderAddress, QVariant(""), QMessageDataComparator::Equal);
         QMessageFilter result2(QMessageFilterPrivate::from(QMessageFilterPrivate::SenderName, QVariant(""), QMessageDataComparator::Equal));
-        result2 &= QMessageFilterPrivate::from(QMessageFilterPrivate::SenderAddress, QVariant(address), QMessageDataComparator::Equal);
+        // Seems to trigger some kind of MAPI restriction bug, results are being missed, so comment out for now
+        //result2 &= QMessageFilterPrivate::from(QMessageFilterPrivate::SenderAddress, QVariant(address), QMessageDataComparator::Equal);
         if (cmp == QMessageDataComparator::Equal) {
             return result1 | result2;
         } else {
@@ -1215,6 +1653,16 @@ QMessageFilter QMessageFilter::bySender(const QString &value, QMessageDataCompar
 
 QMessageFilter QMessageFilter::bySender(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
+    QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::Sender, QVariant(value), cmp));
+    result.d_ptr->_matchesRequired = true;
+    if (cmp != QMessageDataComparator::Includes)
+        result.d_ptr->_restrictionPermitted = false;
+    return result;
+}
+
+QMessageFilter QMessageFilterPrivate::bySender(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+{
+    // Note: An additional matchesMessages check is reqruired, this rule is too liberal and results in a superset or the correct result set being returned
     if (value.isEmpty()) {
         if (cmp == QMessageDataComparator::Includes)
             return QMessageFilter();
@@ -1237,10 +1685,9 @@ QMessageFilter QMessageFilter::bySender(const QString &value, QMessageDataCompar
             result &= QMessageFilterPrivate::from(QMessageFilterPrivate::SenderAddress, QVariant(address), QMessageDataComparator::Includes);
         }
 
-        // Need additional matches check, this should be a Suffix comparision rather than just an Includes
-        // Futhermore this seems to trigger some kind of MAPI bug, results are being missed, 
-        // so comment out for now, TODO need matches function for desktop as well as mobile
-        result &= QMessageFilterPrivate::from(QMessageFilterPrivate::SenderName, QVariant(name), QMessageDataComparator::Includes);
+        // An exact match requires a Suffix comparision (which is not supported by MAPI) rather than just an Includes
+        // Furthermore this seems to trigger some kind of MAPI restriction bug, results are being missed, so comment out for now
+        // result &= QMessageFilterPrivate::from(QMessageFilterPrivate::SenderName, QVariant(name), QMessageDataComparator::Includes);
 
         if (cmp == QMessageDataComparator::Includes) {
             return result;
@@ -1260,22 +1707,27 @@ QMessageFilter QMessageFilter::bySender(const QString &value, QMessageDataCompar
 
 QMessageFilter QMessageFilter::byRecipients(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
+    QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::Recipients, QVariant(value), cmp));
+    // Can't evaluate recipients filter using native MAPI restriction
+    result.d_ptr->_restrictionPermitted = false;
+    result.d_ptr->_matchesRequired = true;
+    return result;
+
+    // Unable to get sensible results yet from code path below
+#if 0
     if (value.isEmpty()) {
         if (cmp == QMessageDataComparator::Includes)
             return QMessageFilter();
         return ~QMessageFilter();
     }
-    // Unable to get sensible results yet from either code path below
-#if 1
-    return QMessageFilterPrivate::from(QMessageFilterPrivate::Recipients, QVariant(value), cmp);
-#else
-    QString sender(value);
+
+    QString recipient(value);
     QString name;
     QString address;
     QString suffix;
     bool startDelimeterFound;
     bool endDelimeterFound;
-    QMessageAddress::parseEmailAddress(sender, &name, &address, &suffix, &startDelimeterFound, &endDelimeterFound);
+    QMessageAddress::parseEmailAddress(recipient, &name, &address, &suffix, &startDelimeterFound, &endDelimeterFound);
     if (startDelimeterFound) {
 
         QMessageFilter result;
@@ -1396,12 +1848,10 @@ QMessageFilter QMessageFilter::byParentAccountId(const QMessageAccountId &id, QM
 
 QMessageFilter QMessageFilter::byParentAccountId(const QMessageAccountFilter &filter, QMessageDataComparator::InclusionComparator cmp)
 {
-    // Not implemented
-    Q_UNUSED(filter)
-    Q_UNUSED(cmp)
-    QMessageFilter result; // stub
-    // Not natively implementable?
-    result.d_ptr->_valid = false;
+    QMessageFilter result;
+    result.d_ptr->_field = QMessageFilterPrivate::AccountFilter;
+    result.d_ptr->_accountFilter = new QMessageAccountFilter(filter);
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
     return result;
 }
 
@@ -1412,7 +1862,6 @@ QMessageFilter QMessageFilter::byStandardFolder(QMessage::StandardFolder folder,
         result.d_ptr->_standardFoldersInclude += folder;
     else
         result.d_ptr->_standardFoldersExclude += folder;
-    result.d_ptr->_valid = false; // TODO testing.
     return result;
 }
 
@@ -1421,18 +1870,18 @@ QMessageFilter QMessageFilter::byParentFolderId(const QMessageFolderId &id, QMes
 {
     // Not implemented
     QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::ParentFolderId, QVariant(id.toString()), cmp)); // stub
-    // Not natively implementable?
+    // Not natively implementable?, TODO
     result.d_ptr->_valid = false;
     return result;
 }
 
 QMessageFilter QMessageFilter::byParentFolderId(const QMessageFolderFilter &filter, QMessageDataComparator::InclusionComparator cmp)
 {
-    // Not implemented
-    Q_UNUSED(filter)
-    Q_UNUSED(cmp)
-    QMessageFilter result; // stub
-    // Not natively implementable?
+    QMessageFilter result;
+    result.d_ptr->_field = QMessageFilterPrivate::FolderFilter;
+    result.d_ptr->_folderFilter = new QMessageFolderFilter(filter);
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
+    // Not implemented, TODO
     result.d_ptr->_valid = false;
     return result;
 }
@@ -1441,18 +1890,18 @@ QMessageFilter QMessageFilter::byAncestorFolderIds(const QMessageFolderId &id, Q
 {
     // Not implemented
     QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::AncestorFolderIds, QVariant(id.toString()), cmp));
-    // Not natively implementable?
+    // Not natively implementable?, TODO
     result.d_ptr->_valid = false;
     return result;
 }
 
 QMessageFilter QMessageFilter::byAncestorFolderIds(const QMessageFolderFilter &filter, QMessageDataComparator::InclusionComparator cmp)
 {
-    // Not implemented
-    Q_UNUSED(filter)
-    Q_UNUSED(cmp)
-    QMessageFilter result; // stub
-    // Not natively implementable?
+    QMessageFilter result;
+    result.d_ptr->_field = QMessageFilterPrivate::AncestorFilter;
+    result.d_ptr->_folderFilter = new QMessageFolderFilter(filter);
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
+    // Not implemented, TODO
     result.d_ptr->_valid = false;
     return result;
 }

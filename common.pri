@@ -111,12 +111,17 @@ wince* {
     # Plugins
     CONTACTS_PLUGINS_DEPLOYMENT.sources = $$OUTPUT_DIR/plugins/contacts/*.dll
     CONTACTS_PLUGINS_DEPLOYMENT.path = plugins/contacts
-
     DEPLOYMENT += CONTACTS_DEPLOYMENT CONTACTS_PLUGINS_DEPLOYMENT
-    
-    SFW_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/$$mobilityDeployFilename(QtServiceFramework).dll
+
+    ### Service Framework    
+    SFW_DEPLOYMENT.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtServiceFramework).dll
     SFW_DEPLOYMENT.path = .
     DEPLOYMENT += SFW_DEPLOYMENT
+    
+    ### Location
+    LOCATION.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtLocation).dll
+    LOCATION.path = .
+    DEPLOYMENT += LOCATION
 }
 
 symbian {

@@ -13,7 +13,7 @@ SUBDIRS += databasemanager \                #service framework
 
 SUBDIRS += qnetworkconfigmanager \          #Bearer management
            qnetworkconfiguration \
-           qnetworksession \
+           qnetworksession
 
 SUBDIRS += qgeocoordinate \                 #Location
           qgeopositioninfo \
@@ -22,8 +22,11 @@ SUBDIRS += qgeocoordinate \                 #Location
           qgeopositioninfosource \
           qgeoareamonitor \
           qlocationutils \
-          qnmeapositioninfosource 
-symbian:SUBDIRS += qgeopositioninfosource_s60 
+          qnmeapositioninfosource
+
+wince* {
+    SUBDIRS += qgeoinfosources_wince
+}
 
 SUBDIRS += qvaluespace \                           #Publish and Subscribe
            qvaluespaceprovider \
