@@ -68,7 +68,7 @@ private:
 
 template <typename T> const char *qmediacontrol_iid() { return 0; }
 
-#define Q_MEDIA_DECLARE_CONTROL(IFace, IId) \
-    template <> inline const char *qmediacontrol_iid<IFace *>() { return IId; }
+#define Q_MEDIA_DECLARE_CONTROL(Class, IId) \
+    template <> inline const char *qmediacontrol_iid<Class *>() { return IId; }
 
 #endif  // QABSTRACTMEDIACONTROL_H
