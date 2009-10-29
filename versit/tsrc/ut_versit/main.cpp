@@ -56,11 +56,11 @@ int main(int /*argc*/, char** /*argv[]*/)
 {
     printf("Running tests...\n");
     TestResultXmlParser parser;
-    QStringList args("ut_versit");
-    args << "-xml" << "-o";
+    QStringList args(QString::fromAscii("ut_versit"));
+    args << QString::fromAscii("-xml") << QString::fromAscii("-o");
 
     UT_QVersitContactGenerator ut_versitContactGenerator;
-    QString resultFileName = "c:/ut_versitContactGenerator.xml";
+    QString resultFileName = QString::fromAscii("c:/ut_versitContactGenerator.xml");
     args << resultFileName;
     QTest::qExec(&ut_versitContactGenerator, args);
     parser.parseAndPrintResults(resultFileName);

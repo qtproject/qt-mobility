@@ -107,6 +107,7 @@ QList<TUid> CntTransformGender::supportedSortingFieldTypes(QString detailFieldNa
  */
 bool CntTransformGender::supportsSubType(const QString& subType) const
 {
+    Q_UNUSED(subType);
     return false;
 }
 
@@ -118,7 +119,16 @@ bool CntTransformGender::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformGender::getIdForField(const QString& fieldName) const
 {
-    return 0;
+if (QContactGender::FieldGender == fieldName)
+        return KUidContactFieldGender.iUid;
+    else if (QContactGender::GenderMale == fieldName)
+        return 0;
+    else if (QContactGender::GenderFemale == fieldName)
+        return 0;
+    else if (QContactGender::GenderUnspecified == fieldName)
+        return 0;
+    else 
+        return 0;
 }
 
 /*!

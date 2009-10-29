@@ -49,37 +49,12 @@ CntAbstractRelationship::CntAbstractRelationship(CContactDatabase* contactDataba
 CntAbstractRelationship::~CntAbstractRelationship()
 {}
 
+QString CntAbstractRelationship::relationshipType() const 
+{
+    return m_relationshipType;
+}
+
 CContactDatabase* CntAbstractRelationship::database()
 {
     return m_contactDatabase;
-}
-
-QList<QContactRelationship> CntAbstractRelationship::relationshipsL(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error)
-{
-    Q_UNUSED(participantId);
-    Q_UNUSED(role);
-    
-    error = QContactManager::NotSupportedError;
-
-    QList<QContactRelationship> relationships;
-    return relationships;
-}
-
-
-bool CntAbstractRelationship::saveRelationshipL(QSet<QContactLocalId> *affectedContactIds, QContactRelationship* relationship, QContactManager::Error& error)
-{
-    Q_UNUSED(affectedContactIds);
-    Q_UNUSED(relationship);
-    
-    error = QContactManager::NotSupportedError;
-    return false;
-}
-
-bool CntAbstractRelationship::removeRelationshipL(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship& relationship, QContactManager::Error& error)
-{
-    Q_UNUSED(affectedContactIds);
-    Q_UNUSED(relationship);
-    
-    error = QContactManager::NotSupportedError;
-    return false;
 }

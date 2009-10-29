@@ -38,67 +38,66 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "cnttransformsynctarget.h"
-#include "cntmodelextuids.h"
+#include "CntTransformAnniversarySimple.h"
 
-QList<CContactItemField *> CntTransformSyncTarget::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformAnniversarySimple::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList;
+    QList<CContactItemField *> fieldList;
 
-	//cast to sync target
-	const QContactSyncTarget &syncTarget(static_cast<const QContactSyncTarget&>(detail));
+    //cast to anniversary
+    const QContactAnniversary &anniversary(static_cast<const QContactAnniversary&>(detail));
 
-	//create new field
-	TPtrC fieldText(reinterpret_cast<const TUint16*>(syncTarget.syncTarget().utf16()));
-	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldSyncTarget);
- 	newField->TextStorage()->SetTextL(fieldText);
-	newField->SetMapping(KUidContactFieldVCardMapUnknown);
+    //create new field
+    TDateTime dateTime(anniversary.originalDate().year(),
+            TMonth(anniversary.originalDate().month() - 1),
+            anniversary.originalDate().day() - 1, 0, 0, 0, 0);
+    CContactItemField* newField = CContactItemField::NewLC(KStorageTypeDateTime, KUidContactFieldAnniversary);
+    newField->DateTimeStorage()->SetTime(dateTime);
+    newField->SetMapping(KUidContactFieldVCardMapAnniversary);
 
-	fieldList.append(newField);
-	CleanupStack::Pop(newField);
+    fieldList.append(newField);
+    CleanupStack::Pop(newField);
 
-	return fieldList;
+    return fieldList;
 }
 
-QContactDetail *CntTransformSyncTarget::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformAnniversarySimple::transformItemField(const CContactItemField& field, const QContact &contact)
 {
-	Q_UNUSED(contact);
+    Q_UNUSED(contact);
 
-	QContactSyncTarget *syncTarget = new QContactSyncTarget();
+    QContactAnniversary *anniversary = new QContactAnniversary();
 
-	CContactTextField* storage = field.TextStorage();
-	QString syncTargetString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
+    CContactDateField* storage = field.DateTimeStorage();
+    TTime time(storage->Time());
+    QDate qDate(time.DateTime().Year(), time.DateTime().Month() + 1, time.DateTime().Day() + 1);
+    anniversary->setOriginalDate(qDate);
 
-	syncTarget->setSyncTarget(syncTargetString);
-	return syncTarget;
+    return anniversary;
 }
 
-bool CntTransformSyncTarget::supportsField(TUint32 fieldType) const
+bool CntTransformAnniversarySimple::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
-    if (fieldType == KUidContactFieldSyncTarget.iUid) {
+    if (fieldType == KUidContactFieldAnniversary.iUid) {
         ret = true;
     }
     return ret;
 }
 
-bool CntTransformSyncTarget::supportsDetail(QString detailName) const
+bool CntTransformAnniversarySimple::supportsDetail(QString detailName) const
 {
     bool ret = false;
-    if (detailName == QContactSyncTarget::DefinitionName) {
+    if (detailName == QContactAnniversary::DefinitionName) {
         ret = true;
     }
     return ret;
 }
 
-QList<TUid> CntTransformSyncTarget::supportedSortingFieldTypes(QString detailFieldName) const
+QList<TUid> CntTransformAnniversarySimple::supportedSortingFieldTypes(QString /*detailFieldName*/) const
 {
-    QList<TUid> uids;
-    if (detailFieldName == QContactSyncTarget::FieldSyncTarget)
-        uids << KUidContactFieldSyncTarget;
-    return uids;
+    // Sorting not supported
+    return QList<TUid>();
 }
-
 
 /*!
  * Checks whether the subtype is supported
@@ -106,9 +105,8 @@ QList<TUid> CntTransformSyncTarget::supportedSortingFieldTypes(QString detailFie
  * \a subType The subtype to be checked
  * \return True if this subtype is supported
  */
-bool CntTransformSyncTarget::supportsSubType(const QString& subType) const
+bool CntTransformAnniversarySimple::supportsSubType(const QString& subType) const
 {
-	  Q_UNUSED(subType);
     return false;
 }
 
@@ -118,12 +116,9 @@ bool CntTransformSyncTarget::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported
  */
-quint32 CntTransformSyncTarget::getIdForField(const QString& fieldName) const
+quint32 CntTransformAnniversarySimple::getIdForField(const QString& fieldName) const
 {
-    if (QContactSyncTarget::FieldSyncTarget == fieldName)
-        return KUidContactFieldSyncTarget.iUid;
-    else 
-        return 0;
+    return 0;
 }
 
 /*!
@@ -131,20 +126,19 @@ quint32 CntTransformSyncTarget::getIdForField(const QString& fieldName) const
  *
  * \a definitions On return, the supported detail definitions have been added.
  */
-void CntTransformSyncTarget::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformAnniversarySimple::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
     QMap<QString, QContactDetailDefinition::Field> fields;
     QContactDetailDefinition::Field f;
     QContactDetailDefinition d;
 
-    d.setName(QContactSyncTarget::DefinitionName);
-    f.dataType = QVariant::String;
-    f.allowableValues << QString("private") << QString("public") << QString("none");
-    fields.insert(QContactSyncTarget::FieldSyncTarget, f);
+    d.setName(QContactAnniversary::DefinitionName);
+    f.dataType = QVariant::Date;
+    f.allowableValues = QVariantList();
+    fields.insert(QContactAnniversary::FieldOriginalDate, f);
 
     d.setFields(fields);
     d.setUnique(true);
     d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-
     definitions.insert(d.name(), d);
 }

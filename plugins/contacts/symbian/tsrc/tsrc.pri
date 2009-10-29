@@ -16,6 +16,7 @@ SYMBIAN_HEADERS += \
         ../../inc/cnttransformsynctarget.h \
         ../../inc/cnttransformgender.h \
         ../../inc/cnttransformanniversary.h \
+        ../../inc/cnttransformanniversarysimple.h \
         ../../inc/cnttransformgeolocation.h \
         ../../inc/cnttransformnote.h \
         ../../inc/cnttransformfamily.h \
@@ -47,6 +48,7 @@ SYMBIAN_SOURCES += \
         ../../src/cnttransformavatar.cpp \
         ../../src/cnttransformsynctarget.cpp \
         ../../src/cnttransformgender.cpp \
+        ../../src/cnttransformanniversarysimple.cpp \
         ../../src/cnttransformanniversary.cpp \
         ../../src/cnttransformgeolocation.cpp \
         ../../src/cnttransformnote.cpp \

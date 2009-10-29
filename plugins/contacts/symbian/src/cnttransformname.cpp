@@ -188,6 +188,7 @@ QList<TUid> CntTransformName::supportedSortingFieldTypes(QString detailFieldName
  */
 bool CntTransformName::supportsSubType(const QString& subType) const
 {
+    Q_UNUSED(subType);
     return false;
 }
 
@@ -199,7 +200,18 @@ bool CntTransformName::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformName::getIdForField(const QString& fieldName) const
 {
-    return 0;
+    if (QContactName::FieldPrefix == fieldName)
+        return KUidContactFieldPrefixName.iUid;
+    else if (QContactName::FieldFirst == fieldName)
+        return KUidContactFieldGivenName.iUid;
+    else if (QContactName::FieldMiddle == fieldName)
+        return KUidContactFieldAdditionalName.iUid;
+    else if (QContactName::FieldLast == fieldName)
+        return KUidContactFieldFamilyName.iUid;
+    else if (QContactName::FieldSuffix == fieldName)
+        return KUidContactFieldSuffixName.iUid;
+    else 
+        return 0;
 }
 
 /*!

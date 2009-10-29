@@ -203,6 +203,10 @@ void  CntSymbianFilterSqlHelper::updateSqlQueryForSingleFilter( const QContactFi
                        error = QContactManager::NotSupportedError;
                        break;
     };
+    if( error != QContactManager::NoError)
+        {
+        sqlQuery = "";
+        }
 }
 
 /*!
@@ -227,9 +231,11 @@ void CntSymbianFilterSqlHelper::updateSqlQueryForDetailFilter(const QContactFilt
         // Id supported, get the corresponding column name 
         QString sqlDbTableColumnName;
         convertFieldIdToSqlDbColumnName(fieldId,sqlDbTableColumnName );
-        if(isSubType) {
+        if(sqlDbTableColumnName == "") {
+        error = QContactManager::NotSupportedError;
+        } else if(isSubType) {
             sqlQuery += sqlDbTableColumnName;
-            sqlQuery += " not NULL ";
+            sqlQuery += " NOT NULL ";
         } else {
             //Get the value and update it to the query
             sqlQuery += "'";
@@ -256,41 +262,6 @@ void CntSymbianFilterSqlHelper::updateSqlQueryForDetailFilter(const QContactFilt
 
 }
 
-/*!
- * Initilize the transform classes and use them for getting the 
- * supported field ids 
- */
-void CntSymbianFilterSqlHelper::initializeCntTransformContactData()
-{
-
-/*
-    //These can be added to normal list, if we loop through it.
-    m_transformContactData.insert(Name, new CntTransformName);
-    m_transformContactData.insert(Nickname, new CntTransformNickname);
-    m_transformContactData.insert(PhoneNumber, new CntTransformPhoneNumber);
-    m_transformContactData.insert(EmailAddress, new CntTransformEmail);
-    m_transformContactData.insert(Address, new CntTransformAddress);
-    m_transformContactData.insert(URL, new CntTransformUrl);
-    m_transformContactData.insert(Birthday, new CntTransformBirthday);
-    m_transformContactData.insert(OnlineAccount, new CntTransformOnlineAccount);
-    m_transformContactData.insert(Organisation, new CntTransformOrganisation);
-    m_transformContactData.insert(Avatar, new CntTransformAvatar);
-    m_transformContactData.insert(SyncTarget, new CntTransformSyncTarget);
-    m_transformContactData.insert(Gender, new CntTransformGender);
-    m_transformContactData.insert(Anniversary, new CntTransformAnniversary);
-    m_transformContactData.insert(Geolocation, new CntTransformGeolocation);
-    */
-}
-
-/*!
- * Create mapping between database columns and field ids .
- */
-void  CntSymbianFilterSqlHelper::createDatabaseColumnMap()
-{
-
-    initializeCntTransformContactData();
-
-}
 
 /*!
  * Converts filed id to column name of the database table.
@@ -304,8 +275,18 @@ void CntSymbianFilterSqlHelper::convertFieldIdToSqlDbColumnName(const quint32 fi
 {
     if(fieldId == KUidContactFieldGivenName.iUid) {
         sqlDbTableColumnName += "first_name";
-    } else {
+    } else if (fieldId == KUidContactFieldGivenNamePronunciation.iUid){
+        sqlDbTableColumnName += "firstname_prn";
+    } else if (fieldId == KUidContactFieldFamilyName.iUid){
         sqlDbTableColumnName += "last_name";
+    }else if (fieldId == KUidContactFieldFamilyNamePronunciation.iUid){
+        sqlDbTableColumnName += "lastname_prn";
+    } else if (fieldId == KUidContactFieldCompanyName.iUid){
+        sqlDbTableColumnName += "company_name";
+    }else if (fieldId == KUidContactFieldCompanyNamePronunciation.iUid){
+        sqlDbTableColumnName += "companyname_prn";
+    }else{
+        sqlDbTableColumnName += "";       
     }
 }
 

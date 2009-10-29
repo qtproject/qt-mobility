@@ -67,8 +67,8 @@ const TInt KDefaultMatchLength(7);
 
 QContactSymbianFilter::QContactSymbianFilter(CContactDatabase& contactDatabase):
     m_contactDatabase(contactDatabase),
-    m_transformContact(0),
-    m_contactSorter(0)
+    m_contactSorter(0),
+    m_transformContact(0)
 {
     // TODO: take CntTransformContact ref as a parameter?
     m_transformContact = new CntTransformContact;

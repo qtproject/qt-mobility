@@ -154,6 +154,7 @@ QList<TUid> CntTransformGeolocation::supportedSortingFieldTypes(QString /*detail
  */
 bool CntTransformGeolocation::supportsSubType(const QString& subType) const
 {
+		Q_UNUSED(subType);
     return false;
 }
 
@@ -165,7 +166,27 @@ bool CntTransformGeolocation::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformGeolocation::getIdForField(const QString& fieldName) const
 {
-    return 0;
+ if (QContactGeolocation::FieldLabel  == fieldName)
+        return 0;
+    else if (QContactGeolocation::FieldLatitude == fieldName)
+        return 0;
+    else if (QContactGeolocation::FieldLongitude == fieldName)
+        return 0;
+    else if (QContactGeolocation::FieldAccuracy == fieldName)
+        return 0;
+    else if (QContactGeolocation::FieldAltitude == fieldName)
+        return 0;
+    else if (QContactGeolocation::FieldAltitudeAccuracy == fieldName)
+        return 0;
+    else if (QContactGeolocation::FieldHeading == fieldName)
+        return 0;
+    else if (QContactGeolocation::FieldSpeed == fieldName)
+        return 0;
+    else if (QContactGeolocation::FieldTimestamp == fieldName)
+        return 0;
+    else 
+        return 0;
+
 }
 
 /*!

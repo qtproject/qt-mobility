@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,29 +38,22 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef TRANSFORMANNIVERSARYSIMPLE_H
+#define TRANSFORMANNIVERSARYSIMPLE_H
 
-#ifndef CNTRELATIONSHIPGROUP_H
-#define CNTRELATIONSHIPGROUP_H
+#include "cnttransformcontactdata.h"
 
-#include "cntabstractrelationship.h"
-#include <qtcontacts.h>
-
-class CntRelationshipGroup: public CntAbstractRelationship
+class CntTransformAnniversarySimple : public CntTransformContactData
 {
-public: 
-    CntRelationshipGroup(CContactDatabase* contactDatabase);
-    virtual ~CntRelationshipGroup();
-
-public:
-    QList<QContactRelationship> relationshipsL(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error);
-    bool saveRelationshipL(QSet<QContactLocalId> *affectedContactIds, QContactRelationship* relationship, QContactManager::Error& error);
-    bool removeRelationshipL(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship& relationship, QContactManager::Error& error);
-    
-    
-private:
-    void isGroupMemberL(const CContactItem* contactItem, const TContactItemId groupId) const;
-    void fetchGroupMembersL(const QContactId& participantId, QList<QContactRelationship> *relationships);
-    void fetchMemberOfGroupsL(const QContactId& participantId, QList<QContactRelationship> *relationships);
+protected:
+	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
+	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
+	bool supportsField(TUint32 fieldType) const;
+	bool supportsDetail(QString detailName) const;
+	QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const;
+    bool supportsSubType(const QString& subType) const;
+    quint32 getIdForField(const QString& fieldName) const;
+    void detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const;
 };
 
 #endif

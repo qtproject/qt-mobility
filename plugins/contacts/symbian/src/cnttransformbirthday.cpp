@@ -108,6 +108,7 @@ QList<TUid> CntTransformBirthday::supportedSortingFieldTypes(QString detailField
  */
 bool CntTransformBirthday::supportsSubType(const QString& subType) const
 {
+    Q_UNUSED(subType);
     return false;
 }
 
@@ -119,7 +120,10 @@ bool CntTransformBirthday::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformBirthday::getIdForField(const QString& fieldName) const
 {
-    return 0;
+    if (QContactBirthday::FieldBirthday == fieldName)
+        return KUidContactFieldBirthday.iUid;
+    else 
+        return 0;
 }
 
 /*!

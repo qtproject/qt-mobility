@@ -178,6 +178,7 @@ QList<TUid> CntTransformOnlineAccount::supportedSortingFieldTypes(QString detail
  */
 bool CntTransformOnlineAccount::supportsSubType(const QString& subType) const
 {
+    Q_UNUSED(subType);
     return false;
 }
 
@@ -189,7 +190,20 @@ bool CntTransformOnlineAccount::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformOnlineAccount::getIdForField(const QString& fieldName) const
 {
-    return 0;
+    if (QContactOnlineAccount::FieldAccountUri  == fieldName)
+        return 0;
+    else if (QContactOnlineAccount::SubTypeSip == fieldName)
+        return KUidContactFieldSIPID.iUid;
+    else if (QContactOnlineAccount::SubTypeH323 == fieldName)
+        return 0;
+    else if (QContactOnlineAccount::SubTypeXmpp == fieldName)
+        return KUidContactFieldIMPP.iUid;
+    else if (QContactOnlineAccount::SubTypeInternet == fieldName)
+        return 0;
+    else if (QContactOnlineAccount::SubTypeShareVideo == fieldName)
+        return 0;
+    else 
+        return 0;
 }
 
 /*!
@@ -206,11 +220,8 @@ void CntTransformOnlineAccount::detailDefinitions(QMap<QString, QContactDetailDe
 
     // fields
     d.setName(QContactOnlineAccount::DefinitionName);
-    fields.clear();
     f.dataType = QVariant::String;
     fields.insert(QContactOnlineAccount::FieldAccountUri, f);
-    f.allowableValues = QVariantList(); // allow any subtypes!
-    fields.insert(QContactOnlineAccount::FieldSubTypes, f);
 
     // sub-types
     f.dataType = QVariant::StringList; // can implement multiple subtypes

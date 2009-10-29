@@ -84,7 +84,7 @@ void UT_QVersitWriter::testStart()
     mWriter->setDevice(0);
     QVersitDocument document;
     QVersitProperty property;
-    property.setName(QString("FN"));
+    property.setName(QString(QString::fromAscii("FN")));
     property.setValue(QByteArray("Homer"));
     document.addProperty(property);
     mWriter->setVersitDocument(document);

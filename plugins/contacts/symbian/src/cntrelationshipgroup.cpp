@@ -59,13 +59,25 @@ bool CntRelationshipGroup::saveRelationshipL(QSet<QContactLocalId> *affectedCont
 
     if(relationship->relationshipType() == this->relationshipType())
     {
-        QContactId groupId   = relationship->first();
-        QContactId contactId = relationship->second();
+        QScopedPointer<QContactId> groupId(new QContactId( relationship->first()));
+        QScopedPointer<QContactId> contactId(new QContactId(relationship->second()));
 
-        database()->AddContactToGroupL(TContactItemId(contactId.localId()), TContactItemId(groupId.localId()));
-
-        //add the group member to the list of affected contacts
-        affectedContactIds->insert(contactId.localId());
+        if (groupId->localId() && contactId->localId())
+            {
+            //cntmodel accepts contact id 0, which is considered an error in qt contacts
+            database()->AddContactToGroupL(TContactItemId(contactId->localId()), TContactItemId(groupId->localId()));
+            }
+        else
+            {
+            User::Leave(KErrNotFound);
+            }
+        //add the group  and group member to the list of affected contacts
+        //note if the value already exists in the QSet nothing happens
+        affectedContactIds->insert(groupId->localId());
+        affectedContactIds->insert(contactId->localId());
+        
+        error = QContactManager::NoError;
+        returnValue = true;
     }
 
     else
@@ -84,24 +96,28 @@ bool CntRelationshipGroup::removeRelationshipL(QSet<QContactLocalId> *affectedCo
     if(relationship.relationshipType() == this->relationshipType())
     {
         //get the ids of the relationship
-        QContactId groupId   = relationship.first();
-        QContactId contactId = relationship.second();
+        QScopedPointer<QContactId> groupId(new QContactId(relationship.first()));
+        QScopedPointer<QContactId> contactId(new QContactId(relationship.second()));
 
         //read the contacts from the database
-        CContactItem* groupContact = database()->ReadContactLC(groupId.localId());
-        CContactItem* contact      = database()->ReadContactLC(contactId.localId());
+        CContactItem* groupContact = database()->ReadContactLC(groupId->localId());
+        CContactItem* contact      = database()->ReadContactLC(contactId->localId());
+        
+        //Check if contact is part of the group
+        isGroupMemberL(contact, groupContact->Id());
+        
+        //remove contact doesn't return an error if the group is not part of the group
+        database()->RemoveContactFromGroupL(contact->Id(), groupContact->Id());
 
-        //if both found remove the contact from the group
-        if(groupContact && contact)
-        {
-            database()->RemoveContactFromGroupL(TContactItemId(contactId.localId()), TContactItemId(groupId.localId()));
-
-            //add the removed group member to the list of affected contacts
-            affectedContactIds->insert(contactId.localId());
-        }
-
-        CleanupStack::PopAndDestroy(groupContact);
+        //add the removed group member to the list of affected contacts
+        affectedContactIds->insert(groupId->localId());
+        affectedContactIds->insert(contactId->localId());
+    
+        error = QContactManager::NoError;
+        returnValue = true;
+        
         CleanupStack::PopAndDestroy(contact);
+        CleanupStack::PopAndDestroy(groupContact);
     }
 
     else
@@ -111,6 +127,42 @@ bool CntRelationshipGroup::removeRelationshipL(QSet<QContactLocalId> *affectedCo
     }
 
     return returnValue;
+}
+
+/*
+ * Function will leave with KErrNotFound if contact is not part of the specific goup
+ * 
+ */
+void CntRelationshipGroup::isGroupMemberL(const CContactItem* contactItem, const TContactItemId groupId) const
+{
+    if(contactItem &&
+            (contactItem->Type() == KUidContactCard
+            || contactItem->Type() == KUidContactOwnCard
+            || contactItem->Type() == KUidContactGroup
+            || contactItem->Type() == KUidContactICCEntry))
+    {
+        //cast the contact item to base class for groups and contacts
+        const CContactItemPlusGroup *contact = static_cast<const CContactItemPlusGroup *>(contactItem);
+        
+        const CContactIdArray *idArray = contact->GroupsJoined();
+        
+        //array is null if contact is not part of any groups
+        if(idArray)
+        {
+            //find the group from the array
+            TInt arrayIndex = idArray->Find(groupId);
+            
+            //if it doesn't exist leave
+            if(arrayIndex == KErrNotFound)
+            {
+                User::Leave(KErrNotFound);
+            }
+        }
+    }
+    else
+    {
+        User::Leave(KErrNotFound);
+    }
 }
 
 //retrieve all the groups that the contact is part of

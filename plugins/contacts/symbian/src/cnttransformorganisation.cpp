@@ -164,6 +164,7 @@ QList<TUid> CntTransformOrganisation::supportedSortingFieldTypes(QString detailF
  */
 bool CntTransformOrganisation::supportsSubType(const QString& subType) const
 {
+    Q_UNUSED(subType);
     return false;
 }
 
@@ -175,7 +176,22 @@ bool CntTransformOrganisation::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformOrganisation::getIdForField(const QString& fieldName) const
 {
-    return 0;
+    
+    if (QContactOrganization::FieldName  == fieldName)
+        return KUidContactFieldCompanyName.iUid;
+    else if (QContactOrganization::FieldLogo == fieldName)
+        return 0;
+    else if (QContactOrganization::FieldDepartment == fieldName)
+        return KUidContactFieldDepartmentName.iUid;
+    else if (QContactOrganization::FieldLocation == fieldName)
+        return 0;
+    else if (QContactOrganization::FieldTitle == fieldName)
+        return KUidContactFieldJobTitle.iUid;
+    else if (QContactOrganization::FieldAssistantName == fieldName)
+        return KUidContactFieldAssistant.iUid;
+    else 
+        return 0;
+
 }
 
 /*!
