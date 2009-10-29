@@ -163,26 +163,26 @@ void UT_VersitUtils::testAddParam()
     originalStr = "ENCODING=7BIT";
     VersitUtils::addParam(params,originalStr,0,100);
     QCOMPARE(1, params.count());
-    QCOMPARE(QString::fromAscii("7BIT"), params.value("ENCODING"));
+    QCOMPARE(QString::fromAscii("7BIT"), params.value(QString::fromAscii("ENCODING")));
 
     // Non-empty substring, from the beginning
     originalStr = " TYPE=WORK ; VOICE; ENCODING=8BIT";
     params.clear();
     VersitUtils::addParam(params,originalStr,0,11);
     QCOMPARE(1, params.count());
-    QCOMPARE(QString::fromAscii("WORK"), params.value("TYPE"));
+    QCOMPARE(QString::fromAscii("WORK"), params.value(QString::fromAscii("TYPE")));
     
     // Non-empty substring, from the middle
     params.clear();
     VersitUtils::addParam(params,originalStr,12,6);
     QCOMPARE(1, params.count());
-    QCOMPARE(QString::fromAscii("VOICE"), params.value("TYPE"));
+    QCOMPARE(QString::fromAscii("VOICE"), params.value(QString::fromAscii("TYPE")));
     
     // Non-empty substring, from the middle to the end
     params.clear();
     VersitUtils::addParam(params,originalStr,20);
     QCOMPARE(1, params.count());
-    QCOMPARE(QString::fromAscii("8BIT"), params.value("ENCODING"));
+    QCOMPARE(QString::fromAscii("8BIT"), params.value(QString::fromAscii("ENCODING")));
 }
 
 void UT_VersitUtils::testFold()

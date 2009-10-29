@@ -97,7 +97,7 @@ END:VCARD\r\n\
     property.addParameter(QByteArray("X-PARAMETER"),QByteArray("VALUE"));
     QVersitDocument document;
     QVersitProperty embeddedProperty;
-    embeddedProperty.setName(QString("FN"));
+    embeddedProperty.setName(QString(QString::fromAscii("FN")));
     embeddedProperty.setValue(QByteArray("Secret Agent"));
     document.addProperty(embeddedProperty);
     property.setEmbeddedDocument(document);

@@ -87,15 +87,15 @@ bool TestResultXmlParser::startElement(
 {
     if (qName == QString::fromAscii(testFunctionElement)) {
         mTestCount++;
-        mCurrentTestName = atts.value(nameAttr);
+        mCurrentTestName = atts.value(QString::fromAscii(nameAttr));
         return true;
     }
     if (qName == QString::fromAscii(incidentElement)) {
         mParsingIncidentElement = true;
-        if (atts.value(typeAttr) == QString::fromAscii(attrValueFail)) {
+        if (atts.value(QString::fromAscii(typeAttr)) == QString::fromAscii(attrValueFail)) {
             mCurrentTestFailed = true;
-            mCurrentTestFile = atts.value(fileAttr);
-            mCurrentTestFailureLine = atts.value(lineAttr).toInt();
+            mCurrentTestFile = atts.value(QString::fromAscii(fileAttr));
+            mCurrentTestFailureLine = atts.value(QString::fromAscii(lineAttr)).toInt();
         }
         return true;
     }

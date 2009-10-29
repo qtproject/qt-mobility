@@ -89,7 +89,7 @@ void UT_QVersitContactGenerator::cleanupTestCase()
         dir.cd(imageAndAudioClipPath);
         // remove all the files first
         QStringList allFiles;
-        allFiles << "*";
+        allFiles << QString::fromAscii("*");
         QStringList fileList = dir.entryList(allFiles, QDir::Files);
         foreach (QString file, fileList) {
             dir.remove(file);
@@ -116,11 +116,11 @@ void UT_QVersitContactGenerator::testName()
     QVersitDocument document;
     QVersitProperty nameProperty;
     QStringList val;
-    val.append("Homer");//FirstName
-    val.append("Simpson");//LastName
-    val.append("BellyBoy");//GivenName
-    val.append("Dr");//PreFix
-    val.append("MSc");//Suffix
+    val.append(QString::fromAscii("Homer"));//FirstName
+    val.append(QString::fromAscii("Simpson"));//LastName
+    val.append(QString::fromAscii("BellyBoy"));//GivenName
+    val.append(QString::fromAscii("Dr"));//PreFix
+    val.append(QString::fromAscii("MSc"));//Suffix
     nameProperty.setName(QString::fromAscii(versitNameId));
     nameProperty.setValue(val.join(QString::fromAscii(";")).toAscii());
     document.addProperty(nameProperty);        
@@ -135,11 +135,11 @@ void UT_QVersitContactGenerator::testName()
     // Multiple Names , first one will be picked and rest will be discarded
     nameProperty = QVersitProperty();
     QStringList val_2;
-    val_2.append("FakeHomer");//FirstName
-    val_2.append("FakeSimpson");//LastName
-    val_2.append("FakeBellyBoy");//GivenName
-    val_2.append("FakeDr");//PreFix
-    val_2.append("FakeMSc");//Suffix
+    val_2.append(QString::fromAscii("FakeHomer"));//FirstName
+    val_2.append(QString::fromAscii("FakeSimpson"));//LastName
+    val_2.append(QString::fromAscii("FakeBellyBoy"));//GivenName
+    val_2.append(QString::fromAscii("FakeDr"));//PreFix
+    val_2.append(QString::fromAscii("FakeMSc"));//Suffix
     nameProperty.setName(QString::fromAscii(versitNameId));
     nameProperty.setValue(val_2.join(QString::fromAscii(";")).toAscii());
     document.addProperty(nameProperty);
@@ -304,7 +304,7 @@ void UT_QVersitContactGenerator::testOrganization()
     property.addParameter(QString::fromAscii(versitType),
                           QString::fromAscii(versitFormatGif));
     property.addParameter(QString::fromAscii(versitEncoding),
-                          versitEncodingBase64);
+                          QString::fromAscii(versitEncodingBase64));
     document.addProperty(property);
     mGenerator->setImagePath(imageAndAudioClipPath);
     contact = mGenerator->generateContact(document);        
@@ -363,7 +363,7 @@ void UT_QVersitContactGenerator::testTel()
     const QContactPhoneNumber& phone = 
         static_cast<QContactPhoneNumber>(
             contact.detail(QContactPhoneNumber::DefinitionName));
-    QCOMPARE(phone.number(),QString(value));
+    QCOMPARE(phone.number(),QString(QString::fromAscii(value)));
 
     const QStringList subTypes = phone.subTypes();
     QCOMPARE(subTypes.count(),8);
@@ -567,7 +567,7 @@ void UT_QVersitContactGenerator::testNickname()
     // one value
     QVersitDocument document;
     QVersitProperty nameProperty;
-    QString singleVal("Homie");
+    QString singleVal(QString::fromAscii("Homie"));
     nameProperty.setName(QString::fromAscii(versitNicknameId));
     nameProperty.setValue(singleVal.toAscii());
     document.addProperty(nameProperty);
@@ -579,9 +579,9 @@ void UT_QVersitContactGenerator::testNickname()
     contact.clearDetails();
     document = QVersitDocument();
     QStringList multiVal;
-    multiVal.append("Homie");
-    multiVal.append("SuperHero");
-    multiVal.append("NukeSpecialist");
+    multiVal.append(QString::fromAscii("Homie"));
+    multiVal.append(QString::fromAscii("SuperHero"));
+    multiVal.append(QString::fromAscii("NukeSpecialist"));
     nameProperty.setName(QString::fromAscii(versitNicknameId));
     nameProperty.setValue(multiVal.join(QString::fromAscii(",")).toAscii());
     document.addProperty(nameProperty);
@@ -659,7 +659,7 @@ void UT_QVersitContactGenerator::testAvatarJpegStored()
     QByteArray name = nameValues.join(QString::fromAscii(";")).toAscii();
     QVersitDocument document =
         createDocumentWithNameAndPhoto(
-            name,img,versitFormatJpeg,QString::fromAscii(versitEncodingBase64));
+            name,img,QString::fromAscii(versitFormatJpeg),QString::fromAscii(versitEncodingBase64));
     mGenerator->setImagePath(imageAndAudioClipPath);
     QContact contact = mGenerator->generateContact(document);
     QContactAvatar avatar =
@@ -684,9 +684,9 @@ void UT_QVersitContactGenerator::testAvatarGifStored()
     QByteArray name = nameValues.join(QString::fromAscii(";")).toAscii();
     QVersitDocument document =
         createDocumentWithNameAndPhoto(
-            name,img,versitFormatGif,QString::fromAscii(versitEncodingBinary));
+            name,img,QString::fromAscii(versitFormatGif),QString::fromAscii(versitEncodingBinary));
     mGenerator->setImagePath(imageAndAudioClipPath);
-    QString ext = versitGIFExtenId;
+    QString ext = QString::fromAscii(versitGIFExtenId);
     ext = ext.toLower();    
     QContact contact = mGenerator->generateContact(document);
     QContactDetail detail = contact.detail(QContactAvatar::DefinitionName);
@@ -714,10 +714,10 @@ void UT_QVersitContactGenerator::testAvatarJpegTwoContactsWithSameName()
     QByteArray name = nameValues.join(QString::fromAscii(";")).toAscii();
     QVersitDocument document1 =
         createDocumentWithNameAndPhoto(
-            name,img,versitFormatJpeg,QString::fromAscii(versitEncodingBase64));
+            name,img,QString::fromAscii(versitFormatJpeg),QString::fromAscii(versitEncodingBase64));
     QVersitDocument document2 =
         createDocumentWithNameAndPhoto(
-            name,img,versitFormatJpeg,QString::fromAscii(versitEncodingBinary));
+            name,img,QString::fromAscii(versitFormatJpeg),QString::fromAscii(versitEncodingBinary));
 
     mGenerator->setImagePath(imageAndAudioClipPath);
     QContact contact1 = mGenerator->generateContact(document1);
@@ -742,9 +742,9 @@ void UT_QVersitContactGenerator::testAvatarJpegNonexistentPath()
     QByteArray name = nameValues.join(QString::fromAscii(";")).toAscii();
     QVersitDocument document =
         createDocumentWithNameAndPhoto(
-            name,img,versitFormatJpeg,QString::fromAscii(versitEncodingBase64));
+            name,img,QString::fromAscii(versitFormatJpeg),QString::fromAscii(versitEncodingBase64));
 
-    mGenerator->setImagePath("some_nonexistent/path/anywhere543");
+    mGenerator->setImagePath(QString::fromAscii("some_nonexistent/path/anywhere543"));
     QContact contact = mGenerator->generateContact(document);
 
     QContactDetail detail = contact.detail(QContactAvatar::DefinitionName);
@@ -807,10 +807,10 @@ void UT_QVersitContactGenerator::testGeo()
     QVersitDocument document;
     QVersitProperty nameProperty;
     QStringList val;    
-    val.append("18.53");// Longtitude
-    val.append("45.32"); // Latitude
+    val.append(QString::fromAscii("18.53"));// Longtitude
+    val.append(QString::fromAscii("45.32")); // Latitude
     nameProperty.setName(QString::fromAscii(versitGeoId));
-    nameProperty.setValue(val.join(",").toAscii());
+    nameProperty.setValue(val.join(QString::fromAscii(",")).toAscii());
     document.addProperty(nameProperty);
     QContact contact = mGenerator->generateContact(document);
     QContactGeolocation geo = (QContactGeolocation)contact.detail(QContactGeolocation::DefinitionName);
@@ -823,10 +823,10 @@ void UT_QVersitContactGenerator::testGeo()
     // some negative values
     document = QVersitDocument();
     nameProperty = QVersitProperty();
-    val.append("18.53");// Longtitude
-    val.append("-45.32"); // Latitude
+    val.append(QString::fromAscii("18.53"));// Longtitude
+    val.append(QString::fromAscii("-45.32")); // Latitude
     nameProperty.setName(QString::fromAscii(versitGeoId));
-    nameProperty.setValue(val.join(",").toAscii());
+    nameProperty.setValue(val.join(QString::fromAscii(",")).toAscii());
     document.addProperty(nameProperty);
     contact = mGenerator->generateContact(document);
     geo = (QContactGeolocation)contact.detail(QContactGeolocation::DefinitionName);
@@ -882,7 +882,7 @@ void UT_QVersitContactGenerator::testOnlineAccount()
     nameProperty = QVersitProperty();
     nameProperty.setName(QString::fromAscii(versitSipId));
     nameProperty.setValue(val);
-    QString subTypeVal = "SIP";
+    QString subTypeVal = QString::fromAscii("SIP");
     QMultiHash<QString,QString> params;
     params.insert(QString::fromAscii(versitType),subTypeVal);
     nameProperty.setParameters(params);
@@ -961,10 +961,10 @@ void UT_QVersitContactGenerator::testFamily()
     nameProperty = QVersitProperty();
     nameProperty.setName(QString::fromAscii(versitChildrenId));
     QStringList kidsVal;
-    kidsVal.append("Bart");
-    kidsVal.append("Liisa");
-    kidsVal.append("Maggie");
-    nameProperty.setValue(kidsVal.join(",").toAscii());
+    kidsVal.append(QString::fromAscii("Bart"));
+    kidsVal.append(QString::fromAscii("Liisa"));
+    kidsVal.append(QString::fromAscii("Maggie"));
+    nameProperty.setValue(kidsVal.join(QString::fromAscii(",")).toAscii());
     document.addProperty(nameProperty);
     // Add wife next
     val = "March";
@@ -976,7 +976,8 @@ void UT_QVersitContactGenerator::testFamily()
     family = (QContactFamily)contact.detail(QContactFamily::DefinitionName);
     childrens = family.children();
     QCOMPARE(childrens.count(),3); // too late , count them now.
-    QCOMPARE(childrens.join(","),kidsVal.join(",")); // painfull but ensure they are your kids
+    // painfull but ensure they are your kids
+    QCOMPARE(childrens.join(QString::fromAscii(",")),kidsVal.join(QString::fromAscii(",")));
     QCOMPARE(family.spouse(),QString::fromAscii(val)); // make sure thats your wife:(
 }
 
