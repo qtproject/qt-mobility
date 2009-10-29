@@ -40,8 +40,6 @@
 ****************************************************************************/
 #include "cnttransformfamily.h"
 
-const char separator = ',';
-
 QList<CContactItemField *> CntTransformFamily::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList;

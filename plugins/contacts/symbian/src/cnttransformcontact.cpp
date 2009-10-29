@@ -54,6 +54,7 @@
 #include "cnttransformsynctarget.h"
 #include "cnttransformgender.h"
 #include "cnttransformanniversary.h"
+#include "cnttransformanniversarysimple.h"
 #include "cnttransformgeolocation.h"
 #include "cnttransformnote.h"
 #include "cnttransformfamily.h"
@@ -94,18 +95,36 @@ void CntTransformContact::initializeCntTransformContactData()
 	m_transformContactData.insert(Address, new CntTransformAddress);
 	m_transformContactData.insert(URL, new CntTransformUrl);
 	m_transformContactData.insert(Birthday, new CntTransformBirthday);
-	m_transformContactData.insert(OnlineAccount, new CntTransformOnlineAccount);
 	m_transformContactData.insert(Organisation, new CntTransformOrganisation);
-	m_transformContactData.insert(Avatar, new CntTransformAvatar);
-	m_transformContactData.insert(SyncTarget, new CntTransformSyncTarget);
-	m_transformContactData.insert(Gender, new CntTransformGender);
-	m_transformContactData.insert(Anniversary, new CntTransformAnniversary);
 	m_transformContactData.insert(Note, new CntTransformNote);
 	m_transformContactData.insert(Family, new CntTransformFamily);
+
 #ifdef USE_CUSTOM_CNT_MODEL_FIELDS
-	// TODO: what are the other fields to be hidden behind the custom field flag?
-	// i.e. the fields that are not supported in pre-10.1 platforms?
+	// These are not supported on pre-10.1
+    m_transformContactData.insert(Anniversary, new CntTransformAnniversary);
 	m_transformContactData.insert(Geolocation, new CntTransformGeolocation);
+
+    // Causes a "CPbk2ContactEdit.. 2" panic in Phonebook2 contact editor
+    // It is probably ok to use this only in 10.1 and newer
+    m_transformContactData.insert(Gender, new CntTransformGender);
+
+    // Causes a "CPbk2ContactEdit.. 2" panic in Phonebook2 contact editor
+    // Although IMPP field is supported on some pre 10.1 platforms (newer
+    // 3.2.3 and 5.0 releases), it may be safer not to include online account
+    // at all.
+    m_transformContactData.insert(OnlineAccount, new CntTransformOnlineAccount);
+
+    // TODO: The following transform classes should be checked. What do we
+	// need to change to make them compatible with Virtual Phonebook and
+	// Phonebook2?
+
+    // Causes a "CPbk2ContactEdit.. 2" panic in Phonebook2 contact editor.
+    // Avatar is probably not correctly mapped to image fields of a contact item
+    m_transformContactData.insert(Avatar, new CntTransformAvatar);
+    // Causes a "CPbk2ContactEdit.. 2" panic in Phonebook2 contact editor
+    m_transformContactData.insert(SyncTarget, new CntTransformSyncTarget);
+#else
+    m_transformContactData.insert(Anniversary, new CntTransformAnniversarySimple);
 #endif
 }
 
@@ -256,6 +275,7 @@ TUint32 CntTransformContact::GetIdForDetailL(const QContactDetailFilter& detailF
 
 QMap<QString, QContactDetailDefinition> CntTransformContact::detailDefinitions(QContactManager::Error& error) const
 {
+    Q_UNUSED(error);
     QMap<QString, QContactDetailDefinition> defMap;
     QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
     while (i != m_transformContactData.constEnd()) {

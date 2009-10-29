@@ -220,11 +220,8 @@ void CntTransformOnlineAccount::detailDefinitions(QMap<QString, QContactDetailDe
 
     // fields
     d.setName(QContactOnlineAccount::DefinitionName);
-    fields.clear();
     f.dataType = QVariant::String;
     fields.insert(QContactOnlineAccount::FieldAccountUri, f);
-    f.allowableValues = QVariantList(); // allow any subtypes!
-    fields.insert(QContactOnlineAccount::FieldSubTypes, f);
 
     // sub-types
     f.dataType = QVariant::StringList; // can implement multiple subtypes

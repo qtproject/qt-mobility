@@ -37,6 +37,7 @@ symbian:
 				../../inc/cnttransformsynctarget.h \
                 ../../inc/cnttransformgender.h \
                 ../../inc/cnttransformanniversary.h \
+                ../../inc/cnttransformanniversarysimple.h \
                 ../../inc/cnttransformgeolocation.h \
                 ../../inc/cnttransformnote.h \
                 ../../inc/cnttransformfamily.h
@@ -56,6 +57,7 @@ symbian:
 				../../src/cnttransformsynctarget.cpp \
 				../../src/cnttransformgender.cpp \
 				../../src/cnttransformanniversary.cpp \
+                ../../src/cnttransformanniversarysimple.cpp \
 				../../src/cnttransformgeolocation.cpp \
 				../../src/cnttransformnote.cpp \
 				../../src/cnttransformfamily.cpp
