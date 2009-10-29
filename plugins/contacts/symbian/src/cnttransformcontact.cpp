@@ -58,6 +58,7 @@
 #include "cnttransformgeolocation.h"
 #include "cnttransformnote.h"
 #include "cnttransformfamily.h"
+#include "qcontactsymbiantransformerror.h"
 
 #include <qtcontacts.h>
 #include <cntfldst.h>
@@ -209,8 +210,19 @@ void CntTransformContact::transformContactL(
 
 	for(int i(0); i < detailCount; ++i)
 	{
-		QList<CContactItemField *> fieldList = transformDetailL( detailList.at(i) );
+	    QContactDetail detail = detailList.at(i);
+		QList<CContactItemField *> fieldList = transformDetailL(detail);
 		int fieldCount = fieldList.count();
+
+		// check if the contact has any unsupported details
+		if(fieldCount == 0) {
+		    if (detail.definitionName() != QContactDisplayLabel::DefinitionName
+                && detail.definitionName() != QContactType::DefinitionName
+                && detail.definitionName() != QContactGuid::DefinitionName
+                && detail.definitionName() != QContactTimestamp::DefinitionName) {
+            User::Leave(KErrInvalidContactDetail);
+		    }
+		}
 
 		for (int j = 0; j < fieldCount; j++)
         {

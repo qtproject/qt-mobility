@@ -44,6 +44,10 @@
 #include <e32err.h>
 #include "qcontactmanager.h"
 
+// Should not overlap any system error code in the context of converting
+// contact details
+const TInt KErrInvalidContactDetail(-32768);
+
 void qContactSymbianTransformError(TInt symbianError, QContactManager::Error& qtError);
 
 #endif

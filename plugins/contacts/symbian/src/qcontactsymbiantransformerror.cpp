@@ -91,6 +91,11 @@ void qContactSymbianTransformError(TInt symbianError, QContactManager::Error& qt
             qtError = QContactManager::BadArgumentError;
             break;
         }
+        case KErrInvalidContactDetail:
+        {
+            qtError = QContactManager::InvalidDetailError;
+            break;
+        }
         default:
         {
             qtError = QContactManager::UnspecifiedError;
