@@ -12,13 +12,11 @@ PUBLIC_HEADERS +=  qserviceglobal.h \
             qservicecontext.h \
             qabstractsecuritysession.h \
             qserviceinterfacedescriptor.h \
-            qservicefilter.h \
-            dberror_p.h
+            qservicefilter.h
 
 PRIVATE_HEADERS += servicemetadata_p.h \
             qserviceinterfacedescriptor_p.h \
-
-
+            dberror_p.h
 
 SOURCES +=  servicemetadata.cpp \
             qservicemanager.cpp \
