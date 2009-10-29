@@ -46,6 +46,7 @@
 #include "s60serviceplugin.h"
 #include "s60radiotunerservice.h"
 #include "s60cameraservice.h"
+#include "s60audiocaptureservice.h"
 
 QStringList S60ServicePlugin::keys() const
 {
