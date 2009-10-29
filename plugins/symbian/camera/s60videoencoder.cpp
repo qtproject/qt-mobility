@@ -80,11 +80,6 @@ S60VideoEncoder::~S60VideoEncoder()
 {
 }
 
-//QSize S60VideoEncoder::resolution() const
-//{
-//    return m_session->frameSize();
-//}
-
 QSize S60VideoEncoder::minimumResolution() const
 {
     QSize minimumSize;
@@ -123,16 +118,6 @@ QList<QSize> S60VideoEncoder::supportedResolutions() const
     return res;
 
 }
-//void S60VideoEncoder::setResolution(const QSize &r)
-//{
-//    m_resolution = r;
-//    m_session->setFrameSize(r);
-//}
-//
-//qreal S60VideoEncoder::frameRate() const
-//{
-//    return m_frameRate;
-//}
 
 qreal S60VideoEncoder::minimumFrameRate() const
 {
@@ -144,18 +129,12 @@ qreal S60VideoEncoder::maximumFrameRate() const
     return 30.0;
 }
 
-//void S60VideoEncoder::setFrameRate(qreal &rate)
-//{
-//    Q_UNUSED(rate)
-//}
-
 QList< qreal > S60VideoEncoder::supportedFrameRates() const
 {
     QList<qreal> res;
     res << 30.0 << 25.0 << 15.0 << 10.0 << 5.0;
     return res;
 }
-
 
 QStringList S60VideoEncoder::supportedVideoCodecs() const
 {
@@ -166,43 +145,6 @@ QString S60VideoEncoder::videoCodecDescription(const QString &codecName) const
 {
     return m_codecDescriptions.value(codecName);
 }
-
-//QString S60VideoEncoder::audioCodec() const
-//{
-//    return m_codec;
-//}
-//
-//bool S60VideoEncoder::setVideoCodec(const QString &codecName)
-//{
-//    Q_UNUSED(codecName);
-//    //TODO
-//    return true;
-//}
-//
-//QString S60VideoEncoder::videoCodec() const
-//{
-//    return m_codec;
-//}
-//
-//int S60VideoEncoder::bitrate() const
-//{
-//    return m_options.value(QLatin1String("bitrate"), QVariant(int(-1))).toInt();
-//}
-//
-//void S60VideoEncoder::setBitrate(int value)
-//{
-//    setEncodingOption(QLatin1String("bitrate"), QVariant(value));
-//}
-//
-//int S60VideoEncoder::quality() const
-//{
-//    return m_options.value(QLatin1String("quality"), QVariant(8.0)).toDouble();
-//}
-//
-//void S60VideoEncoder::setQuality(int value)
-//{
-//    setEncodingOption(QLatin1String("quality"), QVariant(value));
-//}
 
 QStringList S60VideoEncoder::supportedEncodingOptions(const QString &codec) const
 {

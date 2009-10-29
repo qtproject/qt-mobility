@@ -87,7 +87,7 @@ to reduce delay before recording is started.
 */
 void S60MediaControl::applySettings()
 {
-
+    //TODO: create impl.
 }
 
 void S60MediaControl::record()

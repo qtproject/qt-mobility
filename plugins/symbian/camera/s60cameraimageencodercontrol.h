@@ -39,58 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOENCODE_H
-#define S60VIDEOENCODE_H
+#ifndef S60CAMERACONTROL_H
+#define S60CAMERACONTROL_H
 
-#include "qvideoencodercontrol.h"
-
-#include <QtCore/qstringlist.h>
-#include <QtCore/qmap.h>
+#include <QtCore/qobject.h>
+#include "qimageencodercontrol.h"
 
 class S60CameraSession;
 
-class S60VideoEncoder : public QVideoEncoderControl
+class S60CameraImageEncoderControl : public QImageEncoderControl
 {
     Q_OBJECT
 public:
-    S60VideoEncoder(QObject *parent = 0);
-    S60VideoEncoder(QObject *session, QObject *parent = 0);
-    virtual ~S60VideoEncoder();
+    S60CameraImageEncoderControl(QObject *parent = 0);
+    S60CameraImageEncoderControl(QObject *session, QObject *parent = 0);
+    ~S60CameraImageEncoderControl();
 
-    QList<QSize> supportedResolutions() const;
-
+    QSize resolution() const;
     QSize minimumResolution() const;
     QSize maximumResolution() const;
+    QList<QSize> supportedResolutions() const;
+    void setResolution(const QSize &size);
 
-    qreal minimumFrameRate() const;
-    qreal maximumFrameRate() const;
-    QList< qreal >  supportedFrameRates() const;
+    QStringList supportedImageCodecs() const;
+    QString imageCodec() const;
+    bool setImageCodec(const QString &codecName);
 
-    QStringList supportedVideoCodecs() const;
-    QString videoCodecDescription(const QString &codecName) const;
+    QString imageCodecDescription(const QString &codecName) const;
 
-    QVideoEncoderSettings videoSettings() const;
-    void setVideoSettings(const QVideoEncoderSettings &settings);
-
-    QStringList supportedEncodingOptions(const QString &codec) const;
-    QVariant encodingOption(const QString &codec, const QString &name) const;
-    void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
-
+    QtMedia::EncodingQuality quality() const = 0;
+    void setQuality(QtMedia::EncodingQuality);
 private:
-    S60CameraSession* m_session;
-
-    QStringList m_codecs;
-    QMap<QString,QString> m_codecDescriptions;
-    QMap<QString,QStringList> m_codecOptions;
-
-    QString m_codec;
-    QMap<QString, QMap<QString, QVariant> > m_options;
-    QSize m_resolution;
-    qreal m_frameRate;
-
-    QVideoEncoderSettings m_videoSettings;
-
-
+    S60CameraSession *m_session;
 };
 
 #endif
