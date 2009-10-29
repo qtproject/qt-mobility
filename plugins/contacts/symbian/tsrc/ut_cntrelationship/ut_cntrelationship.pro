@@ -23,7 +23,7 @@ symbian:
 	
 	# Input
 	HEADERS +=  ut_cntrelationship.h \
-				../../qcontactsymbiantransformerror.h \ 
+				../../inc/qcontactsymbiantransformerror.h \ 
 				../../inc/cntrelationship.h \
 				../../inc/cntabstractrelationship.h \
       	        ../../inc/cntrelationshipgroup.h \
