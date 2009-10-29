@@ -84,6 +84,8 @@ QString AudioEncoderControl::codecDescription(const QString &codecName) const
 {
     if(qstrcmp(codecName.toLocal8Bit().constData(),"audio/x-wav") == 0)
         return QString("wav file format");
+    if(qstrcmp(codecName.toLocal8Bit().constData(),"audio/pcm") == 0)
+                return QString("raw audio");
 
     return QString();
 }

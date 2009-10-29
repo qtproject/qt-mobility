@@ -47,7 +47,7 @@
 
 #include "qmediarecorder.h"
 #include "qmediarecordercontrol.h"
-#include "qcameracontrol.h"
+#include "experimental/qcameracontrol.h"
 
 class S60CameraSession;
 
@@ -59,8 +59,8 @@ public:
     S60MediaControl(QObject *session, QObject *parent = 0);
     ~S60MediaControl();
 
-    QUrl sink() const;
-    bool setSink(const QUrl &sink);
+    QUrl outputLocation() const;
+    bool setOutputLocation(const QUrl &sink);
 
     QMediaRecorder::State state() const;
 

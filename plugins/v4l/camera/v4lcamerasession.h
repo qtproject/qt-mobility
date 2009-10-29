@@ -46,8 +46,10 @@
 #include <QSocketNotifier>
 #include <QTime>
 #include <QUrl>
+#include <QFile>
 
-#include <multimedia/qcamera.h>
+#include <multimedia/qmediarecorder.h>
+#include <multimedia/experimental/qcamera.h>
 #include <QtMultimedia/qvideoframe.h>
 #include <QtMultimedia/qabstractvideosurface.h>
 
@@ -106,18 +108,24 @@ public:
 
     // media control
 
-    bool setSink(const QUrl &sink);
-    QUrl sink() const;
+    bool setOutputLocation(const QUrl &sink);
+    QUrl outputLocation() const;
     qint64 position() const;
-    int state() const;
+    QMediaRecorder::State state() const;
     void record();
     void pause();
     void stop();
 
     void setSurface(QAbstractVideoSurface* surface);
 
+    void captureImage(const QString &fileName);
+
+    void previewMode(bool value);
+    void captureToFile(bool value);
+
 Q_SIGNALS:
-    void stateChanged(QCamera::State);
+    void stateChanged(QMediaRecorder::State);
+    void imageCaptured(const QString &fileName, const QImage &img);
 
 private Q_SLOTS:
     void captureFrame();
@@ -129,9 +137,12 @@ private:
     int sfd;
     QTime timeStamp;
     bool available;
-    QCamera::State m_state;
+    bool preview;
+    bool toFile;
+    QMediaRecorder::State m_state;
     QByteArray m_device;
     QUrl m_sink;
+    QFile m_file;
     V4LVideoRenderer*   m_output;
     QAbstractVideoSurface* m_surface;
     QVideoFrame::PixelFormat pixelF;
@@ -140,6 +151,8 @@ private:
     QList<unsigned int> formats;
 
     CameraFormatConverter* converter;
+
+    QString m_snapshot;
 };
 
 #endif

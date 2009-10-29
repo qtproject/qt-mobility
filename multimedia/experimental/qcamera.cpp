@@ -41,15 +41,15 @@
 
 #include <QDebug>
 
-#include <multimedia/qcamera.h>
+#include <multimedia/experimental/qcamera.h>
 
 #include <multimedia/qmediaobject_p.h>
-#include <multimedia/qcameracontrol.h>
-#include <multimedia/qcameraexposurecontrol.h>
-#include <multimedia/qcamerafocuscontrol.h>
+#include <multimedia/experimental/qcameracontrol.h>
+#include <multimedia/experimental/qcameraexposurecontrol.h>
+#include <multimedia/experimental/qcamerafocuscontrol.h>
 #include <multimedia/qmediarecordercontrol.h>
-#include <multimedia/qimageprocessingcontrol.h>
-#include <multimedia/qimagecapturecontrol.h>
+#include <multimedia/experimental/qimageprocessingcontrol.h>
+#include <multimedia/experimental/qimagecapturecontrol.h>
 #include <multimedia/qvideodevicecontrol.h>
 
 /*!
@@ -59,6 +59,19 @@
     \preliminary
     \brief The QCamera class provides interface for system
     camera devices.
+
+    QCamera can be used with QVideoWidget for viewfinder display
+    and QMediaRecorder for video recording.
+
+    \code
+        camera = new QCamera;
+        viewFinder = new QVideoWidget(camera);
+        viewFinder->show();
+
+        recorder = QMediaRecorder(camera);
+
+        camera->start();
+    \endcode
 */
 
 
@@ -203,6 +216,9 @@ QCamera::Error QCamera::error() const
     return d_func()->error;
 }
 
+/*!
+    Returns a string describing a camera's error state.
+*/
 QString QCamera::errorString() const
 {
     return d_func()->errorString;
@@ -607,6 +623,12 @@ void QCamera::setAutoIsoSensitivity()
 */
 
 /*!
+    \fn QCamera::shutterSpeedChanged(qreal speed)
+
+    Signals that a camera's shutter \a speed has changed.
+*/
+
+/*!
     \property QCamera::isoSensitivity
     \brief ?
 */
@@ -802,7 +824,13 @@ bool QCamera::isReadyForCapture() const
 }
 
 /*!
-    Capture the image and save it to file.
+    \fn QCamera::readyForCaptureChanged(bool ready)
+
+    Signals that a camera's \a ready for capture state has changed.
+*/
+
+/*!
+    Capture the image and save it to \a file.
     This operation is asynchronous in majority of cases,
     followed by signal QCamera::imageCaptured() or error()
 */

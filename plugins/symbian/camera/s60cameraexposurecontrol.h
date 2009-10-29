@@ -43,7 +43,7 @@
 #define S60CAMERAEXPOSURECONTROL_H
 
 #include <QtCore/qobject.h>
-#include "qcameraexposurecontrol.h"
+#include "multimedia/experimental/qcameraexposurecontrol.h"
 
 class S60CameraService;
 class S60CameraSession;

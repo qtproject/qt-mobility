@@ -39,35 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QCAMERACONTROL_H
-#define QCAMERACONTROL_H
 
-#include <multimedia/qmediacontrol.h>
-#include <multimedia/qmediaobject.h>
+#ifndef V4LMEDIAFORMATCONTROL_H
+#define V4LMEDIAFORMATCONTROL_H
 
-#include <multimedia/qcamera.h>
+#include <multimedia/qmediaformatcontrol.h>
+#include <QtCore/qstringlist.h>
 
-class Q_MEDIA_EXPORT QCameraControl : public QMediaControl
+class V4LMediaFormatControl : public QMediaFormatControl
 {
-    Q_OBJECT
-
+Q_OBJECT
 public:
-    ~QCameraControl();
+    V4LMediaFormatControl(QObject *parent);
+    virtual ~V4LMediaFormatControl() {};
 
-    virtual void start() = 0;
-    virtual void stop() = 0;
-    virtual QCamera::State state() const = 0;
+    virtual QStringList supportedFormats() const { return m_supportedFormats; }
+    virtual QString format() const { return m_format; }
+    virtual void setFormat(const QString &formatMimeType) { m_format = formatMimeType; }
 
-Q_SIGNALS:
-    void stateChanged(QCamera::State);
-    void error(int error, const QString &errorString);
+    virtual QString formatDescription(const QString &formatMimeType) const { Q_UNUSED(formatMimeType) return QString(); }
 
-protected:
-    QCameraControl(QObject* parent = 0);
+private:
+    QString m_format;
+    QStringList m_supportedFormats;
 };
 
-#define QCameraControl_iid "com.nokia.Qt.QCameraControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QCameraControl, QCameraControl_iid)
-
-#endif  // QCAMERACONTROL_H
-
+#endif // V4LMEDIAFORMATCONTROL_H

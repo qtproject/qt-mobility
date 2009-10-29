@@ -43,6 +43,7 @@
 #define S60CAMERAVIDEODEVICECONTROL_H
 
 #include "qvideodevicecontrol.h"
+
 class S60CameraSession;
 class QString;
 class QIcon;

@@ -39,52 +39,14 @@
 **
 ****************************************************************************/
 
-#ifndef QCAMERAFOCUSCONTROL_H
-#define QCAMERAFOCUSCONTROL_H
+#include "v4lmediaformatcontrol.h"
 
-#include <multimedia/qmediacontrol.h>
-#include <multimedia/qmediaobject.h>
-
-#include <multimedia/qcamera.h>
-
-class Q_MEDIA_EXPORT QCameraFocusControl : public QMediaControl
+V4LMediaFormatControl::V4LMediaFormatControl(QObject *parent)
+    :QMediaFormatControl(parent)
 {
-    Q_OBJECT
+    m_format = "mpeg";
+    m_supportedFormats.append("mpeg");
+    setFormat(m_supportedFormats[0]);
+}
 
-public:
-    ~QCameraFocusControl();
-
-    virtual QCamera::FocusMode focusMode() const = 0;
-    virtual void setFocusMode(QCamera::FocusMode mode) = 0;
-    virtual QCamera::FocusModes supportedFocusModes() const = 0;
-    virtual QCamera::FocusStatus focusStatus() const = 0;
-
-    virtual bool macroFocusingEnabled() const = 0;
-    virtual bool isMacroFocusingSupported() const = 0;
-    virtual void setMacroFocusingEnabled(bool) = 0;
-
-    virtual qreal maximumOpticalZoom() const = 0;
-    virtual qreal maximumDigitalZoom() const = 0;
-    virtual qreal zoomValue() const = 0;
-    virtual void zoomTo(qreal value) = 0;
-
-    virtual bool isFocusLocked() const = 0;
-
-public Q_SLOTS:
-    virtual void lockFocus() = 0;
-    virtual void unlockFocus() = 0;
-
-Q_SIGNALS:
-    void zoomValueChanged(qreal);
-    void focusStatusChanged(QCamera::FocusStatus);
-    void focusLocked();
-
-protected:
-    QCameraFocusControl(QObject* parent = 0);
-};
-
-#define QCameraFocusControl_iid "com.nokia.Qt.QCameraFocusingControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QCameraFocusControl, QCameraFocusControl_iid)
-
-#endif  // QCAMERAFOCUSCONTROL_H
 

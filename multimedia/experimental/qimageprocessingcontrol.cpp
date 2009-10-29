@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qimageprocessingcontrol.h>
+#include <multimedia/experimental/qimageprocessingcontrol.h>
 #include  "qmediacontrol_p.h"
 
 /*!
@@ -140,8 +140,22 @@ QImageProcessingControl::~QImageProcessingControl()
 */
 
 /*!
-    \fn QImageProcessingControl::setSharpeningLevel(qreal value)
-    Set sharpening level to \a value.
+    \fn QImageProcessingControl::setDenoisingLevel(qreal level)
+
+    Sets the denoising \a level.
+*/
+
+/*!
+    \fn QImageProcessingControl::isSharpeningSupported() const
+
+    Identifies if sharpening is supported.
+
+    Returns true if sharpening is supported; and false if it is not.
+*/
+
+/*!
+    \fn QImageProcessingControl::setSharpeningLevel(qreal level)
+    Sets the sharpening \a level.
 */
 
 /*!

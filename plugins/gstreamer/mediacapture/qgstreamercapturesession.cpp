@@ -565,12 +565,12 @@ void QGstreamerCaptureSession::dumpGraph(const QString &fileName)
 #endif
 }
 
-QUrl QGstreamerCaptureSession::sink() const
+QUrl QGstreamerCaptureSession::outputLocation() const
 {
     return m_sink;
 }
 
-bool QGstreamerCaptureSession::setSink(const QUrl& sink)
+bool QGstreamerCaptureSession::setOutputLocation(const QUrl& sink)
 {
     m_sink = sink;
     return true;

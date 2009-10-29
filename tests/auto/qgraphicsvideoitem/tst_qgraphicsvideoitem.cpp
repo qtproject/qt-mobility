@@ -45,6 +45,7 @@
 
 #include "multimedia/qmediaobject.h"
 #include "multimedia/qmediaservice.h"
+#include "multimedia/qpaintervideosurface_p.h"
 #include "multimedia/qvideooutputcontrol.h"
 #include "multimedia/qvideorenderercontrol.h"
 
@@ -69,6 +70,8 @@ private slots:
 
     void boundingRect_data();
     void boundingRect();
+
+    void paint();
 };
 
 Q_DECLARE_METATYPE(const uchar *)
@@ -211,19 +214,38 @@ void tst_QGraphicsVideoItem::nullService()
 
     QtTestVideoObject object(service);
 
-    QGraphicsVideoItem item(&object);
+    QGraphicsVideoItem *item = new QGraphicsVideoItem(&object);
 
-    QVERIFY(item.boundingRect().isEmpty());
+    QVERIFY(item->boundingRect().isEmpty());
 
+    item->hide();
+    item->show();
+
+    QGraphicsScene graphicsScene;
+    graphicsScene.addItem(item);
+    QGraphicsView graphicsView(&graphicsScene);
+    graphicsView.show();
+
+    QTestEventLoop::instance().enterLoop(1);
 }
 
 void tst_QGraphicsVideoItem::nullOutputControl()
 {
     QtTestVideoObject object(new QtTestVideoService(0, 0));
 
-    QGraphicsVideoItem item(&object);
+    QGraphicsVideoItem *item = new QGraphicsVideoItem(&object);
 
-    QVERIFY(item.boundingRect().isEmpty());
+    QVERIFY(item->boundingRect().isEmpty());
+
+    item->hide();
+    item->show();
+
+    QGraphicsScene graphicsScene;
+    graphicsScene.addItem(item);
+    QGraphicsView graphicsView(&graphicsScene);
+    graphicsView.show();
+
+    QTestEventLoop::instance().enterLoop(1);
 }
 
 void tst_QGraphicsVideoItem::noOutputs()
@@ -231,9 +253,21 @@ void tst_QGraphicsVideoItem::noOutputs()
     QtTestRendererControl *control = 0;
     QtTestVideoObject object(control);
 
-    QGraphicsVideoItem item(&object);
+    QGraphicsVideoItem *item = new QGraphicsVideoItem(&object);
 
-    QVERIFY(item.boundingRect().isEmpty());
+    QVERIFY(item->boundingRect().isEmpty());
+
+    item->hide();
+    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+    item->show();
+    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+
+    QGraphicsScene graphicsScene;
+    graphicsScene.addItem(item);
+    QGraphicsView graphicsView(&graphicsScene);
+    graphicsView.show();
+
+    QTestEventLoop::instance().enterLoop(1);
 }
 
 void tst_QGraphicsVideoItem::serviceDestroyed()
@@ -309,6 +343,53 @@ void tst_QGraphicsVideoItem::boundingRect()
 
     QCOMPARE(item.boundingRect(), expectedRect);
 }
+
+static const uchar rgb32ImageData[] =
+{
+    0x00, 0xff, 0xff, 0x00, 0x00, 0x00, 0xff, 0x00,
+    0x00, 0xff, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00
+};
+
+void tst_QGraphicsVideoItem::paint()
+{
+    QtTestVideoObject object(new QtTestRendererControl);
+    QGraphicsVideoItem item(&object);
+    
+    QGraphicsScene graphicsScene;
+    graphicsScene.addItem(new QGraphicsVideoItem(&object));
+    QGraphicsView graphicsView(&graphicsScene);
+    graphicsView.show();
+
+    QPainterVideoSurface *surface = qobject_cast<QPainterVideoSurface *>(
+            object.testService->rendererControl->surface());
+
+    QVideoSurfaceFormat format(QSize(2, 2), QVideoFrame::Format_RGB32);
+
+    QVERIFY(surface->start(format));
+    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isReady(), true);
+
+    QTestEventLoop::instance().enterLoop(1);
+
+    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isReady(), true);
+
+    QVideoFrame frame(sizeof(rgb32ImageData), QSize(2, 2), 8, QVideoFrame::Format_RGB32);
+
+    frame.map(QAbstractVideoBuffer::WriteOnly);
+    memcpy(frame.bits(), rgb32ImageData, frame.numBytes());
+    frame.unmap();
+
+    QVERIFY(surface->present(frame));
+    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isReady(), false);
+
+    QTestEventLoop::instance().enterLoop(1);
+
+    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isReady(), true);
+}
+
 
 QTEST_MAIN(tst_QGraphicsVideoItem)
 

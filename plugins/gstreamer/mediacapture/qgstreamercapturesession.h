@@ -78,8 +78,8 @@ public:
     QGstreamerCaptureSession(CaptureMode captureMode, QObject *parent);
     ~QGstreamerCaptureSession();
 
-    QUrl sink() const;
-    bool setSink(const QUrl& sink);
+    QUrl outputLocation() const;
+    bool setOutputLocation(const QUrl& sink);
 
     QGstreamerAudioEncode *audioEncodeControl() const { return m_audioEncodeControl; }
     QGstreamerVideoEncode *videoEncodeControl() const { return m_videoEncodeControl; }

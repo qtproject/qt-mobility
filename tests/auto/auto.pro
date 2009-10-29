@@ -29,6 +29,8 @@ SUBDIRS -= \
         qmediaimageviewer \
         qmediapluginloader \
         qmediaserviceprovider \
-        qpaintervideosurface
+        qpaintervideosurface \
+        qvideowidget \
+        qgraphicsvideoitem
 }
 

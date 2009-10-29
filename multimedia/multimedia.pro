@@ -12,7 +12,7 @@ contains(QT_CONFIG, opengl): QT += opengl
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MEDIA_LIB
 
-HEADERS = \
+HEADERS += \
     qmediacontrol.h \
     qmediacontrol_p.h \
     qmediaobject.h \
@@ -51,20 +51,20 @@ HEADERS = \
     qaudioencodercontrol.h \
     qvideoencodercontrol.h \
     qimageencodercontrol.h \
-    qimagecapturecontrol.h \
+    experimental/qimagecapturecontrol.h \
     qaudiocapturesource.h \
-    qcamera.h \
-    qcameracontrol.h \
-    qcameraexposurecontrol.h \
-    qcamerafocuscontrol.h \
-    qimageprocessingcontrol.h \
+    experimental/qcamera.h \
+    experimental/qcameracontrol.h \
+    experimental/qcameraexposurecontrol.h \
+    experimental/qcamerafocuscontrol.h \
+    experimental/qimageprocessingcontrol.h \
     qmediaformatcontrol.h \
     qmediaplaylistcontrol.h \
     qaudiodevicecontrol.h \
     qvideodevicecontrol.h \
     qmediapluginloader_p.h
 
-SOURCES = qmediacontrol.cpp \
+SOURCES += qmediacontrol.cpp \
     qmediaobject.cpp \
     qmediaservice.cpp \
     qlocalmediaplaylistprovider.cpp \
@@ -93,13 +93,13 @@ SOURCES = qmediacontrol.cpp \
     qaudioencodercontrol.cpp \
     qvideoencodercontrol.cpp \
     qimageencodercontrol.cpp \
-    qimagecapturecontrol.cpp \
+    experimental/qimagecapturecontrol.cpp \
     qaudiocapturesource.cpp \
-    qcamera.cpp \
-    qcameracontrol.cpp \
-    qcameraexposurecontrol.cpp \
-    qcamerafocuscontrol.cpp \
-    qimageprocessingcontrol.cpp \
+    experimental/qcamera.cpp \
+    experimental/qcameracontrol.cpp \
+    experimental/qcameraexposurecontrol.cpp \
+    experimental/qcamerafocuscontrol.cpp \
+    experimental/qimageprocessingcontrol.cpp \
     qmediaformatcontrol.cpp \
     qmediaplaylistcontrol.cpp \
     qaudiodevicecontrol.cpp \
@@ -120,13 +120,4 @@ contains(QT_CONFIG, multimedia) {
     HEADERS += qaudioformat.h
     SOURCES += qaudioformat.cpp
 }
-
-symbian: {
-    load(data_caging_paths)
-
-    qtmedia.sources = QtMedia.dll
-    qtmedia.path = "/sys/bin"
-    DEPLOYMENT += qtmedia
-}
-
-
+symbian {    load(data_caging_paths)    QtMediaDeployment.sources = QtMedia.dll    QtMediaDeployment.path = /sys/bin    DEPLOYMENT += QtMediaDeployment    TARGET.CAPABILITY = ALL -TCB}include (experimental/experimental.pri)

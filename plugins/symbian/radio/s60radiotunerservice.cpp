@@ -97,9 +97,9 @@ bool S60RadioTunerService::setActiveEndpoint(QMediaService::MediaEndpoint endpoi
     return true;
 }
 
-QList<QString> S60RadioTunerService::supportedEndpoints(QMediaService::MediaEndpoint endpointType) const
+QStringList S60RadioTunerService::supportedEndpoints(QMediaService::MediaEndpoint endpointType) const
 {
-    QList<QString> list;
+    QStringList list;
     //TODO
     return list;
 }

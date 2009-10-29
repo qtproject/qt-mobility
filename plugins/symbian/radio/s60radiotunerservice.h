@@ -67,7 +67,8 @@ public:
 
     QString activeEndpoint(QMediaService::MediaEndpoint endpointType);
     bool setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
-    QList<QString> supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
+    QStringList supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
+
 private:
     S60RadioTunerControl *m_control;
 };

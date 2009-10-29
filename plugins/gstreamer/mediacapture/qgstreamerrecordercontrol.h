@@ -55,8 +55,8 @@ public:
     QGstreamerRecorderControl(QGstreamerCaptureSession *session);
     virtual ~QGstreamerRecorderControl();
 
-    QUrl sink() const;
-    bool setSink(const QUrl &sink);
+    QUrl outputLocation() const;
+    bool setOutputLocation(const QUrl &sink);
 
     QMediaRecorder::State state() const;
 

@@ -71,12 +71,11 @@ bool V4LRadioService::isEndpointSupported(QMediaService::MediaEndpoint endpointT
     return false;
 }
 
-QList<QString> V4LRadioService::activeEndpoints(QMediaService::MediaEndpoint endpointType)
+QString V4LRadioService::activeEndpoint(QMediaService::MediaEndpoint endpointType)
 {
     Q_UNUSED(endpointType)
 
-    QList<QString> list;
-    return list;
+    return QString();
 }
 
 bool V4LRadioService::setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint)
@@ -87,12 +86,11 @@ bool V4LRadioService::setActiveEndpoint(QMediaService::MediaEndpoint endpointTyp
     return true;
 }
 
-QList<QString> V4LRadioService::supportedEndpoints(QMediaService::MediaEndpoint endpointType) const
+QStringList V4LRadioService::supportedEndpoints(QMediaService::MediaEndpoint endpointType) const
 {
     Q_UNUSED(endpointType)
 
-    QList<QString> list;
-    //TODO
+    QStringList list;
     return list;
 }
 

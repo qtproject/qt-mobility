@@ -61,14 +61,14 @@ S60MediaControl::~S60MediaControl()
 {
 }
 
-QUrl S60MediaControl::sink() const
+QUrl S60MediaControl::outputLocation() const
 {
-    return m_session->sink();
+    return m_session->outputLocation();
 }
 
-bool S60MediaControl::setSink(const QUrl& sink)
+bool S60MediaControl::setOutputLocation(const QUrl& sink)
 {
-    return m_session->setSink(sink);
+    return m_session->setOutputLocation(sink);
 }
 
 QMediaRecorder::State S60MediaControl::state() const

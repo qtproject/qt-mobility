@@ -39,68 +39,79 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qimagecapturecontrol.h>
-#include <QtCore/qstringlist.h>
+#include <multimedia/experimental/qcameracontrol.h>
+#include  "qmediacontrol_p.h"
 
 /*!
-    \class QImageCaptureControl
-    \brief The QImageCaptureControl provides a control interface for image capture services.
+    \class QCameraControl
+    \ingroup multimedia
+
     \preliminary
+    \brief The abstract class for controling still or video cameras, this is provided
+    by a QMediaService object, and is used by QCamera.
 
-    The interface name of QImageCaptureControl is \c com.nokia.Qt.QImageCaptureControl/1.0 as
-    defined in QImageCaptureControl_iid.
+    The interface name of QCameraControl is \c com.nokia.Qt.QCameraControl/1.0 as
+    defined in QCameraControl_iid.
 
-    \sa QMediaService::control()
+    \sa QMediaService::control(), QCamera
 */
 
 /*!
-    \macro QImageCaptureControl_iid
+    \macro QCameraControl_iid
 
-    \c com.nokia.Qt.QImageCaptureControl/1.0
+    \c com.nokia.Qt.QCameraControl/1.0
 
-    Defines the interface name of the QImageCaptureControl class.
+    Defines the interface name of the QCameraControl class.
 
-    \relates QImageCaptureControl
+    \relates QCameraControl
 */
 
 /*!
-    Constructs a new image capture control object with the given \a parent
+    Constructs a camera control object with \a parent.
 */
-QImageCaptureControl::QImageCaptureControl(QObject *parent)
-    :QMediaControl(parent)
+
+QCameraControl::QCameraControl(QObject *parent):
+    QMediaControl(*new QMediaControlPrivate, parent)
 {
 }
 
 /*!
-    Destroys an image capture control.
+    Destruct the camera control object.
 */
-QImageCaptureControl::~QImageCaptureControl()
+
+QCameraControl::~QCameraControl()
 {
 }
 
 /*!
-    \fn QImageCaptureControl::isReadyForCapture() const
-
-    Identifies if a capture control is ready to perform a capture.
-
-    Returns true if the control is ready; and false if it is not.
+    \fn QCameraControl::start()
+    Start the camera service.
 */
 
 /*!
-    \fn QImageCaptureControl::readyForCaptureChanged(bool ready)
+    \fn QCameraControl::stop()
 
-    Signals that a capture control's \a ready state has changed.
+    Stop the camera service.
 */
 
 /*!
-    \fn QImageCaptureControl::capture(const QString &fileName)
+    \fn QCameraControl::state() const
 
-    Initiates the capture of an image to \a fileName.
+    Returns the state of the camera service.
+
+    \sa QCamera::state
 */
 
 /*!
-    \fn QImageCaptureControl::imageCaptured(const QString &fileName, const QImage &preview)
+    \fn void QCameraControl::stateChanged(QCamera::State state)
 
-    Signals that an image has been captured to \a fileName and a \a preview is available.
+    Signal emitted when \a state changes state.
+*/
+
+/*!
+    \fn void QCameraControl::error(int error, const QString &errorString)
+
+    Signal emitted when an error occurs with error code \a error and
+    a description of the error \a errorString.
 */
 

@@ -312,14 +312,14 @@ QList<QSize> S60CameraSession::supportedCaptureSizes()
 	return list;
 }
 
-bool S60CameraSession::setSink(const QUrl &sink)
+bool S60CameraSession::setOutputLocation(const QUrl &sink)
 {
     m_sink = sink;
 
     return true;
 }
 
-QUrl S60CameraSession::sink() const
+QUrl S60CameraSession::outputLocation() const
 {
     return m_sink;
 }

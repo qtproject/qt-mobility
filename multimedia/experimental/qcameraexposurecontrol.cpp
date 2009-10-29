@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qcameraexposurecontrol.h>
+#include <multimedia/experimental/qcameraexposurecontrol.h>
 #include  "qmediacontrol_p.h"
 
 /*!
@@ -262,6 +262,12 @@ Set the metering mode to \a mode.
   \fn qreal QCameraExposureControl::shutterSpeed() const
 
   Returns the shutter speed
+*/
+
+/*!
+    \fn qreal QCameraExposureControl::minimumShutterSpeed() const
+
+    Returns the maximum shutter speed.
 */
 
 /*!

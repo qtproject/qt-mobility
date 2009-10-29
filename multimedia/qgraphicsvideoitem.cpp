@@ -199,7 +199,7 @@ QVariant QGraphicsVideoItem::itemChange(GraphicsItemChange change, const QVarian
 {
     Q_D(QGraphicsVideoItem);
 
-    if (change == ItemVisibleChange && d->outputControl != 0) {
+    if (change == ItemVisibleChange && d->outputControl != 0 && d->rendererControl != 0) {
         if (value.toBool()) {
             d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
 

@@ -48,7 +48,7 @@
 #include <QUrl>
 #include <QtGui/qicon.h>
 
-#include "qcamera.h"
+#include "multimedia/experimental/qcamera.h"
 #include <QtMultimedia/qvideoframe.h>
 
 #include <e32base.h>
@@ -116,8 +116,8 @@ public:
     QList<QSize> supportedCaptureSizes();
 
     // media control
-    bool setSink(const QUrl &sink);
-    QUrl sink() const;
+    bool setOutputLocation(const QUrl &sink);
+    QUrl outputLocation() const;
     qint64 position() const;
     int state() const;
 

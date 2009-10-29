@@ -39,47 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QIMAGEPROCESSINGCONTROL_H
-#define QIMAGEPROCESSINGCONTROL_H
 
-#include <multimedia/qmediacontrol.h>
-#include <multimedia/qmediaobject.h>
+#ifndef V4LCAPTURECONTROL_H
+#define V4LCAPTURECONTROL_H
 
-#include <multimedia/qcamera.h>
+#include <multimedia/qmediarecordercontrol.h>
+#include "v4lcamerasession.h"
 
-class Q_MEDIA_EXPORT QImageProcessingControl : public QMediaControl
+class V4LRecorderControl : public QMediaRecorderControl
 {
     Q_OBJECT
+    Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
 
 public:
-    ~QImageProcessingControl();
+    V4LRecorderControl(V4LCameraSession *session);
+    virtual ~V4LRecorderControl();
 
-    virtual QCamera::WhiteBalanceMode whiteBalanceMode() const = 0;
-    virtual void setWhiteBalanceMode(QCamera::WhiteBalanceMode mode) = 0;
-    virtual QCamera::WhiteBalanceModes supportedWhiteBalanceModes() const = 0;
-    virtual int manualWhiteBalance() const = 0;
-    virtual void setManualWhiteBalance(int colorTemperature) = 0;
+    QUrl outputLocation() const;
+    bool setOutputLocation(const QUrl &sink);
 
-    virtual qreal contrast() const = 0;
-    virtual void setContrast(qreal value) = 0;
+    QMediaRecorder::State state() const;
 
-    virtual qreal saturation() const = 0;
-    virtual void setSaturation(qreal value) = 0;
+    qint64 duration() const;
 
-    virtual bool isSharpeningSupported() const = 0;
-    virtual qreal sharpeningLevel() const = 0;
-    virtual void setSharpeningLevel(qreal value) = 0;
+    void applySettings() {}
 
-    virtual bool isDenoisingSupported() const = 0;
-    virtual qreal denoisingLevel() const = 0;
-    virtual void setDenoisingLevel(qreal value) = 0;
+public slots:
+    void record();
+    void pause();
+    void stop();
 
-protected:
-    QImageProcessingControl(QObject* parent = 0);
+private slots:
+    void updateState(QMediaRecorder::State state);
+
+private:
+    V4LCameraSession *m_session;
+    QMediaRecorder::State m_state;
 };
 
-#define QImageProcessingControl_iid "com.nokia.Qt.QImageProcessingControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QImageProcessingControl, QImageProcessingControl_iid)
-
-#endif
-
+#endif // V4LCAPTURECONTROL_H

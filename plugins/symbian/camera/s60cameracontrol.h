@@ -43,7 +43,7 @@
 #define S60CAMERACONTROL_H
 
 #include <QtCore/qobject.h>
-#include "qcameracontrol.h"
+#include "multimedia/experimental/qcameracontrol.h"
 
 class S60CameraService;
 class S60CameraSession;

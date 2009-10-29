@@ -43,7 +43,8 @@
 #define V4LCAMERACONTROL_H
 
 #include <QtCore/qobject.h>
-#include <multimedia/qcameracontrol.h>
+#include <multimedia/qmediarecorder.h>
+#include <multimedia/experimental/qcameracontrol.h>
 
 class V4LCameraService;
 class V4LCameraSession;
@@ -58,6 +59,9 @@ public:
     void start();
     void stop();
     QCamera::State state() const;
+
+private slots:
+    void updateState(QMediaRecorder::State);
 
 private:
     V4LCameraSession *m_session;

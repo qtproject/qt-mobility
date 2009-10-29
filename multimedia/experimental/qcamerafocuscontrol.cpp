@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <multimedia/qcamerafocuscontrol.h>
+#include <multimedia/experimental/qcamerafocuscontrol.h>
 #include  "qmediacontrol_p.h"
 
 /*!

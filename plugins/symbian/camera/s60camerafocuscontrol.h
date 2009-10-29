@@ -43,7 +43,7 @@
 #define S60CAMERAFOCUSCONTROL_H
 
 #include <QtCore/qobject.h>
-#include "qcamerafocuscontrol.h"
+#include "multimedia/experimental/qcamerafocuscontrol.h"
 
 class S60CameraService;
 class S60CameraSession;
