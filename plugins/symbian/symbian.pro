@@ -9,8 +9,10 @@ DEPENDPATH += .
 INCLUDEPATH += . \
     ../../multimedia
 HEADERS += s60serviceplugin.h \
+           s60videowidget.h
    
 SOURCES += s60serviceplugin.cpp \
+           s60videowidget.cpp
 
 include(radio/radio.pri)
 include(camera/camera_s60.pri)

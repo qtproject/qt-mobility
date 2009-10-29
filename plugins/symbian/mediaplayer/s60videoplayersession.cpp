@@ -78,7 +78,7 @@ void S60VideoPlayerSession::load(const QUrl &url)
 
 qint64 S60VideoPlayerSession::duration() const
 {
-    if (m_player) 
+    //if (m_player) 
         //m_duration = m_player->DurationL().Int64(); 
     return m_duration;
 }
