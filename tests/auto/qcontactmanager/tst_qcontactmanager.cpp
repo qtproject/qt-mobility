@@ -2028,7 +2028,6 @@ void tst_QContactManager::actionPreferences()
     if (!cm->information()->hasFeature(QContactManagerInfo::ActionPreferences)) {
         delete cm;
         QSKIP("Manager does not support action preferences", SkipSingle);
-        return;
     }
 
     // create a sample contact
@@ -2126,7 +2125,6 @@ void tst_QContactManager::selfContactId()
         QVERIFY(!cm->setSelfContactId(newSelfContact));
         QVERIFY(cm->error() == QContactManager::NotSupportedError);
         QSKIP("Manager does not support the concept of a self-contact", SkipSingle);
-        return;
     }
 
     QVERIFY(cm->error() == QContactManager::NoError);

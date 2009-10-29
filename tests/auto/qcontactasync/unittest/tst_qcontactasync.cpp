@@ -1840,7 +1840,6 @@ void tst_QContactAsync::threadDelivery()
             delete req;
             delete cm;
             QSKIP("Asynchronous request not complete after 30 seconds!", SkipSingle);
-            return;
         }
     }
 
