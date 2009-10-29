@@ -284,7 +284,7 @@ QList<QSize> S60CameraSession::supportedVideoResolutions()
 {
     QList<QSize> list;
     // if we have cameraengine loaded and we can update camerainfo
-    if (m_cameraEngine && queryCurrentCameraInfo) {
+    if (m_cameraEngine && queryCurrentCameraInfo()) {
 		CCamera *camera = m_cameraEngine->Camera();
 		for (int i=0; i < m_info.iNumVideoFrameSizesSupported; i++) {
 			TSize size;
@@ -300,7 +300,7 @@ QList<QSize> S60CameraSession::supportedCaptureSizes()
 {
 	QList<QSize> list;
 	// if we have cameraengine loaded and we can update camerainfo
-	if (m_cameraEngine && queryCurrentCameraInfo) {
+	if (m_cameraEngine && queryCurrentCameraInfo()) {
 		CCamera *camera = m_cameraEngine->Camera();
 		for (int i=0; i < m_info.iNumImageSizesSupported; i++) {
 			TSize size;
