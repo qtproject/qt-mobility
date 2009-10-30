@@ -42,7 +42,7 @@
 
 class CntSymbianEnginePrivate;
 
-class TestSymbianEngine : public QObject
+class TestSymbianEnginePrivate : public QObject
 {
     Q_OBJECT
 

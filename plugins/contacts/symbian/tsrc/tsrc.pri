@@ -33,7 +33,7 @@ SYMBIAN_HEADERS += \
         ../../inc/cntsymbiantransformerror.h
 
 SYMBIAN_SOURCES += \
-        ../../src/qcontactsymbianengine_p.cpp \
+        ../../src/cntsymbianengine_p.cpp \
         ../../src/cnttransformcontact.cpp \
         ../../src/cnttransformcontactdata.cpp \
         ../../src/cnttransformname.cpp \
@@ -61,4 +61,4 @@ SYMBIAN_SOURCES += \
         ../../src/cntrelationshipgroup.cpp \
         ../../src/cntsymbianfiltersqlhelper.cpp \
         ../../src/cntsymbiansrvconnection.cpp \
-        ../../src/qcontactsymbiantransformerror.cpp
+        ../../src/cntsymbiantransformerror.cpp

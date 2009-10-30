@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include "ut_qcontactsymbianengine_p.h"
+#include "ut_cntsymbianengine_p.h"
 #include "cntsymbianengine_p.h"
 #include "qcontactchangeset.h"
 
 #include <QtTest/QtTest>
 
-void TestSymbianEngine::initTestCase()
+void TestSymbianEnginePrivate::initTestCase()
 {
     QContactManager::Error error;
     QMap<QString, QString> emptyParameters;
@@ -53,13 +53,13 @@ void TestSymbianEngine::initTestCase()
     removeAllContacts();
 }
 
-void TestSymbianEngine::cleanupTestCase()
+void TestSymbianEnginePrivate::cleanupTestCase()
 {
     removeAllContacts();
     delete m_engine;
 }
 
-void TestSymbianEngine::removeAllContacts()
+void TestSymbianEnginePrivate::removeAllContacts()
 {
     if(m_engine) {
         // Empty cnt database
@@ -74,7 +74,7 @@ void TestSymbianEngine::removeAllContacts()
     }
 }
 
-void TestSymbianEngine::testContactOperations()
+void TestSymbianEnginePrivate::testContactOperations()
 {
     QContactManager::Error err = QContactManager::NoError;
     QContactChangeSet cs;
@@ -142,7 +142,7 @@ void TestSymbianEngine::testContactOperations()
     QVERIFY(err == QContactManager::DoesNotExistError);
 }
 
-void TestSymbianEngine::testGroupOperations()
+void TestSymbianEnginePrivate::testGroupOperations()
 {
     // XXX TODO
 #if 0
@@ -197,7 +197,7 @@ void TestSymbianEngine::testGroupOperations()
 #endif
 }
 
-void TestSymbianEngine::testSelfContactOperations()
+void TestSymbianEnginePrivate::testSelfContactOperations()
 {
     QContactManager::Error err = QContactManager::NoError;
     QContactChangeSet cs;
@@ -245,4 +245,4 @@ void TestSymbianEngine::testSelfContactOperations()
     QVERIFY(err == QContactManager::DoesNotExistError);
 }
 
-QTEST_MAIN(TestSymbianEngine);
+QTEST_MAIN(TestSymbianEnginePrivate);

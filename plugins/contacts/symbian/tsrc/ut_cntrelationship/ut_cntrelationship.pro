@@ -11,11 +11,10 @@ CONFIG  += qtestlib
 DEPENDPATH += .
 DEPENDPATH += ../../src
 DEPENDPATH += ../../inc
-DEPENDPATH += ../tsrc/ut_relationship
-DEPENDPATH +=  tsrc/ut_relationship
 INCLUDEPATH += .
-INCLUDEPATH += ..\tsrc\ut_cntrelationship
-INCLUDEPATH +=  tsrc\ut_cntrelationship
+INCLUDEPATH += ../../src
+INCLUDEPATH += ../../inc
+
 
 symbian:
 {
@@ -30,7 +29,7 @@ symbian:
       	         
       
 	SOURCES += ut_cntrelationship.cpp \ 
-	            ../../src/qcontactsymbiantransformerror.cpp \ 
+	            ../../src/cntsymbiantransformerror.cpp \ 
 				../../src/cntrelationship.cpp \
 				../../src/cntabstractrelationship.cpp \
       	        ../../src/cntrelationshipgroup.cpp  
