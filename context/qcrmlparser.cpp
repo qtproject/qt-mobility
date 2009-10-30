@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,10 +40,9 @@
 ****************************************************************************/
 
 #include "qcrmlparser_p.h"
-#include <QDomDocument>
-#include <QDomElement>
 #include <QStringList>
 #include <QFile>
+#include <QXmlStreamAttributes>
 
 KeyData::KeyData(const QString &path, quint64 uid, quint32 bitIndex)
 {
@@ -52,175 +51,281 @@ KeyData::KeyData(const QString &path, quint64 uid, quint32 bitIndex)
     m_bitIndex = bitIndex;
 }
 
-void QCRMLParser::setError(ErrorType type, const QString &errorString)
-{
-    m_error = type;
-    m_errorString = errorString;
-}
-
-QCRMLParser::ErrorType QCRMLParser::error()
-{
-    return m_error;
-}
-
-QString QCRMLParser::errorString()
-{
-    return m_errorString;
-}
-
-QList<KeyData> QCRMLParser::parseQCRML(const QString &filePath)
+QList<KeyData> QCrmlParser::parseQCrml(const QString &filePath)
 {
     QList<KeyData> rv;
     QFile inputFile(filePath);
 
     if (!inputFile.exists()) {
-        setError(FileDoesNotExist, "QCRML file does not exist");
+        setError(FileNotFound, QObject::tr("File does not exist: %1").arg(filePath));
         return rv;
     }
 
-    QDomDocument doc;
-    QString errorStr;
-    if (!doc.setContent(&inputFile, false, &errorStr)) {
-        setError(ParseError, errorStr);
+    if (!inputFile.open(QFile::ReadOnly)) {
+        setError(FileOpenError, QObject::tr("Error opening file: %1").arg(filePath));
+    }
+
+
+    setDevice(&inputFile);
+
+    readNext();
+    if (QXmlStreamReader::error() != QXmlStreamReader::NoError) {
+        setError(ParseError, QXmlStreamReader::errorString());
+        rv.clear();
         return rv;
     }
 
-    QDomElement root = doc.documentElement();
-    if (root.tagName() != "repository") {
-        setError(ParseError, "Root element is not a repository element");
-        return rv;
-    }
-
-    if(!parseRepository(root))
-        return rv;
-
-    QDomElement element = root.firstChildElement();
-
-    QList<KeyData> keyData;
-    while(!element.isNull()) {
-        if (element.tagName() == "key")
-            keyData = parseKey(element);
-        else if (element.tagName() == "keyRange") {
-            keyData = parseKeyRange(element);
-        } else { //unknown element so ignore and continue
-            element = element.nextSiblingElement();
-            continue;
-        }
-
-        if (error() != NoError) {
+    if(isStartDocument()) {
+        readNext();
+        if (QXmlStreamReader::error() != QXmlStreamReader::NoError) {
+            setError(ParseError, QXmlStreamReader::errorString());
             rv.clear();
             return rv;
         }
-        m_keyData.append(keyData);
-        element = element.nextSiblingElement();
     }
 
-    setError(NoError, "");
-    return m_keyData;
+    if (isStartElement()) {
+        if (name() == "repository") {
+            rv = parseRepository();
+        } else {
+            setError(ParseError, QObject::tr("root element is not a repository element"));
+        }
+    }
+    return rv;
 }
 
-bool QCRMLParser::parseRepository(const QDomElement &element)
+QList<KeyData> QCrmlParser::parseRepository()
 {
-    m_repoUID = 0;
-
+    QList<KeyData> rv;
     QStringList mandatoryAttributes;
-    mandatoryAttributes << "uidName" << "uidValue";
+    mandatoryAttributes << "uidValue";
+    setError(NoError, "");
+    if (!checkMandatoryAttributes(mandatoryAttributes))
+        return rv;
 
-    if (!checkMandatoryAttributes(element, mandatoryAttributes))
-        return false;
-
-    QString uidValueStr = element.attribute("uidValue");
-    bool ok = false;
-    quint32 uidValue = uidStringToUInt32(uidValueStr, &ok);
+    bool ok;
+    quint32 uidValue = uidStringToUInt32(attributes().value("uidValue").toString(), &ok);
     if (!ok) {
-        setError(ParseError, "repository element has invalid uidValue");
-        return false;
+        setError(ParseError, QObject::tr("repository element has invalid uidValue on line %1")
+                               .arg(QString::number(lineNumber())));
+        return rv;
     }
 
-    QString uidName = element.attribute("uidName");
-    if (uidName.isEmpty()) {
-        setError(ParseError, "repository element has invalid uidName");
-        return false;
+    while (!atEnd())
+    {
+        readNext();
+         if (QXmlStreamReader::error() != QXmlStreamReader::NoError) {
+            setError(ParseError, QXmlStreamReader::errorString());
+            rv.clear();
+           return rv;
+        }
+
+        if (isEndElement()  && name() == "repository")
+            break;
+
+        if (isStartElement()) {
+            if (name() == "key")
+                rv.append(parseKey(uidValue));
+            else if (name() == "keyRange")
+                rv.append(parseKeyRange(uidValue));
+            else
+                parseUnknownElement();
+        }
+
+        if (m_error != NoError) {
+            rv.clear();
+            break;
+        }
     }
 
-    m_repoUID = uidValue;
-    return true;
+    if (!isEndElement() && name() != "repository") {
+        setError(ParseError, QObject::tr("File did not end with a repository end tag"));
+        rv.clear();
+        return rv;
+    }
+
+    return rv;
+
 }
 
-QList<KeyData> QCRMLParser::parseKeyRange(const QDomElement &element)
+QList<KeyData> QCrmlParser::parseKey(quint32 repoUid)
+{
+    QList<KeyData> rv;
+    QStringList mandatoryAttributes;
+    mandatoryAttributes << "int";
+    if (!checkMandatoryAttributes(mandatoryAttributes))
+        return rv;
+
+    QXmlStreamAttributes attribs = attributes();
+    QString keyIntStr = attribs.value("int").toString();
+    bool ok =false;
+    quint32 keyInt = uidStringToUInt32(keyIntStr, &ok);
+    if (!ok) {
+        setError(ParseError,QObject::tr("key element has invalid int attribute on line %1").
+                arg(QString::number(lineNumber())));
+        return rv;
+    }
+
+    if (attribs.value("ref").isNull()) {
+        //no ref attribute so this must be
+        //a bitmask key
+        while (!atEnd()) {
+            readNext();
+            if (QXmlStreamReader::error() != QXmlStreamReader::NoError) {
+                 setError(ParseError, QXmlStreamReader::errorString());
+                 rv.clear();
+                 return rv;
+            }
+            if (isEndElement())
+                break;
+
+            if (isStartElement()) {
+                if (name() == "bit") {
+                    rv.append(parseBit(repoUid, keyInt));
+                } else {
+                    parseUnknownElement();
+                }
+            }
+        }
+    } else {
+        QString keyRef = attribs.value("ref").toString();
+        if (keyRef.isEmpty()) {
+            setError(ParseError, QObject::tr("ref attribute of key element is empty on line %1")
+                    .arg(QString::number(lineNumber())));
+            rv.clear();
+            return rv;
+        }
+
+        while (!atEnd()) {
+            readNext();
+            if (QXmlStreamReader::error() != QXmlStreamReader::NoError) {
+                setError(ParseError, QXmlStreamReader::errorString());
+                rv.clear();
+                return rv;
+            }
+            if (isEndElement() && name() == "key") {
+                break;
+            }
+
+            if (isStartElement()) {
+                if (name() == "key" || name() == "keyRange") {
+                    setError(ParseError, QObject::tr("key and/or keyRange element has "
+                                "been nested in a key element on line %1").arg(QString::number(lineNumber())));
+                    rv.clear();
+                    return rv;
+                } else {
+                    parseUnknownElement();
+                }
+            }
+        }
+
+        QString keyPath(keyRef);
+        if (!keyPath.startsWith("/"))
+            keyPath.prepend("/");
+        quint64 uid = repoUid;
+        uid = uid << 32;
+        uid += keyInt;
+        rv.append(KeyData(keyPath, uid));
+    }
+    return rv;
+}
+
+QList<KeyData> QCrmlParser::parseKeyRange(quint32 repoUid)
 {
     QList<KeyData> rv;
 
     //if keyRange has no ref attribute it must
     //only be used for creating access control
     //policies which we do not need to worry about
-    if (!element.hasAttribute("ref"))
+    if (attributes().value("ref").isNull())
         return rv;
 
     QStringList mandatoryAttributes;
     mandatoryAttributes << "firstInt" << "lastInt";
-    if (!checkMandatoryAttributes(element, mandatoryAttributes))
+    if (!checkMandatoryAttributes(mandatoryAttributes))
         return rv;
 
     bool ok = false;
     QString pathPrefix;
-     pathPrefix = element.attribute("ref");
-     if (!pathPrefix.startsWith("/"))
+    pathPrefix = attributes().value("ref").toString();
+    if (!pathPrefix.startsWith("/"))
         pathPrefix.prepend("/");
 
-    if (element.hasAttribute("countInt")) {
-        quint32 countInt = uidStringToUInt32(element.attribute("countInt"), &ok);
+    if (!attributes().value("countInt").isNull()) {
+        quint32 countInt = uidStringToUInt32(attributes().value("countInt").toString(), &ok);
         if (!ok) {
-            setError(ParseError, "keyRange element has invalid countIn attribute");
+            setError(ParseError, QObject::tr("keyRange element has invalid countInt attribute on line %1")
+                    .arg(QString::number(lineNumber())));
             rv.clear();
             return rv;
         }
 
-        rv.append(KeyData(pathPrefix,(quint64)countInt + (((quint64)m_repoUID) << 32)));
+        rv.append(KeyData(pathPrefix,(quint64)countInt + (((quint64)repoUid) << 32)));
     }
 
      if (!pathPrefix.endsWith("/"))
         pathPrefix.append("/");
 
-    quint32 firstInt = uidStringToUInt32(element.attribute("firstInt"), &ok);
+    quint32 firstInt = uidStringToUInt32(attributes().value("firstInt").toString(), &ok);
     if (!ok) {
-        setError(ParseError, "keyRange element has invalid firstInt attribute");
+        setError(ParseError, QObject::tr("keyRange element has invalid firstInt attribute on line %1")
+                .arg(QString::number(lineNumber())));
         rv.clear();
         return rv;
     }
 
-    quint32 lastInt = uidStringToUInt32(element.attribute("lastInt"),&ok);
+    quint32 lastInt = uidStringToUInt32(attributes().value("lastInt").toString(),&ok);
     if (!ok) {
-        setError(ParseError, "keyRange element has invalid lastInt attribute");
+        setError(ParseError, QObject::tr("keyRange element has invalid lastInt attribute on line %1")
+                .arg(QString::number(lineNumber())));
         rv.clear();
         return rv;
     }
 
-    quint32 maxNum;
-    quint32 indexBits;
-    quint32 firstIndex;
-    if (!element.hasAttribute("indexBits")) {
+    quint32 maxNum =0;
+    quint32 indexBits = 0;
+    quint32 firstIndex = 0;
+    if (attributes().value("indexBits").isNull()) {
         //keyRange doesn't map to sequence setting
 
         maxNum = lastInt - firstInt + 1;
         for (quint32 i=0; i < maxNum; i++) {
-            m_keyData.append(KeyData(pathPrefix + i,(quint64)firstInt + (((quint64)m_repoUID) << 32) + i));
+            rv.append(KeyData(pathPrefix + QString::number(i),(quint64)firstInt + (((quint64)repoUid) << 32) + i));
+        }
+
+        while (!atEnd()) {
+            readNext();
+            if (QXmlStreamReader::error() != QXmlStreamReader::NoError) {
+                setError(ParseError, QXmlStreamReader::errorString());
+                rv.clear();
+                return rv;
+            }
+
+            if (isEndElement())
+                break;
+
+            if (isStartElement())
+                parseUnknownElement();
         }
     } else {
         //keyRanges does  map to sequence setting
-        indexBits = uidStringToUInt32(element.attribute("indexBits"), &ok);
+        indexBits = uidStringToUInt32(attributes().value("indexBits").toString(), &ok);
         if (!ok) {
-            setError(ParseError, "keyRange elment has invalid indexBits attribute");
+            setError(ParseError, QObject::tr("keyRange elment has invalid indexBits attribute on line %1")
+                    .arg(QString::number(lineNumber())));
             rv.clear();
             return rv;
         }
 
-        QString firstIndexStr = element.attribute("firstIndex");
-        firstIndex = firstIndexStr.toUInt(&ok, 10);
-        if (!ok) {
-            setError(ParseError, "keyRange element has invalid firstIndex attribute");
-            rv.clear();
-            return rv;
+        if (!attributes().value("firstIndex").isNull()) {
+            QString firstIndexStr = attributes().value("firstIndex").toString();
+            firstIndex = firstIndexStr.toUInt(&ok, 10);
+            if (!ok) {
+                setError(ParseError, QObject::tr("keyRange element has invalid firstIndex attribute on line %1")
+                        .arg(QString::number(lineNumber())));
+                rv.clear();
+                return rv;
+            }
         }
 
         int indexBitsLSB =0;
@@ -243,23 +348,38 @@ QList<KeyData> QCRMLParser::parseKeyRange(const QDomElement &element)
         bitmask = bitmask << 1;
         quint32 settingIdentifier = lastInt & bitmask;
 
-        QDomNodeList children = element.childNodes();
         QList<KeyData> subSettings;
 
-        for (int i=0; i < children.count(); i++) {
-            if (children.at(i).toElement().tagName() == "key") {
-                subSettings.append(parseKey(children.at(i).toElement()));
-                if ( error() != NoError) {
-                    rv.clear();
-                    return rv;
+        while (!atEnd()) {
+            readNext();
+            if (QXmlStreamReader::error() != QXmlStreamReader::NoError) {
+                setError(ParseError, QXmlStreamReader::errorString());
+                rv.clear();
+                return rv;
+            }
+
+            if (isEndElement())
+                break;
+
+            if (isStartElement()) {
+                if (name() == "key") {
+                    subSettings.append(parseKey(repoUid));
+
+                    if (QXmlStreamReader::error() != QXmlStreamReader::NoError) {
+                        rv.clear();
+                        return rv;
+                    }
+                } else {
+                    parseUnknownElement();
                 }
             }
+
         }
 
         for(quint32 i = 0; i < maxNum; i++) {
             for(int j = 0; j < subSettings.count(); j++) {
                 rv.append(KeyData(pathPrefix + QString::number(i) + subSettings.at(j).path(),
-                                 subSettings.at(j).UID() + settingIdentifier + ((firstIndex + 1*i)  << indexBitsLSB),
+                                 subSettings.at(j).uid() + settingIdentifier + ((firstIndex + 1*i)  << indexBitsLSB),
                                  subSettings.at(j).bitIndex()));
             }
         }
@@ -268,77 +388,117 @@ QList<KeyData> QCRMLParser::parseKeyRange(const QDomElement &element)
     return rv;
 }
 
-QList<KeyData> QCRMLParser::parseKey(const QDomElement &element)
+QList<KeyData> QCrmlParser::parseBit(quint32 repoUid, quint32 keyInt)
 {
-    QList<KeyData> rv;
-
+    QList <KeyData> rv;
     QStringList mandatoryAttributes;
-    mandatoryAttributes << "int";
-    if (!checkMandatoryAttributes(element, mandatoryAttributes))
-        return rv;
-
-    QString keyIntStr = element.attribute("int");
-    bool ok =false;
-    quint32 keyInt = uidStringToUInt32(keyIntStr, &ok);
-    if (!ok) {
-        setError(ParseError, "key element has invalid int attribute");
+    mandatoryAttributes << "ref";
+    if (!checkMandatoryAttributes(mandatoryAttributes)) {
+        rv.clear();
         return rv;
     }
 
-    if (!element.hasAttribute("ref")) {
-        QDomNodeList children = element.childNodes();
-        QDomElement childElement;
-        QString text;
-        QString keyPath;
-        bool ok;
-        for(int i = 0; i < children.count(); ++i) {
-            childElement = children.at(i).toElement();
-            if (childElement.tagName() == "bit") {
-                mandatoryAttributes.clear();
-                mandatoryAttributes << "ref";
-                if (!checkMandatoryAttributes(childElement, mandatoryAttributes)) {
-                    rv.clear();
-                    return rv;
-                }
-                text = childElement.text();
-                int bitIndex = text.toInt(&ok);
-                if (!ok || bitIndex <= 0) {
-                    //Note: binary keys have no maximum bit index
-                    setError(ParseError, "bit element has invalid text value");
-                    rv.clear();
-                    return rv;
-                }
-                keyPath = childElement.attribute("ref");
-               if (!keyPath.startsWith("/"))
-                    keyPath.prepend("/");
-                quint64 uid = m_repoUID;
-                uid = uid << 32;
-                uid += keyInt;
-                rv.append(KeyData(keyPath,uid, bitIndex));
-            }
-        }
-    } else {
-        QString keyRef = element.attribute("ref");
-        if (keyRef.isEmpty()) {
-            setError(ParseError, "ref attribute of key element is empty");
+    QString keyPath = attributes().value("ref").toString();
+    if (!keyPath.startsWith("/"))
+        keyPath.prepend("/");
+
+    int bitIndex = 0;
+    while(!atEnd()) {
+        readNext();
+        if (QXmlStreamReader::error() != QXmlStreamReader::NoError) {
+            setError(ParseError, QXmlStreamReader::errorString());
             rv.clear();
             return rv;
         }
 
-        QString keyPath(keyRef);
-        if (!keyPath.startsWith("/"))
-            keyPath.prepend("/");
-        quint64 uid = m_repoUID;
-        uid = uid << 32;
-        uid += keyInt;
-        rv.append(KeyData(keyPath, uid));
-}
+        if (isEndElement() && name() == "bit")
+            break;
+        if(isStartElement()) {
+            parseUnknownElement();
+            if (error() != NoError) {
+                rv.clear();
+                return rv;
+            }
+        } else if (isCharacters()) {
+            bool ok;
+            QString txt = text().toString();
+            if (txt.simplified().isEmpty())
+                continue;
+            bitIndex = txt.toInt(&ok);
+            if (!ok || bitIndex <= 0) {
+                //Note: binary keys have no maximum bit index
+                setError(ParseError, QObject::tr("bit element has invalid text value on line %1")
+                        .arg(QString::number(lineNumber())));
+                rv.clear();
+                return rv;
+            }
+        }
+    }
 
-    setError(NoError,"");
+    if (!isEndElement() && name() !="bit") {
+        setError(ParseError, QObject::tr("bit element does not have end tag at line: %1")
+                            .arg(QString::number(lineNumber())));
+        rv.clear();
+        return rv;
+    }
+
+    quint64 uid = repoUid;
+    uid = uid << 32;
+    uid += keyInt;
+    rv.append(KeyData(keyPath,uid, bitIndex));
     return rv;
 }
 
-quint32 QCRMLParser::uidStringToUInt32(const QString &uidString, bool *ok)
+void QCrmlParser::parseUnknownElement()
+{
+    Q_ASSERT(isStartElement());
+    while(!atEnd()) {
+        readNext();
+
+        if (QXmlStreamReader::error() != QXmlStreamReader::NoError) {
+            setError(ParseError, QXmlStreamReader::errorString());
+            return;
+        }
+
+        if (isEndElement()) {
+            break;
+        }
+
+        if (isStartElement())
+            parseUnknownElement();
+    }
+}
+
+bool QCrmlParser::checkMandatoryAttributes(const QStringList &mandatoryAttributes)
+{
+    QXmlStreamAttributes attrs= attributes() ;
+    for (int i = 0; i < mandatoryAttributes.count(); ++i) {
+        if (attrs.value(mandatoryAttributes.at(i)).isNull()) {
+            setError(ParseError, QObject::tr("%1 element does not contain %2 attribute")
+                    .arg(name().toString()).arg(mandatoryAttributes.at(i)));
+            return false;
+        }
+    }
+    return true;
+}
+
+QCrmlParser::Error QCrmlParser::error()
+{
+    return m_error;
+}
+
+QString QCrmlParser::errorString()
+{
+    return m_errorString;
+}
+
+void QCrmlParser::setError(Error error, const QString &errorString)
+{
+    m_error = error;
+    m_errorString = errorString;
+}
+
+quint32 QCrmlParser::uidStringToUInt32(const QString &uidString, bool *ok)
 {
     quint32 uid = 0;
     if (!uidString.startsWith("0x")) {
@@ -358,17 +518,4 @@ quint32 QCRMLParser::uidStringToUInt32(const QString &uidString, bool *ok)
     if (ok != NULL)
         *ok = true;
     return uid;
-}
-
-bool QCRMLParser::checkMandatoryAttributes(const QDomElement &element, const QStringList &mandatoryAttributes)
-{
-    foreach(const QString &attribute, mandatoryAttributes) {
-        if (!element.hasAttribute(attribute)) {
-            QString errorString("%1 element does not contain %2 attribute");
-            errorString = errorString.arg(element.tagName()).arg(attribute);
-            setError(ParseError, errorString);
-            return false;
-        }
-    }
-    return true;
 }

@@ -308,7 +308,11 @@ void tst_QValueSpace::availableLayers()
 {
     QList<QUuid> layers = QValueSpace::availableLayers();
 
+#if defined(Q_OS_UNIX) && !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_6)
     QVERIFY(layers.contains(QVALUESPACE_SHAREDMEMORY_LAYER));
+#else
+    QVERIFY(!layers.contains(QVALUESPACE_SHAREDMEMORY_LAYER));
+#endif
 
 #ifdef Q_OS_WIN
     QVERIFY(layers.contains(QVALUESPACE_VOLATILEREGISTRY_LAYER));
@@ -316,6 +320,12 @@ void tst_QValueSpace::availableLayers()
 #else
     QVERIFY(!layers.contains(QVALUESPACE_VOLATILEREGISTRY_LAYER));
     QVERIFY(!layers.contains(QVALUESPACE_NONVOLATILEREGISTRY_LAYER));
+#endif
+
+#ifdef Q_WS_MAEMO_6
+    QVERIFY(layers.contains(QVALUESPACE_CONTEXTKIT_LAYER));
+#else
+    QVERIFY(!layers.contains(QVALUESPACE_CONTEXTKIT_LAYER));
 #endif
 
     QVERIFY(layers.contains(fakeLayer->id()));

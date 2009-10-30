@@ -1,0 +1,10 @@
+<repository uidValue="0x12129898">
+<keyRange firstInt="0x8" lastInt="0xC"  ref="section31">
+</keyRange>
+<keyRange firstInt="0xE" lastInt="0x13" ref="talshiar">
+</keyRange>
+<keyRange firstInt="0x200" lastInt="0x340" ref="obsidian" indexBits="0x1E0">
+<key int="0x00000001" ref="name"/>
+<key int="0x00000002" ref="rank"/>
+</keyRange>
+</repository>

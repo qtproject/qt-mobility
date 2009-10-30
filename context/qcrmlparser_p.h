@@ -55,41 +55,46 @@
 
 #include <QList>
 #include <QString>
-class QDomElement;
+#include <QXmlStreamReader>
 
 class KeyData{
 public:
     KeyData():m_UID(0), m_bitIndex(0){}
     KeyData(const QString &path, quint64 UID, quint32 bitmask=0);
-    quint64 UID() const {return m_UID;}
+    quint64 uid() const {return m_UID;}
+    quint32 repoId() const { return (quint32)(m_UID >> 32);}
+    quint32 keyId() const {return (quint32)m_UID;}
     quint32 bitIndex() const { return m_bitIndex;}
     QString path()const {return m_path;}
 
 private:
     quint64 m_UID;
-    quint32 m_bitIndex;
     QString m_path;
+    quint32 m_bitIndex;
 };
 
-class QCRMLParser {
+class QCrmlParser : private QXmlStreamReader
+{
 public:
-    enum ErrorType{NoError, FileDoesNotExist, ParseError};
-    QList<KeyData> parseQCRML(const QString &filePath);
-    ErrorType error();
+    enum Error{NoError, FileNotFound, FileOpenError, ParseError};
+    QList<KeyData> parseQCrml(const QString &filePath);
+    Error error();
     QString errorString();
 private:
-    void setError(ErrorType type, const QString &errorString);
-    QList<KeyData> parseKey(const QDomElement &element);
-    bool parseRepository(const QDomElement &element);
-    QList<KeyData> parseKeyRange(const QDomElement &element);
-    uint uidStringToUInt32(const QString &uid, bool *ok=false);
-    bool checkMandatoryAttributes(const QDomElement &element,
-                                  const QStringList &mandatoryAttributes);
+    void parseUnknownElement();
+    QList<KeyData> parseRepository();
+    QList<KeyData> parseKey(quint32 repoUid);
+    QList<KeyData> parseKeyRange(quint32 repoUid);
+    QList<KeyData> parseBit(quint32 repoUid, quint32 keyInt);
 
-    ErrorType m_error;
+    bool checkMandatoryAttributes(const QStringList &mandatoryAttributes);
+    quint32 uidStringToUInt32(const QString &uidString, bool*ok);
+    void setError(Error error, const QString &errorString);
+
+    Error m_error;
     QString m_errorString;
-
-    quint32 m_repoUID;
-    QList<KeyData> m_keyData;
 };
+
 #endif
+
+

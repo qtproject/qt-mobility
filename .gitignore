@@ -28,6 +28,7 @@ bin/servicefw*
 bin/vsexplorer*
 bin/examples/*
 bin/sysinfo*
+bin/qcrmlgen*
 install/*
 lib/*
 *.app
