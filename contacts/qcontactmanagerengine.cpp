@@ -558,7 +558,8 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     d.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     retn.insert(d.name(), d);
 
-    // display label
+    // display label - SOON TO BE DEPRECATED
+    // see Commit:
     d.setName(QContactDisplayLabel::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::String);
@@ -574,6 +575,18 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     d.setUnique(true);
     d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
+    // Note that in week 47, the above schema definition will be replaced with the following:
+    //d.setName(QContactDisplayLabel::DefinitionName);
+    //fields.clear();
+    //f.setDataType(QVariant::String);
+    //f.setAllowableValues(QVariantList());
+    //fields.insert(QContactDisplayLabel::FieldLabel, f);
+    //d.setFields(fields);
+    //d.setUnique(true);
+    //d.setAccessConstraint(QContactDetailDefinition::ReadOnly);
+    //retn.insert(d.name(), d);
+    // Which will cause the display label to be READ ONLY (always synthesised)
+    // To set a custom label, use QContactName::CustomLabel field!
 
     // email address
     d.setName(QContactEmailAddress::DefinitionName);
@@ -881,6 +894,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     fields.insert(QContactName::FieldMiddle, f);
     fields.insert(QContactName::FieldLast, f);
     fields.insert(QContactName::FieldSuffix, f);
+    fields.insert(QContactName::FieldCustomLabel, f);
     f.setDataType(QVariant::StringList);
     f.setAllowableValues(contexts);
     fields.insert(QContactDetail::FieldContext, f);

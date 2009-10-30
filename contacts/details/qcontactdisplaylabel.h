@@ -43,6 +43,7 @@
 #ifndef QCONTACTDISPLAYLABEL_H
 #define QCONTACTDISPLAYLABEL_H
 
+#include <QtDebug>
 #include <QString>
 
 #include "qtcontactsglobal.h"
@@ -64,12 +65,13 @@ public:
 
     void setLabel(const QString& label)
     {
+        qWarning("This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!");
         setValue(FieldLabel, label);
         setValue(FieldSynthesized, label.isEmpty() ? true : false);
     }
     QString label() const {return value(FieldLabel);}
-    void setSynthesized(bool synthesized) {setValue(FieldSynthesized, synthesized);}
-    bool isSynthesized() const {return value<bool>(FieldSynthesized);}
+    void setSynthesized(bool synthesized) {qWarning("This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!");setValue(FieldSynthesized, synthesized);}
+    bool isSynthesized() const {qWarning("This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!");return value<bool>(FieldSynthesized);}
 };
 
 #endif

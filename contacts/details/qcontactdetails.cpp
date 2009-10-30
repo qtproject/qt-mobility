@@ -442,6 +442,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactName::FieldLast, "Last");
 Q_DEFINE_LATIN1_LITERAL(QContactName::FieldSuffix, "Suffix");
 
 /*!
+ * \variable QContactName::FieldCustomLabel
+ * The constant key for which the custom name label value is stored in details of the QContactName type, if supported
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldCustomLabel, "CustomLabel");
+
+/*!
  * \variable QContactNickname::FieldNickname
  * The constant key for which the nickname value is stored in details of the QContactNickname type
  */
@@ -792,6 +798,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::FieldLabel, "Label");
 /*!
  * \variable QContactDisplayLabel::FieldSynthesized
  * The constant key for the value which is stored in details of the QContactDisplayLabel type which describes whether the label was synthesized by a QContactManager or set manually.
+ * This field has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::FieldSynthesized, "Synthesized");
 
@@ -1397,6 +1404,16 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
+ * \fn QContactName::customLabel() const
+ * Returns the custom label of the name stored in this detail
+ */
+
+/*!
+ * \fn QContactName::setCustomLabel(const QString& customLabel)
+ * Sets the custom label of the name stored in this detail to \a customLabel
+ */
+
+/*!
  * \fn QContactNickname::setNickname(const QString& nickname)
  * Sets the nickname of the contact which is stored in this detail to \a nickname
  */
@@ -1448,7 +1465,8 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 
 /*!
  * \fn QContactDisplayLabel::isSynthesized() const
- * Returns true if the display label was synthesized automatically by the manager backend
+ * Returns true if the display label was synthesized automatically by the manager backend.
+ * This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!
  */
 
 /*!
@@ -1458,12 +1476,14 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 
 /*!
  * \fn QContactDisplayLabel::setLabel(const QString& label)
- * Sets the display label of the contact to \a label
+ * Sets the display label of the contact to \a label.
+ * This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!
  */
 
 /*!
  * \fn QContactDisplayLabel::setSynthesized(bool synthesized)
- * Sets the synthetic status of the display label to \a synthesized
+ * Sets the synthetic status of the display label to \a synthesized.
+ * This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!
  */
 
 /*!
