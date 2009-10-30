@@ -88,7 +88,6 @@ SOURCES += qmediacontrol.cpp \
     qvideoencodercontrol.cpp \
     qimageencodercontrol.cpp \
     qaudiocapturesource.cpp \
-    experimental/qcamera.cpp \
     qmediaformatcontrol.cpp \
     qmediaplaylistcontrol.cpp \
     qaudiodevicecontrol.cpp \
