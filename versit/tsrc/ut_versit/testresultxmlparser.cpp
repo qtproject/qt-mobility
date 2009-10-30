@@ -143,7 +143,7 @@ bool TestResultXmlParser::characters(const QString& ch)
         testResult += "Reason: ";
         testResult += ch.toAscii();
         testResult += "\n";
-        mErrors->append(testResult);
+        mErrors->append(QString::fromAscii(testResult.data()));
     }
     return true;
 }
@@ -175,7 +175,7 @@ int TestResultXmlParser::parseAndPrintResults(
     if (printDetails) {
         printf("\n");
         foreach(QString error, *mErrors) {
-            printf(error.toUtf8().data());
+            printf("%s", error.toUtf8().data());
             printf("\n");
         }
     }

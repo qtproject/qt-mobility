@@ -154,13 +154,13 @@ QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& 
         } else if (property.name() == QString::fromAscii(versitAddressId)) {
             detail = createAddress(property);
         } else if (property.name() == QString::fromAscii(versitTitleId)){
-            detail = createOrganization(property, versitDocument);
+            detail = createOrganization(property);
         } else if (property.name() == QString::fromAscii(versitOrganizationId)) {
-            detail = createOrganization(property, versitDocument);
+            detail = createOrganization(property);
         } else if (property.name() == QString::fromAscii(versitRoleId)) {
-            detail = createOrganization(property, versitDocument);
+            detail = createOrganization(property);
         } else if (property.name() == QString::fromAscii(versitLogoId)) {
-            detail = createOrganization(property, versitDocument);
+            detail = createOrganization(property);
         } else if (property.name() == QString::fromAscii(versitRevisionId)) {
             detail = createTimeStamp(property);
         } else if (property.name() == QString::fromAscii(versitAnniversaryId)) {
@@ -257,8 +257,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createAddress(
  * Creates a QContactOrganization from \a property and adds it to the \a document
  */
 QContactDetail* QVersitContactGeneratorPrivate::createOrganization(
-     const QVersitProperty& property,
-     const QVersitDocument& versitDocument) const
+    const QVersitProperty& property) const
 {
     QContactOrganization* org = new QContactOrganization;
     if (property.name() == QString::fromAscii(versitTitleId)) {
@@ -370,7 +369,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
     const QVersitDocument& versitDocument,
     const QString& subType) const
 {
-    QString value(property.value());
+    QString value(QString::fromAscii(property.value().data()));
 
     const QString valueParam =
         property.parameters().value(QString::fromAscii(versitValue));
