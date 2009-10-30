@@ -19,6 +19,7 @@ SUBDIRS = \
 
 contains(QT_CONFIG, multimedia) {
     SUBDIRS += \
-            qgraphicsvideoitem \
+            qgraphicsvideoitem
+    !x11: SUBDIRS += \
             qpaintervideosurface
 }
