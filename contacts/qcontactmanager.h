@@ -68,8 +68,10 @@ class QTCONTACTS_EXPORT QContactManager : public QObject
 public:
 #if Q_QDOC // qdoc's parser fails to recognise the default map argument
     QContactManager(const QString& managerName = QString(), const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
+    QContactManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
 #else
     QContactManager(const QString& managerName = QString(), const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
+    QContactManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
 #endif
 
     static QContactManager* fromUri(const QString& uri, QObject* parent = 0);
@@ -80,7 +82,7 @@ public:
     QString managerUri() const;                        // managerName + managerParameters
 
     static bool splitUri(const QString& uri, QString* managerName, QMap<QString, QString>* params);
-    static QString buildUri(const QString& managerName, const QMap<QString, QString>& params);
+    static QString buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion = -1);
 
     /* The values of the Error enum are still to be decided! */
     enum Error {
@@ -150,6 +152,10 @@ public:
     QList<QVariant::Type> supportedDataTypes() const;
     QStringList supportedRelationshipTypes() const;
 
+    /* Versions */ 
+    static int version(); 
+    int implementationVersion() const; 
+
     /* return a list of available backends for which a QContactManager can be constructed. */
     static QStringList availableManagers();
 
@@ -164,6 +170,7 @@ signals:
 
 private:
     friend class QContactManagerData;
+    void createEngine(const QString& managerName, const QMap<QString, QString>& parameters); 
     Q_DISABLE_COPY(QContactManager)
     // private data pointer
     QContactManagerData* d;

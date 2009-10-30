@@ -165,8 +165,8 @@ bool QContactManager::splitUri(const QString& uri, QString* pManagerId, QMap<QSt
     return true;
 }
 
-/*! Returns a URI that completely describes a manager implementation, datastore, and the parameters with which to instantiate the manager, from the given \a managerName and \a params */
-QString QContactManager::buildUri(const QString& managerName, const QMap<QString, QString>& params)
+/*! Returns a URI that completely describes a manager implementation, datastore, and the parameters with which to instantiate the manager, from the given \a managerName, \a params and an optional \a implementationVersion */
+QString QContactManager::buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion) 
 {
     QString ret(QLatin1String("qtcontacts:%1:%2"));
     // we have to escape each param
@@ -182,7 +182,14 @@ QString QContactManager::buildUri(const QString& managerName, const QMap<QString
         key = key + QLatin1Char('=') + arg;
         escapedParams.append(key);
     }
-    return ret.arg(managerName, escapedParams.join(QLatin1String("&")));
+
+    escapedParams.append(QString("%1=%2").arg(QTCONTACTS_VERSION_NAME).arg(version())); 
+
+    if (implementationVersion != -1) { 
+        escapedParams.append(QString("%1=%2").arg(QTCONTACTS_IMPLEMENTATION_VERSION_NAME).arg(implementationVersion)); 
+    } 
+
+      return ret.arg(managerName, escapedParams.join(QLatin1String("&")));
 }
 
 /*!
@@ -217,6 +224,11 @@ QContactManager::QContactManager(const QString& managerName, const QMap<QString,
     : QObject(parent),
     d(new QContactManagerData)
 {
+    createEngine(managerName, parameters); 
+} 
+
+void QContactManager::createEngine(const QString& managerName, const QMap<QString, QString>& parameters) 
+{ 
     d->createEngine(managerName, parameters);
     connect(d->m_engine, SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
     connect(d->m_engine, SIGNAL(contactsAdded(QList<QContactLocalId>)), this, SIGNAL(contactsAdded(QList<QContactLocalId>)));
@@ -227,6 +239,15 @@ QContactManager::QContactManager(const QString& managerName, const QMap<QString,
     connect(d->m_engine, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)), this, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
 }
 
+QContactManager::QContactManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters, QObject* parent) 
+    : QObject(parent), 
+    d(new QContactManagerData) 
+{ 
+    QMap<QString, QString> params = parameters; 
+    params[QTCONTACTS_IMPLEMENTATION_VERSION_NAME] = QString::number(implementationVersion); 
+    createEngine(managerName, params); 
+} 
+ 
 /*! Frees the memory used by the QContactManager */
 QContactManager::~QContactManager()
 {
@@ -560,6 +581,18 @@ QStringList QContactManager::supportedRelationshipTypes() const
 {
     return d->m_engine->supportedRelationshipTypes();
 }
+
+/* Returns the version number of the QTContacts API*/ 
+int QContactManager::version() 
+{ 
+    return QTCONTACTS_VERSION; 
+} 
+
+/* Returns the engine backend implementation version number */ 
+int QContactManager::implementationVersion() const 
+{ 
+    return d->m_engine->implementationVersion(); 
+} 
 
 /*! Returns the manager name for this QContactManager */
 QString QContactManager::managerName() const

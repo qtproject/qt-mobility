@@ -472,6 +472,23 @@ QStringList QContactManagerEngine::supportedRelationshipTypes() const
     return QStringList();
 }
 
+/*! 
+ * Returns the version number of the QTContacts API 
+ */ 
+int QContactManagerEngine::version() 
+{ 
+    return QTCONTACTS_VERSION; 
+} 
+ 
+/*! 
+ * Returns the engine backend implementation version number 
+ */ 
+int QContactManagerEngine::implementationVersion() const 
+{ 
+    return 0; 
+} 
+  
+
 /*! Returns the base schema definitions */
 QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions()
 {

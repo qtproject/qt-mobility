@@ -128,6 +128,10 @@ public:
     virtual bool filterSupported(const QContactFilter& filter) const;
     virtual QList<QVariant::Type> supportedDataTypes() const;
     virtual QStringList supportedRelationshipTypes() const;
+ 
+    /* Versions */ 
+    static int version(); 
+    virtual int implementationVersion() const; 
 
     /* Reports the built-in definitions from the schema */
     static QMap<QString, QContactDetailDefinition> schemaDefinitions();

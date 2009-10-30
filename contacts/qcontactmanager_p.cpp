@@ -101,6 +101,7 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
         m_engine = QContactMemoryEngine::createMemoryEngine(parameters);
     else {
         /* Look for a factory */
+        // XXX TODO:check version and implementationVersion parameters 
         loadFactories();
         QContactManagerEngineFactory *factory = m_engines.value(builtManagerName);
         m_error = QContactManager::NoError;
