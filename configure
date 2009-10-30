@@ -267,6 +267,7 @@ compileTest()
 #compile tests
 compileTest QMF qmf
 compileTest NetworkManager networkmanager
+compileTest "CoreWLAN (MacOS 10.6)" corewlan
 
 echo "Generating Mobility Headers..."
 #remove old headers

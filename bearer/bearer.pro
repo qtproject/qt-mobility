@@ -99,7 +99,7 @@ symbian: {
                    qnetworksessionengine.cpp \
                    qgenericengine.cpp
 
-        unix:!mac:contains(BACKEND, NetworkManager) {
+        unix:!mac:contains(networkmanager_enabled, yes) {
             contains(QT_CONFIG,dbus) {
                 DEFINES += BACKEND_NM
                 QT += dbus
@@ -135,15 +135,10 @@ symbian: {
         SOURCES+= qcorewlanengine_mac.mm
         LIBS += -framework Foundation -framework SystemConfiguration
 
-        # change this to /Developer/SDKs/MacOSX10.6.sdk
-        # if you want to compile for 10.6 with CoreWLAN framework
         QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.5.sdk
-        contains(QMAKE_MAC_SDK, "/Developer/SDKs/MacOSX10.6.sdk") {
+        contains(corewlan_enabled, yes) {
                 LIBS += -framework CoreWLAN
-                message("Using 10.6 SDK")
                 DEFINES += MAC_SDK_10_6
-        } else {
-                message("Using 10.5 SDK")
         }
     }
 }
