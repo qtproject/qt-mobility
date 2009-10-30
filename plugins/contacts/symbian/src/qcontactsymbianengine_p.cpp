@@ -71,7 +71,7 @@ typedef QList<QContactLocalId> QContactLocalIdList;
 // the called function or the return value of the function is placed to the
 // variable.
 
-QContactSymbianEngineData::QContactSymbianEngineData(QContactManager::Error& error) :
+QContactSymbianEngineData::QContactSymbianEngineData(const QMap<QString, QString>& parameters, QContactManager::Error& error) :
     m_contactDatabase(0),
     m_transformContact(0)
 {
@@ -101,6 +101,7 @@ QContactSymbianEngineData::QContactSymbianEngineData(QContactManager::Error& err
         TRAP(err, m_contactDatabase->AddObserverL(*this));
 #endif
 
+        m_managerUri = QContactManager::buildUri(CNT_SYMBIAN_MANAGER_NAME, parameters);
     	m_transformContact = new CntTransformContact;
         m_contactFilter    = new QContactSymbianFilter(*m_contactDatabase);
         m_contactSorter    = new QContactSymbianSorter(*m_contactDatabase, *m_transformContact);
@@ -478,21 +479,26 @@ void QContactSymbianEngineData::HandleDatabaseEventL(TContactDbObserverEvent aEv
 /*!
  * Private leaving implementation for contact()
  */
-QContact QContactSymbianEngineData::contactL(const QContactLocalId &contactId) const
+QContact QContactSymbianEngineData::contactL(const QContactLocalId &localId) const
 {
     // A contact with a zero id is not expected to exist.
     // Symbian contact database uses id 0 internally as the id of the
     // system template.
-    if(contactId == 0)
+    if(localId == 0)
         User::Leave(KErrNotFound);
 
     // Read the contact from the CContactDatabase
-	TContactItemId id(contactId);
-	CContactItem* symContact = m_contactDatabase->ReadContactL(id);
+	CContactItem* symContact = m_contactDatabase->ReadContactL(localId);
 	CleanupStack::PushL(symContact);
 
 	// Convert to a QContact
 	QContact contact = m_transformContact->transformContactL(*symContact, *m_contactDatabase);
+
+	// Convert id
+    QContactId contactId;
+    contactId.setLocalId(localId);
+    contactId.setManagerUri(m_managerUri);
+    contact.setId(contactId);
 
     CleanupStack::PopAndDestroy(symContact);
 
@@ -533,6 +539,7 @@ int QContactSymbianEngineData::addContactL(QContact &contact)
         // id
         QContactId contactId;
         contactId.setLocalId(id);
+        contactId.setManagerUri(m_managerUri);
         contact.setId(contactId);
         contactItem = m_contactDatabase->ReadContactLC(id);
         // Guid
@@ -553,6 +560,7 @@ int QContactSymbianEngineData::addContactL(QContact &contact)
         id = contactItem->Id();
         QContactId contactId;
         contactId.setLocalId(QContactLocalId(id));
+        contactId.setManagerUri(m_managerUri);
         contact.setId(contactId);
 
         //update contact, will add the fields to the already saved group

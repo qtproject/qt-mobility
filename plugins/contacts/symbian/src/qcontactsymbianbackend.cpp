@@ -56,11 +56,9 @@
 
 QContactSymbianEngine::QContactSymbianEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
-    Q_UNUSED(parameters);
-
     error = QContactManager::NoError;
 
-    d = new QContactSymbianEngineData(error);
+    d = new QContactSymbianEngineData(parameters, error);
 
     // Connect database observer events appropriately.
     connect(d, SIGNAL(contactAdded(QContactLocalId)),
@@ -188,12 +186,9 @@ QContact QContactSymbianEngine::contact(const QContactLocalId& contactId, QConta
 {
     QContact contact = d->contact(contactId, error);
 
-    // Set manager uri and synthesize display label (the label it is not
-    // saved to the contact database and thus not modifiable by a client).
+    // synthesize display label (the label it is not saved to the contact
+    // database, thus not modifiable by a client).
     if(error == QContactManager::NoError) {
-        QContactId contactId = contact.id();
-        contactId.setManagerUri(managerUri());
-        contact.setId(contactId);
         updateDisplayLabel(contact);
     }
 
@@ -240,10 +235,11 @@ QList<QContactLocalId> QContactSymbianEngine::slowFilter(
 {
     QList<QContactLocalId> result;
     for (int i(0); i < contacts.count(); i++) {
-        QContactLocalId contactid = contacts.at(i);
+        QContactLocalId id = contacts.at(i);
+
         // Check if this is a false positive. If not, add to the result set.
-        if(QContactManagerEngine::testFilter(filter, d->contact(contactid, error)))
-            result << contactid;
+        if(QContactManagerEngine::testFilter(filter, d->contact(id, error)))
+            result << id;
     }
     return result;
 }
@@ -284,12 +280,8 @@ bool QContactSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& 
     // Create new contact
     } else {
         ret = d->addContact(*contact, changeSet, error);
-        if (ret) {
-            QContactId newContactId = contact->id();
-            newContactId.setManagerUri(managerUri());
-            contact->setId(newContactId);
+        if (ret)
             updateDisplayLabel(*contact);
-        }
     }
     return ret;
 }
@@ -562,7 +554,7 @@ void QContactSymbianEngine::eventRelationshipRemoved(const QContactLocalId &cont
 
 QString QContactSymbianEngine::managerName() const
 {
-    return QString("symbian");
+    return QString(CNT_SYMBIAN_MANAGER_NAME);
 }
 
 /* Factory lives here in the basement */
@@ -573,7 +565,7 @@ QContactManagerEngine* QContactSymbianFactory::engine(const QMap<QString, QStrin
 
 QString QContactSymbianFactory::managerName() const
 {
-    return QString("symbian");
+    return QString(CNT_SYMBIAN_MANAGER_NAME);
 }
 
 Q_EXPORT_PLUGIN2(mobapicontactspluginsymbian, QContactSymbianFactory);

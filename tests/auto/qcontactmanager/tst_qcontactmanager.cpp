@@ -1676,15 +1676,15 @@ void tst_QContactManager::signalEmission()
     // verify multiple modifies works as advertised
     nc2.setLast("M.");
     c2.saveDetail(&nc2);
-    m1->saveContact(&c2);
+    QVERIFY(m1->saveContact(&c2));
     modSigCount += 1;
     nc2.setPrefix("Mr.");
     nc3.setLast("G.");
     c2.saveDetail(&nc2);
     c3.saveDetail(&nc3);
-    m1->saveContact(&c2);
+    QVERIFY(m1->saveContact(&c2));
     modSigCount += 1;
-    m1->saveContact(&c3);
+    QVERIFY(m1->saveContact(&c3));
     modSigCount += 1;
     QTRY_COMPARE(spyCM.count(), modSigCount);
 
