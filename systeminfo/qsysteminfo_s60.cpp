@@ -52,6 +52,7 @@
 #include <hwrmvibra.h>
 #include <AknUtils.h>
 #include <W32STD.H>
+#include <centralrepository.h>
  
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
@@ -502,7 +503,18 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
-    return -1;  //TODO
+    const TUid KCRUidLightSettings = {0x10200C8C};
+    const TUint32 KLightSensorSensitivity = 0x00000002;
+    int ret = 0;
+    TRAP_IGNORE(
+        CRepository *lightRepository = CRepository::NewLC(KCRUidLightSettings);
+        User::LeaveIfError(lightRepository->Get(KLightSensorSensitivity, ret));
+        if (ret == 0) {
+            ret = 1;
+        }
+        CleanupStack::PopAndDestroy(lightRepository);
+    )
+    return ret;
 }
 
 int QSystemDisplayInfoPrivate::colorDepth(int screen)
