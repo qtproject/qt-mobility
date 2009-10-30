@@ -81,7 +81,9 @@
                 this, SLOT(stateChanged(QNetworkSession::State)));
 
         setFlag(ItemIsMovable);
+    #if (QT_VERSION &gt;= QT_VERSION_CHECK(4, 6, 0))
         setFlag(ItemSendsGeometryChanges);
+    #endif
         setZValue(1);
 
         icon = new QGraphicsSvgItem(this);
