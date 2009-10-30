@@ -51,7 +51,8 @@
 
     A QMessageOrdering is composed of a message property to sort and a sort order. 
     The QMessageOrdering class is used in conjunction with the QMessageStore::queryMessages() 
-    function to sort message results according to the criteria defined by the ordering.
+    and QMessageServiceAction::queryMessages() functions to sort message results according to 
+    the criteria defined by the ordering.
 
     For example:
     To create a query for all messages sorted by their timestamp in decending order:
