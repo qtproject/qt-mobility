@@ -1,0 +1,3 @@
+usr/lib/libbearer-test/*
+usr/share/libbearer-test/*
+../../bin/rununittests-in-maemo.sh usr/share/libbearer-test

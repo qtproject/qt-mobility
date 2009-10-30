@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
 SUBDIRS += auto
-!symbian:unix:!mac:SUBDIRS += networkmanager
+unix:!symbian:!maemo:!mac:SUBDIRS += networkmanager

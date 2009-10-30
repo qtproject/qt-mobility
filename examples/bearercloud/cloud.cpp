@@ -67,7 +67,9 @@ Cloud::Cloud(const QNetworkConfiguration &config, QGraphicsItem *parent)
             this, SLOT(stateChanged(QNetworkSession::State)));
 
     setFlag(ItemIsMovable);
+#if (QT_VERSION >= QT_VERSION_CHECK(4, 6, 0))
     setFlag(ItemSendsGeometryChanges);
+#endif
     setZValue(1);
 
     icon = new QGraphicsSvgItem(this);

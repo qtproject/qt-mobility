@@ -46,6 +46,8 @@
 
 #ifdef Q_OS_SYMBIAN
 #include "qnetworksession_s60_p.h"
+#elif MAEMO
+#include "qnetworksession_maemo_p.h"
 #else
 #include "qnetworksession_p.h"
 #endif
