@@ -100,8 +100,7 @@ private:
 private: // Utilities
     QStringList extractContexts(const QVersitProperty& property) const;
     QStringList extractSubTypes(const QVersitProperty& property) const;
-    QString takeFirst(QList<QByteArray>& list) const;    
-    QString takeFirst(QList<QString>& list) const;
+    QString takeFirst(QList<QByteArray>& list) const;
     QDateTime parseDateTime(const QByteArray& text, const QByteArray& format) const;    
     QString saveContentToFile(
         const QString& path,

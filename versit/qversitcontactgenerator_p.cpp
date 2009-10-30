@@ -124,6 +124,8 @@ QVersitContactGeneratorPrivate::QVersitContactGeneratorPrivate()
         QString::fromAscii(versitSipSubTypeId),QContactOnlineAccount::SubTypeSip);
     mSubTypeMappings.insert(
         QString::fromAscii(versitSwisId),QContactOnlineAccount::SubTypeShareVideo);
+    mSubTypeMappings.insert(
+        QString::fromAscii(versitVoipId),QContactOnlineAccount::SubTypeInternet);
 
     mTypeFileExtensionMappings.insert(
         QString::fromAscii(versitFormatWave),QString::fromAscii(versitWAVEExtenId));
@@ -352,20 +354,11 @@ QContactDetail* QVersitContactGeneratorPrivate::createOnlineAccount(
     const QVersitProperty& property) const
 {    
     QContactOnlineAccount* onlineAccount = new QContactOnlineAccount();
-    QMultiHash<QString,QString> params = property.parameters();
-    QList<QString> values = params.values();
-    const QString subTypeVal = takeFirst(values);    
-    if (!subTypeVal.isEmpty()) {
-        const QString fieldKey = mSubTypeMappings.value(subTypeVal);
-        if (!fieldKey.isEmpty()) {
-            onlineAccount->setSubTypes(fieldKey);
-        } else {
-            // Discard : if subtype is not empty and subtype is not found in mapping table
-            delete onlineAccount;
-            return 0;
-        }
-    }
-    onlineAccount->setAccountUri(QString::fromAscii(property.value()));    
+    onlineAccount->setAccountUri(QString::fromAscii(property.value()));
+    QStringList subTypes = extractSubTypes(property);
+    if (subTypes.count() == 0)
+        subTypes.append(QContactOnlineAccount::SubTypeSip);
+    onlineAccount->setSubTypes(subTypes);
     return onlineAccount;
 }
 
@@ -493,18 +486,6 @@ QString QVersitContactGeneratorPrivate::takeFirst(QList<QByteArray>& list) const
     if (!list.isEmpty())
         first = QString::fromAscii(list.takeFirst());
     return first; 
-}
-
-/*!
- * Takes the first value in \a list and converts it to a QString.
- * An empty QString is returned, if the list is empty.
- */
-QString QVersitContactGeneratorPrivate::takeFirst(QList<QString>& list) const
-{
-    QString first;
-    if (!list.isEmpty())
-        first = list.takeFirst();
-    return first;
 }
 
 /*!

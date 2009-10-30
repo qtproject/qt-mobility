@@ -144,8 +144,6 @@ QVersitContactConverterPrivate::QVersitContactConverterPrivate()
     mMappings.insert(
         QContactAnniversary::SubTypeMemorial,QContactAnniversary::SubTypeMemorial);
     mMappings.insert(
-        QContactOnlineAccount::SubTypeSip,QString::fromAscii(versitSipSubTypeId));
-    mMappings.insert(
         QContactOnlineAccount::SubTypeShareVideo,QString::fromAscii(versitSwisId));
     mMappings.insert(
         QContactOnlineAccount::SubTypeInternet,QString::fromAscii(versitVoipId));
@@ -495,7 +493,7 @@ bool QVersitContactConverterPrivate::encodeOnlineAccount(
         subTypes.contains(QContactOnlineAccount::SubTypeInternet) ||
         subTypes.contains(QContactOnlineAccount::SubTypeShareVideo)) {
         encoded = true;
-        encodeParameters(property, onlineAccount.contexts(), onlineAccount.subTypes());
+        encodeParameters(property, onlineAccount.contexts(), subTypes);
         property.setName(QString::fromAscii(versitSipId));
         property.setValue(onlineAccount.accountUri().toAscii());
     }
