@@ -61,6 +61,7 @@
 #include "cntmodelextuids.h"
 
 #include <QtTest/QtTest>
+#include <qglobal.h>
 
 
 void TestCntTransformContactData::initTestCase()
@@ -229,12 +230,17 @@ void TestCntTransformContactData::executeCntTransformFamily()
     QVERIFY(err == 0);
 }
 
+
 void TestCntTransformContactData::validateCntTransformEmailL(TPtrC16 field, QString detail)
 {
     CntTransformContactData* transformEmail = new CntTransformEmail();
     QVERIFY(transformEmail != 0);
     QVERIFY(transformEmail->supportsField(KUidContactFieldEMail.iUid));
     QVERIFY(transformEmail->supportsDetail(QContactEmailAddress::DefinitionName));
+    validateGetIdForField(*transformEmail, QContactEmailAddress::FieldEmailAddress,
+                           KUidContactFieldEMail.iUid);
+    validateGetIdForField(*transformEmail, "WrongValue",0);
+    QVERIFY( !(transformEmail->supportsSubType("WrongValue")));    
     
     validateContextsL(transformEmail);
     
@@ -273,6 +279,13 @@ void TestCntTransformContactData::validateCntTransformNameL(TPtrC16 prefixField,
     QVERIFY(transformName->supportsField(KUidContactFieldSuffixName.iUid));
     QVERIFY(transformName->supportsDetail(QContactName::DefinitionName));
     
+    validateGetIdForField(*transformName, QContactName::FieldPrefix,KUidContactFieldPrefixName.iUid);
+    validateGetIdForField(*transformName, QContactName::FieldFirst, KUidContactFieldGivenName.iUid);
+    validateGetIdForField(*transformName, QContactName::FieldMiddle,KUidContactFieldAdditionalName.iUid);
+    validateGetIdForField(*transformName, QContactName::FieldLast,KUidContactFieldFamilyName.iUid);
+    validateGetIdForField(*transformName, QContactName::FieldSuffix,KUidContactFieldSuffixName.iUid);
+    validateGetIdForField(*transformName, "WrongValue", 0);    
+    QVERIFY( !(transformName->supportsSubType("WrongValue"))); 
     validateContextsL(transformName);
     
     QContactName name;
@@ -359,6 +372,9 @@ void TestCntTransformContactData::validateCntTransformNicknameL(TPtrC16 field, Q
     QVERIFY(transformNickname != 0);
     QVERIFY(transformNickname->supportsField(KUidContactFieldSecondName.iUid));
     QVERIFY(transformNickname->supportsDetail(QContactNickname::DefinitionName));
+    validateGetIdForField(*transformNickname, QContactNickname::FieldNickname,KUidContactFieldSecondName.iUid);
+    validateGetIdForField(*transformNickname, "WrongValue", 0);    
+    QVERIFY( !(transformNickname->supportsSubType("WrongValue"))); 
     
     validateContextsL(transformNickname);
     
@@ -390,6 +406,23 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     QVERIFY(transformPhoneNumber->supportsField(KUidContactFieldFax.iUid));
     QVERIFY(transformPhoneNumber->supportsDetail(QContactPhoneNumber::DefinitionName));
     
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::FieldNumber,0);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeLandline,0);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeMobile,0);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeFacsimile,KUidContactFieldFax.iUid);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypePager,0);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeVoice,0);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeModem,0);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeVideo,0);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeCar,0);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeBulletinBoardSystem,0);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeMessagingCapable,0);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeAssistant,0);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeDtmfMenu,KUidContactFieldDTMF.iUid);
+    validateGetIdForField(*transformPhoneNumber, "WrongValue", 0);    
+    QVERIFY(transformPhoneNumber->supportsSubType(QContactPhoneNumber::FieldSubTypes)); 
+    QVERIFY( !(transformPhoneNumber->supportsSubType("WrongValue"))); 
+
     validateContextsL(transformPhoneNumber);
     
     QContactPhoneNumber phoneNumber1;
@@ -611,6 +644,20 @@ void TestCntTransformContactData::validateCntTransformAddressL(TPtrC16 countryFi
     QVERIFY(transformAddress->supportsField(KUidContactFieldPostOffice.iUid));
     QVERIFY(transformAddress->supportsDetail(QContactAddress::DefinitionName));
     
+    validateGetIdForField(*transformAddress, QContactAddress::FieldStreet,KUidContactFieldAddress.iUid);
+    validateGetIdForField(*transformAddress, QContactAddress::FieldLocality,KUidContactFieldLocality.iUid);
+    validateGetIdForField(*transformAddress, QContactAddress::FieldRegion,KUidContactFieldRegion.iUid);
+    validateGetIdForField(*transformAddress, QContactAddress::FieldPostcode,KUidContactFieldPostcode.iUid);
+    validateGetIdForField(*transformAddress, QContactAddress::FieldCountry,KUidContactFieldCountry.iUid);
+    validateGetIdForField(*transformAddress, QContactAddress::FieldPostOfficeBox,KUidContactFieldPostOffice.iUid);
+    validateGetIdForField(*transformAddress, QContactAddress::SubTypeParcel,0);
+    validateGetIdForField(*transformAddress, QContactAddress::SubTypePostal,0);
+    validateGetIdForField(*transformAddress, QContactAddress::SubTypeDomestic,0);
+    validateGetIdForField(*transformAddress, QContactAddress::SubTypeInternational,0);
+    validateGetIdForField(*transformAddress, "WrongValue", 0);    
+    QVERIFY(transformAddress->supportsSubType(QContactAddress::FieldSubTypes)); 
+    QVERIFY( !(transformAddress->supportsSubType("WrongValue"))); 
+    
     validateContextsL(transformAddress);
     
     QContactAddress address;
@@ -742,6 +789,10 @@ void TestCntTransformContactData::validateCntTransformBirthdayL(TTime field, QDa
     QVERIFY(transformBirthday->supportsField(KUidContactFieldBirthday.iUid));
     QVERIFY(transformBirthday->supportsDetail(QContactBirthday::DefinitionName));
     
+    validateGetIdForField(*transformBirthday, QContactBirthday::FieldBirthday,KUidContactFieldBirthday.iUid);
+    validateGetIdForField(*transformBirthday, "WrongValue", 0);    
+    QVERIFY( !(transformBirthday->supportsSubType("WrongValue"))); 
+      
     validateContextsL(transformBirthday);
     
     QContactBirthday birthday;
@@ -776,6 +827,15 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
     QVERIFY(transformOnlineAccount->supportsField(KUidContactFieldIMPP.iUid));
     QVERIFY(transformOnlineAccount->supportsDetail(QContactOnlineAccount::DefinitionName));
      
+    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::FieldAccountUri,0);
+    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeSip,KUidContactFieldSIPID.iUid);
+    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeH323,0);
+    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeXmpp, KUidContactFieldIMPP.iUid);
+    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeInternet,0);
+    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeShareVideo,0);
+    validateGetIdForField(*transformOnlineAccount, "WrongValue", 0);    
+    QVERIFY( !(transformOnlineAccount->supportsSubType("WrongValue"))); 
+    
     validateContextsL(transformOnlineAccount);
      
     QContactOnlineAccount onlineAccount1;
@@ -885,6 +945,15 @@ void TestCntTransformContactData::validateCntTransformOrganisationL(TPtrC16 comp
     QVERIFY(transformOrganisation->supportsField(KUidContactFieldAssistant.iUid));
     QVERIFY(transformOrganisation->supportsDetail(QContactOrganization::DefinitionName));
     
+    validateGetIdForField(*transformOrganisation, QContactOrganization::FieldName,KUidContactFieldCompanyName.iUid);
+    validateGetIdForField(*transformOrganisation, QContactOrganization::FieldLogo,0);
+    validateGetIdForField(*transformOrganisation, QContactOrganization::FieldDepartment,KUidContactFieldDepartmentName.iUid);
+    validateGetIdForField(*transformOrganisation, QContactOrganization::FieldLocation,0);
+    validateGetIdForField(*transformOrganisation, QContactOrganization::FieldTitle,KUidContactFieldJobTitle.iUid);
+    validateGetIdForField(*transformOrganisation, QContactOrganization::FieldAssistantName,KUidContactFieldAssistant.iUid);
+    validateGetIdForField(*transformOrganisation, "WrongValue", 0);    
+    QVERIFY( !(transformOrganisation->supportsSubType("WrongValue"))); 
+       
     validateContextsL(transformOrganisation);
     
     QContactOrganization organisation;
@@ -961,6 +1030,15 @@ void TestCntTransformContactData::validateCntTransformAvatarL(TPtrC16 field, QSt
     QVERIFY(transformAvatar->supportsField(KUidContactFieldVideoRingTone.iUid));
     QVERIFY(transformAvatar->supportsDetail(QContactAvatar::DefinitionName));
     
+    validateGetIdForField(*transformAvatar, QContactAvatar::FieldAvatar,0);
+    validateGetIdForField(*transformAvatar, QContactAvatar::SubTypeImage,0);
+    validateGetIdForField(*transformAvatar, QContactAvatar::SubTypeVideo,0);
+    validateGetIdForField(*transformAvatar, QContactAvatar::SubTypeTexturedMesh,0);
+    validateGetIdForField(*transformAvatar, QContactAvatar::SubTypeAudioRingtone,0);
+    validateGetIdForField(*transformAvatar, QContactAvatar::SubTypeVideoRingtone,0);
+    validateGetIdForField(*transformAvatar, "WrongValue", 0);    
+    QVERIFY(transformAvatar->supportsSubType(QContactAvatar::FieldSubType)); 
+    QVERIFY( !(transformAvatar->supportsSubType("WrongValue"))); 
     validateContextsL(transformAvatar);
     
     QContactAvatar avatar1;
@@ -1033,6 +1111,9 @@ void TestCntTransformContactData::validateCntTransformSyncTargetL(TPtrC16 field,
     QVERIFY(transformSyncTarget != 0);
     QVERIFY(transformSyncTarget->supportsField(KUidContactFieldSyncTarget.iUid));
     QVERIFY(transformSyncTarget->supportsDetail(QContactSyncTarget::DefinitionName));
+    validateGetIdForField(*transformSyncTarget,QContactSyncTarget::FieldSyncTarget,KUidContactFieldSyncTarget.iUid);
+    validateGetIdForField(*transformSyncTarget, "WrongValue", 0);   
+    QVERIFY( !(transformSyncTarget->supportsSubType("WrongValue"))); 
     
     validateContextsL(transformSyncTarget);
     
@@ -1063,6 +1144,13 @@ void TestCntTransformContactData::validateCntTransformGenderL(TPtrC16 field, QSt
     QVERIFY(transformGender->supportsField(KUidContactFieldGender.iUid));
     QVERIFY(transformGender->supportsDetail(QContactGender::DefinitionName));
     
+    validateGetIdForField(*transformGender, QContactGender::FieldGender,KUidContactFieldGender.iUid);
+    validateGetIdForField(*transformGender, QContactGender::GenderMale,0);
+    validateGetIdForField(*transformGender, QContactGender::GenderFemale,0);
+    validateGetIdForField(*transformGender, QContactGender::GenderUnspecified,0);
+    validateGetIdForField(*transformGender, "WrongValue", 0);     
+    QVERIFY( !(transformGender->supportsSubType("WrongValue"))); 
+    
     validateContextsL(transformGender);
     
     QContactGender gender;
@@ -1091,6 +1179,18 @@ void TestCntTransformContactData::validateCntTransformAnniversaryL(TPtrC16 field
     QVERIFY(transformAnniversary != 0);
     QVERIFY(transformAnniversary->supportsField(KUidContactFieldAnniversary.iUid));
     QVERIFY(transformAnniversary->supportsDetail(QContactAnniversary::DefinitionName));
+    
+    validateGetIdForField(*transformAnniversary, QContactAnniversary::FieldCalendarId,0);
+    validateGetIdForField(*transformAnniversary, QContactAnniversary::FieldOriginalDate,0);
+    validateGetIdForField(*transformAnniversary, QContactAnniversary::FieldEvent,0);
+    validateGetIdForField(*transformAnniversary, QContactAnniversary::SubTypeWedding,0);
+    validateGetIdForField(*transformAnniversary, QContactAnniversary::SubTypeEngagement,0);
+    validateGetIdForField(*transformAnniversary, QContactAnniversary::SubTypeHouse,0);
+    validateGetIdForField(*transformAnniversary, QContactAnniversary::SubTypeEmployment,0);
+    validateGetIdForField(*transformAnniversary, QContactAnniversary::SubTypeMemorial,0);
+    validateGetIdForField(*transformAnniversary, "WrongValue", 0);    
+    QVERIFY(transformAnniversary->supportsSubType(QContactAnniversary::FieldSubType)); 
+    QVERIFY( !(transformAnniversary->supportsSubType("WrongValue"))); 
     
     validateContextsL(transformAnniversary);
     
@@ -1124,6 +1224,18 @@ void TestCntTransformContactData::validateCntTransformGeolocationL(TPtrC16 field
     QVERIFY(transformGeolocation != 0);
     QVERIFY(transformGeolocation->supportsField(KUidContactFieldGEO.iUid));
     QVERIFY(transformGeolocation->supportsDetail(QContactGeolocation::DefinitionName));
+    
+    validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldLabel,0);
+    validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldLatitude,0);
+    validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldLongitude,0);
+    validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldAccuracy,0);
+    validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldAltitude,0);
+    validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldAltitudeAccuracy,0);
+    validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldHeading,0);
+    validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldSpeed,0);
+    validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldTimestamp,0);
+    validateGetIdForField(*transformGeolocation, "WrongValue", 0); 
+    QVERIFY( !(transformGeolocation->supportsSubType("WrongValue"))); 
     
     validateContextsL(transformGeolocation);
     
@@ -1172,6 +1284,10 @@ void TestCntTransformContactData::validateCntTransformNoteL(TPtrC16 field, QStri
     QVERIFY(transformNote->supportsField(KUidContactFieldNote.iUid));
     QVERIFY(transformNote->supportsDetail(QContactNote::DefinitionName));
     
+    validateGetIdForField(*transformNote, QContactNote::FieldNote,KUidContactFieldNote.iUid);
+    validateGetIdForField(*transformNote, "WrongValue", 0);
+    QVERIFY( !(transformNote->supportsSubType("WrongValue"))); 
+    
     validateContextsL(transformNote);
     
     QContactNote note;
@@ -1204,6 +1320,11 @@ void TestCntTransformContactData::validateCntTransformFamilyL(TPtrC16 spouseFiel
     QVERIFY(transformFamily->supportsField(KUidContactFieldChildren.iUid));
     QVERIFY(transformFamily->supportsDetail(QContactFamily::DefinitionName));
     
+    validateGetIdForField(*transformFamily, QContactFamily::FieldSpouse,KUidContactFieldSpouse.iUid);
+    validateGetIdForField(*transformFamily, QContactFamily::FieldChildren,KUidContactFieldChildren.iUid);
+    validateGetIdForField(*transformFamily, "WrongValue", 0);    
+    QVERIFY( !(transformFamily->supportsSubType("WrongValue"))); 
+       
     validateContextsL(transformFamily);
     
     QContactFamily family;
@@ -1279,5 +1400,24 @@ void TestCntTransformContactData::validateContextsL(CntTransformContactData* tra
     delete itemField;
     itemField = 0;
 }
+
+/*!
+ * Validates the getIdForField function 
+ *
+ * \a transformContactData the tranformcontact instance
+ * \a filedname - The filedname which has to be checked
+ * \a idValue - the correct id value against which the comparison is done
+ * \a isSame -  If this value is true then '==' comparision is done else '!=' comparision is done
+ */
+void TestCntTransformContactData::validateGetIdForField(
+                    const CntTransformContactData& transformContactData,
+                    const QString& filedname,
+                    const quint32  idValue )const 
+{
+    //Ravikiran
+    quint32 idForField =  transformContactData.getIdForField(filedname);
+    QVERIFY(idValue == idForField );
+}
+
 
 QTEST_MAIN(TestCntTransformContactData);
