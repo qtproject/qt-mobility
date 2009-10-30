@@ -307,6 +307,7 @@
         <keyword ref="qmessagestore.html#addMessage">addMessage</keyword>
         <keyword ref="qmessagestore.html#countAccounts">countAccounts</keyword>
         <keyword ref="qmessagestore.html#countFolders">countFolders</keyword>
+        <keyword ref="qmessagestore.html#countMessages">countMessages</keyword>
         <keyword ref="qmessagestore.html#folder">folder</keyword>
         <keyword ref="qmessagestore.html#instance">instance</keyword>
         <keyword ref="qmessagestore.html#lastError">lastError</keyword>
@@ -316,6 +317,7 @@
         <keyword ref="qmessagestore.html#messageUpdated">messageUpdated</keyword>
         <keyword ref="qmessagestore.html#queryAccounts">queryAccounts</keyword>
         <keyword ref="qmessagestore.html#queryFolders">queryFolders</keyword>
+        <keyword ref="qmessagestore.html#queryMessages">queryMessages</keyword>
         <keyword ref="qmessagestore.html#registerNotificationFilter">registerNotificationFilter</keyword>
         <keyword ref="qmessagestore.html#removeMessage">removeMessage</keyword>
         <keyword ref="qmessagestore.html#removeMessages">removeMessages</keyword>
