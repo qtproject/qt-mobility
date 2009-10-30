@@ -91,6 +91,11 @@ QByteArray QVCard30Writer::encodeParameters(
             if (i > 0)
                 encodedParameters.append(",");
             QByteArray value = values.at(i).toAscii();
+            // QVersitContactConverterPrivate implementation may have added
+            // base64 encoding parameter according to vCard 2.1.
+            // Convert it to vCard 3.0 compatible.
+            if (name == "ENCODING" && value == "BASE64")
+                value = "B";
             VersitUtils::backSlashEscape(value);
             encodedParameters.append(value);
         }

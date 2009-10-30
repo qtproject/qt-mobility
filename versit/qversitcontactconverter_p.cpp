@@ -186,7 +186,7 @@ QVersitContactConverterPrivate::~QVersitContactConverterPrivate()
  * Encode Contact Field Information into the Versit Document 
  */
 void QVersitContactConverterPrivate::encodeFieldInfo(
-    QVersitDocument& versitDocument, 
+    QVersitDocument& document,
     const QContactDetail& detail)
 {
     QVersitProperty property;
@@ -214,7 +214,8 @@ void QVersitContactConverterPrivate::encodeFieldInfo(
     } else if (detail.definitionName() == QContactNote::DefinitionName) {
         encodeNote(property, detail);
     } else if (detail.definitionName() == QContactOrganization::DefinitionName) {
-        addProperty = encodeOrganization(versitDocument, detail);
+        encodeOrganization(document, detail);
+        addProperty = false;
     } else if (detail.definitionName() == QContactAvatar::DefinitionName){
         addProperty = encodeAvatar(property, detail);
     } else if (detail.definitionName() == QContactAnniversary::DefinitionName) {
@@ -226,13 +227,13 @@ void QVersitContactConverterPrivate::encodeFieldInfo(
     } else if (detail.definitionName() == QContactOnlineAccount::DefinitionName) {
         addProperty = encodeOnlineAccount(property, detail);
     }else if (detail.definitionName() == QContactFamily::DefinitionName) {
-        addProperty = encodeFamily(versitDocument, detail);
+        addProperty = encodeFamily(document, detail);
     }else {
         addProperty = false;
     }
 
     if (addProperty)
-        versitDocument.addProperty(property);
+        document.addProperty(property);
 }
 
 /*!
@@ -327,10 +328,10 @@ bool QVersitContactConverterPrivate::encodeRev(
 {
     QContactTimestamp  rev = static_cast<QContactTimestamp>(detail);
     QString value;
-    bool encode = false;
+    bool encoded = false;
 
     if ( rev.lastModified().toString(Qt::ISODate).size() ) {
-        encode = true;
+        encoded = true;
         if ( rev.lastModified().timeSpec() == Qt::UTC ) {
             value = rev.lastModified().toString(Qt::ISODate) +
                 QString::fromAscii(versitISOFormatSuffix);
@@ -341,7 +342,7 @@ bool QVersitContactConverterPrivate::encodeRev(
     }
 
     else if ( rev.created().toString(Qt::ISODate).size()) {
-        encode = true;
+        encoded = true;
         if ( rev.created().timeSpec() == Qt::UTC ) {
             value = rev.created().toString(Qt::ISODate) +
                 QString::fromAscii(versitISOFormatSuffix);
@@ -351,7 +352,7 @@ bool QVersitContactConverterPrivate::encodeRev(
         }
     }
     property.setValue(value.toAscii());
-    return encode;
+    return encoded;
 }
 
 /*!
@@ -396,7 +397,7 @@ void QVersitContactConverterPrivate::encodeGeoLocation(
 /*!
  * Encode all the organization properties to the versit document
  */
-bool QVersitContactConverterPrivate::encodeOrganization(
+void QVersitContactConverterPrivate::encodeOrganization(
      QVersitDocument& document,
      const QContactDetail& detail)
 {
@@ -417,81 +418,33 @@ bool QVersitContactConverterPrivate::encodeOrganization(
     }
     if (organization.logo().length() > 0) {
         QVersitProperty property;
-        bool scaling = true;
-        if ( encodeEmbeddedContent( organization.logo(), property, scaling )) {
+        if (encodeEmbeddedContent(organization.logo(), property, true)) {
             property.setName(QString::fromAscii(versitLogoId));
             document.addProperty(property);
         }
     }
-    return false;
 }
 
 /*!
- * Encode Avatar Content into the Versit Document
+ * Encode avatar Content into the Versit Document
  */
-
 bool QVersitContactConverterPrivate::encodeAvatar(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
-    bool encode = false;
+    bool encoded = false;
     bool scaling = false;
-    QContactAvatar contactAvatar = static_cast<QContactAvatar >(detail);
-    QString resoucePath = contactAvatar.avatar();
+    QContactAvatar contactAvatar = static_cast<QContactAvatar>(detail);
+    QString resourcePath = contactAvatar.avatar();
 
-    if ( mMappings.contains(contactAvatar.subType())) {
-        scaling = contactAvatar.subType() == QContactAvatar::SubTypeImage;
-        encode = encodeEmbeddedContent(resoucePath, property, scaling);
-        if (encode)
+    if (mMappings.contains(contactAvatar.subType())) {
+        scaling = (contactAvatar.subType() == QContactAvatar::SubTypeImage);
+        encoded = encodeEmbeddedContent(resourcePath, property, scaling);
+        if (encoded)
             property.setName(mMappings.value(contactAvatar.subType()));
     }
-    return encode;
+    return encoded;
 }
-
-/*!
- * Encode Embedded Content into the Versit Document
- *
- */
-
-bool QVersitContactConverterPrivate::encodeEmbeddedContent(
-    const QString& resoucePath,
-    QVersitProperty& property,
-    bool performScaling)
-{
-    bool encodeContent = false;
-    QString resouceExt = resoucePath.section(QString::fromAscii("."), -1).toUpper();
-    QString resouceFormat = mMappings.value( resouceExt );
-
-    if ( !resouceFormat.size())
-        resouceFormat = resouceExt;
-
-    if ( resouceFormat.size()) {
-        QByteArray value;
-        QFile resouceFile(resoucePath);
-        if ( resouceFile.open(QIODevice::ReadOnly )) {
-            encodeContent = true;
-            if (performScaling)
-                emit scale(resoucePath,value);
-            if (value.length() == 0)
-                value = resouceFile.readAll(); // Image not scaled
-            value = value.toBase64();
-            property.addParameter(QString::fromAscii(versitType),resouceFormat);
-            property.addParameter(QString::fromAscii(versitEncoding),
-                                  QString::fromAscii(versitEncodingBase64));
-        }
-        else if (isValidRemoteUrl( resoucePath )) {
-            encodeContent = true;
-            value = resoucePath.toAscii();
-            property.addParameter(QString::fromAscii(versitValue), QString::fromAscii(versitUrlId));
-            property.addParameter(QString::fromAscii(versitType),resouceFormat);
-        } else {
-            // The file has been removed. Don't encode the path to a local file.
-        }
-        property.setValue(value);
-    }
-    return encodeContent;
-}
-
 
 /*!
  * Encode gender property information into Versit Document
@@ -534,19 +487,19 @@ bool QVersitContactConverterPrivate::encodeOnlineAccount(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
-    bool encode = false;
+    bool encoded = false;
     QContactOnlineAccount onlineAccount = static_cast<QContactOnlineAccount>(detail);
     QStringList subTypes = onlineAccount.subTypes();
 
     if (subTypes.contains(QContactOnlineAccount::SubTypeSip) ||
         subTypes.contains(QContactOnlineAccount::SubTypeInternet) ||
         subTypes.contains(QContactOnlineAccount::SubTypeShareVideo)) {
-        encode = true;
+        encoded = true;
         encodeParameters(property, onlineAccount.contexts(), onlineAccount.subTypes());
         property.setName(QString::fromAscii(versitSipId));
         property.setValue(onlineAccount.accountUri().toAscii());
     }
-    return encode;
+    return encoded;
 }
 
 /*!
@@ -609,4 +562,47 @@ void QVersitContactConverterPrivate::encodeParameters(
     }
 }
 
+/*!
+ * Encode embedded content into the Versit Document
+ */
+bool QVersitContactConverterPrivate::encodeEmbeddedContent(
+    const QString& resourcePath,
+    QVersitProperty& property,
+    bool performScaling)
+{
+    bool encodeContent = false;
+    QString resourceExt = resourcePath.section(QString::fromAscii("."), -1).toUpper();
+    QString resourceFormat = mMappings.value(resourceExt);
 
+    if (!resourceFormat.length())
+        resourceFormat = resourceExt;
+
+    if (resourceFormat.length() > 0) {
+        QByteArray value;
+        QFile resourceFile(resourcePath);
+        if ( resourceFile.open(QIODevice::ReadOnly)) {
+            encodeContent = true;
+            if (performScaling)
+                emit scale(resourcePath,value);
+            if (value.length() == 0)
+                value = resourceFile.readAll(); // Image not scaled
+            value = value.toBase64();
+            property.addParameter(
+                QString::fromAscii(versitType),
+                resourceFormat);
+            property.addParameter(
+                QString::fromAscii(versitEncoding),
+                QString::fromAscii(versitEncodingBase64));
+        }
+        else if (isValidRemoteUrl( resourcePath )) {
+            encodeContent = true;
+            value = resourcePath.toAscii();
+            property.addParameter(QString::fromAscii(versitValue), QString::fromAscii(versitUrlId));
+            property.addParameter(QString::fromAscii(versitType),resourceFormat);
+        } else {
+            // The file has been removed. Don't encode the path to a local file.
+        }
+        property.setValue(value);
+    }
+    return encodeContent;
+}

@@ -68,19 +68,21 @@ public:
     void encodeBirthDay(QVersitProperty& property, const QContactDetail& detail);
     void encodeNote(QVersitProperty& property, const QContactDetail& detail);
     void encodeGeoLocation(QVersitProperty& property, const QContactDetail& detail);
-    bool encodeOrganization(QVersitDocument& document, const QContactDetail& detail);
-    bool encodeEmbeddedContent(const QString& resoucePath, QVersitProperty& property,
-                               bool performScaling);
-    void encodeGender(QVersitProperty& property,const QContactDetail& detail);
-    void encodeNickName(QVersitProperty& property,const QContactDetail& detail);
-    void encodeAnniversary(QVersitProperty& property,const QContactDetail& detail);
-    bool encodeOnlineAccount(QVersitProperty& property,const QContactDetail& detail);
-    bool encodeFamily(QVersitDocument& document,const QContactDetail& detail);
-    bool encodeAvatar(QVersitProperty& property,const QContactDetail& detail);
+    void encodeOrganization(QVersitDocument& document, const QContactDetail& detail);
+    void encodeGender(QVersitProperty& property, const QContactDetail& detail);
+    void encodeNickName(QVersitProperty& property, const QContactDetail& detail);
+    void encodeAnniversary(QVersitProperty& property, const QContactDetail& detail);
+    bool encodeOnlineAccount(QVersitProperty& property, const QContactDetail& detail);
+    bool encodeFamily(QVersitDocument& document, const QContactDetail& detail);
+    bool encodeAvatar(QVersitProperty& property,
+                      const QContactDetail& detail);
     bool isValidRemoteUrl(const QString& resourceIdentifier);
     void encodeParameters(QVersitProperty& property,
                           const QStringList& contexts,
                           const QStringList& subTypes=QStringList());
+    bool encodeEmbeddedContent(const QString& resourcePath,
+                               QVersitProperty& property,
+                               bool performScaling);
     
 signals:
     void scale(const QString& imageFileName, QByteArray& imageData);

@@ -124,5 +124,11 @@ void UT_QVCard30Writer::testEncodeParameters()
     parameters.insert(QString::fromAscii("X-P;ARAM"),QString::fromAscii("VA,LUE"));
     QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
              QString::fromAscii(";X-P\\;ARAM=VA\\,LUE"));
+
+    // ENCODING=BASE64 converted to ENCODING=B
+    parameters.clear();
+    parameters.insert(encodingParameterName,QString::fromAscii("BASE64"));
+    QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
+             QString::fromAscii(";ENCODING=B"));
 }
 

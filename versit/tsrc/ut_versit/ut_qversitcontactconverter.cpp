@@ -683,7 +683,6 @@ void UT_QVersitContactConverter::testEncodeOrganization()
     QEXPECT_FAIL(value1.toAscii(), url.toAscii(), Continue);
 }
 
-
 void UT_QVersitContactConverter::testEncodeAvatar()
 {
     QContact contact;
@@ -699,7 +698,6 @@ void UT_QVersitContactConverter::testEncodeAvatar()
     QVersitDocument versitDocument = mConverter->convertContact(contact);
     QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
     QVERIFY(!mScaleSignalEmitted);
-
 
     // Test 2: Local Media PHOTO
     contactAvatar.setAvatar(mTestPhotoFile);
