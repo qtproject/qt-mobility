@@ -4317,7 +4317,9 @@ QMessageIdList MapiSession::queryMessages(QMessageStore::ErrorCode *lastError, c
     }
 
     QList<FolderHeapNodePtr> folderNodes;
-    QMessageFilter processedFilter(QMessageFilterPrivate::preprocess(filter));
+    QMessageFilter processedFilter(QMessageFilterPrivate::preprocess(lastError, _self.toStrongRef(), filter));
+    if (*lastError != QMessageStore::NoError)
+        return  QMessageIdList();
 
     foreach (QMessageFilter subfilter, QMessageFilterPrivate::subfilters(processedFilter)) {
         MapiStoreIterator storeIt(QMessageFilterPrivate::storeIterator(subfilter, lastError, _self.toStrongRef()));
