@@ -44,6 +44,7 @@
 #endif
 
 #include <QDebug>
+#include <QStringList>
 
 QT_BEGIN_NAMESPACE
 
@@ -245,6 +246,13 @@ QString QServiceInterfaceDescriptor::customProperty(const QString& key) const
     if (d)
         return d->customProperties[key];
     return QString();
+}
+
+QStringList QServiceInterfaceDescriptor::customPropertyKeys() const
+{
+    if (d)
+        return d->customProperties.keys();
+    return QStringList();
 }
 
 #ifndef QT_NO_DEBUG_STREAM

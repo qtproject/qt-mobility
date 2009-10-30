@@ -54,6 +54,7 @@ class QDebug;
 
 class QDataStream;
 class QServiceInterfaceDescriptorPrivate;
+class QStringList;
 class Q_SFW_EXPORT QServiceInterfaceDescriptor
 {
 public:
@@ -84,6 +85,7 @@ public:
 
     QVariant property(QServiceInterfaceDescriptor::PropertyKey key) const;
     QString customProperty(const QString& key) const;
+    QStringList customPropertyKeys() const;
 
 private:
     QServiceInterfaceDescriptorPrivate* d;

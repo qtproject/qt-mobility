@@ -156,6 +156,15 @@ void tst_QServiceInterfaceDescriptor::comparison()
     QCOMPARE(validCopy2.inSystemScope(), true);
     QVERIFY(validCopy2.isValid());
 
+    //test customPropertyKeys
+    d->customProperties.insert(QString("ckey"), QString("cvalue"));
+    d->customProperties.insert(QString("ckey1"), QString("cvalue1"));
+    d->customProperties.insert(QString("ckey2"), QString("cvalue2"));
+    QStringList customPropertyKeys = valid.customPropertyKeys();
+    QVERIFY(customPropertyKeys.contains("ckey"));
+    QVERIFY(customPropertyKeys.contains("ckey1"));
+    QVERIFY(customPropertyKeys.contains("ckey2"));
+    QCOMPARE(customPropertyKeys.count(), 3);
 }
 
 #ifndef QT_NO_DATASTREAM

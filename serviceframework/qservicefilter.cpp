@@ -339,7 +339,7 @@ QServiceFilter::VersionMatchRule QServiceFilter::versionMatchRule() const
 /*!
     Returns the list of custom keys which have been added to the filter.
 */
-QList<QString> QServiceFilter::customKeys() const
+QStringList QServiceFilter::customPropertyKeys() const
 {
     return d->customProperties.keys();
 }
