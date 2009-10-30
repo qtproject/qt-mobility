@@ -51,13 +51,7 @@ HEADERS += \
     qaudioencodercontrol.h \
     qvideoencodercontrol.h \
     qimageencodercontrol.h \
-    experimental/qimagecapturecontrol.h \
     qaudiocapturesource.h \
-    experimental/qcamera.h \
-    experimental/qcameracontrol.h \
-    experimental/qcameraexposurecontrol.h \
-    experimental/qcamerafocuscontrol.h \
-    experimental/qimageprocessingcontrol.h \
     qmediaformatcontrol.h \
     qmediaplaylistcontrol.h \
     qaudiodevicecontrol.h \
@@ -93,13 +87,7 @@ SOURCES += qmediacontrol.cpp \
     qaudioencodercontrol.cpp \
     qvideoencodercontrol.cpp \
     qimageencodercontrol.cpp \
-    experimental/qimagecapturecontrol.cpp \
     qaudiocapturesource.cpp \
-    experimental/qcamera.cpp \
-    experimental/qcameracontrol.cpp \
-    experimental/qcameraexposurecontrol.cpp \
-    experimental/qcamerafocuscontrol.cpp \
-    experimental/qimageprocessingcontrol.cpp \
     qmediaformatcontrol.cpp \
     qmediaplaylistcontrol.cpp \
     qaudiodevicecontrol.cpp \
