@@ -106,11 +106,18 @@ QString QVersitProperty::name() const
  */
 void QVersitProperty::setParameters(const QMultiHash<QString,QString>& parameters)
 {
-    // Convert all the parameter names and values to upper case
     d->mParameters.clear();
-    foreach (QString key, parameters.uniqueKeys())
-        foreach (QString value, parameters.values(key))
-            addParameter(key,value);
+    // Traverse parameters in the reverse order, because they are added to
+    // d->mParameters using insert in QVersitProperty::addParameter
+    QList<QString> keys = parameters.uniqueKeys();
+    for (int i=keys.count()-1; i >= 0; i--) {
+        QString key = keys.at(i);
+        QList<QString> values = parameters.values(key);
+        for (int j=values.count()-1; j >= 0; j--) {
+            // Convert all the parameter names and values to upper case
+            addParameter(key,values.at(j));
+        }
+    }
 }
 
 /*!

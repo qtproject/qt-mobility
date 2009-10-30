@@ -299,11 +299,12 @@ QMultiHash<QString,QString> VersitUtils::extractVCard21PropertyParams(
     const QByteArray& property)
 {
     QMultiHash<QString,QString> result;
-    QList<QByteArray> params = extractParams(property);
-    foreach (QByteArray param, params) {
+    QList<QByteArray> paramList = extractParams(property);
+    while (!paramList.isEmpty()) {
+        QByteArray param = paramList.takeLast();
         QString name = QString::fromAscii(paramName(param));
         QString value = QString::fromAscii(paramValue(param));
-        result.insertMulti(name,value);
+        result.insert(name,value);
     }
     return result;
 }
@@ -316,8 +317,9 @@ QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(
     const QByteArray& property)
 {
     QMultiHash<QString,QString> result;
-    QList<QByteArray> params = extractParams(property);
-    foreach (QByteArray param, params) {
+    QList<QByteArray> paramList = extractParams(property);
+    while (!paramList.isEmpty()) {
+        QByteArray param = paramList.takeLast();
         QByteArray name = paramName(param);
         removeBackSlashEscaping(name);
         QByteArray values = paramValue(param);
@@ -325,7 +327,7 @@ QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(
         while (!valueList.isEmpty()) {
             QByteArray value(valueList.takeLast());
             removeBackSlashEscaping(value);
-            result.insertMulti(QString::fromAscii(name),QString::fromAscii(value));
+            result.insert(QString::fromAscii(name),QString::fromAscii(value));
         }
     }
     return result;
