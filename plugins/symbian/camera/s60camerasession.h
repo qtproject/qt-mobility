@@ -57,10 +57,12 @@
 #include <cameraengineobserver.h>
 
 
-struct video_buffer {
-    void* start;
-    size_t length;
+class MVFProcessor
+{
+public:
+      virtual void ViewFinderFrameReady(const QImage& image) = 0;
 };
+
 
 class S60CameraSession : public QObject, public MCameraEngineObserver
 {
@@ -113,7 +115,7 @@ public:
     QVideoFrame::PixelFormat pixelFormat() const;
     void setPixelFormat(QVideoFrame::PixelFormat fmt);
     QList<QSize> supportedVideoResolutions();
-    QList<QSize> supportedCaptureSizes();
+
 
     // media control
     bool setOutputLocation(const QUrl &sink);
@@ -128,6 +130,7 @@ public:
     bool startCamera();
     void stopCamera();
     void capture();
+    void setVFProcessor(MVFProcessor* VFProcessor);
     
     // for mediacontrol
     void startRecording();
@@ -143,7 +146,18 @@ public:
     int selectedDevice() const;
     void setSelectedDevice(int index);
     
-    //void setDevice(const QString &device);
+    //imageencodercontrol
+    QSize captureSize() const;
+    QSize minimumCaptureSize() const;
+    QSize maximumCaptureSize() const;
+    QList<QSize> supportedCaptureSizes();
+    void setCaptureSize(const QSize &size);
+    QStringList supportedImageCaptureCodecs() const;
+    QString imageCaptureCodec() const;
+    bool setImageCaptureCodec(const QString &codecName);
+    QString imageCaptureCodecDescription(const QString &codecName) const;
+    QtMedia::EncodingQuality captureQuality() const;
+    void setCaptureQuality(QtMedia::EncodingQuality);
     
 protected:
     void MceoCameraReady();
@@ -166,9 +180,9 @@ private Q_SLOTS:
 
 private:
     QSocketNotifier *notifier;
-    QList<video_buffer> buffers;
 
     int sfd;
+    QtMedia::EncodingQuality m_quality;
     QTime timeStamp;
     bool available;
     QCamera::State m_state;
@@ -186,6 +200,7 @@ private:
     mutable int iError;
     // information about camera
     TCameraInfo m_info;
+    MVFProcessor* m_VFProcessor;
     
 };
 
