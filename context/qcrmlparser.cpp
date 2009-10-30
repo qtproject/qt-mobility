@@ -51,7 +51,7 @@ KeyData::KeyData(const QString &path, quint64 uid, quint32 bitIndex)
     m_bitIndex = bitIndex;
 }
 
-QList<KeyData> QCrmlParser::parseQcrml(const QString &filePath)
+QList<KeyData> QCrmlParser::parseQCrml(const QString &filePath)
 {
     QList<KeyData> rv;
     QFile inputFile(filePath);

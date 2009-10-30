@@ -86,11 +86,11 @@ void tst_QCrmlParser::simple()
 {
     QCrmlParser parser;
     QList<KeyData> keyData;
-    keyData = parser.parseQcrml("dontexist");
+    keyData = parser.parseQCrml("dontexist");
     QVERIFY(parser.error() == QCrmlParser::FileNotFound);
     QVERIFY(keyData.count() == 0);
 
-    keyData = parser.parseQcrml(testData.absoluteFilePath("test1.qcrml"));
+    keyData = parser.parseQCrml(testData.absoluteFilePath("test1.qcrml"));
     QHash<QString, KeyData> keyHash = makeHash(keyData);
 
     QVERIFY(verifyKeyData(keyHash, "/sensors/accelerometer/x",
@@ -107,7 +107,7 @@ void tst_QCrmlParser::keyRangeSequence()
 {
     QCrmlParser parser;
     QList<KeyData> keyData;
-    keyData = parser.parseQcrml(testData.absoluteFilePath("test2.qcrml"));
+    keyData = parser.parseQCrml(testData.absoluteFilePath("test2.qcrml"));
     QCOMPARE(keyData.count(), 763);
     QHash<QString,KeyData> keyHash = makeHash(keyData);
 
@@ -136,7 +136,7 @@ void tst_QCrmlParser::bitmaskKey()
 {
     QCrmlParser parser;
     QList<KeyData> keyData;
-    keyData = parser.parseQcrml(testData.absoluteFilePath("test3.qcrml"));
+    keyData = parser.parseQCrml(testData.absoluteFilePath("test3.qcrml"));
     QCOMPARE(keyData.count(), 4);
     QHash<QString, KeyData> keyHash = makeHash(keyData);
 
@@ -152,7 +152,7 @@ void tst_QCrmlParser::keyWithUnknownElements()
 {
     QCrmlParser parser;
     QList<KeyData> keyData;
-    keyData = parser.parseQcrml(testData.absoluteFilePath("test4.qcrml"));
+    keyData = parser.parseQCrml(testData.absoluteFilePath("test4.qcrml"));
     QCOMPARE(keyData.count(), 3);
     QHash<QString, KeyData> keyHash = makeHash(keyData);
 
@@ -169,7 +169,7 @@ void tst_QCrmlParser::keyRangeNoSequence()
 {
     QCrmlParser parser;
     QList<KeyData> keyData;
-    keyData = parser.parseQcrml(testData.absoluteFilePath("test5.qcrml"));
+    keyData = parser.parseQCrml(testData.absoluteFilePath("test5.qcrml"));
     QCOMPARE(keyData.count(), 65535);
     QHash<QString,KeyData> keyHash = makeHash(keyData);
 
@@ -188,7 +188,7 @@ void tst_QCrmlParser::singleKey()
 {
     QCrmlParser parser;
     QList<KeyData> keyData;
-    keyData = parser.parseQcrml(testData.absoluteFilePath("test6.qcrml"));
+    keyData = parser.parseQCrml(testData.absoluteFilePath("test6.qcrml"));
     QCOMPARE(keyData.count(), 1);
     QHash<QString, KeyData> keyHash = makeHash(keyData);
     QVERIFY(verifyKeyData(keyHash, "/compass",
@@ -200,7 +200,7 @@ void tst_QCrmlParser::multipleKeyRanges()
 {
     QCrmlParser parser;
     QList<KeyData> keyData;
-    keyData = parser.parseQcrml(testData.absoluteFilePath("test7.qcrml"));
+    keyData = parser.parseQCrml(testData.absoluteFilePath("test7.qcrml"));
     QCOMPARE(keyData.count(),33 );
     QHash<QString, KeyData> keyHash = makeHash(keyData);
 
@@ -234,7 +234,7 @@ void tst_QCrmlParser::multipleBitmaskKeys()
 {
     QCrmlParser parser;
     QList<KeyData> keyData;
-    keyData = parser.parseQcrml(testData.absoluteFilePath("test8.qcrml"));
+    keyData = parser.parseQCrml(testData.absoluteFilePath("test8.qcrml"));
     QCOMPARE(keyData.count(), 7);
     QHash<QString, KeyData> keyHash = makeHash(keyData);
     QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Swan"),Q_UINT64_C(0x1234567800000001),1));
@@ -251,7 +251,7 @@ void tst_QCrmlParser::wrongXmlFile()
 {
     QCrmlParser parser;
     QList<KeyData> keyData;
-    keyData = parser.parseQcrml(testData.absoluteFilePath("error1.qcrml"));
+    keyData = parser.parseQCrml(testData.absoluteFilePath("error1.qcrml"));
     QVERIFY(parser.error() == QCrmlParser::ParseError);
 }
 
@@ -259,7 +259,7 @@ void tst_QCrmlParser::noRepositoryUidValue()
 {
     QCrmlParser parser;
     QList<KeyData> keyData;
-    keyData = parser.parseQcrml(testData.absoluteFilePath("error2.qcrml"));
+    keyData = parser.parseQCrml(testData.absoluteFilePath("error2.qcrml"));
     QVERIFY(parser.error() == QCrmlParser::ParseError);
 }
 
@@ -267,7 +267,7 @@ void tst_QCrmlParser::keyMissingEndTag()
 {
     QCrmlParser parser;
     QList<KeyData> keyData;
-    keyData = parser.parseQcrml(testData.absoluteFilePath("error3.qcrml"));
+    keyData = parser.parseQCrml(testData.absoluteFilePath("error3.qcrml"));
     QVERIFY(parser.error() == QCrmlParser::ParseError);
 }
 
@@ -276,7 +276,7 @@ void tst_QCrmlParser::outOfPlaceEndTag()
 {
     QCrmlParser parser;
     QList<KeyData> keyData;
-    keyData = parser.parseQcrml(testData.absoluteFilePath("error4.qcrml"));
+    keyData = parser.parseQCrml(testData.absoluteFilePath("error4.qcrml"));
     QVERIFY(parser.error() == QCrmlParser::ParseError);
     QVERIFY(keyData.count() == 0);
 }

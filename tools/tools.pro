@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS += vsexplorer
+SUBDIRS += vsexplorer qcrmlgen

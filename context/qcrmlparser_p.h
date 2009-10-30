@@ -62,6 +62,8 @@ public:
     KeyData():m_UID(0), m_bitIndex(0){}
     KeyData(const QString &path, quint64 UID, quint32 bitmask=0);
     quint64 uid() const {return m_UID;}
+    quint32 repoId() const { return (quint32)(m_UID >> 32);}
+    quint32 keyId() const {return (quint32)m_UID;}
     quint32 bitIndex() const { return m_bitIndex;}
     QString path()const {return m_path;}
 
@@ -75,7 +77,7 @@ class QCrmlParser : private QXmlStreamReader
 {
 public:
     enum Error{NoError, FileNotFound, FileOpenError, ParseError};
-    QList<KeyData> parseQcrml(const QString &filePath);
+    QList<KeyData> parseQCrml(const QString &filePath);
     Error error();
     QString errorString();
 private:
