@@ -97,41 +97,57 @@
 #include <cemapi.h>
 #endif
 
-
-namespace {
-
-    QWeakPointer<WinHelpers::MapiInitializer> initializer;
-
-    GUID GuidPublicStrings = { 0x00020329, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 };
-
-    FILETIME toFileTime(const QDateTime &dt)
+namespace WinHelpers
+{
+    bool setMapiProperty(IMAPIProp *object, ULONG tag, const QString &value)
     {
-        FILETIME ft = {0};
-
-        QDate date(dt.date());
-        QTime time(dt.time());
-
-        SYSTEMTIME st = {0};
-        st.wYear = date.year();
-        st.wMonth = date.month();
-        st.wDay = date.day();
-        st.wHour = time.hour();
-        st.wMinute = time.minute();
-        st.wSecond = time.second();
-        st.wMilliseconds = time.msec();
-
-        SystemTimeToFileTime(&st, &ft);
-        return ft;
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.LPSZ = reinterpret_cast<LPWSTR>(const_cast<quint16*>(value.utf16()));
+        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
     }
 
-    QDateTime fromFileTime(const FILETIME &ft)
+    bool setMapiProperty(IMAPIProp *object, ULONG tag, LONG value)
     {
-        SYSTEMTIME st = {0};
-        FileTimeToSystemTime(&ft, &st);
-        QString dateStr(QString("yyyy%1M%2d%3h%4m%5s%6z%7").arg(st.wYear).arg(st.wMonth).arg(st.wDay).arg(st.wHour).arg(st.wMinute).arg(st.wSecond).arg(st.wMilliseconds));
-        QDateTime dt(QDateTime::fromString(dateStr, "'yyyy'yyyy'M'M'd'd'h'h'm'm's's'z'z"));
-        dt.setTimeSpec(Qt::UTC);
-        return dt;
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.l = value;
+        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+    }
+
+    bool setMapiProperty(IMAPIProp *object, ULONG tag, ULONG value)
+    {
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.ul = value;
+        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+    }
+
+    bool setMapiProperty(IMAPIProp *object, ULONG tag, bool value)
+    {
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.b = value;
+        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+    }
+
+    bool setMapiProperty(IMAPIProp *object, ULONG tag, FILETIME value)
+    {
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.ft = value;
+        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+    }
+
+    bool setMapiProperty(IMAPIProp *object, ULONG tag, MapiEntryId value)
+    {
+        SBinary s;
+        s.cb = value.count();
+        s.lpb = reinterpret_cast<LPBYTE>(value.data());
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.bin = s;
+        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
     }
 
     bool getMapiProperty(IMAPIProp *object, ULONG tag, ULONG *value)
@@ -188,48 +204,64 @@ namespace {
         return result;
     }
 
-    bool setMapiProperty(IMAPIProp *object, ULONG tag, const QString &value)
+    bool getMapiProperty(IMAPIProp *object, ULONG tag, QString *value)
     {
-        SPropValue prop = { 0 };
-        prop.ulPropTag = tag;
-        prop.Value.LPSZ = reinterpret_cast<LPWSTR>(const_cast<quint16*>(value.utf16()));
-        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+        bool result(false);
+
+        SPropValue *prop;
+        HRESULT rv = HrGetOneProp(object, tag, &prop);
+        if (HR_SUCCEEDED(rv)) {
+            if (prop->ulPropTag == tag) {
+                *value = QStringFromLpctstr(prop->Value.lpszW);
+                result = true;
+            }
+            MAPIFreeBuffer(prop);
+        }
+
+        return result;
+    }
+}
+
+using namespace WinHelpers;
+
+namespace {
+
+    QWeakPointer<WinHelpers::MapiInitializer> initializer;
+
+    GUID GuidPublicStrings = { 0x00020329, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 };
+
+    FILETIME toFileTime(const QDateTime &dt)
+    {
+        FILETIME ft = {0};
+
+        QDate date(dt.date());
+        QTime time(dt.time());
+
+        SYSTEMTIME st = {0};
+        st.wYear = date.year();
+        st.wMonth = date.month();
+        st.wDay = date.day();
+        st.wHour = time.hour();
+        st.wMinute = time.minute();
+        st.wSecond = time.second();
+        st.wMilliseconds = time.msec();
+
+        SystemTimeToFileTime(&st, &ft);
+        return ft;
     }
 
-    bool setMapiProperty(IMAPIProp *object, ULONG tag, LONG value)
+    QDateTime fromFileTime(const FILETIME &ft)
     {
-        SPropValue prop = { 0 };
-        prop.ulPropTag = tag;
-        prop.Value.l = value;
-        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+        SYSTEMTIME st = {0};
+        FileTimeToSystemTime(&ft, &st);
+        QString dateStr(QString("yyyy%1M%2d%3h%4m%5s%6z%7").arg(st.wYear).arg(st.wMonth).arg(st.wDay).arg(st.wHour).arg(st.wMinute).arg(st.wSecond).arg(st.wMilliseconds));
+        QDateTime dt(QDateTime::fromString(dateStr, "'yyyy'yyyy'M'M'd'd'h'h'm'm's's'z'z"));
+        dt.setTimeSpec(Qt::UTC);
+        return dt;
     }
 
-    bool setMapiProperty(IMAPIProp *object, ULONG tag, bool value)
-    {
-        SPropValue prop = { 0 };
-        prop.ulPropTag = tag;
-        prop.Value.b = value;
-        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
-    }
 
-    bool setMapiProperty(IMAPIProp *object, ULONG tag, FILETIME value)
-    {
-        SPropValue prop = { 0 };
-        prop.ulPropTag = tag;
-        prop.Value.ft = value;
-        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
-    }
 
-    bool setMapiProperty(IMAPIProp *object, ULONG tag, MapiEntryId value)
-    {
-        SBinary s;
-        s.cb = value.count();
-        s.lpb = reinterpret_cast<LPBYTE>(value.data());
-        SPropValue prop = { 0 };
-        prop.ulPropTag = tag;
-        prop.Value.bin = s;
-        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
-    }
 
     //used in preference to HrQueryAllRows
     //as per: http://blogs.msdn.com/stephen_griffin/archive/2009/03/23/try-not-to-query-all-rows.aspx
@@ -2937,6 +2969,19 @@ void MapiStore::notifyEvents(ULONG mask)
     }
 
  }
+
+#ifdef _WIN32_WCE
+
+QString MapiStore::transportName() const
+{
+    QString result;
+        if(!getMapiProperty(_store,PR_CE_TRANSPORT_NAME,&result))
+            qWarning() << "Could not query transport name for store " << name();
+
+    return result;
+}
+
+#endif
 
 HRESULT MapiStore::AdviseSink::QueryInterface(REFIID id, LPVOID FAR* o)
 {

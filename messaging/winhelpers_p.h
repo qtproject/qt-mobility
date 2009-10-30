@@ -152,6 +152,18 @@ public:
     bool _initialized;
 };
 
+bool getMapiProperty(IMAPIProp *object, ULONG tag, ULONG *value);
+bool getMapiProperty(IMAPIProp *object, ULONG tag, LONG *value);
+bool getMapiProperty(IMAPIProp *object, ULONG tag, QByteArray *value);
+bool getMapiProperty(IMAPIProp *object, ULONG tag, QString value);
+
+bool setMapiProperty(IMAPIProp *object, ULONG tag, const QString &value);
+bool setMapiProperty(IMAPIProp *object, ULONG tag, LONG value);
+bool setMapiProperty(IMAPIProp *object, ULONG tag, ULONG value);
+bool setMapiProperty(IMAPIProp *object, ULONG tag, bool value);
+bool setMapiProperty(IMAPIProp *object, ULONG tag, FILETIME value);
+bool setMapiProperty(IMAPIProp *object, ULONG tag, MapiEntryId value);
+
 }
 
 /* Note on links:
@@ -281,6 +293,10 @@ public:
     QMessage::StandardFolder standardFolder(const MapiEntryId &entryId) const;
 
     void notifyEvents(ULONG mask);
+
+#ifdef _WIN32_WCE
+    QString transportName() const;
+#endif
 
 private:
     MapiStore();

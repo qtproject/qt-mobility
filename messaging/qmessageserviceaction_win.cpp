@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "qmessageserviceaction.h"
 #include <mapix.h>
 #include <objbase.h>
@@ -57,8 +58,8 @@
 #endif
 
 using namespace WinHelpers;
-
 static const unsigned long SmsCharLimit = 160;
+static const unsigned int BodyDownloadTimeout = 20; //seconds
 
 class QMessageServiceActionPrivate : public QObject
 {
@@ -71,11 +72,21 @@ public:
 
     bool send(const QMessage& message, bool showComposer = false);
     bool show(const QMessageId& id);
+#ifdef _WIN32_WCE
+    bool isPartiallyDownloaded(const QMessageId& id);
+    bool markForDownload(const QMessageId& id, bool includeAttachments = false);
+    bool synchronize(const QMessageAccountId& id);
+    bool listenForBodyDownload(const QMessageId& targetMessage, unsigned int timeoutSeconds);
+#endif
 
 public slots:
     void completed();
     void reportMatchingIds();
     void reportMessagesCounted();
+#ifdef _WIN32_WCE
+    void messageUpdated(const QMessageId& id);
+    void bodyDownloadTimeout();
+#endif
 
 signals:
     void stateChanged(QMessageServiceAction::State);
@@ -90,6 +101,8 @@ public:
     QMessageIdList _candidateIds;
     int _count;
     QMessageServiceAction::State _state;
+    QMessageId m_bodyDownloadTarget;
+    QTimer m_bodyDownloadTimer;
 };
 
 
@@ -110,6 +123,38 @@ void QMessageServiceActionPrivate::reportMessagesCounted()
     emit messagesCounted(_count);
     completed();
 }
+
+#ifdef _WIN32_WCE
+void QMessageServiceActionPrivate::messageUpdated(const QMessageId& id)
+{
+    if(id == m_bodyDownloadTarget && m_bodyDownloadTimer.isActive())
+    {
+        m_bodyDownloadTimer.stop();
+
+        disconnect(QMessageStore::instance(),SIGNAL(messageUpdated(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)),this,SLOT(messageUpdated(const QMessageId&)));
+
+        m_bodyDownloadTarget = QMessageId();
+
+        bool isBodyDownloaded = !isPartiallyDownloaded(id);
+
+        _state = isBodyDownloaded ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
+        emit q_ptr->stateChanged(_state);
+        _active = false;
+    }
+}
+
+void QMessageServiceActionPrivate::bodyDownloadTimeout()
+{
+    disconnect(QMessageStore::instance(),SIGNAL(messageUpdated(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)),this,SLOT(messageUpdated(const QMessageId&)));
+
+    m_bodyDownloadTarget = QMessageId();
+
+    _state = QMessageServiceAction::Failed;
+    emit q_ptr->stateChanged(_state);
+    _active = false;
+}
+
+#endif
 
 QMessageServiceActionPrivate::QMessageServiceActionPrivate(QMessageServiceAction* parent)
     :q_ptr(parent),
@@ -273,8 +318,7 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
     if( mapiFolder.isNull() || _lastError != QMessageStore::NoError ) {
         qWarning() << "Unable to get outbox folder for outgoing store, trying drafts...";
         mapiFolder = mapiStore->findFolder(&_lastError,QMessage::DraftsFolder);
-        if(mapiFolder.isNull() || _lastError != QMessageStore::NoError)
-        {
+        if(mapiFolder.isNull() || _lastError != QMessageStore::NoError) {
             qWarning() << "Unable to get drafts folder for outgoing store";
             return false;
         }
@@ -394,6 +438,123 @@ bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
 #endif
 }
 
+#ifdef _WIN32_WCE
+
+bool QMessageServiceActionPrivate::isPartiallyDownloaded(const QMessageId& id)
+{
+    MapiSessionPtr mapiSession(MapiSession::createSession(&_lastError));
+
+    if (_lastError != QMessageStore::NoError)
+    {
+        qWarning() << "Could not create session";
+        return false;
+    }
+
+    MapiStorePtr mapiStore = mapiSession->openStore(&_lastError,QMessageIdPrivate::storeRecordKey(id));
+
+    if(mapiStore.isNull() || _lastError != QMessageStore::NoError) {
+        qWarning() << "Unable to get store for the message id";
+        return false;
+    }
+
+    IMessage* message = mapiStore->openMessage(&_lastError,QMessageIdPrivate::entryId(id));
+
+    ULONG status = 0;
+    if(!getMapiProperty(message,PR_MSG_STATUS,&status)) {
+        qWarning() << "Unable to get message flags";
+        return false;
+    }
+    else
+    {
+        mapiRelease(message);
+        return((status & MSGSTATUS_HEADERONLY) || (status & MSGSTATUS_PARTIAL) || (status & MSGSTATUS_PENDING_ATTACHMENTS));
+    }
+}
+
+bool QMessageServiceActionPrivate::markForDownload(const QMessageId& id, bool includeAttachments)
+{
+    MapiSessionPtr mapiSession(MapiSession::createSession(&_lastError));
+
+    if (_lastError != QMessageStore::NoError)
+    {
+        qWarning() << "Could not create session";
+        return false;
+    }
+
+    MapiStorePtr mapiStore = mapiSession->openStore(&_lastError,QMessageIdPrivate::storeRecordKey(id));
+
+    if(mapiStore.isNull() || _lastError != QMessageStore::NoError)
+    {
+        qWarning() << "Unable to get store for the message id";
+        return false;
+    }
+
+    IMessage* message = mapiStore->openMessage(&_lastError,QMessageIdPrivate::entryId(id));
+
+    ULONG status = 0;
+
+    if(!getMapiProperty(message,PR_MSG_STATUS,&status))
+    {
+        qWarning() << "Unable to get message flags";
+        return false;
+    }
+    else
+    {
+        //mark the message to download on the next sync
+
+        status |= MSGSTATUS_REMOTE_DOWNLOAD;
+        if(includeAttachments)
+            status |= MSGSTATUS_REMOTE_DOWNLOAD_ATTACH;
+
+        if(!setMapiProperty(message, PR_MSG_STATUS, status))
+        {
+            qWarning() << "Could not mark the message for download!";
+            return false;
+        }
+
+        mapiRelease(message);
+
+        //perform the synchronization on the store
+
+        QString transportName = mapiStore->transportName();
+        if(transportName.isEmpty())
+        {
+            qWarning() << "Could not get transport name for mapi store";
+            return false;
+        }
+
+    }
+    return true;
+}
+
+bool QMessageServiceActionPrivate::synchronize(const QMessageAccountId& id)
+{
+    QMessageAccount account(id);
+    if(FAILED(MailSyncMessages(LptstrFromQString(account.name()),MCF_ACCOUNT_IS_NAME | MCF_RUN_IN_BACKGROUND)))
+    {
+        qWarning() << "MailSyncMessages failed for account " << account.name();
+        return false;
+    }
+    return true;
+}
+
+bool QMessageServiceActionPrivate::listenForBodyDownload(const QMessageId& targetMessage, unsigned int timeoutSeconds)
+{
+    if(!m_bodyDownloadTimer.isActive())
+    {
+        QMessageStore::instance()->registerNotificationFilter(QMessageFilter());
+        connect(QMessageStore::instance(),SIGNAL(messageUpdated(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)),this,SLOT(messageUpdated(const QMessageId&)));
+        m_bodyDownloadTarget = targetMessage;
+        m_bodyDownloadTimer.singleShot(timeoutSeconds * 1000,this,SLOT(bodyDownloadTimeout()));
+        return true;
+    }
+    else
+        qWarning() << "Already listnening";
+    return false;
+}
+
+#endif
+
 QMessageServiceAction::QMessageServiceAction(QObject *parent)
     : QObject(parent),
     d_ptr(new QMessageServiceActionPrivate(this))
@@ -512,20 +673,48 @@ bool QMessageServiceAction::compose(const QMessage &message)
 
 bool QMessageServiceAction::retrieveHeader(const QMessageId& id)
 {
-    Q_UNUSED(id)
-    return false; // stub
+    //NO-OP
+    return true;
 }
 
 bool QMessageServiceAction::retrieveBody(const QMessageId& id)
 {
-    Q_UNUSED(id)
-    return false; // stub
+#ifdef _WIN32_WCE
+    if(d_ptr->_active) {
+        qWarning() << "Action is currently busy";
+        return false;
+    }
+
+    d_ptr->_state = InProgress;
+    emit stateChanged(d_ptr->_state);
+    d_ptr->_lastError = QMessageStore::NoError;
+    d_ptr->_active = true;
+
+    QMessage message(id);
+
+    bool result = true;
+
+    if(message.type() == QMessage::Email) //already has body
+    {
+        if(d_ptr->isPartiallyDownloaded(id))
+        {
+            qWarning() << "Message is partially downloaded, marking for download..";
+            result = d_ptr->markForDownload(id);
+            d_ptr->listenForBodyDownload(id,BodyDownloadTimeout);
+            result &= d_ptr->synchronize(message.parentAccountId());
+        }
+    }
+
+    return result;
+#else
+    return false;
+#endif
 }
 
 bool QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
 {
-    Q_UNUSED(id)
-    return false; // stub
+    //NO-OP
+    return true;
 }
 
 bool QMessageServiceAction::show(const QMessageId& id)
@@ -551,8 +740,8 @@ bool QMessageServiceAction::show(const QMessageId& id)
 
 bool QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
 {
-    Q_UNUSED(id)
-    return false; // stub
+   //NOOP
+    return true;
 }
 
 QMessageServiceAction::State QMessageServiceAction::state() const
@@ -562,6 +751,7 @@ QMessageServiceAction::State QMessageServiceAction::state() const
 
 void QMessageServiceAction::cancelOperation()
 {
+    //NOOP
 }
 
 QMessageStore::ErrorCode QMessageServiceAction::lastError() const
