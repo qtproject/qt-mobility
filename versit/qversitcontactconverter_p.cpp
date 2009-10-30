@@ -258,10 +258,9 @@ void QVersitContactConverterPrivate::encodePhoneNumber(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
-    QContactPhoneNumber phoneNumer = static_cast<QContactPhoneNumber>(detail);
-    encodeParameters(property, phoneNumer.contexts());
-    encodeParameters(property, phoneNumer.subTypes());
-    property.setValue(phoneNumer.number().toAscii());
+    QContactPhoneNumber phoneNumber = static_cast<QContactPhoneNumber>(detail);
+    encodeParameters(property, phoneNumber.contexts(), phoneNumber.subTypes());
+    property.setValue(phoneNumber.number().toAscii());
 }
 
 /*!
@@ -283,9 +282,8 @@ void QVersitContactConverterPrivate::encodeAddress(
     QVersitProperty& property,
     const QContactDetail& detail )
 {
-    QContactAddress address = static_cast<QContactAddress>(detail);    
-    encodeParameters(property, address.contexts());
-    encodeParameters(property, address.subTypes());
+    QContactAddress address = static_cast<QContactAddress>(detail);
+    encodeParameters(property, address.contexts(), address.subTypes());
     QString value = address.postOfficeBox() + QString::fromAscii(";") +
                     QString::fromAscii(";") + address.street() +
                     QString::fromAscii(";") + address.locality() + 
@@ -428,14 +426,13 @@ bool QVersitContactConverterPrivate::encodeOrganization(
     return false;
 }
 
-
-
 /*!
  * Encode Avatar Content into the Versit Document
  */
 
-bool QVersitContactConverterPrivate::encodeAvatar(QVersitProperty& property,
-                                               const QContactDetail& detail )
+bool QVersitContactConverterPrivate::encodeAvatar(
+    QVersitProperty& property,
+    const QContactDetail& detail)
 {
     bool encode = false;
     bool scaling = false;
@@ -445,24 +442,21 @@ bool QVersitContactConverterPrivate::encodeAvatar(QVersitProperty& property,
     if ( mMappings.contains(contactAvatar.subType())) {
         scaling = contactAvatar.subType() == QContactAvatar::SubTypeImage;
         encode = encodeEmbeddedContent(resoucePath, property, scaling);
-
         if (encode)
             property.setName(mMappings.value(contactAvatar.subType()));
     }
     return encode;
 }
 
-
-
-
 /*!
  * Encode Embedded Content into the Versit Document
  *
  */
 
-bool QVersitContactConverterPrivate::encodeEmbeddedContent( const QString& resoucePath,
-                                                            QVersitProperty& property,
-                                                            bool performScaling )
+bool QVersitContactConverterPrivate::encodeEmbeddedContent(
+    const QString& resoucePath,
+    QVersitProperty& property,
+    bool performScaling)
 {
     bool encodeContent = false;
     QString resouceExt = resoucePath.section(QString::fromAscii("."), -1).toUpper();
@@ -493,8 +487,6 @@ bool QVersitContactConverterPrivate::encodeEmbeddedContent( const QString& resou
         } else {
             // The file has been removed. Don't encode the path to a local file.
         }
-
-        //Add Values
         property.setValue(value);
     }
     return encodeContent;
@@ -505,95 +497,75 @@ bool QVersitContactConverterPrivate::encodeEmbeddedContent( const QString& resou
  * Encode gender property information into Versit Document
  */
 void QVersitContactConverterPrivate::encodeGender(
-        QVersitProperty& property,const
-        QContactDetail& detail ) {
-
+    QVersitProperty& property,const
+    QContactDetail& detail )
+{
     QContactGender gender = static_cast<QContactGender>(detail);
     property.setValue(gender.gender().toAscii());
 }
 
 /*!
- * Encode Nick name property information into the Versit Document
+ * Encode nick name property information into the Versit Document
  */
 void QVersitContactConverterPrivate::encodeNickName(
-        QVersitProperty& property,
-        const QContactDetail& detail ) {
-
+    QVersitProperty& property,
+    const QContactDetail& detail )
+{
     QContactNickname nick = static_cast<QContactNickname>(detail);
     property.setValue(nick.nickname().toAscii());
 }
 
 /*!
- * Encode Aniverssary information into Versit Document
+ * Encode anniversary information into Versit Document
  */
 void QVersitContactConverterPrivate::encodeAnniversary(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
-    QContactAnniversary aniversary = static_cast<QContactAnniversary>(detail);
-    QStringList subtypeList;
-    subtypeList.append(aniversary.subType());
-    encodeParameters(property, subtypeList);
-    property.setValue(aniversary.originalDate().toString(Qt::ISODate).toAscii());
-}
-
-
-/*!
- * Encode Parameter for versit property if its supported in Versit Document 
- */
-void QVersitContactConverterPrivate::encodeParameters(
-    QVersitProperty& property,
-    const QStringList& paramList)
-{
-    foreach (QString type, paramList) {
-        QString parameterValue = mMappings.value(type);
-        if (parameterValue.size())
-            property.addParameter(QString::fromAscii(versitType),parameterValue);
-    }
+    QContactAnniversary anniversary = static_cast<QContactAnniversary>(detail);
+    encodeParameters(property, QStringList(), QStringList(anniversary.subType()));
+    property.setValue(anniversary.originalDate().toString(Qt::ISODate).toAscii());
 }
 
 /*!
  * Encode online account information into the Versit Document
  */
 bool QVersitContactConverterPrivate::encodeOnlineAccount(
-        QVersitProperty& property,
-        const QContactDetail& detail )
+    QVersitProperty& property,
+    const QContactDetail& detail)
 {
     bool encode = false;
-    QContactOnlineAccount onlinAccount = static_cast<QContactOnlineAccount>(detail);
-    QStringList subTypes = onlinAccount.subTypes();
+    QContactOnlineAccount onlineAccount = static_cast<QContactOnlineAccount>(detail);
+    QStringList subTypes = onlineAccount.subTypes();
 
-    if ( subTypes.contains(QContactOnlineAccount::SubTypeSip) ||
-         subTypes.contains(QContactOnlineAccount::SubTypeInternet) ||
-         subTypes.contains(QContactOnlineAccount::SubTypeShareVideo) ) {
-
+    if (subTypes.contains(QContactOnlineAccount::SubTypeSip) ||
+        subTypes.contains(QContactOnlineAccount::SubTypeInternet) ||
+        subTypes.contains(QContactOnlineAccount::SubTypeShareVideo)) {
         encode = true;
-        encodeParameters(property, onlinAccount.subTypes());
-        encodeParameters(property, onlinAccount.contexts());
+        encodeParameters(property, onlineAccount.contexts(), onlineAccount.subTypes());
         property.setName(QString::fromAscii(versitSipId));
-        property.setValue(onlinAccount.accountUri().toAscii());
+        property.setValue(onlineAccount.accountUri().toAscii());
     }
     return encode;
 }
-
 
 /*!
  * Encode family versit property if its supported in Versit Document
  */
 bool QVersitContactConverterPrivate::encodeFamily(
-        QVersitDocument& document,
-        const QContactDetail& detail )
+    QVersitDocument& document,
+    const QContactDetail& detail )
 {
     QContactFamily family = static_cast<QContactFamily>(detail);
 
-    if ( family.spouse().size() ) {
+    if (family.spouse().size()) {
         QVersitProperty property;
         property.setName(QString::fromAscii(versitSpouseId));
         property.setValue(family.spouse().toAscii());
         document.addProperty(property);
     }
 
-    if ( family.children().size() ) {
+    if (family.children().size()) {
         QVersitProperty property;
         property.setName(QString::fromAscii(versitChildrenId));
         QString children = family.children().join(QString::fromAscii(","));
@@ -603,16 +575,38 @@ bool QVersitContactConverterPrivate::encodeFamily(
     return false;
 }
 
-
 /*!
- * Check if the Remote resouce represents a Valid remote resouce
+ * Check if \a resourceIdentifier represents a valid remote resource
  */
-bool QVersitContactConverterPrivate::isValidRemoteUrl(const QString& resouceIdentifier)
+bool QVersitContactConverterPrivate::isValidRemoteUrl(
+    const QString& resourceIdentifier)
 {
-    QUrl remoteResouce(resouceIdentifier);
-    if ( ( !remoteResouce.scheme().isEmpty() &&
-         !remoteResouce.host().isEmpty()) ||
-         resouceIdentifier.contains(QString::fromAscii(versitConstWWW), Qt::CaseInsensitive))
+    QUrl remoteResource(resourceIdentifier);
+    if ((!remoteResource.scheme().isEmpty() && !remoteResource.host().isEmpty()) ||
+         resourceIdentifier.contains(QString::fromAscii(versitConstWWW),Qt::CaseInsensitive))
         return true;
     return false;
 }
+
+/*!
+ * Encode parameters to \a property
+ */
+void QVersitContactConverterPrivate::encodeParameters(
+    QVersitProperty& property,
+    const QStringList& contexts,
+    const QStringList& subTypes)
+{
+    QStringList parameterList(contexts); // Contexts should be encoded first
+    parameterList.append(subTypes);
+    while (!parameterList.isEmpty()) {
+        QString value = parameterList.takeLast();
+        QString mappedValue = mMappings.value(value);
+        if (mappedValue.length() > 0) {
+            // QVersitProperty::addParameter inserts into beginning.
+            // This is why the last value is taken from the list
+            property.addParameter(QString::fromAscii(versitType),mappedValue);
+        }
+    }
+}
+
+

@@ -57,7 +57,6 @@ public:
     QVersitContactConverterPrivate();
     ~QVersitContactConverterPrivate();
 
-    void encodeParameters(QVersitProperty& property, const QStringList& paramList);
     void encodeFieldInfo(QVersitDocument& document, const QContactDetail& detail);
     void encodeName(QVersitProperty& property, const QContactDetail& detail);
     void encodePhoneNumber(QVersitProperty& property, const QContactDetail& detail);
@@ -77,8 +76,11 @@ public:
     void encodeAnniversary(QVersitProperty& property,const QContactDetail& detail);
     bool encodeOnlineAccount(QVersitProperty& property,const QContactDetail& detail);
     bool encodeFamily(QVersitDocument& document,const QContactDetail& detail);
-    bool isValidRemoteUrl(const QString& resouceIdentifier);
-    bool encodeAvatar(QVersitProperty& property,const QContactDetail& detail );
+    bool encodeAvatar(QVersitProperty& property,const QContactDetail& detail);
+    bool isValidRemoteUrl(const QString& resourceIdentifier);
+    void encodeParameters(QVersitProperty& property,
+                          const QStringList& contexts,
+                          const QStringList& subTypes=QStringList());
     
 signals:
     void scale(const QString& imageFileName, QByteArray& imageData);

@@ -182,8 +182,25 @@ void UT_VersitUtils::testExtractParts()
     parts = VersitUtils::extractParts(text,';');
     QVERIFY(parts.isEmpty());
 
+    // Only separator
+    text = ";";
+    parts = VersitUtils::extractParts(text,';');
+    QVERIFY(parts.isEmpty());
+
     // One part
     text = "part";
+    parts = VersitUtils::extractParts(text,';');
+    QCOMPARE(parts.count(),1);
+    QCOMPARE(QString::fromAscii(parts[0]),QString::fromAscii("part"));
+
+    // Separator in the beginning, one part
+    text = ";part";
+    parts = VersitUtils::extractParts(text,';');
+    QCOMPARE(parts.count(),1);
+    QCOMPARE(QString::fromAscii(parts[0]),QString::fromAscii("part"));
+
+    // Separator in the end, one part
+    text = "part;";
     parts = VersitUtils::extractParts(text,';');
     QCOMPARE(parts.count(),1);
     QCOMPARE(QString::fromAscii(parts[0]),QString::fromAscii("part"));
@@ -628,16 +645,16 @@ void UT_VersitUtils::testExtractVCard21PropertyParams()
     params = VersitUtils::extractVCard21PropertyParams(property);
     QCOMPARE(2, params.count());
     QCOMPARE(2, params.values(QString::fromAscii("TYPE")).count());
-    QCOMPARE(params.values(QString::fromAscii("TYPE"))[0],QString::fromAscii("VOICE"));
-    QCOMPARE(params.values(QString::fromAscii("TYPE"))[1],QString::fromAscii("HOME"));
+    QCOMPARE(params.values(QString::fromAscii("TYPE"))[0],QString::fromAscii("HOME"));
+    QCOMPARE(params.values(QString::fromAscii("TYPE"))[1],QString::fromAscii("VOICE"));
     
     // Two parameters, several empty parameters (extra semicolons)
     property = "TEL;;;;HOME;;;;;VOICE;;;:123";
     params = VersitUtils::extractVCard21PropertyParams(property);
     QCOMPARE(2, params.count());
     QCOMPARE(2, params.values(QString::fromAscii("TYPE")).count());
-    QCOMPARE(params.values(QString::fromAscii("TYPE"))[0],QString::fromAscii("VOICE"));
-    QCOMPARE(params.values(QString::fromAscii("TYPE"))[1],QString::fromAscii("HOME"));
+    QCOMPARE(params.values(QString::fromAscii("TYPE"))[0],QString::fromAscii("HOME"));
+    QCOMPARE(params.values(QString::fromAscii("TYPE"))[1],QString::fromAscii("VOICE"));
     
     // Two parameters with different types
     property = "EMAIL;INTERNET;ENCODING=QUOTED-PRINTABLE:user=40ovi.com";
@@ -685,6 +702,14 @@ void UT_VersitUtils::testExtractVCard30PropertyParams()
 
     // Two parameters of the same type
     property = "TEL;TYPE=HOME,VOICE:123";
+    params = VersitUtils::extractVCard30PropertyParams(property);
+    QCOMPARE(params.count(), 2);
+    QCOMPARE(params.values(QString::fromAscii("TYPE")).count(), 2);
+    QCOMPARE(params.values(QString::fromAscii("TYPE"))[0],QString::fromAscii("HOME"));
+    QCOMPARE(params.values(QString::fromAscii("TYPE"))[1],QString::fromAscii("VOICE"));
+
+    // Two parameters of the same type in separate name-values
+    property = "TEL;TYPE=HOME;TYPE=VOICE:123";
     params = VersitUtils::extractVCard30PropertyParams(property);
     QCOMPARE(params.count(), 2);
     QCOMPARE(params.values(QString::fromAscii("TYPE")).count(), 2);
