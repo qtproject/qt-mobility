@@ -559,7 +559,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // display label - SOON TO BE DEPRECATED
-    // see Commit:
+    // see Commit: e49024c7fb5255b465002c82c10a299bf125951a
     d.setName(QContactDisplayLabel::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::String);
@@ -788,6 +788,7 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     retn.insert(d.name(), d);
 
     // presence - DEPRECATED - use online account instead
+    // see: Commit SHA1: e70e29ae3d30288d793336a77829919d16171acb
     d.setName(QContactPresence::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::String);
