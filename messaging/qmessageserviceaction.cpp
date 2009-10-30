@@ -258,9 +258,10 @@
 /*!
     \fn QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
   
-    Synchronize any changes that have been queued by message store operations with external servers.
-    
-    Pending changes to the account with identifier \a id should be synchronized.
+    Iniate synchronization with external servers of local changes that have been queued by message store operations.
+
+    On MAPI platforms this function performs no operation, as when a connection is available, local changes are 
+    opportunistically synchronized with external servers.
 
     Returns true if the action can be initiated; otherwise returns false.
     
