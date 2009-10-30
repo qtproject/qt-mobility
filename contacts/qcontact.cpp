@@ -195,7 +195,23 @@ void QContact::setType(const QContactType& type)
     d->m_details[1] = type;
 }
 
+///*!
+// * THIS FUNCTION WILL REPLACE THE THREE DEPRECATED FUNCTIONS BELOW AT WEEK 47 (unless feedback suggests otherwise).
+// * See Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a
+// *
+// * Returns the read-only display label of this contact.
+// * A contact which has been retrieved from a manager will have a display label synthesized for it.
+// */
+//QString QContact::displayLabel() const
+//{
+//    return d->m_details.at(0).value(QContactDisplayLabel::FieldLabel);
+//}
+
 /*!
+ * \deprecated
+ *
+ * DEPRECATED, see Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a
+ *
  * Returns the display label of the contact.  Every contact has exactly one display label
  * which is either set manually (by saving a modified copy of the QContactDisplayLabel
  * in the contact, or by calling \l setDisplayLabel()) or synthesized by the manager from
@@ -209,6 +225,10 @@ QContactDisplayLabel QContact::displayLabel() const
 }
 
 /*!
+ * \deprecated
+ *
+ * DEPRECATED, see Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a
+ *
  * Set the display label of the contact to \a label.
  *
  * The corresponding "synthesized" flag in this contact will be
@@ -220,6 +240,10 @@ void QContact::setDisplayLabel(const QContactDisplayLabel& label)
 }
 
 /*!
+ * \deprecated
+ *
+ * DEPRECATED, see Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a
+ *
  * Set the display label of the contact to \a label.
  *
  * The corresponding "synthesized" flag in this contact will be
