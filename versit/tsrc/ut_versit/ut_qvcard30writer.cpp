@@ -68,7 +68,7 @@ void UT_QVCard30Writer::testEncodeVersitProperty()
     expectedResult = "TEL;TYPE=HOME:123\r\n";
     property.setName(QString::fromAscii("TEL"));
     property.setValue(QByteArray("123"));
-    property.addParameter(QByteArray("TYPE"),QByteArray("HOME"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
     QByteArray encodedProperty = mWriter->encodeVersitProperty(property);
     QCOMPARE(QString::fromAscii(encodedProperty), QString::fromAscii(expectedResult));
     QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);

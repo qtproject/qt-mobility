@@ -77,9 +77,7 @@ private:
         const QContact& contact) const;
     QContactDetail* createPhone(const QVersitProperty& property) const;
     QContactDetail* createAddress(const QVersitProperty& property) const;
-    QContactDetail* createOrganization(
-        const QVersitProperty& property,
-        const QVersitDocument& document) const;
+    QContactDetail* createOrganization(const QVersitProperty& property) const;
     QContactDetail* createTimeStamp(const QVersitProperty& property) const;
     QContactDetail* createAnniversary(const QVersitProperty& property) const;
     QContactDetail* createBirthday(const QVersitProperty& property) const;    
