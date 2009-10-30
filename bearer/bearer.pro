@@ -112,7 +112,7 @@ symbian: {
                            qnetworkmanagerservice_p.cpp \
                            qnmwifiengine_unix.cpp
             } else {
-                message("NetworkManager backend requires Qt DBus support");
+                message("NetworkManager backend requires Qt DBus support")
             }
         }
 
