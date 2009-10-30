@@ -58,7 +58,7 @@
 #include "cnttransformgeolocation.h"
 #include "cnttransformnote.h"
 #include "cnttransformfamily.h"
-#include "qcontactsymbiantransformerror.h"
+#include "cntsymbiantransformerror.h"
 
 #include <qtcontacts.h>
 #include <cntfldst.h>

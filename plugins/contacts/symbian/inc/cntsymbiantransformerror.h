@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QCONTACTSYMBIANTRANSFORMERROR_H
-#define QCONTACTSYMBIANTRANSFORMERROR_H
+#ifndef CNTSYMBIANTRANSFORMERROR_H
+#define CNTSYMBIANTRANSFORMERROR_H
 
 #include <e32err.h>
 #include "qcontactmanager.h"
@@ -48,7 +48,11 @@
 // contact details
 const TInt KErrInvalidContactDetail(-32768);
 
-void qContactSymbianTransformError(TInt symbianError, QContactManager::Error& qtError);
+class CntSymbianTransformError
+{
+public:
+    static void transformError(TInt symbianError, QContactManager::Error& qtError);
+};
 
 #endif
 

@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "cntrelationship.h"
-#include "qcontactsymbiantransformerror.h"
+#include "cntsymbiantransformerror.h"
 
 /* ... The macros changed names */
 #if QT_VERSION < QT_VERSION_CHECK(4, 6, 0)
@@ -98,7 +98,7 @@ QList<QContactRelationship> CntRelationship::relationships(const QString& relati
 
         //if error translate it into a qt error
         if (symbianError != KErrNone){
-            qContactSymbianTransformError(symbianError, error);
+            CntSymbianTransformError::transformError(symbianError, error);
         }
     }
     else{
@@ -131,7 +131,7 @@ bool CntRelationship::saveRelationship(QSet<QContactLocalId> *affectedContactIds
         //if symbian error translate it into a qt error
         if (symbianError != KErrNone){
             returnValue = false;
-            qContactSymbianTransformError(symbianError, error);
+            CntSymbianTransformError::transformError(symbianError, error);
         }
     }
     else{
@@ -188,7 +188,7 @@ bool CntRelationship::removeRelationship(QSet<QContactLocalId> *affectedContactI
         //if symbian error translate it into a qt error
         if (symbianError != KErrNone){
             returnValue = false;
-            qContactSymbianTransformError(symbianError, error);
+            CntSymbianTransformError::transformError(symbianError, error);
         }
     }
     else{

@@ -39,14 +39,14 @@
 **
 ****************************************************************************/
 
-#include "qcontactsymbiantransformerror.h"
+#include "cntsymbiantransformerror.h"
 
 /*! Transform a Symbian contact error id to QContactManager::Error.
  *
  * \param symbianError Symbian error.
  * \param QtError Qt error.
 */
-void qContactSymbianTransformError(TInt symbianError, QContactManager::Error& qtError)
+void CntSymbianTransformError::transformError(TInt symbianError, QContactManager::Error& qtError)
 {
     switch(symbianError)
     {

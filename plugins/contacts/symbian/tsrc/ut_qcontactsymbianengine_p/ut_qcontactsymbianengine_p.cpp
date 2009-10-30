@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "ut_qcontactsymbianengine_p.h"
-#include "qcontactsymbianengine_p.h"
+#include "cntsymbianengine_p.h"
 #include "qcontactchangeset.h"
 
 #include <QtTest/QtTest>
@@ -49,7 +49,7 @@ void TestSymbianEngine::initTestCase()
 {
     QContactManager::Error error;
     QMap<QString, QString> emptyParameters;
-    m_engine = new QContactSymbianEngineData(emptyParameters, error);
+    m_engine = new CntSymbianEnginePrivate(emptyParameters, error);
     removeAllContacts();
 }
 

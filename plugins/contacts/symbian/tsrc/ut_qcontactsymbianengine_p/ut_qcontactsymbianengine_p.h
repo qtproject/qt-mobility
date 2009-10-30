@@ -40,7 +40,7 @@
 ****************************************************************************/
 #include <QObject>
 
-class QContactSymbianEngineData;
+class CntSymbianEnginePrivate;
 
 class TestSymbianEngine : public QObject
 {
@@ -58,5 +58,5 @@ private:
     void removeAllContacts();
 
 private:
-    QContactSymbianEngineData   *m_engine;
+    CntSymbianEnginePrivate   *m_engine;
 };

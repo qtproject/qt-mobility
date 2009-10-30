@@ -40,13 +40,13 @@
 ****************************************************************************/
 
 #include "qcontactsymbiansorterdbms.h"
-#include "qcontactsymbiantransformerror.h"
+#include "cntsymbiantransformerror.h"
 
 #include <cntdb.h>
 #include <cntdef.h>
 #include <cntfield.h>
 #include "cnttransformcontact.h"
-#include "qcontactsymbianengine_p.h"
+#include "cntsymbianengine_p.h"
 
 typedef QList<QContactLocalId> QContactLocalIdList;
 
@@ -85,7 +85,7 @@ QList<QContactLocalId> QContactSymbianSorter::contacts(
     // there was a problem
     TRAPD(err, QT_TRYCATCH_LEAVING(*ids = contactsL(sortOrders)));
 
-    qContactSymbianTransformError(err, error);
+    CntSymbianTransformError::transformError(err, error);
 
     return *QScopedPointer<QContactLocalIdList>(ids);
 }
@@ -103,7 +103,7 @@ QList<QContactLocalId> QContactSymbianSorter::sort(
     // there was a problem
     TRAPD(err, QT_TRYCATCH_LEAVING(*ids = sortL(contactIds,sortOrders)));
 
-    qContactSymbianTransformError(err, error);
+    CntSymbianTransformError::transformError(err, error);
 
     return *QScopedPointer<QContactLocalIdList>(ids);
 }

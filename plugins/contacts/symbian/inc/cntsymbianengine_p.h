@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTSYMBIANENGINEDATA_H
-#define QCONTACTSYMBIANENGINEDATA_H
+#ifndef CNTSYMBIANENGINEPRIVATE_H
+#define CNTSYMBIANENGINEPRIVATE_H
 
 #include <QObject>
 #include <QSet>
@@ -64,14 +64,14 @@ class QAbstractContactFilter;
 class QAbstractContactSorter;
 class CntRelationship;
 
-class QContactSymbianEngineData : public QObject,
+class CntSymbianEnginePrivate : public QObject,
 							   public MContactDbObserver
 {
 	Q_OBJECT
 
 public:
-    QContactSymbianEngineData(const QMap<QString, QString>& parameters, QContactManager::Error& error);
-    virtual ~QContactSymbianEngineData();
+    CntSymbianEnginePrivate(const QMap<QString, QString>& parameters, QContactManager::Error& error);
+    virtual ~CntSymbianEnginePrivate();
 
 public:
     /* Access */

@@ -54,12 +54,12 @@
 
 // Constants
 
-class CntSrvConnection : public RSessionBase
+class CntSymbianSrvConnection : public RSessionBase
 {
 public:
     /*Constructor and destructor*/
-    CntSrvConnection();
-    ~CntSrvConnection();
+    CntSymbianSrvConnection();
+    ~CntSymbianSrvConnection();
     
 public:
     /* QT like functions */

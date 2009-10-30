@@ -1,6 +1,6 @@
 # Symbian plugin header and source files
 SYMBIAN_HEADERS += \
-        ../../inc/qcontactsymbianengine_p.h \
+        ../../inc/cntsymbianengine_p.h \
         ../../inc/cnttransformcontact.h \
         ../../inc/cnttransformcontactdata.h \
         ../../inc/cnttransformname.h \
@@ -29,8 +29,8 @@ SYMBIAN_HEADERS += \
         ../../inc/cntabstractrelationship.h \
         ../../inc/cntrelationshipgroup.h \
         ../../inc/cntsymbianfiltersqlhelper.h \
-        ../../inc/cntsrvconnection.h \
-        ../../inc/qcontactsymbiantransformerror.h
+        ../../inc/cntsymbiansrvconnection.h \
+        ../../inc/cntsymbiantransformerror.h
 
 SYMBIAN_SOURCES += \
         ../../src/qcontactsymbianengine_p.cpp \
@@ -60,5 +60,5 @@ SYMBIAN_SOURCES += \
         ../../src/cntabstractrelationship.cpp \
         ../../src/cntrelationshipgroup.cpp \
         ../../src/cntsymbianfiltersqlhelper.cpp \
-        ../../src/cntsrvconnection.cpp \
+        ../../src/cntsymbiansrvconnection.cpp \
         ../../src/qcontactsymbiantransformerror.cpp
