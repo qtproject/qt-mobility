@@ -45,9 +45,15 @@
 /*!
     \class QImageEncoderControl
     \preliminary
+    \brief The QImageEncoderControl class provides access to the settings of a media service that
+    performs image encoding.
 
-    The interface name of QCameraControl is \c com.nokia.Qt.QCameraControl/1.0 as
-    defined in QCameraControl_iid.
+    If a QMediaService supports encoding image data it will implement QImageEncoderControl.  This
+    control provides functions for setting the image \l {setImageCodec()}{codec}, and the
+    \l {setResolution()}{resolution} and \l {setQuality()}{quality} of the encoded image.
+
+    The interface name of QImageEncoderControl is \c com.nokia.Qt.QImageEncoderControl/1.0 as
+    defined in QImageEncoderControl_iid.
 
     \sa QMediaService::control()
 */
