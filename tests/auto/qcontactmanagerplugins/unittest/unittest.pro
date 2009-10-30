@@ -38,5 +38,5 @@ symbian: {
                         WriteUserData \
                         ReadDeviceData \
                         WriteDeviceData \
-                        AllFiles \
+                        AllFiles
 }

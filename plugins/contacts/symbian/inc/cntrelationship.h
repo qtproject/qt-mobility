@@ -45,19 +45,23 @@
 #include <qtcontacts.h>
 #include "cntrelationshipgroup.h"
 
+
+//Forward declarations
+class CContactDatabase;
+
 class CntRelationship
 {
 public:
-    CntRelationship(); 
+    CntRelationship(CContactDatabase* contactDatabase); 
     virtual ~CntRelationship();
 
 public:
     /* Relationships between contacts */
     QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
-    bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
-    QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
-    bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);
-    QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
+    bool saveRelationship(QSet<QContactLocalId> *affectedContactIds, QContactRelationship* relationship, QContactManager::Error& error);
+    QList<QContactManager::Error> saveRelationships(QSet<QContactLocalId> *affectedContactIds, QList<QContactRelationship>* relationships, QContactManager::Error& error);
+    bool removeRelationship(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship& relationship, QContactManager::Error& error);
+    QList<QContactManager::Error> removeRelationships(QSet<QContactLocalId> *affectedContactIds, const QList<QContactRelationship>& relationships, QContactManager::Error& error);
 
 private:
     QMap<QString, CntAbstractRelationship *> m_relationshipMap;

@@ -4,9 +4,9 @@
 TEMPLATE = app
 TARGET = 
 QT += testlib
-CONFIG += qtestlib
-
-# DEFINES += PBK_UNIT_TEST
+CONFIG += qtestlib \
+          symbian_test
+DEFINES += PBK_UNIT_TEST
 DEPENDPATH += .
 INCLUDEPATH += .
 INCLUDEPATH += .\inc
@@ -19,7 +19,8 @@ symbian:
     HEADERS += performance.h
     SOURCES += performance.cpp
     TARGET.CAPABILITY = ALL \
-        -TCB
-    LIBS += -lcntmodel \
+        -TCB    
+    LIBS += \
+        -lcntmodel \
         -lQtContacts
 }

@@ -948,6 +948,7 @@
         <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::SelfContact</keyword>
         <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Relationships</keyword>
         <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Anonymous</keyword>
+        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ChangeLogs</keyword>
         <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::MutableDefinitions</keyword>
         <keyword ref="qcontactmanagerinfo.html#filterSupported">filterSupported</keyword>
         <keyword ref="qcontactmanagerinfo.html#hasFeature">hasFeature</keyword>

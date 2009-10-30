@@ -512,7 +512,7 @@ QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QCo
 }
 
 /*!
- * Sets the order of importance of the relationships for this contact by saving an ordered list of relationships which involve the contact.
+ * Sets the order of importance of the relationships for this contact by saving a \a reordered list of relationships which involve the contact.
  * The list must include all of the relationships in which the contact is involved, and must not include any relationships which do
  * not involve the contact.  In order for the ordering preference to be persisted, the contact must be saved in its manager.
  *

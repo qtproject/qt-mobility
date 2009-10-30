@@ -159,6 +159,8 @@ void QContactChangeSet::clear()
     d->m_addedContacts.clear();
     d->m_changedContacts.clear();
     d->m_removedContacts.clear();
+    d->m_addedRelationships.clear();
+    d->m_removedRelationships.clear();
 }
 
 /*!

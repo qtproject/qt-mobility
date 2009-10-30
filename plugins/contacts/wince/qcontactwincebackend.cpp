@@ -40,6 +40,7 @@
 ****************************************************************************/
 #include <QDebug>
 
+#include <QMutex>
 #include "qcontact_p.h"
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
@@ -70,13 +71,13 @@
  */
 
 
-QContactWinCEEngine::QContactWinCEEngine(const QMap<QString, QString>& , QContactManager::Error& error)
+QContactWinCEEngine::QContactWinCEEngine(const QString& engineName, const QMap<QString, QString>& , QContactManager::Error& error)
     : d(new QContactWinCEEngineData)
 {
     error = QContactManager::NoError;
     
     buildHashForContactDetailToPoomPropId();
-    
+    d->m_engineName = engineName;
     if (SUCCEEDED(d->m_cominit.hr())) {
         if (SUCCEEDED(CoCreateInstance(CLSID_Application, NULL,
                                        CLSCTX_INPROC_SERVER, IID_IPOutlookApp2,
@@ -139,6 +140,11 @@ void QContactWinCEEngine::deref()
 {
     if (!d->m_refCount.deref())
         delete this;
+}
+
+QString QContactWinCEEngine::managerName() const
+{
+    return d->m_engineName;
 }
 
 QContact QContactWinCEEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
@@ -457,10 +463,23 @@ QList<QVariant::Type> QContactWinCEEngine::supportedDataTypes() const
     return st;
 }
 
+/* The default constructor of wince contact manager engine factory */
+ContactWinceFactory::ContactWinceFactory()
+:m_engine(0)
+{
+}
+
 /* Factory lives here in the basement */
 QContactManagerEngine* ContactWinceFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
-    return new QContactWinCEEngine(parameters, error);
+    if (!m_engine) {
+        QMutexLocker locker(&m_mutex);
+        if (!m_engine) {
+            m_engine = new QContactWinCEEngine(managerName(), parameters, error);
+        }
+    }
+    m_engine->d->m_refCount.ref();
+    return m_engine;
 }
 
 QString ContactWinceFactory::managerName() const

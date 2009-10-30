@@ -259,8 +259,8 @@ bool QContactRequestWorker::cancelRequest(QContactAbstractRequest* req)
 }
 
 /*!
- * Blocks the caller until the request has been completed by the worker thread or worker thread signals that more partial results 
- * are available for the request \a req, or until \a msecs milliseconds has elapsed.
+ * Blocks the caller until the given request \a req has been completed by the worker thread or worker thread signals that more partial results
+ * are available for the request, or until \a msecs milliseconds has elapsed.
  * If \a msecs is zero, this function will block indefinitely.
  * Returns true if the request was cancelled or completed successfully within the given period, otherwise false. 
  *
@@ -334,8 +334,8 @@ void QContactRequestWorker::processContactFetchRequest(QContactFetchRequest* req
 }
 
 /*!
- * Processes the QContactIdFetchRequest \a req
- * \sa QContactIdFetchRequest
+ * Processes the QContactLocalIdFetchRequest \a req
+ * \sa QContactLocalIdFetchRequest
  */
 void QContactRequestWorker::processContactLocalIdFetchRequest(QContactLocalIdFetchRequest* req)
 {
@@ -629,6 +629,7 @@ QContactRequestElement* QContactRequestWorkerData::takeFirstRequestElement()
         return m_requestQueue.head();
     return 0;
 }
+
 void QContactRequestWorkerData::cleanUpFinishedRequests(bool waitForAll)
 {
     QList<QContactRequestElement*> deleteAll;

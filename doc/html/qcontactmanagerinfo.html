@@ -21,7 +21,7 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerinfo.html#ManagerFeature-enum">ManagerFeature</a></b> { Groups, ActionPreferences, Relationships, ArbitraryRelationshipTypes, ..., Anonymous }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerinfo.html#ManagerFeature-enum">ManagerFeature</a></b> { ChangeLogs, ActionPreferences, Groups, Relationships, ..., Anonymous }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
@@ -45,8 +45,9 @@
 <p>This enum describes the possible features that a particular manager may support</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QContactManagerInfo::Groups</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The manager supports all QContactGroup related operations, and emits the appropriate signals</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::ChangeLogs</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">The manager supports changelog related operations</td></tr>
 <tr><td valign="top"><tt>QContactManagerInfo::ActionPreferences</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The manager supports saving preferred details per action per contact</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::Groups</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The manager supports contacts of the <tt>QContactType::Group</tt> type</td></tr>
 <tr><td valign="top"><tt>QContactManagerInfo::Relationships</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The manager supports at least some types of relationships between contacts</td></tr>
 <tr><td valign="top"><tt>QContactManagerInfo::ArbitraryRelationshipTypes</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The manager supports relationships of arbitrary types between contacts</td></tr>
 <tr><td valign="top"><tt>QContactManagerInfo::MutableDefinitions</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The manager supports saving, updating or removing detail definitions. Some built-in definitions may still be immutable</td></tr>

@@ -42,6 +42,7 @@
 #ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
 
 #include "qcontactsymbianfilterdbms.h"
+#include "qcontactsymbiantransformerror.h"
 
 #include <cntdb.h>
 #include <cntfield.h>
@@ -52,6 +53,8 @@
 #include "qcontactname.h"
 #include "qcontactdetailfilter.h"
 #include "qcontactphonenumber.h"
+#include "qcontactsymbianengine_p.h"
+#include "qcontactsymbiansorterdbms.h"
 
 // Telephony Configuration API
 // Keys under this category are used in defining telephony configuration.
@@ -63,23 +66,33 @@ const TUint32 KTelMatchDigits                               = 0x00000001;
 const TInt KDefaultMatchLength(7);
 
 QContactSymbianFilter::QContactSymbianFilter(CContactDatabase& contactDatabase):
-    m_contactDatabase(contactDatabase)
+    m_contactDatabase(contactDatabase),
+    m_contactSorter(0),
+    m_transformContact(0)
 {
+    // TODO: take CntTransformContact ref as a parameter?
+    m_transformContact = new CntTransformContact;
+    m_contactSorter = new QContactSymbianSorter(m_contactDatabase, *m_transformContact);
 }
 
 QContactSymbianFilter::~QContactSymbianFilter()
 {
+    delete m_contactSorter;
+    delete m_transformContact;
 }
 
 /*!
  * The contact database version implementation for QContactManager::contacts
- * function. Symbian backend supports filtering with flag MatchContains.
- * TODO: other constraints.
+ * function. See filterSupported for the list of supported filters.
  * All the other filtering flags fallback to the generic filtering done
- * in QContactManagerEngine.
+ * in QContactManagerEngine. Contacts are sorted only if the sort order is
+ * supported by contacts database. See QContactSymbianSorter::sortOrderSupported
+ * for the list of supported sort orders.
  *
  * \a filter The QContactFilter to be used.
- * \a sortOrders The sort order to be used.
+ * \a sortOrders The sort orders to be used. If the sort orders are not
+ * supported by contacts database this parameter is ignored and sorting needs
+ * to be done by the caller.
  * \a error On return, contains the possible error in filtering/sorting.
  */
 QList<QContactLocalId> QContactSymbianFilter::contacts(
@@ -87,8 +100,6 @@ QList<QContactLocalId> QContactSymbianFilter::contacts(
             const QList<QContactSortOrder>& sortOrders,
             QContactManager::Error& error)
 {
-    // TODO: handle also sort orders
-
     QList<QContactLocalId> matches;
     CContactIdArray* idArray(0);
 
@@ -96,6 +107,7 @@ QList<QContactLocalId> QContactSymbianFilter::contacts(
     {
         const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
 
+        // Phone numbers
         if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName
                 && (filterSupported(filter) == Supported
                 || filterSupported(filter) == SupportedPreFilterOnly))
@@ -110,58 +122,47 @@ QList<QContactLocalId> QContactSymbianFilter::contacts(
             TInt err = matchContacts(idArray, commPtr, matchLength);
             if(err != KErrNone)
             {
-                // TODO: map error code
-                error = QContactManager::UnspecifiedError;
-            }
-            else
-            {
-                for(int i(0); i < idArray->Count(); i++) {
-                    matches.append(QContactLocalId((*idArray)[i]));
-                }
+                qContactSymbianTransformError(err, error);
             }
         }
-        else if (detailFilter.detailDefinitionName() == QContactName::DefinitionName
-                && (filterSupported(filter) == Supported
-                // All the name pre-filters are implemented as "MatchContains"
-                || filterSupported(filter) == SupportedPreFilterOnly))
-        {
+        // Names
+        else if (filterSupported(filter) == Supported
+                // The pre-filters are implemented as "MatchContains"
+                || filterSupported(filter) == SupportedPreFilterOnly) {
             QString name((detailFilter.value()).toString());
             // TODO: this looks ugly
             TPtrC namePtr(reinterpret_cast<const TUint16*>(name.utf16()));
-            TUid fieldUid(KNullUid);
-
-            if(detailFilter.detailFieldName() == QContactName::FieldPrefix)
-                fieldUid.iUid = KUidContactFieldPrefixNameValue;
-            else if(detailFilter.detailFieldName() == QContactName::FieldFirst)
-                fieldUid.iUid = KUidContactFieldGivenNameValue;
-            else if(detailFilter.detailFieldName() == QContactName::FieldMiddle)
-                fieldUid.iUid = KUidContactFieldAdditionalNameValue;
-            else if(detailFilter.detailFieldName() == QContactName::FieldLast)
-                fieldUid.iUid = KUidContactFieldFamilyNameValue;
-            else if(detailFilter.detailFieldName() == QContactName::FieldSuffix)
-                fieldUid.iUid = KUidContactFieldSuffixNameValue;
-
-            TInt err = findContacts(idArray, fieldUid, namePtr);
-            if(err != KErrNone)
-            {
-                // TODO: map error codes
-                error = QContactManager::UnspecifiedError;
+            CContactItemFieldDef *fieldDef(0);
+            TRAPD(err, transformDetailFilterL(detailFilter, fieldDef));
+            if(err != KErrNone){
+                qContactSymbianTransformError(err, error);
+            } else {
+                Q_ASSERT_X(fieldDef->Count() > 0, "QContactSymbianFilter", "Illegal field def");
+                TInt err = findContacts(idArray, *fieldDef, namePtr);
+                if(err != KErrNone)
+                    qContactSymbianTransformError(err, error);
             }
-            else
-            {
-                for(int i = 0; i < idArray->Count(); i++) {
-                    matches.append(QContactLocalId((*idArray)[i]));
-                }
-            }
-        }
-        else
-        {
+            delete fieldDef;
+        } else {
             error = QContactManager::NotSupportedError;
         }
-    }
-    else
-    {
+    } else {
         error = QContactManager::NotSupportedError;
+    }
+
+    if(idArray && (error == QContactManager::NoError)) {
+        // copy the matching contact ids
+        for(int i(0); i < idArray->Count(); i++) {
+            QContactLocalId id((*idArray)[i]);
+            matches.append(QContactLocalId((*idArray)[i]));
+        }
+
+        // sort the matching contacts
+        if(!sortOrders.isEmpty()) {
+            if(m_contactSorter->sortOrderSupported(sortOrders)) {
+                matches = m_contactSorter->sort(matches, sortOrders, error);
+            }
+        }
     }
 
     delete idArray;
@@ -210,7 +211,9 @@ QAbstractContactFilter::FilterSupport QContactSymbianFilter::filterSupported(con
                 filterSupported = SupportedPreFilterOnly;
         }
         // Names
-        else if (detailFilter.detailDefinitionName() == QContactName::DefinitionName) {
+        else if (detailFilter.detailDefinitionName() == QContactName::DefinitionName
+                || detailFilter.detailDefinitionName() == QContactNickname::DefinitionName
+                || detailFilter.detailDefinitionName() == QContactEmailAddress::DefinitionName) {
             Qt::MatchFlags supportedPreFilterFlags =
                 Qt::MatchExactly
                 & Qt::MatchStartsWith
@@ -228,6 +231,53 @@ QAbstractContactFilter::FilterSupport QContactSymbianFilter::filterSupported(con
     return filterSupported;
 }
 
+void QContactSymbianFilter::transformDetailFilterL(
+        const QContactDetailFilter &detailFilter,
+        CContactItemFieldDef *&fieldDef)
+{
+    const TInt defaultReserve(1);
+    const TInt nameFieldsCount(5);
+
+    CContactItemFieldDef* tempFieldDef = new (ELeave) CContactItemFieldDef();
+    CleanupStack::PushL(tempFieldDef);
+    tempFieldDef->SetReserveL(defaultReserve);
+
+    // TODO: Refactor to use the transform classes
+    // Names
+    if(detailFilter.detailDefinitionName() == QContactName::DefinitionName) {
+        if(detailFilter.detailFieldName() == QContactName::FieldPrefix) {
+            tempFieldDef->AppendL(KUidContactFieldPrefixName);
+        } else if(detailFilter.detailFieldName() == QContactName::FieldFirst) {
+            tempFieldDef->AppendL(KUidContactFieldGivenName);
+        } else if(detailFilter.detailFieldName() == QContactName::FieldMiddle) {
+            tempFieldDef->AppendL(KUidContactFieldAdditionalName);
+        } else if(detailFilter.detailFieldName() == QContactName::FieldLast) {
+            tempFieldDef->AppendL(KUidContactFieldFamilyName);
+        } else if(detailFilter.detailFieldName() == QContactName::FieldSuffix) {
+            tempFieldDef->AppendL(KUidContactFieldSuffixName);
+        } else {
+            // default to all name fields
+            tempFieldDef->SetReserveL(nameFieldsCount);
+            tempFieldDef->AppendL(KUidContactFieldPrefixName);
+            tempFieldDef->AppendL(KUidContactFieldGivenName);
+            tempFieldDef->AppendL(KUidContactFieldAdditionalName);
+            tempFieldDef->AppendL(KUidContactFieldFamilyName);
+            tempFieldDef->AppendL(KUidContactFieldSuffixName);
+        }
+    }
+    // Nick name
+    else if(detailFilter.detailDefinitionName() == QContactNickname::DefinitionName) {
+        tempFieldDef->AppendL(KUidContactFieldSecondName);
+    }
+    // Email
+    else if(detailFilter.detailDefinitionName() == QContactEmailAddress::DefinitionName) {
+        tempFieldDef->AppendL(KUidContactFieldEMail);
+    }
+
+    CleanupStack::Pop(tempFieldDef);
+    fieldDef = tempFieldDef;
+}
+
 /*!
  * Find contacts based on a contact field contents.
  * \a idArray On return contains the ids of the contacts that have the field
@@ -238,11 +288,11 @@ QAbstractContactFilter::FilterSupport QContactSymbianFilter::filterSupported(con
  */
 TInt QContactSymbianFilter::findContacts(
         CContactIdArray*& idArray,
-        const TUid fieldUid,
+        const CContactItemFieldDef& fieldDef,
         const TDesC& text) const
 {
     CContactIdArray* idArrayTmp(0);
-    TRAPD( err, idArrayTmp = findContactsL(fieldUid, text));
+    TRAPD( err, idArrayTmp = findContactsL(fieldDef, text));
     if(err == KErrNone)
     {
         idArray = idArrayTmp;
@@ -254,22 +304,11 @@ TInt QContactSymbianFilter::findContacts(
  * Leaving implementation called by findContacts.
  */
 CContactIdArray* QContactSymbianFilter::findContactsL(
-        const TUid fieldUid,
+        const CContactItemFieldDef& fieldDef,
         const TDesC& text) const
 {
-    CContactItemFieldDef* fieldDef = new (ELeave) CContactItemFieldDef();
-    CleanupStack::PushL(fieldDef);
-    fieldDef->SetReserveL(2);
-    //TUid uid;
-    //if( detailFilter. )
-    //uid.iUid = KUidContactFieldGivenNameValue;
-    fieldDef->AppendL(fieldUid);
-    // TODO: the fields?
-    //uid.iUid = KUidContactFieldFamilyNameValue;
-    //fieldDef->AppendL(uid);
-    CContactIdArray* idsArray = m_contactDatabase.FindLC(text, fieldDef);
+    CContactIdArray* idsArray = m_contactDatabase.FindLC(text, &fieldDef);
     CleanupStack::Pop(idsArray); // Ownership transferred
-    CleanupStack::PopAndDestroy(fieldDef);
     return idsArray;
 }
 

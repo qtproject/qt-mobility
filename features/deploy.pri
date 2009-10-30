@@ -1,4 +1,3 @@
-
 headers.files = $$PUBLIC_HEADERS
 headers.path = $$QT_MOBILITY_INCLUDE
 

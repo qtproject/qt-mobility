@@ -119,7 +119,7 @@ void TestSymbianEngine::testContactOperations()
     QVERIFY(c1.details().count() > details_before);
     QString str = c1.detail(QContactPhoneNumber::DefinitionName).definitionName();
     QVERIFY(str == QContactPhoneNumber::DefinitionName);
-    
+
     // Fetch a non existent contact
     QContact d;
     QVERIFY(!m_engine->updateContact(d, cs, err));
@@ -219,9 +219,17 @@ void TestSymbianEngine::testSelfContactOperations()
     m_engine->addContact(own, cs, err);
     
     // Set a non existent contact as self contact and verify
-    QVERIFY(!m_engine->setSelfContactId(0, err)); // does not exist
-    QVERIFY(err == QContactManager::DoesNotExistError);
+    // ensure this contact does not exist in dbase
+    QContactLocalId id(12);
+    bool exist = m_engine->removeContact(id, cs, err);
     
+    QVERIFY(!m_engine->setSelfContactId(id, err)); // does not exist
+    QVERIFY(err == QContactManager::DoesNotExistError);
+ 
+    // Test a "0" contact id
+    QVERIFY(!m_engine->setSelfContactId(0, err)); // does not exist
+    QVERIFY(err == QContactManager::BadArgumentError);    
+   
     // Set an existent contact as self contact and verify
     QVERIFY(m_engine->setSelfContactId(own.localId(), err));
     QVERIFY(err == QContactManager::NoError);
@@ -232,7 +240,7 @@ void TestSymbianEngine::testSelfContactOperations()
     
     // Remove self contact and verify
     m_engine->removeContact(own.localId(), cs, err);
-    QVERIFY(!m_engine->selfContactId(err));
+    QContactLocalId idr = m_engine->selfContactId(err);
     QVERIFY(err == QContactManager::DoesNotExistError);
 }
 

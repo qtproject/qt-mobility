@@ -6,7 +6,9 @@ TEMPLATE = app
 TARGET = 
 
 QT += testlib
-CONFIG  += qtestlib
+CONFIG  += qtestlib \
+          symbian_test
+          
 DEFINES += PBK_UNIT_TEST
 
 DEPENDPATH += .
@@ -21,42 +23,44 @@ symbian:
 	
 	# Input
 	HEADERS +=  ut_transformcontactdata.h \
-				../../inc/transformcontactdata.h \
-				../../inc/transformemail.h \
-				../../inc/transformname.h \
-				../../inc/transformnickname.h \
-				../../inc/transformphonenumber.h \
-				../../inc/transformaddress.h \
-				../../inc/transformurl.h \
-				../../inc/transformbirthday.h \
-				../../inc/transformonlineaccount.h \
-				../../inc/transformorganisation.h \
-				../../inc/transformavatar.h \
-				../../inc/transformsynctarget.h \
-                ../../inc/transformgender.h \
-                ../../inc/transformanniversary.h \
-                ../../inc/transformgeolocation.h \
-                ../../inc/transformnote.h \
-                ../../inc/transformfamily.h
+				../../inc/cnttransformcontactdata.h \
+				../../inc/cnttransformemail.h \
+				../../inc/cnttransformname.h \
+				../../inc/cnttransformnickname.h \
+				../../inc/cnttransformphonenumber.h \
+				../../inc/cnttransformaddress.h \
+				../../inc/cnttransformurl.h \
+				../../inc/cnttransformbirthday.h \
+				../../inc/cnttransformonlineaccount.h \
+				../../inc/cnttransformorganisation.h \
+				../../inc/cnttransformavatar.h \
+				../../inc/cnttransformsynctarget.h \
+                ../../inc/cnttransformgender.h \
+                ../../inc/cnttransformanniversary.h \
+                ../../inc/cnttransformanniversarysimple.h \
+                ../../inc/cnttransformgeolocation.h \
+                ../../inc/cnttransformnote.h \
+                ../../inc/cnttransformfamily.h
 	
 	SOURCES += ut_transformcontactdata.cpp \ 
-				../../src/transformcontactdata.cpp \
-				../../src/transformemail.cpp \
-				../../src/transformname.cpp \
-				../../src/transformnickname.cpp \
-				../../src/transformphonenumber.cpp \
-				../../src/transformaddress.cpp \
-				../../src/transformurl.cpp \
-				../../src/transformbirthday.cpp \
-				../../src/transformonlineaccount.cpp \
-				../../src/transformorganisation.cpp \
-				../../src/transformavatar.cpp \
-				../../src/transformsynctarget.cpp \
-				../../src/transformgender.cpp \
-				../../src/transformanniversary.cpp \
-				../../src/transformgeolocation.cpp \
-				../../src/transformnote.cpp \
-				../../src/transformfamily.cpp
+				../../src/cnttransformcontactdata.cpp \
+				../../src/cnttransformemail.cpp \
+				../../src/cnttransformname.cpp \
+				../../src/cnttransformnickname.cpp \
+				../../src/cnttransformphonenumber.cpp \
+				../../src/cnttransformaddress.cpp \
+				../../src/cnttransformurl.cpp \
+				../../src/cnttransformbirthday.cpp \
+				../../src/cnttransformonlineaccount.cpp \
+				../../src/cnttransformorganisation.cpp \
+				../../src/cnttransformavatar.cpp \
+				../../src/cnttransformsynctarget.cpp \
+				../../src/cnttransformgender.cpp \
+				../../src/cnttransformanniversary.cpp \
+                ../../src/cnttransformanniversarysimple.cpp \
+				../../src/cnttransformgeolocation.cpp \
+				../../src/cnttransformnote.cpp \
+				../../src/cnttransformfamily.cpp
 
 	TARGET.CAPABILITY = ALL -TCB
   

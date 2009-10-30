@@ -118,6 +118,7 @@
 <h3 class="fn"><a name="isEmpty"></a>bool QContactDetail::isEmpty () const</h3>
 <p>Returns true if no values are contained in this detail. Note that context is stored as a value; hence, if a context is set, this function will return false.</p>
 <h3 class="fn"><a name="preferredActions"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactactiondescriptor.html">QContactActionDescriptor</a>&gt; QContactDetail::preferredActions () const</h3>
+<p>Returns the list of preferred actions for this detail</p>
 <p>See also <a href="qcontactdetail.html#setPreferredActions">setPreferredActions</a>().</p>
 <h3 class="fn"><a name="removeValue"></a>bool QContactDetail::removeValue ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>key</i> )</h3>
 <p>Removes the value stored in this detail for the given <i>key</i>. Returns true if a value was stored for the given <i>key</i> and the operation succeeded, and false otherwise</p>
@@ -132,6 +133,7 @@
 <pre>    setValue(FieldContext, QStringList(context));</pre>
 <p>See also <a href="qcontactdetail.html#setValue">setValue</a>().</p>
 <h3 class="fn"><a name="setPreferredActions"></a>void QContactDetail::setPreferredActions ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactactiondescriptor.html">QContactActionDescriptor</a>&gt; &amp; <i>preferredActions</i> )</h3>
+<p>Sets the preferred actions for this detail to be the given list of <i>preferredActions</i></p>
 <p>See also <a href="qcontactdetail.html#preferredActions">preferredActions</a>().</p>
 <h3 class="fn"><a name="setValue"></a>bool QContactDetail::setValue ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>key</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
 <p>Inserts <i>value</i> into the detail for the given <i>key</i> if <i>value</i> is valid. If <i>value</i> is invalid, removes the field with the given <i>key</i> from the detail. Returns true if the given <i>value</i> was set for the <i>key</i> (if the <i>value</i> was valid), or if the given <i>key</i> was removed from detail (if the <i>value</i> was invalid), and returns false if the key was unable to be removed (and the <i>value</i> was invalid)</p>

@@ -7,7 +7,7 @@ QT += testlib
 CONFIG += qtestlib
 CONFIG += testcase
 
-#DEFINES += PBK_UNIT_TEST
+DEFINES += PBK_UNIT_TEST
 DEPENDPATH += .
 INCLUDEPATH += .
 INCLUDEPATH += .\inc
@@ -16,76 +16,27 @@ INCLUDEPATH += ..\..\rss
 INCLUDEPATH += ..\..\..\..\contacts
 INCLUDEPATH += ..\..\..\..\..\contacts
 
-#include(../../../../../common.pri)
+include(../tsrc.pri)
 
 symbian:
- { 
+{ 
     load(data_caging_paths)
     
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     
     # Input
     HEADERS += ut_qcontactsymbianengine_p.h \
-				../../inc/qcontactsymbianengine_p.h \
-		    ../../inc/transformcontact.h \
-		    ../../inc/transformcontactdata.h \
-		    ../../inc/transformname.h \
-		    ../../inc/transformnickname.h \
-		    ../../inc/transformphonenumber.h \
-		    ../../inc/transformemail.h \
-		    ../../inc/transformaddress.h \
-		    ../../inc/transformurl.h \
-		    ../../inc/transformbirthday.h \
-		    ../../inc/transformonlineaccount.h \
-		    ../../inc/transformorganisation.h \
-		    ../../inc/transformavatar.h \
-		    ../../inc/transformsynctarget.h \
-		    ../../inc/transformgender.h \
-		    ../../inc/transformanniversary.h \
-		    ../../inc/transformgeolocation.h \
-		    ../../inc/transformnote.h \
-                    ../../inc/transformfamily.h \
-		    ../../inc/qabstractcontactfilter.h \
-		    ../../inc/qcontactsymbianfilterdbms.h \
-		    ../../inc/qcontactsymbianfiltersql.h \
-		    ../../inc/qcontactsymbiansorterdbms.h \
-                    ../../inc/qabstractcontactsorter.h \
-                    ../../inc/cntrelationship.h \
-                    ../../inc/cntabstractrelationship.h \
-                    ../../inc/cntrelationshipgroup.h
-
-		SOURCES += ut_qcontactsymbianengine_p.cpp \
-				../../src/qcontactsymbianengine_p.cpp \
-		    ../../src/transformcontact.cpp \
-		    ../../src/transformcontactdata.cpp \
-		    ../../src/transformname.cpp \
-		    ../../src/transformnickname.cpp \
-		    ../../src/transformphonenumber.cpp \
-		    ../../src/transformemail.cpp \
-		    ../../src/transformaddress.cpp \
-		    ../../src/transformurl.cpp \
-		    ../../src/transformbirthday.cpp \
-		    ../../src/transformonlineaccount.cpp \
-		    ../../src/transformorganisation.cpp \
-		    ../../src/transformavatar.cpp \
-		    ../../src/transformsynctarget.cpp \
-		    ../../src/transformgender.cpp \
-		    ../../src/transformanniversary.cpp \
-		    ../../src/transformgeolocation.cpp \
-		    ../../src/transformnote.cpp \
-                    ../../src/transformfamily.cpp \
-		    ../../src/qcontactsymbianfilterdbms.cpp \
-		    ../../src/qcontactsymbiansorterdbms.cpp \
-                    ../../src/qcontactsymbianfiltersql.cpp \
-                    ../../src/cntrelationship.cpp \
-                    ../../src/cntabstractrelationship.cpp \
-                    ../../src/cntrelationshipgroup.cpp
-
-		TARGET.CAPABILITY = ALL \
-        -TCB
-        
+            $$SYMBIAN_HEADERS
+    
+    SOURCES += ut_qcontactsymbianengine_p.cpp \
+            $$SYMBIAN_SOURCES
+            
+    TARGET.CAPABILITY = ALL \
+            -TCB
+    
     LIBS += \
-  				-lcntmodel \
-  				-lQtContacts \
-  				-lcentralrepository
+        -lcntmodel \
+        -lQtContacts \
+        -lcentralrepository \
+        -lestor
 }

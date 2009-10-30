@@ -40,11 +40,12 @@
 ****************************************************************************/
 
 #include "qcontactsymbiansorterdbms.h"
+#include "qcontactsymbiantransformerror.h"
 
 #include <cntdb.h>
 #include <cntdef.h>
 #include <cntfield.h>
-#include "transformcontact.h"
+#include "cnttransformcontact.h"
 #include "qcontactsymbianengine_p.h"
 
 typedef QList<QContactLocalId> QContactLocalIdList;
@@ -62,7 +63,7 @@ typedef QList<QContactLocalId> QContactLocalIdList;
 // the called function or the return value of the function is placed to the
 // variable.
 
-QContactSymbianSorter::QContactSymbianSorter(CContactDatabase& contactDatabase,TransformContact& transformContact):
+QContactSymbianSorter::QContactSymbianSorter(CContactDatabase& contactDatabase,CntTransformContact& transformContact):
     m_contactDatabase(contactDatabase),
     m_transformContact(transformContact)
 {
@@ -84,7 +85,7 @@ QList<QContactLocalId> QContactSymbianSorter::contacts(
     // there was a problem
     TRAPD(err, QT_TRYCATCH_LEAVING(*ids = contactsL(sortOrders)));
 
-    QContactSymbianEngineData::transformError(err, error);
+    qContactSymbianTransformError(err, error);
 
     return *QScopedPointer<QContactLocalIdList>(ids);
 }
@@ -102,7 +103,7 @@ QList<QContactLocalId> QContactSymbianSorter::sort(
     // there was a problem
     TRAPD(err, QT_TRYCATCH_LEAVING(*ids = sortL(contactIds,sortOrders)));
 
-    QContactSymbianEngineData::transformError(err, error);
+    qContactSymbianTransformError(err, error);
 
     return *QScopedPointer<QContactLocalIdList>(ids);
 }
@@ -174,7 +175,7 @@ QList<QContactLocalId> QContactSymbianSorter::contactsL(const QList<QContactSort
 
 QList<QContactLocalId> QContactSymbianSorter::sortL(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders) const
 {
-    CContactIdArray* ids = CContactIdArray::NewL();
+    CContactIdArray* ids = CContactIdArray::NewLC();
     foreach(QContactLocalId id, contactIds)
         ids->AddL(id);
 

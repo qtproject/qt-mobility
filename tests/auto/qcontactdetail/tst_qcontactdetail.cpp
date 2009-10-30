@@ -42,6 +42,7 @@
 #include <QtTest/QtTest>
 
 #include "qtcontacts.h"
+#include "qcontactmanager_p.h"
 
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -53,6 +54,8 @@ Q_OBJECT
 public:
     tst_QContactDetail();
     virtual ~tst_QContactDetail();
+private:
+    QContactManagerDataHolder managerDataHolder;
 
 public slots:
     void init();
@@ -60,6 +63,7 @@ public slots:
 
 private slots:
     void classHierarchy();
+    void assignment();
     void templates();
     void contexts();
     void values();
@@ -226,6 +230,25 @@ void tst_QContactDetail::classHierarchy()
     QVERIFY(!md.isEmpty());
     QVERIFY(md.value("key") == "value");
 
+}
+
+void tst_QContactDetail::assignment()
+{
+    QContactPhoneNumber p1, p2;
+    p1.setNumber("12345");
+    p2.setNumber("54321");
+    QVERIFY(p1 != p2);
+
+    p1 = p2;
+    QVERIFY(p1 == p2);
+
+    QContactEmailAddress e1;
+    e1.setEmailAddress("test@nokia.com");
+    QVERIFY(e1 != p1);
+    e1 = p1;
+    QVERIFY(e1 != p1); // assignment across types shouldn't work
+    QVERIFY(e1.emailAddress() == QString()); // should reset the detail
+    QCOMPARE(e1, QContactEmailAddress());
 }
 
 void tst_QContactDetail::templates()

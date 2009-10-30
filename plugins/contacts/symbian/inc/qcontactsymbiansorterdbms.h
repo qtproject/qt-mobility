@@ -47,12 +47,12 @@
 
 class CContactDatabase;
 class CContactIdArray;
-class TransformContact;
+class CntTransformContact;
 
 class QContactSymbianSorter : public QAbstractContactSorter
 {
 public:
-    QContactSymbianSorter(CContactDatabase& contactDatabase, TransformContact& m_transformContact);
+    QContactSymbianSorter(CContactDatabase& contactDatabase, CntTransformContact& m_transformContact);
     ~QContactSymbianSorter();
 
     /* from QAbstractContactFilter */
@@ -72,7 +72,7 @@ private:
 
 private:
     CContactDatabase& m_contactDatabase;
-    TransformContact& m_transformContact;
+    CntTransformContact& m_transformContact;
 };
 
 #endif /* QCONTACTSYMBIANSORTERDBMS_H */
