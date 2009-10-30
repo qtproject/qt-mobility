@@ -38,15 +38,11 @@
 #ifndef QT_NO_MULTIMEDIA
 
 #include <multimedia/qvideorenderercontrol.h>
-//#include "qvideosurfacegstsink.h"
 
-#include "s60videorendererinterface.h"
-
-
-class S60VideoRenderer : public QVideoRendererControl, public S60VideoRendererInterface
+class S60VideoRenderer : public QVideoRendererControl
 {
     Q_OBJECT
-    Q_INTERFACES(S60VideoRendererInterface)
+
 public:
     S60VideoRenderer(QObject *parent = 0);
     virtual ~S60VideoRenderer();
@@ -54,11 +50,8 @@ public:
     QAbstractVideoSurface *surface() const;
     void setSurface(QAbstractVideoSurface *surface);
 
-    //GstElement *videoSink();
-    void precessNewStream() {}
-
 private:    
-    //GstElement *m_videoSink;
+
     QAbstractVideoSurface *m_surface;
 };
 

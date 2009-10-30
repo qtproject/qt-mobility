@@ -40,7 +40,6 @@
 #include "s60videoplayercontrol.h"
 #include "s60videoplayersession.h"
 #include "s60videometadataprovider.h"
-#include "s60videoplayeroutputcontrol.h"
 #include "s60videowidget.h"
 
 #ifndef QT_NO_MULTIMEDIA
@@ -58,7 +57,7 @@ S60MediaPlayerService::S60MediaPlayerService(QObject *parent):
     m_session = new S60VideoPlayerSession(this);
     m_control = new S60VideoPlayerControl(m_session, this);
     m_metaData = new S60VideoMetaDataProvider(m_session, this);
-    m_videoOutput = new S60VideoPlayerOutputControl(this);
+    m_videoOutput = new S60VideoOutputControl(this);
     connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
             this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
 #ifndef QT_NO_MULTIMEDIA

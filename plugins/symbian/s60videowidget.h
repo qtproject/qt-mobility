@@ -37,8 +37,6 @@
 
 #include <multimedia/qvideowidgetcontrol.h>
 
-#include "s60videorendererinterface.h"
-
 class S60VideoWidget;
 
 class S60VideoWidgetControl

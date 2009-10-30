@@ -39,16 +39,13 @@
 
 #include <multimedia/qvideowindowcontrol.h>
 
-#include "s60videorendererinterface.h"
-
-
 class QAbstractVideoSurface;
 class S60VideoSurface;
 
-class S60VideoOverlay : public QVideoWindowControl, public S60VideoRendererInterface
+class S60VideoOverlay : public QVideoWindowControl
 {
     Q_OBJECT
-    Q_INTERFACES(S60VideoRendererInterface)
+
 public:
     S60VideoOverlay(QObject *parent = 0);
     ~S60VideoOverlay();

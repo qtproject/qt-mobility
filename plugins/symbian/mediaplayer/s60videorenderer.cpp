@@ -33,36 +33,20 @@
 ****************************************************************************/
 
 #include "s60videorenderer.h"
-//#include "qvideosurfacegstsink.h"
 
 #ifndef QT_NO_MULTIMEDIA
 
 #include <QEvent>
 #include <QApplication>
 
-//#include <gst/gst.h>
-
 S60VideoRenderer::S60VideoRenderer(QObject *parent)
-    :QVideoRendererControl(parent)//,m_videoSink(0)
+    :QVideoRendererControl(parent)
 {
 }
 
 S60VideoRenderer::~S60VideoRenderer()
 {
-    /*if (m_videoSink)
-        gst_object_unref(GST_OBJECT(m_videoSink));*/
 }
-
-/*GstElement *QGstreamerVideoRenderer::videoSink()
-{
-    if (!m_videoSink) {
-        m_videoSink = reinterpret_cast<GstElement*>(QVideoSurfaceGstSink::createSink(m_surface));
-        gst_object_ref(GST_OBJECT(m_videoSink)); //Take ownership
-        gst_object_sink(GST_OBJECT(m_videoSink));
-    }
-
-    return m_videoSink;
-}*/
 
 
 QAbstractVideoSurface *S60VideoRenderer::surface() const
