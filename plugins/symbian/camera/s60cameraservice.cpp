@@ -54,7 +54,7 @@
 #include "s60cameraimagecapturecontrol.h"
 #include "S60mediacontrol.h"
 #include "S60camerasession.h"
-//#include "S60videowidget.h"
+#include "S60videowidget.h"
 #include "S60videooutputcontrol.h"
 #include "S60mediaformatcontrol.h"
 #include "s60videoencoder.h"
@@ -75,8 +75,13 @@ S60CameraService::S60CameraService(QObject *parent)
     m_media = new S60MediaControl(m_session, this);
     m_mediaFormat = new S60MediaFormatControl(m_session, this);
     m_videoEncoder = new S60VideoEncoder(m_session, this);
-    m_videoOutput = new S60VideoOutputControl(m_session);
-
+    m_videoWidget = new S60VideoWidgetControl(this);
+    m_videoOutput = new S60VideoOutputControl(this);
+    connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
+            this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
+    
+    m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>() 
+            << QVideoOutputControl::WidgetOutput);
 }
 
 S60CameraService::~S60CameraService()
@@ -114,6 +119,9 @@ QMediaControl *S60CameraService::control(const char *name) const
     if(qstrcmp(name,QCameraExposureControl_iid) == 0)
         return m_exposureControl;
     
+    if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
+        return m_videoWidget;
+    
     if(qstrcmp(name,QCameraFocusControl_iid) == 0)
         return m_focusControl;
 
@@ -129,6 +137,22 @@ QMediaControl *S60CameraService::control(const char *name) const
 
     return 0;
 }
+
+void S60CameraService::videoOutputChanged(QVideoOutputControl::Output output)
+{
+    switch (output) {
+    case QVideoOutputControl::NoOutput:
+        m_control->setVideoOutput(0);
+        break;
+    case QVideoOutputControl::WidgetOutput:
+        m_control->setVideoOutput(m_videoWidget);
+        break;
+    default:
+        qWarning("Invalid video output selection");
+        break;
+    }
+}
+
 
 /*
 bool S60CameraService::isEndpointSupported(QMediaService::MediaEndpoint endpointType)

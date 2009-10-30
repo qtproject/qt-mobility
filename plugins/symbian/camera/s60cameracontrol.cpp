@@ -80,3 +80,9 @@ QCamera::State S60CameraControl::state() const
 {
     return (QCamera::State)m_session->state();
 }
+
+void S60CameraControl::setVideoOutput(QObject *output)
+{
+    m_session->setVideoRenderer(output);
+}
+

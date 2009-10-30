@@ -46,6 +46,8 @@
 
 #include <multimedia/qmediaservice.h>
 
+#include "qvideooutputcontrol.h"
+
 class S60MediaFormatControl;
 class S60VideoEncoder;
 class S60CameraControl;
@@ -57,6 +59,7 @@ class S60CameraFocusControl;
 class S60CameraExposureControl;
 class S60CameraImageProcessingControl;
 class S60CameraImageCaptureControl;
+class S60VideoWidgetControl;
 
 class S60CameraService : public QMediaService
 {
@@ -66,6 +69,9 @@ public:
     ~S60CameraService();
 
     QMediaControl *control(const char *name) const;
+    
+private slots:
+    void videoOutputChanged(QVideoOutputControl::Output output);
 /*
     virtual bool isEndpointSupported(QMediaService::MediaEndpoint endpointType);
 
@@ -93,6 +99,7 @@ private:
     S60CameraImageCaptureControl *m_imageCaptureControl;
     S60VideoOutputControl *m_videoOutput;
     S60MediaControl  *m_media;
+    S60VideoWidgetControl *m_videoWidget;
 };
 
 #endif
