@@ -94,7 +94,10 @@ CONFIG(debug, debug|release) {
     RCC_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/rcc
     UI_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/ui
     QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
+}
 
+maemo {
+    DEFINES+= MAEMO
 }
 
 wince* {

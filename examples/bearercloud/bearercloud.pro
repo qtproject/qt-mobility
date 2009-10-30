@@ -18,6 +18,9 @@ include(../examples.pri)
 qtAddLibrary(QtBearer)
 
 CONFIG += console
+
+include(../examples.pri)
+
 symbian {
     BEARERLIB.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/QtBearer.dll
     BEARERLIB.path = .
@@ -28,6 +31,6 @@ macx: {
     #LIBS += -framework QtBearer
     INCLUDEPATH += ../../
     contains(CONFIG, debug) {
-    CONFIG -= app_bundle
+        CONFIG -= app_bundle
     }
 }

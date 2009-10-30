@@ -46,39 +46,37 @@
 //  W A R N I N G
 //  -------------
 //
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
+// This file is not part of the Qt API.  It exists for the convenience
+// of the QLibrary class.  This header file may change from
+// version to version without notice, or even be removed.
 //
 // We mean it.
 //
 
-#include "qnetworkconfigmanager_p.h"
+#include "qnetworkconfigmanager_maemo_p.h"
 #include "qnetworksession.h"
-#ifdef BEARER_ENGINE
-#include "qnetworksessionengine_p.h"
-#endif
 
-#include "qnetworksession.h"
+#include <qnetworksession.h>
 #include <QNetworkInterface>
 #include <QDateTime>
 
+#include <icd/dbus_api.h>
+
 QT_BEGIN_NAMESPACE
-#ifdef BEARER_ENGINE
-class QNetworkSessionEngine;
-#endif
 
 class QNetworkSessionPrivate : public QObject
 {
     Q_OBJECT
 public:
     QNetworkSessionPrivate() : 
-        tx_data(0), rx_data(0), m_activeTime(0), isActive(false)
+	    tx_data(0), rx_data(0), m_activeTime(0), isActive(false),
+	    connectFlags(ICD_CONNECTION_FLAG_USER_EVENT)
     {
     }
 
     ~QNetworkSessionPrivate()
     {
+	cleanupSession();
     }
 
     //called by QNetworkSession constructor and ensures
@@ -116,12 +114,9 @@ Q_SIGNALS:
     void quitPendingWaitsForOpened();
 
 private Q_SLOTS:
-#ifdef BEARER_ENGINE
+    void do_open();
     void networkConfigurationsChanged();
     void configurationChanged(const QNetworkConfiguration &config);
-    void forcedSessionClose(const QNetworkConfiguration &config);
-    void connectionError(const QString &id, QNetworkSessionEngine::ConnectionError error);
-#endif
 
 private:
     QNetworkConfigurationManager manager;
@@ -142,23 +137,28 @@ private:
     // Either a copy of publicConfig or one of serviceConfig.children().
     QNetworkConfiguration activeConfig;
 
+    QNetworkConfiguration& copyConfig(QNetworkConfiguration &fromConfig, QNetworkConfiguration &toConfig, bool deepCopy = true);
+    void clearConfiguration(QNetworkConfiguration &config);
+    void cleanupAnyConfiguration();
+
     QNetworkSession::State state;
     bool isActive;
-
-#ifdef BEARER_ENGINE
     bool opened;
+    icd_connection_flags connectFlags;
 
-    QNetworkSessionEngine *engine;
-#endif
     QNetworkSession::SessionError lastError;
 
     QNetworkSession* q;
     friend class QNetworkSession;
 
-#if defined(BEARER_ENGINE) && defined(BACKEND_NM)
     QDateTime startTime;
-    void setActiveTimeStamp();
-#endif
+    QString currentBearerName;
+    QString currentNetworkInterface;
+    friend class IcdListener;
+    void updateState(QNetworkSession::State);
+    void updateIdentifier(QString &newId);
+    quint64 getStatistics(bool sent) const;
+    void cleanupSession(void);
 };
 
 QT_END_NAMESPACE

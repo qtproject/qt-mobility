@@ -56,57 +56,96 @@ symbian: {
 
     TARGET.CAPABILITY = All -TCB
 } else {
-    DEFINES += BEARER_ENGINE
+    maemo {
+        QT += dbus
+	CONFIG += link_pkgconfig
 
-    HEADERS += qnetworkconfigmanager_p.h \
-               qnetworkconfiguration_p.h \
-               qnetworksession_p.h \
-               qnetworksessionengine_p.h \
-               qgenericengine_p.h
+	exists(../debug) {
+		message("Enabling debug messages.")
+		DEFINES += BEARER_MANAGEMENT_DEBUG
+	}
 
-    SOURCES += qnetworkconfigmanager_p.cpp \
-               qnetworksession_p.cpp \
-               qnetworksessionengine.cpp \
-               qgenericengine.cpp
+        HEADERS += qnetworksession_maemo_p.h \
+                   qnetworkconfigmanager_maemo_p.h \
+                   qnetworkconfiguration_maemo_p.h
 
-    unix:contains(networkmanager_enabled, yes) {
-        contains(QT_CONFIG,dbus) {
-            DEFINES += BACKEND_NM
-            QT += dbus
+        SOURCES += qnetworkconfigmanager_maemo.cpp \
+		   qnetworksession_maemo.cpp
 
-            HEADERS += qnmdbushelper_p.h \
-                       qnetworkmanagerservice_p.h \
-                       qnmwifiengine_unix_p.h
+	documentation.path = $$QT_MOBILITY_PREFIX/doc
+        documentation.files = doc/html
 
-            SOURCES += qnmdbushelper.cpp \
-                       qnetworkmanagerservice_p.cpp \
-                       qnmwifiengine_unix.cpp
-        } else {
-            message(NetworkManager backend for BearerManagement API requires Qt DBus support.)
+	PKGCONFIG += glib-2.0 dbus-glib-1 gconf-2.0 osso-ic conninet
+
+	CONFIG += create_pc create_prl
+	QMAKE_PKGCONFIG_REQUIRES = glib-2.0 dbus-glib-1 gconf-2.0 osso-ic conninet
+	pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+	pkgconfig.files = QtBearer.pc
+
+	INSTALLS += pkgconfig documentation
+
+    } else {
+
+        DEFINES += BEARER_ENGINE
+
+        HEADERS += qnetworkconfigmanager_p.h \
+                   qnetworkconfiguration_p.h \
+                   qnetworksession_p.h \
+                   qnetworksessionengine_p.h \
+                   qgenericengine_p.h
+
+        SOURCES += qnetworkconfigmanager_p.cpp \
+                   qnetworksession_p.cpp \
+                   qnetworksessionengine.cpp \
+                   qgenericengine.cpp
+
+        unix:!mac:contains(BACKEND, NetworkManager) {
+            contains(QT_CONFIG,dbus) {
+                DEFINES += BACKEND_NM
+                QT += dbus
+
+                HEADERS += qnmdbushelper_p.h \
+                           qnetworkmanagerservice_p.h \
+                           qnmwifiengine_unix_p.h
+
+                SOURCES += qnmdbushelper.cpp \
+                           qnetworkmanagerservice_p.cpp \
+                           qnmwifiengine_unix.cpp
+            } else {
+                message("NetworkManager backend requires Qt DBus support");
+            }
         }
-    }
 
-    win32: {
-        HEADERS += qnlaengine_win_p.h \
+        win32: {
+            HEADERS += qnlaengine_win_p.h \
                    qnetworksessionengine_win_p.h
 
-        !wince*:HEADERS += qnativewifiengine_win_p.h
+            !wince*:HEADERS += qnativewifiengine_win_p.h
 
-        SOURCES += qnlaengine_win.cpp
+            SOURCES += qnlaengine_win.cpp
 
-        !wince*:SOURCES += qnativewifiengine_win.cpp
+            !wince*:SOURCES += qnativewifiengine_win.cpp
 
-        !wince*:LIBS += -lWs2_32
-        wince*:LIBS += -lWs2
+            !wince*:LIBS += -lWs2_32
+            wince*:LIBS += -lWs2
+        }
     }
-#macx: {
-#        HEADERS += qcorewlanengine_mac_p.h
-#        SOURCES+= qcorewlanengine_mac.mm
-        #CONFIG-=app_bundle
-        #CONFIG+=lib_bundle
-#        LIBS += -framework CoreWLAN
-#    }
+    macx: {
+        HEADERS += qcorewlanengine_mac_p.h
+        SOURCES+= qcorewlanengine_mac.mm
+        LIBS += -framework Foundation -framework SystemConfiguration
+
+        # change this to /Developer/SDKs/MacOSX10.6.sdk
+        # if you want to compile for 10.6 with CoreWLAN framework
+        QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.5.sdk
+        contains(QMAKE_MAC_SDK, "/Developer/SDKs/MacOSX10.6.sdk") {
+                LIBS += -framework CoreWLAN
+                message("Using 10.6 SDK")
+                DEFINES += MAC_SDK_10_6
+        } else {
+                message("Using 10.5 SDK")
+        }
+    }
 }
 
-include (../features/deploy.pri)
-
+include(../features/deploy.pri)
