@@ -124,11 +124,15 @@
 /*!
  * \class QContactPresence
  * \brief Presence information relating to a QContactOnlineAccount of the contact
+ * \deprecated
  *
  * Details containing presence information are linked to a particular online account detail.
  * The backend should update the presence information relating to an online account when it
  * is available, and delete the presence information detail if its corresponding online account
  * detail is deleted.
+ *
+ * This class has been deprecated and will be removed during week 47, related to:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 
 /*!
@@ -189,8 +193,10 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::DefinitionName, "PhoneNumber");
 
 /*!
  * \variable QContactPresence::DefinitionName
+ * \deprecated
  * The constant string which identifies the definition of details which contain presence information related
- * to an online account
+ * to an online account. This definition has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 Q_DEFINE_LATIN1_LITERAL(QContactPresence::DefinitionName, "Presence");
 
@@ -271,6 +277,66 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::DefinitionName, "Geolocation");
  * The constant string which identifies the definition of details which identify the organization to which a contact belongs in a given context
  */
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::DefinitionName, "OnlineAccount");
+
+/*!
+ * \variable QContactOnlineAccount::FieldNickname
+ * The constant key for which the nickname value is stored in details of the QContactOnlineAccount type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldNickname, "Nickname");
+
+/*!
+ * \variable QContactOnlineAccount::FieldPresence
+ * The constant key for which the presence value is stored in details of the QContactOnlineAccount type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldPresence, "Presence");
+
+/*!
+ * \variable QContactOnlineAccount::PresenceAvailable
+ * The value for presence which specifies that the contact's current status is available
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceAvailable, "Available");
+
+/*!
+ * \variable QContactOnlineAccount::PresenceHidden
+ * The value for presence which specifies that the contact's current status is hidden
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceHidden, "Hidden");
+
+/*!
+ * \variable QContactOnlineAccount::PresenceBusy
+ * The value for presence which specifies that the contact's current status is busy
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceBusy, "Busy");
+
+/*!
+ * \variable QContactOnlineAccount::PresenceAway
+ * The value for presence which specifies that the contact's current status is away
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceAway, "Away");
+
+/*!
+ * \variable QContactOnlineAccount::PresenceExtendedAway
+ * The value for presence which specifies that the contact's current status is extended away
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceExtendedAway, "ExtendedAway");
+
+/*!
+ * \variable QContactOnlineAccount::PresenceUnknown
+ * The value for presence which specifies that the contact's current status is unknown
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceUnknown, "Unknown");
+
+/*!
+ * \variable QContactOnlineAccount::PresenceOffline
+ * The value for presence which specifies that the contact's current status is offline
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceOffline, "Offline");
+
+/*!
+ * \variable QContactOnlineAccount::FieldStatusMessage
+ * The constant key for which the status message value is stored in details of the QContactOnlineAccount type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldStatusMessage, "StatusMessage");
 
 /*!
  * \variable QContactOrganization::DefinitionName
@@ -632,66 +698,88 @@ Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldAssistantName, "AssistantName
 /*!
  * \variable QContactPresence::FieldAccountUri
  * The constant key for which the remote account uri value is stored in details of the QContactPresence type
+ * This class has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldAccountUri, "AccountUri");
 
 /*!
  * \variable QContactPresence::FieldNickname
  * The constant key for which the nickname value is stored in details of the QContactPresence type
+ * This class has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldNickname, "Nickname");
 
 /*!
  * \variable QContactPresence::FieldPresence
  * The constant key for which the presence value is stored in details of the QContactPresence type
+ * This class has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldPresence, "Presence");
 
 /*!
  * \variable QContactPresence::PresenceAvailable
  * The value for presence which specifies that the contact's current status is available
+ * This class has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceAvailable, "Available");
 
 /*!
  * \variable QContactPresence::PresenceHidden
  * The value for presence which specifies that the contact's current status is hidden
+ * This class has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceHidden, "Hidden");
 
 /*!
  * \variable QContactPresence::PresenceBusy
  * The value for presence which specifies that the contact's current status is busy
+ * This class has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceBusy, "Busy");
 
 /*!
  * \variable QContactPresence::PresenceAway
  * The value for presence which specifies that the contact's current status is away
+ * This class has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceAway, "Away");
 
 /*!
  * \variable QContactPresence::PresenceExtendedAway
  * The value for presence which specifies that the contact's current status is extended away
+ * This class has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceExtendedAway, "ExtendedAway");
 
 /*!
  * \variable QContactPresence::PresenceUnknown
  * The value for presence which specifies that the contact's current status is unknown
+ * This class has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceUnknown, "Unknown");
 
 /*!
  * \variable QContactPresence::PresenceOffline
  * The value for presence which specifies that the contact's current status is offline
+ * This class has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceOffline, "Offline");
 
 /*!
  * \variable QContactPresence::FieldStatusMessage
  * The constant key for which the status message value is stored in details of the QContactPresence type
+ * This class has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldStatusMessage, "StatusMessage");
 
@@ -1404,6 +1492,39 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
+ * \fn QContactOnlineAccount::setNickname(const QString& nickname)
+ * Sets the last-known nickname used by the contact during communications via the online account
+ * about which this detail stores presence information to \a nickname
+ */
+
+/*!
+ * \fn QContactOnlineAccount::nickname() const
+ * Returns the last-known nickname used by the contact during communications via the online account
+ */
+
+/*!
+ * \fn QContactOnlineAccount::setPresence(const QString& presence)
+ * Sets the presence of the online account according to the presence information provider to \a presence
+ */
+
+/*!
+ * \fn QContactOnlineAccount::presence() const
+ * Returns the presence of the online account according to the presence provider
+ */
+
+/*!
+ * \fn QContactOnlineAccount::setStatusMessage(const QString& statusMessage)
+ * Sets the last-known status message of the contact which was communicated via the online account about
+ * which this detail stores presence information to \a statusMessage
+ */
+
+/*!
+ * \fn QContactOnlineAccount::statusMessage() const
+ * Returns the last-known status message of the contact which was communicated via the online account about
+ * which this detail stores presence information
+ */
+
+/*!
  * \fn QContactOrganization::setName(const QString& name)
  * Sets the name of the organization stored in this detail to \a name
  */
@@ -1469,46 +1590,62 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 /*!
  * \fn QContactPresence::setAccountUri(const QString& accountUri)
  * Sets the universal resource identifier of the contact's online account about which
- * this detail stores presence information to \a accountUri
+ * this detail stores presence information to \a accountUri.
+ * This class has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 
 /*!
  * \fn QContactPresence::accountUri() const
  * Returns the universal resource identifier of the online account of the contact about which
- * this detail stores presence information
+ * this detail stores presence information.
+ * This class has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 
 /*!
  * \fn QContactPresence::setNickname(const QString& nickname)
  * Sets the last-known nickname used by the contact during communications via the online account
- * about which this detail stores presence information to \a nickname
+ * about which this detail stores presence information to \a nickname.
+ * This class has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 
 /*!
  * \fn QContactPresence::nickname() const
  * Returns the last-known nickname used by the contact during communications via the online account
- * about which this detail stores presence information
+ * about which this detail stores presence information.
+ * This class has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 
 /*!
  * \fn QContactPresence::setPresence(const QString& presence)
- * Sets the presence of the online account according to the presence information provider to \a presence
+ * Sets the presence of the online account according to the presence information provider to \a presence.
+ * This class has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 
 /*!
  * \fn QContactPresence::presence() const
- * Returns the presence of the online account according to the presence provider
+ * Returns the presence of the online account according to the presence provider.
+ * This class has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 
 /*!
  * \fn QContactPresence::setStatusMessage(const QString& statusMessage)
  * Sets the last-known status message of the contact which was communicated via the online account about
- * which this detail stores presence information to \a statusMessage
+ * which this detail stores presence information to \a statusMessage.
+ * This class has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 
 /*!
  * \fn QContactPresence::statusMessage() const
  * Returns the last-known status message of the contact which was communicated via the online account about
- * which this detail stores presence information
+ * which this detail stores presence information.
+ * This class has been deprecated and should no longer be used; see:
+ * Commit SHA1: bf75173cc23edae9c501ec9f93cd8575df2ff49d
  */
 

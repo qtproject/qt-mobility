@@ -748,6 +748,23 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     f.setDataType(QVariant::String);
     fields.insert(QContactOnlineAccount::FieldAccountUri, f);
     f.setDataType(QVariant::StringList);
+    f.setDataType(QVariant::String);
+    fields.insert(QContactOnlineAccount::FieldAccountUri, f);
+    f.setAccessConstract(QContactDetailDefinitionField::ReadOnly);
+    fields.insert(QContactOnlineAccount::FieldNickname, f);
+    fields.insert(QContactOnlineAccount::FieldStatusMessage, f);
+    QVariantList presenceValues;
+    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceAvailable));
+    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceHidden));
+    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceBusy));
+    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceAway));
+    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceExtendedAway));
+    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceUnknown));
+    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceOffline));
+    f.setAllowableValues(presenceValues);
+    fields.insert(QContactOnlineAccount::FieldPresence, f);
+    f.setDataType(QVariant::StringList);
+    f.setAccessConstract(QContactDetailDefinitionField::NoConstraint);
     f.setAllowableValues(contexts);
     fields.insert(QContactDetail::FieldContext, f);
     f.setAllowableValues(QVariantList()); // allow any subtypes!
@@ -757,14 +774,14 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
-    // presence
+    // presence - DEPRECATED - use online account instead
     d.setName(QContactPresence::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::String);
     fields.insert(QContactPresence::FieldAccountUri, f);
     fields.insert(QContactPresence::FieldNickname, f);
     fields.insert(QContactPresence::FieldStatusMessage, f);
-    QVariantList presenceValues;
+    presenceValues.clear();
     presenceValues << QString(QLatin1String(QContactPresence::PresenceAvailable));
     presenceValues << QString(QLatin1String(QContactPresence::PresenceHidden));
     presenceValues << QString(QLatin1String(QContactPresence::PresenceBusy));

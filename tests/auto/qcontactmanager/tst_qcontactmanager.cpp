@@ -610,11 +610,24 @@ void tst_QContactManager::add()
     QMap<QString, QContactDetailDefinition> defmap = cm->detailDefinitions();
     QList<QContactDetailDefinition> defs = defmap.values();
     foreach (const QContactDetailDefinition def, defs) {
+        // if the definition is read only, we cannot create details of the definition, so skip it.
+        if (def.accessConstraint() == QContactDetailDefinition::ReadOnly) {
+            continue;
+        }
+
+        // otherwise, create a new detail of the given type and save it to the contact
         QContactDetail det(def.name());
         QMap<QString, QContactDetailDefinitionField> fieldmap = def.fields();
         QStringList fieldKeys = fieldmap.keys();
         foreach (const QString& fieldKey, fieldKeys) {
+            // get the field, and check to see that it's not constrained.
             QContactDetailDefinitionField currentField = fieldmap.value(fieldKey);
+            if (currentField.accessConstraint() == QContactDetailDefinitionField::ReadOnly) {
+                // we cannot write to this field.
+                continue;
+            }
+
+            // we can write to this field.  attempt to create a worthy value
             if (!currentField.allowableValues().isEmpty()) {
                 // we want to save a value that will be accepted.
                 if (currentField.dataType() == QVariant::StringList)

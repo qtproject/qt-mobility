@@ -57,6 +57,16 @@ public:
     const char* DefinitionName;
     const char* FieldAccountUri;
     const char* FieldSubTypes;
+    const char* FieldNickname;
+    const char* FieldPresence;
+    const char* FieldStatusMessage;
+    const char* PresenceAvailable;
+    const char* PresenceHidden;
+    const char* PresenceBusy;
+    const char* PresenceAway;
+    const char* PresenceExtendedAway;
+    const char* PresenceUnknown;
+    const char* PresenceOffline;
     const char* SubTypeSip;
     const char* SubTypeH323;
     const char* SubTypeXmpp;
@@ -65,7 +75,17 @@ public:
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOnlineAccount, "OnlineAccount")
     Q_DECLARE_LATIN1_LITERAL(FieldAccountUri, "AccountUri");
+    Q_DECLARE_LATIN1_LITERAL(FieldNickname, "Nickname");
+    Q_DECLARE_LATIN1_LITERAL(FieldPresence, "Presence");
+    Q_DECLARE_LATIN1_LITERAL(FieldStatusMessage, "StatusMessage");
     Q_DECLARE_LATIN1_LITERAL(FieldSubTypes, "SubTypes");
+    Q_DECLARE_LATIN1_LITERAL(PresenceAvailable, "Available");
+    Q_DECLARE_LATIN1_LITERAL(PresenceHidden, "Hidden");
+    Q_DECLARE_LATIN1_LITERAL(PresenceBusy, "Busy");
+    Q_DECLARE_LATIN1_LITERAL(PresenceAway, "Away");
+    Q_DECLARE_LATIN1_LITERAL(PresenceExtendedAway, "ExtendedAway");
+    Q_DECLARE_LATIN1_LITERAL(PresenceUnknown, "Unknown");
+    Q_DECLARE_LATIN1_LITERAL(PresenceOffline, "Offline");
     Q_DECLARE_LATIN1_LITERAL(SubTypeSip, "Sip");
     Q_DECLARE_LATIN1_LITERAL(SubTypeH323, "H323");
     Q_DECLARE_LATIN1_LITERAL(SubTypeXmpp, "Xmpp");
@@ -75,6 +95,12 @@ public:
 
     void setAccountUri(const QString& accountUri) {setValue(FieldAccountUri, accountUri);}
     QString accountUri() const {return value(FieldAccountUri);}
+    void setNickname(const QString& nickname) {setValue(FieldNickname, nickname);}
+    QString nickname() const {return value(FieldNickname);}
+    void setPresence(const QString& presence) {setValue(FieldPresence, presence);}
+    QString presence() const {return value(FieldPresence);}
+    void setStatusMessage(const QString& statusMessage) {setValue(FieldStatusMessage, statusMessage);}
+    QString statusMessage() const {return value(FieldStatusMessage);}
 
     void setSubTypes(const QStringList& subTypes) {setValue(FieldSubTypes, subTypes);}
     void setSubTypes(const QString& subType) {setValue(FieldSubTypes, QStringList(subType));}
