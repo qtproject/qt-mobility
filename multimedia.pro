@@ -11,3 +11,9 @@ SUBDIRS = \
 plugins.depends = multimedia
 examples.depends = multimedia
 test.depends = multimedia
+
+symbian {
+    QtMediaDeployment.sources = QtMedia.dll \
+        QtMobilityMultimediaEngine.dll
+    DEPLOYMENT += QtMediaDeployment
+}

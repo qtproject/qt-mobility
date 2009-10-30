@@ -51,17 +51,20 @@
 QStringList S60ServicePlugin::keys() const
 {
     QStringList list;
-    list << QLatin1String("radio");
-    list << QLatin1String("camera");
+    list << QLatin1String(Q_MEDIASERVICE_RADIO);
+    list << QLatin1String(Q_MEDIASERVICE_CAMERA);
+    list << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER);
     return list;
 }
 
 QMediaService* S60ServicePlugin::create(QString const& key)
 {
-    if (key == QLatin1String("radio")) 
+    if (key == QLatin1String(Q_MEDIASERVICE_RADIO)) 
         return new S60RadioTunerService;
-    else if (key == QLatin1String("camera"))
+    else if (key == QLatin1String(Q_MEDIASERVICE_CAMERA))
         return new S60CameraService;
+    else if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
+        return new S60AudioCaptureService;
 
     qDebug() << "unsupported key:" << key;
     return 0;
