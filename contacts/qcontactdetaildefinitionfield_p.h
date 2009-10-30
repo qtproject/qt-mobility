@@ -1,7 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** All rights reserved.
+** Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
@@ -21,27 +20,20 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
+** If you have questions regarding the use of this file, please
+** contact Nokia at http://qt.nokia.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
 
-#ifndef QCONTACTDETAILDEFINITION_P_H
-#define QCONTACTDETAILDEFINITION_P_H
+#ifndef QCONTACTDETAILDEFINITIONFIELD_P_H
+#define QCONTACTDETAILDEFINITIONFIELD_P_H
 
 //
 //  W A R N I N G
@@ -54,37 +46,39 @@
 // We mean it.
 //
 
-#include "qcontactdetaildefinition.h"
+#include "qcontactdetaildefinitionfield.h"
 
 #include <QSharedData>
 #include <QMap>
 #include <QString>
 #include <QVariant>
+#include <QList>
 
-class QContactDetailDefinitionData : public QSharedData
+class QContactDetailDefinitionFieldPrivate : public QSharedData
 {
 public:
-    QContactDetailDefinitionData()
-        : m_constraint(QContactDetailDefinition::NoConstraint),
-          m_unique(false)
+    QContactDetailDefinitionFieldPrivate()
+        : QSharedData(),
+        m_dataType(QVariant::Invalid),
+        m_accessConstraint(QContactDetailDefinitionField::NoConstraint)
     {
     }
 
-    QContactDetailDefinitionData(const QContactDetailDefinitionData& other)
+    QContactDetailDefinitionFieldPrivate(const QContactDetailDefinitionFieldPrivate& other)
         : QSharedData(other),
-        m_constraint(other.m_constraint),
-        m_name(other.m_name),
-        m_unique(other.m_unique),
-        m_fields(other.m_fields)
+        m_allowableValues(other.m_allowableValues),
+        m_dataType(other.m_dataType),
+        m_accessConstraint(other.m_accessConstraint)
     {
     }
 
-    ~QContactDetailDefinitionData() {}
+    ~QContactDetailDefinitionFieldPrivate()
+    {
+    }
 
-    QContactDetailDefinition::AccessConstraint m_constraint;
-    QString m_name;
-    bool m_unique;
-    QMap<QString, QContactDetailDefinitionField> m_fields;
+    QVariantList m_allowableValues;
+    QVariant::Type m_dataType;
+    QContactDetailDefinitionField::AccessConstraint m_accessConstraint;
 };
 
 #endif

@@ -611,24 +611,24 @@ void tst_QContactManager::add()
     QList<QContactDetailDefinition> defs = defmap.values();
     foreach (const QContactDetailDefinition def, defs) {
         QContactDetail det(def.name());
-        QMap<QString, QContactDetailDefinition::Field> fieldmap = def.fields();
+        QMap<QString, QContactDetailDefinitionField> fieldmap = def.fields();
         QStringList fieldKeys = fieldmap.keys();
         foreach (const QString& fieldKey, fieldKeys) {
-            QContactDetailDefinition::Field currentField = fieldmap.value(fieldKey);
-            if (!currentField.allowableValues.isEmpty()) {
+            QContactDetailDefinitionField currentField = fieldmap.value(fieldKey);
+            if (!currentField.allowableValues().isEmpty()) {
                 // we want to save a value that will be accepted.
-                if (currentField.dataType == QVariant::StringList)
-                    det.setValue(fieldKey, QStringList() << currentField.allowableValues.first().toString());
-                else if (currentField.dataType == QVariant::List)
-                    det.setValue(fieldKey, QVariantList() << currentField.allowableValues.first());
+                if (currentField.dataType() == QVariant::StringList)
+                    det.setValue(fieldKey, QStringList() << currentField.allowableValues().first().toString());
+                else if (currentField.dataType() == QVariant::List)
+                    det.setValue(fieldKey, QVariantList() << currentField.allowableValues().first());
                 else
-                    det.setValue(fieldKey, currentField.allowableValues.first());
+                    det.setValue(fieldKey, currentField.allowableValues().first());
             } else {
                 // any value of the correct type will be accepted
                 bool savedSuccessfully = false;
                 QVariant dummyValue = QVariant(fieldKey); // try to get some unique string data
-                if (dummyValue.canConvert(currentField.dataType)) {
-                    savedSuccessfully = dummyValue.convert(currentField.dataType);
+                if (dummyValue.canConvert(currentField.dataType())) {
+                    savedSuccessfully = dummyValue.convert(currentField.dataType());
                     if (savedSuccessfully) {
                         // we have successfully created a (supposedly) valid field for this detail.
                         det.setValue(fieldKey, dummyValue);
@@ -638,8 +638,8 @@ void tst_QContactManager::add()
 
                 // nope, couldn't save the string value (test); try a date.
                 dummyValue = QVariant(QDate::currentDate());
-                if (dummyValue.canConvert(currentField.dataType)) {
-                    savedSuccessfully = dummyValue.convert(currentField.dataType);
+                if (dummyValue.canConvert(currentField.dataType())) {
+                    savedSuccessfully = dummyValue.convert(currentField.dataType());
                     if (savedSuccessfully) {
                         // we have successfully created a (supposedly) valid field for this detail.
                         det.setValue(fieldKey, dummyValue);
@@ -649,8 +649,8 @@ void tst_QContactManager::add()
 
                 // nope, couldn't convert a string or a date - try the integer value (42)
                 dummyValue = QVariant(42);
-                if (dummyValue.canConvert(currentField.dataType)) {
-                    savedSuccessfully = dummyValue.convert(currentField.dataType);
+                if (dummyValue.canConvert(currentField.dataType())) {
+                    savedSuccessfully = dummyValue.convert(currentField.dataType());
                     if (savedSuccessfully) {
                         // we have successfully created a (supposedly) valid field for this detail.
                         det.setValue(fieldKey, dummyValue);
@@ -1073,9 +1073,9 @@ void tst_QContactManager::invalidManager()
     def.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     def.setUnique(true);
     def.setName("new field");
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field currField;
-    currField.dataType = QVariant::String;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField currField;
+    currField.setDataType(QVariant::String);
     fields.insert("value", currField);
     def.setFields(fields);
 
@@ -1447,9 +1447,9 @@ void tst_QContactManager::contactValidation()
      * 4) a unique create only detail
      */
     QContactDetailDefinition uniqueDef;
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field field;
-    field.dataType = QVariant::String;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField field;
+    field.setDataType(QVariant::String);
     fields.insert("value", field);
 
     uniqueDef.setName("UniqueDetail");
@@ -1461,7 +1461,7 @@ void tst_QContactManager::contactValidation()
     QContactDetailDefinition restrictedDef;
     restrictedDef.setName("RestrictedDetail");
     fields.clear();
-    field.allowableValues = QVariantList() << "One" << "Two" << "Three";
+    field.setAllowableValues(QVariantList() << "One" << "Two" << "Three");
     fields.insert("value", field);
     restrictedDef.setFields(fields);
 
@@ -1471,7 +1471,7 @@ void tst_QContactManager::contactValidation()
     createOnlyDef.setName("CreateOnlyDetail");
     createOnlyDef.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     fields.clear();
-    field.allowableValues.clear();
+    field.setAllowableValues(QList<QVariant>());
     fields.insert("value", field);
     createOnlyDef.setFields(fields);
 
@@ -1482,7 +1482,7 @@ void tst_QContactManager::contactValidation()
     createOnlyUniqueDef.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     createOnlyUniqueDef.setUnique(true);
     fields.clear();
-    field.allowableValues.clear();
+    field.allowableValues().clear();
     fields.insert("value", field);
     createOnlyUniqueDef.setFields(fields);
 
@@ -1797,9 +1797,9 @@ void tst_QContactManager::detailDefinitions()
 
     /* Try to make a credible definition */
     QContactDetailDefinition newDef;
-    QContactDetailDefinition::Field field;
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    field.dataType = cm->supportedDataTypes().value(0);
+    QContactDetailDefinitionField field;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    field.setDataType(cm->supportedDataTypes().value(0));
     fields.insert("New Value", field);
     newDef.setName("New Definition");
     newDef.setFields(fields);
@@ -1812,7 +1812,7 @@ void tst_QContactManager::detailDefinitions()
 
     /* A detail definition with valid allowed values (or really just one) */
     QContactDetailDefinition allowedDef = newDef;
-    field.allowableValues.append(QVariant(field.dataType));
+    field.setAllowableValues(field.allowableValues() << (QVariant(field.dataType())));
     fields.clear();
     fields.insert("Restricted value", field);
     allowedDef.setFields(fields);
@@ -1833,23 +1833,23 @@ void tst_QContactManager::detailDefinitions()
 
     QContactDetailDefinition invalidFieldKeyDef;
     invalidFieldKeyDef.setName("Invalid field key");
-    QMap<QString, QContactDetailDefinition::Field> badfields;
+    QMap<QString, QContactDetailDefinitionField> badfields;
     badfields.insert(QString(), field);
     invalidFieldKeyDef.setFields(badfields);
 
     QContactDetailDefinition invalidFieldTypeDef;
     invalidFieldTypeDef.setName("Invalid field type");
     badfields.clear();
-    QContactDetailDefinition::Field badfield;
-    badfield.dataType = (QVariant::Type) qMetaTypeId<UnsupportedMetatype>();
+    QContactDetailDefinitionField badfield;
+    badfield.setDataType((QVariant::Type) qMetaTypeId<UnsupportedMetatype>());
     badfields.insert("Bad type", badfield);
     invalidFieldTypeDef.setFields(badfields);
 
     QContactDetailDefinition invalidAllowedValuesDef;
     invalidAllowedValuesDef.setName("Invalid field allowed values");
     badfields.clear();
-    badfield.dataType = field.dataType; // use a supported type
-    badfield.allowableValues << "String" << 5; // but unsupported value
+    badfield.setDataType(field.dataType()); // use a supported type
+    badfield.setAllowableValues(QList<QVariant>() << "String" << 5); // but unsupported value
     badfields.insert("Bad allowed", badfield);
     invalidAllowedValuesDef.setFields(badfields);
 
@@ -1900,7 +1900,7 @@ void tst_QContactManager::detailDefinitions()
         QVERIFY(def == newDef);
 
         /* Update it */
-        QMap<QString, QContactDetailDefinition::Field> newFields = def.fields();
+        QMap<QString, QContactDetailDefinitionField> newFields = def.fields();
         newFields.insert("Another new value", field);
         newDef.setFields(newFields);
 

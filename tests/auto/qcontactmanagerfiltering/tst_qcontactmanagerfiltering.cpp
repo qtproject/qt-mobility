@@ -2315,13 +2315,13 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
         // we only consider the definition if it only has a SINGLE FIELD, and
         // if that field is of the required type.  This avoids nasty presence test
         // failures which aren't.
-        QMap<QString, QContactDetailDefinition::Field> allFields = def.fields();
+        QMap<QString, QContactDetailDefinitionField> allFields = def.fields();
         QList<QString> fNames = allFields.keys();
         if (fNames.size() > 1)
             break;
         foreach (const QString& fName, fNames) {
-            QContactDetailDefinition::Field field = allFields.value(fName);
-            if (field.dataType == type) {
+            QContactDetailDefinitionField field = allFields.value(fName);
+            if (field.dataType() == type) {
                 // this field of the current definition is of the required type.
                 definitionName = defName;
                 fieldName = fName;
@@ -2363,9 +2363,9 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
         // build a definition that matches the criteria.
         QContactDetailDefinition generatedDefinition;
         generatedDefinition.setName(generatedDefinitionName);
-        QContactDetailDefinition::Field generatedField;
-        generatedField.dataType = type;
-        QMap<QString, QContactDetailDefinition::Field> fields;
+        QContactDetailDefinitionField generatedField;
+        generatedField.setDataType(type);
+        QMap<QString, QContactDetailDefinitionField> fields;
         fields.insert("generatedField", generatedField);
         generatedDefinition.setFields(fields);
         generatedDefinition.setAccessConstraint(QContactDetailDefinition::NoConstraint);
