@@ -79,8 +79,21 @@ MapiFolderIterator::MapiFolderIterator()
 {
 }
 
-MapiFolderIterator::MapiFolderIterator(MapiStorePtr store, MapiFolderPtr root, QSet<QMessage::StandardFolder> standardFoldersInclude, QSet<QMessage::StandardFolder> standardFoldersExclude)
-    :_store(store), _standardFoldersInclude(standardFoldersInclude), _standardFoldersExclude(standardFoldersExclude)
+MapiFolderIterator::MapiFolderIterator(MapiStorePtr store, 
+                                       MapiFolderPtr root, 
+                                       QSet<QMessage::StandardFolder> standardFoldersInclude, 
+                                       QSet<QMessage::StandardFolder> standardFoldersExclude,
+                                       QSet<QMessageFolderId> parentInclude,
+                                       QSet<QMessageFolderId> parentExclude,
+                                       QSet<QMessageFolderId> ancestorInclude,
+                                       QSet<QMessageFolderId> ancestorExclude)
+    :_store(store), 
+    _standardFoldersInclude(standardFoldersInclude), 
+    _standardFoldersExclude(standardFoldersExclude),
+    _parentInclude(parentInclude),
+    _parentExclude(parentExclude),
+    _ancestorInclude(ancestorInclude),
+    _ancestorExclude(ancestorExclude)
 {
     _folders.append(root);
 }
@@ -97,12 +110,33 @@ MapiFolderPtr MapiFolderIterator::next()
                     // Descend into the subfolder
                     _folders.append(folder);
 
-                    QMessage::StandardFolder folderType(folder->standardFolder());
-                    if ((_standardFoldersInclude.isEmpty() || _standardFoldersInclude.contains(folderType))
-                        && !_standardFoldersExclude.contains(folderType)) {
-                        // This folder is the next one
-                        return folder;
+                    if (!_standardFoldersInclude.isEmpty() || !_standardFoldersExclude.isEmpty()) {
+                        QMessage::StandardFolder folderType(folder->standardFolder());
+                        if (!(_standardFoldersInclude.isEmpty() || _standardFoldersInclude.contains(folderType))
+                            || _standardFoldersExclude.contains(folderType))
+                            continue;
                     }
+
+                    if (!_parentInclude.isEmpty() || !_parentExclude.isEmpty()) {
+                        QMessageFolderId parentId(folder->parentId());
+                        if (!(_parentInclude.isEmpty() || _parentInclude.contains(parentId))
+                            || _parentExclude.contains(parentId))
+                            continue;
+                    }
+
+                    if (!_ancestorInclude.isEmpty() || !_ancestorExclude.isEmpty()) {
+                        QSet<QMessageFolderId> folderAncestors;
+                        QMessageFolderId id(folder->id());
+                        while (id.isValid()) {
+                            folderAncestors.insert(id);
+                            id = QMessageFolder(id).parentFolderId();
+                        }
+                        if (!(_ancestorInclude.isEmpty() || !_ancestorInclude.intersect(folderAncestors).isEmpty())
+                            || !_ancestorExclude.intersect(folderAncestors).isEmpty())
+                            continue;
+                    }
+
+                    return folder;
                 } else {
                     if (folder) {
                         qWarning() << "Invalid subfolder:" << folder->name();
@@ -186,7 +220,14 @@ QMessageFilterPrivate* QMessageFilterPrivate::implementation(const QMessageFilte
 
 MapiFolderIterator QMessageFilterPrivate::folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiStorePtr &store)
 {
-    return MapiFolderIterator(store, store->rootFolder(lastError), filter.d_ptr->_standardFoldersInclude, filter.d_ptr->_standardFoldersExclude);
+    return MapiFolderIterator(store, 
+        store->rootFolder(lastError),
+        filter.d_ptr->_standardFoldersInclude, 
+        filter.d_ptr->_standardFoldersExclude,
+        filter.d_ptr->_parentInclude, 
+        filter.d_ptr->_parentExclude,
+        filter.d_ptr->_ancestorInclude, 
+        filter.d_ptr->_ancestorExclude);
 }
 
 MapiStoreIterator QMessageFilterPrivate::storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiSessionPtr &session)
@@ -274,16 +315,16 @@ void QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, Mapi
         // specifically in the case that one of the oreands has a *Filter field.
         switch (filter->d_ptr->_operator) {
         case And:
-            *filter = *l & *r;
+            *filter = filter->d_ptr->containerFiltersPart() &  *l & *r;
             break;
         case Nand:
-            *filter = ~(*l & *r);
+            *filter = filter->d_ptr->containerFiltersPart() &  ~(*l & *r);
             break;
         case Or:
-            *filter = *l | *r;
+            *filter = filter->d_ptr->containerFiltersPart() &  *l | *r;
             break;
         case Nor:
-            *filter = ~(*l | *r);
+            *filter = filter->d_ptr->containerFiltersPart() &  ~(*l | *r);
             break;
         }
         return;
@@ -1063,7 +1104,11 @@ bool QMessageFilterPrivate::containerFiltersAreEmpty()
     return (_standardFoldersInclude.isEmpty() 
             && _standardFoldersExclude.isEmpty() 
             && _accountsInclude.isEmpty() 
-            && _accountsExclude.isEmpty());
+            && _accountsExclude.isEmpty()
+            && _parentInclude.isEmpty() 
+            && _parentExclude.isEmpty()
+            && _ancestorInclude.isEmpty() 
+            && _ancestorExclude.isEmpty());
 }
 
 bool QMessageFilterPrivate::nonContainerFiltersAreEmpty()
@@ -1079,6 +1124,10 @@ QMessageFilter QMessageFilterPrivate::containerFiltersPart()
     result.d_ptr->_standardFoldersExclude = _standardFoldersExclude;
     result.d_ptr->_accountsInclude = _accountsInclude;
     result.d_ptr->_accountsExclude = _accountsExclude;
+    result.d_ptr->_parentInclude = _parentInclude;
+    result.d_ptr->_parentExclude = _parentExclude;
+    result.d_ptr->_ancestorInclude = _ancestorInclude;
+    result.d_ptr->_ancestorExclude = _ancestorExclude;
     return result;
 }
 
@@ -1146,6 +1195,10 @@ QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
     d_ptr->_standardFoldersExclude = other.d_ptr->_standardFoldersExclude;
     d_ptr->_accountsInclude = other.d_ptr->_accountsInclude;
     d_ptr->_accountsExclude = other.d_ptr->_accountsExclude;
+    d_ptr->_parentInclude = other.d_ptr->_parentInclude;
+    d_ptr->_parentExclude = other.d_ptr->_parentExclude;
+    d_ptr->_ancestorInclude = other.d_ptr->_ancestorInclude;
+    d_ptr->_ancestorExclude = other.d_ptr->_ancestorExclude;
     d_ptr->_complex = other.d_ptr->_complex;
     d_ptr->_matchesRequired = other.d_ptr->_matchesRequired;
     d_ptr->_restrictionPermitted = other.d_ptr->_restrictionPermitted;
@@ -1215,7 +1268,7 @@ QMessageFilter QMessageFilter::operator~() const
     } else if (d_ptr->_complex) {
         // A filter can be in one of two forms, either
         // 1) An account and/or standard folder restriction &'d with a 'native' filter part 
-        //  that can be evaluated using a MAPI SRestriction.
+        //  that can be evaluated using matchesMessage (or better a MAPI SRestriction).
         // or 2) a 'complex' filter part that consists of two subparts |'d together
         //     at least one of which is non-native. That is at least one subpart is either
         //     complex itself, or has an account and/or standard folder restriction.
@@ -1229,82 +1282,32 @@ QMessageFilter QMessageFilter::operator~() const
             qWarning("Complex filter has non empty container filter part");
         result = ~*d_ptr->_left & ~*d_ptr->_right;
     } else {
-        switch (d_ptr->_operator)
-        {
-            case QMessageFilterPrivate::Identity: // fall through
-            case QMessageFilterPrivate::Not:
-            {
-                if (d_ptr->nonContainerFiltersAreEmpty()) {
-                    // ~F
-                    result.d_ptr->_standardFoldersInclude = d_ptr->_standardFoldersExclude;
-                    result.d_ptr->_standardFoldersExclude = d_ptr->_standardFoldersInclude;
-                    result.d_ptr->_accountsInclude = d_ptr->_accountsExclude;
-                    result.d_ptr->_accountsExclude = d_ptr->_accountsInclude;
-                    break;
-                }
-                //~(F&A) -> ~F|~A  Identity case
-                //~(F&~A) -> ~F|~~A -> ~F|A  Not case
-                result.d_ptr->_operator = QMessageFilterPrivate::Or;
-                result.d_ptr->_left = new QMessageFilter();
-                // Find ~F, swap includes and excludes
-                result.d_ptr->_left->d_ptr->_standardFoldersInclude = d_ptr->_standardFoldersExclude;
-                result.d_ptr->_left->d_ptr->_standardFoldersExclude = d_ptr->_standardFoldersInclude;
-                result.d_ptr->_left->d_ptr->_accountsInclude = d_ptr->_accountsExclude;
-                result.d_ptr->_left->d_ptr->_accountsExclude = d_ptr->_accountsInclude;
-                // Find ~A or ~~A
-                result.d_ptr->_right = new QMessageFilter(~d_ptr->nonContainerFiltersPart());
-                result.d_ptr->_complex = true;
-                break;
-            }
-            case QMessageFilterPrivate::And: // fall through
-            case QMessageFilterPrivate::Nand: // fall through
-            case QMessageFilterPrivate::Or: // fall through
-            case QMessageFilterPrivate::Nor:
-            {
-                // Find ~(F&(A?B)), where F is non-native filter part, A and B are native filters, and '?' is a boolean operator
-                // ~(F&(A?B) -> ~F|~(A?B)
-                QMessageFilter result;
-                QMessageFilter resultL;
-                QMessageFilter resultR;
-                result.d_ptr->_operator = QMessageFilterPrivate::Or;
-                result.d_ptr->_left = &resultL;
-                result.d_ptr->_right = &resultR;
-                result.d_ptr->_complex = true;
-                // Find ~F swap inclusion and exclusions
-                resultL.d_ptr->_left->d_ptr->_standardFoldersInclude = d_ptr->_standardFoldersExclude;
-                resultL.d_ptr->_left->d_ptr->_standardFoldersExclude = d_ptr->_standardFoldersInclude;
-                resultL.d_ptr->_left->d_ptr->_accountsInclude = d_ptr->_accountsExclude;
-                resultL.d_ptr->_left->d_ptr->_accountsExclude = d_ptr->_accountsInclude;
-                // Use DeMorgan's law to find ~(A?B)
-                if (d_ptr->_operator == QMessageFilterPrivate::And) {
-                    //~(F&(A&B)) -> ~F|(~A|~B)
-                    resultR.d_ptr->_operator = QMessageFilterPrivate::Or;
-                    resultR.d_ptr->_left = new QMessageFilter(~*d_ptr->_left);
-                    resultR.d_ptr->_right = new QMessageFilter(~*d_ptr->_right);
-                } else if (d_ptr->_operator == QMessageFilterPrivate::Nand) {
-                    //~(F&~(A&B)) -> ~F|(A&B)
-                    resultR.d_ptr->_operator = QMessageFilterPrivate::And;
-                    resultR.d_ptr->_left = new QMessageFilter(*d_ptr->_left);
-                    resultR.d_ptr->_right = new QMessageFilter(*d_ptr->_right);
-                } else if (d_ptr->_operator == QMessageFilterPrivate::Or) {
-                    //~(F&(A|B)) -> ~F|(~A&~B)
-                    resultR.d_ptr->_operator = QMessageFilterPrivate::And;
-                    resultR.d_ptr->_left = new QMessageFilter(~*d_ptr->_left);
-                    resultR.d_ptr->_right = new QMessageFilter(~*d_ptr->_right);
-                } else if (d_ptr->_operator == QMessageFilterPrivate::Nor) {
-                    //~(F&~(A|B)) -> ~F|(A|B)
-                    resultR.d_ptr->_operator = QMessageFilterPrivate::Or;
-                    resultR.d_ptr->_left = new QMessageFilter(*d_ptr->_left);
-                    resultR.d_ptr->_right = new QMessageFilter(*d_ptr->_right);
-                }
-                break;
-            }
-            default: 
-            {
-                qWarning() << "Unhandled filter negation case.";
-                break;
-            }
+        QMessageFilter tmp;
+        result = ~QMessageFilter();
+        if (!d_ptr->_standardFoldersInclude.isEmpty() || !d_ptr->_standardFoldersExclude.isEmpty()) {
+            tmp.d_ptr->_standardFoldersInclude = d_ptr->_standardFoldersExclude;
+            tmp.d_ptr->_standardFoldersExclude = d_ptr->_standardFoldersInclude;
+            result |= tmp;
+            tmp = QMessageFilter();
         }
+        if (!d_ptr->_accountsInclude.isEmpty() || !d_ptr->_accountsExclude.isEmpty()) {
+            tmp.d_ptr->_accountsInclude = d_ptr->_accountsExclude;
+            tmp.d_ptr->_accountsExclude = d_ptr->_accountsInclude;
+            result |= tmp;
+            tmp = QMessageFilter();
+        }
+        if (!d_ptr->_parentInclude.isEmpty() || !d_ptr->_parentExclude.isEmpty()) {
+            tmp.d_ptr->_parentInclude = d_ptr->_parentExclude;
+            tmp.d_ptr->_parentExclude = d_ptr->_parentInclude;
+            result |= tmp;
+            tmp = QMessageFilter();
+        }
+        if (!d_ptr->_ancestorInclude.isEmpty() || !d_ptr->_ancestorExclude.isEmpty()) {
+            tmp.d_ptr->_ancestorInclude = d_ptr->_ancestorExclude;
+            tmp.d_ptr->_ancestorExclude = d_ptr->_ancestorInclude;
+            result |= tmp;
+        }
+        result |= ~d_ptr->nonContainerFiltersPart();
     }
     return result;
 }
@@ -1366,6 +1369,7 @@ const QMessageFilter& QMessageFilter::operator&=(const QMessageFilter& other)
         }
         result.d_ptr->_standardFoldersExclude = this->d_ptr->_standardFoldersExclude;
         result.d_ptr->_standardFoldersExclude |= other.d_ptr->_standardFoldersExclude;
+
         if (this->d_ptr->_accountsInclude.isEmpty()) {
             result.d_ptr->_accountsInclude = other.d_ptr->_accountsInclude;
         } else {
@@ -1381,6 +1385,36 @@ const QMessageFilter& QMessageFilter::operator&=(const QMessageFilter& other)
         result.d_ptr->_accountsExclude = this->d_ptr->_accountsExclude;
         result.d_ptr->_accountsExclude |= other.d_ptr->_accountsExclude;
 
+        if (this->d_ptr->_parentInclude.isEmpty()) {
+            result.d_ptr->_parentInclude = other.d_ptr->_parentInclude;
+        } else {
+            result.d_ptr->_parentInclude = this->d_ptr->_parentInclude;
+            if (!other.d_ptr->_parentInclude.isEmpty()) {
+                result.d_ptr->_parentInclude &= other.d_ptr->_parentInclude;
+                if (result.d_ptr->_parentInclude.isEmpty()) { // non-matching
+                    *this = ~QMessageFilter();
+                    return *this;
+                }
+            }
+        }
+        result.d_ptr->_parentExclude = this->d_ptr->_parentExclude;
+        result.d_ptr->_parentExclude |= other.d_ptr->_parentExclude;
+
+        if (this->d_ptr->_ancestorInclude.isEmpty()) {
+            result.d_ptr->_ancestorInclude = other.d_ptr->_ancestorInclude;
+        } else {
+            result.d_ptr->_ancestorInclude = this->d_ptr->_ancestorInclude;
+            if (!other.d_ptr->_ancestorInclude.isEmpty()) {
+                result.d_ptr->_ancestorInclude &= other.d_ptr->_ancestorInclude;
+                if (result.d_ptr->_ancestorInclude.isEmpty()) { // non-matching
+                    *this = ~QMessageFilter();
+                    return *this;
+                }
+            }
+        }
+        result.d_ptr->_ancestorExclude = this->d_ptr->_ancestorExclude;
+        result.d_ptr->_ancestorExclude |= other.d_ptr->_ancestorExclude;
+
         if (this->d_ptr->nonContainerFiltersPart().isEmpty() 
             || other.d_ptr->nonContainerFiltersPart().isEmpty()) {
             // Degenerate case, empty this or other nonContainerFiltersPart can be thrown away
@@ -1393,6 +1427,10 @@ const QMessageFilter& QMessageFilter::operator&=(const QMessageFilter& other)
             d_ptr->_standardFoldersExclude = result.d_ptr->_standardFoldersExclude;
             d_ptr->_accountsInclude = result.d_ptr->_accountsInclude;
             d_ptr->_accountsExclude = result.d_ptr->_accountsExclude;
+            d_ptr->_parentInclude = result.d_ptr->_parentInclude;
+            d_ptr->_parentExclude = result.d_ptr->_parentExclude;
+            d_ptr->_ancestorInclude = result.d_ptr->_ancestorInclude;
+            d_ptr->_ancestorExclude = result.d_ptr->_ancestorExclude;
         } else {
             QMessageFilter *left(new QMessageFilter(this->d_ptr->nonContainerFiltersPart()));
             QMessageFilter *right(new QMessageFilter(other.d_ptr->nonContainerFiltersPart()));
@@ -1453,6 +1491,10 @@ const QMessageFilter& QMessageFilter::operator|=(const QMessageFilter& other)
         result.d_ptr->_standardFoldersExclude = d_ptr->_standardFoldersExclude;
         result.d_ptr->_accountsInclude = d_ptr->_accountsInclude;
         result.d_ptr->_accountsExclude = d_ptr->_accountsExclude;
+        result.d_ptr->_parentInclude = d_ptr->_parentInclude;
+        result.d_ptr->_parentExclude = d_ptr->_parentExclude;
+        result.d_ptr->_ancestorInclude = d_ptr->_ancestorInclude;
+        result.d_ptr->_ancestorExclude = d_ptr->_ancestorExclude;
         *this = result;
         d_ptr->_left = left;
         d_ptr->_right = right;
@@ -1466,7 +1508,7 @@ const QMessageFilter& QMessageFilter::operator|=(const QMessageFilter& other)
         d_ptr->_left = left;
         d_ptr->_right = right;
         d_ptr->_operator = QMessageFilterPrivate::Or;
-        result.d_ptr->_complex = true;
+        d_ptr->_complex = true;
     }
 
     return *this;
@@ -1481,6 +1523,14 @@ bool QMessageFilter::operator==(const QMessageFilter& other) const
     if (d_ptr->_accountsInclude != other.d_ptr->_accountsInclude)
         return false;
     if (d_ptr->_accountsExclude != other.d_ptr->_accountsExclude)
+        return false;
+    if (d_ptr->_parentInclude != other.d_ptr->_parentInclude)
+        return false;
+    if (d_ptr->_parentExclude != other.d_ptr->_parentExclude)
+        return false;
+    if (d_ptr->_ancestorInclude != other.d_ptr->_ancestorInclude)
+        return false;
+    if (d_ptr->_ancestorExclude != other.d_ptr->_ancestorExclude)
         return false;
     if (d_ptr->_complex != other.d_ptr->_complex)
         return false;
@@ -1887,10 +1937,7 @@ QMessageFilter QMessageFilter::byStandardFolder(QMessage::StandardFolder folder,
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFilter QMessageFilter::byParentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
 {
-    // Not implemented
     QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::ParentFolderId, QVariant(id.toString()), cmp)); // stub
-    // Not natively implementable?, TODO
-    result.d_ptr->_valid = false;
     return result;
 }
 
@@ -1900,17 +1947,12 @@ QMessageFilter QMessageFilter::byParentFolderId(const QMessageFolderFilter &filt
     result.d_ptr->_field = QMessageFilterPrivate::FolderFilter;
     result.d_ptr->_folderFilter = new QMessageFolderFilter(filter);
     result.d_ptr->_comparatorValue = static_cast<int>(cmp);
-    // Not implemented, TODO
-    result.d_ptr->_valid = false;
     return result;
 }
 
 QMessageFilter QMessageFilter::byAncestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp)
 {
-    // Not implemented
     QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::AncestorFolderIds, QVariant(id.toString()), cmp));
-    // Not natively implementable?, TODO
-    result.d_ptr->_valid = false;
     return result;
 }
 
@@ -1920,8 +1962,39 @@ QMessageFilter QMessageFilter::byAncestorFolderIds(const QMessageFolderFilter &f
     result.d_ptr->_field = QMessageFilterPrivate::AncestorFilter;
     result.d_ptr->_folderFilter = new QMessageFolderFilter(filter);
     result.d_ptr->_comparatorValue = static_cast<int>(cmp);
-    // Not implemented, TODO
-    result.d_ptr->_valid = false;
     return result;
+}
+
+void QMessageFilterPrivate::debug(const QMessageFilter &filter, const QString &indent)
+{
+    QString operatorStr;
+    QString fieldStr;
+    QStringList standardFoldersInclude;
+    QStringList standardFoldersExclude;
+    QStringList accountsInclude;
+    QStringList accountsExclude;
+    QStringList fields;
+    fields << "None" << "Id" << "Type" << "Sender" << "SenderName" << "SenderAddress" << "Recipients" << "RecipientName" << "RecipientAddress" << "Subject" << "TimeStamp" << "ReceptionTimeStamp" << "Status" << "Priority" << "Size" << "ParentAccountId" << "ParentFolderId" << "AncestorFolderIds" << "MessageFilter" << "AccountFilter" << "FolderFilter" << "AncestorFilter";
+    QStringList operators;
+    operators << "Identity" << "And" << "Or" << "Not" << "Nand" << "Nor";
+    qDebug() << indent << "field" << fields[filter.d_ptr->_field] << "operator" << operators[filter.d_ptr->_operator] << "complex" << filter.d_ptr->_complex;
+
+    QStringList standards;
+    standards << "InboxFolder" << "OutboxFolder" << "DraftsFolder" << "SentFolder" << "TrashFolder";
+    QStringList sfi, sfe;
+    foreach(QMessage::StandardFolder std, filter.d_ptr->_standardFoldersInclude)
+        sfi.append(standards[std-1]);
+    foreach(QMessage::StandardFolder std, filter.d_ptr->_standardFoldersExclude)
+        sfe.append(standards[std-1]);
+    if (!sfi.isEmpty() || !sfe.isEmpty())
+        qDebug() << indent << "sfi" << sfi << "sfe" << sfe;
+    if (filter.d_ptr->_left) {
+        qDebug() << indent << "left";
+        QMessageFilterPrivate::debug(*filter.d_ptr->_left, indent + " ");
+    }
+    if (filter.d_ptr->_right) {
+        qDebug() << indent << "right";
+        QMessageFilterPrivate::debug(*filter.d_ptr->_right, indent + " ");
+    }
 }
 #endif
