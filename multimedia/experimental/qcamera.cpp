@@ -41,15 +41,15 @@
 
 #include <QDebug>
 
-#include <qcamera.h>
+#include <experimental/qcamera.h>
 
 #include <qmediaobject_p.h>
-#include <qcameracontrol.h>
-#include <qcameraexposurecontrol.h>
-#include <qcamerafocuscontrol.h>
+#include <experimental/qcameracontrol.h>
+#include <experimental/qcameraexposurecontrol.h>
+#include <experimental/qcamerafocuscontrol.h>
 #include <qmediarecordercontrol.h>
-#include <qimageprocessingcontrol.h>
-#include <qimagecapturecontrol.h>
+#include <experimental/qimageprocessingcontrol.h>
+#include <experimental/qimagecapturecontrol.h>
 #include <qvideodevicecontrol.h>
 
 /*!
@@ -59,6 +59,19 @@
     \preliminary
     \brief The QCamera class provides interface for system
     camera devices.
+
+    QCamera can be used with QVideoWidget for viewfinder display
+    and QMediaRecorder for video recording.
+
+    \code
+        camera = new QCamera;
+        viewFinder = new QVideoWidget(camera);
+        viewFinder->show();
+
+        recorder = QMediaRecorder(camera);
+
+        camera->start();
+    \endcode
 */
 
 
@@ -203,6 +216,9 @@ QCamera::Error QCamera::error() const
     return d_func()->error;
 }
 
+/*!
+    Returns a string describing a camera's error state.
+*/
 QString QCamera::errorString() const
 {
     return d_func()->errorString;
@@ -607,6 +623,12 @@ void QCamera::setAutoIsoSensitivity()
 */
 
 /*!
+    \fn QCamera::shutterSpeedChanged(qreal speed)
+
+    Signals that a camera's shutter \a speed has changed.
+*/
+
+/*!
     \property QCamera::isoSensitivity
     \brief ?
 */
@@ -802,7 +824,13 @@ bool QCamera::isReadyForCapture() const
 }
 
 /*!
-    Capture the image and save it to file.
+    \fn QCamera::readyForCaptureChanged(bool ready)
+
+    Signals that a camera's \a ready for capture state has changed.
+*/
+
+/*!
+    Capture the image and save it to \a file.
     This operation is asynchronous in majority of cases,
     followed by signal QCamera::imageCaptured() or error()
 */

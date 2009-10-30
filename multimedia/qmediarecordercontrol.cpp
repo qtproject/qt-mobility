@@ -51,8 +51,21 @@
     \brief The QMediaRecorderControl class provides an abstract class for
     control of media recording.
 
-    \sa QMediaRecorder
+    The interface name of QMediaRecorderControl is \c com.nokia.Qt.QMediaRecorderControl/1.0 as
+    defined in QMediaRecorderControl_iid.
 
+    \sa QMediaService::control(), QMediaRecorder
+
+*/
+
+/*!
+    \macro QMediaRecorderControl_iid
+
+    \c com.nokia.Qt.QMediaRecorderControl/1.0
+
+    Defines the interface name of the QMediaRecorderControl class.
+
+    \relates QMediaRecorderControl
 */
 
 /*!
@@ -73,15 +86,15 @@ QMediaRecorderControl::~QMediaRecorderControl()
 }
 
 /*!
-    \fn QUrl QMediaRecorderControl::sink() const
+    \fn QUrl QMediaRecorderControl::outputLocation() const
 
-    Return the current sink being used.
+    Return the current output location being used.
 */
 
 /*!
-    \fn bool QMediaRecorderControl::setSink(const QUrl &sink)
+    \fn bool QMediaRecorderControl::setOutputLocation(const QUrl &location)
 
-    Returns true if set of sink being used to \a sink is successful.
+    Sets the output \a location and returns if this operation is successful.
 */
 
 /*!

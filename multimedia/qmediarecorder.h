@@ -64,6 +64,7 @@ class Q_MEDIA_EXPORT QMediaRecorder : public QMediaObject
     Q_ENUMS(Error)
     Q_ENUMS(EncodingQuality)
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
+    Q_PROPERTY(QUrl outputLocation READ outputLocation WRITE setOutputLocation)
 public:
 
     enum State
@@ -83,8 +84,8 @@ public:
     QMediaRecorder(QMediaObject *mediaObject, QObject *parent = 0);
     ~QMediaRecorder();
 
-    QUrl sink() const;
-    bool setSink(const QUrl &sink);
+    QUrl outputLocation() const;
+    bool setOutputLocation(const QUrl &location);
 
     State state() const;
 

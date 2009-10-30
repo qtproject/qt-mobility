@@ -42,11 +42,101 @@
 #include "qmediastreamscontrol.h"
 #include "qmediacontrol_p.h"
 
+/*!
+    \class QMediaStreamsControl
+    \preliminary
+    \brief The QMediaStreamsControl class provides a media stream selection control.
+
+    The QMediaStreamsControl class provides descriptions of the available media streams
+    and allows individual streams to be activated and deactivated.
+
+    The interface name of QMediaStreamsControl is \c com.nokia.Qt.MediaStreamsControl as
+    defined in QMediaStreamsControl_iid.
+
+    \sa QMediaService::control()
+*/
+
+/*!
+    \macro QMediaStreamsControl_iid
+
+    \c com.nokia.Qt.MediaStreamsControl
+
+    Defines the interface name of the QMediaStreamsControl class.
+
+    \relates QMediaStreamsControl
+*/
+
+/*!
+    Constructs a new media streams control with the given \a parent.
+*/
 QMediaStreamsControl::QMediaStreamsControl(QObject *parent)
     :QMediaControl(*new QMediaControlPrivate, parent)
 {
 }
 
+/*!
+    Destroys a media streams control.
+*/
 QMediaStreamsControl::~QMediaStreamsControl()
 {
 }
+
+/*!
+  \enum QMediaStreamsControl::StreamType
+
+  Media stream type.
+
+  \value AudioStream Audio stream.
+  \value VideoStream Video stream.
+  \value SubPictureStream Subpicture or teletext stream.
+  \value UnknownStream The stream type is unknown.
+  \value DataStream
+*/
+
+/*!
+    \fn QMediaStreamsControl::streamCount()
+
+    Returns the number of media streams.
+*/
+
+/*!
+    \fn QMediaStreamsControl::streamType(int stream)
+
+    Return the type of a media \a stream.
+*/
+
+/*!
+    \fn QMediaStreamsControl::metaData(int stream, QtMedia::MetaData key)
+
+    Returns the meta-data value of \a key for a given \a stream.
+
+    Useful metadata keya are QtMedia::Title, QtMedia::Description and QtMedia::Language.
+*/
+
+/*!
+    \fn QMediaStreamsControl::isActive(int stream)
+
+    Returns true if the media \a stream is active.
+*/
+
+/*!
+    \fn QMediaStreamsControl::setActive(int stream, bool state)
+
+    Sets the active \a state of a media \a stream.
+
+    Setting the active state of a media stream to true will activate it.  If any other stream
+    of the same type was previously active it will be deactivated. Setting the active state fo a
+    media stream to false will deactivate it.
+*/
+
+/*!
+    \fn QMediaStreamsControl::streamsChanged()
+
+    The signal is emited when the available streams list is changed.
+*/
+
+/*!
+    \fn QMediaStreamsControl::activeStreamsChanged()
+
+    The signal is emited when the active streams list is changed.
+*/

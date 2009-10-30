@@ -39,38 +39,14 @@
 **
 ****************************************************************************/
 
-#ifndef QIMAGECAPTURECONTROL_H
-#define QIMAGECAPTURECONTROL_H
+#include "v4lmediaformatcontrol.h"
 
-#include <qmediacontrol.h>
-
-class QImage;
-
-class Q_MEDIA_EXPORT QImageCaptureControl : public QMediaControl
+V4LMediaFormatControl::V4LMediaFormatControl(QObject *parent)
+    :QMediaFormatControl(parent)
 {
-    Q_OBJECT
-
-public:
-    ~QImageCaptureControl();
-
-    virtual bool isReadyForCapture() const = 0;
-
-    //TODO: what's about raw+jpeg capture?
-    virtual void capture(const QString &fileName) = 0;
-
-Q_SIGNALS:
-    void readyForCaptureChanged(bool);
-
-    //TODO: it would be usefull to receive other image parameters, in addition to preview
-    void imageCaptured(const QString &fileName, const QImage &preview);
-
-protected:
-    QImageCaptureControl(QObject* parent = 0);
-};
-
-#define QImageCaptureControl_iid "com.nokia.Qt.QImageCaptureControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QImageCaptureControl, QImageCaptureControl_iid)
-
-#endif  // QMEDIAPLAYERCONTROL_H
+    m_format = "mpeg";
+    m_supportedFormats.append("mpeg");
+    setFormat(m_supportedFormats[0]);
+}
 
 

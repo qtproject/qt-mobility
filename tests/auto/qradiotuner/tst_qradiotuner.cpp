@@ -344,6 +344,10 @@ void tst_QRadioTuner::testNullControl()
     }
     QCOMPARE(radio.isStereo(), false);
     QCOMPARE(radio.stereoMode(), QRadioTuner::Auto);
+
+    radio.setStereoMode(QRadioTuner::ForceStereo);
+    QCOMPARE(radio.stereoMode(), QRadioTuner::Auto);
+
     QCOMPARE(radio.signalStrength(), 0);
 
     QCOMPARE(radio.volume(), 0);

@@ -39,35 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QCAMERACONTROL_H
-#define QCAMERACONTROL_H
 
-#include <qmediacontrol.h>
-#include <qmediaobject.h>
+#ifndef DSIMAGECAPTURECONTROL_H
+#define DSIMAGECAPTURECONTROL_H
 
-#include <qcamera.h>
+#include <experimental/qimagecapturecontrol.h>
+#include "dscamerasession.h"
 
-class Q_MEDIA_EXPORT QCameraControl : public QMediaControl
+class DSImageCaptureControl : public QImageCaptureControl
 {
     Q_OBJECT
-
 public:
-    ~QCameraControl();
+    DSImageCaptureControl(DSCameraSession *session);
+    virtual ~DSImageCaptureControl();
 
-    virtual void start() = 0;
-    virtual void stop() = 0;
-    virtual QCamera::State state() const = 0;
+    bool isReadyForCapture() const;
+    void capture(const QString &fileName);
 
-Q_SIGNALS:
-    void stateChanged(QCamera::State);
-    void error(int error, const QString &errorString);
+private slots:
+    void updateState();
 
-protected:
-    QCameraControl(QObject* parent = 0);
+private:
+    DSCameraSession *m_session;
+    bool m_ready;
 };
 
-#define QCameraControl_iid "com.nokia.Qt.QCameraControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QCameraControl, QCameraControl_iid)
-
-#endif  // QCAMERACONTROL_H
-
+#endif // DSCAPTURECONTROL_H

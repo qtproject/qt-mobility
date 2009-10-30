@@ -148,8 +148,8 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#focusStatusChanged">focusStatusChanged</a></b> ( QCamera::FocusStatus <i>status</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#imageCaptured">imageCaptured</a></b> ( const QString &amp; <i>fileName</i>, const QImage &amp; <i>preview</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#isoSensitivityChanged">isoSensitivityChanged</a></b> ( int <i>value</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#readyForCaptureChanged">readyForCaptureChanged</a></b> ( bool )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#shutterSpeedChanged">shutterSpeedChanged</a></b> ( qreal )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#readyForCaptureChanged">readyForCaptureChanged</a></b> ( bool <i>ready</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#shutterSpeedChanged">shutterSpeedChanged</a></b> ( qreal <i>speed</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#stateChanged">stateChanged</a></b> ( QCamera::State <i>state</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#zoomValueChanged">zoomValueChanged</a></b> ( qreal <i>value</i> )</td></tr>
 </table>
@@ -178,6 +178,14 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QCamera class provides interface for system camera devices.</p>
+<p>QCamera can be used with <a href="qvideowidget.html">QVideoWidget</a> for viewfinder display and <a href="qmediarecorder.html">QMediaRecorder</a> for video recording.</p>
+<pre>    camera = new QCamera;
+    viewFinder = new QVideoWidget(camera);
+    viewFinder-&gt;show();
+
+    recorder = QMediaRecorder(camera);
+
+    camera-&gt;start();</pre>
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="Error-enum"></a>enum QCamera::Error</h3>
@@ -302,7 +310,7 @@
 </table>
 <p><b>Notifier signal:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#readyForCaptureChanged">readyForCaptureChanged</a></b> ( bool )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#readyForCaptureChanged">readyForCaptureChanged</a></b> ( bool <i>ready</i> )</td></tr>
 </table>
 <h3 class="fn"><a name="shutterSpeed-prop"></a>shutterSpeed : <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a></h3>
 <p>This property holds ?.</p>
@@ -313,7 +321,7 @@
 </table>
 <p><b>Notifier signal:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#shutterSpeedChanged">shutterSpeedChanged</a></b> ( qreal )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#shutterSpeedChanged">shutterSpeedChanged</a></b> ( qreal <i>speed</i> )</td></tr>
 </table>
 <h3 class="fn"><a name="state-prop"></a>state : const <a href="qcamera.html#State-enum">QCamera::State</a></h3>
 <p>This property holds the current state of the camera object.</p>
@@ -340,7 +348,7 @@
 <h3 class="fn"><a name="availableDevices"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a>&gt; QCamera::availableDevices ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a list of camera device's available from the default service provider.</p>
 <h3 class="fn"><a name="capture"></a>void QCamera::capture ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>file</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<p>Capture the image and save it to file. This operation is asynchronous in majority of cases, followed by signal <a href="qcamera.html#imageCaptured">QCamera::imageCaptured</a>() or <a href="qcamera.html#error">error</a>()</p>
+<p>Capture the image and save it to <i>file</i>. This operation is asynchronous in majority of cases, followed by signal <a href="qcamera.html#imageCaptured">QCamera::imageCaptured</a>() or <a href="qcamera.html#error">error</a>()</p>
 <h3 class="fn"><a name="deviceDescription"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QCamera::deviceDescription ( const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>device</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the description of the <i>device</i>.</p>
 <h3 class="fn"><a name="error"></a><a href="qcamera.html#Error-enum">Error</a> QCamera::error () const</h3>
@@ -348,6 +356,7 @@
 <h3 class="fn"><a name="error-2"></a>void QCamera::error ( <a href="qcamera.html#Error-enum">QCamera::Error</a> <i>value</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted when error state changes to <i>value</i>.</p>
 <h3 class="fn"><a name="errorString"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QCamera::errorString () const</h3>
+<p>Returns a string describing a camera's error state.</p>
 <h3 class="fn"><a name="exposureCompensation"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QCamera::exposureCompensation () const</h3>
 <p>Returns the exposure compensation.</p>
 <p>See also <a href="qcamera.html#setExposureCompensation">setExposureCompensation</a>().</p>
@@ -413,7 +422,8 @@
 <p>Returns the smallest supported ISO sensitivity.</p>
 <h3 class="fn"><a name="minimumShutterSpeed"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QCamera::minimumShutterSpeed () const</h3>
 <p>Returns the smallest supported shutter speed.</p>
-<h3 class="fn"><a name="readyForCaptureChanged"></a>void QCamera::readyForCaptureChanged ( bool )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="readyForCaptureChanged"></a>void QCamera::readyForCaptureChanged ( bool <i>ready</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that a camera's <i>ready</i> for capture state has changed.</p>
 <h3 class="fn"><a name="setAutoAperture"></a>void QCamera::setAutoAperture ()</h3>
 <p>Turn on auto aperture</p>
 <h3 class="fn"><a name="setAutoIsoSensitivity"></a>void QCamera::setAutoIsoSensitivity ()</h3>
@@ -444,7 +454,8 @@
 <h3 class="fn"><a name="setWhiteBalanceMode"></a>void QCamera::setWhiteBalanceMode ( <a href="qcamera.html#WhiteBalanceMode-enum">WhiteBalanceMode</a> <i>mode</i> )</h3>
 <p>Sets the white balance to <i>mode</i>.</p>
 <p>See also <a href="qcamera.html#whiteBalanceMode">whiteBalanceMode</a>().</p>
-<h3 class="fn"><a name="shutterSpeedChanged"></a>void QCamera::shutterSpeedChanged ( <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="shutterSpeedChanged"></a>void QCamera::shutterSpeedChanged ( <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> <i>speed</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that a camera's shutter <i>speed</i> has changed.</p>
 <h3 class="fn"><a name="start"></a>void QCamera::start ()</h3>
 <p>Starts the camera.</p>
 <p>This can involve powering up the camera device and can be asynchronyous.</p>

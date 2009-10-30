@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qcameraexposurecontrol.h>
+#include <experimental/qcameraexposurecontrol.h>
 #include  "qmediacontrol_p.h"
 
 /*!
@@ -50,7 +50,20 @@
     \brief The QCameraExposureControl class supplies control for exposure
     related camera parameters.
 
-    \sa QCamera
+    The interface name of QCameraExposureControl is \c com.nokia.Qt.QCameraExposureControl/1.0 as
+    defined in QCameraExposureControl_iid.
+
+    \sa QMediaService::control(), QCamera
+*/
+
+/*!
+    \macro QCameraExposureControl_iid
+
+    \c com.nokia.Qt.QCameraExposureControl/1.0
+
+    Defines the interface name of the QCameraExposureControl class.
+
+    \relates QCameraExposureControl
 */
 
 /*!
@@ -250,6 +263,12 @@ Set the metering mode to \a mode.
   \fn qreal QCameraExposureControl::shutterSpeed() const
 
   Returns the shutter speed
+*/
+
+/*!
+    \fn qreal QCameraExposureControl::minimumShutterSpeed() const
+
+    Returns the maximum shutter speed.
 */
 
 /*!

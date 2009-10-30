@@ -42,14 +42,14 @@
 #include <QtTest/QtTest>
 #include <QDebug>
 
-#include <qcameracontrol.h>
-#include <qcameraexposurecontrol.h>
-#include <qcamerafocuscontrol.h>
-#include <qimagecapturecontrol.h>
+#include <experimental/qcameracontrol.h>
+#include <experimental/qcameraexposurecontrol.h>
+#include <experimental/qcamerafocuscontrol.h>
+#include <experimental/qimagecapturecontrol.h>
 #include <qimageencodercontrol.h>
-#include <qimageprocessingcontrol.h>
+#include <experimental/qimageprocessingcontrol.h>
 #include <qmediaservice.h>
-#include <qcamera.h>
+#include <experimental/qcamera.h>
 
 
 class MockCameraControl : public QCameraControl

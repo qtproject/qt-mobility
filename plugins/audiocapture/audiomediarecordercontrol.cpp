@@ -56,14 +56,14 @@ AudioMediaRecorderControl::~AudioMediaRecorderControl()
 {
 }
 
-QUrl AudioMediaRecorderControl::sink() const
+QUrl AudioMediaRecorderControl::outputLocation() const
 {
-    return m_session->sink();
+    return m_session->outputLocation();
 }
 
-bool AudioMediaRecorderControl::setSink(const QUrl& sink)
+bool AudioMediaRecorderControl::setOutputLocation(const QUrl& sink)
 {
-    return m_session->setSink(sink);
+    return m_session->setOutputLocation(sink);
 }
 
 QMediaRecorder::State AudioMediaRecorderControl::state() const

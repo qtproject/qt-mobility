@@ -178,7 +178,6 @@ public:
     void setAudioSettings(const QAudioEncoderSettings &settings) { m_audioSettings = settings; }
 
     QList<int> supportedSampleRates() const { return QList<int>() << 44100; }
-    QList<int> supportedChannelCounts() const { return QList<int>() << 2; }
 
     QStringList supportedAudioCodecs() const
     {
@@ -294,12 +293,12 @@ public:
     m_state(QMediaRecorder::StoppedState),
     m_position(0) {}
 
-    QUrl sink() const
+    QUrl outputLocation() const
     {
         return m_sink;
     }
 
-    bool setSink(const QUrl &sink)
+    bool setOutputLocation(const QUrl &sink)
     {
         m_sink = sink;
         return true;
@@ -460,7 +459,7 @@ void tst_QMediaRecorder::testNullService()
     MockObject object(0, 0);
     QMediaRecorder recorder(&object);
 
-    QCOMPARE(recorder.sink(), QUrl());
+    QCOMPARE(recorder.outputLocation(), QUrl());
     QCOMPARE(recorder.state(), QMediaRecorder::StoppedState);
     QCOMPARE(recorder.error(), QMediaRecorder::NoError);
     QCOMPARE(recorder.duration(), qint64(0));
@@ -474,6 +473,9 @@ void tst_QMediaRecorder::testNullService()
     QCOMPARE(recorder.minimumResolution(), QSize());
     QCOMPARE(recorder.maximumResolution(), QSize());
     QCOMPARE(recorder.supportedResolutions(), QList<QSize>());
+    QCOMPARE(recorder.minimumFrameRate(), qreal(0.0));
+    QCOMPARE(recorder.maximumFrameRate(), qreal(0.0));
+    QCOMPARE(recorder.supportedFrameRates(), QList<qreal>());
     QCOMPARE(recorder.audioSettings(), QAudioEncoderSettings());
     QCOMPARE(recorder.videoSettings(), QVideoEncoderSettings());
     QCOMPARE(recorder.format(), QString());
@@ -488,7 +490,7 @@ void tst_QMediaRecorder::testNullControls()
     MockObject object(0, &service);
     QMediaRecorder recorder(&object);
 
-    QCOMPARE(recorder.sink(), QUrl());
+    QCOMPARE(recorder.outputLocation(), QUrl());
     QCOMPARE(recorder.state(), QMediaRecorder::StoppedState);
     QCOMPARE(recorder.error(), QMediaRecorder::NoError);
     QCOMPARE(recorder.duration(), qint64(0));
@@ -502,9 +504,15 @@ void tst_QMediaRecorder::testNullControls()
     QCOMPARE(recorder.minimumResolution(), QSize());
     QCOMPARE(recorder.maximumResolution(), QSize());
     QCOMPARE(recorder.supportedResolutions(), QList<QSize>());
+    QCOMPARE(recorder.minimumFrameRate(), qreal(0.0));
+    QCOMPARE(recorder.maximumFrameRate(), qreal(0.0));
+    QCOMPARE(recorder.supportedFrameRates(), QList<qreal>());
     QCOMPARE(recorder.audioSettings(), QAudioEncoderSettings());
     QCOMPARE(recorder.videoSettings(), QVideoEncoderSettings());
     QCOMPARE(recorder.format(), QString());
+
+    recorder.setOutputLocation(QUrl("file://test/save/file.mp4"));
+    QCOMPARE(recorder.outputLocation(), QUrl());
 
     QAudioEncoderSettings audio;
     audio.setCodec(id);
@@ -556,8 +564,8 @@ void tst_QMediaRecorder::testError()
 
 void tst_QMediaRecorder::testSink()
 {
-    capture->setSink(QUrl("test.tmp"));
-    QUrl s = capture->sink();
+    capture->setOutputLocation(QUrl("test.tmp"));
+    QUrl s = capture->outputLocation();
     QCOMPARE(s.toString(), QString("test.tmp"));
 }
 
@@ -580,6 +588,9 @@ void tst_QMediaRecorder::testRecord()
     QVERIFY(capture->state() == QMediaRecorder::StoppedState);
     QTestEventLoop::instance().enterLoop(1);
     QVERIFY(stateSignal.count() == 3);
+    mock->stop();
+    QVERIFY(stateSignal.count() == 3);
+
 }
 
 void tst_QMediaRecorder::testAudioDeviceControl()
@@ -605,6 +616,7 @@ void tst_QMediaRecorder::testAudioEncodeControl()
     QVERIFY(encode->encodingOption("audio/mpeg","bitrate").isNull());
     encode->setEncodingOption("audio/mpeg", "bitrate", QString("vbr"));
     QCOMPARE(encode->encodingOption("audio/mpeg","bitrate").toString(), QString("vbr"));
+    QCOMPARE(capture->supportedAudioSampleRates(), QList<int>() << 44100);
 }
 
 void tst_QMediaRecorder::testMediaFormatsControl()
@@ -836,9 +848,9 @@ void tst_QMediaRecorder::testVideoSettings()
     settings = QVideoEncoderSettings();
     QCOMPARE(settings.frameRate(), qreal());
     settings.setFrameRate(30000.0/10001);
-    QVERIFY(qFuzzyCompare(settings.frameRate(),qreal(30000.0/10001)));
+    QVERIFY(qFuzzyCompare(settings.frameRate(), qreal(30000.0/10001)));
     settings.setFrameRate(24.0);
-    QVERIFY(qFuzzyCompare(settings.frameRate(),qreal(24.0)));
+    QVERIFY(qFuzzyCompare(settings.frameRate(), qreal(24.0)));
     QVERIFY(!settings.isNull());
 
     settings = QVideoEncoderSettings();

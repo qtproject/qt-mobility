@@ -65,7 +65,20 @@
     \ingroup multimedia
 
     \preliminary
-    \brief The QMediaRecorder class provides a media recording service.
+    \brief The QMediaRecorder class is used for the recording of media content.
+
+    The QMediaRecorder class is a high level media recording class.
+    It's not intended to be used alone but for accessing the media
+    recording functions of other media objects, like QRadioTuner,
+    QCamera or QAudioCaptureSource.
+
+    \code
+    audioSource = new QAudioCaptureSource;
+    recorder = new QMediaRecorder(audioSource);
+
+    recorder->setOutputLocation(QUrl::fromLocalFile(fileName));
+    recorder->record();
+    \endcode
 
     \sa
 */
@@ -175,26 +188,36 @@ QMediaRecorder::~QMediaRecorder()
 }
 
 /*!
-    Returns the sink being used.
+    \property QMediaRecorder::outputLocation
+    \brief Destination location of media content.
 */
 
-QUrl QMediaRecorder::sink() const
+/*!
+    Returns the output location being used.
+*/
+
+QUrl QMediaRecorder::outputLocation() const
 {
-    return d_func()->control ? d_func()->control->sink() : QUrl();
+    return d_func()->control ? d_func()->control->outputLocation() : QUrl();
 }
 
 /*!
-    Returns true if set of sink being used to \a sink is successful.
+    Sets the output \a location and returns true if this operation was successful.
+    Setting the location can fail for example when the service supports
+    only local file system locations while the network url was passed,
+    or the service doesn't support media recording.
 */
 
-bool QMediaRecorder::setSink(const QUrl &sink)
+bool QMediaRecorder::setOutputLocation(const QUrl &location)
 {
     Q_D(QMediaRecorder);
-    return d->control ? d->control->setSink(sink) : false;
+    return d->control ? d->control->setOutputLocation(location) : false;
 }
 
 /*!
-    Return the current state.
+    Return the current media recorder state.
+
+    \sa QMediaRecorder::State
 */
 
 QMediaRecorder::State QMediaRecorder::state() const
@@ -204,6 +227,8 @@ QMediaRecorder::State QMediaRecorder::state() const
 
 /*!
     Return the current error state.
+
+    \sa QMediaRecorder::Error
 */
 
 QMediaRecorder::Error QMediaRecorder::error() const
@@ -225,10 +250,6 @@ QString QMediaRecorder::errorString() const
     \brief Recorded media duration in milliseconds.
 */
 
-/*!
-    Return the current duration in milliseconds.
-*/
-
 qint64 QMediaRecorder::duration() const
 {
     return d_func()->control ? d_func()->control->duration() : 0;
@@ -236,7 +257,7 @@ qint64 QMediaRecorder::duration() const
 
 
 /*!
-  Returns the list of supported container formats.
+  Returns the list of supported container format MIME types.
 */
 QStringList QMediaRecorder::supportedFormats() const
 {
@@ -282,7 +303,7 @@ QString QMediaRecorder::audioCodecDescription(const QString &codec) const
 }
 
 /*!
-    Returns a list of available audio sample rates.
+    Returns a list of supported audio sample rates.
 */
 
 QList<int> QMediaRecorder::supportedAudioSampleRates() const

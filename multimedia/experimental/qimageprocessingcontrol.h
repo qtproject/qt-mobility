@@ -39,21 +39,47 @@
 **
 ****************************************************************************/
 
-#include <qimagecapturecontrol.h>
-#include <QtCore/qstringlist.h>
+#ifndef QIMAGEPROCESSINGCONTROL_H
+#define QIMAGEPROCESSINGCONTROL_H
 
-/*!
-  Create a new image capture control object with the given \a parent
-*/
-QImageCaptureControl::QImageCaptureControl(QObject *parent)
-    :QMediaControl(parent)
-{
-}
+#include <qmediacontrol.h>
+#include <qmediaobject.h>
 
-/*!
-  Destroys the image encode control.
-*/
-QImageCaptureControl::~QImageCaptureControl()
+#include <experimental/qcamera.h>
+
+class Q_MEDIA_EXPORT QImageProcessingControl : public QMediaControl
 {
-}
+    Q_OBJECT
+
+public:
+    ~QImageProcessingControl();
+
+    virtual QCamera::WhiteBalanceMode whiteBalanceMode() const = 0;
+    virtual void setWhiteBalanceMode(QCamera::WhiteBalanceMode mode) = 0;
+    virtual QCamera::WhiteBalanceModes supportedWhiteBalanceModes() const = 0;
+    virtual int manualWhiteBalance() const = 0;
+    virtual void setManualWhiteBalance(int colorTemperature) = 0;
+
+    virtual qreal contrast() const = 0;
+    virtual void setContrast(qreal value) = 0;
+
+    virtual qreal saturation() const = 0;
+    virtual void setSaturation(qreal value) = 0;
+
+    virtual bool isSharpeningSupported() const = 0;
+    virtual qreal sharpeningLevel() const = 0;
+    virtual void setSharpeningLevel(qreal value) = 0;
+
+    virtual bool isDenoisingSupported() const = 0;
+    virtual qreal denoisingLevel() const = 0;
+    virtual void setDenoisingLevel(qreal value) = 0;
+
+protected:
+    QImageProcessingControl(QObject* parent = 0);
+};
+
+#define QImageProcessingControl_iid "com.nokia.Qt.QImageProcessingControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QImageProcessingControl, QImageProcessingControl_iid)
+
+#endif
 

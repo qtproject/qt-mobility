@@ -39,52 +39,64 @@
 **
 ****************************************************************************/
 
-#ifndef QCAMERAFOCUSCONTROL_H
-#define QCAMERAFOCUSCONTROL_H
+#include "v4lrecordercontrol.h"
+#include <QtCore/QDebug>
 
-#include <qmediacontrol.h>
-#include <qmediaobject.h>
-
-#include <qcamera.h>
-
-class Q_MEDIA_EXPORT QCameraFocusControl : public QMediaControl
+V4LRecorderControl::V4LRecorderControl(V4LCameraSession *session)
+    :QMediaRecorderControl(session), m_session(session), m_state(QMediaRecorder::StoppedState)
 {
-    Q_OBJECT
+    connect(m_session, SIGNAL(stateChanged(QMediaRecorder::State)), SLOT(updateState(QMediaRecorder::State)));
+    //connect(m_session, SIGNAL(error(int,QString)), SIGNAL(error(int,QString)));
+    //connect(m_session, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
+}
 
-public:
-    ~QCameraFocusControl();
+V4LRecorderControl::~V4LRecorderControl()
+{
+}
 
-    virtual QCamera::FocusMode focusMode() const = 0;
-    virtual void setFocusMode(QCamera::FocusMode mode) = 0;
-    virtual QCamera::FocusModes supportedFocusModes() const = 0;
-    virtual QCamera::FocusStatus focusStatus() const = 0;
+QUrl V4LRecorderControl::outputLocation() const
+{
+    return m_session->outputLocation();
+}
 
-    virtual bool macroFocusingEnabled() const = 0;
-    virtual bool isMacroFocusingSupported() const = 0;
-    virtual void setMacroFocusingEnabled(bool) = 0;
+bool V4LRecorderControl::setOutputLocation(const QUrl &sink)
+{
+    m_session->setOutputLocation(sink);
+    return true;
+}
 
-    virtual qreal maximumOpticalZoom() const = 0;
-    virtual qreal maximumDigitalZoom() const = 0;
-    virtual qreal zoomValue() const = 0;
-    virtual void zoomTo(qreal value) = 0;
 
-    virtual bool isFocusLocked() const = 0;
+QMediaRecorder::State V4LRecorderControl::state() const
+{
+    return m_session->state();
+}
 
-public Q_SLOTS:
-    virtual void lockFocus() = 0;
-    virtual void unlockFocus() = 0;
+void V4LRecorderControl::updateState(QMediaRecorder::State newState)
+{
+    if (m_state != newState) {
+        m_state = newState;
+        emit stateChanged(m_state);
+    }
+}
 
-Q_SIGNALS:
-    void zoomValueChanged(qreal);
-    void focusStatusChanged(QCamera::FocusStatus);
-    void focusLocked();
+qint64 V4LRecorderControl::duration() const
+{
+    return m_session->position();
+}
 
-protected:
-    QCameraFocusControl(QObject* parent = 0);
-};
+void V4LRecorderControl::record()
+{
+    m_session->previewMode(true);
+    m_session->captureToFile(true);
+    m_session->record();
+}
 
-#define QCameraFocusControl_iid "com.nokia.Qt.QCameraFocusingControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QCameraFocusControl, QCameraFocusControl_iid)
+void V4LRecorderControl::pause()
+{
+    m_session->pause();
+}
 
-#endif  // QCAMERAFOCUSCONTROL_H
-
+void V4LRecorderControl::stop()
+{
+    m_session->stop();
+}

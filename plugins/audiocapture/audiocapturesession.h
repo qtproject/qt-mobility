@@ -71,8 +71,8 @@ public:
     bool setAudioCodec(const QString &codecName);
     QString audioCodec() const;
 
-    QUrl sink() const;
-    bool setSink(const QUrl& sink);
+    QUrl outputLocation() const;
+    bool setOutputLocation(const QUrl& sink);
     qint64 position() const;
     int state() const;
     void record();
@@ -99,6 +99,47 @@ private:
     QAudioDeviceInfo *m_deviceInfo;
     QAudioFormat m_format;
     qint64 m_position;
+    bool wavFile;
+
+    // WAV header stuff
+
+    struct chunk
+    {
+        char        id[4];
+        quint32     size;
+    };
+
+    struct RIFFHeader
+    {
+        chunk       descriptor;
+        char        type[4];
+    };
+
+    struct WAVEHeader
+    {
+        chunk       descriptor;
+        quint16     audioFormat;        // PCM = 1
+        quint16     numChannels;
+        quint32     sampleRate;
+        quint32     byteRate;
+        quint16     blockAlign;
+        quint16     bitsPerSample;
+    };
+
+    struct DATAHeader
+    {
+        chunk       descriptor;
+        quint8      data[];
+    };
+
+    struct CombinedHeader
+    {
+        RIFFHeader  riff;
+        WAVEHeader  wave;
+        DATAHeader  data;
+    };
+
+    CombinedHeader      header;
 };
 
 #endif

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qimageprocessingcontrol.h>
+#include <experimental/qimageprocessingcontrol.h>
 #include  "qmediacontrol_p.h"
 
 /*!
@@ -52,7 +52,20 @@
     for controling image processing parameters, like white balance,
     contrast, saturation, sharpening and denoising.
     
-    \sa QMediaService, QCamera
+    The interface name of QImageProcessingControl is \c com.nokia.Qt.QImageProcessingControl/1.0 as
+    defined in QImageProcessingControl_iid.
+
+    \sa QMediaService::control(), QCamera
+*/
+
+/*!
+    \macro QImageProcessingControl_iid
+
+    \c com.nokia.Qt.QImageProcessingControl/1.0
+
+    Defines the interface name of the QImageProcessingControl class.
+
+    \relates QImageProcessingControl
 */
 
 /*!
@@ -129,8 +142,22 @@ QImageProcessingControl::~QImageProcessingControl()
 */
 
 /*!
-    \fn QImageProcessingControl::setSharpeningLevel(qreal value)
-    Set sharpening level to \a value.
+    \fn QImageProcessingControl::setDenoisingLevel(qreal level)
+
+    Sets the denoising \a level.
+*/
+
+/*!
+    \fn QImageProcessingControl::isSharpeningSupported() const
+
+    Identifies if sharpening is supported.
+
+    Returns true if sharpening is supported; and false if it is not.
+*/
+
+/*!
+    \fn QImageProcessingControl::setSharpeningLevel(qreal level)
+    Sets the sharpening \a level.
 */
 
 /*!

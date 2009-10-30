@@ -54,6 +54,7 @@ class Q_MEDIA_EXPORT QMediaImageViewer : public QMediaObject
     Q_PROPERTY(MediaStatus mediaStatus READ mediaStatus NOTIFY mediaStatusChanged)
     Q_PROPERTY(QMediaContent media READ media WRITE setMedia NOTIFY mediaChanged)
     Q_PROPERTY(int timeout READ timeout WRITE setTimeout)
+    Q_PROPERTY(int elapsedTime READ elapsedTime NOTIFY elapsedTimeChanged)
     Q_ENUMS(State MediaStatus)
 
 public:
@@ -81,6 +82,7 @@ public:
     QMediaContent media() const;
 
     int timeout() const;
+    int elapsedTime() const;
 
     void bind(QObject *);
 
@@ -97,13 +99,15 @@ Q_SIGNALS:
     void stateChanged(QMediaImageViewer::State state);
     void mediaStatusChanged(QMediaImageViewer::MediaStatus status);
     void mediaChanged(const QMediaContent &media);
+    void elapsedTimeChanged(int time);
 protected:
     void timerEvent(QTimerEvent *event);
 
 private:
     Q_DECLARE_PRIVATE(QMediaImageViewer)
+    Q_PRIVATE_SLOT(d_func(), void _q_mediaStatusChanged(QMediaImageViewer::MediaStatus))
     Q_PRIVATE_SLOT(d_func(), void _q_playlistMediaChanged(const QMediaContent &))
-    Q_PRIVATE_SLOT(d_func(), void _q_playlistDestroyed(QObject *))
+    Q_PRIVATE_SLOT(d_func(), void _q_playlistDestroyed())
 };
 
 #endif

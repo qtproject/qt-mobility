@@ -42,6 +42,36 @@
 #include <qvideooutputcontrol.h>
 
 /*!
+    \class QVideoOutputControl
+    \preliminary
+    \brief The QVideoOutputControl class provides a means of selecting the active video output
+    control.
+
+    There are multiple controls which a QMediaService may use to output video ony one of which
+    may be active at one time, QVideoOutputControl is the means by which this active control is
+    selected.
+
+    The possible output controls are QVideoRendererControl, QVideoWindowControl, and
+    QVideoWidgetControl.
+
+    The interface name of QVideoOutputControl is \c com.nokia.Qt.QVideoOutputControl/1.0 as
+    defined in QVideoOutputControl_iid.
+
+    \sa QMediaService::control(), QVideoWidget, QVideoRendererControl, QVideoWindowControl,
+    QVideoWidgetControl
+*/
+
+/*!
+    \macro QVideoOutputControl_iid
+
+    \c com.nokia.Qt.QVideoOutputControl/1.0
+
+    Defines the interface name of the QVideoOutputControl class.
+
+    \relates QVideoOutputControl
+*/
+
+/*!
     \enum QVideoOutputControl::Output
 
     Identifies the possible render targets of a video output.
@@ -49,6 +79,7 @@
     \value NoOutput Video is not rendered.
     \value WindowOutput Video is rendered to the target of a QVideoWindowControl.
     \value RendererOutput Video is rendered to the target of a QVideoRendererControl.
+    \value WidgetOutput Video is rendered to a QWidget provided by QVideoWidgetControl.
     \value UserOutput Start value for user defined video targets.
     \value MaxUserOutput End value for user defined video targets.
 */

@@ -97,12 +97,31 @@ void QGraphicsVideoItemPrivate::_q_serviceDestroyed()
     \class QGraphicsVideoItem
 
     \brief The QGraphicsVideoItem class provides a graphics item which display video produced by a
-    media object.
+    QMediaObject.
+
+    Attaching a QGraphicsVideoItem to a QMediaObject allows it to display the video or image output
+    of that media object.  A QGraphicsVideoItem is attached to media object by passing a pointer to
+    the QMediaObject in its constructor, and detached by destroying the QGraphicsVideoItem.
+
+    \code
+    player = new QMediaPlayer(this);
+
+    graphicsView->scence()->addItem(new QGraphicsVideoItem(player));
+    graphicsView->show();
+
+    player->setMedia(video);
+    player->play();
+    \endcode
+
+    \bold {Note}: Only a single display output can be attached to a media object at one time.
+
+    \sa QMediaObject, QMediaPlayer, QVideoWidget
 */
 
 /*!
-    Constructs a new video item that displays the video produced by a media \a object
-    with the given \a parent.
+    Constructs a graphics item that displays the video produced by a media \a object.
+
+    The \a parent is passed to QGraphicsItem.
 */
 QGraphicsVideoItem::QGraphicsVideoItem(QMediaObject *object, QGraphicsItem *parent)
     : QGraphicsItem(parent)
@@ -135,7 +154,7 @@ QGraphicsVideoItem::QGraphicsVideoItem(QMediaObject *object, QGraphicsItem *pare
 }
 
 /*!
-    Destroys a video item.
+    Destroys a video graphics item.
 */
 QGraphicsVideoItem::~QGraphicsVideoItem()
 {
@@ -173,12 +192,14 @@ void QGraphicsVideoItem::paint(
 
 /*!
     \reimp
+
+    \internal
 */
 QVariant QGraphicsVideoItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     Q_D(QGraphicsVideoItem);
 
-    if (change == ItemVisibleChange && d->outputControl != 0) {
+    if (change == ItemVisibleChange && d->outputControl != 0 && d->rendererControl != 0) {
         if (value.toBool()) {
             d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
 

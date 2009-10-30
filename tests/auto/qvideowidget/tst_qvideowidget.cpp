@@ -45,6 +45,7 @@
 
 #include "qmediaobject.h"
 #include "qmediaservice.h"
+#include "qpaintervideosurface_p.h"
 #include "qvideooutputcontrol.h"
 #include "qvideowindowcontrol.h"
 #include "qvideowidgetcontrol.h"
@@ -110,11 +111,7 @@ private slots:
     void saturationRendererControl_data() { color_data(); }
     void saturationRendererControl();
 
-    void rendererSupportedFormat_data();
-    void rendererSupportedFormat();
-
-    void rendererPresent_data();
-    void rendererPresent();
+    void paintRendererControl();
 #endif
 
 private:
@@ -398,6 +395,9 @@ void tst_QVideoWidget::nullObject()
     widget.setFullScreen(true);
     QCOMPARE(widget.isFullScreen(), true);
 
+    widget.setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
+
     {
         QSignalSpy spy(&widget, SIGNAL(brightnessChanged(int)));
 
@@ -475,6 +475,9 @@ void tst_QVideoWidget::nullService()
 
     widget.setFullScreen(true);
     QCOMPARE(widget.isFullScreen(), true);
+
+    widget.setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
+    QCOMPARE(widget.aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
 
     widget.setBrightness(100);
     QCOMPARE(widget.brightness(), 100);
@@ -617,6 +620,7 @@ void tst_QVideoWidget::showRendererControl()
     widget.show();
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::RendererOutput);
+    QVERIFY(object.testService->rendererControl->surface() != 0);
 
     widget.hide();
 
@@ -1395,319 +1399,41 @@ static const uchar rgb32ImageData[] =
     0x00, 0xff, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00
 };
 
-static const uchar argb32ImageData[] =
+void tst_QVideoWidget::paintRendererControl()
 {
-    0x00, 0xff, 0x00, 0x00, 0xcc, 0x00, 0xff, 0xcc,
-    0x77, 0x00, 0x00, 0x77, 0x00, 0xff, 0xff, 0x00
-};
-
-static const uchar rgb24ImageData[] =
-{
-    0x00, 0xff, 0x00, 0x00, 0xcc, 0x00, 0x00, 0x00,
-    0xcc, 0x00, 0xcc, 0x77, 0xff, 0x77, 0x00, 0x00
-};
-
-static const uchar rgb565ImageData[] =
-{
-    0xff, 0xff, 0xff, 0xff,
-    0x00, 0x00, 0x00, 0x00
-};
-
-static const uchar yuvPlanarImageData[] =
-{
-    0x00, 0x00, 0x0f, 0xff, 0xff, 0x0f, 0x00, 0x00,
-    0x00, 0x0f, 0xff, 0x0f, 0x0f, 0xff, 0x0f, 0x00,
-    0x00, 0xff, 0x0f, 0x00, 0x00, 0x0f, 0xff, 0x00,
-    0xff, 0x0f, 0x00, 0x00, 0x00, 0x00, 0x0f, 0xff,
-    0xff, 0x0f, 0x00, 0x00, 0x00, 0x00, 0x0f, 0xff,
-    0x0f, 0xff, 0x0f, 0x00, 0x00, 0x0f, 0xff, 0x0f,
-    0x00, 0x0f, 0xff, 0x0f, 0x0f, 0xff, 0x0f, 0x00,
-    0x00, 0x00, 0x0f, 0xff, 0xff, 0x0f, 0x00, 0x00,
-    0x00, 0x0f, 0x0f, 0x00,
-    0x0f, 0x00, 0x00, 0x0f,
-    0x0f, 0x00, 0x00, 0x0f,
-    0x00, 0x0f, 0x0f, 0x00,
-    0x00, 0x0f, 0x0f, 0x00,
-    0x0f, 0x00, 0x00, 0x0f,
-    0x0f, 0x00, 0x00, 0x0f,
-    0x00, 0x0f, 0x0f, 0x00,
-};
-
-void tst_QVideoWidget::rendererSupportedFormat_data()
-{
-    QTest::addColumn<QAbstractVideoBuffer::HandleType>("handleType");
-    QTest::addColumn<QVideoFrame::PixelFormat>("pixelFormat");
-    QTest::addColumn<QSize>("frameSize");
-    QTest::addColumn<bool>("supportedPixelFormat");
-    QTest::addColumn<bool>("supportedFormat");
-    QTest::addColumn<bool>("glOnly");
-
-    QTest::newRow("rgb32 640x480")
-            << QAbstractVideoBuffer::NoHandle
-            << QVideoFrame::Format_RGB32
-            << QSize(640, 480)
-            << true
-            << true
-            << false;
-    QTest::newRow("rgb32 -640x480")
-            << QAbstractVideoBuffer::NoHandle
-            << QVideoFrame::Format_RGB32
-            << QSize(-640, 480)
-            << true
-            << false
-            << false;
-    QTest::newRow("rgb24 1024x768")
-            << QAbstractVideoBuffer::NoHandle
-            << QVideoFrame::Format_RGB24
-            << QSize(1024, 768)
-            << true
-            << true
-            << false;
-    QTest::newRow("rgb24 -1024x-768")
-            << QAbstractVideoBuffer::NoHandle
-            << QVideoFrame::Format_RGB24
-            << QSize(-1024, -768)
-            << true
-            << false
-            << false;    
-    QTest::newRow("rgb565 0x0")
-            << QAbstractVideoBuffer::NoHandle
-            << QVideoFrame::Format_RGB24
-            << QSize(0, 0)
-            << true
-            << false
-            << false;
-    QTest::newRow("YUV420P 640x480")
-            << QAbstractVideoBuffer::NoHandle
-            << QVideoFrame::Format_YUV420P
-            << QSize(640, 480)
-            << true
-            << true
-            << true;
-    QTest::newRow("YUV420P 640x-480")
-            << QAbstractVideoBuffer::NoHandle
-            << QVideoFrame::Format_YUV420P
-            << QSize(640, -480)
-            << true
-            << false
-            << true;
-    QTest::newRow("Y8 640x480")
-            << QAbstractVideoBuffer::NoHandle
-            << QVideoFrame::Format_Y8
-            << QSize(640, 480)
-            << false
-            << false
-            << false;
-    QTest::newRow("rgb32 (OpenGL) 640x480")
-            << QAbstractVideoBuffer::GLTextureHandle
-            << QVideoFrame::Format_RGB32
-            << QSize(640, 480)
-            << true
-            << true
-            << true;
-    QTest::newRow("yuv420p (OpenGL) 640x480")
-            << QAbstractVideoBuffer::GLTextureHandle
-            << QVideoFrame::Format_YUV420P
-            << QSize(640, 480)
-            << false
-            << false
-            << false;
-}
-
-void tst_QVideoWidget::rendererSupportedFormat()
-{
-    QFETCH(QAbstractVideoBuffer::HandleType, handleType);
-    QFETCH(QVideoFrame::PixelFormat, pixelFormat);
-    QFETCH(QSize, frameSize);
-    QFETCH(bool, supportedPixelFormat);
-    QFETCH(bool, supportedFormat);
-    QFETCH(bool, glOnly);
-
     QtTestVideoObject object(0, 0, new QtTestRendererControl);
 
     QVideoWidget widget(&object);
     widget.show();
 
-    QAbstractVideoSurface *surface = object.testService->rendererControl->surface();
+    QPainterVideoSurface *surface = qobject_cast<QPainterVideoSurface *>(
+            object.testService->rendererControl->surface());
 
-    QVERIFY(surface);
+    QVideoSurfaceFormat format(QSize(2, 2), QVideoFrame::Format_RGB32);
 
-    const QList<QVideoFrame::PixelFormat> pixelFormats = surface->supportedPixelFormats(handleType);
+    QVERIFY(surface->start(format));
+    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isReady(), true);
 
-    // Some formats are not supported without platform support for OpenGL shaders.
-    if (glOnly && !pixelFormats.contains(pixelFormat))
-        QSKIP("Pixel format unsupported on this platform", SkipSingle);
+    QTestEventLoop::instance().enterLoop(1);
 
-    QCOMPARE(pixelFormats.contains(pixelFormat), QBool(supportedPixelFormat));
+    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isReady(), true);
 
-    QVideoSurfaceFormat format(frameSize, pixelFormat, handleType);
+    QVideoFrame frame(sizeof(rgb32ImageData), QSize(2, 2), 8, QVideoFrame::Format_RGB32);
 
-    QCOMPARE(surface->isFormatSupported(format), supportedFormat);
-    QCOMPARE(surface->start(format), supportedFormat);
-}
+    frame.map(QAbstractVideoBuffer::WriteOnly);
+    memcpy(frame.bits(), rgb32ImageData, frame.numBytes());
+    frame.unmap();
 
-void tst_QVideoWidget::rendererPresent_data()
-{
-    QTest::addColumn<QVideoFrame::PixelFormat>("pixelFormatA");
-    QTest::addColumn<QSize>("frameSizeA");
-    QTest::addColumn<const uchar *>("frameDataA");
-    QTest::addColumn<int>("bytesA");
-    QTest::addColumn<int>("bytesPerLineA");
-    QTest::addColumn<QVideoFrame::PixelFormat>("pixelFormatB");
-    QTest::addColumn<QSize>("frameSizeB");
-    QTest::addColumn<const uchar *>("frameDataB");
-    QTest::addColumn<int>("bytesB");
-    QTest::addColumn<int>("bytesPerLineB");
+    QVERIFY(surface->present(frame));
+    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isReady(), false);
 
-    QTest::newRow("rgb32 -> argb32")
-            << QVideoFrame::Format_RGB32
-            << QSize(2, 2)
-            << static_cast<const uchar *>(rgb32ImageData)
-            << int(sizeof(rgb32ImageData))
-            << 8
-            << QVideoFrame::Format_ARGB32
-            << QSize(2, 2)
-            << static_cast<const uchar *>(argb32ImageData)
-            << int(sizeof(argb32ImageData))
-            << 8;
+    QTestEventLoop::instance().enterLoop(1);
 
-    QTest::newRow("rgb32 -> rgb24")
-            << QVideoFrame::Format_RGB32
-            << QSize(2, 2)
-            << static_cast<const uchar *>(rgb32ImageData)
-            << int(sizeof(rgb32ImageData))
-            << 8
-            << QVideoFrame::Format_RGB24
-            << QSize(2, 2)
-            << static_cast<const uchar *>(rgb24ImageData)
-            << int(sizeof(rgb24ImageData))
-            << 8;
-
-    QTest::newRow("rgb32 -> rgb565")
-            << QVideoFrame::Format_RGB32
-            << QSize(2, 2)
-            << static_cast<const uchar *>(rgb32ImageData)
-            << int(sizeof(rgb32ImageData))
-            << 8
-            << QVideoFrame::Format_RGB565
-            << QSize(2, 2)
-            << static_cast<const uchar *>(rgb565ImageData)
-            << int(sizeof(rgb565ImageData))
-            << 4;
-
-    QTest::newRow("rgb32 -> yuv420p")
-            << QVideoFrame::Format_RGB32
-            << QSize(2, 2)
-            << static_cast<const uchar *>(rgb32ImageData)
-            << int(sizeof(rgb32ImageData))
-            << 8
-            << QVideoFrame::Format_YUV420P
-            << QSize(8, 8)
-            << static_cast<const uchar *>(yuvPlanarImageData)
-            << int(sizeof(yuvPlanarImageData))
-            << 8;
-
-    QTest::newRow("yv12 -> rgb24")
-            << QVideoFrame::Format_YV12
-            << QSize(8, 8)
-            << static_cast<const uchar *>(yuvPlanarImageData)
-            << int(sizeof(yuvPlanarImageData))
-            << 8
-            << QVideoFrame::Format_RGB24
-            << QSize(2, 2)
-            << static_cast<const uchar *>(rgb24ImageData)
-            << int(sizeof(rgb24ImageData))
-            << 8;
-
-    QTest::newRow("rgb24 -> rgb565")
-            << QVideoFrame::Format_RGB24
-            << QSize(2, 2)
-            << static_cast<const uchar *>(rgb24ImageData)
-            << int(sizeof(rgb24ImageData))
-            << 8
-            << QVideoFrame::Format_RGB565
-            << QSize(2, 2)
-            << static_cast<const uchar *>(rgb565ImageData)
-            << int(sizeof(rgb565ImageData))
-            << 4;
-}
-
-void tst_QVideoWidget::rendererPresent()
-{
-    QFETCH(QVideoFrame::PixelFormat, pixelFormatA);
-    QFETCH(QSize, frameSizeA);
-    QFETCH(const uchar *, frameDataA);
-    QFETCH(int, bytesA);
-    QFETCH(int, bytesPerLineA);
-    QFETCH(QVideoFrame::PixelFormat, pixelFormatB);
-    QFETCH(QSize, frameSizeB);
-    QFETCH(const uchar *, frameDataB);
-    QFETCH(int, bytesB);
-    QFETCH(int, bytesPerLineB);
-
-    QtTestVideoObject object(0, 0, new QtTestRendererControl);
-
-    QtTestVideoWidget widget(&object);
-    widget.show();
-
-    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::RendererOutput);
-    QVERIFY(object.testService->rendererControl->surface());
-
-    QAbstractVideoSurface *surface = object.testService->rendererControl->surface();
-
-    const QList<QVideoFrame::PixelFormat> pixelFormats = surface->supportedPixelFormats();
-
-    if (!pixelFormats.contains(pixelFormatA) || !pixelFormats.contains(pixelFormatB))
-        QSKIP("Pixel format unsupported on this platform", SkipSingle);
-
-    QVideoSurfaceFormat formatA(frameSizeA, pixelFormatA);
-
-    QVERIFY(surface->start(formatA));
-    QVERIFY(surface->isStarted());
-
-    QVideoFrame frameA(bytesA, frameSizeA, bytesPerLineA, pixelFormatA);
-
-    frameA.map(QAbstractVideoBuffer::WriteOnly);
-    memcpy(frameA.bits(), frameDataA, frameA.numBytes());
-    frameA.unmap();
-
-    QVERIFY(surface->present(frameA));
-
-    QCoreApplication::processEvents();
-
-    QVERIFY(surface->isStarted());
-
-    // Try switching to a different format after starting.
-    QVideoSurfaceFormat formatB(frameSizeB, pixelFormatB);
-
-    QVERIFY(surface->start(formatB));
-    QVERIFY(surface->isStarted());
-
-    QVideoFrame frameB(bytesB, frameSizeB, bytesPerLineB, pixelFormatB);
-
-    frameB.map(QAbstractVideoBuffer::WriteOnly);
-    memcpy(frameB.bits(), frameDataB, frameB.numBytes());
-    frameB.unmap();
-
-    QVERIFY(surface->present(frameB));
-
-    QCoreApplication::processEvents();
-
-    QVERIFY(surface->isStarted());
-
-    surface->stop();
-
-    QVERIFY(!surface->isStarted());
-
-    // Try presenting a frame while stopped.
-    QVERIFY(!surface->present(frameB));
-    QCOMPARE(surface->error(), QAbstractVideoSurface::StoppedError);
-
-    // Try presenting a frame with a different format.
-    QVERIFY(surface->start(formatB));
-    QVERIFY(!surface->present(frameA));
-    QVERIFY(!surface->isStarted());
-    QCOMPARE(surface->error(), QAbstractVideoSurface::IncorrectFormatError);
+    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isReady(), true);
 }
 
 #endif

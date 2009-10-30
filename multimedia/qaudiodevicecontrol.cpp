@@ -50,17 +50,18 @@
     The QAudioDeviceControl class provides descriptions of the audio devices available on a system
     and allows one to be selected as the input/outut of a media service.
 
-    The interface name of QAudioDeviceControl is \c com.nokia.Qt.AudioDeviceControl as
+    The interface name of QAudioDeviceControl is \c com.nokia.Qt.QAudioDeviceControl/1.0 as
     defined in QAudioDeviceControl_iid.
 
+    \sa QMediaService::control()
 */
 
 /*!
     \macro QAudioDeviceControl_iid
 
-    \c com.nokia.Qt.AudioDeviceControl
+    \c com.nokia.Qt.QAudioDeviceControl/1.0
 
-    Defines the interface name of QAudioDeviceControl.
+    Defines the interface name of the QAudioDeviceControl class.
 
     \relates QAudioDeviceControl
 */

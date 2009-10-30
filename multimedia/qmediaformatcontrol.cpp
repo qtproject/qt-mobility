@@ -42,11 +42,62 @@
 
 #include <qmediaformatcontrol.h>
 
+/*!
+    \class QMediaFormatControl
+    \preliminary
+
+    The interface name of QMediaFormatControl is \c com.nokia.Qt.QMediaFormatControl/1.0 as
+    defined in QMediaFormatControl_iid.
+
+    \sa QMediaService::control()
+*/
+
+/*!
+    \macro QMediaFormatControl_iid
+
+    \c com.nokia.Qt.QMediaFormatControl/1.0
+
+    Defines the interface name of the QMediaFormatControl class.
+
+    \relates QMediaFormatControl
+*/
+
+/*!
+    Constructs a new media format control with the given \a parent.
+*/
 QMediaFormatControl::QMediaFormatControl(QObject *parent)
     :QMediaControl(parent)
 {
 }
 
+/*!
+    Destroys a media format control.
+*/
 QMediaFormatControl::~QMediaFormatControl()
 {
 }
+
+
+/*!
+    \fn QMediaFormatControl::supportedFormats() const
+
+    Returns a list of supported format MIME types.
+*/
+
+/*!
+    \fn QMediaFormatControl::format() const
+
+    Returns the MIME type of the selected format.
+*/
+
+/*!
+    \fn QMediaFormatControl::setFormat(const QString &mimeType)
+
+    Sets the current format to the format identified by the given \a mimeType.
+*/
+
+/*!
+    \fn QMediaFormatControl::formatDescription(const QString &mimeType) const
+
+    Returns a description of the format identified by the given \a mimeType.
+*/

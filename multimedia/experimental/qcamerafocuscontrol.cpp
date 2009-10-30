@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qcamerafocuscontrol.h>
+#include <experimental/qcamerafocuscontrol.h>
 #include  "qmediacontrol_p.h"
 
 /*!
@@ -50,7 +50,20 @@
     \brief The QCameraFocusControl class supplies control for
     focusing related camera parameters.
 
-    \sa QCamera
+    The interface name of QCameraFocusControl is \c com.nokia.Qt.QCameraFocusControl/1.0 as
+    defined in QCameraFocusControl_iid.
+
+    \sa QMediaService::control(), QCamera
+*/
+
+/*!
+    \macro QCameraFocusControl_iid
+
+    \c com.nokia.Qt.QCameraFocusControl/1.0
+
+    Defines the interface name of the QCameraFocusControl class.
+
+    \relates QCameraFocusControl
 */
 
 /*!

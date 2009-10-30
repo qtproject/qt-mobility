@@ -45,7 +45,7 @@
 #include <qmediacontrol.h>
 #include <qmediaobject.h>
 
-#include <qcamera.h>
+#include <experimental/qcamera.h>
 
 class Q_MEDIA_EXPORT QCameraExposureControl : public QMediaControl
 {

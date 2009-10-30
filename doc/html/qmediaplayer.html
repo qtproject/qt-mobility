@@ -142,7 +142,18 @@
     player-&gt;setMedia(QUrl::fromLocalFile(&quot;/Users/me/Music/coolsong.mp3&quot;));
     player-&gt;setVolume(50);
     player-&gt;play();</pre>
-<p>See also <a href="qmediaobject.html">QMediaObject</a> and <a href="qmediaservice.html">QMediaService</a>.</p>
+<p><a href="qvideowidget.html">QVideoWidget</a> can be used with QMediaPlayer for video rendering and <a href="qmediaplaylist.html">QMediaPlaylist</a> for accessing playlist functionality.</p>
+<pre>    player = new QMediaPlayer;
+
+    playlist = new QMediaPlaylist(player);
+    playlist-&gt;append(QUrl(&quot;http:<span class="comment">//example.com/movie1.mp4&quot;));</span>
+    playlist-&gt;append(QUrl(&quot;http:<span class="comment">//example.com/movie2.mp4&quot;));</span>
+
+    widget = new QVideoWidget(player);
+    widget-&gt;show();
+
+    player-&gt;play();</pre>
+<p>See also <a href="qmediaobject.html">QMediaObject</a>, <a href="qmediaservice.html">QMediaService</a>, <a href="qvideowidget.html">QVideoWidget</a>, and <a href="qmediaplaylist.html">QMediaPlaylist</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="Error-enum"></a>enum QMediaPlayer::Error</h3>
@@ -159,7 +170,7 @@
 <h3 class="flags"><a name="Flag-enum"></a>enum QMediaPlayer::Flag<br />flags QMediaPlayer::Flags</h3>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMediaPlayer::LowLatency</tt></td><td align="center" valign="top"><tt>0x01</tt></td><td valign="top">TODO</td></tr>
+<tr><td valign="top"><tt>QMediaPlayer::LowLatency</tt></td><td align="center" valign="top"><tt>0x01</tt></td><td valign="top">The player is expected to be used with simple audio formats, but playback should start without significant delay. Such playback service can be used for beeps, ringtones, etc.</td></tr>
 </table></p>
 <p>The Flags type is a typedef for <a href="qflags.html">QFlags</a>&lt;Flag&gt;. It stores an OR combination of Flag values.</p>
 <h3 class="fn"><a name="MediaStatus-enum"></a>enum QMediaPlayer::MediaStatus</h3>
@@ -344,6 +355,8 @@
 <p>Signals that an <i>error</i> condition has occurred.</p>
 <p>See also <a href="qmediaplayer.html#error-prop">errorString</a>().</p>
 <h3 class="fn"><a name="hasSupport"></a><a href="qtmedia.html#SupportEstimate-enum">QtMedia::SupportEstimate</a> QMediaPlayer::hasSupport ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>mimeType</i>, const <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> &amp; <i>codecs</i> = QStringList(), <a href="qmediaplayer.html#Flag-enum">Flags</a> <i>flags</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Returns the level of support a media player has for a <i>mimeType</i> and a set of <i>codecs</i>.</p>
+<p>The <i>flags</i> argument allows additional requirements such as performance indicators to be specified.</p>
 <h3 class="fn"><a name="mediaChanged"></a>void QMediaPlayer::mediaChanged ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>media</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the current playing content will be obtained from <i>media</i>.</p>
 <p>See also <a href="qmediaplayer.html#media-prop">media</a>().</p>
@@ -371,7 +384,7 @@
 <h3 class="fn"><a name="stop"></a>void QMediaPlayer::stop ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Stop playing, and reset the play position to the beginning.</p>
 <h3 class="fn"><a name="videoAvailabilityChanged"></a>void QMediaPlayer::videoAvailabilityChanged ( bool <i>videoAvailable</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal the availability of visual cntent has changed to <i>videoAvailable</i>.</p>
+<p>Signal the availability of visual content has changed to <i>videoAvailable</i>.</p>
 <h3 class="fn"><a name="volumeChanged"></a>void QMediaPlayer::volumeChanged ( int <i>volume</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal the playback volume has changed to <i>volume</i>.</p>
 <p /><address><hr /><div align="center">

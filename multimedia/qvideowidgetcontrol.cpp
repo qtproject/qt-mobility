@@ -45,8 +45,38 @@
 /*!
     \class QVideoWidgetControl
     \preliminary
-    \brief The QVideoWidgetControl class provides a media control for rendering video to QWidget
-           provided by media service.
+    \brief The QVideoWidgetControl class provides a media control which implements a video widget.
+
+    The videoWidget() property of QVideoWidgetControl provides a pointer to a video widget
+    implemented by the control's media service.  This widget is owned by the media service and
+    so care should be taken not to delete it.
+
+    \code
+    QVideoWidgetControl *widgetControl = mediaService->control<QVideoWidgetControl *>();
+
+    layout->addWidget(widgetControl->widget());
+    \endcode
+
+    QVideoWidgetControl is one of number of possible video output controls, in order to receive
+    video it must be made the active video output control by setting the output property
+    of QVideoOutputControl to \l {QVideoOutputControl::WidgetOutput}{WidgetOutput}.
+    Consequently any QMediaService that implements QVideoWidgetControl must also implement
+    QVideoOutputControl.
+
+    The interface name of QVideoWidgetControl is \c com.nokia.Qt.QVideoWidgetControl/1.0 as
+    defined in QVideoWidgetControl_iid.
+
+    \sa QMediaService::control(), QVideoOutputControl, QVideoWidget
+*/
+
+/*!
+    \macro QVideoWidgetControl_iid
+
+    \c com.nokia.Qt.QVideoWidgetControl/1.0
+
+    Defines the interface name of the QVideoWidgetControl class.
+
+    \relates QVideoWidgetControl
 */
 
 /*!

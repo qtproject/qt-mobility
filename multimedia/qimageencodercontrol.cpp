@@ -43,7 +43,27 @@
 #include <QtCore/qstringlist.h>
 
 /*!
-  Create a new image encode control object with the given \a parent
+    \class QImageEncoderControl
+    \preliminary
+
+    The interface name of QCameraControl is \c com.nokia.Qt.QCameraControl/1.0 as
+    defined in QCameraControl_iid.
+
+    \sa QMediaService::control()
+*/
+
+/*!
+    \macro QImageEncoderControl_iid
+
+    \c com.nokia.Qt.QImageEncoderControl/1.0
+
+    Defines the interface name of the QImageEncoderControl class.
+
+    \relates QImageEncoderControl
+*/
+
+/*!
+    Constructs a new image encoder control object with the given \a parent
 */
 QImageEncoderControl::QImageEncoderControl(QObject *parent)
     :QMediaControl(parent)
@@ -51,88 +71,90 @@ QImageEncoderControl::QImageEncoderControl(QObject *parent)
 }
 
 /*!
-  Destroys the image encode control.
+    Destroys the image encoder control.
 */
 QImageEncoderControl::~QImageEncoderControl()
 {
 }
 
 /*!
-  \fn QImageEncoderControl::supportedResolutions() const
+    \fn QImageEncoderControl::supportedResolutions() const
 
-  Returns the list of resolutions if the image encoder supports only the limited set
-  of image sizes, otherwise returns an empty list.
+    Returns a list of specific supported resolutions.  If the encoder supports arbitrary resolutions
+    within the minimum and maximum range, then an empty list is returned.
 
-  \sa resolution(), minimumResolution(), maximumResolution()
 
-*/
-
-/*!
-  \fn QImageEncoderControl::resolution() const
-
-   Returns the resolution of encoded image.
-*/
-
-/*!
-  \fn QImageEncoderControl::minimumResolution() const
-
-  Returns the smallest supported resolution.
-
-  \sa resolution
-*/
-
-/*!
-  \fn QImageEncoderControl::maximumResolution() const
-
-  Returns the largest supported resolution.
-
-  \sa resolution
-*/
-
-/*!
-  \fn QImageEncoderControl::setResolution(const QSize &)
-
-  Set the image \a resolution.
-  If an empty size is passed,
-  the media service should choose the default or content
-  related resolution value.
-*/
-
-/*!
-  \fn QImageEncoderControl::supportedImageCodecs() const
-
-  Returns the list of supported image codec names.
-*/
-
-/*!
-  \fn QImageEncoderControl::imageCodec() const
-
-  Returns the currently used image codec name.
-*/
-
-/*!
-  \fn QImageEncoderControl::setImageCodec(const QString &codecName)
-
-  Use the image codec with name equals to \a codecName.
+    \sa resolution(), minimumResolution(), maximumResolution()
 
 */
 
 /*!
-  \fn QImageEncoderControl::imageCodecDescription(const QString &codecName) const
+    \fn QImageEncoderControl::resolution() const
 
-  Returns description of image \a codec.
+    Returns the resolution of encoded image.
 */
 
 /*!
-  \fn QImageEncoderControl::quality() const
+    \fn QImageEncoderControl::minimumResolution() const
 
-  Returns the image encoding quality value.
+    Returns the minimum supported resolution.
+
+    \sa resolution()
 */
 
 /*!
-  \fn QImageEncoderControl::setQuality(QtMedia::EncodingQuality)
+    \fn QImageEncoderControl::maximumResolution() const
 
-  Sets the image encoding quality to \a value.
+    Returns the maximum supported resolution.
 
-  \sa quality()
+    \sa resolution()
+*/
+
+/*!
+    \fn QImageEncoderControl::setResolution(const QSize &resolution)
+
+    Sets the image \a resolution.
+
+    If an empty size is passed, the media service should choose the default or content related
+    resolution value.
+*/
+
+/*!
+    \fn QImageEncoderControl::supportedImageCodecs() const
+
+    Returns a list of supported image codecs.
+*/
+
+/*!
+    \fn QImageEncoderControl::imageCodec() const
+
+    Returns the selected image codec.
+*/
+
+/*!
+    \fn QImageEncoderControl::setImageCodec(const QString &codec)
+
+    Sets the selected image \a codec.
+
+    Returns true if the codec was accepted; and false otherwise.
+*/
+
+/*!
+    \fn QImageEncoderControl::imageCodecDescription(const QString &codec) const
+
+    Returns a description of an image \a codec.
+*/
+
+/*!
+    \fn QImageEncoderControl::quality() const
+
+    Returns the image encoding quality.
+*/
+
+/*!
+    \fn QImageEncoderControl::setQuality(QtMedia::EncodingQuality quality)
+
+    Sets the image encoding \a quality.
+
+    \sa quality()
 */

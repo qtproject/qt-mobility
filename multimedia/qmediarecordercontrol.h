@@ -54,8 +54,8 @@ class Q_MEDIA_EXPORT QMediaRecorderControl : public QMediaControl
 public:
     virtual ~QMediaRecorderControl();
 
-    virtual QUrl sink() const = 0;
-    virtual bool setSink(const QUrl &sink) = 0;
+    virtual QUrl outputLocation() const = 0;
+    virtual bool setOutputLocation(const QUrl &location) = 0;
 
     virtual QMediaRecorder::State state() const = 0;
 

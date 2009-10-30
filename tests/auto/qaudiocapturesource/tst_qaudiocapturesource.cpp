@@ -102,8 +102,8 @@ public:
 
     ~MockMediaRecorderControl() {}
 
-    QUrl sink() const { return m_sink; }
-    bool setSink(const QUrl &sink) { m_sink = sink; return true; }
+    QUrl outputLocation() const { return m_sink; }
+    bool setOutputLocation(const QUrl &sink) { m_sink = sink; return true; }
     QMediaRecorder::State state() const { return m_state; }
     qint64 duration() const { return m_position; }
     void applySettings() {}

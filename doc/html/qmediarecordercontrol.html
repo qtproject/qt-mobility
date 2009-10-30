@@ -26,8 +26,8 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecordercontrol.html#dtor.QMediaRecorderControl">~QMediaRecorderControl</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecordercontrol.html#applySettings">applySettings</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual qint64 </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecordercontrol.html#duration">duration</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecordercontrol.html#setSink">setSink</a></b> ( const QUrl &amp; <i>sink</i> ) = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QUrl </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecordercontrol.html#sink">sink</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QUrl </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecordercontrol.html#outputLocation">outputLocation</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecordercontrol.html#setOutputLocation">setOutputLocation</a></b> ( const QUrl &amp; <i>location</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QMediaRecorder::State </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecordercontrol.html#state">state</a></b> () const = 0</td></tr>
 </table>
 <ul>
@@ -64,6 +64,12 @@
 <ul>
 <li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
 </ul>
+<hr />
+<a name="macros"></a>
+<h2>Macros</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediarecordercontrol.html#QMediaRecorderControl_iid">QMediaRecorderControl_iid</a></b></td></tr>
+</table>
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
@@ -75,7 +81,8 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QMediaRecorderControl class provides an abstract class for control of media recording.</p>
-<p>See also <a href="qmediarecorder.html">QMediaRecorder</a>.</p>
+<p>The interface name of QMediaRecorderControl is <tt>com.nokia.Qt.QMediaRecorderControl/1.0</tt> as defined in <a href="qmediarecordercontrol.html#QMediaRecorderControl_iid">QMediaRecorderControl_iid</a>.</p>
+<p>See also <a href="qmediaservice.html#control">QMediaService::control</a>() and <a href="qmediarecorder.html">QMediaRecorder</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QMediaRecorderControl"></a>QMediaRecorderControl::QMediaRecorderControl ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [protected]</tt></h3>
@@ -90,22 +97,27 @@
 <p>Signal emitted when <i>duration</i> changed.</p>
 <h3 class="fn"><a name="error"></a>void QMediaRecorderControl::error ( int <i>error</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>errorString</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted when <i>error</i>, <i>errorString</i> changed.</p>
+<h3 class="fn"><a name="outputLocation"></a><a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> QMediaRecorderControl::outputLocation () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Return the current output location being used.</p>
+<p>See also <a href="qmediarecordercontrol.html#setOutputLocation">setOutputLocation</a>().</p>
 <h3 class="fn"><a name="pause"></a>void QMediaRecorderControl::pause ()&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
 <p>Pause recording.</p>
 <h3 class="fn"><a name="record"></a>void QMediaRecorderControl::record ()&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
 <p>Start recording.</p>
-<h3 class="fn"><a name="setSink"></a>bool QMediaRecorderControl::setSink ( const <a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> &amp; <i>sink</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns true if set of sink being used to <i>sink</i> is successful.</p>
-<p>See also <a href="qmediarecordercontrol.html#sink">sink</a>().</p>
-<h3 class="fn"><a name="sink"></a><a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> QMediaRecorderControl::sink () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Return the current sink being used.</p>
-<p>See also <a href="qmediarecordercontrol.html#setSink">setSink</a>().</p>
+<h3 class="fn"><a name="setOutputLocation"></a>bool QMediaRecorderControl::setOutputLocation ( const <a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> &amp; <i>location</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Sets the output <i>location</i> and returns if this operation is successful.</p>
+<p>See also <a href="qmediarecordercontrol.html#outputLocation">outputLocation</a>().</p>
 <h3 class="fn"><a name="state"></a><a href="qmediarecorder.html#State-enum">QMediaRecorder::State</a> QMediaRecorderControl::state () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Return the current state.</p>
 <h3 class="fn"><a name="stateChanged"></a>void QMediaRecorderControl::stateChanged ( <a href="qmediarecorder.html#State-enum">QMediaRecorder::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted when <i>state</i> changed.</p>
 <h3 class="fn"><a name="stop"></a>void QMediaRecorderControl::stop ()&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
 <p>Stop recording.</p>
+<hr />
+<h2>Macro Documentation</h2>
+<h3 class="fn"><a name="QMediaRecorderControl_iid"></a>QMediaRecorderControl_iid</h3>
+<p><tt>com.nokia.Qt.QMediaRecorderControl/1.0</tt></p>
+<p>Defines the interface name of the <a href="qmediarecordercontrol.html">QMediaRecorderControl</a> class.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

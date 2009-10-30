@@ -67,9 +67,9 @@
 
     The capture interface is then used to:
 
-    - Set the destination source using setSink()
+    - Set the destination using setOutputLocation()
 
-    - Set the format parameters using setAudioCodec(), 
+    - Set the format parameters using setAudioCodec(),
 
     - Control the recording using record(),stop()
 

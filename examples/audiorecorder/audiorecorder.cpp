@@ -60,7 +60,7 @@ AudioRecorder::AudioRecorder()
     capture = new QMediaRecorder(audiosource);
 
     // set a default file
-    capture->setSink(QUrl("test.raw"));
+    capture->setOutputLocation(QUrl("test.raw"));
 
     QWidget *window = new QWidget;
     QGridLayout* layout = new QGridLayout;
@@ -129,6 +129,8 @@ AudioRecorder::AudioRecorder()
 
 AudioRecorder::~AudioRecorder()
 {
+    delete capture;
+    delete audiosource;
 }
 
 void AudioRecorder::updateProgress(qint64 pos)
@@ -154,11 +156,13 @@ void AudioRecorder::deviceChanged(int idx)
 
 void AudioRecorder::codecChanged(int idx)
 {
+    Q_UNUSED(idx);
     //capture->setAudioCodec(codecsBox->itemText(idx));
 }
 
 void AudioRecorder::qualityChanged(int idx)
 {
+    Q_UNUSED(idx);
     /*
     if(capture->audioCodec().compare("audio/pcm") == 0) {
         if(qualityBox->itemText(idx).compare("Low") == 0) {
@@ -202,5 +206,5 @@ void AudioRecorder::selectOutputFile()
         fileNames = dialog.selectedFiles();
 
     if(fileNames.size() > 0)
-        capture->setSink(QUrl(fileNames.first()));
+        capture->setOutputLocation(QUrl(fileNames.first()));
 }

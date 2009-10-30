@@ -60,9 +60,9 @@ public:
 
     bool isEndpointSupported(QMediaService::MediaEndpoint endpointType);
 
-    QList<QString> activeEndpoints(QMediaService::MediaEndpoint endpointType);
+    QString activeEndpoint(QMediaService::MediaEndpoint endpointType);
     bool setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
-    QList<QString> supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
+    QStringList supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
     QString endpointDescription(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
 
 private:
