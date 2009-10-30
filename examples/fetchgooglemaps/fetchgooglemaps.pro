@@ -1,7 +1,7 @@
 TEMPLATE=app
 INCLUDEPATH += ../../location
 
-QT += webkit 
+QT += webkit network
 
 HEADERS = mapwindow.h
 SOURCES = mapwindow.cpp \
