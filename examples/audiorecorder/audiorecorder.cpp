@@ -60,7 +60,11 @@ AudioRecorder::AudioRecorder()
     capture = new QMediaRecorder(audiosource);
 
     // set a default file
+#ifdef Q_OS_SYMBIAN
+    capture->setOutputLocation(QUrl("c:\\data\\test.wav"));
+#else
     capture->setOutputLocation(QUrl("test.raw"));
+#endif
 
     QWidget *window = new QWidget;
     QGridLayout* layout = new QGridLayout;

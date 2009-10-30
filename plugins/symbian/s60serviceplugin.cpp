@@ -53,7 +53,7 @@ QStringList S60ServicePlugin::keys() const
     QStringList list;
     list << QLatin1String(Q_MEDIASERVICE_RADIO);
     list << QLatin1String(Q_MEDIASERVICE_CAMERA);
-    list << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER);
+    list << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE);
     return list;
 }
 
