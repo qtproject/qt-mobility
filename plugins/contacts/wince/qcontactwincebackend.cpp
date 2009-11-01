@@ -345,11 +345,11 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(Q
 
     // Simple phone number types (non multiple)
     // defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].dataType = QVariant::String; // XXX doesn't work
-    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeBulletinBoardSystem)));
-    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeLandline)));
-    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeMessagingCapable)));
-    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeModem)));
-    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeVideo)));
+    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeBulletinBoardSystem)));
+    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeLandline)));
+    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeMessagingCapable)));
+    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeModem)));
+    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeVideo)));
 
     // XXX temporary definitions that we should support but don't yet.
     defns.remove(QContactOnlineAccount::DefinitionName);
