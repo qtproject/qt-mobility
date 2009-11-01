@@ -45,7 +45,7 @@
 V4LRecorderControl::V4LRecorderControl(V4LCameraSession *session)
     :QMediaRecorderControl(session), m_session(session), m_state(QMediaRecorder::StoppedState)
 {
-    connect(m_session, SIGNAL(stateChanged(QMediaRecorder::State)), SLOT(updateState(QMediaRecorder::State)));
+    connect(m_session, SIGNAL(recordStateChanged(QMediaRecorder::State)), SLOT(updateState(QMediaRecorder::State)));
     //connect(m_session, SIGNAL(error(int,QString)), SIGNAL(error(int,QString)));
     //connect(m_session, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
 }
@@ -86,7 +86,6 @@ qint64 V4LRecorderControl::duration() const
 
 void V4LRecorderControl::record()
 {
-    m_session->previewMode(true);
     m_session->captureToFile(true);
     m_session->record();
 }
@@ -99,4 +98,5 @@ void V4LRecorderControl::pause()
 void V4LRecorderControl::stop()
 {
     m_session->stop();
+    m_session->captureToFile(false);
 }
