@@ -63,6 +63,7 @@
 #include <QApplication>
 #include <QStackedWidget>
 #include <QMutex>
+#include <qmessagestore.h>
 
 typedef QPointer<QMessageServiceAction> QMessageServiceActionPtr;
 
@@ -719,6 +720,100 @@ m_service(service)
 {
 }
 
+class StoreSignalsWidget : public QWidget
+{
+    Q_OBJECT
+
+public:
+    StoreSignalsWidget(QWidget* parent = 0);
+
+private slots:
+    void messageAdded(const QMessageId&, const QMessageStore::NotificationFilterIdSet&);
+    void messageUpdated(const QMessageId&, const QMessageStore::NotificationFilterIdSet&);
+    void messageRemoved(const QMessageId&, const QMessageStore::NotificationFilterIdSet&);
+
+private:
+    void setupUi();
+    void appendString(const QString& message);
+
+private:
+    QListWidget* m_activityListWidget;
+    QMessageStore::NotificationFilterId m_notificationFilterId;
+};
+
+StoreSignalsWidget::StoreSignalsWidget(QWidget* parent)
+:
+QWidget(parent),
+m_activityListWidget(0)
+{
+    setupUi();
+}
+
+void StoreSignalsWidget::messageAdded(const QMessageId& id, const QMessageStore::NotificationFilterIdSet& filterSet)
+{
+    if(!filterSet.contains(m_notificationFilterId))
+        return;
+
+    QMessage message(id);
+
+    QString msg = QString("Added: %1").arg(message.subject());
+    m_activityListWidget->addItem(msg);
+}
+
+void StoreSignalsWidget::messageUpdated(const QMessageId& id, const QMessageStore::NotificationFilterIdSet& filterSet)
+{
+    if(!filterSet.contains(m_notificationFilterId))
+        return;
+
+    QMessage message(id);
+
+    QString msg = QString("Updated: %1").arg(message.subject());
+    m_activityListWidget->addItem(msg);
+}
+
+void StoreSignalsWidget::messageRemoved(const QMessageId& id, const QMessageStore::NotificationFilterIdSet& filterSet)
+{
+    if(!filterSet.contains(m_notificationFilterId))
+        return;
+
+    QString idString(id.toString());
+    idString.truncate(10);
+
+    QString msg = QString("Removed ID: %1 ...").arg(idString);
+    m_activityListWidget->addItem(msg);
+}
+
+void StoreSignalsWidget::setupUi()
+{
+    m_activityListWidget = new QListWidget(this);
+    QVBoxLayout* l = new QVBoxLayout(this);
+    l->setSpacing(0);
+    l->setContentsMargins(0,0,0,0);
+    l->addWidget(m_activityListWidget);
+
+    connect(QMessageStore::instance(),
+            SIGNAL(messageAdded(const QMessageId&,const QMessageStore::NotificationFilterIdSet&)),
+            this,
+            SLOT(messageAdded(const QMessageId&,const QMessageStore::NotificationFilterIdSet&)));
+
+    connect(QMessageStore::instance(),
+            SIGNAL(messageRemoved(const QMessageId&,const QMessageStore::NotificationFilterIdSet&)),
+            this,
+            SLOT(messageRemoved(const QMessageId&,const QMessageStore::NotificationFilterIdSet&)));
+
+    connect(QMessageStore::instance(),
+            SIGNAL(messageUpdated(const QMessageId&,const QMessageStore::NotificationFilterIdSet&)),
+            this,
+            SLOT(messageUpdated(const QMessageId&,const QMessageStore::NotificationFilterIdSet&)));
+
+    m_notificationFilterId = QMessageStore::instance()->registerNotificationFilter(QMessageFilter());
+
+    QAction* clearAction = new QAction("Clear",this);
+    connect(clearAction,SIGNAL(triggered(bool)),m_activityListWidget,SLOT(clear()));
+    addAction(clearAction);
+
+}
+
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f)
 :
 QMainWindow(parent,f),
@@ -738,7 +833,8 @@ m_tabWidget(0)
     foreach(QWidget* exampleWidget, QWidgetList() << new ComposeSendWidget(m_serviceAction,this)
                                                   << new ShowWidget(m_serviceAction,this)
                                                   << new RetrieveWidget(m_serviceAction,this)
-                                                  << new QueryWidget(m_serviceAction,this)) {
+                                                  << new QueryWidget(m_serviceAction,this)
+                                                  << new StoreSignalsWidget(this)) {
         m_widgetStack->addWidget(exampleWidget);
 #ifdef _WIN32_WCE
         exampleWidget->installEventFilter(this);
@@ -754,7 +850,8 @@ m_tabWidget(0)
     foreach(QAction* viewAction, QList<QAction*>() << new QAction("Compose\\Send",this)
                                                    << new QAction("Show",this)
                                                    << new QAction("Retrieve",this)
-                                                   << new QAction("Query",this))
+                                                   << new QAction("Query",this)
+                                                   << new QAction("Store Signals",this))
     {
         connect(viewAction,SIGNAL(triggered()),this,SLOT(viewSelected()));
 #ifndef _WIN32_WCE
