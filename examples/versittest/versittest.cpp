@@ -55,17 +55,12 @@
 #include <qversitcontactgenerator.h>
 #include <qversitcontactconverter.h>
 
-const QString inputDirPath = "/data/testvcards/in";
-const QString excludeFieldsFileName = "/data/testvcards/excludefields.txt";
-const QString outputDirPath = "/data/testvcards/out";
-const QString imageAndAudioClipPath = "/data/testvcards/images_and_audio";
-
 VersitTest::VersitTest() :
     QObject(),
     mSaveContacts(false),
     mScaledImageHeight(0),
     mScaledImageWidth(0)
-{   
+{
 }
 
 VersitTest::VersitTest(bool saveContacts,int scaledImageHeight,int scaledImageWidth) :
@@ -74,6 +69,15 @@ VersitTest::VersitTest(bool saveContacts,int scaledImageHeight,int scaledImageWi
     mScaledImageHeight(scaledImageHeight),
     mScaledImageWidth(scaledImageWidth)
 {
+    QString homeDir = QDir::homePath();
+    if (!homeDir.endsWith(QString::fromAscii("/")))
+        homeDir += QString::fromAscii("/");
+    QDir dir(homeDir);
+    QString testDir("testvcards/");
+    mInputDirPath = homeDir + testDir + QString::fromAscii("in");
+    mExcludeFieldsFileName = homeDir + testDir + QString::fromAscii("excludefields.txt");
+    mOutputDirPath = homeDir + testDir + QString::fromAscii("out");
+    mImageAndAudioClipPath = homeDir + testDir + QString::fromAscii("images_and_audio");
 }
 
 void VersitTest::scale(const QString& imageFileName, QByteArray& imageData)
@@ -89,12 +93,12 @@ void VersitTest::scale(const QString& imageFileName, QByteArray& imageData)
 
 void VersitTest::initTestCase()
 {
-    QDir dir(inputDirPath);
+    QDir dir(mInputDirPath);
     QStringList type("*.vcf");
     mFiles = dir.entryList(type);
 
     mExcludedFields = new QStringList;
-    QFile excludeFieldsFile(excludeFieldsFileName);
+    QFile excludeFieldsFile(mExcludeFieldsFileName);
     if (excludeFieldsFile.open(QIODevice::ReadOnly)) {
         while (!excludeFieldsFile.atEnd()) {
             QString field(excludeFieldsFile.readLine().trimmed());
@@ -104,8 +108,8 @@ void VersitTest::initTestCase()
     }
     mContactManager = new QContactManager(QString::fromAscii("symbian"));
 
-    if (!dir.exists(imageAndAudioClipPath)) {
-        dir.mkdir(imageAndAudioClipPath);
+    if (!dir.exists(mImageAndAudioClipPath)) {
+        dir.mkdir(mImageAndAudioClipPath);
     }    
 }
 
@@ -136,10 +140,10 @@ void VersitTest::test()
         QFile in(InFile);
         QVERIFY(in.open(QIODevice::ReadOnly));        
         QDir dir;
-        if (!dir.exists(outputDirPath))
-            dir.mkdir(outputDirPath);        
+        if (!dir.exists(mOutputDirPath))
+            dir.mkdir(mOutputDirPath);
         QFileInfo fileInfo = in.fileName();
-        QFile out(outputDirPath+ "\\" + fileInfo.fileName());
+        QFile out(mOutputDirPath+ "/" + fileInfo.fileName());
         out.remove();
         QVERIFY(out.open(QIODevice::ReadWrite));
         QBENCHMARK { executeTest(in,out); }
@@ -153,7 +157,7 @@ void VersitTest::test_data()
     QTest::addColumn<QString>("InFile");
     QStringListIterator fileIterator(mFiles);
     while (fileIterator.hasNext()) {
-        const QString& fileName = inputDirPath + "\\" + fileIterator.next();
+        const QString& fileName = mInputDirPath + "/" + fileIterator.next();
         const QString& myDataFeed = "Data feed:" + fileName; 
         QTest::newRow( myDataFeed.toAscii().data() ) << fileName;
     }
@@ -172,8 +176,8 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
     QVersitContactGenerator generator;
     QList<QVersitDocument::VersitType> documentTypes;
     foreach (QVersitDocument document, mReader->result()) {
-        generator.setImagePath(imageAndAudioClipPath);
-        generator.setAudioClipPath(imageAndAudioClipPath);
+        generator.setImagePath(mImageAndAudioClipPath);
+        generator.setAudioClipPath(mImageAndAudioClipPath);
         QContact contact = generator.generateContact(document);
         if (mSaveContacts)
             QVERIFY(mContactManager->saveContact(&contact));

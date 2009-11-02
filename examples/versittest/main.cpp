@@ -63,7 +63,10 @@ int main(int argc, char** argv)
         }
     }
     TestResultXmlParser parser;
-    QString resultFileName("c:/QVersitTestResults.xml");
+    QString homeDir = QDir::homePath();
+    if (!homeDir.endsWith(QString::fromAscii("/")))
+        homeDir += QString::fromAscii("/");
+    QString resultFileName = homeDir + QString::fromAscii("QVersitTestResults.xml");
     QStringList args;
     printf("Running tests...\n");
     VersitTest versitTest(saveContacts,scaledImageHeight,scaledImageWidth);

@@ -88,6 +88,10 @@ private:
     QStringList mFiles;
     QVersitReader* mReader;
     QVersitWriter* mWriter;
+    QString mInputDirPath;
+    QString mExcludeFieldsFileName;
+    QString mOutputDirPath;
+    QString mImageAndAudioClipPath;
 };
 
 #endif // VERSITTEST_H
