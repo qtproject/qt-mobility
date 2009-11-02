@@ -161,6 +161,8 @@ QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& 
             detail = createOrganization(property);
         } else if (property.name() == QString::fromAscii(versitLogoId)) {
             detail = createOrganization(property);
+        } else if (property.name() == QString::fromAscii(versitAssistantId)) {
+            detail = createOrganization(property);
         } else if (property.name() == QString::fromAscii(versitRevisionId)) {
             detail = createTimeStamp(property);
         } else if (property.name() == QString::fromAscii(versitAnniversaryId)) {
@@ -279,6 +281,8 @@ QContactDetail* QVersitContactGeneratorPrivate::createOrganization(
             delete org;
             org = 0;
         }
+    } else if (property.name() == QString::fromAscii(versitAssistantId)) {
+        org->setAssistantName(QString::fromAscii(property.value()));
     } else {
         delete org;
         org = 0;

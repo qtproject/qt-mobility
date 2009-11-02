@@ -287,6 +287,15 @@ void UT_QVersitContactGenerator::testOrganization()
     org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
     QCOMPARE(org.title(),QString::fromAscii(titleValue));
 
+    // X-ASSISTANT
+    property.setName(QString::fromAscii(versitAssistantId));
+    QByteArray assistantValue("Marge");
+    property.setValue(assistantValue);
+    document = createDocumentWithProperty(property);
+    contact = mGenerator->generateContact(document);
+    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
+    QCOMPARE(org.assistantName(), QString::fromAscii(assistantValue));
+
     // ORG
     property.setName(QString::fromAscii(versitOrganizationId));
     property.setValue(QByteArray("Nokia;R&D"));
