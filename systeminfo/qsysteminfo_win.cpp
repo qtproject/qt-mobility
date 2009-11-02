@@ -68,6 +68,8 @@
 #include <QUuid>
 #include <QSysInfo>
 
+#include <qabstracteventdispatcher.h>
+
 #include <locale.h>
 
 #if !defined( Q_CC_MINGW)
@@ -78,16 +80,11 @@
 #define __WINDOT11_H__
 #include <ntddndis.h>
 #undef __WINDOT11_H__
-//#include <Dshow.h>
 #endif
 #endif
 
 #ifdef Q_OS_WINCE
-//#include <af_irda.h>
-//#include <vibrate.h>
-//#include <Led_drvr.h>
 #include <simmgr.h>
-//#include <Ifapi.h>
 #include <Winbase.h>
 #include <Winuser.h>
 #endif
@@ -98,59 +95,6 @@
 #define WLAN_MAX_NAME_LENGTH 256
 #define DOT11_SSID_MAX_LENGTH 32
 #define WLAN_NOTIFICATION_SOURCE_ALL 0x0000ffff
-//#define OID_GEN_MEDIA_SUPPORTED 0x00010103
-
-/*typedef enum _NDIS_MEDIUM
-{
-    NdisMedium802_3,
-    NdisMedium802_5,
-    NdisMediumFddi,
-    NdisMediumWan,
-    NdisMediumLocalTalk,
-    NdisMediumDix,              // defined for convenience, not a real medium
-    NdisMediumArcnetRaw,
-    NdisMediumArcnet878_2,
-    NdisMediumAtm,
-    NdisMediumWirelessWan,
-    NdisMediumIrda,
-    NdisMediumBpc,
-    NdisMediumCoWan,
-    NdisMedium1394,
-    NdisMediumInfiniBand,
-    NdisMediumTunnel,
-    NdisMediumNative802_11,
-    NdisMediumLoopback,
-    NdisMediumMax               // Not a real medium, defined as an upper-bound
-} NDIS_MEDIUM, *PNDIS_MEDIUM;
-
-
-//
-// Physical Medium Type definitions. Used with OID_GEN_PHYSICAL_MEDIUM.
-//
-typedef enum _NDIS_PHYSICAL_MEDIUM
-{
-    NdisPhysicalMediumUnspecified,
-    NdisPhysicalMediumWirelessLan,
-    NdisPhysicalMediumCableModem,
-    NdisPhysicalMediumPhoneLine,
-    NdisPhysicalMediumPowerLine,
-    NdisPhysicalMediumDSL,      // includes ADSL and UADSL (G.Lite)
-    NdisPhysicalMediumFibreChannel,
-    NdisPhysicalMedium1394,
-    NdisPhysicalMediumWirelessWan,
-    NdisPhysicalMediumNative802_11,
-    NdisPhysicalMediumBluetooth,
-    NdisPhysicalMediumInfiniband,
-    NdisPhysicalMediumWiMax,
-    NdisPhysicalMediumUWB,
-    NdisPhysicalMedium802_3,
-    NdisPhysicalMedium802_5,
-    NdisPhysicalMediumIrda,
-    NdisPhysicalMediumWiredWAN,
-    NdisPhysicalMediumWiredCoWan,
-    NdisPhysicalMediumOther,
-    NdisPhysicalMediumMax       // Not a real physical type, defined as an upper-bound
-} NDIS_PHYSICAL_MEDIUM, *PNDIS_PHYSICAL_MEDIUM;*/
 
 enum WLAN_INTF_OPCODE {
     wlan_intf_opcode_autoconf_start = 0x000000000,
@@ -456,6 +400,8 @@ typedef struct _DISPLAY_BRIGHTNESS {
 #if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
 static WLAN_CONNECTION_ATTRIBUTES *getWifiConnectionAttributes()
 {
+    if(!local_WlanOpenHandle)
+        return NULL;
     DWORD version =  0;
     HANDLE clientHandle = NULL;
     DWORD result;
@@ -907,7 +853,10 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
      case QSysInfo::WV_WINDOWS7:
          break;
      default:
-         QTimer::singleShot(timerMs, this, SLOT(networkStrengthTimeout()));
+         {
+             if(local_WlanOpenHandle)
+                 QTimer::singleShot(timerMs, this, SLOT(networkStrengthTimeout()));
+         }
          break;
      };
  }
@@ -930,7 +879,8 @@ void QSystemNetworkInfoPrivate::startWifiCallback()
     DWORD version =  0;
     hWlan = NULL;
     DWORD result;
-    result = local_WlanOpenHandle(2, NULL, &version, &hWlan );
+    if(local_WlanOpenHandle)
+        result = local_WlanOpenHandle(2, NULL, &version, &hWlan );
     if( result != ERROR_SUCCESS ) {
         qWarning() << "Error opening Wlanapi 2" << result ;
         return ;
@@ -1018,7 +968,8 @@ void QSystemNetworkInfoPrivate::networkStrengthTimeout()
     case QSysInfo::WV_WINDOWS7:
         break;
     default:
-        QTimer::singleShot(timerMs, this, SLOT(networkStrengthTimeout()));
+        if(local_WlanOpenHandle)
+            QTimer::singleShot(timerMs, this, SLOT(networkStrengthTimeout()));
         break;
     };
  }
@@ -1054,18 +1005,20 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
     case QSystemNetworkInfo::WlanMode:
         {
 #if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
-            WLAN_CONNECTION_ATTRIBUTES *connAtts = getWifiConnectionAttributes();
-            if(connAtts != NULL) {
-                if(connAtts->isState  == wlan_interface_state_authenticating) {
-                    local_WlanFreeMemory(connAtts);
-                    return QSystemNetworkInfo::Searching;
+            if(local_WlanOpenHandle) {
+                WLAN_CONNECTION_ATTRIBUTES *connAtts = getWifiConnectionAttributes();
+                if(connAtts != NULL) {
+                    if(connAtts->isState  == wlan_interface_state_authenticating) {
+                        local_WlanFreeMemory(connAtts);
+                        return QSystemNetworkInfo::Searching;
+                    }
+                    if(connAtts->isState  == wlan_interface_state_connected) {
+                        local_WlanFreeMemory(connAtts);
+                        return QSystemNetworkInfo::Connected;
+                    }
                 }
-                if(connAtts->isState  == wlan_interface_state_connected) {
-                    local_WlanFreeMemory(connAtts);
-                    return QSystemNetworkInfo::Connected;
-                }
+                local_WlanFreeMemory(connAtts);
             }
-            local_WlanFreeMemory(connAtts);
 #endif
         }
         break;
@@ -1124,56 +1077,58 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         {
 
 #if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
-            DWORD version =  0;
-            DWORD result;
+            if(local_WlanOpenHandle) {
 
-            WLAN_INTERFACE_INFO_LIST *interfacesInfoList = NULL;
-            if (hWlan ==0) {
-                result = local_WlanOpenHandle( 2, NULL, &version, &hWlan );
-                if( result != ERROR_SUCCESS ) {
-                    qWarning() << "Error opening Wlanapi 3" << result ;
+                DWORD version =  0;
+                DWORD result;
+
+                WLAN_INTERFACE_INFO_LIST *interfacesInfoList = NULL;
+                if (hWlan ==0) {
+                    result = local_WlanOpenHandle( 2, NULL, &version, &hWlan );
+                    if( result != ERROR_SUCCESS ) {
+                        qWarning() << "Error opening Wlanapi 3" << result ;
+                        local_WlanCloseHandle(hWlan,  0);
+                        return 0;
+                    }
+                }
+                result = local_WlanEnumInterfaces(hWlan, NULL, &interfacesInfoList);
+
+                if( result != ERROR_SUCCESS) {
+                    qWarning() << "Error in enumerating wireless interfaces" << result;
                     local_WlanCloseHandle(hWlan,  0);
                     return 0;
                 }
-            }
-            result = local_WlanEnumInterfaces(hWlan, NULL, &interfacesInfoList);
 
-            if( result != ERROR_SUCCESS) {
-                qWarning() << "Error in enumerating wireless interfaces" << result;
-                local_WlanCloseHandle(hWlan,  0);
-                return 0;
-            }
+                for( uint i = 0; i < interfacesInfoList->dwNumberOfItems; i++ ) {
+                    WLAN_INTERFACE_INFO *interfaceInfo = &interfacesInfoList->InterfaceInfo[i];
+                    GUID& guid = interfaceInfo->InterfaceGuid;
+                    WLAN_INTERFACE_STATE wlanInterfaceState = interfaceInfo->isState;
 
-            for( uint i = 0; i < interfacesInfoList->dwNumberOfItems; i++ ) {
-                WLAN_INTERFACE_INFO *interfaceInfo = &interfacesInfoList->InterfaceInfo[i];
-                GUID& guid = interfaceInfo->InterfaceGuid;
-                WLAN_INTERFACE_STATE wlanInterfaceState = interfaceInfo->isState;
+                    if( wlanInterfaceState == wlan_interface_state_not_ready ) {
+                        qWarning() << "Interface not ready";
+                        continue;
+                    }
 
-                if( wlanInterfaceState == wlan_interface_state_not_ready ) {
-                    qWarning() << "Interface not ready";
-                    continue;
+                    ULONG size = 0;
+                    WLAN_CONNECTION_ATTRIBUTES  *connAtts = NULL;
+                    result = local_WlanQueryInterface( hWlan, &guid,  wlan_intf_opcode_current_connection, NULL, &size, (PVOID*) &connAtts, NULL );
+
+                    if( result != ERROR_SUCCESS ) {
+                        //                    qWarning() << "Error querying wireless interfaces"<< result ;
+                        continue;
+                    }
+                    ulong sig =  connAtts->wlanAssociationAttributes.wlanSignalQuality;
+                    local_WlanFreeMemory(connAtts);
+                    local_WlanFreeMemory(interfacesInfoList);
+
+                    if (sig != wifiStrength) {
+                        emit networkSignalStrengthChanged(mode, sig);
+                        //   qWarning() << "signal strength changed" << sig;
+                        wifiStrength = sig;
+                    }
+                    return sig;
                 }
-
-                ULONG size = 0;
-                WLAN_CONNECTION_ATTRIBUTES  *connAtts = NULL;
-                result = local_WlanQueryInterface( hWlan, &guid,  wlan_intf_opcode_current_connection, NULL, &size, (PVOID*) &connAtts, NULL );
-
-                if( result != ERROR_SUCCESS ) {
-//                    qWarning() << "Error querying wireless interfaces"<< result ;
-                    continue;
-                }
-                ulong sig =  connAtts->wlanAssociationAttributes.wlanSignalQuality;
-                local_WlanFreeMemory(connAtts);
-                local_WlanFreeMemory(interfacesInfoList);
-
-                if (sig != wifiStrength) {
-                   emit networkSignalStrengthChanged(mode, sig);
-                //   qWarning() << "signal strength changed" << sig;
-                   wifiStrength = sig;
-                }
-                return sig;
             }
-
 #endif
         }
         break;
@@ -1256,16 +1211,18 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
     case QSystemNetworkInfo::WlanMode:
         {
 #if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
-            netname = "";
-            WLAN_CONNECTION_ATTRIBUTES *connAtts = getWifiConnectionAttributes();
-            if(connAtts != NULL) {
-                DOT11_SSID ssid;
-                ssid = connAtts->wlanAssociationAttributes.dot11Ssid;
-                for(uint i = 0; i < ssid.uSSIDLength;i++) {
-                    netname += ssid.ucSSID[i];
+            if(local_WlanOpenHandle) {
+                netname = "";
+                WLAN_CONNECTION_ATTRIBUTES *connAtts = getWifiConnectionAttributes();
+                if(connAtts != NULL) {
+                    DOT11_SSID ssid;
+                    ssid = connAtts->wlanAssociationAttributes.dot11Ssid;
+                    for(uint i = 0; i < ssid.uSSIDLength;i++) {
+                        netname += ssid.ucSSID[i];
+                    }
                 }
+                local_WlanFreeMemory(connAtts);
             }
-            local_WlanFreeMemory(connAtts);
 #endif
         }
         break;
@@ -1308,89 +1265,91 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
 
 #if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
 
-        unsigned long oid;
-        DWORD bytesWritten;
+        if(local_WlanOpenHandle) {
+            unsigned long oid;
+            DWORD bytesWritten;
 
-        NDIS_MEDIUM medium ;
-        NDIS_PHYSICAL_MEDIUM physicalMedium = NdisPhysicalMediumUnspecified;
+            NDIS_MEDIUM medium ;
+            NDIS_PHYSICAL_MEDIUM physicalMedium = NdisPhysicalMediumUnspecified;
 
-        HANDLE handle = CreateFile((TCHAR *)QString("\\\\.\\%1").arg(netInterface.name()).utf16(), 0,
-                                   FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
+            HANDLE handle = CreateFile((TCHAR *)QString("\\\\.\\%1").arg(netInterface.name()).utf16(), 0,
+                                       FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
 
-        if (handle == INVALID_HANDLE_VALUE) {
-            continue;
-        }
-
-        oid = OID_GEN_MEDIA_SUPPORTED;
-        bytesWritten;
-        bool result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
-                                      &medium, sizeof(medium), &bytesWritten, 0);
-         if (!result) {
-            CloseHandle(handle);
-            qWarning() << "DeviceIo result is false";
-            return QNetworkInterface();
-            continue;
-        }
-
-        oid = OID_GEN_PHYSICAL_MEDIUM;
-        bytesWritten = 0;
-        result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
-                                 &physicalMedium, sizeof(physicalMedium), &bytesWritten, 0);
-
-//        qWarning()
-//                << netInterface.name()
-//                << netInterface.hardwareAddress();
-//
-//        qWarning() << medium << physicalMedium << result;
-
-        if (!result) {
-            CloseHandle(handle);
-            if (medium == NdisMedium802_3 && mode == QSystemNetworkInfo::EthernetMode) {
-                return netInterface;
-            } else {
-               continue;
+            if (handle == INVALID_HANDLE_VALUE) {
+                continue;
             }
-        }
 
-        CloseHandle(handle);
-        if (physicalMedium == NdisMediumWirelessWan && mode == QSystemNetworkInfo::WlanMode) {
-            //some wifi devices show up here
-            return netInterface;
-        }
+            oid = OID_GEN_MEDIA_SUPPORTED;
+            bytesWritten;
+            bool result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
+                                          &medium, sizeof(medium), &bytesWritten, 0);
+            if (!result) {
+                CloseHandle(handle);
+                qWarning() << "DeviceIo result is false";
+                return QNetworkInterface();
+                continue;
+            }
 
-        if (medium == NdisMedium802_3) {
-            switch (physicalMedium) {
-            case NdisPhysicalMediumUnspecified:
-                {
-                    if(mode == QSystemNetworkInfo::EthernetMode) {
-                        return netInterface;
-                    }
+            oid = OID_GEN_PHYSICAL_MEDIUM;
+            bytesWritten = 0;
+            result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
+                                     &physicalMedium, sizeof(physicalMedium), &bytesWritten, 0);
+
+            //        qWarning()
+            //                << netInterface.name()
+            //                << netInterface.hardwareAddress();
+            //
+            //        qWarning() << medium << physicalMedium << result;
+
+            if (!result) {
+                CloseHandle(handle);
+                if (medium == NdisMedium802_3 && mode == QSystemNetworkInfo::EthernetMode) {
+                    return netInterface;
+                } else {
+                    continue;
                 }
-                break;
-            case NdisPhysicalMediumWirelessLan:
-                {
-                    if(mode == QSystemNetworkInfo::WlanMode) {
-                        return netInterface;
+            }
+
+            CloseHandle(handle);
+            if (physicalMedium == NdisMediumWirelessWan && mode == QSystemNetworkInfo::WlanMode) {
+                //some wifi devices show up here
+                return netInterface;
+            }
+
+            if (medium == NdisMedium802_3) {
+                switch (physicalMedium) {
+                case NdisPhysicalMediumUnspecified:
+                    {
+                        if(mode == QSystemNetworkInfo::EthernetMode) {
+                            return netInterface;
+                        }
                     }
-                }
-                break;
-            case NdisPhysicalMediumBluetooth:
-                {
-                    if(mode == QSystemNetworkInfo::BluetoothMode) {
-                        return netInterface;
+                    break;
+                case NdisPhysicalMediumWirelessLan:
+                    {
+                        if(mode == QSystemNetworkInfo::WlanMode) {
+                            return netInterface;
+                        }
                     }
-                }
-                break;
+                    break;
+                case NdisPhysicalMediumBluetooth:
+                    {
+                        if(mode == QSystemNetworkInfo::BluetoothMode) {
+                            return netInterface;
+                        }
+                    }
+                    break;
 #ifdef NDIS_SUPPORT_NDIS6
-            case NdisPhysicalMediumWiMax:
-                {
-                    if(mode == QSystemNetworkInfo::WimaxMode) {
-                        return netInterface;
+                case NdisPhysicalMediumWiMax:
+                    {
+                        if(mode == QSystemNetworkInfo::WimaxMode) {
+                            return netInterface;
+                        }
                     }
-                }
-                break;
+                    break;
 #endif
-            };
+                };
+            }
         }
 #endif
     } //end interfaceList
@@ -1635,10 +1594,38 @@ QStringList QSystemStorageInfoPrivate::logicalDrives()
     return drivesList;
 }
 
+QSystemDeviceInfoPrivate *QSystemDeviceInfoPrivate::self = 0;
+
+bool qax_winEventFilter(void *message)
+{
+    MSG *pMsg = (MSG*)message;
+    if( pMsg->message == WM_POWERBROADCAST) {
+//        qWarning() << "XXXXXXXXXXX we've got the power!";
+        switch (pMsg->wParam) {
+        case PBT_APMPOWERSTATUSCHANGE:
+            QSystemDeviceInfoPrivate::instance()->batteryLevel();
+            QSystemDeviceInfoPrivate::instance()->currentPowerState();
+            break;
+            break;
+        default:
+            break;
+        };
+    }
+
+    return false;
+}
+
 //////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
         : QObject(parent)
 {
+    batteryLevelCache = 0;
+    currentPowerStateCache = QSystemDeviceInfo::UnknownPower;
+    batteryStatusCache = QSystemDeviceInfo::NoBatteryLevel;
+    QAbstractEventDispatcher::instance()->setEventFilter(qax_winEventFilter);
+    if(!self)
+        self = this;
+
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
@@ -1723,15 +1710,23 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
     SYSTEM_POWER_STATUS status;
     GetSystemPowerStatus(&status);
 #endif
+    QSystemDeviceInfo::PowerState state = QSystemDeviceInfo::UnknownPower;
 
-    if(status.BatteryFlag & BATTERY_FLAG_CHARGING)
-        return QSystemDeviceInfo::WallPowerChargingBattery;
-    if(status.ACLineStatus  == AC_LINE_ONLINE)
-        return QSystemDeviceInfo::WallPower;
-    if(status.ACLineStatus  == AC_LINE_OFFLINE)
-        return QSystemDeviceInfo::BatteryPower;
+    if(status.ACLineStatus  == AC_LINE_ONLINE) {
+        state = QSystemDeviceInfo::WallPower;
+    }
+    if(status.ACLineStatus  == AC_LINE_OFFLINE) {
+        state = QSystemDeviceInfo::BatteryPower;
+    }
+    if(status.BatteryFlag & BATTERY_FLAG_CHARGING) {
+        state = QSystemDeviceInfo::WallPowerChargingBattery;
+    }
+    if( currentPowerStateCache != state) {
+        currentPowerStateCache = state;
+        emit powerStateChanged(state);
+    }
 
-    return QSystemDeviceInfo::UnknownPower;
+    return state;
 }
 
 QString QSystemDeviceInfoPrivate::imei()
@@ -1869,7 +1864,7 @@ QString QSystemDeviceInfoPrivate::productName()
     return name;
 }
 
-int QSystemDeviceInfoPrivate::batteryLevel() const
+int QSystemDeviceInfoPrivate::batteryLevel()
 {
 #ifdef Q_OS_WINCE
     SYSTEM_POWER_STATUS_EX status;
@@ -1882,7 +1877,30 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
 #else
     SYSTEM_POWER_STATUS status;
     if(GetSystemPowerStatus( &status) ) {
-        return status.BatteryLifePercent;
+        int bat = status.BatteryLifePercent;
+        if(bat == 255) //battery unknown level status
+            bat = 0;
+
+        if(batteryLevelCache != bat) {
+           batteryLevelCache = bat;
+           emit batteryLevelChanged(bat);
+        }
+
+        if(batteryLevelCache < 4 && batteryStatusCache != QSystemDeviceInfo::BatteryCritical) {
+            batteryStatusCache = QSystemDeviceInfo::BatteryCritical;
+            emit batteryStatusChanged(batteryStatusCache);
+        } else if((batteryLevelCache > 3 && batteryLevelCache < 11) && batteryStatusCache != QSystemDeviceInfo::BatteryVeryLow) {
+            batteryStatusCache = QSystemDeviceInfo::BatteryVeryLow;
+            emit batteryStatusChanged(batteryStatusCache);
+        } else if((batteryLevelCache > 10 && batteryLevelCache < 41) && batteryStatusCache != QSystemDeviceInfo::BatteryLow) {
+            batteryStatusCache = QSystemDeviceInfo::BatteryLow;
+            emit batteryStatusChanged(batteryStatusCache);
+        } else if(batteryLevelCache > 40 && batteryStatusCache != QSystemDeviceInfo::BatteryNormal) {
+            batteryStatusCache = QSystemDeviceInfo::BatteryNormal;
+            emit batteryStatusChanged(batteryStatusCache);
+        }
+
+        return bat;
 }
 #endif
     return 0;

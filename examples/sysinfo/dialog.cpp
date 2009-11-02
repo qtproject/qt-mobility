@@ -50,7 +50,7 @@
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog),
-    systemInfo(NULL), di(NULL), ni(NULL), saver(NULL)
+    saver(NULL), systemInfo(NULL), di(NULL), ni(NULL)
 {
     ui->setupUi(this);
     setupGeneral();
