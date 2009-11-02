@@ -153,15 +153,15 @@ void VersitTest::test_data()
     QTest::addColumn<QString>("InFile");
     QStringListIterator fileIterator(mFiles);
     while (fileIterator.hasNext()) {
-        const QString& fileName = inputDirPath + "\\" + fileIterator.next();
-        const QString& myDataFeed = "Data feed:" + fileName; 
-        QTest::newRow( myDataFeed.toAscii().data() ) << fileName;
+        QString fileName = inputDirPath + "\\" + fileIterator.next();
+        QTest::newRow(fileName.toAscii().data()) << fileName;
     }
 }
 
 void VersitTest::executeTest(QFile& in, QIODevice& out)
 {    
     mReader->setDevice(&in);
+    out.reset();
     mWriter->setDevice(&out);
     
     // Parse the input
