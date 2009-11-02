@@ -142,6 +142,10 @@ void VersitTest::test()
         QFile out(outputDirPath+ "\\" + fileInfo.fileName());
         out.remove();
         QVERIFY(out.open(QIODevice::ReadWrite));
+        // Note that QBENCHMARK may execute the "executeTest"
+        // function several times (see QBENCHMARK documentation).
+        // This may cause the creation of multiple images or audio clips
+        // per one vCard property like PHOTO or SOUND
         QBENCHMARK { executeTest(in,out); }
         in.close();
         out.close();        
