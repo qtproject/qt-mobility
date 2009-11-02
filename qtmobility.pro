@@ -13,8 +13,7 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 5) {
 
 
 #generate prf file for Qt integration
-
-PRF_OUTPUT=features/mobility.prf
+PRF_OUTPUT=$${QT_MOBILITY_BUILD_TREE}/features/mobility.prf
 
 system(echo MOBILITY_PREFIX=$${QT_MOBILITY_PREFIX} > $$PRF_OUTPUT)
 system(echo MOBILITY_INCLUDE=$${QT_MOBILITY_INCLUDE} >> $$PRF_OUTPUT)
@@ -27,7 +26,7 @@ symbian:system(type features\mobility.prf.template >> features\mobility.prf)
 
 # install feature file
 feature.path = $$[QT_INSTALL_DATA]/mkspecs/features
-feature.files = features/mobility.prf
+feature.files = $$QT_MOBILITY_BUILD_TREE/features/mobility.prf
 
 INSTALLS += feature
 
