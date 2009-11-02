@@ -421,6 +421,12 @@ void QVersitContactConverterPrivate::encodeOrganization(
             document.addProperty(property);
         }
     }
+    if (organization.assistantName().length() > 0) {
+        QVersitProperty property;
+        property.setName(QString::fromAscii(versitAssistantId));
+        property.setValue(organization.assistantName().toAscii());
+        document.addProperty(property);
+    }
 }
 
 /*!
