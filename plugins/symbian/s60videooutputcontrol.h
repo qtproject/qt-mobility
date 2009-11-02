@@ -42,7 +42,7 @@
 #ifndef S60VIDEOOUTPUTCONTROL_H
 #define S60VIDEOOUTPUTCONTROL_H
 
-#include "qvideooutputcontrol.h"
+#include <multimedia/qvideooutputcontrol.h>
 
 class S60VideoOutputControl : public QVideoOutputControl
 {

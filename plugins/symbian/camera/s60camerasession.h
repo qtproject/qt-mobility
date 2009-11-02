@@ -56,6 +56,7 @@
 #include <cameraengine.h>
 #include <cameraengineobserver.h>
 
+class S60VideoWidgetControl;
 
 class MVFProcessor
 {
@@ -138,9 +139,9 @@ public:
     void stopRecording();
 
     //videodevicecontrol
-    int deviceCount() const;
-    QString name(int index) const;
-    QString description(int index) const;
+    static int deviceCount();
+    static QString name(const int index);
+    static QString description(const int index);
     QIcon icon(int index) const;
     int defaultDevice() const;
     int selectedDevice() const;
@@ -158,6 +159,8 @@ public:
     QString imageCaptureCodecDescription(const QString &codecName) const;
     QtMedia::EncodingQuality captureQuality() const;
     void setCaptureQuality(QtMedia::EncodingQuality);
+    
+    void setVideoRenderer(QObject *renderer);
     
 protected:
     void MceoCameraReady();
@@ -201,6 +204,7 @@ private:
     // information about camera
     TCameraInfo m_info;
     MVFProcessor* m_VFProcessor;
+    S60VideoWidgetControl* m_videoWidgetControl;
     
 };
 

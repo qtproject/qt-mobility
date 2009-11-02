@@ -43,8 +43,6 @@
 #include <multimedia/qmediaplayer.h>
 #include <VideoPlayer.h>
 
-class S60VideoRendererInterface;
-
 class S60VideoPlayerSession : public QObject, public MVideoPlayerUtilityObserver
 {
 Q_OBJECT
@@ -137,7 +135,6 @@ private:
     QMediaPlayer::MediaStatus m_mediaStatus;
     QMap<QByteArray, QVariant> m_tags;
     QList< QMap<QString,QVariant> > m_streamProperties;
-    S60VideoRendererInterface *m_renderer;
     
     int m_volume;
     qreal m_playbackRate;

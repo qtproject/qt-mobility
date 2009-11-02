@@ -34,8 +34,6 @@
 
 #include "s60videoplayersession.h"
 
-#include "s60videorendererinterface.h"
-
 #include <QtCore/qdatetime.h>
 #include <QtCore/qdebug.h>
 
@@ -50,7 +48,6 @@ S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
     :QObject(parent),
      m_state(QMediaPlayer::StoppedState),
      m_mediaStatus(QMediaPlayer::UnknownMediaStatus),
-     m_renderer(0),
      m_volume(100),
      m_playbackRate(1.0),
      m_muted(false),
