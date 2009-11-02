@@ -411,6 +411,8 @@ QMap<QString, QContactDetailDefinition> CntSymbianEngine::detailDefinitions(QCon
 
 bool CntSymbianEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
 {
+    bool returnValue(false);
+    
     switch (feature) {
         /* TODO: case QContactManagerInfo::Groups to be implemented.
            How about the others? like:
@@ -418,10 +420,17 @@ bool CntSymbianEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) c
            QContactManagerInfo::MutableDefinitions,
            QContactManagerInfo::Anonymous? */
     case QContactManagerInfo::Groups:
-        return true;
-    default:
-        return false;
+    case QContactManagerInfo::Relationships:
+    case QContactManagerInfo::SelfContact: {
+        returnValue = true;
+        break;
     }
+    
+    default:
+        returnValue = false;
+    }
+    
+    return returnValue;
 }
 
 bool CntSymbianEngine::filterSupported(const QContactFilter& filter) const

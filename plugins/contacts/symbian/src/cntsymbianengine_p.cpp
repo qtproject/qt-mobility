@@ -537,10 +537,10 @@ int CntSymbianEnginePrivate::addContactL(QContact &contact)
 
         // Update the changed values to the QContact
         // id
-        QContactId contactId;
-        contactId.setLocalId(id);
-        contactId.setManagerUri(m_managerUri);
-        contact.setId(contactId);
+        QScopedPointer<QContactId> contactId(new QContactId());
+        contactId->setLocalId(id);
+        contactId->setManagerUri(m_managerUri);
+        contact.setId(*contactId);
         contactItem = m_contactDatabase->ReadContactLC(id);
         // Guid
         QContactDetail* detail = m_transformContact->transformGuidItemFieldL(*contactItem, *m_contactDatabase);
@@ -558,10 +558,10 @@ int CntSymbianEnginePrivate::addContactL(QContact &contact)
 
         //set the id for the contact, needed by update
         id = contactItem->Id();
-        QContactId contactId;
-        contactId.setLocalId(QContactLocalId(id));
-        contactId.setManagerUri(m_managerUri);
-        contact.setId(contactId);
+        QScopedPointer<QContactId> contactId(new QContactId());
+        contactId->setLocalId(QContactLocalId(id));
+        contactId->setManagerUri(m_managerUri);
+        contact.setId(*contactId);
 
         //update contact, will add the fields to the already saved group
         updateContactL(contact);

@@ -212,16 +212,16 @@ void CntTransformContact::transformContactL(
 
 	for(int i(0); i < detailCount; ++i)
 	{
-	    QContactDetail detail = detailList.at(i);
-		QList<CContactItemField *> fieldList = transformDetailL(detail);
+	    QScopedPointer<QContactDetail> detail(new QContactDetail(detailList.at(i)));
+		QList<CContactItemField *> fieldList = transformDetailL(*detail);
 		int fieldCount = fieldList.count();
 
 		// check if the contact has any unsupported details
 		if(fieldCount == 0) {
-		    if (detail.definitionName() != QContactDisplayLabel::DefinitionName
-                && detail.definitionName() != QContactType::DefinitionName
-                && detail.definitionName() != QContactGuid::DefinitionName
-                && detail.definitionName() != QContactTimestamp::DefinitionName) {
+		    if (detail->definitionName() != QContactDisplayLabel::DefinitionName
+                && detail->definitionName() != QContactType::DefinitionName
+                && detail->definitionName() != QContactGuid::DefinitionName
+                && detail->definitionName() != QContactTimestamp::DefinitionName) {
             User::Leave(KErrInvalidContactDetail);
 		    }
 		}
