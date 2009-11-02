@@ -107,8 +107,10 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
 
     connect(camera, SIGNAL(stateChanged(QCamera::State)), this, SLOT(updateCameraState(QCamera::State)));
 
-    service = camera->service();
+    mediaRecorder = new QMediaRecorder(camera);
+    connect(mediaRecorder, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(updateRecorderState(QMediaRecorder::State)));
 
+    service = camera->service();
 
     //audio devices
     ui->actionAudio->menu()->clear();
@@ -116,8 +118,6 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
     audioDevicesGroup->setExclusive(true);
 
     if (service) {
-        mediaRecorder = new QMediaRecorder(camera);
-
         foreach(const QString deviceName, service->supportedEndpoints(QMediaService::AudioDevice)) {
             QString description = service->endpointDescription(QMediaService::AudioDevice, deviceName);
             QAction *audioDeviceAction = new QAction(deviceName+" "+description, audioDevicesGroup);
@@ -146,6 +146,7 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
     ui->stackedWidget->addWidget(videoWidget);
 
     updateCameraState(camera->state());
+    updateRecorderState(mediaRecorder->state());
 
     connect(camera, SIGNAL(readyForCaptureChanged(bool)), ui->imageCaptureBox, SLOT(setEnabled(bool)));
     connect(camera, SIGNAL(imageCaptured(QString,QImage)), this, SLOT(processCapturedImage(QString,QImage)));
@@ -245,6 +246,27 @@ void CameraCapture::updateCameraState(QCamera::State state)
     } else {
         ui->startCameraButton->setEnabled(false);
         ui->startCameraButton->setText(tr("Camera is not available"));
+    }
+}
+
+void CameraCapture::updateRecorderState(QMediaRecorder::State state)
+{
+    switch (state) {
+    case QMediaRecorder::StoppedState:
+        ui->recordButton->setEnabled(true);
+        ui->pauseButton->setEnabled(true);
+        ui->stopButton->setEnabled(false);
+        break;
+    case QMediaRecorder::PausedState:
+        ui->recordButton->setEnabled(true);
+        ui->pauseButton->setEnabled(false);
+        ui->stopButton->setEnabled(true);
+        break;
+    case QMediaRecorder::RecordingState:
+        ui->recordButton->setEnabled(false);
+        ui->pauseButton->setEnabled(true);
+        ui->stopButton->setEnabled(true);
+        break;
     }
 }
 
