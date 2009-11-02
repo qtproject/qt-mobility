@@ -7,27 +7,6 @@
         <keyword ref="qcontactdetaildefinition-field.html#operator-eq-eq">operator==</keyword>
         <section ref="qcontactdetaildefinition-field-members.html" title="List of all members"/>
     </section>
-    <section ref="qabstractmediaservice.html" title="QAbstractMediaService Class Reference">
-        <keyword ref="qabstractmediaservice.html">QAbstractMediaService</keyword>
-        <keyword ref="qabstractmediaservice.html#MediaEndpoint-enum">MediaEndpoint</keyword>
-        <keyword ref="qabstractmediaservice.html#MediaEndpoint-enum">QAbstractMediaService::AudioOutput</keyword>
-        <keyword ref="qabstractmediaservice.html#MediaEndpoint-enum">QAbstractMediaService::StreamOutput</keyword>
-        <keyword ref="qabstractmediaservice.html#MediaEndpoint-enum">QAbstractMediaService::VideoInput</keyword>
-        <keyword ref="qabstractmediaservice.html#MediaEndpoint-enum">QAbstractMediaService::StreamInput</keyword>
-        <keyword ref="qabstractmediaservice.html#MediaEndpoint-enum">QAbstractMediaService::VideoOutput</keyword>
-        <keyword ref="qabstractmediaservice.html#MediaEndpoint-enum">QAbstractMediaService::AudioInput</keyword>
-        <keyword ref="qabstractmediaservice.html#activeEndpoints">activeEndpoints</keyword>
-        <keyword ref="qabstractmediaservice.html#control">control</keyword>
-        <keyword ref="qabstractmediaservice.html#endpointDescription">endpointDescription</keyword>
-        <keyword ref="qabstractmediaservice.html#inputStream">inputStream</keyword>
-        <keyword ref="qabstractmediaservice.html#isEndpointSupported">isEndpointSupported</keyword>
-        <keyword ref="qabstractmediaservice.html#outputStream">outputStream</keyword>
-        <keyword ref="qabstractmediaservice.html#setActiveEndpoint">setActiveEndpoint</keyword>
-        <keyword ref="qabstractmediaservice.html#setInputStream">setInputStream</keyword>
-        <keyword ref="qabstractmediaservice.html#setOutputStream">setOutputStream</keyword>
-        <keyword ref="qabstractmediaservice.html#supportedEndpoints">supportedEndpoints</keyword>
-        <section ref="qabstractmediaservice-members.html" title="List of all members"/>
-    </section>
     <section ref="qabstractsecuritysession.html" title="QAbstractSecuritySession Class Reference">
         <keyword ref="qabstractsecuritysession.html">QAbstractSecuritySession</keyword>
         <keyword ref="qabstractsecuritysession.html#isAllowed">isAllowed</keyword>
@@ -151,19 +130,6 @@
         <keyword ref="qaudioformat.html#operator-eq">operator=</keyword>
         <keyword ref="qaudioformat.html#operator-eq-eq">operator==</keyword>
         <section ref="qaudioformat-members.html" title="List of all members"/>
-    </section>
-    <section ref="qaudiosource.html" title="QAudioSource Class Reference">
-        <keyword ref="qaudiosource.html">QAudioSource</keyword>
-        <keyword ref="qaudiosource.html#format">format</keyword>
-        <keyword ref="qaudiosource.html#isFormatSupported">isFormatSupported</keyword>
-        <keyword ref="qaudiosource.html#isValid">isValid</keyword>
-        <keyword ref="qaudiosource.html#service">service</keyword>
-        <keyword ref="qaudiosource.html#setFormat">setFormat</keyword>
-        <keyword ref="qaudiosource.html#supportedChannels">supportedChannels</keyword>
-        <keyword ref="qaudiosource.html#supportedCodecs">supportedCodecs</keyword>
-        <keyword ref="qaudiosource.html#supportedFrequencies">supportedFrequencies</keyword>
-        <keyword ref="qaudiosource.html#supportedSampleSizes">supportedSampleSizes</keyword>
-        <section ref="qaudiosource-members.html" title="List of all members"/>
     </section>
     <section ref="qcamera.html" title="QCamera Class Reference">
         <keyword ref="qcamera.html">QCamera</keyword>
@@ -1843,53 +1809,6 @@
         <keyword ref="qmediaserviceproviderhint.html#operator-eq">operator=</keyword>
         <keyword ref="qmediaserviceproviderhint.html#operator-eq-eq">operator==</keyword>
         <section ref="qmediaserviceproviderhint-members.html" title="List of all members"/>
-    </section>
-    <section ref="qmediaslideshow.html" title="QMediaSlideShow Class Reference">
-        <keyword ref="qmediaslideshow.html">QMediaSlideShow</keyword>
-        <keyword ref="qmediaslideshow.html#MediaStatus-enum">MediaStatus</keyword>
-        <keyword ref="qmediaslideshow.html#MediaStatus-enum">QMediaSlideShow::InvalidMedia</keyword>
-        <keyword ref="qmediaslideshow.html#MediaStatus-enum">QMediaSlideShow::LoadingMedia</keyword>
-        <keyword ref="qmediaslideshow.html#MediaStatus-enum">QMediaSlideShow::LoadedMedia</keyword>
-        <keyword ref="qmediaslideshow.html#MediaStatus-enum">QMediaSlideShow::NoMedia</keyword>
-        <keyword ref="qmediaslideshow.html#State-enum">State</keyword>
-        <keyword ref="qmediaslideshow.html#State-enum">QMediaSlideShow::PausedState</keyword>
-        <keyword ref="qmediaslideshow.html#State-enum">QMediaSlideShow::PlayingState</keyword>
-        <keyword ref="qmediaslideshow.html#State-enum">QMediaSlideShow::StoppedState</keyword>
-        <keyword ref="qmediaslideshow.html#currentIndex-prop">currentIndex</keyword>
-        <keyword ref="qmediaslideshow.html#currentIndex-prop">setCurrentIndex</keyword>
-        <keyword ref="qmediaslideshow.html#currentMedia-prop">currentMedia</keyword>
-        <keyword ref="qmediaslideshow.html#media-prop">media</keyword>
-        <keyword ref="qmediaslideshow.html#media-prop">setMedia</keyword>
-        <keyword ref="qmediaslideshow.html#mediaStatus-prop">mediaStatus</keyword>
-        <keyword ref="qmediaslideshow.html#playlist-prop">playlist</keyword>
-        <keyword ref="qmediaslideshow.html#state-prop">state</keyword>
-        <keyword ref="qmediaslideshow.html#timeout-prop">timeout</keyword>
-        <keyword ref="qmediaslideshow.html#timeout-prop">setTimeout</keyword>
-        <keyword ref="qmediaslideshow.html#currentIndexChanged">currentIndexChanged</keyword>
-        <keyword ref="qmediaslideshow.html#currentMediaChanged">currentMediaChanged</keyword>
-        <keyword ref="qmediaslideshow.html#isValid">isValid</keyword>
-        <keyword ref="qmediaslideshow.html#mediaChanged">mediaChanged</keyword>
-        <keyword ref="qmediaslideshow.html#mediaStatusChanged">mediaStatusChanged</keyword>
-        <keyword ref="qmediaslideshow.html#next">next</keyword>
-        <keyword ref="qmediaslideshow.html#pause">pause</keyword>
-        <keyword ref="qmediaslideshow.html#play">play</keyword>
-        <keyword ref="qmediaslideshow.html#previous">previous</keyword>
-        <keyword ref="qmediaslideshow.html#service">service</keyword>
-        <keyword ref="qmediaslideshow.html#stateChanged">stateChanged</keyword>
-        <keyword ref="qmediaslideshow.html#stop">stop</keyword>
-        <keyword ref="qmediaslideshow.html#timerEvent">timerEvent</keyword>
-        <section ref="qmediaslideshow-members.html" title="List of all members"/>
-    </section>
-    <section ref="qmediasource.html" title="QMediaSource Class Reference">
-        <keyword ref="qmediasource.html">QMediaSource</keyword>
-        <keyword ref="qmediasource.html#contentResource">contentResource</keyword>
-        <keyword ref="qmediasource.html#contentUri">contentUri</keyword>
-        <keyword ref="qmediasource.html#isNull">isNull</keyword>
-        <keyword ref="qmediasource.html#resources">resources</keyword>
-        <keyword ref="qmediasource.html#operator-not-eq">operator!=</keyword>
-        <keyword ref="qmediasource.html#operator-eq">operator=</keyword>
-        <keyword ref="qmediasource.html#operator-eq-eq">operator==</keyword>
-        <section ref="qmediasource-members.html" title="List of all members"/>
     </section>
     <section ref="qmediastreamscontrol.html" title="QMediaStreamsControl Class Reference">
         <keyword ref="qmediastreamscontrol.html">QMediaStreamsControl</keyword>
