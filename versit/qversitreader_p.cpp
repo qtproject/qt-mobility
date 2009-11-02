@@ -55,6 +55,24 @@ QVersitReaderPrivate::QVersitReaderPrivate() :
 /*! Destroy a reader. */    
 QVersitReaderPrivate::~QVersitReaderPrivate()
 {
+    terminate();
+    wait();
+}
+
+/*!
+ * Inherited from QThread. Does the actual reading.
+ */
+void QVersitReaderPrivate::run()
+{
+    if (mIoDevice) {
+        QByteArray input = mIoDevice->readAll();
+        VersitUtils::unfold(input);
+        while (input.length() > 0) {
+            QVersitDocument document = parseVersitDocument(input);
+            if (document.properties().count() > 0)
+                mVersitDocuments.append(document);
+        }
+    }
 }
 
 /*!

@@ -64,12 +64,13 @@ public:
     // async read / write operations.
     void setDevice(QIODevice* device);
     QIODevice* device() const;
-    bool start();
+    bool startAsynchronousWriting();
+    bool writeSynchronously();
 
 signals:
-    void progress(bool finished);
+    void writingDone();
 
-private:
+private: // data
     QVersitWriterPrivate* d;
 };
 

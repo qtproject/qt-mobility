@@ -61,15 +61,16 @@ public:
     // async read / write operation
     void setDevice(QIODevice* device);
     QIODevice* device() const;
-    bool start();
+    bool startAsynchronousReading();
+    bool readSynchronously();
 
     // output:
     QList<QVersitDocument> result() const;
 
 signals:
-    void progress(bool finished);
+    void readingDone();
     
-private: // Data
+private: // data
     QVersitReaderPrivate* d;   
 };
 

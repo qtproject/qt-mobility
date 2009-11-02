@@ -56,9 +56,9 @@
  */
 
 /*! Constructs a writer. */
-QVersitWriter::QVersitWriter() 
+QVersitWriter::QVersitWriter() : d(new QVCard21Writer)
 {
-    d = new QVCard21Writer;
+    connect(d,SIGNAL(finished()),this,SIGNAL(writingDone()),Qt::DirectConnection);
 }
 
 /*! Destroys a writer. */
@@ -88,6 +88,7 @@ void QVersitWriter::setVersitDocument(const QVersitDocument& versitDocument)
         updatedWriter->mIoDevice = d->mIoDevice;
         delete d;
         d = updatedWriter;
+        connect(d,SIGNAL(finished()),this,SIGNAL(writingDone()),Qt::DirectConnection);
     }
     d->mVersitDocument = versitDocument;
 }
@@ -117,17 +118,28 @@ QIODevice* QVersitWriter::device() const
 }
 
 /*!
- * Starts encoding.
+ * Starts writing the output asynchronously.
+ * Signal writingDone is emitted when the writing has finished.
  */
-bool QVersitWriter::start()
+bool QVersitWriter::startAsynchronousWriting()
 {
-    if (d->mIoDevice
-        && !d->mVersitDocument.properties().empty()) {
-        QByteArray output = d->encodeVersitDocument(d->mVersitDocument);
-        if (d->mIoDevice->write(output) > 0) {
-            return true;
-        }
-        return false;
+    bool started = false;
+    if (d->mIoDevice && d->mIoDevice->isOpen() && !d->isRunning()) {
+        d->start();
+        started = true;
     }
-    return false;
+    return started;
+}
+
+/*!
+ * Writes the output synchronously.
+ * Using this function may block the user thread for an undefined period.
+ * In most cases asynchronous startAsynchronousWriting should be used instead.
+ */
+bool QVersitWriter::writeSynchronously()
+{
+    bool ok = startAsynchronousWriting();
+    if (ok)
+        d->wait();
+    return ok;
 }

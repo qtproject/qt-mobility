@@ -173,7 +173,8 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
     mWriter->setDevice(&out);
     
     // Parse the input
-    QVERIFY2(mReader->start(), in.fileName().toAscii().constData());
+    QVERIFY2(mReader->readSynchronously(),
+             in.fileName().toAscii().constData());
     
     // Convert to QContacts
     QList<QContact> contacts;
@@ -205,7 +206,8 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
     // Encode and write to output
     foreach (QVersitDocument document, documents) {
         mWriter->setVersitDocument(document);
-        QVERIFY2(mWriter->start(), in.fileName().toAscii().constData());
+        QVERIFY2(mWriter->writeSynchronously(),
+                 in.fileName().toAscii().constData());
     }
     
     // Compare the input and output

@@ -62,6 +62,19 @@ QVersitWriterPrivate::QVersitWriterPrivate(
 /*! Destroys a writer. */
 QVersitWriterPrivate::~QVersitWriterPrivate()
 {
+    terminate();
+    wait();
+}
+
+/*!
+ * Inherited from QThread. Does the actual writing.
+ */
+void QVersitWriterPrivate::run()
+{
+    if (mIoDevice && !mVersitDocument.properties().empty()) {
+        QByteArray output = encodeVersitDocument(mVersitDocument);
+        mIoDevice->write(output);
+    }
 }
 
 /*!
