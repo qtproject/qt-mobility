@@ -20,11 +20,11 @@ SYMBIAN_HEADERS += \
         ../../inc/cnttransformgeolocation.h \
         ../../inc/cnttransformnote.h \
         ../../inc/cnttransformfamily.h \
-        ../../inc/qabstractcontactfilter.h \
-        ../../inc/qcontactsymbianfilterdbms.h \
-        ../../inc/qcontactsymbianfiltersql.h \
-        ../../inc/qcontactsymbiansorterdbms.h \
-        ../../inc/qabstractcontactsorter.h \
+        ../../inc/cntabstractcontactfilter.h \
+        ../../inc/cntsymbianfilterdbms.h \
+        ../../inc/cntsymbianfiltersql.h \
+        ../../inc/cntsymbiansorterdbms.h \
+        ../../inc/cntabstractcontactsorter.h \
         ../../inc/cntrelationship.h \
         ../../inc/cntabstractrelationship.h \
         ../../inc/cntrelationshipgroup.h \

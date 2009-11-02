@@ -117,15 +117,15 @@ QList<QContactLocalId> CntSymbianEngine::contacts(
     QList<QContactLocalId> result;
 
     // Check if the filter is supported by the underlying filter implementation
-    QAbstractContactFilter::FilterSupport filterSupport = d->filterSupported(filter);
+    CntAbstractContactFilter::FilterSupport filterSupport = d->filterSupported(filter);
 
-    if (filterSupport == QAbstractContactFilter::Supported) {
+    if (filterSupport == CntAbstractContactFilter::Supported) {
         // Filter supported, use as the result directly
         result = d->contacts(filter, sortOrders, error);
         // If sorting is not supported, we need to fallback to slow sorting
         if(!d->sortOrderSupported(sortOrders))
             result = slowSort(result, sortOrders, error);
-    } else if (filterSupport == QAbstractContactFilter::SupportedPreFilterOnly) {
+    } else if (filterSupport == CntAbstractContactFilter::SupportedPreFilterOnly) {
         // Filter only does pre-filtering and may include false positives
         QList<QContactLocalId> contacts = d->contacts(filter, sortOrders, error);
         if(error == QContactManager::NoError)
@@ -429,9 +429,9 @@ bool CntSymbianEngine::filterSupported(const QContactFilter& filter) const
     TBool result;
 
     // Map filter support into a boolean value
-    QAbstractContactFilter::FilterSupport filterSupport = d->filterSupported(filter);
-    if (filterSupport == QAbstractContactFilter::Supported
-        || filterSupport == QAbstractContactFilter::SupportedPreFilterOnly) {
+    CntAbstractContactFilter::FilterSupport filterSupport = d->filterSupported(filter);
+    if (filterSupport == CntAbstractContactFilter::Supported
+        || filterSupport == CntAbstractContactFilter::SupportedPreFilterOnly) {
         result = true;
     } else {
         result = false;

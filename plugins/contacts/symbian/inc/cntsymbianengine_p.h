@@ -55,13 +55,13 @@
 #include "qcontactmanager.h"
 
 #include "cnttransformcontact.h"
-#include "qabstractcontactfilter.h"
+#include "cntabstractcontactfilter.h"
 
 #define CNT_SYMBIAN_MANAGER_NAME "symbian"
 
 class QContactChangeSet;
-class QAbstractContactFilter;
-class QAbstractContactSorter;
+class CntAbstractContactFilter;
+class CntAbstractContactSorter;
 class CntRelationship;
 
 class CntSymbianEnginePrivate : public QObject,
@@ -84,7 +84,7 @@ public:
     QList<QContactLocalId> groups(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& qtError) const;
 
     //Filter & sort order
-    QAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter) const;
+    CntAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter) const;
 	bool sortOrderSupported(const QList<QContactSortOrder>& sortOrders) const;
     int count() const;
 
@@ -140,8 +140,8 @@ private:
     QList<QContactLocalId> m_contactsChangedEmitted;
     QList<QContactLocalId> m_contactsRemovedEmitted;
     CntTransformContact       *m_transformContact;
-    QAbstractContactFilter* m_contactFilter;
-    QAbstractContactSorter* m_contactSorter;
+    CntAbstractContactFilter* m_contactFilter;
+    CntAbstractContactSorter* m_contactSorter;
     CntRelationship        *m_relationship;
 };
 

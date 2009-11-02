@@ -39,41 +39,27 @@
 **
 ****************************************************************************/
 
-#ifndef QABSTRACTCONTACTFILTER_H
-#define QABSTRACTCONTACTFILTER_H
+#ifndef CNTABSTRACTCONTACTSORTER_H
+#define CNTABSTRACTCONTACTSORTER_H
 
 #include <QList>
 #include "qtcontactsglobal.h"
 #include "qcontactmanager.h"
 #include "qcontactsortorder.h"
-#include "qcontactfilter.h"
 
-class QAbstractContactFilter
+class CntAbstractContactSorter
 {
 public:
-    enum FilterSupport {
-        /* The filter not supported */
-        NotSupported = 0,
-        /* The filter is supported */
-        Supported,
-        /* The filter is not directly supported, but for performance reasons
-         * the contact filter implementation pretends supporting the filter
-         * when it actually maps the filter to another, less strict filter.
-         * For example if the caller uses match flag Qt::MatchExactly, the
-         * filter actually gives the result as Qt::MatchContains (because of
-         * the limitations in the underlying database).
-         * The result then needs to be filtered by the caller (for example by
-         * using QContactManagerEngine::testFilter). */
-        SupportedPreFilterOnly
-    };
-
-public:
     virtual QList<QContactLocalId> contacts(
-            const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
             QContactManager::Error& error) = 0;
 
-    virtual FilterSupport filterSupported(const QContactFilter& filter) = 0;
+    virtual QList<QContactLocalId> sort(
+        QList<QContactLocalId> contactIds,
+        const QList<QContactSortOrder>& sortOrders,
+        QContactManager::Error& error) = 0;
+
+    virtual bool sortOrderSupported(const QList<QContactSortOrder>& sortOrders) = 0;
 };
 
-#endif /* QABSTRACTCONTACTFILTER_H */
+#endif /* QABSTRACTCONTACTSORTER_H */

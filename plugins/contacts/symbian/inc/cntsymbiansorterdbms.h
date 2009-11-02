@@ -39,27 +39,40 @@
 **
 ****************************************************************************/
 
-#ifndef QABSTRACTCONTACTSORTER_H
-#define QABSTRACTCONTACTSORTER_H
+#ifndef CNTSYMBIANSORTERDBMS_H
+#define CNTSYMBIANSORTERDBMS_H
 
-#include <QList>
-#include "qtcontactsglobal.h"
-#include "qcontactmanager.h"
-#include "qcontactsortorder.h"
+#include "cntabstractcontactsorter.h"
+#include <e32cmn.h>
 
-class QAbstractContactSorter
+class CContactDatabase;
+class CContactIdArray;
+class CntTransformContact;
+
+class CntSymbianSorterDbms : public CntAbstractContactSorter
 {
 public:
-    virtual QList<QContactLocalId> contacts(
-            const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error) = 0;
+    CntSymbianSorterDbms(CContactDatabase& contactDatabase, CntTransformContact& m_transformContact);
+    ~CntSymbianSorterDbms();
 
-    virtual QList<QContactLocalId> sort(
+    /* from CntAbstractContactFilter */
+    QList<QContactLocalId> contacts(
+            const QList<QContactSortOrder>& sortOrders,
+            QContactManager::Error& error);
+    QList<QContactLocalId> sort(
         QList<QContactLocalId> contactIds,
         const QList<QContactSortOrder>& sortOrders,
-        QContactManager::Error& error) = 0;
+        QContactManager::Error& error);
+    bool sortOrderSupported(const QList<QContactSortOrder>& sortOrders);
 
-    virtual bool sortOrderSupported(const QList<QContactSortOrder>& sortOrders) = 0;
+private:
+    QList<QContactLocalId> contactsL(const QList<QContactSortOrder>& sortOrders) const;
+    QList<QContactLocalId> sortL(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders) const;
+    CContactIdArray* sortL(const CContactIdArray* contactIds, const QList<QContactSortOrder>& sortOrders) const;
+
+private:
+    CContactDatabase& m_contactDatabase;
+    CntTransformContact& m_transformContact;
 };
 
-#endif /* QABSTRACTCONTACTSORTER_H */
+#endif /* QCONTACTSYMBIANSORTERDBMS_H */
