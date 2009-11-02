@@ -97,6 +97,21 @@
 #include <cemapi.h>
 #endif
 
+//unexported before Windows 7, include manually
+#ifndef IID_PPV_ARGS
+extern "C++"
+{
+    template<typename T> void** IID_PPV_ARGS_Helper(T** pp)
+    {
+        // make sure everyone derives from IUnknown
+        static_cast<IUnknown*>(*pp);
+
+        return reinterpret_cast<void**>(pp);
+    }
+}
+#define IID_PPV_ARGS(ppType) __uuidof(**(ppType)), IID_PPV_ARGS_Helper(ppType)
+#endif //IID_PPV_ARGS
+
 namespace WinHelpers
 {
     bool setMapiProperty(IMAPIProp *object, ULONG tag, const QString &value)
