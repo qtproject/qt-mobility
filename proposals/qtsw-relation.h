@@ -41,7 +41,7 @@
 
 /*
  * This file contains example code for common use cases as implemented with
- * the current proposal for relationships as a separate, managed entity.
+ * the new API for relationships as a separate, managed entity.
  */
 
 // Assume we have a valid manager initialised
