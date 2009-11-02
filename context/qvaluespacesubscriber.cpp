@@ -162,11 +162,14 @@ signals:
 public slots:
     void handleChanged(quintptr handle)
     {
-        for (int ii = 0; ii < readers.count(); ++ii)
-            if (readers.at(ii).second == handle) {
+        QAbstractValueSpaceLayer *layer = qobject_cast<QAbstractValueSpaceLayer *>(sender());
+
+        for (int i = 0; i < readers.count(); ++i) {
+            if (readers.at(i).first == layer && readers.at(i).second == handle) {
                 emit changed();
                 return;
             }
+        }
     }
 
     void objDestroyed()
