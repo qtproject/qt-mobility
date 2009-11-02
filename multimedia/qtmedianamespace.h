@@ -115,7 +115,30 @@ namespace QtMedia
         CameraManufacturer,
         CameraModel,
         Event,
-        Subject
+        Subject,
+        Orientation,
+        ExposureTime,
+        FNumber,
+        ExposureProgram,
+        ISOSpeedRatings,
+        ExposureBiasValue,
+        DateTimeOriginal,
+        DateTimeDigitized,
+        SubjectDistance,
+        MeteringMode,
+        LightSource,
+        Flash,
+        FocalLength,
+        ExposureMode,
+        WhiteBalance,
+        DigitalZoomRatio,
+        FocalLengthIn35mmFilm,
+        SceneCaptureType,
+        GainControl,
+        Contrast,
+        Saturation,
+        Sharpness,
+        DeviceSettingDescription
     };
 
     enum SupportEstimate
