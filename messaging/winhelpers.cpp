@@ -1598,7 +1598,7 @@ namespace WinHelpers {
 
             Lptstr ext = LptstrFromQString(dotExtension);
 
-#ifndef _WIN32_WCE
+#if !defined(_WIN32_WCE) && (_MSC_VER>=1500)
             IQueryAssociations *associations(0);
             HRESULT rv = AssocCreate(CLSID_QueryAssociations, IID_PPV_ARGS(&associations));
             if (HR_SUCCEEDED(rv)) {
@@ -1622,6 +1622,9 @@ namespace WinHelpers {
                 }
                 mapiRelease(associations);
             }
+#elif  !defined(_WIN32_WCE) && (_MSC_VER<1500)
+	    //TODO Windows 2005 and 2003 don't have IID_PPV_ARGS.
+	    //find alternative
 #else
             // Find any registry entry for this extension
             HKEY key = { 0 };
