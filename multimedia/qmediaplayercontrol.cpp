@@ -51,8 +51,8 @@
     QMediaService.
 
     If a QMediaService can play media is will implement QMediaPlayerControl.  This control provides
-    a means to set the \l {setMedia()}{media} to play, \l {play()}{play}, \l {pause()} {pause} and
-    \l {stop()}{stop} the player, \l {setPosition()}{seek}, and control the \l {setVolume()}{volume}.
+    a means to set the \l {setMedia()}{media} to play, \l {play()}{start}, \l {pause()} {pause} and
+    \l {stop()}{stop} playback, \l {setPosition()}{seek}, and control the \l {setVolume()}{volume}.
     It also provides feedback on the \l {duration()}{duration} of the media, the current
     \l {position()}{position}, and \l {bufferStatus()}{buffering} progress.
 
