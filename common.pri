@@ -59,7 +59,7 @@ SOURCE_DIR = $$PWD
 }
 
 wince* {
-    SFW_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/bearer.dll
+    SFW_DEPLOYMENT.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/QtServiceFramework.dll
     SFW_DEPLOYMENT.path = .
     DEPLOYMENT += SFW_DEPLOYMENT
 }
