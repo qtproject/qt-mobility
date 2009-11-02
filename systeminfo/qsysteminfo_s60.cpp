@@ -44,6 +44,7 @@
 #include <QStringList>
 #include <QDir>
 #include <QRegExp>
+#include <QTimer>
 
 #include <SysUtil.h>
 #include <ptiengine.h>
@@ -524,7 +525,7 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
         RWsSession ws;
         User::LeaveIfError(ws.Connect());
         CleanupClosePushL(ws);
-        CWsScreenDevice *wsScreenDevice = new CWsScreenDevice(ws);
+        CWsScreenDevice *wsScreenDevice = new (ELeave)CWsScreenDevice(ws);
         CleanupStack::PushL(wsScreenDevice);
         User::LeaveIfError(wsScreenDevice->Construct(screen));
         TDisplayMode mode = wsScreenDevice->DisplayMode();
@@ -799,8 +800,34 @@ DeviceInfo *DeviceInfo::m_instance = NULL;
 
 //////// QSystemScreenSaver
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), m_screenSaverInhibited(false)
 {
+}
+
+bool QSystemScreenSaverPrivate::screenSaverInhibited()
+{
+    return m_screenSaverInhibited;
+}
+
+bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
+{
+    if (m_screenSaverInhibited) {
+        return true;
+    }
+
+    m_screenSaverInhibited = true;
+    resetInactivityTime();
+
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(resetInactivityTime()));
+    timer->start(3000); //3 seconds interval
+
+    return true;
+}
+
+void QSystemScreenSaverPrivate::resetInactivityTime()
+{
+    User::ResetInactivityTime();
 }
 
 QT_END_NAMESPACE

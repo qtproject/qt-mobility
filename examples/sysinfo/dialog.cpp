@@ -420,24 +420,36 @@ void Dialog::getFeature(int index)
 
 void Dialog::setupSaver()
 {
-    delete saver;
-    saver = new QSystemScreenSaver(this);
+    if (!saver) {
+        saver = new QSystemScreenSaver(this);
+        ui->screenLockCheckBox->setChecked(saver->isScreenLockOn());
+        ui->screenLockCheckBox->show();
+    }
+
     bool saverEnabled = saver->screenSaverInhibited();
 
-    ui->screenLockCheckBox->setChecked(saver->isScreenLockOn());
 
-    connect( ui->saverEnabledCheckBox, SIGNAL(clicked(bool)),
+    connect( ui->saverInhibitedCheckBox, SIGNAL(clicked(bool)),
              this,SLOT(setSaverEnabled(bool)));
 
-    ui->saverEnabledCheckBox->setChecked(saverEnabled);
-
+    ui->saverInhibitedCheckBox->setChecked(saverEnabled);
 }
 
 
 void Dialog::setSaverEnabled(bool b)
 {
-    if (b)
-    if(saver->setScreenSaverInhibit()) {
+    if (b) {
+        if (!saver) {
+            saver = new QSystemScreenSaver(this);
+            ui->screenLockCheckBox->setChecked(saver->isScreenLockOn());
+            ui->screenLockCheckBox->show();
+        }
+       if(saver->setScreenSaverInhibit()) {
+        }
+    } else {
+        delete saver;
+        saver = NULL;
+        ui->screenLockCheckBox->hide();
     }
 }
 
