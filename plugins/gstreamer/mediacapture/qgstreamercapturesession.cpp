@@ -68,7 +68,6 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
      m_pendingState(StoppedState),
      m_pipelineMode(EmptyPipeline),
      m_captureMode(captureMode),
-     m_previewEnabled(false),
      m_audioInputFactory(0),
      m_audioPreviewFactory(0),
      m_videoInputFactory(0),
@@ -683,18 +682,6 @@ qint64 QGstreamerCaptureSession::duration() const
 void QGstreamerCaptureSession::setCaptureDevice(const QString &deviceName)
 {
     m_captureDevice = deviceName;
-}
-
-void QGstreamerCaptureSession::enablePreview(bool enabled)
-{
-    m_previewEnabled = enabled;
-    if (enabled) {
-        if (state() == StoppedState)
-            setState(PreviewState);
-    } else {
-        if (state() == PreviewState)
-            setState(StoppedState);
-    }
 }
 
 void QGstreamerCaptureSession::setMetaData(const QMap<QByteArray, QVariant> &data)
