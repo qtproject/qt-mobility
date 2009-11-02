@@ -1877,8 +1877,10 @@ int QSystemDeviceInfoPrivate::batteryLevel()
 #else
     SYSTEM_POWER_STATUS status;
     if(GetSystemPowerStatus( &status) ) {
-//        qWarning() << status.BatteryLifePercent;
         int bat = status.BatteryLifePercent;
+        if(bat == 255) //battery unknown level status
+            bat = 0;
+
         if(batteryLevelCache != bat) {
            batteryLevelCache = bat;
            emit batteryLevelChanged(bat);
@@ -1898,7 +1900,7 @@ int QSystemDeviceInfoPrivate::batteryLevel()
             emit batteryStatusChanged(batteryStatusCache);
         }
 
-        return status.BatteryLifePercent;
+        return bat;
 }
 #endif
     return 0;
