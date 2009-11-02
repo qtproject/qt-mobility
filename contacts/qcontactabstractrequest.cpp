@@ -44,7 +44,7 @@
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
-
+#include <QCoreApplication>
 /*!
  * \class QContactAbstractRequest
  * \brief Allows a client to asynchronously request some functionality of a particular QContactManager.
@@ -195,12 +195,13 @@ bool QContactAbstractRequest::cancel()
     Returns true if the request was cancelled or completed successfully within the given period, otherwise false. */
 bool QContactAbstractRequest::waitForFinished(int msecs)
 {
+    bool ret = false;
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
     if (engine && isActive()) {
-        return engine->waitForRequestFinished(this, msecs);
+        ret = engine->waitForRequestFinished(this, msecs);
+        QCoreApplication::processEvents();
     }
-
-    return false; // unable to wait for operation; not in progress or no engine.
+    return ret;
 }
 
 /*! Blocks until the manager engine signals that more partial results are available for the request, or until \a msecs milliseconds has elapsed.
@@ -208,10 +209,11 @@ bool QContactAbstractRequest::waitForFinished(int msecs)
     Returns true if the request was cancelled or more partial results were made available within the given period, otherwise false. */
 bool QContactAbstractRequest::waitForProgress(int msecs)
 {
+    bool ret = false;
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
     if (engine && isActive()) {
-        return engine->waitForRequestProgress(this, msecs);
+        ret = engine->waitForRequestProgress(this, msecs);
+        QCoreApplication::processEvents();
     }
-
-    return false; // unable to wait for operation; not in progress or no engine.
+    return ret;
 }
