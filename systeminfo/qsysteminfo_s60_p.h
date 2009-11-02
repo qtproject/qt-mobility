@@ -172,6 +172,7 @@ private:
 
 //////// QSystemDeviceInfo
 class DeviceInfo;
+class MProEngEngine;
 
 class QSystemDeviceInfoPrivate : public QObject, public MTelephonyInfoObserver
 {
@@ -217,6 +218,20 @@ protected:  //from MTelephonyInfoObserver
 
     void cellNetworkSignalStrengthChanged(){};
     void cellNetworkStatusChanged(){};
+
+private:
+
+    enum Profile {
+        ProfileGeneral   = 0,
+        ProfileSilent,
+        ProfileMeeting,
+        ProfileOutdoor,
+        ProfilePager,
+        ProfileOffLine,
+        ProfileDrive
+    };
+
+    MProEngEngine *m_profileEngine;
 };
 
 //////// QSystemScreenSaver

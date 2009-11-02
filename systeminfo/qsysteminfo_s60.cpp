@@ -54,7 +54,11 @@
 #include <AknUtils.h>
 #include <W32STD.H>
 #include <centralrepository.h>
- 
+#include <mproengengine.h>
+#include <proengfactory.h>
+#include <mproengprofile.h>
+#include <mproengprofilename.h>
+
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
     : QObject(parent)
@@ -661,7 +665,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
 
 //////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), m_profileEngine(NULL)
 {
     DeviceInfo::instance()->batteryInfo()->addObserver(this);
 }
@@ -669,11 +673,40 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
     DeviceInfo::instance()->batteryInfo()->removeObserver(this);
+
+    if(m_profileEngine) {
+        m_profileEngine->Release();
+    }
 }
 
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 {
-    return QSystemDeviceInfo::UnknownProfile;   //TODO
+    QSystemDeviceInfo::Profile profile = QSystemDeviceInfo::UnknownProfile;
+
+    if (!m_profileEngine) {
+        TRAP_IGNORE(m_profileEngine = ProEngFactory::NewEngineL();)
+    }
+    
+    if (m_profileEngine) {
+        TRAPD(err,
+            MProEngProfile* activeProfile = m_profileEngine->ActiveProfileL();
+            QSystemDeviceInfoPrivate::Profile s60Profile =
+                static_cast<QSystemDeviceInfoPrivate::Profile>(activeProfile->ProfileName().Id());
+            activeProfile->Release();
+            switch (s60Profile) {
+            case ProfileGeneral: profile = QSystemDeviceInfo::NormalProfile; break;
+            case ProfileSilent: profile = QSystemDeviceInfo::SilentProfile; break;
+            case ProfileOutdoor: profile = QSystemDeviceInfo::LoudProfile; break;
+            case ProfileOffLine: profile = QSystemDeviceInfo::OfflineProfile; break;
+            case ProfileMeeting:
+            case ProfilePager:
+            case ProfileDrive: profile = QSystemDeviceInfo::CustomProfile; break;
+            default: profile = QSystemDeviceInfo::UnknownProfile; break;
+            }
+        )
+    }
+
+    return profile;
 }
 
 QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()

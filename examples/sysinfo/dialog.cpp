@@ -178,6 +178,8 @@ void Dialog::setupDevice()
 
     ui->deviceLockCheckBox->setChecked(di->isDeviceLocked());
 
+    ui->profileComboBox->setCurrentIndex(di->currentProfile());
+
     if(di->currentPowerState() == QSystemDeviceInfo::BatteryPower) {
         ui->radioButton_2->setChecked(true);
     } else  if(di->currentPowerState() == QSystemDeviceInfo::WallPower) {
