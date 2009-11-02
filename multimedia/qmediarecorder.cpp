@@ -74,8 +74,18 @@
     QCamera or QAudioCaptureSource.
 
     \code
+    // Audio only recording
     audioSource = new QAudioCaptureSource;
     recorder = new QMediaRecorder(audioSource);
+
+    recorder->setOutputLocation(QUrl::fromLocalFile(fileName));
+    recorder->record();
+    \endcode
+
+    \code
+    // Audio/Video recording
+    camera = new QCamera(deviceName);
+    recorder = new QMediaRecorder(camera);
 
     recorder->setOutputLocation(QUrl::fromLocalFile(fileName));
     recorder->record();

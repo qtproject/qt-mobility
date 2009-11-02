@@ -51,7 +51,7 @@
 
     \preliminary
 
-    QAudioCaptureSource provides access to the audio audio devices available on your system.
+    QAudioCaptureSource provides access to the audio devices available on your system.
 
     You can query these devices and select one to use.
 

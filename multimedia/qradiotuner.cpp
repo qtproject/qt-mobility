@@ -56,11 +56,12 @@
     \code
         radio = new QRadioTuner;
         connect(radio,SIGNAL(frequencyChanged(int)),this,SLOT(freqChanged(int)));
-        if(radio->isBandSupported(QRadioTuner::FM))
+        if (radio->isBandSupported(QRadioTuner::FM)) {
             radio->setBand(QRadioTuner::FM);
-        radio->setFrequency(yourRadioStationFrequency);
-        radio->setVolume(100);
-        radio->start();
+            radio->setFrequency(yourRadioStationFrequency);
+            radio->setVolume(100);
+            radio->start();
+        }
     \endcode
 
     The radio object will emit signals for any changes in state such as:
@@ -529,7 +530,7 @@ QString QRadioTuner::errorString() const
 /*!
     \enum QRadioTuner::Error
 
-    \value NoError         No errors has occurred.
+    \value NoError         No errors have occurred.
     \value ResourceError   There is no radio service available.
     \value OpenError       Unable to open radio device.
     \value OutOfRangeError An attempt to set a frequency or band that is not supported by radio device.
