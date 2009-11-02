@@ -56,6 +56,7 @@
 #include <cameraengine.h>
 #include <cameraengineobserver.h>
 
+class S60VideoWidgetControl;
 
 class MVFProcessor
 {
@@ -159,6 +160,8 @@ public:
     QtMedia::EncodingQuality captureQuality() const;
     void setCaptureQuality(QtMedia::EncodingQuality);
     
+    void setVideoRenderer(QObject *renderer);
+    
 protected:
     void MceoCameraReady();
     void MceoFocusComplete();
@@ -201,6 +204,7 @@ private:
     // information about camera
     TCameraInfo m_info;
     MVFProcessor* m_VFProcessor;
+    S60VideoWidgetControl* m_videoWidgetControl;
     
 };
 

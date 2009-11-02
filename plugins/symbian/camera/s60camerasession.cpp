@@ -44,6 +44,7 @@
 #include <QWidget>
 
 #include "s60camerasession.h"
+#include "s60videowidget.h"
 #include <fbs.h>
 
 S60CameraSession::S60CameraSession(QObject *parent)
@@ -625,4 +626,9 @@ QtMedia::EncodingQuality S60CameraSession::captureQuality() const
 void S60CameraSession::setCaptureQuality(QtMedia::EncodingQuality quality)
 {
     m_quality = quality;
+}
+
+void S60CameraSession::setVideoRenderer(QObject *videoOutput)
+{
+    m_videoWidgetControl = qobject_cast<S60VideoWidgetControl*>(videoOutput);
 }

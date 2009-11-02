@@ -59,6 +59,8 @@ public:
     void start();
     void stop();
     QCamera::State state() const;
+    
+    void setVideoOutput(QObject *output);
 
 private:
     S60CameraSession *m_session;
