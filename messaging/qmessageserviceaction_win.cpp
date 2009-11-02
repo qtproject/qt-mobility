@@ -76,7 +76,7 @@ public:
     bool isPartiallyDownloaded(const QMessageId& id);
     bool markForDownload(const QMessageId& id, bool includeAttachments = false);
     bool synchronize(const QMessageAccountId& id);
-    bool listenForBodyDownload(const QMessageId& targetMessage, unsigned int timeoutSeconds);
+    bool listenForBodyDownload(const QMessageId& targetMessage);
 #endif
 
 public slots:
@@ -538,14 +538,14 @@ bool QMessageServiceActionPrivate::synchronize(const QMessageAccountId& id)
     return true;
 }
 
-bool QMessageServiceActionPrivate::listenForBodyDownload(const QMessageId& targetMessage, unsigned int timeoutSeconds)
+bool QMessageServiceActionPrivate::listenForBodyDownload(const QMessageId& targetMessage)
 {
     if(!m_bodyDownloadTimer.isActive())
     {
         QMessageStore::instance()->registerNotificationFilter(QMessageFilter());
         connect(QMessageStore::instance(),SIGNAL(messageUpdated(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)),this,SLOT(messageUpdated(const QMessageId&)));
         m_bodyDownloadTarget = targetMessage;
-        m_bodyDownloadTimer.singleShot(timeoutSeconds * 1000,this,SLOT(bodyDownloadTimeout()));
+        m_bodyDownloadTimer.singleShot(BodyDownloadTimeout * 1000,this,SLOT(bodyDownloadTimeout()));
         return true;
     }
     else
@@ -700,7 +700,7 @@ bool QMessageServiceAction::retrieveBody(const QMessageId& id)
         {
             qWarning() << "Message is partially downloaded, marking for download..";
             result = d_ptr->markForDownload(id);
-            d_ptr->listenForBodyDownload(id,BodyDownloadTimeout);
+            d_ptr->listenForBodyDownload(id);
             result &= d_ptr->synchronize(message.parentAccountId());
         }
     }

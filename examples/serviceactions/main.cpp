@@ -49,7 +49,9 @@ int main(int argc, char** argv)
     MainWindow mainwindow;
 
 #ifdef _WIN32_WCE
+#ifdef QT_KEYPAD_NAVIGATION
     app.setKeypadNavigationEnabled(true);
+#endif
     mainwindow.showMaximized();
 #else
     mainwindow.show();
