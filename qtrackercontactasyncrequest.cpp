@@ -711,7 +711,8 @@ void QTrackerContactFetchRequest::processQueryIMAccounts(SopranoLive::LiveNodes 
                 if (affiliationAccounts)
                     account.setContexts(QContactOnlineAccount::ContextWork);
                 account.setValue("Account", queryIMAccounts->index(i, 1).data().toString()); // IMId
-                account.setValue("AccountPath", queryIMAccounts->index(i, 5).data().toString()); // getImAccountType?
+                if (!queryIMAccounts->index(i, 5).data().toString().isEmpty())
+                    account.setValue("AccountPath", queryIMAccounts->index(i, 5).data().toString()); // getImAccountType?
                 account.setValue("Capabilities", queryIMAccounts->index(i, 6).data().toString()); // getImAccountType?
                 contacts[j].saveDetail(&account);
                 contacts[j].saveDetail(&account);
