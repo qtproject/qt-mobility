@@ -144,21 +144,3 @@ void UT_QVersitWriter::testEncodeGroupsAndName()
     QCOMPARE(mWriterPrivate->encodeGroupsAndName(property),result);
 }
 
-void UT_QVersitWriter::testEncodeParameters()
-{
-    QString encodingParameterName(QString::fromAscii("ENCODING"));
-    
-    // No parameters
-    QMultiHash<QString,QString> parameters;
-    QCOMPARE(mWriterPrivate->encodeParameters(parameters), QByteArray());
-    
-    // One parameter
-    parameters.insert(encodingParameterName,QString::fromAscii("8BIT"));
-    QCOMPARE(mWriterPrivate->encodeParameters(parameters), QByteArray(";ENCODING=8BIT"));   
-    
-    // Two parameters
-    parameters.clear();
-    parameters.insert(QString::fromAscii("X-PARAM"),QString::fromAscii("value"));
-    parameters.insert(encodingParameterName,QString::fromAscii("7BIT"));    
-    QCOMPARE(mWriterPrivate->encodeParameters(parameters), QByteArray(";X-PARAM=value;ENCODING=7BIT"));
-}

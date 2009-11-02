@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTSYMBIANBACKEND_P_H
-#define QCONTACTSYMBIANBACKEND_P_H
+#ifndef CNTSYMBIANBACKEND_P_H
+#define CNTSYMBIANBACKEND_P_H
 
 //
 //  W A R N I N G
@@ -66,18 +66,18 @@
 #include "qcontactmanagerenginefactory.h"
 
 
-class QContactSymbianEngineData;
+class CntSymbianEnginePrivate;
 class QContactChangeSet;
 
-class QContactSymbianEngine : public QContactManagerEngine
+class CntSymbianEngine : public QContactManagerEngine
 {
     Q_OBJECT
 
 public:
-    QContactSymbianEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
-    QContactSymbianEngine(const QContactSymbianEngine& other);
-    ~QContactSymbianEngine();
-    QContactSymbianEngine& operator=(const QContactSymbianEngine& other);
+    CntSymbianEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
+    CntSymbianEngine(const CntSymbianEngine& other);
+    ~CntSymbianEngine();
+    CntSymbianEngine& operator=(const CntSymbianEngine& other);
     void deref();
 
     /* Contacts - Accessors and Mutators */
@@ -127,10 +127,10 @@ private:
     QList<QContactLocalId> slowSort(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     bool doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error);
     void updateDisplayLabel(QContact& contact) const;
-    QContactSymbianEngineData *d;
+    CntSymbianEnginePrivate *d;
 };
 
-class Q_DECL_EXPORT QContactSymbianFactory : public QObject, public QContactManagerEngineFactory
+class Q_DECL_EXPORT CntSymbianFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
     Q_INTERFACES(QContactManagerEngineFactory)

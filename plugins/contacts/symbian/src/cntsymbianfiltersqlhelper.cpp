@@ -59,7 +59,7 @@
  */
 CntSymbianFilterSqlHelper::CntSymbianFilterSqlHelper()
 {
-   m_srvConnection = new CntSrvConnection();
+   m_srvConnection = new CntSymbianSrvConnection();
 }
 
 /*!

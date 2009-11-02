@@ -41,19 +41,35 @@
 
 #include "cntabstractrelationship.h"
 
+
+/*!
+ * Constructor
+ * 
+ * \a conatctDatabase CContactDatabase with established connection to the database
+ * \a relationshipType name of the relationship type supported by the inherited class
+ */
 CntAbstractRelationship::CntAbstractRelationship(CContactDatabase* contactDatabase, const QString &relationshipType) : 
     m_contactDatabase(contactDatabase),
     m_relationshipType(relationshipType) 
 {}
-    
+
+/*!
+ * Destructor
+ */
 CntAbstractRelationship::~CntAbstractRelationship()
 {}
 
+/*!
+ * \return the name of the supported relationship type
+ */
 QString CntAbstractRelationship::relationshipType() const 
 {
     return m_relationshipType;
 }
 
+/*!
+ * \return the database instance
+ */
 CContactDatabase* CntAbstractRelationship::database()
 {
     return m_contactDatabase;

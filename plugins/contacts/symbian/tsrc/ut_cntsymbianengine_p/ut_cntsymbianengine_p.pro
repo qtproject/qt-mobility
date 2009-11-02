@@ -25,10 +25,10 @@ symbian:
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     
     # Input
-    HEADERS += ut_qcontactsymbianengine_p.h \
+    HEADERS += ut_cntsymbianengine_p.h \
             $$SYMBIAN_HEADERS
     
-    SOURCES += ut_qcontactsymbianengine_p.cpp \
+    SOURCES += ut_cntsymbianengine_p.cpp \
             $$SYMBIAN_SOURCES
             
     TARGET.CAPABILITY = ALL \

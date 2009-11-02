@@ -55,7 +55,8 @@ private slots:
     void testFindHardLineBreakInQuotedPrintable();
     void testParamName();
     void testParamValue();
-    void testAddParam();
+    void testExtractPart();
+    void testExtractParts();
     void testFold();
     void testUnfold();
     void testQuotedPrintableEncode();
@@ -64,7 +65,8 @@ private slots:
     void testRemoveBackSlashEscaping();
     void testExtractPropertyGroupsAndName();
     void testExtractPropertyValue();
-    void testExtractPropertyParams();
+    void testExtractVCard21PropertyParams();
+    void testExtractVCard30PropertyParams();
 };
 
 #endif // UT_VERSITUTILS_H

@@ -38,63 +38,21 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef CNTSYMBIANTRANSFORMERROR_H
+#define CNTSYMBIANTRANSFORMERROR_H
 
-#include "qcontactsymbiantransformerror.h"
+#include <e32err.h>
+#include "qcontactmanager.h"
 
-/*! Transform a Symbian contact error id to QContactManager::Error.
- *
- * \param symbianError Symbian error.
- * \param QtError Qt error.
-*/
-void qContactSymbianTransformError(TInt symbianError, QContactManager::Error& qtError)
+// Should not overlap any system error code in the context of converting
+// contact details
+const TInt KErrInvalidContactDetail(-32768);
+
+class CntSymbianTransformError
 {
-    switch(symbianError)
-    {
-        case KErrNone:
-        {
-            qtError = QContactManager::NoError;
-            break;
-        }
-        case KErrNotFound:
-        {
-            qtError = QContactManager::DoesNotExistError;
-            break;
-        }
-        case KErrAlreadyExists:
-        {
-            qtError = QContactManager::AlreadyExistsError;
-            break;
-        }
-        case KErrLocked:
-        {
-            qtError = QContactManager::LockedError;
-            break;
-        }
-        case KErrAccessDenied:
-        case KErrPermissionDenied:
-        {
-            qtError = QContactManager::PermissionsError;
-            break;
-        }
-        case KErrNoMemory:
-        {
-            qtError = QContactManager::OutOfMemoryError;
-            break;
-        }
-        case KErrNotSupported:
-        {
-            qtError = QContactManager::NotSupportedError;
-            break;
-        }
-        case KErrArgument:
-        {
-            qtError = QContactManager::BadArgumentError;
-            break;
-        }
-        default:
-        {
-            qtError = QContactManager::UnspecifiedError;
-            break;
-        }
-    }
-}
+public:
+    static void transformError(TInt symbianError, QContactManager::Error& qtError);
+};
+
+#endif
+

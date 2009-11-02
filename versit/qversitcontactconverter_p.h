@@ -57,7 +57,6 @@ public:
     QVersitContactConverterPrivate();
     ~QVersitContactConverterPrivate();
 
-    void encodeParameters(QVersitProperty& property, const QStringList& paramList);
     void encodeFieldInfo(QVersitDocument& document, const QContactDetail& detail);
     void encodeName(QVersitProperty& property, const QContactDetail& detail);
     void encodePhoneNumber(QVersitProperty& property, const QContactDetail& detail);
@@ -69,16 +68,21 @@ public:
     void encodeBirthDay(QVersitProperty& property, const QContactDetail& detail);
     void encodeNote(QVersitProperty& property, const QContactDetail& detail);
     void encodeGeoLocation(QVersitProperty& property, const QContactDetail& detail);
-    bool encodeOrganization(QVersitDocument& document, const QContactDetail& detail);
-    bool encodeEmbeddedContent(const QString& resoucePath, QVersitProperty& property,
+    void encodeOrganization(QVersitDocument& document, const QContactDetail& detail);
+    void encodeGender(QVersitProperty& property, const QContactDetail& detail);
+    void encodeNickName(QVersitProperty& property, const QContactDetail& detail);
+    void encodeAnniversary(QVersitProperty& property, const QContactDetail& detail);
+    bool encodeOnlineAccount(QVersitProperty& property, const QContactDetail& detail);
+    bool encodeFamily(QVersitDocument& document, const QContactDetail& detail);
+    bool encodeAvatar(QVersitProperty& property,
+                      const QContactDetail& detail);
+    bool isValidRemoteUrl(const QString& resourceIdentifier);
+    void encodeParameters(QVersitProperty& property,
+                          const QStringList& contexts,
+                          const QStringList& subTypes=QStringList());
+    bool encodeEmbeddedContent(const QString& resourcePath,
+                               QVersitProperty& property,
                                bool performScaling);
-    void encodeGender(QVersitProperty& property,const QContactDetail& detail);
-    void encodeNickName(QVersitProperty& property,const QContactDetail& detail);
-    void encodeAnniversary(QVersitProperty& property,const QContactDetail& detail);
-    bool encodeOnlineAccount(QVersitProperty& property,const QContactDetail& detail);
-    bool encodeFamily(QVersitDocument& document,const QContactDetail& detail);
-    bool isValidRemoteUrl(const QString& resouceIdentifier);
-    bool encodeAvatar(QVersitProperty& property,const QContactDetail& detail );
     
 signals:
     void scale(const QString& imageFileName, QByteArray& imageData);

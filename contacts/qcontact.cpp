@@ -91,7 +91,7 @@ QContact::QContact()
     contactLabel.d->m_id = 1;
     contactLabel.setSynthesised(true);
     d->m_details.insert(0, contactLabel);
-    QContactType contactType;
+    QContactType contactType; // and the type field.
     contactType.setType(QContactType::TypeContact);
     d->m_details.insert(1, contactType);
 }
@@ -126,11 +126,13 @@ bool QContact::isEmpty() const
  */
 void QContact::clearDetails()
 {
+    QContactType typeDet = d->m_details.at(1);
     QContactDisplayLabel dl = displayLabel();
     dl.setLabel(QString());
     dl.setSynthesised(true);
     d->m_details.clear();
     d->m_details.insert(0, dl);
+    d->m_details.insert(1, typeDet);
 }
 
 /*! Replace the contents of this QContact with \a other */

@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTSYMBIANENGINEDATA_H
-#define QCONTACTSYMBIANENGINEDATA_H
+#ifndef CNTSYMBIANENGINEPRIVATE_H
+#define CNTSYMBIANENGINEPRIVATE_H
 
 #include <QObject>
 #include <QSet>
@@ -57,21 +57,21 @@
 #include "cnttransformcontact.h"
 #include "qabstractcontactfilter.h"
 
-
+#define CNT_SYMBIAN_MANAGER_NAME "symbian"
 
 class QContactChangeSet;
 class QAbstractContactFilter;
 class QAbstractContactSorter;
 class CntRelationship;
 
-class QContactSymbianEngineData : public QObject,
+class CntSymbianEnginePrivate : public QObject,
 							   public MContactDbObserver
 {
 	Q_OBJECT
 
 public:
-    QContactSymbianEngineData(QContactManager::Error& error);
-    virtual ~QContactSymbianEngineData();
+    CntSymbianEnginePrivate(const QMap<QString, QString>& parameters, QContactManager::Error& error);
+    virtual ~CntSymbianEnginePrivate();
 
 public:
     /* Access */
@@ -79,10 +79,10 @@ public:
     QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& qtError) const;
     QContact contact(const QContactLocalId& contactId, QContactManager::Error& qtError) const;
-	
+
     //Groups
     QList<QContactLocalId> groups(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& qtError) const;
-    
+
     //Filter & sort order
     QAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter) const;
 	bool sortOrderSupported(const QList<QContactSortOrder>& sortOrders) const;
@@ -99,8 +99,8 @@ public:
     bool removeRelationship(QContactChangeSet *changeSet, const QContactRelationship& relationship, QContactManager::Error& error);
     QList<QContactManager::Error> removeRelationships(QContactChangeSet *changeSet, const QList<QContactRelationship>& relationships, QContactManager::Error& error);
 
-    
-    
+
+
     /* "Self" contact id (MyCard) */
     bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& qtError);
     QContactLocalId selfContactId(QContactManager::Error& qtError) const;
@@ -120,21 +120,22 @@ signals:
 private:
 
 	// Leaving functions implementing CNTMODEL interaction.
-    QContact contactL(const QContactLocalId &id) const;
+    QContact contactL(const QContactLocalId &localId) const;
     QList<QContactLocalId> groupsL() const;
-        
+
     int countL() const;
 
 	int addContactL(QContact &contact);
 	void updateContactL(QContact &contact);
     int removeContactL(QContactLocalId id);
-   
+
 private:
-	CContactDatabase* m_contactDatabase;
+    CContactDatabase* m_contactDatabase;
 #ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
 	CContactChangeNotifier* m_contactChangeNotifier;
 #endif
-        
+    QString m_managerUri;
+
     QList<QContactLocalId> m_contactsAddedEmitted;
     QList<QContactLocalId> m_contactsChangedEmitted;
     QList<QContactLocalId> m_contactsRemovedEmitted;

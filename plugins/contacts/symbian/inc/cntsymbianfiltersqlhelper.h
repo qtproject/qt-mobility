@@ -47,7 +47,7 @@
 #include "qcontactdetailfilter.h"
 #include "qcontactphonenumber.h"
 #include "qcontactmanager.h"
-#include "cntsrvconnection.h"
+#include "cntsymbiansrvconnection.h"
 
 // Forward declarations
 
@@ -83,7 +83,7 @@ private:
     void convertFieldIdToSqlDbColumnName(const quint32 fieldId,
                                          QString& sqlDbTableColumnName );
 private:
-    CntSrvConnection* m_srvConnection;
+    CntSymbianSrvConnection* m_srvConnection;
 };
 
 #endif//CNTSYMBIANFILTERSQLHELPER_H

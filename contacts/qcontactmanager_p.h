@@ -133,7 +133,8 @@ public:
                     contacts.push_back(cm->contact(id));
                 }
                 savedContacts.insert(cm->managerName(),contacts);
-                cm->removeContacts(&cm->contacts());
+                QList<QContactLocalId> ids = cm->contacts();
+                cm->removeContacts(&ids);
             }
         }
     }

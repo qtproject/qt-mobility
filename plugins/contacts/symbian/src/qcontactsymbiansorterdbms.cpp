@@ -40,13 +40,13 @@
 ****************************************************************************/
 
 #include "qcontactsymbiansorterdbms.h"
-#include "qcontactsymbiantransformerror.h"
+#include "cntsymbiantransformerror.h"
 
 #include <cntdb.h>
 #include <cntdef.h>
 #include <cntfield.h>
 #include "cnttransformcontact.h"
-#include "qcontactsymbianengine_p.h"
+#include "cntsymbianengine_p.h"
 
 typedef QList<QContactLocalId> QContactLocalIdList;
 
@@ -85,7 +85,7 @@ QList<QContactLocalId> QContactSymbianSorter::contacts(
     // there was a problem
     TRAPD(err, QT_TRYCATCH_LEAVING(*ids = contactsL(sortOrders)));
 
-    qContactSymbianTransformError(err, error);
+    CntSymbianTransformError::transformError(err, error);
 
     return *QScopedPointer<QContactLocalIdList>(ids);
 }
@@ -103,7 +103,7 @@ QList<QContactLocalId> QContactSymbianSorter::sort(
     // there was a problem
     TRAPD(err, QT_TRYCATCH_LEAVING(*ids = sortL(contactIds,sortOrders)));
 
-    qContactSymbianTransformError(err, error);
+    CntSymbianTransformError::transformError(err, error);
 
     return *QScopedPointer<QContactLocalIdList>(ids);
 }
@@ -123,6 +123,15 @@ bool QContactSymbianSorter::sortOrderSupported(const QList<QContactSortOrder>& s
         // Always case sensitive
         if( s.caseSensitivity() != Qt::CaseSensitive )
             return false;
+
+#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
+        // NOTE:
+        // Seems that there is a bug in cntmodel which causes that sorting
+        // is working correctly only if the direction is the same for all
+        // sort orders.
+        if( s.direction() != sortOrders[0].direction() )
+            return false;
+#endif
     }
     return true;
 }

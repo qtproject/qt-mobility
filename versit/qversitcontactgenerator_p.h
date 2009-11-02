@@ -77,9 +77,7 @@ private:
         const QContact& contact) const;
     QContactDetail* createPhone(const QVersitProperty& property) const;
     QContactDetail* createAddress(const QVersitProperty& property) const;
-    QContactDetail* createOrganization(
-        const QVersitProperty& property,
-        const QVersitDocument& document) const;
+    QContactDetail* createOrganization(const QVersitProperty& property) const;
     QContactDetail* createTimeStamp(const QVersitProperty& property) const;
     QContactDetail* createAnniversary(const QVersitProperty& property) const;
     QContactDetail* createBirthday(const QVersitProperty& property) const;    
@@ -100,8 +98,7 @@ private:
 private: // Utilities
     QStringList extractContexts(const QVersitProperty& property) const;
     QStringList extractSubTypes(const QVersitProperty& property) const;
-    QString takeFirst(QList<QByteArray>& list) const;    
-    QString takeFirst(QList<QString>& list) const;
+    QString takeFirst(QList<QByteArray>& list) const;
     QDateTime parseDateTime(const QByteArray& text, const QByteArray& format) const;    
     QString saveContentToFile(
         const QString& path,

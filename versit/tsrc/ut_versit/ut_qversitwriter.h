@@ -60,7 +60,6 @@ private slots: // Tests
     void testDevice();    
     void testStart();
     void testEncodeGroupsAndName();
-    void testEncodeParameters();
 
 private: // Data
     QVersitWriter* mWriter;

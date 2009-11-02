@@ -64,7 +64,7 @@ public:
 protected: // From QVersitWriterPrivate
 
     QByteArray encodeVersitProperty(const QVersitProperty& property);
-    QByteArray encodeParameter(const QString& name, const QString& value) const;
+    QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters) const;
 
 private: // New functions
     bool quotedPrintableEncode(const QVersitProperty& property, QByteArray& value) const;

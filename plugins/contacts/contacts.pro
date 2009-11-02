@@ -15,3 +15,4 @@ include(../../common.pri)
 contains(CONTACTS_BACKENDS, symbian): SUBDIRS += symbian
 contains(CONTACTS_BACKENDS, symbian): SUBDIRS += symbian/tsrc
 contains(CONTACTS_BACKENDS, wince): SUBDIRS += wince
+contains(CONTACTS_BACKENDS, maemo): SUBDIRS += qtcontacts-tracker

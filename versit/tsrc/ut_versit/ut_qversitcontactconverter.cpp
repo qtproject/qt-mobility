@@ -183,7 +183,7 @@ void UT_QVersitContactConverter::testEncodeName()
     QCOMPARE(propertyName, expectedPropertyName );
     
     //Ensure value of properties contains all the infomation encoded
-    QString value (versitDocument.properties().at(0).value() );
+    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data() );
     QString expectedValue = QString::fromAscii("HH;Heiddo;A;Mr.;");
     QCOMPARE(value, expectedValue);
 }
@@ -222,7 +222,7 @@ void UT_QVersitContactConverter::testEncodePhoneNumber()
     QCOMPARE(propertyName, expectedPropertyName );
     
     //Check property value
-    QString value (versitDocument.properties().at(0).value() );
+    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data() );
     QString expectedValue = QString::fromAscii("12345678");
     QCOMPARE(value, expectedValue);
 }
@@ -261,7 +261,7 @@ void UT_QVersitContactConverter::testEncodeEmailAddress()
     QCOMPARE(propertyName, expectedPropertyName );
     
     //Check value 
-    QString value (versitDocument.properties().at(0).value() );
+    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data() );
     QString expectedValue = QString::fromAscii("test@test");
     QCOMPARE(value, expectedValue);
 
@@ -308,7 +308,7 @@ void UT_QVersitContactConverter::testEncodeStreetAddress()
     QCOMPARE(propertyName, expectedPropertyName );
 
     //Check property value 
-    QString value (versitDocument.properties().at(0).value() );
+    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data() );
 
     //Format: Post Office Address  + ";" +  Extended Address  + ";" + Street  + ";" +
     //Locality  + ";" + Region  + ";" + Postal Code  + ";" + Country
@@ -350,7 +350,7 @@ void UT_QVersitContactConverter::testEncodeUrl()
     QCOMPARE(propertyName, expectedPropertyName);
 
     //Check property value
-    QString value (versitDocument.properties().at(0).value());
+    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data());
     QString expectedValue = QString::fromAscii("http://www.myhome.com");
     QCOMPARE(value, expectedValue);
 }
@@ -385,7 +385,7 @@ void UT_QVersitContactConverter::testEncodeUid()
     QCOMPARE(propertyName, expectedPropertyName);
 
     //Check property value
-    QString value (versitDocument.properties().at(0).value());
+    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data());
     QString expectedValue = QString::fromAscii("0101222");
     QCOMPARE(value, expectedValue);
 }
@@ -421,7 +421,7 @@ void UT_QVersitContactConverter::testEncodeRev()
     QCOMPARE(propertyName, expectedPropertyName);
 
     //Check property value
-    QString value = (versitDocument.properties().at(0).value());
+    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data());
     QString expValueUTCEncoded = QString::fromAscii("2009-01-01T06:01:02Z");
     QCOMPARE(value, expValueUTCEncoded);
 
@@ -493,7 +493,7 @@ void UT_QVersitContactConverter::testEncodeBirthDay()
     QCOMPARE(propertyName, expectedPropertyName);
 
     //Check property value
-    QString value = (versitDocument.properties().at(0).value());
+    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data());
     QString expectedValue = QString::fromAscii("2009-01-01");
     QCOMPARE(value, expectedValue);
 }
@@ -526,7 +526,7 @@ void UT_QVersitContactConverter::testEncodeNote()
     QCOMPARE(propertyName, expectedPropertyName);
 
     //Check property value
-    QString value = versitDocument.properties().at(0).value();
+    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data());
     QCOMPARE(value, myNote);
 }
 
@@ -567,7 +567,7 @@ void UT_QVersitContactConverter::testEncodeGeoLocation()
     QCOMPARE(propertyName, expectedPropertyName);
 
     //Check property value
-    QString value = (versitDocument.properties().at(0).value() );
+    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data() );
     QString expectedValue = longitude + QString::fromAscii(",") + latitude;
     QCOMPARE(value, expectedValue);
 }
@@ -656,7 +656,7 @@ void UT_QVersitContactConverter::testEncodeOrganization()
     QCOMPARE(propertyName, QString::fromAscii(versitLogoId));
 
     //Check property value
-    QString value = (versitDocument.properties().at(0).value() );
+    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data() );
     QCOMPARE(value, url);
 
 
@@ -679,10 +679,9 @@ void UT_QVersitContactConverter::testEncodeOrganization()
             QString::fromAscii(versitEncoding), QString::fromAscii(versitEncodingBase64)));
 
     //Ensure value1 is not URL
-    QString value1 = (versitDocument.properties().at(0).value() );
+    QString value1 = QString::fromAscii(versitDocument.properties().at(0).value().data());
     QEXPECT_FAIL(value1.toAscii(), url.toAscii(), Continue);
 }
-
 
 void UT_QVersitContactConverter::testEncodeAvatar()
 {
@@ -699,7 +698,6 @@ void UT_QVersitContactConverter::testEncodeAvatar()
     QVersitDocument versitDocument = mConverter->convertContact(contact);
     QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
     QVERIFY(!mScaleSignalEmitted);
-
 
     // Test 2: Local Media PHOTO
     contactAvatar.setAvatar(mTestPhotoFile);
@@ -938,7 +936,7 @@ void UT_QVersitContactConverter::testEncodeGender()
     QCOMPARE(propertyName, expectedPropertyName);
 
     //Check property value
-    QString value = versitDocument.properties().at(0).value();
+    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data());
     QCOMPARE(value, QString(QLatin1String(QContactGender::GenderMale)));
 }
 
@@ -971,7 +969,7 @@ void UT_QVersitContactConverter::testEncodeNickName()
     QCOMPARE(propertyName, expectedPropertyName);
 
     //Check property value
-    QString value = versitDocument.properties().at(0).value();
+    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data());
     QCOMPARE(value, nick);
 
 }
@@ -1009,7 +1007,7 @@ void UT_QVersitContactConverter::testEncodeAnniversary()
 
     //Check property value
     QString expectedValue = QString::fromAscii("2009-01-01");
-    QString value = versitDocument.properties().at(0).value();
+    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data());
     QCOMPARE(value, expectedValue);
 
     // Ensure Sub types matches.
@@ -1048,7 +1046,7 @@ void UT_QVersitContactConverter::testEncodOnlineAccount()
     QCOMPARE(propertyName, QString::fromAscii(versitSipId));
 
     //Check property value
-    QString value = versitDocument.properties().at(0).value();
+    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data());
     QCOMPARE(value, testUri);
 
     //Test2: InValid Sub Type Value is not encoded.
@@ -1087,7 +1085,7 @@ void UT_QVersitContactConverter::testEncodeFamily()
     QString propertyName = versitDocument.properties().at(0).name();
     QCOMPARE(propertyName, QString::fromAscii(versitSpouseId));
 
-    QString value (versitDocument.properties().at(0).value() );
+    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data() );
     QCOMPARE(value, spouce);
 
 
@@ -1108,13 +1106,13 @@ void UT_QVersitContactConverter::testEncodeFamily()
     QString propertyName1 = versitDocument.properties().at(0).name();
     QCOMPARE(propertyName1, QString::fromAscii(versitSpouseId));
 
-    QString value1 (versitDocument.properties().at(0).value() );
+    QString value1 = QString::fromAscii(versitDocument.properties().at(0).value().data() );
     QCOMPARE(value1, spouce);
 
     QString propertyName2 = versitDocument.properties().at(1).name();
     QCOMPARE(propertyName2, QString::fromAscii(versitChildrenId));
 
-    QString value2 (versitDocument.properties().at(1).value() );
+    QString value2 = QString::fromAscii(versitDocument.properties().at(1).value().data() );
     QString expected = QString::fromAscii("A,B");
     QCOMPARE(value2, expected);
 }

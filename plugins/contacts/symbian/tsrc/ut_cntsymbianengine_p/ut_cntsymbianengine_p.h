@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,49 +38,25 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef CNTSRVCONNECTION_H
-#define CNTSRVCONNECTION_H
+#include <QObject>
 
-// System includes
-#include <e32std.h>
-#include <cntdb.h>
-#include <qcontactmanager.h>
+class CntSymbianEnginePrivate;
 
-// User includes
-
-// Forward declarations
-
-// External data types
-
-// Constants
-
-class CntSrvConnection : public RSessionBase
+class TestSymbianEnginePrivate : public QObject
 {
-public:
-    /*Constructor and destructor*/
-    CntSrvConnection();
-    ~CntSrvConnection();
+    Q_OBJECT
+
+private slots:
+    void initTestCase();    
+    void cleanupTestCase();
     
-public:
-    /* QT like functions */
-    QList<QContactLocalId> searchContacts(const QString& searchQuery, 
-                                         QContactManager::Error& error);
+    void testContactOperations();
+    void testGroupOperations();
+    void testSelfContactOperations();
 
 private:
-    /* Symbian Leaving functions */
-    QList<QContactLocalId> searchContactsL(const TDesC& aSearchQuery);
-    void ConnectSrvL();
-    void OpenDatabaseL();
-    TVersion Version() const;
-    TDes8& GetReceivingBufferL(TInt aSize=0);
-    QList<QContactLocalId> UnpackCntIdArrayL();
+    void removeAllContacts();
 
 private:
-    /* member varibles */ 
-    CBufFlat* m_buffer;
-    TInt m_maxBufferSize;
-    TPtr8 m_bufPtr;
-    bool m_isInitialized;
+    CntSymbianEnginePrivate   *m_engine;
 };
-
-#endif //CNTSRVCONNECTION_H

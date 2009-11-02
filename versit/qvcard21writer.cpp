@@ -96,20 +96,26 @@ QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
 }
 
 /*!
- * Returns an encoded parameter of a versit property.
+ * Encodes the \a parameters to text.
  */
-QByteArray QVCard21Writer::encodeParameter(
-    const QString& name,
-    const QString& value) const
+QByteArray QVCard21Writer::encodeParameters(
+    const QMultiHash<QString,QString>& parameters) const
 {
-    QByteArray encodedParameter;
-    QString typeParameterName(QString::fromAscii("TYPE"));
-    if (name.length() > 0 && name != typeParameterName) {
-        encodedParameter.append(name.toAscii());
-        encodedParameter.append("=");
+    QByteArray encodedParameters;
+    QList<QString> names = parameters.uniqueKeys();
+    foreach (QString name, names) {
+        QStringList values = parameters.values(name);
+        foreach (QString value, values) {
+            encodedParameters.append(";");
+            QString typeParameterName(QString::fromAscii("TYPE"));
+            if (name.length() > 0 && name != typeParameterName) {
+                encodedParameters.append(name.toAscii());
+                encodedParameters.append("=");
+            }
+            encodedParameters.append(value.toAscii());
+        }
     }
-    encodedParameter.append(value.toAscii());
-    return encodedParameter;
+    return encodedParameters;
 }
 
 /*!

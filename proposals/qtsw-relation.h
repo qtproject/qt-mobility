@@ -41,7 +41,7 @@
 
 /*
  * This file contains example code for common use cases as implemented with
- * the current proposal for relationships as a separate, managed entity.
+ * the new API for relationships as a separate, managed entity.
  */
 
 // Assume we have a valid manager initialised
@@ -68,7 +68,7 @@ QList<QContactDetail> groupDetails = theGroup.details();
 
 // Use Case 4: Retrieve The Groups Which A Particular Contact Is A Member Of
 QContactRelationshipFilter crf;
-crf.setRole(QContactRelationshipFilter::Source);                 // we want "source" contact ids
+crf.setRole(QContactRelationshipFilter::First);                  // we want "source" contact ids
 crf.setType(QContactRelationship::HasMember);                    // which have as a member
 crf.setOtherParticipant(someContact.id());                       // the particular contact.
 QList<QContactLocalId> matchingGroups = contactManager.contacts(crf);
@@ -99,27 +99,28 @@ QList<QContactLocalId> matchingGroups = contactManager.contacts(cif);
 // Advantage: know that the information is up to date
 // Disadvantage: only get local id's (of contacts which are stored in the manager)
 QContactRelationshipFilter crf;
-crf.setRole(QContactRelationshipFilter::Destination);           // we want all destination particpants
+crf.setRole(QContactRelationshipFilter::Second);                // we want all destination particpants
 crf.setType(QContactRelationship::HasMember);                   // ie, group members
-crf.setOtherParticipant(someGroupContact.id());                 // where I am the source (group)
+crf.setOtherParticipant(someGroupContact.id());                 // where I am the first participant (group)
 QList<QContactLocalId> groupMembers = contactManager.contacts(crf);
 
 // Use Case 10: Retrieving The Members Of A Group (Option 2)
 // Advantage: get _all_ groups members no matter which manager they are part of
 // Disadvantage: cached information, possibly stale.
 QContact someGroup;
-QList<QContactId> groupMembers = someGroup.relatedContacts(QContactRelationship::HasMember, QContactRelationshipFilter::Destination);
+QList<QContactId> groupMembers = someGroup.relatedContacts(QContactRelationship::HasMember, QContactRelationshipFilter::First);
 
 // Use Case 11: Modify Ordering Of Group Members
-QContactRelationship someGroupRelationship;
-QList<QContactId> groupMembers = someGroupRelationship.destinationContacts();
-QContactId someEntry = groupMembers.takeAt(3);                  // move from position 3
-groupMembers.insert(6, someEntry);                              // to position 6
-someGroupRelationship.setDestinationContacts(groupMembers);
-contactManager.saveRelationship(someGroupRelationship);
+QList<QContactRelationship> orderedRelationships = someGroup.relationshipOrder();
+QContactRelationship firstRel = orderedRelationships.takeAt(0); // reorder some relationship
+orderedRelationships.insert(3, firstRel);                       // ie, make it less important
+someGroup.setRelationshipOrder(orderedRelationships);           // set the new order
+contactManager.saveContact(&someGroup);                         // and save the new order
 
 // Use Case 12: Adding A Contact To A Group
 QContactRelationship someGroupRelationship;
-someGroupRelationship.appendDestinationContact(someContact.id());
+someGroupRelationship.setFirst(someGroup.id());
+someGroupRelationship.setSecond(someContact.id());
+someGroupRelationship.setType(QContactRelationship::hasMember);
 contactManager.saveRelationship(someGroupRelationship);
 

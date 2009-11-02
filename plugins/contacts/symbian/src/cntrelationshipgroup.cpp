@@ -44,15 +44,30 @@
 
 #include <QDebug>
 
+/*!
+ * Conatructor
+ * 
+ * \a contactDatabase CContactDatabase with established connection to the database
+ */
 CntRelationshipGroup::CntRelationshipGroup(CContactDatabase* contactDatabase) :
     CntAbstractRelationship(contactDatabase, QContactRelationship::HasMember)
 {
 }
 
+/*!
+ * Destructor
+ */
 CntRelationshipGroup::~CntRelationshipGroup()
 {
 }
 
+/*!
+ * Save a single relatonship
+ * 
+ * \a affectedContactIds will include the affected contact ids 
+ * \a relationship to be saved
+ * \a error t
+ */
 bool CntRelationshipGroup::saveRelationshipL(QSet<QContactLocalId> *affectedContactIds, QContactRelationship* relationship, QContactManager::Error& error)
 {
     bool returnValue(false);

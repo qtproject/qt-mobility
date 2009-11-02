@@ -870,64 +870,58 @@ void UT_QVersitContactGenerator::testNote()
 
 void UT_QVersitContactGenerator::testOnlineAccount()
 {
-    // no subtype
+    QByteArray accountUri("sip:homer@simpsons.com");
+
+    // Plain X-SIP, no TYPE ->
     QVersitDocument document;
-    QVersitProperty nameProperty;
-    QByteArray val("sip:homer@wiserthanever.com");
-    nameProperty.setName(QString::fromAscii(versitSipId));
-    nameProperty.setValue(val);
-    document.addProperty(nameProperty);
+    QVersitProperty property;
+    property.setName(QString::fromAscii(versitSipId));
+    property.setValue(accountUri);
+    document.addProperty(property);
     QContact contact = mGenerator->generateContact(document);
-    QContactOnlineAccount online = (QContactOnlineAccount)contact.detail(QContactOnlineAccount::DefinitionName);
-    QCOMPARE(online.accountUri(),QString::fromAscii(val));
+    QContactOnlineAccount onlineAccount =
+         static_cast<QContactOnlineAccount>(
+             contact.detail(QContactOnlineAccount::DefinitionName));
+    QCOMPARE(onlineAccount.accountUri(),QString::fromAscii(accountUri));
+    QStringList subTypes = onlineAccount.subTypes();
+    QCOMPARE(subTypes.count(),1);
+    QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeSip);
 
-    // with supported subtype : SIP
+    // VideoSharing subtype
     document = QVersitDocument();
-    nameProperty = QVersitProperty();
-    nameProperty.setName(QString::fromAscii(versitSipId));
-    nameProperty.setValue(val);
-    QString subTypeVal = QString::fromAscii("SIP");
+    property = QVersitProperty();
+    property.setName(QString::fromAscii(versitSipId));
+    property.setValue(accountUri);
     QMultiHash<QString,QString> params;
-    params.insert(QString::fromAscii(versitType),subTypeVal);
-    nameProperty.setParameters(params);
-    document.addProperty(nameProperty);
+    params.insert(QString::fromAscii(versitType),QString::fromAscii("SWIS"));
+    property.setParameters(params);
+    document.addProperty(property);
     contact = mGenerator->generateContact(document);
-    online = (QContactOnlineAccount)contact.detail(QContactOnlineAccount::DefinitionName);
-    QCOMPARE(online.accountUri(),QString::fromAscii(val));
-    QStringList subTypes = online.subTypes();
+    onlineAccount =
+         static_cast<QContactOnlineAccount>(
+             contact.detail(QContactOnlineAccount::DefinitionName));
+    QCOMPARE(onlineAccount.accountUri(),QString::fromAscii(accountUri));
+    subTypes = onlineAccount.subTypes();
     QCOMPARE(subTypes.count(),1);
-    QCOMPARE(online.subTypes().at(0),QContactOnlineAccount::SubTypeSip.operator QString());
+    QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeShareVideo);
 
-    // with supported subtype : VideoSharing
+    // Internet subtype
     document = QVersitDocument();
-    nameProperty = QVersitProperty();
-    nameProperty.setName(QString::fromAscii(versitSipId));
-    nameProperty.setValue(val);
-    subTypeVal = QString::fromAscii("SWIS");
+    property = QVersitProperty();
+    property.setName(QString::fromAscii(versitSipId));
+    property.setValue(accountUri);
     params.clear();
-    params.insert(QString::fromAscii(versitType),subTypeVal);
-    nameProperty.setParameters(params);
-    document.addProperty(nameProperty);
+    params.insert(QString::fromAscii(versitType),QString::fromAscii("VOIP"));
+    property.setParameters(params);
+    document.addProperty(property);
     contact = mGenerator->generateContact(document);
-    online = (QContactOnlineAccount)contact.detail(QContactOnlineAccount::DefinitionName);
-    QCOMPARE(online.accountUri(),QString::fromAscii(val));
-    subTypes = online.subTypes();    
+    onlineAccount =
+         static_cast<QContactOnlineAccount>(
+             contact.detail(QContactOnlineAccount::DefinitionName));
+    QCOMPARE(onlineAccount.accountUri(),QString::fromAscii(accountUri));
+    subTypes = onlineAccount.subTypes();
     QCOMPARE(subTypes.count(),1);
-    QCOMPARE(online.subTypes().at(0),QContactOnlineAccount::SubTypeShareVideo.operator QString());
-
-    // with unsupported subtype : POC
-    document = QVersitDocument();
-    nameProperty = QVersitProperty();
-    nameProperty.setName(QString::fromAscii(versitSipId));
-    nameProperty.setValue(val);
-    subTypeVal = QString::fromAscii("POC");
-    params.clear();
-    params.insert(QString::fromAscii(versitType),subTypeVal);
-    nameProperty.setParameters(params);
-    document.addProperty(nameProperty);
-    contact = mGenerator->generateContact(document);
-    online = (QContactOnlineAccount)contact.detail(QContactOnlineAccount::DefinitionName);
-    QCOMPARE(online.isEmpty(),true);
+    QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeInternet);
 }
 
 void UT_QVersitContactGenerator::testFamily()

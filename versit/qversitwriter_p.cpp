@@ -99,21 +99,3 @@ QByteArray QVersitWriterPrivate::encodeGroupsAndName(
     encodedGroupAndName.append(property.name().toAscii());
     return encodedGroupAndName;
 }
-
-/*!
- * Encodes the \a parameters to text. 
- */
-QByteArray QVersitWriterPrivate::encodeParameters(
-    const QMultiHash<QString,QString>& parameters) const
-{
-    QByteArray encodedParameters;  
-    QList<QString> names = parameters.uniqueKeys();
-    foreach (QString name, names) {
-        QStringList values = parameters.values(name);
-        foreach (QString value, values) {
-            encodedParameters.append(";");
-            encodedParameters.append(encodeParameter(name,value));
-        } 
-    }
-    return encodedParameters;
-}

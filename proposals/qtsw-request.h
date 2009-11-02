@@ -38,25 +38,62 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QObject>
 
-class QContactSymbianEngineData;
+/*
+ * This file contains proposal for extensions to the asynchronous request class
+ * to allow pausing and resuming of operations.
+ *
+ * Adds a Paused state, and a "pause()" slot; reuses the "start()" slot to resume.
+ *
+ * Also adds some reporting capability to QCM for ability to pause/cancel requests,
+ * and some proposed API for saving and loading of blobs.
+ */
 
-class TestSymbianEngine : public QObject
+class QTCONTACTS_EXPORT QContactAbstractRequest : public QObject
 {
     Q_OBJECT
 
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
-    
-    void testContactOperations();
-    void testGroupOperations();
-    void testSelfContactOperations();
+public:
 
-private:
-    void removeAllContacts();
+    // ...
 
-private:
-    QContactSymbianEngineData   *m_engine;
+    enum Status {
+        // ...
+        Paused,         // operation paused -- maybe re-use Inactive?
+        // ...
+    };
+
+    bool isPaused() const;
+
+    // ...
+
+public slots:
+    // ...
+    bool pause();
+
+    // ...
+};
+
+class QTCONTACTS_EXPORT QContactManager : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    // ...
+
+    enum ManagerFeature {
+        // ...
+        CanCancelRequests,
+        CanPauseRequests,
+        // ...
+    };
+
+    // ...
+
+    bool saveBlob(const QByteArray& blob, const QString& path);
+    bool loadBlob(const QByteArray* blob, const QString& path);
+
+    // ...
+
 };

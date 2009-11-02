@@ -146,6 +146,10 @@ void VersitTest::test()
         QFile out(mOutputDirPath+ "/" + fileInfo.fileName());
         out.remove();
         QVERIFY(out.open(QIODevice::ReadWrite));
+        // Note that QBENCHMARK may execute the "executeTest"
+        // function several times (see QBENCHMARK documentation).
+        // This may cause the creation of multiple images or audio clips
+        // per one vCard property like PHOTO or SOUND
         QBENCHMARK { executeTest(in,out); }
         in.close();
         out.close();        
@@ -157,15 +161,15 @@ void VersitTest::test_data()
     QTest::addColumn<QString>("InFile");
     QStringListIterator fileIterator(mFiles);
     while (fileIterator.hasNext()) {
-        const QString& fileName = mInputDirPath + "/" + fileIterator.next();
-        const QString& myDataFeed = "Data feed:" + fileName; 
-        QTest::newRow( myDataFeed.toAscii().data() ) << fileName;
+        QString fileName = mInputDirPath + "/" + fileIterator.next();
+        QTest::newRow(fileName.toAscii().data()) << fileName;
     }
 }
 
 void VersitTest::executeTest(QFile& in, QIODevice& out)
 {    
     mReader->setDevice(&in);
+    out.reset();
     mWriter->setDevice(&out);
     
     // Parse the input
