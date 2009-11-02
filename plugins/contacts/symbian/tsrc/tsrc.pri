@@ -53,9 +53,9 @@ SYMBIAN_SOURCES += \
         ../../src/cnttransformgeolocation.cpp \
         ../../src/cnttransformnote.cpp \
         ../../src/cnttransformfamily.cpp \
-        ../../src/qcontactsymbianfilterdbms.cpp \
-        ../../src/qcontactsymbiansorterdbms.cpp \
-        ../../src/qcontactsymbianfiltersql.cpp \
+        ../../src/cntsymbianfilterdbms.cpp \
+        ../../src/cntsymbiansorterdbms.cpp \
+        ../../src/cntsymbianfiltersql.cpp \
         ../../src/cntrelationship.cpp \
         ../../src/cntabstractrelationship.cpp \
         ../../src/cntrelationshipgroup.cpp \
