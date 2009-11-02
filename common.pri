@@ -14,7 +14,7 @@ CONFIG(debug, debug|release) {
     WAS_IN_DEBUG=release
 }
 
-include(config.pri)
+include($$QT_MOBILITY_BUILD_TREE/config.pri)
 
 mac {
     contains(QT_CONFIG, qt_framework):contains(TEMPLATE, lib) {
@@ -58,7 +58,7 @@ isEmpty(CONTACTS_BACKENDS) {
 }
 
 # Figure out the root of where stuff should go (this could be done via configure)
-OUTPUT_DIR = $$PWD
+OUTPUT_DIR = $$QT_MOBILITY_BUILD_TREE
 SOURCE_DIR = $$PWD
 
 CONFIG(debug, debug|release) {

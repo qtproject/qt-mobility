@@ -40,13 +40,16 @@
 ##
 #############################################################################
 
+# the current directory (shadow build dir)
+shadowpath=`/bin/pwd`
 # the name of this script
 relconf=`basename $0`
 # the directory of this script is the "source tree"
 relpath=`dirname $0`
 relpath=`(cd "$relpath"; /bin/pwd)`
-CONFIG_IN="$relpath/config.in"
-QT_MOBILITY_PREFIX=$relpath/install
+
+CONFIG_IN="$shadowpath/config.in"
+QT_MOBILITY_PREFIX=$shadowpath/install
 QT_MOBILITY_INCLUDE=
 QT_MOBILITY_LIB=
 QT_MOBILITY_BIN=
@@ -55,6 +58,7 @@ BUILD_EXAMPLES=
 RELEASEMODE=
 CONTACTS_PLUGIN=
 LINUX_TARGET=
+QMAKE_CACHE="$shadowpath/.qmake.cache"
 
 usage() 
 {
@@ -65,7 +69,7 @@ usage()
     echo "Options:"
     echo
     echo "-prefix <dir> ..... This will install everything relative to <dir>"
-    echo "                    (default prefix: $relpath/install)"
+    echo "                    (default prefix: $shadowpath/install)"
     echo "-headerdir <dir> .. Header files will be installed to <dir>"
     echo "                    (default prefix: PREFIX/include)"
     echo "-libdir <dir> ..... Libraries will be installed to <dir>"
@@ -88,9 +92,10 @@ usage()
     exit    
 }
 
-CONFIG_LOG="$relpath/config.log"
+rm -rf "$QMAKE_CACHE"
+CONFIG_LOG="$shadowpath/config.log"
 rm -rf "$CONFIG_LOG"
-echo "CONFIG += silent"  > "$CONFIG_IN"
+#echo "CONFIG += silent"  > "$CONFIG_IN"
 
 while [ "$#" -gt 0 ]; do
     case "$1" in 
@@ -202,6 +207,9 @@ else
 fi
 echo "QT_MOBILITY_BIN = $QT_MOBILITY_BIN" >> "$CONFIG_IN"
 
+echo "QT_MOBILITY_SOURCE_TREE = $relpath" >> "$QMAKE_CACHE"
+echo "QT_MOBILITY_BUILD_TREE = $shadowpath" >> "$QMAKE_CACHE"
+
 if [ -z "$BUILD_UNITTESTS" ]; then
     echo "build_unit_tests = no" >> "$CONFIG_IN"
 else
@@ -271,21 +279,21 @@ compileTest "CoreWLAN (MacOS 10.6)" corewlan
 
 echo "Generating Mobility Headers..."
 #remove old headers
-rm -rf $relpath/include
-mkdir $relpath/include
-$relpath/bin/syncheaders $relpath/include $relpath/bearer
-$relpath/bin/syncheaders $relpath/include $relpath/context
-$relpath/bin/syncheaders $relpath/include $relpath/location
-$relpath/bin/syncheaders $relpath/include $relpath/serviceframework
-$relpath/bin/syncheaders $relpath/include $relpath/systeminfo
-$relpath/bin/syncheaders $relpath/include $relpath/contacts
-$relpath/bin/syncheaders $relpath/include $relpath/multimedia
-$relpath/bin/syncheaders $relpath/include $relpath/messaging
+rm -rf $shadowpath/include
+mkdir $shadowpath/include
+$relpath/bin/syncheaders $shadowpath/include $relpath/bearer
+$relpath/bin/syncheaders $shadowpath/include $relpath/context
+$relpath/bin/syncheaders $shadowpath/include $relpath/location
+$relpath/bin/syncheaders $shadowpath/include $relpath/serviceframework
+$relpath/bin/syncheaders $shadowpath/include $relpath/systeminfo
+$relpath/bin/syncheaders $shadowpath/include $relpath/contacts
+$relpath/bin/syncheaders $shadowpath/include $relpath/multimedia
+$relpath/bin/syncheaders $shadowpath/include $relpath/messaging
 
 mv "$CONFIG_IN" config.pri
 
 echo "Running qmake..."
-if qmake -recursive; then
+if qmake -recursive "$relpath/qtmobility.pro"; then
     echo ""
     echo "configure has finished. You may run make or gmake to build the project now."
 else

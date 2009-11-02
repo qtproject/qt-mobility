@@ -1,5 +1,7 @@
-include(../config.pri)
+include($$QT_MOBILITY_BUILD_TREE/config.pri)
         
+!contains(build_examples, yes):error(Please use the -examples configure switch to enable building of examples)
+
 mac {
     #due to different debug/release library names we have to comply with 
     #whatever Qt does
@@ -9,11 +11,15 @@ mac {
         contains(QT_CONFIG,release): CONFIG+=release
     }
 }
-!contains(build_examples, yes):error(Please use the -examples configure switch to enable building of examples)
 
-OUTPUT_DIR = $$PWD/..
-SUBDIRPART = objects
-DESTDIR=$$OUTPUT_DIR/bin/examples
+CONFIG(debug, debug|release) {
+    SUBDIRPART=Debug
+} else {
+    SUBDIRPART=Release
+}
+
+OUTPUT_DIR = $$QT_MOBILITY_BUILD_TREE
+DESTDIR = $$OUTPUT_DIR/bin/examples
 MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
 RCC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/rcc
 UI_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/ui
