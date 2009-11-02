@@ -2214,7 +2214,12 @@ QMessageFolderId MapiFolder::parentId() const
         QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
         MapiFolderPtr parent(_store->openFolder(&ignoredError, parentEntryId));
         if (!parent.isNull()) {
-            return parent->id();
+            QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+            MapiFolderPtr root(_store->rootFolder(&ignoredError));
+            if ((ignoredError != QMessageStore::NoError) 
+                || !_store->session()->equal(parent->entryId(), root->entryId())) {
+                return parent->id();
+            }
         }
     }
 
@@ -2669,6 +2674,7 @@ MapiFolderPtr MapiStore::openFolder(QMessageStore::ErrorCode *lastError, const M
 
 MapiFolderPtr MapiStore::openFolderWithKey(QMessageStore::ErrorCode *lastError, const MapiRecordKey &recordKey) const
 {
+#if 0 // Doesn't work on desktop or mobile, only searches top level folders
     MapiFolderPtr result;
 
     MapiFolderPtr root(rootFolder(lastError));
@@ -2730,6 +2736,18 @@ MapiFolderPtr MapiStore::openFolderWithKey(QMessageStore::ErrorCode *lastError, 
     }
 
     return result;
+#else
+    foreach (const QMessageFolderId &folderId, folderIds(lastError)) {
+        MapiRecordKey key = QMessageFolderIdPrivate::folderRecordKey(folderId);
+        if (key == recordKey) {
+            MapiEntryId entryId = QMessageFolderIdPrivate::entryId(folderId);
+            MapiFolderPtr folder(openFolder(lastError, entryId));
+            return folder;
+        }
+    }
+
+    return MapiFolderPtr();
+#endif
 }
 
 bool MapiStore::supports(ULONG featureFlag) const
