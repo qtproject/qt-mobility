@@ -998,6 +998,7 @@ void tst_QMediaImageViewer::widgetControl()
         QCOMPARE(fullScreenSpy.value(1).value(0).toBool(), false);
     }
 
+    widget->setMinimumSize(50, 50);
     widget->show();
     QTestEventLoop::instance().enterLoop(1);
 
