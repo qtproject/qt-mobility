@@ -45,7 +45,8 @@
  *
  * Adds a Paused state, and a "pause()" slot; reuses the "start()" slot to resume.
  *
- * Also adds some reporting capability to QCM for ability to pause/cancel requests.
+ * Also adds some reporting capability to QCM for ability to pause/cancel requests,
+ * and some proposed API for saving and loading of blobs.
  */
 
 class QTCONTACTS_EXPORT QContactAbstractRequest : public QObject
@@ -89,4 +90,10 @@ public:
     };
 
     // ...
+
+    bool saveBlob(const QByteArray& blob, const QString& path);
+    bool loadBlob(const QByteArray* blob, const QString& path);
+
+    // ...
+
 };
