@@ -76,7 +76,9 @@ public:
 
     bool isConnected() const;
 
-    static void sync();
+    void sync();
+
+    static void syncAll();
 
 signals:
     void attributeInterestChanged(const QString &attribute, bool interested);

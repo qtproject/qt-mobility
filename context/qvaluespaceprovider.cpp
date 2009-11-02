@@ -350,17 +350,28 @@ bool QValueSpaceProvider::isConnected() const
 }
 
 /*!
+    Forcibly sync all Value Space providers using the same layer as this provider.
+*/
+void QValueSpaceProvider::sync()
+{
+    if (!d || !d->layer)
+        return;
+
+    d->layer->sync();
+}
+
+/*!
     Forcibly sync all Value Space providers.
 
     For performance reasons attribute changes are batched internally by
     QValueSpaceProvider instances.  In cases where the visibility of changes must
     be synchronized with other processes, calling QValueSpaceProvider::sync() will
-    flush these batches.  By the time sync() returns, all other processes in the
+    flush these batches.  By the time syncAll() returns, all other processes in the
     system will be able to see the attribute changes.
 
-    In the common asynchronous case, calling sync() is unnecessary.
+    In the common asynchronous case, calling syncAll() is unnecessary.
 */
-void QValueSpaceProvider::sync()
+void QValueSpaceProvider::syncAll()
 {
     foreach (QAbstractValueSpaceLayer *layer, QValueSpaceManager::instance()->getLayers())
         layer->sync();
