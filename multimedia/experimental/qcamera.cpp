@@ -619,7 +619,7 @@ void QCamera::setAutoIsoSensitivity()
 
 /*!
     \property QCamera::shutterSpeed
-    \brief The effective length of time the shutter is open.
+    \brief The effective length of time the shutter is open in seconds.
 */
 
 /*!
@@ -630,16 +630,12 @@ void QCamera::setAutoIsoSensitivity()
 
 /*!
     \property QCamera::isoSensitivity
-    \brief The duration of exposure. Lower sensitivity, finer the grain, but more light is needed.
+    \brief The sensor ISO sensitivity. Lower sensitivity, the noise is lower, but more light is needed.
 */
 
 /*!
     \property QCamera::aperture
     \brief Lens aperture is specified as an f-number, the ratio of the focal length to effective aperture diameter.
-*/
-
-/*!
-    Returns the current aperture as n F number.
 */
 
 qreal QCamera::aperture() const
@@ -872,7 +868,9 @@ void QCamera::capture(const QString &file)
     \value AutoFocus            One-shot auto focus mode.
     \value ContinuousFocus      Continuous auto focus mode.
     \value InfinityFocus        Focus strictly to infinity.
-    \value HyperfocalFocus      Focus to distance that beyond which all objects are in an acceptable focus.
+    \value HyperfocalFocus      Focus to hyperfocal distance, with with the maximum depth of field achieved.
+                                All objects at distances from half of this
+                                distance out to infinity will be acceptably sharp.
 */
 
 /*!
