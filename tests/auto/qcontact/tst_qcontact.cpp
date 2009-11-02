@@ -339,7 +339,7 @@ void tst_QContact::details()
     QVERIFY(!c.isEmpty());
     QContactId oldId = c.id();
     c.clearDetails();
-    QVERIFY(c.details().size() == 1); // always has a display label.
+    QVERIFY(c.details().size() == 2); // always has a display label and contact type.
     QCOMPARE(c.displayLabel().label(), QString());
     QVERIFY(c.displayLabel().isSynthesised());
     QVERIFY(c.isEmpty());
