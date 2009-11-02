@@ -74,4 +74,43 @@ void S60ServicePlugin::release(QMediaService *service)
     delete service;
 }
 
+QList<QByteArray> S60ServicePlugin::devices(const QByteArray &service) const
+{
+    if (service == Q_MEDIASERVICE_CAMERA) {
+        if (m_cameraDevices.isEmpty())
+            updateDevices();
+
+        return m_cameraDevices;
+    }
+
+    return QList<QByteArray>();
+}
+
+QString S60ServicePlugin::deviceDescription(const QByteArray &service, const QByteArray &device)
+{
+    if (service == Q_MEDIASERVICE_CAMERA) {
+        if (m_cameraDevices.isEmpty())
+            updateDevices();
+
+        for (int i=0; i<m_cameraDevices.count(); i++)
+            if (m_cameraDevices[i] == device)
+                return m_cameraDescriptions[i];
+    }
+
+    return QString();
+}
+
+void S60ServicePlugin::updateDevices() const
+{
+    m_cameraDevices.clear();
+    m_cameraDescriptions.clear();
+    for (int i=0; i < S60CameraService::deviceCount(); i ++) {
+        QString deviceName = QString().number(i);
+        m_cameraDevices.append(deviceName.toUtf8());
+        QString deviceDesc = S60CameraService::deviceDescription(i); 
+        m_cameraDescriptions.append(deviceDesc);
+    }
+
+}
+
 Q_EXPORT_PLUGIN2(QtMobilityMultimediaEngine, S60ServicePlugin);

@@ -138,9 +138,9 @@ public:
     void stopRecording();
 
     //videodevicecontrol
-    int deviceCount() const;
-    QString name(int index) const;
-    QString description(int index) const;
+    static int deviceCount();
+    static QString name(const int index);
+    static QString description(const int index);
     QIcon icon(int index) const;
     int defaultDevice() const;
     int selectedDevice() const;

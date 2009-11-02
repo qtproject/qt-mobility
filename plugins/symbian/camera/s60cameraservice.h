@@ -66,6 +66,9 @@ public:
     ~S60CameraService();
 
     QMediaControl *control(const char *name) const;
+    
+    static int deviceCount();
+    static QString deviceDescription(const int index);
 /*
     virtual bool isEndpointSupported(QMediaService::MediaEndpoint endpointType);
 
@@ -80,6 +83,7 @@ public:
     virtual QString endpointDescription(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
     virtual QList<QString> supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
 */
+    
 private:
 
     S60CameraSession *m_session;

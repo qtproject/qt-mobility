@@ -75,23 +75,12 @@ S60CameraService::S60CameraService(QObject *parent)
     m_media = new S60MediaControl(m_session, this);
     m_mediaFormat = new S60MediaFormatControl(m_session, this);
     m_videoEncoder = new S60VideoEncoder(m_session, this);
-    m_videoOutput = new S60VideoOutputControl(m_session);
+    m_videoOutput = new S60VideoOutputControl(this);
 
 }
 
 S60CameraService::~S60CameraService()
 {
-    delete m_media;
-    delete m_control;
-    delete m_focusControl;
-    delete m_exposureControl;
-    delete m_imageProccessingControl;
-    delete m_imageCaptureControl;
-    delete m_session;
-    delete m_videoEncoder;
-    delete m_mediaFormat;
-    delete m_videoOutput;
-    delete m_videoDeviceControl;
 }
 
 QMediaControl *S60CameraService::control(const char *name) const
@@ -129,6 +118,16 @@ QMediaControl *S60CameraService::control(const char *name) const
 
     return 0;
 }
+int S60CameraService::deviceCount()
+{
+    return S60CameraSession::deviceCount();
+}
+
+QString S60CameraService::deviceDescription(const int index)
+{
+    return S60CameraSession::description(index);
+}
+
 
 /*
 bool S60CameraService::isEndpointSupported(QMediaService::MediaEndpoint endpointType)

@@ -467,14 +467,14 @@ void S60CameraSession::setVFProcessor(MVFProcessor* VFProcessor)
 }
 
 // For S60Cameravideodevicecontrol
-int S60CameraSession::deviceCount() const
+int S60CameraSession::deviceCount()
 {
     return CCameraEngine::CamerasAvailable();
 }
 /**
  * Some names for cameras with index
  */
-QString S60CameraSession::name(int index) const
+QString S60CameraSession::name(const int index)
 {
     //TODO: change these to use querycurrentcamerainfo
     // From where does the naming index start
@@ -495,7 +495,7 @@ QString S60CameraSession::name(int index) const
     }
     return cameraName;
 }
-QString S60CameraSession::description(int index) const
+QString S60CameraSession::description(const int index)
 {
     //TODO: change these to use querycurrentcamerainfo
     // what information is wanted throuhg this call?
