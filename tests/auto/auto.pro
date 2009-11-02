@@ -15,11 +15,11 @@ SUBDIRS = \
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
-        qvideowidget
+#        qvideowidget
 
 contains(QT_CONFIG, multimedia) {
     SUBDIRS += \
-            qgraphicsvideoitem
-    !x11: SUBDIRS += \
-            qpaintervideosurface
+#            qgraphicsvideoitem \
+#            qpaintervideosurface
+
 }

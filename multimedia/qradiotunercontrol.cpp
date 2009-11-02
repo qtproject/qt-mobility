@@ -46,7 +46,7 @@
 /*!
     \class QRadioTunerControl
     \preliminary
-    \brief QRadioTunerControl class provides access to the radio tuning functionality of a
+    \brief The QRadioTunerControl class provides access to the radio tuning functionality of a
     QMediaService.
 
     If a QMediaService can tune an anolog radio device it will implement QRadioTunerControl.  This
