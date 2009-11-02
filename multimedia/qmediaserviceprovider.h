@@ -109,14 +109,17 @@ public:
     static QMediaServiceProvider* defaultServiceProvider();
 };
 
-/*
+/*!
     Service with support for media playback
     Required Controls: QMediaPlayerControl
     Optional Controls: QMediaPlaylistControl, QAudioDeviceControl
+    Video Output Controls (used by QWideoWidget and QGraphicsVideoItem):
+                        Required: QVideoOutputControl
+                        Optional: QVideoWindowControl, QVideoRendererControl, QVideoWidgetControl
 */
 #define Q_MEDIASERVICE_MEDIAPLAYER "com.nokia.qt.mediaplayer"
 
-/*
+/*!
    Service with support for recording from audio sources
    Required Controls: QAudioDeviceControl
    Recording Controls (QMediaRecorder):
@@ -134,13 +137,16 @@ public:
     Recording Controls (QMediaRecorder):
                         Required: QMediaRecorderControl
                         Recommended: QAudioEncoderControl, QVideoEncoderControl, QMediaFormatControl
+    Viewfinder Video Output Controls (used by QWideoWidget and QGraphicsVideoItem):
+                        Required: QVideoOutputControl
+                        Optional: QVideoWindowControl, QVideoRendererControl, QVideoWidgetControl
 */
 #define Q_MEDIASERVICE_CAMERA "com.nokia.qt.camera"
 
 /*!
     Service with support for radio tuning.
     Required Controls: QRadioTunerControl
-    Recording Controls (QMediaRecorder):
+    Recording Controls (Optional, used by QMediaRecorder):
                         Required: QMediaRecorderControl
                         Recommended: QAudioEncoderControl
                         Optional: QMediaFormatControl

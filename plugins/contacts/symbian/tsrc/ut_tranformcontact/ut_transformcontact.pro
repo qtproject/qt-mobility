@@ -20,15 +20,11 @@ symbian:
 	
 	# Input
 	HEADERS +=  ut_transformcontact.h \
-				../../inc/transformcontact.h \
-				../../inc/qcontactfieldmap.h \
-      	../../inc/qfieldmapping.h \
-      
+				../../inc/cnttransformcontact.h 
 	
 	SOURCES += ut_transformcontact.cpp \ 
-				../../src/transformcontact.cpp \
-				../../src/qcontactfieldmap.cpp
-
+				../../src/cnttransformcontact.cpp 
+			
 	TARGET.CAPABILITY = ALL -TCB
   
   LIBS += \

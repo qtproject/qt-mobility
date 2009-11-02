@@ -60,10 +60,10 @@ public:
 
     bool isEndpointSupported(QMediaService::MediaEndpoint endpointType);
 
-    QString activeEndpoint(QMediaService::MediaEndpoint endpointType);
-    bool setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
-    QString endpointDescription(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
-    QStringList supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
+    virtual QString activeEndpoint(QMediaService::MediaEndpoint endpointType);
+    virtual bool setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
+    virtual QString endpointDescription(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
+    virtual QStringList supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
 
     virtual QMediaControl* control(const char *name) const = 0;
 

@@ -892,6 +892,8 @@ void tst_QValueSpaceSubscriber::interestNotification_data()
     QTest::addColumn<QString>("providerPath");
     QTest::addColumn<QString>("attribute");
 
+    bool foundSupported = false;
+
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
     for (int i = 0; i < layers.count(); ++i) {
         QAbstractValueSpaceLayer *layer = layers.at(i);
@@ -899,11 +901,16 @@ void tst_QValueSpaceSubscriber::interestNotification_data()
         if (!layer->supportsInterestNotification())
             continue;
 
+        foundSupported = true;
+
         QTest::newRow("QValueSpaceSubscriber(char *)")
             << layer << CharStar << "/interestNotification" << "/value";
         QTest::newRow("QValueSpaceSubscriber(QString)")
             << layer << String << "/interestNotification" << "/value";
     }
+
+    if (!foundSupported)
+        QSKIP("No layer supporting interest notifications found.", SkipAll);
 }
 
 void tst_QValueSpaceSubscriber::interestNotification()
@@ -976,6 +983,8 @@ void tst_QValueSpaceSubscriber::ipcInterestNotification_data()
 #else
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
 
+    bool foundSupported = false;
+
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
     for (int i = 0; i < layers.count(); ++i) {
         QAbstractValueSpaceLayer *layer = layers.at(i);
@@ -983,8 +992,13 @@ void tst_QValueSpaceSubscriber::ipcInterestNotification_data()
         if (!layer->supportsInterestNotification())
             continue;
 
+        foundSupported = true;
+
         QTest::newRow(layer->name().toLocal8Bit().constData()) << layer;
     }
+
+    if (!foundSupported)
+        QSKIP("No layer supporting interest notifications found.", SkipAll);
 #endif
 }
 

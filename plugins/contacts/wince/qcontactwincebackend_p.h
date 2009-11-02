@@ -185,6 +185,7 @@ public:
     // List of ids (OIDs are equiv to unique ids, yay)
     QList<QContactLocalId> m_ids;
     QContactRequestWorker m_requestWorker;
+    QString m_engineName;
 };
 
 class QContactWinCEEngine : public QContactManagerEngine
@@ -192,11 +193,12 @@ class QContactWinCEEngine : public QContactManagerEngine
     Q_OBJECT
 
 public:
-    QContactWinCEEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
+    QContactWinCEEngine(const QString& engineName, const QMap<QString, QString>& parameters, QContactManager::Error& error);
     QContactWinCEEngine(const QContactWinCEEngine& other);
     ~QContactWinCEEngine();
     QContactWinCEEngine& operator=(const QContactWinCEEngine& other);
     void deref();
+    QString managerName() const;
 
     /* Filtering */
     QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
@@ -240,15 +242,22 @@ private:
     bool convertP2QContacts(const SimpleComPointer<IPOutlookItemCollection>& collection, QList<QContact>* contacts) const;
     QString convertFilterToQueryString(const QContactFilter& filter) const;
     QList<QContactLocalId> convertP2QIdList(const SimpleComPointer<IPOutlookItemCollection>& collection) const;
+
+    friend class ContactWinceFactory;
 };
 
+class QMutex;
 class Q_DECL_EXPORT ContactWinceFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
     Q_INTERFACES(QContactManagerEngineFactory)
-    public:
+public:
+    ContactWinceFactory();
         QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
         QString managerName() const;
+private:
+    QMutex m_mutex;
+    QContactWinCEEngine* m_engine;
 };
 
 #endif

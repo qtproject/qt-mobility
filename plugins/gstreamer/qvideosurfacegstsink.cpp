@@ -57,11 +57,16 @@ QVideoSurfaceGstDelegate::QVideoSurfaceGstDelegate(QAbstractVideoSurface *surfac
     , m_renderReturn(GST_FLOW_ERROR)
     , m_bytesPerLine(0)
 {
+    m_supportedPixelFormats = m_surface->supportedPixelFormats();
+
+    connect(m_surface, SIGNAL(supportedFormatsChanged()), this, SLOT(supportedFormatsChanged()));
 }
 
 QList<QVideoFrame::PixelFormat> QVideoSurfaceGstDelegate::supportedPixelFormats() const
 {
-    return m_surface->supportedPixelFormats();
+    QMutexLocker locker(const_cast<QMutex *>(&m_mutex));
+
+    return m_supportedPixelFormats;
 }
 
 bool QVideoSurfaceGstDelegate::start(const QVideoSurfaceFormat &format, int bytesPerLine)
@@ -171,6 +176,13 @@ void QVideoSurfaceGstDelegate::queuedRender()
     }
 
     m_renderCondition.wakeAll();
+}
+
+void QVideoSurfaceGstDelegate::supportedFormatsChanged()
+{
+    QMutexLocker locker(&m_mutex);
+
+    m_supportedPixelFormats = m_surface->supportedPixelFormats();
 }
 
 struct YuvFormat

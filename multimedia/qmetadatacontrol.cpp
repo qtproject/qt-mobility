@@ -49,9 +49,39 @@
     \ingroup multimedia-serv
 
     \preliminary
-    \brief The QMetaDataControl class is an abstract class to
-    provide meta-data information about your Multimedia object.
+    \brief The QMetaDataControl class provides access to the meta-data of a QMediaService's media.
+
+    If a QMediaService can provide read or write access to the meta-data of its current media it
+    will implement QMetaDataControl.  The functionality provided by this control is exposed to
+    application code by the meta-data members of QMediaObject, and so meta-data access is
+    potentially available in any of the media object classes.  Any media service may implement
+    QMetaDataControl.
+
+    The interface name of QMetaDataControl is \c com.nokia.Qt.QMetaDataControl/1.0 as
+    defined in QMetaDataControl_iid.
+
+    \sa QMediaService::control(), QMediaObject
 */
+
+/*!
+    \macro QMetaDataControl_iid
+
+    \c com.nokia.Qt.QMetaDataControl/1.0
+
+    Defines the interface name of the QMetaDataControl class.
+
+    \relates QMetaDataControl
+*/
+
+/*!
+    Construct a QMetaDataControl with \a parent. This class is meant as a base class
+    for service specific meta data providers so this constructor is protected.
+*/
+
+QMetaDataControl::QMetaDataControl(QObject *parent):
+    QMediaControl(*new QMediaControlPrivate, parent)
+{
+}
 
 /*!
     Destroy the meta-data object.
@@ -126,14 +156,3 @@ QMetaDataControl::~QMetaDataControl()
     Signal a change in the writable status of meta-data, \a writable will be
     true if meta-data elements can be added or adjusted.
 */
-
-/*!
-    Construct a QMetaDataControl with \a parent. This class is meant as s base class
-    for service specific metaData providers so this constructor is protected.
-*/
-
-QMetaDataControl::QMetaDataControl(QObject *parent):
-    QMediaControl(*new QMediaControlPrivate, parent)
-{
-}
-

@@ -54,9 +54,21 @@
     controling audio encoding parameters, this is provided by a
     QMediaService object, and is used by QMediaRecorder.
 
-    \sa QMediaService, QMediaRecorder
+    The interface name of QAudioEncoderControl is \c com.nokia.Qt.QAudioEncoderControl/1.0 as
+    defined in QAudioEncoderControl_iid.
+
+    \sa QMediaService::control(), QMediaRecorder
 */
 
+/*!
+    \macro QAudioEncoderControl_iid
+
+    \c com.nokia.Qt.AudioEncoderControl/1.0
+
+    Defines the interface name of the QAudioEncoderControl class.
+
+    \relates QAudioEncoderControl
+*/
 
 /*!
   Create a new audio encode control object with the given \a parent.
@@ -80,12 +92,6 @@ QAudioEncoderControl::~QAudioEncoderControl()
 */
 
 /*!
-  \fn QString QAudioEncoderControl::audioCodec() const
-
-  Returns the current audio codec being used.
-*/
-
-/*!
   \fn QAudioEncoderControl::codecDescription(const QString &codec) const
 
   Returns description of audio \a codec.
@@ -95,44 +101,6 @@ QAudioEncoderControl::~QAudioEncoderControl()
   \fn QAudioEncoderControl::supportedSampleRates() const
 
   Returns the list of supported audio sample rates, if known.
-*/
-
-/*!
-  \fn QAudioEncoderControl::channels() const
-
-  Returns the number of audio channels or -1 if not specified.
-*/
-
-
-/*!
-  \fn QAudioEncoderControl::setChannels(int channels)
-
-  Sets the number of audio \a channels.
-*/
-
-/*!
-  \fn QAudioEncoderControl::supportedChannelCounts() const
-
-  Returns the list of supported audio channels counts, if known.
-*/
-
-/*!
-  \fn QAudioEncoderControl::sampleSize() const
-
-  Returns the sample size of uncompressed audio stream,
-  or -1 if not specified.
-*/
-
-/*!
-  \fn QAudioEncoderControl::setSampleSize(int sampleSize)
-
-  Sets the sample size of uncompressed audio stream to \a sampleSize.
-*/
-
-/*!
-  \fn QAudioEncoderControl::supportedSampleSizes() const
-
-  Returns the list of supported audio sample sizes, if known.
 */
 
 /*!
@@ -154,44 +122,13 @@ QAudioEncoderControl::~QAudioEncoderControl()
 */
 
 /*!
-    \fn QAudioEncoderControl::quality() const
+    \fn QAudioEncoderControl::audioSettings() const
 
-    Returns the quality level being used.
+    Returns the selected audio settings.
 */
 
 /*!
-    \fn QAudioEncoderControl::setQuality(QtMedia::EncodingQuality quality)
+    \fn QAudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &settings)
 
-    Sets the quality value to \a quality.
+    Sets the selected audio \a settings.
 */
-
-/*!
-    \fn bool QAudioEncoderControl::setAudioCodec(const QString &codecName)
-
-    Returns true if the audio codec is changed to \a codecName.
-*/
-
-/*!
-    \fn void QAudioEncoderControl::setBitrate(int rate)
-
-    Changes the bitrate to \a rate.
-*/
-
-/*!
-    \fn int QAudioEncoderControl::bitrate() const
-
-    Returns the current bitrate being used.
-*/
-
-/*!
-    \fn QAudioEncoderControl::setSampleRate(int sampleRate)
-
-    Changes the sample rate to \a sampleRate.
-*/
-
-/*!
-    \fn int QAudioEncoderControl::sampleRate() const
-
-    Returns the current sample rate being used.
-*/
-

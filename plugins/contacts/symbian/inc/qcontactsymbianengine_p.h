@@ -43,6 +43,8 @@
 #define QCONTACTSYMBIANENGINEDATA_H
 
 #include <QObject>
+#include <QSet>
+
 #include <qtcontacts.h>
 
 #include <cntdb.h>
@@ -52,11 +54,10 @@
 #include "qtcontactsglobal.h"
 #include "qcontactmanager.h"
 
-#include "transformcontact.h"
+#include "cnttransformcontact.h"
 #include "qabstractcontactfilter.h"
 
-//remember to remove this in the code and just return a normal list
-//typedef QList<QContactLocalId> QContactLocalIdIterator;
+
 
 class QContactChangeSet;
 class QAbstractContactFilter;
@@ -74,11 +75,17 @@ public:
 
 public:
     /* Access */
-        QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-	QAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter) const;
-	bool sortOrderSupported(const QList<QContactSortOrder>& sortOrders) const;
-    QContact contact(const QContactLocalId& contactId, QContactManager::Error& qtError) const;
+    //Contacts
+    QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& qtError) const;
+    QContact contact(const QContactLocalId& contactId, QContactManager::Error& qtError) const;
+	
+    //Groups
+    QList<QContactLocalId> groups(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& qtError) const;
+    
+    //Filter & sort order
+    QAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter) const;
+	bool sortOrderSupported(const QList<QContactSortOrder>& sortOrders) const;
     int count() const;
 
     /* Add/Update/Remove */
@@ -87,21 +94,13 @@ public:
     bool removeContact(const QContactLocalId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError);
 
     QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
-    bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
-    QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
-    bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);
-    QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
-#if 0
-    /* Groups functionality */
-        QList<QContactLocalId> groups(QContactManager::Error& qtError) const;
-        QContactGroup group(const QContactLocalId& groupId, QContactManager::Error& qtError) const;
-	bool addGroup(QContactGroup& group, QContactChangeSet& changeSet, QContactManager::Error& qtError);
-	bool updateGroup(QContactGroup& group, QContactChangeSet& changeSet, QContactManager::Error& qtError);
-        bool removeGroup(const QContactLocalId& groupId, QContactChangeSet& changeSet, QContactManager::Error& qtError);
-#endif
-        
-    QContactLocalId simPhonebookGroupId() const;
+    bool saveRelationship(QContactChangeSet *changeSet, QContactRelationship* relationship, QContactManager::Error& error);
+    QList<QContactManager::Error> saveRelationships(QContactChangeSet *changeSet, QList<QContactRelationship>* relationships, QContactManager::Error& error);
+    bool removeRelationship(QContactChangeSet *changeSet, const QContactRelationship& relationship, QContactManager::Error& error);
+    QList<QContactManager::Error> removeRelationships(QContactChangeSet *changeSet, const QList<QContactRelationship>& relationships, QContactManager::Error& error);
 
+    
+    
     /* "Self" contact id (MyCard) */
     bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& qtError);
     QContactLocalId selfContactId(QContactManager::Error& qtError) const;
@@ -115,41 +114,21 @@ signals:
     void contactAdded(const QContactLocalId &contactId);
     void contactRemoved(const QContactLocalId &contactId);
     void contactChanged(const QContactLocalId &contactId);
-    void groupAdded(const QContactLocalId &contactId);
-    void groupRemoved(const QContactLocalId &contactId);
-    void groupChanged(const QContactLocalId &contactId);
-    
-public:
-    // Utility function to convert symbian error to QContactManager error
-    static void transformError(TInt symbianError, QContactManager::Error& qtError);
+    void relationshipAdded(const QContactLocalId &contactId);
+    void relationshipRemoved(const QContactLocalId &contactId);
 
 private:
 
 	// Leaving functions implementing CNTMODEL interaction.
-        QContact contactL(const QContactLocalId &id) const;
-	int countL() const;
+    QContact contactL(const QContactLocalId &id) const;
+    QList<QContactLocalId> groupsL() const;
+        
+    int countL() const;
 
 	int addContactL(QContact &contact);
 	void updateContactL(QContact &contact);
     int removeContactL(QContactLocalId id);
-
-#if 0
-	//Leaving functions for groups functionality
-    QList<QContactLocalId> groupsL() const;
-    QContactGroup groupL(const QContactLocalId& groupId) const;
-	void addGroupL(QContactGroup& group);
-	void updateGroupL(QContactGroup& group);
-    void removeGroupL(const QContactLocalId& groupId);
-    QList<QContactLocalId> memberOfGroupsL(const TContactItemId contactId) const;
-    void updateMemberOfGroupsL(QContact contact);
-#endif
-    
-    QContactLocalId simPhonebookGroupIdL() const;
-    
-	//utility functions
-    CContactGroup* fetchCGroup(const QContactLocalId& id) const;
-    bool isGroup(const QContactLocalId& id) const;
-
+   
 private:
 	CContactDatabase* m_contactDatabase;
 #ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
@@ -159,7 +138,7 @@ private:
     QList<QContactLocalId> m_contactsAddedEmitted;
     QList<QContactLocalId> m_contactsChangedEmitted;
     QList<QContactLocalId> m_contactsRemovedEmitted;
-    TransformContact       *m_transformContact;
+    CntTransformContact       *m_transformContact;
     QAbstractContactFilter* m_contactFilter;
     QAbstractContactSorter* m_contactSorter;
     CntRelationship        *m_relationship;

@@ -152,6 +152,7 @@ Player::Player(QWidget *parent)
 
 Player::~Player()
 {
+    delete playlist;
     delete player;
 }
 

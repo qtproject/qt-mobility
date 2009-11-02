@@ -90,7 +90,10 @@ public:
     QMap<QByteArray ,QVariant> tags() const { return m_tags; }
     QMap<QtMedia::MetaData,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }
     int streamCount() const { return m_streamProperties.count(); }
-    QMediaStreamsControl::StreamType streamType(int streamNumber) { return m_streamTypes[streamNumber]; }
+    QMediaStreamsControl::StreamType streamType(int streamNumber) { return m_streamTypes.value(streamNumber, QMediaStreamsControl::UnknownStream); }
+
+    int activeStream(QMediaStreamsControl::StreamType streamType) const;
+    void setActiveStream(QMediaStreamsControl::StreamType streamType, int streamNumber);
 
     bool processSyncMessage(const QGstreamerMessage &message);
 

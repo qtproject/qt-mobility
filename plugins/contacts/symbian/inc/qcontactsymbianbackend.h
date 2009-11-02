@@ -83,6 +83,8 @@ public:
     /* Contacts - Accessors and Mutators */
     QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContactLocalId> contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    
     QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
     bool saveContact(QContact* contact, QContactManager::Error& error);
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
@@ -95,13 +97,7 @@ public:
     QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
     bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);
     QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
-#if 0
-    /* Groups - Accessors and Mutators */
-    QList<QContactLocalId> groups(QContactManager::Error& error) const;
-    QContactGroup group(const QContactLocalId& groupId, QContactManager::Error& error) const;
-    bool saveGroup(QContactGroup* group, QContactManager::Error& error);
-    bool removeGroup(const QContactLocalId& groupId, QContactManager::Error& error);
-#endif
+
     /* Definitions */
     QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
 
@@ -117,18 +113,18 @@ public:
     bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error);
     QContactLocalId selfContactId(QContactManager::Error& error) const;
 
+    QString managerName() const;
+
 private slots:
         void eventContactAdded(const QContactLocalId &contactId);
         void eventContactRemoved(const QContactLocalId &contactId);
         void eventContactChanged(const QContactLocalId &contactId);
-#if 0
-        void eventGroupAdded(const QContactLocalId &groupId);
-        void eventGroupRemoved(const QContactLocalId &groupId);
-        void eventGroupChanged(const QContactLocalId &groupId);
-#endif
+        void eventRelationshipAdded(const QContactLocalId &contactId);
+        void eventRelationshipRemoved(const QContactLocalId &contactId);
         
 private:
-    void slowFilter(const QContactFilter& filter, const QList<QContactLocalId>& contacts, QList<QContactLocalId>& result, QContactManager::Error& error) const;
+    QList<QContactLocalId> slowFilter(const QContactFilter& filter, const QList<QContactLocalId>& contacts, QContactManager::Error& error) const;
+    QList<QContactLocalId> slowSort(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     bool doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error);
     void updateDisplayLabel(QContact& contact) const;
     QContactSymbianEngineData *d;

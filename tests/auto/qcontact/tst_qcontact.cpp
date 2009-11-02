@@ -42,6 +42,7 @@
 #include <QtTest/QtTest>
 
 #include "qtcontacts.h"
+#include "qcontactmanager_p.h"
 
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -53,12 +54,16 @@ Q_OBJECT
 public:
     tst_QContact();
     virtual ~tst_QContact();
+private:
+    QContactManagerDataHolder managerDataHolder;
 
 private slots:
     void details();
     void actions();
     void preferences();
+    void relationships();
     void displayName();
+    void type();
     void emptiness();
 };
 
@@ -91,6 +96,10 @@ void tst_QContact::details()
     QVERIFY(detail.isEmpty());
     QVERIFY(detail.definitionName().isEmpty());
 
+    // retrieve the first detail using the empty definition name accessor.
+    detail = c.detail(QString());
+    QVERIFY(detail == details.at(0));
+
     QVERIFY(c.details("nonexistent").count() == 0);
 
     // Add a detail
@@ -101,6 +110,8 @@ void tst_QContact::details()
 
     QVERIFY(c.details().count() == 3);
     QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 1);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber, QString("12345678")).count() == 1);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName, QString(), QString("12345678")).count() == c.details(QContactPhoneNumber::DefinitionName).count());
     QVERIFY(c.details<QContactPhoneNumber>().count() == 1);
     QVERIFY(!c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(!c.detail<QContactPhoneNumber>().isEmpty());
@@ -111,6 +122,8 @@ void tst_QContact::details()
     QVERIFY(c.details().count() == 2);
     QVERIFY(c.isEmpty() == true);
     QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 0);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber, QString("12345678")).count() == 0);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName, QString(), QString("12345678")).count() == c.details(QContactPhoneNumber::DefinitionName).count());
     QVERIFY(c.details<QContactPhoneNumber>().count() == 0);
     QVERIFY(c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(c.detail<QContactPhoneNumber>().isEmpty());
@@ -129,6 +142,8 @@ void tst_QContact::details()
     QVERIFY(c.details().count() == 2);
     QVERIFY(c.isEmpty() == true);
     QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 0);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber, QString("12345678")).count() == 0);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName, QString(), QString("12345678")).count() == c.details(QContactPhoneNumber::DefinitionName).count());
     QVERIFY(c.details<QContactPhoneNumber>().count() == 0);
     QVERIFY(c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(c.detail<QContactPhoneNumber>().isEmpty());
@@ -144,11 +159,28 @@ void tst_QContact::details()
     QVERIFY(c.removeDetail(&p3));
     QVERIFY(c.details().count() == 2);
     QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 0);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber, QString("12345678")).count() == 0);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName, QString(), QString("12345678")).count() == c.details(QContactPhoneNumber::DefinitionName).count());
     QVERIFY(c.details<QContactPhoneNumber>().count() == 0);
     QVERIFY(c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(c.detail<QContactPhoneNumber>().isEmpty());
 
     QVERIFY(p == p3);
+
+    // now we want to add multiple details of the same type, and test that retrieval works correctly.
+    p2.setNumber("22222");
+    p2.setValue("nonexistent-field", QVariant("22222-2"));
+    c.saveDetail(&p);
+    c.saveDetail(&p2);
+    QVERIFY(c.details().count() == 4);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 2);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber, QString("12345678")).count() == 1);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName, QString(), QString("12345678")).count() == c.details(QContactPhoneNumber::DefinitionName).count());
+    QVERIFY(c.details<QContactPhoneNumber>().count() == 2);
+    QVERIFY(!c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
+    QVERIFY(!c.detail<QContactPhoneNumber>().isEmpty());
+    QCOMPARE(c.detail<QContactPhoneNumber>(), p);
+    QVERIFY(c.removeDetail(&p2));
 
     // now try removing a detail for which we've set a preference
     QContactEmailAddress pref;
@@ -485,6 +517,49 @@ void tst_QContact::preferences()
     QVERIFY(c.isPreferredDetail("testAction", det2copy) == false);
 }
 
+void tst_QContact::relationships()
+{
+    QContact c;
+
+    // boring test, because the default contact has no relationships
+    // we test this more convincingly in the QContactManager tests.
+    QList<QContactId> related = c.relatedContacts();
+    QVERIFY(related.isEmpty());
+
+    related = c.relatedContacts(QContactRelationship::HasMember);
+    QVERIFY(related.isEmpty());
+
+    related = c.relatedContacts(QContactRelationship::HasMember, QContactRelationshipFilter::First);
+    QVERIFY(related.isEmpty());
+
+    QList<QContactRelationship> relationshipList = c.relationships();
+    QVERIFY(relationshipList.isEmpty());
+
+    relationshipList = c.relationships(QContactRelationship::HasMember);
+    QVERIFY(relationshipList.isEmpty());
+
+    // now test that we can change the order of relationships regardless of the number of relationships
+    QList<QContactRelationship> orderedList = c.relationshipOrder();
+    QVERIFY(orderedList == relationshipList); // should be the same by default
+
+    QContactRelationship dummyRel;
+    QContactId firstId;
+    firstId.setManagerUri("test-nokia");
+    firstId.setLocalId(QContactLocalId(5));
+    QContactId secondId;
+    secondId.setManagerUri("test-nokia-2");
+    secondId.setLocalId(QContactLocalId(5));
+    dummyRel.setFirst(firstId);
+    dummyRel.setSecond(secondId);
+    dummyRel.setRelationshipType(QContactRelationship::IsAssistantOf);
+
+    QList<QContactRelationship> reorderedList;
+    reorderedList.append(dummyRel);
+    c.setRelationshipOrder(reorderedList);
+
+    QVERIFY(c.relationshipOrder() == reorderedList);
+}
+
 void tst_QContact::displayName()
 {
     QContact c;
@@ -554,6 +629,26 @@ void tst_QContact::displayName()
     QVERIFY(d.displayLabel().label().isEmpty());
 }
 
+void tst_QContact::type()
+{
+    QContact c;
+    QVERIFY(c.isEmpty() == true);
+
+    // ensure that the default type is the QContactType::TypeContact type
+    QVERIFY(c.type() == QString(QLatin1String(QContactType::TypeContact)));
+
+    // now set it to be a group via the type mutator, and test that it works
+    QContactType groupType;
+    groupType.setType(QString(QLatin1String(QContactType::TypeGroup)));
+    c.setType(groupType);
+    QVERIFY(c.type() == QString(QLatin1String(QContactType::TypeGroup)));
+
+    // set it back to a contact, via the string mutator
+    c.setType(QContactType::TypeContact);
+    QVERIFY(c.type() == QString(QLatin1String(QContactType::TypeContact)));
+    QVERIFY(c.isEmpty() == true); // type doesn't affect emptiness
+}
+
 void tst_QContact::emptiness()
 {
     QContact c;
@@ -574,6 +669,10 @@ void tst_QContact::emptiness()
 
     c.setDisplayLabel(QString());
     QVERIFY(c.isEmpty() == true);
+
+    c.setType(QContactType::TypeContact);
+    QVERIFY(c.type() == QString(QLatin1String(QContactType::TypeContact)));
+    QVERIFY(c.isEmpty() == true); // type doesn't affect emptiness
 }
 
 QTEST_MAIN(tst_QContact)

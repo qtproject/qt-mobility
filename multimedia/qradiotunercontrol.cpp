@@ -52,7 +52,20 @@
     \brief The QRadioTunerControl class is an abstract class for controlling
     the tuning of analog radio devices.
 
-    \sa QMediaService, QRadioTuner
+    The interface name of QRadioTunerControl is \c com.nokia.Qt.QRadioTunerControl/1.0 as
+    defined in QRadioTunerControl_iid.
+
+    \sa QMediaService::control(), QRadioTuner
+*/
+
+/*!
+    \macro QRadioTunerControl_iid
+
+    \c com.nokia.Qt.QRadioTunerControl/1.0
+
+    Defines the interface name of the QRadioTunerControl class.
+
+    \relates QRadioTunerControl
 */
 
 /*!

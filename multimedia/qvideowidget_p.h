@@ -108,23 +108,6 @@ private:
 
 class QVideoRendererControl;
 
-#ifndef QT_NO_OPENGL
-class QGLWidgetVideoSurface : public QPainterVideoSurface
-{
-    Q_OBJECT
-public:
-    explicit QGLWidgetVideoSurface(QGLWidget *widget, QObject *parent = 0);
-
-protected:
-    void makeCurrent();
-    void doneCurrent();
-
-private:
-    QGLWidget *m_widget;
-};
-
-#endif
-
 class QVideoRendererWidget
 #ifndef QT_NO_OPENGL
     : public QGLWidget
@@ -161,6 +144,10 @@ Q_SIGNALS:
     void saturationChanged(int saturation);
 
 protected:
+#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
+	void initializeGL();
+#endif
+
     void paintEvent(QPaintEvent *event);
 
 private Q_SLOTS:
@@ -257,6 +244,7 @@ public:
     int hue;
     int saturation;
     QVideoWidget::AspectRatioMode aspectRatioMode;
+    Qt::WindowFlags nonFullScreenFlags;
     bool wasFullScreen;
 
     void setCurrentBackend(QVideoWidgetBackendInterface *backend);

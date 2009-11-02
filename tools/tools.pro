@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS += servicefw servicexmlgen
-!wince*:SUBDIRS += vsexplorer
+SUBDIRS += servicefw servicexmlgen  #SFW API
+SUBDIRS += vsexplorer qcrmlgen      #P&S API

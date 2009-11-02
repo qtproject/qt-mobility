@@ -85,6 +85,8 @@ SUBDIRS += \             #Multimedia
 contains(QT_CONFIG, multimedia) {
     SUBDIRS += \
             qgraphicsvideoitem
+    !x11: SUBDIRS += \
+            qpaintervideosurface
 }
 
 #Messaging

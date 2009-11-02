@@ -32,7 +32,24 @@
 <hr />
 <h2>Type Documentation</h2>
 <h3 class="fn"><a name="EncodingMode-enum"></a>enum QtMedia::EncodingMode</h3>
+<p>Enumerates encoding modes.</p>
+<p><table  class="valuelist" border="1" cellpadding="2" cellspacing="1" width="40%">
+<tr><th width="60%">Constant</th><th width="40%">Value</th></tr>
+<tr><td valign="top"><tt>QtMedia::ConstantQualityEncoding</tt></td><td align="center" valign="top"><tt>0</tt></td></tr>
+<tr><td valign="top"><tt>QtMedia::ConstantBitrateEncoding</tt></td><td align="center" valign="top"><tt>1</tt></td></tr>
+<tr><td valign="top"><tt>QtMedia::AverageBitrateEncoding</tt></td><td align="center" valign="top"><tt>2</tt></td></tr>
+<tr><td valign="top"><tt>QtMedia::TwoPassEncoding</tt></td><td align="center" valign="top"><tt>3</tt></td></tr>
+</table></p>
 <h3 class="fn"><a name="EncodingQuality-enum"></a>enum QtMedia::EncodingQuality</h3>
+<p>Enumerates quality encoding levels.</p>
+<p><table  class="valuelist" border="1" cellpadding="2" cellspacing="1" width="40%">
+<tr><th width="60%">Constant</th><th width="40%">Value</th></tr>
+<tr><td valign="top"><tt>QtMedia::VeryLowQuality</tt></td><td align="center" valign="top"><tt>0</tt></td></tr>
+<tr><td valign="top"><tt>QtMedia::LowQuality</tt></td><td align="center" valign="top"><tt>1</tt></td></tr>
+<tr><td valign="top"><tt>QtMedia::NormalQuality</tt></td><td align="center" valign="top"><tt>2</tt></td></tr>
+<tr><td valign="top"><tt>QtMedia::HighQuality</tt></td><td align="center" valign="top"><tt>3</tt></td></tr>
+<tr><td valign="top"><tt>QtMedia::VeryHighQuality</tt></td><td align="center" valign="top"><tt>4</tt></td></tr>
+</table></p>
 <h3 class="fn"><a name="MetaData-enum"></a>enum QtMedia::MetaData</h3>
 <p>This enum provides identifiers for meta-data attributes.</p>
 <p>Common attributes</p>
@@ -96,7 +113,7 @@
 <p>Video attributes</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QtMedia::FrameRate</tt></td><td align="center" valign="top">?</td><td valign="top">The frame rate of the media's video stream. <a href="http://qt.nokia.com/doc/4.5/qpair.html">QPair</a>&lt;int, int&gt;.</td></tr>
+<tr><td valign="top"><tt>QtMedia::VideoFrameRate</tt></td><td align="center" valign="top"><tt>38</tt></td><td valign="top">The frame rate of the media's video stream. qreal.</td></tr>
 <tr><td valign="top"><tt>QtMedia::VideoBitRate</tt></td><td align="center" valign="top"><tt>39</tt></td><td valign="top">The bit rate of the media's video stream in bits per second. int.</td></tr>
 <tr><td valign="top"><tt>QtMedia::VideoCodec</tt></td><td align="center" valign="top"><tt>40</tt></td><td valign="top">The codec of the media's video stream. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
 <tr><td valign="top"><tt>QtMedia::PosterUri</tt></td><td align="center" valign="top"><tt>41</tt></td><td valign="top">The URI of a poster image. <a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a>.</td></tr>
@@ -118,12 +135,13 @@
 <tr><td valign="top"><tt>QtMedia::Subject</tt></td><td align="center" valign="top"><tt>49</tt></td><td valign="top">The subject of the media. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
 </table></p>
 <h3 class="fn"><a name="SupportEstimate-enum"></a>enum QtMedia::SupportEstimate</h3>
-<p><table  class="valuelist" border="1" cellpadding="2" cellspacing="1" width="40%">
-<tr><th width="60%">Constant</th><th width="40%">Value</th></tr>
-<tr><td valign="top"><tt>QtMedia::NotSupported</tt></td><td align="center" valign="top"><tt>0</tt></td></tr>
-<tr><td valign="top"><tt>QtMedia::MaybeSupported</tt></td><td align="center" valign="top"><tt>1</tt></td></tr>
-<tr><td valign="top"><tt>QtMedia::ProbablySupported</tt></td><td align="center" valign="top"><tt>2</tt></td></tr>
-<tr><td valign="top"><tt>QtMedia::PreferedService</tt></td><td align="center" valign="top"><tt>3</tt></td></tr>
+<p>Enumerates the levels of support a media service provider may have for a feature.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QtMedia::NotSupported</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The feature is not supported.</td></tr>
+<tr><td valign="top"><tt>QtMedia::MaybeSupported</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The feature may be supported.</td></tr>
+<tr><td valign="top"><tt>QtMedia::ProbablySupported</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The feature is probably supported.</td></tr>
+<tr><td valign="top"><tt>QtMedia::PreferedService</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The service is the preferred provider of a service.</td></tr>
 </table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

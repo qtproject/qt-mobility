@@ -52,6 +52,7 @@
 #include "qgstreamervideooutputcontrol.h"
 #include "qgstreameraudioinputdevicecontrol.h"
 #include "qgstreamervideoinputdevicecontrol.h"
+#include "qgstreamerimagecapturecontrol.h"
 
 #ifndef QT_NO_MULTIMEDIA
 #include "qgstreamervideooverlay.h"
@@ -145,6 +146,7 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
 #endif
     m_videoWidgetControl = 0;
     m_videoWidgetFactory = 0;
+    m_imageCaptureControl = 0;
 
 
     if (service == Q_MEDIASERVICE_AUDIOSOURCE) {
@@ -156,6 +158,7 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
         m_cameraControl = new QGstreamerCameraControl(m_captureSession);
         m_captureSession->setVideoInput(m_cameraControl);
         m_videoInputDevice = new QGstreamerVideoInputDeviceControl(m_captureSession);
+        m_imageCaptureControl = new QGstreamerImageCaptureControl(m_captureSession);
 
         connect(m_videoInputDevice, SIGNAL(selectedDeviceChanged(QString)),
                 m_cameraControl, SLOT(setDevice(QString)));
@@ -238,6 +241,9 @@ QMediaControl *QGstreamerCaptureService::control(const char *name) const
 
     if (qstrcmp(name,QMetaDataControl_iid) == 0)
         return m_metaDataControl;
+
+    if (qstrcmp(name, QImageCaptureControl_iid) == 0)
+        return m_imageCaptureControl;
 
     return 0;
 }

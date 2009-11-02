@@ -46,7 +46,7 @@
 #include <QGridLayout>
 
 QPhononVideoWidget::QPhononVideoWidget(Phonon::VideoWidget *videoWidget, QObject *parent)
-    :QVideoWidgetControl(parent), m_videoWidget(videoWidget)
+    :QVideoWidgetControl(parent), m_videoWidget(videoWidget), m_isFullscreen(false)
 {
     setAspectRatioMode(QVideoWidget::KeepAspectRatio);
 }
@@ -77,21 +77,15 @@ void QPhononVideoWidget::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 
 bool QPhononVideoWidget::isFullScreen() const
 {
-    return m_videoWidget->isFullScreen();
+    return m_isFullscreen;
 }
 
 void QPhononVideoWidget::setFullScreen(bool fullScreen)
 {
-    if (fullScreen) {
-        m_videoWidget->enterFullScreen();
-        m_videoWidget->setWindowFlags(
-                m_videoWidget->windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
-        m_videoWidget->show();
-    } else {
-        m_videoWidget->exitFullScreen();
+    if (m_isFullscreen != fullScreen) {
+        m_isFullscreen = fullScreen;
+        emit fullScreenChanged(fullScreen);
     }
-
-    emit fullScreenChanged(fullScreen);
 }
 
 int QPhononVideoWidget::brightness() const

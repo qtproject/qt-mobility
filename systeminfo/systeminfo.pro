@@ -6,11 +6,10 @@ QT+= network
 include(../common.pri)
 
 # Input
-PUBLIC_HEADERS += qsysteminfo.h \
-    qsysinfoglobal.h
+PUBLIC_HEADERS +=   qsysteminfo.h \
+                    qsysinfoglobal.h
 SOURCES += qsysteminfo.cpp
-DEFINES += QT_BUILD_SYSINFO_LIB \
-    QT_MAKEDLL
+DEFINES += QT_BUILD_SYSINFO_LIB QT_MAKEDLL
 
 
 win32 {
@@ -26,36 +25,20 @@ win32 {
 
         LIBS += \
             Ole32.lib \
-    #        Strmiids.lib \
             User32.lib \
             Gdi32.lib \
             Ws2_32.lib \
-Iphlpapi.lib \
+            Iphlpapi.lib \
             Oleaut32.lib 
-        }
-
-#            Wbemuuid.lib \
-#            Wlanapi.lib \
-#            Setupapi.lib
-#             Bthprops.lib \
+    }
 
     win32-g++ : {
         LIBS += -luser32 -lgdi32
 
-        # -lole32 -lstrmiids -lbthprops -loleaut32 -lsetupapi
-        # Wbemuuid Ws2_32
-        }
-
-#     DEPENDPATH += C:\Program Files\Microsoft SDKs\Windows\v6.1\Lib
-
-#    INCLUDEPATH += "C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include" \
-#        "C:\Program Files\Microsoft Visual Studio 9.0\VC\include" \
-#        "C:\Program Files\Microsoft SDKs\Windows\v6.1\Include"
+    }
 
     wince*:LIBS += aygshell.lib \
-#        Nleddrv.lib \
         cellcore.lib \
-#        Ifapi.lib \
         Coredll.lib
 }
 
@@ -70,7 +53,6 @@ unix: {
             HEADERS += qhalservice_linux_p.h qnetworkmanagerservice_linux_p.h
 
         }
-        #LIBS += -lXxf86vm
     }
     mac: {
         SOURCES += qsysteminfo_mac.mm

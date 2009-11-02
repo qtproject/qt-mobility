@@ -63,8 +63,9 @@
 /*!
  * \enum QContactManagerInfo::ManagerFeature
  * This enum describes the possible features that a particular manager may support
- * \value Groups The manager supports all QContactGroup related operations, and emits the appropriate signals
+ * \value ChangeLogs The manager supports changelog related operations
  * \value ActionPreferences The manager supports saving preferred details per action per contact
+ * \value Groups The manager supports contacts of the \c QContactType::Group type
  * \value Relationships The manager supports at least some types of relationships between contacts
  * \value ArbitraryRelationshipTypes The manager supports relationships of arbitrary types between contacts
  * \value MutableDefinitions The manager supports saving, updating or removing detail definitions.  Some built-in definitions may still be immutable

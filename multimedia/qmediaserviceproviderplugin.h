@@ -63,6 +63,7 @@ Q_DECLARE_INTERFACE(QMediaServiceProviderFactoryInterface, QMediaServiceProvider
 
 struct Q_MEDIA_EXPORT QMediaServiceSupportedFormatsInterface
 {
+    virtual ~QMediaServiceSupportedFormatsInterface() {}
     virtual QtMedia::SupportEstimate hasSupport(const QString &mimeType, const QStringList& codecs) const = 0;
 };
 #define QMediaServiceSupportedFormatsInterface_iid \
@@ -72,6 +73,7 @@ Q_DECLARE_INTERFACE(QMediaServiceSupportedFormatsInterface, QMediaServiceSupport
 
 struct Q_MEDIA_EXPORT QMediaServiceSupportedDevicesInterface
 {
+    virtual ~QMediaServiceSupportedDevicesInterface() {}
     virtual QList<QByteArray> devices(const QByteArray &service) const = 0;
     virtual QString deviceDescription(const QByteArray &service, const QByteArray &device) = 0;
 };
@@ -81,6 +83,7 @@ Q_DECLARE_INTERFACE(QMediaServiceSupportedDevicesInterface, QMediaServiceSupport
 
 struct Q_MEDIA_EXPORT QMediaServiceFeaturesInterface
 {
+    virtual ~QMediaServiceFeaturesInterface() {}
     virtual QMediaServiceProviderHint::Features supportedFeatures(const QByteArray &service) const = 0;
 };
 #define QMediaServiceFeaturesInterface_iid \

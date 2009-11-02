@@ -103,7 +103,7 @@
     \value PixelAspectRatio The pixel aspect ratio of an image or video.  QSize.
 
     Video attributes
-    \value FrameRate The frame rate of the media's video stream.  QPair<int, int>.
+    \value VideoFrameRate The frame rate of the media's video stream.  qreal.
     \value VideoBitRate The bit rate of the media's video stream in bits per second.  int.
     \value VideoCodec The codec of the media's video stream.  QString.
 
@@ -125,9 +125,33 @@
 /*!
     \enum QtMedia::SupportEstimate
 
-    \value NotSupported
-    \value MaybeSupported
-    \value ProbablySupported
-    \value PreferedService
+    Enumerates the levels of support a media service provider may have for a feature.
+
+    \value NotSupported The feature is not supported.
+    \value MaybeSupported The feature may be supported.
+    \value ProbablySupported The feature is probably supported.
+    \value PreferedService The service is the preferred provider of a service.
 */
 
+/*!
+    \enum QtMedia::EncodingQuality
+
+    Enumerates quality encoding levels.
+
+    \value VeryLowQuality
+    \value LowQuality
+    \value NormalQuality
+    \value HighQuality
+    \value VeryHighQuality
+*/
+
+/*!
+    \enum QtMedia::EncodingMode
+
+    Enumerates encoding modes.
+
+    \value ConstantQualityEncoding
+    \value ConstantBitrateEncoding
+    \value AverageBitrateEncoding
+    \value TwoPassEncoding
+*/

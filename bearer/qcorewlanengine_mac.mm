@@ -49,7 +49,7 @@
 
 #include <QtCore/qdebug.h>
 
-#if defined(MAC_OS_X_VERSION_10_6) //not much functionality without this
+#if defined(MAC_SDK_10_6) //not much functionality without this
 #include <CoreWLAN/CoreWLAN.h>
 #include <CoreWLAN/CWInterface.h>
 #include <CoreWLAN/CWNetwork.h>
@@ -58,15 +58,14 @@
 
 #include <Foundation/NSEnumerator.h>
 #include <Foundation/NSKeyValueObserving.h>
+#include <Foundation/NSAutoreleasePool.h>
 
 #include <SystemConfiguration/SCNetworkConfiguration.h>
 QMap <QString, QString> networkInterfaces;
 
 QT_BEGIN_NAMESPACE
 
-#if defined(MAC_OS_X_VERSION_10_6)
 Q_GLOBAL_STATIC(QCoreWlanEngine, coreWlanEngine)
-#endif
 
 inline QString cfstringRefToQstring(CFStringRef cfStringRef) {
 //    return QString([cfStringRef UTF8String]);
@@ -87,7 +86,7 @@ inline CFStringRef qstringToCFStringRef(const QString &string)
 }
 
 inline NSString *qstringToNSString(const QString &qstr)
-{ return  [NSString stringWithUTF8String: qstr.toUtf8()];}
+{ return [reinterpret_cast<const NSString *>(qstringToCFStringRef(qstr)) autorelease]; }
 
 inline QString nsstringToQString(const NSString *nsstr)
 { return cfstringRefToQstring(reinterpret_cast<const CFStringRef>(nsstr)); }
@@ -231,7 +230,7 @@ void QCoreWlanEngine::connectToId(const QString &id)
     QString interfaceString = getInterfaceFromId(id);
 
     if(networkInterfaces.value(interfaceString) == "WLAN") {
-#if defined(MAC_OS_X_VERSION_10_6)
+#if defined(MAC_SDK_10_6)
         CWInterface *wifiInterface = [CWInterface interfaceWithName: qstringToNSString(interfaceString)];
         CWConfiguration *userConfig = [ wifiInterface configuration];
 
@@ -288,7 +287,7 @@ void QCoreWlanEngine::disconnectFromId(const QString &id)
 {
     QString interfaceString = getInterfaceFromId(id);
     if(networkInterfaces.value(getInterfaceFromId(id)) == "WLAN") { //wifi only for now
-#if defined(MAC_OS_X_VERSION_10_6)
+#if defined(MAC_SDK_10_6)
         NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
         CWInterface *wifiInterface = [CWInterface interfaceWithName:  qstringToNSString(interfaceString)];
         [wifiInterface disassociate];
@@ -318,7 +317,7 @@ QCoreWlanEngine *QCoreWlanEngine::instance()
 QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QString &interfaceName)
 {
     QList<QNetworkConfigurationPrivate *> foundConfigs;
-#if defined(MAC_OS_X_VERSION_10_6)
+#if defined(MAC_SDK_10_6)
     NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
 
     CWInterface *currentInterface = [CWInterface interfaceWithName:qstringToNSString(interfaceName)];
@@ -338,12 +337,9 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
             cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
             cpPriv->serviceInterface = QNetworkInterface::interfaceFromName(nsstringToQString([[CWInterface interface]  name]));
 
-            QNetworkConfiguration::StateFlags state = QNetworkConfiguration::Undefined;
-
             CWWirelessProfile *networkProfile = apNetwork.wirelessProfile;
             CW8021XProfile *userNetworkProfile = networkProfile.user8021XProfile;
             if(!userNetworkProfile) {
-                state |= QNetworkConfiguration::Defined;
             } else {
                 qWarning() <<"Has profile!" ;
             }
@@ -357,8 +353,11 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
                 if(isKnownSsid(cpPriv->serviceInterface.name(), networkSsid)) {
                     cpPriv->state =  QNetworkConfiguration::Discovered;
                 } else {
-                    cpPriv->state =  QNetworkConfiguration::Undefined;
+                    cpPriv->state =  QNetworkConfiguration::Defined;
                 }
+            }
+            if(!cpPriv->state) {
+                cpPriv->state = QNetworkConfiguration::Undefined;
             }
             if([[apNetwork securityMode ] intValue]== kCWSecurityModeOpen)
                 cpPriv->purpose = QNetworkConfiguration::Public;
@@ -377,7 +376,7 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
 
 bool QCoreWlanEngine::isWifiReady(const QString &wifiDeviceName)
 {
-#if defined(MAC_OS_X_VERSION_10_6)
+#if defined(MAC_SDK_10_6)
     CWInterface *defaultInterface = [CWInterface interfaceWithName: qstringToNSString(wifiDeviceName)];
     if([defaultInterface power])
         return true;
@@ -387,7 +386,7 @@ bool QCoreWlanEngine::isWifiReady(const QString &wifiDeviceName)
 
 bool QCoreWlanEngine::isKnownSsid(const QString &interfaceName, const QString &ssid)
 {
-#if defined(MAC_OS_X_VERSION_10_6)
+#if defined(MAC_SDK_10_6)
     CWInterface *wifiInterface = [CWInterface interfaceWithName: qstringToNSString(interfaceName)];
     CWConfiguration *userConfig = [wifiInterface configuration];
     NSSet *remNets = [userConfig rememberedNetworks];
@@ -402,7 +401,7 @@ bool QCoreWlanEngine::isKnownSsid(const QString &interfaceName, const QString &s
 QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::getWlanProfiles(const QString &interfaceName)
 {
     Q_UNUSED(interfaceName)
-#if defined(MAC_OS_X_VERSION_10_6)
+#if defined(MAC_SDK_10_6)
 //    for( CW8021XProfile *each8021XProfile in [CW8021XProfile allUser8021XProfiles] ) {
 //        qWarning() << "Profile name" << nsstringToQString([each8021XProfile ssid]);
 //    }

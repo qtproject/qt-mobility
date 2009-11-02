@@ -218,11 +218,13 @@ bool QContactDetail::operator==(const QContactDetail& other) const
     return true;
 }
 
+/*! Sets the preferred actions for this detail to be the given list of \a preferredActions */
 void QContactDetail::setPreferredActions(const QList<QContactActionDescriptor>& preferredActions)
 {
     d->m_preferredActions = preferredActions;
 }
 
+/*! Returns the list of preferred actions for this detail */
 QList<QContactActionDescriptor> QContactDetail::preferredActions() const
 {
     return d->m_preferredActions;

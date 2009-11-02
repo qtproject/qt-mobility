@@ -1508,7 +1508,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 // if not found by now, it doesn't match the filter.
                 return false;
             }
-            break;
+            //break; // unreachable.
 
         case QContactFilter::ChangeLogFilter:
             {
@@ -1527,7 +1527,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                     return ccf.since() <= ts.lastModified();
 
                 // You can't emulate a removed..
-                // Fall through
+                // Fall through to end
             }
             break;
 
@@ -1689,6 +1689,7 @@ void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& t
     sorted->append(toAdd);
 }
 
+/*! Sorts the given list of contacts \a cs according to the provided \a sortOrders */
 QList<QContactLocalId> QContactManagerEngine::sortContacts(const QList<QContact>& cs, const QList<QContactSortOrder>& sortOrders)
 {
     QList<QContactLocalId> sortedIds;

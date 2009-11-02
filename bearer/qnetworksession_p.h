@@ -77,7 +77,9 @@ public:
     {
     }
 
-    ~QNetworkSessionPrivate() {}
+    ~QNetworkSessionPrivate()
+    {
+    }
 
     //called by QNetworkSession constructor and ensures
     //that the state is immediately updated (w/o actually opening

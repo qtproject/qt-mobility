@@ -109,11 +109,23 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QMediaPlaylist class provides a list of media content to play.</p>
+<p>QMediaPlaylist is intended to be used with other media objects, like <a href="qmediaplayer.html">QMediaPlayer</a> or <a href="qmediaimageviewer.html">QMediaImageViewer</a>. QMediaPlaylist allows to access the service intrinsic playlist functionality if available, otherwise it provides the the local memory playlist implementation.</p>
+<pre>    player = new QMediaPlayer;
+
+    playlist = new QMediaPlaylist(player);
+    playlist-&gt;append(QUrl(&quot;http:<span class="comment">//example.com/movie1.mp4&quot;));</span>
+    playlist-&gt;append(QUrl(&quot;http:<span class="comment">//example.com/movie2.mp4&quot;));</span>
+    playlist-&gt;append(QUrl(&quot;http:<span class="comment">//example.com/movie3.mp4&quot;));</span>
+
+    playlist-&gt;setCurrentPosition(1);
+
+    player-&gt;play();</pre>
 <p>Depending on playlist source implementation, most of playlist modifcation operations can be asynchronous.</p>
 <p>See also <a href="qmediacontent.html">QMediaContent</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="Error-enum"></a>enum QMediaPlaylist::Error</h3>
+<p>This enum describes the <a href="qmediaplaylist.html">QMediaPlaylist</a> error codes.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMediaPlaylist::NoError</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">No errors.</td></tr>
@@ -170,7 +182,7 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QMediaPlaylist"></a>QMediaPlaylist::QMediaPlaylist ( <a href="qmediaobject.html">QMediaObject</a> * <i>mediaObject</i> = 0, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
-<p>Create a new playlist object for with the given <i>parent</i>. If <i>mediaObject</i> is null, internal local memory playlist source will be created.</p>
+<p>Create a new playlist object for with the given <i>parent</i>. If <i>mediaObject</i> is null or doesn't have an intrinsic playlist, internal local memory playlist source will be created.</p>
 <h3 class="fn"><a name="dtor.QMediaPlaylist"></a>QMediaPlaylist::~QMediaPlaylist ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the playlist.</p>
 <h3 class="fn"><a name="appendItem"></a>bool QMediaPlaylist::appendItem ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>content</i> )</h3>

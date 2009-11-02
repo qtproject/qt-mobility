@@ -49,49 +49,67 @@
 # define TESTDATA_DIR "."
 #endif
 
-class tst_QCRMLParser : public QObject
+class tst_QCrmlParser : public QObject
 {
     Q_OBJECT
 
 private slots:
-    void test();
+    void init();
+    void simple();
     void keyRangeSequence();
     void bitmaskKey();
+    void keyWithUnknownElements();
+    void keyRangeNoSequence();
+    void singleKey();
+    void multipleKeyRanges();
+    void multipleBitmaskKeys();
+
+    void wrongXmlFile();
+    void noRepositoryUidValue();
+    void keyMissingEndTag();
+    void outOfPlaceEndTag();
 
 private:
-    bool verifyKeyData(const QList<KeyData> &keyData, const QString &key,
+    bool verifyKeyData(const QHash<QString,KeyData> &keyHash, const QString &key,
                     quint64 uid, quint32 bitIndex = 0);
+    QHash<QString,KeyData> makeHash(const QList<KeyData> &keyList);
+    void printKeyList(const QList<KeyData> &list);
+    QDir testData;
 };
 
-void tst_QCRMLParser::test()
+void tst_QCrmlParser::init()
 {
-    QDir testData(TESTDATA_DIR "/testdata");
-
-    QCRMLParser parser;
-    QList<KeyData> keyData;
-    keyData = parser.parseQCRML("dontexist");
-    QVERIFY(parser.error() == QCRMLParser::FileDoesNotExist);
-    QVERIFY(keyData.count() == 0);
-
-    keyData = parser.parseQCRML(testData.absoluteFilePath("test1.qcrml"));
-
-    QVERIFY(verifyKeyData(keyData, "/sensors/accelerometer/x",
-                          Q_UINT64_C(0x4815162300000000)));
-    QVERIFY(verifyKeyData(keyData, "/sensors/accelerometer/y",
-                          Q_UINT64_C(0x4815162300000001)));
-    QVERIFY(verifyKeyData(keyData, "/sensors/accelerometer/z",
-                          Q_UINT64_C(0x4815162300000002)));
-
-    QVERIFY(parser.error() == QCRMLParser::NoError);
+    testData.setPath(TESTDATA_DIR "/testdata");
 }
 
-void tst_QCRMLParser::keyRangeSequence()
+void tst_QCrmlParser::simple()
 {
-    QDir testData(TESTDATA_DIR "/testdata");
-    QCRMLParser parser;
+    QCrmlParser parser;
     QList<KeyData> keyData;
-    keyData = parser.parseQCRML(testData.absoluteFilePath("test2.qcrml"));
+    keyData = parser.parseQCrml("dontexist");
+    QVERIFY(parser.error() == QCrmlParser::FileNotFound);
+    QVERIFY(keyData.count() == 0);
+
+    keyData = parser.parseQCrml(testData.absoluteFilePath("test1.qcrml"));
+    QHash<QString, KeyData> keyHash = makeHash(keyData);
+
+    QVERIFY(verifyKeyData(keyHash, "/sensors/accelerometer/x",
+                          Q_UINT64_C(0x4815162300000000)));
+    QVERIFY(verifyKeyData(keyHash, "/sensors/accelerometer/y",
+                          Q_UINT64_C(0x4815162300000001)));
+    QVERIFY(verifyKeyData(keyHash, "/sensors/accelerometer/z",
+                          Q_UINT64_C(0x4815162300000002)));
+
+    QVERIFY(parser.error() == QCrmlParser::NoError);
+}
+
+void tst_QCrmlParser::keyRangeSequence()
+{
+    QCrmlParser parser;
+    QList<KeyData> keyData;
+    keyData = parser.parseQCrml(testData.absoluteFilePath("test2.qcrml"));
     QCOMPARE(keyData.count(), 763);
+    QHash<QString,KeyData> keyHash = makeHash(keyData);
 
     quint64 repoUID = Q_UINT64_C(0x81531600000000);
 
@@ -100,45 +118,175 @@ void tst_QCRMLParser::keyRangeSequence()
     quint32 itemSettingIndexOffset = 0x00020000;
     quint64 uidPrefix = 0;
 
+    QVERIFY(verifyKeyData(keyHash, QString("/PIM/Contact"), repoUID + settingsIdentifier));
+
     for(int i=0; i < 254; i++) {
         uidPrefix = repoUID + settingsIdentifier + itemSettingIndex * i + itemSettingIndexOffset;
 
-        QVERIFY(verifyKeyData(keyData,QString("/PIM/Contact/") + QString::number(i) + "/firstName",
+        QVERIFY(verifyKeyData(keyHash,QString("/PIM/Contact/") + QString::number(i) + "/firstName",
                               uidPrefix + 0x1));
-        QVERIFY(verifyKeyData(keyData,QString("/PIM/Contact/") + QString::number(i) + "/lastName",
+        QVERIFY(verifyKeyData(keyHash,QString("/PIM/Contact/") + QString::number(i) + "/lastName",
                               uidPrefix + 0x2));
-        QVERIFY(verifyKeyData(keyData,QString("/PIM/Contact/") + QString::number(i) + "/group",
+        QVERIFY(verifyKeyData(keyHash,QString("/PIM/Contact/") + QString::number(i) + "/group",
                               uidPrefix + 0xf00f));
     }
 }
 
-void tst_QCRMLParser::bitmaskKey()
+void tst_QCrmlParser::bitmaskKey()
 {
-    QDir testData(TESTDATA_DIR "/testdata");
-    QCRMLParser parser;
+    QCrmlParser parser;
     QList<KeyData> keyData;
-    keyData = parser.parseQCRML(testData.absoluteFilePath("test3.qcrml"));
+    keyData = parser.parseQCrml(testData.absoluteFilePath("test3.qcrml"));
     QCOMPARE(keyData.count(), 4);
+    QHash<QString, KeyData> keyHash = makeHash(keyData);
 
     quint64 uid = Q_UINT64_C(0x1234567800000001);
 
-    QVERIFY(verifyKeyData(keyData, QString("/Dharma/Swan"), uid,1));
-    QVERIFY(verifyKeyData(keyData, QString("/Dharma/Pearl"), uid,2));
-    QVERIFY(verifyKeyData(keyData, QString("/Dharma/Hydra"), uid,32));
-    QVERIFY(verifyKeyData(keyData, QString("/Dharma/LookingGlass"), uid,4));
+    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Swan"), uid,1));
+    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Pearl"), uid,2));
+    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Hydra"), uid,32));
+    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/LookingGlass"), uid,4));
 }
 
-bool tst_QCRMLParser::verifyKeyData(const QList<KeyData> &keyData, const QString &key,
-                    quint64 uid, quint32 bitIndex) {
-    KeyData data;
-    for (int i=0; i < keyData.count(); i++) {
-       if (keyData.at(i).path() == key)
-           data = keyData.at(i);
+void tst_QCrmlParser::keyWithUnknownElements()
+{
+    QCrmlParser parser;
+    QList<KeyData> keyData;
+    keyData = parser.parseQCrml(testData.absoluteFilePath("test4.qcrml"));
+    QCOMPARE(keyData.count(), 3);
+    QHash<QString, KeyData> keyHash = makeHash(keyData);
+
+    QVERIFY(verifyKeyData(keyHash, "/sensors/accelerometer/x",
+                          Q_UINT64_C(0x4815162300000000)));
+    QVERIFY(verifyKeyData(keyHash, "/sensors/accelerometer/y",
+                          Q_UINT64_C(0x4815162300000001)));
+    QVERIFY(verifyKeyData(keyHash, "/sensors/accelerometer/z",
+                          Q_UINT64_C(0x4815162300000002)));
+
+}
+
+void tst_QCrmlParser::keyRangeNoSequence()
+{
+    QCrmlParser parser;
+    QList<KeyData> keyData;
+    keyData = parser.parseQCrml(testData.absoluteFilePath("test5.qcrml"));
+    QCOMPARE(keyData.count(), 65535);
+    QHash<QString,KeyData> keyHash = makeHash(keyData);
+
+    quint64 repoUid = Q_UINT64_C(0x8765432100000000);
+    quint32 firstAddr = 0x1;
+    quint64 uidPrefix = repoUid + firstAddr;
+
+    for (int i = 0; i < 65535; ++i) {
+        QVERIFY(verifyKeyData(keyHash, QString("/MyFeature/MyNumbers/") + QString::number(i),
+                        uidPrefix + i));
     }
 
-    if ( data.UID()!= uid ) {
+}
+
+void tst_QCrmlParser::singleKey()
+{
+    QCrmlParser parser;
+    QList<KeyData> keyData;
+    keyData = parser.parseQCrml(testData.absoluteFilePath("test6.qcrml"));
+    QCOMPARE(keyData.count(), 1);
+    QHash<QString, KeyData> keyHash = makeHash(keyData);
+    QVERIFY(verifyKeyData(keyHash, "/compass",
+                          Q_UINT64_C(0x1111222298765432)));
+
+}
+
+void tst_QCrmlParser::multipleKeyRanges()
+{
+    QCrmlParser parser;
+    QList<KeyData> keyData;
+    keyData = parser.parseQCrml(testData.absoluteFilePath("test7.qcrml"));
+    QCOMPARE(keyData.count(),33 );
+    QHash<QString, KeyData> keyHash = makeHash(keyData);
+
+    for(int i = 0x8; i <=0xC; ++i) {
+        QVERIFY(verifyKeyData(keyHash, QString("/section31/") + QString::number(i - 0x8,10),
+                                    Q_UINT64_C(0x1212989800000000)+i));
+    }
+
+    for(int i = 0xE; i <= 0x13; ++i) {
+     QVERIFY(verifyKeyData(keyHash, QString("/talshiar/") + QString::number(i - 0xE,10),
+                                    Q_UINT64_C(0x1212989800000000)+i));
+    }
+
+    quint64 repoUID = Q_UINT64_C(0x1212989800000000);
+
+    quint32 settingsIdentifier = 0x200;
+    quint32 itemSettingIndex = 0x020;
+    quint64 uidPrefix = 0;
+
+    for(int i = 0; i < 11; i++) {
+        uidPrefix = repoUID + settingsIdentifier + itemSettingIndex * i;
+
+        QVERIFY(verifyKeyData(keyHash,QString("/obsidian/") + QString::number(i) + "/name",
+                              uidPrefix + 0x1));
+        QVERIFY(verifyKeyData(keyHash,QString("/obsidian/") + QString::number(i) + "/rank",
+                              uidPrefix + 0x2));
+    }
+}
+
+void tst_QCrmlParser::multipleBitmaskKeys()
+{
+    QCrmlParser parser;
+    QList<KeyData> keyData;
+    keyData = parser.parseQCrml(testData.absoluteFilePath("test8.qcrml"));
+    QCOMPARE(keyData.count(), 7);
+    QHash<QString, KeyData> keyHash = makeHash(keyData);
+    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Swan"),Q_UINT64_C(0x1234567800000001),1));
+    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Pearl"),Q_UINT64_C(0x1234567800000001),2));
+    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Hydra"),Q_UINT64_C(0x1234567800000001),32));
+    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/LookingGlass"),Q_UINT64_C(0x1234567800000001),4));
+
+    QVERIFY(verifyKeyData(keyHash, QString("/Ben"),Q_UINT64_C(0x123456780000000A),2));
+    QVERIFY(verifyKeyData(keyHash, QString("/Tom"),Q_UINT64_C(0x123456780000000A),4));
+    QVERIFY(verifyKeyData(keyHash, QString("/Ethan"),Q_UINT64_C(0x123456780000000A),5));
+}
+
+void tst_QCrmlParser::wrongXmlFile()
+{
+    QCrmlParser parser;
+    QList<KeyData> keyData;
+    keyData = parser.parseQCrml(testData.absoluteFilePath("error1.qcrml"));
+    QVERIFY(parser.error() == QCrmlParser::ParseError);
+}
+
+void tst_QCrmlParser::noRepositoryUidValue()
+{
+    QCrmlParser parser;
+    QList<KeyData> keyData;
+    keyData = parser.parseQCrml(testData.absoluteFilePath("error2.qcrml"));
+    QVERIFY(parser.error() == QCrmlParser::ParseError);
+}
+
+void tst_QCrmlParser::keyMissingEndTag()
+{
+    QCrmlParser parser;
+    QList<KeyData> keyData;
+    keyData = parser.parseQCrml(testData.absoluteFilePath("error3.qcrml"));
+    QVERIFY(parser.error() == QCrmlParser::ParseError);
+}
+
+
+void tst_QCrmlParser::outOfPlaceEndTag()
+{
+    QCrmlParser parser;
+    QList<KeyData> keyData;
+    keyData = parser.parseQCrml(testData.absoluteFilePath("error4.qcrml"));
+    QVERIFY(parser.error() == QCrmlParser::ParseError);
+    QVERIFY(keyData.count() == 0);
+}
+
+bool tst_QCrmlParser::verifyKeyData(const QHash<QString,KeyData> &keyHash, const QString &key,
+                    quint64 uid, quint32 bitIndex) {
+    KeyData data = keyHash.value(key);
+    if ( data.uid()!= uid ) {
         qWarning() << "UID does not match expected:" << QString::number(uid,16) << "\n actual: "
-                << QString::number(data.UID(),16);
+                << QString::number(data.uid(),16);
         return false;
     }
 
@@ -150,5 +298,23 @@ bool tst_QCRMLParser::verifyKeyData(const QList<KeyData> &keyData, const QString
     return true;
 }
 
-QTEST_MAIN(tst_QCRMLParser)
+QHash<QString,KeyData> tst_QCrmlParser::makeHash(const QList<KeyData> &keyList)
+{
+    QHash<QString,KeyData> rv;
+    for (int i = 0; i < keyList.count(); ++i) {
+        rv.insert(keyList.at(i).path(), keyList.at(i));
+    }
+    return rv;
+}
+
+void tst_QCrmlParser::printKeyList(const QList<KeyData> &keyList)
+{
+    for (int i=0; i < keyList.count(); ++i) {
+        qDebug() << "KeyPath = " << keyList.at(i).path();
+        qDebug() << "UID = " << QString::number(keyList.at(i).uid(), 16);
+        qDebug() << "bitIndex"<< QString::number(keyList.at(i).bitIndex());
+    }
+}
+
+QTEST_MAIN(tst_QCrmlParser)
 #include "tst_qcrmlparser.moc"

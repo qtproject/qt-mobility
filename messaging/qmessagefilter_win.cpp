@@ -215,14 +215,14 @@ QList<QMessageFilter> QMessageFilterPrivate::subfilters(const QMessageFilter &fi
 // Several filters require QMessageStore::queryX to be called to evaluate filter member variables, 
 // namely byIds(const QMessageFilter &, ...), byParentAccountId(const QMessageAccountFilter &, ...), 
 // byFolderIds(const QMessageFolderFilter &, ...), byAncestorFolderIds(const QMessageFolderFilter &, ...)
-QMessageFilter QMessageFilterPrivate::preprocess(const QMessageFilter &filter)
+QMessageFilter QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, const QMessageFilter &filter)
 {
     QMessageFilter result(filter);
-    QMessageFilterPrivate::preprocess(&result);
+    QMessageFilterPrivate::preprocess(lastError, session, &result);
     return result;
 }
 
-void QMessageFilterPrivate::preprocess(QMessageFilter *filter)
+void QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFilter *filter)
 {
     if (!filter)
         return;
@@ -234,40 +234,58 @@ void QMessageFilterPrivate::preprocess(QMessageFilter *filter)
         result = ~QMessageFilter();
     }
     if (filter->d_ptr->_field == MessageFilter) {
-        QMessageIdList ids(QMessageStore::instance()->queryMessages(*filter->d_ptr->_messageFilter));
+        QMessageIdList ids(session->queryMessages(lastError, *filter->d_ptr->_messageFilter));
         result = QMessageFilter::byId(ids, incl);
     } else if (filter->d_ptr->_field == AccountFilter) {
-        QMessageAccountIdList ids(QMessageStore::instance()->queryAccounts(*filter->d_ptr->_accountFilter));
-        foreach(QMessageAccountId id, ids) {
+        QList<MapiStorePtr> stores(session->filterStores(lastError, *filter->d_ptr->_accountFilter));
+        foreach(MapiStorePtr store, stores) {
             if (inclusion) {
-                result |= QMessageFilter::byParentAccountId(id);
+                result |= QMessageFilter::byParentAccountId(store->id());
             } else {
-                result &= QMessageFilter::byParentAccountId(id, QMessageDataComparator::NotEqual);
+                result &= QMessageFilter::byParentAccountId(store->id(), QMessageDataComparator::NotEqual);
             }
         }
 #ifdef QMESSAGING_OPTIONAL_FOLDER
     } else if (filter->d_ptr->_field == FolderFilter) {
-        QMessageFolderIdList ids(QMessageStore::instance()->queryFolders(*filter->d_ptr->_folderFilter));
-        foreach(QMessageFolderId id, ids) {
+        QList<MapiFolderPtr> folders(session->filterFolders(lastError, *filter->d_ptr->_folderFilter));
+        foreach(MapiFolderPtr folder, folders) {
             if (inclusion) {
-                result |= QMessageFilter::byParentFolderId(id);
+                result |= QMessageFilter::byParentFolderId(folder->id());
             } else {
-                result &= QMessageFilter::byParentFolderId(id, QMessageDataComparator::NotEqual);
+                result &= QMessageFilter::byParentFolderId(folder->id(), QMessageDataComparator::NotEqual);
             }
         }
     } else if (filter->d_ptr->_field == AncestorFilter) {
-        QMessageFolderIdList ids(QMessageStore::instance()->queryFolders(*filter->d_ptr->_folderFilter));
-        foreach(QMessageFolderId id, ids) {
+        QList<MapiFolderPtr> folders(session->filterFolders(lastError, *filter->d_ptr->_folderFilter));
+        foreach(MapiFolderPtr folder, folders) {
             if (inclusion) {
-                result |= QMessageFilter::byAncestorFolderIds(id);
+                result |= QMessageFilter::byAncestorFolderIds(folder->id());
             } else {
-                result &= QMessageFilter::byAncestorFolderIds(id, QMessageDataComparator::Excludes);
+                result &= QMessageFilter::byAncestorFolderIds(folder->id(), QMessageDataComparator::Excludes);
             }
         }
 #endif
     } else {
-        preprocess(filter->d_ptr->_left);
-        preprocess(filter->d_ptr->_right);
+        QMessageFilter *l(filter->d_ptr->_left);
+        QMessageFilter *r(filter->d_ptr->_right);
+        preprocess(lastError, session, l);
+        preprocess(lastError, session, r);
+        // It's necessary to recombine bool op filters, because the operands may now have non-empty containerFilter parts,
+        // specifically in the case that one of the oreands has a *Filter field.
+        switch (filter->d_ptr->_operator) {
+        case And:
+            *filter = *l & *r;
+            break;
+        case Nand:
+            *filter = ~(*l & *r);
+            break;
+        case Or:
+            *filter = *l | *r;
+            break;
+        case Nor:
+            *filter = ~(*l | *r);
+            break;
+        }
         return;
     }
     if (filter->d_ptr->_operator == Not) // must be Not or Identity
@@ -1307,6 +1325,12 @@ QMessageFilter QMessageFilter::operator|(const QMessageFilter& other) const
 
 const QMessageFilter& QMessageFilter::operator&=(const QMessageFilter& other)
 {
+    QMessageFilter result;
+    if (!d_ptr->_valid || !other.d_ptr->_valid) {
+        result.d_ptr->_valid = false;
+        *this = result;
+        return *this;
+    }
     if (&other == this)
         return *this;
     if (isEmpty()) {
@@ -1322,12 +1346,7 @@ const QMessageFilter& QMessageFilter::operator&=(const QMessageFilter& other)
         *this = other;
         return *this;
     }
-    if (!d_ptr->_valid || !other.d_ptr->_valid) {
-        d_ptr->_valid = false;
-        return *this;
-    }
 
-    QMessageFilter result;
     if (!d_ptr->_complex && !other.d_ptr->_complex) {
         // A&B
         // intersect includes and union excludes
@@ -1402,6 +1421,12 @@ const QMessageFilter& QMessageFilter::operator&=(const QMessageFilter& other)
 
 const QMessageFilter& QMessageFilter::operator|=(const QMessageFilter& other)
 {
+    QMessageFilter result;
+    if (!d_ptr->_valid || !other.d_ptr->_valid) {
+        result.d_ptr->_valid = false;
+        *this = result;
+        return *this;
+    }
     if (&other == this)
         return *this;
     if (isEmpty())
@@ -1418,12 +1443,6 @@ const QMessageFilter& QMessageFilter::operator|=(const QMessageFilter& other)
         return *this;
     }
 
-    QMessageFilter result;
-    if (!d_ptr->_valid || !other.d_ptr->_valid) {
-        result.d_ptr->_valid = false;
-        *this = result;
-        return *this;
-    }
     if (!d_ptr->_complex 
         && !other.d_ptr->_complex 
         && (d_ptr->containerFiltersPart() == other.d_ptr->containerFiltersPart())) {

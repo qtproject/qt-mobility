@@ -338,11 +338,15 @@ void tst_QValueSpaceProvider::testSignals_data()
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
+    bool foundSupported = false;
+
     for (int i = 0; i < layers.count(); ++i) {
         QAbstractValueSpaceLayer *layer = layers.at(i);
 
         if (!layer->supportsInterestNotification())
             continue;
+
+        foundSupported = true;
 
         QTest::newRow("/ /")
             << layer
@@ -362,6 +366,9 @@ void tst_QValueSpaceProvider::testSignals_data()
             << QString("/testSignals")
             << QString();
     }
+
+    if (!foundSupported)
+        QSKIP("No layer supporting interest notifications found.", SkipAll);
 }
 
 void tst_QValueSpaceProvider::testSignals()

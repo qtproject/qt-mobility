@@ -41,53 +41,35 @@
 
 #include "cntabstractrelationship.h"
 
-CntAbstractRelationship::CntAbstractRelationship(const QString &relationshipType) : 
+/*!
+ * Constructor
+ * 
+ * \a conatctDatabase CContactDatabase with established connection to the database
+ * \a relationshipType name of the relationship type supported by the inherited class
+ */
+CntAbstractRelationship::CntAbstractRelationship(CContactDatabase* contactDatabase, const QString &relationshipType) : 
+    m_contactDatabase(contactDatabase),
     m_relationshipType(relationshipType) 
 {}
-    
+
+/*!
+ * Destructor
+ */
 CntAbstractRelationship::~CntAbstractRelationship()
 {}
 
-QList<QContactRelationship> CntAbstractRelationship::relationships(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
+/*!
+ * \return the name of the supported relationship type
+ */
+QString CntAbstractRelationship::relationshipType() const 
 {
-    error = QContactManager::NotSupportedError;
-
-    QList<QContactRelationship> relationships;
-    return relationships;
+    return m_relationshipType;
 }
 
-
-bool CntAbstractRelationship::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
+/*!
+ * \return the database instance
+ */
+CContactDatabase* CntAbstractRelationship::database()
 {
-    error = QContactManager::NotSupportedError;
-    return false;
-}
-
-
-QList<QContactManager::Error> CntAbstractRelationship::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
-{
-    QList<QContactManager::Error> errorList;
-    
-    for(int i = 0; i < relationships->count(); i++ ){
-        errorList.append(QContactManager::NotSupportedError);
-    }    
-    
-    return errorList;
-}
-
-bool CntAbstractRelationship::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
-{
-     error = QContactManager::NotSupportedError;
-     return false;
-}
-
-QList<QContactManager::Error> CntAbstractRelationship::removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
-{
-    QList<QContactManager::Error> errorList;
-    
-    for(int i = 0; i < relationships.count(); i++ ){
-        errorList.append(QContactManager::NotSupportedError);
-    }    
-    
-    return errorList;
+    return m_contactDatabase;
 }

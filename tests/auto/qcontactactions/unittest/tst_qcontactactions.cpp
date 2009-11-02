@@ -60,6 +60,8 @@ Q_OBJECT
 public:
     tst_QContactActions();
     virtual ~tst_QContactActions();
+private:
+    QContactManagerDataHolder managerDataHolder;
 
 public slots:
     void init();

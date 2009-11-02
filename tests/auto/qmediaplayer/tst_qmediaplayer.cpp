@@ -436,6 +436,26 @@ void tst_QMediaPlayer::testNullService()
         player.setPlaybackRate(playbackRate);
         QCOMPARE(player.playbackRate(), qreal(0));
         QCOMPARE(spy.count(), 0);
+    } {
+        QMediaPlaylist playlist(&player);
+
+        QSignalSpy mediaSpy(&player, SIGNAL(mediaChanged(QMediaContent)));
+        QSignalSpy statusSpy(&player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
+
+        playlist.appendItem(QUrl("http://example.com/stream"));
+        playlist.appendItem(QUrl("file:///some.mp3"));
+
+        playlist.setCurrentPosition(0);
+        QCOMPARE(playlist.currentPosition(), 0);
+        QCOMPARE(player.media(), QMediaContent());
+        QCOMPARE(mediaSpy.count(), 0);
+        QCOMPARE(statusSpy.count(), 0);
+
+        playlist.next();
+        QCOMPARE(playlist.currentPosition(), 1);
+        QCOMPARE(player.media(), QMediaContent());
+        QCOMPARE(mediaSpy.count(), 0);
+        QCOMPARE(statusSpy.count(), 0);
     }
 }
 
@@ -907,6 +927,8 @@ void tst_QMediaPlayer::testPlaylist()
     QCOMPARE(stateSpy.count(), 7);
     QCOMPARE(mediaSpy.count(), 5);
 
+    // Double up the signals to ensure some noise doesn't destabalize things.
+    mockService->setState(QMediaPlayer::StoppedState, QMediaPlayer::EndOfMedia);
     mockService->setState(QMediaPlayer::StoppedState, QMediaPlayer::EndOfMedia);
     QCOMPARE(player->media(), QMediaContent());
     QCOMPARE(player->state(), QMediaPlayer::StoppedState);

@@ -27,7 +27,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual QAudioEncoderSettings </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#audioSettings">audioSettings</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QString </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#codecDescription">codecDescription</a></b> ( const QString &amp; <i>codec</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#encodingOption">encodingOption</a></b> ( const QString &amp; <i>codec</i>, const QString &amp; <i>option</i> ) const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#setAudioSettings">setAudioSettings</a></b> ( const QAudioEncoderSettings &amp; ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#setAudioSettings">setAudioSettings</a></b> ( const QAudioEncoderSettings &amp; <i>settings</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#setEncodingOption">setEncodingOption</a></b> ( const QString &amp; <i>codec</i>, const QString &amp; <i>option</i>, const QVariant &amp; <i>value</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#supportedAudioCodecs">supportedAudioCodecs</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#supportedEncodingOptions">supportedEncodingOptions</a></b> ( const QString &amp; <i>codec</i> ) const = 0</td></tr>
@@ -45,6 +45,12 @@
 <ul>
 <li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
 </ul>
+<hr />
+<a name="macros"></a>
+<h2>Macros</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodercontrol.html#QAudioEncoderControl_iid">QAudioEncoderControl_iid</a></b></td></tr>
+</table>
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
@@ -58,7 +64,8 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QAudioEncoderControl class is an abstract class for controling audio encoding parameters, this is provided by a <a href="qmediaservice.html">QMediaService</a> object, and is used by <a href="qmediarecorder.html">QMediaRecorder</a>.</p>
-<p>See also <a href="qmediaservice.html">QMediaService</a> and <a href="qmediarecorder.html">QMediaRecorder</a>.</p>
+<p>The interface name of QAudioEncoderControl is <tt>com.nokia.Qt.QAudioEncoderControl/1.0</tt> as defined in <a href="qaudioencodercontrol.html#QAudioEncoderControl_iid">QAudioEncoderControl_iid</a>.</p>
+<p>See also <a href="qmediaservice.html#control">QMediaService::control</a>() and <a href="qmediarecorder.html">QMediaRecorder</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QAudioEncoderControl"></a>QAudioEncoderControl::QAudioEncoderControl ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [protected]</tt></h3>
@@ -66,13 +73,15 @@
 <h3 class="fn"><a name="dtor.QAudioEncoderControl"></a>QAudioEncoderControl::~QAudioEncoderControl ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the audio encode control.</p>
 <h3 class="fn"><a name="audioSettings"></a><a href="qaudioencodersettings.html">QAudioEncoderSettings</a> QAudioEncoderControl::audioSettings () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the selected audio settings.</p>
 <p>See also <a href="qaudioencodercontrol.html#setAudioSettings">setAudioSettings</a>().</p>
 <h3 class="fn"><a name="codecDescription"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QAudioEncoderControl::codecDescription ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>codec</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns description of audio <i>codec</i>.</p>
 <h3 class="fn"><a name="encodingOption"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> QAudioEncoderControl::encodingOption ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>codec</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>option</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the value of audio encoding <i>option</i> for <i>codec</i>.</p>
 <p>See also <a href="qaudioencodercontrol.html#setEncodingOption">setEncodingOption</a>().</p>
-<h3 class="fn"><a name="setAudioSettings"></a>void QAudioEncoderControl::setAudioSettings ( const <a href="qaudioencodersettings.html">QAudioEncoderSettings</a> &amp; )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="setAudioSettings"></a>void QAudioEncoderControl::setAudioSettings ( const <a href="qaudioencodersettings.html">QAudioEncoderSettings</a> &amp; <i>settings</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Sets the selected audio <i>settings</i>.</p>
 <p>See also <a href="qaudioencodercontrol.html#audioSettings">audioSettings</a>().</p>
 <h3 class="fn"><a name="setEncodingOption"></a>void QAudioEncoderControl::setEncodingOption ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>codec</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>option</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Set the <i>codec</i> specific <i>option</i> to <i>value</i>.</p>
@@ -83,6 +92,11 @@
 <p>Returns the list of <i>codec</i> specific audio encoding options.</p>
 <h3 class="fn"><a name="supportedSampleRates"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;int&gt; QAudioEncoderControl::supportedSampleRates () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the list of supported audio sample rates, if known.</p>
+<hr />
+<h2>Macro Documentation</h2>
+<h3 class="fn"><a name="QAudioEncoderControl_iid"></a>QAudioEncoderControl_iid</h3>
+<p><tt>com.nokia.Qt.AudioEncoderControl/1.0</tt></p>
+<p>Defines the interface name of the <a href="qaudioencodercontrol.html">QAudioEncoderControl</a> class.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

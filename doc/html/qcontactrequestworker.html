@@ -108,8 +108,8 @@
 <p>Processes the <a href="qcontactfetchrequest.html">QContactFetchRequest</a> <i>req</i></p>
 <p>See also <a href="qcontactfetchrequest.html">QContactFetchRequest</a>.</p>
 <h3 class="fn"><a name="processContactLocalIdFetchRequest"></a>void QContactRequestWorker::processContactLocalIdFetchRequest ( QContactLocalIdFetchRequest * <i>req</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
-<p>Processes the QContactIdFetchRequest <i>req</i></p>
-<p>See also QContactIdFetchRequest.</p>
+<p>Processes the QContactLocalIdFetchRequest <i>req</i></p>
+<p>See also QContactLocalIdFetchRequest.</p>
 <h3 class="fn"><a name="processContactRelationshipFetchRequest"></a>void QContactRequestWorker::processContactRelationshipFetchRequest ( <a href="qcontactrelationshipfetchrequest.html">QContactRelationshipFetchRequest</a> * <i>req</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
 <p>Processes the <a href="qcontactrelationshipfetchrequest.html">QContactRelationshipFetchRequest</a> <i>req</i></p>
 <p>See also <a href="qcontactrelationshipfetchrequest.html">QContactRelationshipFetchRequest</a>.</p>
@@ -136,7 +136,7 @@
 <p>Stops the worker thread. The worker thread may still run a while until it tries to process next request. If the worker thread was waiting on an empty queue, wakes it up.</p>
 <p>See also <a href="qcontactrequestworker.html#run">run</a>().</p>
 <h3 class="fn"><a name="waitRequest"></a>bool QContactRequestWorker::waitRequest ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i>, int <i>msecs</i> )</h3>
-<p>Blocks the caller until the request has been completed by the worker thread or worker thread signals that more partial results are available for the request <i>req</i>, or until <i>msecs</i> milliseconds has elapsed. If <i>msecs</i> is zero, this function will block indefinitely. Returns true if the request was cancelled or completed successfully within the given period, otherwise false.</p>
+<p>Blocks the caller until the given request <i>req</i> has been completed by the worker thread or worker thread signals that more partial results are available for the request, or until <i>msecs</i> milliseconds has elapsed. If <i>msecs</i> is zero, this function will block indefinitely. Returns true if the request was cancelled or completed successfully within the given period, otherwise false.</p>
 <p>See also <a href="qcontactabstractrequest.html#waitForFinished">QContactAbstractRequest::waitForFinished</a>() and <a href="qcontactabstractrequest.html#waitForProgress">QContactAbstractRequest::waitForProgress</a>().</p>
 <h3 class="fn"><a name="operator-eq"></a>QContactRequestWorker &amp; QContactRequestWorker::operator= ( const QContactRequestWorker &amp; <i>other</i> )</h3>
 <p>Replace the contents of this <a href="qcontactrequestworker.html">QContactRequestWorker</a> with <i>other</i></p>

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -227,11 +227,6 @@ public:
     /* ValueSpaceLayer interface - QValueSpaceItem functions */
     bool supportsInterestNotification() const { return true; }
     bool notifyInterest(Handle handle, bool interested);
-    bool supportsRequests() const { return false; }
-    bool requestSetValue(Handle, const QVariant &) { return false; }
-    bool requestSetValue(Handle, const QString &, const QVariant &) { return false; }
-    bool requestRemoveValue(Handle, const QString &) { return false; }
-    bool syncRequests() { return false; }
 
     /* ValueSpaceLayer interface - QValueSpaceProvider functions */
     bool setValue(QValueSpaceProvider *, Handle, const QString &, const QVariant &) { return false; }

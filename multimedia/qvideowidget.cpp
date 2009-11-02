@@ -107,26 +107,6 @@ QWidget *QVideoWidgetControlBackend::widget()
 
 #ifndef QT_NO_MULTIMEDIA
 
-#ifndef QT_NO_OPENGL
-
-QGLWidgetVideoSurface::QGLWidgetVideoSurface(QGLWidget *widget, QObject *parent)
-    : QPainterVideoSurface(widget->context(), parent)
-    , m_widget(widget)
-{
-}
-
-void QGLWidgetVideoSurface::makeCurrent()
-{
-    m_widget->makeCurrent();
-}
-
-void QGLWidgetVideoSurface::doneCurrent()
-{
-    m_widget->doneCurrent();
-}
-
-#endif
-
 QVideoRendererWidget::QVideoRendererWidget(QVideoRendererControl *control, QWidget *parent)
 #ifndef QT_NO_OPENGL
     : QGLWidget(parent)
@@ -134,11 +114,7 @@ QVideoRendererWidget::QVideoRendererWidget(QVideoRendererControl *control, QWidg
     : QWidget(parent)
 #endif
     , m_rendererControl(control)
-#ifndef QT_NO_OPENGL
-    , m_surface(new QGLWidgetVideoSurface(this))
-#else
     , m_surface(new QPainterVideoSurface)
-#endif
 {
     connect(m_surface, SIGNAL(frameChanged()), SLOT(update()));
     connect(m_surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)), SLOT(dimensionsChanged()));
@@ -204,6 +180,19 @@ QSize QVideoRendererWidget::sizeHint() const
 {
     return m_surface->surfaceFormat().sizeHint();
 }
+
+#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
+void QVideoRendererWidget::initializeGL()
+{
+    makeCurrent();
+
+    m_surface->setGLContext(const_cast<QGLContext *>(context()));
+    if (m_surface->supportedShaderTypes() & QPainterVideoSurface::GlslShader)
+        m_surface->setShaderType(QPainterVideoSurface::GlslShader);
+    else
+        m_surface->setShaderType(QPainterVideoSurface::FragmentProgramShader);
+}
+#endif
 
 void QVideoRendererWidget::paintEvent(QPaintEvent *event)
 {
@@ -419,26 +408,21 @@ void QVideoWidgetPrivate::_q_fullScreenChanged(bool fullScreen)
     object.
     \ingroup multimedia
 
-    A video widget presents video produced by the media object passed to it in it's constructor.
-    Any media object that produces video can be used as the source for a video widget, but only
-    one video output can be attached to a media object at a time.
+    Attaching a QVideoWidget to a QMediaObject allows it to display the video or image output
+    of that media object.  A QVideoWidget is attached to media object by passing a pointer to
+    the QMediaObject in its constructor, and detached by destroying the QVideoWidget.
 
     \code
-    int main(int argc, char *argv[])
-    {
-        QApplication app(argc, argv);
+        player = new QMediaPlayer;
 
-        QMediaPlayer player;
+        widget = new QVideoWidget(player);
+        widget->show();
 
-        QVideoWidget widget(&player);
-        widget.show();
-
-        player.setMedia(QUrl("http://example.com/movie.mp4"));
-        player.play();
-
-        return app.exec();
-    }
+        player->setMedia(QUrl("http://example.com/movie.mp4"));
+        player->play();
     \endcode
+
+    \bold {Note}: Only a single display output can be attached to a media object at one time.
 
     \sa QMediaObject, QMediaPlayer, QGraphicsVideoItem
 */
@@ -454,8 +438,9 @@ void QVideoWidgetPrivate::_q_fullScreenChanged(bool fullScreen)
 */
 
 /*!
-    Constructs a new widget with the given \a parent which displays video produced by a media
-    \a object.
+    Constructs a new widget which displays video produced by a media \a object.
+
+    The \a parent is passed to QWidget.
 */
 QVideoWidget::QVideoWidget(QMediaObject *object, QWidget *parent)
     : QWidget(parent, 0)
@@ -533,6 +518,8 @@ QVideoWidget::QVideoWidget(QMediaObject *object, QWidget *parent)
 #endif
     }
 
+    d->nonFullScreenFlags = windowFlags() & (Qt::SubWindow | Qt::Window);
+
     setLayout(d->layout);
 }
 
@@ -594,8 +581,18 @@ void QVideoWidget::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 
 void QVideoWidget::setFullScreen(bool fullScreen)
 {
-    if (fullScreen)
+    Q_D(QVideoWidget);
+
+    if (fullScreen) {
+        Qt::WindowFlags flags = windowFlags();
+        if (!(flags & Qt::Window)) {
+            d->nonFullScreenFlags = flags & (Qt::Window | Qt::SubWindow);
+            flags |= Qt::Window;
+            flags ^= Qt::SubWindow;
+            setWindowFlags(flags);
+        }
         showFullScreen();
+    }
     else
         showNormal();
 }
@@ -782,18 +779,29 @@ bool QVideoWidget::event(QEvent *event)
     Q_D(QVideoWidget);
 
     if (event->type() == QEvent::WindowStateChange) {
-        if (windowState() & Qt::WindowFullScreen) {
-            if (d->currentBackend)
-                d->currentBackend->setFullScreen(true);
-            setWindowFlags(windowFlags() | Qt::Window | Qt::WindowStaysOnTopHint);
-            showFullScreen();
+        Qt::WindowFlags flags = windowFlags();
 
+        if (windowState() & Qt::WindowFullScreen) {
+            if (!(flags & Qt::Window)) {
+                d->nonFullScreenFlags = flags & (Qt::Window | Qt::SubWindow);
+                flags |= Qt::Window;
+                flags ^= Qt::SubWindow;
+                setWindowFlags(flags);
+            }
             if (!d->wasFullScreen)
                 emit fullScreenChanged(d->wasFullScreen = true);
+
+            if (d->currentBackend)
+                d->currentBackend->setFullScreen(true);
         } else {
             if (d->currentBackend)
                 d->currentBackend->setFullScreen(false);
-            setWindowFlags(windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
+
+            if (isVisible()) {
+                flags ^= (Qt::Window | Qt::SubWindow); //clear the flags...
+                flags |= d->nonFullScreenFlags; //then we reset the flags (window and subwindow)
+                setWindowFlags(flags);
+            }
 
             if (d->wasFullScreen)
                 emit fullScreenChanged(d->wasFullScreen = false);

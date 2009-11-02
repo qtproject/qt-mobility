@@ -1462,6 +1462,16 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
+ * \fn QContactOrganization::setAssistantName(const QString& assistantName)
+ * Sets the name of the default assistant of contacts belonging to this organization to \a assistantName
+ */
+
+/*!
+ * \fn QContactOrganization::assistantName() const
+ * Returns the name of the default assistant of contacts belonging to this organization
+ */
+
+/*!
  * \fn QContactPresence::setAccountUri(const QString& accountUri)
  * Sets the universal resource identifier of the contact's online account about which
  * this detail stores presence information to \a accountUri

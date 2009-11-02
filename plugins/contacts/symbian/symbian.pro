@@ -21,69 +21,79 @@ symbian: {
 	INCLUDEPATH += $$SOURCE_DIR/contacts/requests
 
   HEADERS += \
-        $$PUBLIC_HEADERS \
-        inc/qcontactsymbianbackend.h \
-        inc/qcontactsymbianengine_p.h \
-        inc/transformcontact.h \
-        inc/transformcontactdata.h \
-        inc/transformname.h \
-        inc/transformnickname.h \
-        inc/transformphonenumber.h \
-        inc/transformemail.h \
-        inc/transformaddress.h \
-        inc/transformurl.h \
-        inc/transformbirthday.h \
-        inc/transformonlineaccount.h \
-        inc/transformorganisation.h \
-        inc/transformavatar.h \
-        inc/transformsynctarget.h \
-        inc/transformgender.h \
-        inc/transformanniversary.h \
-        inc/transformgeolocation.h \
-        inc/transformnote.h \
-        inc/transformfamily.h \  
-        inc/qabstractcontactfilter.h \
-        inc/qcontactsymbianfilterdbms.h \
-        inc/qcontactsymbianfiltersql.h \
-        inc/qabstractcontactsorter.h \
-        inc/qcontactsymbiansorterdbms.h \
-        inc/cntrelationship.h \
-        inc/cntabstractrelationship.h \
-        inc/cntrelationshipgroup.h
-
+      $$PUBLIC_HEADERS \
+      inc/qcontactsymbianbackend.h \
+      inc/qcontactsymbianengine_p.h \
+      inc/cnttransformcontact.h \
+      inc/cnttransformcontactdata.h \
+      inc/cnttransformname.h \
+      inc/cnttransformnickname.h \
+      inc/cnttransformphonenumber.h \
+      inc/cnttransformemail.h \
+      inc/cnttransformaddress.h \
+      inc/cnttransformurl.h \
+      inc/cnttransformbirthday.h \
+      inc/cnttransformonlineaccount.h \
+      inc/cnttransformorganisation.h \
+      inc/cnttransformavatar.h \
+      inc/cnttransformsynctarget.h \
+      inc/cnttransformgender.h \
+      inc/cnttransformanniversary.h \
+      inc/cnttransformanniversarysimple.h \
+      inc/cnttransformgeolocation.h \
+      inc/cnttransformnote.h \
+      inc/cnttransformfamily.h \  
+      inc/qabstractcontactfilter.h \
+      inc/qcontactsymbianfilterdbms.h \
+      inc/qcontactsymbianfiltersql.h \
+      inc/qabstractcontactsorter.h \
+      inc/qcontactsymbiansorterdbms.h \
+      inc/cntrelationship.h \
+      inc/cntabstractrelationship.h \
+      inc/cntrelationshipgroup.h \
+      inc/cntsymbianfiltersqlhelper.h \
+      inc/cntsrvconnection.h \
+      inc/qcontactsymbiantransformerror.h
+      
   SOURCES += \
-        src/qcontactsymbianbackend.cpp \
-        src/qcontactsymbianengine_p.cpp \
-        src/transformcontact.cpp \
-        src/transformcontactdata.cpp \
-        src/transformname.cpp \
-        src/transformnickname.cpp \
-        src/transformphonenumber.cpp \
-        src/transformemail.cpp \
-        src/transformaddress.cpp \
-        src/transformurl.cpp \
-        src/transformbirthday.cpp \
-        src/transformonlineaccount.cpp \
-        src/transformorganisation.cpp \
-        src/transformavatar.cpp \
-        src/transformsynctarget.cpp \
-        src/transformgender.cpp \
-        src/transformanniversary.cpp \
-        src/transformgeolocation.cpp \
-        src/transformnote.cpp \
-        src/transformfamily.cpp \  
-        src/qcontactsymbianfilterdbms.cpp \
-        src/qcontactsymbianfiltersql.cpp \
-        src/qcontactsymbiansorterdbms.cpp \
-        src/cntrelationship.cpp \
-        src/cntabstractrelationship.cpp \
-        src/cntrelationshipgroup.cpp
+      src/qcontactsymbianbackend.cpp \
+      src/qcontactsymbianengine_p.cpp \
+      src/cnttransformcontact.cpp \
+      src/cnttransformcontactdata.cpp \
+      src/cnttransformname.cpp \
+      src/cnttransformnickname.cpp \
+      src/cnttransformphonenumber.cpp \
+      src/cnttransformemail.cpp \
+      src/cnttransformaddress.cpp \
+      src/cnttransformurl.cpp \
+      src/cnttransformbirthday.cpp \
+      src/cnttransformonlineaccount.cpp \
+      src/cnttransformorganisation.cpp \
+      src/cnttransformavatar.cpp \
+      src/cnttransformsynctarget.cpp \
+      src/cnttransformgender.cpp \
+      src/cnttransformanniversary.cpp \
+      src/cnttransformanniversarysimple.cpp \
+      src/cnttransformgeolocation.cpp \
+      src/cnttransformnote.cpp \
+      src/cnttransformfamily.cpp \  
+      src/qcontactsymbianfilterdbms.cpp \
+      src/qcontactsymbianfiltersql.cpp \
+      src/qcontactsymbiansorterdbms.cpp \
+      src/cntrelationship.cpp \
+      src/cntabstractrelationship.cpp \
+      src/cntrelationshipgroup.cpp \
+      src/cntsymbianfiltersqlhelper.cpp \
+      src/cntsrvconnection.cpp \
+      src/qcontactsymbiantransformerror.cpp
+      
 
-    qtAddLibbray(QtContacts)
+    qtAddLibrary(QtContacts)
 
     LIBS += \
         -lcntmodel \
         -lcentralrepository \
+        -lestor
 
     target.path = /sys/bin
     INSTALLS += target
