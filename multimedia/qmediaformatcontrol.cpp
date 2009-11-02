@@ -89,7 +89,7 @@ QMediaFormatControl::~QMediaFormatControl()
 /*!
     \fn QMediaFormatControl::supportedFormats() const
 
-    Returns a list of supported format MIME types.
+    Returns a list of MIME types of supported formats.
 */
 
 /*!
