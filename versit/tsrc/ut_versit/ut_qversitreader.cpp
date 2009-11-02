@@ -105,7 +105,7 @@ void UT_QVersitReader::testReading()
     QVERIFY(mReader->readSynchronously());
 
     // Asynchronous reading started, try to start again
-    mInputDevice->reset();
+    mInputDevice->setData(QByteArray());
     mExpectedDocumentCount = 0;
     QVERIFY(mReader->startAsynchronousReading());
     QVERIFY(!mReader->startAsynchronousReading());

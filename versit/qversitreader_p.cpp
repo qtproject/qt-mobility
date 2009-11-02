@@ -55,8 +55,9 @@ QVersitReaderPrivate::QVersitReaderPrivate() :
 /*! Destroy a reader. */    
 QVersitReaderPrivate::~QVersitReaderPrivate()
 {
-    terminate();
-    wait();
+    // Handle the situation where the user has issued an asynchronous start,
+    // but the reading has not completed before this thread object is destroyed: 
+    yieldCurrentThread();
 }
 
 /*!
