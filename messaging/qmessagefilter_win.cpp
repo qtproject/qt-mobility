@@ -1937,7 +1937,9 @@ QMessageFilter QMessageFilter::byStandardFolder(QMessage::StandardFolder folder,
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFilter QMessageFilter::byParentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
 {
-    QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::ParentFolderId, QVariant(id.toString()), cmp)); // stub
+    QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::ParentFolderId, QVariant(id.toString()), cmp));
+    result.d_ptr->_restrictionPermitted = false;
+    result.d_ptr->_matchesRequired = false;
     return result;
 }
 
@@ -1953,6 +1955,8 @@ QMessageFilter QMessageFilter::byParentFolderId(const QMessageFolderFilter &filt
 QMessageFilter QMessageFilter::byAncestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp)
 {
     QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::AncestorFolderIds, QVariant(id.toString()), cmp));
+    result.d_ptr->_restrictionPermitted = false;
+    result.d_ptr->_matchesRequired = false;
     return result;
 }
 
