@@ -289,6 +289,8 @@ bool QContactRequestWorker::waitRequest(QContactAbstractRequest* req, int msecs)
                     ret = re->condition.wait(&re->mutex);
                 }
                 re->waiting = false;
+            } else {
+                ret = true;
             }
         }
     }
