@@ -88,12 +88,12 @@ symbian: {
       src/qcontactsymbiantransformerror.cpp
       
 
-    qtAddLibbray(QtContacts)
+    qtAddLibrary(QtContacts)
 
     LIBS += \
         -lcntmodel \
         -lcentralrepository \
-  	-lestor
+        -lestor
 
     target.path = /sys/bin
     INSTALLS += target
