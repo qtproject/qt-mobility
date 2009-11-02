@@ -123,6 +123,15 @@ bool CntSymbianSorterDbms::sortOrderSupported(const QList<QContactSortOrder>& so
         // Always case sensitive
         if( s.caseSensitivity() != Qt::CaseSensitive )
             return false;
+
+#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
+        // NOTE:
+        // Seems that there is a bug in cntmodel which causes that sorting
+        // is working correctly only if the direction is the same for all
+        // sort orders.
+        if( s.direction() != sortOrders[0].direction() )
+            return false;
+#endif
     }
     return true;
 }
