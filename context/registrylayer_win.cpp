@@ -498,10 +498,10 @@ bool RegistryLayer::value(Handle handle, const QString &subPath, QVariant *data)
 
     switch (regType) {
     case REG_DWORD:
-        *data = qVariantFromValue(*reinterpret_cast<int *>(regData));
+        *data = qVariantFromValue(*reinterpret_cast<uint *>(regData));
         break;
     case REG_QWORD:
-        *data = qVariantFromValue(*reinterpret_cast<qint64 *>(regData));
+        *data = qVariantFromValue(*reinterpret_cast<quint64 *>(regData));
         break;
     case REG_SZ:
         *data = qVariantFromValue(QString::fromWCharArray(reinterpret_cast<wchar_t *>(regData)));
@@ -936,20 +936,20 @@ bool RegistryLayer::setValue(QValueSpaceProvider *creator, Handle handle, const 
     const void *toDelete;
 
     switch (data.type()) {
-    case QVariant::Int: {
+    case QVariant::UInt: {
         regType = REG_DWORD;
         DWORD *temp = new DWORD;
-        *temp = data.toInt();
+        *temp = data.toUInt();
         toDelete = regData = reinterpret_cast<const BYTE *>(temp);
         regSize = sizeof(DWORD);
         break;
     }
-    case QVariant::LongLong: {
+    case QVariant::ULongLong: {
         regType = REG_QWORD;
-        qint64 *temp = new qint64;
-        *temp = data.toLongLong();
+        quint64 *temp = new quint64;
+        *temp = data.toULongLong();
         toDelete = regData = reinterpret_cast<const BYTE *>(temp);
-        regSize = sizeof(qint64);
+        regSize = sizeof(quint64);
         break;
     }
     case QVariant::String: {
