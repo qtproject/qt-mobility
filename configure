@@ -84,7 +84,7 @@ usage()
     echo "-contact-src <backend> ..."
     echo "                    Compile the specified contacts API backend. Not selecting any backend"
     echo "                    will result in default selection for build platform"
-    echo "                    options: symbian, wince, kabc, memory"
+    echo "                    options: symbian, wince, memory, maemo"
     echo "-maemo ............ Build Qt Mobility for Maemo."
     echo "                    (default: Desktop Linux)"
     

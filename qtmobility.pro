@@ -1,4 +1,5 @@
 # config.pri specifies the configure options
+
 !include($$QT_MOBILITY_BUILD_TREE/config.pri) {
     error("Please run configure script");
 }
@@ -54,6 +55,6 @@ contains(build_examples, yes):SUBDIRS+=examples
 qtmheaders.path = $${QT_MOBILITY_INCLUDE}
 qtmheaders.files = $${QT_MOBILITY_BUILD_TREE}/include/*
 
-unix:INSTALLS += qtmheaders
+INSTALLS += qtmheaders
 
 OTHER_FILES += doc/src/*.qdoc doc/src/examples/*.qdoc

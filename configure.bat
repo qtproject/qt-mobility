@@ -42,19 +42,29 @@
 @echo off
 
 set QT_MOBILITY_PREFIX= C:\QtMobility
-set PROJECT_PWD= %~dp0
-set PROJECT_CONFIG= %~dp0config.in
-set PROJECT_LOG= %~dp0config.log
+set BUILD_PATH=%CD%
+set SOURCE_PATH= %~dp0
+cd %SOURCE_PATH%
+set SOURCE_PATH=%CD%
+cd %BUILD_PATH%
+
+set PROJECT_CONFIG= %BUILD_PATH%\config.in
+set PROJECT_LOG= %BUILD_PATH%\config.log
 set RELEASEMODE=release
 set QT_MOBILITY_LIB=
 set BUILD_UNITTESTS=no
 set BUILD_EXAMPLES=no
 set CONTACTS_PLUGIN=
 set VC_TEMPLATE_OPTION=
+set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
 
+if exist "%QMAKE_CACHE%" del %QMAKE_CACHE%
 if exist "%PROJECT_LOG%" del %PROJECT_LOG%
 if exist "%PROJECT_CONFIG%" del %PROJECT_CONFIG%
 echo CONFIG += silent > %PROJECT_CONFIG%
+
+echo QT_MOBILITY_SOURCE_TREE = %SOURCE_PATH% > %QMAKE_CACHE%
+echo QT_MOBILITY_BUILD_TREE = %BUILD_PATH% >> %QMAKE_CACHE%
 
 :cmdline_parsing
 
@@ -100,10 +110,10 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -contact-src (backend) ...
     echo                    Compile the specified contacts API backend. Not selecting any backend
     echo                    will result in default selection for build platform
-    echo                    options: symbian, wince, kabc, memory
+    echo                    options: symbian, wince, memory, maemo
 
 
-del config.in
+if exist "%PROJECT_CONFIF%" del %PROJECT_CONFIG%
 goto exitTag
 
 :contactsTag
@@ -193,7 +203,7 @@ echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PRO
 echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
 
 
-copy %PROJECT_CONFIG% %PROJECT_PWD%config.pri
+copy %PROJECT_CONFIG% %BUILD_PATH%\config.pri
 del %PROJECT_CONFIG%
 
 echo Checking available Qt
@@ -242,22 +252,22 @@ goto exitTag
 echo.
 REM compile tests go here. We don't have anything to test for at this stage.
 
-
+mkdir %BUILD_PATH%\features
 echo "Generating Mobility Headers..."
-rd /s /q %PROJECT_PWD%\include
-mkdir %PROJECT_PWD%\include
-perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\bearer
-perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\context
-perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\location
-perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\serviceframework
-perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\systeminfo
-perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\contacts
-perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\multimedia
-perl -S %PROJECT_PWD%\bin\syncheaders %PROJECT_PWD%\include %PROJECT_PWD%\messaging
+rd /s /q %BUILD_PATH%\include
+mkdir %BUILD_PATH%\include
+perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\bearer
+perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\context
+perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\location
+perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\serviceframework
+perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\systeminfo
+perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\contacts
+perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\multimedia
+perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\messaging
 
 echo.
 echo Running qmake...
-qmake -recursive %VC_TEMPLATE_OPTION%
+qmake -recursive %VC_TEMPLATE_OPTION% %SOURCE_PATH%\qtmobility.pro
 if errorlevel 1 goto qmakeRecError
 echo.
 echo configure has finished. You may run %MAKE% to build the project now.
