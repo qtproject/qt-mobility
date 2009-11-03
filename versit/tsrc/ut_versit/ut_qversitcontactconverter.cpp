@@ -179,7 +179,7 @@ void UT_QVersitContactConverter::testEncodeName()
     //Check for the property Name
     QString propertyName = versitDocument.properties().at(0).name();
     QString expectedPropertyName = 
-        mConverterPrivate->mMappings.value(QContactName::DefinitionName);
+        mConverterPrivate->mPropertyMappings.value(QContactName::DefinitionName);
     QCOMPARE(propertyName, expectedPropertyName );
     
     //Ensure value of properties contains all the infomation encoded
@@ -218,7 +218,7 @@ void UT_QVersitContactConverter::testEncodePhoneNumber()
     //Check property name
     QString propertyName = versitDocument.properties().at(0).name();
     QString expectedPropertyName = 
-        mConverterPrivate->mMappings.value(QContactPhoneNumber::DefinitionName);
+        mConverterPrivate->mPropertyMappings.value(QContactPhoneNumber::DefinitionName);
     QCOMPARE(propertyName, expectedPropertyName );
     
     //Check property value
@@ -257,7 +257,7 @@ void UT_QVersitContactConverter::testEncodeEmailAddress()
     //Check property name
     QString propertyName = versitDocument.properties().at(0).name();
     QString expectedPropertyName = 
-        mConverterPrivate->mMappings.value(QContactEmailAddress::DefinitionName);
+        mConverterPrivate->mPropertyMappings.value(QContactEmailAddress::DefinitionName);
     QCOMPARE(propertyName, expectedPropertyName );
     
     //Check value 
@@ -304,7 +304,7 @@ void UT_QVersitContactConverter::testEncodeStreetAddress()
     //Check property name
     QString propertyName = versitDocument.properties().at(0).name();
     QString expectedPropertyName = 
-        mConverterPrivate->mMappings.value(QContactAddress::DefinitionName);
+        mConverterPrivate->mPropertyMappings.value(QContactAddress::DefinitionName);
     QCOMPARE(propertyName, expectedPropertyName );
 
     //Check property value 
@@ -346,7 +346,7 @@ void UT_QVersitContactConverter::testEncodeUrl()
 
     QString propertyName = versitDocument.properties().at(0).name();
     QString expectedPropertyName =
-        mConverterPrivate->mMappings.value(QContactUrl::DefinitionName);
+        mConverterPrivate->mPropertyMappings.value(QContactUrl::DefinitionName);
     QCOMPARE(propertyName, expectedPropertyName);
 
     //Check property value
@@ -381,7 +381,7 @@ void UT_QVersitContactConverter::testEncodeUid()
 
     QString propertyName = versitDocument.properties().at(0).name();
     QString expectedPropertyName =
-        mConverterPrivate->mMappings.value(QContactGuid::DefinitionName);
+        mConverterPrivate->mPropertyMappings.value(QContactGuid::DefinitionName);
     QCOMPARE(propertyName, expectedPropertyName);
 
     //Check property value
@@ -417,7 +417,7 @@ void UT_QVersitContactConverter::testEncodeRev()
     //Ensure property parameer exisit and matches.
     QString propertyName = versitDocument.properties().at(0).name();
     QString expectedPropertyName =
-        mConverterPrivate->mMappings.value(QContactTimestamp::DefinitionName);
+        mConverterPrivate->mPropertyMappings.value(QContactTimestamp::DefinitionName);
     QCOMPARE(propertyName, expectedPropertyName);
 
     //Check property value
@@ -489,7 +489,7 @@ void UT_QVersitContactConverter::testEncodeBirthDay()
     //Ensure property parameer exisit and matches.
     QString propertyName = versitDocument.properties().at(0).name();
     QString expectedPropertyName =
-        mConverterPrivate->mMappings.value(QContactBirthday::DefinitionName);
+        mConverterPrivate->mPropertyMappings.value(QContactBirthday::DefinitionName);
     QCOMPARE(propertyName, expectedPropertyName);
 
     //Check property value
@@ -522,7 +522,7 @@ void UT_QVersitContactConverter::testEncodeNote()
     //Ensure property parameer exisit and matches.
     QString propertyName = versitDocument.properties().at(0).name();
     QString expectedPropertyName =
-        mConverterPrivate->mMappings.value(QContactNote::DefinitionName);
+        mConverterPrivate->mPropertyMappings.value(QContactNote::DefinitionName);
     QCOMPARE(propertyName, expectedPropertyName);
 
     //Check property value
@@ -563,7 +563,7 @@ void UT_QVersitContactConverter::testEncodeGeoLocation()
     //Ensure property parameer exisit and matches.
     QString propertyName = versitDocument.properties().at(0).name();
     QString expectedPropertyName =
-        mConverterPrivate->mMappings.value(QContactGeolocation::DefinitionName);
+        mConverterPrivate->mPropertyMappings.value(QContactGeolocation::DefinitionName);
     QCOMPARE(propertyName, expectedPropertyName);
 
     //Check property value
@@ -753,7 +753,7 @@ void UT_QVersitContactConverter::testEncodeEmbeddedContent()
     QVERIFY(photoProperty.parameters().contains(
             QString::fromAscii(versitValue),QString::fromAscii(versitUrlId)));
     QString expectedPropertyName =
-        mConverterPrivate->mMappings.value(QContactAvatar::SubTypeImage);
+        mConverterPrivate->mPropertyMappings.value(QContactAvatar::SubTypeImage);
     QCOMPARE(photoProperty.name(), expectedPropertyName);
     QCOMPARE(QString::fromAscii(photoProperty.value()), url);
 
@@ -944,7 +944,7 @@ void UT_QVersitContactConverter::testEncodeGender()
     //Ensure property parameer exisit and matches.
     QString propertyName = versitDocument.properties().at(0).name();
     QString expectedPropertyName =
-        mConverterPrivate->mMappings.value(QContactGender::DefinitionName);
+        mConverterPrivate->mPropertyMappings.value(QContactGender::DefinitionName);
     QCOMPARE(propertyName, expectedPropertyName);
 
     //Check property value
@@ -977,7 +977,7 @@ void UT_QVersitContactConverter::testEncodeNickName()
     QString propertyName = versitDocument.properties().at(0).name();
     QCOMPARE(propertyName, QString::fromAscii(versitNicknameXId));
     QString expectedPropertyName =
-        mConverterPrivate->mMappings.value(QContactNickname::DefinitionName);
+        mConverterPrivate->mPropertyMappings.value(QContactNickname::DefinitionName);
     QCOMPARE(propertyName, expectedPropertyName);
 
     //Check property value
@@ -1014,7 +1014,7 @@ void UT_QVersitContactConverter::testEncodeAnniversary()
     //Ensure property parameer exisit and matches.
     QString propertyName = versitDocument.properties().at(0).name();
     QString expectedPropertyName =
-        mConverterPrivate->mMappings.value(QContactAnniversary::DefinitionName);
+        mConverterPrivate->mPropertyMappings.value(QContactAnniversary::DefinitionName);
     QCOMPARE(propertyName, expectedPropertyName);
 
     //Check property value

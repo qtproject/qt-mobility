@@ -88,7 +88,8 @@ signals:
     void scale(const QString& imageFileName, QByteArray& imageData);
 
 private: // Data
-    QHash<QString,QString> mMappings;
+    QHash<QString, QString> mPropertyMappings;
+    QHash<QString, QString> mParameterMappings;
 
     friend class UT_QVersitContactConverter;
 };
