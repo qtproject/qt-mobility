@@ -256,7 +256,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createAddress(
 }
 
 /*!
- * Creates a QContactOrganization from \a property and adds it to the \a document
+ * Creates a QContactOrganization from \a property
  */
 QContactDetail* QVersitContactGeneratorPrivate::createOrganization(
     const QVersitProperty& property) const
@@ -265,29 +265,59 @@ QContactDetail* QVersitContactGeneratorPrivate::createOrganization(
     if (property.name() == QString::fromAscii(versitTitleId)) {
         org->setTitle(QString::fromAscii(property.value()));
     } else if (property.name() == QString::fromAscii(versitOrganizationId)) {
-        QByteArray value = property.value();
-        int firstSemic = value.indexOf(";");
-        org->setName(QString::fromAscii(value.left(firstSemic)));
-        QByteArray orgUnit = value.mid(firstSemic+1,value.size());
-        org->setDepartment(QString::fromAscii(orgUnit));
+        setOrganizationNames(*org,property);
     } else if (property.name() == QString::fromAscii(versitLogoId)) {
-        QString path(mImagePath);
-        if (!path.endsWith(QString::fromAscii("/")))
-            path += QString::fromAscii("/");
-        QString fileName = saveContentToFile(path,property);
-        if (!fileName.isEmpty()) {
-            org->setLogo(fileName);
-        } else {
-            delete org;
-            org = 0;
-        }
+        setOrganizationLogo(*org,property);
     } else if (property.name() == QString::fromAscii(versitAssistantId)) {
         org->setAssistantName(QString::fromAscii(property.value()));
     } else {
+         // NOP
+    }
+    if (org->isEmpty()) {
         delete org;
         org = 0;
-    }    
+    }
     return org;
+}
+
+/*!
+ * Set the organization name and department(s) from \a property.
+ */
+void QVersitContactGeneratorPrivate::setOrganizationNames(
+    QContactOrganization& org,
+    const QVersitProperty& property) const
+{
+    QByteArray value = property.value();
+    int firstSemicolon = value.indexOf(";");
+    if (firstSemicolon >= 0) {
+        org.setName(QString::fromAscii(value.left(firstSemicolon)));
+        org.setDepartment(QString::fromAscii(value.mid(firstSemicolon+1)));
+    } else {
+        org.setName(QString::fromAscii(value));
+    }
+}
+
+/*!
+ * Set the organization logo from \a property.
+ */
+void QVersitContactGeneratorPrivate::setOrganizationLogo(
+    QContactOrganization& org,
+    const QVersitProperty& property) const
+{
+    QString value(QString::fromAscii(property.value()));
+
+    const QString valueParam =
+        property.parameters().value(QString::fromAscii(versitValue));
+
+    if (valueParam != QString::fromAscii(versitUrlId)) {
+        QString path(mImagePath);
+        if (!path.endsWith(QString::fromAscii("/")))
+            path += QString::fromAscii("/");
+        // Let saveContentToFile to generate a random string as the name
+        value = saveContentToFile(path,property);
+    }
+
+    org.setLogo(value);
 }
 
 /*!
@@ -373,12 +403,12 @@ QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
     const QVersitDocument& versitDocument,
     const QString& subType) const
 {
-    QString value(QString::fromAscii(property.value().data()));
+    QString value(QString::fromAscii(property.value()));
 
     const QString valueParam =
         property.parameters().value(QString::fromAscii(versitValue));
 
-    if (valueParam != QString::fromAscii("URL")) {
+    if (valueParam != QString::fromAscii(versitUrlId)) {
         QString pathAndName(mImagePath);
         if (subType == QContactAvatar::SubTypeAudioRingtone)
             pathAndName = mAudioClipPath;
@@ -509,7 +539,7 @@ QDateTime QVersitContactGeneratorPrivate::parseDateTime(
 }
 
 /*!
- *
+ * Save the value of the \a property to a file with name \a pathAndName.
  */
 QString QVersitContactGeneratorPrivate::saveContentToFile(
     const QString& pathAndName,
@@ -545,8 +575,11 @@ QString QVersitContactGeneratorPrivate::saveContentToFile(
     return (writeResult > 0) ? fileName : QString();
 }
 
-QString QVersitContactGeneratorPrivate::getFirstAndLastName
-        (const QVersitDocument& document) const
+/*!
+ * Extracts the first and last name from \a document to a string.
+ */
+QString QVersitContactGeneratorPrivate::getFirstAndLastName(
+    const QVersitDocument& document) const
 {
     QString name;
     const QList<QVersitProperty> properties = document.properties();
@@ -560,4 +593,3 @@ QString QVersitContactGeneratorPrivate::getFirstAndLastName
     }
     return name;
 }
-

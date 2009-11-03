@@ -246,13 +246,21 @@ void UT_QVersitContactGenerator::testOrganization()
     QCOMPARE(org.name(),QString());
     QCOMPARE(org.department(),QString());
 
+    // ORG: Organization without separators
+    property.setValue(QByteArray("Nokia"));
+    document = createDocumentWithProperty(property);
+    contact = mGenerator->generateContact(document);
+    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
+    QCOMPARE(org.name(),QString::fromAscii("Nokia"));
+    QCOMPARE(org.department(),QString());
+
     // ORG: Organization with one seprator
     property.setValue(QByteArray(";"));
     document = createDocumentWithProperty(property);
     contact = mGenerator->generateContact(document);
     org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
     QCOMPARE(org.name(),QString::fromAscii(""));
-    QCOMPARE(org.department(),QString::fromAscii(""));
+    QCOMPARE(org.department(),QString());
     
     // ORG: Organization with just separators
     property.setValue(QByteArray(";;;"));
@@ -270,6 +278,22 @@ void UT_QVersitContactGenerator::testOrganization()
     QCOMPARE(org.name(),QString::fromAscii("Nokia"));
     QCOMPARE(org.department(),QString::fromAscii("R&D"));
     
+    // ORG: Organization with organization name and semicolon
+    property.setValue(QByteArray("Nokia;"));
+    document = createDocumentWithProperty(property);
+    contact = mGenerator->generateContact(document);
+    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
+    QCOMPARE(org.name(),QString::fromAscii("Nokia"));
+    QCOMPARE(org.department(),QString());
+
+    // ORG: Organization with semicolon and department
+    property.setValue(QByteArray(";R&D"));
+    document = createDocumentWithProperty(property);
+    contact = mGenerator->generateContact(document);
+    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
+    QCOMPARE(org.name(),QString());
+    QCOMPARE(org.department(),QString::fromAscii("R&D"));
+
     // ORG: Organization with more Organizational Units
     property.setValue(QByteArray("ABC, Inc.;North American Division;Devices;Marketing"));
     document = createDocumentWithProperty(property);
@@ -296,17 +320,7 @@ void UT_QVersitContactGenerator::testOrganization()
     org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
     QCOMPARE(org.assistantName(), QString::fromAscii(assistantValue));
 
-    // ORG
-    property.setName(QString::fromAscii(versitOrganizationId));
-    property.setValue(QByteArray("Nokia;R&D"));
-    document = createDocumentWithProperty(property);
-    document.addProperty(property);
-    contact = mGenerator->generateContact(document);
-    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));    
-    QCOMPARE(org.department(),QString::fromAscii("R&D"));
-    QCOMPARE(org.name(),QString::fromAscii("Nokia"));
-
-    // ORG and LOGO
+    // Embedded LOGO
     property.setName(QString::fromAscii(versitLogoId));
     QByteArray logo = "R0lGODlhEgASAIAAAAAAAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G";
     property.setValue(logo.toBase64());
@@ -314,30 +328,28 @@ void UT_QVersitContactGenerator::testOrganization()
                           QString::fromAscii(versitFormatGif));
     property.addParameter(QString::fromAscii(versitEncoding),
                           QString::fromAscii(versitEncodingBase64));
-    document.addProperty(property);
+    document = createDocumentWithProperty(property);
     mGenerator->setImagePath(imageAndAudioClipPath);
-    contact = mGenerator->generateContact(document);        
-    QList<QContactDetail> details = contact.details(QContactOrganization::DefinitionName);
-    QVERIFY(!details.isEmpty());
-    QCOMPARE(details.size(), 3);
-    QString expectedFileName;
-    foreach(const QContactDetail& d,details){
-        QContactOrganization o = (QContactOrganization)d;
-        if(!o.name().isEmpty()){
-            expectedFileName = o.name() + QString::fromAscii("_") + o.department();
-        }else if(!o.logo().isEmpty()){
-            QString fileName = o.logo();
-            QVERIFY(fileName.endsWith((QString::fromAscii(versitFormatGif).toLower())));
-            QVERIFY(fileName.contains(imageAndAudioClipPath + QString::fromAscii("/")));
-             //                         +
-            QFile file(fileName);
-            QVERIFY(file.open( QIODevice::ReadOnly ));
-            QByteArray content = file.readAll();
-            QCOMPARE(content,logo);
-            file.close();
-            break;
-        }
-    }
+    contact = mGenerator->generateContact(document);
+    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
+    QString logoFileName = org.logo();
+    QVERIFY(logoFileName.endsWith((QString::fromAscii(versitFormatGif).toLower())));
+    QVERIFY(logoFileName.contains(imageAndAudioClipPath + QString::fromAscii("/")));
+    QFile logoFile(logoFileName);
+    QVERIFY(logoFile.open(QIODevice::ReadOnly));
+    QByteArray content = logoFile.readAll();
+    QCOMPARE(content,logo);
+    logoFile.close();
+
+    // LOGO as a URL
+    property.setName(QString::fromAscii(versitLogoId));
+    QByteArray logoUrl = "http://www.organization.org/logo.gif";
+    property.setValue(logoUrl);
+    property.addParameter(QString::fromAscii(versitValue),QString::fromAscii(versitUrlId));
+    document = createDocumentWithProperty(property);
+    contact = mGenerator->generateContact(document);
+    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
+    QCOMPARE(org.logo(),QString::fromAscii(logoUrl));
 
     // ROLE
     property.setName(QString::fromAscii(versitRoleId));
@@ -346,7 +358,7 @@ void UT_QVersitContactGenerator::testOrganization()
     document = createDocumentWithProperty(property);
     contact = mGenerator->generateContact(document);
     org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
-    QVERIFY(org.isEmpty());
+    QVERIFY(org.isEmpty()); // Setting the role is not supported by QContactOrganization
 
 }
 

@@ -60,6 +60,7 @@
 
 class QContact;
 class QContactDetail;
+class QContactOrganization;
 class QVersitProperty;
 class QVersitDocument;
 
@@ -78,6 +79,12 @@ private:
     QContactDetail* createPhone(const QVersitProperty& property) const;
     QContactDetail* createAddress(const QVersitProperty& property) const;
     QContactDetail* createOrganization(const QVersitProperty& property) const;
+    void setOrganizationNames(
+        QContactOrganization& org,
+        const QVersitProperty& property) const;
+    void setOrganizationLogo(
+        QContactOrganization& org,
+        const QVersitProperty& property) const;
     QContactDetail* createTimeStamp(const QVersitProperty& property) const;
     QContactDetail* createAnniversary(const QVersitProperty& property) const;
     QContactDetail* createBirthday(const QVersitProperty& property) const;    
