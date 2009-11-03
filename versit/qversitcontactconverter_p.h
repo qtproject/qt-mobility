@@ -70,7 +70,7 @@ public:
     void encodeGeoLocation(QVersitProperty& property, const QContactDetail& detail);
     void encodeOrganization(QVersitDocument& document, const QContactDetail& detail);
     void encodeGender(QVersitProperty& property, const QContactDetail& detail);
-    void encodeNickName(QVersitProperty& property, const QContactDetail& detail);
+    void encodeNickname(QVersitDocument& document, const QContactDetail& detail);
     void encodeAnniversary(QVersitProperty& property, const QContactDetail& detail);
     bool encodeOnlineAccount(QVersitProperty& property, const QContactDetail& detail);
     bool encodeFamily(QVersitDocument& document, const QContactDetail& detail);

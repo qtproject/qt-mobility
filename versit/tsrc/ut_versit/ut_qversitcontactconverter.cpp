@@ -954,36 +954,26 @@ void UT_QVersitContactConverter::testEncodeGender()
 
 void UT_QVersitContactConverter::testEncodeNickName()
 {
-    QContact contact;
-    QContactNickname nickName;
-    QString nick(QString::fromAscii("Simpson"));
-    nickName.setNickname(nick);
+    QVersitDocument document;
 
-    //API Permits setting up context but it should not be in Versit Doc
-    nickName.setContexts(QContactDetail::ContextHome);
+    // Nickname not yet in the document
+    QContactNickname nicknameDetail;
+    QString firstNickname(QString::fromAscii("Homie"));
+    nicknameDetail.setNickname(firstNickname);
+    mConverterPrivate->encodeFieldInfo(document,nicknameDetail);
+    QCOMPARE(document.properties().count(), 1);
+    QVersitProperty property = document.properties().at(0);
+    QCOMPARE(property.name(), QString::fromAscii(versitNicknameXId));
+    QCOMPARE(QString::fromAscii(property.value()), firstNickname);
 
-    contact.saveDetail(&nickName);
-
-    //Convert Contat Into Versit Document
-    QVersitDocument versitDocument = mConverter->convertContact(contact);
-
-    //Ensure parameters does not exisit
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 0);
-
-    //Ensure property Exisit
-    QCOMPARE(versitDocument.properties().count(), 1);
-
-    //Ensure property parameer exisit and matches.
-    QString propertyName = versitDocument.properties().at(0).name();
-    QCOMPARE(propertyName, QString::fromAscii(versitNicknameXId));
-    QString expectedPropertyName =
-        mConverterPrivate->mPropertyMappings.value(QContactNickname::DefinitionName);
-    QCOMPARE(propertyName, expectedPropertyName);
-
-    //Check property value
-    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data());
-    QCOMPARE(value, nick);
-
+    // Nickname already in the document, append to the existing property
+    QString secondNickname(QString::fromAscii("Jay"));
+    nicknameDetail.setNickname(secondNickname);
+    mConverterPrivate->encodeFieldInfo(document,nicknameDetail);
+    QCOMPARE(document.properties().count(), 1);
+    property = document.properties().at(0);
+    QCOMPARE(property.name(), QString::fromAscii(versitNicknameXId));
+    QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("Homie,Jay"));
 }
 
 void UT_QVersitContactConverter::testEncodeAnniversary()

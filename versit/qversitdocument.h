@@ -68,6 +68,7 @@ public:
 
     void addProperty(const QVersitProperty& property);
     QList<QVersitProperty> properties() const;
+    void removeProperties(const QString& name);
 
 private:
     

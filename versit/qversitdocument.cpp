@@ -93,6 +93,14 @@ QVersitDocument::VersitType QVersitDocument::versitType() const
 }
 
 /*!
+ * Add property to the properties list
+ */
+void QVersitDocument::addProperty(const QVersitProperty& property)
+{
+    d->mProperties.append(property);
+}
+
+/*!
  * Obtain the properties list contained in versit document
  */
 QList<QVersitProperty> QVersitDocument::properties() const
@@ -101,9 +109,13 @@ QList<QVersitProperty> QVersitDocument::properties() const
 }
 
 /*!
- * Add property to the properties list
+ * Removes all the properties with \a name from the versit document
  */
-void QVersitDocument::addProperty(const QVersitProperty& property)
+void QVersitDocument::removeProperties(const QString& name)
 {
-    d->mProperties.append(property);
+    for (int i=d->mProperties.count()-1; i >=0; i--) {
+        if (d->mProperties[i].name() == name)
+            d->mProperties.removeAt(i);
+    }
 }
+

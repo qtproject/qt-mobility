@@ -39,14 +39,11 @@
 **
 ****************************************************************************/
 
-
-#include <QString>
-#include <QtTest/QtTest>
-
 #include "ut_qversitdocument.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
-
+#include <QString>
+#include <QtTest/QtTest>
 
 
 void UT_QVersitDocument::init()
@@ -61,24 +58,20 @@ void UT_QVersitDocument::cleanup()
 }
 
 
-void UT_QVersitDocument::constructor()
+void UT_QVersitDocument::testConstructor()
 {
     QCOMPARE(QVersitDocument::VCard21, mVersitDocument->versitType());
 }
 
-void UT_QVersitDocument::setVersitType()
-{
-    mVersitDocument->setVersitType(QVersitDocument::VCard21);
-    QCOMPARE(QVersitDocument::VCard21, mVersitDocument->versitType());
-}
-
-void UT_QVersitDocument::versitType()
+void UT_QVersitDocument::testVersitType()
 {
     QCOMPARE(QVersitDocument::VCard21, mVersitDocument->versitType());
+
+    mVersitDocument->setVersitType(QVersitDocument::VCard30);
+    QCOMPARE(QVersitDocument::VCard30, mVersitDocument->versitType());
 }
 
-
-void UT_QVersitDocument::addProperty()
+void UT_QVersitDocument::testAddProperty()
 {
     QCOMPARE(0, mVersitDocument->properties().count());
     QVersitProperty property;
@@ -86,7 +79,40 @@ void UT_QVersitDocument::addProperty()
     QCOMPARE(1, mVersitDocument->properties().count());
 }
 
-void UT_QVersitDocument::properties()
+void UT_QVersitDocument::testRemoveProperties()
 {
+    QString name(QString::fromAscii("FN"));
+
+    // Try to remove from an empty document
     QCOMPARE(0, mVersitDocument->properties().count());
+    mVersitDocument->removeProperties(name);
+    QCOMPARE(0, mVersitDocument->properties().count());
+
+    // Try to remove from a non-empty document, name does not match
+    QVersitProperty property;
+    property.setName(QString::fromAscii("TEL"));
+    mVersitDocument->addProperty(property);
+    QCOMPARE(1, mVersitDocument->properties().count());
+    mVersitDocument->removeProperties(name);
+    QCOMPARE(1, mVersitDocument->properties().count());
+
+    // Remove from a non-empty document, name matches
+    mVersitDocument->removeProperties(QString::fromAscii("TEL"));
+    QCOMPARE(0, mVersitDocument->properties().count());
+
+    // Remove from a document with two properties, first matches
+    property.setName(name);
+    mVersitDocument->addProperty(property);
+    property.setName(QString::fromAscii("TEL"));
+    mVersitDocument->addProperty(property);
+    QCOMPARE(2, mVersitDocument->properties().count());
+    mVersitDocument->removeProperties(name);
+    QCOMPARE(1, mVersitDocument->properties().count());
+
+    // Remove from a document with two properties, second matches
+    property.setName(name);
+    mVersitDocument->addProperty(property);
+    QCOMPARE(2, mVersitDocument->properties().count());
+    mVersitDocument->removeProperties(name);
+    QCOMPARE(1, mVersitDocument->properties().count());
 }

@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVersitDocument_H
-#define UT_QVersitDocument_H
+#ifndef UT_QVERSITDOCUMENT_H
+#define UT_QVERSITDOCUMENT_H
 
 #include <QObject>
 
@@ -53,14 +53,14 @@ class UT_QVersitDocument : public QObject
 private slots:
     void init();
     void cleanup();
-    void constructor();
-    void setVersitType();
-    void versitType();
-    void addProperty();
-    void properties();
+
+    void testConstructor();
+    void testVersitType();
+    void testAddProperty();
+    void testRemoveProperties();
     
-private: //Data
+private: // data
     QVersitDocument* mVersitDocument;
 };
 
-#endif // UT_QVersitDocument_H
+#endif // UT_QVERSITDOCUMENT_H

@@ -222,7 +222,8 @@ void QVersitContactConverterPrivate::encodeFieldInfo(
     } else if (detail.definitionName() == QContactAnniversary::DefinitionName) {
         encodeAnniversary(property, detail);
     } else if (detail.definitionName() == QContactNickname::DefinitionName) {
-        encodeNickName(property, detail);
+        encodeNickname(document, detail);
+        addProperty = false;
     } else if (detail.definitionName() == QContactGender::DefinitionName) {
         encodeGender(property, detail);
     } else if (detail.definitionName() == QContactOnlineAccount::DefinitionName) {
@@ -458,21 +459,38 @@ bool QVersitContactConverterPrivate::encodeAvatar(
  */
 void QVersitContactConverterPrivate::encodeGender(
     QVersitProperty& property,const
-    QContactDetail& detail )
+    QContactDetail& detail)
 {
     QContactGender gender = static_cast<QContactGender>(detail);
     property.setValue(gender.gender().toAscii());
 }
 
 /*!
- * Encode nick name property information into the Versit Document
+ * Encodes nickname property information into the Versit Document
  */
-void QVersitContactConverterPrivate::encodeNickName(
-    QVersitProperty& property,
-    const QContactDetail& detail )
+void QVersitContactConverterPrivate::encodeNickname(
+    QVersitDocument& document,
+    const QContactDetail& detail)
 {
-    QContactNickname nick = static_cast<QContactNickname>(detail);
-    property.setValue(nick.nickname().toAscii());
+    QContactNickname nicknameDetail = static_cast<QContactNickname>(detail);
+    QVersitProperty property;
+    property.setName(QString::fromAscii(versitNicknameXId));
+    bool found = false;
+    for (int i=0; i < document.properties().count() && !found; i++) {
+        QVersitProperty currentProperty = document.properties()[i];
+        if (currentProperty.name() == QString::fromAscii(versitNicknameXId)) {
+            property = currentProperty;
+            found = true;
+        }
+    }
+    QByteArray value(property.value());
+    if (found)
+        value += ',';
+    value.append(nicknameDetail.nickname().toAscii());
+    property.setValue(value);
+    // Replace the current property
+    document.removeProperties(QString::fromAscii(versitNicknameXId));
+    document.addProperty(property);
 }
 
 /*!
