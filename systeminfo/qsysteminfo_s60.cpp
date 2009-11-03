@@ -57,6 +57,7 @@
 #include <mproengengine.h>
 #include <proengfactory.h>
 #include <mproengnotifyhandler.h>
+#include <btserversdkcrkeys.h>
 
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
@@ -664,7 +665,8 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
 
 //////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
-    : QObject(parent), m_profileEngine(NULL), m_proEngNotifyHandler(NULL)
+    : QObject(parent), m_profileEngine(NULL), m_proEngNotifyHandler(NULL),
+    m_bluetoothRepository(NULL), m_bluetoothNotifyHandler(NULL)
 {
     DeviceInfo::instance()->batteryInfo()->addObserver(this);
 }
@@ -681,6 +683,9 @@ QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
     if(m_profileEngine) {
         m_profileEngine->Release();
     }
+
+    delete m_bluetoothNotifyHandler;
+    delete m_bluetoothRepository;
 }
 
 void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
@@ -696,6 +701,28 @@ void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
                 m_proEngNotifyHandler = NULL;
             }
         }
+    } else if (QLatin1String(signal) == SIGNAL(bluetoothStateChanged(bool))) {
+        if (!m_bluetoothRepository) {
+            TRAPD(btErr,
+                m_bluetoothRepository = CRepository::NewL(KCRUidBluetoothPowerState);
+                m_bluetoothNotifyHandler = CCenRepNotifyHandler::NewL(
+                    *this, *m_bluetoothRepository, CCenRepNotifyHandler::EIntKey, KBTPowerState);
+                m_bluetoothNotifyHandler->StartListeningL();
+            )
+            if (btErr != KErrNone) {
+                delete m_bluetoothNotifyHandler;
+                m_bluetoothNotifyHandler = NULL;
+                delete m_bluetoothRepository;
+                m_bluetoothRepository = NULL;
+            }
+        }
+    }
+}
+
+void QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate::HandleNotifyInt(TUint32 aId, TInt aNewValue)
+{
+    if (aId == KBTPowerState) {
+        emit bluetoothStateChanged(aNewValue & 0x00000001 != 0);
     }
 }
 
@@ -841,7 +868,7 @@ QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
-    return QSystemDeviceInfo::SimNotAvailable;  //TODO
+    return QSystemDeviceInfo::SimNotAvailable;  //Not available in public SDKs
 }
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()

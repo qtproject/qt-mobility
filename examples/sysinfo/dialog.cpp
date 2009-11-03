@@ -168,7 +168,8 @@ void Dialog::setupDevice()
     connect(di,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
             this,SLOT(updatePowerState(QSystemDeviceInfo::PowerState)));
 
-
+    connect(di, SIGNAL(bluetoothStateChanged(bool)),
+        ui->bluetoothOnCheckBox, SLOT(setChecked(bool)));
 
     ui->ImeiLabel->setText(di->imei());
     ui->imsiLabel->setText(di->imsi());
