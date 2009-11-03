@@ -56,6 +56,8 @@
 
 CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
+    qDebug() << "CntSymbianEngine::CntSymbianEngine";
+
     error = QContactManager::NoError;
 
     d = new CntSymbianEnginePrivate(parameters, error);
@@ -80,7 +82,7 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
 CntSymbianEngine::CntSymbianEngine(const CntSymbianEngine& other)
     : QContactManagerEngine(), d(other.d)
 {
-
+    qDebug() << "CntSymbianEngine::CntSymbianEngine";
 }
 
 CntSymbianEngine& CntSymbianEngine::operator=(const CntSymbianEngine& other)
@@ -93,6 +95,7 @@ CntSymbianEngine& CntSymbianEngine::operator=(const CntSymbianEngine& other)
 
 CntSymbianEngine::~CntSymbianEngine()
 {
+    qDebug() << "~CntSymbianEngine::CntSymbianEngine";
 }
 
 void CntSymbianEngine::deref()
@@ -205,9 +208,11 @@ QContact CntSymbianEngine::contact(const QContactLocalId& contactId, QContactMan
 
 bool CntSymbianEngine::saveContact(QContact* contact, QContactManager::Error& error)
 {
+    qDebug() << "CntSymbianEngine::saveContact - IN";
     QContactChangeSet changeSet;
     TBool ret = doSaveContact(contact, changeSet, error);
     changeSet.emitSignals(this);
+    qDebug() << "CntSymbianEngine::saveContact - OUT, ret = " << ret;
     return ret;
 }
 
