@@ -370,6 +370,8 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
                 <<nsstringToQString([err domain]);
     }
     [autoreleasepool release];
+#else
+    Q_UNUSED(interfaceName);
 #endif
     return foundConfigs;
 }
@@ -380,6 +382,8 @@ bool QCoreWlanEngine::isWifiReady(const QString &wifiDeviceName)
     CWInterface *defaultInterface = [CWInterface interfaceWithName: qstringToNSString(wifiDeviceName)];
     if([defaultInterface power])
         return true;
+#else
+    Q_UNUSED(wifiDeviceName);
 #endif
     return false;
 }
@@ -394,6 +398,9 @@ bool QCoreWlanEngine::isKnownSsid(const QString &interfaceName, const QString &s
         if(ssid == nsstringToQString([wProfile ssid]))
             return true;
     }
+#else
+    Q_UNUSED(interfaceName);
+    Q_UNUSED(ssid);
 #endif
     return false;
 }
