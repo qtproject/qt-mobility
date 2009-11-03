@@ -1157,7 +1157,8 @@ void tst_QPainterVideoSurface::shaderPresentGLFrame()
     if (surface.shaderType() != shaderType)
         QSKIP("Shader type couldn't be set", SkipSingle);
 
-    QVideoSurfaceFormat format(QSize(64, 64), QVideoFrame::Format_RGB32);
+    QVideoSurfaceFormat format(
+            QSize(64, 64), QVideoFrame::Format_RGB32, QAbstractVideoBuffer::GLTextureHandle);
 
     QVERIFY(surface.start(format));
     QCOMPARE(surface.isStarted(), true);

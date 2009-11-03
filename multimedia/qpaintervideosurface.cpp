@@ -667,7 +667,7 @@ void QVideoSurfaceArbFpPainter::stop()
 QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::paint(
         const QRect &target, QPainter *painter, const QRect &source)
 {
-    if (m_textureCount > 0 && m_frame.isValid()) {
+    if (m_frame.isValid()) {
         painter->beginNativePainting();
 
         float txLeft = float(source.left()) / float(m_frameSize.width());
@@ -908,7 +908,7 @@ void QVideoSurfaceGlslPainter::stop()
 QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
         const QRect &target, QPainter *painter, const QRect &source)
 {
-    if (m_textureCount > 0 && m_frame.isValid()) {
+    if (m_frame.isValid()) {
         painter->beginNativePainting();
 
         float txLeft = float(source.left()) / float(m_frameSize.width());
