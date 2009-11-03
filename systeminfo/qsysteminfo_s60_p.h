@@ -219,18 +219,7 @@ protected:  //from MTelephonyInfoObserver
     void cellNetworkSignalStrengthChanged(){};
     void cellNetworkStatusChanged(){};
 
-private:
-
-    enum Profile {
-        ProfileGeneral   = 0,
-        ProfileSilent,
-        ProfileMeeting,
-        ProfileOutdoor,
-        ProfilePager,
-        ProfileOffLine,
-        ProfileDrive
-    };
-
+private:    //data
     MProEngEngine *m_profileEngine;
 };
 

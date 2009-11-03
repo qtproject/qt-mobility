@@ -686,22 +686,39 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
     if (!m_profileEngine) {
         TRAP_IGNORE(m_profileEngine = ProEngFactory::NewEngineL();)
     }
-    
+
+    //From profileenginesdkcrkeys.h:
+    //0 = General profile (default value)<br>
+    //1 = Silent profile<br>
+    //2 = Meeting profile<br>
+    //3 = Outdoor profile<br>
+    //4 = Pager profile<br>
+    //5 = Off-line profile<br>
+    //6 = Drive profile<br>
+    //30-49 = User-created profiles<br>
+
     if (m_profileEngine) {
         TRAPD(err,
             MProEngProfile* activeProfile = m_profileEngine->ActiveProfileL();
-            QSystemDeviceInfoPrivate::Profile s60Profile =
-                static_cast<QSystemDeviceInfoPrivate::Profile>(activeProfile->ProfileName().Id());
+            TInt s60Profile = activeProfile->ProfileName().Id();
             activeProfile->Release();
+
             switch (s60Profile) {
-            case ProfileGeneral: profile = QSystemDeviceInfo::NormalProfile; break;
-            case ProfileSilent: profile = QSystemDeviceInfo::SilentProfile; break;
-            case ProfileOutdoor: profile = QSystemDeviceInfo::LoudProfile; break;
-            case ProfileOffLine: profile = QSystemDeviceInfo::OfflineProfile; break;
-            case ProfileMeeting:
-            case ProfilePager:
-            case ProfileDrive: profile = QSystemDeviceInfo::CustomProfile; break;
-            default: profile = QSystemDeviceInfo::UnknownProfile; break;
+            case 0: profile = QSystemDeviceInfo::NormalProfile; break;
+            case 1: profile = QSystemDeviceInfo::SilentProfile; break;
+            case 2: profile = QSystemDeviceInfo::CustomProfile; break;
+            case 3: profile = QSystemDeviceInfo::LoudProfile; break;
+            case 4: profile = QSystemDeviceInfo::CustomProfile; break;
+            case 5: profile = QSystemDeviceInfo::OfflineProfile; break;
+            case 6: profile = QSystemDeviceInfo::CustomProfile; break;
+            default:
+                {
+                    if (s60Profile >= 30 && s60Profile <= 49) {
+                        profile = QSystemDeviceInfo::CustomProfile;
+                    } else {
+                        profile = QSystemDeviceInfo::UnknownProfile; break;
+                    }
+                }
             }
         )
     }
