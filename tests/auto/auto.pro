@@ -26,12 +26,14 @@ contains(QT_CONFIG, multimedia) {
 
 symbian { 
 SUBDIRS -= \
+        qaudiocapturesource \
         qmediaplaylistnavigator \
         qmediaimageviewer \
         qmediapluginloader \
         qmediaserviceprovider \
         qpaintervideosurface \
         qvideowidget \
+        qmediaplayer \
         qgraphicsvideoitem
 }
 
