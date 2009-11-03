@@ -56,8 +56,7 @@
 #include <centralrepository.h>
 #include <mproengengine.h>
 #include <proengfactory.h>
-#include <mproengprofile.h>
-#include <mproengprofilename.h>
+#include <mproengnotifyhandler.h>
 
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
@@ -665,7 +664,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
 
 //////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
-    : QObject(parent), m_profileEngine(NULL)
+    : QObject(parent), m_profileEngine(NULL), m_proEngNotifyHandler(NULL)
 {
     DeviceInfo::instance()->batteryInfo()->addObserver(this);
 }
@@ -674,9 +673,36 @@ QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
     DeviceInfo::instance()->batteryInfo()->removeObserver(this);
 
+    if (m_proEngNotifyHandler) {
+        m_proEngNotifyHandler->CancelProfileActivationNotifications();
+        delete m_proEngNotifyHandler;
+    }
+
     if(m_profileEngine) {
         m_profileEngine->Release();
     }
+}
+
+void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile))) {
+        if (!m_proEngNotifyHandler) {
+            TRAPD(err,
+                m_proEngNotifyHandler = ProEngFactory::NewNotifyHandlerL();
+                m_proEngNotifyHandler->RequestProfileActivationNotificationsL(*this);
+            )
+            if (err != KErrNone) {
+                delete m_proEngNotifyHandler;
+                m_proEngNotifyHandler = NULL;
+            }
+        }
+    }
+}
+
+void QSystemDeviceInfoPrivate::HandleProfileActivatedL(TInt aProfileId)
+{
+    QSystemDeviceInfo::Profile profile = s60ProfileIdToProfile(aProfileId);
+    emit currentProfileChanged(profile);
 }
 
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
@@ -686,6 +712,17 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
     if (!m_profileEngine) {
         TRAP_IGNORE(m_profileEngine = ProEngFactory::NewEngineL();)
     }
+
+    if (m_profileEngine) {
+        return s60ProfileIdToProfile(m_profileEngine->ActiveProfileId());
+    }
+
+    return profile;
+}
+
+QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::s60ProfileIdToProfile(TInt profileId) const
+{
+    QSystemDeviceInfo::Profile profile = QSystemDeviceInfo::UnknownProfile;
 
     //From profileenginesdkcrkeys.h:
     //0 = General profile (default value)<br>
@@ -697,32 +734,23 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
     //6 = Drive profile<br>
     //30-49 = User-created profiles<br>
 
-    if (m_profileEngine) {
-        TRAPD(err,
-            MProEngProfile* activeProfile = m_profileEngine->ActiveProfileL();
-            TInt s60Profile = activeProfile->ProfileName().Id();
-            activeProfile->Release();
-
-            switch (s60Profile) {
-            case 0: profile = QSystemDeviceInfo::NormalProfile; break;
-            case 1: profile = QSystemDeviceInfo::SilentProfile; break;
-            case 2: profile = QSystemDeviceInfo::CustomProfile; break;
-            case 3: profile = QSystemDeviceInfo::LoudProfile; break;
-            case 4: profile = QSystemDeviceInfo::CustomProfile; break;
-            case 5: profile = QSystemDeviceInfo::OfflineProfile; break;
-            case 6: profile = QSystemDeviceInfo::CustomProfile; break;
-            default:
-                {
-                    if (s60Profile >= 30 && s60Profile <= 49) {
-                        profile = QSystemDeviceInfo::CustomProfile;
-                    } else {
-                        profile = QSystemDeviceInfo::UnknownProfile; break;
-                    }
-                }
+    switch (profileId) {
+    case 0: profile = QSystemDeviceInfo::NormalProfile; break;
+    case 1: profile = QSystemDeviceInfo::SilentProfile; break;
+    case 2: profile = QSystemDeviceInfo::CustomProfile; break;
+    case 3: profile = QSystemDeviceInfo::LoudProfile; break;
+    case 4: profile = QSystemDeviceInfo::CustomProfile; break;
+    case 5: profile = QSystemDeviceInfo::OfflineProfile; break;
+    case 6: profile = QSystemDeviceInfo::CustomProfile; break;
+    default:
+        {
+            if (profileId >= 30 && profileId <= 49) {
+                profile = QSystemDeviceInfo::CustomProfile;
+            } else {
+                profile = QSystemDeviceInfo::UnknownProfile; break;
             }
-        )
+        }
     }
-
     return profile;
 }
 

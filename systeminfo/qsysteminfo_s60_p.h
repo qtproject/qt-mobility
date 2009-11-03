@@ -171,10 +171,16 @@ private:
 };
 
 //////// QSystemDeviceInfo
+
+#include <mproengprofileactivationobserver.h> 
+
 class DeviceInfo;
 class MProEngEngine;
+class MProEngNotifyHandler;
 
-class QSystemDeviceInfoPrivate : public QObject, public MTelephonyInfoObserver
+class QSystemDeviceInfoPrivate : public QObject,
+    public MTelephonyInfoObserver,
+    public MProEngProfileActivationObserver
 {
     Q_OBJECT
 
@@ -208,6 +214,15 @@ Q_SIGNALS:
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void powerStateChanged(QSystemDeviceInfo::PowerState);
 
+protected:  //From QObject
+    void connectNotify(const char *signal);
+
+protected: //From MProEngProfileActivationObserver
+    void HandleProfileActivatedL(TInt aProfileId);
+
+private:
+    QSystemDeviceInfo::Profile s60ProfileIdToProfile(TInt profileId) const;
+
 protected:  //from MTelephonyInfoObserver
     void batteryLevelChanged();
     void powerStateChanged();
@@ -221,6 +236,7 @@ protected:  //from MTelephonyInfoObserver
 
 private:    //data
     MProEngEngine *m_profileEngine;
+    MProEngNotifyHandler* m_proEngNotifyHandler;
 };
 
 //////// QSystemScreenSaver

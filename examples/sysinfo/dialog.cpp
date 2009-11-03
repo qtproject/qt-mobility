@@ -179,6 +179,8 @@ void Dialog::setupDevice()
     ui->deviceLockCheckBox->setChecked(di->isDeviceLocked());
 
     ui->profileComboBox->setCurrentIndex(di->currentProfile());
+    connect(di, SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
+        this, SLOT(updateProfile(QSystemDeviceInfo::Profile)));
 
     if(di->currentPowerState() == QSystemDeviceInfo::BatteryPower) {
         ui->radioButton_2->setChecked(true);
@@ -212,6 +214,11 @@ void Dialog::setupDevice()
     }
 
     ui->inputMethodLabel->setText(inputs.join(" "));
+}
+
+void Dialog::updateProfile(QSystemDeviceInfo::Profile profile)
+{
+    ui->profileComboBox->setCurrentIndex(profile);
 }
 
 void Dialog::setupDisplay()
