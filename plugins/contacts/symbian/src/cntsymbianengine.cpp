@@ -168,18 +168,26 @@ QList<QContactLocalId> CntSymbianEngine::contacts(const QString& contactType, co
     QList<QContactLocalId> contactIds;
 
     //retrieve contacts
-    if(contactType == QContactType::TypeContact)
-    {
-        contactIds = contacts(sortOrders, error);
+    if(contactType == QContactType::TypeContact) {
+        return contacts(sortOrders, error);
+    } else if(contactType == QContactType::TypeGroup) {
+        //retrieve groups
+        contactIds = d->groups(error);
+
+        // Check if sorting is supported by backend
+        if(d->sortOrderSupported(sortOrders)) {
+            return d->sort(contactIds, sortOrders, error);
+            //return contactIds;
+        } else {
+            // Backend does not support this sorting.
+            // Fall back to slow QContact-level sorting method.
+            return slowSort(contactIds, sortOrders, error);
+        }
     }
 
-    //retrieve groups
-    else if(contactType == QContactType::TypeGroup)
-    {
-        contactIds = d->groups(sortOrders, error);
-    }
-
-    return contactIds;
+    // Should never happen
+    error = QContactManager::BadArgumentError;
+    return contactIds; // empty
 }
 
 QContact CntSymbianEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const

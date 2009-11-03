@@ -147,6 +147,14 @@ bool CntSymbianEnginePrivate::sortOrderSupported(const QList<QContactSortOrder>&
     return m_contactSorter->sortOrderSupported(sortOrders);
 }
 
+QList<QContactLocalId> CntSymbianEnginePrivate::sort(
+    QList<QContactLocalId> contactIds,
+    const QList<QContactSortOrder>& sortOrders,
+    QContactManager::Error& error)
+{
+    return m_contactSorter->sort(contactIds, sortOrders, error);
+}
+
 /*!
  * Read a contact from the contact database.
  *
@@ -219,7 +227,7 @@ QList<QContactLocalId> CntSymbianEnginePrivate::contacts( const QList<QContactSo
  * \param qtError Qt error code.
  * \return List of group IDs.
  */
-QList<QContactLocalId> CntSymbianEnginePrivate::groups(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& qtError) const
+QList<QContactLocalId> CntSymbianEnginePrivate::groups(QContactManager::Error& qtError) const
 {
     // See QT_TRYCATCH_LEAVING note at the begginning of this file
     QContactLocalIdList *list = new QContactLocalIdList();
