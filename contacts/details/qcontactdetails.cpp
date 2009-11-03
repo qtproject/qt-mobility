@@ -689,6 +689,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldDepartment, "Department");
 Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldLocation, "Location");
 
 /*!
+ * \variable QContactOrganization::FieldRole
+ * The constant key for which the contact's role within the organization is stored in details of the QContactOrganization type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldRole, "Role");
+
+/*!
  * \variable QContactOrganization::FieldTitle
  * The constant key for which the contact's title within the organization is stored in details of the QContactOrganization type
  */
@@ -1591,6 +1597,17 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 /*!
  * \fn QContactOrganization::location() const
  * Returns the location of the organization stored in this detail
+ */
+
+
+/*!
+ * \fn QContactOrganization::setRole(const QString& role)
+ * Sets the contact's role within the organization stored in this detail to \a role
+ */
+
+/*!
+ * \fn QContactOrganization::role() const
+ * Returns the contact's role within the organization stored in this detail
  */
 
 
