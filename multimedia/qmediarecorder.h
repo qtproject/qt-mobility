@@ -136,7 +136,7 @@ private:
     Q_DISABLE_COPY(QMediaRecorder)
     Q_DECLARE_PRIVATE(QMediaRecorder)
     Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(QMediaRecorder::State))
-    Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &));
+    Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
 };
 
 
