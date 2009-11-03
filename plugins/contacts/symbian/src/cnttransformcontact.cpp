@@ -370,7 +370,7 @@ QContactDetail* CntTransformContact::transformTimestampItemFieldL(CContactItem &
                 //creation date
                 TTime timeCreation(timeValue);
                 TDateTime dateCreation = timeCreation.DateTime();
-                QDate qDateCreation(dateCreation.Year(), dateCreation.Month() + 1, dateCreation.Day());
+                QDate qDateCreation(dateCreation.Year(), dateCreation.Month() + 1, dateCreation.Day() + 1);
                 QTime qTimeCreation(dateCreation.Hour(), dateCreation.Minute(), dateCreation.Second(), dateCreation.MicroSecond()/1000);
                 QDateTime qDateTimeCreation(qDateCreation, qTimeCreation);
                 timestampDetail->setCreated(qDateTimeCreation);
@@ -378,7 +378,7 @@ QContactDetail* CntTransformContact::transformTimestampItemFieldL(CContactItem &
                 //last modified date
                 TTime timeModified = contactItem.LastModified();
                 TDateTime dateModified = timeModified.DateTime();
-                QDate qDateModified(dateModified.Year(), dateModified.Month() + 1, dateModified.Day());
+                QDate qDateModified(dateModified.Year(), dateModified.Month() + 1, dateModified.Day() + 1);
                 QTime qTimeModified(dateModified.Hour(), dateModified.Minute(), dateModified.Second(), dateModified.MicroSecond()/1000);
                 QDateTime qDateTimeModified(qDateModified, qTimeModified);
                 timestampDetail->setLastModified(qDateTimeModified);
