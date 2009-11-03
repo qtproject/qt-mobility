@@ -15,7 +15,6 @@ DEPENDPATH += ../ ../..
 
 HEADERS +=  servicemetadata_p.h \
             servicedatabase_p.h \
-            databasemanager_p.h \
             qserviceplugininterface.h \
             qabstractsecuritysession.h \
             qserviceinterfacedescriptor.h \
@@ -26,14 +25,8 @@ HEADERS +=  servicemetadata_p.h \
             databasemanagersession.h \
             databasemanagersignalhandler.h
 
-            #qserviceglobal.h \
-            #qservicemanager.h \
-            #qservicecontext.h \
-
-
 SOURCES +=  servicemetadata.cpp \
             servicedatabase.cpp \
-            databasemanager.cpp \
             qserviceplugininterface.cpp \
             qabstractsecuritysession.cpp \
             qserviceinterfacedescriptor.cpp \
@@ -42,8 +35,5 @@ SOURCES +=  servicemetadata.cpp \
             databasemanagerserver.cpp \
             databasemanagersession.cpp \
             databasemanagersignalhandler.cpp
-
-            #qservicemanager.cpp \
-            #qservicecontext.cpp \
             
 TARGET.CAPABILITY = ALL -TCB
