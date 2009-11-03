@@ -73,12 +73,6 @@ void CDatabaseManagerServerSession::ConstructL()
     iDatabaseManagerSignalHandler = new DatabaseManagerSignalHandler(*this);
     iDb = new ServiceDatabase();
     initDbPath();
-
-    QObject::connect(iDb, SIGNAL(serviceAdded(const QString&, DatabaseManager::DbScope)), 
-            iDatabaseManagerSignalHandler, SLOT(ServiceAdded(const QString&)));
-    
-    QObject::connect(iDb, SIGNAL(serviceRemoved(const QString&, DatabaseManager::DbScope)), 
-            iDatabaseManagerSignalHandler, SLOT(ServiceRemoved(const QString&)));
     }
 
 CDatabaseManagerServerSession::CDatabaseManagerServerSession()
@@ -435,8 +429,29 @@ TInt CDatabaseManagerServerSession::SetInterfaceDefault2L(const RMessage2& aMess
 
 void CDatabaseManagerServerSession::SetChangeNotificationsEnabled(const RMessage2& aMessage)
 {
-    //iDatabaseManager->setChangeNotificationsEnabled(static_cast<DatabaseManager::DbScope>(aMessage.Int0()), aMessage.Int1());
-    //aMessage.Write(2, LastErrorCode());
+    if (aMessage.Int1() == TRUE)
+    {
+        if (iDatabaseManagerSignalHandler)
+        {
+            iDatabaseManagerSignalHandler = new DatabaseManagerSignalHandler(*this);
+        }
+        QObject::connect(iDb, SIGNAL(serviceAdded(const QString&, DatabaseManager::DbScope)), 
+                iDatabaseManagerSignalHandler, SLOT(ServiceAdded(const QString&)));
+        
+        QObject::connect(iDb, SIGNAL(serviceRemoved(const QString&, DatabaseManager::DbScope)), 
+                iDatabaseManagerSignalHandler, SLOT(ServiceRemoved(const QString&)));
+    }
+    else
+    {   
+        QObject::disconnect(iDb, SIGNAL(serviceAdded(const QString&, DatabaseManager::DbScope)), 
+                iDatabaseManagerSignalHandler, SLOT(ServiceAdded(const QString&)));
+        
+        QObject::disconnect(iDb, SIGNAL(serviceRemoved(const QString&, DatabaseManager::DbScope)), 
+                iDatabaseManagerSignalHandler, SLOT(ServiceRemoved(const QString&)));
+        delete iDatabaseManagerSignalHandler;
+        iDatabaseManagerSignalHandler = NULL;
+    }
+    aMessage.Write(2, LastErrorCode());
 }
 
 TError CDatabaseManagerServerSession::LastErrorCode()
