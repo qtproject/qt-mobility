@@ -22,6 +22,8 @@ include(mediaplayer/mediaplayer_s60.pri)
 
 load(data_caging_paths)
 pluginDep.sources = $${TARGET}.dll
-pluginDep.path = $$QT_PLUGINS_BASE_DIR/$$PLUGIN_SUBDIR    
+pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_SUBDIR}
 DEPLOYMENT += pluginDep      
 TARGET.EPOCALLOWDLLDATA = 1
+TARGET.UID3=0x2002AC76
+MMP_RULES += EXPORTUNFROZEN

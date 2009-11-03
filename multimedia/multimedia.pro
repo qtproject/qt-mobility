@@ -114,6 +114,9 @@ symbian {
     QtMediaDeployment.sources = $${TARGET}.dll
     QtMediaDeployment.path = /sys/bin
     DEPLOYMENT += QtMediaDeployment
+    TARGET.UID3=0x2002AC77
+    MMP_RULES += EXPORTUNFROZEN
+    
 }
 
 include (experimental/experimental.pri)
