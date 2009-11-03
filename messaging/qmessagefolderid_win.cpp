@@ -50,8 +50,7 @@
 QMessageFolderId QMessageFolderIdPrivate::from(const MapiRecordKey &folderKey, const MapiEntryId &storeKey, const MapiEntryId &entryId)
 {
     QMessageFolderId result;
-    if (!result.d_ptr)
-        result.d_ptr = new QMessageFolderIdPrivate(&result);
+    result.d_ptr->_valid = true;
     result.d_ptr->_folderRecordKey = folderKey;
     result.d_ptr->_storeRecordKey = storeKey;
     result.d_ptr->_entryId = entryId;
@@ -60,9 +59,7 @@ QMessageFolderId QMessageFolderIdPrivate::from(const MapiRecordKey &folderKey, c
 
 MapiEntryId QMessageFolderIdPrivate::storeRecordKey(const QMessageFolderId &id)
 {
-    if (id.d_ptr)
-        return id.d_ptr->_storeRecordKey;
-    return MapiEntryId();
+    return id.d_ptr->_storeRecordKey;
 }
 
 #else
@@ -70,8 +67,7 @@ MapiEntryId QMessageFolderIdPrivate::storeRecordKey(const QMessageFolderId &id)
 QMessageFolderId QMessageFolderIdPrivate::from(const MapiRecordKey &folderKey, const MapiRecordKey &storeKey, const MapiEntryId &entryId)
 {
     QMessageFolderId result;
-    if (!result.d_ptr)
-        result.d_ptr = new QMessageFolderIdPrivate(&result);
+    result.d_ptr->_valid = true;
     result.d_ptr->_folderRecordKey = folderKey;
     result.d_ptr->_storeRecordKey = storeKey;
     result.d_ptr->_entryId = entryId;
@@ -80,34 +76,29 @@ QMessageFolderId QMessageFolderIdPrivate::from(const MapiRecordKey &folderKey, c
 
 MapiRecordKey QMessageFolderIdPrivate::storeRecordKey(const QMessageFolderId &id)
 {
-    if (id.d_ptr)
-        return id.d_ptr->_storeRecordKey;
-    return MapiRecordKey();
+    return id.d_ptr->_storeRecordKey;
 }
 
 #endif
 
 MapiRecordKey QMessageFolderIdPrivate::folderRecordKey(const QMessageFolderId &id)
 {
-    if (id.d_ptr)
-        return id.d_ptr->_folderRecordKey;
-    return MapiRecordKey();
+    return id.d_ptr->_folderRecordKey;
 }
 
 MapiEntryId QMessageFolderIdPrivate::entryId(const QMessageFolderId &id)
 {
-    if (id.d_ptr)
-        return id.d_ptr->_entryId;
-    return MapiEntryId();
+    return id.d_ptr->_entryId;
 }
 
 QMessageFolderId::QMessageFolderId()
-    : d_ptr(0)
+    : d_ptr(new QMessageFolderIdPrivate(this))
 {
+    d_ptr->_valid = false;
 }
 
 QMessageFolderId::QMessageFolderId(const QMessageFolderId& other)
-    : d_ptr(0)
+    : d_ptr(new QMessageFolderIdPrivate(this))
 {
     this->operator=(other);
 }
@@ -116,6 +107,7 @@ QMessageFolderId::QMessageFolderId(const QString& id)
     : d_ptr(new QMessageFolderIdPrivate(this))
 {
     QDataStream idStream(QByteArray::fromBase64(id.toLatin1()));
+    d_ptr->_valid = true;
 #ifdef _WIN32_WCE
     idStream >> d_ptr->_entryId;
 #else
@@ -138,17 +130,10 @@ QMessageFolderId::~QMessageFolderId()
 QMessageFolderId& QMessageFolderId::operator=(const QMessageFolderId& other)
 {
     if (&other != this) {
-        if (other.isValid()) {
-            if (!d_ptr) {
-                d_ptr = new QMessageFolderIdPrivate(this);
-            }
-            d_ptr->_folderRecordKey = other.d_ptr->_folderRecordKey;
-            d_ptr->_storeRecordKey = other.d_ptr->_storeRecordKey;
-            d_ptr->_entryId = other.d_ptr->_entryId;
-        } else {
-            delete d_ptr;
-            d_ptr = 0;
-        }
+        d_ptr->_valid = other.d_ptr->_valid;
+        d_ptr->_folderRecordKey = other.d_ptr->_folderRecordKey;
+        d_ptr->_storeRecordKey = other.d_ptr->_storeRecordKey;
+        d_ptr->_entryId = other.d_ptr->_entryId;
     }
 
     return *this;
@@ -171,12 +156,14 @@ bool QMessageFolderId::operator==(const QMessageFolderId& other) const
 
 bool QMessageFolderId::operator<(const QMessageFolderId& other) const
 {
-    if (d_ptr && other.d_ptr) {
+    if (isValid() && other.isValid()) {
         if (d_ptr->_storeRecordKey == other.d_ptr->_storeRecordKey) {
             return (d_ptr->_folderRecordKey < other.d_ptr->_folderRecordKey);
         }
 
         return (d_ptr->_storeRecordKey < other.d_ptr->_storeRecordKey);
+    } else if (!isValid() && other.isValid()) {
+        return true; // Arbitrarily define invalid ids to be less than valid ids
     }
 
     return false;
@@ -207,18 +194,18 @@ QString QMessageFolderId::toString() const
 bool QMessageFolderId::isValid() const
 {
 #ifdef _WIN32_WCE
-    return (d_ptr && !d_ptr->_entryId.isEmpty() && !d_ptr->_storeRecordKey.isEmpty());
+    return (d_ptr->_valid && !d_ptr->_entryId.isEmpty() && !d_ptr->_storeRecordKey.isEmpty());
 #else
-    return (d_ptr && !d_ptr->_folderRecordKey.isEmpty() && !d_ptr->_storeRecordKey.isEmpty());
+    return (d_ptr->_valid && !d_ptr->_folderRecordKey.isEmpty() && !d_ptr->_storeRecordKey.isEmpty());
 #endif
 }
 
 uint qHash(const QMessageFolderId &id)
 {
 #ifdef _WIN32_WCE
-    return (qHash(id.d_ptr->_entryId) ^ qHash(id.d_ptr->_storeRecordKey));
+    return (qHash(id.d_ptr->_valid) ^ qHash(id.d_ptr->_entryId) ^ qHash(id.d_ptr->_storeRecordKey));
 #else
-    return (qHash(id.d_ptr->_folderRecordKey) ^ qHash(id.d_ptr->_storeRecordKey));
+    return (qHash(id.d_ptr->_valid) ^ qHash(id.d_ptr->_folderRecordKey) ^ qHash(id.d_ptr->_storeRecordKey));
 #endif
 }
 
