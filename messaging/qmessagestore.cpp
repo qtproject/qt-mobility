@@ -166,7 +166,6 @@
 */
 
 /*!
-    \internal
     \fn QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
     
     Returns the \l{QMessageId}s of messages in the messaging store. If \a filter is not empty 
@@ -182,7 +181,6 @@
 */
 
 /*!
-    \internal
     \fn QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
     
     Returns the \l{QMessageId}s of messages in the messaging store. If \a filter is not empty 
@@ -230,7 +228,6 @@
 */
 
 /*!
-    \internal
     \fn QMessageStore::countMessages(const QMessageFilter& filter) const
     
     Returns the number of messages which match the 

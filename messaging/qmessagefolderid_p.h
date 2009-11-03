@@ -70,6 +70,7 @@ public:
     static MapiRecordKey storeRecordKey(const QMessageFolderId &id);
 #endif
 
+    bool _valid;
     MapiEntryId _entryId;
     MapiRecordKey _folderRecordKey;
     static MapiRecordKey folderRecordKey(const QMessageFolderId &id);

@@ -120,8 +120,8 @@
 <p>Note: This function should not initiate network activity, instead only message data already stored on the device will be used during evaluation of the function.</p>
 <p>See also <a href="qmessage.html">QMessage</a>, <a href="qmessagefilter.html">QMessageFilter</a>, <a href="qmessageserviceaction.html#messagesCounted">messagesCounted</a>(), <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>(), and <a href="qmessageserviceaction.html#queryMessages">queryMessages</a>().</p>
 <h3 class="fn"><a name="exportUpdates"></a>bool QMessageServiceAction::exportUpdates ( const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>id</i> )</h3>
-<p>Synchronize any changes that have been queued by message store operations with external servers.</p>
-<p>Pending changes to the account with identifier <i>id</i> should be synchronized.</p>
+<p>Iniate synchronization with external servers of local changes that have been queued by message store operations.</p>
+<p>On MAPI platforms this function performs no operation, as when a connection is available, local changes are opportunistically synchronized with external servers.</p>
 <p>Returns true if the action can be initiated; otherwise returns false.</p>
 <p>See also <a href="qmessagestore.html#addMessage">QMessageStore::addMessage</a>(), <a href="qmessagestore.html#updateMessage">QMessageStore::updateMessage</a>(), <a href="qmessagestore.html#removeMessage">QMessageStore::removeMessage</a>(), and <a href="qmessagestore.html#removeMessages">QMessageStore::removeMessages</a>().</p>
 <h3 class="fn"><a name="lastError"></a><a href="qmessagestore.html#ErrorCode-enum">QMessageStore::ErrorCode</a> QMessageServiceAction::lastError () const</h3>

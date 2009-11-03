@@ -181,8 +181,7 @@ bool QMessageFolderFilterPrivate::matchesFolder(const QMessageFolderFilter &filt
                 result = (f->_inclusion == QMessageDataComparator::Includes ? namePartialMatch : !namePartialMatch);
             }
         } else if ((f->_criterion == PathEquality) || (f->_criterion == PathInclusion)) {
-            // Path is the same as DisplayName for windows
-            QString folderPath(folder->name());
+            QString folderPath(QMessageFolder(folder->id()).path());
 
             if (f->_criterion == PathEquality) {
                 bool pathEqual(QString::compare(folderPath, f->_value, caseSensitivity) == 0);
@@ -204,7 +203,7 @@ bool QMessageFolderFilterPrivate::matchesFolder(const QMessageFolderFilter &filt
         } else if ((f->_criterion == ParentEquality) || (f->_criterion == ParentInclusion)) {
             QMessageFolderId parentId(folder->parentId());
 
-            if (f->_criterion == AccountEquality) {
+            if (f->_criterion == ParentEquality) {
                 bool idEqual(parentId == *f->_ids.begin());
                 result = (f->_equality == QMessageDataComparator::Equal ? idEqual : !idEqual);
             } else {
@@ -213,7 +212,8 @@ bool QMessageFolderFilterPrivate::matchesFolder(const QMessageFolderFilter &filt
             }
         } else if (f->_criterion == AncestorInclusion) {
             QSet<QMessageFolderId> ancestorIds(folder->ancestorIds().toSet());
-            result = (ancestorIds.intersect(f->_ids).isEmpty() == false);
+            bool idIncluded(ancestorIds.intersect(f->_ids).isEmpty() == false);
+            result = (f->_inclusion == QMessageDataComparator::Includes ? idIncluded : !idIncluded);
         } else { // None
             result = (f->_equality == QMessageDataComparator::Equal);
         }
@@ -462,6 +462,14 @@ bool QMessageFolderFilter::operator==(const QMessageFolderFilter& other) const
 
 QMessageFolderFilter QMessageFolderFilter::byId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
 {
+    if (!id.isValid()) {
+        QMessageFolderFilter result(~QMessageFolderFilter()); // non-matching
+        if (QMessageDataComparator::NotEqual == cmp) {
+            result = ~result;
+        }
+        return result;
+    }
+
     QMessageFolderFilter result;
     result.d_ptr->_ids.insert(id);
     result.d_ptr->_equality = cmp;
@@ -471,8 +479,22 @@ QMessageFolderFilter QMessageFolderFilter::byId(const QMessageFolderId &id, QMes
 
 QMessageFolderFilter QMessageFolderFilter::byId(const QMessageFolderIdList &ids, QMessageDataComparator::InclusionComparator cmp)
 {
+    QMessageFolderIdList validIds;
+    foreach(QMessageFolderId id, ids) {
+        if (id.isValid()) {
+            validIds.append(id);
+        }
+    }
+    if (validIds.isEmpty()) {
+        QMessageFolderFilter result(~QMessageFolderFilter()); // non-matching
+        if (QMessageDataComparator::Excludes == cmp) {
+            result = ~result;
+        }
+        return result;
+    }
+
     QMessageFolderFilter result;
-    result.d_ptr->_ids = ids.toSet();
+    result.d_ptr->_ids = validIds.toSet();
     result.d_ptr->_inclusion = cmp;
     result.d_ptr->_criterion = QMessageFolderFilterPrivate::IdInclusion;
     return result;
@@ -527,6 +549,13 @@ QMessageFolderFilter QMessageFolderFilter::byPath(const QString &value, QMessage
 
 QMessageFolderFilter QMessageFolderFilter::byParentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
 {
+    if (!id.isValid()) {
+        QMessageFolderFilter result(~QMessageFolderFilter()); // non-matching
+        if (QMessageDataComparator::NotEqual == cmp) {
+            result = ~result;
+        }
+        return result;
+    }
     QMessageFolderFilter result;
     result.d_ptr->_accountIds.insert(id);
     result.d_ptr->_equality = cmp;

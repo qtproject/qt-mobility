@@ -4527,6 +4527,20 @@
             <typedef access="public" threadsafety="unspecified" status="commendable" name="NotificationFilterId" fullname="QMessageStore::NotificationFilterId" href="qmessagestore.html#NotificationFilterId-typedef" location="qmessagestore.h"/>
             <typedef access="public" threadsafety="unspecified" status="commendable" name="NotificationFilterIdSet" fullname="QMessageStore::NotificationFilterIdSet" href="qmessagestore.html#NotificationFilterIdSet-typedef" location="qmessagestore.h"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="lastError" fullname="QMessageStore::lastError" href="qmessagestore.html#lastError" location="qmessagestore_qmf.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMessageStore::ErrorCode" signature="lastError() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="queryMessages" fullname="QMessageStore::queryMessages" href="qmessagestore.html#queryMessages" location="qmessagestore_qmf.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMessageIdList" signature="queryMessages(const QMessageFilter &amp; filter, const QMessageOrdering &amp; ordering, uint limit, uint offset) const">
+                <parameter left="const QMessageFilter &amp;" right="" name="filter" default="QMessageFilter()"/>
+                <parameter left="const QMessageOrdering &amp;" right="" name="ordering" default="QMessageOrdering()"/>
+                <parameter left="uint" right="" name="limit" default="0"/>
+                <parameter left="uint" right="" name="offset" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="queryMessages" fullname="QMessageStore::queryMessages" href="qmessagestore.html#queryMessages-2" location="qmessagestore_qmf.cpp" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="2" type="QMessageIdList" signature="queryMessages(const QMessageFilter &amp; filter, const QString &amp; body, QFlags&lt;QMessageDataComparator::Option&gt; options, const QMessageOrdering &amp; ordering, uint limit, uint offset) const">
+                <parameter left="const QMessageFilter &amp;" right="" name="filter" default=""/>
+                <parameter left="const QString &amp;" right="" name="body" default=""/>
+                <parameter left="QFlags&lt;QMessageDataComparator::Option&gt;" right="" name="options" default="0"/>
+                <parameter left="const QMessageOrdering &amp;" right="" name="ordering" default="QMessageOrdering()"/>
+                <parameter left="uint" right="" name="limit" default="0"/>
+                <parameter left="uint" right="" name="offset" default="0"/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="queryFolders" fullname="QMessageStore::queryFolders" href="qmessagestore.html#queryFolders" location="qmessagestore_qmf.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMessageFolderIdList" signature="queryFolders(const QMessageFolderFilter &amp; filter, const QMessageFolderOrdering &amp; ordering, uint limit, uint offset) const">
                 <parameter left="const QMessageFolderFilter &amp;" right="" name="filter" default="QMessageFolderFilter()"/>
                 <parameter left="const QMessageFolderOrdering &amp;" right="" name="ordering" default="QMessageFolderOrdering()"/>
@@ -4538,6 +4552,9 @@
                 <parameter left="const QMessageAccountOrdering &amp;" right="" name="ordering" default="QMessageAccountOrdering()"/>
                 <parameter left="uint" right="" name="limit" default="0"/>
                 <parameter left="uint" right="" name="offset" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="countMessages" fullname="QMessageStore::countMessages" href="qmessagestore.html#countMessages" location="qmessagestore_qmf.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="countMessages(const QMessageFilter &amp; filter) const">
+                <parameter left="const QMessageFilter &amp;" right="" name="filter" default="QMessageFilter()"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="countFolders" fullname="QMessageStore::countFolders" href="qmessagestore.html#countFolders" location="qmessagestore_qmf.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="countFolders(const QMessageFolderFilter &amp; filter) const">
                 <parameter left="const QMessageFolderFilter &amp;" right="" name="filter" default="QMessageFolderFilter()"/>
@@ -5851,6 +5868,12 @@
             <contents name="reading-nmea-data" title="Reading NMEA data" level="2"/>
             <contents name="example-creating-a-custom-location-data-source" title="Example: Creating a custom location data source" level="1"/>
             <contents name="classes" title="Classes" level="1"/>
+        </page>
+        <page access="public" status="commendable" name="location-releasenotes.html" href="location-releasenotes.html" subtype="page" title="Location Library Release Notes" fulltitle="Location Library Release Notes" subtitle="" location="location.qdoc">
+            <contents name="windows-ce-windows-mobile" title="Windows CE / Windows Mobile" level="1"/>
+            <contents name="accuracy-in-metres-information-is-unavailable" title="Accuracy-in-metres information is unavailable" level="2"/>
+            <contents name="there-is-no-reliable-method-to-detect-if-a-device-has-gps-capabilities" title="There is no reliable method to detect if a device has GPS capabilities" level="2"/>
+            <contents name="other-applications-may-power-down-the-gps-hardware-when-they-are-done" title="Other applications may power down the GPS hardware when they are done" level="2"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="Q_MEDIA_DECLARE_CONTROL" href="qmediacontrol.html#Q_MEDIA_DECLARE_CONTROL" location="" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="QMediaControl" type="" signature="Q_MEDIA_DECLARE_CONTROL( Class,  IId)">
             <parameter left="" right="" name="Class" default=""/>

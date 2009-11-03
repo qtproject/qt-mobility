@@ -97,41 +97,72 @@
 #include <cemapi.h>
 #endif
 
-
-namespace {
-
-    QWeakPointer<WinHelpers::MapiInitializer> initializer;
-
-    GUID GuidPublicStrings = { 0x00020329, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 };
-
-    FILETIME toFileTime(const QDateTime &dt)
+//unexported before Windows 7, include manually
+#ifndef IID_PPV_ARGS
+extern "C++"
+{
+    template<typename T> void** IID_PPV_ARGS_Helper(T** pp)
     {
-        FILETIME ft = {0};
+        // make sure everyone derives from IUnknown
+        static_cast<IUnknown*>(*pp);
 
-        QDate date(dt.date());
-        QTime time(dt.time());
+        return reinterpret_cast<void**>(pp);
+    }
+}
+#define IID_PPV_ARGS(ppType) __uuidof(**(ppType)), IID_PPV_ARGS_Helper(ppType)
+#endif //IID_PPV_ARGS
 
-        SYSTEMTIME st = {0};
-        st.wYear = date.year();
-        st.wMonth = date.month();
-        st.wDay = date.day();
-        st.wHour = time.hour();
-        st.wMinute = time.minute();
-        st.wSecond = time.second();
-        st.wMilliseconds = time.msec();
-
-        SystemTimeToFileTime(&st, &ft);
-        return ft;
+namespace WinHelpers
+{
+    bool setMapiProperty(IMAPIProp *object, ULONG tag, const QString &value)
+    {
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.LPSZ = reinterpret_cast<LPWSTR>(const_cast<quint16*>(value.utf16()));
+        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
     }
 
-    QDateTime fromFileTime(const FILETIME &ft)
+    bool setMapiProperty(IMAPIProp *object, ULONG tag, LONG value)
     {
-        SYSTEMTIME st = {0};
-        FileTimeToSystemTime(&ft, &st);
-        QString dateStr(QString("yyyy%1M%2d%3h%4m%5s%6z%7").arg(st.wYear).arg(st.wMonth).arg(st.wDay).arg(st.wHour).arg(st.wMinute).arg(st.wSecond).arg(st.wMilliseconds));
-        QDateTime dt(QDateTime::fromString(dateStr, "'yyyy'yyyy'M'M'd'd'h'h'm'm's's'z'z"));
-        dt.setTimeSpec(Qt::UTC);
-        return dt;
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.l = value;
+        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+    }
+
+    bool setMapiProperty(IMAPIProp *object, ULONG tag, ULONG value)
+    {
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.ul = value;
+        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+    }
+
+    bool setMapiProperty(IMAPIProp *object, ULONG tag, bool value)
+    {
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.b = value;
+        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+    }
+
+    bool setMapiProperty(IMAPIProp *object, ULONG tag, FILETIME value)
+    {
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.ft = value;
+        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+    }
+
+    bool setMapiProperty(IMAPIProp *object, ULONG tag, MapiEntryId value)
+    {
+        SBinary s;
+        s.cb = value.count();
+        s.lpb = reinterpret_cast<LPBYTE>(value.data());
+        SPropValue prop = { 0 };
+        prop.ulPropTag = tag;
+        prop.Value.bin = s;
+        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
     }
 
     bool getMapiProperty(IMAPIProp *object, ULONG tag, ULONG *value)
@@ -188,48 +219,64 @@ namespace {
         return result;
     }
 
-    bool setMapiProperty(IMAPIProp *object, ULONG tag, const QString &value)
+    bool getMapiProperty(IMAPIProp *object, ULONG tag, QString *value)
     {
-        SPropValue prop = { 0 };
-        prop.ulPropTag = tag;
-        prop.Value.LPSZ = reinterpret_cast<LPWSTR>(const_cast<quint16*>(value.utf16()));
-        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+        bool result(false);
+
+        SPropValue *prop;
+        HRESULT rv = HrGetOneProp(object, tag, &prop);
+        if (HR_SUCCEEDED(rv)) {
+            if (prop->ulPropTag == tag) {
+                *value = QStringFromLpctstr(prop->Value.lpszW);
+                result = true;
+            }
+            MAPIFreeBuffer(prop);
+        }
+
+        return result;
+    }
+}
+
+using namespace WinHelpers;
+
+namespace {
+
+    QWeakPointer<WinHelpers::MapiInitializer> initializer;
+
+    GUID GuidPublicStrings = { 0x00020329, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 };
+
+    FILETIME toFileTime(const QDateTime &dt)
+    {
+        FILETIME ft = {0};
+
+        QDate date(dt.date());
+        QTime time(dt.time());
+
+        SYSTEMTIME st = {0};
+        st.wYear = date.year();
+        st.wMonth = date.month();
+        st.wDay = date.day();
+        st.wHour = time.hour();
+        st.wMinute = time.minute();
+        st.wSecond = time.second();
+        st.wMilliseconds = time.msec();
+
+        SystemTimeToFileTime(&st, &ft);
+        return ft;
     }
 
-    bool setMapiProperty(IMAPIProp *object, ULONG tag, LONG value)
+    QDateTime fromFileTime(const FILETIME &ft)
     {
-        SPropValue prop = { 0 };
-        prop.ulPropTag = tag;
-        prop.Value.l = value;
-        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
+        SYSTEMTIME st = {0};
+        FileTimeToSystemTime(&ft, &st);
+        QString dateStr(QString("yyyy%1M%2d%3h%4m%5s%6z%7").arg(st.wYear).arg(st.wMonth).arg(st.wDay).arg(st.wHour).arg(st.wMinute).arg(st.wSecond).arg(st.wMilliseconds));
+        QDateTime dt(QDateTime::fromString(dateStr, "'yyyy'yyyy'M'M'd'd'h'h'm'm's's'z'z"));
+        dt.setTimeSpec(Qt::UTC);
+        return dt;
     }
 
-    bool setMapiProperty(IMAPIProp *object, ULONG tag, bool value)
-    {
-        SPropValue prop = { 0 };
-        prop.ulPropTag = tag;
-        prop.Value.b = value;
-        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
-    }
 
-    bool setMapiProperty(IMAPIProp *object, ULONG tag, FILETIME value)
-    {
-        SPropValue prop = { 0 };
-        prop.ulPropTag = tag;
-        prop.Value.ft = value;
-        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
-    }
 
-    bool setMapiProperty(IMAPIProp *object, ULONG tag, MapiEntryId value)
-    {
-        SBinary s;
-        s.cb = value.count();
-        s.lpb = reinterpret_cast<LPBYTE>(value.data());
-        SPropValue prop = { 0 };
-        prop.ulPropTag = tag;
-        prop.Value.bin = s;
-        return HR_SUCCEEDED(HrSetOneProp(object, &prop));
-    }
 
     //used in preference to HrQueryAllRows
     //as per: http://blogs.msdn.com/stephen_griffin/archive/2009/03/23/try-not-to-query-all-rows.aspx
@@ -1064,8 +1111,10 @@ namespace {
         // Remove any preexisting body elements
 #ifndef _WIN32_WCE
         SizedSPropTagArray(2, props) = {2, {PR_BODY, PR_RTF_COMPRESSED}};
+#elif(_WIN32_WCE >= 0x600)
+            SizedSPropTagArray(2, props) = {2, {PR_BODY_HTML_A, PR_BODY_W}};
 #else
-        SizedSPropTagArray(2, props) = {2, {PR_BODY_HTML_A, PR_BODY_W}};
+            SizedSPropTagArray(2, props) = {2, {PR_BODY, PR_BODY_W}};
 #endif
         HRESULT rv = message->DeleteProps(reinterpret_cast<LPSPropTagArray>(&props), 0);
 #ifdef _WIN32_WCE
@@ -1095,7 +1144,11 @@ namespace {
 
                 if (subType == "html") {
                     IStream *os(0);
+#if(_WIN32_WCE >= 0x600)
                     HRESULT rv = message->OpenProperty(PR_BODY_HTML_A, 0, STGM_WRITE, MAPI_MODIFY | MAPI_CREATE,(LPUNKNOWN*)&os);
+#else
+                    HRESULT rv = message->OpenProperty(PR_BODY, 0, STGM_WRITE, MAPI_MODIFY | MAPI_CREATE,(LPUNKNOWN*)&os);
+#endif
                     if (HR_SUCCEEDED(rv)) {
                         QByteArray body(bodyContent.textContent().toLatin1());
                         writeStream(lastError, os, body.data(), body.count());
@@ -2185,7 +2238,12 @@ QMessageFolderId MapiFolder::parentId() const
         QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
         MapiFolderPtr parent(_store->openFolder(&ignoredError, parentEntryId));
         if (!parent.isNull()) {
-            return parent->id();
+            QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+            MapiFolderPtr root(_store->rootFolder(&ignoredError));
+            if ((ignoredError != QMessageStore::NoError) 
+                || !_store->session()->equal(parent->entryId(), root->entryId())) {
+                return parent->id();
+            }
         }
     }
 
@@ -2640,6 +2698,7 @@ MapiFolderPtr MapiStore::openFolder(QMessageStore::ErrorCode *lastError, const M
 
 MapiFolderPtr MapiStore::openFolderWithKey(QMessageStore::ErrorCode *lastError, const MapiRecordKey &recordKey) const
 {
+#if 0 // Doesn't work on desktop or mobile, only searches top level folders
     MapiFolderPtr result;
 
     MapiFolderPtr root(rootFolder(lastError));
@@ -2701,6 +2760,18 @@ MapiFolderPtr MapiStore::openFolderWithKey(QMessageStore::ErrorCode *lastError, 
     }
 
     return result;
+#else
+    foreach (const QMessageFolderId &folderId, folderIds(lastError)) {
+        MapiRecordKey key = QMessageFolderIdPrivate::folderRecordKey(folderId);
+        if (key == recordKey) {
+            MapiEntryId entryId = QMessageFolderIdPrivate::entryId(folderId);
+            MapiFolderPtr folder(openFolder(lastError, entryId));
+            return folder;
+        }
+    }
+
+    return MapiFolderPtr();
+#endif
 }
 
 bool MapiStore::supports(ULONG featureFlag) const
@@ -2940,6 +3011,19 @@ void MapiStore::notifyEvents(ULONG mask)
     }
 
  }
+
+#ifdef _WIN32_WCE
+
+QString MapiStore::transportName() const
+{
+    QString result;
+        if(!getMapiProperty(_store,PR_CE_TRANSPORT_NAME,&result))
+            qWarning() << "Could not query transport name for store " << name();
+
+    return result;
+}
+
+#endif
 
 HRESULT MapiStore::AdviseSink::QueryInterface(REFIID id, LPVOID FAR* o)
 {
@@ -3770,8 +3854,10 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
 #ifdef _WIN32_WCE
                         if (prop.Value.l & MSGSTATUS_HAS_PR_BODY) {
                             msg->d_ptr->_contentFormat = EDITOR_FORMAT_PLAINTEXT;
+#if(_WIN32_WCE >= 0x600)
                         } else if (prop.Value.l & MSGSTATUS_HAS_PR_BODY_HTML) {
                             msg->d_ptr->_contentFormat = EDITOR_FORMAT_HTML;
+#endif
                         } else if (prop.Value.l & MSGSTATUS_HAS_PR_CE_MIME_TEXT) {
                             // TODO...
                             // This is how MS proivders store HTML, as per http://msdn.microsoft.com/en-us/library/bb446140.aspx
@@ -4012,9 +4098,11 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                     // See if there is a body HTML property
     #ifndef _WIN32_WCE
                     ULONG bodyProperty(PR_BODY_HTML);
-    #else
+    #elif(_WIN32_WCE >= 0x600)
                     // Correct variants discussed at http://blogs.msdn.com/raffael/archive/2008/09/08/mapi-on-windows-mobile-6-programmatically-retrieve-mail-body-sample-code.aspx
                     ULONG bodyProperty(PR_BODY_HTML_A);
+    #else
+                    ULONG bodyProperty(PR_BODY);
     #endif
                     HRESULT rv = message->OpenProperty(bodyProperty, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
                     if (HR_SUCCEEDED(rv)) {
