@@ -229,7 +229,15 @@ CContactIdArray* QContactSymbianSorter::sortL(const CContactIdArray* contactIds,
         }
     }
 
-    CContactIdArray* sortedIds = m_contactDatabase.SortArrayL(contactIds,sort);
+    CContactIdArray* sortedIds(0);
+    // There is a bug in CContactDatabase::SortArrayL, if an empty sort is used
+    // the function returns all contacts (and groups) instead of the given
+    // contact ids
+    if(sortOrders.isEmpty()) {
+        sortedIds = CContactIdArray::NewL(contactIds);
+    } else {
+        sortedIds = m_contactDatabase.SortArrayL(contactIds,sort);
+    }
     CleanupStack::PopAndDestroy(sort);
     return sortedIds;
 }

@@ -81,11 +81,15 @@ public:
     QContact contact(const QContactLocalId& contactId, QContactManager::Error& qtError) const;
 
     //Groups
-    QList<QContactLocalId> groups(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& qtError) const;
+    QList<QContactLocalId> groups(QContactManager::Error& qtError) const;
 
     //Filter & sort order
     QAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter) const;
 	bool sortOrderSupported(const QList<QContactSortOrder>& sortOrders) const;
+    QList<QContactLocalId> sort(
+        QList<QContactLocalId> contactIds,
+        const QList<QContactSortOrder>& sortOrders,
+        QContactManager::Error& error);
     int count() const;
 
     /* Add/Update/Remove */
