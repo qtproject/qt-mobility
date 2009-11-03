@@ -169,8 +169,8 @@ TInt CDatabaseManagerServerSession::InterfaceDefaultSize(const RMessage2& aMessa
 
     TPckgBuf<TInt> size(iByteArray->size());
     
-    aMessage.Write(2, size);
-    aMessage.Write(3, LastErrorCode());
+    aMessage.Write(1, size);
+    aMessage.Write(2, LastErrorCode());
     delete defaultInterfaceBuf;
     
     return ret;
@@ -215,7 +215,7 @@ TInt CDatabaseManagerServerSession::RegisterServiceL(const RMessage2& aMessage)
     if (ret != KErrNone)
         {
         iDb->lastError().setError(DBError::UnknownError);
-        aMessage.Write(2, LastErrorCode());
+        aMessage.Write(1, LastErrorCode());
         delete serviceMetaDataBuf8;
         return ret;
         }
@@ -227,7 +227,7 @@ TInt CDatabaseManagerServerSession::RegisterServiceL(const RMessage2& aMessage)
     
     iDb->registerService(results);
  
-    aMessage.Write(2, LastErrorCode());
+    aMessage.Write(1, LastErrorCode());
 
     delete serviceMetaDataBuf8;
     
@@ -246,7 +246,7 @@ TInt CDatabaseManagerServerSession::UnregisterServiceL(const RMessage2& aMessage
     if (ret != KErrNone)
         {
         iDb->lastError().setError(DBError::UnknownError);
-        aMessage.Write(2, LastErrorCode());
+        aMessage.Write(1, LastErrorCode());
         delete serviceNameBuf;
         return ret;
         }
@@ -254,7 +254,7 @@ TInt CDatabaseManagerServerSession::UnregisterServiceL(const RMessage2& aMessage
     QString serviceName = QString::fromUtf16(ptrToBuf.Ptr(), ptrToBuf.Length());
     iDb->unregisterService(serviceName);
     
-    aMessage.Write(2, LastErrorCode());
+    aMessage.Write(1, LastErrorCode());
     delete serviceNameBuf;
     
     return ret;
@@ -290,8 +290,8 @@ TInt CDatabaseManagerServerSession::InterfacesSizeL(const RMessage2& aMessage)
     in << interfaces;
 
     TPckgBuf<TInt> size(iByteArray->size());
-    aMessage.Write(2, size);
-    aMessage.Write(3, LastErrorCode());
+    aMessage.Write(1, size);
+    aMessage.Write(2, LastErrorCode());
     
     delete buf;
     return ret;
@@ -333,8 +333,8 @@ TInt CDatabaseManagerServerSession::ServiceNamesSizeL(const RMessage2& aMessage)
     in << serviceNames;
 
     TPckgBuf<TInt> size(iByteArray->size());
-    aMessage.Write(2, size);
-    aMessage.Write(3, LastErrorCode());
+    aMessage.Write(1, size);
+    aMessage.Write(2, LastErrorCode());
     delete serviceNamesBuf;
     
     return ret;
@@ -366,7 +366,7 @@ TInt CDatabaseManagerServerSession::SetInterfaceDefaultL(const RMessage2& aMessa
     if (ret != KErrNone || ret2 != KErrNone)
         {
         iDb->lastError().setError(DBError::UnknownError);
-        aMessage.Write(2, LastErrorCode());
+        aMessage.Write(1, LastErrorCode());
         delete serviceNameBuf;
         delete interfaceNameBuf;
         return (ret == KErrNone) ? ret2 : ret;
@@ -391,7 +391,7 @@ TInt CDatabaseManagerServerSession::SetInterfaceDefaultL(const RMessage2& aMessa
 
     iDb->setInterfaceDefault(descriptors[latestIndex]);
 
-    aMessage.Write(3, LastErrorCode());
+    aMessage.Write(1, LastErrorCode());
     delete serviceNameBuf;
     delete interfaceNameBuf;
     
@@ -463,13 +463,11 @@ void CDatabaseManagerServerSession::ServiceAdded(const QString& aServiceName)
     {    
         if (iWaitingAsyncRequest)
         {
-        //TPckgBuf<TInt> scope(aScope);
         TPckgBuf<TInt> state(0);
         TPtrC str(reinterpret_cast<const TUint16*>(aServiceName.utf16()));
         iMsg.Write(0, str);
-        //iMsg.Write(1, scope);
-        iMsg.Write(2, state);
-        iMsg.Write(3, LastErrorCode());
+        iMsg.Write(1, state);
+        iMsg.Write(2, LastErrorCode());
         iMsg.Complete(ENotifySignalComplete); 
         iWaitingAsyncRequest = EFalse;
         }    
@@ -479,13 +477,11 @@ void CDatabaseManagerServerSession::ServiceRemoved(const QString& aServiceName)
 {
     if (iWaitingAsyncRequest)
         {
-        //TPckgBuf<TInt> scope(aScope);
         TPckgBuf<TInt> state(1);
         TPtrC str(reinterpret_cast<const TUint16*>(aServiceName.utf16()));
         iMsg.Write(0, str);
-        //iMsg.Write(1, scope);
-        iMsg.Write(2, state);
-        iMsg.Write(3, LastErrorCode());
+        iMsg.Write(1, state);
+        iMsg.Write(2, LastErrorCode());
         iMsg.Complete(ENotifySignalComplete);
         iWaitingAsyncRequest = EFalse;
         }
