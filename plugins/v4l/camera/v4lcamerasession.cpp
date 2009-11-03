@@ -72,6 +72,8 @@ V4LCameraSession::V4LCameraSession(QObject *parent)
     m_device = "/dev/video1";
     preview = false;
     toFile = false;
+    converter = 0;
+    active  = false;
 
     sfd = ::open(m_device.constData(), O_RDWR);
 
@@ -103,6 +105,7 @@ V4LCameraSession::V4LCameraSession(QObject *parent)
     m_surface = 0;
     m_windowSize = QSize(320,240);
     pixelF = QVideoFrame::Format_RGB32;
+    savedPixelF = QVideoFrame::Format_RGB32;
 }
 
 V4LCameraSession::~V4LCameraSession()
@@ -327,6 +330,7 @@ void V4LCameraSession::setDevice(const QString &device)
         ::close(sfd);
         sfd = -1;
     }
+    active = false;
 }
 
 QList<QVideoFrame::PixelFormat> V4LCameraSession::supportedPixelFormats()
@@ -359,6 +363,7 @@ QVideoFrame::PixelFormat V4LCameraSession::pixelFormat() const
 void V4LCameraSession::setPixelFormat(QVideoFrame::PixelFormat fmt)
 {
     pixelF = fmt;
+    savedPixelF = fmt;
 }
 
 QList<QSize> V4LCameraSession::supportedResolutions()
@@ -401,22 +406,29 @@ void V4LCameraSession::previewMode(bool value)
 
 void V4LCameraSession::captureToFile(bool value)
 {
+    if(toFile && m_file.isOpen())
+        m_file.close();
+
     toFile = value;
 }
 
 void V4LCameraSession::record()
 {
-    if(sfd > 0) {
-        emit stateChanged(m_state);
+    pixelF = savedPixelF;
+
+    if(active && toFile && m_state != QMediaRecorder::PausedState) {
+        // Camera is active and captureToFile(true)
+        m_state = QMediaRecorder::RecordingState;
+        emit recordStateChanged(m_state);
         return;
-    }
+    } else if(sfd > 0)
+        return;
 
     sfd = ::open(m_device.constData(), O_RDWR);
-
     if(sfd == -1) {
         qWarning()<<"can't open v4l "<<m_device;
         m_state = QMediaRecorder::StoppedState;
-        emit stateChanged(m_state);
+        emit cameraStateChanged(QCamera::StoppedState);
         return;
     }
 
@@ -463,7 +475,7 @@ void V4LCameraSession::record()
                     match = true;
                     converter = CameraFormatConverter::createFormatConverter(pixelF,m_windowSize.width(),
                                                                              m_windowSize.height());
-                    qWarning()<<"found a converter match from: "<<pixelF<<" to RGB565";
+                    //qWarning()<<"found a converter match from: "<<pixelF<<" to RGB565";
                 }
                 if (!match) {
                     // fallback, cant convert your format so set to one that I can get working!
@@ -474,7 +486,7 @@ void V4LCameraSession::record()
                             match = true;
                             converter = CameraFormatConverter::createFormatConverter(pixelF,m_windowSize.width(),
                                     m_windowSize.height());
-                            qWarning()<<"fallback, convert from: "<<pixelF<<" to RGB565";
+                            //qWarning()<<"fallback, convert from: "<<pixelF<<" to RGB565";
                             break;
                         }
                     }
@@ -501,7 +513,7 @@ void V4LCameraSession::record()
             int err = errno;
             qWarning() << "error setting camera format:" << strerror(err);
             m_state = QMediaRecorder::StoppedState;
-            emit stateChanged(m_state);
+            emit cameraStateChanged(QCamera::StoppedState);
             return;
         }
     }
@@ -514,10 +526,10 @@ void V4LCameraSession::record()
     ret = ::ioctl(sfd, VIDIOC_REQBUFS, &req);
     if(ret == -1) {
         qWarning()<<"error allocating buffers";
-        emit stateChanged(m_state = QMediaRecorder::StoppedState);
+        m_state = QMediaRecorder::StoppedState;
+        emit cameraStateChanged(QCamera::StoppedState);
         return;
     }
-
     for(int i=0;i<(int)req.count;++i) {
         struct v4l2_buffer buf;
         memset(&buf, 0 , sizeof(buf));
@@ -527,7 +539,8 @@ void V4LCameraSession::record()
         ret = ::ioctl(sfd, VIDIOC_QUERYBUF, &buf);
         if(ret == -1) {
             qWarning()<<"error allocating buffers";
-            emit stateChanged(QMediaRecorder::StoppedState);
+            m_state = QMediaRecorder::StoppedState;
+            emit cameraStateChanged(QCamera::StoppedState);
             return;
         }
         void* mmap_data = ::mmap(0,buf.length,PROT_READ | PROT_WRITE,MAP_SHARED,sfd,buf.m.offset);
@@ -535,7 +548,8 @@ void V4LCameraSession::record()
             qWarning()<<"can't mmap video data";
             ::close(sfd);
             sfd = -1;
-            emit stateChanged(QMediaRecorder::StoppedState);
+            m_state = QMediaRecorder::StoppedState;
+            emit cameraStateChanged(QCamera::StoppedState);
             return;
         }
         video_buffer  v4l_buf;
@@ -543,7 +557,6 @@ void V4LCameraSession::record()
         v4l_buf.length = buf.length;
         buffers.append(v4l_buf);
     }
-
     // start stream
     for(int i=0;i<(int)req.count;++i) {
         struct v4l2_buffer buf;
@@ -556,7 +569,8 @@ void V4LCameraSession::record()
             qWarning()<<"can't mmap video data";
             ::close(sfd);
             sfd = -1;
-            emit stateChanged(m_state = QMediaRecorder::StoppedState);
+            m_state = QMediaRecorder::StoppedState;
+            emit cameraStateChanged(QCamera::StoppedState);
             return;
         }
     }
@@ -567,13 +581,13 @@ void V4LCameraSession::record()
         qWarning()<<"can't start capture";
         ::close(sfd);
         sfd = -1;
-        emit stateChanged(m_state = QMediaRecorder::StoppedState);
+        m_state = QMediaRecorder::StoppedState;
+        emit cameraStateChanged(QCamera::StoppedState);
         return;
     }
     notifier = new QSocketNotifier(sfd, QSocketNotifier::Read, this);
     connect(notifier, SIGNAL(activated(int)), this, SLOT(captureFrame()));
     notifier->setEnabled(1);
-
     if (!converter) {
         QVideoSurfaceFormat requestedFormat(m_windowSize,pixelF);
 
@@ -583,15 +597,17 @@ void V4LCameraSession::record()
             m_surface->start(requestedFormat);
 
             m_state = QMediaRecorder::RecordingState;
-            emit stateChanged(m_state);
+            emit cameraStateChanged(QCamera::ActiveState);
             timeStamp.restart();
         }
     } else {
         QVideoSurfaceFormat requestedFormat(m_windowSize,QVideoFrame::Format_RGB32);
         m_surface->start(requestedFormat);
-        emit stateChanged(m_state = QMediaRecorder::RecordingState);
+        m_state = QMediaRecorder::RecordingState;
+        emit cameraStateChanged(QCamera::ActiveState);
         timeStamp.restart();
     }
+    active = true;
 }
 
 void V4LCameraSession::pause()
@@ -609,13 +625,23 @@ void V4LCameraSession::pause()
         ::close(sfd);
         sfd = -1;
         m_state = QMediaRecorder::PausedState;
-        emit stateChanged(m_state);
+        emit recordStateChanged(m_state);
     }
 }
 
 void V4LCameraSession::stop()
 {
     if(sfd != -1) {
+
+        if(toFile && m_file.isOpen() && m_state != QMediaRecorder::StoppedState) {
+            // just stop writing to file.
+            m_file.close();
+
+            m_state = QMediaRecorder::StoppedState;
+            emit recordStateChanged(m_state);
+            return;
+        }
+
         v4l2_buf_type buf_type;
         buf_type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         ::ioctl(sfd, VIDIOC_STREAMOFF, &buf_type);
@@ -643,20 +669,18 @@ void V4LCameraSession::stop()
         ::close(sfd);
         sfd = -1;
         m_state = QMediaRecorder::StoppedState;
-        emit stateChanged(m_state);
+        emit cameraStateChanged(QCamera::StoppedState);
 
         if(converter)
             delete converter;
         converter = 0;
+        active = false;
     }
-    if(m_file.isOpen())
-        m_file.close();
 }
 
 void V4LCameraSession::captureFrame()
 {
     if(sfd == -1) return;
-
     v4l2_buffer buf;
     memset(&buf, 0, sizeof(struct v4l2_buffer));
     buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -666,7 +690,6 @@ void V4LCameraSession::captureFrame()
         qWarning()<<"error reading frame";
         return;
     }
-
     //qWarning()<<"size: "<<buf.bytesused<<", time: "<<buf.timestamp.tv_sec;
 
     if(m_surface) {

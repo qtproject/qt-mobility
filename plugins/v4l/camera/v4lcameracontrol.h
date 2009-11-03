@@ -60,9 +60,6 @@ public:
     void stop();
     QCamera::State state() const;
 
-private slots:
-    void updateState(QMediaRecorder::State);
-
 private:
     V4LCameraSession *m_session;
     V4LCameraService *m_service;

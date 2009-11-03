@@ -45,10 +45,17 @@
 
 /*!
     \class QRadioTunerControl
-    \ingroup multimedia
-
     \preliminary
-    \brief The abstract class for controlling the tuning of analog radio devices.
+    \brief The QRadioTunerControl class provides access to the radio tuning functionality of a
+    QMediaService.
+
+    If a QMediaService can tune an anolog radio device it will implement QRadioTunerControl.  This
+    control provides a means to tune a radio device to a specific \l {setFrequency()}{frequency} as
+    well as search \l {searchForward()}{forwards} and \l {searchBackward()}{backwards} for a
+    signal.
+
+    The functionality provided by this control is exposed to application code through the
+    QRadioTuner class.
 
     The interface name of QRadioTunerControl is \c com.nokia.Qt.QRadioTunerControl/1.0 as
     defined in QRadioTunerControl_iid.
@@ -67,7 +74,7 @@
 */
 
 /*!
-    Construct a radio tuner control class parented to \a parent.
+    Constructs a radio tuner control with the given \a parent.
 */
 
 QRadioTunerControl::QRadioTunerControl(QObject *parent):
@@ -76,7 +83,7 @@ QRadioTunerControl::QRadioTunerControl(QObject *parent):
 }
 
 /*!
-    Destruct the radio tuner control class.
+    Destroys a radio tuner control.
 */
 
 QRadioTunerControl::~QRadioTunerControl()
@@ -86,61 +93,68 @@ QRadioTunerControl::~QRadioTunerControl()
 /*!
     \fn QRadioTuner::Band QRadioTunerControl::band() const
 
-    Returns the current band being used.
+    Returns the frequency band a radio tuner is tuned to.
 */
 
 /*!
     \fn void QRadioTunerControl::bandChanged(QRadioTuner::Band band)
 
-    Signal emitted when \a band changed.
+    Signals that the frequency \a band a radio tuner is tuned to has changed.
 */
 
 /*!
     \fn void QRadioTunerControl::setBand(QRadioTuner::Band band)
 
-    Set current band to \a band.
+    Sets the frequecy \a band a radio tuner is tuned to.
+
+    Changing the frequency band will reset the frequency to the minimum frequency of the new band.
 */
 
 /*!
     \fn bool QRadioTunerControl::isBandSupported(QRadioTuner::Band band) const
 
-    Return true if \a band is available.
+    Identifies if a frequency \a band is supported.
+
+    Returns true if the band is supported, and false if it is not.
 */
 
 /*!
     \fn int QRadioTunerControl::frequency() const
 
-    Returns the current frequency being used.
+    Returns the frequency a radio tuner is tuned to.
 */
 
 /*!
     \fn int QRadioTunerControl::frequencyStep(QRadioTuner::Band band) const
 
-    Returns the incremental step size in Hertz when changing frequency for \a band.
+    Returns the number of Hertz to increment the frequency by when stepping through frequencies
+    within a given \a band.
 */
 
 /*!
     \fn QPair<int,int> QRadioTunerControl::frequencyRange(QRadioTuner::Band band) const
 
-    Returns the frequency range for the \a band.
+    Returns a frequency \a band's minimum and maximum frequency.
 */
 
 /*!
     \fn void QRadioTunerControl::setFrequency(int frequency)
 
-    Set the frequency to \a frequency.
+    Sets the \a frequency a radio tuner is tuned to.
 */
 
 /*!
     \fn bool QRadioTunerControl::isStereo() const
 
-    Return true if in stereo mode.
+    Identifies if a radio tuner is receiving a stereo signal.
+
+    Returns true if the tuner is receiving a stereo signal, and false if it is not.
 */
 
 /*!
     \fn QRadioTuner::StereoMode QRadioTunerControl::stereoMode() const
 
-    Returns the stereo mode.
+    Returns a radio tuner's stereo mode.
 
     \sa QRadioTuner::StereoMode
 */
@@ -148,7 +162,7 @@ QRadioTunerControl::~QRadioTunerControl()
 /*!
     \fn void QRadioTunerControl::setStereoMode(QRadioTuner::StereoMode mode)
 
-    Sets stereo mode to \a mode.
+    Sets a radio tuner's stereo \a mode.
 
     \sa QRadioTuner::StereoMode
 */
@@ -156,55 +170,59 @@ QRadioTunerControl::~QRadioTunerControl()
 /*!
     \fn int QRadioTunerControl::signalStrength() const
 
-    Return the current signal strength as a percentage.
+    Return a radio tuner's current signal strength as a percentage.
 */
 
 /*!
     \fn int QRadioTunerControl::volume() const
 
-    Returns the volume as a percentage.
+    Returns the volume of a radio tuner's audio output as a percentage.
 */
 
 /*!
     \fn void QRadioTunerControl::setVolume(int volume)
 
-    Set the volume to \a volume (percentage)
+    Sets the percentage \a volume of a radio tuner's audio output.
 */
 
 /*!
     \fn bool QRadioTunerControl::isMuted() const
 
-    Returns true if muted.
+    Identifies if a radio tuner's audio output is muted.
+
+    Returns true if the audio is muted, and false if it is not.
 */
 
 /*!
     \fn void QRadioTunerControl::setMuted(bool muted)
 
-    Set mute state to \a muted.
+    Sets the \a muted state of a radio tuner's audio output.
 */
 
 /*!
     \fn bool QRadioTunerControl::isSearching() const
 
-    Returns true if currently scanning.
+    Identifies if a radio tuner is currently scanning for signal.
+
+    Returns true if the tuner is scanning, and false if it is not.
 */
 
 /*!
     \fn  void QRadioTunerControl::searchForward()
 
-    Start scanning, ascending freqeuncy.
+    Starts a forward scan for a signal, starting from the current \l frequency().
 */
 
 /*!
     \fn void QRadioTunerControl::searchBackward()
 
-    Start scanning, descending frequency.
+    Starts a backwards scan for a signal, starting from the current \l frequency().
 */
 
 /*!
     \fn void QRadioTunerControl::cancelSearch()
 
-    Stop any scanning being done.
+    Stops scanning for a signal.
 */
 
 /*!
@@ -222,53 +240,53 @@ QRadioTunerControl::~QRadioTunerControl()
 /*!
     \fn QRadioTuner::Error QRadioTunerControl::error() const
 
-    Returns the error state that has occurred.
+    Returns the error state of a radio tuner.
 */
 
 /*!
     \fn QString QRadioTunerControl::errorString() const
 
-    Returns the current error string.
+    Returns a string describing a radio tuner's error state.
 */
 
 /*!
     \fn void QRadioTunerControl::frequencyChanged(int frequency)
 
-    Signal emitted when \a frequency changed.
+    Signals that the \a frequency a radio tuner is tuned to has changed.
 */
 
 /*!
     \fn void QRadioTunerControl::stereoStatusChanged(bool stereo)
 
-    Signal emitted when \a stereo mode changed.
+    Signals that the \a stereo state of a radio tuner has changed.
 */
 
 /*!
     \fn void QRadioTunerControl::searchingStatusChanged(bool searching)
 
-    Signal emitted when \a searching status changed.
+    Signals that the \a searching state of a radio tuner has changed.
 */
 
 /*!
-    \fn void QRadioTunerControl::signalStrengthChanged(int signalStrength)
+    \fn void QRadioTunerControl::signalStrengthChanged(int strength)
 
-    Signal emitted when \a signalStrength changed (percentage).
+    Signals that the percentage \a strength of the signal received by a radio tuner has changed.
 */
 
 /*!
     \fn void QRadioTunerControl::volumeChanged(int volume)
 
-    Signal emitted when \a volume changed (percentage).
+    Signals that the percentage \a volume of radio tuner's audio output has changed.
 */
 
 /*!
     \fn void QRadioTunerControl::mutingChanged(bool muted)
 
-    Signal emitted when \a muted state changed.
+    Signals that the \a muted state of a radio tuner's audio output has changed.
 */
 
 /*!
-    \fn void QRadioTunerControl::error(QRadioTuner::Error err)
+    \fn void QRadioTunerControl::error(QRadioTuner::Error error)
 
-    Signal emitted when an error of \a err has occurred.
+    Signals that an \a error has occured.
 */

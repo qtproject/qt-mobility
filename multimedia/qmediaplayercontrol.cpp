@@ -46,11 +46,18 @@
 
 /*!
     \class QMediaPlayerControl
-    \ingroup multimedia
-
     \preliminary
-    \brief The abstract class for controling media playback, this is provided
-    by a QMediaService object, and is used by QMediaPlayer for playback.
+    \brief The QMediaPlayerControl provides access to the media playing functionality of a
+    QMediaService.
+
+    If a QMediaService can play media is will implement QMediaPlayerControl.  This control provides
+    a means to set the \l {setMedia()}{media} to play, \l {play()}{start}, \l {pause()} {pause} and
+    \l {stop()}{stop} playback, \l {setPosition()}{seek}, and control the \l {setVolume()}{volume}.
+    It also provides feedback on the \l {duration()}{duration} of the media, the current
+    \l {position()}{position}, and \l {bufferStatus()}{buffering} progress.
+
+    The functionality provided by this control is exposed to application code through the
+    QMediaPlayer class.
 
     The interface name of QMediaPlayerControl is \c com.nokia.Qt.QMediaPlayerControl/1.0 as
     defined in QMediaPlayerControl_iid.

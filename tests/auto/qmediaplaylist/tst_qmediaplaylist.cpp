@@ -43,6 +43,12 @@
 #include <QDebug>
 #include "multimedia/qmediaplaylist.h"
 
+
+//Temporary workaround to ensure qrand() is called before QPluginLoader
+//and destroyed after, since QPluginLoader destructor depends on qrand()
+//global static data via ~QSettings -> QMap::insert() -> qrand()
+static int globalStaticRand = qrand();
+
 class tst_QMediaPlaylist : public QObject
 {
     Q_OBJECT

@@ -66,10 +66,10 @@ public:
     virtual void close() = 0;
 };
 
-class Q_MEDIA_EXPORT QMediaPlaylistWritter
+class Q_MEDIA_EXPORT QMediaPlaylistWriter
 {
 public:
-    virtual ~QMediaPlaylistWritter();
+    virtual ~QMediaPlaylistWriter();
 
     virtual bool writeItem(const QMediaContent &content) = 0;
     virtual void close() = 0;
@@ -85,7 +85,7 @@ struct Q_MEDIA_EXPORT QMediaPlaylistIOInterface : public QFactoryInterface
     virtual QMediaPlaylistReader *createReader(QIODevice *device, const QByteArray &format = QByteArray()) = 0;
     virtual QMediaPlaylistReader *createReader(const QUrl& location, const QByteArray &format = QByteArray()) = 0;
 
-    virtual QMediaPlaylistWritter *createWritter(QIODevice *device, const QByteArray &format) = 0;
+    virtual QMediaPlaylistWriter *createWriter(QIODevice *device, const QByteArray &format) = 0;
 };
 
 #define QMediaPlaylistIOInterface_iid "com.nokia.Qt.QMediaPlaylistIOInterface"
@@ -109,7 +109,7 @@ public:
     virtual QMediaPlaylistReader *createReader(QIODevice *device, const QByteArray &format = QByteArray()) = 0;
     virtual QMediaPlaylistReader *createReader(const QUrl& location, const QByteArray &format = QByteArray()) = 0;
 
-    virtual QMediaPlaylistWritter *createWritter(QIODevice *device, const QByteArray &format) = 0;
+    virtual QMediaPlaylistWriter *createWriter(QIODevice *device, const QByteArray &format) = 0;
 };
 
 #endif // QMEDIAPLAYLISTIOPLUGIN_H

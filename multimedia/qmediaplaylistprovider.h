@@ -93,7 +93,7 @@ protected:
     QMediaPlaylistProvider(QMediaPlaylistProviderPrivate &dd, QObject *parent);
 
 private:
-    Q_DECLARE_PRIVATE(QMediaPlaylistProvider);
+    Q_DECLARE_PRIVATE(QMediaPlaylistProvider)
 };
 
 #endif // QMEDIAPLAYLISTPROVIDER_H

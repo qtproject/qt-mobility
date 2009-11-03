@@ -74,8 +74,18 @@
     QCamera or QAudioCaptureSource.
 
     \code
+    // Audio only recording
     audioSource = new QAudioCaptureSource;
     recorder = new QMediaRecorder(audioSource);
+
+    recorder->setOutputLocation(QUrl::fromLocalFile(fileName));
+    recorder->record();
+    \endcode
+
+    \code
+    // Audio/Video recording
+    camera = new QCamera(deviceName);
+    recorder = new QMediaRecorder(camera);
 
     recorder->setOutputLocation(QUrl::fromLocalFile(fileName));
     recorder->record();
@@ -169,7 +179,9 @@ void QMediaRecorderPrivate::_q_error(int error, const QString &errorString)
 
 
 /*!
-    Construct a media recorder object with \a mediaObject with the given \a parent.
+    Constructs a media recorder which records the media produced by \a mediaObject.
+
+    The \a parent is passed to QMediaObject.
 */
 
 QMediaRecorder::QMediaRecorder(QMediaObject *mediaObject, QObject *parent):
@@ -181,7 +193,7 @@ QMediaRecorder::QMediaRecorder(QMediaObject *mediaObject, QObject *parent):
 }
 
 /*!
-    Destruct the media recorder object.
+    Destroys a media object.
 */
 
 QMediaRecorder::~QMediaRecorder()
@@ -190,11 +202,7 @@ QMediaRecorder::~QMediaRecorder()
 
 /*!
     \property QMediaRecorder::outputLocation
-    \brief Destination location of media content.
-*/
-
-/*!
-    Returns the output location being used.
+    \brief the destination location of media content.
 */
 
 QUrl QMediaRecorder::outputLocation() const
@@ -227,9 +235,9 @@ QMediaRecorder::State QMediaRecorder::state() const
 }
 
 /*!
-    Return the current error state.
+    Returns the current error state.
 
-    \sa QMediaRecorder::Error
+    \sa errorString()
 */
 
 QMediaRecorder::Error QMediaRecorder::error() const
@@ -238,7 +246,9 @@ QMediaRecorder::Error QMediaRecorder::error() const
 }
 
 /*!
-    Return the current error string.
+    Returns a string describing the current error state.
+
+    \sa error()
 */
 
 QString QMediaRecorder::errorString() const
@@ -248,7 +258,8 @@ QString QMediaRecorder::errorString() const
 
 /*!
     \property QMediaRecorder::duration
-    \brief Recorded media duration in milliseconds.
+
+    \brief the recorded media duration in milliseconds.
 */
 
 qint64 QMediaRecorder::duration() const
@@ -258,7 +269,7 @@ qint64 QMediaRecorder::duration() const
 
 
 /*!
-  Returns the list of supported container format MIME types.
+    Returns a list of MIME types of supported container formats.
 */
 QStringList QMediaRecorder::supportedFormats() const
 {
@@ -267,16 +278,16 @@ QStringList QMediaRecorder::supportedFormats() const
 }
 
 /*!
-  Returns the description of container \a format.
+    Returns a description of a container format \a mimeType.
 */
-QString QMediaRecorder::formatDescription(const QString &format) const
+QString QMediaRecorder::formatDescription(const QString &mimeType) const
 {
     return d_func()->formatControl ?
-           d_func()->formatControl->formatDescription(format) : QString();
+           d_func()->formatControl->formatDescription(mimeType) : QString();
 }
 
 /*!
-  Returns the mime type for the container.
+    Returns the MIME type of the selected container format.
 */
 
 QString QMediaRecorder::format() const
@@ -286,7 +297,7 @@ QString QMediaRecorder::format() const
 }
 
 /*!
-  Returns the list of supported audio codecs.
+    Returns a list of supported audio codecs.
 */
 QStringList QMediaRecorder::supportedAudioCodecs() const
 {
@@ -295,7 +306,7 @@ QStringList QMediaRecorder::supportedAudioCodecs() const
 }
 
 /*!
-  Returns description of audio \a codec.
+    Returns a description of an audio \a codec.
 */
 QString QMediaRecorder::audioCodecDescription(const QString &codec) const
 {
@@ -314,7 +325,9 @@ QList<int> QMediaRecorder::supportedAudioSampleRates() const
 }
 
 /*!
-  Returns the smallest resolution, video encoder supports.
+    Return the minimum resolution video can be encoded at.
+
+    \sa QVideoEncoderSettings::resolution(), maximumResolution()
 */
 QSize QMediaRecorder::minimumResolution() const
 {
@@ -323,7 +336,9 @@ QSize QMediaRecorder::minimumResolution() const
 }
 
 /*!
-  Returns the largest resolution, video encoder supports.
+    Returns the maximum resolution video can be encoded at.
+
+    \sa QVideoEncoderSettings::resolution(), minimumResolution()
 */
 QSize QMediaRecorder::maximumResolution() const
 {
@@ -332,10 +347,10 @@ QSize QMediaRecorder::maximumResolution() const
 }
 
 /*!
-  Returns the list of resolutions if the video encoder supports only the limited set
-  of video frame sizes, otherwise returns an empty list.
+    Returns a list of resolutions video can be encoded at.  An empty list is returned if the video
+    encoder supports arbitrary resolutions within the minimum and maximum range.
 
-  \sa minimumResolution(), maximumResolution()
+    \sa QVideoEncoderSettings::resolution(), minimumResolution(), maximumResolution()
 */
 QList<QSize> QMediaRecorder::supportedResolutions() const
 {
@@ -344,7 +359,9 @@ QList<QSize> QMediaRecorder::supportedResolutions() const
 }
 
 /*!
-  Returns the smallest frame rate, video encoder supports.
+    Returns the minimum frame rate video can encoded at.
+
+    \sa QVideoEncoderSettings::frameRate(), maximumFrameRate()
 */
 qreal QMediaRecorder::minimumFrameRate()
 {
@@ -353,7 +370,9 @@ qreal QMediaRecorder::minimumFrameRate()
 }
 
 /*!
-  Returns the largest frame rate, video encoder supports.
+    Returns the maximum frame rate video can be encoded at.
+
+    \sa QVideoEncoderSettings::frameRate(), minimumFrameRate()
 */
 qreal QMediaRecorder::maximumFrameRate()
 {
@@ -362,10 +381,12 @@ qreal QMediaRecorder::maximumFrameRate()
 }
 
 /*!
-  Returns the list of frame rates if the video encoder supports only the limited set
-  of video frame rates, otherwise returns an empty list.
+    Returns a list of frame rates video can be encoded at. An empty list is returned if the encoder
+    supports arbitrary frame rates within the minimum and maximum range.
+
+    \sa QVideoEncoderSettings::frameRate(), minimumFrameRate(), maximumFrameRate()
 */
-QList< qreal > QMediaRecorder::supportedFrameRates() const
+QList<qreal> QMediaRecorder::supportedFrameRates() const
 {
     return d_func()->videoControl ?
            d_func()->videoControl->supportedFrameRates() : QList<qreal>();
@@ -373,7 +394,7 @@ QList< qreal > QMediaRecorder::supportedFrameRates() const
 
 
 /*!
-  Returns the list of supported video codecs.
+    Returns a list of supported video codecs.
 */
 QStringList QMediaRecorder::supportedVideoCodecs() const
 {
@@ -382,7 +403,7 @@ QStringList QMediaRecorder::supportedVideoCodecs() const
 }
 
 /*!
-  Returns description of video \a codec.
+    Returns a description of a video \a codec.
 */
 QString QMediaRecorder::videoCodecDescription(const QString &codec) const
 {
@@ -391,7 +412,7 @@ QString QMediaRecorder::videoCodecDescription(const QString &codec) const
 }
 
 /*!
-    Returns the audio encoding settings being used.
+    Returns the audio encoder settings being used.
 */
 
 QAudioEncoderSettings QMediaRecorder::audioSettings() const
@@ -401,7 +422,7 @@ QAudioEncoderSettings QMediaRecorder::audioSettings() const
 }
 
 /*!
-    Returns th video encoding settings being used.
+    Returns the video encoder settings being used.
 */
 
 QVideoEncoderSettings QMediaRecorder::videoSettings() const
@@ -411,20 +432,20 @@ QVideoEncoderSettings QMediaRecorder::videoSettings() const
 }
 
 /*!
-    Configure the mediarecorder to use \a audioSettings, \a videoSettings and \a format.
+    Sets the \a audio and \a video encoder settings and container \a format MIME type.
 */
 
-void QMediaRecorder::setEncodingSettings(const QAudioEncoderSettings &audioSettings,
-                                         const QVideoEncoderSettings &videoSettings,
+void QMediaRecorder::setEncodingSettings(const QAudioEncoderSettings &audio,
+                                         const QVideoEncoderSettings &video,
                                          const QString &format)
 {
     Q_D(QMediaRecorder);
 
     if (d->audioControl)
-        d->audioControl->setAudioSettings(audioSettings);
+        d->audioControl->setAudioSettings(audio);
 
     if (d->videoControl)
-        d->videoControl->setVideoSettings(videoSettings);
+        d->videoControl->setVideoSettings(video);
 
     if (d->formatControl)
         d->formatControl->setFormat(format);
@@ -491,19 +512,19 @@ void QMediaRecorder::stop()
 /*!
     \fn QMediaRecorder::stateChanged(State state)
 
-    Signal emitted when \a state changed.
+    Signals that a media recorder's \a state has changed.
 */
 
 /*!
     \fn QMediaRecorder::durationChanged(qint64 duration)
 
-    Signal emitted when \a duration changed.
+    Signals that the \a duration of the recorded media has changed.
 */
 
 /*!
     \fn QMediaRecorder::error(QMediaRecorder::Error error)
 
-    Signal emitted when \a error changed.
+    Signals that an \a error has occurred.
 */
 
 

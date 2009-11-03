@@ -76,6 +76,11 @@ void QMediaPluginLoader::load()
     if (!m_instances.isEmpty())
         return;
 
+    //To ensure qrand() global static data is loaded before QPluginLoader
+    //since QPluginLoader depends on qrand global static data
+    //via ~QSettings -> QMap::insert() -> qrand()
+    qrand();
+
     QStringList     paths = QCoreApplication::libraryPaths();
 
     foreach (QString const &path, paths) {

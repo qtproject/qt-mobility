@@ -45,9 +45,15 @@
 /*!
     \class QImageEncoderControl
     \preliminary
+    \brief The QImageEncoderControl class provides access to the settings of a media service that
+    performs image encoding.
 
-    The interface name of QCameraControl is \c com.nokia.Qt.QCameraControl/1.0 as
-    defined in QCameraControl_iid.
+    If a QMediaService supports encoding image data it will implement QImageEncoderControl.  This
+    control provides functions for setting the image \l {setImageCodec()}{codec}, and the
+    \l {setResolution()}{resolution} and \l {setQuality()}{quality} of the encoded image.
+
+    The interface name of QImageEncoderControl is \c com.nokia.Qt.QImageEncoderControl/1.0 as
+    defined in QImageEncoderControl_iid.
 
     \sa QMediaService::control()
 */
@@ -80,9 +86,8 @@ QImageEncoderControl::~QImageEncoderControl()
 /*!
     \fn QImageEncoderControl::supportedResolutions() const
 
-    Returns a list of specific supported resolutions.  If the encoder supports arbitrary resolutions
-    within the minimum and maximum range, then an empty list is returned.
-
+    Returns a list of supported resolutions.  This will return an empty list if the encoder supports
+    arbitrary resolutions within the minimum and maximum range.
 
     \sa resolution(), minimumResolution(), maximumResolution()
 
@@ -91,7 +96,7 @@ QImageEncoderControl::~QImageEncoderControl()
 /*!
     \fn QImageEncoderControl::resolution() const
 
-    Returns the resolution of encoded image.
+    Returns the resolution of the encoded image.
 */
 
 /*!
@@ -113,10 +118,10 @@ QImageEncoderControl::~QImageEncoderControl()
 /*!
     \fn QImageEncoderControl::setResolution(const QSize &resolution)
 
-    Sets the image \a resolution.
+    Sets the \a resolution of the encoded image.
 
-    If an empty size is passed, the media service should choose the default or content related
-    resolution value.
+    An empty QSize indicates the encoder should make an optimal choice based on what is available
+    from the video source and the limitations of the codec.
 */
 
 /*!

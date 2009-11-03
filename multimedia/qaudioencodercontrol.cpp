@@ -45,11 +45,17 @@
 
 /*!
     \class QAudioEncoderControl
-    \ingroup multimedia
-
     \preliminary
-    \brief The abstract class for controling audio encoding parameters, this is provided
-    by a QMediaService object, and is used by QMediaRecorder.
+    \brief The QAudioEncoderControl class provides access to the settings of a media service that
+    performs audio encoding.
+
+    If a QMediaService supports encoding audio data it will implement QAudioEncoderControl.  This
+    control provides information about the limits of restricted audio encoder options and allows
+    the selection of a set of audio encoder settings as specificed in a QAudioEncoderSettings
+    object.
+
+    The functionality provided by this control is exposed to application code through the
+    QMediaRecorder class.
 
     The interface name of QAudioEncoderControl is \c com.nokia.Qt.QAudioEncoderControl/1.0 as
     defined in QAudioEncoderControl_iid.
