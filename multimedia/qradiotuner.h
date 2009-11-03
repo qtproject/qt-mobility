@@ -56,6 +56,7 @@ class Q_MEDIA_EXPORT QRadioTuner : public QMediaObject
     Q_PROPERTY(Band band READ band WRITE setBand NOTIFY bandChanged)
     Q_PROPERTY(int frequency READ frequency WRITE setFrequency NOTIFY frequencyChanged)
     Q_PROPERTY(bool stereo READ isStereo NOTIFY stereoStatusChanged)
+    Q_PROPERTY(StereoMode stereoMode READ stereoMode WRITE setStereoMode)
     Q_PROPERTY(int signalStrength READ signalStrength NOTIFY signalStrengthChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutingChanged)

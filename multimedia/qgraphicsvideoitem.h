@@ -69,9 +69,9 @@ protected:
 
 private:
     Q_DECLARE_PRIVATE(QGraphicsVideoItem)
-    Q_PRIVATE_SLOT(d_func(), void _q_present());
-    Q_PRIVATE_SLOT(d_func(), void _q_formatChanged(const QVideoSurfaceFormat &));
-    Q_PRIVATE_SLOT(d_func(), void _q_serviceDestroyed());
+    Q_PRIVATE_SLOT(d_func(), void _q_present())
+    Q_PRIVATE_SLOT(d_func(), void _q_formatChanged(const QVideoSurfaceFormat &))
+    Q_PRIVATE_SLOT(d_func(), void _q_serviceDestroyed())
 };
 
 #endif

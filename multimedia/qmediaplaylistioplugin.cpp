@@ -45,7 +45,7 @@ QMediaPlaylistReader::~QMediaPlaylistReader()
 {
 }
 
-QMediaPlaylistWritter::~QMediaPlaylistWritter()
+QMediaPlaylistWriter::~QMediaPlaylistWriter()
 {
 }
 

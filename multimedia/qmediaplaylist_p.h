@@ -64,7 +64,7 @@
 class QMediaPlaylistControl;
 class QMediaPlaylistProvider;
 class QMediaPlaylistReader;
-class QMediaPlaylistWritter;
+class QMediaPlaylistWriter;
 class QMediaPlayerControl;
 
 class QMediaPlaylistPrivate
@@ -91,7 +91,7 @@ public:
     QMediaPlaylistProvider *playlist() const { return control->playlistProvider(); }
 
     bool readItems(QMediaPlaylistReader *reader);
-    bool writeItems(QMediaPlaylistWritter *writter);
+    bool writeItems(QMediaPlaylistWriter *writer);
 
     QMediaPlaylist::Error error;
     QString errorString;

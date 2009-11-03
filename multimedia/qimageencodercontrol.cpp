@@ -86,9 +86,8 @@ QImageEncoderControl::~QImageEncoderControl()
 /*!
     \fn QImageEncoderControl::supportedResolutions() const
 
-    Returns a list of specific supported resolutions.  If the encoder supports arbitrary resolutions
-    within the minimum and maximum range, then an empty list is returned.
-
+    Returns a list of supported resolutions.  This will return an empty list if the encoder supports
+    arbitrary resolutions within the minimum and maximum range.
 
     \sa resolution(), minimumResolution(), maximumResolution()
 
@@ -97,7 +96,7 @@ QImageEncoderControl::~QImageEncoderControl()
 /*!
     \fn QImageEncoderControl::resolution() const
 
-    Returns the resolution of encoded image.
+    Returns the resolution of the encoded image.
 */
 
 /*!
@@ -119,10 +118,10 @@ QImageEncoderControl::~QImageEncoderControl()
 /*!
     \fn QImageEncoderControl::setResolution(const QSize &resolution)
 
-    Sets the image \a resolution.
+    Sets the \a resolution of the encoded image.
 
-    If an empty size is passed, the media service should choose the default or content related
-    resolution value.
+    An empty QSize indicates the encoder should make an optimal choice based on what is available
+    from the video source and the limitations of the codec.
 */
 
 /*!

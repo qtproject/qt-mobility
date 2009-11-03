@@ -56,7 +56,6 @@ QGstreamerCameraControl::~QGstreamerCameraControl()
 
 GstElement *QGstreamerCameraControl::buildElement()
 {
-    //TODO: add caps filter with desired camera settings, like resolution, framerate, etc
     GstElement *camera = gst_element_factory_make("v4l2src", "camera_source");
 
     if (camera && !m_device.isEmpty() )
@@ -67,17 +66,17 @@ GstElement *QGstreamerCameraControl::buildElement()
 
 void QGstreamerCameraControl::start()
 {
-    m_session->enablePreview(true);
+    if (m_session->state() == QGstreamerCaptureSession::StoppedState)
+        m_session->setState(QGstreamerCaptureSession::PreviewState);
 }
 
 void QGstreamerCameraControl::stop()
 {
-    m_session->enablePreview(false);
+    m_session->setState(QGstreamerCaptureSession::StoppedState);
 }
 
 void QGstreamerCameraControl::setDevice(const QString &device)
 {
-    qDebug() << "QGstreamerCameraControl::setDevice" << device;
     m_device = device.toLocal8Bit().constData();
 }
 
