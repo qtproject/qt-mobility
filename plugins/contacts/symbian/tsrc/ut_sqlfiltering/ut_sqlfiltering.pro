@@ -29,6 +29,9 @@ symbian:
             
     TARGET.CAPABILITY = ALL \
         -TCB
+        
+    BLD_INF_RULES.prj_exports += \
+        "test_data.txt \epoc32\winscw\c\sqltestdata\test_data.txt"
     
     LIBS += \
         -lcntmodel \
