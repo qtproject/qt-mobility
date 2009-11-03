@@ -13,23 +13,28 @@ contains(QT_CONFIG, opengl): QT += opengl
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MEDIA_LIB
 
-HEADERS += \
-    qmediacontrol.h \
+PRIVATE_HEADERS += \
     qmediacontrol_p.h \
-    qmediaobject.h \
     qmediaobject_p.h \
-    qmediaservice.h \
     qmediaservice_p.h  \
+    qmediaplaylist_p.h \
+    qmediaplaylistprovider_p.h \
+    qmediaimageviewerservice_p.h \
+    qvideowidget_p.h \
+    qmediapluginloader_p.h
+
+
+PUBLIC_HEADERS += \
+    qmediacontrol.h \
+    qmediaobject.h \
+    qmediaservice.h \
     qlocalmediaplaylistprovider.h \
     qmediaimageviewer.h \
-    qmediaimageviewerservice_p.h \
     qmediaplayer.h \
     qmediaplayercontrol.h \
     qmediaplaylist.h \
-    qmediaplaylist_p.h \
     qmediaplaylistnavigator.h \
     qmediaplaylistprovider.h \
-    qmediaplaylistprovider_p.h \
     qmediaplaylistioplugin.h \
     qmediacontent.h \
     qmediaresource.h \
@@ -46,7 +51,6 @@ HEADERS += \
     qtmedianamespace.h \
     qvideooutputcontrol.h \
     qvideowidget.h \
-    qvideowidget_p.h \
     qvideowindowcontrol.h \
     qvideowidgetcontrol.h \
     qaudioencodercontrol.h \
@@ -56,8 +60,8 @@ HEADERS += \
     qmediaformatcontrol.h \
     qmediaplaylistcontrol.h \
     qaudiodevicecontrol.h \
-    qvideodevicecontrol.h \
-    qmediapluginloader_p.h
+    qvideodevicecontrol.h
+
 
 SOURCES += qmediacontrol.cpp \
     qmediaobject.cpp \
@@ -96,19 +100,24 @@ SOURCES += qmediacontrol.cpp \
     qmediapluginloader.cpp
 
 contains(QT_CONFIG, multimedia) {
-    HEADERS += \
+    PUBLIC_HEADERS += \
         qgraphicsvideoitem.h \
-        qpaintervideosurface_p.h \
         qvideorenderercontrol.h
+
+    PRIVATE_HEADERS += \
+        qpaintervideosurface_p.h
 
     SOURCES += \
         qgraphicsvideoitem.cpp \
         qpaintervideosurface.cpp \
         qvideorenderercontrol.cpp
 } else {
-    HEADERS += qaudioformat.h
+    PUBLIC_HEADERS += qaudioformat.h
     SOURCES += qaudioformat.cpp
 }
+
+include (experimental/experimental.pri)
+HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 symbian {
     QtMediaDeployment.sources = QtMedia.dll
@@ -117,5 +126,4 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
 
-include (experimental/experimental.pri)
 include(../features/deploy.pri)

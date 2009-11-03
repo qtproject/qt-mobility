@@ -1,15 +1,15 @@
-HEADERS += \
-    $$PWD/qimagecapturecontrol.h \
-    $$PWD/qcamera.h \
-    $$PWD/qcameracontrol.h \
-    $$PWD/qcameraexposurecontrol.h \
-    $$PWD/qcamerafocuscontrol.h \
-    $$PWD/qimageprocessingcontrol.h
+PUBLIC_HEADERS += \
+    experimental/qimagecapturecontrol.h \
+    experimental/qcamera.h \
+    experimental/qcameracontrol.h \
+    experimental/qcameraexposurecontrol.h \
+    experimental/qcamerafocuscontrol.h \
+    experimental/qimageprocessingcontrol.h
 
 SOURCES += \
-    $$PWD/qimagecapturecontrol.cpp \
-    $$PWD/qcamera.cpp \
-    $$PWD/qcameracontrol.cpp \
-    $$PWD/qcameraexposurecontrol.cpp \
-    $$PWD/qcamerafocuscontrol.cpp \
-    $$PWD/qimageprocessingcontrol.cpp
+    experimental/qimagecapturecontrol.cpp \
+    experimental/qcamera.cpp \
+    experimental/qcameracontrol.cpp \
+    experimental/qcameraexposurecontrol.cpp \
+    experimental/qcamerafocuscontrol.cpp \
+    experimental/qimageprocessingcontrol.cpp
