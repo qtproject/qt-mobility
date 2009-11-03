@@ -68,16 +68,32 @@
 #include <QUuid>
 #include <QSysInfo>
 
+#include <qabstracteventdispatcher.h>
+
 #include <locale.h>
 
 #if !defined( Q_CC_MINGW)
 #ifndef Q_OS_WINCE
 #include "qwmihelper_win_p.h"
-//new version of ntddndis.h include windot11.h which clashes with some
-//of our redefinitions below
-#define __WINDOT11_H__
-#include <ntddndis.h>
-#undef __WINDOT11_H__
+
+enum NDIS_MEDIUM {
+    NdisMedium802_3 = 0,
+    NdisMediumWirelessWan = 9,
+};
+
+enum NDIS_PHYSICAL_MEDIUM {
+    NdisPhysicalMediumUnspecified = 0,
+    NdisPhysicalMediumWirelessLan = 1,
+    NdisPhysicalMediumBluetooth = 10,
+    NdisPhysicalMediumWiMax = 12,
+};
+
+#define OID_GEN_MEDIA_SUPPORTED 0x00010103
+#define OID_GEN_PHYSICAL_MEDIUM 0x00010202
+
+#define IOCTL_NDIS_QUERY_GLOBAL_STATS \
+    CTL_CODE(FILE_DEVICE_PHYSICAL_NETCARD, 0, METHOD_OUT_DIRECT, FILE_ANY_ACCESS)
+
 #endif
 #endif
 
@@ -1590,10 +1606,38 @@ QStringList QSystemStorageInfoPrivate::logicalDrives()
     return drivesList;
 }
 
+QSystemDeviceInfoPrivate *QSystemDeviceInfoPrivate::self = 0;
+
+bool qax_winEventFilter(void *message)
+{
+    MSG *pMsg = (MSG*)message;
+    if( pMsg->message == WM_POWERBROADCAST) {
+//        qWarning() << "XXXXXXXXXXX we've got the power!";
+        switch (pMsg->wParam) {
+        case PBT_APMPOWERSTATUSCHANGE:
+            QSystemDeviceInfoPrivate::instance()->batteryLevel();
+            QSystemDeviceInfoPrivate::instance()->currentPowerState();
+            break;
+            break;
+        default:
+            break;
+        };
+    }
+
+    return false;
+}
+
 //////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
         : QObject(parent)
 {
+    batteryLevelCache = 0;
+    currentPowerStateCache = QSystemDeviceInfo::UnknownPower;
+    batteryStatusCache = QSystemDeviceInfo::NoBatteryLevel;
+    QAbstractEventDispatcher::instance()->setEventFilter(qax_winEventFilter);
+    if(!self)
+        self = this;
+
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
@@ -1678,15 +1722,23 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
     SYSTEM_POWER_STATUS status;
     GetSystemPowerStatus(&status);
 #endif
+    QSystemDeviceInfo::PowerState state = QSystemDeviceInfo::UnknownPower;
 
-    if(status.BatteryFlag & BATTERY_FLAG_CHARGING)
-        return QSystemDeviceInfo::WallPowerChargingBattery;
-    if(status.ACLineStatus  == AC_LINE_ONLINE)
-        return QSystemDeviceInfo::WallPower;
-    if(status.ACLineStatus  == AC_LINE_OFFLINE)
-        return QSystemDeviceInfo::BatteryPower;
+    if(status.ACLineStatus  == AC_LINE_ONLINE) {
+        state = QSystemDeviceInfo::WallPower;
+    }
+    if(status.ACLineStatus  == AC_LINE_OFFLINE) {
+        state = QSystemDeviceInfo::BatteryPower;
+    }
+    if(status.BatteryFlag & BATTERY_FLAG_CHARGING) {
+        state = QSystemDeviceInfo::WallPowerChargingBattery;
+    }
+    if( currentPowerStateCache != state) {
+        currentPowerStateCache = state;
+        emit powerStateChanged(state);
+    }
 
-    return QSystemDeviceInfo::UnknownPower;
+    return state;
 }
 
 QString QSystemDeviceInfoPrivate::imei()
@@ -1824,7 +1876,7 @@ QString QSystemDeviceInfoPrivate::productName()
     return name;
 }
 
-int QSystemDeviceInfoPrivate::batteryLevel() const
+int QSystemDeviceInfoPrivate::batteryLevel()
 {
 #ifdef Q_OS_WINCE
     SYSTEM_POWER_STATUS_EX status;
@@ -1837,7 +1889,30 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
 #else
     SYSTEM_POWER_STATUS status;
     if(GetSystemPowerStatus( &status) ) {
-        return status.BatteryLifePercent;
+        int bat = status.BatteryLifePercent;
+        if(bat == 255) //battery unknown level status
+            bat = 0;
+
+        if(batteryLevelCache != bat) {
+           batteryLevelCache = bat;
+           emit batteryLevelChanged(bat);
+        }
+
+        if(batteryLevelCache < 4 && batteryStatusCache != QSystemDeviceInfo::BatteryCritical) {
+            batteryStatusCache = QSystemDeviceInfo::BatteryCritical;
+            emit batteryStatusChanged(batteryStatusCache);
+        } else if((batteryLevelCache > 3 && batteryLevelCache < 11) && batteryStatusCache != QSystemDeviceInfo::BatteryVeryLow) {
+            batteryStatusCache = QSystemDeviceInfo::BatteryVeryLow;
+            emit batteryStatusChanged(batteryStatusCache);
+        } else if((batteryLevelCache > 10 && batteryLevelCache < 41) && batteryStatusCache != QSystemDeviceInfo::BatteryLow) {
+            batteryStatusCache = QSystemDeviceInfo::BatteryLow;
+            emit batteryStatusChanged(batteryStatusCache);
+        } else if(batteryLevelCache > 40 && batteryStatusCache != QSystemDeviceInfo::BatteryNormal) {
+            batteryStatusCache = QSystemDeviceInfo::BatteryNormal;
+            emit batteryStatusChanged(batteryStatusCache);
+        }
+
+        return bat;
 }
 #endif
     return 0;

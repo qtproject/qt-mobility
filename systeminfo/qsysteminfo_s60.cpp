@@ -42,10 +42,19 @@
 #include "qsysteminfo_s60_p.h"
 
 #include <QStringList>
+#include <QDir>
+#include <QRegExp>
+#include <QTimer>
 
 #include <SysUtil.h>
-
-
+#include <ptiengine.h>
+#include <FeatDiscovery.h>
+#include <featureinfo.h>
+#include <hwrmvibra.h>
+#include <AknUtils.h>
+#include <W32STD.H>
+#include <centralrepository.h>
+ 
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
     : QObject(parent)
@@ -58,28 +67,229 @@ QSystemInfoPrivate::~QSystemInfoPrivate()
 
 QString QSystemInfoPrivate::currentLanguage() const
 {
-    return QString();   //TODO
+    return TLanguageToISO639_1(User::Language());
 }
 
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
-    return QStringList();   //TODO
+    QStringList languages;
+    TRAPD(err,
+        CPtiEngine *ptiEngine = CPtiEngine::NewL();
+        CleanupStack::PushL(ptiEngine);
+        RArray<TInt> languageCodes;
+        CleanupClosePushL(languageCodes);
+        ptiEngine->GetAvailableLanguagesL(languageCodes);
+        for (int i = 0; i < languageCodes.Count(); ++i) {
+            QString language = TLanguageToISO639_1(TLanguage(languageCodes[i]));
+            if (!language.isEmpty()) {
+                languages << language;
+            }
+        }
+        CleanupStack::PopAndDestroy(2, ptiEngine);
+    )
+    return languages;
+}
+
+QString QSystemInfoPrivate::TLanguageToISO639_1(TLanguage language) const
+{
+    switch (language) {
+        case ELangAmerican: 
+        case ELangCanadianEnglish:
+        case ELangInternationalEnglish:
+        case ELangSouthAfricanEnglish:
+        case ELangAustralian:
+        case ELangEnglish: return "en";
+        case ELangSwissFrench:
+        case ELangInternationalFrench:
+        case ELangCanadianFrench:
+        case ELangBelgianFrench:
+        case ELangFrench: return "fr";
+        case ELangSwissGerman:
+        case ELangAustrian:
+        case ELangGerman: return "de";
+        case ELangInternationalSpanish:
+        case ELangLatinAmericanSpanish:
+        case ELangSpanish: return "es";
+        case ELangSwissItalian:
+        case ELangItalian: return "it";
+        case ELangFinlandSwedish:
+        case ELangSwedish: return "sv";
+        case ELangDanish: return "da";
+        case ELangNorwegian: return "no";
+        case ELangFinnish: return "fi";
+        case ELangBrazilianPortuguese:
+        case ELangPortuguese: return "pt";
+        case ELangCyprusTurkish:
+        case ELangTurkish: return "tr";
+        case ELangIcelandic: return "is";
+        case ELangRussian: return "ru";
+        case ELangHungarian: return "hu";
+        case ELangBelgianFlemish:
+        case ELangDutch: return "nl";
+        case ELangNewZealand: return "mi";  //Maori
+        case ELangCzech: return "cs";
+        case ELangSlovak: return "sk";
+        case ELangPolish: return "pl";
+        case ELangSlovenian: return "sl";
+        case ELangTaiwanChinese:
+        case ELangHongKongChinese:
+        case ELangPrcChinese: return "zh";
+        case ELangJapanese: return "ja";
+        case ELangThai: return "th";
+        case ELangAfrikaans: return "af";
+        case ELangAlbanian: return "sq";
+        case ELangAmharic: return "am";
+        case ELangArabic: return "ar";
+        case ELangArmenian: return "hy";
+        case ELangTagalog: return "tl";
+        case ELangBelarussian: return "be";
+        case ELangBengali:  return "bn";
+        case ELangBulgarian: return "bg";
+        case ELangBurmese: return "my";
+        case ELangCatalan: return "ca";
+        case ELangCroatian: return "hr";
+        case ELangEstonian: return "et";
+        case ELangFarsi: return "fa";
+        case ELangScotsGaelic: "gd";
+        case ELangGeorgian: return "ka";
+        case ELangGreek:
+        case ELangCyprusGreek: "el";
+        case ELangGujarati: return "gu";
+        case ELangHebrew: return "he";
+        case ELangHindi: return "hi";
+        case ELangIndonesian: return "id";
+        case ELangIrish: return "ga";
+        case ELangKannada: return "kn";
+        case ELangKazakh: return "kk";
+        case ELangKhmer: return "km";
+        case ELangKorean: return "ko";
+        case ELangLao: return "lo";
+        case ELangLatvian: return "lv";
+        case ELangLithuanian: return "lt";
+        case ELangMacedonian: return "mk";
+        case ELangMalay: return "ms";
+        case ELangMalayalam: return "ml";
+        case ELangMarathi: return "mr";
+        case ELangMoldavian: return "ro";
+        case ELangMongolian: return "mn";
+        case ELangNorwegianNynorsk: return "nn";
+        case ELangPunjabi: return "pa";
+        case ELangRomanian: return "ro";
+        case ELangSerbian: return "sr";
+        case ELangSomali: return "so";
+        case ELangSwahili: return "sw";
+        case ELangTamil: return "ta";
+        case ELangTelugu: return "te";
+        case ELangTibetan: return "bo";
+        case ELangTigrinya: return "ti";
+        case ELangTurkmen: return "tk";
+        case ELangUkrainian: return "uk";
+        case ELangUrdu: return "ur";
+        case ELangVietnamese: return "vi";
+        case ELangWelsh: return "cy";
+        case ELangZulu: return "zu";
+        case ELangSinhalese: return "si";
+        case ELangTest:
+        case ELangReserved1:
+        case ELangReserved2:
+        case ELangOther:
+        case ELangNone:
+        default:
+            break;
+    }
+    return "";
 }
 
 QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
-    return QString();   //TODO
+    switch (type) {
+        case QSystemInfo::Os:
+        {
+            return S60Version();
+        }
+        case QSystemInfo::QtCore:
+        {
+            return qVersion();
+        }
+        case QSystemInfo::Firmware:
+        {
+            QString versionText;
+            TBuf<KSysUtilVersionTextLength> versionBuf;
+            if (SysUtil::GetSWVersion(versionBuf) == KErrNone) {
+                versionText = QString::fromUtf16(versionBuf.Ptr(), versionBuf.Length());
+            }
+            return versionText.split("\n").at(0);
+        }
+        case QSystemInfo::WrtCore:  //Not available
+        case QSystemInfo::Webkit:   //Not available
+        case QSystemInfo::ServiceFramework: //Not available
+        case QSystemInfo::WrtExtensions:    //Not available
+        case QSystemInfo::ServiceProvider:  //Not available
+        case QSystemInfo::NetscapePlugin:   //Not available
+        case QSystemInfo::WebApp:   //Not available
+        default:
+            return QString();
+    }
+}
+
+QString QSystemInfoPrivate::S60Version() const
+{
+    QDir romInstallDir("z:\\system\\install\\");
+    QStringList files = romInstallDir.entryList(QStringList("Series60v*.sis"), QDir::Files, QDir::Name | QDir::Reversed);
+    if (files.size() > 0) {
+        QRegExp rx("Series60v(.*).sis");
+        if (rx.indexIn(files[0]) > -1) {
+            return rx.cap(1);
+        }
+    }
+    return QString();
 }
 
 QString QSystemInfoPrivate::currentCountryCode() const
 {
-    return QString();   //TODO
+    return QLocale::system().name().mid(3,2);
 }
 
 
 bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
-    return false;   //TODO
+    TInt featureId = 0;
+    switch (feature) {
+        case QSystemInfo::BluetoothFeature: featureId = KFeatureIdBt; break;
+        case QSystemInfo::CameraFeature: featureId = KFeatureIdCamera; break;
+        case QSystemInfo::IrFeature: featureId = KFeatureIdIrda; break;
+        case QSystemInfo::MemcardFeature: featureId = KFeatureIdMmc; break;
+        case QSystemInfo::UsbFeature: featureId = KFeatureIdUsb; break;
+        case QSystemInfo::WlanFeature: featureId = KFeatureIdProtocolWlan; break;
+        case QSystemInfo::LocationFeature: featureId = KFeatureIdLocationFrameworkCore; break;
+        case QSystemInfo::SimFeature:
+        {
+            return true;    //Always true in S60
+        }
+        case QSystemInfo::VibFeature:
+        {
+            TRAPD(err,
+                //Leaves with KErrNotSupported if device doesn't support vibration feature.
+                CHWRMVibra *vibra = CHWRMVibra::NewLC();
+                CleanupStack::PopAndDestroy(vibra);
+            )
+            return err == KErrNone;
+        }
+        case QSystemInfo::HapticsFeature:
+        {
+            //TODO: Do something with the AVKON dependency
+            return AknLayoutUtils::PenEnabled();
+        }
+        case QSystemInfo::FmradioFeature:   //Not available in public SDK
+        case QSystemInfo::LedFeature:
+        case QSystemInfo::VideoOutFeature:  //Accessory monitor available from S60 5.x onwards
+        default:
+            return false;
+    }
+
+    bool isFeatureSupported = false;
+    TRAP_IGNORE(isFeatureSupported = CFeatureDiscovery::IsFeatureSupportedL(featureId);)
+    return isFeatureSupported;
 }
 
 //////// QSystemNetworkInfo
@@ -294,12 +504,53 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
-    return -1;  //TODO
+    const TUid KCRUidLightSettings = {0x10200C8C};
+    const TUint32 KLightSensorSensitivity = 0x00000002;
+    int ret = 0;
+    TRAP_IGNORE(
+        CRepository *lightRepository = CRepository::NewLC(KCRUidLightSettings);
+        User::LeaveIfError(lightRepository->Get(KLightSensorSensitivity, ret));
+        if (ret == 0) {
+            ret = 1;
+        }
+        CleanupStack::PopAndDestroy(lightRepository);
+    )
+    return ret;
 }
 
 int QSystemDisplayInfoPrivate::colorDepth(int screen)
 {
-    return -1;  //TODO
+    int depth = 0;
+    TRAP_IGNORE(
+        RWsSession ws;
+        User::LeaveIfError(ws.Connect());
+        CleanupClosePushL(ws);
+        CWsScreenDevice *wsScreenDevice = new (ELeave)CWsScreenDevice(ws);
+        CleanupStack::PushL(wsScreenDevice);
+        User::LeaveIfError(wsScreenDevice->Construct(screen));
+        TDisplayMode mode = wsScreenDevice->DisplayMode();
+        switch (mode) {
+            case EGray2: depth = 1; break;
+            case EGray4: depth = 2; break;
+            case EGray16:
+            case EColor16: depth = 4; break;
+            case EGray256:
+            case EColor256: depth = 8; break;
+            case EColor4K: depth = 12; break;
+            case EColor64K: depth = 16; break;
+            case EColor16M:
+            case EColor16MA: depth = 24; break;
+            case EColor16MU: depth = 32; break;
+            case ENone:
+            case ERgb:
+            case EColorLast:
+            default: depth = 0;
+                break;
+        }
+        CleanupStack::PopAndDestroy(2, &ws);
+    )
+    
+    return depth;
 }
 
 //////// QSystemStorageInfo
@@ -549,8 +800,34 @@ DeviceInfo *DeviceInfo::m_instance = NULL;
 
 //////// QSystemScreenSaver
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), m_screenSaverInhibited(false)
 {
+}
+
+bool QSystemScreenSaverPrivate::screenSaverInhibited()
+{
+    return m_screenSaverInhibited;
+}
+
+bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
+{
+    if (m_screenSaverInhibited) {
+        return true;
+    }
+
+    m_screenSaverInhibited = true;
+    resetInactivityTime();
+
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(resetInactivityTime()));
+    timer->start(3000); //3 seconds interval
+
+    return true;
+}
+
+void QSystemScreenSaverPrivate::resetInactivityTime()
+{
+    User::ResetInactivityTime();
 }
 
 QT_END_NAMESPACE

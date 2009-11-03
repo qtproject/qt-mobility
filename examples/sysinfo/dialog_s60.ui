@@ -1330,7 +1330,7 @@
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_12">
          <item>
-          <widget class="QCheckBox" name="saverEnabledCheckBox">
+          <widget class="QCheckBox" name="saverInhibitedCheckBox">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1338,20 +1338,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Screen Saver Enabled</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="screenBlankingCheckBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>ScreenBlanking Enabled</string>
+            <string>Screen Saver Inhibited</string>
            </property>
           </widget>
          </item>

@@ -109,35 +109,40 @@ void tst_QSystemDeviceInfo::tst_inputMethodType()
 void tst_QSystemDeviceInfo::tst_imei()
 {
     QSystemDeviceInfo di;
-    QVERIFY(!di.imei().isEmpty());
+    QString imeiStr =di.imei();
+    QVERIFY(!imeiStr.isEmpty() || imeiStr.isEmpty());
 
 }
 
 void tst_QSystemDeviceInfo::tst_imsi()
 {
     QSystemDeviceInfo di;
-    QVERIFY(!di.imsi().isEmpty());
+    QString imsiStr = di.imsi();
+    QVERIFY(!imsiStr.isEmpty() || imsiStr.isEmpty());
 
 }
 
 void tst_QSystemDeviceInfo::tst_manufacturer()
 {
     QSystemDeviceInfo di;
-    QVERIFY(!di.manufacturer().isEmpty());
+    QString manu = di.manufacturer();
+    QVERIFY(!manu.isEmpty() || manu.isEmpty());
 
 }
 
 void tst_QSystemDeviceInfo::tst_model()
 {
     QSystemDeviceInfo di;
-    QVERIFY(!di.model().isEmpty());
+    QString model = di.model();
+    QVERIFY(!model.isEmpty() || model.isEmpty());
 
 }
 
 void tst_QSystemDeviceInfo::tst_productName()
 {
     QSystemDeviceInfo di;
-    QVERIFY(!di.productName().isEmpty());
+    QString product = di.productName();
+    QVERIFY(!product.isEmpty() | product.isEmpty());
 
 }
 

@@ -925,7 +925,7 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_4">
        <item row="0" column="0" colspan="3">
-        <widget class="QCheckBox" name="saverEnabledCheckBox">
+        <widget class="QCheckBox" name="saverInhibitedCheckBox">
          <property name="text">
           <string>Screen Saver Inhibited</string>
          </property>

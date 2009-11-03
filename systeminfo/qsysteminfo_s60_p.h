@@ -86,6 +86,10 @@ public:
 
 Q_SIGNALS:
     void currentLanguageChanged(const QString &);
+
+private:
+    QString TLanguageToISO639_1(TLanguage language) const;
+    QString S60Version() const;
 };
 
 //////// QSystemNetworkInfo
@@ -223,9 +227,15 @@ class QSystemScreenSaverPrivate : public QObject
 public:
     QSystemScreenSaverPrivate(QObject *parent = 0);
 
-    bool screenSaverInhibited() {return false;}
-    bool setScreenSaverInhibit() {return false;}
+    bool screenSaverInhibited();
+    bool setScreenSaverInhibit();
     static bool isScreenLockOn() {return false;}
+
+private Q_SLOTS:
+    void resetInactivityTime();
+
+private:    //data
+    bool m_screenSaverInhibited;
 };
 
 //////// DeviceInfo (singleton)
