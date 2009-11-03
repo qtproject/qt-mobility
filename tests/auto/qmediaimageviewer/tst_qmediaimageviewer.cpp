@@ -1098,7 +1098,7 @@ void tst_QMediaImageViewer::rendererControl()
     // Test changing the surface while viewing an image stops the old surface and starts
     // the new one and presents the image.
     rendererControl->setSurface(&surfaceB);
-    QCOMPARE(rendererControl->surface(), &surfaceB);
+    QCOMPARE(rendererControl->surface(), (QAbstractVideoSurface*)&surfaceB);
 
     QCOMPARE(surfaceA.isStarted(), false);
     QCOMPARE(surfaceB.isStarted(), true);
