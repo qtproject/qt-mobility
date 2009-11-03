@@ -46,8 +46,17 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+
     MessageSender sender;
+
+#ifdef _WIN32_WCE
+#ifdef QT_KEYPAD_NAVIGATION
+    app.setKeypadNavigationEnabled(true);
+#endif
+    sender.showMaximized();
+#else
     sender.show();
+#endif
     return app.exec();
 }
 

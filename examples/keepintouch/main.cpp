@@ -50,7 +50,9 @@ int main(int argc, char *argv[])
     AddressFinder finder;
 
 #ifdef _WIN32_WCE
+#ifdef QT_KEYPAD_NAVIGATION
     app.setKeypadNavigationEnabled(true);
+#endif
     finder.showMaximized();
 #else
     finder.show();

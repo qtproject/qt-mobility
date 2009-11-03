@@ -97,6 +97,21 @@
 #include <cemapi.h>
 #endif
 
+//unexported before Windows 7, include manually
+#ifndef IID_PPV_ARGS
+extern "C++"
+{
+    template<typename T> void** IID_PPV_ARGS_Helper(T** pp)
+    {
+        // make sure everyone derives from IUnknown
+        static_cast<IUnknown*>(*pp);
+
+        return reinterpret_cast<void**>(pp);
+    }
+}
+#define IID_PPV_ARGS(ppType) __uuidof(**(ppType)), IID_PPV_ARGS_Helper(ppType)
+#endif //IID_PPV_ARGS
+
 namespace WinHelpers
 {
     bool setMapiProperty(IMAPIProp *object, ULONG tag, const QString &value)
@@ -1096,8 +1111,10 @@ namespace {
         // Remove any preexisting body elements
 #ifndef _WIN32_WCE
         SizedSPropTagArray(2, props) = {2, {PR_BODY, PR_RTF_COMPRESSED}};
+#elif(_WIN32_WCE >= 0x600)
+            SizedSPropTagArray(2, props) = {2, {PR_BODY_HTML_A, PR_BODY_W}};
 #else
-        SizedSPropTagArray(2, props) = {2, {PR_BODY_HTML_A, PR_BODY_W}};
+            SizedSPropTagArray(2, props) = {2, {PR_BODY, PR_BODY_W}};
 #endif
         HRESULT rv = message->DeleteProps(reinterpret_cast<LPSPropTagArray>(&props), 0);
 #ifdef _WIN32_WCE
@@ -1127,7 +1144,11 @@ namespace {
 
                 if (subType == "html") {
                     IStream *os(0);
+#if(_WIN32_WCE >= 0x600)
                     HRESULT rv = message->OpenProperty(PR_BODY_HTML_A, 0, STGM_WRITE, MAPI_MODIFY | MAPI_CREATE,(LPUNKNOWN*)&os);
+#else
+                    HRESULT rv = message->OpenProperty(PR_BODY, 0, STGM_WRITE, MAPI_MODIFY | MAPI_CREATE,(LPUNKNOWN*)&os);
+#endif
                     if (HR_SUCCEEDED(rv)) {
                         QByteArray body(bodyContent.textContent().toLatin1());
                         writeStream(lastError, os, body.data(), body.count());
@@ -3830,8 +3851,10 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
 #ifdef _WIN32_WCE
                         if (prop.Value.l & MSGSTATUS_HAS_PR_BODY) {
                             msg->d_ptr->_contentFormat = EDITOR_FORMAT_PLAINTEXT;
+#if(_WIN32_WCE >= 0x600)
                         } else if (prop.Value.l & MSGSTATUS_HAS_PR_BODY_HTML) {
                             msg->d_ptr->_contentFormat = EDITOR_FORMAT_HTML;
+#endif
                         } else if (prop.Value.l & MSGSTATUS_HAS_PR_CE_MIME_TEXT) {
                             // TODO...
                             // This is how MS proivders store HTML, as per http://msdn.microsoft.com/en-us/library/bb446140.aspx
@@ -4072,9 +4095,11 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                     // See if there is a body HTML property
     #ifndef _WIN32_WCE
                     ULONG bodyProperty(PR_BODY_HTML);
-    #else
+    #elif(_WIN32_WCE >= 0x600)
                     // Correct variants discussed at http://blogs.msdn.com/raffael/archive/2008/09/08/mapi-on-windows-mobile-6-programmatically-retrieve-mail-body-sample-code.aspx
                     ULONG bodyProperty(PR_BODY_HTML_A);
+    #else
+                    ULONG bodyProperty(PR_BODY);
     #endif
                     HRESULT rv = message->OpenProperty(bodyProperty, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
                     if (HR_SUCCEEDED(rv)) {
