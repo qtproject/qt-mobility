@@ -109,6 +109,7 @@ QContactAbstractRequest::~QContactAbstractRequest()
  */
 bool QContactAbstractRequest::isActive() const
 {
+    QMutexLocker locker(&d_ptr->mutex);
     return (d_ptr->m_status == QContactAbstractRequest::Active
             || d_ptr->m_status == QContactAbstractRequest::Cancelling);
 }
@@ -120,6 +121,7 @@ bool QContactAbstractRequest::isActive() const
  */
 bool QContactAbstractRequest::isFinished() const
 {
+    QMutexLocker locker(&d_ptr->mutex);
     return (d_ptr->m_status == QContactAbstractRequest::Finished
             || d_ptr->m_status == QContactAbstractRequest::Cancelled);
 }
@@ -151,6 +153,7 @@ QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
  */
 QContactAbstractRequest::Status QContactAbstractRequest::status() const
 {
+    QMutexLocker locker(&d_ptr->mutex);
     return d_ptr->m_status;
 }
 
@@ -171,7 +174,8 @@ void QContactAbstractRequest::setManager(QContactManager* manager)
 bool QContactAbstractRequest::start()
 {
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine) {
+    if (engine && !isActive()) {
+        d_ptr->waiting = false;
         return engine->startRequest(this);
     }
 
@@ -183,7 +187,7 @@ bool QContactAbstractRequest::start()
 bool QContactAbstractRequest::cancel()
 {
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine) {
+    if (engine && isActive()) {
         return engine->cancelRequest(this);
     }
 
