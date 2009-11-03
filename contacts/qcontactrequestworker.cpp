@@ -248,11 +248,16 @@ bool QContactRequestWorker::removeRequest(QContactAbstractRequest* req)
 bool QContactRequestWorker::cancelRequest(QContactAbstractRequest* req)
 {
     if (req) {
-        QMutexLocker locker(&d->m_mutex);
+        QMutexLocker workerLocker(&d->m_mutex);
+        QMutexLocker requestLocker(&req->d_ptr->mutex);
+
+        QContactAbstractRequest::Status status = req->d_ptr->m_status;
+        
         QList<QContactManager::Error> dummy;
-        if (req->isActive()) {
-            if (req->status() == QContactAbstractRequest::Active)
+        if (status == QContactAbstractRequest::Active || status == QContactAbstractRequest::Cancelling) {
+            if (status == QContactAbstractRequest::Active) {
                 QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Cancelling);
+            }
             return true;
         }
     }
