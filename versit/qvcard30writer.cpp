@@ -41,6 +41,7 @@
 
 #include "qvcard30writer.h"
 #include "versitutils.h"
+#include "qversitdefs.h"
 
 /*! Constructs a writer. */
 QVCard30Writer::QVCard30Writer()
@@ -58,15 +59,19 @@ QVCard30Writer::~QVCard30Writer()
  */
 QByteArray QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
 {
-    QByteArray encodedProperty(encodeGroupsAndName(property));
-    encodedProperty.append(encodeParameters(property.parameters()));
+    QVersitProperty modifiedProperty(property);
+    if (property.name() == QString::fromAscii(versitNicknameXId)) {
+        modifiedProperty.setName(QString::fromAscii(versitNicknameId));
+    }
+    QByteArray encodedProperty(encodeGroupsAndName(modifiedProperty));
+    encodedProperty.append(encodeParameters(modifiedProperty.parameters()));
     encodedProperty.append(":");
-    QByteArray value(property.value());
-    if (property.name() == QString::fromAscii("AGENT")) {
-        QVersitDocument embeddedDocument = property.embeddedDocument();
+    QByteArray value(modifiedProperty.value());
+    if (modifiedProperty.name() == QString::fromAscii("AGENT")) {
+        QVersitDocument embeddedDocument = modifiedProperty.embeddedDocument();
         value = encodeVersitDocument(embeddedDocument);
         VersitUtils::backSlashEscape(value);
-    }
+    }    
     encodedProperty.append(value);
     encodedProperty.append("\r\n");
     return encodedProperty;

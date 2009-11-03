@@ -58,25 +58,33 @@ void UT_QVCard30Writer::cleanup()
 void UT_QVCard30Writer::testEncodeVersitProperty()
 {
     // No parameters
-    QByteArray expectedResult = "FN:Homer Simpson\r\n";
+    QString expectedResult = QString::fromAscii("FN:Homer Simpson\r\n");
     QVersitProperty property;
     property.setName(QString::fromAscii("FN"));
     property.setValue(QByteArray("Homer Simpson"));
-    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
+    QByteArray encodedProperty = mWriter->encodeVersitProperty(property);
+    QCOMPARE(QString::fromAscii(encodedProperty), expectedResult);
     
     // With parameter(s)
-    expectedResult = "TEL;TYPE=HOME:123\r\n";
+    expectedResult = QString::fromAscii("TEL;TYPE=HOME:123\r\n");
     property.setName(QString::fromAscii("TEL"));
     property.setValue(QByteArray("123"));
     property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
-    QByteArray encodedProperty = mWriter->encodeVersitProperty(property);
-    QCOMPARE(QString::fromAscii(encodedProperty), QString::fromAscii(expectedResult));
-    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
+    encodedProperty = mWriter->encodeVersitProperty(property);
+    QCOMPARE(QString::fromAscii(encodedProperty), expectedResult);
     
+    // Convert X-NICKNAME to NICKNAME
+    expectedResult = QString::fromAscii("NICKNAME:Homie\r\n");
+    property.setParameters(QMultiHash<QString,QString>());
+    property.setName(QString::fromAscii("X-NICKNAME"));
+    property.setValue(QByteArray("Homie"));
+    encodedProperty = mWriter->encodeVersitProperty(property);
+    QCOMPARE(QString::fromAscii(encodedProperty), expectedResult);
+
     // AGENT property
     expectedResult =
-        "AGENT:BEGIN:VCARD\\nVERSION:3.0\\nFN:Secret Agent\\nEND:VCARD\\n\r\n";
-    property.setParameters(QMultiHash<QString,QString>());
+        QString::fromAscii(
+            "AGENT:BEGIN:VCARD\\nVERSION:3.0\\nFN:Secret Agent\\nEND:VCARD\\n\r\n");
     property.setName(QString::fromAscii("AGENT"));
     property.setValue(QByteArray());
     QVersitDocument document;
@@ -85,7 +93,8 @@ void UT_QVCard30Writer::testEncodeVersitProperty()
     embeddedProperty.setValue(QByteArray("Secret Agent"));
     document.addProperty(embeddedProperty);
     property.setEmbeddedDocument(document);
-    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
+    encodedProperty = mWriter->encodeVersitProperty(property);
+    QCOMPARE(QString::fromAscii(encodedProperty), expectedResult);
 }
 
 void UT_QVCard30Writer::testEncodeParameters()
