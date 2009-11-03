@@ -170,8 +170,10 @@ QAbstractVideoSurface::Error QVideoSurfaceRasterPainter::paint(
                 m_imageFormat);
 
         painter->drawImage(target, image, source);
+
+        m_frame.unmap();
     } else if (m_frame.isValid()) {
-        return QAbstractVideoSurface::ResourceError;
+        return QAbstractVideoSurface::IncorrectFormatError;
     }
     return QAbstractVideoSurface::NoError;
 }
@@ -322,7 +324,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGLPainter::setCurrentFrame(const QVide
         }
         m_frame.unmap();
     } else {
-        return QAbstractVideoSurface::ResourceError;
+        return QAbstractVideoSurface::IncorrectFormatError;
     }
 
     return QAbstractVideoSurface::NoError;
@@ -716,14 +718,11 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::paint(
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_textureIds[0]);
 
-        if (m_textureCount > 1) {
+        if (m_textureCount == 3) {
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, m_textureIds[1]);
-
-            if (m_textureCount > 2) {
-                glActiveTexture(GL_TEXTURE2);
-                glBindTexture(GL_TEXTURE_2D, m_textureIds[2]);
-            }
+            glActiveTexture(GL_TEXTURE2);
+            glBindTexture(GL_TEXTURE_2D, m_textureIds[2]);
             glActiveTexture(GL_TEXTURE0);
         }
 
@@ -935,7 +934,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
 
         m_program.enable();
 
-        if (m_yuv) {
+        if (m_textureCount == 3) {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, m_textureIds[0]);
             glActiveTexture(GL_TEXTURE1);
