@@ -43,6 +43,7 @@
 #define UT_QVERSITREADER_H
 
 #include <QObject>
+#include <QBuffer>
 
 class QVersitReader;
 class QVersitReaderPrivate;
@@ -51,14 +52,17 @@ class QVersitReaderPrivate;
 class UT_QVersitReader : public QObject                 
 {
      Q_OBJECT
-    
+
+public slots:
+    void readingDone();
+
 private slots: // Tests
 
     void init();
     void cleanup();
     
     void testDevice();
-    void testStart();
+    void testReading();
     void testResult();
     void testSetVersionFromProperty();
     void testParseNextVersitPropertyVCard21();
@@ -69,6 +73,8 @@ private: // Data
 
     QVersitReader* mReader;
     QVersitReaderPrivate* mReaderPrivate;
+    QBuffer* mInputDevice;
+    int mExpectedDocumentCount;
 };
 
 #endif // UT_VERSITREADER_H

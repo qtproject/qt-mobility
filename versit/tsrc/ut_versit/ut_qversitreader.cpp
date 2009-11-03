@@ -43,11 +43,15 @@
 #include "qversitreader.h"
 #include "qversitreader_p.h"
 #include <QtTest/QtTest>
-#include <QBuffer>
+
 
 void UT_QVersitReader::init()
 {
+    mExpectedDocumentCount = 0;
+    mInputDevice = new QBuffer;
+    mInputDevice->open(QBuffer::ReadWrite);
     mReader = new QVersitReader;
+    connect(mReader,SIGNAL(readingDone()),this,SLOT(readingDone()),Qt::DirectConnection);
     mReaderPrivate = new QVersitReaderPrivate;
 }
 
@@ -55,6 +59,13 @@ void UT_QVersitReader::cleanup()
 {   
     delete mReaderPrivate;
     delete mReader;
+    delete mInputDevice;
+    mExpectedDocumentCount = 0;
+}
+
+void UT_QVersitReader::readingDone()
+{
+    QCOMPARE(mReader->result().count(),mExpectedDocumentCount);
 }
 
 void UT_QVersitReader::testDevice()
@@ -63,48 +74,41 @@ void UT_QVersitReader::testDevice()
     QVERIFY(mReader->device() == NULL);    
     
     // Device has been set
-    QBuffer device;
-    mReader->setDevice(&device);
-    QVERIFY(mReader->device() == &device);
+    mReader->setDevice(mInputDevice);
+    QVERIFY(mReader->device() == mInputDevice);
 }
 
-void UT_QVersitReader::testStart()
+void UT_QVersitReader::testReading()
 {
     // No I/O device set
-    QVERIFY(!mReader->start());
+    QVERIFY(!mReader->readSynchronously());
     
-    // Device set, not open
-    QBuffer buffer;
-    mReader->setDevice(&buffer);
-    QVERIFY(!mReader->start());
-    
-    // Device set, opened, no data
-    buffer.open(QBuffer::ReadWrite);
-    QVERIFY(!mReader->start());
-    
-    // Device ready, invalid data
-    const QByteArray& invalidData = 
-        "BEGIN:VCARD\r\nVERSION:2.1\r\nEND:VCARD\r\n";
-    buffer.write(invalidData);
-    buffer.seek(0);
-    QVERIFY(!mReader->start());
+    // Device set, no data
+    mReader->setDevice(mInputDevice);
+    QVERIFY(mReader->readSynchronously());
 
     // Device set, one document
     const QByteArray& oneDocument = 
         "Begin:VCARD\r\nVERSION:2.1\r\nN:Homer\r\nenD:VCARD\r\n";
-    buffer.write(oneDocument);
-    buffer.seek(0);
-    QVERIFY(mReader->start());
-    QCOMPARE(mReader->result().count(),1);
-    
+    mInputDevice->write(oneDocument);
+    mInputDevice->seek(0);
+    mExpectedDocumentCount = 1;
+    QVERIFY(mReader->readSynchronously());
+
     // Two documents
     const QByteArray& twoDocuments = 
         "begin:VCARD\r\nN:Marge\r\nEND:VCARD\r\nBEGIN:VCARD\r\nN:Bart\r\nend:VCARD\r\n";
-    buffer.reset();
-    buffer.write(twoDocuments);
-    buffer.seek(0);
-    QVERIFY(mReader->start());
-    QCOMPARE(mReader->result().count(),3);
+    mInputDevice->reset();
+    mInputDevice->write(twoDocuments);
+    mInputDevice->seek(0);
+    mExpectedDocumentCount = 2;
+    QVERIFY(mReader->readSynchronously());
+
+    // Asynchronous reading started, try to start again
+    mInputDevice->setData(QByteArray());
+    mExpectedDocumentCount = 0;
+    QVERIFY(mReader->startAsynchronousReading());
+    QVERIFY(!mReader->startAsynchronousReading());
 }
 
 void UT_QVersitReader::testResult()

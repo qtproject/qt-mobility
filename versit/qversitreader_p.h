@@ -54,18 +54,21 @@
 // We mean it.
 //
 
+#include "qversitdocument.h"
+#include "qversitproperty.h"
+#include <QThread>
 #include <QByteArray>
 #include <QIODevice>
 #include <QList>
-#include "qversitdocument.h"
-#include "qversitproperty.h"
+#include <QTimer>
 
-class QVersitReaderPrivate
+class QVersitReaderPrivate : public QThread
 {
 public:
     QVersitReaderPrivate(); 
     ~QVersitReaderPrivate();
-    
+
+public: // New functions
     QVersitDocument parseVersitDocument(QByteArray& text);
 
     QVersitProperty parseNextVersitProperty(
@@ -83,7 +86,11 @@ public:
     bool setVersionFromProperty(
         QVersitDocument& document,
         const QVersitProperty& property) const;
-    
+
+protected: // From QThread
+     void run();
+
+public: // Data
     QIODevice* mIoDevice;
     QList<QVersitDocument> mVersitDocuments;
     int mDocumentNestingLevel; // Depth in parsing nested versit documents

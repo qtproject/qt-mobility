@@ -117,15 +117,15 @@ QList<QContactLocalId> CntSymbianEngine::contacts(
     QList<QContactLocalId> result;
 
     // Check if the filter is supported by the underlying filter implementation
-    QAbstractContactFilter::FilterSupport filterSupport = d->filterSupported(filter);
+    CntAbstractContactFilter::FilterSupport filterSupport = d->filterSupported(filter);
 
-    if (filterSupport == QAbstractContactFilter::Supported) {
+    if (filterSupport == CntAbstractContactFilter::Supported) {
         // Filter supported, use as the result directly
         result = d->contacts(filter, sortOrders, error);
         // If sorting is not supported, we need to fallback to slow sorting
         if(!d->sortOrderSupported(sortOrders))
             result = slowSort(result, sortOrders, error);
-    } else if (filterSupport == QAbstractContactFilter::SupportedPreFilterOnly) {
+    } else if (filterSupport == CntAbstractContactFilter::SupportedPreFilterOnly) {
         // Filter only does pre-filtering and may include false positives
         QList<QContactLocalId> contacts = d->contacts(filter, sortOrders, error);
         if(error == QContactManager::NoError)
@@ -419,6 +419,8 @@ QMap<QString, QContactDetailDefinition> CntSymbianEngine::detailDefinitions(QCon
 
 bool CntSymbianEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
 {
+    bool returnValue(false);
+    
     switch (feature) {
         /* TODO: case QContactManagerInfo::Groups to be implemented.
            How about the others? like:
@@ -426,10 +428,17 @@ bool CntSymbianEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) c
            QContactManagerInfo::MutableDefinitions,
            QContactManagerInfo::Anonymous? */
     case QContactManagerInfo::Groups:
-        return true;
-    default:
-        return false;
+    case QContactManagerInfo::Relationships:
+    case QContactManagerInfo::SelfContact: {
+        returnValue = true;
+        break;
     }
+    
+    default:
+        returnValue = false;
+    }
+    
+    return returnValue;
 }
 
 bool CntSymbianEngine::filterSupported(const QContactFilter& filter) const
@@ -437,9 +446,9 @@ bool CntSymbianEngine::filterSupported(const QContactFilter& filter) const
     TBool result;
 
     // Map filter support into a boolean value
-    QAbstractContactFilter::FilterSupport filterSupport = d->filterSupported(filter);
-    if (filterSupport == QAbstractContactFilter::Supported
-        || filterSupport == QAbstractContactFilter::SupportedPreFilterOnly) {
+    CntAbstractContactFilter::FilterSupport filterSupport = d->filterSupported(filter);
+    if (filterSupport == CntAbstractContactFilter::Supported
+        || filterSupport == CntAbstractContactFilter::SupportedPreFilterOnly) {
         result = true;
     } else {
         result = false;

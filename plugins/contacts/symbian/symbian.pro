@@ -48,11 +48,11 @@ symbian: {
         inc/cnttransformgeolocation.h \
         inc/cnttransformnote.h \
         inc/cnttransformfamily.h \  
-        inc/qabstractcontactfilter.h \
-        inc/qcontactsymbianfilterdbms.h \
-        inc/qcontactsymbianfiltersql.h \
-        inc/qabstractcontactsorter.h \
-        inc/qcontactsymbiansorterdbms.h \
+        inc/cntabstractcontactfilter.h \
+        inc/cntsymbianfilterdbms.h \
+        inc/cntsymbianfiltersql.h \
+        inc/cntabstractcontactsorter.h \
+        inc/cntsymbiansorterdbms.h \
         inc/cntrelationship.h \
         inc/cntabstractrelationship.h \
         inc/cntrelationshipgroup.h \
@@ -82,9 +82,9 @@ symbian: {
         src/cnttransformgeolocation.cpp \
         src/cnttransformnote.cpp \
         src/cnttransformfamily.cpp \  
-        src/qcontactsymbianfilterdbms.cpp \
-        src/qcontactsymbianfiltersql.cpp \
-        src/qcontactsymbiansorterdbms.cpp \
+        src/cntsymbianfilterdbms.cpp \
+        src/cntsymbianfiltersql.cpp \
+        src/cntsymbiansorterdbms.cpp \
         src/cntrelationship.cpp \
         src/cntabstractrelationship.cpp \
         src/cntrelationshipgroup.cpp \

@@ -53,12 +53,13 @@
 // We mean it.
 //
 
-#include <QByteArray>
-#include <QIODevice>
 #include <qversitdocument.h>
 #include <qversitproperty.h>
+#include <QThread>
+#include <QByteArray>
+#include <QIODevice>
 
-class QVersitWriterPrivate
+class QVersitWriterPrivate : public QThread
 {
 public:
     virtual ~QVersitWriterPrivate();  
@@ -75,6 +76,9 @@ protected: // To be implemented in each of the subclasses
 
 protected: // Constructors
     QVersitWriterPrivate(const QByteArray& documentType, const QByteArray& version);
+
+protected: // From QThread
+     void run();
 
 protected: // New functions
     QByteArray encodeGroupsAndName(const QVersitProperty& property) const;

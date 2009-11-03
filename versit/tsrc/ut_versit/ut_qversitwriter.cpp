@@ -49,14 +49,25 @@
 
 void UT_QVersitWriter::init()
 {
+    mWritingDoneCalled = false;
+    mOutputDevice = new QBuffer;
     mWriter = new QVersitWriter;
+    connect(mWriter,SIGNAL(writingDone()),this,SLOT(writingDone()),Qt::DirectConnection);
     mWriterPrivate = new QVCard21Writer;
 }
 
 void UT_QVersitWriter::cleanup()
 {
     delete mWriterPrivate;
+    disconnect(mWriter,SIGNAL(writingDone()),this,SLOT(writingDone()));
     delete mWriter;
+    delete mOutputDevice;
+    mWritingDoneCalled = false;
+}
+
+void UT_QVersitWriter::writingDone()
+{
+    mWritingDoneCalled = true;
 }
 
 void UT_QVersitWriter::testDevice()
@@ -65,30 +76,15 @@ void UT_QVersitWriter::testDevice()
     QVERIFY(mWriter->device() == NULL);    
     
     // Device has been set
-    QBuffer device;
-    mWriter->setDevice(&device);
-    QVERIFY(mWriter->device() == &device);
+    mWriter->setDevice(mOutputDevice);
+    QVERIFY(mWriter->device() == mOutputDevice);
 }
 
-void UT_QVersitWriter::testStart()
+void UT_QVersitWriter::testWriting()
 {
-    QVERIFY(!mWriter->start());
-    
-    // Device set, document not set
-    QBuffer buffer;
-    mWriter->setDevice(&buffer);
-    buffer.open(QBuffer::ReadWrite);
-    QVERIFY(!mWriter->start());
-
-    // Document set, device not set
-    mWriter->setDevice(0);
-    QVersitDocument document;
-    QVersitProperty property;
-    property.setName(QString(QString::fromAscii("FN")));
-    property.setValue(QByteArray("Homer"));
-    document.addProperty(property);
-    mWriter->setVersitDocument(document);
-    QVERIFY(!mWriter->start());
+    // Device not set
+    QVERIFY(!mWriter->writeSynchronously());
+    QVERIFY(!mWritingDoneCalled);
 
     // vCard 2.1
     const char vCard21[] =
@@ -96,14 +92,21 @@ void UT_QVersitWriter::testStart()
 VERSION:2.1\r\n\
 FN:Homer\r\n\
 END:VCARD\r\n";
+    mWritingDoneCalled = false;
+    mWriter->setDevice(mOutputDevice);
+    mOutputDevice->open(QBuffer::ReadWrite);
+    QVersitDocument document;
+    QVersitProperty property;
+    property.setName(QString(QString::fromAscii("FN")));
+    property.setValue(QByteArray("Homer"));
+    document.addProperty(property);
     document.setVersitType(QVersitDocument::VCard21);
     mWriter->setVersitDocument(document);
-    buffer.open(QBuffer::ReadWrite);
-    mWriter->setDevice(&buffer);
-    QVERIFY(mWriter->start());
-    buffer.seek(0);
-    QByteArray result(buffer.readAll());
+    QVERIFY(mWriter->writeSynchronously());
+    mOutputDevice->seek(0);
+    QByteArray result(mOutputDevice->readAll());
     QCOMPARE(QString::fromAscii(result),QString::fromAscii(vCard21));
+    QVERIFY(mWritingDoneCalled);
 
     // vCard 3.0
     const char vCard30[] =
@@ -111,15 +114,20 @@ END:VCARD\r\n";
 VERSION:3.0\r\n\
 FN:Homer\r\n\
 END:VCARD\r\n";
+    mWritingDoneCalled = false;
     document.setVersitType(QVersitDocument::VCard30);
     mWriter->setVersitDocument(document);
-    buffer.reset();
-    mWriter->setDevice(&buffer);
-    QVERIFY(mWriter->start());
-    buffer.seek(0);
-    result = buffer.readAll();
+    mOutputDevice->reset();
+    QVERIFY(mWriter->writeSynchronously());
+    mOutputDevice->seek(0);
+    result = mOutputDevice->readAll();
     QCOMPARE(QString::fromAscii(result),QString::fromAscii(vCard30));
+    QVERIFY(mWritingDoneCalled);
 
+    // Asynchronous writing started, try to start again
+    mOutputDevice->reset();
+    QVERIFY(mWriter->startAsynchronousWriting());
+    QVERIFY(!mWriter->startAsynchronousWriting());
 }
 
 void UT_QVersitWriter::testEncodeGroupsAndName()

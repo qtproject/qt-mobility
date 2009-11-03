@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qcontactsymbiansorterdbms.h"
+#include "cntsymbiansorterdbms.h"
 #include "cntsymbiantransformerror.h"
 
 #include <cntdb.h>
@@ -63,17 +63,17 @@ typedef QList<QContactLocalId> QContactLocalIdList;
 // the called function or the return value of the function is placed to the
 // variable.
 
-QContactSymbianSorter::QContactSymbianSorter(CContactDatabase& contactDatabase,CntTransformContact& transformContact):
+CntSymbianSorterDbms::CntSymbianSorterDbms(CContactDatabase& contactDatabase,CntTransformContact& transformContact):
     m_contactDatabase(contactDatabase),
     m_transformContact(transformContact)
 {
 }
 
-QContactSymbianSorter::~QContactSymbianSorter()
+CntSymbianSorterDbms::~CntSymbianSorterDbms()
 {
 }
 
-QList<QContactLocalId> QContactSymbianSorter::contacts(
+QList<QContactLocalId> CntSymbianSorterDbms::contacts(
             const QList<QContactSortOrder>& sortOrders,
             QContactManager::Error& error)
 {
@@ -90,7 +90,7 @@ QList<QContactLocalId> QContactSymbianSorter::contacts(
     return *QScopedPointer<QContactLocalIdList>(ids);
 }
 
-QList<QContactLocalId> QContactSymbianSorter::sort(
+QList<QContactLocalId> CntSymbianSorterDbms::sort(
             QList<QContactLocalId> contactIds,
             const QList<QContactSortOrder>& sortOrders,
             QContactManager::Error& error)
@@ -108,7 +108,7 @@ QList<QContactLocalId> QContactSymbianSorter::sort(
     return *QScopedPointer<QContactLocalIdList>(ids);
 }
 
-bool QContactSymbianSorter::sortOrderSupported(const QList<QContactSortOrder>& sortOrders)
+bool CntSymbianSorterDbms::sortOrderSupported(const QList<QContactSortOrder>& sortOrders)
 {
     foreach( QContactSortOrder s, sortOrders ) {
         // Find uids for sortings
@@ -136,7 +136,7 @@ bool QContactSymbianSorter::sortOrderSupported(const QList<QContactSortOrder>& s
     return true;
 }
 
-QList<QContactLocalId> QContactSymbianSorter::contactsL(const QList<QContactSortOrder>& sortOrders) const
+QList<QContactLocalId> CntSymbianSorterDbms::contactsL(const QList<QContactSortOrder>& sortOrders) const
 {
     // Populate the ID array, returns the coontact ids + group ids
     TTime epoch(0);
@@ -182,7 +182,7 @@ QList<QContactLocalId> QContactSymbianSorter::contactsL(const QList<QContactSort
     return qIds;
 }
 
-QList<QContactLocalId> QContactSymbianSorter::sortL(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders) const
+QList<QContactLocalId> CntSymbianSorterDbms::sortL(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders) const
 {
     CContactIdArray* ids = CContactIdArray::NewLC();
     foreach(QContactLocalId id, contactIds)
@@ -200,7 +200,7 @@ QList<QContactLocalId> QContactSymbianSorter::sortL(const QList<QContactLocalId>
     return qSortedIds;
 }
 
-CContactIdArray* QContactSymbianSorter::sortL(const CContactIdArray* contactIds, const QList<QContactSortOrder>& sortOrders) const
+CContactIdArray* CntSymbianSorterDbms::sortL(const CContactIdArray* contactIds, const QList<QContactSortOrder>& sortOrders) const
 {
     CArrayFixFlat<CContactDatabase::TSortPref> *sort =
         new (ELeave) CArrayFixFlat<CContactDatabase::TSortPref>(5);

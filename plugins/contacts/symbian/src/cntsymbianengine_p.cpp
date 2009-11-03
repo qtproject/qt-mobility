@@ -48,9 +48,9 @@
 #include <qtcontacts.h>
 #include <QSet>
 #include "qcontactchangeset.h"
-#include "qcontactsymbianfilterdbms.h"
-#include "qcontactsymbianfiltersql.h"
-#include "qcontactsymbiansorterdbms.h"
+#include "cntsymbianfilterdbms.h"
+#include "cntsymbianfiltersql.h"
+#include "cntsymbiansorterdbms.h"
 #include "cntrelationship.h"
 #include "cntsymbiantransformerror.h"
 
@@ -103,8 +103,8 @@ CntSymbianEnginePrivate::CntSymbianEnginePrivate(const QMap<QString, QString>& p
 
         m_managerUri = QContactManager::buildUri(CNT_SYMBIAN_MANAGER_NAME, parameters);
     	m_transformContact = new CntTransformContact;
-        m_contactFilter    = new QContactSymbianFilter(*m_contactDatabase);
-        m_contactSorter    = new QContactSymbianSorter(*m_contactDatabase, *m_transformContact);
+        m_contactFilter    = new CntSymbianFilterDbms(*m_contactDatabase);
+        m_contactSorter    = new CntSymbianSorterDbms(*m_contactDatabase, *m_transformContact);
         m_relationship     = new CntRelationship(m_contactDatabase);
         CntSymbianTransformError::transformError(err, error);
     }
@@ -136,7 +136,7 @@ QList<QContactLocalId> CntSymbianEnginePrivate::contacts(
     return m_contactFilter->contacts(filter, sortOrders, error);
 }
 
-QAbstractContactFilter::FilterSupport CntSymbianEnginePrivate::filterSupported(
+CntAbstractContactFilter::FilterSupport CntSymbianEnginePrivate::filterSupported(
         const QContactFilter& filter) const
 {
     return m_contactFilter->filterSupported(filter);
@@ -545,10 +545,10 @@ int CntSymbianEnginePrivate::addContactL(QContact &contact)
 
         // Update the changed values to the QContact
         // id
-        QContactId contactId;
-        contactId.setLocalId(id);
-        contactId.setManagerUri(m_managerUri);
-        contact.setId(contactId);
+        QScopedPointer<QContactId> contactId(new QContactId());
+        contactId->setLocalId(id);
+        contactId->setManagerUri(m_managerUri);
+        contact.setId(*contactId);
         contactItem = m_contactDatabase->ReadContactLC(id);
         // Guid
         QContactDetail* detail = m_transformContact->transformGuidItemFieldL(*contactItem, *m_contactDatabase);
@@ -566,10 +566,10 @@ int CntSymbianEnginePrivate::addContactL(QContact &contact)
 
         //set the id for the contact, needed by update
         id = contactItem->Id();
-        QContactId contactId;
-        contactId.setLocalId(QContactLocalId(id));
-        contactId.setManagerUri(m_managerUri);
-        contact.setId(contactId);
+        QScopedPointer<QContactId> contactId(new QContactId());
+        contactId->setLocalId(QContactLocalId(id));
+        contactId->setManagerUri(m_managerUri);
+        contact.setId(*contactId);
 
         //update contact, will add the fields to the already saved group
         updateContactL(contact);

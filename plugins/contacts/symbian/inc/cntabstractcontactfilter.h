@@ -39,53 +39,41 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTSYMBIANFILTERDBMS_H
-#define QCONTACTSYMBIANFILTERDBMS_H
+#ifndef QABSTRACTCONTACTFILTER_H
+#define QABSTRACTCONTACTFILTER_H
 
-#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
+#include <QList>
+#include "qtcontactsglobal.h"
+#include "qcontactmanager.h"
+#include "qcontactsortorder.h"
+#include "qcontactfilter.h"
 
-#include "qabstractcontactfilter.h"
-#include <e32cmn.h>
-
-class CContactDatabase;
-class CContactIdArray;
-class QContactDetailFilter;
-class QAbstractContactSorter;
-class CntTransformContact;
-class CContactItemFieldDef;
-
-class QContactSymbianFilter : public QAbstractContactFilter
+class CntAbstractContactFilter
 {
 public:
-    QContactSymbianFilter(CContactDatabase& contactDatabase);
-    ~QContactSymbianFilter();
+    enum FilterSupport {
+        /* The filter not supported */
+        NotSupported = 0,
+        /* The filter is supported */
+        Supported,
+        /* The filter is not directly supported, but for performance reasons
+         * the contact filter implementation pretends supporting the filter
+         * when it actually maps the filter to another, less strict filter.
+         * For example if the caller uses match flag Qt::MatchExactly, the
+         * filter actually gives the result as Qt::MatchContains (because of
+         * the limitations in the underlying database).
+         * The result then needs to be filtered by the caller (for example by
+         * using QContactManagerEngine::testFilter). */
+        SupportedPreFilterOnly
+    };
 
-    /* from QAbstractContactFilter */
-    QList<QContactLocalId> contacts(
+public:
+    virtual QList<QContactLocalId> contacts(
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error);
-    QAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter);
+            QContactManager::Error& error) = 0;
 
-private:
-    void transformDetailFilterL(const QContactDetailFilter& detailFilter, CContactItemFieldDef*& fieldDef);
-    TInt findContacts(
-            CContactIdArray*& idArray,
-            const CContactItemFieldDef& fieldDef,
-            const TDesC& text) const;
-    CContactIdArray* findContactsL(
-            const CContactItemFieldDef& fieldDef,
-            const TDesC& text) const;
-    TInt matchContacts(
-            CContactIdArray*& idArray,
-            const TDesC& phoneNumber,
-            const TInt matchLength);
-    void getMatchLengthL(TInt& matchLength);
-    CContactDatabase &m_contactDatabase;
-    QAbstractContactSorter *m_contactSorter;
-    CntTransformContact *m_transformContact;
+    virtual FilterSupport filterSupported(const QContactFilter& filter) = 0;
 };
 
-#endif /*__SYMBIAN_CNTMODEL_USE_SQLITE__*/
-
-#endif /* QCONTACTSYMBIANFILTERDBMS_H */
+#endif /* QABSTRACTCONTACTFILTER_H */

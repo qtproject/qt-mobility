@@ -62,6 +62,20 @@ QVersitWriterPrivate::QVersitWriterPrivate(
 /*! Destroys a writer. */
 QVersitWriterPrivate::~QVersitWriterPrivate()
 {
+    // Handle the situation where the user has issued an asynchronous start,
+    // but the writing has not completed before this thread object is destroyed: 
+    yieldCurrentThread();
+}
+
+/*!
+ * Inherited from QThread. Does the actual writing.
+ */
+void QVersitWriterPrivate::run()
+{
+    if (mIoDevice && !mVersitDocument.properties().empty()) {
+        QByteArray output = encodeVersitDocument(mVersitDocument);
+        mIoDevice->write(output);
+    }
 }
 
 /*!

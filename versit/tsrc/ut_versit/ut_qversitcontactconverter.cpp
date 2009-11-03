@@ -663,7 +663,6 @@ void UT_QVersitContactConverter::testEncodeOrganization()
     // ORG LOGO Test2: LOGO File.
     contact = QContact();
     organization = QContactOrganization();
-    organization = QContactOrganization();
     organization.setLogo(mTestPhotoFile);
     contact.saveDetail(&organization);
     versitDocument = mConverter->convertContact(contact);
@@ -681,6 +680,19 @@ void UT_QVersitContactConverter::testEncodeOrganization()
     //Ensure value1 is not URL
     QString value1 = QString::fromAscii(versitDocument.properties().at(0).value().data());
     QEXPECT_FAIL(value1.toAscii(), url.toAscii(), Continue);
+
+
+    // Assistant Name Test.
+    contact = QContact();
+    organization = QContactOrganization();
+    organization.setAssistantName(QString::fromAscii("myAssistant"));
+    contact.saveDetail(&organization);
+    versitDocument = mConverter->convertContact(contact);
+    QCOMPARE(versitDocument.properties().count(), 1);
+    property = versitDocument.properties().at(0);
+    QCOMPARE(property.name(), QString::fromAscii(versitAssistantId));
+    QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("myAssistant"));
+
 }
 
 void UT_QVersitContactConverter::testEncodeAvatar()

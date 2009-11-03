@@ -60,6 +60,7 @@
 /*! Construct a reader. */
 QVersitReader::QVersitReader() : d(new QVersitReaderPrivate)
 {
+    connect(d,SIGNAL(finished()),this,SIGNAL(readingDone()),Qt::DirectConnection);
 }
     
 /*! Destroy a reader. */    
@@ -85,20 +86,31 @@ QIODevice* QVersitReader::device() const
 }
 
 /*!
- * Starts parsing the input. 
+ * Starts reading the input asynchronously.
+ * Signal readingDone is emitted when the reading has finished.
  */
-bool QVersitReader::start()
+bool QVersitReader::startAsynchronousReading()
 {
-    if (d->mIoDevice) {
-        QByteArray input = d->mIoDevice->readAll();
-        VersitUtils::unfold(input);
-        while (input.length() > 0) {
-            QVersitDocument document = d->parseVersitDocument(input);
-            if (document.properties().count() > 0)
-                d->mVersitDocuments.append(document);
-        }
+    bool started = false;
+    if (d->mIoDevice && d->mIoDevice->isOpen() && !d->isRunning()) {
+        d->mVersitDocuments.clear();
+        d->start();
+        started = true;
     }
-    return (d->mVersitDocuments.count() > 0);
+    return started;
+}
+
+/*!
+ * Reads the input synchronously.
+ * Using this function may block the user thread for an undefined period.
+ * In most cases asynchronous startAsynchronousReading should be used instead.
+ */
+bool QVersitReader::readSynchronously()
+{
+    bool ok = startAsynchronousReading();
+    if (ok)
+        d->wait();
+    return ok;
 }
 
 /*!

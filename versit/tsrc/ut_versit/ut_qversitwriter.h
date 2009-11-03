@@ -43,6 +43,7 @@
 #define UT_QVERSITWRITER_H
 
 #include <QObject>
+#include <QBuffer>
 
 class QVersitWriter;
 class QVersitWriterPrivate;
@@ -52,18 +53,23 @@ class UT_QVersitWriter : public QObject
 {
      Q_OBJECT
     
+public slots:
+    void writingDone();
+
 private slots: // Tests
 
     void init();
     void cleanup();
 
     void testDevice();    
-    void testStart();
+    void testWriting();
     void testEncodeGroupsAndName();
 
 private: // Data
     QVersitWriter* mWriter;
     QVersitWriterPrivate* mWriterPrivate;
+    QBuffer* mOutputDevice;
+    bool mWritingDoneCalled;
 };
 
 #endif // UT_QVERSITWRITER_H

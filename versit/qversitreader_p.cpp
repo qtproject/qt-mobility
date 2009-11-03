@@ -55,6 +55,25 @@ QVersitReaderPrivate::QVersitReaderPrivate() :
 /*! Destroy a reader. */    
 QVersitReaderPrivate::~QVersitReaderPrivate()
 {
+    // Handle the situation where the user has issued an asynchronous start,
+    // but the reading has not completed before this thread object is destroyed: 
+    yieldCurrentThread();
+}
+
+/*!
+ * Inherited from QThread. Does the actual reading.
+ */
+void QVersitReaderPrivate::run()
+{
+    if (mIoDevice) {
+        QByteArray input = mIoDevice->readAll();
+        VersitUtils::unfold(input);
+        while (input.length() > 0) {
+            QVersitDocument document = parseVersitDocument(input);
+            if (document.properties().count() > 0)
+                mVersitDocuments.append(document);
+        }
+    }
 }
 
 /*!
