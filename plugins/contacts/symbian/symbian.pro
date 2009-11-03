@@ -96,7 +96,8 @@ symbian: {
   				-lcntmodel \
   				-lcentralrepository \
   				-lQtContacts \
-  				-lestor
+  				-lestor \
+  				-lflogger
 
 	target.path = /sys/bin
 	INSTALLS += target
