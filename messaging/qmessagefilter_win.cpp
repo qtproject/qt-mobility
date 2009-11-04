@@ -341,16 +341,12 @@ void QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, Mapi
             }
         }
     } else if (filter->d_ptr->_field == AncestorFilter) {
-        if (filter->d_ptr->_folderFilter->isEmpty()) {
-            result = ~result;  // match all for include, match none for exclude
-        } else {
-            QList<MapiFolderPtr> folders(session->filterFolders(lastError, *filter->d_ptr->_folderFilter));
-            foreach(MapiFolderPtr folder, folders) {
-                if (inclusion) {
-                    result |= QMessageFilter::byAncestorFolderIds(folder->id());
-                } else {
-                    result &= QMessageFilter::byAncestorFolderIds(folder->id(), QMessageDataComparator::Excludes);
-                }
+        QList<MapiFolderPtr> folders(session->filterFolders(lastError, *filter->d_ptr->_folderFilter));
+        foreach(MapiFolderPtr folder, folders) {
+            if (inclusion) {
+                result |= QMessageFilter::byAncestorFolderIds(folder->id());
+            } else {
+                result &= QMessageFilter::byAncestorFolderIds(folder->id(), QMessageDataComparator::Excludes);
             }
         }
 #endif
@@ -2016,12 +2012,16 @@ QMessageFilter QMessageFilter::byParentFolderId(const QMessageFolderFilter &filt
 QMessageFilter QMessageFilter::byAncestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp)
 {
     QMessageFilter result;
+    if (id.isValid()) {
 #ifdef _WIN32_WCE
-    result.d_ptr->_ancestorInclude += id;
+        result.d_ptr->_ancestorInclude += id;
 #else
-    QMessageFolder folder(id);
-    result.d_ptr->_ancestorInclude += folder.parentAccountId().toString() + "/" + folder.path();
+        QMessageFolder folder(id);
+        result.d_ptr->_ancestorInclude += folder.parentAccountId().toString() + "/" + folder.path();
 #endif
+    } else {
+        result = ~result;
+    }
     if (cmp != QMessageDataComparator::Includes) {
         result = ~result;
     }
