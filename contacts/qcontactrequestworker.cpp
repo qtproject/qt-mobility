@@ -123,35 +123,28 @@ void QContactRequestWorker::stop()
 void QContactRequestWorker::run()
 {
     QContactRequestElement *re;
-    QMutexLocker locker(&d->m_mutex);
-    locker.unlock();
     
     for(;;) {
+        
         d->cleanUpFinishedRequests();
         re = d->takeFirstRequestElement();
         if (d->m_stop)
-            break;
-
-        locker.relock();
+           break;
+        
         Q_ASSERT(re && re->request);
         
         // check to see if it is cancelling; if so, cancel it and perform update.
         if (re->request->status() == QContactAbstractRequest::Cancelling) {
             QList<QContactManager::Error> dummy;
-            locker.unlock();
             QContactManagerEngine::updateRequestStatus(re->request, QContactManager::NoError, dummy, QContactAbstractRequest::Cancelled);
-            locker.relock();
         }
 
         if (re->request->isFinished() || !re->request->manager()) {
-            locker.unlock();
             removeRequest(re->request);
             continue;
         }
 
         // Now perform the active request and emit required signals.
-        if (re->request->status() != QContactAbstractRequest::Active)
-            qWarning("RequestWorker has suffered an internal consistency error!  Please file a bug report!");
         Q_ASSERT(re->request->status() == QContactAbstractRequest::Active);
         switch (re->request->type()) {
             case QContactAbstractRequest::ContactFetchRequest:
@@ -186,22 +179,21 @@ void QContactRequestWorker::run()
                 break;
             default:
                 break;
-        }
-        locker.unlock();
-        removeRequest(re->request);
+        }//switch
         re->condition.wakeAll();
-    }
-
-    // clean up our requests.
-    foreach (QContactRequestElement* re, d->m_requestQueue) {
-        if (re) {
-            removeRequest(re->request);
+        removeRequest(re->request);
+    }//for
+    
+    {
+        QMutexLocker locker(&d->m_mutex);
+        foreach (QContactRequestElement* re, d->m_requestQueue) {
+            if (re)
+                removeRequest(re->request);
         }
+        d->m_requestQueue.clear();
+        d->m_requestMap.clear();
+        d->cleanUpFinishedRequests(true);
     }
-
-    d->m_requestQueue.clear();
-    d->m_requestMap.clear();
-    d->cleanUpFinishedRequests(true);
 }
 
 
@@ -284,9 +276,8 @@ bool QContactRequestWorker::waitRequest(QContactAbstractRequest* req, int msecs)
             re->waiting = true;
             if (msecs) {
                 ret = re->condition.wait(&re->mutex, msecs);
-            } else {
-                ret = re->condition.wait(&re->mutex);
             }
+            ret = re->condition.wait(&re->mutex);
             re->waiting = false;
         }
     }
