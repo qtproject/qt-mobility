@@ -61,9 +61,39 @@
 
 #include <locale.h>
 
-#include <IOBluetoothHostController.h>
+#include <IOBluetooth/IOBluetooth.h>
+
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <CoreFoundation/CFArray.h>
+#include <CoreFoundation/CFArray.h>
+#include <CoreFoundation/CFNumber.h>
+
+#include <IOKit/graphics/IOGraphicsLib.h>
+
+#include <IOKit/usb/IOUSBLib.h>
+#include <IOKit/pwr_mgt/IOPM.h>
+#include <IOKit/ps/IOPSKeys.h>
+#include <IOKit/ps/IOPowerSources.h>
+#include <IOKit/IOTypes.h>
+
+#include <IOKit/storage/IOMedia.h>
+#include <IOKit/storage/IOCDMedia.h>
+#include <IOKit/storage/IODVDMedia.h>
+#include <IOKit/storage/IOBlockStorageDevice.h>
+
+#ifdef MAC_SDK_10_6
+#include <CoreWLAN/CWInterface.h>
+#endif
+
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#include <sys/cdefs.h>
+#include <sys/param.h>
+#include <sys/ucred.h>
+#include <sys/mount.h>
+#include <math.h>
+
+//
 ////////
 static QString stringFromCFString(CFStringRef value) {
     QString retVal;
@@ -75,6 +105,9 @@ static QString stringFromCFString(CFStringRef value) {
     delete cstring;
     return retVal;
 }
+
+inline QString nsstringToQString(const NSString *nsstr)
+{ return stringFromCFString(reinterpret_cast<const CFStringRef>(nsstr)); }
 
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
@@ -171,17 +204,20 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     switch (feature) {
     case QSystemInfo::BluetoothFeature :
         {
+#ifdef  MAC_SDK_10_6
             //IOBluetoothHostController
             //addressAsString
             IOBluetoothHostController* controller = [IOBluetoothHostController defaultController];
             if (controller != NULL) {
                 featureSupported = true;
             }
+#endif
         }
         break;
     case QSystemInfo::CameraFeature :
         {
-
+//ICCameraDevice
+            //ICCameraDeviceCanTakePicture
         }
         break;
     case QSystemInfo::FmradioFeature :
@@ -191,12 +227,12 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::IrFeature :
         {
-
+//kSCNetworkInterfaceTypeIrDA;
         }
         break;
     case QSystemInfo::LedFeature :
         {
-
+//kHIDPage_LEDs
         }
         break;
     case QSystemInfo::MemcardFeature :
@@ -206,7 +242,12 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::UsbFeature :
         {
+               CFDictionaryRef 	match = 0;
 
+               match = IOServiceMatching(kIOUSBDeviceClassName);
+               if(match != NULL) {
+                   featureSupported = true;
+               }
         }
         break;
     case QSystemInfo::VibFeature :
@@ -298,7 +339,18 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         break;
     case QSystemNetworkInfo::WlanMode:
         {
+             int percent = 0;
+#ifdef MAC_SDK_10_6
+            CWInterface *wifiInterface = [CWInterface interface/*interfaceWithName: qstringToNSString(interfaceString)*/];
+            int rssiSignal = [[wifiInterface rssi] intValue];
+            
+            int maxSignal = -60;
+            int disSignal = -80;
+            percent = 95 - 80*(maxSignal - rssiSignal)/(maxSignal - disSignal);
+            qWarning() << __FUNCTION__ << [[wifiInterface rssi] intValue] << percent;
+#endif
 
+            return percent;
         }
         break;
     case QSystemNetworkInfo::EthernetMode:
@@ -358,6 +410,7 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
     QString mac;
+#ifdef  MAC_SDK_10_6
     if(mode == QSystemNetworkInfo::BluetoothMode) {
         NSString *addy;
         IOBluetoothHostController* controller = [IOBluetoothHostController defaultController];
@@ -369,6 +422,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
     } else {
         mac = interfaceForMode(mode).hardwareAddress();
     }
+#endif
     return mac;
 }
 
@@ -415,16 +469,37 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
-    Q_UNUSED(screen);
-    return -1;
+    int macScreens = 4;
+    CGDisplayErr dErr;
+    io_service_t service;
+    CFStringRef key = CFSTR(kIODisplayBrightnessKey);
+
+    float brightness = HUGE_VALF;
+    int displayBrightness = -1;
+    CGDirectDisplayID screensArray[macScreens]; //support 4 screens
+    CGDisplayCount numberScreens;
+    CGGetActiveDisplayList(macScreens, screensArray, &numberScreens);
+    if(numberScreens >= screen) {
+        service = CGDisplayIOServicePort(screensArray[screen]);
+        dErr = IODisplayGetFloatParameter(service, kNilOptions, key, &brightness);
+        if (dErr == kIOReturnSuccess) {
+            displayBrightness = (int)(brightness * 100);
+        }
+    }
+    return displayBrightness;
 }
 
 int QSystemDisplayInfoPrivate::colorDepth(int screen)
 {
-    Q_UNUSED(screen);
-
-   int bpp=0;
-    return bpp;
+    int macScreens = 4;
+    CGDirectDisplayID screensArray[macScreens]; //support 4 screens
+    CGDisplayCount numberScreens;
+    long bitsPerPixel = 0;
+    CGGetActiveDisplayList(macScreens, screensArray, &numberScreens);
+    if(numberScreens >= screen) {
+        bitsPerPixel = CGDisplayBitsPerPixel (screensArray[screen]);
+    }
+    return (int)bitsPerPixel;
 }
 
 //////// QSystemStorageInfo
@@ -438,39 +513,163 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
 }
 
+bool QSystemStorageInfoPrivate::updateVolumesMap()
+{
+    struct statfs64 *buf = NULL;
+    unsigned i, count = 0;
+    qint64 totalFreeBytes=0;
+
+    count = getmntinfo64(&buf, 0);
+    for (i=0; i<count; i++) {
+        char *volName = buf[i].f_mntonname;
+        mountEntriesHash.insert(volName, buf[i].f_mntfromname);
+    }
+}
+
+
 qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
-        Q_UNUSED(driveVolume);
+//    foreach(QString volName, mountEntriesHash) {
+//        if(volName == driveVolume) {
+//
+//        }
+//    }
 
+    struct statfs64 *buf = NULL;
+    unsigned i, count = 0;
     qint64 totalFreeBytes=0;
+
+    count = getmntinfo64(&buf, 0);
+    for (i=0; i<count; i++) {
+        char *volName = buf[i].f_mntonname;
+        if(driveVolume == QString(volName)) {
+            totalFreeBytes = (buf[i].f_bavail * (buf[i].f_bsize/512));
+        }
+    }
+
     return  totalFreeBytes;
 }
 
 qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
-        Q_UNUSED(driveVolume);
-
+    struct statfs64 *buf = NULL;
+    unsigned i, count = 0;
     qint64 totalBytes=0;
+
+    count = getmntinfo64(&buf, 0);
+    for (i=0; i<count; i++) {
+        char *volName = buf[i].f_mntonname;
+        if(driveVolume == QString(volName)) {
+            totalBytes = (buf[i].f_blocks * (buf[i].f_bsize/512));
+            return totalBytes;
+        }
+    }
+
     return totalBytes;
 }
 
 QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QString &driveVolume)
 {
-        Q_UNUSED(driveVolume);
+    updateVolumesMap();
 
-    return QSystemStorageInfo::NoDrive;
+    //  qWarning() << __FUNCTION__ << driveVolume;
+    OSStatus osstatusResult = noErr;
+    ItemCount volumeIndex;
+
+    for (volumeIndex = 1; osstatusResult == noErr || osstatusResult != nsvErr; volumeIndex++) {
+        FSVolumeRefNum actualVolume;
+        HFSUniStr255 volumeName;
+        FSVolumeInfo	volumeInfo;
+
+        bzero((void *) &volumeInfo, sizeof(volumeInfo));
+
+        osstatusResult = FSGetVolumeInfo(kFSInvalidVolumeRefNum, volumeIndex, &actualVolume, kFSVolInfoFSInfo,
+                                         &volumeInfo, &volumeName, NULL);
+
+        if (osstatusResult == noErr) {
+            GetVolParmsInfoBuffer volumeParmeters;
+            osstatusResult = FSGetVolumeParms(actualVolume, &volumeParmeters, sizeof(volumeParmeters));
+
+             NSString *deviceId = [NSString stringWithCString:(char *)volumeParmeters.vMDeviceID];
+            if (volumeParmeters.vMServerAdr == 0) { //local drive
+                io_service_t ioService;
+                ioService = IOServiceGetMatchingService(kIOMasterPortDefault,
+                                                        IOBSDNameMatching(kIOMasterPortDefault, 0,
+                                                                          (char *)volumeParmeters.vMDeviceID));
+
+                if (IOObjectConformsTo(ioService, kIOMediaClass)) {
+                    CFTypeRef wholeMedia;
+
+                    wholeMedia = IORegistryEntryCreateCFProperty(ioService,
+                                                                 CFSTR(kIOMediaContentKey),
+                                                                 kCFAllocatorDefault,
+                                                                 0);
+                    QString devId = QString((char *)volumeParmeters.vMDeviceID);
+                    devId = devId.prepend("/dev/");
+                    if( mountEntriesHash.keys(devId).count() > 0) {
+                        if((volumeParmeters.vMExtendedAttributes & (1L << bIsRemovable))) {
+                            CFRelease(wholeMedia);
+                            return QSystemStorageInfo::RemovableDrive;
+                        } else {
+                            return QSystemStorageInfo::InternalDrive;
+                        }
+                    }
+                }
+            } else {
+                return QSystemStorageInfo::RemoteDrive;
+            }
+        }
+    }
+       return QSystemStorageInfo::NoDrive;
 }
 
 QStringList QSystemStorageInfoPrivate::logicalDrives()
 {
     QStringList drivesList;
+
+    struct statfs64 *buf = NULL;
+    unsigned i, count = 0;
+
+    count = getmntinfo64(&buf, 0);
+    for (i=0; i<count; i++) {
+        char *volName = buf[i].f_mntonname;
+//        qWarning() << "Volume:"
+//                << volName
+//                << buf[i].f_bfree
+//                << buf[i].f_bavail
+//                << buf[i].f_fstypename
+//                << buf[i].f_type;
+        if(buf[i].f_type != 19
+           && buf[i].f_type != 20) {
+            drivesList << volName;
+        }
+    }
     return drivesList;
+}
+
+QSystemDeviceInfoPrivate *QSystemDeviceInfoPrivate::self = 0;
+
+void powerInfoChanged(void* runLoopInfo)
+{
+    Q_UNUSED(runLoopInfo)
+    QSystemDeviceInfoPrivate::instance()->batteryLevel();
+    QSystemDeviceInfoPrivate::instance()->currentPowerState();
 }
 
 //////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
         : QObject(parent)
 {
+    batteryLevelCache = 0;
+    currentPowerStateCache = QSystemDeviceInfo::UnknownPower;
+    batteryStatusCache = QSystemDeviceInfo::NoBatteryLevel;
+    CFRunLoopSourceRef runLoopSource = (CFRunLoopSourceRef)IOPSNotificationCreateRunLoopSource(powerInfoChanged, this);
+    if (runLoopSource) {
+        CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, kCFRunLoopDefaultMode);
+        CFRelease(runLoopSource);
+    }
+    if(!self)
+        self = this;
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
@@ -491,7 +690,47 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 
 QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 {
-    return QSystemDeviceInfo::UnknownPower;
+    QSystemDeviceInfo::PowerState state = QSystemDeviceInfo::UnknownPower;
+
+    CFDictionaryRef powerSourceDict = NULL;
+    CFStringRef powerStateString;
+
+    CFTypeRef powerSourcesInfoBlob = IOPSCopyPowerSourcesInfo();
+    CFArrayRef powerSourcesList = IOPSCopyPowerSourcesList(powerSourcesInfoBlob);
+    int i;
+    for (i=0; i<CFArrayGetCount(powerSourcesList); i++) {
+        powerSourceDict = IOPSGetPowerSourceDescription(powerSourcesInfoBlob, /* [powerSourcesList objectAtIndex:0]*/ CFArrayGetValueAtIndex(powerSourcesList, i));
+        if(!powerSourceDict) {
+            state = QSystemDeviceInfo::UnknownPower;
+            break;
+        }
+
+        powerStateString = (CFStringRef)CFDictionaryGetValue(powerSourceDict, CFSTR(kIOPSPowerSourceStateKey));
+    //    qWarning() << stringFromCFString(powerStateString);
+        if(CFStringCompare(powerStateString,CFSTR(kIOPSBatteryPowerValue),0)==kCFCompareEqualTo) {
+            //has battery
+            state = QSystemDeviceInfo::BatteryPower;
+        } else {
+
+            NSDictionary *powerSourceInfo = nil;
+            powerSourceInfo = [NSDictionary dictionaryWithDictionary:(NSDictionary*)powerSourceDict];
+            bool charging = (bool)[[powerSourceInfo valueForKey:[NSString stringWithCString:kIOPSIsChargingKey]] boolValue];
+            if (charging ) {
+                state = QSystemDeviceInfo::WallPowerChargingBattery;
+            } else {
+                state = QSystemDeviceInfo::WallPower;
+            }
+        }
+    }
+
+    CFRelease(powerSourcesInfoBlob);
+    CFRelease(powerSourcesList);
+
+    if( currentPowerStateCache != state) {
+        currentPowerStateCache = state;
+        emit powerStateChanged(state);
+    }
+    return state;
 }
 
 QString QSystemDeviceInfoPrivate::imei()
@@ -506,22 +745,75 @@ QString QSystemDeviceInfoPrivate::imsi()
 
 QString QSystemDeviceInfoPrivate::manufacturer()
 {
-    return QString();
+    return QString("Apple"); //pretty sure we can hardcode this one
 }
 
 QString QSystemDeviceInfoPrivate::model()
 {
-    return  QString();
+    char modelBuffer[256];
+    QString model;
+      size_t sz = sizeof(modelBuffer);
+      if (0 == sysctlbyname("hw.model", modelBuffer, &sz, NULL, 0)) {
+          model = modelBuffer;
+      }
+    return  model;
 }
 
 QString QSystemDeviceInfoPrivate::productName()
 {
-    return  QString();
+
+        return  QString();
 }
 
-int QSystemDeviceInfoPrivate::batteryLevel() const
+int QSystemDeviceInfoPrivate::batteryLevel()
 {
-    return 0;
+    float level = 0;
+    CFDictionaryRef powerSourceDict = NULL;
+    CFTypeRef powerSourcesInfoBlob = IOPSCopyPowerSourcesInfo();
+    CFArrayRef powerSourcesList = IOPSCopyPowerSourcesList(powerSourcesInfoBlob);
+    int i;
+    for (i=0; i<CFArrayGetCount(powerSourcesList); i++) {
+        powerSourceDict = IOPSGetPowerSourceDescription(powerSourcesInfoBlob, /* [powerSourcesList objectAtIndex:0]*/ CFArrayGetValueAtIndex(powerSourcesList, i));
+        if(!powerSourceDict) {
+            break;
+        }
+
+        float currentLevel = 0;
+        float maxLevel = 0;
+        const void *powerStateValue;
+
+        powerStateValue = CFDictionaryGetValue(powerSourceDict, CFSTR(kIOPSCurrentCapacityKey));
+        CFNumberGetValue((CFNumberRef)powerStateValue, kCFNumberSInt32Type, &currentLevel);
+
+        powerStateValue = CFDictionaryGetValue(powerSourceDict, CFSTR(kIOPSMaxCapacityKey));
+        CFNumberGetValue((CFNumberRef)powerStateValue, kCFNumberSInt32Type, &maxLevel);
+        level = (currentLevel/maxLevel) * 100;
+      //  qWarning() << __FUNCTION__<<level;
+    }
+
+    CFRelease(powerSourcesInfoBlob);
+    CFRelease(powerSourcesList);    
+
+    if(batteryLevelCache != level) {
+        batteryLevelCache = level;
+        emit batteryLevelChanged(level);
+    }
+
+    if(batteryLevelCache < 4 && batteryStatusCache != QSystemDeviceInfo::BatteryCritical) {
+        batteryStatusCache = QSystemDeviceInfo::BatteryCritical;
+        emit batteryStatusChanged(batteryStatusCache);
+    } else if((batteryLevelCache > 3 && batteryLevelCache < 11) && batteryStatusCache != QSystemDeviceInfo::BatteryVeryLow) {
+        batteryStatusCache = QSystemDeviceInfo::BatteryVeryLow;
+        emit batteryStatusChanged(batteryStatusCache);
+    } else if((batteryLevelCache > 10 && batteryLevelCache < 41) && batteryStatusCache != QSystemDeviceInfo::BatteryLow) {
+        batteryStatusCache = QSystemDeviceInfo::BatteryLow;
+        emit batteryStatusChanged(batteryStatusCache);
+    } else if(batteryLevelCache > 40 && batteryStatusCache != QSystemDeviceInfo::BatteryNormal) {
+        batteryStatusCache = QSystemDeviceInfo::BatteryNormal;
+        emit batteryStatusChanged(batteryStatusCache);
+    }
+
+    return (int)level;
 }
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()

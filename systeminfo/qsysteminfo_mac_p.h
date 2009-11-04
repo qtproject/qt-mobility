@@ -165,6 +165,7 @@ public:
 
 private:
     QHash<QString, QString> mountEntriesHash;
+    bool updateVolumesMap();
     void mountEntries();
 
 };
@@ -188,7 +189,7 @@ public:
 
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
-    int  batteryLevel() const;
+    int  batteryLevel();
 
     QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
@@ -196,6 +197,7 @@ public:
 
     QSystemDeviceInfo::PowerState currentPowerState();
     void setConnection();
+    static QSystemDeviceInfoPrivate *instance() {return self;}
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
@@ -206,6 +208,10 @@ Q_SIGNALS:
     void bluetoothStateChanged(bool);
 
 private:
+    int batteryLevelCache;
+    QSystemDeviceInfo::PowerState currentPowerStateCache;
+    QSystemDeviceInfo::BatteryStatus batteryStatusCache;
+    static QSystemDeviceInfoPrivate *self;
 };
 
 
