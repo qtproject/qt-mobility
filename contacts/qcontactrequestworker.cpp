@@ -235,6 +235,9 @@ bool QContactRequestWorker::cancelRequest(QContactAbstractRequest* req)
 {
     if (req) {
         QMutexLocker workerLocker(&d->m_mutex);
+        if (d->m_requestQueue.isEmpty() || req == d->m_currentRequest) {
+            return false;
+        }
         QList<QContactManager::Error> dummy;
         return QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Cancelling);
     }
@@ -611,7 +614,9 @@ QContactAbstractRequest* QContactRequestWorkerData::takeFirstRequest()
     // take the first pending request and finish it
     if (m_requestQueue.isEmpty())
         m_newRequestAdded.wait(&m_mutex);
-    if (!m_requestQueue.isEmpty())
-        return m_requestQueue.head();
+    if (!m_requestQueue.isEmpty()) {
+        m_currentRequest = m_requestQueue.head();
+        return m_currentRequest;
+    }
     return 0;
 }

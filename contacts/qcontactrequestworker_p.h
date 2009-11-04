@@ -68,13 +68,15 @@ class QContactRequestWorkerData : public QSharedData
 public:
     QContactRequestWorkerData()
         : QSharedData(),
-        m_stop(false)
+        m_stop(false),
+        m_currentRequest(0)
     {
     }
 
     QContactRequestWorkerData(const QContactRequestWorkerData& other)
         : QSharedData(other),
-        m_stop(other.m_stop)
+        m_stop(other.m_stop),
+        m_currentRequest(other.m_currentRequest)
     {
     }
 
@@ -89,6 +91,7 @@ public:
     QWaitCondition m_newRequestAdded;
     QQueue<QContactAbstractRequest*> m_requestQueue; 
     QList<QContactAbstractRequest*> m_removedRequests; 
+    QContactAbstractRequest* m_currentRequest;
 };
 #endif
 
