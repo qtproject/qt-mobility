@@ -391,6 +391,7 @@ void tst_QContactAsync::contactFetch()
             continue;
         }
         QVERIFY(cfr.waitForProgress() || cfr.isFinished());
+        cfr.waitForFinished();
         expectedCount += 3;
         QVERIFY(spy.count() >= expectedCount); // active + cancelling + cancelled progress signals
         QVERIFY(cfr.isFinished());
@@ -537,6 +538,7 @@ void tst_QContactAsync::contactIdFetch()
             continue;
         }
         QVERIFY(cfr.waitForProgress() || cfr.isFinished());
+        cfr.waitForFinished();
         expectedCount += 3;
         QVERIFY(spy.count() >= expectedCount); // active + cancelling + cancelled progress signals
         QVERIFY(cfr.isFinished());
@@ -671,6 +673,7 @@ void tst_QContactAsync::contactRemove()
             continue;
         }
         QVERIFY(crr.waitForProgress() || crr.isFinished());
+        crr.waitForFinished();
         expectedCount += 3;
         QVERIFY(spy.count() >= expectedCount); // active + cancelling + cancelled progress signals
         QVERIFY(crr.isFinished());
@@ -835,11 +838,12 @@ void tst_QContactAsync::contactSave()
             continue;
         }
         QVERIFY(csr.waitForProgress() || csr.isFinished());
-        QVERIFY(csr.status() == QContactAbstractRequest::Cancelled);
+        csr.waitForFinished(); // now wait until finished (if it hasn't already).
         expectedCount += 3;
         QVERIFY(spy.count() >= expectedCount); // active + cancelling + cancelled progress signals
         QVERIFY(csr.isFinished());
         QVERIFY(!csr.isActive());
+        QVERIFY(csr.status() == QContactAbstractRequest::Cancelled);
 
         // verify that the changes were not saved
         expected.clear();
@@ -968,6 +972,7 @@ void tst_QContactAsync::definitionFetch()
             continue;
         }
         QVERIFY(dfr.waitForProgress() || dfr.isFinished());
+        dfr.waitForFinished();
         expectedCount += 3;
         QVERIFY(spy.count() >= expectedCount); // active + cancelling + cancelled progress signals
         QVERIFY(dfr.isFinished());
@@ -1139,6 +1144,7 @@ void tst_QContactAsync::definitionRemove()
             continue;
         }
         QVERIFY(drr.waitForProgress() || drr.isFinished());
+        drr.waitForFinished();
         expectedCount += 3;
         QVERIFY(spy.count() >= expectedCount); // active + cancelling + cancelled progress signals
         QVERIFY(drr.isFinished());
@@ -1301,6 +1307,7 @@ void tst_QContactAsync::definitionSave()
             continue;
         }
         QVERIFY(dsr.waitForProgress() || dsr.isFinished());
+        dsr.waitForFinished();
         expectedCount += 3;
         QVERIFY(spy.count() >= expectedCount); // active + cancelling + cancelled progress signals
         QVERIFY(dsr.isFinished());
@@ -1525,6 +1532,7 @@ void tst_QContactAsync::relationshipFetch()
             continue;
         }
         QVERIFY(rfr.waitForProgress() || rfr.isFinished());
+        rfr.waitForFinished();
         expectedCount += 3;
         QVERIFY(spy.count() >= expectedCount); // active + cancelling + cancelled progress signals
         QVERIFY(rfr.isFinished());
@@ -1742,7 +1750,8 @@ void tst_QContactAsync::relationshipRemove()
             }
             continue;
         }
-        QVERIFY(rrr.waitForProgress());
+        QVERIFY(rrr.waitForProgress() || rrr.isFinished());
+        rrr.waitForFinished();
         expectedCount += 3;
         QVERIFY(spy.count() >= expectedCount); // active + cancelling + cancelled progress signals
         QVERIFY(rrr.isFinished());
@@ -1905,7 +1914,8 @@ void tst_QContactAsync::relationshipSave()
             }
             continue;
         }
-        QVERIFY(rsr.waitForProgress());
+        QVERIFY(rsr.waitForProgress() || rsr.isFinished());
+        rsr.waitForFinished();
         expectedCount += 3;
         QVERIFY(spy.count() >= expectedCount); // active + cancelling + cancelled progress signals
         QVERIFY(rsr.isFinished());
