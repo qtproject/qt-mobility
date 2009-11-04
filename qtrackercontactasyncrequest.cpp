@@ -175,7 +175,7 @@ QTrackerContactIdFetchRequest::QTrackerContactIdFetchRequest(QContactAbstractReq
     Q_ASSERT(req);
     Q_ASSERT(parent);
     QList<QContactManager::Error> dummy;
-    parent->updateRequestStatus(request, QContactManager::NoError, dummy,
+    QContactManagerEngine::updateRequestStatus(request, QContactManager::NoError, dummy,
                                 QContactAbstractRequest::Active);
 
     Q_ASSERT( req->type() == QContactAbstractRequest::ContactLocalIdFetchRequest );
@@ -232,9 +232,8 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(QContactAbstractRequest
 {
     Q_ASSERT(parent);
     QList<QContactManager::Error> dummy;
-    parent->updateRequestStatus(request, QContactManager::NoError, dummy,
+    QContactManagerEngine::updateRequestStatus(request, QContactManager::NoError, dummy,
                                 QContactAbstractRequest::Active);
-
 
     validateRequest();
     QContactFetchRequest* r = static_cast<QContactFetchRequest*> (req);
@@ -353,15 +352,15 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(QContactAbstractRequest
                 << "is not yet supported";
         }
     }
+
     query = ::tracker()->modelQuery(quer);
+
     // need to store LiveNodes in order to receive notification from model
     QObject::connect(query.model(), SIGNAL(modelUpdated()), this, SLOT(contactsReady()));
 }
 
 void QTrackerContactIdFetchRequest::modelUpdated()
 {
-    // fastest way to get this working. refactor
-    QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *>(parent());
     QList<QContactLocalId> result;
     // for now this only serves get all contacts
     for(int i = 0; i < query->rowCount(); i++) {
@@ -375,8 +374,7 @@ void QTrackerContactIdFetchRequest::modelUpdated()
         }
     }
 
-    if (engine)
-        engine->updateRequest(req, result, QContactManager::NoError,
+    QContactManagerEngine::updateRequest(req, result, QContactManager::NoError,
                               QList<QContactManager::Error> (),
                               QContactAbstractRequest::Finished,
                               false);
@@ -400,7 +398,6 @@ void QTrackerContactFetchRequest::contactsReady()
         ? static_cast<QContactFetchRequest*> (req) : 0;
     Q_ASSERT( request ); // signal is supposed to be used only for contact fetch
     // fastest way to get this working. refactor
-    QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *> (parent());
     QList<QContact> result;
     // access existing contacts in result list, contactid to array index (result) lookup
     QHash<quint32, int> resultLookup;
@@ -555,11 +552,9 @@ void QTrackerContactFetchRequest::contactsReady()
         }
     }
 
-    if (engine) {
-        engine->updateRequest(req, result, QContactManager::NoError,
+    QContactManagerEngine::updateRequest(req, result, QContactManager::NoError,
                               QList<QContactManager::Error> (),
                               QContactAbstractRequest::Finished, true);
-    }
 }
 
 void QTrackerContactFetchRequest::phoneNumbersReady()

@@ -28,11 +28,11 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
 
     if(contacts.isEmpty()) {
         QList<QContactManager::Error> errors(QList<QContactManager::Error>()<<QContactManager::BadArgumentError);
-        parent->updateRequest(req, contacts, QContactManager::BadArgumentError, errors, QContactAbstractRequest::Finished);
+        QContactManagerEngine::updateRequest(req, contacts, QContactManager::BadArgumentError, errors, QContactAbstractRequest::Finished);
         return;
     }
     QList<QContactManager::Error> dummy;
-    parent->updateRequestStatus(req, QContactManager::NoError, dummy,
+    QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy,
             QContactAbstractRequest::Active);
     foreach(QContact contact, contacts)
     {
@@ -54,10 +54,7 @@ void QTrackerContactSaveRequest::computeProgress()
                 error = err;
                 break;
             }
-        QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *> (parent());
-        Q_ASSERT(engine);
-
-        engine->updateRequest(req, contactsFinished, error, errorsOfContactsFinished, QContactAbstractRequest::Finished);
+        QContactManagerEngine::updateRequest(req, contactsFinished, error, errorsOfContactsFinished, QContactAbstractRequest::Finished);
     }
 }
 
