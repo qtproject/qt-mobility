@@ -129,6 +129,8 @@ public:
 
 Q_SIGNALS:
     void currentLanguageChanged(const QString &);
+private:
+    QSystemInfoPrivate *d;
 };
 
 ////////
@@ -196,6 +198,8 @@ Q_SIGNALS:
    void currentMobileNetworkCodeChanged(const QString &);
    void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+private:
+       QSystemNetworkInfoPrivate *d;
 };
 
 ////////
@@ -341,6 +345,8 @@ Q_SIGNALS:
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
 
+private:
+    QSystemDeviceInfoPrivate *d;
 };
 
 
