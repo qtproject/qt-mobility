@@ -133,6 +133,7 @@ protected:  //from MTelephonyInfoObserver
     void countryCodeChanged();
     void networkCodeChanged();
     void networkNameChanged();
+    void networkModeChanged();
 
     void cellNetworkSignalStrengthChanged();
     void cellNetworkStatusChanged();
@@ -235,6 +236,7 @@ protected:  //from MTelephonyInfoObserver
     void countryCodeChanged(){};
     void networkCodeChanged(){};
     void networkNameChanged(){};
+    void networkModeChanged(){};
 
     void cellNetworkSignalStrengthChanged(){};
     void cellNetworkStatusChanged(){};

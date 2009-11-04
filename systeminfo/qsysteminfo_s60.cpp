@@ -60,6 +60,7 @@
 #include <btserversdkcrkeys.h>
 #include <bt_subscribe.h>
 #include <bttypes.h>
+#include <Etel3rdParty.h>
 
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
@@ -312,12 +313,24 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
-    //TODO: CDMA, WCDMA and WLAN modes
     switch(mode) {
         case QSystemNetworkInfo::GsmMode:
+        case QSystemNetworkInfo::CdmaMode:
+        case QSystemNetworkInfo::WcdmaMode:
         {
             CTelephony::TRegistrationStatus networkStatus = DeviceInfo::instance()
                 ->cellNetworkRegistrationInfo()->cellNetworkStatus();
+
+            CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
+            if (networkMode == CTelephony::ENetworkModeGsm && mode != QSystemNetworkInfo::GsmMode)
+                return QSystemNetworkInfo::NoNetworkAvailable;
+
+            if ((networkMode == CTelephony::ENetworkModeCdma95 || networkMode == CTelephony::ENetworkModeCdma2000) && 
+                mode != QSystemNetworkInfo::CdmaMode)
+                return QSystemNetworkInfo::NoNetworkAvailable;
+
+            if (networkMode == CTelephony::ENetworkModeWcdma && mode != QSystemNetworkInfo::WcdmaMode)
+                return QSystemNetworkInfo::NoNetworkAvailable;
 
             switch(networkStatus) {
                 case CTelephony::ERegistrationUnknown:
@@ -349,10 +362,6 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
 
             };
         }
-        case QSystemNetworkInfo::CdmaMode:
-        break;
-        case QSystemNetworkInfo::WcdmaMode:
-        break;
         case QSystemNetworkInfo::WlanMode:
         break;
         case QSystemNetworkInfo::EthernetMode:
@@ -370,12 +379,23 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
     //TODO: CDMA, WCDMA and WLAN modes
     switch(mode) {
         case QSystemNetworkInfo::GsmMode:
-            return DeviceInfo::instance()->cellSignalStrenghtInfo()->cellNetworkSignalStrength();
-
         case QSystemNetworkInfo::CdmaMode:
-        break;
         case QSystemNetworkInfo::WcdmaMode:
-        break;
+        {
+            CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
+            if (networkMode == CTelephony::ENetworkModeGsm && mode != QSystemNetworkInfo::GsmMode)
+                return -1;
+
+            if ((networkMode == CTelephony::ENetworkModeCdma95 || networkMode == CTelephony::ENetworkModeCdma2000) && 
+                mode != QSystemNetworkInfo::CdmaMode)
+                return -1;
+
+            if (networkMode == CTelephony::ENetworkModeWcdma && mode != QSystemNetworkInfo::WcdmaMode)
+                return -1;
+
+            return DeviceInfo::instance()->cellSignalStrenghtInfo()->cellNetworkSignalStrength();
+        }
+
         case QSystemNetworkInfo::WlanMode:
         break;
         case QSystemNetworkInfo::EthernetMode:
@@ -430,12 +450,22 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
     //TODO: CDMA, WCDMA and WLAN modes
     switch(mode) {
         case QSystemNetworkInfo::GsmMode:
-            return DeviceInfo::instance()->cellNetworkInfo()->networkName();
-
         case QSystemNetworkInfo::CdmaMode:
-        break;
         case QSystemNetworkInfo::WcdmaMode:
-        break;
+        {
+            CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
+            if (networkMode == CTelephony::ENetworkModeGsm && mode != QSystemNetworkInfo::GsmMode)
+                return QString();
+
+            if ((networkMode == CTelephony::ENetworkModeCdma95 || networkMode == CTelephony::ENetworkModeCdma2000) && 
+                mode != QSystemNetworkInfo::CdmaMode)
+                return QString();
+
+            if (networkMode == CTelephony::ENetworkModeWcdma && mode != QSystemNetworkInfo::WcdmaMode)
+                return QString();
+
+            return DeviceInfo::instance()->cellNetworkInfo()->networkName();
+        }
         case QSystemNetworkInfo::WlanMode:
         break;
         case QSystemNetworkInfo::EthernetMode:
@@ -507,12 +537,47 @@ void QSystemNetworkInfoPrivate::networkCodeChanged()
 
 void QSystemNetworkInfoPrivate::networkNameChanged()
 {
-    emit networkNameChanged(QSystemNetworkInfo::GsmMode, DeviceInfo::instance()->cellNetworkInfo()->networkName());
+    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
+    CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
+    switch (networkMode) {
+        case CTelephony::ENetworkModeGsm: mode = QSystemNetworkInfo::GsmMode; break;
+        case CTelephony::ENetworkModeCdma95:
+        case CTelephony::ENetworkModeCdma2000: mode = QSystemNetworkInfo::CdmaMode; break;
+        case CTelephony::ENetworkModeWcdma: mode = QSystemNetworkInfo::WcdmaMode; break;
+        default:
+            break;
+    }
+    emit networkNameChanged(mode, DeviceInfo::instance()->cellNetworkInfo()->networkName());
+}
+
+void QSystemNetworkInfoPrivate::networkModeChanged()
+{
+    QSystemNetworkInfo::NetworkMode newMode = QSystemNetworkInfo::UnknownMode;
+    CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
+    switch (networkMode) {
+        case CTelephony::ENetworkModeGsm: newMode = QSystemNetworkInfo::GsmMode; break;
+        case CTelephony::ENetworkModeCdma95:
+        case CTelephony::ENetworkModeCdma2000: newMode = QSystemNetworkInfo::CdmaMode; break;
+        case CTelephony::ENetworkModeWcdma: newMode = QSystemNetworkInfo::WcdmaMode; break;
+        default:
+            break;
+    }
+    emit networkModeChanged(newMode);
 }
 
 void QSystemNetworkInfoPrivate::cellNetworkSignalStrengthChanged()
 {
-    emit networkSignalStrengthChanged(QSystemNetworkInfo::GsmMode,
+    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
+    CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
+    switch (networkMode) {
+        case CTelephony::ENetworkModeGsm: mode = QSystemNetworkInfo::GsmMode; break;
+        case CTelephony::ENetworkModeCdma95:
+        case CTelephony::ENetworkModeCdma2000: mode = QSystemNetworkInfo::CdmaMode; break;
+        case CTelephony::ENetworkModeWcdma: mode = QSystemNetworkInfo::WcdmaMode; break;
+        default:
+            break;
+    }
+    emit networkSignalStrengthChanged(mode,
         DeviceInfo::instance()->cellSignalStrenghtInfo()->cellNetworkSignalStrength());
 }
 
