@@ -1228,7 +1228,6 @@ void tst_QContactAsync::definitionSave()
 
     // cancelling
     cm->removeDetailDefinition(testDef.name());
-    QCOMPARE(cm->detailDefinitions().values().size(), originalCount);
     fields.insert("TestDefinitionFieldThree - shouldn't get saved", f);
     testDef.setFields(fields);
     saveList.clear();
@@ -1267,7 +1266,7 @@ void tst_QContactAsync::definitionSave()
         // verify that the changes were not saved
         QList<QContactDetailDefinition> allDefs = cm->detailDefinitions().values();
         QVERIFY(!allDefs.contains(testDef));
-        QCOMPARE(cm->detailDefinitions().values().size(), originalCount);
+        QCOMPARE(cm->detailDefinitions().values().size(), originalCount + 1);
 
         break;
     }
@@ -1301,7 +1300,7 @@ void tst_QContactAsync::definitionSave()
         // verify that the changes were not saved
         QList<QContactDetailDefinition> allDefs = cm->detailDefinitions().values();
         QVERIFY(!allDefs.contains(testDef));
-        QCOMPARE(cm->detailDefinitions().values().size(), originalCount);
+        QCOMPARE(cm->detailDefinitions().values().size(), originalCount + 1);
 
         break;
     }
