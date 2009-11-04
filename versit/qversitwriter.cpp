@@ -55,13 +55,18 @@
  * \sa
  */
 
+/*!
+ * \fn QVersitWriter::writingDone()
+ * The signal is emitted by the writer when the asynchronous writing has been completed.
+ */
+
 /*! Constructs a writer. */
 QVersitWriter::QVersitWriter() : d(new QVCard21Writer)
 {
     connect(d,SIGNAL(finished()),this,SIGNAL(writingDone()),Qt::DirectConnection);
 }
 
-/*! Destroys a writer. */
+/*! Destroys the writer. */
 QVersitWriter::~QVersitWriter()
 {
     d->wait();
