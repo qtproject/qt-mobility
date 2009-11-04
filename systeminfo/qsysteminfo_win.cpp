@@ -1610,6 +1610,7 @@ QStringList QSystemStorageInfoPrivate::logicalDrives()
 
 QSystemDeviceInfoPrivate *QSystemDeviceInfoPrivate::self = 0;
 
+#if !defined(Q_OS_WINCE)
 bool qax_winEventFilter(void *message)
 {
     MSG *pMsg = (MSG*)message;
@@ -1628,6 +1629,7 @@ bool qax_winEventFilter(void *message)
 
     return false;
 }
+#endif
 
 //////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
@@ -1636,7 +1638,9 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     batteryLevelCache = 0;
     currentPowerStateCache = QSystemDeviceInfo::UnknownPower;
     batteryStatusCache = QSystemDeviceInfo::NoBatteryLevel;
+#if !defined(Q_OS_WINCE)
     QAbstractEventDispatcher::instance()->setEventFilter(qax_winEventFilter);
+#endif
     if(!self)
         self = this;
 
