@@ -88,7 +88,7 @@ usage()
     echo "-maemo ............ Build Qt Mobility for Maemo."
     echo "                    (default: Desktop Linux)"
     
-    rm "$CONFIG_IN"
+    rm -f "$CONFIG_IN"
     exit    
 }
 
