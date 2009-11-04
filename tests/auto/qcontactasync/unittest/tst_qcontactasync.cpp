@@ -1842,7 +1842,7 @@ void tst_QContactAsync::threadDelivery()
             QSKIP("Asynchronous request not complete after 30 seconds!", SkipSingle);
         }
     }
-    QCoreApplication::processEvents();
+
     // ensure that the progress signal was delivered to the main thread.
     QCOMPARE(m_mainThreadId, m_progressSlotThreadId);
     delete req;
@@ -1880,7 +1880,7 @@ void tst_QContactAsync::addManagers()
 QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
 {
     QContactManager* cm = QContactManager::fromUri(managerUri);
-    
+    cm->removeContacts(&cm->contacts());
     QContact a, b, c;
     a.setDisplayLabel("Aaron Aaronson");
     b.setDisplayLabel("Bob Aaronsen");
