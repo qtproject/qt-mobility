@@ -289,8 +289,6 @@ bool ServiceDatabase::registerService(const ServiceMetaDataResults &service, con
         securityTokens << query.value(EBindIndex).toString();
     }
     
-    qDebug() << "Token in db: " << securityTokens.first();
-    qDebug() << "Delivered token: " << securityToken;
     if (!securityTokens.isEmpty() && securityTokens.first() != securityToken) {
         QString errorText("Access denied: \"%1\"");
              m_lastError.setError(DBError::NoWritePermissions, errorText.arg(service.name));
