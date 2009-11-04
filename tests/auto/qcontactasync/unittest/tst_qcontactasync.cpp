@@ -779,7 +779,9 @@ void tst_QContactAsync::contactSave()
             // after the request has already finished.. so loop and try again.
             expectedCount += 2; // active + progress + finished signals
             csr.waitForFinished();
-            cm->removeContact(temp.localId());
+            if (!cm->removeContact(temp.localId())) {
+                QSKIP("Unable to remove saved contact to test cancellation of contact save request", SkipSingle);
+            }
             bailoutCount -= 1;
             if (!bailoutCount) {
                 qWarning("Unable to test cancelling due to thread scheduling!");
@@ -821,7 +823,9 @@ void tst_QContactAsync::contactSave()
             // after the request has already finished.. so loop and try again.
             expectedCount += 2; // active + progress + finished signals
             csr.waitForFinished();
-            cm->removeContact(temp.localId());
+            if (!cm->removeContact(temp.localId())) {
+                QSKIP("Unable to remove saved contact to test cancellation of contact save request", SkipSingle);
+            }
             bailoutCount -= 1;
             if (!bailoutCount) {
                 qWarning("Unable to test cancelling due to thread scheduling!");
@@ -831,11 +835,11 @@ void tst_QContactAsync::contactSave()
             continue;
         }
         QVERIFY(csr.waitForProgress() || csr.isFinished());
+        QVERIFY(csr.status() == QContactAbstractRequest::Cancelled);
         expectedCount += 3;
         QVERIFY(spy.count() >= expectedCount); // active + cancelling + cancelled progress signals
         QVERIFY(csr.isFinished());
         QVERIFY(!csr.isActive());
-        QVERIFY(csr.status() == QContactAbstractRequest::Cancelled);
 
         // verify that the changes were not saved
         expected.clear();
@@ -1086,7 +1090,10 @@ void tst_QContactAsync::definitionRemove()
             // after the request has already finished.. so loop and try again.
             expectedCount += 2; // active + progress + finished signals
             drr.waitForFinished();
-            cm->saveDetailDefinition(resaveIfRemoved);
+            if (!cm->saveDetailDefinition(resaveIfRemoved)) {
+                QSKIP("Unable to resave removed definition to test cancellation of definition remove request", SkipSingle);
+            }
+            QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 2); // hasn't changed
             bailoutCount -= 1;
             if (!bailoutCount) {
                 qWarning("Unable to test cancelling due to thread scheduling!");
@@ -1120,7 +1127,9 @@ void tst_QContactAsync::definitionRemove()
             // after the request has already finished.. so loop and try again.
             expectedCount += 2; // active + progress + finished signals
             drr.waitForFinished();
-            cm->saveDetailDefinition(resaveIfRemoved);
+            if (!cm->saveDetailDefinition(resaveIfRemoved)) {
+                QSKIP("Unable to resave removed definition to test cancellation of definition remove request", SkipSingle);
+            }
             bailoutCount -= 1;
             if (!bailoutCount) {
                 qWarning("Unable to test cancelling due to thread scheduling!");
