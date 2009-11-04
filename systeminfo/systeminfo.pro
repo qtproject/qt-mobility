@@ -107,7 +107,8 @@ unix: {
             -lavkon \    #Used by AknLayoutUtils::PenEnabled(). Try to remove this dependency.
             -lws32 \
             -lcentralrepository \
-            -lprofileengine
+            -lprofileengine \
+            -lbluetooth
 
         TARGET.CAPABILITY = ALL -TCB
         TARGET.EPOCALLOWDLLDATA = 1

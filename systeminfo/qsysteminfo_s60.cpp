@@ -58,6 +58,8 @@
 #include <proengfactory.h>
 #include <mproengnotifyhandler.h>
 #include <btserversdkcrkeys.h>
+#include <bt_subscribe.h>
+#include <bttypes.h>
 
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
@@ -424,6 +426,7 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
+    QString name;
     //TODO: CDMA, WCDMA and WLAN modes
     switch(mode) {
         case QSystemNetworkInfo::GsmMode:
@@ -442,27 +445,49 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
         case QSystemNetworkInfo::WimaxMode:
         break;
     };
+    return name;
 }
 
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
+    QString address;
+
     switch(mode) {
-        case QSystemNetworkInfo::GsmMode:
-        break;
-        case QSystemNetworkInfo::CdmaMode:
-        break;
-        case QSystemNetworkInfo::WcdmaMode:
-        break;
         case QSystemNetworkInfo::WlanMode:
-        break;
-        case QSystemNetworkInfo::EthernetMode:
-        break;
+        {
+            const TUid KPSUidWlan = {0x101f8ec5};
+            const TUint KPSWlanMacAddress = 0x00000001;
+            const TUint KPSWlanMacAddressLength = 6;
+            TBuf8<KPSWlanMacAddressLength> wlanMacAddr;
+            if (RProperty::Get(KPSUidWlan, KPSWlanMacAddress, wlanMacAddr) == KErrNone) {
+                for (TInt i = 0; i < KPSWlanMacAddressLength - 1; ++i) {
+                    address += QString(QByteArray((const char*)wlanMacAddr.Mid(i, 1).Ptr(), 1).toHex());
+                    address += ":";
+                }
+                address += QString(QByteArray((const char*)wlanMacAddr.Mid(KPSWlanMacAddressLength - 1, 1).Ptr(), 1).toHex());
+            }
+            break;
+        }
         case QSystemNetworkInfo::BluetoothMode:
-        break;
+        {
+            TBuf<20> bluetoothAddr;
+            TPckgBuf<TBTDevAddr> bluetoothAddrPckg;
+            if (RProperty::Get(KUidSystemCategory, 
+                KPropertyKeyBluetoothGetLocalDeviceAddress, bluetoothAddrPckg) == KErrNone) {
+                bluetoothAddrPckg().GetReadable(bluetoothAddr, KNullDesC, _L(":"), KNullDesC);
+                address = QString::fromUtf16(bluetoothAddr.Ptr(), bluetoothAddr.Length());
+            }
+            break;
+        }
+        case QSystemNetworkInfo::GsmMode:
+        case QSystemNetworkInfo::CdmaMode:
+        case QSystemNetworkInfo::WcdmaMode:
         case QSystemNetworkInfo::WimaxMode:
-        break;
+        case QSystemNetworkInfo::EthernetMode:
+        default:
+            break;
     };
-    return QString();   //TODO
+    return address;
 }
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
