@@ -138,7 +138,6 @@ void QContactRequestWorker::run()
         if (status == QContactAbstractRequest::Cancelling) {
             QList<QContactManager::Error> dummy;
             QContactManagerEngine::updateRequestStatus(re->request, QContactManager::NoError, dummy, QContactAbstractRequest::Cancelled);
-            status = QContactAbstractRequest::Cancelled;
         }
 
         if (status == QContactAbstractRequest::Finished || 
