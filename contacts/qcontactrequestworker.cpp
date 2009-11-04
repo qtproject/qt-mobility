@@ -132,49 +132,62 @@ void QContactRequestWorker::run()
 
         Q_ASSERT(req);
         
+        QContactAbstractRequest::Status status  = req->status();
+
         // check to see if it is cancelling; if so, cancel it and perform update.
-        if (req->status() == QContactAbstractRequest::Cancelling) {
+        if (status == QContactAbstractRequest::Cancelling) {
             QList<QContactManager::Error> dummy;
             QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Cancelled);
+            status = QContactAbstractRequest::Cancelled;
+        }
+
+        if (status == QContactAbstractRequest::Finished || 
+            status == QContactAbstractRequest::Cancelled || 
+            !req->manager()) {
+            removeRequest(req);
             continue;
         }
 
         // Now perform the active request and emit required signals.
-        switch (req->type()) {
-            case QContactAbstractRequest::ContactFetchRequest:
-                processContactFetchRequest(static_cast<QContactFetchRequest*>(req));
-                break;
-            case QContactAbstractRequest::ContactLocalIdFetchRequest:
-                processContactLocalIdFetchRequest(static_cast<QContactLocalIdFetchRequest*>(req));
-                break;
-            case QContactAbstractRequest::ContactSaveRequest:
-                processContactSaveRequest(static_cast<QContactSaveRequest*>(req));
-                break;
-            case QContactAbstractRequest::ContactRemoveRequest:
-                processContactRemoveRequest(static_cast<QContactRemoveRequest*>(req));
-                break;
-            case QContactAbstractRequest::RelationshipFetchRequest:
-                processContactRelationshipFetchRequest(static_cast<QContactRelationshipFetchRequest*>(req));
-                break;
-            case QContactAbstractRequest::RelationshipSaveRequest:
-                processContactRelationshipSaveRequest(static_cast<QContactRelationshipSaveRequest*>(req));
-                break;
-            case QContactAbstractRequest::RelationshipRemoveRequest:
-                processContactRelationshipRemoveRequest(static_cast<QContactRelationshipRemoveRequest*>(req));
-                break;
-            case QContactAbstractRequest::DetailDefinitionFetchRequest:
-                processContactDetailDefinitionFetchRequest(static_cast<QContactDetailDefinitionFetchRequest*>(req));
-                break;
-            case QContactAbstractRequest::DetailDefinitionSaveRequest:
-                processContactDetailDefinitionSaveRequest(static_cast<QContactDetailDefinitionSaveRequest*>(req));
-                break;
-            case QContactAbstractRequest::DetailDefinitionRemoveRequest:
-                processContactDetailDefinitionRemoveRequest(static_cast<QContactDetailDefinitionRemoveRequest*>(req));
-                break;
-            default:
-                break;
+        if (status != QContactAbstractRequest::Inactive) {
+            Q_ASSERT(status == QContactAbstractRequest::Active);
+            switch (req->type()) {
+                case QContactAbstractRequest::ContactFetchRequest:
+                    processContactFetchRequest(static_cast<QContactFetchRequest*>(req));
+                    break;
+                case QContactAbstractRequest::ContactLocalIdFetchRequest:
+                    processContactLocalIdFetchRequest(static_cast<QContactLocalIdFetchRequest*>(req));
+                    break;
+                case QContactAbstractRequest::ContactSaveRequest:
+                    processContactSaveRequest(static_cast<QContactSaveRequest*>(req));
+                    break;
+                case QContactAbstractRequest::ContactRemoveRequest:
+                    processContactRemoveRequest(static_cast<QContactRemoveRequest*>(req));
+                    break;
+                case QContactAbstractRequest::RelationshipFetchRequest:
+                    processContactRelationshipFetchRequest(static_cast<QContactRelationshipFetchRequest*>(req));
+                    break;
+                case QContactAbstractRequest::RelationshipSaveRequest:
+                    processContactRelationshipSaveRequest(static_cast<QContactRelationshipSaveRequest*>(req));
+                    break;
+                case QContactAbstractRequest::RelationshipRemoveRequest:
+                    processContactRelationshipRemoveRequest(static_cast<QContactRelationshipRemoveRequest*>(req));
+                    break;
+                case QContactAbstractRequest::DetailDefinitionFetchRequest:
+                    processContactDetailDefinitionFetchRequest(static_cast<QContactDetailDefinitionFetchRequest*>(req));
+                    break;
+                case QContactAbstractRequest::DetailDefinitionSaveRequest:
+                    processContactDetailDefinitionSaveRequest(static_cast<QContactDetailDefinitionSaveRequest*>(req));
+                    break;
+                case QContactAbstractRequest::DetailDefinitionRemoveRequest:
+                    processContactDetailDefinitionRemoveRequest(static_cast<QContactDetailDefinitionRemoveRequest*>(req));
+                    break;
+                default:
+                    break;
+            }
         }
-        req->d_ptr->m_condition.wakeAll();
+        removeRequest(req);
+        req->d_ptr->condition.wakeAll();
     }
 
     // clean up our requests.
@@ -201,9 +214,9 @@ bool QContactRequestWorker::addRequest(QContactAbstractRequest* req)
         if (!d->m_requestQueue.contains(req)) {
             d->m_requestQueue.enqueue(req);
             QList<QContactManager::Error> dummy;
-            bool ret = QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Active);
+            QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Active);
             d->m_newRequestAdded.wakeAll();
-            return ret;
+            return true;
         }
     }
     return false;
@@ -219,8 +232,9 @@ bool QContactRequestWorker::removeRequest(QContactAbstractRequest* req)
         QMutexLocker workerLocker(&d->m_mutex);
         d->m_requestQueue.removeOne(req);
         
-        if (req->d_ptr->m_waiting) {
-            req->d_ptr->m_condition.wakeAll();
+        QMutexLocker requestLocker(&req->d_ptr->mutex);
+        if (req->d_ptr->waiting) {
+            req->d_ptr->condition.wakeAll();
         }
         return true;
     }
@@ -235,8 +249,17 @@ bool QContactRequestWorker::cancelRequest(QContactAbstractRequest* req)
 {
     if (req) {
         QMutexLocker workerLocker(&d->m_mutex);
+        QMutexLocker requestLocker(&req->d_ptr->mutex);
+
+        QContactAbstractRequest::Status status = req->d_ptr->m_status;
+        
         QList<QContactManager::Error> dummy;
-        return QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Cancelling);
+        if (status == QContactAbstractRequest::Active || status == QContactAbstractRequest::Cancelling) {
+            if (status == QContactAbstractRequest::Active) {
+                QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Cancelling);
+            }
+            return true;
+        }
     }
     return false;
 }
@@ -253,18 +276,18 @@ bool QContactRequestWorker::waitRequest(QContactAbstractRequest* req, int msecs)
 {
     bool ret = false;
     if (req) {
-        QMutexLocker locker(&req->d_ptr->m_mutex);
+        QMutexLocker locker(&req->d_ptr->mutex);
         QContactAbstractRequest::Status status = req->d_ptr->m_status;
         if (status == QContactAbstractRequest::Active || status == QContactAbstractRequest::Cancelling) {
-            req->d_ptr->m_waiting = true;
+            req->d_ptr->waiting = true;
             if (msecs) {
-                ret = req->d_ptr->m_condition.wait(&req->d_ptr->m_mutex, msecs);
+                ret = req->d_ptr->condition.wait(&req->d_ptr->mutex, msecs);
             } else {
-                ret = req->d_ptr->m_condition.wait(&req->d_ptr->m_mutex);
+                ret = req->d_ptr->condition.wait(&req->d_ptr->mutex);
             }
-            req->d_ptr->m_waiting = false;
+            req->d_ptr->waiting = false;
         } else if (status == QContactAbstractRequest::Finished || status == QContactAbstractRequest::Cancelled) {
-            ret = false;
+            ret = true; //XXX
         }
     }
     return ret;
