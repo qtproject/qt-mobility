@@ -127,10 +127,8 @@ void QContactRequestWorker::run()
     
     for(;;) {
         req = d->takeFirstRequest();
-        if (d->m_stop)
+        if (d->m_stop || req == 0)
             break;
-
-        Q_ASSERT(req);
         
         // check to see if it is cancelling; if so, cancel it and perform update.
         if (req->status() == QContactAbstractRequest::Cancelling) {
@@ -619,5 +617,7 @@ QContactAbstractRequest* QContactRequestWorkerData::takeFirstRequest()
         m_currentRequest = m_requestQueue.head();
         return m_currentRequest;
     }
+
+    // means that we are stopping the request worker (ie, deleting the manager)
     return 0;
 }
