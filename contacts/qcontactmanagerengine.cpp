@@ -1778,14 +1778,15 @@ bool QContactManagerEngine::waitForRequestFinished(QContactAbstractRequest* req,
 /*!
  * Updates the given asynchronous request \a req by setting the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability.
  */
-void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+bool QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     // convenience function that simply sets the operation error and status
-    bool requestLocked = req->d_ptr->mutex.tryLock();
+    if (!req->d_ptr->stateTransition(req, status))
+        return false;
+
     req->d_ptr->m_error = error;
     req->d_ptr->m_errors = errors;
-    req->d_ptr->m_status = status;
-    
+
     switch (req->type()) {
         case QContactAbstractRequest::ContactFetchRequest:
         {
@@ -1860,9 +1861,7 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
         default: // unknown request type.
         break;
     }
-    if (requestLocked) {
-        req->d_ptr->mutex.unlock();
-    }
+    return true;
 }
 
 /*!
@@ -1870,11 +1869,10 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    QMutexLocker locker(&req->d_ptr->mutex);
     if (req->type() == QContactAbstractRequest::ContactLocalIdFetchRequest) {
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
-        req->d_ptr->m_status = status;
+        req->d_ptr->stateTransition(req, status);
         QContactLocalIdFetchRequestPrivate* rd = static_cast<QContactLocalIdFetchRequestPrivate*>(req->d_ptr);
         rd->m_ids = result;
         QContactLocalIdFetchRequest* r = static_cast<QContactLocalIdFetchRequest*>(req);
@@ -1887,13 +1885,12 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    QMutexLocker locker(&req->d_ptr->mutex);
     switch (req->type()) {
         case QContactAbstractRequest::ContactFetchRequest:
         {
             req->d_ptr->m_error = error;
             req->d_ptr->m_errors = errors;
-            req->d_ptr->m_status = status;
+            req->d_ptr->stateTransition(req, status);
             QContactFetchRequestPrivate* rd = static_cast<QContactFetchRequestPrivate*>(req->d_ptr);
             rd->m_contacts = result;
             QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
@@ -1905,7 +1902,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
         {
             req->d_ptr->m_error = error;
             req->d_ptr->m_errors = errors;
-            req->d_ptr->m_status = status;
+            req->d_ptr->stateTransition(req, status);
             QContactSaveRequestPrivate* rd = static_cast<QContactSaveRequestPrivate*>(req->d_ptr);
             rd->m_contacts = result;
             QContactSaveRequest* r = static_cast<QContactSaveRequest*>(req);
@@ -1926,11 +1923,11 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
-    QMutexLocker locker(&req->d_ptr->mutex);
+    
     if (req->type() == QContactAbstractRequest::DetailDefinitionSaveRequest) {
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
-        req->d_ptr->m_status = status;
+        req->d_ptr->stateTransition(req, status);
         QContactDetailDefinitionSaveRequestPrivate* rd = static_cast<QContactDetailDefinitionSaveRequestPrivate*>(req->d_ptr);
         rd->m_definitions = result;
         QContactDetailDefinitionSaveRequest* r = static_cast<QContactDetailDefinitionSaveRequest*>(req);
@@ -1943,11 +1940,10 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    QMutexLocker locker(&req->d_ptr->mutex);
     if (req->type() == QContactAbstractRequest::DetailDefinitionFetchRequest) {
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
-        req->d_ptr->m_status = status;
+        req->d_ptr->stateTransition(req, status);
         QContactDetailDefinitionFetchRequestPrivate* rd = static_cast<QContactDetailDefinitionFetchRequestPrivate*>(req->d_ptr);
         rd->m_definitions = result;
         QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
@@ -1960,11 +1956,10 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QM
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    QMutexLocker locker(&req->d_ptr->mutex);
     if (req->type() == QContactAbstractRequest::RelationshipSaveRequest) {
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
-        req->d_ptr->m_status = status;
+        req->d_ptr->stateTransition(req, status);
         QContactRelationshipSaveRequestPrivate* rd = static_cast<QContactRelationshipSaveRequestPrivate*>(req->d_ptr);
         rd->m_relationships = result;
         QContactRelationshipSaveRequest* r = static_cast<QContactRelationshipSaveRequest*>(req);
@@ -1972,7 +1967,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
     } else if (req->type() == QContactAbstractRequest::RelationshipFetchRequest) {
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
-        req->d_ptr->m_status = status;
+        req->d_ptr->stateTransition(req, status);
         QContactRelationshipFetchRequestPrivate* rd = static_cast<QContactRelationshipFetchRequestPrivate*>(req->d_ptr);
         rd->m_relationships = result;
         QContactRelationshipFetchRequest* r = static_cast<QContactRelationshipFetchRequest*>(req);

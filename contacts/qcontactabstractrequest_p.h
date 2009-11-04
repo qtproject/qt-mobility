@@ -68,7 +68,7 @@ public:
         : m_error(QContactManager::NoError),
             m_status(QContactAbstractRequest::Inactive),
             m_manager(0),
-            waiting(false)
+            m_waiting(false)
     {
     }
 
@@ -80,14 +80,16 @@ public:
     {
         return QContactAbstractRequest::InvalidRequest;
     }
+    bool stateTransition(QContactAbstractRequest* req, QContactAbstractRequest::Status newState);
+    void removeFromManagerEngine();
 
     QContactManager::Error m_error;
     QContactAbstractRequest::Status m_status;
     QPointer<QContactManager> m_manager;
     QList<QContactManager::Error> m_errors;
-    QMutex mutex;
-    QWaitCondition condition;
-    bool waiting;
+    QMutex m_mutex;
+    QWaitCondition m_condition;
+    bool m_waiting;
 };
 
 #endif

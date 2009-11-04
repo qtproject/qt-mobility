@@ -95,9 +95,9 @@ QContactAbstractRequest::~QContactAbstractRequest()
     if (d_ptr) {
         QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
         if (engine) {
+            QMutexLocker locker(&d_ptr->m_mutex);
             engine->requestDestroyed(this);
         }
-
         delete d_ptr;
     }
 }
@@ -109,7 +109,7 @@ QContactAbstractRequest::~QContactAbstractRequest()
  */
 bool QContactAbstractRequest::isActive() const
 {
-    QMutexLocker locker(&d_ptr->mutex);
+    QMutexLocker locker(&d_ptr->m_mutex);
     return (d_ptr->m_status == QContactAbstractRequest::Active
             || d_ptr->m_status == QContactAbstractRequest::Cancelling);
 }
@@ -121,7 +121,7 @@ bool QContactAbstractRequest::isActive() const
  */
 bool QContactAbstractRequest::isFinished() const
 {
-    QMutexLocker locker(&d_ptr->mutex);
+    QMutexLocker locker(&d_ptr->m_mutex);
     return (d_ptr->m_status == QContactAbstractRequest::Finished
             || d_ptr->m_status == QContactAbstractRequest::Cancelled);
 }
@@ -153,7 +153,7 @@ QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
  */
 QContactAbstractRequest::Status QContactAbstractRequest::status() const
 {
-    QMutexLocker locker(&d_ptr->mutex);
+    QMutexLocker locker(&d_ptr->m_mutex);
     return d_ptr->m_status;
 }
 
@@ -175,7 +175,7 @@ bool QContactAbstractRequest::start()
 {
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
     if (engine && !isActive()) {
-        d_ptr->waiting = false;
+        d_ptr->m_waiting = false;
         return engine->startRequest(this);
     }
 
@@ -221,3 +221,26 @@ bool QContactAbstractRequest::waitForProgress(int msecs)
     }
     return ret;
 }
+
+
+bool QContactAbstractRequestPrivate::stateTransition(QContactAbstractRequest* req, QContactAbstractRequest::Status newStatus)
+{
+    QMutexLocker locker(&m_mutex);
+    QContactManagerEngine *engine = QContactManagerData::engine(m_manager);
+    if (!engine)
+        return false;
+    //XXX more state transition check
+    if ((m_status == QContactAbstractRequest::Cancelling && newStatus == QContactAbstractRequest::Finished) ||
+        (m_status == QContactAbstractRequest::Cancelling && newStatus == QContactAbstractRequest::Active) ||
+        (m_status == QContactAbstractRequest::Inactive && newStatus != QContactAbstractRequest::Active) ||
+        ((m_status == QContactAbstractRequest::Finished || m_status == QContactAbstractRequest::Cancelled) && newStatus != QContactAbstractRequest::Active)) {
+            return false;
+    }
+
+    m_status = newStatus;
+    if (newStatus == QContactAbstractRequest::Finished || newStatus == QContactAbstractRequest::Cancelled) {
+        engine->requestDestroyed(req);
+    }
+    return true;
+}
+
