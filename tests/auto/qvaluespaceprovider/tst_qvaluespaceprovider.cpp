@@ -247,7 +247,7 @@ void tst_QValueSpaceProvider::testConstructor()
         provider->removeAttribute(QString("value"));
         break;
     };
-    provider->sync();
+    QValueSpaceProvider::syncAll();
 
     if (layer) {
         QAbstractValueSpaceLayer::Handle handle =
