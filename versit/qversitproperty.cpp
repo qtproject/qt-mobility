@@ -39,6 +39,27 @@
 **
 ****************************************************************************/
 
+/*!
+ * \class QVersitProperty
+ *
+ * \brief QVersitProperty stores the name, value and parameters of a versit property.
+ *
+ * QVersitProperty is a container for the name, value and
+ * parameters for a versit property.
+ * For example a vCard can be presented as a QVersitDocument that
+ * consists of 0..n properties such as a name (N),
+ * a telephone number (TEL) and an email address (EMAIL) to name a few.
+ * Each of these properties is stored as
+ * an instance of a QVersitProperty in a QVersitDocument.
+ *
+ * QVersitProperty supports implicit sharing.
+ * The property name and parameters of a QVersitProperty are converted
+ * to upper-case when they are stored to a QVersitProperty.
+ * The value of a QVersitProperty is raw data and it is case-sensitive.
+ *
+ * \sa QVersitDocument
+ */
+
 #include "qversitproperty.h"
 #include "qversitproperty_p.h"
 #include <QStringList>
@@ -67,8 +88,8 @@ QVersitProperty& QVersitProperty::operator=(const QVersitProperty& other)
 }
 
 /*!
-  * Sets the groups in the property.
-  */
+ * Sets the \a groups in the property.
+ */
 void QVersitProperty::setGroups(const QStringList& groups)
 {
     d->mGroups.clear();
@@ -78,15 +99,16 @@ void QVersitProperty::setGroups(const QStringList& groups)
 }
 
 /*!
-  * Retreives the groups from the property.
-  */
+ * Gets the groups part of the property.
+ */
 QStringList QVersitProperty::groups() const
 {
     return d->mGroups;
 }
 
 /*!
- * Sets the name of the property
+ * Sets the name of the property.
+ * The name is converted to upper-case.
  */
 void QVersitProperty::setName(const QString& name)
 {
@@ -94,7 +116,7 @@ void QVersitProperty::setName(const QString& name)
 }
 
 /*!
- * Retreives the name of the property
+ * Gets the name of the property.
  */
 QString QVersitProperty::name() const
 {
@@ -102,7 +124,8 @@ QString QVersitProperty::name() const
 }
 
 /*!
- * Replaces all the parameters
+ * Replaces all the parameters with \a parameters.
+ * The parameters are converted to upper-case.
  */
 void QVersitProperty::setParameters(const QMultiHash<QString,QString>& parameters)
 {
@@ -121,7 +144,8 @@ void QVersitProperty::setParameters(const QMultiHash<QString,QString>& parameter
 }
 
 /*!
- * Adds a new parameter with \a name and \a value
+ * Adds a new parameter with \a name and \a value.
+ * Both the name and the value are converted to upper-case.
  */
 void QVersitProperty::addParameter(const QString& name, const QString& value)
 {
@@ -129,7 +153,7 @@ void QVersitProperty::addParameter(const QString& name, const QString& value)
 }
 
 /*!
- * Removes a parameter with \a name and \a value
+ * Removes a parameter with \a name and \a value.
  */
 void QVersitProperty::removeParameter(const QString& name, const QString& value)
 {
@@ -137,7 +161,8 @@ void QVersitProperty::removeParameter(const QString& name, const QString& value)
 }
 
 /*!
- * Returns the contained list of parameters
+ * Return a copy of the contained list of parameters.
+ * Note that actual the parameters cannot be modified using the copy.
  */
 QMultiHash<QString,QString> QVersitProperty::parameters() const
 {
@@ -145,7 +170,7 @@ QMultiHash<QString,QString> QVersitProperty::parameters() const
 }
 
 /*!
- * Sets the value of the property
+ * Sets the \a value of the property.
  */
 void QVersitProperty::setValue(const QByteArray& value)
 {
@@ -153,7 +178,7 @@ void QVersitProperty::setValue(const QByteArray& value)
 }
 
 /*!
- * Returns the parameter value
+ * Returns the value of the parameter.
  */
 QByteArray QVersitProperty::value() const
 {
@@ -169,7 +194,8 @@ void QVersitProperty::setEmbeddedDocument(const QVersitDocument& document)
 }
 
 /*!
- * Returns the embedded document from the property
+ * Returns the embedded document of the property.
+ * If the embedded document has not been set, an empty document is returned.
  */
 QVersitDocument QVersitProperty::embeddedDocument() const
 {

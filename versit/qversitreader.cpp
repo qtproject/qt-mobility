@@ -44,18 +44,40 @@
 #include "qversitreader_p.h"
 #include "versitutils.h"
 
-// Some big enough value for nested versit documents to prevent infite recursion
-#define MAX_VERSIT_DOCUMENT_NESTING_DEPTH 20
-
 /*!
  * \class QVersitReader
  *
- * \brief The QVersitReader class provides an interface 
- * for parsing versit documents such as vCards from a stream. 
+ * \brief QVersitReader provides an interface
+ * for parsing versit documents such as vCards from a stream.
  *
- * \sa
+ * QVersitReader converts 0..n versit documents such as vCards
+ * from a test stream into 0..n QVersitDocument instances.
+ * QVersitReader supports reading from an abstract I/O device
+ * which can be for example a file or a memory buffer.
+ * The reading can be done either synchronously or asynchronously.
+ *
+ * \code
+ * // An example of reading a simple vCard from a memory buffer:
+ * QBuffer vCardBuffer;
+ * vCardBuffer.open(QBuffer::ReadWrite);
+ * QByteArray vCard =
+ *     "BEGIN:VCARD\r\nVERSION:2.1\r\nN:Simpson;Homer;J;;\r\nEND:VCARD\r\n";
+ * vCardBuffer.write(vCard);
+ * vCardBuffer.seek(0);
+ * QVersitReader reader;
+ * reader.setDevice(&vCardBuffer);
+ * reader.readSynchronously();
+ * QList<QVersitDocument> versitDocuments = reader.result();
+ * // Use the resulting document(s)...
+ * \endcode
+ *
+ * \sa QVersitDocument
  */
 
+/*!
+ * \fn QVersitReader::readingDone()
+ * The signal is emitted by the reader when the asynchronous reading has been completed.
+ */
 
 /*! Construct a reader. */
 QVersitReader::QVersitReader() : d(new QVersitReaderPrivate)
@@ -63,7 +85,7 @@ QVersitReader::QVersitReader() : d(new QVersitReaderPrivate)
     connect(d,SIGNAL(finished()),this,SIGNAL(readingDone()),Qt::DirectConnection);
 }
     
-/*! Destroy a reader. */    
+/*! Destroys the reader. */
 QVersitReader::~QVersitReader()
 {
     d->wait();
@@ -71,7 +93,7 @@ QVersitReader::~QVersitReader()
 }
 
 /*!
- * Sets the \a device used for parsing input. 
+ * Sets the device used for reading the input to \a device.
  */
 void QVersitReader::setDevice(QIODevice* device)
 {
@@ -79,7 +101,7 @@ void QVersitReader::setDevice(QIODevice* device)
 }
 
 /*!
- * Returns the \a device used for parsing input. 
+ * Returns the device used for reading input.
  */
 QIODevice* QVersitReader::device() const
 {
@@ -88,7 +110,9 @@ QIODevice* QVersitReader::device() const
 
 /*!
  * Starts reading the input asynchronously.
- * Signal readingDone is emitted when the reading has finished.
+ * Returns false if the input device has not been set or opened
+ * or if there is another asynchronous read operation already pending.
+ * Signal \l readingDone is emitted when the reading has finished.
  */
 bool QVersitReader::startAsynchronousReading()
 {
@@ -104,7 +128,7 @@ bool QVersitReader::startAsynchronousReading()
 /*!
  * Reads the input synchronously.
  * Using this function may block the user thread for an undefined period.
- * In most cases asynchronous startAsynchronousReading should be used instead.
+ * In most cases asynchronous \l startAsynchronousReading should be used instead.
  */
 bool QVersitReader::readSynchronously()
 {
@@ -115,8 +139,8 @@ bool QVersitReader::readSynchronously()
 }
 
 /*!
- * Returns the parsing result or an empty list 
- * if the parsing was not completed successfully. 
+ * Returns the reading result or an empty list
+ * if the reading was not completed successfully.
  */
 QList<QVersitDocument> QVersitReader::result() const
 {
