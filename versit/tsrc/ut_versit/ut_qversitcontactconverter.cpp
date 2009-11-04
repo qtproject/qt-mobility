@@ -132,262 +132,205 @@ void UT_QVersitContactConverter::testConvertContact()
     QContactName name;
     name.setFirst(QString::fromAscii("Moido"));
     contact.saveDetail(&name);
-    
+
     // Adding phone number to the Contact.
-    QContactPhoneNumber p;
-    p.setNumber(QString::fromAscii("12345678"));
-    contact.saveDetail(&p);
+    QContactPhoneNumber phoneNumber;
+    phoneNumber.setNumber(QString::fromAscii("12345678"));
+    contact.saveDetail(&phoneNumber);
 
     // Convert contact into versit properties
-    QVersitDocument versitDocument = mConverter->convertContact(contact);
-    
-    // Ensure versit document is created with properties.
-    QCOMPARE(versitDocument.properties().count(), 2);
+    QVersitDocument document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 2);
 }
 
 void UT_QVersitContactConverter::testEncodeName()
 {
     QContact contact;
-
-    // Adding name detail for the Contact
     QContactName name;
-    name.setFirst(QString::fromAscii("Heiddo"));
+
+    // vCard 2.1
+    name.setFirst(QString::fromAscii("Heido"));
     name.setLast(QString::fromAscii("HH"));
     name.setMiddle(QString::fromAscii("A"));
     name.setPrefix(QString::fromAscii("Mr."));
-
-    //Try to set context: for name context does not exisit ensure
-    //Its not encoded into versit doc
     name.setContexts(QContactDetail::ContextHome);
-
     contact.saveDetail(&name);
+    QVersitDocument document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    QVersitProperty property = document.properties().at(0);
+    // Check parameters, contexts not allowed for N property
+    QCOMPARE(property.parameters().count(), 0);
+    // Check name
+    QCOMPARE(property.name(), QString::fromAscii(versitNameId));
+    // Check value
+    QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("HH;Heido;A;Mr.;"));
 
-    QVersitDocument versitDocument;
-
-    //Ensure there are no properties in the versit document.
-    QVERIFY(!versitDocument.properties().count());
-
-    //Convert Contat Into Versit Document
-    versitDocument = mConverter->convertContact(contact);
-
-    //Ensure Context parameter is not encoded.
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 0);
-    
-    //Ensure versit document is created with properties.
-    QCOMPARE(versitDocument.properties().count(), 1);
-    
-    //Check for the property Name
-    QString propertyName = versitDocument.properties().at(0).name();
-    QString expectedPropertyName = 
-        mConverterPrivate->mPropertyMappings.value(QContactName::DefinitionName);
-    QCOMPARE(propertyName, expectedPropertyName );
-    
-    //Ensure value of properties contains all the infomation encoded
-    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data() );
-    QString expectedValue = QString::fromAscii("HH;Heiddo;A;Mr.;");
-    QCOMPARE(value, expectedValue);
+    // vCard 3.0, special characters in the name parts are backslash escaped
+    contact.removeDetail(&name);
+    name.setFirst(QString::fromAscii("Hom,er"));
+    name.setLast(QString::fromAscii("Simp;son"));
+    name.setMiddle(QString::fromAscii("J;"));
+    name.setPrefix(QString::fromAscii(";Mr."));
+    name.setSuffix(QString::fromAscii("Sir,"));
+    contact.saveDetail(&name);
+    document = mConverter->convertContact(contact,QVersitDocument::VCard30);
+    QCOMPARE(document.versitType(),QVersitDocument::VCard30);
+    QCOMPARE(document.properties().count(), 1);
+    property = document.properties().at(0);
+    // Check parameters
+    QCOMPARE(property.parameters().count(), 0);
+    // Check name
+    QCOMPARE(property.name(), QString::fromAscii(versitNameId));
+    // Check value
+    QCOMPARE(QString::fromAscii(property.value()),
+             QString::fromAscii("Simp\\;son;Hom\\,er;J\\;;\\;Mr.;Sir\\,"));
 }
 
 void UT_QVersitContactConverter::testEncodePhoneNumber()
 {
     QContact contact;
-
-    // Adding Phone Numer for the Contact.
-    QContactPhoneNumber p;
-    p.setNumber(QString::fromAscii("12345678"));
-    p.setContexts(QContactDetail::ContextHome);
-    p.setSubTypes(QContactPhoneNumber::SubTypeMobile);
-
-    contact.saveDetail(&p);
-
-    //Convert Contat Into Versit Document
-    QVersitDocument versitDocument = mConverter->convertContact(contact);
-
-    //Ensure versit document is created with properties
-    QCOMPARE(versitDocument.properties().count(), 1);
-
-    //Ensure Only Valid params are encoded
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
-
-    //Ensure Valid parameters exisit
-    QVERIFY(versitDocument.properties().at(0).parameters().contains(
-            QString::fromAscii(versitType), QString::fromAscii(versitContextHomeId)));
-    QVERIFY(versitDocument.properties().at(0).parameters().contains(
-            QString::fromAscii(versitType), QString::fromAscii(versitCellId)));
-
-    //Check property name
-    QString propertyName = versitDocument.properties().at(0).name();
-    QString expectedPropertyName = 
-        mConverterPrivate->mPropertyMappings.value(QContactPhoneNumber::DefinitionName);
-    QCOMPARE(propertyName, expectedPropertyName );
-    
-    //Check property value
-    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data() );
-    QString expectedValue = QString::fromAscii("12345678");
-    QCOMPARE(value, expectedValue);
+    QContactPhoneNumber phoneNumber;
+    phoneNumber.setNumber(QString::fromAscii("12345678"));
+    phoneNumber.setContexts(QContactDetail::ContextHome);
+    phoneNumber.setSubTypes(QContactPhoneNumber::SubTypeMobile);
+    contact.saveDetail(&phoneNumber);
+    QVersitDocument document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    QVersitProperty property = document.properties().at(0);
+    // Check parameters
+    QCOMPARE(property.parameters().count(), 2);
+    QVERIFY(property.parameters().contains(
+        QString::fromAscii(versitType),QString::fromAscii(versitContextHomeId)));
+    QVERIFY(property.parameters().contains(
+        QString::fromAscii(versitType),QString::fromAscii(versitCellId)));
+    // Check name
+    QCOMPARE(property.name(), QString::fromAscii(versitPhoneId));
+    // Check value
+    QCOMPARE(QString::fromAscii(property.value()), phoneNumber.number());
 }
 
 void UT_QVersitContactConverter::testEncodeEmailAddress()
 {
     QContact contact;
-
     QContactEmailAddress email;
     email.setEmailAddress(QString::fromAscii("test@test"));
     email.setContexts(QContactDetail::ContextHome);
     contact.saveDetail(&email);
-    
-    QVersitDocument versitDocument;
-    
-    //Ensure there are no properties in the versit document.
-    QVERIFY(!versitDocument.properties().count());
-
-    //Convert Contat Into Versit Document
-    versitDocument = mConverter->convertContact(contact);
-
-    //Ensure versit document is created with properties
-    QCOMPARE(versitDocument.properties().count(), 1);
-
-    //Ensure Only Valid params are encoded
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 1);
-
-    //Ensure Valid parameters exisit
-    QVERIFY(versitDocument.properties().at(0).parameters().contains(
-            QString::fromAscii(versitType), QString::fromAscii(versitContextHomeId)));
-    
-    //Check property name
-    QString propertyName = versitDocument.properties().at(0).name();
-    QString expectedPropertyName = 
-        mConverterPrivate->mPropertyMappings.value(QContactEmailAddress::DefinitionName);
-    QCOMPARE(propertyName, expectedPropertyName );
-    
-    //Check value 
-    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data() );
-    QString expectedValue = QString::fromAscii("test@test");
-    QCOMPARE(value, expectedValue);
-
+    QVersitDocument document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    QVersitProperty property = document.properties().at(0);
+    // Check parameters
+    QCOMPARE(property.parameters().count(), 1);
+    QVERIFY(property.parameters().contains(
+        QString::fromAscii(versitType),QString::fromAscii(versitContextHomeId)));
+    // Check name
+    QCOMPARE(property.name(), QString::fromAscii(versitEmailId));
+    // Check value
+    QCOMPARE(QString::fromAscii(property.value()), email.emailAddress());
 }
 
 void UT_QVersitContactConverter::testEncodeStreetAddress()
 {
     QContact contact;
-
     QContactAddress address;
+
+    // vCard 2.1
     address.setCountry(QString::fromAscii("Finland"));
     address.setPostcode(QString::fromAscii("00440"));
     address.setStreet(QString::fromAscii("HKKI 1X 90"));
     address.setLocality(QString::fromAscii("Helsinki"));
-
     address.setContexts(QContactDetail::ContextHome);
     address.setSubTypes(QContactAddress::SubTypePostal);
     contact.saveDetail(&address);
-    
-    QVersitDocument versitDocument;
+    QVersitDocument document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    QVersitProperty property = document.properties().at(0);
+    // Check parameters
+    QCOMPARE(property.parameters().count(), 2);
+    QVERIFY(property.parameters().contains(
+        QString::fromAscii(versitType),QString::fromAscii(versitContextHomeId)));
+    QVERIFY(property.parameters().contains(
+        QString::fromAscii(versitType),QString::fromAscii(versitPostalId)));
+    // Check name
+    QCOMPARE(property.name(), QString::fromAscii(versitAddressId));
+    // Check value
+    QCOMPARE(QString::fromAscii(property.value()),
+             QString::fromAscii(";;HKKI 1X 90;Helsinki;;00440;Finland"));
 
-    //Ensure there are no properties in the versit document.
-    QVERIFY(!versitDocument.properties().count());
-
-    //Conver Contact
-    versitDocument= mConverter->convertContact(contact);
-    
-    //Ensure versit document is created with properties
-    QCOMPARE(versitDocument.properties().count(), 1);
-
-    //Ensure Only Valid params are encoded
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
-
-    //Ensure Valid parameters exisit
-    QVERIFY(versitDocument.properties().at(0).parameters().contains(
-            QString::fromAscii(versitType), QString::fromAscii(versitContextHomeId)));
-    QVERIFY(versitDocument.properties().at(0).parameters().contains(
-            QString::fromAscii(versitType), QString::fromAscii(versitPostalId)));
-    
-    //Check property name
-    QString propertyName = versitDocument.properties().at(0).name();
-    QString expectedPropertyName = 
-        mConverterPrivate->mPropertyMappings.value(QContactAddress::DefinitionName);
-    QCOMPARE(propertyName, expectedPropertyName );
-
-    //Check property value 
-    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data() );
-
-    //Format: Post Office Address  + ";" +  Extended Address  + ";" + Street  + ";" +
-    //Locality  + ";" + Region  + ";" + Postal Code  + ";" + Country
-
-    QString expectedValue = QString::fromAscii(";;HKKI 1X 90;Helsinki;;00440;Finland");
-    QCOMPARE(value, expectedValue);
+    // vCard 3.0, special characters in the address parts are backslash escaped
+    contact.removeDetail(&address);
+    address.setPostOfficeBox(QString::fromAscii("PO;Box"));
+    address.setStreet(QString::fromAscii("My;Street"));
+    address.setLocality(QString::fromAscii("My;Town"));
+    address.setRegion(QString::fromAscii("My;State"));
+    address.setPostcode(QString::fromAscii("12345;"));
+    address.setCountry(QString::fromAscii("My;Country"));
+    contact.saveDetail(&address);
+    document = mConverter->convertContact(contact,QVersitDocument::VCard30);
+    QCOMPARE(document.versitType(),QVersitDocument::VCard30);
+    QCOMPARE(document.properties().count(), 1);
+    property = document.properties().at(0);
+    // Check name
+    QCOMPARE(property.name(), QString::fromAscii(versitAddressId));
+    // Check value
+    QCOMPARE(QString::fromAscii(property.value()),
+             QString::fromAscii("PO\\;Box;;My\\;Street;My\\;Town;My\\;State;12345\\;;My\\;Country"));
 }
 
 void UT_QVersitContactConverter::testEncodeUrl()
 {
     QContact contact;
-
-    // Adding Phone Numer for the Contact.
-    QContactUrl p;
-    p.setUrl(QString::fromAscii("http://www.myhome.com"));
-    p.setContexts(QContactDetail::ContextHome);
-    p.setSubType(QContactUrl::SubTypeHomePage);
-
-    contact.saveDetail(&p);
-
-    //Convert Contat Into Versit Document
-    QVersitDocument versitDocument = mConverter->convertContact(contact);
-
-    //Ensure property Exisit
-    QCOMPARE(versitDocument.properties().count(), 1);
-
-    //Ensure Only Valid params are encoded
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 1);
-
-    //Ensure Valid parameters exisit
-    QVERIFY(versitDocument.properties().at(0).parameters().contains(
-            QString::fromAscii(versitType), QString::fromAscii(versitContextHomeId)));
-
-    //Ensure valud value exist for the parameters.
-
-    QString propertyName = versitDocument.properties().at(0).name();
-    QString expectedPropertyName =
-        mConverterPrivate->mPropertyMappings.value(QContactUrl::DefinitionName);
-    QCOMPARE(propertyName, expectedPropertyName);
-
-    //Check property value
-    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data());
-    QString expectedValue = QString::fromAscii("http://www.myhome.com");
-    QCOMPARE(value, expectedValue);
+    QContactUrl url;
+    url.setUrl(QString::fromAscii("http://www.myhome.com"));
+    url.setContexts(QContactDetail::ContextHome);
+    url.setSubType(QContactUrl::SubTypeHomePage);
+    contact.saveDetail(&url);
+    QVersitDocument document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    QVersitProperty property = document.properties().at(0);
+    // Check parameters
+    QCOMPARE(property.parameters().count(), 1);
+    QVERIFY(property.parameters().contains(
+        QString::fromAscii(versitType),QString::fromAscii(versitContextHomeId)));
+    // Check name
+    QCOMPARE(property.name(), QString::fromAscii(versitUrlId));
+    // Check value
+    QCOMPARE(QString::fromAscii(property.value()), url.url());
 }
 
 void UT_QVersitContactConverter::testEncodeUid()
 {
     QContact contact;
+    QContactGuid guid;
 
-    // Adding uid for the Contact.
-    QContactGuid p;
+    // vCard 2.1
+    guid.setContexts(QContactDetail::ContextHome);
+    guid.setGuid(QString::fromAscii("0101222"));
+    contact.saveDetail(&guid);
+    QVersitDocument document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    QVersitProperty property = document.properties().at(0);
+    // Check parameters
+    // Contexts are not allowed for UID
+    QCOMPARE(property.parameters().count(), 0);
+    // Check name
+    QCOMPARE(property.name(), QString::fromAscii(versitUidId));
+    // Check value
+    QCOMPARE(QString::fromAscii(property.value()), guid.guid());
 
-    //API Permits setting up context but it should not be in Versit Doc
-    p.setContexts(QContactDetail::ContextHome);
-
-    p.setGuid(QString::fromAscii("0101222"));
-    contact.saveDetail(&p);
-
-    //Convert Contat Into Versit Document
-    QVersitDocument versitDocument = mConverter->convertContact(contact);
-
-    //Ensure parameters does not exisit
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 0);
-
-    //Ensure property Exisit
-    QCOMPARE(versitDocument.properties().count(), 1);
-
-    //Ensure valud value exist for the parameters.
-
-    QString propertyName = versitDocument.properties().at(0).name();
-    QString expectedPropertyName =
-        mConverterPrivate->mPropertyMappings.value(QContactGuid::DefinitionName);
-    QCOMPARE(propertyName, expectedPropertyName);
-
-    //Check property value
-    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data());
-    QString expectedValue = QString::fromAscii("0101222");
-    QCOMPARE(value, expectedValue);
+    // vCard 3.0, special characters in the value are backslash escaped
+    contact.removeDetail(&guid);
+    guid.setGuid(QString::fromAscii("1;2,3\r\n4\\5"));
+    contact.saveDetail(&guid);
+    document = mConverter->convertContact(contact,QVersitDocument::VCard30);
+    QCOMPARE(document.versitType(),QVersitDocument::VCard30);
+    QCOMPARE(document.properties().count(), 1);
+    property = document.properties().at(0);
+    // Check name
+    QCOMPARE(property.name(), QString::fromAscii(versitUidId));
+    // Check value
+    QCOMPARE(QString::fromAscii(property.value()),
+             QString::fromAscii("1\\;2\\,3\\n4\\\\5"));
 }
 
 void UT_QVersitContactConverter::testEncodeRev()
@@ -1118,4 +1061,3 @@ void UT_QVersitContactConverter::testEncodeFamily()
     QString expected = QString::fromAscii("A,B");
     QCOMPARE(value2, expected);
 }
-

@@ -58,6 +58,11 @@ public:
     ~QVersitContactConverterPrivate();
 
     void encodeFieldInfo(QVersitDocument& document, const QContactDetail& detail);
+    
+signals:
+    void scale(const QString& imageFileName, QByteArray& imageData);
+
+private:
     void encodeName(QVersitProperty& property, const QContactDetail& detail);
     void encodePhoneNumber(QVersitProperty& property, const QContactDetail& detail);
     void encodeEmail(QVersitProperty& property, const QContactDetail& detail);
@@ -83,13 +88,13 @@ public:
     bool encodeEmbeddedContent(const QString& resourcePath,
                                QVersitProperty& property,
                                bool performScaling);
-    
-signals:
-    void scale(const QString& imageFileName, QByteArray& imageData);
+    void setEscapedValue(QVersitProperty& property,const QString& value);
+    QByteArray escape(const QByteArray& value);
 
-private: // Data
+private: // data
     QHash<QString, QString> mPropertyMappings;
     QHash<QString, QString> mParameterMappings;
+    QVersitDocument::VersitType mVersitType;
 
     friend class UT_QVersitContactConverter;
 };

@@ -75,9 +75,12 @@ QVersitContactConverter::~QVersitContactConverter()
 /*!
  * Returns the versit document corresponding to the \a contact 
  */
-QVersitDocument QVersitContactConverter::convertContact(const QContact& contact)
+QVersitDocument QVersitContactConverter::convertContact(
+    const QContact& contact,
+    QVersitDocument::VersitType versitType)
 {
-    QVersitDocument versitDocument;    
+    QVersitDocument versitDocument;
+    versitDocument.setVersitType(versitType);
     QList<QContactDetail> allDetails = contact.details();
     for (int i = 0; i < allDetails.size(); i++) {
         QContactDetail detail = allDetails.at(i);

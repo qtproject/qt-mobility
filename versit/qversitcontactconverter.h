@@ -58,7 +58,9 @@ public:
     QVersitContactConverter();
     ~QVersitContactConverter();
 
-    QVersitDocument convertContact(const QContact& contact);
+    QVersitDocument convertContact(
+        const QContact& contact,
+        QVersitDocument::VersitType versitType=QVersitDocument::VCard21);
 
 signals:
     void scale(const QString& imageFileName, QByteArray& imageData);
