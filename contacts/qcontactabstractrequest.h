@@ -105,7 +105,6 @@ protected:
 private:
     Q_DISABLE_COPY(QContactAbstractRequest)
     friend class QContactManagerEngine;
-    friend class QContactRequestWorker;
 };
 
 #endif

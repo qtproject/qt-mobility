@@ -63,6 +63,14 @@
 
 class QContactAbstractRequest;
 
+struct QContactRequestElement
+{
+    QContactAbstractRequest* request;
+    QMutex mutex;
+    QWaitCondition condition;
+    bool waiting;
+};
+
 class QContactRequestWorkerData : public QSharedData
 {
 public:
@@ -82,13 +90,17 @@ public:
     {
     }
 
-    QContactAbstractRequest* takeFirstRequest();
+    QContactRequestElement* takeFirstRequestElement();
+    void cleanUpFinishedRequests(bool waitForAll = false);
+    
+    QContactAbstractRequest::Status requestStatus(QContactRequestElement* re);
     
     bool m_stop;
     QMutex m_mutex;
     QWaitCondition m_newRequestAdded;
-    QQueue<QContactAbstractRequest*> m_requestQueue; 
-    QList<QContactAbstractRequest*> m_removedRequests; 
+    QMap<QContactAbstractRequest*, QContactRequestElement*> m_requestMap;
+    QQueue<QContactRequestElement*> m_requestQueue; 
+    QList<QContactRequestElement*> m_removedRequests; 
 };
 #endif
 

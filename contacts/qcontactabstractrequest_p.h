@@ -58,8 +58,6 @@
 
 #include <QList>
 #include <QPointer>
-#include <QMutex>
-#include <QWaitCondition>
 
 class QContactAbstractRequestPrivate
 {
@@ -67,8 +65,7 @@ public:
     QContactAbstractRequestPrivate()
         : m_error(QContactManager::NoError),
             m_status(QContactAbstractRequest::Inactive),
-            m_manager(0),
-            waiting(false)
+            m_manager(0)
     {
     }
 
@@ -85,9 +82,6 @@ public:
     QContactAbstractRequest::Status m_status;
     QPointer<QContactManager> m_manager;
     QList<QContactManager::Error> m_errors;
-    QMutex mutex;
-    QWaitCondition condition;
-    bool waiting;
 };
 
 #endif

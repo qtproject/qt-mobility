@@ -1781,12 +1781,10 @@ bool QContactManagerEngine::waitForRequestFinished(QContactAbstractRequest* req,
 void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     // convenience function that simply sets the operation error and status
-    QMutexLocker locker(&req->d_ptr->mutex);
-
     req->d_ptr->m_error = error;
     req->d_ptr->m_errors = errors;
     req->d_ptr->m_status = status;
-    
+
     switch (req->type()) {
         case QContactAbstractRequest::ContactFetchRequest:
         {
@@ -1868,7 +1866,6 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    QMutexLocker locker(&req->d_ptr->mutex);
     if (req->type() == QContactAbstractRequest::ContactLocalIdFetchRequest) {
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
@@ -1885,7 +1882,6 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    QMutexLocker locker(&req->d_ptr->mutex);
     switch (req->type()) {
         case QContactAbstractRequest::ContactFetchRequest:
         {
@@ -1924,7 +1920,6 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
-    QMutexLocker locker(&req->d_ptr->mutex);
     if (req->type() == QContactAbstractRequest::DetailDefinitionSaveRequest) {
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
@@ -1941,7 +1936,6 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    QMutexLocker locker(&req->d_ptr->mutex);
     if (req->type() == QContactAbstractRequest::DetailDefinitionFetchRequest) {
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
@@ -1958,7 +1952,6 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QM
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    QMutexLocker locker(&req->d_ptr->mutex);
     if (req->type() == QContactAbstractRequest::RelationshipSaveRequest) {
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
