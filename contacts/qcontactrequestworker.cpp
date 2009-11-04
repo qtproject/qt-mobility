@@ -281,15 +281,13 @@ bool QContactRequestWorker::waitRequest(QContactAbstractRequest* req, int msecs)
         QContactRequestElement* re = d->m_requestMap.value(req);
         if (re) {
             QMutexLocker locker(&re->mutex);
-            if (re->request->isActive() {
-                re->waiting = true;
-                if (msecs) {
-                    ret = re->condition.wait(&re->mutex, msecs);
-                } else {
-                    ret = re->condition.wait(&re->mutex);
-                }
-                re->waiting = false;
+            re->waiting = true;
+            if (msecs) {
+                ret = re->condition.wait(&re->mutex, msecs);
+            } else {
+                ret = re->condition.wait(&re->mutex);
             }
+            re->waiting = false;
         }
     }
     return ret;
