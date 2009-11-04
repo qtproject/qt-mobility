@@ -54,16 +54,26 @@ unix: {
 
         }
     }
+
     mac: {
         SOURCES += qsysteminfo_mac.mm
         HEADERS += qsysteminfo_mac_p.h
-        QMAKE_LFLAGS += -F/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks
-        LIBS += -framework IOBluetooth -framework SystemConfiguration -framework CoreFoundation
-        INCLUDEPATH += /Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/IOBluetooth.framework/Versions/A/Headers/objc
+        LIBS += -framework SystemConfiguration -framework CoreFoundation \
+         -framework IOKit -framework ApplicationServices
+
+        # change this to /Developer/SDKs/MacOSX10.6.sdk
+        # if you want to compile for 10.6 with CoreWLAN framework
+
+        QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.5.sdk
+        contains(QMAKE_MAC_SDK, "/Developer/SDKs/MacOSX10.6.sdk") {
+                LIBS += -framework CoreWLAN  -framework IOBluetooth
+                message("Using 10.6 SDK")
+                DEFINES += MAC_SDK_10_6
+        } else {
+                message("Using 10.5 SDK")
+        }
         TEMPLATE = lib
         #CONFIG += lib_bundle
-        macx:debug{
-        }
     }
 
     symbian:{
