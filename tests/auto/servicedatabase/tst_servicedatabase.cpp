@@ -683,20 +683,20 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
     //test the removal of a custom property from the filter
     filter.setCustomProperty("bot", "automatic");
     filter.setCustomProperty("extension", "multidrive");
-    QCOMPARE(filter.customKeys().length(), 2);
+    QCOMPARE(filter.customPropertyKeys().length(), 2);
     filter.removeCustomProperty("bot");
-    QCOMPARE(filter.customKeys().length(), 1);
+    QCOMPARE(filter.customPropertyKeys().length(), 1);
     filter.removeCustomProperty("extension");
-    QCOMPARE(filter.customKeys().length(), 0);
+    QCOMPARE(filter.customPropertyKeys().length(), 0);
 
     //test clearing of custom properties
     filter.setCustomProperty("bot", "automatic");
     filter.setCustomProperty("extension", "multidrive");
-    QCOMPARE(filter.customKeys().length(),2);
+    QCOMPARE(filter.customPropertyKeys().length(),2);
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 1);
     filter.clearCustomProperties();
-    QCOMPARE(filter.customKeys().length(), 0);
+    QCOMPARE(filter.customPropertyKeys().length(), 0);
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 36);
 
