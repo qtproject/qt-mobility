@@ -102,10 +102,11 @@ QContactMemoryEngine* QContactMemoryEngine::createMemoryEngine(const QMap<QStrin
         engine->d->m_engineName = QString(QLatin1String("memory"));
         engine->d->m_id = idValue;
         engine->d->m_anonymous = anonymous;
+        engine->d->m_requestWorker = new QContactRequestWorker;
         engines.insert(idValue, engine);
     }
-    if (engine && !engine->d->m_requestWorker.isRunning()) {
-        engine->d->m_requestWorker.start();
+    if (engine && !engine->d->m_requestWorker->isRunning()) {
+        engine->d->m_requestWorker->start();
     }
     return engine;
 }
@@ -652,31 +653,31 @@ bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, Q
 /*! \reimp */
 void QContactMemoryEngine::requestDestroyed(QContactAbstractRequest* req)
 {
-    d->m_requestWorker.removeRequest(req);
+    d->m_requestWorker->removeRequest(req);
 }
 
 /*! \reimp */
 bool QContactMemoryEngine::startRequest(QContactAbstractRequest* req)
 {
-    return d->m_requestWorker.addRequest(req);
+    return d->m_requestWorker->addRequest(req);
 }
 
 /*! \reimp */
 bool QContactMemoryEngine::cancelRequest(QContactAbstractRequest* req)
 {
-    return  d->m_requestWorker.cancelRequest(req);
+    return  d->m_requestWorker->cancelRequest(req);
 }
 
 /*! \reimp */
 bool QContactMemoryEngine::waitForRequestProgress(QContactAbstractRequest* req, int msecs)
 {
-    return d->m_requestWorker.waitRequest(req, msecs);
+    return d->m_requestWorker->waitRequest(req, msecs);
 }
 
 /*! \reimp */
 bool QContactMemoryEngine::waitForRequestFinished(QContactAbstractRequest* req, int msecs)
 {
-    return d->m_requestWorker.waitRequest(req, msecs) && req->isFinished();
+    return d->m_requestWorker->waitRequest(req, msecs) && req->isFinished();
 }
 
 /*!
