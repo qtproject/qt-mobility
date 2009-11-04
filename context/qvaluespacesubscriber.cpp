@@ -45,8 +45,9 @@
 
 #include <QSet>
 #include <QCoreApplication>
-#include <QThread>
 #include <QUuid>
+#include <QSharedData>
+#include <QMutex>
 
 QT_BEGIN_NAMESPACE
 
@@ -162,16 +163,14 @@ signals:
 public slots:
     void handleChanged(quintptr handle)
     {
-        for (int ii = 0; ii < readers.count(); ++ii)
-            if (readers.at(ii).second == handle) {
+        QAbstractValueSpaceLayer *layer = qobject_cast<QAbstractValueSpaceLayer *>(sender());
+
+        for (int i = 0; i < readers.count(); ++i) {
+            if (readers.at(i).first == layer && readers.at(i).second == handle) {
                 emit changed();
                 return;
             }
-    }
-
-    void objDestroyed()
-    {
-        connections.remove((QValueSpaceSubscriber *)sender());
+        }
     }
 
 public:
@@ -179,152 +178,158 @@ public:
     QHash<const QValueSpaceSubscriber *,int> connections;
 };
 
-struct QValueSpaceSubscriberPrivate
+typedef QList<QPair<QAbstractValueSpaceLayer *, QAbstractValueSpaceLayer::Handle> > LayerList;
+
+class QValueSpaceSubscriberPrivate : public QSharedData
 {
+public:
     QValueSpaceSubscriberPrivate(const QString &_path,
-                           QValueSpace::LayerOptions filter = QValueSpace::UnspecifiedLayer)
-        : refCount(0), connections(0)
-    {
-        path = qCanonicalPath(_path);
+                           QValueSpace::LayerOptions filter = QValueSpace::UnspecifiedLayer);
+    QValueSpaceSubscriberPrivate(const QString &_path, const QUuid &uuid);
+    ~QValueSpaceSubscriberPrivate();
 
-        QValueSpaceManager *man = QValueSpaceManager::instance();
-        if (!man)
-            return;
+    void connect(const QValueSpaceSubscriber *space) const;
+    bool disconnect(QValueSpaceSubscriber * space);
 
-        if ((filter & QValueSpace::PermanentLayer &&
-             filter & QValueSpace::NonPermanentLayer) ||
-            (filter & QValueSpace::WriteableLayer &&
-             filter & QValueSpace::NonWriteableLayer)) {
-            return;
-        }
+    const QString path;
+    const LayerList readers;
 
-        const QList<QAbstractValueSpaceLayer *> & readerList = man->getLayers();
-
-        for (int ii = 0; ii < readerList.count(); ++ii) {
-            QAbstractValueSpaceLayer *read = readerList.at(ii);
-            if (filter != QValueSpace::UnspecifiedLayer &&
-                !(read->layerOptions() & filter)) {
-                continue;
-            }
-
-            QAbstractValueSpaceLayer::Handle handle =
-                read->item(QAbstractValueSpaceLayer::InvalidHandle, path);
-            if (QAbstractValueSpaceLayer::InvalidHandle != handle) {
-                readers.append(qMakePair(read, handle));
-
-                read->notifyInterest(handle, true);
-            }
-        }
-    }
-
-    QValueSpaceSubscriberPrivate(const QString &_path, const QUuid &uuid)
-    :   refCount(0), connections(0)
-    {
-        path = qCanonicalPath(_path);
-
-        QValueSpaceManager *man = QValueSpaceManager::instance();
-        if (!man)
-            return;
-
-        const QList<QAbstractValueSpaceLayer *> & readerList = man->getLayers();
-
-        for (int ii = 0; ii < readerList.count(); ++ii) {
-            QAbstractValueSpaceLayer *read = readerList.at(ii);
-            if (read->id() != uuid)
-                continue;
-
-            QAbstractValueSpaceLayer::Handle handle =
-                read->item(QAbstractValueSpaceLayer::InvalidHandle, path);
-            if (QAbstractValueSpaceLayer::InvalidHandle != handle) {
-                readers.append(qMakePair(read, handle));
-
-                read->notifyInterest(handle, true);
-            }
-        }
-    }
-
-    ~QValueSpaceSubscriberPrivate()
-    {
-        for (int ii = 0; ii < readers.count(); ++ii) {
-            readers[ii].first->notifyInterest(readers[ii].second, false);
-            readers[ii].first->removeHandle(readers[ii].second);
-        }
-
-        if (connections)
-            delete connections;
-
-    }
-
-    void connect(const QValueSpaceSubscriber *space)
-    {
-        if (!connections) {
-            qRegisterMetaType<quintptr>("quintptr");
-            connections = new QValueSpaceSubscriberPrivateProxy;
-            connections->readers = readers;
-            connections->connections.insert(space,1);
-            QObject::connect(space, SIGNAL(destroyed(QObject*)),
-                             connections, SLOT(objDestroyed()));
-            QObject::connect(connections, SIGNAL(changed()),
-                             space, SIGNAL(contentsChanged()));
-            for (int ii = 0; ii < readers.count(); ++ii) {
-                readers.at(ii).first->setProperty(readers.at(ii).second,
-                                                  QAbstractValueSpaceLayer::Publish);
-                QObject::connect(readers.at(ii).first, SIGNAL(handleChanged(quintptr)),
-                                 connections, SLOT(handleChanged(quintptr)));
-            }
-        } else if (!connections->connections.contains(space)) {
-            connections->connections[space] = 1;
-
-            QObject::connect(space, SIGNAL(destroyed(QObject*)),
-                             connections, SLOT(objDestroyed()));
-            QObject::connect(connections, SIGNAL(changed()),
-                             space, SIGNAL(contentsChanged()));
-        } else {
-            ++connections->connections[space];
-        }
-    }
-
-    bool disconnect(QValueSpaceSubscriber * space)
-    {
-        if (connections) {
-            QHash<const QValueSpaceSubscriber *, int>::Iterator iter =
-                connections->connections.find(space);
-            if (iter != connections->connections.end()) {
-                --(*iter);
-                if (!*iter) {
-                    QObject::disconnect(space, SIGNAL(destroyed(QObject*)),
-                                        connections, SLOT(objDestroyed()));
-                    QObject::disconnect(connections, SIGNAL(changed()),
-                                        space, SIGNAL(contentsChanged()));
-                    connections->connections.erase(iter);
-                }
-                return true;
-            }
-        }
-        return false;
-    }
-
-    void AddRef()
-    {
-        ++refCount;
-    }
-
-    void Release()
-    {
-        Q_ASSERT(refCount);
-        --refCount;
-        if (!refCount)
-            delete this;
-    }
-
-    unsigned int refCount;
-    QString path;
-    QList<QPair<QAbstractValueSpaceLayer *, QAbstractValueSpaceLayer::Handle> > readers;
-    QValueSpaceSubscriberPrivateProxy * connections;
+    mutable QMutex lock;
+    mutable QValueSpaceSubscriberPrivateProxy *connections;
 };
 
-#define VS_CALL_ASSERT Q_ASSERT(!QCoreApplication::instance() || \
-                            QCoreApplication::instance()->thread() == QThread::currentThread());
+static LayerList matchLayers(const QString &path, QValueSpace::LayerOptions filter)
+{
+    LayerList list;
+
+    QValueSpaceManager *manager = QValueSpaceManager::instance();
+    if (!manager)
+        return list;
+
+    // Invalid filter combination.
+    if ((filter & QValueSpace::PermanentLayer &&
+         filter & QValueSpace::NonPermanentLayer) ||
+        (filter & QValueSpace::WriteableLayer &&
+         filter & QValueSpace::NonWriteableLayer)) {
+        return list;
+    }
+
+    const QList<QAbstractValueSpaceLayer *> &readerList = manager->getLayers();
+
+    for (int ii = 0; ii < readerList.count(); ++ii) {
+        QAbstractValueSpaceLayer *read = readerList.at(ii);
+        if (filter != QValueSpace::UnspecifiedLayer &&
+            !(read->layerOptions() & filter)) {
+            continue;
+        }
+
+        QAbstractValueSpaceLayer::Handle handle =
+            read->item(QAbstractValueSpaceLayer::InvalidHandle, path);
+        if (QAbstractValueSpaceLayer::InvalidHandle != handle) {
+            list.append(qMakePair(read, handle));
+
+            read->notifyInterest(handle, true);
+        }
+    }
+
+    return list;
+}
+
+QValueSpaceSubscriberPrivate::QValueSpaceSubscriberPrivate(const QString &path,
+                                                           QValueSpace::LayerOptions filter)
+:   path(qCanonicalPath(path)), readers(matchLayers(this->path, filter)), connections(0)
+{
+}
+
+static LayerList matchLayers(const QString &path, const QUuid &uuid)
+{
+    LayerList list;
+
+    QValueSpaceManager *manager = QValueSpaceManager::instance();
+    if (!manager)
+        return list;
+
+    const QList<QAbstractValueSpaceLayer *> &readerList = manager->getLayers();
+
+    for (int ii = 0; ii < readerList.count(); ++ii) {
+        QAbstractValueSpaceLayer *read = readerList.at(ii);
+        if (read->id() != uuid)
+            continue;
+
+        QAbstractValueSpaceLayer::Handle handle =
+            read->item(QAbstractValueSpaceLayer::InvalidHandle, path);
+        if (QAbstractValueSpaceLayer::InvalidHandle != handle) {
+            list.append(qMakePair(read, handle));
+
+            read->notifyInterest(handle, true);
+        }
+    }
+
+    return list;
+}
+
+QValueSpaceSubscriberPrivate::QValueSpaceSubscriberPrivate(const QString &path, const QUuid &uuid)
+:   path(qCanonicalPath(path)), readers(matchLayers(this->path, uuid)), connections(0)
+{
+}
+
+QValueSpaceSubscriberPrivate::~QValueSpaceSubscriberPrivate()
+{
+    for (int ii = 0; ii < readers.count(); ++ii) {
+        readers[ii].first->notifyInterest(readers[ii].second, false);
+        readers[ii].first->removeHandle(readers[ii].second);
+    }
+
+    if (connections)
+        delete connections;
+}
+
+void QValueSpaceSubscriberPrivate::connect(const QValueSpaceSubscriber *space) const
+{
+    QMutexLocker locker(&lock);
+
+    if (!connections) {
+        qRegisterMetaType<quintptr>("quintptr");
+        connections = new QValueSpaceSubscriberPrivateProxy;
+        connections->readers = readers;
+        connections->connections.insert(space,1);
+        QObject::connect(connections, SIGNAL(changed()),
+                         space, SIGNAL(contentsChanged()));
+        for (int ii = 0; ii < readers.count(); ++ii) {
+            readers.at(ii).first->setProperty(readers.at(ii).second,
+                                              QAbstractValueSpaceLayer::Publish);
+            QObject::connect(readers.at(ii).first, SIGNAL(handleChanged(quintptr)),
+                             connections, SLOT(handleChanged(quintptr)));
+        }
+    } else if (!connections->connections.contains(space)) {
+        connections->connections[space] = 1;
+
+        QObject::connect(connections, SIGNAL(changed()),
+                         space, SIGNAL(contentsChanged()));
+    } else {
+        ++connections->connections[space];
+    }
+}
+
+bool QValueSpaceSubscriberPrivate::disconnect(QValueSpaceSubscriber * space)
+{
+    QMutexLocker locker(&lock);
+
+    if (connections) {
+        QHash<const QValueSpaceSubscriber *, int>::Iterator iter =
+            connections->connections.find(space);
+        if (iter != connections->connections.end()) {
+            --(*iter);
+            if (!*iter) {
+                QObject::disconnect(connections, SIGNAL(changed()),
+                                    space, SIGNAL(contentsChanged()));
+                connections->connections.erase(iter);
+            }
+            return true;
+        }
+    }
+    return false;
+}
 
 /*!
     Constructs a QValueSpaceSubscriber with the specified \a parent that refers to the root path.
@@ -335,10 +340,7 @@ struct QValueSpaceSubscriberPrivate
 QValueSpaceSubscriber::QValueSpaceSubscriber(QObject *parent)
 :   QObject(parent)
 {
-    VS_CALL_ASSERT;
-
     d = new QValueSpaceSubscriberPrivate(QLatin1String("/"));
-    d->AddRef();
 }
 
 /*!
@@ -353,10 +355,7 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(QObject *parent)
 QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path, QObject *parent)
 :   QObject(parent)
 {
-    VS_CALL_ASSERT;
-
     d = new QValueSpaceSubscriberPrivate(path);
-    d->AddRef();
 }
 
 /*!
@@ -371,10 +370,7 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path, QObject *paren
 QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path, QObject *parent)
 :   QObject(parent)
 {
-    VS_CALL_ASSERT;
-
     d = new QValueSpaceSubscriberPrivate(QString::fromLatin1(path));
-    d->AddRef();
 }
 
 /*!
@@ -394,10 +390,7 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path,
                                  QObject *parent)
 :   QObject(parent)
 {
-    VS_CALL_ASSERT;
-
     d = new QValueSpaceSubscriberPrivate(path, filter);
-    d->AddRef();
 }
 
 /*!
@@ -417,10 +410,7 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path,
                                  QObject *parent)
 :   QObject(parent)
 {
-    VS_CALL_ASSERT;
-
     d = new QValueSpaceSubscriberPrivate(QString::fromLatin1(path), filter);
-    d->AddRef();
 }
 
 /*!
@@ -443,10 +433,7 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path,
                                              QObject *parent)
 :   QObject(parent)
 {
-    VS_CALL_ASSERT;
-
     d = new QValueSpaceSubscriberPrivate(path, uuid);
-    d->AddRef();
 }
 
 /*!
@@ -467,10 +454,7 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path,
 QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path, const QUuid &uuid, QObject *parent)
 :   QObject(parent)
 {
-    VS_CALL_ASSERT;
-
     d = new QValueSpaceSubscriberPrivate(QString::fromLatin1(path), uuid);
-    d->AddRef();
 }
 
 /*!
@@ -478,9 +462,7 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path, const QUuid &uuid
 */
 QValueSpaceSubscriber::~QValueSpaceSubscriber()
 {
-    VS_CALL_ASSERT;
-
-    d->Release();
+    d->disconnect(this);
 }
 
 /*!
@@ -493,17 +475,14 @@ QValueSpaceSubscriber::~QValueSpaceSubscriber()
 */
 void QValueSpaceSubscriber::setPath(const QString &path)
 {
-    VS_CALL_ASSERT;
-
     if (d->path == path)
         return;
 
-    d->Release();
+    d->disconnect(this);
 
     disconnect();
 
     d = new QValueSpaceSubscriberPrivate(path);
-    d->AddRef();
 }
 
 /*!
@@ -516,21 +495,15 @@ void QValueSpaceSubscriber::setPath(const QString &path)
 */
 void QValueSpaceSubscriber::setPath(QValueSpaceSubscriber *subscriber)
 {
-    VS_CALL_ASSERT;
-
-    d->Release();
+    d->disconnect(this);
 
     disconnect();
 
     d = subscriber->d;
-
-    d->AddRef();
 }
 
 QString QValueSpaceSubscriber::path() const
 {
-    VS_CALL_ASSERT;
-
     return d->path;
 }
 
@@ -539,8 +512,6 @@ QString QValueSpaceSubscriber::path() const
 */
 void QValueSpaceSubscriber::cd(const QString &path)
 {
-    VS_CALL_ASSERT;
-
     if (path.startsWith(QLatin1Char('/')))
         setPath(path);
     else
@@ -552,8 +523,6 @@ void QValueSpaceSubscriber::cd(const QString &path)
 */
 void QValueSpaceSubscriber::cdUp()
 {
-    VS_CALL_ASSERT;
-
     if (d->path == QLatin1String("/"))
         return;
 
@@ -573,8 +542,6 @@ void QValueSpaceSubscriber::cdUp()
 */
 bool QValueSpaceSubscriber::isConnected() const
 {
-    VS_CALL_ASSERT;
-
     return !d->readers.isEmpty();
 }
 
@@ -594,8 +561,6 @@ bool QValueSpaceSubscriber::isConnected() const
 */
 QVariant QValueSpaceSubscriber::value(const QString & subPath, const QVariant &def) const
 {
-    VS_CALL_ASSERT;
-
     QVariant value;
     if (subPath.isEmpty()) {
         for (int ii = d->readers.count(); ii > 0; --ii) {
@@ -620,16 +585,17 @@ QVariant QValueSpaceSubscriber::value(const QString & subPath, const QVariant &d
 */
 QVariant QValueSpaceSubscriber::value(const char *subPath, const QVariant &def) const
 {
-    VS_CALL_ASSERT;
     return value(QString::fromLatin1(subPath), def);
 }
 
 QVariant QValueSpaceSubscriber::valuex(const QVariant &def) const
 {
-    VS_CALL_ASSERT;
+    QMutexLocker locker(&d->lock);
 
-    if (!d->connections || d->connections->connections.value(this) == 0)
+    if (!d->connections || d->connections->connections.value(this) == 0) {
+        locker.unlock();
         d->connect(this);
+    }
 
     return value(QString(), def);
 }
@@ -641,7 +607,6 @@ QVariant QValueSpaceSubscriber::valuex(const QVariant &def) const
 */
 void QValueSpaceSubscriber::connectNotify(const char *signal)
 {
-    VS_CALL_ASSERT;
     if (QLatin1String(signal) == SIGNAL(contentsChanged()))
         d->connect(this);
     else
@@ -656,7 +621,6 @@ void QValueSpaceSubscriber::connectNotify(const char *signal)
 */
 void QValueSpaceSubscriber::disconnectNotify(const char *signal)
 {
-    VS_CALL_ASSERT;
     if (QLatin1String(signal) == SIGNAL(contentsChanged()))
         d->disconnect(this);
     else
@@ -679,8 +643,6 @@ void QValueSpaceSubscriber::disconnectNotify(const char *signal)
 */
 QStringList QValueSpaceSubscriber::subPaths() const
 {
-    VS_CALL_ASSERT;
-
     QSet<QString> rv;
     for (int ii = 0; ii < d->readers.count(); ++ii)
         rv.unite(d->readers[ii].first->children(d->readers[ii].second));

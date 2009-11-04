@@ -45,7 +45,6 @@
 #include "qvaluespacemanager_p.h"
 
 #include <QtCore/qcoreapplication.h>
-#include <QtCore/qthread.h>
 
 #include <QtCore/qdebug.h>
 
@@ -134,9 +133,6 @@ QT_BEGIN_NAMESPACE
     least on QValueSpaceSubscriber is interested in the value of \a attribute.
 */
 
-#define VS_CALL_ASSERT Q_ASSERT(!QCoreApplication::instance() || \
-                       QCoreApplication::instance()->thread() == QThread::currentThread());
-
 class QValueSpaceProviderPrivate
 {
 public:
@@ -209,7 +205,6 @@ QValueSpaceProviderPrivate::QValueSpaceProviderPrivate(const QString &_path, con
 QValueSpaceProvider::QValueSpaceProvider(const QString &path, QObject *parent)
 :   QObject(parent), d(new QValueSpaceProviderPrivate(path))
 {
-    VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
 }
 
@@ -223,7 +218,6 @@ QValueSpaceProvider::QValueSpaceProvider(const QString &path, QObject *parent)
 QValueSpaceProvider::QValueSpaceProvider(const char *path, QObject *parent)
 :   QObject(parent), d(new QValueSpaceProviderPrivate(QString::fromLatin1(path)))
 {
-    VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
 }
 
@@ -249,7 +243,6 @@ QValueSpaceProvider::QValueSpaceProvider(const QString &path,
                                          QObject *parent)
 :   QObject(parent), d(new QValueSpaceProviderPrivate(path, filter))
 {
-    VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
 }
 
@@ -275,7 +268,6 @@ QValueSpaceProvider::QValueSpaceProvider(const char *path,
                                          QObject *parent)
 :   QObject(parent), d(new QValueSpaceProviderPrivate(QString::fromLatin1(path), filter))
 {
-    VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
 }
 
@@ -298,7 +290,6 @@ QValueSpaceProvider::QValueSpaceProvider(const char *path,
 QValueSpaceProvider::QValueSpaceProvider(const QString &path, const QUuid &uuid, QObject *parent)
 :   QObject(parent), d(new QValueSpaceProviderPrivate(path, uuid))
 {
-    VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
 }
 
@@ -320,7 +311,6 @@ QValueSpaceProvider::QValueSpaceProvider(const QString &path, const QUuid &uuid,
 QValueSpaceProvider::QValueSpaceProvider(const char *path, const QUuid &uuid, QObject *parent)
 :   QObject(parent), d(new QValueSpaceProviderPrivate(QString::fromLatin1(path), uuid))
 {
-    VS_CALL_ASSERT;
     QValueSpaceManager::instance()->init();
 }
 
@@ -330,8 +320,6 @@ QValueSpaceProvider::QValueSpaceProvider(const char *path, const QUuid &uuid, QO
 */
 QValueSpaceProvider::~QValueSpaceProvider()
 {
-    VS_CALL_ASSERT;
-
     if (!d->layer)
         return;
 
@@ -349,7 +337,6 @@ QValueSpaceProvider::~QValueSpaceProvider()
 */
 QString QValueSpaceProvider::path() const
 {
-    VS_CALL_ASSERT;
     return d->path;
 }
 
@@ -363,20 +350,29 @@ bool QValueSpaceProvider::isConnected() const
 }
 
 /*!
+    Forcibly sync all Value Space providers using the same layer as this provider.
+*/
+void QValueSpaceProvider::sync()
+{
+    if (!d || !d->layer)
+        return;
+
+    d->layer->sync();
+}
+
+/*!
     Forcibly sync all Value Space providers.
 
     For performance reasons attribute changes are batched internally by
     QValueSpaceProvider instances.  In cases where the visibility of changes must
     be synchronized with other processes, calling QValueSpaceProvider::sync() will
-    flush these batches.  By the time sync() returns, all other processes in the
+    flush these batches.  By the time syncAll() returns, all other processes in the
     system will be able to see the attribute changes.
 
-    In the common asynchronous case, calling sync() is unnecessary.
+    In the common asynchronous case, calling syncAll() is unnecessary.
 */
-void QValueSpaceProvider::sync()
+void QValueSpaceProvider::syncAll()
 {
-    VS_CALL_ASSERT;
-
     foreach (QAbstractValueSpaceLayer *layer, QValueSpaceManager::instance()->getLayers())
         layer->sync();
 }
@@ -397,8 +393,6 @@ void QValueSpaceProvider::sync()
 */
 void QValueSpaceProvider::setAttribute(const QString &attribute, const QVariant &data)
 {
-    VS_CALL_ASSERT;
-
     if (!isConnected()) {
         qWarning("setAttribute called on unconnected QValueSpaceProvider.");
         return;
@@ -416,7 +410,6 @@ void QValueSpaceProvider::setAttribute(const QString &attribute, const QVariant 
 */
 void QValueSpaceProvider::setAttribute(const char *attribute, const QVariant &data)
 {
-    VS_CALL_ASSERT;
     setAttribute(QString::fromLatin1(attribute), data);
 }
 
@@ -440,8 +433,6 @@ void QValueSpaceProvider::setAttribute(const char *attribute, const QVariant &da
 */
 void QValueSpaceProvider::removeAttribute(const QString &attribute)
 {
-    VS_CALL_ASSERT;
-
     if (!isConnected()) {
         qWarning("removeAttribute called on unconnected QValueSpaceProvider.");
         return;
@@ -457,7 +448,6 @@ void QValueSpaceProvider::removeAttribute(const QString &attribute)
 */
 void QValueSpaceProvider::removeAttribute(const char *attribute)
 {
-    VS_CALL_ASSERT;
     removeAttribute(QString::fromLatin1(attribute));
 }
 
@@ -475,8 +465,6 @@ void QValueSpaceProvider::removeAttribute(const char *attribute)
 */
 void QValueSpaceProvider::connectNotify(const char *member)
 {
-    VS_CALL_ASSERT;
-
     if (!d->hasWatch && d->layer && (*member - '0') == QSIGNAL_CODE) {
         d->layer->addWatch(this, d->handle);
         d->hasWatch = true;
