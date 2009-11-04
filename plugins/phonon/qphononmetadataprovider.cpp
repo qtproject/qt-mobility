@@ -103,7 +103,7 @@ void QPhononMetaDataProvider::setMetaData(QtMedia::MetaData key, QVariant const 
     Q_UNUSED(value);
 }
 
-QList<QtMedia::MetaData> QPhononMetaDataProvider::availableMetadata() const
+QList<QtMedia::MetaData> QPhononMetaDataProvider::availableMetaData() const
 {
     QList<QtMedia::MetaData> res;
     QMap<QString,QString> metaData = m_session->metaData();
@@ -130,7 +130,7 @@ void QPhononMetaDataProvider::setExtendedMetaData(const QString &key, QVariant c
     Q_UNUSED(value);
 }
 
-QStringList QPhononMetaDataProvider::availableExtenededMetadata() const
+QStringList QPhononMetaDataProvider::availableExtendedMetaData() const
 {
     return m_session->metaData().keys();
 }

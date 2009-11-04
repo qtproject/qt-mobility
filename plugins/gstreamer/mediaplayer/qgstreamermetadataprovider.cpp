@@ -158,6 +158,26 @@ void QGstreamerMetaDataProvider::setMetaData(QtMedia::MetaData key, QVariant con
     Q_UNUSED(value);
 }
 
+QList<QtMedia::MetaData> QGstreamerMetaDataProvider::availableMetaData() const
+{
+    static QMap<QByteArray, QtMedia::MetaData> keysMap;
+    if (keysMap.isEmpty()) {
+        const int count = sizeof(qt_gstreamerMetaDataKeys) / sizeof(QGstreamerMetaDataKeyLookup);
+        for (int i = 0; i < count; ++i) {
+            keysMap[QByteArray(qt_gstreamerMetaDataKeys[i].token)] = qt_gstreamerMetaDataKeys[i].key;
+        }
+    }
+
+    QList<QtMedia::MetaData> res;
+    foreach (const QByteArray &key, m_session->tags().keys()) {
+        QtMedia::MetaData tag = keysMap.value(key, QtMedia::MetaData(-1));
+        if (tag != -1)
+            res.append(tag);
+    }
+
+    return res;
+}
+
 QVariant QGstreamerMetaDataProvider::extendedMetaData(const QString &key) const
 {
     return m_session->tags().value(key.toLatin1());
@@ -169,6 +189,14 @@ void QGstreamerMetaDataProvider::setExtendedMetaData(const QString &key, QVarian
     Q_UNUSED(value);
 }
 
+QStringList QGstreamerMetaDataProvider::availableExtendedMetaData() const
+{
+    QStringList res;
+    foreach (const QByteArray &key, m_session->tags().keys())
+        res.append(QString(key));
+
+    return res;
+}
 
 void QGstreamerMetaDataProvider::updateTags()
 {

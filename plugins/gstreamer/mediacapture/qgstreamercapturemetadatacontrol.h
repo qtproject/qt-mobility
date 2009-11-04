@@ -57,9 +57,11 @@ public:
 
     QVariant metaData(QtMedia::MetaData key) const;
     void setMetaData(QtMedia::MetaData key, const QVariant &value);
+    QList<QtMedia::MetaData> availableMetaData() const;
 
     QVariant extendedMetaData(QString const &name) const;
     void setExtendedMetaData(QString const &name, QVariant const &value);
+    QStringList availableExtendedMetaData() const;
 
 Q_SIGNALS:
     void metaDataChanged(const QMap<QByteArray, QVariant>&);
