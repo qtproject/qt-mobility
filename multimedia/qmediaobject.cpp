@@ -292,6 +292,18 @@ void QMediaObject::setMetaData(QtMedia::MetaData key, const QVariant &value)
 }
 
 /*!
+    Returns the list of keys, meta-data is available for.
+*/
+QList<QtMedia::MetaData> QMediaObject::availableMetadata() const
+{
+    Q_D(const QMediaObject);
+
+    return d->metaDataControl
+            ? d->metaDataControl->availableMetadata()
+            : QList<QtMedia::MetaData>();
+}
+
+/*!
     \fn QMediaObject::metaDataChanged()
 
     Signals that a media object's meta-data has changed.
@@ -325,6 +337,19 @@ void QMediaObject::setExtendedMetaData(const QString &key, const QVariant &value
     if (d->metaDataControl)
         d->metaDataControl->setExtendedMetaData(key, value);
 }
+
+/*!
+    Returns the list of keys, extended meta-data is available for.
+*/
+QStringList QMediaObject::availableExtenededMetadata() const
+{
+    Q_D(const QMediaObject);
+
+    return d->metaDataControl
+            ? d->metaDataControl->availableExtenededMetadata()
+            : QStringList();
+}
+
 
 void QMediaObject::setupMetaData()
 {

@@ -72,9 +72,11 @@ public:
 
     QVariant metaData(QtMedia::MetaData key) const;
     void setMetaData(QtMedia::MetaData key, const QVariant &value);
+    QList<QtMedia::MetaData> availableMetadata() const;
 
     QVariant extendedMetaData(const QString &key) const;
     void setExtendedMetaData(const QString &key, const QVariant &value);
+    QStringList availableExtenededMetadata() const;
 
 Q_SIGNALS:
     void notifyIntervalChanged(int milliSeconds);
