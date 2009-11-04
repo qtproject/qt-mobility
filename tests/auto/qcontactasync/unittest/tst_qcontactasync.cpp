@@ -1890,7 +1890,7 @@ void tst_QContactAsync::addManagers()
 QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
 {
     QContactManager* cm = QContactManager::fromUri(managerUri);
-    cm->removeContacts(&cm->contacts());
+
     QContact a, b, c;
     a.setDisplayLabel("Aaron Aaronson");
     b.setDisplayLabel("Bob Aaronsen");

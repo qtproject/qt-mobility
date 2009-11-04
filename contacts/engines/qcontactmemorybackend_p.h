@@ -71,7 +71,6 @@
 #include "qcontactdetaildefinition.h"
 #include "qcontactabstractrequest.h"
 #include "qcontactchangeset.h"
-#include "qcontactrequestworker_p.h"
 
 class QContactAbstractRequest;
 class QContactManagerInfoPrivate;
@@ -112,7 +111,7 @@ public:
     bool m_anonymous;                              // Is this backend ever shared?
     QString m_engineName;                          // name of this engine as supplied by factory (memory)
 
-    QContactRequestWorker m_requestWorker;
+    QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
 };
 
 class QTCONTACTS_EXPORT QContactMemoryEngine : public QContactManagerEngine
@@ -163,6 +162,9 @@ public:
 
 protected:
     QContactMemoryEngine(const QMap<QString, QString>& parameters);
+
+private slots:
+    void performAsynchronousOperation();
 
 private:
     /* Implement "signal coalescing" for batch functions via change set */
