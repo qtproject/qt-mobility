@@ -92,9 +92,7 @@ public:
 
     QContactRequestElement* takeFirstRequestElement();
     void cleanUpFinishedRequests(bool waitForAll = false);
-    
-    QContactAbstractRequest::Status requestStatus(QContactRequestElement* re);
-    
+
     bool m_stop;
     QMutex m_mutex;
     QWaitCondition m_newRequestAdded;
