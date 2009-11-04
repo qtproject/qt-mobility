@@ -218,8 +218,7 @@ bool QContactRequestWorker::removeRequest(QContactAbstractRequest* req)
     if (req) {
         QMutexLocker workerLocker(&d->m_mutex);
         d->m_requestQueue.removeOne(req);
-        if (req == d->m_currentRequest)
-            d->m_currentRequest = 0;
+        
         if (req->d_ptr->m_waiting) {
             req->d_ptr->m_condition.wakeAll();
         }
@@ -236,7 +235,7 @@ bool QContactRequestWorker::cancelRequest(QContactAbstractRequest* req)
 {
     if (req) {
         QMutexLocker workerLocker(&d->m_mutex);
-        if (d->m_requestQueue.isEmpty() || (req == d->m_requestQueue.head() && req == d->m_currentRequest)) {
+        if (d->m_requestQueue.isEmpty() || req == d->m_currentRequest) {
             return false;
         }
         QList<QContactManager::Error> dummy;
