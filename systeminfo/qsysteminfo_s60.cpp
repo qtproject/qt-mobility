@@ -304,11 +304,13 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     : QObject(parent)
 {
     DeviceInfo::instance()->cellSignalStrenghtInfo()->addObserver(this);
+    DeviceInfo::instance()->cellNetworkRegistrationInfo()->addObserver(this);
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
     DeviceInfo::instance()->cellSignalStrenghtInfo()->removeObserver(this);
+    DeviceInfo::instance()->cellNetworkRegistrationInfo()->removeObserver(this);
 }
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
@@ -333,50 +335,30 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
                 return QSystemNetworkInfo::NoNetworkAvailable;
 
             switch(networkStatus) {
-                case CTelephony::ERegistrationUnknown:
-                    return QSystemNetworkInfo::UndefinedStatus;
-
-                case CTelephony::ENotRegisteredNoService:
-                    return QSystemNetworkInfo::NoNetworkAvailable;
-
-                case CTelephony::ENotRegisteredEmergencyOnly:
-                    return QSystemNetworkInfo::EmergencyOnly;
-
-                case CTelephony::ENotRegisteredSearching:
-                    return QSystemNetworkInfo::Searching;
-
-                case CTelephony::ERegisteredBusy:
-                    return QSystemNetworkInfo::Busy;
-                /*
-                case CTelephony::ERegisteredOnHomeNetwork: //How this case should be handled? There are no connected state in CTelephony. Should this be same as HomeNetwork?
-                    return QSystemNetworkInfo::Connected;
-                */
-                case CTelephony::ERegisteredOnHomeNetwork:
-                    return QSystemNetworkInfo::HomeNetwork;
-
-                case CTelephony::ERegistrationDenied:
-                    return QSystemNetworkInfo::Denied;
-
-                case CTelephony::ERegisteredRoaming:
-                    return QSystemNetworkInfo::Roaming;
-
+                case CTelephony::ERegistrationUnknown: return QSystemNetworkInfo::UndefinedStatus;
+                case CTelephony::ENotRegisteredNoService: return QSystemNetworkInfo::NoNetworkAvailable;
+                case CTelephony::ENotRegisteredEmergencyOnly: return QSystemNetworkInfo::EmergencyOnly;
+                case CTelephony::ENotRegisteredSearching: return QSystemNetworkInfo::Searching;
+                case CTelephony::ERegisteredBusy: return QSystemNetworkInfo::Busy;
+                case CTelephony::ERegisteredOnHomeNetwork: return QSystemNetworkInfo::HomeNetwork;
+                case CTelephony::ERegistrationDenied: return QSystemNetworkInfo::Denied;
+                case CTelephony::ERegisteredRoaming: return QSystemNetworkInfo::Roaming;
+                default:
+                    break;
             };
         }
         case QSystemNetworkInfo::WlanMode:
-        break;
         case QSystemNetworkInfo::EthernetMode:
-        break;
         case QSystemNetworkInfo::BluetoothMode:
-        break;
         case QSystemNetworkInfo::WimaxMode:
-        break;
+        default:
+            break;
     };
-    return QSystemNetworkInfo::NoNetworkAvailable;
+    return QSystemNetworkInfo::UndefinedStatus;
 }
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
-    //TODO: CDMA, WCDMA and WLAN modes
     switch(mode) {
         case QSystemNetworkInfo::GsmMode:
         case QSystemNetworkInfo::CdmaMode:
@@ -397,13 +379,11 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         }
 
         case QSystemNetworkInfo::WlanMode:
-        break;
         case QSystemNetworkInfo::EthernetMode:
-        break;
         case QSystemNetworkInfo::BluetoothMode:
-        break;
         case QSystemNetworkInfo::WimaxMode:
-        break;
+        default:
+            break;
     };
     return -1;  //TODO
 }
@@ -447,7 +427,6 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
     QString name;
-    //TODO: CDMA, WCDMA and WLAN modes
     switch(mode) {
         case QSystemNetworkInfo::GsmMode:
         case QSystemNetworkInfo::CdmaMode:
@@ -467,13 +446,11 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
             return DeviceInfo::instance()->cellNetworkInfo()->networkName();
         }
         case QSystemNetworkInfo::WlanMode:
-        break;
         case QSystemNetworkInfo::EthernetMode:
-        break;
         case QSystemNetworkInfo::BluetoothMode:
-        break;
         case QSystemNetworkInfo::WimaxMode:
-        break;
+        default:
+            break;
     };
     return name;
 }
@@ -522,7 +499,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
-    return QNetworkInterface();     //TODO
+    return QNetworkInterface();
 }
 
 void QSystemNetworkInfoPrivate::countryCodeChanged()
@@ -583,7 +560,18 @@ void QSystemNetworkInfoPrivate::cellNetworkSignalStrengthChanged()
 
 void QSystemNetworkInfoPrivate::cellNetworkStatusChanged()
 {
-    //TODO
+    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
+    CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
+    switch (networkMode) {
+        case CTelephony::ENetworkModeGsm: mode = QSystemNetworkInfo::GsmMode; break;
+        case CTelephony::ENetworkModeCdma95:
+        case CTelephony::ENetworkModeCdma2000: mode = QSystemNetworkInfo::CdmaMode; break;
+        case CTelephony::ENetworkModeWcdma: mode = QSystemNetworkInfo::WcdmaMode; break;
+        default:
+            break;
+    }
+
+    emit networkStatusChanged(mode, networkStatus(mode));
 }
 
 //////// QSystemDisplayInfo

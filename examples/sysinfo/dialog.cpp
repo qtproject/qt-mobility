@@ -544,6 +544,19 @@ void Dialog::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode ,
             ui->signalLevelProgressBar->setValue(strength);
         }
     }
+
+    if(mode == QSystemNetworkInfo::CdmaMode) {
+        if(ui->netStatusComboBox->currentText() == "Cdma") {
+            ui->signalLevelProgressBar->setValue(strength);
+        }
+    }
+
+    if(mode == QSystemNetworkInfo::WcdmaMode) {
+        if(ui->netStatusComboBox->currentText() == "Wcdma") {
+            ui->signalLevelProgressBar->setValue(strength);
+        }
+    }
+
 }
 
 void Dialog::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QString &text)
@@ -565,6 +578,19 @@ void Dialog::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QStri
             ui->operatorNameLabel->setText(text);
         }
     }
+
+    if(mode == QSystemNetworkInfo::CdmaMode) {
+        if(ui->netStatusComboBox->currentText() == "Cdma") {
+            ui->operatorNameLabel->setText(text);
+        }
+    }
+
+    if(mode == QSystemNetworkInfo::WcdmaMode) {
+        if(ui->netStatusComboBox->currentText() == "Wcdma") {
+            ui->operatorNameLabel->setText(text);
+        }
+    }
+
 }
 
 void Dialog::networkStatusChanged(QSystemNetworkInfo::NetworkMode mode , QSystemNetworkInfo::NetworkStatus status)
@@ -586,6 +612,19 @@ void Dialog::networkStatusChanged(QSystemNetworkInfo::NetworkMode mode , QSystem
             displayNetworkStatus(status);
         }
     }
+
+    if(mode == QSystemNetworkInfo::CdmaMode) {
+        if(ui->netStatusComboBox->currentText() == "Cdma") {
+            displayNetworkStatus(status);
+        }
+    }
+
+    if(mode == QSystemNetworkInfo::WcdmaMode) {
+        if(ui->netStatusComboBox->currentText() == "Wcdma") {
+            displayNetworkStatus(status);
+        }
+    }
+
 }
 
 void Dialog::displayNetworkStatus(QSystemNetworkInfo::NetworkStatus status)
