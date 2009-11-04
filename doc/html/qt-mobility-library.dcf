@@ -2389,8 +2389,8 @@
         <keyword ref="qservicefilter.html#capabilities">capabilities</keyword>
         <keyword ref="qservicefilter.html#capabilityMatchRule">capabilityMatchRule</keyword>
         <keyword ref="qservicefilter.html#clearCustomProperties">clearCustomProperties</keyword>
-        <keyword ref="qservicefilter.html#customKeys">customKeys</keyword>
         <keyword ref="qservicefilter.html#customProperty">customProperty</keyword>
+        <keyword ref="qservicefilter.html#customPropertyKeys">customPropertyKeys</keyword>
         <keyword ref="qservicefilter.html#interfaceMajorVersion">interfaceMajorVersion</keyword>
         <keyword ref="qservicefilter.html#interfaceMinorVersion">interfaceMinorVersion</keyword>
         <keyword ref="qservicefilter.html#interfaceName">interfaceName</keyword>
@@ -2412,6 +2412,7 @@
         <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::Capabilities</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::Location</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#customProperty">customProperty</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#customPropertyKeys">customPropertyKeys</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#inSystemScope">inSystemScope</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#interfaceName">interfaceName</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#isValid">isValid</keyword>
@@ -2711,6 +2712,7 @@
         <keyword ref="qvaluespaceprovider.html#removeAttribute">removeAttribute</keyword>
         <keyword ref="qvaluespaceprovider.html#setAttribute">setAttribute</keyword>
         <keyword ref="qvaluespaceprovider.html#sync">sync</keyword>
+        <keyword ref="qvaluespaceprovider.html#syncAll">syncAll</keyword>
         <section ref="qvaluespaceprovider-members.html" title="List of all members"/>
     </section>
     <section ref="qvaluespacesubscriber.html" title="QValueSpaceSubscriber Class Reference">
