@@ -213,24 +213,26 @@ void CntTransformContact::transformContactL(
 	for(int i(0); i < detailCount; ++i)
 	{
 	    QScopedPointer<QContactDetail> detail(new QContactDetail(detailList.at(i)));
-		QList<CContactItemField *> fieldList = transformDetailL(*detail);
-		int fieldCount = fieldList.count();
-
-		// check if the contact has any unsupported details
-		if(fieldCount == 0) {
-		    if (detail->definitionName() != QContactDisplayLabel::DefinitionName
-                && detail->definitionName() != QContactType::DefinitionName
-                && detail->definitionName() != QContactGuid::DefinitionName
-                && detail->definitionName() != QContactTimestamp::DefinitionName) {
-            User::Leave(KErrInvalidContactDetail);
-		    }
-		}
-
-		for (int j = 0; j < fieldCount; j++)
-        {
-			//Add field to fieldSet
-			fieldSet->AddL(*fieldList.at(j));
-		}
+	    if (!detail->isEmpty()) {
+            QList<CContactItemField *> fieldList = transformDetailL(*detail);
+            int fieldCount = fieldList.count();
+            
+            // check if the contact has any unsupported details
+            if(fieldCount == 0) {
+                if (detail->definitionName() != QContactDisplayLabel::DefinitionName
+                    && detail->definitionName() != QContactType::DefinitionName
+                    && detail->definitionName() != QContactGuid::DefinitionName
+                    && detail->definitionName() != QContactTimestamp::DefinitionName) {
+                User::Leave(KErrInvalidContactDetail);
+                }
+            }
+    
+            for (int j = 0; j < fieldCount; j++)
+            {
+                //Add field to fieldSet
+                fieldSet->AddL(*fieldList.at(j));
+            }
+	    }
 	}
 
 	contactItem.UpdateFieldSet(fieldSet);
@@ -302,17 +304,15 @@ QMap<QString, QContactDetailDefinition> CntTransformContact::detailDefinitions(Q
 QList<CContactItemField *> CntTransformContact::transformDetailL(const QContactDetail &detail) const
 {
 	QList<CContactItemField *> itemFieldList;
-	if(!detail.isEmpty()) {
-        QScopedPointer<QString> detailName(new QString(detail.definitionName()));
+    QScopedPointer<QString> detailName(new QString(detail.definitionName()));
 
-        QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
-        while (i != m_transformContactData.constEnd()) {
-            if (i.value()->supportsDetail(*detailName)) {
-                itemFieldList = i.value()->transformDetailL(detail);
-                break;
-            }
-            ++i;
+    QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+    while (i != m_transformContactData.constEnd()) {
+        if (i.value()->supportsDetail(*detailName)) {
+            itemFieldList = i.value()->transformDetailL(detail);
+            break;
         }
+        ++i;
 	}
 	return itemFieldList;
 }
