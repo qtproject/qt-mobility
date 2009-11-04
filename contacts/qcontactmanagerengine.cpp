@@ -1777,7 +1777,6 @@ bool QContactManagerEngine::waitForRequestFinished(QContactAbstractRequest* req,
 
 /*!
  * Updates the given asynchronous request \a req by setting the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability.
- * Returns true if the request was updated successfully, false if it was not.
  */
 bool QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
@@ -1867,142 +1866,111 @@ bool QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
 
 /*!
  * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability.  If the request is of a type which does not return a list of unique ids as a result, this function will return without doing anything.
- * Returns true if the request was updated successfully, false if it was not.
  */
-bool QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     if (req->type() == QContactAbstractRequest::ContactLocalIdFetchRequest) {
-        if (!req->d_ptr->stateTransition(req, status)) {
-            qWarning("Fatal thread error - unable to set status! (1)");
-            return false;
-        }
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
+        req->d_ptr->stateTransition(req, status);
         QContactLocalIdFetchRequestPrivate* rd = static_cast<QContactLocalIdFetchRequestPrivate*>(req->d_ptr);
         rd->m_ids = result;
         QContactLocalIdFetchRequest* r = static_cast<QContactLocalIdFetchRequest*>(req);
         emit r->progress(r, appendOnly);
-        return true;
     }
-
-    return false;
 }
 
 /*!
  * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability. If the request is of a type which does not return a list of contacts as a result, this function will return without doing anything.
- * Returns true if the request was updated successfully, false if it was not.
  */
-bool QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    if (req->type() == QContactAbstractRequest::ContactFetchRequest) {
-        if (!req->d_ptr->stateTransition(req, status)) {
-            qWarning("Fatal thread error - unable to set status! (2)");
-            return false;
+    switch (req->type()) {
+        case QContactAbstractRequest::ContactFetchRequest:
+        {
+            req->d_ptr->m_error = error;
+            req->d_ptr->m_errors = errors;
+            req->d_ptr->stateTransition(req, status);
+            QContactFetchRequestPrivate* rd = static_cast<QContactFetchRequestPrivate*>(req->d_ptr);
+            rd->m_contacts = result;
+            QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
+            emit r->progress(r, appendOnly);
         }
-        req->d_ptr->m_error = error;
-        req->d_ptr->m_errors = errors;
-        QContactFetchRequestPrivate* rd = static_cast<QContactFetchRequestPrivate*>(req->d_ptr);
-        rd->m_contacts = result;
-        QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
-        emit r->progress(r, appendOnly);
-        return true;
-    }
+        break;
 
-    if (req->type() == QContactAbstractRequest::ContactSaveRequest) {
-        if (!req->d_ptr->stateTransition(req, status)) {
-            qWarning("Fatal thread error - unable to set status! (3)");
-            return false;
+        case QContactAbstractRequest::ContactSaveRequest:
+        {
+            req->d_ptr->m_error = error;
+            req->d_ptr->m_errors = errors;
+            req->d_ptr->stateTransition(req, status);
+            QContactSaveRequestPrivate* rd = static_cast<QContactSaveRequestPrivate*>(req->d_ptr);
+            rd->m_contacts = result;
+            QContactSaveRequest* r = static_cast<QContactSaveRequest*>(req);
+            emit r->progress(r);
         }
-        req->d_ptr->m_error = error;
-        req->d_ptr->m_errors = errors;
-        QContactSaveRequestPrivate* rd = static_cast<QContactSaveRequestPrivate*>(req->d_ptr);
-        rd->m_contacts = result;
-        QContactSaveRequest* r = static_cast<QContactSaveRequest*>(req);
-        emit r->progress(r);
-        return true;
-    }
+        break;
 
-    return false;
+        default:
+        {
+            // this request type does not have a list of contacts to update...
+            return;
+        }
+    }
 }
 
 /*!
  * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request.  If the request is of a type which does not return a list of detail definition as a result, this function will return without doing anything.
- * Returns true if the request was updated successfully, false if it was not.
  */
-bool QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
     
     if (req->type() == QContactAbstractRequest::DetailDefinitionSaveRequest) {
-        if (!req->d_ptr->stateTransition(req, status)) {
-            qWarning("Fatal thread error - unable to set status! (4)");
-            return false;
-        }
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
+        req->d_ptr->stateTransition(req, status);
         QContactDetailDefinitionSaveRequestPrivate* rd = static_cast<QContactDetailDefinitionSaveRequestPrivate*>(req->d_ptr);
         rd->m_definitions = result;
         QContactDetailDefinitionSaveRequest* r = static_cast<QContactDetailDefinitionSaveRequest*>(req);
         emit r->progress(r);
-        return true;
     }
-
-    return false;
 }
 
 /*!
  * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability.  If the request is of a type which does not return a map of string to detail definition as a result, this function will return without doing anything.
- * Returns true if the request was updated successfully, false if it was not.
  */
-bool QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     if (req->type() == QContactAbstractRequest::DetailDefinitionFetchRequest) {
-        if (!req->d_ptr->stateTransition(req, status)) {
-            qWarning("Fatal thread error - unable to set status! (5)");
-            return false;
-        }
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
+        req->d_ptr->stateTransition(req, status);
         QContactDetailDefinitionFetchRequestPrivate* rd = static_cast<QContactDetailDefinitionFetchRequestPrivate*>(req->d_ptr);
         rd->m_definitions = result;
         QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
         emit r->progress(r, appendOnly);
-        return true;
     }
-
-    return false;
 }
 
 /*!
  * Updates the given asynchronous request \a req by setting its \a result, the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability.  If the request is of a type which does not return a list of contact relationships as a result, this function will return without doing anything.
- * Returns true if the request was updated successfully, false if it was not.
  */
-bool QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     if (req->type() == QContactAbstractRequest::RelationshipSaveRequest) {
-        if (!req->d_ptr->stateTransition(req, status)) {
-            qWarning("Fatal thread error - unable to set status! (6)");
-            return false;
-        }
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
+        req->d_ptr->stateTransition(req, status);
         QContactRelationshipSaveRequestPrivate* rd = static_cast<QContactRelationshipSaveRequestPrivate*>(req->d_ptr);
         rd->m_relationships = result;
         QContactRelationshipSaveRequest* r = static_cast<QContactRelationshipSaveRequest*>(req);
         emit r->progress(r);
-        return true;
     } else if (req->type() == QContactAbstractRequest::RelationshipFetchRequest) {
-        if (!req->d_ptr->stateTransition(req, status)) {
-            qWarning("Fatal thread error - unable to set status! (7)");
-            return false;
-        }
         req->d_ptr->m_error = error;
         req->d_ptr->m_errors = errors;
+        req->d_ptr->stateTransition(req, status);
         QContactRelationshipFetchRequestPrivate* rd = static_cast<QContactRelationshipFetchRequestPrivate*>(req->d_ptr);
         rd->m_relationships = result;
         QContactRelationshipFetchRequest* r = static_cast<QContactRelationshipFetchRequest*>(req);
         emit r->progress(r, appendOnly);
-        return true;
     }
-
-    return false;
 }

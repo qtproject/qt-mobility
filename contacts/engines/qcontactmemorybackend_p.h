@@ -96,10 +96,6 @@ public:
 
     ~QContactMemoryEngineData()
     {
-        if (m_requestWorker) {
-            delete m_requestWorker;
-            m_requestWorker = 0;
-        }
     }
 
     QAtomicInt m_refCount;
@@ -116,7 +112,7 @@ public:
     bool m_anonymous;                              // Is this backend ever shared?
     QString m_engineName;                          // name of this engine as supplied by factory (memory)
 
-    QContactRequestWorker *m_requestWorker;
+    QContactRequestWorker m_requestWorker;
 };
 
 class QTCONTACTS_EXPORT QContactMemoryEngine : public QContactManagerEngine
