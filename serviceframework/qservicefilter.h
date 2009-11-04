@@ -85,7 +85,7 @@ public:
     int interfaceMinorVersion() const;
     VersionMatchRule versionMatchRule() const;
 
-    QList<QString> customKeys() const;
+    QStringList customPropertyKeys() const;
     QString customProperty(const QString& key) const;
     void setCustomProperty(const QString& key, const QString& value);
     void removeCustomProperty(const QString &key);

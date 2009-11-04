@@ -884,12 +884,12 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
             continue;
 
         //only return those interfaces that comply with set custom filters
-        if (filter.customKeys().size() > 0) {
-            QSet<QString> keyDiff = filter.customKeys().toSet();
+        if (filter.customPropertyKeys().size() > 0) {
+            QSet<QString> keyDiff = filter.customPropertyKeys().toSet();
             keyDiff.subtract(interface.d->customProperties.uniqueKeys().toSet());
             if (keyDiff.isEmpty()) { //target descriptor has same custom keys as filter
                 bool isMatch = true;
-                const QList<QString> keys = filter.customKeys();
+                const QStringList keys = filter.customPropertyKeys();
                 for(int i = 0; i<keys.count(); i++) {
                     if (interface.d->customProperties.value(keys[i]) !=
                             filter.customProperty(keys[i])) {
