@@ -363,7 +363,7 @@ void QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, Mapi
         }
         return;
     }
-    *filter = filter->d_ptr->containerFiltersPart() & result;
+    *filter = filter->d_ptr->containerFiltersPart() & result; // Must preserve container filters part
 }
 
 bool QMessageFilterPrivate::restrictionPermitted(const QMessageFilter &filter)
