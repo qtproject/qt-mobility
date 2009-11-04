@@ -26,36 +26,21 @@ win32 {
 
         LIBS += \
             Ole32.lib \
-    #        Strmiids.lib \
             User32.lib \
             Gdi32.lib \
             Ws2_32.lib \
-Iphlpapi.lib \
+            Iphlpapi.lib \
             Oleaut32.lib 
         }
 
-#            Wbemuuid.lib \
-#            Wlanapi.lib \
-#            Setupapi.lib
-#             Bthprops.lib \
 
     win32-g++ : {
         LIBS += -luser32 -lgdi32
+    }
 
-        # -lole32 -lstrmiids -lbthprops -loleaut32 -lsetupapi
-        # Wbemuuid Ws2_32
-        }
-
-#     DEPENDPATH += C:\Program Files\Microsoft SDKs\Windows\v6.1\Lib
-
-#    INCLUDEPATH += "C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include" \
-#        "C:\Program Files\Microsoft Visual Studio 9.0\VC\include" \
-#        "C:\Program Files\Microsoft SDKs\Windows\v6.1\Include"
 
     wince*:LIBS += aygshell.lib \
-#        Nleddrv.lib \
         cellcore.lib \
-#        Ifapi.lib \
         Coredll.lib
 }
 
@@ -70,7 +55,6 @@ unix: {
             HEADERS += qhalservice_linux_p.h qnetworkmanagerservice_linux_p.h
 
         }
-#        LIBS += -lXxf86vm
     }
 
     mac: {
@@ -79,8 +63,8 @@ unix: {
         LIBS += -framework SystemConfiguration -framework CoreFoundation \
          -framework IOKit -framework ApplicationServices
 
-# change this to /Developer/SDKs/MacOSX10.6.sdk
-# if you want to compile for 10.6 with CoreWLAN framework
+        # change this to /Developer/SDKs/MacOSX10.6.sdk
+        # if you want to compile for 10.6 with CoreWLAN framework
 
         QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.5.sdk
         contains(QMAKE_MAC_SDK, "/Developer/SDKs/MacOSX10.6.sdk") {
@@ -91,10 +75,7 @@ unix: {
                 message("Using 10.5 SDK")
         }
         TEMPLATE = lib
-        #CONFIG += lib_bundle
-       macx:debug{
-     }
-}
+    }
 
     symbian:{
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
