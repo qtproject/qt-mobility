@@ -98,73 +98,87 @@ MapiFolderIterator::MapiFolderIterator(MapiStorePtr store,
     _ancestorInclude(ancestorInclude),
     _ancestorExclude(ancestorExclude)
 {
-    _folders.append(root);
+    QList<MapiFolderPtr> unprocessed;
+    unprocessed.append(root);
+    while (_store && _store->isValid() && !unprocessed.isEmpty()) {
+        MapiFolderPtr parent(unprocessed.takeLast());
+        if (parent->isValid()) {
+            _folders.append(parent);
+            QMessageStore::ErrorCode ignored(QMessageStore::NoError);
+            while (true) {
+                MapiFolderPtr folder(parent->nextSubFolder(&ignored));
+                if (ignored != QMessageStore::NoError) {
+                    qWarning() << "MapiFolderIterator:: Error getting next subfolder";
+                    break;
+                }
+                if (folder && folder->isValid()) {
+                    unprocessed.append(folder);
+                } else {
+                    if (folder) {
+                        qWarning() << "MaiFolderIterator:: Invalid subfolder:" << folder->name();
+                    }
+                    break; // No more subfolders in the current folder
+                }
+            }
+        } else {
+            qWarning() << "Invalid folder:" << parent->name();
+        }
+    }
 }
 
 MapiFolderPtr MapiFolderIterator::next()
 {
     while (_store && _store->isValid() && !_folders.isEmpty()) {
-        if (_folders.back()->isValid()) {
-            // Get the next subfolder of this folder
-            QMessageStore::ErrorCode ignored(QMessageStore::NoError);
-            MapiFolderPtr folder(_folders.back()->nextSubFolder(&ignored));
-            if (ignored == QMessageStore::NoError) {
-                if (folder && folder->isValid()) {
-                    // Descend into the subfolder
-                    _folders.append(folder);
-
-                    if (!_standardFoldersInclude.isEmpty() || !_standardFoldersExclude.isEmpty()) {
-                        QMessage::StandardFolder folderType(folder->standardFolder());
-                        if (!(_standardFoldersInclude.isEmpty() || _standardFoldersInclude.contains(folderType))
-                            || _standardFoldersExclude.contains(folderType))
-                            continue;
-                    }
-
-                    if (!_parentInclude.isEmpty() || !_parentExclude.isEmpty()) {
-                        QMessageFolderId parentId(folder->parentId());
-#ifdef _WIN32_WCE
-                        if (!(_parentInclude.isEmpty() || _parentInclude.contains(folder->id()))
-                            || _parentExclude.contains(folder->id()))
-                            continue;
-#else
-                        QString path(QMessageFolder(folder->id()).path());
-                        if (!(_parentInclude.isEmpty() || _parentInclude.contains(path))
-                            || _parentExclude.contains(path))
-                            continue;
-#endif
-                    }
-
-                    if (!_ancestorInclude.isEmpty() || !_ancestorExclude.isEmpty()) {
-                        FolderIdSet folderAncestors;
-                        QMessageFolderId id(folder->id());
-                        while (id.isValid()) {
-                            QMessageFolder folder(id);
-#ifdef _WIN32_WCE
-                            folderAncestors.insert(id);
-#else
-                            folderAncestors.insert(folder.path());
-#endif
-                            id = folder.parentFolderId();
-                        }
-                        if (!(_ancestorInclude.isEmpty() || !_ancestorInclude.intersect(folderAncestors).isEmpty())
-                            || !_ancestorExclude.intersect(folderAncestors).isEmpty())
-                            continue;
-                    }
-
-                    return folder;
-                } else {
-                    if (folder) {
-                        qWarning() << "Invalid subfolder:" << folder->name();
-                    }
-                    _folders.pop_back(); // No more subfolders in the current folder
-                }
-            } else {
-                qWarning() << "Error getting next subfolder...";
-                _folders.pop_back();
+        MapiFolderPtr folder(_folders.takeFirst());
+        if (folder && folder->isValid()) {
+            if (!_standardFoldersInclude.isEmpty() || !_standardFoldersExclude.isEmpty()) {
+                QMessage::StandardFolder folderType(folder->standardFolder());
+                if (!(_standardFoldersInclude.isEmpty() || _standardFoldersInclude.contains(folderType))
+                    || _standardFoldersExclude.contains(folderType))
+                    continue;
             }
+
+            if (!_parentInclude.isEmpty() || !_parentExclude.isEmpty()) {
+                QMessageFolderId parentId(folder->parentId());
+#ifdef _WIN32_WCE
+                if (!(_parentInclude.isEmpty() || _parentInclude.contains(folder->id()))
+                    || _parentExclude.contains(folder->id()))
+                    continue;
+#else
+                QString path(folder->accountId().toString() + "/" + QMessageFolder(folder->id()).path());
+                if (!(_parentInclude.isEmpty() || _parentInclude.contains(path))
+                    || _parentExclude.contains(path))
+                    continue;
+#endif
+            }
+
+            if (!_ancestorInclude.isEmpty() || !_ancestorExclude.isEmpty()) {
+                FolderIdSet folderAncestors;
+                QMessageFolderId id(folder->parentId());
+                while (id.isValid()) {
+                    QMessageFolder f(id);
+#ifdef _WIN32_WCE
+                    folderAncestors.insert(id);
+#else
+                    folderAncestors.insert(f.parentAccountId().toString() + "/" + f.path());
+#endif
+                    id = f.parentFolderId();
+                }
+                FolderIdSet includeIntersection(_ancestorInclude);
+                includeIntersection.intersect(folderAncestors);
+                FolderIdSet excludeIntersection(_ancestorExclude);
+                excludeIntersection.intersect(folderAncestors);
+                if (!(_ancestorInclude.isEmpty() || !includeIntersection.isEmpty())
+                    || !excludeIntersection.isEmpty()) {
+                    continue;
+                }
+            }
+            return folder;
+
         } else {
-            qWarning() << "Invalid folder:" << _folders.back()->name();
-            _folders.pop_back();
+            if (folder) {
+                qWarning() << "MaiFolderIterator::next() Invalid subfolder:" << folder->name();
+            }
         }
     }
 
@@ -1977,7 +1991,8 @@ QMessageFilter QMessageFilter::byParentFolderId(const QMessageFolderId &id, QMes
 #ifdef _WIN32_WCE
     result.d_ptr->_parentInclude += id;
 #else
-    result.d_ptr->_parentInclude += QMessageFolder(id).path();
+    QMessageFolder folder(id);
+    result.d_ptr->_parentInclude += folder.parentAccountId().toString() + "/" + folder.path();
 #endif
     // An invalid id is a special case, assume it means any top-level folder (with root as parent) in any MAPI store
     if (id.isValid()) {
@@ -2004,7 +2019,8 @@ QMessageFilter QMessageFilter::byAncestorFolderIds(const QMessageFolderId &id, Q
 #ifdef _WIN32_WCE
     result.d_ptr->_ancestorInclude += id;
 #else
-    result.d_ptr->_ancestorInclude += QMessageFolder(id).path();
+    QMessageFolder folder(id);
+    result.d_ptr->_ancestorInclude += folder.parentAccountId().toString() + "/" + folder.path();
 #endif
     if (cmp != QMessageDataComparator::Includes) {
         result = ~result;
