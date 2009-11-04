@@ -79,6 +79,7 @@ QVersitDocument QVersitContactConverter::convertContact(
     const QContact& contact,
     QVersitDocument::VersitType versitType)
 {
+    d->mUnconvertedContactDetails.clear();
     QVersitDocument versitDocument;
     versitDocument.setVersitType(versitType);
     QList<QContactDetail> allDetails = contact.details();
@@ -87,4 +88,12 @@ QVersitDocument QVersitContactConverter::convertContact(
         d->encodeFieldInfo(versitDocument,detail);
     }
     return versitDocument;
+}
+
+/*!
+ * Returns the list of contact detils, which are not encoded
+ */
+QList<QContactDetail> QVersitContactConverter::unconvertedContactDetails()
+{
+    return d->mUnconvertedContactDetails;
 }

@@ -91,6 +91,9 @@ private:
     void setEscapedValue(QVersitProperty& property,const QString& value);
     QByteArray escape(const QByteArray& value);
 
+public: // Data
+    QList<QContactDetail> mUnconvertedContactDetails;
+
 private: // data
     QHash<QString, QString> mPropertyMappings;
     QHash<QString, QString> mParameterMappings;

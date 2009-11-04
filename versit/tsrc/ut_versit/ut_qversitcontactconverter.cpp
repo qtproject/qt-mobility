@@ -65,6 +65,7 @@
 #include <qcontactanniversary.h>
 #include <qcontactonlineaccount.h>
 #include <qcontactfamily.h>
+#include <qcontactpresence.h>
 
 
 void UT_QVersitContactConverter::scale(
@@ -142,7 +143,47 @@ void UT_QVersitContactConverter::testConvertContact()
     QVersitDocument document = mConverter->convertContact(contact);
     QCOMPARE(document.properties().count(), 2);
 }
+void UT_QVersitContactConverter::testUnconvertedContactDetails()
+{
+    // Test1: Un-supported Avatar Test
+    QContact contact;
+    QVersitDocument versitDocument;
+    QContactAvatar contactAvatar;
+    const QString url = QString::fromAscii("http://www.myhome.com/test.jpg");
+    contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
+    contact.saveDetail(&contactAvatar);
+    versitDocument = mConverter->convertContact(contact);
+    QCOMPARE(versitDocument.properties().count(), 0);
+    QList<QContactDetail> unconvertedDetails = mConverter->unconvertedContactDetails();
+    QString defintionName = contactAvatar.definitionName();
+    QContactDetail detail = searchDetail(unconvertedDetails,defintionName);
+    QCOMPARE(defintionName, detail.definitionName());
 
+    // Test2: Un-supported Online Account
+    QContactOnlineAccount onlineAccount;
+    QString testUri = QString::fromAscii("sip:abc@temp.com");
+    onlineAccount.setAccountUri(testUri);
+    onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeH323);
+    contact.saveDetail(&onlineAccount);
+    versitDocument = mConverter->convertContact(contact);
+    QCOMPARE(versitDocument.properties().count(), 0);
+    unconvertedDetails = mConverter->unconvertedContactDetails();
+    defintionName = onlineAccount.definitionName();
+    detail = QContactDetail();
+    detail = searchDetail(unconvertedDetails,defintionName);
+    QCOMPARE(defintionName, detail.definitionName());
+
+    // Test3: UnConvered Field Name
+    QContactPresence presence;
+    detail = QContactDetail();
+    presence.setAccountUri(QString::fromAscii("a@abc.com"));
+    contact.saveDetail(&presence);
+    defintionName = presence.definitionName();
+    versitDocument = mConverter->convertContact(contact);
+    unconvertedDetails = mConverter->unconvertedContactDetails();
+    detail = searchDetail(unconvertedDetails,defintionName);
+    QCOMPARE(defintionName, detail.definitionName());
+}
 void UT_QVersitContactConverter::testEncodeName()
 {
     QContact contact;
@@ -961,7 +1002,7 @@ void UT_QVersitContactConverter::testEncodeAnniversary()
 }
 
 
-void UT_QVersitContactConverter::testEncodOnlineAccount()
+void UT_QVersitContactConverter::testEncodeOnlineAccount()
 {
     QContact contact;
     QContactOnlineAccount onlineAccount;
@@ -1060,4 +1101,16 @@ void UT_QVersitContactConverter::testEncodeFamily()
     QString value2 = QString::fromAscii(versitDocument.properties().at(1).value().data() );
     QString expected = QString::fromAscii("A,B");
     QCOMPARE(value2, expected);
+}
+
+// Test Utility Funcitons
+QContactDetail UT_QVersitContactConverter::searchDetail(QList<QContactDetail> details,
+                                                        QString search)
+{
+    QContactDetail detail;
+    for (int i= 0; i < details.count(); i++) {
+        if ( details.at(i).definitionName() == search )
+        detail = details.at(i);
+    }
+    return detail;
 }

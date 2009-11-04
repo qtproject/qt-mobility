@@ -222,6 +222,8 @@ void QVersitContactConverterPrivate::encodeFieldInfo(
         addProperty = false;
     } else if (detail.definitionName() == QContactAvatar::DefinitionName){
         addProperty = encodeAvatar(property, detail);
+        if (!addProperty)
+            mUnconvertedContactDetails.append(detail);
     } else if (detail.definitionName() == QContactAnniversary::DefinitionName) {
         encodeAnniversary(property, detail);
     } else if (detail.definitionName() == QContactNickname::DefinitionName) {
@@ -231,10 +233,13 @@ void QVersitContactConverterPrivate::encodeFieldInfo(
         encodeGender(property, detail);
     } else if (detail.definitionName() == QContactOnlineAccount::DefinitionName) {
         addProperty = encodeOnlineAccount(property, detail);
+        if (!addProperty)
+            mUnconvertedContactDetails.append(detail);
     }else if (detail.definitionName() == QContactFamily::DefinitionName) {
         addProperty = encodeFamily(document, detail);
     }else {
         addProperty = false;
+        mUnconvertedContactDetails.append(detail);
     }
 
     if (addProperty)

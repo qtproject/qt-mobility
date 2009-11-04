@@ -42,7 +42,7 @@
 #ifndef UT_QVERSITCONTACTCONVERTER_H
 #define UT_QVERSITCONTACTCONVERTER_H
 
-
+#include <qcontactdetail.h>
 #include <QObject>
 
 class QVersitContactConverter;
@@ -62,6 +62,7 @@ private slots:
     void cleanupTestCase();
     
     void testConvertContact();
+    void testUnconvertedContactDetails();
     void testEncodeName();
     void testEncodePhoneNumber();
     void testEncodeEmailAddress();
@@ -79,9 +80,12 @@ private slots:
     void testEncodeGender();
     void testEncodeNickName();
     void testEncodeAnniversary();
-    void testEncodOnlineAccount();
+    void testEncodeOnlineAccount();
     void testEncodeFamily();
     void testEncodeAvatar();
+
+    // Test Utility Function
+    QContactDetail searchDetail(QList<QContactDetail> details, QString search);
 
     
 private: // Data
