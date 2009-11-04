@@ -3,7 +3,9 @@ CONFIG += plugin
 TARGET = QtMobilityMultimediaEngine
 PLUGIN_SUBDIR = mediaservice
 include (../../common.pri)
-LIBS += -lQtMedia -lcamerawrapper -lfbscli
+LIBS += -lQtMedia
+
+# camera is on hold -lcamerawrapper -lfbscli
 
 DEPENDPATH += .
 INCLUDEPATH += . \
@@ -17,7 +19,7 @@ SOURCES += s60serviceplugin.cpp \
            s60videooutputcontrol.cpp
 
 include(radio/radio.pri)
-include(camera/camera_s60.pri)
+# include(camera/camera_s60.pri)
 include(mediaplayer/mediaplayer_s60.pri)
 
 load(data_caging_paths)
