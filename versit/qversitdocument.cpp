@@ -42,9 +42,16 @@
 /*!
  * \class QVersitDocument
  *
- * \brief The QVersitDocument class is container class for versit properties.
+ * \brief QVersitDocument class is container for 0..n versit properties.
  *
- * A QVersitDocument consists of zero or more properties.
+ * QVersitDocument class is container for 0..n versit properties.
+ * For example a vCard can be presented as a QVersitDocument that
+ * consists of 0..n properties such as a name (N),
+ * a telephone number (TEL) and an email address (EMAIL) to name a few.
+ * Each of these properties is stored as
+ * an instance of a QVersitProperty in a QVersitDocument.
+ *
+ * QVersitDocument supports implicit sharing.
  *
  * \sa QVersitProperty
  */
@@ -77,7 +84,7 @@ QVersitDocument& QVersitDocument::operator=(const QVersitDocument& other)
 }
 
 /*!
- * Set versit document type
+ * Sets the versit document type to \a type.
  */
 void QVersitDocument::setVersitType(VersitType type)
 {
@@ -85,15 +92,16 @@ void QVersitDocument::setVersitType(VersitType type)
 }
 
 /*!
- * Obtain versit document type
+ * Gets the versit document type.
  */
 QVersitDocument::VersitType QVersitDocument::versitType() const
 {
-   return d->mVersitType;
+    return d->mVersitType;
 }
 
 /*!
- * Add property to the properties list
+ * Add \a property to the list of contained versit properties.
+ * The property is appended as the last property of the list.
  */
 void QVersitDocument::addProperty(const QVersitProperty& property)
 {
@@ -101,7 +109,8 @@ void QVersitDocument::addProperty(const QVersitProperty& property)
 }
 
 /*!
- * Obtain the properties list contained in versit document
+ * Gets the list of the contained versit properties.
+ * Note that actual the properties cannot be modified using the copy.
  */
 QList<QVersitProperty> QVersitDocument::properties() const
 {
@@ -109,7 +118,7 @@ QList<QVersitProperty> QVersitDocument::properties() const
 }
 
 /*!
- * Removes all the properties with \a name from the versit document
+ * Removes all the properties with \a name from the versit document.
  */
 void QVersitDocument::removeProperties(const QString& name)
 {
@@ -118,4 +127,3 @@ void QVersitDocument::removeProperties(const QString& name)
             d->mProperties.removeAt(i);
     }
 }
-
