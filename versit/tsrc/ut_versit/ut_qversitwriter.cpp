@@ -59,7 +59,6 @@ void UT_QVersitWriter::init()
 void UT_QVersitWriter::cleanup()
 {
     delete mWriterPrivate;
-    disconnect(mWriter,SIGNAL(writingDone()),this,SLOT(writingDone()));
     delete mWriter;
     delete mOutputDevice;
     mWritingDoneCalled = false;

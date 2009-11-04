@@ -66,6 +66,7 @@ QVersitReader::QVersitReader() : d(new QVersitReaderPrivate)
 /*! Destroy a reader. */    
 QVersitReader::~QVersitReader()
 {
+    d->wait();
     delete d;
 }
 

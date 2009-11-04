@@ -64,6 +64,7 @@ QVersitWriter::QVersitWriter() : d(new QVCard21Writer)
 /*! Destroys a writer. */
 QVersitWriter::~QVersitWriter()
 {
+    d->wait();
     delete d;
 }
 

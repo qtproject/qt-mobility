@@ -62,9 +62,6 @@ QVersitWriterPrivate::QVersitWriterPrivate(
 /*! Destroys a writer. */
 QVersitWriterPrivate::~QVersitWriterPrivate()
 {
-    // Handle the situation where the user has issued an asynchronous start,
-    // but the writing has not completed before this thread object is destroyed: 
-    yieldCurrentThread();
 }
 
 /*!
