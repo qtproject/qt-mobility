@@ -34,8 +34,8 @@ win32 {
 
     win32-g++ : {
         LIBS += -luser32 -lgdi32
-
     }
+
 
     wince*:LIBS += aygshell.lib \
         cellcore.lib \
@@ -73,7 +73,6 @@ unix: {
                 message("Using 10.5 SDK")
         }
         TEMPLATE = lib
-        #CONFIG += lib_bundle
     }
 
     symbian:{
