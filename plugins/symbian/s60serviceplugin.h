@@ -45,16 +45,16 @@
 
 #include <multimedia/qmediaserviceproviderplugin.h>
 
-class S60ServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class S60ServicePlugin : public QMediaServiceProviderPlugin//, public QMediaServiceSupportedDevicesInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
+    //Q_INTERFACES(QMediaServiceSupportedDevicesInterface) // Camera impl is on hold
 public:
 
     QStringList keys() const;
     QMediaService* create(QString const& key);
     void release(QMediaService *service);
-
+/* Camera impl is on hold
     QList<QByteArray> devices(const QByteArray &service) const;
     QString deviceDescription(const QByteArray &service, const QByteArray &device);
 
@@ -63,6 +63,7 @@ private:
 
     mutable QList<QByteArray> m_cameraDevices;
     mutable QStringList m_cameraDescriptions;
+    */
 };
 
 #endif // S60SERVICEPLUGIN_H

@@ -44,10 +44,17 @@
 
 /*!
     \class QMediaRecorderControl
-    \ingroup multimedia
-
     \preliminary
-    \brief
+    \brief The QMediaRecorderControl provides access to the recording functionality of a
+    QMediaService.
+
+    If a QMediaService can record media it will implement QMediaRecorderControl.  This control
+    provides a means to set the \l {outputLocation()}{output location}, and \l {record()}{start},
+    \l {pause()}{pause} and \l {stop()}{stop} recording.  It also provides feedback on the
+    \l {duration()}{duration} of the recording.
+
+    The functionality provided by this control is exposed to application code through the
+    QMediaRecorder class.
 
     The interface name of QMediaRecorderControl is \c com.nokia.Qt.QMediaRecorderControl/1.0 as
     defined in QMediaRecorderControl_iid.
@@ -67,7 +74,7 @@
 */
 
 /*!
-    Construct a media recorder control with \a parent.
+    Constructs a media recorder control with the given \a parent.
 */
 
 QMediaRecorderControl::QMediaRecorderControl(QObject* parent)
@@ -76,7 +83,7 @@ QMediaRecorderControl::QMediaRecorderControl(QObject* parent)
 }
 
 /*!
-    Destruct media recorder control object.
+    Destroys a media recorder control.
 */
 
 QMediaRecorderControl::~QMediaRecorderControl()
@@ -86,7 +93,7 @@ QMediaRecorderControl::~QMediaRecorderControl()
 /*!
     \fn QUrl QMediaRecorderControl::outputLocation() const
 
-    Return the current output location being used.
+    Returns the current output location being used.
 */
 
 /*!
@@ -98,7 +105,7 @@ QMediaRecorderControl::~QMediaRecorderControl()
 /*!
     \fn int QMediaRecorderControl::state() const
 
-    Return the current state.
+    Return the current recording state.
 */
 
 /*!
@@ -128,31 +135,27 @@ QMediaRecorderControl::~QMediaRecorderControl()
 /*!
     \fn void QMediaRecorderControl::applySettings()
 
-    This method is called after encoder configuration is done.
-    Encoder can load necessary resources at this point,
-    to reduce delay before recording is started.
+    Commits the encoder settings and performs pre-initialization to reduce delays when recording
+    is started.
 */
 
 
 /*!
     \fn void QMediaRecorderControl::stateChanged(QMediaRecorder::State state)
 
-    Signal emitted when \a state changed.
+    Signals that the \a state of a media recorder has changed.
 */
 
 /*!
     \fn void QMediaRecorderControl::durationChanged(qint64 duration)
 
-    Signal emitted when \a duration changed.
+    Signals that the \a duration of the recorded media has changed.
+
+    This only emitted when there is a discontinuous change in the duration such as being reset to 0.
 */
 
 /*!
     \fn void QMediaRecorderControl::error(int error, const QString &errorString)
 
-    Signal emitted when \a error, \a errorString changed.
+    Signals that an \a error has occurred.  The \a errorString describes the error.
 */
-
-
-
-
-

@@ -43,6 +43,7 @@
 #define RECORDER_H
 
 #include <multimedia/experimental/qcamera.h>
+#include <multimedia/qmediarecorder.h>
 
 namespace Ui {
     class CameraCapture;
@@ -81,6 +82,7 @@ private slots:
     void updateAudioDevice(QAction*);
 
     void updateCameraState(QCamera::State);
+    void updateRecorderState(QMediaRecorder::State state);
 
     void updateRecordTime();
 

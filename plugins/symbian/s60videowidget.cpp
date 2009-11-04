@@ -49,8 +49,9 @@
 #include <coemain.h>    // For CCoeEnv
 #include <coecntrl.h>
 #include <w32std.h>
+//#include <s60camerasession.h>
 
-class S60VideoWidget : public QWidget
+class S60VideoWidget : public QWidget//, MVFProcessor
 {
 public:
     S60VideoWidget(QWidget *parent = 0)
@@ -84,15 +85,25 @@ public:
             updateGeometry();
         }
     }
-
+    void ViewFinderFrameReady(const QImage& image)
+    {
+        m_pixmapImage = QPixmap::fromImage(image);
+        repaint();
+    }
 protected:
     void paintEvent(QPaintEvent *)
     {
         QPainter painter(this);
         painter.fillRect(rect(), palette().background());
+        
+        
+//        QPoint point(pos());
+//        painter.drawPixmap(point, m_pixmapImage.scaled(size(), Qt::KeepAspectRatio));
+
     }
 
     QSize m_nativeSize;
+    QPixmap m_pixmapImage;
 };
 
 S60VideoWidgetControl::S60VideoWidgetControl(QObject *parent)

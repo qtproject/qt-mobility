@@ -114,6 +114,7 @@ public:
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
     const QGLContext *glContext() const;
     void setGLContext(QGLContext *context);
+
     ShaderTypes supportedShaderTypes() const;
     ShaderType shaderType() const;
     void setShaderType(ShaderType type);

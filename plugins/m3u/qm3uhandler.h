@@ -64,7 +64,7 @@ public:
     virtual QMediaPlaylistReader *createReader(QIODevice *device, const QByteArray &format = QByteArray());
     virtual QMediaPlaylistReader *createReader(const QUrl& location, const QByteArray &format = QByteArray());
 
-    virtual QMediaPlaylistWritter *createWritter(QIODevice *device, const QByteArray &format);
+    virtual QMediaPlaylistWriter *createWriter(QIODevice *device, const QByteArray &format);
 };
 
 QT_END_NAMESPACE

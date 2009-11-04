@@ -197,6 +197,11 @@ public:
         return m_paintCount != paintCount;
     }
 
+    int paintCount() const
+    {
+        return m_paintCount;
+    }
+
 private:
     int m_paintCount;
 };
@@ -214,7 +219,7 @@ void tst_QGraphicsVideoItem::nullService()
 
     QtTestVideoObject object(service);
 
-    QGraphicsVideoItem *item = new QGraphicsVideoItem(&object);
+    QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem(&object);
 
     QVERIFY(item->boundingRect().isEmpty());
 
@@ -225,15 +230,13 @@ void tst_QGraphicsVideoItem::nullService()
     graphicsScene.addItem(item);
     QGraphicsView graphicsView(&graphicsScene);
     graphicsView.show();
-
-    QTestEventLoop::instance().enterLoop(1);
 }
 
 void tst_QGraphicsVideoItem::nullOutputControl()
 {
     QtTestVideoObject object(new QtTestVideoService(0, 0));
 
-    QGraphicsVideoItem *item = new QGraphicsVideoItem(&object);
+    QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem(&object);
 
     QVERIFY(item->boundingRect().isEmpty());
 
@@ -244,8 +247,6 @@ void tst_QGraphicsVideoItem::nullOutputControl()
     graphicsScene.addItem(item);
     QGraphicsView graphicsView(&graphicsScene);
     graphicsView.show();
-
-    QTestEventLoop::instance().enterLoop(1);
 }
 
 void tst_QGraphicsVideoItem::noOutputs()
@@ -253,7 +254,7 @@ void tst_QGraphicsVideoItem::noOutputs()
     QtTestRendererControl *control = 0;
     QtTestVideoObject object(control);
 
-    QGraphicsVideoItem *item = new QGraphicsVideoItem(&object);
+    QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem(&object);
 
     QVERIFY(item->boundingRect().isEmpty());
 
@@ -266,8 +267,6 @@ void tst_QGraphicsVideoItem::noOutputs()
     graphicsScene.addItem(item);
     QGraphicsView graphicsView(&graphicsScene);
     graphicsView.show();
-
-    QTestEventLoop::instance().enterLoop(1);
 }
 
 void tst_QGraphicsVideoItem::serviceDestroyed()
@@ -282,20 +281,34 @@ void tst_QGraphicsVideoItem::serviceDestroyed()
 }
 
 void tst_QGraphicsVideoItem::show()
-{
+{    
     QtTestVideoObject object(new QtTestRendererControl);
-    QGraphicsVideoItem item(&object);
+    QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem(&object);
 
     // Graphics items are visible by default
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::RendererOutput);
     QVERIFY(object.testService->rendererControl->surface() != 0);
 
-    item.hide();
+    item->hide();
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
 
-    item.show();
+    item->show();
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::RendererOutput);
     QVERIFY(object.testService->rendererControl->surface() != 0);
+
+    QVERIFY(item->boundingRect().isEmpty());
+
+    QVideoSurfaceFormat format(QSize(320,240),QVideoFrame::Format_RGB32);
+    QVERIFY(object.testService->rendererControl->surface()->start(format));
+
+    QVERIFY(!item->boundingRect().isEmpty());
+
+    QGraphicsScene graphicsScene;
+    graphicsScene.addItem(item);
+    QGraphicsView graphicsView(&graphicsScene);
+    graphicsView.show();
+
+    QVERIFY(item->paintCount() || item->waitForPaint(1));
 }
 
 void tst_QGraphicsVideoItem::boundingRect_data()
@@ -353,10 +366,10 @@ static const uchar rgb32ImageData[] =
 void tst_QGraphicsVideoItem::paint()
 {
     QtTestVideoObject object(new QtTestRendererControl);
-    QGraphicsVideoItem item(&object);
+    QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem(&object);
     
     QGraphicsScene graphicsScene;
-    graphicsScene.addItem(new QGraphicsVideoItem(&object));
+    graphicsScene.addItem(item);
     QGraphicsView graphicsView(&graphicsScene);
     graphicsView.show();
 
@@ -369,7 +382,7 @@ void tst_QGraphicsVideoItem::paint()
     QCOMPARE(surface->isStarted(), true);
     QCOMPARE(surface->isReady(), true);
 
-    QTestEventLoop::instance().enterLoop(1);
+    QVERIFY(item->waitForPaint(1));
 
     QCOMPARE(surface->isStarted(), true);
     QCOMPARE(surface->isReady(), true);
@@ -384,7 +397,7 @@ void tst_QGraphicsVideoItem::paint()
     QCOMPARE(surface->isStarted(), true);
     QCOMPARE(surface->isReady(), false);
 
-    QTestEventLoop::instance().enterLoop(1);
+    QVERIFY(item->waitForPaint(1));
 
     QCOMPARE(surface->isStarted(), true);
     QCOMPARE(surface->isReady(), true);

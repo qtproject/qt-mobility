@@ -99,17 +99,27 @@ qint64 QGstreamerRecorderControl::duration() const
 void QGstreamerRecorderControl::record()
 {
     m_session->dumpGraph("before-record");
-    m_session->setState(QGstreamerCaptureSession::RecordingState);
+    if (m_session->state() != QGstreamerCaptureSession::StoppedState)
+        m_session->setState(QGstreamerCaptureSession::RecordingState);
+    else
+        emit error(QMediaRecorder::ResourceError, tr("Service has not been started"));
+
     m_session->dumpGraph("after-record");
 }
 
 void QGstreamerRecorderControl::pause()
 {
     m_session->dumpGraph("before-pause");
-    m_session->setState(QGstreamerCaptureSession::PausedState);
+    if (m_session->state() != QGstreamerCaptureSession::StoppedState)
+        m_session->setState(QGstreamerCaptureSession::PausedState);
+    else
+        emit error(QMediaRecorder::ResourceError, tr("Service has not been started"));
 }
 
 void QGstreamerRecorderControl::stop()
 {
-    m_session->setState(m_session->isPreviewEnabled() ? QGstreamerCaptureSession::PreviewState : QGstreamerCaptureSession::StoppedState);
+    if (m_session->state() != QGstreamerCaptureSession::StoppedState)
+        m_session->setState(QGstreamerCaptureSession::PreviewState);
+    else
+        emit error(QMediaRecorder::ResourceError, tr("Service has not been started"));
 }

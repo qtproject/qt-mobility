@@ -273,6 +273,8 @@ void tst_QMediaPlaylistNavigator::randomPlayback()
     playlist.appendItem(QMediaContent(QUrl(QLatin1String("file:///2"))));
     playlist.appendItem(QMediaContent(QUrl(QLatin1String("file:///3"))));
 
+    playlist.shuffle();
+
     QCOMPARE(navigator.currentPosition(), -1);
     navigator.next();
     int pos1 = navigator.currentPosition();

@@ -147,7 +147,7 @@ QMediaContent::QMediaContent(const QMediaContent &other):
 }
 
 /*!
-    Destroys the media source object.
+    Destroys the media content object.
 */
 
 QMediaContent::~QMediaContent()
@@ -155,7 +155,7 @@ QMediaContent::~QMediaContent()
 }
 
 /*!
-    Assigns the value of \a other to this media source.
+    Assigns the value of \a other to this media content.
 */
 
 QMediaContent& QMediaContent::operator=(const QMediaContent &other)
@@ -165,7 +165,7 @@ QMediaContent& QMediaContent::operator=(const QMediaContent &other)
 }
 
 /*!
-    Returns true if \a other is equivalent to this media source; false otherwise.
+    Returns true if \a other is equivalent to this media content; false otherwise.
 */
 
 bool QMediaContent::operator==(const QMediaContent &other) const
@@ -176,7 +176,7 @@ bool QMediaContent::operator==(const QMediaContent &other) const
 }
 
 /*!
-    Returns true if \a other is not equivalent to this media source; false otherwise.
+    Returns true if \a other is not equivalent to this media content; false otherwise.
 */
 
 bool QMediaContent::operator!=(const QMediaContent &other) const
@@ -185,7 +185,7 @@ bool QMediaContent::operator!=(const QMediaContent &other) const
 }
 
 /*!
-    Returns true if this media source is null (uninitialized); false otherwise.
+    Returns true if this media content is null (uninitialized); false otherwise.
 */
 
 bool QMediaContent::isNull() const

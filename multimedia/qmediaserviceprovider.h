@@ -59,7 +59,7 @@ public:
         LowLatencyPlayback = 0x01,
         RecordingSupport = 0x02
     };
-    Q_DECLARE_FLAGS(Features, Feature);
+    Q_DECLARE_FLAGS(Features, Feature)
 
     QMediaServiceProviderHint();
     QMediaServiceProviderHint(const QString &mimeType, const QStringList& codecs);

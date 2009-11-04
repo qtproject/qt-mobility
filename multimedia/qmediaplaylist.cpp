@@ -330,13 +330,13 @@ bool QMediaPlaylistPrivate::readItems(QMediaPlaylistReader *reader)
     return true;
 }
 
-bool QMediaPlaylistPrivate::writeItems(QMediaPlaylistWritter *writter)
+bool QMediaPlaylistPrivate::writeItems(QMediaPlaylistWriter *writer)
 {
     for (int i=0; i<playlist()->size(); i++) {
-        if (!writter->writeItem(playlist()->media(i)))
+        if (!writer->writeItem(playlist()->media(i)))
             return false;
     }
-    writter->close();
+    writer->close();
     return true;
 }
 
@@ -459,12 +459,12 @@ bool QMediaPlaylist::save(QIODevice * device, const char *format)
     foreach (QString const& key, playlistIOLoader()->keys()) {
         QMediaPlaylistIOInterface* plugin = qobject_cast<QMediaPlaylistIOInterface*>(playlistIOLoader()->instance(key));
         if (plugin && plugin->canWrite(device,format)) {
-            QMediaPlaylistWritter *writter = plugin->createWritter(device,QByteArray(format));
-            if (writter && d->writeItems(writter)) {
-                delete writter;
+            QMediaPlaylistWriter *writer = plugin->createWriter(device,QByteArray(format));
+            if (writer && d->writeItems(writer)) {
+                delete writer;
                 return true;
             }
-            delete writter;
+            delete writer;
         }
     }
 

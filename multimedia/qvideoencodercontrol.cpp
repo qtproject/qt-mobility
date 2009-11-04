@@ -46,11 +46,21 @@
 /*!
     \class QVideoEncoderControl
     \preliminary
+    \brief The QVideoEncoderControl class provides access to the settings of a media service that
+    performs video encoding.
+
+    If a QMediaService supports encoding video data it will implement QVideoEncoderControl.  This
+    control provides information about the limits of restricted video encoder options and allows
+    the selection of a set of video encoder settings as specificed in a QVideoEncoderSettings
+    object.
+
+    The functionality provided by this control is exposed to application code through the
+    QMediaRecorder class.
 
     The interface name of QVideoEncoderControl is \c com.nokia.Qt.QVideoEncoderControl/1.0 as
     defined in QVideoEncoderControl_iid.
 
-    \sa QMediaService::control()
+    \sa QMediaService::control(), QMediaRecorder
 */
 
 /*!
@@ -145,8 +155,8 @@ QVideoEncoderControl::~QVideoEncoderControl()
 /*!
     \fn QVideoEncoderControl::supportedResolutions() const
 
-    Returns a list of specific supported resolutions.  If the encoder supports arbitrary resolutions
-    within the minimum and maximum range, then an empty list is returned.
+    Returns a list of supported resolutions.  An empty list is returned if the video encoder
+    supports arbitrary resolutions within the minimum and maximum range.
 
     \sa QVideoEncoderSettings::resolution(), minimumResolution(), maximumResolution()
 */
@@ -154,10 +164,10 @@ QVideoEncoderControl::~QVideoEncoderControl()
 /*!
     \fn QVideoEncoderControl::supportedFrameRates() const
 
-    Returns the list of frame rates if the video encoder supports only the limited set
-    of video frame rates, otherwise returns an empty list.
+    Returns a list of supported frame rates. An empty list is returned if the encoder supports
+    arbitrary frame rates within the minimum and maximum range.
 
-    \sa QVideoEncoderSettings::frameRate()
+    \sa QVideoEncoderSettings::frameRate(), minimumFrameRate(), maximumFrameRate()
 */
 
 /*!

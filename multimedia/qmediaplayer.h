@@ -177,7 +177,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_mediaStatusChanged(QMediaPlayer::MediaStatus))
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
     Q_PRIVATE_SLOT(d_func(), void _q_updateMedia(const QMediaContent&))
-    Q_PRIVATE_SLOT(d_func(), void _q_playlistDestroyed());
+    Q_PRIVATE_SLOT(d_func(), void _q_playlistDestroyed())
 };
 
 Q_DECLARE_METATYPE(QMediaPlayer::State)

@@ -15,22 +15,25 @@ SUBDIRS = \
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
-        qvideowidget \
+        qvideowidget
 
 contains(QT_CONFIG, multimedia) {
     SUBDIRS += \
             qgraphicsvideoitem \
             qpaintervideosurface
+
 }
 
 symbian { 
 SUBDIRS -= \
+        qaudiocapturesource \
         qmediaplaylistnavigator \
         qmediaimageviewer \
         qmediapluginloader \
         qmediaserviceprovider \
         qpaintervideosurface \
         qvideowidget \
+        qmediaplayer \
         qgraphicsvideoitem
 }
 

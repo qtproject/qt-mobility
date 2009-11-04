@@ -48,7 +48,7 @@
 #include <fbs.h>
 
 S60CameraSession::S60CameraSession(QObject *parent)
-    :QObject(parent), m_cameraEngine(NULL)
+    :QObject(parent), m_cameraEngine(NULL), m_VFProcessor(NULL)
 {
     available = false;
     m_quality = QtMedia::NormalQuality;
@@ -568,20 +568,20 @@ bool S60CameraSession::queryCurrentCameraInfo()
 // End for S60Cameravideodevicecontrol
 QSize S60CameraSession::captureSize() const
 {
-
+    return QSize();
 }
 QSize S60CameraSession::minimumCaptureSize() const
 {
-
+    return QSize();
 }
 QSize S60CameraSession::maximumCaptureSize() const
 {
-
+    return QSize();
 }
 
 void S60CameraSession::setCaptureSize(const QSize &size)
 {
-
+    Q_UNUSED(size);
 }
 
 QList<QSize> S60CameraSession::supportedCaptureSizes()
@@ -603,11 +603,11 @@ QList<QSize> S60CameraSession::supportedCaptureSizes()
 
 QStringList S60CameraSession::supportedImageCaptureCodecs() const
 {
-
+    return QStringList();
 }
 QString S60CameraSession::imageCaptureCodec() const
 {
-
+    return QString();
 }
 bool S60CameraSession::setImageCaptureCodec(const QString &codecName)
 {
@@ -630,5 +630,8 @@ void S60CameraSession::setCaptureQuality(QtMedia::EncodingQuality quality)
 
 void S60CameraSession::setVideoRenderer(QObject *videoOutput)
 {
-    m_videoWidgetControl = qobject_cast<S60VideoWidgetControl*>(videoOutput);
+//    m_videoWidgetControl = qobject_cast<S60VideoWidgetControl*>(videoOutput);
+//    MVFProcessor *widgetProcessor = dynamic_cast<MVFProcessor*>(m_videoWidgetControl->videoWidget());
+//    if (widgetProcessor)
+//        setVFProcessor(widgetProcessor);
 }

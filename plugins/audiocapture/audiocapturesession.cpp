@@ -259,7 +259,7 @@ void AudioCaptureSession::stop()
         if(file.open(QIODevice::ReadOnly)) {
             file.read((char*)&header,sizeof(CombinedHeader));
             header.riff.descriptor.size = fileSize; // filesize-8
-            header.data.descriptor.size = fileSize*m_format.channels()*m_format.sampleSize()/8; // samples*channels*sampleSize/8
+            header.data.descriptor.size = fileSize-44; // samples*channels*sampleSize/8
             tmpFile.write((char*)&header,sizeof(CombinedHeader));
             char buf[4096];
             while(!file.atEnd()) {
