@@ -330,7 +330,7 @@ void tst_QContactAsync::contactFetch()
     cfr.setFilter(fil);
     cfr.setSorting(sorting);
     cfr.setDefinitionRestrictions(QStringList());
-    int bailoutCount = 10; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
+    int bailoutCount = 40; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!cfr.cancel()); // not started
         QVERIFY(cfr.start());
