@@ -45,7 +45,6 @@
 
 #include <QSet>
 #include <QCoreApplication>
-#include <QThread>
 #include <QUuid>
 #include <QSharedData>
 #include <QMutex>

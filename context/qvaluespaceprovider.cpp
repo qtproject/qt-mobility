@@ -45,7 +45,6 @@
 #include "qvaluespacemanager_p.h"
 
 #include <QtCore/qcoreapplication.h>
-#include <QtCore/qthread.h>
 
 #include <QtCore/qdebug.h>
 
