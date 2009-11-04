@@ -48,6 +48,7 @@
 #include <QThread>
 #include <QUuid>
 #include <QSharedData>
+#include <QMutex>
 
 QT_BEGIN_NAMESPACE
 
@@ -173,15 +174,12 @@ public slots:
         }
     }
 
-    void objDestroyed()
-    {
-        connections.remove((QValueSpaceSubscriber *)sender());
-    }
-
 public:
     QList<QPair<QAbstractValueSpaceLayer *, QAbstractValueSpaceLayer::Handle> > readers;
     QHash<const QValueSpaceSubscriber *,int> connections;
 };
+
+typedef QList<QPair<QAbstractValueSpaceLayer *, QAbstractValueSpaceLayer::Handle> > LayerList;
 
 class QValueSpaceSubscriberPrivate : public QSharedData
 {
@@ -194,29 +192,30 @@ public:
     void connect(const QValueSpaceSubscriber *space) const;
     bool disconnect(QValueSpaceSubscriber * space);
 
-    QString path;
-    QList<QPair<QAbstractValueSpaceLayer *, QAbstractValueSpaceLayer::Handle> > readers;
+    const QString path;
+    const LayerList readers;
+
+    mutable QMutex lock;
     mutable QValueSpaceSubscriberPrivateProxy *connections;
 };
 
-QValueSpaceSubscriberPrivate::QValueSpaceSubscriberPrivate(const QString &_path,
-                                                           QValueSpace::LayerOptions filter)
-: connections(0)
+static LayerList matchLayers(const QString &path, QValueSpace::LayerOptions filter)
 {
-    path = qCanonicalPath(_path);
+    LayerList list;
 
-    QValueSpaceManager *man = QValueSpaceManager::instance();
-    if (!man)
-        return;
+    QValueSpaceManager *manager = QValueSpaceManager::instance();
+    if (!manager)
+        return list;
 
+    // Invalid filter combination.
     if ((filter & QValueSpace::PermanentLayer &&
          filter & QValueSpace::NonPermanentLayer) ||
         (filter & QValueSpace::WriteableLayer &&
          filter & QValueSpace::NonWriteableLayer)) {
-        return;
+        return list;
     }
 
-    const QList<QAbstractValueSpaceLayer *> & readerList = man->getLayers();
+    const QList<QAbstractValueSpaceLayer *> &readerList = manager->getLayers();
 
     for (int ii = 0; ii < readerList.count(); ++ii) {
         QAbstractValueSpaceLayer *read = readerList.at(ii);
@@ -228,23 +227,30 @@ QValueSpaceSubscriberPrivate::QValueSpaceSubscriberPrivate(const QString &_path,
         QAbstractValueSpaceLayer::Handle handle =
             read->item(QAbstractValueSpaceLayer::InvalidHandle, path);
         if (QAbstractValueSpaceLayer::InvalidHandle != handle) {
-            readers.append(qMakePair(read, handle));
+            list.append(qMakePair(read, handle));
 
             read->notifyInterest(handle, true);
         }
     }
+
+    return list;
 }
 
-QValueSpaceSubscriberPrivate::QValueSpaceSubscriberPrivate(const QString &_path, const QUuid &uuid)
-:   connections(0)
+QValueSpaceSubscriberPrivate::QValueSpaceSubscriberPrivate(const QString &path,
+                                                           QValueSpace::LayerOptions filter)
+:   path(qCanonicalPath(path)), readers(matchLayers(this->path, filter)), connections(0)
 {
-    path = qCanonicalPath(_path);
+}
 
-    QValueSpaceManager *man = QValueSpaceManager::instance();
-    if (!man)
-        return;
+static LayerList matchLayers(const QString &path, const QUuid &uuid)
+{
+    LayerList list;
 
-    const QList<QAbstractValueSpaceLayer *> & readerList = man->getLayers();
+    QValueSpaceManager *manager = QValueSpaceManager::instance();
+    if (!manager)
+        return list;
+
+    const QList<QAbstractValueSpaceLayer *> &readerList = manager->getLayers();
 
     for (int ii = 0; ii < readerList.count(); ++ii) {
         QAbstractValueSpaceLayer *read = readerList.at(ii);
@@ -254,11 +260,18 @@ QValueSpaceSubscriberPrivate::QValueSpaceSubscriberPrivate(const QString &_path,
         QAbstractValueSpaceLayer::Handle handle =
             read->item(QAbstractValueSpaceLayer::InvalidHandle, path);
         if (QAbstractValueSpaceLayer::InvalidHandle != handle) {
-            readers.append(qMakePair(read, handle));
+            list.append(qMakePair(read, handle));
 
             read->notifyInterest(handle, true);
         }
     }
+
+    return list;
+}
+
+QValueSpaceSubscriberPrivate::QValueSpaceSubscriberPrivate(const QString &path, const QUuid &uuid)
+:   path(qCanonicalPath(path)), readers(matchLayers(this->path, uuid)), connections(0)
+{
 }
 
 QValueSpaceSubscriberPrivate::~QValueSpaceSubscriberPrivate()
@@ -270,18 +283,17 @@ QValueSpaceSubscriberPrivate::~QValueSpaceSubscriberPrivate()
 
     if (connections)
         delete connections;
-
 }
 
 void QValueSpaceSubscriberPrivate::connect(const QValueSpaceSubscriber *space) const
 {
+    QMutexLocker locker(&lock);
+
     if (!connections) {
         qRegisterMetaType<quintptr>("quintptr");
         connections = new QValueSpaceSubscriberPrivateProxy;
         connections->readers = readers;
         connections->connections.insert(space,1);
-        QObject::connect(space, SIGNAL(destroyed(QObject*)),
-                         connections, SLOT(objDestroyed()));
         QObject::connect(connections, SIGNAL(changed()),
                          space, SIGNAL(contentsChanged()));
         for (int ii = 0; ii < readers.count(); ++ii) {
@@ -293,8 +305,6 @@ void QValueSpaceSubscriberPrivate::connect(const QValueSpaceSubscriber *space) c
     } else if (!connections->connections.contains(space)) {
         connections->connections[space] = 1;
 
-        QObject::connect(space, SIGNAL(destroyed(QObject*)),
-                         connections, SLOT(objDestroyed()));
         QObject::connect(connections, SIGNAL(changed()),
                          space, SIGNAL(contentsChanged()));
     } else {
@@ -304,14 +314,14 @@ void QValueSpaceSubscriberPrivate::connect(const QValueSpaceSubscriber *space) c
 
 bool QValueSpaceSubscriberPrivate::disconnect(QValueSpaceSubscriber * space)
 {
+    QMutexLocker locker(&lock);
+
     if (connections) {
         QHash<const QValueSpaceSubscriber *, int>::Iterator iter =
             connections->connections.find(space);
         if (iter != connections->connections.end()) {
             --(*iter);
             if (!*iter) {
-                QObject::disconnect(space, SIGNAL(destroyed(QObject*)),
-                                    connections, SLOT(objDestroyed()));
                 QObject::disconnect(connections, SIGNAL(changed()),
                                     space, SIGNAL(contentsChanged()));
                 connections->connections.erase(iter);
@@ -321,10 +331,6 @@ bool QValueSpaceSubscriberPrivate::disconnect(QValueSpaceSubscriber * space)
     }
     return false;
 }
-
-
-
-
 
 /*!
     Constructs a QValueSpaceSubscriber with the specified \a parent that refers to the root path.
@@ -457,6 +463,7 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path, const QUuid &uuid
 */
 QValueSpaceSubscriber::~QValueSpaceSubscriber()
 {
+    d->disconnect(this);
 }
 
 /*!
@@ -471,6 +478,8 @@ void QValueSpaceSubscriber::setPath(const QString &path)
 {
     if (d->path == path)
         return;
+
+    d->disconnect(this);
 
     disconnect();
 
@@ -487,6 +496,8 @@ void QValueSpaceSubscriber::setPath(const QString &path)
 */
 void QValueSpaceSubscriber::setPath(QValueSpaceSubscriber *subscriber)
 {
+    d->disconnect(this);
+
     disconnect();
 
     d = subscriber->d;
@@ -580,8 +591,12 @@ QVariant QValueSpaceSubscriber::value(const char *subPath, const QVariant &def) 
 
 QVariant QValueSpaceSubscriber::valuex(const QVariant &def) const
 {
-    if (!d->connections || d->connections->connections.value(this) == 0)
+    QMutexLocker locker(&d->lock);
+
+    if (!d->connections || d->connections->connections.value(this) == 0) {
+        locker.unlock();
         d->connect(this);
+    }
 
     return value(QString(), def);
 }
