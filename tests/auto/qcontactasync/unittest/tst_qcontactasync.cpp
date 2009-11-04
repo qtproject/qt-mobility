@@ -1895,13 +1895,7 @@ void tst_QContactAsync::addManagers()
 QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
 {
     QContactManager* cm = QContactManager::fromUri(managerUri);
-
-    // assumes that the manager should be empty of contacts.  If it isn't, remove them all.
-    QList<QContactLocalId> allContacts = cm->contacts();
-    foreach (const QContactLocalId& removeId, allContacts)
-        cm->removeContact(removeId);
     
-    // now create some reference contacts and add them.
     QContact a, b, c;
     a.setDisplayLabel("Aaron Aaronson");
     b.setDisplayLabel("Bob Aaronsen");
