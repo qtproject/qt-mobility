@@ -101,7 +101,6 @@ class RDatabaseManagerSession : public RSessionBase
         
     public:
         TBuf<255> iServiceName;
-        //TPckgBuf<TInt> iScope;
         TPckgBuf<TInt> iState;
 
     private:

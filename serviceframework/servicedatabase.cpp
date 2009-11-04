@@ -67,6 +67,9 @@
 #endif
 
 #define SERVICE_DESCRIPTION_KEY "DESCRIPTION"
+#ifdef Q_OS_SYMBIAN
+#define SECURITY_TOKEN_KEY "SECURITYTOKEN"
+#endif
 #define INTERFACE_DESCRIPTION_KEY "DESCRIPTION"
 #define INTERFACE_CAPABILITY_KEY "CAPABILITIES"
 
@@ -213,7 +216,7 @@ bool ServiceDatabase::open()
    DBError::InvalidDatabaseFile
 */
 //bool ServiceDatabase::registerService(ServiceMetaData &service)
-bool ServiceDatabase::registerService(const ServiceMetaDataResults &service)
+bool ServiceDatabase::registerService(const ServiceMetaDataResults &service, const QString &securityToken)
 {
     if(!checkConnection()) {
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
@@ -266,6 +269,40 @@ bool ServiceDatabase::registerService(const ServiceMetaDataResults &service)
         return false;
     }
 
+#ifdef Q_OS_SYMBIAN
+    statement = "SELECT Value FROM ServiceProperty WHERE ServiceID = ? AND Key = ?";
+    bindValues.clear();
+    bindValues.append(service.name);
+    bindValues.append(SECURITY_TOKEN_KEY);
+    
+    if(!executeQuery(&query, statement, bindValues)) {
+        rollbackTransaction(&query);
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+        qWarning() << "ServiceDatabase::unregisterService():-"
+                    << qPrintable(m_lastError.text());
+#endif
+        return false;
+    }
+
+    QStringList securityTokens;
+    while(query.next()) {
+        securityTokens << query.value(EBindIndex).toString();
+    }
+    
+    qDebug() << "Token in db: " << securityTokens.first();
+    qDebug() << "Delivered token: " << securityToken;
+    if (!securityTokens.isEmpty() && securityTokens.first() != securityToken) {
+        QString errorText("Access denied: \"%1\"");
+             m_lastError.setError(DBError::NoWritePermissions, errorText.arg(service.name));
+             rollbackTransaction(&query);
+     #ifdef QT_SFW_SERVICEDATABASE_DEBUG
+             qWarning() << "ServiceDatabase::unregisterService():-"
+                         << "Problem: Unable to unregister service"
+                         << "\nReason:" << qPrintable(m_lastError.text());
+     #endif    
+    }
+#endif
+
     statement = "INSERT INTO Service(ID,Name,Location) VALUES(?,?,?)";
     QString serviceID = QUuid::createUuid().toString();
 
@@ -300,7 +337,24 @@ bool ServiceDatabase::registerService(const ServiceMetaDataResults &service)
 #endif
         return false;
     }
+    
+#ifdef Q_OS_SYMBIAN
+    statement = "INSERT INTO ServiceProperty(ServiceID,Key,Value) VALUES(?,?,?)";
+    bindValues.clear();
+    bindValues.append(service.name);
+    bindValues.append(SECURITY_TOKEN_KEY);
+    bindValues.append(securityToken);
 
+    if (!executeQuery(&query, statement, bindValues)) {
+        rollbackTransaction(&query);
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+        qWarning() << "ServiceDatabase::registerService():-"
+                    << qPrintable(m_lastError.text());
+#endif
+        return false;
+    }
+#endif
+    
     QList <QServiceInterfaceDescriptor> interfaces = service.interfaces;
     QString interfaceID;;
     foreach (const QServiceInterfaceDescriptor &interface, interfaces) {
@@ -1297,7 +1351,7 @@ bool ServiceDatabase::setInterfaceDefault(const QServiceInterfaceDescriptor &int
    DBError::NoWritePermissions
    DBError::InvalidDatabaseFile
 */
-bool ServiceDatabase::unregisterService(const QString &serviceName)
+bool ServiceDatabase::unregisterService(const QString &serviceName, const QString &securityToken)
 {
     if (!checkConnection()) {
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
@@ -1318,7 +1372,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
 #endif
         return false;
     }
-
+        
     QString statement("SELECT Service.ID from Service WHERE Service.Name = ? COLLATE NOCASE");
     QList<QVariant> bindValues;
     bindValues.append(serviceName);
@@ -1349,6 +1403,40 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
 #endif
         return false;
     }
+
+#ifdef Q_OS_SYMBIAN
+    statement = "SELECT Value FROM ServiceProperty WHERE ServiceID = ? AND Key = ?";
+    bindValues.clear();
+    bindValues.append(serviceName);
+    bindValues.append(SECURITY_TOKEN_KEY);
+    if(!executeQuery(&query, statement, bindValues)) {
+        rollbackTransaction(&query);
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+        qWarning() << "ServiceDatabase::unregisterService():-"
+                    << qPrintable(m_lastError.text());
+#endif
+        return false;
+    }
+
+    QStringList securityTokens;
+    while(query.next()) {
+        securityTokens << query.value(EBindIndex).toString();
+    }
+    
+    qDebug() << "Token in db: " << securityTokens.first();
+    qDebug() << "Delivered token: " << securityToken;
+    if (securityTokens.first() != securityToken) {
+        QString errorText("Access denied: \"%1\"");
+             m_lastError.setError(DBError::NoWritePermissions, errorText.arg(serviceName));
+             rollbackTransaction(&query);
+     #ifdef QT_SFW_SERVICEDATABASE_DEBUG
+             qWarning() << "ServiceDatabase::unregisterService():-"
+                         << "Problem: Unable to unregister service"
+                         << "\nReason:" << qPrintable(m_lastError.text());
+     #endif    
+    }
+    
+#endif
 
     QStringList interfaceIDs;
     while (query.next()) {
@@ -1388,6 +1476,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
         serviceDefaultInterfaces << query.value(EBindIndex).toString();
     }
 
+    
     statement = "DELETE FROM Service WHERE Service.Name = ? COLLATE NOCASE";
     bindValues.clear();
     bindValues.append(serviceName);
@@ -1414,10 +1503,19 @@ bool ServiceDatabase::unregisterService(const QString &serviceName)
         }
     }
 
+#ifndef Q_OS_SYMBIAN
     statement = "DELETE FROM ServiceProperty WHERE ServiceID = ?";
+#else
+    statement = "DELETE FROM ServiceProperty WHERE ServiceID = ? AND Key <> ?";
+#endif
+
+    
     foreach(const QString &serviceID, serviceIDs) {
         bindValues.clear();
         bindValues.append(serviceID);
+#ifndef Q_OS_SYMBIAN
+        bindValues.append(SECURITY_TOKEN_KEY);
+#endif
         if (!executeQuery(&query, statement, bindValues)) {
             rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG

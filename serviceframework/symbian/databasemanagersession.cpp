@@ -204,7 +204,19 @@ TInt CDatabaseManagerServerSession::CancelNotifyServiceSignal(const RMessage2& /
     }
 
 TInt CDatabaseManagerServerSession::RegisterServiceL(const RMessage2& aMessage)
+    {    
+    QString securityToken;
+    
+    TVendorId vendorId = aMessage.VendorId();
+    if (vendorId != 0)
     {
+        securityToken = QString::number(vendorId);
+    }
+    else
+    {
+        securityToken = QString::number(aMessage.SecureId().iId);
+    }
+
     TInt ret;
     HBufC8* serviceMetaDataBuf8 = HBufC8::New(aMessage.GetDesLength(0));
     if (!serviceMetaDataBuf8)
@@ -225,7 +237,7 @@ TInt CDatabaseManagerServerSession::RegisterServiceL(const RMessage2& aMessage)
     ServiceMetaDataResults results;
     out >> results;
     
-    iDb->registerService(results);
+    iDb->registerService(results, securityToken);
  
     aMessage.Write(1, LastErrorCode());
 
@@ -236,6 +248,18 @@ TInt CDatabaseManagerServerSession::RegisterServiceL(const RMessage2& aMessage)
 
 TInt CDatabaseManagerServerSession::UnregisterServiceL(const RMessage2& aMessage)
     {
+    QString securityToken;
+    
+    TVendorId vendorId = aMessage.VendorId();
+    if (vendorId != 0)
+    {
+        securityToken = QString::number(vendorId);
+    }
+    else
+    {
+        securityToken = QString::number(aMessage.SecureId().iId);
+    }
+    
     TInt ret;
     HBufC* serviceNameBuf = HBufC::New(aMessage.GetDesLength(0));
     if (!serviceNameBuf)
@@ -252,7 +276,7 @@ TInt CDatabaseManagerServerSession::UnregisterServiceL(const RMessage2& aMessage
         }
 
     QString serviceName = QString::fromUtf16(ptrToBuf.Ptr(), ptrToBuf.Length());
-    iDb->unregisterService(serviceName);
+    iDb->unregisterService(serviceName, securityToken);
     
     aMessage.Write(1, LastErrorCode());
     delete serviceNameBuf;
@@ -502,6 +526,7 @@ void CDatabaseManagerServerSession::initDbPath()
     db->setDatabasePath(dir.path() + QDir::separator() + dbName);
 
     bool isOpen = db->open();
+    qDebug() << db->databasePath();
     // TODO: Error handling...
 }
 
