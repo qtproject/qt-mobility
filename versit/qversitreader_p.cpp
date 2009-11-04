@@ -78,6 +78,7 @@ void QVersitReaderPrivate::run()
  */
 QVersitDocument QVersitReaderPrivate::parseVersitDocument(QByteArray& text)
 {
+    bool containsGroupedCards = false;
     mDocumentNestingLevel++;
     QVersitDocument document;
     text = text.mid(VersitUtils::countLeadingWhiteSpaces(text));
@@ -88,16 +89,28 @@ QVersitDocument QVersitReaderPrivate::parseVersitDocument(QByteArray& text)
         while (property.name().length() > 0 && 
                property.name() != QString::fromAscii("END")) {
             property = parseNextVersitProperty(document.versitType(),text);
+            if (property.name() == QString::fromAscii("BEGIN") &&
+                property.value().trimmed().toUpper() == "VCARD") {
+                containsGroupedCards = true;
+                text.prepend("BEGIN:VCARD\r\n");
+                document = parseVersitDocument(text);
+                if (document.properties().count() > 0)
+                    mVersitDocuments.append(document);
+            }
             if (!setVersionFromProperty(document,property)) {
                 mDocumentNestingLevel--;
                 return QVersitDocument(); // return an empty document
             }
             if (property.name() != QString::fromAscii("VERSION") && 
-                property.name() != QString::fromAscii("END"))
+                property.name() != QString::fromAscii("END") &&
+                property.name() != QString::fromAscii("BEGIN"))
                 document.addProperty(property);
+
         }
     }
     mDocumentNestingLevel--;
+    if (containsGroupedCards)
+        return QVersitDocument(); // return an empty document
     return document;
 }
 

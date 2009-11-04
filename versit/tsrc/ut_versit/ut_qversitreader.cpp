@@ -338,4 +338,41 @@ END:VCARD\r\n";
     document = mReaderPrivate->parseVersitDocument(vCard);
     QCOMPARE(document.properties().count(),0);
     QCOMPARE(mReaderPrivate->mDocumentNestingLevel,0);
+
+    // Grouped vCards (2.1 only)
+    const char validGroupedCard[] =
+"BEGIN:VCARD\r\n\
+VERSION:2.1\r\n\
+X-SIMPSON:Family vCard\r\n\
+BEGIN:VCARD\r\n\
+VERSION:2.1\r\n\
+N:Simpson;Homer\r\n\
+TEL;CELL:1111\r\n\
+EMAIL;ENCODING=QUOTED-PRINTABLE:homer=40simpsons.com\r\n\
+END:VCARD\r\n\
+BEGIN:VCARD\r\n\
+VERSION:2.1\r\n\
+N:Simpson;Marge\r\n\
+TEL;CELL:7777\r\n\
+END:VCARD\r\n\
+END:VCARD";
+    vCard = validGroupedCard;
+    document = mReaderPrivate->parseVersitDocument(vCard);
+    QCOMPARE(mReaderPrivate->mDocumentNestingLevel,0);
+    QCOMPARE(document.properties().count(), 0);
+    QList<QVersitDocument> versitDocuments = mReaderPrivate->mVersitDocuments;
+    QCOMPARE(versitDocuments.count(), 2);
+    QCOMPARE(versitDocuments.at(0).properties().count(), 3);
+    QCOMPARE(versitDocuments.at(0).properties().at(0).name(),
+             QString::fromAscii("N"));
+    QCOMPARE(versitDocuments.at(0).properties().at(0).value(),
+             QByteArray("Simpson;Homer"));
+    QCOMPARE(versitDocuments.at(1).properties().count(), 2);
+    QCOMPARE(versitDocuments.at(1).properties().at(1).name(),
+             QString::fromAscii("TEL"));
+    QCOMPARE(versitDocuments.at(1).properties().at(1).value(),
+             QByteArray("7777"));
+    QCOMPARE(versitDocuments.at(1).properties().at(1).parameters().count(), 1);
+    QCOMPARE(versitDocuments.at(1).properties().at(1).parameters().value(QString::fromAscii("TYPE")),
+             QString::fromAscii("CELL"));
 }
