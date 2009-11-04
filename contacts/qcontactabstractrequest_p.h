@@ -80,8 +80,8 @@ public:
     {
         return QContactAbstractRequest::InvalidRequest;
     }
+
     bool stateTransition(QContactAbstractRequest* req, QContactAbstractRequest::Status newState);
-    void removeFromManagerEngine();
 
     QContactManager::Error m_error;
     QContactAbstractRequest::Status m_status;
