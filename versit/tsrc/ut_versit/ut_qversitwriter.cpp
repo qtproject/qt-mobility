@@ -123,10 +123,9 @@ END:VCARD\r\n";
     QCOMPARE(QString::fromAscii(result),QString::fromAscii(vCard30));
     QVERIFY(mWritingDoneCalled);
 
-    // Asynchronous writing started, try to start again
+    // Start asynchronous writing and leave it running
     mOutputDevice->reset();
     QVERIFY(mWriter->startAsynchronousWriting());
-    QVERIFY(!mWriter->startAsynchronousWriting());
 }
 
 void UT_QVersitWriter::testEncodeGroupsAndName()
