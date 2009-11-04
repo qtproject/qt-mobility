@@ -330,7 +330,6 @@ void tst_QContactAsync::contactFetch()
     cfr.setFilter(fil);
     cfr.setSorting(sorting);
     cfr.setDefinitionRestrictions(QStringList());
-    int counter = 0;
     while (true) {
         QVERIFY(!cfr.cancel()); // not started
         QVERIFY(cfr.start());
@@ -338,11 +337,6 @@ void tst_QContactAsync::contactFetch()
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
             expectedCount += 3; // active + progress + finished signals
-            counter++;
-            if (counter > 5) {
-                qWarning() << "Can't break the async request thread scheduling after 5 tries, async cancelling tests skipped!";
-                break;
-            }
             continue;
         }
 
@@ -358,7 +352,6 @@ void tst_QContactAsync::contactFetch()
     }
 
     // restart, and wait for progress after cancel.
-    counter = 0;
     while (true) {
         QVERIFY(!cfr.cancel()); // not started
         QVERIFY(cfr.start());
@@ -366,10 +359,6 @@ void tst_QContactAsync::contactFetch()
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
             expectedCount += 3; // active + progress + finished signals
-            if (counter > 5) {
-                qWarning() << "Can't break the async request thread scheduling after 5 tries, async cancelling tests skipped!";
-                break;
-            }
             continue;
         }
         QVERIFY(cfr.waitForProgress());

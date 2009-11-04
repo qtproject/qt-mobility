@@ -187,7 +187,7 @@ bool QContactAbstractRequest::start()
 bool QContactAbstractRequest::cancel()
 {
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine) {
+    if (engine && isActive()) {
         return engine->cancelRequest(this);
     }
 

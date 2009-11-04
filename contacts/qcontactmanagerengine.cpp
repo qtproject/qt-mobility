@@ -1781,7 +1781,8 @@ bool QContactManagerEngine::waitForRequestFinished(QContactAbstractRequest* req,
 void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     // convenience function that simply sets the operation error and status
-    bool requestLocked = req->d_ptr->mutex.tryLock();
+    QMutexLocker locker(&req->d_ptr->mutex);
+
     req->d_ptr->m_error = error;
     req->d_ptr->m_errors = errors;
     req->d_ptr->m_status = status;
@@ -1859,9 +1860,6 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
 
         default: // unknown request type.
         break;
-    }
-    if (requestLocked) {
-        req->d_ptr->mutex.unlock();
     }
 }
 
