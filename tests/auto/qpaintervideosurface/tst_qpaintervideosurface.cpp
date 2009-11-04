@@ -1158,7 +1158,7 @@ void tst_QPainterVideoSurface::shaderPresentGLFrame()
         QSKIP("Shader type couldn't be set", SkipSingle);
 
     QVideoSurfaceFormat format(
-            QSize(64, 64), QVideoFrame::Format_RGB32, QAbstractVideoBuffer::GLTextureHandle);
+            QSize(2, 2), QVideoFrame::Format_RGB32, QAbstractVideoBuffer::GLTextureHandle);
 
     QVERIFY(surface.start(format));
     QCOMPARE(surface.isStarted(), true);
@@ -1175,14 +1175,23 @@ void tst_QPainterVideoSurface::shaderPresentGLFrame()
 
     QVideoFrame frame(buffer, QSize(2, 2), QVideoFrame::Format_RGB32);
 
-    if (surface.present(frame)) {
+    QVERIFY(surface.present(frame));
+
+    {
         QPainter painter(&widget);
         surface.paint(&painter, QRect(0, 0, 320, 240));
     }
 
-    QCOMPARE(surface.isStarted(), false);
+    QCOMPARE(surface.isStarted(), true);
     QCOMPARE(surface.isReady(), false);
-    QCOMPARE(surface.error(), QAbstractVideoSurface::IncorrectFormatError);
+
+    {
+        QPainter painter(&widget);
+        surface.paint(&painter, QRect(0, 0, 320, 240));
+    }
+
+    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isReady(), false);
 }
 
 #endif
