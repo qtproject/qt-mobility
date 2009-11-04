@@ -84,6 +84,9 @@ private slots:
 
     void clientServer();
 
+    void threads_data();
+    void threads();
+
 private:
     QMap<QAbstractValueSpaceLayer *, QValueSpaceProvider *> roots;
     QMap<QAbstractValueSpaceLayer*, QValueSpaceProvider *> busys;

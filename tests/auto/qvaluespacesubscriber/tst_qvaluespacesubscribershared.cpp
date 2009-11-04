@@ -50,6 +50,8 @@
 #include <QSignalSpy>
 #include <QProcess>
 #include <QFile>
+#include <QThread>
+#include <QTimer>
 
 #include <QDebug>
 
@@ -720,6 +722,8 @@ void tst_QValueSpaceSubscriber::contentsChanged()
     QTRY_COMPARE(spy->count(), should_emit_signal);
     QCOMPARE(subscriber.value(value_path,!old_value).toBool(), new_value);
 
+    disconnect(&subscriber, SIGNAL(contentsChanged()), listener, SIGNAL(baseChanged()));
+
     delete spy;
     delete listener;
 }
@@ -1055,6 +1059,147 @@ void tst_QValueSpaceSubscriber::clientServer()
 #else
     QVERIFY(!QValueSpaceManager::instance()->isServer());
 #endif
+}
+
+class WriteThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    WriteThread();
+
+    void setDone();
+
+protected:
+    void run();
+
+private:
+    QValueSpaceProvider *provider;
+    bool done;
+};
+
+WriteThread::WriteThread()
+:   provider(0), done(false)
+{
+}
+
+void WriteThread::setDone()
+{
+    done = true;
+}
+
+void WriteThread::run()
+{
+    QTest::qWait(100);  // give some ReadThreads some time to start.
+
+    QValueSpaceProvider provider("/threads");
+
+    uint value = 0;
+    while (!done) {
+        provider.setAttribute("value", value);
+        provider.sync();
+        QTest::qWait(100);
+        value += 100;
+    }
+}
+
+class ReadThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    ReadThread(QValueSpaceSubscriber *subscriber, bool sync);
+
+protected:
+    void run();
+
+private:
+    QValueSpaceSubscriber *masterSubscriber;
+    int iterations;
+    bool synchronised;
+};
+
+ReadThread::ReadThread(QValueSpaceSubscriber *subscriber, bool sync)
+:   masterSubscriber(subscriber), iterations(0), synchronised(sync)
+{
+}
+
+void ReadThread::run()
+{
+    while (true) {
+        QValueSpaceSubscriber subscriber;
+        subscriber.setPath(masterSubscriber);
+
+        if (synchronised) {
+            QEventLoop loop;
+            connect(&subscriber, SIGNAL(contentsChanged()), &loop, SLOT(quit()));
+            QTimer::singleShot(1000, &loop, SLOT(quit()));
+            loop.exec();
+        }
+
+        ++iterations;
+
+        QVariant value = subscriber.value();
+        if (value.isValid() && value.toUInt() > 1000)
+            break;
+    }
+}
+
+void tst_QValueSpaceSubscriber::threads_data()
+{
+    QTest::addColumn<unsigned int>("threads");
+    QTest::addColumn<bool>("synchronised");
+
+    QTest::newRow("1 thread") << uint(1) << true;
+    QTest::newRow("2 threads") << uint(2) << true;
+#ifdef Q_OS_WINCE
+    QTest::newRow("10 threads") << uint(10) << true;
+#else
+    QTest::newRow("100 threads") << uint(100) << true;
+#endif
+    QTest::newRow("1 thread, unsynchronised") << uint(1) << false;
+    QTest::newRow("2 threads, unsynchronised") << uint(2) << false;
+#ifdef Q_OS_WINCE
+    QTest::newRow("10 threads") << uint(10) << false;
+#else
+    QTest::newRow("100 threads, unsynchronised") << uint(100) << false;
+#endif
+}
+
+void tst_QValueSpaceSubscriber::threads()
+{
+    QFETCH(unsigned int, threads);
+    QFETCH(bool, synchronised);
+
+    QEventLoop writeLoop;
+    WriteThread *writeThread = new WriteThread;
+    connect(writeThread, SIGNAL(finished()), &writeLoop, SLOT(quit()));
+    writeThread->start();
+
+    QValueSpaceSubscriber masterSubscriber("/threads/value");
+
+    QVector<ReadThread *> readThreads(threads);
+
+    for (unsigned int i = 0; i < threads; ++i) {
+        readThreads[i] = new ReadThread(&masterSubscriber, synchronised);
+        readThreads[i]->start();
+    }
+
+    for (unsigned int i = 0; i < threads; ++i) {
+        QEventLoop loop;
+        connect(readThreads[i], SIGNAL(finished()), &loop, SLOT(quit()));
+        if (!readThreads[i]->isFinished())
+            loop.exec();
+
+        delete readThreads[i];
+    }
+
+    writeThread->setDone();
+
+    if (!writeThread->isFinished())
+        writeLoop.exec();
+
+    delete writeThread;
 }
 
 #include "tst_qvaluespacesubscribershared.moc"
