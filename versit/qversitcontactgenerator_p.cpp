@@ -143,6 +143,7 @@ QVersitContactGeneratorPrivate::~QVersitContactGeneratorPrivate()
  */
 QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& versitDocument)
 {
+    mUnconvertedVersitProperties.clear();
     QContact contact;
     const QList<QVersitProperty> properties = versitDocument.properties();
     foreach (QVersitProperty property, properties) {
@@ -185,6 +186,8 @@ QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& 
             detail = createAvatar(property,versitDocument,QContactAvatar::SubTypeAudioRingtone);
         } else {
             detail = createNameValueDetail(property);
+            if (!detail)
+                mUnconvertedVersitProperties.append(property);
         }
 
         if (detail) {

@@ -61,15 +61,6 @@ QVersitContactGenerator::~QVersitContactGenerator()
 }
 
 /*!
- * Generates a QContact from \a versitDocument.
- */
-QContact QVersitContactGenerator::generateContact(
-    const QVersitDocument& versitDocument)
-{
-    return d->generateContact(versitDocument);
-}
-
-/*!
  * Sets the \a path where the contact photos will be saved.
  */
 void QVersitContactGenerator::setImagePath(const QString& path)
@@ -99,4 +90,22 @@ void QVersitContactGenerator::setAudioClipPath(const QString& path)
 QString QVersitContactGenerator::audioClipPath() const
 {
     return d->mAudioClipPath;
+}
+
+/*!
+ * Generates a QContact from \a versitDocument.
+ */
+QContact QVersitContactGenerator::generateContact(
+    const QVersitDocument& versitDocument)
+{
+    return d->generateContact(versitDocument);
+}
+
+/*!
+ * Returns the list of versit properties that were left unconverted
+ * by the most recent call of generateContact.
+ */
+QList<QVersitProperty> QVersitContactGenerator::unconvertedVersitProperties()
+{
+    return d->mUnconvertedVersitProperties;
 }

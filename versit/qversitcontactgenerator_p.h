@@ -53,10 +53,11 @@
 // We mean it.
 //
 
+#include "qversitdefs.h"
+#include <QList>
 #include <QDateTime>
 #include <QHash>
 #include <QPair>
-#include "qversitdefs.h"
 
 class QContact;
 class QContactDetail;
@@ -71,6 +72,7 @@ public:
     ~QVersitContactGeneratorPrivate();
 
     QContact generateContact(const QVersitDocument& versitDocument);
+    QList<QVersitProperty> unconvertedVersitProperties();
     
 private:
     QContactDetail* createName(
@@ -115,6 +117,7 @@ private: // Utilities
 public: // Data
     QString mImagePath;
     QString mAudioClipPath;
+    QList<QVersitProperty> mUnconvertedVersitProperties;
 
 private: // Data
     QHash<QString,QPair<QString,QString> > mDetailMappings;

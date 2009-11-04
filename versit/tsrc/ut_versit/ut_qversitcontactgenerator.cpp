@@ -1036,6 +1036,57 @@ void UT_QVersitContactGenerator::testSound()
     QCOMPARE(content,val);
 }
 
+void UT_QVersitContactGenerator::testUnconvertedVersitProperties()
+{
+    QVersitDocument document;
+    QVersitProperty property;
+    QCOMPARE(mGenerator->unconvertedVersitProperties().count(), 0);
+
+    // No unconverted properties, no converted properties either
+    mGenerator->generateContact(document);
+    QCOMPARE(mGenerator->unconvertedVersitProperties().count(), 0);
+
+    // No unconverted properties, one converted property
+    property.setName(QString::fromAscii(versitNameId));
+    property.setValue("Simpson;Homer;J;;");
+    document.addProperty(property);
+    mGenerator->generateContact(document);
+    QCOMPARE(mGenerator->unconvertedVersitProperties().count(), 0);
+
+    // One unconverted property
+    property.setName(QString::fromAscii("X-EXTENSION-1"));
+    property.setValue("extension value 1");
+    document.addProperty(property);
+    mGenerator->generateContact(document);
+    QList<QVersitProperty> unconvertedProperties =
+        mGenerator->unconvertedVersitProperties();
+    QCOMPARE(unconvertedProperties.count(), 1);
+    QCOMPARE(unconvertedProperties[0].name(), QString::fromAscii("X-EXTENSION-1"));
+    QCOMPARE(QString::fromAscii(unconvertedProperties[0].value()),
+             QString::fromAscii("extension value 1"));
+
+    // Two unconverted properties
+    property.setName(QString::fromAscii("X-EXTENSION-2"));
+    property.setValue("extension value 2");
+    document.addProperty(property);
+    mGenerator->generateContact(document);
+    unconvertedProperties = mGenerator->unconvertedVersitProperties();
+    QCOMPARE(unconvertedProperties.count(), 2);
+    QCOMPARE(unconvertedProperties[0].name(), QString::fromAscii("X-EXTENSION-1"));
+    QCOMPARE(QString::fromAscii(unconvertedProperties[0].value()),
+             QString::fromAscii("extension value 1"));
+    QCOMPARE(unconvertedProperties[1].name(), QString::fromAscii("X-EXTENSION-2"));
+    QCOMPARE(QString::fromAscii(unconvertedProperties[1].value()),
+             QString::fromAscii("extension value 2"));
+
+    // Test that the previous unconverted properties are cleaned
+    // when generateContact is called again
+    document = QVersitDocument();
+    mGenerator->generateContact(document);
+    unconvertedProperties = mGenerator->unconvertedVersitProperties();
+    QCOMPARE(unconvertedProperties.count(), 0);
+}
+
 QVersitDocument UT_QVersitContactGenerator::createDocumentWithProperty(
     const QVersitProperty& property)
 {

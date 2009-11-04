@@ -44,8 +44,10 @@
 
 #include <qtversitglobal.h>
 #include <qcontact.h>
+#include <QList>
 
 class QVersitDocument;
+class QVersitProperty;
 class QVersitContactGeneratorPrivate;
 
 class QTVERSIT_EXPORT QVersitContactGenerator
@@ -61,6 +63,7 @@ public:
     QString audioClipPath() const;
 
     QContact generateContact(const QVersitDocument& versitDocument);
+    QList<QVersitProperty> unconvertedVersitProperties();
     
 private:
     QVersitContactGeneratorPrivate* d;
