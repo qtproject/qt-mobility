@@ -349,7 +349,7 @@ void tst_QContactAsync::contactFetch()
         if (!cfr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
-            expectedCount += 3; // active + progress + finished signals
+            expectedCount += 2; // active + progress + finished signals
             cfr.waitForFinished();
             bailoutCount -= 1;
             if (!bailoutCount) {
@@ -380,7 +380,7 @@ void tst_QContactAsync::contactFetch()
         if (!cfr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
-            expectedCount += 3; // active + progress + finished signals
+            expectedCount += 2; // active + progress + finished signals
             cfr.waitForFinished();
             bailoutCount -= 1;
             if (!bailoutCount) {
@@ -621,7 +621,7 @@ void tst_QContactAsync::contactRemove()
         if (!crr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
-            expectedCount += 3; // active + progress + finished signals
+            expectedCount += 2; // active + progress + finished signals
             crr.waitForFinished();
             temp.setId(QContactId());
             if (!cm->saveContact(&temp)) {
@@ -658,7 +658,7 @@ void tst_QContactAsync::contactRemove()
         if (!crr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
-            expectedCount += 3; // active + progress + finished signals
+            expectedCount += 2; // active + progress + finished signals
             crr.waitForFinished();
             temp.setId(QContactId());
             cm->saveContact(&temp);
@@ -777,7 +777,7 @@ void tst_QContactAsync::contactSave()
         if (!csr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
-            expectedCount += 3; // active + progress + finished signals
+            expectedCount += 2; // active + progress + finished signals
             csr.waitForFinished();
             cm->removeContact(temp.localId());
             bailoutCount -= 1;
@@ -819,7 +819,7 @@ void tst_QContactAsync::contactSave()
         if (!csr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
-            expectedCount += 3; // active + progress + finished signals
+            expectedCount += 2; // active + progress + finished signals
             csr.waitForFinished();
             cm->removeContact(temp.localId());
             bailoutCount -= 1;
@@ -921,7 +921,7 @@ void tst_QContactAsync::definitionFetch()
         if (!dfr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
-            expectedCount += 3; // active + progress + finished signals
+            expectedCount += 2; // active + progress + finished signals
             dfr.waitForFinished();
             bailoutCount -= 1;
             if (!bailoutCount) {
@@ -953,7 +953,7 @@ void tst_QContactAsync::definitionFetch()
         if (!dfr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
-            expectedCount += 3; // active + progress + finished signals
+            expectedCount += 2; // active + progress + finished signals
             dfr.waitForFinished();
             bailoutCount -= 1;
             if (!bailoutCount) {
@@ -1084,7 +1084,7 @@ void tst_QContactAsync::definitionRemove()
         if (!drr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
-            expectedCount += 3; // active + progress + finished signals
+            expectedCount += 2; // active + progress + finished signals
             drr.waitForFinished();
             cm->saveDetailDefinition(resaveIfRemoved);
             bailoutCount -= 1;
@@ -1118,7 +1118,7 @@ void tst_QContactAsync::definitionRemove()
         if (!drr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
-            expectedCount += 3; // active + progress + finished signals
+            expectedCount += 2; // active + progress + finished signals
             drr.waitForFinished();
             cm->saveDetailDefinition(resaveIfRemoved);
             bailoutCount -= 1;
@@ -1242,7 +1242,7 @@ void tst_QContactAsync::definitionSave()
         if (!dsr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
-            expectedCount += 3; // active + progress + finished signals
+            expectedCount += 2; // active + progress + finished signals
             dsr.waitForFinished();
             cm->removeDetailDefinition(testDef.name());
             bailoutCount -= 1;
@@ -1280,7 +1280,7 @@ void tst_QContactAsync::definitionSave()
         if (!dsr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
-            expectedCount += 3; // active + progress + finished signals
+            expectedCount += 2; // active + progress + finished signals
             dsr.waitForFinished();
             cm->removeDetailDefinition(testDef.name());
             bailoutCount -= 1;
@@ -1474,7 +1474,7 @@ void tst_QContactAsync::relationshipFetch()
         if (!rfr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
-            expectedCount += 3; // active + progress + finished signals
+            expectedCount += 2; // active + progress + finished signals
             rfr.waitForFinished();
             bailoutCount -= 1;
             if (!bailoutCount) {
@@ -1505,7 +1505,7 @@ void tst_QContactAsync::relationshipFetch()
         if (!rfr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
-            expectedCount += 3; // active + progress + finished signals
+            expectedCount += 2; // active + progress + finished signals
             rfr.waitForFinished();
             bailoutCount -= 1;
             if (!bailoutCount) {
@@ -1688,7 +1688,7 @@ void tst_QContactAsync::relationshipRemove()
         if (!rrr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
-            expectedCount += 3; // active + progress + finished signals
+            expectedCount += 2; // active + progress + finished signals
             rrr.waitForFinished();
             cm->saveRelationships(&resaveIfRemoved);
             bailoutCount -= 1;
@@ -1722,7 +1722,7 @@ void tst_QContactAsync::relationshipRemove()
         if (!rrr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
-            expectedCount += 3; // active + progress + finished signals
+            expectedCount += 2; // active + progress + finished signals
             rrr.waitForFinished();
             cm->saveRelationships(&resaveIfRemoved);
             bailoutCount -= 1;
@@ -1847,7 +1847,7 @@ void tst_QContactAsync::relationshipSave()
         if (!rsr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
-            expectedCount += 3; // active + progress + finished signals
+            expectedCount += 2; // active + progress + finished signals
             rsr.waitForFinished();
             cm->removeRelationship(testRel); // probably shouldn't have been saved anyway (circular)
             bailoutCount -= 1;
@@ -1885,7 +1885,7 @@ void tst_QContactAsync::relationshipSave()
         if (!rsr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
-            expectedCount += 3; // active + progress + finished signals
+            expectedCount += 2; // active + progress + finished signals
             rsr.waitForFinished();
             cm->removeRelationship(testRel); // probably shouldn't have been saved anyway (circular)
             bailoutCount -= 1;
