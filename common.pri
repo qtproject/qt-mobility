@@ -108,14 +108,6 @@ wince* {
 
     DEPLOYMENT += CONTACTS_DEPLOYMENT CONTACTS_PLUGINS_DEPLOYMENT
 }
-symbian {
-    # Main library
-    CONTACTS_DEPLOYMENT.sources = QtContacts.dll
-    CONTACTS_DEPLOYMENT.path = \sys\bin
-
-    # Engine plugins should be installed in their own .pro
-    DEPLOYMENT += CONTACTS_DEPLOYMENT
-}
 
 # Add the output dirs to the link path too
 LIBS += -L$$DESTDIR
