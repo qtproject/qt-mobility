@@ -330,7 +330,7 @@ void tst_QContactAsync::contactFetch()
     cfr.setFilter(fil);
     cfr.setSorting(sorting);
     cfr.setDefinitionRestrictions(QStringList());
-    int bailoutCount = 40; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
+    int counter = 0;
     while (true) {
         QVERIFY(!cfr.cancel()); // not started
         QVERIFY(cfr.start());
@@ -338,10 +338,9 @@ void tst_QContactAsync::contactFetch()
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
             expectedCount += 3; // active + progress + finished signals
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
+            counter++;
+            if (counter > 5) {
+                qWarning() << "Can't break the async request thread scheduling after 5 tries, async cancelling tests skipped!";
                 break;
             }
             continue;
@@ -359,6 +358,7 @@ void tst_QContactAsync::contactFetch()
     }
 
     // restart, and wait for progress after cancel.
+    counter = 0;
     while (true) {
         QVERIFY(!cfr.cancel()); // not started
         QVERIFY(cfr.start());
@@ -366,10 +366,8 @@ void tst_QContactAsync::contactFetch()
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
             expectedCount += 3; // active + progress + finished signals
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
+            if (counter > 5) {
+                qWarning() << "Can't break the async request thread scheduling after 5 tries, async cancelling tests skipped!";
                 break;
             }
             continue;
@@ -473,19 +471,12 @@ void tst_QContactAsync::contactIdFetch()
     sorting.clear();
     cfr.setFilter(fil);
     cfr.setSorting(sorting);
-    int bailoutCount = 40; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!cfr.cancel()); // not started
         QVERIFY(cfr.start());
         if (!cfr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
-                break;
-            }
             continue;
         }
 
@@ -505,12 +496,6 @@ void tst_QContactAsync::contactIdFetch()
         QVERIFY(!cfr.cancel()); // not started
         QVERIFY(cfr.start());
         if (!cfr.cancel()) {
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
-                break;
-            }
             continue;
         }
         QVERIFY(cfr.waitForProgress());
@@ -588,7 +573,6 @@ void tst_QContactAsync::contactRemove()
     temp.setDisplayLabel("should not be removed");
     cm->saveContact(&temp);
     crr.setFilter(dfil);
-    int bailoutCount = 40; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!crr.cancel()); // not started
         QVERIFY(crr.start());
@@ -598,12 +582,6 @@ void tst_QContactAsync::contactRemove()
             expectedCount += 3; // active + progress + finished signals
             temp.setId(QContactId());
             cm->saveContact(&temp);
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
-                break;
-            }
             continue;
         }
 
@@ -630,12 +608,6 @@ void tst_QContactAsync::contactRemove()
             expectedCount += 3; // active + progress + finished signals
             temp.setId(QContactId());
             cm->saveContact(&temp);
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
-                break;
-            }
             continue;
         }
         QVERIFY(crr.waitForProgress());
@@ -737,7 +709,6 @@ void tst_QContactAsync::contactSave()
     saveList.clear();
     saveList << temp;
     csr.setContacts(saveList);
-    int bailoutCount = 40; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!csr.cancel()); // not started
         QVERIFY(csr.start());
@@ -746,12 +717,6 @@ void tst_QContactAsync::contactSave()
             // after the request has already finished.. so loop and try again.
             expectedCount += 3; // active + progress + finished signals
             cm->removeContact(temp.localId());
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
-                break;
-            }
             continue;
         }
 
@@ -785,12 +750,6 @@ void tst_QContactAsync::contactSave()
             // after the request has already finished.. so loop and try again.
             expectedCount += 3; // active + progress + finished signals
             cm->removeContact(temp.localId());
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
-                break;
-            }
             continue;
         }
         QVERIFY(csr.waitForProgress());
@@ -876,7 +835,6 @@ void tst_QContactAsync::definitionFetch()
 
     // cancelling
     dfr.setNames(QStringList());
-    int bailoutCount = 40; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!dfr.cancel()); // not started
         QVERIFY(dfr.start());
@@ -884,12 +842,6 @@ void tst_QContactAsync::definitionFetch()
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
             expectedCount += 3; // active + progress + finished signals
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
-                break;
-            }
             continue;
         }
 
@@ -913,12 +865,6 @@ void tst_QContactAsync::definitionFetch()
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
             expectedCount += 3; // active + progress + finished signals
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
-                break;
-            }
             continue;
         }
         QVERIFY(dfr.waitForProgress());
@@ -1034,7 +980,6 @@ void tst_QContactAsync::definitionRemove()
     removeIds << cm->detailDefinitions().keys().first();
     QContactDetailDefinition resaveIfRemoved = cm->detailDefinition(removeIds.at(0));
     drr.setNames(removeIds);
-    int bailoutCount = 40; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!drr.cancel()); // not started
         QVERIFY(drr.start());
@@ -1043,12 +988,6 @@ void tst_QContactAsync::definitionRemove()
             // after the request has already finished.. so loop and try again.
             expectedCount += 3; // active + progress + finished signals
             cm->saveDetailDefinition(resaveIfRemoved);
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
-                break;
-            }
             continue;
         }
 
@@ -1074,12 +1013,6 @@ void tst_QContactAsync::definitionRemove()
             // after the request has already finished.. so loop and try again.
             expectedCount += 3; // active + progress + finished signals
             cm->saveDetailDefinition(resaveIfRemoved);
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
-                break;
-            }
             continue;
         }
         QVERIFY(drr.waitForProgress());
@@ -1185,7 +1118,6 @@ void tst_QContactAsync::definitionSave()
     saveList.clear();
     saveList << testDef;
     dsr.setDefinitions(saveList);
-    int bailoutCount = 40; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!dsr.cancel()); // not started
         QVERIFY(dsr.start());
@@ -1194,12 +1126,6 @@ void tst_QContactAsync::definitionSave()
             // after the request has already finished.. so loop and try again.
             expectedCount += 3; // active + progress + finished signals
             cm->removeDetailDefinition(testDef.name());
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
-                break;
-            }
             continue;
         }
 
@@ -1229,12 +1155,6 @@ void tst_QContactAsync::definitionSave()
             // after the request has already finished.. so loop and try again.
             expectedCount += 3; // active + progress + finished signals
             cm->removeDetailDefinition(testDef.name());
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
-                break;
-            }
             continue;
         }
         QVERIFY(dsr.waitForProgress());
@@ -1412,7 +1332,6 @@ void tst_QContactAsync::relationshipFetch()
 
     // cancelling
     rfr.setRelationshipType(QString());
-    int bailoutCount = 40; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!rfr.cancel()); // not started
         QVERIFY(rfr.start());
@@ -1420,12 +1339,6 @@ void tst_QContactAsync::relationshipFetch()
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
             expectedCount += 3; // active + progress + finished signals
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
-                break;
-            }
             continue;
         }
 
@@ -1448,12 +1361,6 @@ void tst_QContactAsync::relationshipFetch()
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
             expectedCount += 3; // active + progress + finished signals
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
-                break;
-            }
             continue;
         }
         QVERIFY(rfr.waitForProgress());
@@ -1621,7 +1528,6 @@ void tst_QContactAsync::relationshipRemove()
     QList<QContactRelationship> resaveIfRemoved = cm->relationships(cId, QContactRelationshipFilter::First);
     rrr.setFirst(cId);
     rrr.setSecond(QContactId());
-    int bailoutCount = 40; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!rrr.cancel()); // not started
         QVERIFY(rrr.start());
@@ -1630,12 +1536,6 @@ void tst_QContactAsync::relationshipRemove()
             // after the request has already finished.. so loop and try again.
             expectedCount += 3; // active + progress + finished signals
             cm->saveRelationships(&resaveIfRemoved);
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
-                break;
-            }
             continue;
         }
 
@@ -1661,12 +1561,6 @@ void tst_QContactAsync::relationshipRemove()
             // after the request has already finished.. so loop and try again.
             expectedCount += 3; // active + progress + finished signals
             cm->saveRelationships(&resaveIfRemoved);
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
-                break;
-            }
             continue;
         }
         QVERIFY(rrr.waitForProgress());
@@ -1775,7 +1669,6 @@ void tst_QContactAsync::relationshipSave()
     saveList.clear();
     saveList << testRel;
     rsr.setRelationships(saveList);
-    int bailoutCount = 40; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!rsr.cancel()); // not started
         QVERIFY(rsr.start());
@@ -1784,12 +1677,6 @@ void tst_QContactAsync::relationshipSave()
             // after the request has already finished.. so loop and try again.
             expectedCount += 3; // active + progress + finished signals
             cm->removeRelationship(testRel); // probably shouldn't have been saved anyway (circular)
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
-                break;
-            }
             continue;
         }
 
@@ -1819,12 +1706,6 @@ void tst_QContactAsync::relationshipSave()
             // after the request has already finished.. so loop and try again.
             expectedCount += 3; // active + progress + finished signals
             cm->removeRelationship(testRel); // probably shouldn't have been saved anyway (circular)
-            bailoutCount -= 1;
-            if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
-                bailoutCount = 40;
-                break;
-            }
             continue;
         }
         QVERIFY(rsr.waitForProgress());
