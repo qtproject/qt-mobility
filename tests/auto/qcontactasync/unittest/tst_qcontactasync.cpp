@@ -535,7 +535,9 @@ void tst_QContactAsync::contactRemove()
     QVERIFY(crr.filter() == dfil);
     QVERIFY(!crr.cancel()); // not started
     QVERIFY(crr.start());
-    QVERIFY((crr.isActive() &&crr.status() == QContactAbstractRequest::Active) || crr.isFinished());
+    QVERIFY(crr.isActive());
+    QVERIFY(crr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!crr.isFinished());
     QVERIFY(!crr.start());  // already started.
     QVERIFY(crr.waitForFinished());
     int expectedCount = 2;
@@ -552,7 +554,9 @@ void tst_QContactAsync::contactRemove()
     QVERIFY(crr.filter() == dfil);
     QVERIFY(!crr.cancel()); // not started
     QVERIFY(crr.start());
-    QVERIFY((crr.isActive() && crr.status() == QContactAbstractRequest::Active) || crr.isFinished());
+    QVERIFY(crr.isActive());
+    QVERIFY(crr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!crr.isFinished());
     QVERIFY(!crr.start());  // already started.
     QVERIFY(crr.waitForFinished());
     expectedCount += 2;
@@ -569,10 +573,13 @@ void tst_QContactAsync::contactRemove()
     crr.setFilter(dfil);
     QVERIFY(!crr.cancel()); // not started
     QVERIFY(crr.start());
-    QVERIFY((crr.isActive() && crr.status() == QContactAbstractRequest::Active) || crr.isFinished());
+    QVERIFY(crr.isActive());
+    QVERIFY(crr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!crr.isFinished());
     QVERIFY(crr.cancel());
     QVERIFY(crr.status() == QContactAbstractRequest::Cancelling);
-    QVERIFY(crr.isActive() || crr.isFinished());    // still cancelling
+    QVERIFY(crr.isActive());    // still cancelling
+    QVERIFY(!crr.isFinished()); // not finished cancelling
     QVERIFY(!crr.start());      // already started.
     QVERIFY(crr.waitForFinished());
     expectedCount += 3;
@@ -587,10 +594,13 @@ void tst_QContactAsync::contactRemove()
     // restart, and wait for progress after cancel.
     QVERIFY(!crr.cancel()); // not started
     QVERIFY(crr.start());
-    QVERIFY((crr.isActive() && crr.status() == QContactAbstractRequest::Active)|| crr.isFinished());
+    QVERIFY(crr.isActive());
+    QVERIFY(crr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!crr.isFinished());
     QVERIFY(crr.cancel());
     QVERIFY(crr.status() == QContactAbstractRequest::Cancelling);
-    QVERIFY(crr.isActive() || crr.isFinished());    // still cancelling
+    QVERIFY(crr.isActive());    // still cancelling
+    QVERIFY(!crr.isFinished()); // not finished cancelling
     QVERIFY(!crr.start());      // already started.
     QVERIFY(crr.waitForProgress());
     expectedCount += 3;
