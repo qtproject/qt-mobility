@@ -49,10 +49,32 @@
 /*!
  * \class QVersitWriter
  *
- * \brief The QVersitWriter class provides an interface 
- * for encoding vCards from a versit document into a stream. 
+ * \brief QVersitWriter provides an interface
+ * for writing a versit document such as a vCard to a text stream.
  *
- * \sa
+ * QVersitWriter converts a QVersitDocument into its textual representation.
+ * QVersitWriter supports writing to an abstract I/O device
+ * which can be for example a file or a memory buffer.
+ * The writing can be done synchronously or asynchronously.
+ *
+ * \code
+ * // An example of writing a simple vCard to a memory buffer:
+ * QBuffer vCardBuffer;
+ * vCardBuffer.open(QBuffer::ReadWrite);
+ * QVersitWriter writer;
+ * writer.setDevice(&vCardBuffer);
+ * QVersitDocument document;
+ * QVersitProperty property;
+ * property.setName("N");
+ * property.setValue("Simpson;Homer;J;;");
+ * document.addProperty(property);
+ * writer.setVersitDocument(document);
+ * if (writer.writeSynchronously()) {
+ *     // Use the vCardBuffer...
+ * }
+ * \endcode
+ *
+ * \sa QVersitDocument, QVersitProperty
  */
 
 /*!
@@ -74,8 +96,8 @@ QVersitWriter::~QVersitWriter()
 }
 
 /*!
- * Set the versit document to be written and
- * selects the writer implementation based on the versit document type.
+ * Set the versit document to be written to \a versitDocument and
+ * selects the actual writer implementation based on the versit document type.
  */
 void QVersitWriter::setVersitDocument(const QVersitDocument& versitDocument)
 {
@@ -108,7 +130,7 @@ QVersitDocument QVersitWriter::versitDocument() const
 }
 
 /*!
- * Sets the \a device used for encoding.
+ * Sets the device used for writing to \a device.
  */
 void QVersitWriter::setDevice(QIODevice* device)
 {
@@ -116,7 +138,7 @@ void QVersitWriter::setDevice(QIODevice* device)
 }
 
 /*!
- * Returns the device used for encoding. 
+ * Returns the device used for writing.
  */
 QIODevice* QVersitWriter::device() const
 {
@@ -125,7 +147,9 @@ QIODevice* QVersitWriter::device() const
 
 /*!
  * Starts writing the output asynchronously.
- * Signal writingDone is emitted when the writing has finished.
+ * Returns false if the output device has not been set or opened or
+ * if there is another asynchronous write operation already pending.
+ * Signal \l writingDone is emitted when the writing has finished.
  */
 bool QVersitWriter::startAsynchronousWriting()
 {
@@ -139,8 +163,10 @@ bool QVersitWriter::startAsynchronousWriting()
 
 /*!
  * Writes the output synchronously.
+ * Returns false if the output device has not been set or opened or
+ * if there is an asynchronous write operation pending.
  * Using this function may block the user thread for an undefined period.
- * In most cases asynchronous startAsynchronousWriting should be used instead.
+ * In most cases asynchronous \l startAsynchronousWriting should be used instead.
  */
 bool QVersitWriter::writeSynchronously()
 {

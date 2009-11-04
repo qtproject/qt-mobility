@@ -48,13 +48,13 @@
  * \class QVersitReader
  *
  * \brief QVersitReader provides an interface
- * for parsing versit documents such as vCards from a stream.
+ * for reading versit documents such as vCards from a stream.
  *
  * QVersitReader converts 0..n versit documents such as vCards
  * from a test stream into 0..n QVersitDocument instances.
  * QVersitReader supports reading from an abstract I/O device
  * which can be for example a file or a memory buffer.
- * The reading can be done either synchronously or asynchronously.
+ * The reading can be done synchronously or asynchronously.
  *
  * \code
  * // An example of reading a simple vCard from a memory buffer:
@@ -66,9 +66,10 @@
  * vCardBuffer.seek(0);
  * QVersitReader reader;
  * reader.setDevice(&vCardBuffer);
- * reader.readSynchronously();
- * QList<QVersitDocument> versitDocuments = reader.result();
- * // Use the resulting document(s)...
+ * if (reader.readSynchronously()) {
+ *     QList<QVersitDocument> versitDocuments = reader.result();
+ *     // Use the resulting document(s)...
+ * }
  * \endcode
  *
  * \sa QVersitDocument
@@ -110,8 +111,8 @@ QIODevice* QVersitReader::device() const
 
 /*!
  * Starts reading the input asynchronously.
- * Returns false if the input device has not been set or opened
- * or if there is another asynchronous read operation already pending.
+ * Returns false if the input device has not been set or opened or
+ * if there is another asynchronous read operation already pending.
  * Signal \l readingDone is emitted when the reading has finished.
  */
 bool QVersitReader::startAsynchronousReading()
@@ -127,6 +128,8 @@ bool QVersitReader::startAsynchronousReading()
 
 /*!
  * Reads the input synchronously.
+ * Returns false if the input device has not been set or opened or
+ * if there is an asynchronous read operation pending.
  * Using this function may block the user thread for an undefined period.
  * In most cases asynchronous \l startAsynchronousReading should be used instead.
  */
