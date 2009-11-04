@@ -47,9 +47,13 @@
 
 /* Define an innocuous request (fetch ie doesn't mutate) to "fill up" any queues */
 #define FILL_QUEUE_WITH_FETCH_REQUESTS() QContactFetchRequest fqcfr1, fqcfr2, fqcfr3; \
+                                         QContactDetailDefinitionFetchRequest fqdfr1, fqdfr2, fqdfr3; \
                                          fqcfr1.start(); \
                                          fqcfr2.start(); \
-                                         fqcfr3.start()
+                                         fqcfr3.start(); \
+                                         fqdfr1.start(); \
+                                         fqdfr2.start(); \
+                                         fqdfr3.start();
 
 
 //TESTED_CLASS=
@@ -337,7 +341,7 @@ void tst_QContactAsync::contactFetch()
     cfr.setFilter(fil);
     cfr.setSorting(sorting);
     cfr.setDefinitionRestrictions(QStringList());
-    int bailoutCount = 40; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
+    int bailoutCount = 10; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!cfr.cancel()); // not started
         FILL_QUEUE_WITH_FETCH_REQUESTS();
