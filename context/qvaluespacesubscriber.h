@@ -48,12 +48,14 @@
 #include <QObject>
 #include <QVariant>
 #include <QStringList>
+#include <QExplicitlySharedDataPointer>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-struct QValueSpaceSubscriberPrivate;
+class QValueSpaceSubscriberPrivate;
+
 class Q_CFW_EXPORT QValueSpaceSubscriber : public QObject
 {
     Q_OBJECT
@@ -102,7 +104,8 @@ private:
 
 private:
     Q_DISABLE_COPY(QValueSpaceSubscriber)
-    QValueSpaceSubscriberPrivate *d;
+
+    QExplicitlySharedDataPointer<QValueSpaceSubscriberPrivate> d;
 };
 
 QT_END_NAMESPACE

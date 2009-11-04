@@ -43,6 +43,9 @@
 #include <qvaluespacemanager_p.h>
 #include <qvaluespaceprovider.h>
 
+#include <QThread>
+#include <QVector>
+
 #include <QTest>
 #include <QDebug>
 #include <QSignalSpy>
@@ -96,6 +99,9 @@ private slots:
 
     void valuePermanence_data();
     void valuePermanence();
+
+    void threads_data();
+    void threads();
 
 private:
     int variantMetaTypeId;
@@ -241,7 +247,7 @@ void tst_QValueSpaceProvider::testConstructor()
         provider->removeAttribute(QString("value"));
         break;
     };
-    provider->sync();
+    QValueSpaceProvider::syncAll();
 
     if (layer) {
         QAbstractValueSpaceLayer::Handle handle =
@@ -458,6 +464,221 @@ void tst_QValueSpaceProvider::valuePermanence()
     }
 }
 
+class WriteThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    WriteThread(const QString &path, const QUuid &uuid, unsigned int count);
+
+    void runSequential() { run(); }
+
+protected:
+    void run();
+
+private:
+    QString path;
+    unsigned int count;
+    QValueSpaceProvider *provider;
+};
+
+WriteThread::WriteThread(const QString &path, const QUuid &uuid, unsigned int count)
+:   path(path), count(count)
+{
+    provider = new QValueSpaceProvider(path, uuid, this);
+}
+
+void WriteThread::run()
+{
+    const QString key("key%1");
+    const QString value("value%1");
+
+    for (unsigned int i = 0; i < count; ++i)
+        provider->setAttribute(key.arg(i), value.arg(i));
+
+    provider->sync();
+}
+
+void tst_QValueSpaceProvider::threads_data()
+{
+    QTest::addColumn<QUuid>("uuid");
+
+    QTest::addColumn<unsigned int>("threads");
+    QTest::addColumn<unsigned int>("count");
+    QTest::addColumn<bool>("sequential");
+
+    QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
+
+    for (int i = 0; i < layers.count(); ++i) {
+        QAbstractValueSpaceLayer *layer = layers.at(i);
+
+        if (layer->id() == QVALUESPACE_NONVOLATILEREGISTRY_LAYER)
+            continue;
+
+#ifdef Q_OS_WINCE
+        // Limit number of items on Windows CE to prevent out of disk space errors.
+        if (layer->id() == QVALUESPACE_VOLATILEREGISTRY_LAYER) {
+            QTest::newRow("1 thread, 10 items, sequential")
+                << layer->id() << uint(1) << uint(10) << true;
+            QTest::newRow("1 thread, 3000 items, sequential")
+                << layer->id() << uint(1) << uint(3000) << true;
+            QTest::newRow("2 threads, 10 items, sequential")
+                << layer->id() << uint(2) << uint(10) << true;
+            QTest::newRow("2 threads, 1500 items, sequential")
+                << layer->id() << uint(2) << uint(1500) << true;
+            QTest::newRow("4 threads, 750 items, sequential")
+                << layer->id() << uint(4) << uint(750) << true;
+            QTest::newRow("10 threads, 300 items, sequential")
+                << layer->id() << uint(10) << uint(300) << true;
+
+            QTest::newRow("1 thread, 10 items")
+                << layer->id() << uint(1) << uint(10) << false;
+            QTest::newRow("1 thread, 3000 items")
+                << layer->id() << uint(1) << uint(3000) << false;
+            QTest::newRow("2 threads, 10 items")
+                << layer->id() << uint(2) << uint(10) << false;
+            QTest::newRow("2 threads, 1500 items")
+                << layer->id() << uint(2) << uint(1500) << false;
+            QTest::newRow("4 threads, 750 items")
+                << layer->id() << uint(4) << uint(750) << false;
+            QTest::newRow("10 threads, 300 items")
+                << layer->id() << uint(10) << uint(300) << false;
+        } else
+#endif
+
+        // The Shared Memory layer can hold a maximum of 8191 nodes.
+        if (layer->id() == QVALUESPACE_SHAREDMEMORY_LAYER) {
+            QTest::newRow("1 thread, 10 items, sequential")
+                << layer->id() << uint(1) << uint(10) << true;
+            QTest::newRow("1 thread, 8000 items, sequential")
+                << layer->id() << uint(1) << uint(8000) << true;
+            QTest::newRow("2 threads, 10 items, sequential")
+                << layer->id() << uint(2) << uint(10) << true;
+            QTest::newRow("2 threads, 4000 items, sequential")
+                << layer->id() << uint(2) << uint(4000) << true;
+            QTest::newRow("4 threads, 2000 items, sequential")
+                << layer->id() << uint(4) << uint(2000) << true;
+            QTest::newRow("10 threads, 800 items, sequential")
+                << layer->id() << uint(10) << uint(800) << true;
+            QTest::newRow("100 threads, 80 items, sequential")
+                << layer->id() << uint(100) << uint(80) << true;
+
+            QTest::newRow("1 thread, 10 items")
+                << layer->id() << uint(1) << uint(10) << false;
+            QTest::newRow("1 thread, 8000 items")
+                << layer->id() << uint(1) << uint(8000) << false;
+            QTest::newRow("2 threads, 10 items")
+                << layer->id() << uint(2) << uint(10) << false;
+            QTest::newRow("2 threads, 4000 items")
+                << layer->id() << uint(2) << uint(4000) << false;
+            QTest::newRow("4 threads, 2000 items")
+                << layer->id() << uint(4) << uint(2000) << false;
+            QTest::newRow("10 threads, 800 items")
+                << layer->id() << uint(10) << uint(800) << false;
+            QTest::newRow("100 threads, 80 items")
+                << layer->id() << uint(100) << uint(80) << false;
+        } else {
+            // Assume no limits on all other layers.
+            QTest::newRow("1 thread, 10 items, sequential")
+                << layer->id() << uint(1) << uint(10) << true;
+            QTest::newRow("1 thread, 10000 items, sequential")
+                << layer->id() << uint(1) << uint(10000) << true;
+            QTest::newRow("2 threads, 10 items, sequential")
+                << layer->id() << uint(2) << uint(10) << true;
+            QTest::newRow("2 threads, 5000 items, sequential")
+                << layer->id() << uint(2) << uint(5000) << true;
+            QTest::newRow("100 threads, 100 items, sequential")
+                << layer->id() << uint(100) << uint(100) << true;
+
+            QTest::newRow("1 thread, 10 items")
+                << layer->id() << uint(1) << uint(10) << false;
+            QTest::newRow("1 thread, 10000 items")
+                << layer->id() << uint(1) << uint(10000) << false;
+            QTest::newRow("2 threads, 10 items")
+                << layer->id() << uint(2) << uint(10) << false;
+            QTest::newRow("2 threads, 5000 items")
+                << layer->id() << uint(2) << uint(5000) << false;
+            QTest::newRow("100 threads, 100 items")
+                << layer->id() << uint(100) << uint(100) << false;
+        }
+    }
+}
+
+void tst_QValueSpaceProvider::threads()
+{
+    QFETCH(QUuid, uuid);
+    QFETCH(unsigned int, threads);
+    QFETCH(unsigned int, count);
+    QFETCH(bool, sequential);
+
+    QStringList expectedPaths;
+    for (unsigned int i = 0; i < threads; ++i)
+        expectedPaths.append(QString("thread%1").arg(i));
+
+    QHash<QString, QString> expectedValues;
+    for (unsigned int i = 0; i < count; ++i)
+        expectedValues.insert(QString("key%1").arg(i), QString("value%1").arg(i));
+
+    QValueSpaceSubscriber *subscriber = new QValueSpaceSubscriber("/threads", uuid);
+
+    QVERIFY(subscriber->subPaths().isEmpty());
+
+    QVector<WriteThread *> writeThreads(threads);
+
+    // Create and start writer threads.
+    for (unsigned int i = 0; i < threads; ++i) {
+        writeThreads[i] =
+            new WriteThread(QString("/threads/%1").arg(expectedPaths.at(i)), uuid, count);
+
+        if (sequential)
+            writeThreads[i]->runSequential();
+        else
+            writeThreads[i]->start();
+    }
+
+    if (!sequential) {
+        // Wait for writer threads to finish.
+        for (unsigned int i = 0; i < threads; ++i)
+            writeThreads[i]->wait();
+    }
+
+    qDebug() << "Published" << count << "items in" << threads
+             << "theads, totaling" << (threads * count);
+
+    // Verify Value Space
+    QStringList subPaths = subscriber->subPaths();
+    if (subPaths.toSet() != expectedPaths.toSet()) {
+        qDebug() << "Expected Paths:" << expectedPaths;
+        qDebug() << "Actual Paths:" << subPaths;
+    }
+    QVERIFY(subPaths.toSet() == expectedPaths.toSet());
+
+    while (!subPaths.isEmpty()) {
+        QValueSpaceSubscriber threadItem;
+        threadItem.setPath(subscriber);
+        threadItem.cd(subPaths.takeFirst());
+
+        QStringList keys = threadItem.subPaths();
+
+        if (keys.toSet() != expectedValues.keys().toSet()) {
+            qDebug() << "Expected value keys:" << expectedValues.keys();
+            qDebug() << "Actual value keys:" << keys;
+        }
+        QVERIFY(keys.toSet() == expectedValues.keys().toSet());
+
+        while (!keys.isEmpty()) {
+            const QString key = keys.takeFirst();
+
+            QCOMPARE(threadItem.value(key).toString(), expectedValues.value(key));
+        }
+    }
+
+    delete subscriber;
+
+    // Delete writer threads.
+    for (unsigned int i = 0; i < threads; ++i)
+        delete writeThreads[i];
+}
 
 QTEST_MAIN(tst_QValueSpaceProvider)
 #include "tst_qvaluespaceprovider.moc"

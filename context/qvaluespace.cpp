@@ -49,7 +49,6 @@
 #include <QMap>
 #include <QPair>
 #include <QCoreApplication>
-#include <QThread>
 #include <QSet>
 #include <QString>
 #include <QVarLengthArray>
