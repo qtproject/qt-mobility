@@ -580,8 +580,11 @@ int CntSymbianEnginePrivate::addContactL(QContact &contact)
 
         CleanupStack::PopAndDestroy(contactItem);
     }
-
-    //else{ should this leave? }
+    // Leave with an error
+    else
+    {
+        User::Leave(KErrInvalidContactDetail);
+    }
 
     // Return the new ID.
 	return id;

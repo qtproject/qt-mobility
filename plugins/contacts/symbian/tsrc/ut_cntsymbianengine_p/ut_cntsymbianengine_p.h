@@ -50,9 +50,20 @@ private slots:
     void initTestCase();    
     void cleanupTestCase();
     
-    void testContactOperations();
-    void testGroupOperations();
-    void testSelfContactOperations();
+    void init();
+    void clean();
+    
+    void addContact();
+    void retrieveContact();
+    void updateContact();
+    void removeContact();
+    void addOwnCard();
+    void retrieveOwnCard();
+    void addGroup();
+    void retrieveGroup();
+    void batchContacts();
+    void singleRelationship();
+    void batchRelationships();
 
 private:
     void removeAllContacts();
