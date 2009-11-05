@@ -359,13 +359,13 @@ void QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, Mapi
         // specifically in the case that one of the oreands has a *Filter field.
         switch (filter->d_ptr->_operator) {
         case And:
-            *filter = filter->d_ptr->containerFiltersPart() &  *l & *r;
+            *filter = filter->d_ptr->containerFiltersPart() & (*l & *r);
             break;
         case Nand:
             *filter = filter->d_ptr->containerFiltersPart() &  ~(*l & *r);
             break;
         case Or:
-            *filter = filter->d_ptr->containerFiltersPart() &  *l | *r;
+            *filter = filter->d_ptr->containerFiltersPart() &  (*l | *r);
             break;
         case Nor:
             *filter = filter->d_ptr->containerFiltersPart() &  ~(*l | *r);
@@ -445,11 +445,11 @@ bool QMessageFilterPrivate::matchesMessage(const QMessageFilter &filter, const Q
     switch (filter.d_ptr->_operator) {
     case QMessageFilterPrivate::And: // fall through
     case QMessageFilterPrivate::Nand:
-        result = matchesMessage(*filter.d_ptr->_left, message) & matchesMessage(*filter.d_ptr->_left, message);
+        result = matchesMessage(*filter.d_ptr->_left, message) && matchesMessage(*filter.d_ptr->_right, message);
         break;
     case QMessageFilterPrivate::Nor: // fall through
     case QMessageFilterPrivate::Or:
-        result = matchesMessage(*filter.d_ptr->_left, message) | matchesMessage(*filter.d_ptr->_left, message);
+        result = matchesMessage(*filter.d_ptr->_left, message) || matchesMessage(*filter.d_ptr->_right, message);
         break;
     case QMessageFilterPrivate::Not: // fall through
     case QMessageFilterPrivate::Identity: {
@@ -630,6 +630,9 @@ bool QMessageFilterPrivate::matchesMessage(const QMessageFilter &filter, const Q
                 ids.append(QMessageId(str));
             }
             result = ids.contains(messageId);
+            if (filter.d_ptr->_comparatorType != QMessageFilterPrivate::Inclusion) {
+                result = !result;
+            }
             break;
         }
         case QMessageFilterPrivate::ParentAccountId: // fall through
@@ -1668,7 +1671,7 @@ QMessageFilter QMessageFilter::byId(const QMessageIdList &ids, QMessageDataCompa
             result |= tmp;
         } else {
             QMessageFilter tmp(QMessageFilter::byParentAccountId(QMessageAccountIdPrivate::from(i.key()), QMessageDataComparator::NotEqual));
-            tmp |= QMessageFilterPrivate::from(QMessageFilterPrivate::Id, QVariant(i.value()), cmp);
+            tmp |= QMessageFilterPrivate::from(QMessageFilterPrivate::Id, QVariant(i.value()), QMessageDataComparator::Excludes);
             result &= tmp;
         }
     }
