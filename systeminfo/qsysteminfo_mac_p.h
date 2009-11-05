@@ -61,6 +61,7 @@
 #include "qsysteminfo.h"
 #include <qsysinfoglobal.h>
 
+#include <QTimer>
 
 QT_BEGIN_HEADER
 
@@ -233,8 +234,11 @@ private:
     QString screenPath;
     QString settingsPath;
     bool screenSaverSecure;
+    bool isInhibited;
+    QTimer *ssTimer;
 
-
+private slots:
+    void activityTimeout();
 
 };
 
