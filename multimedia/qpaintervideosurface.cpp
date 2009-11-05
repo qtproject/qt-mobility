@@ -136,7 +136,7 @@ bool QVideoSurfaceRasterPainter::isFormatSupported(
 QAbstractVideoSurface::Error QVideoSurfaceRasterPainter::start(const QVideoSurfaceFormat &format)
 {
     m_frame = QVideoFrame();
-    m_imageFormat = QVideoFrame::equivalentImageFormat(format.pixelFormat());
+    m_imageFormat = QVideoFrame::imageFormatFromPixelFormat(format.pixelFormat());
     m_imageSize = format.frameSize();
 
     return format.handleType() == QAbstractVideoBuffer::NoHandle
@@ -1005,7 +1005,7 @@ QPainterVideoSurface::QPainterVideoSurface(QObject *parent)
 */
 QPainterVideoSurface::~QPainterVideoSurface()
 {
-    if (isStarted())
+    if (isActive())
         m_painter->stop();
 
     delete m_painter;
@@ -1037,7 +1037,7 @@ bool QPainterVideoSurface::isFormatSupported(
 */
 bool QPainterVideoSurface::start(const QVideoSurfaceFormat &format)
 {
-    if (isStarted())
+    if (isActive())
         m_painter->stop();
 
     if (!m_painter)
@@ -1070,7 +1070,7 @@ bool QPainterVideoSurface::start(const QVideoSurfaceFormat &format)
 */
 void QPainterVideoSurface::stop()
 {
-    if (isStarted()) {
+    if (isActive()) {
         m_painter->stop();
         m_ready = false;
 
@@ -1083,7 +1083,7 @@ void QPainterVideoSurface::stop()
 bool QPainterVideoSurface::present(const QVideoFrame &frame)
 {
     if (!m_ready) {
-        if (!isStarted())
+        if (!isActive())
             setError(StoppedError);
     } else if (frame.pixelFormat() != m_pixelFormat || frame.size() != m_frameSize) {
         setError(IncorrectFormatError);
@@ -1189,7 +1189,7 @@ void QPainterVideoSurface::setReady(bool ready)
 */
 void QPainterVideoSurface::paint(QPainter *painter, const QRect &rect)
 {
-    if (!isStarted()) {
+    if (!isActive()) {
         painter->fillRect(rect, QBrush(Qt::black));
     } else {
         if (m_colorsDirty) {
@@ -1253,7 +1253,7 @@ void QPainterVideoSurface::setGLContext(QGLContext *context)
     if (type != m_shaderType || type != NoShaders) {
         m_shaderType = type;
 
-        if (isStarted()) {
+        if (isActive()) {
             m_painter->stop();
             delete m_painter;
             m_painter = 0;
@@ -1302,7 +1302,7 @@ void QPainterVideoSurface::setShaderType(ShaderType type)
     if (type != m_shaderType) {
         m_shaderType = type;
 
-        if (isStarted()) {
+        if (isActive()) {
             m_painter->stop();
             delete m_painter;
             m_painter = 0;

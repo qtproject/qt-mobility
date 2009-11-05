@@ -426,7 +426,7 @@ void tst_QPainterVideoSurface::present()
     QVideoSurfaceFormat formatA(frameSizeA, pixelFormatA);
 
     QVERIFY(surface.start(formatA));
-    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isActive(), true);
     QCOMPARE(surface.isReady(), true);
 
     {   // Test painting before receiving a frame.
@@ -438,7 +438,7 @@ void tst_QPainterVideoSurface::present()
     QVideoFrame frameA(bytesA, frameSizeA, bytesPerLineA, pixelFormatA);
 
     frameA.map(QAbstractVideoBuffer::WriteOnly);
-    memcpy(frameA.bits(), frameDataA, frameA.numBytes());
+    memcpy(frameA.bits(), frameDataA, frameA.mappedBytes());
     frameA.unmap();
 
     QVERIFY(surface.present(frameA));
@@ -449,14 +449,14 @@ void tst_QPainterVideoSurface::present()
         QPainter painter(&image);
         surface.paint(&painter, QRect(0, 0, 320, 240));
     }
-    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isActive(), true);
     QCOMPARE(surface.isReady(), false);
 
     {   // Test repainting before receiving another frame.
         QPainter painter(&image);
         surface.paint(&painter, QRect(0, 0, 320, 240));
     }
-    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isActive(), true);
     QCOMPARE(surface.isReady(), false);
 
     // Not ready.
@@ -472,13 +472,13 @@ void tst_QPainterVideoSurface::present()
     QVideoSurfaceFormat formatB(frameSizeB, pixelFormatB);
 
     QVERIFY(surface.start(formatB));
-    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isActive(), true);
     QCOMPARE(surface.isReady(), true);
 
     QVideoFrame frameB(bytesB, frameSizeB, bytesPerLineB, pixelFormatB);
 
     frameB.map(QAbstractVideoBuffer::WriteOnly);
-    memcpy(frameB.bits(), frameDataB, frameB.numBytes());
+    memcpy(frameB.bits(), frameDataB, frameB.mappedBytes());
     frameB.unmap();
 
     QVERIFY(surface.present(frameB));
@@ -489,11 +489,11 @@ void tst_QPainterVideoSurface::present()
         QPainter painter(&image);
         surface.paint(&painter, QRect(0, 0, 320, 240));
     }
-    QVERIFY(surface.isStarted());
+    QVERIFY(surface.isActive());
 
     surface.stop();
 
-    QCOMPARE(surface.isStarted(), false);
+    QCOMPARE(surface.isActive(), false);
     QCOMPARE(surface.isReady(), false);
 
     // Try presenting a frame while stopped.
@@ -504,7 +504,7 @@ void tst_QPainterVideoSurface::present()
     // Try presenting a frame with a different format.
     QVERIFY(surface.start(formatB));
     QVERIFY(!surface.present(frameA));
-    QCOMPARE(surface.isStarted(), false);
+    QCOMPARE(surface.isActive(), false);
     QCOMPARE(surface.isReady(), false);
     QCOMPARE(surface.error(), QAbstractVideoSurface::IncorrectFormatError);
 }
@@ -518,7 +518,7 @@ void tst_QPainterVideoSurface::presentOpaqueFrame()
     QVideoSurfaceFormat format(QSize(64, 64), QVideoFrame::Format_RGB32);
 
     QVERIFY(surface.start(format));
-    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isActive(), true);
     QCOMPARE(surface.isReady(), true);
 
     QVideoFrame frame(new QtTestOpaqueVideoBuffer, QSize(64, 64), QVideoFrame::Format_RGB32);
@@ -528,7 +528,7 @@ void tst_QPainterVideoSurface::presentOpaqueFrame()
         surface.paint(&painter, QRect(0, 0, 320, 240));
     }
 
-    QCOMPARE(surface.isStarted(), false);
+    QCOMPARE(surface.isActive(), false);
     QCOMPARE(surface.isReady(), false);
     QCOMPARE(surface.error(), QAbstractVideoSurface::IncorrectFormatError);
 }
@@ -643,43 +643,43 @@ void tst_QPainterVideoSurface::shaderTypeStarted()
 
     QVERIFY(surface.start(QVideoSurfaceFormat(QSize(640, 480), QVideoFrame::Format_RGB32)));
     {
-        QSignalSpy spy(&surface, SIGNAL(startedChanged(bool)));
+        QSignalSpy spy(&surface, SIGNAL(activeChanged(bool)));
 
         surface.setShaderType(QPainterVideoSurface::NoShaders);
         QCOMPARE(surface.shaderType(), QPainterVideoSurface::NoShaders);
-        QCOMPARE(surface.isStarted(), false);
+        QCOMPARE(surface.isActive(), false);
         QCOMPARE(spy.count(), 1);
         QCOMPARE(spy.last().value(0).toBool(), false);
     }
 
     QVERIFY(surface.start(QVideoSurfaceFormat(QSize(640, 480), QVideoFrame::Format_RGB32)));
     {
-        QSignalSpy spy(&surface, SIGNAL(startedChanged(bool)));
+        QSignalSpy spy(&surface, SIGNAL(activeChanged(bool)));
 
         surface.setShaderType(QPainterVideoSurface::NoShaders);
         QCOMPARE(surface.shaderType(), QPainterVideoSurface::NoShaders);
-        QCOMPARE(surface.isStarted(), true);
+        QCOMPARE(surface.isActive(), true);
         QCOMPARE(spy.count(), 0);
 
         surface.setShaderType(shaderType);
         QCOMPARE(surface.shaderType(), shaderType);
-        QCOMPARE(surface.isStarted(), false);
+        QCOMPARE(surface.isActive(), false);
         QCOMPARE(spy.count(), 1);
         QCOMPARE(spy.last().value(0).toBool(), false);
     }
 
     QVERIFY(surface.start(QVideoSurfaceFormat(QSize(640, 480), QVideoFrame::Format_RGB32)));
     {
-        QSignalSpy spy(&surface, SIGNAL(startedChanged(bool)));
+        QSignalSpy spy(&surface, SIGNAL(activeChanged(bool)));
 
         surface.setShaderType(shaderType);
         QCOMPARE(surface.shaderType(), shaderType);
-        QCOMPARE(surface.isStarted(), true);
+        QCOMPARE(surface.isActive(), true);
         QCOMPARE(spy.count(), 0);
 
         surface.setGLContext(0);
         QCOMPARE(surface.shaderType(), QPainterVideoSurface::NoShaders);
-        QCOMPARE(surface.isStarted(), false);
+        QCOMPARE(surface.isActive(), false);
         QCOMPARE(spy.count(), 1);
         QCOMPARE(spy.last().value(0).toBool(), false);
     }
@@ -992,7 +992,7 @@ void tst_QPainterVideoSurface::shaderPresent()
     QVideoSurfaceFormat formatA(frameSizeA, pixelFormatA);
 
     QVERIFY(surface.start(formatA));
-    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isActive(), true);
     QCOMPARE(surface.isReady(), true);
 
     // Test painting before receiving a frame.
@@ -1000,13 +1000,13 @@ void tst_QPainterVideoSurface::shaderPresent()
         QPainter painter(&widget);
         surface.paint(&painter, QRect(0, 0, 320, 240));
     }
-    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isActive(), true);
     QCOMPARE(surface.isReady(), true);
 
     QVideoFrame frameA(bytesA, frameSizeA, bytesPerLineA, pixelFormatA);
 
     frameA.map(QAbstractVideoBuffer::WriteOnly);
-    memcpy(frameA.bits(), frameDataA, frameA.numBytes());
+    memcpy(frameA.bits(), frameDataA, frameA.mappedBytes());
     frameA.unmap();
 
     QVERIFY(surface.present(frameA));
@@ -1017,14 +1017,14 @@ void tst_QPainterVideoSurface::shaderPresent()
         QPainter painter(&widget);
         surface.paint(&painter, QRect(0, 0, 320, 240));
     }
-    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isActive(), true);
     QCOMPARE(surface.isReady(), false);
 
     {   // Test repainting before receiving another frame.
         QPainter painter(&widget);
         surface.paint(&painter, QRect(0, 0, 320, 240));
     }
-    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isActive(), true);
     QCOMPARE(surface.isReady(), false);
 
     // Not ready.
@@ -1040,13 +1040,13 @@ void tst_QPainterVideoSurface::shaderPresent()
     QVideoSurfaceFormat formatB(frameSizeB, pixelFormatB);
 
     QVERIFY(surface.start(formatB));
-    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isActive(), true);
     QCOMPARE(surface.isReady(), true);
 
     QVideoFrame frameB(bytesB, frameSizeB, bytesPerLineB, pixelFormatB);
 
     frameB.map(QAbstractVideoBuffer::WriteOnly);
-    memcpy(frameB.bits(), frameDataB, frameB.numBytes());
+    memcpy(frameB.bits(), frameDataB, frameB.mappedBytes());
     frameB.unmap();
 
     QVERIFY(surface.present(frameB));
@@ -1057,10 +1057,10 @@ void tst_QPainterVideoSurface::shaderPresent()
         QPainter painter(&widget);
         surface.paint(&painter, QRect(0, 0, 320, 240));
     }
-    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isActive(), true);
 
     surface.stop();
-    QCOMPARE(surface.isStarted(), false);
+    QCOMPARE(surface.isActive(), false);
     QCOMPARE(surface.isReady(), false);
 
     // Try presenting a frame while stopped.
@@ -1070,13 +1070,13 @@ void tst_QPainterVideoSurface::shaderPresent()
 
     // Try stopping while already stopped.
     surface.stop();
-    QCOMPARE(surface.isStarted(), false);
+    QCOMPARE(surface.isActive(), false);
     QCOMPARE(surface.isReady(), false);
 
     // Try presenting a frame with a different format.
     QVERIFY(surface.start(formatB));
     QVERIFY(!surface.present(frameA));
-    QCOMPARE(surface.isStarted(), false);
+    QCOMPARE(surface.isActive(), false);
     QCOMPARE(surface.isReady(), false);
     QCOMPARE(surface.error(), QAbstractVideoSurface::IncorrectFormatError);
 }
@@ -1113,7 +1113,7 @@ void tst_QPainterVideoSurface::shaderPresentOpaqueFrame()
     QVideoSurfaceFormat format(QSize(64, 64), QVideoFrame::Format_RGB32);
 
     QVERIFY(surface.start(format));
-    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isActive(), true);
     QCOMPARE(surface.isReady(), true);
 
     QVideoFrame frame(new QtTestOpaqueVideoBuffer, QSize(64, 64), QVideoFrame::Format_RGB32);
@@ -1123,7 +1123,7 @@ void tst_QPainterVideoSurface::shaderPresentOpaqueFrame()
         surface.paint(&painter, QRect(0, 0, 320, 240));
     }
 
-    QCOMPARE(surface.isStarted(), false);
+    QCOMPARE(surface.isActive(), false);
     QCOMPARE(surface.isReady(), false);
     QCOMPARE(surface.error(), QAbstractVideoSurface::IncorrectFormatError);
 }
@@ -1161,7 +1161,7 @@ void tst_QPainterVideoSurface::shaderPresentGLFrame()
             QSize(2, 2), QVideoFrame::Format_RGB32, QAbstractVideoBuffer::GLTextureHandle);
 
     QVERIFY(surface.start(format));
-    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isActive(), true);
     QCOMPARE(surface.isReady(), true);
 
     QtTestGLVideoBuffer *buffer = new QtTestGLVideoBuffer;
@@ -1182,7 +1182,7 @@ void tst_QPainterVideoSurface::shaderPresentGLFrame()
         surface.paint(&painter, QRect(0, 0, 320, 240));
     }
 
-    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isActive(), true);
     QCOMPARE(surface.isReady(), false);
 
     {
@@ -1190,7 +1190,7 @@ void tst_QPainterVideoSurface::shaderPresentGLFrame()
         surface.paint(&painter, QRect(0, 0, 320, 240));
     }
 
-    QCOMPARE(surface.isStarted(), true);
+    QCOMPARE(surface.isActive(), true);
     QCOMPARE(surface.isReady(), false);
 }
 

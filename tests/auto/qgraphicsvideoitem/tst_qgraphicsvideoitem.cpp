@@ -379,27 +379,27 @@ void tst_QGraphicsVideoItem::paint()
     QVideoSurfaceFormat format(QSize(2, 2), QVideoFrame::Format_RGB32);
 
     QVERIFY(surface->start(format));
-    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isActive(), true);
     QCOMPARE(surface->isReady(), true);
 
     QVERIFY(item->waitForPaint(1));
 
-    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isActive(), true);
     QCOMPARE(surface->isReady(), true);
 
     QVideoFrame frame(sizeof(rgb32ImageData), QSize(2, 2), 8, QVideoFrame::Format_RGB32);
 
     frame.map(QAbstractVideoBuffer::WriteOnly);
-    memcpy(frame.bits(), rgb32ImageData, frame.numBytes());
+    memcpy(frame.bits(), rgb32ImageData, frame.mappedBytes());
     frame.unmap();
 
     QVERIFY(surface->present(frame));
-    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isActive(), true);
     QCOMPARE(surface->isReady(), false);
 
     QVERIFY(item->waitForPaint(1));
 
-    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isActive(), true);
     QCOMPARE(surface->isReady(), true);
 }
 
