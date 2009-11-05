@@ -83,6 +83,28 @@ public:
 */
 
 /*!
+    \enum QMediaServiceProviderHint::Feature
+
+    \value LowLatencyPlayback
+            The service is expected to play simple audio formats,
+            but playback should start without significant delay.
+            Such playback service can be used for beeps, ringtones, etc.
+
+    \value RecordingSupport
+            The service provides audio or video recording functions.
+*/
+
+/*!
+    \enum QMediaServiceProviderHint::Type
+
+    \value Null               En empty hint, use the default service.
+    \value ContentType        Select media service most suitable for certain content type.
+    \value Device             Select media service which supports certain device.
+    \value SupportedFeatures  Select media service supporting the set of optional features.
+*/
+
+
+/*!
   Construct an empty media service provider hint.
 */
 QMediaServiceProviderHint::QMediaServiceProviderHint()
@@ -388,11 +410,33 @@ public:
 Q_GLOBAL_STATIC(QPluginServiceProvider, pluginProvider);
 
 /*!
-    \fn QtMedia::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &type, const QString &mimeType, const QStringList& codecs, int flags) const
+    \class QMediaServiceProvider
+    \preliminary
+    \brief The QMediaServiceProvider class provides an abstract allocator for media services.
+*/
 
-    Returns how confident the available service is that it can play media resources of the given mime \a type
-    with content encoded with \a codecs. If multiple services with the same \a serviceType are
-    available, the result from the most confident one is returned.
+/*!
+    \fn QMediaServiceProvider::requestService(const QByteArray &type, const QMediaServiceProviderHint &hint)
+
+    Requests an instance of a \a type service which best matches the given \a hint.
+
+    Returns a pointer to the requested service, or a null pointer if there is no suitable service.
+
+    The returned service must be released with releaseService when it is finished with.
+*/
+
+/*!
+    \fn QMediaServiceProvider::releaseService(QMediaService *service)
+
+    Releases a media \a service requested with requestService().
+*/
+
+/*!
+    \fn QtMedia::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &serviceType, const QString &mimeType, const QStringList& codecs, int flags) const
+
+    Returns how confident the available service is that it can play media resources of the given
+    \a mimeType with content encoded with \a codecs. If multiple services with the same
+    \a serviceType are available, the result from the most confident one is returned.
 */
 QtMedia::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &serviceType,
                                                         const QString &mimeType,
@@ -417,7 +461,7 @@ QList<QByteArray> QMediaServiceProvider::devices(const QByteArray &service) cons
 }
 
 /*!
-  Returns the description of \a device related to \a service type,
+  Returns the description of \a device related to \a serviceType,
   suitable to be displayed to user.
 */
 QString QMediaServiceProvider::deviceDescription(const QByteArray &serviceType, const QByteArray &device)
@@ -434,23 +478,28 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
 }
 
 /*!
-    \enum QMediaServiceProviderHint::Feature
-
-    \value LowLatencyPlayback
-            The service is expected to play simple audio formats,
-            but playback should start without significant delay.
-            Such playback service can be used for beeps, ringtones, etc.
-
-    \value RecordingSupport
-            The service provides audio or video recording functions.
+    \class QMediaServiceProviderPlugin
+    \preliminary
+    \brief The QMediaServiceProviderPlugin interface provides an interface for QMediaService
+    plug-ins.
 */
 
 /*!
-    \enum QMediaServiceProviderHint::Type
+    \fn QMediaServiceProviderPlugin::keys() const
 
-    \value Null               En empty hint, use the default service.
-    \value ContentType        Select media service most suitable for certain content type.
-    \value Device             Select media service which supports certain device.
-    \value SupportedFeatures  Select media service supporting the set of optional features.
+    Returns a list of keys for media services a plug-in can create.
 */
 
+/*!
+    \fn QMediaServiceProviderPlugin::create(const QString &key)
+
+    Constructs a new instance of the QMediaService identified by \a key.
+
+    The QMediaService returned must be destroyed with release().
+*/
+
+/*!
+    \fn QMediaServiceProviderPlugin::release(QMediaService *service)
+
+    Destroys a media \a service constructed with create().
+*/
