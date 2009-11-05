@@ -84,6 +84,8 @@ void UT_QVersitContactConverter::init()
         mConverter, SIGNAL(scale(const QString&,QByteArray&)),
         this, SLOT(scale(const QString&,QByteArray&)));
     mConverterPrivate = new QVersitContactConverterPrivate();
+    QVERIFY(!mConverterPrivate->mParameterMappings.empty());
+    QVERIFY(!mConverterPrivate->mPropertyMappings.empty());
     mScaleSignalEmitted = false;
 }
 
