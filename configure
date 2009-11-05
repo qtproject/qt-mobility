@@ -88,7 +88,7 @@ usage()
     echo "-maemo ............ Build Qt Mobility for Maemo."
     echo "                    (default: Desktop Linux)"
     
-    rm "$CONFIG_IN"
+    rm -f "$CONFIG_IN"
     exit    
 }
 
@@ -254,9 +254,12 @@ compileTest()
 {
     printf "Checking $1"
     CURRENT_PWD=`pwd`
-    cd "$relpath/config.tests/$2"
-    rm -rf ./$2
-    qmake >> "$CONFIG_LOG"
+
+    rm -rf config.tests/$2
+    mkdir -p config.tests/$2
+    cd config.tests/$2
+
+    qmake "$relpath/config.tests/$2/$2.pro" >> "$CONFIG_LOG"
     printf  " ."
     "$MAKE" clean >> "$CONFIG_LOG"
     printf "."
