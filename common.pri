@@ -67,6 +67,10 @@ CONFIG(debug, debug|release) {
     SUBDIRPART=Release
 }
 
+contains(QT_CONFIG, reduce_exports):CONFIG+=hide_symbols
+
+#export more symbols if we build the unit tests
+contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
 
 #test whether we have a unit test
 !testcase {
