@@ -41,7 +41,98 @@
 
 #include <QtTest/QtTest>
 #include <QDebug>
+#include "multimedia/qmediaservice.h"
 #include "multimedia/qmediaplaylist.h"
+#include "multimedia/qmediaplaylistcontrol.h"
+#include "multimedia/qmediaplaylistnavigator.h"
+
+class MockReadOnlyPlaylistProvider : public QMediaPlaylistProvider
+{
+    Q_OBJECT
+public:
+    MockReadOnlyPlaylistProvider(QObject *parent)
+        :QMediaPlaylistProvider(parent)
+    {
+        m_items.append(QMediaContent(QUrl(QLatin1String("file:///1"))));
+        m_items.append(QMediaContent(QUrl(QLatin1String("file:///2"))));
+        m_items.append(QMediaContent(QUrl(QLatin1String("file:///3"))));
+    }
+
+    int size() const { return m_items.size(); }
+    QMediaContent media(int index) const
+    {
+        return index >=0 && index < size() ? m_items.at(index) : QMediaContent();
+    }
+
+private:
+    QList<QMediaContent> m_items;
+};
+
+class MockPlaylistControl : public QMediaPlaylistControl
+{
+    Q_OBJECT
+public:
+    MockPlaylistControl(QObject *parent) : QMediaPlaylistControl(parent)
+    {        
+        m_navigator = new QMediaPlaylistNavigator(new MockReadOnlyPlaylistProvider(this), this);
+    }
+
+    ~MockPlaylistControl()
+    {
+    }
+
+    QMediaPlaylistProvider* playlistProvider() const { return m_navigator->playlist(); }
+    bool setPlaylistProvider(QMediaPlaylistProvider *playlist) { m_navigator->setPlaylist(playlist); return true; }
+
+    int currentPosition() const { return m_navigator->currentPosition(); }
+    void setCurrentPosition(int position) { m_navigator->jump(position); }
+    int nextPosition(int steps) const { return m_navigator->nextPosition(steps); }
+    int previousPosition(int steps) const { return m_navigator->previousPosition(steps); }
+
+    void next() { m_navigator->next(); }
+    void previous() { m_navigator->previous(); }
+
+    QMediaPlaylist::PlaybackMode playbackMode() const { return m_navigator->playbackMode(); }
+    void setPlaybackMode(QMediaPlaylist::PlaybackMode mode) { m_navigator->setPlaybackMode(mode); }
+
+private:    
+    QMediaPlaylistNavigator *m_navigator;
+};
+
+class MockPlaylistService : public QMediaService
+{
+    Q_OBJECT
+
+public:
+    MockPlaylistService():QMediaService(0)
+    {
+        mockControl = new MockPlaylistControl(this);
+    }
+
+    ~MockPlaylistService()
+    {        
+    }
+
+    QMediaControl* control(const char *iid) const
+    {
+        if (qstrcmp(iid, QMediaPlaylistControl_iid) == 0)
+            return mockControl;
+        return 0;
+    }
+
+    MockPlaylistControl *mockControl;
+};
+
+class MockReadOnlyPlaylistObject : public QMediaObject
+{
+    Q_OBJECT
+public:
+    MockReadOnlyPlaylistObject(QObject *parent = 0)
+        :QMediaObject(parent, new MockPlaylistService)
+    {
+    }
+};
+
 
 class tst_QMediaPlaylist : public QObject
 {
@@ -62,6 +153,7 @@ private slots:
     void playbackMode();
     void playbackMode_data();
     void shuffle();
+    void readOnlyPlaylist();
 
 private:
     QMediaContent content1;
@@ -369,6 +461,51 @@ void tst_QMediaPlaylist::shuffle()
 
     QVERIFY(contentList != shuffledContentList);
 
+}
+
+void tst_QMediaPlaylist::readOnlyPlaylist()
+{
+    MockReadOnlyPlaylistObject mediaObject;
+    QMediaPlaylist playlist(&mediaObject);
+
+    QVERIFY(playlist.isReadOnly());
+    QVERIFY(!playlist.isEmpty());
+    QCOMPARE(playlist.size(), 3);
+
+    QCOMPARE(playlist.media(0), content1);
+    QCOMPARE(playlist.media(1), content2);
+    QCOMPARE(playlist.media(2), content3);
+    QCOMPARE(playlist.media(3), QMediaContent());
+
+    //it's a read only playlist, so all the modification should fail
+    QVERIFY(!playlist.appendItem(content1));
+    QCOMPARE(playlist.size(), 3);
+    QVERIFY(!playlist.insertItem(1, content1));
+    QCOMPARE(playlist.size(), 3);
+    QVERIFY(!playlist.removeItem(1));
+    QCOMPARE(playlist.size(), 3);
+    QVERIFY(!playlist.removeItems(0,2));
+    QCOMPARE(playlist.size(), 3);
+
+    QBuffer buffer;
+    buffer.open(QBuffer::ReadWrite);
+    buffer.write(QByteArray("file:///1\nfile:///2"));
+    buffer.seek(0);
+
+    QSignalSpy errorSignal(&playlist, SIGNAL(loadFailed()));
+    playlist.load(&buffer, "m3u");    
+    QCOMPARE(errorSignal.size(), 1);
+    QCOMPARE(playlist.error(), QMediaPlaylist::AccessDeniedError);
+    QVERIFY(!playlist.errorString().isEmpty());
+    QCOMPARE(playlist.size(), 3);
+
+    errorSignal.clear();
+    playlist.load(QUrl(QLatin1String("tmp.m3u")), "m3u");
+
+    QCOMPARE(errorSignal.size(), 1);
+    QCOMPARE(playlist.error(), QMediaPlaylist::AccessDeniedError);
+    QVERIFY(!playlist.errorString().isEmpty());
+    QCOMPARE(playlist.size(), 3);
 }
 
 QTEST_MAIN(tst_QMediaPlaylist)
