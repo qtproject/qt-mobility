@@ -781,7 +781,6 @@ void tst_QContactAsync::contactSave()
     QCOMPARE(cm->contacts().size(), originalCount + 1);
 
     // cancelling
-QList<QContactLocalId> origdbgids = cm->contacts();
     QContact temp = testContact;
     temp.setId(QContactId());
     QContactUrl url;
@@ -1124,7 +1123,7 @@ void tst_QContactAsync::definitionRemove()
             expectedCount += 2; // active + progress + finished signals
             drr.waitForFinished();
             drr.setNames(removeIds);
-            if (!cm->saveDetailDefinition(resaveIfRemoved)) {
+            if (cm->detailDefinition(resaveIfRemoved.name()) != resaveIfRemoved && !cm->saveDetailDefinition(resaveIfRemoved)) {
                 QSKIP("Unable to resave removed definition to test cancellation of definition remove request", SkipSingle);
             }
             QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 2); // hasn't changed
@@ -1162,7 +1161,7 @@ void tst_QContactAsync::definitionRemove()
             expectedCount += 2; // active + progress + finished signals
             drr.waitForFinished();
             drr.setNames(removeIds);
-            if (!cm->saveDetailDefinition(resaveIfRemoved)) {
+            if (cm->detailDefinition(resaveIfRemoved.name()) != resaveIfRemoved && !cm->saveDetailDefinition(resaveIfRemoved)) {
                 QSKIP("Unable to resave removed definition to test cancellation of definition remove request", SkipSingle);
             }
             bailoutCount -= 1;
