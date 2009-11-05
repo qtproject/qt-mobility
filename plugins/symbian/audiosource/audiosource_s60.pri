@@ -14,4 +14,3 @@ SOURCES += $$PWD/s60audioencodercontrol.cpp \
     $$PWD/s60audiodevicecontrol.cpp \
     $$PWD/s60audiocaptureservice.cpp \
     $$PWD/s60audiocapturesession.cpp
-

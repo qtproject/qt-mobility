@@ -51,21 +51,16 @@
 #include <Mda\Client\Utility.h>
 #include <MdaAudioSampleEditor.h>
 
+#include <QDir>
+
 S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
-    QObject(parent)
+    QObject(parent), m_recorderUtility(NULL)
 {
-    if (m_recorderUtility)
-    {
-        m_recorderUtility->Stop();
-        m_recorderUtility->Close();
-        delete m_recorderUtility;
-    }
+    TRAPD(err, m_recorderUtility = CMdaAudioRecorderUtility::NewL(*this));
+    qWarning() << err;
     
-    if (!m_recorderUtility)
-    {
-        TRAPD(err, m_recorderUtility = CMdaAudioRecorderUtility::NewL(*this));
-    }
-    
+    //TODO:
+    /*
     m_position = 0;
     m_state = QMediaRecorder::StoppedState;
 
@@ -75,6 +70,7 @@ S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
     m_format.setSampleType(QAudioFormat::UnSignedInt);
     //m_format.setCodec(QString("audio/pcm"));
     wavFile = false;
+    */
 }
 
 S60AudioCaptureSession::~S60AudioCaptureSession()
@@ -92,6 +88,7 @@ QAudioFormat S60AudioCaptureSession::format() const
 
 bool S60AudioCaptureSession::isFormatSupported(const QAudioFormat &format) const
 {
+    //TODO:
     /*
     if(m_recorderUtility) {
         return m_recorderUtility->isFormatSupported(format);
@@ -102,6 +99,7 @@ bool S60AudioCaptureSession::isFormatSupported(const QAudioFormat &format) const
 
 bool S60AudioCaptureSession::setFormat(const QAudioFormat &format)
 {
+    //TODO:
     /*
     if(m_recorderUtility) {
         if(m_recorderUtility->isFormatSupported(format)) {
@@ -127,6 +125,7 @@ bool S60AudioCaptureSession::setFormat(const QAudioFormat &format)
 QStringList S60AudioCaptureSession::supportedAudioCodecs() const
 {
     QStringList list;
+    //TODO:
     /*
     if(m_recorderUtility) {
         list = m_recorderUtility->supportedCodecs();
@@ -137,6 +136,7 @@ QStringList S60AudioCaptureSession::supportedAudioCodecs() const
 
 QString S60AudioCaptureSession::codecDescription(const QString &codecName)
 {
+    //TODO:
     /*
     if(m_recorderUtility) {
         if(qstrcmp(codecName.toLocal8Bit().constData(), "audio/pcm") == 0)
@@ -148,6 +148,7 @@ QString S60AudioCaptureSession::codecDescription(const QString &codecName)
 
 bool S60AudioCaptureSession::setAudioCodec(const QString &codecName)
 {
+    //TODO:
     /*
     if(m_recorderUtility) {
         QStringList codecs = m_recorderUtility->supportedCodecs();
@@ -162,6 +163,7 @@ bool S60AudioCaptureSession::setAudioCodec(const QString &codecName)
 
 QString S60AudioCaptureSession::audioCodec() const
 {
+    //TODO:
     return QString(); //m_format.codec();
 }
 
@@ -173,10 +175,6 @@ QUrl S60AudioCaptureSession::outputLocation() const
 bool S60AudioCaptureSession::setOutputLocation(const QUrl& sink)
 {
     m_sink = sink;
-    if(sink.toLocalFile().length() > 0)
-        file.setFileName(sink.toLocalFile());
-    else
-        file.setFileName(sink.toString());
     return true;
 }
 
@@ -191,10 +189,13 @@ int S60AudioCaptureSession::state() const
 }
 
 void S60AudioCaptureSession::record()
-{
-    TPtrC16 sink(reinterpret_cast<const TUint16*>(QString(m_sink.toString()).utf16()));
-    
+{    
+    QString filename = QDir::toNativeSeparators(m_sink.toString());
+    TPtrC16 sink(reinterpret_cast<const TUint16*>(filename.utf16()));    
     TRAPD(err, m_recorderUtility->OpenFileL(sink));
+    qWarning() << err;
+
+    //TODO:
     /*
     if(!m_audioInput) {
         setFormat(m_format);
@@ -236,6 +237,7 @@ void S60AudioCaptureSession::record()
 
 void S60AudioCaptureSession::pause()
 {
+    //TODO:
     /*
     if(m_audioInput)
         m_audioInput->stop();
@@ -251,6 +253,8 @@ void S60AudioCaptureSession::stop()
         m_recorderUtility->Stop();
         m_recorderUtility->Close();
     }
+    
+    //TODO:
     /*
     if(m_audioInput) {
         m_audioInput->stop();
@@ -301,6 +305,7 @@ void S60AudioCaptureSession::stateChanged(QAudio::State state)
 
 void S60AudioCaptureSession::notify()
 {
+    //TODO:
     //m_position += m_audioInput->notifyInterval();
     m_position = 0;
     emit positionChanged(m_position);
@@ -311,12 +316,15 @@ void S60AudioCaptureSession::setCaptureDevice(const QString &deviceName)
     m_captureDevice = deviceName;
 }
 
+// Needed observer for CMdaAudioRecorderUtility
 void S60AudioCaptureSession::MoscoStateChangeEvent(CBase* aObject,
         TInt aPreviousState, TInt aCurrentState, TInt /*aErrorCode*/)
 {
 	TRAPD(err, MoscoStateChangeEventL(aObject, aPreviousState, aCurrentState, NULL));
+    qWarning() << err;
 }
 
+// Needed observer for CMdaAudioRecorderUtility
 void S60AudioCaptureSession::MoscoStateChangeEventL(CBase* aObject,
         TInt aPreviousState, TInt aCurrentState, TInt /*aErrorCode*/)
 {

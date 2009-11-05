@@ -114,7 +114,6 @@ private:
     void MoscoStateChangeEventL(CBase* aObject, TInt aPreviousState,
             TInt aCurrentState, TInt aErrorCode);
 
-    QFile file;
     QString m_captureDevice;
     QUrl m_sink;
     QMediaRecorder::State m_state;
