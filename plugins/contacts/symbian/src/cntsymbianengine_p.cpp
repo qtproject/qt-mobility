@@ -401,6 +401,10 @@ bool CntSymbianEnginePrivate::setSelfContactId(const QContactLocalId& contactId,
     TRAPD(err,
         symContact = m_contactDatabase->ReadContactL(id);
         m_contactDatabase->SetOwnCardL(*symContact);
+        
+        //TODO: temporal solution, fix when we have a signal for MyCard change
+        emit contactChanged(m_contactDatabase->OwnCardId());
+        emit contactChanged(contactId);
         );
     delete symContact;
     CntSymbianTransformError::transformError(err, qtError);
