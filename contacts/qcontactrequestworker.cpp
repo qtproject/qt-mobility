@@ -85,14 +85,10 @@ QContactRequestWorker& QContactRequestWorker::operator=(const QContactRequestWor
 /*! Frees the memory used by this QContactRequestWorker, stops the thread and clean up all request elements in the working queue */
 QContactRequestWorker::~QContactRequestWorker()
 {
-qDebug() << "::dtor()";
     stop();
-qDebug() << "   stopped";
     quit();
-qDebug() << "   quit";
     while (isRunning() && !wait(1)) 
         d->m_newRequestAdded.wakeAll();
-qDebug() << "   no longer running";
 }
 
 /*!
@@ -102,7 +98,6 @@ qDebug() << "   no longer running";
  */
 void QContactRequestWorker::stop()
 {
-qDebug() << "::stop()";
     QMutexLocker locker(&d->m_mutex);
     d->m_stop = true;
     d->m_newRequestAdded.wakeAll();
@@ -187,8 +182,6 @@ void QContactRequestWorker::run()
         req->d_ptr->m_condition.wakeAll();
     }
 
-qDebug() << "Run loop cleaning up...";
-
     // we were stopped.  clean up our requests by cancelling them all.
     foreach (QContactAbstractRequest* req, d->m_requestQueue) {
         if (req) {
@@ -202,8 +195,6 @@ qDebug() << "Run loop cleaning up...";
                 req->d_ptr->m_condition.wakeAll();
         }
     }
-
-qDebug() << "Run loop clean; d->m_requestQueue.size() =" << d->m_requestQueue.size();
 
     d->m_requestQueue.clear();
 }
