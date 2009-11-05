@@ -75,29 +75,29 @@ QVersitContactConverterPrivate::QVersitContactConverterPrivate() :
     // Create Mapping for Details
     unsigned int count = sizeof(versitDetailMappings)/sizeof(versitMapping);
     for (unsigned int i=0; i < count; i++) {
-        mPropertyMappings.insert(versitDetailMappings[i].contactDetail,
-                                    versitDetailMappings[i].versitType);
+        mPropertyMappings.insert(QString::fromAscii(versitDetailMappings[i].contactDetail),
+                                    QString::fromAscii(versitDetailMappings[i].versitType));
     }
 
     // Create Mappings for SubTypes
     count = sizeof(versitSubTypeMappings)/sizeof(versitMapping);
     for (unsigned int i=0; i < count; i++) {
-        mParameterMappings.insert(versitSubTypeMappings[i].contactDetail,
-                                    versitSubTypeMappings[i].versitType);
+        mParameterMappings.insert(QString::fromAscii(versitSubTypeMappings[i].contactDetail),
+                                    QString::fromAscii(versitSubTypeMappings[i].versitType));
     }
 
     // Create Mappings for Contexts
     count = sizeof(versitFileTypesMappings)/sizeof(versitMapping);
     for (unsigned int i=0; i < count; i++) {
-        mParameterMappings.insert(versitFileTypesMappings[i].contactDetail,
-                                    versitFileTypesMappings[i].versitType);
+        mParameterMappings.insert(QString::fromAscii(versitFileTypesMappings[i].contactDetail),
+                                    QString::fromAscii(versitFileTypesMappings[i].versitType));
     }
 
     // Create Mappings for FileExtensionMappings
     count = sizeof(versitContextMappings)/sizeof(versitMapping);
     for (unsigned int i=0; i < count; i++) {
-        mParameterMappings.insert(versitContextMappings[i].contactDetail,
-                                    versitContextMappings[i].versitType);
+        mParameterMappings.insert(QString::fromAscii(versitContextMappings[i].contactDetail),
+                                    QString::fromAscii(versitContextMappings[i].versitType));
     }
 }
 
