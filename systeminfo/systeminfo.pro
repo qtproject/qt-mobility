@@ -61,7 +61,7 @@ unix: {
         SOURCES += qsysteminfo_mac.mm
         HEADERS += qsysteminfo_mac_p.h
         LIBS += -framework SystemConfiguration -framework CoreFoundation \
-         -framework IOKit -framework ApplicationServices
+         -framework IOKit -framework ApplicationServices -framework Foundation
 
         # change this to /Developer/SDKs/MacOSX10.6.sdk
         # if you want to compile for 10.6 with CoreWLAN framework
