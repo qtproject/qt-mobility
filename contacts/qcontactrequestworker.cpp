@@ -87,8 +87,6 @@ QContactRequestWorker::~QContactRequestWorker()
 {
     stop();
     quit();
-    while (isRunning() && !wait(1)) 
-        d->m_newRequestAdded.wakeAll();
 }
 
 /*!
@@ -100,7 +98,11 @@ void QContactRequestWorker::stop()
 {
     QMutexLocker locker(&d->m_mutex);
     d->m_stop = true;
-    d->m_newRequestAdded.wakeAll();
+    locker.unlock();
+    while (isRunning()) {
+        d->m_newRequestAdded.wakeAll();
+        usleep(100); // sleep for one hundred micros
+    }
 }
 
 /*!
@@ -435,8 +437,10 @@ void QContactRequestWorker::processContactDetailDefinitionFetchRequest(QContactD
             operationErrors.append(tempError);
             requestedDefinitions.insert(names.at(i), current);
 
+
             if (tempError != QContactManager::NoError)
                 operationError = tempError;
+
         }
 
         // update the request with the results.
@@ -625,12 +629,14 @@ QContactAbstractRequest* QContactRequestWorkerData::takeFirstRequest()
     QMutexLocker locker(&m_mutex);
     
     // check that I'm not already stopped.
-    if (m_stop)
+    if (m_stop) {
         return 0;
+    }
 
     // take the first pending request and finish it
-    if (m_requestQueue.isEmpty())
+    if (m_requestQueue.isEmpty()) {
         m_newRequestAdded.wait(&m_mutex);
+    }
 
     // we were woken up; check for new request or stop.
     if (!m_requestQueue.isEmpty()) {

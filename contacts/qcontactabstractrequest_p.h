@@ -81,7 +81,7 @@ public:
         return QContactAbstractRequest::InvalidRequest;
     }
 
-    bool stateTransition(QContactAbstractRequest* req, QContactAbstractRequest::Status newState);
+    bool stateTransition(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status newStatus);
 
     QContactManager::Error m_error;
     QContactAbstractRequest::Status m_status;

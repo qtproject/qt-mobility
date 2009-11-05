@@ -103,6 +103,9 @@ private slots:
 
     void maliciousManager(); // uses it's own custom data (manager)
 
+    void testQuickDestruction();
+    void testQuickDestruction_data() { addManagers(); }
+
     void threadDelivery();
     void progressReceived(QContactFetchRequest* request, bool appendOnly);
     void threadDelivery_data() { addManagers(); }
@@ -2098,6 +2101,54 @@ void tst_QContactAsync::maliciousManager()
     QVERIFY(!drr.waitForProgress(100));
     QVERIFY(!drr.waitForFinished(100));
     QVERIFY(drr.cancel());
+}
+
+void tst_QContactAsync::testQuickDestruction()
+{
+    QFETCH(QString, uri);
+
+    // in this test, we create a manager, fire off a request, and delete the manager, all in quick succession
+    // this is to test for segfaults etc.
+    for (int i = 0; i < 10; i++) {
+        QContactFetchRequest cfr;
+        QContactManager *cm = prepareModel(uri);
+        cfr.setManager(cm);
+        cfr.start();
+        delete cm;
+    }
+
+    // in this test, we create a manager, fire off a request, delete the request, then delete the manager, all in quick succession
+    // this is to test for segfaults, etc.
+    for (int i = 0; i < 10; i++) {
+        QContactFetchRequest *cfr = new QContactFetchRequest;
+        QContactManager *cm = prepareModel(uri);
+        cfr->setManager(cm);
+        cfr->start();
+        delete cfr;
+        delete cm;
+    }
+
+    // in this test, we create a manager, fire off a request, delete the manager, then delete the request, all in quick succession
+    // this is to test for segfaults, etc.
+    for (int i = 0; i < 10; i++) {
+        QContactFetchRequest *cfr = new QContactFetchRequest;
+        QContactManager *cm = prepareModel(uri);
+        cfr->setManager(cm);
+        cfr->start();
+        delete cm;
+        delete cfr;
+    }
+
+    // in this test, we create a manager, fire off a request, and delete the request, all in quick succession
+    // this is to test for segfaults, etc.
+    QContactManager *cm = prepareModel(uri);
+    for (int i = 0; i < 10; i++) {
+        QContactFetchRequest *cfr = new QContactFetchRequest;
+        cfr->setManager(cm);
+        cfr->start();
+        delete cfr;
+    }
+    delete cm;
 }
 
 void tst_QContactAsync::threadDelivery()

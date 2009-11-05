@@ -223,7 +223,7 @@ bool QContactAbstractRequest::waitForProgress(int msecs)
 }
 
 
-bool QContactAbstractRequestPrivate::stateTransition(QContactAbstractRequest* req, QContactAbstractRequest::Status newStatus)
+bool QContactAbstractRequestPrivate::stateTransition(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status newStatus)
 {
     QMutexLocker locker(&m_mutex);
     QContactManagerEngine *engine = QContactManagerData::engine(m_manager);
@@ -237,6 +237,8 @@ bool QContactAbstractRequestPrivate::stateTransition(QContactAbstractRequest* re
             return false;
     }
 
+    m_error = error;
+    m_errors = errors;
     m_status = newStatus;
     if (newStatus == QContactAbstractRequest::Finished || newStatus == QContactAbstractRequest::Cancelled) {
         engine->requestDestroyed(req);
