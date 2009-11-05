@@ -72,35 +72,38 @@
 QVersitContactConverterPrivate::QVersitContactConverterPrivate() :
     mVersitType(QVersitDocument::VCard21)
 {
-    // Create Mapping for Details
-    unsigned int count = sizeof(versitDetailMappings)/sizeof(versitMapping);
-    for (unsigned int i=0; i < count; i++) {
-        mPropertyMappings.insert(QString::fromAscii(versitDetailMappings[i].contactDetail),
-                                    QString::fromAscii(versitDetailMappings[i].versitType));
+    // Create mappings for details
+    int count = sizeof(versitDetailMappings)/sizeof(versitMapping);
+    for (int i=0; i < count; i++) {
+        mPropertyMappings.insert(
+            QString::fromAscii(versitDetailMappings[i].contactDetail),
+            QString::fromAscii(versitDetailMappings[i].versitType));
     }
 
-    // Create Mappings for SubTypes
+    // Create mappings for subtypes
     count = sizeof(versitSubTypeMappings)/sizeof(versitMapping);
-    for (unsigned int i=0; i < count; i++) {
-        mParameterMappings.insert(QString::fromAscii(versitSubTypeMappings[i].contactDetail),
-                                    QString::fromAscii(versitSubTypeMappings[i].versitType));
+    for (int i=0; i < count; i++) {
+        mParameterMappings.insert(
+            QString::fromAscii(versitSubTypeMappings[i].contactDetail),
+            QString::fromAscii(versitSubTypeMappings[i].versitType));
     }
 
-    // Create Mappings for Contexts
+    // Create mappings for contexts
     count = sizeof(versitFileTypesMappings)/sizeof(versitMapping);
-    for (unsigned int i=0; i < count; i++) {
-        mParameterMappings.insert(QString::fromAscii(versitFileTypesMappings[i].contactDetail),
-                                    QString::fromAscii(versitFileTypesMappings[i].versitType));
+    for (int i=0; i < count; i++) {
+        mParameterMappings.insert(
+            QString::fromAscii(versitFileTypesMappings[i].contactDetail),
+            QString::fromAscii(versitFileTypesMappings[i].versitType));
     }
 
-    // Create Mappings for FileExtensionMappings
+    // Create mappings for file extensions
     count = sizeof(versitContextMappings)/sizeof(versitMapping);
-    for (unsigned int i=0; i < count; i++) {
-        mParameterMappings.insert(QString::fromAscii(versitContextMappings[i].contactDetail),
-                                    QString::fromAscii(versitContextMappings[i].versitType));
+    for (int i=0; i < count; i++) {
+        mParameterMappings.insert(
+            QString::fromAscii(versitContextMappings[i].contactDetail),
+            QString::fromAscii(versitContextMappings[i].versitType));
     }
 }
-
 
 /*!
  * Destructor.

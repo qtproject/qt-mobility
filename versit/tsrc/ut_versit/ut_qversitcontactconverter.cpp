@@ -126,7 +126,6 @@ void UT_QVersitContactConverter::cleanupTestCase()
     dir.remove(mTestAudioFile);
 }
 
-
 void UT_QVersitContactConverter::testConvertContact()
 {
     QContact contact;
@@ -145,6 +144,7 @@ void UT_QVersitContactConverter::testConvertContact()
     QVersitDocument document = mConverter->convertContact(contact);
     QCOMPARE(document.properties().count(), 2);
 }
+
 void UT_QVersitContactConverter::testUnconvertedContactDetails()
 {
     // Test1: Un-supported Avatar Test
@@ -186,6 +186,7 @@ void UT_QVersitContactConverter::testUnconvertedContactDetails()
     detail = searchDetail(unconvertedDetails,defintionName);
     QCOMPARE(defintionName, detail.definitionName());
 }
+
 void UT_QVersitContactConverter::testEncodeName()
 {
     QContact contact;
@@ -1008,41 +1009,66 @@ void UT_QVersitContactConverter::testEncodeOnlineAccount()
 {
     QContact contact;
     QContactOnlineAccount onlineAccount;
+    QString accountUri(QString::fromAscii("sip:abc@temp.com"));
+    onlineAccount.setAccountUri(accountUri);
 
-    //Test1:  Valid SWIS Account.
-    QString testUri = QString::fromAscii("sip:abc@temp.com");
-    onlineAccount.setAccountUri(testUri);
+    // Video sharing
     onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeShareVideo);
     onlineAccount.setContexts(QContactDetail::ContextHome);
     contact.saveDetail(&onlineAccount);
-    
-    //Convert Contat Into Versit Document
-    QVersitDocument versitDocument = mConverter->convertContact(contact);
+    QVersitDocument document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    QVersitProperty property = document.properties().at(0);
+    // Check parameters
+    QCOMPARE(property.parameters().count(), 2);
+    QVERIFY(property.parameters().contains(
+        QString::fromAscii(versitType),QString::fromAscii("HOME")));
+    QVERIFY(property.parameters().contains(
+        QString::fromAscii(versitType),QString::fromAscii("SWIS")));
+    // Check name
+    QCOMPARE(property.name(), QString::fromAscii(versitSipId));
+    // Check value
+    QCOMPARE(QString::fromAscii(property.value()), accountUri);
 
-    //Ensure parameters exisit, i.e. home and swiss
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
-    QVERIFY(versitDocument.properties().at(0).parameters().contains(
-            QString::fromAscii(versitType), QString::fromAscii(versitContextHomeId)));
-    QVERIFY(versitDocument.properties().at(0).parameters().contains(
-            QString::fromAscii(versitType), QString::fromAscii(versitSwisId)));
+    // VoIP
+    onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeInternet);
+    onlineAccount.setContexts(QContactDetail::ContextWork);
+    contact.saveDetail(&onlineAccount);
+    document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    property = document.properties().at(0);
+    // Check parameters
+    QCOMPARE(property.parameters().count(), 2);
+    QVERIFY(property.parameters().contains(
+        QString::fromAscii(versitType),QString::fromAscii("WORK")));
+    QVERIFY(property.parameters().contains(
+        QString::fromAscii(versitType),QString::fromAscii("VOIP")));
+    // Check name
+    QCOMPARE(property.name(), QString::fromAscii(versitSipId));
+    // Check value
+    QCOMPARE(QString::fromAscii(property.value()), accountUri);
 
-    //Ensure property Exisit
-    QCOMPARE(versitDocument.properties().count(), 1);
+    // Plain SIP
+    onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeSip);
+    onlineAccount.setContexts(QContactDetail::ContextHome);
+    contact.saveDetail(&onlineAccount);
+    document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    property = document.properties().at(0);
+    // Check parameters, SIP not added as a TYPE parameter
+    QCOMPARE(property.parameters().count(), 1);
+    QVERIFY(property.parameters().contains(
+        QString::fromAscii(versitType),QString::fromAscii("HOME")));
+    // Check name
+    QCOMPARE(property.name(), QString::fromAscii(versitSipId));
+    // Check value
+    QCOMPARE(QString::fromAscii(property.value()), accountUri);
 
-    //Ensure property parameer exisit and matches.
-    QString propertyName = versitDocument.properties().at(0).name();
-    QCOMPARE(propertyName, QString::fromAscii(versitSipId));
-
-    //Check property value
-    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data());
-    QCOMPARE(value, testUri);
-
-    //Test2: InValid Sub Type Value is not encoded.
-    onlineAccount.setAccountUri(testUri);
+    // Other subtypes not converted
     onlineAccount.setSubTypes(QString::fromAscii("INVALIDSUBTYPE"));
     contact.saveDetail(&onlineAccount);
-    versitDocument = mConverter->convertContact(contact);
-    QCOMPARE(versitDocument.properties().count(), 0);
+    document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 0);
 }
 
 
@@ -1105,9 +1131,10 @@ void UT_QVersitContactConverter::testEncodeFamily()
     QCOMPARE(value2, expected);
 }
 
-// Test Utility Funcitons
-QContactDetail UT_QVersitContactConverter::searchDetail(QList<QContactDetail> details,
-                                                        QString search)
+// Test utility functions
+QContactDetail UT_QVersitContactConverter::searchDetail(
+    QList<QContactDetail> details,
+    QString search)
 {
     QContactDetail detail;
     for (int i= 0; i < details.count(); i++) {

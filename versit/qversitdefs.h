@@ -206,7 +206,6 @@ const versitMapping versitSubTypeMappings[] = {
     {"PAGER",QContactPhoneNumber::SubTypePager.str},
     {"SWIS", QContactOnlineAccount::SubTypeShareVideo.str},
     {"VOIP", QContactOnlineAccount::SubTypeInternet.str},
-    {"SIP", QContactOnlineAccount::SubTypeSip.str},
     {QContactAnniversary::SubTypeWedding.str, QContactAnniversary::SubTypeWedding.str},
     {QContactAnniversary::SubTypeEngagement.str, QContactAnniversary::SubTypeEngagement.str},
     {QContactAnniversary::SubTypeHouse.str, QContactAnniversary::SubTypeHouse.str},
