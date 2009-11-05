@@ -75,8 +75,9 @@ bool QVersitReaderPrivate::read()
         QByteArray input = mIoDevice->readAll();
         VersitUtils::unfold(input);
         while (input.length() > 0) {
-            QVersitDocument document = parseVersitDocument(input);
-            if (document.properties().count() > 0)
+            QVersitDocument document;
+            if (parseVersitDocument(input,document) &&
+                document.properties().count() > 0)
                 mVersitDocuments.append(document);
         }
     }
@@ -92,13 +93,16 @@ void QVersitReaderPrivate::run()
 }
 
 /*!
- * Parses a versit document and returns the resulting document object
+ * Parses a versit document. Returns true if the parsing was successful.
  */
-QVersitDocument QVersitReaderPrivate::parseVersitDocument(QByteArray& text)
+bool QVersitReaderPrivate::parseVersitDocument(
+    QByteArray& text,
+    QVersitDocument& document)
 {
-    bool containsGroupedCards = false;
+    if (mDocumentNestingLevel >= MAX_VERSIT_DOCUMENT_NESTING_DEPTH)
+        return false; // To prevent infinite recursion
+    bool parsingOk = true;
     mDocumentNestingLevel++;
-    QVersitDocument document;
     text = text.mid(VersitUtils::countLeadingWhiteSpaces(text));
     QVersitProperty property =
         parseNextVersitProperty(document.versitType(),text);
@@ -109,12 +113,16 @@ QVersitDocument QVersitReaderPrivate::parseVersitDocument(QByteArray& text)
             property = parseNextVersitProperty(document.versitType(),text);
             if (property.name() == QString::fromAscii("BEGIN") &&
                 property.value().trimmed().toUpper() == "VCARD") {
-                containsGroupedCards = true;
-                break;
+                parsingOk = false;
+                // Parse through the embedded cards, but don't save them
+                text.prepend("BEGIN:VCARD\r\n");
+                QVersitDocument nestedDocument;
+                if (!parseVersitDocument(text,nestedDocument))
+                    break;
             }
             if (!setVersionFromProperty(document,property)) {
-                mDocumentNestingLevel--;
-                return QVersitDocument(); // return an empty document
+                parsingOk = false;
+                break;
             }
             if (property.name() != QString::fromAscii("VERSION") && 
                 property.name() != QString::fromAscii("END"))
@@ -123,7 +131,9 @@ QVersitDocument QVersitReaderPrivate::parseVersitDocument(QByteArray& text)
         }
     }
     mDocumentNestingLevel--;
-    return (containsGroupedCards) ? QVersitDocument() : document;
+    if (!parsingOk)
+        document = QVersitDocument();
+    return parsingOk;
 }
 
 /*!
@@ -157,9 +167,7 @@ void QVersitReaderPrivate::parseVCard21Property(
     property.setParameters(VersitUtils::extractVCard21PropertyParams(text));
     text = VersitUtils::extractPropertyValue(text);
     if (property.name() == QString::fromAscii("AGENT")) {
-        if (mDocumentNestingLevel >= MAX_VERSIT_DOCUMENT_NESTING_DEPTH)
-            return; // To prevent infinite recursion
-        property.setEmbeddedDocument(parseVersitDocument(text));
+        parseAgentProperty(text,property);
     } else {
         int crlfPos = -1;
         QString encoding(QString::fromAscii("ENCODING"));
@@ -199,13 +207,26 @@ void QVersitReaderPrivate::parseVCard30Property(
     QByteArray value = text.left(crlfPos);
     VersitUtils::removeBackSlashEscaping(value);
     if (property.name() == QString::fromAscii("AGENT")) {
-        if (mDocumentNestingLevel >= MAX_VERSIT_DOCUMENT_NESTING_DEPTH)
-            return; // To prevent infinite recursion
-        property.setEmbeddedDocument(parseVersitDocument(value));
+        parseAgentProperty(value,property);
     } else {
         property.setValue(value);
     }
     text = text.mid(crlfPos+2); // +2 is for skipping the CRLF
+}
+
+/*!
+ * Parses the value of AGENT \a property from \a text
+ */
+void QVersitReaderPrivate::parseAgentProperty(
+    QByteArray& text,
+    QVersitProperty& property)
+{
+    QVersitDocument agentDocument;
+    if (!parseVersitDocument(text,agentDocument)) {
+        property = QVersitProperty();
+    } else {
+        property.setEmbeddedDocument(agentDocument);
+    }
 }
 
 /*!

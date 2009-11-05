@@ -72,7 +72,7 @@ public: // New functions
     bool isReady() const;
     bool read();
 
-    QVersitDocument parseVersitDocument(QByteArray& text);
+    bool parseVersitDocument(QByteArray& text, QVersitDocument& document);
 
     QVersitProperty parseNextVersitProperty(
         QVersitDocument::VersitType versitType,
@@ -83,6 +83,10 @@ public: // New functions
         QVersitProperty& property);
 
     void parseVCard30Property(
+        QByteArray& text,
+        QVersitProperty& property);
+
+    void parseAgentProperty(
         QByteArray& text,
         QVersitProperty& property);
 

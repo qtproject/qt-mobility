@@ -86,28 +86,59 @@ void UT_QVersitReader::testReading()
     
     // Device set, no data
     mReader->setDevice(mInputDevice);
+    mInputDevice->open(QBuffer::ReadWrite);
     QVERIFY(!mReader->readAll());
+    QCOMPARE(mReader->result().count(),0);
 
     // Device set, one document
     const QByteArray& oneDocument = 
-        "Begin:VCARD\r\nVERSION:2.1\r\nN:Homer\r\nenD:VCARD\r\n";
+        "BEGIN:VCARD\r\nVERSION:2.1\r\nFN:Homer\r\nEND:VCARD\r\n";
     mInputDevice->write(oneDocument);
     mInputDevice->seek(0);
-    mExpectedDocumentCount = 1;
     QVERIFY(mReader->readAll());
+    QCOMPARE(mReader->result().count(),1);
 
     // Two documents
-    const QByteArray& twoDocuments = 
-        "begin:VCARD\r\nN:Marge\r\nEND:VCARD\r\nBEGIN:VCARD\r\nN:Bart\r\nend:VCARD\r\n";
-    mInputDevice->reset();
+    const QByteArray& twoDocuments =
+        "BEGIN:VCARD\r\nFN:Marge\r\nEND:VCARD\r\nBEGIN:VCARD\r\nFN:Bart\r\nEND:VCARD\r\n";
+    delete mInputDevice;
+    mInputDevice = 0;
+    mInputDevice = new QBuffer;
+    mInputDevice->open(QBuffer::ReadWrite);
     mInputDevice->write(twoDocuments);
     mInputDevice->seek(0);
-    mExpectedDocumentCount = 2;
     QVERIFY(mReader->readAll());
+    QCOMPARE(mReader->result().count(),2);
+
+    // Valid documents and a grouped document between them
+    const QByteArray& validDocumentsAndGroupedDocument =
+"BEGIN:VCARD\r\nFN:Marge\r\nEND:VCARD\r\n\
+BEGIN:VCARD\r\n\
+X-GROUPING:pub gang\r\n\
+BEGIN:VCARD\r\nFN:Moe\r\nEND:VCARD\r\n\
+BEGIN:VCARD\r\nFN:Barney\r\nEND:VCARD\r\n\
+END:VCARD\r\n\
+BEGIN:VCARD\r\nFN:Bart\r\nEND:VCARD\r\n\
+BEGIN:VCARD\r\nFN:Lisa\r\nEND:VCARD\r\n\
+BEGIN:VCARD\r\nFN:Maggie\r\nEND:VCARD\r\n";
+    delete mInputDevice;
+    mInputDevice = 0;
+    mInputDevice = new QBuffer;
+    mInputDevice->open(QBuffer::ReadWrite);
+    mInputDevice->write(validDocumentsAndGroupedDocument);
+    mInputDevice->seek(0);
+    QVERIFY(mReader->readAll());
+    QCOMPARE(mReader->result().count(),4);
 
     // Asynchronous reading
     QVERIFY(!mReadingDoneCalled);
+    delete mInputDevice;
+    mInputDevice = 0;
+    mInputDevice = new QBuffer;
+    mInputDevice->open(QBuffer::ReadWrite);
+    mInputDevice->write(oneDocument);
     mInputDevice->seek(0);
+    mExpectedDocumentCount = 1;
     QVERIFY(mReader->startReading());
     delete mReader; // waits for the thread to finish
     mReader = 0;
@@ -213,7 +244,7 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
     mReaderPrivate->mDocumentNestingLevel = 20;
     QByteArray agentProperty("AGENT:BEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\r\n");
     property = mReaderPrivate->parseNextVersitProperty(type,agentProperty);
-    QCOMPARE(property.name(),QString::fromAscii("AGENT"));
+    QCOMPARE(property.name(),QString());
     QCOMPARE(property.embeddedDocument().properties().count(),0);
     QCOMPARE(property.value(),QByteArray());
 }
@@ -278,7 +309,7 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard30()
     mReaderPrivate->mDocumentNestingLevel = 20;
     QByteArray agentProperty("AGENT:BEGIN\\:VCARD\\nFN\\:Marge\\nEND\\:VCARD\\n\r\n");
     property = mReaderPrivate->parseNextVersitProperty(type,agentProperty);
-    QCOMPARE(property.name(),QString::fromAscii("AGENT"));
+    QCOMPARE(property.name(),QString());
     QCOMPARE(property.embeddedDocument().properties().count(),0);
     QCOMPARE(property.value(),QByteArray());
 }
@@ -294,7 +325,8 @@ AGENT:BEGIN:VCARD\r\nN:Marge\r\nEND:VCARD\r\n\r\n\
 EMAIL;ENCODING=QUOTED-PRINTABLE:homer=40simp=\r\nsons.com\r\n\
 END:VCARD\r\n";
     QByteArray vCard(validCard21);
-    QVersitDocument document = mReaderPrivate->parseVersitDocument(vCard);
+    QVersitDocument document;
+    QVERIFY(mReaderPrivate->parseVersitDocument(vCard,document));
     QCOMPARE(document.properties().count(),3);
     QCOMPARE(mReaderPrivate->mDocumentNestingLevel,0);
 
@@ -307,7 +339,8 @@ AGENT:BEGIN\\:VCARD\\nN\\:Marge\\nEND\\:VCARD\\n\r\n\
 EMAIL:homer@simpsons.com\r\n\
 END:VCARD\r\n";
     vCard = validCard30;
-    document = mReaderPrivate->parseVersitDocument(vCard);
+    document = QVersitDocument();
+    QVERIFY(mReaderPrivate->parseVersitDocument(vCard,document));
     QCOMPARE(document.properties().count(),3);
     QCOMPARE(mReaderPrivate->mDocumentNestingLevel,0);
     
@@ -318,7 +351,8 @@ VERSION:2.1\r\n\
 FN:Nobody\r\n\
 END:VCARD\r\n";
     vCard = beginMissing;
-    document = mReaderPrivate->parseVersitDocument(vCard);
+    document = QVersitDocument();
+    QVERIFY(mReaderPrivate->parseVersitDocument(vCard,document));
     QCOMPARE(document.properties().count(),0);
     QCOMPARE(mReaderPrivate->mDocumentNestingLevel,0);
     
@@ -327,7 +361,8 @@ END:VCARD\r\n";
 "BEGIN:VCAL\r\n\
 END:VCAL\r\n";
     vCard = wrongType;
-    document = mReaderPrivate->parseVersitDocument(vCard);
+    document = QVersitDocument();
+    QVERIFY(mReaderPrivate->parseVersitDocument(vCard,document));
     QCOMPARE(document.properties().count(),0);
     QCOMPARE(mReaderPrivate->mDocumentNestingLevel,0);
     
@@ -338,7 +373,8 @@ VERSION:4.0\r\n\
 FN:Nobody\r\n\
 END:VCARD\r\n";
     vCard = wrongVersion;
-    document = mReaderPrivate->parseVersitDocument(vCard);
+    document = QVersitDocument();
+    QVERIFY(!mReaderPrivate->parseVersitDocument(vCard,document));
     QCOMPARE(document.properties().count(),0);
     QCOMPARE(mReaderPrivate->mDocumentNestingLevel,0);
 
@@ -360,7 +396,8 @@ TEL;CELL:7777\r\n\
 END:VCARD\r\n\
 END:VCARD";
     vCard = groupedCard;
-    document = mReaderPrivate->parseVersitDocument(vCard);
+    document = QVersitDocument();
+    QVERIFY(!mReaderPrivate->parseVersitDocument(vCard,document));
     QCOMPARE(mReaderPrivate->mDocumentNestingLevel, 0);
     QCOMPARE(mReaderPrivate->mVersitDocuments.count(), 0);
 }
