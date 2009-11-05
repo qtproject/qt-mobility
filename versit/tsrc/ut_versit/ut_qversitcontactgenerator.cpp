@@ -956,10 +956,10 @@ void UT_QVersitContactGenerator::testFamily()
     document.addProperty(nameProperty);
     QContact contact = mGenerator->generateContact(document);
     QContactFamily family = (QContactFamily)contact.detail(QContactFamily::DefinitionName);
-    QStringList childrens = family.children();
-    QCOMPARE(childrens.count(),1); // ensure no other kids in list
+    QStringList children = family.children();
+    QCOMPARE(children.count(),1); // ensure no other kids in list
     QCOMPARE(family.spouse(),QString()); // make sure no wife
-    QCOMPARE(childrens[0],QString::fromAscii(val)); // ensure it is your kid
+    QCOMPARE(children[0],QString::fromAscii(val)); // ensure it is your kid
 
     // Critical : wife but no kids , happy hours
     document = QVersitDocument();
@@ -970,8 +970,8 @@ void UT_QVersitContactGenerator::testFamily()
     document.addProperty(nameProperty);
     contact = mGenerator->generateContact(document);
     family = (QContactFamily)contact.detail(QContactFamily::DefinitionName);
-    childrens = family.children();
-    QCOMPARE(childrens.count(),0); // list should be empty as you know
+    children = family.children();
+    QCOMPARE(children.count(),0); // list should be empty as you know
     QCOMPARE(family.spouse(),QString::fromAscii(val)); // make sure thats your wife:(
 
     // Hopeless : couple of kids and wife
@@ -993,10 +993,10 @@ void UT_QVersitContactGenerator::testFamily()
     document.addProperty(nameProperty);
     contact = mGenerator->generateContact(document);
     family = (QContactFamily)contact.detail(QContactFamily::DefinitionName);
-    childrens = family.children();
-    QCOMPARE(childrens.count(),3); // too late , count them now.
+    children = family.children();
+    QCOMPARE(children.count(),3); // too late , count them now.
     // painfull but ensure they are your kids
-    QCOMPARE(childrens.join(QString::fromAscii(",")),kidsVal.join(QString::fromAscii(",")));
+    QCOMPARE(children.join(QString::fromAscii(",")),kidsVal.join(QString::fromAscii(",")));
     QCOMPARE(family.spouse(),QString::fromAscii(val)); // make sure thats your wife:(
 }
 

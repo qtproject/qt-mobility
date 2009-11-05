@@ -104,32 +104,26 @@ QVersitDocument QVersitReaderPrivate::parseVersitDocument(QByteArray& text)
         parseNextVersitProperty(document.versitType(),text);
     if (property.name() == QString::fromAscii("BEGIN") && 
         property.value().trimmed().toUpper() == "VCARD") {
-        while (property.name().length() > 0 && 
+        while (property.name().length() > 0 &&
                property.name() != QString::fromAscii("END")) {
             property = parseNextVersitProperty(document.versitType(),text);
             if (property.name() == QString::fromAscii("BEGIN") &&
                 property.value().trimmed().toUpper() == "VCARD") {
                 containsGroupedCards = true;
-                text.prepend("BEGIN:VCARD\r\n");
-                document = parseVersitDocument(text);
-                if (document.properties().count() > 0)
-                    mVersitDocuments.append(document);
+                break;
             }
             if (!setVersionFromProperty(document,property)) {
                 mDocumentNestingLevel--;
                 return QVersitDocument(); // return an empty document
             }
             if (property.name() != QString::fromAscii("VERSION") && 
-                property.name() != QString::fromAscii("END") &&
-                property.name() != QString::fromAscii("BEGIN"))
+                property.name() != QString::fromAscii("END"))
                 document.addProperty(property);
 
         }
     }
     mDocumentNestingLevel--;
-    if (containsGroupedCards)
-        return QVersitDocument(); // return an empty document
-    return document;
+    return (containsGroupedCards) ? QVersitDocument() : document;
 }
 
 /*!
