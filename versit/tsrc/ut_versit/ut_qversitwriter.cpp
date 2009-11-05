@@ -83,13 +83,16 @@ void UT_QVersitWriter::testWriting()
     // Device not set
     QVERIFY(!mWriter->writeAll());
 
+    // Device set, but not opened
+    mWriter->setDevice(mOutputDevice);
+    QVERIFY(!mWriter->writeAll());
+
     // vCard 2.1
     const char vCard21[] =
 "BEGIN:VCARD\r\n\
 VERSION:2.1\r\n\
 FN:Homer\r\n\
 END:VCARD\r\n";
-    mWriter->setDevice(mOutputDevice);
     mOutputDevice->open(QBuffer::ReadWrite);
     QVersitDocument document;
     QVersitProperty property;
