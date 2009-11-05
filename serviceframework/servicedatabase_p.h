@@ -53,12 +53,13 @@
 // We mean it.
 //
 
+#include "qserviceglobal.h"
 #include <QtSql>
 #include <QList>
 #include "servicemetadata_p.h"
 #include "qservicefilter.h"
 #include "dberror_p.h"
-#include "qserviceglobal.h"
+
 
 QT_BEGIN_HEADER
 QT_BEGIN_NAMESPACE

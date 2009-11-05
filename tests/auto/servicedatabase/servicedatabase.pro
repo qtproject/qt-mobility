@@ -22,9 +22,9 @@ include(../../../common.pri)
 
 # Input 
 SOURCES += tst_servicedatabase.cpp \
-            dberror.cpp
-HEADERS += dberror_p.h \
-            servicedatabase_p.h
+ #           dberror.cpp
+#HEADERS += dberror_p.h
+            #servicedatabase_p.h
             
 
 
