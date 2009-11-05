@@ -357,7 +357,7 @@ bool QX11VideoSurface::present(const QVideoFrame &frame)
         } else {
             bool presented = false;
 
-            if (m_image->data_size > frame.numBytes()) {
+            if (m_image->data_size > frame.mappedBytes()) {
                 qWarning("Insufficient frame buffer size");
                 setError(IncorrectFormatError);
             } else if (m_image->num_planes > 0 && m_image->pitches[0] != frame.bytesPerLine()) {
