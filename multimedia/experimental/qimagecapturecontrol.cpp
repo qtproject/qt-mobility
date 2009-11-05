@@ -101,6 +101,13 @@ QImageCaptureControl::~QImageCaptureControl()
 /*!
     \fn QImageCaptureControl::imageCaptured(const QString &fileName, const QImage &preview)
 
-    Signals that an image has been captured to \a fileName and a \a preview is available.
+    Signals that an image intendec to be saved to to \a fileName
+    has been captured and a \a preview is available.
 */
 
+
+/*!
+    \fn QImageCaptureControl::imageSaved(const QString &fileName)
+
+    Signals that an captured image has been saved to \a fileName.
+*/

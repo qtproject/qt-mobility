@@ -154,6 +154,8 @@ void QCameraPrivate::initControls()
     if (captureControl) {
         q->connect(captureControl, SIGNAL(imageCaptured(QString,QImage)),
                 q, SIGNAL(imageCaptured(QString,QImage)));
+        q->connect(captureControl, SIGNAL(imageSaved(QString)),
+                        q, SIGNAL(imageSaved(QString)));
         q->connect(captureControl, SIGNAL(readyForCaptureChanged(bool)),
                 q, SIGNAL(readyForCaptureChanged(bool)));
     }
@@ -985,10 +987,19 @@ void QCamera::capture(const QString &file)
 */
 
 /*!
-    \fn void QCamera::imageCaptured(const QString &fileName, const QImage &preview)
+    \fn QCamera::imageCaptured(const QString &fileName, const QImage &preview)
 
-    Signal emitted when image ready with \a fileName and \a preview.
+    Signals that an image intendec to be saved to to \a fileName
+    has been captured and a \a preview is available.
 */
+
+
+/*!
+    \fn QCamera::imageSaved(const QString &fileName)
+
+    Signals that an captured image has been saved to \a fileName.
+*/
+
 
 /*!
     \fn void QCamera::isoSensitivityChanged(int value)
