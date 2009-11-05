@@ -75,7 +75,8 @@ public:
         CameraError,
         NotReadyToCaptureError,
         InvalidRequestError,
-        ServiceMissingError
+        ServiceMissingError,
+        NotSupportedFeatureError
     };
 
     enum FlashMode {
