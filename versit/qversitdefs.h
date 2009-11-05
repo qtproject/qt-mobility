@@ -44,8 +44,28 @@
 #ifndef QVERSITDEFS_H
 #define QVERSITDEFS_H
 
-// vCard 2.1 constants.
+#include <qcontact.h>
+#include <qcontactdetail.h>
+#include <qcontactname.h>
+#include <qcontactemailaddress.h>
+#include <qcontactphonenumber.h>
+#include <qcontactaddress.h>
+#include <qcontacturl.h>
+#include <qcontactguid.h>
+#include <qcontactorganization.h>
+#include <qcontacttimestamp.h>
+#include <qcontactbirthday.h>
+#include <qcontactnote.h>
+#include <qcontactgeolocation.h>
+#include <qcontactavatar.h>
+#include <qcontactgender.h>
+#include <qcontactnickname.h>
+#include <qcontactanniversary.h>
+#include <qcontactonlineaccount.h>
+#include <qcontactfamily.h>
 
+
+// vCard 2.1 constants.
 // Property names and parameters
 const char versitNameId[] = "N";
 const char versitFormatedNameId[] = "FN";
@@ -119,8 +139,6 @@ const char versitFormatQtime[] = "QTIME";
 const char versitFormatAiff[] = "AIFF";
 const char versitFormatGif[] = "GIF";
 
-
-
 // ISO-8601 basic format datetime spec
 const char versitDateTimeSpecIso8601Basic[] = "yyyyMMddThhmmss";
 const char versitDateSpecIso8601Basic[] = "yyyyMMdd";
@@ -148,5 +166,70 @@ const char versitConstWWW[] = "WWW.";
 const char versitISOFormatSuffix[] = "Z";
 
 
-#endif // QVERSITDEFS_H
+struct versitMapping {
+    const char* versitType;
+    const char* contactDetail;
+};
 
+const versitMapping versitDetailMappings[] = {
+    {"N",  QContactName::DefinitionName.str},
+    {"EMAIL",  QContactEmailAddress::DefinitionName.str},
+    {"TEL",  QContactPhoneNumber::DefinitionName.str},
+    {"ADR",  QContactAddress::DefinitionName.str},
+    {"URL",  QContactUrl::DefinitionName.str},
+    {"REV", QContactTimestamp::DefinitionName.str},
+    {"UID",  QContactGuid::DefinitionName.str},
+    {"ORG",  QContactOrganization::DefinitionName.str},
+    {"BDAY", QContactBirthday::DefinitionName.str},
+    {"NOTE", QContactNote::DefinitionName.str},
+    {"GEO",  QContactGeolocation::DefinitionName.str},
+    {"NICKNAME",  QContactNickname::DefinitionName.str},
+    {"PHOTO",  QContactAvatar::SubTypeImage.str},
+    {"SOUND", QContactAvatar::SubTypeAudioRingtone.str},
+    {"X-ANNIVERSARY", QContactAnniversary::DefinitionName.str},
+    {"X-GENDER", QContactGender::DefinitionName.str},
+    {"X-NICKNAME", QContactNickname::DefinitionName.str}
+ };
+
+const versitMapping versitSubTypeMappings[] = {
+    {"DOM", QContactAddress::SubTypeDomestic.str},
+    {"INTL", QContactAddress::SubTypeInternational.str},
+    {"POSTAL", QContactAddress::SubTypePostal.str},
+    {"PARCEL", QContactAddress::SubTypeParcel.str},
+    {"VOICE", QContactPhoneNumber::SubTypeVoice.str},
+    {"CELL", QContactPhoneNumber::SubTypeMobile.str},
+    {"MODEM", QContactPhoneNumber::SubTypeModem.str},
+    {"CAR", QContactPhoneNumber::SubTypeCar.str},
+    {"VIDEO", QContactPhoneNumber::SubTypeVideo.str},
+    {"FAX", QContactPhoneNumber::SubTypeFacsimile.str},
+    {"BBS", QContactPhoneNumber::SubTypeBulletinBoardSystem.str},
+    {"PAGER",QContactPhoneNumber::SubTypePager.str},
+    {"SWIS", QContactOnlineAccount::SubTypeShareVideo.str},
+    {"VOIP", QContactOnlineAccount::SubTypeInternet.str},
+    {"SIP", QContactOnlineAccount::SubTypeSip.str},
+    {QContactAnniversary::SubTypeWedding.str, QContactAnniversary::SubTypeWedding.str},
+    {QContactAnniversary::SubTypeEngagement.str, QContactAnniversary::SubTypeEngagement.str},
+    {QContactAnniversary::SubTypeHouse.str, QContactAnniversary::SubTypeHouse.str},
+    {QContactAnniversary::SubTypeEmployment.str, QContactAnniversary::SubTypeEmployment.str},
+    {QContactAnniversary::SubTypeMemorial.str, QContactAnniversary::SubTypeMemorial.str}
+ };
+
+const versitMapping versitFileTypesMappings[] = {
+    {"JPEG", "JPG"},
+    {"WAVE", "WAV"},
+    {"PICT", "PCT"},
+    {"TIFF", "TIF"},
+    {"MPEG", "MPG"},
+    {"MPEG2", "M2P"},
+    {"QTIME", "QT"},
+    {"AIFF", "AIF"},
+    {"TIFF", "GIF"}
+};
+
+const versitMapping versitContextMappings[] = {
+    {"HOME", QContactDetail::ContextHome.str},
+    {"WORK", QContactDetail::ContextWork.str},
+};
+
+
+#endif // QVERSITDEFS_H

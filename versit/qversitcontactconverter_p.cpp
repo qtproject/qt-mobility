@@ -71,112 +71,36 @@
  */
 QVersitContactConverterPrivate::QVersitContactConverterPrivate() :
     mVersitType(QVersitDocument::VCard21)
-{                
-    //Properties Mapping
+{
+    // Create Mapping for Details
+    unsigned int count = sizeof(versitDetailMappings)/sizeof(versitMapping);
+    for (unsigned int i=0; i < count; i++) {
+        mPropertyMappings.insert(versitDetailMappings[i].contactDetail,
+                                    versitDetailMappings[i].versitType);
+    }
 
-    mPropertyMappings.insert(
-        QContactName::DefinitionName,QString::fromAscii(versitNameId));
-    mPropertyMappings.insert(
-        QContactEmailAddress::DefinitionName,QString::fromAscii(versitEmailId));  
-    mPropertyMappings.insert(
-        QContactPhoneNumber::DefinitionName,QString::fromAscii(versitPhoneId));
-    mPropertyMappings.insert(
-        QContactAddress::DefinitionName,QString::fromAscii(versitAddressId));
-    mPropertyMappings.insert(
-        QContactUrl::DefinitionName,QString::fromAscii(versitUrlId));
-    mPropertyMappings.insert(
-        QContactGuid::DefinitionName,QString::fromAscii(versitUidId));
-    mPropertyMappings.insert(
-        QContactOrganization::DefinitionName,QString::fromAscii(versitOrganizationId));
-    mPropertyMappings.insert(
-        QContactTimestamp::DefinitionName,QString::fromAscii(versitRevId));
-    mPropertyMappings.insert(
-        QContactBirthday::DefinitionName,QString::fromAscii(versitBirthdayId));
-    mPropertyMappings.insert(
-        QContactNote::DefinitionName,QString::fromAscii(versitNoteId));
-    mPropertyMappings.insert(
-        QContactGeolocation::DefinitionName,QString::fromAscii(versitGeoId));
-    mPropertyMappings.insert(
-        QContactGender::DefinitionName,QString::fromAscii(versitGenderId));
-    mPropertyMappings.insert(
-        QContactNickname::DefinitionName,QString::fromAscii(versitNicknameXId));
-    mPropertyMappings.insert(
-        QContactAnniversary::DefinitionName,QString::fromAscii(versitAnniversaryId));
+    // Create Mappings for SubTypes
+    count = sizeof(versitSubTypeMappings)/sizeof(versitMapping);
+    for (unsigned int i=0; i < count; i++) {
+        mParameterMappings.insert(versitSubTypeMappings[i].contactDetail,
+                                    versitSubTypeMappings[i].versitType);
+    }
 
-    // Sound is mapped to the Contact Audio Ringingtones that was the nearest match
-    // field for the Sound
-    mPropertyMappings.insert(
-        QContactAvatar::SubTypeAudioRingtone,QString::fromAscii(versitSoundId));
+    // Create Mappings for Contexts
+    count = sizeof(versitFileTypesMappings)/sizeof(versitMapping);
+    for (unsigned int i=0; i < count; i++) {
+        mParameterMappings.insert(versitFileTypesMappings[i].contactDetail,
+                                    versitFileTypesMappings[i].versitType);
+    }
 
-    mPropertyMappings.insert(
-        QContactAvatar::SubTypeImage,QString::fromAscii(versitPhotoId));
-
-
-    // Parameters Table
-    // Contexts
-    mParameterMappings.insert(
-        QContactDetail::ContextWork,QString::fromAscii(versitContextWorkId));
-    mParameterMappings.insert(
-        QContactDetail::ContextHome,QString::fromAscii(versitContextHomeId));
-    
-    // Subtypes
-    mParameterMappings.insert(
-        QContactAddress::SubTypeDomestic,QString::fromAscii(versitDomesticId));
-    mParameterMappings.insert(
-        QContactAddress::SubTypeInternational,QString::fromAscii(versitInternationalId));
-    mParameterMappings.insert(
-        QContactAddress::SubTypePostal,QString::fromAscii(versitPostalId));
-    mParameterMappings.insert(
-        QContactAddress::SubTypeParcel,QString::fromAscii(versitParcelId));
-    mParameterMappings.insert(
-        QContactPhoneNumber::SubTypeVoice,QString::fromAscii(versitVoiceId));
-    mParameterMappings.insert(
-        QContactPhoneNumber::SubTypeMobile,QString::fromAscii(versitCellId));
-    mParameterMappings.insert(
-        QContactPhoneNumber::SubTypeModem,QString::fromAscii(versitModemId));
-    mParameterMappings.insert(
-        QContactPhoneNumber::SubTypeCar,QString::fromAscii(versitCarId));
-    mParameterMappings.insert(
-        QContactPhoneNumber::SubTypeVideo,QString::fromAscii(versitVideoId));
-    mParameterMappings.insert(
-        QContactPhoneNumber::SubTypeFacsimile,QString::fromAscii(versitFaxId));
-    mParameterMappings.insert(
-        QContactPhoneNumber::SubTypeBulletinBoardSystem,QString::fromAscii(versitBbsId));
-    mParameterMappings.insert(
-        QContactPhoneNumber::SubTypePager,QString::fromAscii(versitPagerId));
-    mParameterMappings.insert(
-        QContactAnniversary::SubTypeWedding,QContactAnniversary::SubTypeWedding);
-    mParameterMappings.insert(
-        QContactAnniversary::SubTypeEngagement,QContactAnniversary::SubTypeEngagement);
-    mParameterMappings.insert(
-        QContactAnniversary::SubTypeHouse,QContactAnniversary::SubTypeHouse);
-    mParameterMappings.insert(
-        QContactAnniversary::SubTypeEmployment,QContactAnniversary::SubTypeEmployment);
-    mParameterMappings.insert(
-        QContactAnniversary::SubTypeMemorial,QContactAnniversary::SubTypeMemorial);
-    mParameterMappings.insert(
-        QContactOnlineAccount::SubTypeShareVideo,QString::fromAscii(versitSwisId));
-    mParameterMappings.insert(
-        QContactOnlineAccount::SubTypeInternet,QString::fromAscii(versitVoipId));
-
-    //Media Types.
-    mParameterMappings.insert(
-        QString::fromAscii(versitJPEGExtenId),QString::fromAscii(versitFormatJpeg));
-    mParameterMappings.insert(
-        QString::fromAscii(versitWAVEExtenId),QString::fromAscii(versitFormatWave));
-    mParameterMappings.insert(
-        QString::fromAscii(versitPICTExtenId),QString::fromAscii(versitFormatPict));
-    mParameterMappings.insert(
-        QString::fromAscii(versitTIFFExtenId),QString::fromAscii(versitFormatWave));
-    mParameterMappings.insert(
-        QString::fromAscii(versitMPEGExtenId),QString::fromAscii(versitFormatMpeg));
-    mParameterMappings.insert(
-        QString::fromAscii(versitMPEG2ExtenId),QString::fromAscii(versitFormatMpeg2));
-    mParameterMappings.insert(
-        QString::fromAscii(versitQTIMEExtenId),QString::fromAscii(versitFormatQtime));
-    mParameterMappings.insert(
-        QString::fromAscii(versitAIFFExtenId),QString::fromAscii(versitFormatAiff));
+    // Create Mappings for FileExtensionMappings
+    count = sizeof(versitContextMappings)/sizeof(versitMapping);
+    for (unsigned int i=0; i < count; i++) {
+        mParameterMappings.insert(versitContextMappings[i].contactDetail,
+                                    versitContextMappings[i].versitType);
+    }
 }
+
 
 /*!
  * Destructor.
