@@ -121,9 +121,9 @@ QMetaDataControl::~QMetaDataControl()
 */
 
 /*!
-    \fn QMetadataControl::availableMetaData() const
+    \fn QMetaDataControl::availableMetaData() const
 
-    Returns the list of keys, meta-data is available for.
+    Returns a list of keys there is meta-data available for.
 */
 
 /*!
@@ -145,9 +145,9 @@ QMetaDataControl::~QMetaDataControl()
 */
 
 /*!
-    \fn QMetadataControl::availableExtendedMetaData() const
+    \fn QMetaDataControl::availableExtendedMetaData() const
 
-    Returns the list of keys, extended meta-data is available for.
+    Returns a list of keys there is extended meta-data available for.
 */
 
 
