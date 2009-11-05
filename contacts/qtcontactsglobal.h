@@ -51,8 +51,8 @@
 #define QTCONTACTS_EXPORT Q_DECL_IMPORT
 #endif
 
- #define QTCONTACTS_VERSION_NAME "version" 
- #define QTCONTACTS_IMPLEMENTATION_VERSION_NAME "implementationVersion" 
+ #define QTCONTACTS_VERSION_NAME "com.nokia.qt.mobility.contacts.api.version" 
+ #define QTCONTACTS_IMPLEMENTATION_VERSION_NAME "com.nokia.qt.mobility.contacts.implementation.version" 
  #define QTCONTACTS_VERSION 1 
 
 // XXX

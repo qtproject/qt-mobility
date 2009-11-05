@@ -601,9 +601,13 @@ QString QContactManager::managerName() const
 }
 
 /*! Return the parameters relevant to the creation of this QContactManager */
-QMap<QString, QString>QContactManager::managerParameters() const
+QMap<QString, QString> QContactManager::managerParameters() const
 {
-    return d->m_engine->managerParameters();
+    QMap<QString, QString> params = d->m_engine->managerParameters();
+    
+    params.remove(QString::fromAscii(QTCONTACTS_VERSION_NAME));
+    params.remove(QString::fromAscii(QTCONTACTS_IMPLEMENTATION_VERSION_NAME));
+    return params;
 }
 
 /*!

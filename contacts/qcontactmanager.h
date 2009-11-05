@@ -97,7 +97,8 @@ public:
         OutOfMemoryError,
         NotSupportedError,
         BadArgumentError,
-        UnspecifiedError
+        UnspecifiedError,
+        VersionMismatchError
     };
 
     /* Error reporting */
