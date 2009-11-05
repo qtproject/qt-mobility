@@ -262,6 +262,17 @@ void tst_QMediaPlaylist::saveAndLoad()
     QVERIFY(playlist.error() != QMediaPlaylist::NoError);
     QVERIFY(!playlist.errorString().isEmpty());
 
+    res = playlist.save(QUrl(QLatin1String("tmp.unsupported_format")), "unsupported_format");
+    QVERIFY(!res);
+    QVERIFY(playlist.error() != QMediaPlaylist::NoError);
+    QVERIFY(!playlist.errorString().isEmpty());
+
+    errorSignal.clear();
+    playlist.load(QUrl(QLatin1String("tmp.unsupported_format")), "unsupported_format");
+    QCOMPARE(errorSignal.size(), 1);
+    QVERIFY(playlist.error() != QMediaPlaylist::NoError);
+    QVERIFY(!playlist.errorString().isEmpty());
+
     //it's necessary to ensure the m3u plugin is loaded for this test
     /*
     res = playlist.save(&buffer, "m3u");
@@ -278,8 +289,20 @@ void tst_QMediaPlaylist::saveAndLoad()
     QCOMPARE(playlist.media(0), playlist2.media(0));
     QCOMPARE(playlist.media(1), playlist2.media(1));
     QCOMPARE(playlist.media(3), playlist2.media(3));
-    */
 
+    res = playlist.save(QUrl(QLatin1String("tmp.m3u")), "m3u");
+    QVERIFY(res);
+
+    playlist2.clear();
+    QVERIFY(playlist2.isEmpty());
+    playlist2.load(QUrl(QLatin1String("tmp.m3u")), "m3u");
+    QCOMPARE(playlist.error(), QMediaPlaylist::NoError);
+
+    QCOMPARE(playlist.size(), playlist2.size());
+    QCOMPARE(playlist.media(0), playlist2.media(0));
+    QCOMPARE(playlist.media(1), playlist2.media(1));
+    QCOMPARE(playlist.media(3), playlist2.media(3));
+    */
 }
 
 void tst_QMediaPlaylist::playbackMode_data()
