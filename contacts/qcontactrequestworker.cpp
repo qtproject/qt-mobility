@@ -85,10 +85,14 @@ QContactRequestWorker& QContactRequestWorker::operator=(const QContactRequestWor
 /*! Frees the memory used by this QContactRequestWorker, stops the thread and clean up all request elements in the working queue */
 QContactRequestWorker::~QContactRequestWorker()
 {
+qDebug() << "::dtor()";
     stop();
+qDebug() << "   stopped";
     quit();
+qDebug() << "   quit";
     while (isRunning() && !wait(1)) 
         d->m_newRequestAdded.wakeAll();
+qDebug() << "   no longer running";
 }
 
 /*!
@@ -98,6 +102,7 @@ QContactRequestWorker::~QContactRequestWorker()
  */
 void QContactRequestWorker::stop()
 {
+qDebug() << "::stop()";
     QMutexLocker locker(&d->m_mutex);
     d->m_stop = true;
     d->m_newRequestAdded.wakeAll();
@@ -126,9 +131,16 @@ void QContactRequestWorker::run()
     QContactAbstractRequest *req;
     
     for(;;) {
-        req = d->takeFirstRequest();
-        if (d->m_stop || req == 0)
+        // first, check to see if we were stopped during our previous cycle
+        if (d->m_stop)
             break;
+
+        // otherwise, get a new request from the queue (also sets the m_currentRequest ptr to this request)
+        req = d->takeFirstRequest();
+        if (req == 0) {
+            // no requests?  woken due to stop() - m_currentRequest ptr will still be zero.
+            break;
+        }
         
         // check to see if it is cancelling; if so, cancel it and perform update.
         if (req->status() == QContactAbstractRequest::Cancelling) {
@@ -175,12 +187,23 @@ void QContactRequestWorker::run()
         req->d_ptr->m_condition.wakeAll();
     }
 
-    // clean up our requests.
+qDebug() << "Run loop cleaning up...";
+
+    // we were stopped.  clean up our requests by cancelling them all.
     foreach (QContactAbstractRequest* req, d->m_requestQueue) {
         if (req) {
-            removeRequest(req);
+            // manually cancel and remove all requests from the queue.
+            QMutexLocker workerLocker(&d->m_mutex);
+            QList<QContactManager::Error> dummy;
+            QContactManagerEngine::updateRequestStatus(req, QContactManager::UnspecifiedError, dummy, QContactAbstractRequest::Cancelling);
+            QContactManagerEngine::updateRequestStatus(req, QContactManager::UnspecifiedError, dummy, QContactAbstractRequest::Cancelled);
+            d->m_requestQueue.removeOne(req);
+            if (req->d_ptr->m_waiting)
+                req->d_ptr->m_condition.wakeAll();
         }
     }
+
+qDebug() << "Run loop clean; d->m_requestQueue.size() =" << d->m_requestQueue.size();
 
     d->m_requestQueue.clear();
 }
@@ -609,11 +632,18 @@ void QContactRequestWorker::processContactRelationshipSaveRequest(QContactRelati
 QContactAbstractRequest* QContactRequestWorkerData::takeFirstRequest()
 {
     QMutexLocker locker(&m_mutex);
+    
+    // check that I'm not already stopped.
+    if (m_stop)
+        return 0;
 
     // take the first pending request and finish it
     if (m_requestQueue.isEmpty())
         m_newRequestAdded.wait(&m_mutex);
+
+    // we were woken up; check for new request or stop.
     if (!m_requestQueue.isEmpty()) {
+        // we have a new request to process.
         m_currentRequest = m_requestQueue.head();
         return m_currentRequest;
     }

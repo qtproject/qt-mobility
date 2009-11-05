@@ -82,7 +82,8 @@ public:
         : QSharedData(),
         m_refCount(QAtomicInt(1)),
         m_nextContactId(1),
-        m_anonymous(false)
+        m_anonymous(false),
+        m_requestWorker(0)
     {
     }
 
@@ -90,7 +91,8 @@ public:
         : QSharedData(other),
         m_refCount(QAtomicInt(1)),
         m_nextContactId(other.m_nextContactId),
-        m_anonymous(other.m_anonymous)
+        m_anonymous(other.m_anonymous),
+        m_requestWorker(0)
     {
     }
 
