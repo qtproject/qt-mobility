@@ -59,7 +59,7 @@ unix: {
         SOURCES += qsysteminfo_mac.mm
         HEADERS += qsysteminfo_mac_p.h
         LIBS += -framework SystemConfiguration -framework CoreFoundation \
-         -framework IOKit -framework ApplicationServices
+         -framework IOKit -framework ApplicationServices -framework Foundation
 
         # change this to /Developer/SDKs/MacOSX10.6.sdk
         # if you want to compile for 10.6 with CoreWLAN framework
@@ -67,10 +67,7 @@ unix: {
         QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.5.sdk
         contains(QMAKE_MAC_SDK, "/Developer/SDKs/MacOSX10.6.sdk") {
                 LIBS += -framework CoreWLAN  -framework IOBluetooth
-                message("Using 10.6 SDK")
                 DEFINES += MAC_SDK_10_6
-        } else {
-                message("Using 10.5 SDK")
         }
         TEMPLATE = lib
     }
