@@ -358,6 +358,13 @@ void QMediaPlaylist::load(const QUrl &location, const char *format)
     if (d->playlist()->load(location,format))
         return;
 
+    if (isReadOnly()) {
+        d->error = AccessDeniedError;
+        d->errorString = tr("Could not add items to read only playlist.");
+        emit loadFailed();
+        return;
+    }
+
     foreach (QString const& key, playlistIOLoader()->keys()) {
         QMediaPlaylistIOInterface* plugin = qobject_cast<QMediaPlaylistIOInterface*>(playlistIOLoader()->instance(key));
         if (plugin && plugin->canRead(location,format)) {
@@ -394,6 +401,13 @@ void QMediaPlaylist::load(QIODevice * device, const char *format)
 
     if (d->playlist()->load(device,format))
         return;
+
+    if (isReadOnly()) {
+        d->error = AccessDeniedError;
+        d->errorString = tr("Could not add items to read only playlist.");
+        emit loadFailed();
+        return;
+    }
 
     foreach (QString const& key, playlistIOLoader()->keys()) {
         QMediaPlaylistIOInterface* plugin = qobject_cast<QMediaPlaylistIOInterface*>(playlistIOLoader()->instance(key));
