@@ -165,43 +165,43 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
         useDate = true;
     }
     switch(type) {
-    case QSystemInfo::Os :
+    case QSystemInfo::Os:
         {
-
+            return nsstringToQString([[NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"] objectForKey:@"ProductVersion"]);
         }
         break;
-    case QSystemInfo::QtCore :
+    case QSystemInfo::QtCore:
        return  qVersion();
        break;
-    case QSystemInfo::WrtCore :
+    case QSystemInfo::WrtCore:
         {
         }
        break;
-    case QSystemInfo::Webkit :
+    case QSystemInfo::Webkit:
         {
         }
        break;
-    case QSystemInfo::ServiceFramework :
+    case QSystemInfo::ServiceFramework:
         {
         }
        break;
-    case QSystemInfo::WrtExtensions :
+    case QSystemInfo::WrtExtensions:
         {
         }
        break;
-    case QSystemInfo::ServiceProvider :
+    case QSystemInfo::ServiceProvider:
         {
         }
        break;
-    case QSystemInfo::NetscapePlugin :
+    case QSystemInfo::NetscapePlugin:
         {
         }
        break;
-    case QSystemInfo::WebApp :
+    case QSystemInfo::WebApp:
         {
         }
        break;
-   case QSystemInfo::Firmware :
+   case QSystemInfo::Firmware:
        {
        }
        break;
@@ -841,8 +841,7 @@ QString QSystemDeviceInfoPrivate::model()
 
 QString QSystemDeviceInfoPrivate::productName()
 {
-
-        return  QString();
+    return nsstringToQString([[NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"] objectForKey:@"ProductName"]);
 }
 
 int QSystemDeviceInfoPrivate::batteryLevel()
