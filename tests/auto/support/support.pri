@@ -1,27 +1,13 @@
-TEMPLATE = lib
-TARGET = support
-
-include(../../../common.pri)
-
-qtAddLibrary(QtMessaging)
-INCLUDEPATH += ../../../messaging
-
-DEFINES += QT_BUILD_MESSAGING_SUPPORT_LIB
 
 HEADERS += \
-    support.h
+    $$PWD/support.h
 
 symbian|win32 {
     symbian {
-        MMP_RULES += "EXPORTUNFROZEN"
-
-        SOURCES += \
-            support_symbian.cpp
+        SOURCES += $$PWD/support_symbian.cpp
     }
     win32 {
-        !static:DEFINES += QT_MAKEDLL
-        SOURCES += \
-            support_win.cpp
+        SOURCES += $$PWD/support_win.cpp
 
         wince*{
             LIBS += cemapi.lib
@@ -38,7 +24,6 @@ symbian|win32 {
     # QMF libraries must be located at $QMF_LIBDIR
     LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
 
-    SOURCES += \
-        support_qmf.cpp
+    SOURCES += $$PWD/support_qmf.cpp
 }
 

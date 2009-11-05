@@ -5,12 +5,10 @@ CONFIG += testcase
 QT += testlib
 
 include(../../../common.pri)
+include(../support/support.pri)
 
 qtAddLibrary(QtMessaging)
 INCLUDEPATH += ../../../messaging
-
-# Link against the test support library
-LIBS += -lsupport
 
 symbian|wince*|maemo|win32 {
 } else {

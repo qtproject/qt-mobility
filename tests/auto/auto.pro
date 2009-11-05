@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
-CONFIG += ordered
+include($$QT_MOBILITY_BUILD_TREE/config.pri)
 
 #remove servicedatabase and databasemanager tests. they have some serious symbol issues
 #SUBDIRS += databasemanager \                #service framework
@@ -93,7 +93,6 @@ contains(QT_CONFIG, multimedia) {
 #Messaging
 contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
     SUBDIRS += \
-        support \
         qmessagestore \
         qmessagestorekeys \
         qmessage
