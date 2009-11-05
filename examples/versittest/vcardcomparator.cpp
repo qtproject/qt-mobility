@@ -90,7 +90,7 @@ QStringList* VCardComparator::readLines(
 {
     QStringList* lines = new QStringList;
     while (!device.atEnd()) {
-        QString line(device.readLine());
+        QString line = QString::fromAscii(device.readLine());
         bool addLine = true;
         foreach(QString excludedField, excludedFields) {
             if (line.startsWith(excludedField)) {

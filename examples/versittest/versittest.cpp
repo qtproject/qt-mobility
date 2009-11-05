@@ -101,7 +101,7 @@ void VersitTest::initTestCase()
     QFile excludeFieldsFile(mExcludeFieldsFileName);
     if (excludeFieldsFile.open(QIODevice::ReadOnly)) {
         while (!excludeFieldsFile.atEnd()) {
-            QString field(excludeFieldsFile.readLine().trimmed());
+            QString field = QString::fromAscii(excludeFieldsFile.readLine().trimmed());
             mExcludedFields->append(field);
         }
         excludeFieldsFile.close();
