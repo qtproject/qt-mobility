@@ -48,7 +48,7 @@
 
 class QVersitWriterPrivate;
 
-// writes QVersitDocument to iodevice
+// writes a QVersitDocument to i/o device
 class QTVERSIT_EXPORT QVersitWriter : public QObject
 {
     Q_OBJECT
@@ -60,12 +60,12 @@ public:
     // input:
     void setVersitDocument(const QVersitDocument& versitDocument);
     QVersitDocument versitDocument() const;
-
-    // async read / write operations.
+    // output:
     void setDevice(QIODevice* device);
     QIODevice* device() const;
-    bool startAsynchronousWriting();
-    bool writeSynchronously();
+    // writing:
+    bool startWriting();
+    bool writeAll();
 
 signals:
     void writingDone();

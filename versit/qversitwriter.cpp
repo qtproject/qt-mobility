@@ -151,10 +151,10 @@ QIODevice* QVersitWriter::device() const
  * if there is another asynchronous write operation already pending.
  * Signal \l writingDone is emitted when the writing has finished.
  */
-bool QVersitWriter::startAsynchronousWriting()
+bool QVersitWriter::startWriting()
 {
     bool started = false;
-    if (d->mIoDevice && d->mIoDevice->isOpen() && !d->isRunning()) {
+    if (d->isReady() && !d->isRunning()) {
         d->start();
         started = true;
     }
@@ -166,12 +166,9 @@ bool QVersitWriter::startAsynchronousWriting()
  * Returns false if the output device has not been set or opened or
  * if there is an asynchronous write operation pending.
  * Using this function may block the user thread for an undefined period.
- * In most cases asynchronous \l startAsynchronousWriting should be used instead.
+ * In most cases asynchronous \l startWriting should be used instead.
  */
-bool QVersitWriter::writeSynchronously()
+bool QVersitWriter::writeAll()
 {
-    bool ok = startAsynchronousWriting();
-    if (ok)
-        d->wait();
-    return ok;
+    return d->write();
 }

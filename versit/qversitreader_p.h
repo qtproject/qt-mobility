@@ -64,11 +64,14 @@
 
 class QVersitReaderPrivate : public QThread
 {
-public:
+public: // Constructors and destructor
     QVersitReaderPrivate(); 
     ~QVersitReaderPrivate();
 
 public: // New functions
+    bool isReady() const;
+    bool read();
+
     QVersitDocument parseVersitDocument(QByteArray& text);
 
     QVersitProperty parseNextVersitProperty(

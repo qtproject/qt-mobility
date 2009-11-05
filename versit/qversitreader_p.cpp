@@ -58,11 +58,20 @@ QVersitReaderPrivate::~QVersitReaderPrivate()
 }
 
 /*!
+ * Checks whether the reader is ready for reading.
+ */
+bool QVersitReaderPrivate::isReady() const
+{
+    return (mIoDevice && mIoDevice->isOpen());
+}
+
+/*!
  * Inherited from QThread. Does the actual reading.
  */
-void QVersitReaderPrivate::run()
+bool QVersitReaderPrivate::read()
 {
-    if (mIoDevice) {
+    mVersitDocuments.clear();
+    if (isReady()) {
         QByteArray input = mIoDevice->readAll();
         VersitUtils::unfold(input);
         while (input.length() > 0) {
@@ -71,6 +80,15 @@ void QVersitReaderPrivate::run()
                 mVersitDocuments.append(document);
         }
     }
+    return (mVersitDocuments.count() > 0);
+}
+
+/*!
+ * Inherited from QThread, called by QThread when the thread has been started.
+ */
+void QVersitReaderPrivate::run()
+{
+    read();
 }
 
 /*!

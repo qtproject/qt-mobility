@@ -75,6 +75,7 @@ private: // Data
     QVersitReaderPrivate* mReaderPrivate;
     QBuffer* mInputDevice;
     int mExpectedDocumentCount;
+    bool mReadingDoneCalled;
 };
 
 #endif // UT_VERSITREADER_H

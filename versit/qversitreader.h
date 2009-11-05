@@ -49,7 +49,7 @@
 class QIODevice;
 class QVersitReaderPrivate;
 
-// reads QVersitDocument from iodevice
+// reads a QVersitDocument from i/o device
 class QTVERSIT_EXPORT QVersitReader : public QObject
 {
     Q_OBJECT  
@@ -58,12 +58,12 @@ public:
     QVersitReader();
     ~QVersitReader();
 
-    // async read / write operation
+    // input:
     void setDevice(QIODevice* device);
     QIODevice* device() const;
-    bool startAsynchronousReading();
-    bool readSynchronously();
-
+    // reading:
+    bool startReading();
+    bool readAll();
     // output:
     QList<QVersitDocument> result() const;
 

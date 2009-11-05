@@ -115,11 +115,10 @@ QIODevice* QVersitReader::device() const
  * if there is another asynchronous read operation already pending.
  * Signal \l readingDone is emitted when the reading has finished.
  */
-bool QVersitReader::startAsynchronousReading()
+bool QVersitReader::startReading()
 {
     bool started = false;
-    if (d->mIoDevice && d->mIoDevice->isOpen() && !d->isRunning()) {
-        d->mVersitDocuments.clear();
+    if (d->isReady() && !d->isRunning()) {
         d->start();
         started = true;
     }
@@ -131,14 +130,11 @@ bool QVersitReader::startAsynchronousReading()
  * Returns false if the input device has not been set or opened or
  * if there is an asynchronous read operation pending.
  * Using this function may block the user thread for an undefined period.
- * In most cases asynchronous \l startAsynchronousReading should be used instead.
+ * In most cases asynchronous \l startReading should be used instead.
  */
-bool QVersitReader::readSynchronously()
+bool QVersitReader::readAll()
 {
-    bool ok = startAsynchronousReading();
-    if (ok)
-        d->wait();
-    return ok;
+    return d->read();
 }
 
 /*!

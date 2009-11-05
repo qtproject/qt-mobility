@@ -47,6 +47,7 @@
 
 void UT_QVersitReader::init()
 {
+    mReadingDoneCalled = false;
     mExpectedDocumentCount = 0;
     mInputDevice = new QBuffer;
     mInputDevice->open(QBuffer::ReadWrite);
@@ -60,12 +61,12 @@ void UT_QVersitReader::cleanup()
     delete mReaderPrivate;
     delete mReader;
     delete mInputDevice;
-    mExpectedDocumentCount = 0;
 }
 
 void UT_QVersitReader::readingDone()
 {
     QCOMPARE(mReader->result().count(),mExpectedDocumentCount);
+    mReadingDoneCalled = true;
 }
 
 void UT_QVersitReader::testDevice()
@@ -81,11 +82,11 @@ void UT_QVersitReader::testDevice()
 void UT_QVersitReader::testReading()
 {
     // No I/O device set
-    QVERIFY(!mReader->readSynchronously());
+    QVERIFY(!mReader->readAll());
     
     // Device set, no data
     mReader->setDevice(mInputDevice);
-    QVERIFY(mReader->readSynchronously());
+    QVERIFY(!mReader->readAll());
 
     // Device set, one document
     const QByteArray& oneDocument = 
@@ -93,7 +94,7 @@ void UT_QVersitReader::testReading()
     mInputDevice->write(oneDocument);
     mInputDevice->seek(0);
     mExpectedDocumentCount = 1;
-    QVERIFY(mReader->readSynchronously());
+    QVERIFY(mReader->readAll());
 
     // Two documents
     const QByteArray& twoDocuments = 
@@ -102,11 +103,15 @@ void UT_QVersitReader::testReading()
     mInputDevice->write(twoDocuments);
     mInputDevice->seek(0);
     mExpectedDocumentCount = 2;
-    QVERIFY(mReader->readSynchronously());
+    QVERIFY(mReader->readAll());
 
-    // Start asynchronous reading and leave it running
+    // Asynchronous reading
+    QVERIFY(!mReadingDoneCalled);
     mInputDevice->seek(0);
-    QVERIFY(mReader->startAsynchronousReading());
+    QVERIFY(mReader->startReading());
+    delete mReader; // waits for the thread to finish
+    mReader = 0;
+    QVERIFY(mReadingDoneCalled);
 }
 
 void UT_QVersitReader::testResult()

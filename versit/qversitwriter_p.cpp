@@ -65,14 +65,32 @@ QVersitWriterPrivate::~QVersitWriterPrivate()
 }
 
 /*!
- * Inherited from QThread. Does the actual writing.
+ * Checks whether the writer is ready for writing.
+ */
+bool QVersitWriterPrivate::isReady() const
+{
+    return (mIoDevice && mIoDevice->isOpen() && !mVersitDocument.properties().empty());
+}
+
+/*!
+ * Do the actual writing.
+ */
+bool QVersitWriterPrivate::write()
+{
+    bool ok = false;
+    if (isReady()) {
+        QByteArray output = encodeVersitDocument(mVersitDocument);
+        ok = (mIoDevice->write(output) > 0);
+    }
+    return ok;
+}
+
+/*!
+ * Inherited from QThread, called by QThread when the thread has been started.
  */
 void QVersitWriterPrivate::run()
 {
-    if (mIoDevice && !mVersitDocument.properties().empty()) {
-        QByteArray output = encodeVersitDocument(mVersitDocument);
-        mIoDevice->write(output);
-    }
+    write();
 }
 
 /*!

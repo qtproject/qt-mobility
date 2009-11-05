@@ -62,8 +62,9 @@
 class QVersitWriterPrivate : public QThread
 {
 public:
-    virtual ~QVersitWriterPrivate();  
-    QByteArray encodeVersitDocument(const QVersitDocument& document);
+    virtual ~QVersitWriterPrivate();
+    bool isReady() const;
+    bool write();
 
 public: // Data
     QIODevice* mIoDevice;
@@ -81,6 +82,7 @@ protected: // From QThread
      void run();
 
 protected: // New functions
+    QByteArray encodeVersitDocument(const QVersitDocument& document);
     QByteArray encodeGroupsAndName(const QVersitProperty& property) const;
 
 private: // Constructors

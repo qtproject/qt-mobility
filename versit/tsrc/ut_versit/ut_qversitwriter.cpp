@@ -61,7 +61,6 @@ void UT_QVersitWriter::cleanup()
     delete mWriterPrivate;
     delete mWriter;
     delete mOutputDevice;
-    mWritingDoneCalled = false;
 }
 
 void UT_QVersitWriter::writingDone()
@@ -82,8 +81,7 @@ void UT_QVersitWriter::testDevice()
 void UT_QVersitWriter::testWriting()
 {
     // Device not set
-    QVERIFY(!mWriter->writeSynchronously());
-    QVERIFY(!mWritingDoneCalled);
+    QVERIFY(!mWriter->writeAll());
 
     // vCard 2.1
     const char vCard21[] =
@@ -91,7 +89,6 @@ void UT_QVersitWriter::testWriting()
 VERSION:2.1\r\n\
 FN:Homer\r\n\
 END:VCARD\r\n";
-    mWritingDoneCalled = false;
     mWriter->setDevice(mOutputDevice);
     mOutputDevice->open(QBuffer::ReadWrite);
     QVersitDocument document;
@@ -101,11 +98,10 @@ END:VCARD\r\n";
     document.addProperty(property);
     document.setVersitType(QVersitDocument::VCard21);
     mWriter->setVersitDocument(document);
-    QVERIFY(mWriter->writeSynchronously());
+    QVERIFY(mWriter->writeAll());
     mOutputDevice->seek(0);
     QByteArray result(mOutputDevice->readAll());
     QCOMPARE(QString::fromAscii(result),QString::fromAscii(vCard21));
-    QVERIFY(mWritingDoneCalled);
 
     // vCard 3.0
     const char vCard30[] =
@@ -113,19 +109,22 @@ END:VCARD\r\n";
 VERSION:3.0\r\n\
 FN:Homer\r\n\
 END:VCARD\r\n";
-    mWritingDoneCalled = false;
     document.setVersitType(QVersitDocument::VCard30);
     mWriter->setVersitDocument(document);
     mOutputDevice->reset();
-    QVERIFY(mWriter->writeSynchronously());
+    QVERIFY(mWriter->writeAll());
     mOutputDevice->seek(0);
     result = mOutputDevice->readAll();
     QCOMPARE(QString::fromAscii(result),QString::fromAscii(vCard30));
+
+    // Asynchronous writing
+    QVERIFY(!mWritingDoneCalled);
+    mOutputDevice->reset();
+    QVERIFY(mWriter->startWriting());
+    delete mWriter; // waits for the thread to finish
+    mWriter = 0;
     QVERIFY(mWritingDoneCalled);
 
-    // Start asynchronous writing and leave it running
-    mOutputDevice->reset();
-    QVERIFY(mWriter->startAsynchronousWriting());
 }
 
 void UT_QVersitWriter::testEncodeGroupsAndName()
