@@ -304,12 +304,14 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     : QObject(parent)
 {
     DeviceInfo::instance()->cellSignalStrenghtInfo()->addObserver(this);
+    DeviceInfo::instance()->cellNetworkInfo()->addObserver(this);
     DeviceInfo::instance()->cellNetworkRegistrationInfo()->addObserver(this);
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
     DeviceInfo::instance()->cellSignalStrenghtInfo()->removeObserver(this);
+    DeviceInfo::instance()->cellNetworkInfo()->removeObserver(this);
     DeviceInfo::instance()->cellNetworkRegistrationInfo()->removeObserver(this);
 }
 
