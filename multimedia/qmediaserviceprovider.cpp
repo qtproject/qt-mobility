@@ -471,7 +471,9 @@ QString QMediaServiceProvider::deviceDescription(const QByteArray &serviceType, 
     return QString();
 }
 
-
+/*!
+    Returns a default provider of media services.
+*/
 QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
 {
     return pluginProvider();
@@ -482,6 +484,10 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
     \preliminary
     \brief The QMediaServiceProviderPlugin interface provides an interface for QMediaService
     plug-ins.
+
+    A media service provider plug-in may implement one or more of
+    QMediaServiceSupportedFormatsInterface, QMediaServiceSupportedDevicesInterface,
+    and QMediaServiceFeaturesInterface to identify the features it supports.
 */
 
 /*!
@@ -502,4 +508,70 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
     \fn QMediaServiceProviderPlugin::release(QMediaService *service)
 
     Destroys a media \a service constructed with create().
+*/
+
+
+/*!
+    \class QMediaServiceSupportedFormatsInterface
+    \brief The QMediaServiceSupportedFormatsInterface interface identifies if a media service
+    plug-in supports a media format.
+
+    A QMediaServiceProviderPlugin may implement this interface.
+*/
+
+/*!
+    \fn QMediaServiceSupportedFormatsInterface::~QMediaServiceSupportedFormatsInterface()
+
+    Destroys a media service supported formats interface.
+*/
+
+/*!
+    \fn QMediaServiceSupportedFormatsInterface::hasSupport(const QString &mimeType, const QStringList& codecs) const
+
+    Returns the level of support a media service plug-in has for a \a mimeType and set of \a codecs.
+*/
+
+/*!
+    \class QMediaServiceSupportedDevicesInterface
+    \brief The QMediaServiceSupportedDevicesInterface interface identifies the devices supported
+    by a media service plug-in.
+
+    A QMediaServiceProviderPlugin may implement this interface.
+*/
+
+/*!
+    \fn QMediaServiceSupportedDevicesInterface::~QMediaServiceSupportedDevicesInterface()
+
+    Destroys a media service supported devices interface.
+*/
+
+/*!
+    \fn QMediaServiceSupportedDevicesInterface::devices(const QByteArray &service) const
+
+    Returns a list of devices supported by a plug-in \a service.
+*/
+
+/*!
+    \fn QMediaServiceSupportedDevicesInterface::deviceDescription(const QByteArray &service, const QByteArray &device)
+
+    Returns a description of a \a device supported by a plug-in \a service.
+*/
+
+/*!
+    \class QMediaServiceFeaturesInterface
+    \brief The QMediaServiceFeaturesInterface interface identifies features supported by a media
+    service plug-in.
+
+    A QMediaServiceProviderPlugin may implement this interface.
+*/
+
+/*!
+    \fn QMediaServiceFeaturesInterface::~QMediaServiceFeaturesInterface()
+
+    Destroys a media service features interface.
+*/
+/*!
+    \fn QMediaServiceFeaturesInterface::supportedFeatures(const QByteArray &service) const
+
+    Returns a set of features supported by a plug-in \a service.
 */
