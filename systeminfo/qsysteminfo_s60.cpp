@@ -863,7 +863,19 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::s60ProfileIdToProfile(TInt 
 
 QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 {
-    QSystemDeviceInfo::InputMethodFlags methods;    //TODO
+    QSystemDeviceInfo::InputMethodFlags methods;
+
+    methods |= QSystemDeviceInfo::Keys;
+    methods |= QSystemDeviceInfo::Keypad;
+
+    //TODO: Do something with the AVKON dependency
+    if (AknLayoutUtils::PenEnabled()) methods |= QSystemDeviceInfo::SingleTouch;
+
+    TRAP_IGNORE(
+        if (CFeatureDiscovery::IsFeatureSupportedL(KFeatureIdQwertyInput)) {
+            methods |= QSystemDeviceInfo::Keyboard;
+        }
+    )
     return methods;
 }
 
