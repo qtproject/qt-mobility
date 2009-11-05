@@ -597,9 +597,8 @@ bool QContactMemoryEngine::saveDetailDefinition(const QContactDetailDefinition& 
     // we should check for changes to the database in this function, and add ids of changed data to changeSet. TODO.
     Q_UNUSED(changeSet);
 
-    if (!validateDefinition(def, error)) {
+    if (!validateDefinition(def, error))
         return false;
-    }
 
     detailDefinitions(error); // just to populate the definitions if we haven't already.
     d->m_definitions.insert(def.name(), def);
@@ -709,6 +708,7 @@ QList<QVariant::Type> QContactMemoryEngine::supportedDataTypes() const
 {
     QList<QVariant::Type> st;
     st.append(QVariant::String);
+    st.append(QVariant::StringList);
     st.append(QVariant::Date);
     st.append(QVariant::DateTime);
     st.append(QVariant::Time);

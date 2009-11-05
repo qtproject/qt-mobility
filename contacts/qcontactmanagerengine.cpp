@@ -1041,8 +1041,11 @@ bool QContactManagerEngine::validateDefinition(const QContactDetailDefinition& d
         // Check that each allowed value is the same type
         for (int i=0; i < it.value().allowableValues.count(); i++) {
             if (it.value().allowableValues.at(i).type() != it.value().dataType) {
-                error = QContactManager::BadArgumentError;
-                return false;
+                // the value can be a string in a list of strings, or a variant in a list of variants.
+                if (it.value().allowableValues.at(i).type() != QVariant::String && it.value().dataType != QVariant::StringList) {
+                    error = QContactManager::BadArgumentError;
+                    return false;
+                }
             }
         }
     }
