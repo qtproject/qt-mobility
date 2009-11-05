@@ -60,9 +60,9 @@ public:
         return QContactManager::version();
     }
 
-    virtual int implementationVersion() const
+    virtual QList<int> supportedImplementationVersions() const
     {
-        return 0;
+        return QList<int>();
     }
     virtual ~QContactManagerEngineFactory() {}
     virtual QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error) = 0;

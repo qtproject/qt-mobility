@@ -109,11 +109,12 @@ static int parameterValue(const QMap<QString, QString>& parameters, const char* 
 
 void QContactManagerData::createEngine(const QString& managerName, const QMap<QString, QString>& parameters)
 {
-    int apiVersion = parameterValue(parameters, QTCONTACTS_VERSION_NAME, -1);
+    int apiVersion = parameterValue(parameters, QTCONTACTS_VERSION_NAME, QContactManager::version());
     m_engine = 0;
 
     if (apiVersion != QContactManager::version()) {
         m_error = QContactManager::VersionMismatchError;
+        m_engine = new QContactInvalidEngine(); // XXX share
         return;
     }
 
@@ -121,7 +122,7 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
     if (builtManagerName == QLatin1String("memory"))
         m_engine = QContactMemoryEngine::createMemoryEngine(parameters);
     else {
-        int implementationVersion = parameterValue(parameters, QTCONTACTS_IMPLEMENTATION_VERSION_NAME, 0);
+        int implementationVersion = parameterValue(parameters, QTCONTACTS_IMPLEMENTATION_VERSION_NAME, -1);
         /* Look for a factory */
         loadFactories();
         QList<QContactManagerEngineFactory*> factories = m_engines.values(builtManagerName);
@@ -129,12 +130,21 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
 
         
         foreach (QContactManagerEngineFactory* f, factories) {
+            QList<int> versions = f->supportedImplementationVersions();
             if (f && f->version() == apiVersion) {
-                if (f->implementationVersion() == implementationVersion) {
+                if (implementationVersion == -1 ||//no given implementation version required
+                    versions.isEmpty() || //the manager engine factory does not report any version
+                    versions.contains(implementationVersion)) {
                     m_engine = f->engine(parameters, m_error);
                     break;
                 }
             }
+        }
+
+        // the engine factory could lie to us, so check the real implementation version
+        if (m_engine->version() != apiVersion || (implementationVersion != -1 && m_engine->implementationVersion() != implementationVersion)) {
+            m_error = QContactManager::VersionMismatchError;
+            m_engine = 0;
         }
 
         if (!m_engine) {
@@ -264,7 +274,11 @@ void QContactManagerData::loadFactories()
         
         QStringList engineNames;
         foreach (QContactManagerEngineFactory* f, m_engines.values()) {
-            engineNames << QString::fromAscii("%1/%2.%3").arg(f->managerName()).arg(f->version()).arg(f->implementationVersion());
+            QStringList versions;
+            foreach (int v, f->supportedImplementationVersions()) {
+                versions << QString::fromAscii("%1.%2").arg(f->version()).arg(v);
+            }
+            engineNames << QString::fromAscii("%1[%2]").arg(f->managerName()).arg(versions.join(","));
         }
         qDebug() << "Found engines:" << engineNames;
         qDebug() << "Found actions:" << m_actionmap.keys();
