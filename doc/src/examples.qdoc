@@ -57,6 +57,35 @@
 
     \list
     \o \l{samplephonebook}{Sample Phonebook}
+    \o \l{incomingcalls}{Incoming Calls}
+    \endlist
+
+    \section2 Location
+
+    \list
+    \o \l{fetchgooglemaps}{Fetch Google Maps}
+    \o \l{logfilepositionsource}{Log File Position Source}
+    \endlist
+
+    \section2 Messaging
+
+    \list
+    \o \l{keepintouch}{Keep in Touch}
+    \o \l{querymessages}{Query Messages}
+    \o \l{sendmessage}{Send Message}
+    \o \l{serviceactions}{Service Actions}
+    \endlist
+
+    \section2 Multimedia
+
+    \list
+    \o \l{audiorecorder}{Audio Recorder}
+    \o \l{cameracapture}{Camera Capture}
+    \o \l{player}{Player}
+    \o \l{radio}{Radio}
+    \o \l{recorder}{Recorder}
+    \o \l{slideshow}{Slideshow}
+    \o \l{streamplayer}{Stream Player}
     \endlist
 
     \section2 Publish and Subscribe
@@ -70,8 +99,15 @@
 
     \list
     \o \l{bluetoothtransferplugin}{Bluetooth Transfer Plugin}
+    \o \l{declarative}{Declarative}
     \o \l{filemanagerplugin}{File Manager Plugin}
     \o \l{servicebrowser}{Service Browser}\raisedaster
+    \endlist
+
+    \section2 System Information
+
+    \list
+    \o \l{sysinfo}{System Information}
     \endlist
 */
 
