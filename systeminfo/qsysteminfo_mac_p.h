@@ -131,6 +131,8 @@ Q_SIGNALS:
    void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
+private:
+    bool isInterfaceActive(const char* netInterface);
 };
 
 class QSystemDisplayInfoPrivate : public QObject

@@ -83,6 +83,7 @@
 
 #ifdef MAC_SDK_10_6
 #include <CoreWLAN/CWInterface.h>
+#include <CoreWLAN/CWGlobals.h>
 #endif
 
 #include <sys/types.h>
@@ -92,22 +93,40 @@
 #include <sys/ucred.h>
 #include <sys/mount.h>
 #include <math.h>
+#include <net/if.h>
+
+#include <net/if_types.h>
+#include <net/if_media.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
 
 //
 ////////
 static QString stringFromCFString(CFStringRef value) {
     QString retVal;
-    CFIndex maxLength = 2 * CFStringGetLength(value) + 1/*zero term*/; // max UTF8
-    char *cstring = new char[maxLength];
-    if (CFStringGetCString(CFStringRef(value), cstring, maxLength, kCFStringEncodingUTF8)) {
-        retVal = QString::fromUtf8(cstring);
+    if(CFStringGetLength(value) > 1) {
+        CFIndex maxLength = 2 * CFStringGetLength(value) + 1/*zero term*/; // max UTF8
+        char *cstring = new char[maxLength];
+        if (CFStringGetCString(CFStringRef(value), cstring, maxLength, kCFStringEncodingUTF8)) {
+            retVal = QString::fromUtf8(cstring);
+        }
+        delete cstring;
     }
-    delete cstring;
     return retVal;
 }
 
+inline CFStringRef qstringToCFStringRef(const QString &string)
+{
+    return CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar *>(string.unicode()),
+                                        string.length());
+}
+
 inline QString nsstringToQString(const NSString *nsstr)
-{ return stringFromCFString(reinterpret_cast<const CFStringRef>(nsstr)); }
+//{ return stringFromCFString(reinterpret_cast<const CFStringRef>(nsstr)); }
+{ return QString([nsstr UTF8String]);}
+
+inline NSString *qstringToNSString(const QString &qstr)
+{ return [reinterpret_cast<const NSString *>(qstringToCFStringRef(qstr)) autorelease]; }
 
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
@@ -294,8 +313,23 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 }
 
+bool QSystemNetworkInfoPrivate::isInterfaceActive(const char* netInterface)
+{
+    struct ifmediareq ifm;
+
+    memset(&ifm, 0, sizeof(struct ifmediareq));
+    strncpy(ifm.ifm_name, netInterface, IFNAMSIZ);
+    int s = socket(AF_INET, SOCK_DGRAM, 0);
+    ioctl(s, SIOCGIFMEDIA, &ifm);
+    if (ifm.ifm_status & IFM_ACTIVE) {
+        return true;
+    }
+    return false;
+}
+
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
+    QSystemNetworkInfo::NetworkStatus status = QSystemNetworkInfo::NoNetworkAvailable;
     switch(mode) {
         case QSystemNetworkInfo::GsmMode:
         break;
@@ -305,14 +339,37 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         break;
     case QSystemNetworkInfo::WlanMode:
         {
-//SCNetworkConnectionStatus SCNetworkConnectionGetStatus (
-  //  SCNetworkConnectionRef connection );
-
+#ifdef MAC_SDK_10_6
+            NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
+            CWInterface *wifiInterface = [CWInterface interfaceWithName:  qstringToNSString(interfaceForMode(mode).name())];
+            [wifiInterface disassociate];
+            switch([[wifiInterface interfaceState]intValue]) {
+            case  kCWInterfaceStateInactive:
+                break;
+            case kCWInterfaceStateScanning:
+            case kCWInterfaceStateAuthenticating:
+            case kCWInterfaceStateAssociating:
+                status = QSystemNetworkInfo::Searching;
+                break;
+            case kCWInterfaceStateRunning:
+                status = QSystemNetworkInfo::Connected;
+                break;
+            };
+            [autoreleasepool release];
+#else
+            if(isInterfaceActive(interfaceForMode(mode).name().toLatin1())) {
+                status = QSystemNetworkInfo::Connected;
+            }
+#endif
         }
         break;
     case QSystemNetworkInfo::EthernetMode:
         {
-
+            if(networkSignalStrength(mode) == 100) {
+                return QSystemNetworkInfo::Connected;
+            } else {
+                return QSystemNetworkInfo::NoNetworkAvailable;
+            }
         }
         break;
         case QSystemNetworkInfo::BluetoothMode:
@@ -325,7 +382,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         default:
         break;
     };
-    return QSystemNetworkInfo::NoNetworkAvailable;
+    return status;
 }
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
@@ -347,7 +404,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
             int maxSignal = -60;
             int disSignal = -80;
             percent = 95 - 80*(maxSignal - rssiSignal)/(maxSignal - disSignal);
-            qWarning() << __FUNCTION__ << [[wifiInterface rssi] intValue] << percent;
+//            qWarning() << __FUNCTION__ << [[wifiInterface rssi] intValue] << percent;
 #endif
 
             return percent;
@@ -355,15 +412,17 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         break;
     case QSystemNetworkInfo::EthernetMode:
         {
-
-
+            int percent = (isInterfaceActive(interfaceForMode(mode).name().toLatin1())) ? 100 : 0;
+            return percent;
         }
         break;
     case QSystemNetworkInfo::BluetoothMode:
+        // link quality for which device?
+        // [controller readRSSIForDevice: blah?];
         break;
-        case QSystemNetworkInfo::WimaxMode:
+    case QSystemNetworkInfo::WimaxMode:
         break;
-        default:
+    default:
         break;
     };
     return -1;
@@ -403,8 +462,38 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
-    Q_UNUSED(mode);
-    return "No Operator";
+    switch(mode) {
+        case QSystemNetworkInfo::GsmMode:
+        break;
+        case QSystemNetworkInfo::CdmaMode:
+        break;
+        case QSystemNetworkInfo::WcdmaMode:
+        break;
+    case QSystemNetworkInfo::WlanMode:
+        {
+#ifdef MAC_SDK_10_6
+            qWarning() <<__FUNCTION__ << interfaceForMode(mode).name();
+            QString name = interfaceForMode(mode).name();
+            CWInterface *wifiInterface = [CWInterface interfaceWithName:qstringToNSString(name)];
+           NSString *ssidStr = [wifiInterface ssid];
+qWarning() << nsstringToQString(ssidStr);
+            return nsstringToQString([wifiInterface ssid]);
+#else
+#endif
+        }
+        break;
+    case QSystemNetworkInfo::EthernetMode:
+        {
+        }
+        break;
+    case QSystemNetworkInfo::BluetoothMode:
+        break;
+    case QSystemNetworkInfo::WimaxMode:
+        break;
+    default:
+        break;
+    };
+    return "";
 }
 
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
@@ -419,16 +508,15 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
             mac = [addy UTF8String];
             mac.replace("-",":");
         }
-    } else {
-        mac = interfaceForMode(mode).hardwareAddress();
+        return mac;
     }
 #endif
+    mac = interfaceForMode(mode).hardwareAddress();
     return mac;
 }
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
-    //    qWarning() << __FUNCTION__ << mode;
     QNetworkInterface netInterface;
 
     CFArrayRef interfaceArray = SCNetworkInterfaceCopyAll(); //10.4
@@ -479,7 +567,7 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
     CGDirectDisplayID screensArray[macScreens]; //support 4 screens
     CGDisplayCount numberScreens;
     CGGetActiveDisplayList(macScreens, screensArray, &numberScreens);
-    if(numberScreens >= screen) {
+    if(numberScreens >= (uint)screen) {
         service = CGDisplayIOServicePort(screensArray[screen]);
         dErr = IODisplayGetFloatParameter(service, kNilOptions, key, &brightness);
         if (dErr == kIOReturnSuccess) {
@@ -496,7 +584,7 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     CGDisplayCount numberScreens;
     long bitsPerPixel = 0;
     CGGetActiveDisplayList(macScreens, screensArray, &numberScreens);
-    if(numberScreens >= screen) {
+    if(numberScreens >= (uint)screen) {
         bitsPerPixel = CGDisplayBitsPerPixel (screensArray[screen]);
     }
     return (int)bitsPerPixel;
@@ -517,24 +605,18 @@ bool QSystemStorageInfoPrivate::updateVolumesMap()
 {
     struct statfs64 *buf = NULL;
     unsigned i, count = 0;
-    qint64 totalFreeBytes=0;
 
     count = getmntinfo64(&buf, 0);
     for (i=0; i<count; i++) {
         char *volName = buf[i].f_mntonname;
-        mountEntriesHash.insert(volName, buf[i].f_mntfromname);
+        mountEntriesHash.insert(buf[i].f_mntfromname,volName);
     }
+    return true;
 }
 
 
 qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
-//    foreach(QString volName, mountEntriesHash) {
-//        if(volName == driveVolume) {
-//
-//        }
-//    }
-
     struct statfs64 *buf = NULL;
     unsigned i, count = 0;
     qint64 totalFreeBytes=0;
@@ -571,8 +653,6 @@ qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QString &driveVolume)
 {
     updateVolumesMap();
-
-    //  qWarning() << __FUNCTION__ << driveVolume;
     OSStatus osstatusResult = noErr;
     ItemCount volumeIndex;
 
@@ -590,23 +670,23 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
             GetVolParmsInfoBuffer volumeParmeters;
             osstatusResult = FSGetVolumeParms(actualVolume, &volumeParmeters, sizeof(volumeParmeters));
 
-             NSString *deviceId = [NSString stringWithCString:(char *)volumeParmeters.vMDeviceID];
-            if (volumeParmeters.vMServerAdr == 0) { //local drive
-                io_service_t ioService;
-                ioService = IOServiceGetMatchingService(kIOMasterPortDefault,
-                                                        IOBSDNameMatching(kIOMasterPortDefault, 0,
-                                                                          (char *)volumeParmeters.vMDeviceID));
+            QString devId = QString((char *)volumeParmeters.vMDeviceID);
+            devId = devId.prepend("/dev/");
+            if(mountEntriesHash.value(devId) == driveVolume) {
+                if (volumeParmeters.vMServerAdr == 0) { //local drive
+                    io_service_t ioService;
+                    ioService = IOServiceGetMatchingService(kIOMasterPortDefault,
+                                                            IOBSDNameMatching(kIOMasterPortDefault, 0,
+                                                                              (char *)volumeParmeters.vMDeviceID));
 
-                if (IOObjectConformsTo(ioService, kIOMediaClass)) {
-                    CFTypeRef wholeMedia;
+                    if (IOObjectConformsTo(ioService, kIOMediaClass)) {
+                        CFTypeRef wholeMedia;
 
-                    wholeMedia = IORegistryEntryCreateCFProperty(ioService,
-                                                                 CFSTR(kIOMediaContentKey),
-                                                                 kCFAllocatorDefault,
-                                                                 0);
-                    QString devId = QString((char *)volumeParmeters.vMDeviceID);
-                    devId = devId.prepend("/dev/");
-                    if( mountEntriesHash.keys(devId).count() > 0) {
+                        wholeMedia = IORegistryEntryCreateCFProperty(ioService,
+                                                                     CFSTR(kIOMediaContentKey),
+                                                                     kCFAllocatorDefault,
+                                                                     0);
+
                         if((volumeParmeters.vMExtendedAttributes & (1L << bIsRemovable))) {
                             CFRelease(wholeMedia);
                             return QSystemStorageInfo::RemovableDrive;
@@ -614,13 +694,13 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
                             return QSystemStorageInfo::InternalDrive;
                         }
                     }
+                } else {
+                    return QSystemStorageInfo::RemoteDrive;
                 }
-            } else {
-                return QSystemStorageInfo::RemoteDrive;
             }
         }
     }
-       return QSystemStorageInfo::NoDrive;
+    return QSystemStorageInfo::NoDrive;
 }
 
 QStringList QSystemStorageInfoPrivate::logicalDrives()
