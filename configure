@@ -254,10 +254,17 @@ compileTest()
 {
     printf "Checking $1"
     CURRENT_PWD=`pwd`
-
-    rm -rf config.tests/$2
-    mkdir -p config.tests/$2
-    cd config.tests/$2
+    
+    if [ "$shadowpath" = "$relpath" ]; then 
+        #doing source tree build
+        cd "$relpath/config.tests/$2"
+        rm -rf ./$2
+    else
+        #using shadow build
+        rm -rf config.tests/$2
+        mkdir -p config.tests/$2
+        cd config.tests/$2
+    fi
 
     qmake "$relpath/config.tests/$2/$2.pro" >> "$CONFIG_LOG"
     printf  " ."
