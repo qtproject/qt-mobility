@@ -42,6 +42,7 @@
 #include <multimedia/qmediaplaylistnavigator.h>
 #include <multimedia/qmediaplaylistprovider.h>
 #include <multimedia/qmediaplaylist.h>
+#include <multimedia/qmediaobject_p.h>
 
 #include <QtCore/qdebug.h>
 
@@ -58,7 +59,7 @@ Q_GLOBAL_STATIC(QMediaPlaylistNullProvider, _q_nullMediaPlaylist)
 
 class QMediaPlaylistNavigatorPrivate
 {
-    Q_DECLARE_PUBLIC(QMediaPlaylistNavigator)
+    Q_DECLARE_NON_CONST_PUBLIC(QMediaPlaylistNavigator)
 public:
     QMediaPlaylistNavigatorPrivate()
         :playlist(0),

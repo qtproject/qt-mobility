@@ -77,8 +77,7 @@
 
 class QCameraPrivate : public QMediaObjectPrivate
 {
-    Q_DECLARE_PUBLIC(QCamera)
-
+    Q_DECLARE_NON_CONST_PUBLIC(QCamera)
 public:
     void initControls();
 

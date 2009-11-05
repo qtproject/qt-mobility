@@ -47,6 +47,7 @@
 #include <multimedia/qmediacontent.h>
 #include <multimedia/qmediaresource.h>
 #include <multimedia/qvideooutputcontrol.h>
+#include <multimedia/qmediaobject_p.h>
 #ifndef QT_NO_MULTIMEDIA
 #include <multimedia/qvideorenderercontrol.h>
 #endif
@@ -392,7 +393,7 @@ void QMediaImageViewerService::setNetworkManager(QNetworkAccessManager *manager)
 
 class QMediaImageViewerControlPrivate : public QMediaControlPrivate
 {
-    Q_DECLARE_PUBLIC(QMediaImageViewerControl)
+    Q_DECLARE_NON_CONST_PUBLIC(QMediaImageViewerControl)
 public:
     QMediaImageViewerControlPrivate()
         : service(0)

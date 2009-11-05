@@ -54,7 +54,7 @@
 
 class QMediaImageViewerPrivate : public QMediaObjectPrivate
 {
-    Q_DECLARE_PUBLIC(QMediaImageViewer)
+    Q_DECLARE_NON_CONST_PUBLIC(QMediaImageViewer)
 public:
     QMediaImageViewerPrivate():
         viewerControl(0), playlist(0),
