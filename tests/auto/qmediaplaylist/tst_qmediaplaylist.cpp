@@ -486,7 +486,19 @@ void tst_QMediaPlaylist::readOnlyPlaylist()
     QCOMPARE(playlist.size(), 3);
     QVERIFY(!playlist.removeItems(0,2));
     QCOMPARE(playlist.size(), 3);
+    QVERIFY(!playlist.clear());
+    QCOMPARE(playlist.size(), 3);
 
+    playlist.shuffle();
+    //it's still the same
+    QCOMPARE(playlist.media(0), content1);
+    QCOMPARE(playlist.media(1), content2);
+    QCOMPARE(playlist.media(2), content3);
+    QCOMPARE(playlist.media(3), QMediaContent());
+
+
+    //load to read only playlist should fail,
+    //unless underlaying provider supports it
     QBuffer buffer;
     buffer.open(QBuffer::ReadWrite);
     buffer.write(QByteArray("file:///1\nfile:///2"));
