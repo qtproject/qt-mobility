@@ -52,7 +52,7 @@
 // We mean it.
 //
 
-#include <QtGlobal>
+#include "qlocationglobal.h"
 
 class QTime;
 class QGeoPositionInfo;

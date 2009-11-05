@@ -42,6 +42,13 @@
 #ifndef QCONTEXTFRAMEWORKGLOBAL_H
 #define QCONTEXTFRAMEWORKGLOBAL_H
 
+#if defined(QTM_BUILD_UNITTESTS)
+# include <qconfig.h>
+# if !defined(QT_BUILD_INTERNAL)
+#   define QT_BUILD_INTERNAL
+# endif
+#endif
+
 #include <QtCore/qglobal.h>
 
 QT_BEGIN_HEADER

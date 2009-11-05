@@ -41,10 +41,9 @@
 #ifndef QMALLOCPOOL_H
 #define QMALLOCPOOL_H
 
+#include "qcontextglobal.h"
 #include <cstdlib>
 #include <QString>
-
-#include "qcontextglobal.h"
 
 QT_BEGIN_NAMESPACE
 

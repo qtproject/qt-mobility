@@ -41,6 +41,12 @@
 #ifndef QSERVICEFRAMEWORKGLOBAL_H
 #define QSERVICEFRAMEWORKGLOBAL_H
 
+#if defined(QTM_BUILD_UNITTESTS)
+# include <qconfig.h>
+# if !defined(QT_BUILD_INTERNAL)
+#   define QT_BUILD_INTERNAL
+# endif
+#endif
 #include <QtCore/qglobal.h>
 
 #if defined(SYMBIAN_DATABASEMANAGER_SERVER)

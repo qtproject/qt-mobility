@@ -65,7 +65,7 @@ QT_BEGIN_NAMESPACE
 
 class QServiceInterfaceDescriptor;
 
-class Q_SFW_EXPORT ServiceDatabase : public QObject
+class Q_AUTOTEST_EXPORT ServiceDatabase : public QObject
 {
     Q_OBJECT
 

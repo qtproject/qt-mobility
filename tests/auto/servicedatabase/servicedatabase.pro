@@ -1,6 +1,7 @@
 TARGET=tst_servicedatabase
 QT = core sql
 INCLUDEPATH += ../../../serviceframework
+DEPENDPATH += ../../../serviceframework
 
 
 wince*|symbian*: {
@@ -20,7 +21,12 @@ CONFIG+=testcase
 include(../../../common.pri)
 
 # Input 
-SOURCES += tst_servicedatabase.cpp
+SOURCES += tst_servicedatabase.cpp \
+            dberror.cpp
+HEADERS += dberror_p.h \
+            servicedatabase_p.h
+            
+
 
 qtAddLibrary(QtServiceFramework)
 

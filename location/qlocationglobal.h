@@ -41,6 +41,13 @@
 #ifndef QLOCATIONGLOBAL_H
 #define QLOCATIONGLOBAL_H
 
+#if defined(QTM_BUILD_UNITTESTS)
+# include <qconfig.h>
+# if !defined(QT_BUILD_INTERNAL)
+#   define QT_BUILD_INTERNAL
+# endif
+#endif
+
 #include <QtCore/qglobal.h>
 
 #if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)

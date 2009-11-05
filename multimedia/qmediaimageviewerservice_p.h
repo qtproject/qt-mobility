@@ -52,7 +52,6 @@
 //
 // We mean it.
 //
-
 #include <qmediaservice.h>
 #include <qmediaimageviewer.h>
 #include <qvideooutputcontrol.h>

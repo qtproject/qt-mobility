@@ -53,11 +53,12 @@
 // We mean it.
 //
 
+#include <qmultimediaglobal.h>
 #include <QtCore/qstring.h>
 #include <QtCore/qmap.h>
 
 class QMediaServiceProviderPlugin;
-
+class QObject;
 
 class Q_AUTOTEST_EXPORT QMediaPluginLoader
 {

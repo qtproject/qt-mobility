@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include <qmediapluginloader_p.h>
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qpluginloader.h>
 #include <QtCore/qdir.h>
@@ -46,7 +47,6 @@
 
 #include <qmediaserviceproviderplugin.h>
 
-#include <qmediapluginloader_p.h>
 
 
 QMediaPluginLoader::QMediaPluginLoader(const char *iid, const QString &location, Qt::CaseSensitivity):

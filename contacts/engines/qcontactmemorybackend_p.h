@@ -115,7 +115,7 @@ public:
     QContactRequestWorker m_requestWorker;
 };
 
-class QTCONTACTS_EXPORT QContactMemoryEngine : public QContactManagerEngine
+class QContactMemoryEngine : public QContactManagerEngine
 {
     Q_OBJECT
 

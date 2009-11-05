@@ -41,10 +41,9 @@
 #ifndef QPACKETPROTOCOL_H
 #define QPACKETPROTOCOL_H
 
+#include "qcontextglobal.h"
 #include <QObject>
 #include <QDataStream>
-
-#include "qcontextglobal.h"
 
 QT_BEGIN_NAMESPACE
 

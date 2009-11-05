@@ -42,6 +42,7 @@
 #ifndef QABSTRACTMEDIASERVICE_H
 #define QABSTRACTMEDIASERVICE_H
 
+#include <qmultimediaglobal.h>
 #include <QtCore/qobject.h>
 #include <QtCore/qstringlist.h>
 

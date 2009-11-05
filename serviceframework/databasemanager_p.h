@@ -62,7 +62,7 @@ QT_BEGIN_NAMESPACE
 
 class DatabaseFileWatcher;
 
-class Q_SFW_EXPORT DatabaseManager : public QObject
+class Q_AUTOTEST_EXPORT DatabaseManager : public QObject
 {
     Q_OBJECT
 
@@ -106,7 +106,7 @@ class Q_SFW_EXPORT DatabaseManager : public QObject
 };
 
 
-class Q_SFW_EXPORT DatabaseFileWatcher : public QObject
+class Q_AUTOTEST_EXPORT DatabaseFileWatcher : public QObject
 {
     Q_OBJECT
 public:

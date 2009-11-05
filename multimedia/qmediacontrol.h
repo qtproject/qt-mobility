@@ -42,11 +42,12 @@
 #ifndef QABSTRACTMEDIACONTROL_H
 #define QABSTRACTMEDIACONTROL_H
 
+#include <qmultimediaglobal.h>
+
 #include <QtCore/qobject.h>
 #include <QtCore/qstring.h>
 #include <QtCore/qvariant.h>
 
-#include <qmultimediaglobal.h>
 
 class QMediaControlPrivate;
 class Q_MEDIA_EXPORT QMediaControl : public QObject

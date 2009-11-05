@@ -45,9 +45,18 @@ symbian {
     LIBS += -lefsrv
 
 } else {
-    HEADERS += ../qsfwtestutil.h
+    DEPENDPATH += ../../../serviceframework
+    HEADERS += ../qsfwtestutil.h \
+                databasemanager_p.h \
+               dberror_p.h \
+               servicedatabase_p.h
+
+
     SOURCES += ../qsfwtestutil.cpp \
-           tst_databasemanager.cpp
+                    tst_databasemanager.cpp \
+                    dberror.cpp \
+                    servicemetadata.cpp \
+                    databasemanager.cpp
 }
 
 qtAddLibrary(QtServiceFramework)

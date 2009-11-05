@@ -53,11 +53,11 @@
 // We mean it.
 //
 
+#include "qserviceglobal.h"
 #include <QXmlStreamReader>
 #include <QStringList>
 #include <QList>
 #include <QSet>
-#include "qserviceglobal.h"
 #include "qserviceinterfacedescriptor.h"
 
 class QIODevice;
@@ -89,11 +89,11 @@ public:
 };
 
 #ifndef QT_NO_DATASTREAM
-Q_SFW_EXPORT QDataStream &operator<<(QDataStream &, const ServiceMetaDataResults &);
-Q_SFW_EXPORT QDataStream &operator>>(QDataStream &, ServiceMetaDataResults &);
+Q_AUTOTEST_EXPORT QDataStream &operator<<(QDataStream &, const ServiceMetaDataResults &);
+Q_AUTOTEST_EXPORT QDataStream &operator>>(QDataStream &, ServiceMetaDataResults &);
 #endif
 
-class Q_SFW_EXPORT ServiceMetaData 
+class Q_AUTOTEST_EXPORT ServiceMetaData 
 {
 public:
 

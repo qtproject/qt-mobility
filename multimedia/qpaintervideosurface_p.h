@@ -55,6 +55,7 @@
 
 #ifndef QT_NO_MULTIMEDIA
 
+#include <qmultimediaglobal.h>
 #include <QtCore/qsize.h>
 #include <QtGui/qimage.h>
 #include <QtGui/qmatrix4x4.h>
@@ -62,7 +63,6 @@
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideoframe.h>
 
-#include <qmultimediaglobal.h>
 
 class QGLContext;
 class QVideoSurfacePainter;
