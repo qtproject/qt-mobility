@@ -398,15 +398,15 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         break;
     case QSystemNetworkInfo::WlanMode:
         {
-             int percent = 0;
+            int percent = 0;
 #ifdef MAC_SDK_10_6
-            CWInterface *wifiInterface = [CWInterface interface/*interfaceWithName: qstringToNSString(interfaceString)*/];
+            QString name = interfaceForMode(mode).name();
+            CWInterface *wifiInterface = [CWInterface interfaceWithName:qstringToNSString(name)];
             int rssiSignal = [[wifiInterface rssi] intValue];
-            
+
             int maxSignal = -60;
             int disSignal = -80;
             percent = 95 - 80*(maxSignal - rssiSignal)/(maxSignal - disSignal);
-//            qWarning() << __FUNCTION__ << [[wifiInterface rssi] intValue] << percent;
 #endif
 
             return percent;
