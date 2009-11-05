@@ -7,9 +7,13 @@
 TEMPLATE = app
 TARGET = qtcontactsdocsample
 include(../../../../common.pri)
-DEPENDPATH += .
-INCLUDEPATH += .
+INCLUDEPATH += ../../../../contacts \
+                ../../../../contacts/requests \
+                ../../../../contacts/filters \
+                ../../../../contacts/details
 
+DESTDIR = $$QT_MOBILITY_BUILD_TREE/bin/examples
+QMAKE_RPATHDIR+=$$OUTPUT_DIR/lib
 qtAddLibrary(QtContacts)
 
 SOURCES += qtcontactsdocsample.cpp
