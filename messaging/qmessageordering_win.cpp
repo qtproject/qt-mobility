@@ -367,8 +367,9 @@ QMessageOrdering QMessageOrdering::byType(Qt::SortOrder order)
 QMessageOrdering QMessageOrdering::bySender(Qt::SortOrder order)
 {
     // Partially implemented, can sort by sender name only not sender email address
-    // TODO: Update doc to reflect this
-    return QMessageOrderingPrivate::from(QMessageOrderingPrivate::Sender, order);
+    QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Sender, order));
+    result.d_ptr->_valid = false; // Not yet implemented
+    return result;
 }
 
 QMessageOrdering QMessageOrdering::byRecipients(Qt::SortOrder order)

@@ -76,7 +76,8 @@ public:
     bool isPartiallyDownloaded(const QMessageId& id);
     bool markForDownload(const QMessageId& id, bool includeAttachments = false);
     bool synchronize(const QMessageAccountId& id);
-    bool listenForBodyDownload(const QMessageId& targetMessage);
+    bool registerUpdates(const QMessageId& targetMessage);
+    void unregisterUpdates();
 #endif
 
 public slots:
@@ -103,6 +104,7 @@ public:
     QMessageServiceAction::State _state;
     QMessageId m_bodyDownloadTarget;
     QTimer m_bodyDownloadTimer;
+    QMessageStore::NotificationFilterId m_bodyDownloadFilterId;
 };
 
 
@@ -127,19 +129,17 @@ void QMessageServiceActionPrivate::reportMessagesCounted()
 #ifdef _WIN32_WCE
 void QMessageServiceActionPrivate::messageUpdated(const QMessageId& id)
 {
-    if(id == m_bodyDownloadTarget && m_bodyDownloadTimer.isActive())
+    if(id == m_bodyDownloadTarget)
     {
-        m_bodyDownloadTimer.stop();
-
-        disconnect(QMessageStore::instance(),SIGNAL(messageUpdated(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)),this,SLOT(messageUpdated(const QMessageId&)));
-
-        m_bodyDownloadTarget = QMessageId();
-
         bool isBodyDownloaded = !isPartiallyDownloaded(id);
 
-        _state = isBodyDownloaded ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
-        emit q_ptr->stateChanged(_state);
-        _active = false;
+        if(isBodyDownloaded)
+        {
+            unregisterUpdates();
+            _state = isBodyDownloaded ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
+            emit q_ptr->stateChanged(_state);
+            _active = false;
+        }
     }
 }
 
@@ -538,19 +538,29 @@ bool QMessageServiceActionPrivate::synchronize(const QMessageAccountId& id)
     return true;
 }
 
-bool QMessageServiceActionPrivate::listenForBodyDownload(const QMessageId& targetMessage)
+bool QMessageServiceActionPrivate::registerUpdates(const QMessageId& targetMessage)
 {
     if(!m_bodyDownloadTimer.isActive())
     {
-        QMessageStore::instance()->registerNotificationFilter(QMessageFilter());
         connect(QMessageStore::instance(),SIGNAL(messageUpdated(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)),this,SLOT(messageUpdated(const QMessageId&)));
+        connect(&m_bodyDownloadTimer,SIGNAL(timeout()),this,SLOT(bodyDownloadTimeout()));
+        m_bodyDownloadFilterId = QMessageStore::instance()->registerNotificationFilter(QMessageFilter());
         m_bodyDownloadTarget = targetMessage;
-        m_bodyDownloadTimer.singleShot(BodyDownloadTimeout * 1000,this,SLOT(bodyDownloadTimeout()));
+        m_bodyDownloadTimer.setSingleShot(true);
+        m_bodyDownloadTimer.start(BodyDownloadTimeout * 1000);
         return true;
     }
     else
         qWarning() << "Already listnening";
     return false;
+}
+
+void QMessageServiceActionPrivate::unregisterUpdates()
+{
+    m_bodyDownloadTimer.stop();
+    disconnect(QMessageStore::instance(),SIGNAL(messageUpdated(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)),this,SLOT(messageUpdated(const QMessageId&)));
+    QMessageStore::instance()->unregisterNotificationFilter(m_bodyDownloadFilterId);
+    m_bodyDownloadFilterId = 0;
 }
 
 #endif
@@ -700,7 +710,7 @@ bool QMessageServiceAction::retrieveBody(const QMessageId& id)
         {
             qWarning() << "Message is partially downloaded, marking for download..";
             result = d_ptr->markForDownload(id);
-            d_ptr->listenForBodyDownload(id);
+            result &= d_ptr->registerUpdates(id);
             result &= d_ptr->synchronize(message.parentAccountId());
         }
     }

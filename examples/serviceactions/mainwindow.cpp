@@ -268,7 +268,7 @@ private:
     };
 
 public:
-    RecentMessagesWidget(QWidget* parent = 0);
+    RecentMessagesWidget(QWidget* parent = 0, unsigned int maxRecent = 10);
 
     IdSubjectPair currentItem() const;
 
@@ -293,6 +293,8 @@ private:
     Loader m_loader;
     mutable QMutex m_loadMutex;
     MessageIdSubjectList m_ids;
+    bool m_loaded;
+    unsigned int m_maxRecent;
 };
 
 RecentMessagesWidget::Loader::Loader(RecentMessagesWidget* parent)
@@ -304,7 +306,7 @@ m_parent(parent)
 
 void RecentMessagesWidget::Loader::run()
 {
-    QMessageIdList lastTenMessages = QMessageStore::instance()->queryMessages(QMessageFilter(),QMessageOrdering::byReceptionTimeStamp(Qt::DescendingOrder),10,0);
+    QMessageIdList lastTenMessages = QMessageStore::instance()->queryMessages(QMessageFilter(),QMessageOrdering::byReceptionTimeStamp(Qt::DescendingOrder),m_parent->m_maxRecent,0);
 
     MessageIdSubjectList ids;
 
@@ -318,13 +320,15 @@ void RecentMessagesWidget::Loader::run()
     m_parent->setIds(ids);
 }
 
-RecentMessagesWidget::RecentMessagesWidget(QWidget* parent)
+RecentMessagesWidget::RecentMessagesWidget(QWidget* parent, unsigned int maxRecent)
 :
 QWidget(parent),
 m_messageListWidget(0),
 m_busyLabel(0),
 m_layout(0),
-m_loader(this)
+m_loader(this),
+m_loaded(false),
+m_maxRecent(maxRecent)
 {
     setupUi();
     connect(&m_loader,SIGNAL(started()),this,SLOT(loadStarted()));
@@ -349,16 +353,18 @@ void RecentMessagesWidget::showEvent(QShowEvent* e)
 void RecentMessagesWidget::hideEvent(QHideEvent* e)
 {
     if(m_loader.isRunning())
+    {
         m_loader.exit();
+        m_loaded = false;
+    }
     QWidget::hideEvent(e);
 }
 
 void RecentMessagesWidget::load()
 {
-    static bool runonce = false;
-    if(!runonce)
+    if(!m_loaded)
         m_loader.start();
-    runonce = true;
+    m_loaded = true;
 }
 
 void RecentMessagesWidget::loadStarted()
@@ -559,15 +565,19 @@ void ComposeSendWidget::setupUi()
     QAction* composeAction = new QAction("Compose",this);
     connect(composeAction,SIGNAL(triggered()),this,SLOT(composeButtonClicked()));
     addAction(composeAction);
+
     QAction* sendAction = new QAction("Send",this);
     connect(sendAction,SIGNAL(triggered()),this,SLOT(sendButtonClicked()));
     addAction(sendAction);
+
     m_sendAsHTMLAction = new QAction("Send as HTML",this);
     connect(m_sendAsHTMLAction,SIGNAL(triggered()),this,SLOT(sendButtonClicked()));
     addAction(m_sendAsHTMLAction);
+
     QAction* separator = new QAction(this);
     separator->setSeparator(true);
     addAction(separator);
+
     m_attachmentsAction = new QAction("Add attachment",this);
     connect(m_attachmentsAction,SIGNAL(triggered()),this,SLOT(addAttachmentButtonClicked()));
     addAction(m_attachmentsAction);
@@ -696,7 +706,7 @@ void ShowWidget::setupUi()
 
     vbl->addWidget(new QLabel("Last 10 messages:",this));
 
-    m_recentMessagesWidget = new RecentMessagesWidget(this);
+    m_recentMessagesWidget = new RecentMessagesWidget(this,30);
     vbl->addWidget(m_recentMessagesWidget);
 
     QAction* showAction = new QAction("Show",this);
