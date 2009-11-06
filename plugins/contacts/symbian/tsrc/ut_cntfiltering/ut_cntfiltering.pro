@@ -4,8 +4,8 @@
 TEMPLATE = app
 TARGET = 
 QT += testlib
-CONFIG += qtestlib \
-          symbian_test
+CONFIG += qtestlib
+
 DEFINES += PBK_UNIT_TEST
 DEPENDPATH += .
 INCLUDEPATH += .
@@ -21,17 +21,17 @@ symbian:
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     
     # Input
-    HEADERS += ut_sqlfiltering.h \
+    HEADERS += ut_cntfiltering.h \
             $$SYMBIAN_HEADERS
             
-    SOURCES += ut_sqlfiltering.cpp \
+    SOURCES += ut_cntfiltering.cpp \
             $$SYMBIAN_SOURCES            
             
     TARGET.CAPABILITY = ALL \
         -TCB
         
     BLD_INF_RULES.prj_exports += \
-        "test_data.txt \epoc32\winscw\c\sqltestdata\test_data.txt"
+        "test_data.txt \epoc32\winscw\c\filtering\test_data.txt"
     
     LIBS += \
         -lcntmodel \

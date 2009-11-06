@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include "ut_sqlfiltering.h"
+#include "ut_cntfiltering.h"
 #include "cntsymbianfiltersqlhelper.h"
 
 #include <qtcontacts.h>
 #include <QtTest/QtTest>
 
-void TestSqlFiltering::initTestCase()
+void TestFiltering::initTestCase()
 {
     mCntMng = new QContactManager("symbian");
     mSqlFilter = new CntSymbianFilterSqlHelper;
@@ -59,7 +59,7 @@ void TestSqlFiltering::initTestCase()
     createContacts();
 }
 
-void TestSqlFiltering::cleanupTestCase()
+void TestFiltering::cleanupTestCase()
 {
     delete mCntMng;
     delete mSqlFilter;
@@ -67,9 +67,9 @@ void TestSqlFiltering::cleanupTestCase()
     
 }
 
-void TestSqlFiltering::parseFilters()
+void TestFiltering::parseFilters()
 {
-    QFile file("c:/sqltestdata/test_data.txt");
+    QFile file("c:/filtering/test_data.txt");
     QByteArray texts;
     QVector<QString> param(7);
     
@@ -170,7 +170,7 @@ void TestSqlFiltering::parseFilters()
         }
     }
 }
-void TestSqlFiltering::addFilter(QVector<QString> param)
+void TestFiltering::addFilter(QVector<QString> param)
 {
     if (param[0].contains("ContactDetailFilter", Qt::CaseInsensitive)) {
         QContactDetailFilter df;
@@ -195,7 +195,7 @@ void TestSqlFiltering::addFilter(QVector<QString> param)
     }
 }
 
-void TestSqlFiltering::createContacts()
+void TestFiltering::createContacts()
 {
 
     QContact alice;
@@ -263,7 +263,7 @@ void TestSqlFiltering::createContacts()
 
 }
 
-Qt::MatchFlags TestSqlFiltering::flag(int f)
+Qt::MatchFlags TestFiltering::flag(int f)
 {
     switch(f) {
         case 0:
@@ -279,7 +279,7 @@ Qt::MatchFlags TestSqlFiltering::flag(int f)
     }    
 }
 
-void TestSqlFiltering::testInvalidFilter()
+void TestFiltering::testInvalidFilter()
 {
     QList<QContactLocalId> cnt_ids;
     QContactFilter filter;
@@ -290,7 +290,7 @@ void TestSqlFiltering::testInvalidFilter()
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
-void TestSqlFiltering::testContactDetailFilter()
+void TestFiltering::testContactDetailFilter()
 {
     QList<QContactLocalId> cnt_ids;
     QContactManager::Error error;
@@ -319,7 +319,7 @@ void TestSqlFiltering::testContactDetailFilter()
     }
 }
 
-void TestSqlFiltering::testContactDetailRangeFilter()
+void TestFiltering::testContactDetailRangeFilter()
 {
     QList<QContactLocalId> cnt_ids;
     QContactDetailRangeFilter filter;
@@ -330,7 +330,7 @@ void TestSqlFiltering::testContactDetailRangeFilter()
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
-void TestSqlFiltering::testChangeLogFilter()
+void TestFiltering::testChangeLogFilter()
 {
     QList<QContactLocalId> cnt_ids;
     QContactChangeLogFilter filter;
@@ -341,7 +341,7 @@ void TestSqlFiltering::testChangeLogFilter()
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
-void TestSqlFiltering::testActionFilter()
+void TestFiltering::testActionFilter()
 {
     QList<QContactLocalId> cnt_ids;
     QContactActionFilter filter;
@@ -352,7 +352,7 @@ void TestSqlFiltering::testActionFilter()
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
-void TestSqlFiltering::testRelationshipFilter()
+void TestFiltering::testRelationshipFilter()
 {
     QList<QContactLocalId> cnt_ids;
     QContactRelationshipFilter filter;
@@ -363,7 +363,7 @@ void TestSqlFiltering::testRelationshipFilter()
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
-void TestSqlFiltering::testIntersectionFilter()
+void TestFiltering::testIntersectionFilter()
 {
     QList<QContactLocalId> cnt_ids;
     QContactIntersectionFilter filter;
@@ -374,7 +374,7 @@ void TestSqlFiltering::testIntersectionFilter()
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
-void TestSqlFiltering::testUnionFilter()
+void TestFiltering::testUnionFilter()
 {
     QList<QContactLocalId> cnt_ids;
     QContactUnionFilter filter;
@@ -385,7 +385,7 @@ void TestSqlFiltering::testUnionFilter()
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
-void TestSqlFiltering::testLocalIdFilter()
+void TestFiltering::testLocalIdFilter()
 {
     QList<QContactLocalId> cnt_ids;
     QContactLocalIdFilter filter;
@@ -396,7 +396,7 @@ void TestSqlFiltering::testLocalIdFilter()
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
-void TestSqlFiltering::testDefaultFilter()
+void TestFiltering::testDefaultFilter()
 {
     QList<QContactLocalId> cnt_ids;
     QContactFilter filter;
@@ -407,4 +407,4 @@ void TestSqlFiltering::testDefaultFilter()
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
-QTEST_MAIN(TestSqlFiltering);
+QTEST_MAIN(TestFiltering);
