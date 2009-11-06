@@ -94,10 +94,6 @@ const char versitChildrenId[] = "X-CHILDREN";
 const char versitNicknameXId[] = "X-NICKNAME";
 const char versitAssistantId[] = "X-ASSISTANT";
 
-// Contexts
-const char versitContextWorkId[] = "WORK";
-const char versitContextHomeId[] = "HOME";
-
 // Subtypes
 const char versitDomesticId[] = "DOM";
 const char versitInternationalId[] = "INTL";
@@ -112,33 +108,6 @@ const char versitFaxId[] = "FAX";
 const char versitBbsId[] = "BBS";
 const char versitPagerId[] = "PAGER";
 
-// SubTypes for photograph and audio
-const char versitJPEGExtenId[] = "JPG";
-const char versitWAVEExtenId[] = "WAV";
-const char versitPICTExtenId[] = "PCT";
-const char versitTIFFExtenId[] = "TIF";
-const char versitMPEGExtenId[] = "MPG";
-const char versitMPEG2ExtenId[] = "M2P";
-const char versitQTIMEExtenId[] = "QT";
-const char versitAIFFExtenId[] = "AIF";
-const char versitGIFExtenId[] = "GIF";
-
-// Sub types for onlineaccount
-const char versitSwisId[] = "SWIS";
-const char versitSipSubTypeId[] = "SIP";
-const char versitVoipId[] = "VOIP";
-
-// Known Extenssion Formats for Versit
-const char versitFormatJpeg[] = "JPEG";
-const char versitFormatWave[] = "WAVE";
-const char versitFormatPict[] = "PICT";
-const char versitFormatTiff[] = "TIFF";
-const char versitFormatMpeg[] = "MPEG";
-const char versitFormatMpeg2[] = "MPEG2";
-const char versitFormatQtime[] = "QTIME";
-const char versitFormatAiff[] = "AIFF";
-const char versitFormatGif[] = "GIF";
-
 // ISO-8601 basic format datetime spec
 const char versitDateTimeSpecIso8601Basic[] = "yyyyMMddThhmmss";
 const char versitDateSpecIso8601Basic[] = "yyyyMMdd";
@@ -152,11 +121,7 @@ const char versitEncodingBinary[] = "B";
 
 // Parameters
 const char versitType[] = "TYPE";
-
-// VALUE parameter name
 const char versitValue[] = "VALUE";
-
-// Encoding Type.
 const char versitEncoding[] = "ENCODING";
 
 // www. exception type const
@@ -167,53 +132,53 @@ const char versitISOFormatSuffix[] = "Z";
 
 
 struct versitMapping {
-    const char* versitType;
-    const char* contactDetail;
+    const char* versitString;
+    const char* contactString;
 };
 
 const versitMapping versitDetailMappings[] = {
-    {"N",  QContactName::DefinitionName.str},
-    {"EMAIL",  QContactEmailAddress::DefinitionName.str},
-    {"TEL",  QContactPhoneNumber::DefinitionName.str},
-    {"ADR",  QContactAddress::DefinitionName.str},
-    {"URL",  QContactUrl::DefinitionName.str},
-    {"REV", QContactTimestamp::DefinitionName.str},
-    {"UID",  QContactGuid::DefinitionName.str},
-    {"ORG",  QContactOrganization::DefinitionName.str},
-    {"BDAY", QContactBirthday::DefinitionName.str},
-    {"NOTE", QContactNote::DefinitionName.str},
-    {"GEO",  QContactGeolocation::DefinitionName.str},
-    {"NICKNAME",  QContactNickname::DefinitionName.str},
-    {"PHOTO",  QContactAvatar::SubTypeImage.str},
-    {"SOUND", QContactAvatar::SubTypeAudioRingtone.str},
+    {"N",             QContactName::DefinitionName.str},
+    {"EMAIL",         QContactEmailAddress::DefinitionName.str},
+    {"TEL",           QContactPhoneNumber::DefinitionName.str},
+    {"ADR",           QContactAddress::DefinitionName.str},
+    {"URL",           QContactUrl::DefinitionName.str},
+    {"REV",           QContactTimestamp::DefinitionName.str},
+    {"UID",           QContactGuid::DefinitionName.str},
+    {"ORG",           QContactOrganization::DefinitionName.str},
+    {"BDAY",          QContactBirthday::DefinitionName.str},
+    {"NOTE",          QContactNote::DefinitionName.str},
+    {"GEO",           QContactGeolocation::DefinitionName.str},
+    {"NICKNAME",      QContactNickname::DefinitionName.str},
+    {"PHOTO",         QContactAvatar::SubTypeImage.str},
+    {"SOUND",         QContactAvatar::SubTypeAudioRingtone.str},
     {"X-ANNIVERSARY", QContactAnniversary::DefinitionName.str},
-    {"X-GENDER", QContactGender::DefinitionName.str},
-    {"X-NICKNAME", QContactNickname::DefinitionName.str}
- };
+    {"X-GENDER",      QContactGender::DefinitionName.str},
+    {"X-NICKNAME",    QContactNickname::DefinitionName.str}
+};
+
+const versitMapping versitContextMappings[] = {
+    {"HOME", QContactDetail::ContextHome.str},
+    {"WORK", QContactDetail::ContextWork.str},
+};
 
 const versitMapping versitSubTypeMappings[] = {
-    {"DOM", QContactAddress::SubTypeDomestic.str},
-    {"INTL", QContactAddress::SubTypeInternational.str},
+    {"DOM",    QContactAddress::SubTypeDomestic.str},
+    {"INTL",   QContactAddress::SubTypeInternational.str},
     {"POSTAL", QContactAddress::SubTypePostal.str},
     {"PARCEL", QContactAddress::SubTypeParcel.str},
-    {"VOICE", QContactPhoneNumber::SubTypeVoice.str},
-    {"CELL", QContactPhoneNumber::SubTypeMobile.str},
-    {"MODEM", QContactPhoneNumber::SubTypeModem.str},
-    {"CAR", QContactPhoneNumber::SubTypeCar.str},
-    {"VIDEO", QContactPhoneNumber::SubTypeVideo.str},
-    {"FAX", QContactPhoneNumber::SubTypeFacsimile.str},
-    {"BBS", QContactPhoneNumber::SubTypeBulletinBoardSystem.str},
-    {"PAGER",QContactPhoneNumber::SubTypePager.str},
-    {"SWIS", QContactOnlineAccount::SubTypeShareVideo.str},
-    {"VOIP", QContactOnlineAccount::SubTypeInternet.str},
-    {QContactAnniversary::SubTypeWedding.str, QContactAnniversary::SubTypeWedding.str},
-    {QContactAnniversary::SubTypeEngagement.str, QContactAnniversary::SubTypeEngagement.str},
-    {QContactAnniversary::SubTypeHouse.str, QContactAnniversary::SubTypeHouse.str},
-    {QContactAnniversary::SubTypeEmployment.str, QContactAnniversary::SubTypeEmployment.str},
-    {QContactAnniversary::SubTypeMemorial.str, QContactAnniversary::SubTypeMemorial.str}
- };
+    {"VOICE",  QContactPhoneNumber::SubTypeVoice.str},
+    {"CELL",   QContactPhoneNumber::SubTypeMobile.str},
+    {"MODEM",  QContactPhoneNumber::SubTypeModem.str},
+    {"CAR",    QContactPhoneNumber::SubTypeCar.str},
+    {"VIDEO",  QContactPhoneNumber::SubTypeVideo.str},
+    {"FAX",    QContactPhoneNumber::SubTypeFacsimile.str},
+    {"BBS",    QContactPhoneNumber::SubTypeBulletinBoardSystem.str},
+    {"PAGER",  QContactPhoneNumber::SubTypePager.str},
+    {"SWIS",   QContactOnlineAccount::SubTypeShareVideo.str},
+    {"VOIP",   QContactOnlineAccount::SubTypeInternet.str}
+};
 
-const versitMapping versitFileTypesMappings[] = {
+const versitMapping versitFileExtensionMappings[] = {
     {"JPEG", "JPG"},
     {"WAVE", "WAV"},
     {"PICT", "PCT"},
@@ -224,11 +189,5 @@ const versitMapping versitFileTypesMappings[] = {
     {"AIFF", "AIF"},
     {"TIFF", "GIF"}
 };
-
-const versitMapping versitContextMappings[] = {
-    {"HOME", QContactDetail::ContextHome.str},
-    {"WORK", QContactDetail::ContextWork.str},
-};
-
 
 #endif // QVERSITDEFS_H

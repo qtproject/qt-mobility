@@ -91,44 +91,29 @@ QVersitContactGeneratorPrivate::QVersitContactGeneratorPrivate()
             QContactGender::DefinitionName,
             QContactGender::FieldGender));
 
-    mContextMappings.insert(
-        QString::fromAscii(versitContextWorkId),QContactDetail::ContextWork);
-    mContextMappings.insert(
-        QString::fromAscii(versitContextHomeId),QContactDetail::ContextHome);
-    
-    mSubTypeMappings.insert(
-        QString::fromAscii(versitDomesticId),QContactAddress::SubTypeDomestic);
-    mSubTypeMappings.insert(
-        QString::fromAscii(versitInternationalId),QContactAddress::SubTypeInternational);
-    mSubTypeMappings.insert(
-        QString::fromAscii(versitPostalId),QContactAddress::SubTypePostal);
-    mSubTypeMappings.insert(
-        QString::fromAscii(versitParcelId),QContactAddress::SubTypeParcel);
-    mSubTypeMappings.insert(
-        QString::fromAscii(versitVoiceId),QContactPhoneNumber::SubTypeVoice);
-    mSubTypeMappings.insert(
-        QString::fromAscii(versitCellId),QContactPhoneNumber::SubTypeMobile);
-    mSubTypeMappings.insert(
-        QString::fromAscii(versitModemId),QContactPhoneNumber::SubTypeModem);
-    mSubTypeMappings.insert(
-        QString::fromAscii(versitCarId),QContactPhoneNumber::SubTypeCar);
-    mSubTypeMappings.insert(
-        QString::fromAscii(versitVideoId),QContactPhoneNumber::SubTypeVideo);
-    mSubTypeMappings.insert(
-        QString::fromAscii(versitFaxId),QContactPhoneNumber::SubTypeFacsimile);
-    mSubTypeMappings.insert(
-        QString::fromAscii(versitBbsId),QContactPhoneNumber::SubTypeBulletinBoardSystem);
-    mSubTypeMappings.insert(
-        QString::fromAscii(versitPagerId),QContactPhoneNumber::SubTypePager);
-    mSubTypeMappings.insert(
-        QString::fromAscii(versitSipSubTypeId),QContactOnlineAccount::SubTypeSip);
-    mSubTypeMappings.insert(
-        QString::fromAscii(versitSwisId),QContactOnlineAccount::SubTypeShareVideo);
-    mSubTypeMappings.insert(
-        QString::fromAscii(versitVoipId),QContactOnlineAccount::SubTypeInternet);
+    // Context mappings
+    int contextCount = sizeof(versitContextMappings)/sizeof(versitMapping);
+    for (int i=0; i < contextCount; i++) {
+        mContextMappings.insert(
+            QString::fromAscii(versitContextMappings[i].versitString),
+            QString::fromAscii(versitContextMappings[i].contactString));
+    }
 
-    mTypeFileExtensionMappings.insert(
-        QString::fromAscii(versitFormatWave),QString::fromAscii(versitWAVEExtenId));
+    // Subtype mappings
+    int subTypeCount = sizeof(versitSubTypeMappings)/sizeof(versitMapping);
+    for (int i=0; i < subTypeCount; i++) {
+        mSubTypeMappings.insert(
+            QString::fromAscii(versitSubTypeMappings[i].versitString),
+            QString::fromAscii(versitSubTypeMappings[i].contactString));
+    }
+
+    // File extension mappings
+    int fileExtensionCount = sizeof(versitFileExtensionMappings)/sizeof(versitMapping);
+    for (int i=0; i < fileExtensionCount; i++) {
+        mFileExtensionMappings.insert(
+            QString::fromAscii(versitFileExtensionMappings[i].versitString),
+            QString::fromAscii(versitFileExtensionMappings[i].contactString));
+    }
 }
 
 /*!
@@ -555,7 +540,7 @@ QString QVersitContactGeneratorPrivate::saveContentToFile(
     QString type =
         property.parameters().value(QString::fromAscii(versitType));
     // Use the type parameter value as it is, if not found in the mapping table
-    QString extension = mTypeFileExtensionMappings.value(type,type);
+    QString extension = mFileExtensionMappings.value(type,type);
 
     QString fileName(pathAndName);
     fileName += QString::number(qrand());

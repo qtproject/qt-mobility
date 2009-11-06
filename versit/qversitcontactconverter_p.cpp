@@ -72,36 +72,36 @@
 QVersitContactConverterPrivate::QVersitContactConverterPrivate() :
     mVersitType(QVersitDocument::VCard21)
 {
-    // Create mappings for details
-    int count = sizeof(versitDetailMappings)/sizeof(versitMapping);
-    for (int i=0; i < count; i++) {
+    // Detail mappings
+    int detailCount = sizeof(versitDetailMappings)/sizeof(versitMapping);
+    for (int i=0; i < detailCount; i++) {
         mPropertyMappings.insert(
-            QString::fromAscii(versitDetailMappings[i].contactDetail),
-            QString::fromAscii(versitDetailMappings[i].versitType));
+            QString::fromAscii(versitDetailMappings[i].contactString),
+            QString::fromAscii(versitDetailMappings[i].versitString));
     }
 
-    // Create mappings for subtypes
-    count = sizeof(versitSubTypeMappings)/sizeof(versitMapping);
-    for (int i=0; i < count; i++) {
+    // Contexts mappings
+    int contextCount = sizeof(versitContextMappings)/sizeof(versitMapping);
+    for (int i=0; i < contextCount; i++) {
         mParameterMappings.insert(
-            QString::fromAscii(versitSubTypeMappings[i].contactDetail),
-            QString::fromAscii(versitSubTypeMappings[i].versitType));
+            QString::fromAscii(versitContextMappings[i].contactString),
+            QString::fromAscii(versitContextMappings[i].versitString));
     }
 
-    // Create mappings for contexts
-    count = sizeof(versitFileTypesMappings)/sizeof(versitMapping);
-    for (int i=0; i < count; i++) {
+    // Subtypes mappings
+    int subTypeCount = sizeof(versitSubTypeMappings)/sizeof(versitMapping);
+    for (int i=0; i < subTypeCount; i++) {
         mParameterMappings.insert(
-            QString::fromAscii(versitFileTypesMappings[i].contactDetail),
-            QString::fromAscii(versitFileTypesMappings[i].versitType));
+            QString::fromAscii(versitSubTypeMappings[i].contactString),
+            QString::fromAscii(versitSubTypeMappings[i].versitString));
     }
 
-    // Create mappings for file extensions
-    count = sizeof(versitContextMappings)/sizeof(versitMapping);
-    for (int i=0; i < count; i++) {
+    // File extension mappings
+    int fileExtensionCount = sizeof(versitFileExtensionMappings)/sizeof(versitMapping);
+    for (int i=0; i < fileExtensionCount; i++) {
         mParameterMappings.insert(
-            QString::fromAscii(versitContextMappings[i].contactDetail),
-            QString::fromAscii(versitContextMappings[i].versitType));
+            QString::fromAscii(versitFileExtensionMappings[i].contactString),
+            QString::fromAscii(versitFileExtensionMappings[i].versitString));
     }
 }
 
@@ -441,7 +441,6 @@ void QVersitContactConverterPrivate::encodeAnniversary(
     const QContactDetail& detail)
 {
     QContactAnniversary anniversary = static_cast<QContactAnniversary>(detail);
-    encodeParameters(property, QStringList(), QStringList(anniversary.subType()));
     property.setValue(anniversary.originalDate().toString(Qt::ISODate).toAscii());
 }
 
@@ -500,7 +499,8 @@ bool QVersitContactConverterPrivate::isValidRemoteUrl(
     const QString& resourceIdentifier)
 {
     QUrl remoteResource(resourceIdentifier);
-    if ((!remoteResource.scheme().isEmpty() && !remoteResource.host().isEmpty()) ||
+    if ((!remoteResource.scheme().isEmpty() &&
+         !remoteResource.host().isEmpty()) ||
          resourceIdentifier.contains(QString::fromAscii(versitConstWWW),Qt::CaseInsensitive))
         return true;
     return false;

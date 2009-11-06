@@ -123,7 +123,7 @@ private: // Data
     QHash<QString,QPair<QString,QString> > mDetailMappings;
     QHash<QString,QString> mContextMappings;
     QHash<QString,QString> mSubTypeMappings;
-    QHash<QString,QString> mTypeFileExtensionMappings;
+    QHash<QString,QString> mFileExtensionMappings;
 };
 
 #endif // QVERSITCONTACTGENERATOR_P_H
