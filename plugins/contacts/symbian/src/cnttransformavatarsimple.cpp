@@ -38,14 +38,13 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "cnttransformavatar.h"
-#include "cntmodelextuids.h"
+#include "cnttransformavatarsimple.h"
 
 // S60 specific contact field type containing image call object data
 #define KUidContactFieldCodImageValue 0x101F8841
 const TUid KUidContactFieldCodImage={KUidContactFieldCodImageValue};
 
-QList<CContactItemField *> CntTransformAvatar::transformDetailL(const QContactDetail &detail)
+QList<CContactItemField *> CntTransformAvatarSimple::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList;
 
@@ -55,18 +54,15 @@ QList<CContactItemField *> CntTransformAvatar::transformDetailL(const QContactDe
 	//supported subTypes
 	const QString& subTypeImage(QContactAvatar::SubTypeImage);
 	const QString& subTypeAudioRingtone(QContactAvatar::SubTypeAudioRingtone);
-	const QString& subTypeVideoRingtone(QContactAvatar::SubTypeVideoRingtone);
 
 	//create new field
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(avatar.avatar().utf16()));
 
 	TUid uid(KNullUid);
-	if (avatar.subType().compare(subTypeImage) == 0) {
-	    uid = KUidContactFieldCodImage;
-	} else if (avatar.subType().compare(subTypeAudioRingtone) == 0) {
+    if (avatar.subType().compare(subTypeImage) == 0) {
+        uid = KUidContactFieldCodImage;
+    } else if (avatar.subType().compare(subTypeAudioRingtone) == 0) {
         uid = KUidContactFieldRingTone;
-	} else if (avatar.subType().compare(subTypeVideoRingtone) == 0) {
-        uid = KUidContactFieldVideoRingTone;
     } else {
         User::LeaveIfError(KErrNotSupported);
     }
@@ -81,7 +77,7 @@ QList<CContactItemField *> CntTransformAvatar::transformDetailL(const QContactDe
 	return fieldList;
 }
 
-QContactDetail *CntTransformAvatar::transformItemField(const CContactItemField& field, const QContact &contact)
+QContactDetail *CntTransformAvatarSimple::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
 
@@ -97,25 +93,21 @@ QContactDetail *CntTransformAvatar::transformItemField(const CContactItemField& 
 	else if (field.ContentType().ContainsFieldType(KUidContactFieldRingTone)) {
         avatar->setSubType(QContactAvatar::SubTypeAudioRingtone);
 	}
-    else if (field.ContentType().ContainsFieldType(KUidContactFieldVideoRingTone)) {
-        avatar->setSubType(QContactAvatar::SubTypeVideoRingtone);
-    }
 
 	return avatar;
 }
 
-bool CntTransformAvatar::supportsField(TUint32 fieldType) const
+bool CntTransformAvatarSimple::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
-    if (fieldType == KUidContactFieldCodImage.iUid ||
-        fieldType == KUidContactFieldRingTone.iUid ||
-        fieldType == KUidContactFieldVideoRingTone.iUid) {
+    if (fieldType == KUidContactFieldCodImage.iUid
+        || fieldType == KUidContactFieldRingTone.iUid) {
         ret = true;
     }
     return ret;
 }
 
-bool CntTransformAvatar::supportsDetail(QString detailName) const
+bool CntTransformAvatarSimple::supportsDetail(QString detailName) const
 {
     bool ret = false;
     if (detailName == QContactAvatar::DefinitionName) {
@@ -124,7 +116,7 @@ bool CntTransformAvatar::supportsDetail(QString detailName) const
     return ret;
 }
 
-QList<TUid> CntTransformAvatar::supportedSortingFieldTypes(QString /*detailFieldName*/) const
+QList<TUid> CntTransformAvatarSimple::supportedSortingFieldTypes(QString /*detailFieldName*/) const
 {
     // Sorting not supported
     return QList<TUid>();
@@ -137,7 +129,7 @@ QList<TUid> CntTransformAvatar::supportedSortingFieldTypes(QString /*detailField
  * \a subType The subtype to be checked
  * \return True if this subtype is supported
  */
-bool CntTransformAvatar::supportsSubType(const QString& subType) const
+bool CntTransformAvatarSimple::supportsSubType(const QString& subType) const
 {
     if(QContactAvatar::FieldSubType  == subType)
       return true;
@@ -151,7 +143,7 @@ bool CntTransformAvatar::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported
  */
-quint32 CntTransformAvatar::getIdForField(const QString& fieldName) const
+quint32 CntTransformAvatarSimple::getIdForField(const QString& fieldName) const
 {
    if (QContactAvatar::FieldAvatar  == fieldName)
         return 0;
@@ -174,7 +166,7 @@ quint32 CntTransformAvatar::getIdForField(const QString& fieldName) const
  *
  * \a definitions On return, the supported detail definitions have been added.
  */
-void CntTransformAvatar::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformAvatarSimple::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
     QMap<QString, QContactDetailDefinition::Field> fields;
     QContactDetailDefinition::Field f;
@@ -191,7 +183,6 @@ void CntTransformAvatar::detailDefinitions(QMap<QString, QContactDetailDefinitio
     f.dataType = QVariant::String; // only allowed to be a single subtype
     subTypes << QString(QLatin1String(QContactAvatar::SubTypeImage));
     subTypes << QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone));
-    subTypes << QString(QLatin1String(QContactAvatar::SubTypeVideoRingtone));
     f.allowableValues = subTypes;
     fields.insert(QContactUrl::FieldSubType, f);
 

@@ -41,6 +41,7 @@ symbian: {
         inc/cnttransformonlineaccount.h \
         inc/cnttransformorganisation.h \
         inc/cnttransformavatar.h \
+        inc/cnttransformavatarsimple.h \
         inc/cnttransformsynctarget.h \
         inc/cnttransformgender.h \
         inc/cnttransformanniversary.h \
@@ -75,6 +76,7 @@ symbian: {
         src/cnttransformonlineaccount.cpp \
         src/cnttransformorganisation.cpp \
         src/cnttransformavatar.cpp \
+        src/cnttransformavatarsimple.cpp \
         src/cnttransformsynctarget.cpp \
         src/cnttransformgender.cpp \
         src/cnttransformanniversary.cpp \
