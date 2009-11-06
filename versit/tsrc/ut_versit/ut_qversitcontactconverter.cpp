@@ -99,7 +99,7 @@ void UT_QVersitContactConverter::cleanup()
 
 void UT_QVersitContactConverter::initTestCase()
 {
-    //create dummy file.
+    // Create a dummy file
     QDir dir = QDir::current();
     mTestPhotoFile = dir.filePath(QString::fromAscii("versitTest001.jpg"));
     mTestAudioFile = dir.filePath(QString::fromAscii("versitTest001.wav"));
@@ -244,9 +244,9 @@ void UT_QVersitContactConverter::testEncodePhoneNumber()
     // Check parameters
     QCOMPARE(property.parameters().count(), 2);
     QVERIFY(property.parameters().contains(
-        QString::fromAscii(versitType),QString::fromAscii("HOME")));
+        QString::fromAscii("TYPE"),QString::fromAscii("HOME")));
     QVERIFY(property.parameters().contains(
-        QString::fromAscii(versitType),QString::fromAscii("CELL")));
+        QString::fromAscii("TYPE"),QString::fromAscii("CELL")));
     // Check name
     QCOMPARE(property.name(), QString::fromAscii("TEL"));
     // Check value
@@ -266,7 +266,7 @@ void UT_QVersitContactConverter::testEncodeEmailAddress()
     // Check parameters
     QCOMPARE(property.parameters().count(), 1);
     QVERIFY(property.parameters().contains(
-        QString::fromAscii(versitType),QString::fromAscii("HOME")));
+        QString::fromAscii("TYPE"),QString::fromAscii("HOME")));
     // Check name
     QCOMPARE(property.name(), QString::fromAscii("EMAIL"));
     // Check value
@@ -292,9 +292,9 @@ void UT_QVersitContactConverter::testEncodeStreetAddress()
     // Check parameters
     QCOMPARE(property.parameters().count(), 2);
     QVERIFY(property.parameters().contains(
-        QString::fromAscii(versitType),QString::fromAscii("HOME")));
+        QString::fromAscii("TYPE"),QString::fromAscii("HOME")));
     QVERIFY(property.parameters().contains(
-        QString::fromAscii(versitType),QString::fromAscii("POSTAL")));
+        QString::fromAscii("TYPE"),QString::fromAscii("POSTAL")));
     // Check name
     QCOMPARE(property.name(), QString::fromAscii("ADR"));
     // Check value
@@ -335,7 +335,7 @@ void UT_QVersitContactConverter::testEncodeUrl()
     // Check parameters
     QCOMPARE(property.parameters().count(), 1);
     QVERIFY(property.parameters().contains(
-        QString::fromAscii(versitType),QString::fromAscii("HOME")));
+        QString::fromAscii("TYPE"),QString::fromAscii("HOME")));
     // Check name
     QCOMPARE(property.name(), QString::fromAscii("URL"));
     // Check value
@@ -380,75 +380,54 @@ void UT_QVersitContactConverter::testEncodeUid()
 void UT_QVersitContactConverter::testEncodeRev()
 {
     QContact contact;
-    QContactTimestamp p;
-    QDateTime changeRev = QDateTime::fromString(QString::fromAscii("M1d1y200906:01:02"),
-                                                QString::fromAscii("'M'M'd'd'y'yyyyhh:mm:ss"));
-    changeRev.setTimeSpec(Qt::UTC);
+    QContactTimestamp timeStamp;
 
-    p.setLastModified(changeRev);
+    // Last modified time found
+    QDateTime revisionTime =
+        QDateTime::fromString(
+            QString::fromAscii("M1d1y200906:01:02"),
+            QString::fromAscii("'M'M'd'd'y'yyyyhh:mm:ss"));
+    revisionTime.setTimeSpec(Qt::UTC);
+    timeStamp.setLastModified(revisionTime);
+    // Contexts not allowed in REV property, check that they are not added
+    timeStamp.setContexts(QContactDetail::ContextHome);
+    contact.saveDetail(&timeStamp);
+    QVersitDocument document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    QVersitProperty property = document.properties().at(0);
+    QCOMPARE(property.parameters().count(), 0);
+    QCOMPARE(property.name(), QString::fromAscii("REV"));
+    QString expectedValueUTCEncoded = QString::fromAscii("2009-01-01T06:01:02Z");
+    QCOMPARE(QString::fromAscii(property.value()), expectedValueUTCEncoded);
 
-    //API Permits setting up context but it should not be in Versit Doc
-    p.setContexts(QContactDetail::ContextHome);
-
-    contact.saveDetail(&p);
-
-    //Convert Contat Into Versit Document
-    QVersitDocument versitDocument = mConverter->convertContact(contact);
-
-    //Ensure parameters does not exisit
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 0);
-
-    //Ensure property Exisit
-    QCOMPARE(versitDocument.properties().count(), 1);
-
-    //Ensure property parameer exisit and matches.
-    QString propertyName = versitDocument.properties().at(0).name();
-    QString expectedPropertyName =
-        mConverterPrivate->mPropertyMappings.value(QContactTimestamp::DefinitionName);
-    QCOMPARE(propertyName, expectedPropertyName);
-
-    //Check property value
-    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data());
-    QString expValueUTCEncoded = QString::fromAscii("2009-01-01T06:01:02Z");
-    QCOMPARE(value, expValueUTCEncoded);
-
-
-    // Test 2: If Modified Data does not Exist than date of contact created will be used.
+    // Last modified time not found, use the creation time
     QDateTime emptyTime;
-    p.setLastModified(emptyTime);
-    p.setCreated(changeRev);
-    contact.saveDetail(&p);
+    timeStamp.setLastModified(emptyTime);
+    timeStamp.setCreated(revisionTime);
+    contact.saveDetail(&timeStamp);
+    document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    property = document.properties().at(0);
+    QCOMPARE(QString::fromAscii(property.value()), expectedValueUTCEncoded);
 
-    versitDocument = mConverter->convertContact(contact);
-    value = QString::fromAscii(versitDocument.properties().at(0).value());
-
-    // Ensure Value exisit and matches.
-    QCOMPARE(value, expValueUTCEncoded);
-
-
-    // Test 3: Modified Date but Local Time spec not UTC
+    // Last modified time found, Local Time spec not UTC
     QDateTime localTime;
-    p.setLastModified(changeRev);
-    p.setCreated(localTime);
-    changeRev.setTimeSpec(Qt::LocalTime);
-    contact.saveDetail(&p);
+    timeStamp.setLastModified(revisionTime);
+    timeStamp.setCreated(localTime);
+    revisionTime.setTimeSpec(Qt::LocalTime);
+    contact.saveDetail(&timeStamp);
+    document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    property = document.properties().at(0);
+    QString expectedValueEncoded = QString::fromAscii("2009-01-01T06:01:02");
+    QCOMPARE(QString::fromAscii(property.value()), expectedValueUTCEncoded);
 
-    versitDocument = mConverter->convertContact(contact);
-    value = QString::fromAscii(versitDocument.properties().at(0).value());
-
-    // Ensure Value exisit and matches.
-    QString expValueEncoded = QString::fromAscii("2009-01-01T06:01:02");
-    QCOMPARE(value, expValueUTCEncoded);
-
-
-    // Test 4: Empty Date Entry No Created / Modified Date.
-    p.setLastModified(emptyTime);
-    p.setCreated(emptyTime);
-    changeRev.setTimeSpec(Qt::LocalTime);
-    contact.saveDetail(&p);
-
-    versitDocument = mConverter->convertContact(contact);
-    QCOMPARE(versitDocument.properties().count(), 0);
+    // Last modified time not found, creation time not found
+    timeStamp.setLastModified(emptyTime);
+    timeStamp.setCreated(emptyTime);
+    contact.saveDetail(&timeStamp);
+    document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 0);
 }
 
 void UT_QVersitContactConverter::testEncodeBirthDay()
@@ -456,107 +435,52 @@ void UT_QVersitContactConverter::testEncodeBirthDay()
     QContact contact;
     QDate date(2009,1,1);
     QContactBirthday birthDay;
-
     birthDay.setDate(date);
-
-    //API Permits setting up context but it should not be in Versit Doc
+    // Contexts not allowed in BDAY property, check that they are not added
     birthDay.setContexts(QContactDetail::ContextHome);
-
     contact.saveDetail(&birthDay);
-
-    //Convert Contat Into Versit Document
-    QVersitDocument versitDocument = mConverter->convertContact(contact);
-
-    //Ensure parameters does not exisit
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 0);
-
-    //Ensure property Exisit
-    QCOMPARE(versitDocument.properties().count(), 1);
-
-    //Ensure property parameer exisit and matches.
-    QString propertyName = versitDocument.properties().at(0).name();
-    QString expectedPropertyName =
-        mConverterPrivate->mPropertyMappings.value(QContactBirthday::DefinitionName);
-    QCOMPARE(propertyName, expectedPropertyName);
-
-    //Check property value
-    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data());
-    QString expectedValue = QString::fromAscii("2009-01-01");
-    QCOMPARE(value, expectedValue);
+    QVersitDocument document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    QVersitProperty property = document.properties().at(0);
+    QCOMPARE(property.parameters().count(), 0);
+    QCOMPARE(property.name(), QString::fromAscii("BDAY"));
+    QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("2009-01-01"));
 }
 
 void UT_QVersitContactConverter::testEncodeNote()
 {
     QContact contact;
-    QString myNote = QString::fromAscii("My Note");
     QContactNote note;
-    note.setNote(myNote);
-
-    //API Permits setting up context but it should not be in Versit Doc
+    note.setNote(QString::fromAscii("My Note"));
+    // Contexts not allowed in NOTE property, check that they are not added
     note.setContexts(QContactDetail::ContextHome);
-
     contact.saveDetail(&note);
-
-    //Convert Contat Into Versit Document
-    QVersitDocument versitDocument = mConverter->convertContact(contact);
-
-    //Ensure parameters does not exisit
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 0);
-
-    //Ensure property Exisit
-    QCOMPARE(versitDocument.properties().count(), 1);
-
-    //Ensure property parameer exisit and matches.
-    QString propertyName = versitDocument.properties().at(0).name();
-    QString expectedPropertyName =
-        mConverterPrivate->mPropertyMappings.value(QContactNote::DefinitionName);
-    QCOMPARE(propertyName, expectedPropertyName);
-
-    //Check property value
-    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data());
-    QCOMPARE(value, myNote);
+    QVersitDocument document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    QVersitProperty property = document.properties().at(0);
+    QCOMPARE(property.parameters().count(), 0);
+    QCOMPARE(property.name(), QString::fromAscii("NOTE"));
+    QCOMPARE(QString::fromAscii(property.value()), note.note());
 }
 
 void UT_QVersitContactConverter::testEncodeGeoLocation()
 {
     QContact contact;
     QContactGeolocation geoLocation;
-
     QString longitude = QString::fromAscii("99.9");
-    QString latitude = QString::fromAscii("98.9");
-    QString accuracy = QString::fromAscii("90.7");
-
     geoLocation.setLongitude(longitude.toDouble());
-
+    QString latitude = QString::fromAscii("98.9");
     geoLocation.setLatitude(latitude.toDouble());
-
-    // API Permit setting accuracy and other parameters which should be encoded.
-    geoLocation.setAccuracy(accuracy.toDouble());
-
-    //API Permits setting up context but it should not be in Versit Doc
+    // Contexts not allowed in GEO property, check that they are not added
     geoLocation.setContexts(QContactDetail::ContextHome);
-
     contact.saveDetail(&geoLocation);
-
-    //Convert Contat Into Versit Document
-    QVersitDocument versitDocument = mConverter->convertContact(contact);
-
-    //Ensure parameters does not exisit
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 0);
-
-    //Ensure property Exisit
-    QCOMPARE(versitDocument.properties().count(), 1);
-
-    //Ensure property parameer exisit and matches.
-    QString propertyName = versitDocument.properties().at(0).name();
-    QString expectedPropertyName =
-        mConverterPrivate->mPropertyMappings.value(QContactGeolocation::DefinitionName);
-    QCOMPARE(propertyName, expectedPropertyName);
-
-    //Check property value
-    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data() );
+    QVersitDocument document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    QVersitProperty property = document.properties().at(0);
+    QCOMPARE(property.parameters().count(), 0);
+    QCOMPARE(property.name(), QString::fromAscii("GEO"));
     QString expectedValue = longitude + QString::fromAscii(",") + latitude;
-    QCOMPARE(value, expectedValue);
+    QCOMPARE(QString::fromAscii(property.value()), expectedValue);
 }
 
 void UT_QVersitContactConverter::testEncodeOrganization()
@@ -634,9 +558,9 @@ void UT_QVersitContactConverter::testEncodeOrganization()
     QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
 
     QVERIFY(versitDocument.properties().at(0).parameters().contains(
-            QString::fromAscii(versitType), QString::fromAscii("JPEG")));
+            QString::fromAscii("TYPE"), QString::fromAscii("JPEG")));
     QVERIFY(versitDocument.properties().at(0).parameters().contains(
-            QString::fromAscii(versitValue), QString::fromAscii("URL")));
+            QString::fromAscii("VALUE"), QString::fromAscii("URL")));
 
     //Check property Name
     QString propertyName = versitDocument.properties().at(0).name();
@@ -659,10 +583,10 @@ void UT_QVersitContactConverter::testEncodeOrganization()
     QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
 
     QVERIFY(versitDocument.properties().at(0).parameters().contains(
-            QString::fromAscii(versitType), QString::fromAscii("JPEG")));
+            QString::fromAscii("TYPE"), QString::fromAscii("JPEG")));
 
     QVERIFY(versitDocument.properties().at(0).parameters().contains(
-            QString::fromAscii(versitEncoding), QString::fromAscii(versitEncodingBase64)));
+            QString::fromAscii("ENCODING"), QString::fromAscii("BASE64")));
 
     //Ensure value1 is not URL
     QString value1 = QString::fromAscii(versitDocument.properties().at(0).value().data());
@@ -736,15 +660,13 @@ void UT_QVersitContactConverter::testEncodeEmbeddedContent()
     QVersitProperty photoProperty = versitDocument.properties().at(0);
     QCOMPARE(photoProperty.parameters().count(), 2);
     QVERIFY(photoProperty.parameters().contains(
-            QString::fromAscii(versitType),QString::fromAscii("JPEG")));
+            QString::fromAscii("TYPE"),QString::fromAscii("JPEG")));
     QVERIFY(photoProperty.parameters().contains(
-            QString::fromAscii(versitValue),QString::fromAscii("URL")));
-    QString expectedPropertyName =
-        mConverterPrivate->mPropertyMappings.value(QContactAvatar::SubTypeImage);
-    QCOMPARE(photoProperty.name(), expectedPropertyName);
+            QString::fromAscii("VALUE"),QString::fromAscii("URL")));
+    QCOMPARE(photoProperty.name(), QString::fromAscii("PHOTO"));
     QCOMPARE(QString::fromAscii(photoProperty.value()), url);
 
-    // Test 2: Local Media PHOTO, image not scaled
+    // Test 2: Local PHOTO, image not scaled
     contactAvatar.setAvatar(mTestPhotoFile);
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
     contact.saveDetail(&contactAvatar);
@@ -753,17 +675,17 @@ void UT_QVersitContactConverter::testEncodeEmbeddedContent()
     photoProperty = versitDocument.properties().at(0);
     QCOMPARE(photoProperty.parameters().count(), 2);
     QVERIFY(photoProperty.parameters().contains(
-        QString::fromAscii(versitType),
+        QString::fromAscii("TYPE"),
         QString::fromAscii("JPEG")));
     QVERIFY(photoProperty.parameters().contains(
-        QString::fromAscii(versitEncoding),
-        QString::fromAscii(versitEncodingBase64)));
+        QString::fromAscii("ENCODING"),
+        QString::fromAscii("BASE64")));
     QFile photoFile(mTestPhotoFile);
     photoFile.open(QIODevice::ReadOnly);
     QByteArray photoFileContent = photoFile.readAll();
     QCOMPARE(photoProperty.value(), photoFileContent.toBase64());
 
-    // Test 3: Local Media PHOTO, image scaled by the "client"
+    // Test 3: Local PHOTO, image scaled by the "client"
     mScaleSignalEmitted = false;
     mSimulatedImageData = "simulated image data";
     versitDocument = mConverter->convertContact(contact);
@@ -771,14 +693,14 @@ void UT_QVersitContactConverter::testEncodeEmbeddedContent()
     photoProperty = versitDocument.properties().at(0);
     QCOMPARE(photoProperty.parameters().count(), 2);
     QVERIFY(photoProperty.parameters().contains(
-        QString::fromAscii(versitType),
+        QString::fromAscii("TYPE"),
         QString::fromAscii("JPEG")));
     QVERIFY(photoProperty.parameters().contains(
-        QString::fromAscii(versitEncoding),
-        QString::fromAscii(versitEncodingBase64)));
+        QString::fromAscii("ENCODING"),
+        QString::fromAscii("BASE64")));
     QCOMPARE(photoProperty.value(), mSimulatedImageData.toBase64());
 
-    // Test 5: Local Media SOUND
+    // Test 5: Local SOUND
     mScaleSignalEmitted = false;
     contactAvatar.setAvatar(mTestAudioFile);
     contactAvatar.setSubType(QContactAvatar::SubTypeAudioRingtone);
@@ -788,14 +710,14 @@ void UT_QVersitContactConverter::testEncodeEmbeddedContent()
     QVersitProperty soundProperty = versitDocument.properties().at(0);
     QCOMPARE(soundProperty.parameters().count(), 2);
     QVERIFY(soundProperty.parameters().contains(
-        QString::fromAscii(versitType),
+        QString::fromAscii("TYPE"),
         QString::fromAscii("WAVE")));
     QVERIFY(soundProperty.parameters().contains(
-        QString::fromAscii(versitEncoding),
-        QString::fromAscii(versitEncodingBase64)));
+        QString::fromAscii("ENCODING"),
+        QString::fromAscii("BASE64")));
     QCOMPARE(soundProperty.value(), QByteArray());
 
-    // Test 6: New Media Format will be encoded also
+    // Test 6: New media format will be encoded also
     const QString testUrl = QString::fromAscii("http://www.myhome.com/test.ggg");
     contactAvatar.setAvatar(testUrl);
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
@@ -805,11 +727,11 @@ void UT_QVersitContactConverter::testEncodeEmbeddedContent()
     QCOMPARE(versitDocument.properties().count(), 1);
     QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
     QVERIFY(versitDocument.properties().at(0).parameters().contains(
-            QString::fromAscii(versitType), QString::fromAscii("GGG")));
+            QString::fromAscii("TYPE"), QString::fromAscii("GGG")));
     QVERIFY(versitDocument.properties().at(0).parameters().contains(
-            QString::fromAscii(versitValue),QString::fromAscii("URL")));
+            QString::fromAscii("VALUE"),QString::fromAscii("URL")));
 
-    // Test 7: UnSupported Media Type, properties and parameters are not encoded
+    // Test 7: Unsupported media type, properties and parameters are not encoded
     const QString testUrl2 = QString::fromAscii("http://www.myhome.com/test.jpg");
     contactAvatar.setAvatar(testUrl2);
     // un-supported media type is encoded
@@ -836,9 +758,9 @@ void UT_QVersitContactConverter::testEncodeParameters()
     QVersitProperty property = document.properties().at(0);
     QCOMPARE(property.parameters().count(), 2);
     QVERIFY(property.parameters().contains(
-        QString::fromAscii(versitType), QString::fromAscii("CELL")));
+        QString::fromAscii("TYPE"), QString::fromAscii("CELL")));
     QVERIFY(property.parameters().contains(
-        QString::fromAscii(versitType),QString::fromAscii("VIDEO")));
+        QString::fromAscii("TYPE"),QString::fromAscii("VIDEO")));
 }
 
 void UT_QVersitContactConverter::testIsValidRemoteUrl()
@@ -965,9 +887,9 @@ void UT_QVersitContactConverter::testEncodeOnlineAccount()
     // Check parameters
     QCOMPARE(property.parameters().count(), 2);
     QVERIFY(property.parameters().contains(
-        QString::fromAscii(versitType),QString::fromAscii("HOME")));
+        QString::fromAscii("TYPE"),QString::fromAscii("HOME")));
     QVERIFY(property.parameters().contains(
-        QString::fromAscii(versitType),QString::fromAscii("SWIS")));
+        QString::fromAscii("TYPE"),QString::fromAscii("SWIS")));
     // Check name
     QCOMPARE(property.name(), QString::fromAscii("X-SIP"));
     // Check value
@@ -983,9 +905,9 @@ void UT_QVersitContactConverter::testEncodeOnlineAccount()
     // Check parameters
     QCOMPARE(property.parameters().count(), 2);
     QVERIFY(property.parameters().contains(
-        QString::fromAscii(versitType),QString::fromAscii("WORK")));
+        QString::fromAscii("TYPE"),QString::fromAscii("WORK")));
     QVERIFY(property.parameters().contains(
-        QString::fromAscii(versitType),QString::fromAscii("VOIP")));
+        QString::fromAscii("TYPE"),QString::fromAscii("VOIP")));
     // Check name
     QCOMPARE(property.name(), QString::fromAscii("X-SIP"));
     // Check value
@@ -1001,7 +923,7 @@ void UT_QVersitContactConverter::testEncodeOnlineAccount()
     // Check parameters, SIP not added as a TYPE parameter
     QCOMPARE(property.parameters().count(), 1);
     QVERIFY(property.parameters().contains(
-        QString::fromAscii(versitType),QString::fromAscii("HOME")));
+        QString::fromAscii("TYPE"),QString::fromAscii("HOME")));
     // Check name
     QCOMPARE(property.name(), QString::fromAscii("X-SIP"));
     // Check value
@@ -1019,57 +941,39 @@ void UT_QVersitContactConverter::testEncodeFamily()
     QContact contact;
     QContactFamily family;
 
-    //Test1: No Spouce No Family
+    // No spouse, no family
     family.setContexts(QContactDetail::ContextHome);
     contact.saveDetail(&family);
-    //Convert Contat Into Versit Document
-    QVersitDocument versitDocument = mConverter->convertContact(contact);
-    QCOMPARE(versitDocument.properties().count(), 0);
+    QVersitDocument document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 0);
 
-    //Test2: Only Spouce.
+    // Only spouse present
     QString spouce = QString::fromAscii("ABC");
     family.setSpouse(spouce);
     contact.saveDetail(&family);
-    //Convert Contat Into Versit Document
-    versitDocument = mConverter->convertContact(contact);
+    document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    QVersitProperty spouseProperty = document.properties().at(0);
+    QCOMPARE(spouseProperty.parameters().count(), 0);
+    QCOMPARE(spouseProperty.name(), QString::fromAscii("X-SPOUSE"));
+    QCOMPARE(QString::fromAscii(spouseProperty.value()), spouce);
 
-    //Ensure property Exisit
-    QCOMPARE(versitDocument.properties().count(), 1);
-    //Ensure no parameters exisit,
-    QCOMPARE(0, versitDocument.properties().at(0).parameters().count());
-    QString propertyName = versitDocument.properties().at(0).name();
-    QCOMPARE(propertyName, QString::fromAscii("X-SPOUSE"));
-
-    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data() );
-    QCOMPARE(value, spouce);
-
-
-    //Test3: Spouce with few childerns
-    QStringList childerns;
-    childerns << QString::fromAscii("A") << QString::fromAscii("B") ;
-    family.setChildren(childerns);
+    // Spouse and children
+    QStringList children;
+    children << QString::fromAscii("A") << QString::fromAscii("B") ;
+    family.setChildren(children);
     family.setSpouse(spouce);
     contact.saveDetail(&family);
-    versitDocument = mConverter->convertContact(contact);
-
-    //Ensure property Exisit
-    QCOMPARE(versitDocument.properties().count(), 2);
-    //Ensure no parameters exisit,
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 0);
-
-    //Ensure property parameer exisit and matches.
-    QString propertyName1 = versitDocument.properties().at(0).name();
-    QCOMPARE(propertyName1, QString::fromAscii("X-SPOUSE"));
-
-    QString value1 = QString::fromAscii(versitDocument.properties().at(0).value().data() );
-    QCOMPARE(value1, spouce);
-
-    QString propertyName2 = versitDocument.properties().at(1).name();
-    QCOMPARE(propertyName2, QString::fromAscii("X-CHILDREN"));
-
-    QString value2 = QString::fromAscii(versitDocument.properties().at(1).value().data() );
-    QString expected = QString::fromAscii("A,B");
-    QCOMPARE(value2, expected);
+    document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 2);
+    spouseProperty = document.properties().at(0);
+    QCOMPARE(spouseProperty.parameters().count(), 0);
+    QCOMPARE(spouseProperty.name(), QString::fromAscii("X-SPOUSE"));
+    QCOMPARE(QString::fromAscii(spouseProperty.value()), spouce);
+    QVersitProperty childrenProperty = document.properties().at(1);
+    QCOMPARE(childrenProperty.parameters().count(), 0);
+    QCOMPARE(childrenProperty.name(), QString::fromAscii("X-CHILDREN"));
+    QCOMPARE(QString::fromAscii(childrenProperty.value()), QString::fromAscii("A,B"));
 }
 
 // Test utility functions

@@ -44,7 +44,6 @@
 #ifndef QVERSITDEFS_H
 #define QVERSITDEFS_H
 
-#include <qcontact.h>
 #include <qcontactdetail.h>
 #include <qcontactname.h>
 #include <qcontactemailaddress.h>
@@ -64,31 +63,67 @@
 #include <qcontactonlineaccount.h>
 #include <qcontactfamily.h>
 
+// Mapping between a string in versit specifications and Qt contact details
+struct versitContactDetailMapping {
+    const char* versitPropertyName;
+    const char* contactDetailDefinitionName;
+    const char* contactDetailValueKey;
+};
+
+// Mappings from versit property names to Qt contact details
+const versitContactDetailMapping versitContactDetailMappings[] = {
+    {"ADR",           QContactAddress::DefinitionName.str,
+                      ""},
+    {"BDAY",          QContactBirthday::DefinitionName.str,
+                      QContactBirthday::FieldBirthday.str},
+    {"GEO",           QContactGeolocation::DefinitionName.str,
+                      ""},
+    {"EMAIL",         QContactEmailAddress::DefinitionName.str,
+                      QContactEmailAddress::FieldEmailAddress.str},
+    {"LOGO",          QContactOrganization::DefinitionName.str,
+                      QContactOrganization::FieldLogo.str},
+    {"N",             QContactName::DefinitionName.str,
+                      ""},
+    {"NICKNAME",      QContactNickname::DefinitionName.str,
+                      QContactNickname::FieldNickname.str},
+    {"NOTE",          QContactNote::DefinitionName.str,
+                      QContactNote::FieldNote.str},
+    {"ORG",           QContactOrganization::DefinitionName.str,
+                      QContactOrganization::FieldName.str},
+    {"PHOTO",         QContactAvatar::DefinitionName.str,
+                      QContactAvatar::SubTypeImage.str},
+    {"REV",           QContactTimestamp::DefinitionName.str,
+                      ""},
+    {"SOUND",         QContactAvatar::DefinitionName.str,
+                      QContactAvatar::SubTypeAudioRingtone.str},
+    {"TEL",           QContactPhoneNumber::DefinitionName.str,
+                      QContactPhoneNumber::FieldNumber.str},
+    {"TITLE",         QContactOrganization::DefinitionName.str,
+                      QContactOrganization::FieldTitle.str},
+    {"UID",           QContactGuid::DefinitionName.str,
+                      QContactGuid::FieldGuid.str},
+    {"URL",           QContactUrl::DefinitionName.str,
+                      QContactUrl::FieldUrl.str},
+    {"X-ANNIVERSARY", QContactAnniversary::DefinitionName.str,
+                      ""},
+    {"X-ASSISTANT",   QContactOrganization::DefinitionName.str,
+                      QContactOrganization::FieldAssistantName.str},
+    {"X-CHILDREN",    QContactFamily::DefinitionName.str,
+                      QContactFamily::FieldChildren.str},
+    {"X-GENDER",      QContactGender::DefinitionName.str,
+                      QContactGender::FieldGender.str},
+    {"X-NICKNAME",    QContactNickname::DefinitionName.str,
+                      QContactNickname::FieldNickname.str},
+    {"X-SIP",         QContactOnlineAccount::DefinitionName.str,
+                      ""},
+    {"X-SPOUSE",      QContactFamily::DefinitionName.str,
+                      QContactFamily::FieldSpouse.str}
+};
+
 // Mapping between a string in versit specifications and Qt contacts
 struct versitMapping {
     const char* versitString;
     const char* contactString;
-};
-
-// Mappings from versit property names to Qt contact details
-const versitMapping versitDetailMappings[] = {
-    {"N",             QContactName::DefinitionName.str},
-    {"EMAIL",         QContactEmailAddress::DefinitionName.str},
-    {"TEL",           QContactPhoneNumber::DefinitionName.str},
-    {"ADR",           QContactAddress::DefinitionName.str},
-    {"URL",           QContactUrl::DefinitionName.str},
-    {"REV",           QContactTimestamp::DefinitionName.str},
-    {"UID",           QContactGuid::DefinitionName.str},
-    {"ORG",           QContactOrganization::DefinitionName.str},
-    {"BDAY",          QContactBirthday::DefinitionName.str},
-    {"NOTE",          QContactNote::DefinitionName.str},
-    {"GEO",           QContactGeolocation::DefinitionName.str},
-    {"NICKNAME",      QContactNickname::DefinitionName.str},
-    {"PHOTO",         QContactAvatar::SubTypeImage.str},
-    {"SOUND",         QContactAvatar::SubTypeAudioRingtone.str},
-    {"X-ANNIVERSARY", QContactAnniversary::DefinitionName.str},
-    {"X-GENDER",      QContactGender::DefinitionName.str},
-    {"X-NICKNAME",    QContactNickname::DefinitionName.str}
 };
 
 // Mappings from versit TYPE parameters to Qt contact detail contexts
@@ -127,24 +162,5 @@ const versitMapping versitFileExtensionMappings[] = {
     {"AIFF", "AIF"},
     {"TIFF", "GIF"}
 };
-
-// Versit parameter names
-const char versitType[] = "TYPE";
-const char versitValue[] = "VALUE";
-const char versitEncoding[] = "ENCODING";
-
-// Versit encoding parameter values
-const char versitEncoding7Bit[] = "7BIT";
-const char versitEncoding8Bit[] = "8BIT";
-const char versitEncodingQuotedPrintable[] = "QUOTED-PRINTABLE";
-const char versitEncodingBase64[] = "BASE64";
-const char versitEncodingBinary[] = "B";
-
-// ISO-8601 basic format datetime spec
-const char versitDateTimeSpecIso8601Basic[] = "yyyyMMddThhmmss";
-const char versitDateSpecIso8601Basic[] = "yyyyMMdd";
-
-// ISO 8601 Extended Format suffix
-const char versitISOFormatSuffix[] = "Z";
 
 #endif // QVERSITDEFS_H

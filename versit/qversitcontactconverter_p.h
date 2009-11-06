@@ -95,8 +95,8 @@ public: // Data
     QList<QContactDetail> mUnconvertedContactDetails;
 
 private: // data
-    QHash<QString, QString> mPropertyMappings;
-    QHash<QString, QString> mParameterMappings;
+    QHash<QString,QString> mPropertyMappings;
+    QHash<QString,QString> mParameterMappings;
     QVersitDocument::VersitType mVersitType;
 
     friend class UT_QVersitContactConverter;

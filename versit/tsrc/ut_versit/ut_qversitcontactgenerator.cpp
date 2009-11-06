@@ -211,13 +211,13 @@ void UT_QVersitContactGenerator::testAddress()
     QCOMPARE(address.country(),QString::fromAscii("My Country"));
     
     // Address with TYPE parameters converted to contexts and subtypes
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("HOME"));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("WORK"));    
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("DOM"));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("INTL"));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("POSTAL"));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("PARCEL"));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("X-EXTENSION"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("WORK"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("DOM"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("INTL"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("POSTAL"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("PARCEL"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("X-EXTENSION"));
     document = createDocumentWithProperty(property);
     contact = mGenerator->generateContact(document);
     address = static_cast<QContactAddress>(contact.detail(QContactAddress::DefinitionName));
@@ -324,10 +324,10 @@ void UT_QVersitContactGenerator::testOrganization()
     property.setName(QString::fromAscii("LOGO"));
     QByteArray logo = "R0lGODlhEgASAIAAAAAAAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G";
     property.setValue(logo.toBase64());
-    property.addParameter(QString::fromAscii(versitType),
+    property.addParameter(QString::fromAscii("TYPE"),
                           QString::fromAscii("GIF"));
-    property.addParameter(QString::fromAscii(versitEncoding),
-                          QString::fromAscii(versitEncodingBase64));
+    property.addParameter(QString::fromAscii("ENCODING"),
+                          QString::fromAscii("BASE64"));
     document = createDocumentWithProperty(property);
     mGenerator->setImagePath(imageAndAudioClipPath);
     contact = mGenerator->generateContact(document);
@@ -345,7 +345,7 @@ void UT_QVersitContactGenerator::testOrganization()
     property.setName(QString::fromAscii("LOGO"));
     QByteArray logoUrl = "http://www.organization.org/logo.gif";
     property.setValue(logoUrl);
-    property.addParameter(QString::fromAscii(versitValue),QString::fromAscii("URL"));
+    property.addParameter(QString::fromAscii("VALUE"),QString::fromAscii("URL"));
     document = createDocumentWithProperty(property);
     contact = mGenerator->generateContact(document);
     org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
@@ -370,16 +370,16 @@ void UT_QVersitContactGenerator::testTel()
     QByteArray value("+35850987654321");
     property.setValue(value);   
 
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("VOICE"));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("CELL"));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("MODEM"));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("CAR"));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("VIDEO"));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("FAX"));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("BBS"));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("PAGER"));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("HOME"));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("WORK"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("VOICE"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("CELL"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("MODEM"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("CAR"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("VIDEO"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("FAX"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("BBS"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("PAGER"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("WORK"));
 
     document.addProperty(property);
     QContact contact = mGenerator->generateContact(document);
@@ -411,7 +411,7 @@ void UT_QVersitContactGenerator::testEmail()
     property.setName(QString::fromAscii("EMAIL"));
     QByteArray value("homer.simpson@burns-corporation.com");
     property.setValue(value);
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("WORK"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("WORK"));
     QVersitDocument document = createDocumentWithProperty(property);
     QContact contact = mGenerator->generateContact(document);
     QContactEmailAddress email =
@@ -429,7 +429,7 @@ void UT_QVersitContactGenerator::testUrl()
     property.setName(QString::fromAscii("URL"));
     QByteArray value("http://www.simpsonsmovie.com/homer.html");
     property.setValue(value);
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("WORK"));
+    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("WORK"));
     QVersitDocument document = createDocumentWithProperty(property);    
     QContact contact = mGenerator->generateContact(document);
     QContactUrl url =
@@ -499,8 +499,9 @@ void UT_QVersitContactGenerator::testTimeStamp()
     timeStamp =
         static_cast<QContactTimestamp>(
             contact.detail(QContactTimestamp::DefinitionName));
-    QCOMPARE(timeStamp.lastModified().toString(QString::fromAscii(versitDateTimeSpecIso8601Basic)),
-                                                         QString::fromAscii(dateAndTimeValue));
+
+    QCOMPARE(timeStamp.lastModified().toString(QString::fromAscii("yyyyMMddThhmmss")),
+             QString::fromAscii(dateAndTimeValue));
 
     // Date and Time : ISO 8601 in basic format with utc offset
     dateAndTimeValue = "19810520T235555";
@@ -511,8 +512,8 @@ void UT_QVersitContactGenerator::testTimeStamp()
     timeStamp =
         static_cast<QContactTimestamp>(
             contact.detail(QContactTimestamp::DefinitionName));
-    QCOMPARE(timeStamp.lastModified().toString(QString::fromAscii(versitDateTimeSpecIso8601Basic)),
-                                                         QString::fromAscii(dateAndTimeValue));
+    QCOMPARE(timeStamp.lastModified().toString(QString::fromAscii("yyyyMMddThhmmss")),
+             QString::fromAscii(dateAndTimeValue));
     QCOMPARE(timeStamp.lastModified().timeSpec(),Qt::UTC);
 }
 
@@ -538,8 +539,8 @@ void UT_QVersitContactGenerator::testAnniversary()
     anniversary =
         static_cast<QContactAnniversary>(
             contact.detail(QContactAnniversary::DefinitionName));
-    QCOMPARE(anniversary.originalDate().toString(QString::fromAscii(versitDateSpecIso8601Basic)),
-                                                          QString::fromAscii(dateValue));
+    QCOMPARE(anniversary.originalDate().toString(QString::fromAscii("yyyyMMdd")),
+             QString::fromAscii(dateValue));
 
 }
 
@@ -566,7 +567,7 @@ void UT_QVersitContactGenerator::testBirthday()
     bday =
         static_cast<QContactBirthday>(
             contact.detail(QContactBirthday::DefinitionName));
-    QCOMPARE(bday.date().toString(QString::fromAscii(versitDateSpecIso8601Basic)),
+    QCOMPARE(bday.date().toString(QString::fromAscii("yyyyMMdd")),
              QString::fromAscii(dateValue));
 
 }
@@ -684,7 +685,7 @@ void UT_QVersitContactGenerator::testAvatarJpegStored()
     QVersitDocument document =
         createDocumentWithNameAndPhoto(
             name,img,QString::fromAscii("JPEG"),
-            QString::fromAscii(versitEncodingBase64));
+            QString::fromAscii("BASE64"));
     mGenerator->setImagePath(imageAndAudioClipPath);
     QContact contact = mGenerator->generateContact(document);
     QContactAvatar avatar =
@@ -711,7 +712,7 @@ void UT_QVersitContactGenerator::testAvatarGifStored()
     QVersitDocument document =
         createDocumentWithNameAndPhoto(
             name,img,QString::fromAscii("GIF"),
-            QString::fromAscii(versitEncodingBinary));
+            QString::fromAscii("B"));
     mGenerator->setImagePath(imageAndAudioClipPath); 
     QContact contact = mGenerator->generateContact(document);
     QContactDetail detail = contact.detail(QContactAvatar::DefinitionName);
@@ -847,11 +848,11 @@ QStringList nameValues(QString::fromAscii("Homer")); // First name
     QVersitDocument document1 =
         createDocumentWithNameAndPhoto(
             name,img,QString::fromAscii("JPEG"),
-            QString::fromAscii(versitEncodingBase64));
+            QString::fromAscii("BASE64"));
     QVersitDocument document2 =
         createDocumentWithNameAndPhoto(
             name,img,QString::fromAscii("JPEG"),
-            QString::fromAscii(versitEncodingBinary));
+            QString::fromAscii("B"));
 
     mGenerator->setImagePath(imageAndAudioClipPath);
     QContact contact1 = mGenerator->generateContact(document1);
@@ -877,7 +878,7 @@ void UT_QVersitContactGenerator::testAvatarJpegNonexistentPath()
     QVersitDocument document =
         createDocumentWithNameAndPhoto(
             name,img,QString::fromAscii("JPEG"),
-            QString::fromAscii(versitEncodingBase64));
+            QString::fromAscii("BASE64"));
 
     mGenerator->setImagePath(QString::fromAscii("some_nonexistent/path/anywhere543"));
     QContact contact = mGenerator->generateContact(document);
@@ -896,7 +897,7 @@ void UT_QVersitContactGenerator::testAvatarUrl()
     QByteArray value("file:///jgpublic.");
     property.setValue(value);
     property.addParameter(
-        QString::fromAscii(versitValue),QString::fromAscii("URL"));
+        QString::fromAscii("VALUE"),QString::fromAscii("URL"));
 
     QVersitDocument document;
     document.addProperty(property);
@@ -923,7 +924,7 @@ void UT_QVersitContactGenerator::testAvatarEncoding()
     QVersitDocument document =
         createDocumentWithNameAndPhoto(
             name,img,QString::fromAscii("GIF"),
-            QString::fromAscii(versitEncodingQuotedPrintable));
+            QString::fromAscii("8BIT"));
 
     mGenerator->setImagePath(imageAndAudioClipPath);
     QContact contact = mGenerator->generateContact(document);
@@ -1024,7 +1025,7 @@ void UT_QVersitContactGenerator::testOnlineAccount()
     property.setName(QString::fromAscii("X-SIP"));
     property.setValue(accountUri);
     QMultiHash<QString,QString> params;
-    params.insert(QString::fromAscii(versitType),QString::fromAscii("SWIS"));
+    params.insert(QString::fromAscii("TYPE"),QString::fromAscii("SWIS"));
     property.setParameters(params);
     document.addProperty(property);
     contact = mGenerator->generateContact(document);
@@ -1042,7 +1043,7 @@ void UT_QVersitContactGenerator::testOnlineAccount()
     property.setName(QString::fromAscii("X-SIP"));
     property.setValue(accountUri);
     params.clear();
-    params.insert(QString::fromAscii(versitType),QString::fromAscii("VOIP"));
+    params.insert(QString::fromAscii("TYPE"),QString::fromAscii("VOIP"));
     property.setParameters(params);
     document.addProperty(property);
     contact = mGenerator->generateContact(document);
@@ -1217,17 +1218,17 @@ QVersitDocument UT_QVersitContactGenerator::createDocumentWithNameAndPhoto(
 
     QVersitProperty property;
     property.setName(QString::fromAscii("PHOTO"));
-    if (encoding == QString::fromAscii(versitEncodingBase64) ||
-        encoding == QString::fromAscii(versitEncodingBinary)){
+    if (encoding == QString::fromAscii("BASE64") ||
+        encoding == QString::fromAscii("B")){
         property.setValue(image.toBase64());
     } else {
         property.setValue(image);
     }
     if (imageType != QString()) {
-        property.addParameter(QString::fromAscii(versitType), imageType);
+        property.addParameter(QString::fromAscii("TYPE"), imageType);
     }
     if (encoding != QString()) {
-        property.addParameter(QString::fromAscii(versitEncoding), encoding);
+        property.addParameter(QString::fromAscii("ENCODING"), encoding);
     }
     document.addProperty(property);
 

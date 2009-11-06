@@ -70,26 +70,19 @@
  */
 QVersitContactGeneratorPrivate::QVersitContactGeneratorPrivate()
 {
-    mDetailMappings.insert(QString::fromAscii("EMAIL"),
-        QPair<QString,QString>(
-            QContactEmailAddress::DefinitionName,
-            QContactEmailAddress::FieldEmailAddress));
-    mDetailMappings.insert(QString::fromAscii("URL"),
-        QPair<QString,QString>(
-            QContactUrl::DefinitionName,
-            QContactUrl::FieldUrl));
-    mDetailMappings.insert(QString::fromAscii("UID"),
-        QPair<QString,QString>(
-            QContactGuid::DefinitionName,
-            QContactGuid::FieldGuid));
-    mDetailMappings.insert(QString::fromAscii("NOTE"),
-        QPair<QString,QString>(
-            QContactNote::DefinitionName,
-            QContactNote::FieldNote));
-    mDetailMappings.insert(QString::fromAscii("X-GENDER"),
-        QPair<QString,QString>(
-            QContactGender::DefinitionName,
-            QContactGender::FieldGender));
+    // Contact detail mappings
+    int versitPropertyCount =
+        sizeof(versitContactDetailMappings)/sizeof(versitContactDetailMapping);
+    for (int i=0; i < versitPropertyCount; i++) {
+        QString versitPropertyName =
+            QString::fromAscii(versitContactDetailMappings[i].versitPropertyName);
+        QPair<QString,QString> contactDetail;
+        contactDetail.first =
+            QString::fromAscii(versitContactDetailMappings[i].contactDetailDefinitionName);
+        contactDetail.second =
+            QString::fromAscii(versitContactDetailMappings[i].contactDetailValueKey);
+        mDetailMappings.insert(versitPropertyName,contactDetail);
+    }
 
     // Context mappings
     int contextCount = sizeof(versitContextMappings)/sizeof(versitMapping);
@@ -126,48 +119,40 @@ QVersitContactGeneratorPrivate::~QVersitContactGeneratorPrivate()
 /*!
  * Generates a QContact from \a versitDocument.
  */
-QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& versitDocument)
+QContact QVersitContactGeneratorPrivate::generateContact(
+     const QVersitDocument& versitDocument)
 {
     mUnconvertedVersitProperties.clear();
     QContact contact;
     const QList<QVersitProperty> properties = versitDocument.properties();
     foreach (QVersitProperty property, properties) {
+        QPair<QString,QString> detailDefinition =
+            mDetailMappings.value(property.name());
+        QString detailDefinitionName = detailDefinition.first;
         QContactDetail* detail = 0;
-        if (property.name() == QString::fromAscii("ADR")) {
+        if (detailDefinitionName == QContactAddress::DefinitionName) {
             detail = createAddress(property);
-        } else if (property.name() == QString::fromAscii("N")) {
+        } else if (detailDefinitionName == QContactName::DefinitionName) {
             detail = createName(property,contact);
-        } else if (property.name() == QString::fromAscii("BDAY")) {
+        } else if (detailDefinitionName == QContactBirthday::DefinitionName) {
             detail = createBirthday(property);
-        } else if (property.name() == QString::fromAscii("GEO")){
+        } else if (detailDefinitionName == QContactGeolocation::DefinitionName){
             detail = createGeoLocation(property);
-        } else if (property.name() == QString::fromAscii("LOGO")) {
+        } else if (detailDefinitionName == QContactOrganization::DefinitionName) {
             detail = createOrganization(property);
-        } else if (property.name() == QString::fromAscii("NICKNAME") ||
-                   property.name() == QString::fromAscii("X-NICKNAME")) {
+        } else if (detailDefinitionName == QContactNickname::DefinitionName) {
             createNicknames(property,contact);
-        } else if (property.name() == QString::fromAscii("ORG")) {
-            detail = createOrganization(property);
-        } else if (property.name() == QString::fromAscii("PHOTO")) {
-            detail = createAvatar(property,versitDocument,QContactAvatar::SubTypeImage);
-         } else if (property.name() == QString::fromAscii("REV")) {
+        } else if (detailDefinitionName == QContactAvatar::DefinitionName) {
+            detail = createAvatar(property,versitDocument,detailDefinition.second);
+        } else if (detailDefinitionName == QContactTimestamp::DefinitionName) {
             detail = createTimeStamp(property);
-        } else if (property.name() == QString::fromAscii("ROLE")) {
-            detail = createOrganization(property);
-        } else if (property.name() == QString::fromAscii("SOUND")){
-            detail = createAvatar(property,versitDocument,QContactAvatar::SubTypeAudioRingtone);
-        } else if (property.name() == QString::fromAscii("TEL")) {
+        } else if (detailDefinitionName == QContactPhoneNumber::DefinitionName) {
             detail = createPhone(property);
-        } else if (property.name() == QString::fromAscii("TITLE")){
-            detail = createOrganization(property);
-        } else if (property.name() == QString::fromAscii("X-ANNIVERSARY")) {
+        } else if (detailDefinitionName == QContactAnniversary::DefinitionName) {
             detail = createAnniversary(property);
-        } else if (property.name() == QString::fromAscii("X-ASSISTANT")) {
-            detail = createOrganization(property);
-         } else if (property.name() == QString::fromAscii("X-CHILDREN") ||
-                   property.name() == QString::fromAscii("X-SPOUSE")){
+        } else if (detailDefinitionName == QContactFamily::DefinitionName) {
             detail = createFamily(property,contact);
-        } else if (property.name() == QString::fromAscii("X-SIP")){
+        } else if (detailDefinitionName == QContactOnlineAccount::DefinitionName) {
             detail = createOnlineAccount(property);
         } else {
             detail = createNameValueDetail(property);
@@ -295,7 +280,7 @@ void QVersitContactGeneratorPrivate::setOrganizationLogo(
     QString value(QString::fromAscii(property.value()));
 
     const QString valueParam =
-        property.parameters().value(QString::fromAscii(versitValue));
+        property.parameters().value(QString::fromAscii("VALUE"));
 
     if (valueParam != QString::fromAscii("URL")) {
         QString path(mImagePath);
@@ -319,7 +304,8 @@ QContactDetail* QVersitContactGeneratorPrivate::createTimeStamp(
     bool utc = (value.endsWith("Z") || value.endsWith("z"));
     if (utc)
         value.chop(1); // take away z from end;
-    QDateTime dateTime = parseDateTime(value,versitDateTimeSpecIso8601Basic);
+
+    QDateTime dateTime = parseDateTime(value,"yyyyMMddThhmmss");
     if (utc)
         dateTime.setTimeSpec(Qt::UTC);
     timeStamp->setLastModified(dateTime);
@@ -334,7 +320,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createAnniversary(
 {
     QContactAnniversary* anniversary = new QContactAnniversary();
     QDateTime dateTime =
-        parseDateTime(property.value(),versitDateSpecIso8601Basic);
+        parseDateTime(property.value(),"yyyyMMdd");
     anniversary->setOriginalDate(dateTime.date());
     return anniversary;
 }
@@ -347,7 +333,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createBirthday(
 {
     QContactBirthday* bday = new QContactBirthday();
     QDateTime dateTime =
-        parseDateTime(property.value(),versitDateSpecIso8601Basic);
+        parseDateTime(property.value(),"yyyyMMdd");
     bday->setDate(dateTime.date());
     return bday;
 }
@@ -394,7 +380,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
     QString value(QString::fromAscii(property.value()));
 
     const QString valueParam =
-        property.parameters().value(QString::fromAscii(versitValue));
+        property.parameters().value(QString::fromAscii("VALUE"));
 
     if (valueParam != QString::fromAscii("URL")) {
         QString pathAndName(mImagePath);
@@ -470,7 +456,7 @@ QStringList QVersitContactGeneratorPrivate::extractContexts(
     const QVersitProperty& property) const
 {   
     QStringList types = 
-        property.parameters().values(QString::fromAscii(versitType));
+        property.parameters().values(QString::fromAscii("TYPE"));
     QStringList contexts;
     foreach (QString type, types) {   
         QString value = mContextMappings.value(type);
@@ -487,7 +473,7 @@ QStringList QVersitContactGeneratorPrivate::extractSubTypes(
     const QVersitProperty& property) const
 {
     QStringList types = 
-        property.parameters().values(QString::fromAscii(versitType));
+        property.parameters().values(QString::fromAscii("TYPE"));
     QStringList subTypes;
     foreach (QString type, types) {
         QString subType = mSubTypeMappings.value(type);
@@ -534,11 +520,11 @@ QString QVersitContactGeneratorPrivate::saveContentToFile(
     const QVersitProperty& property) const
 {
     QString encoding =
-        property.parameters().value(QString::fromAscii(versitEncoding));
+        property.parameters().value(QString::fromAscii("ENCODING"));
     QByteArray content = property.value();
 
     QString type =
-        property.parameters().value(QString::fromAscii(versitType));
+        property.parameters().value(QString::fromAscii("TYPE"));
     // Use the type parameter value as it is, if not found in the mapping table
     QString extension = mFileExtensionMappings.value(type,type);
 
@@ -550,8 +536,8 @@ QString QVersitContactGeneratorPrivate::saveContentToFile(
     QFile file(fileName);
     qint64 writeResult = -1;
     if (file.open(QIODevice::WriteOnly)) {
-        if (encoding == QString::fromAscii(versitEncodingBase64) ||
-            encoding == QString::fromAscii(versitEncodingBinary)) {
+        if (encoding == QString::fromAscii("BASE64") ||
+            encoding == QString::fromAscii("B")) {
             writeResult = file.write(QByteArray::fromBase64(property.value()));
         } else {
             // default assumption

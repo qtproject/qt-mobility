@@ -73,11 +73,14 @@ QVersitContactConverterPrivate::QVersitContactConverterPrivate() :
     mVersitType(QVersitDocument::VCard21)
 {
     // Detail mappings
-    int detailCount = sizeof(versitDetailMappings)/sizeof(versitMapping);
-    for (int i=0; i < detailCount; i++) {
-        mPropertyMappings.insert(
-            QString::fromAscii(versitDetailMappings[i].contactString),
-            QString::fromAscii(versitDetailMappings[i].versitString));
+    int versitPropertyCount =
+        sizeof(versitContactDetailMappings)/sizeof(versitContactDetailMapping);
+    for (int i=0; i < versitPropertyCount; i++) {
+        QString contactDetailName =
+            QString::fromAscii(versitContactDetailMappings[i].contactDetailDefinitionName);
+        QString versitPropertyName =
+            QString::fromAscii(versitContactDetailMappings[i].versitPropertyName);
+        mPropertyMappings.insert(contactDetailName,versitPropertyName);
     }
 
     // Contexts mappings
@@ -162,9 +165,9 @@ void QVersitContactConverterPrivate::encodeFieldInfo(
         addProperty = encodeOnlineAccount(property, detail);
         if (!addProperty)
             mUnconvertedContactDetails.append(detail);
-    }else if (detail.definitionName() == QContactFamily::DefinitionName) {
+    } else if (detail.definitionName() == QContactFamily::DefinitionName) {
         addProperty = encodeFamily(document, detail);
-    }else {
+    } else {
         addProperty = false;
         mUnconvertedContactDetails.append(detail);
     }
@@ -273,8 +276,7 @@ bool QVersitContactConverterPrivate::encodeRev(
     if ( rev.lastModified().toString(Qt::ISODate).size() ) {
         encoded = true;
         if ( rev.lastModified().timeSpec() == Qt::UTC ) {
-            value = rev.lastModified().toString(Qt::ISODate) +
-                QString::fromAscii(versitISOFormatSuffix);
+            value = rev.lastModified().toString(Qt::ISODate) + QString::fromAscii("Z");
         }
         else {
             value = rev.lastModified().toString(Qt::ISODate);
@@ -284,8 +286,7 @@ bool QVersitContactConverterPrivate::encodeRev(
     else if ( rev.created().toString(Qt::ISODate).size()) {
         encoded = true;
         if ( rev.created().timeSpec() == Qt::UTC ) {
-            value = rev.created().toString(Qt::ISODate) +
-                QString::fromAscii(versitISOFormatSuffix);
+            value = rev.created().toString(Qt::ISODate) + QString::fromAscii("Z");
         }
         else {
             value = rev.created().toString(Qt::ISODate);
@@ -379,15 +380,20 @@ bool QVersitContactConverterPrivate::encodeAvatar(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
-    bool encoded = false;
-    bool scaling = false;
     QContactAvatar contactAvatar = static_cast<QContactAvatar>(detail);
-    QString resourcePath = contactAvatar.avatar();
-
-    QString propertyName = mPropertyMappings.value(contactAvatar.subType());
+    bool scalingAllowed = false;
+    bool encoded = false;
+    QString propertyName;
+    if (contactAvatar.subType() == QContactAvatar::SubTypeImage) {
+        scalingAllowed = true;
+        propertyName = QString::fromAscii("PHOTO");
+    } else if (contactAvatar.subType() == QContactAvatar::SubTypeAudioRingtone) {
+        propertyName = QString::fromAscii("SOUND");
+    } else {
+        // NOP
+    }
     if (propertyName.length() > 0) {
-        scaling = (contactAvatar.subType() == QContactAvatar::SubTypeImage);
-        encoded = encodeEmbeddedContent(resourcePath, property, scaling);
+        encoded = encodeEmbeddedContent(contactAvatar.avatar(), property, scalingAllowed);
         if (encoded)
             property.setName(propertyName);
     }
@@ -523,7 +529,7 @@ void QVersitContactConverterPrivate::encodeParameters(
         if (mappedValue.length() > 0) {
             // QVersitProperty::addParameter inserts into beginning.
             // This is why the last value is taken from the list
-            property.addParameter(QString::fromAscii(versitType),mappedValue);
+            property.addParameter(QString::fromAscii("TYPE"),mappedValue);
         }
     }
 }
@@ -554,17 +560,17 @@ bool QVersitContactConverterPrivate::encodeEmbeddedContent(
                 value = resourceFile.readAll(); // Image not scaled
             value = value.toBase64();
             property.addParameter(
-                QString::fromAscii(versitEncoding),
-                QString::fromAscii(versitEncodingBase64));
-            property.addParameter(QString::fromAscii(versitType),resourceFormat);
+                QString::fromAscii("ENCODING"),
+                QString::fromAscii("BASE64"));
+            property.addParameter(QString::fromAscii("TYPE"),resourceFormat);
         }
         else if (isValidRemoteUrl( resourcePath )) {
             encodeContent = true;
             value = resourcePath.toAscii();
             property.addParameter(
-                QString::fromAscii(versitValue),
+                QString::fromAscii("VALUE"),
                 QString::fromAscii("URL"));
-            property.addParameter(QString::fromAscii(versitType),resourceFormat);
+            property.addParameter(QString::fromAscii("TYPE"),resourceFormat);
         } else {
             // The file has been removed. Don't encode the path to a local file.
         }
