@@ -459,18 +459,18 @@ void CDatabaseManagerServerSession::SetChangeNotificationsEnabled(const RMessage
         {
             iDatabaseManagerSignalHandler = new DatabaseManagerSignalHandler(*this);
         }
-        QObject::connect(iDb, SIGNAL(serviceAdded(const QString&, DatabaseManager::DbScope)), 
+        QObject::connect(iDb, SIGNAL(serviceAdded(const QString&)), 
                 iDatabaseManagerSignalHandler, SLOT(ServiceAdded(const QString&)));
         
-        QObject::connect(iDb, SIGNAL(serviceRemoved(const QString&, DatabaseManager::DbScope)), 
+        QObject::connect(iDb, SIGNAL(serviceRemoved(const QString&)), 
                 iDatabaseManagerSignalHandler, SLOT(ServiceRemoved(const QString&)));
     }
     else
     {   
-        QObject::disconnect(iDb, SIGNAL(serviceAdded(const QString&, DatabaseManager::DbScope)), 
+        QObject::disconnect(iDb, SIGNAL(serviceAdded(const QString&)), 
                 iDatabaseManagerSignalHandler, SLOT(ServiceAdded(const QString&)));
         
-        QObject::disconnect(iDb, SIGNAL(serviceRemoved(const QString&, DatabaseManager::DbScope)), 
+        QObject::disconnect(iDb, SIGNAL(serviceRemoved(const QString&)), 
                 iDatabaseManagerSignalHandler, SLOT(ServiceRemoved(const QString&)));
         delete iDatabaseManagerSignalHandler;
         iDatabaseManagerSignalHandler = NULL;

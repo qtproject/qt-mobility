@@ -240,15 +240,14 @@ void DatabaseManagerSignalMonitor::RunL()
         case ENotifySignalComplete:
         {
             QString serviceName = QString::fromUtf16(iDatabaseManagerSession.iServiceName.Ptr(), iDatabaseManagerSession.iServiceName.Length());
-            //DatabaseManager::DbScope scope = (DatabaseManager::DbScope)iDatabaseManagerSession.iScope();
             
             if ((DatabaseManager::State)iDatabaseManagerSession.iState() == DatabaseManager::EAdded)
             {
-               //TODO: emit iDatabaseManager.serviceAdded(serviceName, scope);
+                emit iDatabaseManager.serviceAdded(serviceName, DatabaseManager::SystemScope);
             }
             else if ((DatabaseManager::State)iDatabaseManagerSession.iState() == DatabaseManager::ERemoved) 
             {    
-                // TODO: emit iDatabaseManager.serviceRemoved(serviceName, scope);
+                emit iDatabaseManager.serviceRemoved(serviceName, DatabaseManager::SystemScope);
             }
             issueNotifyServiceSignal();
             break;
