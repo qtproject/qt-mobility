@@ -60,8 +60,8 @@ QVCard30Writer::~QVCard30Writer()
 QByteArray QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
 {
     QVersitProperty modifiedProperty(property);
-    if (property.name() == QString::fromAscii(versitNicknameXId)) {
-        modifiedProperty.setName(QString::fromAscii(versitNicknameId));
+    if (property.name() == QString::fromAscii("X-NICKNAME")) {
+        modifiedProperty.setName(QString::fromAscii("NICKNAME"));
     }
     QByteArray encodedProperty(encodeGroupsAndName(modifiedProperty));
     encodedProperty.append(encodeParameters(modifiedProperty.parameters()));

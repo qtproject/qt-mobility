@@ -121,7 +121,7 @@ void UT_QVersitContactGenerator::testName()
     val.append(QString::fromAscii("BellyBoy"));//GivenName
     val.append(QString::fromAscii("Dr"));//PreFix
     val.append(QString::fromAscii("MSc"));//Suffix
-    nameProperty.setName(QString::fromAscii(versitNameId));
+    nameProperty.setName(QString::fromAscii("N"));
     nameProperty.setValue(val.join(QString::fromAscii(";")).toAscii());
     document.addProperty(nameProperty);        
     QContact contact = mGenerator->generateContact(document);    
@@ -140,7 +140,7 @@ void UT_QVersitContactGenerator::testName()
     val_2.append(QString::fromAscii("FakeBellyBoy"));//GivenName
     val_2.append(QString::fromAscii("FakeDr"));//PreFix
     val_2.append(QString::fromAscii("FakeMSc"));//Suffix
-    nameProperty.setName(QString::fromAscii(versitNameId));
+    nameProperty.setName(QString::fromAscii("N"));
     nameProperty.setValue(val_2.join(QString::fromAscii(";")).toAscii());
     document.addProperty(nameProperty);
     contact = mGenerator->generateContact(document);
@@ -160,7 +160,7 @@ void UT_QVersitContactGenerator::testAddress()
     QContact contact;
     QVersitDocument document;
     QVersitProperty property;
-    property.setName(QString::fromAscii(versitAddressId)); 
+    property.setName(QString::fromAscii("ADR"));
     
     // Empty value for the address
     document = createDocumentWithProperty(property);
@@ -238,7 +238,7 @@ void UT_QVersitContactGenerator::testOrganization()
     QVersitProperty property;
     
     // ORG: Empty value for the organization
-    property.setName(QString::fromAscii(versitOrganizationId));
+    property.setName(QString::fromAscii("ORG"));
     document = createDocumentWithProperty(property);
     contact = mGenerator->generateContact(document);
     QContactOrganization org = 
@@ -303,7 +303,7 @@ void UT_QVersitContactGenerator::testOrganization()
     QCOMPARE(org.department(),QString::fromAscii("North American Division;Devices;Marketing"));
 
     // TITLE
-    property.setName(QString::fromAscii(versitTitleId));
+    property.setName(QString::fromAscii("TITLE"));
     QByteArray titleValue("Hacker");
     property.setValue(titleValue);
     document = createDocumentWithProperty(property);
@@ -312,7 +312,7 @@ void UT_QVersitContactGenerator::testOrganization()
     QCOMPARE(org.title(),QString::fromAscii(titleValue));
 
     // X-ASSISTANT
-    property.setName(QString::fromAscii(versitAssistantId));
+    property.setName(QString::fromAscii("X-ASSISTANT"));
     QByteArray assistantValue("Marge");
     property.setValue(assistantValue);
     document = createDocumentWithProperty(property);
@@ -321,7 +321,7 @@ void UT_QVersitContactGenerator::testOrganization()
     QCOMPARE(org.assistantName(), QString::fromAscii(assistantValue));
 
     // Embedded LOGO
-    property.setName(QString::fromAscii(versitLogoId));
+    property.setName(QString::fromAscii("LOGO"));
     QByteArray logo = "R0lGODlhEgASAIAAAAAAAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G";
     property.setValue(logo.toBase64());
     property.addParameter(QString::fromAscii(versitType),
@@ -342,17 +342,17 @@ void UT_QVersitContactGenerator::testOrganization()
     logoFile.close();
 
     // LOGO as a URL
-    property.setName(QString::fromAscii(versitLogoId));
+    property.setName(QString::fromAscii("LOGO"));
     QByteArray logoUrl = "http://www.organization.org/logo.gif";
     property.setValue(logoUrl);
-    property.addParameter(QString::fromAscii(versitValue),QString::fromAscii(versitUrlId));
+    property.addParameter(QString::fromAscii(versitValue),QString::fromAscii("URL"));
     document = createDocumentWithProperty(property);
     contact = mGenerator->generateContact(document);
     org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
     QCOMPARE(org.logo(),QString::fromAscii(logoUrl));
 
     // ROLE
-    property.setName(QString::fromAscii(versitRoleId));
+    property.setName(QString::fromAscii("ROLE"));
     QByteArray roleValue("Very important manager and proud of it");
     property.setValue(roleValue);
     document = createDocumentWithProperty(property);
@@ -366,18 +366,18 @@ void UT_QVersitContactGenerator::testTel()
 {
     QVersitDocument document;
     QVersitProperty property;
-    property.setName(QString::fromAscii(versitPhoneId));
-    QByteArray value("+35850486321");
-    property.setValue(value);
-    
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitVoiceId));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitCellId));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitModemId));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitCarId));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitVideoId));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitFaxId));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitBbsId));
-    property.addParameter(QString::fromAscii(versitType),QString::fromAscii(versitPagerId));
+    property.setName(QString::fromAscii("TEL"));
+    QByteArray value("+35850987654321");
+    property.setValue(value);   
+
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("VOICE"));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("CELL"));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("MODEM"));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("CAR"));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("VIDEO"));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("FAX"));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("BBS"));
+    property.addParameter(QString::fromAscii(versitType),QString::fromAscii("PAGER"));
     property.addParameter(QString::fromAscii(versitType),QString::fromAscii("HOME"));
     property.addParameter(QString::fromAscii(versitType),QString::fromAscii("WORK"));
 
@@ -408,7 +408,7 @@ void UT_QVersitContactGenerator::testTel()
 void UT_QVersitContactGenerator::testEmail()
 {
     QVersitProperty property;
-    property.setName(QString::fromAscii(versitEmailId));
+    property.setName(QString::fromAscii("EMAIL"));
     QByteArray value("homer.simpson@burns-corporation.com");
     property.setValue(value);
     property.addParameter(QString::fromAscii(versitType),QString::fromAscii("WORK"));
@@ -426,7 +426,7 @@ void UT_QVersitContactGenerator::testEmail()
 void UT_QVersitContactGenerator::testUrl()
 {
     QVersitProperty property;
-    property.setName(QString::fromAscii(versitUrlId));
+    property.setName(QString::fromAscii("URL"));
     QByteArray value("http://www.simpsonsmovie.com/homer.html");
     property.setValue(value);
     property.addParameter(QString::fromAscii(versitType),QString::fromAscii("WORK"));
@@ -444,7 +444,7 @@ void UT_QVersitContactGenerator::testUrl()
 void UT_QVersitContactGenerator::testUid()
 {
     QVersitProperty property;
-    property.setName(QString::fromAscii(versitUidId));
+    property.setName(QString::fromAscii("UID"));
     QByteArray value("unique identifier");
     property.setValue(value);
     QVersitDocument document = createDocumentWithProperty(property);
@@ -459,7 +459,7 @@ void UT_QVersitContactGenerator::testTimeStamp()
 {
     // Simple date : ISO 8601 extended format
     QVersitProperty property;
-    property.setName(QString::fromAscii(versitRevisionId));    
+    property.setName(QString::fromAscii("REV"));
     QByteArray dateValue("1981-05-20");
     property.setValue(dateValue);
     QVersitDocument document = createDocumentWithProperty(property);
@@ -520,7 +520,7 @@ void UT_QVersitContactGenerator::testAnniversary()
 {
     // Date : ISO 8601 extended format
     QVersitProperty property;
-    property.setName(QString::fromAscii(versitAnniversaryId));
+    property.setName(QString::fromAscii("X-ANNIVERSARY"));
     QByteArray dateValue("1981-05-20");
     property.setValue(dateValue);
     QVersitDocument document = createDocumentWithProperty(property);
@@ -547,7 +547,7 @@ void UT_QVersitContactGenerator::testBirthday()
 {
     // Date : ISO 8601 extended format
     QVersitProperty property;
-    property.setName(QString::fromAscii(versitBirthdayId));
+    property.setName(QString::fromAscii("BDAY"));
     QByteArray dateValue("1981-05-20");
     property.setValue(dateValue);
     QVersitDocument document = createDocumentWithProperty(property);
@@ -555,7 +555,8 @@ void UT_QVersitContactGenerator::testBirthday()
     QContactBirthday bday =
         static_cast<QContactBirthday>(
             contact.detail(QContactBirthday::DefinitionName));
-    QCOMPARE(bday.date().toString(Qt::ISODate),QString::fromAscii(dateValue));
+    QCOMPARE(bday.date().toString(Qt::ISODate),
+             QString::fromAscii(dateValue));
 
     // Date : ISO 8601 in basic format
     dateValue = "19810520";
@@ -566,7 +567,7 @@ void UT_QVersitContactGenerator::testBirthday()
         static_cast<QContactBirthday>(
             contact.detail(QContactBirthday::DefinitionName));
     QCOMPARE(bday.date().toString(QString::fromAscii(versitDateSpecIso8601Basic)),
-                                                          QString::fromAscii(dateValue));
+             QString::fromAscii(dateValue));
 
 }
 
@@ -574,7 +575,7 @@ void UT_QVersitContactGenerator::testGender()
 {
     // Date : ISO 8601 extended format
     QVersitProperty property;
-    property.setName(QString::fromAscii(versitGenderId));
+    property.setName(QString::fromAscii("X-GENDER"));
     QByteArray val("Male");
     property.setValue(val);
     QVersitDocument document = createDocumentWithProperty(property);
@@ -591,7 +592,7 @@ void UT_QVersitContactGenerator::testNickname()
     QVersitDocument document;
     QVersitProperty nameProperty;
     QString singleVal(QString::fromAscii("Homie"));
-    nameProperty.setName(QString::fromAscii(versitNicknameId));
+    nameProperty.setName(QString::fromAscii("NICKNAME"));
     nameProperty.setValue(singleVal.toAscii());
     document.addProperty(nameProperty);
     QContact contact = mGenerator->generateContact(document);
@@ -605,7 +606,7 @@ void UT_QVersitContactGenerator::testNickname()
     multiVal.append(QString::fromAscii("Homie"));
     multiVal.append(QString::fromAscii("SuperHero"));
     multiVal.append(QString::fromAscii("NukeSpecialist"));
-    nameProperty.setName(QString::fromAscii(versitNicknameId));
+    nameProperty.setName(QString::fromAscii("NICKNAME"));
     nameProperty.setValue(multiVal.join(QString::fromAscii(",")).toAscii());
     document.addProperty(nameProperty);
     contact = mGenerator->generateContact(document);
@@ -622,7 +623,7 @@ void UT_QVersitContactGenerator::testNickname()
     // X-NICKNAME
     document = QVersitDocument();
     nameProperty = QVersitProperty();
-    nameProperty.setName(QString::fromAscii(versitNicknameXId));
+    nameProperty.setName(QString::fromAscii("X-NICKNAME"));
     nameProperty.setValue(singleVal.toAscii());
     document.addProperty(nameProperty);
     contact = mGenerator->generateContact(document);
@@ -733,8 +734,114 @@ void UT_QVersitContactGenerator::testAvatarJpegTwoContactsWithSameName()
 {
     // Create 2 contacts with the same name.
     // Test that the generated photo files have different names
-    QByteArray img = "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";
-    QStringList nameValues(QString::fromAscii("Homer")); // First name
+    QByteArray img =
+"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\
+XCXdMn7JKUklOqSClJJd0vFJCuUkgkUkqSSS7/BJCkuySSKlJ2kgyOUx/FJCyCpvU3CwQfpIqzW\
+uIII0IV2m4WCDo7wWzyXOe4BjyH1jY/vf2tfJjrUbJUkkloMakkkklKTOc1rS5xho1JKdZ+Tab7\
+XVj+aq0P8p/n5N/Kos+aOLGZy6bDuV0Y8Rpa652QeCKR9Fp5d5lR7J0lz+bNPLMzmfLsPJsgACg\
+skkko0rJJFOklYpdk6ZLqpdJJJJCkkkoSSsknTJKUnSTJKXSSKSSlkinSRUpMkn7pKW7pcJJaoK\
+UkknSClkkuyXZFSk6ZOgpZJJJKlKTpJSipSSSSClJJeCSKlJJd0klKKSSbugpdSaSDIKikjqDaG\
+9TcLBB0cirOa4tIIOqvVP9Rgd37ra5HmzlHtz+eI0P7w/i18kK1GzNJJJXmNha/wBOp7/3Wl33C\
+VmY4IpZOpIlx8zqfxK0cljn41rG/Scxwb8SIWdQ4OqY7xaD+CzPihPDjHS5fsZsP6X0SJk6SyWZ\
+bukkkkpSXCSRSSpJJJJSkkvgnSQsklKSVqUl3SS5KSVJJJIoUlokkkVKShJJJSku6SSCVQkkkih\
+bVOkkUkqTd06SRUrskkkgpSZOkUVKShJJJCkuyUpd0lKS8UkklK0SSSSUpKEkgEFK7JJBOkpQCs\
+YrjuLfESq6Pij3k+SscoSOYx1+8syfKW2kkkuhaylmPq9C11fDHEur+B1I+RWmh21MuZtePMHuD\
+4hQczgGbGYbEaxPivhPhPh1aISU30W1nUbm/vD+IUPyrCyYcmM1OJH5fa2AQdQbUmTpKIhKuySS\
+SNFSkycpIKWhOkmSUrRIhJJJSkkkiipSSSSSlBIpJJKUEkku6SlJJJeSSlu6dJJJKkkkkkKSSS7\
+pFSkkkikpXdJMOU8oJUlKSSSFJJJIqUnTBOgpSSSUI0eylJJJFKipQ4S1nyS7Jwx7tAJlIRkdAC\
+T4KtZXMevayTyVGrGiHP8AuR1q8jycoH3cgo/ox6+ZYMkwdAukkktNiUkkkkpSaAeQnSSUx2t8B\
+9yW1vgFJJCh2Va21vgE21vgPuUkkqHZVsHV1uEFoKoZFZxrWQZqsMNnkO5j5rSVPqYnHaf3baz9\
+7w3+Kg5rBDJilcRxRiTE9bC/HIiQF6HRCmTplzzZUknTd0lKS7wkl3SSpJJOihbukkkgpSSSXdF\
+SkgkkEkq7BJJJJCk0J0u6RUpJJNqkpdIpJFBSgkkEiklSXdLskkhSXdOm7JFS7ROg7q7XQxo1Eu\
+VWnWxvxV5afw3DCXFkkBIxNC2HLIigFbW+ASgeCdJa1BhWgeCW1vgE6SVBTHa3wH3J4jhOklQUp\
+JJJJSkkkklKSSSSUpJJJJSydJJJSkkkklKVLq0/YXkdn1H7rGK6qnU9cJ48XMH/AE2psxcJDvEp\
+juPNARqU2qdILmG2oJk5TBJSkkkkVK7p0ydJSySSSCVSkkkUUKTBOkklR4KYmEh/vS8+UlLlIpJ\
+kFLpJJBFCkjykkkpZOkkgLSpJIpJIUNEkoTpKZ0/zjfiryo0fzrfir62Phf8ANT/v/sYM3zDyUk\
+kktFiUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlKl1b+gP/r1f+fGK6qfVRODYP\
+Nn/AFbUzJ/Nz/ulMfmHmEPdMnTLmW2umSShFSkkkigpSdN2SKKlBJLhJJKkiYH8EgmPdDopfukm\
+SRUqE4SSSUpJMkgpQTpJh+VFS6RSSSQpJJJJSkkkklKSSThBTOj+dar6oUfzjfir62Phf83P+/8\
+AsYM3zDyUkkktFiUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlKp1T+hP+LP8Aq2\
+q2qfVhOBaPNn/VtTcnyS/ulMdx5oO6SR5SXMNtSSRSRUqNZSKSXdJSkkkklKSCSSXVSkoS7peKS\
+Vk6bukgpdJLtCXwSUt8Ekk6Slkk5CZJS/ZJJI90UK7pJJIFKkgkkkhXZOm8kuCBHxKKklP8434q\
++qFP842PFX1r/C/5uf8AeH5MGbceSkkklosSkkkklKSSSSUpJJJJSkkkklKSSSSUpJJJJSkkkkl\
+KSSSSUpU+qmMGz4sH3vaFcVLq8/YXR+/V93qsTcmkJH+qV0fmHmEXdMl/FLuuYbSkkkkVKTJykA\
+gpXKSSSKleSSSSCVJJJJKUUydJJSkkkklLFIJ4lMkpdJIJIqUkkkUkLJ0ydBK6ZJI+aKFDxTlLs\
+mSUkp/nW/FX1Qp/nW/FX1r/AAv+bn/f/YwZtx5KSSSWixKSSSSUsnSSSUpJJJJSkkkklKSSSSUp\
+JJJJSkkkklKSSSSUpU+qQcJ08bq5/wA9quKn1Uxgv/rV/wDnxqZkNY5n+qfyTH5h5hCkmSXMttS\
+SXkkipR4SS5EJIJUkkkihXdJJIIJUkl2SRUpJJJBSpSSSSUpLzTJ0lKhMnTJKXSSKSKlk6ZOAgp\
+SRSSKKF0yRPZJAqSU/zrfir6z6f5xvxWgtf4X/ADc/7/7GDNuPJSSSS0mJSSSSSlJJJJKUkkkkp\
+SSSSSlJJJJKUkmTpKUkkkkpSSSSSlKn1QTg2DzZ/wBW1XFT6q7bhPP8qv8AGxqbk+SX90pj8w80\
+J8UkjymXMNtSSSSKlJFJJBSkkkkVKSSlJJKkkkklKSSSSUryShN3ToKV2TJJ4SUpNynTcJKX7Jk\
+6SKllIJgnSCCtKZOkglSSZOOUrUzp/nW/FaCz6f51vxWgtf4X/Nz/ALwa+bceSkkklpMSkkkklK\
+SSSSUsnSSSUpJJJJSkkkklKSSSSUpJJJJSkkkklKVLqwnAs+LD9z2lXVU6n/QrPiz/AKtqZk+SX\
+90pj8w8wgOpKZOkuZbaySSSKlJJJJKV8EkkklKSSSSStwl/BOkkpSQSKSSld0ikkUuilJk4S7oK\
+UEycpklLpk6ZEqXCSQSSQpJJJBKx4SCSceKSmVX863wkLRWfT/ON+IWgtf4X8mT+8Gvm3HkpJJJ\
+aTEpJJJJSkkkklKSSSSUpJJJJSkkkklKSSSSUpJJJJSkkkklKVPqv9Bf/AFq//PjVcVTqn9Dd/W\
+Z/1bUzJ/Nz/un8l0fmHmEB0lJLul4LmW0pMUkkVK7Jk6SSVcpJJJBCu6SSSCVBJJLsihSSSRSUp\
+JJJJS6ZJJJSkku6UIKUkkkipSRSSKSlJBJJLqpSQSSGiCWdP8434rQVCn+cb8VfWv8AC/kyf3g1\
+8248lJJJLSYlJJJJKUkkkkpSSSSSlJJJJKUkkmSUukmTpKUkkkkpSSSSSlKp1QxhPPg6ufh6jZV\
+tCyavXx7Kv32kD49k2YuMh3BCYmiD2LSSUa3b2Bx0PDh4HupQuZIINHcNtZJOl2QUpMnASRUsEk\
+kkgpRS7pJ0lLJJ4TJKV2SSSQKlFJJLskpSSXknRUskkE6Sld1FOlCSlJJd0/dJSySRlJJSil2S7\
+p+2iCmdOtrfir6p4rSX7uzVcW18MiRilL96Wn0a+U+ryCkkklfY1JJJJKUkkkkpZOkkkpSSSSSl\
+JJJJKUkkkkpSSSSSlJJJJKUkkkkppZOM5rjbUJDtXsHj+8EEEH5crSUXVVv+k0E+Ko8zyEcsjOB\
+4JHfsWWOWhR1aCSufZqvA/el9mq8/vVT/AEZm7w+0/wAF/ux8Wmkrn2arwP3pfZqvA/el/ozN+9\
+D7T/BXux8Wmkrn2arwP3pfZavA/eh/ozN+9D7T/BXux8WmkrYxax4p/stXn96X+jM/eH2n+Cvdj\
+4tNLurn2Wrz+9L7LV5/el/o3P3h9p/gr3Y+LTShXPstXn96b7LV5/el/ozP3h9v9ivdj4tSEoVv\
+7JV5/el9lr8/vS/0bn7w+3+xXux8Wokrf2WrzS+y1+aX+jc/eH2/2K92Pi1Elc+y1+aX2Wvz+9L\
+/AEbn7w+3+xXux8Wmkrf2Wrz+9P8AZa/P70v9G5+8Pt/sV7sfFppamfBXPstXn96b7LVM6/el/o\
+3P3h9pV7sfFqJK39lr8Sl9lq8/vS/0bn7w+3+xXux8WopMY5xAaJVsY1Q7T8UQNDRAEBSY/hk7/\
+WSiB/V1KDmHQMa6xW2B8yppJLUhGMIiMRQiKDATepUkkknKUkkkkpSSSSSlJJJJKUkkkkpSSSSS\
+lJJJJKUkkkkpSSSSSlk6SSSlk6SSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkp\
+SSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKf/Z";
+
+QStringList nameValues(QString::fromAscii("Homer")); // First name
     nameValues.append(QString::fromAscii("Simpson")); // Last name
     QByteArray name = nameValues.join(QString::fromAscii(";")).toAscii();
     QVersitDocument document1 =
@@ -785,7 +892,7 @@ void UT_QVersitContactGenerator::testAvatarJpegNonexistentPath()
 void UT_QVersitContactGenerator::testAvatarUrl()
 {
     QVersitProperty property;
-    property.setName(QString::fromAscii(versitPhotoId));
+    property.setName(QString::fromAscii("PHOTO"));
     QByteArray value("file:///jgpublic.");
     property.setValue(value);
     property.addParameter(
@@ -837,7 +944,7 @@ void UT_QVersitContactGenerator::testGeo()
     QStringList val;    
     val.append(QString::fromAscii("18.53"));// Longtitude
     val.append(QString::fromAscii("45.32")); // Latitude
-    nameProperty.setName(QString::fromAscii(versitGeoId));
+    nameProperty.setName(QString::fromAscii("GEO"));
     nameProperty.setValue(val.join(QString::fromAscii(",")).toAscii());
     document.addProperty(nameProperty);
     QContact contact = mGenerator->generateContact(document);
@@ -853,7 +960,7 @@ void UT_QVersitContactGenerator::testGeo()
     nameProperty = QVersitProperty();
     val.append(QString::fromAscii("18.53"));// Longtitude
     val.append(QString::fromAscii("-45.32")); // Latitude
-    nameProperty.setName(QString::fromAscii(versitGeoId));
+    nameProperty.setName(QString::fromAscii("GEO"));
     nameProperty.setValue(val.join(QString::fromAscii(",")).toAscii());
     document.addProperty(nameProperty);
     contact = mGenerator->generateContact(document);
@@ -870,7 +977,7 @@ void UT_QVersitContactGenerator::testNote()
     QVersitDocument document;
     QVersitProperty nameProperty;
     QByteArray val("I will not sleep at my work -Bart");
-    nameProperty.setName(QString::fromAscii(versitNoteId));
+    nameProperty.setName(QString::fromAscii("NOTE"));
     nameProperty.setValue(val);
     document.addProperty(nameProperty);
     QContact contact = mGenerator->generateContact(document);
@@ -881,7 +988,7 @@ void UT_QVersitContactGenerator::testNote()
     document = QVersitDocument();
     nameProperty = QVersitProperty();
     val = QByteArray("My Dad acts like he belongs,=0D=0AHe belongs in the zoo.=0D=0A");
-    nameProperty.setName(QString::fromAscii(versitNoteId));
+    nameProperty.setName(QString::fromAscii("NOTE"));
     nameProperty.setValue(val);
     QMultiHash<QString,QString> params;
     params.insert(QString::fromAscii("QUOTED-PRINTABLE"),QString::fromAscii(val));
@@ -899,7 +1006,7 @@ void UT_QVersitContactGenerator::testOnlineAccount()
     // Plain X-SIP, no TYPE ->
     QVersitDocument document;
     QVersitProperty property;
-    property.setName(QString::fromAscii(versitSipId));
+    property.setName(QString::fromAscii("X-SIP"));
     property.setValue(accountUri);
     document.addProperty(property);
     QContact contact = mGenerator->generateContact(document);
@@ -914,7 +1021,7 @@ void UT_QVersitContactGenerator::testOnlineAccount()
     // VideoSharing subtype
     document = QVersitDocument();
     property = QVersitProperty();
-    property.setName(QString::fromAscii(versitSipId));
+    property.setName(QString::fromAscii("X-SIP"));
     property.setValue(accountUri);
     QMultiHash<QString,QString> params;
     params.insert(QString::fromAscii(versitType),QString::fromAscii("SWIS"));
@@ -932,7 +1039,7 @@ void UT_QVersitContactGenerator::testOnlineAccount()
     // Internet subtype
     document = QVersitDocument();
     property = QVersitProperty();
-    property.setName(QString::fromAscii(versitSipId));
+    property.setName(QString::fromAscii("X-SIP"));
     property.setValue(accountUri);
     params.clear();
     params.insert(QString::fromAscii(versitType),QString::fromAscii("VOIP"));
@@ -954,7 +1061,7 @@ void UT_QVersitContactGenerator::testFamily()
     QVersitDocument document;
     QVersitProperty nameProperty;
     QByteArray val("Maggie"); // one is enough
-    nameProperty.setName(QString::fromAscii(versitChildrenId));
+    nameProperty.setName(QString::fromAscii("X-CHILDREN"));
     nameProperty.setValue(val);
     document.addProperty(nameProperty);
     QContact contact = mGenerator->generateContact(document);
@@ -967,7 +1074,7 @@ void UT_QVersitContactGenerator::testFamily()
     // Critical : wife but no kids , happy hours
     document = QVersitDocument();
     nameProperty = QVersitProperty();
-    nameProperty.setName(QString::fromAscii(versitSpouseId));
+    nameProperty.setName(QString::fromAscii("X-SPOUSE"));
     val = "March";
     nameProperty.setValue(val);
     document.addProperty(nameProperty);
@@ -981,7 +1088,7 @@ void UT_QVersitContactGenerator::testFamily()
     document = QVersitDocument();
     // Add kids first
     nameProperty = QVersitProperty();
-    nameProperty.setName(QString::fromAscii(versitChildrenId));
+    nameProperty.setName(QString::fromAscii("X-CHILDREN"));
     QStringList kidsVal;
     kidsVal.append(QString::fromAscii("Bart"));
     kidsVal.append(QString::fromAscii("Liisa"));
@@ -991,7 +1098,7 @@ void UT_QVersitContactGenerator::testFamily()
     // Add wife next
     val = "March";
     nameProperty = QVersitProperty();
-    nameProperty.setName(QString::fromAscii(versitSpouseId));
+    nameProperty.setName(QString::fromAscii("X-SPOUSE"));
     nameProperty.setValue(val);
     document.addProperty(nameProperty);
     contact = mGenerator->generateContact(document);
@@ -1009,17 +1116,14 @@ void UT_QVersitContactGenerator::testSound()
     mGenerator->setAudioClipPath(path);
     QVersitDocument document;
     QVersitProperty nameProperty;
-    nameProperty.setName(QString::fromAscii(versitNameId));
-    QStringList nameValues(QString::fromAscii("Homer")); // First name
-    nameValues.append(QString::fromAscii("Simpson")); // Last name
-    QByteArray name = nameValues.join(QString::fromAscii(";")).toAscii();
-    nameProperty.setValue(name);
+    nameProperty.setName(QString::fromAscii("N"));
+    nameProperty.setValue("Simpson;Homer;;;");
     document.addProperty(nameProperty);
     nameProperty = QVersitProperty();
     QMultiHash<QString,QString> param;
     param.insert(QString::fromAscii("TYPE"),QString::fromAscii("WAVE"));
     param.insert(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
-    nameProperty.setName(QString::fromAscii(versitSoundId));
+    nameProperty.setName(QString::fromAscii("SOUND"));
     QByteArray val("111110000011111");
     nameProperty.setValue(val.toBase64());
     nameProperty.setParameters(param);
@@ -1034,7 +1138,7 @@ void UT_QVersitContactGenerator::testSound()
     QString fileName = avatar.avatar();    
     QVERIFY(fileName.endsWith(QString::fromAscii(".wav")));
     QFile file(fileName);
-    QVERIFY(file.open( QIODevice::ReadOnly ));
+    QVERIFY(file.open( QIODevice::ReadOnly));
     QByteArray content = file.readAll();
     QCOMPARE(content,val);
 }
@@ -1050,7 +1154,7 @@ void UT_QVersitContactGenerator::testUnconvertedVersitProperties()
     QCOMPARE(mGenerator->unconvertedVersitProperties().count(), 0);
 
     // No unconverted properties, one converted property
-    property.setName(QString::fromAscii(versitNameId));
+    property.setName(QString::fromAscii("N"));
     property.setValue("Simpson;Homer;J;;");
     document.addProperty(property);
     mGenerator->generateContact(document);
@@ -1107,12 +1211,12 @@ QVersitDocument UT_QVersitContactGenerator::createDocumentWithNameAndPhoto(
     QVersitDocument document;
 
     QVersitProperty nameProperty;
-    nameProperty.setName(QString::fromAscii(versitNameId));
+    nameProperty.setName(QString::fromAscii("N"));
     nameProperty.setValue(name);
     document.addProperty(nameProperty);
 
     QVersitProperty property;
-    property.setName(QString::fromAscii(versitPhotoId));
+    property.setName(QString::fromAscii("PHOTO"));
     if (encoding == QString::fromAscii(versitEncodingBase64) ||
         encoding == QString::fromAscii(versitEncodingBinary)){
         property.setValue(image.toBase64());

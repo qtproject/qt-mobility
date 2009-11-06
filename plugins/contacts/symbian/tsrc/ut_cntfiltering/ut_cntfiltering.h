@@ -52,7 +52,7 @@ typedef struct {
     int error;
 } TFilter;
 
-class TestSqlFiltering : public QObject
+class TestFiltering : public QObject
 {
     Q_OBJECT
 

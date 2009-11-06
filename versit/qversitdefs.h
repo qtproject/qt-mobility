@@ -64,78 +64,13 @@
 #include <qcontactonlineaccount.h>
 #include <qcontactfamily.h>
 
-
-// vCard 2.1 constants.
-// Property names and parameters
-const char versitNameId[] = "N";
-const char versitFormatedNameId[] = "FN";
-const char versitEmailId[] = "EMAIL";
-const char versitPhoneId[] = "TEL";
-const char versitAddressId[] = "ADR";
-const char versitUrlId[] = "URL";
-const char versitRevId[] = "REV";
-const char versitUidId[] = "UID";
-const char versitOrganizationId[] = "ORG";
-const char versitRevisionId[] = "REV";
-const char versitBirthdayId[] = "BDAY";
-const char versitNoteId[] = "NOTE";
-const char versitGeoId[] = "GEO";
-const char versitNicknameId[] = "NICKNAME";
-const char versitPhotoId[] = "PHOTO";
-const char versitTitleId[] = "TITLE";
-const char versitRoleId[] = "ROLE";
-const char versitLogoId[] = "LOGO";
-const char versitAnniversaryId[] = "X-ANNIVERSARY";
-const char versitGenderId[] = "X-GENDER";
-const char versitSipId[] = "X-SIP";
-const char versitSoundId[] = "SOUND";
-const char versitSpouseId[] = "X-SPOUSE";
-const char versitChildrenId[] = "X-CHILDREN";
-const char versitNicknameXId[] = "X-NICKNAME";
-const char versitAssistantId[] = "X-ASSISTANT";
-
-// Subtypes
-const char versitDomesticId[] = "DOM";
-const char versitInternationalId[] = "INTL";
-const char versitPostalId[] = "POSTAL";
-const char versitParcelId[] = "PARCEL";
-const char versitVoiceId[] = "VOICE";
-const char versitCellId[] = "CELL";
-const char versitModemId[] = "MODEM";
-const char versitCarId[] = "CAR";
-const char versitVideoId[] = "VIDEO";
-const char versitFaxId[] = "FAX";
-const char versitBbsId[] = "BBS";
-const char versitPagerId[] = "PAGER";
-
-// ISO-8601 basic format datetime spec
-const char versitDateTimeSpecIso8601Basic[] = "yyyyMMddThhmmss";
-const char versitDateSpecIso8601Basic[] = "yyyyMMdd";
-
-// Encoding values
-const char versitEncoding7Bit[] = "7BIT";
-const char versitEncoding8Bit[] = "8BIT";
-const char versitEncodingQuotedPrintable[] = "QUOTED-PRINTABLE";
-const char versitEncodingBase64[] = "BASE64";
-const char versitEncodingBinary[] = "B";
-
-// Parameters
-const char versitType[] = "TYPE";
-const char versitValue[] = "VALUE";
-const char versitEncoding[] = "ENCODING";
-
-// www. exception type const
-const char versitConstWWW[] = "WWW.";
-
-//ISO 8601 Extended Format suffix
-const char versitISOFormatSuffix[] = "Z";
-
-
+// Mapping between a string in versit specifications and Qt contacts
 struct versitMapping {
     const char* versitString;
     const char* contactString;
 };
 
+// Mappings from versit property names to Qt contact details
 const versitMapping versitDetailMappings[] = {
     {"N",             QContactName::DefinitionName.str},
     {"EMAIL",         QContactEmailAddress::DefinitionName.str},
@@ -156,11 +91,13 @@ const versitMapping versitDetailMappings[] = {
     {"X-NICKNAME",    QContactNickname::DefinitionName.str}
 };
 
+// Mappings from versit TYPE parameters to Qt contact detail contexts
 const versitMapping versitContextMappings[] = {
     {"HOME", QContactDetail::ContextHome.str},
     {"WORK", QContactDetail::ContextWork.str},
 };
 
+// Mappings from versit TYPE parameters to Qt contact detail subtypes
 const versitMapping versitSubTypeMappings[] = {
     {"DOM",    QContactAddress::SubTypeDomestic.str},
     {"INTL",   QContactAddress::SubTypeInternational.str},
@@ -178,6 +115,7 @@ const versitMapping versitSubTypeMappings[] = {
     {"VOIP",   QContactOnlineAccount::SubTypeInternet.str}
 };
 
+// Mappings from file types in versit specifications to file extensions
 const versitMapping versitFileExtensionMappings[] = {
     {"JPEG", "JPG"},
     {"WAVE", "WAV"},
@@ -189,5 +127,24 @@ const versitMapping versitFileExtensionMappings[] = {
     {"AIFF", "AIF"},
     {"TIFF", "GIF"}
 };
+
+// Versit parameter names
+const char versitType[] = "TYPE";
+const char versitValue[] = "VALUE";
+const char versitEncoding[] = "ENCODING";
+
+// Versit encoding parameter values
+const char versitEncoding7Bit[] = "7BIT";
+const char versitEncoding8Bit[] = "8BIT";
+const char versitEncodingQuotedPrintable[] = "QUOTED-PRINTABLE";
+const char versitEncodingBase64[] = "BASE64";
+const char versitEncodingBinary[] = "B";
+
+// ISO-8601 basic format datetime spec
+const char versitDateTimeSpecIso8601Basic[] = "yyyyMMddThhmmss";
+const char versitDateSpecIso8601Basic[] = "yyyyMMdd";
+
+// ISO 8601 Extended Format suffix
+const char versitISOFormatSuffix[] = "Z";
 
 #endif // QVERSITDEFS_H
