@@ -132,10 +132,10 @@ public:
     QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships);
 
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QContactDetailDefinition> detailDefinitions() const;
-    QContactDetailDefinition detailDefinition(const QString& definitionName) const;
-    bool saveDetailDefinition(const QContactDetailDefinition& def);
-    bool removeDetailDefinition(const QString& definitionName);
+    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType = QContactType::TypeContact) const;
+    QContactDetailDefinition detailDefinition(const QString& definitionName, const QString& contactType = QContactType::TypeContact) const;
+    bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType = QContactType::TypeContact);
+    bool removeDetailDefinition(const QString& definitionName, const QString& contactType = QContactType::TypeContact);
 
     /* Functionality reporting */
     enum ManagerFeature {
@@ -148,10 +148,11 @@ public:
         Anonymous,
         ChangeLogs
     };
-    bool hasFeature(QContactManager::ManagerFeature feature) const;
-    bool filterSupported(const QContactFilter& filter) const;
+    bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType = QContactType::TypeContact) const;
+    QStringList supportedRelationshipTypes(const QString& contactType = QContactType::TypeContact) const;
     QList<QVariant::Type> supportedDataTypes() const;
-    QStringList supportedRelationshipTypes() const;
+    bool filterSupported(const QContactFilter& filter) const;
+    QStringList supportedContactTypes() const;
 
     /* Versions */ 
     static int version(); 

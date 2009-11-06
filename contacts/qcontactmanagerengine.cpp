@@ -439,9 +439,10 @@ QString QContactManagerEngine::synthesizeDisplayLabel(const QContact& contact, Q
 /*!
  * Returns true if the given \a feature is supported by this engine
  */
-bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature) const
+bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const
 {
     Q_UNUSED(feature);
+    Q_UNUSED(contactType);
     return false;
 }
 
@@ -467,9 +468,26 @@ QList<QVariant::Type> QContactManagerEngine::supportedDataTypes() const
 /*!
  * Returns the list of relationship types supported by this engine.
  */
-QStringList QContactManagerEngine::supportedRelationshipTypes() const
+QStringList QContactManagerEngine::supportedRelationshipTypes(const QString& contactType) const
 {
+    Q_UNUSED(contactType);
     return QStringList();
+}
+
+/*!
+ * Returns the list of contact types which are supported by this engine.
+ * This is a convenience function, equivalent to retrieving the allowable values
+ * for the \c QContactType::FieldType field of the QContactType definition
+ * which is valid in this engine.
+ */
+QStringList QContactManagerEngine::supportedContactTypes() const
+{
+    QContactManager::Error error;
+    QList<QVariant> allowableVals = detailDefinition(QContactType::DefinitionName, QContactType::TypeContact, error).fields().value(QContactType::FieldType).allowableValues();
+    QStringList retn;
+    for (int i = 0; i < allowableVals.size(); i++)
+        retn += allowableVals.at(i).toString();
+    return retn;
 }
 
 /*! 
@@ -490,7 +508,7 @@ int QContactManagerEngine::implementationVersion() const
   
 
 /*! Returns the base schema definitions */
-QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions()
+QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::schemaDefinitions()
 {
     // This implementation provides the base schema.
     // The schema documentation (contactsschema.qdoc)
@@ -921,7 +939,13 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::schemaDefinitions
     d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
-    return retn;
+    // in the default schema, we have two contact types: TypeContact, TypeGroup.
+    // the entire default schema is valid for both types.
+    QMap<QString, QMap<QString, QContactDetailDefinition> > retnSchema;
+    retnSchema.insert(QContactType::TypeContact, retn);
+    retnSchema.insert(QContactType::TypeGroup, retn);
+
+    return retnSchema;
 }
 
 
@@ -995,7 +1019,7 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
     for (int i=0; i < contact.details().count(); i++) {
         const QContactDetail& d = contact.details().at(i);
         QVariantMap values = d.values();
-        QContactDetailDefinition def = detailDefinition(d.definitionName(), error);
+        QContactDetailDefinition def = detailDefinition(d.definitionName(), contact.type(), error);
 
         // check that the definition is supported
         if (error != QContactManager::NoError) {
@@ -1138,30 +1162,31 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
 }
 
 /*!
- * Returns the registered detail definitions which are valid for contacts in this engine.
+ * Returns the registered detail definitions which are valid for contacts whose type is of the given \a contactType in this engine.
  *
  * Any errors encountered during this operation should be stored to
  * \a error.
  */
-QMap<QString, QContactDetailDefinition> QContactManagerEngine::detailDefinitions(QContactManager::Error& error) const
+QMap<QString, QContactDetailDefinition> QContactManagerEngine::detailDefinitions(const QString& contactType, QContactManager::Error& error) const
 {
+    Q_UNUSED(contactType);
     error = QContactManager::NotSupportedError;
     return QMap<QString, QContactDetailDefinition>();
 }
 
 /*!
  * Returns the definition identified by the given \a definitionName that
- * is valid for contacts in this store, or a default-constructed QContactDetailDefinition
+ * is valid for contacts whose type is of the given \a contactType in this store, or a default-constructed QContactDetailDefinition
  * if no such definition exists
  *
  * Any errors encountered during this operation should be stored to
  * \a error.
  */
-QContactDetailDefinition QContactManagerEngine::detailDefinition(const QString& definitionName, QContactManager::Error& error) const
+QContactDetailDefinition QContactManagerEngine::detailDefinition(const QString& definitionName, const QString& contactType, QContactManager::Error& error) const
 {
     Q_UNUSED(definitionName);
 
-    QMap<QString, QContactDetailDefinition> definitions = detailDefinitions(error);
+    QMap<QString, QContactDetailDefinition> definitions = detailDefinitions(contactType, error);
     if (definitions.contains(definitionName))  {
         error = QContactManager::NoError;
         return definitions.value(definitionName);
@@ -1172,7 +1197,7 @@ QContactDetailDefinition QContactManagerEngine::detailDefinition(const QString& 
 }
 
 /*!
- * Persists the given definition \a def in the database.
+ * Persists the given definition \a def in the database, which is valid for contacts whose type is the given \a contactType.
  *
  * Returns true if the definition was saved successfully, and otherwise returns false.
  *
@@ -1182,7 +1207,7 @@ QContactDetailDefinition QContactManagerEngine::detailDefinition(const QString& 
  * Any errors encountered during this operation should be stored to
  * \a error.
  */
-bool QContactManagerEngine::saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error)
+bool QContactManagerEngine::saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error& error)
 {
     Q_UNUSED(def);
     error = QContactManager::NotSupportedError;
@@ -1190,7 +1215,7 @@ bool QContactManagerEngine::saveDetailDefinition(const QContactDetailDefinition&
 }
 
 /*!
- * Removes the definition identified by the given \a definitionName from the database.
+ * Removes the definition identified by the given \a definitionName from the database, where it was valid for contacts whose type was the given \a contactType.
  *
  * Returns true if the definition was removed successfully, otherwise returns false.
  *
@@ -1200,7 +1225,7 @@ bool QContactManagerEngine::saveDetailDefinition(const QContactDetailDefinition&
  * Any errors encountered during this operation should be stored to
  * \a error.
  */
-bool QContactManagerEngine::removeDetailDefinition(const QString& definitionName, QContactManager::Error& error)
+bool QContactManagerEngine::removeDetailDefinition(const QString& definitionName, const QString& contactType, QContactManager::Error& error)
 {
     Q_UNUSED(definitionName);
     error = QContactManager::NotSupportedError;

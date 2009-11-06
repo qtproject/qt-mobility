@@ -105,10 +105,10 @@ public:
     virtual bool validateDefinition(const QContactDetailDefinition& def, QContactManager::Error& error) const;
 
     /* Definitions - Accessors and Mutators */
-    virtual QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
-    virtual QContactDetailDefinition detailDefinition(const QString& definitionId, QContactManager::Error& error) const;
-    virtual bool saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
-    virtual bool removeDetailDefinition(const QString& definitionId, QContactManager::Error& error);
+    virtual QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
+    virtual QContactDetailDefinition detailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error& error) const;
+    virtual bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error& error);
+    virtual bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error& error);
 
     /* Asynchronous Request Support */
     virtual void requestDestroyed(QContactAbstractRequest* req);
@@ -124,17 +124,18 @@ public:
     static void updateRequest(QContactAbstractRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
 
     /* Capabilities reporting */
-    virtual bool hasFeature(QContactManager::ManagerFeature feature) const;
+    virtual bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
+    virtual QStringList supportedRelationshipTypes(const QString& contactType) const;
     virtual bool filterSupported(const QContactFilter& filter) const;
     virtual QList<QVariant::Type> supportedDataTypes() const;
-    virtual QStringList supportedRelationshipTypes() const;
+    virtual QStringList supportedContactTypes() const;
  
     /* Versions */ 
     static int version(); 
     virtual int implementationVersion() const; 
 
     /* Reports the built-in definitions from the schema */
-    static QMap<QString, QContactDetailDefinition> schemaDefinitions();
+    static QMap<QString, QMap<QString, QContactDetailDefinition> > schemaDefinitions();
 
 signals:
     void dataChanged();

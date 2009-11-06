@@ -501,30 +501,30 @@ QList<QContactManager::Error> QContactManager::removeRelationships(const QList<Q
 }
 
 /*!
- * Returns a map of identifier to detail definition for the registered detail definitions
+ * Returns a map of identifier to detail definition for the registered detail definitions which are valid for contacts whose type is the given \a contactType
  * which are valid for the contacts in this store
  */
-QMap<QString, QContactDetailDefinition> QContactManager::detailDefinitions() const
+QMap<QString, QContactDetailDefinition> QContactManager::detailDefinitions(const QString& contactType) const
 {
-    return d->m_engine->detailDefinitions(d->m_error);
+    return d->m_engine->detailDefinitions(contactType, d->m_error);
 }
 
-/*! Returns the definition identified by the given \a definitionName that is valid for the contacts in this store, or a default-constructed QContactDetailDefinition if no such definition exists */
-QContactDetailDefinition QContactManager::detailDefinition(const QString& definitionName) const
+/*! Returns the definition identified by the given \a definitionName that is valid for the contacts whose type is the given \a contactType in this store, or a default-constructed QContactDetailDefinition if no such definition exists */
+QContactDetailDefinition QContactManager::detailDefinition(const QString& definitionName, const QString& contactType) const
 {
-    return d->m_engine->detailDefinition(definitionName, d->m_error);
+    return d->m_engine->detailDefinition(definitionName, contactType, d->m_error);
 }
 
-/*! Persists the given definition \a def in the database.  Returns true if the definition was saved successfully, otherwise returns false */
-bool QContactManager::saveDetailDefinition(const QContactDetailDefinition& def)
+/*! Persists the given definition \a def in the database, which is valid for contacts whose type is the given \a contactType.  Returns true if the definition was saved successfully, otherwise returns false */
+bool QContactManager::saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType)
 {
-    return d->m_engine->saveDetailDefinition(def, d->m_error);
+    return d->m_engine->saveDetailDefinition(def, contactType, d->m_error);
 }
 
-/*! Removes the detail definition identified by \a definitionName from the database.  Returns true if the definition was removed successfully, otherwise returns false */
-bool QContactManager::removeDetailDefinition(const QString& definitionName)
+/*! Removes the detail definition identified by \a definitionName from the database, which is valid for contacts whose type is the given \a contactType.  Returns true if the definition was removed successfully, otherwise returns false */
+bool QContactManager::removeDetailDefinition(const QString& definitionName, const QString& contactType)
 {
-    return d->m_engine->removeDetailDefinition(definitionName, d->m_error);
+    return d->m_engine->removeDetailDefinition(definitionName, contactType, d->m_error);
 }
 
 /*!
@@ -542,9 +542,9 @@ bool QContactManager::removeDetailDefinition(const QString& definitionName)
 /*!
  * Returns true if the given \a feature is supported by the manager
  */
-bool QContactManager::hasFeature(QContactManager::ManagerFeature feature) const
+bool QContactManager::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const
 {
-    return d->m_engine->hasFeature(feature);
+    return d->m_engine->hasFeature(feature, contactType);
 }
 
 /*!
@@ -570,16 +570,28 @@ bool QContactManager::filterSupported(const QContactFilter& filter) const
 }
 
 /*!
- * Returns the list of relationship types which are supported by this manager.
+ * Returns the list of relationship types which are supported by this manager for contacts of
+ * the given \a contactType.
  * If the backend does not support the \c QContactManager::Relationships feature, this list should
  * be empty.  If the backend supports the \c QContactManager::Relationships feature and also
  * supports the \c QContactManager::ArbitraryRelationshipTypes feature, the list will
  * contain the natively supported (well-known) relationship types contained in the list, but clients
  * are able to add relationships of any custom type also.
  */
-QStringList QContactManager::supportedRelationshipTypes() const
+QStringList QContactManager::supportedRelationshipTypes(const QString& contactType) const
 {
-    return d->m_engine->supportedRelationshipTypes();
+    return d->m_engine->supportedRelationshipTypes(contactType);
+}
+
+/*!
+ * Returns the list of contact types which are supported by this manager.
+ * This is a convenience function, equivalent to retrieving the allowable values
+ * for the \c QContactType::FieldType field of the QContactType definition
+ * which is valid in this manager.
+ */
+QStringList QContactManager::supportedContactTypes() const
+{
+    return d->m_engine->supportedContactTypes();
 }
 
 /* Returns the version number of the QTContacts API*/ 
