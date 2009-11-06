@@ -342,10 +342,9 @@ information from the system.
 Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)
 
 QSystemInfo::QSystemInfo(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), d(sysinfoPrivate())
 {
-    QSystemInfoPrivate *sysPriv = sysinfoPrivate();
-    connect(sysPriv,SIGNAL(currentLanguageChanged(QString)),
+    connect(d,SIGNAL(currentLanguageChanged(QString)),
             this,SIGNAL(currentLanguageChanged(QString)));
 }
 
@@ -419,9 +418,8 @@ bool QSystemInfo::hasFeatureSupported(QSystemInfo::Feature feature)
 Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
 
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), d(netInfoPrivate())
 {
-    QSystemNetworkInfoPrivate *d = netInfoPrivate();
     connect(d,SIGNAL(currentMobileCountryCodeChanged(QString)),
             this,SIGNAL(currentMobileCountryCodeChanged(QString)));
 
@@ -660,9 +658,8 @@ QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &dr
 Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
 
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), d(deviceInfoPrivate())
 {
-    QSystemDeviceInfoPrivate *d = deviceInfoPrivate();
     connect(d,SIGNAL(batteryLevelChanged(int)),
             this,SIGNAL(batteryLevelChanged(int)));
 
