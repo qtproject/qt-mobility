@@ -32,9 +32,7 @@ const char loggingAttr[] = "logging";
 
 // XML configuration values
 const char valueYes[] = "yes";
-const char valueNo[] = "no";
 const char valuePerformanceTest[] = "0";
-const char valueNormalTest[] = "1";
 
 
 // -----------------------------------------------------------------------------
