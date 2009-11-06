@@ -385,7 +385,10 @@ public:
 
         //Return NotSupported only if no services are available of serviceType
         //or all the services returned NotSupported, otherwise return at least MaybeSupported
-        return allServicesProvideInterface ? supportEstimate : QtMedia::MaybeSupported;
+        if (!allServicesProvideInterface)
+            supportEstimate = qMax(QtMedia::MaybeSupported, supportEstimate);
+
+        return supportEstimate;
     }
 
     QList<QByteArray> devices(const QByteArray &serviceType) const
