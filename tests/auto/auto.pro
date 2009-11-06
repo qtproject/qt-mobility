@@ -2,10 +2,9 @@ TEMPLATE = subdirs
 
 CONFIG += ordered
 
-#remove servicedatabase and databasemanager tests. they have some serious symbol issues
-#SUBDIRS += databasemanager \                #service framework
-#           servicedatabase \
-SUBDIRS+=  servicemetadata \
+SUBDIRS += databasemanager \                #service framework
+           servicedatabase \ 
+           servicemetadata \
            qserviceinterfacedescriptor \
            qservicefilter \
            qservicemanager \

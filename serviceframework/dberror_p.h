@@ -57,6 +57,7 @@
 #include "qserviceglobal.h"
 
 QT_BEGIN_NAMESPACE
+
 class Q_AUTOTEST_EXPORT DBError
 {
     public:

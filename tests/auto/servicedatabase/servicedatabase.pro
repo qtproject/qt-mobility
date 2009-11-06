@@ -21,13 +21,8 @@ CONFIG+=testcase
 include(../../../common.pri)
 
 # Input 
-SOURCES += tst_servicedatabase.cpp \
- #           dberror.cpp
-#HEADERS += dberror_p.h
-            #servicedatabase_p.h
+SOURCES += tst_servicedatabase.cpp
             
-
-
 qtAddLibrary(QtServiceFramework)
 
 symbian {

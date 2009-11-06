@@ -103,7 +103,11 @@ Q_SIGNALS:
         void serviceAdded(const QString& serviceName);
         void serviceRemoved(const QString& serviceName);
 
+#ifdef QT_BUILD_INTERNAL
+    public:
+#else
     private:
+#endif
         enum TransactionType{Read, Write};
 
         bool createTables();

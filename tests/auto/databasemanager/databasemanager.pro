@@ -47,17 +47,10 @@ symbian {
 } else {
     DEPENDPATH += ../../../serviceframework
     HEADERS += ../qsfwtestutil.h \
-               #databasemanager_p.h \
-               dberror_p.h \
-               #servicedatabase_p.h
 
 
     SOURCES += ../qsfwtestutil.cpp \
-                    tst_databasemanager.cpp \
-                    dberror.cpp \
-                    #servicemetadata.cpp \
-                    #databasemanager.cpp
-                    #servicedatabase.cpp
+                    tst_databasemanager.cpp
 }
 
 qtAddLibrary(QtServiceFramework)

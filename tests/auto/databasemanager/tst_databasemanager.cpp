@@ -41,14 +41,8 @@
 #include <QtTest/QtTest>
 #include <QtCore>
 #define private public
-//#define Q_AUTOTEST_EXPORT
 #include <qserviceinterfacedescriptor.h>
 #include <qserviceinterfacedescriptor_p.h>
-/*#include <servicedatabase_p.h>
-#include "../../../serviceframework/servicedatabase.cpp"
-#include <qservicefilter.h>
-#include <databasemanager_p.h>
-#include "servicemetadata_p.h"*/
 #include "../qsfwtestutil.h"
 #include <databasemanager_p.h>
 
