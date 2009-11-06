@@ -58,14 +58,16 @@
 VersitTest::VersitTest() :
     QObject(),
     mSaveContacts(false),
+    mPerformanceTest(true),
     mScaledImageHeight(0),
     mScaledImageWidth(0)
 {
 }
 
-VersitTest::VersitTest(bool saveContacts,int scaledImageHeight,int scaledImageWidth) :
+VersitTest::VersitTest(bool performanceTest,bool saveContacts,int scaledImageHeight,int scaledImageWidth) :
     QObject(),
     mSaveContacts(saveContacts),
+    mPerformanceTest(performanceTest),
     mScaledImageHeight(scaledImageHeight),
     mScaledImageWidth(scaledImageWidth)
 {
@@ -146,11 +148,15 @@ void VersitTest::test()
         QFile out(mOutputDirPath+ "/" + fileInfo.fileName());
         out.remove();
         QVERIFY(out.open(QIODevice::ReadWrite));
-        // Note that QBENCHMARK may execute the "executeTest"
-        // function several times (see QBENCHMARK documentation).
-        // This may cause the creation of multiple images or audio clips
-        // per one vCard property like PHOTO or SOUND
-        QBENCHMARK { executeTest(in,out); }
+        if( mPerformanceTest ){
+            // Note that QBENCHMARK may execute the "executeTest"
+            // function several times (see QBENCHMARK documentation).
+            // This may cause the creation of multiple images or audio clips
+            // per one vCard property like PHOTO or SOUND
+            QBENCHMARK { executeTest(in,out); }
+        }else {
+            executeTest(in,out);
+        }
         in.close();
         out.close();        
     }
