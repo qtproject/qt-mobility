@@ -83,6 +83,7 @@ private slots:
     void testEncodeOnlineAccount();
     void testEncodeFamily();
     void testEncodeAvatar();
+    void testEncodeDisplayLabel();
 
     // Test Utility Function
     QContactDetail searchDetail(QList<QContactDetail> details, QString search);

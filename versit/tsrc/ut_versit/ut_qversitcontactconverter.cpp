@@ -66,6 +66,7 @@
 #include <qcontactonlineaccount.h>
 #include <qcontactfamily.h>
 #include <qcontactpresence.h>
+#include <qcontactdisplaylabel.h>
 
 
 void UT_QVersitContactConverter::scale(
@@ -142,7 +143,10 @@ void UT_QVersitContactConverter::testConvertContact()
 
     // Convert contact into versit properties
     QVersitDocument document = mConverter->convertContact(contact);
-    QCOMPARE(document.properties().count(), 2);
+
+    // Each Contact has display label detail by default. Display label is enocded
+    // if some value exisit for the Label or if value for Name exisit.
+    QCOMPARE(document.properties().count(), 3);
 }
 
 void UT_QVersitContactConverter::testUnconvertedContactDetails()
@@ -200,14 +204,24 @@ void UT_QVersitContactConverter::testEncodeName()
     name.setContexts(QContactDetail::ContextHome);
     contact.saveDetail(&name);
     QVersitDocument document = mConverter->convertContact(contact);
-    QCOMPARE(document.properties().count(), 1);
-    QVersitProperty property = document.properties().at(0);
-    // Check parameters, contexts not allowed for N property
-    QCOMPARE(property.parameters().count(), 0);
+
+    // Each Contact has display label detail by default. Display label is enocded
+    // if some value exisit for the Label or if value for Name exisit.
+    QCOMPARE(document.properties().count(), 2);
+
+    QVersitProperty displayProperty = document.properties().at(0);
     // Check name
-    QCOMPARE(property.name(), QString::fromAscii("N"));
+    QCOMPARE(displayProperty.name(), QString::fromAscii("FN"));
     // Check value
-    QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("HH;Heido;A;Mr.;"));
+    QCOMPARE(QString::fromAscii(displayProperty.value()), QString::fromAscii("Heido HH"));
+
+    QVersitProperty nameProperty = document.properties().at(1);
+    // Check parameters, contexts not allowed for N property
+    QCOMPARE(nameProperty.parameters().count(), 0);
+    // Check name
+    QCOMPARE(nameProperty.name(), QString::fromAscii("N"));
+    // Check value
+    QCOMPARE(QString::fromAscii(nameProperty.value()), QString::fromAscii("HH;Heido;A;Mr.;"));
 
     // vCard 3.0, special characters in the name parts are backslash escaped
     contact.removeDetail(&name);
@@ -219,14 +233,24 @@ void UT_QVersitContactConverter::testEncodeName()
     contact.saveDetail(&name);
     document = mConverter->convertContact(contact,QVersitDocument::VCard30);
     QCOMPARE(document.versitType(),QVersitDocument::VCard30);
-    QCOMPARE(document.properties().count(), 1);
-    property = document.properties().at(0);
+
+    // Each Contact has display label detail by default. Display label is enocded
+    // if some value exisit for the Label or if value for Name exisit.
+    QCOMPARE(document.properties().count(), 2);
+    displayProperty = document.properties().at(0);
+    nameProperty = document.properties().at(1);
     // Check parameters
-    QCOMPARE(property.parameters().count(), 0);
+    QCOMPARE(displayProperty.parameters().count(), 0);
+    QCOMPARE(nameProperty.parameters().count(), 0);
     // Check name
-    QCOMPARE(property.name(), QString::fromAscii("N"));
+    QCOMPARE(displayProperty.name(), QString::fromAscii("FN"));
+    QCOMPARE(nameProperty.name(), QString::fromAscii("N"));
     // Check value
-    QCOMPARE(QString::fromAscii(property.value()),
+
+    QCOMPARE(QString::fromAscii(displayProperty.value()),
+             QString::fromAscii("Hom\\,er Simp\\;son"));
+
+    QCOMPARE(QString::fromAscii(nameProperty.value()),
              QString::fromAscii("Simp\\;son;Hom\\,er;J\\;;\\;Mr.;Sir\\,"));
 }
 
@@ -905,13 +929,17 @@ void UT_QVersitContactConverter::testEncodeGender()
 
 void UT_QVersitContactConverter::testEncodeNickName()
 {
+    QContact contact;
     QVersitDocument document;
 
     // Nickname not yet in the document
     QContactNickname nicknameDetail;
     QString firstNickname(QString::fromAscii("Homie"));
     nicknameDetail.setNickname(firstNickname);
-    mConverterPrivate->encodeFieldInfo(document,nicknameDetail);
+
+    contact.saveDetail(&nicknameDetail);
+    mConverterPrivate->convertContact(document,contact);
+
     QCOMPARE(document.properties().count(), 1);
     QVersitProperty property = document.properties().at(0);
     QCOMPARE(property.name(), QString::fromAscii("X-NICKNAME"));
@@ -920,7 +948,9 @@ void UT_QVersitContactConverter::testEncodeNickName()
     // Nickname already in the document, append to the existing property
     QString secondNickname(QString::fromAscii("Jay"));
     nicknameDetail.setNickname(secondNickname);
-    mConverterPrivate->encodeFieldInfo(document,nicknameDetail);
+
+    contact.saveDetail(&nicknameDetail);
+    mConverterPrivate->convertContact(document,contact);
     QCOMPARE(document.properties().count(), 1);
     property = document.properties().at(0);
     QCOMPARE(property.name(), QString::fromAscii("X-NICKNAME"));
@@ -1071,6 +1101,52 @@ void UT_QVersitContactConverter::testEncodeFamily()
     QString expected = QString::fromAscii("A,B");
     QCOMPARE(value2, expected);
 }
+
+
+void UT_QVersitContactConverter::testEncodeDisplayLabel()
+{
+    QContact contact;
+    QContactDisplayLabel displayLaebl;
+    QContactName contactName;
+
+    //Test1: Display Label and Name does not Exisit
+    QVersitDocument document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 0);
+
+    //Test2: Display Label does not Exisit but Name Exisit
+    contactName.setFirst(QString::fromAscii("First"));
+    contactName.setLast(QString::fromAscii("Last"));
+    contactName.setMiddle(QString::fromAscii("Middle"));
+
+    contact.saveDetail(&contactName);
+
+    document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 2);
+
+    // Display Label Verify
+    QVersitProperty displayProperty = document.properties().at(0);
+    QCOMPARE(displayProperty.name(), QString::fromAscii("FN"));
+    QCOMPARE(QString::fromAscii(displayProperty.value()), QString::fromAscii("First Last"));
+
+    // Name Verify
+    QVersitProperty nameProperty = document.properties().at(1);
+    QCOMPARE(nameProperty.name(), QString::fromAscii("N"));
+    QCOMPARE(QString::fromAscii(nameProperty.value()),
+        QString::fromAscii("Last;First;Middle;;"));
+
+    //Test3: Valid Display Lable and Name Exisit & test escaping
+    contact = QContact();
+    displayLaebl.setLabel(QString::fromAscii("Display,Label"));
+    contact.saveDetail(&displayLaebl);
+    contact.saveDetail(&contactName);
+    document = mConverter->convertContact(contact, QVersitDocument::VCard30);
+
+    displayProperty = document.properties().at(0);
+    QCOMPARE(displayProperty.name(), QString::fromAscii("FN"));
+    QCOMPARE(QString::fromAscii(displayProperty.value()), QString::fromAscii("Display\\,Label"));
+}
+
+
 
 // Test utility functions
 QContactDetail UT_QVersitContactConverter::searchDetail(

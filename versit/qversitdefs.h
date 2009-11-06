@@ -63,6 +63,7 @@
 #include <qcontactanniversary.h>
 #include <qcontactonlineaccount.h>
 #include <qcontactfamily.h>
+#include <qcontactdisplaylabel.h>
 
 // Mapping between a string in versit specifications and Qt contacts
 struct versitMapping {
@@ -73,6 +74,7 @@ struct versitMapping {
 // Mappings from versit property names to Qt contact details
 const versitMapping versitDetailMappings[] = {
     {"N",             QContactName::DefinitionName.str},
+    {"FN", 			  QContactDisplayLabel::DefinitionName.str},
     {"EMAIL",         QContactEmailAddress::DefinitionName.str},
     {"TEL",           QContactPhoneNumber::DefinitionName.str},
     {"ADR",           QContactAddress::DefinitionName.str},
