@@ -1579,8 +1579,9 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 
 
 /*!
- * \fn QContactOrganization::setDepartment(const QString& department)
- * Sets the contact's department of the organization stored in this detail to \a department
+ * \fn QContactOrganization::setDepartment(const QStringList& department)
+ * Sets the contact's department of the organization stored in this detail to \a department.
+ * The department is a list of progressively finer-grained information.
  */
 
 /*!
