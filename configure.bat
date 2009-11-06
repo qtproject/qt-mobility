@@ -252,7 +252,7 @@ goto exitTag
 echo.
 REM compile tests go here. We don't have anything to test for at this stage.
 
-mkdir %BUILD_PATH%\features
+if not exist "%BUILD_PATH%\features" mkdir %BUILD_PATH%\features
 echo "Generating Mobility Headers..."
 rd /s /q %BUILD_PATH%\include
 mkdir %BUILD_PATH%\include
