@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
-CONFIG += ordered
+include($$QT_MOBILITY_BUILD_TREE/config.pri)
 
 SUBDIRS += databasemanager \                #service framework
            servicedatabase \ 
@@ -92,7 +92,6 @@ contains(QT_CONFIG, multimedia) {
 #Messaging
 contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
     SUBDIRS += \
-        support \
         qmessagestore \
         qmessagestorekeys \
         qmessage

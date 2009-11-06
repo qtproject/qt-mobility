@@ -41,6 +41,7 @@
 #ifndef QMESSAGECONTENTCONTAINER_P_H
 #define QMESSAGECONTENTCONTAINER_P_H
 
+#include "qmessageglobal.h"
 #include "qmessagecontentcontainer.h"
 #include "qmessage.h"
 

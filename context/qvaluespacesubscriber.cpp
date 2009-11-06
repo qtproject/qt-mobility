@@ -56,6 +56,8 @@ QT_BEGIN_NAMESPACE
 
     \brief The QValueSpaceSubscriber class provides access to values stored in the Value Space.
 
+    \ingroup publishsubscribe
+
     The Value Space is an inter-application hierarchy of readable, writable and
     subscribable data.  The QValueSpaceSubscriber class allows applications to read
     and subscribe to this data.
@@ -603,7 +605,8 @@ QVariant QValueSpaceSubscriber::valuex(const QVariant &def) const
 /*!
     \internal
 
-    Registers for change notifications in response to connection to the contentsChanged() signal.
+    Registers for change notifications in response to connection to the contentsChanged()
+    \a signal.
 */
 void QValueSpaceSubscriber::connectNotify(const char *signal)
 {
@@ -617,7 +620,7 @@ void QValueSpaceSubscriber::connectNotify(const char *signal)
     \internal
 
     Unregisters for change notifications in response to disconnection from the contentsChanged()
-    signal.
+    \a signal.
 */
 void QValueSpaceSubscriber::disconnectNotify(const char *signal)
 {

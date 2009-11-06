@@ -38,9 +38,8 @@ SUBDIRS += serviceframework
 symbian:SUBDIRS += serviceframework/symbian/dll/databasemanagerserver_dll.pro \
                    serviceframework/symbian/exe/databasemanagerserver_exe.pro
 
-SUBDIRS += bearer location contacts multimedia context systeminfo
-
-SUBDIRS += tools plugins
+SUBDIRS += bearer location contacts multimedia context systeminfo tools plugins
+SUBDIRS += doc   #built documentation snippets
 
 
 contains(qmf_enabled, yes)|wince*|win32|symbian|maemo {
@@ -50,6 +49,8 @@ contains(qmf_enabled, yes)|wince*|win32|symbian|maemo {
 
 contains(build_unit_tests, yes):SUBDIRS+=tests
 contains(build_examples, yes):SUBDIRS+=examples
+
+include(doc/doc.pri)
 
 # install Qt style headers
 qtmheaders.path = $${QT_MOBILITY_INCLUDE}

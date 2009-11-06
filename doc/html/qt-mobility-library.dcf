@@ -2699,6 +2699,7 @@
         <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::PermanentLayer</keyword>
         <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::NonWriteableLayer</keyword>
         <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::NonPermanentLayer</keyword>
+        <keyword ref="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER">QVALUESPACE_CONTEXTKIT_LAYER</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_NONVOLATILEREGISTRY_LAYER">QVALUESPACE_NONVOLATILEREGISTRY_LAYER</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER">QVALUESPACE_SHAREDMEMORY_LAYER</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_VOLATILEREGISTRY_LAYER">QVALUESPACE_VOLATILEREGISTRY_LAYER</keyword>
@@ -2930,6 +2931,9 @@
     <section ref="mobility.html" title="Qt Mobility APIs">
         <keyword ref="mobility.html">Qt Mobility APIs</keyword>
     </section>
+    <section ref="examples.html" title="Qt Mobility Examples">
+        <keyword ref="examples.html">Qt Mobility Examples</keyword>
+    </section>
     <section ref="location.html" title="Qt Mobility Location API">
         <keyword ref="location.html">Qt Mobility Location API</keyword>
     </section>
@@ -2953,6 +2957,9 @@
     <section ref="battery-charge.html" title="Accessing Publish and Subscribe from QML">
         <keyword ref="battery-charge.html">Accessing Publish and Subscribe from QML</keyword>
     </section>
+    <section ref="audiorecorder.html" title="Audio Recorder Example">
+        <keyword ref="audiorecorder.html">Audio Recorder Example</keyword>
+    </section>
     <section ref="bearercloud.html" title="Bearer Cloud Example">
         <keyword ref="bearercloud.html">Bearer Cloud Example</keyword>
     </section>
@@ -2962,17 +2969,62 @@
     <section ref="bluetoothtransferplugin.html" title="Bluetooth Transfer Plugin Example">
         <keyword ref="bluetoothtransferplugin.html">Bluetooth Transfer Plugin Example</keyword>
     </section>
+    <section ref="cameracapture.html" title="Camera Capture Example">
+        <keyword ref="cameracapture.html">Camera Capture Example</keyword>
+    </section>
+    <section ref="declarative.html" title="Declarative Example">
+        <keyword ref="declarative.html">Declarative Example</keyword>
+    </section>
+    <section ref="fetchgooglemaps.html" title="Fetch Google Maps Example">
+        <keyword ref="fetchgooglemaps.html">Fetch Google Maps Example</keyword>
+    </section>
     <section ref="filemanagerplugin.html" title="File Manager Plugin Example">
         <keyword ref="filemanagerplugin.html">File Manager Plugin Example</keyword>
+    </section>
+    <section ref="incomingcalls.html" title="Incoming Calls Example">
+        <keyword ref="incomingcalls.html">Incoming Calls Example</keyword>
+    </section>
+    <section ref="keepintouch.html" title="Keep in Touch Example">
+        <keyword ref="keepintouch.html">Keep in Touch Example</keyword>
+    </section>
+    <section ref="logfilepositionsource.html" title="Log File Position Source Example">
+        <keyword ref="logfilepositionsource.html">Log File Position Source Example</keyword>
+    </section>
+    <section ref="player.html" title="Player Example">
+        <keyword ref="player.html">Player Example</keyword>
     </section>
     <section ref="publish-subscribe.html" title="Publish and Subscribe Example">
         <keyword ref="publish-subscribe.html">Publish and Subscribe Example</keyword>
     </section>
+    <section ref="querymessages.html" title="Query Messages Example">
+        <keyword ref="querymessages.html">Query Messages Example</keyword>
+    </section>
+    <section ref="radio.html" title="Radio Example">
+        <keyword ref="radio.html">Radio Example</keyword>
+    </section>
+    <section ref="recorder.html" title="Recorder Example">
+        <keyword ref="recorder.html">Recorder Example</keyword>
+    </section>
     <section ref="samplephonebook.html" title="Sample Phonebook Example">
         <keyword ref="samplephonebook.html">Sample Phonebook Example</keyword>
     </section>
+    <section ref="sendmessage.html" title="Send Message Example">
+        <keyword ref="sendmessage.html">Send Message Example</keyword>
+    </section>
+    <section ref="serviceactions.html" title="Service Actions Example">
+        <keyword ref="serviceactions.html">Service Actions Example</keyword>
+    </section>
     <section ref="servicebrowser.html" title="Service Browser Example">
         <keyword ref="servicebrowser.html">Service Browser Example</keyword>
+    </section>
+    <section ref="slideshow.html" title="Slideshow Example">
+        <keyword ref="slideshow.html">Slideshow Example</keyword>
+    </section>
+    <section ref="streamplayer.html" title="Stream Player Example">
+        <keyword ref="streamplayer.html">Stream Player Example</keyword>
+    </section>
+    <section ref="sysinfo.html" title="System Information Example">
+        <keyword ref="sysinfo.html">System Information Example</keyword>
     </section>
 </section>
 </DCF>

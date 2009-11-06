@@ -58,7 +58,11 @@
 
 QT_BEGIN_NAMESPACE
 
+#if defined(Q_OS_SYMBIAN) && defined(DATABASEMANAGERSERVER_NO_LIBRARY)
+class Q_SFW_EXPORT DBError
+#else
 class Q_AUTOTEST_EXPORT DBError
+#endif
 {
     public:
         enum ErrorCode {

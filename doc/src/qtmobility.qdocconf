@@ -33,8 +33,6 @@ sources.fileextensions  = "*.qdoc *.cpp"
 
 outputdir               = ../html
 
-indexes                 = qt.index
-
 extraimages.HTML        = qtlogo \
                           codeless
 
@@ -48,6 +46,36 @@ defines                 = Q_QDOC \
                           QMESSAGING_OPTIONAL_FOLDER
 
 examples.fileextensions = "*.cpp *.h *.svg"
+
+qhp.projects = Mobility
+qhp.Mobility.file = qtmobility.qhp
+qhp.Mobility.namespace = com.nokia.qtmobility
+qhp.Mobility.virtualFolder = mobility
+qhp.Mobility.indexTitle = Qt Mobility Reference Documentation
+qhp.Mobility.indexRoot =
+
+qhp.Mobility.extraFiles = classic.css \
+                          images/qtlogo.png \
+                          images/codeless.png
+
+qhp.Mobility.filterAttributes = qtmobility
+qhp.Mobility.customFilters.QtMobility.name = Qt Mobility
+qhp.Mobility.customFilters.QtMobility.filterAttributes = qtmobility
+
+qhp.Mobility.subprojects = classes overviews examples
+qhp.Mobility.subprojects.classes.title = Classes
+qhp.Mobility.subprojects.classes.indexTitle = All Qt Mobility Classes
+qhp.Mobility.subprojects.classes.selectors = class
+qhp.Mobility.subprojects.classes.sortPages = true
+qhp.Mobility.subprojects.overviews.title = Overviews
+qhp.Mobility.subprojects.overviews.indexTitle = Qt Mobility Overview
+qhp.Mobility.subprojects.overviews.selectors = fake:page,group
+qhp.Mobility.subprojects.overviews.sortPages = true
+qhp.Mobility.subprojects.examples.title = Examples
+qhp.Mobility.subprojects.examples.indexTitle = Qt Mobility Examples
+qhp.Mobility.subprojects.examples.selectors = fake:example
+qhp.Mobility.subprojects.examples.sortPages = true
+
 
 Cpp.ignoretokens        = QAXFACTORY_EXPORT \
                           QM_EXPORT_CANVAS \
@@ -137,4 +165,6 @@ HTML.footer             = "<p /><address><hr /><div align=\"center\">\n" \
                           "<td align=\"left\">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>\n" \
                           "<td align=\"right\"><div align=\"right\">Qt Mobility API</div></td>\n" \
                           "</tr></table></div></address>"
+
+macro.raisedaster.HTML  = "<sup>*</sup>"
 

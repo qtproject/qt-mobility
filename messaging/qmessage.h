@@ -41,6 +41,7 @@
 #ifndef QMESSAGE_H
 #define QMESSAGE_H
 #include <qmessageglobal.h>
+
 #include <qmessageaccountid.h>
 #include <qmessagefolderid.h>
 #include <qmessagecontentcontainer.h>

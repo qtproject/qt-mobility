@@ -27,6 +27,7 @@
 <a name="macros"></a>
 <h2>Macros</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER">QVALUESPACE_CONTEXTKIT_LAYER</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#QVALUESPACE_NONVOLATILEREGISTRY_LAYER">QVALUESPACE_NONVOLATILEREGISTRY_LAYER</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER">QVALUESPACE_SHAREDMEMORY_LAYER</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#QVALUESPACE_VOLATILEREGISTRY_LAYER">QVALUESPACE_VOLATILEREGISTRY_LAYER</a></b></td></tr>
@@ -51,6 +52,10 @@
 <p>The LayerOptions type is a typedef for <a href="qflags.html">QFlags</a>&lt;LayerOption&gt;. It stores an OR combination of LayerOption values.</p>
 <hr />
 <h2>Macro Documentation</h2>
+<h3 class="fn"><a name="QVALUESPACE_CONTEXTKIT_LAYER"></a>QVALUESPACE_CONTEXTKIT_LAYER</h3>
+<p>The UUID of the ContextKit Layer as a <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a>. The actual UUID values is {2c769b9e-d949-4cd1-848f-d32241fe07ff}.</p>
+<p>This values can be passed to the constructor of <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> to force the constructed value space provider to publish its values in the ContextKit Layer.</p>
+<p>You can test if the ContextKit Layer is available by checking if the list returned by QValueSpace::availableLayers() contains this value.</p>
 <h3 class="fn"><a name="QVALUESPACE_NONVOLATILEREGISTRY_LAYER"></a>QVALUESPACE_NONVOLATILEREGISTRY_LAYER</h3>
 <p>The UUID of the Non-Volatile Registry Layer as a <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a>. The actual UUID value is {8e29561c-a0f0-4e89-ba56-080664abc017}.</p>
 <p>This value can be passed to the constructor of <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> to force the constructed value space provider to publish its values in the Non-Volatile Registry Layer.</p>

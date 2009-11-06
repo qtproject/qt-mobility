@@ -49,6 +49,7 @@ QT_BEGIN_NAMESPACE
 /*!
   \class QPacketProtocol
   \internal
+  \ingroup publishsubscribe
 
   \brief The QPacketProtocol class encapsulates communicating discrete packets
   across fragmented IO channels, such as TCP sockets.
@@ -353,6 +354,7 @@ QIODevice * QPacketProtocol::device()
 /*!
   \class QPacket
   \internal
+  \ingroup publishsubscribe
 
   \brief The QPacket class encapsulates an unfragmentable packet of data to be
   transmitted by QPacketProtocol.
@@ -425,8 +427,8 @@ QPacket::QPacket(const QPacket & other)
 }
 
 /*!
-  \internal
-  */
+    Constructs a read-only packet from \a ba.
+*/
 QPacket::QPacket(const QByteArray & ba)
 : QDataStream(), b(ba)
 {
@@ -468,11 +470,6 @@ void QPacket::clear()
     buf->open(oldMode);
 }
 
-/*!
-  \class QPacketAutoSend
-
-  \internal
-  */
 QPacketAutoSend::QPacketAutoSend(QPacketProtocol * _p)
 : QPacket(), p(_p)
 {
