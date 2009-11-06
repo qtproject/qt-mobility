@@ -69,6 +69,7 @@ public:
     QContactRequestWorkerData()
         : QSharedData(),
         m_stop(false),
+        m_finished(false),
         m_currentRequest(0)
     {
     }
@@ -76,6 +77,7 @@ public:
     QContactRequestWorkerData(const QContactRequestWorkerData& other)
         : QSharedData(other),
         m_stop(other.m_stop),
+        m_finished(other.m_finished),
         m_currentRequest(other.m_currentRequest)
     {
     }
@@ -87,6 +89,7 @@ public:
     QContactAbstractRequest* takeFirstRequest();
     
     bool m_stop;
+    bool m_finished;
     QMutex m_mutex;
     QWaitCondition m_newRequestAdded;
     QQueue<QContactAbstractRequest*> m_requestQueue; 
