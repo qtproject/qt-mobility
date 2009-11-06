@@ -70,23 +70,23 @@
  */
 QVersitContactGeneratorPrivate::QVersitContactGeneratorPrivate()
 {
-    mDetailMappings.insert(QString::fromAscii(versitEmailId),
+    mDetailMappings.insert(QString::fromAscii("EMAIL"),
         QPair<QString,QString>(
             QContactEmailAddress::DefinitionName,
             QContactEmailAddress::FieldEmailAddress));
-    mDetailMappings.insert(QString::fromAscii(versitUrlId),
+    mDetailMappings.insert(QString::fromAscii("URL"),
         QPair<QString,QString>(
             QContactUrl::DefinitionName,
             QContactUrl::FieldUrl));
-    mDetailMappings.insert(QString::fromAscii(versitUidId),
+    mDetailMappings.insert(QString::fromAscii("UID"),
         QPair<QString,QString>(
             QContactGuid::DefinitionName,
             QContactGuid::FieldGuid));
-    mDetailMappings.insert(QString::fromAscii(versitNoteId),
+    mDetailMappings.insert(QString::fromAscii("NOTE"),
         QPair<QString,QString>(
             QContactNote::DefinitionName,
             QContactNote::FieldNote));
-    mDetailMappings.insert(QString::fromAscii(versitGenderId),
+    mDetailMappings.insert(QString::fromAscii("X-GENDER"),
         QPair<QString,QString>(
             QContactGender::DefinitionName,
             QContactGender::FieldGender));
@@ -133,42 +133,42 @@ QContact QVersitContactGeneratorPrivate::generateContact(const QVersitDocument& 
     const QList<QVersitProperty> properties = versitDocument.properties();
     foreach (QVersitProperty property, properties) {
         QContactDetail* detail = 0;
-        if (property.name() == QString::fromAscii(versitNameId)) {
-            detail = createName(property,contact);
-        } else if (property.name() == QString::fromAscii(versitPhoneId)) {
-            detail = createPhone(property);
-        } else if (property.name() == QString::fromAscii(versitAddressId)) {
+        if (property.name() == QString::fromAscii("ADR")) {
             detail = createAddress(property);
-        } else if (property.name() == QString::fromAscii(versitTitleId)){
-            detail = createOrganization(property);
-        } else if (property.name() == QString::fromAscii(versitOrganizationId)) {
-            detail = createOrganization(property);
-        } else if (property.name() == QString::fromAscii(versitRoleId)) {
-            detail = createOrganization(property);
-        } else if (property.name() == QString::fromAscii(versitLogoId)) {
-            detail = createOrganization(property);
-        } else if (property.name() == QString::fromAscii(versitAssistantId)) {
-            detail = createOrganization(property);
-        } else if (property.name() == QString::fromAscii(versitRevisionId)) {
-            detail = createTimeStamp(property);
-        } else if (property.name() == QString::fromAscii(versitAnniversaryId)) {
-            detail = createAnniversary(property);
-        } else if (property.name() == QString::fromAscii(versitPhotoId)) {
-            detail = createAvatar(property,versitDocument,QContactAvatar::SubTypeImage);
-        } else if (property.name() == QString::fromAscii(versitBirthdayId)) {
+        } else if (property.name() == QString::fromAscii("N")) {
+            detail = createName(property,contact);
+        } else if (property.name() == QString::fromAscii("BDAY")) {
             detail = createBirthday(property);
-        } else if (property.name() == QString::fromAscii(versitNicknameId)||
-                   property.name() == QString::fromAscii(versitNicknameXId)) {
-            createNicknames(property,contact);
-        } else if (property.name() == QString::fromAscii(versitGeoId)){
+        } else if (property.name() == QString::fromAscii("GEO")){
             detail = createGeoLocation(property);
-        } else if (property.name() == QString::fromAscii(versitSipId)){
-            detail = createOnlineAccount(property);
-        } else if (property.name() == QString::fromAscii(versitSpouseId) ||
-                   property.name() == QString::fromAscii(versitChildrenId)){
-            detail = createFamily(property,contact);
-        } else if (property.name() == QString::fromAscii(versitSoundId)){
+        } else if (property.name() == QString::fromAscii("LOGO")) {
+            detail = createOrganization(property);
+        } else if (property.name() == QString::fromAscii("NICKNAME") ||
+                   property.name() == QString::fromAscii("X-NICKNAME")) {
+            createNicknames(property,contact);
+        } else if (property.name() == QString::fromAscii("ORG")) {
+            detail = createOrganization(property);
+        } else if (property.name() == QString::fromAscii("PHOTO")) {
+            detail = createAvatar(property,versitDocument,QContactAvatar::SubTypeImage);
+         } else if (property.name() == QString::fromAscii("REV")) {
+            detail = createTimeStamp(property);
+        } else if (property.name() == QString::fromAscii("ROLE")) {
+            detail = createOrganization(property);
+        } else if (property.name() == QString::fromAscii("SOUND")){
             detail = createAvatar(property,versitDocument,QContactAvatar::SubTypeAudioRingtone);
+        } else if (property.name() == QString::fromAscii("TEL")) {
+            detail = createPhone(property);
+        } else if (property.name() == QString::fromAscii("TITLE")){
+            detail = createOrganization(property);
+        } else if (property.name() == QString::fromAscii("X-ANNIVERSARY")) {
+            detail = createAnniversary(property);
+        } else if (property.name() == QString::fromAscii("X-ASSISTANT")) {
+            detail = createOrganization(property);
+         } else if (property.name() == QString::fromAscii("X-CHILDREN") ||
+                   property.name() == QString::fromAscii("X-SPOUSE")){
+            detail = createFamily(property,contact);
+        } else if (property.name() == QString::fromAscii("X-SIP")){
+            detail = createOnlineAccount(property);
         } else {
             detail = createNameValueDetail(property);
             if (!detail)
@@ -250,13 +250,13 @@ QContactDetail* QVersitContactGeneratorPrivate::createOrganization(
     const QVersitProperty& property) const
 {
     QContactOrganization* org = new QContactOrganization;
-    if (property.name() == QString::fromAscii(versitTitleId)) {
+    if (property.name() == QString::fromAscii("TITLE")) {
         org->setTitle(QString::fromAscii(property.value()));
-    } else if (property.name() == QString::fromAscii(versitOrganizationId)) {
+    } else if (property.name() == QString::fromAscii("ORG")) {
         setOrganizationNames(*org,property);
-    } else if (property.name() == QString::fromAscii(versitLogoId)) {
+    } else if (property.name() == QString::fromAscii("LOGO")) {
         setOrganizationLogo(*org,property);
-    } else if (property.name() == QString::fromAscii(versitAssistantId)) {
+    } else if (property.name() == QString::fromAscii("X-ASSISTANT")) {
         org->setAssistantName(QString::fromAscii(property.value()));
     } else {
          // NOP
@@ -297,7 +297,7 @@ void QVersitContactGeneratorPrivate::setOrganizationLogo(
     const QString valueParam =
         property.parameters().value(QString::fromAscii(versitValue));
 
-    if (valueParam != QString::fromAscii(versitUrlId)) {
+    if (valueParam != QString::fromAscii("URL")) {
         QString path(mImagePath);
         if (!path.endsWith(QString::fromAscii("/")))
             path += QString::fromAscii("/");
@@ -396,7 +396,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
     const QString valueParam =
         property.parameters().value(QString::fromAscii(versitValue));
 
-    if (valueParam != QString::fromAscii(versitUrlId)) {
+    if (valueParam != QString::fromAscii("URL")) {
         QString pathAndName(mImagePath);
         if (subType == QContactAvatar::SubTypeAudioRingtone)
             pathAndName = mAudioClipPath;
@@ -438,9 +438,9 @@ QContactDetail* QVersitContactGeneratorPrivate::createFamily(
     QString val = QString::fromAscii(property.value());
     QContactFamily family =
         static_cast<QContactFamily>(contact.detail(QContactFamily::DefinitionName));
-    if (property.name() == QString::fromAscii(versitSpouseId)) {
+    if (property.name() == QString::fromAscii("X-SPOUSE")) {
         family.setSpouse(val);
-    } else if (property.name() == QString::fromAscii(versitChildrenId)) {
+    } else if (property.name() == QString::fromAscii("X-CHILDREN")) {
         family.setChildren(val.split(QString::fromAscii(",")));
     }
     return new QContactDetail(family);
@@ -572,7 +572,7 @@ QString QVersitContactGeneratorPrivate::getFirstAndLastName(
     QString name;
     const QList<QVersitProperty> properties = document.properties();
     foreach(const QVersitProperty& nameProperty, properties) {
-        if (nameProperty.name() == QString::fromAscii(versitNameId)) {
+        if (nameProperty.name() == QString::fromAscii("N")) {
             QList<QByteArray> values = nameProperty.value().split(';');
             name.append(takeFirst(values));
             name.append(takeFirst(values));

@@ -205,7 +205,7 @@ void UT_QVersitContactConverter::testEncodeName()
     // Check parameters, contexts not allowed for N property
     QCOMPARE(property.parameters().count(), 0);
     // Check name
-    QCOMPARE(property.name(), QString::fromAscii(versitNameId));
+    QCOMPARE(property.name(), QString::fromAscii("N"));
     // Check value
     QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("HH;Heido;A;Mr.;"));
 
@@ -224,7 +224,7 @@ void UT_QVersitContactConverter::testEncodeName()
     // Check parameters
     QCOMPARE(property.parameters().count(), 0);
     // Check name
-    QCOMPARE(property.name(), QString::fromAscii(versitNameId));
+    QCOMPARE(property.name(), QString::fromAscii("N"));
     // Check value
     QCOMPARE(QString::fromAscii(property.value()),
              QString::fromAscii("Simp\\;son;Hom\\,er;J\\;;\\;Mr.;Sir\\,"));
@@ -246,9 +246,9 @@ void UT_QVersitContactConverter::testEncodePhoneNumber()
     QVERIFY(property.parameters().contains(
         QString::fromAscii(versitType),QString::fromAscii("HOME")));
     QVERIFY(property.parameters().contains(
-        QString::fromAscii(versitType),QString::fromAscii(versitCellId)));
+        QString::fromAscii(versitType),QString::fromAscii("CELL")));
     // Check name
-    QCOMPARE(property.name(), QString::fromAscii(versitPhoneId));
+    QCOMPARE(property.name(), QString::fromAscii("TEL"));
     // Check value
     QCOMPARE(QString::fromAscii(property.value()), phoneNumber.number());
 }
@@ -268,7 +268,7 @@ void UT_QVersitContactConverter::testEncodeEmailAddress()
     QVERIFY(property.parameters().contains(
         QString::fromAscii(versitType),QString::fromAscii("HOME")));
     // Check name
-    QCOMPARE(property.name(), QString::fromAscii(versitEmailId));
+    QCOMPARE(property.name(), QString::fromAscii("EMAIL"));
     // Check value
     QCOMPARE(QString::fromAscii(property.value()), email.emailAddress());
 }
@@ -294,9 +294,9 @@ void UT_QVersitContactConverter::testEncodeStreetAddress()
     QVERIFY(property.parameters().contains(
         QString::fromAscii(versitType),QString::fromAscii("HOME")));
     QVERIFY(property.parameters().contains(
-        QString::fromAscii(versitType),QString::fromAscii(versitPostalId)));
+        QString::fromAscii(versitType),QString::fromAscii("POSTAL")));
     // Check name
-    QCOMPARE(property.name(), QString::fromAscii(versitAddressId));
+    QCOMPARE(property.name(), QString::fromAscii("ADR"));
     // Check value
     QCOMPARE(QString::fromAscii(property.value()),
              QString::fromAscii(";;HKKI 1X 90;Helsinki;;00440;Finland"));
@@ -315,7 +315,7 @@ void UT_QVersitContactConverter::testEncodeStreetAddress()
     QCOMPARE(document.properties().count(), 1);
     property = document.properties().at(0);
     // Check name
-    QCOMPARE(property.name(), QString::fromAscii(versitAddressId));
+    QCOMPARE(property.name(), QString::fromAscii("ADR"));
     // Check value
     QCOMPARE(QString::fromAscii(property.value()),
              QString::fromAscii("PO\\;Box;;My\\;Street;My\\;Town;My\\;State;12345\\;;My\\;Country"));
@@ -337,7 +337,7 @@ void UT_QVersitContactConverter::testEncodeUrl()
     QVERIFY(property.parameters().contains(
         QString::fromAscii(versitType),QString::fromAscii("HOME")));
     // Check name
-    QCOMPARE(property.name(), QString::fromAscii(versitUrlId));
+    QCOMPARE(property.name(), QString::fromAscii("URL"));
     // Check value
     QCOMPARE(QString::fromAscii(property.value()), url.url());
 }
@@ -358,7 +358,7 @@ void UT_QVersitContactConverter::testEncodeUid()
     // Contexts are not allowed for UID
     QCOMPARE(property.parameters().count(), 0);
     // Check name
-    QCOMPARE(property.name(), QString::fromAscii(versitUidId));
+    QCOMPARE(property.name(), QString::fromAscii("UID"));
     // Check value
     QCOMPARE(QString::fromAscii(property.value()), guid.guid());
 
@@ -371,7 +371,7 @@ void UT_QVersitContactConverter::testEncodeUid()
     QCOMPARE(document.properties().count(), 1);
     property = document.properties().at(0);
     // Check name
-    QCOMPARE(property.name(), QString::fromAscii(versitUidId));
+    QCOMPARE(property.name(), QString::fromAscii("UID"));
     // Check value
     QCOMPARE(QString::fromAscii(property.value()),
              QString::fromAscii("1\\;2\\,3\\n4\\\\5"));
@@ -575,7 +575,7 @@ void UT_QVersitContactConverter::testEncodeOrganization()
     versitDocument = mConverter->convertContact(contact);
     QCOMPARE(versitDocument.properties().count(), 1);
     property = versitDocument.properties().at(0);
-    QCOMPARE(property.name(), QString::fromAscii(versitTitleId));
+    QCOMPARE(property.name(), QString::fromAscii("TITLE"));
     QCOMPARE(QString::fromAscii(property.value()), title);
 
     // ORG with name
@@ -585,7 +585,7 @@ void UT_QVersitContactConverter::testEncodeOrganization()
     versitDocument = mConverter->convertContact(contact);
     QCOMPARE(versitDocument.properties().count(), 1);
     property = versitDocument.properties().at(0);
-    QCOMPARE(property.name(), QString::fromAscii(versitOrganizationId));
+    QCOMPARE(property.name(), QString::fromAscii("ORG"));
     QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("Nokia;"));
 
     // ORG with department/unit
@@ -595,7 +595,7 @@ void UT_QVersitContactConverter::testEncodeOrganization()
     versitDocument = mConverter->convertContact(contact);
     QCOMPARE(versitDocument.properties().count(), 1);
     property = versitDocument.properties().at(0);
-    QCOMPARE(property.name(), QString::fromAscii(versitOrganizationId));
+    QCOMPARE(property.name(), QString::fromAscii("ORG"));
     QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii(";R&D"));
 
     // ORG with name and department/unit
@@ -604,7 +604,7 @@ void UT_QVersitContactConverter::testEncodeOrganization()
     versitDocument = mConverter->convertContact(contact);
     QCOMPARE(versitDocument.properties().count(), 1);
     property = versitDocument.properties().at(0);
-    QCOMPARE(property.name(), QString::fromAscii(versitOrganizationId));
+    QCOMPARE(property.name(), QString::fromAscii("ORG"));
     QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("Nokia;R&D"));
 
     // TITLE and ORG
@@ -613,10 +613,10 @@ void UT_QVersitContactConverter::testEncodeOrganization()
     versitDocument = mConverter->convertContact(contact);
     QCOMPARE(versitDocument.properties().count(), 2);
     property = versitDocument.properties().at(0);
-    QCOMPARE(property.name(), QString::fromAscii(versitTitleId));
+    QCOMPARE(property.name(), QString::fromAscii("TITLE"));
     QCOMPARE(QString::fromAscii(property.value()), title);
     property = versitDocument.properties().at(1);
-    QCOMPARE(property.name(), QString::fromAscii(versitOrganizationId));
+    QCOMPARE(property.name(), QString::fromAscii("ORG"));
     QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("Nokia;R&D"));
 
     // ORG LOGO Test1: LOGO as remote Resouce
@@ -636,11 +636,11 @@ void UT_QVersitContactConverter::testEncodeOrganization()
     QVERIFY(versitDocument.properties().at(0).parameters().contains(
             QString::fromAscii(versitType), QString::fromAscii("JPEG")));
     QVERIFY(versitDocument.properties().at(0).parameters().contains(
-            QString::fromAscii(versitValue), QString::fromAscii(versitUrlId)));
+            QString::fromAscii(versitValue), QString::fromAscii("URL")));
 
     //Check property Name
     QString propertyName = versitDocument.properties().at(0).name();
-    QCOMPARE(propertyName, QString::fromAscii(versitLogoId));
+    QCOMPARE(propertyName, QString::fromAscii("LOGO"));
 
     //Check property value
     QString value = QString::fromAscii(versitDocument.properties().at(0).value().data() );
@@ -677,7 +677,7 @@ void UT_QVersitContactConverter::testEncodeOrganization()
     versitDocument = mConverter->convertContact(contact);
     QCOMPARE(versitDocument.properties().count(), 1);
     property = versitDocument.properties().at(0);
-    QCOMPARE(property.name(), QString::fromAscii(versitAssistantId));
+    QCOMPARE(property.name(), QString::fromAscii("X-ASSISTANT"));
     QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("myAssistant"));
 
 }
@@ -738,7 +738,7 @@ void UT_QVersitContactConverter::testEncodeEmbeddedContent()
     QVERIFY(photoProperty.parameters().contains(
             QString::fromAscii(versitType),QString::fromAscii("JPEG")));
     QVERIFY(photoProperty.parameters().contains(
-            QString::fromAscii(versitValue),QString::fromAscii(versitUrlId)));
+            QString::fromAscii(versitValue),QString::fromAscii("URL")));
     QString expectedPropertyName =
         mConverterPrivate->mPropertyMappings.value(QContactAvatar::SubTypeImage);
     QCOMPARE(photoProperty.name(), expectedPropertyName);
@@ -807,7 +807,7 @@ void UT_QVersitContactConverter::testEncodeEmbeddedContent()
     QVERIFY(versitDocument.properties().at(0).parameters().contains(
             QString::fromAscii(versitType), QString::fromAscii("GGG")));
     QVERIFY(versitDocument.properties().at(0).parameters().contains(
-            QString::fromAscii(versitValue),QString::fromAscii(versitUrlId)));
+            QString::fromAscii(versitValue),QString::fromAscii("URL")));
 
     // Test 7: UnSupported Media Type, properties and parameters are not encoded
     const QString testUrl2 = QString::fromAscii("http://www.myhome.com/test.jpg");
@@ -822,39 +822,23 @@ void UT_QVersitContactConverter::testEncodeEmbeddedContent()
 void UT_QVersitContactConverter::testEncodeParameters()
 {
     QContact contact;
-
-    // Adding Phone Numer for the Contact.
-    QContactPhoneNumber p;
-    p.setNumber(QString::fromAscii("12345678"));
-
-    // Set Supported Types
-    QStringList mysubtypes;
-
-    mysubtypes.append(QContactPhoneNumber::SubTypeMobile);
-    mysubtypes.append(QContactPhoneNumber::SubTypeVideo);
-
-    // Not supported sub type in versit specs
-    // ensure its not encoded.
-    mysubtypes.append(QContactPhoneNumber::SubTypeDtmfMenu);
-
-    p.setSubTypes(mysubtypes);
-
-    contact.saveDetail(&p);
-
-    //Convert Contat Into Versit Document
-    QVersitDocument versitDocument = mConverter->convertContact(contact);
-
-    //Ensure property Exisit
-    QCOMPARE(versitDocument.properties().count(), 1);
-
-    //Ensure Only Valid params are encoded
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
-
-    //Ensure Valid parameters exisit
-    QVERIFY(versitDocument.properties().at(0).parameters().contains(
-            QString::fromAscii(versitType), QString::fromAscii(versitCellId)));
-    QVERIFY(versitDocument.properties().at(0).parameters().contains(
-            QString::fromAscii(versitType),QString::fromAscii(versitVideoId)));
+    QContactPhoneNumber phoneNumber;
+    phoneNumber.setNumber(QString::fromAscii("12345678"));
+    QStringList subtypes;
+    subtypes.append(QContactPhoneNumber::SubTypeMobile);
+    subtypes.append(QContactPhoneNumber::SubTypeVideo);
+    // Add a not supported subtype in vCard, to make sure its not encoded.
+    subtypes.append(QContactPhoneNumber::SubTypeDtmfMenu);
+    phoneNumber.setSubTypes(subtypes);
+    contact.saveDetail(&phoneNumber);
+    QVersitDocument document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    QVersitProperty property = document.properties().at(0);
+    QCOMPARE(property.parameters().count(), 2);
+    QVERIFY(property.parameters().contains(
+        QString::fromAscii(versitType), QString::fromAscii("CELL")));
+    QVERIFY(property.parameters().contains(
+        QString::fromAscii(versitType),QString::fromAscii("VIDEO")));
 }
 
 void UT_QVersitContactConverter::testIsValidRemoteUrl()
@@ -871,7 +855,6 @@ void UT_QVersitContactConverter::testIsValidRemoteUrl()
     versitDocument = mConverter->convertContact(contact);
     QCOMPARE(versitDocument.properties().count(), 1);
 
-
     // Test2: FTP URL
     url = QString::fromAscii("ftp://nonoh.com/test.jpg");
     contactAvatar.setAvatar(url);
@@ -879,7 +862,6 @@ void UT_QVersitContactConverter::testIsValidRemoteUrl()
     contact.saveDetail(&contactAvatar);
     versitDocument = mConverter->convertContact(contact);
     QCOMPARE(versitDocument.properties().count(), 1);
-
 
     // Test3: NEW Protocol URL
     url = QString::fromAscii("myProtocol://nonoh.com/test.jpg");
@@ -889,8 +871,7 @@ void UT_QVersitContactConverter::testIsValidRemoteUrl()
     versitDocument = mConverter->convertContact(contact);
     QCOMPARE(versitDocument.properties().count(), 1);
 
-
-    // Test4: URL without schem
+    // Test4: URL without scheme
     url = QString::fromAscii("www.nonoh.com/test.jpg");
     contactAvatar.setAvatar(url);
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
@@ -907,36 +888,19 @@ void UT_QVersitContactConverter::testIsValidRemoteUrl()
     QCOMPARE(versitDocument.properties().count(), 0);
 }
 
-
 void UT_QVersitContactConverter::testEncodeGender()
 {
     QContact contact;
     QContactGender gender;
     gender.setGender(QContactGender::GenderMale);
-
-    //API Permits setting up context but it should not be in Versit Doc
-    gender.setContexts(QContactGender::ContextHome);
-
+    gender.setContexts(QContactGender::ContextHome); // Should not be encoded
     contact.saveDetail(&gender);
-
-    //Convert Contat Into Versit Document
-    QVersitDocument versitDocument = mConverter->convertContact(contact);
-
-    //Ensure parameters does not exisit
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 0);
-
-    //Ensure property Exisit
-    QCOMPARE(versitDocument.properties().count(), 1);
-
-    //Ensure property parameer exisit and matches.
-    QString propertyName = versitDocument.properties().at(0).name();
-    QString expectedPropertyName =
-        mConverterPrivate->mPropertyMappings.value(QContactGender::DefinitionName);
-    QCOMPARE(propertyName, expectedPropertyName);
-
-    //Check property value
-    QString value = QString::fromAscii(versitDocument.properties().at(0).value().data());
-    QCOMPARE(value, QString(QLatin1String(QContactGender::GenderMale)));
+    QVersitDocument document = mConverter->convertContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    QVersitProperty property = document.properties().at(0);
+    QCOMPARE(property.parameters().count(), 0);
+    QCOMPARE(property.name(), QString::fromAscii("X-GENDER"));
+    QCOMPARE(QString::fromAscii(property.value()), gender.gender());
 }
 
 void UT_QVersitContactConverter::testEncodeNickName()
@@ -950,7 +914,7 @@ void UT_QVersitContactConverter::testEncodeNickName()
     mConverterPrivate->encodeFieldInfo(document,nicknameDetail);
     QCOMPARE(document.properties().count(), 1);
     QVersitProperty property = document.properties().at(0);
-    QCOMPARE(property.name(), QString::fromAscii(versitNicknameXId));
+    QCOMPARE(property.name(), QString::fromAscii("X-NICKNAME"));
     QCOMPARE(QString::fromAscii(property.value()), firstNickname);
 
     // Nickname already in the document, append to the existing property
@@ -959,7 +923,7 @@ void UT_QVersitContactConverter::testEncodeNickName()
     mConverterPrivate->encodeFieldInfo(document,nicknameDetail);
     QCOMPARE(document.properties().count(), 1);
     property = document.properties().at(0);
-    QCOMPARE(property.name(), QString::fromAscii(versitNicknameXId));
+    QCOMPARE(property.name(), QString::fromAscii("X-NICKNAME"));
     QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("Homie,Jay"));
 }
 
@@ -1005,7 +969,7 @@ void UT_QVersitContactConverter::testEncodeOnlineAccount()
     QVERIFY(property.parameters().contains(
         QString::fromAscii(versitType),QString::fromAscii("SWIS")));
     // Check name
-    QCOMPARE(property.name(), QString::fromAscii(versitSipId));
+    QCOMPARE(property.name(), QString::fromAscii("X-SIP"));
     // Check value
     QCOMPARE(QString::fromAscii(property.value()), accountUri);
 
@@ -1023,7 +987,7 @@ void UT_QVersitContactConverter::testEncodeOnlineAccount()
     QVERIFY(property.parameters().contains(
         QString::fromAscii(versitType),QString::fromAscii("VOIP")));
     // Check name
-    QCOMPARE(property.name(), QString::fromAscii(versitSipId));
+    QCOMPARE(property.name(), QString::fromAscii("X-SIP"));
     // Check value
     QCOMPARE(QString::fromAscii(property.value()), accountUri);
 
@@ -1039,7 +1003,7 @@ void UT_QVersitContactConverter::testEncodeOnlineAccount()
     QVERIFY(property.parameters().contains(
         QString::fromAscii(versitType),QString::fromAscii("HOME")));
     // Check name
-    QCOMPARE(property.name(), QString::fromAscii(versitSipId));
+    QCOMPARE(property.name(), QString::fromAscii("X-SIP"));
     // Check value
     QCOMPARE(QString::fromAscii(property.value()), accountUri);
 
@@ -1074,7 +1038,7 @@ void UT_QVersitContactConverter::testEncodeFamily()
     //Ensure no parameters exisit,
     QCOMPARE(0, versitDocument.properties().at(0).parameters().count());
     QString propertyName = versitDocument.properties().at(0).name();
-    QCOMPARE(propertyName, QString::fromAscii(versitSpouseId));
+    QCOMPARE(propertyName, QString::fromAscii("X-SPOUSE"));
 
     QString value = QString::fromAscii(versitDocument.properties().at(0).value().data() );
     QCOMPARE(value, spouce);
@@ -1095,13 +1059,13 @@ void UT_QVersitContactConverter::testEncodeFamily()
 
     //Ensure property parameer exisit and matches.
     QString propertyName1 = versitDocument.properties().at(0).name();
-    QCOMPARE(propertyName1, QString::fromAscii(versitSpouseId));
+    QCOMPARE(propertyName1, QString::fromAscii("X-SPOUSE"));
 
     QString value1 = QString::fromAscii(versitDocument.properties().at(0).value().data() );
     QCOMPARE(value1, spouce);
 
     QString propertyName2 = versitDocument.properties().at(1).name();
-    QCOMPARE(propertyName2, QString::fromAscii(versitChildrenId));
+    QCOMPARE(propertyName2, QString::fromAscii("X-CHILDREN"));
 
     QString value2 = QString::fromAscii(versitDocument.properties().at(1).value().data() );
     QString expected = QString::fromAscii("A,B");

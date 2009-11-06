@@ -344,13 +344,13 @@ void QVersitContactConverterPrivate::encodeOrganization(
     QContactOrganization organization = static_cast<QContactOrganization>(detail);
     if (organization.title().length() > 0) {
         QVersitProperty property;
-        property.setName(QString::fromAscii(versitTitleId));
+        property.setName(QString::fromAscii("TITLE"));
         setEscapedValue(property,organization.title());
         document.addProperty(property);
     }
     if (organization.name().length() > 0 || organization.department().length() > 0) {
         QVersitProperty property;
-        property.setName(QString::fromAscii(versitOrganizationId));
+        property.setName(QString::fromAscii("ORG"));
         QByteArray value =
             escape(organization.name().toAscii()) + ";" +
             escape(organization.department().toAscii());
@@ -360,13 +360,13 @@ void QVersitContactConverterPrivate::encodeOrganization(
     if (organization.logo().length() > 0) {
         QVersitProperty property;
         if (encodeEmbeddedContent(organization.logo(), property, true)) {
-            property.setName(QString::fromAscii(versitLogoId));
+            property.setName(QString::fromAscii("LOGO"));
             document.addProperty(property);
         }
     }
     if (organization.assistantName().length() > 0) {
         QVersitProperty property;
-        property.setName(QString::fromAscii(versitAssistantId));
+        property.setName("X-ASSISTANT");
         setEscapedValue(property,organization.assistantName());
         document.addProperty(property);
     }
@@ -384,11 +384,12 @@ bool QVersitContactConverterPrivate::encodeAvatar(
     QContactAvatar contactAvatar = static_cast<QContactAvatar>(detail);
     QString resourcePath = contactAvatar.avatar();
 
-    if (mPropertyMappings.contains(contactAvatar.subType())) {
+    QString propertyName = mPropertyMappings.value(contactAvatar.subType());
+    if (propertyName.length() > 0) {
         scaling = (contactAvatar.subType() == QContactAvatar::SubTypeImage);
         encoded = encodeEmbeddedContent(resourcePath, property, scaling);
         if (encoded)
-            property.setName(mPropertyMappings.value(contactAvatar.subType()));
+            property.setName(propertyName);
     }
     return encoded;
 }
@@ -413,11 +414,11 @@ void QVersitContactConverterPrivate::encodeNickname(
 {
     QContactNickname nicknameDetail = static_cast<QContactNickname>(detail);
     QVersitProperty property;
-    property.setName(QString::fromAscii(versitNicknameXId));
+    property.setName(QString::fromAscii("X-NICKNAME"));
     bool found = false;
     for (int i=0; i < document.properties().count() && !found; i++) {
         QVersitProperty currentProperty = document.properties()[i];
-        if (currentProperty.name() == QString::fromAscii(versitNicknameXId)) {
+        if (currentProperty.name() == QString::fromAscii("X-NICKNAME")) {
             property = currentProperty;
             found = true;
         }
@@ -429,7 +430,7 @@ void QVersitContactConverterPrivate::encodeNickname(
     value.append(nickname);
     property.setValue(value);
     // Replace the current property
-    document.removeProperties(QString::fromAscii(versitNicknameXId));
+    document.removeProperties(QString::fromAscii("X-NICKNAME"));
     document.addProperty(property);
 }
 
@@ -460,7 +461,7 @@ bool QVersitContactConverterPrivate::encodeOnlineAccount(
         subTypes.contains(QContactOnlineAccount::SubTypeShareVideo)) {
         encoded = true;
         encodeParameters(property, onlineAccount.contexts(), subTypes);
-        property.setName(QString::fromAscii(versitSipId));
+        property.setName(QString::fromAscii("X-SIP"));
         setEscapedValue(property,onlineAccount.accountUri());
     }
     return encoded;
@@ -477,14 +478,14 @@ bool QVersitContactConverterPrivate::encodeFamily(
 
     if (family.spouse().size()) {
         QVersitProperty property;
-        property.setName(QString::fromAscii(versitSpouseId));
+        property.setName(QString::fromAscii("X-SPOUSE"));
         setEscapedValue(property,family.spouse());
         document.addProperty(property);
     }
 
     if (family.children().size()) {
         QVersitProperty property;
-        property.setName(QString::fromAscii(versitChildrenId));
+        property.setName(QString::fromAscii("X-CHILDREN"));
         QString children = family.children().join(QString::fromAscii(","));
         setEscapedValue(property,children);
         document.addProperty(property);
@@ -501,7 +502,7 @@ bool QVersitContactConverterPrivate::isValidRemoteUrl(
     QUrl remoteResource(resourceIdentifier);
     if ((!remoteResource.scheme().isEmpty() &&
          !remoteResource.host().isEmpty()) ||
-         resourceIdentifier.contains(QString::fromAscii(versitConstWWW),Qt::CaseInsensitive))
+         resourceIdentifier.contains(QString::fromAscii("www."),Qt::CaseInsensitive))
         return true;
     return false;
 }
@@ -562,7 +563,7 @@ bool QVersitContactConverterPrivate::encodeEmbeddedContent(
             value = resourcePath.toAscii();
             property.addParameter(
                 QString::fromAscii(versitValue),
-                QString::fromAscii(versitUrlId));
+                QString::fromAscii("URL"));
             property.addParameter(QString::fromAscii(versitType),resourceFormat);
         } else {
             // The file has been removed. Don't encode the path to a local file.
