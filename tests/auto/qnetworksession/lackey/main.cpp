@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 #include <QCoreApplication>
-#include <QFile>
-
+#include <QStringList>
+#include <QLocalSocket>
 #include <qnetworkconfigmanager.h>
 #include <qnetworkconfiguration.h>
 #include <qnetworksession.h>
@@ -63,9 +63,13 @@ int main(int argc, char** argv)
     if (discovered.isEmpty())
         return NO_DISCOVERED_CONFIGURATIONS_ERROR;
 
-    QFile standardOutput;
-    standardOutput.open(1, QIODevice::WriteOnly);
-    QTextStream output(&standardOutput);
+    // Cannot read/write to processes on WinCE or Symbian.
+    // Easiest alternative is to use sockets for IPC.
+
+    QLocalSocket oopSocket;
+
+    oopSocket.connectToServer("tst_qnetworksession");
+    oopSocket.waitForConnected(-1);
 
     qDebug() << "Lackey started";
 
@@ -94,8 +98,10 @@ int main(int argc, char** argv)
         qDebug() << "Creating session for" << config.name() << config.identifier();
 
         session = new QNetworkSession(config);
-        output << "Starting session for " << config.identifier() << '\n';
-        output.flush();
+
+        QString output = QString("Starting session for %1\n").arg(config.identifier());
+        oopSocket.write(output.toAscii());
+        oopSocket.waitForBytesWritten();
 
         session->open();
         session->waitForOpened();
@@ -105,21 +111,26 @@ int main(int argc, char** argv)
 
     if (!session) {
         qDebug() << "Could not start session";
+
+        oopSocket.disconnectFromServer();
+        oopSocket.waitForDisconnected(-1);
+
         return SESSION_OPEN_ERROR;
     }
 
-    output << "Started session " << session->configuration().identifier() << '\n';
-    output.flush();
+    QString output = QString("Started session for %1\n").arg(session->configuration().identifier());
+    oopSocket.write(output.toAscii());
+    oopSocket.waitForBytesWritten();
 
-    QFile input;
-    input.open(0, QIODevice::ReadOnly);
-
-    // Wait for command from test code.
-    input.readLine();
+    oopSocket.waitForReadyRead();
+    oopSocket.readLine();
 
     session->stop();
 
     delete session;
+
+    oopSocket.disconnectFromServer();
+    oopSocket.waitForDisconnected(-1);
 
     return 0;
 }

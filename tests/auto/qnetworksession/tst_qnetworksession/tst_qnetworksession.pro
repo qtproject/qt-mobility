@@ -10,6 +10,12 @@ INCLUDEPATH += ../../../../bearer
 include(../../../../common.pri)
 LIBS += -lQtBearer
 
+wince* {
+    LACKEY.sources = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/qnetworksessionlackey.exe
+    LACKEY.path = .
+    DEPLOYMENT += LACKEY
+}
+
 symbian {
     TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
 }
