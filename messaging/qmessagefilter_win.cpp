@@ -418,9 +418,6 @@ bool QMessageFilterPrivate::matchesMessage(const QMessageFilter &filter, const Q
     bool negate(false);
     bool result(true);
 
-    if (!QMessageFilterPrivate::matchesMessageRequired(filter))
-        return true;
-
     if (!filter.d_ptr->_valid) {
         qWarning("matchesMessage: Invalid filter application attempted.");
         return false;
@@ -631,6 +628,9 @@ bool QMessageFilterPrivate::matchesMessage(const QMessageFilter &filter, const Q
             }
             result = ids.contains(messageId);
             if (filter.d_ptr->_comparatorType != QMessageFilterPrivate::Inclusion) {
+                qWarning("matchesMessage: Unhandled restriction criteria, id comparator type");
+            }
+            if (static_cast<QMessageDataComparator::InclusionComparator>(filter.d_ptr->_comparatorValue) == QMessageDataComparator::Excludes) {
                 result = !result;
             }
             break;
@@ -1758,9 +1758,9 @@ QMessageFilter QMessageFilterPrivate::bySender(const QString &value, QMessageDat
         QMessageFilter result1(QMessageFilterPrivate::from(QMessageFilterPrivate::SenderName, QVariant(name), QMessageDataComparator::Equal));
         // Seems to trigger some kind of MAPI restriction bug, results are being missed, so comment out for now
         //result1 &= QMessageFilterPrivate::from(QMessageFilterPrivate::SenderAddress, QVariant(""), QMessageDataComparator::Equal);
-        QMessageFilter result2(QMessageFilterPrivate::from(QMessageFilterPrivate::SenderName, QVariant(""), QMessageDataComparator::Equal));
+        QMessageFilter result2(QMessageFilterPrivate::from(QMessageFilterPrivate::SenderAddress, QVariant(address), QMessageDataComparator::Equal));
         // Seems to trigger some kind of MAPI restriction bug, results are being missed, so comment out for now
-        //result2 &= QMessageFilterPrivate::from(QMessageFilterPrivate::SenderAddress, QVariant(address), QMessageDataComparator::Equal);
+        //result2 &= QMessageFilterPrivate::from(QMessageFilterPrivate::SenderName, QVariant(""), QMessageDataComparator::Equal);
         if (cmp == QMessageDataComparator::Equal) {
             return result1 | result2;
         } else {
