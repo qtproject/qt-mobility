@@ -42,12 +42,12 @@
 #define CNTSYMBIANFILTERSQLHELPER_H
 
 // System includes
-
+#include <qtcontactsglobal.h>
 // User includes
 #include "qcontactdetailfilter.h"
 #include "qcontactphonenumber.h"
 #include "qcontactmanager.h"
-#include "cntsrvconnection.h"
+#include "cntsymbiansrvconnection.h"
 
 // Forward declarations
 
@@ -57,6 +57,13 @@
 
 class CntSymbianFilterSqlHelper
 {
+public: 
+    Q_DECLARE_LATIN1_LITERAL(SingleQuote,"'")  ;
+    Q_DECLARE_LATIN1_LITERAL(PercentSign,"%") ;
+    Q_DECLARE_LATIN1_LITERAL(Space," ") ;
+    Q_DECLARE_LATIN1_LITERAL(EqualTo,"=") ;
+    Q_DECLARE_LATIN1_LITERAL(SqlLike,"LIKE") ;
+    Q_DECLARE_LATIN1_LITERAL(SqlNotNull,"NOT NULL") ;
 public:
     CntSymbianFilterSqlHelper();
     virtual ~CntSymbianFilterSqlHelper();
@@ -82,8 +89,11 @@ private:
                                        QContactManager::Error& error);
     void convertFieldIdToSqlDbColumnName(const quint32 fieldId,
                                          QString& sqlDbTableColumnName );
+    void updateFieldForDeatilFilterMatchFlag( const QContactDetailFilter& filter,
+                                              QString& fieldToUpdate ,
+                                              QContactManager::Error& error) const;
 private:
-    CntSrvConnection* m_srvConnection;
+    CntSymbianSrvConnection* m_srvConnection;
 };
 
 #endif//CNTSYMBIANFILTERSQLHELPER_H

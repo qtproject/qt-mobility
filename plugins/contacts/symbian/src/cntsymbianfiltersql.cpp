@@ -41,7 +41,7 @@
 
 #ifdef __SYMBIAN_CNTMODEL_USE_SQLITE__
 
-#include "qcontactsymbianfiltersql.h"
+#include "cntsymbianfiltersql.h"
 #include "qcontactdetailfilter.h"
 #include "qcontactphonenumber.h"
 
@@ -88,7 +88,7 @@ QList<QContactLocalId> QContactSymbianFilter::contacts(
     return matches;
 }
 
-QAbstractContactFilter::FilterSupport QContactSymbianFilter::filterSupported(const QContactFilter& filter)
+CntAbstractContactFilter::FilterSupport QContactSymbianFilter::filterSupported(const QContactFilter& filter)
 {
     // TODO: modify depending on the supported filters
 

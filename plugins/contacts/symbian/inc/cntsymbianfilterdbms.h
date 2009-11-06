@@ -39,32 +39,53 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTSYMBIANFILTER_H
-#define QCONTACTSYMBIANFILTER_H
+#ifndef CNTSYMBIANFILTERDBMS_H
+#define CNTSYMBIANFILTERDBMS_H
 
-#ifdef __SYMBIAN_CNTMODEL_USE_SQLITE__
+#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
 
-#include "qabstractcontactfilter.h"
+#include "cntabstractcontactfilter.h"
+#include <e32cmn.h>
 
 class CContactDatabase;
+class CContactIdArray;
+class QContactDetailFilter;
+class CntAbstractContactSorter;
+class CntTransformContact;
+class CContactItemFieldDef;
 
-class QContactSymbianFilter : public QAbstractContactFilter
+class CntSymbianFilterDbms : public CntAbstractContactFilter
 {
 public:
-    QContactSymbianFilter(CContactDatabase& contactDatabase);
-    ~QContactSymbianFilter();
+    CntSymbianFilterDbms(CContactDatabase& contactDatabase);
+    ~CntSymbianFilterDbms();
 
-    /* from QAbstractContactFilter */
+    /* from CntAbstractContactFilter */
     QList<QContactLocalId> contacts(
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
             QContactManager::Error& error);
-    QAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter);
+    CntAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter);
 
 private:
-    CContactDatabase& m_contactDatabase;
+    void transformDetailFilterL(const QContactDetailFilter& detailFilter, CContactItemFieldDef*& fieldDef);
+    TInt findContacts(
+            CContactIdArray*& idArray,
+            const CContactItemFieldDef& fieldDef,
+            const TDesC& text) const;
+    CContactIdArray* findContactsL(
+            const CContactItemFieldDef& fieldDef,
+            const TDesC& text) const;
+    TInt matchContacts(
+            CContactIdArray*& idArray,
+            const TDesC& phoneNumber,
+            const TInt matchLength);
+    void getMatchLengthL(TInt& matchLength);
+    CContactDatabase &m_contactDatabase;
+    CntAbstractContactSorter *m_contactSorter;
+    CntTransformContact *m_transformContact;
 };
 
-#endif /* __SYMBIAN_CNTMODEL_USE_SQLITE__ */
+#endif /*__SYMBIAN_CNTMODEL_USE_SQLITE__*/
 
-#endif /* QCONTACTSYMBIANFILTER_H */
+#endif /* CntSymbianFilterDbmsDBMS_H */

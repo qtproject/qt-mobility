@@ -39,41 +39,40 @@
 **
 ****************************************************************************/
 
-#ifndef QABSTRACTCONTACTFILTER_H
-#define QABSTRACTCONTACTFILTER_H
+#ifndef CNTSYMBIANSORTERDBMS_H
+#define CNTSYMBIANSORTERDBMS_H
 
-#include <QList>
-#include "qtcontactsglobal.h"
-#include "qcontactmanager.h"
-#include "qcontactsortorder.h"
-#include "qcontactfilter.h"
+#include "cntabstractcontactsorter.h"
+#include <e32cmn.h>
 
-class QAbstractContactFilter
+class CContactDatabase;
+class CContactIdArray;
+class CntTransformContact;
+
+class CntSymbianSorterDbms : public CntAbstractContactSorter
 {
 public:
-    enum FilterSupport {
-        /* The filter not supported */
-        NotSupported = 0,
-        /* The filter is supported */
-        Supported,
-        /* The filter is not directly supported, but for performance reasons
-         * the contact filter implementation pretends supporting the filter
-         * when it actually maps the filter to another, less strict filter.
-         * For example if the caller uses match flag Qt::MatchExactly, the
-         * filter actually gives the result as Qt::MatchContains (because of
-         * the limitations in the underlying database).
-         * The result then needs to be filtered by the caller (for example by
-         * using QContactManagerEngine::testFilter). */
-        SupportedPreFilterOnly
-    };
+    CntSymbianSorterDbms(CContactDatabase& contactDatabase, CntTransformContact& m_transformContact);
+    ~CntSymbianSorterDbms();
 
-public:
-    virtual QList<QContactLocalId> contacts(
-            const QContactFilter& filter,
+    /* from CntAbstractContactFilter */
+    QList<QContactLocalId> contacts(
             const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error) = 0;
+            QContactManager::Error& error);
+    QList<QContactLocalId> sort(
+        QList<QContactLocalId> contactIds,
+        const QList<QContactSortOrder>& sortOrders,
+        QContactManager::Error& error);
+    bool sortOrderSupported(const QList<QContactSortOrder>& sortOrders);
 
-    virtual FilterSupport filterSupported(const QContactFilter& filter) = 0;
+private:
+    QList<QContactLocalId> contactsL(const QList<QContactSortOrder>& sortOrders) const;
+    QList<QContactLocalId> sortL(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders) const;
+    CContactIdArray* sortL(const CContactIdArray* contactIds, const QList<QContactSortOrder>& sortOrders) const;
+
+private:
+    CContactDatabase& m_contactDatabase;
+    CntTransformContact& m_transformContact;
 };
 
-#endif /* QABSTRACTCONTACTFILTER_H */
+#endif /* QCONTACTSYMBIANSORTERDBMS_H */

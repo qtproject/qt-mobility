@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtCore module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,17 +38,42 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QCONTACTSYMBIANTRANSFORMERROR_H
-#define QCONTACTSYMBIANTRANSFORMERROR_H
 
-#include <e32err.h>
+#ifndef QABSTRACTCONTACTFILTER_H
+#define QABSTRACTCONTACTFILTER_H
+
+#include <QList>
+#include "qtcontactsglobal.h"
 #include "qcontactmanager.h"
+#include "qcontactsortorder.h"
+#include "qcontactfilter.h"
 
-// Should not overlap any system error code in the context of converting
-// contact details
-const TInt KErrInvalidContactDetail(-32768);
+class CntAbstractContactFilter
+{
+public:
+    enum FilterSupport {
+        /* The filter not supported */
+        NotSupported = 0,
+        /* The filter is supported */
+        Supported,
+        /* The filter is not directly supported, but for performance reasons
+         * the contact filter implementation pretends supporting the filter
+         * when it actually maps the filter to another, less strict filter.
+         * For example if the caller uses match flag Qt::MatchExactly, the
+         * filter actually gives the result as Qt::MatchContains (because of
+         * the limitations in the underlying database).
+         * The result then needs to be filtered by the caller (for example by
+         * using QContactManagerEngine::testFilter). */
+        SupportedPreFilterOnly
+    };
 
-void qContactSymbianTransformError(TInt symbianError, QContactManager::Error& qtError);
+public:
+    virtual QList<QContactLocalId> contacts(
+            const QContactFilter& filter,
+            const QList<QContactSortOrder>& sortOrders,
+            QContactManager::Error& error) = 0;
 
-#endif
+    virtual FilterSupport filterSupported(const QContactFilter& filter) = 0;
+};
 
+#endif /* QABSTRACTCONTACTFILTER_H */

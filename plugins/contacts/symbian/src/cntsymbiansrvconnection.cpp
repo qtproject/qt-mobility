@@ -43,8 +43,8 @@
 #include <s32mem.h>
 
 //user includes
-#include "cntsrvconnection.h"
-#include "qcontactsymbiantransformerror.h"
+#include "cntsymbiansrvconnection.h"
+#include "cntsymbiantransformerror.h"
 
 // Constants
 // To be removed. Should be defined in a header file
@@ -69,7 +69,7 @@ const TInt KDefaultPackagerSize = 3514; //Observed Techview Golden template size
 /*!
  * The constructor
  */
-CntSrvConnection::CntSrvConnection() :
+CntSymbianSrvConnection::CntSymbianSrvConnection() :
     m_buffer(0),
     m_bufPtr(0,0,0),
     m_isInitialized(false)
@@ -79,7 +79,7 @@ CntSrvConnection::CntSrvConnection() :
 /*!
  * Destructor 
  */
-CntSrvConnection::~CntSrvConnection()
+CntSymbianSrvConnection::~CntSymbianSrvConnection()
 {
     delete m_buffer;
     RHandleBase::Close();
@@ -92,13 +92,13 @@ CntSrvConnection::~CntSrvConnection()
  * \a error On return, contains the possible error.
  * \return the list of matched contact ids
  */
-QList<QContactLocalId> CntSrvConnection::searchContacts(const QString& sqlQuery, 
+QList<QContactLocalId> CntSymbianSrvConnection::searchContacts(const QString& sqlQuery, 
                                                        QContactManager::Error& error)
 {
     QList<QContactLocalId> list;
     TPtrC queryPtr(reinterpret_cast<const TUint16*>(sqlQuery.utf16()));
     TRAPD(err, list = searchContactsL(queryPtr));
-    qContactSymbianTransformError(err, error);
+    CntSymbianTransformError::transformError(err, error);
     return list;
 }
 
@@ -108,7 +108,7 @@ QList<QContactLocalId> CntSrvConnection::searchContacts(const QString& sqlQuery,
  * \a aSqlQuery An SQL query
  * \return the list of matched contact ids
  */
-QList<QContactLocalId> CntSrvConnection::searchContactsL(const TDesC& aSqlQuery)
+QList<QContactLocalId> CntSymbianSrvConnection::searchContactsL(const TDesC& aSqlQuery)
 {
     // Initialize connection if it is not initialized yet.
     if (!m_isInitialized) {
@@ -137,7 +137,7 @@ QList<QContactLocalId> CntSrvConnection::searchContactsL(const TDesC& aSqlQuery)
 /*!
  * Connect to / create a cntsrv server session
  */
-void CntSrvConnection::ConnectSrvL()
+void CntSymbianSrvConnection::ConnectSrvL()
 {
     // Assume the server is already running and attempt to create a session
     // with a maximum of KAsyncMessageSlots message slots.
@@ -177,7 +177,7 @@ void CntSrvConnection::ConnectSrvL()
 /*!
  * Open database
  */
-void CntSrvConnection::OpenDatabaseL()
+void CntSymbianSrvConnection::OpenDatabaseL()
 {
     TIpcArgs args;
     args.Set(0, &KNullDesC);
@@ -187,7 +187,7 @@ void CntSrvConnection::OpenDatabaseL()
 /*!
  * Version of cntsrv
  */
-TVersion CntSrvConnection::Version() const
+TVersion CntSymbianSrvConnection::Version() const
 {
     return(TVersion(KCntServerMajorVersionNumber,
                     KCntServerMinorVersionNumber,
@@ -200,7 +200,7 @@ TVersion CntSrvConnection::Version() const
  * \a size size of the receiving buffer
  * \return a reference to the beginning of the buffer
  */
-TDes8& CntSrvConnection::GetReceivingBufferL(int size)
+TDes8& CntSymbianSrvConnection::GetReceivingBufferL(int size)
 {
     if(size > m_buffer->Size()) {
         // Find next divisable by granularity size value.
@@ -223,7 +223,7 @@ TDes8& CntSrvConnection::GetReceivingBufferL(int size)
  * 
  * \return list of matched contact ids
  */
-QList<QContactLocalId> CntSrvConnection::UnpackCntIdArrayL()
+QList<QContactLocalId> CntSymbianSrvConnection::UnpackCntIdArrayL()
 {
     RBufReadStream readStream;
     QList<QContactLocalId> list;

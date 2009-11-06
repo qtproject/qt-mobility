@@ -101,4 +101,8 @@ private:
     void validateCntTransformFamilyL(TPtrC16 spouseField, QString spouseDetail,
                                  TPtrC16 childField, QString childDetail);
     void validateContextsL(CntTransformContactData* transformContactData) const; 
+    void TestCntTransformContactData::validateGetIdForField(
+                        const CntTransformContactData& transformContactData,
+                        const QString& filedname,
+                        const quint32  idValue) const;
 };

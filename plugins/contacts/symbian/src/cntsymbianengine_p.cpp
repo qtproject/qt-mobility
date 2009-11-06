@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qcontactsymbianengine_p.h"
+#include "cntsymbianengine_p.h"
 #include "qcontact_p.h"
 
 #include <cntfldst.h>
@@ -48,11 +48,11 @@
 #include <qtcontacts.h>
 #include <QSet>
 #include "qcontactchangeset.h"
-#include "qcontactsymbianfilterdbms.h"
-#include "qcontactsymbianfiltersql.h"
-#include "qcontactsymbiansorterdbms.h"
+#include "cntsymbianfilterdbms.h"
+#include "cntsymbianfiltersql.h"
+#include "cntsymbiansorterdbms.h"
 #include "cntrelationship.h"
-#include "qcontactsymbiantransformerror.h"
+#include "cntsymbiantransformerror.h"
 
 #include <QDebug>
 
@@ -71,7 +71,7 @@ typedef QList<QContactLocalId> QContactLocalIdList;
 // the called function or the return value of the function is placed to the
 // variable.
 
-QContactSymbianEngineData::QContactSymbianEngineData(QContactManager::Error& error) :
+CntSymbianEnginePrivate::CntSymbianEnginePrivate(const QMap<QString, QString>& parameters, QContactManager::Error& error) :
     m_contactDatabase(0),
     m_transformContact(0)
 {
@@ -86,7 +86,7 @@ QContactSymbianEngineData::QContactSymbianEngineData(QContactManager::Error& err
     //If database didn't open successfully return error
     if(err != KErrNone)
     {
-        qContactSymbianTransformError(err, error);
+        CntSymbianTransformError::transformError(err, error);
     }
 
     //Database opened successfully
@@ -101,15 +101,16 @@ QContactSymbianEngineData::QContactSymbianEngineData(QContactManager::Error& err
         TRAP(err, m_contactDatabase->AddObserverL(*this));
 #endif
 
+        m_managerUri = QContactManager::buildUri(CNT_SYMBIAN_MANAGER_NAME, parameters);
     	m_transformContact = new CntTransformContact;
-        m_contactFilter    = new QContactSymbianFilter(*m_contactDatabase);
-        m_contactSorter    = new QContactSymbianSorter(*m_contactDatabase, *m_transformContact);
+        m_contactFilter    = new CntSymbianFilterDbms(*m_contactDatabase);
+        m_contactSorter    = new CntSymbianSorterDbms(*m_contactDatabase, *m_transformContact);
         m_relationship     = new CntRelationship(m_contactDatabase);
-        qContactSymbianTransformError(err, error);
+        CntSymbianTransformError::transformError(err, error);
     }
 }
 
-QContactSymbianEngineData::~QContactSymbianEngineData()
+CntSymbianEnginePrivate::~CntSymbianEnginePrivate()
 {
 #ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
 	delete m_contactChangeNotifier;
@@ -127,7 +128,7 @@ QContactSymbianEngineData::~QContactSymbianEngineData()
 }
 
 /* Access */
-QList<QContactLocalId> QContactSymbianEngineData::contacts(
+QList<QContactLocalId> CntSymbianEnginePrivate::contacts(
         const QContactFilter& filter,
         const QList<QContactSortOrder>& sortOrders,
         QContactManager::Error& error) const
@@ -135,15 +136,23 @@ QList<QContactLocalId> QContactSymbianEngineData::contacts(
     return m_contactFilter->contacts(filter, sortOrders, error);
 }
 
-QAbstractContactFilter::FilterSupport QContactSymbianEngineData::filterSupported(
+CntAbstractContactFilter::FilterSupport CntSymbianEnginePrivate::filterSupported(
         const QContactFilter& filter) const
 {
     return m_contactFilter->filterSupported(filter);
 }
 
-bool QContactSymbianEngineData::sortOrderSupported(const QList<QContactSortOrder>& sortOrders) const
+bool CntSymbianEnginePrivate::sortOrderSupported(const QList<QContactSortOrder>& sortOrders) const
 {
     return m_contactSorter->sortOrderSupported(sortOrders);
+}
+
+QList<QContactLocalId> CntSymbianEnginePrivate::sort(
+    QList<QContactLocalId> contactIds,
+    const QList<QContactSortOrder>& sortOrders,
+    QContactManager::Error& error)
+{
+    return m_contactSorter->sort(contactIds, sortOrders, error);
 }
 
 /*!
@@ -157,12 +166,12 @@ bool QContactSymbianEngineData::sortOrderSupported(const QList<QContactSortOrder
  * \return A QContact for the requested QUniquId value or 0 if the read
  *  operation was unsuccessful (e.g. contact not found).
  */
-QContact QContactSymbianEngineData::contact(const QContactLocalId& contactId, QContactManager::Error& qtError) const
+QContact CntSymbianEnginePrivate::contact(const QContactLocalId& contactId, QContactManager::Error& qtError) const
 {
     // See QT_TRYCATCH_LEAVING note at the begginning of this file
     QContact* contact = new QContact();
     TRAPD(err, QT_TRYCATCH_LEAVING(*contact = contactL(contactId)));
-    qContactSymbianTransformError(err, qtError);
+    CntSymbianTransformError::transformError(err, qtError);
     return *QScopedPointer<QContact>(contact);
 }
 
@@ -176,7 +185,7 @@ QContact QContactSymbianEngineData::contact(const QContactLocalId& contactId, QC
  *
  * \return Number of contacts in database or an error code.
  */
-int QContactSymbianEngineData::count() const
+int CntSymbianEnginePrivate::count() const
 {
 	// Call leaving implementation and trap the error code
 	int count(0);
@@ -205,7 +214,7 @@ int QContactSymbianEngineData::count() const
  *  or an empty list if there was a problem or the database is
  *  empty.
  */
-QList<QContactLocalId> QContactSymbianEngineData::contacts( const QList<QContactSortOrder>& sortOrders, QContactManager::Error& qtError) const
+QList<QContactLocalId> CntSymbianEnginePrivate::contacts( const QList<QContactSortOrder>& sortOrders, QContactManager::Error& qtError) const
 {
     return m_contactSorter->contacts( sortOrders, qtError );
 }
@@ -218,19 +227,19 @@ QList<QContactLocalId> QContactSymbianEngineData::contacts( const QList<QContact
  * \param qtError Qt error code.
  * \return List of group IDs.
  */
-QList<QContactLocalId> QContactSymbianEngineData::groups(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& qtError) const
+QList<QContactLocalId> CntSymbianEnginePrivate::groups(QContactManager::Error& qtError) const
 {
     // See QT_TRYCATCH_LEAVING note at the begginning of this file
     QContactLocalIdList *list = new QContactLocalIdList();
     TRAPD(err, QT_TRYCATCH_LEAVING(*list = groupsL()));
-    qContactSymbianTransformError(err, qtError);
+    CntSymbianTransformError::transformError(err, qtError);
     return *QScopedPointer<QContactLocalIdList>(list);
 }
 
 /*!
  * Private leaving implementation for groups
  */
-QList<QContactLocalId> QContactSymbianEngineData::groupsL() const
+QList<QContactLocalId> CntSymbianEnginePrivate::groupsL() const
 {
     QList<QContactLocalId> list;
     CContactIdArray* cIdList = m_contactDatabase->GetGroupIdListL();
@@ -256,7 +265,7 @@ QList<QContactLocalId> QContactSymbianEngineData::groupsL() const
  * \param qtError Qt error code.
  * \return Error status
  */
-bool QContactSymbianEngineData::addContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError)
+bool CntSymbianEnginePrivate::addContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError)
 {
 	// Attempt to persist contact, trapping errors
     int err(0);
@@ -267,7 +276,7 @@ bool QContactSymbianEngineData::addContact(QContact& contact, QContactChangeSet&
         changeSet.addedContacts().insert(id);
         m_contactsAddedEmitted.append(id);
     }
-    qContactSymbianTransformError(err, qtError);
+    CntSymbianTransformError::transformError(err, qtError);
 
 	return (err==KErrNone);
 }
@@ -279,7 +288,7 @@ bool QContactSymbianEngineData::addContact(QContact& contact, QContactChangeSet&
  * \param qtError Qt error code.
  * \return Error status.
  */
-bool QContactSymbianEngineData::updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError)
+bool CntSymbianEnginePrivate::updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError)
 {
     int err(0);
     TRAP(err, QT_TRYCATCH_LEAVING(updateContactL(contact)));
@@ -289,7 +298,7 @@ bool QContactSymbianEngineData::updateContact(QContact& contact, QContactChangeS
         changeSet.changedContacts().insert(contact.localId());
         m_contactsChangedEmitted.append(contact.localId());
     }
-    qContactSymbianTransformError(err, qtError);
+    CntSymbianTransformError::transformError(err, qtError);
     return (err==KErrNone);
 }
 
@@ -306,7 +315,7 @@ bool QContactSymbianEngineData::updateContact(QContact& contact, QContactChangeS
  * \param qtError Qt error code.
  * \return Error status.
  */
-bool QContactSymbianEngineData::removeContact(const QContactLocalId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError)
+bool CntSymbianEnginePrivate::removeContact(const QContactLocalId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError)
 {
     // removeContactL() can't throw c++ exception
 	TRAPD(err, removeContactL(id));
@@ -316,12 +325,12 @@ bool QContactSymbianEngineData::removeContact(const QContactLocalId &id, QContac
         changeSet.removedContacts().insert(id);
         m_contactsRemovedEmitted.append(id);
     }
-    qContactSymbianTransformError(err, qtError);
+    CntSymbianTransformError::transformError(err, qtError);
 	return (err==KErrNone);
 }
 /* relationships */
 
-QList<QContactRelationship> QContactSymbianEngineData::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
+QList<QContactRelationship> CntSymbianEnginePrivate::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
 {
     //retrieve the relationships
     QList<QContactRelationship> returnValue = m_relationship->relationships(relationshipType, participantId, role, error);
@@ -329,7 +338,7 @@ QList<QContactRelationship> QContactSymbianEngineData::relationships(const QStri
     return returnValue;
 }
 
-bool QContactSymbianEngineData::saveRelationship(QContactChangeSet *changeSet, QContactRelationship* relationship, QContactManager::Error& error)
+bool CntSymbianEnginePrivate::saveRelationship(QContactChangeSet *changeSet, QContactRelationship* relationship, QContactManager::Error& error)
 {
     //save the relationship
     bool returnValue = m_relationship->saveRelationship(&changeSet->addedRelationshipsContacts(), relationship, error);
@@ -340,7 +349,7 @@ bool QContactSymbianEngineData::saveRelationship(QContactChangeSet *changeSet, Q
     return returnValue;
 }
 
-QList<QContactManager::Error> QContactSymbianEngineData::saveRelationships(QContactChangeSet *changeSet, QList<QContactRelationship>* relationships, QContactManager::Error& error)
+QList<QContactManager::Error> CntSymbianEnginePrivate::saveRelationships(QContactChangeSet *changeSet, QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
     //save the relationships
     QList<QContactManager::Error> returnValue = m_relationship->saveRelationships(&changeSet->addedRelationshipsContacts(), relationships, error);
@@ -351,7 +360,7 @@ QList<QContactManager::Error> QContactSymbianEngineData::saveRelationships(QCont
     return returnValue;
 }
 
-bool QContactSymbianEngineData::removeRelationship(QContactChangeSet *changeSet, const QContactRelationship& relationship, QContactManager::Error& error)
+bool CntSymbianEnginePrivate::removeRelationship(QContactChangeSet *changeSet, const QContactRelationship& relationship, QContactManager::Error& error)
 {
     //remove the relationship
     bool returnValue = m_relationship->removeRelationship(&changeSet->removedRelationshipsContacts(), relationship, error);
@@ -362,7 +371,7 @@ bool QContactSymbianEngineData::removeRelationship(QContactChangeSet *changeSet,
     return returnValue;
 }
 
-QList<QContactManager::Error> QContactSymbianEngineData::removeRelationships(QContactChangeSet *changeSet, const QList<QContactRelationship>& relationships, QContactManager::Error& error)
+QList<QContactManager::Error> CntSymbianEnginePrivate::removeRelationships(QContactChangeSet *changeSet, const QList<QContactRelationship>& relationships, QContactManager::Error& error)
 {
     //remove the relationships
     QList<QContactManager::Error> returnValue = m_relationship->removeRelationships(&changeSet->removedRelationshipsContacts(), relationships, error);
@@ -380,7 +389,7 @@ QList<QContactManager::Error> QContactSymbianEngineData::removeRelationships(QCo
  * \param qtError Qt error code.
  * \return Operation success status.
  */
-bool QContactSymbianEngineData::setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& qtError)
+bool CntSymbianEnginePrivate::setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& qtError)
 {
     if (contactId <= 0) {
         qtError = QContactManager::BadArgumentError;
@@ -392,9 +401,13 @@ bool QContactSymbianEngineData::setSelfContactId(const QContactLocalId& contactI
     TRAPD(err,
         symContact = m_contactDatabase->ReadContactL(id);
         m_contactDatabase->SetOwnCardL(*symContact);
+        
+        //TODO: temporal solution, fix when we have a signal for MyCard change
+        emit contactChanged(m_contactDatabase->OwnCardId());
+        emit contactChanged(contactId);
         );
     delete symContact;
-    qContactSymbianTransformError(err, qtError);
+    CntSymbianTransformError::transformError(err, qtError);
     return (err==KErrNone);
 }
 
@@ -404,7 +417,7 @@ bool QContactSymbianEngineData::setSelfContactId(const QContactLocalId& contactI
  * \param qtError Qt error code.
  * \return Id of the "my card" contact.
  */
-QContactLocalId QContactSymbianEngineData::selfContactId(QContactManager::Error& qtError) const
+QContactLocalId CntSymbianEnginePrivate::selfContactId(QContactManager::Error& qtError) const
 {
     qtError = QContactManager::NoError;
     QContactLocalId id = 0;
@@ -426,7 +439,7 @@ QContactLocalId QContactSymbianEngineData::selfContactId(QContactManager::Error&
  * \param aEvent Contacts database event describing the change to the
  *  database.
  */
-void QContactSymbianEngineData::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
+void CntSymbianEnginePrivate::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
 {
         // TODO: Conversion to/from QContactLocalId
 
@@ -478,21 +491,26 @@ void QContactSymbianEngineData::HandleDatabaseEventL(TContactDbObserverEvent aEv
 /*!
  * Private leaving implementation for contact()
  */
-QContact QContactSymbianEngineData::contactL(const QContactLocalId &contactId) const
+QContact CntSymbianEnginePrivate::contactL(const QContactLocalId &localId) const
 {
     // A contact with a zero id is not expected to exist.
     // Symbian contact database uses id 0 internally as the id of the
     // system template.
-    if(contactId == 0)
+    if(localId == 0)
         User::Leave(KErrNotFound);
 
     // Read the contact from the CContactDatabase
-	TContactItemId id(contactId);
-	CContactItem* symContact = m_contactDatabase->ReadContactL(id);
+	CContactItem* symContact = m_contactDatabase->ReadContactL(localId);
 	CleanupStack::PushL(symContact);
 
 	// Convert to a QContact
 	QContact contact = m_transformContact->transformContactL(*symContact, *m_contactDatabase);
+
+	// Convert id
+    QContactId contactId;
+    contactId.setLocalId(localId);
+    contactId.setManagerUri(m_managerUri);
+    contact.setId(contactId);
 
     CleanupStack::PopAndDestroy(symContact);
 
@@ -502,7 +520,7 @@ QContact QContactSymbianEngineData::contactL(const QContactLocalId &contactId) c
 /*!
  * Private leaving implementation for count()
  */
-int QContactSymbianEngineData::countL() const
+int CntSymbianEnginePrivate::countL() const
 {
 	// Call CountL and return number of contacts in database
 	return m_contactDatabase->CountL();
@@ -514,7 +532,7 @@ int QContactSymbianEngineData::countL() const
  * \param contact The contact item to save in the database.
  * \return The new contact ID.
  */
-int QContactSymbianEngineData::addContactL(QContact &contact)
+int CntSymbianEnginePrivate::addContactL(QContact &contact)
 {
     CContactItem* contactItem(0);
     int id(0);
@@ -531,9 +549,10 @@ int QContactSymbianEngineData::addContactL(QContact &contact)
 
         // Update the changed values to the QContact
         // id
-        QContactId contactId;
-        contactId.setLocalId(id);
-        contact.setId(contactId);
+        QScopedPointer<QContactId> contactId(new QContactId());
+        contactId->setLocalId(id);
+        contactId->setManagerUri(m_managerUri);
+        contact.setId(*contactId);
         contactItem = m_contactDatabase->ReadContactLC(id);
         // Guid
         QContactDetail* detail = m_transformContact->transformGuidItemFieldL(*contactItem, *m_contactDatabase);
@@ -551,17 +570,21 @@ int QContactSymbianEngineData::addContactL(QContact &contact)
 
         //set the id for the contact, needed by update
         id = contactItem->Id();
-        QContactId contactId;
-        contactId.setLocalId(QContactLocalId(id));
-        contact.setId(contactId);
+        QScopedPointer<QContactId> contactId(new QContactId());
+        contactId->setLocalId(QContactLocalId(id));
+        contactId->setManagerUri(m_managerUri);
+        contact.setId(*contactId);
 
         //update contact, will add the fields to the already saved group
         updateContactL(contact);
 
         CleanupStack::PopAndDestroy(contactItem);
     }
-
-    //else{ should this leave? }
+    // Leave with an error
+    else
+    {
+        User::Leave(KErrInvalidContactDetail);
+    }
 
     // Return the new ID.
 	return id;
@@ -572,7 +595,7 @@ int QContactSymbianEngineData::addContactL(QContact &contact)
  *
  * \param contact The contact to update in the database.
  */
-void QContactSymbianEngineData::updateContactL(QContact &contact)
+void CntSymbianEnginePrivate::updateContactL(QContact &contact)
 {
     // Need to open the contact for write, leaving this item
     // on the cleanup stack to unlock the item in the event of a leave.
@@ -599,7 +622,7 @@ void QContactSymbianEngineData::updateContactL(QContact &contact)
 /*!
  * Private leaving implementation for removeContact
  */
-int QContactSymbianEngineData::removeContactL(QContactLocalId id)
+int CntSymbianEnginePrivate::removeContactL(QContactLocalId id)
 {
     // A contact with a zero id is not expected to exist.
     // Symbian contact database uses id 0 internally as the id of the

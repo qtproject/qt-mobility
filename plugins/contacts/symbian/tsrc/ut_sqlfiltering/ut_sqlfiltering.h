@@ -39,9 +39,18 @@
 **
 ****************************************************************************/
 #include <QObject>
+#include <QHash>
+#include <qcontactfilter.h>
+#include <qcontactmanager.h>
 
 class CntSymbianFilterSqlHelper;
-class QContactManager;
+
+typedef struct {
+    QContactFilter filter;
+    QString name;
+    int result;
+    int error;
+} TFilter;
 
 class TestSqlFiltering : public QObject
 {
@@ -50,6 +59,12 @@ class TestSqlFiltering : public QObject
 private slots:  // Init & cleanup
 	void initTestCase();
 	void cleanupTestCase();
+	
+private:
+    void parseFilters();
+    void addFilter(QVector<QString> param);
+    void createContacts();
+    Qt::MatchFlags flag(int f);
 
 private slots:  // Test cases
     void testInvalidFilter();
@@ -64,6 +79,7 @@ private slots:  // Test cases
     void testDefaultFilter();
     
 private:
-    QContactManager             *mCntMng;
-    CntSymbianFilterSqlHelper   *mSqlFilter;
+    QContactManager                             *mCntMng;
+    CntSymbianFilterSqlHelper                   *mSqlFilter;
+    QHash<QContactFilter::FilterType, TFilter>  *mFilters;
 };

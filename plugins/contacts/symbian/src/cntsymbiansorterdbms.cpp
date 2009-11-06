@@ -39,14 +39,14 @@
 **
 ****************************************************************************/
 
-#include "qcontactsymbiansorterdbms.h"
-#include "qcontactsymbiantransformerror.h"
+#include "cntsymbiansorterdbms.h"
+#include "cntsymbiantransformerror.h"
 
 #include <cntdb.h>
 #include <cntdef.h>
 #include <cntfield.h>
 #include "cnttransformcontact.h"
-#include "qcontactsymbianengine_p.h"
+#include "cntsymbianengine_p.h"
 
 typedef QList<QContactLocalId> QContactLocalIdList;
 
@@ -63,17 +63,17 @@ typedef QList<QContactLocalId> QContactLocalIdList;
 // the called function or the return value of the function is placed to the
 // variable.
 
-QContactSymbianSorter::QContactSymbianSorter(CContactDatabase& contactDatabase,CntTransformContact& transformContact):
+CntSymbianSorterDbms::CntSymbianSorterDbms(CContactDatabase& contactDatabase,CntTransformContact& transformContact):
     m_contactDatabase(contactDatabase),
     m_transformContact(transformContact)
 {
 }
 
-QContactSymbianSorter::~QContactSymbianSorter()
+CntSymbianSorterDbms::~CntSymbianSorterDbms()
 {
 }
 
-QList<QContactLocalId> QContactSymbianSorter::contacts(
+QList<QContactLocalId> CntSymbianSorterDbms::contacts(
             const QList<QContactSortOrder>& sortOrders,
             QContactManager::Error& error)
 {
@@ -85,12 +85,12 @@ QList<QContactLocalId> QContactSymbianSorter::contacts(
     // there was a problem
     TRAPD(err, QT_TRYCATCH_LEAVING(*ids = contactsL(sortOrders)));
 
-    qContactSymbianTransformError(err, error);
+    CntSymbianTransformError::transformError(err, error);
 
     return *QScopedPointer<QContactLocalIdList>(ids);
 }
 
-QList<QContactLocalId> QContactSymbianSorter::sort(
+QList<QContactLocalId> CntSymbianSorterDbms::sort(
             QList<QContactLocalId> contactIds,
             const QList<QContactSortOrder>& sortOrders,
             QContactManager::Error& error)
@@ -103,12 +103,12 @@ QList<QContactLocalId> QContactSymbianSorter::sort(
     // there was a problem
     TRAPD(err, QT_TRYCATCH_LEAVING(*ids = sortL(contactIds,sortOrders)));
 
-    qContactSymbianTransformError(err, error);
+    CntSymbianTransformError::transformError(err, error);
 
     return *QScopedPointer<QContactLocalIdList>(ids);
 }
 
-bool QContactSymbianSorter::sortOrderSupported(const QList<QContactSortOrder>& sortOrders)
+bool CntSymbianSorterDbms::sortOrderSupported(const QList<QContactSortOrder>& sortOrders)
 {
     foreach( QContactSortOrder s, sortOrders ) {
         // Find uids for sortings
@@ -123,11 +123,20 @@ bool QContactSymbianSorter::sortOrderSupported(const QList<QContactSortOrder>& s
         // Always case sensitive
         if( s.caseSensitivity() != Qt::CaseSensitive )
             return false;
+
+#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
+        // NOTE:
+        // Seems that there is a bug in cntmodel which causes that sorting
+        // is working correctly only if the direction is the same for all
+        // sort orders.
+        if( s.direction() != sortOrders[0].direction() )
+            return false;
+#endif
     }
     return true;
 }
 
-QList<QContactLocalId> QContactSymbianSorter::contactsL(const QList<QContactSortOrder>& sortOrders) const
+QList<QContactLocalId> CntSymbianSorterDbms::contactsL(const QList<QContactSortOrder>& sortOrders) const
 {
     // Populate the ID array, returns the coontact ids + group ids
     TTime epoch(0);
@@ -173,7 +182,7 @@ QList<QContactLocalId> QContactSymbianSorter::contactsL(const QList<QContactSort
     return qIds;
 }
 
-QList<QContactLocalId> QContactSymbianSorter::sortL(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders) const
+QList<QContactLocalId> CntSymbianSorterDbms::sortL(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders) const
 {
     CContactIdArray* ids = CContactIdArray::NewLC();
     foreach(QContactLocalId id, contactIds)
@@ -191,7 +200,7 @@ QList<QContactLocalId> QContactSymbianSorter::sortL(const QList<QContactLocalId>
     return qSortedIds;
 }
 
-CContactIdArray* QContactSymbianSorter::sortL(const CContactIdArray* contactIds, const QList<QContactSortOrder>& sortOrders) const
+CContactIdArray* CntSymbianSorterDbms::sortL(const CContactIdArray* contactIds, const QList<QContactSortOrder>& sortOrders) const
 {
     CArrayFixFlat<CContactDatabase::TSortPref> *sort =
         new (ELeave) CArrayFixFlat<CContactDatabase::TSortPref>(5);
@@ -220,7 +229,15 @@ CContactIdArray* QContactSymbianSorter::sortL(const CContactIdArray* contactIds,
         }
     }
 
-    CContactIdArray* sortedIds = m_contactDatabase.SortArrayL(contactIds,sort);
+    CContactIdArray* sortedIds(0);
+    // There is a bug in CContactDatabase::SortArrayL, if an empty sort is used
+    // the function returns all contacts (and groups) instead of the given
+    // contact ids
+    if(sortOrders.isEmpty()) {
+        sortedIds = CContactIdArray::NewL(contactIds);
+    } else {
+        sortedIds = m_contactDatabase.SortArrayL(contactIds,sort);
+    }
     CleanupStack::PopAndDestroy(sort);
     return sortedIds;
 }
