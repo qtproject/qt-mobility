@@ -300,6 +300,7 @@ QList<QContactLocalId> QContactManager::contacts(const QContactFilter &filter, c
  */
 QList<QContactLocalId> QContactManager::contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders) const
 {
+    qWarning("This function is deprecated and will be removed in week 47 - see email discussion from week 45!");
     return d->m_engine->contacts(contactType, sortOrders, d->m_error);
 }
 
