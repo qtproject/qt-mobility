@@ -24,7 +24,7 @@ TrackerChangeListener::TrackerChangeListener(QObject* parent)
 {
     SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler =
             SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
-                    nco::PersonContact::iri());
+                    nco::Contact::iri());
     // Note here that we are not using
     // QAbstractItemModel signals from LiveNodes::model() because
     // node list for which notification comes is fixed. Those are used for
