@@ -98,7 +98,9 @@ public:
         NotSupportedError,
         BadArgumentError,
         UnspecifiedError,
-        VersionMismatchError
+        VersionMismatchError,
+        LimitReachedError,
+        InvalidContactTypeError
     };
 
     /* Error reporting */

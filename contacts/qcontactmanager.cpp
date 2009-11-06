@@ -286,6 +286,8 @@ QList<QContactLocalId> QContactManager::contacts(const QList<QContactSortOrder>&
 }
 
 /*!
+ * \deprecated
+ *
  * Returns a list of contact ids that match the given \a filter, sorted according to the given list of \a sortOrders.
  *
  * Depending on the backend, this filtering operation may involve retrieving all the contacts.
@@ -507,24 +509,44 @@ QList<QContactManager::Error> QContactManager::removeRelationships(const QList<Q
  */
 QMap<QString, QContactDetailDefinition> QContactManager::detailDefinitions(const QString& contactType) const
 {
+    if (!supportedContactTypes().contains(contactType)) {
+        d->m_error = QContactManager::InvalidContactTypeError;
+        return QMap<QString, QContactDetailDefinition>();
+    }
+
     return d->m_engine->detailDefinitions(contactType, d->m_error);
 }
 
 /*! Returns the definition identified by the given \a definitionName that is valid for the contacts whose type is the given \a contactType in this store, or a default-constructed QContactDetailDefinition if no such definition exists */
 QContactDetailDefinition QContactManager::detailDefinition(const QString& definitionName, const QString& contactType) const
 {
+    if (!supportedContactTypes().contains(contactType)) {
+        d->m_error = QContactManager::InvalidContactTypeError;
+        return QContactDetailDefinition();
+    }
+
     return d->m_engine->detailDefinition(definitionName, contactType, d->m_error);
 }
 
 /*! Persists the given definition \a def in the database, which is valid for contacts whose type is the given \a contactType.  Returns true if the definition was saved successfully, otherwise returns false */
 bool QContactManager::saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType)
 {
+    if (!supportedContactTypes().contains(contactType)) {
+        d->m_error = QContactManager::InvalidContactTypeError;
+        return false;
+    }
+
     return d->m_engine->saveDetailDefinition(def, contactType, d->m_error);
 }
 
 /*! Removes the detail definition identified by \a definitionName from the database, which is valid for contacts whose type is the given \a contactType.  Returns true if the definition was removed successfully, otherwise returns false */
 bool QContactManager::removeDetailDefinition(const QString& definitionName, const QString& contactType)
 {
+    if (!supportedContactTypes().contains(contactType)) {
+        d->m_error = QContactManager::InvalidContactTypeError;
+        return false;
+    }
+
     return d->m_engine->removeDetailDefinition(definitionName, contactType, d->m_error);
 }
 

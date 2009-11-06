@@ -243,6 +243,7 @@ QList<QContactLocalId> QContactManagerEngine::contacts(const QContactFilter& fil
 }
 
 /*!
+ * \deprecated
  * Returns a list of ids of contacts of the given \a contactType, sorted according to the given list of \a sortOrders.
  * Any error which occurs is saved in \a error.
  */
