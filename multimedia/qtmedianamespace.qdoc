@@ -115,11 +115,52 @@
     \value LeadPerformer The lead performer in the media.  QStringList.
     \value Writer The writer of the media.  QStringList.
 
-    Photo attributes
+    Photo attributes.
     \value CameraManufacturer The manufacturer of the camera used to capture the media.  QString.
     \value CameraModel The model of the camera used to capture the media.  QString.
     \value Event The event during which the media was captured.  QString.
     \value Subject The subject of the media.  QString.
+    \value Orientation Orientation of image.
+    \value ExposureTime Exposure time, given in seconds.
+    \value FNumber The F Number.
+    \value ExposureProgram
+        The class of the program used by the camera to set exposure when the picture is taken.
+    \value ISOSpeedRatings
+        Indicates the ISO Speed and ISO Latitude of the camera or input device as specified in ISO 12232.
+    \value ExposureBiasValue
+        The exposure bias.
+        The unit is the APEX (Additive System of Photographic Exposure) setting.
+    \value DateTimeOriginal The date and time when the original image data was generated.
+    \value DateTimeDigitized The date and time when the image was stored as digital data.
+    \value SubjectDistance The distance to the subject, given in meters.
+    \value MeteringMode The metering mode.
+    \value LightSource
+        The kind of light source.
+    \value Flash
+        Status of flash when the image was shot.
+    \value FocalLength
+        The actual focal length of the lens, in mm.
+    \value ExposureMode
+        Indicates the exposure mode set when the image was shot.
+    \value WhiteBalance
+        Indicates the white balance mode set when the image was shot.
+    \value DigitalZoomRatio
+        Indicates the digital zoom ratio when the image was shot.
+    \value FocalLengthIn35mmFilm
+        Indicates the equivalent focal length assuming a 35mm film camera, in mm.
+    \value SceneCaptureType
+        Indicates the type of scene that was shot.
+        It can also be used to record the mode in which the image was shot.
+    \value GainControl
+        Indicates the degree of overall image gain adjustment.
+    \value Contrast
+        Indicates the direction of contrast processing applied by the camera when the image was shot.
+    \value Saturation
+        Indicates the direction of saturation processing applied by the camera when the image was shot.
+    \value Sharpness
+        Indicates the direction of sharpness processing applied by the camera when the image was shot.
+    \value DeviceSettingDescription
+        Exif tag, indicates information on the picture-taking conditions of a particular camera model. QString
 */
 
 /*!

@@ -119,15 +119,15 @@ private:
     QMediaContent nextResource;
 };
 
-class QM3uPlaylistWritter : public QMediaPlaylistWritter
+class QM3uPlaylistWriter : public QMediaPlaylistWriter
 {
 public:
-    QM3uPlaylistWritter(QIODevice *device)
+    QM3uPlaylistWriter(QIODevice *device)
         :m_device(device), m_textStream(new QTextStream(m_device))
     {
     }
 
-    virtual ~QM3uPlaylistWritter()
+    virtual ~QM3uPlaylistWriter()
     {
         delete m_textStream;
     }
@@ -198,10 +198,10 @@ QMediaPlaylistReader *QM3uPlaylistPlugin::createReader(const QUrl& location, con
     return new QM3uPlaylistReader(location);
 }
 
-QMediaPlaylistWritter *QM3uPlaylistPlugin::createWritter(QIODevice *device, const QByteArray &format)
+QMediaPlaylistWriter *QM3uPlaylistPlugin::createWriter(QIODevice *device, const QByteArray &format)
 {
     Q_UNUSED(format);
-    return new QM3uPlaylistWritter(device);
+    return new QM3uPlaylistWriter(device);
 }
 
 

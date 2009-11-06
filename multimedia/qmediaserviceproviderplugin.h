@@ -98,7 +98,7 @@ class Q_MEDIA_EXPORT QMediaServiceProviderPlugin : public QObject, public QMedia
 
 public:
     virtual QStringList keys() const = 0;
-    virtual QMediaService* create(QString const& key) = 0;
+    virtual QMediaService* create(const QString& key) = 0;
     virtual void release(QMediaService *service) = 0;
 };
 

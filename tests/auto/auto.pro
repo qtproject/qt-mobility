@@ -81,13 +81,13 @@ SUBDIRS += \             #Multimedia
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
-        qvideowidget
+#        qvideowidget
 
 contains(QT_CONFIG, multimedia) {
     SUBDIRS += \
-            qgraphicsvideoitem
-    !x11: SUBDIRS += \
+            qgraphicsvideoitem \
             qpaintervideosurface
+
 }
 
 #Messaging

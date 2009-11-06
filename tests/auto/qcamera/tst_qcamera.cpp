@@ -51,9 +51,11 @@
 #include <qmediaservice.h>
 #include <experimental/qcamera.h>
 
+class MockCaptureControl;
 
 class MockCameraControl : public QCameraControl
 {
+    friend class MockCaptureControl;
     Q_OBJECT
 public:
     MockCameraControl(QObject *parent = 0):
@@ -68,15 +70,15 @@ public:
     virtual void stop() { m_state = QCamera::StoppedState; }
     QCamera::State state() const { return m_state; }
 
-    QCamera::State m_state;
+    QCamera::State m_state;        
 };
 
 class MockCaptureControl : public QImageCaptureControl
 {
     Q_OBJECT
 public:
-    MockCaptureControl(QObject *parent = 0)
-        :QImageCaptureControl(parent)
+    MockCaptureControl(MockCameraControl *cameraControl, QObject *parent = 0)
+        :QImageCaptureControl(parent), m_cameraControl(cameraControl)
     {
     }
 
@@ -84,12 +86,18 @@ public:
     {
     }
 
-    bool isReadyForCapture() const { return true; }
+    bool isReadyForCapture() const { return m_cameraControl->state() == QCamera::ActiveState; }
 
     void capture(const QString &fileName)
     {
-        emit imageCaptured(fileName, QImage());
+        if (isReadyForCapture())
+            emit imageCaptured(fileName, QImage());
+        else
+            m_cameraControl->error(QCamera::NotReadyToCaptureError,
+                                   QLatin1String("Cou;d not capture in stopped state"));
     }
+
+    MockCameraControl *m_cameraControl;
 
 };
 
@@ -497,7 +505,7 @@ public:
         mockControl = new MockCameraControl(this);
         mockExposureControl = new MockCameraExposureControl(this);
         mockFocusControl = new MockCameraFocusControl(this);
-        mockCaptureControl = new MockCaptureControl(this);
+        mockCaptureControl = new MockCaptureControl(mockControl, this);
         mockImageProcessingControl = new MockImageProcessingControl(this);
         mockImageEncoderControl = new MockImageEncoderControl(this);
     }
@@ -748,7 +756,7 @@ void tst_QCamera::testSimpleCameraCapture()
     QSignalSpy errorSignal(&camera, SIGNAL(error(QCamera::Error)));
     camera.capture(QString::fromLatin1("/dev/null"));
     QCOMPARE(errorSignal.size(), 1);
-    QCOMPARE(camera.error(), QCamera::NotReadyToCaptureError);
+    QCOMPARE(camera.error(), QCamera::NotSupportedFeatureError);
     QVERIFY(!camera.errorString().isEmpty());
 }
 
@@ -758,11 +766,25 @@ void tst_QCamera::testCameraCapture()
     provider->service = &service;
     QCamera camera(0, provider);
 
-    QVERIFY(camera.isReadyForCapture());
+    QVERIFY(!camera.isReadyForCapture());
 
     QSignalSpy capturedSignal(&camera, SIGNAL(imageCaptured(QString,QImage)));
+    QSignalSpy errorSignal(&camera, SIGNAL(error(QCamera::Error)));
+
+    camera.capture(QString::fromLatin1("/dev/null"));
+    QCOMPARE(capturedSignal.size(), 0);
+    QCOMPARE(errorSignal.size(), 1);
+    QCOMPARE(camera.error(), QCamera::NotReadyToCaptureError);
+
+    errorSignal.clear();
+
+    camera.start();
+    QVERIFY(camera.isReadyForCapture());
+    QCOMPARE(errorSignal.size(), 0);
+
     camera.capture(QString::fromLatin1("/dev/null"));
     QCOMPARE(capturedSignal.size(), 1);
+    QCOMPARE(errorSignal.size(), 0);
     QCOMPARE(camera.error(), QCamera::NoError);
 }
 

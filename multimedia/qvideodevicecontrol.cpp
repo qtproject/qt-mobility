@@ -65,7 +65,7 @@
 */
 
 /*!
-    Constructs a new video device control with the given \a parent.
+    Constructs a video device control with the given \a parent.
 */
 QVideoDeviceControl::QVideoDeviceControl(QObject *parent)
     :QMediaControl(parent)
@@ -73,7 +73,7 @@ QVideoDeviceControl::QVideoDeviceControl(QObject *parent)
 }
 
 /*!
-    Destroys an video device control.
+    Destroys a video device control.
 */
 QVideoDeviceControl::~QVideoDeviceControl()
 {
@@ -82,59 +82,59 @@ QVideoDeviceControl::~QVideoDeviceControl()
 /*!
     \fn QVideoDeviceControl::deviceCount() const
 
-    Returns the number of available devices;
+    Returns the number of available video devices;
 */
 
 /*!
-    \fn QVideoDeviceControl::name(int device) const
+    \fn QVideoDeviceControl::name(int index) const
 
-    Returns the name of a \a device.
+    Returns the name of the video device at \a index.
 */
 
 /*!
-    \fn QVideoDeviceControl::description(int device) const
+    \fn QVideoDeviceControl::description(int index) const
 
-    Returns a description of a \a device.
+    Returns a description of the video device at \a index.
 */
 
 /*!
-    \fn QVideoDeviceControl::icon(int device) const
+    \fn QVideoDeviceControl::icon(int index) const
 
-    Returns an icon for a \a device.
+    Returns an icon for the video device at \a index.
 */
 
 /*!
     \fn QVideoDeviceControl::defaultDevice() const
 
-    Returns the index of the default device.
+    Returns the index of the default video device.
 */
 
 /*!
     \fn QVideoDeviceControl::selectedDevice() const
 
-    The index of the selected device.
+    Returns the index of the selected video device.
 */
 
 /*!
     \fn QVideoDeviceControl::setSelectedDevice(int index)
 
-    Set the device to the device associated with \a index.
+    Sets the selected video device \a index.
 */
 
 /*!
     \fn QVideoDeviceControl::devicesChanged()
 
-    Signals that list of available devices was changed.
+    Signals that the list of available video devices has changed.
 */
 
 /*!
     \fn QVideoDeviceControl::selectedDeviceChanged(int index)
 
-    Signals that the \a index of the selected device has changed.
+    Signals that the selected video device \a index has changed.
 */
 
 /*!
-    \fn QVideoDeviceControl::selectedDeviceChanged(const QString &deviceName)
+    \fn QVideoDeviceControl::selectedDeviceChanged(const QString &name)
 
-    Signals that the video device has changed to \a deviceName.
+    Signals that the selected video device \a name has changed.
 */

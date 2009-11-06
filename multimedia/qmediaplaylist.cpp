@@ -330,13 +330,13 @@ bool QMediaPlaylistPrivate::readItems(QMediaPlaylistReader *reader)
     return true;
 }
 
-bool QMediaPlaylistPrivate::writeItems(QMediaPlaylistWritter *writter)
+bool QMediaPlaylistPrivate::writeItems(QMediaPlaylistWriter *writer)
 {
     for (int i=0; i<playlist()->size(); i++) {
-        if (!writter->writeItem(playlist()->media(i)))
+        if (!writer->writeItem(playlist()->media(i)))
             return false;
     }
-    writter->close();
+    writer->close();
     return true;
 }
 
@@ -357,6 +357,13 @@ void QMediaPlaylist::load(const QUrl &location, const char *format)
 
     if (d->playlist()->load(location,format))
         return;
+
+    if (isReadOnly()) {
+        d->error = AccessDeniedError;
+        d->errorString = tr("Could not add items to read only playlist.");
+        emit loadFailed();
+        return;
+    }
 
     foreach (QString const& key, playlistIOLoader()->keys()) {
         QMediaPlaylistIOInterface* plugin = qobject_cast<QMediaPlaylistIOInterface*>(playlistIOLoader()->instance(key));
@@ -394,6 +401,13 @@ void QMediaPlaylist::load(QIODevice * device, const char *format)
 
     if (d->playlist()->load(device,format))
         return;
+
+    if (isReadOnly()) {
+        d->error = AccessDeniedError;
+        d->errorString = tr("Could not add items to read only playlist.");
+        emit loadFailed();
+        return;
+    }
 
     foreach (QString const& key, playlistIOLoader()->keys()) {
         QMediaPlaylistIOInterface* plugin = qobject_cast<QMediaPlaylistIOInterface*>(playlistIOLoader()->instance(key));
@@ -459,12 +473,12 @@ bool QMediaPlaylist::save(QIODevice * device, const char *format)
     foreach (QString const& key, playlistIOLoader()->keys()) {
         QMediaPlaylistIOInterface* plugin = qobject_cast<QMediaPlaylistIOInterface*>(playlistIOLoader()->instance(key));
         if (plugin && plugin->canWrite(device,format)) {
-            QMediaPlaylistWritter *writter = plugin->createWritter(device,QByteArray(format));
-            if (writter && d->writeItems(writter)) {
-                delete writter;
+            QMediaPlaylistWriter *writer = plugin->createWriter(device,QByteArray(format));
+            if (writer && d->writeItems(writer)) {
+                delete writer;
                 return true;
             }
-            delete writter;
+            delete writer;
         }
     }
 

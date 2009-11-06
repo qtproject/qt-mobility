@@ -50,22 +50,11 @@ V4LCameraControl::V4LCameraControl(QObject *parent)
     :QCameraControl(parent)
 {
     m_session = qobject_cast<V4LCameraSession*>(parent);
-    connect(m_session, SIGNAL(stateChanged(QMediaRecorder::State)),this, SLOT(updateState(QMediaRecorder::State)));
+    connect(m_session, SIGNAL(cameraStateChanged(QCamera::State)),this, SIGNAL(stateChanged(QCamera::State)));
 }
 
 V4LCameraControl::~V4LCameraControl()
 {
-}
-
-void V4LCameraControl::updateState(QMediaRecorder::State state)
-{
-    switch(state) {
-        case QMediaRecorder::RecordingState:
-            emit stateChanged(QCamera::ActiveState);
-            break;
-        default:
-            emit stateChanged(QCamera::StoppedState);
-    }
 }
 
 void V4LCameraControl::start()
@@ -77,6 +66,8 @@ void V4LCameraControl::start()
 
 void V4LCameraControl::stop()
 {
+    m_session->previewMode(false);
+    m_session->captureToFile(false);
     m_session->stop();
 }
 

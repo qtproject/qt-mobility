@@ -124,7 +124,8 @@ public:
     void captureToFile(bool value);
 
 Q_SIGNALS:
-    void stateChanged(QMediaRecorder::State);
+    void cameraStateChanged(QCamera::State);
+    void recordStateChanged(QMediaRecorder::State);
     void imageCaptured(const QString &fileName, const QImage &img);
 
 private Q_SLOTS:
@@ -139,6 +140,7 @@ private:
     bool available;
     bool preview;
     bool toFile;
+    bool active;
     QMediaRecorder::State m_state;
     QByteArray m_device;
     QUrl m_sink;
@@ -146,6 +148,7 @@ private:
     V4LVideoRenderer*   m_output;
     QAbstractVideoSurface* m_surface;
     QVideoFrame::PixelFormat pixelF;
+    QVideoFrame::PixelFormat savedPixelF;
     QSize m_windowSize;
     QList<QSize> resolutions;
     QList<unsigned int> formats;

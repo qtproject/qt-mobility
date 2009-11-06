@@ -197,7 +197,7 @@ void QVideoRendererWidget::initializeGL()
 void QVideoRendererWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
-    if (m_surface->isStarted()) {
+    if (m_surface->isActive()) {
         m_surface->paint(&painter, displayRect());
 
         m_surface->setReady(true);

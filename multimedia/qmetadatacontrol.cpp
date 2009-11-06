@@ -52,10 +52,14 @@
     \brief The QMetaDataControl class provides access to the meta-data of a QMediaService's media.
 
     If a QMediaService can provide read or write access to the meta-data of its current media it
-    will implement QMetaDataControl.  The functionality provided by this control is exposed to
-    application code by the meta-data members of QMediaObject, and so meta-data access is
-    potentially available in any of the media object classes.  Any media service may implement
-    QMetaDataControl.
+    will implement QMetaDataControl.  This control provides functions for both retrieving and
+    setting meta-data values.  Meta-data may be addressed by the well defined keys in the
+    QtMedia::MetaData enumeration using the metaData() functions, or by string keys using the
+    extendedMetaData() functions.
+
+    The functionality provided by this control is exposed to application code by the meta-data
+    members of QMediaObject, and so meta-data access is potentially available in any of the media
+    object classes.  Any media service may implement QMetaDataControl.
 
     The interface name of QMetaDataControl is \c com.nokia.Qt.QMetaDataControl/1.0 as
     defined in QMetaDataControl_iid.
@@ -120,6 +124,12 @@ QMetaDataControl::~QMetaDataControl()
 */
 
 /*!
+    \fn QMetaDataControl::availableMetaData() const
+
+    Returns a list of keys there is meta-data available for.
+*/
+
+/*!
     \fn QMetaDataControl::extendedMetaData(const QString &key) const
 
     Returns the metaData for an abitrary string \a key.
@@ -136,6 +146,13 @@ QMetaDataControl::~QMetaDataControl()
     The valid selection of keys for extended meta-data is determined by the provider and the meaning
     and type may differ between providers.
 */
+
+/*!
+    \fn QMetaDataControl::availableExtendedMetaData() const
+
+    Returns a list of keys there is extended meta-data available for.
+*/
+
 
 /*!
     \fn void QMetaDataControl::metaDataChanged()

@@ -58,13 +58,14 @@
 #include <qmediaplayer.h>
 #include <qmediaplayercontrol.h>
 #include <qlocalmediaplaylistprovider.h>
+#include <qmediaobject_p.h>
 
 #include <QtCore/qdebug.h>
 
 class QMediaPlaylistControl;
 class QMediaPlaylistProvider;
 class QMediaPlaylistReader;
-class QMediaPlaylistWritter;
+class QMediaPlaylistWriter;
 class QMediaPlayerControl;
 
 class QMediaPlaylistPrivate
@@ -91,7 +92,7 @@ public:
     QMediaPlaylistProvider *playlist() const { return control->playlistProvider(); }
 
     bool readItems(QMediaPlaylistReader *reader);
-    bool writeItems(QMediaPlaylistWritter *writter);
+    bool writeItems(QMediaPlaylistWriter *writer);
 
     QMediaPlaylist::Error error;
     QString errorString;

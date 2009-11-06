@@ -45,7 +45,7 @@
 V4LImageCaptureControl::V4LImageCaptureControl(V4LCameraSession *session)
     :QImageCaptureControl(session), m_session(session), m_ready(false)
 {
-    connect(m_session, SIGNAL(stateChanged(QMediaRecorder::State)), SLOT(updateState()));
+    connect(m_session, SIGNAL(cameraStateChanged(QCamera::State)), SLOT(updateState()));
     connect(m_session, SIGNAL(imageCaptured(QString,QImage)), this, SIGNAL(imageCaptured(QString,QImage)));
 }
 

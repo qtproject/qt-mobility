@@ -49,6 +49,16 @@ QPhononMetaDataProvider::QPhononMetaDataProvider(Phonon::MediaObject *session, Q
     :QMetaDataControl(parent), m_session(session), m_metaDataAvailable(false)
 {
     connect(m_session, SIGNAL(metaDataChanged()), SLOT(updateTags()));
+
+    m_keysMap["TITLE"] = QtMedia::Title;
+    m_keysMap["ALBUM"] = QtMedia::AlbumTitle;
+    m_keysMap["TRACKNUMBER"] = QtMedia::TrackNumber;
+    m_keysMap["ARTIST"] = QtMedia::AlbumArtist;
+    m_keysMap["PERFORMER"] = QtMedia::ContributingArtist;
+    m_keysMap["COPYRIGHT"] = QtMedia::Copyright;
+    m_keysMap["DESCRIPTION"] = QtMedia::Description;
+    m_keysMap["GENRE"] = QtMedia::Genre;
+    m_keysMap["DATE"] = QtMedia::Date;
 }
 
 QPhononMetaDataProvider::~QPhononMetaDataProvider()
@@ -68,8 +78,10 @@ bool QPhononMetaDataProvider::isWritable() const
 QVariant QPhononMetaDataProvider::metaData(QtMedia::MetaData key) const
 {
     switch (key) {
-    case QtMedia::ContributingArtist:
+    case QtMedia::AlbumArtist:
         return m_session->metaData(Phonon::ArtistMetaData);
+    case QtMedia::ContributingArtist:
+        return m_session->metaData("PERFORMER");
     case QtMedia::AlbumTitle:
         return m_session->metaData(Phonon::AlbumMetaData);
     case QtMedia::Title:
@@ -91,17 +103,36 @@ void QPhononMetaDataProvider::setMetaData(QtMedia::MetaData key, QVariant const 
     Q_UNUSED(value);
 }
 
+QList<QtMedia::MetaData> QPhononMetaDataProvider::availableMetaData() const
+{
+    QList<QtMedia::MetaData> res;
+    QMap<QString,QString> metaData = m_session->metaData();
+    QMapIterator<QString, QString> i(metaData);
+     while (i.hasNext()) {
+         i.next();
+         QtMedia::MetaData tag = m_keysMap.value(i.key(), QtMedia::MetaData(-1));
+
+         if (tag != -1)
+             res.append(tag);
+     }
+
+     return res;
+}
+
 QVariant QPhononMetaDataProvider::extendedMetaData(const QString &key) const
 {
-    Q_UNUSED(key);
-
-    return QVariant();
+    return m_session->metaData(key);
 }
 
 void QPhononMetaDataProvider::setExtendedMetaData(const QString &key, QVariant const &value)
 {
     Q_UNUSED(key);
     Q_UNUSED(value);
+}
+
+QStringList QPhononMetaDataProvider::availableExtendedMetaData() const
+{
+    return m_session->metaData().keys();
 }
 
 void QPhononMetaDataProvider::updateTags()

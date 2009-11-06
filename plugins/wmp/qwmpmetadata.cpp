@@ -216,6 +216,41 @@ void QWmpMetaData::setMetaData(QtMedia::MetaData key, const QVariant &value)
     }
 }
 
+QList<QtMedia::MetaData> QWmpMetaData::availableMetaData() const
+{
+    QList<QtMedia::MetaData> keys;
+
+    if (m_media) {
+        // WMP will return a list of all possible keys so there's no point in filtering the keys
+        // in the lookup table.
+        static const int  count = sizeof(qt_wmpMetaDataKeys) / sizeof(QWmpMetaDataKeyLookup);
+        for (int i = 0; i < count; ++i)
+            keys.append(qt_wmpMetaDataKeys[i].key);
+
+        BSTR string = 0;
+        if (m_media->get_sourceURL(&string) == S_OK) {
+            QString uri = QString::fromWCharArray(static_cast<const wchar_t *>(string));
+            ::SysFreeString(string);
+
+            if (m_media->getItemInfo(QAutoBStr(L"WM/WMCollectionGroupID"), &string) == S_OK) {
+                QString uuid = QString::fromWCharArray(static_cast<const wchar_t *>(string));
+                ::SysFreeString(string);
+
+                QString albumArtLarge = QLatin1String("AlbumArt_") + uuid + QLatin1String("_Large.jpg");
+                QString albumArtSmall = QLatin1String("AlbumArt_") + uuid + QLatin1String("_Small.jpg");
+
+                QDir dir = QFileInfo(uri).absoluteDir();
+
+                if (dir.exists(albumArtLarge))
+                    keys.append(QtMedia::CoverArtUriLarge);
+                if (dir.exists(albumArtSmall))
+                    keys.append(QtMedia::CoverArtUriSmall);
+            }
+        }
+    }
+    return keys;
+}
+
 QVariant QWmpMetaData::extendedMetaData(const QString &key) const
 {
     return value(m_media, QAutoBStr(key));
@@ -224,6 +259,12 @@ QVariant QWmpMetaData::extendedMetaData(const QString &key) const
 void QWmpMetaData::setExtendedMetaData(const QString &key, const QVariant &value)
 {
     setValue(m_media, QAutoBStr(key), value);
+}
+
+
+QStringList QWmpMetaData::availableExtendedMetaData() const
+{
+    return keys(m_media);
 }
 
 void QWmpMetaData::currentItemChangeEvent(IDispatch *dispatch)

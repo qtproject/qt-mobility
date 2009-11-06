@@ -62,9 +62,11 @@ public:
 
     QVariant metaData(QtMedia::MetaData key) const;
     void setMetaData(QtMedia::MetaData key, const QVariant &value);
+    QList<QtMedia::MetaData> availableMetaData() const;
 
     QVariant extendedMetaData(const QString &key) const ;
     void setExtendedMetaData(const QString &key, const QVariant &value);
+    QStringList availableExtendedMetaData() const;
 
     static QStringList keys(IWMPMedia *media);
     static QVariant value(IWMPMedia *media, BSTR key);
