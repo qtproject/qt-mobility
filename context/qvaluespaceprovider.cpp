@@ -55,6 +55,8 @@ QT_BEGIN_NAMESPACE
 
     \brief The QValueSpaceProvider class allows applications to add entries to the Value Space.
 
+    \ingroup publishsubscribe
+
     For an overview of the Qt Value Space, please see the QValueSpaceSubscriber documentation.
 
     The QValueSpaceProvider class allows applications to write entries into the

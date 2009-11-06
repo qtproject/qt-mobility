@@ -61,6 +61,7 @@ QT_BEGIN_NAMESPACE
     \class QAbstractValueSpaceLayer
     \brief The QAbstractValueSpaceLayer class provides support for adding new logical data layers
            to the Qt Value Space.
+    \ingroup publishsubscribe
 
     To create a new layer in the Value Space subclass this class and reimplement all of the virtual
     functions.  The new layer is installed by either calling QValueSpace::installLayer() or by
@@ -317,9 +318,9 @@ void QAbstractValueSpaceLayer::emitAttributeInterestChanged(QValueSpaceProvider 
 
 /*!
     \namespace QValueSpace
-
     \brief The QValueSpace namespace provides methods that are useful to Value Space layer
            implementors.
+    \ingroup publishsubscribe
 
     Value Space layers that are available at link time can be automatically installed using
     QVALUESPACE_AUTO_INSTALL_LAYER() macro.  Value Space layers that are only available at run-time
@@ -338,6 +339,13 @@ void QAbstractValueSpaceLayer::emitAttributeInterestChanged(QValueSpaceProvider 
     \internal
 
     Support class used by the QVALUESPACE_AUTO_INSTALL_LAYER() macro.
+*/
+
+/*!
+    \fn QValueSpace::AutoInstall::AutoInstall(LayerCreateFunc func)
+
+    Installs the Value Space layer at construction time by calling the layer creation function
+    \a func.
 */
 
 /*!
@@ -417,6 +425,20 @@ void QValueSpace::installLayer(LayerCreateFunc func)
 */
 
 /*!
+    \macro QVALUESPACE_CONTEXTKIT_LAYER
+    \relates QValueSpace
+
+    The UUID of the ContextKit Layer as a QUuid.  The actual UUID values is
+    {2c769b9e-d949-4cd1-848f-d32241fe07ff}.
+
+    This values can be passed to the constructor of QValueSpaceProvider to force the constructed
+    value space provider to publish its values in the ContextKit Layer.
+
+    You can test if the ContextKit Layer is available by checking if the list returned by
+    QValueSpace::availableLayers() contains this value.
+*/
+
+/*!
     Returns a list of QUuids of all of the available layers.
 */
 QList<QUuid> QValueSpace::availableLayers()
@@ -433,6 +455,7 @@ QList<QUuid> QValueSpace::availableLayers()
 
 /*!
     \internal
+    \ingroup publishsubscribe
 
     Returns \a path with all duplicate '/' characters removed.
 */

@@ -2705,6 +2705,7 @@
             <keyword name="typeForDrive" id="QSystemStorageInfo::typeForDrive" ref="qsystemstorageinfo.html#typeForDrive"/>
             <keyword name="~QSystemStorageInfo" id="QSystemStorageInfo::~QSystemStorageInfo" ref="qsystemstorageinfo.html#dtor.QSystemStorageInfo"/>
             <keyword name="QVALUESPACE_AUTO_INSTALL_LAYER" id="QVALUESPACE_AUTO_INSTALL_LAYER" ref="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER"/>
+            <keyword name="QVALUESPACE_CONTEXTKIT_LAYER" id="QVALUESPACE_CONTEXTKIT_LAYER" ref="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER"/>
             <keyword name="QVALUESPACE_NONVOLATILEREGISTRY_LAYER" id="QVALUESPACE_NONVOLATILEREGISTRY_LAYER" ref="qvaluespace.html#QVALUESPACE_NONVOLATILEREGISTRY_LAYER"/>
             <keyword name="QVALUESPACE_SHAREDMEMORY_LAYER" id="QVALUESPACE_SHAREDMEMORY_LAYER" ref="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER"/>
             <keyword name="QVALUESPACE_VOLATILEREGISTRY_LAYER" id="QVALUESPACE_VOLATILEREGISTRY_LAYER" ref="qvaluespace.html#QVALUESPACE_VOLATILEREGISTRY_LAYER"/>

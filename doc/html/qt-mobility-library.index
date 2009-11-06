@@ -6029,6 +6029,7 @@
         <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_SHAREDMEMORY_LAYER" href="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_SHAREDMEMORY_LAYER()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_VOLATILEREGISTRY_LAYER" href="qvaluespace.html#QVALUESPACE_VOLATILEREGISTRY_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_VOLATILEREGISTRY_LAYER()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_NONVOLATILEREGISTRY_LAYER" href="qvaluespace.html#QVALUESPACE_NONVOLATILEREGISTRY_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_NONVOLATILEREGISTRY_LAYER()"/>
+        <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_CONTEXTKIT_LAYER" href="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_CONTEXTKIT_LAYER()"/>
         <page access="public" status="commendable" name="mobility" href="mobility.html" subtype="group" title="Qt Mobility APIs" fulltitle="Qt Mobility APIs" subtitle="" location="index.qdoc"/>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Overview" fulltitle="Qt Mobility Overview" subtitle="" location="index.qdoc">
             <contents name="mobility-component-apis" title="Mobility Component APIs" level="1"/>
@@ -6076,11 +6077,12 @@
         </page>
         <page access="public" status="commendable" name="publ-subs.html" href="publ-subs.html" subtype="page" title="Publish-Subscribe" fulltitle="Publish-Subscribe" subtitle="" location="publ-subs.qdoc">
             <contents name="overview" title="Overview" level="1"/>
-            <contents name="architecture" title="Architecture" level="1"/>
+            <contents name="detailed-layer-descriptions" title="Detailed Layer Descriptions" level="1"/>
             <contents name="shared-memory-layer" title="Shared Memory Layer" level="2"/>
-            <contents name="example-publish-and-subscribe" title="Example: Publish and Subscribe" level="1"/>
-            <contents name="example-battery-charging-accessing-publish-and-subscribe-from-qml" title="Example: Battery Charging - Accessing Publish and Subscribe from QML" level="1"/>
-            <contents name="classes" title="Classes" level="1"/>
+            <contents name="examples" title="Examples" level="1"/>
+            <contents name="publish-and-subscribe" title="Publish and Subscribe" level="2"/>
+            <contents name="battery-charging-accessing-publish-and-subscribe-from-qml" title="Battery Charging - Accessing Publish and Subscribe from QML" level="2"/>
+            <contents name="namespaces-and-classes" title="Namespaces and Classes" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoEncoderControl_iid" href="qvideoencodercontrol.html#QVideoEncoderControl_iid" location="qvideoencodercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoEncoderControl" type="" signature="QVideoEncoderControl_iid()"/>
         <page access="public" status="commendable" name="systeminfo" href="systeminfo.html" subtype="group" title="System Information" fulltitle="System Information" subtitle="" location="si.qdoc"/>
