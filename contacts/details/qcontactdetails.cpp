@@ -629,6 +629,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldTimestamp, "Timestamp");
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldAccountUri, "AccountUri");
 
 /*!
+ * \variable QContactOnlineAccount::FieldServiceProvider
+ * The constant key for which the service provider value is stored in details of the QContactOnlineAccount type
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldServiceProvider, "ServiceProvider");
+
+/*!
  * \variable QContactOnlineAccount::FieldSubTypes
  * The constant key for which the subtypes value is stored in details of the QContactOnlineAccount type
  */
@@ -1507,6 +1513,16 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 /*!
  * \fn QContactOnlineAccount::accountUri() const
  * Returns the universal resource identifier of the online account of the contact
+ */
+
+/*!
+ * \fn QContactOnlineAccount::setServiceProvider(const QString& serviceProvider)
+ * Sets the service provider of the contact's online account to \a serviceProvider
+ */
+
+/*!
+ * \fn QContactOnlineAccount::serviceProvider() const
+ * Returns the service provider of the online account of the contact
  */
 
 /*!

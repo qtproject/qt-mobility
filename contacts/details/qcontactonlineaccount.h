@@ -56,6 +56,7 @@ public:
 #ifdef Q_QDOC
     const char* DefinitionName;
     const char* FieldAccountUri;
+    const char* FieldServiceProvider;
     const char* FieldSubTypes;
     const char* FieldNickname;
     const char* FieldPresence;
@@ -75,6 +76,7 @@ public:
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOnlineAccount, "OnlineAccount")
     Q_DECLARE_LATIN1_LITERAL(FieldAccountUri, "AccountUri");
+    Q_DECLARE_LATIN1_LITERAL(FieldServiceProvider, "ServiceProvider");
     Q_DECLARE_LATIN1_LITERAL(FieldNickname, "Nickname");
     Q_DECLARE_LATIN1_LITERAL(FieldPresence, "Presence");
     Q_DECLARE_LATIN1_LITERAL(FieldStatusMessage, "StatusMessage");
@@ -95,6 +97,8 @@ public:
 
     void setAccountUri(const QString& accountUri) {setValue(FieldAccountUri, accountUri);}
     QString accountUri() const {return value(FieldAccountUri);}
+    void setServiceProvider(const QString& serviceProvider) {setValue(FieldServiceProvider, serviceProvider);}
+    QString serviceProvider() const {return value(FieldServiceProvider);}
     void setNickname(const QString& nickname) {setValue(FieldNickname, nickname);}
     QString nickname() const {return value(FieldNickname);}
     void setPresence(const QString& presence) {setValue(FieldPresence, presence);}
