@@ -61,7 +61,7 @@ QT_BEGIN_HEADER
 QT_BEGIN_NAMESPACE
 
 class DatabaseFileWatcher;
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) && defined(DATABASEMANAGERSERVER_NO_LIBRARY)
 class Q_SFW_EXPORT DatabaseManager : public QObject
 #else
 class Q_AUTOTEST_EXPORT DatabaseManager : public QObject
@@ -109,7 +109,7 @@ class Q_AUTOTEST_EXPORT DatabaseManager : public QObject
 };
 
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) && defined(DATABASEMANAGERSERVER_NO_LIBRARY)
 class Q_SFW_EXPORT DatabaseFileWatcher : public QObject
 #else
 class Q_AUTOTEST_EXPORT DatabaseFileWatcher : public QObject

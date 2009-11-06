@@ -57,7 +57,7 @@
 #include "qserviceglobal.h"
 
 QT_BEGIN_NAMESPACE
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) && defined(DATABASEMANAGERSERVER_NO_LIBRARY)
 class Q_SFW_EXPORT DBError
 #else
 class Q_AUTOTEST_EXPORT DBError

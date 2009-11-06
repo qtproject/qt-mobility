@@ -66,7 +66,7 @@ QT_BEGIN_NAMESPACE
 
 class QServiceInterfaceDescriptor;
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) && defined(DATABASEMANAGERSERVER_NO_LIBRARY)
 class Q_SFW_EXPORT ServiceDatabase : public QObject
 #else
 class Q_AUTOTEST_EXPORT ServiceDatabase : public QObject
