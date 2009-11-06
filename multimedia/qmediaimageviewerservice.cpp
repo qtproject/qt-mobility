@@ -47,6 +47,7 @@
 #include <multimedia/qmediacontent.h>
 #include <multimedia/qmediaresource.h>
 #include <multimedia/qvideooutputcontrol.h>
+#include <multimedia/qmediaobject_p.h>
 #ifndef QT_NO_MULTIMEDIA
 #include <multimedia/qvideorenderercontrol.h>
 #endif
@@ -125,7 +126,7 @@ void QMediaImageViewerRenderer::setSurface(QAbstractVideoSurface *surface)
 
     if (m_surface && !m_image.isNull()) {
         QVideoSurfaceFormat format(
-                m_image.size(), QVideoFrame::equivalentPixelFormat(m_image.format()));
+                m_image.size(), QVideoFrame::pixelFormatFromImageFormat(m_image.format()));
 
         if (surface->start(format))
             surface->present(QVideoFrame(m_image));
@@ -141,7 +142,7 @@ void QMediaImageViewerRenderer::showImage(const QImage &image)
             m_surface->stop();
         } else {
             QVideoSurfaceFormat format(
-                    image.size(), QVideoFrame::equivalentPixelFormat(image.format()));
+                    image.size(), QVideoFrame::pixelFormatFromImageFormat(image.format()));
 
             if (m_surface->start(format))
                 m_surface->present(QVideoFrame(image));
@@ -392,7 +393,7 @@ void QMediaImageViewerService::setNetworkManager(QNetworkAccessManager *manager)
 
 class QMediaImageViewerControlPrivate : public QMediaControlPrivate
 {
-    Q_DECLARE_PUBLIC(QMediaImageViewerControl)
+    Q_DECLARE_NON_CONST_PUBLIC(QMediaImageViewerControl)
 public:
     QMediaImageViewerControlPrivate()
         : service(0)

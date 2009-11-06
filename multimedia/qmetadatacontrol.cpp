@@ -121,6 +121,12 @@ QMetaDataControl::~QMetaDataControl()
 */
 
 /*!
+    \fn QMetaDataControl::availableMetaData() const
+
+    Returns a list of keys there is meta-data available for.
+*/
+
+/*!
     \fn QMetaDataControl::extendedMetaData(const QString &key) const
 
     Returns the metaData for an abitrary string \a key.
@@ -137,6 +143,13 @@ QMetaDataControl::~QMetaDataControl()
     The valid selection of keys for extended meta-data is determined by the provider and the meaning
     and type may differ between providers.
 */
+
+/*!
+    \fn QMetaDataControl::availableExtendedMetaData() const
+
+    Returns a list of keys there is extended meta-data available for.
+*/
+
 
 /*!
     \fn void QMetaDataControl::metaDataChanged()

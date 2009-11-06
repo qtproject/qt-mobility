@@ -1064,7 +1064,7 @@ void tst_QMediaImageViewer::rendererControl()
     if (viewer.mediaStatus() != QMediaImageViewer::LoadedMedia)
         QSKIP("failed to load test image", SkipSingle);
 
-    QCOMPARE(surfaceA.isStarted(), true);
+    QCOMPARE(surfaceA.isActive(), true);
 
     {
         QVideoSurfaceFormat format = surfaceA.surfaceFormat();
@@ -1079,7 +1079,7 @@ void tst_QMediaImageViewer::rendererControl()
     }
     // Test clearing the output stops the video surface.
     outputControl->setOutput(QVideoOutputControl::NoOutput);
-    QCOMPARE(surfaceA.isStarted(), false);
+    QCOMPARE(surfaceA.isActive(), false);
 
     // Test reseting the output restarts it.
     outputControl->setOutput(QVideoOutputControl::RendererOutput);
@@ -1100,8 +1100,8 @@ void tst_QMediaImageViewer::rendererControl()
     rendererControl->setSurface(&surfaceB);
     QCOMPARE(rendererControl->surface(), (QAbstractVideoSurface*)&surfaceB);
 
-    QCOMPARE(surfaceA.isStarted(), false);
-    QCOMPARE(surfaceB.isStarted(), true);
+    QCOMPARE(surfaceA.isActive(), false);
+    QCOMPARE(surfaceB.isActive(), true);
 
     QVideoSurfaceFormat format = surfaceB.surfaceFormat();
     QCOMPARE(format.handleType(), QAbstractVideoBuffer::NoHandle);
@@ -1115,7 +1115,7 @@ void tst_QMediaImageViewer::rendererControl()
 
     // Test setting null media stops the surface.
     viewer.setMedia(QMediaContent());
-    QCOMPARE(surfaceB.isStarted(), false);
+    QCOMPARE(surfaceB.isActive(), false);
 
     // Test the renderer control accepts a null surface.
     rendererControl->setSurface(0);

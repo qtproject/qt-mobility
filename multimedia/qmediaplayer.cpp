@@ -96,7 +96,7 @@
 
 class QMediaPlayerPrivate : public QMediaObjectPrivate
 {
-    Q_DECLARE_PUBLIC(QMediaPlayer)
+    Q_DECLARE_NON_CONST_PUBLIC(QMediaPlayer)
 
 public:
     QMediaPlayerPrivate()

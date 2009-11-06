@@ -77,8 +77,7 @@
 
 class QCameraPrivate : public QMediaObjectPrivate
 {
-    Q_DECLARE_PUBLIC(QCamera)
-
+    Q_DECLARE_NON_CONST_PUBLIC(QCamera)
 public:
     void initControls();
 
@@ -92,6 +91,7 @@ public:
     QString errorString;
 
     void _q_error(int error, const QString &errorString);
+    void unsetError() { error = QCamera::NoError; errorString.clear(); };
 };
 
 void QCameraPrivate::_q_error(int error, const QString &errorString)
@@ -154,6 +154,8 @@ void QCameraPrivate::initControls()
     if (captureControl) {
         q->connect(captureControl, SIGNAL(imageCaptured(QString,QImage)),
                 q, SIGNAL(imageCaptured(QString,QImage)));
+        q->connect(captureControl, SIGNAL(imageSaved(QString)),
+                        q, SIGNAL(imageSaved(QString)));
         q->connect(captureControl, SIGNAL(readyForCaptureChanged(bool)),
                 q, SIGNAL(readyForCaptureChanged(bool)));
     }
@@ -237,6 +239,8 @@ void QCamera::start()
 {
     Q_D(QCamera);
 
+    d->unsetError();
+
     if (d->control)
         d->control->start();
     else {
@@ -254,8 +258,12 @@ void QCamera::stop()
 {
     Q_D(QCamera);
 
+    d->unsetError();
+
     if(d->control)
         d->control->stop();
+    else
+        d->_q_error(QCamera::ServiceMissingError, tr("The camera service is missing"));
 }
 
 /*!
@@ -266,10 +274,12 @@ void QCamera::lockExposure()
 {
     Q_D(QCamera);
 
+    d->unsetError();
+
     if(d->exposureControl)
         d->exposureControl->lockExposure();
     else
-        emit exposureLocked();
+        d->_q_error(NotSupportedFeatureError, tr("Exposure locking is not supported"));
 }
 
 /*!
@@ -280,8 +290,10 @@ void QCamera::unlockExposure()
 {
     Q_D(QCamera);
 
+    d->unsetError();
+
     if(d->exposureControl)
-        d->exposureControl->unlockExposure();
+        d->exposureControl->unlockExposure();    
 }
 
 /*!
@@ -292,10 +304,12 @@ void QCamera::lockFocus()
 {
     Q_D(QCamera);
 
+    d->unsetError();
+
     if(d->focusControl)
         d->focusControl->lockFocus();
     else
-        emit focusLocked();
+        d->_q_error(NotSupportedFeatureError, tr("Focus locking is not supported"));
 }
 
 /*!
@@ -834,10 +848,12 @@ void QCamera::capture(const QString &file)
 {
     Q_D(QCamera);
 
+    d->unsetError();
+
     if (d->captureControl) {
         d->captureControl->capture(file);
     } else {
-        d->error = NotReadyToCaptureError;
+        d->error = NotSupportedFeatureError;
         d->errorString = tr("Device does not support images capture.");
 
         emit error(d->error);
@@ -985,10 +1001,19 @@ void QCamera::capture(const QString &file)
 */
 
 /*!
-    \fn void QCamera::imageCaptured(const QString &fileName, const QImage &preview)
+    \fn QCamera::imageCaptured(const QString &fileName, const QImage &preview)
 
-    Signal emitted when image ready with \a fileName and \a preview.
+    Signals that an image intendec to be saved to to \a fileName
+    has been captured and a \a preview is available.
 */
+
+
+/*!
+    \fn QCamera::imageSaved(const QString &fileName)
+
+    Signals that an captured image has been saved to \a fileName.
+*/
+
 
 /*!
     \fn void QCamera::isoSensitivityChanged(int value)

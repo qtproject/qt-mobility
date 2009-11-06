@@ -72,16 +72,24 @@ void QMediaObjectPrivate::_q_notify()
 
 /*!
     \class QMediaObject
-    \ingroup multimedia
-
     \preliminary
-    \brief The base Multimedia object.
+    \brief The QMediaObject class provides a common base for multimedia objects.
+
+    QMediaObject derived classes provide access to the functionality of a QMediaService.  Each
+    media object hosts a QMediaService and uses the QMediaControl interfaces implemented by the
+    service to implement its API.  Most media objects when constructed will request a new
+    QMediaService instance from a QMediaServiceProvider, but some like QMediaRecorder will share
+    a service with another object.
+
+    QMediaObject itself provides an API for accessing a media service's \l {metaData()}{meta-data}
+    and a means of connecting other media objects, and peripheral classes like QVideoWidget and
+    QMediaPlaylist.
 
     \sa QMediaService, QMediaControl
 */
 
 /*!
-    Destroys the QMediaObject object.
+    Destroys a media object.
 */
 
 QMediaObject::~QMediaObject()
@@ -90,9 +98,7 @@ QMediaObject::~QMediaObject()
 }
 
 /*!
-    \fn QMediaService* QMediaObject::service() const
-
-    Returns the media service that provide the functionality for the Multimedia object.
+    Returns the media service that provides the functionality of a multimedia object.
 */
 
 QMediaService* QMediaObject::service() const
@@ -124,7 +130,10 @@ void QMediaObject::bind(QObject*)
 }
 
 /*!
-    Construct a QMediaObject using QMediaService \a service, with \a parent.
+    Constructs a media object which uses the functionality provided by a media \a service.
+
+    The \a parent is passed to QObject.
+
     This class is meant as a base class for Multimedia objects so this
     constructor is protected.
 */
@@ -213,21 +222,18 @@ void QMediaObject::removePropertyWatch(QByteArray const &name)
 */
 
 /*!
-    \fn void QMediaObject::notifyIntervalChanged(int milliSeconds)
+    \fn void QMediaObject::notifyIntervalChanged(int milliseconds)
 
-    Signal a change in the notify interval period to \a milliSeconds.
+    Signal a change in the notify interval period to \a milliseconds.
 */
 
 /*!
     \property QMediaObject::metaDataAvailable
-    \brief Identifies if access to a media object's meta-data is available.
+    \brief whether access to a media object's meta-data is available.
+
+    If this is true there is meta-data available, otherwise there is no meta-data available.
 */
 
-/*!
-    Identifies if access to a media object's meta-data is available.
-
-    Returns true if the meta-data is available and false otherwise.
-*/
 bool QMediaObject::isMetaDataAvailable() const
 {
     Q_D(const QMediaObject);
@@ -245,14 +251,11 @@ bool QMediaObject::isMetaDataAvailable() const
 
 /*!
     \property QMediaObject::metaDataWritable
-    \brief Identifies if a media object's meta-data is writable.
+    \brief whether a media object's meta-data is writable.
+
+    If this is true the meta-data is writable, otherwise the meta-data is read-only.
 */
 
-/*!
-    Identifies if a media object's meta-data is writable.
-
-    Returns true if the meta-data can be edited and false otherwise.
-*/
 bool QMediaObject::isMetaDataWritable() const
 {
     Q_D(const QMediaObject);
@@ -292,6 +295,18 @@ void QMediaObject::setMetaData(QtMedia::MetaData key, const QVariant &value)
 }
 
 /*!
+    Returns a list of keys there is meta-data available for.
+*/
+QList<QtMedia::MetaData> QMediaObject::availableMetaData() const
+{
+    Q_D(const QMediaObject);
+
+    return d->metaDataControl
+            ? d->metaDataControl->availableMetaData()
+            : QList<QtMedia::MetaData>();
+}
+
+/*!
     \fn QMediaObject::metaDataChanged()
 
     Signals that a media object's meta-data has changed.
@@ -325,6 +340,19 @@ void QMediaObject::setExtendedMetaData(const QString &key, const QVariant &value
     if (d->metaDataControl)
         d->metaDataControl->setExtendedMetaData(key, value);
 }
+
+/*!
+    Returns a list of keys there is extended meta-data available for.
+*/
+QStringList QMediaObject::availableExtendedMetaData() const
+{
+    Q_D(const QMediaObject);
+
+    return d->metaDataControl
+            ? d->metaDataControl->availableExtendedMetaData()
+            : QStringList();
+}
+
 
 void QMediaObject::setupMetaData()
 {

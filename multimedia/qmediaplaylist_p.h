@@ -58,6 +58,7 @@
 #include <multimedia/qmediaplayer.h>
 #include <multimedia/qmediaplayercontrol.h>
 #include <multimedia/qlocalmediaplaylistprovider.h>
+#include <multimedia/qmediaobject_p.h>
 
 #include <QtCore/qdebug.h>
 

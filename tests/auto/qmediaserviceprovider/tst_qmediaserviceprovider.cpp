@@ -114,6 +114,8 @@ void tst_QMediaServiceProvider::testDevices()
 {
     MockMediaServiceProvider mockProvider;
     QVERIFY(mockProvider.devices(QByteArray(Q_MEDIASERVICE_CAMERA)).isEmpty());
+    QVERIFY(mockProvider.deviceDescription(QByteArray(Q_MEDIASERVICE_CAMERA),
+                                           QByteArray()).isEmpty());
 
     QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider();
 

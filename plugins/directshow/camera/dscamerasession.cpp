@@ -463,6 +463,11 @@ void DSCameraSession::record()
     }
 
     opened = startStream();
+
+    if(!opened) {
+        m_state = QCamera::StoppedState;
+        emit stateChanged(QCamera::StoppedState);
+    }
 }
 
 void DSCameraSession::pause()
@@ -648,11 +653,6 @@ bool DSCameraSession::createFilterGraph()
         qWarning()<<"failed to get video settings handle";
         return false;
     }
-    hr = pCap->QueryInterface(IID_IAMCameraControl,(void**)&pCameraControl);
-    if(FAILED(hr)) {
-        qWarning()<<"failed to get camera control handle";
-        return false;
-    }
     CoUninitialize();
 
     return true;
@@ -835,6 +835,9 @@ bool DSCameraSession::openStream()
 
     if(!graph)
         graph = createFilterGraph();
+
+    if(!graph)
+        return false;
 
     CoInitialize(NULL);
 
