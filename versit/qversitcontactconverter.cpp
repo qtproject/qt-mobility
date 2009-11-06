@@ -79,14 +79,9 @@ QVersitDocument QVersitContactConverter::convertContact(
     const QContact& contact,
     QVersitDocument::VersitType versitType)
 {
-    d->mUnconvertedContactDetails.clear();
     QVersitDocument versitDocument;
     versitDocument.setVersitType(versitType);
-    QList<QContactDetail> allDetails = contact.details();
-    for (int i = 0; i < allDetails.size(); i++) {
-        QContactDetail detail = allDetails.at(i);
-        d->encodeFieldInfo(versitDocument,detail);
-    }
+    d->convertContact(versitDocument,contact);
     return versitDocument;
 }
 

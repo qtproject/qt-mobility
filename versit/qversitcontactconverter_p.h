@@ -57,7 +57,7 @@ public:
     QVersitContactConverterPrivate();
     ~QVersitContactConverterPrivate();
 
-    void encodeFieldInfo(QVersitDocument& document, const QContactDetail& detail);
+    void convertContact(QVersitDocument& versitDocument, const QContact& contact);
     
 signals:
     void scale(const QString& imageFileName, QByteArray& imageData);
@@ -80,14 +80,17 @@ private:
     bool encodeOnlineAccount(QVersitProperty& property, const QContactDetail& detail);
     bool encodeFamily(QVersitDocument& document, const QContactDetail& detail);
     bool encodeAvatar(QVersitProperty& property,
-                      const QContactDetail& detail);
+        const QContactDetail& detail);
+    bool encodeDisplayLabel(QVersitProperty& property,
+        const QContactDetail& detail,
+        const QContact& contact);
     bool isValidRemoteUrl(const QString& resourceIdentifier);
     void encodeParameters(QVersitProperty& property,
-                          const QStringList& contexts,
-                          const QStringList& subTypes=QStringList());
+        const QStringList& contexts,
+        const QStringList& subTypes=QStringList());
     bool encodeEmbeddedContent(const QString& resourcePath,
-                               QVersitProperty& property,
-                               bool performScaling);
+        QVersitProperty& property,
+        bool performScaling);
     void setEscapedValue(QVersitProperty& property,const QString& value);
     QByteArray escape(const QByteArray& value);
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<setup name="VersitTest">
+<contact save="yes">
+    <Description>If save="yes" then saves the contact in phonebook. Default</Description>
+    <Description>If save="no" then will not save the contact in phonebook</Description>
+</contact>
+<test type="0">
+    <Description>If type="0" then runs the versit test with performance benchmarking. Default</Description>
+    <Description>If type="1" then runs the versit test </Description>
+</test>
+<log logging="yes">
+		<Description>If logging="no" then runs the versit test with performance benchmarking.Default</Description>
+    <Description>If logging="yes" then parse and store the result in xmlparser.</Description>
+</log>
+</setup>

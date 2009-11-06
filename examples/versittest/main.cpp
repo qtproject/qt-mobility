@@ -41,19 +41,39 @@
 
 #include "versittest.h"
 #include "testresultxmlparser.h"
+#include "testconfiguration.h"
 
 #include <QtTest/QtTest>
 
 int main(int argc, char** argv)
 {   
-    bool saveContacts = false;
+    QString homeDir = QDir::homePath();
+    if (!homeDir.endsWith(QString::fromAscii("/")))
+        homeDir += QString::fromAscii("/");
+    QString confFileName = homeDir + QString::fromAscii("conf.xml");
+    TestConfiguration conf;
+    conf.parse(confFileName);
+
+    // overwrite configuration file setting by command line params.
+    bool saveContacts = conf.saveContact();
+    bool logToFile = conf.logToFile();
+    bool performanceTest = conf.performanceTest();
+    QString testName = ( conf.testName().length() >0 ) ? conf.testName()
+                                                       : QString::fromAscii("versittest");
     int scaledImageHeight = 0;
     int scaledImageWidth = 0;
     for (int i=0; i < argc; i++) {
-        QString argStr(QString::fromAscii(argv[i]));
+        QString argStr(QString::fromAscii(argv[i]));        
         if (argStr == QString::fromAscii("save")) {
+            // if save argument in command line enable contact saving
             saveContacts = true;
-        } else {
+        }else if (argStr == QString::fromAscii("log")) {
+            // if log argument in command line enable xml result logging
+            logToFile = true;
+        }else if (argStr == QString::fromAscii("test")) {
+            // if test argument in command line disable performance , so enables the normal test
+            performanceTest = false;
+        }else {
             // Scaling height and width
             QStringList list = argStr.split('x');
             if (!list.isEmpty())
@@ -62,17 +82,20 @@ int main(int argc, char** argv)
                 scaledImageWidth = list.takeFirst().toInt();
         }
     }
-    TestResultXmlParser parser;
-    QString homeDir = QDir::homePath();
-    if (!homeDir.endsWith(QString::fromAscii("/")))
-        homeDir += QString::fromAscii("/");
-    QString resultFileName = homeDir + QString::fromAscii("QVersitTestResults.xml");
-    QStringList args;
+    VersitTest versitTest(performanceTest,saveContacts,scaledImageHeight,scaledImageWidth);
     printf("Running tests...\n");
-    VersitTest versitTest(saveContacts,scaledImageHeight,scaledImageWidth);
-    args << "versittest" << "-xml" << "-o" << resultFileName;
-    QTest::qExec(&versitTest, args);
-    parser.parseAndPrintResults(resultFileName,true);
+    QStringList args;    
+    if( logToFile){
+        QString resultFileName = homeDir + QString::fromAscii("QVersitTestResults.xml");
+        args << testName << "-xml" << "-o" << resultFileName;
+        QTest::qExec(&versitTest, args);
+        TestResultXmlParser parser;
+        parser.parseAndPrintResults(resultFileName,true);
+    }
+    else{
+        args << testName;
+        QTest::qExec(&versitTest, args);
+    }    
     printf("Press any key...\n");
     getchar();
     return 0;   

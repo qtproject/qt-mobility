@@ -61,6 +61,7 @@
 #include <qcontactanniversary.h>
 #include <qcontactonlineaccount.h>
 #include <qcontactfamily.h>
+#include <qcontactdisplaylabel.h>
 #include <QFile>
 #include <QUrl>
 #include <QBuffer>
@@ -115,65 +116,75 @@ QVersitContactConverterPrivate::~QVersitContactConverterPrivate()
 {
 }
 
+
 /*!
- * Encode Contact Field Information into the Versit Document 
+ * Convert Contact into Versit Document.
  */
-void QVersitContactConverterPrivate::encodeFieldInfo(
-    QVersitDocument& document,
-    const QContactDetail& detail)
+void QVersitContactConverterPrivate::convertContact(
+    QVersitDocument& versitDocument,
+    const QContact& contact)
 {
-    mVersitType = document.versitType();
-    QVersitProperty property;
-    property.setName(mPropertyMappings.value(detail.definitionName()));
-    bool addProperty = true;
+    mUnconvertedContactDetails.clear();
+    mVersitType = versitDocument.versitType();
+    QList<QContactDetail> allDetails = contact.details();
+    for (int i = 0; i < allDetails.size(); i++) {
+        QContactDetail detail = allDetails.at(i);
+        QVersitProperty property;
+        property.setName(mPropertyMappings.value(detail.definitionName()));
+        bool addProperty = true;
 
-    if (detail.definitionName() == QContactName::DefinitionName) {
-        encodeName(property, detail);
-    } else if (detail.definitionName() == QContactPhoneNumber::DefinitionName) {
-        encodePhoneNumber(property, detail);
-    } else if (detail.definitionName() == QContactEmailAddress::DefinitionName) {
-        encodeEmail(property, detail);
-    } else if (detail.definitionName() == QContactAddress::DefinitionName) {
-        encodeAddress(property, detail);
-    } else if (detail.definitionName() == QContactGuid::DefinitionName) {
-        encodeUid(property, detail);
-    } else if (detail.definitionName() == QContactUrl::DefinitionName) {
-        encodeUrl(property, detail);
-    } else if (detail.definitionName() == QContactTimestamp::DefinitionName) {
-        addProperty = encodeRev(property, detail);
-    } else if (detail.definitionName() == QContactBirthday::DefinitionName) {
-        encodeBirthDay(property, detail);
-    } else if (detail.definitionName() == QContactGeolocation::DefinitionName) {
-        encodeGeoLocation(property, detail);
-    } else if (detail.definitionName() == QContactNote::DefinitionName) {
-        encodeNote(property, detail);
-    } else if (detail.definitionName() == QContactOrganization::DefinitionName) {
-        encodeOrganization(document, detail);
-        addProperty = false;
-    } else if (detail.definitionName() == QContactAvatar::DefinitionName){
-        addProperty = encodeAvatar(property, detail);
-        if (!addProperty)
+        if (detail.definitionName() == QContactName::DefinitionName) {
+            encodeName(property, detail);
+        } else if (detail.definitionName() == QContactPhoneNumber::DefinitionName) {
+            encodePhoneNumber(property, detail);
+        } else if (detail.definitionName() == QContactEmailAddress::DefinitionName) {
+            encodeEmail(property, detail);
+        } else if (detail.definitionName() == QContactAddress::DefinitionName) {
+            encodeAddress(property, detail);
+        } else if (detail.definitionName() == QContactGuid::DefinitionName) {
+            encodeUid(property, detail);
+        } else if (detail.definitionName() == QContactUrl::DefinitionName) {
+            encodeUrl(property, detail);
+        } else if (detail.definitionName() == QContactTimestamp::DefinitionName) {
+            addProperty = encodeRev(property, detail);
+        } else if (detail.definitionName() == QContactBirthday::DefinitionName) {
+            encodeBirthDay(property, detail);
+        } else if (detail.definitionName() == QContactGeolocation::DefinitionName) {
+            encodeGeoLocation(property, detail);
+        } else if (detail.definitionName() == QContactNote::DefinitionName) {
+            encodeNote(property, detail);
+        } else if (detail.definitionName() == QContactOrganization::DefinitionName) {
+            encodeOrganization(versitDocument, detail);
+            addProperty = false;
+        } else if (detail.definitionName() == QContactAvatar::DefinitionName){
+            addProperty = encodeAvatar(property, detail);
+            if (!addProperty)
+                mUnconvertedContactDetails.append(detail);
+        } else if (detail.definitionName() == QContactAnniversary::DefinitionName) {
+            encodeAnniversary(property, detail);
+        } else if (detail.definitionName() == QContactNickname::DefinitionName) {
+            encodeNickname(versitDocument, detail);
+            addProperty = false;
+        } else if (detail.definitionName() == QContactGender::DefinitionName) {
+            encodeGender(property, detail);
+        } else if (detail.definitionName() == QContactOnlineAccount::DefinitionName) {
+            addProperty = encodeOnlineAccount(property, detail);
+            if (!addProperty)
+                mUnconvertedContactDetails.append(detail);
+        } else if (detail.definitionName() == QContactFamily::DefinitionName) {
+            addProperty = encodeFamily(versitDocument, detail);
+        } else if (detail.definitionName() == QContactDisplayLabel::DefinitionName) {
+            addProperty = encodeDisplayLabel(property, detail, contact);
+            if (!addProperty)
+                mUnconvertedContactDetails.append(detail);
+        } else {
+            addProperty = false;
             mUnconvertedContactDetails.append(detail);
-    } else if (detail.definitionName() == QContactAnniversary::DefinitionName) {
-        encodeAnniversary(property, detail);
-    } else if (detail.definitionName() == QContactNickname::DefinitionName) {
-        encodeNickname(document, detail);
-        addProperty = false;
-    } else if (detail.definitionName() == QContactGender::DefinitionName) {
-        encodeGender(property, detail);
-    } else if (detail.definitionName() == QContactOnlineAccount::DefinitionName) {
-        addProperty = encodeOnlineAccount(property, detail);
-        if (!addProperty)
-            mUnconvertedContactDetails.append(detail);
-    } else if (detail.definitionName() == QContactFamily::DefinitionName) {
-        addProperty = encodeFamily(document, detail);
-    } else {
-        addProperty = false;
-        mUnconvertedContactDetails.append(detail);
+        }
+
+        if (addProperty)
+            versitDocument.addProperty(property);
     }
-
-    if (addProperty)
-        document.addProperty(property);
 }
 
 /*!
@@ -497,6 +508,39 @@ bool QVersitContactConverterPrivate::encodeFamily(
         document.addProperty(property);
     }
     return false;
+}
+
+
+/*!
+ * Encode family versit property if its supported in Versit Document
+ */
+bool QVersitContactConverterPrivate::encodeDisplayLabel(
+    QVersitProperty& property,
+    const QContactDetail& detail,
+    const QContact& contact)
+{
+    bool encoded = false;
+    QByteArray value;
+    QContactDisplayLabel displayLabel = static_cast<QContactDisplayLabel>(detail);
+    if (displayLabel.label().size()) {
+        encoded = true;
+        value = escape(displayLabel.label().toAscii());
+        property.setValue(value);
+    } else {
+        QContactDetail contactDetail;
+        for (int i = 0; i < contact.details().size(); i++) {
+            contactDetail = contact.details().at(i);
+            if ( contactDetail.definitionName() == QContactName::DefinitionName)
+                break;
+        }
+        QContactName name = static_cast<QContactName>(contactDetail);
+        value = escape(name.first().toAscii()) + ' ' + escape(name.last().toAscii());
+        if (name.first().size() || name.last().size()) {
+            encoded = true;
+            property.setValue(value);
+        }
+    }
+    return encoded;
 }
 
 /*!
