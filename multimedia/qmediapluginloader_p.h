@@ -54,6 +54,7 @@
 //
 
 #include <qmultimediaglobal.h>
+#include <QObject>
 #include <QtCore/qstring.h>
 #include <QtCore/qmap.h>
 
