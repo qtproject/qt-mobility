@@ -48,6 +48,8 @@
 #include <qmediaserviceproviderplugin.h>
 
 
+typedef QMap<QString,QObjectList> ObjectListMap;
+Q_GLOBAL_STATIC(ObjectListMap, staticMediaPlugins);
 
 QMediaPluginLoader::QMediaPluginLoader(const char *iid, const QString &location, Qt::CaseSensitivity):
     m_iid(iid)
@@ -71,37 +73,56 @@ QList<QObject*> QMediaPluginLoader::instances(QString const &key)
     return m_instances.values(key);
 }
 
+//to be used for testing purposes only
+void QMediaPluginLoader::setStaticPlugins(const QString &location, const QObjectList& objects)
+{
+    staticMediaPlugins()->insert(location+"/", objects);
+}
+
 void QMediaPluginLoader::load()
 {
     if (!m_instances.isEmpty())
         return;
 
-    QStringList     paths = QCoreApplication::libraryPaths();
-
-    foreach (QString const &path, paths) {
-        QString     pluginPathName(path + m_location);
-        QDir        pluginDir(pluginPathName);
-
-        if (!pluginDir.exists())
-            continue;
-
-        foreach (QString pluginLib, pluginDir.entryList(QDir::Files)) {
-            QPluginLoader   loader(pluginPathName + pluginLib);
-
-            QObject *o = loader.instance();
+    if (staticMediaPlugins() && staticMediaPlugins()->contains(m_location)) {
+        qWarning() << "Load static plugins for" << m_location;
+        foreach(QObject *o, staticMediaPlugins()->value(m_location)) {
             if (o != 0 && o->qt_metacast(m_iid) != 0) {
                 QFactoryInterface* p = qobject_cast<QFactoryInterface*>(o);
                 if (p != 0) {
                     foreach (QString const &key, p->keys())
                         m_instances.insertMulti(key, o);
                 }
-
-                continue;
-            } else {
-                qWarning() << "QMediaPluginLoader: Failed to load plugin: " << pluginLib << loader.errorString();
             }
-            delete o;
-            loader.unload();
+        }
+    } else {
+        QStringList     paths = QCoreApplication::libraryPaths();
+
+        foreach (QString const &path, paths) {
+            QString     pluginPathName(path + m_location);
+            QDir        pluginDir(pluginPathName);
+
+            if (!pluginDir.exists())
+                continue;
+
+            foreach (QString pluginLib, pluginDir.entryList(QDir::Files)) {
+                QPluginLoader   loader(pluginPathName + pluginLib);
+
+                QObject *o = loader.instance();
+                if (o != 0 && o->qt_metacast(m_iid) != 0) {
+                    QFactoryInterface* p = qobject_cast<QFactoryInterface*>(o);
+                    if (p != 0) {
+                        foreach (QString const &key, p->keys())
+                            m_instances.insertMulti(key, o);
+                    }
+
+                    continue;
+                } else {
+                    qWarning() << "QMediaPluginLoader: Failed to load plugin: " << pluginLib << loader.errorString();
+                }
+                delete o;
+                loader.unload();
+            }
         }
     }
 }
