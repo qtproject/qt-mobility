@@ -1880,7 +1880,7 @@ bool QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
         }
 
         QContactLocalIdFetchRequestPrivate* rd = static_cast<QContactLocalIdFetchRequestPrivate*>(req->d_ptr);
-        rd->m_ids = result;
+        rd->setIds(result);
         QContactLocalIdFetchRequest* r = static_cast<QContactLocalIdFetchRequest*>(req);
         emit r->progress(r, appendOnly);
         return true;
@@ -1904,7 +1904,7 @@ bool QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
         }
 
         QContactFetchRequestPrivate* rd = static_cast<QContactFetchRequestPrivate*>(req->d_ptr);
-        rd->m_contacts = result;
+        rd->setContacts(result);
         QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
         emit r->progress(r, appendOnly);
         return true;
@@ -1918,9 +1918,8 @@ bool QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
             return false;
         }
 
-        QContactSaveRequestPrivate* rd = static_cast<QContactSaveRequestPrivate*>(req->d_ptr);
-        rd->m_contacts = result;
         QContactSaveRequest* r = static_cast<QContactSaveRequest*>(req);
+        r->setContacts(result);
         emit r->progress(r);
         return true;
     }
@@ -1942,9 +1941,8 @@ bool QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
             return false;
         }
 
-        QContactDetailDefinitionSaveRequestPrivate* rd = static_cast<QContactDetailDefinitionSaveRequestPrivate*>(req->d_ptr);
-        rd->m_definitions = result;
         QContactDetailDefinitionSaveRequest* r = static_cast<QContactDetailDefinitionSaveRequest*>(req);
+        r->setDefinitions(result);
         emit r->progress(r);
         return true;
     }
@@ -1967,7 +1965,7 @@ bool QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QM
         }
 
         QContactDetailDefinitionFetchRequestPrivate* rd = static_cast<QContactDetailDefinitionFetchRequestPrivate*>(req->d_ptr);
-        rd->m_definitions = result;
+        rd->setDefinitions(result);
         QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
         emit r->progress(r, appendOnly);
         return true;
@@ -1990,9 +1988,8 @@ bool QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
             return false;
         }
 
-        QContactRelationshipSaveRequestPrivate* rd = static_cast<QContactRelationshipSaveRequestPrivate*>(req->d_ptr);
-        rd->m_relationships = result;
         QContactRelationshipSaveRequest* r = static_cast<QContactRelationshipSaveRequest*>(req);
+        r->setRelationships(result);
         emit r->progress(r);
         return true;
     } else if (req->type() == QContactAbstractRequest::RelationshipFetchRequest) {
@@ -2004,7 +2001,7 @@ bool QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
         }
 
         QContactRelationshipFetchRequestPrivate* rd = static_cast<QContactRelationshipFetchRequestPrivate*>(req->d_ptr);
-        rd->m_relationships = result;
+        rd->setRelationships(result);
         QContactRelationshipFetchRequest* r = static_cast<QContactRelationshipFetchRequest*>(req);
         emit r->progress(r, appendOnly);
         return true;

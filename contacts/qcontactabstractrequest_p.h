@@ -87,7 +87,7 @@ public:
     QContactAbstractRequest::Status m_status;
     QPointer<QContactManager> m_manager;
     QList<QContactManager::Error> m_errors;
-    QMutex m_mutex;
+    mutable QMutex m_mutex;
     QWaitCondition m_condition;
     bool m_waiting;
 };

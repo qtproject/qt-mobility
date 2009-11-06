@@ -69,6 +69,7 @@ QContactDetailDefinitionSaveRequest::~QContactDetailDefinitionSaveRequest()
 void QContactDetailDefinitionSaveRequest::setDefinitions(const QList<QContactDetailDefinition>& definitions)
 {
     Q_D(QContactDetailDefinitionSaveRequest);
+    QMutexLocker locker(&d->m_mutex);
     d->m_definitions = definitions;
 }
 
@@ -77,5 +78,6 @@ void QContactDetailDefinitionSaveRequest::setDefinitions(const QList<QContactDet
 QList<QContactDetailDefinition> QContactDetailDefinitionSaveRequest::definitions() const
 {
     Q_D(const QContactDetailDefinitionSaveRequest);
+    QMutexLocker locker(&d->m_mutex);
     return d->m_definitions;
 }

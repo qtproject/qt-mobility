@@ -60,6 +60,7 @@
 #include "qcontact.h"
 #include "qtcontactsglobal.h"
 
+#include <QMutexLocker>
 #include <QStringList>
 #include <QList>
 
@@ -98,6 +99,12 @@ public:
     QContactAbstractRequest::RequestType type() const
     {
         return QContactAbstractRequest::ContactFetchRequest;
+    }
+
+    void setContacts(const QList<QContact>& contacts)
+    {
+        QMutexLocker locker(&m_mutex);
+        m_contacts = contacts;
     }
 
     QContactFilter m_filter;
@@ -144,6 +151,12 @@ public:
         return QContactAbstractRequest::ContactLocalIdFetchRequest;
     }
 
+    void setIds(const QList<QContactLocalId>& ids)
+    {
+        QMutexLocker locker(&m_mutex);
+        m_ids = ids;
+    }
+
     QContactFilter m_filter;
     QList<QContactSortOrder> m_sorting;
 
@@ -165,6 +178,12 @@ public:
     QContactAbstractRequest::RequestType type() const
     {
         return QContactAbstractRequest::DetailDefinitionFetchRequest;
+    }
+
+    void setDefinitions(const QMap<QString, QContactDetailDefinition>& definitions)
+    {
+        QMutexLocker locker(&m_mutex);
+        m_definitions = definitions;
     }
 
     QStringList m_names;
@@ -227,6 +246,12 @@ public:
     QContactAbstractRequest::RequestType type() const
     {
         return QContactAbstractRequest::RelationshipFetchRequest;
+    }
+
+    void setRelationships(const QList<QContactRelationship>& relationships)
+    {
+        QMutexLocker locker(&m_mutex);
+        m_relationships = relationships;
     }
 
     QContactId m_first;

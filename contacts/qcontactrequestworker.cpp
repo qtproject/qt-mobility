@@ -99,9 +99,16 @@ void QContactRequestWorker::stop()
     QMutexLocker locker(&d->m_mutex);
     d->m_stop = true;
     locker.unlock();
-    while (isRunning()) {
+
+    while (true) {
+        //locker.relock();
+        bool stillRunning = isRunning();
+        //locker.unlock();
+
+        if (!stillRunning)
+            break;
+
         d->m_newRequestAdded.wakeAll();
-        usleep(100); // sleep for one hundred micros
     }
 }
 
