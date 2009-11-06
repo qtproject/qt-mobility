@@ -27,6 +27,7 @@ symbian|wince* {
                 $$OUTPUT_DIR/build/tests/bin/plugins/$$mobilityDeployFilename(tst_sfw_testservice2plugin).dll
         SFWTEST_PLUGIN_DEPLOY.path = .
         DEPLOYMENT += SFWTEST_PLUGIN_DEPLOY
+        DEPLOYMENT_PLUGIN += qsqlite
     }
     
     addFiles.sources = ../../testservice2/xml/testserviceplugin.xml

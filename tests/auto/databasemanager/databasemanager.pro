@@ -16,6 +16,7 @@ wince*|symbian*: {
 
 wince* {
     DEFINES+= TESTDATA_DIR=\\\".\\\"
+    DEPLOYMENT_PLUGIN += qsqlite
 } else:!symbian {
     DEFINES += TESTDATA_DIR=\\\"$$PWD/\\\"
 }

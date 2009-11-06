@@ -803,6 +803,7 @@ void tst_QServiceManager::loadInterface_descriptor_data()
 
     lib.setFileName(QCoreApplication::applicationDirPath() + "/tst_sfw_sampleserviceplugin");
     QVERIFY(lib.load());
+    QVERIFY(lib.unload());
     priv->properties[QServiceInterfaceDescriptor::Location] = lib.fileName();
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
     QTest::newRow("tst_sfw_sampleserviceplugin")
@@ -811,6 +812,7 @@ void tst_QServiceManager::loadInterface_descriptor_data()
 
     lib.setFileName(QCoreApplication::applicationDirPath() + "/tst_sfw_testservice2plugin");
     QVERIFY(lib.load());
+    QVERIFY(lib.unload());
     priv->properties[QServiceInterfaceDescriptor::Location] = lib.fileName();
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
     QTest::newRow("tst_sfw2_sampleserviceplugin")
@@ -825,6 +827,7 @@ void tst_QServiceManager::loadInterface_testLoadedObjectAttributes()
 #endif
     QLibrary lib(QCoreApplication::applicationDirPath() + "/tst_sfw_testservice2plugin");
     QVERIFY(lib.load());
+    QVERIFY(lib.unload());
 
     QServiceInterfaceDescriptor descriptor;
     QServiceInterfaceDescriptorPrivate *priv = new QServiceInterfaceDescriptorPrivate;
@@ -1298,7 +1301,7 @@ void tst_QServiceManager::serviceAdded()
     }
 
     // Pause between file changes so they are detected separately
-    QTest::qWait(1000);
+    QTest::qWait(2000);
 
     QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)));
     QVERIFY(mgr_modify.removeService(serviceName));
@@ -1313,6 +1316,9 @@ void tst_QServiceManager::serviceAdded()
 #ifndef Q_OS_WIN    // on win, cannot delete the database while it is in use
     // try it again after deleting the database
     deleteTestDatabasesAndWaitUntilDone();
+#else
+    // Pause between file changes so they are detected separately
+    QTest::qWait(2000);
 #endif
 
     spyAdd.clear();
@@ -1391,7 +1397,7 @@ void tst_QServiceManager::serviceRemoved()
     }
 
     // Pause between file changes so they are detected separately
-    QTest::qWait(1000);
+    QTest::qWait(2000);
 
     QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)));
     QVERIFY(mgr_modify.removeService(serviceName));
@@ -1410,6 +1416,9 @@ void tst_QServiceManager::serviceRemoved()
 #ifndef Q_OS_WIN    // on win, cannot delete the database while it is in use
     // try it again after deleting the database
     deleteTestDatabasesAndWaitUntilDone();
+#else
+    // Pause between file changes so they are detected separately
+    QTest::qWait(2000);
 #endif
 
     spyAdd.clear();
@@ -1425,7 +1434,7 @@ void tst_QServiceManager::serviceRemoved()
     spyRemove.clear();
 
     // Pause between file changes so they are detected separately
-    QTest::qWait(1000);
+    QTest::qWait(2000);
 
     QVERIFY(mgr_modify.removeService(serviceName));
     if (!expectSignal) {
