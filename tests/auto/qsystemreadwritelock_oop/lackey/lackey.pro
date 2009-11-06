@@ -6,7 +6,7 @@ SOURCES += main.cpp
 TARGET = lackey
 INCLUDEPATH += ../../../../context
 DEPENDPATH += ../../../../context
-QT = core
+QT = core network
 
 CONFIG+= testcase
 
