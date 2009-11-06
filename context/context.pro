@@ -25,13 +25,9 @@ SOURCES += \
            qvaluespacesubscriber.cpp
 
 symbian {
-    HEADERS += qcrmlparser_p.h
-    SOURCES += qcrmlparser.cpp
-    deploy.path = $$EPOCROOT
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include
-    DEPLOYMENT += exportheaders
-
+    DEFINES += QT_BUILD_INTERNAL
+    HEADERS += settingslayer_symbian.h
+    SOURCES += settingslayer_symbian.cpp
     MMP_RULES += "EXPORTUNFROZEN"
     TARGET.CAPABILITY = ALL -TCB
 }
