@@ -79,11 +79,17 @@ public:
 };
 
 /*!
-  \class QMediaServiceProviderHint
+    \class QMediaServiceProviderHint
+    \preliminary
+    \brief The QMediaServiceProviderHint class describes what is required of a QMediaService.
+
+    The QMediaServiceProvider class uses hints to select an appropriate media service.
 */
 
 /*!
     \enum QMediaServiceProviderHint::Feature
+
+    Enumerates features a media service may provide.
 
     \value LowLatencyPlayback
             The service is expected to play simple audio formats,
@@ -97,6 +103,8 @@ public:
 /*!
     \enum QMediaServiceProviderHint::Type
 
+    Enumerates the possible types of media service provider hint.
+
     \value Null               En empty hint, use the default service.
     \value ContentType        Select media service most suitable for certain content type.
     \value Device             Select media service which supports certain device.
@@ -105,7 +113,7 @@ public:
 
 
 /*!
-  Construct an empty media service provider hint.
+    Constructs an empty media service provider hint.
 */
 QMediaServiceProviderHint::QMediaServiceProviderHint()
     :d(new QMediaServiceProviderHintPrivate(Null))
@@ -113,9 +121,10 @@ QMediaServiceProviderHint::QMediaServiceProviderHint()
 }
 
 /*!
-  Constructs the content type related media service provider hint.
-  Passing this hint to the service provider allows it to choose the service
-  suitable to play content with certain mime \a type and \a codecs list.
+    Constructs a ContentType media service provider hint.
+
+    This type of hint describes a service that is able to play content of a specific MIME \a type
+    encoded with one or more of the listed \a codecs.
 */
 QMediaServiceProviderHint::QMediaServiceProviderHint(const QString &type, const QStringList& codecs)
     :d(new QMediaServiceProviderHintPrivate(ContentType))
@@ -125,9 +134,9 @@ QMediaServiceProviderHint::QMediaServiceProviderHint(const QString &type, const 
 }
 
 /*!
-  Constructs the device related media service provider hint.
-  Passing this hint to the service provider allows it to choose the service
-  able to work with \a device.
+  Constructs a Device media service provider hint.
+
+  This type of hint describes a media service that utilizes a specific \a device.
 */
 QMediaServiceProviderHint::QMediaServiceProviderHint(const QByteArray &device)
     :d(new QMediaServiceProviderHintPrivate(Device))
@@ -136,9 +145,9 @@ QMediaServiceProviderHint::QMediaServiceProviderHint(const QByteArray &device)
 }
 
 /*!
-  Constructs the supported features related media service provider hint.
-  Passing this hint to the service provider allows it to choose the service
-  providing optional \a features, like recording support or low latency playback.
+    Constructs a SupportedFeatures media service provider hint.
+
+    This type of hint describes a service which supports a specific set of \a features.
 */
 QMediaServiceProviderHint::QMediaServiceProviderHint(QMediaServiceProviderHint::Features features)
     :d(new QMediaServiceProviderHintPrivate(SupportedFeatures))
@@ -147,7 +156,7 @@ QMediaServiceProviderHint::QMediaServiceProviderHint(QMediaServiceProviderHint::
 }
 
 /*!
-  Constructs a copy of \a other.
+    Constructs a copy of the media service provider hint \a other.
 */
 QMediaServiceProviderHint::QMediaServiceProviderHint(const QMediaServiceProviderHint &other)
     :d(other.d)
@@ -155,14 +164,14 @@ QMediaServiceProviderHint::QMediaServiceProviderHint(const QMediaServiceProvider
 }
 
 /*!
-  Destroys the service provider hint.
+    Destroys a media service provider hint.
 */
 QMediaServiceProviderHint::~QMediaServiceProviderHint()
 {
 }
 
 /*!
-  Assigns \a other to this service provider hint and returns a reference to this hint.
+    Assigns the value \a other to a media service provider hint.
 */
 QMediaServiceProviderHint& QMediaServiceProviderHint::operator=(const QMediaServiceProviderHint &other)
 {
@@ -171,7 +180,9 @@ QMediaServiceProviderHint& QMediaServiceProviderHint::operator=(const QMediaServ
 }
 
 /*!
-  Returns true if this hint is equal to \a other; otherwise returns false.
+    Identifies if \a other is of equal value to a media service provider hint.
+
+    Returns true if the hints are equal, and false if they are not.
 */
 bool QMediaServiceProviderHint::operator == (const QMediaServiceProviderHint &other) const
 {
@@ -184,7 +195,9 @@ bool QMediaServiceProviderHint::operator == (const QMediaServiceProviderHint &ot
 }
 
 /*!
-  Returns true if this hint is not equal to \a other; otherwise returns false.
+    Identifies if \a other is not of equal value to a media service provider hint.
+
+    Returns true if the hints are not equal, and false if they are.
 */
 bool QMediaServiceProviderHint::operator != (const QMediaServiceProviderHint &other) const
 {
@@ -192,7 +205,7 @@ bool QMediaServiceProviderHint::operator != (const QMediaServiceProviderHint &ot
 }
 
 /*!
-  Returns true if this hint null.
+    Returns true if a media service provider is null.
 */
 bool QMediaServiceProviderHint::isNull() const
 {
@@ -200,7 +213,7 @@ bool QMediaServiceProviderHint::isNull() const
 }
 
 /*!
-  Returns hint type.
+    Returns the type of a media service provider hint.
 */
 QMediaServiceProviderHint::Type QMediaServiceProviderHint::type() const
 {
@@ -208,7 +221,7 @@ QMediaServiceProviderHint::Type QMediaServiceProviderHint::type() const
 }
 
 /*!
-  Returns mime type of media the service is expected to play.
+    Returns the mime type of the media a service is expected to be able play.
 */
 QString QMediaServiceProviderHint::mimeType() const
 {
@@ -216,7 +229,7 @@ QString QMediaServiceProviderHint::mimeType() const
 }
 
 /*!
-  Returns the codecs list of media the service is expected to play.
+    Returns a list of codes a media service is expected to be able to decode.
 */
 QStringList QMediaServiceProviderHint::codecs() const
 {
@@ -224,7 +237,7 @@ QStringList QMediaServiceProviderHint::codecs() const
 }
 
 /*!
-  Returns the device name, the service is expected to work with.
+    Returns the name of a device a media service is expected to utilize.
 */
 QByteArray QMediaServiceProviderHint::device() const
 {
@@ -232,7 +245,7 @@ QByteArray QMediaServiceProviderHint::device() const
 }
 
 /*!
-  Returns the set of features, the service should provide.
+    Returns a set of features a media service is expected to provide.
 */
 QMediaServiceProviderHint::Features QMediaServiceProviderHint::features() const
 {
@@ -434,9 +447,9 @@ Q_GLOBAL_STATIC(QPluginServiceProvider, pluginProvider);
 /*!
     \fn QtMedia::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &serviceType, const QString &mimeType, const QStringList& codecs, int flags) const
 
-    Returns how confident the available service is that it can play media resources of the given
-    \a mimeType with content encoded with \a codecs. If multiple services with the same
-    \a serviceType are available, the result from the most confident one is returned.
+    Returns how confident a media service provider is that is can provide a \a serviceType
+    service that is able to play media of a specific \a mimeType that is encoded using the listed
+    \a codecs while adhearing to constraints identified in \a flags.
 */
 QtMedia::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &serviceType,
                                                         const QString &mimeType,
@@ -461,8 +474,8 @@ QList<QByteArray> QMediaServiceProvider::devices(const QByteArray &service) cons
 }
 
 /*!
-  Returns the description of \a device related to \a serviceType,
-  suitable to be displayed to user.
+    Returns the description of \a device related to \a serviceType,
+    suitable to be displayed to user.
 */
 QString QMediaServiceProvider::deviceDescription(const QByteArray &serviceType, const QByteArray &device)
 {
