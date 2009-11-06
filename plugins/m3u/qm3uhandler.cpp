@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qm3uhandler.h"
-#include "qmediaresource.h"
+#include <multimedia/qmediaresource.h>
 #include <QtCore/qiodevice.h>
 #include <QtCore/qfileinfo.h>
 #include <QtCore/qtextstream.h>
