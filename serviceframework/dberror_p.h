@@ -57,7 +57,11 @@
 #include "qserviceglobal.h"
 
 QT_BEGIN_NAMESPACE
+#ifdef Q_OS_SYMBIAN
+class Q_SFW_EXPORT DBError
+#else
 class Q_AUTOTEST_EXPORT DBError
+#endif
 {
     public:
         enum ErrorCode {
