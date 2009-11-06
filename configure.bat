@@ -105,12 +105,14 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -debug ............ Build with debugging symbols
     echo -release .......... Build without debugging symbols
     echo -tests ............ Build unit tests (not build by default)
+    echo                     Note, this adds test symbols to all libraries 
+    echo                     and should not be used for release builds.
     echo -examples ......... Build example applications
     echo -vc ............... Generate Visual Studio make files
     echo -contact-src (backend) ...
-    echo                    Compile the specified contacts API backend. Not selecting any backend
-    echo                    will result in default selection for build platform
-    echo                    options: symbian, wince, memory, maemo
+    echo                     Compile the specified contacts API backend. Not selecting any backend
+    echo                     will result in default selection for build platform
+    echo                     options: symbian, wince, memory, maemo
 
 
 if exist "%PROJECT_CONFIF%" del %PROJECT_CONFIG%
