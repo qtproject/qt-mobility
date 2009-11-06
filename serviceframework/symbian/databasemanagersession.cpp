@@ -390,7 +390,7 @@ TInt CDatabaseManagerServerSession::SetInterfaceDefaultL(const RMessage2& aMessa
     if (ret != KErrNone || ret2 != KErrNone)
         {
         iDb->lastError().setError(DBError::UnknownError);
-        aMessage.Write(1, LastErrorCode());
+        aMessage.Write(2, LastErrorCode());
         delete serviceNameBuf;
         delete interfaceNameBuf;
         return (ret == KErrNone) ? ret2 : ret;
@@ -415,7 +415,7 @@ TInt CDatabaseManagerServerSession::SetInterfaceDefaultL(const RMessage2& aMessa
 
     iDb->setInterfaceDefault(descriptors[latestIndex]);
 
-    aMessage.Write(1, LastErrorCode());
+    aMessage.Write(2, LastErrorCode());
     delete serviceNameBuf;
     delete interfaceNameBuf;
     
