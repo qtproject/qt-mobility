@@ -378,7 +378,7 @@ void QVersitContactConverterPrivate::encodeOrganization(
     }
     if (organization.assistantName().length() > 0) {
         QVersitProperty property;
-        property.setName("X-ASSISTANT");
+        property.setName(QString::fromAscii("X-ASSISTANT"));
         setEscapedValue(property,organization.assistantName());
         document.addProperty(property);
     }
