@@ -108,7 +108,7 @@ symbian: {
         DEFINES += USE_CUSTOM_CNT_MODEL_FIELDS
         cntmodelResourceFile = \
             "START RESOURCE ../rss/cntmodel.rss" \
-            "TARGETPATH resource/cntmodel" \
+            "TARGETPATH $${CONTACTS_RESOURCE_DIR}" \
             "END"
         MMP_RULES += cntmodelResourceFile
     }
