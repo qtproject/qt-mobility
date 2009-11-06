@@ -53,6 +53,7 @@
 #include "cntsymbiansorterdbms.h"
 #include "cntrelationship.h"
 #include "cntsymbiantransformerror.h"
+#include "cntsymbiandatabase.h"
 
 #include <QDebug>
 
@@ -72,57 +73,29 @@ typedef QList<QContactLocalId> QContactLocalIdList;
 // variable.
 
 CntSymbianEnginePrivate::CntSymbianEnginePrivate(const QMap<QString, QString>& parameters, QContactManager::Error& error) :
-    m_contactDatabase(0),
+    m_dataBase(0),
     m_transformContact(0)
 {
-    TRAPD(err, m_contactDatabase = CContactDatabase::OpenL())
-
-    //Database not found, create it
-    if(err == KErrNotFound)
-    {
-        TRAP(err, m_contactDatabase = CContactDatabase::CreateL())
-    }
-
-    //If database didn't open successfully return error
-    if(err != KErrNone)
-    {
-        CntSymbianTransformError::transformError(err, error);
-    }
-
+    m_dataBase = new CntSymbianDatabase(error);
+    
     //Database opened successfully
-    else
+    if(error == QContactManager::NoError)
     {
-    // In pre 10.1 platforms the AddObserverL & RemoveObserver functions are not
-    // exported so we need to use CContactChangeNotifier.
-    // TODO: Is it ok to use __SYMBIAN_CNTMODEL_USE_SQLITE__ flag for this?
-#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
-        TRAP(err, m_contactChangeNotifier = CContactChangeNotifier::NewL(*m_contactDatabase, this));
-#else
-        TRAP(err, m_contactDatabase->AddObserverL(*this));
-#endif
-
+        m_dataBase->observer(this); // Temporary solution
         m_managerUri = QContactManager::buildUri(CNT_SYMBIAN_MANAGER_NAME, parameters);
     	m_transformContact = new CntTransformContact;
-        m_contactFilter    = new CntSymbianFilterDbms(*m_contactDatabase);
-        m_contactSorter    = new CntSymbianSorterDbms(*m_contactDatabase, *m_transformContact);
-        m_relationship     = new CntRelationship(m_contactDatabase);
-        CntSymbianTransformError::transformError(err, error);
+        m_contactFilter    = new CntSymbianFilterDbms(*m_dataBase->contactdatabase());
+        m_contactSorter    = new CntSymbianSorterDbms(*m_dataBase->contactdatabase(), *m_transformContact);
+        m_relationship     = new CntRelationship(m_dataBase->contactdatabase());
     }
 }
 
 CntSymbianEnginePrivate::~CntSymbianEnginePrivate()
 {
-#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
-	delete m_contactChangeNotifier;
-#else
-	if (m_contactDatabase != 0) {
-	    m_contactDatabase->RemoveObserver(*this);
-	}
-#endif
-	// m_contactFilter needs to be deleted before m_contactDatabase
+	// m_contactFilter needs to be deleted before m_dataBase->contactdatabase()
     delete m_contactFilter;
     delete m_contactSorter;
-	delete m_contactDatabase;
+	delete m_dataBase;
 	delete m_transformContact;
 	delete m_relationship;
 }
@@ -242,7 +215,7 @@ QList<QContactLocalId> CntSymbianEnginePrivate::groups(QContactManager::Error& q
 QList<QContactLocalId> CntSymbianEnginePrivate::groupsL() const
 {
     QList<QContactLocalId> list;
-    CContactIdArray* cIdList = m_contactDatabase->GetGroupIdListL();
+    CContactIdArray* cIdList = m_dataBase->contactdatabase()->GetGroupIdListL();
     CleanupStack::PushL(cIdList);
     const int count = cIdList->Count();
     for (int i = 0; i < count; ++i)
@@ -399,8 +372,8 @@ bool CntSymbianEnginePrivate::setSelfContactId(const QContactLocalId& contactId,
     TContactItemId id(contactId);
     CContactItem* symContact = 0;
     TRAPD(err,
-        symContact = m_contactDatabase->ReadContactL(id);
-        m_contactDatabase->SetOwnCardL(*symContact);
+        symContact = m_dataBase->contactdatabase()->ReadContactL(id);
+        m_dataBase->contactdatabase()->SetOwnCardL(*symContact);
         );
     delete symContact;
     CntSymbianTransformError::transformError(err, qtError);
@@ -418,7 +391,7 @@ QContactLocalId CntSymbianEnginePrivate::selfContactId(QContactManager::Error& q
     qtError = QContactManager::NoError;
     QContactLocalId id = 0;
 
-    TContactItemId myCard = m_contactDatabase->OwnCardId();
+    TContactItemId myCard = m_dataBase->contactdatabase()->OwnCardId();
     if (myCard < 0) {
         qtError = QContactManager::DoesNotExistError;
     }
@@ -481,7 +454,7 @@ void CntSymbianEnginePrivate::HandleDatabaseEventL(TContactDbObserverEvent aEven
         break;
 	case EContactDbObserverEventOwnCardChanged:
 	    //TODO: temporal solution, fix when we have a signal for MyCard change
-        emit contactChanged(m_contactDatabase->OwnCardId());
+        emit contactChanged(m_dataBase->contactdatabase()->OwnCardId());
         break;
 	default:
 		break; // ignore other events
@@ -500,11 +473,11 @@ QContact CntSymbianEnginePrivate::contactL(const QContactLocalId &localId) const
         User::Leave(KErrNotFound);
 
     // Read the contact from the CContactDatabase
-	CContactItem* symContact = m_contactDatabase->ReadContactL(localId);
+	CContactItem* symContact = m_dataBase->contactdatabase()->ReadContactL(localId);
 	CleanupStack::PushL(symContact);
 
 	// Convert to a QContact
-	QContact contact = m_transformContact->transformContactL(*symContact, *m_contactDatabase);
+	QContact contact = m_transformContact->transformContactL(*symContact, *m_dataBase->contactdatabase());
 
 	// Convert id
     QContactId contactId;
@@ -523,7 +496,7 @@ QContact CntSymbianEnginePrivate::contactL(const QContactLocalId &localId) const
 int CntSymbianEnginePrivate::countL() const
 {
 	// Call CountL and return number of contacts in database
-	return m_contactDatabase->CountL();
+	return m_dataBase->contactdatabase()->CountL();
 }
 
 /*!
@@ -544,7 +517,7 @@ int CntSymbianEnginePrivate::addContactL(QContact &contact)
         contactItem = CContactCard::NewLC();
         m_transformContact->transformContactL(contact, *contactItem);
         // Add to the database
-        id = m_contactDatabase->AddNewContactL(*contactItem);
+        id = m_dataBase->contactdatabase()->AddNewContactL(*contactItem);
         CleanupStack::PopAndDestroy(contactItem);
 
         // Update the changed values to the QContact
@@ -553,12 +526,12 @@ int CntSymbianEnginePrivate::addContactL(QContact &contact)
         contactId->setLocalId(id);
         contactId->setManagerUri(m_managerUri);
         contact.setId(*contactId);
-        contactItem = m_contactDatabase->ReadContactLC(id);
+        contactItem = m_dataBase->contactdatabase()->ReadContactLC(id);
         // Guid
-        QContactDetail* detail = m_transformContact->transformGuidItemFieldL(*contactItem, *m_contactDatabase);
+        QContactDetail* detail = m_transformContact->transformGuidItemFieldL(*contactItem, *m_dataBase->contactdatabase());
         contact.saveDetail(detail);
         // Timestamp
-        detail = m_transformContact->transformTimestampItemFieldL(*contactItem, *m_contactDatabase);
+        detail = m_transformContact->transformTimestampItemFieldL(*contactItem, *m_dataBase->contactdatabase());
         contact.saveDetail(detail);
         CleanupStack::PopAndDestroy(contactItem);
     }
@@ -566,7 +539,7 @@ int CntSymbianEnginePrivate::addContactL(QContact &contact)
     else if(contact.type() == QContactType::TypeGroup)
     {
         // Create a new group, which is added to the database
-        contactItem = m_contactDatabase->CreateContactGroupLC();
+        contactItem = m_dataBase->contactdatabase()->CreateContactGroupLC();
 
         //set the id for the contact, needed by update
         id = contactItem->Id();
@@ -599,7 +572,7 @@ void CntSymbianEnginePrivate::updateContactL(QContact &contact)
 {
     // Need to open the contact for write, leaving this item
     // on the cleanup stack to unlock the item in the event of a leave.
-    CContactItem* contactItem = m_contactDatabase->OpenContactLX(contact.localId());
+    CContactItem* contactItem = m_dataBase->contactdatabase()->OpenContactLX(contact.localId());
     CleanupStack::PushL(contactItem);
 
     // Copy the data from QContact to CContactItem
@@ -607,7 +580,7 @@ void CntSymbianEnginePrivate::updateContactL(QContact &contact)
 
     // Write the entry using the converted  contact
     // note commitContactL removes empty fields from the contact
-    m_contactDatabase->CommitContactL(*contactItem);
+    m_dataBase->contactdatabase()->CommitContactL(*contactItem);
 
     // retrieve the contact in case of empty fields that have been removed, this could also be handled in transformcontact.
     contact = contactL(contact.localId());
@@ -635,7 +608,7 @@ int CntSymbianEnginePrivate::removeContactL(QContactLocalId id)
 
     //TODO: add code to remove all relationships.
 
-	m_contactDatabase->DeleteContactL(cId);
+	m_dataBase->contactdatabase()->DeleteContactL(cId);
 
 
 	return 0;

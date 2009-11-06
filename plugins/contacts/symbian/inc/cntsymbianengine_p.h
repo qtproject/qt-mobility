@@ -47,7 +47,6 @@
 
 #include <qtcontacts.h>
 
-#include <cntdb.h>
 #include <cntdbobs.h>
 #include <cntitem.h>
 
@@ -63,6 +62,7 @@ class QContactChangeSet;
 class CntAbstractContactFilter;
 class CntAbstractContactSorter;
 class CntRelationship;
+class CntSymbianDatabase;
 
 class CntSymbianEnginePrivate : public QObject,
 							   public MContactDbObserver
@@ -134,10 +134,7 @@ private:
     int removeContactL(QContactLocalId id);
 
 private:
-    CContactDatabase* m_contactDatabase;
-#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
-	CContactChangeNotifier* m_contactChangeNotifier;
-#endif
+    CntSymbianDatabase* m_dataBase;
     QString m_managerUri;
 
     QList<QContactLocalId> m_contactsAddedEmitted;
