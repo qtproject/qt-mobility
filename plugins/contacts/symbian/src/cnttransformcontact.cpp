@@ -97,6 +97,7 @@ void CntTransformContact::initializeCntTransformContactData()
 	m_transformContactData.insert(URL, new CntTransformUrl);
 	m_transformContactData.insert(Birthday, new CntTransformBirthday);
 	m_transformContactData.insert(Organisation, new CntTransformOrganisation);
+	m_transformContactData.insert(SyncTarget, new CntTransformSyncTarget);
 	m_transformContactData.insert(Note, new CntTransformNote);
 	m_transformContactData.insert(Family, new CntTransformFamily);
 
@@ -122,8 +123,6 @@ void CntTransformContact::initializeCntTransformContactData()
     // Causes a "CPbk2ContactEdit.. 2" panic in Phonebook2 contact editor.
     // Avatar is probably not correctly mapped to image fields of a contact item
     m_transformContactData.insert(Avatar, new CntTransformAvatar);
-    // Causes a "CPbk2ContactEdit.. 2" panic in Phonebook2 contact editor
-    m_transformContactData.insert(SyncTarget, new CntTransformSyncTarget);
 #else
     m_transformContactData.insert(Anniversary, new CntTransformAnniversarySimple);
 #endif

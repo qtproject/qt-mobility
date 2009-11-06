@@ -50,9 +50,9 @@ QList<CContactItemField *> CntTransformSyncTarget::transformDetailL(const QConta
 
 	//create new field
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(syncTarget.syncTarget().utf16()));
-	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldSyncTarget);
+	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldClass);
  	newField->TextStorage()->SetTextL(fieldText);
-	newField->SetMapping(KUidContactFieldVCardMapUnknown);
+	newField->SetMapping(KUidContactFieldVCardMapClass);
 
 	fieldList.append(newField);
 	CleanupStack::Pop(newField);
@@ -76,7 +76,7 @@ QContactDetail *CntTransformSyncTarget::transformItemField(const CContactItemFie
 bool CntTransformSyncTarget::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
-    if (fieldType == KUidContactFieldSyncTarget.iUid) {
+    if (fieldType == KUidContactFieldClass.iUid) {
         ret = true;
     }
     return ret;
@@ -95,7 +95,7 @@ QList<TUid> CntTransformSyncTarget::supportedSortingFieldTypes(QString detailFie
 {
     QList<TUid> uids;
     if (detailFieldName == QContactSyncTarget::FieldSyncTarget)
-        uids << KUidContactFieldSyncTarget;
+        uids << KUidContactFieldClass;
     return uids;
 }
 
@@ -108,7 +108,7 @@ QList<TUid> CntTransformSyncTarget::supportedSortingFieldTypes(QString detailFie
  */
 bool CntTransformSyncTarget::supportsSubType(const QString& subType) const
 {
-	  Q_UNUSED(subType);
+    Q_UNUSED(subType);
     return false;
 }
 
@@ -121,7 +121,7 @@ bool CntTransformSyncTarget::supportsSubType(const QString& subType) const
 quint32 CntTransformSyncTarget::getIdForField(const QString& fieldName) const
 {
     if (QContactSyncTarget::FieldSyncTarget == fieldName)
-        return KUidContactFieldSyncTarget.iUid;
+        return KUidContactFieldClass.iUid;
     else 
         return 0;
 }
