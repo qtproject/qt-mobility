@@ -113,8 +113,7 @@ QVideoSurfaceRasterPainter::QVideoSurfaceRasterPainter()
         << QVideoFrame::Format_RGB24
         << QVideoFrame::Format_ARGB32
         << QVideoFrame::Format_ARGB32_Premultiplied
-        << QVideoFrame::Format_RGB565
-        << QVideoFrame::Format_RGB555;
+        << QVideoFrame::Format_RGB565;
 }
 
 QList<QVideoFrame::PixelFormat> QVideoSurfaceRasterPainter::supportedPixelFormats(
@@ -227,7 +226,7 @@ public:
     void updateColors(int brightness, int contrast, int hue, int saturation);
 
 protected:
-    void initRgbTextureInfo(GLenum internalFormat, GLuint format, const QSize &size);
+    void initRgbTextureInfo(GLenum internalFormat, GLuint format, GLenum type, const QSize &size);
     void initYuv420PTextureInfo(const QSize &size);
     void initYv12TextureInfo(const QSize &size);
 
@@ -243,6 +242,7 @@ protected:
     QAbstractVideoBuffer::HandleType m_handleType;
     GLenum m_textureFormat;
     GLuint m_textureInternalFormat;
+    GLenum m_textureType;
     int m_textureCount;
     GLuint m_textureIds[3];
     int m_textureWidths[3];
@@ -256,6 +256,7 @@ QVideoSurfaceGLPainter::QVideoSurfaceGLPainter(QGLContext *context)
     , m_handleType(QAbstractVideoBuffer::NoHandle)
     , m_textureFormat(0)
     , m_textureInternalFormat(0)
+    , m_textureType(0)
     , m_textureCount(0)
     , m_yuv(false)
 {
@@ -315,7 +316,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGLPainter::setCurrentFrame(const QVide
                     m_textureHeights[i],
                     0,
                     m_textureFormat,
-                    GL_UNSIGNED_BYTE,
+                    m_textureType,
                     m_frame.bits() + m_textureOffsets[i]);
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -392,11 +393,12 @@ void QVideoSurfaceGLPainter::updateColors(int brightness, int contrast, int hue,
 }
 
 void QVideoSurfaceGLPainter::initRgbTextureInfo(
-        GLenum internalFormat, GLuint format, const QSize &size)
+        GLenum internalFormat, GLuint format, GLenum type, const QSize &size)
 {
     m_yuv = false;
     m_textureInternalFormat = internalFormat;
     m_textureFormat = format;
+    m_textureType = type;
     m_textureCount = 1;
     m_textureWidths[0] = size.width();
     m_textureHeights[0] = size.height();
@@ -408,6 +410,7 @@ void QVideoSurfaceGLPainter::initYuv420PTextureInfo(const QSize &size)
     m_yuv = true;
     m_textureInternalFormat = GL_LUMINANCE;
     m_textureFormat = GL_LUMINANCE;
+    m_textureType = GL_UNSIGNED_BYTE;
     m_textureCount = 3;
     m_textureWidths[0] = size.width();
     m_textureHeights[0] = size.height();
@@ -425,6 +428,7 @@ void QVideoSurfaceGLPainter::initYv12TextureInfo(const QSize &size)
     m_yuv = true;
     m_textureInternalFormat = GL_LUMINANCE;
     m_textureFormat = GL_LUMINANCE;
+    m_textureType = GL_UNSIGNED_BYTE;
     m_textureCount = 3;
     m_textureWidths[0] = size.width();
     m_textureHeights[0] = size.height();
@@ -548,13 +552,13 @@ QVideoSurfaceArbFpPainter::QVideoSurfaceArbFpPainter(QGLContext *context)
     m_imagePixelFormats
             << QVideoFrame::Format_RGB32
             << QVideoFrame::Format_ARGB32
+            << QVideoFrame::Format_RGB24
             << QVideoFrame::Format_RGB565
             << QVideoFrame::Format_YV12
             << QVideoFrame::Format_YUV420P;
     m_glPixelFormats
             << QVideoFrame::Format_RGB32
-            << QVideoFrame::Format_ARGB32
-            << QVideoFrame::Format_RGB565;
+            << QVideoFrame::Format_ARGB32;
 }
 
 QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::start(const QVideoSurfaceFormat &format)
@@ -570,15 +574,19 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::start(const QVideoSurfac
     if (format.handleType() == QAbstractVideoBuffer::NoHandle) {
         switch (format.pixelFormat()) {
         case QVideoFrame::Format_RGB32:
-            initRgbTextureInfo(GL_RGBA, GL_RGBA, format.frameSize());
+            initRgbTextureInfo(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, format.frameSize());
             program = qt_arbfp_xrgbShaderProgram;
             break;
         case QVideoFrame::Format_ARGB32:
-            initRgbTextureInfo(GL_RGBA, GL_RGBA, format.frameSize());
+            initRgbTextureInfo(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, format.frameSize());
+            program = qt_arbfp_argbShaderProgram;
+            break;
+        case QVideoFrame::Format_RGB24:
+            initRgbTextureInfo(GL_RGB8, GL_RGBA, GL_UNSIGNED_BYTE, format.frameSize());
             program = qt_arbfp_argbShaderProgram;
             break;
         case QVideoFrame::Format_RGB565:
-            initRgbTextureInfo(GL_RGB16, GL_RGB, format.frameSize());
+            initRgbTextureInfo(GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, format.frameSize());
             program = qt_arbfp_rgbShaderProgram;
             break;
         case QVideoFrame::Format_YV12:
@@ -595,7 +603,6 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::start(const QVideoSurfac
     } else if (format.handleType() == QAbstractVideoBuffer::GLTextureHandle) {
         switch (format.pixelFormat()) {
         case QVideoFrame::Format_RGB32:
-        case QVideoFrame::Format_RGB565:
         case QVideoFrame::Format_ARGB32:
             m_yuv = false;
             m_textureCount = 1;
@@ -815,13 +822,13 @@ QVideoSurfaceGlslPainter::QVideoSurfaceGlslPainter(QGLContext *context)
     m_imagePixelFormats
             << QVideoFrame::Format_RGB32
             << QVideoFrame::Format_ARGB32
+            << QVideoFrame::Format_RGB24
             << QVideoFrame::Format_RGB565
             << QVideoFrame::Format_YV12
             << QVideoFrame::Format_YUV420P;
     m_glPixelFormats
             << QVideoFrame::Format_RGB32
-            << QVideoFrame::Format_ARGB32
-            << QVideoFrame::Format_RGB565;
+            << QVideoFrame::Format_ARGB32;
 }
 
 QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::start(const QVideoSurfaceFormat &format)
@@ -837,15 +844,19 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::start(const QVideoSurface
     if (format.handleType() == QAbstractVideoBuffer::NoHandle) {
         switch (format.pixelFormat()) {
         case QVideoFrame::Format_RGB32:
-            initRgbTextureInfo(GL_RGBA, GL_RGBA, format.frameSize());
+            initRgbTextureInfo(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, format.frameSize());
             fragmentProgram = qt_glsl_xrgbShaderProgram;
             break;
         case QVideoFrame::Format_ARGB32:
-            initRgbTextureInfo(GL_RGBA, GL_RGBA, format.frameSize());
+            initRgbTextureInfo(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, format.frameSize());
             fragmentProgram = qt_glsl_argbShaderProgram;
             break;
+        case QVideoFrame::Format_RGB24:
+            initRgbTextureInfo(GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, format.frameSize());
+            fragmentProgram = qt_glsl_rgbShaderProgram;
+            break;
         case QVideoFrame::Format_RGB565:
-            initRgbTextureInfo(GL_RGB16, GL_RGB, format.frameSize());
+            initRgbTextureInfo(GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, format.frameSize());
             fragmentProgram = qt_glsl_rgbShaderProgram;
             break;
         case QVideoFrame::Format_YV12:
@@ -862,7 +873,6 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::start(const QVideoSurface
     } else if (format.handleType() == QAbstractVideoBuffer::GLTextureHandle) {
         switch (format.pixelFormat()) {
         case QVideoFrame::Format_RGB32:
-        case QVideoFrame::Format_RGB565:
         case QVideoFrame::Format_ARGB32:
             m_yuv = false;
             m_textureCount = 1;

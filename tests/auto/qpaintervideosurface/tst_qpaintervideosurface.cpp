@@ -698,7 +698,7 @@ void tst_QPainterVideoSurface::shaderSupportedFormat_data()
 #ifndef QT_OPENGL_ES
     types << qMakePair(QPainterVideoSurface::FragmentProgramShader, QByteArray("ARBfp: "));
 #endif
-    types << qMakePair(QPainterVideoSurface::GlslShader, QByteArray("GLSL"));
+    types << qMakePair(QPainterVideoSurface::GlslShader, QByteArray("GLSL: "));
 
     QPair<QPainterVideoSurface::ShaderType, QByteArray> type;
     foreach (type, types) {
@@ -742,14 +742,14 @@ void tst_QPainterVideoSurface::shaderSupportedFormat_data()
                 << QAbstractVideoBuffer::NoHandle
                 << QVideoFrame::Format_RGB24
                 << QSize(1024, 768)
-                << false
-                << false;
+                << true
+                << true;
         QTest::newRow((type.second + "rgb24 -1024x-768").constData())
                 << type.first
                 << QAbstractVideoBuffer::NoHandle
                 << QVideoFrame::Format_RGB24
                 << QSize(-1024, -768)
-                << false
+                << true
                 << false;
         QTest::newRow((type.second + "YUV420P 640x480").constData())
                 << type.first
@@ -791,14 +791,14 @@ void tst_QPainterVideoSurface::shaderSupportedFormat_data()
                 << QAbstractVideoBuffer::GLTextureHandle
                 << QVideoFrame::Format_RGB565
                 << QSize(32, 32)
-                << true
-                << true;
+                << false
+                << false;
         QTest::newRow((type.second + "Texture: rgb565 0x0").constData())
                 << type.first
                 << QAbstractVideoBuffer::GLTextureHandle
                 << QVideoFrame::Format_RGB565
                 << QSize(0, 0)
-                << true
+                << false
                 << false;
         QTest::newRow((type.second + "Texture argb32 256x256").constData())
                 << type.first
