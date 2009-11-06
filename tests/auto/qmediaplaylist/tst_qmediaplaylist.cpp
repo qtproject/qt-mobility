@@ -45,6 +45,9 @@
 #include "multimedia/qmediaplaylist.h"
 #include "multimedia/qmediaplaylistcontrol.h"
 #include "multimedia/qmediaplaylistnavigator.h"
+#include "multimedia/qmediapluginloader_p.h"
+
+#include "qm3uhandler.h"
 
 class MockReadOnlyPlaylistProvider : public QMediaPlaylistProvider
 {
@@ -170,6 +173,8 @@ void tst_QMediaPlaylist::initTestCase()
     content1 = QMediaContent(QUrl(QLatin1String("file:///1")));
     content2 = QMediaContent(QUrl(QLatin1String("file:///2")));
     content3 = QMediaContent(QUrl(QLatin1String("file:///3")));
+
+    QMediaPluginLoader::setStaticPlugins(QLatin1String("/playlistformats"), QObjectList() << new QM3uPlaylistPlugin(this));
 }
 
 void tst_QMediaPlaylist::cleanup()
@@ -337,6 +342,7 @@ void tst_QMediaPlaylist::saveAndLoad()
     QBuffer buffer;
     buffer.open(QBuffer::ReadWrite);
 
+    QTest::ignoreMessage(QtWarningMsg, "Load static plugins for \"/playlistformats/\" ");
     bool res = playlist.save(&buffer, "unsupported_format");
     QVERIFY(!res);
     QVERIFY(playlist.error() != QMediaPlaylist::NoError);
@@ -359,8 +365,6 @@ void tst_QMediaPlaylist::saveAndLoad()
     QVERIFY(playlist.error() != QMediaPlaylist::NoError);
     QVERIFY(!playlist.errorString().isEmpty());
 
-    //it's necessary to ensure the m3u plugin is loaded for this test
-    /*
     res = playlist.save(&buffer, "m3u");
 
     QVERIFY(res);
@@ -388,7 +392,6 @@ void tst_QMediaPlaylist::saveAndLoad()
     QCOMPARE(playlist.media(0), playlist2.media(0));
     QCOMPARE(playlist.media(1), playlist2.media(1));
     QCOMPARE(playlist.media(3), playlist2.media(3));
-    */
 }
 
 void tst_QMediaPlaylist::playbackMode_data()
