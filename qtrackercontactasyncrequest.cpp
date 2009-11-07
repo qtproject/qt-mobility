@@ -23,15 +23,36 @@
 using namespace SopranoLive;
 using namespace hcontacts;
 
-void matchPhoneNumberFromEnd(RDFVariable &variable, QContactDetailFilter &filter)
+void matchPhoneNumber(RDFVariable &variable, QContactDetailFilter &filter)
 {
+    // This here is the first implementation of filtering that takes into account also affiliations.
+    // needs to be applied for other filters too - TODO
+    RDFVariable officeContact;
+    RDFVariable homeContact;
+
     RDFVariable rdfPhoneNumber;
-    rdfPhoneNumber = variable.property<nco::hasPhoneNumber>().property<nco::phoneNumber>();
-    QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
-    int matchDigitCount = settings.value("phoneNumberMatchDigitCount", "7").toInt();
-    debug() << "match with:" << matchDigitCount;
-    QString filterValue = filter.value().toString().right(matchDigitCount);
-    rdfPhoneNumber.hasSuffix(filterValue);
+    rdfPhoneNumber = homeContact.property<nco::hasPhoneNumber>().property<nco::phoneNumber>();
+
+    RDFVariable rdfOfficePhoneNumber;
+    rdfOfficePhoneNumber = officeContact.property<nco::hasAffiliation>().property<nco::hasPhoneNumber>().property<nco::phoneNumber>();
+
+    QString filterValue = filter.value().toString();
+    if (filter.matchFlags() == Qt::MatchEndsWith)
+    {
+        QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Nokia","Trackerplugin");
+        int matchDigitCount = settings.value("phoneNumberMatchDigitCount", "7").toInt();
+        filterValue = filterValue.right(matchDigitCount);
+        debug() << "match with:" << matchDigitCount << ":" << filterValue;
+        rdfPhoneNumber.hasSuffix(filterValue);
+        rdfOfficePhoneNumber.hasSuffix(filterValue);
+    }
+    else
+    {   // default to exact match
+        rdfOfficePhoneNumber.matchesRegexp(filterValue);
+        rdfPhoneNumber.matchesRegexp(filterValue);
+    }
+    // This is the key part, including both contacts and affiliations
+    variable.isMemberOf(RDFVariableList()<<homeContact);// TODO report bug doesnt work in tracker <<officeContact);
 }
 
 void applyFilterToRDFVariable(RDFVariable &variable,
@@ -45,14 +66,15 @@ void applyFilterToRDFVariable(RDFVariable &variable,
             warning() << Q_FUNC_INFO << "QContactLocalIdFilter idlist is empty";
         }
     } else if (filter.type() == QContactFilter::ContactDetailFilter) {
+        // this one is tricky as we need to match in contacts or in affiliations
+
         QContactDetailFilter filt = filter;
-        if (filt.matchFlags() == Qt::MatchExactly) {
-            if ( QContactPhoneNumber::DefinitionName == filt.detailDefinitionName()
-                 && QContactPhoneNumber::FieldNumber == filt.detailFieldName()) {
-                RDFVariable rdfPhoneNumber;
-                rdfPhoneNumber = variable.property<nco::hasPhoneNumber>();
-                rdfPhoneNumber.property<nco::phoneNumber>() = LiteralValue(filt.value().toString());
-            } else if (QContactEmailAddress::DefinitionName == filt.detailDefinitionName()
+        if ( QContactPhoneNumber::DefinitionName == filt.detailDefinitionName()
+             && QContactPhoneNumber::FieldNumber == filt.detailFieldName()) {
+            matchPhoneNumber(variable, filt);
+        }
+        else if (filt.matchFlags() == Qt::MatchExactly) {
+            if (QContactEmailAddress::DefinitionName == filt.detailDefinitionName()
                        && QContactEmailAddress::FieldEmailAddress == filt.detailFieldName()) {
                 RDFVariable rdfEmailAddress;
                 rdfEmailAddress = variable.property<nco::hasEmailAddress>();
@@ -64,13 +86,6 @@ void applyFilterToRDFVariable(RDFVariable &variable,
             } else {
                 warning() << "QContactTrackerEngine: Unsupported QContactFilter::ContactDetail"
                     << filt.detailDefinitionName();
-            }
-        }
-        // TODO: change match flag as soon as qtmobility provides one
-        if (filt.matchFlags() == Qt::MatchEndsWith) {
-            if ( filt.detailDefinitionName() == QContactPhoneNumber::DefinitionName 
-                 && filt.detailFieldName() == QContactPhoneNumber::FieldNumber) {
-                matchPhoneNumberFromEnd(variable, filt);
             }
         }
     } else if (filter.type() == QContactFilter::ChangeLogFilter) {
