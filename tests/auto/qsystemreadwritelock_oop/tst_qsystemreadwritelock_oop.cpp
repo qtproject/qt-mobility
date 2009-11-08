@@ -297,7 +297,11 @@ void tst_QSystemReadWriteLock_oop::exclusiveWriteTest()
     QSystemReadWriteLock testLock("Viper", QSystemReadWriteLock::Create);
 
     int runTime=10000;
+#if !defined(Q_OS_WINCE)
     const int numReaders = 20;
+#else
+    const int numReaders = 10;
+#endif
 
     int readerHoldTime = 0;
     int readerWaitTime = 1;
