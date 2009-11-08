@@ -162,7 +162,9 @@ void AddressFinder::stateChanged(QMessageServiceAction::State s)
                 QTimer::singleShot(0, this, SLOT(continueSearch()));
             } else {
                 searchAction->setEnabled(true);
+#ifndef _WIN32_WCE
                 searchButton->setEnabled(true);
+#endif
             }
         }
     } else if (s == QMessageServiceAction::Failed) {
