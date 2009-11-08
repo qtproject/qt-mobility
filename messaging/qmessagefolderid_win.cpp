@@ -44,6 +44,7 @@
 #include <QByteArray>
 #include <QDataStream>
 #include <MAPIUtil.h>
+#include <QDebug>
 
 #ifdef _WIN32_WCE
 
@@ -144,7 +145,18 @@ bool QMessageFolderId::operator==(const QMessageFolderId& other) const
     if (isValid()) {
         if (other.isValid()) {
             bool result(true);
+#ifdef _WIN32_WCE    
+            QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+            MapiSessionPtr session(MapiSession::createSession(&ignoredError));
+            if (ignoredError == QMessageStore::NoError) {
+                result &= session->equal(d_ptr->_entryId, other.d_ptr->_entryId);
+            } else {
+                result = false;
+                qWarning() << "Unable to compare entry IDs.";
+            }
+#else
             result &= (d_ptr->_folderRecordKey == other.d_ptr->_folderRecordKey);
+#endif
             result &= (d_ptr->_storeRecordKey == other.d_ptr->_storeRecordKey);
             return result;
         }

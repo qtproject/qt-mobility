@@ -99,11 +99,13 @@ MapiFolderIterator::MapiFolderIterator(MapiStorePtr store,
     _ancestorExclude(ancestorExclude)
 {
     QList<MapiFolderPtr> unprocessed;
-    unprocessed.append(root);
+    if (root && root->isValid())
+        unprocessed.append(root);
     while (_store && _store->isValid() && !unprocessed.isEmpty()) {
         MapiFolderPtr parent(unprocessed.takeLast());
         if (parent->isValid()) {
-            _folders.append(parent);
+            if (!_store->session()->equal(parent->entryId(), root->entryId()))
+                _folders.append(parent);
             QMessageStore::ErrorCode ignored(QMessageStore::NoError);
             while (true) {
                 MapiFolderPtr folder(parent->nextSubFolder(&ignored));
@@ -140,7 +142,7 @@ MapiFolderPtr MapiFolderIterator::next()
 
             if (!_parentInclude.isEmpty() || !_parentExclude.isEmpty()) {
                 QMessageFolderId parentId(folder->parentId());
-#ifdef _WIN32_WCE
+#ifndef QSTRING_FOLDER_ID
                 if (!(_parentInclude.isEmpty() || _parentInclude.contains(folder->id()))
                     || _parentExclude.contains(folder->id()))
                     continue;
@@ -157,7 +159,7 @@ MapiFolderPtr MapiFolderIterator::next()
                 QMessageFolderId id(folder->parentId());
                 while (id.isValid()) {
                     QMessageFolder f(id);
-#ifdef _WIN32_WCE
+#ifndef QSTRING_FOLDER_ID
                     folderAncestors.insert(id);
 #else
                     folderAncestors.insert(f.parentAccountId().toString() + "/" + f.path());
@@ -1987,7 +1989,7 @@ QMessageFilter QMessageFilter::byStandardFolder(QMessage::StandardFolder folder,
 QMessageFilter QMessageFilter::byParentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageFilter result;
-#ifdef _WIN32_WCE
+#ifndef QSTRING_FOLDER_ID
     result.d_ptr->_parentInclude += id;
 #else
     QMessageFolder folder(id);
@@ -2016,7 +2018,7 @@ QMessageFilter QMessageFilter::byAncestorFolderIds(const QMessageFolderId &id, Q
 {
     QMessageFilter result;
     if (id.isValid()) {
-#ifdef _WIN32_WCE
+#ifndef QSTRING_FOLDER_ID
         result.d_ptr->_ancestorInclude += id;
 #else
         QMessageFolder folder(id);

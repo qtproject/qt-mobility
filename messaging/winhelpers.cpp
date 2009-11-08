@@ -2544,7 +2544,9 @@ QMessageFolder MapiStore::folderFromId(QMessageStore::ErrorCode *lastError, cons
 {
     QMessageFolder result;
     QList<MapiFolderPtr> folders;
-    folders.append(rootFolder(lastError));
+    MapiFolderPtr root(rootFolder(lastError));
+    if (!root.isNull() && root->isValid())
+        folders.append(root);
 
     while (!folders.isEmpty()) {
         MapiFolderPtr subFolder(folders.back()->nextSubFolder(lastError));
@@ -3706,13 +3708,11 @@ QMessageFolder MapiSession::folder(QMessageStore::ErrorCode *lastError, const QM
 
             QMessageFolderId folderId(QMessageFolderIdPrivate::from(folderKey, storeRecordKey, entryId));
 
-#ifdef _WIN32_WCE
             if (equal(parentEntryId, storeRoot->entryId())) {
                 // This folder is a direct child of the root folder
                 QMessageAccountId accountId(QMessageAccountIdPrivate::from(storeRecordKey));
-                return QMessageFolderPrivate::from(folderId, accountId, storeRoot->id(), displayName, displayName);
+                return QMessageFolderPrivate::from(folderId, accountId, QMessageFolderId(), displayName, displayName);
             }
-#endif
 
             QStringList path;
             path.append(displayName);
@@ -3756,10 +3756,6 @@ QMessageFolder MapiSession::folder(QMessageStore::ErrorCode *lastError, const QM
                     // Prepare to consider next ancestor
                     if (!ancestorName.isEmpty())
                         path.prepend(ancestorName);
-#if 1 // break out of infinite loop in, (parentFolderId equality 1) qmessagestorekeys unit test. TODO debug further
-                    else
-                        break;
-#endif
                 } else {
                     break;
                 }
