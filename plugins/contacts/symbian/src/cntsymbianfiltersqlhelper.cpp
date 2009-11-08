@@ -54,12 +54,19 @@
     \brief Helper class for converting filter to sql queries
 */
 
+ Q_DEFINE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::SingleQuote,"'")  ;
+ Q_DEFINE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::PercentSign,"%") ;
+ Q_DEFINE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::Space," ") ;
+ Q_DEFINE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::EqualTo,"=") ;
+ Q_DEFINE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::SqlLike,"LIKE") ;
+ Q_DEFINE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::SqlNotNull,"NOT NULL") ;
+
 /*!
  * The constructor
  */
 CntSymbianFilterSqlHelper::CntSymbianFilterSqlHelper()
 {
-   m_srvConnection = new CntSrvConnection();
+   m_srvConnection = new CntSymbianSrvConnection();
 }
 
 /*!
@@ -200,6 +207,8 @@ void  CntSymbianFilterSqlHelper::updateSqlQueryForSingleFilter( const QContactFi
                        error = QContactManager::NotSupportedError;
                        break;
            default:
+                       //Some Unknow filter value
+                       // Not supported 
                        error = QContactManager::NotSupportedError;
                        break;
     };
@@ -237,16 +246,13 @@ void CntSymbianFilterSqlHelper::updateSqlQueryForDetailFilter(const QContactFilt
             sqlQuery += sqlDbTableColumnName;
             sqlQuery += " NOT NULL ";
         } else {
-            //Get the value and update it to the query
-            sqlQuery += "'";
-            sqlQuery +=  cdf.value().toString();
-            sqlQuery += "%";
-            sqlQuery += "'";
-            error = QContactManager::NoError;
-            
-
         
-         }
+            sqlQuery += Space + sqlDbTableColumnName + Space ;
+            QString fieldToUpdate;
+            //Update the value depending on the match flag
+            updateFieldForDeatilFilterMatchFlag(cdf,fieldToUpdate,error);
+            sqlQuery +=  fieldToUpdate ;
+        }
         
         
     } else {
@@ -270,22 +276,118 @@ void CntSymbianFilterSqlHelper::updateSqlQueryForDetailFilter(const QContactFilt
  * \a fieldId field id representing the detail field name 
  * \a sqlDbTableColumnName On return,contains the column name in the database 
  */
+void CntSymbianFilterSqlHelper::updateFieldForDeatilFilterMatchFlag(
+                                                    const QContactDetailFilter& filter,
+                                                    QString& fieldToUpdate ,
+                                                    QContactManager::Error& error) const
+{
+    // Modify the filed depending on the query
+    switch(filter.matchFlags())
+        {
+            case Qt::MatchExactly:
+                {
+                // Pattern for MatchExactly: 
+                // " ='xyz%'"
+                fieldToUpdate = Space + EqualTo + SingleQuote 
+                               + filter.value().toString() + SingleQuote;
+                error = QContactManager::NoError;
+                break;
+                }
+            case Qt::MatchContains:
+                {
+                // Pattern for MatchContains: 
+                // " LIKE '%xyz%'"
+                fieldToUpdate = Space + SqlLike + Space + SingleQuote + PercentSign 
+                                + filter.value().toString() + PercentSign + SingleQuote ;
+                error = QContactManager::NoError;
+                break;
+                }
+            case Qt::MatchStartsWith:
+                {
+                // Pattern for MatchStartsWith: 
+                // " LIKE 'xyz%'"
+                fieldToUpdate = Space + SqlLike + Space + SingleQuote 
+                               +  filter.value().toString() + PercentSign + SingleQuote ;
+                error = QContactManager::NoError;
+                break;
+                }
+            case Qt::MatchEndsWith:
+                {
+                // Pattern for MatchEndsWith: 
+                // " LIKE '%xyz'"
+                fieldToUpdate = Space + SqlLike + Space + SingleQuote + PercentSign
+                              + filter.value().toString() + SingleQuote ;
+                error = QContactManager::NoError;
+                break;
+                }
+            case Qt::MatchRegExp:
+                {
+                error = QContactManager::NotSupportedError;
+                break;
+                }
+            case Qt::MatchWildcard:
+                {
+                error = QContactManager::NotSupportedError;
+                break;
+                }
+            case Qt::MatchFixedString:
+                {
+                error = QContactManager::NotSupportedError;
+                break;
+                }
+            case Qt::MatchCaseSensitive:
+                {
+                error = QContactManager::NotSupportedError;
+                break;
+                }
+            case Qt::MatchWrap:
+                {
+                error = QContactManager::NotSupportedError;
+                break;
+                }
+            case Qt::MatchRecursive:
+                {
+                error = QContactManager::NotSupportedError;
+                break;
+                }
+            default:
+                {
+                error = QContactManager::NotSupportedError;
+                break;
+                }
+        }
+}
+
+/*!
+ * Converts filed id to column name of the database table.
+ * QContactManager::contacts function.
+ *
+ * \a fieldId field id representing the detail field name 
+ * \a sqlDbTableColumnName On return,contains the column name in the database 
+ */
 void CntSymbianFilterSqlHelper::convertFieldIdToSqlDbColumnName(const quint32 fieldId,
                                                                 QString& sqlDbTableColumnName )
 {
-    if(fieldId == KUidContactFieldGivenName.iUid) {
+    if(fieldId == KUidContactFieldGivenName.iUid) { 
+        // First name
         sqlDbTableColumnName += "first_name";
     } else if (fieldId == KUidContactFieldGivenNamePronunciation.iUid){
+        // First name Pronunciation
         sqlDbTableColumnName += "firstname_prn";
     } else if (fieldId == KUidContactFieldFamilyName.iUid){
+        // Last name
         sqlDbTableColumnName += "last_name";
     }else if (fieldId == KUidContactFieldFamilyNamePronunciation.iUid){
+        // Last name Pronunciation
         sqlDbTableColumnName += "lastname_prn";
     } else if (fieldId == KUidContactFieldCompanyName.iUid){
+        // Company name
         sqlDbTableColumnName += "company_name";
     }else if (fieldId == KUidContactFieldCompanyNamePronunciation.iUid){
+        // Company name Pronunciation
         sqlDbTableColumnName += "companyname_prn";
     }else{
+        // Empty string for not supported field
         sqlDbTableColumnName += "";       
     }
 }

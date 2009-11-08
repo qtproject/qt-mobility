@@ -261,7 +261,7 @@ quint32 CntTransformPhoneNumber::getIdForField(const QString& fieldName) const
         return 0;
     else if (QContactPhoneNumber::SubTypeAssistant == fieldName)
         return 0;
-    else if (QContactPhoneNumber::SubTypeMessagingCapable == fieldName)
+    else if (QContactPhoneNumber::SubTypeDtmfMenu == fieldName)
         return KUidContactFieldDTMF.iUid;
     else 
         return 0;

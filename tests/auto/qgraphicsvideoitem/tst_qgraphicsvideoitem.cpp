@@ -197,6 +197,11 @@ public:
         return m_paintCount != paintCount;
     }
 
+    int paintCount() const
+    {
+        return m_paintCount;
+    }
+
 private:
     int m_paintCount;
 };
@@ -225,8 +230,6 @@ void tst_QGraphicsVideoItem::nullService()
     graphicsScene.addItem(item);
     QGraphicsView graphicsView(&graphicsScene);
     graphicsView.show();
-
-    item->waitForPaint(1);
 }
 
 void tst_QGraphicsVideoItem::nullOutputControl()
@@ -244,8 +247,6 @@ void tst_QGraphicsVideoItem::nullOutputControl()
     graphicsScene.addItem(item);
     QGraphicsView graphicsView(&graphicsScene);
     graphicsView.show();
-
-    item->waitForPaint(1);
 }
 
 void tst_QGraphicsVideoItem::noOutputs()
@@ -266,8 +267,6 @@ void tst_QGraphicsVideoItem::noOutputs()
     graphicsScene.addItem(item);
     QGraphicsView graphicsView(&graphicsScene);
     graphicsView.show();
-
-    QVERIFY(item->waitForPaint(1));
 }
 
 void tst_QGraphicsVideoItem::serviceDestroyed()
@@ -282,20 +281,34 @@ void tst_QGraphicsVideoItem::serviceDestroyed()
 }
 
 void tst_QGraphicsVideoItem::show()
-{
+{    
     QtTestVideoObject object(new QtTestRendererControl);
-    QGraphicsVideoItem item(&object);
+    QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem(&object);
 
     // Graphics items are visible by default
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::RendererOutput);
     QVERIFY(object.testService->rendererControl->surface() != 0);
 
-    item.hide();
+    item->hide();
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
 
-    item.show();
+    item->show();
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::RendererOutput);
     QVERIFY(object.testService->rendererControl->surface() != 0);
+
+    QVERIFY(item->boundingRect().isEmpty());
+
+    QVideoSurfaceFormat format(QSize(320,240),QVideoFrame::Format_RGB32);
+    QVERIFY(object.testService->rendererControl->surface()->start(format));
+
+    QVERIFY(!item->boundingRect().isEmpty());
+
+    QGraphicsScene graphicsScene;
+    graphicsScene.addItem(item);
+    QGraphicsView graphicsView(&graphicsScene);
+    graphicsView.show();
+
+    QVERIFY(item->paintCount() || item->waitForPaint(1));
 }
 
 void tst_QGraphicsVideoItem::boundingRect_data()
@@ -366,27 +379,27 @@ void tst_QGraphicsVideoItem::paint()
     QVideoSurfaceFormat format(QSize(2, 2), QVideoFrame::Format_RGB32);
 
     QVERIFY(surface->start(format));
-    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isActive(), true);
     QCOMPARE(surface->isReady(), true);
 
     QVERIFY(item->waitForPaint(1));
 
-    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isActive(), true);
     QCOMPARE(surface->isReady(), true);
 
     QVideoFrame frame(sizeof(rgb32ImageData), QSize(2, 2), 8, QVideoFrame::Format_RGB32);
 
     frame.map(QAbstractVideoBuffer::WriteOnly);
-    memcpy(frame.bits(), rgb32ImageData, frame.numBytes());
+    memcpy(frame.bits(), rgb32ImageData, frame.mappedBytes());
     frame.unmap();
 
     QVERIFY(surface->present(frame));
-    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isActive(), true);
     QCOMPARE(surface->isReady(), false);
 
     QVERIFY(item->waitForPaint(1));
 
-    QCOMPARE(surface->isStarted(), true);
+    QCOMPARE(surface->isActive(), true);
     QCOMPARE(surface->isReady(), true);
 }
 

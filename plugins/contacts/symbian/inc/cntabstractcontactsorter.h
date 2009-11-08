@@ -39,53 +39,27 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTSYMBIANFILTERDBMS_H
-#define QCONTACTSYMBIANFILTERDBMS_H
+#ifndef CNTABSTRACTCONTACTSORTER_H
+#define CNTABSTRACTCONTACTSORTER_H
 
-#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
+#include <QList>
+#include "qtcontactsglobal.h"
+#include "qcontactmanager.h"
+#include "qcontactsortorder.h"
 
-#include "qabstractcontactfilter.h"
-#include <e32cmn.h>
-
-class CContactDatabase;
-class CContactIdArray;
-class QContactDetailFilter;
-class QAbstractContactSorter;
-class CntTransformContact;
-class CContactItemFieldDef;
-
-class QContactSymbianFilter : public QAbstractContactFilter
+class CntAbstractContactSorter
 {
 public:
-    QContactSymbianFilter(CContactDatabase& contactDatabase);
-    ~QContactSymbianFilter();
-
-    /* from QAbstractContactFilter */
-    QList<QContactLocalId> contacts(
-            const QContactFilter& filter,
+    virtual QList<QContactLocalId> contacts(
             const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error);
-    QAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter);
+            QContactManager::Error& error) = 0;
 
-private:
-    void transformDetailFilterL(const QContactDetailFilter& detailFilter, CContactItemFieldDef*& fieldDef);
-    TInt findContacts(
-            CContactIdArray*& idArray,
-            const CContactItemFieldDef& fieldDef,
-            const TDesC& text) const;
-    CContactIdArray* findContactsL(
-            const CContactItemFieldDef& fieldDef,
-            const TDesC& text) const;
-    TInt matchContacts(
-            CContactIdArray*& idArray,
-            const TDesC& phoneNumber,
-            const TInt matchLength);
-    void getMatchLengthL(TInt& matchLength);
-    CContactDatabase &m_contactDatabase;
-    QAbstractContactSorter *m_contactSorter;
-    CntTransformContact *m_transformContact;
+    virtual QList<QContactLocalId> sort(
+        QList<QContactLocalId> contactIds,
+        const QList<QContactSortOrder>& sortOrders,
+        QContactManager::Error& error) = 0;
+
+    virtual bool sortOrderSupported(const QList<QContactSortOrder>& sortOrders) = 0;
 };
 
-#endif /*__SYMBIAN_CNTMODEL_USE_SQLITE__*/
-
-#endif /* QCONTACTSYMBIANFILTERDBMS_H */
+#endif /* QABSTRACTCONTACTSORTER_H */

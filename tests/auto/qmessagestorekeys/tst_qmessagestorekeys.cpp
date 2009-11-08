@@ -94,6 +94,7 @@ private:
 #endif
 
     QSet<QMessageId> existingMessageIds;
+    QMessageFilter existingAccountsFilter;
     QMessageIdList messageIds;
 
     uint unsupportedCount;
@@ -177,6 +178,10 @@ void tst_QMessageStoreKeys::initTestCase()
     Support::clearMessageStore();
 
     existingAccountIds = QMessageStore::instance()->queryAccounts().toSet();
+    existingAccountsFilter = ~QMessageFilter();
+    foreach(QMessageAccountId id, existingAccountIds) {
+        existingAccountsFilter |= QMessageFilter::byParentAccountId(id);
+    }
 
     QList<Support::Parameters> accountParams;
 
@@ -219,12 +224,16 @@ void tst_QMessageStoreKeys::initTestCase()
     }
 #endif
 
-    existingMessageIds = QMessageStore::instance()->queryMessages().toSet();
+    existingMessageIds = QMessageStore::instance()->queryMessages(~existingAccountsFilter).toSet();
 
     QList<Support::Parameters> messageParams;
     messageParams << Params()("parentAccountName", "Alter Ego")
                              ("parentFolderPath", "My messages")
+#ifdef Q_OS_WIN // SMS messages must be in SMS store on Windows
+                             ("type", "email")
+#else
                              ("type", "sms")
+#endif
                              ("to", "SuperMegaLightningBabe")
                              ("from", "Frozone")
                              ("subject", "Ice to meet you")
@@ -285,7 +294,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("status-hasAttachments", "true")
                              ("custom-spam", "filter:yes");
 
-        foreach (const Support::Parameters &params, messageParams) {
+    foreach (const Support::Parameters &params, messageParams) {
         messageIds.append(Support::addMessage(params));
         QVERIFY(messageIds.last().isValid());
     }
@@ -1257,6 +1266,11 @@ void tst_QMessageStoreKeys::testFolderOrdering()
 
 #endif //QMESSAGING_OPTIONAL_FOLDER
 
+#ifdef Q_OS_WIN
+// No support for setting 
+#define NO_SET_SUPPORT
+#endif
+
 void tst_QMessageStoreKeys::testMessageFilter_data()
 {
     QTest::addColumn<QMessageFilter>("filter");
@@ -1340,13 +1354,23 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
 
     QTest::newRow("type equality 1")
         << QMessageFilter::byType(QMessage::Sms, QMessageDataComparator::Equal) 
+#ifdef Q_OS_WIN
+        << QMessageIdList()
+        << messageIds;
+#else
         << ( QMessageIdList() << messageIds[0] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] );
+#endif
 
     QTest::newRow("type equality 2")
         << QMessageFilter::byType(QMessage::Email, QMessageDataComparator::Equal) 
+#ifdef Q_OS_WIN
+        << messageIds
+        << QMessageIdList();
+#else
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] );
+#endif
 
     QTest::newRow("type equality invalid")
         << QMessageFilter::byType(QMessage::NoType, QMessageDataComparator::Equal) 
@@ -1355,13 +1379,23 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
 
     QTest::newRow("type inequality 1")
         << QMessageFilter::byType(QMessage::Sms, QMessageDataComparator::NotEqual) 
+#ifdef Q_OS_WIN
+        << messageIds
+        << QMessageIdList();
+#else
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] );
+#endif
 
     QTest::newRow("type inequality 2")
         << QMessageFilter::byType(QMessage::Email, QMessageDataComparator::NotEqual) 
+#ifdef Q_OS_WIN
+        << QMessageIdList()
+        << messageIds;
+#else
         << ( QMessageIdList() << messageIds[0] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] );
+#endif
 
     QTest::newRow("type inequality invalid")
         << QMessageFilter::byType(QMessage::NoType, QMessageDataComparator::NotEqual) 
@@ -1370,13 +1404,23 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
 
     QTest::newRow("type mask inclusion 1")
         << QMessageFilter::byType(QMessage::Sms, QMessageDataComparator::Includes) 
+#ifdef Q_OS_WIN
+        << QMessageIdList()
+        << messageIds;
+#else
         << ( QMessageIdList() << messageIds[0] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] );
+#endif
 
     QTest::newRow("type mask inclusion 2")
         << QMessageFilter::byType(QMessage::Email, QMessageDataComparator::Includes) 
+#ifdef Q_OS_WIN
+        << messageIds
+        << QMessageIdList();
+#else
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] );
+#endif
 
     QTest::newRow("type mask inclusion 3")
         << QMessageFilter::byType(QMessage::Sms | QMessage::Email, QMessageDataComparator::Includes) 
@@ -1390,13 +1434,23 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
 
     QTest::newRow("type mask exclusion 1")
         << QMessageFilter::byType(QMessage::Sms, QMessageDataComparator::Excludes) 
+#ifdef Q_OS_WIN
+        << messageIds
+        << QMessageIdList();
+#else
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] );
+#endif
 
     QTest::newRow("type mask exclusion 2")
         << QMessageFilter::byType(QMessage::Email, QMessageDataComparator::Excludes) 
+#ifdef Q_OS_WIN
+        << QMessageIdList()
+        << messageIds;
+#else
         << ( QMessageIdList() << messageIds[0] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] );
+#endif
 
     QTest::newRow("type mask exclusion 3")
         << QMessageFilter::byType(QMessage::Sms | QMessage::Email, QMessageDataComparator::Excludes) 
@@ -1720,6 +1774,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[4] );
 
+#ifndef NO_SET_SUPPORT
     QTest::newRow("receptionTimeStamp equality 1")
         << QMessageFilter::byReceptionTimeStamp(QDateTime::fromString("1999-04-01T10:31:00Z", Qt::ISODate), QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[4] )
@@ -1941,6 +1996,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageFilter::bySize(discriminator, QMessageDataComparator::GreaterThanEqual) 
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] );
+#endif // NO_SET_SUPPORT
 
     QTest::newRow("parentAccountId equality 1")
         << QMessageFilter::byParentAccountId(accountIds[0], QMessageDataComparator::Equal) 
@@ -2124,6 +2180,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageFilter::byParentFolderId(QMessageFolderFilter::byPath("NoneSuch"), QMessageDataComparator::Excludes) 
         << messageIds
         << QMessageIdList();
+
     QTest::newRow("ancestorFolderIds inclusion 1")
         << QMessageFilter::byAncestorFolderIds(folderIds[1], QMessageDataComparator::Includes) 
         << ( QMessageIdList() << messageIds[3] << messageIds[4] )
@@ -2205,6 +2262,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList();
 #endif
 
+#ifndef NO_SET_SUPPORT
     // Test some basic combinations
     QTest::newRow("status mask inclusion AND timeStamp greater than")
         << ( QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Includes) &
@@ -2215,6 +2273,19 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
     QTest::newRow("size greater than equal OR timeStamp greater than")
         << ( QMessageFilter::bySize(discriminator, QMessageDataComparator::GreaterThanEqual) |
              QMessageFilter::byTimeStamp(epoch, QMessageDataComparator::GreaterThan) )
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[4] );
+#endif
+
+    QTest::newRow("sender inclusion AND timeStamp greater than")
+        << ( QMessageFilter::bySender("Boss", QMessageDataComparator::Includes) &
+             QMessageFilter::byTimeStamp(epoch, QMessageDataComparator::GreaterThan) )
+        << ( QMessageIdList() << messageIds[2] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[3] << messageIds[4] );
+
+    QTest::newRow("subject inclusion OR subject exclusion")
+        << ( QMessageFilter::bySubject("agenda", QMessageDataComparator::Includes) |
+             QMessageFilter::bySubject("ee", QMessageDataComparator::Excludes) )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[0] << messageIds[4] );
 }
@@ -2230,8 +2301,8 @@ void tst_QMessageStoreKeys::testMessageFilter()
         QCOMPARE(filter != QMessageFilter(), !filter.isEmpty());
 
         // Order is irrelevant for filtering
-        QCOMPARE(QMessageStore::instance()->queryMessages(filter).toSet().subtract(existingMessageIds), ids.toSet());
-        QCOMPARE(QMessageStore::instance()->queryMessages(~filter).toSet().subtract(existingMessageIds), negatedIds.toSet());
+        QCOMPARE(QMessageStore::instance()->queryMessages(filter&~existingAccountsFilter).toSet().subtract(existingMessageIds), ids.toSet());
+        QCOMPARE(QMessageStore::instance()->queryMessages(~filter&~existingAccountsFilter).toSet().subtract(existingMessageIds), negatedIds.toSet());
     } else {
         ++unsupportedCount;
     }
@@ -2242,6 +2313,7 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
     QTest::addColumn<QMessageOrdering>("ordering");
     QTest::addColumn<MessageListList>("ids");
 
+#ifndef NO_SET_SUPPORT // setting type not supported on WIN
     QTest::newRow("type ascending")
         << QMessageOrdering::byType(Qt::AscendingOrder)
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
@@ -2251,6 +2323,7 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
         << QMessageOrdering::byType(Qt::DescendingOrder)
         << ( MessageListList() << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
                                << ( QMessageIdList() << messageIds[0] ) );
+#endif
 
     QTest::newRow("sender ascending")
         << QMessageOrdering::bySender(Qt::AscendingOrder)
@@ -2305,7 +2378,7 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
         << ( MessageListList() << ( QMessageIdList() << messageIds[2] << messageIds[3] )
                                << ( QMessageIdList() << messageIds[0] << messageIds[1] )
                                << ( QMessageIdList() << messageIds[4] ) );
-
+#ifndef NO_SET_SUPPORT // setting receptionTimeStamp, priority and size and type not supported on WIN
     QTest::newRow("receptionTimeStamp ascending")
         << QMessageOrdering::byReceptionTimeStamp(Qt::AscendingOrder)
         << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
@@ -2413,6 +2486,7 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
                                << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[0] ) );
+#endif
 }
 
 void tst_QMessageStoreKeys::testMessageOrdering()
@@ -2425,7 +2499,7 @@ void tst_QMessageStoreKeys::testMessageOrdering()
         QCOMPARE(ordering != QMessageOrdering(), !ordering.isEmpty());
 
         // Filter out the existing messages
-        QMessageIdList sortedIds(QMessageStore::instance()->queryMessages(QMessageFilter(), ordering));
+        QMessageIdList sortedIds(QMessageStore::instance()->queryMessages(~existingAccountsFilter, ordering));
         for (QMessageIdList::iterator it = sortedIds.begin(); it != sortedIds.end(); ) {
             if (existingMessageIds.contains(*it)) {
                 it = sortedIds.erase(it);

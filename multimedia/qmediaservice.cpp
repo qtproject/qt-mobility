@@ -55,6 +55,28 @@
     \brief The QMediaService class provides a common base class for media service
     implementations.
     \preliminary
+
+    Media services provide implementations of the functionality promised by media objects, and allow
+    multiple providers to implement a QMediaObject.
+
+    To provide the functionality of a QMediaObject media services implement QMediaControl
+    interfaces.  Services typically implement one core media control which provides the core
+    feature of a media object, and some number of additional controls which provide either optional
+    features of the media object, or features of a secondary media object or peripheral object.
+
+    A pointer to media service's QMediaControl implementation can be obtained by passing the
+    control's interface name to the control() function.
+
+    \code
+    QMediaPlayerControl *control = qobject_cast<QMediaPlayerControl *>(
+            service->control("com.nokia.Qt.QMediaPlayerControl/1.0"));
+    \endcode
+
+    Media objects can use services loaded dynamically from plug-ins or implemented statically within
+    an applications.  Plug-in based services should also implement the QMediaServiceProviderPlugin
+    interface.  Static services should implement the QMediaServiceProvider interface.
+
+    \sa QMediaObject, QMediaControl, QMediaServiceProvider, QMediaServiceProviderPlugin
 */
 
 /*!
@@ -66,7 +88,7 @@
 */
 
 /*!
-    Construct a QMediaService with \a parent. This class is meant as a
+    Construct a media service with the given \a parent. This class is meant as a
     base class for Multimedia services so this constructor is protected.
 */
 

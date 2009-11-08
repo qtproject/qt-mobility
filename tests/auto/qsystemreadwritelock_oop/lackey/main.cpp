@@ -39,78 +39,105 @@
 **
 ****************************************************************************/
 
+#include <QCoreApplication>
 #include <QDebug>
 #include <QStringList>
 #include "qsystemreadwritelock_p.h"
 #include "../common.h"
 #include <QFile>
+#include <QIODevice>
+#include <QLocalSocket>
 #include <QtTest/QtTest>
+
+void write(QIODevice * device, const char * str)
+{
+    device->write(str);
+    device->waitForBytesWritten(30000);
+}
+
+void readLine(QIODevice * device)
+{
+    if (device->waitForReadyRead(30000))
+        device->readLine();
+}
 
 int main(int argc, char * argv[])
 {
+    QCoreApplication app(argc, argv);
+
     QStringList args;
     for (int i = 1; i < argc; ++i)
         args << QString(argv[i]);
+
+    if (args.count() == 0 )
+        qFatal("No connection name supplied to lackey process");
+
+    // This is a workaround for the fact that we cannot use stdin/stdout/stderr
+    // to communicate with a process on WinCE or Symbian systems.
+    // We use sockets instead, and the first argument given is the port number.
+
+    QString connectionName = args.takeFirst();
+    QLocalSocket oopSocket;
+
+    if (connectionName != QString("NoComms")) {
+        oopSocket.connectToServer(connectionName);
+        oopSocket.waitForConnected(-1);
+    }
+
     if (args.count() == 0 )
         qFatal("No arguments supplied to lackey process");
+
+    int retVal = 0;
 
     if (args[0] == "ReadLock") {
         // 1)read-lock
         // 2)unlock
         QSystemReadWriteLock testRwLock("Viper");
-        qDebug() << qPrintable(Lackey::BeforeLockForRead);
-
+        write(&oopSocket, qPrintable(Lackey::BeforeLockForRead));
         testRwLock.lockForRead();
-        qDebug() << qPrintable(Lackey::AfterLockForRead);
+        write(&oopSocket, qPrintable(Lackey::AfterLockForRead));
 
         testRwLock.unlock();
         QTest::qSleep(1000);
-        qDebug() << qPrintable(Lackey::AfterUnlockForRead);
-        return 0;
+        write(&oopSocket, qPrintable(Lackey::AfterUnlockForRead));
     } else if (args[0] == "WriteLock") {
         // 1) write-lock
         // 2) unlock
         QSystemReadWriteLock testRwLock("Viper");
-        qDebug() << qPrintable(Lackey::BeforeLockForWrite);
+        write(&oopSocket, qPrintable(Lackey::BeforeLockForWrite));
         testRwLock.lockForWrite();
-        qDebug() << qPrintable(Lackey::AfterLockForWrite);
+        write(&oopSocket, qPrintable(Lackey::AfterLockForWrite));
+
         testRwLock.unlock();
         QTest::qSleep(1000);
-        qDebug() << qPrintable(Lackey::AfterUnlockForWrite);
-        return 0;
+        write(&oopSocket, qPrintable(Lackey::AfterUnlockForWrite));
     } else if (args[0] == "ReadLockReleaseable") {
         // 1) read-lock
         // 2) wait for input on stdin
         // 3) unlock
         QSystemReadWriteLock testRwLock("Viper");
-        qDebug() << qPrintable(Lackey::BeforeLockForRead);
+        write(&oopSocket, qPrintable(Lackey::BeforeLockForRead));
         testRwLock.lockForRead();
         QTest::qSleep(1000);
-        qDebug() << qPrintable(Lackey::AfterLockForRead);
+        write(&oopSocket, qPrintable(Lackey::AfterLockForRead));
 
-        QFile read;
-        read.open(stdin, QIODevice::ReadOnly);
-        read.readLine();
+        readLine(&oopSocket);
 
         testRwLock.unlock();
-        qDebug() << qPrintable(Lackey::AfterUnlockForRead);
-        return 0;
+        write(&oopSocket, qPrintable(Lackey::AfterUnlockForRead));
     } else if (args[0] == "WriteLockReleaseable") {
         // 1) write-lock
         // 2) wait for input on stdin
         // 3) unlock
         QSystemReadWriteLock testRwLock("Viper");
-        qDebug() << qPrintable(Lackey::BeforeLockForWrite);
+        write(&oopSocket, qPrintable(Lackey::BeforeLockForWrite));
         testRwLock.lockForWrite();
-        qDebug() << qPrintable(Lackey::AfterLockForWrite);
+        write(&oopSocket, qPrintable(Lackey::AfterLockForWrite));
 
-        QFile read;
-        read.open(stdin, QIODevice::ReadOnly);
-        read.readLine();
+        readLine(&oopSocket);
 
         testRwLock.unlock();
-        qDebug() << qPrintable(Lackey::AfterUnlockForWrite);
-        return 0;
+        write(&oopSocket, qPrintable(Lackey::AfterUnlockForWrite));
     } else if (args[0] == "ReadLockLoop") {
         // for(runTime msecs):
         // 1) read-lock
@@ -133,7 +160,6 @@ int main(int argc, char * argv[])
             if(waitTime)
                 QTest::qSleep(waitTime);
         }
-        return 0;
     } else if (args[0]  == "WriteLockLoop") {
         // for(runTime msecs):
         // 1) read-lock
@@ -156,7 +182,6 @@ int main(int argc, char * argv[])
             if (waitTime)
                 QTest::qSleep(waitTime);
         }
-        return 0;
     } else if (args[0] == "ReadLockExcl") {
         // for (runTime msecs):
         // 1) read-lock
@@ -184,7 +209,6 @@ int main(int argc, char * argv[])
             if (waitTime)
                 QTest::qSleep(waitTime);
         }
-        return 0;
     } else if (args[0] == "WriteLockExcl") {
         // for(runTime msecs)
         // 1) write-lock
@@ -217,8 +241,14 @@ int main(int argc, char * argv[])
             if(waitTime)
                 QTest::qSleep(waitTime);
         }
-        return 0;
+    } else {
+        retVal = 1;
     }
 
-return 1;
+    if (connectionName != QString("NoComms")) {
+        oopSocket.disconnectFromServer();
+        oopSocket.waitForDisconnected(-1);
+    }
+
+    return retVal;
 }

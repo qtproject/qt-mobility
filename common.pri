@@ -134,15 +134,6 @@ wince* {
 symbian {
     #For some reason the default include path doesn't include MOC_DIR on symbian
     INCLUDEPATH += $$MOC_DIR
-
-    ### Contacts
-    # Main library
-    CONTACTS_DEPLOYMENT.sources = QtContacts.dll
-    CONTACTS_DEPLOYMENT.path = \sys\bin
-
-    # Engine plugins should be installed in their own .pro
-    DEPLOYMENT += CONTACTS_DEPLOYMENT
-    TARGET.CAPABILITY = ALL -TCB
 }
 
 # Add the output dirs to the link path too

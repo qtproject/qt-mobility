@@ -54,7 +54,7 @@
 
 class QMediaImageViewerPrivate : public QMediaObjectPrivate
 {
-    Q_DECLARE_PUBLIC(QMediaImageViewer)
+    Q_DECLARE_NON_CONST_PUBLIC(QMediaImageViewer)
 public:
     QMediaImageViewerPrivate():
         viewerControl(0), playlist(0),
@@ -466,7 +466,6 @@ void QMediaImageViewer::timerEvent(QTimerEvent *event)
         removePropertyWatch("elapsedTime");
         emit elapsedTimeChanged(d->pauseTime = d->timeout);
 
-        Q_ASSERT(d->playlist);
         d->playlist->next();
 
         if (d->playlist->currentPosition() < 0) {

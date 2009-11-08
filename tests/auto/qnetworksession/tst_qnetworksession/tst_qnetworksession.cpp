@@ -40,6 +40,8 @@
 ****************************************************************************/
 
 #include <QtTest/QtTest>
+#include <QLocalServer>
+#include <QLocalSocket>
 #include "../../qbearertestcommon.h"
 #include <qnetworkconfigmanager.h>
 #include <qnetworksession.h>
@@ -779,13 +781,24 @@ void tst_QNetworkSession::outOfProcessSession()
 
     QSignalSpy spy(&manager, SIGNAL(configurationChanged(QNetworkConfiguration)));
 
+    // Cannot read/write to processes on WinCE or Symbian.
+    // Easiest alternative is to use sockets for IPC.
+
+    QLocalServer oopServer;
+    oopServer.listen("tst_qnetworksession");
+
     QProcess lackey;
     lackey.start("qnetworksessionlackey");
     QVERIFY(lackey.waitForStarted());
 
+    QVERIFY(oopServer.waitForNewConnection(-1));
+    QLocalSocket *oopSocket = oopServer.nextPendingConnection();
+
     do {
-        lackey.waitForReadyRead();
-        QByteArray output = lackey.readLine().trimmed();
+        QByteArray output;
+
+        if(oopSocket->waitForReadyRead())
+            output = oopSocket->readLine().trimmed();
 
         if (output.startsWith("Started session ")) {
             QString identifier = QString::fromLocal8Bit(output.mid(16).constData());
@@ -811,7 +824,8 @@ void tst_QNetworkSession::outOfProcessSession()
 
             spy.clear();
 
-            lackey.write("stop\n");
+            oopSocket->write("stop\n");
+            oopSocket->waitForBytesWritten();
 
             do {
                 QTRY_VERIFY(!spy.isEmpty());
@@ -827,9 +841,16 @@ void tst_QNetworkSession::outOfProcessSession()
 
             QVERIFY(!afterStop.contains(changed));
 
+            oopSocket->disconnectFromServer();
+            oopSocket->waitForDisconnected(-1);
+
             lackey.waitForFinished();
         }
-    } while (lackey.state() == QProcess::Running);
+    // This is effected by QTBUG-4903, process will always report as running
+    //} while (lackey.state() == QProcess::Running);
+
+    // Workaround: the socket in the lackey will disconnect on exit
+    } while (oopSocket->state() == QLocalSocket::ConnectedState);
 
     switch (lackey.exitCode()) {
     case 0:

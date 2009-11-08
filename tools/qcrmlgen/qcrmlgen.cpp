@@ -274,8 +274,10 @@ void EditorWidget::save(const QString &filePath)
 #ifdef INCL_TYPE
     QString type;
 #endif
+    QString documentStart("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+    file.write(documentStart.toUtf8());
 
-    QString repositoryElementStart("<repository verision =\"1.0\" uidValue=\"0x%2\">\n");
+    QString repositoryElementStart("<repository uidValue=\"0x%2\">\n");
     file.write(repositoryElementStart.arg(repoUID).toUtf8());
 #ifdef INCL_TYPE
     QString keyElementStart("    <key int=\"0x%1\" type=\"%2\" ref=\"%3\">\n");

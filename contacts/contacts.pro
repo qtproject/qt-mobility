@@ -80,10 +80,15 @@ symbian {
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
 
+    ### Contacts
+    # Main library
+    CONTACTS_DEPLOYMENT.sources = QtContacts.dll
+    CONTACTS_DEPLOYMENT.path = \sys\bin
+
     deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
-    DEPLOYMENT += exportheaders
+    DEPLOYMENT += exportheaders CONTACTS_DEPLOYMENT
 
     # This is for new exporting system coming in garden
     for(header, exportheaders.sources) {

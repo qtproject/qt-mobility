@@ -3,7 +3,7 @@ TARGET = qnetworksessionlackey
 INCLUDEPATH += ../../../../bearer
 DEPENDPATH += ../../../../bearer
 
-QT = core
+QT = core network
 
 CONFIG+= testcase
 

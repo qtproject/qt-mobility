@@ -61,6 +61,7 @@ Q_SIGNALS:
     void readyForCaptureChanged(bool);
 
     void imageCaptured(const QString &fileName, const QImage &preview);
+    void imageSaved(const QString &fileName);
 
 protected:
     QImageCaptureControl(QObject* parent = 0);

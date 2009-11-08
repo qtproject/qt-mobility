@@ -3,7 +3,7 @@ INCLUDEPATH += ../../../../context
 
 CONFIG+=testcase
 
-QT = core
+QT = core network
 
 include(../../../../common.pri)
 

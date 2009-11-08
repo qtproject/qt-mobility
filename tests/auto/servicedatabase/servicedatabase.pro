@@ -36,3 +36,6 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
 
+wince* {
+    DEPLOYMENT_PLUGIN += qsqlite
+}

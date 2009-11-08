@@ -38,25 +38,21 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QObject>
+#ifndef CNTSYMBIANTRANSFORMERROR_H
+#define CNTSYMBIANTRANSFORMERROR_H
 
-class QContactSymbianEngineData;
+#include <e32err.h>
+#include "qcontactmanager.h"
 
-class TestSymbianEngine : public QObject
+// Should not overlap any system error code in the context of converting
+// contact details
+const TInt KErrInvalidContactDetail(-32768);
+
+class CntSymbianTransformError
 {
-    Q_OBJECT
-
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
-    
-    void testContactOperations();
-    void testGroupOperations();
-    void testSelfContactOperations();
-
-private:
-    void removeAllContacts();
-
-private:
-    QContactSymbianEngineData   *m_engine;
+public:
+    static void transformError(TInt symbianError, QContactManager::Error& qtError);
 };
+
+#endif
+

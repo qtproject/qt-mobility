@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,28 +38,36 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <QObject>
 
-#ifndef QABSTRACTCONTACTSORTER_H
-#define QABSTRACTCONTACTSORTER_H
+class CntSymbianEnginePrivate;
 
-#include <QList>
-#include "qtcontactsglobal.h"
-#include "qcontactmanager.h"
-#include "qcontactsortorder.h"
-
-class QAbstractContactSorter
+class TestSymbianEnginePrivate : public QObject
 {
-public:
-    virtual QList<QContactLocalId> contacts(
-            const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error) = 0;
+    Q_OBJECT
 
-    virtual QList<QContactLocalId> sort(
-        QList<QContactLocalId> contactIds,
-        const QList<QContactSortOrder>& sortOrders,
-        QContactManager::Error& error) = 0;
+private slots:
+    void initTestCase();    
+    void cleanupTestCase();
+    
+    void init();
+    void clean();
+    
+    void addContact();
+    void retrieveContact();
+    void updateContact();
+    void removeContact();
+    void addOwnCard();
+    void retrieveOwnCard();
+    void addGroup();
+    void retrieveGroup();
+    void batchContacts();
+    void singleRelationship();
+    void batchRelationships();
 
-    virtual bool sortOrderSupported(const QList<QContactSortOrder>& sortOrders) = 0;
+private:
+    void removeAllContacts();
+
+private:
+    CntSymbianEnginePrivate   *m_engine;
 };
-
-#endif /* QABSTRACTCONTACTSORTER_H */

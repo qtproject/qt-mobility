@@ -84,6 +84,7 @@ void tst_QMediaPlaylistNavigator::setPlaylist()
     QMediaPlaylistNavigator navigator(0);
     QVERIFY(navigator.playlist() != 0);
     QCOMPARE(navigator.playlist()->size(), 0);
+    QCOMPARE(navigator.playlist()->media(0), QMediaContent());
     QVERIFY(navigator.playlist()->isReadOnly() );
 
     QLocalMediaPlaylistProvider playlist;
@@ -272,6 +273,8 @@ void tst_QMediaPlaylistNavigator::randomPlayback()
     playlist.appendItem(QMediaContent(QUrl(QLatin1String("file:///1"))));
     playlist.appendItem(QMediaContent(QUrl(QLatin1String("file:///2"))));
     playlist.appendItem(QMediaContent(QUrl(QLatin1String("file:///3"))));
+
+    playlist.shuffle();
 
     QCOMPARE(navigator.currentPosition(), -1);
     navigator.next();

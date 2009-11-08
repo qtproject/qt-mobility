@@ -47,6 +47,11 @@
 #include <qvariant.h>
 #include <qset.h>
 #endif
+#ifdef _WIN32_WCE
+typedef QSet<QMessageFolderId> FolderIdSet;
+#else
+typedef QSet<QString> FolderIdSet;
+#endif
 
 #if defined(Q_OS_WIN)
 class MapiFolderIterator {
@@ -56,20 +61,20 @@ public:
                        MapiFolderPtr root, 
                        QSet<QMessage::StandardFolder> standardFoldersInclude, 
                        QSet<QMessage::StandardFolder> standardFoldersExclude,
-                       QSet<QMessageFolderId> parentInclude,
-                       QSet<QMessageFolderId> parentExclude,
-                       QSet<QMessageFolderId> ancestorInclude,
-                       QSet<QMessageFolderId> ancestorExclude);
+                       FolderIdSet parentInclude,
+                       FolderIdSet parentExclude,
+                       FolderIdSet ancestorInclude,
+                       FolderIdSet ancestorExclude);
     MapiFolderPtr next();
 private:
     QList<MapiFolderPtr> _folders; 
     MapiStorePtr _store;
     QSet<QMessage::StandardFolder> _standardFoldersInclude;
     QSet<QMessage::StandardFolder> _standardFoldersExclude;
-    QSet<QMessageFolderId> _parentInclude;
-    QSet<QMessageFolderId> _parentExclude;
-    QSet<QMessageFolderId> _ancestorInclude;
-    QSet<QMessageFolderId> _ancestorExclude;
+    FolderIdSet _parentInclude;
+    FolderIdSet _parentExclude;
+    FolderIdSet _ancestorInclude;
+    FolderIdSet _ancestorExclude;
 };
 
 class MapiStoreIterator {
@@ -118,10 +123,10 @@ public:
     QSet<QMessage::StandardFolder> _standardFoldersExclude; // only match messages not directly in any of these folders
     QSet<QMessageAccountId> _accountsInclude; // only match messages in one of these accounts
     QSet<QMessageAccountId> _accountsExclude; // only match messages not in any of these accounts
-    QSet<QMessageFolderId> _parentInclude; // only match messages directly in one of these folders
-    QSet<QMessageFolderId> _parentExclude; // only match messages not directly in any of these folders
-    QSet<QMessageFolderId> _ancestorInclude; // only match messages (directly or recursively) in one of these folders
-    QSet<QMessageFolderId> _ancestorExclude; // only match messages not (directly or recursively) in any of these folders
+    FolderIdSet _parentInclude; // only match messages directly in one of these folders
+    FolderIdSet _parentExclude; // only match messages not directly in any of these folders
+    FolderIdSet _ancestorInclude; // only match messages (directly or recursively) in one of these folders
+    FolderIdSet _ancestorExclude; // only match messages not (directly or recursively) in any of these folders
     bool _complex; // true iff operator is Or and left or right terms contain non-null containerFilters
 
     bool containerFiltersAreEmpty(); // returns true IFF above QSets are empty

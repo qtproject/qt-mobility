@@ -39,40 +39,32 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTSYMBIANSORTERDBMS_H
-#define QCONTACTSYMBIANSORTERDBMS_H
+#ifndef QCONTACTSYMBIANFILTER_H
+#define QCONTACTSYMBIANFILTER_H
 
-#include "qabstractcontactsorter.h"
-#include <e32cmn.h>
+#ifdef __SYMBIAN_CNTMODEL_USE_SQLITE__
+
+#include "cntabstractcontactfilter.h"
 
 class CContactDatabase;
-class CContactIdArray;
-class CntTransformContact;
 
-class QContactSymbianSorter : public QAbstractContactSorter
+class QContactSymbianFilter : public CntAbstractContactFilter
 {
 public:
-    QContactSymbianSorter(CContactDatabase& contactDatabase, CntTransformContact& m_transformContact);
-    ~QContactSymbianSorter();
+    QContactSymbianFilter(CContactDatabase& contactDatabase);
+    ~QContactSymbianFilter();
 
-    /* from QAbstractContactFilter */
+    /* from CntAbstractContactFilter */
     QList<QContactLocalId> contacts(
+            const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
             QContactManager::Error& error);
-    QList<QContactLocalId> sort(
-        QList<QContactLocalId> contactIds,
-        const QList<QContactSortOrder>& sortOrders,
-        QContactManager::Error& error);
-    bool sortOrderSupported(const QList<QContactSortOrder>& sortOrders);
-
-private:
-    QList<QContactLocalId> contactsL(const QList<QContactSortOrder>& sortOrders) const;
-    QList<QContactLocalId> sortL(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders) const;
-    CContactIdArray* sortL(const CContactIdArray* contactIds, const QList<QContactSortOrder>& sortOrders) const;
+    CntAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter);
 
 private:
     CContactDatabase& m_contactDatabase;
-    CntTransformContact& m_transformContact;
 };
 
-#endif /* QCONTACTSYMBIANSORTERDBMS_H */
+#endif /* __SYMBIAN_CNTMODEL_USE_SQLITE__ */
+
+#endif /* QCONTACTSYMBIANFILTER_H */

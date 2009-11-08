@@ -113,7 +113,7 @@ public:
         GlslShader = 0x02
     };
 
-    Q_DECLARE_FLAGS(ShaderTypes, ShaderType);
+    Q_DECLARE_FLAGS(ShaderTypes, ShaderType)
 
     ShaderTypes supportedShaderTypes() const;
 

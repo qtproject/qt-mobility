@@ -54,6 +54,7 @@
 //
 
 #include <qmultimediaglobal.h>
+#include <QObject>
 #include <QtCore/qstring.h>
 #include <QtCore/qmap.h>
 
@@ -70,6 +71,8 @@ public:
     QStringList keys() const;
     QObject* instance(QString const &key);
     QList<QObject*> instances(QString const &key);
+
+    static void setStaticPlugins(const QString &location, const QObjectList& objects);
 
 private:
     void load();

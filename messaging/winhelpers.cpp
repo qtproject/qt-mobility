@@ -2007,7 +2007,8 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
 #endif
                                 FreeProws(rows);
 
-                                if (!QMessageFilterPrivate::matchesMessage(filter, QMessage(id)))
+                                if (QMessageFilterPrivate::matchesMessageRequired(filter)
+                                    && !QMessageFilterPrivate::matchesMessage(filter, QMessage(id)))
                                     continue;
                                 result.append(id);
                                 if (limit) {
@@ -3755,6 +3756,10 @@ QMessageFolder MapiSession::folder(QMessageStore::ErrorCode *lastError, const QM
                     // Prepare to consider next ancestor
                     if (!ancestorName.isEmpty())
                         path.prepend(ancestorName);
+#if 1 // break out of infinite loop in, (parentFolderId equality 1) qmessagestorekeys unit test. TODO debug further
+                    else
+                        break;
+#endif
                 } else {
                     break;
                 }
@@ -4407,10 +4412,18 @@ QMessageIdList MapiSession::queryMessages(QMessageStore::ErrorCode *lastError, c
         return QMessageIdList();
     }
 
+    if (QMessageFilterPrivate::isNonMatching(filter)) { // Avoid unnecessary preprocessing/evaluation
+        return QMessageIdList();
+    }
+
     QList<FolderHeapNodePtr> folderNodes;
     QMessageFilter processedFilter(QMessageFilterPrivate::preprocess(lastError, _self.toStrongRef(), filter));
     if (*lastError != QMessageStore::NoError)
         return  QMessageIdList();
+
+    if (QMessageFilterPrivate::isNonMatching(processedFilter)) { // Filter maybe be simplified by preprocessing
+        return QMessageIdList();
+    }
 
     foreach (QMessageFilter subfilter, QMessageFilterPrivate::subfilters(processedFilter)) {
         MapiStoreIterator storeIt(QMessageFilterPrivate::storeIterator(subfilter, lastError, _self.toStrongRef()));
