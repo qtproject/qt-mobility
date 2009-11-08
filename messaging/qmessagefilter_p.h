@@ -47,7 +47,11 @@
 #include <qvariant.h>
 #include <qset.h>
 #endif
-#ifdef _WIN32_WCE
+
+#if 0
+#define QSTRING_FOLDER_ID
+#endif
+#ifndef QSTRING_FOLDER_ID
 typedef QSet<QMessageFolderId> FolderIdSet;
 #else
 typedef QSet<QString> FolderIdSet;
