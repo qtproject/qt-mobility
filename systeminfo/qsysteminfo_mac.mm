@@ -81,6 +81,8 @@
 #include <IOKit/storage/IODVDMedia.h>
 #include <IOKit/storage/IOBlockStorageDevice.h>
 
+#include <CoreServices/CoreServices.h>
+
 #ifdef MAC_SDK_10_6
 #include <CoreWLAN/CWInterface.h>
 #include <CoreWLAN/CWGlobals.h>
@@ -221,7 +223,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
     bool featureSupported = false;
     switch (feature) {
-    case QSystemInfo::BluetoothFeature :
+    case QSystemInfo::BluetoothFeature:
         {
 #ifdef  MAC_SDK_10_6
             //IOBluetoothHostController
@@ -233,33 +235,33 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 #endif
         }
         break;
-    case QSystemInfo::CameraFeature :
+    case QSystemInfo::CameraFeature:
         {
 //ICCameraDevice
             //ICCameraDeviceCanTakePicture
         }
         break;
-    case QSystemInfo::FmradioFeature :
+    case QSystemInfo::FmradioFeature:
         {
 
         }
         break;
-    case QSystemInfo::IrFeature :
+    case QSystemInfo::IrFeature:
         {
 //kSCNetworkInterfaceTypeIrDA;
         }
         break;
-    case QSystemInfo::LedFeature :
+    case QSystemInfo::LedFeature:
         {
 //kHIDPage_LEDs
         }
         break;
-    case QSystemInfo::MemcardFeature :
+    case QSystemInfo::MemcardFeature:
         {
 
         }
         break;
-    case QSystemInfo::UsbFeature :
+    case QSystemInfo::UsbFeature:
         {
                CFDictionaryRef 	match = 0;
 
@@ -269,27 +271,27 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
                }
         }
         break;
-    case QSystemInfo::VibFeature :
+    case QSystemInfo::VibFeature:
         {
 
         }
         break;
-    case QSystemInfo::WlanFeature :
+    case QSystemInfo::WlanFeature:
         {
 
         }
         break;
-    case QSystemInfo::SimFeature :
+    case QSystemInfo::SimFeature:
         {
 
         }
         break;
-    case QSystemInfo::LocationFeature :
+    case QSystemInfo::LocationFeature:
         {
 
         }
         break;
-    case QSystemInfo::VideoOutFeature :
+    case QSystemInfo::VideoOutFeature:
         {
 
         }
@@ -396,15 +398,15 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         break;
     case QSystemNetworkInfo::WlanMode:
         {
-             int percent = 0;
+            int percent = 0;
 #ifdef MAC_SDK_10_6
-            CWInterface *wifiInterface = [CWInterface interface/*interfaceWithName: qstringToNSString(interfaceString)*/];
+            QString name = interfaceForMode(mode).name();
+            CWInterface *wifiInterface = [CWInterface interfaceWithName:qstringToNSString(name)];
             int rssiSignal = [[wifiInterface rssi] intValue];
-            
+
             int maxSignal = -60;
             int disSignal = -80;
             percent = 95 - 80*(maxSignal - rssiSignal)/(maxSignal - disSignal);
-//            qWarning() << __FUNCTION__ << [[wifiInterface rssi] intValue] << percent;
 #endif
 
             return percent;
@@ -908,28 +910,45 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 //////////////
 ///////
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
-        : QObject(parent)
+        : QObject(parent), isInhibited(0)
 {
+    ssTimer = new QTimer(this);
+    connect(ssTimer, SIGNAL(timeout()), this, SLOT(activityTimeout()));
 }
 
 QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
 {
+    if(ssTimer->isActive())
+        ssTimer->stop();
 }
 
 bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
 {
+    activityTimeout();
+    ssTimer->start(1000 * 60);
+    if(ssTimer->isActive()) {
+        isInhibited = true;
+        return isInhibited;
+    }
+
     return false;
 }
 
 
 bool QSystemScreenSaverPrivate::screenSaverInhibited()
 {
-    return false;
+    return isInhibited;
 }
 
 bool QSystemScreenSaverPrivate::isScreenLockOn()
 {
     return false;
 }
+
+void QSystemScreenSaverPrivate::activityTimeout()
+{
+    UpdateSystemActivity(OverallAct);
+}
+
 
 QT_END_NAMESPACE
