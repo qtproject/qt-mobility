@@ -270,6 +270,8 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_ENUMS(BatteryLevel)
     Q_ENUMS(PowerState)
     Q_ENUMS(InputMethod)
+    Q_ENUMS(SimStatus)
+    Q_ENUMS(Profile)
 
 public:
 
