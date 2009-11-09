@@ -424,8 +424,14 @@ QList<QContactManager::Error> CntSymbianEngine::removeRelationships(const QList<
     return returnValue;
 }
 
-QMap<QString, QContactDetailDefinition> CntSymbianEngine::detailDefinitions(QContactManager::Error& error) const
+QMap<QString, QContactDetailDefinition> CntSymbianEngine::detailDefinitions(const QString& contactType, QContactManager::Error& error) const
 {
+    // TODO: update for SIM contacts later
+    if (contactType != QContactType::TypeContact && contactType != QContactType::TypeGroup) {
+        error = QContactManager::InvalidContactTypeError;
+        return QMap<QString, QContactDetailDefinition>();
+    }
+
     error = QContactManager::NoError;
 
     // Get the supported detail definitions from the contact transformer
@@ -436,9 +442,13 @@ QMap<QString, QContactDetailDefinition> CntSymbianEngine::detailDefinitions(QCon
     return defMap;
 }
 
-bool CntSymbianEngine::hasFeature(QContactManager::ManagerFeature feature) const
+bool CntSymbianEngine::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const
 {
     bool returnValue(false);
+
+    // TODO: update for SIM contacts later
+    if (contactType != QContactType::TypeContact && contactType != QContactType::TypeGroup)
+        return false;
     
     switch (feature) {
         /* TODO: case QContactManager::Groups to be implemented.

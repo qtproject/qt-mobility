@@ -99,10 +99,10 @@ public:
     QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
 
     /* Definitions */
-    QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
+    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
 
     /* Capabilities reporting */
-    bool hasFeature(QContactManager::ManagerFeature feature) const;
+    bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
     bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
