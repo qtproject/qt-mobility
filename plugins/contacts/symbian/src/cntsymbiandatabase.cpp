@@ -45,10 +45,11 @@
 //user includes
 #include "cntsymbiandatabase.h"
 #include "cntsymbiantransformerror.h"
+#include "qcontactchangeset.h"
 
 // Constants
 
-CntSymbianDatabase::CntSymbianDatabase(QContactManager::Error& error) :
+CntSymbianDatabase::CntSymbianDatabase(QContactManagerEngine *engine, QContactManager::Error& error) :
     m_contactDatabase(0)
 {
     TRAPD(err, m_contactDatabase = CContactDatabase::OpenL())
@@ -70,13 +71,15 @@ CntSymbianDatabase::CntSymbianDatabase(QContactManager::Error& error) :
 #else
         TRAP(err, m_contactDatabase->AddObserverL(*this));
 #endif
+        if (err == KErrNone)
+            m_engine = engine;
     }
     CntSymbianTransformError::transformError(err, error);
 }
 
 CntSymbianDatabase::~CntSymbianDatabase()
 {
-    m_observer = NULL;
+    m_engine = NULL;
     #ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
         delete m_contactChangeNotifier;
     #else
@@ -92,10 +95,81 @@ CContactDatabase* CntSymbianDatabase::contactDatabase()
     return m_contactDatabase;
 }
 
+void CntSymbianDatabase::appendContactsRemovedEmitted(QList<QContactLocalId> *contactList)
+{
+    m_contactsRemovedEmitted += *contactList;
+}
+
+void CntSymbianDatabase::appendContactsAddedEmitted(QList<QContactLocalId> *contactList)
+{
+    m_contactsAddedEmitted += *contactList;
+}
+
+void CntSymbianDatabase::appendContactsChangedEmitted(QList<QContactLocalId> *contactList)
+{
+    m_contactsChangedEmitted += *contactList;
+}
+
+/*!
+ * Respond to a contacts database event, delegating this event to
+ * an appropriate signal as required.
+ *
+ * \param aEvent Contacts database event describing the change to the
+ *  database.
+ */
 void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
 {
-    // Temporary solution. To change once main classes are combined
-    m_observer->HandleDatabaseEventL(aEvent);
+    QContactChangeSet changeSet;
+    TContactItemId id = aEvent.iContactId;
+    
+    switch (aEvent.iType)
+    {
+    case EContactDbObserverEventContactAdded:
+        if(m_contactsAddedEmitted.contains(id))
+            m_contactsAddedEmitted.removeOne(id);
+        else
+            changeSet.addedContacts().insert(id);
+        break;
+    case EContactDbObserverEventOwnCardDeleted:
+    case EContactDbObserverEventContactDeleted:
+        if(m_contactsRemovedEmitted.contains(id))
+            m_contactsRemovedEmitted.removeOne(id);
+        else
+            changeSet.removedContacts().insert(id);
+        break;
+    case EContactDbObserverEventContactChanged:
+        if(m_contactsChangedEmitted.contains(id))
+            m_contactsChangedEmitted.removeOne(id);
+        else
+            changeSet.changedContacts().insert(id);
+        break;
+    case EContactDbObserverEventGroupAdded:
+        if(m_contactsAddedEmitted.contains(id))
+            m_contactsAddedEmitted.removeOne(id);
+        else
+            changeSet.addedRelationshipsContacts().insert(id);
+        break;
+    case EContactDbObserverEventGroupDeleted:
+        if(m_contactsRemovedEmitted.contains(id))
+            m_contactsRemovedEmitted.removeOne(id);
+        else
+            changeSet.removedRelationshipsContacts().insert(id);
+        break;
+    case EContactDbObserverEventGroupChanged:
+        if(m_contactsChangedEmitted.contains(id))
+            m_contactsChangedEmitted.removeOne(id);
+        else
+            changeSet.changedContacts().insert(id); //group is a contact
+        break;
+    case EContactDbObserverEventOwnCardChanged:
+        //TODO: temporal solution, fix when we have a signal for MyCard change
+        changeSet.changedContacts().insert(m_contactDatabase->OwnCardId());
+        break;
+    default:
+        break; // ignore other events
+    }
+    
+    changeSet.emitSignals(m_engine);
 }
 
 
