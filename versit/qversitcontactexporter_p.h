@@ -96,7 +96,7 @@ private:
     QByteArray escape(const QByteArray& value);
 
 public: // Data
-    QList<QContactDetail> mUnconvertedContactDetails;
+    QList<QContactDetail> mUnknownContactDetails;
 
 private: // data
     QHash<QString,QString> mPropertyMappings;
