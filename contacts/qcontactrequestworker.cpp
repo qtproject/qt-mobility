@@ -215,13 +215,21 @@ void QContactRequestWorker::run()
  */
 bool QContactRequestWorker::addRequest(QContactAbstractRequest* req)
 {
+    // we have to be careful with the order of locks - if request is deleted, then it will be removed
+    // when removeRequest is called, locks are acquired; so we need to ensure order is not violated.
     if (req) {
-        QMutexLocker locker(&d->m_mutex);
-        
-        if (!d->m_requestQueue.contains(req)) {
-            d->m_requestQueue.enqueue(req);
+        bool exists = false;
+        QMutexLocker threadLocker(&d->m_mutex);
+        exists = d->m_requestQueue.contains(req);
+        threadLocker.unlock();
+
+        // we update the request first, then lock the thread and add it to the queue..
+        if (!exists) {
             QList<QContactManager::Error> dummy;
             bool ret = QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Active);
+
+            threadLocker.relock();
+            d->m_requestQueue.enqueue(req);
             d->m_newRequestAdded.wakeAll();
             return ret;
         }
@@ -236,13 +244,12 @@ bool QContactRequestWorker::addRequest(QContactAbstractRequest* req)
 bool QContactRequestWorker::removeRequest(QContactAbstractRequest* req)
 {
     if (req) {
-        QMutexLocker workerLocker(&d->m_mutex);
+        QMutexLocker threadLocker(&d->m_mutex);
         d->m_requestQueue.removeOne(req);
         if (req == d->m_currentRequest)
             d->m_currentRequest = 0;
-        if (req->d_ptr->m_waiting) {
+        if (req->d_ptr->m_waiting)
             req->d_ptr->m_condition.wakeAll();
-        }
         return true;
     }
     return false;
@@ -254,11 +261,14 @@ bool QContactRequestWorker::removeRequest(QContactAbstractRequest* req)
  */
 bool QContactRequestWorker::cancelRequest(QContactAbstractRequest* req)
 {
+    // we have to be careful with the order of locks - if request is deleted, then it will be removed
+    // when removeRequest is called, locks are acquired; so we need to ensure order is not violated.
     if (req) {
-        QMutexLocker workerLocker(&d->m_mutex);
+        QMutexLocker threadLocker(&d->m_mutex);
         if (d->m_requestQueue.isEmpty() || (req == d->m_requestQueue.head() && req == d->m_currentRequest)) {
             return false;
         }
+        threadLocker.unlock();
         QList<QContactManager::Error> dummy;
         return QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Cancelling);
     }
@@ -277,7 +287,7 @@ bool QContactRequestWorker::waitRequest(QContactAbstractRequest* req, int msecs)
 {
     bool ret = false;
     if (req) {
-        QMutexLocker locker(&req->d_ptr->m_mutex);
+        QMutexLocker requestLocker(&req->d_ptr->m_mutex);
         QContactAbstractRequest::Status status = req->d_ptr->m_status;
         if (status == QContactAbstractRequest::Active || status == QContactAbstractRequest::Cancelling) {
             req->d_ptr->m_waiting = true;
