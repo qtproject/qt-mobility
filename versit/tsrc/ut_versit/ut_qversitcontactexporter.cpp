@@ -65,7 +65,6 @@
 #include <qcontactanniversary.h>
 #include <qcontactonlineaccount.h>
 #include <qcontactfamily.h>
-#include <qcontactpresence.h>
 #include <qcontactdisplaylabel.h>
 
 
@@ -149,7 +148,7 @@ void UT_QVersitContactExporter::testConvertContact()
     QCOMPARE(document.properties().count(), 3);
 }
 
-void UT_QVersitContactExporter::testUnconvertedContactDetails()
+void UT_QVersitContactExporter::testUnknownContactDetails()
 {
     // Test1: Un-supported Avatar Test
     QContact contact;
@@ -160,9 +159,9 @@ void UT_QVersitContactExporter::testUnconvertedContactDetails()
     contact.saveDetail(&contactAvatar);
     versitDocument = mExporter->exportContact(contact);
     QCOMPARE(versitDocument.properties().count(), 0);
-    QList<QContactDetail> unconvertedDetails = mExporter->unconvertedContactDetails();
+    QList<QContactDetail> unknowndDetails = mExporter->unknownContactDetails();
     QString defintionName = contactAvatar.definitionName();
-    QContactDetail detail = searchDetail(unconvertedDetails,defintionName);
+    QContactDetail detail = searchDetail(unknowndDetails,defintionName);
     QCOMPARE(defintionName, detail.definitionName());
 
     // Test2: Un-supported Online Account
@@ -173,21 +172,10 @@ void UT_QVersitContactExporter::testUnconvertedContactDetails()
     contact.saveDetail(&onlineAccount);
     versitDocument = mExporter->exportContact(contact);
     QCOMPARE(versitDocument.properties().count(), 0);
-    unconvertedDetails = mExporter->unconvertedContactDetails();
+    unknowndDetails = mExporter->unknownContactDetails();
     defintionName = onlineAccount.definitionName();
     detail = QContactDetail();
-    detail = searchDetail(unconvertedDetails,defintionName);
-    QCOMPARE(defintionName, detail.definitionName());
-
-    // Test3: UnConvered Field Name
-    QContactPresence presence;
-    detail = QContactDetail();
-    presence.setAccountUri(QString::fromAscii("a@abc.com"));
-    contact.saveDetail(&presence);
-    defintionName = presence.definitionName();
-    versitDocument = mExporter->exportContact(contact);
-    unconvertedDetails = mExporter->unconvertedContactDetails();
-    detail = searchDetail(unconvertedDetails,defintionName);
+    detail = searchDetail(unknowndDetails,defintionName);
     QCOMPARE(defintionName, detail.definitionName());
 }
 

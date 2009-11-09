@@ -50,28 +50,37 @@ int main(int argc, char** argv)
     QString homeDir = QDir::homePath();
     if (!homeDir.endsWith(QString::fromAscii("/")))
         homeDir += QString::fromAscii("/");
-    QString confFileName = homeDir + QString::fromAscii("conf.xml");
+    QString confFileName = homeDir + QString::fromAscii("versittestconfig.xml");
     TestConfiguration conf;
     conf.parse(confFileName);
 
-    // overwrite configuration file setting by command line params.
     bool saveContacts = conf.saveContact();
-    bool logToFile = conf.logToFile();
+    QString outputFormat = conf.outputFormat();
     bool performanceTest = conf.performanceTest();
+    int performanceIterations = conf.iterations();
     QString testName = ( conf.testName().length() >0 ) ? conf.testName()
                                                        : QString::fromAscii("versittest");
     int scaledImageHeight = 0;
     int scaledImageWidth = 0;
+    // overwrite configuration file setting by command line params.
     for (int i=0; i < argc; i++) {
         QString argStr(QString::fromAscii(argv[i]));        
-        if (argStr == QString::fromAscii("save")) {
-            // if save argument in command line enable contact saving
+        if (argStr == QString::fromAscii("sc")) {
+            // if sc argument in command line enable contact saving
             saveContacts = true;
-        }else if (argStr == QString::fromAscii("log")) {
+        }else if (argStr == QString::fromAscii("nsc")) {
+            // if nsc argument in command line disable contact saving
+            saveContacts = false;
+        }else if (argStr == QString::fromAscii("xml") ||
+                  argStr == QString::fromAscii("v1") ||
+                  argStr == QString::fromAscii("v2") ) {
             // if log argument in command line enable xml result logging
-            logToFile = true;
-        }else if (argStr == QString::fromAscii("test")) {
-            // if test argument in command line disable performance , so enables the normal test
+            outputFormat = argStr;
+        }else if (argStr == QString::fromAscii("np")) {
+            // if np argument in command line disable performance , so enables the normal test
+            performanceTest = false;
+        }else if (argStr == QString::fromAscii("p")) {
+            // if p argument in command line enable performance
             performanceTest = false;
         }else {
             // Scaling height and width
@@ -85,15 +94,24 @@ int main(int argc, char** argv)
     VersitTest versitTest(performanceTest,saveContacts,scaledImageHeight,scaledImageWidth);
     printf("Running tests...\n");
     QStringList args;    
-    if( logToFile){
+    // set test name
+    args << testName;
+    // if performance, set number of iterations
+    if( performanceTest ){
+        args << "-iterations" << QString::number(performanceIterations);
+    }
+    // set output format
+    args<< QString::fromAscii("-") + outputFormat;
+    if( outputFormat == QString::fromAscii("xml")){
+        // if xml set filename
         QString resultFileName = homeDir + QString::fromAscii("QVersitTestResults.xml");
-        args << testName << "-xml" << "-o" << resultFileName;
+        args << QString::fromAscii("-o") << resultFileName;
         QTest::qExec(&versitTest, args);
         TestResultXmlParser parser;
         parser.parseAndPrintResults(resultFileName,true);
     }
     else{
-        args << testName;
+        // if verbose no file name needed
         QTest::qExec(&versitTest, args);
     }    
     printf("Press any key...\n");
