@@ -303,7 +303,7 @@ public:
                             qobject_cast<QMediaServiceFeaturesInterface*>(currentPlugin);
 
                     if (iface) {
-                        if (iface->supportedFeatures(type) & hint.features() == hint.features()) {
+                        if ((iface->supportedFeatures(type) & hint.features()) == hint.features()) {
                             plugin = currentPlugin;
                             break;
                         }
