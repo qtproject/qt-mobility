@@ -62,7 +62,7 @@ public:
         const QContact& contact,
         QVersitDocument::VersitType versitType=QVersitDocument::VCard21);
 		
-    QList<QContactDetail> unconvertedContactDetails();		
+    QList<QContactDetail> unknownContactDetails();
 
 signals:
     void scale(const QString& imageFileName, QByteArray& imageData);
