@@ -2,9 +2,9 @@ TEMPLATE = subdirs
 
 include($$QT_MOBILITY_BUILD_TREE/config.pri)
 
-SUBDIRS += databasemanager \                #service framework
+#SUBDIRS += databasemanager \                #service framework
 #           servicedatabase \ 
-           servicemetadata \
+SUBDIRS+=  servicemetadata \
            qserviceinterfacedescriptor \
            qservicefilter \
            qservicemanager \
