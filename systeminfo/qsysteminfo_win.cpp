@@ -75,11 +75,25 @@
 #if !defined( Q_CC_MINGW)
 #ifndef Q_OS_WINCE
 #include "qwmihelper_win_p.h"
-//new version of ntddndis.h include windot11.h which clashes with some
-//of our redefinitions below
-#define __WINDOT11_H__
-#include <ntddndis.h>
-#undef __WINDOT11_H__
+
+enum NDIS_MEDIUM {
+    NdisMedium802_3 = 0,
+    NdisMediumWirelessWan = 9,
+};
+
+enum NDIS_PHYSICAL_MEDIUM {
+    NdisPhysicalMediumUnspecified = 0,
+    NdisPhysicalMediumWirelessLan = 1,
+    NdisPhysicalMediumBluetooth = 10,
+    NdisPhysicalMediumWiMax = 12,
+};
+
+#define OID_GEN_MEDIA_SUPPORTED 0x00010103
+#define OID_GEN_PHYSICAL_MEDIUM 0x00010202
+
+#define IOCTL_NDIS_QUERY_GLOBAL_STATS \
+    CTL_CODE(FILE_DEVICE_PHYSICAL_NETCARD, 0, METHOD_OUT_DIRECT, FILE_ANY_ACCESS)
+
 #endif
 #endif
 
@@ -88,7 +102,6 @@
 #include <Winbase.h>
 #include <Winuser.h>
 #endif
-
 
 
 
@@ -223,7 +236,6 @@ struct DOT11_SSID {
     ULONG uSSIDLength;
     UCHAR ucSSID[DOT11_SSID_MAX_LENGTH];
 };
-
 
 typedef UCHAR DOT11_MAC_ADDRESS[6];
 
@@ -1596,6 +1608,7 @@ QStringList QSystemStorageInfoPrivate::logicalDrives()
 
 QSystemDeviceInfoPrivate *QSystemDeviceInfoPrivate::self = 0;
 
+#if !defined(Q_OS_WINCE)
 bool qax_winEventFilter(void *message)
 {
     MSG *pMsg = (MSG*)message;
@@ -1614,6 +1627,7 @@ bool qax_winEventFilter(void *message)
 
     return false;
 }
+#endif
 
 //////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
@@ -1622,7 +1636,9 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     batteryLevelCache = 0;
     currentPowerStateCache = QSystemDeviceInfo::UnknownPower;
     batteryStatusCache = QSystemDeviceInfo::NoBatteryLevel;
+#if !defined(Q_OS_WINCE)
     QAbstractEventDispatcher::instance()->setEventFilter(qax_winEventFilter);
+#endif
     if(!self)
         self = this;
 

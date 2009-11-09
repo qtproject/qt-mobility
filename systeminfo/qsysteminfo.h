@@ -129,6 +129,8 @@ public:
 
 Q_SIGNALS:
     void currentLanguageChanged(const QString &);
+private:
+    QSystemInfoPrivate *d;
 };
 
 ////////
@@ -196,6 +198,8 @@ Q_SIGNALS:
    void currentMobileNetworkCodeChanged(const QString &);
    void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+private:
+       QSystemNetworkInfoPrivate *d;
 };
 
 ////////
@@ -266,6 +270,8 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_ENUMS(BatteryLevel)
     Q_ENUMS(PowerState)
     Q_ENUMS(InputMethod)
+    Q_ENUMS(SimStatus)
+    Q_ENUMS(Profile)
 
 public:
 
@@ -341,6 +347,8 @@ Q_SIGNALS:
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
 
+private:
+    QSystemDeviceInfoPrivate *d;
 };
 
 

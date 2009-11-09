@@ -40,35 +40,148 @@
 ****************************************************************************/
 
 /*!
+    \group mobility
+    \title Qt Mobility APIs
 
-\page index.html
-
-\title System Information Library Developer Resources
-
-\tableofcontents
-
-
-\section1 Introduction
-
-The System Information API provides a set of APIs to discover system related information and capabilities.
-
-This library requires Qt 4.5 to be installed.
-
-To build the library, run \tt qmake and \tt make.
-
-
-\section1 Reference documentation
-
-\section2 Main classes
-
-\list
-    \o \l{QSystemDeviceInfo}
-    \o \l{QSystemDisplayInfo}
-    \o \l{QSystemInfo}
-    \o \l{QSystemStorageInfo}
-    \o \l{QSystemNetworkInfo}
-    \o \l{QSystemScreenSaver}
-\endlist
-
+    The Qt Mobility is a set of APIs which have the goal of supplying features
+    for various mobile devices.
 
 */
+
+/*!
+    \page index.html
+    \startpage index.html  Qt Reference Documentation
+
+    \title Qt Mobility Overview
+
+    \brief An overview of the Qt Mobility APIs.
+
+    The Qt Mobility is a set of APIs which have the goal of supplying features
+    for various mobile devices.
+
+    \tableofcontents
+
+    \raw HTML
+    <a href="classlists.html">List of Mobility Classes and Functions</a>
+    \endraw
+
+    \section1 Mobility Component APIs
+
+    \annotatedlist  mobility
+
+    \section1 Overview
+    
+    These APIs give the developer a wide range of desirable functions for a
+    mobile platform. A mobile device using the Qt Mobility API should be able
+    to
+        \list
+        \o Locate services on-board or remotely. Find an optimal
+    connection to the network for the particular service.
+        \o Services built on top of this would include Internet applications
+    such as email and web browsing.
+        \o Multimedia features enable image and video capture with audio ,
+    audio recording, and the playing of music or video clips.
+        \o Location will make the device aware of its geographical location
+    to support GIS applications.
+        \o Publish-Subscribe enables a flexible behavior for changed circumstances.
+        \endlist
+
+    \section1 Bearer Management
+
+    Although not a network manager, this component manages the connectivity
+    state to the network. So it does not manage network configurations, which
+    are the role of the platform provider, but it does allow the user to start
+    or stop network interfaces. Some higher level management of the connection
+    session may also be possible as well depending on the platform.
+
+    Some platforms can have a set of grouped access points perhaps based on a
+    common purpose. Bearer Management allows comparison and prioritization
+    of the access and use of these points. 
+
+    The aim of Bearer Management is to reduce the need for the developer to be
+    concerned about trying to locate the best connection from a list of
+    possible IP bearers and 3G connections. The user can select the best or
+    it can be selected transparently so that WLAN roaming can occur
+    seemlessly.
+
+    Some examples of the Bearer Management functionality,
+        \list
+        \o On demand use of the appropriate Access Point. When a user starts
+    to use a browser, the appropriate access point is selected from those
+    available and a connection is transparently made.
+        \o Always-on applications such as email or IM roam automatically
+    between cellular packet data and WLAN networks. The application developer
+    is in control and for example the application can gracefully close TCP
+    connections over the old bearer after setting up new TCP connections
+    over the new bearer.
+        \o Application developer can create a settings user interface, where
+    the user can select a certain connection to be used with the application
+        \o A connection manager application can be implemented with Qt. This
+    application enumerates available connections, shows counters, and allows
+    the user to connect or disconnect
+        \endlist
+
+    \section1 Contacts
+
+    The structure and retrieval of contact data from local or remote backends.
+    It includes the ability to create, edit, list, delete and lookup contact
+    information whether it is stored locally or remotely.
+
+    \section1 Publish and Subscribe
+
+    Enables context sensitive access to information. Data is organized as a tree, with
+    data being able to 'shadow' other data with the 'same key', a string
+    specifying the leaf or node. The context is an example of a context ontology,
+    a defined set of relationships. As the context changes the values of the
+    objects change but the relationships remain the same. It is intended to
+    be an enabling technology, the basis of a range future applications.
+
+    For example, this will make personalization easier as different people
+    would represent a different context. Or behavior of the device that
+    changes depending on physical location or device status.
+
+    \section1 Location
+
+    The C++ API is one layer of this feature. This API encapsulates basic
+    geographical information obtained from satellite or other sources about
+    the user, including latitude and longitude, bearing, speed and altitude.
+    It will enable a range of geographical applications, for example, maps.
+
+    \section1 Messaging
+
+    A common interface for handling SMS, MMS, XMPP, Email and partial MIME.
+    Sending, notification and retrieval of messages as well as the ability to
+    use a native app to create, edit, reply-to, send and display messages.
+    Supports the sending of messages with attachments, and in situations of
+    low battery to leave attachments on the server unless opened.
+
+    \section1 Multimedia
+
+    An API to record and play audio and video of various formats. The playing
+    and managing of a FM radio. This includes the typical functionality you
+    would find on a music player, combined with FM radio, and camera for still
+    and video recording.
+
+    \section1 Service Framework
+
+    A platform independent method of finding Services. A 'service' is an
+    independent component that allows a client to perform a well-defined 
+    operation.
+
+    The services are implemented as plugins installed on the device and can
+    look for supporting external services running on a central server. E.g.
+    weather, local tourist attractions etc. Also default applications can use
+    the layer to locate servers. Since this is a level of abstraction then the
+    app does not need to be concerned with the underlying protocol, where the
+    servers are, the hardware peculiarities with networking and other low
+    level details.
+
+    \section1 System Information
+
+    An API to discover system related information and capabilities. Information
+    available will cover software version numbers, hardware features,
+    network connection types and status, display, data storage devices,
+    device information and the screensaver.
+    
+*/
+

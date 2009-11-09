@@ -76,10 +76,6 @@
 #include <mntent.h>
 #include <sys/stat.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/hci.h>
-#include <bluetooth/hci_lib.h>
-
 #ifdef Q_WS_X11
 #include <QX11Info>
 #include <X11/Xlib.h>
@@ -764,7 +760,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::getBluetoothNetStat
         }
        }
        return QSystemNetworkInfo::UndefinedStatus;
-   }
+}
 #endif
 
 

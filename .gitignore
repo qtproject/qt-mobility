@@ -1,6 +1,8 @@
+.DS_Store
 .obj
 *.moc
 Makefile*
+*.dylib
 *.so.*
 *.so
 *.so.debug
@@ -16,6 +18,22 @@ moc_*.cpp
 *.idb
 *.ib_pdb_index
 build
+include/*
+config.pri
+config.in
+config.log
+mobility.prf
+bin/servicexmlgen*
+bin/servicefw*
+bin/vsexplorer*
+bin/examples/*
+bin/sysinfo*
+bin/qcrmlgen*
+install/*
+lib/*
+*.app
+config.tests/networkmanager/networkmanager
+.qmake.cache
 
 #Symbian specific
 *.mmp
@@ -30,3 +48,15 @@ ABLD.BAT
 
 #Carbide project files
 *.project
+plugin_commonU.def
+
+#Visual Studio files
+*.sln
+*.vcproj
+*.suo
+*.ncb
+*.user
+
+#QtCreator project files
+*.pro.user
+

@@ -1,0 +1,70 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of the License "Symbian Foundation License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.symbianfoundation.org/legal/sfl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:
+*     This file contains private declarations for resources of PbkEng.dll.
+*     The file can be included in C++ or resource file.
+*
+*/
+
+
+#ifndef CNTMODELEXTUIDS_HRH
+#define CNTMODELEXTUIDS_HRH
+
+//  CONSTANTS
+
+/**
+ * Storage type for thumbnail fields.
+ * Currently filename link is the default.
+ */
+#define KPbkThumbnailFieldStorageType KStorageTypeStore
+
+/**
+ * Phonebook custom Field value.
+ * Locationing privacy field type.
+ */
+#define KPbkUidContactFieldLocationPrivValue    0x101F4FF2
+
+/**
+ * Phonebook custom Field value.
+ * Top Contact field type.
+ */
+#define KUidContactFieldTopContactValue 	0x200100E3
+
+/**
+ * Phonebook custom Field value.
+ * IMPP field type.
+ */
+#define KUidContactFieldIMPPValue        	0x200100E4
+
+/**
+ * Phonebook custom Field value.
+ * Video ringtone field type.
+ */
+#define KUidContactFieldVideoRingToneValue	0x200100E5
+
+/**
+ * Phonebook custom Field value.
+ * Sync target field type.
+ */
+#define KUidContactFieldSyncTargetValue		0x200100E6
+
+/**
+ * Phonebook custom Field value.
+ * Gender field type.
+ */
+#define KUidContactFieldGenderValue		0x200100E7
+
+#endif // CNTMODELEXTUIDS_HRH
+
+// End of File

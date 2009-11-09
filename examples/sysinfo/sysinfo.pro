@@ -1,9 +1,3 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2009-08-06T10:02:21
-#
-#-------------------------------------------------
-
 QT       += network
 
 TARGET = sysinfo
@@ -17,8 +11,8 @@ HEADERS  += dialog.h
 
 INCLUDEPATH += ../../systeminfo
 
-include(../../common.pri)
-LIBS += -lQtSystemInfo
+include(../examples.pri)
+qtAddLibrary(QtSystemInfo)
 
 CONFIG += console
 

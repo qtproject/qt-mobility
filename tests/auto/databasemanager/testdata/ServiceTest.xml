@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<service>
+  <name>TestService</name>
+  <version>1.0.456</version>
+  <filepath>testdata/testservice.dll</filepath>
+  <description>Test service description</description>
+  <interface>
+    <name>com.nokia.IDownloader</name>
+    <description>Interface that provides download support</description>
+    <version>1.0</version>
+    <capabilities>ReadUserData,WriteUserData</capabilities>
+  </interface>
+  <interface>
+    <name>com.nokia.ILocation</name>
+    <description>Interface that provides location support</description>
+    <version>1.0</version>
+  </interface>
+  <interface>
+    <name>com.nokia.ISysInfo</name>
+    <description>Interface that provides system information support</description>
+    <capabilities>ReadUserData</capabilities>
+    <version>1.0</version>
+  </interface>
+  <interface>
+    <name>com.nokia.ISendMessage</name>
+    <description>Interface that provides message sending support</description>
+    <capabilities>ReadUserData</capabilities>
+    <version>1.0</version>
+  </interface>
+  <interface>
+    <name>com.nokia.IReceiveMessage</name>
+    <description>Interface that provides message receiving support</description>
+    <capabilities>WriteUserData</capabilities>
+    <version>1.0</version>
+  </interface>
+</service>
+

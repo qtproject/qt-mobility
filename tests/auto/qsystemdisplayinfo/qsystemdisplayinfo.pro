@@ -1,15 +1,13 @@
-SOURCES  += tst_qsystemdisplayinfo.cpp
-HEADERS  += 
 TARGET = tst_qsystemdisplayinfo
 CONFIG+=testcase
-QT += testlib
 
+SOURCES  += tst_qsystemdisplayinfo.cpp
 QT = core network gui
 
 INCLUDEPATH += ../../../systeminfo
 
 include(../../../common.pri)
-LIBS += -lQtSystemInfo
+qtAddLibrary(QtSystemInfo)
 
 symbian {
     TARGET.CAPABILITY = All -TCB -DRM

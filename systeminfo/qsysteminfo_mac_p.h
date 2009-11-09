@@ -61,6 +61,7 @@
 #include "qsysteminfo.h"
 #include <qsysinfoglobal.h>
 
+#include <QTimer>
 
 QT_BEGIN_HEADER
 
@@ -131,6 +132,8 @@ Q_SIGNALS:
    void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
+private:
+    bool isInterfaceActive(const char* netInterface);
 };
 
 class QSystemDisplayInfoPrivate : public QObject
@@ -165,6 +168,7 @@ public:
 
 private:
     QHash<QString, QString> mountEntriesHash;
+    bool updateVolumesMap();
     void mountEntries();
 
 };
@@ -188,7 +192,7 @@ public:
 
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
-    int  batteryLevel() const;
+    int  batteryLevel();
 
     QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
@@ -196,6 +200,7 @@ public:
 
     QSystemDeviceInfo::PowerState currentPowerState();
     void setConnection();
+    static QSystemDeviceInfoPrivate *instance() {return self;}
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
@@ -206,6 +211,10 @@ Q_SIGNALS:
     void bluetoothStateChanged(bool);
 
 private:
+    int batteryLevelCache;
+    QSystemDeviceInfo::PowerState currentPowerStateCache;
+    QSystemDeviceInfo::BatteryStatus batteryStatusCache;
+    static QSystemDeviceInfoPrivate *self;
 };
 
 
@@ -225,8 +234,11 @@ private:
     QString screenPath;
     QString settingsPath;
     bool screenSaverSecure;
+    bool isInhibited;
+    QTimer *ssTimer;
 
-
+private slots:
+    void activityTimeout();
 
 };
 

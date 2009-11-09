@@ -1,15 +1,13 @@
-SOURCES  += tst_qsystemnetworkinfo.cpp
-HEADERS  += 
 TARGET = tst_qsystemnetworkinfo
 CONFIG+=testcase
-QT -= gui
 
 QT = core network
+SOURCES  += tst_qsystemnetworkinfo.cpp
 
 INCLUDEPATH += ../../../systeminfo
 
 include(../../../common.pri)
-LIBS += -lQtSystemInfo
+qtAddLibrary(QtSystemInfo)
 
 symbian {
     TARGET.CAPABILITY = All -TCB -DRM

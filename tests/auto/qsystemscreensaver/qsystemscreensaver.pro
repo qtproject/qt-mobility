@@ -1,15 +1,14 @@
-SOURCES  += tst_qsystemscreensaver.cpp
 TARGET = tst_qsystemscreensaver
 CONFIG+=testcase
-QT += testlib
 QT = gui core network
 
 INCLUDEPATH += ../../../systeminfo
+SOURCES  += tst_qsystemscreensaver.cpp
 
 include(../../../common.pri)
-LIBS += -lQtSystemInfo
+qtAddLibrary(QtSystemInfo)
 
 symbian {
     TARGET.CAPABILITY = All -TCB -DRM
-    }
+}
 
