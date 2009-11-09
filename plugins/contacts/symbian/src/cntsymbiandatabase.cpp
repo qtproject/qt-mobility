@@ -59,14 +59,8 @@ CntSymbianDatabase::CntSymbianDatabase(QContactManager::Error& error) :
         TRAP(err, m_contactDatabase = CContactDatabase::CreateL())
     }
 
-    //If database didn't open successfully return error
-    if(err != KErrNone)
-    {
-        CntSymbianTransformError::transformError(err, error);
-    }
-
     //Database opened successfully
-    else
+    if (err == KErrNone)
     {
     // In pre 10.1 platforms the AddObserverL & RemoveObserver functions are not
     // exported so we need to use CContactChangeNotifier.
@@ -77,6 +71,7 @@ CntSymbianDatabase::CntSymbianDatabase(QContactManager::Error& error) :
         TRAP(err, m_contactDatabase->AddObserverL(*this));
 #endif
     }
+    CntSymbianTransformError::transformError(err, error);
 }
 
 CntSymbianDatabase::~CntSymbianDatabase()
@@ -92,7 +87,7 @@ CntSymbianDatabase::~CntSymbianDatabase()
         delete m_contactDatabase;
 }
 
-CContactDatabase* CntSymbianDatabase::contactdatabase()
+CContactDatabase* CntSymbianDatabase::contactDatabase()
 {
     return m_contactDatabase;
 }
