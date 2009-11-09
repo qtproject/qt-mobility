@@ -105,4 +105,8 @@ private:
                         const CntTransformContactData& transformContactData,
                         const QString& filedname,
                         const quint32  idValue) const;
+    void TestCntTransformContactData::validateSupportedSortingFieldTypes(
+            const CntTransformContactData& transformContactData,
+            const QString& filedname,
+            const QList<TUid>&  checkSortFieldList )const;
 };
