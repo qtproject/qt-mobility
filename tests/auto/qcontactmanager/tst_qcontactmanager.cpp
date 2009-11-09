@@ -2265,7 +2265,7 @@ void tst_QContactManager::relationships()
     cm->saveContact(&dest2);
     cm->saveContact(&dest3);
 
-    if (!cm->information()->hasFeature(QContactManagerInfo::Relationships)) {
+    if (!cm->hasFeature(QContactManager::Relationships)) {
         // ensure that the operations all fail as required.
         QContactRelationship r1, r2, r3;
         r1.setFirst(source.id());
@@ -2324,8 +2324,8 @@ void tst_QContactManager::relationships()
         return;
     }
 
-    int totalRelationships = cm->relationships().size();
-    int totalManagerRelationships = cm->relationships(QContactRelationship::IsManagerOf).size();
+    totalRelationships = cm->relationships().size();
+    totalManagerRelationships = cm->relationships(QContactRelationship::IsManagerOf).size();
 
     QContactId dest1Uri = dest1.id();
     QContactId dest1EmptyUri;
@@ -2609,7 +2609,7 @@ void tst_QContactManager::contactType()
     QFETCH(QString, uri);
     QContactManager* cm = QContactManager::fromUri(uri);
 
-    if (!cm->information()->hasFeature(QContactManagerInfo::Groups))
+    if (!cm->hasFeature(QContactManager::Groups))
         QSKIP("Skipping: This manager does not support group contacts!", SkipSingle);
 
     QContact g1, g2, c;

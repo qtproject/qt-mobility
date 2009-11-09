@@ -1201,6 +1201,7 @@ QContactDetailDefinition QContactManagerEngine::detailDefinition(const QString& 
 bool QContactManagerEngine::saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error& error)
 {
     Q_UNUSED(def);
+    Q_UNUSED(contactType);
     error = QContactManager::NotSupportedError;
     return false;
 }
@@ -1219,6 +1220,7 @@ bool QContactManagerEngine::saveDetailDefinition(const QContactDetailDefinition&
 bool QContactManagerEngine::removeDetailDefinition(const QString& definitionName, const QString& contactType, QContactManager::Error& error)
 {
     Q_UNUSED(definitionName);
+    Q_UNUSED(contactType);
     error = QContactManager::NotSupportedError;
     return false;
 }
