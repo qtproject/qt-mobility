@@ -31,8 +31,9 @@ public:
     int parse(const QString& fileName);
     bool saveContact(){return mSaveContact;}
     bool performanceTest(){return mPerformanceTest;}
-    bool logToFile(){return mLogToFile;}
+    QString outputFormat(){return mOutputFormat;}
     QString testName(){return mTestName;}
+    int iterations(){return mPerformanceIterationCount;}
 
 protected: // From QXmlContentHandler
     bool startElement(
@@ -45,7 +46,8 @@ private: // Data
     QString mTestName;
     bool mSaveContact;
     bool mPerformanceTest;
-    bool mLogToFile;
+    QString mOutputFormat;
+    int mPerformanceIterationCount;
 };
 
 
