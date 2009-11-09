@@ -231,94 +231,164 @@ void UT_QVersitContactImporter::testAddress()
     QVERIFY(subTypes.contains(QContactAddress::SubTypeParcel));
 }
 
-void UT_QVersitContactImporter::testOrganization()
+void UT_QVersitContactImporter::testOrganizationName()
 {
     QContact contact;
     QVersitDocument document;
     QVersitProperty property;
-    
-    // ORG: Empty value for the organization
+
+    // Empty value for the organization
     property.setName(QString::fromAscii("ORG"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
-    QContactOrganization org = 
-        static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
-    QCOMPARE(org.name(),QString());
-    QCOMPARE(org.department(),QString());
+    QContactOrganization organization =
+        static_cast<QContactOrganization>(
+            contact.detail(QContactOrganization::DefinitionName));
+    QCOMPARE(organization.name(),QString());
+    QCOMPARE(organization.department(),QString());
 
-    // ORG: Organization without separators
+    // Organization without separators
     property.setValue(QByteArray("Nokia"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
-    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
-    QCOMPARE(org.name(),QString::fromAscii("Nokia"));
-    QCOMPARE(org.department(),QString());
+    organization =
+        static_cast<QContactOrganization>(
+            contact.detail(QContactOrganization::DefinitionName));
+    QCOMPARE(organization.name(),QString::fromAscii("Nokia"));
+    QCOMPARE(organization.department(),QString());
 
-    // ORG: Organization with one seprator
+    // Organization with one seprator
     property.setValue(QByteArray(";"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
-    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
-    QCOMPARE(org.name(),QString::fromAscii(""));
-    QCOMPARE(org.department(),QString());
-    
-    // ORG: Organization with just separators
+    organization =
+        static_cast<QContactOrganization>(
+            contact.detail(QContactOrganization::DefinitionName));
+    QCOMPARE(organization.name(),QString::fromAscii(""));
+    QCOMPARE(organization.department(),QString());
+
+    // Organization with just separators
     property.setValue(QByteArray(";;;"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
-    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
-    QCOMPARE(org.name(),QString::fromAscii(""));
-    QCOMPARE(org.department(),QString::fromAscii(";;"));
-    
-    // ORG: Organization with one Organizational Unit
+    organization =
+        static_cast<QContactOrganization>(
+            contact.detail(QContactOrganization::DefinitionName));
+    QCOMPARE(organization.name(),QString::fromAscii(""));
+    QCOMPARE(organization.department(),QString::fromAscii(";;"));
+
+    // Organization with one Organizational Unit
     property.setValue(QByteArray("Nokia;R&D"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
-    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
-    QCOMPARE(org.name(),QString::fromAscii("Nokia"));
-    QCOMPARE(org.department(),QString::fromAscii("R&D"));
-    
-    // ORG: Organization with organization name and semicolon
+    organization =
+        static_cast<QContactOrganization>(
+            contact.detail(QContactOrganization::DefinitionName));
+    QCOMPARE(organization.name(),QString::fromAscii("Nokia"));
+    QCOMPARE(organization.department(),QString::fromAscii("R&D"));
+
+    // Organization with organization name and semicolon
     property.setValue(QByteArray("Nokia;"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
-    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
-    QCOMPARE(org.name(),QString::fromAscii("Nokia"));
-    QCOMPARE(org.department(),QString());
+    organization =
+        static_cast<QContactOrganization>(
+            contact.detail(QContactOrganization::DefinitionName));
+    QCOMPARE(organization.name(),QString::fromAscii("Nokia"));
+    QCOMPARE(organization.department(),QString());
 
-    // ORG: Organization with semicolon and department
+    // Organization with semicolon and department
     property.setValue(QByteArray(";R&D"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
-    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
-    QCOMPARE(org.name(),QString());
-    QCOMPARE(org.department(),QString::fromAscii("R&D"));
+    organization =
+        static_cast<QContactOrganization>(
+            contact.detail(QContactOrganization::DefinitionName));
+    QCOMPARE(organization.name(),QString());
+    QCOMPARE(organization.department(),QString::fromAscii("R&D"));
 
-    // ORG: Organization with more Organizational Units
+    // Organization with more Organizational Units
     property.setValue(QByteArray("ABC, Inc.;North American Division;Devices;Marketing"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
-    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
-    QCOMPARE(org.name(),QString::fromAscii("ABC, Inc."));
-    QCOMPARE(org.department(),QString::fromAscii("North American Division;Devices;Marketing"));
+    organization =
+        static_cast<QContactOrganization>(
+            contact.detail(QContactOrganization::DefinitionName));
+    QCOMPARE(organization.name(),QString::fromAscii("ABC, Inc."));
+    QCOMPARE(organization.department(),QString::fromAscii("North American Division;Devices;Marketing"));
+}
 
-    // TITLE
+void UT_QVersitContactImporter::testOrganizationTitle()
+{
+    QContact contact;
+    QVersitDocument document;
+    QVersitProperty property;
+
+    // One title
     property.setName(QString::fromAscii("TITLE"));
-    QByteArray titleValue("Hacker");
+    QByteArray titleValue("Developer");
     property.setValue(titleValue);
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
-    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
-    QCOMPARE(org.title(),QString::fromAscii(titleValue));
+    QList<QContactDetail> organizationDetails =
+        contact.details(QContactOrganization::DefinitionName);
+    QCOMPARE(organizationDetails.count(), 1);
+    QContactOrganization organization =
+        static_cast<QContactOrganization>(organizationDetails[0]);
+    QCOMPARE(organization.title(),QString::fromAscii(titleValue));
 
-    // X-ASSISTANT
+    // Two titles -> two QContactOrganizations created
+    property.setName(QString::fromAscii("TITLE"));
+    QByteArray secondTitleValue("Hacker");
+    property.setValue(secondTitleValue);
+    document.addProperty(property);
+    contact = mImporter->importContact(document);
+    organizationDetails = contact.details(QContactOrganization::DefinitionName);
+    QCOMPARE(organizationDetails.count(), 2);
+    QContactOrganization firstOrganization =
+        static_cast<QContactOrganization>(organizationDetails[0]);
+    QCOMPARE(firstOrganization.title(),QString::fromAscii(titleValue));
+    QContactOrganization secondOrganization =
+        static_cast<QContactOrganization>(organizationDetails[1]);
+    QCOMPARE(secondOrganization.title(),QString::fromAscii(secondTitleValue));
+
+    // Two titles and one organization name -> two QContactOrganizations created
+    property.setName(QString::fromAscii("ORG"));
+    QByteArray organizationName("Nokia");
+    property.setValue(organizationName);
+    document.addProperty(property);
+    contact = mImporter->importContact(document);
+    organizationDetails = contact.details(QContactOrganization::DefinitionName);
+    QCOMPARE(organizationDetails.count(), 2);
+    firstOrganization = static_cast<QContactOrganization>(organizationDetails[0]);
+    QCOMPARE(firstOrganization.title(),QString::fromAscii(titleValue));
+    QCOMPARE(firstOrganization.name(),QString::fromAscii(organizationName));
+    secondOrganization = static_cast<QContactOrganization>(organizationDetails[1]);
+    QCOMPARE(secondOrganization.title(),QString::fromAscii(secondTitleValue));
+    QCOMPARE(secondOrganization.name(),QString());
+}
+
+void UT_QVersitContactImporter::testOrganizationLogo()
+{
+    QContact contact;
+    QVersitDocument document;
+    QVersitProperty property;
     property.setName(QString::fromAscii("X-ASSISTANT"));
     QByteArray assistantValue("Marge");
     property.setValue(assistantValue);
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
-    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
-    QCOMPARE(org.assistantName(), QString::fromAscii(assistantValue));
+    QContactOrganization organization =
+        static_cast<QContactOrganization>(
+            contact.detail(QContactOrganization::DefinitionName));
+    QCOMPARE(organization.assistantName(), QString::fromAscii(assistantValue));
+}
+
+void UT_QVersitContactImporter::testOrganizationAssistant()
+{
+    QContact contact;
+    QVersitDocument document;
+    QVersitProperty property;
 
     // Embedded LOGO
     property.setName(QString::fromAscii("LOGO"));
@@ -331,8 +401,10 @@ void UT_QVersitContactImporter::testOrganization()
     document = createDocumentWithProperty(property);
     mImporter->setImagePath(imageAndAudioClipPath);
     contact = mImporter->importContact(document);
-    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
-    QString logoFileName = org.logo();
+    QContactOrganization organization =
+        static_cast<QContactOrganization>(
+            contact.detail(QContactOrganization::DefinitionName));
+    QString logoFileName = organization.logo();
     QVERIFY(logoFileName.endsWith(QString::fromAscii(".gif")));
     QVERIFY(logoFileName.contains(imageAndAudioClipPath + QString::fromAscii("/")));
     QFile logoFile(logoFileName);
@@ -348,18 +420,28 @@ void UT_QVersitContactImporter::testOrganization()
     property.addParameter(QString::fromAscii("VALUE"),QString::fromAscii("URL"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
-    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
-    QCOMPARE(org.logo(),QString::fromAscii(logoUrl));
+    organization =
+        static_cast<QContactOrganization>(
+            contact.detail(QContactOrganization::DefinitionName));
+    QCOMPARE(organization.logo(),QString::fromAscii(logoUrl));
+}
 
-    // ROLE
+void UT_QVersitContactImporter::testOrganizationRole()
+{
+    QContact contact;
+    QVersitDocument document;
+    QVersitProperty property;
+
+    // Setting the role is not yet supported by QContactOrganization
     property.setName(QString::fromAscii("ROLE"));
     QByteArray roleValue("Very important manager and proud of it");
     property.setValue(roleValue);
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
-    org = static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
-    QVERIFY(org.isEmpty()); // Setting the role is not supported by QContactOrganization
-
+    QContactOrganization organization =
+        static_cast<QContactOrganization>(
+            contact.detail(QContactOrganization::DefinitionName));
+    QVERIFY(organization.isEmpty());
 }
 
 void UT_QVersitContactImporter::testTel()

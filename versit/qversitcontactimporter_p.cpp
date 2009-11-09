@@ -139,7 +139,7 @@ QContact QVersitContactImporterPrivate::importContact(
         } else if (detailDefinitionName == QContactGeolocation::DefinitionName){
             detail = createGeoLocation(property);
         } else if (detailDefinitionName == QContactOrganization::DefinitionName) {
-            detail = createOrganization(property);
+            detail = createOrganization(property,contact);
         } else if (detailDefinitionName == QContactNickname::DefinitionName) {
             createNicknames(property,contact);
         } else if (detailDefinitionName == QContactAvatar::DefinitionName) {
@@ -179,7 +179,7 @@ QContactDetail* QVersitContactImporterPrivate::createName(
 {
     // Restrict only one name can exist, if multiple than choose first
     // and discard rest
-    if( !contact.detail(QContactName::DefinitionName).isEmpty()){
+    if (!contact.detail(QContactName::DefinitionName).isEmpty()){
         return 0;
     }
     QContactName* name = new QContactName();
@@ -232,41 +232,54 @@ QContactDetail* QVersitContactImporterPrivate::createAddress(
  * Creates a QContactOrganization from \a property
  */
 QContactDetail* QVersitContactImporterPrivate::createOrganization(
-    const QVersitProperty& property) const
+    const QVersitProperty& property,
+    const QContact& contact) const
 {
-    QContactOrganization* org = new QContactOrganization;
-    if (property.name() == QString::fromAscii("TITLE")) {
-        org->setTitle(QString::fromAscii(property.value()));
-    } else if (property.name() == QString::fromAscii("ORG")) {
-        setOrganizationNames(*org,property);
-    } else if (property.name() == QString::fromAscii("LOGO")) {
-        setOrganizationLogo(*org,property);
-    } else if (property.name() == QString::fromAscii("X-ASSISTANT")) {
-        org->setAssistantName(QString::fromAscii(property.value()));
+    QContactOrganization* organization = 0;
+    QPair<QString,QString> detailNameAndFieldName =
+        mDetailMappings.value(property.name());
+    QString fieldName = detailNameAndFieldName.second;
+    QList<QContactDetail> organizations =
+        contact.details(QContactOrganization::DefinitionName);
+    foreach(QContactDetail detail, organizations) {
+        QContactOrganization current = static_cast<QContactOrganization>(detail);
+        if (current.value(fieldName).length() == 0) {
+            organization = new QContactOrganization(current);
+            break;
+        }
+    }
+    if (!organization) {
+        organization = new QContactOrganization();
+    }
+    if (fieldName == QContactOrganization::FieldName) {
+        setOrganizationNames(*organization,property);
+    } else if (fieldName == QContactOrganization::FieldTitle) {
+        organization->setTitle(QString::fromAscii(property.value()));
+    } else if (fieldName == QContactOrganization::FieldLogo) {
+        setOrganizationLogo(*organization,property);
+    } else if (fieldName == QContactOrganization::FieldAssistantName) {
+        organization->setAssistantName(QString::fromAscii(property.value()));
     } else {
-         // NOP
+        delete organization;
+        organization = 0;
     }
-    if (org->isEmpty()) {
-        delete org;
-        org = 0;
-    }
-    return org;
+    return organization;
 }
 
 /*!
  * Set the organization name and department(s) from \a property.
  */
 void QVersitContactImporterPrivate::setOrganizationNames(
-    QContactOrganization& org,
+    QContactOrganization& organization,
     const QVersitProperty& property) const
 {
     QByteArray value = property.value();
     int firstSemicolon = value.indexOf(";");
     if (firstSemicolon >= 0) {
-        org.setName(QString::fromAscii(value.left(firstSemicolon)));
-        org.setDepartment(QString::fromAscii(value.mid(firstSemicolon+1)));
+        organization.setName(QString::fromAscii(value.left(firstSemicolon)));
+        organization.setDepartment(QString::fromAscii(value.mid(firstSemicolon+1)));
     } else {
-        org.setName(QString::fromAscii(value));
+        organization.setName(QString::fromAscii(value));
     }
 }
 
