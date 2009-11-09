@@ -290,6 +290,26 @@ QList<QContactLocalId> CntSymbianEngine::slowSort(
 bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error)
 {
     bool ret = false;
+    
+    // If contact has GUid and no local Id, try to find it in database
+    if (contact && !contact->localId() && 
+        contact->details(QContactGuid::DefinitionName).count() > 0) {
+        QContactDetailFilter guidFilter;
+        guidFilter.setDetailDefinitionName(QContactGuid::DefinitionName, QContactGuid::FieldGuid); 
+        QContactGuid guidDetail = static_cast<QContactGuid>(contact->details(QContactGuid::DefinitionName).at(0));
+        guidFilter.setValue(guidDetail.guid());
+        
+        QContactManager::Error err;
+        QList<QContactLocalId> localIdList = contacts(guidFilter,
+                QList<QContactSortOrder>(), err);
+        if (err == QContactManager::NoError && localIdList.count() > 0) {
+            QScopedPointer<QContactId> contactId(new QContactId());
+            contactId->setLocalId(localIdList.at(0));
+            contactId->setManagerUri(managerUri());
+            contact->setId(*contactId);
+        }
+    }
+    
     // Check parameters
     if(!contact) {
         error = QContactManager::BadArgumentError;
