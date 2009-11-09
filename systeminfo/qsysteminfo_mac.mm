@@ -86,6 +86,9 @@
 #ifdef MAC_SDK_10_6
 #include <CoreWLAN/CWInterface.h>
 #include <CoreWLAN/CWGlobals.h>
+#else
+// 10.5 sdk is broken for this:
+#include </Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/OSServices.framework/Headers/Power.h>
 #endif
 
 #include <sys/types.h>
