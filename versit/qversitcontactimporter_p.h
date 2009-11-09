@@ -117,7 +117,7 @@ private: // Utilities
 public: // Data
     QString mImagePath;
     QString mAudioClipPath;
-    QList<QVersitProperty> mUnconvertedVersitProperties;
+    QList<QVersitProperty> mUnknownVersitProperties;
 
 private: // Data
     QHash<QString,QPair<QString,QString> > mDetailMappings;
