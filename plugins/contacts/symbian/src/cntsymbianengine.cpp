@@ -436,19 +436,19 @@ QMap<QString, QContactDetailDefinition> CntSymbianEngine::detailDefinitions(QCon
     return defMap;
 }
 
-bool CntSymbianEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
+bool CntSymbianEngine::hasFeature(QContactManager::ManagerFeature feature) const
 {
     bool returnValue(false);
     
     switch (feature) {
-        /* TODO: case QContactManagerInfo::Groups to be implemented.
+        /* TODO: case QContactManager::Groups to be implemented.
            How about the others? like:
-           QContactManagerInfo::ActionPreferences,
-           QContactManagerInfo::MutableDefinitions,
-           QContactManagerInfo::Anonymous? */
-    case QContactManagerInfo::Groups:
-    case QContactManagerInfo::Relationships:
-    case QContactManagerInfo::SelfContact: {
+           QContactManager::ActionPreferences,
+           QContactManager::MutableDefinitions,
+           QContactManager::Anonymous? */
+    case QContactManager::Groups:
+    case QContactManager::Relationships:
+    case QContactManager::SelfContact: {
         returnValue = true;
         break;
     }
