@@ -56,12 +56,16 @@ QList<CContactItemField *> CntTransformOrganisation::transformDetailL(const QCon
 	CleanupStack::Pop(company);
 
 	//Department
-	TPtrC fieldTextDepartment(reinterpret_cast<const TUint16*>(orgDetails.department().utf16()));
-	CContactItemField* department = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldDepartmentName);
-	department->TextStorage()->SetTextL(fieldTextDepartment);
-	department->SetMapping(KUidContactFieldVCardMapDepartment);
-	fieldList.append(department);
-	CleanupStack::Pop(department);
+	QStringList departments = orgDetails.department();
+	if(departments.count()) {
+	    // Take only the first department
+	    TPtrC fieldTextDepartment(reinterpret_cast<const TUint16*>(departments[0].utf16()));
+	    CContactItemField* department = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldDepartmentName);
+	    department->TextStorage()->SetTextL(fieldTextDepartment);
+	    department->SetMapping(KUidContactFieldVCardMapDepartment);
+	    fieldList.append(department);
+	    CleanupStack::Pop(department);
+	}
 
 	//Job title
 	TPtrC fieldTextJobTitle(reinterpret_cast<const TUint16*>(orgDetails.title().utf16()));
@@ -95,17 +99,16 @@ QContactDetail *CntTransformOrganisation::transformItemField(const CContactItemF
 		if (field.ContentType().FieldType(i) == KUidContactFieldCompanyName) {
             organisation->setName(orgDetail);
 		}
-
 		//Department
 		else if (field.ContentType().FieldType(i) == KUidContactFieldDepartmentName) {
-            organisation->setDepartment(orgDetail);
+		    // Assume only a single department
+		    QStringList departments = orgDetail;
+            organisation->setDepartment(departments);
 		}
-
 		//Job title
 		else if (field.ContentType().FieldType(i) == KUidContactFieldJobTitle) {
             organisation->setTitle(orgDetail);
 		}
-
 	    //Assistant name
 	    else if (field.ContentType().FieldType(i) == KUidContactFieldAssistant) {
             organisation->setAssistantName(orgDetail);
@@ -176,7 +179,7 @@ bool CntTransformOrganisation::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformOrganisation::getIdForField(const QString& fieldName) const
 {
-    
+
     if (QContactOrganization::FieldName  == fieldName)
         return KUidContactFieldCompanyName.iUid;
     else if (QContactOrganization::FieldLogo == fieldName)
@@ -189,7 +192,7 @@ quint32 CntTransformOrganisation::getIdForField(const QString& fieldName) const
         return KUidContactFieldJobTitle.iUid;
     else if (QContactOrganization::FieldAssistantName == fieldName)
         return KUidContactFieldAssistant.iUid;
-    else 
+    else
         return 0;
 
 }
@@ -201,14 +204,14 @@ quint32 CntTransformOrganisation::getIdForField(const QString& fieldName) const
  */
 void CntTransformOrganisation::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
     QContactDetailDefinition d;
 
     d.setName(QContactOrganization::DefinitionName);
     fields.clear();
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
     fields.insert(QContactOrganization::FieldName, f);
     fields.insert(QContactOrganization::FieldDepartment, f);
     fields.insert(QContactOrganization::FieldTitle, f);

@@ -31,7 +31,8 @@ SYMBIAN_HEADERS += \
         ../../inc/cntrelationshipgroup.h \
         ../../inc/cntsymbianfiltersqlhelper.h \
         ../../inc/cntsymbiansrvconnection.h \
-        ../../inc/cntsymbiantransformerror.h
+        ../../inc/cntsymbiantransformerror.h \
+        ../../inc/cntsymbiandatabase.h
 
 SYMBIAN_SOURCES += \
         ../../src/cntsymbianengine_p.cpp \
@@ -63,4 +64,5 @@ SYMBIAN_SOURCES += \
         ../../src/cntrelationshipgroup.cpp \
         ../../src/cntsymbianfiltersqlhelper.cpp \
         ../../src/cntsymbiansrvconnection.cpp \
-        ../../src/cntsymbiantransformerror.cpp
+        ../../src/cntsymbiantransformerror.cpp \
+        ../../src/cntsymbiandatabase.cpp

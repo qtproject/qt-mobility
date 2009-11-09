@@ -317,10 +317,10 @@ void CntSymbianEngine::updateDisplayLabel(QContact& contact) const
 {
     QContactManager::Error error(QContactManager::NoError);
     QContactDisplayLabel label = contact.displayLabel();
-    QString labelString = synthesiseDisplayLabel(contact, error);
+    QString labelString = synthesizeDisplayLabel(contact, error);
     if(error == QContactManager::NoError) {
         label.setLabel(labelString);
-        label.setSynthesised(true);
+        label.setSynthesized(true);
         contact.setDisplayLabel(label);
     }
 }
@@ -449,7 +449,7 @@ bool CntSymbianEngine::hasFeature(QContactManager::ManagerFeature feature, const
     // TODO: update for SIM contacts later
     if (contactType != QContactType::TypeContact && contactType != QContactType::TypeGroup)
         return false;
-    
+
     switch (feature) {
         /* TODO: case QContactManager::Groups to be implemented.
            How about the others? like:
@@ -462,11 +462,11 @@ bool CntSymbianEngine::hasFeature(QContactManager::ManagerFeature feature, const
         returnValue = true;
         break;
     }
-    
+
     default:
         returnValue = false;
     }
-    
+
     return returnValue;
 }
 
@@ -487,7 +487,7 @@ bool CntSymbianEngine::filterSupported(const QContactFilter& filter) const
 }
 
 /* Synthesise the display label of a contact */
-QString CntSymbianEngine::synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& /*error*/) const
+QString CntSymbianEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& /*error*/) const
 {
     QContactName name = contact.detail<QContactName>();
     QContactOrganization org = contact.detail<QContactOrganization>();

@@ -239,7 +239,7 @@ bool CntTransformAddress::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformAddress::getIdForField(const QString& fieldName) const
 {
-       
+
     if (QContactAddress::FieldStreet  == fieldName)
         return KUidContactFieldAddress.iUid;
     else if (QContactAddress::FieldLocality == fieldName)
@@ -260,7 +260,7 @@ quint32 CntTransformAddress::getIdForField(const QString& fieldName) const
         return 0;
     else if (QContactAddress::SubTypeInternational == fieldName)
         return 0;
-    else 
+    else
         return 0;
 }
 
@@ -271,14 +271,14 @@ quint32 CntTransformAddress::getIdForField(const QString& fieldName) const
  */
 void CntTransformAddress::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
     QContactDetailDefinition d;
 
     // Address fields
     d.setName(QContactAddress::DefinitionName);
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
     fields.insert(QContactAddress::FieldPostOfficeBox, f);
     fields.insert(QContactAddress::FieldStreet, f);
     fields.insert(QContactAddress::FieldLocality, f);
@@ -287,8 +287,8 @@ void CntTransformAddress::detailDefinitions(QMap<QString, QContactDetailDefiniti
     fields.insert(QContactAddress::FieldCountry, f);
 
     // Contexts
-    f.dataType = QVariant::StringList;
-    f.allowableValues << QString(QLatin1String(QContactDetail::ContextHome)) << QString(QLatin1String(QContactDetail::ContextWork)) << QString(QLatin1String(QContactDetail::ContextOther));
+    f.setDataType(QVariant::StringList);
+    f.setAllowableValues(QVariantList() << QString(QLatin1String(QContactDetail::ContextHome)) << QString(QLatin1String(QContactDetail::ContextWork)) << QString(QLatin1String(QContactDetail::ContextOther)));
     fields.insert(QContactDetail::FieldContext, f);
 
     d.setFields(fields);

@@ -202,7 +202,7 @@ quint32 CntTransformOnlineAccount::getIdForField(const QString& fieldName) const
         return 0;
     else if (QContactOnlineAccount::SubTypeShareVideo == fieldName)
         return 0;
-    else 
+    else
         return 0;
 }
 
@@ -213,36 +213,53 @@ quint32 CntTransformOnlineAccount::getIdForField(const QString& fieldName) const
  */
 void CntTransformOnlineAccount::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
     QContactDetailDefinition d;
     QVariantList subTypes;
 
-    // fields
     d.setName(QContactOnlineAccount::DefinitionName);
-    f.dataType = QVariant::String;
+    // fields
+    f.setDataType(QVariant::String);
     fields.insert(QContactOnlineAccount::FieldAccountUri, f);
+    f.setDataType(QVariant::StringList);
+    f.setDataType(QVariant::String);
+    fields.insert(QContactOnlineAccount::FieldAccountUri, f);
+    fields.insert(QContactOnlineAccount::FieldServiceProvider, f);
+    f.setAccessConstract(QContactDetailDefinitionField::ReadOnly);
+    fields.insert(QContactOnlineAccount::FieldNickname, f);
+    fields.insert(QContactOnlineAccount::FieldStatusMessage, f);
 
-    // sub-types
-    f.dataType = QVariant::StringList; // can implement multiple subtypes
-    subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeXmpp));
-    subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeInternet));
-    subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeShareVideo));
-    subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeSip));
-    f.allowableValues = subTypes;
-    fields.insert(QContactPhoneNumber::FieldSubTypes, f);
+    // presence
+    QVariantList presenceValues;
+    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceAvailable));
+    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceHidden));
+    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceBusy));
+    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceAway));
+    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceExtendedAway));
+    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceUnknown));
+    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceOffline));
+    f.setAllowableValues(presenceValues);
+    fields.insert(QContactOnlineAccount::FieldPresence, f);
 
-    // Contexts
-    /* TODO: does not work for some reason:
-tst_QContactManager::add(mgr='symbian') A contact had extra detail: "OnlineAccount" QMap(("AccountUri", QVariant(QString, "AccountUri") ) ( "Context" ,  QVariant(QStringList, ("Xmpp") ) ) ( "SubTypes" ,  QVariant(QStringList, ("Xmpp") ) ) )
-tst_QContactManager::add(mgr='symbian') B contact had extra detail: "OnlineAccount" QMap(("AccountUri", QVariant(QString, "AccountUri") ) ( "SubTypes" ,  QVariant(QStringList, ("Xmpp") ) ) )
-
-    f.dataType = QVariant::StringList;
-    f.allowableValues << QString(QLatin1String(QContactDetail::ContextHome)) << QString(QLatin1String(QContactDetail::ContextWork)) << QString(QLatin1String(QContactDetail::ContextOther));
+    // contexts
+    f.setDataType(QVariant::StringList);
+    f.setAccessConstract(QContactDetailDefinitionField::NoConstraint);
+    f.setAllowableValues(QVariantList()
+            << QString(QLatin1String(QContactDetail::ContextHome))
+            << QString(QLatin1String(QContactDetail::ContextWork))
+            << QString(QLatin1String(QContactDetail::ContextOther)));
     fields.insert(QContactDetail::FieldContext, f);
-     */
 
+    // subtypes
+    f.setAllowableValues(QVariantList()
+            << QString(QLatin1String(QContactOnlineAccount::SubTypeXmpp))
+            << QString(QLatin1String(QContactOnlineAccount::SubTypeInternet))
+            << QString(QLatin1String(QContactOnlineAccount::SubTypeShareVideo))
+            << QString(QLatin1String(QContactOnlineAccount::SubTypeSip)));
+    fields.insert(QContactOnlineAccount::FieldSubTypes, f);
     d.setFields(fields);
+
     d.setUnique(false);
     d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
 
