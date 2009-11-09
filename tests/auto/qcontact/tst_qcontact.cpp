@@ -363,14 +363,14 @@ void tst_QContact::actions()
 
     // Prior to plugin loading:
     // first, the empty contact
-    QList<QContactActionDescriptor> availableActions = c.availableActions();
+    QList<QContactActionDescriptor> availableActions = c.availableActions(QString());
     QVERIFY(availableActions.isEmpty());
     QContactDetail d = c.detailWithAction("SendEmail");
     QVERIFY(d.isEmpty());
     QList<QContactDetail> dets = c.detailsWithAction("SendEmail");
     QVERIFY(dets.isEmpty());
     // then, the email contact
-    availableActions = c2.availableActions();
+    availableActions = c2.availableActions(QString());
     QEXPECT_FAIL("", "Plugins are only loaded once", Continue);
     QVERIFY(availableActions.isEmpty());
     d = c2.detailWithAction("SendEmail");
@@ -386,10 +386,10 @@ void tst_QContact::actions()
 
     // available actions - should be one there now.
     // empty contact
-    availableActions = c.availableActions();
+    availableActions = c.availableActions(QString());
     QVERIFY(availableActions.isEmpty());
     // contact with email
-    availableActions = c2.availableActions();
+    availableActions = c2.availableActions(QString());
     QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
 
     // detail with action:

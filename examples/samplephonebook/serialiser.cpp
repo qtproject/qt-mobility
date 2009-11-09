@@ -85,7 +85,7 @@ QString Serialiser::convertDetail(const QContact& contact, const QContactDetail&
     retn += ";";
 
     retn += "preferredFor=";
-    foreach(const QContactActionDescriptor& actionDescr, contact.availableActions()) {
+    foreach(const QContactActionDescriptor& actionDescr, contact.availableActions(QString())) {
         if (contact.isPreferredDetail(actionDescr.actionName(), detail)) {
             retn += escaped(actionDescr.actionName()) + ",";
         }
@@ -676,7 +676,7 @@ bool Serialiser::parsePreferred(const QString& line)
 
 bool Serialiser::detailIsPreferredForAnything(const QContact& contact, const QContactDetail& detail)
 {
-    foreach (const QContactActionDescriptor& actionDescr, contact.availableActions()) {
+    foreach (const QContactActionDescriptor& actionDescr, contact.availableActions(QString())) {
         if (contact.isPreferredDetail(actionDescr.actionName(), detail)) {
             return true;
         }

@@ -561,8 +561,32 @@ QList<QContactRelationship> QContact::relationshipOrder() const
     return d->m_reorderedRelationshipsCache;
 }
 
-/*! Return a list of actions available to be performed on this contact */
-QList<QContactActionDescriptor> QContact::availableActions() const
+/*!
+ * \deprecated
+ * This function returns a list of names of actions which are available for this contact.
+ * Deprecated in commit SHA1: dd7d9904cc52bbbda22bac5c1aaa3876ee5724e6
+ */
+QStringList QContact::availableActions() const
+{
+    qWarning("This function is deprecated and will be removed in week 47!  See Commit SHA1: dd7d9904cc52bbbda22bac5c1aaa3876ee5724e6");
+    QList<QContactActionDescriptor> allDescriptors = availableActions(QString());
+    QStringList result;
+    for (int i = 0; i < allDescriptors.size(); i++) {
+        result << allDescriptors.at(i).actionName();
+    }
+}
+
+/*!
+ * Return a list of actions available to be performed on this contact which are offered
+ * by the vendor whose name is the given \a vendorName, where the action instance has
+ * the implementation version given by \a implementationVersion.
+ * If \a vendorName is empty, actions from any vendor are supplied; if \a implementationVersion
+ * is \c -1, action implementations of any version will be returned.
+ *
+ * NOTE: during week 47 when the above deprecated function is removed, vendorName will have a
+ * default argument and thus will not need to be supplied.
+ */
+QList<QContactActionDescriptor> QContact::availableActions(const QString& vendorName, int implementationVersion) const
 {
     // check every action implementation to see if it supports me.
     QSet<QContactActionDescriptor> retn;
