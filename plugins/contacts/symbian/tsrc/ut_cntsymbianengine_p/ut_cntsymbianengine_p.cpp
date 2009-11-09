@@ -52,7 +52,10 @@ void TestSymbianEnginePrivate::initTestCase()
     QContactManager::Error error;
     QMap<QString, QString> emptyParameters;
     m_engine = new CntSymbianEnginePrivate(emptyParameters, error);
-    removeAllContacts();
+    if (error == QContactManager::NoError)
+        removeAllContacts();
+    else
+        QSKIP("Error creating manager", SkipAll);
 }
 
 void TestSymbianEnginePrivate::cleanupTestCase()
