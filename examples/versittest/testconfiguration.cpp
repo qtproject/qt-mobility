@@ -28,7 +28,8 @@ const char logElement[] = "log";
 const char nameAttr[] = "name";
 const char saveAttr[] = "save";
 const char typeAttr[] = "type";
-const char loggingAttr[] = "logging";
+const char loggingFormatAttr[] = "format";
+const char iterationAttr[] = "iteration";
 
 // XML configuration values
 const char valueYes[] = "yes";
@@ -42,7 +43,8 @@ const char valuePerformanceTest[] = "0";
 TestConfiguration::TestConfiguration()
 : mSaveContact(true),
   mPerformanceTest(true),
-  mLogToFile(false)
+  mOutputFormat(QString::fromAscii("xml")),
+  mPerformanceIterationCount(10)
 {    
 }
 
@@ -87,10 +89,10 @@ bool TestConfiguration::startElement(
     else if (qName == testElement) {
         mPerformanceTest = atts.value(typeAttr).contains(valuePerformanceTest,
                                                          Qt::CaseInsensitive);
+        mPerformanceIterationCount = atts.value(iterationAttr).toInt();
     }
     else if (qName == logElement) {
-        mLogToFile = atts.value(loggingAttr).contains(valueYes,
-                                                      Qt::CaseInsensitive);
+        mOutputFormat = atts.value(loggingFormatAttr);        
     }
     return true;
 }
