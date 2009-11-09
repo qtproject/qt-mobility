@@ -13,6 +13,7 @@
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QVideoEncoderControl Class Reference</h1>
+<p>The QVideoEncoderControl class provides access to the settings of a media service that performs video encoding. <a href="#details">More...</a></p>
 <pre>    #include &lt;QVideoEncoderControl&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <p>Inherits <a href="qmediacontrol.html">QMediaControl</a>.</p>
 <ul>
@@ -67,8 +68,11 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
+<p>The QVideoEncoderControl class provides access to the settings of a media service that performs video encoding.</p>
+<p>If a <a href="qmediaservice.html">QMediaService</a> supports encoding video data it will implement QVideoEncoderControl. This control provides information about the limits of restricted video encoder options and allows the selection of a set of video encoder settings as specificed in a <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> object.</p>
+<p>The functionality provided by this control is exposed to application code through the <a href="qmediarecorder.html">QMediaRecorder</a> class.</p>
 <p>The interface name of QVideoEncoderControl is <tt>com.nokia.Qt.QVideoEncoderControl/1.0</tt> as defined in <a href="qvideoencodercontrol.html#QVideoEncoderControl_iid">QVideoEncoderControl_iid</a>.</p>
-<p>See also <a href="qmediaservice.html#control">QMediaService::control</a>().</p>
+<p>See also <a href="qmediaservice.html#control">QMediaService::control</a>() and <a href="qmediarecorder.html">QMediaRecorder</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QVideoEncoderControl"></a>QVideoEncoderControl::QVideoEncoderControl ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [protected]</tt></h3>
@@ -100,10 +104,10 @@
 <p>Returns a list of supported encoding options for a video <i>codec</i>.</p>
 <p>The names and types of the options in the list is system dependent.</p>
 <h3 class="fn"><a name="supportedFrameRates"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a>&gt; QVideoEncoderControl::supportedFrameRates () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns the list of frame rates if the video encoder supports only the limited set of video frame rates, otherwise returns an empty list.</p>
-<p>See also <a href="qvideoencodersettings.html#frameRate">QVideoEncoderSettings::frameRate</a>().</p>
+<p>Returns a list of supported frame rates. An empty list is returned if the encoder supports arbitrary frame rates within the minimum and maximum range.</p>
+<p>See also <a href="qvideoencodersettings.html#frameRate">QVideoEncoderSettings::frameRate</a>(), <a href="qvideoencodercontrol.html#minimumFrameRate">minimumFrameRate</a>(), and <a href="qvideoencodercontrol.html#maximumFrameRate">maximumFrameRate</a>().</p>
 <h3 class="fn"><a name="supportedResolutions"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a>&gt; QVideoEncoderControl::supportedResolutions () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns a list of specific supported resolutions. If the encoder supports arbitrary resolutions within the minimum and maximum range, then an empty list is returned.</p>
+<p>Returns a list of supported resolutions. An empty list is returned if the video encoder supports arbitrary resolutions within the minimum and maximum range.</p>
 <p>See also <a href="qvideoencodersettings.html#resolution">QVideoEncoderSettings::resolution</a>(), <a href="qvideoencodercontrol.html#minimumResolution">minimumResolution</a>(), and <a href="qvideoencodercontrol.html#maximumResolution">maximumResolution</a>().</p>
 <h3 class="fn"><a name="supportedVideoCodecs"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QVideoEncoderControl::supportedVideoCodecs () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the list of supported video codecs.</p>
