@@ -39,16 +39,16 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVERSITCONTACTCONVERTER_H
-#define UT_QVERSITCONTACTCONVERTER_H
+#ifndef UT_QVERSITCONTACTEXPORTER_H
+#define UT_QVERSITCONTACTEXPORTER_H
 
 #include <qcontactdetail.h>
 #include <QObject>
 
-class QVersitContactConverter;
-class QVersitContactConverterPrivate;
+class QVersitContactExporter;
+class QVersitContactExporterPrivate;
 
-class UT_QVersitContactConverter : public QObject
+class UT_QVersitContactExporter : public QObject
 {
     Q_OBJECT
     
@@ -90,12 +90,12 @@ private slots:
 
     
 private: // Data
-    QVersitContactConverter* mConverter;
-    QVersitContactConverterPrivate* mConverterPrivate;
+    QVersitContactExporter* mConverter;
+    QVersitContactExporterPrivate* mConverterPrivate;
     QString mTestPhotoFile;
     QString mTestAudioFile;
     bool mScaleSignalEmitted;
     QByteArray mSimulatedImageData;
 };
 
-#endif // UT_QVERSITCONTACTCONVERTER_H
+#endif // UT_QVERSITCONTACTEXPORTER_H

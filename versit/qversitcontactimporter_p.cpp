@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qversitdefs.h"
-#include "qversitcontactgenerator_p.h"
+#include "qversitcontactimporter_p.h"
 #include <qversitdocument.h>
 #include <qversitproperty.h>
 #include <qcontact.h>
@@ -68,7 +68,7 @@
 /*!
  * Constructor.
  */
-QVersitContactGeneratorPrivate::QVersitContactGeneratorPrivate()
+QVersitContactImporterPrivate::QVersitContactImporterPrivate()
 {
     // Contact detail mappings
     int versitPropertyCount =
@@ -112,14 +112,14 @@ QVersitContactGeneratorPrivate::QVersitContactGeneratorPrivate()
 /*!
  * Destructor.
  */
-QVersitContactGeneratorPrivate::~QVersitContactGeneratorPrivate()
+QVersitContactImporterPrivate::~QVersitContactImporterPrivate()
 {
 }
 
 /*!
  * Generates a QContact from \a versitDocument.
  */
-QContact QVersitContactGeneratorPrivate::generateContact(
+QContact QVersitContactImporterPrivate::importContact(
      const QVersitDocument& versitDocument)
 {
     mUnconvertedVersitProperties.clear();
@@ -174,7 +174,7 @@ QContact QVersitContactGeneratorPrivate::generateContact(
 /*!
  * Creates a QContactName from \a property
  */
-QContactDetail* QVersitContactGeneratorPrivate::createName(
+QContactDetail* QVersitContactImporterPrivate::createName(
     const QVersitProperty& property,const QContact& contact) const
 {
     // Restrict only one name can exist, if multiple than choose first
@@ -195,7 +195,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createName(
 /*!
  * Creates a QContactPhoneNumber from \a property
  */
-QContactDetail* QVersitContactGeneratorPrivate::createPhone(
+QContactDetail* QVersitContactImporterPrivate::createPhone(
     const QVersitProperty& property) const
 {
     QContactPhoneNumber* phone = new QContactPhoneNumber();
@@ -207,7 +207,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createPhone(
 /*!
  * Creates a QContactAddress from \a property
  */
-QContactDetail* QVersitContactGeneratorPrivate::createAddress(
+QContactDetail* QVersitContactImporterPrivate::createAddress(
     const QVersitProperty& property) const
 {
     QContactAddress* address = new QContactAddress();
@@ -231,7 +231,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createAddress(
 /*!
  * Creates a QContactOrganization from \a property
  */
-QContactDetail* QVersitContactGeneratorPrivate::createOrganization(
+QContactDetail* QVersitContactImporterPrivate::createOrganization(
     const QVersitProperty& property) const
 {
     QContactOrganization* org = new QContactOrganization;
@@ -256,7 +256,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createOrganization(
 /*!
  * Set the organization name and department(s) from \a property.
  */
-void QVersitContactGeneratorPrivate::setOrganizationNames(
+void QVersitContactImporterPrivate::setOrganizationNames(
     QContactOrganization& org,
     const QVersitProperty& property) const
 {
@@ -273,7 +273,7 @@ void QVersitContactGeneratorPrivate::setOrganizationNames(
 /*!
  * Set the organization logo from \a property.
  */
-void QVersitContactGeneratorPrivate::setOrganizationLogo(
+void QVersitContactImporterPrivate::setOrganizationLogo(
     QContactOrganization& org,
     const QVersitProperty& property) const
 {
@@ -296,7 +296,7 @@ void QVersitContactGeneratorPrivate::setOrganizationLogo(
 /*!
  * Creates a QContactTimeStamp from \a property
  */
-QContactDetail* QVersitContactGeneratorPrivate::createTimeStamp(
+QContactDetail* QVersitContactImporterPrivate::createTimeStamp(
     const QVersitProperty& property) const
 {
     QContactTimestamp* timeStamp = new QContactTimestamp();
@@ -315,7 +315,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createTimeStamp(
 /*!
  * Creates a QContactAnniversary from \a property
  */
-QContactDetail* QVersitContactGeneratorPrivate::createAnniversary(
+QContactDetail* QVersitContactImporterPrivate::createAnniversary(
     const QVersitProperty& property) const
 {
     QContactAnniversary* anniversary = new QContactAnniversary();
@@ -328,7 +328,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createAnniversary(
 /*!
  * Creates a QContactBirthday from \a property
  */
-QContactDetail* QVersitContactGeneratorPrivate::createBirthday(
+QContactDetail* QVersitContactImporterPrivate::createBirthday(
     const QVersitProperty& property) const
 {
     QContactBirthday* bday = new QContactBirthday();
@@ -341,7 +341,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createBirthday(
 /*!
  * Creates QContactNicknames from \a property and adds them to \a contact
  */
-void QVersitContactGeneratorPrivate::createNicknames(
+void QVersitContactImporterPrivate::createNicknames(
     const QVersitProperty& property,
     QContact& contact) const
 {
@@ -357,7 +357,7 @@ void QVersitContactGeneratorPrivate::createNicknames(
 /*!
  * Creates a QContactOnlineAccount from \a property
  */
-QContactDetail* QVersitContactGeneratorPrivate::createOnlineAccount(
+QContactDetail* QVersitContactImporterPrivate::createOnlineAccount(
     const QVersitProperty& property) const
 {    
     QContactOnlineAccount* onlineAccount = new QContactOnlineAccount();
@@ -372,7 +372,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createOnlineAccount(
 /*!
  * Creates a QContactAvatar from \a property
  */
-QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
+QContactDetail* QVersitContactImporterPrivate::createAvatar(
     const QVersitProperty& property,
     const QVersitDocument& versitDocument,
     const QString& subType) const
@@ -404,7 +404,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createAvatar(
 /*!
  * Creates a QContactGeolocation from \a property
  */
-QContactDetail* QVersitContactGeneratorPrivate::createGeoLocation(
+QContactDetail* QVersitContactImporterPrivate::createGeoLocation(
     const QVersitProperty& property) const
 {
     QContactGeolocation* geo = new QContactGeolocation();
@@ -417,7 +417,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createGeoLocation(
 /*!
  * Creates a QContactFamily from \a property
  */
-QContactDetail* QVersitContactGeneratorPrivate::createFamily(
+QContactDetail* QVersitContactImporterPrivate::createFamily(
     const QVersitProperty& property,
     const QContact& contact) const
 {
@@ -435,7 +435,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createFamily(
 /*!
  * Creates a simple name-value contact detail.
  */
-QContactDetail* QVersitContactGeneratorPrivate::createNameValueDetail(
+QContactDetail* QVersitContactImporterPrivate::createNameValueDetail(
     const QVersitProperty& property) const
 {
     QContactDetail* detail = 0;
@@ -452,7 +452,7 @@ QContactDetail* QVersitContactGeneratorPrivate::createNameValueDetail(
 /*!
  * Extracts the list of contexts from \a types
  */
-QStringList QVersitContactGeneratorPrivate::extractContexts(
+QStringList QVersitContactImporterPrivate::extractContexts(
     const QVersitProperty& property) const
 {   
     QStringList types = 
@@ -469,7 +469,7 @@ QStringList QVersitContactGeneratorPrivate::extractContexts(
 /*!
  * Extracts the list of subtypes from \a property
  */
-QStringList QVersitContactGeneratorPrivate::extractSubTypes(
+QStringList QVersitContactImporterPrivate::extractSubTypes(
     const QVersitProperty& property) const
 {
     QStringList types = 
@@ -487,7 +487,7 @@ QStringList QVersitContactGeneratorPrivate::extractSubTypes(
  * Takes the first value in \a list and converts it to a QString.
  * An empty QString is returned, if the list is empty.
  */
-QString QVersitContactGeneratorPrivate::takeFirst(QList<QByteArray>& list) const
+QString QVersitContactImporterPrivate::takeFirst(QList<QByteArray>& list) const
 {
     QString first;
     if (!list.isEmpty())
@@ -498,7 +498,7 @@ QString QVersitContactGeneratorPrivate::takeFirst(QList<QByteArray>& list) const
 /*!
  * Parses a date and time from text
  */
-QDateTime QVersitContactGeneratorPrivate::parseDateTime(
+QDateTime QVersitContactImporterPrivate::parseDateTime(
     const QByteArray& text,
     const QByteArray& format) const
 {
@@ -515,7 +515,7 @@ QDateTime QVersitContactGeneratorPrivate::parseDateTime(
 /*!
  * Save the value of the \a property to a file with name \a pathAndName.
  */
-QString QVersitContactGeneratorPrivate::saveContentToFile(
+QString QVersitContactImporterPrivate::saveContentToFile(
     const QString& pathAndName,
     const QVersitProperty& property) const
 {
@@ -552,7 +552,7 @@ QString QVersitContactGeneratorPrivate::saveContentToFile(
 /*!
  * Extracts the first and last name from \a document to a string.
  */
-QString QVersitContactGeneratorPrivate::getFirstAndLastName(
+QString QVersitContactImporterPrivate::getFirstAndLastName(
     const QVersitDocument& document) const
 {
     QString name;

@@ -39,35 +39,73 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITCONTACTGENERATOR_H
-#define QVERSITCONTACTGENERATOR_H
+#include "qversitcontactimporter.h"
+#include "qversitcontactimporter_p.h"
+#include "qversitdocument.h"
+#include "qversitproperty.h"
 
-#include <qtversitglobal.h>
-#include <qcontact.h>
-#include <QList>
-
-class QVersitDocument;
-class QVersitProperty;
-class QVersitContactGeneratorPrivate;
-
-class QTVERSIT_EXPORT QVersitContactGenerator
+/*!
+ * Constructor.
+ */
+QVersitContactImporter::QVersitContactImporter() 
+    : d(new QVersitContactImporterPrivate)
 {
-public:
-    QVersitContactGenerator();
-    ~QVersitContactGenerator();
+}
 
-    void setImagePath(const QString& path);
-    QString imagePath() const;
-    
-    void setAudioClipPath(const QString& path);
-    QString audioClipPath() const;
+/*!
+ * Destructor.
+ */
+QVersitContactImporter::~QVersitContactImporter()
+{
+    delete d;
+}
 
-    QContact generateContact(const QVersitDocument& versitDocument);
-    QList<QVersitProperty> unconvertedVersitProperties();
-    
-private:
-    QVersitContactGeneratorPrivate* d;
-};
+/*!
+ * Sets the \a path where the contact photos will be saved.
+ */
+void QVersitContactImporter::setImagePath(const QString& path)
+{
+    d->mImagePath = path;
+}
 
-#endif // QVERSITCONTACTGENERATOR_H
+/*!
+ * Returns the path where the contact photos will be saved.
+ */
+QString QVersitContactImporter::imagePath() const
+{
+    return d->mImagePath;
+}
 
+/*!
+ * Sets the \a path where the contact related audio clips will be saved.
+ */
+void QVersitContactImporter::setAudioClipPath(const QString& path)
+{
+    d->mAudioClipPath = path;
+}
+
+/*!
+ * Returns the path where the contact related audio clips will be saved.
+ */
+QString QVersitContactImporter::audioClipPath() const
+{
+    return d->mAudioClipPath;
+}
+
+/*!
+ * Generates a QContact from \a versitDocument.
+ */
+QContact QVersitContactImporter::importContact(
+    const QVersitDocument& versitDocument)
+{
+    return d->importContact(versitDocument);
+}
+
+/*!
+ * Returns the list of versit properties that were left unconverted
+ * by the most recent call of importContact.
+ */
+QList<QVersitProperty> QVersitContactImporter::unconvertedVersitProperties()
+{
+    return d->mUnconvertedVersitProperties;
+}

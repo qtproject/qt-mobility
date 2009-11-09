@@ -39,56 +39,60 @@
 **
 ****************************************************************************/
 
-/*!
- * \class QVersitContactConverter
- *
- * \brief The QVersitContactConverter class converts the contact into versit document.
- *
- * A QVersitContactConverter process contact detail and generates the corresponding
- * versit document.
- *
- * \sa QContact, QVersitDocument, QVersitProperty
- */
+#ifndef UT_QVERSITCONTACTIMPORTER_H
+#define UT_QVERSITCONTACTIMPORTER_H
 
-#include "qversitcontactconverter.h"
-#include "qversitcontactconverter_p.h"
-#include <qcontact.h>
-#include <qcontactdetail.h>
+#include <QObject>
+#include <qversitdocument.h>
 
-/*!
- * Constructs a new contact converter
- */
-QVersitContactConverter::QVersitContactConverter()
-    : d(new QVersitContactConverterPrivate())
+class QVersitContactImporter;
+class QVersitContactImporterPrivate;
+
+class UT_QVersitContactImporter : public QObject
 {
-    connect(d, SIGNAL(scale(const QString&,QByteArray&)),
-            this, SIGNAL(scale(const QString&,QByteArray&)));
-}
+    Q_OBJECT
 
-/*!
- * Frees any memory in use by this contact converter
- */
-QVersitContactConverter::~QVersitContactConverter()
-{
-}
+private slots: // Tests
+    
+    void initTestCase();
+    void cleanupTestCase();
+    void init();
+    void cleanup();
+    
+    void testName();
+    void testAddress();
+    void testTel();    
+    void testEmail();
+    void testUrl();
+    void testUid();
+    void testOrganization();
+    void testTimeStamp();
+    void testAnniversary();
+    void testBirthday();
+    void testGender();
+    void testNickname();
+    void testAvatarJpegStored();
+    void testAvatarGifStored();
+    void testAvatarJpegTwoContactsWithSameName();
+    void testAvatarJpegNonexistentPath();
+    void testAvatarUrl();
+    void testAvatarEncoding();
+    void testGeo();
+    void testNote();
+    void testOnlineAccount();
+    void testFamily();
+    void testSound();
+    void testUnconvertedVersitProperties();
 
-/*!
- * Returns the versit document corresponding to the \a contact 
- */
-QVersitDocument QVersitContactConverter::convertContact(
-    const QContact& contact,
-    QVersitDocument::VersitType versitType)
-{
-    QVersitDocument versitDocument;
-    versitDocument.setVersitType(versitType);
-    d->convertContact(versitDocument,contact);
-    return versitDocument;
-}
+private: 
+    
+    QVersitDocument createDocumentWithProperty(const QVersitProperty& property);
+    QVersitDocument createDocumentWithNameAndPhoto(const QByteArray& name, QByteArray image,
+                                                   const QString& photoType, const QString& encoding);
 
-/*!
- * Returns the list of contact detils, which are not encoded
- */
-QList<QContactDetail> QVersitContactConverter::unconvertedContactDetails()
-{
-    return d->mUnconvertedContactDetails;
-}
+private:
+    QVersitContactImporter* mGenerator;
+    QVersitContactImporterPrivate* mGeneratorPrivate;
+};
+
+#endif // UT_QVERSITCONTACTIMPORTER_H

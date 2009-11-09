@@ -39,36 +39,56 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITCONTACTCONVERTER_H
-#define QVERSITCONTACTCONVERTER_H
+/*!
+ * \class QVersitContactExporter
+ *
+ * \brief The QVersitContactExporter class converts the contact into versit document.
+ *
+ * A QVersitContactExporter process contact detail and generates the corresponding
+ * versit document.
+ *
+ * \sa QContact, QVersitDocument, QVersitProperty
+ */
 
-#include <qtversitglobal.h>
-#include <qversitdocument.h>
+#include "qversitcontactexporter.h"
+#include "qversitcontactexporter_p.h"
 #include <qcontact.h>
-#include <QObject>
-#include <QImage>
+#include <qcontactdetail.h>
 
-class QVersitContactConverterPrivate;
-
-class QTVERSIT_EXPORT QVersitContactConverter : public QObject
+/*!
+ * Constructs a new contact converter
+ */
+QVersitContactExporter::QVersitContactExporter()
+    : d(new QVersitContactExporterPrivate())
 {
-    Q_OBJECT
+    connect(d, SIGNAL(scale(const QString&,QByteArray&)),
+            this, SIGNAL(scale(const QString&,QByteArray&)));
+}
 
-public:
-    QVersitContactConverter();
-    ~QVersitContactConverter();
+/*!
+ * Frees any memory in use by this contact converter
+ */
+QVersitContactExporter::~QVersitContactExporter()
+{
+}
 
-    QVersitDocument convertContact(
-        const QContact& contact,
-        QVersitDocument::VersitType versitType=QVersitDocument::VCard21);
-		
-    QList<QContactDetail> unconvertedContactDetails();		
+/*!
+ * Returns the versit document corresponding to the \a contact 
+ */
+QVersitDocument QVersitContactExporter::exportContact(
+    const QContact& contact,
+    QVersitDocument::VersitType versitType)
+{
+    QVersitDocument versitDocument;
+    versitDocument.setVersitType(versitType);
+    d->exportContact(versitDocument,contact);
+    return versitDocument;
+}
 
-signals:
-    void scale(const QString& imageFileName, QByteArray& imageData);
-
-private:
-    QVersitContactConverterPrivate* d;    
-};
-
-#endif // QVERSITCONTACTCONVERTER_H
+/*!
+ * Returns the list of contact detils, which are not encoded
+ */
+QList<QContactDetail> QVersitContactExporter::unconvertedContactDetails()
+{
+    return d->mUnconvertedContactDetails;
+}
