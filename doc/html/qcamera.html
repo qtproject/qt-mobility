@@ -119,7 +119,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#zoomValue">zoomValue</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>9 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
+<li><div bar="2" class="fn"></div>11 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
@@ -147,6 +147,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#focusLocked">focusLocked</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#focusStatusChanged">focusStatusChanged</a></b> ( QCamera::FocusStatus <i>status</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#imageCaptured">imageCaptured</a></b> ( const QString &amp; <i>fileName</i>, const QImage &amp; <i>preview</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#imageSaved">imageSaved</a></b> ( const QString &amp; <i>fileName</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#isoSensitivityChanged">isoSensitivityChanged</a></b> ( int <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#readyForCaptureChanged">readyForCaptureChanged</a></b> ( bool <i>ready</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#shutterSpeedChanged">shutterSpeedChanged</a></b> ( qreal <i>speed</i> )</td></tr>
@@ -236,8 +237,8 @@
 <tr><td valign="top"><tt>QCamera::ManualFocus</tt></td><td align="center" valign="top"><tt>0x1</tt></td><td valign="top">Manual focus mode.</td></tr>
 <tr><td valign="top"><tt>QCamera::AutoFocus</tt></td><td align="center" valign="top"><tt>0x8</tt></td><td valign="top">One-shot auto focus mode.</td></tr>
 <tr><td valign="top"><tt>QCamera::ContinuousFocus</tt></td><td align="center" valign="top"><tt>0x10</tt></td><td valign="top">Continuous auto focus mode.</td></tr>
-<tr><td valign="top"><tt>QCamera::InfinityFocus</tt></td><td align="center" valign="top"><tt>0x04</tt></td><td valign="top">?</td></tr>
-<tr><td valign="top"><tt>QCamera::HyperfocalFocus</tt></td><td align="center" valign="top"><tt>0x02</tt></td><td valign="top">?</td></tr>
+<tr><td valign="top"><tt>QCamera::InfinityFocus</tt></td><td align="center" valign="top"><tt>0x04</tt></td><td valign="top">Focus strictly to infinity.</td></tr>
+<tr><td valign="top"><tt>QCamera::HyperfocalFocus</tt></td><td align="center" valign="top"><tt>0x02</tt></td><td valign="top">Focus to hyperfocal distance, with with the maximum depth of field achieved. All objects at distances from half of this distance out to infinity will be acceptably sharp.</td></tr>
 </table></p>
 <p>The FocusModes type is a typedef for <a href="qflags.html">QFlags</a>&lt;FocusMode&gt;. It stores an OR combination of FocusMode values.</p>
 <h3 class="fn"><a name="FocusStatus-enum"></a>enum QCamera::FocusStatus</h3>
@@ -281,7 +282,7 @@
 <hr />
 <h2>Property Documentation</h2>
 <h3 class="fn"><a name="aperture-prop"></a>aperture : <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a></h3>
-<p>This property holds ?.</p>
+<p>This property holds lens aperture is specified as an f-number, the ratio of the focal length to effective aperture diameter.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>aperture</b> () const</td></tr>
@@ -292,7 +293,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#apertureChanged">apertureChanged</a></b> ( qreal <i>value</i> )</td></tr>
 </table>
 <h3 class="fn"><a name="isoSensitivity-prop"></a>isoSensitivity : int</h3>
-<p>This property holds ?.</p>
+<p>This property holds the sensor ISO sensitivity. Lower sensitivity, the noise is lower, but more light is needed.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>isoSensitivity</b> () const</td></tr>
@@ -313,7 +314,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#readyForCaptureChanged">readyForCaptureChanged</a></b> ( bool <i>ready</i> )</td></tr>
 </table>
 <h3 class="fn"><a name="shutterSpeed-prop"></a>shutterSpeed : <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a></h3>
-<p>This property holds ?.</p>
+<p>This property holds the effective length of time the shutter is open in seconds.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>shutterSpeed</b> () const</td></tr>
@@ -335,7 +336,7 @@
 </table>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QCamera"></a>QCamera::QCamera ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0, QMediaServiceProvider * <i>provider</i> = QMediaServiceProvider::defaultServiceProvider() )</h3>
+<h3 class="fn"><a name="QCamera"></a>QCamera::QCamera ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0, <a href="qmediaserviceprovider.html">QMediaServiceProvider</a> * <i>provider</i> = QMediaServiceProvider::defaultServiceProvider() )</h3>
 <p>Construct a <a href="qcamera.html">QCamera</a> from service <i>provider</i> and <i>parent</i>.</p>
 <h3 class="fn"><a name="QCamera-2"></a>QCamera::QCamera ( const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>device</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Construct a <a href="qcamera.html">QCamera</a> from device name <i>device</i> and <i>parent</i>.</p>
@@ -380,7 +381,9 @@
 <h3 class="fn"><a name="focusStatusChanged"></a>void QCamera::focusStatusChanged ( <a href="qcamera.html#FocusStatus-enum">QCamera::FocusStatus</a> <i>status</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted when focus <i>status</i> changed.</p>
 <h3 class="fn"><a name="imageCaptured"></a>void QCamera::imageCaptured ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>fileName</i>, const <a href="http://qt.nokia.com/doc/4.5/qimage.html">QImage</a> &amp; <i>preview</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal emitted when image ready with <i>fileName</i> and <i>preview</i>.</p>
+<p>Signals that an image intendec to be saved to to <i>fileName</i> has been captured and a <i>preview</i> is available.</p>
+<h3 class="fn"><a name="imageSaved"></a>void QCamera::imageSaved ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>fileName</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that an captured image has been saved to <i>fileName</i>.</p>
 <h3 class="fn"><a name="isExposureLocked"></a>bool QCamera::isExposureLocked () const</h3>
 <p>Return true if exposure locked.</p>
 <h3 class="fn"><a name="isFlashReady"></a>bool QCamera::isFlashReady () const</h3>
