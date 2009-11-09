@@ -4,7 +4,7 @@ QT = core sql
 
 include(../common.pri)
 
-DEFINES += QT_BUILD_SFW_LIB QT_MAKEDLL
+DEFINES += QT_BUILD_SFW_LIB QT_MAKEDLL QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
 
 PUBLIC_HEADERS +=  qserviceglobal.h \
             qservicemanager.h \
@@ -52,6 +52,7 @@ symbian {
     QtServiceFrameworkDeployment.path = /sys/bin
 
     DEPLOYMENT += QtServiceFrameworkDeployment
+    DEFINES += QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
 
 } else {
     PRIVATE_HEADERS +=  servicedatabase_p.h \

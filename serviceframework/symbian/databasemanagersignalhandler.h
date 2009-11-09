@@ -42,7 +42,6 @@
 #define DATABASEMANAGERSIGNALHANDLER_H
 
 #include <QObject>
-//#include "databasemanager_p.h"
 #include "databasemanagersession.h"
 
 class DatabaseManagerSignalHandler : public QObject

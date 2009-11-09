@@ -67,7 +67,7 @@
 #endif
 
 #define SERVICE_DESCRIPTION_KEY "DESCRIPTION"
-#ifdef Q_OS_SYMBIAN
+#ifdef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
 #define SECURITY_TOKEN_KEY "SECURITYTOKEN"
 #endif
 #define INTERFACE_DESCRIPTION_KEY "DESCRIPTION"
@@ -269,7 +269,7 @@ bool ServiceDatabase::registerService(const ServiceMetaDataResults &service, con
         return false;
     }
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
     statement = "SELECT Value FROM ServiceProperty WHERE ServiceID = ? AND Key = ?";
     bindValues.clear();
     bindValues.append(service.name);
@@ -337,7 +337,7 @@ bool ServiceDatabase::registerService(const ServiceMetaDataResults &service, con
         return false;
     }
     
-#ifdef Q_OS_SYMBIAN
+#ifdef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
     if (securityTokens.isEmpty()) {
         statement = "INSERT INTO ServiceProperty(ServiceID,Key,Value) VALUES(?,?,?)";
         bindValues.clear();
@@ -1392,7 +1392,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName, const QStrin
     }
 
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
     statement = "SELECT Value FROM ServiceProperty WHERE ServiceID = ? AND Key = ?";
     bindValues.clear();
     bindValues.append(serviceName);
@@ -1503,7 +1503,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName, const QStrin
         }
     }
 
-#ifndef Q_OS_SYMBIAN
+#ifndef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
     statement = "DELETE FROM ServiceProperty WHERE ServiceID = ?";
 #else
     statement = "DELETE FROM ServiceProperty WHERE ServiceID = ? AND Key <> ?";
@@ -1513,7 +1513,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName, const QStrin
     foreach(const QString &serviceID, serviceIDs) {
         bindValues.clear();
         bindValues.append(serviceID);
-#ifdef Q_OS_SYMBIAN
+#ifdef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
         bindValues.append(SECURITY_TOKEN_KEY);
 #endif
         if (!executeQuery(&query, statement, bindValues)) {

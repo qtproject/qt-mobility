@@ -70,7 +70,7 @@ CDatabaseManagerServerSession* CDatabaseManagerServerSession::NewLC()
 
 void CDatabaseManagerServerSession::ConstructL()
     {
-    iDatabaseManagerSignalHandler = new DatabaseManagerSignalHandler(*this);
+    iDatabaseManagerSignalHandler = NULL;
     iDb = new ServiceDatabase();
     initDbPath();
     }
@@ -453,9 +453,9 @@ TInt CDatabaseManagerServerSession::SetInterfaceDefault2L(const RMessage2& aMess
 
 void CDatabaseManagerServerSession::SetChangeNotificationsEnabled(const RMessage2& aMessage)
 {
-    if (aMessage.Int1() == TRUE)
+    if (aMessage.Int1() == true)
     {
-        if (iDatabaseManagerSignalHandler)
+        if (!iDatabaseManagerSignalHandler)
         {
             iDatabaseManagerSignalHandler = new DatabaseManagerSignalHandler(*this);
         }
@@ -467,6 +467,10 @@ void CDatabaseManagerServerSession::SetChangeNotificationsEnabled(const RMessage
     }
     else
     {   
+	    if (!iDatabaseManagerSignalHandler)
+        {
+            iDatabaseManagerSignalHandler = new DatabaseManagerSignalHandler(*this);
+        }
         QObject::disconnect(iDb, SIGNAL(serviceAdded(const QString&)), 
                 iDatabaseManagerSignalHandler, SLOT(ServiceAdded(const QString&)));
         
@@ -526,8 +530,6 @@ void CDatabaseManagerServerSession::initDbPath()
     db->setDatabasePath(dir.path() + QDir::separator() + dbName);
 
     bool isOpen = db->open();
-    qDebug() << db->databasePath();
-    // TODO: Error handling...
 }
 
 // End of File
