@@ -65,7 +65,6 @@
 #include <qcontactanniversary.h>
 #include <qcontactonlineaccount.h>
 #include <qcontactfamily.h>
-#include <qcontactpresence.h>
 #include <qcontactdisplaylabel.h>
 
 
@@ -176,17 +175,6 @@ void UT_QVersitContactExporter::testUnknownContactDetails()
     unknowndDetails = mExporter->unknownContactDetails();
     defintionName = onlineAccount.definitionName();
     detail = QContactDetail();
-    detail = searchDetail(unknowndDetails,defintionName);
-    QCOMPARE(defintionName, detail.definitionName());
-
-    // Test3: UnConvered Field Name
-    QContactPresence presence;
-    detail = QContactDetail();
-    presence.setAccountUri(QString::fromAscii("a@abc.com"));
-    contact.saveDetail(&presence);
-    defintionName = presence.definitionName();
-    versitDocument = mExporter->exportContact(contact);
-    unknowndDetails = mExporter->unknownContactDetails();
     detail = searchDetail(unknowndDetails,defintionName);
     QCOMPARE(defintionName, detail.definitionName());
 }

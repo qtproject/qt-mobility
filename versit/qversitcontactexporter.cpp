@@ -56,31 +56,35 @@
  *  QVersitContactExporter contactExporter;
  *  QContact contact;
  *  QContactName contactName;
- *  QContactPresence presence;
  *  QContactAvatar contactAvatar;
+ *  QContactOrganization organization;
+ *
  *
  *  // Encode Name
  *  name.setFirst(QString::fromAscii("Simpson"));
  *  contact.saveDetail(&name);
  *
- *  // Encode presence
- *  presence.setAccountUri(QString::fromAscii("a@abc.com"));
- *  contact.saveDetail(&presence);
- *
- *  // Encode Avatar, ensure to provide valid avatar
- *  contactAvatar.setAvatar("/my/image/path");
- *  contactAvatar.setSubType(QContactAvatar::SubTypeImage);
+ *  // Creating Avatar type which is not supported
+ *  contactAvatar.setAvatar(QString::fromAscii("/my/image/avatar_path"));
+ *  contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
  *  contact.saveDetail(&contactAvatar);
- *  QVersitDocument versitDocument = contactExporter->exportContact(contact);
  *
- *  // Client will receive the signal scale with image data and path client may
+ *  // Creating Organization with title and photo
+ *  organization.setTitle(QString::fromAscii("Developer"));
+ *  organization.setLogo(QString::fromAscii("/my/image/logo_path"));
+ *  contact.saveDetail(&organization);
+ *  QVersitDocument versitDocument = contactExporter->exportContact(contact); *
+ *
+ *  // Client will receive the signal scale with logo image data and path client may
  *  // scale the image
  *
  *  QList<QContactDetail> unknownDetails = contactExporter->unknownContactDetails();
  *
  *  // unknownDetails can be processed by the client to append details directly
- *  // into versitDocument if needed, in this example presence is not encoded into the
- *  // versitDocument
+ *  // into versitDocument if needed, in this example Avatar sub type i.e.
+ *  // SubTypeTexturedMesh is unknown. Currently for Avatar, encoding of SubTypeImage
+ *  // SubTypeAudioRingtone is supported.
+ *
  *
  *  // use versitDocument ...
  *
