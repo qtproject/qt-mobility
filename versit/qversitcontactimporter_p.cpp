@@ -122,7 +122,7 @@ QVersitContactImporterPrivate::~QVersitContactImporterPrivate()
 QContact QVersitContactImporterPrivate::importContact(
      const QVersitDocument& versitDocument)
 {
-    mUnconvertedVersitProperties.clear();
+    mUnknownVersitProperties.clear();
     QContact contact;
     const QList<QVersitProperty> properties = versitDocument.properties();
     foreach (QVersitProperty property, properties) {
@@ -157,7 +157,7 @@ QContact QVersitContactImporterPrivate::importContact(
         } else {
             detail = createNameValueDetail(property);
             if (!detail)
-                mUnconvertedVersitProperties.append(property);
+                mUnknownVersitProperties.append(property);
         }
 
         if (detail) {
