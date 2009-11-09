@@ -66,7 +66,7 @@ public:
     ~CntSymbianDatabase();
     
 public:
-    CContactDatabase* contactdatabase();
+    CContactDatabase* contactDatabase();
     
 public:
     // From MContactDbObserver

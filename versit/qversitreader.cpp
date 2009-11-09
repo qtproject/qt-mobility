@@ -50,8 +50,8 @@
  * \brief QVersitReader provides an interface
  * for reading versit documents such as vCards from a stream.
  *
- * QVersitReader converts 0..n versit documents such as vCards
- * from a test stream into 0..n QVersitDocument instances.
+ * QVersitReader reads 0..n versit documents such as vCards
+ * from a text stream into 0..n QVersitDocument instances.
  * QVersitReader supports reading from an abstract I/O device
  * which can be for example a file or a memory buffer.
  * The reading can be done synchronously or asynchronously.

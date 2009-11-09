@@ -63,7 +63,7 @@ public:
     QString audioClipPath() const;
 
     QContact importContact(const QVersitDocument& versitDocument);
-    QList<QVersitProperty> unconvertedVersitProperties();
+    QList<QVersitProperty> unknownVersitProperties();
     
 private:
     QVersitContactImporterPrivate* d;

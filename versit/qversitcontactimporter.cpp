@@ -45,6 +45,46 @@
 #include "qversitproperty.h"
 
 /*!
+ * \class QVersitContactImporter
+ *
+ * \brief QVersitContactImporter creates QContacts from QVersitDocuments.
+ *
+ * The versit properties (\l QVersitProperty) that are not supported by
+ * QVersitContactImporter can be imported by the client
+ * by calling QVersitContactImporter::unknownVersitProperties.
+ * For the returned properties,
+ * the client can perform the versit property to contact detail
+ * conversions itself and add the converted details to the QContact.
+ *
+ * \code
+ *
+ * QVersitDocument document;
+ * QVersitProperty property;
+ *
+ * property.setName(QString::fromAscii("N"));
+ * property.setValue("Simpson;Homer;J;;");
+ * document.addProperty(property);
+ *
+ * property.setName(QString::fromAscii("X-UNKNOWN-PROPERTY"));
+ * property.setValue("some value");
+ * document.addProperty(property);
+ *
+ * QVersitContactImporter importer;
+ * importer.setImagePath(QString::fromAscii("/my/image/path"));
+ * importer.setAudioClipPath(QString::fromAscii("my/audio_clip/path"));
+ *
+ * QContact contact = importer.importContact(document);
+ * // contact now contains the "N" property as a QContactName
+ * QList<QVersitProperty> unknownProperties = importer.unknownVersitProperties();
+ * // unknownProperties contains "X-UNKNOWN-PROPERTY"
+ * // that can be handled by the client itself
+ *
+ * \endcode
+ *
+ * \sa QVersitDocument, QVersitReader
+ */
+
+/*!
  * Constructor.
  */
 QVersitContactImporter::QVersitContactImporter() 
@@ -62,6 +102,10 @@ QVersitContactImporter::~QVersitContactImporter()
 
 /*!
  * Sets the \a path where the contact photos will be saved.
+ * This function should be called before calling \l importContact.
+ * If the image path has not been set,
+ * the images in the versit document will not be added to the contact.
+ * There is no default path for them.
  */
 void QVersitContactImporter::setImagePath(const QString& path)
 {
@@ -69,7 +113,7 @@ void QVersitContactImporter::setImagePath(const QString& path)
 }
 
 /*!
- * Returns the path where the contact photos will be saved.
+ * Returns the path where the contact photos are saved.
  */
 QString QVersitContactImporter::imagePath() const
 {
@@ -78,6 +122,10 @@ QString QVersitContactImporter::imagePath() const
 
 /*!
  * Sets the \a path where the contact related audio clips will be saved.
+ * This function should be called before calling \l importContact.
+ * If the audio clip path has not been set,
+ * the audio clips in the versit document will not be added to the contact.
+ * There is no default path for them.
  */
 void QVersitContactImporter::setAudioClipPath(const QString& path)
 {
@@ -93,7 +141,7 @@ QString QVersitContactImporter::audioClipPath() const
 }
 
 /*!
- * Generates a QContact from \a versitDocument.
+ * Creates a QContact from \a versitDocument.
  */
 QContact QVersitContactImporter::importContact(
     const QVersitDocument& versitDocument)
@@ -102,10 +150,10 @@ QContact QVersitContactImporter::importContact(
 }
 
 /*!
- * Returns the list of versit properties that were left unconverted
+ * Returns the list of versit properties that were not imported
  * by the most recent call of importContact.
  */
-QList<QVersitProperty> QVersitContactImporter::unconvertedVersitProperties()
+QList<QVersitProperty> QVersitContactImporter::unknownVersitProperties()
 {
-    return d->mUnconvertedVersitProperties;
+    return d->mUnknownVersitProperties;
 }
