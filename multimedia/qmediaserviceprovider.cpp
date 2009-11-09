@@ -280,9 +280,36 @@ public:
             switch (hint.type()) {
             case QMediaServiceProviderHint::Null:
                 plugin = plugins[0];
+                //special case for media player, if low latency was not asked,
+                //prefer services not offering it, since they are likely to support
+                //more formats
+                if (type == QByteArray(Q_MEDIASERVICE_MEDIAPLAYER)) {
+                    foreach (QMediaServiceProviderPlugin *currentPlugin, plugins) {
+                        QMediaServiceFeaturesInterface *iface =
+                                qobject_cast<QMediaServiceFeaturesInterface*>(currentPlugin);
+
+                        if (!iface || !(iface->supportedFeatures(type) &
+                                        QMediaServiceProviderHint::LowLatencyPlayback)) {
+                            plugin = currentPlugin;
+                            break;
+                        }
+
+                    }
+                }
                 break;
             case QMediaServiceProviderHint::SupportedFeatures:
                 plugin = plugins[0];
+                foreach (QMediaServiceProviderPlugin *currentPlugin, plugins) {
+                    QMediaServiceFeaturesInterface *iface =
+                            qobject_cast<QMediaServiceFeaturesInterface*>(currentPlugin);
+
+                    if (iface) {
+                        if (iface->supportedFeatures(type) & hint.features() == hint.features()) {
+                            plugin = currentPlugin;
+                            break;
+                        }
+                    }
+                }
                 break;
             case QMediaServiceProviderHint::Device: {
                     foreach (QMediaServiceProviderPlugin *currentPlugin, plugins) {
