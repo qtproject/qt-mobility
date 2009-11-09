@@ -39,73 +39,36 @@
 **
 ****************************************************************************/
 
-#include "qversitcontactgenerator.h"
-#include "qversitcontactgenerator_p.h"
-#include "qversitdocument.h"
-#include "qversitproperty.h"
+#ifndef QVERSITCONTACTEXPORTER_H
+#define QVERSITCONTACTEXPORTER_H
 
-/*!
- * Constructor.
- */
-QVersitContactGenerator::QVersitContactGenerator() 
-    : d(new QVersitContactGeneratorPrivate)
-{
-}
+#include <qtversitglobal.h>
+#include <qversitdocument.h>
+#include <qcontact.h>
+#include <QObject>
+#include <QImage>
 
-/*!
- * Destructor.
- */
-QVersitContactGenerator::~QVersitContactGenerator()
-{
-    delete d;
-}
+class QVersitContactExporterPrivate;
 
-/*!
- * Sets the \a path where the contact photos will be saved.
- */
-void QVersitContactGenerator::setImagePath(const QString& path)
+class QTVERSIT_EXPORT QVersitContactExporter : public QObject
 {
-    d->mImagePath = path;
-}
+    Q_OBJECT
 
-/*!
- * Returns the path where the contact photos will be saved.
- */
-QString QVersitContactGenerator::imagePath() const
-{
-    return d->mImagePath;
-}
+public:
+    QVersitContactExporter();
+    ~QVersitContactExporter();
 
-/*!
- * Sets the \a path where the contact related audio clips will be saved.
- */
-void QVersitContactGenerator::setAudioClipPath(const QString& path)
-{
-    d->mAudioClipPath = path;
-}
+    QVersitDocument exportContact(
+        const QContact& contact,
+        QVersitDocument::VersitType versitType=QVersitDocument::VCard21);
+		
+    QList<QContactDetail> unconvertedContactDetails();		
 
-/*!
- * Returns the path where the contact related audio clips will be saved.
- */
-QString QVersitContactGenerator::audioClipPath() const
-{
-    return d->mAudioClipPath;
-}
+signals:
+    void scale(const QString& imageFileName, QByteArray& imageData);
 
-/*!
- * Generates a QContact from \a versitDocument.
- */
-QContact QVersitContactGenerator::generateContact(
-    const QVersitDocument& versitDocument)
-{
-    return d->generateContact(versitDocument);
-}
+private:
+    QVersitContactExporterPrivate* d;    
+};
 
-/*!
- * Returns the list of versit properties that were left unconverted
- * by the most recent call of generateContact.
- */
-QList<QVersitProperty> QVersitContactGenerator::unconvertedVersitProperties()
-{
-    return d->mUnconvertedVersitProperties;
-}
+#endif // QVERSITCONTACTEXPORTER_H

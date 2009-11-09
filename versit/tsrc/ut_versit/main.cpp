@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 #include "testresultxmlparser.h"
-#include "ut_qversitcontactgenerator.h"
-#include "ut_qversitcontactconverter.h"
+#include "ut_qversitcontactimporter.h"
+#include "ut_qversitcontactexporter.h"
 #include "ut_qversitproperty.h"
 #include "ut_qversitdocument.h"
 #include "ut_versitutils.h"
@@ -63,16 +63,16 @@ int main(int /*argc*/, char** /*argv[]*/)
     if (!homeDir.endsWith(QString::fromAscii("/")))
         homeDir += QString::fromAscii("/");
 
-    UT_QVersitContactGenerator ut_versitContactGenerator;
-    QString resultFileName = homeDir + QString::fromAscii("ut_versitContactGenerator.xml");
+    UT_QVersitContactImporter ut_versitContactImporter;
+    QString resultFileName = homeDir + QString::fromAscii("ut_versitContactImporter.xml");
     args << resultFileName;
-    QTest::qExec(&ut_versitContactGenerator, args);
+    QTest::qExec(&ut_versitContactImporter, args);
     parser.parseAndPrintResults(resultFileName);
 
-    UT_QVersitContactConverter ut_versitContactconverter;
-    resultFileName = homeDir + QString::fromAscii("ut_versitContactconverter.xml");
+    UT_QVersitContactExporter ut_versitContactExporter;
+    resultFileName = homeDir + QString::fromAscii("ut_versitContactExporter.xml");
     args.replace(args.count()-1,resultFileName);
-    QTest::qExec(&ut_versitContactconverter, args);
+    QTest::qExec(&ut_versitContactExporter, args);
     parser.parseAndPrintResults(resultFileName);
 	
     UT_QVersitProperty ut_qVersitProperty;

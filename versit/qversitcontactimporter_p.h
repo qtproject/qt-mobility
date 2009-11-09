@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITCONTACTGENERATOR_P_H
-#define QVERSITCONTACTGENERATOR_P_H
+#ifndef QVERSITCONTACTIMPORTER_P_H
+#define QVERSITCONTACTIMPORTER_P_H
 
 //
 //  W A R N I N G
@@ -65,13 +65,13 @@ class QContactOrganization;
 class QVersitProperty;
 class QVersitDocument;
 
-class QVersitContactGeneratorPrivate
+class QVersitContactImporterPrivate
 {
 public:
-    QVersitContactGeneratorPrivate();
-    ~QVersitContactGeneratorPrivate();
+    QVersitContactImporterPrivate();
+    ~QVersitContactImporterPrivate();
 
-    QContact generateContact(const QVersitDocument& versitDocument);
+    QContact importContact(const QVersitDocument& versitDocument);
     QList<QVersitProperty> unconvertedVersitProperties();
     
 private:
@@ -126,4 +126,4 @@ private: // Data
     QHash<QString,QString> mFileExtensionMappings;
 };
 
-#endif // QVERSITCONTACTGENERATOR_P_H
+#endif // QVERSITCONTACTIMPORTER_P_H

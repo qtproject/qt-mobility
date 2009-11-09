@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qversitcontactconverter_p.h"
+#include "qversitcontactexporter_p.h"
 #include "qversitdefs.h"
 #include "versitutils.h"
 #include <qcontact.h>
@@ -70,7 +70,7 @@
 /*!
  * Constructor.
  */
-QVersitContactConverterPrivate::QVersitContactConverterPrivate() :
+QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
     mVersitType(QVersitDocument::VCard21)
 {
     // Detail mappings
@@ -112,7 +112,7 @@ QVersitContactConverterPrivate::QVersitContactConverterPrivate() :
 /*!
  * Destructor.
  */
-QVersitContactConverterPrivate::~QVersitContactConverterPrivate()
+QVersitContactExporterPrivate::~QVersitContactExporterPrivate()
 {
 }
 
@@ -120,7 +120,7 @@ QVersitContactConverterPrivate::~QVersitContactConverterPrivate()
 /*!
  * Convert Contact into Versit Document.
  */
-void QVersitContactConverterPrivate::convertContact(
+void QVersitContactExporterPrivate::exportContact(
     QVersitDocument& versitDocument,
     const QContact& contact)
 {
@@ -190,7 +190,7 @@ void QVersitContactConverterPrivate::convertContact(
 /*!
  * Encode Contact Name Field Information into the Versit Document 
  */
-void QVersitContactConverterPrivate::encodeName(
+void QVersitContactExporterPrivate::encodeName(
     QVersitProperty& property, 
     const QContactDetail& detail)
 {   
@@ -207,7 +207,7 @@ void QVersitContactConverterPrivate::encodeName(
 /*!
  * Encode Phone Numer Field Information into the Versit Document 
  */
-void QVersitContactConverterPrivate::encodePhoneNumber(
+void QVersitContactExporterPrivate::encodePhoneNumber(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
@@ -219,7 +219,7 @@ void QVersitContactConverterPrivate::encodePhoneNumber(
 /*!
  * Encode Email Field Information into the Versit Document 
  */
-void QVersitContactConverterPrivate::encodeEmail(
+void QVersitContactExporterPrivate::encodeEmail(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
@@ -231,7 +231,7 @@ void QVersitContactConverterPrivate::encodeEmail(
 /*!
  * Encode Address Field Information into the Versit Document 
  */
-void QVersitContactConverterPrivate::encodeAddress(
+void QVersitContactExporterPrivate::encodeAddress(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
@@ -251,7 +251,7 @@ void QVersitContactConverterPrivate::encodeAddress(
 /*!
  * Encode URL Field Information into the Versit Document
  */
-void QVersitContactConverterPrivate::encodeUrl(
+void QVersitContactExporterPrivate::encodeUrl(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
@@ -265,7 +265,7 @@ void QVersitContactConverterPrivate::encodeUrl(
 /*!
  * Encode Uid Field Information into the Versit Document
  */
-void QVersitContactConverterPrivate::encodeUid(
+void QVersitContactExporterPrivate::encodeUid(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
@@ -276,7 +276,7 @@ void QVersitContactConverterPrivate::encodeUid(
 /*!
  * Encode REV Field Information into the Versit Document
  */
-bool QVersitContactConverterPrivate::encodeRev(
+bool QVersitContactExporterPrivate::encodeRev(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
@@ -310,7 +310,7 @@ bool QVersitContactConverterPrivate::encodeRev(
 /*!
  * Encode BirthDay Field Information into the Versit Document
  */
-void QVersitContactConverterPrivate::encodeBirthDay(
+void QVersitContactExporterPrivate::encodeBirthDay(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
@@ -322,7 +322,7 @@ void QVersitContactConverterPrivate::encodeBirthDay(
 /*!
  * Encode Comment i.e. Note Field Information into the Versit Document
  */
-void QVersitContactConverterPrivate::encodeNote(
+void QVersitContactExporterPrivate::encodeNote(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
@@ -333,7 +333,7 @@ void QVersitContactConverterPrivate::encodeNote(
 /*!
  * Encode Geo Prpoperties Field Information into the Versit Document
  */
-void QVersitContactConverterPrivate::encodeGeoLocation(
+void QVersitContactExporterPrivate::encodeGeoLocation(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
@@ -349,7 +349,7 @@ void QVersitContactConverterPrivate::encodeGeoLocation(
 /*!
  * Encode all the organization properties to the versit document
  */
-void QVersitContactConverterPrivate::encodeOrganization(
+void QVersitContactExporterPrivate::encodeOrganization(
      QVersitDocument& document,
      const QContactDetail& detail)
 {
@@ -387,7 +387,7 @@ void QVersitContactConverterPrivate::encodeOrganization(
 /*!
  * Encode avatar Content into the Versit Document
  */
-bool QVersitContactConverterPrivate::encodeAvatar(
+bool QVersitContactExporterPrivate::encodeAvatar(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
@@ -414,7 +414,7 @@ bool QVersitContactConverterPrivate::encodeAvatar(
 /*!
  * Encode gender property information into Versit Document
  */
-void QVersitContactConverterPrivate::encodeGender(
+void QVersitContactExporterPrivate::encodeGender(
     QVersitProperty& property,const
     QContactDetail& detail)
 {
@@ -425,7 +425,7 @@ void QVersitContactConverterPrivate::encodeGender(
 /*!
  * Encodes nickname property information into the Versit Document
  */
-void QVersitContactConverterPrivate::encodeNickname(
+void QVersitContactExporterPrivate::encodeNickname(
     QVersitDocument& document,
     const QContactDetail& detail)
 {
@@ -454,7 +454,7 @@ void QVersitContactConverterPrivate::encodeNickname(
 /*!
  * Encode anniversary information into Versit Document
  */
-void QVersitContactConverterPrivate::encodeAnniversary(
+void QVersitContactExporterPrivate::encodeAnniversary(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
@@ -465,7 +465,7 @@ void QVersitContactConverterPrivate::encodeAnniversary(
 /*!
  * Encode online account information into the Versit Document
  */
-bool QVersitContactConverterPrivate::encodeOnlineAccount(
+bool QVersitContactExporterPrivate::encodeOnlineAccount(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
@@ -487,7 +487,7 @@ bool QVersitContactConverterPrivate::encodeOnlineAccount(
 /*!
  * Encode family versit property if its supported in Versit Document
  */
-bool QVersitContactConverterPrivate::encodeFamily(
+bool QVersitContactExporterPrivate::encodeFamily(
     QVersitDocument& document,
     const QContactDetail& detail )
 {
@@ -514,7 +514,7 @@ bool QVersitContactConverterPrivate::encodeFamily(
 /*!
  * Encode family versit property if its supported in Versit Document
  */
-bool QVersitContactConverterPrivate::encodeDisplayLabel(
+bool QVersitContactExporterPrivate::encodeDisplayLabel(
     QVersitProperty& property,
     const QContactDetail& detail,
     const QContact& contact)
@@ -546,7 +546,7 @@ bool QVersitContactConverterPrivate::encodeDisplayLabel(
 /*!
  * Check if \a resourceIdentifier represents a valid remote resource
  */
-bool QVersitContactConverterPrivate::isValidRemoteUrl(
+bool QVersitContactExporterPrivate::isValidRemoteUrl(
     const QString& resourceIdentifier)
 {
     QUrl remoteResource(resourceIdentifier);
@@ -560,7 +560,7 @@ bool QVersitContactConverterPrivate::isValidRemoteUrl(
 /*!
  * Encode parameters to \a property
  */
-void QVersitContactConverterPrivate::encodeParameters(
+void QVersitContactExporterPrivate::encodeParameters(
     QVersitProperty& property,
     const QStringList& contexts,
     const QStringList& subTypes)
@@ -581,7 +581,7 @@ void QVersitContactConverterPrivate::encodeParameters(
 /*!
  * Encode embedded content into the Versit Document
  */
-bool QVersitContactConverterPrivate::encodeEmbeddedContent(
+bool QVersitContactExporterPrivate::encodeEmbeddedContent(
     const QString& resourcePath,
     QVersitProperty& property,
     bool performScaling)
@@ -626,7 +626,7 @@ bool QVersitContactConverterPrivate::encodeEmbeddedContent(
 /*!
  * Escapes \a value if necessary and sets it to \a property
  */
-void QVersitContactConverterPrivate::setEscapedValue(
+void QVersitContactExporterPrivate::setEscapedValue(
     QVersitProperty& property,
     const QString& value)
 {
@@ -640,7 +640,7 @@ void QVersitContactConverterPrivate::setEscapedValue(
  * Starting from 3.0 the property values having certain special
  * characters should be escaped.
  */
-QByteArray QVersitContactConverterPrivate::escape(const QByteArray& value)
+QByteArray QVersitContactExporterPrivate::escape(const QByteArray& value)
 {
     QByteArray escaped(value);
     if (mVersitType != QVersitDocument::VCard21) {

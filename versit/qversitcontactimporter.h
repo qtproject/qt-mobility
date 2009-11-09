@@ -39,60 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVERSITCONTACTGENERATOR_H
-#define UT_QVERSITCONTACTGENERATOR_H
+#ifndef QVERSITCONTACTIMPORTER_H
+#define QVERSITCONTACTIMPORTER_H
 
-#include <QObject>
-#include <qversitdocument.h>
+#include <qtversitglobal.h>
+#include <qcontact.h>
+#include <QList>
 
-class QVersitContactGenerator;
-class QVersitContactGeneratorPrivate;
+class QVersitDocument;
+class QVersitProperty;
+class QVersitContactImporterPrivate;
 
-class UT_QVersitContactGenerator : public QObject
+class QTVERSIT_EXPORT QVersitContactImporter
 {
-    Q_OBJECT
+public:
+    QVersitContactImporter();
+    ~QVersitContactImporter();
 
-private slots: // Tests
+    void setImagePath(const QString& path);
+    QString imagePath() const;
     
-    void initTestCase();
-    void cleanupTestCase();
-    void init();
-    void cleanup();
-    
-    void testName();
-    void testAddress();
-    void testTel();    
-    void testEmail();
-    void testUrl();
-    void testUid();
-    void testOrganization();
-    void testTimeStamp();
-    void testAnniversary();
-    void testBirthday();
-    void testGender();
-    void testNickname();
-    void testAvatarJpegStored();
-    void testAvatarGifStored();
-    void testAvatarJpegTwoContactsWithSameName();
-    void testAvatarJpegNonexistentPath();
-    void testAvatarUrl();
-    void testAvatarEncoding();
-    void testGeo();
-    void testNote();
-    void testOnlineAccount();
-    void testFamily();
-    void testSound();
-    void testUnconvertedVersitProperties();
+    void setAudioClipPath(const QString& path);
+    QString audioClipPath() const;
 
-private: 
+    QContact importContact(const QVersitDocument& versitDocument);
+    QList<QVersitProperty> unconvertedVersitProperties();
     
-    QVersitDocument createDocumentWithProperty(const QVersitProperty& property);
-    QVersitDocument createDocumentWithNameAndPhoto(const QByteArray& name, QByteArray image,
-                                                   const QString& photoType, const QString& encoding);
-
 private:
-    QVersitContactGenerator* mGenerator;
-    QVersitContactGeneratorPrivate* mGeneratorPrivate;
+    QVersitContactImporterPrivate* d;
 };
 
-#endif // UT_QVERSITCONTACTGENERATOR_H
+#endif // QVERSITCONTACTIMPORTER_H
+

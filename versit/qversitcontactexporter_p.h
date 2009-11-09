@@ -39,25 +39,26 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITCONTACTCONVERTER_P_H
-#define QVERSITCONTACTCONVERTER_P_H
+#ifndef QVERSITCONTACTEXPORTER_P_H
+#define QVERSITCONTACTEXPORTER_P_H
 
 #include "qversitdocument.h"
 #include "qversitproperty.h"
-#include <qversitcontactconverter.h>
-#include <qcontactdetail.h>
 #include <QHash>
 #include <QObject>
 
+class QContact;
+class QContactDetail;
 
-class QVersitContactConverterPrivate : public QObject
+
+class QVersitContactExporterPrivate : public QObject
 {
     Q_OBJECT
 public:    
-    QVersitContactConverterPrivate();
-    ~QVersitContactConverterPrivate();
+    QVersitContactExporterPrivate();
+    ~QVersitContactExporterPrivate();
 
-    void convertContact(QVersitDocument& versitDocument, const QContact& contact);
+    void exportContact(QVersitDocument& versitDocument, const QContact& contact);
     
 signals:
     void scale(const QString& imageFileName, QByteArray& imageData);
@@ -102,7 +103,7 @@ private: // data
     QHash<QString,QString> mParameterMappings;
     QVersitDocument::VersitType mVersitType;
 
-    friend class UT_QVersitContactConverter;
+    friend class UT_QVersitContactExporter;
 };
 
-#endif // QVERSITCONTACTCONVERTER_P_H
+#endif // QVERSITCONTACTEXPORTER_P_H

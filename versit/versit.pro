@@ -13,8 +13,8 @@ PUBLIC_HEADERS += qtversitglobal.h \
     qversitproperty.h \
     qversitreader.h \
     qversitwriter.h \
-    qversitcontactconverter.h \
-    qversitcontactgenerator.h
+    qversitcontactexporter.h \
+    qversitcontactimporter.h
 
 # Private Headers
 PRIVATE_HEADERS += qversitdocument_p.h \
@@ -23,8 +23,8 @@ PRIVATE_HEADERS += qversitdocument_p.h \
     qversitwriter_p.h \
     qvcard21writer.h \
     qvcard30writer.h \
-    qversitcontactconverter_p.h \
-    qversitcontactgenerator_p.h
+    qversitcontactexporter_p.h \
+    qversitcontactimporter_p.h
 
 SOURCES += qversitdocument.cpp \
     qversitproperty.cpp \
@@ -34,10 +34,10 @@ SOURCES += qversitdocument.cpp \
     qversitwriter_p.cpp \
     qvcard21writer.cpp \
     qvcard30writer.cpp \
-    qversitcontactconverter.cpp \
-    qversitcontactconverter_p.cpp \    
-    qversitcontactgenerator.cpp \
-    qversitcontactgenerator_p.cpp \    
+    qversitcontactexporter.cpp \
+    qversitcontactexporter_p.cpp \    
+    qversitcontactimporter.cpp \
+    qversitcontactimporter_p.cpp \    
     versitutils.cpp
 
 HEADERS += \
