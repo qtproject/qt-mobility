@@ -54,14 +54,14 @@
 #include <QtCore/qvariant.h>
 
 QWmpPlayerControl::QWmpPlayerControl(IWMPCore3 *player, QWmpEvents *events, QObject *parent)
-        : QMediaPlayerControl(parent)
-        , m_player(player)
-        , m_controls(0)
-        , m_settings(0)
-        , m_state(QMediaPlayer::StoppedState)
-        , m_duration(0)
-        , m_buffering(false)
-        , m_videoAvailable(false)
+    : QMediaPlayerControl(parent)
+    , m_player(player)
+    , m_controls(0)
+    , m_settings(0)
+    , m_state(QMediaPlayer::StoppedState)
+    , m_duration(0)
+    , m_buffering(false)
+    , m_videoAvailable(false)
 {
     m_player->get_controls(&m_controls);
     m_player->get_settings(&m_settings);
