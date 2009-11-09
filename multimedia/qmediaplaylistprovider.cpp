@@ -46,16 +46,14 @@
 
 /*!
     \class QMediaPlaylistProvider
-    \ingroup multimedia
-
     \preliminary
-    \brief The QMediaPlaylistProvider class provides access to a list of media sources.
+    \brief The QMediaPlaylistProvider class provides an abstract list of media.
 
-    \sa
+    \sa QMediaPlaylist
 */
 
 /*!
-  Create a new playlist provider object with the given \a parent.
+    Constructs a playlist provider with the given \a parent.
 */
 QMediaPlaylistProvider::QMediaPlaylistProvider(QObject *parent)
     :QObject(parent), d_ptr(new QMediaPlaylistProviderPrivate)
@@ -63,7 +61,7 @@ QMediaPlaylistProvider::QMediaPlaylistProvider(QObject *parent)
 }
 
 /*!
-  \internal
+    \internal
 */
 QMediaPlaylistProvider::QMediaPlaylistProvider(QMediaPlaylistProviderPrivate &dd, QObject *parent)
     :QObject(parent), d_ptr(&dd)
@@ -71,7 +69,7 @@ QMediaPlaylistProvider::QMediaPlaylistProvider(QMediaPlaylistProviderPrivate &dd
 }
 
 /*!
-  Destroys the playlist provider.
+    Destroys a playlist provider.
 */
 QMediaPlaylistProvider::~QMediaPlaylistProvider()
 {
@@ -86,22 +84,20 @@ QMediaPlaylistProvider::~QMediaPlaylistProvider()
 /*!
     \fn QMediaPlaylistProvider::media(int index) const;
 
-    Returns a media object at playlist position \a index,
-    or invalid media object if index is out of playlist range.
+    Returns the media at \a index in the playlist.
+
+    If the index is invalid this will return a null media content.
 */
 
 
 /*!
-  Load playlist from \a location. If \a format is specified, it is used,
-  otherwise format is guessed from location name and data.
+    Loads a playlist from from a URI \a location. If no playlist \a format is specified the loader
+    will inspect the URI or probe the headers to guess the format.
 
-  New items are appended to playlist.
+    New items are appended to playlist.
 
-  QMediaPlaylist uses QMediaPlaylistProvider to load/save playlists first,
-  than it tries available playlist I/O plugins.
-
-  Returns true if provider supports loading of location URL protocol and passed format,
-  otherwise returns false.
+    Returns true if the provider supports the format and loading from the locations URI protocol,
+    otherwise this will return false.
 */
 bool QMediaPlaylistProvider::load(const QUrl &location, const char *format)
 {
@@ -111,13 +107,13 @@ bool QMediaPlaylistProvider::load(const QUrl &location, const char *format)
 }
 
 /*!
-  Load playlist from QIODevice \a device. If \a format is specified, it is used,
-  otherwise format is guessed from device data.
+    Loads a playlist from from an I/O \a device. If no playlist \a format is specified the loader
+    will probe the headers to guess the format.
 
-  New items are appended to playlist.
+    New items are appended to playlist.
 
-  Returns true if provider supports loading of location URL protocol and passed format,
-  otherwise returns false.
+    Returns true if the provider supports the format and loading from an I/O device, otherwise this
+    will return false.
 */
 bool QMediaPlaylistProvider::load(QIODevice * device, const char *format)
 {
@@ -127,10 +123,10 @@ bool QMediaPlaylistProvider::load(QIODevice * device, const char *format)
 }
 
 /*!
-  Save playlist to \a location. If \a format is specified, it is used,
-  otherwise format is guessed from location name.
+    Saves the contents of a playlist to a URI \a location.  If no playlist \a format is specified
+    the writer will inspect the URI to guess the format.
 
-  Returns true if playlist was saved succesfully, otherwise returns false.
+    Returns true if the playlist was saved succesfully; and false otherwise.
   */
 bool QMediaPlaylistProvider::save(const QUrl &location, const char *format)
 {
@@ -140,9 +136,9 @@ bool QMediaPlaylistProvider::save(const QUrl &location, const char *format)
 }
 
 /*!
-  Save playlist to QIODevice \a device using format \a format.
+    Saves the contents of a playlist to an I/O \a device in the specified \a format.
 
-  Returns true if playlist was saved succesfully, otherwise returns false.
+    Returns true if the playlist was saved succesfully; and false otherwise.
 */
 bool QMediaPlaylistProvider::save(QIODevice * device, const char *format)
 {
@@ -152,7 +148,7 @@ bool QMediaPlaylistProvider::save(QIODevice * device, const char *format)
 }
 
 /*!
-  Returns true if the playlist is read-only; otherwise returns false.
+    Returns true if a playlist is read-only; otherwise returns false.
 */
 bool QMediaPlaylistProvider::isReadOnly() const
 {
@@ -160,43 +156,43 @@ bool QMediaPlaylistProvider::isReadOnly() const
 }
 
 /*!
-  Append \a content to the playlist.
+    Append \a media to a playlist.
 
-  Returns true if the operation is successfull, other wise return false.
+    Returns true if the media was appended; and false otherwise.
 */
-bool QMediaPlaylistProvider::appendItem(const QMediaContent &content)
+bool QMediaPlaylistProvider::appendItem(const QMediaContent &media)
 {
-    Q_UNUSED(content);
+    Q_UNUSED(media);
     return false;
 }
 
 /*!
-  Insert a \a content to the playlist at position \a pos.
+    Inserts \a media into a playlist at \a position.
 
-  Returns true if the operation is successfull, other wise return false.
+    Returns true if the media was inserted; and false otherwise.
 */
-bool QMediaPlaylistProvider::insertItem(int pos, const QMediaContent &content)
+bool QMediaPlaylistProvider::insertItem(int position, const QMediaContent &media)
 {
-    Q_UNUSED(pos);
-    Q_UNUSED(content);
+    Q_UNUSED(position);
+    Q_UNUSED(media);
     return false;
 }
 
 /*!
-  Remove a source from the playlist at position \a pos.
+    Removes the media at \a position from a playlist.
 
-  Returns true if the operation is successfull, other wise return false.
+    Returns true if the media was removed; and false otherwise.
 */
-bool QMediaPlaylistProvider::removeItem(int pos)
+bool QMediaPlaylistProvider::removeItem(int position)
 {
-    Q_UNUSED(pos);
+    Q_UNUSED(position);
     return false;
 }
 
 /*!
-  Remove the items from the playlist from position \a start to \a end inclusive.
+    Removes the media between the given \a start and \a end positions from a playlist.
 
-  Returns true if the operation is successfull, other wise return false.
+    Returns true if the media was removed; and false otherwise.
   */
 bool QMediaPlaylistProvider::removeItems(int start, int end)
 {
@@ -209,9 +205,9 @@ bool QMediaPlaylistProvider::removeItems(int start, int end)
 }
 
 /*!
-  Remove all the items from the playlist.
+    Removes all media from a playlist.
 
-  Returns true if the operation is successfull, other wise return false.
+    Returns true if the media was removed; and false otherwise.
 */
 bool QMediaPlaylistProvider::clear()
 {
@@ -219,55 +215,53 @@ bool QMediaPlaylistProvider::clear()
 }
 
 /*!
-  Shuffle items in the playlist.
+    Shuffles the contents of a playlist.
 */
 void QMediaPlaylistProvider::shuffle()
 {
 }
 
 /*!
-  \fn void QMediaPlaylistProvider::itemsAboutToBeInserted(int start, int end);
+    \fn void QMediaPlaylistProvider::itemsAboutToBeInserted(int start, int end);
 
-  This signal is emitted just before items are inserted into the playlist.
-  The new items will be positioned between \a start and \a end inclusive.
+    Signals that new media is about to be inserted into a playlist between the \a start and \a end
+    positions.
 */
 
 /*!
-  \fn void QMediaPlaylistProvider::itemsInserted(int start, int end);
+    \fn void QMediaPlaylistProvider::itemsInserted(int start, int end);
 
-  This signal is emitted after items are inserted into the playlist.
-  The new items are positioned between \a start and \a end inclusive.
+    Signals that new media has been inserted into a playlist between the \a start and \a end
+    positions.
 */
 
 /*!
-  \fn void QMediaPlaylistProvider::itemsAboutToBeRemoved(int start, int end);
+    \fn void QMediaPlaylistProvider::itemsAboutToBeRemoved(int start, int end);
 
-  This signal is emitted just before items between \a start and \a end inclusive
-  are removed from the playlist.
+    Signals that media is about to be removed from a playlist between the \a start and \a end
+    positions.
 */
 
 /*!
-  \fn void QMediaPlaylistProvider::itemsRemoved(int start, int end);
+    \fn void QMediaPlaylistProvider::itemsRemoved(int start, int end);
 
-  This signal is emitted after items between \a start and \a end inclusive
-  are removed from the playlist.
+    Signals that media has been removed from a playlist between the \a start and \a end positions.
 */
 
 /*!
-  \fn void QMediaPlaylistProvider::itemsChanged(int start, int end);
+    \fn void QMediaPlaylistProvider::itemsChanged(int start, int end);
 
-  This signal is emitted when playlist items
-  between \a start and \a end inclusive are changed.
+    Signals that media in playlist between the \a start and \a end positions has changed.
 */
 
 /*!
-  \fn void QMediaPlaylistProvider::loaded()
+    \fn void QMediaPlaylistProvider::loaded()
 
-  Signal emitted when load process has finished and successful.
+    Signals that a load() finished successfully.
 */
 
 /*!
-  \fn void QMediaPlaylistProvider::loadFailed(QMediaPlaylist::Error err, const QString& errorMessage)
+    \fn void QMediaPlaylistProvider::loadFailed(QMediaPlaylist::Error error, const QString& errorMessage)
 
-  Signal emitted when load process fails, returning \a err and \a errorMessage.
+    Signals that a load failed() due to an \a error.  The \a errorMessage provides more information.
 */
