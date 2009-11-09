@@ -574,6 +574,8 @@ QStringList QContact::availableActions() const
     for (int i = 0; i < allDescriptors.size(); i++) {
         result << allDescriptors.at(i).actionName();
     }
+
+    return result;
 }
 
 /*!
