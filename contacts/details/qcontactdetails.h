@@ -49,7 +49,6 @@
 #include "qcontactanniversary.h"
 #include "qcontactavatar.h"
 #include "qcontactbirthday.h"
-#include "qcontactcustomlabel.h"
 #include "qcontactdisplaylabel.h"
 #include "qcontactemailaddress.h"
 #include "qcontactfamily.h"

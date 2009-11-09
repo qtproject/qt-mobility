@@ -82,11 +82,6 @@
  */
 
 /*!
- * \class QContactCustomLabel
- * \brief A custom label which a user may set for the contact
- */
-
-/*!
  * \class QContactGuid
  * \brief The globally unique Id of a contact
  */
@@ -217,12 +212,6 @@ Q_DEFINE_LATIN1_LITERAL(QContactTimestamp::DefinitionName, "Timestamp");
  * The constant string which identifies the definition of details which identify the type of the contact
  */
 Q_DEFINE_LATIN1_LITERAL(QContactType::DefinitionName, "Type");
-
-/*!
- * \variable QContactCustomLabel::DefinitionName
- * The constant string which identifies the definition of details which contain a custom label for the contact
- */
-Q_DEFINE_LATIN1_LITERAL(QContactCustomLabel::DefinitionName, "CustomLabel");
 
 /*!
  * \variable QContactGuid::DefinitionName
@@ -380,12 +369,6 @@ Q_DEFINE_LATIN1_LITERAL(QContactFamily::FieldSpouse, "Spouse");
  * The constant key for which the children names value is stored in details of the QContactFamily type
  */
 Q_DEFINE_LATIN1_LITERAL(QContactFamily::FieldChildren, "Children");
-
-/*!
- * \variable QContactCustomLabel::FieldLabel
- * The constant key for which the custom label value is stored in details of the QContactCustomLabel type
- */
-Q_DEFINE_LATIN1_LITERAL(QContactCustomLabel::FieldLabel, "Label");
 
 /*!
  * \variable QContactGuid::FieldGuid
@@ -1344,16 +1327,6 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 /*!
  * \fn QContactGeolocation::timestamp() const
  * Returns the timestamp associated with the location stored in the detail
- */
-
-/*!
- * \fn QContactCustomLabel::label() const
- * Returns the custom label which has been set for this contact
- */
-
-/*!
- * \fn QContactCustomLabel::setLabel(const QString& label)
- * Sets the custom label of this contact to \a label
  */
 
 /*!

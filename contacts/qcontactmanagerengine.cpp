@@ -569,18 +569,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
-    // custom label
-    d.setName(QContactCustomLabel::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QContactCustomLabel::FieldLabel, f);
-    // note: no context allowed.
-    d.setFields(fields);
-    d.setUnique(true); // only one allowed.
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-    retn.insert(d.name(), d);
-
     // guid
     d.setName(QContactGuid::DefinitionName);
     fields.clear();
