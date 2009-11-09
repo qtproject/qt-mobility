@@ -422,6 +422,7 @@ void CntSymbianEnginePrivate::HandleDatabaseEventL(TContactDbObserverEvent aEven
         else
             emit contactAdded(id);
         break;
+    case EContactDbObserverEventOwnCardDeleted:
     case EContactDbObserverEventContactDeleted:
         if(m_contactsRemovedEmitted.contains(id))
             m_contactsRemovedEmitted.removeOne(id);
