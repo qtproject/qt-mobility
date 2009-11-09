@@ -74,23 +74,8 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
 
     error = QContactManager::NoError;
 
-    d = new CntSymbianEnginePrivate(parameters, error);
+    d = new CntSymbianEnginePrivate(this, parameters, error);
 
-    // Connect database observer events appropriately.
-    connect(d, SIGNAL(contactAdded(QContactLocalId)),
-        this, SLOT(eventContactAdded(QContactLocalId)));
-
-    connect(d, SIGNAL(contactRemoved(QContactLocalId)),
-        this, SLOT(eventContactRemoved(QContactLocalId)));
-
-    connect(d, SIGNAL(contactChanged(QContactLocalId)),
-        this, SLOT(eventContactChanged(QContactLocalId)));
-
-    connect(d, SIGNAL(relationshipAdded(QContactLocalId)),
-        this, SLOT(eventRelationshipRemoved(QContactLocalId)));
-
-    connect(d, SIGNAL(relationshipRemoved(QContactLocalId)),
-        this, SLOT(eventRelationshipRemoved(QContactLocalId)));
 }
 
 CntSymbianEngine::CntSymbianEngine(const CntSymbianEngine& other)
@@ -551,71 +536,6 @@ QList<QVariant::Type> CntSymbianEngine::supportedDataTypes() const
     st.append(QVariant::String);
 
     return st;
-}
-
-/*!
- * Private slot to receive events about added entries.
- *
- * \param contactId The new contact's ID.
- */
-void CntSymbianEngine::eventContactAdded(const QContactLocalId &contactId)
-{
-    QList<QContactLocalId> contactList;
-	contactList.append(contactId);
-
-	emit contactsAdded(contactList);
-}
-
-/*!
- * Private slot to receive events about deleted entries.
- *
- * \param contactId ID for the deleted contact item.
- */
-void CntSymbianEngine::eventContactRemoved(const QContactLocalId &contactId)
-{
-    QList<QContactLocalId> contactList;
-	contactList.append(contactId);
-
-	emit contactsRemoved(contactList);
-}
-
-/*!
- * Private slot to receive events about modified contact items.
- *
- * \param ID for the contact entry with modified data.
- */
-void CntSymbianEngine::eventContactChanged(const QContactLocalId &contactId)
-{
-    QList<QContactLocalId> contactList;
-	contactList.append(contactId);
-
-	emit contactsChanged(contactList);
-}
-
-/*!
- * Private slot to receive events about added relationships.
- *
- * \param contactId the added contact
- */
-void CntSymbianEngine::eventRelationshipAdded(const QContactLocalId &contactId)
-{
-    QList<QContactLocalId> contactList;
-    contactList.append(contactId);
-
-    emit relationshipsAdded(contactList);
-}
-
-/*!
- * Private slot to receive events about removed relationships.
- *
- * \param contactId the modified contact from relationship
- */
-void CntSymbianEngine::eventRelationshipRemoved(const QContactLocalId &contactId)
-{
-    QList<QContactLocalId> contactList;
-    contactList.append(contactId);
-
-    emit relationshipsRemoved(contactList);
 }
 
 QString CntSymbianEngine::managerName() const
