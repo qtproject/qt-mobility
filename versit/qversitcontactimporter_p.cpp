@@ -62,6 +62,7 @@
 #include <qcontactnote.h>
 #include <qcontactonlineaccount.h>
 #include <qcontactfamily.h>
+#include <qcontactdisplaylabel.h>
 #include <QHash>
 #include <QFile>
 
@@ -154,6 +155,8 @@ QContact QVersitContactImporterPrivate::importContact(
             detail = createFamily(property,contact);
         } else if (detailDefinitionName == QContactOnlineAccount::DefinitionName) {
             detail = createOnlineAccount(property);
+        } else if (detailDefinitionName == QContactDisplayLabel::DefinitionName) {
+            detail = createDisplayLabel(property);
         } else {
             detail = createNameValueDetail(property);
             if (!detail)
@@ -448,6 +451,18 @@ QContactDetail* QVersitContactImporterPrivate::createNameValueDetail(
     }
     return detail;
 }
+
+/*!
+ * Creates a simple name-value contact detail.
+ */
+QContactDetail* QVersitContactImporterPrivate::createDisplayLabel(
+    const QVersitProperty& property) const
+{
+    QContactDisplayLabel* label = new QContactDisplayLabel();
+    label->setLabel(QString::fromAscii(property.value()));
+    return label;
+}
+
 
 /*!
  * Extracts the list of contexts from \a types

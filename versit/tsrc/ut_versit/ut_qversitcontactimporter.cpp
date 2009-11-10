@@ -1000,6 +1000,21 @@ void UT_QVersitContactImporter::testNote()
     QCOMPARE(note.note(),QString::fromAscii(val));
 }
 
+void UT_QVersitContactImporter::testDisplayLabel()
+{
+    // single line value
+    QVersitDocument document;
+    QVersitProperty nameProperty;
+    QByteArray val("Homer Simpson");
+    nameProperty.setName(QString::fromAscii("FN"));
+    nameProperty.setValue(val);
+    document.addProperty(nameProperty);
+    QContact contact = mGenerator->importContact(document);
+    QContactDisplayLabel label =
+            (QContactDisplayLabel)contact.detail(QContactDisplayLabel::DefinitionName);
+    QCOMPARE(label.label(),QString::fromAscii(val));
+}
+
 void UT_QVersitContactImporter::testOnlineAccount()
 {
     QByteArray accountUri("sip:homer@simpsons.com");
