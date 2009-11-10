@@ -319,27 +319,6 @@ void Dialog::getVersion(int index)
         version = QSystemInfo::QtCore;
         break;
     case 2:
-        version = QSystemInfo::WrtCore;
-        break;
-    case 3:
-        version = QSystemInfo::Webkit;
-        break;
-    case 4:
-        version = QSystemInfo::ServiceFramework;
-        break;
-    case 5:
-        version = QSystemInfo::WrtExtensions;
-        break;
-    case 6:
-        version = QSystemInfo::ServiceProvider;
-        break;
-    case 7:
-        version = QSystemInfo::NetscapePlugin;
-        break;
-    case 8:
-        version = QSystemInfo::WebApp;
-        break;
-    case 9:
         version = QSystemInfo::Firmware;
         break;
     };
