@@ -249,7 +249,7 @@ QList<QContactLocalId> QContactManagerEngine::contacts(const QContactFilter& fil
  */
 QList<QContactLocalId> QContactManagerEngine::contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
-    qWarning("This function is deprecated and will be removed in week 47 - see email discussion from week 45!");
+    qWarning("This function is deprecated and will be removed in week 47 - see email discussion from week 45!  Use a detail filter with definition set to QContactType::DefinitionName and field name set to QContactType::FieldType instead!");
     QContactDetailFilter df;
     df.setDetailDefinitionName(QContactType::DefinitionName, QContactType::FieldType);
     df.setValue(contactType);

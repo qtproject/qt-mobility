@@ -568,7 +568,7 @@ QList<QContactRelationship> QContact::relationshipOrder() const
  */
 QStringList QContact::availableActions() const
 {
-    qWarning("This function is deprecated and will be removed in week 47!  See Commit SHA1: dd7d9904cc52bbbda22bac5c1aaa3876ee5724e6");
+    qWarning("This function is deprecated and will be removed in week 47!  Use QContact::availableActions(const QString& vendorName, int implementationVersion) instead!  See Commit SHA1: dd7d9904cc52bbbda22bac5c1aaa3876ee5724e6");
     QList<QContactActionDescriptor> allDescriptors = availableActions(QString());
     QStringList result;
     for (int i = 0; i < allDescriptors.size(); i++) {
