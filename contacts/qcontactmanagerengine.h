@@ -88,6 +88,7 @@ public:
 
     /* Synthesize the display label of a contact */
     virtual QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    QContact setContactDisplayLabel(const QString& displayLabel, const QContact& contact) const;
 
     /* "Self" contact id (MyCard) */
     virtual bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error);

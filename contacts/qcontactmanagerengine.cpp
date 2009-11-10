@@ -439,6 +439,19 @@ QString QContactManagerEngine::synthesizeDisplayLabel(const QContact& contact, Q
 }
 
 /*!
+ * Returns a copy of the given contact \a contact with its display label set to \a displayLabel.
+ * This function does not touch the database in any way, and is purely a convenience to allow engine implementations to set the display label.
+ */
+QContact QContactManagerEngine::setContactDisplayLabel(const QString& displayLabel, const QContact& contact) const
+{
+    QContact retn = contact;
+    QContactDisplayLabel dl;
+    dl.setValue(QContactDisplayLabel::FieldLabel, displayLabel);
+    retn.d->m_details.replace(0, dl);
+    return retn;
+}
+
+/*!
  * Returns true if the given \a feature is supported by this engine
  */
 bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const
