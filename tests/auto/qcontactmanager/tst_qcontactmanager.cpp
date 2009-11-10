@@ -2135,7 +2135,6 @@ void tst_QContactManager::selfContactId()
 
     if (!success) {
         QSKIP("Unable to save the generated self contact", SkipSingle);
-        return;
     }
 
     QSignalSpy spy(cm, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
