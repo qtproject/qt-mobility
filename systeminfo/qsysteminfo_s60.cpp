@@ -227,13 +227,6 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
             }
             return versionText.split("\n").at(0);
         }
-        case QSystemInfo::WrtCore:  //Not available
-        case QSystemInfo::Webkit:   //Not available
-        case QSystemInfo::ServiceFramework: //Not available
-        case QSystemInfo::WrtExtensions:    //Not available
-        case QSystemInfo::ServiceProvider:  //Not available
-        case QSystemInfo::NetscapePlugin:   //Not available
-        case QSystemInfo::WebApp:   //Not available
         default:
             return QString();
     }

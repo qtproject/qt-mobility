@@ -178,34 +178,6 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
     case QSystemInfo::QtCore:
        return  qVersion();
        break;
-    case QSystemInfo::WrtCore:
-        {
-        }
-       break;
-    case QSystemInfo::Webkit:
-        {
-        }
-       break;
-    case QSystemInfo::ServiceFramework:
-        {
-        }
-       break;
-    case QSystemInfo::WrtExtensions:
-        {
-        }
-       break;
-    case QSystemInfo::ServiceProvider:
-        {
-        }
-       break;
-    case QSystemInfo::NetscapePlugin:
-        {
-        }
-       break;
-    case QSystemInfo::WebApp:
-        {
-        }
-       break;
    case QSystemInfo::Firmware:
        {
        }
