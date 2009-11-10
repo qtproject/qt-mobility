@@ -84,6 +84,7 @@ void tst_QMediaPlaylistNavigator::setPlaylist()
     QMediaPlaylistNavigator navigator(0);
     QVERIFY(navigator.playlist() != 0);
     QCOMPARE(navigator.playlist()->size(), 0);
+    QCOMPARE(navigator.playlist()->media(0), QMediaContent());
     QVERIFY(navigator.playlist()->isReadOnly() );
 
     QLocalMediaPlaylistProvider playlist;

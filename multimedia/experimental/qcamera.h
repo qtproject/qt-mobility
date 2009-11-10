@@ -75,7 +75,8 @@ public:
         CameraError,
         NotReadyToCaptureError,
         InvalidRequestError,
-        ServiceMissingError
+        ServiceMissingError,
+        NotSupportedFeatureError
     };
 
     enum FlashMode {
@@ -250,6 +251,7 @@ Q_SIGNALS:
 
     void readyForCaptureChanged(bool);
     void imageCaptured(const QString &fileName, const QImage &preview);
+    void imageSaved(const QString &fileName);
 
     void stateChanged(QCamera::State);
     void error(QCamera::Error);

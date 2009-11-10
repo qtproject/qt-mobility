@@ -38,49 +38,42 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <QDebug>
 
-#ifndef QWMPMETADATA_H
-#define QWMPMETADATA_H
+#include "s60audiocaptureservice.h"
+#include "s60audiocapturesession.h"
+#include "s60audiodevicecontrol.h"
+#include "s60audioencodercontrol.h"
+#include "s60audiomediarecordercontrol.h"
 
-#include <multimedia/qmetadatacontrol.h>
-#include <multimedia/qmediaresource.h>
-
-#include <wmp.h>
-
-class QMediaContent;
-class QWmpEvents;
-
-class QWmpMetaData : public QMetaDataControl
+S60AudioCaptureService::S60AudioCaptureService(QObject *parent):
+    QMediaService(parent)
 {
-    Q_OBJECT
-public:
-    QWmpMetaData(IWMPCore3 *player, QWmpEvents *events, QObject *parent = 0);
-    ~QWmpMetaData();
+    m_session = new S60AudioCaptureSession(this);
+    m_encoderControl  = new S60AudioEncoderControl(m_session);
+    m_mediaControl   = new S60AudioMediaRecorderControl(m_session);
+    m_deviceControl  = new S60AudioDeviceControl(m_session);
+}
 
-    bool isMetaDataAvailable() const;
-    bool isWritable() const;
+S60AudioCaptureService::~S60AudioCaptureService()
+{
+    delete m_encoderControl;
+    delete m_deviceControl;
+    delete m_mediaControl;
+    delete m_session;
+}
 
-    QVariant metaData(QtMedia::MetaData key) const;
-    void setMetaData(QtMedia::MetaData key, const QVariant &value);
-    QList<QtMedia::MetaData> availableMetaData() const;
+QMediaControl *S60AudioCaptureService::control(const char *name) const
+{
+    if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
+        return m_mediaControl;
 
-    QVariant extendedMetaData(const QString &key) const ;
-    void setExtendedMetaData(const QString &key, const QVariant &value);
-    QStringList availableExtendedMetaData() const;
+    if (qstrcmp(name,QAudioEncoderControl_iid) == 0)
+        return m_encoderControl;
 
-    static QStringList keys(IWMPMedia *media);
-    static QVariant value(IWMPMedia *media, BSTR key);
-    static void setValue(IWMPMedia *media, BSTR key, const QVariant &value);
-    static QMediaContent resources(IWMPMedia *media);
-    static QVariant convertVariant(const VARIANT &variant);
-    static QVariant albumArtUri(IWMPMedia *media, const char *suffix);
+    if (qstrcmp(name,QAudioDeviceControl_iid) == 0)
+        return m_deviceControl;
 
-private Q_SLOTS:
-    void currentItemChangeEvent(IDispatch *dispatch);
-    void mediaChangeEvent(IDispatch *dispatch);
+    return 0;
+}
 
-private:
-    IWMPMedia *m_media;
-};
-
-#endif

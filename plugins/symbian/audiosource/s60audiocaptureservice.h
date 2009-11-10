@@ -39,48 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPMETADATA_H
-#define QWMPMETADATA_H
+#ifndef S60AUDIOCAPTURESERVICE_H
+#define S60AUDIOCAPTURESERVICE_H
 
-#include <multimedia/qmetadatacontrol.h>
-#include <multimedia/qmediaresource.h>
+#include <QtCore/qobject.h>
 
-#include <wmp.h>
+#include <multimedia/qmediaservice.h>
 
-class QMediaContent;
-class QWmpEvents;
+class S60AudioCaptureSession;
+class S60AudioEncoderControl;
+class S60AudioMediaRecorderControl;
+class S60AudioDeviceControl;
 
-class QWmpMetaData : public QMetaDataControl
+class S60AudioCaptureService : public QMediaService
 {
     Q_OBJECT
 public:
-    QWmpMetaData(IWMPCore3 *player, QWmpEvents *events, QObject *parent = 0);
-    ~QWmpMetaData();
+    S60AudioCaptureService(QObject *parent = 0);
+    ~S60AudioCaptureService();
 
-    bool isMetaDataAvailable() const;
-    bool isWritable() const;
-
-    QVariant metaData(QtMedia::MetaData key) const;
-    void setMetaData(QtMedia::MetaData key, const QVariant &value);
-    QList<QtMedia::MetaData> availableMetaData() const;
-
-    QVariant extendedMetaData(const QString &key) const ;
-    void setExtendedMetaData(const QString &key, const QVariant &value);
-    QStringList availableExtendedMetaData() const;
-
-    static QStringList keys(IWMPMedia *media);
-    static QVariant value(IWMPMedia *media, BSTR key);
-    static void setValue(IWMPMedia *media, BSTR key, const QVariant &value);
-    static QMediaContent resources(IWMPMedia *media);
-    static QVariant convertVariant(const VARIANT &variant);
-    static QVariant albumArtUri(IWMPMedia *media, const char *suffix);
-
-private Q_SLOTS:
-    void currentItemChangeEvent(IDispatch *dispatch);
-    void mediaChangeEvent(IDispatch *dispatch);
-
+    QMediaControl *control(const char *name) const;
 private:
-    IWMPMedia *m_media;
+    S60AudioCaptureSession       *m_session;
+    S60AudioEncoderControl       *m_encoderControl;
+    S60AudioDeviceControl        *m_deviceControl;
+    S60AudioMediaRecorderControl *m_mediaControl;
 };
 
-#endif
+#endif // S60AUDIOCAPTURESERVICE_H

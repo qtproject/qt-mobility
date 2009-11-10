@@ -70,6 +70,8 @@ public:
     QObject* instance(QString const &key);
     QList<QObject*> instances(QString const &key);
 
+    static void setStaticPlugins(const QString &location, const QObjectList& objects);
+
 private:
     void load();
 

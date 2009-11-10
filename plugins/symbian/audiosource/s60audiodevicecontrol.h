@@ -39,48 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPMETADATA_H
-#define QWMPMETADATA_H
+#ifndef S60AUDIODEVICECONTROL_H
+#define S60AUDIODEVICECONTROL_H
 
-#include <multimedia/qmetadatacontrol.h>
-#include <multimedia/qmediaresource.h>
+#include <QStringList>
 
-#include <wmp.h>
+#include <multimedia/qaudiodevicecontrol.h>
 
-class QMediaContent;
-class QWmpEvents;
+class S60AudioCaptureSession;
 
-class QWmpMetaData : public QMetaDataControl
+class S60AudioDeviceControl : public QAudioDeviceControl
 {
-    Q_OBJECT
+
+Q_OBJECT
+
 public:
-    QWmpMetaData(IWMPCore3 *player, QWmpEvents *events, QObject *parent = 0);
-    ~QWmpMetaData();
+    S60AudioDeviceControl(QObject *parent);
+    virtual ~S60AudioDeviceControl();
 
-    bool isMetaDataAvailable() const;
-    bool isWritable() const;
+    int deviceCount() const;
 
-    QVariant metaData(QtMedia::MetaData key) const;
-    void setMetaData(QtMedia::MetaData key, const QVariant &value);
-    QList<QtMedia::MetaData> availableMetaData() const;
+    QString name(int index) const;
+    QString description(int index) const;
+    QIcon icon(int index) const;
 
-    QVariant extendedMetaData(const QString &key) const ;
-    void setExtendedMetaData(const QString &key, const QVariant &value);
-    QStringList availableExtendedMetaData() const;
+    int defaultDevice() const;
+    int selectedDevice() const;
 
-    static QStringList keys(IWMPMedia *media);
-    static QVariant value(IWMPMedia *media, BSTR key);
-    static void setValue(IWMPMedia *media, BSTR key, const QVariant &value);
-    static QMediaContent resources(IWMPMedia *media);
-    static QVariant convertVariant(const VARIANT &variant);
-    static QVariant albumArtUri(IWMPMedia *media, const char *suffix);
-
-private Q_SLOTS:
-    void currentItemChangeEvent(IDispatch *dispatch);
-    void mediaChangeEvent(IDispatch *dispatch);
+public Q_SLOTS:
+    void setSelectedDevice(int index);
 
 private:
-    IWMPMedia *m_media;
+    void update();
+
+    QStringList             m_names;
+    QStringList             m_descriptions;
+    S60AudioCaptureSession* m_session;
 };
 
-#endif
+#endif // S60AUDIODEVICECONTROL_H

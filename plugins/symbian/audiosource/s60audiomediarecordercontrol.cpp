@@ -39,48 +39,54 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPMETADATA_H
-#define QWMPMETADATA_H
+#include "s60audiocapturesession.h"
+#include "s60audiomediarecordercontrol.h"
 
-#include <multimedia/qmetadatacontrol.h>
-#include <multimedia/qmediaresource.h>
+#include <QtCore/qdebug.h>
 
-#include <wmp.h>
-
-class QMediaContent;
-class QWmpEvents;
-
-class QWmpMetaData : public QMetaDataControl
+S60AudioMediaRecorderControl::S60AudioMediaRecorderControl(QObject *parent)
+    :QMediaRecorderControl(parent)
 {
-    Q_OBJECT
-public:
-    QWmpMetaData(IWMPCore3 *player, QWmpEvents *events, QObject *parent = 0);
-    ~QWmpMetaData();
+    m_session = qobject_cast<S60AudioCaptureSession*>(parent);
+    connect(m_session, SIGNAL(positionChanged(qint64)), this, SIGNAL(durationChanged(qint64)));
+    connect(m_session, SIGNAL(stateChanged(QMediaRecorder::State)), this, SIGNAL(stateChanged(QMediaRecorder::State)));
+}
 
-    bool isMetaDataAvailable() const;
-    bool isWritable() const;
+S60AudioMediaRecorderControl::~S60AudioMediaRecorderControl()
+{
+}
 
-    QVariant metaData(QtMedia::MetaData key) const;
-    void setMetaData(QtMedia::MetaData key, const QVariant &value);
-    QList<QtMedia::MetaData> availableMetaData() const;
+QUrl S60AudioMediaRecorderControl::outputLocation() const
+{
+    return m_session->outputLocation();
+}
 
-    QVariant extendedMetaData(const QString &key) const ;
-    void setExtendedMetaData(const QString &key, const QVariant &value);
-    QStringList availableExtendedMetaData() const;
+bool S60AudioMediaRecorderControl::setOutputLocation(const QUrl& sink)
+{
+    return m_session->setOutputLocation(sink);
+}
 
-    static QStringList keys(IWMPMedia *media);
-    static QVariant value(IWMPMedia *media, BSTR key);
-    static void setValue(IWMPMedia *media, BSTR key, const QVariant &value);
-    static QMediaContent resources(IWMPMedia *media);
-    static QVariant convertVariant(const VARIANT &variant);
-    static QVariant albumArtUri(IWMPMedia *media, const char *suffix);
+QMediaRecorder::State S60AudioMediaRecorderControl::state() const
+{
+    return (QMediaRecorder::State)m_session->state();
+}
 
-private Q_SLOTS:
-    void currentItemChangeEvent(IDispatch *dispatch);
-    void mediaChangeEvent(IDispatch *dispatch);
+qint64 S60AudioMediaRecorderControl::duration() const
+{
+    return m_session->position();
+}
 
-private:
-    IWMPMedia *m_media;
-};
+void S60AudioMediaRecorderControl::record()
+{
+    m_session->record();
+}
 
-#endif
+void S60AudioMediaRecorderControl::pause()
+{
+    m_session->stop();
+}
+
+void S60AudioMediaRecorderControl::stop()
+{
+    m_session->stop();
+}

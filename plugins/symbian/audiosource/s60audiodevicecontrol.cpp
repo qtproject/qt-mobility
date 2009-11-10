@@ -39,48 +39,68 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPMETADATA_H
-#define QWMPMETADATA_H
+#include "s60audiocapturesession.h"
+#include "s60audiodevicecontrol.h"
 
-#include <multimedia/qmetadatacontrol.h>
-#include <multimedia/qmediaresource.h>
+#include <QtGui/QIcon>
+#include <QtCore/QDebug>
 
-#include <wmp.h>
+//#include <multimedia/qaudiodeviceinfo.h>
 
-class QMediaContent;
-class QWmpEvents;
 
-class QWmpMetaData : public QMetaDataControl
+S60AudioDeviceControl::S60AudioDeviceControl(QObject *parent)
+    :QAudioDeviceControl(parent)
 {
-    Q_OBJECT
-public:
-    QWmpMetaData(IWMPCore3 *player, QWmpEvents *events, QObject *parent = 0);
-    ~QWmpMetaData();
+    m_session = qobject_cast<S60AudioCaptureSession*>(parent);
 
-    bool isMetaDataAvailable() const;
-    bool isWritable() const;
+    update();
+}
 
-    QVariant metaData(QtMedia::MetaData key) const;
-    void setMetaData(QtMedia::MetaData key, const QVariant &value);
-    QList<QtMedia::MetaData> availableMetaData() const;
+S60AudioDeviceControl::~S60AudioDeviceControl()
+{
+}
 
-    QVariant extendedMetaData(const QString &key) const ;
-    void setExtendedMetaData(const QString &key, const QVariant &value);
-    QStringList availableExtendedMetaData() const;
+int S60AudioDeviceControl::deviceCount() const
+{
+    return 1;
+}
 
-    static QStringList keys(IWMPMedia *media);
-    static QVariant value(IWMPMedia *media, BSTR key);
-    static void setValue(IWMPMedia *media, BSTR key, const QVariant &value);
-    static QMediaContent resources(IWMPMedia *media);
-    static QVariant convertVariant(const VARIANT &variant);
-    static QVariant albumArtUri(IWMPMedia *media, const char *suffix);
+QString S60AudioDeviceControl::name(int index) const
+{
+    return QString();
+}
 
-private Q_SLOTS:
-    void currentItemChangeEvent(IDispatch *dispatch);
-    void mediaChangeEvent(IDispatch *dispatch);
+QString S60AudioDeviceControl::description(int index) const
+{
+    return QString();
+}
 
-private:
-    IWMPMedia *m_media;
-};
+QIcon S60AudioDeviceControl::icon(int index) const
+{
+    Q_UNUSED(index);
+    return QIcon();
+}
 
-#endif
+int S60AudioDeviceControl::defaultDevice() const
+{
+    return 0;
+}
+
+int S60AudioDeviceControl::selectedDevice() const
+{
+    return 0;
+}
+
+void S60AudioDeviceControl::setSelectedDevice(int index)
+{
+    m_session->setCaptureDevice(QString("MMF"));    //TODO: What this should be in S60 case? There are no special devices as Linux or Windows.
+}
+
+void S60AudioDeviceControl::update()
+{
+    m_names.clear();
+    m_descriptions.clear();
+
+    m_names.append(QString("MMF"));
+    m_descriptions.append(QString("MMF"));
+}

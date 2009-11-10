@@ -61,6 +61,11 @@
 
 class QMetaDataControl;
 
+#define Q_DECLARE_NON_CONST_PUBLIC(Class) \
+    inline Class* q_func() { return static_cast<Class *>(q_ptr); } \
+    friend class Class;
+
+
 class QMediaObjectPrivate
 {
     Q_DECLARE_PUBLIC(QMediaObject)

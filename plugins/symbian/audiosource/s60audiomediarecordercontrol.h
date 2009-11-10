@@ -39,48 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPMETADATA_H
-#define QWMPMETADATA_H
+#ifndef S60AUDIOMEDIARECORDERCONTROL_H
+#define S60AUDIOMEDIARECORDERCONTROL_H
 
-#include <multimedia/qmetadatacontrol.h>
-#include <multimedia/qmediaresource.h>
+#include <QtCore/qobject.h>
 
-#include <wmp.h>
+#include <multimedia/qmediarecorder.h>
+#include <multimedia/qmediarecordercontrol.h>
 
-class QMediaContent;
-class QWmpEvents;
+class S60AudioCaptureSession;
 
-class QWmpMetaData : public QMetaDataControl
+class S60AudioMediaRecorderControl : public QMediaRecorderControl
 {
     Q_OBJECT
 public:
-    QWmpMetaData(IWMPCore3 *player, QWmpEvents *events, QObject *parent = 0);
-    ~QWmpMetaData();
+    S60AudioMediaRecorderControl(QObject *parent = 0);
+    ~S60AudioMediaRecorderControl();
 
-    bool isMetaDataAvailable() const;
-    bool isWritable() const;
+    QUrl outputLocation() const;
+    bool setOutputLocation(const QUrl &sink);
 
-    QVariant metaData(QtMedia::MetaData key) const;
-    void setMetaData(QtMedia::MetaData key, const QVariant &value);
-    QList<QtMedia::MetaData> availableMetaData() const;
+    QMediaRecorder::State state() const;
 
-    QVariant extendedMetaData(const QString &key) const ;
-    void setExtendedMetaData(const QString &key, const QVariant &value);
-    QStringList availableExtendedMetaData() const;
+    qint64 duration() const;
 
-    static QStringList keys(IWMPMedia *media);
-    static QVariant value(IWMPMedia *media, BSTR key);
-    static void setValue(IWMPMedia *media, BSTR key, const QVariant &value);
-    static QMediaContent resources(IWMPMedia *media);
-    static QVariant convertVariant(const VARIANT &variant);
-    static QVariant albumArtUri(IWMPMedia *media, const char *suffix);
+    void applySettings() {}
 
-private Q_SLOTS:
-    void currentItemChangeEvent(IDispatch *dispatch);
-    void mediaChangeEvent(IDispatch *dispatch);
+public slots:
+    void record();
+    void pause();
+    void stop();
 
 private:
-    IWMPMedia *m_media;
+    S60AudioCaptureSession* m_session;
 };
 
 #endif

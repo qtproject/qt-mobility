@@ -39,48 +39,58 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPMETADATA_H
-#define QWMPMETADATA_H
+#ifndef AUDIOENCODERCONTROL_H
+#define AUDIOENCODERCONTROL_H
 
-#include <multimedia/qmetadatacontrol.h>
-#include <multimedia/qmediaresource.h>
+#include <multimedia/qaudioencodercontrol.h>
 
-#include <wmp.h>
+#include <QtCore/qstringlist.h>
+#include <QtCore/qmap.h>
 
-class QMediaContent;
-class QWmpEvents;
+#include <multimedia/qaudioformat.h>
 
-class QWmpMetaData : public QMetaDataControl
+class S60AudioCaptureSession;
+
+class S60AudioEncoderControl : public QAudioEncoderControl
 {
     Q_OBJECT
 public:
-    QWmpMetaData(IWMPCore3 *player, QWmpEvents *events, QObject *parent = 0);
-    ~QWmpMetaData();
+    S60AudioEncoderControl(QObject *parent);
+    virtual ~S60AudioEncoderControl();
 
-    bool isMetaDataAvailable() const;
-    bool isWritable() const;
+    QStringList supportedAudioCodecs() const;
+    QString audioCodec() const;
+    bool setAudioCodec(const QString &codecName);
 
-    QVariant metaData(QtMedia::MetaData key) const;
-    void setMetaData(QtMedia::MetaData key, const QVariant &value);
-    QList<QtMedia::MetaData> availableMetaData() const;
+    QString codecDescription(const QString &codecName) const;
 
-    QVariant extendedMetaData(const QString &key) const ;
-    void setExtendedMetaData(const QString &key, const QVariant &value);
-    QStringList availableExtendedMetaData() const;
+    int bitrate() const;
+    void setBitrate(int);
 
-    static QStringList keys(IWMPMedia *media);
-    static QVariant value(IWMPMedia *media, BSTR key);
-    static void setValue(IWMPMedia *media, BSTR key, const QVariant &value);
-    static QMediaContent resources(IWMPMedia *media);
-    static QVariant convertVariant(const VARIANT &variant);
-    static QVariant albumArtUri(IWMPMedia *media, const char *suffix);
+    QtMedia::EncodingQuality quality() const;
+    void setQuality(QtMedia::EncodingQuality);
 
-private Q_SLOTS:
-    void currentItemChangeEvent(IDispatch *dispatch);
-    void mediaChangeEvent(IDispatch *dispatch);
+    QStringList supportedEncodingOptions(const QString &codec) const;
+    QVariant encodingOption(const QString &codec, const QString &name) const;
+    void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
+
+    int sampleRate() const;
+    void setSampleRate(int sampleRate);
+    QList<int> supportedSampleRates() const;
+
+    int channels() const;
+    void setChannels(int channels);
+    QList<int> supportedChannelCounts() const;
+
+    int sampleSize() const;
+    void setSampleSize(int sampleSize);
+    QList<int> supportedSampleSizes() const;
+
+    QAudioEncoderSettings audioSettings() const;
+    void setAudioSettings(const QAudioEncoderSettings&);
 
 private:
-    IWMPMedia *m_media;
+    S60AudioCaptureSession* m_session;
 };
 
 #endif

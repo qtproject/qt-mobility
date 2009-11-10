@@ -96,7 +96,7 @@
 
 class QMediaRecorderPrivate : public QMediaObjectPrivate
 {
-    Q_DECLARE_PUBLIC(QMediaRecorder)
+    Q_DECLARE_NON_CONST_PUBLIC(QMediaRecorder)
 
 public:
     QMediaRecorderPrivate();

@@ -60,9 +60,11 @@ public:
 
     virtual QVariant metaData(QtMedia::MetaData key) const = 0;
     virtual void setMetaData(QtMedia::MetaData key, const QVariant &value) = 0;
+    virtual QList<QtMedia::MetaData> availableMetaData() const = 0;
 
     virtual QVariant extendedMetaData(const QString &key) const = 0;
     virtual void setExtendedMetaData(const QString &key, const QVariant &value) = 0;
+    virtual QStringList availableExtendedMetaData() const = 0;
 
 
 Q_SIGNALS:
