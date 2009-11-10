@@ -80,6 +80,10 @@ void S60VideoMetaDataProvider::setMetaData(QtMedia::MetaData key, QVariant const
     Q_UNUSED(key);
     Q_UNUSED(value);
 }
+QList<QtMedia::MetaData> S60VideoMetaDataProvider::availableMetaData() const
+{
+
+}
 
 QVariant S60VideoMetaDataProvider::extendedMetaData(const QString &key) const
 {
@@ -96,4 +100,9 @@ void S60VideoMetaDataProvider::setExtendedMetaData(const QString &key, QVariant 
 void S60VideoMetaDataProvider::updateTags()
 {
     emit metaDataChanged();
+}
+
+QStringList S60VideoMetaDataProvider::availableExtendedMetaData() const
+{
+
 }
