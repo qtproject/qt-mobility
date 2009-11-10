@@ -46,6 +46,11 @@
 #include <QVariant>
 #include "qserviceglobal.h"
 
+#ifdef SERVICE_XML_GENERATOR
+#undef Q_SFW_EXPORT
+#define Q_SFW_EXPORT
+#endif
+
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
