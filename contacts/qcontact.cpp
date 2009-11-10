@@ -597,7 +597,10 @@ QList<QContactActionDescriptor> QContact::availableActions(const QString& vendor
         QContactActionDescriptor currDescriptor = descriptors.at(i);
         QContactAction *currImpl = QContactManagerData::action(currDescriptor);
         if (QContactManagerEngine::testFilter(currImpl->contactFilter(), *this)) {
-            retn.insert(currDescriptor);
+            if ((vendorName.isEmpty() || currDescriptor.vendorName() == vendorName) &&
+                    (implementationVersion == -1 || currDescriptor.implementationVersion() == implementationVersion)) {
+                retn.insert(currDescriptor);
+            }
         }
 
         // clean up the implementation to avoid leak.
