@@ -140,7 +140,7 @@ QContactFilter::QContactFilter(QContactFilterPrivate *d)
 }
 
 /*! Intersects the \a left and \a right filters */
-const QContactFilter operator&&(const QContactFilter& left, const QContactFilter& right)
+const QContactFilter operator&(const QContactFilter& left, const QContactFilter& right)
 {
     // XXX TODO: empty intersection/union operations are not well defined yet.
     //if (left.type() == QContactFilter::Intersection) {
@@ -164,7 +164,7 @@ const QContactFilter operator&&(const QContactFilter& left, const QContactFilter
 }
 
 /*! Unions the \a left and \a right filters */
-const QContactFilter operator||(const QContactFilter& left, const QContactFilter& right)
+const QContactFilter operator|(const QContactFilter& left, const QContactFilter& right)
 {
     if (left.type() == QContactFilter::UnionFilter) {
         QContactUnionFilter bf(left);

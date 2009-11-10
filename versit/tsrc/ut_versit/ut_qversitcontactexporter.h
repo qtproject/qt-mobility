@@ -62,7 +62,7 @@ private slots:
     void cleanupTestCase();
     
     void testConvertContact();
-    void testUnconvertedContactDetails();
+    void testUnknownContactDetails();
     void testEncodeName();
     void testEncodePhoneNumber();
     void testEncodeEmailAddress();
@@ -90,8 +90,8 @@ private slots:
 
     
 private: // Data
-    QVersitContactExporter* mConverter;
-    QVersitContactExporterPrivate* mConverterPrivate;
+    QVersitContactExporter* mExporter;
+    QVersitContactExporterPrivate* mExporterPrivate;
     QString mTestPhotoFile;
     QString mTestAudioFile;
     bool mScaleSignalEmitted;

@@ -118,13 +118,13 @@ QVersitContactExporterPrivate::~QVersitContactExporterPrivate()
 
 
 /*!
- * Convert Contact into Versit Document.
+ * Export QT Contact into Versit Document.
  */
 void QVersitContactExporterPrivate::exportContact(
     QVersitDocument& versitDocument,
     const QContact& contact)
 {
-    mUnconvertedContactDetails.clear();
+    mUnknownContactDetails.clear();
     mVersitType = versitDocument.versitType();
     QList<QContactDetail> allDetails = contact.details();
     for (int i = 0; i < allDetails.size(); i++) {
@@ -159,7 +159,7 @@ void QVersitContactExporterPrivate::exportContact(
         } else if (detail.definitionName() == QContactAvatar::DefinitionName){
             addProperty = encodeAvatar(property, detail);
             if (!addProperty)
-                mUnconvertedContactDetails.append(detail);
+                mUnknownContactDetails.append(detail);
         } else if (detail.definitionName() == QContactAnniversary::DefinitionName) {
             encodeAnniversary(property, detail);
         } else if (detail.definitionName() == QContactNickname::DefinitionName) {
@@ -170,16 +170,16 @@ void QVersitContactExporterPrivate::exportContact(
         } else if (detail.definitionName() == QContactOnlineAccount::DefinitionName) {
             addProperty = encodeOnlineAccount(property, detail);
             if (!addProperty)
-                mUnconvertedContactDetails.append(detail);
+                mUnknownContactDetails.append(detail);
         } else if (detail.definitionName() == QContactFamily::DefinitionName) {
             addProperty = encodeFamily(versitDocument, detail);
         } else if (detail.definitionName() == QContactDisplayLabel::DefinitionName) {
             addProperty = encodeDisplayLabel(property, detail, contact);
             if (!addProperty)
-                mUnconvertedContactDetails.append(detail);
+                mUnknownContactDetails.append(detail);
         } else {
             addProperty = false;
-            mUnconvertedContactDetails.append(detail);
+            mUnknownContactDetails.append(detail);
         }
 
         if (addProperty)
@@ -205,7 +205,7 @@ void QVersitContactExporterPrivate::encodeName(
 }
 
 /*!
- * Encode Phone Numer Field Information into the Versit Document 
+ * Encode Phone Number Field Information into the Versit Document
  */
 void QVersitContactExporterPrivate::encodePhoneNumber(
     QVersitProperty& property,
@@ -347,7 +347,7 @@ void QVersitContactExporterPrivate::encodeGeoLocation(
 }
 
 /*!
- * Encode all the organization properties to the versit document
+ * Encode organization properties to the versit document
  */
 void QVersitContactExporterPrivate::encodeOrganization(
      QVersitDocument& document,
@@ -363,9 +363,14 @@ void QVersitContactExporterPrivate::encodeOrganization(
     if (organization.name().length() > 0 || organization.department().length() > 0) {
         QVersitProperty property;
         property.setName(QString::fromAscii("ORG"));
-        QByteArray value =
-            escape(organization.name().toAscii()) + ";" +
-            escape(organization.department().toAscii());
+        QByteArray value = escape(organization.name().toAscii());
+        QStringList departments(organization.department());
+        if (departments.count() == 0)
+            value += ";";
+        foreach (QString department, departments) {
+            value += ";";
+            value += escape(department.toAscii());
+        }
         property.setValue(value);
         document.addProperty(property);
     }
@@ -385,7 +390,7 @@ void QVersitContactExporterPrivate::encodeOrganization(
 }
 
 /*!
- * Encode avatar Content into the Versit Document
+ * Encode avatar content into the Versit Document
  */
 bool QVersitContactExporterPrivate::encodeAvatar(
     QVersitProperty& property,
@@ -474,8 +479,8 @@ bool QVersitContactExporterPrivate::encodeOnlineAccount(
     QStringList subTypes = onlineAccount.subTypes();
 
     if (subTypes.contains(QContactOnlineAccount::SubTypeSip) ||
-        subTypes.contains(QContactOnlineAccount::SubTypeInternet) ||
-        subTypes.contains(QContactOnlineAccount::SubTypeShareVideo)) {
+        subTypes.contains(QContactOnlineAccount::SubTypeSipVoip) ||
+        subTypes.contains(QContactOnlineAccount::SubTypeVideoShare)) {
         encoded = true;
         encodeParameters(property, onlineAccount.contexts(), subTypes);
         property.setName(QString::fromAscii("X-SIP"));

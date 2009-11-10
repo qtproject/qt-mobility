@@ -45,6 +45,7 @@
 #include "qcontactfilter.h"
 
 /*!
+ * \deprecated
  * \class QContactManagerInfo
  *
  * \brief The QContactManagerInfo class provides information about a particular QContactManager.
@@ -56,6 +57,8 @@
  *
  * If the manager that provided an information object is subsequently destroyed, the
  * returned QContactManagerInfo object will be invalid.
+ *
+ * THIS CLASS IS DEPRECATED AND WILL BE REMOVED IN WEEK 47 - see commit SHA1: 948704fe9b83ef164f0c816897f67ef34654e510
  *
  * \sa QContactManager
  */
@@ -81,14 +84,17 @@ QContactManagerInfo::~QContactManagerInfo()
 /*! \internal */
 QContactManagerInfo::QContactManagerInfo()
 {
+    qWarning("This class is deprecated!  Please use QContactManager for reporting instead!  See commit SHA1: 948704fe9b83ef164f0c816897f67ef34654e510");
 }
 
 /*!
  * Returns true if the given \a feature is supported by the manager from whom this information object was received.
  */
-bool QContactManagerInfo::hasFeature(QContactManagerInfo::ManagerFeature feature) const
+bool QContactManagerInfo::hasFeature(QContactManagerInfo::ManagerFeature feature, const QString& contactType) const
 {
-    return d->m_engine->hasFeature(feature);
+    qWarning("This class is deprecated!  Please use QContactManager for reporting instead!  See commit SHA1: 948704fe9b83ef164f0c816897f67ef34654e510");
+    QContactManager::ManagerFeature managerFeature = (QContactManager::ManagerFeature)feature;
+    return d->m_engine->hasFeature(managerFeature, contactType);
 }
 
 /*!
@@ -97,6 +103,7 @@ bool QContactManagerInfo::hasFeature(QContactManagerInfo::ManagerFeature feature
  */
 QList<QVariant::Type> QContactManagerInfo::supportedDataTypes() const
 {
+    qWarning("This class is deprecated!  Please use QContactManager for reporting instead!  See commit SHA1: 948704fe9b83ef164f0c816897f67ef34654e510");
     return d->m_engine->supportedDataTypes();
 }
 
@@ -111,6 +118,7 @@ QList<QVariant::Type> QContactManagerInfo::supportedDataTypes() const
  */
 bool QContactManagerInfo::filterSupported(const QContactFilter& filter) const
 {
+    qWarning("This class is deprecated!  Please use QContactManager for reporting instead!  See commit SHA1: 948704fe9b83ef164f0c816897f67ef34654e510");
     return d->m_engine->filterSupported(filter);
 }
 
@@ -122,7 +130,8 @@ bool QContactManagerInfo::filterSupported(const QContactFilter& filter) const
  * contain the natively supported (well-known) relationship types contained in the list, but clients
  * are able to add relationships of any custom type also.
  */
-QStringList QContactManagerInfo::supportedRelationshipTypes() const
+QStringList QContactManagerInfo::supportedRelationshipTypes(const QString& contactType) const
 {
-    return d->m_engine->supportedRelationshipTypes();
+    qWarning("This class is deprecated!  Please use QContactManager for reporting instead!  See commit SHA1: 948704fe9b83ef164f0c816897f67ef34654e510");
+    return d->m_engine->supportedRelationshipTypes(contactType);
 }

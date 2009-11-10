@@ -215,11 +215,16 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
         QVERIFY2(mWriter->writeAll(),in.fileName().toAscii().constData());
     }
     
-    // Compare the input and output
-    in.seek(0);
-    out.seek(0);    
-    VCardComparator comparator(in,out,*mExcludedFields);
-    QCOMPARE(QString(),comparator.nonMatchingLines());
+    // if performance test, assume in and out will be same
+    // or otherwise only successful tests were run in performance benchmarking.
+    if( !mPerformanceTest ){
+        // Compare the input and output
+        in.seek(0);
+        out.seek(0);
+        VCardComparator comparator(in,out,*mExcludedFields);
+        QCOMPARE(QString(),comparator.nonMatchingLines());
+    }
+
 }
 
 

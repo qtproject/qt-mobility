@@ -43,6 +43,7 @@
 #ifndef QCONTACTPRESENCE_H
 #define QCONTACTPRESENCE_H
 
+#include <QtDebug>
 #include <QString>
 
 #include "qtcontactsglobal.h"
@@ -81,14 +82,14 @@ public:
     Q_DECLARE_LATIN1_LITERAL(PresenceOffline, "Offline");
 #endif
 
-    void setAccountUri(const QString& accountUri) {setValue(FieldAccountUri, accountUri);}
-    QString accountUri() const {return value(FieldAccountUri);}
-    void setNickname(const QString& nickname) {setValue(FieldNickname, nickname);}
-    QString nickname() const {return value(FieldNickname);}
-    void setPresence(const QString& presence) {setValue(FieldPresence, presence);}
-    QString presence() const {return value(FieldPresence);}
-    void setStatusMessage(const QString& statusMessage) {setValue(FieldStatusMessage, statusMessage);}
-    QString statusMessage() const {return value(FieldStatusMessage);}
+    void setAccountUri(const QString& accountUri) {qWarning("This class has been deprecated!  Please use QContactOnlineAccount and Read-Only Field Constraints!"); setValue(FieldAccountUri, accountUri);}
+    QString accountUri() const {qWarning("This class has been deprecated!  Please use QContactOnlineAccount and Read-Only Field Constraints!"); return value(FieldAccountUri);}
+    void setNickname(const QString& nickname) {qWarning("This class has been deprecated!  Please use QContactOnlineAccount and Read-Only Field Constraints!"); setValue(FieldNickname, nickname);}
+    QString nickname() const {qWarning("This class has been deprecated!  Please use QContactOnlineAccount and Read-Only Field Constraints!"); return value(FieldNickname);}
+    void setPresence(const QString& presence) {qWarning("This class has been deprecated!  Please use QContactOnlineAccount and Read-Only Field Constraints!"); setValue(FieldPresence, presence);}
+    QString presence() const {qWarning("This class has been deprecated!  Please use QContactOnlineAccount and Read-Only Field Constraints!"); return value(FieldPresence);}
+    void setStatusMessage(const QString& statusMessage) {qWarning("This class has been deprecated!  Please use QContactOnlineAccount and Read-Only Field Constraints!"); setValue(FieldStatusMessage, statusMessage);}
+    QString statusMessage() const {qWarning("This class has been deprecated!  Please use QContactOnlineAccount and Read-Only Field Constraints!"); return value(FieldStatusMessage);}
 };
 
 #endif

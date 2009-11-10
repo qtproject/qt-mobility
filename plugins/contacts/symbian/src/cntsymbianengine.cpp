@@ -74,23 +74,8 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
 
     error = QContactManager::NoError;
 
-    d = new CntSymbianEnginePrivate(parameters, error);
+    d = new CntSymbianEnginePrivate(this, parameters, error);
 
-    // Connect database observer events appropriately.
-    connect(d, SIGNAL(contactAdded(QContactLocalId)),
-        this, SLOT(eventContactAdded(QContactLocalId)));
-
-    connect(d, SIGNAL(contactRemoved(QContactLocalId)),
-        this, SLOT(eventContactRemoved(QContactLocalId)));
-
-    connect(d, SIGNAL(contactChanged(QContactLocalId)),
-        this, SLOT(eventContactChanged(QContactLocalId)));
-
-    connect(d, SIGNAL(relationshipAdded(QContactLocalId)),
-        this, SLOT(eventRelationshipRemoved(QContactLocalId)));
-
-    connect(d, SIGNAL(relationshipRemoved(QContactLocalId)),
-        this, SLOT(eventRelationshipRemoved(QContactLocalId)));
 }
 
 CntSymbianEngine::CntSymbianEngine(const CntSymbianEngine& other)
@@ -290,6 +275,26 @@ QList<QContactLocalId> CntSymbianEngine::slowSort(
 bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error)
 {
     bool ret = false;
+    
+    // If contact has GUid and no local Id, try to find it in database
+    if (contact && !contact->localId() && 
+        contact->details(QContactGuid::DefinitionName).count() > 0) {
+        QContactDetailFilter guidFilter;
+        guidFilter.setDetailDefinitionName(QContactGuid::DefinitionName, QContactGuid::FieldGuid); 
+        QContactGuid guidDetail = static_cast<QContactGuid>(contact->details(QContactGuid::DefinitionName).at(0));
+        guidFilter.setValue(guidDetail.guid());
+        
+        QContactManager::Error err;
+        QList<QContactLocalId> localIdList = contacts(guidFilter,
+                QList<QContactSortOrder>(), err);
+        if (err == QContactManager::NoError && localIdList.count() > 0) {
+            QScopedPointer<QContactId> contactId(new QContactId());
+            contactId->setLocalId(localIdList.at(0));
+            contactId->setManagerUri(managerUri());
+            contact->setId(*contactId);
+        }
+    }
+    
     // Check parameters
     if(!contact) {
         error = QContactManager::BadArgumentError;
@@ -317,10 +322,10 @@ void CntSymbianEngine::updateDisplayLabel(QContact& contact) const
 {
     QContactManager::Error error(QContactManager::NoError);
     QContactDisplayLabel label = contact.displayLabel();
-    QString labelString = synthesiseDisplayLabel(contact, error);
+    QString labelString = synthesizeDisplayLabel(contact, error);
     if(error == QContactManager::NoError) {
         label.setLabel(labelString);
-        label.setSynthesised(true);
+        label.setSynthesized(true);
         contact.setDisplayLabel(label);
     }
 }
@@ -424,8 +429,14 @@ QList<QContactManager::Error> CntSymbianEngine::removeRelationships(const QList<
     return returnValue;
 }
 
-QMap<QString, QContactDetailDefinition> CntSymbianEngine::detailDefinitions(QContactManager::Error& error) const
+QMap<QString, QContactDetailDefinition> CntSymbianEngine::detailDefinitions(const QString& contactType, QContactManager::Error& error) const
 {
+    // TODO: update for SIM contacts later
+    if (contactType != QContactType::TypeContact && contactType != QContactType::TypeGroup) {
+        error = QContactManager::InvalidContactTypeError;
+        return QMap<QString, QContactDetailDefinition>();
+    }
+
     error = QContactManager::NoError;
 
     // Get the supported detail definitions from the contact transformer
@@ -436,27 +447,31 @@ QMap<QString, QContactDetailDefinition> CntSymbianEngine::detailDefinitions(QCon
     return defMap;
 }
 
-bool CntSymbianEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
+bool CntSymbianEngine::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const
 {
     bool returnValue(false);
-    
+
+    // TODO: update for SIM contacts later
+    if (contactType != QContactType::TypeContact && contactType != QContactType::TypeGroup)
+        return false;
+
     switch (feature) {
-        /* TODO: case QContactManagerInfo::Groups to be implemented.
+        /* TODO: case QContactManager::Groups to be implemented.
            How about the others? like:
-           QContactManagerInfo::ActionPreferences,
-           QContactManagerInfo::MutableDefinitions,
-           QContactManagerInfo::Anonymous? */
-    case QContactManagerInfo::Groups:
-    case QContactManagerInfo::Relationships:
-    case QContactManagerInfo::SelfContact: {
+           QContactManager::ActionPreferences,
+           QContactManager::MutableDefinitions,
+           QContactManager::Anonymous? */
+    case QContactManager::Groups:
+    case QContactManager::Relationships:
+    case QContactManager::SelfContact: {
         returnValue = true;
         break;
     }
-    
+
     default:
         returnValue = false;
     }
-    
+
     return returnValue;
 }
 
@@ -477,7 +492,7 @@ bool CntSymbianEngine::filterSupported(const QContactFilter& filter) const
 }
 
 /* Synthesise the display label of a contact */
-QString CntSymbianEngine::synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& /*error*/) const
+QString CntSymbianEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& /*error*/) const
 {
     QContactName name = contact.detail<QContactName>();
     QContactOrganization org = contact.detail<QContactOrganization>();
@@ -521,71 +536,6 @@ QList<QVariant::Type> CntSymbianEngine::supportedDataTypes() const
     st.append(QVariant::String);
 
     return st;
-}
-
-/*!
- * Private slot to receive events about added entries.
- *
- * \param contactId The new contact's ID.
- */
-void CntSymbianEngine::eventContactAdded(const QContactLocalId &contactId)
-{
-    QList<QContactLocalId> contactList;
-	contactList.append(contactId);
-
-	emit contactsAdded(contactList);
-}
-
-/*!
- * Private slot to receive events about deleted entries.
- *
- * \param contactId ID for the deleted contact item.
- */
-void CntSymbianEngine::eventContactRemoved(const QContactLocalId &contactId)
-{
-    QList<QContactLocalId> contactList;
-	contactList.append(contactId);
-
-	emit contactsRemoved(contactList);
-}
-
-/*!
- * Private slot to receive events about modified contact items.
- *
- * \param ID for the contact entry with modified data.
- */
-void CntSymbianEngine::eventContactChanged(const QContactLocalId &contactId)
-{
-    QList<QContactLocalId> contactList;
-	contactList.append(contactId);
-
-	emit contactsChanged(contactList);
-}
-
-/*!
- * Private slot to receive events about added relationships.
- *
- * \param contactId the added contact
- */
-void CntSymbianEngine::eventRelationshipAdded(const QContactLocalId &contactId)
-{
-    QList<QContactLocalId> contactList;
-    contactList.append(contactId);
-
-    emit relationshipsAdded(contactList);
-}
-
-/*!
- * Private slot to receive events about removed relationships.
- *
- * \param contactId the modified contact from relationship
- */
-void CntSymbianEngine::eventRelationshipRemoved(const QContactLocalId &contactId)
-{
-    QList<QContactLocalId> contactList;
-    contactList.append(contactId);
-
-    emit relationshipsRemoved(contactList);
 }
 
 QString CntSymbianEngine::managerName() const

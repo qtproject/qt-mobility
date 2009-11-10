@@ -99,28 +99,21 @@ public:
     QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
 
     /* Definitions */
-    QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
+    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
 
     /* Capabilities reporting */
-    bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
+    bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
     bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
-    /* Synthesise the display label of a contact */
-    QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    /* Synthesize the display label of a contact */
+    QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 
     /* "Self" contact id (MyCard) */
     bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error);
     QContactLocalId selfContactId(QContactManager::Error& error) const;
 
     QString managerName() const;
-
-private slots:
-        void eventContactAdded(const QContactLocalId &contactId);
-        void eventContactRemoved(const QContactLocalId &contactId);
-        void eventContactChanged(const QContactLocalId &contactId);
-        void eventRelationshipAdded(const QContactLocalId &contactId);
-        void eventRelationshipRemoved(const QContactLocalId &contactId);
         
 private:
     QList<QContactLocalId> slowFilter(const QContactFilter& filter, const QList<QContactLocalId>& contacts, QContactManager::Error& error) const;

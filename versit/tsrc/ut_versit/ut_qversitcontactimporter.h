@@ -65,7 +65,11 @@ private slots: // Tests
     void testEmail();
     void testUrl();
     void testUid();
-    void testOrganization();
+    void testOrganizationName();
+    void testOrganizationTitle();
+    void testOrganizationLogo();
+    void testOrganizationAssistant();
+    void testOrganizationRole();
     void testTimeStamp();
     void testAnniversary();
     void testBirthday();
@@ -83,17 +87,21 @@ private slots: // Tests
     void testFamily();
     void testSound();
     void testDisplayLabel();
-    void testUnconvertedVersitProperties();
+    void testUnknownVersitProperties();
 
-private: 
+private: // Utilities
     
     QVersitDocument createDocumentWithProperty(const QVersitProperty& property);
-    QVersitDocument createDocumentWithNameAndPhoto(const QByteArray& name, QByteArray image,
-                                                   const QString& photoType, const QString& encoding);
+
+    QVersitDocument createDocumentWithNameAndPhoto(
+        const QByteArray& name,
+        QByteArray image,
+        const QString& photoType,
+        const QString& encoding);
 
 private:
-    QVersitContactImporter* mGenerator;
-    QVersitContactImporterPrivate* mGeneratorPrivate;
+    QVersitContactImporter* mImporter;
+    QVersitContactImporterPrivate* mImporterPrivate;
 };
 
 #endif // UT_QVERSITCONTACTIMPORTER_H

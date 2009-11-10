@@ -210,7 +210,7 @@ quint32 CntTransformName::getIdForField(const QString& fieldName) const
         return KUidContactFieldFamilyName.iUid;
     else if (QContactName::FieldSuffix == fieldName)
         return KUidContactFieldSuffixName.iUid;
-    else 
+    else
         return 0;
 }
 
@@ -221,14 +221,14 @@ quint32 CntTransformName::getIdForField(const QString& fieldName) const
  */
 void CntTransformName::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
     QContactDetailDefinition d;
 
     // name
     d.setName(QContactName::DefinitionName);
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
     fields.insert(QContactName::FieldPrefix, f);
     fields.insert(QContactName::FieldFirst, f);
     fields.insert(QContactName::FieldMiddle, f);

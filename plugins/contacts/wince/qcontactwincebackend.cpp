@@ -306,56 +306,56 @@ bool QContactWinCEEngine::removeContact(const QContactLocalId& contactId, QConta
     return false;
 }
 
-QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(QContactManager::Error& error) const
+QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(const QString& contactType, QContactManager::Error& error) const
 {
     error = QContactManager::NoError;
-    QMap<QString, QContactDetailDefinition> defns = QContactManagerEngine::schemaDefinitions();
+    QMap<QString, QMap<QString, QContactDetailDefinition> > defns = QContactManagerEngine::schemaDefinitions();
 
     // Remove the details we don't support
-    defns.remove(QContactSyncTarget::DefinitionName);
-    defns.remove(QContactPresence::DefinitionName);
-    defns.remove(QContactGeolocation::DefinitionName);
-    defns.remove(QContactTimestamp::DefinitionName);
-    defns.remove(QContactGuid::DefinitionName);
-    defns.remove(QContactGender::DefinitionName); // ? Surprising
+    defns[contactType].remove(QContactSyncTarget::DefinitionName);
+    defns[contactType].remove(QContactPresence::DefinitionName);
+    defns[contactType].remove(QContactGeolocation::DefinitionName);
+    defns[contactType].remove(QContactTimestamp::DefinitionName);
+    defns[contactType].remove(QContactGuid::DefinitionName);
+    defns[contactType].remove(QContactGender::DefinitionName); // ? Surprising
 
     // Remove the fields we don't support
 
     // Simple anniversarys
-    defns[QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldCalendarId);
-    defns[QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldEvent);
-    defns[QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldSubType);
+    defns[contactType][QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldCalendarId);
+    defns[contactType][QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldEvent);
+    defns[contactType][QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldSubType);
 
     // No logo for organisation
-    defns[QContactOrganization::DefinitionName].fields().remove(QContactOrganization::FieldLogo);
+    defns[contactType][QContactOrganization::DefinitionName].fields().remove(QContactOrganization::FieldLogo);
 
     // No subtypes for these details
-    defns[QContactAddress::DefinitionName].fields().remove(QContactAddress::FieldSubTypes);
-    defns[QContactUrl::DefinitionName].fields().remove(QContactUrl::FieldSubType);
-    defns[QContactAvatar::DefinitionName].fields().remove(QContactAvatar::FieldSubType);
+    defns[contactType][QContactAddress::DefinitionName].fields().remove(QContactAddress::FieldSubTypes);
+    defns[contactType][QContactUrl::DefinitionName].fields().remove(QContactUrl::FieldSubType);
+    defns[contactType][QContactAvatar::DefinitionName].fields().remove(QContactAvatar::FieldSubType);
 
     // No contexts for these details
-    defns[QContactAvatar::DefinitionName].fields().remove(QContactDetail::FieldContext);
-    defns[QContactAnniversary::DefinitionName].fields().remove(QContactDetail::FieldContext);
-    defns[QContactBirthday::DefinitionName].fields().remove(QContactDetail::FieldContext);
-    defns[QContactName::DefinitionName].fields().remove(QContactDetail::FieldContext);
-    defns[QContactNickname::DefinitionName].fields().remove(QContactDetail::FieldContext);
-    defns[QContactOrganization::DefinitionName].fields().remove(QContactDetail::FieldContext);
-    defns[QContactUrl::DefinitionName].fields().remove(QContactDetail::FieldContext);
+    defns[contactType][QContactAvatar::DefinitionName].fields().remove(QContactDetail::FieldContext);
+    defns[contactType][QContactAnniversary::DefinitionName].fields().remove(QContactDetail::FieldContext);
+    defns[contactType][QContactBirthday::DefinitionName].fields().remove(QContactDetail::FieldContext);
+    defns[contactType][QContactName::DefinitionName].fields().remove(QContactDetail::FieldContext);
+    defns[contactType][QContactNickname::DefinitionName].fields().remove(QContactDetail::FieldContext);
+    defns[contactType][QContactOrganization::DefinitionName].fields().remove(QContactDetail::FieldContext);
+    defns[contactType][QContactUrl::DefinitionName].fields().remove(QContactDetail::FieldContext);
 
     // Simple phone number types (non multiple)
     // defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].dataType = QVariant::String; // XXX doesn't work
-    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeBulletinBoardSystem)));
-    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeLandline)));
-    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeMessagingCapable)));
-    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeModem)));
-    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeVideo)));
+    defns[contactType][QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeBulletinBoardSystem)));
+    defns[contactType][QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeLandline)));
+    defns[contactType][QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeMessagingCapable)));
+    defns[contactType][QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeModem)));
+    defns[contactType][QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeVideo)));
 
     // XXX temporary definitions that we should support but don't yet.
-    defns.remove(QContactOnlineAccount::DefinitionName);
-    defns.remove(QContactAvatar::DefinitionName);
+    defns[contactType].remove(QContactOnlineAccount::DefinitionName);
+    defns[contactType].remove(QContactAvatar::DefinitionName);
 
-    return defns;
+    return defns[contactType];
 }
 
 
@@ -390,10 +390,10 @@ bool QContactWinCEEngine::waitForRequestFinished(QContactAbstractRequest* req, i
 }
 
 /*! \reimp */
-bool QContactWinCEEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
+bool QContactWinCEEngine::hasFeature(QContactManager::ManagerFeature feature) const
 {
     // The Windows CE backend is an "isolated" backend
-    if (feature == QContactManagerInfo::Anonymous)
+    if (feature == QContactManager::Anonymous)
         return true;
 
     // Windows CE backend does not support Mutable Definitions, Relationships or Action Preferences
@@ -401,7 +401,7 @@ bool QContactWinCEEngine::hasFeature(QContactManagerInfo::ManagerFeature feature
 }
 
 /* Synthesise the display label of a contact */
-QString QContactWinCEEngine::synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString QContactWinCEEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
     Q_UNUSED(error)
     // The POOM API (well, lack thereof) makes this a bit strange.

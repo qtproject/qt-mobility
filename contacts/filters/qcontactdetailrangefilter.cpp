@@ -91,7 +91,7 @@ void QContactDetailRangeFilter::setRange(const QVariant& min, const QVariant& ma
  * Sets the match flags of the filter criterion to \a flags
  * \sa matchFlags()
  */
-void QContactDetailRangeFilter::setMatchFlags(Qt::MatchFlags flags)
+void QContactDetailRangeFilter::setMatchFlags(QContactFilter::MatchFlags flags)
 {
     Q_D(QContactDetailRangeFilter);
     d->m_flags = flags;
@@ -113,7 +113,7 @@ void QContactDetailRangeFilter::setDetailDefinitionName(const QString& definitio
  * Returns the match flags of the criterion, which define semantics such as case sensitivity, prefix matching, exact matching, etc.
  * \sa setMatchFlags()
  */
-Qt::MatchFlags QContactDetailRangeFilter::matchFlags() const
+QContactFilter::MatchFlags QContactDetailRangeFilter::matchFlags() const
 {
     Q_D(const QContactDetailRangeFilter);
     return d->m_flags;

@@ -167,6 +167,7 @@ public:
         return QContactAbstractRequest::DetailDefinitionFetchRequest;
     }
 
+    QString m_contactType;
     QStringList m_names;
     QMap<QString, QContactDetailDefinition> m_definitions;
 };
@@ -188,6 +189,7 @@ public:
         return QContactAbstractRequest::DetailDefinitionSaveRequest;
     }
 
+    QString m_contactType;
     QList<QContactDetailDefinition> m_definitions;
 };
 
@@ -208,6 +210,7 @@ public:
         return QContactAbstractRequest::DetailDefinitionRemoveRequest;
     }
 
+    QString m_contactType;
     QStringList m_names;
 };
 

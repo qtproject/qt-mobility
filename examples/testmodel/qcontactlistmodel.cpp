@@ -407,7 +407,7 @@ QVariant QContactListModel::data(const QModelIndex& index, int role) const
 
             // grab the possible presence values; they should be in order from (unknown) to least present to most present.
             QContactDetailDefinition presenceDef = d->m_manager->detailDefinition(QContactPresence::DefinitionName);
-            QList<QVariant> allowablePresenceValues = presenceDef.fields().value(QContactPresence::FieldPresence).allowableValues;
+            QList<QVariant> allowablePresenceValues = presenceDef.fields().value(QContactPresence::FieldPresence).allowableValues();
             if (presenceDef.isEmpty() || allowablePresenceValues.isEmpty()) {
                 // the manager does not support presence details.
                 break;

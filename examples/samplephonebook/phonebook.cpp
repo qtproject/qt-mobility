@@ -248,11 +248,11 @@ void PhoneBook::populateList(const QContact& currentContact)
             QContactDisplayLabel cdl = contact.detail(QContactDisplayLabel::DefinitionName);
             QContactDisplayLabel sdl = sortedContact.detail(QContactDisplayLabel::DefinitionName);
 
-            // if none set, ask the backend to synthesise them for us.
+            // if none set, ask the backend to synthesize them for us.
             if (cdl.isEmpty())
-                cdl.setLabel(cm->synthesiseDisplayLabel(contact));
+                cdl.setLabel(cm->synthesizeDisplayLabel(contact));
             if (sdl.isEmpty())
-                sdl.setLabel(cm->synthesiseDisplayLabel(sortedContact));
+                sdl.setLabel(cm->synthesizeDisplayLabel(sortedContact));
 
             // compare the display labels, and insert into list.
             if (cdl.label().toLower() < sdl.label().toLower()) {
@@ -526,7 +526,7 @@ void PhoneBook::removeContact()
     QContact current = contacts.at(currentIndex);
     QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionName);
     if (cdl.isEmpty())
-        cdl.setLabel(cm->synthesiseDisplayLabel(current));
+        cdl.setLabel(cm->synthesizeDisplayLabel(current));
     QString contactName = cdl.label();
     int button = QMessageBox::question(this,
         tr("Confirm Remove"),
@@ -578,7 +578,7 @@ void PhoneBook::findContact()
                 QContact current = contacts.at(i);
                 QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionName);
                 if (cdl.isEmpty())
-                    cdl.setLabel(cm->synthesiseDisplayLabel(current));
+                    cdl.setLabel(cm->synthesizeDisplayLabel(current));
                 if (cdl.label() == contactName) {
                     contactsList->setCurrentRow(i);
                     contactSelected(i);
@@ -702,7 +702,7 @@ void PhoneBook::exportAsVCard()
     QContact current = contacts.at(currentIndex);
     QContactDisplayLabel cdl = current.detail(QContactDisplayLabel::DefinitionName);
     if (cdl.isEmpty())
-        cdl.setLabel(cm->synthesiseDisplayLabel(current));
+        cdl.setLabel(cm->synthesizeDisplayLabel(current));
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QMessageBox::information(this, tr("Unable to export"),
             tr("Unable to export contact \"%1\"!").arg(cdl.label()));

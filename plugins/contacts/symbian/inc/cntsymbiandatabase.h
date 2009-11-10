@@ -42,57 +42,46 @@
 #define CNTSRVCONNECTION_H
 
 // System includes
-#include <QObject>
+#include <QList>
 #include <e32std.h>
 #include <cntdb.h>
 #include <cntdbobs.h>
-#include "qcontactmanager.h"
 
 // User includes
+#include "qcontactmanager.h"
 
 // Forward declarations
+class QContactManagerEngine;
 
 // External data types
 
 // Constants
 
-class CntSymbianDatabase : public QObject,
-                           public MContactDbObserver
+class CntSymbianDatabase : public MContactDbObserver
 {
-    Q_OBJECT
-
 public:
-    CntSymbianDatabase(QContactManager::Error& error);
+    CntSymbianDatabase(QContactManagerEngine *engine, QContactManager::Error& error);
     ~CntSymbianDatabase();
     
 public:
-    CContactDatabase* contactdatabase();
+    CContactDatabase* contactDatabase();
+    void appendContactsRemovedEmitted(QList<QContactLocalId> *contactList);
+    void appendContactsAddedEmitted(QList<QContactLocalId> *contactList);
+    void appendContactsChangedEmitted(QList<QContactLocalId> *contactList);
     
 public:
     // From MContactDbObserver
     void HandleDatabaseEventL(TContactDbObserverEvent aEvent);
-    
-/*  Signals to be moved here after CntSymbianEnginePrivate & CntSymbianEngine
- *  are combined
-signals:
-    // Database change notifications
-    void contactAdded(const QContactLocalId &contactId);
-    void contactRemoved(const QContactLocalId &contactId);
-    void contactChanged(const QContactLocalId &contactId);
-    void relationshipAdded(const QContactLocalId &contactId);
-    void relationshipRemoved(const QContactLocalId &contactId);
-*/
-    // Temporary helper functions. To be removed after signals are implemented
-    void observer(MContactDbObserver* observer){m_observer = observer;};
-private:
-    MContactDbObserver* m_observer;
     
 private:
     CContactDatabase* m_contactDatabase;
 #ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
     CContactChangeNotifier* m_contactChangeNotifier;
 #endif
-    
+    QContactManagerEngine *m_engine;
+    QList<QContactLocalId> m_contactsAddedEmitted;
+    QList<QContactLocalId> m_contactsChangedEmitted;
+    QList<QContactLocalId> m_contactsRemovedEmitted;    
 };
 
 
