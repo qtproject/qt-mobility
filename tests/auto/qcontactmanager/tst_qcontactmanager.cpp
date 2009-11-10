@@ -248,6 +248,16 @@ void tst_QContactManager::dumpContactDifferences(const QContact& ca, const QCont
         if (d.definitionName() != QContactDisplayLabel::DefinitionName && d.definitionName() != QContactType::DefinitionName)
             qDebug() << "B contact had extra detail:" << d.definitionName() << d.values();
     }
+
+    // now test specifically the display label and the type
+    if (a.displayLabel() != b.displayLabel()) {
+        qDebug() << "A contact display label =" << a.displayLabel().label() << "," << a.displayLabel().isSynthesized();
+        qDebug() << "B contact display label =" << b.displayLabel().label() << "," << b.displayLabel().isSynthesized();
+    }
+    if (a.type() != b.type()) {
+        qDebug() << "A contact type =" << a.type();
+        qDebug() << "B contact type =" << b.type();
+    }
 }
 
 bool tst_QContactManager::isSuperset(const QContact& ca, const QContact& cb)
