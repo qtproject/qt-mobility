@@ -236,16 +236,16 @@ void tst_QContactManager::dumpContactDifferences(const QContact& ca, const QCont
         }
     }
 
-    // Now dump the extra details that were unmatched in A
+    // Now dump the extra details that were unmatched in A (note that DisplayLabel and Type are always present).
     aDetails = a.details();
     bDetails = b.details();
     foreach(QContactDetail d, aDetails) {
-        if (d.definitionName() != QContactDisplayLabel::DefinitionName)
+        if (d.definitionName() != QContactDisplayLabel::DefinitionName && d.definitionName() != QContactType::DefinitionName)
             qDebug() << "A contact had extra detail:" << d.definitionName() << d.values();
     }
     // and same for B
     foreach(QContactDetail d, bDetails) {
-        if (d.definitionName() != QContactDisplayLabel::DefinitionName)
+        if (d.definitionName() != QContactDisplayLabel::DefinitionName && d.definitionName() != QContactType::DefinitionName)
             qDebug() << "B contact had extra detail:" << d.definitionName() << d.values();
     }
 }
