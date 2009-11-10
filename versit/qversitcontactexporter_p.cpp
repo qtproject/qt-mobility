@@ -387,6 +387,13 @@ void QVersitContactExporterPrivate::encodeOrganization(
         setEscapedValue(property,organization.assistantName());
         document.addProperty(property);
     }
+
+    if (organization.role().length() > 0) {
+        QVersitProperty property;
+        property.setName(QString::fromAscii("ROLE"));
+        setEscapedValue(property,organization.role());
+        document.addProperty(property);
+    }
 }
 
 /*!

@@ -584,7 +584,6 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     QString value = QString::fromAscii(versitDocument.properties().at(0).value().data() );
     QCOMPARE(value, url);
 
-
     // ORG LOGO Test2: LOGO File.
     contact = QContact();
     organization = QContactOrganization();
@@ -606,7 +605,6 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     QString value1 = QString::fromAscii(versitDocument.properties().at(0).value().data());
     QEXPECT_FAIL(value1.toAscii(), url.toAscii(), Continue);
 
-
     // Assistant Name Test.
     contact = QContact();
     organization = QContactOrganization();
@@ -617,6 +615,17 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     property = versitDocument.properties().at(0);
     QCOMPARE(property.name(), QString::fromAscii("X-ASSISTANT"));
     QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("myAssistant"));
+
+    // Test: Role
+    contact = QContact();
+    organization = QContactOrganization();
+    organization.setRole(QString::fromAscii("Executive"));
+    contact.saveDetail(&organization);
+    versitDocument = mExporter->exportContact(contact);
+    QCOMPARE(versitDocument.properties().count(), 1);
+    property = versitDocument.properties().at(0);
+    QCOMPARE(property.name(), QString::fromAscii("ROLE"));
+    QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("Executive"));
 
 }
 
