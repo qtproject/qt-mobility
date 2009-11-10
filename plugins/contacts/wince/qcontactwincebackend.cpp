@@ -345,11 +345,11 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(Q
 
     // Simple phone number types (non multiple)
     // defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].dataType = QVariant::String; // XXX doesn't work
-    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeBulletinBoardSystem)));
-    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeLandline)));
-    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeMessagingCapable)));
-    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeModem)));
-    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues.removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeVideo)));
+    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeBulletinBoardSystem)));
+    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeLandline)));
+    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeMessagingCapable)));
+    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeModem)));
+    defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeVideo)));
 
     // XXX temporary definitions that we should support but don't yet.
     defns.remove(QContactOnlineAccount::DefinitionName);
@@ -390,10 +390,10 @@ bool QContactWinCEEngine::waitForRequestFinished(QContactAbstractRequest* req, i
 }
 
 /*! \reimp */
-bool QContactWinCEEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
+bool QContactWinCEEngine::hasFeature(QContactManager::ManagerFeature feature) const
 {
     // The Windows CE backend is an "isolated" backend
-    if (feature == QContactManagerInfo::Anonymous)
+    if (feature == QContactManager::Anonymous)
         return true;
 
     // Windows CE backend does not support Mutable Definitions, Relationships or Action Preferences
@@ -401,7 +401,7 @@ bool QContactWinCEEngine::hasFeature(QContactManagerInfo::ManagerFeature feature
 }
 
 /* Synthesise the display label of a contact */
-QString QContactWinCEEngine::synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString QContactWinCEEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
     Q_UNUSED(error)
     // The POOM API (well, lack thereof) makes this a bit strange.

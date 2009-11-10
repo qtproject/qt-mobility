@@ -122,7 +122,7 @@ quint32 CntTransformBirthday::getIdForField(const QString& fieldName) const
 {
     if (QContactBirthday::FieldBirthday == fieldName)
         return KUidContactFieldBirthday.iUid;
-    else 
+    else
         return 0;
 }
 
@@ -133,13 +133,13 @@ quint32 CntTransformBirthday::getIdForField(const QString& fieldName) const
  */
 void CntTransformBirthday::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
     QContactDetailDefinition d;
 
     d.setName(QContactBirthday::DefinitionName);
-    f.dataType = QVariant::Date;
-    f.allowableValues = QVariantList();
+    f.setDataType(QVariant::Date);
+    f.setAllowableValues(QVariantList());
     fields.insert(QContactBirthday::FieldBirthday, f);
 
     d.setFields(fields);

@@ -763,6 +763,7 @@ void tst_QContactAsync::contactSave()
 
 void tst_QContactAsync::definitionFetch()
 {
+    // XXX TODO: include contact type in definition fetch!
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
     QContactDetailDefinitionFetchRequest dfr;
@@ -866,9 +867,10 @@ void tst_QContactAsync::definitionFetch()
 
 void tst_QContactAsync::definitionRemove()
 {
+    // XXX TODO: include contact type in mutability!
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
-    if (!cm->information()->hasFeature(QContactManagerInfo::MutableDefinitions)) {
+    if (!cm->hasFeature(QContactManager::MutableDefinitions)) {
        QSKIP("This contact manager doest not support mutable definitions, can't remove a definition!", SkipSingle);
     }
     QContactDetailDefinitionRemoveRequest drr;
@@ -1015,10 +1017,11 @@ void tst_QContactAsync::definitionRemove()
 
 void tst_QContactAsync::definitionSave()
 {
+    // XXX TODO: include contact type in mutability!
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
     
-    if (!cm->information()->hasFeature(QContactManagerInfo::MutableDefinitions)) {
+    if (!cm->hasFeature(QContactManager::MutableDefinitions)) {
        QSKIP("This contact manager doest not support mutable definitions, can't save a definition!", SkipSingle);
     }
     
@@ -1037,9 +1040,9 @@ void tst_QContactAsync::definitionSave()
     int originalCount = cm->detailDefinitions().keys().size();
     QContactDetailDefinition testDef;
     testDef.setName("TestDefinitionId");
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
-    f.dataType = QVariant::String;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
+    f.setDataType(QVariant::String);
     fields.insert("TestDefinitionField", f);
     testDef.setFields(fields);
     QList<QContactDetailDefinition> saveList;

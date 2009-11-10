@@ -127,7 +127,7 @@ if (QContactGender::FieldGender == fieldName)
         return 0;
     else if (QContactGender::GenderUnspecified == fieldName)
         return 0;
-    else 
+    else
         return 0;
 }
 
@@ -138,13 +138,16 @@ if (QContactGender::FieldGender == fieldName)
  */
 void CntTransformGender::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
     QContactDetailDefinition d;
 
     d.setName(QContactGender::DefinitionName);
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList() << QString(QLatin1String(QContactGender::GenderMale)) << QString(QLatin1String(QContactGender::GenderFemale)) << QString(QLatin1String(QContactGender::GenderUnspecified));
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList()
+            << QString(QLatin1String(QContactGender::GenderMale))
+            << QString(QLatin1String(QContactGender::GenderFemale))
+            << QString(QLatin1String(QContactGender::GenderUnspecified)));
     fields.insert(QContactGender::FieldGender, f);
 
     d.setFields(fields);

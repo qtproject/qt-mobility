@@ -160,7 +160,7 @@ quint32 CntTransformAnniversary::getIdForField(const QString& fieldName) const
         return 0;
     else if (QContactAnniversary::SubTypeMemorial == fieldName)
         return 0;
-    else 
+    else
         return 0;
 }
 
@@ -171,13 +171,13 @@ quint32 CntTransformAnniversary::getIdForField(const QString& fieldName) const
  */
 void CntTransformAnniversary::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
     QContactDetailDefinition d;
 
     d.setName(QContactAnniversary::DefinitionName);
-    f.dataType = QVariant::Date;
-    f.allowableValues = QVariantList();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
     fields.insert(QContactAnniversary::FieldOriginalDate, f);
     fields.insert(QContactAnniversary::FieldEvent, f);
 

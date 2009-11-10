@@ -333,7 +333,7 @@ void tst_QContact::details()
 
     // ensure that clearing a contact's details works correctly
     c.setDisplayLabel("test");
-    QVERIFY(!c.displayLabel().isSynthesised());
+    QVERIFY(!c.displayLabel().isSynthesized());
     QCOMPARE(c.displayLabel().label(), QString("test"));
     QVERIFY(c.details().size() > 0);
     QVERIFY(!c.isEmpty());
@@ -341,7 +341,7 @@ void tst_QContact::details()
     c.clearDetails();
     QVERIFY(c.details().size() == 2); // always has a display label and contact type.
     QCOMPARE(c.displayLabel().label(), QString());
-    QVERIFY(c.displayLabel().isSynthesised());
+    QVERIFY(c.displayLabel().isSynthesized());
     QVERIFY(c.isEmpty());
     QCOMPARE(c.id(), oldId); // id shouldn't change.
 }
@@ -363,14 +363,14 @@ void tst_QContact::actions()
 
     // Prior to plugin loading:
     // first, the empty contact
-    QStringList availableActions = c.availableActions();
+    QList<QContactActionDescriptor> availableActions = c.availableActions(QString());
     QVERIFY(availableActions.isEmpty());
     QContactDetail d = c.detailWithAction("SendEmail");
     QVERIFY(d.isEmpty());
     QList<QContactDetail> dets = c.detailsWithAction("SendEmail");
     QVERIFY(dets.isEmpty());
     // then, the email contact
-    availableActions = c2.availableActions();
+    availableActions = c2.availableActions(QString());
     QEXPECT_FAIL("", "Plugins are only loaded once", Continue);
     QVERIFY(availableActions.isEmpty());
     d = c2.detailWithAction("SendEmail");
@@ -386,11 +386,11 @@ void tst_QContact::actions()
 
     // available actions - should be one there now.
     // empty contact
-    availableActions = c.availableActions();
+    availableActions = c.availableActions(QString());
     QVERIFY(availableActions.isEmpty());
     // contact with email
-    availableActions = c2.availableActions();
-    QVERIFY(availableActions.contains("SendEmail"));
+    availableActions = c2.availableActions(QString());
+    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
 
     // detail with action:
     // empty contact
@@ -567,31 +567,31 @@ void tst_QContact::displayName()
 
     QContactDisplayLabel label = c.displayLabel();
     QVERIFY(label.label().isEmpty());
-    QVERIFY(c.displayLabel().isSynthesised() == true);
+    QVERIFY(c.displayLabel().isSynthesized() == true);
 
     label.setLabel("Wesley Wentworth Worrier");
     QVERIFY(label.isEmpty() == false);
     QVERIFY(label.label().isEmpty() == false);
-    QVERIFY(label.isSynthesised() == false);
+    QVERIFY(label.isSynthesized() == false);
 
-    label.setSynthesised(true);
+    label.setSynthesized(true);
 
     c.setDisplayLabel(label);
     QVERIFY(c.displayLabel().label() == "Wesley Wentworth Worrier");
-    QVERIFY(c.displayLabel().isSynthesised() == true);
+    QVERIFY(c.displayLabel().isSynthesized() == true);
 
     //label.setLabel(QString());
-    //QVERIFY(label.isSynthesised() == true);
+    //QVERIFY(label.isSynthesized() == true);
 
     /* Clear the label again */
     c.setDisplayLabel(QString());
     QVERIFY(c.displayLabel().label().isEmpty());
-    QVERIFY(c.displayLabel().isSynthesised() == true);
+    QVERIFY(c.displayLabel().isSynthesized() == true);
 
     /* Use the string mutator */
     c.setDisplayLabel("Wesley Wentworth Worrier");
     QVERIFY(c.displayLabel().label() == "Wesley Wentworth Worrier");
-    QVERIFY(c.displayLabel().isSynthesised() == false);
+    QVERIFY(c.displayLabel().isSynthesized() == false);
 
     /* Try to make this a bit more consistent by using a single name */
     QContact d;
@@ -605,17 +605,17 @@ void tst_QContact::displayName()
      * The display label is not updated until you save the contact, or
      * do it manually.
      */
-    QString synth = cm.synthesiseDisplayLabel(d);
+    QString synth = cm.synthesizeDisplayLabel(d);
 
     QVERIFY(d.displayLabel().label().isEmpty());
-    QVERIFY(d.displayLabel().isSynthesised() == true);
+    QVERIFY(d.displayLabel().isSynthesized() == true);
 
     QVERIFY(synth == name.first()); // XXX Perhaps not guaranteed
 
     /* Set something else */
     d.setDisplayLabel("The grand old duchess");
     QVERIFY(d.displayLabel().label() == "The grand old duchess");
-    QVERIFY(d.displayLabel().isSynthesised() == false);
+    QVERIFY(d.displayLabel().isSynthesized() == false);
 
     /* Remove the detail via removeDetail */
     QContactDisplayLabel old = d.displayLabel();
@@ -625,7 +625,7 @@ void tst_QContact::displayName()
     QVERIFY(d.details().count() == 3); // it should not be removed, only cleared (!)
 
     /* Make sure we go back to the old synth version */
-    QVERIFY(d.displayLabel().isSynthesised() == true);
+    QVERIFY(d.displayLabel().isSynthesized() == true);
     QVERIFY(d.displayLabel().label().isEmpty());
 }
 
@@ -665,7 +665,7 @@ void tst_QContact::emptiness()
     QVERIFY(c.isEmpty() == false);
 
     QVERIFY(c.displayLabel().label() == "Wesley Wentworth Worrier");
-    QVERIFY(c.displayLabel().isSynthesised() == false);
+    QVERIFY(c.displayLabel().isSynthesized() == false);
 
     c.setDisplayLabel(QString());
     QVERIFY(c.isEmpty() == true);

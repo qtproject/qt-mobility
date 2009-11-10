@@ -176,23 +176,23 @@ quint32 CntTransformAvatar::getIdForField(const QString& fieldName) const
  */
 void CntTransformAvatar::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
     QContactDetailDefinition d;
     QVariantList subTypes;
 
     // fields
     d.setName(QContactAvatar::DefinitionName);
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
     fields.insert(QContactAvatar::FieldAvatar, f);
 
     // Sub-types
-    f.dataType = QVariant::String; // only allowed to be a single subtype
-    subTypes << QString(QLatin1String(QContactAvatar::SubTypeImage));
-    subTypes << QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone));
-    subTypes << QString(QLatin1String(QContactAvatar::SubTypeVideoRingtone));
-    f.allowableValues = subTypes;
+    f.setDataType(QVariant::String); // only allowed to be a single subtype
+    f.setAllowableValues(QVariantList()
+            << QString(QLatin1String(QContactAvatar::SubTypeImage))
+            << QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone))
+            << QString(QLatin1String(QContactAvatar::SubTypeVideoRingtone)));
     fields.insert(QContactUrl::FieldSubType, f);
 
     d.setFields(fields);

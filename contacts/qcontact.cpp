@@ -89,7 +89,7 @@ QContact::QContact()
     // insert the contact's name field.
     QContactDisplayLabel contactLabel;
     contactLabel.d->m_id = 1;
-    contactLabel.setSynthesised(true);
+    contactLabel.setSynthesized(true);
     d->m_details.insert(0, contactLabel);
     QContactType contactType; // and the type field.
     contactType.setType(QContactType::TypeContact);
@@ -129,7 +129,7 @@ void QContact::clearDetails()
     QContactType typeDet = d->m_details.at(1);
     QContactDisplayLabel dl = displayLabel();
     dl.setLabel(QString());
-    dl.setSynthesised(true);
+    dl.setSynthesized(true);
     d->m_details.clear();
     d->m_details.insert(0, dl);
     d->m_details.insert(1, typeDet);
@@ -162,7 +162,7 @@ QContactLocalId QContact::localId() const
 /*!
  * Returns the type of the contact.  Every contact has exactly one type which
  * is either set manually (by saving a modified copy of the QCotnactType
- * in the contact, or by calling \l setType()) or synthesised automatically.
+ * in the contact, or by calling \l setType()) or synthesized automatically.
  *
  * \sa setType()
  */
@@ -195,10 +195,26 @@ void QContact::setType(const QContactType& type)
     d->m_details[1] = type;
 }
 
+///*!
+// * THIS FUNCTION WILL REPLACE THE THREE DEPRECATED FUNCTIONS BELOW AT WEEK 47 (unless feedback suggests otherwise).
+// * See Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a
+// *
+// * Returns the read-only display label of this contact.
+// * A contact which has been retrieved from a manager will have a display label synthesized for it.
+// */
+//QString QContact::displayLabel() const
+//{
+//    return d->m_details.at(0).value(QContactDisplayLabel::FieldLabel);
+//}
+
 /*!
+ * \deprecated
+ *
+ * DEPRECATED, see Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a
+ *
  * Returns the display label of the contact.  Every contact has exactly one display label
  * which is either set manually (by saving a modified copy of the QContactDisplayLabel
- * in the contact, or by calling \l setDisplayLabel()) or synthesised by the manager from
+ * in the contact, or by calling \l setDisplayLabel()) or synthesized by the manager from
  * which the contact is retrieved.
  *
  * \sa setDisplayLabel()
@@ -209,9 +225,13 @@ QContactDisplayLabel QContact::displayLabel() const
 }
 
 /*!
+ * \deprecated
+ *
+ * DEPRECATED, see Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a
+ *
  * Set the display label of the contact to \a label.
  *
- * The corresponding "synthesised" flag in this contact will be
+ * The corresponding "synthesized" flag in this contact will be
  * cleared.
  */
 void QContact::setDisplayLabel(const QContactDisplayLabel& label)
@@ -220,9 +240,13 @@ void QContact::setDisplayLabel(const QContactDisplayLabel& label)
 }
 
 /*!
+ * \deprecated
+ *
+ * DEPRECATED, see Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a
+ *
  * Set the display label of the contact to \a label.
  *
- * The corresponding "synthesised" flag in this contact will be
+ * The corresponding "synthesized" flag in this contact will be
  * cleared.
  */
 void QContact::setDisplayLabel(const QString& label)
@@ -436,23 +460,19 @@ QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) con
     // ascertain which details are supported by any implementation of the given action
     QList<QContactDetail> retn;
     QList<QContactActionDescriptor> descriptors = QContactManagerData::actionDescriptors(actionName);
-    QList<QContactAction*> implementations;
-    for (int i = 0; i < descriptors.size(); i++)
-        implementations.append(QContactManagerData::action(descriptors.at(i)));
-
-    for (int i = 0; i < d->m_details.size(); i++) {
-        QContactDetail detail = d->m_details.at(i);
-        for (int j = 0; j < implementations.size(); j++) {
-            QContactAction* aptr = implementations.at(j);
-            if (aptr->supportsDetail(detail)) {
+    for (int i = 0; i < descriptors.size(); i++) {
+        QContactAction *currImpl = QContactManagerData::action(descriptors.at(i));
+        for (int i = 0; i < d->m_details.size(); i++) {
+            QContactDetail detail = d->m_details.at(i);
+            if (currImpl->supportsDetail(detail)) {
                 retn.append(detail);
                 break;
             }
         }
-    }
 
-    for (int i = 0; i < implementations.size(); i++)
-        delete implementations.at(i);
+        // clean up
+        delete currImpl;
+    }
 
     return retn;
 }
@@ -541,26 +561,50 @@ QList<QContactRelationship> QContact::relationshipOrder() const
     return d->m_reorderedRelationshipsCache;
 }
 
-/*! Return a list of actions available to be performed on this contact */
+/*!
+ * \deprecated
+ * This function returns a list of names of actions which are available for this contact.
+ * Deprecated in commit SHA1: dd7d9904cc52bbbda22bac5c1aaa3876ee5724e6
+ */
 QStringList QContact::availableActions() const
 {
-    // check every action implementation to see if it supports me.
-    QSet<QString> validActions;
-    QList<QContactActionDescriptor> descriptors = QContactManagerData::actionDescriptors();
-    QList<QContactAction*> implementations;
-    for (int i = 0; i < descriptors.size(); i++)
-        implementations.append(QContactManagerData::action(descriptors.at(i)));
-
-    for (int i = 0; i < implementations.size(); i++) {
-        QContactAction* aptr = implementations.at(i);
-        if (QContactManagerEngine::testFilter(aptr->contactFilter(), *this))
-            validActions.insert(aptr->actionDescriptor().actionName());
+    qWarning("This function is deprecated and will be removed in week 47!  Use QContact::availableActions(const QString& vendorName, int implementationVersion) instead!  See Commit SHA1: dd7d9904cc52bbbda22bac5c1aaa3876ee5724e6");
+    QList<QContactActionDescriptor> allDescriptors = availableActions(QString());
+    QStringList result;
+    for (int i = 0; i < allDescriptors.size(); i++) {
+        result << allDescriptors.at(i).actionName();
     }
 
-    for (int i = 0; i < implementations.size(); i++)
-        delete implementations.at(i);
+    return result;
+}
 
-    return validActions.toList();
+/*!
+ * Return a list of actions available to be performed on this contact which are offered
+ * by the vendor whose name is the given \a vendorName, where the action instance has
+ * the implementation version given by \a implementationVersion.
+ * If \a vendorName is empty, actions from any vendor are supplied; if \a implementationVersion
+ * is \c -1, action implementations of any version will be returned.
+ *
+ * NOTE: during week 47 when the above deprecated function is removed, vendorName will have a
+ * default argument and thus will not need to be supplied.
+ */
+QList<QContactActionDescriptor> QContact::availableActions(const QString& vendorName, int implementationVersion) const
+{
+    // check every action implementation to see if it supports me.
+    QSet<QContactActionDescriptor> retn;
+    QList<QContactActionDescriptor> descriptors = QContactManagerData::actionDescriptors();
+    for (int i = 0; i < descriptors.size(); i++) {
+        QContactActionDescriptor currDescriptor = descriptors.at(i);
+        QContactAction *currImpl = QContactManagerData::action(currDescriptor);
+        if (QContactManagerEngine::testFilter(currImpl->contactFilter(), *this)) {
+            retn.insert(currDescriptor);
+        }
+
+        // clean up the implementation to avoid leak.
+        delete currImpl;
+    }
+
+    return retn.toList();
 }
 
 /*! Set a particular detail as the \a preferredDetail for a given \a actionName.  Returns true if the detail was successfully set as the preferred detail for the action identified by \a actionName, otherwise returns false  */

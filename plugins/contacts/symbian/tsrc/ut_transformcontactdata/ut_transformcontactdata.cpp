@@ -158,11 +158,11 @@ void TestCntTransformContactData::executeCntTransformOnlineAccount()
 void TestCntTransformContactData::executeCntTransformOrganisation()
 {
     TRAPD(err, validateCntTransformOrganisationL(_L("dummycompany"), QString("dummycompany"),
-                                  _L("dummydepartment"), QString("dummydepartment"),
+                                  _L("dummydepartment"), QStringList("dummydepartment"),
                                   _L("dummyjobtitle"), QString("dummyjobtitle"),
                                   _L("dummyassistant"), QString("dummyassistant"));
         validateCntTransformOrganisationL(_L(""), QString(""),
-                                  _L(""), QString(""),
+                                  _L(""), QStringList(""),
                                   _L(""), QString(""),
                                   _L(""), QString(""));
         );
@@ -1075,7 +1075,7 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
 }
 
 void TestCntTransformContactData::validateCntTransformOrganisationL(TPtrC16 companyField, QString companyDetail,
-                                TPtrC16 departmentField, QString departmentDetail,
+                                TPtrC16 departmentField, QStringList departmentDetail,
                                 TPtrC16 jobtitleField, QString jobtitleDetail,
                                 TPtrC16 assistantField, QString assistantDetail)
 {
