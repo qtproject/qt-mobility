@@ -51,6 +51,7 @@
 #include "qcontactmanager.h"
 
 // Forward declarations
+class QContactManagerEngine;
 
 // External data types
 
