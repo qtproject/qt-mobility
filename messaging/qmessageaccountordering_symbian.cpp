@@ -41,44 +41,76 @@
 #include "qmessageaccountordering.h"
 #include "qmessageaccountordering_p.h"
 
+QMessageAccountOrderingPrivate::QMessageAccountOrderingPrivate(QMessageAccountOrdering *ordering)
+ : q_ptr(ordering)
+{
+}
+
+bool QMessageAccountOrderingPrivate::lessThan(const QMessageAccountOrdering &ordering,
+                                              const QMessageAccount &account1, const QMessageAccount &account2)
+{
+    QMessageAccountOrderingPrivate *d(ordering.d_ptr);
+    if (d->_order == Qt::AscendingOrder) {
+        return (account1.name().compare(account2.name(), Qt::CaseInsensitive) < 0);
+    }
+    return (account1.name().compare(account2.name(), Qt::CaseInsensitive) > 0);
+}
 
 QMessageAccountOrdering::QMessageAccountOrdering()
+ : d_ptr(0)
 {
 }
 
 QMessageAccountOrdering::QMessageAccountOrdering(const QMessageAccountOrdering &other)
+ : d_ptr(new QMessageAccountOrderingPrivate(this))
 {
-    Q_UNUSED(other)
+	this->operator=(other);
 }
 
 QMessageAccountOrdering::~QMessageAccountOrdering()
 {
+	delete d_ptr;
+	d_ptr = 0;
 }
 
 bool QMessageAccountOrdering::isEmpty() const
 {
-    return false; // stub
+	return (d_ptr == 0);
 }
 
 bool QMessageAccountOrdering::isSupported() const
 {
-    return true; // stub
+    return true;
 }
 
 bool QMessageAccountOrdering::operator==(const QMessageAccountOrdering& other) const
 {
-    Q_UNUSED(other)
-    return false; // stub
+    if (!d_ptr && !other.d_ptr) {
+        return true;
+    }
+    if (!d_ptr || !other.d_ptr) {
+        return false;
+    }
+    
+	return (d_ptr->_order == other.d_ptr->_order);
 }
 
 QMessageAccountOrdering& QMessageAccountOrdering::operator=(const QMessageAccountOrdering& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+	if (&other != this) {
+	    if (!d_ptr) {
+			d_ptr = new QMessageAccountOrderingPrivate(this);	    
+	    }
+		d_ptr->_order = other.d_ptr->_order;
+	}
+	
+	return *this;
 }
 
 QMessageAccountOrdering QMessageAccountOrdering::byName(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageAccountOrdering(); // stub
+	QMessageAccountOrdering ordering;
+	ordering.d_ptr = new QMessageAccountOrderingPrivate(&ordering);
+	ordering.d_ptr->_order = order;
+	return ordering;
 }

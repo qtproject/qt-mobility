@@ -40,9 +40,9 @@
 ****************************************************************************/
 #ifndef QMESSAGECONTENTCONTAINERID_H
 #define QMESSAGECONTENTCONTAINERID_H
-#include <qmessageglobal.h>
 #include <QString>
 #include <QList>
+#include <qmessageglobal.h>
 
 class QMessageContentContainerIdPrivate;
 
