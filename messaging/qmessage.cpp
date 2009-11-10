@@ -39,7 +39,11 @@
 **
 ****************************************************************************/
 #include "qmessage.h"
+#ifdef Q_OS_SYMBIAN
+#include "qmessage_symbian_p.h"
+#else
 #include "qmessage_p.h"
+#endif
 
 #include <QTextCodec>
 #include <QDebug>

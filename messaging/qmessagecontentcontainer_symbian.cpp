@@ -39,111 +39,331 @@
 **
 ****************************************************************************/
 #include "qmessagecontentcontainer.h"
+#include <QStringList>
+#include "qmessagecontentcontainer_symbian_p.h"
+
+QMessageContentContainerPrivate& QMessageContentContainerPrivate::operator=(const QMessageContentContainerPrivate &other)
+{
+	q_ptr = other.q_ptr;
+	_message = other._message;
+	_available = other._available;
+	_size = other._size;
+	_attachments = other._attachments;
+	_type = other._type;
+	_subType = other._subType;
+	_charset = other._charset;
+	_name = other._name;
+	_content = other._content;
+	_textContent = other._textContent;
+	_filename = other._filename;
+	_messageId = other._messageId;
+	_id = other._id;
+	_header = other._header;
+
+	return *this;
+}
+
+bool QMessageContentContainerPrivate::isMessage() const
+{
+	return (_message != 0);
+}
+
+void QMessageContentContainerPrivate::setDerivedMessage(QMessage *derived)
+{
+	_message = derived;
+}
+
+void QMessageContentContainerPrivate::clearContents()
+{
+	_type = QByteArray("text");
+	_subType = QByteArray("plain");
+	_charset = QByteArray();
+	_name = QByteArray();
+	_content = QByteArray();
+	_textContent = QString();
+	_filename = QString();
+	_messageId = QMessageId();
+	_id = QMessageContentContainerId();
+	_available = false;
+	_size = 0;
+	_header.clear();
+	_attachments.clear();
+}
+
+void QMessageContentContainerPrivate::setContentType(const QByteArray &type, const QByteArray &subType, const QByteArray &charset)
+{
+	clearContents();
+
+	_type = type;
+	_subType = subType;
+	_charset = charset;
+}
+
+void QMessageContentContainerPrivate::setContent(const QString &content, const QByteArray &type, const QByteArray &subType, const QByteArray &charset)
+{
+	setContentType(type, subType, charset);
+
+	_textContent = content;
+	_available = true;
+}
+
+void QMessageContentContainerPrivate::setContent(const QByteArray &content, const QByteArray &type, const QByteArray &subType, const QByteArray &charset)
+{
+	setContentType(type, subType, charset);
+
+	_content = content;
+	_available = true;
+}
+
+void QMessageContentContainerPrivate::setHeaderField(const QByteArray &name, const QByteArray &value)
+{
+	_header.remove(name);
+	_header.insert(name, value);
+}
+
+QMessageContentContainer* QMessageContentContainerPrivate::attachment(const QMessageContentContainerId &id)
+{
+	if (isMessage()) {
+		if (id == bodyContentId()) {
+			return _message;
+		} else {
+			foreach (const QMessageContentContainer &container, _attachments) {
+				if (container.d_ptr->_id == id) {
+					return const_cast<QMessageContentContainer*>(&container);
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
+const QMessageContentContainer* QMessageContentContainerPrivate::attachment(const QMessageContentContainerId &id) const
+{
+	if (isMessage()) {
+		if (id == bodyContentId()) {
+			return _message;
+		} else {
+			foreach (const QMessageContentContainer &container, _attachments) {
+				if (container.d_ptr->_id == id) {
+					return &container;
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
+bool QMessageContentContainerPrivate::createAttachment(const QString& attachmentPath)
+{
+	//set the attachment data
+
+	if (!QFile::exists(attachmentPath)) {
+		return false;
+	}
+
+	QFile attachmentFile(attachmentPath);
+	if (!attachmentFile.open(QIODevice::ReadOnly)) {
+		return false;
+	}
+
+	_content = attachmentFile.readAll();
+	_available = true;
+
+	attachmentFile.close();
+	QFileInfo fi(attachmentPath);
+	_name = fi.fileName().toLatin1();
+
+	//set the mime-type
+	QByteArray mimeType;
+	QString type;
+	TBuf8<255> fileBuffer;
+	RApaLsSession session;	
+	QString fileString = QString(_name);
+	TPtrC16 filePtr(reinterpret_cast<const TUint16*>(fileString.utf16()));
+	TBuf8<20> fileType;
+	if(session.Connect() == KErrNone){						
+		TDataRecognitionResult fileDataType; 					
+		session.RecognizeData(filePtr, fileBuffer, *&fileDataType); 										
+		fileType.Copy(fileDataType.iDataType.Des8());
+		mimeType = QByteArray((const char*)fileType.Ptr(), fileType.Length());
+		session.Close();				
+	}
+
+	QString extension(fi.suffix());
+	int index = mimeType.indexOf("/");
+	if (index != -1) {
+		_type = mimeType.left(index).trimmed();
+		_subType = mimeType.mid(index + 1).trimmed();
+	}
+	
+	// set the hole filepath to _name
+	_name = fi.filePath().toLatin1();
+	
+	return true;
+}
+
+QMessageContentContainerId QMessageContentContainerPrivate::appendContent(QMessageContentContainer& container)
+{
+	container.d_ptr->_id = QMessageContentContainerId(QString::number(_attachments.count()+1));
+	_attachments.append(container);
+	return container.d_ptr->_id;
+}
+
+QMessageContentContainerId QMessageContentContainerPrivate::prependContent(QMessageContentContainer& container)
+{
+	_attachments.prepend(container);
+	for (int i = 0; i < _attachments.count(); ++i) {
+		_attachments[i].d_ptr->_id = QMessageContentContainerId(QString::number(i+1));
+	}
+	return _attachments[0].d_ptr->_id;
+}
+
+QMessageContentContainerId QMessageContentContainerPrivate::bodyContentId()
+{
+	return QMessageContentContainerId(QString::number(0));
+}
 
 QMessageContentContainer::QMessageContentContainer()
+: d_ptr(new QMessageContentContainerPrivate(this))
 {
 }
 
 QMessageContentContainer::QMessageContentContainer(const QMessageContentContainer &other)
+: d_ptr(new QMessageContentContainerPrivate(this))
 {
-    Q_UNUSED(other)
+	this->operator=(other);
 }
 
 QMessageContentContainer& QMessageContentContainer::operator=(const QMessageContentContainer& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+	if (&other != this) {
+		*d_ptr = *other.d_ptr;
+	}
+	
+	return *this;
 }
 
 QMessageContentContainer::~QMessageContentContainer()
 {
+	delete d_ptr;
 }
 
 QByteArray QMessageContentContainer::contentType() const
 {
-    return QByteArray(); // stub
+	return d_ptr->_type;
 }
 
 QByteArray QMessageContentContainer::contentSubType() const
 {
-    return QByteArray(); // stub
+    return d_ptr->_subType;
 }
 
 QByteArray QMessageContentContainer::contentCharset() const
 {
-    return QByteArray(); // stub
+    return d_ptr->_charset;
 }
 
 QByteArray QMessageContentContainer::suggestedFileName() const
 {
-    return QByteArray(); // stub
+    return d_ptr->_name;
 }
 
 bool QMessageContentContainer::isContentAvailable() const
 {
-    return false;
+    return d_ptr->_available;
 }
 
 uint QMessageContentContainer::size() const
 {
-    return 0;
+    return d_ptr->_size;
 }
 
 QString QMessageContentContainer::textContent() const
 {
-    return QString();
+	return d_ptr->_textContent;
 }
 
 QByteArray QMessageContentContainer::content() const
 {
-    return QByteArray(); // stub
+	return d_ptr->_content;
 }
 
 void QMessageContentContainer::writeTextContentTo(QTextStream& out) const
 {
-    Q_UNUSED(out)
+	out << textContent();
 }
 
 void QMessageContentContainer::writeContentTo(QDataStream& out) const
 {
-    Q_UNUSED(out)
+	QByteArray data(content());
+	out.writeRawData(data.constData(), data.length());
 }
 
 QMessageContentContainerIdList QMessageContentContainer::contentIds() const
 {
-    return QMessageContentContainerIdList(); // stub
+    QMessageContentContainerIdList ids;
+    int c = d_ptr->_attachments.count();
+
+    if (d_ptr->isMessage()) {
+        foreach (const QMessageContentContainer &container, d_ptr->_attachments) {
+            ids.append(container.d_ptr->_id);
+        }
+    }
+
+    return ids;
 }
 
 QMessageContentContainer QMessageContentContainer::find(const QMessageContentContainerId &id) const
 {
-    Q_UNUSED(id)
-    return QMessageContentContainer(); // stub
+	if (d_ptr->isMessage()) {
+		if (const QMessageContentContainer *container = d_ptr->attachment(id)) {
+			return *container;
+		}
+	}
+	
+	return QMessageContentContainer();
 }
 
 bool QMessageContentContainer::contains(const QMessageContentContainerId &id) const
 {
-    Q_UNUSED(id)
-    return false; // stub
+	if (d_ptr->isMessage()) {
+		return (d_ptr->attachment(id) != 0);
+	}
+	
+	return false;
 }
 
 QString QMessageContentContainer::headerFieldValue(const QByteArray &name) const
 {
-    Q_UNUSED(name)
-    return QString(); // stub
+	QMultiMap<QByteArray, QString>::const_iterator it = d_ptr->_header.find(name);
+	if (it != d_ptr->_header.end()) {
+		return it.value();
+	}
+	
+	return QString();
 }
 
 QStringList QMessageContentContainer::headerFieldValues(const QByteArray &name) const
 {
-    Q_UNUSED(name)
-    return QStringList(); // stub
+	QStringList values;
+
+    QMultiMap<QByteArray, QString>::const_iterator it = d_ptr->_header.find(name);
+    while ((it != d_ptr->_header.end()) && (it.key() == name)) {
+        values.append(it.value());
+        ++it;
+    }
+
+    return values;
 }
 
 QList<QByteArray> QMessageContentContainer::headerFields() const
 {
-    return QList<QByteArray>(); // stub
+	return d_ptr->_header.keys();
 }
 
 void QMessageContentContainer::setDerivedMessage(QMessage *derived)
 {
-    Q_UNUSED(derived)
+	d_ptr->setDerivedMessage(derived);
 }

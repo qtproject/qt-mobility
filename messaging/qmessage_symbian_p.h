@@ -38,49 +38,46 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGEFOLDERIDPRIVATE_H
-#define QMESSAGEFOLDERIDPRIVATE_H
-#ifdef QMESSAGING_OPTIONAL_FOLDER
-#include "qmessagefolderid.h"
-#if defined(Q_OS_WIN)
-#include "winhelpers_p.h"
-#endif
+#ifndef QMESSAGE_P_H
+#define QMESSAGE_P_H
 
-class QMessageFolderIdPrivate
+#include "qmessage.h"
+#include "qmessageaddress.h"
+
+class QMessagePrivate
 {
-    Q_DECLARE_PUBLIC(QMessageFolderId)
+    Q_DECLARE_PUBLIC(QMessage)
 
 public:
-    QMessageFolderIdPrivate(QMessageFolderId *folderId)
-        :q_ptr(folderId)
-    {
-    }
+    QMessagePrivate(QMessage *message);
+    ~QMessagePrivate();
 
-public:
-    QMessageFolderId *q_ptr;
-#if defined(Q_OS_WIN)
+    static void setStandardFolder(QMessage& message, QMessage::StandardFolder sf);
 
-#ifdef _WIN32_WCE
-    MapiEntryId _storeRecordKey;
-    static QMessageFolderId from(const MapiRecordKey &folderKey, const MapiEntryId &storeKey, const MapiEntryId &entryId);
-    static MapiEntryId storeRecordKey(const QMessageFolderId &id);
-#else
-    MapiRecordKey _storeRecordKey;
-    static QMessageFolderId from(const MapiRecordKey &folderKey, const MapiRecordKey &storeKey, const MapiEntryId &entryId = MapiEntryId());
-    static MapiRecordKey storeRecordKey(const QMessageFolderId &id);
+private:
+    QMessage *q_ptr;
+
+    QMessageId _id;
+    QMessage::Type _type;
+    QString _body;
+    uint _size;
+    QMessageAccountId _parentAccountId;
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+    QMessageFolderId _parentFolderId;
 #endif
-
-    bool _valid;
-    MapiEntryId _entryId;
-    MapiRecordKey _folderRecordKey;
-    static MapiRecordKey folderRecordKey(const QMessageFolderId &id);
-    static MapiEntryId entryId(const QMessageFolderId &id);
-
-#endif
-#if defined(Q_OS_SYMBIAN)
-    QString _id;
-#endif    
+    QMessage::StandardFolder _standardFolder;
+    QMessageAddress _from;
+    QString _senderName;
+    QMessageAddressList _toList;
+    QMessageAddressList _ccList;
+    QMessageAddressList _bccList;
+    QMessage::StatusFlags _status;
+    QMessage::Priority _priority;
+    QString _subject;
+    QDateTime _date;
+    QDateTime _receivedDate;
+    bool _modified;
+    QMessageContentContainerId _bodyId;
 };
 
-#endif
 #endif
