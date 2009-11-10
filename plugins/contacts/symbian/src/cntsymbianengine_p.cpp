@@ -246,7 +246,7 @@ bool CntSymbianEnginePrivate::addContact(QContact& contact, QContactChangeSet& c
     if(err == KErrNone)
     {
         changeSet.addedContacts().insert(id);
-        m_dataBase->appendContactsAddedEmitted(&changeSet.addedContacts().toList());
+        m_dataBase->appendContactsEmitted(&changeSet.addedContacts().toList());
     }
     CntSymbianTransformError::transformError(err, qtError);
 
@@ -268,7 +268,7 @@ bool CntSymbianEnginePrivate::updateContact(QContact& contact, QContactChangeSet
     {
         //TODO: check what to do with groupsChanged
         changeSet.changedContacts().insert(contact.localId());
-        m_dataBase->appendContactsChangedEmitted(&changeSet.changedContacts().toList());
+        m_dataBase->appendContactsEmitted(&changeSet.changedContacts().toList());
     }
     CntSymbianTransformError::transformError(err, qtError);
     return (err==KErrNone);
@@ -295,7 +295,7 @@ bool CntSymbianEnginePrivate::removeContact(const QContactLocalId &id, QContactC
     {
         //TODO: check what to do with groupsChanged?
         changeSet.removedContacts().insert(id);
-        m_dataBase->appendContactsRemovedEmitted(&changeSet.removedContacts().toList());
+        m_dataBase->appendContactsEmitted(&changeSet.removedContacts().toList());
     }
     CntSymbianTransformError::transformError(err, qtError);
 	return (err==KErrNone);
@@ -316,7 +316,7 @@ bool CntSymbianEnginePrivate::saveRelationship(QContactChangeSet *changeSet, QCo
     bool returnValue = m_relationship->saveRelationship(&changeSet->addedRelationshipsContacts(), relationship, error);
 
     //add contacts to the list that shouldn't be emitted
-    m_dataBase->appendContactsAddedEmitted(&changeSet->addedRelationshipsContacts().toList());
+    m_dataBase->appendContactsEmitted(&changeSet->addedRelationshipsContacts().toList());
 
     return returnValue;
 }
@@ -327,7 +327,7 @@ QList<QContactManager::Error> CntSymbianEnginePrivate::saveRelationships(QContac
     QList<QContactManager::Error> returnValue = m_relationship->saveRelationships(&changeSet->addedRelationshipsContacts(), relationships, error);
 
     //add contacts to the list that shouldn't be emitted
-    m_dataBase->appendContactsAddedEmitted(&changeSet->addedRelationshipsContacts().toList());
+    m_dataBase->appendContactsEmitted(&changeSet->addedRelationshipsContacts().toList());
 
     return returnValue;
 }
@@ -338,7 +338,7 @@ bool CntSymbianEnginePrivate::removeRelationship(QContactChangeSet *changeSet, c
     bool returnValue = m_relationship->removeRelationship(&changeSet->removedRelationshipsContacts(), relationship, error);
 
     //add contacts to the list that shouldn't be emitted
-    m_dataBase->appendContactsRemovedEmitted(&changeSet->removedRelationshipsContacts().toList());
+    m_dataBase->appendContactsEmitted(&changeSet->removedRelationshipsContacts().toList());
 
     return returnValue;
 }
@@ -349,7 +349,7 @@ QList<QContactManager::Error> CntSymbianEnginePrivate::removeRelationships(QCont
     QList<QContactManager::Error> returnValue = m_relationship->removeRelationships(&changeSet->removedRelationshipsContacts(), relationships, error);
 
     //add contacts to the list that shouldn't be emitted
-    m_dataBase->appendContactsRemovedEmitted(&changeSet->removedRelationshipsContacts().toList());
+    m_dataBase->appendContactsEmitted(&changeSet->removedRelationshipsContacts().toList());
 
     return returnValue;
 }

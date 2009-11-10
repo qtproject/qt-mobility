@@ -95,19 +95,9 @@ CContactDatabase* CntSymbianDatabase::contactDatabase()
     return m_contactDatabase;
 }
 
-void CntSymbianDatabase::appendContactsRemovedEmitted(QList<QContactLocalId> *contactList)
+void CntSymbianDatabase::appendContactsEmitted(QList<QContactLocalId> *contactList)
 {
-    m_contactsRemovedEmitted += *contactList;
-}
-
-void CntSymbianDatabase::appendContactsAddedEmitted(QList<QContactLocalId> *contactList)
-{
-    m_contactsAddedEmitted += *contactList;
-}
-
-void CntSymbianDatabase::appendContactsChangedEmitted(QList<QContactLocalId> *contactList)
-{
-    m_contactsChangedEmitted += *contactList;
+    m_contactsEmitted += *contactList;
 }
 
 /*!
@@ -125,39 +115,39 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
     switch (aEvent.iType)
     {
     case EContactDbObserverEventContactAdded:
-        if(m_contactsAddedEmitted.contains(id))
-            m_contactsAddedEmitted.removeOne(id);
+        if(m_contactsEmitted.contains(id))
+            m_contactsEmitted.removeOne(id);
         else
             changeSet.addedContacts().insert(id);
         break;
     case EContactDbObserverEventOwnCardDeleted:
     case EContactDbObserverEventContactDeleted:
-        if(m_contactsRemovedEmitted.contains(id))
-            m_contactsRemovedEmitted.removeOne(id);
+        if(m_contactsEmitted.contains(id))
+            m_contactsEmitted.removeOne(id);
         else
             changeSet.removedContacts().insert(id);
         break;
     case EContactDbObserverEventContactChanged:
-        if(m_contactsChangedEmitted.contains(id))
-            m_contactsChangedEmitted.removeOne(id);
+        if(m_contactsEmitted.contains(id))
+            m_contactsEmitted.removeOne(id);
         else
             changeSet.changedContacts().insert(id);
         break;
     case EContactDbObserverEventGroupAdded:
-        if(m_contactsAddedEmitted.contains(id))
-            m_contactsAddedEmitted.removeOne(id);
+        if(m_contactsEmitted.contains(id))
+            m_contactsEmitted.removeOne(id);
         else
             changeSet.addedRelationshipsContacts().insert(id);
         break;
     case EContactDbObserverEventGroupDeleted:
-        if(m_contactsRemovedEmitted.contains(id))
-            m_contactsRemovedEmitted.removeOne(id);
+        if(m_contactsEmitted.contains(id))
+            m_contactsEmitted.removeOne(id);
         else
             changeSet.removedRelationshipsContacts().insert(id);
         break;
     case EContactDbObserverEventGroupChanged:
-        if(m_contactsChangedEmitted.contains(id))
-            m_contactsChangedEmitted.removeOne(id);
+        if(m_contactsEmitted.contains(id))
+            m_contactsEmitted.removeOne(id);
         else
             changeSet.changedContacts().insert(id); //group is a contact
         break;

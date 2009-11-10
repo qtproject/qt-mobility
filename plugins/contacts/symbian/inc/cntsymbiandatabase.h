@@ -65,9 +65,7 @@ public:
     
 public:
     CContactDatabase* contactDatabase();
-    void appendContactsRemovedEmitted(QList<QContactLocalId> *contactList);
-    void appendContactsAddedEmitted(QList<QContactLocalId> *contactList);
-    void appendContactsChangedEmitted(QList<QContactLocalId> *contactList);
+    void appendContactsEmitted(QList<QContactLocalId> *contactList);
     
 public:
     // From MContactDbObserver
@@ -79,9 +77,7 @@ private:
     CContactChangeNotifier* m_contactChangeNotifier;
 #endif
     QContactManagerEngine *m_engine;
-    QList<QContactLocalId> m_contactsAddedEmitted;
-    QList<QContactLocalId> m_contactsChangedEmitted;
-    QList<QContactLocalId> m_contactsRemovedEmitted;    
+    QList<QContactLocalId> m_contactsEmitted;  
 };
 
 

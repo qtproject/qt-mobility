@@ -128,9 +128,6 @@ private:
     CntSymbianDatabase* m_dataBase;
     QString m_managerUri;
 
-    QList<QContactLocalId> m_contactsAddedEmitted;
-    QList<QContactLocalId> m_contactsChangedEmitted;
-    QList<QContactLocalId> m_contactsRemovedEmitted;
     CntTransformContact       *m_transformContact;
     CntAbstractContactFilter* m_contactFilter;
     CntAbstractContactSorter* m_contactSorter;
