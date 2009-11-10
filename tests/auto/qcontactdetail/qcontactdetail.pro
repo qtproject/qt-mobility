@@ -5,10 +5,10 @@ CONFIG+=testcase
 
 include(../../../common.pri)
 
-INCLUDEPATH += ../../../contacts \
-               ../../../contacts/details \
-               ../../../contacts/requests \
-               ../../../contacts/filters
+INCLUDEPATH += ../../../src/contacts \
+               ../../../src/contacts/details \
+               ../../../src/contacts/requests \
+               ../../../src/contacts/filters
 
 qtAddLibrary(QtContacts)
 SOURCES  += tst_qcontactdetail.cpp

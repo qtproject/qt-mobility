@@ -1,5 +1,5 @@
 TARGET=tst_qservicecontext
-INCLUDEPATH += ../../../serviceframework
+INCLUDEPATH += ../../../src/serviceframework
 
 CONFIG+=testcase
 

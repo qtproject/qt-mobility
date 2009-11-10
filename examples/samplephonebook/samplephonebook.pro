@@ -8,10 +8,10 @@ TEMPLATE = app
 TARGET = samplephonebook
 DEPENDPATH += .
 INCLUDEPATH += . \
-               ../../contacts\
-               ../../contacts/filters \
-               ../../contacts/requests \
-               ../../contacts/details 
+               ../../src/contacts\
+               ../../src/contacts/filters \
+               ../../src/contacts/requests \
+               ../../src/contacts/details 
 
 INCLUDEPATH += ../testmodel
 VPATH += ../testmodel

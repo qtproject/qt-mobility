@@ -3,7 +3,7 @@ TARGET = QtSystemInfo
 
 
 QT+= network
-include(../common.pri)
+include(../../common.pri)
 
 # Input
 PUBLIC_HEADERS +=   qsysteminfo.h \
@@ -108,4 +108,4 @@ unix: {
 }
 
 HEADERS += $$PUBLIC_HEADERS 
-include (../features/deploy.pri)
+include (../../features/deploy.pri)

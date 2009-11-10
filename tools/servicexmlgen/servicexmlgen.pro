@@ -1,7 +1,7 @@
 TEMPLATE=app
 TARGET=servicexmlgen
 
-INCLUDEPATH += ../../serviceframework
+INCLUDEPATH += ../../src/serviceframework
 
 HEADERS = servicexmlgen.h \
           servicewidget.h \

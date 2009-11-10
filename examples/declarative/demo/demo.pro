@@ -1,6 +1,6 @@
 TEMPLATE=app
 TARGET=sfw-kinetic-example
-INCLUDEPATH += ../../../serviceframework
+INCLUDEPATH += ../../../src/serviceframework
 
 include(../../examples.pri)
 

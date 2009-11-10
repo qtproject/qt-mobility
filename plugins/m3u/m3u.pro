@@ -10,7 +10,7 @@ qtAddLibrary(QtMedia)
 
 DEPENDPATH += .
 INCLUDEPATH += . \
-    ../../multimedia
+    ../../src/multimedia
 
 HEADERS += qm3uhandler.h
 SOURCES += main.cpp \

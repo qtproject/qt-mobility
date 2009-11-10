@@ -3,7 +3,7 @@ TEMPLATE = lib
 # distinct from QtMultimedia
 TARGET = QtMedia
 
-include (../common.pri)
+include (../../common.pri)
 INCLUDEPATH+= .
 
 QT += network
@@ -126,4 +126,4 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
 
-include(../features/deploy.pri)
+include(../../features/deploy.pri)

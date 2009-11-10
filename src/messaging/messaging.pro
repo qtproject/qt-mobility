@@ -1,7 +1,7 @@
 TEMPLATE = lib
 TARGET = QtMessaging
 
-include(../common.pri)
+include(../../common.pri)
 
 INCLUDEPATH += .
 
@@ -176,4 +176,4 @@ SOURCES += qmessageid_qmf.cpp \
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
-include(../features/deploy.pri)
+include(../../features/deploy.pri)

@@ -5,7 +5,7 @@ CONFIG+=testcase
 QT = core network
 
 SOURCES  += tst_qsystemstorageinfo.cpp
-INCLUDEPATH += ../../../systeminfo
+INCLUDEPATH += ../../../src/systeminfo
 
 include(../../../common.pri)
 qtAddLibrary(QtSystemInfo)

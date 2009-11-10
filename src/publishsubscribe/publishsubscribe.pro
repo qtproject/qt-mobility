@@ -2,7 +2,7 @@ TEMPLATE = lib
 TARGET = QtPublishSubscribe
 QT = core network xml
 
-include(../common.pri)
+include(../../common.pri)
 
 DEFINES += QT_BUILD_CFW_LIB QT_MAKEDLL
 
@@ -63,4 +63,4 @@ win32 {
     wince*:LIBS += -ltoolhelp
 }
 
-include(../features/deploy.pri)
+include(../../features/deploy.pri)

@@ -2,7 +2,7 @@ TEMPLATE = lib
 TARGET = QtServiceFramework
 QT = core sql
 
-include(../common.pri)
+include(../../common.pri)
 
 DEFINES += QT_BUILD_SFW_LIB QT_MAKEDLL
 
@@ -61,4 +61,4 @@ symbian {
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
-include(../features/deploy.pri)
+include(../../features/deploy.pri)

@@ -8,7 +8,7 @@ TARGET = QtContacts
 DEFINES += BUILD_QTCONTACTS \
     QT_ASCII_CAST_WARNINGS
 
-include(../common.pri)
+include(../../common.pri)
 
 include(details/details.pri)
 include(engines/engines.pri)
@@ -95,4 +95,4 @@ symbian {
         BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
     }
 }
-include(../features/deploy.pri)
+include(../../features/deploy.pri)

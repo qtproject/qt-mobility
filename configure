@@ -293,14 +293,14 @@ echo "Generating Mobility Headers..."
 #remove old headers
 rm -rf $shadowpath/include
 mkdir $shadowpath/include
-$relpath/bin/syncheaders $shadowpath/include $relpath/bearer
-$relpath/bin/syncheaders $shadowpath/include $relpath/context
-$relpath/bin/syncheaders $shadowpath/include $relpath/location
-$relpath/bin/syncheaders $shadowpath/include $relpath/serviceframework
-$relpath/bin/syncheaders $shadowpath/include $relpath/systeminfo
-$relpath/bin/syncheaders $shadowpath/include $relpath/contacts
-$relpath/bin/syncheaders $shadowpath/include $relpath/multimedia
-$relpath/bin/syncheaders $shadowpath/include $relpath/messaging
+$relpath/bin/syncheaders $shadowpath/include $relpath/src/bearer
+$relpath/bin/syncheaders $shadowpath/include $relpath/src/context
+$relpath/bin/syncheaders $shadowpath/include $relpath/src/location
+$relpath/bin/syncheaders $shadowpath/include $relpath/src/serviceframework
+$relpath/bin/syncheaders $shadowpath/include $relpath/src/systeminfo
+$relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
+$relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
+$relpath/bin/syncheaders $shadowpath/include $relpath/src/messaging
 
 mv "$CONFIG_IN" config.pri
 mkdir -p "$shadowpath/features"

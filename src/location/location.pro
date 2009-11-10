@@ -2,7 +2,7 @@ TEMPLATE = lib
 TARGET = QtLocation
 QT = core
 
-include(../common.pri)
+include(../../common.pri)
 
 #S60 area monitoring must be switched on explicitly, it requires
 #LBT headers and binaries
@@ -105,4 +105,4 @@ symbian {
     DEPLOYMENT += QtLocationDeployment
 }
 
-include(../features/deploy.pri)
+include(../../features/deploy.pri)
