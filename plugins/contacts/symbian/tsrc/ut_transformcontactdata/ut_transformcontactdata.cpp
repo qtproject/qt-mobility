@@ -962,10 +962,9 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
     
     validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::FieldAccountUri,0);
     validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeSip,KUidContactFieldSIPID.iUid);
-    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeH323,0);
-    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeXmpp, KUidContactFieldIMPP.iUid);
-    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeInternet,0);
-    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeShareVideo,0);
+    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeImpp, KUidContactFieldIMPP.iUid);
+    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeSipVoip,0);
+    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeVideoShare,0);
     validateGetIdForField(*transformOnlineAccount, "WrongValue", 0);    
     QVERIFY( !(transformOnlineAccount->supportsSubType("WrongValue"))); 
     
@@ -982,7 +981,7 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
      
     QContactOnlineAccount onlineAccount1;
     onlineAccount1.setAccountUri(sipDetail);
-    onlineAccount1.setSubTypes(QContactOnlineAccount::SubTypeInternet);
+    onlineAccount1.setSubTypes(QContactOnlineAccount::SubTypeSipVoip);
     QList<CContactItemField *> fields = transformOnlineAccount->transformDetailL(onlineAccount1);
     QVERIFY(fields.count() == 1);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
@@ -993,7 +992,7 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
 
     QContactOnlineAccount onlineAccount2;
     onlineAccount2.setAccountUri(sipDetail);
-    onlineAccount2.setSubTypes(QContactOnlineAccount::SubTypeShareVideo);
+    onlineAccount2.setSubTypes(QContactOnlineAccount::SubTypeVideoShare);
     fields = transformOnlineAccount->transformDetailL(onlineAccount2);
     QVERIFY(fields.count() == 1);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
@@ -1015,7 +1014,7 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
 
     QContactOnlineAccount onlineAccount4;
     onlineAccount4.setAccountUri(sipDetail);
-    onlineAccount4.setSubTypes(QContactOnlineAccount::SubTypeXmpp);
+    onlineAccount4.setSubTypes(QContactOnlineAccount::SubTypeImpp);
     fields = transformOnlineAccount->transformDetailL(onlineAccount4);
     QVERIFY(fields.count() == 1);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
@@ -1030,7 +1029,7 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
     QContactDetail* contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
     const QContactOnlineAccount* onlineAccountDetail1(static_cast<const QContactOnlineAccount*>(contactDetail));
     QCOMPARE(onlineAccountDetail1->accountUri(), sipDetail);
-    QVERIFY(onlineAccountDetail1->subTypes().contains(QContactOnlineAccount::SubTypeInternet));
+    QVERIFY(onlineAccountDetail1->subTypes().contains(QContactOnlineAccount::SubTypeSipVoip));
     delete contactDetail;
     contactDetail = 0;
     delete newField;
@@ -1042,7 +1041,7 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
     contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
     const QContactOnlineAccount* onlineAccountDetail2(static_cast<const QContactOnlineAccount*>(contactDetail));
     QCOMPARE(onlineAccountDetail2->accountUri(), sipDetail);
-    QVERIFY(onlineAccountDetail2->subTypes().contains(QContactOnlineAccount::SubTypeShareVideo));
+    QVERIFY(onlineAccountDetail2->subTypes().contains(QContactOnlineAccount::SubTypeVideoShare));
     delete contactDetail;
     contactDetail = 0;
     delete newField;
@@ -1065,7 +1064,7 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
     contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
     const QContactOnlineAccount* onlineAccountDetail4(static_cast<const QContactOnlineAccount*>(contactDetail));
     QCOMPARE(onlineAccountDetail4->accountUri(), sipDetail);
-    QVERIFY(onlineAccountDetail4->subTypes().contains(QContactOnlineAccount::SubTypeXmpp));
+    QVERIFY(onlineAccountDetail4->subTypes().contains(QContactOnlineAccount::SubTypeImpp));
     delete contactDetail;
     contactDetail = 0;
     delete newField;
