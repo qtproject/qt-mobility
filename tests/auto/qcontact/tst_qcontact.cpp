@@ -358,7 +358,11 @@ void tst_QContact::actions()
     // XXX this is here to make the bulk
     // of this test pass.  The first set
     // of tests expect to not find plugins.
-    QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins/";
+    QString path = QApplication::applicationDirPath() + "/dummyplugin";
+    QApplication::addLibraryPath(path);
+    path = QApplication::applicationDirPath() + "/dummyplugin/plugins";
+    QApplication::addLibraryPath(path);
+    path = QApplication::applicationDirPath() + "/dummyplugin/plugins/contacts";
     QApplication::addLibraryPath(path);
 
     // Prior to plugin loading:

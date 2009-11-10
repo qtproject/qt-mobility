@@ -112,7 +112,7 @@ Q_DECLARE_METATYPE(QContactLocalIdList);
 tst_QContactAsync::tst_QContactAsync()
 {
     // ensure we can load all of the plugins we need to.
-    QString path = QApplication::applicationDirPath() + "/dummyplugin";
+    QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins";
     QApplication::addLibraryPath(path);
 
     qRegisterMetaType<QContactLocalIdList>("QList<QContactLocalId>");
@@ -120,7 +120,7 @@ tst_QContactAsync::tst_QContactAsync()
 
 tst_QContactAsync::~tst_QContactAsync()
 {
-    QString path = QApplication::applicationDirPath() + "/dummyplugin";
+    QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins";
     QApplication::removeLibraryPath(path);
 }
 
@@ -328,8 +328,18 @@ void tst_QContactAsync::contactFetch()
         QList<QContactName> names = currFull.details<QContactName>();
         foreach (const QContactName& name, names) {
             QContactName fullName = name;
-            currRestricted.saveDetail(&fullName);
+            if (!fullName.isEmpty()) {
+                currRestricted.saveDetail(&fullName);
+            }
         }
+
+        // XXX TODO: remove the following after removing the deprecated API
+        QContactDisplayLabel dl = currFull.detail(QContactDisplayLabel::DefinitionName);
+        dl.setLabel(dl.label()); // empty field but still exists.
+        currRestricted.setDisplayLabel(dl);
+        // remove to here.
+
+        // ensure that the contact is the same
         QVERIFY(contacts.at(i) == currRestricted);
     }
 
@@ -772,11 +782,12 @@ void tst_QContactAsync::contactSave()
 
 void tst_QContactAsync::definitionFetch()
 {
-    // XXX TODO: include contact type in definition fetch!
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
     QContactDetailDefinitionFetchRequest dfr;
     QVERIFY(dfr.type() == QContactAbstractRequest::DetailDefinitionFetchRequest);
+    dfr.setContactType(QContactType::TypeContact);
+    QVERIFY(dfr.contactType() == QString(QLatin1String(QContactType::TypeContact)));
 
     // initial state - not started, no manager.
     QVERIFY(!dfr.isActive());
@@ -876,14 +887,15 @@ void tst_QContactAsync::definitionFetch()
 
 void tst_QContactAsync::definitionRemove()
 {
-    // XXX TODO: include contact type in mutability!
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
-    if (!cm->hasFeature(QContactManager::MutableDefinitions)) {
+    if (!cm->hasFeature(QContactManager::MutableDefinitions, QContactType::TypeContact)) {
        QSKIP("This contact manager doest not support mutable definitions, can't remove a definition!", SkipSingle);
     }
     QContactDetailDefinitionRemoveRequest drr;
     QVERIFY(drr.type() == QContactAbstractRequest::DetailDefinitionRemoveRequest);
+    drr.setContactType(QContactType::TypeContact);
+    QVERIFY(drr.contactType() == QString(QLatin1String(QContactType::TypeContact)));
 
     // initial state - not started, no manager.
     QVERIFY(!drr.isActive());
@@ -1026,16 +1038,17 @@ void tst_QContactAsync::definitionRemove()
 
 void tst_QContactAsync::definitionSave()
 {
-    // XXX TODO: include contact type in mutability!
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
     
-    if (!cm->hasFeature(QContactManager::MutableDefinitions)) {
+    if (!cm->hasFeature(QContactManager::MutableDefinitions, QContactType::TypeContact)) {
        QSKIP("This contact manager doest not support mutable definitions, can't save a definition!", SkipSingle);
     }
     
     QContactDetailDefinitionSaveRequest dsr;
     QVERIFY(dsr.type() == QContactAbstractRequest::DetailDefinitionSaveRequest);
+    dsr.setContactType(QContactType::TypeContact);
+    QVERIFY(dsr.contactType() == QString(QLatin1String(QContactType::TypeContact)));
 
     // initial state - not started, no manager.
     QVERIFY(!dsr.isActive());
@@ -1902,6 +1915,12 @@ void tst_QContactAsync::addManagers()
 QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
 {
     QContactManager* cm = QContactManager::fromUri(managerUri);
+
+    // XXX TODO: ensure that this is the case:
+    // there should be no contacts in the database.
+    QList<QContactLocalId> toRemove = cm->contacts();
+    foreach (const QContactLocalId& removeId, toRemove)
+        cm->removeContact(removeId);
 
     QContact a, b, c;
     QContactName aNameDetail;
