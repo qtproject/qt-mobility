@@ -303,8 +303,8 @@ void tst_QContactAsync::contactFetch()
     sorting.clear();
     cfr.setFilter(fil);
     cfr.setSorting(sorting);
-    cfr.setDefinitionRestrictions(QStringList(QContactDisplayLabel::DefinitionName));
-    QCOMPARE(cfr.definitionRestrictions(), QStringList(QContactDisplayLabel::DefinitionName));
+    cfr.setDefinitionRestrictions(QStringList(QContactName::DefinitionName));
+    QCOMPARE(cfr.definitionRestrictions(), QStringList(QContactName::DefinitionName));
     QVERIFY(!cfr.cancel()); // not started
     QVERIFY(cfr.start());
     QVERIFY(cfr.isActive());
@@ -325,7 +325,11 @@ void tst_QContactAsync::contactFetch()
         QContact currFull = cm->contact(contactIds.at(i));
         QContact currRestricted;
         currRestricted.setId(currFull.id());
-        currRestricted.setDisplayLabel(currFull.displayLabel());
+        QList<QContactName> names = currFull.details<QContactName>();
+        foreach (const QContactName& name, names) {
+            QContactName fullName = name;
+            currRestricted.saveDetail(&fullName);
+        }
         QVERIFY(contacts.at(i) == currRestricted);
     }
 
@@ -568,7 +572,9 @@ void tst_QContactAsync::contactRemove()
 
     // cancelling
     QContact temp;
-    temp.setDisplayLabel("should not be removed");
+    QContactName nameDetail;
+    nameDetail.setCustomLabel("Should not be removed");
+    temp.saveDetail(&nameDetail);
     cm->saveContact(&temp);
     crr.setFilter(dfil);
     QVERIFY(!crr.cancel()); // not started
@@ -611,6 +617,7 @@ void tst_QContactAsync::contactRemove()
 
     QCOMPARE(cm->contacts().size(), 1);
     QCOMPARE(cm->contact(cm->contacts().first()), temp);
+    cm->removeContact(temp.localId()); // clean up
 
     delete cm;
 }
@@ -633,7 +640,9 @@ void tst_QContactAsync::contactSave()
     // save a new contact
     int originalCount = cm->contacts().size();
     QContact testContact;
-    testContact.setDisplayLabel("Test Contact");
+    QContactName nameDetail;
+    nameDetail.setCustomLabel("Test Contact");
+    testContact.saveDetail(&nameDetail);
     QList<QContact> saveList;
     saveList << testContact;
     csr.setManager(cm);
@@ -1223,7 +1232,7 @@ void tst_QContactAsync::relationshipFetch()
     QContactId aId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.displayLabel().label() == QString("Aaron Aaronson")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Aaron Aaronson")) {
             aId = curr.id();
             break;
         }
@@ -1251,7 +1260,7 @@ void tst_QContactAsync::relationshipFetch()
     QContactId bId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.displayLabel().label() == QString("Bob Aaronsen")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Bob Aaronsen")) {
             bId = curr.id();
             break;
         }
@@ -1281,7 +1290,7 @@ void tst_QContactAsync::relationshipFetch()
     QContactId cId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.displayLabel().label() == QString("Borris Aaronsun")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Borris Aaronsun")) {
             cId = curr.id();
             break;
         }
@@ -1384,15 +1393,15 @@ void tst_QContactAsync::relationshipRemove()
     QContactId aId, bId, cId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.displayLabel().label() == QString("Aaron Aaronson")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Aaron Aaronson")) {
             aId = curr.id();
             continue;
         }
-        if (curr.displayLabel().label() == QString("Bob Aaronsen")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Bob Aaronsen")) {
             bId = curr.id();
             continue;
         }
-        if (curr.displayLabel().label() == QString("Borris Aaronsun")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Borris Aaronsun")) {
             cId = curr.id();
             continue;
         }
@@ -1588,11 +1597,11 @@ void tst_QContactAsync::relationshipSave()
     QContactId cId, aId, bId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.displayLabel().label() == QString("Borris Aaronsun")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Borris Aaronsun")) {
             cId = curr.id();
-        } else if (curr.displayLabel().label() == QString("Bob Aaronsen")) {
+        } else if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Bob Aaronsen")) {
             bId = curr.id();
-        } else if (curr.displayLabel().label() == QString("Aaron Aaronson")) {
+        } else if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Aaron Aaronson")) {
             aId = curr.id();
         }
     }
@@ -1895,9 +1904,15 @@ QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
     QContactManager* cm = QContactManager::fromUri(managerUri);
 
     QContact a, b, c;
-    a.setDisplayLabel("Aaron Aaronson");
-    b.setDisplayLabel("Bob Aaronsen");
-    c.setDisplayLabel("Borris Aaronsun");
+    QContactName aNameDetail;
+    aNameDetail.setCustomLabel("Aaron Aaronson");
+    a.saveDetail(&aNameDetail);
+    QContactName bNameDetail;
+    bNameDetail.setCustomLabel("Bob Aaronsen");
+    b.saveDetail(&bNameDetail);
+    QContactName cNameDetail;
+    cNameDetail.setCustomLabel("Borris Aaronsun");
+    c.saveDetail(&cNameDetail);
 
     QContactPhoneNumber phn;
     phn.setNumber("0123");

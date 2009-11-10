@@ -2670,13 +2670,19 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
 
     /* Ensure the last modified times are different */
     QTest::qSleep(napTime);
-    c.setDisplayLabel("Clarence");
+    QContactName modifiedName = c.detail(QContactName::DefinitionName);
+    modifiedName.setCustomLabel("Clarence");
+    c.saveDetail(&modifiedName);
     cm->saveContact(&c);
     QTest::qSleep(napTime);
-    b.setDisplayLabel("Boris");
+    modifiedName = b.detail(QContactName::DefinitionName);
+    modifiedName.setCustomLabel("Boris");
+    b.saveDetail(&modifiedName);
     cm->saveContact(&b);
     QTest::qSleep(napTime);
-    a.setDisplayLabel("Albert");
+    modifiedName = a.detail(QContactName::DefinitionName);
+    modifiedName.setCustomLabel("Albert");
+    a.saveDetail(&modifiedName);
     cm->saveContact(&a);
     QTest::qSleep(napTime);
 
@@ -2733,10 +2739,13 @@ void tst_QContactManagerFiltering::dumpContactDifferences(const QContact& ca, co
     QCOMPARE(n1.last(), n2.last());
     QCOMPARE(n1.prefix(), n2.prefix());
     QCOMPARE(n1.suffix(), n2.suffix());
+    QCOMPARE(n1.customLabel(), n2.customLabel());
 
+#if 0 // XXX TODO: update this after removing deprecated API
     // Check the display label
     QCOMPARE(a.displayLabel().label(), b.displayLabel().label());
     QCOMPARE(a.displayLabel().isSynthesized(), b.displayLabel().isSynthesized());
+#endif
 
     // Now look at the rest
     QList<QContactDetail> aDetails = a.details();
