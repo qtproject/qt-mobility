@@ -118,6 +118,7 @@ private:
         const QVersitProperty& property,
         const QContact& contact)const;
     QContactDetail* createNameValueDetail(const QVersitProperty& property) const;
+    QContactDetail* createDisplayLabel(const QVersitProperty& property) const;
 
     QStringList extractContexts(const QVersitProperty& property) const;
 

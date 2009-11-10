@@ -86,6 +86,7 @@ private slots: // Tests
     void testOnlineAccount();
     void testFamily();
     void testSound();
+    void testDisplayLabel();
     void testUnknownVersitProperties();
 
 private: // Utilities
