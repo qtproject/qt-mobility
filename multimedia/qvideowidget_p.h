@@ -225,6 +225,7 @@ public:
         , hue(0)
         , saturation(0)
         , aspectRatioMode(QVideoWidget::KeepAspectRatio)
+        , nonFullScreenFlags(0)
         , wasFullScreen(false)
     {
     }
