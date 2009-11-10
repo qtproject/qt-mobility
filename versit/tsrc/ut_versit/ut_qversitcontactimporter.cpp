@@ -1095,7 +1095,7 @@ void UT_QVersitContactImporter::testDisplayLabel()
     nameProperty.setName(QString::fromAscii("FN"));
     nameProperty.setValue(val);
     document.addProperty(nameProperty);
-    QContact contact = mGenerator->importContact(document);
+    QContact contact = mImporter->importContact(document);
     QContactDisplayLabel label =
             (QContactDisplayLabel)contact.detail(QContactDisplayLabel::DefinitionName);
     QCOMPARE(label.label(),QString::fromAscii(val));
