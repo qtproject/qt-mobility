@@ -149,8 +149,8 @@ const versitMapping versitSubTypeMappings[] = {
     {"FAX",    QContactPhoneNumber::SubTypeFacsimile.str},
     {"BBS",    QContactPhoneNumber::SubTypeBulletinBoardSystem.str},
     {"PAGER",  QContactPhoneNumber::SubTypePager.str},
-    {"SWIS",   QContactOnlineAccount::SubTypeShareVideo.str},
-    {"VOIP",   QContactOnlineAccount::SubTypeInternet.str}
+    {"SWIS",   QContactOnlineAccount::SubTypeVideoShare.str},
+    {"VOIP",   QContactOnlineAccount::SubTypeSipVoip.str}
 };
 
 // Mappings from file types in versit specifications to file extensions

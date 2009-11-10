@@ -277,7 +277,10 @@ void QVersitContactImporterPrivate::setOrganizationNames(
     int firstSemicolon = value.indexOf(";");
     if (firstSemicolon >= 0) {
         organization.setName(QString::fromAscii(value.left(firstSemicolon)));
-        organization.setDepartment(QString::fromAscii(value.mid(firstSemicolon+1)));
+        QString departmentsStr(QString::fromAscii(value.mid(firstSemicolon+1)));
+        QStringList departments =
+            departmentsStr.split(QString::fromAscii(";"),QString::SkipEmptyParts);
+        organization.setDepartment(departments);
     } else {
         organization.setName(QString::fromAscii(value));
     }

@@ -245,7 +245,7 @@ void UT_QVersitContactImporter::testOrganizationName()
         static_cast<QContactOrganization>(
             contact.detail(QContactOrganization::DefinitionName));
     QCOMPARE(organization.name(),QString());
-    QCOMPARE(organization.department(),QString());
+    QCOMPARE(organization.department().count(),0);
 
     // Organization without separators
     property.setValue(QByteArray("Nokia"));
@@ -255,9 +255,9 @@ void UT_QVersitContactImporter::testOrganizationName()
         static_cast<QContactOrganization>(
             contact.detail(QContactOrganization::DefinitionName));
     QCOMPARE(organization.name(),QString::fromAscii("Nokia"));
-    QCOMPARE(organization.department(),QString());
+    QCOMPARE(organization.department().count(),0);
 
-    // Organization with one seprator
+    // Organization with one separator
     property.setValue(QByteArray(";"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
@@ -265,7 +265,7 @@ void UT_QVersitContactImporter::testOrganizationName()
         static_cast<QContactOrganization>(
             contact.detail(QContactOrganization::DefinitionName));
     QCOMPARE(organization.name(),QString::fromAscii(""));
-    QCOMPARE(organization.department(),QString());
+    QCOMPARE(organization.department().count(),0);
 
     // Organization with just separators
     property.setValue(QByteArray(";;;"));
@@ -275,7 +275,7 @@ void UT_QVersitContactImporter::testOrganizationName()
         static_cast<QContactOrganization>(
             contact.detail(QContactOrganization::DefinitionName));
     QCOMPARE(organization.name(),QString::fromAscii(""));
-    QCOMPARE(organization.department(),QString::fromAscii(";;"));
+    QCOMPARE(organization.department().count(),0);
 
     // Organization with one Organizational Unit
     property.setValue(QByteArray("Nokia;R&D"));
@@ -285,7 +285,8 @@ void UT_QVersitContactImporter::testOrganizationName()
         static_cast<QContactOrganization>(
             contact.detail(QContactOrganization::DefinitionName));
     QCOMPARE(organization.name(),QString::fromAscii("Nokia"));
-    QCOMPARE(organization.department(),QString::fromAscii("R&D"));
+    QCOMPARE(organization.department().count(),1);
+    QCOMPARE(organization.department().at(0),QString::fromAscii("R&D"));
 
     // Organization with organization name and semicolon
     property.setValue(QByteArray("Nokia;"));
@@ -295,7 +296,7 @@ void UT_QVersitContactImporter::testOrganizationName()
         static_cast<QContactOrganization>(
             contact.detail(QContactOrganization::DefinitionName));
     QCOMPARE(organization.name(),QString::fromAscii("Nokia"));
-    QCOMPARE(organization.department(),QString());
+    QCOMPARE(organization.department().count(),0);
 
     // Organization with semicolon and department
     property.setValue(QByteArray(";R&D"));
@@ -305,17 +306,21 @@ void UT_QVersitContactImporter::testOrganizationName()
         static_cast<QContactOrganization>(
             contact.detail(QContactOrganization::DefinitionName));
     QCOMPARE(organization.name(),QString());
-    QCOMPARE(organization.department(),QString::fromAscii("R&D"));
+    QCOMPARE(organization.department().count(),1);
+    QCOMPARE(organization.department().at(0),QString::fromAscii("R&D"));
 
     // Organization with more Organizational Units
-    property.setValue(QByteArray("ABC, Inc.;North American Division;Devices;Marketing"));
+    property.setValue(QByteArray("Nokia;R&D;Devices;Qt"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
     organization =
         static_cast<QContactOrganization>(
             contact.detail(QContactOrganization::DefinitionName));
-    QCOMPARE(organization.name(),QString::fromAscii("ABC, Inc."));
-    QCOMPARE(organization.department(),QString::fromAscii("North American Division;Devices;Marketing"));
+    QCOMPARE(organization.name(),QString::fromAscii("Nokia"));
+    QCOMPARE(organization.department().count(),3);
+    QCOMPARE(organization.department().at(0),QString::fromAscii("R&D"));
+    QCOMPARE(organization.department().at(1),QString::fromAscii("Devices"));
+    QCOMPARE(organization.department().at(2),QString::fromAscii("Qt"));
 }
 
 void UT_QVersitContactImporter::testOrganizationTitle()
@@ -1116,7 +1121,7 @@ void UT_QVersitContactImporter::testOnlineAccount()
     QCOMPARE(onlineAccount.accountUri(),QString::fromAscii(accountUri));
     subTypes = onlineAccount.subTypes();
     QCOMPARE(subTypes.count(),1);
-    QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeShareVideo);
+    QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeVideoShare);
 
     // Internet subtype
     document = QVersitDocument();
@@ -1134,7 +1139,7 @@ void UT_QVersitContactImporter::testOnlineAccount()
     QCOMPARE(onlineAccount.accountUri(),QString::fromAscii(accountUri));
     subTypes = onlineAccount.subTypes();
     QCOMPARE(subTypes.count(),1);
-    QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeInternet);
+    QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeSipVoip);
 }
 
 void UT_QVersitContactImporter::testFamily()
