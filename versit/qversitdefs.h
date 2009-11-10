@@ -99,6 +99,8 @@ const versitContactDetailMapping versitContactDetailMappings[] = {
                       QContactAvatar::SubTypeImage.str},
     {"REV",           QContactTimestamp::DefinitionName.str,
                       ""},
+    {"ROLE",          QContactOrganization::DefinitionName.str,
+                      QContactOrganization::FieldRole.str},
     {"SOUND",         QContactAvatar::DefinitionName.str,
                       QContactAvatar::SubTypeAudioRingtone.str},
     {"TEL",           QContactPhoneNumber::DefinitionName.str,
