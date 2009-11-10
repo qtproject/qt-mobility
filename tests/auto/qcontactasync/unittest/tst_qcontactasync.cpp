@@ -1045,7 +1045,7 @@ void tst_QContactAsync::definitionSave()
     QVERIFY(!dsr.waitForFinished());
     QVERIFY(!dsr.waitForProgress());
 
-    // save a new group
+    // save a new detail definition
     int originalCount = cm->detailDefinitions().keys().size();
     QContactDetailDefinition testDef;
     testDef.setName("TestDefinitionId");

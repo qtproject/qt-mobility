@@ -1080,10 +1080,7 @@ void tst_QContactManager::invalidManager()
 
     /* Detail definitions */
     QVERIFY(manager.detailDefinitions().count() == 0);
-    QVERIFY(manager.error() == QContactManager::NotSupportedError);
-
-    QVERIFY(manager.detailDefinitions().count() == 0);
-    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
 
     QContactDetailDefinition def;
     def.setAccessConstraint(QContactDetailDefinition::CreateOnly);
@@ -1096,15 +1093,15 @@ void tst_QContactManager::invalidManager()
     def.setFields(fields);
 
     QVERIFY(manager.saveDetailDefinition(def) == false);
-    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
     QVERIFY(manager.detailDefinitions().count() == 0);
-    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
     QVERIFY(manager.detailDefinition("new field").name() == QString());
 
     QVERIFY(manager.removeDetailDefinition(def.name()) == false);
-    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
     QVERIFY(manager.detailDefinitions().count() == 0);
-    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
 
     /* Capabilities */
     QVERIFY(manager.supportedDataTypes().count() == 0);
