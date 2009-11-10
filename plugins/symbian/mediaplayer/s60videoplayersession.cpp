@@ -52,19 +52,10 @@
 #include <QDir>
 
 S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
-    :QObject(parent),
-     m_state(QMediaPlayer::StoppedState),
-     m_mediaStatus(QMediaPlayer::UnknownMediaStatus),
-     m_volume(100),
-     m_playbackRate(1.0),
-     m_muted(false),
-     m_videoAvailable(false),
-     m_seekable(false),
-     m_lastPosition(0),
-     m_duration(-1),
-     m_wsSession(0),
-     m_screenDevice(0),
-     m_window(0)
+    : S60MediaPlayerSession(parent),
+      m_wsSession(0),
+      m_screenDevice(0),
+      m_window(0)
 {    
     m_frameSize = QSize(320,240);
 }

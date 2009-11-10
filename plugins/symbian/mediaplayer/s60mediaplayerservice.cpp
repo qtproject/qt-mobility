@@ -44,10 +44,12 @@
 #include <QtGui/qwidget.h>
 
 #include "s60mediaplayerservice.h"
-#include "s60videoplayercontrol.h"
+#include "s60mediaplayercontrol.h"
 #include "s60videoplayersession.h"
+#include "s60audioplayersession.h"
 #include "s60videometadataprovider.h"
 #include "s60videowidget.h"
+#include "s60mediarecognizer.h"
 
 #ifndef QT_NO_MULTIMEDIA
 #include "s60videooverlay.h"
@@ -57,13 +59,13 @@
 #include <multimedia/qmediaplaylistnavigator.h>
 #include <multimedia/qmediaplaylist.h>
 
-S60MediaPlayerService::S60MediaPlayerService(QObject *parent):
-     QMediaService(parent)
+S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
+    : QMediaService(parent),
+      m_videoPlayerSession(NULL),
+      m_audioPlayerSession(NULL)
 {
-
-    m_session = new S60VideoPlayerSession(this);
-    m_control = new S60VideoPlayerControl(m_session, this);
-    m_metaData = new S60VideoMetaDataProvider(m_session, this);
+    m_control = new S60MediaPlayerControl(*this, this);
+    //TODO:m_metaData = new S60VideoMetaDataProvider(m_session, this);
     m_videoOutput = new S60VideoOutputControl(this);
     connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
             this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
@@ -90,8 +92,8 @@ QMediaControl *S60MediaPlayerService::control(const char *name) const
     if (qstrcmp(name,QMediaPlayerControl_iid) == 0)
         return m_control;
 
-    if (qstrcmp(name,QMetaDataControl_iid) == 0)
-        return m_metaData;
+    //TODO:if (qstrcmp(name,QMetaDataControl_iid) == 0)
+    //    return m_metaData;
 
     if (qstrcmp(name, QVideoOutputControl_iid) == 0)
         return m_videoOutput;
@@ -136,3 +138,24 @@ void S60MediaPlayerService::videoOutputChanged(QVideoOutputControl::Output outpu
     }
 }
 
+S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
+{
+    QUrl url = m_control->media().canonicalUri();
+    qDebug() << url.toString();
+    S60MediaRecognizer *mediaRecognizer = new S60MediaRecognizer;
+    
+    S60MediaPlayerSession* mediaPlayerSession = NULL;
+    S60MediaRecognizer::MediaType mediaType = mediaRecognizer->IdentifyMediaTypeL(url);
+    if (mediaType == S60MediaRecognizer::Video) {
+        if (!m_videoPlayerSession)
+            m_videoPlayerSession = new S60VideoPlayerSession(this);
+        mediaPlayerSession = m_videoPlayerSession;    
+    } else if (mediaType == S60MediaRecognizer::Audio) {
+        if (!m_audioPlayerSession)
+            m_audioPlayerSession = new S60AudioPlayerSession(this);
+        mediaPlayerSession = m_audioPlayerSession;
+    }
+    
+    delete mediaRecognizer;
+    return mediaPlayerSession;
+}

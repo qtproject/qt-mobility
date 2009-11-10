@@ -39,63 +39,71 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOPLAYERSERVICE_H
-#define S60VIDEOPLAYERSERVICE_H
+#ifndef S60MEDIAPLAYERCONTROL_H
+#define S60MEDIAPLAYERCONTROL_H
 
 #include <QtCore/qobject.h>
 
-#include <multimedia/qmediaservice.h>
-#include <multimedia/qvideooutputcontrol.h>
+#include <multimedia/qmediaplayercontrol.h>
+#include <multimedia/qmediaplayer.h>
 
-#include "s60videooutputcontrol.h"
 #include "ms60mediaplayerresolver.h"
 
-class QMediaMetaData;
-class QMediaPlayerControl;
 class QMediaPlaylist;
-
-class S60VideoMetaData;
-class S60VideoOutputControl;
-class S60VideoPlayerSession;
-class S60AudioPlayerSession;
-class S60MediaPlayerControl;
-class S60VideoMetaDataProvider;
-class S60VideoWidgetControl;
-
-#ifndef QT_NO_MULTIMEDIA
-class S60VideoRenderer;
-class S60VideoOverlay;
-#endif
-
+class S60MediaPlayerSession;
+class S60MediaPlayerService;
 class QMediaPlaylistNavigator;
 
-class S60MediaPlayerService : public QMediaService, public MS60MediaPlayerResolver
+class S60MediaPlayerControl : public QMediaPlayerControl
 {
     Q_OBJECT
-    
-public:   
-    S60MediaPlayerService(QObject *parent = 0);
-    ~S60MediaPlayerService();
 
-    QMediaControl *control(const char *name) const;
-    
-private slots:
-    void videoOutputChanged(QVideoOutputControl::Output output);
+public:
+    S60MediaPlayerControl(MS60MediaPlayerResolver& mediaPlayerResolver, QObject *parent = 0);
+    ~S60MediaPlayerControl();
 
-protected: // From MS60MediaPlayerResolver
-    S60MediaPlayerSession* PlayerSession();
+    QMediaPlayer::State state() const;
+    QMediaPlayer::MediaStatus mediaStatus() const;
+
+    qint64 position() const;
+    qint64 duration() const;
+
+    int bufferStatus() const;
+
+    int volume() const;
+    bool isMuted() const;
+
+    bool isVideoAvailable() const;
+    void setVideoOutput(QObject *output);
+
+    bool isSeekable() const;
+    QPair<qint64, qint64> seekRange() const;
+	
+    qreal playbackRate() const;
+    void setPlaybackRate(qreal rate);
+
+    QMediaContent media() const;
+    const QIODevice *mediaStream() const;
+    void setMedia(const QMediaContent&, QIODevice *);
+
+public Q_SLOTS:
+    void setPosition(qint64 pos);
+
+    void play();
+    void pause();
+    void stop();
+
+    void setVolume(int volume);
+    void setMuted(bool muted);
+
+private: 
+    S60MediaPlayerSession* currentPlayerSession();
     
 private:
-    S60MediaPlayerControl *m_control;
-    S60VideoOutputControl *m_videoOutput;
-    S60VideoPlayerSession *m_videoPlayerSession;
-    S60AudioPlayerSession *m_audioPlayerSession;
-    S60VideoMetaDataProvider *m_metaData;   
-#ifndef QT_NO_MULTIMEDIA
-    S60VideoRenderer *m_videoRenderer;
-    S60VideoOverlay *m_videoWindow;
-#endif
-    S60VideoWidgetControl *m_videoWidget;
+    MS60MediaPlayerResolver& m_mediaPlayerResolver;
+    S60MediaPlayerSession *m_session;
+    QMediaContent m_currentResource; 
+    QIODevice *m_stream;
 };
 
 #endif

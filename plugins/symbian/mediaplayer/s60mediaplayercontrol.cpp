@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include "s60videoplayercontrol.h"
-#include "s60videoplayersession.h"
+#include "s60mediaplayercontrol.h"
+#include "s60mediaplayersession.h"
 
 #include <multimedia/qmediaplaylistnavigator.h>
 
@@ -49,12 +49,13 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>
 
-S60VideoPlayerControl::S60VideoPlayerControl(S60VideoPlayerSession *session, QObject *parent)
-    : QMediaPlayerControl(parent)
-    , m_session(session)
+S60MediaPlayerControl::S60MediaPlayerControl(MS60MediaPlayerResolver& mediaPlayerResolver, QObject *parent)
+    : QMediaPlayerControl(parent),
+      m_mediaPlayerResolver(mediaPlayerResolver),
+      m_session(NULL)
 {
-
-    connect(m_session, SIGNAL(positionChanged(qint64)),
+    // TODO: Make connections somewhere
+    /*connect(m_session, SIGNAL(positionChanged(qint64)),
             this, SIGNAL(positionChanged(qint64)));
     connect(m_session, SIGNAL(durationChanged(qint64)),
             this, SIGNAL(durationChanged(qint64)));
@@ -71,132 +72,146 @@ S60VideoPlayerControl::S60VideoPlayerControl(S60VideoPlayerSession *session, QOb
     connect(m_session, SIGNAL(videoAvailabilityChanged(bool)),
             this, SIGNAL(videoAvailabilityChanged(bool)));
     connect(m_session, SIGNAL(seekableChanged(bool)),
-            this, SIGNAL(seekableChanged(bool)));
+            this, SIGNAL(seekableChanged(bool)));*/
 }
 
-S60VideoPlayerControl::~S60VideoPlayerControl()
+S60MediaPlayerControl::~S60MediaPlayerControl()
 {
 }
 
-qint64 S60VideoPlayerControl::position() const
+qint64 S60MediaPlayerControl::position() const
 {
     return m_session->position();
 }
 
-qint64 S60VideoPlayerControl::duration() const
+qint64 S60MediaPlayerControl::duration() const
 {
+    if (!m_session)
+        return 0;
     return m_session->duration();
 }
 
-QMediaPlayer::State S60VideoPlayerControl::state() const
+QMediaPlayer::State S60MediaPlayerControl::state() const
 {
+    if (!m_session)
+        return QMediaPlayer::StoppedState;
     return m_session->state();
 }
 
-QMediaPlayer::MediaStatus S60VideoPlayerControl::mediaStatus() const
-{
+QMediaPlayer::MediaStatus S60MediaPlayerControl::mediaStatus() const
+{   
+    if (!m_session)
+        return QMediaPlayer::NoMedia;
     return m_session->mediaStatus();
 }
 
-int S60VideoPlayerControl::bufferStatus() const
+int S60MediaPlayerControl::bufferStatus() const
 {
     return 100;
 }
 
-int S60VideoPlayerControl::volume() const
+int S60MediaPlayerControl::volume() const
 {
+    if (!m_session)
+        return -1;
     return m_session->volume();
 }
 
-bool S60VideoPlayerControl::isMuted() const
+bool S60MediaPlayerControl::isMuted() const
 {
     return m_session->isMuted();
 }
 
-bool S60VideoPlayerControl::isSeekable() const
+bool S60MediaPlayerControl::isSeekable() const
 {
     return m_session->isSeekable();
 }
 
-QPair<qint64, qint64> S60VideoPlayerControl::seekRange() const
+QPair<qint64, qint64> S60MediaPlayerControl::seekRange() const
 {
     return m_session->isSeekable()
             ? qMakePair<qint64, qint64>(0, m_session->duration())
             : qMakePair<qint64, qint64>(0, 0);
 }
 
-qreal S60VideoPlayerControl::playbackRate() const
+qreal S60MediaPlayerControl::playbackRate() const
 {
     return m_session->playbackRate();
 }
 
-void S60VideoPlayerControl::setPlaybackRate(qreal rate)
+void S60MediaPlayerControl::setPlaybackRate(qreal rate)
 {
     m_session->setPlaybackRate(rate);
 }
 
-void S60VideoPlayerControl::setPosition(qint64 pos)
+void S60MediaPlayerControl::setPosition(qint64 pos)
 {
     m_session->seek(pos);
 }
 
-void S60VideoPlayerControl::play()
+void S60MediaPlayerControl::play()
 {
     m_session->play();
 }
 
-void S60VideoPlayerControl::pause()
+void S60MediaPlayerControl::pause()
 {
     m_session->pause();
 }
 
-void S60VideoPlayerControl::stop()
+void S60MediaPlayerControl::stop()
 {
     m_session->stop();
 }
 
-void S60VideoPlayerControl::setVolume(int volume)
+void S60MediaPlayerControl::setVolume(int volume)
 {
     m_session->setVolume(volume);
 }
 
-void S60VideoPlayerControl::setMuted(bool muted)
+void S60MediaPlayerControl::setMuted(bool muted)
 {
     m_session->setMuted(muted);
 }
 
-QMediaContent S60VideoPlayerControl::media() const
+QMediaContent S60MediaPlayerControl::media() const
 {
     return m_currentResource;
 }
 
-const QIODevice *S60VideoPlayerControl::mediaStream() const
+const QIODevice *S60MediaPlayerControl::mediaStream() const
 {
     return m_stream;
 }
 
-void S60VideoPlayerControl::setMedia(const QMediaContent &source, QIODevice *stream)
+void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *stream)
 {
     Q_UNUSED(stream)
-    m_session->stop();
+    if (m_session)
+        m_session->stop();
     m_currentResource = source;
     
     QUrl url;
     if (!source.isNull()) {
         url = source.canonicalUri();
     }
-
+    m_session = currentPlayerSession();
     m_session->load(url);
 
     emit mediaChanged(m_currentResource);
 }
 
-void S60VideoPlayerControl::setVideoOutput(QObject *output)
+void S60MediaPlayerControl::setVideoOutput(QObject *output)
 {
     m_session->setVideoRenderer(output);
 }
 
-bool S60VideoPlayerControl::isVideoAvailable() const
+bool S60MediaPlayerControl::isVideoAvailable() const
 {
     return m_session->isVideoAvailable();
+}
+
+S60MediaPlayerSession* S60MediaPlayerControl::currentPlayerSession() 
+{
+    return m_mediaPlayerResolver.PlayerSession();   
 }

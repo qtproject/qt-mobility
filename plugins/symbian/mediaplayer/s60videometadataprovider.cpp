@@ -62,7 +62,7 @@ S60VideoMetaDataProvider::~S60VideoMetaDataProvider()
 
 bool S60VideoMetaDataProvider::isMetaDataAvailable() const
 {
-    return !m_session->tags().isEmpty();
+    return false; //TODO:!m_session->tags().isEmpty();
 }
 
 bool S60VideoMetaDataProvider::isWritable() const
@@ -87,7 +87,7 @@ QList<QtMedia::MetaData> S60VideoMetaDataProvider::availableMetaData() const
 
 QVariant S60VideoMetaDataProvider::extendedMetaData(const QString &key) const
 {
-    return m_session->tags().value(key.toLatin1());
+    return QVariant(); //TODO:m_session->tags().value(key.toLatin1());
 }
 
 void S60VideoMetaDataProvider::setExtendedMetaData(const QString &key, QVariant const &value)

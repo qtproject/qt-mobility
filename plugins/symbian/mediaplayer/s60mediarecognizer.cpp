@@ -44,6 +44,8 @@
 #include <e32def.h>
 #include <e32cmn.h>
 #include <QUrl>
+#include <QDir>
+#include <QDebug>
 
 _LIT(KVideo,"c:\\fileName.rm");
 
@@ -72,32 +74,34 @@ bool S60MediaRecognizer::checkUrl(QUrl url)
    return validUrl;
 }
 
-int S60MediaRecognizer::IdentifyMediaTypeL()
+S60MediaRecognizer::MediaType S60MediaRecognizer::IdentifyMediaTypeL(const QUrl& url)
 {
    TBuf<20> aText;
-   CMPMediaRecognizer::TMPMediaType aType;
-   //Recognizes media type, returns TMPMediaType which contains different media files
-   TRAP(m_error, aType = m_recognizer->IdentifyMediaTypeL(KVideo,EFalse) );
-   /*
+   CMPMediaRecognizer::TMPMediaType type;
+   QString filePath = QDir::toNativeSeparators(url.toLocalFile());
+   qDebug() << url.toLocalFile();
+   qDebug() << QDir::toNativeSeparators(url.toLocalFile());
+   qDebug() << QDir::toNativeSeparators(url.toString());
+   TPtrC16 urlPtr(reinterpret_cast<const TUint16*>(filePath.utf16()));
+      MediaType mediaType = NotSupported;
+   TRAP(m_error, type = m_recognizer->IdentifyMediaTypeL(urlPtr, EFalse));
    if (!m_error) {
-       switch (aType) {
-       case CMPMediaRecognizer::ELocalVideoFile:
-
-           break;
+       switch (type) {
+       case CMPMediaRecognizer::ELocalRamFile:
        case CMPMediaRecognizer::ELocalAudioFile:
-
+           mediaType = Audio;
+           break;
+       case CMPMediaRecognizer::ELocalVideoFile:
+           mediaType = Video;
            break;
        case CMPMediaRecognizer::ELocalAudioPlaylist:
-
-           break;
        case CMPMediaRecognizer::EUrl:
-
+       case CMPMediaRecognizer::ELocalSdpFile:
+       case CMPMediaRecognizer::EProgressiveDownload:
+       case CMPMediaRecognizer::EUnidentified:
        default:
-           CMPMediaRecognizer::EUnidentified:
            break;
        }
    }
-   */
-   //TODO: return proper media types 
-   return (int) aType; 
+   return mediaType; 
 }

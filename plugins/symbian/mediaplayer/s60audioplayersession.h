@@ -39,65 +39,94 @@
 **
 ****************************************************************************/
 
-#ifndef S60MEDIAPLAYERCONTROL_H
-#define S60MEDIAPLAYERCONTROL_H
+#ifndef S60AUDIOPLAYERSESSION_H
+#define S60AUDIOPLAYERSESSION_H
 
-#include <QtCore/qobject.h>
-
-#include <multimedia/qmediaplayercontrol.h>
+#include <QObject>
+#include <QUrl>
+#include <QSize>
 #include <multimedia/qmediaplayer.h>
+#include "s60mediaplayersession.h"
 
-class QMediaPlaylist;
-class S60VideoPlayerSession;
-class S60MediaPlayerService;
-class QMediaPlaylistNavigator;
-
-class S60VideoPlayerControl : public QMediaPlayerControl
+class S60AudioPlayerSession : public S60MediaPlayerSession
 {
     Q_OBJECT
 
 public:
-    S60VideoPlayerControl(S60VideoPlayerSession *session, QObject *parent = 0);
-    ~S60VideoPlayerControl();
+    S60AudioPlayerSession(QObject *parent);
+    ~S60AudioPlayerSession();
 
-    QMediaPlayer::State state() const;
-    QMediaPlayer::MediaStatus mediaStatus() const;
+    QMediaPlayer::State state() const { return m_state; }
+    QMediaPlayer::MediaStatus mediaStatus() const { return m_mediaStatus; }
 
-    qint64 position() const;
     qint64 duration() const;
+    qint64 position() const;
 
-    int bufferStatus() const;
+    bool isBuffering() const;
+
+    int bufferingProgress() const;
 
     int volume() const;
     bool isMuted() const;
 
     bool isVideoAvailable() const;
-    void setVideoOutput(QObject *output);
 
     bool isSeekable() const;
-    QPair<qint64, qint64> seekRange() const;
-	
+
     qreal playbackRate() const;
     void setPlaybackRate(qreal rate);
-
-    QMediaContent media() const;
-    const QIODevice *mediaStream() const;
-    void setMedia(const QMediaContent&, QIODevice *);
-
-public Q_SLOTS:
-    void setPosition(qint64 pos);
+    
+public slots:
+    //void load(const QUrl &url);
 
     void play();
     void pause();
     void stop();
 
+    void seek(qint64 pos);
+
     void setVolume(int volume);
     void setMuted(bool muted);
 
+signals:
+    void durationChanged(qint64 duration);
+    void positionChanged(qint64 position);
+    void stateChanged(QMediaPlayer::State state);
+    void mediaStatusChanged(QMediaPlayer::MediaStatus mediaStatus);
+    void volumeChanged(int volume);
+    void mutedStateChaned(bool muted);
+    void videoAvailabilityChanged(bool videoAvailable);
+    void bufferingChanged(bool buffering);
+    void bufferingProgressChanged(int percentFilled);
+    void playbackFinished();
+    void tagsChanged();
+    void seekableChanged(bool);
+
+private: 
+    void getNativeHandles();
+    
+private slots:
+    void setSeekable(bool);
+
 private:
-    S60VideoPlayerSession *m_session;
-    QMediaContent m_currentResource; 
-    QIODevice *m_stream;
+    void setMediaStatus(QMediaPlayer::MediaStatus);
+
+    /*QSize m_frameSize;
+    qint64 m_totalTime;    
+    QUrl m_url;
+    QMediaPlayer::State m_state;
+    QMediaPlayer::MediaStatus m_mediaStatus;
+    QMap<QByteArray, QVariant> m_tags;
+    QList< QMap<QString,QVariant> > m_streamProperties;
+    
+    int m_volume;
+    qreal m_playbackRate;
+    bool m_muted;
+    bool m_videoAvailable;
+    bool m_seekable;
+
+    qint64 m_lastPosition;
+    qint64 m_duration;*/
 };
 
 #endif

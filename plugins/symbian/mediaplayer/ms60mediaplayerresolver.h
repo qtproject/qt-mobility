@@ -38,37 +38,15 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef MS60MEDIAPLAYERRESOLVER_H
+#define MS60MEDIAPLAYERRESOLVER_H
 
-#ifndef S60MEDIARECOGNIZER_H_
-#define S60MEDIARECOGNIZER_H_
+#include "s60mediaplayersession.h"
 
-#include <QObject>
-#include <qtmedianamespace.h>
-
-class CMPMediaRecognizer;
-class QUrl;
-
-class S60MediaRecognizer : public QObject
+class MS60MediaPlayerResolver
 {
-    Q_OBJECT
-    
     public:
-        enum MediaType {
-            Audio,
-            Video,
-            NotSupported = -1
-        };
-        
-        S60MediaRecognizer(QObject *parent = 0);
-        ~S60MediaRecognizer();
-        bool checkUrl(QUrl url);
-        MediaType IdentifyMediaTypeL(const QUrl& url);
-    
-    private:
-    
-        CMPMediaRecognizer *m_recognizer;
-        int m_error; 
-
+        virtual S60MediaPlayerSession* PlayerSession() = 0;
 };
 
-#endif /* S60MEDIARECOGNIZER_H_ */
+#endif
