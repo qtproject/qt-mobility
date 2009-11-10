@@ -176,7 +176,7 @@ void TestFiltering::addFilter(QVector<QString> param)
         QContactDetailFilter df;
 
         df.setDetailDefinitionName(param[1], param[2]);
-        QContactFilter::MatchFlags fl = param[4].toInt();
+        QContactFilter::MatchFlags fl = static_cast<QContactFilter::MatchFlags>(param[4].toInt());
         df.setMatchFlags(fl);
         df.setValue(param[3]);
 
