@@ -65,13 +65,13 @@ public:
 
     void setLabel(const QString& label)
     {
-        qWarning("This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!");
+        qWarning("setLabel(): This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!");
         setValue(FieldLabel, label);
         setValue(FieldSynthesized, label.isEmpty() ? true : false);
     }
     QString label() const {return value(FieldLabel);}
-    void setSynthesized(bool synthesized) {qWarning("This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!");setValue(FieldSynthesized, synthesized);}
-    bool isSynthesized() const {qWarning("This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!");return value<bool>(FieldSynthesized);}
+    void setSynthesized(bool synthesized) {qWarning("setSynthesized(): This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!");setValue(FieldSynthesized, synthesized);}
+    bool isSynthesized() const {qWarning("synthesized(): This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!");return value<bool>(FieldSynthesized);}
 };
 
 #endif

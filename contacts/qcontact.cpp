@@ -86,7 +86,7 @@
 QContact::QContact()
     : d(new QContactData)
 {
-    // insert the contact's name field.
+    // insert the contact's name field. XXX TODO: fix this after removing deprecated API
     QContactDisplayLabel contactLabel;
     contactLabel.d->m_id = 1;
     contactLabel.setSynthesized(true);
@@ -127,9 +127,9 @@ bool QContact::isEmpty() const
 void QContact::clearDetails()
 {
     QContactType typeDet = d->m_details.at(1);
-    QContactDisplayLabel dl = displayLabel();
-    dl.setLabel(QString());
-    dl.setSynthesized(true);
+    QContactDisplayLabel dl = d->m_details.at(0);
+    dl.setValue(QContactDisplayLabel::FieldLabel, QString());
+    dl.setSynthesized(true); // XXX TODO: fix this after removing deprecated API
     d->m_details.clear();
     d->m_details.insert(0, dl);
     d->m_details.insert(1, typeDet);
@@ -400,6 +400,7 @@ bool QContact::removeDetail(QContactDetail* detail)
 
     // Check if this a display label
     if (detail->d->m_definitionName == QContactDisplayLabel::DefinitionName) {
+        // XXX TODO: fix this after removing the deprecated API
         QContactDisplayLabel l = d->m_details[0];
         l.setLabel(QString());
         d->m_details[0] = l;
