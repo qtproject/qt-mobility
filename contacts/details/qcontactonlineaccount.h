@@ -69,10 +69,9 @@ public:
     const char* PresenceUnknown;
     const char* PresenceOffline;
     const char* SubTypeSip;
-    const char* SubTypeH323;
-    const char* SubTypeXmpp;
-    const char* SubTypeInternet;
-    const char* SubTypeShareVideo;
+    const char* SubTypeSipVoip;
+    const char* SubTypeImpp;
+    const char* SubTypeVideoShare;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOnlineAccount, "OnlineAccount")
     Q_DECLARE_LATIN1_LITERAL(FieldAccountUri, "AccountUri");
@@ -89,10 +88,9 @@ public:
     Q_DECLARE_LATIN1_LITERAL(PresenceUnknown, "Unknown");
     Q_DECLARE_LATIN1_LITERAL(PresenceOffline, "Offline");
     Q_DECLARE_LATIN1_LITERAL(SubTypeSip, "Sip");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeH323, "H323");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeXmpp, "Xmpp");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeInternet, "Internet");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeShareVideo, "ShareVideo");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeSipVoip, "SipVoip");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeImpp, "Impp");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeVideoShare, "VideoShare");
 #endif
 
     void setAccountUri(const QString& accountUri) {setValue(FieldAccountUri, accountUri);}

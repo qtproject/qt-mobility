@@ -577,7 +577,7 @@ void tst_QContactDetails::onlineAccount()
     QCOMPARE(o1.subTypes(), QStringList() << QLatin1String(QContactOnlineAccount::SubTypeSip));
 
     QStringList sl;
-    sl << QLatin1String(QContactOnlineAccount::SubTypeXmpp) << QLatin1String(QContactOnlineAccount::SubTypeH323);
+    sl << QLatin1String(QContactOnlineAccount::SubTypeImpp) << QLatin1String(QContactOnlineAccount::SubTypeVideoShare);
     o1.setSubTypes(sl);
     QCOMPARE(o1.subTypes(), sl);
 

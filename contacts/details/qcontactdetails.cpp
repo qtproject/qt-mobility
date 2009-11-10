@@ -630,28 +630,22 @@ Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldSubTypes, "SubTypes");
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeSip, "Sip");
 
 /*!
- * \variable QContactOnlineAccount::SubTypeH323
- * The constant attribute value which describes the online account as supporting H323
+ * \variable QContactOnlineAccount::SubTypeSipVoip
+ * The constant attribute value which describes the online account as supporting SIP-based VoIP
  */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeH323, "H323");
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeSipVoip, "SipVoip");
 
 /*!
- * \variable QContactOnlineAccount::SubTypeXmpp
- * The constant attribute value which describes the online account as supporting XMPP
+ * \variable QContactOnlineAccount::SubTypeImpp
+ * The constant attribute value which describes the online account as supporting IMPP
  */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeXmpp, "Xmpp");
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeImpp, "Impp");
 
 /*!
- * \variable QContactOnlineAccount::SubTypeInternet
- * The constant attribute value which describes the online account as supporting internet sessions
+ * \variable QContactOnlineAccount::SubTypeVideoShare
+ * The constant attribute value which describes the online account as supporting VideoShare
  */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeInternet, "Internet");
-
-/*!
- * \variable QContactOnlineAccount::SubTypeShareVideo
- * The constant attribute value which describes the online account as supporting ShareVideo
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeShareVideo, "ShareVideo");
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeVideoShare, "VideoShare");
 
 /*!
  * \variable QContactOrganization::FieldName
