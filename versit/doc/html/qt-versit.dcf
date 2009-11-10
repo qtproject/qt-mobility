@@ -1,0 +1,99 @@
+<!DOCTYPE DCF>
+<DCF ref="index.html" icon="qt-versit.png" imagedir="../../gif" title="Qt Versit Reference Documentation">
+<section ref="classes.html" title="Classes">
+    <section ref="qversitcontactexporter.html" title="QVersitContactExporter Class Reference">
+        <keyword ref="qversitcontactexporter.html">QVersitContactExporter</keyword>
+        <keyword ref="qversitcontactexporter.html#exportContact">exportContact</keyword>
+        <keyword ref="qversitcontactexporter.html#scale">scale</keyword>
+        <keyword ref="qversitcontactexporter.html#unknownContactDetails">unknownContactDetails</keyword>
+        <section ref="qversitcontactexporter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qversitcontactimporter.html" title="QVersitContactImporter Class Reference">
+        <keyword ref="qversitcontactimporter.html">QVersitContactImporter</keyword>
+        <keyword ref="qversitcontactimporter.html#audioClipPath">audioClipPath</keyword>
+        <keyword ref="qversitcontactimporter.html#imagePath">imagePath</keyword>
+        <keyword ref="qversitcontactimporter.html#importContact">importContact</keyword>
+        <keyword ref="qversitcontactimporter.html#setAudioClipPath">setAudioClipPath</keyword>
+        <keyword ref="qversitcontactimporter.html#setImagePath">setImagePath</keyword>
+        <keyword ref="qversitcontactimporter.html#unknownVersitProperties">unknownVersitProperties</keyword>
+        <section ref="qversitcontactimporter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qversitdocument.html" title="QVersitDocument Class Reference">
+        <keyword ref="qversitdocument.html">QVersitDocument</keyword>
+        <keyword ref="qversitdocument.html#VersitType-enum">VersitType</keyword>
+        <keyword ref="qversitdocument.html#addProperty">addProperty</keyword>
+        <keyword ref="qversitdocument.html#properties">properties</keyword>
+        <keyword ref="qversitdocument.html#removeProperties">removeProperties</keyword>
+        <keyword ref="qversitdocument.html#setVersitType">setVersitType</keyword>
+        <keyword ref="qversitdocument.html#versitType">versitType</keyword>
+        <keyword ref="qversitdocument.html#operator-eq">operator=</keyword>
+        <section ref="qversitdocument-members.html" title="List of all members"/>
+    </section>
+    <section ref="qversitproperty.html" title="QVersitProperty Class Reference">
+        <keyword ref="qversitproperty.html">QVersitProperty</keyword>
+        <keyword ref="qversitproperty.html#addParameter">addParameter</keyword>
+        <keyword ref="qversitproperty.html#embeddedDocument">embeddedDocument</keyword>
+        <keyword ref="qversitproperty.html#groups">groups</keyword>
+        <keyword ref="qversitproperty.html#name">name</keyword>
+        <keyword ref="qversitproperty.html#parameters">parameters</keyword>
+        <keyword ref="qversitproperty.html#removeParameter">removeParameter</keyword>
+        <keyword ref="qversitproperty.html#setEmbeddedDocument">setEmbeddedDocument</keyword>
+        <keyword ref="qversitproperty.html#setGroups">setGroups</keyword>
+        <keyword ref="qversitproperty.html#setName">setName</keyword>
+        <keyword ref="qversitproperty.html#setParameters">setParameters</keyword>
+        <keyword ref="qversitproperty.html#setValue">setValue</keyword>
+        <keyword ref="qversitproperty.html#value">value</keyword>
+        <keyword ref="qversitproperty.html#operator-eq">operator=</keyword>
+        <section ref="qversitproperty-members.html" title="List of all members"/>
+    </section>
+    <section ref="qversitreader.html" title="QVersitReader Class Reference">
+        <keyword ref="qversitreader.html">QVersitReader</keyword>
+        <keyword ref="qversitreader.html#device">device</keyword>
+        <keyword ref="qversitreader.html#readAll">readAll</keyword>
+        <keyword ref="qversitreader.html#readingDone">readingDone</keyword>
+        <keyword ref="qversitreader.html#result">result</keyword>
+        <keyword ref="qversitreader.html#setDevice">setDevice</keyword>
+        <keyword ref="qversitreader.html#startReading">startReading</keyword>
+        <section ref="qversitreader-members.html" title="List of all members"/>
+    </section>
+    <section ref="qversitwriter.html" title="QVersitWriter Class Reference">
+        <keyword ref="qversitwriter.html">QVersitWriter</keyword>
+        <keyword ref="qversitwriter.html#device">device</keyword>
+        <keyword ref="qversitwriter.html#setDevice">setDevice</keyword>
+        <keyword ref="qversitwriter.html#setVersitDocument">setVersitDocument</keyword>
+        <keyword ref="qversitwriter.html#startWriting">startWriting</keyword>
+        <keyword ref="qversitwriter.html#versitDocument">versitDocument</keyword>
+        <keyword ref="qversitwriter.html#writeAll">writeAll</keyword>
+        <keyword ref="qversitwriter.html#writingDone">writingDone</keyword>
+        <section ref="qversitwriter-members.html" title="List of all members"/>
+    </section>
+</section>
+<section ref="overviews.html" title="Overviews">
+    <section ref="index.html" title="Qt Mobility Versit Developer Resources">
+        <keyword ref="index.html">Qt Mobility Versit Developer Resources</keyword>
+    </section>
+    <section ref="index.html" title="Qt Mobility Versit Developer Resources">
+        <keyword ref="index.html">Qt Mobility Versit Developer Resources</keyword>
+    </section>
+    <section ref="versit.html" title="Qt Versit Developer Resources">
+        <keyword ref="versit.html">Qt Versit Developer Resources</keyword>
+    </section>
+    <section ref="versit.html" title="Qt Versit Developer Resources">
+        <keyword ref="versit.html">Qt Versit Developer Resources</keyword>
+    </section>
+    <section ref="versitmapping.html" title="Qt Versit Mapping">
+        <keyword ref="versitmapping.html">Qt Versit Mapping</keyword>
+    </section>
+    <section ref="versitmapping.html" title="Qt Versit Mapping">
+        <keyword ref="versitmapping.html">Qt Versit Mapping</keyword>
+    </section>
+</section>
+<section ref="examples.html" title="Tutorial &amp; Examples">
+    <section ref="sampleversit.html" title="Sample Versit Example">
+        <keyword ref="sampleversit.html">Sample Versit Example</keyword>
+    </section>
+    <section ref="sampleversit.html" title="Sample Versit Example">
+        <keyword ref="sampleversit.html">Sample Versit Example</keyword>
+    </section>
+</section>
+</DCF>
