@@ -63,14 +63,14 @@ QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QCo
 	}
 
 	// online account
-	else if (subTypes.contains(QContactOnlineAccount::SubTypeXmpp))
+	else if (subTypes.contains(QContactOnlineAccount::SubTypeImpp))
 	{
         newField->AddFieldTypeL(KUidContactFieldIMPP);
         newField->SetMapping(KUidContactFieldVCardMapUnknown);
 	}
 
 	//internet
-	else if (subTypes.contains(QContactOnlineAccount::SubTypeInternet))
+	else if (subTypes.contains(QContactOnlineAccount::SubTypeSipVoip))
 	{
 		newField->AddFieldTypeL(KUidContactFieldSIPID);
 		newField->SetMapping(KUidContactFieldVCardMapSIPID);
@@ -78,7 +78,7 @@ QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QCo
 	}
 
 	//share video
-	else if	(subTypes.contains(QContactOnlineAccount::SubTypeShareVideo))
+	else if	(subTypes.contains(QContactOnlineAccount::SubTypeVideoShare))
 	{
 		newField->AddFieldTypeL(KUidContactFieldSIPID);
 		newField->SetMapping(KUidContactFieldVCardMapSIPID);
@@ -119,13 +119,13 @@ QContactDetail *CntTransformOnlineAccount::transformItemField(const CContactItem
 	onlineAccount->setAccountUri(onlineAccountString);
 
     if (field.ContentType().ContainsFieldType(KUidContactFieldIMPP)) {
-        onlineAccount->setSubTypes(QContactOnlineAccount::SubTypeXmpp);
+        onlineAccount->setSubTypes(QContactOnlineAccount::SubTypeImpp);
     }
 	else if (field.ContentType().ContainsFieldType(KUidContactFieldVCardMapVOIP)) {
-        onlineAccount->setSubTypes(QContactOnlineAccount::SubTypeInternet);
+        onlineAccount->setSubTypes(QContactOnlineAccount::SubTypeSipVoip);
     }
     else if (field.ContentType().ContainsFieldType(KUidContactFieldVCardMapSWIS)) {
-        onlineAccount->setSubTypes(QContactOnlineAccount::SubTypeShareVideo);
+        onlineAccount->setSubTypes(QContactOnlineAccount::SubTypeVideoShare);
     }
     else if (field.ContentType().ContainsFieldType(KUidContactFieldVCardMapSIPID)) {
         onlineAccount->setSubTypes(QContactOnlineAccount::SubTypeSip);
@@ -194,13 +194,11 @@ quint32 CntTransformOnlineAccount::getIdForField(const QString& fieldName) const
         return 0;
     else if (QContactOnlineAccount::SubTypeSip == fieldName)
         return KUidContactFieldSIPID.iUid;
-    else if (QContactOnlineAccount::SubTypeH323 == fieldName)
-        return 0;
-    else if (QContactOnlineAccount::SubTypeXmpp == fieldName)
+    else if (QContactOnlineAccount::SubTypeImpp == fieldName)
         return KUidContactFieldIMPP.iUid;
-    else if (QContactOnlineAccount::SubTypeInternet == fieldName)
+    else if (QContactOnlineAccount::SubTypeSipVoip == fieldName)
         return 0;
-    else if (QContactOnlineAccount::SubTypeShareVideo == fieldName)
+    else if (QContactOnlineAccount::SubTypeVideoShare == fieldName)
         return 0;
     else
         return 0;
@@ -253,9 +251,9 @@ void CntTransformOnlineAccount::detailDefinitions(QMap<QString, QContactDetailDe
 
     // subtypes
     f.setAllowableValues(QVariantList()
-            << QString(QLatin1String(QContactOnlineAccount::SubTypeXmpp))
-            << QString(QLatin1String(QContactOnlineAccount::SubTypeInternet))
-            << QString(QLatin1String(QContactOnlineAccount::SubTypeShareVideo))
+            << QString(QLatin1String(QContactOnlineAccount::SubTypeImpp))
+            << QString(QLatin1String(QContactOnlineAccount::SubTypeSipVoip))
+            << QString(QLatin1String(QContactOnlineAccount::SubTypeVideoShare))
             << QString(QLatin1String(QContactOnlineAccount::SubTypeSip)));
     fields.insert(QContactOnlineAccount::FieldSubTypes, f);
     d.setFields(fields);
