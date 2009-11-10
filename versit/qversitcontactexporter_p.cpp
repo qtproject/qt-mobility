@@ -550,8 +550,14 @@ bool QVersitContactExporterPrivate::encodeDisplayLabel(
                 break;
         }
         QContactName name = static_cast<QContactName>(contactDetail);
-        value = escape(name.first().toAscii()) + ' ' + escape(name.last().toAscii());
-        if (name.first().size() || name.last().size()) {
+        if ( name.customLabel().length() )
+            value = escape(name.customLabel().toAscii());
+        else {
+            value = escape(name.first().toAscii()) + ' ' + escape(name.last().toAscii());
+        }
+        if ( name.customLabel().length() ||
+             name.first().length() ||
+             name.last().length()) {
             encoded = true;
             property.setValue(value);
         }

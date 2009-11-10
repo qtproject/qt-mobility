@@ -1053,16 +1053,15 @@ void UT_QVersitContactExporter::testEncodeDisplayLabel()
     QCOMPARE(QString::fromAscii(nameProperty.value()),
         QString::fromAscii("Last;First;Middle;;"));
 
-    //Test3: Valid Display Lable and Name Exisit & test escaping
+    // Test 3:
     contact = QContact();
-    displayLaebl.setLabel(QString::fromAscii("Display,Label"));
-    contact.saveDetail(&displayLaebl);
+    contactName.setCustomLabel(QString::fromAscii("Custom\\,Label"));
     contact.saveDetail(&contactName);
     document = mExporter->exportContact(contact, QVersitDocument::VCard30);
 
     displayProperty = document.properties().at(0);
     QCOMPARE(displayProperty.name(), QString::fromAscii("FN"));
-    QCOMPARE(QString::fromAscii(displayProperty.value()), QString::fromAscii("Display\\,Label"));
+    QCOMPARE(QString::fromAscii(displayProperty.value()), QString::fromAscii("Custom\\,Label"));
 }
 
 // Test utility functions
