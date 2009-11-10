@@ -183,13 +183,19 @@ QString QContactManager::buildUri(const QString& managerName, const QMap<QString
         escapedParams.append(key);
     }
 
-    escapedParams.append(QString("%1=%2").arg(QTCONTACTS_VERSION_NAME).arg(version())); 
+    QString versionString = QString(QLatin1String(QTCONTACTS_VERSION_NAME));
+    versionString += QString::fromAscii("=");
+    versionString += QString::number(version());
+    escapedParams.append(versionString);
 
-    if (implementationVersion != -1) { 
-        escapedParams.append(QString("%1=%2").arg(QTCONTACTS_IMPLEMENTATION_VERSION_NAME).arg(implementationVersion)); 
-    } 
+    if (implementationVersion != -1) {
+        versionString = QString(QLatin1String(QTCONTACTS_IMPLEMENTATION_VERSION_NAME));
+        versionString += QString::fromAscii("=");
+        versionString += QString::number(implementationVersion);
+        escapedParams.append(versionString);
+    }
 
-      return ret.arg(managerName, escapedParams.join(QLatin1String("&")));
+    return ret.arg(managerName, escapedParams.join(QLatin1String("&")));
 }
 
 /*!
@@ -244,7 +250,7 @@ QContactManager::QContactManager(const QString& managerName, int implementationV
     d(new QContactManagerData) 
 { 
     QMap<QString, QString> params = parameters; 
-    params[QTCONTACTS_IMPLEMENTATION_VERSION_NAME] = QString::number(implementationVersion); 
+    params[QString(QLatin1String(QTCONTACTS_IMPLEMENTATION_VERSION_NAME))] = QString::number(implementationVersion);
     createEngine(managerName, params); 
 } 
  

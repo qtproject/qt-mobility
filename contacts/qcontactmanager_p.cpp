@@ -278,7 +278,7 @@ void QContactManagerData::loadFactories()
             foreach (int v, f->supportedImplementationVersions()) {
                 versions << QString::fromAscii("%1.%2").arg(f->version()).arg(v);
             }
-            engineNames << QString::fromAscii("%1[%2]").arg(f->managerName()).arg(versions.join(","));
+            engineNames << QString::fromAscii("%1[%2]").arg(f->managerName()).arg(versions.join(QString::fromAscii(",")));
         }
         qDebug() << "Found engines:" << engineNames;
         qDebug() << "Found actions:" << m_actionmap.keys();
