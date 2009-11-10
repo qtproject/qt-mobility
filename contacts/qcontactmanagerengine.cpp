@@ -446,7 +446,9 @@ QContact QContactManagerEngine::setContactDisplayLabel(const QString& displayLab
 {
     QContact retn = contact;
     QContactDisplayLabel dl;
-    dl.setValue(QContactDisplayLabel::FieldLabel, displayLabel);
+    if (!displayLabel.isEmpty())
+        dl.setValue(QContactDisplayLabel::FieldLabel, displayLabel);
+    dl.setValue(QContactDisplayLabel::FieldSynthesized, true);   // XXX TODO: remove this line after removing deprecated API
     retn.d->m_details.replace(0, dl);
     return retn;
 }
