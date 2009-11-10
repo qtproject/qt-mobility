@@ -51,6 +51,10 @@
 #define QTCONTACTS_EXPORT Q_DECL_IMPORT
 #endif
 
+ #define QTCONTACTS_VERSION_NAME "com.nokia.qt.mobility.contacts.api.version" 
+ #define QTCONTACTS_IMPLEMENTATION_VERSION_NAME "com.nokia.qt.mobility.contacts.implementation.version" 
+ #define QTCONTACTS_VERSION 1 
+
 // XXX
 #if defined(EXPORT_PRIVATE)
 #define QTCONTACTS_PRIVATE_EXPORT HB_EXPORT
@@ -60,9 +64,26 @@
 
 typedef quint32 QContactLocalId; // XXX Put this else where
 
+/*
+ * Latin1Literal
+ *
+ * The idea of the Latin1Literal is to provide a POD-esque container
+ * for constant strings which are defined in various places
+ * (e.g., detail leaf class definition names, field keys, constant field values, etc).
+ * We would ideally like these to be stored in the .rodata section to allow
+ * sharing / minimise footprint.
+ *
+ * Given that the declare/define macros are const anyway, we changed the
+ * member to a char array from a const char array, in order to squash
+ * the compiler warning regarding uninitialised const value without
+ * initialiser list in default ctor (POD requires default ctor).
+ * Does it work as hoped?
+ */
+
 template <int N> struct Latin1Literal
 {
-    const char str[N];
+    //const char str[N]; // causes compiler warning due to uninitialized const value
+    char str[N];
 
     operator QLatin1String() const {return QLatin1String(str);}
     operator QString() const {return QString::fromLatin1(str, N-1);}

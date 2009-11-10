@@ -42,47 +42,47 @@
 /*!
  * \class QVersitContactExporter
  *
- * \brief The QVersitContactExporter class exports the QTContact into QVersitDocument.
+ * \brief QVersitContactExporter exports QContact(s) into QVersitDocument(s)
  *
- * A QVersitContactExporter exportContact(), is used for processing QTcontact and
- * generating corresponding QVersitDocument. If the QTContact has some detail with
- * image value it will emit scale(const QString& imageFileName, QByteArray& imageData)
- * signal which can be used by client for image scalling. Client may reterive
- * list of contact details wihch are not encoded using unknownContactDetails().
+ * If the exported QContact has some detail with an image as its value,
+ * signal scale(const QString& imageFileName, QByteArray& imageData) is emitted
+ * and the client can scale the image's data to the size it wishes.
+ * The client may retrieve the list contact details
+ * which were not exported using QVersitContactExporter::unknownContactDetails().
  *
  * \code
  *
- * // An example of exporting the QTContact:
+ * // An example of exporting a QContact:
  *  QVersitContactExporter contactExporter;
  *  QContact contact;
- *  QContactName contactName;
- *  QContactPresence presence;
- *  QContactAvatar contactAvatar;
  *
- *  // Encode Name
+ *  // Create a name
+ *  QContactName name;
  *  name.setFirst(QString::fromAscii("Simpson"));
  *  contact.saveDetail(&name);
  *
- *  // Encode presence
- *  presence.setAccountUri(QString::fromAscii("a@abc.com"));
- *  contact.saveDetail(&presence);
- *
- *  // Encode Avatar, ensure to provide valid avatar
- *  contactAvatar.setAvatar("/my/image/path");
- *  contactAvatar.setSubType(QContactAvatar::SubTypeImage);
+ *  // Create an avatar type which is not supported by the exporter
+ *  QContactAvatar contactAvatar;
+ *  contactAvatar.setAvatar(QString::fromAscii("/my/image/avatar_path"));
+ *  contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
  *  contact.saveDetail(&contactAvatar);
- *  QVersitDocument versitDocument = contactExporter->exportContact(contact);
  *
- *  // Client will receive the signal scale with image data and path client may
- *  // scale the image
+ *  // Create an organization detail with a title and a logo
+ *  QContactOrganization organization;
+ *  organization.setTitle(QString::fromAscii("Developer"));
+ *  organization.setLogo(QString::fromAscii("/my/image/logo_path"));
+ *  contact.saveDetail(&organization);
  *
- *  QList<QContactDetail> unknownDetails = contactExporter->unknownContactDetails();
+ *  QVersitDocument versitDocument = contactExporter.exportContact(contact);
+ *  // Client will receive the signal "scale" with the logo image path
  *
- *  // unknownDetails can be processed by the client to append details directly
- *  // into versitDocument if needed, in this example presence is not encoded into the
- *  // versitDocument
+ *  QList<QContactDetail> unknownDetails = contactExporter.unknownContactDetails();
  *
- *  // use versitDocument ...
+ *  // unknownDetails can be processed by the client to append details directly into
+ *  // QVersitDocument if needed (in this example QContactAvatar::SubTypeTexturedMesh).
+ *  // Currently for QContactAvatar details, only exporting subtypes
+ *  // QContactAvatar::SubTypeImage and QContactAvatar::SubTypeAudioRingtone
+ *  // are supported.
  *
  * \endcode
  *
@@ -92,11 +92,12 @@
 
 /*!
  * \fn void scale(const QString& imageFileName, QByteArray& imageData)
- * Scale signal is emitted by the exportContact, when image data is found in QTContact.
- * It provides clients \a imageFileName and \a imageData which client can use for image
- * scalling. Image scalling can be done using utilties functions for example QImage scale.
- *
- * \sa QImage
+ * This signal is emitted by \l QVersitContactExporter::exportContact,
+ * when a contact detail containing an image is found in a QContact.
+ * The input for the client is the path of the image in \a imageFileName.
+ * When the client has performed the scaling,
+ * it should write the result to \a imageData.
+ * Image scaling can be done for example by using class QImage.
  */
 
 #include "qversitcontactexporter.h"
@@ -106,7 +107,7 @@
 
 
 /*!
- * Constructs a new contact converter
+ * Constructs a new contact exporter
  */
 QVersitContactExporter::QVersitContactExporter()
     : d(new QVersitContactExporterPrivate())
@@ -116,15 +117,15 @@ QVersitContactExporter::QVersitContactExporter()
 }
 
 /*!
- * Frees any memory in use by this contact converter
+ * Frees any memory in use by this contact exporter.
  */
 QVersitContactExporter::~QVersitContactExporter()
 {
 }
 
 /*!
- * Returns the versit document corresponding to the \a contact and
- * \a versitType.
+ * Returns the versit document corresponding
+ * to the \a contact and \a versitType.
  */
 QVersitDocument QVersitContactExporter::exportContact(
     const QContact& contact,
@@ -137,8 +138,8 @@ QVersitDocument QVersitContactExporter::exportContact(
 }
 
 /*!
- * Returns the list of contact detils, which are not encoded by
- * the most recent call of exportContact.
+ * Returns the list of contact details, which were not exported
+ * by the most recent call of \l QVersitContactExporter::exportContact().
  */
 QList<QContactDetail> QVersitContactExporter::unknownContactDetails()
 {

@@ -96,7 +96,7 @@ public:
     QString m_defId;
     QString m_fieldId;
     QVariant m_exactValue;
-    Qt::MatchFlags m_flags;
+    QContactFilter::MatchFlags m_flags;
 };
 
 #endif

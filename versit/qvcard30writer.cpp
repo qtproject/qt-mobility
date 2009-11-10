@@ -47,6 +47,10 @@
 QVCard30Writer::QVCard30Writer()
     : QVersitWriterPrivate(QByteArray("VCARD"),QByteArray("3.0"))
 {
+    mPropertyNameMappings.insert(
+        QString::fromAscii("X-NICKNAME"),QString::fromAscii("NICKNAME"));
+    mPropertyNameMappings.insert(
+        QString::fromAscii("X-IMPP"),QString::fromAscii("IMPP"));
 }
 
 /*! Destroys a writer. */
@@ -60,9 +64,8 @@ QVCard30Writer::~QVCard30Writer()
 QByteArray QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
 {
     QVersitProperty modifiedProperty(property);
-    if (property.name() == QString::fromAscii("X-NICKNAME")) {
-        modifiedProperty.setName(QString::fromAscii("NICKNAME"));
-    }
+    QString name = mPropertyNameMappings.value(property.name(),property.name());
+    modifiedProperty.setName(name);
     QByteArray encodedProperty(encodeGroupsAndName(modifiedProperty));
     encodedProperty.append(encodeParameters(modifiedProperty.parameters()));
     encodedProperty.append(":");

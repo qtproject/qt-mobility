@@ -144,13 +144,13 @@ bool QContactDetailDefinition::isUnique() const
 }
 
 /*! Sets the fields which constitute the data of details of this this definition to \a fields */
-void QContactDetailDefinition::setFields(const QMap<QString, QContactDetailDefinition::Field>& fields)
+void QContactDetailDefinition::setFields(const QMap<QString, QContactDetailDefinitionField>& fields)
 {
     d->m_fields = fields;
 }
 
 /*! Returns the map of keys to fields which are present in details of this definition */
-QMap<QString, QContactDetailDefinition::Field> QContactDetailDefinition::fields() const
+QMap<QString, QContactDetailDefinitionField> QContactDetailDefinition::fields() const
 {
     return d->m_fields;
 }
@@ -160,7 +160,7 @@ QMap<QString, QContactDetailDefinition::Field> QContactDetailDefinition::fields(
  *
  * You can make changes to the returned map.
  */
-QMap<QString, QContactDetailDefinition::Field>& QContactDetailDefinition::fields()
+QMap<QString, QContactDetailDefinitionField>& QContactDetailDefinition::fields()
 {
     return d->m_fields;
 }
@@ -180,22 +180,3 @@ void QContactDetailDefinition::setAccessConstraint(const QContactDetailDefinitio
     d->m_constraint = constraint;
 }
 
-/*!
- * \fn QContactDetailDefinition::Field::operator!=(const QContactDetailDefinition::Field& other) const
- * Returns true if either the data type or range of allowable values of this field is different to that of \a other
- */
-
-/*!
- * \fn QContactDetailDefinition::Field::Field()
- * Constructs a new detail definition field definition.
- */
-
-/*!
- * Returns true if this detail definition field is equal to the \a other field; returns false if either the data type or the range of allowable values are not equal
- */
-bool QContactDetailDefinition::Field::operator==(const QContactDetailDefinition::Field& other) const
-{
-    if (this->dataType == other.dataType && this->allowableValues == other.allowableValues)
-        return true;
-    return false;
-}

@@ -146,7 +146,7 @@ void matchCall(QContactManager* cm, const QString& incomingCallNbr)
     QContactDetailFilter phoneFilter;
     phoneFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
     phoneFilter.setValue(incomingCallNbr);
-    phoneFilter.setMatchFlags(Qt::MatchExactly);
+    phoneFilter.setMatchFlags(QContactFilter::MatchExactly);
 
     QList<QContactLocalId> matchingContacts = cm->contacts(phoneFilter);
     if (matchingContacts.size() == 0) {
@@ -155,7 +155,7 @@ void matchCall(QContactManager* cm, const QString& incomingCallNbr)
         QContact match = cm->contact(matchingContacts.at(0));
         QContactDisplayLabel cdl = match.detail(QContactDisplayLabel::DefinitionName);
         if (cdl.isEmpty())
-            cdl.setLabel(cm->synthesiseDisplayLabel(match));
+            cdl.setLabel(cm->synthesizeDisplayLabel(match));
         qDebug() << "Incoming call from"
                  << cdl.label()
                  << "(" << incomingCallNbr << ")";
@@ -170,7 +170,7 @@ void viewSpecificDetail(QContactManager* cm)
     QContact a = cm->contact(contactIds.first());
     QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
     if (cdl.isEmpty())
-        cdl.setLabel(cm->synthesiseDisplayLabel(a));
+        cdl.setLabel(cm->synthesizeDisplayLabel(a));
     qDebug() << "The first phone number of" << cdl.label()
              << "is" << a.detail(QContactPhoneNumber::DefinitionName).value(QContactPhoneNumber::FieldNumber);
 }
@@ -183,18 +183,18 @@ void viewDetails(QContactManager* cm)
     QContact a = cm->contact(contactIds.first());
     QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
     if (cdl.isEmpty())
-        cdl.setLabel(cm->synthesiseDisplayLabel(a));
+        cdl.setLabel(cm->synthesizeDisplayLabel(a));
     qDebug() << "Viewing the details of" << cdl.label();
 
     QList<QContactDetail> allDetails = a.details();
     for (int i = 0; i < allDetails.size(); i++) {
         QContactDetail detail = allDetails.at(i);
         QContactDetailDefinition currentDefinition = cm->detailDefinition(detail.definitionName());
-        QMap<QString, QContactDetailDefinition::Field> fields = currentDefinition.fields();
+        QMap<QString, QContactDetailDefinitionField> fields = currentDefinition.fields();
 
         qDebug("\tDetail #%d (%s):", i, detail.definitionName().toAscii().constData());
         foreach (const QString& fieldKey, fields.keys()) {
-            qDebug() << "\t\t" << fieldKey << "(" << fields.value(fieldKey).dataType << ") =" << detail.value(fieldKey);
+            qDebug() << "\t\t" << fieldKey << "(" << fields.value(fieldKey).dataType() << ") =" << detail.value(fieldKey);
         }
         qDebug();
     }
@@ -209,9 +209,9 @@ void addPlugin(QContactManager* cm)
     QContactDetailDefinition modified = definitions.value(QContactEmailAddress::DefinitionName);
 
     /* Make our modifications: we add a "Label" field to email addresses */
-    QContactDetailDefinition::Field newField;
-    newField.dataType = QVariant::String;
-    QMap<QString, QContactDetailDefinition::Field> fields = modified.fields();
+    QContactDetailDefinitionField newField;
+    newField.setDataType(QVariant::String);
+    QMap<QString, QContactDetailDefinitionField> fields = modified.fields();
     fields.insert("Label", newField);
 
     /* Update the definition with the new field included */
@@ -232,7 +232,7 @@ void editView(QContactManager* cm)
     QContact a = cm->contact(contactIds.first());
     QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
     if (cdl.isEmpty())
-        cdl.setLabel(cm->synthesiseDisplayLabel(a));
+        cdl.setLabel(cm->synthesizeDisplayLabel(a));
     qDebug() << "Modifying the details of" << cdl.label();
 
     /* Change the first phone number */
@@ -263,7 +263,7 @@ void RequestExample::performRequest()
     QContactDetailFilter dfil;
     dfil.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
     dfil.setValue("Alice");
-    dfil.setMatchFlags(Qt::MatchExactly);
+    dfil.setMatchFlags(QContactFilter::MatchExactly);
 
     m_fetchRequest->setFilter(dfil);
     connect(m_fetchRequest, SIGNAL(progress(QContactFetchRequest*,bool)), this, SLOT(printContacts(QContactFetchRequest*,bool)));
@@ -306,7 +306,7 @@ void loadManager()
         QContact a = cm->contact(contactIds.first());
         QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
         if (cdl.isEmpty())
-            cdl.setLabel(cm->synthesiseDisplayLabel(a));
+            cdl.setLabel(cm->synthesizeDisplayLabel(a));
         qDebug() << "This manager contains" << cdl.label();
     } else {
         qDebug() << "This manager contains no contacts";
@@ -327,10 +327,10 @@ void loadManagerWithParameters()
     qDebug() << "This backend currently supports the following detail definitions:";
     QList<QContactDetailDefinition> allDefinitions = definitions.values();
     foreach (const QContactDetailDefinition& defn, allDefinitions) {
-        QMap<QString, QContactDetailDefinition::Field> fields = defn.fields();
+        QMap<QString, QContactDetailDefinitionField> fields = defn.fields();
         foreach (const QString& fieldKey, fields.keys()) {
-            QList<QVariant> allowableValues = fields.value(fieldKey).allowableValues;
-            qDebug() << "\t" << fieldKey << "(" << fields.value(fieldKey).dataType << "):";
+            QList<QVariant> allowableValues = fields.value(fieldKey).allowableValues();
+            qDebug() << "\t" << fieldKey << "(" << fields.value(fieldKey).dataType() << "):";
             if (allowableValues.isEmpty()) {
                 qDebug() << "\t\tAny Value Permitted";
             } else {

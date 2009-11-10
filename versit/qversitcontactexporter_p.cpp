@@ -363,9 +363,14 @@ void QVersitContactExporterPrivate::encodeOrganization(
     if (organization.name().length() > 0 || organization.department().length() > 0) {
         QVersitProperty property;
         property.setName(QString::fromAscii("ORG"));
-        QByteArray value =
-            escape(organization.name().toAscii()) + ";" +
-            escape(organization.department().toAscii());
+        QByteArray value = escape(organization.name().toAscii());
+        QStringList departments(organization.department());
+        if (departments.count() == 0)
+            value += ";";
+        foreach (QString department, departments) {
+            value += ";";
+            value += escape(department.toAscii());
+        }
         property.setValue(value);
         document.addProperty(property);
     }
@@ -380,6 +385,13 @@ void QVersitContactExporterPrivate::encodeOrganization(
         QVersitProperty property;
         property.setName(QString::fromAscii("X-ASSISTANT"));
         setEscapedValue(property,organization.assistantName());
+        document.addProperty(property);
+    }
+
+    if (organization.role().length() > 0) {
+        QVersitProperty property;
+        property.setName(QString::fromAscii("ROLE"));
+        setEscapedValue(property,organization.role());
         document.addProperty(property);
     }
 }
@@ -474,11 +486,15 @@ bool QVersitContactExporterPrivate::encodeOnlineAccount(
     QStringList subTypes = onlineAccount.subTypes();
 
     if (subTypes.contains(QContactOnlineAccount::SubTypeSip) ||
-        subTypes.contains(QContactOnlineAccount::SubTypeInternet) ||
-        subTypes.contains(QContactOnlineAccount::SubTypeShareVideo)) {
+        subTypes.contains(QContactOnlineAccount::SubTypeSipVoip) ||
+        subTypes.contains(QContactOnlineAccount::SubTypeVideoShare) ||
+        subTypes.contains(QContactOnlineAccount::SubTypeImpp)) {
         encoded = true;
         encodeParameters(property, onlineAccount.contexts(), subTypes);
-        property.setName(QString::fromAscii("X-SIP"));
+        QString name(QString::fromAscii("X-SIP"));
+        if (subTypes.contains(QContactOnlineAccount::SubTypeImpp))
+            name = QString::fromAscii("X-IMPP");
+        property.setName(name);
         setEscapedValue(property,onlineAccount.accountUri());
     }
     return encoded;
@@ -534,8 +550,14 @@ bool QVersitContactExporterPrivate::encodeDisplayLabel(
                 break;
         }
         QContactName name = static_cast<QContactName>(contactDetail);
-        value = escape(name.first().toAscii()) + ' ' + escape(name.last().toAscii());
-        if (name.first().size() || name.last().size()) {
+        if ( name.customLabel().length() )
+            value = escape(name.customLabel().toAscii());
+        else {
+            value = escape(name.first().toAscii()) + ' ' + escape(name.last().toAscii());
+        }
+        if ( name.customLabel().length() ||
+             name.first().length() ||
+             name.last().length()) {
             encoded = true;
             property.setValue(value);
         }

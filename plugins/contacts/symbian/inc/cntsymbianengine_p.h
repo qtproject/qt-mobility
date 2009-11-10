@@ -64,13 +64,12 @@ class CntAbstractContactSorter;
 class CntRelationship;
 class CntSymbianDatabase;
 
-class CntSymbianEnginePrivate : public QObject,
-							   public MContactDbObserver
+class CntSymbianEnginePrivate : public QObject
 {
 	Q_OBJECT
 
 public:
-    CntSymbianEnginePrivate(const QMap<QString, QString>& parameters, QContactManager::Error& error);
+    CntSymbianEnginePrivate(QContactManagerEngine *engine, const QMap<QString, QString>& parameters, QContactManager::Error& error);
     virtual ~CntSymbianEnginePrivate();
 
 public:
@@ -113,14 +112,6 @@ public:
 	// From MContactDbObserver
 	void HandleDatabaseEventL(TContactDbObserverEvent aEvent);
 
-signals:
-    // Database change notifications
-    void contactAdded(const QContactLocalId &contactId);
-    void contactRemoved(const QContactLocalId &contactId);
-    void contactChanged(const QContactLocalId &contactId);
-    void relationshipAdded(const QContactLocalId &contactId);
-    void relationshipRemoved(const QContactLocalId &contactId);
-
 private:
 
 	// Leaving functions implementing CNTMODEL interaction.
@@ -137,9 +128,6 @@ private:
     CntSymbianDatabase* m_dataBase;
     QString m_managerUri;
 
-    QList<QContactLocalId> m_contactsAddedEmitted;
-    QList<QContactLocalId> m_contactsChangedEmitted;
-    QList<QContactLocalId> m_contactsRemovedEmitted;
     CntTransformContact       *m_transformContact;
     CntAbstractContactFilter* m_contactFilter;
     CntAbstractContactSorter* m_contactSorter;

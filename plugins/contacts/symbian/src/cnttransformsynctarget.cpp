@@ -122,7 +122,7 @@ quint32 CntTransformSyncTarget::getIdForField(const QString& fieldName) const
 {
     if (QContactSyncTarget::FieldSyncTarget == fieldName)
         return KUidContactFieldClass.iUid;
-    else 
+    else
         return 0;
 }
 
@@ -133,13 +133,16 @@ quint32 CntTransformSyncTarget::getIdForField(const QString& fieldName) const
  */
 void CntTransformSyncTarget::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
     QContactDetailDefinition d;
 
     d.setName(QContactSyncTarget::DefinitionName);
-    f.dataType = QVariant::String;
-    f.allowableValues << QString("private") << QString("public") << QString("none");
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList()
+            << QString("private")
+            << QString("public")
+            << QString("none"));
     fields.insert(QContactSyncTarget::FieldSyncTarget, f);
 
     d.setFields(fields);

@@ -72,16 +72,15 @@ typedef QList<QContactLocalId> QContactLocalIdList;
 // the called function or the return value of the function is placed to the
 // variable.
 
-CntSymbianEnginePrivate::CntSymbianEnginePrivate(const QMap<QString, QString>& parameters, QContactManager::Error& error) :
+CntSymbianEnginePrivate::CntSymbianEnginePrivate(QContactManagerEngine *engine, const QMap<QString, QString>& parameters, QContactManager::Error& error) :
     m_dataBase(0),
     m_transformContact(0)
 {
-    m_dataBase = new CntSymbianDatabase(error);
+    m_dataBase = new CntSymbianDatabase(engine, error);
     
     //Database opened successfully
     if(error == QContactManager::NoError)
     {
-        m_dataBase->observer(this); // Temporary solution
         m_managerUri = QContactManager::buildUri(CNT_SYMBIAN_MANAGER_NAME, parameters);
     	m_transformContact = new CntTransformContact;
         m_contactFilter    = new CntSymbianFilterDbms(*m_dataBase->contactDatabase());
@@ -247,7 +246,7 @@ bool CntSymbianEnginePrivate::addContact(QContact& contact, QContactChangeSet& c
     if(err == KErrNone)
     {
         changeSet.addedContacts().insert(id);
-        m_contactsAddedEmitted.append(id);
+        m_dataBase->appendContactsEmitted(&changeSet.addedContacts().toList());
     }
     CntSymbianTransformError::transformError(err, qtError);
 
@@ -269,7 +268,7 @@ bool CntSymbianEnginePrivate::updateContact(QContact& contact, QContactChangeSet
     {
         //TODO: check what to do with groupsChanged
         changeSet.changedContacts().insert(contact.localId());
-        m_contactsChangedEmitted.append(contact.localId());
+        m_dataBase->appendContactsEmitted(&changeSet.changedContacts().toList());
     }
     CntSymbianTransformError::transformError(err, qtError);
     return (err==KErrNone);
@@ -296,7 +295,7 @@ bool CntSymbianEnginePrivate::removeContact(const QContactLocalId &id, QContactC
     {
         //TODO: check what to do with groupsChanged?
         changeSet.removedContacts().insert(id);
-        m_contactsRemovedEmitted.append(id);
+        m_dataBase->appendContactsEmitted(&changeSet.removedContacts().toList());
     }
     CntSymbianTransformError::transformError(err, qtError);
 	return (err==KErrNone);
@@ -317,7 +316,7 @@ bool CntSymbianEnginePrivate::saveRelationship(QContactChangeSet *changeSet, QCo
     bool returnValue = m_relationship->saveRelationship(&changeSet->addedRelationshipsContacts(), relationship, error);
 
     //add contacts to the list that shouldn't be emitted
-    m_contactsAddedEmitted += changeSet->addedRelationshipsContacts().toList();
+    m_dataBase->appendContactsEmitted(&changeSet->addedRelationshipsContacts().toList());
 
     return returnValue;
 }
@@ -328,7 +327,7 @@ QList<QContactManager::Error> CntSymbianEnginePrivate::saveRelationships(QContac
     QList<QContactManager::Error> returnValue = m_relationship->saveRelationships(&changeSet->addedRelationshipsContacts(), relationships, error);
 
     //add contacts to the list that shouldn't be emitted
-    m_contactsAddedEmitted += changeSet->addedRelationshipsContacts().toList();
+    m_dataBase->appendContactsEmitted(&changeSet->addedRelationshipsContacts().toList());
 
     return returnValue;
 }
@@ -339,7 +338,7 @@ bool CntSymbianEnginePrivate::removeRelationship(QContactChangeSet *changeSet, c
     bool returnValue = m_relationship->removeRelationship(&changeSet->removedRelationshipsContacts(), relationship, error);
 
     //add contacts to the list that shouldn't be emitted
-    m_contactsRemovedEmitted += changeSet->removedRelationshipsContacts().toList();
+    m_dataBase->appendContactsEmitted(&changeSet->removedRelationshipsContacts().toList());
 
     return returnValue;
 }
@@ -350,7 +349,7 @@ QList<QContactManager::Error> CntSymbianEnginePrivate::removeRelationships(QCont
     QList<QContactManager::Error> returnValue = m_relationship->removeRelationships(&changeSet->removedRelationshipsContacts(), relationships, error);
 
     //add contacts to the list that shouldn't be emitted
-    m_contactsRemovedEmitted += changeSet->removedRelationshipsContacts().toList();
+    m_dataBase->appendContactsEmitted(&changeSet->removedRelationshipsContacts().toList());
 
     return returnValue;
 }
@@ -399,67 +398,6 @@ QContactLocalId CntSymbianEnginePrivate::selfContactId(QContactManager::Error& q
         id = myCard;
     }
     return id;
-}
-
-/*!
- * Respond to a contacts database event, delegating this event to
- * an appropriate signal as required.
- *
- * \param aEvent Contacts database event describing the change to the
- *  database.
- */
-void CntSymbianEnginePrivate::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
-{
-        // TODO: Conversion to/from QContactLocalId
-
-    TContactItemId id = aEvent.iContactId;
-
-	switch (aEvent.iType)
-	{
-    case EContactDbObserverEventContactAdded:
-        if(m_contactsAddedEmitted.contains(id))
-            m_contactsAddedEmitted.removeOne(id);
-        else
-            emit contactAdded(id);
-        break;
-    case EContactDbObserverEventOwnCardDeleted:
-    case EContactDbObserverEventContactDeleted:
-        if(m_contactsRemovedEmitted.contains(id))
-            m_contactsRemovedEmitted.removeOne(id);
-        else
-            emit contactRemoved(id);
-        break;
-	case EContactDbObserverEventContactChanged:
-        if(m_contactsChangedEmitted.contains(id))
-            m_contactsChangedEmitted.removeOne(id);
-        else
-            emit contactChanged(id);
-        break;
-	case EContactDbObserverEventGroupAdded:
-        if(m_contactsAddedEmitted.contains(id))
-            m_contactsAddedEmitted.removeOne(id);
-        else
-            emit relationshipAdded(id);
-		break;
-	case EContactDbObserverEventGroupDeleted:
-        if(m_contactsRemovedEmitted.contains(id))
-            m_contactsRemovedEmitted.removeOne(id);
-        else
-            emit relationshipRemoved(id);
-        break;
-	case EContactDbObserverEventGroupChanged:
-        if(m_contactsChangedEmitted.contains(id))
-            m_contactsChangedEmitted.removeOne(id);
-        else
-            emit contactChanged(id); //group is a contact
-        break;
-	case EContactDbObserverEventOwnCardChanged:
-	    //TODO: temporal solution, fix when we have a signal for MyCard change
-        emit contactChanged(m_dataBase->contactDatabase()->OwnCardId());
-        break;
-	default:
-		break; // ignore other events
-	}
 }
 
 /*!
@@ -610,7 +548,6 @@ int CntSymbianEnginePrivate::removeContactL(QContactLocalId id)
     //TODO: add code to remove all relationships.
 
 	m_dataBase->contactDatabase()->DeleteContactL(cId);
-
 
 	return 0;
 }

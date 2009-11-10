@@ -83,6 +83,8 @@ const versitContactDetailMapping versitContactDetailMappings[] = {
                       ""},
     {"EMAIL",         QContactEmailAddress::DefinitionName.str,
                       QContactEmailAddress::FieldEmailAddress.str},
+    {"IMPP",        QContactOnlineAccount::DefinitionName.str,
+                      QContactOnlineAccount::SubTypeImpp.str},
     {"LOGO",          QContactOrganization::DefinitionName.str,
                       QContactOrganization::FieldLogo.str},
     {"N",             QContactName::DefinitionName.str,
@@ -97,6 +99,8 @@ const versitContactDetailMapping versitContactDetailMappings[] = {
                       QContactAvatar::SubTypeImage.str},
     {"REV",           QContactTimestamp::DefinitionName.str,
                       ""},
+    {"ROLE",          QContactOrganization::DefinitionName.str,
+                      QContactOrganization::FieldRole.str},
     {"SOUND",         QContactAvatar::DefinitionName.str,
                       QContactAvatar::SubTypeAudioRingtone.str},
     {"TEL",           QContactPhoneNumber::DefinitionName.str,
@@ -115,6 +119,8 @@ const versitContactDetailMapping versitContactDetailMappings[] = {
                       QContactFamily::FieldChildren.str},
     {"X-GENDER",      QContactGender::DefinitionName.str,
                       QContactGender::FieldGender.str},
+    {"X-IMPP",        QContactOnlineAccount::DefinitionName.str,
+                      QContactOnlineAccount::SubTypeImpp.str},
     {"X-NICKNAME",    QContactNickname::DefinitionName.str,
                       QContactNickname::FieldNickname.str},
     {"X-SIP",         QContactOnlineAccount::DefinitionName.str,
@@ -149,8 +155,8 @@ const versitMapping versitSubTypeMappings[] = {
     {"FAX",    QContactPhoneNumber::SubTypeFacsimile.str},
     {"BBS",    QContactPhoneNumber::SubTypeBulletinBoardSystem.str},
     {"PAGER",  QContactPhoneNumber::SubTypePager.str},
-    {"SWIS",   QContactOnlineAccount::SubTypeShareVideo.str},
-    {"VOIP",   QContactOnlineAccount::SubTypeInternet.str}
+    {"SWIS",   QContactOnlineAccount::SubTypeVideoShare.str},
+    {"VOIP",   QContactOnlineAccount::SubTypeSipVoip.str}
 };
 
 // Mappings from file types in versit specifications to file extensions

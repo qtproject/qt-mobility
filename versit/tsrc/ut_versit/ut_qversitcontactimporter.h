@@ -65,7 +65,11 @@ private slots: // Tests
     void testEmail();
     void testUrl();
     void testUid();
-    void testOrganization();
+    void testOrganizationName();
+    void testOrganizationTitle();
+    void testOrganizationLogo();
+    void testOrganizationAssistant();
+    void testOrganizationRole();
     void testTimeStamp();
     void testAnniversary();
     void testBirthday();
@@ -82,6 +86,7 @@ private slots: // Tests
     void testOnlineAccount();
     void testFamily();
     void testSound();
+    void testLabel();
     void testUnknownVersitProperties();
 
 private: // Utilities

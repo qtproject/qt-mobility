@@ -50,11 +50,11 @@ void TestFiltering::initTestCase()
     mCntMng = new QContactManager("symbian");
     mSqlFilter = new CntSymbianFilterSqlHelper;
     mFilters = new QHash<QContactFilter::FilterType, TFilter>;
-    
+
     // Remove all contacts from the database
     QList<QContactLocalId> cnt_ids = mCntMng->contacts();
     mCntMng->removeContacts(&cnt_ids);
-    
+
     parseFilters();
     createContacts();
 }
@@ -64,7 +64,7 @@ void TestFiltering::cleanupTestCase()
     delete mCntMng;
     delete mSqlFilter;
     delete mFilters;
-    
+
 }
 
 void TestFiltering::parseFilters()
@@ -72,12 +72,12 @@ void TestFiltering::parseFilters()
     QFile file("c:/filtering/test_data.txt");
     QByteArray texts;
     QVector<QString> param(7);
-    
+
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         texts = file.readAll();
-    } else 
+    } else
         QSKIP("Could not open test_data.txt", SkipAll);
-    
+
     char lf = '\n';
     char cr = '\r';
     char tab = '\t';
@@ -92,7 +92,7 @@ void TestFiltering::parseFilters()
     char colon = ':';
     bool found_colon = false;
     int count = texts.size();
-    
+
     // Parse the text file
     for(int i=0; i<count; i++) {
         char c = texts[i];
@@ -103,15 +103,15 @@ void TestFiltering::parseFilters()
                 continue;
             }
         }
-        
+
         if (c == lf) {
             wait_for_return = false;
             continue;
         }
-        
+
         if (wait_for_return)
             continue;
-        
+
         // Enter braces
         if (c == open_brace) {
             brace_state = 1;
@@ -123,17 +123,17 @@ void TestFiltering::parseFilters()
         if (c == close_brace) {
             brace_state = 2;
         }
-        
+
         if (c == colon) {
             found_colon = true;
             continue;
         }
-        
+
         if (c == comma) {
             no_of_commas++;
             continue;
         }
-                        
+
         // Append filter data
         if (brace_state == 1 && c != tab && c != space && c != lf && c != cr) {
             if (!found_colon) {
@@ -148,7 +148,7 @@ void TestFiltering::parseFilters()
                     param[2].append(c);
                 if (no_of_commas == 2)
                     // Value
-                    param[3].append(c); 
+                    param[3].append(c);
                 if (no_of_commas == 3)
                     // Match flags
                     param[4].append(c);
@@ -164,7 +164,7 @@ void TestFiltering::parseFilters()
         if (brace_state == 2) {
             addFilter(param);
             brace_state = 0;
-            qDebug() << "[" << param[0] << param[1] << param[2] << param[3] << param[4] << param[5] << param[6] << "]";  
+            qDebug() << "[" << param[0] << param[1] << param[2] << param[3] << param[4] << param[5] << param[6] << "]";
             param.clear();
             param = QVector<QString>(7);
         }
@@ -174,12 +174,12 @@ void TestFiltering::addFilter(QVector<QString> param)
 {
     if (param[0].contains("ContactDetailFilter", Qt::CaseInsensitive)) {
         QContactDetailFilter df;
-        
+
         df.setDetailDefinitionName(param[1], param[2]);
-        int fl = param[4].toInt();
-        df.setMatchFlags(flag(fl));
+        QContactFilter::MatchFlags fl = static_cast<QContactFilter::MatchFlags>(param[4].toInt());
+        df.setMatchFlags(fl);
         df.setValue(param[3]);
-        
+
         TFilter f;
         f.filter = df;
         if (!param[5].isEmpty())
@@ -199,31 +199,31 @@ void TestFiltering::createContacts()
 {
 
     QContact alice;
-    
-    // Contact details    
+
+    // Contact details
     QContactName aliceName;
     aliceName.setFirst("Alice");
     aliceName.setLast("Jones");
     alice.saveDetail(&aliceName);
-    
+
     QString label("Ally Jones");
     QContactDisplayLabel aliceDisplay;
     aliceDisplay.setLabel(label);
     alice.saveDetail(&aliceDisplay);
-    
+
     QContactPhoneNumber number;
     number.setContexts("Home");
     number.setSubTypes("Mobile");
     number.setNumber("12345678");
     alice.saveDetail(&number);
     alice.setPreferredDetail("DialAction", number);
-    
+
     QContactPhoneNumber number2;
     number2.setContexts("Work");
     number2.setSubTypes("Landline");
     number2.setNumber("555-4444");
     alice.saveDetail(&number2);
-    
+
     QContactAddress add;
     add.setStreet("Leeds West Yorkshire");
     add.setPostcode("10087");
@@ -231,32 +231,32 @@ void TestFiltering::createContacts()
     add.setCountry("United States");
     add.setSubTypes(QContactAddress::SubTypeDomestic);
     alice.saveDetail(&add);
-    
+
     QContactGender gender;
     gender.setGender("Female");
     alice.saveDetail(&gender);
-    
+
     QContactBirthday bday;
     bday.setDate(QDate(25,10,1978));
     alice.saveDetail(&bday);
-    
+
     QContactOnlineAccount acc;
     acc.setAccountUri("sips:alice.jones@nokia.com");
     acc.setSubTypes(QContactOnlineAccount::SubTypeSip);
     alice.saveDetail(&acc);
-    
+
     QContactEmailAddress email;
     email.setEmailAddress("mailto:alice.jones@nokia.com");
     alice.saveDetail(&email);
-    
+
     QContactOrganization org;
-    org.setDepartment("Services");
+    org.setDepartment(QStringList("Services"));
     org.setTitle("Assistant Manager");
     org.setLocation("Nokia Cyber Park");
     alice.saveDetail(&email);
-    
+
     mCntMng->saveContact(&alice);
-    
+
     // Empty contact
     QContact empty;
     mCntMng->saveContact(&empty);
@@ -276,7 +276,7 @@ Qt::MatchFlags TestFiltering::flag(int f)
             return Qt::MatchEndsWith;
         default:
             return Qt::MatchRecursive;
-    }    
+    }
 }
 
 void TestFiltering::testInvalidFilter()
@@ -284,9 +284,9 @@ void TestFiltering::testInvalidFilter()
     QList<QContactLocalId> cnt_ids;
     QContactFilter filter;
     QContactManager::Error error;
-    
+
     cnt_ids = mSqlFilter->searchContacts(filter, error);
-    
+
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
@@ -294,21 +294,21 @@ void TestFiltering::testContactDetailFilter()
 {
     QList<QContactLocalId> cnt_ids;
     QContactManager::Error error;
-    
+
     QList<TFilter> fs = mFilters->values(QContactFilter::ContactDetailFilter);
-    
+
     for(int i=0; i<fs.count(); i++) {
         qDebug() << fs[i].name;
         const QContactDetailFilter cdf(fs[i].filter);
         cnt_ids = mSqlFilter->searchContacts(cdf, error);
         QVERIFY(error == fs[i].error);
         QVERIFY(cnt_ids.count() == fs[i].result);
-        
+
         // Verify contacts
         QString value = cdf.value().toString();
         QString field = cdf.detailFieldName();
         QString defname = cdf.detailDefinitionName();
-        for(int j=0; j<cnt_ids.count(); i++) {            
+        for(int j=0; j<cnt_ids.count(); i++) {
             QContact c = mCntMng->contact(cnt_ids[j]);
             QContactDetail d = c.detail(defname);
             QVERIFY(d.definitionName() == defname);
@@ -324,9 +324,9 @@ void TestFiltering::testContactDetailRangeFilter()
     QList<QContactLocalId> cnt_ids;
     QContactDetailRangeFilter filter;
     QContactManager::Error error;
-    
+
     cnt_ids = mSqlFilter->searchContacts(filter, error);
-    
+
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
@@ -335,9 +335,9 @@ void TestFiltering::testChangeLogFilter()
     QList<QContactLocalId> cnt_ids;
     QContactChangeLogFilter filter;
     QContactManager::Error error;
-    
+
     cnt_ids = mSqlFilter->searchContacts(filter, error);
-    
+
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
@@ -346,9 +346,9 @@ void TestFiltering::testActionFilter()
     QList<QContactLocalId> cnt_ids;
     QContactActionFilter filter;
     QContactManager::Error error;
-    
+
     cnt_ids = mSqlFilter->searchContacts(filter, error);
-        
+
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
@@ -357,9 +357,9 @@ void TestFiltering::testRelationshipFilter()
     QList<QContactLocalId> cnt_ids;
     QContactRelationshipFilter filter;
     QContactManager::Error error;
-    
+
     cnt_ids = mSqlFilter->searchContacts(filter, error);
-    
+
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
@@ -368,9 +368,9 @@ void TestFiltering::testIntersectionFilter()
     QList<QContactLocalId> cnt_ids;
     QContactIntersectionFilter filter;
     QContactManager::Error error;
-    
+
     cnt_ids = mSqlFilter->searchContacts(filter, error);
-    
+
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
@@ -379,9 +379,9 @@ void TestFiltering::testUnionFilter()
     QList<QContactLocalId> cnt_ids;
     QContactUnionFilter filter;
     QContactManager::Error error;
-    
+
     cnt_ids = mSqlFilter->searchContacts(filter, error);
-    
+
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
@@ -390,9 +390,9 @@ void TestFiltering::testLocalIdFilter()
     QList<QContactLocalId> cnt_ids;
     QContactLocalIdFilter filter;
     QContactManager::Error error;
-    
+
     cnt_ids = mSqlFilter->searchContacts(filter, error);
-    
+
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
@@ -401,9 +401,9 @@ void TestFiltering::testDefaultFilter()
     QList<QContactLocalId> cnt_ids;
     QContactFilter filter;
     QContactManager::Error error;
-    
+
     cnt_ids = mSqlFilter->searchContacts(filter, error);
-    
+
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 

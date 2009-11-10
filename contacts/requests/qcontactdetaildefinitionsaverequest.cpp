@@ -79,3 +79,17 @@ QList<QContactDetailDefinition> QContactDetailDefinitionSaveRequest::definitions
     Q_D(const QContactDetailDefinitionSaveRequest);
     return d->m_definitions;
 }
+
+/*! Sets the type of contact for which detail definitions should be saved to \a contactType */
+void QContactDetailDefinitionSaveRequest::setContactType(const QString& contactType)
+{
+    Q_D(QContactDetailDefinitionSaveRequest);
+    d->m_contactType = contactType;
+}
+
+/*! Returns the type of contact for which detail definitions will be saved */
+QString QContactDetailDefinitionSaveRequest::contactType() const
+{
+    Q_D(const QContactDetailDefinitionSaveRequest);
+    return d->m_contactType;
+}

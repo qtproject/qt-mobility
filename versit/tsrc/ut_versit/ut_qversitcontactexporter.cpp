@@ -65,7 +65,6 @@
 #include <qcontactanniversary.h>
 #include <qcontactonlineaccount.h>
 #include <qcontactfamily.h>
-#include <qcontactpresence.h>
 #include <qcontactdisplaylabel.h>
 
 
@@ -169,24 +168,13 @@ void UT_QVersitContactExporter::testUnknownContactDetails()
     QContactOnlineAccount onlineAccount;
     QString testUri = QString::fromAscii("sip:abc@temp.com");
     onlineAccount.setAccountUri(testUri);
-    onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeH323);
+    onlineAccount.setSubTypes(QString::fromAscii("unsupported"));
     contact.saveDetail(&onlineAccount);
     versitDocument = mExporter->exportContact(contact);
     QCOMPARE(versitDocument.properties().count(), 0);
     unknowndDetails = mExporter->unknownContactDetails();
     defintionName = onlineAccount.definitionName();
     detail = QContactDetail();
-    detail = searchDetail(unknowndDetails,defintionName);
-    QCOMPARE(defintionName, detail.definitionName());
-
-    // Test3: UnConvered Field Name
-    QContactPresence presence;
-    detail = QContactDetail();
-    presence.setAccountUri(QString::fromAscii("a@abc.com"));
-    contact.saveDetail(&presence);
-    defintionName = presence.definitionName();
-    versitDocument = mExporter->exportContact(contact);
-    unknowndDetails = mExporter->unknownContactDetails();
     detail = searchDetail(unknowndDetails,defintionName);
     QCOMPARE(defintionName, detail.definitionName());
 }
@@ -538,13 +526,15 @@ void UT_QVersitContactExporter::testEncodeOrganization()
 
     // ORG with department/unit
     organization.setName(QString());
-    organization.setDepartment(QString::fromAscii("R&D"));
+    QStringList departments(QString::fromAscii("R&D"));
+    departments.append(QString::fromAscii("Qt"));
+    organization.setDepartment(departments);
     contact.saveDetail(&organization);
     versitDocument = mExporter->exportContact(contact);
     QCOMPARE(versitDocument.properties().count(), 1);
     property = versitDocument.properties().at(0);
     QCOMPARE(property.name(), QString::fromAscii("ORG"));
-    QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii(";R&D"));
+    QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii(";R&D;Qt"));
 
     // ORG with name and department/unit
     organization.setName(QString::fromAscii("Nokia"));
@@ -553,7 +543,7 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     QCOMPARE(versitDocument.properties().count(), 1);
     property = versitDocument.properties().at(0);
     QCOMPARE(property.name(), QString::fromAscii("ORG"));
-    QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("Nokia;R&D"));
+    QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("Nokia;R&D;Qt"));
 
     // TITLE and ORG
     organization.setTitle(QString::fromAscii("Developer"));
@@ -565,7 +555,7 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     QCOMPARE(QString::fromAscii(property.value()), title);
     property = versitDocument.properties().at(1);
     QCOMPARE(property.name(), QString::fromAscii("ORG"));
-    QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("Nokia;R&D"));
+    QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("Nokia;R&D;Qt"));
 
     // ORG LOGO Test1: LOGO as remote Resouce
     mScaleSignalEmitted = false;
@@ -594,7 +584,6 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     QString value = QString::fromAscii(versitDocument.properties().at(0).value().data() );
     QCOMPARE(value, url);
 
-
     // ORG LOGO Test2: LOGO File.
     contact = QContact();
     organization = QContactOrganization();
@@ -616,7 +605,6 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     QString value1 = QString::fromAscii(versitDocument.properties().at(0).value().data());
     QEXPECT_FAIL(value1.toAscii(), url.toAscii(), Continue);
 
-
     // Assistant Name Test.
     contact = QContact();
     organization = QContactOrganization();
@@ -627,6 +615,17 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     property = versitDocument.properties().at(0);
     QCOMPARE(property.name(), QString::fromAscii("X-ASSISTANT"));
     QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("myAssistant"));
+
+    // Test: Role
+    contact = QContact();
+    organization = QContactOrganization();
+    organization.setRole(QString::fromAscii("Executive"));
+    contact.saveDetail(&organization);
+    versitDocument = mExporter->exportContact(contact);
+    QCOMPARE(versitDocument.properties().count(), 1);
+    property = versitDocument.properties().at(0);
+    QCOMPARE(property.name(), QString::fromAscii("ROLE"));
+    QCOMPARE(QString::fromAscii(property.value()), QString::fromAscii("Executive"));
 
 }
 
@@ -908,7 +907,7 @@ void UT_QVersitContactExporter::testEncodeOnlineAccount()
     onlineAccount.setAccountUri(accountUri);
 
     // Video sharing
-    onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeShareVideo);
+    onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeVideoShare);
     onlineAccount.setContexts(QContactDetail::ContextHome);
     contact.saveDetail(&onlineAccount);
     QVersitDocument document = mExporter->exportContact(contact);
@@ -926,7 +925,7 @@ void UT_QVersitContactExporter::testEncodeOnlineAccount()
     QCOMPARE(QString::fromAscii(property.value()), accountUri);
 
     // VoIP
-    onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeInternet);
+    onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeSipVoip);
     onlineAccount.setContexts(QContactDetail::ContextWork);
     contact.saveDetail(&onlineAccount);
     document = mExporter->exportContact(contact);
@@ -945,6 +944,22 @@ void UT_QVersitContactExporter::testEncodeOnlineAccount()
 
     // Plain SIP
     onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeSip);
+    onlineAccount.setContexts(QContactDetail::ContextWork);
+    contact.saveDetail(&onlineAccount);
+    document = mExporter->exportContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    property = document.properties().at(0);
+    // Check parameters, SIP not added as a TYPE parameter
+    QCOMPARE(property.parameters().count(), 1);
+    QVERIFY(property.parameters().contains(
+        QString::fromAscii("TYPE"),QString::fromAscii("WORK")));
+    // Check name
+    QCOMPARE(property.name(), QString::fromAscii("X-SIP"));
+    // Check value
+    QCOMPARE(QString::fromAscii(property.value()), accountUri);
+
+    // IMPP / X-IMPP
+    onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeImpp);
     onlineAccount.setContexts(QContactDetail::ContextHome);
     contact.saveDetail(&onlineAccount);
     document = mExporter->exportContact(contact);
@@ -955,7 +970,7 @@ void UT_QVersitContactExporter::testEncodeOnlineAccount()
     QVERIFY(property.parameters().contains(
         QString::fromAscii("TYPE"),QString::fromAscii("HOME")));
     // Check name
-    QCOMPARE(property.name(), QString::fromAscii("X-SIP"));
+    QCOMPARE(property.name(), QString::fromAscii("X-IMPP"));
     // Check value
     QCOMPARE(QString::fromAscii(property.value()), accountUri);
 
@@ -1038,16 +1053,15 @@ void UT_QVersitContactExporter::testEncodeDisplayLabel()
     QCOMPARE(QString::fromAscii(nameProperty.value()),
         QString::fromAscii("Last;First;Middle;;"));
 
-    //Test3: Valid Display Lable and Name Exisit & test escaping
+    // Test 3:
     contact = QContact();
-    displayLaebl.setLabel(QString::fromAscii("Display,Label"));
-    contact.saveDetail(&displayLaebl);
+    contactName.setCustomLabel(QString::fromAscii("Custom\\,Label"));
     contact.saveDetail(&contactName);
     document = mExporter->exportContact(contact, QVersitDocument::VCard30);
 
     displayProperty = document.properties().at(0);
     QCOMPARE(displayProperty.name(), QString::fromAscii("FN"));
-    QCOMPARE(QString::fromAscii(displayProperty.value()), QString::fromAscii("Display\\,Label"));
+    QCOMPARE(QString::fromAscii(displayProperty.value()), QString::fromAscii("Custom\\,Label"));
 }
 
 // Test utility functions

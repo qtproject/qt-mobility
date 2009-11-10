@@ -84,7 +84,7 @@ public:
     QContactDetailDefinition::AccessConstraint m_constraint;
     QString m_name;
     bool m_unique;
-    QMap<QString, QContactDetailDefinition::Field> m_fields;
+    QMap<QString, QContactDetailDefinitionField> m_fields;
 };
 
 #endif

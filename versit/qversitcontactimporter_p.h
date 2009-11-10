@@ -78,40 +78,62 @@ private:
     QContactDetail* createName(
         const QVersitProperty& property,
         const QContact& contact) const;
+
     QContactDetail* createPhone(const QVersitProperty& property) const;
+
     QContactDetail* createAddress(const QVersitProperty& property) const;
-    QContactDetail* createOrganization(const QVersitProperty& property) const;
+
+    QContactDetail* createOrganization(
+        const QVersitProperty& property,
+        const QContact& contact) const;
+
     void setOrganizationNames(
         QContactOrganization& org,
         const QVersitProperty& property) const;
+
     void setOrganizationLogo(
         QContactOrganization& org,
         const QVersitProperty& property) const;
+
     QContactDetail* createTimeStamp(const QVersitProperty& property) const;
+
     QContactDetail* createAnniversary(const QVersitProperty& property) const;
-    QContactDetail* createBirthday(const QVersitProperty& property) const;    
+
+    QContactDetail* createBirthday(const QVersitProperty& property) const;
+
     QContactDetail* createAvatar(
         const QVersitProperty& property,
         const QVersitDocument& versitDocument,
         const QString& subType) const;
+
     void createNicknames(
         const QVersitProperty& property,
         QContact& contact) const;
+
     QContactDetail* createGeoLocation(const QVersitProperty& property) const;
+
     QContactDetail* createOnlineAccount(const QVersitProperty& property) const;
+
     QContactDetail* createFamily(
         const QVersitProperty& property,
         const QContact& contact)const;
     QContactDetail* createNameValueDetail(const QVersitProperty& property) const;
+    QContactDetail* createLabel(
+            const QVersitProperty& property,
+            const QContact& contact) const;
 
-private: // Utilities
     QStringList extractContexts(const QVersitProperty& property) const;
+
     QStringList extractSubTypes(const QVersitProperty& property) const;
+
     QString takeFirst(QList<QByteArray>& list) const;
-    QDateTime parseDateTime(const QByteArray& text, const QByteArray& format) const;    
+
+    QDateTime parseDateTime(const QByteArray& text, const QByteArray& format) const;
+
     QString saveContentToFile(
         const QString& path,
         const QVersitProperty& property) const;
+
     QString getFirstAndLastName(const QVersitDocument& document) const;
     
 public: // Data

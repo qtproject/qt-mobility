@@ -48,6 +48,7 @@
 #include <QSharedDataPointer>
 
 #include "qtcontactsglobal.h"
+#include "qcontactdetails.h"
 
 class QContactFilter;
 
@@ -66,10 +67,10 @@ public:
         ChangeLogs
     };
 
-    bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
+    bool hasFeature(QContactManagerInfo::ManagerFeature feature, const QString& contactType = QContactType::TypeContact) const;
     bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
-    QStringList supportedRelationshipTypes() const;
+    QStringList supportedRelationshipTypes(const QString& contactType = QContactType::TypeContact) const;
 
 private:
     /* Can't instantiate apart from through manager */
@@ -88,4 +89,3 @@ private:
 };
 
 #endif
-

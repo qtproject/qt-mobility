@@ -62,6 +62,7 @@
 #include <qcontactnote.h>
 #include <qcontactonlineaccount.h>
 #include <qcontactfamily.h>
+#include <qcontactdisplaylabel.h>
 #include <QHash>
 #include <QFile>
 
@@ -139,7 +140,7 @@ QContact QVersitContactImporterPrivate::importContact(
         } else if (detailDefinitionName == QContactGeolocation::DefinitionName){
             detail = createGeoLocation(property);
         } else if (detailDefinitionName == QContactOrganization::DefinitionName) {
-            detail = createOrganization(property);
+            detail = createOrganization(property,contact);
         } else if (detailDefinitionName == QContactNickname::DefinitionName) {
             createNicknames(property,contact);
         } else if (detailDefinitionName == QContactAvatar::DefinitionName) {
@@ -154,6 +155,8 @@ QContact QVersitContactImporterPrivate::importContact(
             detail = createFamily(property,contact);
         } else if (detailDefinitionName == QContactOnlineAccount::DefinitionName) {
             detail = createOnlineAccount(property);
+        } else if (detailDefinitionName == QContactDisplayLabel::DefinitionName) {
+            detail = createLabel(property, contact);
         } else {
             detail = createNameValueDetail(property);
             if (!detail)
@@ -177,12 +180,19 @@ QContact QVersitContactImporterPrivate::importContact(
 QContactDetail* QVersitContactImporterPrivate::createName(
     const QVersitProperty& property,const QContact& contact) const
 {
-    // Restrict only one name can exist, if multiple than choose first
-    // and discard rest
-    if( !contact.detail(QContactName::DefinitionName).isEmpty()){
-        return 0;
+    QContactName* name = 0;
+    QContactDetail detail = contact.detail(QContactName::DefinitionName);
+    if (!detail.isEmpty()) {
+        name = new QContactName(static_cast<QContactName>(detail));
+        // If multiple name properties exist,
+        // discard all except the first occurence
+        if (!name->first().isEmpty()) {
+            return 0;
+        }
+    } else {
+        name = new QContactName();
     }
-    QContactName* name = new QContactName();
+
     QList<QByteArray> values = property.value().split(';');
     name->setLast(takeFirst(values));
     name->setFirst(takeFirst(values));
@@ -232,41 +242,59 @@ QContactDetail* QVersitContactImporterPrivate::createAddress(
  * Creates a QContactOrganization from \a property
  */
 QContactDetail* QVersitContactImporterPrivate::createOrganization(
-    const QVersitProperty& property) const
+    const QVersitProperty& property,
+    const QContact& contact) const
 {
-    QContactOrganization* org = new QContactOrganization;
-    if (property.name() == QString::fromAscii("TITLE")) {
-        org->setTitle(QString::fromAscii(property.value()));
-    } else if (property.name() == QString::fromAscii("ORG")) {
-        setOrganizationNames(*org,property);
-    } else if (property.name() == QString::fromAscii("LOGO")) {
-        setOrganizationLogo(*org,property);
-    } else if (property.name() == QString::fromAscii("X-ASSISTANT")) {
-        org->setAssistantName(QString::fromAscii(property.value()));
+    QContactOrganization* organization = 0;
+    QPair<QString,QString> detailNameAndFieldName =
+        mDetailMappings.value(property.name());
+    QString fieldName = detailNameAndFieldName.second;
+    QList<QContactDetail> organizations =
+        contact.details(QContactOrganization::DefinitionName);
+    foreach(QContactDetail detail, organizations) {
+        QContactOrganization current = static_cast<QContactOrganization>(detail);
+        if (current.value(fieldName).length() == 0) {
+            organization = new QContactOrganization(current);
+            break;
+        }
+    }
+    if (!organization) {
+        organization = new QContactOrganization();
+    }
+    if (fieldName == QContactOrganization::FieldName) {
+        setOrganizationNames(*organization,property);
+    } else if (fieldName == QContactOrganization::FieldTitle) {
+        organization->setTitle(QString::fromAscii(property.value()));
+    } else if (fieldName == QContactOrganization::FieldRole) {
+        organization->setRole(QString::fromAscii(property.value()));
+    } else if (fieldName == QContactOrganization::FieldLogo) {
+        setOrganizationLogo(*organization,property);
+    } else if (fieldName == QContactOrganization::FieldAssistantName) {
+        organization->setAssistantName(QString::fromAscii(property.value()));
     } else {
-         // NOP
+        delete organization;
+        organization = 0;
     }
-    if (org->isEmpty()) {
-        delete org;
-        org = 0;
-    }
-    return org;
+    return organization;
 }
 
 /*!
  * Set the organization name and department(s) from \a property.
  */
 void QVersitContactImporterPrivate::setOrganizationNames(
-    QContactOrganization& org,
+    QContactOrganization& organization,
     const QVersitProperty& property) const
 {
     QByteArray value = property.value();
     int firstSemicolon = value.indexOf(";");
     if (firstSemicolon >= 0) {
-        org.setName(QString::fromAscii(value.left(firstSemicolon)));
-        org.setDepartment(QString::fromAscii(value.mid(firstSemicolon+1)));
+        organization.setName(QString::fromAscii(value.left(firstSemicolon)));
+        QString departmentsStr(QString::fromAscii(value.mid(firstSemicolon+1)));
+        QStringList departments =
+            departmentsStr.split(QString::fromAscii(";"),QString::SkipEmptyParts);
+        organization.setDepartment(departments);
     } else {
-        org.setName(QString::fromAscii(value));
+        organization.setName(QString::fromAscii(value));
     }
 }
 
@@ -362,10 +390,19 @@ QContactDetail* QVersitContactImporterPrivate::createOnlineAccount(
 {    
     QContactOnlineAccount* onlineAccount = new QContactOnlineAccount();
     onlineAccount->setAccountUri(QString::fromAscii(property.value()));
-    QStringList subTypes = extractSubTypes(property);
-    if (subTypes.count() == 0)
-        subTypes.append(QContactOnlineAccount::SubTypeSip);
-    onlineAccount->setSubTypes(subTypes);
+    if (property.name() == QString::fromAscii("X-SIP")) {
+        QStringList subTypes = extractSubTypes(property);
+        if (subTypes.count() == 0)
+            subTypes.append(QContactOnlineAccount::SubTypeSip);
+        onlineAccount->setSubTypes(subTypes);
+    }
+    else if (property.name() == QString::fromAscii("X-IMPP") ||
+             property.name() == QString::fromAscii("IMPP")) {
+        onlineAccount->setSubTypes(QContactOnlineAccount::SubTypeImpp);
+    }
+    else {
+        // NOP
+    }
     return onlineAccount;
 }
 
@@ -447,6 +484,26 @@ QContactDetail* QVersitContactImporterPrivate::createNameValueDetail(
             nameAndValueType.second,QString::fromAscii(property.value()));
     }
     return detail;
+}
+
+/*!
+ * Creates a simple name-value contact detail.
+ */
+QContactDetail* QVersitContactImporterPrivate::createLabel(
+    const QVersitProperty& property,
+    const QContact& contact) const
+{
+    QContactName* name = 0;
+    QContactDetail detail = contact.detail(QContactName::DefinitionName);
+    if (!detail.isEmpty()) {
+        name = new QContactName(static_cast<QContactName>(detail));
+    } else {
+        name = new QContactName();
+    }
+
+    // Setting the QContactDisplayLabel is done by the backend
+    name->setCustomLabel(QString::fromAscii(property.value()));
+    return name;
 }
 
 /*!
