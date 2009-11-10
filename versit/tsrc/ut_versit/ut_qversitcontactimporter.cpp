@@ -1105,7 +1105,7 @@ void UT_QVersitContactImporter::testOnlineAccount()
     QCOMPARE(subTypes.count(),1);
     QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeSip);
 
-    // VideoSharing subtype
+    // X-SIP;SWIS
     document = QVersitDocument();
     property = QVersitProperty();
     property.setName(QString::fromAscii("X-SIP"));
@@ -1123,7 +1123,7 @@ void UT_QVersitContactImporter::testOnlineAccount()
     QCOMPARE(subTypes.count(),1);
     QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeVideoShare);
 
-    // Internet subtype
+    // X-SIP;VOIP
     document = QVersitDocument();
     property = QVersitProperty();
     property.setName(QString::fromAscii("X-SIP"));
@@ -1140,6 +1140,36 @@ void UT_QVersitContactImporter::testOnlineAccount()
     subTypes = onlineAccount.subTypes();
     QCOMPARE(subTypes.count(),1);
     QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeSipVoip);
+
+    // X-IMPP
+    document = QVersitDocument();
+    property = QVersitProperty();
+    property.setName(QString::fromAscii("X-IMPP"));
+    property.setValue(accountUri);
+    document.addProperty(property);
+    contact = mImporter->importContact(document);
+    onlineAccount =
+         static_cast<QContactOnlineAccount>(
+             contact.detail(QContactOnlineAccount::DefinitionName));
+    QCOMPARE(onlineAccount.accountUri(),QString::fromAscii(accountUri));
+    subTypes = onlineAccount.subTypes();
+    QCOMPARE(subTypes.count(),1);
+    QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeImpp);
+
+    // IMPP
+    document = QVersitDocument();
+    property = QVersitProperty();
+    property.setName(QString::fromAscii("IMPP"));
+    property.setValue(accountUri);
+    document.addProperty(property);
+    contact = mImporter->importContact(document);
+    onlineAccount =
+         static_cast<QContactOnlineAccount>(
+             contact.detail(QContactOnlineAccount::DefinitionName));
+    QCOMPARE(onlineAccount.accountUri(),QString::fromAscii(accountUri));
+    subTypes = onlineAccount.subTypes();
+    QCOMPARE(subTypes.count(),1);
+    QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeImpp);
 }
 
 void UT_QVersitContactImporter::testFamily()

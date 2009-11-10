@@ -935,6 +935,22 @@ void UT_QVersitContactExporter::testEncodeOnlineAccount()
 
     // Plain SIP
     onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeSip);
+    onlineAccount.setContexts(QContactDetail::ContextWork);
+    contact.saveDetail(&onlineAccount);
+    document = mExporter->exportContact(contact);
+    QCOMPARE(document.properties().count(), 1);
+    property = document.properties().at(0);
+    // Check parameters, SIP not added as a TYPE parameter
+    QCOMPARE(property.parameters().count(), 1);
+    QVERIFY(property.parameters().contains(
+        QString::fromAscii("TYPE"),QString::fromAscii("WORK")));
+    // Check name
+    QCOMPARE(property.name(), QString::fromAscii("X-SIP"));
+    // Check value
+    QCOMPARE(QString::fromAscii(property.value()), accountUri);
+
+    // IMPP / X-IMPP
+    onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeImpp);
     onlineAccount.setContexts(QContactDetail::ContextHome);
     contact.saveDetail(&onlineAccount);
     document = mExporter->exportContact(contact);
@@ -945,7 +961,7 @@ void UT_QVersitContactExporter::testEncodeOnlineAccount()
     QVERIFY(property.parameters().contains(
         QString::fromAscii("TYPE"),QString::fromAscii("HOME")));
     // Check name
-    QCOMPARE(property.name(), QString::fromAscii("X-SIP"));
+    QCOMPARE(property.name(), QString::fromAscii("X-IMPP"));
     // Check value
     QCOMPARE(QString::fromAscii(property.value()), accountUri);
 

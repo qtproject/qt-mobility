@@ -480,10 +480,14 @@ bool QVersitContactExporterPrivate::encodeOnlineAccount(
 
     if (subTypes.contains(QContactOnlineAccount::SubTypeSip) ||
         subTypes.contains(QContactOnlineAccount::SubTypeSipVoip) ||
-        subTypes.contains(QContactOnlineAccount::SubTypeVideoShare)) {
+        subTypes.contains(QContactOnlineAccount::SubTypeVideoShare) ||
+        subTypes.contains(QContactOnlineAccount::SubTypeImpp)) {
         encoded = true;
         encodeParameters(property, onlineAccount.contexts(), subTypes);
-        property.setName(QString::fromAscii("X-SIP"));
+        QString name(QString::fromAscii("X-SIP"));
+        if (subTypes.contains(QContactOnlineAccount::SubTypeImpp))
+            name = QString::fromAscii("X-IMPP");
+        property.setName(name);
         setEscapedValue(property,onlineAccount.accountUri());
     }
     return encoded;

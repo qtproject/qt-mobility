@@ -378,10 +378,19 @@ QContactDetail* QVersitContactImporterPrivate::createOnlineAccount(
 {    
     QContactOnlineAccount* onlineAccount = new QContactOnlineAccount();
     onlineAccount->setAccountUri(QString::fromAscii(property.value()));
-    QStringList subTypes = extractSubTypes(property);
-    if (subTypes.count() == 0)
-        subTypes.append(QContactOnlineAccount::SubTypeSip);
-    onlineAccount->setSubTypes(subTypes);
+    if (property.name() == QString::fromAscii("X-SIP")) {
+        QStringList subTypes = extractSubTypes(property);
+        if (subTypes.count() == 0)
+            subTypes.append(QContactOnlineAccount::SubTypeSip);
+        onlineAccount->setSubTypes(subTypes);
+    }
+    else if (property.name() == QString::fromAscii("X-IMPP") ||
+             property.name() == QString::fromAscii("IMPP")) {
+        onlineAccount->setSubTypes(QContactOnlineAccount::SubTypeImpp);
+    }
+    else {
+        // NOP
+    }
     return onlineAccount;
 }
 

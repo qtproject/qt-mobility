@@ -81,6 +81,14 @@ void UT_QVCard30Writer::testEncodeVersitProperty()
     encodedProperty = mWriter->encodeVersitProperty(property);
     QCOMPARE(QString::fromAscii(encodedProperty), expectedResult);
 
+    // Convert X-IMPP to IMPP
+    expectedResult = QString::fromAscii("IMPP:msn:msn-address\r\n");
+    property.setParameters(QMultiHash<QString,QString>());
+    property.setName(QString::fromAscii("X-IMPP"));
+    property.setValue(QByteArray("msn:msn-address"));
+    encodedProperty = mWriter->encodeVersitProperty(property);
+    QCOMPARE(QString::fromAscii(encodedProperty), expectedResult);
+
     // AGENT property
     expectedResult =
         QString::fromAscii(
