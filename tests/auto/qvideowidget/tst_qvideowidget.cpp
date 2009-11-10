@@ -361,6 +361,7 @@ void tst_QVideoWidget::nullObject()
     QVERIFY(widget.sizeHint().isEmpty());
 
     widget.setFullScreen(true);
+    QTest::qWaitForWindowShown(&widget);
     QCOMPARE(widget.isFullScreen(), true);
 
     widget.setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
@@ -442,6 +443,7 @@ void tst_QVideoWidget::nullService()
     QVERIFY(widget.sizeHint().isEmpty());
 
     widget.setFullScreen(true);
+    QTest::qWaitForWindowShown(&widget);
     QCOMPARE(widget.isFullScreen(), true);
 
     widget.setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
@@ -469,6 +471,7 @@ void tst_QVideoWidget::nullOutputControl()
     QVERIFY(widget.sizeHint().isEmpty());
 
     widget.setFullScreen(true);
+    QTest::qWaitForWindowShown(&widget);
     QCOMPARE(widget.isFullScreen(), true);
 
     widget.setBrightness(100);
@@ -783,6 +786,8 @@ void tst_QVideoWidget::fullScreenWindowControl()
     widget.show();
     QTest::qWaitForWindowShown(&widget);
 
+    Qt::WindowFlags windowFlags = widget.windowFlags();
+
     QSignalSpy spy(&widget, SIGNAL(fullScreenChanged(bool)));
 
     // Test showing full screen with setFullScreen(true).
@@ -800,6 +805,7 @@ void tst_QVideoWidget::fullScreenWindowControl()
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 2);
     QCOMPARE(spy.value(1).value(0).toBool(), false);
+    QCOMPARE(widget.windowFlags(), windowFlags);
 
     // Test showing full screen with showFullScreen().
     widget.showFullScreen();
@@ -816,6 +822,7 @@ void tst_QVideoWidget::fullScreenWindowControl()
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 4);
     QCOMPARE(spy.value(3).value(0).toBool(), false);
+    QCOMPARE(widget.windowFlags(), windowFlags);
 
     // Test setFullScreen(false) and showNormal() do nothing when isFullScreen() == false.
     widget.setFullScreen(false);
@@ -859,6 +866,8 @@ void tst_QVideoWidget::fullScreenWidgetControl()
     widget.show();
     QTest::qWaitForWindowShown(&widget);
 
+    Qt::WindowFlags windowFlags = widget.windowFlags();
+
     QSignalSpy spy(&widget, SIGNAL(fullScreenChanged(bool)));
 
     // Test showing full screen with setFullScreen(true).
@@ -876,6 +885,7 @@ void tst_QVideoWidget::fullScreenWidgetControl()
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 2);
     QCOMPARE(spy.value(1).value(0).toBool(), false);
+    QCOMPARE(widget.windowFlags(), windowFlags);
 
     // Test showing full screen with showFullScreen().
     widget.showFullScreen();
@@ -892,6 +902,7 @@ void tst_QVideoWidget::fullScreenWidgetControl()
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 4);
     QCOMPARE(spy.value(3).value(0).toBool(), false);
+    QCOMPARE(widget.windowFlags(), windowFlags);
 
     // Test setFullScreen(false) and showNormal() do nothing when isFullScreen() == false.
     widget.setFullScreen(false);
@@ -937,6 +948,8 @@ void tst_QVideoWidget::fullScreenRendererControl()
     widget.show();
     QTest::qWaitForWindowShown(&widget);
 
+    Qt::WindowFlags windowFlags = widget.windowFlags();
+
     QSignalSpy spy(&widget, SIGNAL(fullScreenChanged(bool)));
 
     // Test showing full screen with setFullScreen(true).
@@ -952,6 +965,7 @@ void tst_QVideoWidget::fullScreenRendererControl()
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 2);
     QCOMPARE(spy.value(1).value(0).toBool(), false);
+    QCOMPARE(widget.windowFlags(), windowFlags);
 
     // Test showing full screen with showFullScreen().
     widget.showFullScreen();
@@ -966,6 +980,7 @@ void tst_QVideoWidget::fullScreenRendererControl()
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 4);
     QCOMPARE(spy.value(3).value(0).toBool(), false);
+    QCOMPARE(widget.windowFlags(), windowFlags);
 
     // Test setFullScreen(false) and showNormal() do nothing when isFullScreen() == false.
     widget.setFullScreen(false);
