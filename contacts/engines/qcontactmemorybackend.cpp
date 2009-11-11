@@ -386,8 +386,10 @@ bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QCont
     error = QContactManager::NoError;
 
     // and if it was the self contact, reset the self contact id
-    if (contactId == d->m_selfContactId)
+    if (contactId == d->m_selfContactId) {
         d->m_selfContactId = QContactLocalId(0);
+        emit selfContactIdChanged(contactId, QContactLocalId(0));
+    }
 
     changeSet.removedContacts().insert(contactId);
     return true;
