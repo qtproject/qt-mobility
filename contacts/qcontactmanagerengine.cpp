@@ -178,6 +178,18 @@
  * \sa dataChanged()
  */
 
+/*!
+ * \fn QContactManagerEngine::selfContactIdChanged(const QContactLocalId& oldId, const QContactLocalId& newId)
+ *
+ * This signal is emitted at some point after the id of the self-contact is changed from \a oldId to \a newId in the manager.
+ * If the \a newId is the invalid, zero id, then the self contact was deleted or no self contact exists.
+ * This signal must not be emitted if the dataChanged() signal was previously emitted for this change.
+ * As it is possible that other processes (or other devices) may
+ * have removed or changed the self contact, the timing cannot be determined.
+ *
+ * \sa dataChanged()
+ */
+
 /*! Returns the manager name for this QContactManagerEngine */
 QString QContactManagerEngine::managerName() const
 {
@@ -457,7 +469,7 @@ QContact QContactManagerEngine::setContactDisplayLabel(const QString& displayLab
 }
 
 /*!
- * Returns true if the given \a feature is supported by this engine
+ * Returns true if the given \a feature is supported by this engine for contacts of the given \a contactType
  */
 bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const
 {
@@ -486,7 +498,7 @@ QList<QVariant::Type> QContactManagerEngine::supportedDataTypes() const
 }
 
 /*!
- * Returns the list of relationship types supported by this engine.
+ * Returns the list of relationship types supported by this engine for contacts whose type is the given \a contactType.
  */
 QStringList QContactManagerEngine::supportedRelationshipTypes(const QString& contactType) const
 {

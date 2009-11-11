@@ -59,7 +59,7 @@
 
 /*!
  * \fn QContactManager::dataChanged()
- * signal is emitted by the manager if its internal state changes, and it is unable to determine the changes
+ * This signal is emitted by the manager if its internal state changes, and it is unable to determine the changes
  * which occurred, or if the manager considers the changes to be radical enough to require clients to reload all data.
  * If this signal is emitted, no other signals will be emitted for the associated changes.
  */
@@ -92,6 +92,13 @@
  * \fn QContactManager::relationshipsRemoved(const QList<QContactLocalId>& affectedContactIds)
  * This signal is emitted at some point after relationships have eben removed from the manager which involve the contacts identified by \a affectedContactIds.
  * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
+ */
+
+/*!
+ * \fn QContactManager::selfContactIdChanged(const QContactLocalId& oldId, const QContactLocalId& newId)
+ * This signal is emitted at some point after the id of the self-contact is changed from \a oldId to \a newId in the manager.
+ * If the \a newId is the invalid, zero id, then the self contact was deleted or no self contact exists.
+ * This signal must not be emitted if the dataChanged() signal was previously emitted for this change.
  */
 
 
@@ -270,10 +277,13 @@ QContactManager::~QContactManager()
  * \value AlreadyExistsError The most recent operation failed because the specified contact or detail definition already exists
  * \value InvalidDetailError The most recent operation failed because the specified contact contains details which do not conform to their definition
  * \value InvalidRelationshipError The most recent operation failed because the specified relationship is circular or references an invalid local contact
+ * \value InvalidContactTypeError The most recent operation failed because the contact type specified was not valid for the operation
  * \value LockedError The most recent operation failed because the datastore specified is currently locked
  * \value DetailAccessError The most recent operation failed because a detail was modified or removed and its access method does not allow that
  * \value PermissionsError The most recent operation failed because the caller does not have permission to perform the operation
  * \value OutOfMemoryError The most recent operation failed due to running out of memory
+ * \value VersionMismatchError The most recent operation failed because the backend of the manager is not of the required version
+ * \value LimitReachedError The most recent operation failed because the limit for that type of object has been reached
  * \value NotSupportedError The most recent operation failed because the requested operation is not supported in the specified store
  * \value BadArgumentError The most recent operation failed because one or more of the parameters to the operation were invalid
  * \value UnspecifiedError The most recent operation failed for an undocumented reason
@@ -567,6 +577,7 @@ bool QContactManager::removeDetailDefinition(const QString& definitionName, cons
  * \value ArbitraryRelationshipTypes The manager supports relationships of arbitrary types between contacts
  * \value MutableDefinitions The manager supports saving, updating or removing detail definitions.  Some built-in definitions may still be immutable
  * \value SelfContact The manager supports the concept of saving a contact which represents the current user
+ * \value ChangeLogs The manager supports reporting of timestamps of changes, and filtering and sorting by those timestamps
  * \value Anonymous The manager is isolated from other managers
  */
 
@@ -625,13 +636,13 @@ QStringList QContactManager::supportedContactTypes() const
     return d->m_engine->supportedContactTypes();
 }
 
-/* Returns the version number of the QTContacts API*/ 
+/*! Returns the version number of the Qt Mobility Contacts API */
 int QContactManager::version() 
 { 
     return QTCONTACTS_VERSION; 
 } 
 
-/* Returns the engine backend implementation version number */ 
+/*! Returns the engine backend implementation version number */
 int QContactManager::implementationVersion() const 
 { 
     return d->m_engine->implementationVersion(); 

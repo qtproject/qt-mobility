@@ -71,6 +71,18 @@
  */
 
 /*!
+ * \enum QContactFilter::MatchFlag
+ * Describes the semantics of matching followed by the filter
+ * \value MatchExactly Performs QVariant-based matching
+ * \value MatchContains The search term is contained in the item
+ * \value MatchStartsWith The search term matches the start of the item
+ * \value MatchEndsWith The search term matches the end of the item
+ * \value MatchFixedString Performs string-based matching. String-based comparisons are case-insensitive unless the \c MatchCaseSensitive flag is also specified
+ * \value MatchCaseSensitive The search is case sensitive
+ * \value MatchPhoneNumber The search term is considered to be contained in the item by the platform where the search term is a phone number
+ */
+
+/*!
  * \fn QContactFilter::operator!=(const QContactFilter& other) const
  * Returns true if this filter is not identical to the \a other filter.
  * \sa operator==()

@@ -172,7 +172,7 @@ QContactDetailDefinition::AccessConstraint QContactDetailDefinition::accessConst
 }
 
 /*!
- * \fn QContactDetailDefinition::setAccessConstraint(const AccessConstraint& constraint)
+ * \fn QContactDetailDefinition::setAccessConstraint(const QContactDetailDefinition::AccessConstraint& constraint)
  * Sets the access constraint that is applied to details of this definition to \a constraint
  */
 void QContactDetailDefinition::setAccessConstraint(const QContactDetailDefinition::AccessConstraint& constraint)
