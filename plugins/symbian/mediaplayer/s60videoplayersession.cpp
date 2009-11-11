@@ -220,24 +220,12 @@ void S60VideoPlayerSession::setMuted(bool muted)
         m_player->SetVolumeL(0);
 }
 
-void S60VideoPlayerSession::setSeekable(bool seekable)
-{
-    if (seekable != m_seekable) {
-        m_seekable = seekable;
-        emit seekableChanged(m_seekable);
-    }
-}
-
 void S60VideoPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
 {
     if (m_mediaStatus != status) {
         m_mediaStatus = status;
         emit mediaStatusChanged(status);
     }
-}
-
-void S60VideoPlayerSession::getStreamsInfo()
-{
 }
 
 void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)

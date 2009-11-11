@@ -117,8 +117,6 @@ protected:
     QUrl m_url;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;
-    //QMap<QByteArray, QVariant> m_tags;
-   // QList< QMap<QString,QVariant> > m_streamProperties;
     
     int m_volume;
     qreal m_playbackRate;

@@ -56,14 +56,10 @@ public:
     S60AudioPlayerSession(QObject *parent);
     ~S60AudioPlayerSession();
 
-    QMediaPlayer::State state() const { return m_state; }
-    QMediaPlayer::MediaStatus mediaStatus() const { return m_mediaStatus; }
-
     qint64 duration() const;
     qint64 position() const;
 
     bool isBuffering() const;
-
     int bufferingProgress() const;
 
     int volume() const;
@@ -77,56 +73,18 @@ public:
     void setPlaybackRate(qreal rate);
     
 public slots:
-    //void load(const QUrl &url);
-
     void play();
     void pause();
     void stop();
-
     void seek(qint64 pos);
-
     void setVolume(int volume);
     void setMuted(bool muted);
 
-signals:
-    void durationChanged(qint64 duration);
-    void positionChanged(qint64 position);
-    void stateChanged(QMediaPlayer::State state);
-    void mediaStatusChanged(QMediaPlayer::MediaStatus mediaStatus);
-    void volumeChanged(int volume);
-    void mutedStateChaned(bool muted);
-    void videoAvailabilityChanged(bool videoAvailable);
-    void bufferingChanged(bool buffering);
-    void bufferingProgressChanged(int percentFilled);
-    void playbackFinished();
-    void tagsChanged();
-    void seekableChanged(bool);
-
 private: 
     void getNativeHandles();
-    
-private slots:
-    void setSeekable(bool);
 
 private:
     void setMediaStatus(QMediaPlayer::MediaStatus);
-
-    /*QSize m_frameSize;
-    qint64 m_totalTime;    
-    QUrl m_url;
-    QMediaPlayer::State m_state;
-    QMediaPlayer::MediaStatus m_mediaStatus;
-    QMap<QByteArray, QVariant> m_tags;
-    QList< QMap<QString,QVariant> > m_streamProperties;
-    
-    int m_volume;
-    qreal m_playbackRate;
-    bool m_muted;
-    bool m_videoAvailable;
-    bool m_seekable;
-
-    qint64 m_lastPosition;
-    qint64 m_duration;*/
 };
 
 #endif

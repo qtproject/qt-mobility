@@ -59,9 +59,6 @@ public:
     S60VideoPlayerSession(QObject *parent);
     ~S60VideoPlayerSession();
 
-    QMediaPlayer::State state() const { return m_state; }
-    QMediaPlayer::MediaStatus mediaStatus() const { return m_mediaStatus; }
-
     qint64 duration() const;
     qint64 position() const;
 
@@ -79,36 +76,15 @@ public:
 
     qreal playbackRate() const;
     void setPlaybackRate(qreal rate);
-
-    //QMap<QByteArray ,QVariant> tags() const { return m_tags; }
-    //QMap<QString,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }
-    //int streamCount() const { return m_streamProperties.count(); }
     
 public slots:
     void load(const QUrl &url);
-
     void play();
     void pause();
     void stop();
-
     void seek(qint64 pos);
-
     void setVolume(int volume);
     void setMuted(bool muted);
-
-signals:
-    void durationChanged(qint64 duration);
-    void positionChanged(qint64 position);
-    void stateChanged(QMediaPlayer::State state);
-    void mediaStatusChanged(QMediaPlayer::MediaStatus mediaStatus);
-    void volumeChanged(int volume);
-    void mutedStateChaned(bool muted);
-    void videoAvailabilityChanged(bool videoAvailable);
-    void bufferingChanged(bool buffering);
-    void bufferingProgressChanged(int percentFilled);
-    void playbackFinished();
-    void tagsChanged();
-    void seekableChanged(bool);
 
 private: 
     void getNativeHandles();
@@ -119,10 +95,6 @@ private: // From MVideoPlayerUtilityObserver
     void MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError);
     void MvpuoPlayComplete(TInt aError);
     void MvpuoEvent(const TMMFEvent &aEvent);
-    
-private slots:
-    void getStreamsInfo();
-    void setSeekable(bool);
 
 private:
     void setMediaStatus(QMediaPlayer::MediaStatus);
@@ -135,21 +107,6 @@ private:
     TRect m_windowRect;
     TRect m_clipRect;
     QSize m_frameSize;
-    /*qint64 m_totalTime;    
-    QUrl m_url;
-    QMediaPlayer::State m_state;
-    QMediaPlayer::MediaStatus m_mediaStatus;
-    QMap<QByteArray, QVariant> m_tags;
-    QList< QMap<QString,QVariant> > m_streamProperties;
-    
-    int m_volume;
-    qreal m_playbackRate;
-    bool m_muted;
-    bool m_videoAvailable;
-    bool m_seekable;
-
-    qint64 m_lastPosition;
-    qint64 m_duration;*/
 };
 
 #endif

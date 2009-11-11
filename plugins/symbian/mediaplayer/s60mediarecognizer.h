@@ -52,22 +52,21 @@ class S60MediaRecognizer : public QObject
 {
     Q_OBJECT
     
-    public:
-        enum MediaType {
-            Audio,
-            Video,
-            NotSupported = -1
-        };
+public:
+    enum MediaType {
+        Audio,
+        Video,
+        NotSupported = -1
+    };
         
-        S60MediaRecognizer(QObject *parent = 0);
-        ~S60MediaRecognizer();
-        bool checkUrl(QUrl url);
-        MediaType IdentifyMediaTypeL(const QUrl& url);
-    
-    private:
-    
-        CMPMediaRecognizer *m_recognizer;
-        int m_error; 
+    S60MediaRecognizer(QObject *parent = 0);
+    ~S60MediaRecognizer();
+    bool checkUrl(const QUrl& url);
+    MediaType IdentifyMediaTypeL(const QUrl& url);
+
+private:
+    CMPMediaRecognizer *m_recognizer;
+    int m_error; 
 
 };
 

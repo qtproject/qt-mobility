@@ -56,12 +56,6 @@ S60AudioPlayerSession::~S60AudioPlayerSession()
 {
 }
 
-/*void S60AudioPlayerSession::load(const QUrl &url)
-{
-    m_url = url.toLocalFile();
-    qDebug() << m_url;
-}*/
-
 qint64 S60AudioPlayerSession::duration() const
 {
     // TODO:
@@ -149,14 +143,6 @@ void S60AudioPlayerSession::setVolume(int volume)
 void S60AudioPlayerSession::setMuted(bool muted)
 {
     // TODO:
-}
-
-void S60AudioPlayerSession::setSeekable(bool seekable)
-{
-    /*if (seekable != m_seekable) {
-        m_seekable = seekable;
-        emit seekableChanged(m_seekable);
-    }*/
 }
 
 void S60AudioPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)

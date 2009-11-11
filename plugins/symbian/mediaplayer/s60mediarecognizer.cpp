@@ -63,7 +63,7 @@ S60MediaRecognizer::~S60MediaRecognizer()
 /*
  * Checks if Url is valid or not.
  */
-bool S60MediaRecognizer::checkUrl(QUrl url)
+bool S60MediaRecognizer::checkUrl(const QUrl& url)
 {
    TBool validUrl = false;
    if (m_recognizer) {
@@ -76,15 +76,12 @@ bool S60MediaRecognizer::checkUrl(QUrl url)
 
 S60MediaRecognizer::MediaType S60MediaRecognizer::IdentifyMediaTypeL(const QUrl& url)
 {
-   TBuf<20> aText;
    CMPMediaRecognizer::TMPMediaType type;
    QString filePath = QDir::toNativeSeparators(url.toLocalFile());
-   qDebug() << url.toLocalFile();
-   qDebug() << QDir::toNativeSeparators(url.toLocalFile());
-   qDebug() << QDir::toNativeSeparators(url.toString());
    TPtrC16 urlPtr(reinterpret_cast<const TUint16*>(filePath.utf16()));
-      MediaType mediaType = NotSupported;
+   MediaType mediaType = NotSupported;
    TRAP(m_error, type = m_recognizer->IdentifyMediaTypeL(urlPtr, EFalse));
+   
    if (!m_error) {
        switch (type) {
        case CMPMediaRecognizer::ELocalRamFile:
@@ -96,6 +93,7 @@ S60MediaRecognizer::MediaType S60MediaRecognizer::IdentifyMediaTypeL(const QUrl&
            break;
        case CMPMediaRecognizer::ELocalAudioPlaylist:
        case CMPMediaRecognizer::EUrl:
+// TODO: Must be considered when streams will be implemented
        case CMPMediaRecognizer::ELocalSdpFile:
        case CMPMediaRecognizer::EProgressiveDownload:
        case CMPMediaRecognizer::EUnidentified:
