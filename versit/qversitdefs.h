@@ -174,7 +174,7 @@ const versitMapping versitFileExtensionMappings[] = {
     {"MPEG2", "M2P"},
     {"QTIME", "QT"},
     {"AIFF", "AIF"},
-    {"TIFF", "GIF"}
+    {"GIF", "GIF"}
 };
 //! [ File extension Mapping table]
 

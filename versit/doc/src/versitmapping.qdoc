@@ -110,15 +110,15 @@ Versit Subtype Field to QContactDetail SubField mapping table
 
 Versit file type to file extension mapping table
 \table
-    \row \o \c  JPEG             \o .JPG
+    \row \o \c  JPEG            \o .JPG
     \row \o \c  WAVE            \o .WAV
-    \row \o \c  PICT          \o .PCT
-    \row \o \c  TIFF          \o .TIF
-    \row \o \c  MPEG           \o .MPG
-    \row \o \c  MPEG2            \o .M2P
+    \row \o \c  PICT            \o .PCT
+    \row \o \c  TIFF            \o .TIF
+    \row \o \c  MPEG            \o .MPG
+    \row \o \c  MPEG2           \o .M2P
     \row \o \c  QTIME           \o .QT
     \row \o \c  AIFF            \o .AIF
-    \row \o \c  TIIF             \o .GIF
+    \row \o \c  GIF             \o .GIF
 \endtable
 
 
