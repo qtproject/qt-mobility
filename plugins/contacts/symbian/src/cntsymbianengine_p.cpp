@@ -239,7 +239,7 @@ bool CntSymbianEnginePrivate::addContact(QContact& contact, QContactChangeSet& c
     if(err == KErrNone)
     {
         changeSet.addedContacts().insert(id);
-        m_dataBase->appendContactsEmitted(&changeSet.addedContacts().toList());
+        m_dataBase->appendContactEmitted(id);
     }
     CntSymbianTransformError::transformError(err, qtError);
 
@@ -261,7 +261,7 @@ bool CntSymbianEnginePrivate::updateContact(QContact& contact, QContactChangeSet
     {
         //TODO: check what to do with groupsChanged
         changeSet.changedContacts().insert(contact.localId());
-        m_dataBase->appendContactsEmitted(&changeSet.changedContacts().toList());
+        m_dataBase->appendContactEmitted(contact.localId());
     }
     CntSymbianTransformError::transformError(err, qtError);
     return (err==KErrNone);
@@ -288,7 +288,7 @@ bool CntSymbianEnginePrivate::removeContact(const QContactLocalId &id, QContactC
     {
         //TODO: check what to do with groupsChanged?
         changeSet.removedContacts().insert(id);
-        m_dataBase->appendContactsEmitted(&changeSet.removedContacts().toList());
+        m_dataBase->appendContactEmitted(id);
     }
     CntSymbianTransformError::transformError(err, qtError);
 	return (err==KErrNone);
