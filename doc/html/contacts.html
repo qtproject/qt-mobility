@@ -72,11 +72,8 @@
         QContactName aliceName;
         aliceName.setFirst(&quot;Alice&quot;);
         aliceName.setLast(&quot;Jones&quot;);
+        aliceName.setCustomLabel(&quot;Ally Jones&quot;);
         alice.saveDetail(&amp;aliceName);
-
-        QContactDisplayLabel aliceDisplay;
-        aliceDisplay.setLabel(&quot;Ally Jones&quot;);
-        alice.saveDetail(&amp;aliceDisplay);
 
         <span class="comment">/* Add a phone number */</span>
         QContactPhoneNumber number;
@@ -104,16 +101,16 @@
         QContactDetailFilter phoneFilter;
         phoneFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
         phoneFilter.setValue(incomingCallNbr);
-        phoneFilter.setMatchFlags(Qt::MatchExactly);
+        phoneFilter.setMatchFlags(QContactFilter::MatchExactly);
 
         QList&lt;QContactLocalId&gt; matchingContacts = cm-&gt;contacts(phoneFilter);
         if (matchingContacts.size() == 0) {
             qDebug() &lt;&lt; &quot;Incoming call from unknown contact (&quot; &lt;&lt; incomingCallNbr &lt;&lt; &quot;)&quot;;
         } else {
             QContact match = cm-&gt;contact(matchingContacts.at(0));
+
+            <span class="comment">// XXX TODO: replace the following with match.displayLabel() after week 47.</span>
             QContactDisplayLabel cdl = match.detail(QContactDisplayLabel::DefinitionName);
-            if (cdl.isEmpty())
-                cdl.setLabel(cm-&gt;synthesiseDisplayLabel(match));
             qDebug() &lt;&lt; &quot;Incoming call from&quot;
                      &lt;&lt; cdl.label()
                      &lt;&lt; &quot;(&quot; &lt;&lt; incomingCallNbr &lt;&lt; &quot;)&quot;;
@@ -126,9 +123,9 @@
     {
         QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
         QContact a = cm-&gt;contact(contactIds.first());
+
+        <span class="comment">// XXX TODO: replace the following with a.displayLabel() after week 47.</span>
         QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
-        if (cdl.isEmpty())
-            cdl.setLabel(cm-&gt;synthesiseDisplayLabel(a));
         qDebug() &lt;&lt; &quot;The first phone number of&quot; &lt;&lt; cdl.label()
                  &lt;&lt; &quot;is&quot; &lt;&lt; a.detail(QContactPhoneNumber::DefinitionName).value(QContactPhoneNumber::FieldNumber);
     }</pre>
@@ -139,20 +136,20 @@
     {
         QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
         QContact a = cm-&gt;contact(contactIds.first());
+
+        <span class="comment">// XXX TODO: replace the following with match.displayLabel() after week 47.</span>
         QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
-        if (cdl.isEmpty())
-            cdl.setLabel(cm-&gt;synthesiseDisplayLabel(a));
         qDebug() &lt;&lt; &quot;Viewing the details of&quot; &lt;&lt; cdl.label();
 
         QList&lt;QContactDetail&gt; allDetails = a.details();
         for (int i = 0; i &lt; allDetails.size(); i++) {
             QContactDetail detail = allDetails.at(i);
             QContactDetailDefinition currentDefinition = cm-&gt;detailDefinition(detail.definitionName());
-            QMap&lt;QString, QContactDetailDefinition::Field&gt; fields = currentDefinition.fields();
+            QMap&lt;QString, QContactDetailDefinitionField&gt; fields = currentDefinition.fields();
 
             qDebug(&quot;\tDetail #%d (%s):&quot;, i, detail.definitionName().toAscii().constData());
             foreach (const QString&amp; fieldKey, fields.keys()) {
-                qDebug() &lt;&lt; &quot;\t\t&quot; &lt;&lt; fieldKey &lt;&lt; &quot;(&quot; &lt;&lt; fields.value(fieldKey).dataType &lt;&lt; &quot;) =&quot; &lt;&lt; detail.value(fieldKey);
+                qDebug() &lt;&lt; &quot;\t\t&quot; &lt;&lt; fieldKey &lt;&lt; &quot;(&quot; &lt;&lt; fields.value(fieldKey).dataType() &lt;&lt; &quot;) =&quot; &lt;&lt; detail.value(fieldKey);
             }
             qDebug();
         }
@@ -167,9 +164,9 @@
         QContactDetailDefinition modified = definitions.value(QContactEmailAddress::DefinitionName);
 
         <span class="comment">/* Make our modifications: we add a &quot;Label&quot; field to email addresses */</span>
-        QContactDetailDefinition::Field newField;
-        newField.dataType = QVariant::String;
-        QMap&lt;QString, QContactDetailDefinition::Field&gt; fields = modified.fields();
+        QContactDetailDefinitionField newField;
+        newField.setDataType(QVariant::String);
+        QMap&lt;QString, QContactDetailDefinitionField&gt; fields = modified.fields();
         fields.insert(&quot;Label&quot;, newField);
 
         <span class="comment">/* Update the definition with the new field included */</span>
@@ -188,9 +185,9 @@
     {
         QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
         QContact a = cm-&gt;contact(contactIds.first());
+
+        <span class="comment">// XXX TODO: replace the following with match.displayLabel() after week 47.</span>
         QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
-        if (cdl.isEmpty())
-            cdl.setLabel(cm-&gt;synthesiseDisplayLabel(a));
         qDebug() &lt;&lt; &quot;Modifying the details of&quot; &lt;&lt; cdl.label();
 
         <span class="comment">/* Change the first phone number */</span>
@@ -224,7 +221,7 @@
         QContactDetailFilter dfil;
         dfil.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
         dfil.setValue(&quot;Alice&quot;);
-        dfil.setMatchFlags(Qt::MatchExactly);
+        dfil.setMatchFlags(QContactFilter::MatchExactly);
 
         m_fetchRequest-&gt;setFilter(dfil);
         connect(m_fetchRequest, SIGNAL(progress(QContactFetchRequest*,bool)), this, SLOT(printContacts(QContactFetchRequest*,bool)));
@@ -272,9 +269,9 @@
         QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
         if (!contactIds.isEmpty()) {
             QContact a = cm-&gt;contact(contactIds.first());
+
+            <span class="comment">// XXX TODO: replace the following with a.displayLabel() after week 47.</span>
             QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
-            if (cdl.isEmpty())
-                cdl.setLabel(cm-&gt;synthesiseDisplayLabel(a));
             qDebug() &lt;&lt; &quot;This manager contains&quot; &lt;&lt; cdl.label();
         } else {
             qDebug() &lt;&lt; &quot;This manager contains no contacts&quot;;
@@ -295,10 +292,10 @@
         qDebug() &lt;&lt; &quot;This backend currently supports the following detail definitions:&quot;;
         QList&lt;QContactDetailDefinition&gt; allDefinitions = definitions.values();
         foreach (const QContactDetailDefinition&amp; defn, allDefinitions) {
-            QMap&lt;QString, QContactDetailDefinition::Field&gt; fields = defn.fields();
+            QMap&lt;QString, QContactDetailDefinitionField&gt; fields = defn.fields();
             foreach (const QString&amp; fieldKey, fields.keys()) {
-                QList&lt;QVariant&gt; allowableValues = fields.value(fieldKey).allowableValues;
-                qDebug() &lt;&lt; &quot;\t&quot; &lt;&lt; fieldKey &lt;&lt; &quot;(&quot; &lt;&lt; fields.value(fieldKey).dataType &lt;&lt; &quot;):&quot;;
+                QList&lt;QVariant&gt; allowableValues = fields.value(fieldKey).allowableValues();
+                qDebug() &lt;&lt; &quot;\t&quot; &lt;&lt; fieldKey &lt;&lt; &quot;(&quot; &lt;&lt; fields.value(fieldKey).dataType() &lt;&lt; &quot;):&quot;;
                 if (allowableValues.isEmpty()) {
                     qDebug() &lt;&lt; &quot;\t\tAny Value Permitted&quot;;
                 } else {

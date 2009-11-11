@@ -25,6 +25,8 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerenginefactory.html#dtor.QContactManagerEngineFactory">~QContactManagerEngineFactory</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QContactManagerEngine * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerenginefactory.html#engine">engine</a></b> ( const QMap&lt;QString, QString&gt; &amp; <i>parameters</i>, QContactManager::Error &amp; <i>error</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerenginefactory.html#managerName">managerName</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;int&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerenginefactory.html#supportedImplementationVersions">supportedImplementationVersions</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerenginefactory.html#version">version</a></b> () const</td></tr>
 </table>
 <a name="details"></a>
 <hr />
@@ -44,6 +46,8 @@
 <h3 class="fn"><a name="managerName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactManagerEngineFactory::managerName () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>This function should return a unique string that identifies the engines provided by this factory.</p>
 <p>Typically this would be of the form &quot;com.nokia.qt.contacts.engines.memory&quot;, with the appropriate domain and engine name substituted.</p>
+<h3 class="fn"><a name="supportedImplementationVersions"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;int&gt; QContactManagerEngineFactory::supportedImplementationVersions () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="version"></a>int QContactManagerEngineFactory::version () const</h3>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

@@ -33,12 +33,12 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#QContactDetailRangeFilter-2">QContactDetailRangeFilter</a></b> ( const QContactFilter &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#detailDefinitionName">detailDefinitionName</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#detailFieldName">detailFieldName</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">Qt::MatchFlags </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#matchFlags">matchFlags</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QContactFilter::MatchFlags </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#matchFlags">matchFlags</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#maxValue">maxValue</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#minValue">minValue</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">RangeFlags </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#rangeFlags">rangeFlags</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#setDetailDefinitionName">setDetailDefinitionName</a></b> ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>fieldName</i> = QString() )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#setMatchFlags">setMatchFlags</a></b> ( Qt::MatchFlags <i>flags</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#setMatchFlags">setMatchFlags</a></b> ( QContactFilter::MatchFlags <i>flags</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#setRange">setRange</a></b> ( const QVariant &amp; <i>min</i>, const QVariant &amp; <i>max</i>, RangeFlags <i>flags</i> = 0 )</td></tr>
 </table>
 <ul>
@@ -73,7 +73,7 @@
 <h3 class="fn"><a name="detailFieldName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactDetailRangeFilter::detailFieldName () const</h3>
 <p>Returns the name of the field which contains the value which will be matched against the value criterion</p>
 <p>See also <a href="qcontactdetailrangefilter.html#setDetailDefinitionName">setDetailDefinitionName</a>().</p>
-<h3 class="fn"><a name="matchFlags"></a><a href="http://qt.nokia.com/doc/4.5/qt.html#MatchFlags-typedef">Qt::MatchFlags</a> QContactDetailRangeFilter::matchFlags () const</h3>
+<h3 class="fn"><a name="matchFlags"></a><a href="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchFlags</a> QContactDetailRangeFilter::matchFlags () const</h3>
 <p>Returns the match flags of the criterion, which define semantics such as case sensitivity, prefix matching, exact matching, etc.</p>
 <p>See also <a href="qcontactdetailrangefilter.html#setMatchFlags">setMatchFlags</a>().</p>
 <h3 class="fn"><a name="maxValue"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> QContactDetailRangeFilter::maxValue () const</h3>
@@ -88,7 +88,7 @@
 <h3 class="fn"><a name="setDetailDefinitionName"></a>void QContactDetailRangeFilter::setDetailDefinitionName ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>definitionName</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>fieldName</i> = QString() )</h3>
 <p>Sets the name of the detail definition of which type details will be inspected for matching values to <i>definitionName</i>, and the name of the field which will be inspected in details of that definition to <i>fieldName</i>.</p>
 <p>See also <a href="qcontactdetailrangefilter.html#detailDefinitionName">detailDefinitionName</a>() and <a href="qcontactdetailrangefilter.html#detailFieldName">detailFieldName</a>().</p>
-<h3 class="fn"><a name="setMatchFlags"></a>void QContactDetailRangeFilter::setMatchFlags ( <a href="http://qt.nokia.com/doc/4.5/qt.html#MatchFlags-typedef">Qt::MatchFlags</a> <i>flags</i> )</h3>
+<h3 class="fn"><a name="setMatchFlags"></a>void QContactDetailRangeFilter::setMatchFlags ( <a href="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchFlags</a> <i>flags</i> )</h3>
 <p>Sets the match flags of the filter criterion to <i>flags</i></p>
 <p>See also <a href="qcontactdetailrangefilter.html#matchFlags">matchFlags</a>().</p>
 <h3 class="fn"><a name="setRange"></a>void QContactDetailRangeFilter::setRange ( const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>min</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>max</i>, <a href="qcontactdetailrangefilter.html#RangeFlag-enum">RangeFlags</a> <i>flags</i> = 0 )</h3>
