@@ -58,23 +58,9 @@
 #include "cntsymbiantransformerror.h"
 
 #include <flogger.h>
-namespace {
-    void PbkPrintToLog( TRefByValue<const TDesC> aFormat, ... )
-    {
-        _LIT( KLogDir, "sp" );
-        _LIT( KLogName, "sp.log" );
-
-        VA_LIST args;
-        VA_START( args, aFormat );
-        RFileLogger::WriteFormat(KLogDir, KLogName, EFileLoggingModeAppend, aFormat, args);
-        VA_END( args );
-    }
-}  // namespace
 
 CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
-    PbkPrintToLog(_L("CntSymbianEngine::CntSymbianEngine"));
-
     error = QContactManager::NoError;
     
     m_dataBase = new CntSymbianDatabase(this, error);
@@ -94,7 +80,6 @@ CntSymbianEngine::CntSymbianEngine(const CntSymbianEngine& other)
       m_transformContact(other.m_transformContact),
       d(other.d)
 {
-    PbkPrintToLog(_L("CntSymbianEngine::CntSymbianEngine"));
 }
 
 CntSymbianEngine& CntSymbianEngine::operator=(const CntSymbianEngine& other)
@@ -110,7 +95,6 @@ CntSymbianEngine& CntSymbianEngine::operator=(const CntSymbianEngine& other)
 
 CntSymbianEngine::~CntSymbianEngine()
 {
-    PbkPrintToLog(_L("~CntSymbianEngine::CntSymbianEngine"));
     delete m_dataBase;
     delete m_transformContact;
 }
@@ -225,11 +209,9 @@ QContact CntSymbianEngine::contact(const QContactLocalId& contactId, QContactMan
 
 bool CntSymbianEngine::saveContact(QContact* contact, QContactManager::Error& error)
 {
-    PbkPrintToLog(_L("CntSymbianEngine::saveContact - IN"));
     QContactChangeSet changeSet;
     TBool ret = doSaveContact(contact, changeSet, error);
     changeSet.emitSignals(this);
-    PbkPrintToLog(_L("CntSymbianEngine::saveContact - OUT, ret = %d"), ret);
     return ret;
 }
 

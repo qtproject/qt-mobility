@@ -101,7 +101,6 @@ symbian: {
   				-lcentralrepository \
   				-lQtContacts \
   				-lestor \
-  				-lflogger
 
 	target.path = /sys/bin
 	INSTALLS += target
