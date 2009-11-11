@@ -91,8 +91,6 @@ SOURCES += qmessageid_maemo.cpp \
            qmessageserviceaction_maemo.cpp 
 }
 symbian {
-DEFINES += QT_MAKEDLL
-
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 HEADERS -= qmessagestore_p.h \
@@ -150,8 +148,6 @@ MMP_RULES += "EXPORTUNFROZEN"
 }
 
 win32 {
-!static:DEFINES += QT_MAKEDLL
-
 PRIVATE_HEADERS += \
            winhelpers_p.h
 

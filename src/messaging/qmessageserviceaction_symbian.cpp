@@ -134,17 +134,17 @@ QMessageServiceAction::~QMessageServiceAction()
 {
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
+bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset)
 {
     return d_ptr->queryMessages(filter, ordering, limit, offset);
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
+bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset)
 {
     return d_ptr->queryMessages(filter, body, options, ordering, limit, offset);
 }
 
-bool QMessageServiceAction::countMessages(const QMessageFilter &filter) const
+bool QMessageServiceAction::countMessages(const QMessageFilter &filter)
 {
     Q_UNUSED(filter);
     return false;
