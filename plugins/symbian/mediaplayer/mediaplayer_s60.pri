@@ -1,5 +1,6 @@
 INCLUDEPATH += $$PWD
 LIBS += -lmediaclientvideo \
+	-lmediaclientaudio \
 	-lws32 \
 	-lfbscli \
 	-lcone \

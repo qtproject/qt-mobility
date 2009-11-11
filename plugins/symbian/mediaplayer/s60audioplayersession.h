@@ -47,8 +47,9 @@
 #include <QSize>
 #include <multimedia/qmediaplayer.h>
 #include "s60mediaplayersession.h"
+#include <MdaAudioSamplePlayer.h>  
 
-class S60AudioPlayerSession : public S60MediaPlayerSession
+class S60AudioPlayerSession : public S60MediaPlayerSession, public MMdaAudioPlayerCallback
 {
     Q_OBJECT
 
@@ -72,6 +73,11 @@ public:
     qreal playbackRate() const;
     void setPlaybackRate(qreal rate);
     
+
+private: // From MMdaAudioPlayerCallback
+    void MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration);
+    void MapcPlayComplete(TInt aError);
+    
 public slots:
     void play();
     void pause();
@@ -85,6 +91,9 @@ private:
 
 private:
     void setMediaStatus(QMediaPlayer::MediaStatus);
+    
+private:
+    CMdaAudioPlayerUtility *m_player;
 };
 
 #endif

@@ -50,6 +50,8 @@
 S60AudioPlayerSession::S60AudioPlayerSession(QObject *parent)
     : S60MediaPlayerSession(parent)
 {    
+    //TODO: Error checking somehow...
+    TRAP_IGNORE(m_player = CMdaAudioPlayerUtility::NewL(*this);)
 }
 
 S60AudioPlayerSession::~S60AudioPlayerSession()
@@ -113,12 +115,19 @@ bool S60AudioPlayerSession::isSeekable() const
 
 void S60AudioPlayerSession::play()
 {
-    // TODO: Play()
+    // TODO: State checking...
+    if (m_state = QMediaPlayer::PausedState) {
+        m_player->Play();
+    } else {
+        QString fileName = QDir::toNativeSeparators(m_url.toString());
+        TPtrC str(reinterpret_cast<const TUint16*>(fileName.utf16()));
+        TRAP_IGNORE(m_player->OpenFileL(str);)  // TODO: Error handling...
+    }
 }
 
 void S60AudioPlayerSession::pause()
 {
-    // TODO: Pause()
+    m_player->Pause();
     m_state = QMediaPlayer::PausedState;
     emit stateChanged(QMediaPlayer::PausedState);
 }
@@ -126,6 +135,7 @@ void S60AudioPlayerSession::pause()
 void S60AudioPlayerSession::stop()
 {
     // TODO: Stop()
+    m_player->Stop();
     m_state = QMediaPlayer::StoppedState;
     emit stateChanged(QMediaPlayer::StoppedState);
 }
@@ -151,4 +161,14 @@ void S60AudioPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
         m_mediaStatus = status;
         emit mediaStatusChanged(status);
     }*/
+}
+
+void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration)
+{
+    if (!aError)
+        m_player->Play();   
+}
+
+void S60AudioPlayerSession::MapcPlayComplete(TInt aError)
+{
 }
