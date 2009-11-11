@@ -65,11 +65,12 @@
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
 
-
-class CntSymbianEnginePrivate;
 class QContactChangeSet;
 class CntSymbianDatabase;
 class CntTransformContact;
+class CntAbstractContactFilter;
+class CntAbstractContactSorter;
+class CntRelationship;
 
 class CntSymbianEngine : public QContactManagerEngine
 {
@@ -137,13 +138,20 @@ private:
     /* Remove contact */
     bool removeContact(const QContactLocalId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError);
     int removeContactL(QContactLocalId id);
-
+    
+    /* Groups */
+    QList<QContactLocalId> groups(QContactManager::Error& qtError) const;
+    QList<QContactLocalId> groupsL() const;
+    
     void updateDisplayLabel(QContact& contact) const;
 
 private:
-    CntSymbianDatabase      *m_dataBase;
-    CntTransformContact     *m_transformContact;
-    CntSymbianEnginePrivate *d;
+    CntSymbianDatabase *m_dataBase;
+    QString m_managerUri;
+    CntTransformContact *m_transformContact;
+    CntAbstractContactFilter *m_contactFilter;
+    CntAbstractContactSorter *m_contactSorter;
+    CntRelationship *m_relationship;
 };
 
 class Q_DECL_EXPORT CntSymbianFactory : public QObject, public QContactManagerEngineFactory

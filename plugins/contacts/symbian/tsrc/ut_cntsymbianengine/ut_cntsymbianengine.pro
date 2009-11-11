@@ -38,6 +38,5 @@ symbian:
         -lcntmodel \
         -lQtContacts \
         -lcentralrepository \
-        -lestor \
-		-lflogger
+        -lestor
 }

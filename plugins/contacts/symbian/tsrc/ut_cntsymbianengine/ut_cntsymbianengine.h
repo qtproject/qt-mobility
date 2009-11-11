@@ -55,19 +55,21 @@ private slots:
     
     void saveContact();
     void saveContacts();
-    /*
     void contact();
-    void contacts();
+    void updateContact();
     void removeContact();
     void removeContacts();
     void addOwnCard();
     void retrieveOwnCard();
+    void simpleFilterTest();
+    void featureSupport();
+    /*
     void addGroup();
     void retrieveGroup();
-    void batchContacts();
+    */
     void singleRelationship();
     void batchRelationships();
-    */
+    
 private:
     void removeAllContacts();
 

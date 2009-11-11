@@ -22,6 +22,5 @@ symbian:
         -TCB    
     LIBS += \
         -lcntmodel \
-        -lQtContacts \
-        -lflogger
+        -lQtContacts
 }
