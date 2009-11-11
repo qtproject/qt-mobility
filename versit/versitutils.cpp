@@ -150,25 +150,31 @@ bool VersitUtils::quotedPrintableEncode(QByteArray& text)
  */
 void VersitUtils::decodeQuotedPrintable(QByteArray& text)
 {
-    // QString needed instead of QByteArray to use QRegExp
-    QString textAsString(QString::fromAscii(text));
-    
-    // Replace soft line breaks
-    QRegExp softLineBreaks(QString::fromAscii("(=\\r\\n)")); 
-    textAsString.remove(softLineBreaks);
-
-    // Other encoded characters
-    QRegExp encodedChars(
-        QString::fromAscii("(=\\d[A-F]|=\\d\\d)"),Qt::CaseInsensitive);
-    int pos = 0;    
-    while ((pos = encodedChars.indexIn(textAsString,pos)) >= 0) {
-        QString encodedCharAsString(encodedChars.cap(1));
-        bool decoded = false;
-        QChar decodedChar(encodedCharAsString.mid(1).toInt(&decoded,16));
-        if (decoded)
-            textAsString.replace(encodedCharAsString,decodedChar);
+    for (int i=0; i < text.length(); i++) {
+        char current = text.at(i);
+        if (current == '=' && i+2 < text.length()) {
+            char next = text.at(i+1);
+            char nextAfterNext = text.at(i+2);
+            if (next == '\r' && nextAfterNext == '\n') {
+                text.remove(i,3);
+            }
+            if ((next >= 'a' && next <= 'f' ||
+                 next >= 'A' && next <= 'F' ||
+                 next >= '0' && next <= '9') &&
+                (nextAfterNext >= 'a' && nextAfterNext <= 'f' ||
+                 nextAfterNext >= 'A' && nextAfterNext <= 'F' ||
+                 nextAfterNext >= '0' && nextAfterNext <= '9')) {
+                QByteArray hexEncodedChar(text.mid(i+1,2));
+                bool decoded = false; 
+                char decodedChar = hexEncodedChar.toInt(&decoded,16);
+                QByteArray decodedCharAsByteArray;
+                decodedCharAsByteArray.append(decodedChar);
+                if (decoded) {
+                    text.replace(i,3,decodedCharAsByteArray);
+                }
+            }
+        }
     }
-    text = textAsString.toAscii();
 }
 
 /*!

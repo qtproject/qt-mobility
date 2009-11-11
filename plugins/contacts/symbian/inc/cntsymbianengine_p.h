@@ -78,6 +78,7 @@ public:
     QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& qtError) const;
     QContact contact(const QContactLocalId& contactId, QContactManager::Error& qtError) const;
+    QString managerUri(){ return m_managerUri; }
 
     //Groups
     QList<QContactLocalId> groups(QContactManager::Error& qtError) const;

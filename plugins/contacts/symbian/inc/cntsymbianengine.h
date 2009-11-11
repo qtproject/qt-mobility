@@ -86,7 +86,7 @@ public:
     QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QList<QContactLocalId> contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    
+
     QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
     bool saveContact(QContact* contact, QContactManager::Error& error);
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
@@ -116,33 +116,32 @@ public:
     QContactLocalId selfContactId(QContactManager::Error& error) const;
 
     QString managerName() const;
-        
+
 private:
     QList<QContactLocalId> slowFilter(const QContactFilter& filter, const QList<QContactLocalId>& contacts, QContactManager::Error& error) const;
     QList<QContactLocalId> slowSort(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     bool doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error);
-    
+
     /* Fetch contact */
     QContact fetchContact(const QContactLocalId& contactId, QContactManager::Error& qtError) const;
     QContact fetchContactL(const QContactLocalId &localId) const;
-    
+
     /* Add contact */
     bool addContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
     int addContactL(QContact &contact);
-    
+
     /* Update contact */
     bool updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
     void updateContactL(QContact &contact);
-    
+
     /* Remove contact */
     bool removeContact(const QContactLocalId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError);
     int removeContactL(QContactLocalId id);
-    
+
     void updateDisplayLabel(QContact& contact) const;
 
 private:
     CntSymbianDatabase      *m_dataBase;
-    QString                 m_managerUri;
     CntTransformContact     *m_transformContact;
     CntSymbianEnginePrivate *d;
 };

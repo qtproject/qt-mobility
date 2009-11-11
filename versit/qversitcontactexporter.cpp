@@ -86,13 +86,13 @@
  *
  * \endcode
  *
- * \sa QContact, QVersitDocument, QVersitProperty
+ * \sa QVersitDocument, QVersitProperty
  */
 
 
 /*!
- * \fn void scale(const QString& imageFileName, QByteArray& imageData)
- * This signal is emitted by \l QVersitContactExporter::exportContact,
+ * \fn void QVersitContactExporter::scale(const QString& imageFileName, QByteArray& imageData)
+ * This signal is emitted by \l QVersitContactExporter::exportContact(),
  * when a contact detail containing an image is found in a QContact.
  * The input for the client is the path of the image in \a imageFileName.
  * When the client has performed the scaling,
