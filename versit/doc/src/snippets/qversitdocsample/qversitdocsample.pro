@@ -3,7 +3,7 @@
 # #####################################################################
 TEMPLATE = app
 TARGET =
-include(../../../../common.pri)
+include(../../../../../common.pri)
 DEPENDPATH += .
 INCLUDEPATH += . \
     ../../../../../contacts/ \

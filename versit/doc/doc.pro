@@ -7,5 +7,5 @@
 TEMPLATE = subdirs
 TARGET = 
 CONFIG += ordered
-include(../common.pri)
+include(../../common.pri)
 SUBDIRS += src/snippets
