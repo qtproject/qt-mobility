@@ -47,6 +47,7 @@ class MS60MediaPlayerResolver
 {
     public:
         virtual S60MediaPlayerSession* PlayerSession() = 0;
+        virtual S60MediaPlayerSession* VideoPlayerSession() = 0;
 };
 
 #endif

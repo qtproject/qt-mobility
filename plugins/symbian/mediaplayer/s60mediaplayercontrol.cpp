@@ -203,6 +203,8 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
 
 void S60MediaPlayerControl::setVideoOutput(QObject *output)
 {
+    if (!m_session)
+        m_session = m_mediaPlayerResolver.VideoPlayerSession();
     m_session->setVideoRenderer(output);
 }
 

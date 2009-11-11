@@ -176,3 +176,10 @@ S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
     delete mediaRecognizer;
     return mediaPlayerSession;
 }
+
+S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
+{
+    if (!m_videoPlayerSession)
+        m_videoPlayerSession = new S60VideoPlayerSession(this);
+    return m_videoPlayerSession;
+}
