@@ -49,6 +49,8 @@ class QIODevice;
 class QContactManager;
 class QVersitReader;
 class QVersitWriter;
+class QVersitContactImporter;
+class QVersitContactExporter;
 
 
 class VersitTest : public QObject
@@ -94,6 +96,8 @@ private:
     QString mExcludeFieldsFileName;
     QString mOutputDirPath;
     QString mImageAndAudioClipPath;
+    QVersitContactImporter* mImporter;
+    QVersitContactExporter* mExporter;
 };
 
 #endif // VERSITTEST_H

@@ -124,10 +124,14 @@ void VersitTest::init()
 {
     mReader = new QVersitReader;
     mWriter = new QVersitWriter;
+    mImporter = new QVersitContactImporter;
+    mExporter = new QVersitContactExporter;
 }
 
 void VersitTest::cleanup()
 {
+    delete mImporter;
+    delete mExporter;    
     delete mWriter;
     delete mReader;
 }
@@ -178,12 +182,11 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
     
     // Convert to QContacts
     QList<QContact> contacts;
-    QVersitContactImporter importer;
     QList<QVersitDocument::VersitType> documentTypes;
     foreach (QVersitDocument document, mReader->result()) {
-        importer.setImagePath(mImageAndAudioClipPath);
-        importer.setAudioClipPath(mImageAndAudioClipPath);
-        QContact contact = importer.importContact(document);
+        mImporter->setImagePath(mImageAndAudioClipPath);
+        mImporter->setAudioClipPath(mImageAndAudioClipPath);
+        QContact contact = mImporter->importContact(document);
         if (mSaveContacts)
             QVERIFY(mContactManager->saveContact(&contact));
         contacts.append(contact);
@@ -192,12 +195,11 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
     
     // Convert back to QVersitDocuments
     QList<QVersitDocument> documents;
-    QVersitContactExporter exporter;
-    connect(&exporter, SIGNAL(scale(const QString&,QByteArray&)),
+    connect(mExporter, SIGNAL(scale(const QString&,QByteArray&)),
             this, SLOT(scale(const QString&,QByteArray&)));
 
     foreach (QContact contact, contacts) {
-        QVersitDocument document = exporter.exportContact(contact);
+        QVersitDocument document = mExporter->exportContact(contact);
         if (!documentTypes.isEmpty())
             document.setVersitType(documentTypes.takeFirst());
         documents.append(document);
