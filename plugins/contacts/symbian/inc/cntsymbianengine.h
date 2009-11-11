@@ -142,7 +142,6 @@ private:
 
 private:
     CntSymbianDatabase      *m_dataBase;
-    QString                 m_managerUri;
     CntTransformContact     *m_transformContact;
     CntSymbianEnginePrivate *d;
 };

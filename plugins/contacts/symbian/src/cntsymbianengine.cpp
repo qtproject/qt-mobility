@@ -67,7 +67,6 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
 
     //Database opened successfully
     if(error == QContactManager::NoError) {
-        m_managerUri = QContactManager::buildUri(CNT_SYMBIAN_MANAGER_NAME, parameters);
         d = new CntSymbianEnginePrivate(m_dataBase, parameters, error);
         m_transformContact = new CntTransformContact;
         connect(m_dataBase, SIGNAL(ownCardChanged(QContactLocalId,QContactLocalId)), this, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
@@ -77,7 +76,6 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
 CntSymbianEngine::CntSymbianEngine(const CntSymbianEngine& other)
     : QContactManagerEngine(),
       m_dataBase(other.m_dataBase),
-      m_managerUri(other.m_managerUri),
       m_transformContact(other.m_transformContact),
       d(other.d)
 {
@@ -87,7 +85,6 @@ CntSymbianEngine& CntSymbianEngine::operator=(const CntSymbianEngine& other)
 {
     // assign
     m_dataBase = other.m_dataBase;
-    m_managerUri = other.m_managerUri;
     m_transformContact = other.m_transformContact;
     d = other.d;
 
@@ -291,7 +288,7 @@ bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& chang
         ret = false;
     // Update an existing contact
     } else if(contact->localId()) {
-        if(contact->id().managerUri() == managerUri()) {
+        if(contact->id().managerUri() == d->managerUri()) {
             ret = updateContact(*contact, changeSet, error);
         } else {
             error = QContactManager::BadArgumentError;
@@ -345,7 +342,7 @@ QContact CntSymbianEngine::fetchContactL(const QContactLocalId &localId) const
     // Convert id
     QContactId contactId;
     contactId.setLocalId(localId);
-    contactId.setManagerUri(m_managerUri);
+    contactId.setManagerUri(d->managerUri());
     contact.setId(contactId);
 
     CleanupStack::PopAndDestroy(symContact);
@@ -402,7 +399,7 @@ int CntSymbianEngine::addContactL(QContact &contact)
         // id
         QScopedPointer<QContactId> contactId(new QContactId());
         contactId->setLocalId(id);
-        contactId->setManagerUri(m_managerUri);
+        contactId->setManagerUri(d->managerUri());
         contact.setId(*contactId);
         contactItem = m_dataBase->contactDatabase()->ReadContactLC(id);
         // Guid
@@ -423,7 +420,7 @@ int CntSymbianEngine::addContactL(QContact &contact)
         id = contactItem->Id();
         QScopedPointer<QContactId> contactId(new QContactId());
         contactId->setLocalId(QContactLocalId(id));
-        contactId->setManagerUri(m_managerUri);
+        contactId->setManagerUri(d->managerUri());
         contact.setId(*contactId);
 
         //update contact, will add the fields to the already saved group
