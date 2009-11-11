@@ -59,7 +59,6 @@
 
 using namespace WinHelpers;
 static const unsigned long SmsCharLimit = 160;
-static const unsigned int BodyDownloadTimeout = 20; //seconds
 
 class QMessageServiceActionPrivate : public QObject
 {
@@ -86,7 +85,6 @@ public slots:
     void reportMessagesCounted();
 #ifdef _WIN32_WCE
     void messageUpdated(const QMessageId& id);
-    void bodyDownloadTimeout();
 #endif
 
 signals:
@@ -103,8 +101,8 @@ public:
     int _count;
     QMessageServiceAction::State _state;
     QMessageId m_bodyDownloadTarget;
-    QTimer m_bodyDownloadTimer;
     QMessageStore::NotificationFilterId m_bodyDownloadFilterId;
+    bool m_registeredUpdates;
 };
 
 
@@ -143,23 +141,13 @@ void QMessageServiceActionPrivate::messageUpdated(const QMessageId& id)
     }
 }
 
-void QMessageServiceActionPrivate::bodyDownloadTimeout()
-{
-    disconnect(QMessageStore::instance(),SIGNAL(messageUpdated(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)),this,SLOT(messageUpdated(const QMessageId&)));
-
-    m_bodyDownloadTarget = QMessageId();
-
-    _state = QMessageServiceAction::Failed;
-    emit q_ptr->stateChanged(_state);
-    _active = false;
-}
-
 #endif
 
 QMessageServiceActionPrivate::QMessageServiceActionPrivate(QMessageServiceAction* parent)
     :q_ptr(parent),
      _active(false),
-     _state(QMessageServiceAction::Pending)
+     _state(QMessageServiceAction::Pending),
+     m_registeredUpdates(false)
 {
 }
 
@@ -540,27 +528,22 @@ bool QMessageServiceActionPrivate::synchronize(const QMessageAccountId& id)
 
 bool QMessageServiceActionPrivate::registerUpdates(const QMessageId& targetMessage)
 {
-    if(!m_bodyDownloadTimer.isActive())
+    if(!m_registeredUpdates)
     {
         connect(QMessageStore::instance(),SIGNAL(messageUpdated(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)),this,SLOT(messageUpdated(const QMessageId&)));
-        connect(&m_bodyDownloadTimer,SIGNAL(timeout()),this,SLOT(bodyDownloadTimeout()));
         m_bodyDownloadFilterId = QMessageStore::instance()->registerNotificationFilter(QMessageFilter());
         m_bodyDownloadTarget = targetMessage;
-        m_bodyDownloadTimer.setSingleShot(true);
-        m_bodyDownloadTimer.start(BodyDownloadTimeout * 1000);
-        return true;
+        m_registeredUpdates = true;
     }
-    else
-        qWarning() << "Already listnening";
-    return false;
+    return m_registeredUpdates;
 }
 
 void QMessageServiceActionPrivate::unregisterUpdates()
 {
-    m_bodyDownloadTimer.stop();
     disconnect(QMessageStore::instance(),SIGNAL(messageUpdated(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)),this,SLOT(messageUpdated(const QMessageId&)));
     QMessageStore::instance()->unregisterNotificationFilter(m_bodyDownloadFilterId);
     m_bodyDownloadFilterId = 0;
+    m_registeredUpdates = false;
 }
 
 #endif
