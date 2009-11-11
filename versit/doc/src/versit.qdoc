@@ -161,5 +161,7 @@ To build the library, run \tt qmake and \tt make.
         \snippet snippets/qversitdocsample/qversitdocsample.cpp Scaling callback implementation
 
 \section2 Examples
-TODO : Add example code here
+\list
+    \o \l{Sample Versit Example}{versittest}
+\endlist
 */

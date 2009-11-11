@@ -89,11 +89,11 @@
     </section>
 </section>
 <section ref="examples.html" title="Tutorial &amp; Examples">
-    <section ref="sampleversit.html" title="Sample Versit Example">
-        <keyword ref="sampleversit.html">Sample Versit Example</keyword>
+    <section ref="versittest.html" title="Sample Versit Example">
+        <keyword ref="versittest.html">Sample Versit Example</keyword>
     </section>
-    <section ref="sampleversit.html" title="Sample Versit Example">
-        <keyword ref="sampleversit.html">Sample Versit Example</keyword>
+    <section ref="versittest.html" title="Sample Versit Example">
+        <keyword ref="versittest.html">Sample Versit Example</keyword>
     </section>
 </section>
 </DCF>

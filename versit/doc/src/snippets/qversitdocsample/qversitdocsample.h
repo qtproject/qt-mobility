@@ -55,8 +55,7 @@ class VersitDocSample : public QObject
 {
      Q_OBJECT
 
-public:
-    VersitDocSample(){};
+public:    
     QList<QContact> generateContact(QIODevice&);
     void generateVCard(QContact&);
     void generateAndSaveContact(QFile&);

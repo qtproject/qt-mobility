@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>testresultxmlparser.cpp Example File (versittest/testresultxmlparser.cpp)</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">testresultxmlparser.cpp Example File<br /><span class="small-subtitle">versittest/testresultxmlparser.cpp</span>
+</h1>
+<pre><span class="comment">    /*
+    * Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    * All rights reserved.
+    * This component and the accompanying materials are made available
+    * under the terms of the License &quot;Symbian Foundation License v1.0&quot;
+    * which accompanies this distribution, and is available
+    * at the URL &quot;http://www.symbianfoundation.org/legal/sfl-v10.html&quot;.
+    *
+    * Initial Contributors:
+    * Nokia Corporation - initial contribution.
+    *
+    * Contributors:
+    *
+    * Description:
+    *
+    */</span>
+
+    #include &quot;testresultxmlparser.h&quot;
+    #include &lt;stdio.h&gt;
+
+    const char testFunctionElement[] = &quot;TestFunction&quot;;
+    const char incidentElement[] = &quot;Incident&quot;;
+    const char descriptionElement[] = &quot;Description&quot;;
+    const char nameAttr[] = &quot;name&quot;;
+    const char typeAttr[] = &quot;type&quot;;
+    const char fileAttr[] = &quot;file&quot;;
+    const char lineAttr[] = &quot;line&quot;;
+    const char attrValueFail[] = &quot;fail&quot;;
+    const char benchmarkElement[] = &quot;BenchmarkResult&quot;;
+    const char valueAttr[] = &quot;value&quot;;
+
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    // TestResultXmlParser::TestResultXmlParser</span>
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    //</span>
+    TestResultXmlParser::TestResultXmlParser()
+    : mTestCount(0),
+      mParsingIncidentElement(false),
+      mParsingDescriptionElement(false),
+      mCurrentTestFailed(false),
+      mCurrentTestFailureLine(0),
+      mTotalBenchMarkTime(0),
+      mBenchMarkCount(0)
+    {
+        mErrors = new QStringList;
+    }
+
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    // TestResultXmlParser::TestResultXmlParser</span>
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    //</span>
+    TestResultXmlParser::~TestResultXmlParser()
+    {
+        delete mErrors;
+    }
+
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    // TestResultXmlParser::startElement</span>
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    //</span>
+    bool TestResultXmlParser::startElement(
+        const QString&amp; <span class="comment">/*namespaceURI*/</span>,
+        const QString&amp; <span class="comment">/*localName*/</span>,
+        const QString&amp; qName,
+        const QXmlAttributes&amp; atts)
+    {
+        if( qName == benchmarkElement) {
+            mTotalBenchMarkTime += atts.value(valueAttr).toInt();
+            mBenchMarkCount++;
+        }
+        if (qName == testFunctionElement) {
+            mTestCount++;
+            mCurrentTestName = atts.value(nameAttr);
+            return true;
+        }
+        if (qName == incidentElement) {
+            mParsingIncidentElement = true;
+            if (atts.value(typeAttr) == attrValueFail) {
+                mCurrentTestFailed = true;
+                mCurrentTestFile = atts.value(fileAttr);
+                mCurrentTestFailureLine = atts.value(lineAttr).toInt();
+            }
+            return true;
+        }
+        mParsingDescriptionElement = (qName == descriptionElement);
+        return true;
+    }
+
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    // TestResultXmlParser::endElement</span>
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    //</span>
+    bool TestResultXmlParser::endElement(
+        const QString&amp; <span class="comment">/*namespaceURI*/</span>,
+        const QString&amp; <span class="comment">/*localName*/</span>,
+        const QString&amp; qName)
+    {
+        if (qName == incidentElement) {
+            mParsingIncidentElement = false;
+            mCurrentTestFailed = false;
+            return true;
+        }
+        if (qName == descriptionElement) {
+            mParsingDescriptionElement = false;
+        }
+        return true;
+    }
+
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    // TestResultXmlParser::characters</span>
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    //</span>
+    bool TestResultXmlParser::characters(const QString&amp; ch)
+    {
+        if (mParsingIncidentElement &amp;&amp;
+            mParsingDescriptionElement &amp;&amp;
+            mCurrentTestFailed) {
+            QString testResult = mCurrentTestName + &quot; failed:\n&quot;;
+            testResult += &quot;File: &quot;;
+            testResult += mCurrentTestFile;
+            testResult += &quot;\n&quot;;
+            testResult += &quot;Line: &quot;;
+            testResult += QString::number(mCurrentTestFailureLine);
+            testResult += &quot;\n&quot;;
+            testResult += &quot;Reason: &quot;;
+            testResult += ch;
+            testResult += &quot;\n&quot;;
+            mErrors-&gt;append(testResult);
+        }
+        return true;
+    }
+
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    // TestResultXmlParser::parse</span>
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    //</span>
+    int TestResultXmlParser::parse(const QString&amp; fileName)
+    {
+        QFile file(fileName);
+        QXmlInputSource inputSource(&amp;file);
+        QXmlSimpleReader reader;
+        reader.setContentHandler(this);
+        return reader.parse(inputSource);
+    }
+
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    // TestResultXmlParser::parseAndPrintResults</span>
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    //</span>
+    int TestResultXmlParser::parseAndPrintResults(
+        const QString&amp; fileName,
+        bool printDetails)
+    {
+        printf(&quot;Parsing: %s\n&quot;, fileName.toUtf8().data());
+        int error = parse(fileName);
+        printf(&quot;%d tests executed. Failed total: %d\n&quot;, mTestCount, mErrors-&gt;count());
+        if (printDetails) {
+            printf(&quot;\n&quot;);
+            foreach(QString error, *mErrors) {
+                printf(&quot;%s\n&quot;, error.toUtf8().data());
+            }
+        }
+        if (mBenchMarkCount &amp;&amp; mTotalBenchMarkTime) {
+            printf(&quot; Benchmark count: %u\n&quot;, mBenchMarkCount);
+            printf(&quot; Total time: %u ms\n&quot;, mTotalBenchMarkTime);
+            printf(&quot; Average time: %u ms\n\n&quot;, mTotalBenchMarkTime/mBenchMarkCount);
+        }
+        return error;
+    }
+
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    // TestResultXmlParser::testCount</span>
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    //</span>
+    int TestResultXmlParser::testCount()
+    {
+        return mTestCount;
+    }
+
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    // TestResultXmlParser::errors</span>
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    //</span>
+    QStringList TestResultXmlParser::errors()
+    {
+        return *mErrors;
+    }
+
+<span class="comment">    // End of File.</span></pre>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Qt Contacts</div></td>
+</tr></table></div></address></body>
+</html>

@@ -40,34 +40,56 @@
 ****************************************************************************/
 
 /*!
-    \example sampleversit
+    \example versittest
     \title Sample Versit Example
 
     \tableofcontents
 
     \section1 Versit
 
-    This example shows how to write a simple versit with the \l{versit}{Versit API}.
+    This example shows how to use \l{versit}{Versit API}.
 
     \section2 Motivation
-    This application was written to provide an example to developers of how to use the Qt Versit API.    .
+
+    This application was written to provide an example to developers of how to use the Qt Versit API.
+    It uses the QTTest framework to intialize some tests and call the needed function.
+    But the main motivation is how to convert VCard formatted file into QContact and save
+    into contact database. Also to convert it back ( QContact to VCard file ) and compare
+    the input vcard file with output vcard file.Interestingly you could notice that in
+    some cases unsupported vcard fields were missed in output file. That may give some
+    insight about to find out unsupported field by QContact.
+    Also check \l{Mapping Table}{Qt Versit Mapping} to know how VCard field are mapped to
+    QContact details.
 
     [*] \i{vCard is a registered trademark of the Internet Mail Consortium}
 
     \section2 Use Case
-    There are applications like Sync and Backup used to import vards into phonebook contacts or export contacts into vcard.
-    So the Sync and Backup application developers can write a code as mentioned in this sample to generate contacts from vcard 
-    or generate vcard from contacts.
+
+    There are applications like Sync and Backup used to import vards into phonebook contacts
+    or export contacts into vcard formatted file which can be stored in memory card or send
+    as business card via Email/Bluetooth/Infrared etc.
+
+    So the Sync and Backup application developers can write a code as mentioned in this sample to
+    generate QContact from vcard formatted file or generate vcard from QContact.
 
     \section2 Interface
-    The application is aimed at desktop platforms as opposed to mobile platforms.So the whole versit code is developed by using
-    QT libraries and it does not have any dependencies to platform specific implementations.
-  
+
+    The application is aimed at desktop platforms as opposed to mobile platforms.
+    So the whole versit code is developed by using QT libraries and it does not have any dependencies
+    to platform specific implementations.
+
+    \section2 Code snippets
+
+    Following snippets will be usable to API users like Sync/Backup developers.
+
+        \snippet ../../../examples/versittest/versittest.cpp Import/Export VCard and QContact
 
     \section2 Known Issues
+
     Only VCard 2.1 version is fully supported
 
     Furthermore:
+
     \list
         \o Unsupported X-Fields are not mapped to QContactDetail        
     \endlist

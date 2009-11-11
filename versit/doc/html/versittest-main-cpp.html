@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>main.cpp Example File (versittest/main.cpp)</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">main.cpp Example File<br /><span class="small-subtitle">versittest/main.cpp</span>
+</h1>
+<pre><span class="comment">    /****************************************************************************
+    **
+    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** All rights reserved.
+    ** Contact: Nokia Corporation (qt-info@nokia.com)
+    **
+    ** This file is part of the Qt Mobility Components.
+    **
+    ** $QT_BEGIN_LICENSE:LGPL$
+    ** No Commercial Usage
+    ** This file contains pre-release code and may not be distributed.
+    ** You may use this file in accordance with the terms and conditions
+    ** contained in the Technology Preview License Agreement accompanying
+    ** this package.
+    **
+    ** GNU Lesser General Public License Usage
+    ** Alternatively, this file may be used under the terms of the GNU Lesser
+    ** General Public License version 2.1 as published by the Free Software
+    ** Foundation and appearing in the file LICENSE.LGPL included in the
+    ** packaging of this file.  Please review the following information to
+    ** ensure the GNU Lesser General Public License version 2.1 requirements
+    ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+    **
+    ** In addition, as a special exception, Nokia gives you certain additional
+    ** rights.  These rights are described in the Nokia Qt LGPL Exception
+    ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+    **
+    ** If you have questions regarding the use of this file, please contact
+    ** Nokia at qt-info@nokia.com.
+    **
+    **
+    **
+    **
+    **
+    **
+    **
+    **
+    ** $QT_END_LICENSE$
+    **
+    ****************************************************************************/</span>
+
+    #include &quot;versittest.h&quot;
+    #include &quot;testresultxmlparser.h&quot;
+    #include &quot;testconfiguration.h&quot;
+
+    #include &lt;QtTest/QtTest&gt;
+
+    int main(int argc, char** argv)
+    {
+        QString homeDir = QDir::homePath();
+        if (!homeDir.endsWith(QString::fromAscii(&quot;/&quot;)))
+            homeDir += QString::fromAscii(&quot;/&quot;);
+        QString confFileName = homeDir + QString::fromAscii(&quot;versittestconfig.xml&quot;);
+        TestConfiguration conf;
+        conf.parse(confFileName);
+
+        bool saveContacts = conf.saveContact();
+        QString outputFormat = conf.outputFormat();
+        bool performanceTest = conf.performanceTest();
+        int performanceIterations = conf.iterations();
+        QString testName = ( conf.testName().length() &gt;0 ) ? conf.testName()
+                                                           : QString::fromAscii(&quot;versittest&quot;);
+        int scaledImageHeight = 0;
+        int scaledImageWidth = 0;
+        <span class="comment">// overwrite configuration file setting by command line params.</span>
+        for (int i=0; i &lt; argc; i++) {
+            QString argStr(QString::fromAscii(argv[i]));
+            if (argStr == QString::fromAscii(&quot;sc&quot;)) {
+                <span class="comment">// if sc argument in command line enable contact saving</span>
+                saveContacts = true;
+            }else if (argStr == QString::fromAscii(&quot;nsc&quot;)) {
+                <span class="comment">// if nsc argument in command line disable contact saving</span>
+                saveContacts = false;
+            }else if (argStr == QString::fromAscii(&quot;xml&quot;) ||
+                      argStr == QString::fromAscii(&quot;v1&quot;) ||
+                      argStr == QString::fromAscii(&quot;v2&quot;) ) {
+                <span class="comment">// if log argument in command line enable xml result logging</span>
+                outputFormat = argStr;
+            }else if (argStr == QString::fromAscii(&quot;np&quot;)) {
+                <span class="comment">// if np argument in command line disable performance , so enables the normal test</span>
+                performanceTest = false;
+            }else if (argStr == QString::fromAscii(&quot;p&quot;)) {
+                <span class="comment">// if p argument in command line enable performance</span>
+                performanceTest = false;
+            }else {
+                <span class="comment">// Scaling height and width</span>
+                QStringList list = argStr.split('x');
+                if (!list.isEmpty())
+                    scaledImageHeight = list.takeFirst().toInt();
+                if (!list.isEmpty())
+                    scaledImageWidth = list.takeFirst().toInt();
+            }
+        }
+        VersitTest versitTest(saveContacts,scaledImageHeight,scaledImageWidth);
+        printf(&quot;Running tests...\n&quot;);
+        QStringList args;
+        <span class="comment">// set test name</span>
+        args &lt;&lt; testName;
+        <span class="comment">// if performance, set number of iterations</span>
+        if( performanceTest ){
+            args &lt;&lt; &quot;-iterations&quot; &lt;&lt; QString::number(performanceIterations);
+        }
+        <span class="comment">// set output format</span>
+        args&lt;&lt; QString::fromAscii(&quot;-&quot;) + outputFormat;
+        if( outputFormat == QString::fromAscii(&quot;xml&quot;)){
+            <span class="comment">// if xml set filename</span>
+            QString resultFileName = homeDir + QString::fromAscii(&quot;QVersitTestResults.xml&quot;);
+            args &lt;&lt; QString::fromAscii(&quot;-o&quot;) &lt;&lt; resultFileName;
+            QTest::qExec(&amp;versitTest, args);
+            TestResultXmlParser parser;
+            parser.parseAndPrintResults(resultFileName,true);
+        }
+        else{
+            <span class="comment">// if verbose no file name needed</span>
+            QTest::qExec(&amp;versitTest, args);
+        }
+        printf(&quot;Press any key...\n&quot;);
+        getchar();
+        return 0;
+    }</pre>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Qt Contacts</div></td>
+</tr></table></div></address></body>
+</html>

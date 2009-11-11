@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>testconfiguration.cpp Example File (versittest/testconfiguration.cpp)</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">testconfiguration.cpp Example File<br /><span class="small-subtitle">versittest/testconfiguration.cpp</span>
+</h1>
+<pre><span class="comment">    /*
+    * Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    * All rights reserved.
+    * This component and the accompanying materials are made available
+    * under the terms of the License &quot;Symbian Foundation License v1.0&quot;
+    * which accompanies this distribution, and is available
+    * at the URL &quot;http://www.symbianfoundation.org/legal/sfl-v10.html&quot;.
+    *
+    * Initial Contributors:
+    * Nokia Corporation - initial contribution.
+    *
+    * Contributors:
+    *
+    * Description:
+    *
+    */</span>
+
+    #include &quot;testconfiguration.h&quot;
+    #include &lt;stdio.h&gt;
+
+<span class="comment">    // XML configuration elements</span>
+    const char setupElement[] = &quot;setup&quot;;
+    const char contactElement[] = &quot;contact&quot;;
+    const char testElement[] = &quot;test&quot;;
+    const char logElement[] = &quot;log&quot;;
+
+<span class="comment">    // XML configuration attriputes</span>
+    const char nameAttr[] = &quot;name&quot;;
+    const char saveAttr[] = &quot;save&quot;;
+    const char typeAttr[] = &quot;type&quot;;
+    const char loggingFormatAttr[] = &quot;format&quot;;
+    const char iterationAttr[] = &quot;iteration&quot;;
+
+<span class="comment">    // XML configuration values</span>
+    const char valueYes[] = &quot;yes&quot;;
+    const char valuePerformanceTest[] = &quot;0&quot;;
+
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    // TestConfiguration::TestConfiguration</span>
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    //</span>
+    TestConfiguration::TestConfiguration()
+    : mSaveContact(true),
+      mPerformanceTest(true),
+      mOutputFormat(QString::fromAscii(&quot;xml&quot;)),
+      mPerformanceIterationCount(10)
+    {
+    }
+
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    // TestConfiguration::TestConfiguration</span>
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    //</span>
+    TestConfiguration::~TestConfiguration()
+    {
+    }
+
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    // TestResultXmlParser::parse</span>
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    //</span>
+    int TestConfiguration::parse(const QString&amp; fileName)
+    {
+        QFile file(fileName);
+        QXmlInputSource inputSource(&amp;file);
+        QXmlSimpleReader reader;
+        reader.setContentHandler(this);
+        return reader.parse(inputSource);
+    }
+
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    // TestConfiguration::startElement</span>
+<span class="comment">    // -----------------------------------------------------------------------------</span>
+<span class="comment">    //</span>
+    bool TestConfiguration::startElement(
+        const QString&amp; <span class="comment">/*namespaceURI*/</span>,
+        const QString&amp; <span class="comment">/*localName*/</span>,
+        const QString&amp; qName,
+        const QXmlAttributes&amp; atts)
+    {
+        if( qName == setupElement) {
+            mTestName = atts.value(nameAttr);
+        }
+        else if (qName == contactElement) {
+            mSaveContact = atts.value(saveAttr).contains(valueYes,
+                                                         Qt::CaseInsensitive);
+        }
+        else if (qName == testElement) {
+            mPerformanceTest = atts.value(typeAttr).contains(valuePerformanceTest,
+                                                             Qt::CaseInsensitive);
+            mPerformanceIterationCount = atts.value(iterationAttr).toInt();
+        }
+        else if (qName == logElement) {
+            mOutputFormat = atts.value(loggingFormatAttr);
+        }
+        return true;
+    }
+
+<span class="comment">    // End of File.</span></pre>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Qt Contacts</div></td>
+</tr></table></div></address></body>
+</html>
