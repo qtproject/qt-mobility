@@ -82,7 +82,7 @@
      <span class="comment">// Currently for QContactAvatar details, only exporting subtypes</span>
      <span class="comment">// QContactAvatar::SubTypeImage and QContactAvatar::SubTypeAudioRingtone</span>
      <span class="comment">// are supported.</span></pre>
-<p>See also QContact, <a href="qversitdocument.html">QVersitDocument</a>, and <a href="qversitproperty.html">QVersitProperty</a>.</p>
+<p>See also <a href="qversitdocument.html">QVersitDocument</a> and <a href="qversitproperty.html">QVersitProperty</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QVersitContactExporter"></a>QVersitContactExporter::QVersitContactExporter ()</h3>
@@ -92,6 +92,7 @@
 <h3 class="fn"><a name="exportContact"></a><a href="qversitdocument.html">QVersitDocument</a> QVersitContactExporter::exportContact ( const QContact &amp; <i>contact</i>, QVersitDocument::VersitType <i>versitType</i> = QVersitDocument::VCard21 )</h3>
 <p>Returns the versit document corresponding to the <i>contact</i> and <i>versitType</i>.</p>
 <h3 class="fn"><a name="scale"></a>void QVersitContactExporter::scale ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>imageFileName</i>, <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>imageData</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted by <a href="qversitcontactexporter.html#exportContact">QVersitContactExporter::exportContact</a>(), when a contact detail containing an image is found in a QContact. The input for the client is the path of the image in <i>imageFileName</i>. When the client has performed the scaling, it should write the result to <i>imageData</i>. Image scaling can be done for example by using class <a href="http://qt.nokia.com/doc/4.5/qimage.html">QImage</a>.</p>
 <h3 class="fn"><a name="unknownContactDetails"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QContactDetail&gt; QVersitContactExporter::unknownContactDetails ()</h3>
 <p>Returns the list of contact details, which were not exported by the most recent call of <a href="qversitcontactexporter.html#exportContact">QVersitContactExporter::exportContact</a>().</p>
 <p /><address><hr /><div align="center">
