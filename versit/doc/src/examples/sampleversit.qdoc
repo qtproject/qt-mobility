@@ -58,7 +58,7 @@
     the input vcard file with output vcard file.Interestingly you could notice that in
     some cases unsupported vcard fields were missed in output file. That may give some
     insight about to find out unsupported field by QContact.
-    Also check \l{Mapping Table}{Qt Versit Mapping} to know how VCard field are mapped to
+    Also check \l{Qt Versit Mapping} to know how VCard field are mapped to
     QContact details.
 
     [*] \i{vCard is a registered trademark of the Internet Mail Consortium}

@@ -17,14 +17,175 @@
 <ul><li><a href="#introduction">Introduction</a></li>
 <li><a href="#mapping-defintion">Mapping Defintion</a></li>
 <li><a href="#mapping-table">Mapping Table</a></li>
+<li><a href="#unsupported-vcard-fields">Unsupported VCard fields</a></li>
+<ul><li><a href="#example-code">Example code</a></li>
+</ul>
+<li><a href="#implementation-definition-file">Implementation definition file</a></li>
 </ul>
 <a name="introduction"></a>
 <h2>Introduction</h2>
-<p>TODO : Add introduction here</p>
+<p>Purpose of this document is to give insight view about how each VCard property mapped to QContact detail. For example N type nmae of VCard will be mapped to QContactName detail.</p>
 <a name="mapping-defintion"></a>
 <h2>Mapping Defintion</h2>
+<p>Table below has two columns , first one is for VCard type fields and second one is corresponding map of QContactDetail. It can be intrepreted viceversa also.</p>
 <a name="mapping-table"></a>
 <h2>Mapping Table</h2>
+<p>Versit Field to QContactDetail mapping table</p>
+<p><table align="center" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><td><tt>ADR</tt></td><td>QContactAddress::DefinitionName.</td></tr>
+<tr valign="top" class="even"><td><tt>BDAY</tt></td><td>QContactBirthday::FieldBirthday.</td></tr>
+<tr valign="top" class="odd"><td><tt>FN</tt></td><td>QContactDisplayLabel::DefinitionName.</td></tr>
+<tr valign="top" class="even"><td><tt>GEO</tt></td><td>QContactGeolocation::DefinitionName.</td></tr>
+<tr valign="top" class="odd"><td><tt>EMAIL</tt></td><td>QContactEmailAddress::FieldEmailAddress.</td></tr>
+<tr valign="top" class="even"><td><tt>IMPP</tt></td><td>QContactOnlineAccount::SubTypeImpp.</td></tr>
+<tr valign="top" class="odd"><td><tt>LOGO</tt></td><td>QContactOrganization::FieldLogo.</td></tr>
+<tr valign="top" class="even"><td><tt>N</tt></td><td>QContactName::DefinitionName.</td></tr>
+<tr valign="top" class="odd"><td><tt>NICKNAME</tt></td><td>QContactNickname::FieldNickname.</td></tr>
+<tr valign="top" class="even"><td><tt>NOTE</tt></td><td>QContactNote::FieldNote.</td></tr>
+<tr valign="top" class="odd"><td><tt>ORG</tt></td><td>QContactOrganization::FieldName.</td></tr>
+<tr valign="top" class="even"><td><tt>PHOTO</tt></td><td>QContactAvatar::SubTypeImage.</td></tr>
+<tr valign="top" class="odd"><td><tt>REV</tt></td><td>QContactTimestamp::DefinitionName.</td></tr>
+<tr valign="top" class="even"><td><tt>ROLE</tt></td><td>QContactOrganization::FieldRole.</td></tr>
+<tr valign="top" class="odd"><td><tt>SOUND</tt></td><td>QContactAvatar::SubTypeAudioRingtone.</td></tr>
+<tr valign="top" class="even"><td><tt>TEL</tt></td><td>QContactPhoneNumber::FieldNumber.</td></tr>
+<tr valign="top" class="odd"><td><tt>TITLE</tt></td><td>QContactOrganization::FieldTitle.</td></tr>
+<tr valign="top" class="even"><td><tt>UID</tt></td><td>QContactGuid::FieldGuid.</td></tr>
+<tr valign="top" class="odd"><td><tt>URL</tt></td><td>QContactUrl::FieldUrl.</td></tr>
+<tr valign="top" class="even"><td><tt>X-ANNIVERSARY</tt></td><td>QContactAnniversary::DefinitionName.</td></tr>
+<tr valign="top" class="odd"><td><tt>X-ASSISTANT</tt></td><td>QContactOrganization::FieldAssistantName.</td></tr>
+<tr valign="top" class="even"><td><tt>X-CHILDREN</tt></td><td>QContactFamily::FieldChildren.</td></tr>
+<tr valign="top" class="odd"><td><tt>X-GENDER</tt></td><td>QContactGender::FieldGender.</td></tr>
+<tr valign="top" class="even"><td><tt>X-IMPP</tt></td><td>QContactOnlineAccount::SubTypeImpp.</td></tr>
+<tr valign="top" class="odd"><td><tt>X-NICKNAME</tt></td><td>QContactNickname::FieldNickname.</td></tr>
+<tr valign="top" class="even"><td><tt>X-SIP</tt></td><td>QContactOnlineAccount::DefinitionName.</td></tr>
+<tr valign="top" class="odd"><td><tt>X-SPOUSE</tt></td><td>QContactFamily::FieldSpouse.</td></tr>
+</table></p>
+<p>Versit Subtype Field to QContactDetail SubField mapping table</p>
+<p><table align="center" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><td><tt>DOM</tt></td><td>QContactAddress::SubTypeDomestic.</td></tr>
+<tr valign="top" class="even"><td><tt>INTL</tt></td><td>QContactAddress::SubTypeInternational.</td></tr>
+<tr valign="top" class="odd"><td><tt>POSTAL</tt></td><td>QContactAddress::SubTypePostal.</td></tr>
+<tr valign="top" class="even"><td><tt>PARCEL</tt></td><td>QContactAddress::SubTypeParcel.</td></tr>
+<tr valign="top" class="odd"><td><tt>VOICE</tt></td><td>QContactPhoneNumber::SubTypeVoice.</td></tr>
+<tr valign="top" class="even"><td><tt>CELL</tt></td><td>QContactPhoneNumber::SubTypeMobile.</td></tr>
+<tr valign="top" class="odd"><td><tt>MODEM</tt></td><td>QContactPhoneNumber::SubTypeModem.</td></tr>
+<tr valign="top" class="even"><td><tt>CAR</tt></td><td>QContactPhoneNumber::SubTypeCar.</td></tr>
+<tr valign="top" class="odd"><td><tt>FAX</tt></td><td>QContactPhoneNumber::SubTypeFacsimile.</td></tr>
+<tr valign="top" class="even"><td><tt>BBS</tt></td><td>QContactPhoneNumber::SubTypeBulletinBoardSystem.</td></tr>
+<tr valign="top" class="odd"><td><tt>PAGER</tt></td><td>QContactPhoneNumber::SubTypePager.</td></tr>
+<tr valign="top" class="even"><td><tt>SWIS</tt></td><td>QContactOnlineAccount::SubTypeVideoShare.</td></tr>
+<tr valign="top" class="odd"><td><tt>VOIP</tt></td><td>QContactOnlineAccount::SubTypeSipVoip.</td></tr>
+</table></p>
+<p>Versit file type to file extension mapping table</p>
+<p><table align="center" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><td><tt>JPEG</tt></td><td>.JPG</td></tr>
+<tr valign="top" class="even"><td><tt>WAVE</tt></td><td>.WAV</td></tr>
+<tr valign="top" class="odd"><td><tt>PICT</tt></td><td>.PCT</td></tr>
+<tr valign="top" class="even"><td><tt>TIFF</tt></td><td>.TIF</td></tr>
+<tr valign="top" class="odd"><td><tt>MPEG</tt></td><td>.MPG</td></tr>
+<tr valign="top" class="even"><td><tt>MPEG2</tt></td><td>.M2P</td></tr>
+<tr valign="top" class="odd"><td><tt>QTIME</tt></td><td>.QT</td></tr>
+<tr valign="top" class="even"><td><tt>AIFF</tt></td><td>.AIF</td></tr>
+<tr valign="top" class="odd"><td><tt>TIIF</tt></td><td>.GIF</td></tr>
+</table></p>
+<a name="unsupported-vcard-fields"></a>
+<h2>Unsupported VCard fields</h2>
+<p>Fields other than mentioned in above table is considered as unsupported at this moment. And will be discarded by <a href="qversitcontactimporter.html">QVersitContactImporter</a>. But if API user want to implement a custom support then this fields can be obtained by calling</p>
+<a name="example-code"></a>
+<h3>Example code</h3>
+<p><a href="qversitcontactimporter.html">QVersitContactImporter</a> importer;</p>
+<p><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qversitproperty.html">QVersitProperty</a>&gt; unSupportedVersitProperties = importer.unknownVersitProperties();</p>
+<a name="implementation-definition-file"></a>
+<h2>Implementation definition file</h2>
+<p>Versit Field to QContactDetail mapping table</p>
+<pre><span class="comment">    // Mappings from versit property names to Qt contact details</span>
+    const versitContactDetailMapping versitContactDetailMappings[] = {
+        {&quot;ADR&quot;,           QContactAddress::DefinitionName.str,
+                          &quot;&quot;},
+        {&quot;BDAY&quot;,          QContactBirthday::DefinitionName.str,
+                          QContactBirthday::FieldBirthday.str},
+        {&quot;FN&quot;,            QContactDisplayLabel::DefinitionName.str,
+                          &quot;&quot;},
+        {&quot;GEO&quot;,           QContactGeolocation::DefinitionName.str,
+                          &quot;&quot;},
+        {&quot;EMAIL&quot;,         QContactEmailAddress::DefinitionName.str,
+                          QContactEmailAddress::FieldEmailAddress.str},
+        {&quot;IMPP&quot;,        QContactOnlineAccount::DefinitionName.str,
+                          QContactOnlineAccount::SubTypeImpp.str},
+        {&quot;LOGO&quot;,          QContactOrganization::DefinitionName.str,
+                          QContactOrganization::FieldLogo.str},
+        {&quot;N&quot;,             QContactName::DefinitionName.str,
+                          &quot;&quot;},
+        {&quot;NICKNAME&quot;,      QContactNickname::DefinitionName.str,
+                          QContactNickname::FieldNickname.str},
+        {&quot;NOTE&quot;,          QContactNote::DefinitionName.str,
+                          QContactNote::FieldNote.str},
+        {&quot;ORG&quot;,           QContactOrganization::DefinitionName.str,
+                          QContactOrganization::FieldName.str},
+        {&quot;PHOTO&quot;,         QContactAvatar::DefinitionName.str,
+                          QContactAvatar::SubTypeImage.str},
+        {&quot;REV&quot;,           QContactTimestamp::DefinitionName.str,
+                          &quot;&quot;},
+        {&quot;ROLE&quot;,          QContactOrganization::DefinitionName.str,
+                          QContactOrganization::FieldRole.str},
+        {&quot;SOUND&quot;,         QContactAvatar::DefinitionName.str,
+                          QContactAvatar::SubTypeAudioRingtone.str},
+        {&quot;TEL&quot;,           QContactPhoneNumber::DefinitionName.str,
+                          QContactPhoneNumber::FieldNumber.str},
+        {&quot;TITLE&quot;,         QContactOrganization::DefinitionName.str,
+                          QContactOrganization::FieldTitle.str},
+        {&quot;UID&quot;,           QContactGuid::DefinitionName.str,
+                          QContactGuid::FieldGuid.str},
+        {&quot;URL&quot;,           QContactUrl::DefinitionName.str,
+                          QContactUrl::FieldUrl.str},
+        {&quot;X-ANNIVERSARY&quot;, QContactAnniversary::DefinitionName.str,
+                          &quot;&quot;},
+        {&quot;X-ASSISTANT&quot;,   QContactOrganization::DefinitionName.str,
+                          QContactOrganization::FieldAssistantName.str},
+        {&quot;X-CHILDREN&quot;,    QContactFamily::DefinitionName.str,
+                          QContactFamily::FieldChildren.str},
+        {&quot;X-GENDER&quot;,      QContactGender::DefinitionName.str,
+                          QContactGender::FieldGender.str},
+        {&quot;X-IMPP&quot;,        QContactOnlineAccount::DefinitionName.str,
+                          QContactOnlineAccount::SubTypeImpp.str},
+        {&quot;X-NICKNAME&quot;,    QContactNickname::DefinitionName.str,
+                          QContactNickname::FieldNickname.str},
+        {&quot;X-SIP&quot;,         QContactOnlineAccount::DefinitionName.str,
+                          &quot;&quot;},
+        {&quot;X-SPOUSE&quot;,      QContactFamily::DefinitionName.str,
+                          QContactFamily::FieldSpouse.str}
+    };</pre>
+<p>Versit Subtype Fields to QContactDetail SubFields mapping table</p>
+<pre><span class="comment">    // Mappings from versit TYPE parameters to Qt contact detail subtypes</span>
+    const versitMapping versitSubTypeMappings[] = {
+        {&quot;DOM&quot;,    QContactAddress::SubTypeDomestic.str},
+        {&quot;INTL&quot;,   QContactAddress::SubTypeInternational.str},
+        {&quot;POSTAL&quot;, QContactAddress::SubTypePostal.str},
+        {&quot;PARCEL&quot;, QContactAddress::SubTypeParcel.str},
+        {&quot;VOICE&quot;,  QContactPhoneNumber::SubTypeVoice.str},
+        {&quot;CELL&quot;,   QContactPhoneNumber::SubTypeMobile.str},
+        {&quot;MODEM&quot;,  QContactPhoneNumber::SubTypeModem.str},
+        {&quot;CAR&quot;,    QContactPhoneNumber::SubTypeCar.str},
+        {&quot;VIDEO&quot;,  QContactPhoneNumber::SubTypeVideo.str},
+        {&quot;FAX&quot;,    QContactPhoneNumber::SubTypeFacsimile.str},
+        {&quot;BBS&quot;,    QContactPhoneNumber::SubTypeBulletinBoardSystem.str},
+        {&quot;PAGER&quot;,  QContactPhoneNumber::SubTypePager.str},
+        {&quot;SWIS&quot;,   QContactOnlineAccount::SubTypeVideoShare.str},
+        {&quot;VOIP&quot;,   QContactOnlineAccount::SubTypeSipVoip.str}
+    };</pre>
+<p>File extension mapping table</p>
+<pre><span class="comment">    // Mappings from file types in versit specifications to file extensions</span>
+    const versitMapping versitFileExtensionMappings[] = {
+        {&quot;JPEG&quot;, &quot;JPG&quot;},
+        {&quot;WAVE&quot;, &quot;WAV&quot;},
+        {&quot;PICT&quot;, &quot;PCT&quot;},
+        {&quot;TIFF&quot;, &quot;TIF&quot;},
+        {&quot;MPEG&quot;, &quot;MPG&quot;},
+        {&quot;MPEG2&quot;, &quot;M2P&quot;},
+        {&quot;QTIME&quot;, &quot;QT&quot;},
+        {&quot;AIFF&quot;, &quot;AIF&quot;},
+        {&quot;TIFF&quot;, &quot;GIF&quot;}
+    };</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

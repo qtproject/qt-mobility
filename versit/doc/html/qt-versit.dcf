@@ -20,7 +20,6 @@
     </section>
     <section ref="qversitdocument.html" title="QVersitDocument Class Reference">
         <keyword ref="qversitdocument.html">QVersitDocument</keyword>
-        <keyword ref="qversitdocument.html#VersitType-enum">VersitType</keyword>
         <keyword ref="qversitdocument.html#addProperty">addProperty</keyword>
         <keyword ref="qversitdocument.html#properties">properties</keyword>
         <keyword ref="qversitdocument.html#removeProperties">removeProperties</keyword>

@@ -11,10 +11,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QVersitDocument::operator=" href="qversitdocument.html#operator=" location="qversitdocument.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QVersitDocument &amp;" signature="operator=(const QVersitDocument &amp; other)">
                 <parameter left="const QVersitDocument &amp;" right="" name="other" default=""/>
             </function>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="VersitType" fullname="QVersitDocument::VersitType" href="qversitdocument.html#VersitType-enum" location="qversitdocument.h">
-                <value name="VCard21" value="0"/>
-                <value name="VCard30" value="1"/>
-            </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="setVersitType" fullname="QVersitDocument::setVersitType" href="qversitdocument.html#setVersitType" location="qversitdocument.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setVersitType(VersitType type)">
                 <parameter left="VersitType" right="" name="type" default=""/>
             </function>
@@ -158,12 +154,18 @@
             <contents name="introduction" title="Introduction" level="1"/>
             <contents name="mapping-defintion" title="Mapping Defintion" level="1"/>
             <contents name="mapping-table" title="Mapping Table" level="1"/>
+            <contents name="unsupported-vcard-fields" title="Unsupported VCard fields" level="1"/>
+            <contents name="example-code" title="Example code" level="2"/>
+            <contents name="implementation-definition-file" title="Implementation definition file" level="1"/>
         </page>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Versit Developer Resources" fulltitle="Qt Mobility Versit Developer Resources" subtitle="" location="index.qdoc"/>
         <page access="public" status="commendable" name="versitmapping.html" href="versitmapping.html" subtype="page" title="Qt Versit Mapping" fulltitle="Qt Versit Mapping" subtitle="" location="versitmapping.qdoc">
             <contents name="introduction" title="Introduction" level="1"/>
             <contents name="mapping-defintion" title="Mapping Defintion" level="1"/>
             <contents name="mapping-table" title="Mapping Table" level="1"/>
+            <contents name="unsupported-vcard-fields" title="Unsupported VCard fields" level="1"/>
+            <contents name="example-code" title="Example code" level="2"/>
+            <contents name="implementation-definition-file" title="Implementation definition file" level="1"/>
         </page>
         <page access="public" status="commendable" name="versit.html" href="versit.html" subtype="page" title="Qt Versit Developer Resources" fulltitle="Qt Versit Developer Resources" subtitle="" location="versit.qdoc">
             <contents name="introduction" title="Introduction" level="1"/>

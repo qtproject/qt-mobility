@@ -71,6 +71,7 @@ struct versitContactDetailMapping {
     const char* contactDetailValueKey;
 };
 
+//! [Mapping table]
 // Mappings from versit property names to Qt contact details
 const versitContactDetailMapping versitContactDetailMappings[] = {
     {"ADR",           QContactAddress::DefinitionName.str,
@@ -128,6 +129,7 @@ const versitContactDetailMapping versitContactDetailMappings[] = {
     {"X-SPOUSE",      QContactFamily::DefinitionName.str,
                       QContactFamily::FieldSpouse.str}
 };
+//! [Mapping table]
 
 // Mapping between a string in versit specifications and Qt contacts
 struct versitMapping {
@@ -141,6 +143,7 @@ const versitMapping versitContextMappings[] = {
     {"WORK", QContactDetail::ContextWork.str},
 };
 
+//! [ Sub Type Mapping table]
 // Mappings from versit TYPE parameters to Qt contact detail subtypes
 const versitMapping versitSubTypeMappings[] = {
     {"DOM",    QContactAddress::SubTypeDomestic.str},
@@ -158,7 +161,9 @@ const versitMapping versitSubTypeMappings[] = {
     {"SWIS",   QContactOnlineAccount::SubTypeVideoShare.str},
     {"VOIP",   QContactOnlineAccount::SubTypeSipVoip.str}
 };
+//! [ Sub Type Mapping table]
 
+//! [ File extension Mapping table]
 // Mappings from file types in versit specifications to file extensions
 const versitMapping versitFileExtensionMappings[] = {
     {"JPEG", "JPG"},
@@ -171,5 +176,6 @@ const versitMapping versitFileExtensionMappings[] = {
     {"AIFF", "AIF"},
     {"TIFF", "GIF"}
 };
+//! [ File extension Mapping table]
 
 #endif // QVERSITDEFS_H

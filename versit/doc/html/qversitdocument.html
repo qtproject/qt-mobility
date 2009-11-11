@@ -17,11 +17,6 @@
 <pre>    #include &lt;QVersitDocument&gt;</pre><ul>
 <li><a href="qversitdocument-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a>
-<h3>Public Types</h3>
-<ul>
-<li><div class="fn"></div>enum <b><a href="qversitdocument.html#VersitType-enum">VersitType</a></b> { VCard21, VCard30 }</li>
-</ul>
 <a name="public-functions"></a>
 <h3>Public Functions</h3>
 <ul>
@@ -43,9 +38,6 @@
 <p>QVersitDocument supports implicit sharing.</p>
 <p>See also <a href="qversitproperty.html">QVersitProperty</a>.</p>
 <hr />
-<h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="VersitType-enum"></a>enum QVersitDocument::VersitType</h3>
-<hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QVersitDocument"></a>QVersitDocument::QVersitDocument ()</h3>
 <p>Constructs a new empty document</p>
@@ -59,10 +51,10 @@
 <p>Gets the list of the contained versit properties. Note that actual the properties cannot be modified using the copy.</p>
 <h3 class="fn"><a name="removeProperties"></a>void QVersitDocument::removeProperties ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>name</i> )</h3>
 <p>Removes all the properties with <i>name</i> from the versit document.</p>
-<h3 class="fn"><a name="setVersitType"></a>void QVersitDocument::setVersitType ( <a href="qversitdocument.html#VersitType-enum">VersitType</a> <i>type</i> )</h3>
+<h3 class="fn"><a name="setVersitType"></a>void QVersitDocument::setVersitType ( VersitType <i>type</i> )</h3>
 <p>Sets the versit document type to <i>type</i>.</p>
 <p>See also <a href="qversitdocument.html#versitType">versitType</a>().</p>
-<h3 class="fn"><a name="versitType"></a><a href="qversitdocument.html#VersitType-enum">VersitType</a> QVersitDocument::versitType () const</h3>
+<h3 class="fn"><a name="versitType"></a>VersitType QVersitDocument::versitType () const</h3>
 <p>Gets the versit document type.</p>
 <p>See also <a href="qversitdocument.html#setVersitType">setVersitType</a>().</p>
 <h3 class="fn"><a name="operator-eq"></a>QVersitDocument &amp; QVersitDocument::operator= ( const QVersitDocument &amp; <i>other</i> )</h3>

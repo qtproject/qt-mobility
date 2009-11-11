@@ -49,10 +49,100 @@
 
 \section1 Introduction
 
-TODO : Add introduction here
+ Purpose of this document is to give insight view about how each VCard
+ property mapped to QContact detail. For example N type nmae of VCard will be
+ mapped to QContactName detail.
 
 \section1 Mapping Defintion
 
+ Table below has two columns , first one is for VCard type fields and second one is
+ corresponding map of QContactDetail. It can be intrepreted viceversa also.
+
 \section1 Mapping Table
+
+Versit Field to QContactDetail mapping table
+\table
+    \row \o \c  ADR             \o QContactAddress::DefinitionName.
+    \row \o \c  BDAY            \o QContactBirthday::FieldBirthday.
+    \row \o \c  FN              \o QContactDisplayLabel::DefinitionName.
+    \row \o \c  GEO             \o QContactGeolocation::DefinitionName.
+    \row \o \c  EMAIL           \o QContactEmailAddress::FieldEmailAddress.
+    \row \o \c  IMPP            \o QContactOnlineAccount::SubTypeImpp.
+    \row \o \c  LOGO            \o QContactOrganization::FieldLogo.
+    \row \o \c  N               \o QContactName::DefinitionName.
+    \row \o \c  NICKNAME        \o QContactNickname::FieldNickname.
+    \row \o \c  NOTE            \o QContactNote::FieldNote.
+    \row \o \c  ORG             \o QContactOrganization::FieldName.
+    \row \o \c  PHOTO           \o QContactAvatar::SubTypeImage.
+    \row \o \c  REV             \o QContactTimestamp::DefinitionName.
+    \row \o \c  ROLE            \o QContactOrganization::FieldRole.
+    \row \o \c  SOUND           \o QContactAvatar::SubTypeAudioRingtone.
+    \row \o \c  TEL             \o QContactPhoneNumber::FieldNumber.
+    \row \o \c  TITLE           \o QContactOrganization::FieldTitle.
+    \row \o \c  UID             \o QContactGuid::FieldGuid.
+    \row \o \c  URL             \o QContactUrl::FieldUrl.
+    \row \o \c  X-ANNIVERSARY   \o QContactAnniversary::DefinitionName.
+    \row \o \c  X-ASSISTANT     \o QContactOrganization::FieldAssistantName.
+    \row \o \c  X-CHILDREN      \o QContactFamily::FieldChildren.
+    \row \o \c  X-GENDER        \o QContactGender::FieldGender.
+    \row \o \c  X-IMPP          \o QContactOnlineAccount::SubTypeImpp.
+    \row \o \c  X-NICKNAME      \o QContactNickname::FieldNickname.
+    \row \o \c  X-SIP           \o QContactOnlineAccount::DefinitionName.
+    \row \o \c  X-SPOUSE        \o QContactFamily::FieldSpouse.
+\endtable
+
+Versit Subtype Field to QContactDetail SubField mapping table
+\table
+    \row \o \c  DOM             \o QContactAddress::SubTypeDomestic.
+    \row \o \c  INTL            \o QContactAddress::SubTypeInternational.
+    \row \o \c  POSTAL          \o QContactAddress::SubTypePostal.
+    \row \o \c  PARCEL          \o QContactAddress::SubTypeParcel.
+    \row \o \c  VOICE           \o QContactPhoneNumber::SubTypeVoice.
+    \row \o \c  CELL            \o QContactPhoneNumber::SubTypeMobile.
+    \row \o \c  MODEM           \o QContactPhoneNumber::SubTypeModem.
+    \row \o \c  CAR             \o QContactPhoneNumber::SubTypeCar.
+    \row \o \c  FAX             \o QContactPhoneNumber::SubTypeFacsimile.
+    \row \o \c  BBS             \o QContactPhoneNumber::SubTypeBulletinBoardSystem.
+    \row \o \c  PAGER           \o QContactPhoneNumber::SubTypePager.
+    \row \o \c  SWIS            \o QContactOnlineAccount::SubTypeVideoShare.
+    \row \o \c  VOIP            \o QContactOnlineAccount::SubTypeSipVoip.
+\endtable
+
+Versit file type to file extension mapping table
+\table
+    \row \o \c  JPEG             \o .JPG
+    \row \o \c  WAVE            \o .WAV
+    \row \o \c  PICT          \o .PCT
+    \row \o \c  TIFF          \o .TIF
+    \row \o \c  MPEG           \o .MPG
+    \row \o \c  MPEG2            \o .M2P
+    \row \o \c  QTIME           \o .QT
+    \row \o \c  AIFF            \o .AIF
+    \row \o \c  TIIF             \o .GIF
+\endtable
+
+
+\section1 Unsupported VCard fields
+
+Fields other than mentioned in above table is considered as unsupported at this moment.
+And will be discarded by QVersitContactImporter. But if API user want to implement a
+custom support then this fields can be obtained by calling
+
+\section2 Example code
+
+    QVersitContactImporter importer;
+
+    QList<QVersitProperty> unSupportedVersitProperties = importer.unknownVersitProperties();
+
+\section1 Implementation definition file
+
+    Versit Field to QContactDetail mapping table
+    \snippet ../../../qversitdefs.h Mapping table
+
+    Versit Subtype Fields to QContactDetail SubFields mapping table
+    \snippet ../../../qversitdefs.h Sub Type Mapping table
+
+    File extension mapping table
+    \snippet ../../../qversitdefs.h File extension Mapping table
 
 */

@@ -86,12 +86,12 @@
 <p>Set the versit document to be written to <i>versitDocument</i> and selects the actual writer implementation based on the versit document type.</p>
 <p>See also <a href="qversitwriter.html#versitDocument">versitDocument</a>().</p>
 <h3 class="fn"><a name="startWriting"></a>bool QVersitWriter::startWriting ()</h3>
-<p>Starts writing the output asynchronously. Returns false if the output device has not been set or opened or if there is another asynchronous write operation already pending. Signal writingDone is emitted when the writing has finished.</p>
+<p>Starts writing the output asynchronously. Returns false if the output device has not been set or opened or if there is another asynchronous write operation already pending. Signal <a href="qversitwriter.html#writingDone">writingDone</a>() is emitted when the writing has finished.</p>
 <h3 class="fn"><a name="versitDocument"></a><a href="qversitdocument.html">QVersitDocument</a> QVersitWriter::versitDocument () const</h3>
 <p>Returns the current versit document.</p>
 <p>See also <a href="qversitwriter.html#setVersitDocument">setVersitDocument</a>().</p>
 <h3 class="fn"><a name="writeAll"></a>bool QVersitWriter::writeAll ()</h3>
-<p>Writes the output synchronously. Returns false if the output device has not been set or opened or if there is an asynchronous write operation pending. Using this function may block the user thread for an undefined period. In most cases asynchronous startWriting should be used instead.</p>
+<p>Writes the output synchronously. Returns false if the output device has not been set or opened or if there is an asynchronous write operation pending. Using this function may block the user thread for an undefined period. In most cases asynchronous <a href="qversitwriter.html#startWriting">startWriting</a>() should be used instead.</p>
 <h3 class="fn"><a name="writingDone"></a>void QVersitWriter::writingDone ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>The signal is emitted by the writer when the asynchronous writing has been completed.</p>
 <p /><address><hr /><div align="center">
