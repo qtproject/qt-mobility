@@ -19,6 +19,7 @@
 #include <QFile>
 #include <QSet>
 
+#include "qcontactdetaildefinitionfield.h"
 #include "qcontact_p.h"
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
@@ -321,7 +322,7 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
     // lazy initialisation of schema definitions.
     if (d->m_definitions.isEmpty()) {
         // none in the list?  get the schema definitions, and modify them to match our capabilities.
-        d->m_definitions = QContactManagerEngine::schemaDefinitions();
+        d->m_definitions = QContactManagerEngine::schemaDefinitions().value(QContactType::TypeGroup);
         {
             debug() << "the definitions";
             QList<QString> defs = d->m_definitions.keys();
@@ -342,15 +343,15 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
 
         // modification: url is unique.
         QContactDetailDefinition urlDef = d->m_definitions.value(QContactUrl::DefinitionName);
-        QMap<QString, QContactDetailDefinition::Field> &fields(urlDef.fields());
-        QContactDetailDefinition::Field f;
+        QMap<QString, QContactDetailDefinitionField> &fields(urlDef.fields());
+        QContactDetailDefinitionField f;
 
-        f.dataType = QVariant::String;
+        f.setDataType( QVariant::String );
         QVariantList subTypes;
         // removing social networking url
         subTypes << QString(QLatin1String(QContactUrl::SubTypeFavourite));
         subTypes << QString(QLatin1String(QContactUrl::SubTypeHomePage));
-        f.allowableValues = subTypes;
+        f.setAllowableValues( subTypes );
         fields.insert(QContactUrl::FieldSubType, f);
         urlDef.setFields(fields);
         urlDef.setUnique(true);
