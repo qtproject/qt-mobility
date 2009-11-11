@@ -62,7 +62,7 @@
 CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
     error = QContactManager::NoError;
-    
+
     m_dataBase = new CntSymbianDatabase(this, error);
 
     //Database opened successfully
@@ -70,6 +70,7 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
         m_managerUri = QContactManager::buildUri(CNT_SYMBIAN_MANAGER_NAME, parameters);
         d = new CntSymbianEnginePrivate(m_dataBase, parameters, error);
         m_transformContact = new CntTransformContact;
+        connect(m_dataBase, SIGNAL(ownCardChanged(QContactLocalId,QContactLocalId)), this, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
     }
 }
 
@@ -97,15 +98,12 @@ CntSymbianEngine::~CntSymbianEngine()
 {
     delete m_dataBase;
     delete m_transformContact;
+    delete d;
 }
 
 void CntSymbianEngine::deref()
 {
-	//This class is not using a private shared class so should this be always deleted?
-	//d->deref();
-
-	/*if (!d->m_refCount.deref())
- 	delete this;*/
+ 	delete this;
 }
 
 /*!
@@ -567,8 +565,12 @@ void CntSymbianEngine::updateDisplayLabel(QContact& contact) const
 
 bool CntSymbianEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
 {
+    QContactManager::Error err;
+    QContactLocalId selfContactId = d->selfContactId(err); // err ignored
     QContactChangeSet changeSet;
     TBool ret = removeContact(contactId, changeSet, error);
+    if (ret && contactId == selfContactId )
+        emit selfContactIdChanged(selfContactId, QContactLocalId(0));    
     changeSet.emitSignals(this);
     return ret;
 }
@@ -581,6 +583,8 @@ QList<QContactManager::Error> CntSymbianEngine::removeContacts(QList<QContactLoc
         error = QContactManager::BadArgumentError;
         return ret;
     } else {
+        QContactManager::Error err;
+        QContactLocalId selfContactId = d->selfContactId(err); // err ignored
         QList<QContactLocalId> removedList;
         QContactManager::Error functionError = QContactManager::NoError;
         for (int i = 0; i < contactIds->count(); i++) {
@@ -591,9 +595,11 @@ QList<QContactManager::Error> CntSymbianEngine::removeContacts(QList<QContactLoc
             } else {
                 (*contactIds)[i] = 0;
                 ret.append(QContactManager::NoError);
+                if (current == selfContactId ) {
+                    emit selfContactIdChanged(selfContactId, QContactLocalId(0));
+                }
             }
         }
-
         error = functionError;
     }
     changeSet.emitSignals(this);

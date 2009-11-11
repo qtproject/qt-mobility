@@ -2151,21 +2151,38 @@ void tst_QContactManager::selfContactId()
     QContactPhoneNumber selfPhn;
     selfPhn.setNumber("12345");
     self.saveDetail(&selfPhn);
-    bool success = cm->saveContact(&self);
-    QContactLocalId newSelfContact = self.localId();
-
-    if (!success) {
+    if (!cm->saveContact(&self)) {
         QSKIP("Unable to save the generated self contact", SkipSingle);
     }
+    QContactLocalId newSelfContact = self.localId();
 
+    // Setup signal spy
+    qRegisterMetaType<QContactLocalId>("QContactLocalId");
     QSignalSpy spy(cm, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
-    cm->setSelfContactId(newSelfContact);
-    QVERIFY(cm->selfContactId() == newSelfContact);
+        
+    // Set new self contact
+    QVERIFY(cm->setSelfContactId(newSelfContact));
     QVERIFY(cm->error() == QContactManager::NoError);
-    cm->removeContact(self.localId());
-    QVERIFY(cm->selfContactId() == QContactLocalId(0)); // ensure reset after removed.
-    cm->setSelfContactId(selfContact); // reset to original state.
-    QVERIFY(spy.count() == 2); // ensure that the signals were emitted correctly.
+    QTRY_VERIFY(spy.count() == 1);
+    QVERIFY(spy.at(0).count() == 2);
+    // note: for some reason qvariant_cast<QContactLocalId>(spy.at(0).at(0)) returns always zero
+    // because the type is not recognized. Hence the ugly casting below.
+    QVERIFY(*((const QContactLocalId*) spy.at(0).at(0).constData()) == selfContact);
+    QVERIFY(*((const QContactLocalId*) spy.at(0).at(1).constData()) == newSelfContact);
+    QVERIFY(cm->selfContactId() == newSelfContact);
+    
+    // Remove self contact
+    if(!cm->removeContact(self.localId())) {
+        QSKIP("Unable to remove self contact", SkipSingle);
+    }        
+    QTRY_VERIFY(spy.count() == 2);
+    QVERIFY(spy.at(1).count() == 2);
+    QVERIFY(*((const QContactLocalId*) spy.at(1).at(0).constData()) == newSelfContact);
+    QVERIFY(*((const QContactLocalId*) spy.at(1).at(1).constData()) == QContactLocalId(0));
+    QVERIFY(cm->selfContactId() == QContactLocalId(0)); // ensure reset after removed.    
+    
+    // reset to original state.
+    cm->setSelfContactId(selfContact);
 }
 
 QList<QContactDetail> tst_QContactManager::removeAllDefaultDetails(const QList<QContactDetail>& details)
