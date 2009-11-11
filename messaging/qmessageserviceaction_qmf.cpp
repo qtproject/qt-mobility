@@ -278,7 +278,7 @@ QMessageServiceAction::~QMessageServiceAction()
     delete d_ptr;
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
+bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset)
 {
     if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::InProgress))) {
         qWarning() << "Action is currently busy";
@@ -303,7 +303,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QM
     return false;
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
+bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset)
 {
     if (options) {
         //TODO: Support options
@@ -346,7 +346,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
     return false;
 }
 
-bool QMessageServiceAction::countMessages(const QMessageFilter &filter) const
+bool QMessageServiceAction::countMessages(const QMessageFilter &filter)
 {
     if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::InProgress))) {
         qWarning() << "Action is currently busy";
