@@ -113,9 +113,11 @@ void VersitDocSample::generateVCard(QContact& contact)
     out.open(QIODevice::ReadWrite);
     writer->setDevice(&out);
     // Create QVersitContactExporter to convert QContact into QVersitDocument
+    //! [Scaling Example Snippet]
     QVersitContactExporter exporter;        
     connect(&exporter, SIGNAL(scale(const QString&,QByteArray&)),
             0, SLOT(scale(const QString&,QByteArray&)));
+    //! [Scaling Example Snippet]
     // Create versit document
     QVersitDocument document = exporter.exportContact(contact,QVersitDocument::VCard21);
     // Encode and write to output file
@@ -124,6 +126,7 @@ void VersitDocSample::generateVCard(QContact& contact)
 }
 //! [Generate VCard file from QContact]
 
+//! [Scaling callback implementation]
 // Callback for image scaling
 void VersitDocSample::scale(const QString& imageFileName, QByteArray& imageData)
 {
@@ -137,7 +140,7 @@ void VersitDocSample::scale(const QString& imageFileName, QByteArray& imageData)
         image.save(&imageBuffer,fileExtension.constData());
     }
 }
-
+//! [Scaling callback implementation]
 //! [Generate QContact from VCard file and save to contact database]
 void VersitDocSample::generateAndSaveContact(QFile& in)
 {
