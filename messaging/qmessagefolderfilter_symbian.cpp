@@ -42,92 +42,461 @@
 #include "qmessagefolderfilter.h"
 #include "qmessagefolderfilter_p.h"
 
-QMessageFolderFilter::QMessageFolderFilter()
+QMessageFolderFilterPrivate::QMessageFolderFilterPrivate(QMessageFolderFilter *folderFilter)
+ : q_ptr(folderFilter)
 {
 }
 
-QMessageFolderFilter::QMessageFolderFilter(const QMessageFolderFilter &other)
+QMessageFolderFilterPrivate::~QMessageFolderFilterPrivate()
 {
-    Q_UNUSED(other)
+}
+
+bool QMessageFolderFilterPrivate::lessThan(const QMessageFolderFilter filter1, const QMessageFolderFilter filter2)
+{
+    return filter1.d_ptr->_field < filter2.d_ptr->_field;
+}
+
+void QMessageFolderFilterPrivate::applyNot(QMessageFolderFilter& filter)
+{
+    if (filter.d_ptr->_filterList.count() == 0) {
+        if (filter.d_ptr->_comparatorType == QMessageFolderFilterPrivate::Equality) {
+            QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(filter.d_ptr->_comparatorValue));
+            if (cmp == QMessageDataComparator::Equal) {
+                filter.d_ptr->_comparatorValue = static_cast<int>(QMessageDataComparator::NotEqual);
+            } else {
+                filter.d_ptr->_comparatorValue = static_cast<int>(QMessageDataComparator::Equal);
+            }
+        } else { // QMessageFolderFilterPrivate::Inclusion
+            QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(filter.d_ptr->_comparatorValue));
+            if (cmp == QMessageDataComparator::Includes) {
+                filter.d_ptr->_comparatorValue = static_cast<int>(QMessageDataComparator::Excludes);
+            } else { // Excludes
+                filter.d_ptr->_comparatorValue = static_cast<int>(QMessageDataComparator::Includes);
+            }
+        }
+    } else {
+        for (int i=0; i < filter.d_ptr->_filterList.count(); i++) {
+            for (int j=0; j < filter.d_ptr->_filterList[i].count(); j++) {
+                QMessageFolderFilterPrivate::applyNot(filter.d_ptr->_filterList[i][j]);
+            }
+        }
+    }
+}
+
+bool QMessageFolderFilterPrivate::filter(QMessageFolder &messageFolder)
+{
+    if (!_valid) {
+        return false;
+    }
+    
+    bool retVal = false;
+    
+    Qt::CaseSensitivity caseSensitivity = (_options & QMessageDataComparator::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive; 
+    
+    switch (_field) {
+    case QMessageFolderFilterPrivate::Id:
+        {
+        if (_comparatorType == QMessageFolderFilterPrivate::Equality) {
+            QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(_comparatorValue));
+            if (cmp == QMessageDataComparator::Equal) {
+                if (messageFolder.id().toString() == _value.toString()) {
+                    retVal = true;
+                }
+            } else { // NotEqual
+                if (!(messageFolder.id().toString() == _value.toString())) {
+                    retVal = true;
+                }
+            }
+        } else if (_comparatorType == QMessageFolderFilterPrivate::Inclusion) {
+            QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(_comparatorValue));
+            if (_ids.count() > 0) { // QMessageIdList
+                if (cmp == QMessageDataComparator::Includes) {
+                    if (_ids.contains(messageFolder.id())) {
+                        retVal = true;
+                    }
+                } else { // Excludes
+                    if (!_ids.contains(messageFolder.id())) {
+                        retVal = true;
+                    }
+                }
+            } else { // QMessageFilter
+                if (cmp == QMessageDataComparator::Includes) {
+                    // TODO:
+                } else { // Excludes
+                    // TODO:
+                }
+            }
+        }
+        break;
+        }
+    case QMessageFolderFilterPrivate::DisplayName:
+        {
+        if (_comparatorType == QMessageFolderFilterPrivate::Equality) {
+            QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(_comparatorValue));
+            if (cmp == QMessageDataComparator::Equal) {
+                if (messageFolder.displayName().compare(_value.toString(),caseSensitivity) == 0) {
+                    retVal = true;
+                }
+            } else { // NotEqual
+                if (messageFolder.displayName().compare(_value.toString(),caseSensitivity) != 0) {
+                    retVal = true;
+                }
+            }
+        } else if (_comparatorType == QMessageFolderFilterPrivate::Inclusion) {
+            QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(_comparatorValue));
+            if (cmp == QMessageDataComparator::Includes) {
+                if (messageFolder.displayName().contains(_value.toString(),caseSensitivity)) {
+                    retVal = true;
+                }
+            } else { // Excludes
+            if (!messageFolder.displayName().contains(_value.toString(),caseSensitivity)) {
+                    retVal = true;
+                }
+            }
+        }
+        break;
+        }
+    case QMessageFolderFilterPrivate::Path:
+        {
+        if (_comparatorType == QMessageFolderFilterPrivate::Equality) {
+            QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(_comparatorValue));
+            if (cmp == QMessageDataComparator::Equal) {
+                if (messageFolder.path().compare(_value.toString(),caseSensitivity) == 0) {
+                    retVal = true;
+                }
+            } else { // NotEqual
+                if (messageFolder.path().compare(_value.toString(),caseSensitivity) != 0) {
+                    retVal = true;
+                }
+            }
+        } else if (_comparatorType == QMessageFolderFilterPrivate::Inclusion) {
+            QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(_comparatorValue));
+            if (cmp == QMessageDataComparator::Includes) {
+                if (messageFolder.path().contains(_value.toString(),caseSensitivity)) {
+                    retVal = true;
+                }
+            } else { // Excludes
+            if (!messageFolder.path().contains(_value.toString(),caseSensitivity)) {
+                    retVal = true;
+                }
+            }
+        }
+        break;
+        }
+    case QMessageFolderFilterPrivate::ParentAccountId:
+        {
+        if (_comparatorType == QMessageFolderFilterPrivate::Equality) {
+            QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(_comparatorValue));
+            if (cmp == QMessageDataComparator::Equal) {
+                if (messageFolder.parentAccountId().toString() == _value.toString()) {
+                    retVal = true;
+                }
+            } else { // NotEqual
+                if (!(messageFolder.parentAccountId().toString() == _value.toString())) {
+                    retVal = true;
+                }
+            }
+        } else if (_comparatorType == QMessageFolderFilterPrivate::Inclusion) {
+            QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(_comparatorValue));
+            if (cmp == QMessageDataComparator::Includes) {
+                // TODO:
+            } else { // Excludes
+                // TODO:
+            }
+        }
+        break;
+        }
+    case QMessageFolderFilterPrivate::ParentFolderId:
+        {
+        if (_comparatorType == QMessageFolderFilterPrivate::Equality) {
+            QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(_comparatorValue));
+            if (cmp == QMessageDataComparator::Equal) {
+                if (messageFolder.parentFolderId().toString() == _value.toString()) {
+                    retVal = true;
+                }
+            } else { // NotEqual
+                if (!(messageFolder.parentFolderId().toString() == _value.toString())) {
+                    retVal = true;
+                }
+            }
+        } else if (_comparatorType == QMessageFolderFilterPrivate::Inclusion) {
+            QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(_comparatorValue));
+            if (cmp == QMessageDataComparator::Includes) {
+                // TODO:
+            } else { // Excludes
+                // TODO:
+            }
+        }
+        break;
+        }
+    case QMessageFolderFilterPrivate::AncestorFolderIds:
+        {
+        if (_comparatorType == QMessageFolderFilterPrivate::Inclusion) {
+            QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(_comparatorValue));
+            if (!_value.isNull()) { // QMessageFolderId
+                if (cmp == QMessageDataComparator::Includes) {
+                    // TODO:
+                } else { // Excludes
+                    // TODO:
+                }
+            } else { // QMessageFolderFilter
+                if (cmp == QMessageDataComparator::Includes) {
+                    // TODO:
+                } else { // Excludes
+                    // TODO:
+                }
+            }
+        }
+        break;
+        }
+    }
+    
+    return retVal;
+}
+
+QMessageFolderFilterPrivate* QMessageFolderFilterPrivate::implementation(const QMessageFolderFilter &filter)
+
+{
+    return filter.d_ptr;
+}
+
+QMessageFolderFilter::QMessageFolderFilter()
+ : d_ptr(new QMessageFolderFilterPrivate(this))
+{
+    d_ptr->_options = 0;
+    
+    d_ptr->_valid = false;
+    d_ptr->_ids = QMessageFolderIdList();
+    d_ptr->_value = QVariant();
+    d_ptr->_field = QMessageFolderFilterPrivate::None;
+    d_ptr->_comparatorType = QMessageFolderFilterPrivate::Equality;
+    d_ptr->_comparatorValue = 0;
+}
+
+QMessageFolderFilter::QMessageFolderFilter(const QMessageFolderFilter &other)
+ : d_ptr(new QMessageFolderFilterPrivate(this))
+{
+    this->operator=(other);
 }
 
 QMessageFolderFilter::~QMessageFolderFilter()
 {
+    delete d_ptr;
 }
 
 QMessageFolderFilter& QMessageFolderFilter::operator=(const QMessageFolderFilter& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other == this)
+        return *this;
+    
+    d_ptr->_options = other.d_ptr->_options;
+    
+    d_ptr->_valid = other.d_ptr->_valid;
+    d_ptr->_ids = other.d_ptr->_ids;
+    d_ptr->_value = other.d_ptr->_value;
+    d_ptr->_field = other.d_ptr->_field;
+    d_ptr->_comparatorType = other.d_ptr->_comparatorType;
+    d_ptr->_comparatorValue = other.d_ptr->_comparatorValue;
+    d_ptr->_filterList = other.d_ptr->_filterList;
+    
+    return *this;
 }
 
 void QMessageFolderFilter::setOptions(QMessageDataComparator::Options options)
 {
-    Q_UNUSED(options)
+    d_ptr->_options = options;
 }
 
 QMessageDataComparator::Options QMessageFolderFilter::options() const
 {
-    return 0;
+    return d_ptr->_options;
 }
 
 bool QMessageFolderFilter::isEmpty() const
 {
-    return false; // stub
+    return ((d_ptr->_field == QMessageFolderFilterPrivate::None) && 
+            (d_ptr->_filterList.count()) == 0);
 }
 
 bool QMessageFolderFilter::isSupported() const
 {
-    return true; // TODO: Implement
+    return d_ptr->_valid;
 }
 
 QMessageFolderFilter QMessageFolderFilter::operator~() const
 {
-    return QMessageFolderFilter(); // stub
+    QMessageFolderFilter result(*this);
+    QMessageFolderFilterPrivate::applyNot(result);
+    return result;
 }
 
 QMessageFolderFilter QMessageFolderFilter::operator&(const QMessageFolderFilter& other) const
 {
-    Q_UNUSED(other)
-    return QMessageFolderFilter(); // stub
+    if (isEmpty()) {
+        return QMessageFolderFilter(other);
+    }
+    
+    if (other.isEmpty()) {
+        return QMessageFolderFilter(*this);
+    }
+    
+    QMessageFolderFilter result;
+    result.d_ptr->_filterList = d_ptr->_filterList;
+    if (result.d_ptr->_filterList.count() == 0) {
+        result.d_ptr->_filterList.append(QMessageFolderFilterPrivate::SortedMessageFolderFilterList());
+        result.d_ptr->_filterList[0] << *this;
+    }
+    for (int i=0; i < result.d_ptr->_filterList.count(); i++) {
+        if (other.d_ptr->_filterList.count() == 0) {
+            result.d_ptr->_filterList[i] << other;
+        } else {
+            for (int j=0; j < other.d_ptr->_filterList.count(); j++) {
+                result.d_ptr->_filterList[i] << other.d_ptr->_filterList[j];
+            }
+        }
+        qSort(result.d_ptr->_filterList[i].begin(), result.d_ptr->_filterList[i].end(), QMessageFolderFilterPrivate::lessThan);
+    }
+    result.d_ptr->_valid = d_ptr->_valid & other.d_ptr->_valid;
+    
+    return result;
 }
 
 QMessageFolderFilter QMessageFolderFilter::operator|(const QMessageFolderFilter& other) const
 {
-    Q_UNUSED(other)
-    return QMessageFolderFilter(); // stub
+    if (isEmpty()) {
+        return QMessageFolderFilter(*this);
+    }
+    
+    if (other.isEmpty()) {
+        return QMessageFolderFilter(other);
+    }
+    
+    QMessageFolderFilter result;
+    if (d_ptr->_filterList.count() == 0) {
+        result.d_ptr->_filterList.append(QMessageFolderFilterPrivate::SortedMessageFolderFilterList());
+        result.d_ptr->_filterList[0] << *this;
+    } else {
+        result.d_ptr->_filterList = d_ptr->_filterList;
+    }
+    if (other.d_ptr->_filterList.count() == 0) {
+        result.d_ptr->_filterList.append(QMessageFolderFilterPrivate::SortedMessageFolderFilterList());
+        result.d_ptr->_filterList[result.d_ptr->_filterList.count()-1] << other;
+    } else {
+        result.d_ptr->_filterList << other.d_ptr->_filterList;
+    }
+    result.d_ptr->_valid = d_ptr->_valid & other.d_ptr->_valid;
+    
+    return result;
 }
 
 const QMessageFolderFilter& QMessageFolderFilter::operator&=(const QMessageFolderFilter& other)
 {
-    Q_UNUSED(other)
+    if (&other == this) {
+        return *this;
+    }
+    
+    if (isEmpty()) {
+        *this = other;
+        return *this;
+    }
+    
+    if (other.isEmpty()) {
+        return *this;
+    }
+
+    if (d_ptr->_filterList.count() == 0) {
+        d_ptr->_filterList.append(QMessageFolderFilterPrivate::SortedMessageFolderFilterList());
+        d_ptr->_filterList[0] << QMessageFolderFilter(*this);
+    }
+    for (int i=0; i < d_ptr->_filterList.count(); i++) {
+        if (other.d_ptr->_filterList.count() == 0) {
+            d_ptr->_filterList[i] << other;
+        } else {
+            for (int j=0; j < other.d_ptr->_filterList.count(); j++) {
+                d_ptr->_filterList[i] << other.d_ptr->_filterList[j];
+            }
+        }
+        qSort(d_ptr->_filterList[i].begin(), d_ptr->_filterList[i].end(), QMessageFolderFilterPrivate::lessThan);
+    }
+    d_ptr->_valid = d_ptr->_valid & other.d_ptr->_valid;
+    
     return *this;
 }
 
 const QMessageFolderFilter& QMessageFolderFilter::operator|=(const QMessageFolderFilter& other)
 {
-    Q_UNUSED(other)
+    if (&other == this) {
+        return *this;
+    }
+    
+    if (isEmpty()) {
+        return *this;
+    }
+    
+    if (other.isEmpty()) {
+        *this = other;
+        return *this;
+    }
+
+    if (other.d_ptr->_filterList.count() == 0) {
+        d_ptr->_filterList.append(QMessageFolderFilterPrivate::SortedMessageFolderFilterList());
+        d_ptr->_filterList[d_ptr->_filterList.count()-1] << other;
+    } else {
+        d_ptr->_filterList << other.d_ptr->_filterList;
+    }
+    d_ptr->_valid = d_ptr->_valid & other.d_ptr->_valid;
+    
     return *this;
 }
 
 bool QMessageFolderFilter::operator==(const QMessageFolderFilter& other) const
 {
-    Q_UNUSED(other)
-    return false; // stub
+    if (d_ptr->_filterList.count() != other.d_ptr->_filterList.count()) {
+        return false;
+    }
+
+    if (d_ptr->_filterList.count() == 0) {
+        return (d_ptr->_field == other.d_ptr->_field &&
+                d_ptr->_value == other.d_ptr->_value &&
+                d_ptr->_ids == other.d_ptr->_ids &&
+                d_ptr->_comparatorType == other.d_ptr->_comparatorType &&
+                d_ptr->_comparatorValue == other.d_ptr->_comparatorValue);
+    } else { // List
+        for (int i=0; i < d_ptr->_filterList.count(); i++) {
+            if (d_ptr->_filterList[i].count() != other.d_ptr->_filterList[i].count()) {
+                return false;
+            }
+            for (int j=0; j < d_ptr->_filterList[i].count(); j++) {
+                if (!(d_ptr->_filterList[i][j] == other.d_ptr->_filterList[i][j])) {
+                    return false;
+                }
+            }
+        }
+    }
+    
+    return true;
 }
 
 QMessageFolderFilter QMessageFolderFilter::byId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(id)
-    Q_UNUSED(cmp)
-    return QMessageFolderFilter(); // stub
+    QMessageFolderFilter result;
+    result.d_ptr->_field = QMessageFolderFilterPrivate::Id;
+    result.d_ptr->_value = id.toString();
+    result.d_ptr->_comparatorType = QMessageFolderFilterPrivate::Equality;
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
+    result.d_ptr->_valid = true;
+    return result;
 }
 
 QMessageFolderFilter QMessageFolderFilter::byId(const QMessageFolderIdList &ids, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(ids)
-    Q_UNUSED(cmp)
-    return QMessageFolderFilter(); // stub
+    QMessageFolderFilter result;
+    result.d_ptr->_field = QMessageFolderFilterPrivate::Id;
+    result.d_ptr->_ids = ids;
+    result.d_ptr->_comparatorType = QMessageFolderFilterPrivate::Inclusion;
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
+    result.d_ptr->_valid = true;
+    return result;
 }
 
 QMessageFolderFilter QMessageFolderFilter::byId(const QMessageFolderFilter &filter, QMessageDataComparator::InclusionComparator cmp)
@@ -139,37 +508,57 @@ QMessageFolderFilter QMessageFolderFilter::byId(const QMessageFolderFilter &filt
 
 QMessageFolderFilter QMessageFolderFilter::byDisplayName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFolderFilter(); // stub
+    QMessageFolderFilter result;
+    result.d_ptr->_field = QMessageFolderFilterPrivate::DisplayName;
+    result.d_ptr->_value = value;
+    result.d_ptr->_comparatorType = QMessageFolderFilterPrivate::Equality;
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
+    result.d_ptr->_valid = true;
+    return result;
 }
 
 QMessageFolderFilter QMessageFolderFilter::byDisplayName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFolderFilter(); // stub
+    QMessageFolderFilter result;
+    result.d_ptr->_field = QMessageFolderFilterPrivate::DisplayName;
+    result.d_ptr->_value = value;
+    result.d_ptr->_comparatorType = QMessageFolderFilterPrivate::Inclusion;
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
+    result.d_ptr->_valid = true;
+    return result;
 }
 
 QMessageFolderFilter QMessageFolderFilter::byPath(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFolderFilter(); // stub
+    QMessageFolderFilter result;
+    result.d_ptr->_field = QMessageFolderFilterPrivate::Path;
+    result.d_ptr->_value = value;
+    result.d_ptr->_comparatorType = QMessageFolderFilterPrivate::Equality;
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
+    result.d_ptr->_valid = true;
+    return result;
 }
 
 QMessageFolderFilter QMessageFolderFilter::byPath(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(value)
-    Q_UNUSED(cmp)
-    return QMessageFolderFilter(); // stub
+    QMessageFolderFilter result;
+    result.d_ptr->_field = QMessageFolderFilterPrivate::Path;
+    result.d_ptr->_value = value;
+    result.d_ptr->_comparatorType = QMessageFolderFilterPrivate::Inclusion;
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
+    result.d_ptr->_valid = true;
+    return result;
 }
 
 QMessageFolderFilter QMessageFolderFilter::byParentAccountId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(id)
-    Q_UNUSED(cmp)
-    return QMessageFolderFilter(); // stub
+    QMessageFolderFilter result;
+    result.d_ptr->_field = QMessageFolderFilterPrivate::ParentAccountId;
+    result.d_ptr->_value = id.toString();
+    result.d_ptr->_comparatorType = QMessageFolderFilterPrivate::Equality;
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
+    result.d_ptr->_valid = true;
+    return result;
 }
 
 QMessageFolderFilter QMessageFolderFilter::byParentAccountId(const QMessageAccountFilter &filter, QMessageDataComparator::InclusionComparator cmp)
@@ -181,9 +570,13 @@ QMessageFolderFilter QMessageFolderFilter::byParentAccountId(const QMessageAccou
 
 QMessageFolderFilter QMessageFolderFilter::byParentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
 {
-    Q_UNUSED(id)
-    Q_UNUSED(cmp)
-    return QMessageFolderFilter(); // stub
+    QMessageFolderFilter result;
+    result.d_ptr->_field = QMessageFolderFilterPrivate::ParentFolderId;
+    result.d_ptr->_value = id.toString();
+    result.d_ptr->_comparatorType = QMessageFolderFilterPrivate::Equality;
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
+    result.d_ptr->_valid = true;
+    return result;
 }
 
 QMessageFolderFilter QMessageFolderFilter::byParentFolderId(const QMessageFolderFilter &filter, QMessageDataComparator::InclusionComparator cmp)
@@ -195,9 +588,13 @@ QMessageFolderFilter QMessageFolderFilter::byParentFolderId(const QMessageFolder
 
 QMessageFolderFilter QMessageFolderFilter::byAncestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(id)
-    Q_UNUSED(cmp)
-    return QMessageFolderFilter(); // stub
+    QMessageFolderFilter result;
+    result.d_ptr->_field = QMessageFolderFilterPrivate::AncestorFolderIds;
+    result.d_ptr->_value = id.toString();
+    result.d_ptr->_comparatorType = QMessageFolderFilterPrivate::Inclusion;
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
+    result.d_ptr->_valid = true;
+    return result;
 }
 
 QMessageFolderFilter QMessageFolderFilter::byAncestorFolderIds(const QMessageFolderFilter &filter, QMessageDataComparator::InclusionComparator cmp)

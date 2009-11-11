@@ -2,9 +2,9 @@ TEMPLATE = subdirs
 
 include($$QT_MOBILITY_BUILD_TREE/config.pri)
 
-#SUBDIRS += databasemanager \                #service framework
-#           servicedatabase \ 
-SUBDIRS+=  servicemetadata \
+SUBDIRS += databasemanager \                #service framework
+           servicedatabase \ 
+           servicemetadata \
            qserviceinterfacedescriptor \
            qservicefilter \
            qservicemanager \
@@ -80,7 +80,7 @@ SUBDIRS += \             #Multimedia
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
-#        qvideowidget
+        qvideowidget
 
 contains(QT_CONFIG, multimedia) {
     SUBDIRS += \

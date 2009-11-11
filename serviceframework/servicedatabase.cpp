@@ -41,9 +41,9 @@
 
 //#define QT_SFW_SERVICEDATABASE_DEBUG
 
+#include "servicedatabase_p.h"
 #include <QDir>
 #include <QSet>
-#include "servicedatabase_p.h"
 #include "qserviceinterfacedescriptor.h"
 #include "qserviceinterfacedescriptor_p.h"
 #include <QUuid>

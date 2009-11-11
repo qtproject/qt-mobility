@@ -3,6 +3,7 @@ TARGET=servicexmlgen
 
 INCLUDEPATH += ../../serviceframework
 
+DEFINES += SERVICE_XML_GENERATOR
 HEADERS = servicexmlgen.h \
           servicewidget.h \
           interfacestabwidget.h \
@@ -15,9 +16,10 @@ SOURCES = servicexmlgen.cpp \
           interfacestabwidget.cpp \
           interfacewidget.cpp \
           mandatorylineedit.cpp \
-          errorcollector.cpp
+          errorcollector.cpp \
+	  ../../serviceframework/servicemetadata.cpp \
+	  ../../serviceframework/qserviceinterfacedescriptor.cpp
 
 include(../../common.pri)
-qtAddLibrary(QtServiceFramework)
 
 include(../../features/deploy.pri)

@@ -39,7 +39,11 @@
 **
 ****************************************************************************/
 #include "qmessagecontentcontainer.h"
+#ifdef Q_OS_SYMBIAN
+#include "qmessagecontentcontainer_symbian_p.h"
+#else
 #include "qmessagecontentcontainer_p.h"
+#endif
 
 /*!
     \class QMessageContentContainer

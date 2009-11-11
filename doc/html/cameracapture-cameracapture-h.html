@@ -58,6 +58,7 @@
     #define RECORDER_H
 
     #include &lt;experimental/qcamera.h&gt;
+    #include &lt;qmediarecorder.h&gt;
 
     namespace Ui {
         class CameraCapture;
@@ -96,6 +97,7 @@
         void updateAudioDevice(QAction*);
 
         void updateCameraState(QCamera::State);
+        void updateRecorderState(QMediaRecorder::State state);
 
         void updateRecordTime();
 
