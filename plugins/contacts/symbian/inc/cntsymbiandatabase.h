@@ -66,6 +66,7 @@ public:
 public:
     CContactDatabase* contactDatabase();
     void appendContactsEmitted(QList<QContactLocalId> *contactList);
+    void appendContactEmitted(QContactLocalId id);
     
 public:
     // From MContactDbObserver

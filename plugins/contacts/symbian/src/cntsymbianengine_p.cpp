@@ -72,21 +72,15 @@ typedef QList<QContactLocalId> QContactLocalIdList;
 // the called function or the return value of the function is placed to the
 // variable.
 
-CntSymbianEnginePrivate::CntSymbianEnginePrivate(QContactManagerEngine *engine, const QMap<QString, QString>& parameters, QContactManager::Error& error) :
-    m_dataBase(0),
+CntSymbianEnginePrivate::CntSymbianEnginePrivate(CntSymbianDatabase *database, const QMap<QString, QString>& parameters, QContactManager::Error& error) :
+    m_dataBase(database),
     m_transformContact(0)
 {
-    m_dataBase = new CntSymbianDatabase(engine, error);
-    
-    //Database opened successfully
-    if(error == QContactManager::NoError)
-    {
-        m_managerUri = QContactManager::buildUri(CNT_SYMBIAN_MANAGER_NAME, parameters);
-    	m_transformContact = new CntTransformContact;
-        m_contactFilter    = new CntSymbianFilterDbms(*m_dataBase->contactDatabase());
-        m_contactSorter    = new CntSymbianSorterDbms(*m_dataBase->contactDatabase(), *m_transformContact);
-        m_relationship     = new CntRelationship(m_dataBase->contactDatabase());
-    }
+    m_managerUri = QContactManager::buildUri(CNT_SYMBIAN_MANAGER_NAME, parameters);
+    m_transformContact = new CntTransformContact;
+    m_contactFilter    = new CntSymbianFilterDbms(*m_dataBase->contactDatabase());
+    m_contactSorter    = new CntSymbianSorterDbms(*m_dataBase->contactDatabase(), *m_transformContact);
+    m_relationship     = new CntRelationship(m_dataBase->contactDatabase());
 }
 
 CntSymbianEnginePrivate::~CntSymbianEnginePrivate()
@@ -94,7 +88,6 @@ CntSymbianEnginePrivate::~CntSymbianEnginePrivate()
 	// m_contactFilter needs to be deleted before m_dataBase->contactDatabase()
     delete m_contactFilter;
     delete m_contactSorter;
-	delete m_dataBase;
 	delete m_transformContact;
 	delete m_relationship;
 }

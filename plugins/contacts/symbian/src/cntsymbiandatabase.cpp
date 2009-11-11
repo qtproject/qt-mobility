@@ -100,6 +100,11 @@ void CntSymbianDatabase::appendContactsEmitted(QList<QContactLocalId> *contactLi
     m_contactsEmitted += *contactList;
 }
 
+void CntSymbianDatabase::appendContactEmitted(QContactLocalId id)
+{
+    m_contactsEmitted.append(id);
+}
+
 /*!
  * Respond to a contacts database event, delegating this event to
  * an appropriate signal as required.

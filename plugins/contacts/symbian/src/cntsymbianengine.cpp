@@ -53,6 +53,9 @@
 #include "cntsymbianengine.h"
 #include "cntsymbianengine_p.h"
 #include "qcontactchangeset.h"
+#include "cntsymbiandatabase.h"
+#include "cnttransformcontact.h"
+#include "cntsymbiantransformerror.h"
 
 #include <flogger.h>
 namespace {
@@ -73,13 +76,23 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
     PbkPrintToLog(_L("CntSymbianEngine::CntSymbianEngine"));
 
     error = QContactManager::NoError;
+    
+    m_dataBase = new CntSymbianDatabase(this, error);
 
-    d = new CntSymbianEnginePrivate(this, parameters, error);
-
+    //Database opened successfully
+    if(error == QContactManager::NoError) {
+        m_managerUri = QContactManager::buildUri(CNT_SYMBIAN_MANAGER_NAME, parameters);
+        d = new CntSymbianEnginePrivate(m_dataBase, parameters, error);
+        m_transformContact = new CntTransformContact;
+    }
 }
 
 CntSymbianEngine::CntSymbianEngine(const CntSymbianEngine& other)
-    : QContactManagerEngine(), d(other.d)
+    : QContactManagerEngine(), 
+      m_dataBase(other.m_dataBase),
+      m_managerUri(other.m_managerUri),
+      m_transformContact(other.m_transformContact),
+      d(other.d)
 {
     PbkPrintToLog(_L("CntSymbianEngine::CntSymbianEngine"));
 }
@@ -87,6 +100,9 @@ CntSymbianEngine::CntSymbianEngine(const CntSymbianEngine& other)
 CntSymbianEngine& CntSymbianEngine::operator=(const CntSymbianEngine& other)
 {
     // assign
+    m_dataBase = other.m_dataBase;
+    m_managerUri = other.m_managerUri;
+    m_transformContact = other.m_transformContact;
     d = other.d;
 
     return *this;
@@ -95,6 +111,8 @@ CntSymbianEngine& CntSymbianEngine::operator=(const CntSymbianEngine& other)
 CntSymbianEngine::~CntSymbianEngine()
 {
     PbkPrintToLog(_L("~CntSymbianEngine::CntSymbianEngine"));
+    delete m_dataBase;
+    delete m_transformContact;
 }
 
 void CntSymbianEngine::deref()
@@ -194,7 +212,7 @@ QList<QContactLocalId> CntSymbianEngine::contacts(const QString& contactType, co
 
 QContact CntSymbianEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
-    QContact contact = d->contact(contactId, error);
+    QContact contact = fetchContact(contactId, error);
 
     // synthesize display label (the label it is not saved to the contact
     // database, thus not modifiable by a client).
@@ -250,7 +268,7 @@ QList<QContactLocalId> CntSymbianEngine::slowFilter(
         QContactLocalId id = contacts.at(i);
 
         // Check if this is a false positive. If not, add to the result set.
-        if(QContactManagerEngine::testFilter(filter, d->contact(id, error)))
+        if(QContactManagerEngine::testFilter(filter, fetchContact(id, error)))
             result << id;
     }
     return result;
@@ -302,7 +320,7 @@ bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& chang
     // Update an existing contact
     } else if(contact->localId()) {
         if(contact->id().managerUri() == managerUri()) {
-            ret = d->updateContact(*contact, changeSet, error);
+            ret = updateContact(*contact, changeSet, error);
             if (ret)
                 updateDisplayLabel(*contact);
         } else {
@@ -311,12 +329,247 @@ bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& chang
         }
     // Create new contact
     } else {
-        ret = d->addContact(*contact, changeSet, error);
+        ret = addContact(*contact, changeSet, error);
         if (ret)
             updateDisplayLabel(*contact);
     }
     return ret;
 }
+
+/*!
+ * Read a contact from the contact database.
+ *
+ * Internal implementation to read a conact, called by
+ * QContactManager::contact().
+ *
+ * \param contactId The Id of the contact to be retrieved.
+ * \param qtError Qt error code.
+ * \return A QContact for the requested QUniquId value or 0 if the read
+ *  operation was unsuccessful (e.g. contact not found).
+ */
+QContact CntSymbianEngine::fetchContact(const QContactLocalId& contactId, QContactManager::Error& qtError) const
+{
+    // See QT_TRYCATCH_LEAVING note at the begginning of this file
+    QContact* contact = new QContact();
+    TRAPD(err, QT_TRYCATCH_LEAVING(*contact = fetchContactL(contactId)));
+    CntSymbianTransformError::transformError(err, qtError);
+    return *QScopedPointer<QContact>(contact);
+}
+
+/*!
+ * Private leaving implementation for contact()
+ */
+QContact CntSymbianEngine::fetchContactL(const QContactLocalId &localId) const
+{
+    // A contact with a zero id is not expected to exist.
+    // Symbian contact database uses id 0 internally as the id of the
+    // system template.
+    if(localId == 0)
+        User::Leave(KErrNotFound);
+
+    // Read the contact from the CContactDatabase
+    CContactItem* symContact = m_dataBase->contactDatabase()->ReadContactL(localId);
+    CleanupStack::PushL(symContact);
+
+    // Convert to a QContact
+    QContact contact = m_transformContact->transformContactL(*symContact, *m_dataBase->contactDatabase());
+
+    // Convert id
+    QContactId contactId;
+    contactId.setLocalId(localId);
+    contactId.setManagerUri(m_managerUri);
+    contact.setId(contactId);
+
+    CleanupStack::PopAndDestroy(symContact);
+
+    return contact;
+}
+
+/*!
+ * Add the specified contact item to the persistent contacts store.
+ *
+ * \param contact The QContact to be saved.
+ * \param id The Id of new contact
+ * \param qtError Qt error code.
+ * \return Error status
+ */
+bool CntSymbianEngine::addContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError)
+{
+    // Attempt to persist contact, trapping errors
+    int err(0);
+    QContactLocalId id(0);
+    TRAP(err, QT_TRYCATCH_LEAVING(id = addContactL(contact)));
+    if(err == KErrNone)
+    {
+        changeSet.addedContacts().insert(id);
+        m_dataBase->appendContactEmitted(id);
+    }
+    CntSymbianTransformError::transformError(err, qtError);
+
+    return (err==KErrNone);
+}
+
+/*!
+ * Private leaving implementation for addContact()
+ *
+ * \param contact The contact item to save in the database.
+ * \return The new contact ID.
+ */
+int CntSymbianEngine::addContactL(QContact &contact)
+{
+    CContactItem* contactItem(0);
+    int id(0);
+
+    //handle normal contact
+    if(contact.type() == QContactType::TypeContact)
+    {
+        // Create a new contact card.
+        contactItem = CContactCard::NewLC();
+        m_transformContact->transformContactL(contact, *contactItem);
+        // Add to the database
+        id = m_dataBase->contactDatabase()->AddNewContactL(*contactItem);
+        CleanupStack::PopAndDestroy(contactItem);
+
+        // Update the changed values to the QContact
+        // id
+        QScopedPointer<QContactId> contactId(new QContactId());
+        contactId->setLocalId(id);
+        contactId->setManagerUri(m_managerUri);
+        contact.setId(*contactId);
+        contactItem = m_dataBase->contactDatabase()->ReadContactLC(id);
+        // Guid
+        QContactDetail* detail = m_transformContact->transformGuidItemFieldL(*contactItem, *m_dataBase->contactDatabase());
+        contact.saveDetail(detail);
+        // Timestamp
+        detail = m_transformContact->transformTimestampItemFieldL(*contactItem, *m_dataBase->contactDatabase());
+        contact.saveDetail(detail);
+        CleanupStack::PopAndDestroy(contactItem);
+    }
+    //group contact
+    else if(contact.type() == QContactType::TypeGroup)
+    {
+        // Create a new group, which is added to the database
+        contactItem = m_dataBase->contactDatabase()->CreateContactGroupLC();
+
+        //set the id for the contact, needed by update
+        id = contactItem->Id();
+        QScopedPointer<QContactId> contactId(new QContactId());
+        contactId->setLocalId(QContactLocalId(id));
+        contactId->setManagerUri(m_managerUri);
+        contact.setId(*contactId);
+
+        //update contact, will add the fields to the already saved group
+        updateContactL(contact);
+
+        CleanupStack::PopAndDestroy(contactItem);
+    }
+    // Leave with an error
+    else
+    {
+        User::Leave(KErrInvalidContactDetail);
+    }
+
+    // Return the new ID.
+    return id;
+}
+
+/*!
+ * Update an existing contact entry in the database.
+ *
+ * \param contact The contact to update in the database.
+ * \param qtError Qt error code.
+ * \return Error status.
+ */
+bool CntSymbianEngine::updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError)
+{
+    int err(0);
+    TRAP(err, QT_TRYCATCH_LEAVING(updateContactL(contact)));
+    if(err == KErrNone)
+    {
+        //TODO: check what to do with groupsChanged
+        changeSet.changedContacts().insert(contact.localId());
+        m_dataBase->appendContactEmitted(contact.localId());
+    }
+    CntSymbianTransformError::transformError(err, qtError);
+    return (err==KErrNone);
+}
+
+/*!
+ * Private leaving implementation for updateContact()
+ *
+ * \param contact The contact to update in the database.
+ */
+void CntSymbianEngine::updateContactL(QContact &contact)
+{
+    // Need to open the contact for write, leaving this item
+    // on the cleanup stack to unlock the item in the event of a leave.
+    CContactItem* contactItem = m_dataBase->contactDatabase()->OpenContactLX(contact.localId());
+    CleanupStack::PushL(contactItem);
+
+    // Copy the data from QContact to CContactItem
+    m_transformContact->transformContactL(contact, *contactItem);
+
+    // Write the entry using the converted  contact
+    // note commitContactL removes empty fields from the contact
+    m_dataBase->contactDatabase()->CommitContactL(*contactItem);
+
+    // retrieve the contact in case of empty fields that have been removed, this could also be handled in transformcontact.
+    contact = fetchContactL(contact.localId());
+
+    // Update group memberships to contact database
+    //updateMemberOfGroupsL(contact);
+
+    CleanupStack::PopAndDestroy(contactItem);
+    CleanupStack::PopAndDestroy(1); // commit lock
+}
+
+/*!
+ * Remove the specified contact object from the database.
+ *
+ * The removal of contacts from the underlying contacts model database
+ * is performed in transactions of maximum 50 items at a time. E.g.
+ * deleting 177 contacts would be done in 3 transactions of 50 and a
+ * final transaction of 27.
+ *
+ * \param contact The QContact to be removed.
+ * \param qtError Qt error code.
+ * \return Error status.
+ */
+bool CntSymbianEngine::removeContact(const QContactLocalId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError)
+{
+    // removeContactL() can't throw c++ exception
+    TRAPD(err, removeContactL(id));
+    if(err == KErrNone)
+    {
+        //TODO: check what to do with groupsChanged?
+        changeSet.removedContacts().insert(id);
+        m_dataBase->appendContactEmitted(id);
+    }
+    CntSymbianTransformError::transformError(err, qtError);
+    return (err==KErrNone);
+}
+
+/*!
+ * Private leaving implementation for removeContact
+ */
+int CntSymbianEngine::removeContactL(QContactLocalId id)
+{
+    // A contact with a zero id is not expected to exist.
+    // Symbian contact database uses id 0 internally as the id of the
+    // system template.
+    if(id == 0)
+        User::Leave(KErrNotFound);
+
+    //TODO: in future QContactLocalId will be a class so this will need to be changed.
+    TContactItemId cId = static_cast<TContactItemId>(id);
+
+    //TODO: add code to remove all relationships.
+
+    m_dataBase->contactDatabase()->DeleteContactL(cId);
+
+    return 0;
+}
+
 
 void CntSymbianEngine::updateDisplayLabel(QContact& contact) const
 {
@@ -333,7 +586,7 @@ void CntSymbianEngine::updateDisplayLabel(QContact& contact) const
 bool CntSymbianEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
 {
     QContactChangeSet changeSet;
-    TBool ret = d->removeContact(contactId, changeSet, error);
+    TBool ret = removeContact(contactId, changeSet, error);
     changeSet.emitSignals(this);
     return ret;
 }
@@ -350,7 +603,7 @@ QList<QContactManager::Error> CntSymbianEngine::removeContacts(QList<QContactLoc
         QContactManager::Error functionError = QContactManager::NoError;
         for (int i = 0; i < contactIds->count(); i++) {
             QContactLocalId current = contactIds->at(i);
-            if (!d->removeContact(current, changeSet, error)) {
+            if (!removeContact(current, changeSet, error)) {
                 functionError = error;
                 ret.append(functionError);
             } else {
