@@ -60,6 +60,11 @@
 #include <QSet>
 #include "qserviceinterfacedescriptor.h"
 
+#ifdef SERVICE_XML_GENERATOR
+#undef Q_AUTOTEST_EXPORT
+#define Q_AUTOTEST_EXPORT
+#endif
+
 class QIODevice;
 
 QT_BEGIN_NAMESPACE

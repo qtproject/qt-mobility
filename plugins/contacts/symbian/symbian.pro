@@ -92,7 +92,7 @@ symbian: {
     LIBS += \
         -lcntmodel \
         -lcentralrepository \
-        -lestor
+        -lestor \
         -lflogger
 
     target.path = /sys/bin

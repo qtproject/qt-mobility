@@ -115,8 +115,10 @@ void QCameraPrivate::initControls()
         imageControl = qobject_cast<QImageProcessingControl *>(service->control(QImageProcessingControl_iid));
         captureControl = qobject_cast<QImageCaptureControl *>(service->control(QImageCaptureControl_iid));
 
-        q->connect(control, SIGNAL(stateChanged(QCamera::State)), q, SIGNAL(stateChanged(QCamera::State)));
-        q->connect(control, SIGNAL(error(int,QString)), q, SLOT(_q_error(int,QString)));
+        if (control) {
+            q->connect(control, SIGNAL(stateChanged(QCamera::State)), q, SIGNAL(stateChanged(QCamera::State)));
+            q->connect(control, SIGNAL(error(int,QString)), q, SLOT(_q_error(int,QString)));
+        }
 
         error = QCamera::NoError;
     } else {

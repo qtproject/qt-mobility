@@ -58,6 +58,7 @@ public:
     virtual void countryCodeChanged() = 0;
     virtual void networkCodeChanged() = 0;
     virtual void networkNameChanged() = 0;
+    virtual void networkModeChanged() = 0;
 
     virtual void cellNetworkSignalStrengthChanged() = 0;
     virtual void cellNetworkStatusChanged() = 0;
@@ -186,6 +187,7 @@ public:
     QString countryCode() const;
     QString networkCode() const;
     QString networkName() const;
+    CTelephony::TNetworkMode networkMode() const;
 
 private:
     bool m_initializing;
@@ -204,6 +206,10 @@ private:
     
     QString m_networkName;
     QString m_previousNetworkName;
+    
+    CTelephony::TNetworkMode m_networkMode;
+    CTelephony::TNetworkMode m_previousNetworkMode;
+
 };
 
 class CCellNetworkRegistrationInfo : public CTelephonyInfo

@@ -90,7 +90,6 @@ Q_DECLARE_METATYPE(const uchar *)
 
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
 Q_DECLARE_METATYPE(QPainterVideoSurface::ShaderType);
-#endif
 
 class QtTestGLVideoBuffer : public QAbstractVideoBuffer
 {
@@ -118,6 +117,8 @@ public:
 private:
     GLuint m_textureId;
 };
+
+#endif
 
 class QtTestOpaqueVideoBuffer : public QAbstractVideoBuffer
 {

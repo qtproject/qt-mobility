@@ -47,17 +47,50 @@
 
 #include <QSet>
 
+#ifdef Q_OS_SYMBIAN
+#include <qmessageaccount.h>
+#include <QVariant>
+#endif
+
 class QMessageAccountFilterPrivate
 {
     Q_DECLARE_PUBLIC(QMessageAccountFilter)
 
 public:
+#ifndef Q_OS_SYMBIAN
     enum Criterion { None = 0, IdEquality, IdInclusion, NameEquality, NameInclusion };
     enum Operator { Identity = 0, And, Or, Not, Nand, Nor, OperatorEnd };
+#endif
 
     QMessageAccountFilterPrivate(QMessageAccountFilter *accountFilter);
     ~QMessageAccountFilterPrivate();
     QMessageAccountFilter *q_ptr;
+
+#ifdef Q_OS_SYMBIAN
+    typedef QList<QMessageAccountFilter> SortedMessageAccountFilterList;
+    
+    bool filter(QMessageAccount &messageAccount);
+
+    static void applyNot(QMessageAccountFilter& filter);
+    static bool lessThan(const QMessageAccountFilter filter1, const QMessageAccountFilter filter2);
+    static QMessageAccountFilterPrivate* implementation(const QMessageAccountFilter &filter);
+
+    QMessageDataComparator::Options _options;    
+    
+    enum Field {None = 0, Id, Name};
+    enum Comparator {Equality = 0, Inclusion};
+    
+    bool _valid;
+    
+    QMessageAccountIdList _ids;
+    QVariant _value;
+    Field _field;
+
+    Comparator _comparatorType;
+    int _comparatorValue;
+    
+    QList<SortedMessageAccountFilterList> _filterList;
+#endif
 
 #ifdef Q_OS_WIN
     QMessageAccountFilterPrivate &operator=(const QMessageAccountFilterPrivate &other);

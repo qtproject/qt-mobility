@@ -67,5 +67,9 @@ public:
 
 private:
     QMessageAccountPrivate *d_ptr;
+#ifdef Q_OS_SYMBIAN
+    friend class CMTMEngine;
+    friend class CMessagesFindOperation;
+#endif
 };
 #endif

@@ -242,6 +242,9 @@ CCellNetworkInfo::CCellNetworkInfo(CTelephony &telephony) : CTelephonyInfo(telep
     m_networkName = QString::fromUtf16(networkName.Ptr(), networkName.Length());
     m_previousNetworkName = m_networkName;
 
+    m_networkMode = m_networkInfoV1.iMode;
+    m_previousNetworkMode = m_networkMode;
+
     m_initializing = false;
     
     startMonitoring();    
@@ -265,6 +268,8 @@ void CCellNetworkInfo::RunL()
             m_networkName = QString::fromUtf16(networkName.Ptr(),
             networkName.Length());
 
+        m_networkMode = m_networkInfoV1.iMode;
+
         foreach (MTelephonyInfoObserver *observer, m_observers) {
             if (m_networkId != m_previousNetworkId) {
                 observer->networkCodeChanged();
@@ -275,10 +280,14 @@ void CCellNetworkInfo::RunL()
             if (m_networkName != m_previousNetworkName) {
                 observer->networkNameChanged();
             }
+            if (m_networkMode != m_previousNetworkMode) {
+                observer->networkModeChanged();
+            }
         }
         m_previousNetworkId = m_networkId;
         m_previousCountryCode = m_countryCode;
         m_previousNetworkName = m_networkName;
+        m_previousNetworkMode = m_networkMode;
         startMonitoring();
     }
 }
@@ -316,6 +325,12 @@ QString CCellNetworkInfo::networkName() const
 {
     return m_networkName;
 }
+
+CTelephony::TNetworkMode CCellNetworkInfo::networkMode() const
+{
+    return m_networkMode;
+}
+
 
 void CCellNetworkInfo::startMonitoring()
 {

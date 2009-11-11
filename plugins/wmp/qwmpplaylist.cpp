@@ -69,9 +69,6 @@ QWmpPlaylist::~QWmpPlaylist()
 {
     if (m_playlist)
         m_playlist->Release();
-
-    if (m_player)
-        m_player->Release();
 }
 
 bool QWmpPlaylist::load(const QString &location, const char *format)

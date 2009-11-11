@@ -41,104 +41,203 @@
 #include "qmessageordering.h"
 #include "qmessageordering_p.h"
 
+#define COMPARE(x,y) \
+if ((x) < (y)) { \
+    return true; \
+} else if ((y) < (x)) { \
+    return false; \
+} else { \
+    continue; \
+}
+
+QMessageOrderingPrivate::QMessageOrderingPrivate(QMessageOrdering *ordering)
+ : q_ptr(ordering),
+   _valid(true)
+{
+}
+
+QMessageOrdering QMessageOrderingPrivate::from(QMessageOrderingPrivate::Field field, Qt::SortOrder order)
+{
+    QMessageOrdering result;
+    QPair<QMessageOrderingPrivate::Field, Qt::SortOrder> fieldOrder(field, order);
+    result.d_ptr->_fieldOrderList.append(fieldOrder);
+    return result;
+}
+
+QMessageOrderingPrivate* QMessageOrderingPrivate::implementation(const QMessageOrdering &ordering)
+
+{
+    return ordering.d_ptr;
+}
+
+bool QMessageOrderingPrivate::lessThan(const QMessageOrdering &ordering,
+                                       const QMessage &message1, const QMessage &message2)
+{
+    QMessageOrderingPrivate *d(ordering.d_ptr);
+
+    QList<QPair<Field, Qt::SortOrder> >::iterator it(d->_fieldOrderList.begin());
+    while (it != d->_fieldOrderList.end()) {
+        Field field((*it).first);
+        Qt::SortOrder order((*it).second);
+        ++it;
+
+        const QMessage *left;
+        const QMessage *right;
+        if (order == Qt::AscendingOrder) {
+            left = &message1;
+            right = &message2; 
+        } else {
+            left = &message2;
+            right = &message1; 
+        }
+
+        switch (field)
+        {
+        case Type: COMPARE(left->type(), right->type())
+        //TODO: case Sender: 
+        case Recipients: {
+            QString leftStr;
+            QString rightStr;
+            foreach (QMessageAddress a, left->to() + left->cc() + left->bcc()) {
+                leftStr.append(a.recipient() + ";");
+            }
+            foreach (QMessageAddress a, right->to() + right->cc() + right->bcc()) {
+                rightStr.append(a.recipient() + ";");
+            }
+            COMPARE(leftStr, rightStr)
+        }
+        case Subject: COMPARE(left->subject(), right->subject())
+        case TimeStamp: COMPARE(left->date(), right->date())
+        case ReceptionTimeStamp: COMPARE(left->receivedDate(), right->receivedDate())
+        case Read: COMPARE(left->status() & QMessage::Read, right->status() & QMessage::Read)
+        case HasAttachments: COMPARE(left->status() & QMessage::HasAttachments, right->status() & QMessage::HasAttachments)
+        case Incoming: COMPARE(left->status() & QMessage::Incoming, right->status() & QMessage::Incoming)
+        case Removed: COMPARE(left->status() & QMessage::Removed, right->status() & QMessage::Removed)
+        case Priority: COMPARE(left->priority(), right->priority())
+        case Size: COMPARE(left->size(), right->size())
+        }
+    }
+    return false; // equality
+}
+
 QMessageOrdering::QMessageOrdering()
+ : d_ptr(new QMessageOrderingPrivate(this))
 {
 }
 
 QMessageOrdering::QMessageOrdering(const QMessageOrdering &other)
+ : d_ptr(new QMessageOrderingPrivate(this))
 {
-    Q_UNUSED(other)
+	this->operator=(other);
 }
 
 QMessageOrdering::~QMessageOrdering()
 {
+	delete d_ptr;
+	d_ptr = 0;
 }
 
 QMessageOrdering& QMessageOrdering::operator=(const QMessageOrdering& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+	if (&other != this) {
+		d_ptr->_fieldOrderList = other.d_ptr->_fieldOrderList;
+		d_ptr->_valid = other.d_ptr->_valid;
+	}
+	
+	return *this;
 }
 
 bool QMessageOrdering::isEmpty() const
 {
-    return false; // stub
+	return d_ptr->_fieldOrderList.isEmpty();
 }
 
 bool QMessageOrdering::isSupported() const
 {
-    return true; // stub
+	return d_ptr->_valid;
 }
 
 QMessageOrdering QMessageOrdering::operator+(const QMessageOrdering& other) const
 {
-    Q_UNUSED(other)
-    return QMessageOrdering(); // stub
+	QMessageOrdering sum;
+	sum.d_ptr->_fieldOrderList = d_ptr->_fieldOrderList + other.d_ptr->_fieldOrderList;
+	return sum;
 }
 
 QMessageOrdering& QMessageOrdering::operator+=(const QMessageOrdering& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+	if (&other == this) {
+		 return *this;
+	}
+	d_ptr->_fieldOrderList += other.d_ptr->_fieldOrderList;
+	return *this;
 }
 
 bool QMessageOrdering::operator==(const QMessageOrdering& other) const
 {
-    Q_UNUSED(other)
-    return false; // stub
+	return (d_ptr->_fieldOrderList == other.d_ptr->_fieldOrderList);
 }
 
 QMessageOrdering QMessageOrdering::byType(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageOrdering(); // stub
+	QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Type, order));
+	return result;
 }
 
 QMessageOrdering QMessageOrdering::bySender(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageOrdering(); // stub
+	QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Sender, order));
+	return result;
 }
 
 QMessageOrdering QMessageOrdering::byRecipients(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageOrdering(); // stub
+	QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Recipients, order));
+	return result;
 }
 
 QMessageOrdering QMessageOrdering::bySubject(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageOrdering(); // stub
+	QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Subject, order));
+	return result;
 }
 
 QMessageOrdering QMessageOrdering::byTimeStamp(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageOrdering(); // stub
+	QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::TimeStamp, order));
+	return result;
 }
 
 QMessageOrdering QMessageOrdering::byReceptionTimeStamp(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageOrdering(); // stub
+	QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::ReceptionTimeStamp, order));
+	return result;
 }
 
 QMessageOrdering QMessageOrdering::byStatus(QMessage::Status flag, Qt::SortOrder order)
 {
-    Q_UNUSED(flag)
-    Q_UNUSED(order)
-    return QMessageOrdering(); // stub
+	QMessageOrdering result;
+	switch (flag) {
+	case QMessage::Read:
+		result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::Read, order);
+	case QMessage::HasAttachments:
+		result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::HasAttachments, order);
+	case QMessage::Incoming:
+		result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::Incoming, order);
+	case QMessage::Removed:
+		result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::Removed, order);
+	}
+	return result;
 }
 
 QMessageOrdering QMessageOrdering::byPriority(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageOrdering(); // stub
+	QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Priority, order));
+	return result;
 }
 
 QMessageOrdering QMessageOrdering::bySize(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageOrdering(); // stub
+	QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Size, order));
+	return result;
 }

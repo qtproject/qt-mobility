@@ -1,5 +1,5 @@
 TARGET = tst_qmediaserviceprovider
-INCLUDEPATH += ../../../src/multimedia
+INCLUDEPATH += ../../../src/multimedia ../../../src
 CONFIG += testcase
 
 SOURCES += tst_qmediaserviceprovider.cpp

@@ -83,13 +83,6 @@ QT_BEGIN_NAMESPACE
 
     \value Os                    Operating system version / platform ID.
     \value QtCore                Qt libs version.
-    \value WrtCore               Web runtime version.
-    \value Webkit                Version of Webkit.
-    \value ServiceFramework      version of Service Framework.
-    \value WrtExtensions         version of Web runtime.
-    \value ServiceProvider       Version of requested service provider.
-    \value NetscapePlugin        Version of Netscap plugin.
-    \value WebApp                Web Application identifier.
     \value Firmware              Version of (flashable) system as a whole.
 
   */
