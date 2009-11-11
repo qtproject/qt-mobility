@@ -1111,10 +1111,10 @@ namespace {
         // Remove any preexisting body elements
 #ifndef _WIN32_WCE
         SizedSPropTagArray(2, props) = {2, {PR_BODY, PR_RTF_COMPRESSED}};
-#elif(_WIN32_WCE >= 0x600)
-            SizedSPropTagArray(2, props) = {2, {PR_BODY_HTML_A, PR_BODY_W}};
+#elif(_WIN32_WCE > 0x501)
+        SizedSPropTagArray(2, props) = {2, {PR_BODY_HTML_A, PR_BODY_W}};
 #else
-            SizedSPropTagArray(2, props) = {2, {PR_BODY, PR_BODY_W}};
+        SizedSPropTagArray(2, props) = {2, {PR_BODY, PR_BODY_W}};
 #endif
         HRESULT rv = message->DeleteProps(reinterpret_cast<LPSPropTagArray>(&props), 0);
 #ifdef _WIN32_WCE
@@ -1144,9 +1144,10 @@ namespace {
 
                 if (subType == "html") {
                     IStream *os(0);
-#if(_WIN32_WCE >= 0x600)
+#if(_WIN32_WCE > 0x501)
                     HRESULT rv = message->OpenProperty(PR_BODY_HTML_A, 0, STGM_WRITE, MAPI_MODIFY | MAPI_CREATE,(LPUNKNOWN*)&os);
 #else
+                    // TODO: If we store the HTML in the body property, how do we know that it is HTML on extraction?
                     HRESULT rv = message->OpenProperty(PR_BODY, 0, STGM_WRITE, MAPI_MODIFY | MAPI_CREATE,(LPUNKNOWN*)&os);
 #endif
                     if (HR_SUCCEEDED(rv)) {
@@ -1676,8 +1677,8 @@ namespace WinHelpers {
                 mapiRelease(associations);
             }
 #elif  !defined(_WIN32_WCE) && (_MSC_VER<1500)
-	    //TODO Windows 2005 and 2003 don't have IID_PPV_ARGS.
-	    //find alternative
+            //TODO Windows 2005 and 2003 don't have IID_PPV_ARGS.
+            //find alternative
 #else
             // Find any registry entry for this extension
             HKEY key = { 0 };
@@ -3855,7 +3856,7 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
 #ifdef _WIN32_WCE
                         if (prop.Value.l & MSGSTATUS_HAS_PR_BODY) {
                             msg->d_ptr->_contentFormat = EDITOR_FORMAT_PLAINTEXT;
-#if(_WIN32_WCE >= 0x600)
+#if(_WIN32_WCE > 0x501)
                         } else if (prop.Value.l & MSGSTATUS_HAS_PR_BODY_HTML) {
                             msg->d_ptr->_contentFormat = EDITOR_FORMAT_HTML;
 #endif
@@ -4099,7 +4100,7 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                     // See if there is a body HTML property
     #ifndef _WIN32_WCE
                     ULONG bodyProperty(PR_BODY_HTML);
-    #elif(_WIN32_WCE >= 0x600)
+    #elif(_WIN32_WCE > 0x501)
                     // Correct variants discussed at http://blogs.msdn.com/raffael/archive/2008/09/08/mapi-on-windows-mobile-6-programmatically-retrieve-mail-body-sample-code.aspx
                     ULONG bodyProperty(PR_BODY_HTML_A);
     #else
