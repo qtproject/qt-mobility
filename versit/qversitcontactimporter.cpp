@@ -102,7 +102,7 @@ QVersitContactImporter::~QVersitContactImporter()
 
 /*!
  * Sets the \a path where the contact photos will be saved.
- * This function should be called before calling \l importContact.
+ * This function should be called before calling \l importContact().
  * If the image path has not been set,
  * the images in the versit document will not be added to the contact.
  * There is no default path for them.
@@ -122,7 +122,7 @@ QString QVersitContactImporter::imagePath() const
 
 /*!
  * Sets the \a path where the contact related audio clips will be saved.
- * This function should be called before calling \l importContact.
+ * This function should be called before calling \l importContact().
  * If the audio clip path has not been set,
  * the audio clips in the versit document will not be added to the contact.
  * There is no default path for them.

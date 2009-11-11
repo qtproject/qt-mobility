@@ -107,8 +107,8 @@ QStringList QVersitProperty::groups() const
 }
 
 /*!
- * Sets the name of the property.
- * The name is converted to upper-case.
+ * Sets the \a name of the property.
+ * The \a name is converted to upper-case.
  */
 void QVersitProperty::setName(const QString& name)
 {
@@ -186,7 +186,7 @@ QByteArray QVersitProperty::value() const
 }
 
 /*!
- * Sets the embedded document of the property
+ * Sets the embedded \a document of the property
  */
 void QVersitProperty::setEmbeddedDocument(const QVersitDocument& document)
 {
