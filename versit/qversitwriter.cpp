@@ -149,7 +149,7 @@ QIODevice* QVersitWriter::device() const
  * Starts writing the output asynchronously.
  * Returns false if the output device has not been set or opened or
  * if there is another asynchronous write operation already pending.
- * Signal \l writingDone is emitted when the writing has finished.
+ * Signal \l writingDone() is emitted when the writing has finished.
  */
 bool QVersitWriter::startWriting()
 {
@@ -166,7 +166,7 @@ bool QVersitWriter::startWriting()
  * Returns false if the output device has not been set or opened or
  * if there is an asynchronous write operation pending.
  * Using this function may block the user thread for an undefined period.
- * In most cases asynchronous \l startWriting should be used instead.
+ * In most cases asynchronous \l startWriting() should be used instead.
  */
 bool QVersitWriter::writeAll()
 {

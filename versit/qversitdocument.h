@@ -57,9 +57,10 @@ public:
 
     QVersitDocument& operator=(const QVersitDocument& other);
     
+    /*! Versit document type */
     enum VersitType {
-        VCard21,
-        VCard30
+        VCard21,   // vCard version 2.1
+        VCard30    // vCard version 3.0 (RFC 2426)
     };
 
     // metadata about the versit document itself.
