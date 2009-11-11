@@ -1,5 +1,6 @@
 # Symbian plugin header and source files
 SYMBIAN_HEADERS += \
+        ../../inc/cntsymbianengine.h \
         ../../inc/cntsymbianengine_p.h \
         ../../inc/cnttransformcontact.h \
         ../../inc/cnttransformcontactdata.h \
@@ -35,6 +36,7 @@ SYMBIAN_HEADERS += \
         ../../inc/cntsymbiandatabase.h
 
 SYMBIAN_SOURCES += \
+        ../../src/cntsymbianengine.cpp \
         ../../src/cntsymbianengine_p.cpp \
         ../../src/cnttransformcontact.cpp \
         ../../src/cnttransformcontactdata.cpp \

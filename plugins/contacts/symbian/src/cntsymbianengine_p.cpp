@@ -72,21 +72,15 @@ typedef QList<QContactLocalId> QContactLocalIdList;
 // the called function or the return value of the function is placed to the
 // variable.
 
-CntSymbianEnginePrivate::CntSymbianEnginePrivate(QContactManagerEngine *engine, const QMap<QString, QString>& parameters, QContactManager::Error& error) :
-    m_dataBase(0),
+CntSymbianEnginePrivate::CntSymbianEnginePrivate(CntSymbianDatabase *database, const QMap<QString, QString>& parameters, QContactManager::Error& error) :
+    m_dataBase(database),
     m_transformContact(0)
 {
-    m_dataBase = new CntSymbianDatabase(engine, error);
-    
-    //Database opened successfully
-    if(error == QContactManager::NoError)
-    {
-        m_managerUri = QContactManager::buildUri(CNT_SYMBIAN_MANAGER_NAME, parameters);
-    	m_transformContact = new CntTransformContact;
-        m_contactFilter    = new CntSymbianFilterDbms(*m_dataBase->contactDatabase());
-        m_contactSorter    = new CntSymbianSorterDbms(*m_dataBase->contactDatabase(), *m_transformContact);
-        m_relationship     = new CntRelationship(m_dataBase->contactDatabase());
-    }
+    m_managerUri = QContactManager::buildUri(CNT_SYMBIAN_MANAGER_NAME, parameters);
+    m_transformContact = new CntTransformContact;
+    m_contactFilter    = new CntSymbianFilterDbms(*m_dataBase->contactDatabase());
+    m_contactSorter    = new CntSymbianSorterDbms(*m_dataBase->contactDatabase(), *m_transformContact);
+    m_relationship     = new CntRelationship(m_dataBase->contactDatabase());
 }
 
 CntSymbianEnginePrivate::~CntSymbianEnginePrivate()
@@ -94,7 +88,6 @@ CntSymbianEnginePrivate::~CntSymbianEnginePrivate()
 	// m_contactFilter needs to be deleted before m_dataBase->contactDatabase()
     delete m_contactFilter;
     delete m_contactSorter;
-	delete m_dataBase;
 	delete m_transformContact;
 	delete m_relationship;
 }
@@ -246,7 +239,7 @@ bool CntSymbianEnginePrivate::addContact(QContact& contact, QContactChangeSet& c
     if(err == KErrNone)
     {
         changeSet.addedContacts().insert(id);
-        m_dataBase->appendContactsEmitted(&changeSet.addedContacts().toList());
+        m_dataBase->appendContactEmitted(id);
     }
     CntSymbianTransformError::transformError(err, qtError);
 
@@ -268,7 +261,7 @@ bool CntSymbianEnginePrivate::updateContact(QContact& contact, QContactChangeSet
     {
         //TODO: check what to do with groupsChanged
         changeSet.changedContacts().insert(contact.localId());
-        m_dataBase->appendContactsEmitted(&changeSet.changedContacts().toList());
+        m_dataBase->appendContactEmitted(contact.localId());
     }
     CntSymbianTransformError::transformError(err, qtError);
     return (err==KErrNone);
@@ -295,7 +288,7 @@ bool CntSymbianEnginePrivate::removeContact(const QContactLocalId &id, QContactC
     {
         //TODO: check what to do with groupsChanged?
         changeSet.removedContacts().insert(id);
-        m_dataBase->appendContactsEmitted(&changeSet.removedContacts().toList());
+        m_dataBase->appendContactEmitted(id);
     }
     CntSymbianTransformError::transformError(err, qtError);
 	return (err==KErrNone);

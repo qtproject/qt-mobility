@@ -68,6 +68,8 @@
 
 class CntSymbianEnginePrivate;
 class QContactChangeSet;
+class CntSymbianDatabase;
+class CntTransformContact;
 
 class CntSymbianEngine : public QContactManagerEngine
 {
@@ -119,7 +121,29 @@ private:
     QList<QContactLocalId> slowFilter(const QContactFilter& filter, const QList<QContactLocalId>& contacts, QContactManager::Error& error) const;
     QList<QContactLocalId> slowSort(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     bool doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error);
+    
+    /* Fetch contact */
+    QContact fetchContact(const QContactLocalId& contactId, QContactManager::Error& qtError) const;
+    QContact fetchContactL(const QContactLocalId &localId) const;
+    
+    /* Add contact */
+    bool addContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
+    int addContactL(QContact &contact);
+    
+    /* Update contact */
+    bool updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
+    void updateContactL(QContact &contact);
+    
+    /* Remove contact */
+    bool removeContact(const QContactLocalId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError);
+    int removeContactL(QContactLocalId id);
+    
     void updateDisplayLabel(QContact& contact) const;
+
+private:
+    CntSymbianDatabase      *m_dataBase;
+    QString                 m_managerUri;
+    CntTransformContact     *m_transformContact;
     CntSymbianEnginePrivate *d;
 };
 

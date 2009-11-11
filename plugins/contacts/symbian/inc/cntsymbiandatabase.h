@@ -57,8 +57,10 @@ class QContactManagerEngine;
 
 // Constants
 
-class CntSymbianDatabase : public MContactDbObserver
+class CntSymbianDatabase : public QObject, public MContactDbObserver
 {
+Q_OBJECT
+
 public:
     CntSymbianDatabase(QContactManagerEngine *engine, QContactManager::Error& error);
     ~CntSymbianDatabase();
@@ -66,10 +68,14 @@ public:
 public:
     CContactDatabase* contactDatabase();
     void appendContactsEmitted(QList<QContactLocalId> *contactList);
+    void appendContactEmitted(QContactLocalId id);
     
 public:
     // From MContactDbObserver
     void HandleDatabaseEventL(TContactDbObserverEvent aEvent);
+    
+signals:
+    void ownCardChanged(const QContactLocalId& oldId, const QContactLocalId& newId);
     
 private:
     CContactDatabase* m_contactDatabase;
@@ -78,6 +84,7 @@ private:
 #endif
     QContactManagerEngine *m_engine;
     QList<QContactLocalId> m_contactsEmitted;  
+    QContactLocalId m_ownCardId;
 };
 
 

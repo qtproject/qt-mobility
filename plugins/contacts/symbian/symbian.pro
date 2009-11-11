@@ -60,7 +60,7 @@ symbian: {
         inc/cntsymbianfiltersqlhelper.h \
         inc/cntsymbiansrvconnection.h \
         inc/cntsymbiantransformerror.h \
-	inc/cntsymbiandatabase.h
+        inc/cntsymbiandatabase.h
       
   SOURCES += \
         src/cntsymbianengine.cpp \
@@ -94,14 +94,13 @@ symbian: {
         src/cntsymbianfiltersqlhelper.cpp \
         src/cntsymbiansrvconnection.cpp \
         src/cntsymbiantransformerror.cpp \
-	src/cntsymbiandatabase.cpp
+        src/cntsymbiandatabase.cpp
       
   LIBS += \
   				-lcntmodel \
   				-lcentralrepository \
   				-lQtContacts \
   				-lestor \
-  				-lflogger
 
 	target.path = /sys/bin
 	INSTALLS += target

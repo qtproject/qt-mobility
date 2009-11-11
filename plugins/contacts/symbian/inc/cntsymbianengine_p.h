@@ -69,7 +69,7 @@ class CntSymbianEnginePrivate : public QObject
 	Q_OBJECT
 
 public:
-    CntSymbianEnginePrivate(QContactManagerEngine *engine, const QMap<QString, QString>& parameters, QContactManager::Error& error);
+    CntSymbianEnginePrivate(CntSymbianDatabase *database, const QMap<QString, QString>& parameters, QContactManager::Error& error);
     virtual ~CntSymbianEnginePrivate();
 
 public:
