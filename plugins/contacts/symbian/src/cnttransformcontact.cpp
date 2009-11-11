@@ -287,12 +287,31 @@ TUint32 CntTransformContact::GetIdForDetailL(const QContactDetailFilter& detailF
 QMap<QString, QContactDetailDefinition> CntTransformContact::detailDefinitions(QContactManager::Error& error) const
 {
     Q_UNUSED(error);
+
+    // Add definitions implemented by the transform leaf classes
     QMap<QString, QContactDetailDefinition> defMap;
     QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
     while (i != m_transformContactData.constEnd()) {
         i.value()->detailDefinitions(defMap);
         i++;
     }
+
+    // Add definitions for contact types
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
+    QContactDetailDefinition d;
+
+    d.setName(QContactType::DefinitionName);
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList()
+            << QString(QLatin1String(QContactType::TypeContact))
+            << QString(QLatin1String(QContactType::TypeGroup)));
+    fields.insert(QContactType::FieldType, f); // note: NO CONTEXT!!
+    d.setFields(fields);
+    d.setUnique(true);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+    defMap.insert(d.name(), d);
+
     return defMap;
 }
 
