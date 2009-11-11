@@ -91,7 +91,7 @@ int main(int argc, char** argv)
                 scaledImageWidth = list.takeFirst().toInt();
         }
     }
-    VersitTest versitTest(performanceTest,saveContacts,scaledImageHeight,scaledImageWidth);
+    VersitTest versitTest(saveContacts,scaledImageHeight,scaledImageWidth);
     printf("Running tests...\n");
     QStringList args;    
     // set test name

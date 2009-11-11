@@ -58,8 +58,9 @@ class VersitTest : public QObject
 public:
 
     VersitTest();
-    VersitTest(bool performanceTest,bool saveContacts,
-               int scaledImageHeight,int scaledImageWidth);
+    VersitTest(bool saveContacts,
+               int scaledImageHeight,
+               int scaledImageWidth);
      
 public slots:
     void scale(const QString& imageFileName, QByteArray& imageData);
@@ -82,7 +83,6 @@ private:
 private:
  
     bool mSaveContacts;
-    bool mPerformanceTest;
     int mScaledImageHeight;
     int mScaledImageWidth;
     QContactManager* mContactManager;

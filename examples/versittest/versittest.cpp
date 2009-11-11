@@ -58,16 +58,14 @@
 VersitTest::VersitTest() :
     QObject(),
     mSaveContacts(false),
-    mPerformanceTest(true),
     mScaledImageHeight(0),
     mScaledImageWidth(0)
 {
 }
 
-VersitTest::VersitTest(bool performanceTest,bool saveContacts,int scaledImageHeight,int scaledImageWidth) :
+VersitTest::VersitTest(bool saveContacts,int scaledImageHeight,int scaledImageWidth) :
     QObject(),
     mSaveContacts(saveContacts),
-    mPerformanceTest(performanceTest),
     mScaledImageHeight(scaledImageHeight),
     mScaledImageWidth(scaledImageWidth)
 {
@@ -148,15 +146,11 @@ void VersitTest::test()
         QFile out(mOutputDirPath+ "/" + fileInfo.fileName());
         out.remove();
         QVERIFY(out.open(QIODevice::ReadWrite));
-        if( mPerformanceTest ){
-            // Note that QBENCHMARK may execute the "executeTest"
-            // function several times (see QBENCHMARK documentation).
-            // This may cause the creation of multiple images or audio clips
-            // per one vCard property like PHOTO or SOUND
-            QBENCHMARK { executeTest(in,out); }
-        }else {
-            executeTest(in,out);
-        }
+        QBENCHMARK { executeTest(in,out); }
+        in.seek(0);
+        out.seek(0);
+        VCardComparator comparator(in,out,*mExcludedFields);
+        QCOMPARE(QString(),comparator.nonMatchingLines());
         in.close();
         out.close();        
     }
@@ -173,12 +167,12 @@ void VersitTest::test_data()
 }
 
 void VersitTest::executeTest(QFile& in, QIODevice& out)
-{    
+{   
     in.seek(0);
     mReader->setDevice(&in);
     out.reset();
     mWriter->setDevice(&out);
-    
+
     // Parse the input
     QVERIFY2(mReader->readAll(),in.fileName().toAscii().constData());
     
@@ -214,17 +208,6 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
         mWriter->setVersitDocument(document);
         QVERIFY2(mWriter->writeAll(),in.fileName().toAscii().constData());
     }
-    
-    // if performance test, assume in and out will be same
-    // or otherwise only successful tests were run in performance benchmarking.
-    if( !mPerformanceTest ){
-        // Compare the input and output
-        in.seek(0);
-        out.seek(0);
-        VCardComparator comparator(in,out,*mExcludedFields);
-        QCOMPARE(QString(),comparator.nonMatchingLines());
-    }
-
 }
 
 
