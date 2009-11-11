@@ -287,8 +287,7 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(QContactAbstractRequest
         }
     }
 
-    if ( r->definitionRestrictions().contains(QContactPresence::DefinitionName)
-         || r->definitionRestrictions().contains( QContactOnlineAccount::DefinitionName)) {
+    if ( r->definitionRestrictions().contains( QContactOnlineAccount::DefinitionName) ) {
         queryIMAccountNodes.clear();
         queryIMAccountNodesReady = 0;
         for(int forAffiliations = 0; forAffiliations <= 1; forAffiliations++) {
@@ -559,8 +558,7 @@ void QTrackerContactFetchRequest::contactsReady()
             processQueryEmailAddresses(queryEmailAddressNodes[cnt], result, cnt);
         }
     }
-    if ( request->definitionRestrictions().contains(QContactPresence::DefinitionName)
-         || request->definitionRestrictions().contains(QContactOnlineAccount::DefinitionName)) {
+    if ( request->definitionRestrictions().contains(QContactOnlineAccount::DefinitionName)) {
         Q_ASSERT(queryIMAccountNodes.size() == 2);
         for (int cnt = 0; cnt < queryIMAccountNodes.size(); cnt++) {
             processQueryIMAccounts(queryIMAccountNodes[cnt], result, cnt);
@@ -724,16 +722,12 @@ void QTrackerContactFetchRequest::processQueryIMAccounts(SopranoLive::LiveNodes 
                 if (!queryIMAccounts->index(i, 5).data().toString().isEmpty())
                     account.setValue("AccountPath", queryIMAccounts->index(i, 5).data().toString()); // getImAccountType?
                 account.setValue("Capabilities", queryIMAccounts->index(i, 6).data().toString()); // getImAccountType?
+                account.setNickname(queryIMAccounts->index(i, 4).data().toString()); // nick
+                account.setPresence(queryIMAccounts->index(i, 2).data().toString()); // imStatus
+                debug() << "the status from **tracker**" << account.presence();
+                account.setStatusMessage(queryIMAccounts->index(i, 3).data().toString()); // imStatusMessage
                 contacts[j].saveDetail(&account);
                 contacts[j].saveDetail(&account);
-                QContactPresence presence;
-                if (affiliationAccounts)
-                    presence.setContexts(QContactPresence::ContextWork);
-                presence.setValue(QContactPresence::FieldNickname, queryIMAccounts->index(i, 4).data().toString()); // nick
-                presence.setValue(QContactPresence::FieldPresence, queryIMAccounts->index(i, 2).data().toString()); // imStatus
-                debug() << "the status from **tracker**" << presence.value(QContactPresence::FieldPresence);
-                presence.setValue(QContactPresence::FieldStatusMessage, queryIMAccounts->index(i, 3).data().toString()); // imStatusMessage
-                contacts[j].saveDetail(&presence);
                 break;
             }
         }

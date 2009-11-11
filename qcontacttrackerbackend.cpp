@@ -174,7 +174,7 @@ QContact QContactTrackerEngine::contact_impl(const QContactLocalId& contactId, Q
             << QContactOnlineAccount::DefinitionName
             << QContactOrganization::DefinitionName
             << QContactPhoneNumber::DefinitionName
-            << QContactPresence::DefinitionName
+            << QContactOnlineAccount::DefinitionName
             << QContactUrl::DefinitionName;
     request.setDefinitionRestrictions(fields);
     request.setFilter(idlist);
