@@ -343,6 +343,8 @@ QContact QContactManager::contact(const QContactLocalId& contactId) const
  * return \c false and calling error() will return
  * \c QContactManager::InvalidRelationshipError.
  *
+ * The manager will automatically synthesize the display label of the contact when it is saved.
+ *
  * Returns false on failure, or true on
  * success.  On successful save of a contact with an id of zero, its
  * id will be set to a new, valid id with the manager URI set to the URI of

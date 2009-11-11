@@ -982,6 +982,10 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
  * included in the list.  If these conditions are not met, the function will
  * return \c false and \a error will be set to \c QContactManager::InvalidRelationshipError.
  *
+ * The engine must automatically synthesize the display label of the contact when it is saved,
+ * by either using the built in \l synthesizeDisplayLabel() function or overriding it, and
+ * then calling \l setContactDisplayLabel().
+ *
  * Returns false on failure, or true on
  * success.  On successful save of a contact with an id of zero, its
  * id will be set to a new, valid id with the manager URI set to the URI of
