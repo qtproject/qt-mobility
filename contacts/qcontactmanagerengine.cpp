@@ -391,6 +391,11 @@ QString QContactManagerEngine::synthesizeDisplayLabel(const QContact& contact, Q
     for (int i=0; i < allNames.size(); i++) {
         const QContactName& name = allNames.at(i);
 
+        if (!name.customLabel().isEmpty()) {
+            // default behaviour is to allow the user to define a custom display label.
+            return name.customLabel();
+        }
+
         QString result;
         if (!name.value(QContactName::FieldPrefix).trimmed().isEmpty()) {
            result += name.value(QContactName::FieldPrefix);

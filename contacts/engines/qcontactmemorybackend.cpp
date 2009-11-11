@@ -275,9 +275,13 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
             d->m_orderedRelationships.insert(theContact->localId(), orderedList);
         }
 
+        // synthesize the display label for the contact.
+        QContact saveContact = setContactDisplayLabel(synthesizeDisplayLabel(*theContact, error), *theContact);
+        *theContact = saveContact;
+
         // Looks ok, so continue
         d->m_contacts.replace(index, *theContact);
-        changeSet.changedContacts().insert(theContact->id().localId());
+        changeSet.changedContacts().insert(theContact->localId());
     } else {
         // id does not exist; if not zero, fail.
         QContactId newId;
@@ -297,6 +301,10 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
         // update the contact item - set its ID
         newId.setLocalId(++d->m_nextContactId);
         theContact->setId(newId);
+
+        // synthesize the display label for the contact.
+        QContact saveContact = setContactDisplayLabel(synthesizeDisplayLabel(*theContact, error), *theContact);
+        *theContact = saveContact;
 
         // finally, add the contact to our internal lists and return
         d->m_contacts.append(*theContact);                   // add contact to list
