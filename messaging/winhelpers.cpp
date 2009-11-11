@@ -2009,7 +2009,7 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
                                 FreeProws(rows);
 
                                 if (QMessageFilterPrivate::matchesMessageRequired(filter)
-                                    && !QMessageFilterPrivate::matchesMessage(filter, QMessage(id)))
+                                    && !QMessageFilterPrivate::matchesMessageSimple(filter, QMessage(id)))
                                     continue;
                                 result.append(id);
                                 if (limit) {
@@ -4607,6 +4607,7 @@ void MapiSession::notify(MapiStore *store, const QMessageId &id, MapiSession::No
     for ( ; it != end; ++it) {
         const QMessageFilter &filter(it.value());
 
+#if 1
         QSet<QMessageId> filteredIds;
         if (!filter.isEmpty()) {
             // Empty filter matches all messages; otherwise get the filtered set
@@ -4616,6 +4617,23 @@ void MapiSession::notify(MapiStore *store, const QMessageId &id, MapiSession::No
         if (filter.isEmpty() || filteredIds.contains(id)) {
             matchingFilterIds.insert(it.key());
         }
+#else // TODO: test this alternative logic
+        if (!filter.isSupported())
+            continue;
+
+        QMessageStore::ErrorCode ignoredError;
+        QMessageFilter processedFilter(QMessageFilterPrivate::preprocess(&ignoredError, _self.toStrongRef(), filter));
+        if (ignoredError != QMessageStore::NoError)
+            continue;
+
+        QMessage message(id);
+        foreach (QMessageFilter subfilter, QMessageFilterPrivate::subfilters(processedFilter)) {
+            if (QMessageFilterPrivate::matchesMessage(filter, message, MapiStorePtr(store))) {
+                matchingFilterIds.insert(it.key());
+                break; // subfilters are or'd together
+            }
+        }
+#endif
     }
 
     if (!matchingFilterIds.isEmpty()) {
