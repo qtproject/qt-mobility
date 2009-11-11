@@ -95,11 +95,8 @@ void addContact(QContactManager* cm)
     QContactName aliceName;
     aliceName.setFirst("Alice");
     aliceName.setLast("Jones");
+    aliceName.setCustomLabel("Ally Jones");
     alice.saveDetail(&aliceName);
-
-    QContactDisplayLabel aliceDisplay;
-    aliceDisplay.setLabel("Ally Jones");
-    alice.saveDetail(&aliceDisplay);
 
     /* Add a phone number */
     QContactPhoneNumber number;
@@ -153,9 +150,9 @@ void matchCall(QContactManager* cm, const QString& incomingCallNbr)
         qDebug() << "Incoming call from unknown contact (" << incomingCallNbr << ")";
     } else {
         QContact match = cm->contact(matchingContacts.at(0));
+
+        // XXX TODO: replace the following with match.displayLabel() after week 47.
         QContactDisplayLabel cdl = match.detail(QContactDisplayLabel::DefinitionName);
-        if (cdl.isEmpty())
-            cdl.setLabel(cm->synthesizeDisplayLabel(match));
         qDebug() << "Incoming call from"
                  << cdl.label()
                  << "(" << incomingCallNbr << ")";
@@ -168,9 +165,9 @@ void viewSpecificDetail(QContactManager* cm)
 {
     QList<QContactLocalId> contactIds = cm->contacts();
     QContact a = cm->contact(contactIds.first());
+
+    // XXX TODO: replace the following with a.displayLabel() after week 47.
     QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
-    if (cdl.isEmpty())
-        cdl.setLabel(cm->synthesizeDisplayLabel(a));
     qDebug() << "The first phone number of" << cdl.label()
              << "is" << a.detail(QContactPhoneNumber::DefinitionName).value(QContactPhoneNumber::FieldNumber);
 }
@@ -181,9 +178,9 @@ void viewDetails(QContactManager* cm)
 {
     QList<QContactLocalId> contactIds = cm->contacts();
     QContact a = cm->contact(contactIds.first());
+
+    // XXX TODO: replace the following with match.displayLabel() after week 47.
     QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
-    if (cdl.isEmpty())
-        cdl.setLabel(cm->synthesizeDisplayLabel(a));
     qDebug() << "Viewing the details of" << cdl.label();
 
     QList<QContactDetail> allDetails = a.details();
@@ -230,9 +227,9 @@ void editView(QContactManager* cm)
 {
     QList<QContactLocalId> contactIds = cm->contacts();
     QContact a = cm->contact(contactIds.first());
+
+    // XXX TODO: replace the following with match.displayLabel() after week 47.
     QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
-    if (cdl.isEmpty())
-        cdl.setLabel(cm->synthesizeDisplayLabel(a));
     qDebug() << "Modifying the details of" << cdl.label();
 
     /* Change the first phone number */
@@ -304,9 +301,9 @@ void loadManager()
     QList<QContactLocalId> contactIds = cm->contacts();
     if (!contactIds.isEmpty()) {
         QContact a = cm->contact(contactIds.first());
+
+        // XXX TODO: replace the following with a.displayLabel() after week 47.
         QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
-        if (cdl.isEmpty())
-            cdl.setLabel(cm->synthesizeDisplayLabel(a));
         qDebug() << "This manager contains" << cdl.label();
     } else {
         qDebug() << "This manager contains no contacts";

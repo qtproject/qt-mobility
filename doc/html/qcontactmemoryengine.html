@@ -26,30 +26,32 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual QContact </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#contact">contact</a></b> ( const QContactLocalId &amp; <i>contactId</i>, QContactManager::Error &amp; <i>error</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QContactLocalId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#contacts">contacts</a></b> ( const QList&lt;QContactSortOrder&gt; &amp; <i>sortOrders</i>, QContactManager::Error &amp; <i>error</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#deref">deref</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QMap&lt;QString, QContactDetailDefinition&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#detailDefinitions">detailDefinitions</a></b> ( QContactManager::Error &amp; <i>error</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMap&lt;QString, QContactDetailDefinition&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#detailDefinitions">detailDefinitions</a></b> ( const QString &amp; <i>contactType</i>, QContactManager::Error &amp; <i>error</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#filterSupported">filterSupported</a></b> ( const QContactFilter &amp; <i>filter</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#hasFeature">hasFeature</a></b> ( QContactManagerInfo::ManagerFeature <i>feature</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#hasFeature">hasFeature</a></b> ( QContactManager::ManagerFeature <i>feature</i>, const QString &amp; <i>contactType</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#managerName">managerName</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QMap&lt;QString, QString&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#managerParameters">managerParameters</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QContactRelationship&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#relationships">relationships</a></b> ( const QString &amp; <i>relationshipType</i>, const QContactId &amp; <i>participantId</i>, QContactRelationshipFilter::Role <i>role</i>, QContactManager::Error &amp; <i>error</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#removeContact">removeContact</a></b> ( const QContactLocalId &amp; <i>contactId</i>, QContactManager::Error &amp; <i>error</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QContactManager::Error&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#removeContacts">removeContacts</a></b> ( QList&lt;QContactLocalId&gt; * <i>contactIds</i>, QContactManager::Error &amp; <i>error</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#removeDetailDefinition">removeDetailDefinition</a></b> ( const QString &amp; <i>definitionId</i>, QContactManager::Error &amp; <i>error</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#removeDetailDefinition">removeDetailDefinition</a></b> ( const QString &amp; <i>definitionId</i>, const QString &amp; <i>contactType</i>, QContactManager::Error &amp; <i>error</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#removeRelationship">removeRelationship</a></b> ( const QContactRelationship &amp; <i>relationship</i>, QContactManager::Error &amp; <i>error</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QContactManager::Error&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#removeRelationships">removeRelationships</a></b> ( const QList&lt;QContactRelationship&gt; &amp; <i>relationships</i>, QContactManager::Error &amp; <i>error</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#requestDestroyed">requestDestroyed</a></b> ( QContactAbstractRequest * <i>req</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#saveContact">saveContact</a></b> ( QContact * <i>contact</i>, QContactManager::Error &amp; <i>error</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QContactManager::Error&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#saveContacts">saveContacts</a></b> ( QList&lt;QContact&gt; * <i>contacts</i>, QContactManager::Error &amp; <i>error</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#saveDetailDefinition">saveDetailDefinition</a></b> ( const QContactDetailDefinition &amp; <i>def</i>, QContactManager::Error &amp; <i>error</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#saveDetailDefinition">saveDetailDefinition</a></b> ( const QContactDetailDefinition &amp; <i>def</i>, const QString &amp; <i>contactType</i>, QContactManager::Error &amp; <i>error</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#saveRelationship">saveRelationship</a></b> ( QContactRelationship * <i>relationship</i>, QContactManager::Error &amp; <i>error</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QContactManager::Error&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#saveRelationships">saveRelationships</a></b> ( QList&lt;QContactRelationship&gt; * <i>relationships</i>, QContactManager::Error &amp; <i>error</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QContactLocalId </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#selfContactId">selfContactId</a></b> ( QContactManager::Error &amp; <i>error</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#setSelfContactId">setSelfContactId</a></b> ( const QContactLocalId &amp; <i>contactId</i>, QContactManager::Error &amp; <i>error</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#startRequest">startRequest</a></b> ( QContactAbstractRequest * <i>req</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QVariant::Type&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#supportedDataTypes">supportedDataTypes</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#waitForRequestFinished">waitForRequestFinished</a></b> ( QContactAbstractRequest * <i>req</i>, int <i>msecs</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#waitForRequestProgress">waitForRequestProgress</a></b> ( QContactAbstractRequest * <i>req</i>, int <i>msecs</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>35 public functions inherited from <a href="qcontactmanagerengine.html#public-functions">QContactManagerEngine</a></li>
+<li><div bar="2" class="fn"></div>38 public functions inherited from <a href="qcontactmanagerengine.html#public-functions">QContactManagerEngine</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
@@ -59,7 +61,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">QContactMemoryEngine * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#createMemoryEngine">createMemoryEngine</a></b> ( const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>14 static public members inherited from <a href="qcontactmanagerengine.html#static-public-members">QContactManagerEngine</a></li>
+<li><div bar="2" class="fn"></div>15 static public members inherited from <a href="qcontactmanagerengine.html#static-public-members">QContactManagerEngine</a></li>
 <li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
 </ul>
 <hr />
@@ -74,10 +76,10 @@
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>35 public functions inherited from <a href="qcontactmanagerengine.html#public-functions">QContactManagerEngine</a></li>
+<li><div class="fn"></div>38 public functions inherited from <a href="qcontactmanagerengine.html#public-functions">QContactManagerEngine</a></li>
 <li><div class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>6 signals inherited from <a href="qcontactmanagerengine.html#signals">QContactManagerEngine</a></li>
+<li><div class="fn"></div>7 signals inherited from <a href="qcontactmanagerengine.html#signals">QContactManagerEngine</a></li>
 <li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-variables">QObject</a></li>
@@ -106,11 +108,11 @@
 <p>The same engine will be returned for multiple calls with the same value for the &quot;id&quot; parameter, while one of them is in scope.</p>
 <h3 class="fn"><a name="deref"></a>void QContactMemoryEngine::deref ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#deref">QContactManagerEngine::deref</a>().</p>
-<h3 class="fn"><a name="detailDefinitions"></a><a href="http://qt.nokia.com/doc/4.5/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>, <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a>&gt; QContactMemoryEngine::detailDefinitions ( <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="detailDefinitions"></a><a href="http://qt.nokia.com/doc/4.5/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>, <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a>&gt; QContactMemoryEngine::detailDefinitions ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>contactType</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#detailDefinitions">QContactManagerEngine::detailDefinitions</a>().</p>
 <h3 class="fn"><a name="filterSupported"></a>bool QContactMemoryEngine::filterSupported ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#filterSupported">QContactManagerEngine::filterSupported</a>().</p>
-<h3 class="fn"><a name="hasFeature"></a>bool QContactMemoryEngine::hasFeature ( <a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ManagerFeature</a> <i>feature</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="hasFeature"></a>bool QContactMemoryEngine::hasFeature ( <a href="qcontactmanager.html#ManagerFeature-enum">QContactManager::ManagerFeature</a> <i>feature</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>contactType</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#hasFeature">QContactManagerEngine::hasFeature</a>().</p>
 <h3 class="fn"><a name="managerName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactMemoryEngine::managerName () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#managerName">QContactManagerEngine::managerName</a>().</p>
@@ -122,7 +124,7 @@
 <p>Reimplemented from <a href="qcontactmanagerengine.html#removeContact">QContactManagerEngine::removeContact</a>().</p>
 <h3 class="fn"><a name="removeContacts"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; QContactMemoryEngine::removeContacts ( <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QContactLocalId&gt; * <i>contactIds</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#removeContacts">QContactManagerEngine::removeContacts</a>().</p>
-<h3 class="fn"><a name="removeDetailDefinition"></a>bool QContactMemoryEngine::removeDetailDefinition ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>definitionId</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="removeDetailDefinition"></a>bool QContactMemoryEngine::removeDetailDefinition ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>definitionId</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>contactType</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#removeDetailDefinition">QContactManagerEngine::removeDetailDefinition</a>().</p>
 <h3 class="fn"><a name="removeRelationship"></a>bool QContactMemoryEngine::removeRelationship ( const <a href="qcontactrelationship.html">QContactRelationship</a> &amp; <i>relationship</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#removeRelationship">QContactManagerEngine::removeRelationship</a>().</p>
@@ -134,12 +136,18 @@
 <p>Reimplemented from <a href="qcontactmanagerengine.html#saveContact">QContactManagerEngine::saveContact</a>().</p>
 <h3 class="fn"><a name="saveContacts"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; QContactMemoryEngine::saveContacts ( <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt; * <i>contacts</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#saveContacts">QContactManagerEngine::saveContacts</a>().</p>
-<h3 class="fn"><a name="saveDetailDefinition"></a>bool QContactMemoryEngine::saveDetailDefinition ( const <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> &amp; <i>def</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="saveDetailDefinition"></a>bool QContactMemoryEngine::saveDetailDefinition ( const <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> &amp; <i>def</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>contactType</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#saveDetailDefinition">QContactManagerEngine::saveDetailDefinition</a>().</p>
 <h3 class="fn"><a name="saveRelationship"></a>bool QContactMemoryEngine::saveRelationship ( <a href="qcontactrelationship.html">QContactRelationship</a> * <i>relationship</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#saveRelationship">QContactManagerEngine::saveRelationship</a>().</p>
 <h3 class="fn"><a name="saveRelationships"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; QContactMemoryEngine::saveRelationships ( <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; * <i>relationships</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#saveRelationships">QContactManagerEngine::saveRelationships</a>().</p>
+<h3 class="fn"><a name="selfContactId"></a>QContactLocalId QContactMemoryEngine::selfContactId ( <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qcontactmanagerengine.html#selfContactId">QContactManagerEngine::selfContactId</a>().</p>
+<p>See also <a href="qcontactmemoryengine.html#setSelfContactId">setSelfContactId</a>().</p>
+<h3 class="fn"><a name="setSelfContactId"></a>bool QContactMemoryEngine::setSelfContactId ( const QContactLocalId &amp; <i>contactId</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qcontactmanagerengine.html#setSelfContactId">QContactManagerEngine::setSelfContactId</a>().</p>
+<p>See also <a href="qcontactmemoryengine.html#selfContactId">selfContactId</a>().</p>
 <h3 class="fn"><a name="startRequest"></a>bool QContactMemoryEngine::startRequest ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#startRequest">QContactManagerEngine::startRequest</a>().</p>
 <h3 class="fn"><a name="supportedDataTypes"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qvariant.html#Type-enum">QVariant::Type</a>&gt; QContactMemoryEngine::supportedDataTypes () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>

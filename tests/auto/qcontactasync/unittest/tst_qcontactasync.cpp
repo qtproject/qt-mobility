@@ -333,12 +333,6 @@ void tst_QContactAsync::contactFetch()
             }
         }
 
-        // XXX TODO: remove the following after removing the deprecated API
-        QContactDisplayLabel dl = currFull.detail(QContactDisplayLabel::DefinitionName);
-        dl.setLabel(dl.label()); // empty field but still exists.
-        currRestricted.setDisplayLabel(dl);
-        // remove to here.
-
         // ensure that the contact is the same
         QVERIFY(contacts.at(i) == currRestricted);
     }

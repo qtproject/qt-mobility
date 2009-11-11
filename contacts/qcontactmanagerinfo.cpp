@@ -88,6 +88,7 @@ QContactManagerInfo::QContactManagerInfo()
 }
 
 /*!
+ * \deprecated
  * Returns true if the given \a feature is supported by the manager from whom this information object was received.
  */
 bool QContactManagerInfo::hasFeature(QContactManagerInfo::ManagerFeature feature, const QString& contactType) const
@@ -98,6 +99,7 @@ bool QContactManagerInfo::hasFeature(QContactManagerInfo::ManagerFeature feature
 }
 
 /*!
+ * \deprecated
  * Returns the list of data types supported by the manager
  * associated with this object.
  */
@@ -108,6 +110,7 @@ QList<QVariant::Type> QContactManagerInfo::supportedDataTypes() const
 }
 
 /*!
+ * \deprecated
  * Returns true if the given \a filter is supported natively by the
  * manager, and false if the filter behaviour would be emulated.
  *
@@ -123,6 +126,7 @@ bool QContactManagerInfo::filterSupported(const QContactFilter& filter) const
 }
 
 /*!
+ * \deprecated
  * Returns the list of relationship types which are supported by this backend.
  * If the backend does not support the \c QContactManagerInfo::Relationships feature, this list should
  * be empty.  If the backend supports the \c QContactManagerInfo::Relationships feature and also

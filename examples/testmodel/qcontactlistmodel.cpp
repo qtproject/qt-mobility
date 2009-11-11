@@ -339,7 +339,9 @@ QVariant QContactListModel::data(const QModelIndex& index, int role) const
         foreach (int row, newCacheRows) {
             if (!d->m_cache.contains(row)) {
                 QContact temp;
-                temp.setDisplayLabel(QString(tr("Loading...")));
+                QContactName loadingName;
+                loadingName.setCustomLabel(QString(tr("Loading...")));
+                temp.saveDetail(&loadingName);
                 d->m_cache.insert(row, temp);
             }
         }
@@ -359,8 +361,11 @@ QVariant QContactListModel::data(const QModelIndex& index, int role) const
         }
 
         // ensure that the current row's contact is cached; if not create a placeholder.
-        if (!d->m_cache.contains(d->m_currentRow))
-            currentContact.setDisplayLabel(QString(tr("Loading...")));
+        if (!d->m_cache.contains(d->m_currentRow)) {
+            QContactName loadingName;
+            loadingName.setCustomLabel(QString(tr("Loading...")));
+            currentContact.saveDetail(&loadingName);
+        }
 
         // now fire off an asynchronous request to update our cache
         QContactFetchRequest* req = new QContactFetchRequest;
@@ -406,8 +411,8 @@ QVariant QContactListModel::data(const QModelIndex& index, int role) const
             }
 
             // grab the possible presence values; they should be in order from (unknown) to least present to most present.
-            QContactDetailDefinition presenceDef = d->m_manager->detailDefinition(QContactPresence::DefinitionName);
-            QList<QVariant> allowablePresenceValues = presenceDef.fields().value(QContactPresence::FieldPresence).allowableValues();
+            QContactDetailDefinition presenceDef = d->m_manager->detailDefinition(QContactOnlineAccount::DefinitionName);
+            QList<QVariant> allowablePresenceValues = presenceDef.fields().value(QContactOnlineAccount::FieldPresence).allowableValues();
             if (presenceDef.isEmpty() || allowablePresenceValues.isEmpty()) {
                 // the manager does not support presence details.
                 break;
@@ -415,8 +420,8 @@ QVariant QContactListModel::data(const QModelIndex& index, int role) const
 
             // calculate the "global presence" of the contact in a naive way.
             int bestPresenceSoFar = 0; // unknown
-            QList<QContactDetail> presenceDetails = currentContact.details(QContactPresence::DefinitionName);
-            foreach (const QContactPresence& pres, presenceDetails) {
+            QList<QContactDetail> presenceDetails = currentContact.details(QContactOnlineAccount::DefinitionName);
+            foreach (const QContactOnlineAccount& pres, presenceDetails) {
                 int index = allowablePresenceValues.indexOf(pres.presence());
                 if (index > bestPresenceSoFar) {
                     bestPresenceSoFar = index;

@@ -251,8 +251,8 @@ void tst_QContactManager::dumpContactDifferences(const QContact& ca, const QCont
 
     // now test specifically the display label and the type
     if (a.displayLabel() != b.displayLabel()) {
-        qDebug() << "A contact display label =" << a.displayLabel().label() << "," << a.displayLabel().isSynthesized();
-        qDebug() << "B contact display label =" << b.displayLabel().label() << "," << b.displayLabel().isSynthesized();
+        qDebug() << "A contact display label =" << a.displayLabel().label();
+        qDebug() << "B contact display label =" << b.displayLabel().label();
     }
     if (a.type() != b.type()) {
         qDebug() << "A contact type =" << a.type();

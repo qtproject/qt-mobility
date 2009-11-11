@@ -446,7 +446,7 @@ void UT_QVersitContactImporter::testOrganizationRole()
     QContactOrganization organization =
         static_cast<QContactOrganization>(
             contact.detail(QContactOrganization::DefinitionName));
-    QVERIFY(organization.isEmpty());
+    QCOMPARE(organization.role(), QString::fromAscii(roleValue));
 }
 
 void UT_QVersitContactImporter::testTel()
@@ -1086,9 +1086,8 @@ void UT_QVersitContactImporter::testNote()
     QCOMPARE(note.note(),QString::fromAscii(val));
 }
 
-void UT_QVersitContactImporter::testDisplayLabel()
+void UT_QVersitContactImporter::testLabel()
 {
-    // single line value
     QVersitDocument document;
     QVersitProperty nameProperty;
     QByteArray val("Homer Simpson");
@@ -1096,9 +1095,9 @@ void UT_QVersitContactImporter::testDisplayLabel()
     nameProperty.setValue(val);
     document.addProperty(nameProperty);
     QContact contact = mImporter->importContact(document);
-    QContactDisplayLabel label =
-            (QContactDisplayLabel)contact.detail(QContactDisplayLabel::DefinitionName);
-    QCOMPARE(label.label(),QString::fromAscii(val));
+    QContactName name =
+            (QContactName)contact.detail(QContactName::DefinitionName);
+    QCOMPARE(name.customLabel(),QString::fromAscii(val));
 }
 
 void UT_QVersitContactImporter::testOnlineAccount()

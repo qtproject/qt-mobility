@@ -73,6 +73,7 @@ QHash<QString, int> QContactManagerData::m_vendormap;
 QHash<QString, int> QContactManagerData::m_actionmap;
 
 bool QContactManagerData::m_discovered;
+QStringList QContactManagerData::m_pluginPaths;
 
 static void qContactsCleanEngines()
 {
@@ -158,8 +159,9 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
 /* Plugin loader */
 void QContactManagerData::loadFactories()
 {
-    if (!m_discovered) {
+    if (!m_discovered || QApplication::libraryPaths() != m_pluginPaths) {
         m_discovered = true;
+        m_pluginPaths = QApplication::libraryPaths();
 
         /* Clean stuff up at the end */
         qAddPostRoutine(qContactsCleanEngines);
@@ -176,7 +178,12 @@ void QContactManagerData::loadFactories()
                 QString name = f->managerName();
                 qDebug() << "Static: found an engine plugin" << f << "with name" << name;
                 if (name != QLatin1String("memory") && name != QLatin1String("invalid") && !name.isEmpty()) {
-                    m_engines.insertMulti(name, f);
+                    // we also need to ensure that we haven't already loaded this factory.
+                    if (m_engines.keys().contains(name)) {
+                        qWarning() << "Static contacts plugin" << name << "has the same name as a currently loaded plugin; ignored";
+                    } else {
+                        m_engines.insertMulti(name, f);
+                    }
                 } else {
                     qWarning() << "Static contacts plugin with reserved name" << name << "ignored";
                 }
@@ -186,16 +193,20 @@ void QContactManagerData::loadFactories()
                 QString name = g->name();
                 qDebug() << "Static: found an action factory" << g << "with name" << name;
 
-                m_actionfactories.append(g);
+                if (m_actionfactories.contains(g)) {
+                    qWarning() << "Static contacts plugin" << name << "has the same name as currently loaded plugin; ignored";
+                } else {
+                    m_actionfactories.append(g);
 
-                QList<QContactActionDescriptor> actions = g->actionDescriptors();
-                QMap<QContactActionDescriptor, QContactActionFactory*>::iterator it;
-                for (int j = 0; j < actions.size(); j++) {
-                    QContactActionDescriptor desc = actions.at(j);
-                    m_descriptormap.insert(desc, g);
-                    m_descriptors.append(desc);
-                    m_actionmap.insertMulti(desc.actionName(), m_descriptors.count() - 1);
-                    m_vendormap.insertMulti(desc.vendorName(), m_descriptors.count() - 1);
+                    QList<QContactActionDescriptor> actions = g->actionDescriptors();
+                    QMap<QContactActionDescriptor, QContactActionFactory*>::iterator it;
+                    for (int j = 0; j < actions.size(); j++) {
+                        QContactActionDescriptor desc = actions.at(j);
+                        m_descriptormap.insert(desc, g);
+                        m_descriptors.append(desc);
+                        m_actionmap.insertMulti(desc.actionName(), m_descriptors.count() - 1);
+                        m_vendormap.insertMulti(desc.vendorName(), m_descriptors.count() - 1);
+                    }
                 }
             }
         }
@@ -204,8 +215,8 @@ void QContactManagerData::loadFactories()
         QSet<QString> processed;
 
         paths << QApplication::applicationDirPath() << QApplication::libraryPaths();
-
         qDebug() << "Plugin paths:" << paths;
+
         /* Enumerate our plugin paths */
         for (int i=0; i < paths.count(); i++) {
             if (processed.contains(paths.at(i)))
@@ -242,7 +253,12 @@ void QContactManagerData::loadFactories()
                 qDebug() << "Dynamic: found an engine plugin" << f << "with name" << name;
 
                 if (name != QLatin1String("memory") && name != QLatin1String("invalid") && !name.isEmpty()) {
-                    m_engines.insertMulti(name, f);
+                    // we also need to ensure that we haven't already loaded this factory.
+                    if (m_engines.keys().contains(name)) {
+                        qWarning() << "Contacts plugin" << plugins.at(i) << "has the same name as currently loaded plugin" << name << "; ignored";
+                    } else {
+                        m_engines.insertMulti(name, f);
+                    }
                 } else {
                     qWarning() << "Contacts plugin" << plugins.at(i) << "with reserved name" << name << "ignored";
                 }
@@ -252,16 +268,21 @@ void QContactManagerData::loadFactories()
                 QString name = g->name();
                 qDebug() << "Dynamic: found an action factory" << g << "with name" << name;
 
-                m_actionfactories.append(g);
+                // we also need to ensure that we haven't already loaded this factory.
+                if (m_actionfactories.contains(g)) {
+                    qWarning() << "Contacts plugin" << plugins.at(i) << "has the same name as currently loaded plugin" << name << "; ignored";
+                } else {
+                    m_actionfactories.append(g);
 
-                QList<QContactActionDescriptor> actions = g->actionDescriptors();
-                QMap<QContactActionDescriptor, QContactActionFactory*>::iterator it;
-                for (int j = 0; j < actions.size(); j++) {
-                    const QContactActionDescriptor& desc = actions.at(j);
-                    m_descriptormap.insert(desc, g);
-                    m_descriptors.append(desc);
-                    m_actionmap.insertMulti(desc.actionName(), m_descriptors.count() - 1);
-                    m_vendormap.insertMulti(desc.vendorName(), m_descriptors.count() - 1);
+                    QList<QContactActionDescriptor> actions = g->actionDescriptors();
+                    QMap<QContactActionDescriptor, QContactActionFactory*>::iterator it;
+                    for (int j = 0; j < actions.size(); j++) {
+                        const QContactActionDescriptor& desc = actions.at(j);
+                        m_descriptormap.insert(desc, g);
+                        m_descriptors.append(desc);
+                        m_actionmap.insertMulti(desc.actionName(), m_descriptors.count() - 1);
+                        m_vendormap.insertMulti(desc.vendorName(), m_descriptors.count() - 1);
+                    }
                 }
             }
 

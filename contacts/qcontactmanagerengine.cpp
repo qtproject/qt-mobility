@@ -178,6 +178,18 @@
  * \sa dataChanged()
  */
 
+/*!
+ * \fn QContactManagerEngine::selfContactIdChanged(const QContactLocalId& oldId, const QContactLocalId& newId)
+ *
+ * This signal is emitted at some point after the id of the self-contact is changed from \a oldId to \a newId in the manager.
+ * If the \a newId is the invalid, zero id, then the self contact was deleted or no self contact exists.
+ * This signal must not be emitted if the dataChanged() signal was previously emitted for this change.
+ * As it is possible that other processes (or other devices) may
+ * have removed or changed the self contact, the timing cannot be determined.
+ *
+ * \sa dataChanged()
+ */
+
 /*! Returns the manager name for this QContactManagerEngine */
 QString QContactManagerEngine::managerName() const
 {
@@ -391,6 +403,11 @@ QString QContactManagerEngine::synthesizeDisplayLabel(const QContact& contact, Q
     for (int i=0; i < allNames.size(); i++) {
         const QContactName& name = allNames.at(i);
 
+        if (!name.customLabel().isEmpty()) {
+            // default behaviour is to allow the user to define a custom display label.
+            return name.customLabel();
+        }
+
         QString result;
         if (!name.value(QContactName::FieldPrefix).trimmed().isEmpty()) {
            result += name.value(QContactName::FieldPrefix);
@@ -446,15 +463,13 @@ QContact QContactManagerEngine::setContactDisplayLabel(const QString& displayLab
 {
     QContact retn = contact;
     QContactDisplayLabel dl;
-    if (!displayLabel.isEmpty())
-        dl.setValue(QContactDisplayLabel::FieldLabel, displayLabel);
-    dl.setValue(QContactDisplayLabel::FieldSynthesized, true);   // XXX TODO: remove this line after removing deprecated API
+    dl.setValue(QContactDisplayLabel::FieldLabel, displayLabel);
     retn.d->m_details.replace(0, dl);
     return retn;
 }
 
 /*!
- * Returns true if the given \a feature is supported by this engine
+ * Returns true if the given \a feature is supported by this engine for contacts of the given \a contactType
  */
 bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const
 {
@@ -483,7 +498,7 @@ QList<QVariant::Type> QContactManagerEngine::supportedDataTypes() const
 }
 
 /*!
- * Returns the list of relationship types supported by this engine.
+ * Returns the list of relationship types supported by this engine for contacts whose type is the given \a contactType.
  */
 QStringList QContactManagerEngine::supportedRelationshipTypes(const QString& contactType) const
 {
@@ -978,6 +993,10 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
  * either do not involve the contact, or have not been saved in the manager are
  * included in the list.  If these conditions are not met, the function will
  * return \c false and \a error will be set to \c QContactManager::InvalidRelationshipError.
+ *
+ * The engine must automatically synthesize the display label of the contact when it is saved,
+ * by either using the built in \l synthesizeDisplayLabel() function or overriding it, and
+ * then calling \l setContactDisplayLabel().
  *
  * Returns false on failure, or true on
  * success.  On successful save of a contact with an id of zero, its
