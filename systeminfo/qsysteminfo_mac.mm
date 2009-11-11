@@ -86,6 +86,9 @@
 #ifdef MAC_SDK_10_6
 #include <CoreWLAN/CWInterface.h>
 #include <CoreWLAN/CWGlobals.h>
+#else
+// 10.5 sdk is broken for this:
+#include </Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/OSServices.framework/Headers/Power.h>
 #endif
 
 #include <sys/types.h>
@@ -174,34 +177,6 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
         break;
     case QSystemInfo::QtCore:
        return  qVersion();
-       break;
-    case QSystemInfo::WrtCore:
-        {
-        }
-       break;
-    case QSystemInfo::Webkit:
-        {
-        }
-       break;
-    case QSystemInfo::ServiceFramework:
-        {
-        }
-       break;
-    case QSystemInfo::WrtExtensions:
-        {
-        }
-       break;
-    case QSystemInfo::ServiceProvider:
-        {
-        }
-       break;
-    case QSystemInfo::NetscapePlugin:
-        {
-        }
-       break;
-    case QSystemInfo::WebApp:
-        {
-        }
        break;
    case QSystemInfo::Firmware:
        {
