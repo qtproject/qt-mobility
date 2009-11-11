@@ -339,7 +339,9 @@ QVariant QContactListModel::data(const QModelIndex& index, int role) const
         foreach (int row, newCacheRows) {
             if (!d->m_cache.contains(row)) {
                 QContact temp;
-                temp.setDisplayLabel(QString(tr("Loading...")));
+                QContactName loadingName;
+                loadingName.setCustomLabel(QString(tr("Loading...")));
+                temp.saveDetail(&loadingName);
                 d->m_cache.insert(row, temp);
             }
         }
@@ -359,8 +361,11 @@ QVariant QContactListModel::data(const QModelIndex& index, int role) const
         }
 
         // ensure that the current row's contact is cached; if not create a placeholder.
-        if (!d->m_cache.contains(d->m_currentRow))
-            currentContact.setDisplayLabel(QString(tr("Loading...")));
+        if (!d->m_cache.contains(d->m_currentRow)) {
+            QContactName loadingName;
+            loadingName.setCustomLabel(QString(tr("Loading...")));
+            currentContact.saveDetail(&loadingName);
+        }
 
         // now fire off an asynchronous request to update our cache
         QContactFetchRequest* req = new QContactFetchRequest;
