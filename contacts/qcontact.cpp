@@ -110,6 +110,8 @@ QContact::QContact(const QContact& other)
  */
 bool QContact::isEmpty() const
 {
+    //stopcompilation;
+
     /* Every contact has a display label field.. */
     if (d->m_details.count() > 2)
         return false;
