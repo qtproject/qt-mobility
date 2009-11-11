@@ -86,13 +86,17 @@
 QContact::QContact()
     : d(new QContactData)
 {
-    // insert the contact's name field. XXX TODO: fix this after removing deprecated API
+    // insert the contact's name field.
+    // XXX TODO: fix this after removing deprecated API
     QContactDisplayLabel contactLabel;
+    contactLabel.setValue(QContactDisplayLabel::FieldLabel, QString());
     contactLabel.d->m_id = 1;
-    contactLabel.setSynthesized(true);
     d->m_details.insert(0, contactLabel);
-    QContactType contactType; // and the type field.
+
+    // and the contact type field.
+    QContactType contactType;
     contactType.setType(QContactType::TypeContact);
+    contactType.d->m_id = 2;
     d->m_details.insert(1, contactType);
 }
 
@@ -128,10 +132,12 @@ bool QContact::isEmpty() const
  */
 void QContact::clearDetails()
 {
-    QContactType typeDet = d->m_details.at(1);
     QContactDisplayLabel dl = d->m_details.at(0);
     dl.setValue(QContactDisplayLabel::FieldLabel, QString());
-    dl.setSynthesized(true); // XXX TODO: fix this after removing deprecated API
+    dl.d->m_id = 1;
+    QContactType typeDet = d->m_details.at(1);
+    typeDet.d->m_id = 2;
+
     d->m_details.clear();
     d->m_details.insert(0, dl);
     d->m_details.insert(1, typeDet);
@@ -404,7 +410,7 @@ bool QContact::removeDetail(QContactDetail* detail)
     if (detail->d->m_definitionName == QContactDisplayLabel::DefinitionName) {
         // XXX TODO: fix this after removing the deprecated API
         QContactDisplayLabel l = d->m_details[0];
-        l.setLabel(QString());
+        l.setValue(QContactDisplayLabel::FieldLabel, QString());
         d->m_details[0] = l;
         return true;
     }
