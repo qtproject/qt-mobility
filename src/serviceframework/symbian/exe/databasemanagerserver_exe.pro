@@ -8,7 +8,7 @@ DEFINES += DATABASEMANAGERSERVER_NO_LIBRARY
 
 SOURCES += databasemanagerservermain.cpp
 
-include(../../../common.pri)
+include(../../../../common.pri)
 
 
 DEPENDPATH += ../ ../..

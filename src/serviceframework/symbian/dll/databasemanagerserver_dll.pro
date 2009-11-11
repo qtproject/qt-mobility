@@ -7,7 +7,7 @@ DEFINES += DATABASEMANAGERSERVER_LIBRARY
 
 DEPENDPATH += ../..
 
-include(../../../common.pri)
+include(../../../../common.pri)
 
 
 DEPENDPATH += ..
