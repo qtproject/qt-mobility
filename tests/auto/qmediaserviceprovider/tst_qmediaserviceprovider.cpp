@@ -43,13 +43,13 @@
 #include <QDebug>
 
 #include <qmediaserviceprovider.h>
-#include <multimedia/qmediaserviceproviderplugin.h>
-#include <multimedia/qmediapluginloader_p.h>
-#include <multimedia/qmediaobject.h>
-#include <multimedia/qmediaservice.h>
-#include <multimedia/qmediaplayer.h>
-#include <multimedia/experimental/qcamera.h>
-#include <multimedia/qaudiocapturesource.h>
+#include <qmediaserviceproviderplugin.h>
+#include <qmediapluginloader_p.h>
+#include <qmediaobject.h>
+#include <qmediaservice.h>
+#include <qmediaplayer.h>
+#include <experimental/qcamera.h>
+#include <qaudiocapturesource.h>
 
 class MockMediaService : public QMediaService
 {
