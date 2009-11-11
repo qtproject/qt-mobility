@@ -45,9 +45,6 @@
 #include <e32cmn.h>
 #include <QUrl>
 #include <QDir>
-#include <QDebug>
-
-_LIT(KVideo,"c:\\fileName.rm");
 
 S60MediaRecognizer::S60MediaRecognizer(QObject *parent) : QObject(parent)
 {
@@ -84,7 +81,6 @@ S60MediaRecognizer::MediaType S60MediaRecognizer::IdentifyMediaTypeL(const QUrl&
    
    if (!m_error) {
        switch (type) {
-       case CMPMediaRecognizer::ELocalRamFile:
        case CMPMediaRecognizer::ELocalAudioFile:
            mediaType = Audio;
            break;
@@ -94,6 +90,7 @@ S60MediaRecognizer::MediaType S60MediaRecognizer::IdentifyMediaTypeL(const QUrl&
        case CMPMediaRecognizer::ELocalAudioPlaylist:
        case CMPMediaRecognizer::EUrl:
 // TODO: Must be considered when streams will be implemented
+       case CMPMediaRecognizer::ELocalRamFile:
        case CMPMediaRecognizer::ELocalSdpFile:
        case CMPMediaRecognizer::EProgressiveDownload:
        case CMPMediaRecognizer::EUnidentified:

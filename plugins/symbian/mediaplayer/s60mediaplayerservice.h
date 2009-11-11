@@ -87,15 +87,15 @@ protected: // From MS60MediaPlayerResolver
     
 private:
     S60MediaPlayerControl *m_control;
-    S60VideoOutputControl *m_videoOutput;
+    mutable S60VideoOutputControl *m_videoOutput;
     S60VideoPlayerSession *m_videoPlayerSession;
     S60AudioPlayerSession *m_audioPlayerSession;
     S60VideoMetaDataProvider *m_metaData;   
 #ifndef QT_NO_MULTIMEDIA
-    S60VideoRenderer *m_videoRenderer;
-    S60VideoOverlay *m_videoWindow;
+    mutable S60VideoRenderer *m_videoRenderer;
+    mutable S60VideoOverlay *m_videoWindow;
 #endif
-    S60VideoWidgetControl *m_videoWidget;
+    mutable S60VideoWidgetControl *m_videoWidget;
 };
 
 #endif

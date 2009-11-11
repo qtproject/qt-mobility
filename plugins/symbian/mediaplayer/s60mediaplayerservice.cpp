@@ -62,29 +62,22 @@
 S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
     : QMediaService(parent),
       m_videoPlayerSession(NULL),
-      m_audioPlayerSession(NULL)
+      m_audioPlayerSession(NULL),
+      m_videoWindow(NULL),
+      m_videoWidget(NULL),
+      m_videoRenderer(NULL),
+      m_control(NULL),
+      m_videoOutput(NULL),
+      m_metaData(NULL)
 {
     m_control = new S60MediaPlayerControl(*this, this);
-    //TODO:m_metaData = new S60VideoMetaDataProvider(m_session, this);
-    m_videoOutput = new S60VideoOutputControl(this);
-    connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
-            this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
-#ifndef QT_NO_MULTIMEDIA
-    m_videoRenderer = new S60VideoRenderer(this);
-    m_videoWindow = new S60VideoOverlay(this);
-#endif
-    m_videoWidget = new S60VideoWidgetControl(this);
-
-    m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>() 
-#ifndef QT_NO_MULTIMEDIA
-            << QVideoOutputControl::RendererOutput
-            << QVideoOutputControl::WindowOutput
-#endif
-            << QVideoOutputControl::WidgetOutput);
 }
 
 S60MediaPlayerService::~S60MediaPlayerService()
 {
+    delete m_videoWidget;
+    delete m_videoRenderer;
+    delete m_videoWindow;
 }
 
 QMediaControl *S60MediaPlayerService::control(const char *name) const
@@ -92,21 +85,46 @@ QMediaControl *S60MediaPlayerService::control(const char *name) const
     if (qstrcmp(name,QMediaPlayerControl_iid) == 0)
         return m_control;
 
-    //TODO:if (qstrcmp(name,QMetaDataControl_iid) == 0)
-    //    return m_metaData;
+    if (qstrcmp(name,QMetaDataControl_iid) == 0) {
+        // TODO:if (m_metaData)
+        // TODO:    m_metaData = new S60VideoMetaDataProvider(m_session, this);
+        // return m_metaData;
+    }
 
-    if (qstrcmp(name, QVideoOutputControl_iid) == 0)
-        return m_videoOutput;
-
-    if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
-        return m_videoWidget;
-
+    if (qstrcmp(name, QVideoOutputControl_iid) == 0) {
+        if (!m_videoOutput) {
+            m_videoOutput = new S60VideoOutputControl;
+            connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
+                    this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
+            m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>() 
 #ifndef QT_NO_MULTIMEDIA
-    if (qstrcmp(name, QVideoRendererControl_iid) == 0)
-        return m_videoRenderer;
+                        << QVideoOutputControl::RendererOutput
+                        << QVideoOutputControl::WindowOutput
+#endif
+                        << QVideoOutputControl::WidgetOutput);
+            
+        }
+        return m_videoOutput;
+    }
 
-    if (qstrcmp(name, QVideoWindowControl_iid) == 0)
+    if (qstrcmp(name, QVideoWidgetControl_iid) == 0) {
+        if (!m_videoWidget)
+            m_videoWidget = new S60VideoWidgetControl;
+        return m_videoWidget;
+    }
+    
+#ifndef QT_NO_MULTIMEDIA
+    if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
+        if (m_videoRenderer)
+            m_videoRenderer = new S60VideoRenderer;
+        return m_videoRenderer;
+    }
+    
+    if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
+        if (!m_videoWindow)
+            m_videoWindow = new S60VideoOverlay;
         return m_videoWindow;
+    }
 #endif
 
     return 0;
@@ -140,11 +158,10 @@ void S60MediaPlayerService::videoOutputChanged(QVideoOutputControl::Output outpu
 
 S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
 {
-    QUrl url = m_control->media().canonicalUri();
-    qDebug() << url.toString();
-    S60MediaRecognizer *mediaRecognizer = new S60MediaRecognizer;
-    
+    S60MediaRecognizer *mediaRecognizer = new S60MediaRecognizer;    
     S60MediaPlayerSession* mediaPlayerSession = NULL;
+    QUrl url = m_control->media().canonicalUri();
+    
     S60MediaRecognizer::MediaType mediaType = mediaRecognizer->IdentifyMediaTypeL(url);
     if (mediaType == S60MediaRecognizer::Video) {
         if (!m_videoPlayerSession)
