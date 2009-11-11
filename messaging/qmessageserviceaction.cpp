@@ -39,6 +39,9 @@
 **
 ****************************************************************************/
 #include "qmessageserviceaction.h"
+#ifdef Q_OS_SYMBIAN
+#include "qmessageserviceaction_symbian_p.h"
+#endif
 
 /*!
     \class QMessageServiceAction

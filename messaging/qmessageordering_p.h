@@ -47,6 +47,9 @@
 #include <qpair.h>
 #include "winhelpers_p.h"
 #endif
+#ifdef Q_OS_SYMBIAN
+#include <qpair.h>
+#endif
 
 class QMessageOrderingPrivate
 {
@@ -66,6 +69,14 @@ public:
 
     static bool isFilterType(const QMessageOrdering &ordering);
     static QList<QMessageFilter> normalize(const QList<QMessageFilter> &filters, const QMessageOrdering &ordering);
+#endif
+#ifdef Q_OS_SYMBIAN
+    enum Field { Type = 0, Sender, Recipients, Subject, TimeStamp, ReceptionTimeStamp, Read, HasAttachments, Incoming, Removed, Priority, Size };
+    QList<QPair<Field, Qt::SortOrder> > _fieldOrderList;
+
+    static QMessageOrdering from(QMessageOrderingPrivate::Field field, Qt::SortOrder order);
+    static QMessageOrderingPrivate* implementation(const QMessageOrdering &ordering);
+    static bool lessThan(const QMessageOrdering &ordering, const QMessage &message1, const QMessage &message2);
 #endif
 };
 #endif

@@ -54,10 +54,18 @@ public:
 
     QMessageAccountId _id;
     QString _name;
+#if defined(Q_OS_SYMBIAN)
+    long int _service1EntryId; 
+    long int _service2EntryId; 
+#else
     QMessageAddress _address;
+#endif    
     QMessage::TypeFlags _types;
 
 #if defined(Q_OS_WIN)
     static QMessageAccount from(const QMessageAccountId &id, const QString &name, const QMessageAddress &address, const QMessage::TypeFlags &types);
+#endif
+#if defined(Q_OS_SYMBIAN)
+    static QMessageAccount from(const QMessageAccountId &id, const QString &name, long int service1EntryId, long int service2EntryId, const QMessage::TypeFlags &types);
 #endif
 };

@@ -133,6 +133,7 @@ protected:  //from MTelephonyInfoObserver
     void countryCodeChanged();
     void networkCodeChanged();
     void networkNameChanged();
+    void networkModeChanged();
 
     void cellNetworkSignalStrengthChanged();
     void cellNetworkStatusChanged();
@@ -171,9 +172,18 @@ private:
 };
 
 //////// QSystemDeviceInfo
-class DeviceInfo;
 
-class QSystemDeviceInfoPrivate : public QObject, public MTelephonyInfoObserver
+#include <mproengprofileactivationobserver.h> 
+#include <cenrepnotifyhandler.h>
+
+class DeviceInfo;
+class MProEngEngine;
+class MProEngNotifyHandler;
+
+class QSystemDeviceInfoPrivate : public QObject,
+    public MTelephonyInfoObserver,
+    public MProEngProfileActivationObserver,
+    public MCenRepNotifyHandlerCallback
 {
     Q_OBJECT
 
@@ -207,6 +217,18 @@ Q_SIGNALS:
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void powerStateChanged(QSystemDeviceInfo::PowerState);
 
+protected:  //From QObject
+    void connectNotify(const char *signal);
+
+protected: //From MProEngProfileActivationObserver
+    void HandleProfileActivatedL(TInt aProfileId);
+
+protected: //From MCenRepNotifyHandlerCallback
+    void HandleNotifyInt(TUint32 aId, TInt aNewValue);
+
+private:
+    QSystemDeviceInfo::Profile s60ProfileIdToProfile(TInt profileId) const;
+
 protected:  //from MTelephonyInfoObserver
     void batteryLevelChanged();
     void powerStateChanged();
@@ -214,9 +236,17 @@ protected:  //from MTelephonyInfoObserver
     void countryCodeChanged(){};
     void networkCodeChanged(){};
     void networkNameChanged(){};
+    void networkModeChanged(){};
 
     void cellNetworkSignalStrengthChanged(){};
     void cellNetworkStatusChanged(){};
+
+private:    //data
+    MProEngEngine *m_profileEngine;
+    MProEngNotifyHandler* m_proEngNotifyHandler;
+
+    CRepository *m_bluetoothRepository;
+    CCenRepNotifyHandler *m_bluetoothNotifyHandler;
 };
 
 //////// QSystemScreenSaver

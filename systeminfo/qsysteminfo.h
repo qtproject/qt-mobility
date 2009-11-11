@@ -94,13 +94,6 @@ public:
     enum Version {
         Os = 1,
         QtCore,
-        WrtCore,
-        Webkit,
-        ServiceFramework,
-        WrtExtensions,
-        ServiceProvider,
-        NetscapePlugin,
-        WebApp,
         Firmware
     };
 

@@ -128,19 +128,19 @@ void QEvrVideoOverlay::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 {
     switch (mode) {
     case QVideoWidget::KeepAspectRatio:
-            if (m_displayControl)
-                    m_displayControl->SetAspectRatioMode(MFVideoARMode_PreservePicture);
+        if (m_displayControl)
+                m_displayControl->SetAspectRatioMode(MFVideoARMode_PreservePicture);
 
-            m_aspectRatioMode = mode;
-            break;
+        m_aspectRatioMode = mode;
+        break;
     case QVideoWidget::IgnoreAspectRatio:
-            if (m_displayControl)
-                    m_displayControl->SetAspectRatioMode(MFVideoARMode_None);
+        if (m_displayControl)
+                m_displayControl->SetAspectRatioMode(MFVideoARMode_None);
 
-            m_aspectRatioMode = mode;
-            break;
+        m_aspectRatioMode = mode;
+        break;
     default:
-            break;
+        break;
     }
 }
 
@@ -200,8 +200,6 @@ void QEvrVideoOverlay::setDisplayControl(IMFVideoDisplayControl *control)
         m_displayControl->AddRef();
         m_displayControl->SetVideoWindow(winId());
         m_displayControl->SetVideoPosition(0, &displayRect);
-
-		//setAspectRatio(m_aspectRatioMode);
     }
 }
 

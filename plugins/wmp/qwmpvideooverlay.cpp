@@ -45,7 +45,7 @@
 
 QWmpVideoOverlay::QWmpVideoOverlay(IWMPPlayer4 *player, IOleObject *object, QWmpPlayerService *service)
     : m_service(service)
-	, m_player(player)
+    , m_player(player)
     , m_object(object)
     , m_inPlaceObject(0)
     , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
@@ -162,18 +162,18 @@ void QWmpVideoOverlay::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 {
         switch (mode) {
         case QVideoWidget::KeepAspectRatio:
-		m_player->put_stretchToFit(FALSE);
+        m_player->put_stretchToFit(FALSE);
 
-                m_aspectRatioMode = mode;
-		break;
-        case QVideoWidget::IgnoreAspectRatio:
-		m_player->put_stretchToFit(TRUE);
+        m_aspectRatioMode = mode;
+        break;
+    case QVideoWidget::IgnoreAspectRatio:
+        m_player->put_stretchToFit(TRUE);
 
-                m_aspectRatioMode = mode;
-		break;
-	default:
-		break;
-	}
+        m_aspectRatioMode = mode;
+        break;
+    default:
+        break;
+    }
 }
 
 void QWmpVideoOverlay::repaint()

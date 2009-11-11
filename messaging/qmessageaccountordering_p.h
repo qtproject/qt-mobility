@@ -42,6 +42,9 @@
 #define QMESSAGEACCOUNTORDERINGPRIVATE_H
 #include "qmessageaccountordering.h"
 #include "qstring.h"
+#ifdef Q_OS_SYMBIAN
+#include <qmessageaccount.h>
+#endif
 
 class QMessageAccountOrderingPrivate
 {
@@ -52,5 +55,9 @@ public:
     Qt::SortOrder _order;
     QMessageAccountOrdering *q_ptr;
     static Qt::SortOrder order(const QMessageAccountOrdering &ordering) { return ordering.d_ptr->_order; }
+    
+#ifdef Q_OS_SYMBIAN
+    static bool lessThan(const QMessageAccountOrdering &ordering, const QMessageAccount &account1, const QMessageAccount &account2);
+#endif    
 };
 #endif
