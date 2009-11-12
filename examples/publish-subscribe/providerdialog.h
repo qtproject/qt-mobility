@@ -58,6 +58,11 @@ public:
     ProviderDialog(QWidget *parent = 0);
     ~ProviderDialog();
 
+#ifdef Q_OS_SYMBIAN
+signals:
+    void switchRequested();
+#endif
+
 protected:
     void changeEvent(QEvent *e);
 

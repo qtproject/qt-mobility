@@ -70,15 +70,28 @@ int main(int argc, char *argv[])
     if (createDefault || createProvider) {
         provider = new ProviderDialog;
         QObject::connect(provider, SIGNAL(rejected()), &app, SLOT(quit()));
+#ifndef Q_OS_SYMBIAN
         provider->show();
+#else
+        provider->showFullScreen();
+#endif
     }
 
     ConsumerDialog *consumer = 0;
     if (createDefault || createConsumer) {
         consumer = new ConsumerDialog;
         QObject::connect(consumer, SIGNAL(rejected()), &app, SLOT(quit()));
+#ifndef Q_OS_SYMBIAN
         consumer->show();
+#else
+        consumer->showFullScreen();
+#endif
     }
+
+#ifdef Q_OS_SYMBIAN
+    QObject::connect(provider, SIGNAL(switchRequested()), consumer, SLOT(raise()));
+    QObject::connect(consumer, SIGNAL(switchRequested()), provider, SLOT(raise()));
+#endif
 
     int result = app.exec();
 

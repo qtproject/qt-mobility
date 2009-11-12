@@ -44,6 +44,10 @@
 
 #include <qvaluespaceprovider.h>
 
+#ifdef Q_OS_SYMBIAN
+#include <QPushButton>
+#endif
+
 #include <QDebug>
 
 ProviderDialog::ProviderDialog(QWidget *parent) :
@@ -52,6 +56,14 @@ ProviderDialog::ProviderDialog(QWidget *parent) :
         provider(0)
 {
     ui->setupUi(this);
+
+#ifdef Q_OS_SYMBIAN
+    QPushButton *switchButton = new QPushButton("Switch", this);
+    switchButton->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    ui->gridLayout->addWidget(switchButton);
+    switchButton->show();
+    connect(switchButton, SIGNAL(clicked()), this, SIGNAL(switchRequested()));
+#endif
 
     //! [1]
     connect(ui->connectButton, SIGNAL(clicked()), this, SLOT(createNewObject()));
