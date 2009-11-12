@@ -1,5 +1,5 @@
 TARGET = tst_qserviceinterfacedescriptor
-INCLUDEPATH += ../../../serviceframework
+INCLUDEPATH += ../../../src/serviceframework
 
 CONFIG+=testcase
 

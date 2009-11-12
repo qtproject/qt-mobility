@@ -1,5 +1,5 @@
 TARGET = tst_qmediaplayer
-INCLUDEPATH += ../../../multimedia
+INCLUDEPATH += ../../../src/multimedia
 CONFIG += testcase
 
 SOURCES += tst_qmediaplayer.cpp

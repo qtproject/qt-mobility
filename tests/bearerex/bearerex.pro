@@ -14,7 +14,7 @@ CONFIG += testcase
 
 DEPENDPATH += .
 INCLUDEPATH += . \
-               ../../bearer
+               ../../src/bearer
 
 # Example headers and sources
 HEADERS += bearerex.h \

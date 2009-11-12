@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = player
 
-INCLUDEPATH += ../../multimedia
+INCLUDEPATH += ../../src/multimedia
 
 include(../examples.pri)
 qtAddLibrary(QtMedia)

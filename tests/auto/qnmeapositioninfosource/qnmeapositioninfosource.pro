@@ -5,7 +5,7 @@ TARGET = tst_qnmeapositioninfosource
 
 include (../../../common.pri)
 
-INCLUDEPATH += ../../../location
+INCLUDEPATH += ../../../src/location
 
 HEADERS += ../qlocationtestutils_p.h \
            ../testqgeopositioninfosource_p.h \

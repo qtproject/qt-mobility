@@ -4,7 +4,7 @@ TARGET=tst_qlocationutils
 
 include (../../../common.pri)
 
-INCLUDEPATH += ../../../location
+INCLUDEPATH += ../../../src/location
 
 # Input 
 SOURCES += tst_qlocationutils.cpp

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "../../../context/qcrmlparser_p.h"
+#include "../../../src/publishsubscribe/qcrmlparser_p.h"
 
 #include <QtTest/QTest>
 #include <QDebug>

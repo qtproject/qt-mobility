@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-INCLUDEPATH += ../../serviceframework
+INCLUDEPATH += ../../src/serviceframework
 HEADERS += bluetoothtransferplugin.h \
            bluetoothtransfer.h
 SOURCES += bluetoothtransferplugin.cpp \
