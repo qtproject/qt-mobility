@@ -717,28 +717,29 @@ namespace {
         return result;
     }
 
-    QByteArray extractPlainText(const QString &rtf)
+#ifndef _WIN32_WCE
+    QByteArray extractPlainText(const QByteArray &rtf)
     {
         // Attempt to extract the HTML from the RTF
         // as per CMapiEx, http://www.codeproject.com/KB/IP/CMapiEx.aspx
         QByteArray text;
 
-        const QString startTag("\\fs20");
+        const QByteArray startTag("\\fs20");
         int index = rtf.indexOf(startTag);
         if (index != -1) {
-            const QString par("\\par");
-            const QString tab("\\tab");
-            const QString li("\\li");
-            const QString fi("\\fi-");
-            const QString pntext("\\pntext");
+            const QByteArray par("\\par");
+            const QByteArray tab("\\tab");
+            const QByteArray li("\\li");
+            const QByteArray fi("\\fi-");
+            const QByteArray pntext("\\pntext");
 
-            const QChar zero = QChar('\0');
-            const QChar space = QChar(' ');
-            const QChar openingBrace = QChar('{');
-            const QChar closingBrace = QChar('}');
-            const QChar ignore[] = { openingBrace, closingBrace, QChar('\r'), QChar('\n') };
+            const char zero = '\0';
+            const char space = ' ';
+            const char openingBrace = '{';
+            const char closingBrace = '}';
+            const char ignore[] = { openingBrace, closingBrace, '\r', '\n' };
 
-            QString::const_iterator rit = rtf.constBegin() + index, rend = rtf.constEnd();
+            QByteArray::const_iterator rit = rtf.constBegin() + index, rend = rtf.constEnd();
             while ((rit != rend) && (*rit != zero)) {
                 if (*rit == ignore[0] || *rit == ignore[1] || *rit == ignore[2] || *rit == ignore[3]) {
                     ++rit;
@@ -747,7 +748,7 @@ namespace {
                     bool skipDigits(false);
                     bool skipSpace(false);
 
-                    const QString remainder(QString::fromRawData(rit, (rend - rit)));
+                    const QByteArray remainder(QByteArray::fromRawData(rit, (rend - rit)));
 
                     if (remainder.startsWith(par)) {
                         rit += par.length();
@@ -765,22 +766,22 @@ namespace {
                         rit += fi.length();
                         skipDigits = true;
                         skipSpace = true;
-                    } else if (remainder.startsWith(QString("\\'"))) {
+                    } else if (remainder.startsWith(QByteArray("\\'"))) {
                         rit += 2;
-                        QString encodedChar(QString::fromRawData(rit, 2));
+                        QByteArray encodedChar(QByteArray::fromRawData(rit, 2));
                         rit += 2;
                         text += char(encodedChar.toUInt(0, 16));
                     } else if (remainder.startsWith(pntext)) {
                         rit += pntext.length();
                         skipSection = true;
-                    } else if (remainder.startsWith(QString("\\{"))) {
+                    } else if (remainder.startsWith(QByteArray("\\{"))) {
                         rit += 2;
                         text += "{";
-                    } else if (remainder.startsWith(QString("\\}"))) {
+                    } else if (remainder.startsWith(QByteArray("\\}"))) {
                         rit += 2;
                         text += "}";
                     } else {
-                        text += char((*rit).unicode());
+                        text += *rit;
                         ++rit;
                     }
 
@@ -790,7 +791,7 @@ namespace {
                         }
                     }
                     if (skipDigits) {
-                        while ((rit != rend) && (*rit).isDigit()) {
+                        while ((rit != rend) && isdigit(*rit)) {
                             ++rit;
                         }
                     }
@@ -806,35 +807,44 @@ namespace {
         return text;
     }
 
-    QString extractHtml(const QString &rtf)
+    int digitValue(char n)
+    {
+        if (n >= '0' && n <= '9') {
+            return (n - '0');
+        }
+
+        return 0;
+    }
+
+    QByteArray extractHtml(const QByteArray &rtf)
     {
         // Attempt to extract the HTML from the RTF
         // as per CMapiEx, http://www.codeproject.com/KB/IP/CMapiEx.aspx
-        QString html;
+        QByteArray html;
 
-        const QString htmltag("\\*\\htmltag");
+        const QByteArray htmltag("\\*\\htmltag");
         int index = rtf.indexOf("<html", Qt::CaseInsensitive);
         if (index == -1) {
             index = rtf.indexOf(htmltag, Qt::CaseInsensitive);
         }
         if (index != -1) {
-            const QString mhtmltag("\\*\\mhtmltag");
-            const QString par("\\par");
-            const QString tab("\\tab");
-            const QString li("\\li");
-            const QString fi("\\fi-");
-            const QString pntext("\\pntext");
-            const QString htmlrtf("\\htmlrtf");
+            const QByteArray mhtmltag("\\*\\mhtmltag");
+            const QByteArray par("\\par");
+            const QByteArray tab("\\tab");
+            const QByteArray li("\\li");
+            const QByteArray fi("\\fi-");
+            const QByteArray pntext("\\pntext");
+            const QByteArray htmlrtf("\\htmlrtf");
 
-            const QChar zero = QChar('\0');
-            const QChar space = QChar(' ');
-            const QChar openingBrace = QChar('{');
-            const QChar closingBrace = QChar('}');
-            const QChar ignore[] = { openingBrace, closingBrace, QChar('\r'), QChar('\n') };
+            const char zero = '\0';
+            const char space = ' ';
+            const char openingBrace = '{';
+            const char closingBrace = '}';
+            const char ignore[] = { openingBrace, closingBrace, '\r', '\n' };
 
             int tagIgnored = -1;
 
-            QString::const_iterator rit = rtf.constBegin() + index, rend = rtf.constEnd();
+            QByteArray::const_iterator rit = rtf.constBegin() + index, rend = rtf.constEnd();
             while ((rit != rend) && (*rit != zero)) {
                 if (*rit == ignore[0] || *rit == ignore[1] || *rit == ignore[2] || *rit == ignore[3]) {
                     ++rit;
@@ -843,14 +853,14 @@ namespace {
                     bool skipDigits(false);
                     bool skipSpace(false);
 
-                    const QString remainder(QString::fromRawData(rit, (rend - rit)));
+                    const QByteArray remainder(QByteArray::fromRawData(rit, (rend - rit)));
 
                     if (remainder.startsWith(htmltag)) {
                         rit += htmltag.length();
 
                         int tagNumber = 0;
-                        while ((*rit).isDigit()) {
-                            tagNumber = (tagNumber * 10) + (*rit).digitValue();
+                        while (isdigit(*rit)) {
+                            tagNumber = (tagNumber * 10) + digitValue(*rit);
                             ++rit;
                         }
                         skipSpace = true;
@@ -863,8 +873,8 @@ namespace {
                         rit += mhtmltag.length();
 
                         int tagNumber = 0;
-                        while ((*rit).isDigit()) {
-                            tagNumber = (tagNumber * 10) + (*rit).digitValue();
+                        while (isdigit(*rit)) {
+                            tagNumber = (tagNumber * 10) + digitValue(*rit);
                             ++rit;
                         }
                         skipSpace = true;
@@ -872,12 +882,12 @@ namespace {
                         tagIgnored = tagNumber;
                     } else if (remainder.startsWith(par)) {
                         rit += par.length();
-                        html += QChar('\r');
-                        html += QChar('\n');
+                        html += char('\r');
+                        html += char('\n');
                         skipSpace = true;
                     } else if (remainder.startsWith(tab)) {
                         rit += tab.length();
-                        html += QChar('\t');
+                        html += char('\t');
                         skipSpace = true;
                     } else if (remainder.startsWith(li)) {
                         rit += li.length();
@@ -887,12 +897,12 @@ namespace {
                         rit += fi.length();
                         skipDigits = true;
                         skipSpace = true;
-                    } else if (remainder.startsWith(QString("\\'"))) {
+                    } else if (remainder.startsWith(QByteArray("\\'"))) {
                         rit += 2;
 
-                        QString encodedChar(QString::fromRawData(rit, 2));
+                        QByteArray encodedChar(QByteArray::fromRawData(rit, 2));
                         rit += 2;
-                        html += QChar(encodedChar.toUInt(0, 16));
+                        html += char(encodedChar.toUInt(0, 16));
                     } else if (remainder.startsWith(pntext)) {
                         rit += pntext.length();
                         skipSection = true;
@@ -900,7 +910,7 @@ namespace {
                         rit += htmlrtf.length();
 
                         // Find the terminating tag
-                        const QString terminator("\\htmlrtf0");
+                        const QByteArray terminator("\\htmlrtf0");
                         int index = remainder.indexOf(terminator, htmlrtf.length());
                         if (index == -1) {
                             rit = rend;
@@ -908,10 +918,10 @@ namespace {
                             rit += (index + terminator.length() - htmlrtf.length());
                             skipSpace = true;
                         }
-                    } else if (remainder.startsWith(QString("\\{"))) {
+                    } else if (remainder.startsWith(QByteArray("\\{"))) {
                         rit += 2;
                         html += openingBrace;
-                    } else if (remainder.startsWith(QString("\\}"))) {
+                    } else if (remainder.startsWith(QByteArray("\\}"))) {
                         rit += 2;
                         html += closingBrace;
                     } else {
@@ -925,7 +935,7 @@ namespace {
                         }
                     }
                     if (skipDigits) {
-                        while ((rit != rend) && (*rit).isDigit()) {
+                        while ((rit != rend) && isdigit(*rit)) {
                             ++rit;
                         }
                     }
@@ -940,6 +950,7 @@ namespace {
 
         return html;
     }
+#endif
 
     void storeMessageProperties(QMessageStore::ErrorCode *lastError, const QMessage &source, IMessage *message)
     {
@@ -4185,6 +4196,9 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
 
                             decompressor->Release();
 
+                            // RTF is stored in ASCII
+                            asciiData = true;
+
                             if (contentFormat == EDITOR_FORMAT_DONTKNOW) {
                                 // Inspect the message content to see if we can tell what is in it
                                 if (!messageBody.isEmpty()) {
@@ -4199,6 +4213,7 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                                         if (HR_SUCCEEDED(rv)) {
                                             messageBody = readStream(lastError, ts);
                                             bodySubType = "plain";
+											asciiData = false;
 
                                             ts->Release();
                                         } else {
@@ -4213,16 +4228,14 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
 
                             if (bodySubType.isEmpty()) {
                                 if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
-                                    messageBody = extractPlainText(QString::fromLatin1(messageBody));
+                                    messageBody = extractPlainText(messageBody);
                                     bodySubType = "plain";
                                 } else if (contentFormat == EDITOR_FORMAT_HTML) {
-                                    QString html = extractHtml(QString::fromLatin1(messageBody));
-                                    messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(html.constData(), html.length());
+                                    messageBody = extractHtml(messageBody);
                                     bodySubType = "html";
                                 } else {
-                                    // I guess we must have RTF
+                                    // I guess we must just have RTF
                                     bodySubType = "rtf";
-                                    asciiData = true;
                                 }
                             }
                         } else {
