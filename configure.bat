@@ -182,11 +182,16 @@ set CURRENTDIR=%CD%
 echo %CURRENTDIR%
 if exist %QT_MOBILITY_PREFIX% goto prefixExists
 mkdir %QT_MOBILITY_PREFIX%
+if errorlevel 1 goto invalidPrefix
 cd %QT_MOBILITY_PREFIX%
 set QT_MOBILITY_PREFIX=%CD%
 cd %CURRENTDIR%
 rd /S /Q %QT_MOBILITY_PREFIX%
 goto endprefixProcessing
+
+:invalidPrefix
+echo "%QT_MOBILITY_PREFIX%" is not a valid directory path.
+goto :exitTag
 
 :prefixExists
 cd %QT_MOBILITY_PREFIX%
