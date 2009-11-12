@@ -55,7 +55,10 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QRegExpValidator>
+#include <QRadioButton>
+#include <QButtonGroup>
 #include <QDebug>
+#include <QCloseEvent>
 
 bool checkID(const QString &id)
 {
@@ -158,11 +161,25 @@ void PathDelegate::setModelData(QWidget *editor,
 }
 
 EditorWidget::EditorWidget():m_isModified(false) {
-    m_repoLabel = new QLabel("Category/Repository ID", this);
+    m_RPropRadio = new QRadioButton("RProperty");
+    m_CRepRadio = new QRadioButton("CRepository");
+    QButtonGroup *targetGroup = new QButtonGroup(this);
+    targetGroup->addButton(m_CRepRadio);
+    targetGroup->addButton(m_RPropRadio);
+    targetGroup->setExclusive(true);
+    connect(targetGroup, SIGNAL(buttonClicked(QAbstractButton *)), this, SLOT(targetChanged(QAbstractButton *)));
+
+    QHBoxLayout *targetLayout = new QHBoxLayout;
+    targetLayout->addWidget(m_RPropRadio);
+    targetLayout->addWidget(m_CRepRadio);
+
+    m_RPropRadio->setChecked(true);
+    m_repoLabel = new QLabel("Category ID", this);
     m_repoUID = new QLineEdit(this);
     QRegExpValidator *validator = new QRegExpValidator(QRegExp("([0-9]|[A-F]|[a-f]){1,8}"), this);
     m_repoUID->setValidator(validator);
     connect(m_repoUID, SIGNAL(textEdited(const QString &)), this, SLOT(setModified()));
+    m_repoUID->setToolTip("Must be a hexidecimal number no longer than  8 digits");
 
     QHBoxLayout *repoLayout = new QHBoxLayout;
     repoLayout->addWidget(m_repoLabel);
@@ -208,6 +225,7 @@ EditorWidget::EditorWidget():m_isModified(false) {
     buttonsLayout->addWidget(downButton);
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
+    mainLayout->addLayout(targetLayout);
     mainLayout->addLayout(repoLayout);
     mainLayout->addWidget(m_tableWidget);
     mainLayout->addLayout(buttonsLayout);
@@ -277,8 +295,9 @@ void EditorWidget::save(const QString &filePath)
     QString documentStart("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
     file.write(documentStart.toUtf8());
 
-    QString repositoryElementStart("<repository uidValue=\"0x%2\">\n");
-    file.write(repositoryElementStart.arg(repoUID).toUtf8());
+    QString repositoryElementStart("<repository target=\"%1\" uidValue=\"0x%2\">\n");
+    QString target = m_RPropRadio->isChecked()?"RProperty":"CRepository";
+    file.write(repositoryElementStart.arg(target).arg(repoUID).toUtf8());
 #ifdef INCL_TYPE
     QString keyElementStart("    <key int=\"0x%1\" type=\"%2\" ref=\"%3\">\n");
 #else
@@ -330,8 +349,13 @@ void EditorWidget::open(const QString &filePath)
     }
 
     for (int i = 0; i < keyData.count(); ++i) {
-        if (i == 0)
+        if (i == 0) {
             m_repoUID->setText(QString::number(keyData.at(i).repoId(),16));
+            if (keyData.at(i).target() == KeyData::RProperty)
+                m_RPropRadio->click();
+            else 
+                m_CRepRadio->click();
+        }
 
         addRow();
         m_tableWidget->item(i, EditorWidget::KeyId)->setText(QString::number(keyData.at(i).keyId(),16));
@@ -389,7 +413,7 @@ bool EditorWidget::verifyContents()
 
     QString repoUID = m_repoUID->text();
     if (!checkID(repoUID)) {
-        QMessageBox::warning(this, "Invalid input", "Category/Repository ID field is invalid, it must be a hexidecimal number no longer than 8 digits");
+        QMessageBox::warning(this, "Invalid input", m_repoLabel->text() + "field is invalid, it must be a hexidecimal number no longer than 8 digits");
         m_repoUID->setFocus();
         return false;
     }
@@ -473,6 +497,14 @@ void EditorWidget::moveRowDown()
     m_tableWidget->removeRow(currentRow);
 }
 
+void EditorWidget::targetChanged(QAbstractButton *button)
+{
+    if (button == m_RPropRadio)
+        m_repoLabel->setText("Category ID");
+    else
+        m_repoLabel->setText("Repository ID");
+}
+
 QCrmlGenerator::QCrmlGenerator()
 {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
@@ -487,7 +519,7 @@ QCrmlGenerator::QCrmlGenerator()
     connect(saveAsAction, SIGNAL(triggered()), this, SLOT(saveFileAs()));
 
     exitAction = new QAction(tr("&Exit"), this);
-    connect(exitAction, SIGNAL(triggered()), this, SLOT(exit()));
+    connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
 
     fileMenu->addAction(newAction);
     fileMenu->addAction(openAction);
@@ -503,14 +535,14 @@ QCrmlGenerator::QCrmlGenerator()
 
 void QCrmlGenerator::newFile() {
 
-    if (loseUnsaved()) {
+    if (safeToClear()) {
         m_editorWidget->initNew();
         m_saveFile.clear();
     }
 }
 
 void QCrmlGenerator::openFile() {
-    if (loseUnsaved()) {
+    if (safeToClear()) {
         QFileDialog openDialog(this, tr("Open"), QString(), tr("QCrml (*.qcrml);;Any Files(*)"));
         openDialog.setFileMode(QFileDialog::ExistingFile);
         openDialog.setAcceptMode(QFileDialog::AcceptOpen);
@@ -550,27 +582,28 @@ void QCrmlGenerator::saveFileAs()
     }
 }
 
-void QCrmlGenerator::exit()
+void QCrmlGenerator::closeEvent(QCloseEvent *event)
 {
-    if (loseUnsaved()) {
-        close();
-    }
+    if (safeToClear())
+        event->accept();
+    else
+        event->ignore();
 }
 
-bool QCrmlGenerator::loseUnsaved()
+bool QCrmlGenerator::safeToClear()
 {
     if (m_editorWidget->isModified()) {
-        int ret = QMessageBox::warning(this, tr("Unsaved changes"),
-                tr("Unsaved changes will be lost, do you wish to continue?"),
-                    QMessageBox::Yes, QMessageBox::No);
+        int ret = QMessageBox::warning(this, tr("Save changes?"),
+                tr("Modifications have been made. Do you want to save your changes? "),
+                    QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
         switch (ret) {
-            case QMessageBox::No:
-                return false;
-            case QMessageBox::Yes:
+            case QMessageBox::Save:
+                saveFile();
+                return true;
+            case QMessageBox::Discard:
+                return true;
             default:
-                //User wants to continue
-                //so let them
-                break;
+                return false;
         }
     }
     return true;
