@@ -633,6 +633,17 @@ namespace {
         return result;
     }
 
+    ULONG streamSize(QMessageStore::ErrorCode* lastError, IStream* is)
+    {
+        ULONG size = 0;
+        STATSTG stg = { 0 };
+        HRESULT rv = is->Stat(&stg, STATFLAG_NONAME);
+        if(HR_SUCCEEDED(rv))
+            size = stg.cbSize.LowPart;
+        else *lastError = QMessageStore::ContentInaccessible;
+        return size;
+    }
+
     QByteArray readStream(QMessageStore::ErrorCode *lastError, IStream *is)
     {
         QByteArray result;
@@ -4232,16 +4243,29 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
             if (*lastError == QMessageStore::NoError) {
                 QMessageContentContainerPrivate *messageContainer(((QMessageContentContainer *)(msg))->d_ptr);
 
+                bool bodyDownloaded = true;
+#ifdef _WIN32_WCE
+                ULONG status = 0;
+                if(getMapiProperty(message,PR_MSG_STATUS,&status)) {
+                    bodyDownloaded = !((status & MSGSTATUS_HEADERONLY) || (status & MSGSTATUS_PARTIAL));
+                }
+#else
+                //TODO windows
+#endif
+
                 if (!msg->d_ptr->_hasAttachments) {
                     // Make the body the entire content of the message
                     messageContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
                     msg->d_ptr->_bodyId = QMessageContentContainerPrivate::bodyContentId();
+                    messageContainer->_available = bodyDownloaded;
+
                 } else {
                     // Add the message body data as the first part
                     QMessageContentContainer bodyPart;
                     {
                         QMessageContentContainerPrivate *bodyContainer(((QMessageContentContainer *)(&bodyPart))->d_ptr);
                         bodyContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
+                        bodyContainer->_available = bodyDownloaded;
                     }
 
                     messageContainer->setContentType(QByteArray("multipart"), QByteArray("mixed"), QByteArray());
@@ -4362,6 +4386,7 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
 
                             container->_name = filename.toAscii();
                             container->_size = size;
+                            container->_available = haveAttachmentData(lastError,msg->id(),number);
 
                             attachments[number] = attachment;
                         }
@@ -4398,6 +4423,33 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
 
     return result;
 }
+
+bool MapiSession::haveAttachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const
+{
+    bool result = false;
+
+    IMessage *message = openMapiMessage(lastError, id);
+    if (*lastError == QMessageStore::NoError) {
+        LPATTACH attachment(0);
+        HRESULT rv = message->OpenAttach(number, 0, 0, &attachment);
+        if (HR_SUCCEEDED(rv)) {
+            IStream *is(0);
+            rv = attachment->OpenProperty(PR_ATTACH_DATA_BIN, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+            if (HR_SUCCEEDED(rv)) {
+                result = streamSize(lastError, is) > 0;
+                mapiRelease(is);
+            }
+            mapiRelease(attachment);
+        } else {
+            qWarning() << "Unable to open attachment:" << number;
+        }
+
+        mapiRelease(message);
+    }
+
+    return result;
+}
+
 
 QByteArray MapiSession::attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const
 {
