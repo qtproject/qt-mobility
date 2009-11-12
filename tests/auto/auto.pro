@@ -34,6 +34,7 @@ SUBDIRS -= \
         qpaintervideosurface \
         qvideowidget \
         qmediaplayer \
-        qgraphicsvideoitem
+        qgraphicsvideoitem \
+        qmediaplaylist
 }
 
