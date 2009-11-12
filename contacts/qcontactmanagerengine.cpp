@@ -1784,11 +1784,12 @@ bool QContactManagerEngine::waitForRequestFinished(QContactAbstractRequest* req,
  */
 bool QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
+    QContactAbstractRequest::RequestType requestType = req->type();
     // convenience function that simply sets the operation error and status
     if (!req->d_ptr->stateTransition(req, error, errors, status))
         return false;
 
-    switch (req->type()) {
+    switch (requestType) {
         case QContactAbstractRequest::ContactFetchRequest:
         {
             QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
