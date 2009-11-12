@@ -1,6 +1,6 @@
 TARGET = tst_qpacketprotocol
-INCLUDEPATH += ../../../context
-DEPENDPATH += ../../../context
+INCLUDEPATH += ../../../src/publishsubscribe
+DEPENDPATH += ../../../src/publishsubscribe
 CONFIG += testcase
 QT = core network
 include(../../../common.pri)

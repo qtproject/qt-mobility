@@ -15,10 +15,10 @@ symbian: {
   
     INCLUDEPATH += inc
 	INCLUDEPATH += rss
-	INCLUDEPATH += $$SOURCE_DIR/contacts 
-	INCLUDEPATH += $$SOURCE_DIR/contacts/details 
-	INCLUDEPATH += $$SOURCE_DIR/contacts/filters 
-	INCLUDEPATH += $$SOURCE_DIR/contacts/requests
+	INCLUDEPATH += $$SOURCE_DIR/src/contacts 
+	INCLUDEPATH += $$SOURCE_DIR/src/contacts/details 
+	INCLUDEPATH += $$SOURCE_DIR/src/contacts/filters 
+	INCLUDEPATH += $$SOURCE_DIR/src/contacts/requests
 
   HEADERS += \
         $$PUBLIC_HEADERS \
@@ -92,7 +92,7 @@ symbian: {
     LIBS += \
         -lcntmodel \
         -lcentralrepository \
-        -lestor
+        -lestor \
         -lflogger
 
     target.path = /sys/bin

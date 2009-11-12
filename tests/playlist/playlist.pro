@@ -2,7 +2,7 @@ QT       += phonon
 TARGET = playlist
 TEMPLATE = app
 
-INCLUDEPATH += ../../multimedia
+INCLUDEPATH += ../../src/multimedia
 
 qtAddLibrary(QtMedia)
 

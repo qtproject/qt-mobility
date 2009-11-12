@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = servicebrowser
-INCLUDEPATH += ../../serviceframework
+INCLUDEPATH += ../../src/serviceframework
 
 include(../examples.pri)
 

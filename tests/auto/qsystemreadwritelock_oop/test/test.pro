@@ -1,5 +1,5 @@
 TARGET = tst_qsystemreadwritelock_oop
-INCLUDEPATH += ../../../../context
+INCLUDEPATH += ../../../../src/publishsubscribe
 
 CONFIG+=testcase
 

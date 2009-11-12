@@ -1,7 +1,7 @@
 SOURCES += main.cpp
 TARGET = vsiTestLackey
-INCLUDEPATH += ../../../../context
-DEPENDPATH += ../../../../context
+INCLUDEPATH += ../../../../src/publishsubscribe
+DEPENDPATH += ../../../../src/publishsubscribe
 
 QT = core
 

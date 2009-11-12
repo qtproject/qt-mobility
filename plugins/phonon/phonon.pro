@@ -9,7 +9,7 @@ include (../../common.pri)
 
 qtAddLibrary(QtMedia)
 
-INCLUDEPATH += ../../multimedia
+INCLUDEPATH += ../../src/multimedia
 
 DEPENDPATH += .
 

@@ -10,7 +10,7 @@ qtAddLibrary(QtMedia)
 
 DEPENDPATH += .
 
-INCLUDEPATH += ../../multimedia
+INCLUDEPATH += ../../src/multimedia
 
 HEADERS += v4lserviceplugin.h
 SOURCES += v4lserviceplugin.cpp

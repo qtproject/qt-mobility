@@ -168,7 +168,8 @@ void Dialog::setupDevice()
     connect(di,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
             this,SLOT(updatePowerState(QSystemDeviceInfo::PowerState)));
 
-
+    connect(di, SIGNAL(bluetoothStateChanged(bool)),
+        ui->bluetoothOnCheckBox, SLOT(setChecked(bool)));
 
     ui->ImeiLabel->setText(di->imei());
     ui->imsiLabel->setText(di->imsi());
@@ -177,6 +178,10 @@ void Dialog::setupDevice()
     ui->productLabel->setText(di->productName());
 
     ui->deviceLockCheckBox->setChecked(di->isDeviceLocked());
+
+    ui->profileComboBox->setCurrentIndex(di->currentProfile());
+    connect(di, SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
+        this, SLOT(updateProfile(QSystemDeviceInfo::Profile)));
 
     if(di->currentPowerState() == QSystemDeviceInfo::BatteryPower) {
         ui->radioButton_2->setChecked(true);
@@ -210,6 +215,11 @@ void Dialog::setupDevice()
     }
 
     ui->inputMethodLabel->setText(inputs.join(" "));
+}
+
+void Dialog::updateProfile(QSystemDeviceInfo::Profile profile)
+{
+    ui->profileComboBox->setCurrentIndex(profile);
 }
 
 void Dialog::setupDisplay()
@@ -309,27 +319,6 @@ void Dialog::getVersion(int index)
         version = QSystemInfo::QtCore;
         break;
     case 2:
-        version = QSystemInfo::WrtCore;
-        break;
-    case 3:
-        version = QSystemInfo::Webkit;
-        break;
-    case 4:
-        version = QSystemInfo::ServiceFramework;
-        break;
-    case 5:
-        version = QSystemInfo::WrtExtensions;
-        break;
-    case 6:
-        version = QSystemInfo::ServiceProvider;
-        break;
-    case 7:
-        version = QSystemInfo::NetscapePlugin;
-        break;
-    case 8:
-        version = QSystemInfo::WebApp;
-        break;
-    case 9:
         version = QSystemInfo::Firmware;
         break;
     };
@@ -534,6 +523,19 @@ void Dialog::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode ,
             ui->signalLevelProgressBar->setValue(strength);
         }
     }
+
+    if(mode == QSystemNetworkInfo::CdmaMode) {
+        if(ui->netStatusComboBox->currentText() == "Cdma") {
+            ui->signalLevelProgressBar->setValue(strength);
+        }
+    }
+
+    if(mode == QSystemNetworkInfo::WcdmaMode) {
+        if(ui->netStatusComboBox->currentText() == "Wcdma") {
+            ui->signalLevelProgressBar->setValue(strength);
+        }
+    }
+
 }
 
 void Dialog::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QString &text)
@@ -555,6 +557,19 @@ void Dialog::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QStri
             ui->operatorNameLabel->setText(text);
         }
     }
+
+    if(mode == QSystemNetworkInfo::CdmaMode) {
+        if(ui->netStatusComboBox->currentText() == "Cdma") {
+            ui->operatorNameLabel->setText(text);
+        }
+    }
+
+    if(mode == QSystemNetworkInfo::WcdmaMode) {
+        if(ui->netStatusComboBox->currentText() == "Wcdma") {
+            ui->operatorNameLabel->setText(text);
+        }
+    }
+
 }
 
 void Dialog::networkStatusChanged(QSystemNetworkInfo::NetworkMode mode , QSystemNetworkInfo::NetworkStatus status)
@@ -576,6 +591,19 @@ void Dialog::networkStatusChanged(QSystemNetworkInfo::NetworkMode mode , QSystem
             displayNetworkStatus(status);
         }
     }
+
+    if(mode == QSystemNetworkInfo::CdmaMode) {
+        if(ui->netStatusComboBox->currentText() == "Cdma") {
+            displayNetworkStatus(status);
+        }
+    }
+
+    if(mode == QSystemNetworkInfo::WcdmaMode) {
+        if(ui->netStatusComboBox->currentText() == "Wcdma") {
+            displayNetworkStatus(status);
+        }
+    }
+
 }
 
 void Dialog::displayNetworkStatus(QSystemNetworkInfo::NetworkStatus status)

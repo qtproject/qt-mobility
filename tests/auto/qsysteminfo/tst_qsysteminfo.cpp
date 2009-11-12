@@ -100,13 +100,6 @@ void tst_QSystemInfo::tst_versions_data()
 
  QTest::newRow("Os") << QSystemInfo::Os << "";
  QTest::newRow("QtCore") << QSystemInfo::QtCore << "";
- QTest::newRow("WrtCore") << QSystemInfo::WrtCore << "";
- QTest::newRow("Webkit") << QSystemInfo::Webkit << "";
- QTest::newRow("ServiceFramework") << QSystemInfo::ServiceFramework << "";
- QTest::newRow("WrtExtensions") << QSystemInfo::WrtExtensions << "";
- QTest::newRow("ServiceProvider") << QSystemInfo::ServiceProvider << "";
- QTest::newRow("NetscapePlugin") << QSystemInfo::NetscapePlugin << "";
- QTest::newRow("WebApp") << QSystemInfo::WebApp << "";
  QTest::newRow("Firmware") << QSystemInfo::Firmware << "";
 
 }

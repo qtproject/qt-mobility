@@ -271,8 +271,20 @@
                     <section ref="qmediaplaylistcontrol.html" title="QMediaPlaylistControl Class Reference">
                         <section ref="qmediaplaylistcontrol-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qmediaplaylistioplugin.html" title="QMediaPlaylistIOPlugin Class Reference">
+                        <section ref="qmediaplaylistioplugin-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qmediaplaylistnavigator.html" title="QMediaPlaylistNavigator Class Reference">
+                        <section ref="qmediaplaylistnavigator-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qmediaplaylistprovider.html" title="QMediaPlaylistProvider Class Reference">
                         <section ref="qmediaplaylistprovider-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qmediaplaylistreader.html" title="QMediaPlaylistReader Class Reference">
+                        <section ref="qmediaplaylistreader-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qmediaplaylistwriter.html" title="QMediaPlaylistWriter Class Reference">
+                        <section ref="qmediaplaylistwriter-members.html" title="List of all members"/>
                     </section>
                     <section ref="qmediarecorder.html" title="QMediaRecorder Class Reference">
                         <section ref="qmediarecorder-members.html" title="List of all members"/>
@@ -1851,6 +1863,33 @@
             <keyword name="setPlaylistProvider" id="QMediaPlaylistControl::setPlaylistProvider" ref="qmediaplaylistcontrol.html#setPlaylistProvider"/>
             <keyword name="~QMediaPlaylistControl" id="QMediaPlaylistControl::~QMediaPlaylistControl" ref="qmediaplaylistcontrol.html#dtor.QMediaPlaylistControl"/>
             <keyword name="QMediaPlaylistControl_iid" id="QMediaPlaylistControl_iid" ref="qmediaplaylistcontrol.html#QMediaPlaylistControl_iid"/>
+            <keyword name="QMediaPlaylistIOPlugin" id="QMediaPlaylistIOPlugin" ref="qmediaplaylistioplugin.html"/>
+            <keyword name="canRead" id="QMediaPlaylistIOPlugin::canRead" ref="qmediaplaylistioplugin.html#canRead"/>
+            <keyword name="canWrite" id="QMediaPlaylistIOPlugin::canWrite" ref="qmediaplaylistioplugin.html#canWrite"/>
+            <keyword name="createReader" id="QMediaPlaylistIOPlugin::createReader" ref="qmediaplaylistioplugin.html#createReader"/>
+            <keyword name="createWriter" id="QMediaPlaylistIOPlugin::createWriter" ref="qmediaplaylistioplugin.html#createWriter"/>
+            <keyword name="keys" id="QMediaPlaylistIOPlugin::keys" ref="qmediaplaylistioplugin.html#keys"/>
+            <keyword name="~QMediaPlaylistIOPlugin" id="QMediaPlaylistIOPlugin::~QMediaPlaylistIOPlugin" ref="qmediaplaylistioplugin.html#dtor.QMediaPlaylistIOPlugin"/>
+            <keyword name="QMediaPlaylistNavigator" id="QMediaPlaylistNavigator" ref="qmediaplaylistnavigator.html"/>
+            <keyword name="activated" id="QMediaPlaylistNavigator::activated" ref="qmediaplaylistnavigator.html#activated"/>
+            <keyword name="currentItem" id="QMediaPlaylistNavigator::currentItem" ref="qmediaplaylistnavigator.html#currentItem-prop"/>
+            <keyword name="currentPosition" id="QMediaPlaylistNavigator::currentPosition" ref="qmediaplaylistnavigator.html#currentPosition-prop"/>
+            <keyword name="currentPositionChanged" id="QMediaPlaylistNavigator::currentPositionChanged" ref="qmediaplaylistnavigator.html#currentPositionChanged"/>
+            <keyword name="itemAt" id="QMediaPlaylistNavigator::itemAt" ref="qmediaplaylistnavigator.html#itemAt"/>
+            <keyword name="jump" id="QMediaPlaylistNavigator::jump" ref="qmediaplaylistnavigator.html#currentPosition-prop"/>
+            <keyword name="next" id="QMediaPlaylistNavigator::next" ref="qmediaplaylistnavigator.html#next"/>
+            <keyword name="nextItem" id="QMediaPlaylistNavigator::nextItem" ref="qmediaplaylistnavigator.html#nextItem-prop"/>
+            <keyword name="nextPosition" id="QMediaPlaylistNavigator::nextPosition" ref="qmediaplaylistnavigator.html#nextPosition"/>
+            <keyword name="playbackMode" id="QMediaPlaylistNavigator::playbackMode" ref="qmediaplaylistnavigator.html#playbackMode-prop"/>
+            <keyword name="playbackModeChanged" id="QMediaPlaylistNavigator::playbackModeChanged" ref="qmediaplaylistnavigator.html#playbackModeChanged"/>
+            <keyword name="playlist" id="QMediaPlaylistNavigator::playlist" ref="qmediaplaylistnavigator.html#playlist"/>
+            <keyword name="previous" id="QMediaPlaylistNavigator::previous" ref="qmediaplaylistnavigator.html#previous"/>
+            <keyword name="previousItem" id="QMediaPlaylistNavigator::previousItem" ref="qmediaplaylistnavigator.html#previousItem-prop"/>
+            <keyword name="previousPosition" id="QMediaPlaylistNavigator::previousPosition" ref="qmediaplaylistnavigator.html#previousPosition"/>
+            <keyword name="setPlaybackMode" id="QMediaPlaylistNavigator::setPlaybackMode" ref="qmediaplaylistnavigator.html#playbackMode-prop"/>
+            <keyword name="setPlaylist" id="QMediaPlaylistNavigator::setPlaylist" ref="qmediaplaylistnavigator.html#setPlaylist"/>
+            <keyword name="surroundingItemsChanged" id="QMediaPlaylistNavigator::surroundingItemsChanged" ref="qmediaplaylistnavigator.html#surroundingItemsChanged"/>
+            <keyword name="~QMediaPlaylistNavigator" id="QMediaPlaylistNavigator::~QMediaPlaylistNavigator" ref="qmediaplaylistnavigator.html#dtor.QMediaPlaylistNavigator"/>
             <keyword name="QMediaPlaylistProvider" id="QMediaPlaylistProvider" ref="qmediaplaylistprovider.html"/>
             <keyword name="appendItem" id="QMediaPlaylistProvider::appendItem" ref="qmediaplaylistprovider.html#appendItem"/>
             <keyword name="clear" id="QMediaPlaylistProvider::clear" ref="qmediaplaylistprovider.html#clear"/>
@@ -1871,6 +1910,15 @@
             <keyword name="shuffle" id="QMediaPlaylistProvider::shuffle" ref="qmediaplaylistprovider.html#shuffle"/>
             <keyword name="size" id="QMediaPlaylistProvider::size" ref="qmediaplaylistprovider.html#size"/>
             <keyword name="~QMediaPlaylistProvider" id="QMediaPlaylistProvider::~QMediaPlaylistProvider" ref="qmediaplaylistprovider.html#dtor.QMediaPlaylistProvider"/>
+            <keyword name="QMediaPlaylistReader" id="QMediaPlaylistReader" ref="qmediaplaylistreader.html"/>
+            <keyword name="atEnd" id="QMediaPlaylistReader::atEnd" ref="qmediaplaylistreader.html#atEnd"/>
+            <keyword name="close" id="QMediaPlaylistReader::close" ref="qmediaplaylistreader.html#close"/>
+            <keyword name="readItem" id="QMediaPlaylistReader::readItem" ref="qmediaplaylistreader.html#readItem"/>
+            <keyword name="~QMediaPlaylistReader" id="QMediaPlaylistReader::~QMediaPlaylistReader" ref="qmediaplaylistreader.html#dtor.QMediaPlaylistReader"/>
+            <keyword name="QMediaPlaylistWriter" id="QMediaPlaylistWriter" ref="qmediaplaylistwriter.html"/>
+            <keyword name="close" id="QMediaPlaylistWriter::close" ref="qmediaplaylistwriter.html#close"/>
+            <keyword name="writeItem" id="QMediaPlaylistWriter::writeItem" ref="qmediaplaylistwriter.html#writeItem"/>
+            <keyword name="~QMediaPlaylistWriter" id="QMediaPlaylistWriter::~QMediaPlaylistWriter" ref="qmediaplaylistwriter.html#dtor.QMediaPlaylistWriter"/>
             <keyword name="QMediaRecorder" id="QMediaRecorder" ref="qmediarecorder.html"/>
             <keyword name="QMediaRecorder::Error" id="QMediaRecorder::Error" ref="qmediarecorder.html#Error-enum"/>
             <keyword name="QMediaRecorder::NoError" id="QMediaRecorder::NoError" ref="qmediarecorder.html#Error-enum"/>
@@ -2676,13 +2724,6 @@
             <keyword name="QSystemInfo::Version" id="QSystemInfo::Version" ref="qsysteminfo.html#Version-enum"/>
             <keyword name="QSystemInfo::Os" id="QSystemInfo::Os" ref="qsysteminfo.html#Version-enum"/>
             <keyword name="QSystemInfo::QtCore" id="QSystemInfo::QtCore" ref="qsysteminfo.html#Version-enum"/>
-            <keyword name="QSystemInfo::WrtCore" id="QSystemInfo::WrtCore" ref="qsysteminfo.html#Version-enum"/>
-            <keyword name="QSystemInfo::Webkit" id="QSystemInfo::Webkit" ref="qsysteminfo.html#Version-enum"/>
-            <keyword name="QSystemInfo::ServiceFramework" id="QSystemInfo::ServiceFramework" ref="qsysteminfo.html#Version-enum"/>
-            <keyword name="QSystemInfo::WrtExtensions" id="QSystemInfo::WrtExtensions" ref="qsysteminfo.html#Version-enum"/>
-            <keyword name="QSystemInfo::ServiceProvider" id="QSystemInfo::ServiceProvider" ref="qsysteminfo.html#Version-enum"/>
-            <keyword name="QSystemInfo::NetscapePlugin" id="QSystemInfo::NetscapePlugin" ref="qsysteminfo.html#Version-enum"/>
-            <keyword name="QSystemInfo::WebApp" id="QSystemInfo::WebApp" ref="qsysteminfo.html#Version-enum"/>
             <keyword name="QSystemInfo::Firmware" id="QSystemInfo::Firmware" ref="qsysteminfo.html#Version-enum"/>
             <keyword name="availableLanguages" id="QSystemInfo::availableLanguages" ref="qsysteminfo.html#availableLanguages-prop"/>
             <keyword name="currentCountryCode" id="QSystemInfo::currentCountryCode" ref="qsysteminfo.html#currentCountryCode-prop"/>
@@ -3047,9 +3088,11 @@
             <file>qcontactdetaildefinition-members.html</file>
             <file>player-main-cpp.html</file>
             <file>qsystemdeviceinfo.html</file>
+            <file>qmediaplaylistnavigator-members.html</file>
             <file>qvideoencodersettings-members.html</file>
             <file>qsystemdisplayinfo.html</file>
             <file>qcontactsynctarget-members.html</file>
+            <file>qmediaplaylistwriter-members.html</file>
             <file>qcontactnote.html</file>
             <file>images/bearermonitor-example.png</file>
             <file>qcontactgeolocation-members.html</file>
@@ -3080,12 +3123,14 @@
             <file>qmediaplayercontrol.html</file>
             <file>qmessagestore.html</file>
             <file>qservicemanager.html</file>
+            <file>qmediaplaylistnavigator.html</file>
             <file>qcontactdetaildefinitionsaverequest-members.html</file>
             <file>qvideoencodercontrol.html</file>
             <file>radio-radio-h.html</file>
             <file>qserviceplugininterface-members.html</file>
             <file>incomingcalls-main-cpp.html</file>
             <file>qcontactdetailfilter.html</file>
+            <file>qmediaplaylistioplugin.html</file>
             <file>qmediacontrol-members.html</file>
             <file>bluetoothtransferplugin.html</file>
             <file>battery-charge-battery-charge-pro.html</file>
@@ -3097,6 +3142,7 @@
             <file>qmessagefolderid.html</file>
             <file>samplephonebook-phonebook-h.html</file>
             <file>qmessagefilter-members.html</file>
+            <file>qmediaplaylistwriter.html</file>
             <file>fetchgooglemaps.html</file>
             <file>bearercloud-cloud-cpp.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-pro.html</file>
@@ -3214,6 +3260,7 @@
             <file>qcontactbirthday.html</file>
             <file>qcontactdetaildefinitionfetchrequest-members.html</file>
             <file>qcontactrelationshipfilter.html</file>
+            <file>qmediaplaylistioplugin-members.html</file>
             <file>qservicefilter-members.html</file>
             <file>qcontactsaverequest.html</file>
             <file>qcontactonlineaccount-members.html</file>
@@ -3250,8 +3297,8 @@
             <file>publ-subs.html</file>
             <file>filemanagerplugin.html</file>
             <file>qserviceinterfacedescriptor-members.html</file>
-            <file>qservicecontext.html</file>
             <file>player-playercontrols-cpp.html</file>
+            <file>qservicecontext.html</file>
             <file>qcontactnote-members.html</file>
             <file>qcontacturl-members.html</file>
             <file>qmediarecorder-members.html</file>
@@ -3456,6 +3503,7 @@
             <file>filemanagerplugin-filemanagertransfer-h.html</file>
             <file>samplephonebook-phonebook-cpp.html</file>
             <file>qcontactaddress-members.html</file>
+            <file>qmediaplaylistreader.html</file>
             <file>qcontacturl.html</file>
             <file>qcontactrelationship.html</file>
             <file>servicebrowser-servicebrowser-cpp.html</file>
@@ -3504,6 +3552,7 @@
             <file>qcontactdisplaylabel-members.html</file>
             <file>incomingcalls-filterdialog-h.html</file>
             <file>qmessageaccountid-members.html</file>
+            <file>qmediaplaylistreader-members.html</file>
             <file>bearercloud-cloud-h.html</file>
             <file>incomingcalls-filterdialog-cpp.html</file>
             <file>qimageprocessingcontrol.html</file>
