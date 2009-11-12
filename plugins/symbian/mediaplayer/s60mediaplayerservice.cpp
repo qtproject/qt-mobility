@@ -71,6 +71,7 @@ S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
       m_metaData(NULL)
 {
     m_control = new S60MediaPlayerControl(*this, this);
+    m_mediaRecognizer = new S60MediaRecognizer(this);    
 }
 
 S60MediaPlayerService::~S60MediaPlayerService()
@@ -158,10 +159,8 @@ void S60MediaPlayerService::videoOutputChanged(QVideoOutputControl::Output outpu
 
 S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
 {
-    S60MediaRecognizer *mediaRecognizer = new S60MediaRecognizer;    
     QUrl url = m_control->media().canonicalUri();
-    S60MediaRecognizer::MediaType mediaType = mediaRecognizer->IdentifyMediaTypeL(url);
-    delete mediaRecognizer;
+    S60MediaRecognizer::MediaType mediaType = m_mediaRecognizer->IdentifyMediaTypeL(url);
     
     if (mediaType == S60MediaRecognizer::Video) {
         return VideoPlayerSession();

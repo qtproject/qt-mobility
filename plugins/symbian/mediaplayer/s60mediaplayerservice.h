@@ -61,6 +61,7 @@ class S60AudioPlayerSession;
 class S60MediaPlayerControl;
 class S60VideoMetaDataProvider;
 class S60VideoWidgetControl;
+class S60MediaRecognizer;
 
 #ifndef QT_NO_MULTIMEDIA
 class S60VideoRenderer;
@@ -89,6 +90,7 @@ protected: // From MS60MediaPlayerResolver
     
 private:
     S60MediaPlayerControl *m_control;
+    S60MediaRecognizer *m_mediaRecognizer;
     mutable S60VideoOutputControl *m_videoOutput;
     S60VideoPlayerSession *m_videoPlayerSession;
     S60AudioPlayerSession *m_audioPlayerSession;
