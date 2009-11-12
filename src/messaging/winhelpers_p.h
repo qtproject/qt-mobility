@@ -189,7 +189,10 @@ public:
 
     MapiFolderPtr nextSubFolder(QMessageStore::ErrorCode *lastError);
 
-    QMessageIdList queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter = QMessageFilter(), const QMessageOrdering &ordering = QMessageOrdering(), uint limit = 0, uint offset = 0) const;
+    LPMAPITABLE queryBegin(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering);
+    QMessageIdList queryNext(QMessageStore::ErrorCode *lastError, LPMAPITABLE messagesTable, const QMessageFilter &filter);
+    void queryEnd(LPMAPITABLE messagesTable);
+
     uint countMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter = QMessageFilter()) const;
 
     void removeMessages(QMessageStore::ErrorCode *lastError, const QMessageIdList &ids);

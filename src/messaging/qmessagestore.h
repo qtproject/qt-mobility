@@ -76,8 +76,7 @@ public:
         ContentInaccessible,
         NotYetImplemented,
         FrameworkFault,
-        WorkingMemoryOverflow,
-        Busy
+        WorkingMemoryOverflow
     };
 
     typedef int NotificationFilterId;

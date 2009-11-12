@@ -175,7 +175,7 @@ public:
     static QList<QMessageFilter> subfilters(const QMessageFilter &filter);
 
     static QMessageFilter preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, const QMessageFilter &filter);
-    static void preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFilter *filter);
+    static bool preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFilter *filter);
     static bool isNonMatching(const QMessageFilter &filter); // Possibly should be in public QMessageFilter API
     static bool matchesMessageSimple(const QMessageFilter &filter, const QMessage &message);
     static bool matchesMessage(const QMessageFilter &filter, const QMessage &message, MapiStorePtr store);

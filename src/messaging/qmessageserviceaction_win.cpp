@@ -40,6 +40,11 @@
 ****************************************************************************/
 
 #include "qmessageserviceaction.h"
+#include <mapix.h>
+#include <objbase.h>
+#include <mapiutil.h>
+#include <QDebug>
+#include <QTimer>
 #include "winhelpers_p.h"
 #include "qmessagestore.h"
 #include "qmessageid_p.h"
@@ -48,12 +53,6 @@
 #include "qmessage_p.h"
 #include "qmessagestore_p.h"
 #include "qmessagecontentcontainer_p.h"
-#include <QDebug>
-#include <QThread>
-#include <QTimer>
-#include <mapix.h>
-#include <objbase.h>
-#include <mapiutil.h>
 #ifdef _WIN32_WCE
 #include <cemapi.h>
 #endif
@@ -110,29 +109,19 @@ public:
 void QMessageServiceActionPrivate::completed()
 {
     _active = false;
-    emit stateChanged(_lastError == QMessageStore::NoError ? QMessageServiceAction::Successful : QMessageServiceAction::Failed);
+    emit stateChanged(QMessageServiceAction::Successful);
 }
 
 void QMessageServiceActionPrivate::reportMatchingIds()
 {
-    if (_lastError == QMessageStore::NoError) {
-        emit messagesFound(_candidateIds);
-    }
+    emit messagesFound(_candidateIds);
     completed();
-
-    // Delete the completed thread that generated this event
-    delete sender();
 }
 
 void QMessageServiceActionPrivate::reportMessagesCounted()
 {
-    if (_lastError == QMessageStore::NoError) {
-        emit messagesCounted(_candidateIds.count());
-    }
+    emit messagesCounted(_count);
     completed();
-
-    // Delete the completed thread that generated this event
-    delete sender();
 }
 
 #ifdef _WIN32_WCE
@@ -561,52 +550,6 @@ void QMessageServiceActionPrivate::unregisterUpdates()
 
 #endif
 
-namespace {
-
-class QueryThread : public QThread
-{
-    Q_OBJECT
-
-    QMessageServiceActionPrivate *_parent;
-    QMessageFilter _filter;
-    QString _body;
-    QMessageDataComparator::Options _options;
-    QMessageOrdering _ordering;
-    uint _limit;
-    uint _offset;
-
-public:
-    QueryThread(QMessageServiceActionPrivate *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset)
-        : QThread(),
-          _parent(parent),
-          _filter(filter),
-          _body(body),
-          _options(options),
-          _ordering(ordering),
-          _limit(limit),
-          _offset(offset)
-    {
-        // Ensure that the main thread has instantiated the store before we access it from another thread
-        (void)QMessageStore::instance();
-    }
-
-    void run()
-    {
-        // Ensure that this thread has initialized MAPI
-        WinHelpers::MapiInitializationToken token(WinHelpers::initializeMapi());
-
-        // TODO: body text search
-        _parent->_candidateIds = QMessageStore::instance()->queryMessages(_filter, _ordering, _limit, _offset);
-        _parent->_lastError = QMessageStore::instance()->lastError();
-        emit completed();
-    }
-
-signals:
-    void completed();
-};
-
-}
-
 QMessageServiceAction::QMessageServiceAction(QObject *parent)
     : QObject(parent),
     d_ptr(new QMessageServiceActionPrivate(this))
@@ -629,7 +572,19 @@ QMessageServiceAction::~QMessageServiceAction()
 
 bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset)
 {
-    return queryMessages(filter, QString(), QMessageDataComparator::Options(), ordering, limit, offset);
+    if (d_ptr->_active) {
+        qWarning() << "Action is currently busy";
+        return false;
+    }
+    d_ptr->_active = true;
+    d_ptr->_candidateIds = QMessageStore::instance()->queryMessages(filter, ordering, limit, offset);
+    d_ptr->_lastError = QMessageStore::instance()->lastError();
+
+    if (d_ptr->_lastError == QMessageStore::NoError) {
+        QTimer::singleShot(0, d_ptr, SLOT(reportMatchingIds()));
+        return true;
+    }
+    return false;
 }
 
 bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset)
@@ -639,15 +594,14 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
         return false;
     }
     d_ptr->_active = true;
-    d_ptr->_lastError = QMessageStore::NoError;
-    d_ptr->_state = QMessageServiceAction::InProgress;
-    emit stateChanged(d_ptr->_state);
+    d_ptr->_candidateIds = QMessageStore::instance()->queryMessages(filter, body, options, ordering, limit, offset);
+    d_ptr->_lastError = QMessageStore::instance()->lastError();
 
-    // Perform the query in another thread to keep the UI thread free
-    QueryThread *query = new QueryThread(d_ptr, filter, body, options, ordering, limit, offset);
-    connect(query, SIGNAL(completed()), d_ptr, SLOT(reportMatchingIds()), Qt::QueuedConnection);
-    query->start();
-    return true;
+    if (d_ptr->_lastError == QMessageStore::NoError) {
+        QTimer::singleShot(0, d_ptr, SLOT(reportMatchingIds()));
+        return true;
+    }
+    return false;
 }
 
 bool QMessageServiceAction::countMessages(const QMessageFilter &filter)
@@ -657,15 +611,14 @@ bool QMessageServiceAction::countMessages(const QMessageFilter &filter)
         return false;
     }
     d_ptr->_active = true;
-    d_ptr->_lastError = QMessageStore::NoError;
-    d_ptr->_state = QMessageServiceAction::InProgress;
-    emit stateChanged(d_ptr->_state);
+    d_ptr->_count = QMessageStore::instance()->queryMessages(filter).count();
+    d_ptr->_lastError = QMessageStore::instance()->lastError();
 
-    // Perform the query in another thread to keep the UI thread free
-    QueryThread *query = new QueryThread(d_ptr, filter, QString(), QMessageDataComparator::Options(), QMessageOrdering(), 0, 0);
-    connect(query, SIGNAL(completed()), d_ptr, SLOT(reportMessagesCounted()), Qt::QueuedConnection);
-    query->start();
-    return true;
+    if (d_ptr->_lastError == QMessageStore::NoError) {
+        QTimer::singleShot(0, d_ptr, SLOT(reportMessagesCounted()));
+        return true;
+    }
+    return false;
 }
 
 bool QMessageServiceAction::send(QMessage &message)
