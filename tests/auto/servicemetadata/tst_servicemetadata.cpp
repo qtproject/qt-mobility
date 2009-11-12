@@ -43,9 +43,13 @@
 #define private public
 #include <qserviceinterfacedescriptor.h>
 #include <qserviceinterfacedescriptor_p.h>
-#include "../../../serviceframework/qserviceinterfacedescriptor.cpp"
+#if !defined(Q_CC_MINGW)
+    #include "../../../serviceframework/qserviceinterfacedescriptor.cpp"
+#endif
 #include "servicemetadata_p.h"
-#include "../../../serviceframework/servicemetadata.cpp"
+#if !defined(Q_CC_MINGW)
+    #include "../../../serviceframework/servicemetadata.cpp"
+#endif
 
 #if defined(Q_OS_SYMBIAN)
 # define TESTDATA_DIR "."
