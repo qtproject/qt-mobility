@@ -125,9 +125,9 @@ QByteArray contentTypeFromExtension(const QString &extension);
 class Lptstr : public QVector<TCHAR>
 {
 public:
-    Lptstr():QVector(){}
-    Lptstr(int length) : QVector(length){}
-    operator TCHAR* (){ return QVector::data(); }
+    Lptstr():QVector<TCHAR>(){}
+    Lptstr(int length) : QVector<TCHAR>(length){}
+    operator TCHAR* (){ return QVector<TCHAR>::data(); }
 };
 
 Lptstr LptstrFromQString(const QString &src);
