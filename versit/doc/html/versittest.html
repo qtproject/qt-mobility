@@ -32,7 +32,6 @@
 <ul><li><a href="#motivation">Motivation</a></li>
 <li><a href="#use-case">Use Case</a></li>
 <li><a href="#interface">Interface</a></li>
-<li><a href="#code-snippets">Code snippets</a></li>
 <li><a href="#known-issues">Known Issues</a></li>
 </ul>
 </ul>
@@ -50,50 +49,6 @@
 <a name="interface"></a>
 <h3>Interface</h3>
 <p>The application is aimed at desktop platforms as opposed to mobile platforms. So the whole versit code is developed by using QT libraries and it does not have any dependencies to platform specific implementations.</p>
-<a name="code-snippets"></a>
-<h3>Code snippets</h3>
-<p>Following snippets will be usable to API users like Sync/Backup developers.</p>
-<pre>    void VersitTest::executeTest(QFile&amp; in, QIODevice&amp; out)
-    {
-        in.seek(0);
-        mReader-&gt;setDevice(&amp;in);
-        out.reset();
-        mWriter-&gt;setDevice(&amp;out);
-
-        <span class="comment">// Parse the input</span>
-        QVERIFY2(mReader-&gt;readAll(),in.fileName().toAscii().constData());
-
-        <span class="comment">// Convert to QContacts</span>
-        QList&lt;QContact&gt; contacts;
-        QList&lt;QVersitDocument::VersitType&gt; documentTypes;
-        foreach (QVersitDocument document, mReader-&gt;result()) {
-            mImporter-&gt;setImagePath(mImageAndAudioClipPath);
-            mImporter-&gt;setAudioClipPath(mImageAndAudioClipPath);
-            QContact contact = mImporter-&gt;importContact(document);
-            if (mSaveContacts)
-                QVERIFY(mContactManager-&gt;saveContact(&amp;contact));
-            contacts.append(contact);
-            documentTypes.append(document.versitType());
-        }
-
-        <span class="comment">// Convert back to QVersitDocuments</span>
-        QList&lt;QVersitDocument&gt; documents;
-        connect(mExporter, SIGNAL(scale(const QString&amp;,QByteArray&amp;)),
-                this, SLOT(scale(const QString&amp;,QByteArray&amp;)));
-
-        foreach (QContact contact, contacts) {
-            QVersitDocument document = mExporter-&gt;exportContact(contact);
-            if (!documentTypes.isEmpty())
-                document.setVersitType(documentTypes.takeFirst());
-            documents.append(document);
-        }
-
-        <span class="comment">// Encode and write to output</span>
-        foreach (QVersitDocument document, documents) {
-            mWriter-&gt;setVersitDocument(document);
-            QVERIFY2(mWriter-&gt;writeAll(),in.fileName().toAscii().constData());
-        }
-    }</pre>
 <a name="known-issues"></a>
 <h3>Known Issues</h3>
 <p>Only VCard 2.1 version is fully supported</p>

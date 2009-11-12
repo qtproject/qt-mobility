@@ -122,7 +122,6 @@
             <contents name="motivation" title="Motivation" level="2"/>
             <contents name="use-case" title="Use Case" level="2"/>
             <contents name="interface" title="Interface" level="2"/>
-            <contents name="code-snippets" title="Code snippets" level="2"/>
             <contents name="known-issues" title="Known Issues" level="2"/>
             <page access="public" status="commendable" name="versittest/testconfiguration.cpp" href="versittest-testconfiguration-cpp.html" subtype="file" title="" fulltitle="testconfiguration.cpp Example File" subtitle="versittest/testconfiguration.cpp" location=""/>
             <page access="public" status="commendable" name="versittest/testconfiguration.h" href="versittest-testconfiguration-h.html" subtype="file" title="" fulltitle="testconfiguration.h Example File" subtitle="versittest/testconfiguration.h" location=""/>
@@ -148,7 +147,6 @@
             <contents name="reference-documentation" title="Reference documentation" level="1"/>
             <contents name="main-classes" title="Main classes" level="2"/>
             <contents name="asynchronous-requests" title="Asynchronous Requests" level="2"/>
-            <contents name="examples" title="Examples" level="2"/>
         </page>
         <page access="public" status="commendable" name="versitmapping.html" href="versitmapping.html" subtype="page" title="Qt Versit Mapping" fulltitle="Qt Versit Mapping" subtitle="" location="versitmapping.qdoc">
             <contents name="introduction" title="Introduction" level="1"/>
@@ -178,14 +176,12 @@
             <contents name="reference-documentation" title="Reference documentation" level="1"/>
             <contents name="main-classes" title="Main classes" level="2"/>
             <contents name="asynchronous-requests" title="Asynchronous Requests" level="2"/>
-            <contents name="examples" title="Examples" level="2"/>
         </page>
         <page access="public" status="commendable" name="versittest" href="versittest.html" subtype="example" title="Sample Versit Example" fulltitle="Sample Versit Example" subtitle="" location="sampleversit.qdoc">
             <contents name="versit" title="Versit" level="1"/>
             <contents name="motivation" title="Motivation" level="2"/>
             <contents name="use-case" title="Use Case" level="2"/>
             <contents name="interface" title="Interface" level="2"/>
-            <contents name="code-snippets" title="Code snippets" level="2"/>
             <contents name="known-issues" title="Known Issues" level="2"/>
             <page access="public" status="commendable" name="versittest/testconfiguration.cpp" href="versittest-testconfiguration-cpp.html" subtype="file" title="" fulltitle="testconfiguration.cpp Example File" subtitle="versittest/testconfiguration.cpp" location=""/>
             <page access="public" status="commendable" name="versittest/testconfiguration.h" href="versittest-testconfiguration-h.html" subtype="file" title="" fulltitle="testconfiguration.h Example File" subtitle="versittest/testconfiguration.h" location=""/>

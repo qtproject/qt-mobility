@@ -78,12 +78,6 @@
     So the whole versit code is developed by using QT libraries and it does not have any dependencies
     to platform specific implementations.
 
-    \section2 Code snippets
-
-    Following snippets will be usable to API users like Sync/Backup developers.
-
-        \snippet ../../../examples/versittest/versittest.cpp Import/Export VCard and QContact
-
     \section2 Known Issues
 
     Only VCard 2.1 version is fully supported
