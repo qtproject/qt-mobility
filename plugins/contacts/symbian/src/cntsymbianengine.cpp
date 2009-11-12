@@ -76,6 +76,7 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
         m_contactFilter    = new CntSymbianFilterDbms(*m_dataBase->contactDatabase());
         m_contactSorter    = new CntSymbianSorterDbms(*m_dataBase->contactDatabase(), *m_transformContact);
         m_relationship     = new CntRelationship(m_dataBase->contactDatabase());
+        connect(m_dataBase, SIGNAL(ownCardChanged(QContactLocalId,QContactLocalId)), this, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
     }
 }
 
