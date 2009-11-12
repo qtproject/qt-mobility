@@ -322,10 +322,10 @@ QMessageFilter QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastE
 }
 
 // returns true if filter is modified
-void QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFilter *filter)
+bool QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFilter *filter)
 {
     if (!filter)
-        return;
+        return false;
 
     // incl only used if filter->d_ptr->field is == *Filter
     QMessageDataComparator::InclusionComparator incl(static_cast<QMessageDataComparator::InclusionComparator>(filter->d_ptr->_comparatorValue));
@@ -384,29 +384,32 @@ void QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, Mapi
     } else {
         QMessageFilter *l(filter->d_ptr->_left);
         QMessageFilter *r(filter->d_ptr->_right);
-        preprocess(lastError, session, l);
-        preprocess(lastError, session, r);
+        bool modified(false);
+        modified |= preprocess(lastError, session, l);
+        modified |= preprocess(lastError, session, r);
 
         // It's necessary to recombine bool op filters, because the operands may now have non-empty containerFilter parts,
         // specifically in the case that one of the operands has a *Filter field.
-        switch (filter->d_ptr->_operator) {
-        case And:
-            *filter = filter->d_ptr->containerFiltersPart() & (*l & *r);
-            break;
-        case Nand:
-            *filter = filter->d_ptr->containerFiltersPart() &  ~(*l & *r);
-            break;
-        case Or:
-            *filter = filter->d_ptr->containerFiltersPart() &  (*l | *r);
-            break;
-        case Nor:
-            *filter = filter->d_ptr->containerFiltersPart() &  ~(*l | *r);
-            break;
+        if (modified) {
+            switch (filter->d_ptr->_operator) {
+            case And:
+                *filter = filter->d_ptr->containerFiltersPart() & (*l & *r);
+                break;
+            case Nand:
+                *filter = filter->d_ptr->containerFiltersPart() &  ~(*l & *r);
+                break;
+            case Or:
+                *filter = filter->d_ptr->containerFiltersPart() &  (*l | *r);
+                break;
+            case Nor:
+                *filter = filter->d_ptr->containerFiltersPart() &  ~(*l | *r);
+                break;
+            }
         }
-        return;
+        return modified;
     }
     *filter = filter->d_ptr->containerFiltersPart() & result; // Must preserve container filters part
-    return;
+    return true;
 }
 
 bool QMessageFilterPrivate::restrictionPermitted(const QMessageFilter &filter)
