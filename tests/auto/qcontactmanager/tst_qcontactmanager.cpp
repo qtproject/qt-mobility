@@ -91,6 +91,9 @@
         } \
     } while(0)
 
+#define QCONTACTMANAGER_REMOVE_VERSIONS_FROM_URI(params)  params.remove(QString::fromAscii(QTCONTACTS_VERSION_NAME)); \
+                                                          params.remove(QString::fromAscii(QTCONTACTS_IMPLEMENTATION_VERSION_NAME))
+
 //TESTED_CLASS=
 //TESTED_FILES=
 
@@ -427,11 +430,17 @@ void tst_QContactManager::uriParsing()
         QVERIFY(QContactManager::splitUri(uri, &outmanager, 0));
         QCOMPARE(manager, outmanager);
         QVERIFY(QContactManager::splitUri(uri, 0, &outparameters));
+
+        QCONTACTMANAGER_REMOVE_VERSIONS_FROM_URI(outparameters);
+        
         QCOMPARE(parameters, outparameters);
 
         outmanager.clear();
         outparameters.clear();
         QVERIFY(QContactManager::splitUri(uri, &outmanager, &outparameters));
+
+        QCONTACTMANAGER_REMOVE_VERSIONS_FROM_URI(outparameters);
+        
         QCOMPARE(manager, outmanager);
         QCOMPARE(parameters, outparameters);
     } else {
@@ -442,6 +451,7 @@ void tst_QContactManager::uriParsing()
         QVERIFY(QContactManager::splitUri(uri, &outmanager, 0) == false);
         QVERIFY(outmanager.isEmpty());
         QVERIFY(QContactManager::splitUri(uri, 0, &outparameters) == false);
+        QCONTACTMANAGER_REMOVE_VERSIONS_FROM_URI(outparameters);
         QVERIFY(outparameters.isEmpty());
 
         /* make sure the in parameters don't change with a bad split */
@@ -450,6 +460,7 @@ void tst_QContactManager::uriParsing()
         QVERIFY(QContactManager::splitUri(uri, &outmanager, 0) == false);
         QCOMPARE(manager, outmanager);
         QVERIFY(QContactManager::splitUri(uri, 0, &outparameters) == false);
+        QCONTACTMANAGER_REMOVE_VERSIONS_FROM_URI(outparameters);
         QCOMPARE(parameters, outparameters);
     }
 }
