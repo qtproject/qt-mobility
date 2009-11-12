@@ -47,8 +47,8 @@
 
 #include <qtcontacts.h>
 
-#include <cntdbobs.h>
 #include <cntitem.h>
+#include <cntdbobs.h>
 
 #include "qtcontactsglobal.h"
 #include "qcontactmanager.h"
