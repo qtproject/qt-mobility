@@ -161,6 +161,16 @@ bool QMessageContentContainer::isContentAvailable() const
 {
     if (d_ptr->isMessage()) {
         d_ptr->_message->d_ptr->ensureBodyPresent(d_ptr->_message);
+        d_ptr->_message->d_ptr->ensureAttachmentsPresent(d_ptr->_message);
+    }
+
+    //if we are a container, then availabilty depends on the availability of subparts
+    if(!contentIds().isEmpty())
+    {
+        bool available = true;
+        foreach(const QMessageContentContainer& c, d_ptr->_attachments)
+            available &= c.isContentAvailable();
+        return available;
     }
 
     return d_ptr->_available;
