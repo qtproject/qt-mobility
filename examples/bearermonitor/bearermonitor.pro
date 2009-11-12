@@ -13,7 +13,7 @@ TARGET = bearermonitor
 
 QT = core gui network
 
-INCLUDEPATH += ../../bearer
+INCLUDEPATH += ../../src/bearer
 
 include(../examples.pri)
 

@@ -1,6 +1,6 @@
 TARGET=tst_qservicefilter
 SOURCES += tst_qservicefilter.cpp
-INCLUDEPATH += ../../../serviceframework
+INCLUDEPATH += ../../../src/serviceframework
 
 CONFIG+=testcase
 

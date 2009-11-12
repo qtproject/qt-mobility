@@ -1,8 +1,8 @@
 TEMPLATE = app
 TARGET = publish-subscribe
 
-INCLUDEPATH += ../../context
-DEPENDPATH += ../../context
+INCLUDEPATH += ../../src/publishsubscribe
+DEPENDPATH += ../../src/publishsubscribe
 
 HEADERS = providerdialog.h \
           consumerdialog.h

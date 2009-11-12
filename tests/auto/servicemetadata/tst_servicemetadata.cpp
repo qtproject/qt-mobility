@@ -44,11 +44,11 @@
 #include <qserviceinterfacedescriptor.h>
 #include <qserviceinterfacedescriptor_p.h>
 #if !defined(Q_CC_MINGW)
-    #include "../../../serviceframework/qserviceinterfacedescriptor.cpp"
+    #include "../../../src/serviceframework/qserviceinterfacedescriptor.cpp"
 #endif
 #include "servicemetadata_p.h"
 #if !defined(Q_CC_MINGW)
-    #include "../../../serviceframework/servicemetadata.cpp"
+    #include "../../../src/serviceframework/servicemetadata.cpp"
 #endif
 
 #if defined(Q_OS_SYMBIAN)

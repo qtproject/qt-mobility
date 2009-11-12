@@ -1,5 +1,5 @@
 TARGET=tst_qabstractsecuritysession
-INCLUDEPATH += ../../../serviceframework
+INCLUDEPATH += ../../../src/serviceframework
 
 CONFIG+=testcase
 

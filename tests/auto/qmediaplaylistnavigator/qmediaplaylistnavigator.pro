@@ -1,5 +1,5 @@
 TARGET = tst_qmediaplaylistnavigator
-INCLUDEPATH += ../../../multimedia
+INCLUDEPATH += ../../../src/multimedia
 CONFIG += testcase
 
 SOURCES += tst_qmediaplaylistnavigator.cpp

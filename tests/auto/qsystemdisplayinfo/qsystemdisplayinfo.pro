@@ -4,7 +4,7 @@ CONFIG+=testcase
 SOURCES  += tst_qsystemdisplayinfo.cpp
 QT = core network gui
 
-INCLUDEPATH += ../../../systeminfo
+INCLUDEPATH += ../../../src/systeminfo
 
 include(../../../common.pri)
 qtAddLibrary(QtSystemInfo)

@@ -2,8 +2,8 @@ TEMPLATE=app
 TARGET=vsexplorer
 CONFIG+=console
 
-INCLUDEPATH += ../../context
-DEPENDPATH += ../../context
+INCLUDEPATH += ../../src/publishsubscribe
+DEPENDPATH += ../../src/publishsubscribe
 
 #enable_readline {
 #    MODULES*=readline
