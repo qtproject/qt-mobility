@@ -42,6 +42,9 @@
 #include "qvaluespace_p.h"
 #include "qvaluespaceprovider.h"
 
+#include <QHash>
+#include <QMultiMap>
+
 QT_BEGIN_NAMESPACE
 
 #define QVALUESPACE_SYMBIAN_SETTINGS_LAYER QUuid(0x40d7b059, 0x66ac, 0x442f, 0xb2, 0x22, \
@@ -90,6 +93,33 @@ protected:
 public:
     static SymbianSettingsLayer *instance();
 
+private:
+    struct SymbianSettingsHandle {
+        SymbianSettingsHandle(const QString &p)
+        :   path(p), valueHandle(false), refCount(1)
+        {
+        }
+
+        QString path;
+        bool valueHandle;
+        unsigned int refCount;
+    };
+
+    QHash<QString, SymbianSettingsHandle *> handles;
+
+    SymbianSettingsHandle *symbianSettingsHandle(Handle handle)
+    {
+        if (handle == InvalidHandle)
+            return 0;
+
+        SymbianSettingsHandle *h = reinterpret_cast<SymbianSettingsHandle *>(handle);
+        if (handles.values().contains(h))
+            return h;
+
+        return 0;
+    }
+
+    QMap<QValueSpaceProvider *, QList<QString> > creators;
 };
 
 QT_END_NAMESPACE

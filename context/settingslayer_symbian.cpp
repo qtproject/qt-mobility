@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #include "settingslayer_symbian.h"
+#include <QVariant>
 
 #include <QDebug>
 
@@ -53,30 +54,45 @@ SymbianSettingsLayer::SymbianSettingsLayer()
 SymbianSettingsLayer::~SymbianSettingsLayer()
 {
     qDebug("SymbianSettingsLayer::~SymbianSettingsLayer()");
+
+    QMutableHashIterator<QString, SymbianSettingsHandle *> i(handles);
+    while (i.hasNext()) {
+        i.next();
+
+        SymbianSettingsHandle *handle = i.value();
+
+        if (handle->valueHandle)
+            removeHandle(Handle(handle));
+    }
+
+    i.toFront();
+    while (i.hasNext()) {
+        i.next();
+
+        removeHandle(Handle(i.value()));
+    }
 }
 
 QString SymbianSettingsLayer::name()
 {
-    qDebug("QString SymbianSettingsLayer::name()");
     return QLatin1String("Symbian Settings Layer");
 }
 
 QUuid SymbianSettingsLayer::id()
 {
-    qDebug("");
     return QVALUESPACE_SYMBIAN_SETTINGS_LAYER;
 }
 
 unsigned int SymbianSettingsLayer::order()
 {
-    qDebug("");
     return 0;
 }
 
 QValueSpace::LayerOptions SymbianSettingsLayer::layerOptions() const
 {
-    qDebug("");
-    return QValueSpace::UnspecifiedLayer;
+    return QValueSpace::PermanentLayer |
+        QValueSpace::NonPermanentLayer |
+        QValueSpace::WriteableLayer;
 }
 
 SymbianSettingsLayer *SymbianSettingsLayer::instance()
@@ -94,52 +110,202 @@ bool SymbianSettingsLayer::startup(Type type)
 bool SymbianSettingsLayer::value(Handle handle, QVariant *data)
 {
     qDebug("bool SymbianSettingsLayer::value(Handle handle, QVariant *data)");
-    return false;
+    SymbianSettingsHandle *sh = symbianSettingsHandle(handle);
+    if (!sh)
+        return false;
+
+    return value(InvalidHandle, sh->path, data);
 }
 
 bool SymbianSettingsLayer::value(Handle handle, const QString &subPath, QVariant *data)
 {
     qDebug("bool SymbianSettingsLayer::value(Handle handle, const QString &subPath, QVariant *data)");
-    return false;
+    if (handle != InvalidHandle && !symbianSettingsHandle(handle))
+        return false;
+
+    QString path(subPath);
+    while (path.endsWith(QLatin1Char('/')))
+        path.chop(1);
+    if (handle != InvalidHandle)
+        while (path.startsWith(QLatin1Char('/')))
+            path = path.mid(1);
+    int index = path.lastIndexOf(QLatin1Char('/'), -1);
+
+    bool createdHandle = false;
+
+    QString value;
+    if (index == -1) {
+        value = path;
+    } else {
+        // want a value that is in a sub path under handle
+        value = path.mid(index + 1);
+        path.truncate(index);
+
+        handle = item(handle, path);
+        createdHandle = true;
+    }
+
+    SymbianSettingsHandle *sh = symbianSettingsHandle(handle);
+
+    if (sh) {
+        qDebug() << "TODO: Actual code for reading data" << sh->path;
+    }
+
+    if (createdHandle)
+        removeHandle(handle);
+
+    return true;
 }
 
 QSet<QString> SymbianSettingsLayer::children(Handle handle)
 {
     qDebug("QSet<QString> SymbianSettingsLayer::children(Handle handle)");
-    return QSet<QString>();
+    QSet<QString> foundChildren;
+
+    SymbianSettingsHandle *sh = symbianSettingsHandle(handle);
+    if (!sh)
+        return foundChildren;
+
+    qDebug() << "TODO: Actual code for retrieving children" << sh->path;
+    foundChildren << "intValue" << "stringValue";
+    return foundChildren;
 }
 
 QAbstractValueSpaceLayer::Handle SymbianSettingsLayer::item(Handle parent, const QString &path)
 {
     qDebug("QAbstractValueSpaceLayer::Handle SymbianSettingsLayer::item(Handle parent, const QString &path)");
-    return 0;
+    QString fullPath;
+
+    // Fail on invalid path.
+    if (path.isEmpty() || path.contains(QLatin1String("//")))
+        return InvalidHandle;
+
+    if (parent == InvalidHandle) {
+        fullPath = path;
+    } else {
+        SymbianSettingsHandle *sh = symbianSettingsHandle(parent);
+        if (!sh)
+            return InvalidHandle;
+
+        if (path == QLatin1String("/")) {
+            fullPath = sh->path;
+        } else if (sh->path.endsWith(QLatin1Char('/')) && path.startsWith(QLatin1Char('/')))
+            fullPath = sh->path + path.mid(1);
+        else if (!sh->path.endsWith(QLatin1Char('/')) && !path.startsWith(QLatin1Char('/')))
+            fullPath = sh->path + QLatin1Char('/') + path;
+        else
+            fullPath = sh->path + path;
+    }
+
+    if (handles.contains(fullPath)) {
+        SymbianSettingsHandle *sh = handles.value(fullPath);
+        ++sh->refCount;
+        return Handle(sh);
+    }
+
+    // Create a new handle for path
+    SymbianSettingsHandle *sh = new SymbianSettingsHandle(fullPath);
+    handles.insert(fullPath, sh);
+
+    return Handle(sh);
 }
 
 void SymbianSettingsLayer::setProperty(Handle handle, Properties properties)
 {
     qDebug("void SymbianSettingsLayer::setProperty(Handle handle, Properties properties)");
+    SymbianSettingsHandle *sh = symbianSettingsHandle(handle);
+    if (!sh)
+        return;
+    if (properties & QAbstractValueSpaceLayer::Publish) {
+        qDebug() << "TODO: Actual code for start monitoring" << sh->path;
+    }
+
+    if (!(properties & QAbstractValueSpaceLayer::Publish)) {
+        qDebug() << "TODO: Actual code for stop monitoring" << sh->path;
+    }
 }
 
 void SymbianSettingsLayer::removeHandle(Handle handle)
 {
     qDebug("void SymbianSettingsLayer::removeHandle(Handle handle)");
+    SymbianSettingsHandle *sh = symbianSettingsHandle(handle);
+    if (!sh)
+        return;
+
+    if (--sh->refCount)
+        return;
+
+    handles.remove(sh->path);
+
+    delete sh;
 }
 
 bool SymbianSettingsLayer::setValue(QValueSpaceProvider *creator, Handle handle, const QString &subPath,
     const QVariant &data)
 {
     qDebug("bool SymbianSettingsLayer::setValue(QValueSpaceProvider *creator, Handle handle, const QString &subPath, const QVariant &data)");
-    return false;
+    SymbianSettingsHandle *sh = symbianSettingsHandle(handle);
+    if (!sh)
+        return false;
+
+    QString path(subPath);
+    while (path.endsWith(QLatin1Char('/')))
+        path.chop(1);
+
+    int index = path.lastIndexOf(QLatin1Char('/'), -1);
+
+    bool createdHandle = false;
+
+    QString value;
+    if (index == -1) {
+        value = path;
+    } else {
+        // want a value that is in a sub path under handle
+        value = path.mid(index + 1);
+        path.truncate(index);
+
+        if (path.isEmpty())
+            path.append(QLatin1Char('/'));
+
+        sh = symbianSettingsHandle(item(Handle(sh), path));
+        createdHandle = true;
+    }
+
+    bool created = false;
+    //TODO created = Try to create key
+    if (created) {
+        if (!creators[creator].contains(sh->path))
+            creators[creator].append(sh->path);
+    }
+
+    QString fullPath(sh->path);
+    if (fullPath != QLatin1String("/"))
+        fullPath.append(QLatin1Char('/'));
+
+    fullPath.append(value);
+
+    //TODO: Write data
+    qDebug() << "TODO: Actual code for writing data" << fullPath << data;
+
+    if (!creators[creator].contains(fullPath))
+        creators[creator].append(fullPath);
+
+    if (createdHandle)
+        removeHandle(Handle(sh));
+
+    return true;
 }
 
 void SymbianSettingsLayer::sync()
 {
     qDebug("void SymbianSettingsLayer::sync()");
+    //TODO: Is this needed in Symbian?
 }
 
 bool SymbianSettingsLayer::removeSubTree(QValueSpaceProvider *creator, Handle handle)
 {
     qDebug("bool SymbianSettingsLayer::removeSubTree(QValueSpaceProvider *creator, Handle handle)");
+    //TODO: Is this needed in Symbian?
     return false;
 }
 
@@ -148,7 +314,33 @@ bool SymbianSettingsLayer::removeValue(QValueSpaceProvider *creator,
     const QString &subPath)
 {
     qDebug("bool SymbianSettingsLayer::removeValue(QValueSpaceProvider *creator, Handle handle, const QString &subPath)");
-    return false;
+    QString fullPath;
+
+    if (handle == InvalidHandle) {
+        fullPath = subPath;
+    } else {
+        SymbianSettingsHandle *sh = symbianSettingsHandle(handle);
+        if (!sh)
+            return false;
+
+        if (subPath == QLatin1String("/"))
+            fullPath = sh->path;
+        else if (sh->path.endsWith(QLatin1Char('/')) && subPath.startsWith(QLatin1Char('/')))
+            fullPath = sh->path + subPath.mid(1);
+        else if (!sh->path.endsWith(QLatin1Char('/')) && !subPath.startsWith(QLatin1Char('/')))
+            fullPath = sh->path + QLatin1Char('/') + subPath;
+        else
+            fullPath = sh->path + subPath;
+    }
+
+    // permanent layer always removes items even if our records show that creator does not own it.
+    if (!creators[creator].contains(fullPath) && (layerOptions() & QValueSpace::NonPermanentLayer))
+        return false;
+
+    //TODO: Remove value from mapper?
+    creators[creator].removeOne(fullPath);
+
+    return true;
 }
 
 void SymbianSettingsLayer::addWatch(QValueSpaceProvider *, Handle)
