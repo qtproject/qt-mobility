@@ -171,7 +171,7 @@ void VersitTest::test_data()
 }
 
 void VersitTest::executeTest(QFile& in, QIODevice& out)
-{   
+{       
     in.seek(0);
     mReader->setDevice(&in);
     out.reset();
@@ -179,7 +179,7 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
 
     // Parse the input
     QVERIFY2(mReader->readAll(),in.fileName().toAscii().constData());
-    
+  
     // Convert to QContacts
     QList<QContact> contacts;
     QList<QVersitDocument::VersitType> documentTypes;
@@ -192,7 +192,7 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
         contacts.append(contact);
         documentTypes.append(document.versitType());
     }    
-    
+
     // Convert back to QVersitDocuments
     QList<QVersitDocument> documents;
     connect(mExporter, SIGNAL(scale(const QString&,QByteArray&)),
@@ -204,7 +204,7 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
             document.setVersitType(documentTypes.takeFirst());
         documents.append(document);
     }
-    
+  
     // Encode and write to output
     foreach (QVersitDocument document, documents) {
         mWriter->setVersitDocument(document);
@@ -212,4 +212,42 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
     }
 }
 
+void VersitTest::exampleCode()
+{
+    // Create the input vCard
+    QBuffer input;
+    input.open(QBuffer::ReadWrite);
+    QByteArray inputVCard =
+        "BEGIN:VCARD\r\nVERSION:2.1\r\nFN:Homer Simpson\r\nN:Simpson;Homer;J;;\r\nEND:VCARD\r\n";
+    input.write(inputVCard);
+    input.seek(0);
 
+    // Parse the input into a QVersitDocument
+    QVersitReader reader;
+    reader.setDevice(&input);
+    reader.readAll(); // Remember to check the return value
+
+    // Import the QVersitDocument to a QContact
+    QVersitDocument inputDocument = reader.result().takeFirst();
+    QVersitContactImporter importer;
+    QContact contact = importer.importContact(inputDocument);
+    // Note that the QContact is not saved yet.
+    // Use QContactManager::saveContact() for saving if necessary
+
+    // Export the QContact back to a QVersitDocument
+    QVersitContactExporter exporter;
+    QVersitDocument outputDocument = exporter.exportContact(contact);
+
+    // Encode the QVersitDocument back to a vCard
+    QBuffer output;
+    output.open(QBuffer::ReadWrite);
+    QVersitWriter writer;
+    writer.setDevice(&output);
+    writer.setVersitDocument(outputDocument);
+    writer.writeAll(); // Remember to check the return value
+
+    // Read the vCard back to a QByteArray
+    output.seek(0);
+    QByteArray outputVCard(output.readAll());
+    QCOMPARE(QString::fromAscii(inputVCard),QString::fromAscii(outputVCard));
+}

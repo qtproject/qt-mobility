@@ -76,12 +76,13 @@ private slots:
 
 private slots:
     void test();
-    void test_data();    
+    void test_data();
+    void exampleCode();
 
 private:
     
-    void executeTest(QFile& in, QIODevice& out);
-    
+    void executeTest(QFile& in, QIODevice& out);  
+
 private:
  
     bool mSaveContacts;

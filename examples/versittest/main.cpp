@@ -53,13 +53,10 @@ int main(int argc, char** argv)
     QString confFileName = homeDir + QString::fromAscii("versittestconfig.xml");
     TestConfiguration conf;
     conf.parse(confFileName);
-
     bool saveContacts = conf.saveContact();
     QString outputFormat = conf.outputFormat();
-    bool performanceTest = conf.performanceTest();
-    int performanceIterations = conf.iterations();
-    QString testName = ( conf.testName().length() >0 ) ? conf.testName()
-                                                       : QString::fromAscii("versittest");
+    int iterations = conf.iterations();
+
     int scaledImageHeight = 0;
     int scaledImageWidth = 0;
     // overwrite configuration file setting by command line params.
@@ -68,21 +65,15 @@ int main(int argc, char** argv)
         if (argStr == QString::fromAscii("sc")) {
             // if sc argument in command line enable contact saving
             saveContacts = true;
-        }else if (argStr == QString::fromAscii("nsc")) {
+        } else if (argStr == QString::fromAscii("nsc")) {
             // if nsc argument in command line disable contact saving
             saveContacts = false;
-        }else if (argStr == QString::fromAscii("xml") ||
+        } else if (argStr == QString::fromAscii("xml") ||
                   argStr == QString::fromAscii("v1") ||
                   argStr == QString::fromAscii("v2") ) {
             // if log argument in command line enable xml result logging
             outputFormat = argStr;
-        }else if (argStr == QString::fromAscii("np")) {
-            // if np argument in command line disable performance , so enables the normal test
-            performanceTest = false;
-        }else if (argStr == QString::fromAscii("p")) {
-            // if p argument in command line enable performance
-            performanceTest = false;
-        }else {
+        } else {
             // Scaling height and width
             QStringList list = argStr.split('x');
             if (!list.isEmpty())
@@ -91,17 +82,12 @@ int main(int argc, char** argv)
                 scaledImageWidth = list.takeFirst().toInt();
         }
     }
+
     VersitTest versitTest(saveContacts,scaledImageHeight,scaledImageWidth);
     printf("Running tests...\n");
-    QStringList args;    
-    // set test name
-    args << testName;
-    // if performance, set number of iterations
-    if( performanceTest ){
-        args << "-iterations" << QString::number(performanceIterations);
-    }
-    // set output format
-    args<< QString::fromAscii("-") + outputFormat;
+    QStringList args(QString::fromAscii("versittest"));
+    args << "-iterations" << QString::number(iterations);
+    args << QString::fromAscii("-") + outputFormat;
     if( outputFormat == QString::fromAscii("xml")){
         // if xml set filename
         QString resultFileName = homeDir + QString::fromAscii("QVersitTestResults.xml");

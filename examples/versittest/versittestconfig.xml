@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<setup name="VersitTest">
-<test type="0" iteration="50">
-    <Description>If type="0" then runs the versit test with performance benchmarking.Number of iterations can be specified as iteration value.Default</Description>
-    <Description>If type="1" then runs the versit test </Description>
-</test>
-<contact save="yes">
-    <Description>If save="yes" then saves the contact in phonebook. Default</Description>
-    <Description>If save="no" then will not save the contact in phonebook</Description>
-</contact>
-<log format="xml">	  
-		<Description>If format="xml" then runs the versit test with xml file logging enabled.Default</Description>
-		<Description>If format="vb" then runs the versit test with verbose benchmarking output.</Description>    
-    <Description>If format="v1" then runs the versit test with verbose level 1 output.</Description>    
-</log>
-</setup>
+<versit_test_setup>
+<test_iterations value="1"/><!-- number of times the test is executed -->
+<save_contacts value="yes"/>
+<output_format value="xml"/><!-- QTestLib output options -->
+</versit_test_setup>
