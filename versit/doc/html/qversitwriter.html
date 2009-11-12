@@ -66,16 +66,16 @@
     property.setValue(&quot;Simpson;Homer;J;;&quot;);
     document.addProperty(property);
     writer.setVersitDocument(document);
-    if (writer.writeSynchronously()) {
+    if (writer.writeAll()) {
         <span class="comment">// Use the vCardBuffer...</span>
     }</pre>
 <p>See also <a href="qversitdocument.html">QVersitDocument</a> and <a href="qversitproperty.html">QVersitProperty</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QVersitWriter"></a>QVersitWriter::QVersitWriter ()</h3>
-<p>Constructs a writer.</p>
+<p>Constructs a new writer.</p>
 <h3 class="fn"><a name="dtor.QVersitWriter"></a>QVersitWriter::~QVersitWriter ()</h3>
-<p>Destroys the writer.</p>
+<p>Frees the memory used by the writer. Waits until a pending asynchronous writing has been completed.</p>
 <h3 class="fn"><a name="device"></a><a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> * QVersitWriter::device () const</h3>
 <p>Returns the device used for writing.</p>
 <p>See also <a href="qversitwriter.html#setDevice">setDevice</a>().</p>

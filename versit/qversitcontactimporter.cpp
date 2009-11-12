@@ -49,12 +49,12 @@
  *
  * \brief QVersitContactImporter creates QContacts from QVersitDocuments.
  *
- * The versit properties (\l QVersitProperty) that are not supported by
- * QVersitContactImporter can be imported by the client
- * by calling QVersitContactImporter::unknownVersitProperties.
+ * The versit properties (\l QVersitProperty) that were not imported by
+ * \l QVersitContactImporter::importContact() can be fetched after importing
+ * by calling \l QVersitContactImporter::unknownVersitProperties().
  * For the returned properties,
- * the client can perform the versit property to contact detail
- * conversions itself and add the converted details to the QContact.
+ * the client can perform the conversions from versit properties 
+ * to contact details and add the converted details to the QContact.
  *
  * \code
  *
@@ -84,17 +84,13 @@
  * \sa QVersitDocument, QVersitReader
  */
 
-/*!
- * Constructor.
- */
+/*! Constructs a new importer */
 QVersitContactImporter::QVersitContactImporter() 
     : d(new QVersitContactImporterPrivate)
 {
 }
 
-/*!
- * Destructor.
- */
+/*! Frees the memory used by the importer */
 QVersitContactImporter::~QVersitContactImporter()
 {
     delete d;
@@ -151,7 +147,7 @@ QContact QVersitContactImporter::importContact(
 
 /*!
  * Returns the list of versit properties that were not imported
- * by the most recent call of importContact.
+ * by the most recent call of \l importContact().
  */
 QList<QVersitProperty> QVersitContactImporter::unknownVersitProperties()
 {

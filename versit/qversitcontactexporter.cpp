@@ -45,8 +45,8 @@
  * \brief QVersitContactExporter exports QContact(s) into QVersitDocument(s)
  *
  * If the exported QContact has some detail with an image as its value,
- * signal scale(const QString& imageFileName, QByteArray& imageData) is emitted
- * and the client can scale the image's data to the size it wishes.
+ * signal \l QVersitContactExporter::scale() is emitted and 
+ * the client can scale the image's data to the size it wishes.
  * The client may retrieve the list contact details
  * which were not exported using QVersitContactExporter::unknownContactDetails().
  *
@@ -63,14 +63,14 @@
  *
  *  // Create an avatar type which is not supported by the exporter
  *  QContactAvatar contactAvatar;
- *  contactAvatar.setAvatar(QString::fromAscii("/my/image/avatar_path"));
+ *  contactAvatar.setAvatar(QString::fromAscii("/my/image/avatar_path/texture.type"));
  *  contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
  *  contact.saveDetail(&contactAvatar);
  *
  *  // Create an organization detail with a title and a logo
  *  QContactOrganization organization;
  *  organization.setTitle(QString::fromAscii("Developer"));
- *  organization.setLogo(QString::fromAscii("/my/image/logo_path"));
+ *  organization.setLogo(QString::fromAscii("/my/image/logo_path/logo.jpg"));
  *  contact.saveDetail(&organization);
  *
  *  QVersitDocument versitDocument = contactExporter.exportContact(contact);
@@ -78,11 +78,12 @@
  *
  *  QList<QContactDetail> unknownDetails = contactExporter.unknownContactDetails();
  *
- *  // unknownDetails can be processed by the client to append details directly into
- *  // QVersitDocument if needed (in this example QContactAvatar::SubTypeTexturedMesh).
- *  // Currently for QContactAvatar details, only exporting subtypes
- *  // QContactAvatar::SubTypeImage and QContactAvatar::SubTypeAudioRingtone
- *  // are supported.
+ *  // The returned unknownDetails can be processed by the client and 
+ *  // the client can append details directly into QVersitDocument if needed.
+ *  // (In this example QContactAvatar::SubTypeTexturedMesh.
+ *  //  Currently for QContactAvatar details, 
+ *  //  only exporting subtypes QContactAvatar::SubTypeImage and 
+ *  //  QContactAvatar::SubTypeAudioRingtone is supported.)
  *
  * \endcode
  *

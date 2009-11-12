@@ -63,7 +63,7 @@
     vCardBuffer.seek(0);
     QVersitReader reader;
     reader.setDevice(&amp;vCardBuffer);
-    if (reader.readSynchronously()) {
+    if (reader.readAll()) {
         QList&lt;QVersitDocument&gt; versitDocuments = reader.result();
         <span class="comment">// Use the resulting document(s)...</span>
     }</pre>
@@ -71,9 +71,9 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QVersitReader"></a>QVersitReader::QVersitReader ()</h3>
-<p>Construct a reader.</p>
+<p>Constructs a new reader.</p>
 <h3 class="fn"><a name="dtor.QVersitReader"></a>QVersitReader::~QVersitReader ()</h3>
-<p>Destroys the reader.</p>
+<p>Frees the memory used by the reader. Waits until a pending asynchronous reading has been completed.</p>
 <h3 class="fn"><a name="device"></a><a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> * QVersitReader::device () const</h3>
 <p>Returns the device used for reading input.</p>
 <p>See also <a href="qversitreader.html#setDevice">setDevice</a>().</p>

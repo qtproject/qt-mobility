@@ -50,7 +50,7 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>QVersitContactExporter exports QContact(s) into <a href="qversitdocument.html">QVersitDocument</a>(s)</p>
-<p>If the exported QContact has some detail with an image as its value, signal scale(const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>&amp; imageFileName, <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a>&amp; imageData) is emitted and the client can scale the image's data to the size it wishes. The client may retrieve the list contact details which were not exported using <a href="qversitcontactexporter.html#unknownContactDetails">QVersitContactExporter::unknownContactDetails</a>().</p>
+<p>If the exported QContact has some detail with an image as its value, signal <a href="qversitcontactexporter.html#scale">QVersitContactExporter::scale</a>() is emitted and the client can scale the image's data to the size it wishes. The client may retrieve the list contact details which were not exported using <a href="qversitcontactexporter.html#unknownContactDetails">QVersitContactExporter::unknownContactDetails</a>().</p>
 <pre><span class="comment">    // An example of exporting a QContact:</span>
      QVersitContactExporter contactExporter;
      QContact contact;
@@ -62,14 +62,14 @@
 
      <span class="comment">// Create an avatar type which is not supported by the exporter</span>
      QContactAvatar contactAvatar;
-     contactAvatar.setAvatar(QString::fromAscii(&quot;/my/image/avatar_path&quot;));
+     contactAvatar.setAvatar(QString::fromAscii(&quot;/my/image/avatar_path/texture.type&quot;));
      contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
      contact.saveDetail(&amp;contactAvatar);
 
      <span class="comment">// Create an organization detail with a title and a logo</span>
      QContactOrganization organization;
      organization.setTitle(QString::fromAscii(&quot;Developer&quot;));
-     organization.setLogo(QString::fromAscii(&quot;/my/image/logo_path&quot;));
+     organization.setLogo(QString::fromAscii(&quot;/my/image/logo_path/logo.jpg&quot;));
      contact.saveDetail(&amp;organization);
 
      QVersitDocument versitDocument = contactExporter.exportContact(contact);
@@ -77,11 +77,12 @@
 
      QList&lt;QContactDetail&gt; unknownDetails = contactExporter.unknownContactDetails();
 
-     <span class="comment">// unknownDetails can be processed by the client to append details directly into</span>
-     <span class="comment">// QVersitDocument if needed (in this example QContactAvatar::SubTypeTexturedMesh).</span>
-     <span class="comment">// Currently for QContactAvatar details, only exporting subtypes</span>
-     <span class="comment">// QContactAvatar::SubTypeImage and QContactAvatar::SubTypeAudioRingtone</span>
-     <span class="comment">// are supported.</span></pre>
+     <span class="comment">// The returned unknownDetails can be processed by the client and</span>
+     <span class="comment">// the client can append details directly into QVersitDocument if needed.</span>
+     <span class="comment">// (In this example QContactAvatar::SubTypeTexturedMesh.</span>
+     <span class="comment">//  Currently for QContactAvatar details,</span>
+     <span class="comment">//  only exporting subtypes QContactAvatar::SubTypeImage and</span>
+     <span class="comment">//  QContactAvatar::SubTypeAudioRingtone is supported.)</span></pre>
 <p>See also <a href="qversitdocument.html">QVersitDocument</a> and <a href="qversitproperty.html">QVersitProperty</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
