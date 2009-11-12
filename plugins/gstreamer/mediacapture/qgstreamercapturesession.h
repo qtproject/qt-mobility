@@ -171,6 +171,7 @@ private:
 
 public:
     bool m_passImage;
+    bool m_passPrerollImage;
     QString m_imageFileName;
 };
 
