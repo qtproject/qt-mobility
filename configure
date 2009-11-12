@@ -265,6 +265,21 @@ else
 fi
 
 
+echo "Configuring Qt Mobility"
+echo 
+
+WHICH="$relpath/config.tests/tools/which.test"
+
+printf "Checking available Qt"
+if ! "$WHICH" qmake 2>/dev/null 1>&2; then
+    printf " ... Not found\n\n" >&2
+    echo >&2 "Cannot find 'qmake' in your PATH.";
+    echo >&2 "Aborting." 
+else
+    printf " ... "
+    qmake -query QT_VERSION
+fi
+
 # find out which make we want to use
 MAKE=
 for m in make gmake; do
