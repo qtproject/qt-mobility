@@ -162,7 +162,7 @@ void CameraCapture::updateRecordTime()
 
 void CameraCapture::processCapturedImage(const QString& fname, const QImage& img)
 {
-    Q_UNUSED(img);
+    ui->lastImagePreviewLabel->setPixmap( QPixmap::fromImage(img.scaledToWidth(128)) );
     qDebug() << "image captured:" << fname;
 }
 
