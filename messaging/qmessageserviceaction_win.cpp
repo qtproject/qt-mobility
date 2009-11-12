@@ -119,6 +119,9 @@ void QMessageServiceActionPrivate::reportMatchingIds()
         emit messagesFound(_candidateIds);
     }
     completed();
+
+    // Delete the completed thread that generated this event
+    delete sender();
 }
 
 void QMessageServiceActionPrivate::reportMessagesCounted()
@@ -127,6 +130,9 @@ void QMessageServiceActionPrivate::reportMessagesCounted()
         emit messagesCounted(_candidateIds.count());
     }
     completed();
+
+    // Delete the completed thread that generated this event
+    delete sender();
 }
 
 #ifdef _WIN32_WCE
@@ -571,7 +577,7 @@ class QueryThread : public QThread
 
 public:
     QueryThread(QMessageServiceActionPrivate *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset)
-        : QThread(parent),
+        : QThread(),
           _parent(parent),
           _filter(filter),
           _body(body),
@@ -580,10 +586,15 @@ public:
           _limit(limit),
           _offset(offset)
     {
+        // Ensure that the main thread has instantiated the store before we access it from another thread
+        (void)QMessageStore::instance();
     }
 
     void run()
     {
+        // Ensure that this thread has initialized MAPI
+        WinHelpers::MapiInitializationToken token(WinHelpers::initializeMapi());
+
         // TODO: body text search
         _parent->_candidateIds = QMessageStore::instance()->queryMessages(_filter, _ordering, _limit, _offset);
         _parent->_lastError = QMessageStore::instance()->lastError();
