@@ -4154,7 +4154,7 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                 } else if (contentFormat == EDITOR_FORMAT_HTML) {
                     // See if there is a body HTML property
                     // Correct variants discussed at http://blogs.msdn.com/raffael/archive/2008/09/08/mapi-on-windows-mobile-6-programmatically-retrieve-mail-body-sample-code.aspx
-#ifdef _WIN32_WCE
+#if(_WIN32_WCE > 0x501)
                     ULONG tags[] = { PR_BODY_HTML, PR_BODY_HTML_W, PR_BODY_HTML_A };
 #else
                     ULONG tags[] = { PR_BODY_HTML };
