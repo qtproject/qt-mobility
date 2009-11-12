@@ -10,7 +10,8 @@ HEADERS += $$PWD/qgstreamercaptureservice.h \
     $$PWD/qgstreamermediaformatcontrol.h \
     $$PWD/qgstreamercameracontrol.h \
     $$PWD/qgstreamercapturemetadatacontrol.h \
-    $$PWD/qgstreamerimagecapturecontrol.h
+    $$PWD/qgstreamerimagecapturecontrol.h \
+    $$PWD/qgstreamerimageencode.h
 
 SOURCES += $$PWD/qgstreamercaptureservice.cpp \
     $$PWD/qgstreamercapturesession.cpp \
@@ -20,4 +21,5 @@ SOURCES += $$PWD/qgstreamercaptureservice.cpp \
     $$PWD/qgstreamermediaformatcontrol.cpp \
     $$PWD/qgstreamercameracontrol.cpp \
     $$PWD/qgstreamercapturemetadatacontrol.cpp \
-    $$PWD/qgstreamerimagecapturecontrol.cpp
+    $$PWD/qgstreamerimagecapturecontrol.cpp \
+    $$PWD/qgstreamerimageencode.cpp

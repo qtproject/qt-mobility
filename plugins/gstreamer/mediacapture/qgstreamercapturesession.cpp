@@ -44,6 +44,7 @@
 #include "qgstreamermediaformatcontrol.h"
 #include "qgstreameraudioencode.h"
 #include "qgstreamervideoencode.h"
+#include "qgstreamerimageencode.h"
 #include "qgstreamerbushelper.h"
 #include <qmediarecorder.h>
 
@@ -82,7 +83,8 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
      m_videoPreview(0),
      m_imageCaptureBin(0),
      m_encodeBin(0),
-     m_passImage(false)
+     m_passImage(false),
+     m_passPrerollImage(false)
 {
     m_pipeline = gst_pipeline_new("media-capture-pipeline");
     gstRef(m_pipeline);
@@ -93,6 +95,7 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
     connect(m_busHelper, SIGNAL(message(QGstreamerMessage)), SLOT(busMessage(QGstreamerMessage)));
     m_audioEncodeControl = new QGstreamerAudioEncode(this);
     m_videoEncodeControl = new QGstreamerVideoEncode(this);
+    m_imageEncodeControl = new QGstreamerImageEncode(this);
     m_recorderControl = new QGstreamerRecorderControl(this);
     m_mediaFormatControl = new QGstreamerMediaFormatControl(this);
 
@@ -333,8 +336,83 @@ static gboolean passImageFilter(GstElement *element,
     Q_UNUSED(buffer);
 
     QGstreamerCaptureSession *session = (QGstreamerCaptureSession *)appdata;
-    if (session->m_passImage) {
+    if (session->m_passImage || session->m_passPrerollImage) {
         session->m_passImage = false;
+
+        if (session->m_passPrerollImage) {
+            session->m_passPrerollImage = false;
+            return TRUE;
+        }
+        session->m_passPrerollImage = false;
+
+        QImage img;
+
+        GstCaps *caps = gst_buffer_get_caps(buffer);
+        if (caps) {
+            GstStructure *structure = gst_caps_get_structure (caps, 0);
+            gint width = 0;
+            gint height = 0;
+
+            if (structure &&
+                gst_structure_get_int(structure, "width", &width) &&
+                gst_structure_get_int(structure, "height", &height) &&
+                width > 0 && height > 0) {
+                    if (qstrcmp(gst_structure_get_name(structure), "video/x-raw-yuv") == 0) {
+                        guint32 fourcc = 0;
+                        gst_structure_get_fourcc(structure, "format", &fourcc);
+
+                        if (fourcc == GST_MAKE_FOURCC('I','4','2','0')) {
+                            img = QImage(width/2, height/2, QImage::Format_RGB32);
+
+                            const uchar *data = (const uchar *)buffer->data;
+
+                            for (int y=0; y<height; y+=2) {
+                                const uchar *yLine = data + y*width;
+                                const uchar *uLine = data + width*height + y*width/4;
+                                const uchar *vLine = data + width*height*5/4 + y*width/4;
+
+                                for (int x=0; x<width; x+=2) {
+                                    const qreal Y = 1.164*(yLine[x]-16);
+                                    const int U = uLine[x/2]-128;
+                                    const int V = vLine[x/2]-128;
+
+                                    int b = qBound(0, int(Y + 2.018*U), 255);
+                                    int g = qBound(0, int(Y - 0.813*V - 0.391*U), 255);
+                                    int r = qBound(0, int(Y + 1.596*V), 255);
+
+                                    img.setPixel(x/2,y/2,qRgb(r,g,b));
+                                }
+                            }
+                        }
+
+                    } else if (qstrcmp(gst_structure_get_name(structure), "video/x-raw-rgb") == 0) {
+                        QImage::Format format = QImage::Format_Invalid;
+                        int bpp = 0;
+                        gst_structure_get_int(structure, "bpp", &bpp);
+
+                        if (bpp == 24)
+                            format = QImage::Format_RGB888;
+                        else if (bpp == 32)
+                            format = QImage::Format_RGB32;
+
+                        if (format != QImage::Format_Invalid) {
+                            img = QImage((const uchar *)buffer->data,
+                                         width,
+                                         height,
+                                         format);
+                            img.bits(); //detach
+                        }
+                    }
+            }
+            gst_caps_unref(caps);
+        }
+
+        static int signalIndex = session->metaObject()->indexOfSignal("imageCaptured(QString,QImage)");
+        session->metaObject()->method(signalIndex).invoke(session,
+                                                          Qt::QueuedConnection,
+                                                          Q_ARG(QString,session->m_imageFileName),
+                                                          Q_ARG(QImage,img));
+
         return TRUE;
     } else {
         return FALSE;
@@ -358,11 +436,10 @@ static gboolean saveImageFilter(GstElement *element,
             f.write((const char *)buffer->data, buffer->size);
             f.close();
 
-            static int signalIndex = session->metaObject()->indexOfSignal("imageCaptured(QString,QImage)");
+            static int signalIndex = session->metaObject()->indexOfSignal("imageSaved(QString)");
             session->metaObject()->method(signalIndex).invoke(session,
                                                               Qt::QueuedConnection,
-                                                              Q_ARG(QString,fileName),
-                                                              Q_ARG(QImage,QImage()));
+                                                              Q_ARG(QString,fileName));
         }
     }
 
@@ -394,7 +471,8 @@ GstElement *QGstreamerCaptureSession::buildImageCapture()
     gst_element_add_pad(GST_ELEMENT(bin), gst_ghost_pad_new("imagesink", pad));
     gst_object_unref(GST_OBJECT(pad));
 
-    m_passImage = true;
+    m_passImage = false;
+    m_passPrerollImage = true;
     m_imageFileName = QString();
 
     return bin;
