@@ -69,5 +69,8 @@ public:
 #endif
 
 #endif
+#if defined(Q_OS_SYMBIAN)
+    QString _id;
+#endif    
 };
 #endif

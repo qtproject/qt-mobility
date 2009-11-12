@@ -42,6 +42,11 @@
 #define QMESSAGEFOLDERFILTERPRIVATE_H
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderfilter.h"
+
+#ifdef Q_OS_SYMBIAN
+#include <qvariant.h>
+#include "qmessagefolder.h"
+#endif
 #ifdef Q_OS_WIN
 #include "winhelpers_p.h"
 #include "qmessagestore.h"
@@ -52,6 +57,7 @@ class QMessageFolderFilterPrivate
 {
     Q_DECLARE_PUBLIC(QMessageFolderFilter)
 public:
+#ifndef Q_OS_SYMBIAN
     enum Criterion { 
         None = 0, 
         IdEquality, 
@@ -79,11 +85,37 @@ public:
         Nor, 
         OperatorEnd 
     };
+#endif
 
     QMessageFolderFilterPrivate(QMessageFolderFilter *folderFilter);
     ~QMessageFolderFilterPrivate();
     QMessageFolderFilter *q_ptr;
 
+#ifdef Q_OS_SYMBIAN
+    typedef QList<QMessageFolderFilter> SortedMessageFolderFilterList;
+    
+    bool filter(QMessageFolder& folder);
+
+    static void applyNot(QMessageFolderFilter& filter);
+    static bool lessThan(const QMessageFolderFilter filter1, const QMessageFolderFilter filter2); 
+    static QMessageFolderFilterPrivate* implementation(const QMessageFolderFilter &filter);
+
+    QMessageDataComparator::Options _options;
+    
+    enum Field {None = 0, Id, ParentFolderId, AncestorFolderIds, ParentAccountId, DisplayName, Path };
+    enum Comparator {Equality = 0, Inclusion};
+
+    bool _valid;
+    
+    QMessageFolderIdList _ids;
+    QVariant _value;
+    QMessageFolderFilterPrivate::Field _field;
+
+    Comparator _comparatorType;
+    int _comparatorValue;
+    
+    QList<SortedMessageFolderFilterList> _filterList;
+#else
     QMessageFolderFilterPrivate &operator=(const QMessageFolderFilterPrivate &other);
     bool operator==(const QMessageFolderFilterPrivate &other) const;
 
@@ -99,6 +131,7 @@ public:
     QList<QMessageFolderFilter*> _arguments; // for bool ops
     QMessageAccountFilter *_accountFilter;
     QMessageFolderFilter *_folderFilter;
+#endif
 
 #ifdef Q_OS_WIN
     static QMessageFolderFilter preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, const QMessageFolderFilter &filter);

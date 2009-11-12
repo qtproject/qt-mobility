@@ -1,3 +1,5 @@
+include($$QT_MOBILITY_BUILD_TREE/config.pri)
+
 TEMPLATE = subdirs
 
 #ServiceFramework examples

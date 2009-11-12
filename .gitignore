@@ -33,6 +33,7 @@ install/*
 lib/*
 *.app
 config.tests/networkmanager/networkmanager
+config.tests/qmf/qmf
 .qmake.cache
 
 #Symbian specific

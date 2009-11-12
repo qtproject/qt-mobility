@@ -61,5 +61,9 @@ public:
 #if defined(Q_OS_WIN)
     static QMessageFolder from(const QMessageFolderId &id, const QMessageAccountId &accountId, const QMessageFolderId &parentId, const QString &name, const QString &path);
 #endif
+#ifdef Q_OS_SYMBIAN
+    long int _folderEntryId;
+    static QMessageFolder from(const QMessageFolderId &id, const QMessageAccountId &accountId, const QMessageFolderId &parentId, const QString &name, const QString &path);
+#endif
 };
 #endif
