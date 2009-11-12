@@ -74,17 +74,17 @@
     <section ref="index.html" title="Qt Mobility Versit Developer Resources">
         <keyword ref="index.html">Qt Mobility Versit Developer Resources</keyword>
     </section>
-    <section ref="versit.html" title="Qt Versit Developer Resources">
-        <keyword ref="versit.html">Qt Versit Developer Resources</keyword>
-    </section>
-    <section ref="versit.html" title="Qt Versit Developer Resources">
-        <keyword ref="versit.html">Qt Versit Developer Resources</keyword>
-    </section>
     <section ref="versitmapping.html" title="Qt Versit Mapping">
         <keyword ref="versitmapping.html">Qt Versit Mapping</keyword>
     </section>
     <section ref="versitmapping.html" title="Qt Versit Mapping">
         <keyword ref="versitmapping.html">Qt Versit Mapping</keyword>
+    </section>
+    <section ref="versit.html" title="Versit API documentation">
+        <keyword ref="versit.html">Versit API documentation</keyword>
+    </section>
+    <section ref="versit.html" title="Versit API documentation">
+        <keyword ref="versit.html">Versit API documentation</keyword>
     </section>
 </section>
 <section ref="examples.html" title="Tutorial &amp; Examples">

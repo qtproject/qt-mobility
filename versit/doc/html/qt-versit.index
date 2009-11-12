@@ -136,17 +136,11 @@
             <page access="public" status="commendable" name="versittest/versittest.pro" href="versittest-versittest-pro.html" subtype="file" title="" fulltitle="versittest.pro Example File" subtitle="versittest/versittest.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Versit Developer Resources" fulltitle="Qt Mobility Versit Developer Resources" subtitle="" location="index.qdoc"/>
-        <page access="public" status="commendable" name="versit.html" href="versit.html" subtype="page" title="Qt Versit Developer Resources" fulltitle="Qt Versit Developer Resources" subtitle="" location="versit.qdoc">
-            <contents name="introduction" title="Introduction" level="1"/>
+        <page access="public" status="commendable" name="versit.html" href="versit.html" subtype="page" title="Versit API documentation" fulltitle="Versit API documentation" subtitle="" location="versit.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="using-the-api" title="Using the API" level="1"/>
-            <contents name="generating-qcontact-from-vcard-file" title="Generating QContact from VCard file" level="2"/>
-            <contents name="generating-vcard-file-from-qcontact" title="Generating VCard file from QContact" level="2"/>
-            <contents name="generating-vcard-file-from-qcontact-and-save-to-contact-database" title="Generating VCard file from QContact and save to contact database" level="2"/>
-            <contents name="building-and-compiling" title="Building and compiling" level="1"/>
             <contents name="reference-documentation" title="Reference documentation" level="1"/>
-            <contents name="main-classes" title="Main classes" level="2"/>
-            <contents name="asynchronous-requests" title="Asynchronous Requests" level="2"/>
+            <contents name="classes" title="Classes" level="2"/>
         </page>
         <page access="public" status="commendable" name="versitmapping.html" href="versitmapping.html" subtype="page" title="Qt Versit Mapping" fulltitle="Qt Versit Mapping" subtitle="" location="versitmapping.qdoc">
             <contents name="introduction" title="Introduction" level="1"/>
@@ -165,17 +159,11 @@
             <contents name="example-code" title="Example code" level="2"/>
             <contents name="implementation-definition-file" title="Implementation definition file" level="1"/>
         </page>
-        <page access="public" status="commendable" name="versit.html" href="versit.html" subtype="page" title="Qt Versit Developer Resources" fulltitle="Qt Versit Developer Resources" subtitle="" location="versit.qdoc">
-            <contents name="introduction" title="Introduction" level="1"/>
+        <page access="public" status="commendable" name="versit.html" href="versit.html" subtype="page" title="Versit API documentation" fulltitle="Versit API documentation" subtitle="" location="versit.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="using-the-api" title="Using the API" level="1"/>
-            <contents name="generating-qcontact-from-vcard-file" title="Generating QContact from VCard file" level="2"/>
-            <contents name="generating-vcard-file-from-qcontact" title="Generating VCard file from QContact" level="2"/>
-            <contents name="generating-vcard-file-from-qcontact-and-save-to-contact-database" title="Generating VCard file from QContact and save to contact database" level="2"/>
-            <contents name="building-and-compiling" title="Building and compiling" level="1"/>
             <contents name="reference-documentation" title="Reference documentation" level="1"/>
-            <contents name="main-classes" title="Main classes" level="2"/>
-            <contents name="asynchronous-requests" title="Asynchronous Requests" level="2"/>
+            <contents name="classes" title="Classes" level="2"/>
         </page>
         <page access="public" status="commendable" name="versittest" href="versittest.html" subtype="example" title="Sample Versit Example" fulltitle="Sample Versit Example" subtitle="" location="sampleversit.qdoc">
             <contents name="versit" title="Versit" level="1"/>

@@ -45,9 +45,7 @@
 
 \title Qt Mobility Versit Developer Resources
 
-This is a place holder for the overall Mobility program documentation page.
+\l{Versit API documentation}{Versit API documentation}
 
-Here is the \l{Qt Versit Developer Resources}{QVersit} page.
-
-Hare is the \l{Qt Versit Mapping}{Versitmapping Table} page.
+\l{Qt Versit Mapping}{vCard property mappings to QContactDetails}
 */
