@@ -93,7 +93,7 @@ usage()
     echo "                    (default: Desktop Linux)"
     
     rm -f "$CONFIG_IN"
-    exit    
+    exit 1
 }
 
 rm -rf "$QMAKE_CACHE"
