@@ -551,3 +551,196 @@ void QVideoEncoderSettings::setQuality(QtMedia::EncodingQuality quality)
     d->isNull = false;
     d->quality = quality;
 }
+
+
+
+class QImageEncoderSettingsPrivate  : public QSharedData
+{
+public:
+    QImageEncoderSettingsPrivate() :
+        isNull(true),
+        quality(QtMedia::NormalQuality)
+    {
+    }
+
+    QImageEncoderSettingsPrivate(const QImageEncoderSettingsPrivate &other):
+        QSharedData(other),
+        isNull(other.isNull),
+        codec(other.codec),
+        resolution(other.resolution),
+        quality(other.quality)
+    {
+    }
+
+    bool isNull;
+    QString codec;
+    QSize resolution;
+    QtMedia::EncodingQuality quality;
+
+private:
+    QImageEncoderSettingsPrivate& operator=(const QImageEncoderSettingsPrivate &other);
+};
+
+/*!
+    \class QImageEncoderSettings
+    \preliminary
+    \brief The QImageEncoderSettings class provides a set of image encoder settings.
+
+    A image encoder settings object is used to specify the image encoder settings used by
+    QStillImageCapture.  Image encoder settings are selected by constructing a QImageEncoderSettings
+    object, setting the desired properties and then passing it to a QStillImageCapture instance using
+    the QStillImageCapture::setImageSettings() function.
+
+    \code
+    QImageEncoderSettings imageSettings;
+    imageSettings.setCodec("image/jpeg");
+    imageSettings.setResolution(1600, 1200);
+
+    imageCapture->setImageSettings(imageSettings);
+    \endcode
+
+    \sa QStillImageCapture, QImageEncoderControl
+*/
+
+/*!
+    Constructs a null image encoder settings object.
+*/
+
+QImageEncoderSettings::QImageEncoderSettings()
+    :d(new QImageEncoderSettingsPrivate)
+{
+}
+
+/*!
+    Constructs a copy of the image encoder settings object \a other.
+*/
+
+QImageEncoderSettings::QImageEncoderSettings(const QImageEncoderSettings& other)
+    :d(other.d)
+{
+}
+
+/*!
+    Destroys a image encoder settings object.
+*/
+
+QImageEncoderSettings::~QImageEncoderSettings()
+{
+}
+
+/*!
+    Assigns the value of \a other to a image encoder settings object.
+*/
+QImageEncoderSettings &QImageEncoderSettings::operator=(const QImageEncoderSettings &other)
+{
+    d = other.d;
+    return *this;
+}
+
+/*!
+    Determines if \a other is of equal value to a image encoder settings object.
+
+    Returns true if the settings objects are of equal value, and true if they are not of equal
+    value.
+*/
+bool QImageEncoderSettings::operator==(const QImageEncoderSettings &other) const
+{
+    return (d == other.d) ||
+           (d->isNull == other.d->isNull &&
+            d->quality == other.d->quality &&
+            d->codec == other.d->codec &&
+            d->resolution == other.d->resolution);
+
+}
+
+/*!
+    Determines if \a other is of equal value to a image encoder settings object.
+
+    Returns true if the settings objects are not of equal value, and true if they are of equal
+    value.
+*/
+bool QImageEncoderSettings::operator!=(const QImageEncoderSettings &other) const
+{
+    return !(*this == other);
+}
+
+/*!
+    Identifies if a image encoder settings object is uninitalized.
+
+    Returns true if the settings are null, and false if they are not.
+*/
+bool QImageEncoderSettings::isNull() const
+{
+    return d->isNull;
+}
+
+/*!
+    Returns the image codec.
+*/
+
+QString QImageEncoderSettings::codec() const
+{
+    return d->codec;
+}
+
+/*!
+    Sets the image \a codec.
+*/
+void QImageEncoderSettings::setCodec(const QString& codec)
+{
+    d->isNull = false;
+    d->codec = codec;
+}
+
+/*!
+    Returns the resolution of the encoded image.
+*/
+
+QSize QImageEncoderSettings::resolution() const
+{
+    return d->resolution;
+}
+
+/*!
+    Sets the \a resolution of the encoded image.
+
+    An empty QSize indicates the encoder should make an optimal choice based on what is available
+    from the image source and the limitations of the codec.
+*/
+
+void QImageEncoderSettings::setResolution(const QSize &resolution)
+{
+    d->isNull = false;
+    d->resolution = resolution;
+}
+
+/*!
+    Sets the \a width and \a height of the resolution of the encoded image.
+
+    \overload
+*/
+
+void QImageEncoderSettings::setResolution(int width, int height)
+{
+    d->isNull = false;
+    d->resolution = QSize(width, height);
+}
+
+/*!
+    Returns the image encoding quality.
+*/
+
+QtMedia::EncodingQuality QImageEncoderSettings::quality() const
+{
+    return d->quality;
+}
+
+/*!
+    Sets the image encoding \a quality.
+*/
+
+void QImageEncoderSettings::setQuality(QtMedia::EncodingQuality quality)
+{
+    d->isNull = false;
+    d->quality = quality;
+}
