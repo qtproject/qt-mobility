@@ -48,7 +48,38 @@
 #include "qmessagecontentcontainer.h"
 #include "winhelpers_p.h"
 #include <QCoreApplication>
+#include <QMutex>
 #include <qdebug.h>
+
+namespace {
+
+class MutexTryLocker
+{
+    QMutex *_mutex;
+
+public:
+    MutexTryLocker(QMutex *mutex) 
+        : _mutex(0)
+    {
+        if (mutex->tryLock()) {
+            _mutex = mutex;
+        }
+    }
+    
+    ~MutexTryLocker()
+    {
+        if (_mutex) {
+            _mutex->unlock();
+        }
+    }
+
+    operator bool() const
+    {
+        return (_mutex != 0);
+    }
+};
+
+}
 
 class QMessageStorePrivatePlatform : public QObject
 {
@@ -63,6 +94,7 @@ public:
     QMessageStore::ErrorCode lastError;
 
     MapiSessionPtr session;
+    QMutex mutex;
 
 private slots:
     void appDestroyed();
@@ -72,7 +104,8 @@ QMessageStorePrivatePlatform::QMessageStorePrivatePlatform(QMessageStorePrivate 
     :d_ptr(d),
      q_ptr(q),
      lastError(QMessageStore::NoError),
-     session(MapiSession::createSession(&lastError))
+     session(MapiSession::createSession(&lastError)),
+     mutex(QMutex::Recursive)
 {
     connect(QCoreApplication::instance(), SIGNAL(destroyed()), this, SLOT(appDestroyed()));
 
@@ -145,6 +178,12 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 {
     QMessageIdList result;
 
+    MutexTryLocker locker(&d_ptr->p_ptr->mutex);
+    if (!locker) {
+        d_ptr->p_ptr->lastError = QMessageStore::Busy;
+        return result;
+    }
+
     if (!d_ptr->p_ptr->session) {
         d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
         return result;
@@ -159,6 +198,12 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
 {
     QMessageIdList result;
+
+    MutexTryLocker locker(&d_ptr->p_ptr->mutex);
+    if (!locker) {
+        d_ptr->p_ptr->lastError = QMessageStore::Busy;
+        return result;
+    }
 
     if (options & QMessageDataComparator::FullWord) {
         d_ptr->p_ptr->lastError = QMessageStore::NotYetImplemented;
@@ -181,6 +226,12 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &fil
 {
     QMessageFolderIdList result;
 
+    MutexTryLocker locker(&d_ptr->p_ptr->mutex);
+    if (!locker) {
+        d_ptr->p_ptr->lastError = QMessageStore::Busy;
+        return result;
+    }
+
     if (!d_ptr->p_ptr->session) {
         d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
         return result;
@@ -198,6 +249,12 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &fil
 QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset) const
 {
     QMessageAccountIdList result;
+
+    MutexTryLocker locker(&d_ptr->p_ptr->mutex);
+    if (!locker) {
+        d_ptr->p_ptr->lastError = QMessageStore::Busy;
+        return result;
+    }
 
     if (!d_ptr->p_ptr->session) {
         d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
@@ -236,6 +293,12 @@ bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
 
     bool result(false);
 
+    MutexTryLocker locker(&d_ptr->p_ptr->mutex);
+    if (!locker) {
+        d_ptr->p_ptr->lastError = QMessageStore::Busy;
+        return result;
+    }
+
     if (!d_ptr->p_ptr->session) {
         d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
     } else {
@@ -258,6 +321,12 @@ bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageStore::
 
     bool result(false);
 
+    MutexTryLocker locker(&d_ptr->p_ptr->mutex);
+    if (!locker) {
+        d_ptr->p_ptr->lastError = QMessageStore::Busy;
+        return result;
+    }
+
     if (!d_ptr->p_ptr->session) {
         d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
     } else {
@@ -277,6 +346,12 @@ bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageStore::
 bool QMessageStore::addMessage(QMessage *message)
 {
     bool result(false);
+
+    MutexTryLocker locker(&d_ptr->p_ptr->mutex);
+    if (!locker) {
+        d_ptr->p_ptr->lastError = QMessageStore::Busy;
+        return result;
+    }
 
     if (!d_ptr->p_ptr->session) {
         d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
@@ -368,6 +443,12 @@ bool QMessageStore::updateMessage(QMessage *message)
 {
     bool result(false);
 
+    MutexTryLocker locker(&d_ptr->p_ptr->mutex);
+    if (!locker) {
+        d_ptr->p_ptr->lastError = QMessageStore::Busy;
+        return result;
+    }
+
     if (!d_ptr->p_ptr->session) {
         d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
         return result;
@@ -410,6 +491,12 @@ QMessage QMessageStore::message(const QMessageId& id) const
 {
     QMessage result;
 
+    MutexTryLocker locker(&d_ptr->p_ptr->mutex);
+    if (!locker) {
+        d_ptr->p_ptr->lastError = QMessageStore::Busy;
+        return result;
+    }
+
     if (!d_ptr->p_ptr->session) {
         d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
         return result;
@@ -425,6 +512,12 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
 {
     QMessageFolder result;
 
+    MutexTryLocker locker(&d_ptr->p_ptr->mutex);
+    if (!locker) {
+        d_ptr->p_ptr->lastError = QMessageStore::Busy;
+        return result;
+    }
+
     if (!d_ptr->p_ptr->session) {
         d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
         return result;
@@ -439,6 +532,12 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
 QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 {
     QMessageAccount result;
+
+    MutexTryLocker locker(&d_ptr->p_ptr->mutex);
+    if (!locker) {
+        d_ptr->p_ptr->lastError = QMessageStore::Busy;
+        return result;
+    }
 
     if (!d_ptr->p_ptr->session) {
         d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
@@ -459,6 +558,12 @@ QMessageStore::NotificationFilterId QMessageStore::registerNotificationFilter(co
 {
     QMessageStore::NotificationFilterId result(0);
 
+    MutexTryLocker locker(&d_ptr->p_ptr->mutex);
+    if (!locker) {
+        d_ptr->p_ptr->lastError = QMessageStore::Busy;
+        return result;
+    }
+
     if (!d_ptr->p_ptr->session) {
         d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
         return result;
@@ -471,6 +576,12 @@ QMessageStore::NotificationFilterId QMessageStore::registerNotificationFilter(co
 
 void QMessageStore::unregisterNotificationFilter(NotificationFilterId notificationFilterId)
 {
+    MutexTryLocker locker(&d_ptr->p_ptr->mutex);
+    if (!locker) {
+        d_ptr->p_ptr->lastError = QMessageStore::Busy;
+        return;
+    }
+
     if (!d_ptr->p_ptr->session) {
         d_ptr->p_ptr->lastError = QMessageStore::ContentInaccessible;
     } else {

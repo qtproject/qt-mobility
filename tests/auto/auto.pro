@@ -80,7 +80,7 @@ SUBDIRS += \             #Multimedia
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
-#        qvideowidget
+        qvideowidget
 
 contains(QT_CONFIG, multimedia) {
     SUBDIRS += \

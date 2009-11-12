@@ -86,6 +86,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QTextCodec>
+#include <QThreadStorage>
 #include <QTimer>
 
 #include <shlwapi.h>
@@ -241,7 +242,10 @@ using namespace WinHelpers;
 
 namespace {
 
-    QWeakPointer<WinHelpers::MapiInitializer> initializer;
+    typedef QWeakPointer<WinHelpers::MapiInitializer> InitRecord;
+    typedef InitRecord *InitRecordPtr;
+
+    QThreadStorage<InitRecordPtr> initializer;
 
     GUID GuidPublicStrings = { 0x00020329, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 };
 
@@ -631,6 +635,17 @@ namespace {
         }
 
         return result;
+    }
+
+    ULONG streamSize(QMessageStore::ErrorCode* lastError, IStream* is)
+    {
+        ULONG size = 0;
+        STATSTG stg = { 0 };
+        HRESULT rv = is->Stat(&stg, STATFLAG_NONAME);
+        if(HR_SUCCEEDED(rv))
+            size = stg.cbSize.LowPart;
+        else *lastError = QMessageStore::ContentInaccessible;
+        return size;
     }
 
     QByteArray readStream(QMessageStore::ErrorCode *lastError, IStream *is)
@@ -1734,11 +1749,16 @@ namespace WinHelpers {
     {
         MapiInitializationToken result;
 
-        if (!initializer.isNull()) {
-            result = initializer.toStrongRef();
+        if (!initializer.hasLocalData()) {
+            initializer.setLocalData(new InitRecord);
+        }
+
+        InitRecordPtr &threadInitializer(initializer.localData());
+        if (!(*threadInitializer).isNull()) {
+            result = (*threadInitializer).toStrongRef();
         } else {
             result = MapiInitializationToken(new MapiInitializer());
-            initializer = result;
+            (*threadInitializer) = result;
         }
 
         return result;
@@ -3862,7 +3882,7 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
 #endif
                         } else if (prop.Value.l & MSGSTATUS_HAS_PR_CE_MIME_TEXT) {
                             // TODO...
-                            // This is how MS proivders store HTML, as per http://msdn.microsoft.com/en-us/library/bb446140.aspx
+                            // This is how MS providers store HTML, as per http://msdn.microsoft.com/en-us/library/bb446140.aspx
                         }
 #endif
                         break;
@@ -4073,52 +4093,75 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
         MapiStorePtr store;
         IMessage *message = openMapiMessage(lastError, msg->id(), &store);
         if (*lastError == QMessageStore::NoError) {
-
             //SMS body stored in subject on CEMAPI
-            if(store->types() & QMessage::Sms)
-            {
+            if (store->types() & QMessage::Sms) {
                 messageBody.append(reinterpret_cast<const char*>(msg->subject().utf16()),msg->subject().count()*sizeof(quint16));
                 bodySubType = "plain";
-            }
-            else
-            {
+            } else {
                 IStream *is(0);
+                bool asciiData(false);
                 LONG contentFormat(msg->d_ptr->_contentFormat);
 
                 if (contentFormat == EDITOR_FORMAT_DONTKNOW) {
+#ifdef _WIN32_WCE
+                    // TODO: Attempt to read MIME text first
+#else
                     // Attempt to read HTML first
                     contentFormat = EDITOR_FORMAT_HTML;
+#endif
                 }
-
                 if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
-                    HRESULT rv = message->OpenProperty(PR_BODY, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
-                    if (HR_SUCCEEDED(rv)) {
-                        messageBody = readStream(lastError, is);
-                        bodySubType = "plain";
+#ifdef _WIN32_WCE
+                    ULONG tags[] = { PR_BODY, PR_BODY_W, PR_BODY_A };
+#else
+                    ULONG tags[] = { PR_BODY };
+#endif
+                    const int n = sizeof(tags)/sizeof(tags[0]);
+                    for (int i = 0; i < n; ++i) {
+                        HRESULT rv = message->OpenProperty(tags[i], &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+                        if (HR_SUCCEEDED(rv)) {
+                            messageBody = readStream(lastError, is);
+                            bodySubType = "plain";
+                            if (i == 2) {
+                                asciiData = true;
+                            }
+                            break;
+                        } 
+                    }
+                    if (messageBody.isEmpty()) {
+                        qWarning() << "Unable to open PR_BODY!";
                     }
                 } else if (contentFormat == EDITOR_FORMAT_HTML) {
                     // See if there is a body HTML property
-    #ifndef _WIN32_WCE
-                    ULONG bodyProperty(PR_BODY_HTML);
-    #elif(_WIN32_WCE > 0x501)
                     // Correct variants discussed at http://blogs.msdn.com/raffael/archive/2008/09/08/mapi-on-windows-mobile-6-programmatically-retrieve-mail-body-sample-code.aspx
-                    ULONG bodyProperty(PR_BODY_HTML_A);
-    #else
-                    ULONG bodyProperty(PR_BODY);
-    #endif
-                    HRESULT rv = message->OpenProperty(bodyProperty, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
-                    if (HR_SUCCEEDED(rv)) {
-                        messageBody = readStream(lastError, is);
-                        bodySubType = "html";
-
-    #ifdef _WIN32_WCE
-                        // Encode the ASCII text into UTF-16
-                        messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(decodeContent(messageBody, "Latin-1"));
-    #endif
+#ifdef _WIN32_WCE
+                    ULONG tags[] = { PR_BODY_HTML, PR_BODY_HTML_W, PR_BODY_HTML_A };
+#else
+                    ULONG tags[] = { PR_BODY_HTML };
+#endif
+                    const int n = sizeof(tags)/sizeof(tags[0]);
+                    for (int i = 0; i < n; ++i) {
+                        HRESULT rv = message->OpenProperty(tags[i], &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+                        if (HR_SUCCEEDED(rv)) {
+                            messageBody = readStream(lastError, is);
+                            bodySubType = "html";
+                            if (i == 2) {
+                                asciiData = true;
+                            }
+                            break;
+                        }
+                    }
+                    if (messageBody.isEmpty()) {
+#ifdef _WIN32_WCE
+                        qWarning() << "Unable to open PR_BODY_HTML!";
+#else
+                        // We couldn't get HTML; try RTF
+                        contentFormat = EDITOR_FORMAT_DONTKNOW;
+#endif
                     }
                 }
 
-    #ifndef _WIN32_WCE // RTF not supported
+#ifndef _WIN32_WCE // RTF not supported
                 if (bodySubType.isEmpty()) {
                     if (!msg->d_ptr->_rtfInSync) {
                         // See if we need to sync the RTF
@@ -4153,8 +4196,8 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
 
                             if (contentFormat == EDITOR_FORMAT_DONTKNOW) {
                                 // Inspect the message content to see if we can tell what is in it
-                                QString initialText = decodeContent(messageBody, "utf-16", 256);
-                                if (!initialText.isEmpty()) {
+                                if (!messageBody.isEmpty()) {
+                                    QByteArray initialText(messageBody.left(256));
                                     if (initialText.indexOf("\\fromtext") != -1) {
                                         // This message originally contained text
                                         contentFormat = EDITOR_FORMAT_PLAINTEXT;
@@ -4179,18 +4222,17 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
 
                             if (bodySubType.isEmpty()) {
                                 if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
-                                    messageBody = extractPlainText(decodeContent(messageBody, "utf-16"));
+                                    messageBody = extractPlainText(QString::fromLatin1(messageBody));
                                     bodySubType = "plain";
                                 } else if (contentFormat == EDITOR_FORMAT_HTML) {
-                                    QString html = extractHtml(decodeContent(messageBody, "utf-16"));
+                                    QString html = extractHtml(QString::fromLatin1(messageBody));
                                     messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(html.constData(), html.length());
                                     bodySubType = "html";
+                                } else {
+                                    // I guess we must have RTF
+                                    bodySubType = "rtf";
+                                    asciiData = true;
                                 }
-                            }
-
-                            if (bodySubType.isEmpty()) {
-                                // I guess we must have RTF
-                                bodySubType = "rtf";
                             }
                         } else {
                             *lastError = QMessageStore::ContentInaccessible;
@@ -4201,23 +4243,42 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                         bodySubType = "unknown";
                     }
                 }
-    #endif
+#endif
+
                 mapiRelease(is);
+
+                if (asciiData) {
+                    // Convert the ASCII content back to UTF-16
+                    messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(decodeContent(messageBody, "Latin-1"));
+                }
             }
 
             if (*lastError == QMessageStore::NoError) {
                 QMessageContentContainerPrivate *messageContainer(((QMessageContentContainer *)(msg))->d_ptr);
 
+                bool bodyDownloaded = true;
+#ifdef _WIN32_WCE
+                ULONG status = 0;
+                if(getMapiProperty(message,PR_MSG_STATUS,&status)) {
+                    bodyDownloaded = !((status & MSGSTATUS_HEADERONLY) || (status & MSGSTATUS_PARTIAL));
+                }
+#else
+                //TODO windows
+#endif
+
                 if (!msg->d_ptr->_hasAttachments) {
                     // Make the body the entire content of the message
                     messageContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
                     msg->d_ptr->_bodyId = QMessageContentContainerPrivate::bodyContentId();
+                    messageContainer->_available = bodyDownloaded;
+
                 } else {
                     // Add the message body data as the first part
                     QMessageContentContainer bodyPart;
                     {
                         QMessageContentContainerPrivate *bodyContainer(((QMessageContentContainer *)(&bodyPart))->d_ptr);
                         bodyContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
+                        bodyContainer->_available = bodyDownloaded;
                     }
 
                     messageContainer->setContentType(QByteArray("multipart"), QByteArray("mixed"), QByteArray());
@@ -4338,6 +4399,7 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
 
                             container->_name = filename.toAscii();
                             container->_size = size;
+                            container->_available = haveAttachmentData(lastError,msg->id(),number);
 
                             attachments[number] = attachment;
                         }
@@ -4374,6 +4436,33 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
 
     return result;
 }
+
+bool MapiSession::haveAttachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const
+{
+    bool result = false;
+
+    IMessage *message = openMapiMessage(lastError, id);
+    if (*lastError == QMessageStore::NoError) {
+        LPATTACH attachment(0);
+        HRESULT rv = message->OpenAttach(number, 0, 0, &attachment);
+        if (HR_SUCCEEDED(rv)) {
+            IStream *is(0);
+            rv = attachment->OpenProperty(PR_ATTACH_DATA_BIN, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+            if (HR_SUCCEEDED(rv)) {
+                result = streamSize(lastError, is) > 0;
+                mapiRelease(is);
+            }
+            mapiRelease(attachment);
+        } else {
+            qWarning() << "Unable to open attachment:" << number;
+        }
+
+        mapiRelease(message);
+    }
+
+    return result;
+}
+
 
 QByteArray MapiSession::attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const
 {

@@ -56,6 +56,7 @@ QT_MOBILITY_BIN=
 BUILD_UNITTESTS=
 BUILD_EXAMPLES=
 RELEASEMODE=
+BUILD_SILENT=
 CONTACTS_PLUGIN=
 LINUX_TARGET=
 QMAKE_CACHE="$shadowpath/.qmake.cache"
@@ -66,8 +67,8 @@ MAC_SDK=
 usage() 
 {
     echo "Usage: configure [-prefix <dir>] [headerdir <dir>] [libdir <dir>]"
-    echo "                 [-bindir <dir>] [-tests] [-examples] [debug]"
-    echo "                 [-release]"
+    echo "                 [-bindir <dir>] [-tests] [-examples]"
+    echo "                 [-debug] [-release] [-silent]"
     echo
     echo "Options:"
     echo
@@ -81,6 +82,7 @@ usage()
     echo "                    (default PREFIX/bin)"
     echo "-debug ............ Build with debugging symbols"
     echo "-release .......... Build without debugging symbols"
+    echo "-silent ........... Reduces build output"
     echo "-tests ............ Build unit tests (not build by default)"
     echo "                    Note, this adds test symbols to all libraries"
     echo "                    and should not be used for release builds."
@@ -97,13 +99,12 @@ usage()
     echo
     
     rm -f "$CONFIG_IN"
-    exit    
+    exit 1
 }
 
 rm -rf "$QMAKE_CACHE"
 CONFIG_LOG="$shadowpath/config.log"
 rm -rf "$CONFIG_LOG"
-#echo "CONFIG += silent"  > "$CONFIG_IN"
 
 while [ "$#" -gt 0 ]; do
     case "$1" in 
@@ -138,6 +139,9 @@ while [ "$#" -gt 0 ]; do
         -release)
             RELEASEMODE=release
             ;;
+        -silent)
+            BUILD_SILENT=yes
+            ;;
         -contact-src)
             CONTACTS_PLUGIN="$CONTACTS_PLUGIN $2"
             shift
@@ -157,21 +161,6 @@ while [ "$#" -gt 0 ]; do
     shift
 done
 
-echo "Configuring Qt Mobility"
-echo 
-
-WHICH="$relpath/config.tests/tools/which.test"
-
-printf "Checking available Qt"
-if ! "$WHICH" qmake 2>/dev/null 1>&2; then
-    printf " ... Not found\n\n" >&2
-    echo >&2 "Cannot find 'qmake' in your PATH.";
-    echo >&2 "Aborting." 
-else
-    printf " ... "
-    qmake -query QT_VERSION
-fi
-
 
 findframeworks()
 {
@@ -189,6 +178,9 @@ findframeworks()
 
 findframeworks
 
+if [ -n "$BUILD_SILENT" ]; then
+    echo "CONFIG += silent"  > "$CONFIG_IN"
+fi
 
 if [ -z "$RELEASEMODE" ]; then
     RELEASEMODE="debug"
