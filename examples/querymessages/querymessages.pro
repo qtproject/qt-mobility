@@ -6,7 +6,7 @@ QT += gui
 include(../examples.pri)
 
 qtAddLibrary(QtMessaging)
-INCLUDEPATH += ../../messaging
+INCLUDEPATH += ../../src/messaging
 
 symbian|win32 {
 } else {

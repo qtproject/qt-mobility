@@ -1,5 +1,5 @@
 TARGET = tst_qradiotuner
-INCLUDEPATH += ../../../multimedia
+INCLUDEPATH += ../../../src/multimedia
 
 CONFIG += testcase
 

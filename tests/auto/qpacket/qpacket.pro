@@ -1,6 +1,6 @@
 TARGET = tst_qpacket
-INCLUDEPATH += ../../../context
-DEPENDPATH += ../../../context
+INCLUDEPATH += ../../../src/publishsubscribe
+DEPENDPATH += ../../../src/publishsubscribe
 CONFIG += testcase
 QT = core
 include(../../../common.pri)

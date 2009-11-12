@@ -4,7 +4,7 @@ TARGET=tst_qgeopositioninfosource
 
 include (../../../common.pri)
 
-INCLUDEPATH += ../../../location
+INCLUDEPATH += ../../../src/location
 DEPENDPATH += ../../../buid/Debug/bin
 
 # Input 

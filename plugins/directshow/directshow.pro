@@ -5,7 +5,7 @@ TARGET = $$qtLibraryTarget(dsengine)
 PLUGIN_TYPE = mediaservice
 
 include (../../common.pri)
-INCLUDEPATH+=../../multimedia
+INCLUDEPATH+=../../src/multimedia
 
 qtAddLibrary(QtMedia)
 

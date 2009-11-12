@@ -1668,6 +1668,37 @@
         <keyword ref="qmediaplaylistcontrol.html#QMediaPlaylistControl_iid">QMediaPlaylistControl_iid</keyword>
         <section ref="qmediaplaylistcontrol-members.html" title="List of all members"/>
     </section>
+    <section ref="qmediaplaylistioplugin.html" title="QMediaPlaylistIOPlugin Class Reference">
+        <keyword ref="qmediaplaylistioplugin.html">QMediaPlaylistIOPlugin</keyword>
+        <keyword ref="qmediaplaylistioplugin.html#canRead">canRead</keyword>
+        <keyword ref="qmediaplaylistioplugin.html#canWrite">canWrite</keyword>
+        <keyword ref="qmediaplaylistioplugin.html#createReader">createReader</keyword>
+        <keyword ref="qmediaplaylistioplugin.html#createWriter">createWriter</keyword>
+        <keyword ref="qmediaplaylistioplugin.html#keys">keys</keyword>
+        <section ref="qmediaplaylistioplugin-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmediaplaylistnavigator.html" title="QMediaPlaylistNavigator Class Reference">
+        <keyword ref="qmediaplaylistnavigator.html">QMediaPlaylistNavigator</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#currentItem-prop">currentItem</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#currentPosition-prop">currentPosition</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#currentPosition-prop">jump</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#nextItem-prop">nextItem</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#playbackMode-prop">setPlaybackMode</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#previousItem-prop">previousItem</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#activated">activated</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#currentPositionChanged">currentPositionChanged</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#itemAt">itemAt</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#next">next</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#nextPosition">nextPosition</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#playbackModeChanged">playbackModeChanged</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#playlist">playlist</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#previous">previous</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#previousPosition">previousPosition</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#setPlaylist">setPlaylist</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#surroundingItemsChanged">surroundingItemsChanged</keyword>
+        <section ref="qmediaplaylistnavigator-members.html" title="List of all members"/>
+    </section>
     <section ref="qmediaplaylistprovider.html" title="QMediaPlaylistProvider Class Reference">
         <keyword ref="qmediaplaylistprovider.html">QMediaPlaylistProvider</keyword>
         <keyword ref="qmediaplaylistprovider.html#appendItem">appendItem</keyword>
@@ -1689,6 +1720,19 @@
         <keyword ref="qmediaplaylistprovider.html#shuffle">shuffle</keyword>
         <keyword ref="qmediaplaylistprovider.html#size">size</keyword>
         <section ref="qmediaplaylistprovider-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmediaplaylistreader.html" title="QMediaPlaylistReader Class Reference">
+        <keyword ref="qmediaplaylistreader.html">QMediaPlaylistReader</keyword>
+        <keyword ref="qmediaplaylistreader.html#atEnd">atEnd</keyword>
+        <keyword ref="qmediaplaylistreader.html#close">close</keyword>
+        <keyword ref="qmediaplaylistreader.html#readItem">readItem</keyword>
+        <section ref="qmediaplaylistreader-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmediaplaylistwriter.html" title="QMediaPlaylistWriter Class Reference">
+        <keyword ref="qmediaplaylistwriter.html">QMediaPlaylistWriter</keyword>
+        <keyword ref="qmediaplaylistwriter.html#close">close</keyword>
+        <keyword ref="qmediaplaylistwriter.html#writeItem">writeItem</keyword>
+        <section ref="qmediaplaylistwriter-members.html" title="List of all members"/>
     </section>
     <section ref="qmediarecorder.html" title="QMediaRecorder Class Reference">
         <keyword ref="qmediarecorder.html">QMediaRecorder</keyword>
@@ -2579,16 +2623,9 @@
         <keyword ref="qsysteminfo.html#Feature-enum">QSystemInfo::FmradioFeature</keyword>
         <keyword ref="qsysteminfo.html#Feature-enum">QSystemInfo::LedFeature</keyword>
         <keyword ref="qsysteminfo.html#Version-enum">Version</keyword>
-        <keyword ref="qsysteminfo.html#Version-enum">QSystemInfo::Webkit</keyword>
         <keyword ref="qsysteminfo.html#Version-enum">QSystemInfo::Os</keyword>
         <keyword ref="qsysteminfo.html#Version-enum">QSystemInfo::Firmware</keyword>
-        <keyword ref="qsysteminfo.html#Version-enum">QSystemInfo::WrtExtensions</keyword>
-        <keyword ref="qsysteminfo.html#Version-enum">QSystemInfo::WrtCore</keyword>
-        <keyword ref="qsysteminfo.html#Version-enum">QSystemInfo::ServiceFramework</keyword>
         <keyword ref="qsysteminfo.html#Version-enum">QSystemInfo::QtCore</keyword>
-        <keyword ref="qsysteminfo.html#Version-enum">QSystemInfo::ServiceProvider</keyword>
-        <keyword ref="qsysteminfo.html#Version-enum">QSystemInfo::NetscapePlugin</keyword>
-        <keyword ref="qsysteminfo.html#Version-enum">QSystemInfo::WebApp</keyword>
         <keyword ref="qsysteminfo.html#availableLanguages-prop">availableLanguages</keyword>
         <keyword ref="qsysteminfo.html#currentCountryCode-prop">currentCountryCode</keyword>
         <keyword ref="qsysteminfo.html#currentLanguage-prop">currentLanguage</keyword>

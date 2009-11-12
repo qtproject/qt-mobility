@@ -61,7 +61,7 @@ set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
 if exist "%QMAKE_CACHE%" del %QMAKE_CACHE%
 if exist "%PROJECT_LOG%" del %PROJECT_LOG%
 if exist "%PROJECT_CONFIG%" del %PROJECT_CONFIG%
-echo CONFIG += silent > %PROJECT_CONFIG%
+::echo CONFIG += silent > %PROJECT_CONFIG%
 
 echo QT_MOBILITY_SOURCE_TREE = %SOURCE_PATH% > %QMAKE_CACHE%
 echo QT_MOBILITY_BUILD_TREE = %BUILD_PATH% >> %QMAKE_CACHE%
@@ -182,11 +182,16 @@ set CURRENTDIR=%CD%
 echo %CURRENTDIR%
 if exist %QT_MOBILITY_PREFIX% goto prefixExists
 mkdir %QT_MOBILITY_PREFIX%
+if errorlevel 1 goto invalidPrefix
 cd %QT_MOBILITY_PREFIX%
 set QT_MOBILITY_PREFIX=%CD%
 cd %CURRENTDIR%
 rd /S /Q %QT_MOBILITY_PREFIX%
 goto endprefixProcessing
+
+:invalidPrefix
+echo "%QT_MOBILITY_PREFIX%" is not a valid directory path.
+goto :exitTag
 
 :prefixExists
 cd %QT_MOBILITY_PREFIX%
@@ -258,14 +263,14 @@ if not exist "%BUILD_PATH%\features" mkdir %BUILD_PATH%\features
 echo "Generating Mobility Headers..."
 rd /s /q %BUILD_PATH%\include
 mkdir %BUILD_PATH%\include
-perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\bearer
-perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\context
-perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\location
-perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\serviceframework
-perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\systeminfo
-perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\contacts
-perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\multimedia
-perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\messaging
+perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\bearer
+perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\context
+perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\location
+perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\serviceframework
+perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\systeminfo
+perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts
+perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia
+perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\messaging
 
 echo.
 echo Running qmake...

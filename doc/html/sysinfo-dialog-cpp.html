@@ -183,6 +183,9 @@
         connect(di,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
                 this,SLOT(updatePowerState(QSystemDeviceInfo::PowerState)));
 
+        connect(di, SIGNAL(bluetoothStateChanged(bool)),
+            ui-&gt;bluetoothOnCheckBox, SLOT(setChecked(bool)));
+
         ui-&gt;ImeiLabel-&gt;setText(di-&gt;imei());
         ui-&gt;imsiLabel-&gt;setText(di-&gt;imsi());
         ui-&gt;manufacturerLabel-&gt;setText(di-&gt;manufacturer());
@@ -190,6 +193,10 @@
         ui-&gt;productLabel-&gt;setText(di-&gt;productName());
 
         ui-&gt;deviceLockCheckBox-&gt;setChecked(di-&gt;isDeviceLocked());
+
+        ui-&gt;profileComboBox-&gt;setCurrentIndex(di-&gt;currentProfile());
+        connect(di, SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
+            this, SLOT(updateProfile(QSystemDeviceInfo::Profile)));
 
         if(di-&gt;currentPowerState() == QSystemDeviceInfo::BatteryPower) {
             ui-&gt;radioButton_2-&gt;setChecked(true);
@@ -223,6 +230,11 @@
         }
 
         ui-&gt;inputMethodLabel-&gt;setText(inputs.join(&quot; &quot;));
+    }
+
+    void Dialog::updateProfile(QSystemDeviceInfo::Profile profile)
+    {
+        ui-&gt;profileComboBox-&gt;setCurrentIndex(profile);
     }
 
     void Dialog::setupDisplay()
@@ -322,27 +334,6 @@
             version = QSystemInfo::QtCore;
             break;
         case 2:
-            version = QSystemInfo::WrtCore;
-            break;
-        case 3:
-            version = QSystemInfo::Webkit;
-            break;
-        case 4:
-            version = QSystemInfo::ServiceFramework;
-            break;
-        case 5:
-            version = QSystemInfo::WrtExtensions;
-            break;
-        case 6:
-            version = QSystemInfo::ServiceProvider;
-            break;
-        case 7:
-            version = QSystemInfo::NetscapePlugin;
-            break;
-        case 8:
-            version = QSystemInfo::WebApp;
-            break;
-        case 9:
             version = QSystemInfo::Firmware;
             break;
         };
@@ -544,6 +535,19 @@
                 ui-&gt;signalLevelProgressBar-&gt;setValue(strength);
             }
         }
+
+        if(mode == QSystemNetworkInfo::CdmaMode) {
+            if(ui-&gt;netStatusComboBox-&gt;currentText() == &quot;Cdma&quot;) {
+                ui-&gt;signalLevelProgressBar-&gt;setValue(strength);
+            }
+        }
+
+        if(mode == QSystemNetworkInfo::WcdmaMode) {
+            if(ui-&gt;netStatusComboBox-&gt;currentText() == &quot;Wcdma&quot;) {
+                ui-&gt;signalLevelProgressBar-&gt;setValue(strength);
+            }
+        }
+
     }
 
     void Dialog::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QString &amp;text)
@@ -565,6 +569,19 @@
                 ui-&gt;operatorNameLabel-&gt;setText(text);
             }
         }
+
+        if(mode == QSystemNetworkInfo::CdmaMode) {
+            if(ui-&gt;netStatusComboBox-&gt;currentText() == &quot;Cdma&quot;) {
+                ui-&gt;operatorNameLabel-&gt;setText(text);
+            }
+        }
+
+        if(mode == QSystemNetworkInfo::WcdmaMode) {
+            if(ui-&gt;netStatusComboBox-&gt;currentText() == &quot;Wcdma&quot;) {
+                ui-&gt;operatorNameLabel-&gt;setText(text);
+            }
+        }
+
     }
 
     void Dialog::networkStatusChanged(QSystemNetworkInfo::NetworkMode mode , QSystemNetworkInfo::NetworkStatus status)
@@ -586,6 +603,19 @@
                 displayNetworkStatus(status);
             }
         }
+
+        if(mode == QSystemNetworkInfo::CdmaMode) {
+            if(ui-&gt;netStatusComboBox-&gt;currentText() == &quot;Cdma&quot;) {
+                displayNetworkStatus(status);
+            }
+        }
+
+        if(mode == QSystemNetworkInfo::WcdmaMode) {
+            if(ui-&gt;netStatusComboBox-&gt;currentText() == &quot;Wcdma&quot;) {
+                displayNetworkStatus(status);
+            }
+        }
+
     }
 
     void Dialog::displayNetworkStatus(QSystemNetworkInfo::NetworkStatus status)
