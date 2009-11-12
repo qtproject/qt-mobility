@@ -4152,7 +4152,12 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                         }
                     }
                     if (messageBody.isEmpty()) {
+#ifdef _WIN32_WCE
                         qWarning() << "Unable to open PR_BODY_HTML!";
+#else
+                        // We couldn't get HTML; try RTF
+                        contentFormat = EDITOR_FORMAT_DONTKNOW;
+#endif
                     }
                 }
 
@@ -4191,8 +4196,8 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
 
                             if (contentFormat == EDITOR_FORMAT_DONTKNOW) {
                                 // Inspect the message content to see if we can tell what is in it
-                                QString initialText = decodeContent(messageBody, "utf-16", 256);
-                                if (!initialText.isEmpty()) {
+                                if (!messageBody.isEmpty()) {
+                                    QByteArray initialText(messageBody.left(256));
                                     if (initialText.indexOf("\\fromtext") != -1) {
                                         // This message originally contained text
                                         contentFormat = EDITOR_FORMAT_PLAINTEXT;
@@ -4217,18 +4222,17 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
 
                             if (bodySubType.isEmpty()) {
                                 if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
-                                    messageBody = extractPlainText(decodeContent(messageBody, "utf-16"));
+                                    messageBody = extractPlainText(QString::fromLatin1(messageBody));
                                     bodySubType = "plain";
                                 } else if (contentFormat == EDITOR_FORMAT_HTML) {
-                                    QString html = extractHtml(decodeContent(messageBody, "utf-16"));
+                                    QString html = extractHtml(QString::fromLatin1(messageBody));
                                     messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(html.constData(), html.length());
                                     bodySubType = "html";
+                                } else {
+                                    // I guess we must have RTF
+                                    bodySubType = "rtf";
+                                    asciiData = true;
                                 }
-                            }
-
-                            if (bodySubType.isEmpty()) {
-                                // I guess we must have RTF
-                                bodySubType = "rtf";
                             }
                         } else {
                             *lastError = QMessageStore::ContentInaccessible;
