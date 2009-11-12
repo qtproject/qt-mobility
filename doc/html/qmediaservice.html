@@ -72,6 +72,13 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QMediaService class provides a common base class for media service implementations.</p>
+<p>Media services provide implementations of the functionality promised by media objects, and allow multiple providers to implement a <a href="qmediaobject.html">QMediaObject</a>.</p>
+<p>To provide the functionality of a <a href="qmediaobject.html">QMediaObject</a> media services implement <a href="qmediacontrol.html">QMediaControl</a> interfaces. Services typically implement one core media control which provides the core feature of a media object, and some number of additional controls which provide either optional features of the media object, or features of a secondary media object or peripheral object.</p>
+<p>A pointer to media service's <a href="qmediacontrol.html">QMediaControl</a> implementation can be obtained by passing the control's interface name to the <a href="qmediaservice.html#control">control</a>() function.</p>
+<pre>    QMediaPlayerControl *control = qobject_cast&lt;QMediaPlayerControl *&gt;(
+            service-&gt;control(&quot;com.nokia.Qt.QMediaPlayerControl/1.0&quot;));</pre>
+<p>Media objects can use services loaded dynamically from plug-ins or implemented statically within an applications. Plug-in based services should also implement the <a href="qmediaserviceproviderplugin.html">QMediaServiceProviderPlugin</a> interface. Static services should implement the <a href="qmediaserviceprovider.html">QMediaServiceProvider</a> interface.</p>
+<p>See also <a href="qmediaobject.html">QMediaObject</a>, <a href="qmediacontrol.html">QMediaControl</a>, <a href="qmediaserviceprovider.html">QMediaServiceProvider</a>, and <a href="qmediaserviceproviderplugin.html">QMediaServiceProviderPlugin</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="MediaEndpoint-enum"></a>enum QMediaService::MediaEndpoint</h3>
@@ -83,7 +90,7 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QMediaService"></a>QMediaService::QMediaService ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
-<p>Construct a <a href="qmediaservice.html">QMediaService</a> with <i>parent</i>. This class is meant as a base class for Multimedia services so this constructor is protected.</p>
+<p>Construct a media service with the given <i>parent</i>. This class is meant as a base class for Multimedia services so this constructor is protected.</p>
 <h3 class="fn"><a name="dtor.QMediaService"></a>QMediaService::~QMediaService ()</h3>
 <p>Destroys a media service.</p>
 <h3 class="fn"><a name="activeEndpoint"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMediaService::activeEndpoint ( <a href="qmediaservice.html#MediaEndpoint-enum">QMediaService::MediaEndpoint</a> <i>endpointType</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>

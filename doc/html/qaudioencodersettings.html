@@ -32,7 +32,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodersettings.html#isNull">isNull</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QtMedia::EncodingQuality </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodersettings.html#quality">quality</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodersettings.html#sampleRate">sampleRate</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodersettings.html#setBitrate">setBitrate</a></b> ( int <i>bitrate</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodersettings.html#setBitrate">setBitrate</a></b> ( int <i>rate</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodersettings.html#setChannels">setChannels</a></b> ( int <i>channels</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodersettings.html#setCodec">setCodec</a></b> ( const QString &amp; <i>codec</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudioencodersettings.html#setEncodingMode">setEncodingMode</a></b> ( QtMedia::EncodingMode <i>mode</i> )</td></tr>
@@ -46,16 +46,23 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QAudioEncoderSettings class provides a set of audio encoder settings.</p>
+<p>A audio encoder settings object is used to specify the audio encoder settings used by <a href="qmediarecorder.html">QMediaRecorder</a>. Audio encoder settings are selected by constructing a QAudioEncoderSettings object, setting the desired properties and then passing it to a <a href="qmediarecorder.html">QMediaRecorder</a> instance using the <a href="qmediarecorder.html#setEncodingSettings">QMediaRecorder::setEncodingSettings</a>() function.</p>
+<pre>    QAudioEncoderSettings audioSettings;
+    audioSettings.setCodec(&quot;audio/mpeg&quot;);
+    audioSettings.setChannels(2);
+
+    recorder-&gt;setEncodingSettings(audioSettings);</pre>
+<p>See also <a href="qmediarecorder.html">QMediaRecorder</a> and <a href="qaudioencodercontrol.html">QAudioEncoderControl</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QAudioEncoderSettings"></a>QAudioEncoderSettings::QAudioEncoderSettings ()</h3>
-<p>Construct a <a href="qaudioencodersettings.html">QAudioEncoderSettings</a>.</p>
+<p>Construct a null audio encoder settings object.</p>
 <h3 class="fn"><a name="QAudioEncoderSettings-2"></a>QAudioEncoderSettings::QAudioEncoderSettings ( const QAudioEncoderSettings &amp; <i>other</i> )</h3>
-<p>Constructs a copy of the audio settings <i>other</i>.</p>
+<p>Constructs a copy of the audio encoder settings object <i>other</i>.</p>
 <h3 class="fn"><a name="dtor.QAudioEncoderSettings"></a>QAudioEncoderSettings::~QAudioEncoderSettings ()</h3>
-<p>Destroys the audio settings.</p>
+<p>Destroys an audio encoder settings object.</p>
 <h3 class="fn"><a name="bitrate"></a>int QAudioEncoderSettings::bitrate () const</h3>
-<p>Returns the bitrate of compressed audio stream in bits per second.</p>
+<p>Returns the bit rate of the compressed audio stream in bits per second.</p>
 <p>See also <a href="qaudioencodersettings.html#setBitrate">setBitrate</a>().</p>
 <h3 class="fn"><a name="channels"></a>int QAudioEncoderSettings::channels () const</h3>
 <p>Returns the number of audio channels.</p>
@@ -67,41 +74,42 @@
 <p>Returns the audio encoding mode.</p>
 <p>See also <a href="qaudioencodersettings.html#setEncodingMode">setEncodingMode</a>() and <a href="qtmedia.html#EncodingMode-enum">QtMedia::EncodingMode</a>.</p>
 <h3 class="fn"><a name="isNull"></a>bool QAudioEncoderSettings::isNull () const</h3>
-<p>Returns true if a valid object.</p>
+<p>Identifies if an audio settings object is initialized.</p>
+<p>Returns true if the settings object is null, and false if it is not.</p>
 <h3 class="fn"><a name="quality"></a><a href="qtmedia.html#EncodingQuality-enum">QtMedia::EncodingQuality</a> QAudioEncoderSettings::quality () const</h3>
 <p>Returns the audio encoding quality.</p>
 <p>See also <a href="qaudioencodersettings.html#setQuality">setQuality</a>().</p>
 <h3 class="fn"><a name="sampleRate"></a>int QAudioEncoderSettings::sampleRate () const</h3>
 <p>Returns the audio sample rate.</p>
 <p>See also <a href="qaudioencodersettings.html#setSampleRate">setSampleRate</a>().</p>
-<h3 class="fn"><a name="setBitrate"></a>void QAudioEncoderSettings::setBitrate ( int <i>bitrate</i> )</h3>
-<p>Sets the audio <i>bitrate</i>.</p>
+<h3 class="fn"><a name="setBitrate"></a>void QAudioEncoderSettings::setBitrate ( int <i>rate</i> )</h3>
+<p>Sets the audio bit <i>rate</i>.</p>
 <p>See also <a href="qaudioencodersettings.html#bitrate">bitrate</a>().</p>
 <h3 class="fn"><a name="setChannels"></a>void QAudioEncoderSettings::setChannels ( int <i>channels</i> )</h3>
 <p>Sets the number of audio <i>channels</i>.</p>
-<p>By default the number of channels is set to -1 indicating the encoder should choose the number of channels based on audio source and codec capabilities.</p>
+<p>A value of -1 indicates the encoder should make an optimal choice based on what is available from the audio source and the limitations of the codec.</p>
 <p>See also <a href="qaudioencodersettings.html#channels">channels</a>().</p>
 <h3 class="fn"><a name="setCodec"></a>void QAudioEncoderSettings::setCodec ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>codec</i> )</h3>
 <p>Sets the audio <i>codec</i>.</p>
 <p>See also <a href="qaudioencodersettings.html#codec">codec</a>().</p>
 <h3 class="fn"><a name="setEncodingMode"></a>void QAudioEncoderSettings::setEncodingMode ( <a href="qtmedia.html#EncodingMode-enum">QtMedia::EncodingMode</a> <i>mode</i> )</h3>
-<p>Sets the audio encoding <i>mode</i>.</p>
+<p>Sets the audio encoding <i>mode</i> setting.</p>
 <p>See also <a href="qaudioencodersettings.html#encodingMode">encodingMode</a>() and <a href="qtmedia.html#EncodingMode-enum">QtMedia::EncodingMode</a>.</p>
 <h3 class="fn"><a name="setQuality"></a>void QAudioEncoderSettings::setQuality ( <a href="qtmedia.html#EncodingQuality-enum">QtMedia::EncodingQuality</a> <i>quality</i> )</h3>
 <p>Set the audio encoding <i>quality</i>.</p>
 <p>See also <a href="qaudioencodersettings.html#quality">quality</a>().</p>
 <h3 class="fn"><a name="setSampleRate"></a>void QAudioEncoderSettings::setSampleRate ( int <i>rate</i> )</h3>
 <p>Sets the audio sample <i>rate</i>.</p>
-<p>A value of -1 means the encoder will choose the suitable rate depending on source and codec capabilities.</p>
+<p>A value of -1 indicates the encoder should make an optimal choice based on what is avaialbe from the audio source and the limitations of the codec.</p>
 <p>See also <a href="qaudioencodersettings.html#sampleRate">sampleRate</a>().</p>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QAudioEncoderSettings::operator!= ( const QAudioEncoderSettings &amp; <i>other</i> ) const</h3>
-<p>Determines if the audio settings are equal value to <i>other</i>.</p>
-<p>Returns true if the settings are not of equal value, and true if they are of equal value.</p>
+<p>Determines if <i>other</i> is of equal value to an audio encoder settings object.</p>
+<p>Returns true if the settings objects are not of equal value, and true if they are of equal value.</p>
 <h3 class="fn"><a name="operator-eq"></a>QAudioEncoderSettings &amp; QAudioEncoderSettings::operator= ( const QAudioEncoderSettings &amp; <i>other</i> )</h3>
-<p>Assigns the value of <i>other</i> to the audio settings.</p>
+<p>Assigns the value of <i>other</i> to an audio encoder settings object.</p>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QAudioEncoderSettings::operator== ( const QAudioEncoderSettings &amp; <i>other</i> ) const</h3>
-<p>Determines if the audio settings are equal value to <i>other</i>.</p>
-<p>Returns true if the settings are of equal value, and true if they are not of equal value.</p>
+<p>Determines if <i>other</i> is of equal value to an audio encoder settings object.</p>
+<p>Returns true if the settings objects are of equal value, and true if they are not of equal value.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

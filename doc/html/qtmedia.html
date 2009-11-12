@@ -22,7 +22,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qtmedia.html#EncodingMode-enum">EncodingMode</a></b> { ConstantQualityEncoding, ConstantBitrateEncoding, AverageBitrateEncoding, TwoPassEncoding }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qtmedia.html#EncodingQuality-enum">EncodingQuality</a></b> { VeryLowQuality, LowQuality, NormalQuality, HighQuality, VeryHighQuality }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qtmedia.html#MetaData-enum">MetaData</a></b> { Title, SubTitle, Author, Comment, ..., Subject }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qtmedia.html#MetaData-enum">MetaData</a></b> { Title, SubTitle, Author, Comment, ..., DeviceSettingDescription }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qtmedia.html#SupportEstimate-enum">SupportEstimate</a></b> { NotSupported, MaybeSupported, ProbablySupported, PreferedService }</td></tr>
 </table>
 <a name="details"></a>
@@ -126,13 +126,36 @@
 <tr><td valign="top"><tt>QtMedia::LeadPerformer</tt></td><td align="center" valign="top"><tt>44</tt></td><td valign="top">The lead performer in the media. <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a>.</td></tr>
 <tr><td valign="top"><tt>QtMedia::Writer</tt></td><td align="center" valign="top"><tt>45</tt></td><td valign="top">The writer of the media. <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a>.</td></tr>
 </table></p>
-<p>Photo attributes</p>
+<p>Photo attributes.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QtMedia::CameraManufacturer</tt></td><td align="center" valign="top"><tt>46</tt></td><td valign="top">The manufacturer of the camera used to capture the media. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
 <tr><td valign="top"><tt>QtMedia::CameraModel</tt></td><td align="center" valign="top"><tt>47</tt></td><td valign="top">The model of the camera used to capture the media. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
 <tr><td valign="top"><tt>QtMedia::Event</tt></td><td align="center" valign="top"><tt>48</tt></td><td valign="top">The event during which the media was captured. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
 <tr><td valign="top"><tt>QtMedia::Subject</tt></td><td align="center" valign="top"><tt>49</tt></td><td valign="top">The subject of the media. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>.</td></tr>
+<tr><td valign="top"><tt>QtMedia::Orientation</tt></td><td align="center" valign="top"><tt>50</tt></td><td valign="top">Orientation of image.</td></tr>
+<tr><td valign="top"><tt>QtMedia::ExposureTime</tt></td><td align="center" valign="top"><tt>51</tt></td><td valign="top">Exposure time, given in seconds.</td></tr>
+<tr><td valign="top"><tt>QtMedia::FNumber</tt></td><td align="center" valign="top"><tt>52</tt></td><td valign="top">The F Number.</td></tr>
+<tr><td valign="top"><tt>QtMedia::ExposureProgram</tt></td><td align="center" valign="top"><tt>53</tt></td><td valign="top">The class of the program used by the camera to set exposure when the picture is taken.</td></tr>
+<tr><td valign="top"><tt>QtMedia::ISOSpeedRatings</tt></td><td align="center" valign="top"><tt>54</tt></td><td valign="top">Indicates the ISO Speed and ISO Latitude of the camera or input device as specified in ISO 12232.</td></tr>
+<tr><td valign="top"><tt>QtMedia::ExposureBiasValue</tt></td><td align="center" valign="top"><tt>55</tt></td><td valign="top">The exposure bias. The unit is the APEX (Additive System of Photographic Exposure) setting.</td></tr>
+<tr><td valign="top"><tt>QtMedia::DateTimeOriginal</tt></td><td align="center" valign="top"><tt>56</tt></td><td valign="top">The date and time when the original image data was generated.</td></tr>
+<tr><td valign="top"><tt>QtMedia::DateTimeDigitized</tt></td><td align="center" valign="top"><tt>57</tt></td><td valign="top">The date and time when the image was stored as digital data.</td></tr>
+<tr><td valign="top"><tt>QtMedia::SubjectDistance</tt></td><td align="center" valign="top"><tt>58</tt></td><td valign="top">The distance to the subject, given in meters.</td></tr>
+<tr><td valign="top"><tt>QtMedia::MeteringMode</tt></td><td align="center" valign="top"><tt>59</tt></td><td valign="top">The metering mode.</td></tr>
+<tr><td valign="top"><tt>QtMedia::LightSource</tt></td><td align="center" valign="top"><tt>60</tt></td><td valign="top">The kind of light source.</td></tr>
+<tr><td valign="top"><tt>QtMedia::Flash</tt></td><td align="center" valign="top"><tt>61</tt></td><td valign="top">Status of flash when the image was shot.</td></tr>
+<tr><td valign="top"><tt>QtMedia::FocalLength</tt></td><td align="center" valign="top"><tt>62</tt></td><td valign="top">The actual focal length of the lens, in mm.</td></tr>
+<tr><td valign="top"><tt>QtMedia::ExposureMode</tt></td><td align="center" valign="top"><tt>63</tt></td><td valign="top">Indicates the exposure mode set when the image was shot.</td></tr>
+<tr><td valign="top"><tt>QtMedia::WhiteBalance</tt></td><td align="center" valign="top"><tt>64</tt></td><td valign="top">Indicates the white balance mode set when the image was shot.</td></tr>
+<tr><td valign="top"><tt>QtMedia::DigitalZoomRatio</tt></td><td align="center" valign="top"><tt>65</tt></td><td valign="top">Indicates the digital zoom ratio when the image was shot.</td></tr>
+<tr><td valign="top"><tt>QtMedia::FocalLengthIn35mmFilm</tt></td><td align="center" valign="top"><tt>66</tt></td><td valign="top">Indicates the equivalent focal length assuming a 35mm film camera, in mm.</td></tr>
+<tr><td valign="top"><tt>QtMedia::SceneCaptureType</tt></td><td align="center" valign="top"><tt>67</tt></td><td valign="top">Indicates the type of scene that was shot. It can also be used to record the mode in which the image was shot.</td></tr>
+<tr><td valign="top"><tt>QtMedia::GainControl</tt></td><td align="center" valign="top"><tt>68</tt></td><td valign="top">Indicates the degree of overall image gain adjustment.</td></tr>
+<tr><td valign="top"><tt>QtMedia::Contrast</tt></td><td align="center" valign="top"><tt>69</tt></td><td valign="top">Indicates the direction of contrast processing applied by the camera when the image was shot.</td></tr>
+<tr><td valign="top"><tt>QtMedia::Saturation</tt></td><td align="center" valign="top"><tt>70</tt></td><td valign="top">Indicates the direction of saturation processing applied by the camera when the image was shot.</td></tr>
+<tr><td valign="top"><tt>QtMedia::Sharpness</tt></td><td align="center" valign="top"><tt>71</tt></td><td valign="top">Indicates the direction of sharpness processing applied by the camera when the image was shot.</td></tr>
+<tr><td valign="top"><tt>QtMedia::DeviceSettingDescription</tt></td><td align="center" valign="top"><tt>72</tt></td><td valign="top">Exif tag, indicates information on the picture-taking conditions of a particular camera model. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a></td></tr>
 </table></p>
 <h3 class="fn"><a name="SupportEstimate-enum"></a>enum QtMedia::SupportEstimate</h3>
 <p>Enumerates the levels of support a media service provider may have for a feature.</p>
