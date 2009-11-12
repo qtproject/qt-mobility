@@ -62,15 +62,22 @@ unix: {
          -framework IOKit -framework ApplicationServices -framework Foundation \
          -framework CoreServices
 
-        # change this to /Developer/SDKs/MacOSX10.6.sdk
-        # if you want to compile for 10.6 with CoreWLAN framework
-
-        QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.5.sdk
-        contains(QMAKE_MAC_SDK, "/Developer/SDKs/MacOSX10.6.sdk") {
-                LIBS += -framework CoreWLAN  -framework IOBluetooth
-                DEFINES += MAC_SDK_10_6
-        }
-        TEMPLATE = lib
+            contains(corewlan_enabled, yes) {
+                     isEmpty(QMAKE_MAC_SDK) {
+                         SDK6="yes"
+                     } else {
+                         contains(QMAKE_MAC_SDK, "/Developer/SDKs/MacOSX10.6.sdk") {
+                             SDK6="yes"
+                     }     
+                 }
+            
+                !isEmpty(SDK6) {
+                        LIBS += -framework CoreWLAN  -framework IOBluetooth
+                        DEFINES += MAC_SDK_10_6
+                }
+           }
+    
+    TEMPLATE = lib
     }
 
     symbian:{

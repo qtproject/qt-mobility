@@ -134,6 +134,12 @@ Q_SIGNALS:
 
 private:
     bool isInterfaceActive(const char* netInterface);
+    QTimer *rssiTimer;
+    int signalStrengthCache;
+    
+private slots:
+    void rssiTimeout();
+
 };
 
 class QSystemDisplayInfoPrivate : public QObject
