@@ -34,5 +34,6 @@ unix:!mac:!symbian {
 symbian: {
     SUBDIRS -= phonon
     SUBDIRS -= audiocapture
+	SUBDIRS -= m3u
     SUBDIRS += symbian
 }
