@@ -73,7 +73,7 @@ public:
     bool send(const QMessage& message, bool showComposer = false);
     bool show(const QMessageId& id);
 #ifdef _WIN32_WCE
-    bool isPartiallyDownloaded(const QMessageId& id);
+    bool isPartiallyDownloaded(const QMessageId& id, bool considerAttachments = false);
     bool markForDownload(const QMessageId& id, bool includeAttachments = false);
     bool synchronize(const QMessageAccountId& id);
     bool registerUpdates(const QMessageId& targetMessage);
@@ -433,7 +433,7 @@ bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
 
 #ifdef _WIN32_WCE
 
-bool QMessageServiceActionPrivate::isPartiallyDownloaded(const QMessageId& id)
+bool QMessageServiceActionPrivate::isPartiallyDownloaded(const QMessageId& id, bool considerAttachments)
 {
     MapiSessionPtr mapiSession(MapiSession::createSession(&_lastError));
 
@@ -460,7 +460,9 @@ bool QMessageServiceActionPrivate::isPartiallyDownloaded(const QMessageId& id)
     else
     {
         mapiRelease(message);
-        return((status & MSGSTATUS_HEADERONLY) || (status & MSGSTATUS_PARTIAL) || (status & MSGSTATUS_PENDING_ATTACHMENTS));
+        bool bodyNotDownloaded = (status & MSGSTATUS_HEADERONLY) || (status & MSGSTATUS_PARTIAL);
+        bool attachmentsNotDownloaded = (status & MSGSTATUS_PENDING_ATTACHMENTS);
+        return considerAttachments ? bodyNotDownloaded && attachmentsNotDownloaded : bodyNotDownloaded;
     }
 }
 
@@ -727,8 +729,7 @@ bool QMessageServiceAction::retrieveBody(const QMessageId& id)
     {
         if(d_ptr->isPartiallyDownloaded(id))
         {
-            qWarning() << "Message is partially downloaded, marking for download..";
-            result = d_ptr->markForDownload(id);
+            result = d_ptr->markForDownload(id,true);
             result &= d_ptr->registerUpdates(id);
             result &= d_ptr->synchronize(message.parentAccountId());
         }
