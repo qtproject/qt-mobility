@@ -205,7 +205,10 @@ QList<QContactLocalId> CntSymbianEngine::contacts(const QString& contactType, co
 
 QContact CntSymbianEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
-    return fetchContact(contactId, error);
+    QContact contact = fetchContact(contactId, error);
+    if(error == QContactManager::NoError)
+        updateDisplayLabel(contact);
+    return contact;
 }
 
 bool CntSymbianEngine::saveContact(QContact* contact, QContactManager::Error& error)
@@ -313,6 +316,10 @@ bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& chang
     } else {
         ret = addContact(*contact, changeSet, error);
     }
+
+    if (ret)
+        updateDisplayLabel(*contact);
+
     return ret;
 }
 
@@ -550,19 +557,6 @@ int CntSymbianEngine::removeContactL(QContactLocalId id)
     return 0;
 }
 
-
-void CntSymbianEngine::updateDisplayLabel(QContact& contact) const
-{
-    QContactManager::Error error(QContactManager::NoError);
-    QContactDisplayLabel label = contact.displayLabel();
-    QString labelString = synthesizeDisplayLabel(contact, error);
-    if(error == QContactManager::NoError) {
-        label.setLabel(labelString);
-        label.setSynthesized(true);
-        contact.setDisplayLabel(label);
-    }
-}
-
 bool CntSymbianEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
 {
     QContactManager::Error err;
@@ -573,6 +567,15 @@ bool CntSymbianEngine::removeContact(const QContactLocalId& contactId, QContactM
         emit selfContactIdChanged(selfCntId, QContactLocalId(0));
     changeSet.emitSignals(this);
     return ret;
+}
+
+void CntSymbianEngine::updateDisplayLabel(QContact& contact) const
+{
+    QContactManager::Error error(QContactManager::NoError);
+    QString label = synthesizeDisplayLabel(contact, error);
+    if(error == QContactManager::NoError) {
+        contact = setContactDisplayLabel(label, contact);
+    }
 }
 
 QList<QContactManager::Error> CntSymbianEngine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error)
