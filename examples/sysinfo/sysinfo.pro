@@ -9,7 +9,7 @@ SOURCES += main.cpp\
 
 HEADERS  += dialog.h
 
-INCLUDEPATH += ../../systeminfo
+INCLUDEPATH += ../../src/systeminfo
 
 include(../examples.pri)
 qtAddLibrary(QtSystemInfo)

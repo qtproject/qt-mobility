@@ -1,5 +1,5 @@
 TARGET=tst_servicemetadata
-INCLUDEPATH += ../../../serviceframework
+INCLUDEPATH += ../../../src/serviceframework
 
 wince*|symbian*: {
     addFiles.sources = testdata/*

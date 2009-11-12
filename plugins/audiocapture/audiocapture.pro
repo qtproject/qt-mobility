@@ -4,7 +4,7 @@ TARGET = $$qtLibraryTarget(audioengine)
 PLUGIN_TYPE=mediaservice
 
 include (../../common.pri)
-INCLUDEPATH += ../../multimedia
+INCLUDEPATH += ../../src/multimedia
 
 qtAddLibrary(QtMedia)
 

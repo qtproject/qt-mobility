@@ -4,7 +4,7 @@ TARGET = $$qtLibraryTarget(gstengine)
 PLUGIN_TYPE=mediaservice
 
 include(../../common.pri)
-INCLUDEPATH+=../../multimedia
+INCLUDEPATH+=../../src/multimedia
 
 qtAddLibrary(QtMedia)
 

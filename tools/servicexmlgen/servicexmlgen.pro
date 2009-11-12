@@ -1,7 +1,7 @@
 TEMPLATE=app
 TARGET=servicexmlgen
 
-INCLUDEPATH += ../../serviceframework
+INCLUDEPATH += ../../src/serviceframework
 
 DEFINES += SERVICE_XML_GENERATOR
 HEADERS = servicexmlgen.h \

@@ -1,5 +1,5 @@
 TARGET = tst_qvideowidget
-INCLUDEPATH += ../../../multimedia
+INCLUDEPATH += ../../../src/multimedia
 CONFIG += testcase
 
 include (../../../common.pri)

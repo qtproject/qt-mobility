@@ -5,7 +5,7 @@ CONFIG += testcase
 
 QT = core network
 
-INCLUDEPATH += ../../../../bearer
+INCLUDEPATH += ../../../../src/bearer
 
 include(../../../../common.pri)
 qtAddLibrary(QtBearer)
