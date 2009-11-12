@@ -92,10 +92,7 @@ public:
     QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
 
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
-    QContactDetailDefinition detailDefinition(const QString& definitionId, QContactManager::Error& error) const;
-    bool saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
-    bool removeDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
+    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
 
     /* Asynchronous Request Support */
     void requestDestroyed(QContactAbstractRequest* req);

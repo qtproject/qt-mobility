@@ -317,12 +317,13 @@ QList<QContactManager::Error> QContactTrackerEngine::removeContacts(QList<QConta
     return errors;
 }
 
-QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions(QContactManager::Error& error) const
+QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions(const QString& contactType,
+                                                                                 QContactManager::Error& error) const
 {
     // lazy initialisation of schema definitions.
     if (d->m_definitions.isEmpty()) {
         // none in the list?  get the schema definitions, and modify them to match our capabilities.
-        d->m_definitions = QContactManagerEngine::schemaDefinitions().value(QContactType::TypeGroup);
+        d->m_definitions = QContactManagerEngine::schemaDefinitions().value(QContactType::TypeContact);
         {
             debug() << "the definitions";
             QList<QString> defs = d->m_definitions.keys();
@@ -360,31 +361,6 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
 
     error = QContactManager::NoError;
     return d->m_definitions;
-}
-
-QContactDetailDefinition QContactTrackerEngine::detailDefinition(const QString& definitionId, QContactManager::Error& error) const
-{
-    detailDefinitions(error); // just to populate the definitions if we haven't already.
-    error = QContactManager::DoesNotExistError;
-    if (d->m_definitions.contains(definitionId))
-        error = QContactManager::NoError;
-    return d->m_definitions.value(definitionId);
-}
-
-bool QContactTrackerEngine::saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error)
-{
-    Q_UNUSED(def)
-    error = QContactManager::UnspecifiedError; // Not implemented yet;
-
-    return false;
-}
-
-bool QContactTrackerEngine::removeDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error)
-{
-    Q_UNUSED(def)
-    error = QContactManager::UnspecifiedError; // Not implemented yet;
-
-    return false;
 }
 
 /*!
