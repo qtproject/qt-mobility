@@ -125,9 +125,9 @@ QByteArray contentTypeFromExtension(const QString &extension);
 class Lptstr : public QVector<TCHAR>
 {
 public:
-    Lptstr():QVector(){}
-    Lptstr(int length) : QVector(length){}
-    operator TCHAR* (){ return QVector::data(); }
+    Lptstr():QVector<TCHAR>(){}
+    Lptstr(int length) : QVector<TCHAR>(length){}
+    operator TCHAR* (){ return QVector<TCHAR>::data(); }
 };
 
 Lptstr LptstrFromQString(const QString &src);
@@ -386,6 +386,7 @@ public:
     bool updateMessageBody(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
     bool updateMessageAttachments(QMessageStore::ErrorCode *lastError, QMessage *msg) const;
 
+    bool haveAttachmentData(QMessageStore::ErrorCode* lastError, const QMessageId& id, ULONG number) const;
     QByteArray attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const;
 
     QMessageIdList queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering = QMessageOrdering(), uint limit = 0, uint offset = 0, const QString &body = QString(), QMessageDataComparator::Options options = 0) const;

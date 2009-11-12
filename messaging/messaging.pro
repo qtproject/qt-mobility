@@ -91,7 +91,20 @@ SOURCES += qmessageid_maemo.cpp \
            qmessageserviceaction_maemo.cpp 
 }
 symbian {
-SOURCES += qmessageid_symbian.cpp \
+INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+
+HEADERS -= qmessagestore_p.h \
+           qmessagecontentcontainer_p.h \
+           qmessage_p.h
+
+HEADERS += qmtmengine_symbian_p.h \
+           qmessagestore_symbian_p.h \
+           qmessageserviceaction_symbian_p.h \
+           qmessagecontentcontainer_symbian_p.h \
+           qmessage_symbian_p.h
+
+SOURCES += qmtmengine_symbian.cpp \
+           qmessageid_symbian.cpp \
            qmessagecontentcontainerid_symbian.cpp \
            qmessagefolderid_symbian.cpp \
            qmessageaccountid_symbian.cpp \
@@ -106,14 +119,35 @@ SOURCES += qmessageid_symbian.cpp \
            qmessagefilter_symbian.cpp \
            qmessageordering_symbian.cpp \
            qmessagestore_symbian.cpp \
-           qmessageserviceaction_symbian.cpp 
+           qmessageserviceaction_symbian.cpp
+           
+LIBS += -lsendas2 \
+        -lmsgs \
+        -letext \
+        -lefsrv \
+        -lcharconv \
+        -lgsmu \
+        -limcm \
+        -lbafl \
+        -lmtur \
+	-lsendui \
+	-lsmcm \
+	-limcm \
+	-leikcore \
+	-lcone \
+	-lapgrfx \
+	-lapmime
+
+messaging.sources = QtMessaging.dll
+messaging.path = /sys/bin
+DEPLOYMENT += license messaging
+symbian:TARGET.CAPABILITY = All -TCB -AllFiles -DRM
+symbian:MMP_RULES += EXPORTUNFROZEN
 
 MMP_RULES += "EXPORTUNFROZEN"
 }
 
 win32 {
-!static:DEFINES += QT_MAKEDLL
-
 PRIVATE_HEADERS += \
            winhelpers_p.h
 

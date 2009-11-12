@@ -39,30 +39,65 @@
 **
 ****************************************************************************/
 #include "qmessage.h"
+#include "qmessage_symbian_p.h"
+#include "qmessagecontentcontainer_symbian_p.h"
+
+QMessagePrivate::QMessagePrivate(QMessage *message)
+ : q_ptr(message),
+   _size(0),
+   _standardFolder(QMessage::DraftsFolder),
+   _type(QMessage::NoType),
+   _status(0),
+   _priority(QMessage::NormalPriority),
+   _modified(false)
+{
+}
+
+QMessagePrivate::~QMessagePrivate()
+{
+}
+
+void QMessagePrivate::setStandardFolder(QMessage& message, QMessage::StandardFolder sf)
+{
+    message.d_ptr->_standardFolder = sf;
+    message.d_ptr->_modified = true;
+}
+
 
 QMessage::QMessage()
+ : d_ptr(new QMessagePrivate(this))
 {
+	setDerivedMessage(this);
+	d_ptr->_modified = false;
 }
 
 QMessage::QMessage(const QMessageId& id)
+ : d_ptr(new QMessagePrivate(this))
 {
-    Q_UNUSED(id)
+	d_ptr->_id = id;
 }
 
 QMessage::QMessage(const QMessage &other)
-    :QMessageContentContainer(other)
+ :QMessageContentContainer(other),
+    d_ptr(new QMessagePrivate(this))
 {
-    Q_UNUSED(other)
+	this->operator=(other);
 }
 
 QMessage& QMessage::operator=(const QMessage& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        QMessageContentContainer::operator=(other);
+        *d_ptr = *other.d_ptr;
+        setDerivedMessage(this);
+    }
+    
+    return *this;
 }
 
 QMessage::~QMessage()
 {
+	delete d_ptr;	
 }
 
 QMessage QMessage::fromTransmissionFormat(Type t, const QByteArray &ba)
@@ -91,27 +126,27 @@ void QMessage::toTransmissionFormat(QDataStream& out) const
 
 QMessageId QMessage::id() const
 {
-    return QMessageId(); // stub
+	return d_ptr->_id;
 }
 
 QMessage::Type QMessage::type() const
 {
-    return NoType; // stub
+	return d_ptr->_type;
 }
 
 void QMessage::setType(Type t)
 {
-    Q_UNUSED(t)
+	d_ptr->_type = t;
 }
 
 QMessageAccountId QMessage::parentAccountId() const
 {
-    return QMessageAccountId(); // stub
+    return d_ptr->_parentAccountId;
 }
 
 void QMessage::setParentAccountId(const QMessageAccountId &accountId)
 {
-    Q_UNUSED(accountId)
+    d_ptr->_parentAccountId = accountId;
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
@@ -123,92 +158,101 @@ QMessageFolderId QMessage::parentFolderId() const
 
 QMessage::StandardFolder QMessage::standardFolder() const
 {
-    return QMessage::InboxFolder; // stub
+    return d_ptr->_standardFolder;
 }
 
 QMessageAddress QMessage::from() const
 {
-    return QMessageAddress(); // stub
+	return d_ptr->_from;
 }
 
 void QMessage::setFrom(const QMessageAddress &address)
 {
-    Q_UNUSED(address)
+	d_ptr->_modified = true;
+	d_ptr->_from = address;
 }
 
 QString QMessage::subject() const
 {
-    return QString::null; //stub
+    return d_ptr->_subject;
 }
 
 void QMessage::setSubject(const QString &s)
 {
-    Q_UNUSED(s)
+	d_ptr->_modified = true;
+    d_ptr->_subject = s;
 }
 
 QDateTime QMessage::date() const
 {
-    return date(); // stub
+    return d_ptr->_date;
 }
 
 void QMessage::setDate(const QDateTime &d)
 {
-    Q_UNUSED(d)
+	d_ptr->_modified = true;
+	d_ptr->_date = d;
 }
 
 QDateTime QMessage::receivedDate() const
 {
-    return QDateTime(); // stub
+    return d_ptr->_receivedDate;
 }
 
 void QMessage::setReceivedDate(const QDateTime &d)
 {
-    Q_UNUSED(d)
+	d_ptr->_modified = true;
+    d_ptr->_receivedDate = d;
 }
 
 QMessageAddressList QMessage::to() const
 {
-    return QMessageAddressList(); // stub
+    return d_ptr->_toList;
 }
 
 void QMessage::setTo(const QMessageAddressList& toList)
 {
-    Q_UNUSED(toList)
+	d_ptr->_modified = true;
+    d_ptr->_toList = toList;
 }
 
 void QMessage::setTo(const QMessageAddress& address)
 {
-    Q_UNUSED(address)
+	d_ptr->_modified = true;
+    d_ptr->_toList << address;
 }
 
 QMessageAddressList QMessage::cc() const
 {
-    return QMessageAddressList(); // stub
+	return d_ptr->_ccList;
 }
 
 void QMessage::setCc(const QMessageAddressList& ccList)
 {
-    Q_UNUSED(ccList)
+	d_ptr->_modified = true;
+	d_ptr->_ccList = ccList;
 }
 
 QMessageAddressList QMessage::bcc() const
 {
-    return QMessageAddressList(); // stub
+    return d_ptr->_bccList;
 }
 
 void QMessage::setBcc(const QMessageAddressList& bccList)
 {
-    Q_UNUSED(bccList)
+	d_ptr->_modified = true;
+	d_ptr->_bccList = bccList;
 }
 
 QMessage::StatusFlags QMessage::status() const
 {
-    return StatusFlags(0); // stub
+    return d_ptr->_status;
 }
 
 void QMessage::setStatus(QMessage::StatusFlags newStatus)
 {
-    Q_UNUSED(newStatus)
+	d_ptr->_modified = true;
+    d_ptr->_status = newStatus;
 }
 
 void QMessage::setStatus(QMessage::Status flag, bool set)
@@ -219,12 +263,13 @@ void QMessage::setStatus(QMessage::Status flag, bool set)
 
 QMessage::Priority QMessage::priority() const
 {
-    return QMessage::NormalPriority; // stub
+    return d_ptr->_priority;
 }
 
 void QMessage::setPriority(Priority newPriority)
 {
-    Q_UNUSED(newPriority)
+	d_ptr->_modified = true;
+    d_ptr->_priority = newPriority;
 }
 
 uint QMessage::size() const
@@ -238,45 +283,61 @@ QMessageContentContainerId QMessage::bodyId() const
     // If the content type of the message is text, then that is the body
     // otherwise if the first part of the body is text then that is the body.
     
-    return QMessageContentContainerId(); // stub
+    return d_ptr->_bodyId;
 }
 
 void QMessage::setBody(const QString &body, const QByteArray &mimeType)
 {
-    Q_UNUSED(body)
-    Q_UNUSED(mimeType)
+    QByteArray mainType("text");
+    QByteArray subType("plain");
+    QByteArray charset("UTF-8");
+    
+    int index = mimeType.indexOf("/");
+    if (index != -1) {
+        mainType = mimeType.left(index).trimmed();
+        subType = mimeType.mid(index + 1).trimmed();
+    }
+    
+    QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
+    container->setContent(body, mainType, subType, charset);
+    d_ptr->_bodyId = QMessageContentContainerPrivate::bodyContentId();
+    d_ptr->_modified = true;
 }
 
 void QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
 {
-    Q_UNUSED(in)
-    Q_UNUSED(mimeType)
+    setBody(in.readAll(), mimeType);
 }
 
 QMessageContentContainerIdList QMessage::attachmentIds() const
 {
-    //    TODO: Example attachment list generation algorithm, message parts are the main issue, maybe 
-    //    have to recurse into them, somewhat ambiguous.
-    //    Don't recurse, just ignore any body part, see bodyId() for body finding algorithm.
-    
-    // Implementation note, this should be platform independent.
-    return QMessageContentContainerIdList(); // stub
+	return contentIds();
 }
 
 void QMessage::appendAttachments(const QStringList &fileNames)
 {
-    // Implementation note, this should be platform independent.
-    Q_UNUSED(fileNames)
+	if (!fileNames.isEmpty()) {
+		d_ptr->_modified = true;
+        QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
+        foreach (const QString &filename, fileNames) {
+            QMessageContentContainer attachment;
+            if (attachment.d_ptr->createAttachment(filename)) {
+                container->appendContent(attachment);
+            }
+        }
+    }
 }
 
 void QMessage::clearAttachments()
 {
-    // Implementation note, this should be platform independent.
+	d_ptr->_modified = true;
+	QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
+	container->_attachments.clear();
 }
 
 bool QMessage::isModified() const
 {
-    return false; // stub
+	return d_ptr->_modified;
 }
 
 QMessage QMessage::createResponseMessage(ResponseType type) const

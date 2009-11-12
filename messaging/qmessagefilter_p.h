@@ -41,6 +41,9 @@
 #ifndef QMESSAGEFILTERPRIVATE_H
 #define QMESSAGEFILTERPRIVATE_H
 #include "qmessagefilter.h"
+#ifdef Q_OS_SYMBIAN
+#include <qvariant.h>
+#endif
 #if defined(Q_OS_WIN)
 #include "qmessagestore.h"
 #include "winhelpers_p.h"
@@ -103,6 +106,30 @@ public:
 
     QMessageFilter *q_ptr;
     QMessageDataComparator::Options _options;
+
+#ifdef Q_OS_SYMBIAN
+    typedef QList<QMessageFilter> SortedMessageFilterList;
+    
+    bool filter(QMessage &message);
+    
+    static void applyNot(QMessageFilter& filter);
+    static bool lessThan(const QMessageFilter filter1, const QMessageFilter filter2); 
+    static QMessageFilterPrivate* implementation(const QMessageFilter &filter);
+
+    enum Field {None = 0, Id, ParentFolderId, AncestorFolderIds, ParentAccountId, Type, StandardFolder, TimeStamp, ReceptionTimeStamp, Sender, Recipients, Subject, Status, Priority, Size, CustomField};
+    enum Comparator {Equality = 0, Relation, Inclusion};
+
+    bool _valid;
+
+    QMessageIdList _ids;
+    QVariant _value;
+    QMessageFilterPrivate::Field _field;
+
+    Comparator _comparatorType;
+    int _comparatorValue;
+    
+    QList<SortedMessageFilterList> _filterList;
+#endif
 #if defined(Q_OS_WIN)
     enum Field { None = 0, Id, Type, Sender, SenderName, SenderAddress, Recipients, RecipientName, RecipientAddress, Subject, TimeStamp, ReceptionTimeStamp, Status, Priority, Size, ParentAccountId, ParentFolderId, AncestorFolderIds, MessageFilter, AccountFilter, FolderFilter, AncestorFilter };
     enum Comparator { Equality = 0, Relation, Inclusion };
@@ -148,9 +175,10 @@ public:
     static QList<QMessageFilter> subfilters(const QMessageFilter &filter);
 
     static QMessageFilter preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, const QMessageFilter &filter);
-    static void preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFilter *filter);
+    static bool preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFilter *filter);
     static bool isNonMatching(const QMessageFilter &filter); // Possibly should be in public QMessageFilter API
-    static bool matchesMessage(const QMessageFilter &filter, const QMessage &message);
+    static bool matchesMessageSimple(const QMessageFilter &filter, const QMessage &message);
+    static bool matchesMessage(const QMessageFilter &filter, const QMessage &message, MapiStorePtr store);
 
     static bool QMessageFilterPrivate::restrictionPermitted(const QMessageFilter &filter);
     static bool QMessageFilterPrivate::matchesMessageRequired(const QMessageFilter &filter);

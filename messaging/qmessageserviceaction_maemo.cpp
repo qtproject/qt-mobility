@@ -49,7 +49,7 @@ QMessageServiceAction::~QMessageServiceAction()
 {
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
+bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset)
 {
     Q_UNUSED(filter);
     Q_UNUSED(ordering);
@@ -58,7 +58,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QM
     return false; // stub
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
+bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset)
 {
     Q_UNUSED(filter);
     Q_UNUSED(body);
@@ -69,7 +69,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
     return false; // stub
 }
 
-bool QMessageServiceAction::countMessages(const QMessageFilter &filter) const
+bool QMessageServiceAction::countMessages(const QMessageFilter &filter)
 {
     // TODO: Implement this
     Q_UNUSED(filter);

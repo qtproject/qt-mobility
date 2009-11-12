@@ -40,34 +40,58 @@
 ****************************************************************************/
 #include "qmessageid.h"
 
+class QMessageIdPrivate
+{
+public:
+    QString _id;
+};
+
 QMessageId::QMessageId()
+ : d_ptr(0)
 {
 }
 
 QMessageId::QMessageId(const QMessageId& other)
+ : d_ptr(0)
 {
-    Q_UNUSED(other)
+	this->operator=(other);
 }
 
 QMessageId::QMessageId(const QString& id)
 {
-    Q_UNUSED(id)
+    d_ptr = new QMessageIdPrivate;
+    d_ptr->_id = id;
 }
 
 QMessageId::~QMessageId()
 {
+	delete d_ptr;
 }
 
 QMessageId& QMessageId::operator=(const QMessageId& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (!other.d_ptr) {
+        delete d_ptr;
+        return *this;
+    }
+
+    if (!d_ptr)
+        d_ptr = new QMessageIdPrivate;
+    
+    d_ptr->_id = other.d_ptr->_id;
+        
+    return *this;
 }
 
 bool QMessageId::operator==(const QMessageId& other) const
 {
-    Q_UNUSED(other)
-    return false; // stub
+    if (!other.d_ptr && !d_ptr)
+        return true;
+    
+    if (!other.d_ptr || !d_ptr)
+        return false;
+    
+    return (d_ptr->_id == other.d_ptr->_id);
 }
 
 bool QMessageId::operator<(const QMessageId& other) const
@@ -77,17 +101,16 @@ bool QMessageId::operator<(const QMessageId& other) const
 
 QString QMessageId::toString() const
 {
-    return QString::null; // stub
+    return d_ptr ? d_ptr->_id : QString();
 }
 
 bool QMessageId::isValid() const
 {
-    return false; // stub
+    return d_ptr ? true : false;
 }
 
 uint qHash(const QMessageId &id)
 {
-    Q_UNUSED(id)
-    return 0; // stub
+    return qHash(id.toString());
 }
 

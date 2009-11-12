@@ -128,59 +128,77 @@ MapiFolderIterator::MapiFolderIterator(MapiStorePtr store,
     }
 }
 
+static bool sFolderMatches(MapiFolderPtr folder,
+                           QSet<QMessage::StandardFolder> standardFoldersInclude, 
+                           QSet<QMessage::StandardFolder> standardFoldersExclude,
+                           FolderIdSet parentInclude,
+                           FolderIdSet parentExclude,
+                           FolderIdSet ancestorInclude,
+                           FolderIdSet ancestorExclude)
+{
+    if (!folder || !folder->isValid()) {
+        if (folder) {
+            qWarning() << "MaiFolderIterator::next() Invalid subfolder:" << folder->name();
+        }
+        return false;
+    }
+    if (!standardFoldersInclude.isEmpty() || !standardFoldersExclude.isEmpty()) {
+        QMessage::StandardFolder folderType(folder->standardFolder());
+        if (!(standardFoldersInclude.isEmpty() || standardFoldersInclude.contains(folderType))
+            || standardFoldersExclude.contains(folderType))
+            return false;
+    }
+
+    if (!parentInclude.isEmpty() || !parentExclude.isEmpty()) {
+        QMessageFolderId parentId(folder->parentId());
+#ifndef QSTRING_FOLDER_ID
+        if (!(parentInclude.isEmpty() || parentInclude.contains(folder->id()))
+            || parentExclude.contains(folder->id()))
+            return false;
+#else
+        QString path(folder->accountId().toString() + "/" + QMessageFolder(folder->id()).path());
+        if (!(parentInclude.isEmpty() || parentInclude.contains(path))
+            || parentExclude.contains(path))
+            return false;
+#endif
+    }
+
+    if (!ancestorInclude.isEmpty() || !ancestorExclude.isEmpty()) {
+        FolderIdSet folderAncestors;
+        QMessageFolderId id(folder->parentId());
+        while (id.isValid()) {
+            QMessageFolder f(id);
+#ifndef QSTRING_FOLDER_ID
+            folderAncestors.insert(id);
+#else
+            folderAncestors.insert(f.parentAccountId().toString() + "/" + f.path());
+#endif
+            id = f.parentFolderId();
+        }
+        FolderIdSet includeIntersection(ancestorInclude);
+        includeIntersection.intersect(folderAncestors);
+        FolderIdSet excludeIntersection(ancestorExclude);
+        excludeIntersection.intersect(folderAncestors);
+        if (!(ancestorInclude.isEmpty() || !includeIntersection.isEmpty())
+            || !excludeIntersection.isEmpty()) {
+            return false;
+        }
+    }
+    return true;
+}
+
 MapiFolderPtr MapiFolderIterator::next()
 {
     while (_store && _store->isValid() && !_folders.isEmpty()) {
         MapiFolderPtr folder(_folders.takeFirst());
-        if (folder && folder->isValid()) {
-            if (!_standardFoldersInclude.isEmpty() || !_standardFoldersExclude.isEmpty()) {
-                QMessage::StandardFolder folderType(folder->standardFolder());
-                if (!(_standardFoldersInclude.isEmpty() || _standardFoldersInclude.contains(folderType))
-                    || _standardFoldersExclude.contains(folderType))
-                    continue;
-            }
-
-            if (!_parentInclude.isEmpty() || !_parentExclude.isEmpty()) {
-                QMessageFolderId parentId(folder->parentId());
-#ifndef QSTRING_FOLDER_ID
-                if (!(_parentInclude.isEmpty() || _parentInclude.contains(folder->id()))
-                    || _parentExclude.contains(folder->id()))
-                    continue;
-#else
-                QString path(folder->accountId().toString() + "/" + QMessageFolder(folder->id()).path());
-                if (!(_parentInclude.isEmpty() || _parentInclude.contains(path))
-                    || _parentExclude.contains(path))
-                    continue;
-#endif
-            }
-
-            if (!_ancestorInclude.isEmpty() || !_ancestorExclude.isEmpty()) {
-                FolderIdSet folderAncestors;
-                QMessageFolderId id(folder->parentId());
-                while (id.isValid()) {
-                    QMessageFolder f(id);
-#ifndef QSTRING_FOLDER_ID
-                    folderAncestors.insert(id);
-#else
-                    folderAncestors.insert(f.parentAccountId().toString() + "/" + f.path());
-#endif
-                    id = f.parentFolderId();
-                }
-                FolderIdSet includeIntersection(_ancestorInclude);
-                includeIntersection.intersect(folderAncestors);
-                FolderIdSet excludeIntersection(_ancestorExclude);
-                excludeIntersection.intersect(folderAncestors);
-                if (!(_ancestorInclude.isEmpty() || !includeIntersection.isEmpty())
-                    || !excludeIntersection.isEmpty()) {
-                    continue;
-                }
-            }
+        if (sFolderMatches(folder, 
+                            _standardFoldersInclude, 
+                            _standardFoldersExclude, 
+                            _parentInclude, 
+                            _parentExclude, 
+                            _ancestorInclude, 
+                            _ancestorExclude)) {
             return folder;
-
-        } else {
-            if (folder) {
-                qWarning() << "MaiFolderIterator::next() Invalid subfolder:" << folder->name();
-            }
         }
     }
 
@@ -196,6 +214,17 @@ MapiStoreIterator::MapiStoreIterator(QList<MapiStorePtr> stores, QSet<QMessageAc
 {
 }
 
+static bool sAccountIdMatches(QMessageAccountId key, 
+                              QSet<QMessageAccountId> accountsInclude, 
+                              QSet<QMessageAccountId> accountsExclude)
+{
+    if ((accountsInclude.isEmpty() || accountsInclude.contains(key))
+        && (accountsExclude.isEmpty() || !accountsExclude.contains(key))) {
+        return true;
+    }
+    return false;
+}
+
 MapiStorePtr MapiStoreIterator::next()
 {
     while (!_stores.isEmpty()) {
@@ -205,10 +234,8 @@ MapiStorePtr MapiStoreIterator::next()
 #else
         QMessageAccountId key(QMessageAccountIdPrivate::from(store->recordKey()));
 #endif
-        if ((_accountsInclude.isEmpty() || _accountsInclude.contains(key))
-            && (_accountsExclude.isEmpty() || !_accountsExclude.contains(key))) {
+        if (sAccountIdMatches(key, _accountsInclude, _accountsExclude))
             return store;
-        }
     }
 
     return MapiStorePtr();
@@ -294,11 +321,13 @@ QMessageFilter QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastE
     return result;
 }
 
-void QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFilter *filter)
+// returns true if filter is modified
+bool QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFilter *filter)
 {
     if (!filter)
-        return;
+        return false;
 
+    // incl only used if filter->d_ptr->field is == *Filter
     QMessageDataComparator::InclusionComparator incl(static_cast<QMessageDataComparator::InclusionComparator>(filter->d_ptr->_comparatorValue));
     bool inclusion(incl == QMessageDataComparator::Includes);
     QMessageFilter result;
@@ -355,27 +384,32 @@ void QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, Mapi
     } else {
         QMessageFilter *l(filter->d_ptr->_left);
         QMessageFilter *r(filter->d_ptr->_right);
-        preprocess(lastError, session, l);
-        preprocess(lastError, session, r);
+        bool modified(false);
+        modified |= preprocess(lastError, session, l);
+        modified |= preprocess(lastError, session, r);
+
         // It's necessary to recombine bool op filters, because the operands may now have non-empty containerFilter parts,
-        // specifically in the case that one of the oreands has a *Filter field.
-        switch (filter->d_ptr->_operator) {
-        case And:
-            *filter = filter->d_ptr->containerFiltersPart() & (*l & *r);
-            break;
-        case Nand:
-            *filter = filter->d_ptr->containerFiltersPart() &  ~(*l & *r);
-            break;
-        case Or:
-            *filter = filter->d_ptr->containerFiltersPart() &  (*l | *r);
-            break;
-        case Nor:
-            *filter = filter->d_ptr->containerFiltersPart() &  ~(*l | *r);
-            break;
+        // specifically in the case that one of the operands has a *Filter field.
+        if (modified) {
+            switch (filter->d_ptr->_operator) {
+            case And:
+                *filter = filter->d_ptr->containerFiltersPart() & (*l & *r);
+                break;
+            case Nand:
+                *filter = filter->d_ptr->containerFiltersPart() &  ~(*l & *r);
+                break;
+            case Or:
+                *filter = filter->d_ptr->containerFiltersPart() &  (*l | *r);
+                break;
+            case Nor:
+                *filter = filter->d_ptr->containerFiltersPart() &  ~(*l | *r);
+                break;
+            }
         }
-        return;
+        return modified;
     }
     *filter = filter->d_ptr->containerFiltersPart() & result; // Must preserve container filters part
+    return true;
 }
 
 bool QMessageFilterPrivate::restrictionPermitted(const QMessageFilter &filter)
@@ -415,7 +449,31 @@ bool QMessageFilterPrivate::isNonMatching(const QMessageFilter &filter)
         && (filter.d_ptr->_operator == QMessageFilterPrivate::Not));
 }
 
-bool QMessageFilterPrivate::matchesMessage(const QMessageFilter &filter, const QMessage &message)
+
+bool QMessageFilterPrivate::matchesMessage(const QMessageFilter &filter, const QMessage &message, MapiStorePtr store)
+{
+    QMessageAccountId accountId(message.parentAccountId());
+    if (!sAccountIdMatches(accountId, filter.d_ptr->_accountsInclude, filter.d_ptr->_accountsExclude))
+        return false;
+
+    QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+    MapiFolderPtr folder(store->openFolder(&ignoredError, QMessageIdPrivate::entryId(message.id())));
+    if (ignoredError != QMessageStore::NoError)
+        return false;
+    if (!sFolderMatches(folder, 
+        filter.d_ptr->_standardFoldersInclude, 
+        filter.d_ptr->_standardFoldersExclude,
+        filter.d_ptr->_parentInclude, 
+        filter.d_ptr->_parentExclude,
+        filter.d_ptr->_ancestorInclude, 
+        filter.d_ptr->_ancestorExclude))
+        return false;
+    return matchesMessageSimple(filter, message);
+}
+
+
+// Simple matchesMessage function, filter must have an empty nonContainerFiltersPart
+bool QMessageFilterPrivate::matchesMessageSimple(const QMessageFilter &filter, const QMessage &message)
 {
     bool negate(false);
     bool result(true);
@@ -444,11 +502,13 @@ bool QMessageFilterPrivate::matchesMessage(const QMessageFilter &filter, const Q
     switch (filter.d_ptr->_operator) {
     case QMessageFilterPrivate::And: // fall through
     case QMessageFilterPrivate::Nand:
-        result = matchesMessage(*filter.d_ptr->_left, message) && matchesMessage(*filter.d_ptr->_right, message);
+        result = matchesMessageSimple(*filter.d_ptr->_left, message) 
+            && matchesMessageSimple(*filter.d_ptr->_right, message);
         break;
     case QMessageFilterPrivate::Nor: // fall through
     case QMessageFilterPrivate::Or:
-        result = matchesMessage(*filter.d_ptr->_left, message) || matchesMessage(*filter.d_ptr->_right, message);
+        result = matchesMessageSimple(*filter.d_ptr->_left, message) 
+            || matchesMessageSimple(*filter.d_ptr->_right, message);
         break;
     case QMessageFilterPrivate::Not: // fall through
     case QMessageFilterPrivate::Identity: {

@@ -885,7 +885,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::start(const QVideoSurface
 
     if (!fragmentProgram) {
         error = QAbstractVideoSurface::UnsupportedFormatError;
-    } else if (!m_program.addShader(QGLShader::FragmentShader, fragmentProgram)) {
+    } else if (!m_program.addShaderFromSourceCode(QGLShader::Fragment, fragmentProgram)) {
         qWarning("QPainterVideoSurface: Shader compile error %s", qPrintable(m_program.log()));
         error = QAbstractVideoSurface::ResourceError;
     } else if(!m_program.link()) {
@@ -942,7 +942,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
             target.right() + 1, target.top()
         };
 
-        m_program.enable();
+        m_program.bind();
 
         if (m_textureCount == 3) {
             glActiveTexture(GL_TEXTURE0);
@@ -977,7 +977,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisable(GL_FRAGMENT_PROGRAM_ARB);
 
-        m_program.disable();
+        m_program.release();
 
         painter->endNativePainting();
     }
@@ -1251,7 +1251,7 @@ void QPainterVideoSurface::setGLContext(QGLContext *context)
             m_shaderTypes |= FragmentProgramShader;
 #endif
 
-        if (QGLShaderProgram::hasShaderPrograms(m_glContext)
+        if (QGLShaderProgram::hasOpenGLShaderPrograms(m_glContext)
                 && extensions.contains("ARB_shader_objects"))
             m_shaderTypes |= GlslShader;
     }

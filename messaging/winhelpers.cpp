@@ -633,6 +633,17 @@ namespace {
         return result;
     }
 
+    ULONG streamSize(QMessageStore::ErrorCode* lastError, IStream* is)
+    {
+        ULONG size = 0;
+        STATSTG stg = { 0 };
+        HRESULT rv = is->Stat(&stg, STATFLAG_NONAME);
+        if(HR_SUCCEEDED(rv))
+            size = stg.cbSize.LowPart;
+        else *lastError = QMessageStore::ContentInaccessible;
+        return size;
+    }
+
     QByteArray readStream(QMessageStore::ErrorCode *lastError, IStream *is)
     {
         QByteArray result;
@@ -706,28 +717,29 @@ namespace {
         return result;
     }
 
-    QByteArray extractPlainText(const QString &rtf)
+#ifndef _WIN32_WCE
+    QByteArray extractPlainText(const QByteArray &rtf)
     {
         // Attempt to extract the HTML from the RTF
         // as per CMapiEx, http://www.codeproject.com/KB/IP/CMapiEx.aspx
         QByteArray text;
 
-        const QString startTag("\\fs20");
+        const QByteArray startTag("\\fs20");
         int index = rtf.indexOf(startTag);
         if (index != -1) {
-            const QString par("\\par");
-            const QString tab("\\tab");
-            const QString li("\\li");
-            const QString fi("\\fi-");
-            const QString pntext("\\pntext");
+            const QByteArray par("\\par");
+            const QByteArray tab("\\tab");
+            const QByteArray li("\\li");
+            const QByteArray fi("\\fi-");
+            const QByteArray pntext("\\pntext");
 
-            const QChar zero = QChar('\0');
-            const QChar space = QChar(' ');
-            const QChar openingBrace = QChar('{');
-            const QChar closingBrace = QChar('}');
-            const QChar ignore[] = { openingBrace, closingBrace, QChar('\r'), QChar('\n') };
+            const char zero = '\0';
+            const char space = ' ';
+            const char openingBrace = '{';
+            const char closingBrace = '}';
+            const char ignore[] = { openingBrace, closingBrace, '\r', '\n' };
 
-            QString::const_iterator rit = rtf.constBegin() + index, rend = rtf.constEnd();
+            QByteArray::const_iterator rit = rtf.constBegin() + index, rend = rtf.constEnd();
             while ((rit != rend) && (*rit != zero)) {
                 if (*rit == ignore[0] || *rit == ignore[1] || *rit == ignore[2] || *rit == ignore[3]) {
                     ++rit;
@@ -736,7 +748,7 @@ namespace {
                     bool skipDigits(false);
                     bool skipSpace(false);
 
-                    const QString remainder(QString::fromRawData(rit, (rend - rit)));
+                    const QByteArray remainder(QByteArray::fromRawData(rit, (rend - rit)));
 
                     if (remainder.startsWith(par)) {
                         rit += par.length();
@@ -754,22 +766,22 @@ namespace {
                         rit += fi.length();
                         skipDigits = true;
                         skipSpace = true;
-                    } else if (remainder.startsWith(QString("\\'"))) {
+                    } else if (remainder.startsWith(QByteArray("\\'"))) {
                         rit += 2;
-                        QString encodedChar(QString::fromRawData(rit, 2));
+                        QByteArray encodedChar(QByteArray::fromRawData(rit, 2));
                         rit += 2;
                         text += char(encodedChar.toUInt(0, 16));
                     } else if (remainder.startsWith(pntext)) {
                         rit += pntext.length();
                         skipSection = true;
-                    } else if (remainder.startsWith(QString("\\{"))) {
+                    } else if (remainder.startsWith(QByteArray("\\{"))) {
                         rit += 2;
                         text += "{";
-                    } else if (remainder.startsWith(QString("\\}"))) {
+                    } else if (remainder.startsWith(QByteArray("\\}"))) {
                         rit += 2;
                         text += "}";
                     } else {
-                        text += char((*rit).unicode());
+                        text += *rit;
                         ++rit;
                     }
 
@@ -779,7 +791,7 @@ namespace {
                         }
                     }
                     if (skipDigits) {
-                        while ((rit != rend) && (*rit).isDigit()) {
+                        while ((rit != rend) && isdigit(*rit)) {
                             ++rit;
                         }
                     }
@@ -795,35 +807,44 @@ namespace {
         return text;
     }
 
-    QString extractHtml(const QString &rtf)
+    int digitValue(char n)
+    {
+        if (n >= '0' && n <= '9') {
+            return (n - '0');
+        }
+
+        return 0;
+    }
+
+    QByteArray extractHtml(const QByteArray &rtf)
     {
         // Attempt to extract the HTML from the RTF
         // as per CMapiEx, http://www.codeproject.com/KB/IP/CMapiEx.aspx
-        QString html;
+        QByteArray html;
 
-        const QString htmltag("\\*\\htmltag");
+        const QByteArray htmltag("\\*\\htmltag");
         int index = rtf.indexOf("<html", Qt::CaseInsensitive);
         if (index == -1) {
             index = rtf.indexOf(htmltag, Qt::CaseInsensitive);
         }
         if (index != -1) {
-            const QString mhtmltag("\\*\\mhtmltag");
-            const QString par("\\par");
-            const QString tab("\\tab");
-            const QString li("\\li");
-            const QString fi("\\fi-");
-            const QString pntext("\\pntext");
-            const QString htmlrtf("\\htmlrtf");
+            const QByteArray mhtmltag("\\*\\mhtmltag");
+            const QByteArray par("\\par");
+            const QByteArray tab("\\tab");
+            const QByteArray li("\\li");
+            const QByteArray fi("\\fi-");
+            const QByteArray pntext("\\pntext");
+            const QByteArray htmlrtf("\\htmlrtf");
 
-            const QChar zero = QChar('\0');
-            const QChar space = QChar(' ');
-            const QChar openingBrace = QChar('{');
-            const QChar closingBrace = QChar('}');
-            const QChar ignore[] = { openingBrace, closingBrace, QChar('\r'), QChar('\n') };
+            const char zero = '\0';
+            const char space = ' ';
+            const char openingBrace = '{';
+            const char closingBrace = '}';
+            const char ignore[] = { openingBrace, closingBrace, '\r', '\n' };
 
             int tagIgnored = -1;
 
-            QString::const_iterator rit = rtf.constBegin() + index, rend = rtf.constEnd();
+            QByteArray::const_iterator rit = rtf.constBegin() + index, rend = rtf.constEnd();
             while ((rit != rend) && (*rit != zero)) {
                 if (*rit == ignore[0] || *rit == ignore[1] || *rit == ignore[2] || *rit == ignore[3]) {
                     ++rit;
@@ -832,14 +853,14 @@ namespace {
                     bool skipDigits(false);
                     bool skipSpace(false);
 
-                    const QString remainder(QString::fromRawData(rit, (rend - rit)));
+                    const QByteArray remainder(QByteArray::fromRawData(rit, (rend - rit)));
 
                     if (remainder.startsWith(htmltag)) {
                         rit += htmltag.length();
 
                         int tagNumber = 0;
-                        while ((*rit).isDigit()) {
-                            tagNumber = (tagNumber * 10) + (*rit).digitValue();
+                        while (isdigit(*rit)) {
+                            tagNumber = (tagNumber * 10) + digitValue(*rit);
                             ++rit;
                         }
                         skipSpace = true;
@@ -852,8 +873,8 @@ namespace {
                         rit += mhtmltag.length();
 
                         int tagNumber = 0;
-                        while ((*rit).isDigit()) {
-                            tagNumber = (tagNumber * 10) + (*rit).digitValue();
+                        while (isdigit(*rit)) {
+                            tagNumber = (tagNumber * 10) + digitValue(*rit);
                             ++rit;
                         }
                         skipSpace = true;
@@ -861,12 +882,12 @@ namespace {
                         tagIgnored = tagNumber;
                     } else if (remainder.startsWith(par)) {
                         rit += par.length();
-                        html += QChar('\r');
-                        html += QChar('\n');
+                        html += char('\r');
+                        html += char('\n');
                         skipSpace = true;
                     } else if (remainder.startsWith(tab)) {
                         rit += tab.length();
-                        html += QChar('\t');
+                        html += char('\t');
                         skipSpace = true;
                     } else if (remainder.startsWith(li)) {
                         rit += li.length();
@@ -876,12 +897,12 @@ namespace {
                         rit += fi.length();
                         skipDigits = true;
                         skipSpace = true;
-                    } else if (remainder.startsWith(QString("\\'"))) {
+                    } else if (remainder.startsWith(QByteArray("\\'"))) {
                         rit += 2;
 
-                        QString encodedChar(QString::fromRawData(rit, 2));
+                        QByteArray encodedChar(QByteArray::fromRawData(rit, 2));
                         rit += 2;
-                        html += QChar(encodedChar.toUInt(0, 16));
+                        html += char(encodedChar.toUInt(0, 16));
                     } else if (remainder.startsWith(pntext)) {
                         rit += pntext.length();
                         skipSection = true;
@@ -889,7 +910,7 @@ namespace {
                         rit += htmlrtf.length();
 
                         // Find the terminating tag
-                        const QString terminator("\\htmlrtf0");
+                        const QByteArray terminator("\\htmlrtf0");
                         int index = remainder.indexOf(terminator, htmlrtf.length());
                         if (index == -1) {
                             rit = rend;
@@ -897,10 +918,10 @@ namespace {
                             rit += (index + terminator.length() - htmlrtf.length());
                             skipSpace = true;
                         }
-                    } else if (remainder.startsWith(QString("\\{"))) {
+                    } else if (remainder.startsWith(QByteArray("\\{"))) {
                         rit += 2;
                         html += openingBrace;
-                    } else if (remainder.startsWith(QString("\\}"))) {
+                    } else if (remainder.startsWith(QByteArray("\\}"))) {
                         rit += 2;
                         html += closingBrace;
                     } else {
@@ -914,7 +935,7 @@ namespace {
                         }
                     }
                     if (skipDigits) {
-                        while ((rit != rend) && (*rit).isDigit()) {
+                        while ((rit != rend) && isdigit(*rit)) {
                             ++rit;
                         }
                     }
@@ -929,6 +950,7 @@ namespace {
 
         return html;
     }
+#endif
 
     void storeMessageProperties(QMessageStore::ErrorCode *lastError, const QMessage &source, IMessage *message)
     {
@@ -1111,10 +1133,10 @@ namespace {
         // Remove any preexisting body elements
 #ifndef _WIN32_WCE
         SizedSPropTagArray(2, props) = {2, {PR_BODY, PR_RTF_COMPRESSED}};
-#elif(_WIN32_WCE >= 0x600)
-            SizedSPropTagArray(2, props) = {2, {PR_BODY_HTML_A, PR_BODY_W}};
+#elif(_WIN32_WCE > 0x501)
+        SizedSPropTagArray(2, props) = {2, {PR_BODY_HTML_A, PR_BODY_W}};
 #else
-            SizedSPropTagArray(2, props) = {2, {PR_BODY, PR_BODY_W}};
+        SizedSPropTagArray(2, props) = {2, {PR_BODY, PR_BODY_W}};
 #endif
         HRESULT rv = message->DeleteProps(reinterpret_cast<LPSPropTagArray>(&props), 0);
 #ifdef _WIN32_WCE
@@ -1144,9 +1166,10 @@ namespace {
 
                 if (subType == "html") {
                     IStream *os(0);
-#if(_WIN32_WCE >= 0x600)
+#if(_WIN32_WCE > 0x501)
                     HRESULT rv = message->OpenProperty(PR_BODY_HTML_A, 0, STGM_WRITE, MAPI_MODIFY | MAPI_CREATE,(LPUNKNOWN*)&os);
 #else
+                    // TODO: If we store the HTML in the body property, how do we know that it is HTML on extraction?
                     HRESULT rv = message->OpenProperty(PR_BODY, 0, STGM_WRITE, MAPI_MODIFY | MAPI_CREATE,(LPUNKNOWN*)&os);
 #endif
                     if (HR_SUCCEEDED(rv)) {
@@ -1676,8 +1699,8 @@ namespace WinHelpers {
                 mapiRelease(associations);
             }
 #elif  !defined(_WIN32_WCE) && (_MSC_VER<1500)
-	    //TODO Windows 2005 and 2003 don't have IID_PPV_ARGS.
-	    //find alternative
+            //TODO Windows 2005 and 2003 don't have IID_PPV_ARGS.
+            //find alternative
 #else
             // Find any registry entry for this extension
             HKEY key = { 0 };
@@ -2008,7 +2031,7 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
                                 FreeProws(rows);
 
                                 if (QMessageFilterPrivate::matchesMessageRequired(filter)
-                                    && !QMessageFilterPrivate::matchesMessage(filter, QMessage(id)))
+                                    && !QMessageFilterPrivate::matchesMessageSimple(filter, QMessage(id)))
                                     continue;
                                 result.append(id);
                                 if (limit) {
@@ -3855,13 +3878,13 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
 #ifdef _WIN32_WCE
                         if (prop.Value.l & MSGSTATUS_HAS_PR_BODY) {
                             msg->d_ptr->_contentFormat = EDITOR_FORMAT_PLAINTEXT;
-#if(_WIN32_WCE >= 0x600)
+#if(_WIN32_WCE > 0x501)
                         } else if (prop.Value.l & MSGSTATUS_HAS_PR_BODY_HTML) {
                             msg->d_ptr->_contentFormat = EDITOR_FORMAT_HTML;
 #endif
                         } else if (prop.Value.l & MSGSTATUS_HAS_PR_CE_MIME_TEXT) {
                             // TODO...
-                            // This is how MS proivders store HTML, as per http://msdn.microsoft.com/en-us/library/bb446140.aspx
+                            // This is how MS providers store HTML, as per http://msdn.microsoft.com/en-us/library/bb446140.aspx
                         }
 #endif
                         break;
@@ -4072,52 +4095,75 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
         MapiStorePtr store;
         IMessage *message = openMapiMessage(lastError, msg->id(), &store);
         if (*lastError == QMessageStore::NoError) {
-
             //SMS body stored in subject on CEMAPI
-            if(store->types() & QMessage::Sms)
-            {
+            if (store->types() & QMessage::Sms) {
                 messageBody.append(reinterpret_cast<const char*>(msg->subject().utf16()),msg->subject().count()*sizeof(quint16));
                 bodySubType = "plain";
-            }
-            else
-            {
+            } else {
                 IStream *is(0);
+                bool asciiData(false);
                 LONG contentFormat(msg->d_ptr->_contentFormat);
 
                 if (contentFormat == EDITOR_FORMAT_DONTKNOW) {
+#ifdef _WIN32_WCE
+                    // TODO: Attempt to read MIME text first
+#else
                     // Attempt to read HTML first
                     contentFormat = EDITOR_FORMAT_HTML;
+#endif
                 }
-
                 if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
-                    HRESULT rv = message->OpenProperty(PR_BODY, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
-                    if (HR_SUCCEEDED(rv)) {
-                        messageBody = readStream(lastError, is);
-                        bodySubType = "plain";
+#ifdef _WIN32_WCE
+                    ULONG tags[] = { PR_BODY, PR_BODY_W, PR_BODY_A };
+#else
+                    ULONG tags[] = { PR_BODY };
+#endif
+                    const int n = sizeof(tags)/sizeof(tags[0]);
+                    for (int i = 0; i < n; ++i) {
+                        HRESULT rv = message->OpenProperty(tags[i], &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+                        if (HR_SUCCEEDED(rv)) {
+                            messageBody = readStream(lastError, is);
+                            bodySubType = "plain";
+                            if (i == 2) {
+                                asciiData = true;
+                            }
+                            break;
+                        } 
+                    }
+                    if (messageBody.isEmpty()) {
+                        qWarning() << "Unable to open PR_BODY!";
                     }
                 } else if (contentFormat == EDITOR_FORMAT_HTML) {
                     // See if there is a body HTML property
-    #ifndef _WIN32_WCE
-                    ULONG bodyProperty(PR_BODY_HTML);
-    #elif(_WIN32_WCE >= 0x600)
                     // Correct variants discussed at http://blogs.msdn.com/raffael/archive/2008/09/08/mapi-on-windows-mobile-6-programmatically-retrieve-mail-body-sample-code.aspx
-                    ULONG bodyProperty(PR_BODY_HTML_A);
-    #else
-                    ULONG bodyProperty(PR_BODY);
-    #endif
-                    HRESULT rv = message->OpenProperty(bodyProperty, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
-                    if (HR_SUCCEEDED(rv)) {
-                        messageBody = readStream(lastError, is);
-                        bodySubType = "html";
-
-    #ifdef _WIN32_WCE
-                        // Encode the ASCII text into UTF-16
-                        messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(decodeContent(messageBody, "Latin-1"));
-    #endif
+#ifdef _WIN32_WCE
+                    ULONG tags[] = { PR_BODY_HTML, PR_BODY_HTML_W, PR_BODY_HTML_A };
+#else
+                    ULONG tags[] = { PR_BODY_HTML };
+#endif
+                    const int n = sizeof(tags)/sizeof(tags[0]);
+                    for (int i = 0; i < n; ++i) {
+                        HRESULT rv = message->OpenProperty(tags[i], &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+                        if (HR_SUCCEEDED(rv)) {
+                            messageBody = readStream(lastError, is);
+                            bodySubType = "html";
+                            if (i == 2) {
+                                asciiData = true;
+                            }
+                            break;
+                        }
+                    }
+                    if (messageBody.isEmpty()) {
+#ifdef _WIN32_WCE
+                        qWarning() << "Unable to open PR_BODY_HTML!";
+#else
+                        // We couldn't get HTML; try RTF
+                        contentFormat = EDITOR_FORMAT_DONTKNOW;
+#endif
                     }
                 }
 
-    #ifndef _WIN32_WCE // RTF not supported
+#ifndef _WIN32_WCE // RTF not supported
                 if (bodySubType.isEmpty()) {
                     if (!msg->d_ptr->_rtfInSync) {
                         // See if we need to sync the RTF
@@ -4150,10 +4196,13 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
 
                             decompressor->Release();
 
+                            // RTF is stored in ASCII
+                            asciiData = true;
+
                             if (contentFormat == EDITOR_FORMAT_DONTKNOW) {
                                 // Inspect the message content to see if we can tell what is in it
-                                QString initialText = decodeContent(messageBody, "utf-16", 256);
-                                if (!initialText.isEmpty()) {
+                                if (!messageBody.isEmpty()) {
+                                    QByteArray initialText(messageBody.left(256));
                                     if (initialText.indexOf("\\fromtext") != -1) {
                                         // This message originally contained text
                                         contentFormat = EDITOR_FORMAT_PLAINTEXT;
@@ -4164,6 +4213,7 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                                         if (HR_SUCCEEDED(rv)) {
                                             messageBody = readStream(lastError, ts);
                                             bodySubType = "plain";
+											asciiData = false;
 
                                             ts->Release();
                                         } else {
@@ -4178,18 +4228,15 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
 
                             if (bodySubType.isEmpty()) {
                                 if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
-                                    messageBody = extractPlainText(decodeContent(messageBody, "utf-16"));
+                                    messageBody = extractPlainText(messageBody);
                                     bodySubType = "plain";
                                 } else if (contentFormat == EDITOR_FORMAT_HTML) {
-                                    QString html = extractHtml(decodeContent(messageBody, "utf-16"));
-                                    messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(html.constData(), html.length());
+                                    messageBody = extractHtml(messageBody);
                                     bodySubType = "html";
+                                } else {
+                                    // I guess we must just have RTF
+                                    bodySubType = "rtf";
                                 }
-                            }
-
-                            if (bodySubType.isEmpty()) {
-                                // I guess we must have RTF
-                                bodySubType = "rtf";
                             }
                         } else {
                             *lastError = QMessageStore::ContentInaccessible;
@@ -4200,23 +4247,42 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                         bodySubType = "unknown";
                     }
                 }
-    #endif
+#endif
+
                 mapiRelease(is);
+
+                if (asciiData) {
+                    // Convert the ASCII content back to UTF-16
+                    messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(decodeContent(messageBody, "Latin-1"));
+                }
             }
 
             if (*lastError == QMessageStore::NoError) {
                 QMessageContentContainerPrivate *messageContainer(((QMessageContentContainer *)(msg))->d_ptr);
 
+                bool bodyDownloaded = true;
+#ifdef _WIN32_WCE
+                ULONG status = 0;
+                if(getMapiProperty(message,PR_MSG_STATUS,&status)) {
+                    bodyDownloaded = !((status & MSGSTATUS_HEADERONLY) || (status & MSGSTATUS_PARTIAL));
+                }
+#else
+                //TODO windows
+#endif
+
                 if (!msg->d_ptr->_hasAttachments) {
                     // Make the body the entire content of the message
                     messageContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
                     msg->d_ptr->_bodyId = QMessageContentContainerPrivate::bodyContentId();
+                    messageContainer->_available = bodyDownloaded;
+
                 } else {
                     // Add the message body data as the first part
                     QMessageContentContainer bodyPart;
                     {
                         QMessageContentContainerPrivate *bodyContainer(((QMessageContentContainer *)(&bodyPart))->d_ptr);
                         bodyContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
+                        bodyContainer->_available = bodyDownloaded;
                     }
 
                     messageContainer->setContentType(QByteArray("multipart"), QByteArray("mixed"), QByteArray());
@@ -4337,6 +4403,7 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
 
                             container->_name = filename.toAscii();
                             container->_size = size;
+                            container->_available = haveAttachmentData(lastError,msg->id(),number);
 
                             attachments[number] = attachment;
                         }
@@ -4373,6 +4440,33 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
 
     return result;
 }
+
+bool MapiSession::haveAttachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const
+{
+    bool result = false;
+
+    IMessage *message = openMapiMessage(lastError, id);
+    if (*lastError == QMessageStore::NoError) {
+        LPATTACH attachment(0);
+        HRESULT rv = message->OpenAttach(number, 0, 0, &attachment);
+        if (HR_SUCCEEDED(rv)) {
+            IStream *is(0);
+            rv = attachment->OpenProperty(PR_ATTACH_DATA_BIN, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+            if (HR_SUCCEEDED(rv)) {
+                result = streamSize(lastError, is) > 0;
+                mapiRelease(is);
+            }
+            mapiRelease(attachment);
+        } else {
+            qWarning() << "Unable to open attachment:" << number;
+        }
+
+        mapiRelease(message);
+    }
+
+    return result;
+}
+
 
 QByteArray MapiSession::attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const
 {
@@ -4606,6 +4700,7 @@ void MapiSession::notify(MapiStore *store, const QMessageId &id, MapiSession::No
     for ( ; it != end; ++it) {
         const QMessageFilter &filter(it.value());
 
+#if 1
         QSet<QMessageId> filteredIds;
         if (!filter.isEmpty()) {
             // Empty filter matches all messages; otherwise get the filtered set
@@ -4615,6 +4710,23 @@ void MapiSession::notify(MapiStore *store, const QMessageId &id, MapiSession::No
         if (filter.isEmpty() || filteredIds.contains(id)) {
             matchingFilterIds.insert(it.key());
         }
+#else // TODO: test this alternative logic
+        if (!filter.isSupported())
+            continue;
+
+        QMessageStore::ErrorCode ignoredError;
+        QMessageFilter processedFilter(QMessageFilterPrivate::preprocess(&ignoredError, _self.toStrongRef(), filter));
+        if (ignoredError != QMessageStore::NoError)
+            continue;
+
+        QMessage message(id);
+        foreach (QMessageFilter subfilter, QMessageFilterPrivate::subfilters(processedFilter)) {
+            if (QMessageFilterPrivate::matchesMessage(filter, message, MapiStorePtr(store))) {
+                matchingFilterIds.insert(it.key());
+                break; // subfilters are or'd together
+            }
+        }
+#endif
     }
 
     if (!matchingFilterIds.isEmpty()) {

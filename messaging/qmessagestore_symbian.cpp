@@ -38,41 +38,117 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessagestore.h"
-#include "qmessagestore_p.h"
+#include "qmessagestore_symbian_p.h"
+#include "qmtmengine_symbian_p.h"
 
-class QMessageStorePrivatePlatform
-{
-public:
-    QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q)
-        :d_ptr(d), q_ptr(q) {}
-    QMessageStorePrivate *d_ptr;
-    QMessageStore *q_ptr;
-    //...
-};
+#include <QString>
+
+Q_GLOBAL_STATIC(QMessageStorePrivate,messageStorePrivate);
 
 QMessageStorePrivate::QMessageStorePrivate()
-    :q_ptr(0),
-     p_ptr(0)
+  : q_ptr(0),
+    _mtmEngine(0),
+    _error(QMessageStore::NoError)
 {
 }
 
 QMessageStorePrivate::~QMessageStorePrivate()
 {
-    delete p_ptr;
 }
 
 void QMessageStorePrivate::initialize(QMessageStore *store)
 {
     q_ptr = store;
-    p_ptr = new QMessageStorePrivatePlatform(this, store);
+    _mtmEngine = CMTMEngine::instance();
 }
 
-Q_GLOBAL_STATIC(QMessageStorePrivate,data);
+QMessageAccountIdList QMessageStorePrivate::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset) const
+{
+    return _mtmEngine->queryAccounts(filter, ordering, limit, offset);
+}
+
+int QMessageStorePrivate::countAccounts(const QMessageAccountFilter &filter) const
+{
+    return _mtmEngine->countAccounts(filter);
+}
+
+#ifdef QMESSAGING_OPTIONAL_FOLDER
+QMessageFolderIdList QMessageStorePrivate::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset) const
+{
+    return _mtmEngine->queryFolders(filter, ordering, limit, offset);
+}
+
+int QMessageStorePrivate::countFolders(const QMessageFolderFilter& filter) const
+{
+    return _mtmEngine->countFolders(filter);
+}
+
+QMessageFolder QMessageStorePrivate::folder(const QMessageFolderId& id) const
+{
+    return _mtmEngine->folder(id);
+}
+#endif
+
+
+bool QMessageStorePrivate::addMessage(QMessage *m)
+{
+    return _mtmEngine->addMessage(m);
+}
+
+bool QMessageStorePrivate::updateMessage(QMessage *m)
+{
+    return _mtmEngine->updateMessage(m);
+}
+
+bool QMessageStorePrivate::removeMessage(const QMessageId &id, QMessageStore::RemovalOption option)
+{
+    return _mtmEngine->removeMessage(id, option);
+}
+
+bool QMessageStorePrivate::removeMessages(const QMessageFilter &filter, QMessageStore::RemovalOption option)
+{
+    return _mtmEngine->removeMessages(filter, option);
+}
+
+QMessage QMessageStorePrivate::message(const QMessageId& id) const
+{
+    return _mtmEngine->message(id);
+}
+
+QMessageAccount QMessageStorePrivate::account(const QMessageAccountId &id) const
+{
+    return _mtmEngine->account(id);
+}
+
+QMessageStore::NotificationFilterId QMessageStorePrivate::registerNotificationFilter(const QMessageFilter &filter)
+{
+    return _mtmEngine->registerNotificationFilter(*this, filter);
+}
+
+void QMessageStorePrivate::unregisterNotificationFilter(QMessageStore::NotificationFilterId notificationFilterId)
+{
+    _mtmEngine->unregisterNotificationFilter(notificationFilterId);    
+}
+
+void QMessageStorePrivate::messageNotification(QMessageStorePrivate::NotificationType type, const QMessageId& id,
+                                               const QMessageStore::NotificationFilterIdSet &matchingFilters)
+{
+    switch (type) {
+        case Added:
+            emit q_ptr->messageAdded(id, matchingFilters);
+            break;
+        case Updated:
+            emit q_ptr->messageUpdated(id, matchingFilters);
+            break;
+        case Removed:
+            emit q_ptr->messageRemoved(id, matchingFilters);
+            break;
+    }
+}
 
 QMessageStore::QMessageStore(QObject *parent)
     : QObject(parent),
-      d_ptr(data())
+      d_ptr(messageStorePrivate())
 {
     Q_ASSERT(d_ptr != 0);
     Q_ASSERT(d_ptr->q_ptr == 0); // QMessageStore should be singleton
@@ -86,10 +162,10 @@ QMessageStore::~QMessageStore()
 
 QMessageStore* QMessageStore::instance()
 {
-    QMessageStorePrivate *d = data();
+    QMessageStorePrivate *d = messageStorePrivate();
     Q_ASSERT(d != 0);
     if (!d->q_ptr)
-        d->initialize(new QMessageStore());
+        new QMessageStore();
     return d->q_ptr;
 }
 
@@ -121,21 +197,13 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset) const
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(ordering)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
-    return QMessageFolderIdList(); // stub
+    return messageStorePrivate()->queryFolders(filter, ordering, limit, offset);
 }
 #endif
 
 QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset) const
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(ordering)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
-    return QMessageAccountIdList(); // stub
+    return messageStorePrivate()->queryAccounts(filter, ordering, limit, offset);
 }
 
 int QMessageStore::countMessages(const QMessageFilter& filter) const
@@ -147,15 +215,13 @@ int QMessageStore::countMessages(const QMessageFilter& filter) const
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 int QMessageStore::countFolders(const QMessageFolderFilter& filter) const
 {
-    Q_UNUSED(filter)
-    return 0; // stub
+    return messageStorePrivate()->countFolders(filter);
 }
 #endif
 
 int QMessageStore::countAccounts(const QMessageAccountFilter& filter) const
 {
-    Q_UNUSED(filter)
-    return 0; // stub
+    return messageStorePrivate()->countAccounts(filter);
 }
 
 bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
@@ -174,44 +240,38 @@ bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageStore::
 
 bool QMessageStore::addMessage(QMessage *m)
 {
-    Q_UNUSED(m)
-    return true; // stub
+    return messageStorePrivate()->addMessage(m);   	
 }
 
 bool QMessageStore::updateMessage(QMessage *m)
 {
-    Q_UNUSED(m)
-    return true; // stub
+	return messageStorePrivate()->updateMessage(m);
 }
 
 QMessage QMessageStore::message(const QMessageId& id) const
 {
-    Q_UNUSED(id)
-    return QMessage(); // stub
+    return messageStorePrivate()->message(id);
 }
 
 #ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
 {
-    Q_UNUSED(id)
-    return QMessageFolder(); // stub
+    return messageStorePrivate()->folder(id);
 }
 #endif
 
 QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 {
-    Q_UNUSED(id)
-    return QMessageAccount(); // stub
+    return messageStorePrivate()->account(id);
 }
 
 QMessageStore::NotificationFilterId QMessageStore::registerNotificationFilter(const QMessageFilter &filter)
 {
-    Q_UNUSED(filter)
-    return 0; // stub
+    return messageStorePrivate()->registerNotificationFilter(filter);
 }
 
-void QMessageStore::unregisterNotificationFilter(NotificationFilterId notificationFilterId)
+void QMessageStore::unregisterNotificationFilter(QMessageStore::NotificationFilterId notificationFilterId)
 {
-    Q_UNUSED(notificationFilterId)
+    messageStorePrivate()->unregisterNotificationFilter(notificationFilterId);
 }
 

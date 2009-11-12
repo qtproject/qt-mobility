@@ -38,38 +38,113 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <smsclnt.h>
+#include <smuthdr.h>        // CSmsHeader
+#include <rsendas.h>
+#include <rsendasmessage.h>
+#include <f32file.h>
+#include <mmsconst.h>
+#include <utf.h>            // CnvUtfConverter
+
 #include "qmessageserviceaction.h"
+#include "qmessageserviceaction_symbian_p.h"
+#include "qmtmengine_symbian_p.h"
+
+QMessageServiceActionPrivate::QMessageServiceActionPrivate(QMessageServiceAction* parent)
+ : q_ptr(0),
+ _state(QMessageServiceAction::Pending)
+{
+	Q_UNUSED(parent);
+}
+      
+QMessageServiceActionPrivate::~QMessageServiceActionPrivate()
+{
+}
+
+bool QMessageServiceActionPrivate::sendSMS(QMessage &message)
+{
+	return  CMTMEngine::instance()->sendSMS(message);
+}
+
+bool QMessageServiceActionPrivate::sendMMS(QMessage &message)
+{
+	CMTMEngine* mtmEngine = CMTMEngine::instance();
+	bool retVal = mtmEngine->storeMMS(message, KMsvGlobalOutBoxIndexEntryId);
+	if (retVal){
+		mtmEngine->sendMMS();
+	}
+	return retVal;
+}
+
+bool QMessageServiceActionPrivate::sendEmail(QMessage &message)
+{
+	CMTMEngine* mtmEngine = CMTMEngine::instance();
+	bool retVal = mtmEngine->storeEmail(message, KMsvGlobalOutBoxIndexEntryId);
+	if (retVal){
+		mtmEngine->sendEmail(message);
+	}
+	return retVal;
+}
+
+bool QMessageServiceActionPrivate::show(const QMessageId& id)
+{
+	return CMTMEngine::instance()->showMessage(id);
+}
+
+bool QMessageServiceActionPrivate::compose(const QMessage &message)
+{
+	return CMTMEngine::instance()->composeMessage(message);
+}
+
+bool QMessageServiceActionPrivate::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
+{
+    return CMTMEngine::instance()->queryMessages((QMessageServiceActionPrivate&)*this, filter, ordering, limit, offset);
+}
+
+bool QMessageServiceActionPrivate::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
+{
+    return CMTMEngine::instance()->queryMessages((QMessageServiceActionPrivate&)*this, filter, body, options, ordering, limit, offset);
+}
+
+bool QMessageServiceActionPrivate::retrieve(const QMessageContentContainerId& id)
+{
+	return CMTMEngine::instance()->retrieve(id);
+}
+
+bool QMessageServiceActionPrivate::retrieveBody(const QMessageId& id)
+{
+	return CMTMEngine::instance()->retrieveBody(id);
+}
+
+bool QMessageServiceActionPrivate::retrieveHeader(const QMessageId& id)
+{
+	return CMTMEngine::instance()->retrieveHeader(id);
+}
 
 QMessageServiceAction::QMessageServiceAction(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+    d_ptr(new QMessageServiceActionPrivate(this))
 {
+	connect(d_ptr, SIGNAL(stateChanged(QMessageServiceAction::State)), this, SIGNAL(stateChanged(QMessageServiceAction::State)));
+	connect(d_ptr, SIGNAL(messagesFound(const QMessageIdList&)), this, SIGNAL(messagesFound(const QMessageIdList&)));
+	connect(d_ptr, SIGNAL(progressChanged(uint, uint)), this, SIGNAL(progressChanged(uint, uint)));
 }
 
 QMessageServiceAction::~QMessageServiceAction()
 {
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
+bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset)
 {
-    Q_UNUSED(filter);
-    Q_UNUSED(ordering);
-    Q_UNUSED(limit);
-    Q_UNUSED(offset);
-    return false; // stub
+    return d_ptr->queryMessages(filter, ordering, limit, offset);
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
+bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset)
 {
-    Q_UNUSED(filter);
-    Q_UNUSED(body);
-    Q_UNUSED(options);
-    Q_UNUSED(ordering);
-    Q_UNUSED(limit);
-    Q_UNUSED(offset);
-    return false; // stub
+    return d_ptr->queryMessages(filter, body, options, ordering, limit, offset);
 }
 
-bool QMessageServiceAction::countMessages(const QMessageFilter &filter) const
+bool QMessageServiceAction::countMessages(const QMessageFilter &filter)
 {
     Q_UNUSED(filter);
     return false;
@@ -77,38 +152,71 @@ bool QMessageServiceAction::countMessages(const QMessageFilter &filter) const
 
 bool QMessageServiceAction::send(QMessage &message)
 {
-    Q_UNUSED(message)
-    return false; // stub
+    bool retVal = true;	
+    
+    d_ptr->_state = QMessageServiceAction::InProgress;
+    emit stateChanged(d_ptr->_state);
+    
+    if (message.type() == QMessage::NoType){
+		QMessageAccount account = QMessageAccount(message.parentAccountId());
+		QMessage::TypeFlags types = account.messageTypes();
+		if (types == QMessage::Email){
+			message.setType(QMessage::Email);
+		}
+		else if (types == QMessage::Mms){
+			message.setType(QMessage::Mms);
+		}
+		if (types == QMessage::Sms){
+			message.setType(QMessage::Sms);
+		}
+    } 
+    
+    if (message.type() == QMessage::Sms) {
+        retVal = d_ptr->sendSMS(message);
+    } else if (message.type() == QMessage::Mms) {
+        retVal = d_ptr->sendMMS(message);
+    } else if (message.type() == QMessage::Email) {
+		retVal = d_ptr->sendEmail(message);
+    }
+    
+    d_ptr->_state = retVal ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
+    emit stateChanged(d_ptr->_state);
+    
+    return retVal;
 }
 
 bool QMessageServiceAction::compose(const QMessage &message)
 {
-    Q_UNUSED(message)
-    return false; // stub
+	bool retVal = true;
+	d_ptr->_state = QMessageServiceAction::InProgress;
+	emit stateChanged(d_ptr->_state);
+	
+	retVal = d_ptr->compose(message);
+	
+    d_ptr->_state = retVal ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
+    emit stateChanged(d_ptr->_state);
+    
+    return retVal;
 }
 
 bool QMessageServiceAction::retrieveHeader(const QMessageId& id)
 {
-    Q_UNUSED(id)
-    return false; // stub
+	return d_ptr->retrieveHeader(id);
 }
 
 bool QMessageServiceAction::retrieveBody(const QMessageId& id)
 {
-    Q_UNUSED(id)
-    return false; // stub
+	return d_ptr->retrieveBody(id);
 }
 
 bool QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
 {
-    Q_UNUSED(id)
-    return false; // stub
+	return d_ptr->retrieve(id);
 }
 
 bool QMessageServiceAction::show(const QMessageId& id)
 {
-    Q_UNUSED(id)
-    return false; // stub
+    return d_ptr->show(id);
 }
 
 bool QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
