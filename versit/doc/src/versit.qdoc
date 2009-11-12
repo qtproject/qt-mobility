@@ -101,8 +101,6 @@ This section provides some examples of common usage of the API.
     file which is passed as an QIODevice argument to snippet function name generateContact(QIODevice&)
     This function will return one or more QContact based on the input VCard file.It exposes the usage
     of QVersitReader,QVersitContactImporter and QVersitDocument.
-	
-    \snippet snippets/qversitdocsample/qversitdocsample.cpp Generate QContact from VCard file
 
 \section2 Generating VCard file from QContact
 
@@ -111,8 +109,6 @@ This section provides some examples of common usage of the API.
     and converts QContactDetails into QVersitDocument. Later QVersitDocument is passed to
     QVersitWriter which writes this information into QIODevice which is here nothing but a file.
     This example snippet shows the usage of QVersitWriter,QVersitContactExporter and QVersitDocument.
-	
-    \snippet snippets/qversitdocsample/qversitdocsample.cpp Generate VCard file from QContact 
 
 \section2 Generating VCard file from QContact and save to contact database
 
@@ -122,8 +118,6 @@ This section provides some examples of common usage of the API.
     details to contact database by using QContactManager.It exposes the usage
     of QVersitReader,QVersitContactImporter,QVersitDocument and QContactManager.
 	
-    \snippet snippets/qversitdocsample/qversitdocsample.cpp Generate QContact from VCard file and save to contact database 
-
 
 \section1 Building and compiling
 
@@ -153,15 +147,4 @@ To build the library, run \tt qmake and \tt make.
     Also scaling the image is time consuming operation and does asynchrous operation. When scaling needed
     QVersitContactExporter emits a signal scale along with file name of the image and image content which needs
     to be scaled. For example by writing a below line of code the client can achieve its own scaling functionalities
-
-
-        \snippet snippets/qversitdocsample/qversitdocsample.cpp Scaling Example Snippet
-
-
-        \snippet snippets/qversitdocsample/qversitdocsample.cpp Scaling callback implementation
-
-\section2 Examples
-\list
-    \o \l{Sample Versit Example}{versittest}
-\endlist
 */

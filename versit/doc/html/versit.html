@@ -25,7 +25,6 @@
 <li><a href="#reference-documentation">Reference documentation</a></li>
 <ul><li><a href="#main-classes">Main classes</a></li>
 <li><a href="#asynchronous-requests">Asynchronous Requests</a></li>
-<li><a href="#examples">Examples</a></li>
 </ul>
 </ul>
 <a name="introduction"></a>
@@ -44,85 +43,12 @@
 <a name="generating-qcontact-from-vcard-file"></a>
 <h3>Generating QContact from VCard file</h3>
 <p>Purpose of this example snippet code is to generate QContact from VCard 2.1 formatted file which is passed as an <a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> argument to snippet function name generateContact(<a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a>&amp;) This function will return one or more QContact based on the input VCard file.It exposes the usage of <a href="qversitreader.html">QVersitReader</a>,<a href="qversitcontactimporter.html">QVersitContactImporter</a> and <a href="qversitdocument.html">QVersitDocument</a>.</p>
-<pre>    QList&lt;QContact&gt; VersitDocSample::generateContact(QIODevice&amp; in)
-    {
-       <span class="comment">// Seek beginning of the file</span>
-       in.seek(0);
-       <span class="comment">// Create versit reader and read the vcard file content</span>
-       QVersitReader* reader = new QVersitReader;
-       reader-&gt;setDevice(&amp;in);
-       reader-&gt;readAll();
-       <span class="comment">// Get list of QVersitDocument from reader</span>
-       QList&lt;QVersitDocument&gt; documents = reader-&gt;result();
-       <span class="comment">// Create QVersitContactImporter to convert QVersitDocument into QContact</span>
-       QVersitContactImporter importer;
-       <span class="comment">// Generate contact from each document</span>
-       QList&lt;QContact&gt; contacts;
-       foreach (QVersitDocument document, documents) {
-                <span class="comment">// VCard may have image and audio ( Like LOGO,RINGTONE etc)</span>
-                <span class="comment">// Configure the storage location of this content</span>
-            importer.setImagePath(QString::fromAscii(&quot;/images/&quot;));
-            importer.setAudioClipPath(QString::fromAscii(&quot;/audio/&quot;));
-            <span class="comment">// Converts QVersitDocument into QContact</span>
-            QContact contact = importer.importContact(document);
-            <span class="comment">// Append contact to contact List</span>
-            contacts.append(contact);
-        }
-        delete reader;
-        return contacts;
-    }</pre>
 <a name="generating-vcard-file-from-qcontact"></a>
 <h3>Generating VCard file from QContact</h3>
 <p>Purpose of this example snippet code is to encode QContact into VCard 2.1 format and write into file. Function named generateVCard(QContact&amp;) takes QContact as a reference argument and converts QContactDetails into <a href="qversitdocument.html">QVersitDocument</a>. Later <a href="qversitdocument.html">QVersitDocument</a> is passed to <a href="qversitwriter.html">QVersitWriter</a> which writes this information into <a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> which is here nothing but a file. This example snippet shows the usage of <a href="qversitwriter.html">QVersitWriter</a>,<a href="qversitcontactexporter.html">QVersitContactExporter</a> and <a href="qversitdocument.html">QVersitDocument</a>.</p>
-<pre>    void VersitDocSample::generateVCard(QContact&amp; contact)
-    {
-        <span class="comment">// Create versit writer</span>
-        QVersitWriter* writer = new QVersitWriter;
-        <span class="comment">// Create file and set to writer</span>
-        QFile out(&quot;testvcard_2.1-vcf&quot;);
-        out.open(QIODevice::ReadWrite);
-        writer-&gt;setDevice(&amp;out);
-        <span class="comment">// Create QVersitContactExporter to convert QContact into QVersitDocument</span>
-        //! [Scaling Example Snippet]
-        QVersitContactExporter exporter;
-        connect(&amp;exporter, SIGNAL(scale(const QString&amp;,QByteArray&amp;)),
-                0, SLOT(scale(const QString&amp;,QByteArray&amp;)));
-        //! [Scaling Example Snippet]
-        <span class="comment">// Create versit document</span>
-        QVersitDocument document = exporter.exportContact(contact,QVersitDocument::VCard21);
-        <span class="comment">// Encode and write to output file</span>
-        writer-&gt;setVersitDocument(document);
-        writer-&gt;writeAll();
-    }</pre>
 <a name="generating-vcard-file-from-qcontact-and-save-to-contact-database"></a>
 <h3>Generating VCard file from QContact and save to contact database</h3>
 <p>Purpose of this example snippet code is to generate QContact from VCard 2.1 formatted file which is passed as an <a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> argument to snippet function name generateContact(<a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a>&amp;) This function will generate one or more QContact based on the input VCard file and writes this contact details to contact database by using QContactManager.It exposes the usage of <a href="qversitreader.html">QVersitReader</a>,<a href="qversitcontactimporter.html">QVersitContactImporter</a>,<a href="qversitdocument.html">QVersitDocument</a> and QContactManager.</p>
-<pre>    void VersitDocSample::generateAndSaveContact(QFile&amp; in)
-    {
-       <span class="comment">// Seek beginning of the file</span>
-       in.seek(0);
-       <span class="comment">// Create versit reader and read the vcard file content</span>
-       QVersitReader* reader = new QVersitReader;
-       reader-&gt;setDevice(&amp;in);
-       reader-&gt;readAll();
-       <span class="comment">// Get list of QVersitDocument from reader</span>
-       QList&lt;QVersitDocument&gt; documents = reader-&gt;result();
-       <span class="comment">// Create QVersitContactImporter to convert QVersitDocument into QContact</span>
-       QVersitContactImporter importer;
-       <span class="comment">// Generate contact from each document</span>
-       foreach (QVersitDocument document, documents) {
-            <span class="comment">// VCard may have image and audio ( Like LOGO,RINGTONE etc)</span>
-            <span class="comment">// Configure the storage location of this content</span>
-            importer.setImagePath(QString::fromAscii(&quot;/images/&quot;));
-            importer.setAudioClipPath(QString::fromAscii(&quot;/audio/&quot;));
-            <span class="comment">// Converts QVersitDocument into QContact</span>
-            QContact contact = importer.importContact(document);
-            <span class="comment">// Save contact</span>
-            QContactManager* contactManager = new QContactManager(QString::fromAscii(&quot;symbian&quot;));
-            contactManager-&gt;saveContact(&amp;contact);
-            delete contactManager;
-        }
-    }</pre>
 <a name="building-and-compiling"></a>
 <h2>Building and compiling</h2>
 <p>This library requires Qt 4.5 to be installed.</p>
@@ -143,27 +69,6 @@
 <h3>Asynchronous Requests</h3>
 <p><a href="qversitreader.html">QVersitReader</a> provides asynchronous functionality to read VCard formatted file. Reason is file reading could be slow and multiple vcards can present in one input stream. By calling startReading() API of <a href="qversitreader.html">QVersitReader</a> triggers an asynchronous operation and upon completion readingDone() signal is emitted. Results of the parsing can be read from result() API.</p>
 <p>Also scaling the image is time consuming operation and does asynchrous operation. When scaling needed <a href="qversitcontactexporter.html">QVersitContactExporter</a> emits a signal scale along with file name of the image and image content which needs to be scaled. For example by writing a below line of code the client can achieve its own scaling functionalities</p>
-<pre>        QVersitContactExporter exporter;
-        connect(&amp;exporter, SIGNAL(scale(const QString&amp;,QByteArray&amp;)),
-                0, SLOT(scale(const QString&amp;,QByteArray&amp;)));
-<span class="comment">    // Callback for image scaling</span>
-    void VersitDocSample::scale(const QString&amp; imageFileName, QByteArray&amp; imageData)
-    {
-        int scaledImageHeight = 100;
-        int scaledImageWidth = 100;
-        if (scaledImageHeight &gt; 0 &amp;&amp; scaledImageWidth &gt; 0) {
-            QImage image(imageFileName);
-            image = image.scaled(scaledImageHeight,scaledImageWidth);
-            QBuffer imageBuffer(&amp;imageData);
-            QByteArray fileExtension = imageFileName.section('.',-1).toUpper().toAscii();
-            image.save(&amp;imageBuffer,fileExtension.constData());
-        }
-    }</pre>
-<a name="examples"></a>
-<h3>Examples</h3>
-<ul>
-<li><a href="versittest.html">versittest</a></li>
-</ul>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

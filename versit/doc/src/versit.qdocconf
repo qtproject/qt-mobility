@@ -12,7 +12,6 @@ sourcedirs = ../../ \
 sources.fileextensions  = "*.qdoc *.cpp"
 
 exampledirs = examples/ \
-              snippets/ \
               ../../../examples/ \
               ../../../ \
               .
