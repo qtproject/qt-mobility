@@ -45,6 +45,7 @@
 #include "qgstreamermediaformatcontrol.h"
 #include "qgstreameraudioencode.h"
 #include "qgstreamervideoencode.h"
+#include "qgstreamerimageencode.h"
 #include "qgstreamerbushelper.h"
 #include "qgstreamercameracontrol.h"
 #include "qgstreamercapturemetadatacontrol.h"
@@ -230,8 +231,9 @@ QMediaControl *QGstreamerCaptureService::control(const char *name) const
     if (qstrcmp(name,QAudioEncoderControl_iid) == 0)
         return m_captureSession->audioEncodeControl();
 
-    if (qstrcmp(name,QVideoEncoderControl_iid) == 0)
-        return m_captureSession->videoEncodeControl();
+    if (qstrcmp(name,QImageEncoderControl_iid) == 0)
+        return m_captureSession->imageEncodeControl();
+
 
     if (qstrcmp(name,QMediaFormatControl_iid) == 0)
         return m_captureSession->mediaFormatControl();

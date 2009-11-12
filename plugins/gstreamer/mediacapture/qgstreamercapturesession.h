@@ -55,6 +55,7 @@ class QGstreamerMessage;
 class QGstreamerBusHelper;
 class QGstreamerAudioEncode;
 class QGstreamerVideoEncode;
+class QGstreamerImageEncode;
 class QGstreamerRecorderControl;
 class QGstreamerMediaFormatControl;
 
@@ -83,6 +84,8 @@ public:
 
     QGstreamerAudioEncode *audioEncodeControl() const { return m_audioEncodeControl; }
     QGstreamerVideoEncode *videoEncodeControl() const { return m_videoEncodeControl; }
+    QGstreamerImageEncode *imageEncodeControl() const { return m_imageEncodeControl; }
+
     QGstreamerRecorderControl *recorderControl() const { return m_recorderControl; }
     QGstreamerMediaFormatControl *mediaFormatControl() const { return m_mediaFormatControl; }
 
@@ -144,6 +147,7 @@ private:
 
     QGstreamerAudioEncode *m_audioEncodeControl;
     QGstreamerVideoEncode *m_videoEncodeControl;
+    QGstreamerImageEncode *m_imageEncodeControl;
     QGstreamerRecorderControl *m_recorderControl;
     QGstreamerMediaFormatControl *m_mediaFormatControl;
 

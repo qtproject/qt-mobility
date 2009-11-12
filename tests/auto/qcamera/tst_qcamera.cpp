@@ -94,7 +94,7 @@ public:
             emit imageCaptured(fileName, QImage());
         else
             m_cameraControl->error(QCamera::NotReadyToCaptureError,
-                                   QLatin1String("Cou;d not capture in stopped state"));
+                                   QLatin1String("Could not capture in stopped state"));
     }
 
     MockCameraControl *m_cameraControl;
