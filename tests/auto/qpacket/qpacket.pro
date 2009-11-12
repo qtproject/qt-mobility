@@ -8,6 +8,5 @@ include(../../../common.pri)
 # Input
 SOURCES += tst_qpacket.cpp
 
-LIBS += -lQtPublishSubscribe
-symbian:TARGET.CAPABILITY = ALL \
-    -TCB
+qtAddLibrary(QtPublishSubscribe)
+symbian:TARGET.CAPABILITY = ALL -TCB

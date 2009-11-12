@@ -143,6 +143,7 @@ struct QMallocPtr
 /*!
   \class QMallocPool
   \internal
+  \ingroup publishsubscribe
 
   \brief The QMallocPool class allows management of allocations within a
   designated memory region.

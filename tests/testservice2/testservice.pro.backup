@@ -1,0 +1,39 @@
+TEMPLATE        = lib
+CONFIG         += plugin
+INCLUDEPATH    += ../../servicefw/serviceframework/servicehandler \
+                  ../../servicefw/serviceframework/serviceresolution \
+                  ../../servicefw/inc
+#SOURCES          = testserviceplugin.cpp \
+#                   testservice.cpp \
+#                   userdefinedclass.cpp
+#HEADER           = testserviceplugin.h \
+#                   testservice.h \
+#                   testserviceinterface.h
+SOURCES           = testserviceplugin.cpp
+HEADER            = testserviceplugin.h  
+TARGET          = tst_testserviceplugin
+
+
+
+include(../../common.pri)
+
+LIBS += -lQtServiceFramework
+
+symbian {
+ 
+    LIBS            += -lefsrv -lPlatformEnv
+    INCLUDEPATH     += ${EPOCROOT}/epoc32/include/osextensions
+    
+    TARGET.CAPABILITY = ALL -TCB
+    TARGET.EPOCALLOWDLLDATA = 1
+    TARGET.UID3 = 0x102829CA
+
+    # Work around All Files capability
+    dummydeploy.sources = ./stub/testserviceplugin.dll
+    dummydeploy.path = /resource/qt/sfwplugin
+    DEPLOYMENT += dummydeploy
+    
+    # Export registration file for winscw
+    BLD_INF_RULES.prj_exports += \
+        ".\descriptionxml\testserviceplugin.xml \epoc32\winscw\c\private\102829B8\import\testserviceplugin.xml"
+}

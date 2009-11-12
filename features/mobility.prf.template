@@ -1,0 +1,35 @@
+INCLUDEPATH += $${MOBILITY_INCLUDE}
+mac: LIBS += -F$${MOBILITY_LIB}
+LIBS+= -L$${MOBILITY_LIB}
+
+contains(MOBILITY, bearer) {
+    qtAddLibrary(QtBearer)
+}
+
+contains(MOBILITY, publishsubscribe) {
+    qtAddLibrary(QtPublishSubscribe)
+}
+
+contains(MOBILITY, location) {
+    qtAddLibrary(QtLocation)
+}
+
+contains(MOBILITY, serviceframework) {
+    qtAddLibrary(QtServiceFramework)
+}
+
+contains(MOBILITY, systeminfo) {
+    qtAddLibrary(QtSystemInfo)
+}
+
+contains(MOBILITY, multimedia) {
+    qtAddLibrary(QtMedia)
+}
+
+contains(MOBILITY, contacts) {
+    qtAddLibrary(QtContacts)
+}
+
+contains(MOBILITY, messaging) {
+    qtAddLibrary(QtMessaging)
+}

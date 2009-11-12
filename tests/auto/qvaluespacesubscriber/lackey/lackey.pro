@@ -9,4 +9,4 @@ CONFIG+= testcase
 
 include(../../../../common.pri)
 
-LIBS += -lQtPublishSubscribe
+qtAddLibrary(QtPublishSubscribe)

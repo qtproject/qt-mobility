@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qcontactmanagerinfo.cpp -->
+<head>
+  <title>QContactManagerInfo Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactManagerInfo Class Reference</h1>
+<p>The QContactManagerInfo class provides information about a particular <a href="qcontactmanager.html">QContactManager</a>. <a href="#details">More...</a></p>
+<pre>    #include &lt;QContactManagerInfo&gt;</pre><ul>
+<li><a href="qcontactmanagerinfo-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerinfo.html#ManagerFeature-enum">ManagerFeature</a></b> { ChangeLogs, ActionPreferences, Groups, Relationships, ..., Anonymous }</td></tr>
+</table>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerinfo.html#filterSupported">filterSupported</a></b> ( const QContactFilter &amp; <i>filter</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerinfo.html#hasFeature">hasFeature</a></b> ( QContactManagerInfo::ManagerFeature <i>feature</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QVariant::Type&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerinfo.html#supportedDataTypes">supportedDataTypes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerinfo.html#supportedRelationshipTypes">supportedRelationshipTypes</a></b> () const</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QContactManagerInfo class provides information about a particular <a href="qcontactmanager.html">QContactManager</a>.</p>
+<p>This class allows managers to report information about their supported functionality to clients. The supported functionality of a manager includes which data types the backend supports, which definitions are natively filterable in the backend (and thus are high performance), and what capabilities the manager supports.</p>
+<p>If the manager that provided an information object is subsequently destroyed, the returned QContactManagerInfo object will be invalid.</p>
+<p>See also <a href="qcontactmanager.html">QContactManager</a>.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<h3 class="fn"><a name="ManagerFeature-enum"></a>enum QContactManagerInfo::ManagerFeature</h3>
+<p>This enum describes the possible features that a particular manager may support</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::ChangeLogs</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">The manager supports changelog related operations</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::ActionPreferences</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The manager supports saving preferred details per action per contact</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::Groups</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The manager supports contacts of the <tt>QContactType::Group</tt> type</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::Relationships</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The manager supports at least some types of relationships between contacts</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::ArbitraryRelationshipTypes</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The manager supports relationships of arbitrary types between contacts</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::MutableDefinitions</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The manager supports saving, updating or removing detail definitions. Some built-in definitions may still be immutable</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::SelfContact</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The manager supports the concept of saving a contact which represents the current user</td></tr>
+<tr><td valign="top"><tt>QContactManagerInfo::Anonymous</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">The manager is isolated from other managers</td></tr>
+</table></p>
+<hr />
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="filterSupported"></a>bool QContactManagerInfo::filterSupported ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i> ) const</h3>
+<p>Returns true if the given <i>filter</i> is supported natively by the manager, and false if the filter behaviour would be emulated.</p>
+<p>Note: In some cases, the behaviour of an unsupported filter cannot be emulated. For example, a filter that requests contacts that have changed since a given time depends on having that information available. In these cases, the filter will fail.</p>
+<h3 class="fn"><a name="hasFeature"></a>bool QContactManagerInfo::hasFeature ( <a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ManagerFeature</a> <i>feature</i> ) const</h3>
+<p>Returns true if the given <i>feature</i> is supported by the manager from whom this information object was received.</p>
+<h3 class="fn"><a name="supportedDataTypes"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qvariant.html#Type-enum">QVariant::Type</a>&gt; QContactManagerInfo::supportedDataTypes () const</h3>
+<p>Returns the list of data types supported by the manager associated with this object.</p>
+<h3 class="fn"><a name="supportedRelationshipTypes"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QContactManagerInfo::supportedRelationshipTypes () const</h3>
+<p>Returns the list of relationship types which are supported by this backend. If the backend does not support the <tt>QContactManagerInfo::Relationships</tt> feature, this list should be empty. If the backend supports the <tt>QContactManagerInfo::Relationships</tt> feature and also supports the <tt>QContactManagerInfo::ArbitraryRelationshipTypes</tt> feature, the list will contain the natively supported (well-known) relationship types contained in the list, but clients are able to add relationships of any custom type also.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Qt Mobility API</div></td>
+</tr></table></div></address></body>
+</html>

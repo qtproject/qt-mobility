@@ -14,4 +14,7 @@ SOURCES=\
     vsexplorer.cpp
 
 include(../../common.pri)
-LIBS += -lQtPublishSubscribe
+
+qtAddLibrary(QtPublishSubscribe)
+
+include(../../features/deploy.pri)

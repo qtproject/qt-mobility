@@ -11,7 +11,7 @@ include(../../../common.pri)
 # Input 
 SOURCES += tst_qvaluespace.cpp
 
-LIBS += -lQtPublishSubscribe
+qtAddLibrary(QtPublishSubscribe)
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

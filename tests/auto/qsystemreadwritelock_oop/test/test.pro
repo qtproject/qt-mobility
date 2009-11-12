@@ -3,21 +3,21 @@ INCLUDEPATH += ../../../../context
 
 CONFIG+=testcase
 
-QT = core
+QT = core network
 
 include(../../../../common.pri)
 
 # Input 
 SOURCES += ../tst_qsystemreadwritelock_oop.cpp
 
-LIBS += -lQtPublishSubscribe
+qtAddLibrary(QtPublishSubscribe)
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
 
 wince* {
-    DEPLOYLACKEY.sources = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/lackey.exe
+    DEPLOYLACKEY.sources = $$OUTPUT_DIR/build/tests/bin/lackey.exe
     DEPLOYLACKEY.path = .
     DEPLOYMENT += DEPLOYLACKEY
 }

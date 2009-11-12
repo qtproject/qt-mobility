@@ -8,6 +8,6 @@ include(../../../common.pri)
 # Input
 SOURCES += tst_qmallocpool.cpp
 
-LIBS += -lQtPublishSubscribe
+qtAddLibrary(QtPublishSubscribe)
 symbian:TARGET.CAPABILITY = ALL \
     -TCB

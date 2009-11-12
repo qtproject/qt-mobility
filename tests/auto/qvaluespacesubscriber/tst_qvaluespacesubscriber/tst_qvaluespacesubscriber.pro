@@ -19,7 +19,7 @@ HEADERS += tst_qvaluespacesubscribershared.h
 
 DEFINES += QT_START_VALUESPACE
 
-LIBS += -lQtPublishSubscribe
+qtAddLibrary(QtPublishSubscribe)
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
@@ -30,7 +30,7 @@ win32 {
 }
 
 wince* {
-    DEPLOYLACKEY.sources = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/vsiTestLackey.exe
+    DEPLOYLACKEY.sources = $$OUTPUT_DIR/build/tests/bin/vsiTestLackey.exe
     DEPLOYLACKEY.path = .
     DEPLOYMENT += DEPLOYLACKEY
 }

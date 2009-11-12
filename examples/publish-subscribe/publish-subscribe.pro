@@ -14,5 +14,5 @@ SOURCES = main.cpp \
 FORMS = providerdialog.ui \
         consumerdialog.ui
 
-include(../../common.pri)
-LIBS += -lQtPublishSubscribe
+include(../examples.pri)
+qtAddLibrary(QtPublishSubscribe)

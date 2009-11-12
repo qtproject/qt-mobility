@@ -41,6 +41,9 @@
 
 #include <QtTest/QtTest>
 #include <QProcess>
+#include <QIODevice>
+#include <QLocalServer>
+#include <QLocalSocket>
 #include "qsystemreadwritelock_p.h"
 #include "common.h"
 
@@ -56,8 +59,9 @@ private slots:
     void writerPrecedence();
 
 private:
-    bool waitForLine(QProcess *process, const QString &expectedLine,
+    bool waitForLine(QIODevice *device, const QString &expectedLine,
                     bool print = false, int timeout=5000);
+
 };
 
 /*
@@ -74,22 +78,31 @@ void tst_QSystemReadWriteLock_oop::readLockBlockRelease()
     if (print)
         qDebug() << "Main process: After lock for writing";
 
+    QLocalServer server;
+    QString connectionName = "readLockBlockRelease";
+    server.listen(connectionName);
+
     QProcess reader;
     reader.setReadChannel(QProcess::StandardError);
     QStringList args;
+    args << connectionName;
     args << "ReadLock";
+
     reader.start("./lackey", args);
     QVERIFY(reader.waitForStarted());
 
-    QVERIFY(waitForLine(&reader, Lackey::BeforeLockForRead,print));
-    QVERIFY(!waitForLine(&reader, Lackey::AfterLockForRead,false,1000));
+    QVERIFY(server.waitForNewConnection(-1));
+    QLocalSocket *oopSocket = server.nextPendingConnection();
+
+    QVERIFY(waitForLine(oopSocket, Lackey::BeforeLockForRead,print));
+    QVERIFY(!waitForLine(oopSocket, Lackey::AfterLockForRead,false,1000));
 
     testLock.unlock();
     if (print)
         qDebug() << "Main process: After unlock(write)";
 
-    QVERIFY(waitForLine(&reader, Lackey::AfterLockForRead, print));
-    QVERIFY(waitForLine(&reader, Lackey::AfterUnlockForRead, print));
+    QVERIFY(waitForLine(oopSocket, Lackey::AfterLockForRead, print));
+    QVERIFY(waitForLine(oopSocket, Lackey::AfterUnlockForRead, print));
     QVERIFY(reader.waitForFinished());
 }
 
@@ -107,22 +120,30 @@ void tst_QSystemReadWriteLock_oop::writeLockBlockRelease()
     if (print)
         qDebug() << "Main process: After lock for writing";
 
+    QLocalServer server;
+    QString connectionName = "writeLockBlockRelease";
+    server.listen(connectionName);
+
     QProcess writer;
     writer.setReadChannel(QProcess::StandardError);
     QStringList args;
+    args << connectionName;
     args << "WriteLock";
     writer.start("./lackey", args);
     QVERIFY(writer.waitForStarted());
 
-    QVERIFY(waitForLine(&writer, Lackey::BeforeLockForWrite,print));
-    QVERIFY(!waitForLine(&writer, Lackey::AfterUnlockForWrite,false, 1000));
+    QVERIFY(server.waitForNewConnection(-1));
+    QLocalSocket *oopSocket = server.nextPendingConnection();
+
+    QVERIFY(waitForLine(oopSocket, Lackey::BeforeLockForWrite,print));
+    QVERIFY(!waitForLine(oopSocket, Lackey::AfterUnlockForWrite,false, 1000));
 
     testLock.unlock();
     if (print)
         qDebug() << "Main process: After unlock(write)";
 
-    QVERIFY(waitForLine(&writer, Lackey::AfterLockForWrite, print));
-    QVERIFY(waitForLine(&writer, Lackey::AfterUnlockForWrite, print));
+    QVERIFY(waitForLine(oopSocket, Lackey::AfterLockForWrite, print));
+    QVERIFY(waitForLine(oopSocket, Lackey::AfterUnlockForWrite, print));
     QVERIFY(writer.waitForFinished());
 }
 
@@ -139,35 +160,58 @@ void tst_QSystemReadWriteLock_oop::multipleReadersBlockRelease()
 
     const int numReaders = 2;
     QProcess readers[numReaders];
+    QLocalServer readerServers[numReaders];
+    QLocalSocket *readerSockets[numReaders];
+
+    QString connectionName = "multipleReadersBlockRelease";
+
     QStringList args;
     args << "ReadLockReleaseable";
 
     for( int i=0; i < numReaders; ++i) {
+        QString readerConnectionName = connectionName.append("_reader_").append(QString::number(i));
+        readerServers[i].listen(readerConnectionName);
+        args.push_front(readerConnectionName);
+
         readers[i].setReadChannel(QProcess::StandardError);
         readers[i].start("./lackey", args);
         QVERIFY(readers[i].waitForStarted());
-        QVERIFY(waitForLine(&readers[i], Lackey::BeforeLockForRead, print));
-        QVERIFY(waitForLine(&readers[i], Lackey::AfterLockForRead, print));
+
+        QVERIFY(readerServers[i].waitForNewConnection(-1));
+        readerSockets[i] = readerServers[i].nextPendingConnection();
+
+        QVERIFY(waitForLine(readerSockets[i], Lackey::BeforeLockForRead, print));
+        QVERIFY(waitForLine(readerSockets[i], Lackey::AfterLockForRead, print));
+
+        args.pop_front();
     }
+
+    QLocalServer server;
+    QString writerConnectionName = connectionName.append("_writer");
+    server.listen(writerConnectionName);
 
     QProcess writer;
     writer.setReadChannel(QProcess::StandardError);
     args.clear();
+    args << writerConnectionName;
     args << "WriteLock";
     writer.start("./lackey", args);
     QVERIFY(writer.waitForStarted());
 
-    QVERIFY(waitForLine(&writer, Lackey::BeforeLockForWrite, print));
-    QVERIFY(!waitForLine(&writer, Lackey::AfterLockForWrite, false, 1000));
+    QVERIFY(server.waitForNewConnection(-1));
+    QLocalSocket *writerSocket = server.nextPendingConnection();
+
+    QVERIFY(waitForLine(writerSocket, Lackey::BeforeLockForWrite, print));
+    QVERIFY(!waitForLine(writerSocket, Lackey::AfterLockForWrite, false, 1000));
 
     for (int i = 0; i < numReaders; ++i) {
-        readers[i].write("release\n");
-        QVERIFY(waitForLine(&readers[i], Lackey::AfterUnlockForRead, print));
+        readerSockets[i]->write("release\n");
+        QVERIFY(waitForLine(readerSockets[i], Lackey::AfterUnlockForRead, print));
         if ( i < (numReaders - 1))
-            QVERIFY(!waitForLine(&writer, Lackey::AfterLockForWrite, false, 1000));
+            QVERIFY(!waitForLine(writerSocket, Lackey::AfterLockForWrite, false, 1000));
     }
-    QVERIFY(waitForLine(&writer, Lackey::AfterLockForWrite, print));
-    QVERIFY(waitForLine(&writer, Lackey::AfterUnlockForWrite, print));
+    QVERIFY(waitForLine(writerSocket, Lackey::AfterLockForWrite, print));
+    QVERIFY(waitForLine(writerSocket, Lackey::AfterUnlockForWrite, print));
 
     for(int i = 0; i < numReaders; ++i) {
         QVERIFY(readers[i].waitForFinished());
@@ -190,7 +234,8 @@ void tst_QSystemReadWriteLock_oop::multipleReadersLoop()
     const int numReaders = 10;
     QProcess readers[numReaders];
     QStringList args;
-    args << "ReadLockLoop"
+    args << "NoComms" // no communications between test and lackey
+        << "ReadLockLoop"
         << QString::number(runTime)
         << QString::number(holdTime)
         << QString::number(waitTime);
@@ -222,7 +267,8 @@ void tst_QSystemReadWriteLock_oop::multipleWritersLoop()
     const int numWriters = 10;
     QProcess writers[numWriters];
     QStringList args;
-    args << "WriteLockLoop"
+    args << "NoComms" // no communications between test and lackey
+        << "WriteLockLoop"
         << QString::number(runTime)
         << QString::number(holdTime)
         << QString::number(waitTime);
@@ -251,7 +297,11 @@ void tst_QSystemReadWriteLock_oop::exclusiveWriteTest()
     QSystemReadWriteLock testLock("Viper", QSystemReadWriteLock::Create);
 
     int runTime=10000;
+#if !defined(Q_OS_WINCE)
     const int numReaders = 20;
+#else
+    const int numReaders = 10;
+#endif
 
     int readerHoldTime = 0;
     int readerWaitTime = 1;
@@ -263,7 +313,8 @@ void tst_QSystemReadWriteLock_oop::exclusiveWriteTest()
     QProcess readers[numReaders];
     QProcess writers[numWriters];
     QStringList args;
-    args << "ReadLockExcl"
+    args << "NoComms" // no communications between test and lackey
+        << "ReadLockExcl"
         << QString::number(runTime)
         << QString::number(readerHoldTime)
         << QString::number(readerWaitTime);
@@ -274,7 +325,8 @@ void tst_QSystemReadWriteLock_oop::exclusiveWriteTest()
     }
 
     args.clear();
-    args << "WriteLockExcl"
+    args << "NoComms" // no communications between test and lackey
+        << "WriteLockExcl"
         << QString::number(runTime)
         << QString::number(writerHoldTime)
         << QString::number(writerWaitTime);
@@ -319,27 +371,49 @@ void tst_QSystemReadWriteLock_oop::writerPrecedence()
 
     const int numReaders = 5;
     QProcess readers[numReaders];
+    QLocalServer readerServers[numReaders];
+    QLocalSocket *readerSockets[numReaders];
+
+    QString connectionName = "writePrecedence";
 
     QStringList args;
     args << "ReadLock";
     for (int i = 0; i < numReaders; ++i) {
+        QString readerConnectionName = connectionName.append("_reader_").append(QString::number(i));
+        readerServers[i].listen(readerConnectionName);
+        args.push_front(readerConnectionName);
+
         readers[i].setReadChannel(QProcess::StandardError);
         readers[i].start("./lackey", args);
-        QVERIFY(waitForLine(&readers[i], Lackey::BeforeLockForRead, print));
-        QVERIFY(!waitForLine(&readers[i], Lackey::AfterLockForRead, false, 1000));
+
+        QVERIFY(readerServers[i].waitForNewConnection(-1));
+        readerSockets[i] = readerServers[i].nextPendingConnection();
+
+        QVERIFY(waitForLine(readerSockets[i], Lackey::BeforeLockForRead, print));
+        QVERIFY(!waitForLine(readerSockets[i], Lackey::AfterLockForRead, false, 1000));
+
+        args.pop_front();
     }
+
+    QLocalServer server;
+    QString writerConnectionName = connectionName.append("_writer");
+    server.listen(writerConnectionName);
 
     QProcess writer;
     writer.setReadChannel(QProcess::StandardError);
     args.clear();
+    args << writerConnectionName;
     args << "WriteLockReleaseable";
     writer.start("./lackey", args);
 
-    QVERIFY(waitForLine(&writer, Lackey::BeforeLockForWrite, print));
-    QVERIFY(!waitForLine(&writer, Lackey::AfterLockForWrite, false, 1000));
+    QVERIFY(server.waitForNewConnection(-1));
+    QLocalSocket *writerSocket = server.nextPendingConnection();
+
+    QVERIFY(waitForLine(writerSocket, Lackey::BeforeLockForWrite, print));
+    QVERIFY(!waitForLine(writerSocket, Lackey::AfterLockForWrite, false, 1000));
 
     testRwLock.unlock();
-    QVERIFY(waitForLine(&writer, Lackey::AfterLockForWrite, print));
+    QVERIFY(waitForLine(writerSocket, Lackey::AfterLockForWrite, print));
      if (print)
         qDebug() << "Main process: After unlock(write)";
 
@@ -349,14 +423,14 @@ void tst_QSystemReadWriteLock_oop::writerPrecedence()
         QCOMPARE(readers[i].state(), QProcess::Running);
     }
 
-    writer.write("release\n");
-    QVERIFY(waitForLine(&writer, Lackey::AfterUnlockForWrite, print));
+    writerSocket->write("release\n");
+    QVERIFY(waitForLine(writerSocket, Lackey::AfterUnlockForWrite, print));
 
     for (int i = 0; i < numReaders; ++i) {
-        QVERIFY(waitForLine(&readers[i], Lackey::AfterLockForRead, print));
+        QVERIFY(waitForLine(readerSockets[i], Lackey::AfterLockForRead, print));
     }//Note: 2 loops (ie above and below) are used due to timing issues
     for (int i = 0; i < numReaders; ++i) {
-        QVERIFY(waitForLine(&readers[i], Lackey::AfterUnlockForRead, print));
+        QVERIFY(waitForLine(readerSockets[i], Lackey::AfterUnlockForRead, print));
     }
 
     for (int i = 0; i < numReaders; ++i) {
@@ -371,16 +445,16 @@ void tst_QSystemReadWriteLock_oop::writerPrecedence()
    for a given \a timeout(msecs).  The line written by the process
    is printed to console if \a print is true.
 */
-bool tst_QSystemReadWriteLock_oop::waitForLine(QProcess * process,const QString &expectedLine, bool print, int timeout)
+bool tst_QSystemReadWriteLock_oop::waitForLine(QIODevice * device,const QString &expectedLine, bool print, int timeout)
 {
-    if (!process->waitForReadyRead(timeout))
+    if (!device->waitForReadyRead(timeout))
     {
         if (print)
             qWarning() << "Wait for ready read returned false";
         return false;
     }
 
-    QString line = process->readLine();
+    QString line = device->readLine();
     line = line.trimmed();
     if (print)
         qDebug() << qPrintable(line);

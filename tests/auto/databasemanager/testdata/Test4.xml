@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<service>
+  <name>TestService </name>
+  <filepath>testdata/testservice.dll</filepath>
+  <version>1.0.456</version>
+  <interface>
+    <name>com.nokia.IDownloader</name>
+    <description>Interface that provides download support</description>
+    <capabilities>ReadUserData,WriteUserData</capabilities>
+  </interface>
+</service>

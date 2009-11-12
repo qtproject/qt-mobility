@@ -59,6 +59,4 @@ win32 {
     wince*:LIBS += -ltoolhelp
 }
 
-headers.files = $$PUBLIC_HEADERS
-headers.path = $$OUTPUT_DIR/include
-INSTALLS+=headers
+include(../features/deploy.pri)
