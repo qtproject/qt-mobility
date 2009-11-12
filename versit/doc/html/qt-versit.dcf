@@ -68,31 +68,12 @@
     </section>
 </section>
 <section ref="overviews.html" title="Overviews">
-    <section ref="index.html" title="Qt Mobility Versit Developer Resources">
-        <keyword ref="index.html">Qt Mobility Versit Developer Resources</keyword>
+    <section ref="index.html" title="Versit API">
+        <keyword ref="index.html">Versit API</keyword>
     </section>
-    <section ref="index.html" title="Qt Mobility Versit Developer Resources">
-        <keyword ref="index.html">Qt Mobility Versit Developer Resources</keyword>
-    </section>
-    <section ref="versitmapping.html" title="Qt Versit Mapping">
-        <keyword ref="versitmapping.html">Qt Versit Mapping</keyword>
-    </section>
-    <section ref="versitmapping.html" title="Qt Versit Mapping">
-        <keyword ref="versitmapping.html">Qt Versit Mapping</keyword>
-    </section>
-    <section ref="versit.html" title="Versit API documentation">
-        <keyword ref="versit.html">Versit API documentation</keyword>
-    </section>
-    <section ref="versit.html" title="Versit API documentation">
-        <keyword ref="versit.html">Versit API documentation</keyword>
+    <section ref="index.html" title="Versit API">
+        <keyword ref="index.html">Versit API</keyword>
     </section>
 </section>
-<section ref="examples.html" title="Tutorial &amp; Examples">
-    <section ref="versittest.html" title="Sample Versit Example">
-        <keyword ref="versittest.html">Sample Versit Example</keyword>
-    </section>
-    <section ref="versittest.html" title="Sample Versit Example">
-        <keyword ref="versittest.html">Sample Versit Example</keyword>
-    </section>
-</section>
+<section ref="examples.html" title="Tutorial &amp; Examples"/>
 </DCF>

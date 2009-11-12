@@ -117,69 +117,17 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="embeddedDocument" fullname="QVersitProperty::embeddedDocument" href="qversitproperty.html#embeddedDocument" location="qversitproperty.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVersitDocument" signature="embeddedDocument() const"/>
         </class>
-        <page access="public" status="commendable" name="versittest" href="versittest.html" subtype="example" title="Sample Versit Example" fulltitle="Sample Versit Example" subtitle="" location="sampleversit.qdoc">
-            <contents name="versit" title="Versit" level="1"/>
-            <contents name="motivation" title="Motivation" level="2"/>
-            <contents name="use-case" title="Use Case" level="2"/>
-            <contents name="interface" title="Interface" level="2"/>
-            <contents name="known-issues" title="Known Issues" level="2"/>
-            <page access="public" status="commendable" name="versittest/testconfiguration.cpp" href="versittest-testconfiguration-cpp.html" subtype="file" title="" fulltitle="testconfiguration.cpp Example File" subtitle="versittest/testconfiguration.cpp" location=""/>
-            <page access="public" status="commendable" name="versittest/testconfiguration.h" href="versittest-testconfiguration-h.html" subtype="file" title="" fulltitle="testconfiguration.h Example File" subtitle="versittest/testconfiguration.h" location=""/>
-            <page access="public" status="commendable" name="versittest/testresultxmlparser.cpp" href="versittest-testresultxmlparser-cpp.html" subtype="file" title="" fulltitle="testresultxmlparser.cpp Example File" subtitle="versittest/testresultxmlparser.cpp" location=""/>
-            <page access="public" status="commendable" name="versittest/testresultxmlparser.h" href="versittest-testresultxmlparser-h.html" subtype="file" title="" fulltitle="testresultxmlparser.h Example File" subtitle="versittest/testresultxmlparser.h" location=""/>
-            <page access="public" status="commendable" name="versittest/vcardcomparator.cpp" href="versittest-vcardcomparator-cpp.html" subtype="file" title="" fulltitle="vcardcomparator.cpp Example File" subtitle="versittest/vcardcomparator.cpp" location=""/>
-            <page access="public" status="commendable" name="versittest/vcardcomparator.h" href="versittest-vcardcomparator-h.html" subtype="file" title="" fulltitle="vcardcomparator.h Example File" subtitle="versittest/vcardcomparator.h" location=""/>
-            <page access="public" status="commendable" name="versittest/versittest.cpp" href="versittest-versittest-cpp.html" subtype="file" title="" fulltitle="versittest.cpp Example File" subtitle="versittest/versittest.cpp" location=""/>
-            <page access="public" status="commendable" name="versittest/versittest.h" href="versittest-versittest-h.html" subtype="file" title="" fulltitle="versittest.h Example File" subtitle="versittest/versittest.h" location=""/>
-            <page access="public" status="commendable" name="versittest/versittestconfig.xml" href="versittest-versittestconfig-xml.html" subtype="file" title="" fulltitle="versittestconfig.xml Example File" subtitle="versittest/versittestconfig.xml" location=""/>
-            <page access="public" status="commendable" name="versittest/main.cpp" href="versittest-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="versittest/main.cpp" location=""/>
-            <page access="public" status="commendable" name="versittest/versittest.pro" href="versittest-versittest-pro.html" subtype="file" title="" fulltitle="versittest.pro Example File" subtitle="versittest/versittest.pro" location=""/>
-        </page>
-        <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Versit Developer Resources" fulltitle="Qt Mobility Versit Developer Resources" subtitle="" location="index.qdoc"/>
-        <page access="public" status="commendable" name="versit.html" href="versit.html" subtype="page" title="Versit API documentation" fulltitle="Versit API documentation" subtitle="" location="versit.qdoc">
+        <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Versit API" fulltitle="Versit API" subtitle="" location="index.qdoc">
             <contents name="overview" title="Overview" level="1"/>
-            <contents name="using-the-api" title="Using the API" level="1"/>
-            <contents name="reference-documentation" title="Reference documentation" level="1"/>
-            <contents name="classes" title="Classes" level="2"/>
+            <contents name="usage" title="Usage" level="1"/>
+            <contents name="classes" title="Classes" level="1"/>
+            <contents name="mapping-the-vcard-constants" title="Mapping the vCard constants" level="1"/>
         </page>
-        <page access="public" status="commendable" name="versitmapping.html" href="versitmapping.html" subtype="page" title="Qt Versit Mapping" fulltitle="Qt Versit Mapping" subtitle="" location="versitmapping.qdoc">
-            <contents name="introduction" title="Introduction" level="1"/>
-            <contents name="mapping-defintion" title="Mapping Defintion" level="1"/>
-            <contents name="mapping-table-implementation" title="Mapping table implementation" level="1"/>
-            <contents name="unsupported-vcard-fields" title="Unsupported VCard fields" level="1"/>
-            <contents name="example-code" title="Example code" level="2"/>
-        </page>
-        <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Versit Developer Resources" fulltitle="Qt Mobility Versit Developer Resources" subtitle="" location="index.qdoc"/>
-        <page access="public" status="commendable" name="versitmapping.html" href="versitmapping.html" subtype="page" title="Qt Versit Mapping" fulltitle="Qt Versit Mapping" subtitle="" location="versitmapping.qdoc">
-            <contents name="introduction" title="Introduction" level="1"/>
-            <contents name="mapping-defintion" title="Mapping Defintion" level="1"/>
-            <contents name="mapping-table-implementation" title="Mapping table implementation" level="1"/>
-            <contents name="unsupported-vcard-fields" title="Unsupported VCard fields" level="1"/>
-            <contents name="example-code" title="Example code" level="2"/>
-        </page>
-        <page access="public" status="commendable" name="versit.html" href="versit.html" subtype="page" title="Versit API documentation" fulltitle="Versit API documentation" subtitle="" location="versit.qdoc">
+        <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Versit API" fulltitle="Versit API" subtitle="" location="index.qdoc">
             <contents name="overview" title="Overview" level="1"/>
-            <contents name="using-the-api" title="Using the API" level="1"/>
-            <contents name="reference-documentation" title="Reference documentation" level="1"/>
-            <contents name="classes" title="Classes" level="2"/>
-        </page>
-        <page access="public" status="commendable" name="versittest" href="versittest.html" subtype="example" title="Sample Versit Example" fulltitle="Sample Versit Example" subtitle="" location="sampleversit.qdoc">
-            <contents name="versit" title="Versit" level="1"/>
-            <contents name="motivation" title="Motivation" level="2"/>
-            <contents name="use-case" title="Use Case" level="2"/>
-            <contents name="interface" title="Interface" level="2"/>
-            <contents name="known-issues" title="Known Issues" level="2"/>
-            <page access="public" status="commendable" name="versittest/testconfiguration.cpp" href="versittest-testconfiguration-cpp.html" subtype="file" title="" fulltitle="testconfiguration.cpp Example File" subtitle="versittest/testconfiguration.cpp" location=""/>
-            <page access="public" status="commendable" name="versittest/testconfiguration.h" href="versittest-testconfiguration-h.html" subtype="file" title="" fulltitle="testconfiguration.h Example File" subtitle="versittest/testconfiguration.h" location=""/>
-            <page access="public" status="commendable" name="versittest/testresultxmlparser.cpp" href="versittest-testresultxmlparser-cpp.html" subtype="file" title="" fulltitle="testresultxmlparser.cpp Example File" subtitle="versittest/testresultxmlparser.cpp" location=""/>
-            <page access="public" status="commendable" name="versittest/testresultxmlparser.h" href="versittest-testresultxmlparser-h.html" subtype="file" title="" fulltitle="testresultxmlparser.h Example File" subtitle="versittest/testresultxmlparser.h" location=""/>
-            <page access="public" status="commendable" name="versittest/vcardcomparator.cpp" href="versittest-vcardcomparator-cpp.html" subtype="file" title="" fulltitle="vcardcomparator.cpp Example File" subtitle="versittest/vcardcomparator.cpp" location=""/>
-            <page access="public" status="commendable" name="versittest/vcardcomparator.h" href="versittest-vcardcomparator-h.html" subtype="file" title="" fulltitle="vcardcomparator.h Example File" subtitle="versittest/vcardcomparator.h" location=""/>
-            <page access="public" status="commendable" name="versittest/versittest.cpp" href="versittest-versittest-cpp.html" subtype="file" title="" fulltitle="versittest.cpp Example File" subtitle="versittest/versittest.cpp" location=""/>
-            <page access="public" status="commendable" name="versittest/versittest.h" href="versittest-versittest-h.html" subtype="file" title="" fulltitle="versittest.h Example File" subtitle="versittest/versittest.h" location=""/>
-            <page access="public" status="commendable" name="versittest/versittestconfig.xml" href="versittest-versittestconfig-xml.html" subtype="file" title="" fulltitle="versittestconfig.xml Example File" subtitle="versittest/versittestconfig.xml" location=""/>
-            <page access="public" status="commendable" name="versittest/main.cpp" href="versittest-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="versittest/main.cpp" location=""/>
-            <page access="public" status="commendable" name="versittest/versittest.pro" href="versittest-versittest-pro.html" subtype="file" title="" fulltitle="versittest.pro Example File" subtitle="versittest/versittest.pro" location=""/>
+            <contents name="usage" title="Usage" level="1"/>
+            <contents name="classes" title="Classes" level="1"/>
+            <contents name="mapping-the-vcard-constants" title="Mapping the vCard constants" level="1"/>
         </page>
     </namespace>
 </INDEX>

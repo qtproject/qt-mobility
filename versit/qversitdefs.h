@@ -71,7 +71,7 @@ struct versitContactDetailMapping {
     const char* contactDetailValueKey;
 };
 
-//! [Mapping table]
+//! [Property name mappings]
 // Mappings from versit property names to Qt contact details
 const versitContactDetailMapping versitContactDetailMappings[] = {
     {"ADR",           QContactAddress::DefinitionName.str,
@@ -84,7 +84,7 @@ const versitContactDetailMapping versitContactDetailMappings[] = {
                       ""},
     {"EMAIL",         QContactEmailAddress::DefinitionName.str,
                       QContactEmailAddress::FieldEmailAddress.str},
-    {"IMPP",        QContactOnlineAccount::DefinitionName.str,
+    {"IMPP",          QContactOnlineAccount::DefinitionName.str,
                       QContactOnlineAccount::SubTypeImpp.str},
     {"LOGO",          QContactOrganization::DefinitionName.str,
                       QContactOrganization::FieldLogo.str},
@@ -129,7 +129,7 @@ const versitContactDetailMapping versitContactDetailMappings[] = {
     {"X-SPOUSE",      QContactFamily::DefinitionName.str,
                       QContactFamily::FieldSpouse.str}
 };
-//! [Mapping table]
+//! [Property name mappings]
 
 // Mapping between a string in versit specifications and Qt contacts
 struct versitMapping {
@@ -143,7 +143,7 @@ const versitMapping versitContextMappings[] = {
     {"WORK", QContactDetail::ContextWork.str},
 };
 
-//! [ Sub Type Mapping table]
+//! [Property type parameter mappings]
 // Mappings from versit TYPE parameters to Qt contact detail subtypes
 const versitMapping versitSubTypeMappings[] = {
     {"DOM",    QContactAddress::SubTypeDomestic.str},
@@ -161,9 +161,9 @@ const versitMapping versitSubTypeMappings[] = {
     {"SWIS",   QContactOnlineAccount::SubTypeVideoShare.str},
     {"VOIP",   QContactOnlineAccount::SubTypeSipVoip.str}
 };
-//! [ Sub Type Mapping table]
+//! [Property type parameter mappings]
 
-//! [ File extension Mapping table]
+//! [File extension mappings]
 // Mappings from file types in versit specifications to file extensions
 const versitMapping versitFileExtensionMappings[] = {
     {"JPEG", "JPG"},
@@ -176,6 +176,6 @@ const versitMapping versitFileExtensionMappings[] = {
     {"AIFF", "AIF"},
     {"GIF", "GIF"}
 };
-//! [ File extension Mapping table]
+//! [File extension mappings]
 
 #endif // QVERSITDEFS_H
