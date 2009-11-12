@@ -66,7 +66,7 @@
  * vCardBuffer.seek(0);
  * QVersitReader reader;
  * reader.setDevice(&vCardBuffer);
- * if (reader.readSynchronously()) {
+ * if (reader.readAll()) {
  *     QList<QVersitDocument> versitDocuments = reader.result();
  *     // Use the resulting document(s)...
  * }
@@ -80,13 +80,16 @@
  * The signal is emitted by the reader when the asynchronous reading has been completed.
  */
 
-/*! Construct a reader. */
+/*! Constructs a new reader. */
 QVersitReader::QVersitReader() : d(new QVersitReaderPrivate)
 {
     connect(d,SIGNAL(finished()),this,SIGNAL(readingDone()),Qt::DirectConnection);
 }
     
-/*! Destroys the reader. */
+/*! 
+ * Frees the memory used by the reader. 
+ * Waits until a pending asynchronous reading has been completed.
+ */
 QVersitReader::~QVersitReader()
 {
     d->wait();
@@ -134,7 +137,10 @@ bool QVersitReader::startReading()
  */
 bool QVersitReader::readAll()
 {
-    return d->read();
+    bool ok = false;
+    if (!d->isRunning()) 
+        ok = d->read();
+    return ok;
 }
 
 /*!

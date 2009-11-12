@@ -69,7 +69,7 @@
  * property.setValue("Simpson;Homer;J;;");
  * document.addProperty(property);
  * writer.setVersitDocument(document);
- * if (writer.writeSynchronously()) {
+ * if (writer.writeAll()) {
  *     // Use the vCardBuffer...
  * }
  * \endcode
@@ -82,13 +82,16 @@
  * The signal is emitted by the writer when the asynchronous writing has been completed.
  */
 
-/*! Constructs a writer. */
+/*! Constructs a new writer. */
 QVersitWriter::QVersitWriter() : d(new QVCard21Writer)
 {
     connect(d,SIGNAL(finished()),this,SIGNAL(writingDone()),Qt::DirectConnection);
 }
 
-/*! Destroys the writer. */
+/*! 
+ * Frees the memory used by the writer. 
+ * Waits until a pending asynchronous writing has been completed.
+ */
 QVersitWriter::~QVersitWriter()
 {
     d->wait();
@@ -170,5 +173,8 @@ bool QVersitWriter::startWriting()
  */
 bool QVersitWriter::writeAll()
 {
-    return d->write();
+    bool ok = false;
+    if (!d->isRunning())
+        ok = d->write();
+    return ok;
 }

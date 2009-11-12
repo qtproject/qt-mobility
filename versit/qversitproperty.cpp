@@ -44,8 +44,6 @@
  *
  * \brief QVersitProperty stores the name, value and parameters of a versit property.
  *
- * QVersitProperty is a container for the name, value and
- * parameters for a versit property.
  * For example a vCard can be presented as a QVersitDocument that
  * consists of 0..n properties such as a name (N),
  * a telephone number (TEL) and an email address (EMAIL) to name a few.
@@ -116,7 +114,7 @@ void QVersitProperty::setName(const QString& name)
 }
 
 /*!
- * Gets the name of the property.
+ * Gets the name of the property in upper-case.
  */
 QString QVersitProperty::name() const
 {
@@ -178,7 +176,7 @@ void QVersitProperty::setValue(const QByteArray& value)
 }
 
 /*!
- * Returns the value of the parameter.
+ * Returns the value of the property.
  */
 QByteArray QVersitProperty::value() const
 {

@@ -13,7 +13,7 @@
 <td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QVersitDocument Class Reference</h1>
-<p>QVersitDocument class is container for 0..n versit properties. <a href="#details">More...</a></p>
+<p>QVersitDocument is a container for 0..n versit properties. <a href="#details">More...</a></p>
 <pre>    #include &lt;QVersitDocument&gt;</pre><ul>
 <li><a href="qversitdocument-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -33,8 +33,8 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>QVersitDocument class is container for 0..n versit properties.</p>
-<p>QVersitDocument class is container for 0..n versit properties. For example a vCard can be presented as a QVersitDocument that consists of 0..n properties such as a name (N), a telephone number (TEL) and an email address (EMAIL) to name a few. Each of these properties is stored as an instance of a <a href="qversitproperty.html">QVersitProperty</a> in a QVersitDocument.</p>
+<p>QVersitDocument is a container for 0..n versit properties.</p>
+<p>For example a vCard can be presented as a QVersitDocument that consists of 0..n properties such as a name (N), a telephone number (TEL) and an email address (EMAIL) to name a few. Each of these properties is stored as an instance of a <a href="qversitproperty.html">QVersitProperty</a> in a QVersitDocument.</p>
 <p>QVersitDocument supports implicit sharing.</p>
 <p>See also <a href="qversitproperty.html">QVersitProperty</a>.</p>
 <hr />
@@ -48,7 +48,7 @@
 <h3 class="fn"><a name="addProperty"></a>void QVersitDocument::addProperty ( const <a href="qversitproperty.html">QVersitProperty</a> &amp; <i>property</i> )</h3>
 <p>Add <i>property</i> to the list of contained versit properties. The property is appended as the last property of the list.</p>
 <h3 class="fn"><a name="properties"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qversitproperty.html">QVersitProperty</a>&gt; QVersitDocument::properties () const</h3>
-<p>Gets the list of the contained versit properties. Note that actual the properties cannot be modified using the copy.</p>
+<p>Gets the list of the contained versit properties. Note that the actual properties cannot be modified using the copy.</p>
 <h3 class="fn"><a name="removeProperties"></a>void QVersitDocument::removeProperties ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>name</i> )</h3>
 <p>Removes all the properties with <i>name</i> from the versit document.</p>
 <h3 class="fn"><a name="setVersitType"></a>void QVersitDocument::setVersitType ( VersitType <i>type</i> )</h3>

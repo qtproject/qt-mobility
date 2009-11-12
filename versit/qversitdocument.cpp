@@ -42,9 +42,8 @@
 /*!
  * \class QVersitDocument
  *
- * \brief QVersitDocument class is container for 0..n versit properties.
+ * \brief QVersitDocument is a container for 0..n versit properties.
  *
- * QVersitDocument class is container for 0..n versit properties.
  * For example a vCard can be presented as a QVersitDocument that
  * consists of 0..n properties such as a name (N),
  * a telephone number (TEL) and an email address (EMAIL) to name a few.
@@ -110,7 +109,7 @@ void QVersitDocument::addProperty(const QVersitProperty& property)
 
 /*!
  * Gets the list of the contained versit properties.
- * Note that actual the properties cannot be modified using the copy.
+ * Note that the actual properties cannot be modified using the copy.
  */
 QList<QVersitProperty> QVersitDocument::properties() const
 {

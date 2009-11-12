@@ -41,7 +41,7 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>QVersitProperty stores the name, value and parameters of a versit property.</p>
-<p>QVersitProperty is a container for the name, value and parameters for a versit property. For example a vCard can be presented as a <a href="qversitdocument.html">QVersitDocument</a> that consists of 0..n properties such as a name (N), a telephone number (TEL) and an email address (EMAIL) to name a few. Each of these properties is stored as an instance of a QVersitProperty in a <a href="qversitdocument.html">QVersitDocument</a>.</p>
+<p>For example a vCard can be presented as a <a href="qversitdocument.html">QVersitDocument</a> that consists of 0..n properties such as a name (N), a telephone number (TEL) and an email address (EMAIL) to name a few. Each of these properties is stored as an instance of a QVersitProperty in a <a href="qversitdocument.html">QVersitDocument</a>.</p>
 <p>QVersitProperty supports implicit sharing. The property name and parameters of a QVersitProperty are converted to upper-case when they are stored to a QVersitProperty. The value of a QVersitProperty is raw data and it is case-sensitive.</p>
 <p>See also <a href="qversitdocument.html">QVersitDocument</a>.</p>
 <hr />
@@ -61,7 +61,7 @@
 <p>Gets the groups part of the property.</p>
 <p>See also <a href="qversitproperty.html#setGroups">setGroups</a>().</p>
 <h3 class="fn"><a name="name"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QVersitProperty::name () const</h3>
-<p>Gets the name of the property.</p>
+<p>Gets the name of the property in upper-case.</p>
 <p>See also <a href="qversitproperty.html#setName">setName</a>().</p>
 <h3 class="fn"><a name="parameters"></a><a href="http://qt.nokia.com/doc/4.5/qmultihash.html">QMultiHash</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>&gt; QVersitProperty::parameters () const</h3>
 <p>Return a copy of the contained list of parameters. Note that actual the parameters cannot be modified using the copy.</p>
@@ -84,7 +84,7 @@
 <p>Sets the <i>value</i> of the property.</p>
 <p>See also <a href="qversitproperty.html#value">value</a>().</p>
 <h3 class="fn"><a name="value"></a><a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> QVersitProperty::value () const</h3>
-<p>Returns the value of the parameter.</p>
+<p>Returns the value of the property.</p>
 <p>See also <a href="qversitproperty.html#setValue">setValue</a>().</p>
 <h3 class="fn"><a name="operator-eq"></a>QVersitProperty &amp; QVersitProperty::operator= ( const QVersitProperty &amp; <i>other</i> )</h3>
 <p>Assigns this property to <i>other</i></p>

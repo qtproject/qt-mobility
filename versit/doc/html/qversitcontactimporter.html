@@ -33,7 +33,7 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>QVersitContactImporter creates QContacts from QVersitDocuments.</p>
-<p>The versit properties (<a href="qversitproperty.html">QVersitProperty</a>) that are not supported by QVersitContactImporter can be imported by the client by calling QVersitContactImporter::unknownVersitProperties. For the returned properties, the client can perform the versit property to contact detail conversions itself and add the converted details to the QContact.</p>
+<p>The versit properties (<a href="qversitproperty.html">QVersitProperty</a>) that were not imported by <a href="qversitcontactimporter.html#importContact">QVersitContactImporter::importContact</a>() can be fetched after importing by calling <a href="qversitcontactimporter.html#unknownVersitProperties">QVersitContactImporter::unknownVersitProperties</a>(). For the returned properties, the client can perform the conversions from versit properties to contact details and add the converted details to the QContact.</p>
 <pre>    QVersitDocument document;
     QVersitProperty property;
 
@@ -58,9 +58,9 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QVersitContactImporter"></a>QVersitContactImporter::QVersitContactImporter ()</h3>
-<p>Constructor.</p>
+<p>Constructs a new importer</p>
 <h3 class="fn"><a name="dtor.QVersitContactImporter"></a>QVersitContactImporter::~QVersitContactImporter ()</h3>
-<p>Destructor.</p>
+<p>Frees the memory used by the importer</p>
 <h3 class="fn"><a name="audioClipPath"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QVersitContactImporter::audioClipPath () const</h3>
 <p>Returns the path where the contact related audio clips will be saved.</p>
 <p>See also <a href="qversitcontactimporter.html#setAudioClipPath">setAudioClipPath</a>().</p>
@@ -76,7 +76,7 @@
 <p>Sets the <i>path</i> where the contact photos will be saved. This function should be called before calling <a href="qversitcontactimporter.html#importContact">importContact</a>(). If the image path has not been set, the images in the versit document will not be added to the contact. There is no default path for them.</p>
 <p>See also <a href="qversitcontactimporter.html#imagePath">imagePath</a>().</p>
 <h3 class="fn"><a name="unknownVersitProperties"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qversitproperty.html">QVersitProperty</a>&gt; QVersitContactImporter::unknownVersitProperties ()</h3>
-<p>Returns the list of versit properties that were not imported by the most recent call of importContact.</p>
+<p>Returns the list of versit properties that were not imported by the most recent call of <a href="qversitcontactimporter.html#importContact">importContact</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

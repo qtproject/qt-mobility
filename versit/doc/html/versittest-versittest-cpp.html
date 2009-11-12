@@ -121,7 +121,7 @@
             }
             excludeFieldsFile.close();
         }
-        mContactManager = new QContactManager(QString::fromAscii(&quot;tracker&quot;));
+        mContactManager = new QContactManager(QString::fromAscii(&quot;symbian&quot;));
 
         if (!dir.exists(mImageAndAudioClipPath)) {
             dir.mkdir(mImageAndAudioClipPath);
@@ -202,7 +202,7 @@
             mImporter-&gt;setImagePath(mImageAndAudioClipPath);
             mImporter-&gt;setAudioClipPath(mImageAndAudioClipPath);
             QContact contact = mImporter-&gt;importContact(document);
-            <span class="comment">//if (mSaveContacts)</span>
+            if (mSaveContacts)
                 QVERIFY(mContactManager-&gt;saveContact(&amp;contact));
             contacts.append(contact);
             documentTypes.append(document.versitType());
