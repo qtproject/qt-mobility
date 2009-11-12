@@ -56,6 +56,7 @@ S60AudioPlayerSession::S60AudioPlayerSession(QObject *parent)
 
 S60AudioPlayerSession::~S60AudioPlayerSession()
 {
+    delete m_player;
 }
 
 qint64 S60AudioPlayerSession::duration() const
@@ -115,8 +116,7 @@ bool S60AudioPlayerSession::isSeekable() const
 
 void S60AudioPlayerSession::play()
 {
-    // TODO: State checking...
-    if (m_state = QMediaPlayer::PausedState) {
+    if (m_state == QMediaPlayer::PausedState) {
         m_player->Play();
     } else {
         QString fileName = QDir::toNativeSeparators(m_url.toString());
@@ -165,8 +165,10 @@ void S60AudioPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
 
 void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration)
 {
-    if (!aError)
+    if (!aError) {
         m_player->Play();   
+        emit stateChanged(QMediaPlayer::PlayingState);
+    }
 }
 
 void S60AudioPlayerSession::MapcPlayComplete(TInt aError)

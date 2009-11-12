@@ -54,25 +54,6 @@ S60MediaPlayerControl::S60MediaPlayerControl(MS60MediaPlayerResolver& mediaPlaye
       m_mediaPlayerResolver(mediaPlayerResolver),
       m_session(NULL)
 {
-    // TODO: Make connections somewhere
-    /*connect(m_session, SIGNAL(positionChanged(qint64)),
-            this, SIGNAL(positionChanged(qint64)));
-    connect(m_session, SIGNAL(durationChanged(qint64)),
-            this, SIGNAL(durationChanged(qint64)));
-    connect(m_session, SIGNAL(mutedStateChaned(bool)),
-            this, SIGNAL(mutingChanged(bool)));
-    connect(m_session, SIGNAL(volumeChanged(int)),
-            this, SIGNAL(volumeChanged(int)));
-    connect(m_session, SIGNAL(stateChanged(QMediaPlayer::State)),
-            this, SIGNAL(stateChanged(QMediaPlayer::State)));
-    connect(m_session, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
-            this, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
-    connect(m_session,SIGNAL(bufferingProgressChanged(int)),
-            this, SIGNAL(bufferStatusChanged(int)));
-    connect(m_session, SIGNAL(videoAvailabilityChanged(bool)),
-            this, SIGNAL(videoAvailabilityChanged(bool)));
-    connect(m_session, SIGNAL(seekableChanged(bool)),
-            this, SIGNAL(seekableChanged(bool)));*/
 }
 
 S60MediaPlayerControl::~S60MediaPlayerControl()

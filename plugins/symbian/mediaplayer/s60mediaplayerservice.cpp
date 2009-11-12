@@ -159,27 +159,69 @@ void S60MediaPlayerService::videoOutputChanged(QVideoOutputControl::Output outpu
 S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
 {
     S60MediaRecognizer *mediaRecognizer = new S60MediaRecognizer;    
-    S60MediaPlayerSession* mediaPlayerSession = NULL;
     QUrl url = m_control->media().canonicalUri();
-    
     S60MediaRecognizer::MediaType mediaType = mediaRecognizer->IdentifyMediaTypeL(url);
-    if (mediaType == S60MediaRecognizer::Video) {
-        if (!m_videoPlayerSession)
-            m_videoPlayerSession = new S60VideoPlayerSession(this);
-        mediaPlayerSession = m_videoPlayerSession;    
-    } else if (mediaType == S60MediaRecognizer::Audio) {
-        if (!m_audioPlayerSession)
-            m_audioPlayerSession = new S60AudioPlayerSession(this);
-        mediaPlayerSession = m_audioPlayerSession;
-    }
-    
     delete mediaRecognizer;
-    return mediaPlayerSession;
+    
+    if (mediaType == S60MediaRecognizer::Video) {
+        return VideoPlayerSession();
+    } else if (mediaType == S60MediaRecognizer::Audio) {
+        return AudioPlayerSession();
+    }
+   
+    return 0;
 }
 
 S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
 {
-    if (!m_videoPlayerSession)
+    if (!m_videoPlayerSession) {
         m_videoPlayerSession = new S60VideoPlayerSession(this);
+        
+        connect(m_videoPlayerSession, SIGNAL(positionChanged(qint64)),
+                m_control, SIGNAL(positionChanged(qint64)));
+        connect(m_videoPlayerSession, SIGNAL(durationChanged(qint64)),
+                m_control, SIGNAL(durationChanged(qint64)));
+        connect(m_videoPlayerSession, SIGNAL(mutedStateChaned(bool)),
+                m_control, SIGNAL(mutingChanged(bool)));
+        connect(m_videoPlayerSession, SIGNAL(volumeChanged(int)),
+                m_control, SIGNAL(volumeChanged(int)));
+        connect(m_videoPlayerSession, SIGNAL(stateChanged(QMediaPlayer::State)),
+                m_control, SIGNAL(stateChanged(QMediaPlayer::State)));
+        connect(m_videoPlayerSession, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
+                m_control, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
+        connect(m_videoPlayerSession,SIGNAL(bufferingProgressChanged(int)),
+                m_control, SIGNAL(bufferStatusChanged(int)));
+        connect(m_videoPlayerSession, SIGNAL(videoAvailabilityChanged(bool)),
+                m_control, SIGNAL(videoAvailabilityChanged(bool)));
+        connect(m_videoPlayerSession, SIGNAL(seekableChanged(bool)),
+                m_control, SIGNAL(seekableChanged(bool)));
+    }
     return m_videoPlayerSession;
+}
+
+S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
+{
+    if (!m_audioPlayerSession) {
+        m_audioPlayerSession = new S60AudioPlayerSession(this);
+        
+        connect(m_audioPlayerSession, SIGNAL(positionChanged(qint64)),
+                m_control, SIGNAL(positionChanged(qint64)));
+        connect(m_audioPlayerSession, SIGNAL(durationChanged(qint64)),
+                m_control, SIGNAL(durationChanged(qint64)));
+        connect(m_audioPlayerSession, SIGNAL(mutedStateChaned(bool)),
+                m_control, SIGNAL(mutingChanged(bool)));
+        connect(m_audioPlayerSession, SIGNAL(volumeChanged(int)),
+                m_control, SIGNAL(volumeChanged(int)));
+        connect(m_audioPlayerSession, SIGNAL(stateChanged(QMediaPlayer::State)),
+                m_control, SIGNAL(stateChanged(QMediaPlayer::State)));
+        connect(m_audioPlayerSession, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
+                m_control, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
+        connect(m_audioPlayerSession,SIGNAL(bufferingProgressChanged(int)),
+                m_control, SIGNAL(bufferStatusChanged(int)));
+        connect(m_audioPlayerSession, SIGNAL(videoAvailabilityChanged(bool)),
+                m_control, SIGNAL(videoAvailabilityChanged(bool)));
+        connect(m_audioPlayerSession, SIGNAL(seekableChanged(bool)),
+                m_control, SIGNAL(seekableChanged(bool)));
+    }
+    return m_audioPlayerSession;
 }

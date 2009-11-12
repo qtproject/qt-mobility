@@ -85,6 +85,7 @@ private slots:
 protected: // From MS60MediaPlayerResolver
     S60MediaPlayerSession* PlayerSession();
     S60MediaPlayerSession* VideoPlayerSession();
+    S60MediaPlayerSession* AudioPlayerSession();
     
 private:
     S60MediaPlayerControl *m_control;
