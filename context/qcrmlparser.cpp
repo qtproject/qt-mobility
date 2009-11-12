@@ -44,10 +44,11 @@
 #include <QFile>
 #include <QXmlStreamAttributes>
 
-KeyData::KeyData(const QString &path, quint64 uid, quint32 bitIndex)
+KeyData::KeyData(const QString &path, quint64 uid, Target target, quint32 bitIndex)
 {
     m_path = path;
     m_UID = uid;
+    m_target = target;
     m_bitIndex = bitIndex;
 }
 
@@ -64,7 +65,6 @@ QList<KeyData> QCrmlParser::parseQCrml(const QString &filePath)
     if (!inputFile.open(QFile::ReadOnly)) {
         setError(FileOpenError, QObject::tr("Error opening file: %1").arg(filePath));
     }
-
 
     setDevice(&inputFile);
 
@@ -108,6 +108,18 @@ QList<KeyData> QCrmlParser::parseRepository()
     if (!ok) {
         setError(ParseError, QObject::tr("repository element has invalid uidValue on line %1")
                                .arg(QString::number(lineNumber())));
+        return rv;
+    }
+
+    QString targetStr = attributes().value("target").toString();
+    if (targetStr.isEmpty() || targetStr == "CRepository") {
+        m_target = KeyData::CRepository;
+    } else if (targetStr == "RProperty") {
+        m_target = KeyData::RProperty;
+    } else {
+        setError(ParseError, QObject::tr("repository element has unrecognised target attribute "
+                                        "on line %1, attribute must be CRepository, RProperty or "
+                                        "be left undefined").arg(QString::number(lineNumber())));
         return rv;
     }
 
@@ -225,7 +237,7 @@ QList<KeyData> QCrmlParser::parseKey(quint32 repoUid)
         quint64 uid = repoUid;
         uid = uid << 32;
         uid += keyInt;
-        rv.append(KeyData(keyPath, uid));
+        rv.append(KeyData(keyPath, uid,m_target));
     }
     return rv;
 }
@@ -260,7 +272,7 @@ QList<KeyData> QCrmlParser::parseKeyRange(quint32 repoUid)
             return rv;
         }
 
-        rv.append(KeyData(pathPrefix,(quint64)countInt + (((quint64)repoUid) << 32)));
+        rv.append(KeyData(pathPrefix,(quint64)countInt + (((quint64)repoUid) << 32), m_target));
     }
 
      if (!pathPrefix.endsWith("/"))
@@ -290,7 +302,9 @@ QList<KeyData> QCrmlParser::parseKeyRange(quint32 repoUid)
 
         maxNum = lastInt - firstInt + 1;
         for (quint32 i=0; i < maxNum; i++) {
-            rv.append(KeyData(pathPrefix + QString::number(i),(quint64)firstInt + (((quint64)repoUid) << 32) + i));
+            rv.append(KeyData(pathPrefix + QString::number(i),
+                                (quint64)firstInt + (((quint64)repoUid) << 32) + i,
+                                m_target));
         }
 
         while (!atEnd()) {
@@ -380,7 +394,7 @@ QList<KeyData> QCrmlParser::parseKeyRange(quint32 repoUid)
             for(int j = 0; j < subSettings.count(); j++) {
                 rv.append(KeyData(pathPrefix + QString::number(i) + subSettings.at(j).path(),
                                  subSettings.at(j).uid() + settingIdentifier + ((firstIndex + 1*i)  << indexBitsLSB),
-                                 subSettings.at(j).bitIndex()));
+                                 m_target, subSettings.at(j).bitIndex()));
             }
         }
     }
@@ -445,7 +459,7 @@ QList<KeyData> QCrmlParser::parseBit(quint32 repoUid, quint32 keyInt)
     quint64 uid = repoUid;
     uid = uid << 32;
     uid += keyInt;
-    rv.append(KeyData(keyPath,uid, bitIndex));
+    rv.append(KeyData(keyPath,uid, m_target, bitIndex));
     return rv;
 }
 

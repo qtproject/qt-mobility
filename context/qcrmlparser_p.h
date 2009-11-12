@@ -59,18 +59,23 @@
 
 class KeyData{
 public:
-    KeyData():m_UID(0), m_bitIndex(0){}
-    KeyData(const QString &path, quint64 UID, quint32 bitmask=0);
+    enum Target{CRepository, RProperty};
+
+    KeyData():m_UID(0), m_bitIndex(0), m_target(RProperty){}
+    KeyData(const QString &path, quint64 UID,
+            Target target, quint32 bitmask=0);
     quint64 uid() const {return m_UID;}
     quint32 repoId() const { return (quint32)(m_UID >> 32);}
     quint32 keyId() const {return (quint32)m_UID;}
     quint32 bitIndex() const { return m_bitIndex;}
     QString path()const {return m_path;}
+    Target target() const {return m_target;}
 
 private:
     quint64 m_UID;
     QString m_path;
     quint32 m_bitIndex;
+    Target m_target;
 };
 
 class QCrmlParser : private QXmlStreamReader
@@ -93,6 +98,7 @@ private:
 
     Error m_error;
     QString m_errorString;
+    KeyData::Target m_target;
 };
 
 #endif
