@@ -86,6 +86,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QTextCodec>
+#include <QThreadStorage>
 #include <QTimer>
 
 #include <shlwapi.h>
@@ -241,7 +242,10 @@ using namespace WinHelpers;
 
 namespace {
 
-    QWeakPointer<WinHelpers::MapiInitializer> initializer;
+    typedef QWeakPointer<WinHelpers::MapiInitializer> InitRecord;
+    typedef InitRecord *InitRecordPtr;
+
+    QThreadStorage<InitRecordPtr> initializer;
 
     GUID GuidPublicStrings = { 0x00020329, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 };
 
@@ -1770,11 +1774,16 @@ namespace WinHelpers {
     {
         MapiInitializationToken result;
 
-        if (!initializer.isNull()) {
-            result = initializer.toStrongRef();
+        if (!initializer.hasLocalData()) {
+            initializer.setLocalData(new InitRecord);
+        }
+
+        InitRecordPtr &threadInitializer(initializer.localData());
+        if (!(*threadInitializer).isNull()) {
+            result = (*threadInitializer).toStrongRef();
         } else {
             result = MapiInitializationToken(new MapiInitializer());
-            initializer = result;
+            (*threadInitializer) = result;
         }
 
         return result;
