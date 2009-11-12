@@ -73,13 +73,13 @@
 #include "qcontactchangeset.h"
 
 class QContactAbstractRequest;
-class QContactManagerInfoPrivate;
 class QContactMemoryEngineData : public QSharedData
 {
 public:
     QContactMemoryEngineData()
         : QSharedData(),
         m_refCount(QAtomicInt(1)),
+        m_selfContactId(0),
         m_nextContactId(1),
         m_anonymous(false)
     {
@@ -88,6 +88,7 @@ public:
     QContactMemoryEngineData(const QContactMemoryEngineData& other)
         : QSharedData(other),
         m_refCount(QAtomicInt(1)),
+        m_selfContactId(other.m_selfContactId),
         m_nextContactId(other.m_nextContactId),
         m_anonymous(other.m_anonymous)
     {
@@ -100,13 +101,14 @@ public:
     QAtomicInt m_refCount;
     QString m_id;                                  // the id parameter value
 
+    QContactLocalId m_selfContactId;               // the "MyCard" contact id
     QList<QContact> m_contacts;                    // list of contacts
     QList<QContactLocalId> m_contactIds;           // list of contact Id's
     QList<QContactRelationship> m_relationships;   // list of contact relationships
     QMap<QContactLocalId, QList<QContactRelationship> > m_orderedRelationships; // map of ordered lists of contact relationships
     QList<QString> m_definitionIds;                // list of definition types (id's)
-    mutable QMap<QString, QContactDetailDefinition> m_definitions; // list of definitions.
-    mutable QSet<QString> m_createOnlyIds; // a list of create only ids.
+    mutable QMap<QString, QMap<QString, QContactDetailDefinition> > m_definitions; // map of contact type to map of definition name to definitions.
+    mutable QMap<QString, QSet<QString> > m_createOnlyIds; // a list of create only definitions for each contact type
     QContactLocalId m_nextContactId;
     bool m_anonymous;                              // Is this backend ever shared?
     QString m_engineName;                          // name of this engine as supplied by factory (memory)
@@ -114,7 +116,7 @@ public:
     QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
 };
 
-class QContactMemoryEngine : public QContactManagerEngine
+class QTCONTACTS_EXPORT QContactMemoryEngine : public QContactManagerEngine
 {
     Q_OBJECT
 
@@ -127,6 +129,10 @@ public:
     /* URI reporting */
     QString managerName() const;
     QMap<QString, QString> managerParameters() const;
+
+    /* "Self" contact id (MyCard) */
+    bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error);
+    QContactLocalId selfContactId(QContactManager::Error& error) const;
 
     /* Contacts - Accessors and Mutators */
     QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
@@ -144,9 +150,9 @@ public:
     QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
 
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
-    bool saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
-    bool removeDetailDefinition(const QString& definitionId, QContactManager::Error& error);
+    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
+    bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error& error);
+    bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error& error);
 
     /* Asynchronous Request Support */
     void requestDestroyed(QContactAbstractRequest* req);
@@ -156,7 +162,7 @@ public:
     bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
 
     /* Capabilities reporting */
-    bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
+    bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
     bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
@@ -170,8 +176,8 @@ private:
     /* Implement "signal coalescing" for batch functions via change set */
     bool saveContact(QContact* theContact, QContactChangeSet& changeSet, QContactManager::Error& error);
     bool removeContact(const QContactLocalId& contactId, QContactChangeSet& changeSet, QContactManager::Error& error);
-    bool saveDetailDefinition(const QContactDetailDefinition& def, QContactChangeSet& changeSet, QContactManager::Error& error);
-    bool removeDetailDefinition(const QString& definitionId, QContactChangeSet& changeSet, QContactManager::Error& error);
+    bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactChangeSet& changeSet, QContactManager::Error& error);
+    bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactChangeSet& changeSet, QContactManager::Error& error);
     bool saveRelationship(QContactRelationship* relationship, QContactChangeSet& changeSet, QContactManager::Error& error);
     bool removeRelationship(const QContactRelationship& relationship, QContactChangeSet& changeSet, QContactManager::Error& error);
 

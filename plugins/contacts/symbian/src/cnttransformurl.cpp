@@ -144,7 +144,7 @@ quint32 CntTransformUrl::getIdForField(const QString& fieldName) const
         return 0;
     else if (QContactUrl::SubTypeFavourite == fieldName)
         return 0;
-    else 
+    else
         return 0;
 
 }
@@ -156,23 +156,21 @@ quint32 CntTransformUrl::getIdForField(const QString& fieldName) const
  */
 void CntTransformUrl::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
     QContactDetailDefinition d;
     QVariantList subTypes;
 
     // fields
     d.setName(QContactUrl::DefinitionName);
-    fields.clear();
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
     fields.insert(QContactUrl::FieldUrl, f);
 
     // Sub-types
-    f.dataType = QVariant::String; // only allowed to be a single subtype
-    subTypes.clear();
-    subTypes << QString(QLatin1String(QContactUrl::SubTypeHomePage));
-    f.allowableValues = subTypes;
+    f.setDataType(QVariant::String); //only allowed to be a single subtype
+    f.setAllowableValues(QVariantList()
+            << QString(QLatin1String(QContactUrl::SubTypeHomePage)));
     fields.insert(QContactUrl::FieldSubType, f);
 
     // Contexts

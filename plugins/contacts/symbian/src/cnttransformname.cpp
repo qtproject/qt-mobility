@@ -44,106 +44,124 @@
 
 QList<CContactItemField *> CntTransformName::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList;
+    QList<CContactItemField *> fieldList;
 
-	//cast to name
-	const QContactName &name(static_cast<const QContactName&>(detail));
+    if(detail.definitionName() != QContactName::DefinitionName)
+       User::Leave(KErrArgument);
 
-	//Prefix
-	TPtrC fieldTextPrefix(reinterpret_cast<const TUint16*>(name.prefix().utf16()));
-	CContactItemField* prefix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldPrefixName);
-	prefix->TextStorage()->SetTextL(fieldTextPrefix);
-	prefix->SetMapping(KUidContactFieldVCardMapUnusedN);
-	fieldList.append(prefix);
-	CleanupStack::Pop(prefix);
+    //cast to name
+    const QContactName &name(static_cast<const QContactName&>(detail));
 
-	//First Name
-	TPtrC fieldTextFirstName(reinterpret_cast<const TUint16*>(name.first().utf16()));
-	CContactItemField* firstName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldGivenName);
-	firstName->TextStorage()->SetTextL(fieldTextFirstName);
-	firstName->SetMapping(KUidContactFieldVCardMapUnusedN);
-	fieldList.append(firstName);
-	CleanupStack::Pop(firstName);
+    //Prefix
+    TPtrC fieldTextPrefix(reinterpret_cast<const TUint16*>(name.prefix().utf16()));
+    if(fieldTextPrefix.Length()) {
+        CContactItemField* prefix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldPrefixName);
+        prefix->TextStorage()->SetTextL(fieldTextPrefix);
+        prefix->SetMapping(KUidContactFieldVCardMapUnusedN);
+        fieldList.append(prefix);
+        CleanupStack::Pop(prefix);
+    }
 
-	//Middle Name
-	TPtrC fieldTextMiddleName(reinterpret_cast<const TUint16*>(name.middle().utf16()));
-	CContactItemField* middleName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldAdditionalName);
-	middleName->TextStorage()->SetTextL(fieldTextMiddleName);
-	middleName->SetMapping(KUidContactFieldVCardMapUnusedN);
-	fieldList.append(middleName);
-	CleanupStack::Pop(middleName);
+    //First Name
+    TPtrC fieldTextFirstName(reinterpret_cast<const TUint16*>(name.first().utf16()));
+    if(fieldTextFirstName.Length()) {
+        CContactItemField* firstName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldGivenName);
+        firstName->TextStorage()->SetTextL(fieldTextFirstName);
+        firstName->SetMapping(KUidContactFieldVCardMapUnusedN);
+        fieldList.append(firstName);
+        CleanupStack::Pop(firstName);
+    }
 
-	//Last Name
-	TPtrC fieldTextLastName(reinterpret_cast<const TUint16*>(name.last().utf16()));
-	CContactItemField* lastName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldFamilyName);
-	lastName->TextStorage()->SetTextL(fieldTextLastName);
-	lastName->SetMapping(KUidContactFieldVCardMapUnusedN);
-	fieldList.append(lastName);
-	CleanupStack::Pop(lastName);
+    //Middle Name
+    TPtrC fieldTextMiddleName(reinterpret_cast<const TUint16*>(name.middle().utf16()));
+    if(fieldTextMiddleName.Length()) {
+        CContactItemField* middleName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldAdditionalName);
+        middleName->TextStorage()->SetTextL(fieldTextMiddleName);
+        middleName->SetMapping(KUidContactFieldVCardMapUnusedN);
+        fieldList.append(middleName);
+        CleanupStack::Pop(middleName);
+    }
 
-	//Suffix
-	TPtrC fieldTextSuffix(reinterpret_cast<const TUint16*>(name.suffix().utf16()));
-	CContactItemField* suffix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldSuffixName);
-	suffix->TextStorage()->SetTextL(fieldTextSuffix);
-	suffix->SetMapping(KUidContactFieldVCardMapUnusedN);
-	fieldList.append(suffix);
-	CleanupStack::Pop(suffix);
+    //Last Name
+    TPtrC fieldTextLastName(reinterpret_cast<const TUint16*>(name.last().utf16()));
+    if(fieldTextLastName.Length()) {
+        CContactItemField* lastName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldFamilyName);
+        lastName->TextStorage()->SetTextL(fieldTextLastName);
+        lastName->SetMapping(KUidContactFieldVCardMapUnusedN);
+        fieldList.append(lastName);
+        CleanupStack::Pop(lastName);
+    }
 
-	return fieldList;
+    //Suffix
+    TPtrC fieldTextSuffix(reinterpret_cast<const TUint16*>(name.suffix().utf16()));
+    if(fieldTextSuffix.Length()) {
+        CContactItemField* suffix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldSuffixName);
+        suffix->TextStorage()->SetTextL(fieldTextSuffix);
+        suffix->SetMapping(KUidContactFieldVCardMapUnusedN);
+        fieldList.append(suffix);
+        CleanupStack::Pop(suffix);
+    }
+
+    // Custom label
+    TPtrC fieldTextLabel(reinterpret_cast<const TUint16*>(name.customLabel().utf16()));
+    if(fieldTextLabel.Length()) {
+        CContactItemField* templateLabel = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldTemplateLabel);
+        templateLabel->TextStorage()->SetTextL(fieldTextLabel);
+        templateLabel->SetMapping(KUidContactFieldVCardMapUnusedN);
+        fieldList.append(templateLabel);
+        CleanupStack::Pop(templateLabel);
+    }
+
+    return fieldList;
 }
 
 
 QContactDetail *CntTransformName::transformItemField(const CContactItemField& field, const QContact &contact)
 {
-	QContactName *name = new QContactName(contact.detail<QContactName>());
+    QContactName *name = new QContactName(contact.detail<QContactName>());
 
-	CContactTextField* storage = field.TextStorage();
-	QString nameValue = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
+    CContactTextField* storage = field.TextStorage();
+    QString nameValue = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
 
-	for (int i = 0; i < field.ContentType().FieldTypeCount(); i++)
-	{
-		//Prefix
-		if (field.ContentType().FieldType(i) == KUidContactFieldPrefixName)
-		{
-			name->setPrefix(nameValue);
-		}
+    for (int i = 0; i < field.ContentType().FieldTypeCount(); i++) {
+        //Prefix
+        if (field.ContentType().FieldType(i) == KUidContactFieldPrefixName) {
+            name->setPrefix(nameValue);
+        }
+        //First name
+        else if (field.ContentType().FieldType(i) == KUidContactFieldGivenName) {
+            name->setFirst(nameValue);
+        }
+        //Middle name
+        else if (field.ContentType().FieldType(i) == KUidContactFieldAdditionalName) {
+            name->setMiddle(nameValue);
+        }
+        //Last name
+        else if (field.ContentType().FieldType(i) == KUidContactFieldFamilyName) {
+            name->setLast(nameValue);
+        }
+        //Suffix
+        else if (field.ContentType().FieldType(i) == KUidContactFieldSuffixName) {
+            name->setSuffix(nameValue);
+        }
+        // custom label
+        else if (field.ContentType().FieldType(i) == KUidContactFieldTemplateLabel) {
+            name->setCustomLabel(nameValue);
+        }
+    }
 
-		//First name
-		else if (field.ContentType().FieldType(i) == KUidContactFieldGivenName)
-		{
-			name->setFirst(nameValue);
-		}
-
-		//Middle name
-		else if (field.ContentType().FieldType(i) == KUidContactFieldAdditionalName)
-		{
-			name->setMiddle(nameValue);
-		}
-
-		//Last name
-		else if (field.ContentType().FieldType(i) == KUidContactFieldFamilyName)
-		{
-			name->setLast(nameValue);
-		}
-
-		//Suffix
-		else if (field.ContentType().FieldType(i) == KUidContactFieldSuffixName)
-		{
-			name->setSuffix(nameValue);
-		}
-	}
-
-	return name;
+    return name;
 }
 
 bool CntTransformName::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
-    if (fieldType == KUidContactFieldPrefixName.iUid ||
-        fieldType == KUidContactFieldGivenName.iUid ||
-        fieldType == KUidContactFieldAdditionalName.iUid ||
-        fieldType == KUidContactFieldFamilyName.iUid ||
-        fieldType == KUidContactFieldSuffixName.iUid) {
+    if (fieldType == KUidContactFieldPrefixName.iUid
+        || fieldType == KUidContactFieldGivenName.iUid
+        || fieldType == KUidContactFieldAdditionalName.iUid
+        || fieldType == KUidContactFieldFamilyName.iUid
+        || fieldType == KUidContactFieldSuffixName.iUid
+        || fieldType == KUidContactFieldTemplateLabel.iUid ) {
         ret = true;
     }
     return ret;
@@ -176,6 +194,9 @@ QList<TUid> CntTransformName::supportedSortingFieldTypes(QString detailFieldName
 
     if (detailFieldName == QContactName::FieldSuffix)
         return uids << KUidContactFieldSuffixName;
+
+    if (detailFieldName == QContactName::FieldCustomLabel)
+        return uids << KUidContactFieldTemplateLabel;
 
     return uids;
 }
@@ -210,7 +231,7 @@ quint32 CntTransformName::getIdForField(const QString& fieldName) const
         return KUidContactFieldFamilyName.iUid;
     else if (QContactName::FieldSuffix == fieldName)
         return KUidContactFieldSuffixName.iUid;
-    else 
+    else
         return 0;
 }
 
@@ -221,19 +242,20 @@ quint32 CntTransformName::getIdForField(const QString& fieldName) const
  */
 void CntTransformName::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
     QContactDetailDefinition d;
 
     // name
     d.setName(QContactName::DefinitionName);
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
     fields.insert(QContactName::FieldPrefix, f);
     fields.insert(QContactName::FieldFirst, f);
     fields.insert(QContactName::FieldMiddle, f);
     fields.insert(QContactName::FieldLast, f);
     fields.insert(QContactName::FieldSuffix, f);
+    fields.insert(QContactName::FieldCustomLabel, f);
     d.setFields(fields);
     d.setUnique(true);
     d.setAccessConstraint(QContactDetailDefinition::NoConstraint);

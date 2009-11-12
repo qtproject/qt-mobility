@@ -141,7 +141,7 @@ quint32 CntTransformFamily::getIdForField(const QString& fieldName) const
         return KUidContactFieldSpouse.iUid;
     else if (QContactFamily::FieldChildren == fieldName)
         return KUidContactFieldChildren.iUid;
-    else 
+    else
         return 0;
 }
 
@@ -152,13 +152,13 @@ quint32 CntTransformFamily::getIdForField(const QString& fieldName) const
  */
 void CntTransformFamily::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
     QContactDetailDefinition d;
 
     d.setName(QContactFamily::DefinitionName);
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
     fields.insert(QContactFamily::FieldSpouse, f);
     fields.insert(QContactFamily::FieldChildren, f);
 

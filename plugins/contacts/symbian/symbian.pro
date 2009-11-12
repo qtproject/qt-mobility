@@ -36,6 +36,7 @@ symbian: {
         inc/cnttransformonlineaccount.h \
         inc/cnttransformorganisation.h \
         inc/cnttransformavatar.h \
+        inc/cnttransformavatarsimple.h \
         inc/cnttransformsynctarget.h \
         inc/cnttransformgender.h \
         inc/cnttransformanniversary.h \
@@ -53,7 +54,8 @@ symbian: {
         inc/cntrelationshipgroup.h \
         inc/cntsymbianfiltersqlhelper.h \
         inc/cntsymbiansrvconnection.h \
-        inc/cntsymbiantransformerror.h
+        inc/cntsymbiantransformerror.h \
+        inc/cntsymbiandatabase.h
       
   SOURCES += \
         src/cntsymbianengine.cpp \
@@ -70,6 +72,7 @@ symbian: {
         src/cnttransformonlineaccount.cpp \
         src/cnttransformorganisation.cpp \
         src/cnttransformavatar.cpp \
+        src/cnttransformavatarsimple.cpp \
         src/cnttransformsynctarget.cpp \
         src/cnttransformgender.cpp \
         src/cnttransformanniversary.cpp \
@@ -85,7 +88,8 @@ symbian: {
         src/cntrelationshipgroup.cpp \
         src/cntsymbianfiltersqlhelper.cpp \
         src/cntsymbiansrvconnection.cpp \
-        src/cntsymbiantransformerror.cpp
+        src/cntsymbiantransformerror.cpp \
+        src/cntsymbiandatabase.cpp
       
     qtAddLibrary(QtContacts)
 
@@ -102,7 +106,7 @@ symbian: {
         DEFINES += USE_CUSTOM_CNT_MODEL_FIELDS
         cntmodelResourceFile = \
             "START RESOURCE ../rss/cntmodel.rss" \
-            "TARGETPATH resource/cntmodel" \
+            "TARGETPATH $${CONTACTS_RESOURCE_DIR}" \
             "END"
         MMP_RULES += cntmodelResourceFile
     }

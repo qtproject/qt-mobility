@@ -60,6 +60,8 @@ public:
 
     /* Selection */
     void setDefinitions(const QList<QContactDetailDefinition>& definitions);
+    void setContactType(const QString& contactType);
+    QString contactType() const;
 
     /* Results */
     QList<QContactDetailDefinition> definitions() const;

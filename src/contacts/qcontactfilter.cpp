@@ -48,11 +48,11 @@
 #include "qcontactmanager.h"
 
 /*!
-  \class QContactFilter
-  \brief The QContactFilter class is used to select contacts made available through a QContactManager
- 
-  This class is used as a parameter to various functions offered by QContactManager, to allow
-  selection of contacts which have certain details or properties.
+ * \class QContactFilter
+ * \brief The QContactFilter class is used to select contacts made available through a QContactManager
+ *
+ * This class is used as a parameter to various functions offered by QContactManager, to allow
+ * selection of contacts which have certain details or properties.
  */
 
 /*!
@@ -68,6 +68,18 @@
  * \value UnionFilter A filter which matches any contact that is matched by any of the filters it includes
  * \value LocalIdFilter A filter which matches any contact whose local id is contained in a particular list of contact local ids
  * \value DefaultFilter A filter which matches everything
+ */
+
+/*!
+ * \enum QContactFilter::MatchFlag
+ * Describes the semantics of matching followed by the filter
+ * \value MatchExactly Performs QVariant-based matching
+ * \value MatchContains The search term is contained in the item
+ * \value MatchStartsWith The search term matches the start of the item
+ * \value MatchEndsWith The search term matches the end of the item
+ * \value MatchFixedString Performs string-based matching. String-based comparisons are case-insensitive unless the \c MatchCaseSensitive flag is also specified
+ * \value MatchCaseSensitive The search is case sensitive
+ * \value MatchPhoneNumber The search term is considered to be contained in the item by the platform where the search term is a phone number
  */
 
 /*!
@@ -140,7 +152,7 @@ QContactFilter::QContactFilter(QContactFilterPrivate *d)
 }
 
 /*! Intersects the \a left and \a right filters */
-const QContactFilter operator&&(const QContactFilter& left, const QContactFilter& right)
+const QContactFilter operator&(const QContactFilter& left, const QContactFilter& right)
 {
     // XXX TODO: empty intersection/union operations are not well defined yet.
     //if (left.type() == QContactFilter::Intersection) {
@@ -164,7 +176,7 @@ const QContactFilter operator&&(const QContactFilter& left, const QContactFilter
 }
 
 /*! Unions the \a left and \a right filters */
-const QContactFilter operator||(const QContactFilter& left, const QContactFilter& right)
+const QContactFilter operator|(const QContactFilter& left, const QContactFilter& right)
 {
     if (left.type() == QContactFilter::UnionFilter) {
         QContactUnionFilter bf(left);

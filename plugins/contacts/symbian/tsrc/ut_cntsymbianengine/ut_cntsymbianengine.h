@@ -39,47 +39,40 @@
 **
 ****************************************************************************/
 #include <QObject>
-#include <QHash>
-#include <qcontactfilter.h>
-#include <qcontactmanager.h>
 
-class CntSymbianFilterSqlHelper;
+class CntSymbianEngine;
 
-typedef struct {
-    QContactFilter filter;
-    QString name;
-    int result;
-    int error;
-} TFilter;
-
-class TestSqlFiltering : public QObject
+class TestSymbianEngine : public QObject
 {
     Q_OBJECT
 
-private slots:  // Init & cleanup
-	void initTestCase();
-	void cleanupTestCase();
-	
-private:
-    void parseFilters();
-    void addFilter(QVector<QString> param);
-    void createContacts();
-    Qt::MatchFlags flag(int f);
-
-private slots:  // Test cases
-    void testInvalidFilter();
-    void testContactDetailFilter();
-    void testContactDetailRangeFilter();
-    void testChangeLogFilter();
-    void testActionFilter();
-    void testRelationshipFilter();
-    void testIntersectionFilter();
-    void testUnionFilter();
-    void testLocalIdFilter();
-    void testDefaultFilter();
+private slots:
+    void initTestCase();    
+    void cleanupTestCase();
+    
+    void init();
+    void clean();
+    
+    void saveContact();
+    void saveContacts();
+    void contact();
+    void updateContact();
+    void removeContact();
+    void removeContacts();
+    void addOwnCard();
+    void retrieveOwnCard();
+    void simpleFilterTest();
+    void featureSupport();
+    /*
+    void addGroup();
+    void retrieveGroup();
+    */
+    void singleRelationship();
+    void batchRelationships();
     
 private:
-    QContactManager                             *mCntMng;
-    CntSymbianFilterSqlHelper                   *mSqlFilter;
-    QHash<QContactFilter::FilterType, TFilter>  *mFilters;
+    void removeAllContacts();
+
+private:
+    CntSymbianEngine   *m_engine;
 };

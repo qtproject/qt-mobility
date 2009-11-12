@@ -67,7 +67,7 @@ QString QContactInvalidEngine::managerName() const
 }
 
 /*! \reimp */
-QString QContactInvalidEngine::synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString QContactInvalidEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
     Q_UNUSED(contact);
     error = QContactManager::NotSupportedError;

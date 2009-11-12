@@ -112,7 +112,7 @@ Q_DECLARE_METATYPE(QContactLocalIdList);
 tst_QContactAsync::tst_QContactAsync()
 {
     // ensure we can load all of the plugins we need to.
-    QString path = QApplication::applicationDirPath() + "/dummyplugin";
+    QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins";
     QApplication::addLibraryPath(path);
 
     qRegisterMetaType<QContactLocalIdList>("QList<QContactLocalId>");
@@ -120,7 +120,7 @@ tst_QContactAsync::tst_QContactAsync()
 
 tst_QContactAsync::~tst_QContactAsync()
 {
-    QString path = QApplication::applicationDirPath() + "/dummyplugin";
+    QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins";
     QApplication::removeLibraryPath(path);
 }
 
@@ -303,8 +303,8 @@ void tst_QContactAsync::contactFetch()
     sorting.clear();
     cfr.setFilter(fil);
     cfr.setSorting(sorting);
-    cfr.setDefinitionRestrictions(QStringList(QContactDisplayLabel::DefinitionName));
-    QCOMPARE(cfr.definitionRestrictions(), QStringList(QContactDisplayLabel::DefinitionName));
+    cfr.setDefinitionRestrictions(QStringList(QContactName::DefinitionName));
+    QCOMPARE(cfr.definitionRestrictions(), QStringList(QContactName::DefinitionName));
     QVERIFY(!cfr.cancel()); // not started
     QVERIFY(cfr.start());
     QVERIFY(cfr.isActive());
@@ -325,7 +325,15 @@ void tst_QContactAsync::contactFetch()
         QContact currFull = cm->contact(contactIds.at(i));
         QContact currRestricted;
         currRestricted.setId(currFull.id());
-        currRestricted.setDisplayLabel(currFull.displayLabel());
+        QList<QContactName> names = currFull.details<QContactName>();
+        foreach (const QContactName& name, names) {
+            QContactName fullName = name;
+            if (!fullName.isEmpty()) {
+                currRestricted.saveDetail(&fullName);
+            }
+        }
+
+        // ensure that the contact is the same
         QVERIFY(contacts.at(i) == currRestricted);
     }
 
@@ -568,7 +576,9 @@ void tst_QContactAsync::contactRemove()
 
     // cancelling
     QContact temp;
-    temp.setDisplayLabel("should not be removed");
+    QContactName nameDetail;
+    nameDetail.setCustomLabel("Should not be removed");
+    temp.saveDetail(&nameDetail);
     cm->saveContact(&temp);
     crr.setFilter(dfil);
     QVERIFY(!crr.cancel()); // not started
@@ -611,6 +621,7 @@ void tst_QContactAsync::contactRemove()
 
     QCOMPARE(cm->contacts().size(), 1);
     QCOMPARE(cm->contact(cm->contacts().first()), temp);
+    cm->removeContact(temp.localId()); // clean up
 
     delete cm;
 }
@@ -633,7 +644,9 @@ void tst_QContactAsync::contactSave()
     // save a new contact
     int originalCount = cm->contacts().size();
     QContact testContact;
-    testContact.setDisplayLabel("Test Contact");
+    QContactName nameDetail;
+    nameDetail.setCustomLabel("Test Contact");
+    testContact.saveDetail(&nameDetail);
     QList<QContact> saveList;
     saveList << testContact;
     csr.setManager(cm);
@@ -767,6 +780,8 @@ void tst_QContactAsync::definitionFetch()
     QContactManager* cm = prepareModel(uri);
     QContactDetailDefinitionFetchRequest dfr;
     QVERIFY(dfr.type() == QContactAbstractRequest::DetailDefinitionFetchRequest);
+    dfr.setContactType(QContactType::TypeContact);
+    QVERIFY(dfr.contactType() == QString(QLatin1String(QContactType::TypeContact)));
 
     // initial state - not started, no manager.
     QVERIFY(!dfr.isActive());
@@ -868,11 +883,13 @@ void tst_QContactAsync::definitionRemove()
 {
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
-    if (!cm->information()->hasFeature(QContactManagerInfo::MutableDefinitions)) {
+    if (!cm->hasFeature(QContactManager::MutableDefinitions, QContactType::TypeContact)) {
        QSKIP("This contact manager doest not support mutable definitions, can't remove a definition!", SkipSingle);
     }
     QContactDetailDefinitionRemoveRequest drr;
     QVERIFY(drr.type() == QContactAbstractRequest::DetailDefinitionRemoveRequest);
+    drr.setContactType(QContactType::TypeContact);
+    QVERIFY(drr.contactType() == QString(QLatin1String(QContactType::TypeContact)));
 
     // initial state - not started, no manager.
     QVERIFY(!drr.isActive());
@@ -1018,12 +1035,14 @@ void tst_QContactAsync::definitionSave()
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
     
-    if (!cm->information()->hasFeature(QContactManagerInfo::MutableDefinitions)) {
+    if (!cm->hasFeature(QContactManager::MutableDefinitions, QContactType::TypeContact)) {
        QSKIP("This contact manager doest not support mutable definitions, can't save a definition!", SkipSingle);
     }
     
     QContactDetailDefinitionSaveRequest dsr;
     QVERIFY(dsr.type() == QContactAbstractRequest::DetailDefinitionSaveRequest);
+    dsr.setContactType(QContactType::TypeContact);
+    QVERIFY(dsr.contactType() == QString(QLatin1String(QContactType::TypeContact)));
 
     // initial state - not started, no manager.
     QVERIFY(!dsr.isActive());
@@ -1033,13 +1052,13 @@ void tst_QContactAsync::definitionSave()
     QVERIFY(!dsr.waitForFinished());
     QVERIFY(!dsr.waitForProgress());
 
-    // save a new group
+    // save a new detail definition
     int originalCount = cm->detailDefinitions().keys().size();
     QContactDetailDefinition testDef;
     testDef.setName("TestDefinitionId");
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
-    f.dataType = QVariant::String;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
+    f.setDataType(QVariant::String);
     fields.insert("TestDefinitionField", f);
     testDef.setFields(fields);
     QList<QContactDetailDefinition> saveList;
@@ -1220,7 +1239,7 @@ void tst_QContactAsync::relationshipFetch()
     QContactId aId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.displayLabel().label() == QString("Aaron Aaronson")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Aaron Aaronson")) {
             aId = curr.id();
             break;
         }
@@ -1248,7 +1267,7 @@ void tst_QContactAsync::relationshipFetch()
     QContactId bId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.displayLabel().label() == QString("Bob Aaronsen")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Bob Aaronsen")) {
             bId = curr.id();
             break;
         }
@@ -1278,7 +1297,7 @@ void tst_QContactAsync::relationshipFetch()
     QContactId cId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.displayLabel().label() == QString("Borris Aaronsun")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Borris Aaronsun")) {
             cId = curr.id();
             break;
         }
@@ -1381,15 +1400,15 @@ void tst_QContactAsync::relationshipRemove()
     QContactId aId, bId, cId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.displayLabel().label() == QString("Aaron Aaronson")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Aaron Aaronson")) {
             aId = curr.id();
             continue;
         }
-        if (curr.displayLabel().label() == QString("Bob Aaronsen")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Bob Aaronsen")) {
             bId = curr.id();
             continue;
         }
-        if (curr.displayLabel().label() == QString("Borris Aaronsun")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Borris Aaronsun")) {
             cId = curr.id();
             continue;
         }
@@ -1585,11 +1604,11 @@ void tst_QContactAsync::relationshipSave()
     QContactId cId, aId, bId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.displayLabel().label() == QString("Borris Aaronsun")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Borris Aaronsun")) {
             cId = curr.id();
-        } else if (curr.displayLabel().label() == QString("Bob Aaronsen")) {
+        } else if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Bob Aaronsen")) {
             bId = curr.id();
-        } else if (curr.displayLabel().label() == QString("Aaron Aaronson")) {
+        } else if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Aaron Aaronson")) {
             aId = curr.id();
         }
     }
@@ -1891,10 +1910,22 @@ QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
 {
     QContactManager* cm = QContactManager::fromUri(managerUri);
 
+    // XXX TODO: ensure that this is the case:
+    // there should be no contacts in the database.
+    QList<QContactLocalId> toRemove = cm->contacts();
+    foreach (const QContactLocalId& removeId, toRemove)
+        cm->removeContact(removeId);
+
     QContact a, b, c;
-    a.setDisplayLabel("Aaron Aaronson");
-    b.setDisplayLabel("Bob Aaronsen");
-    c.setDisplayLabel("Borris Aaronsun");
+    QContactName aNameDetail;
+    aNameDetail.setCustomLabel("Aaron Aaronson");
+    a.saveDetail(&aNameDetail);
+    QContactName bNameDetail;
+    bNameDetail.setCustomLabel("Bob Aaronsen");
+    b.saveDetail(&bNameDetail);
+    QContactName cNameDetail;
+    cNameDetail.setCustomLabel("Borris Aaronsun");
+    c.saveDetail(&cNameDetail);
 
     QContactPhoneNumber phn;
     phn.setNumber("0123");
