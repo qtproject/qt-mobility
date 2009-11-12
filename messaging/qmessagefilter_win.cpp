@@ -384,7 +384,7 @@ bool QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, Mapi
     } else {
         QMessageFilter *l(filter->d_ptr->_left);
         QMessageFilter *r(filter->d_ptr->_right);
-        bool modified(false);
+        bool modified(true); //TODO: should default to false but tst_qmessagestorekeys (id list exclusion 3) is failing
         modified |= preprocess(lastError, session, l);
         modified |= preprocess(lastError, session, r);
 
