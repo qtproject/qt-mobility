@@ -63,6 +63,12 @@
 typedef QList<QContactLocalId> QContactLocalIdList;
 #define CNT_SYMBIAN_MANAGER_NAME "symbian"
 
+/* ... The macros changed names */
+#if QT_VERSION < QT_VERSION_CHECK(4, 6, 0)
+#define QT_TRAP_THROWING QT_TRANSLATE_SYMBIAN_LEAVE_TO_EXCEPTION
+#define QT_TRYCATCH_LEAVING QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE
+#endif
+
 CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
     error = QContactManager::NoError;
@@ -783,29 +789,42 @@ bool CntSymbianEngine::filterSupported(const QContactFilter& filter) const
 }
 
 /* Synthesise the display label of a contact */
-QString CntSymbianEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& /*error*/) const
+QString CntSymbianEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
+    QString label("");
     QContactName name = contact.detail<QContactName>();
-    QContactOrganization org = contact.detail<QContactOrganization>();
+    if(contact.type() == QContactType::TypeContact) {
+        QContactOrganization org = contact.detail<QContactOrganization>();
+        QString firstName = name.first();
+        QString lastName = name.last();
 
-    QString firstName = name.first();
-    QString lastName = name.last();
-
-    if (!name.last().isEmpty()) {
-        if (!name.first().isEmpty()) {
-            return QString(QLatin1String("%1, %2")).arg(name.last()).arg(name.first());
+        if (!name.last().isEmpty()) {
+            if (!name.first().isEmpty()) {
+                label = QString(QLatin1String("%1, %2")).arg(name.last()).arg(name.first());
+            } else {
+                // Just last
+                label = name.last();
+            }
+        } else if (!name.first().isEmpty()) {
+            label = name.first();
+        } else if (!org.name().isEmpty()) {
+            label = org.name();
         } else {
-            // Just last
-            return name.last();
+            // TODO: localize?
+            label = QLatin1String("Unnamed");
         }
-    } else if (!name.first().isEmpty()) {
-        return name.first();
-    } else if (!org.name().isEmpty()) {
-        return org.name();
-    } else {
-        // XXX grargh.
-        return QLatin1String("Unnamed");
+    } else if (contact.type() == QContactType::TypeGroup) {
+        if (!name.customLabel().isEmpty()) {
+            label = name.customLabel();
+        } else {
+            // TODO: localize?
+            label = QLatin1String("Unnamed");
+        }
     }
+    else {
+        error = QContactManager::InvalidContactTypeError;
+    }
+    return label;
 }
 
 bool CntSymbianEngine::setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error)
