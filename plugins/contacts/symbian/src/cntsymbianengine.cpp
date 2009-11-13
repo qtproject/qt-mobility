@@ -62,6 +62,13 @@
 
 typedef QList<QContactLocalId> QContactLocalIdList;
 
+// NOTE: There is a bug with RVCT compiler which causes the local stack
+// variable to corrupt if the called function leaves. As a workaround we are
+// reserving the objects from heap so it will not get corrupted.
+// This of course applies only to those stack variables which are passed to
+// the called function or the return value of the function is placed to the
+// variable
+
 /* ... The macros changed names */
 #if QT_VERSION < QT_VERSION_CHECK(4, 6, 0)
 #define QT_TRAP_THROWING QT_TRANSLATE_SYMBIAN_LEAVE_TO_EXCEPTION
@@ -182,6 +189,17 @@ QList<QContactLocalId> CntSymbianEngine::contacts(const QList<QContactSortOrder>
     return slowSort(unsortedIds, sortOrders, error);
 }
 
+/*!
+ * Complete list of sorted contact IDs of a certain contact
+ * type from the database based on a list of sort orders.
+ *
+ * \param contactType Contact type
+ * \param sortOrders Sort order
+ * \param error Qt error code.
+ * \return List of all IDs for contact entries in the database,
+ *  or an empty list if there was a problem or the database is
+ *  empty.
+ */
 QList<QContactLocalId> CntSymbianEngine::contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     QList<QContactLocalId> contactIds;
@@ -209,6 +227,14 @@ QList<QContactLocalId> CntSymbianEngine::contacts(const QString& contactType, co
     return contactIds; // empty
 }
 
+/*!
+ * Read a contact from the contact database.
+ *
+ * \param contactId The Id of the contact to be retrieved.
+ * \param error Qt error code.
+ * \return A QContact for the requested QContactLocalId value or 0 if the read
+ *  operation was unsuccessful (e.g. contact not found).
+ */
 QContact CntSymbianEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
     QContact contact = fetchContact(contactId, error);
@@ -225,6 +251,14 @@ bool CntSymbianEngine::saveContact(QContact* contact, QContactManager::Error& er
     return ret;
 }
 
+/*!
+ * Add a list of contacts to the database.
+ *
+ * \param contacts List of QContact to be saved.
+ * \param error Qt error code.
+ * \return List of all error codes corresponding to each QContact in the
+ *  list of contacts to be saved.
+ */
 QList<QContactManager::Error> CntSymbianEngine::saveContacts(QList<QContact>* contacts, QContactManager::Error& error)
 {
     QContactChangeSet changeSet;
@@ -867,7 +901,7 @@ QString CntSymbianEngine::managerName() const
 {
     return CNT_SYMBIAN_MANAGER_NAME;
 }
-
+#ifndef PBK_UNIT_TEST
 /* Factory lives here in the basement */
 QContactManagerEngine* CntSymbianFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
@@ -880,3 +914,4 @@ QString CntSymbianFactory::managerName() const
 }
 
 Q_EXPORT_PLUGIN2(mobapicontactspluginsymbian, CntSymbianFactory);
+#endif  //PBK_UNIT_TEST
