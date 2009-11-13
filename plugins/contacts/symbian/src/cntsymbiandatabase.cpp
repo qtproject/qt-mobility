@@ -75,7 +75,7 @@ CntSymbianDatabase::CntSymbianDatabase(QContactManagerEngine *engine, QContactMa
 #endif
         if (err == KErrNone)
             m_engine = engine;
-        
+
         // Read current own card id (self contact id)
         TContactItemId myCard = m_contactDatabase->OwnCardId();
         if (myCard > 0)
@@ -102,9 +102,9 @@ CContactDatabase* CntSymbianDatabase::contactDatabase()
     return m_contactDatabase;
 }
 
-void CntSymbianDatabase::appendContactsEmitted(QList<QContactLocalId> *contactList)
+void CntSymbianDatabase::appendContactsEmitted(const QList<QContactLocalId> &contactList)
 {
-    m_contactsEmitted += *contactList;
+    m_contactsEmitted += contactList;
 }
 
 void CntSymbianDatabase::appendContactEmitted(QContactLocalId id)
@@ -123,7 +123,7 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
 {
     QContactChangeSet changeSet;
     TContactItemId id = aEvent.iContactId;
-    
+
     switch (aEvent.iType)
     {
     case EContactDbObserverEventContactAdded:
@@ -170,7 +170,7 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
     default:
         break; // ignore other events
     }
-    
+
     changeSet.emitSignals(m_engine);
 }
 
