@@ -405,7 +405,11 @@ void tst_QMessageStore::testMessage_data()
         << "Last HTML message..."
         << QByteArray("multipart")
         << QByteArray("mixed")
+#if defined(Q_OS_WIN) && !defined(_WIN32_WCE)
+        << 5120u
+#else
         << 4096u
+#endif
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
         << QByteArray("html")
@@ -607,7 +611,7 @@ void tst_QMessageStore::testMessage()
         QCOMPARE(attachment.contentType().toLower(), attachmentType[index].toLower());
         QCOMPARE(attachment.contentSubType().toLower(), attachmentSubType[index].toLower());
         QCOMPARE(attachment.suggestedFileName(), attachments[index]);
-        QAPPROXIMATECOMPARE(attachment.size(), attachmentSize[index], (attachmentSize[i] / 2));
+        QAPPROXIMATECOMPARE(attachment.size(), attachmentSize[index], (attachmentSize[index] / 2));
     }
 
     QMessageIdList messageIds(QMessageStore::instance()->queryMessages());
