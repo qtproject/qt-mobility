@@ -1,3 +1,4 @@
+
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
 :: Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
@@ -61,7 +62,6 @@ set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
 if exist "%QMAKE_CACHE%" del %QMAKE_CACHE%
 if exist "%PROJECT_LOG%" del %PROJECT_LOG%
 if exist "%PROJECT_CONFIG%" del %PROJECT_CONFIG%
-echo CONFIG += silent > %PROJECT_CONFIG%
 
 echo QT_MOBILITY_SOURCE_TREE = %SOURCE_PATH% > %QMAKE_CACHE%
 echo QT_MOBILITY_BUILD_TREE = %BUILD_PATH% >> %QMAKE_CACHE%
@@ -71,6 +71,7 @@ echo QT_MOBILITY_BUILD_TREE = %BUILD_PATH% >> %QMAKE_CACHE%
 if "%1" == ""               goto startProcessing
 if "%1" == "-debug"         goto debugTag
 if "%1" == "-release"       goto releaseTag
+if "%1" == "-silent"        goto silentTag
 if "%1" == "-prefix"        goto prefixTag
 if "%1" == "-libdir"        goto libTag
 if "%1" == "-bindir"        goto binTag
@@ -90,7 +91,8 @@ goto usage
 
 :usage
 echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
-    echo                  [-bindir (dir)] [-tests] [-examples] [-debug] [-release]
+    echo                  [-bindir (dir)] [-tests] [-examples]
+    echo                  [-debug] [-release] [-silent]
     echo.
     echo Options:
     echo.
@@ -104,6 +106,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo                     (default PREFIX/bin)
     echo -debug ............ Build with debugging symbols
     echo -release .......... Build without debugging symbols
+    echo -silent ........... Reduces build output
     echo -tests ............ Build unit tests (not build by default)
     echo                     Note, this adds test symbols to all libraries 
     echo                     and should not be used for release builds.
@@ -131,6 +134,11 @@ goto cmdline_parsing
 
 :releaseTag
 if "%RELEASEMODE%" == "debug"   set RELEASEMODE=release
+shift
+goto cmdline_parsing
+
+:silentTag
+echo CONFIG += silent > %PROJECT_CONFIG%
 shift
 goto cmdline_parsing
 
@@ -182,11 +190,16 @@ set CURRENTDIR=%CD%
 echo %CURRENTDIR%
 if exist %QT_MOBILITY_PREFIX% goto prefixExists
 mkdir %QT_MOBILITY_PREFIX%
+if errorlevel 1 goto invalidPrefix
 cd %QT_MOBILITY_PREFIX%
 set QT_MOBILITY_PREFIX=%CD%
 cd %CURRENTDIR%
 rd /S /Q %QT_MOBILITY_PREFIX%
 goto endprefixProcessing
+
+:invalidPrefix
+echo "%QT_MOBILITY_PREFIX%" is not a valid directory path.
+goto :exitTag
 
 :prefixExists
 cd %QT_MOBILITY_PREFIX%

@@ -518,8 +518,6 @@ QVideoWidget::QVideoWidget(QMediaObject *object, QWidget *parent)
 #endif
     }
 
-    d->nonFullScreenFlags = windowFlags() & (Qt::SubWindow | Qt::Window);
-
     setLayout(d->layout);
 }
 
@@ -584,17 +582,17 @@ void QVideoWidget::setFullScreen(bool fullScreen)
     Q_D(QVideoWidget);
 
     if (fullScreen) {
+#ifdef Q_WS_MAC
         Qt::WindowFlags flags = windowFlags();
-        if (!(flags & Qt::Window)) {
-            d->nonFullScreenFlags = flags & (Qt::Window | Qt::SubWindow);
-            flags |= Qt::Window;
-            flags ^= Qt::SubWindow;
-            setWindowFlags(flags);
-        }
+        d->nonFullScreenFlags = flags & (Qt::Window | Qt::SubWindow);
+        flags |= Qt::Window;
+        flags &= ~Qt::SubWindow;
+        setWindowFlags(flags);
+#endif
         showFullScreen();
-    }
-    else
+    } else {
         showNormal();
+    }
 }
 
 /*!
@@ -782,12 +780,13 @@ bool QVideoWidget::event(QEvent *event)
         Qt::WindowFlags flags = windowFlags();
 
         if (windowState() & Qt::WindowFullScreen) {
-            if (!(flags & Qt::Window)) {
-                d->nonFullScreenFlags = flags & (Qt::Window | Qt::SubWindow);
-                flags |= Qt::Window;
-                flags ^= Qt::SubWindow;
-                setWindowFlags(flags);
-            }
+#ifndef Q_WS_MAC
+            d->nonFullScreenFlags = flags & (Qt::Window | Qt::SubWindow);
+            flags |= Qt::Window;
+            flags &= ~Qt::SubWindow;
+            setWindowFlags(flags);
+#endif
+
             if (!d->wasFullScreen)
                 emit fullScreenChanged(d->wasFullScreen = true);
 
@@ -797,11 +796,9 @@ bool QVideoWidget::event(QEvent *event)
             if (d->currentBackend)
                 d->currentBackend->setFullScreen(false);
 
-            if (isVisible()) {
-                flags ^= (Qt::Window | Qt::SubWindow); //clear the flags...
-                flags |= d->nonFullScreenFlags; //then we reset the flags (window and subwindow)
-                setWindowFlags(flags);
-            }
+            flags &= ~(Qt::Window | Qt::SubWindow); //clear the flags...
+            flags |= d->nonFullScreenFlags; //then we reset the flags (window and subwindow)
+            setWindowFlags(flags);
 
             if (d->wasFullScreen)
                 emit fullScreenChanged(d->wasFullScreen = false);

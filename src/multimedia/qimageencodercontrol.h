@@ -44,6 +44,7 @@
 
 #include <qmediacontrol.h>
 #include <qmediarecorder.h>
+#include <qmediaencodersettings.h>
 
 #include <QtCore/qsize.h>
 
@@ -57,20 +58,15 @@ class Q_MEDIA_EXPORT QImageEncoderControl : public QMediaControl
 public:
     virtual ~QImageEncoderControl();
 
-    virtual QSize resolution() const = 0;
     virtual QSize minimumResolution() const = 0;
     virtual QSize maximumResolution() const = 0;
     virtual QList<QSize> supportedResolutions() const = 0;
-    virtual void setResolution(const QSize &) = 0;
 
     virtual QStringList supportedImageCodecs() const = 0;
-    virtual QString imageCodec() const = 0;
-    virtual bool setImageCodec(const QString &codecName) = 0;
-
     virtual QString imageCodecDescription(const QString &codecName) const = 0;
 
-    virtual QtMedia::EncodingQuality quality() const = 0;
-    virtual void setQuality(QtMedia::EncodingQuality) = 0;
+    virtual QImageEncoderSettings imageSettings() const = 0;
+    virtual void setImageSettings(const QImageEncoderSettings &settings) = 0;
 
 protected:
     QImageEncoderControl(QObject *parent = 0);

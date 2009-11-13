@@ -124,6 +124,33 @@ private:
     QSharedDataPointer<QVideoEncoderSettingsPrivate> d;
 };
 
+class QImageEncoderSettingsPrivate;
+class Q_MEDIA_EXPORT QImageEncoderSettings
+{
+public:
+    QImageEncoderSettings();
+    QImageEncoderSettings(const QImageEncoderSettings& other);
+
+    ~QImageEncoderSettings();
+
+    QImageEncoderSettings& operator=(const QImageEncoderSettings &other);
+    bool operator==(const QImageEncoderSettings &other) const;
+    bool operator!=(const QImageEncoderSettings &other) const;
+
+    bool isNull() const;
+
+    QString codec() const;
+    void setCodec(const QString &);
+
+    QSize resolution() const;
+    void setResolution(const QSize &);
+    void setResolution(int width, int height);
+
+    QtMedia::EncodingQuality quality() const;
+    void setQuality(QtMedia::EncodingQuality quality);
+
+private:
+    QSharedDataPointer<QImageEncoderSettingsPrivate> d;
+};
 
 #endif
-
