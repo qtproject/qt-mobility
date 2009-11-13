@@ -49,6 +49,8 @@
 #include "s60mediaplayersession.h"
 #include <MdaAudioSamplePlayer.h>  
 
+class QTimer;
+
 class S60AudioPlayerSession : public S60MediaPlayerSession, public MMdaAudioPlayerCallback
 {
     Q_OBJECT
@@ -87,6 +89,7 @@ public slots:
     void seek(qint64 pos);
     void setVolume(int volume);
     void setMuted(bool muted);
+    void load(const QUrl &url);
 
 private: 
     void getNativeHandles();

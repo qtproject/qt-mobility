@@ -47,6 +47,7 @@
 #include <QWidget>
 #include <QDir>
 #include <QVariant>
+#include <QTimer>
 
 S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     : QObject(parent),
@@ -58,8 +59,10 @@ S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
       m_videoAvailable(false),
       m_seekable(false),
       m_lastPosition(0),
-      m_duration(-1)
+      m_duration(-1),
+      m_timer(new QTimer(this))
 {    
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(tick()));
 }
 
 S60MediaPlayerSession::~S60MediaPlayerSession()
@@ -69,11 +72,6 @@ S60MediaPlayerSession::~S60MediaPlayerSession()
 QUrl S60MediaPlayerSession::url() const
 {
     return m_url;
-}
-
-void S60MediaPlayerSession::load(const QUrl &url)
-{
-    m_url = url.toLocalFile();
 }
 
 qint64 S60MediaPlayerSession::duration() const
@@ -198,4 +196,21 @@ QVariant S60MediaPlayerSession::metaData(QtMedia::MetaData key)
 {
     Q_UNUSED(key);
     return QVariant();
+}
+
+void S60MediaPlayerSession::tick()
+{
+    emit positionChanged(position());
+}
+
+bool S60MediaPlayerSession::startTimer()
+{
+    if (!m_timer->isActive()) {
+        m_timer->start(1000);
+    }
+}
+
+void S60MediaPlayerSession::stopTimer()
+{
+    m_timer->stop();
 }

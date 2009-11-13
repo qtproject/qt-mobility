@@ -47,6 +47,7 @@
 #include <QSize>
 #include <multimedia/qmediaplayer.h>
 #include <QPair>
+class QTimer;
 
 class S60MediaPlayerSession : public QObject
 {
@@ -85,7 +86,7 @@ public:
     virtual QVariant metaData(QtMedia::MetaData key);
     
 public slots:
-    virtual void load(const QUrl &url);
+    virtual void load(const QUrl &url) = 0;
 
     virtual void play() = 0;
     virtual void pause() = 0;
@@ -113,15 +114,18 @@ signals:
     
 protected slots:
     virtual void setSeekable(bool);
+    void tick();
+    bool startTimer();
+    void stopTimer();
 
 protected:
     void setMediaStatus(QMediaPlayer::MediaStatus);
 
-    qint64 m_totalTime;    
+    qint64 m_totalTime;
     QUrl m_url;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;
-    
+
     int m_volume;
     qreal m_playbackRate;
     bool m_muted;
@@ -130,6 +134,9 @@ protected:
 
     qint64 m_lastPosition;
     qint64 m_duration;
+
+    QMap<QString, QVariant> m_metaDataMap;
+    QTimer* m_timer;
 };
 
 #endif

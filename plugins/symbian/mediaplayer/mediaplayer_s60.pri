@@ -4,7 +4,8 @@ LIBS += -lmediaclientvideo \
 	-lws32 \
 	-lfbscli \
 	-lcone \
-	-lMPEngine.dll
+	-lMPEngine \
+    -lmmfcontrollerframework
 
 HEADERS += \
     $$PWD/s60mediaplayercontrol.h \
