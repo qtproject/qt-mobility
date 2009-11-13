@@ -275,7 +275,7 @@ QVariant S60VideoPlayerSession::metaData(QtMedia::MetaData key)
 
     switch(key) {
         case QtMedia::Title: keyString = QString("title"); break;
-        case QtMedia::Author: keyString = QString("artist"); break;
+        case QtMedia::AlbumArtist: keyString = QString("artist"); break;
         case QtMedia::Comment: keyString = QString("comment"); break;
         case QtMedia::Genre: keyString = QString("genre"); break;
         case QtMedia::Year: keyString = QString("year"); break;
@@ -302,7 +302,7 @@ QVariant S60VideoPlayerSession::metaData(QtMedia::MetaData key)
         case QtMedia::Channels:
         case QtMedia::PeakValue:
         case QtMedia::Frequency:
-        case QtMedia::AlbumArtist:
+        case QtMedia::Author:
         case QtMedia::ContributingArtist:
         case QtMedia::Conductor:
         case QtMedia::Lyrics:
