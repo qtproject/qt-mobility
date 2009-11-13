@@ -48,6 +48,7 @@
 #include "qcontactphonenumber.h"
 #include "qcontactmanager.h"
 #include "cntsymbiansrvconnection.h"
+#include "cntabstractcontactfilter.h"
 
 // Forward declarations
 
@@ -64,15 +65,27 @@ public:
     Q_DECLARE_LATIN1_LITERAL(EqualTo,"=") ;
     Q_DECLARE_LATIN1_LITERAL(SqlLike,"LIKE") ;
     Q_DECLARE_LATIN1_LITERAL(SqlNotNull,"NOT NULL") ;
+    Q_DECLARE_LATIN1_LITERAL(contactsTable,"contact") ;
+    Q_DECLARE_LATIN1_LITERAL(commAddrTable,"comm_addr") ;
+    //This is copied from pltables.h from cntmodel.
+    // This definition needs to be exported and the file included
+    // so that duplicity is avoided
+    enum TCommAddrType
+            {
+            EPhoneNumber,
+            EEmailAddress,
+            ESipAddress
+            };
 public:
-    CntSymbianFilterSqlHelper();
+    CntSymbianFilterSqlHelper(CContactDatabase &contactDatabase);
     virtual ~CntSymbianFilterSqlHelper();
 
 public:
     /*Generic functions for all filters*/
     QList<QContactLocalId> searchContacts(const QContactFilter& filter, 
                                            QContactManager::Error& error);
-    
+    CntAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter);
+
 private:
     void createSqlQuery(const QContactFilter& filter,
                           QString& sqlQuery,
@@ -87,13 +100,26 @@ private:
     void updateSqlQueryForDetailFilter(const QContactFilter& filter,
                                        QString& sqlQuery,
                                        QContactManager::Error& error);
-    void convertFieldIdToSqlDbColumnName(const quint32 fieldId,
-                                         QString& sqlDbTableColumnName );
+    void getSqlDbTableAndColumnNameforDetailFilter(
+                                const QContactDetailFilter& filter ,
+                                bool& isSubType,
+                                QString& tableName,
+                                QString& columnName );
     void updateFieldForDeatilFilterMatchFlag( const QContactDetailFilter& filter,
                                               QString& fieldToUpdate ,
                                               QContactManager::Error& error) const;
+    void CntSymbianFilterSqlHelper::HandlePhonenumberDetailFilter(const QContactDetailFilter detailFilter);
+    void getMatchLengthL(TInt& matchLength);
+    TInt CntSymbianFilterSqlHelper::searchPhoneNumbers(
+            CContactIdArray*& idArray,
+            const TDesC& phoneNumber,
+            const TInt matchLength);
 private:
     CntSymbianSrvConnection* m_srvConnection;
+    CContactDatabase &m_contactDatabase;
+    bool isSearchingDone;
+    QHash<int,QString> contactsTableIdColumNameMapping;
+    QHash<int,int> commAddrTableIdColumNameMapping;
 };
 
 #endif//CNTSYMBIANFILTERSQLHELPER_H
