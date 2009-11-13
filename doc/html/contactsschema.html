@@ -83,7 +83,7 @@
 <h3>Field Access Constraints</h3>
 <p>Furthermore, some fields of some definitions are also constrained to be read-only. This is information which is generated or automatically provided by the backend, which is related to user-provided information that is also stored in the detail.</p>
 <p>The eponymous example of this is the <a href="qcontactonlineaccount.html">QContactOnlineAccount</a> leaf detail, which has an unconstrained field which stores the URI of the account, and several read-only fields in which are stored presence information, status messages, and service availability.</p>
-<p>Currently, the <a href="qcontactonlineaccount.html">QContactOnlineAccount</a> is the only leaf detail with field-level access constraints.</p>
+<p>Currently, the <a href="qcontactonlineaccount.html">QContactOnlineAccount</a> is the only leaf detail with field-level access constraints. Every field in details of this type are <tt>QContactDetailDefinition::ReadOnly</tt> except for <tt>QContactOnlineAccount::FieldAccountUri</tt>, which has no constraint.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

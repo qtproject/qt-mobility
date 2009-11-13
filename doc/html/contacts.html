@@ -260,7 +260,7 @@
 <p>Any operation that may be performed using the synchronous API may also be performed using the asynchronous API. It is recommended for most applications that the asynchronous API be used where possible.</p>
 <a name="manager-settings-and-configuration"></a>
 <h3>Manager Settings And Configuration</h3>
-<p>Users of the contacts API can define which backend they wish to access if a manager for that backend is available. The list of available managers can be queried programmatically at run-time, and the capabilities of different managers can be ascertained by inspecting a <a href="qcontactmanagerinfo.html">QContactManagerInfo</a> instance returned by a manager. Furthermore, some managers can be constructed with parameters which affect the operation of the backend.</p>
+<p>Users of the contacts API can define which backend they wish to access if a manager for that backend is available. The list of available managers can be queried programmatically at run-time, and the capabilities of different managers can be ascertained by inspecting a <a href="qcontactmanager.html">QContactManager</a> instance. Furthermore, some managers can be constructed with parameters which affect the operation of the backend.</p>
 <a name="loading-the-manager-for-a-specific-backend"></a>
 <h4>Loading the manager for a specific backend</h4>
 <p>In this example, the client loads a manager for a specific backend. While this could be found and retrieved using a more advanced plugin framework (such as the Qt Service Framework), this code assumes that the client has prior knowledge of the backend in question.</p>
