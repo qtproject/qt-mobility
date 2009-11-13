@@ -64,26 +64,26 @@ Q_OBJECT
 public:
     CntSymbianDatabase(QContactManagerEngine *engine, QContactManager::Error& error);
     ~CntSymbianDatabase();
-    
+
 public:
     CContactDatabase* contactDatabase();
-    void appendContactsEmitted(QList<QContactLocalId> *contactList);
+    void appendContactsEmitted(const QList<QContactLocalId>& contactList);
     void appendContactEmitted(QContactLocalId id);
-    
+
 public:
     // From MContactDbObserver
     void HandleDatabaseEventL(TContactDbObserverEvent aEvent);
-    
+
 signals:
     void ownCardChanged(const QContactLocalId& oldId, const QContactLocalId& newId);
-    
+
 private:
     CContactDatabase* m_contactDatabase;
 #ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
     CContactChangeNotifier* m_contactChangeNotifier;
 #endif
     QContactManagerEngine *m_engine;
-    QList<QContactLocalId> m_contactsEmitted;  
+    QList<QContactLocalId> m_contactsEmitted;
     QContactLocalId m_ownCardId;
 };
 

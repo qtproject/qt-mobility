@@ -129,14 +129,14 @@ void CntTransformContact::initializeCntTransformContactData()
 }
 
 /*!
- * Converts Symbian contact item to QContact. Note that the contact id is not
- * converted to QContactId so the caller is responsible of setting the contact
- * id if needed.
+ * Converts Symbian contact item to QContact. Note that the contact is not
+ * saved into contacts database so the details that require contact to exist
+ * in the database are not transformed. Use transformPostSaveDetailsL to
+ * transform those details after the contact item has been saved.
  * \param contact A reference to a symbian contact item to be converted.
- * \param contactDatabase Reference to an opened Symbian contact database instance.
  * \return Qt Contact
  */
-QContact CntTransformContact::transformContactL(CContactItem &contact, CContactDatabase &contactDatabase) const
+QContact CntTransformContact::transformContactL(CContactItem &contact) const
 {
     // Create a new QContact
     QContact newQtContact;
@@ -176,7 +176,7 @@ QContact CntTransformContact::transformContactL(CContactItem &contact, CContactD
  * Transforms details that are not available until the CContactItem has been
  * saved into contacts database.
  */
-void CntTransformContact::transformExtraDetailsL(
+void CntTransformContact::transformPostSaveDetailsL(
         const CContactItem& contactItem,
         QContact& contact,
         const CContactDatabase &contactDatabase,
