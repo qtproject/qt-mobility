@@ -234,23 +234,6 @@ void tst_QMessageStore::testFolder()
     static const QString testAccountName("testAccount");
     QMessageAccountId testAccountId;
     QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter::byName(testAccountName)));
-#if defined(Q_OS_WIN) && !defined(ACCOUNT_FILTERING_IMPLEMENTED)
-{
-    // Filtering is not implemented yet
-    QMessageAccountIdList::iterator it = accountIds.begin(), end = accountIds.end();
-    while (it != end) {
-        QMessageAccount acct(*it);
-        if (acct.name() == testAccountName) {
-            accountIds.clear();
-            accountIds.append(acct.id());
-            break;
-        }
-        if (++it == end) {
-            accountIds.clear();
-        }
-    }
-}
-#endif
     if (accountIds.isEmpty()) {
         Support::Parameters p;
         p.insert("name", testAccountName);
@@ -288,23 +271,6 @@ void tst_QMessageStore::testFolder()
     if (!parentFolderPath.isEmpty()) {
         QMessageFolderFilter filter(QMessageFolderFilter::byPath(parentFolderPath) & QMessageFolderFilter::byParentAccountId(testAccountId));
         QMessageFolderIdList list(QMessageStore::instance()->queryFolders(filter));
-#if defined(Q_OS_WIN) && !defined(FOLDER_FILTERING_IMPLEMENTED)
-{
-    // Filtering is not implemented yet
-    QMessageFolderIdList::iterator it = list.begin(), end = list.end();
-    while (it != end) {
-        QMessageFolder fldr(*it);
-        if ((fldr.parentAccountId() == testAccountId) && (fldr.path() == parentFolderPath)) {
-            list.clear();
-            list.append(fldr.id());
-            break;
-        }
-        if (++it == end) {
-            list.clear();
-        }
-    }
-}
-#endif
         QMessageFolderId parentFolderId(list.first());
         QCOMPARE(folder.parentFolderId(), parentFolderId);
     }
@@ -428,23 +394,6 @@ void tst_QMessageStore::testMessage()
 
     QMessageAccountId testAccountId;
     QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter::byName(testAccountName)));
-#if defined(Q_OS_WIN) && !defined(ACCOUNT_FILTERING_IMPLEMENTED)
-{
-    // Filtering is not implemented yet
-    QMessageAccountIdList::iterator it = accountIds.begin(), end = accountIds.end();
-    while (it != end) {
-        QMessageAccount acct(*it);
-        if (acct.name() == testAccountName) {
-            accountIds.clear();
-            accountIds.append(acct.id());
-            break;
-        }
-        if (++it == end) {
-            accountIds.clear();
-        }
-    }
-}
-#endif
     if (accountIds.isEmpty()) {
         Support::Parameters p;
         p.insert("name", testAccountName);
@@ -459,23 +408,6 @@ void tst_QMessageStore::testMessage()
     QMessageFolderId testFolderId;
     QMessageFolderFilter filter(QMessageFolderFilter::byDisplayName("Inbox") & QMessageFolderFilter::byParentAccountId(testAccountId));
     QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(filter));
-#if defined(Q_OS_WIN) && !defined(FOLDER_FILTERING_IMPLEMENTED)
-{
-    // Filtering is not implemented yet
-    QMessageFolderIdList::iterator it = folderIds.begin(), end = folderIds.end();
-    while (it != end) {
-        QMessageFolder fldr(*it);
-        if ((fldr.parentAccountId() == testAccountId) && (fldr.displayName() == "Inbox")) {
-            folderIds.clear();
-            folderIds.append(fldr.id());
-            break;
-        }
-        if (++it == end) {
-            folderIds.clear();
-        }
-    }
-}
-#endif
     if (folderIds.isEmpty()) {
         Support::Parameters p;
         p.insert("path", "Inbox");
@@ -550,11 +482,8 @@ void tst_QMessageStore::testMessage()
 
     QCOMPARE(catcher.added.count(), 1);
     QCOMPARE(catcher.added.first().first, messageId);
-#ifndef Q_OS_WIN
-    // Filters not yet implemented on windows
     QCOMPARE(catcher.added.first().second.count(), 2);
     QCOMPARE(catcher.added.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2->id << filter3->id);
-#endif
 
     QMessage message(messageId);
     QCOMPARE(message.id(), messageId);
@@ -639,11 +568,8 @@ void tst_QMessageStore::testMessage()
     // MAPI generates multiple update notifications per message updated
     QVERIFY(catcher.updated.count() > 0);
     QCOMPARE(catcher.updated.first().first, messageId);
-#ifndef Q_OS_WIN
-    // Filters not yet implemented on windows
     QCOMPARE(catcher.updated.first().second.count(), 2);
     QCOMPARE(catcher.updated.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2->id << filter3->id);
-#endif
 
     QMessage updated(message.id());
 
@@ -675,10 +601,7 @@ void tst_QMessageStore::testMessage()
 
     QCOMPARE(removeCatcher.removed.count(), 1);
     QCOMPARE(removeCatcher.removed.first().first, messageId);
-#ifndef Q_OS_WIN
-    // Filters not yet implemented on windows
     QCOMPARE(removeCatcher.removed.first().second.count(), 1);
     QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageStore::NotificationFilterId>() << filter3->id);
-#endif
 }
 
