@@ -402,6 +402,9 @@ public:
     QMessageStore::NotificationFilterId registerNotificationFilter(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter);
     void unregisterNotificationFilter(QMessageStore::ErrorCode *lastError, QMessageStore::NotificationFilterId filterId);
 
+    static QMessagePrivate *messageImpl(const QMessage &message);
+    static QMessageContentContainerPrivate *containerImpl(const QMessageContentContainer &);
+
 signals:
     void messageAdded(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
     void messageRemoved(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
