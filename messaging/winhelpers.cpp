@@ -4718,17 +4718,6 @@ void MapiSession::notify(MapiStore *store, const QMessageId &id, MapiSession::No
     for ( ; it != end; ++it) {
         const QMessageFilter &filter(it.value());
 
-#if 0
-        QSet<QMessageId> filteredIds;
-        if (!filter.isEmpty()) {
-            // Empty filter matches all messages; otherwise get the filtered set
-            QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
-            filteredIds = store->queryMessages(&ignoredError, filter, QMessageOrdering(), 0, 0).toSet();
-        }
-        if (filter.isEmpty() || filteredIds.contains(id)) {
-            matchingFilterIds.insert(it.key());
-        }
-#else // TODO: test this alternative logic
         if (!filter.isSupported())
             continue;
 
@@ -4744,7 +4733,6 @@ void MapiSession::notify(MapiStore *store, const QMessageId &id, MapiSession::No
                 break; // subfilters are or'd together
             }
         }
-#endif
     }
 
     if (!matchingFilterIds.isEmpty()) {
