@@ -41,7 +41,7 @@
 #include "qtcontactsglobal.h"
 
 class QContactDetailDefinitionFieldPrivate;
-class QTCONTACTS_EXPORT QContactDetailDefinitionField
+class Q_CONTACTS_EXPORT QContactDetailDefinitionField
 {
 public:
     QContactDetailDefinitionField();
