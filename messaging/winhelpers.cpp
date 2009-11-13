@@ -2262,7 +2262,6 @@ QMessage::StandardFolder MapiFolder::standardFolder() const
     return _store->standardFolder(_entryId);
 }
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderId MapiFolder::id() const
 {
 #ifdef _WIN32_WCE
@@ -2271,7 +2270,6 @@ QMessageFolderId MapiFolder::id() const
     return QMessageFolderIdPrivate::from(_key, _store->recordKey(), _entryId);
 #endif
 }
-#endif
 
 QMessageAccountId MapiFolder::accountId() const
 {
@@ -2559,7 +2557,6 @@ MapiEntryId MapiStore::standardFolderId(QMessageStore::ErrorCode *lastError, QMe
     return result;
 }
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderIdList MapiStore::folderIds(QMessageStore::ErrorCode *lastError) const
 {
     QMessageFolderIdList folderIds;
@@ -2616,7 +2613,6 @@ QMessageFolder MapiStore::folderFromId(QMessageStore::ErrorCode *lastError, cons
 
     return result;
 }
-#endif
 
 QList<MapiFolderPtr> MapiStore::filterFolders(QMessageStore::ErrorCode *lastError, const QMessageFolderFilter &afilter) const
 {

@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderfilter.h"
 #include "qmessagefolderfilter_p.h"
 
@@ -603,4 +602,3 @@ QMessageFolderFilter QMessageFolderFilter::byAncestorFolderIds(const QMessageFol
     Q_UNUSED(cmp)
     return QMessageFolderFilter(); // stub
 }
-#endif
