@@ -3301,14 +3301,10 @@ bool SharedMemoryLayer::setValue(QValueSpaceProvider *creator, Handle handle, co
     owner.data2 = reinterpret_cast<unsigned long>(creator);
 
     QByteArray fullPath(readHandle->path);
-    if (!fullPath.endsWith('/'))
+    if (!fullPath.endsWith('/') && path != QLatin1String("/"))
         fullPath.append('/');
 
-    int index = 0;
-    while (index < path.length() && path[index] == QLatin1Char('/'))
-        ++index;
-
-    fullPath.append(path.mid(index));
+    fullPath.append(path.mid(1));
 
     return setItem(owner, fullPath, data);
 }
