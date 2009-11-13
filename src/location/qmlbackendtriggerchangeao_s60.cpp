@@ -239,7 +239,6 @@ void QMLBackendTriggerChangeAO::RunL()
 
                 RArray < TLbtTriggerId > triggerIdList;
 
-                CLbtTriggerEntry* entry = NULL;
 
                 //retrieve the list of trigger IDs created by the client
                 TRAPD(ret,iLbt.ListTriggerIdsL(triggerIdList));
