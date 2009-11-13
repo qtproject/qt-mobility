@@ -279,8 +279,29 @@ namespace {
         return dt;
     }
 
+    struct AccountFilterPredicate
+    {
+        const QMessageAccountFilter &_filter;
 
+        AccountFilterPredicate(const QMessageAccountFilter &filter) : _filter(filter) {}
 
+        bool operator()(const MapiStorePtr &store) const
+        {
+            return QMessageAccountFilterPrivate::matchesStore(_filter, store);
+        }
+    };
+
+    struct FolderFilterPredicate
+    {
+        const QMessageFolderFilter &_filter;
+
+        FolderFilterPredicate(const QMessageFolderFilter &filter) : _filter(filter) {}
+
+        bool operator()(const MapiStorePtr &store) const
+        {
+            return QMessageFolderFilterPrivate::matchesStore(_filter, store);
+        }
+    };
 
     //used in preference to HrQueryAllRows
     //as per: http://blogs.msdn.com/stephen_griffin/archive/2009/03/23/try-not-to-query-all-rows.aspx
@@ -3337,36 +3358,12 @@ QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastErro
 
 QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastError, const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset, bool cachedMode) const
 {
-    struct AccountFilterPredicate
-    {
-        const QMessageAccountFilter &_filter;
-
-        AccountFilterPredicate(const QMessageAccountFilter &filter) : _filter(filter) {}
-
-        bool operator()(const MapiStorePtr &store) const
-        {
-            return QMessageAccountFilterPrivate::matchesStore(_filter, store);
-        }
-    };
-
     AccountFilterPredicate pred(filter);
     return filterStores<const AccountFilterPredicate&, const QMessageAccountOrdering &>(lastError, pred, ordering, limit, offset, cachedMode);
 }
 
 QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastError, const QMessageFolderFilter &filter, bool cachedMode) const
 {
-    struct FolderFilterPredicate
-    {
-        const QMessageFolderFilter &_filter;
-
-        FolderFilterPredicate(const QMessageFolderFilter &filter) : _filter(filter) {}
-
-        bool operator()(const MapiStorePtr &store) const
-        {
-            return QMessageFolderFilterPrivate::matchesStore(_filter, store);
-        }
-    };
-
     FolderFilterPredicate pred(filter);
     return filterStores<const FolderFilterPredicate&, const QMessageAccountOrdering &>(lastError, pred, QMessageAccountOrdering(), 0, 0, cachedMode);
 }
