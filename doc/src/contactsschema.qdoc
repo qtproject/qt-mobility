@@ -73,346 +73,84 @@ the default schema will work without source modification against their backend.
 
 \section1 Default Schema
 
-\section2 Leaf Classes
-\table
-\header
-    \o Leaf Class
-    \o Definition Identifier
-    \o Definition Identifier Value
-    \o Description
-    \o Uniqueness Constraint
-    \o Access Constraint
-\row
-    \o QContactAddress
-    \o QContactAddress::DefinitionId
-    \o "StreetAddress"
-    \o Details of this definition contain an address of a particular contact
-    \o No
-    \o Any
-\row
-    \o QContactAnniversary
-    \o QContactAnniversary::DefinitionId
-    \o "Anniversary"
-    \o Details of this definition contain the (annually recurring) date of an important event
-    \o No
-    \o Any
-\row
-    \o QContactAvatar
-    \o QContactAvatar::DefinitionId
-    \o "Avatar"
-    \o Details of this definition contain the URI of an avatar of the contact
-    \o No
-    \o Any
-\row
-    \o QContactBirthday
-    \o QContactBirthday::DefinitionId
-    \o "Birthday"
-    \o Details of this definition contain the date of a contact's birthday
-    \o Yes
-    \o Any
-\row
-    \o QContactDisplayLabel
-    \o QContactDisplayLabel::DefinitionId
-    \o "DisplayLabel"
-    \o Details of this definition contain the formatted display label of the contact
-    \o yes
-    \o Any
-\row
-    \o QContactEmailAddress
-    \o QContactEmailAddress::DefinitionId
-    \o "EmailAddress"
-    \o Details of this definition contain an email address of a contact
-    \o No
-    \o Any
-\row
-    \o QContactGender
-    \o QContactGender::DefinitionId
-    \o "Gender"
-    \o Details of this definition contain the gender of a contact within a given context
-    \o No
-    \o Any
-\row
-    \o QContactGeolocation
-    \o QContactGeolocation::DefinitionId
-    \o "Geolocation"
-    \o Details of this definition contain a timestamped location update
-    \o No
-    \o Any
-\row
-    \o QContactGuid
-    \o QContactGuid::DefinitionId
-    \o "Guid"
-    \o Details of this definition contain a globally unique identifier for a contact
-    \o Yes
-    \o ReadOnly
-\row
-    \o QContactName
-    \o QContactName::DefinitionId
-    \o "Name"
-    \o Details of this definition contain the full name information of a contact
-    \o No
-    \o Any
-\row
-    \o QContactOnlineAccount
-    \o QContactOnlineAccount::DefinitionId
-    \o "OnlineAccount"
-    \o Details of this definition contain the URI of an online account of the contact
-    \o No
-    \o Any
-\row
-    \o QContactOrganisation
-    \o QContactOrganisation::DefinitionId
-    \o "Organisation"
-    \o Details of this definition contain details of an organisation with which the contact is associated
-    \o No
-    \o Any
-\row
-    \o QContactPhoneNumber
-    \o QContactPhoneNumber::DefinitionId
-    \o "PhoneNumber"
-    \o Details of this definition contain a telephony endpoint associated with a contact
-    \o No
-    \o Any
-\row
-    \o QContactPresence
-    \o QContactPresence::DefinitionId
-    \o "Presence"
-    \o Details of this definition contain presence information regarding a particular online account
-    \o No
-    \o ReadOnly
-\row
-    \o QContactRelationship
-    \o QContactRelationship::DefinitionId
-    \o "Relationship"
-    \o Details of this definition contain information about which other contacts this contact is related to and in what way
-    \o No
-    \o Any
-\row
-    \o QContactSyncTarget
-    \o QContactSyncTarget::DefinitionId
-    \o "SyncTarget"
-    \o Details of this definition contain the id of a storage backend to which the contact should be synchronised
-    \o Yes
-    \o CreateOnly
-\row
-    \o QContactTimestamp
-    \o QContactTimestamp::DefinitionId
-    \o "Timestamp"
-    \o Details of this definition contain a creation and modification timestamp of the contact
-    \o Yes
-    \o ReadOnly
-\row
-    \o QContactUrl
-    \o QContactUrl::DefinitionId
-    \o "Url"
-    \o Details of this definition contain a universal resource location related to the contact
-    \o No
-    \o Any
-\endtable
+The leaf details that form the default schema are as follows:
+\list
+    \o \l{QContactAddress}
+    \o \l{QContactAnniversary}
+    \o \l{QContactAvatar}
+    \o \l{QContactBirthday}
+    \o \l{QContactDisplayLabel}
+    \o \l{QContactEmailAddress}
+    \o \l{QContactFamily}
+    \o \l{QContactGender}
+    \o \l{QContactGeolocation}
+    \o \l{QContactGuid}
+    \o \l{QContactName}
+    \o \l{QContactNickname}
+    \o \l{QContactNote}
+    \o \l{QContactOnlineAccount}
+    \o \l{QContactOrganization}
+    \o \l{QContactPhoneNumber}
+    \o \l{QContactSyncTarget}
+    \o \l{QContactTimestamp}
+    \o \l{QContactType}
+    \o \l{QContactUrl}
+\endlist
 
-\section2 Field Schema
-\table
-\header
-    \o Detail
-    \o Field Keys
-    \o Field Value Data Types
-    \o Allowable Values
-    \o Field Description
-\row
-    \o QContactAddress
-    \o \list
-            \o DisplayLabel
-            \o PostOfficeBox
-            \o Street
-            \o Locality
-            \o Region
-            \o Postcode
-            \o Country
-       \endlist
-    \o \list
-            \o String
-            \o String
-            \o String
-            \o String
-            \o String
-            \o String
-            \o String
-       \endlist
-    \o \list
-            \o Any
-            \o Any
-            \o Any
-            \o Any
-            \o Any
-            \o Any
-            \o Any
-       \endlist
-    \o \list
-            \o The formatted address
-            \o The post office box segment of the address.
-            \o The street segment of the address (i.e., street and number)
-            \o The locality segment of the address (i.e., city/suburb)
-            \o The region segment of the address (i.e., state)
-            \o The postcode segment of the address
-            \o The country segment of the address
-       \endlist
-\row
-    \o QContactAnniversary
-    \o \list \o OriginalDate \o CalendarId \o Event \endlist
-    \o \list \o Date \o String \o String \endlist
-    \o \list \o Any \o Any \o Any \endlist
-    \o \list \o The date of the original occurrance of the event \o The identifier of the calendar entry associated with this detail \o The name of the event remembered by this anniversary \endlist
-\row
-    \o QContactAvatar
-    \o \list \o Avatar \endlist
-    \o \list \o String \endlist
-    \o \list \o Any \endlist
-    \o \list \o The location of an avatar file which is associated with a contact \endlist
-\row
-    \o QContactBirthday
-    \o \list \o Birthday \endlist
-    \o \list \o Date \endlist
-    \o \list \o Any \endlist
-    \o \list \o The date of the birthday associated with a contact \endlist
-\row
-    \o QContactDisplayLabel
-    \o \list \o DisplayLabel \o Synthesised \endlist
-    \o \list \o String \o bool \endlist
-    \o \list \o Any \o Any \endlist
-    \o \list \o The display label of a contact \o Whether the display label was synthesised automatically or set manually \endlist
-\row
-    \o QContactEmailAddress
-    \o \list \o EmailAddress \endlist
-    \o \list \o String \endlist
-    \o \list \o Any \endlist
-    \o \list \o The email address URL associated with a contact \endlist
-\row
-    \o QContactGender
-    \o \list \o Gender \endlist
-    \o \list \o String \endlist
-    \o \list \o "Male", "Female", "Unspecified" \endlist
-    \o \list \o The gender of a contact in a particular context \endlist
-\row
-    \o QContactGeolocation
-    \o \list \o Latitude \o Longitude \o Accuracy \o Altitude \o AltitudeAccuracy \o Heading \o Speed \o Timestamp \endlist
-    \o \list \o double \o double \o double \o double \o double \o double \o double \o DateTime \endlist
-    \o \list \o Any \o Any \o Any \o Any \o Any \o Any \o Any \o Any \endlist
-    \o \list
-            \o The latitude coordinate of the location
-            \o The longitude coordinate of the location
-            \o The accuracy (in metres) of the latitude and longitude coordinates
-            \o The altitude (in metres) of the location
-            \o The accuracy (in metres) of the altitude coordinate of the location
-            \o The heading of the location aware device at the time of measurement, in degrees from true north
-            \o The speed of the location aware device at the time of measurement, in metres per second
-       \endlist
-\row
-    \o QContactGuid
-    \o \list \o Guid \endlist
-    \o \list \o String \endlist
-    \o \list \o Any \endlist
-    \o \list \o A globally unique identifier which is associated with a contact \endlist
-\row
-    \o QContactName
-    \o \list
-            \o Prefix
-            \o First
-            \o Middle
-            \o Last
-            \o Suffix
-       \endlist
-    \o \list
-            \o String
-            \o String
-            \o String
-            \o String
-            \o String
-       \endlist
-    \o \list
-            \o Any
-            \o Any
-            \o Any
-            \o Any
-            \o Any
-       \endlist
-    \o \list
-            \o The prefix segment of the name of a contact (e.g., "Mr", "Mrs", "Dr")
-            \o The first (given) name segment of the name of a contact
-            \o The middle (additional) name segment of the name of a contact
-            \o The last (surname) name segment of the name of a contact
-            \o The suffix segment of the name of a contact (e.g., "Esq.", "Ph.D")
-       \endlist
-\row
-    \o QContactOnlineAccount
-    \o \list \o AccountUri \endlist
-    \o \list \o String \endlist
-    \o \list \o Any \endlist
-    \o \list \o The URI of an online account communication endpoint associated with the contact \endlist
-\row
-    \o QContactOrganisation
-    \o \list \o DisplayLabel \o Logo \o Department \o Location \o Title \endlist
-    \o \list \o String \o String \o String \o String \o String \endlist
-    \o \list \o Any \o Any \o Any \o Any \o Any \endlist
-    \o \list
-            \o The display label of an organisation associated with the contact
-            \o The file location of a logo of an organisation associated with the contact
-            \o The department of the organisation associated with the contact
-            \o The physical location (e.g. city or suburb) of the part of the organisation associated with the contact
-            \o The title the contact has within the organisation (e.g. job position, role etc)
-       \endlist
-\row
-    \o QContactPhoneNumber
-    \o \list \o PhoneNumber \endlist
-    \o \list \o String \endlist
-    \o \list \o Any \endlist
-    \o \list \o A phone number associated with a contact \endlist
-\row
-    \o QContactPresence
-    \o \list \o AccountUri \o Nickname \o Presence \o StatusMessage \endlist
-    \o \list \o String \o String \o String \o String \endlist
-    \o \list \o Any \o Any \o "Available", "Busy, "Away", "Extended Away", "Unknown", "Offline" \o Any \endlist
-    \o \list
-            \o The URI of an online account communication endpoint associated with the contact
-            \o The last-known nickname that the contact used while communicating via the associated online account
-            \o The presence of the contact as reported by the provider of the associated online account
-            \o The last-known status message of the contact sent from the online account communication endpoint
-       \endlist
-\row
-    \o QContactRelationship
-    \o \list \o RelationshipType \o ContactLabel \o ContactUid \o ContactManagerUri \endlist
-    \o \list \o String \o String \o String \o String \endlist
-    \o \list \o "Is", "Was", "Father", "Mother", "Child", "Son", "Daughter", "Sibling", "Brother", "Sister", "Cousin", "Friend", "Spouse", "Fiancee", "Husband", "Wife", "Employer", "Employee", "Other", "Unknown"
-             \o Any
-             \o Any
-             \o Any
-       \endlist
-    \o \list
-            \o The way in which this contact is related to the contact about which this detail stores information.  To be read as: "This contact is the <RelationshipType> of the contact linked in this detail".
-            \o The display label of the contact to which this contact is related
-            \o The unique identifier of the contact to which this contact is related, as used to identify the contact by the manager which stores the related contact
-            \o The URI of the manager which stores the related contact
-       \endlist
-\row
-    \o QContactSyncTarget
-    \o \list \o SyncTarget \endlist
-    \o \list \o String \endlist
-    \o \list \o Any \endlist
-    \o \list \o The identifier of a backend store to which the contact containing this detail should be synchronised \endlist
-\row
-    \o QContactTimestamp
-    \o \list \o CreationTimestamp \o ModificationTimestamp \endlist
-    \o \list \o DateTime \o DateTime \endlist
-    \o \list \o Any \o Any \endlist
-    \o \list
-            \o The date and time of creation of the contact
-            \o The date and time of the last modification of the contact
-       \endlist
-\row
-    \o QContactUrl
-    \o \list \o Url \endlist
-    \o \list \o String \endlist
-    \o \list \o Any \endlist
-    \o \list \o A universal resource location associated with the contact containing this detail \endlist
-\endtable
+In the default schema, each of these definitions have various access and uniqueness constraints.
+Additionally, fields of the definitions may have an access constraint of read-only defined for them.
+
+\section2 Detail Definition Uniqueness
+
+A uniqueness constraint on a detail definition means that for any \l{QContact}, only one detail of that
+definition may be saved.  Generally, it is information for which a contradicting detail would mean
+inability to identify the contact.  Please note that some details, such as \l{QContactBirthday} or
+\l{QContactName}, do not have a uniqueness constraint, since in different contexts, different information
+may be valid.
+
+The leaf classes which have a uniqueness constraint in the default schema are as follows:
+\list
+    \o \l{QContactDisplayLabel}
+    \o \l{QContactType}
+    \o \l{QContactSyncTarget}
+    \p \l{QContactGuid}
+\endlist
+
+\section2 Detail Definition Access Constraints
+
+An access constraint on a detail definition means that for any detail of that definition in a \l{QContact},
+the specified access constraints apply.  For example, the \l{QContactDisplayLabel} is defined in the default
+schema as a read-only detail definition; meaning that details of that type in a contact cannot be created, modified or deleted by
+the client, but are provided by the backend (in the case of \l{QContactDisplayLabel}, automatically synthesized
+by the backend from various details of the contact).
+
+There are three possible detail definition-level access constraints: read-only, create-only and no-constraint.
+A read-only constraint ensures that clients cannot create, delete or modify details of that definition; a create-only
+constraint ensures that clients cannot modify details of that definition, but can create them (with whichever
+values they see fit); if no constraint is specified, details of that definition may be created, modified or deleted as required.
+
+Please see the documentation of \l{QContactDetailDefinition} for more information on access constraints.
+
+The leaf classes which have access constraints in the default schema are as follows:
+\list
+    \o \l{QContactGuid} is \c QContactDetailDefinition::CreateOnly
+    \o \l{QContactSyncTarget} is \c QContactDetailDefinition::CreateOnly
+    \o \l{QContactTimestamp} is \c QContactDetailDefinition::ReadOnly
+    \o \l{QContactDisplayLabel} is \c QContactDetailDefinition::ReadOnly
+\endlist
+
+Furthermore, in the default schema, every contact is required to have at least two details by default: a \l{QContactType} which describes
+the type of entity that the contact represents (for example, a person or a group), and a \l{QContactDisplayLabel} which holds
+the default display label for the contact.
+
+\section2 Field Access Constraints
+
+Furthermore, some fields of some definitions are also constrained to be read-only.  This is information which is generated or automatically
+provided by the backend, which is related to user-provided information that is also stored in the detail.
+
+The eponymous example of this is the \l{QContactOnlineAccount} leaf detail, which has an unconstrained field which stores the URI of the
+account, and several read-only fields in which are stored presence information, status messages, and service availability.
+
+Currently, the \l{QContactOnlineAccount} is the only leaf detail with field-level access constraints.
 
 */
