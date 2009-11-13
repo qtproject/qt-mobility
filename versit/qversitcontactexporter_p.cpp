@@ -558,7 +558,7 @@ bool QVersitContactExporterPrivate::encodeDisplayLabel(
             name.first().length() ||
             name.last().length()) {
             encoded = true;
-            setEscapedValue(property,value);
+            property.setValue(escape(value));
         }
     }
     return encoded;
