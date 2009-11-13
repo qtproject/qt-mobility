@@ -291,18 +291,6 @@ namespace {
         }
     };
 
-    struct FolderFilterPredicate
-    {
-        const QMessageFolderFilter &_filter;
-
-        FolderFilterPredicate(const QMessageFolderFilter &filter) : _filter(filter) {}
-
-        bool operator()(const MapiStorePtr &store) const
-        {
-            return QMessageFolderFilterPrivate::matchesStore(_filter, store);
-        }
-    };
-
     //used in preference to HrQueryAllRows
     //as per: http://blogs.msdn.com/stephen_griffin/archive/2009/03/23/try-not-to-query-all-rows.aspx
 
@@ -2991,27 +2979,6 @@ MapiEntryId MapiStore::receiveFolderId(QMessageStore::ErrorCode *lastError) cons
     return result;
 }
 
-QMessageIdList MapiStore::queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
-{
-    QList<FolderHeapNodePtr> folderNodes;
-
-    MapiStorePtr store(_self.toStrongRef());
-
-    MapiFolderIterator folderIt(QMessageFilterPrivate::folderIterator(filter, lastError, store));
-    for (MapiFolderPtr folder(folderIt.next()); folder && folder->isValid(); folder = folderIt.next()) {
-        QList<QMessageFilter> orderingFilters;
-        orderingFilters.append(filter);
-        foreach(QMessageFilter orderingFilter, QMessageOrderingPrivate::normalize(orderingFilters, ordering)) {
-            folderNodes.append(FolderHeapNodePtr(new FolderHeapNode(folder, orderingFilter)));
-        }
-    }
-
-    if (*lastError != QMessageStore::NoError)
-        return QMessageIdList();
-
-    return filterMessages(lastError, folderNodes, ordering, limit, offset);
-}
-
 QMessageFolder MapiStore::folder(QMessageStore::ErrorCode *lastError, const QMessageFolderId& id) const
 {
     return _session.toStrongRef()->folder(lastError, id);
@@ -3371,12 +3338,6 @@ QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastErro
     return filterStores<const AccountFilterPredicate&, const QMessageAccountOrdering &>(lastError, pred, ordering, limit, offset, cachedMode);
 }
 
-QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastError, const QMessageFolderFilter &filter, bool cachedMode) const
-{
-    FolderFilterPredicate pred(filter);
-    return filterStores<const FolderFilterPredicate&, const QMessageAccountOrdering &>(lastError, pred, QMessageAccountOrdering(), 0, 0, cachedMode);
-}
-
 QList<MapiStorePtr> MapiSession::allStores(QMessageStore::ErrorCode *lastError, bool cachedMode) const
 {
     return filterStores(lastError, QMessageAccountFilter(), QMessageAccountOrdering(), 0, 0, cachedMode);
@@ -3396,7 +3357,7 @@ QList<MapiFolderPtr> MapiSession::filterFolders(QMessageStore::ErrorCode *lastEr
         return result;
     }
 
-    foreach (const MapiStorePtr &store, filterStores(lastError, filter, cachedMode)) {
+    foreach (const MapiStorePtr &store, allStores(lastError, cachedMode)) {
         result.append(store->filterFolders(lastError, filter));
     }
 
