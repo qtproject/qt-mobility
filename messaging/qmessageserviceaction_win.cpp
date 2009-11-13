@@ -40,11 +40,6 @@
 ****************************************************************************/
 
 #include "qmessageserviceaction.h"
-#include <mapix.h>
-#include <objbase.h>
-#include <mapiutil.h>
-#include <QDebug>
-#include <QTimer>
 #include "winhelpers_p.h"
 #include "qmessagestore.h"
 #include "qmessageid_p.h"
@@ -53,13 +48,18 @@
 #include "qmessage_p.h"
 #include "qmessagestore_p.h"
 #include "qmessagecontentcontainer_p.h"
+#include <QDebug>
+#include <QThread>
+#include <QTimer>
+#include <mapix.h>
+#include <objbase.h>
+#include <mapiutil.h>
 #ifdef _WIN32_WCE
 #include <cemapi.h>
 #endif
 
 using namespace WinHelpers;
 static const unsigned long SmsCharLimit = 160;
-static const unsigned int BodyDownloadTimeout = 20; //seconds
 
 class QMessageServiceActionPrivate : public QObject
 {
@@ -73,7 +73,7 @@ public:
     bool send(const QMessage& message, bool showComposer = false);
     bool show(const QMessageId& id);
 #ifdef _WIN32_WCE
-    bool isPartiallyDownloaded(const QMessageId& id);
+    bool isPartiallyDownloaded(const QMessageId& id, bool considerAttachments = false);
     bool markForDownload(const QMessageId& id, bool includeAttachments = false);
     bool synchronize(const QMessageAccountId& id);
     bool registerUpdates(const QMessageId& targetMessage);
@@ -86,7 +86,6 @@ public slots:
     void reportMessagesCounted();
 #ifdef _WIN32_WCE
     void messageUpdated(const QMessageId& id);
-    void bodyDownloadTimeout();
 #endif
 
 signals:
@@ -103,27 +102,37 @@ public:
     int _count;
     QMessageServiceAction::State _state;
     QMessageId m_bodyDownloadTarget;
-    QTimer m_bodyDownloadTimer;
     QMessageStore::NotificationFilterId m_bodyDownloadFilterId;
+    bool m_registeredUpdates;
 };
 
 
 void QMessageServiceActionPrivate::completed()
 {
     _active = false;
-    emit stateChanged(QMessageServiceAction::Successful);
+    emit stateChanged(_lastError == QMessageStore::NoError ? QMessageServiceAction::Successful : QMessageServiceAction::Failed);
 }
 
 void QMessageServiceActionPrivate::reportMatchingIds()
 {
-    emit messagesFound(_candidateIds);
+    if (_lastError == QMessageStore::NoError) {
+        emit messagesFound(_candidateIds);
+    }
     completed();
+
+    // Delete the completed thread that generated this event
+    delete sender();
 }
 
 void QMessageServiceActionPrivate::reportMessagesCounted()
 {
-    emit messagesCounted(_count);
+    if (_lastError == QMessageStore::NoError) {
+        emit messagesCounted(_candidateIds.count());
+    }
     completed();
+
+    // Delete the completed thread that generated this event
+    delete sender();
 }
 
 #ifdef _WIN32_WCE
@@ -143,23 +152,13 @@ void QMessageServiceActionPrivate::messageUpdated(const QMessageId& id)
     }
 }
 
-void QMessageServiceActionPrivate::bodyDownloadTimeout()
-{
-    disconnect(QMessageStore::instance(),SIGNAL(messageUpdated(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)),this,SLOT(messageUpdated(const QMessageId&)));
-
-    m_bodyDownloadTarget = QMessageId();
-
-    _state = QMessageServiceAction::Failed;
-    emit q_ptr->stateChanged(_state);
-    _active = false;
-}
-
 #endif
 
 QMessageServiceActionPrivate::QMessageServiceActionPrivate(QMessageServiceAction* parent)
     :q_ptr(parent),
      _active(false),
-     _state(QMessageServiceAction::Pending)
+     _state(QMessageServiceAction::Pending),
+     m_registeredUpdates(false)
 {
 }
 
@@ -440,7 +439,7 @@ bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
 
 #ifdef _WIN32_WCE
 
-bool QMessageServiceActionPrivate::isPartiallyDownloaded(const QMessageId& id)
+bool QMessageServiceActionPrivate::isPartiallyDownloaded(const QMessageId& id, bool considerAttachments)
 {
     MapiSessionPtr mapiSession(MapiSession::createSession(&_lastError));
 
@@ -467,7 +466,9 @@ bool QMessageServiceActionPrivate::isPartiallyDownloaded(const QMessageId& id)
     else
     {
         mapiRelease(message);
-        return((status & MSGSTATUS_HEADERONLY) || (status & MSGSTATUS_PARTIAL) || (status & MSGSTATUS_PENDING_ATTACHMENTS));
+        bool bodyNotDownloaded = (status & MSGSTATUS_HEADERONLY) || (status & MSGSTATUS_PARTIAL);
+        bool attachmentsNotDownloaded = (status & MSGSTATUS_PENDING_ATTACHMENTS);
+        return considerAttachments ? bodyNotDownloaded && attachmentsNotDownloaded : bodyNotDownloaded;
     }
 }
 
@@ -540,30 +541,71 @@ bool QMessageServiceActionPrivate::synchronize(const QMessageAccountId& id)
 
 bool QMessageServiceActionPrivate::registerUpdates(const QMessageId& targetMessage)
 {
-    if(!m_bodyDownloadTimer.isActive())
+    if(!m_registeredUpdates)
     {
         connect(QMessageStore::instance(),SIGNAL(messageUpdated(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)),this,SLOT(messageUpdated(const QMessageId&)));
-        connect(&m_bodyDownloadTimer,SIGNAL(timeout()),this,SLOT(bodyDownloadTimeout()));
         m_bodyDownloadFilterId = QMessageStore::instance()->registerNotificationFilter(QMessageFilter());
         m_bodyDownloadTarget = targetMessage;
-        m_bodyDownloadTimer.setSingleShot(true);
-        m_bodyDownloadTimer.start(BodyDownloadTimeout * 1000);
-        return true;
+        m_registeredUpdates = true;
     }
-    else
-        qWarning() << "Already listnening";
-    return false;
+    return m_registeredUpdates;
 }
 
 void QMessageServiceActionPrivate::unregisterUpdates()
 {
-    m_bodyDownloadTimer.stop();
     disconnect(QMessageStore::instance(),SIGNAL(messageUpdated(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)),this,SLOT(messageUpdated(const QMessageId&)));
     QMessageStore::instance()->unregisterNotificationFilter(m_bodyDownloadFilterId);
     m_bodyDownloadFilterId = 0;
+    m_registeredUpdates = false;
 }
 
 #endif
+
+namespace {
+
+class QueryThread : public QThread
+{
+    Q_OBJECT
+
+    QMessageServiceActionPrivate *_parent;
+    QMessageFilter _filter;
+    QString _body;
+    QMessageDataComparator::Options _options;
+    QMessageOrdering _ordering;
+    uint _limit;
+    uint _offset;
+
+public:
+    QueryThread(QMessageServiceActionPrivate *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset)
+        : QThread(),
+          _parent(parent),
+          _filter(filter),
+          _body(body),
+          _options(options),
+          _ordering(ordering),
+          _limit(limit),
+          _offset(offset)
+    {
+        // Ensure that the main thread has instantiated the store before we access it from another thread
+        (void)QMessageStore::instance();
+    }
+
+    void run()
+    {
+        // Ensure that this thread has initialized MAPI
+        WinHelpers::MapiInitializationToken token(WinHelpers::initializeMapi());
+
+        // TODO: body text search
+        _parent->_candidateIds = QMessageStore::instance()->queryMessages(_filter, _ordering, _limit, _offset);
+        _parent->_lastError = QMessageStore::instance()->lastError();
+        emit completed();
+    }
+
+signals:
+    void completed();
+};
+
+}
 
 QMessageServiceAction::QMessageServiceAction(QObject *parent)
     : QObject(parent),
@@ -587,19 +629,7 @@ QMessageServiceAction::~QMessageServiceAction()
 
 bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset)
 {
-    if (d_ptr->_active) {
-        qWarning() << "Action is currently busy";
-        return false;
-    }
-    d_ptr->_active = true;
-    d_ptr->_candidateIds = QMessageStore::instance()->queryMessages(filter, ordering, limit, offset);
-    d_ptr->_lastError = QMessageStore::instance()->lastError();
-
-    if (d_ptr->_lastError == QMessageStore::NoError) {
-        QTimer::singleShot(0, d_ptr, SLOT(reportMatchingIds()));
-        return true;
-    }
-    return false;
+    return queryMessages(filter, QString(), QMessageDataComparator::Options(), ordering, limit, offset);
 }
 
 bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset)
@@ -609,14 +639,15 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
         return false;
     }
     d_ptr->_active = true;
-    d_ptr->_candidateIds = QMessageStore::instance()->queryMessages(filter, body, options, ordering, limit, offset);
-    d_ptr->_lastError = QMessageStore::instance()->lastError();
+    d_ptr->_lastError = QMessageStore::NoError;
+    d_ptr->_state = QMessageServiceAction::InProgress;
+    emit stateChanged(d_ptr->_state);
 
-    if (d_ptr->_lastError == QMessageStore::NoError) {
-        QTimer::singleShot(0, d_ptr, SLOT(reportMatchingIds()));
-        return true;
-    }
-    return false;
+    // Perform the query in another thread to keep the UI thread free
+    QueryThread *query = new QueryThread(d_ptr, filter, body, options, ordering, limit, offset);
+    connect(query, SIGNAL(completed()), d_ptr, SLOT(reportMatchingIds()), Qt::QueuedConnection);
+    query->start();
+    return true;
 }
 
 bool QMessageServiceAction::countMessages(const QMessageFilter &filter)
@@ -626,14 +657,15 @@ bool QMessageServiceAction::countMessages(const QMessageFilter &filter)
         return false;
     }
     d_ptr->_active = true;
-    d_ptr->_count = QMessageStore::instance()->queryMessages(filter).count();
-    d_ptr->_lastError = QMessageStore::instance()->lastError();
+    d_ptr->_lastError = QMessageStore::NoError;
+    d_ptr->_state = QMessageServiceAction::InProgress;
+    emit stateChanged(d_ptr->_state);
 
-    if (d_ptr->_lastError == QMessageStore::NoError) {
-        QTimer::singleShot(0, d_ptr, SLOT(reportMessagesCounted()));
-        return true;
-    }
-    return false;
+    // Perform the query in another thread to keep the UI thread free
+    QueryThread *query = new QueryThread(d_ptr, filter, QString(), QMessageDataComparator::Options(), QMessageOrdering(), 0, 0);
+    connect(query, SIGNAL(completed()), d_ptr, SLOT(reportMessagesCounted()), Qt::QueuedConnection);
+    query->start();
+    return true;
 }
 
 bool QMessageServiceAction::send(QMessage &message)
@@ -708,8 +740,7 @@ bool QMessageServiceAction::retrieveBody(const QMessageId& id)
     {
         if(d_ptr->isPartiallyDownloaded(id))
         {
-            qWarning() << "Message is partially downloaded, marking for download..";
-            result = d_ptr->markForDownload(id);
+            result = d_ptr->markForDownload(id,true);
             result &= d_ptr->registerUpdates(id);
             result &= d_ptr->synchronize(message.parentAccountId());
         }

@@ -334,7 +334,7 @@ void tst_QMessageStore::testMessage_data()
     QTest::addColumn<QByteArray>("bodyType");
     QTest::addColumn<QByteArray>("bodySubType");
     QTest::addColumn<unsigned>("bodySize");
-    QTest::addColumn<QStringList>("attachments");
+    QTest::addColumn<QList<QByteArray> >("attachments");
     QTest::addColumn<QList<QByteArray> >("attachmentType");
     QTest::addColumn<QList<QByteArray> >("attachmentSubType");
     QTest::addColumn<QList<unsigned> >("attachmentSize");
@@ -356,7 +356,7 @@ void tst_QMessageStore::testMessage_data()
         << QByteArray("text")
         << QByteArray("plain")
         << 24u
-        << QStringList()
+        << QList<QByteArray>()
         << QList<QByteArray>()
         << QList<QByteArray>()
         << QList<unsigned>()
@@ -374,7 +374,7 @@ void tst_QMessageStore::testMessage_data()
         << QByteArray("text")
         << QByteArray("html")
         << 64u
-        << QStringList()
+        << QList<QByteArray>()
         << QList<QByteArray>()
         << QList<QByteArray>()
         << QList<unsigned>()
@@ -392,7 +392,7 @@ void tst_QMessageStore::testMessage_data()
         << QByteArray("text")
         << QByteArray("plain")
         << 24u
-        << ( QStringList() << "1.txt" )
+        << ( QList<QByteArray>() << "1.txt" )
         << ( QList<QByteArray>() << "text" )
         << ( QList<QByteArray>() << "plain" )
         << ( QList<unsigned>() << 512u )
@@ -410,7 +410,7 @@ void tst_QMessageStore::testMessage_data()
         << QByteArray("text")
         << QByteArray("html")
         << 64u
-        << ( QStringList() << "1.txt" << "qtlogo.png" )
+        << ( QList<QByteArray>() << "1.txt" << "qtlogo.png" )
         << ( QList<QByteArray>() << "text" << "image" )
         << ( QList<QByteArray>() << "plain" << "png" )
         << ( QList<unsigned>() << 512u << 4096u )
@@ -508,7 +508,7 @@ void tst_QMessageStore::testMessage()
     QFETCH(QByteArray, bodyType);
     QFETCH(QByteArray, bodySubType);
     QFETCH(unsigned, bodySize);
-    QFETCH(QStringList, attachments);
+    QFETCH(QList<QByteArray>, attachments);
     QFETCH(QList<QByteArray>, attachmentType);
     QFETCH(QList<QByteArray>, attachmentSubType);
     QFETCH(QList<unsigned>, attachmentSize);
@@ -599,11 +599,15 @@ void tst_QMessageStore::testMessage()
         QCOMPARE(attachmentId != QMessageContentContainerId(), true);
         QCOMPARE(QMessageContentContainerId(attachmentId.toString()), attachmentId);
 
+        // With MAPI, attachment order is not preserved
         QMessageContentContainer attachment(message.find(attachmentId));
-        QCOMPARE(attachment.contentType().toLower(), attachmentType[i].toLower());
-        QCOMPARE(attachment.contentSubType().toLower(), attachmentSubType[i].toLower());
-        QCOMPARE(attachment.suggestedFileName(), attachments[i].toAscii());
-        QAPPROXIMATECOMPARE(attachment.size(), attachmentSize[i], (attachmentSize[i] / 2));
+        int index = attachments.indexOf(attachment.suggestedFileName());
+        QVERIFY(index != -1);
+
+        QCOMPARE(attachment.contentType().toLower(), attachmentType[index].toLower());
+        QCOMPARE(attachment.contentSubType().toLower(), attachmentSubType[index].toLower());
+        QCOMPARE(attachment.suggestedFileName(), attachments[index]);
+        QAPPROXIMATECOMPARE(attachment.size(), attachmentSize[index], (attachmentSize[i] / 2));
     }
 
     QMessageIdList messageIds(QMessageStore::instance()->queryMessages());

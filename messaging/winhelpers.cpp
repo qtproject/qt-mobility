@@ -86,6 +86,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QTextCodec>
+#include <QThreadStorage>
 #include <QTimer>
 
 #include <shlwapi.h>
@@ -241,7 +242,10 @@ using namespace WinHelpers;
 
 namespace {
 
-    QWeakPointer<WinHelpers::MapiInitializer> initializer;
+    typedef QWeakPointer<WinHelpers::MapiInitializer> InitRecord;
+    typedef InitRecord *InitRecordPtr;
+
+    QThreadStorage<InitRecordPtr> initializer;
 
     GUID GuidPublicStrings = { 0x00020329, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 };
 
@@ -275,8 +279,29 @@ namespace {
         return dt;
     }
 
+    struct AccountFilterPredicate
+    {
+        const QMessageAccountFilter &_filter;
 
+        AccountFilterPredicate(const QMessageAccountFilter &filter) : _filter(filter) {}
 
+        bool operator()(const MapiStorePtr &store) const
+        {
+            return QMessageAccountFilterPrivate::matchesStore(_filter, store);
+        }
+    };
+
+    struct FolderFilterPredicate
+    {
+        const QMessageFolderFilter &_filter;
+
+        FolderFilterPredicate(const QMessageFolderFilter &filter) : _filter(filter) {}
+
+        bool operator()(const MapiStorePtr &store) const
+        {
+            return QMessageFolderFilterPrivate::matchesStore(_filter, store);
+        }
+    };
 
     //used in preference to HrQueryAllRows
     //as per: http://blogs.msdn.com/stephen_griffin/archive/2009/03/23/try-not-to-query-all-rows.aspx
@@ -292,6 +317,7 @@ namespace {
                 bool setPosition = true);
         ~QueryAllRows();
 
+        LONG rowCount();
         bool query();
         LPSRowSet rows() const;
         QMessageStore::ErrorCode lastError() const;
@@ -350,23 +376,37 @@ namespace {
         m_rows = 0;
     }
 
+    LONG QueryAllRows::rowCount()
+    {
+        if (m_lastError != QMessageStore::NoError)
+            return -1;
+
+        ULONG count(0);
+        HRESULT rv = m_table->GetRowCount(0, &count);
+        if (HR_FAILED(rv)) {
+            m_lastError = QMessageStore::ContentInaccessible;
+            return -1;
+        }
+
+        return count;
+    }
+
     bool QueryAllRows::query()
     {
-        if(m_lastError != QMessageStore::NoError)
+        if (m_lastError != QMessageStore::NoError)
             return false;
 
         FreeProws(m_rows);
         m_rows = 0;
         m_lastError = QMessageStore::NoError;
 
-        bool failed = FAILED(m_table->QueryRows( QueryAllRows::BatchSize, NULL, &m_rows));
-
-        if(failed)
+        HRESULT rv = m_table->QueryRows( QueryAllRows::BatchSize, NULL, &m_rows);
+        if (HR_FAILED(rv)) {
             m_lastError = QMessageStore::ContentInaccessible;
+            return false;
+        }
 
-        if(failed || m_rows && !m_rows->cRows) return false;
-
-        return true;
+        return (m_rows && m_rows->cRows);
     }
 
     LPSRowSet QueryAllRows::rows() const
@@ -485,7 +525,7 @@ namespace {
         MAPIFreeBuffer(list);
     }
 
-    void addAttachment(IMessage* message, const QMessageContentContainer& attachmentContainer)
+    ULONG addAttachment(IMessage* message, const QMessageContentContainer& attachmentContainer)
     {
         IAttach *attachment(0);
         ULONG attachmentNumber(0);
@@ -557,6 +597,8 @@ namespace {
         } else {
             qWarning() << "Could not create MAPI attachment";
         }
+
+        return attachmentNumber;
     }
 
     template<typename T> QString getLastError(T& mapiType, HRESULT hr)
@@ -633,6 +675,17 @@ namespace {
         return result;
     }
 
+    ULONG streamSize(QMessageStore::ErrorCode* lastError, IStream* is)
+    {
+        ULONG size = 0;
+        STATSTG stg = { 0 };
+        HRESULT rv = is->Stat(&stg, STATFLAG_NONAME);
+        if(HR_SUCCEEDED(rv))
+            size = stg.cbSize.LowPart;
+        else *lastError = QMessageStore::ContentInaccessible;
+        return size;
+    }
+
     QByteArray readStream(QMessageStore::ErrorCode *lastError, IStream *is)
     {
         QByteArray result;
@@ -706,28 +759,29 @@ namespace {
         return result;
     }
 
-    QByteArray extractPlainText(const QString &rtf)
+#ifndef _WIN32_WCE
+    QByteArray extractPlainText(const QByteArray &rtf)
     {
         // Attempt to extract the HTML from the RTF
         // as per CMapiEx, http://www.codeproject.com/KB/IP/CMapiEx.aspx
         QByteArray text;
 
-        const QString startTag("\\fs20");
+        const QByteArray startTag("\\fs20");
         int index = rtf.indexOf(startTag);
         if (index != -1) {
-            const QString par("\\par");
-            const QString tab("\\tab");
-            const QString li("\\li");
-            const QString fi("\\fi-");
-            const QString pntext("\\pntext");
+            const QByteArray par("\\par");
+            const QByteArray tab("\\tab");
+            const QByteArray li("\\li");
+            const QByteArray fi("\\fi-");
+            const QByteArray pntext("\\pntext");
 
-            const QChar zero = QChar('\0');
-            const QChar space = QChar(' ');
-            const QChar openingBrace = QChar('{');
-            const QChar closingBrace = QChar('}');
-            const QChar ignore[] = { openingBrace, closingBrace, QChar('\r'), QChar('\n') };
+            const char zero = '\0';
+            const char space = ' ';
+            const char openingBrace = '{';
+            const char closingBrace = '}';
+            const char ignore[] = { openingBrace, closingBrace, '\r', '\n' };
 
-            QString::const_iterator rit = rtf.constBegin() + index, rend = rtf.constEnd();
+            QByteArray::const_iterator rit = rtf.constBegin() + index, rend = rtf.constEnd();
             while ((rit != rend) && (*rit != zero)) {
                 if (*rit == ignore[0] || *rit == ignore[1] || *rit == ignore[2] || *rit == ignore[3]) {
                     ++rit;
@@ -736,7 +790,7 @@ namespace {
                     bool skipDigits(false);
                     bool skipSpace(false);
 
-                    const QString remainder(QString::fromRawData(rit, (rend - rit)));
+                    const QByteArray remainder(QByteArray::fromRawData(rit, (rend - rit)));
 
                     if (remainder.startsWith(par)) {
                         rit += par.length();
@@ -754,22 +808,22 @@ namespace {
                         rit += fi.length();
                         skipDigits = true;
                         skipSpace = true;
-                    } else if (remainder.startsWith(QString("\\'"))) {
+                    } else if (remainder.startsWith(QByteArray("\\'"))) {
                         rit += 2;
-                        QString encodedChar(QString::fromRawData(rit, 2));
+                        QByteArray encodedChar(QByteArray::fromRawData(rit, 2));
                         rit += 2;
                         text += char(encodedChar.toUInt(0, 16));
                     } else if (remainder.startsWith(pntext)) {
                         rit += pntext.length();
                         skipSection = true;
-                    } else if (remainder.startsWith(QString("\\{"))) {
+                    } else if (remainder.startsWith(QByteArray("\\{"))) {
                         rit += 2;
                         text += "{";
-                    } else if (remainder.startsWith(QString("\\}"))) {
+                    } else if (remainder.startsWith(QByteArray("\\}"))) {
                         rit += 2;
                         text += "}";
                     } else {
-                        text += char((*rit).unicode());
+                        text += *rit;
                         ++rit;
                     }
 
@@ -779,7 +833,7 @@ namespace {
                         }
                     }
                     if (skipDigits) {
-                        while ((rit != rend) && (*rit).isDigit()) {
+                        while ((rit != rend) && isdigit(*rit)) {
                             ++rit;
                         }
                     }
@@ -795,35 +849,44 @@ namespace {
         return text;
     }
 
-    QString extractHtml(const QString &rtf)
+    int digitValue(char n)
+    {
+        if (n >= '0' && n <= '9') {
+            return (n - '0');
+        }
+
+        return 0;
+    }
+
+    QByteArray extractHtml(const QByteArray &rtf)
     {
         // Attempt to extract the HTML from the RTF
         // as per CMapiEx, http://www.codeproject.com/KB/IP/CMapiEx.aspx
-        QString html;
+        QByteArray html;
 
-        const QString htmltag("\\*\\htmltag");
+        const QByteArray htmltag("\\*\\htmltag");
         int index = rtf.indexOf("<html", Qt::CaseInsensitive);
         if (index == -1) {
             index = rtf.indexOf(htmltag, Qt::CaseInsensitive);
         }
         if (index != -1) {
-            const QString mhtmltag("\\*\\mhtmltag");
-            const QString par("\\par");
-            const QString tab("\\tab");
-            const QString li("\\li");
-            const QString fi("\\fi-");
-            const QString pntext("\\pntext");
-            const QString htmlrtf("\\htmlrtf");
+            const QByteArray mhtmltag("\\*\\mhtmltag");
+            const QByteArray par("\\par");
+            const QByteArray tab("\\tab");
+            const QByteArray li("\\li");
+            const QByteArray fi("\\fi-");
+            const QByteArray pntext("\\pntext");
+            const QByteArray htmlrtf("\\htmlrtf");
 
-            const QChar zero = QChar('\0');
-            const QChar space = QChar(' ');
-            const QChar openingBrace = QChar('{');
-            const QChar closingBrace = QChar('}');
-            const QChar ignore[] = { openingBrace, closingBrace, QChar('\r'), QChar('\n') };
+            const char zero = '\0';
+            const char space = ' ';
+            const char openingBrace = '{';
+            const char closingBrace = '}';
+            const char ignore[] = { openingBrace, closingBrace, '\r', '\n' };
 
             int tagIgnored = -1;
 
-            QString::const_iterator rit = rtf.constBegin() + index, rend = rtf.constEnd();
+            QByteArray::const_iterator rit = rtf.constBegin() + index, rend = rtf.constEnd();
             while ((rit != rend) && (*rit != zero)) {
                 if (*rit == ignore[0] || *rit == ignore[1] || *rit == ignore[2] || *rit == ignore[3]) {
                     ++rit;
@@ -832,14 +895,14 @@ namespace {
                     bool skipDigits(false);
                     bool skipSpace(false);
 
-                    const QString remainder(QString::fromRawData(rit, (rend - rit)));
+                    const QByteArray remainder(QByteArray::fromRawData(rit, (rend - rit)));
 
                     if (remainder.startsWith(htmltag)) {
                         rit += htmltag.length();
 
                         int tagNumber = 0;
-                        while ((*rit).isDigit()) {
-                            tagNumber = (tagNumber * 10) + (*rit).digitValue();
+                        while (isdigit(*rit)) {
+                            tagNumber = (tagNumber * 10) + digitValue(*rit);
                             ++rit;
                         }
                         skipSpace = true;
@@ -852,8 +915,8 @@ namespace {
                         rit += mhtmltag.length();
 
                         int tagNumber = 0;
-                        while ((*rit).isDigit()) {
-                            tagNumber = (tagNumber * 10) + (*rit).digitValue();
+                        while (isdigit(*rit)) {
+                            tagNumber = (tagNumber * 10) + digitValue(*rit);
                             ++rit;
                         }
                         skipSpace = true;
@@ -861,12 +924,12 @@ namespace {
                         tagIgnored = tagNumber;
                     } else if (remainder.startsWith(par)) {
                         rit += par.length();
-                        html += QChar('\r');
-                        html += QChar('\n');
+                        html += char('\r');
+                        html += char('\n');
                         skipSpace = true;
                     } else if (remainder.startsWith(tab)) {
                         rit += tab.length();
-                        html += QChar('\t');
+                        html += char('\t');
                         skipSpace = true;
                     } else if (remainder.startsWith(li)) {
                         rit += li.length();
@@ -876,12 +939,12 @@ namespace {
                         rit += fi.length();
                         skipDigits = true;
                         skipSpace = true;
-                    } else if (remainder.startsWith(QString("\\'"))) {
+                    } else if (remainder.startsWith(QByteArray("\\'"))) {
                         rit += 2;
 
-                        QString encodedChar(QString::fromRawData(rit, 2));
+                        QByteArray encodedChar(QByteArray::fromRawData(rit, 2));
                         rit += 2;
-                        html += QChar(encodedChar.toUInt(0, 16));
+                        html += char(encodedChar.toUInt(0, 16));
                     } else if (remainder.startsWith(pntext)) {
                         rit += pntext.length();
                         skipSection = true;
@@ -889,7 +952,7 @@ namespace {
                         rit += htmlrtf.length();
 
                         // Find the terminating tag
-                        const QString terminator("\\htmlrtf0");
+                        const QByteArray terminator("\\htmlrtf0");
                         int index = remainder.indexOf(terminator, htmlrtf.length());
                         if (index == -1) {
                             rit = rend;
@@ -897,10 +960,10 @@ namespace {
                             rit += (index + terminator.length() - htmlrtf.length());
                             skipSpace = true;
                         }
-                    } else if (remainder.startsWith(QString("\\{"))) {
+                    } else if (remainder.startsWith(QByteArray("\\{"))) {
                         rit += 2;
                         html += openingBrace;
-                    } else if (remainder.startsWith(QString("\\}"))) {
+                    } else if (remainder.startsWith(QByteArray("\\}"))) {
                         rit += 2;
                         html += closingBrace;
                     } else {
@@ -914,7 +977,7 @@ namespace {
                         }
                     }
                     if (skipDigits) {
-                        while ((rit != rend) && (*rit).isDigit()) {
+                        while ((rit != rend) && isdigit(*rit)) {
                             ++rit;
                         }
                     }
@@ -929,6 +992,7 @@ namespace {
 
         return html;
     }
+#endif
 
     void storeMessageProperties(QMessageStore::ErrorCode *lastError, const QMessage &source, IMessage *message)
     {
@@ -1234,73 +1298,45 @@ namespace {
         }
     }
 
-    void replaceMessageAttachments(QMessageStore::ErrorCode *lastError, const QMessage &source, IMessage *message, WinHelpers::SavePropertyOption saveOption = WinHelpers::SavePropertyChanges )
+    void addMessageAttachments(QMessageStore::ErrorCode *lastError, const QMessage &source, IMessage *message, WinHelpers::SavePropertyOption saveOption = WinHelpers::SavePropertyChanges )
     {
-        // Find any existing attachments and remove them
-        IMAPITable *attachmentsTable(0);
-        HRESULT rv = message->GetAttachmentTable(MAPI_UNICODE, &attachmentsTable);
-        if (HR_SUCCEEDED(rv)) {
-            QList<LONG> attachmentNumbers;
-            SizedSPropTagArray(1, columns) = {1, {PR_ATTACH_NUM}};
-            rv = attachmentsTable->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0);
+        QList<LONG> attachmentNumbers;
+
+        if (MapiSession::messageImpl(source)->_hasAttachments) {
+            // Find any existing attachments
+            IMAPITable *attachmentsTable(0);
+            HRESULT rv = message->GetAttachmentTable(MAPI_UNICODE, &attachmentsTable);
             if (HR_SUCCEEDED(rv)) {
-                SRowSet *rows(0);
-                ULONG rowCount = 0;
-                while (*lastError == QMessageStore::NoError) {
-                    if (HR_SUCCEEDED(attachmentsTable->QueryRows(1, 0, &rows))) {
-                        if (rows->cRows == 0) {
-                            FreeProws(rows);
-                            break;
-                        } else if (rows->cRows == 1) {
-                            // Add this attachment's number to the removal list
-                            attachmentNumbers.append(rows->aRow[0].lpProps[0].Value.l);
-                            rowCount+= rows->cRows;
-                        }
-                        FreeProws(rows);
-                    } else {
-                        if(rowCount)
-                            *lastError = QMessageStore::ContentInaccessible;
-                        break;
-                        qWarning() << "Unable to query rows for recipient table";
+                SizedSPropTagArray(1, columns) = {1, {PR_ATTACH_NUM}};
+
+                QueryAllRows qar(attachmentsTable, reinterpret_cast<LPSPropTagArray>(&columns), 0, 0, false);
+                while (qar.query()) {
+                    for (uint n = 0; n < qar.rows()->cRows; ++n) {
+                        attachmentNumbers.append(qar.rows()->aRow[n].lpProps[0].Value.l);
                     }
                 }
 
-                if ((*lastError == QMessageStore::NoError) || !attachmentNumbers.isEmpty()) {
-                    while (!attachmentNumbers.isEmpty()) {
-                        rv = message->DeleteAttach(attachmentNumbers.takeLast(), 0, 0, 0);
-                        if (HR_FAILED(rv)) {
-                            qWarning() << "Unable to remove existing attachment from message.";
-                            *lastError = QMessageStore::FrameworkFault;
-                        }
-                    }
-
-                    if (*lastError == QMessageStore::NoError && saveOption == WinHelpers::SavePropertyChanges ) {
-#ifndef _WIN32_WCE //unsupported
-                        if (HR_FAILED(message->SaveChanges(KEEP_OPEN_READWRITE))) {
-                            qWarning() << "Unable to save changes to message";
-                            *lastError = QMessageStore::FrameworkFault;
-                        }
-#endif
-                    }
+                *lastError = qar.lastError();
+                if (*lastError != QMessageStore::NoError) {
+                    qWarning() << "Unable to get attachments numbers from table.";
                 }
+                mapiRelease(attachmentsTable);
             } else {
-                *lastError = QMessageStore::ContentInaccessible;
-                qWarning() << "Unable to set columns for attachments table";
+                qWarning() << "Unable to get attachments table from message.";
+                *lastError = QMessageStore::FrameworkFault;
             }
-
-            mapiRelease(attachmentsTable);
-        } else {
-            qWarning() << "Unable to get attachments table from message.";
-            *lastError = QMessageStore::FrameworkFault;
         }
 
         if (*lastError == QMessageStore::NoError) {
-            // Add any current attachments
+            // Add any current attachments not present
             foreach (const QMessageContentContainerId &attachmentId, source.attachmentIds()) {
                 QMessageContentContainer attachment(source.find(attachmentId));
                 bool isAttachment = (!attachment.suggestedFileName().isEmpty() && attachment.isContentAvailable());
                 if (isAttachment) {
-                    addAttachment(message, attachment);
+                    LONG number(MapiSession::containerImpl(attachment)->_attachmentNumber);
+                    if (!number || !attachmentNumbers.contains(number)) {
+                        addAttachment(message, attachment);
+                    }
                 }
             }
         }
@@ -1312,6 +1348,7 @@ namespace {
 
         QMessageFilter _filter;
         MapiFolderPtr _folder;
+        LPMAPITABLE _table;
         uint _offset; // TODO replace this with LPMAPITABLE for efficiency
         QMessage _front;
     };
@@ -1354,11 +1391,19 @@ namespace {
 
             node->_offset = 0;
 
-            // TODO: Would be more efficient to use a LPMAPITABLE directly instead of calling MapiFolder queryMessages and message functions.
-            QMessageIdList messageIdList(node->_folder->queryMessages(lastError, node->_filter, ordering, 1));
+            QMessageIdList messageIdList;
+            node->_table = node->_folder->queryBegin(lastError, node->_filter, ordering);
             if (*lastError == QMessageStore::NoError) {
+                if (node->_table) {
+                    messageIdList = node->_folder->queryNext(lastError, node->_table, node->_filter);
+                    if (messageIdList.isEmpty() || (*lastError != QMessageStore::NoError)) {
+                        node->_folder->queryEnd(node->_table);
+                    }
+                }
+
                 if (!messageIdList.isEmpty()) {
                     node->_front = node->_folder->message(lastError, messageIdList.front());
+
                     if (*lastError == QMessageStore::NoError) {
                         _heap.append(node);
                     }
@@ -1383,8 +1428,13 @@ namespace {
         FolderHeapNodePtr node(_heap[0]);
         ++node->_offset;
 
-        // TODO: Would be more efficient to use a LPMAPITABLE directly instead of calling MapiFolder queryMessages and message functions.
-        QMessageIdList messageIdList(node->_folder->queryMessages(lastError, node->_filter, _ordering, 1, node->_offset));
+        QMessageIdList messageIdList;
+        if (node->_table) {
+            messageIdList = node->_folder->queryNext(lastError, node->_table, node->_filter);
+            if (messageIdList.isEmpty() || (*lastError != QMessageStore::NoError)) {
+                node->_folder->queryEnd(node->_table);
+            }
+        }
         if (*lastError != QMessageStore::NoError)
             return result;
 
@@ -1734,11 +1784,16 @@ namespace WinHelpers {
     {
         MapiInitializationToken result;
 
-        if (!initializer.isNull()) {
-            result = initializer.toStrongRef();
+        if (!initializer.hasLocalData()) {
+            initializer.setLocalData(new InitRecord);
+        }
+
+        InitRecordPtr &threadInitializer(initializer.localData());
+        if (!(*threadInitializer).isNull()) {
+            result = (*threadInitializer).toStrongRef();
         } else {
             result = MapiInitializationToken(new MapiInitializer());
-            initializer = result;
+            (*threadInitializer) = result;
         }
 
         return result;
@@ -1952,20 +2007,18 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError)
     return result;
 }
 
-QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
+LPMAPITABLE MapiFolder::queryBegin(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering)
 {
-    QMessageIdList result;
-
     if (!_valid || !_folder) {
         Q_ASSERT(_valid && _folder);
         *lastError = QMessageStore::FrameworkFault;
-        return result;
+        return 0;
     }
 
     MapiRestriction restriction(filter);
     if (!restriction.isValid()) {
         *lastError = QMessageStore::ConstraintFailure;
-        return result;
+        return 0;
     }
 
     LPMAPITABLE messagesTable(0);
@@ -1978,73 +2031,70 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
             if (!ordering.isEmpty()) {
                 QMessageOrderingPrivate::sortTable(lastError, ordering, messagesTable);
             }
-
-            if (*lastError == QMessageStore::NoError) {
-                if (!restriction.isEmpty()) {
-                    ULONG flags(0);
-                    if (messagesTable->Restrict(restriction.sRestriction(), flags) != S_OK)
-                        *lastError = QMessageStore::ConstraintFailure;
-                }
+            if (!restriction.isEmpty()) {
+                ULONG flags(0);
+                if (messagesTable->Restrict(restriction.sRestriction(), flags) != S_OK)
+                    *lastError = QMessageStore::ConstraintFailure;
             }
-
-            if (*lastError == QMessageStore::NoError) {
-                uint workingLimit(limit);
-                LPSRowSet rows(0);
-                LONG ignored;
-                rv = messagesTable->SeekRow(BOOKMARK_BEGINNING, offset, &ignored);
-                if (HR_SUCCEEDED(rv)) {
-                    while (true) {
-                        rv = messagesTable->QueryRows(1, 0, &rows);
-                        if (HR_SUCCEEDED(rv)) {
-                            if (rows->cRows == 1) {
-                                LPSPropValue entryIdProp(&rows->aRow[0].lpProps[0]);
-                                LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[1]);
-                                MapiRecordKey recordKey(recordKeyProp->Value.bin.lpb, recordKeyProp->Value.bin.cb);
-                                MapiEntryId entryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
-#ifdef _WIN32_WCE
-                                QMessageId id(QMessageIdPrivate::from(_store->entryId(), entryId, recordKey, _entryId));
-#else
-                                QMessageId id(QMessageIdPrivate::from(_store->recordKey(), entryId, recordKey, _key));
-#endif
-                                FreeProws(rows);
-
-                                if (QMessageFilterPrivate::matchesMessageRequired(filter)
-                                    && !QMessageFilterPrivate::matchesMessageSimple(filter, QMessage(id)))
-                                    continue;
-                                result.append(id);
-                                if (limit) {
-                                    --workingLimit;
-                                }
-
-                                if (limit && !workingLimit)
-                                    break;
-                            } else {
-                                // We have retrieved all rows
-                                FreeProws(rows);
-                                break;
-                            }
-                        } else {
-                            *lastError = QMessageStore::ContentInaccessible;
-                            qWarning() << "Unable to query rows in message table.";
-                        }
-                    }
-                } else {
-                    *lastError = QMessageStore::ContentInaccessible;
-                    qWarning() << "Unable to seek to offset in message table.";
-                }
+            if (*lastError != QMessageStore::NoError) {
+                return 0;
             }
+            return messagesTable;
         } else {
             *lastError = QMessageStore::ContentInaccessible;
-            return QMessageIdList();
+            return 0;
         }
 
         mapiRelease(messagesTable);
+        messagesTable = 0;
     } else {
         *lastError = QMessageStore::ContentInaccessible;
-        return QMessageIdList(); // TODO set last error to content inaccessible, and review all != S_OK result handling
+        return 0;
     }
 
-    return result;
+    return 0;
+}
+
+QMessageIdList MapiFolder::queryNext(QMessageStore::ErrorCode *lastError, LPMAPITABLE messagesTable, const QMessageFilter &filter)
+{
+    QMessageIdList result;
+    while (true) {
+        LPSRowSet rows(0);
+        HRESULT rv = messagesTable->QueryRows(1, 0, &rows);
+        if (HR_SUCCEEDED(rv)) {
+            if (rows->cRows == 1) {
+                LPSPropValue entryIdProp(&rows->aRow[0].lpProps[0]);
+                LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[1]);
+                MapiRecordKey recordKey(recordKeyProp->Value.bin.lpb, recordKeyProp->Value.bin.cb);
+                MapiEntryId entryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
+        #ifdef _WIN32_WCE
+                QMessageId id(QMessageIdPrivate::from(_store->entryId(), entryId, recordKey, _entryId));
+        #else
+                QMessageId id(QMessageIdPrivate::from(_store->recordKey(), entryId, recordKey, _key));
+        #endif
+                FreeProws(rows);
+
+                if (QMessageFilterPrivate::matchesMessageRequired(filter)
+                    && !QMessageFilterPrivate::matchesMessageSimple(filter, QMessage(id)))
+                    continue;
+                result.append(id);
+                return result;
+            } else {
+                // We have retrieved all rows
+                FreeProws(rows);
+                return result;
+            }
+        } else {
+            *lastError = QMessageStore::ContentInaccessible;
+            qWarning() << "Unable to query rows in message table.";
+            return result;
+        }
+    }
+}
+
+void MapiFolder::queryEnd(LPMAPITABLE messagesTable)
+{
+    mapiRelease(messagesTable);
 }
 
 uint MapiFolder::countMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter) const
@@ -2350,7 +2400,7 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
             replaceMessageBody(lastError, source, mapiMessage, _store);
         }
         if (*lastError == QMessageStore::NoError) {
-            replaceMessageAttachments(lastError, source, mapiMessage, saveOption );
+            addMessageAttachments(lastError, source, mapiMessage, saveOption );
         }
 #ifndef _WIN32_WCE //unsupported
         if (*lastError == QMessageStore::NoError && saveOption == SavePropertyChanges ) {
@@ -3317,36 +3367,12 @@ QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastErro
 
 QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastError, const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset, bool cachedMode) const
 {
-    struct AccountFilterPredicate
-    {
-        const QMessageAccountFilter &_filter;
-
-        AccountFilterPredicate(const QMessageAccountFilter &filter) : _filter(filter) {}
-
-        bool operator()(const MapiStorePtr &store) const
-        {
-            return QMessageAccountFilterPrivate::matchesStore(_filter, store);
-        }
-    };
-
     AccountFilterPredicate pred(filter);
     return filterStores<const AccountFilterPredicate&, const QMessageAccountOrdering &>(lastError, pred, ordering, limit, offset, cachedMode);
 }
 
 QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastError, const QMessageFolderFilter &filter, bool cachedMode) const
 {
-    struct FolderFilterPredicate
-    {
-        const QMessageFolderFilter &_filter;
-
-        FolderFilterPredicate(const QMessageFolderFilter &filter) : _filter(filter) {}
-
-        bool operator()(const MapiStorePtr &store) const
-        {
-            return QMessageFolderFilterPrivate::matchesStore(_filter, store);
-        }
-    };
-
     FolderFilterPredicate pred(filter);
     return filterStores<const FolderFilterPredicate&, const QMessageAccountOrdering &>(lastError, pred, QMessageAccountOrdering(), 0, 0, cachedMode);
 }
@@ -3862,7 +3888,7 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
 #endif
                         } else if (prop.Value.l & MSGSTATUS_HAS_PR_CE_MIME_TEXT) {
                             // TODO...
-                            // This is how MS proivders store HTML, as per http://msdn.microsoft.com/en-us/library/bb446140.aspx
+                            // This is how MS providers store HTML, as per http://msdn.microsoft.com/en-us/library/bb446140.aspx
                         }
 #endif
                         break;
@@ -4073,52 +4099,75 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
         MapiStorePtr store;
         IMessage *message = openMapiMessage(lastError, msg->id(), &store);
         if (*lastError == QMessageStore::NoError) {
-
             //SMS body stored in subject on CEMAPI
-            if(store->types() & QMessage::Sms)
-            {
+            if (store->types() & QMessage::Sms) {
                 messageBody.append(reinterpret_cast<const char*>(msg->subject().utf16()),msg->subject().count()*sizeof(quint16));
                 bodySubType = "plain";
-            }
-            else
-            {
+            } else {
                 IStream *is(0);
+                bool asciiData(false);
                 LONG contentFormat(msg->d_ptr->_contentFormat);
 
                 if (contentFormat == EDITOR_FORMAT_DONTKNOW) {
+#ifdef _WIN32_WCE
+                    // TODO: Attempt to read MIME text first
+#else
                     // Attempt to read HTML first
                     contentFormat = EDITOR_FORMAT_HTML;
+#endif
                 }
-
                 if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
-                    HRESULT rv = message->OpenProperty(PR_BODY, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
-                    if (HR_SUCCEEDED(rv)) {
-                        messageBody = readStream(lastError, is);
-                        bodySubType = "plain";
+#ifdef _WIN32_WCE
+                    ULONG tags[] = { PR_BODY, PR_BODY_W, PR_BODY_A };
+#else
+                    ULONG tags[] = { PR_BODY };
+#endif
+                    const int n = sizeof(tags)/sizeof(tags[0]);
+                    for (int i = 0; i < n; ++i) {
+                        HRESULT rv = message->OpenProperty(tags[i], &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+                        if (HR_SUCCEEDED(rv)) {
+                            messageBody = readStream(lastError, is);
+                            bodySubType = "plain";
+                            if (i == 2) {
+                                asciiData = true;
+                            }
+                            break;
+                        } 
+                    }
+                    if (messageBody.isEmpty()) {
+                        qWarning() << "Unable to open PR_BODY!";
                     }
                 } else if (contentFormat == EDITOR_FORMAT_HTML) {
                     // See if there is a body HTML property
-    #ifndef _WIN32_WCE
-                    ULONG bodyProperty(PR_BODY_HTML);
-    #elif(_WIN32_WCE > 0x501)
                     // Correct variants discussed at http://blogs.msdn.com/raffael/archive/2008/09/08/mapi-on-windows-mobile-6-programmatically-retrieve-mail-body-sample-code.aspx
-                    ULONG bodyProperty(PR_BODY_HTML_A);
-    #else
-                    ULONG bodyProperty(PR_BODY);
-    #endif
-                    HRESULT rv = message->OpenProperty(bodyProperty, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
-                    if (HR_SUCCEEDED(rv)) {
-                        messageBody = readStream(lastError, is);
-                        bodySubType = "html";
-
-    #ifdef _WIN32_WCE
-                        // Encode the ASCII text into UTF-16
-                        messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(decodeContent(messageBody, "Latin-1"));
-    #endif
+#if(_WIN32_WCE > 0x501)
+                    ULONG tags[] = { PR_BODY_HTML, PR_BODY_HTML_W, PR_BODY_HTML_A };
+#else
+                    ULONG tags[] = { PR_BODY_HTML };
+#endif
+                    const int n = sizeof(tags)/sizeof(tags[0]);
+                    for (int i = 0; i < n; ++i) {
+                        HRESULT rv = message->OpenProperty(tags[i], &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+                        if (HR_SUCCEEDED(rv)) {
+                            messageBody = readStream(lastError, is);
+                            bodySubType = "html";
+                            if (i == 2) {
+                                asciiData = true;
+                            }
+                            break;
+                        }
+                    }
+                    if (messageBody.isEmpty()) {
+#ifdef _WIN32_WCE
+                        qWarning() << "Unable to open PR_BODY_HTML!";
+#else
+                        // We couldn't get HTML; try RTF
+                        contentFormat = EDITOR_FORMAT_DONTKNOW;
+#endif
                     }
                 }
 
-    #ifndef _WIN32_WCE // RTF not supported
+#ifndef _WIN32_WCE // RTF not supported
                 if (bodySubType.isEmpty()) {
                     if (!msg->d_ptr->_rtfInSync) {
                         // See if we need to sync the RTF
@@ -4151,10 +4200,13 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
 
                             decompressor->Release();
 
+                            // RTF is stored in ASCII
+                            asciiData = true;
+
                             if (contentFormat == EDITOR_FORMAT_DONTKNOW) {
                                 // Inspect the message content to see if we can tell what is in it
-                                QString initialText = decodeContent(messageBody, "utf-16", 256);
-                                if (!initialText.isEmpty()) {
+                                if (!messageBody.isEmpty()) {
+                                    QByteArray initialText(messageBody.left(256));
                                     if (initialText.indexOf("\\fromtext") != -1) {
                                         // This message originally contained text
                                         contentFormat = EDITOR_FORMAT_PLAINTEXT;
@@ -4165,6 +4217,7 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                                         if (HR_SUCCEEDED(rv)) {
                                             messageBody = readStream(lastError, ts);
                                             bodySubType = "plain";
+											asciiData = false;
 
                                             ts->Release();
                                         } else {
@@ -4179,18 +4232,15 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
 
                             if (bodySubType.isEmpty()) {
                                 if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
-                                    messageBody = extractPlainText(decodeContent(messageBody, "utf-16"));
+                                    messageBody = extractPlainText(messageBody);
                                     bodySubType = "plain";
                                 } else if (contentFormat == EDITOR_FORMAT_HTML) {
-                                    QString html = extractHtml(decodeContent(messageBody, "utf-16"));
-                                    messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(html.constData(), html.length());
+                                    messageBody = extractHtml(messageBody);
                                     bodySubType = "html";
+                                } else {
+                                    // I guess we must just have RTF
+                                    bodySubType = "rtf";
                                 }
-                            }
-
-                            if (bodySubType.isEmpty()) {
-                                // I guess we must have RTF
-                                bodySubType = "rtf";
                             }
                         } else {
                             *lastError = QMessageStore::ContentInaccessible;
@@ -4201,23 +4251,42 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                         bodySubType = "unknown";
                     }
                 }
-    #endif
+#endif
+
                 mapiRelease(is);
+
+                if (asciiData) {
+                    // Convert the ASCII content back to UTF-16
+                    messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(decodeContent(messageBody, "Latin-1"));
+                }
             }
 
             if (*lastError == QMessageStore::NoError) {
                 QMessageContentContainerPrivate *messageContainer(((QMessageContentContainer *)(msg))->d_ptr);
 
+                bool bodyDownloaded = true;
+#ifdef _WIN32_WCE
+                ULONG status = 0;
+                if(getMapiProperty(message,PR_MSG_STATUS,&status)) {
+                    bodyDownloaded = !((status & MSGSTATUS_HEADERONLY) || (status & MSGSTATUS_PARTIAL));
+                }
+#else
+                //TODO windows
+#endif
+
                 if (!msg->d_ptr->_hasAttachments) {
                     // Make the body the entire content of the message
                     messageContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
                     msg->d_ptr->_bodyId = QMessageContentContainerPrivate::bodyContentId();
+                    messageContainer->_available = bodyDownloaded;
+
                 } else {
                     // Add the message body data as the first part
                     QMessageContentContainer bodyPart;
                     {
                         QMessageContentContainerPrivate *bodyContainer(((QMessageContentContainer *)(&bodyPart))->d_ptr);
                         bodyContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
+                        bodyContainer->_available = bodyDownloaded;
                     }
 
                     messageContainer->setContentType(QByteArray("multipart"), QByteArray("mixed"), QByteArray());
@@ -4261,8 +4330,6 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
                 IMAPITable *attachmentsTable(0);
                 HRESULT rv = message->GetAttachmentTable(0, &attachmentsTable);
                 if (HR_SUCCEEDED(rv)) {
-                    QMap<LONG, QMessageContentContainer> attachments;
-
                     // Find the properties of these attachments
                     SizedSPropTagArray(7, attCols) = {7, { PR_ATTACH_NUM,
                                                            PR_ATTACH_EXTENSION,
@@ -4338,26 +4405,18 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
 
                             container->_name = filename.toAscii();
                             container->_size = size;
+                            container->_available = haveAttachmentData(lastError,msg->id(),number);
 
-                            attachments[number] = attachment;
+                            messageContainer->appendContent(attachment);
+                            if (!isModified) {
+                                msg->d_ptr->_modified = false;
+                            }
                         }
                     }
 
                     if (qar.lastError() != QMessageStore::NoError) {
                         *lastError = qar.lastError();
                     } else {
-                        if (!attachments.isEmpty()) {
-                            // Add the message attachments in numbered order
-                            QMap<LONG, QMessageContentContainer>::iterator it = attachments.begin(), end = attachments.end();
-                            for ( ; it != end; ++it) {
-                                messageContainer->appendContent(it.value());
-                            }
-
-                            if (!isModified) {
-                                msg->d_ptr->_modified = false;
-                            }
-                        }
-
                         result = true;
                     }
 
@@ -4374,6 +4433,33 @@ bool MapiSession::updateMessageAttachments(QMessageStore::ErrorCode *lastError, 
 
     return result;
 }
+
+bool MapiSession::haveAttachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const
+{
+    bool result = false;
+
+    IMessage *message = openMapiMessage(lastError, id);
+    if (*lastError == QMessageStore::NoError) {
+        LPATTACH attachment(0);
+        HRESULT rv = message->OpenAttach(number, 0, 0, &attachment);
+        if (HR_SUCCEEDED(rv)) {
+            IStream *is(0);
+            rv = attachment->OpenProperty(PR_ATTACH_DATA_BIN, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+            if (HR_SUCCEEDED(rv)) {
+                result = streamSize(lastError, is) > 0;
+                mapiRelease(is);
+            }
+            mapiRelease(attachment);
+        } else {
+            qWarning() << "Unable to open attachment:" << number;
+        }
+
+        mapiRelease(message);
+    }
+
+    return result;
+}
+
 
 QByteArray MapiSession::attachmentData(QMessageStore::ErrorCode *lastError, const QMessageId& id, ULONG number) const
 {
@@ -4458,7 +4544,8 @@ void MapiSession::updateMessage(QMessageStore::ErrorCode* lastError, const QMess
             replaceMessageBody(lastError, source, mapiMessage, store);
         }
         if (*lastError == QMessageStore::NoError) {
-            replaceMessageAttachments(lastError, source, mapiMessage);
+            // Attachments cannot be removed from a QMessage but new ones can be added
+            addMessageAttachments(lastError, source, mapiMessage);
         }
 #ifndef _WIN32_WCE //unsupported
         if (*lastError == QMessageStore::NoError) {
@@ -4607,33 +4694,21 @@ void MapiSession::notify(MapiStore *store, const QMessageId &id, MapiSession::No
     for ( ; it != end; ++it) {
         const QMessageFilter &filter(it.value());
 
-#if 1
-        QSet<QMessageId> filteredIds;
-        if (!filter.isEmpty()) {
-            // Empty filter matches all messages; otherwise get the filtered set
-            QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
-            filteredIds = store->queryMessages(&ignoredError, filter, QMessageOrdering(), 0, 0).toSet();
-        }
-        if (filter.isEmpty() || filteredIds.contains(id)) {
-            matchingFilterIds.insert(it.key());
-        }
-#else // TODO: test this alternative logic
         if (!filter.isSupported())
             continue;
 
-        QMessageStore::ErrorCode ignoredError;
+        QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
         QMessageFilter processedFilter(QMessageFilterPrivate::preprocess(&ignoredError, _self.toStrongRef(), filter));
         if (ignoredError != QMessageStore::NoError)
             continue;
 
         QMessage message(id);
         foreach (QMessageFilter subfilter, QMessageFilterPrivate::subfilters(processedFilter)) {
-            if (QMessageFilterPrivate::matchesMessage(filter, message, MapiStorePtr(store))) {
+            if (QMessageFilterPrivate::matchesMessage(subfilter, message, store)) {
                 matchingFilterIds.insert(it.key());
                 break; // subfilters are or'd together
             }
         }
-#endif
     }
 
     if (!matchingFilterIds.isEmpty()) {
@@ -4677,6 +4752,16 @@ void MapiSession::dispatchNotifications()
     }
 
     QTimer::singleShot(1000, this, SLOT(dispatchNotifications()));
+}
+
+QMessagePrivate *MapiSession::messageImpl(const QMessage &message)
+{
+    return message.d_ptr;
+}
+
+QMessageContentContainerPrivate *MapiSession::containerImpl(const QMessageContentContainer &container)
+{
+    return container.d_ptr;
 }
 
 #include "winhelpers.moc"
