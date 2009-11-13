@@ -72,6 +72,11 @@
  */
 
 /*!
+ * \class QContactFamily
+ * \brief The names of the family members of a contact
+ */
+
+/*!
  * \class QContactGender
  * \brief The gender of a contact
  */

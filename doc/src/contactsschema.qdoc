@@ -113,7 +113,7 @@ The leaf classes which have a uniqueness constraint in the default schema are as
     \o \l{QContactDisplayLabel}
     \o \l{QContactType}
     \o \l{QContactSyncTarget}
-    \p \l{QContactGuid}
+    \o \l{QContactGuid}
 \endlist
 
 \section2 Detail Definition Access Constraints

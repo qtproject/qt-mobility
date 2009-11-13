@@ -87,3 +87,15 @@
  * Typically this would be of the form "com.nokia.qt.contacts.engines.memory", with
  * the appropriate domain and engine name substituted.
  */
+
+/*!
+ * \fn QContactManagerEngineFactory::supportedImplementationVersions() const
+ *
+ * This function should return a list of versions of the engine which this factory can instantiate.
+ */
+
+/*!
+ * \fn QContactManagerEngineFactory::version() const
+ *
+ * Returns the version of the Qt Mobility Contacts API which is implemented by engines instantiated by this factory.
+ */
