@@ -46,11 +46,12 @@
 #include <e32base.h>    // For CActive, link against: euser.lib
 #include <lbs.h>
 #include <lbscommon.h>
-
+#include <lbssatellite.h>
 #include "qgeopositioninfosource.h"
 //#include "qgeopositioninfosources60.h"
 
 class CQGeoPositionInfoSourceS60 ;
+class CQGeoSatelliteInfoSourceS60;
 
 // Types of request
 enum RequestType {
@@ -67,12 +68,12 @@ public:
     ~CQMLBackendAO();
 
     // Two-phased constructor.
-    static CQMLBackendAO* NewL(CQGeoPositionInfoSourceS60 *aRequester,
+    static CQMLBackendAO* NewL(QObject *aRequester,
                                RequestType  aRequestType, TPositionModuleId  aModId = TUid::Uid(0)
                               );
 
     // Two-phased constructor.
-    static CQMLBackendAO* NewLC(CQGeoPositionInfoSourceS60 *aRequester,
+    static CQMLBackendAO* NewLC(QObject *aRequester,
                                 RequestType  aRequestType, TPositionModuleId  aModID);
 
     // checks any pending request in activeobject
@@ -99,8 +100,8 @@ private:
     CQMLBackendAO();
 
     // Second-phase constructor
-    TInt CQMLBackendAO::ConstructL(CQGeoPositionInfoSourceS60 *aRequester, RequestType  aRequestType,
-                                   TPositionModuleId  aModId);
+    TInt ConstructL(QObject *aRequester, RequestType  aRequestType,
+                    TPositionModuleId  aModId);
 
     // Device Notifications are handled
     void handleDeviceNotification(int aError);
@@ -129,6 +130,9 @@ private:
     // Request is a device or a regular
     CQGeoPositionInfoSourceS60 *mRequester;
 
+    //Request is a device for Satellite update only
+    CQGeoSatelliteInfoSourceS60 *mRequesterSatellite;
+
     // Request type once, regular, device
     RequestType  mRequestType;
 
@@ -137,6 +141,7 @@ private:
 
     HPositionGenericInfo *mPosInfo;
 
+    TPositionSatelliteInfo mPosSatInfo;
 };
 
 #endif // QMLBACKENDAO_H
