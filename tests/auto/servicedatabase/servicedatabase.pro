@@ -1,7 +1,7 @@
 TARGET=tst_servicedatabase
 QT = core sql
-INCLUDEPATH += ../../../serviceframework
-DEPENDPATH += ../../../serviceframework
+INCLUDEPATH += ../../../src/serviceframework
+DEPENDPATH += ../../../src/serviceframework
 
 
 wince*|symbian*: {

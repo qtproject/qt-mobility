@@ -8,7 +8,7 @@ include(../../../common.pri)
 include(../support/support.pri)
 
 qtAddLibrary(QtMessaging)
-INCLUDEPATH += ../../../messaging
+INCLUDEPATH += ../../../src/messaging
 
 symbian|wince*|maemo|win32 {
 } else {

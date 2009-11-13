@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = slideshow
-INCLUDEPATH+=../../multimedia
+INCLUDEPATH+=../../src/multimedia
 include (../examples.pri)
 
 qtAddLibrary(QtMedia)

@@ -548,6 +548,7 @@ void DSCameraSession::captureFrame()
         }
 
         if(m_snapshot.length() > 0) {
+            emit imageCaptured(m_snapshot,image);
             image.save(m_snapshot,"JPG");
             m_snapshot.clear();
         }

@@ -1,5 +1,5 @@
 TARGET = tst_qgraphicsvideoitem
-INCLUDEPATH += ../../../multimedia
+INCLUDEPATH += ../../../src/multimedia
 CONFIG += testcase
 
 SOURCES += tst_qgraphicsvideoitem.cpp

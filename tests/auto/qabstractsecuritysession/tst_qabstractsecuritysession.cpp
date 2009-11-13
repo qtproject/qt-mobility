@@ -88,7 +88,7 @@ private:
 
 void tst_QAbstractSecuritySession::initTestCase()
 {
-    path = QCoreApplication::applicationDirPath() + "/xmldata/";
+    path = QCoreApplication::applicationDirPath() + "/plugins/xmldata/";
 
     QSfwTestUtil::setupTempUserDb();
     QSfwTestUtil::setupTempSystemDb();

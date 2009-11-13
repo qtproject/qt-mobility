@@ -1,5 +1,5 @@
 TARGET = tst_qmediapluginloader
-INCLUDEPATH += ../../../multimedia
+INCLUDEPATH += ../../../src/multimedia
 CONFIG += testcase
 
 SOURCES += tst_qmediapluginloader.cpp

@@ -53,9 +53,12 @@ private slots:
     void openFile();
     void saveFile();
     void saveFileAs();
-    void exit();
+
+protected:
+    void closeEvent(QCloseEvent *event);
+
 private:
-    bool loseUnsaved();
+    bool safeToClear();
     EditorWidget *m_editorWidget;
 
     QAction *newAction;
@@ -71,6 +74,8 @@ class QLabel;
 class QLineEdit;
 class QTableWidget;
 class QPushButton;
+class QAbstractButton;
+class QRadioButton;
 
 //#define INCL_TYPE 1
 
@@ -143,6 +148,7 @@ private slots:
     void setModified(bool b = true);
     void moveRowDown();
     void moveRowUp();
+    void targetChanged(QAbstractButton *);
 
 private:
     QLabel *m_repoLabel;
@@ -150,6 +156,8 @@ private:
     QTableWidget *m_tableWidget;
     QPushButton *m_addRowButton;
     QPushButton *m_removeRowButton;
+    QRadioButton *m_CRepRadio;
+    QRadioButton *m_RPropRadio;
 #ifdef INCL_TYPE
     TypeDelegate *m_typeDelegate;
 #endif
