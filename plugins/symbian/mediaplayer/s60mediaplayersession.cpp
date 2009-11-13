@@ -71,11 +71,6 @@ QUrl S60MediaPlayerSession::url() const
     return m_url;
 }
 
-void S60MediaPlayerSession::load(const QUrl &url)
-{
-    m_url = url.toLocalFile();
-}
-
 qint64 S60MediaPlayerSession::duration() const
 {
     return -1;

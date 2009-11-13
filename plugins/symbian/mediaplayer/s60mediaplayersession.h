@@ -85,7 +85,7 @@ public:
     virtual QVariant metaData(QtMedia::MetaData key);
     
 public slots:
-    virtual void load(const QUrl &url);
+    virtual void load(const QUrl &url) = 0;
 
     virtual void play() = 0;
     virtual void pause() = 0;
