@@ -733,7 +733,6 @@ MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
      _left(0),
      _right(0)
 {
-    // TODO: Could refactor this code so that different Operators/Fields each have a separate class, with a separate constructor
     QMessageFilter filter;
     QMessageFilterPrivate *d_ptr(QMessageFilterPrivate::implementation(aFilter));
 
@@ -1946,7 +1945,6 @@ QMessageFilter QMessageFilter::byRecipients(const QString &value, QMessageDataCo
 
 QMessageFilter QMessageFilter::bySubject(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
-    // TODO: Test this filter
     return QMessageFilterPrivate::from(QMessageFilterPrivate::Subject, QVariant(value), cmp);
 }
 
