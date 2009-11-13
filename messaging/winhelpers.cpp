@@ -4669,6 +4669,15 @@ void MapiSession::notify(MapiStore *store, const QMessageId &id, MapiSession::No
         if (!filter.isSupported())
             continue;
 
+         // no message properties are available for a removed message, so only empty filter can match
+        if (notifyType == MapiSession::Removed) {
+            if (filter.isEmpty()) {
+                matchingFilterIds.insert(it.key());
+                break;
+            }
+            continue;
+        }
+
         QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
         QMessageFilter processedFilter(QMessageFilterPrivate::preprocess(&ignoredError, _self.toStrongRef(), filter));
         if (ignoredError != QMessageStore::NoError)
