@@ -845,6 +845,7 @@ void TestSymbianEngine::synthesizeDisplaylable()
     QVERIFY(label.isEmpty());
     
     QContact group;
+    group.setType(QContactType::TypeGroup);
     QContactName gn;
     gn.setCustomLabel("grouplable");
     group.saveDetail(&gn);

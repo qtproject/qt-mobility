@@ -141,7 +141,7 @@ QList<QContactLocalId> CntSymbianEngine::contacts(
         QContactManager::Error& error) const
 {
     QList<QContactLocalId> result;
-
+    error = QContactManager::NoError;
     // Check if the filter is supported by the underlying filter implementation
     CntAbstractContactFilter::FilterSupport filterSupport = m_contactFilter->filterSupported(filter);
 
@@ -320,7 +320,7 @@ QList<QContactLocalId> CntSymbianEngine::slowSort(
 bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error)
 {
     bool ret = false;
-    if(!validateContact(*contact, error))
+    if(contact && !validateContact(*contact, error))
         return false;
 
     // If contact has GUid and no local Id, try to find it in database
@@ -818,6 +818,7 @@ bool CntSymbianEngine::filterSupported(const QContactFilter& filter) const
 QString CntSymbianEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
     QString label("");
+    error = QContactManager::NoError;
     QContactName name = contact.detail<QContactName>();
     if(contact.type() == QContactType::TypeContact) {
         QContactOrganization org = contact.detail<QContactOrganization>();
