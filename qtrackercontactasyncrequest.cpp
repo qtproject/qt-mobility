@@ -564,7 +564,18 @@ void QTrackerContactFetchRequest::contactsReady()
             processQueryIMAccounts(queryIMAccountNodes[cnt], result, cnt);
         }
     }
-
+    // update display labels
+    QContactManagerEngine *engine = dynamic_cast<QContactManagerEngine*>(parent());
+    Q_ASSERT(engine);
+    for(int i = 0; i < result.count(); i++)
+    {
+        QContact &cont(result[i]);
+        QContactDisplayLabel dl = cont.detail(QContactDisplayLabel::DefinitionName);
+        if (dl.label().isEmpty()) {
+            QContactManager::Error synthError;
+            result[i] = engine->setContactDisplayLabel(engine->synthesizeDisplayLabel(cont, synthError), cont);
+        }
+    }
     QContactManagerEngine::updateRequest(req, result, QContactManager::NoError,
                               QList<QContactManager::Error> (),
                               QContactAbstractRequest::Finished, true);

@@ -506,3 +506,11 @@ bool QContactTrackerEngine::startRequest(QContactAbstractRequest* req)
     d->m_requests[req] = request;
     return true;
 }
+
+QString QContactTrackerEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+{
+    QString label = QContactManagerEngine::synthesizeDisplayLabel(contact, error);
+    if( label.isEmpty() )
+        return contact.detail<QContactNickname>().nickname();
+    return label;
+}

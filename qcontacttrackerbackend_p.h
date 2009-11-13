@@ -104,6 +104,9 @@ public:
     bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
+    /* Synthesise the display label of a contact */
+    QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+
 
 private:
     //called from both constructors, connecting to all contact NodeList changes signals
