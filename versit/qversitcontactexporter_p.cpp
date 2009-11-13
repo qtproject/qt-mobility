@@ -536,30 +536,29 @@ bool QVersitContactExporterPrivate::encodeDisplayLabel(
     const QContact& contact)
 {
     bool encoded = false;
-    QByteArray value;
     QContactDisplayLabel displayLabel = static_cast<QContactDisplayLabel>(detail);
     if (displayLabel.label().size()) {
         encoded = true;
-        value = escape(displayLabel.label().toAscii());
-        property.setValue(value);
+        setEscapedValue(property,displayLabel.label());
     } else {
         QContactDetail contactDetail;
-        for (int i = 0; i < contact.details().size(); i++) {
+        for (int i = 0; i < contact.details().count(); i++) {
             contactDetail = contact.details().at(i);
-            if ( contactDetail.definitionName() == QContactName::DefinitionName)
+            if (contactDetail.definitionName() == QContactName::DefinitionName)
                 break;
         }
         QContactName name = static_cast<QContactName>(contactDetail);
-        if ( name.customLabel().length() )
-            value = escape(name.customLabel().toAscii());
-        else {
-            value = escape(name.first().toAscii()) + ' ' + escape(name.last().toAscii());
+        QByteArray value;
+        if (name.customLabel().length()) {
+            value = name.customLabel().toAscii();
+        } else {
+            value = name.first().toAscii() + ' ' + name.last().toAscii();
         }
-        if ( name.customLabel().length() ||
-             name.first().length() ||
-             name.last().length()) {
+        if (name.customLabel().length() ||
+            name.first().length() ||
+            name.last().length()) {
             encoded = true;
-            property.setValue(value);
+            setEscapedValue(property,value);
         }
     }
     return encoded;

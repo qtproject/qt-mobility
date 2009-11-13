@@ -1028,40 +1028,34 @@ void UT_QVersitContactExporter::testEncodeDisplayLabel()
     QContactDisplayLabel displayLaebl;
     QContactName contactName;
 
-    //Test1: Display Label and Name does not Exisit
+    // No display label and no QContactName
     QVersitDocument document = mExporter->exportContact(contact);
     QCOMPARE(document.properties().count(), 0);
 
-    //Test2: Display Label does not Exisit but Name Exisit
+    // No display label, but QContactName found
     contactName.setFirst(QString::fromAscii("First"));
     contactName.setLast(QString::fromAscii("Last"));
     contactName.setMiddle(QString::fromAscii("Middle"));
-
     contact.saveDetail(&contactName);
-
     document = mExporter->exportContact(contact);
     QCOMPARE(document.properties().count(), 2);
-
-    // Display Label Verify
     QVersitProperty displayProperty = document.properties().at(0);
     QCOMPARE(displayProperty.name(), QString::fromAscii("FN"));
     QCOMPARE(QString::fromAscii(displayProperty.value()), QString::fromAscii("First Last"));
-
-    // Name Verify
     QVersitProperty nameProperty = document.properties().at(1);
     QCOMPARE(nameProperty.name(), QString::fromAscii("N"));
     QCOMPARE(QString::fromAscii(nameProperty.value()),
         QString::fromAscii("Last;First;Middle;;"));
 
-    // Test 3:
+    // Custom label in QContactName, use vCard 3.0 to test the backslash escaping
     contact = QContact();
-    contactName.setCustomLabel(QString::fromAscii("Custom\\,Label"));
+    contactName.setCustomLabel(QString::fromAscii("Custom,Label"));
     contact.saveDetail(&contactName);
     document = mExporter->exportContact(contact, QVersitDocument::VCard30);
-
     displayProperty = document.properties().at(0);
     QCOMPARE(displayProperty.name(), QString::fromAscii("FN"));
-    QCOMPARE(QString::fromAscii(displayProperty.value()), QString::fromAscii("Custom\\,Label"));
+    QCOMPARE(QString::fromAscii(displayProperty.value()),
+        QString::fromAscii("Custom\\,Label"));
 }
 
 // Test utility functions

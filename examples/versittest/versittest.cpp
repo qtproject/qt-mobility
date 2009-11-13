@@ -199,9 +199,10 @@ void VersitTest::executeTest(QFile& in, QIODevice& out)
             this, SLOT(scale(const QString&,QByteArray&)));
 
     foreach (QContact contact, contacts) {
-        QVersitDocument document = mExporter->exportContact(contact);
+        QVersitDocument::VersitType versitType(QVersitDocument::VCard21);
         if (!documentTypes.isEmpty())
-            document.setVersitType(documentTypes.takeFirst());
+            versitType = documentTypes.takeFirst();
+        QVersitDocument document = mExporter->exportContact(contact,versitType);
         documents.append(document);
     }
   
