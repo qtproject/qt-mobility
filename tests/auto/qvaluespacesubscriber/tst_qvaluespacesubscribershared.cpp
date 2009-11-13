@@ -722,7 +722,8 @@ void tst_QValueSpaceSubscriber::contentsChanged()
     QTRY_COMPARE(spy->count(), should_emit_signal);
     QCOMPARE(subscriber.value(value_path,!old_value).toBool(), new_value);
 
-    disconnect(&subscriber, SIGNAL(contentsChanged()), listener, SIGNAL(baseChanged()));
+    if (listener)
+        disconnect(&subscriber, SIGNAL(contentsChanged()), listener, SIGNAL(baseChanged()));
 
     delete spy;
     delete listener;
