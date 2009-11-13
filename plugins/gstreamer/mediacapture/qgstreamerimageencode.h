@@ -55,7 +55,7 @@ class QGstreamerImageEncode : public QImageEncoderControl
 {
     Q_OBJECT
 public:
-    QGstreamerImageEncode(QObject *parent);
+    QGstreamerImageEncode(QGstreamerCaptureSession *session);
     virtual ~QGstreamerImageEncode();
 
     QSize minimumResolution() const;
@@ -70,6 +70,8 @@ public:
 
 private:
     QImageEncoderSettings m_settings;
+
+    QGstreamerCaptureSession *m_session;
 };
 
 #endif
