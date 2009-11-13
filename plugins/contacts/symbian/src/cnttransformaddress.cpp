@@ -269,30 +269,19 @@ quint32 CntTransformAddress::getIdForField(const QString& fieldName) const
  *
  * \a definitions On return, the supported detail definitions have been added.
  */
-void CntTransformAddress::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformAddress::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField f;
-    QContactDetailDefinition d;
+    Q_UNUSED(contactType);
 
-    // Address fields
-    d.setName(QContactAddress::DefinitionName);
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QContactAddress::FieldPostOfficeBox, f);
-    fields.insert(QContactAddress::FieldStreet, f);
-    fields.insert(QContactAddress::FieldLocality, f);
-    fields.insert(QContactAddress::FieldRegion, f);
-    fields.insert(QContactAddress::FieldPostcode, f);
-    fields.insert(QContactAddress::FieldCountry, f);
+    if(definitions.contains(QContactAddress::DefinitionName)) {
+        QContactDetailDefinition d = definitions.value(QContactAddress::DefinitionName);
+        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
 
-    // Contexts
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(QVariantList() << QString(QLatin1String(QContactDetail::ContextHome)) << QString(QLatin1String(QContactDetail::ContextWork)) << QString(QLatin1String(QContactDetail::ContextOther)));
-    fields.insert(QContactDetail::FieldContext, f);
+        // Sub-types not supported in symbian back-end, remove
+        fields.remove(QContactAddress::FieldSubTypes);
+        d.setFields(fields);
 
-    d.setFields(fields);
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-    definitions.insert(d.name(), d);
+        // Replace original definitions
+        definitions.insert(d.name(), d);
+    }
 }

@@ -59,6 +59,7 @@
 #include "cnttransformgeolocation.h"
 #include "cnttransformnote.h"
 #include "cnttransformfamily.h"
+#include "cnttransformempty.h"
 #include "cntsymbiantransformerror.h"
 
 #include <qtcontacts.h>
@@ -118,6 +119,9 @@ void CntTransformContact::initializeCntTransformContactData()
     m_transformContactData.insert(OnlineAccount, new CntTransformOnlineAccount);
 
 #else
+    // Empty transform class for removing unsupported detail definitions
+    m_transformContactData.insert(Empty, new CntTransformEmpty);
+
     // variated transform classes
     m_transformContactData.insert(Anniversary, new CntTransformAnniversarySimple);
     m_transformContactData.insert(Avatar, new CntTransformAvatarSimple);
@@ -165,25 +169,54 @@ QContact CntTransformContact::transformContactL(CContactItem &contact, CContactD
         }
     }
 
-    // Add contact's GUID
-    QContactDetail *detailUid = transformGuidItemFieldL(contact, contactDatabase);
+    return newQtContact;
+}
+
+/*!
+ * Transforms details that are not available until the CContactItem has been
+ * saved into contacts database.
+ */
+void CntTransformContact::transformExtraDetailsL(
+        const CContactItem& contactItem,
+        QContact& contact,
+        const CContactDatabase &contactDatabase,
+        QString managerUri) const
+{
+    // Id
+    QContactId contactId;
+    contactId.setLocalId(contactItem.Id());
+    contactId.setManagerUri(managerUri);
+    contact.setId(contactId);
+
+    // GUID
+    QContactDetail *detailUid = transformGuidItemFieldL(contactItem, contactDatabase);
     if(detailUid)
     {
-        newQtContact.saveDetail(detailUid);
+        // replace detail
+        QList<QContactDetail> guids = contact.details(QContactGuid::DefinitionName);
+        for(int i(0); i < guids.count(); i++) {
+            QContactGuid guidDetail = guids[i];
+            contact.removeDetail(&guidDetail);
+        }
+        contact.saveDetail(detailUid);
         delete detailUid;
         detailUid = 0;
     }
 
-    // Add contact's timestamp
-    QContactDetail *detailTimestamp = transformTimestampItemFieldL(contact, contactDatabase);
+    // Timestamp
+    QContactDetail *detailTimestamp = transformTimestampItemFieldL(contactItem, contactDatabase);
     if(detailTimestamp)
     {
-        newQtContact.saveDetail(detailTimestamp);
+        // replace detail
+        QList<QContactDetail> timestamps = contact.details(QContactTimestamp::DefinitionName);
+        for(int i(0); i < timestamps.count(); i++) {
+            QContactTimestamp timestampDetail = timestamps[i];
+            contact.removeDetail(&timestampDetail);
+        }
+        contact.saveDetail(detailTimestamp);
         delete detailTimestamp;
         detailTimestamp = 0;
     }
-
-    return newQtContact;
 }
 
 /*! CntTransform a QContact into a Symbian CContactItem.
@@ -209,6 +242,7 @@ void CntTransformContact::transformContactL(
 	{
 	    QScopedPointer<QContactDetail> detail(new QContactDetail(detailList.at(i)));
 	    if (!detail->isEmpty()) {
+            QString detailName = detail->definitionName();
             QList<CContactItemField *> fieldList = transformDetailL(*detail);
             int fieldCount = fieldList.count();
 
@@ -284,35 +318,19 @@ TUint32 CntTransformContact::GetIdForDetailL(const QContactDetailFilter& detailF
 
     }
 
-QMap<QString, QContactDetailDefinition> CntTransformContact::detailDefinitions(QContactManager::Error& error) const
+void CntTransformContact::detailDefinitions(
+        QMap<QString, QContactDetailDefinition>& defaultSchema,
+        const QString& contactType,
+        QContactManager::Error& error) const
 {
     Q_UNUSED(error);
 
-    // Add definitions implemented by the transform leaf classes
-    QMap<QString, QContactDetailDefinition> defMap;
+    // Ask leaf classes to do the modifications required to the default schema
     QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
     while (i != m_transformContactData.constEnd()) {
-        i.value()->detailDefinitions(defMap);
+        i.value()->detailDefinitions(defaultSchema, contactType);
         i++;
     }
-
-    // Add definitions for contact types
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField f;
-    QContactDetailDefinition d;
-
-    d.setName(QContactType::DefinitionName);
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList()
-            << QString(QLatin1String(QContactType::TypeContact))
-            << QString(QLatin1String(QContactType::TypeGroup)));
-    fields.insert(QContactType::FieldType, f); // note: NO CONTEXT!!
-    d.setFields(fields);
-    d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-    defMap.insert(d.name(), d);
-
-    return defMap;
 }
 
 QList<CContactItemField *> CntTransformContact::transformDetailL(const QContactDetail &detail) const
@@ -348,7 +366,7 @@ QContactDetail *CntTransformContact::transformItemField(const CContactItemField&
 	return detail;
 }
 
-QContactDetail* CntTransformContact::transformGuidItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const
+QContactDetail* CntTransformContact::transformGuidItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase) const
 {
     QContactGuid *guidDetail = 0;
     QString guid = QString::fromUtf16(contactItem.UidStringL(contactDatabase.MachineId()).Ptr(),
@@ -361,7 +379,7 @@ QContactDetail* CntTransformContact::transformGuidItemFieldL(CContactItem &conta
     return guidDetail;
 }
 
-QContactDetail* CntTransformContact::transformTimestampItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const
+QContactDetail* CntTransformContact::transformTimestampItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase) const
 {
     QContactTimestamp *timestampDetail = 0;
 

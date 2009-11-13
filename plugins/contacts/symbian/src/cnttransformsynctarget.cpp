@@ -131,23 +131,28 @@ quint32 CntTransformSyncTarget::getIdForField(const QString& fieldName) const
  *
  * \a definitions On return, the supported detail definitions have been added.
  */
-void CntTransformSyncTarget::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformSyncTarget::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField f;
-    QContactDetailDefinition d;
+    Q_UNUSED(contactType);
 
-    d.setName(QContactSyncTarget::DefinitionName);
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList()
-            << QString("private")
-            << QString("public")
-            << QString("none"));
-    fields.insert(QContactSyncTarget::FieldSyncTarget, f);
+    if(definitions.contains(QContactSyncTarget::DefinitionName)) {
+        QContactDetailDefinition d = definitions.value(QContactSyncTarget::DefinitionName);
+        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
+        QContactDetailDefinitionField f;
 
-    d.setFields(fields);
-    d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+        // Not all fields are supported, replace:
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList()
+                << QString("private")
+                << QString("public")
+                << QString("none"));
+        fields.insert(QContactSyncTarget::FieldSyncTarget, f);
 
-    definitions.insert(d.name(), d);
+        d.setFields(fields);
+        d.setUnique(true);
+
+        // Replace original definitions
+        definitions.insert(d.name(), d);
+    }
 }

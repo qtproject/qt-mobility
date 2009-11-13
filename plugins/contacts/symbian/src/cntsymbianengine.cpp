@@ -61,7 +61,6 @@
 #include "cntrelationship.h"
 
 typedef QList<QContactLocalId> QContactLocalIdList;
-#define CNT_SYMBIAN_MANAGER_NAME "symbian"
 
 /* ... The macros changed names */
 #if QT_VERSION < QT_VERSION_CHECK(4, 6, 0)
@@ -287,6 +286,8 @@ QList<QContactLocalId> CntSymbianEngine::slowSort(
 bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error)
 {
     bool ret = false;
+    if(!validateContact(*contact, error))
+        return false;
 
     // If contact has GUid and no local Id, try to find it in database
     if (contact && !contact->localId() &&
@@ -362,19 +363,16 @@ QContact CntSymbianEngine::fetchContactL(const QContactLocalId &localId) const
         User::Leave(KErrNotFound);
 
     // Read the contact from the CContactDatabase
-    CContactItem* symContact = m_dataBase->contactDatabase()->ReadContactL(localId);
-    CleanupStack::PushL(symContact);
+    CContactItem* contactItem = m_dataBase->contactDatabase()->ReadContactL(localId);
+    CleanupStack::PushL(contactItem);
 
     // Convert to a QContact
-    QContact contact = m_transformContact->transformContactL(*symContact, *m_dataBase->contactDatabase());
+    QContact contact = m_transformContact->transformContactL(*contactItem, *m_dataBase->contactDatabase());
 
-    // Convert id
-    QContactId contactId;
-    contactId.setLocalId(localId);
-    contactId.setManagerUri(m_managerUri);
-    contact.setId(contactId);
+    // Transform details that are not available until the contact has been saved
+    m_transformContact->transformExtraDetailsL(*contactItem, contact, *m_dataBase->contactDatabase(), m_managerUri);
 
-    CleanupStack::PopAndDestroy(symContact);
+    CleanupStack::PopAndDestroy(contactItem);
 
     return contact;
 }
@@ -411,39 +409,29 @@ bool CntSymbianEngine::addContact(QContact& contact, QContactChangeSet& changeSe
  */
 int CntSymbianEngine::addContactL(QContact &contact)
 {
-    CContactItem* contactItem(0);
     int id(0);
 
     //handle normal contact
     if(contact.type() == QContactType::TypeContact)
     {
         // Create a new contact card.
-        contactItem = CContactCard::NewLC();
+        CContactItem* contactItem = CContactCard::NewLC();
         m_transformContact->transformContactL(contact, *contactItem);
         // Add to the database
         id = m_dataBase->contactDatabase()->AddNewContactL(*contactItem);
+        // Reload contact item
         CleanupStack::PopAndDestroy(contactItem);
-
-        // Update the changed values to the QContact
-        // id
-        QScopedPointer<QContactId> contactId(new QContactId());
-        contactId->setLocalId(id);
-        contactId->setManagerUri(m_managerUri);
-        contact.setId(*contactId);
+        contactItem = 0;
         contactItem = m_dataBase->contactDatabase()->ReadContactLC(id);
-        // Guid
-        QContactDetail* detail = m_transformContact->transformGuidItemFieldL(*contactItem, *m_dataBase->contactDatabase());
-        contact.saveDetail(detail);
-        // Timestamp
-        detail = m_transformContact->transformTimestampItemFieldL(*contactItem, *m_dataBase->contactDatabase());
-        contact.saveDetail(detail);
+        // Transform details that are not available until the contact has been saved
+        m_transformContact->transformExtraDetailsL(*contactItem, contact, *m_dataBase->contactDatabase(), m_managerUri);
         CleanupStack::PopAndDestroy(contactItem);
     }
     //group contact
     else if(contact.type() == QContactType::TypeGroup)
     {
         // Create a new group, which is added to the database
-        contactItem = m_dataBase->contactDatabase()->CreateContactGroupLC();
+        CContactItem* contactItem = m_dataBase->contactDatabase()->CreateContactGroupLC();
 
         //set the id for the contact, needed by update
         id = contactItem->Id();
@@ -454,6 +442,8 @@ int CntSymbianEngine::addContactL(QContact &contact)
 
         //update contact, will add the fields to the already saved group
         updateContactL(contact);
+        // Transform details that are not available until the contact has been saved
+        m_transformContact->transformExtraDetailsL(*contactItem, contact, *m_dataBase->contactDatabase(), m_managerUri);
 
         CleanupStack::PopAndDestroy(contactItem);
     }
@@ -736,12 +726,14 @@ QMap<QString, QContactDetailDefinition> CntSymbianEngine::detailDefinitions(cons
 
     error = QContactManager::NoError;
 
-    // Get the supported detail definitions from the contact transformer
-    CntTransformContact *transformContact = new CntTransformContact;
-    QMap<QString, QContactDetailDefinition> defMap = transformContact->detailDefinitions(error);
-    delete transformContact;
+    // First get the default definitions
+    QMap<QString, QMap<QString, QContactDetailDefinition> > schemaDefinitions = QContactManagerEngine::schemaDefinitions();
 
-    return defMap;
+    // And then ask contact transformer to do the modifications required
+    QMap<QString, QContactDetailDefinition> schemaForType = schemaDefinitions.value(contactType);
+    m_transformContact->detailDefinitions(schemaForType, contactType, error);
+
+    return schemaForType;
 }
 
 bool CntSymbianEngine::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const

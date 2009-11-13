@@ -231,6 +231,8 @@ quint32 CntTransformName::getIdForField(const QString& fieldName) const
         return KUidContactFieldFamilyName.iUid;
     else if (QContactName::FieldSuffix == fieldName)
         return KUidContactFieldSuffixName.iUid;
+    else if (QContactName::FieldCustomLabel == fieldName)
+        return KUidContactFieldTemplateLabel.iUid;
     else
         return 0;
 }
@@ -239,26 +241,30 @@ quint32 CntTransformName::getIdForField(const QString& fieldName) const
  * Adds the detail definitions for the details this transform class supports.
  *
  * \a definitions On return, the supported detail definitions have been added.
+ * \a contactType The type of the contact that definitions apply for.
  */
-void CntTransformName::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformName::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField f;
-    QContactDetailDefinition d;
+    if(definitions.contains(QContactName::DefinitionName)) {
+        QContactDetailDefinition d = definitions.value(QContactName::DefinitionName);
+        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
 
-    // name
-    d.setName(QContactName::DefinitionName);
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QContactName::FieldPrefix, f);
-    fields.insert(QContactName::FieldFirst, f);
-    fields.insert(QContactName::FieldMiddle, f);
-    fields.insert(QContactName::FieldLast, f);
-    fields.insert(QContactName::FieldSuffix, f);
-    fields.insert(QContactName::FieldCustomLabel, f);
-    d.setFields(fields);
-    d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+        // groups support only custom label
+        if(contactType == QContactType::TypeGroup) {
+            fields.remove(QContactName::FieldPrefix);
+            fields.remove(QContactName::FieldFirst);
+            fields.remove(QContactName::FieldMiddle);
+            fields.remove(QContactName::FieldLast);
+            fields.remove(QContactName::FieldSuffix);
+        }
 
-    definitions.insert(d.name(), d);
+        // Context not supported in symbian back-end, remove
+        fields.remove(QContactName::FieldContext);
+
+        d.setFields(fields);
+        d.setUnique(true);
+
+        // Replace original definitions
+        definitions.insert(d.name(), d);
+    }
 }

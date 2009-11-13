@@ -50,7 +50,10 @@
 #include <cntitem.h>
 
 class CntTransformContactData;
+class QContactDetailDefinition;
+
 class CntTransformContact
+
 {
 public:
 	CntTransformContact();
@@ -58,14 +61,19 @@ public:
 
 public:
 	QContact transformContactL(CContactItem &contact, CContactDatabase &contactDatabase) const;
+	void transformExtraDetailsL(
+	        const CContactItem& contactItem,
+	        QContact& contact,
+	        const CContactDatabase &contactDatabase,
+	        QString managerUri) const;
 	void transformContactL(
 	        QContact &contact,
 	        CContactItem &contactItem) const;
 	QList<TUid> supportedSortingFieldTypes( QString detailDefinitionName, QString detailFieldName );
     TUint32 GetIdForDetailL(const QContactDetailFilter& detailFilter,bool& isSubtype) const;
-    QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
-    QContactDetail *transformGuidItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const;
-    QContactDetail *transformTimestampItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const;
+    void detailDefinitions(QMap<QString, QContactDetailDefinition>& defaultSchema, const QString& contactType, QContactManager::Error& error) const;
+    QContactDetail *transformGuidItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase) const;
+    QContactDetail *transformTimestampItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase) const;
 private:
 	enum ContactData
 	{
@@ -84,7 +92,8 @@ private:
 		Anniversary,
 		Geolocation,
 		Note,
-		Family
+		Family,
+		Empty
 	};
 
 	void initializeCntTransformContactData();

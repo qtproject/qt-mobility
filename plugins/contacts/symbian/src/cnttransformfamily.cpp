@@ -150,8 +150,11 @@ quint32 CntTransformFamily::getIdForField(const QString& fieldName) const
  *
  * \a definitions On return, the supported detail definitions have been added.
  */
-void CntTransformFamily::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformFamily::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
+    Q_UNUSED(contactType);
+
+    // Note: Family is not defined in the default schema
     QMap<QString, QContactDetailDefinitionField> fields;
     QContactDetailDefinitionField f;
     QContactDetailDefinition d;

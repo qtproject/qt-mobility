@@ -154,38 +154,25 @@ quint32 CntTransformUrl::getIdForField(const QString& fieldName) const
  *
  * \a definitions On return, the supported detail definitions have been added.
  */
-void CntTransformUrl::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformUrl::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField f;
-    QContactDetailDefinition d;
-    QVariantList subTypes;
+    Q_UNUSED(contactType);
 
-    // fields
-    d.setName(QContactUrl::DefinitionName);
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QContactUrl::FieldUrl, f);
+    if(definitions.contains(QContactUrl::DefinitionName)) {
+        QContactDetailDefinition d = definitions.value(QContactUrl::DefinitionName);
+        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
+        QContactDetailDefinitionField f;
 
-    // Sub-types
-    f.setDataType(QVariant::String); //only allowed to be a single subtype
-    f.setAllowableValues(QVariantList()
-            << QString(QLatin1String(QContactUrl::SubTypeHomePage)));
-    fields.insert(QContactUrl::FieldSubType, f);
+        f.setDataType(QVariant::String); //only allowed to be a single subtype
+        f.setAllowableValues(QVariantList()
+                << QString(QLatin1String(QContactUrl::SubTypeHomePage)));
+        fields.insert(QContactUrl::FieldSubType, f);
+        // Context not supported in symbian back-end, remove
+        //fields.remove(QContactUrl::FieldContext);
 
-    // Contexts
-    /* TODO: does not work for some reason:
-tst_QContactManager::add(mgr='symbian') A contact had extra detail: "Url" QMap(("Context", QVariant(QStringList, ("HomePage") ) ) ( "SubType" ,  QVariant(QString, "HomePage") ) ( "Url" ,  QVariant(QString, "Url") ) )
-tst_QContactManager::add(mgr='symbian') B contact had extra detail: "Url" QMap(("SubType", QVariant(QString, "HomePage") ) ( "Url" ,  QVariant(QString, "Url") ) )
+        d.setFields(fields);
 
-    f.dataType = QVariant::StringList;
-    f.allowableValues << QString(QLatin1String(QContactDetail::ContextHome)) << QString(QLatin1String(QContactDetail::ContextWork)) << QString(QLatin1String(QContactDetail::ContextOther));
-    fields.insert(QContactDetail::FieldContext, f);
-    */
-
-    d.setFields(fields);
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-
-    definitions.insert(d.name(), d);
+        // Replace original definitions
+        definitions.insert(d.name(), d);
+    }
 }

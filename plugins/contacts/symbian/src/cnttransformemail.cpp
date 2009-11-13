@@ -138,28 +138,8 @@ quint32 CntTransformEmail::getIdForField(const QString& fieldName) const
  *
  * \a definitions On return, the supported detail definitions have been added.
  */
-void CntTransformEmail::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformEmail::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField f;
-    QContactDetailDefinition d;
-
-    d.setName(QContactEmailAddress::DefinitionName);
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QContactEmailAddress::FieldEmailAddress, f);
-
-    // Contexts
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(QVariantList()
-            << QString(QLatin1String(QContactDetail::ContextHome))
-            << QString(QLatin1String(QContactDetail::ContextWork))
-            << QString(QLatin1String(QContactDetail::ContextOther)));
-    fields.insert(QContactDetail::FieldContext, f);
-
-    d.setFields(fields);
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-
-    definitions.insert(d.name(), d);
+    Q_UNUSED(definitions);
+    Q_UNUSED(contactType);
 }

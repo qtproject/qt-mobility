@@ -137,20 +137,20 @@ quint32 CntTransformNickname::getIdForField(const QString& fieldName) const
  *
  * \a definitions On return, the supported detail definitions have been added.
  */
-void CntTransformNickname::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformNickname::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField f;
-    QContactDetailDefinition d;
+    Q_UNUSED(contactType);
 
-    d.setName(QContactNickname::DefinitionName);
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QContactNickname::FieldNickname, f);
+    if(definitions.contains(QContactNickname::DefinitionName)) {
+        QContactDetailDefinition d = definitions.value(QContactNickname::DefinitionName);
+        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
 
-    d.setFields(fields);
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+        // Context not supported in symbian back-end, remove
+        fields.remove(QContactNickname::FieldContext);
 
-    definitions.insert(d.name(), d);
+        d.setFields(fields);
+
+        // Replace original definitions
+        definitions.insert(d.name(), d);
+    }
 }

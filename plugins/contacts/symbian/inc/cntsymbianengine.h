@@ -72,6 +72,8 @@ class CntAbstractContactFilter;
 class CntAbstractContactSorter;
 class CntRelationship;
 
+#define CNT_SYMBIAN_MANAGER_NAME "symbian"
+
 class CntSymbianEngine : public QContactManagerEngine
 {
     Q_OBJECT
@@ -138,11 +140,11 @@ private:
     /* Remove contact */
     bool removeContact(const QContactLocalId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError);
     int removeContactL(QContactLocalId id);
-    
+
     /* Groups */
     QList<QContactLocalId> groups(QContactManager::Error& qtError) const;
     QList<QContactLocalId> groupsL() const;
-    
+
     void updateDisplayLabel(QContact& contact) const;
 
 private:

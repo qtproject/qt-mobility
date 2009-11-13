@@ -1,7 +1,6 @@
 # Symbian plugin header and source files
 SYMBIAN_HEADERS += \
         ../../inc/cntsymbianengine.h \
-        ../../inc/cntsymbianengine_p.h \
         ../../inc/cnttransformcontact.h \
         ../../inc/cnttransformcontactdata.h \
         ../../inc/cnttransformname.h \
@@ -22,6 +21,7 @@ SYMBIAN_HEADERS += \
         ../../inc/cnttransformgeolocation.h \
         ../../inc/cnttransformnote.h \
         ../../inc/cnttransformfamily.h \
+        ../../inc/cnttransformempty.h \
         ../../inc/cntabstractcontactfilter.h \
         ../../inc/cntsymbianfilterdbms.h \
         ../../inc/cntsymbianfiltersql.h \
@@ -37,7 +37,6 @@ SYMBIAN_HEADERS += \
 
 SYMBIAN_SOURCES += \
         ../../src/cntsymbianengine.cpp \
-        ../../src/cntsymbianengine_p.cpp \
         ../../src/cnttransformcontact.cpp \
         ../../src/cnttransformcontactdata.cpp \
         ../../src/cnttransformname.cpp \
@@ -58,6 +57,7 @@ SYMBIAN_SOURCES += \
         ../../src/cnttransformgeolocation.cpp \
         ../../src/cnttransformnote.cpp \
         ../../src/cnttransformfamily.cpp \
+        ../../src/cnttransformempty.cpp \
         ../../src/cntsymbianfilterdbms.cpp \
         ../../src/cntsymbiansorterdbms.cpp \
         ../../src/cntsymbianfiltersql.cpp \

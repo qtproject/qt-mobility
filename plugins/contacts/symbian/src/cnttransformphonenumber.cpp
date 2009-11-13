@@ -272,45 +272,8 @@ quint32 CntTransformPhoneNumber::getIdForField(const QString& fieldName) const
  *
  * \a definitions On return, the supported detail definitions have been added.
  */
-void CntTransformPhoneNumber::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformPhoneNumber::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField f;
-    QContactDetailDefinition d;
-    QVariantList subTypes;
-
-    d.setName(QContactPhoneNumber::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QContactPhoneNumber::FieldNumber, f);
-
-    // Sub-types
-    f.setDataType(QVariant::StringList); // can implement multiple subtypes
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeAssistant));
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeBulletinBoardSystem));
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeCar));
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeDtmfMenu));
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeFacsimile));
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeLandline));
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeMobile));
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypePager));
-    f.setAllowableValues(subTypes);
-    fields.insert(QContactPhoneNumber::FieldSubTypes, f);
-
-    // Contexts
-    /* TODO: does not work for some reason:
-tst_QContactManager::add(mgr='symbian') A contact had extra detail: "PhoneNumber" QMap(("Context", QVariant(QStringList, ("Assistant") ) ) ( "PhoneNumber" ,  QVariant(QString, "PhoneNumber") ) ( "SubTypes" ,  QVariant(QStringList, ("Assistant") ) ) )
-tst_QContactManager::add(mgr='symbian') B contact had extra detail: "PhoneNumber" QMap(("PhoneNumber", QVariant(QString, "PhoneNumber") ) ( "SubTypes" ,  QVariant(QStringList, ("Assistant") ) ) )
-
-    f.dataType = QVariant::StringList;
-    f.allowableValues << QString(QLatin1String(QContactDetail::ContextHome)) << QString(QLatin1String(QContactDetail::ContextWork)) << QString(QLatin1String(QContactDetail::ContextOther));
-    fields.insert(QContactDetail::FieldContext, f);
-    */
-
-    d.setFields(fields);
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-
-    definitions.insert(d.name(), d);
+    Q_UNUSED(definitions);
+    Q_UNUSED(contactType);
 }
