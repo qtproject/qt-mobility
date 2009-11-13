@@ -47,7 +47,7 @@
 #include "s60mediaplayercontrol.h"
 #include "s60videoplayersession.h"
 #include "s60audioplayersession.h"
-#include "s60videometadataprovider.h"
+#include "s60mediametadataprovider.h"
 #include "s60videowidget.h"
 #include "s60mediarecognizer.h"
 
@@ -71,7 +71,8 @@ S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
       m_metaData(NULL)
 {
     m_control = new S60MediaPlayerControl(*this, this);
-    m_mediaRecognizer = new S60MediaRecognizer(this);    
+    m_mediaRecognizer = new S60MediaRecognizer(this);  
+    m_metaData = new S60MediaMetaDataProvider(*this);
 }
 
 S60MediaPlayerService::~S60MediaPlayerService()
@@ -79,17 +80,19 @@ S60MediaPlayerService::~S60MediaPlayerService()
     delete m_videoWidget;
     delete m_videoRenderer;
     delete m_videoWindow;
+    delete m_metaData;
 }
 
 QMediaControl *S60MediaPlayerService::control(const char *name) const
 {
-    if (qstrcmp(name,QMediaPlayerControl_iid) == 0)
+    if (qstrcmp(name, QMediaPlayerControl_iid) == 0)
         return m_control;
 
-    if (qstrcmp(name,QMetaDataControl_iid) == 0) {
-        // TODO:if (m_metaData)
-        // TODO:    m_metaData = new S60VideoMetaDataProvider(m_session, this);
-        // return m_metaData;
+    if (qstrcmp(name, QMetaDataControl_iid) == 0) {
+        //if (!m_metaData) {
+        //    m_metaData = new S60MediaMetaDataProvider(const_cast<S60MediaPlayerService&>(*this));
+        //}
+        return m_metaData;
     }
 
     if (qstrcmp(name, QVideoOutputControl_iid) == 0) {
@@ -194,6 +197,8 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
                 m_control, SIGNAL(videoAvailabilityChanged(bool)));
         connect(m_videoPlayerSession, SIGNAL(seekableChanged(bool)),
                 m_control, SIGNAL(seekableChanged(bool)));
+        connect(m_videoPlayerSession, SIGNAL(metaDataChanged()), 
+                m_metaData, SIGNAL(metaDataChanged()));
     }
     return m_videoPlayerSession;
 }
@@ -221,6 +226,9 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
                 m_control, SIGNAL(videoAvailabilityChanged(bool)));
         connect(m_audioPlayerSession, SIGNAL(seekableChanged(bool)),
                 m_control, SIGNAL(seekableChanged(bool)));
+        connect(m_audioPlayerSession, SIGNAL(metaDataChanged()), 
+                m_metaData, SIGNAL(metaDataChanged()));
     }
     return m_audioPlayerSession;
 }
+

@@ -54,12 +54,11 @@ class QMediaMetaData;
 class QMediaPlayerControl;
 class QMediaPlaylist;
 
-class S60VideoMetaData;
 class S60VideoOutputControl;
 class S60VideoPlayerSession;
 class S60AudioPlayerSession;
 class S60MediaPlayerControl;
-class S60VideoMetaDataProvider;
+class S60MediaMetaDataProvider;
 class S60VideoWidgetControl;
 class S60MediaRecognizer;
 
@@ -94,7 +93,7 @@ private:
     mutable S60VideoOutputControl *m_videoOutput;
     S60VideoPlayerSession *m_videoPlayerSession;
     S60AudioPlayerSession *m_audioPlayerSession;
-    S60VideoMetaDataProvider *m_metaData;   
+    mutable S60MediaMetaDataProvider *m_metaData;   
 #ifndef QT_NO_MULTIMEDIA
     mutable S60VideoRenderer *m_videoRenderer;
     mutable S60VideoOverlay *m_videoWindow;

@@ -39,70 +39,36 @@
 **
 ****************************************************************************/
 
-#include "s60videometadataprovider.h"
-#include "s60videoplayersession.h"
-#include <QDebug>
-//#include <mmfmeta.h> // mmf defined metadata constants
+#ifndef S60MEDIAMETADATAPROVIDER_H
+#define S60MEDIAMETADATAPROVIDER_H
 
-struct S60VideoMetaDataKeyLookup
+#include <multimedia/qmetadatacontrol.h>
+#include "ms60mediaplayerresolver.h"
+
+class S60MediaPlayerSession;
+
+class S60MediaMetaDataProvider : public QMetaDataControl
 {
-    QtMedia::MetaData key;
-    const char *token;
+    Q_OBJECT
+    
+public:
+    S60MediaMetaDataProvider(MS60MediaPlayerResolver& mediaPlayerResolver, QObject *parent = 0);
+    ~S60MediaMetaDataProvider();
+
+    bool isMetaDataAvailable() const;
+    bool isWritable() const;
+
+    QVariant metaData(QtMedia::MetaData key) const;
+    void setMetaData(QtMedia::MetaData key, const QVariant &value);
+    QList<QtMedia::MetaData> availableMetaData() const;
+    
+    QVariant extendedMetaData(const QString &key) const ;
+    void setExtendedMetaData(const QString &key, const QVariant &value);
+    QStringList availableExtendedMetaData() const;
+
+private:
+    mutable S60MediaPlayerSession *m_session;
+    MS60MediaPlayerResolver& m_mediaPlayerResolver;
 };
 
-S60VideoMetaDataProvider::S60VideoMetaDataProvider(S60VideoPlayerSession *session, QObject *parent)
-    : QMetaDataControl(parent), m_session(session)
-{
-    connect(m_session, SIGNAL(tagsChanged()), SLOT(updateTags()));
-}
-
-S60VideoMetaDataProvider::~S60VideoMetaDataProvider()
-{
-}
-
-bool S60VideoMetaDataProvider::isMetaDataAvailable() const
-{
-    return false; //TODO:!m_session->tags().isEmpty();
-}
-
-bool S60VideoMetaDataProvider::isWritable() const
-{
-    return false;
-}
-
-QVariant S60VideoMetaDataProvider::metaData(QtMedia::MetaData key) const
-{
-    return QVariant();
-}
-
-void S60VideoMetaDataProvider::setMetaData(QtMedia::MetaData key, QVariant const &value)
-{
-    Q_UNUSED(key);
-    Q_UNUSED(value);
-}
-QList<QtMedia::MetaData> S60VideoMetaDataProvider::availableMetaData() const
-{
-
-}
-
-QVariant S60VideoMetaDataProvider::extendedMetaData(const QString &key) const
-{
-    return QVariant(); //TODO:m_session->tags().value(key.toLatin1());
-}
-
-void S60VideoMetaDataProvider::setExtendedMetaData(const QString &key, QVariant const &value)
-{
-    Q_UNUSED(key);
-    Q_UNUSED(value);
-}
-
-
-void S60VideoMetaDataProvider::updateTags()
-{
-    emit metaDataChanged();
-}
-
-QStringList S60VideoMetaDataProvider::availableExtendedMetaData() const
-{
-
-}
+#endif // S60VIDEOMETADATAPROVIDER_H

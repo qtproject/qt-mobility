@@ -77,6 +77,9 @@ public:
     qreal playbackRate() const;
     void setPlaybackRate(qreal rate);
     
+    bool isMetadataAvailable(); 
+    QVariant metaData(QtMedia::MetaData key);
+    
 public slots:
     void load(const QUrl &url);
     void play();
@@ -107,6 +110,8 @@ private:
     TRect m_windowRect;
     TRect m_clipRect;
     QSize m_frameSize;
+    
+    int m_numberOfMetaDataEntries;
 };
 
 #endif

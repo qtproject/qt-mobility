@@ -46,9 +46,11 @@
 
 #include <QWidget>
 #include <QDir>
+#include <QVariant>
 
 S60AudioPlayerSession::S60AudioPlayerSession(QObject *parent)
-    : S60MediaPlayerSession(parent)
+    : S60MediaPlayerSession(parent),
+      m_numberOfMetaDataEntries(0)
 {    
     //TODO: Error checking somehow...
     TRAP_IGNORE(m_player = CMdaAudioPlayerUtility::NewL(*this);)
@@ -173,4 +175,14 @@ void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMic
 
 void S60AudioPlayerSession::MapcPlayComplete(TInt aError)
 {
+}
+
+bool S60AudioPlayerSession::isMetadataAvailable()
+{
+    return (m_numberOfMetaDataEntries > 0);
+}
+
+QVariant S60AudioPlayerSession::metaData(QtMedia::MetaData key)
+{
+    return "Test metadata";
 }

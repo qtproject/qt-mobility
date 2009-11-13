@@ -55,7 +55,8 @@ S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
     : S60MediaPlayerSession(parent),
       m_wsSession(0),
       m_screenDevice(0),
-      m_window(0)
+      m_window(0),
+      m_numberOfMetaDataEntries(0)
 {    
     m_frameSize = QSize(320,240);
 }
@@ -68,6 +69,9 @@ S60VideoPlayerSession::~S60VideoPlayerSession()
 void S60VideoPlayerSession::load(const QUrl &url)
 {
     m_url = url.toLocalFile();
+    QString fileName = QDir::toNativeSeparators(m_url.toString());
+    TPtrC str(reinterpret_cast<const TUint16*>(fileName.utf16()));
+    m_player->OpenFileL(str);
     qDebug() << m_url;
 }
 
@@ -174,7 +178,7 @@ bool S60VideoPlayerSession::isSeekable() const
 
 void S60VideoPlayerSession::play()
 {
-    if (m_state == QMediaPlayer::PausedState)
+    /*if (m_state == QMediaPlayer::PausedState)
     {
         m_player->Play();
         m_state = QMediaPlayer::PlayingState;
@@ -187,7 +191,10 @@ void S60VideoPlayerSession::play()
         m_player->OpenFileL(str);
         m_state = QMediaPlayer::PlayingState;
         emit stateChanged(QMediaPlayer::PlayingState);        
-    }
+    }*/
+    m_player->Play();
+    m_state = QMediaPlayer::PlayingState;
+    emit stateChanged(QMediaPlayer::PlayingState); 
 }
 
 void S60VideoPlayerSession::pause()
@@ -237,7 +244,10 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {
     qDebug() << "Starting to play with error: " << aError;
-    m_player->Play();
+    m_numberOfMetaDataEntries = 0;
+    TRAP_IGNORE(m_numberOfMetaDataEntries = m_player->NumberOfMetaDataEntriesL();)
+    
+    emit metaDataChanged();
 }
 
 void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
@@ -256,4 +266,14 @@ void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
 void S60VideoPlayerSession::MvpuoEvent(const TMMFEvent &aEvent)
 {
     Q_UNUSED(aEvent);
+}
+
+bool S60VideoPlayerSession::isMetadataAvailable()
+{
+    return (m_numberOfMetaDataEntries > 0);
+}
+
+QVariant S60VideoPlayerSession::metaData(QtMedia::MetaData key)
+{
+    return "Test metadata";
 }

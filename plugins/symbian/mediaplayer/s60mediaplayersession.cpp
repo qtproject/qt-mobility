@@ -46,6 +46,7 @@
 
 #include <QWidget>
 #include <QDir>
+#include <QVariant>
 
 S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     : QObject(parent),
@@ -186,4 +187,15 @@ void S60MediaPlayerSession::setMedia(const QMediaContent&, QIODevice *)
 QPair<qint64, qint64> S60MediaPlayerSession::seekRange() const
 {
     
+}
+
+bool S60MediaPlayerSession::isMetadataAvailable()
+{
+    return false;
+}
+
+QVariant S60MediaPlayerSession::metaData(QtMedia::MetaData key)
+{
+    Q_UNUSED(key);
+    return QVariant();
 }

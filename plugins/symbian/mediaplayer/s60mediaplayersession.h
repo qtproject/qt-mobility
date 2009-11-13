@@ -81,6 +81,9 @@ public:
     
     virtual void setMedia(const QMediaContent&, QIODevice *);
     
+    virtual bool isMetadataAvailable(); 
+    virtual QVariant metaData(QtMedia::MetaData key);
+    
 public slots:
     virtual void load(const QUrl &url);
 
@@ -106,6 +109,7 @@ signals:
     void playbackFinished();
     void tagsChanged();
     void seekableChanged(bool); 
+    void metaDataChanged();
     
 protected slots:
     virtual void setSeekable(bool);

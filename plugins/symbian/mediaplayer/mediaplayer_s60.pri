@@ -11,7 +11,7 @@ HEADERS += \
     $$PWD/s60mediaplayerservice.h \
     $$PWD/s60mediaplayersession.h \
     $$PWD/s60videoplayersession.h \
-    $$PWD/s60videometadataprovider.h \
+    $$PWD/s60mediametadataprovider.h \
     $$PWD/s60videosurface.h \
     $$PWD/s60videooverlay.h \
     $$PWD/s60videorenderer.h \
@@ -24,7 +24,7 @@ SOURCES += \
     $$PWD/s60mediaplayerservice.cpp \
     $$PWD/s60mediaplayersession.cpp \
     $$PWD/s60videoplayersession.cpp \
-    $$PWD/s60videometadataprovider.cpp \
+    $$PWD/s60mediametadataprovider.cpp \
     $$PWD/s60videosurface.cpp \
     $$PWD/s60videooverlay.cpp \
     $$PWD/s60videorenderer.cpp \
