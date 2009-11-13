@@ -179,7 +179,7 @@ when requesting information from remote or slow, local datastores.
 Users of the contacts API can define which backend they wish to access if a manager
 for that backend is available.  The list of available managers can be queried programmatically at
 run-time, and the capabilities of different managers can be ascertained by inspecting a
-QContactManagerInfo instance returned by a manager.  Furthermore, some managers can be constructed
+QContactManager instance.  Furthermore, some managers can be constructed
 with parameters which affect the operation of the backend.
 
 \section3 Loading the manager for a specific backend

@@ -151,6 +151,7 @@ provided by the backend, which is related to user-provided information that is a
 The eponymous example of this is the \l{QContactOnlineAccount} leaf detail, which has an unconstrained field which stores the URI of the
 account, and several read-only fields in which are stored presence information, status messages, and service availability.
 
-Currently, the \l{QContactOnlineAccount} is the only leaf detail with field-level access constraints.
+Currently, the \l{QContactOnlineAccount} is the only leaf detail with field-level access constraints.  Every field in details of this
+type are \c QContactDetailDefinition::ReadOnly except for \c QContactOnlineAccount::FieldAccountUri, which has no constraint.
 
 */
