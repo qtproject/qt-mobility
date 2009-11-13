@@ -45,9 +45,9 @@
 set QT_MOBILITY_PREFIX= C:\QtMobility
 set BUILD_PATH=%CD%
 set SOURCE_PATH= %~dp0
-cd %SOURCE_PATH%
+cd /D %SOURCE_PATH%
 set SOURCE_PATH=%CD%
-cd %BUILD_PATH%
+cd /D %BUILD_PATH%
 
 set PROJECT_CONFIG= %BUILD_PATH%\config.in
 set PROJECT_LOG= %BUILD_PATH%\config.log
@@ -191,9 +191,9 @@ echo %CURRENTDIR%
 if exist %QT_MOBILITY_PREFIX% goto prefixExists
 mkdir %QT_MOBILITY_PREFIX%
 if errorlevel 1 goto invalidPrefix
-cd %QT_MOBILITY_PREFIX%
+cd /D %QT_MOBILITY_PREFIX%
 set QT_MOBILITY_PREFIX=%CD%
-cd %CURRENTDIR%
+cd /D %CURRENTDIR%
 rd /S /Q %QT_MOBILITY_PREFIX%
 goto endprefixProcessing
 
@@ -202,9 +202,9 @@ echo "%QT_MOBILITY_PREFIX%" is not a valid directory path.
 goto :exitTag
 
 :prefixExists
-cd %QT_MOBILITY_PREFIX%
+cd /D %QT_MOBILITY_PREFIX%
 set QT_MOBILITY_PREFIX=%CD%
-cd %CURRENTDIR%
+cd /D %CURRENTDIR%
 
 :endprefixProcessing
 echo QT_MOBILITY_PREFIX = %QT_MOBILITY_PREFIX% >> %PROJECT_CONFIG%
