@@ -1,3 +1,5 @@
+#for now we don't actually have anything to build
+#just ensure installation of public headers
 TEMPLATE = subdirs
 
 include(../../common.pri)
