@@ -130,12 +130,6 @@ bool QMessageFolderFilterPrivate::operator==(const QMessageFolderFilterPrivate &
     return true;
 }
 
-bool QMessageFolderFilterPrivate::matchesStore(const QMessageFolderFilter &filter, const MapiStorePtr &store)
-{
-    // TODO - return false if the filter excludes the entire store
-    return true;
-}
-
 bool QMessageFolderFilterPrivate::matchesFolder(const QMessageFolderFilter &filter, const MapiFolderPtr &folder)
 {
     Qt::CaseSensitivity caseSensitivity(Qt::CaseInsensitive);
