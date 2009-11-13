@@ -288,7 +288,7 @@ private:
     void updateUi();
 
 private:
-    enum State { Unloaded, Loading, LoadFinished, LoadFailed };
+    enum State { Unloaded, Loading, LoadFinished, LoadFailed, Done };
     static const int MessageIdRole = Qt::UserRole + 1;
 
 private:
@@ -321,7 +321,7 @@ QMessageId RecentMessagesWidget::currentMessage() const
 {
     QMessageId result;
 
-    if(m_state == LoadFinished && !m_ids.isEmpty())
+    if(m_state == Done && !m_ids.isEmpty())
         result = m_ids.at(m_messageListWidget->currentRow());
 
     return result;
@@ -391,7 +391,7 @@ void RecentMessagesWidget::stateChanged(QMessageServiceAction::State s)
 {
     if(s == QMessageServiceAction::Failed)
         m_state = LoadFailed;
-    else if(s == QMessageServiceAction::Successful)
+    else if(s == QMessageServiceAction::Successful && m_state != LoadFailed)
         m_state = LoadFinished;
 
     updateUi();
@@ -440,6 +440,7 @@ void RecentMessagesWidget::updateUi()
             {
                 processResults();
                 m_layout->setCurrentWidget(m_messageListWidget);
+                m_state = Done;
             }
         }
         break;
