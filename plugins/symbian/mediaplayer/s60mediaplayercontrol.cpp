@@ -100,59 +100,71 @@ int S60MediaPlayerControl::volume() const
 
 bool S60MediaPlayerControl::isMuted() const
 {
-    return m_session->isMuted();
+   if (m_session)
+       return  m_session->isMuted();
 }
 
 bool S60MediaPlayerControl::isSeekable() const
 {
-    return m_session->isSeekable();
+    if (m_session)
+       return  m_session->isSeekable();
 }
 
 QPair<qint64, qint64> S60MediaPlayerControl::seekRange() const
 {
-    return m_session->isSeekable()
+    if (m_session) {
+        return q_check_ptr(m_session)->isSeekable()
             ? qMakePair<qint64, qint64>(0, m_session->duration())
             : qMakePair<qint64, qint64>(0, 0);
+    }
 }
 
 qreal S60MediaPlayerControl::playbackRate() const
 {
-    return m_session->playbackRate();
+    if (m_session)
+        return  m_session->playbackRate();
 }
 
 void S60MediaPlayerControl::setPlaybackRate(qreal rate)
 {
-    m_session->setPlaybackRate(rate);
+    if (m_session)
+        m_session->setPlaybackRate(rate);
 }
 
 void S60MediaPlayerControl::setPosition(qint64 pos)
 {
-    m_session->seek(pos);
+    if (m_session)
+        m_session->seek(pos);
 }
 
 void S60MediaPlayerControl::play()
 {
-    m_session->play();
+    if (m_session)
+        m_session->play();
 }
 
 void S60MediaPlayerControl::pause()
 {
-    m_session->pause();
+    if (m_session)
+        m_session->pause();
 }
 
 void S60MediaPlayerControl::stop()
 {
-    m_session->stop();
+    if (m_session)
+        m_session->stop();
 }
 
 void S60MediaPlayerControl::setVolume(int volume)
 {
-    m_session->setVolume(volume);
+    if (m_session)
+        m_session->setVolume(volume);
 }
 
 void S60MediaPlayerControl::setMuted(bool muted)
 {
-    m_session->setMuted(muted);
+    if (m_session)
+        m_session->setMuted(muted);
 }
 
 QMediaContent S60MediaPlayerControl::media() const
@@ -170,16 +182,19 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
     Q_UNUSED(stream)
     if (m_session)
         m_session->stop();
-    m_currentResource = source;
     
     QUrl url;
-    if (!source.isNull()) {
+    if (!source.isNull() && m_session) {
         url = source.canonicalUri();
+        m_currentResource = source;
+        m_session = currentPlayerSession();
+        m_session->load(url);
+        emit mediaChanged(m_currentResource);
     }
-    m_session = currentPlayerSession();
-    m_session->load(url);
+    else {
+        emit mediaStatusChanged(QMediaPlayer::InvalidMedia);
+    }
 
-    emit mediaChanged(m_currentResource);
 }
 
 void S60MediaPlayerControl::setVideoOutput(QObject *output)
@@ -191,7 +206,8 @@ void S60MediaPlayerControl::setVideoOutput(QObject *output)
 
 bool S60MediaPlayerControl::isVideoAvailable() const
 {
-    return m_session->isVideoAvailable();
+    if (m_session)
+        return m_session->isVideoAvailable();
 }
 
 S60MediaPlayerSession* S60MediaPlayerControl::currentPlayerSession() 
