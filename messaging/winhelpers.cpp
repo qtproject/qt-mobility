@@ -668,9 +668,11 @@ namespace {
         ULONG size = 0;
         STATSTG stg = { 0 };
         HRESULT rv = is->Stat(&stg, STATFLAG_NONAME);
-        if(HR_SUCCEEDED(rv))
+        if (HR_SUCCEEDED(rv)) {
             size = stg.cbSize.LowPart;
-        else *lastError = QMessageStore::ContentInaccessible;
+        } else {
+            *lastError = QMessageStore::ContentInaccessible;
+        }
         return size;
     }
 
@@ -695,31 +697,37 @@ namespace {
         return result;
     }
 
-    bool writeStream(QMessageStore::ErrorCode *lastError, IStream *os, const void *address, ULONG bytes)
+    bool writeStream(QMessageStore::ErrorCode *lastError, IStream *os, const void *address, ULONG bytes, bool truncate)
     {
-        ULARGE_INTEGER uli = { 0 };
-        uli.LowPart = bytes;
+        ULONG existingSize = truncate ? streamSize(lastError, os) : 0;
+        if (*lastError == QMessageStore::NoError) {
+            HRESULT rv = S_OK;
+            if (existingSize > bytes) {
+                ULARGE_INTEGER uli = { 0 };
+                uli.LowPart = bytes;
+                rv = os->SetSize(uli);
+            }
 
-        HRESULT rv = os->SetSize(uli);
-        if (HR_SUCCEEDED(rv)) {
-            ULONG written(0);
-            rv = os->Write(address, bytes, &written);
             if (HR_SUCCEEDED(rv)) {
-                if (written < bytes) {
-                    qWarning() << "Only wrote partial data to output stream.";
-                } else {
-                    rv = os->Commit(STGC_DEFAULT);
-                    if (HR_SUCCEEDED(rv)) {
-                        return true;
+                ULONG written(0);
+                rv = os->Write(address, bytes, &written);
+                if (HR_SUCCEEDED(rv)) {
+                    if (written < bytes) {
+                        qWarning() << "Only wrote partial data to output stream.";
                     } else {
-                        qWarning() << "Unable to commit write to output stream.";
+                        rv = os->Commit(STGC_DEFAULT);
+                        if (HR_SUCCEEDED(rv)) {
+                            return true;
+                        } else {
+                            qWarning() << "Unable to commit write to output stream.";
+                        }
                     }
+                } else {
+                    qWarning() << "Unable to write data to output stream.";
                 }
             } else {
-                qWarning() << "Unable to write data to output stream.";
+                qWarning() << "Unable to resize output stream.";
             }
-        } else {
-            qWarning() << "Unable to resize output stream.";
         }
 
         *lastError = QMessageStore::FrameworkFault;
@@ -1204,7 +1212,7 @@ namespace {
 #endif
                     if (HR_SUCCEEDED(rv)) {
                         QByteArray body(bodyContent.textContent().toLatin1());
-                        writeStream(lastError, os, body.data(), body.count());
+                        writeStream(lastError, os, body.data(), body.count(), true);
 
                         mapiRelease(os);
                     } else {
@@ -1213,15 +1221,17 @@ namespace {
                     }
 #else
                 if ((subType == "rtf") || (subType == "html")) {
-                    QString body(bodyContent.textContent());
+                    QByteArray body(bodyContent.textContent().toLatin1());
                     LONG textFormat(EDITOR_FORMAT_RTF);
                     if (subType == "html") {
                         // Encode the HTML within RTF
                         TCHAR codePage[6] = _T("1252");
                         GetLocaleInfo(LOCALE_SYSTEM_DEFAULT, LOCALE_IDEFAULTANSICODEPAGE, codePage, sizeof(codePage));
 
-                        QString format("{\\rtf1\\ansi\\ansicpg%1\\fromhtml1 {\\*\\htmltag1 %2}}");
-                        body = format.arg(QString::fromUtf16(reinterpret_cast<const quint16*>(codePage))).arg(body);
+                        QByteArray format("{\\rtf1\\ansi\\ansicpg" + 
+                                          QString::fromUtf16(reinterpret_cast<const quint16*>(codePage)).toLatin1() +
+					  "\\fromhtml1 {\\*\\htmltag1 ");
+					  body = format + body + "}}";
                         textFormat = EDITOR_FORMAT_HTML;
                     }
 
@@ -1237,7 +1247,8 @@ namespace {
                         IStream *compressor(0);
                         rv = WrapCompressedRTFStream(os, MAPI_MODIFY, &compressor);
                         if (HR_SUCCEEDED(rv)) {
-                            writeStream(lastError, compressor, body.utf16(), body.length() * sizeof(TCHAR));
+                            // The wrapper stream does not support Stat()
+                            writeStream(lastError, compressor, body.data(), body.length(), false);
 
                             compressor->Release();
                         } else {
@@ -1258,7 +1269,7 @@ namespace {
                     IStream *os(0);
                     HRESULT rv = message->OpenProperty(PR_BODY_W, 0, STGM_WRITE, MAPI_MODIFY | MAPI_CREATE,(LPUNKNOWN*)&os);
                     if (HR_SUCCEEDED(rv)) {
-                        writeStream(lastError, os, body.utf16(), body.count() * sizeof(WCHAR));
+                        writeStream(lastError, os, body.utf16(), body.count() * sizeof(WCHAR), true);
 
                         mapiRelease(os);
                     } else {
@@ -2374,12 +2385,12 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
         //On Windows Mobile occurs by default and at discretion of mail client settings.
 
         MapiFolderPtr sentFolder = _store->findFolder(lastError,QMessage::SentFolder);
-        if (sentFolder.isNull() || *lastError != QMessageStore::NoError)
-            qWarning() << "Unable to find the sent folder while constructing message";
-        else if (!setMapiProperty(mapiMessage, PR_SENTMAIL_ENTRYID, sentFolder->entryId()))
-            qWarning() << "Unable to set sent folder entry id on message";
+        if (!sentFolder.isNull() && *lastError != QMessageStore::NoError) {
+            if (!setMapiProperty(mapiMessage, PR_SENTMAIL_ENTRYID, sentFolder->entryId())) {
+                qWarning() << "Unable to set sent folder entry id on message";
+            }
+        }
 #endif
-
 
         if (*lastError == QMessageStore::NoError) {
             replaceMessageRecipients(lastError, source, mapiMessage, session->session());
@@ -4178,7 +4189,7 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                                         if (HR_SUCCEEDED(rv)) {
                                             messageBody = readStream(lastError, ts);
                                             bodySubType = "plain";
-											asciiData = false;
+                                            asciiData = false;
 
                                             ts->Release();
                                         } else {

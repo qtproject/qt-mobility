@@ -405,7 +405,7 @@ void tst_QMessageStore::testMessage_data()
         << "Last HTML message..."
         << QByteArray("multipart")
         << QByteArray("mixed")
-        << 4096u
+        << 5120u
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
         << QByteArray("html")
