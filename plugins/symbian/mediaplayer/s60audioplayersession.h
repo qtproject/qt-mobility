@@ -90,7 +90,6 @@ public slots:
     void setVolume(int volume);
     void setMuted(bool muted);
     void load(const QUrl &url);
-    void tick();
 
 private: 
     void getNativeHandles();
@@ -101,8 +100,6 @@ private:
 private:
     CMdaAudioPlayerUtility *m_player;
     int m_numberOfMetaDataEntries;
-    
-    QTimer* m_timer;
 };
 
 #endif

@@ -55,8 +55,8 @@ S60AudioPlayerSession::S60AudioPlayerSession(QObject *parent)
 {    
     //TODO: Error checking somehow...
     TRAP_IGNORE(m_player = CMdaAudioPlayerUtility::NewL(*this);)
-    m_timer = new QTimer(this);
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(tick()));
+    //m_timer = new QTimer(this);
+    //connect(m_timer, SIGNAL(timeout()), this, SLOT(tick()));
 }
 
 S60AudioPlayerSession::~S60AudioPlayerSession()
@@ -131,18 +131,10 @@ bool S60AudioPlayerSession::isSeekable() const
 
 void S60AudioPlayerSession::play()
 {
-    //if (m_state == QMediaPlayer::PausedState) {
-    if (!m_timer->isActive()) {
-        m_timer->start(1000);
-    }
-    
+    startTimer();
     m_player->Play();
+    m_state = QMediaPlayer::PlayingState;
     emit stateChanged(QMediaPlayer::PlayingState);
-    //} else {
-     //   QString fileName = QDir::toNativeSeparators(m_url.toString());
-    //    TPtrC str(reinterpret_cast<const TUint16*>(fileName.utf16()));
-     //   TRAP_IGNORE(m_player->OpenFileL(str);)  // TODO: Error handling...
-    //}
 }
 
 void S60AudioPlayerSession::pause()
@@ -162,6 +154,7 @@ void S60AudioPlayerSession::stop()
 
 void S60AudioPlayerSession::seek(qint64 ms)
 {   
+    m_player->Pause();
     m_player->SetPosition(ms);
     emit positionChanged(position());
 }
@@ -194,7 +187,7 @@ void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMic
 
 void S60AudioPlayerSession::MapcPlayComplete(TInt aError)
 {
-    m_timer->stop();
+    stopTimer();
     emit stateChanged(QMediaPlayer::StoppedState);
     emit positionChanged(position());
 }
@@ -207,9 +200,4 @@ bool S60AudioPlayerSession::isMetadataAvailable()
 QVariant S60AudioPlayerSession::metaData(QtMedia::MetaData key)
 {
     return "Test metadata";
-}
-
-void S60AudioPlayerSession::tick()
-{
-    emit positionChanged(position());
 }
