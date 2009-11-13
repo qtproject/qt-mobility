@@ -111,8 +111,7 @@ int S60AudioPlayerSession::bufferingProgress() const
 
 int S60AudioPlayerSession::volume() const
 {
-    //TODO:
-    return -1;
+    return m_volume;
 }
 
 bool S60AudioPlayerSession::isMuted() const
@@ -151,7 +150,7 @@ void S60AudioPlayerSession::stop()
     // TODO: Stop()
     m_player->Stop();
     m_state = QMediaPlayer::StoppedState;
-    emit stateChanged(m_statee);
+    emit stateChanged(m_state);
 }
 
 void S60AudioPlayerSession::seek(qint64 ms)
@@ -163,6 +162,7 @@ void S60AudioPlayerSession::seek(qint64 ms)
 
 void S60AudioPlayerSession::setVolume(int volume)
 {
+    m_volume = volume;
     // TODO: m_player->SetVolume(volume);
 }
 

@@ -148,6 +148,7 @@ void S60MediaPlayerSession::seek(qint64 ms)
 
 void S60MediaPlayerSession::setVolume(int volume)
 {
+    m_volume = volume;
     // TODO: setvolume
 }
 
