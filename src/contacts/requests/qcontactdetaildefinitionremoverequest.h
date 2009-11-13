@@ -59,6 +59,8 @@ public:
     /* Selection */
     void setNames(const QStringList& names);
     QStringList names() const;
+    void setContactType(const QString& contactType);
+    QString contactType() const;
 
 signals:
     void progress(QContactDetailDefinitionRemoveRequest* self);

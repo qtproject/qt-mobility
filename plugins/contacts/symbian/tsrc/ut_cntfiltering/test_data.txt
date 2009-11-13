@@ -1,4 +1,4 @@
-// This file is exported to c:/sqltestdata/test_data.txt
+// This file is exported to c:/filtering/test_data.txt
 //
 // Usage [FilterType: Definition, Field, Value, MatchFlag, Results, Error expected]
 //

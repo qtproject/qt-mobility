@@ -41,6 +41,10 @@
 #include "cnttransformavatar.h"
 #include "cntmodelextuids.h"
 
+// S60 specific contact field type containing image call object data
+#define KUidContactFieldCodImageValue 0x101F8841
+const TUid KUidContactFieldCodImage={KUidContactFieldCodImageValue};
+
 QList<CContactItemField *> CntTransformAvatar::transformDetailL(const QContactDetail &detail)
 {
 	QList<CContactItemField *> fieldList;
@@ -55,29 +59,21 @@ QList<CContactItemField *> CntTransformAvatar::transformDetailL(const QContactDe
 
 	//create new field
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(avatar.avatar().utf16()));
-	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldPicture);
-	newField->TextStorage()->SetTextL(fieldText);
 
-    //image
+	TUid uid(KNullUid);
 	if (avatar.subType().compare(subTypeImage) == 0) {
-        newField->AddFieldTypeL(KUidContactFieldPicture);
-	    newField->SetMapping(KUidContactFieldVCardMapUnknown);
-	}
-
-    //audio ringtone
-    else if (avatar.subType().compare(subTypeAudioRingtone) == 0) {
-        newField->AddFieldTypeL(KUidContactFieldRingTone);
-	    newField->SetMapping(KUidContactFieldVCardMapUnknown);
-	}
-
-    //video ringtone
-    else if (avatar.subType().compare(subTypeVideoRingtone) == 0) {
-        newField->AddFieldTypeL(KUidContactFieldVideoRingTone);
-        newField->SetMapping(KUidContactFieldVCardMapUnknown);
-    }
-    else {
+	    uid = KUidContactFieldCodImage;
+	} else if (avatar.subType().compare(subTypeAudioRingtone) == 0) {
+        uid = KUidContactFieldRingTone;
+	} else if (avatar.subType().compare(subTypeVideoRingtone) == 0) {
+        uid = KUidContactFieldVideoRingTone;
+    } else {
         User::LeaveIfError(KErrNotSupported);
     }
+    CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, uid);
+
+    newField->SetMapping(KUidContactFieldVCardMapUnknown);
+    newField->TextStorage()->SetTextL(fieldText);
 
 	fieldList.append(newField);
 	CleanupStack::Pop(newField);
@@ -95,7 +91,7 @@ QContactDetail *CntTransformAvatar::transformItemField(const CContactItemField& 
 	QString avatarString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
 	avatar->setAvatar(avatarString);
 
-	if (field.ContentType().ContainsFieldType(KUidContactFieldPicture)) {
+	if (field.ContentType().ContainsFieldType(KUidContactFieldCodImage)) {
         avatar->setSubType(QContactAvatar::SubTypeImage);
     }
 	else if (field.ContentType().ContainsFieldType(KUidContactFieldRingTone)) {
@@ -111,7 +107,7 @@ QContactDetail *CntTransformAvatar::transformItemField(const CContactItemField& 
 bool CntTransformAvatar::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
-    if (fieldType == KUidContactFieldPicture.iUid ||
+    if (fieldType == KUidContactFieldCodImage.iUid ||
         fieldType == KUidContactFieldRingTone.iUid ||
         fieldType == KUidContactFieldVideoRingTone.iUid) {
         ret = true;
@@ -169,7 +165,7 @@ quint32 CntTransformAvatar::getIdForField(const QString& fieldName) const
         return 0;
     else if (QContactAvatar::SubTypeVideoRingtone == fieldName)
         return 0;
-    else 
+    else
         return 0;
 }
 
@@ -180,23 +176,23 @@ quint32 CntTransformAvatar::getIdForField(const QString& fieldName) const
  */
 void CntTransformAvatar::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
     QContactDetailDefinition d;
     QVariantList subTypes;
 
     // fields
     d.setName(QContactAvatar::DefinitionName);
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
     fields.insert(QContactAvatar::FieldAvatar, f);
 
     // Sub-types
-    f.dataType = QVariant::String; // only allowed to be a single subtype
-    subTypes << QString(QLatin1String(QContactAvatar::SubTypeImage));
-    subTypes << QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone));
-    subTypes << QString(QLatin1String(QContactAvatar::SubTypeVideoRingtone));
-    f.allowableValues = subTypes;
+    f.setDataType(QVariant::String); // only allowed to be a single subtype
+    f.setAllowableValues(QVariantList()
+            << QString(QLatin1String(QContactAvatar::SubTypeImage))
+            << QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone))
+            << QString(QLatin1String(QContactAvatar::SubTypeVideoRingtone)));
     fields.insert(QContactUrl::FieldSubType, f);
 
     d.setFields(fields);

@@ -862,8 +862,8 @@ RESOURCE ARRAY r_cntui_new_field_defns
     FIELD // Sync target
       {
       fieldStorageType=KStorageTypeText;
-      contactFieldType=KUidContactFieldSyncTargetValue;
-      vCardMapping=KIntContactFieldVCardMapUnknown;
+      contactFieldType=KUidContactFieldClassValue;
+      vCardMapping=KIntContactFieldVCardMapClass;
       category=EContactCategoryNone;
       fieldName=STRING_r_cntui_new_field_defns13;
       },      

@@ -53,7 +53,7 @@ public:
 
     /* Mutators */
     void setDetailDefinitionName(const QString& definition, const QString& fieldName = QString());
-    void setMatchFlags(Qt::MatchFlags flags);
+    void setMatchFlags(QContactFilter::MatchFlags flags);
 
     /* Filter Criterion */
     void setValue(const QVariant& value);
@@ -61,7 +61,7 @@ public:
     /* Accessors */
     QString detailDefinitionName() const;
     QString detailFieldName() const;
-    Qt::MatchFlags matchFlags() const;
+    QContactFilter::MatchFlags matchFlags() const;
 
     QVariant value() const;
 
