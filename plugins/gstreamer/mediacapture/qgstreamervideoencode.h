@@ -54,7 +54,7 @@ class QGstreamerVideoEncode : public QVideoEncoderControl
 {
     Q_OBJECT
 public:
-    QGstreamerVideoEncode(QObject *parent);
+    QGstreamerVideoEncode(QGstreamerCaptureSession *session);
     virtual ~QGstreamerVideoEncode();
 
     QSize minimumResolution() const;
@@ -80,6 +80,8 @@ public:
     GstElement *createEncoder();
 
 private:
+    QGstreamerCaptureSession *m_session;
+
     QStringList m_codecs;
     QMap<QString,QString> m_codecDescriptions;
     QMap<QString,QByteArray> m_elementNames;

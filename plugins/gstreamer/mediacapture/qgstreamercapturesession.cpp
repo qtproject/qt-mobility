@@ -663,7 +663,7 @@ void QGstreamerCaptureSession::setAudioPreview(QGstreamerElementFactory *audioPr
     m_audioPreviewFactory = audioPreview;
 }
 
-void QGstreamerCaptureSession::setVideoInput(QGstreamerElementFactory *videoInput)
+void QGstreamerCaptureSession::setVideoInput(QGstreamerVideoInput *videoInput)
 {
     m_videoInputFactory = videoInput;
 }
@@ -916,3 +916,4 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
         }
     }
 }
+
