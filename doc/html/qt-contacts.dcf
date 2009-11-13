@@ -351,6 +351,17 @@
         <keyword ref="qcontactemailaddress.html#FieldEmailAddress-var">FieldEmailAddress</keyword>
         <section ref="qcontactemailaddress-members.html" title="List of all members"/>
     </section>
+    <section ref="qcontactfamily.html" title="QContactFamily Class Reference">
+        <keyword ref="qcontactfamily.html">QContactFamily</keyword>
+        <keyword ref="qcontactfamily.html#children">children</keyword>
+        <keyword ref="qcontactfamily.html#setChildren">setChildren</keyword>
+        <keyword ref="qcontactfamily.html#setSpouse">setSpouse</keyword>
+        <keyword ref="qcontactfamily.html#spouse">spouse</keyword>
+        <keyword ref="qcontactfamily.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactfamily.html#FieldChildren-var">FieldChildren</keyword>
+        <keyword ref="qcontactfamily.html#FieldSpouse-var">FieldSpouse</keyword>
+        <section ref="qcontactfamily-members.html" title="List of all members"/>
+    </section>
     <section ref="qcontactfetchrequest.html" title="QContactFetchRequest Class Reference">
         <keyword ref="qcontactfetchrequest.html">QContactFetchRequest</keyword>
         <keyword ref="qcontactfetchrequest.html#contacts">contacts</keyword>

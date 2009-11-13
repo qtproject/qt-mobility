@@ -17,8 +17,9 @@
 <ul><li><a href="#introduction">Introduction</a></li>
 <li><a href="#schema-definition">Schema Definition</a></li>
 <li><a href="#default-schema">Default Schema</a></li>
-<ul><li><a href="#leaf-classes">Leaf Classes</a></li>
-<li><a href="#field-schema">Field Schema</a></li>
+<ul><li><a href="#detail-definition-uniqueness">Detail Definition Uniqueness</a></li>
+<li><a href="#detail-definition-access-constraints">Detail Definition Access Constraints</a></li>
+<li><a href="#field-access-constraints">Field Access Constraints</a></li>
 </ul>
 </ul>
 <a name="introduction"></a>
@@ -31,391 +32,58 @@
 <p>By implementing the default schema, the backend developer ensures that client code written against the default schema will work without source modification against their backend.</p>
 <a name="default-schema"></a>
 <h2>Default Schema</h2>
-<a name="leaf-classes"></a>
-<h3>Leaf Classes</h3>
-<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
-<thead><tr valign="top" class="qt-style"><th>Leaf Class</th><th>Definition Identifier</th><th>Definition Identifier Value</th><th>Description</th><th>Uniqueness Constraint</th><th>Access Constraint</th></tr></thead>
-<tr valign="top" class="odd"><td><a href="qcontactaddress.html">QContactAddress</a></td><td>QContactAddress::DefinitionId</td><td>&quot;StreetAddress&quot;</td><td>Details of this definition contain an address of a particular contact</td><td>No</td><td>Any</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactanniversary.html">QContactAnniversary</a></td><td>QContactAnniversary::DefinitionId</td><td>&quot;Anniversary&quot;</td><td>Details of this definition contain the (annually recurring) date of an important event</td><td>No</td><td>Any</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactavatar.html">QContactAvatar</a></td><td>QContactAvatar::DefinitionId</td><td>&quot;Avatar&quot;</td><td>Details of this definition contain the URI of an avatar of the contact</td><td>No</td><td>Any</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactbirthday.html">QContactBirthday</a></td><td>QContactBirthday::DefinitionId</td><td>&quot;Birthday&quot;</td><td>Details of this definition contain the date of a contact's birthday</td><td>Yes</td><td>Any</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a></td><td>QContactDisplayLabel::DefinitionId</td><td>&quot;DisplayLabel&quot;</td><td>Details of this definition contain the formatted display label of the contact</td><td>yes</td><td>Any</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactemailaddress.html">QContactEmailAddress</a></td><td>QContactEmailAddress::DefinitionId</td><td>&quot;EmailAddress&quot;</td><td>Details of this definition contain an email address of a contact</td><td>No</td><td>Any</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactgender.html">QContactGender</a></td><td>QContactGender::DefinitionId</td><td>&quot;Gender&quot;</td><td>Details of this definition contain the gender of a contact within a given context</td><td>No</td><td>Any</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactgeolocation.html">QContactGeolocation</a></td><td>QContactGeolocation::DefinitionId</td><td>&quot;Geolocation&quot;</td><td>Details of this definition contain a timestamped location update</td><td>No</td><td>Any</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactguid.html">QContactGuid</a></td><td>QContactGuid::DefinitionId</td><td>&quot;Guid&quot;</td><td>Details of this definition contain a globally unique identifier for a contact</td><td>Yes</td><td>ReadOnly</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactname.html">QContactName</a></td><td>QContactName::DefinitionId</td><td>&quot;Name&quot;</td><td>Details of this definition contain the full name information of a contact</td><td>No</td><td>Any</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactonlineaccount.html">QContactOnlineAccount</a></td><td>QContactOnlineAccount::DefinitionId</td><td>&quot;OnlineAccount&quot;</td><td>Details of this definition contain the URI of an online account of the contact</td><td>No</td><td>Any</td></tr>
-<tr valign="top" class="even"><td>QContactOrganisation</td><td>QContactOrganisation::DefinitionId</td><td>&quot;Organisation&quot;</td><td>Details of this definition contain details of an organisation with which the contact is associated</td><td>No</td><td>Any</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactphonenumber.html">QContactPhoneNumber</a></td><td>QContactPhoneNumber::DefinitionId</td><td>&quot;PhoneNumber&quot;</td><td>Details of this definition contain a telephony endpoint associated with a contact</td><td>No</td><td>Any</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactpresence.html">QContactPresence</a></td><td>QContactPresence::DefinitionId</td><td>&quot;Presence&quot;</td><td>Details of this definition contain presence information regarding a particular online account</td><td>No</td><td>ReadOnly</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactrelationship.html">QContactRelationship</a></td><td>QContactRelationship::DefinitionId</td><td>&quot;Relationship&quot;</td><td>Details of this definition contain information about which other contacts this contact is related to and in what way</td><td>No</td><td>Any</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactsynctarget.html">QContactSyncTarget</a></td><td>QContactSyncTarget::DefinitionId</td><td>&quot;SyncTarget&quot;</td><td>Details of this definition contain the id of a storage backend to which the contact should be synchronised</td><td>Yes</td><td>CreateOnly</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontacttimestamp.html">QContactTimestamp</a></td><td>QContactTimestamp::DefinitionId</td><td>&quot;Timestamp&quot;</td><td>Details of this definition contain a creation and modification timestamp of the contact</td><td>Yes</td><td>ReadOnly</td></tr>
-<tr valign="top" class="even"><td><a href="qcontacturl.html">QContactUrl</a></td><td>QContactUrl::DefinitionId</td><td>&quot;Url&quot;</td><td>Details of this definition contain a universal resource location related to the contact</td><td>No</td><td>Any</td></tr>
-</table></p>
-<a name="field-schema"></a>
-<h3>Field Schema</h3>
-<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
-<thead><tr valign="top" class="qt-style"><th>Detail</th><th>Field Keys</th><th>Field Value Data Types</th><th>Allowable Values</th><th>Field Description</th></tr></thead>
-<tr valign="top" class="odd"><td><a href="qcontactaddress.html">QContactAddress</a></td><td><ul>
-<li>DisplayLabel</li>
-<li>PostOfficeBox</li>
-<li>Street</li>
-<li>Locality</li>
-<li>Region</li>
-<li>Postcode</li>
-<li>Country</li>
-</ul>
-</td><td><ul>
-<li>String</li>
-<li>String</li>
-<li>String</li>
-<li>String</li>
-<li>String</li>
-<li>String</li>
-<li>String</li>
-</ul>
-</td><td><ul>
-<li>Any</li>
-<li>Any</li>
-<li>Any</li>
-<li>Any</li>
-<li>Any</li>
-<li>Any</li>
-<li>Any</li>
-</ul>
-</td><td><ul>
-<li>The formatted address</li>
-<li>The post office box segment of the address.</li>
-<li>The street segment of the address (i.e&#x2e;, street and number)</li>
-<li>The locality segment of the address (i.e&#x2e;, city/suburb)</li>
-<li>The region segment of the address (i.e&#x2e;, state)</li>
-<li>The postcode segment of the address</li>
-<li>The country segment of the address</li>
-</ul>
-</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactanniversary.html">QContactAnniversary</a></td><td><ul>
-<li>OriginalDate</li>
-<li>CalendarId</li>
-<li>Event</li>
-</ul>
-</td><td><ul>
-<li>Date</li>
-<li>String</li>
-<li>String</li>
-</ul>
-</td><td><ul>
-<li>Any</li>
-<li>Any</li>
-<li>Any</li>
-</ul>
-</td><td><ul>
-<li>The date of the original occurrance of the event</li>
-<li>The identifier of the calendar entry associated with this detail</li>
-<li>The name of the event remembered by this anniversary</li>
-</ul>
-</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactavatar.html">QContactAvatar</a></td><td><ul>
-<li>Avatar</li>
-</ul>
-</td><td><ul>
-<li>String</li>
-</ul>
-</td><td><ul>
-<li>Any</li>
-</ul>
-</td><td><ul>
-<li>The location of an avatar file which is associated with a contact</li>
-</ul>
-</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactbirthday.html">QContactBirthday</a></td><td><ul>
-<li>Birthday</li>
-</ul>
-</td><td><ul>
-<li>Date</li>
-</ul>
-</td><td><ul>
-<li>Any</li>
-</ul>
-</td><td><ul>
-<li>The date of the birthday associated with a contact</li>
-</ul>
-</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a></td><td><ul>
-<li>DisplayLabel</li>
-<li>Synthesised</li>
-</ul>
-</td><td><ul>
-<li>String</li>
-<li>bool</li>
-</ul>
-</td><td><ul>
-<li>Any</li>
-<li>Any</li>
-</ul>
-</td><td><ul>
-<li>The display label of a contact</li>
-<li>Whether the display label was synthesised automatically or set manually</li>
-</ul>
-</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactemailaddress.html">QContactEmailAddress</a></td><td><ul>
-<li>EmailAddress</li>
-</ul>
-</td><td><ul>
-<li>String</li>
-</ul>
-</td><td><ul>
-<li>Any</li>
-</ul>
-</td><td><ul>
-<li>The email address URL associated with a contact</li>
-</ul>
-</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactgender.html">QContactGender</a></td><td><ul>
-<li>Gender</li>
-</ul>
-</td><td><ul>
-<li>String</li>
-</ul>
-</td><td><ul>
-<li>&quot;Male&quot;, &quot;Female&quot;, &quot;Unspecified&quot;</li>
-</ul>
-</td><td><ul>
-<li>The gender of a contact in a particular context</li>
-</ul>
-</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactgeolocation.html">QContactGeolocation</a></td><td><ul>
-<li>Latitude</li>
-<li>Longitude</li>
-<li>Accuracy</li>
-<li>Altitude</li>
-<li>AltitudeAccuracy</li>
-<li>Heading</li>
-<li>Speed</li>
-<li>Timestamp</li>
-</ul>
-</td><td><ul>
-<li>double</li>
-<li>double</li>
-<li>double</li>
-<li>double</li>
-<li>double</li>
-<li>double</li>
-<li>double</li>
-<li>DateTime</li>
-</ul>
-</td><td><ul>
-<li>Any</li>
-<li>Any</li>
-<li>Any</li>
-<li>Any</li>
-<li>Any</li>
-<li>Any</li>
-<li>Any</li>
-<li>Any</li>
-</ul>
-</td><td><ul>
-<li>The latitude coordinate of the location</li>
-<li>The longitude coordinate of the location</li>
-<li>The accuracy (in metres) of the latitude and longitude coordinates</li>
-<li>The altitude (in metres) of the location</li>
-<li>The accuracy (in metres) of the altitude coordinate of the location</li>
-<li>The heading of the location aware device at the time of measurement, in degrees from true north</li>
-<li>The speed of the location aware device at the time of measurement, in metres per second</li>
-</ul>
-</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactguid.html">QContactGuid</a></td><td><ul>
-<li>Guid</li>
-</ul>
-</td><td><ul>
-<li>String</li>
-</ul>
-</td><td><ul>
-<li>Any</li>
-</ul>
-</td><td><ul>
-<li>A globally unique identifier which is associated with a contact</li>
-</ul>
-</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactname.html">QContactName</a></td><td><ul>
-<li>Prefix</li>
-<li>First</li>
-<li>Middle</li>
-<li>Last</li>
-<li>Suffix</li>
-</ul>
-</td><td><ul>
-<li>String</li>
-<li>String</li>
-<li>String</li>
-<li>String</li>
-<li>String</li>
-</ul>
-</td><td><ul>
-<li>Any</li>
-<li>Any</li>
-<li>Any</li>
-<li>Any</li>
-<li>Any</li>
-</ul>
-</td><td><ul>
-<li>The prefix segment of the name of a contact (e.g&#x2e;, &quot;Mr&quot;, &quot;Mrs&quot;, &quot;Dr&quot;)</li>
-<li>The first (given) name segment of the name of a contact</li>
-<li>The middle (additional) name segment of the name of a contact</li>
-<li>The last (surname) name segment of the name of a contact</li>
-<li>The suffix segment of the name of a contact (e.g&#x2e;, &quot;Esq.&quot;, &quot;Ph.D&quot;)</li>
-</ul>
-</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactonlineaccount.html">QContactOnlineAccount</a></td><td><ul>
-<li>AccountUri</li>
-</ul>
-</td><td><ul>
-<li>String</li>
-</ul>
-</td><td><ul>
-<li>Any</li>
-</ul>
-</td><td><ul>
-<li>The URI of an online account communication endpoint associated with the contact</li>
-</ul>
-</td></tr>
-<tr valign="top" class="even"><td>QContactOrganisation</td><td><ul>
-<li>DisplayLabel</li>
-<li>Logo</li>
-<li>Department</li>
-<li>Location</li>
-<li>Title</li>
-</ul>
-</td><td><ul>
-<li>String</li>
-<li>String</li>
-<li>String</li>
-<li>String</li>
-<li>String</li>
-</ul>
-</td><td><ul>
-<li>Any</li>
-<li>Any</li>
-<li>Any</li>
-<li>Any</li>
-<li>Any</li>
-</ul>
-</td><td><ul>
-<li>The display label of an organisation associated with the contact</li>
-<li>The file location of a logo of an organisation associated with the contact</li>
-<li>The department of the organisation associated with the contact</li>
-<li>The physical location (e.g&#x2e; city or suburb) of the part of the organisation associated with the contact</li>
-<li>The title the contact has within the organisation (e.g&#x2e; job position, role etc)</li>
-</ul>
-</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactphonenumber.html">QContactPhoneNumber</a></td><td><ul>
-<li>PhoneNumber</li>
-</ul>
-</td><td><ul>
-<li>String</li>
-</ul>
-</td><td><ul>
-<li>Any</li>
-</ul>
-</td><td><ul>
-<li>A phone number associated with a contact</li>
-</ul>
-</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactpresence.html">QContactPresence</a></td><td><ul>
-<li>AccountUri</li>
-<li>Nickname</li>
-<li>Presence</li>
-<li>StatusMessage</li>
-</ul>
-</td><td><ul>
-<li>String</li>
-<li>String</li>
-<li>String</li>
-<li>String</li>
-</ul>
-</td><td><ul>
-<li>Any</li>
-<li>Any</li>
-<li>&quot;Available&quot;, &quot;Busy, &quot;Away&quot;, &quot;Extended Away&quot;, &quot;Unknown&quot;, &quot;Offline&quot;</li>
-<li>Any</li>
-</ul>
-</td><td><ul>
-<li>The URI of an online account communication endpoint associated with the contact</li>
-<li>The last-known nickname that the contact used while communicating via the associated online account</li>
-<li>The presence of the contact as reported by the provider of the associated online account</li>
-<li>The last-known status message of the contact sent from the online account communication endpoint</li>
-</ul>
-</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontactrelationship.html">QContactRelationship</a></td><td><ul>
-<li>RelationshipType</li>
-<li>ContactLabel</li>
-<li>ContactUid</li>
-<li>ContactManagerUri</li>
-</ul>
-</td><td><ul>
-<li>String</li>
-<li>String</li>
-<li>String</li>
-<li>String</li>
-</ul>
-</td><td><ul>
-<li>&quot;Is&quot;, &quot;Was&quot;, &quot;Father&quot;, &quot;Mother&quot;, &quot;Child&quot;, &quot;Son&quot;, &quot;Daughter&quot;, &quot;Sibling&quot;, &quot;Brother&quot;, &quot;Sister&quot;, &quot;Cousin&quot;, &quot;Friend&quot;, &quot;Spouse&quot;, &quot;Fiancee&quot;, &quot;Husband&quot;, &quot;Wife&quot;, &quot;Employer&quot;, &quot;Employee&quot;, &quot;Other&quot;, &quot;Unknown&quot;</li>
-<li>Any</li>
-<li>Any</li>
-<li>Any</li>
-</ul>
-</td><td><ul>
-<li>The way in which this contact is related to the contact about which this detail stores information. To be read as: &quot;This contact is the &lt;RelationshipType&gt; of the contact linked in this detail&quot;.</li>
-<li>The display label of the contact to which this contact is related</li>
-<li>The unique identifier of the contact to which this contact is related, as used to identify the contact by the manager which stores the related contact</li>
-<li>The URI of the manager which stores the related contact</li>
-</ul>
-</td></tr>
-<tr valign="top" class="even"><td><a href="qcontactsynctarget.html">QContactSyncTarget</a></td><td><ul>
-<li>SyncTarget</li>
-</ul>
-</td><td><ul>
-<li>String</li>
-</ul>
-</td><td><ul>
-<li>Any</li>
-</ul>
-</td><td><ul>
-<li>The identifier of a backend store to which the contact containing this detail should be synchronised</li>
-</ul>
-</td></tr>
-<tr valign="top" class="odd"><td><a href="qcontacttimestamp.html">QContactTimestamp</a></td><td><ul>
-<li>CreationTimestamp</li>
-<li>ModificationTimestamp</li>
-</ul>
-</td><td><ul>
-<li>DateTime</li>
-<li>DateTime</li>
-</ul>
-</td><td><ul>
-<li>Any</li>
-<li>Any</li>
-</ul>
-</td><td><ul>
-<li>The date and time of creation of the contact</li>
-<li>The date and time of the last modification of the contact</li>
-</ul>
-</td></tr>
-<tr valign="top" class="even"><td><a href="qcontacturl.html">QContactUrl</a></td><td><ul>
-<li>Url</li>
-</ul>
-</td><td><ul>
-<li>String</li>
-</ul>
-</td><td><ul>
-<li>Any</li>
-</ul>
-</td><td><ul>
-<li>A universal resource location associated with the contact containing this detail</li>
-</ul>
-</td></tr>
-</table></p>
+<p>The leaf details that form the default schema are as follows:</p>
+<ul>
+<li><a href="qcontactaddress.html">QContactAddress</a></li>
+<li><a href="qcontactanniversary.html">QContactAnniversary</a></li>
+<li><a href="qcontactavatar.html">QContactAvatar</a></li>
+<li><a href="qcontactbirthday.html">QContactBirthday</a></li>
+<li><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a></li>
+<li><a href="qcontactemailaddress.html">QContactEmailAddress</a></li>
+<li><a href="qcontactfamily.html">QContactFamily</a></li>
+<li><a href="qcontactgender.html">QContactGender</a></li>
+<li><a href="qcontactgeolocation.html">QContactGeolocation</a></li>
+<li><a href="qcontactguid.html">QContactGuid</a></li>
+<li><a href="qcontactname.html">QContactName</a></li>
+<li><a href="qcontactnickname.html">QContactNickname</a></li>
+<li><a href="qcontactnote.html">QContactNote</a></li>
+<li><a href="qcontactonlineaccount.html">QContactOnlineAccount</a></li>
+<li><a href="qcontactorganization.html">QContactOrganization</a></li>
+<li><a href="qcontactphonenumber.html">QContactPhoneNumber</a></li>
+<li><a href="qcontactsynctarget.html">QContactSyncTarget</a></li>
+<li><a href="qcontacttimestamp.html">QContactTimestamp</a></li>
+<li><a href="qcontacttype.html">QContactType</a></li>
+<li><a href="qcontacturl.html">QContactUrl</a></li>
+</ul>
+<p>In the default schema, each of these definitions have various access and uniqueness constraints. Additionally, fields of the definitions may have an access constraint of read-only defined for them.</p>
+<a name="detail-definition-uniqueness"></a>
+<h3>Detail Definition Uniqueness</h3>
+<p>A uniqueness constraint on a detail definition means that for any <a href="qcontact.html">QContact</a>, only one detail of that definition may be saved. Generally, it is information for which a contradicting detail would mean inability to identify the contact. Please note that some details, such as <a href="qcontactbirthday.html">QContactBirthday</a> or <a href="qcontactname.html">QContactName</a>, do not have a uniqueness constraint, since in different contexts, different information may be valid.</p>
+<p>The leaf classes which have a uniqueness constraint in the default schema are as follows:</p>
+<ul>
+<li><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a></li>
+<li><a href="qcontacttype.html">QContactType</a></li>
+<li><a href="qcontactsynctarget.html">QContactSyncTarget</a></li>
+<li><a href="qcontactguid.html">QContactGuid</a></li>
+</ul>
+<a name="detail-definition-access-constraints"></a>
+<h3>Detail Definition Access Constraints</h3>
+<p>An access constraint on a detail definition means that for any detail of that definition in a <a href="qcontact.html">QContact</a>, the specified access constraints apply. For example, the <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> is defined in the default schema as a read-only detail definition; meaning that details of that type in a contact cannot be created, modified or deleted by the client, but are provided by the backend (in the case of <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a>, automatically synthesized by the backend from various details of the contact).</p>
+<p>There are three possible detail definition-level access constraints: read-only, create-only and no-constraint. A read-only constraint ensures that clients cannot create, delete or modify details of that definition; a create-only constraint ensures that clients cannot modify details of that definition, but can create them (with whichever values they see fit); if no constraint is specified, details of that definition may be created, modified or deleted as required.</p>
+<p>Please see the documentation of <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> for more information on access constraints.</p>
+<p>The leaf classes which have access constraints in the default schema are as follows:</p>
+<ul>
+<li><a href="qcontactguid.html">QContactGuid</a> is <tt>QContactDetailDefinition::CreateOnly</tt></li>
+<li><a href="qcontactsynctarget.html">QContactSyncTarget</a> is <tt>QContactDetailDefinition::CreateOnly</tt></li>
+<li><a href="qcontacttimestamp.html">QContactTimestamp</a> is <tt>QContactDetailDefinition::ReadOnly</tt></li>
+<li><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> is <tt>QContactDetailDefinition::ReadOnly</tt></li>
+</ul>
+<p>Furthermore, in the default schema, every contact is required to have at least two details by default: a <a href="qcontacttype.html">QContactType</a> which describes the type of entity that the contact represents (for example, a person or a group), and a <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> which holds the default display label for the contact.</p>
+<a name="field-access-constraints"></a>
+<h3>Field Access Constraints</h3>
+<p>Furthermore, some fields of some definitions are also constrained to be read-only. This is information which is generated or automatically provided by the backend, which is related to user-provided information that is also stored in the detail.</p>
+<p>The eponymous example of this is the <a href="qcontactonlineaccount.html">QContactOnlineAccount</a> leaf detail, which has an unconstrained field which stores the URI of the account, and several read-only fields in which are stored presence information, status messages, and service availability.</p>
+<p>Currently, the <a href="qcontactonlineaccount.html">QContactOnlineAccount</a> is the only leaf detail with field-level access constraints.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

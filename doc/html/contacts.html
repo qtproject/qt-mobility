@@ -51,10 +51,11 @@
 <p>Qt Contacts provides a set of APIs that allows clients to request contact data from local or remote backends, access to which are provided by implementations of Qt Contacts manager API. This is achieved by defining generic personal information data abstractions which can sufficiently describe contact data stored on any platform. Due to the cross-platform nature of the API, and the ability for developers to write platform-independent implementations of a <a href="qcontactmanager.html">QContactManager</a> which may unify one or more platform specific contact backends, it is intended that the semantics and quirks of the underlying datastores on any platform may be entirely opaque from the perspective of Qt-based, cross-platform client applications.</p>
 <a name="overview"></a>
 <h2>Overview</h2>
-<p>A contact is the digital representation of a person, which is stored in a platform-specific manner. Information pertaining to a single contact may be located across several different datastores, and each datum (or detail) may or may not pertain to a particular context in which that information is valid. A contact may include semantically identical pieces of information that are relevant in different contexts. For example, a contact may have a phone number that is relevant to their &quot;home&quot; context, and another phone number that is relevant to their &quot;work&quot; context. It can be seen that the context of information defines its validity to the user, depending on the context of usage; and as such, the sum of information in a given context can be considered equivalent to a &quot;contextual identity&quot;. This allows great flexibility when consolidating data from various sources into a single, cohesive contact. Contacts may be placed into arbitrary collections called groups. Each group has a name and a unique identifier, and consists of a list of contacts.</p>
-<p>Each datum (or detail) stored in a contact has defined semantics of usage and storage. The Qt Contacts API allows per-datastore contact detail definitions, allowing a manager to provide clients with this information on demand, and allowing third-party developers to register detail definitions for use by clients. A detail definition includes the fields (and value-types of those fields) which make up the detail, per-contact uniqueness constraints on details of the definition, and access constraints (such as read-only, create-only, etc).</p>
-<p>A detail is a single, cohesive unit of information that is stored in a contact. As explained previously, it is valid for a particular context or set of contexts, and conforms to a particular definition. A detail may have specific metadata associated with it, such as its sub-type, the source of the information, and arbitrary, user-defined metadata.</p>
-<p>A manager provides access to zero or more platform-specific datastores. Each datastore may support different capabilities (for example, the ability to store certain datatypes, the ability to natively filter on different details or details of different definitions, the provision of locking mechanisms, the provision of changelog information, etc) which are reported by the manager on request. The manager therefore provides access to detail definitions, contacts, and groups stored in different datastores, in a platform and datastore independent manner. The engine of a manager may be implemented as a plugin to allow dynamic loading of different engines at run-time.</p>
+<p>A contact is the digital representation of a person, group or entity, which is stored in a platform-specific manner. Information pertaining to a single contact may be located across several different datastores, and each datum (or detail) may or may not pertain to a particular context in which that information is valid. A contact may include semantically identical pieces of information that are relevant in different contexts. For example, a contact may have a phone number that is relevant to their &quot;home&quot; context, and another phone number that is relevant to their &quot;work&quot; context. It can be seen that the context of information defines its validity to the user, depending on the context of usage; and as such, the sum of information in a given context can be considered equivalent to a &quot;contextual identity&quot;. This allows great flexibility when consolidating data from various sources into a single, cohesive contact.</p>
+<p>Each datum (or detail) stored in a contact has defined semantics of usage and storage. The Qt Contacts API allows per-datastore contact detail definitions, allowing a manager to provide clients with this information on demand, and allowing third-party developers to register detail definitions for use by clients. A detail definition includes the fields (and value-types of those fields) which make up the detail, per-contact uniqueness constraints on details of the definition, and access constraints (such as read-only, create-only, etc). Additionally, the fields of a detail definition may also be constrained to be read-only or not.</p>
+<p>A detail is a single, cohesive unit of information that is stored in a contact. As explained previously, it is valid for a particular context or set of contexts, and conforms to a particular definition. A detail may have specific metadata associated with it, such as its sub-type, context, and arbitrary, user-defined metadata.</p>
+<p>Contacts may participate in relationships with other contacts. The details of any such relationship is stored by the manager which contains the contact. There are several standard relationship types supported by the default schema, and arbitrary relationship types are also allowed. In particular, membership of a contact in a group can be modeled as that group contact participating in a <tt>HasMember</tt> relationship with the contact.</p>
+<p>A manager provides access to zero or more platform-specific datastores. Each datastore may support different capabilities (for example, the ability to store certain datatypes, the ability to natively filter on different details or details of different definitions, the provision of locking mechanisms, the provision of changelog information, etc) which are reported by the manager on request. The manager therefore provides access to detail definitions, contacts, and relationships stored in different datastores, in a platform and datastore independent manner. The engine of a manager may be implemented as a plugin to allow dynamic loading of different engines at run-time.</p>
 <a name="using-the-api"></a>
 <h2>Using the API</h2>
 <p>This section provides some examples of common usage of the API.</p>
@@ -332,18 +333,19 @@
 <li><a href="qcontactbirthday.html">QContactBirthday</a></li>
 <li><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a></li>
 <li><a href="qcontactemailaddress.html">QContactEmailAddress</a></li>
+<li><a href="qcontactfamily.html">QContactFamily</a></li>
 <li><a href="qcontactgender.html">QContactGender</a></li>
 <li><a href="qcontactgeolocation.html">QContactGeolocation</a></li>
 <li><a href="qcontactguid.html">QContactGuid</a></li>
 <li><a href="qcontactname.html">QContactName</a></li>
 <li><a href="qcontactnickname.html">QContactNickname</a></li>
+<li><a href="qcontactnote.html">QContactNote</a></li>
 <li><a href="qcontactonlineaccount.html">QContactOnlineAccount</a></li>
 <li><a href="qcontactorganization.html">QContactOrganization</a></li>
 <li><a href="qcontactphonenumber.html">QContactPhoneNumber</a></li>
-<li><a href="qcontactpresence.html">QContactPresence</a></li>
 <li><a href="qcontactsynctarget.html">QContactSyncTarget</a></li>
-<li><a href="qcontactrelationship.html">QContactRelationship</a></li>
 <li><a href="qcontacttimestamp.html">QContactTimestamp</a></li>
+<li><a href="qcontacttype.html">QContactType</a></li>
 <li><a href="qcontacturl.html">QContactUrl</a></li>
 </ul>
 <p>Each of these subclasses provide access to information stored in fields which are listed in the <a href="contactsschema.html">schema</a>.</p>
@@ -380,13 +382,13 @@
 <a name="actions"></a>
 <h3>Actions</h3>
 <p>Clients can perform actions on contacts which support them. Actions are things like &quot;Send Email&quot; or &quot;Dial&quot;, and can be provided from various sources including Qt Plugins or the Qt Mobility Service Framework. Every action implementation is uniquely identified by a combination of its name, the name of the vendor which provided the implementation, and the version of the implementation according to the vendor. These pieces of data may be encapsulated in a <a href="qcontactactiondescriptor.html">QContactActionDescriptor</a> which can be used to retrieve an instance of the implementation from a <a href="qcontactactionfactory.html">QContactActionFactory</a>.</p>
-<p>When an instance of a <a href="qcontactaction.html">QContactAction</a> is created, the caller takes ownership of the instance, and must delete it after use. The semantics of ownership are currently under discussion; they are subject to change prior to the Alpha release of Qt Mobility.</p>
+<p>When an instance of a <a href="qcontactaction.html">QContactAction</a> is created, the caller takes ownership of the instance, and must delete it after use.</p>
 <a name="implementing-backends"></a>
 <h3>Implementing Backends</h3>
 <p>A manager backend may be implemented by subclassing <a href="qcontactmanagerengine.html">QContactManagerEngine</a>, and providing a <a href="qcontactmanagerenginefactory.html">QContactManagerEngineFactory</a> which can instantiate it when required.</p>
 <a name="manager-information-and-functionality-reporting"></a>
 <h3>Manager information and functionality reporting</h3>
-<p>Different backends have different capabilities and offer different functionality. In order to allow clients to query the provided functionality at runtime, every backend must be capable of reporting their functionality. The functionality is reported in an instance of a <a href="qcontactmanagerinfo.html">QContactManagerInfo</a> object.</p>
+<p>Different backends have different capabilities and offer different functionality. In order to allow clients to query the provided functionality at runtime, every backend must be capable of reporting their functionality and implementation version. They are reported to clients through various functions provided by the <a href="qcontactmanager.html">QContactManager</a> class.</p>
 <a name="examples"></a>
 <h3>Examples</h3>
 <ul>

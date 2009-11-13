@@ -47,7 +47,9 @@
 <p>This function should return a unique string that identifies the engines provided by this factory.</p>
 <p>Typically this would be of the form &quot;com.nokia.qt.contacts.engines.memory&quot;, with the appropriate domain and engine name substituted.</p>
 <h3 class="fn"><a name="supportedImplementationVersions"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;int&gt; QContactManagerEngineFactory::supportedImplementationVersions () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>This function should return a list of versions of the engine which this factory can instantiate.</p>
 <h3 class="fn"><a name="version"></a>int QContactManagerEngineFactory::version () const</h3>
+<p>Returns the version of the Qt Mobility Contacts API which is implemented by engines instantiated by this factory.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

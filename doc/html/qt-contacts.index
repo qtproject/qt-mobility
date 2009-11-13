@@ -132,7 +132,7 @@
                 <parameter left="const QMap&lt;QString, QString&gt; &amp;" right="" name="parameters" default="0"/>
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactManager" fullname="QContactManager::QContactManager" href="qcontactmanager.html#QContactManager-2" location="qcontactmanager.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactManager(const QString &amp; managerName, int implementationVersion, const QMap&lt;QString, QString&gt; &amp; parameters, QObject * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactManager" fullname="QContactManager::QContactManager" href="qcontactmanager.html#QContactManager-2" location="qcontactmanager.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactManager(const QString &amp; managerName, int implementationVersion, const QMap&lt;QString, QString&gt; &amp; parameters, QObject * parent)">
                 <parameter left="const QString &amp;" right="" name="managerName" default=""/>
                 <parameter left="int" right="" name="implementationVersion" default=""/>
                 <parameter left="const QMap&lt;QString, QString&gt; &amp;" right="" name="parameters" default="0"/>
@@ -500,6 +500,19 @@
                 <parameter left="const QString &amp;" right="" name="subType" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="subType" fullname="QContactUrl::subType" href="qcontacturl.html#subType" location="qcontacturl.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="subType() const"/>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QContactFamily" href="qcontactfamily.html" location="qcontactfamily.h" bases="QContactDetail" module="">
+            <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactFamily::DefinitionName" href="qcontactfamily.html#DefinitionName-var" location="qcontactfamily.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldSpouse" fullname="QContactFamily::FieldSpouse" href="qcontactfamily.html#FieldSpouse-var" location="qcontactfamily.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldChildren" fullname="QContactFamily::FieldChildren" href="qcontactfamily.html#FieldChildren-var" location="qcontactfamily.h" type="const char *" static="false"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSpouse" fullname="QContactFamily::setSpouse" href="qcontactfamily.html#setSpouse" location="qcontactfamily.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSpouse(const QString &amp; spouseName)">
+                <parameter left="const QString &amp;" right="" name="spouseName" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="spouse" fullname="QContactFamily::spouse" href="qcontactfamily.html#spouse" location="qcontactfamily.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="spouse() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setChildren" fullname="QContactFamily::setChildren" href="qcontactfamily.html#setChildren" location="qcontactfamily.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setChildren(const QStringList &amp; childrenNames)">
+                <parameter left="const QStringList &amp;" right="" name="childrenNames" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="children" fullname="QContactFamily::children" href="qcontactfamily.html#children" location="qcontactfamily.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="children() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactTimestamp" href="qcontacttimestamp.html" location="qcontacttimestamp.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactTimestamp::DefinitionName" href="qcontacttimestamp.html#DefinitionName-var" location="qcontacttimestamp.h" type="const char *" static="false"/>
@@ -1855,8 +1868,9 @@
             <contents name="introduction" title="Introduction" level="1"/>
             <contents name="schema-definition" title="Schema Definition" level="1"/>
             <contents name="default-schema" title="Default Schema" level="1"/>
-            <contents name="leaf-classes" title="Leaf Classes" level="2"/>
-            <contents name="field-schema" title="Field Schema" level="2"/>
+            <contents name="detail-definition-uniqueness" title="Detail Definition Uniqueness" level="2"/>
+            <contents name="detail-definition-access-constraints" title="Detail Definition Access Constraints" level="2"/>
+            <contents name="field-access-constraints" title="Field Access Constraints" level="2"/>
         </page>
         <page access="public" status="commendable" name="samplephonebook" href="samplephonebook.html" subtype="example" title="Sample Phonebook Example" fulltitle="Sample Phonebook Example" subtitle="" location="samplephonebook.qdoc">
             <contents name="phone-book" title="Phone Book" level="1"/>
