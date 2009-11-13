@@ -252,11 +252,12 @@ goto testingMake
 :gnumake
 echo Checking for GNU make...
 make -v >> %PROJECT_LOG% 2>&1
-if errorlevel 1 goto gnumake
+if errorlevel 1 goto noMake
 echo       Using GNU make
 set MAKE=make
 goto testingMake
 
+:noMake
 echo >&2 "Cannot find 'nmake', 'mingw32-make' or 'make' in your PATH"
 echo >&2 "Aborting."
 
