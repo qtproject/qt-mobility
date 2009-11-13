@@ -158,12 +158,12 @@ void VersitUtils::decodeQuotedPrintable(QByteArray& text)
             if (next == '\r' && nextAfterNext == '\n') {
                 text.remove(i,3);
             }
-            if ((next >= 'a' && next <= 'f' ||
-                 next >= 'A' && next <= 'F' ||
-                 next >= '0' && next <= '9') &&
-                (nextAfterNext >= 'a' && nextAfterNext <= 'f' ||
-                 nextAfterNext >= 'A' && nextAfterNext <= 'F' ||
-                 nextAfterNext >= '0' && nextAfterNext <= '9')) {
+            if (((next >= 'a' && next <= 'f') ||
+                 (next >= 'A' && next <= 'F') ||
+                 (next >= '0' && next <= '9')) &&
+                ((nextAfterNext >= 'a' && nextAfterNext <= 'f') ||
+                 (nextAfterNext >= 'A' && nextAfterNext <= 'F') ||
+                 (nextAfterNext >= '0' && nextAfterNext <= '9'))) {
                 QByteArray hexEncodedChar(text.mid(i+1,2));
                 bool decoded = false; 
                 char decodedChar = hexEncodedChar.toInt(&decoded,16);
