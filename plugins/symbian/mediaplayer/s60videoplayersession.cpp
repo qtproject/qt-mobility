@@ -97,6 +97,7 @@ qreal S60VideoPlayerSession::playbackRate() const
 
 void S60VideoPlayerSession::setPlaybackRate(qreal rate)
 {
+    //TODO: videoplayrate set but not used.
     m_playbackRate = rate;
 }
 

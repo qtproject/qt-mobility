@@ -75,13 +75,13 @@ qint64 S60AudioPlayerSession::position() const
 
 qreal S60AudioPlayerSession::playbackRate() const
 {
-    //TODO:
-    return -1;
+    return m_playbackRate;
 }
 
 void S60AudioPlayerSession::setPlaybackRate(qreal rate)
 {
-    //TODO:
+    //TODO: set playbackrate 
+    m_playbackRate = rate;
 }
 
 bool S60AudioPlayerSession::isBuffering() const
@@ -120,6 +120,8 @@ void S60AudioPlayerSession::play()
 {
     if (m_state == QMediaPlayer::PausedState) {
         m_player->Play();
+        m_state = QMediaPlayer::PlayingState;
+        emit stateChanged(m_state);
     } else {
         QString fileName = QDir::toNativeSeparators(m_url.toString());
         TPtrC str(reinterpret_cast<const TUint16*>(fileName.utf16()));
@@ -175,6 +177,8 @@ void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMic
 
 void S60AudioPlayerSession::MapcPlayComplete(TInt aError)
 {
+    m_state = QMediaPlayer::StoppedState;
+    emit stateChanged(m_state);
 }
 
 bool S60AudioPlayerSession::isMetadataAvailable()

@@ -62,28 +62,29 @@ S60MediaPlayerControl::~S60MediaPlayerControl()
 
 qint64 S60MediaPlayerControl::position() const
 {
-    return m_session->position();
+    if (m_session)
+        return m_session->position();
 }
 
 qint64 S60MediaPlayerControl::duration() const
 {
-    if (!m_session)
-        return 0;
-    return m_session->duration();
+    if (m_session)
+        return m_session->duration();
 }
 
 QMediaPlayer::State S60MediaPlayerControl::state() const
 {
-    if (!m_session)
-        return QMediaPlayer::StoppedState;
-    return m_session->state();
+    if (m_session)
+        return m_session->state();
+    // we dont have a session -> state is stopped
+    return QMediaPlayer::StoppedState;
 }
 
 QMediaPlayer::MediaStatus S60MediaPlayerControl::mediaStatus() const
 {   
-    if (!m_session)
-        return QMediaPlayer::NoMedia;
-    return m_session->mediaStatus();
+    if (m_session)
+        return m_session->mediaStatus();
+    return QMediaPlayer::NoMedia;
 }
 
 int S60MediaPlayerControl::bufferStatus() const
@@ -180,14 +181,16 @@ const QIODevice *S60MediaPlayerControl::mediaStream() const
 void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *stream)
 {
     Q_UNUSED(stream)
-    if (m_session)
+    // store to variable as session is created based on the content type.
+    m_currentResource = source;
+    m_session = currentPlayerSession();
+
+    /*if (m_session)
         m_session->stop();
-    
+    */
     QUrl url;
     if (!source.isNull() && m_session) {
         url = source.canonicalUri();
-        m_currentResource = source;
-        m_session = currentPlayerSession();
         m_session->load(url);
         emit mediaChanged(m_currentResource);
     }

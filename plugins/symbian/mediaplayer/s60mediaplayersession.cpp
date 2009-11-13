@@ -88,7 +88,7 @@ qint64 S60MediaPlayerSession::position() const
 
 qreal S60MediaPlayerSession::playbackRate() const
 {
-    return -1;
+    return m_playbackRate;
 }
 
 void S60MediaPlayerSession::setPlaybackRate(qreal rate)
@@ -145,17 +145,17 @@ void S60MediaPlayerSession::stop()
 
 void S60MediaPlayerSession::seek(qint64 ms)
 {
-    // TODO:
+    // TODO: seek
 }
 
 void S60MediaPlayerSession::setVolume(int volume)
 {
-    // TODO:
+    // TODO: setvolume
 }
 
 void S60MediaPlayerSession::setMuted(bool muted)
 {
-    // TODO:
+    // TODO: setmuted
 }
 
 void S60MediaPlayerSession::setSeekable(bool seekable)
