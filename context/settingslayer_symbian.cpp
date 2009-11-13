@@ -46,6 +46,8 @@
 Q_GLOBAL_STATIC(SymbianSettingsLayer, symbianSettingsLayer);
 QVALUESPACE_AUTO_INSTALL_LAYER(SymbianSettingsLayer);
 
+QT_BEGIN_NAMESPACE
+
 SymbianSettingsLayer::SymbianSettingsLayer()
 {
     qDebug("SymbianSettingsLayer::SymbianSettingsLayer()");
@@ -91,13 +93,11 @@ unsigned int SymbianSettingsLayer::order()
 QValueSpace::LayerOptions SymbianSettingsLayer::layerOptions() const
 {
     return QValueSpace::PermanentLayer |
-        QValueSpace::NonPermanentLayer |
         QValueSpace::WriteableLayer;
 }
 
 SymbianSettingsLayer *SymbianSettingsLayer::instance()
 {
-    qDebug("");
     return symbianSettingsLayer();
 }
 
@@ -147,8 +147,20 @@ bool SymbianSettingsLayer::value(Handle handle, const QString &subPath, QVariant
 
     SymbianSettingsHandle *sh = symbianSettingsHandle(handle);
 
+    QString fullPath(sh->path);
+    if (fullPath != QLatin1String("/"))
+        fullPath.append(QLatin1Char('/'));
+
+    fullPath.append(value);
+
     if (sh) {
-        qDebug() << "TODO: Actual code for reading data" << sh->path;
+        qDebug() << "TODO: Actual code for reading data" << fullPath;
+        PathMapper::Target target;
+        qlonglong category;
+        qlonglong key;
+        if (pathMapper.resolvePath(fullPath, target, category, key)) {
+            qDebug() << "pathMapper.resolvePath" << target << category << key;
+        }
     }
 
     if (createdHandle)
@@ -167,7 +179,9 @@ QSet<QString> SymbianSettingsLayer::children(Handle handle)
         return foundChildren;
 
     qDebug() << "TODO: Actual code for retrieving children" << sh->path;
-    foundChildren << "intValue" << "stringValue";
+    pathMapper.getChildren(sh->path, foundChildren);
+    qDebug() << "foundChildren" << foundChildren;
+
     return foundChildren;
 }
 
@@ -271,13 +285,6 @@ bool SymbianSettingsLayer::setValue(QValueSpaceProvider *creator, Handle handle,
         createdHandle = true;
     }
 
-    bool created = false;
-    //TODO created = Try to create key
-    if (created) {
-        if (!creators[creator].contains(sh->path))
-            creators[creator].append(sh->path);
-    }
-
     QString fullPath(sh->path);
     if (fullPath != QLatin1String("/"))
         fullPath.append(QLatin1Char('/'));
@@ -286,9 +293,12 @@ bool SymbianSettingsLayer::setValue(QValueSpaceProvider *creator, Handle handle,
 
     //TODO: Write data
     qDebug() << "TODO: Actual code for writing data" << fullPath << data;
-
-    if (!creators[creator].contains(fullPath))
-        creators[creator].append(fullPath);
+    PathMapper::Target target;
+    qlonglong category;
+    qlonglong key;
+    if (pathMapper.resolvePath(fullPath, target, category, key)) {
+        qDebug() << "pathMapper.resolvePath" << target << category << key;
+    }
 
     if (createdHandle)
         removeHandle(Handle(sh));
@@ -314,33 +324,8 @@ bool SymbianSettingsLayer::removeValue(QValueSpaceProvider *creator,
     const QString &subPath)
 {
     qDebug("bool SymbianSettingsLayer::removeValue(QValueSpaceProvider *creator, Handle handle, const QString &subPath)");
-    QString fullPath;
-
-    if (handle == InvalidHandle) {
-        fullPath = subPath;
-    } else {
-        SymbianSettingsHandle *sh = symbianSettingsHandle(handle);
-        if (!sh)
-            return false;
-
-        if (subPath == QLatin1String("/"))
-            fullPath = sh->path;
-        else if (sh->path.endsWith(QLatin1Char('/')) && subPath.startsWith(QLatin1Char('/')))
-            fullPath = sh->path + subPath.mid(1);
-        else if (!sh->path.endsWith(QLatin1Char('/')) && !subPath.startsWith(QLatin1Char('/')))
-            fullPath = sh->path + QLatin1Char('/') + subPath;
-        else
-            fullPath = sh->path + subPath;
-    }
-
-    // permanent layer always removes items even if our records show that creator does not own it.
-    if (!creators[creator].contains(fullPath) && (layerOptions() & QValueSpace::NonPermanentLayer))
-        return false;
-
-    //TODO: Remove value from mapper?
-    creators[creator].removeOne(fullPath);
-
-    return true;
+    //TODO: Is this needed in Symbian?
+    return false;
 }
 
 void SymbianSettingsLayer::addWatch(QValueSpaceProvider *, Handle)

@@ -38,12 +38,16 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef SYMBIANSETTINGSLAYER_H
+#define SYMBIANSETTINGSLAYER_H
 
 #include "qvaluespace_p.h"
 #include "qvaluespaceprovider.h"
 
 #include <QHash>
 #include <QMultiMap>
+
+#include "pathmapper_symbian.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -119,7 +123,9 @@ private:
         return 0;
     }
 
-    QMap<QValueSpaceProvider *, QList<QString> > creators;
+    PathMapper pathMapper;
 };
 
 QT_END_NAMESPACE
+
+#endif //SYMBIANSETTINGSLAYER_H

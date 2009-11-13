@@ -26,8 +26,10 @@ SOURCES += \
 
 symbian {
     DEFINES += QT_BUILD_INTERNAL
-    HEADERS += settingslayer_symbian.h
-    SOURCES += settingslayer_symbian.cpp
+    HEADERS += settingslayer_symbian.h \
+        pathmapper_symbian.h
+    SOURCES += settingslayer_symbian.cpp \
+        pathmapper_symbian.cpp
     MMP_RULES += "EXPORTUNFROZEN"
     TARGET.CAPABILITY = ALL -TCB
 }
