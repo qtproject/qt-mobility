@@ -74,8 +74,8 @@ namespace {
 class Lptstr : public QVector<TCHAR>
 {
 public:
-    Lptstr(int length) : QVector(length){}
-    operator TCHAR* (){ return QVector::data(); }
+    Lptstr(int length) : QVector<TCHAR>(length){}
+    operator TCHAR* (){ return QVector<TCHAR>::data(); }
 };
 
 Lptstr LptstrFromQString(const QString &src)
