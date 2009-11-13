@@ -1348,14 +1348,12 @@ namespace {
         QMessageFilter _filter;
         MapiFolderPtr _folder;
         LPMAPITABLE _table;
-        uint _offset; // TODO replace this with LPMAPITABLE for efficiency
         QMessage _front;
     };
 
     FolderHeapNode::FolderHeapNode(const MapiFolderPtr &folder, const QMessageFilter &filter)
         : _filter(filter),
-          _folder(folder),
-          _offset(0)
+          _folder(folder)
     {
     }
 
@@ -1387,8 +1385,6 @@ namespace {
                 qWarning() << "Unable to access folder:" << node->_folder->name();
                 continue;
             }
-
-            node->_offset = 0;
 
             QMessageIdList messageIdList;
             node->_table = node->_folder->queryBegin(lastError, node->_filter, ordering);
@@ -1425,7 +1421,6 @@ namespace {
         QMessage result(_heap[0]->_front);
 
         FolderHeapNodePtr node(_heap[0]);
-        ++node->_offset;
 
         QMessageIdList messageIdList;
         if (node->_table) {
@@ -1503,7 +1498,9 @@ namespace {
 
         int count = 0 - offset;
         while (!folderHeap.isEmpty()) {
-            // TODO: avoid retrieving unwanted messages
+            // Ideally would not retrieve unwanted messages using IMAPITable::SeekRow
+            // But this is not feasible on Windows Mobile http://msdn.microsoft.com/en-us/library/bb446068.aspx:
+            // 'If there are large numbers of rows in the table, the SeekRow oepration can be slow. Do not set lRowCount ot a numer greater than 50'
             if (limit && (count == limit))
                 break;
 
@@ -2023,8 +2020,7 @@ LPMAPITABLE MapiFolder::queryBegin(QMessageStore::ErrorCode *lastError, const QM
     LPMAPITABLE messagesTable(0);
     HRESULT rv = _folder->GetContentsTable(MAPI_UNICODE, &messagesTable);
     if (HR_SUCCEEDED(rv)) {
-        // TODO remove flags, sender, subject, they are just used for debugging
-        SizedSPropTagArray(5, columns) = {5, {PR_ENTRYID, PR_RECORD_KEY, PR_MESSAGE_FLAGS, PR_SENDER_NAME, PR_SUBJECT}};
+        SizedSPropTagArray(2, columns) = {5, {PR_ENTRYID, PR_RECORD_KEY}};
         rv = messagesTable->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0);
         if (HR_SUCCEEDED(rv)) {
             if (!ordering.isEmpty()) {
@@ -3335,7 +3331,7 @@ QList<MapiStorePtr> MapiSession::filterStores(QMessageStore::ErrorCode *lastErro
         accountList.clear();
     }
 
-    // TODO: do better than this
+    // See note in filerMessages explaining why IMAPITable::SeekRow can't be used to skip unwanted items
     if (offset) {
         return result.mid(offset, (limit ? limit : -1));
     } else {
@@ -3390,7 +3386,7 @@ QList<MapiFolderPtr> MapiSession::filterFolders(QMessageStore::ErrorCode *lastEr
         folderList.clear();
     }
 
-    // TODO: do better than this
+    // See note in filerMessages explaining why IMAPITable::SeekRow can't be used to skip unwanted items
     if (offset) {
         return result.mid(offset, (limit ? limit : -1));
     } else {
@@ -4668,6 +4664,15 @@ void MapiSession::notify(MapiStore *store, const QMessageId &id, MapiSession::No
 
         if (!filter.isSupported())
             continue;
+
+         // no message properties are available for a removed message, so only empty filter can match
+        if (notifyType == MapiSession::Removed) {
+            if (filter.isEmpty()) {
+                matchingFilterIds.insert(it.key());
+                break;
+            }
+            continue;
+        }
 
         QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
         QMessageFilter processedFilter(QMessageFilterPrivate::preprocess(&ignoredError, _self.toStrongRef(), filter));
