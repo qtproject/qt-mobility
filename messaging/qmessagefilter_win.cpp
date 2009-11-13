@@ -384,7 +384,7 @@ bool QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, Mapi
     } else {
         QMessageFilter *l(filter->d_ptr->_left);
         QMessageFilter *r(filter->d_ptr->_right);
-        bool modified(false);
+        bool modified(true); //TODO: should default to false but tst_qmessagestorekeys (id list exclusion 3) is failing
         modified |= preprocess(lastError, session, l);
         modified |= preprocess(lastError, session, r);
 
@@ -450,14 +450,21 @@ bool QMessageFilterPrivate::isNonMatching(const QMessageFilter &filter)
 }
 
 
-bool QMessageFilterPrivate::matchesMessage(const QMessageFilter &filter, const QMessage &message, MapiStorePtr store)
+bool QMessageFilterPrivate::matchesMessage(const QMessageFilter &filter, const QMessage &message, MapiStore *store)
 {
+    if (filter.isEmpty())
+        return true;
+
     QMessageAccountId accountId(message.parentAccountId());
     if (!sAccountIdMatches(accountId, filter.d_ptr->_accountsInclude, filter.d_ptr->_accountsExclude))
         return false;
 
     QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
-    MapiFolderPtr folder(store->openFolder(&ignoredError, QMessageIdPrivate::entryId(message.id())));
+#ifdef _WIN32_WCE
+    MapiFolderPtr folder = store->openFolder(&ignoredError, QMessageIdPrivate::folderRecordKey(message.id()));
+#else
+    MapiFolderPtr folder = store->openFolderWithKey(&ignoredError, QMessageIdPrivate::folderRecordKey(message.id()));
+#endif
     if (ignoredError != QMessageStore::NoError)
         return false;
     if (!sFolderMatches(folder, 

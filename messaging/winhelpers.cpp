@@ -1348,6 +1348,7 @@ namespace {
 
         QMessageFilter _filter;
         MapiFolderPtr _folder;
+        LPMAPITABLE _table;
         uint _offset; // TODO replace this with LPMAPITABLE for efficiency
         QMessage _front;
     };
@@ -1390,11 +1391,19 @@ namespace {
 
             node->_offset = 0;
 
-            // TODO: Would be more efficient to use a LPMAPITABLE directly instead of calling MapiFolder queryMessages and message functions.
-            QMessageIdList messageIdList(node->_folder->queryMessages(lastError, node->_filter, ordering, 1));
+            QMessageIdList messageIdList;
+            node->_table = node->_folder->queryBegin(lastError, node->_filter, ordering);
             if (*lastError == QMessageStore::NoError) {
+                if (node->_table) {
+                    messageIdList = node->_folder->queryNext(lastError, node->_table, node->_filter);
+                    if (messageIdList.isEmpty() || (*lastError != QMessageStore::NoError)) {
+                        node->_folder->queryEnd(node->_table);
+                    }
+                }
+
                 if (!messageIdList.isEmpty()) {
                     node->_front = node->_folder->message(lastError, messageIdList.front());
+
                     if (*lastError == QMessageStore::NoError) {
                         _heap.append(node);
                     }
@@ -1419,8 +1428,13 @@ namespace {
         FolderHeapNodePtr node(_heap[0]);
         ++node->_offset;
 
-        // TODO: Would be more efficient to use a LPMAPITABLE directly instead of calling MapiFolder queryMessages and message functions.
-        QMessageIdList messageIdList(node->_folder->queryMessages(lastError, node->_filter, _ordering, 1, node->_offset));
+        QMessageIdList messageIdList;
+        if (node->_table) {
+            messageIdList = node->_folder->queryNext(lastError, node->_table, node->_filter);
+            if (messageIdList.isEmpty() || (*lastError != QMessageStore::NoError)) {
+                node->_folder->queryEnd(node->_table);
+            }
+        }
         if (*lastError != QMessageStore::NoError)
             return result;
 
@@ -1993,20 +2007,18 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageStore::ErrorCode *lastError)
     return result;
 }
 
-QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
+LPMAPITABLE MapiFolder::queryBegin(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering)
 {
-    QMessageIdList result;
-
     if (!_valid || !_folder) {
         Q_ASSERT(_valid && _folder);
         *lastError = QMessageStore::FrameworkFault;
-        return result;
+        return 0;
     }
 
     MapiRestriction restriction(filter);
     if (!restriction.isValid()) {
         *lastError = QMessageStore::ConstraintFailure;
-        return result;
+        return 0;
     }
 
     LPMAPITABLE messagesTable(0);
@@ -2019,73 +2031,70 @@ QMessageIdList MapiFolder::queryMessages(QMessageStore::ErrorCode *lastError, co
             if (!ordering.isEmpty()) {
                 QMessageOrderingPrivate::sortTable(lastError, ordering, messagesTable);
             }
-
-            if (*lastError == QMessageStore::NoError) {
-                if (!restriction.isEmpty()) {
-                    ULONG flags(0);
-                    if (messagesTable->Restrict(restriction.sRestriction(), flags) != S_OK)
-                        *lastError = QMessageStore::ConstraintFailure;
-                }
+            if (!restriction.isEmpty()) {
+                ULONG flags(0);
+                if (messagesTable->Restrict(restriction.sRestriction(), flags) != S_OK)
+                    *lastError = QMessageStore::ConstraintFailure;
             }
-
-            if (*lastError == QMessageStore::NoError) {
-                uint workingLimit(limit);
-                LPSRowSet rows(0);
-                LONG ignored;
-                rv = messagesTable->SeekRow(BOOKMARK_BEGINNING, offset, &ignored);
-                if (HR_SUCCEEDED(rv)) {
-                    while (true) {
-                        rv = messagesTable->QueryRows(1, 0, &rows);
-                        if (HR_SUCCEEDED(rv)) {
-                            if (rows->cRows == 1) {
-                                LPSPropValue entryIdProp(&rows->aRow[0].lpProps[0]);
-                                LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[1]);
-                                MapiRecordKey recordKey(recordKeyProp->Value.bin.lpb, recordKeyProp->Value.bin.cb);
-                                MapiEntryId entryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
-#ifdef _WIN32_WCE
-                                QMessageId id(QMessageIdPrivate::from(_store->entryId(), entryId, recordKey, _entryId));
-#else
-                                QMessageId id(QMessageIdPrivate::from(_store->recordKey(), entryId, recordKey, _key));
-#endif
-                                FreeProws(rows);
-
-                                if (QMessageFilterPrivate::matchesMessageRequired(filter)
-                                    && !QMessageFilterPrivate::matchesMessageSimple(filter, QMessage(id)))
-                                    continue;
-                                result.append(id);
-                                if (limit) {
-                                    --workingLimit;
-                                }
-
-                                if (limit && !workingLimit)
-                                    break;
-                            } else {
-                                // We have retrieved all rows
-                                FreeProws(rows);
-                                break;
-                            }
-                        } else {
-                            *lastError = QMessageStore::ContentInaccessible;
-                            qWarning() << "Unable to query rows in message table.";
-                        }
-                    }
-                } else {
-                    *lastError = QMessageStore::ContentInaccessible;
-                    qWarning() << "Unable to seek to offset in message table.";
-                }
+            if (*lastError != QMessageStore::NoError) {
+                return 0;
             }
+            return messagesTable;
         } else {
             *lastError = QMessageStore::ContentInaccessible;
-            return QMessageIdList();
+            return 0;
         }
 
         mapiRelease(messagesTable);
+        messagesTable = 0;
     } else {
         *lastError = QMessageStore::ContentInaccessible;
-        return QMessageIdList(); // TODO set last error to content inaccessible, and review all != S_OK result handling
+        return 0;
     }
 
-    return result;
+    return 0;
+}
+
+QMessageIdList MapiFolder::queryNext(QMessageStore::ErrorCode *lastError, LPMAPITABLE messagesTable, const QMessageFilter &filter)
+{
+    QMessageIdList result;
+    while (true) {
+        LPSRowSet rows(0);
+        HRESULT rv = messagesTable->QueryRows(1, 0, &rows);
+        if (HR_SUCCEEDED(rv)) {
+            if (rows->cRows == 1) {
+                LPSPropValue entryIdProp(&rows->aRow[0].lpProps[0]);
+                LPSPropValue recordKeyProp(&rows->aRow[0].lpProps[1]);
+                MapiRecordKey recordKey(recordKeyProp->Value.bin.lpb, recordKeyProp->Value.bin.cb);
+                MapiEntryId entryId(entryIdProp->Value.bin.lpb, entryIdProp->Value.bin.cb);
+        #ifdef _WIN32_WCE
+                QMessageId id(QMessageIdPrivate::from(_store->entryId(), entryId, recordKey, _entryId));
+        #else
+                QMessageId id(QMessageIdPrivate::from(_store->recordKey(), entryId, recordKey, _key));
+        #endif
+                FreeProws(rows);
+
+                if (QMessageFilterPrivate::matchesMessageRequired(filter)
+                    && !QMessageFilterPrivate::matchesMessageSimple(filter, QMessage(id)))
+                    continue;
+                result.append(id);
+                return result;
+            } else {
+                // We have retrieved all rows
+                FreeProws(rows);
+                return result;
+            }
+        } else {
+            *lastError = QMessageStore::ContentInaccessible;
+            qWarning() << "Unable to query rows in message table.";
+            return result;
+        }
+    }
+}
+
+void MapiFolder::queryEnd(LPMAPITABLE messagesTable)
+{
+    mapiRelease(messagesTable);
 }
 
 uint MapiFolder::countMessages(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter) const
@@ -4131,7 +4140,7 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                 } else if (contentFormat == EDITOR_FORMAT_HTML) {
                     // See if there is a body HTML property
                     // Correct variants discussed at http://blogs.msdn.com/raffael/archive/2008/09/08/mapi-on-windows-mobile-6-programmatically-retrieve-mail-body-sample-code.aspx
-#ifdef _WIN32_WCE
+#if(_WIN32_WCE > 0x501)
                     ULONG tags[] = { PR_BODY_HTML, PR_BODY_HTML_W, PR_BODY_HTML_A };
 #else
                     ULONG tags[] = { PR_BODY_HTML };
@@ -4685,33 +4694,21 @@ void MapiSession::notify(MapiStore *store, const QMessageId &id, MapiSession::No
     for ( ; it != end; ++it) {
         const QMessageFilter &filter(it.value());
 
-#if 1
-        QSet<QMessageId> filteredIds;
-        if (!filter.isEmpty()) {
-            // Empty filter matches all messages; otherwise get the filtered set
-            QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
-            filteredIds = store->queryMessages(&ignoredError, filter, QMessageOrdering(), 0, 0).toSet();
-        }
-        if (filter.isEmpty() || filteredIds.contains(id)) {
-            matchingFilterIds.insert(it.key());
-        }
-#else // TODO: test this alternative logic
         if (!filter.isSupported())
             continue;
 
-        QMessageStore::ErrorCode ignoredError;
+        QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
         QMessageFilter processedFilter(QMessageFilterPrivate::preprocess(&ignoredError, _self.toStrongRef(), filter));
         if (ignoredError != QMessageStore::NoError)
             continue;
 
         QMessage message(id);
         foreach (QMessageFilter subfilter, QMessageFilterPrivate::subfilters(processedFilter)) {
-            if (QMessageFilterPrivate::matchesMessage(filter, message, MapiStorePtr(store))) {
+            if (QMessageFilterPrivate::matchesMessage(subfilter, message, store)) {
                 matchingFilterIds.insert(it.key());
                 break; // subfilters are or'd together
             }
         }
-#endif
     }
 
     if (!matchingFilterIds.isEmpty()) {
