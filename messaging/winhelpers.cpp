@@ -2020,7 +2020,7 @@ LPMAPITABLE MapiFolder::queryBegin(QMessageStore::ErrorCode *lastError, const QM
     LPMAPITABLE messagesTable(0);
     HRESULT rv = _folder->GetContentsTable(MAPI_UNICODE, &messagesTable);
     if (HR_SUCCEEDED(rv)) {
-        SizedSPropTagArray(2, columns) = {5, {PR_ENTRYID, PR_RECORD_KEY}};
+        SizedSPropTagArray(2, columns) = {2, {PR_ENTRYID, PR_RECORD_KEY}};
         rv = messagesTable->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0);
         if (HR_SUCCEEDED(rv)) {
             if (!ordering.isEmpty()) {
