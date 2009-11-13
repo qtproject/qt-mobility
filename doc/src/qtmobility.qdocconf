@@ -42,8 +42,6 @@ base                    = file:./doc/html
 
 defines                 = Q_QDOC \
                           __cplusplus \
-                          QMESSAGING_OPTIONAL \
-                          QMESSAGING_OPTIONAL_FOLDER
 
 examples.fileextensions = "*.cpp *.h *.svg"
 

@@ -44,9 +44,7 @@
 #include "qdebug.h"
 #include "winhelpers_p.h"
 #include "qmessageaccountid_p.h"
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderid_p.h"
-#endif
 #include "qmessageid_p.h"
 #include "addresshelper_p.h"
 
@@ -357,7 +355,6 @@ bool QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, Mapi
                 }
             }
         }
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     } else if (filter->d_ptr->_field == FolderFilter) {
         if (filter->d_ptr->_folderFilter->isEmpty()) {
             result = ~result;  // match all for include, match none for exclude
@@ -380,7 +377,6 @@ bool QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, Mapi
                 result &= QMessageFilter::byAncestorFolderIds(folder->id(), QMessageDataComparator::Excludes);
             }
         }
-#endif
     } else {
         QMessageFilter *l(filter->d_ptr->_left);
         QMessageFilter *r(filter->d_ptr->_right);
@@ -1191,9 +1187,7 @@ QMessageFilterPrivate::QMessageFilterPrivate(QMessageFilter *messageFilter)
 #endif
     _messageFilter(0),
     _accountFilter(0),
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     _folderFilter(0),
-#endif
      _complex(false)
 {
 }
@@ -1263,10 +1257,8 @@ QMessageFilter QMessageFilterPrivate::nonContainerFiltersPart()
         result.d_ptr->_messageFilter = new QMessageFilter(*_messageFilter);
     if (_accountFilter)
         result.d_ptr->_accountFilter = new QMessageAccountFilter(*_accountFilter);
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     if (_folderFilter)
         result.d_ptr->_folderFilter = new QMessageFolderFilter(*_folderFilter);
-#endif
     result.d_ptr->_valid = _valid;
     result.d_ptr->_complex = _complex;
     return result;
@@ -1325,10 +1317,8 @@ QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
         d_ptr->_messageFilter = new QMessageFilter(*other.d_ptr->_messageFilter);
     if (other.d_ptr->_accountFilter)
         d_ptr->_accountFilter = new QMessageAccountFilter(*other.d_ptr->_accountFilter);
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     if (other.d_ptr->_folderFilter)
         d_ptr->_folderFilter = new QMessageFolderFilter(*other.d_ptr->_folderFilter);
-#endif
 
     if (other.d_ptr->_left)
         d_ptr->_left = new QMessageFilter(*other.d_ptr->_left);
@@ -1667,14 +1657,12 @@ bool QMessageFilter::operator==(const QMessageFilter& other) const
             || !(*other.d_ptr->_accountFilter == *d_ptr->_accountFilter))
             return false;
     }
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     if (other.d_ptr->_folderFilter || d_ptr->_folderFilter) {
         if (!other.d_ptr->_folderFilter
             || !d_ptr->_folderFilter
             || !(*other.d_ptr->_folderFilter == *d_ptr->_folderFilter))
             return false;
     }
-#endif
 
     if (d_ptr->_operator == QMessageFilterPrivate::Identity) {
         if (other.d_ptr->_operator != QMessageFilterPrivate::Identity)
@@ -2050,7 +2038,6 @@ QMessageFilter QMessageFilter::byStandardFolder(QMessage::StandardFolder folder,
     return result;
 }
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFilter QMessageFilter::byParentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageFilter result;
@@ -2144,4 +2131,3 @@ void QMessageFilterPrivate::debug(const QMessageFilter &filter, const QString &i
         QMessageFilterPrivate::debug(*filter.d_ptr->_right, indent + " ");
     }
 }
-#endif
