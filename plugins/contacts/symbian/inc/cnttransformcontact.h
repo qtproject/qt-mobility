@@ -60,8 +60,8 @@ public:
 	virtual ~CntTransformContact();
 
 public:
-	QContact transformContactL(CContactItem &contact, CContactDatabase &contactDatabase) const;
-	void transformExtraDetailsL(
+	QContact transformContactL(CContactItem &contact) const;
+	void transformPostSaveDetailsL(
 	        const CContactItem& contactItem,
 	        QContact& contact,
 	        const CContactDatabase &contactDatabase,
