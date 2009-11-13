@@ -187,39 +187,39 @@ QList<QContactLocalId> CntSymbianFilterDbms::contacts(
  * the filter is not supported. returns
  *
  * SupportedPreFilterOnly is returned in the following cases:
- * 1. matchFlags is set to Qt::MatchExactly (CntSymbianFilterDbms::contacts
- * will use Qt::MatchContains)
- * 2. matchFlags is set to Qt::MatchStartsWith (CntSymbianFilterDbms::contacts
- * will use Qt::MatchContains)
- * 3. matchFlags is set to Qt::MatchEndsWith (CntSymbianFilterDbms::contacts
- * will use Qt::MatchContains)
- * 4. matchFlags is set to Qt::MatchCaseSensitive (CntSymbianFilterDbms::contacts
- * will use Qt::MatchContains)
+ * 1. matchFlags is set to QContactFilter::MatchExactly (CntSymbianFilterDbms::contacts
+ * will use QContactFilter::MatchContains)
+ * 2. matchFlags is set to QContactFilter::MatchStartsWith (CntSymbianFilterDbms::contacts
+ * will use QContactFilter::MatchContains)
+ * 3. matchFlags is set to QContactFilter::MatchEndsWith (CntSymbianFilterDbms::contacts
+ * will use QContactFilter::MatchContains)
+ * 4. matchFlags is set to QContactFilter::MatchCaseSensitive (CntSymbianFilterDbms::contacts
+ * will use QContactFilter::MatchContains)
  */
 CntAbstractContactFilter::FilterSupport CntSymbianFilterDbms::filterSupported(const QContactFilter& filter)
 {
     FilterSupport filterSupported(NotSupported);
     if (filter.type() == QContactFilter::ContactDetailFilter) {
         const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
-        Qt::MatchFlags matchFlags = detailFilter.matchFlags();
+        QContactFilter::MatchFlags matchFlags = detailFilter.matchFlags();
 
         // Phone numbers
         if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName) {
-            if (matchFlags == Qt::MatchEndsWith)
+            if (matchFlags == QContactFilter::MatchEndsWith)
                 filterSupported = Supported;
-            else if (matchFlags == Qt::MatchExactly)
+            else if (matchFlags == QContactFilter::MatchExactly)
                 filterSupported = SupportedPreFilterOnly;
         }
         // Names
         else if (detailFilter.detailDefinitionName() == QContactName::DefinitionName
                 || detailFilter.detailDefinitionName() == QContactNickname::DefinitionName
                 || detailFilter.detailDefinitionName() == QContactEmailAddress::DefinitionName) {
-            Qt::MatchFlags supportedPreFilterFlags =
-                Qt::MatchExactly
-                & Qt::MatchStartsWith
-                & Qt::MatchEndsWith
-                & Qt::MatchCaseSensitive;
-            if (matchFlags == Qt::MatchContains) {
+            QContactFilter::MatchFlags supportedPreFilterFlags =
+                QContactFilter::MatchExactly
+                & QContactFilter::MatchStartsWith
+                & QContactFilter::MatchEndsWith
+                & QContactFilter::MatchCaseSensitive;
+            if (matchFlags == QContactFilter::MatchContains) {
                 filterSupported = Supported;
             }
             else if (matchFlags | supportedPreFilterFlags ==

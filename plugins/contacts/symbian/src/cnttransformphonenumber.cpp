@@ -263,7 +263,7 @@ quint32 CntTransformPhoneNumber::getIdForField(const QString& fieldName) const
         return 0;
     else if (QContactPhoneNumber::SubTypeDtmfMenu == fieldName)
         return KUidContactFieldDTMF.iUid;
-    else 
+    else
         return 0;
 }
 
@@ -274,19 +274,19 @@ quint32 CntTransformPhoneNumber::getIdForField(const QString& fieldName) const
  */
 void CntTransformPhoneNumber::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
     QContactDetailDefinition d;
     QVariantList subTypes;
 
     d.setName(QContactPhoneNumber::DefinitionName);
     fields.clear();
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
     fields.insert(QContactPhoneNumber::FieldNumber, f);
 
     // Sub-types
-    f.dataType = QVariant::StringList; // can implement multiple subtypes
+    f.setDataType(QVariant::StringList); // can implement multiple subtypes
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeAssistant));
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeBulletinBoardSystem));
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeCar));
@@ -295,7 +295,7 @@ void CntTransformPhoneNumber::detailDefinitions(QMap<QString, QContactDetailDefi
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeLandline));
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeMobile));
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypePager));
-    f.allowableValues = subTypes;
+    f.setAllowableValues(subTypes);
     fields.insert(QContactPhoneNumber::FieldSubTypes, f);
 
     // Contexts

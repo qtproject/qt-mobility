@@ -128,7 +128,7 @@ quint32 CntTransformNickname::getIdForField(const QString& fieldName) const
 {
     if (QContactNickname::FieldNickname == fieldName)
        return KUidContactFieldSecondName.iUid;
-    else 
+    else
        return 0;
 }
 
@@ -139,13 +139,13 @@ quint32 CntTransformNickname::getIdForField(const QString& fieldName) const
  */
 void CntTransformNickname::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
     QContactDetailDefinition d;
 
     d.setName(QContactNickname::DefinitionName);
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
     fields.insert(QContactNickname::FieldNickname, f);
 
     d.setFields(fields);

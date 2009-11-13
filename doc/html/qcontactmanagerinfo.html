@@ -14,7 +14,8 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactManagerInfo Class Reference</h1>
 <p>The QContactManagerInfo class provides information about a particular <a href="qcontactmanager.html">QContactManager</a>. <a href="#details">More...</a></p>
-<pre>    #include &lt;QContactManagerInfo&gt;</pre><ul>
+<pre>    #include &lt;QContactManagerInfo&gt;</pre><p><b>This class is deprecated.</b></p>
+<ul>
 <li><a href="qcontactmanagerinfo-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -23,21 +24,13 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerinfo.html#ManagerFeature-enum">ManagerFeature</a></b> { ChangeLogs, ActionPreferences, Groups, Relationships, ..., Anonymous }</td></tr>
 </table>
-<hr />
-<a name="public-functions"></a>
-<h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerinfo.html#filterSupported">filterSupported</a></b> ( const QContactFilter &amp; <i>filter</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerinfo.html#hasFeature">hasFeature</a></b> ( QContactManagerInfo::ManagerFeature <i>feature</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QVariant::Type&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerinfo.html#supportedDataTypes">supportedDataTypes</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerinfo.html#supportedRelationshipTypes">supportedRelationshipTypes</a></b> () const</td></tr>
-</table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QContactManagerInfo class provides information about a particular <a href="qcontactmanager.html">QContactManager</a>.</p>
 <p>This class allows managers to report information about their supported functionality to clients. The supported functionality of a manager includes which data types the backend supports, which definitions are natively filterable in the backend (and thus are high performance), and what capabilities the manager supports.</p>
 <p>If the manager that provided an information object is subsequently destroyed, the returned QContactManagerInfo object will be invalid.</p>
+<p>THIS CLASS IS DEPRECATED AND WILL BE REMOVED IN WEEK 47 - see commit SHA1: 948704fe9b83ef164f0c816897f67ef34654e510</p>
 <p>See also <a href="qcontactmanager.html">QContactManager</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
@@ -54,17 +47,6 @@
 <tr><td valign="top"><tt>QContactManagerInfo::SelfContact</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The manager supports the concept of saving a contact which represents the current user</td></tr>
 <tr><td valign="top"><tt>QContactManagerInfo::Anonymous</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">The manager is isolated from other managers</td></tr>
 </table></p>
-<hr />
-<h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="filterSupported"></a>bool QContactManagerInfo::filterSupported ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i> ) const</h3>
-<p>Returns true if the given <i>filter</i> is supported natively by the manager, and false if the filter behaviour would be emulated.</p>
-<p>Note: In some cases, the behaviour of an unsupported filter cannot be emulated. For example, a filter that requests contacts that have changed since a given time depends on having that information available. In these cases, the filter will fail.</p>
-<h3 class="fn"><a name="hasFeature"></a>bool QContactManagerInfo::hasFeature ( <a href="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ManagerFeature</a> <i>feature</i> ) const</h3>
-<p>Returns true if the given <i>feature</i> is supported by the manager from whom this information object was received.</p>
-<h3 class="fn"><a name="supportedDataTypes"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qvariant.html#Type-enum">QVariant::Type</a>&gt; QContactManagerInfo::supportedDataTypes () const</h3>
-<p>Returns the list of data types supported by the manager associated with this object.</p>
-<h3 class="fn"><a name="supportedRelationshipTypes"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QContactManagerInfo::supportedRelationshipTypes () const</h3>
-<p>Returns the list of relationship types which are supported by this backend. If the backend does not support the <tt>QContactManagerInfo::Relationships</tt> feature, this list should be empty. If the backend supports the <tt>QContactManagerInfo::Relationships</tt> feature and also supports the <tt>QContactManagerInfo::ArbitraryRelationshipTypes</tt> feature, the list will contain the natively supported (well-known) relationship types contained in the list, but clients are able to add relationships of any custom type also.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

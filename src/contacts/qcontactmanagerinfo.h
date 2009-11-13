@@ -48,6 +48,7 @@
 #include <QSharedDataPointer>
 
 #include "qtcontactsglobal.h"
+#include "qcontactdetails.h"
 
 class QContactFilter;
 
@@ -66,10 +67,10 @@ public:
         ChangeLogs
     };
 
-    bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
-    bool filterSupported(const QContactFilter& filter) const;
-    QList<QVariant::Type> supportedDataTypes() const;
-    QStringList supportedRelationshipTypes() const;
+    bool Q_DECL_DEPRECATED hasFeature(QContactManagerInfo::ManagerFeature feature, const QString& contactType = QContactType::TypeContact) const;
+    bool Q_DECL_DEPRECATED filterSupported(const QContactFilter& filter) const;
+    QList<QVariant::Type> Q_DECL_DEPRECATED supportedDataTypes() const;
+    QStringList Q_DECL_DEPRECATED supportedRelationshipTypes(const QString& contactType = QContactType::TypeContact) const;
 
 private:
     /* Can't instantiate apart from through manager */
@@ -88,4 +89,3 @@ private:
 };
 
 #endif
-
