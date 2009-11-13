@@ -5,7 +5,7 @@ TEMPLATE = lib
 
 # Target gets fixed up in common.pri
 TARGET = QtContacts
-DEFINES += BUILD_QTCONTACTS \
+DEFINES += QT_BUILD_CONTACTS_LIB QT_MAKEDLL\
     QT_ASCII_CAST_WARNINGS
 
 include(../../common.pri)

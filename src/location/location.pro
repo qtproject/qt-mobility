@@ -24,8 +24,7 @@ DEPENDPATH += .
 
 PUBLIC_HEADERS +=
 
-PUBLIC_HEADERS += qlocationglobal.h \
-                  qgeocoordinate.h \
+PUBLIC_HEADERS += qgeocoordinate.h \
                   qgeopositioninfo.h \
                   qgeosatelliteinfo.h \
                   qgeosatelliteinfosource.h \

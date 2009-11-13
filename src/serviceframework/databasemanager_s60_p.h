@@ -53,12 +53,12 @@
 // We mean it.
 //
 
+#include "qmobilityglobal.h"
 #include <QObject>
 #include <QList>
 
 #include <servicemetadata_p.h>
 #include "dberror_p.h"
-#include "qserviceglobal.h"
 #include <e32base.h>
 class QServiceFilter;
 

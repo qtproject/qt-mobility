@@ -61,7 +61,7 @@ class QContactDetailDefinitionFetchRequest;
 class QContactDetailDefinitionSaveRequest;
 class QContactDetailDefinitionRemoveRequest;
 
-class QTCONTACTS_EXPORT QContactRequestWorker : public QThread
+class Q_CONTACTS_EXPORT QContactRequestWorker : public QThread
 {
     Q_OBJECT
 

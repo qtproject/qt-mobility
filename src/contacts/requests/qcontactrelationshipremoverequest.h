@@ -48,7 +48,7 @@
 #include <QString>
 
 class QContactRelationshipRemoveRequestPrivate;
-class QTCONTACTS_EXPORT QContactRelationshipRemoveRequest : public QContactAbstractRequest
+class Q_CONTACTS_EXPORT QContactRelationshipRemoveRequest : public QContactAbstractRequest
 {
     Q_OBJECT
 

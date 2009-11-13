@@ -51,7 +51,7 @@
 #include "qtcontactsglobal.h"
 
 class QContactDetailDefinitionData;
-class QTCONTACTS_EXPORT QContactDetailDefinition
+class Q_CONTACTS_EXPORT QContactDetailDefinition
 {
     friend class QContactManager;
 
@@ -80,7 +80,7 @@ public:
     bool isUnique() const;
 
     /* Field Structure - a detail consists of one or more fields. */
-    struct QTCONTACTS_EXPORT Field {
+    struct Q_CONTACTS_EXPORT Field {
         Field() : dataType(QVariant::Invalid) {}
         QVariant::Type dataType;
         QVariantList allowableValues;

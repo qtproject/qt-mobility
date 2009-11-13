@@ -50,7 +50,7 @@
 #include "qcontact.h"
 
 /* Leaf class */
-class QTCONTACTS_EXPORT QContactOnlineAccount : public QContactDetail
+class Q_CONTACTS_EXPORT QContactOnlineAccount : public QContactDetail
 {
 public:
 #ifdef Q_QDOC

@@ -49,7 +49,7 @@
 #include <QList>
 
 class QContactSortOrderPrivate;
-class QTCONTACTS_EXPORT QContactSortOrder
+class Q_CONTACTS_EXPORT QContactSortOrder
 {
 public:
     QContactSortOrder();

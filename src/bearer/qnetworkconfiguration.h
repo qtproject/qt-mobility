@@ -42,7 +42,7 @@
 #ifndef QNETWORKCONFIGURATION_H
 #define QNETWORKCONFIGURATION_H
 
-#include "qbearerglobal.h"
+#include "qmobilityglobal.h"
 
 #include <QtCore/qshareddata.h>
 #include <QtCore/qstring.h>

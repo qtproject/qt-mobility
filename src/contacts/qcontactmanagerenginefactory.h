@@ -51,7 +51,7 @@
 
 /* Backend plugin API interface, creates engines for us */
 class QContactManagerEngine;
-class QTCONTACTS_EXPORT QContactManagerEngineFactory
+class Q_CONTACTS_EXPORT QContactManagerEngineFactory
 {
 public:
     virtual ~QContactManagerEngineFactory() {}

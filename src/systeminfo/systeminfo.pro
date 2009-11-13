@@ -6,8 +6,7 @@ QT+= network
 include(../../common.pri)
 
 # Input
-PUBLIC_HEADERS +=   qsysteminfo.h \
-                    qsysinfoglobal.h
+PUBLIC_HEADERS +=   qsysteminfo.h
 SOURCES += qsysteminfo.cpp
 DEFINES += QT_BUILD_SYSINFO_LIB QT_MAKEDLL
 

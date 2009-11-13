@@ -60,7 +60,7 @@
 class QContactFilter;
 class QContactSortOrder;
 
-class QTCONTACTS_EXPORT QContactManagerEngine : public QObject
+class Q_CONTACTS_EXPORT QContactManagerEngine : public QObject
 {
     Q_OBJECT
 

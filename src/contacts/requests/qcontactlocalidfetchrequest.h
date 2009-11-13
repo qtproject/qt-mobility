@@ -51,7 +51,7 @@
 #include <QStringList>
 
 class QContactLocalIdFetchRequestPrivate;
-class QTCONTACTS_EXPORT QContactLocalIdFetchRequest : public QContactAbstractRequest
+class Q_CONTACTS_EXPORT QContactLocalIdFetchRequest : public QContactAbstractRequest
 {
     Q_OBJECT
 

@@ -42,21 +42,8 @@
 #ifndef QTCONTACTSGLOBAL_H
 #define QTCONTACTSGLOBAL_H
 
-#if defined(QTM_BUILD_UNITTESTS)
-# include <qconfig.h>
-# if !defined(QT_BUILD_INTERNAL)
-#   define QT_BUILD_INTERNAL
-# endif
-#endif
-
-#include <qglobal.h>
+#include <qmobilityglobal.h>
 #include <QString>
-
-#ifdef BUILD_QTCONTACTS
-#define QTCONTACTS_EXPORT Q_DECL_EXPORT
-#else
-#define QTCONTACTS_EXPORT Q_DECL_IMPORT
-#endif
 
 typedef quint32 QContactLocalId; // XXX Put this else where
 
