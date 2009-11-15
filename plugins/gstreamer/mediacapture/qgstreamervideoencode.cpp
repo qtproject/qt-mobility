@@ -46,8 +46,8 @@
 
 #include <math.h>
 
-QGstreamerVideoEncode::QGstreamerVideoEncode(QObject *parent)
-    :QVideoEncoderControl(parent)
+QGstreamerVideoEncode::QGstreamerVideoEncode(QGstreamerCaptureSession *session)
+    :QVideoEncoderControl(session), m_session(session)
 {
     QList<QByteArray> codecCandidates;
     codecCandidates << "video/h264" << "video/xvid" << "video/mpeg4" << "video/mpeg1" << "video/mpeg2" << "video/theora";
@@ -98,15 +98,7 @@ QSize QGstreamerVideoEncode::maximumResolution() const
 
 QList<QSize> QGstreamerVideoEncode::supportedResolutions() const
 {
-    QList<QSize> res;
-    res << QSize(160, 120);
-    res << QSize(320, 240);
-    res << QSize(640, 480);
-    res << QSize(800, 600);
-    res << QSize(960, 720);
-    res << QSize(1600, 1200);
-
-    return res;
+    return m_session->videoInput() ? m_session->videoInput()->supportedResolutions() : QList<QSize>();
 }
 
 qreal QGstreamerVideoEncode::minimumFrameRate() const
@@ -121,9 +113,7 @@ qreal QGstreamerVideoEncode::maximumFrameRate() const
 
 QList< qreal > QGstreamerVideoEncode::supportedFrameRates() const
 {
-    QList<qreal> res;
-    res << 30.0 << 25.0 << 15.0 << 10.0 << 5.0;
-    return res;
+    return m_session->videoInput() ? m_session->videoInput()->supportedFrameRates() : QList<qreal>();
 }
 
 QStringList QGstreamerVideoEncode::supportedVideoCodecs() const

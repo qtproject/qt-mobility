@@ -66,6 +66,13 @@ public:
     virtual void prepareWinId() {}
 };
 
+class QGstreamerVideoInput : public QGstreamerElementFactory
+{
+public:
+    virtual QList<qreal> supportedFrameRates(const QSize &frameSize = QSize()) const = 0;
+    virtual QList<QSize> supportedResolutions(qreal frameRate = -1) const = 0;
+};
+
 class QGstreamerCaptureSession : public QObject, public QGstreamerSyncEventFilter
 {
     Q_OBJECT
@@ -89,10 +96,16 @@ public:
     QGstreamerRecorderControl *recorderControl() const { return m_recorderControl; }
     QGstreamerMediaFormatControl *mediaFormatControl() const { return m_mediaFormatControl; }
 
+    QGstreamerElementFactory *audioInput() const { return m_audioInputFactory; }
     void setAudioInput(QGstreamerElementFactory *audioInput);
+
+    QGstreamerElementFactory *audioPreview() const { return m_audioPreviewFactory; }
     void setAudioPreview(QGstreamerElementFactory *audioPreview);
 
-    void setVideoInput(QGstreamerElementFactory *videoInput);
+    QGstreamerVideoInput *videoInput() const { return m_videoInputFactory; }
+    void setVideoInput(QGstreamerVideoInput *videoInput);
+
+    QGstreamerElementFactory *videoPreview() const { return m_videoPreviewFactory; }
     void setVideoPreview(QGstreamerElementFactory *videoPreview);
 
     void captureImage(const QString &fileName);
@@ -142,7 +155,7 @@ private:
 
     QGstreamerElementFactory *m_audioInputFactory;
     QGstreamerElementFactory *m_audioPreviewFactory;
-    QGstreamerElementFactory *m_videoInputFactory;
+    QGstreamerVideoInput *m_videoInputFactory;
     QGstreamerElementFactory *m_videoPreviewFactory;
 
     QGstreamerAudioEncode *m_audioEncodeControl;

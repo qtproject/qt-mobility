@@ -46,7 +46,7 @@
 #include <experimental/qcameracontrol.h>
 #include "qgstreamercapturesession.h"
 
-class QGstreamerCameraControl : public QCameraControl, public QGstreamerElementFactory
+class QGstreamerCameraControl : public QCameraControl, public QGstreamerVideoInput
 {
     Q_OBJECT
 public:
@@ -62,6 +62,9 @@ public:
     void start();
     void stop();
 
+    QList<qreal> supportedFrameRates(const QSize &frameSize = QSize()) const;
+    QList<QSize> supportedResolutions(qreal frameRate = -1) const;
+
 public slots:
     void setDevice(const QString &device);
 
@@ -69,6 +72,13 @@ private slots:
     void updateState();
 
 private:
+    void updateSupportedResolutions(const QString &device);
+
+    QList<qreal> m_frameRates;
+    QList<QSize> m_resolutions;
+
+    QHash<QSize, QSet<int> > m_ratesByResolution;
+
     QGstreamerCaptureSession *m_session;
     QByteArray m_device;
     QCamera::State m_state;

@@ -46,8 +46,8 @@
 
 #include <math.h>
 
-QGstreamerImageEncode::QGstreamerImageEncode(QObject *parent)
-    :QImageEncoderControl(parent)
+QGstreamerImageEncode::QGstreamerImageEncode(QGstreamerCaptureSession *session)
+    :QImageEncoderControl(session), m_session(session)
 {
 }
 
@@ -67,15 +67,7 @@ QSize QGstreamerImageEncode::maximumResolution() const
 
 QList<QSize> QGstreamerImageEncode::supportedResolutions() const
 {
-    QList<QSize> res;
-    res << QSize(160, 120);
-    res << QSize(320, 240);
-    res << QSize(640, 480);
-    res << QSize(800, 600);
-    res << QSize(960, 720);
-    res << QSize(1600, 1200);
-
-    return res;
+    return m_session->videoInput() ? m_session->videoInput()->supportedResolutions() : QList<QSize>();
 }
 
 QStringList QGstreamerImageEncode::supportedImageCodecs() const
