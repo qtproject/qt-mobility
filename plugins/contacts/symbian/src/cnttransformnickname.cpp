@@ -128,29 +128,32 @@ quint32 CntTransformNickname::getIdForField(const QString& fieldName) const
 {
     if (QContactNickname::FieldNickname == fieldName)
        return KUidContactFieldSecondName.iUid;
-    else 
+    else
        return 0;
 }
 
 /*!
- * Adds the detail definitions for the details this transform class supports.
+ * Modifies the detail definitions. The default detail definitions are
+ * queried from QContactManagerEngine::schemaDefinitions and then modified
+ * with this function in the transform leaf classes.
  *
- * \a definitions On return, the supported detail definitions have been added.
+ * \a definitions The detail definitions to modify.
+ * \a contactType The contact type the definitions apply for.
  */
-void CntTransformNickname::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformNickname::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
-    QContactDetailDefinition d;
+    Q_UNUSED(contactType);
 
-    d.setName(QContactNickname::DefinitionName);
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
-    fields.insert(QContactNickname::FieldNickname, f);
+    if(definitions.contains(QContactNickname::DefinitionName)) {
+        QContactDetailDefinition d = definitions.value(QContactNickname::DefinitionName);
+        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
 
-    d.setFields(fields);
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+        // Context not supported in symbian back-end, remove
+        fields.remove(QContactNickname::FieldContext);
 
-    definitions.insert(d.name(), d);
+        d.setFields(fields);
+
+        // Replace original definitions
+        definitions.insert(d.name(), d);
+    }
 }

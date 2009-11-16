@@ -122,9 +122,7 @@ public:
     QMessageAccountId parentAccountId() const;
     void setParentAccountId(const QMessageAccountId &accountId);
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderId parentFolderId() const;
-#endif
 
     StandardFolder standardFolder() const;
 

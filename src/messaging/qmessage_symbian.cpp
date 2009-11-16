@@ -149,12 +149,10 @@ void QMessage::setParentAccountId(const QMessageAccountId &accountId)
     d_ptr->_parentAccountId = accountId;
 }
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderId QMessage::parentFolderId() const
 {
     return QMessageFolderId(); // stub
 }
-#endif
 
 QMessage::StandardFolder QMessage::standardFolder() const
 {

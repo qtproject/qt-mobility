@@ -147,7 +147,6 @@ QGeoPositionInfo CQGeoPositionInfoSourceS60::getLastknownPositionS60(TPositionMo
     //request for lastknown position update and wait for the request to complete
     if (error == KErrNone) {
         TPositionInfo posInfo;
-        TReal val;
 
         iLastKnownpositioner.SetRequestor(CRequestor::ERequestorService ,
                                           CRequestor::EFormatApplication, _L("QTmobility_Location"));
@@ -174,7 +173,7 @@ QGeoPositionInfo CQGeoPositionInfoSourceS60::getLastknownPositionS60(TPositionMo
             posUpdate.setCoordinate(coord);
 
             TDateTime datetime = pos.Time().DateTime();
-            QDateTime dt(QDate(datetime.Year(),datetime.Month(),datetime.Day()),
+            QDateTime dt(QDate(datetime.Year(),datetime.Month()+1,datetime.Day()+1),
                          QTime(datetime.Hour(),datetime.Minute(),datetime.Second(),
                                datetime.MicroSecond()/1000));
 
@@ -211,8 +210,6 @@ QGeoPositionInfo CQGeoPositionInfoSourceS60::lastKnownPosition(bool aFromSatelli
 
         else if (mSupportedMethods & SatellitePositioningMethods) {
             bits = mModuleFlags;
-
-            PositioningMethod method = SatellitePositioningMethods;
 
             do {
                 index = getIndexPositionModule(bits);
@@ -375,7 +372,7 @@ TInt CQGeoPositionInfoSourceS60::getMoreAccurateMethod(TInt aTimeout,TUint8 aBit
 void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo,TInt aStatus)
 {
 
-    TInt i,error, index;
+    TInt i, index;
     TPositionModuleId id;
     PositioningMethod method;
     TBool available;
@@ -507,7 +504,6 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo,TInt 
 
                 delete  mRegUpdateAO;
 
-                error = -1;
 
                 bits = mModuleFlags;
 

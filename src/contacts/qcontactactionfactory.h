@@ -55,7 +55,7 @@
 #include <QHash>
 
 class QContactAction;
-class QTCONTACTS_EXPORT QContactActionFactory : public QObject
+class Q_CONTACTS_EXPORT QContactActionFactory : public QObject
 {
     Q_OBJECT
 

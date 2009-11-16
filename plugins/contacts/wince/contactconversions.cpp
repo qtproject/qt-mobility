@@ -40,10 +40,8 @@
 ****************************************************************************/
 #include <QDebug>
 
-#include "qcontact_p.h"
 #include "qcontactmanager.h"
-#include "qcontactmanager_p.h"
-
+#include "qtcontacts.h"
 #include "qcontactwincebackend_p.h"
 
 /*!
@@ -832,10 +830,10 @@ QContact QContactWinCEEngine::convertToQContact(IItem *contact) const
     // Now, we need to check whether we got a display label
     QContactDisplayLabel label = ret.displayLabel();
     QContactManager::Error error;
-    QString synth = synthesiseDisplayLabel(ret, error);
+    QString synth = synthesizeDisplayLabel(ret, error);
     if (label.label().isEmpty() || label.label() == synth) {
         label.setLabel(synth);
-        label.setSynthesised(true);
+        label.setSynthesized(true);
         ret.saveDetail(&label);
     }
 
@@ -1169,7 +1167,7 @@ QString QContactWinCEEngine::convertFilterToQueryString(const QContactFilter& fi
             {
                 const QContactDetailFilter cdf(filter);
                 //XXX Only exact match can be supported?
-                if (cdf.matchFlags() == Qt::MatchExactly && cdf.value().isValid()) {
+                if (cdf.matchFlags() == QContactFilter::MatchExactly && cdf.value().isValid()) {
                     QList<CEPROPID> ids = convertToCEPropIds(cdf.detailDefinitionName(), cdf.detailFieldName());
                     if (!ids.isEmpty()) {
                         QStringList strList;
@@ -1188,7 +1186,7 @@ QString QContactWinCEEngine::convertFilterToQueryString(const QContactFilter& fi
             {
                 const QContactDetailRangeFilter cdf(filter);
                 //XXX Only exact match can be supported?
-                if (cdf.matchFlags() == Qt::MatchExactly && (cdf.minValue().isValid() || cdf.maxValue().isValid())) {
+                if (cdf.matchFlags() == QContactFilter::MatchExactly && (cdf.minValue().isValid() || cdf.maxValue().isValid())) {
                     QList<CEPROPID> ids = convertToCEPropIds(cdf.detailDefinitionName(), cdf.detailFieldName());
                     if (!ids.isEmpty()) {
                         const QString minComp = cdf.rangeFlags() & QContactDetailRangeFilter::ExcludeLower ? ">" : ">=";

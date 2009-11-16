@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderordering.h"
 #include "qmessagefolderordering_p.h"
 
@@ -145,4 +144,3 @@ bool QMessageFolderOrdering::operator!=(const QMessageFolderOrdering& other) con
 
     \sa QMessageFolder::path()
 */
-#endif

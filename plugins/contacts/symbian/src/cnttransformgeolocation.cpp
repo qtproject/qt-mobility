@@ -184,50 +184,22 @@ quint32 CntTransformGeolocation::getIdForField(const QString& fieldName) const
         return 0;
     else if (QContactGeolocation::FieldTimestamp == fieldName)
         return 0;
-    else 
+    else
         return 0;
 
 }
 
 /*!
- * Adds the detail definitions for the details this transform class supports.
+ * Modifies the detail definitions. The default detail definitions are
+ * queried from QContactManagerEngine::schemaDefinitions and then modified
+ * with this function in the transform leaf classes.
  *
- * \a definitions On return, the supported detail definitions have been added.
+ * \a definitions The detail definitions to modify.
+ * \a contactType The contact type the definitions apply for.
  */
-void CntTransformGeolocation::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformGeolocation::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
-    QContactDetailDefinition d;
-
-    // Geolocation fields
-    d.setName(QContactGeolocation::DefinitionName);
-    fields.clear();
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
-    fields.insert(QContactGeolocation::FieldLabel, f);
-    f.dataType = QVariant::Double;
-    fields.insert(QContactGeolocation::FieldLatitude, f);
-    fields.insert(QContactGeolocation::FieldLongitude, f);
-    /*
-    TODO:
-    fields.insert(QContactGeolocation::FieldAccuracy, f);
-    fields.insert(QContactGeolocation::FieldAltitude, f);
-    fields.insert(QContactGeolocation::FieldAltitudeAccuracy, f);
-    fields.insert(QContactGeolocation::FieldSpeed, f);
-    fields.insert(QContactGeolocation::FieldHeading, f);
-    f.dataType = QVariant::DateTime;
-    fields.insert(QContactGeolocation::FieldTimestamp, f);
-    */
-
-    // Contexts
-    f.dataType = QVariant::StringList;
-    f.allowableValues << QString(QLatin1String(QContactDetail::ContextHome)) << QString(QLatin1String(QContactDetail::ContextWork)) << QString(QLatin1String(QContactDetail::ContextOther));
-    fields.insert(QContactDetail::FieldContext, f);
-
-    d.setFields(fields);
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-
-    definitions.insert(d.name(), d);
+    Q_UNUSED(definitions);
+    Q_UNUSED(contactType);
+    // Does not modify the default schema
 }

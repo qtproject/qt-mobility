@@ -50,7 +50,7 @@
 #include "qcontact.h"
 
 /* Leaf class */
-class QTCONTACTS_EXPORT QContactGeolocation : public QContactDetail
+class Q_CONTACTS_EXPORT QContactGeolocation : public QContactDetail
 {
 public:
 #ifdef Q_QDOC

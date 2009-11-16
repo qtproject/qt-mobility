@@ -53,7 +53,7 @@
 
 class QContactActionDescriptor;
 class QContactActionData;
-class QTCONTACTS_EXPORT QContactAction : public QObject
+class Q_CONTACTS_EXPORT QContactAction : public QObject
 {
     Q_OBJECT
 

@@ -6,7 +6,7 @@ include(../../common.pri)
 
 DEFINES += QT_BUILD_SFW_LIB QT_MAKEDLL
 
-PUBLIC_HEADERS +=  qserviceglobal.h \
+PUBLIC_HEADERS += \
             qservicemanager.h \
             qserviceplugininterface.h \
             qservicecontext.h \

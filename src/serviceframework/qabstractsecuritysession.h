@@ -42,7 +42,7 @@
 #ifndef QABSTRACTSECURITYSESSION_H
 #define QABSTRACTSECURITYSESSION_H
 
-#include "qserviceglobal.h"
+#include "qmobilityglobal.h"
 #include <QObject>
 
 QT_BEGIN_HEADER

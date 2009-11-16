@@ -44,7 +44,7 @@
 
 #include <QString>
 #include <QVariant>
-#include "qserviceglobal.h"
+#include "qmobilityglobal.h"
 
 #ifdef SERVICE_XML_GENERATOR
 #undef Q_SFW_EXPORT

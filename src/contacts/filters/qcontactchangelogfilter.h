@@ -47,7 +47,7 @@
 #include <QDateTime>
 
 class QContactChangeLogFilterPrivate;
-class QTCONTACTS_EXPORT QContactChangeLogFilter: public QContactFilter
+class Q_CONTACTS_EXPORT QContactChangeLogFilter: public QContactFilter
 {
 public:
     enum EventType {

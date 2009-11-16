@@ -143,11 +143,8 @@ private slots:
     void testAccount_data();
     void testAccount();
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
-
     void testFolder_data();
     void testFolder();
-#endif
 
     void testMessage_data();
     void testMessage();
@@ -212,8 +209,6 @@ void tst_QMessageStore::testAccount()
     QVERIFY(accountIds.contains(accountId));
 }
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
-
 void tst_QMessageStore::testFolder_data()
 {
     QTest::addColumn<QString>("path");
@@ -234,23 +229,6 @@ void tst_QMessageStore::testFolder()
     static const QString testAccountName("testAccount");
     QMessageAccountId testAccountId;
     QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter::byName(testAccountName)));
-#if defined(Q_OS_WIN) && !defined(ACCOUNT_FILTERING_IMPLEMENTED)
-{
-    // Filtering is not implemented yet
-    QMessageAccountIdList::iterator it = accountIds.begin(), end = accountIds.end();
-    while (it != end) {
-        QMessageAccount acct(*it);
-        if (acct.name() == testAccountName) {
-            accountIds.clear();
-            accountIds.append(acct.id());
-            break;
-        }
-        if (++it == end) {
-            accountIds.clear();
-        }
-    }
-}
-#endif
     if (accountIds.isEmpty()) {
         Support::Parameters p;
         p.insert("name", testAccountName);
@@ -288,23 +266,6 @@ void tst_QMessageStore::testFolder()
     if (!parentFolderPath.isEmpty()) {
         QMessageFolderFilter filter(QMessageFolderFilter::byPath(parentFolderPath) & QMessageFolderFilter::byParentAccountId(testAccountId));
         QMessageFolderIdList list(QMessageStore::instance()->queryFolders(filter));
-#if defined(Q_OS_WIN) && !defined(FOLDER_FILTERING_IMPLEMENTED)
-{
-    // Filtering is not implemented yet
-    QMessageFolderIdList::iterator it = list.begin(), end = list.end();
-    while (it != end) {
-        QMessageFolder fldr(*it);
-        if ((fldr.parentAccountId() == testAccountId) && (fldr.path() == parentFolderPath)) {
-            list.clear();
-            list.append(fldr.id());
-            break;
-        }
-        if (++it == end) {
-            list.clear();
-        }
-    }
-}
-#endif
         QMessageFolderId parentFolderId(list.first());
         QCOMPARE(folder.parentFolderId(), parentFolderId);
     }
@@ -312,8 +273,6 @@ void tst_QMessageStore::testFolder()
     QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders());
     QVERIFY(folderIds.contains(folderId));
 }
-
-#endif
 
 Q_DECLARE_METATYPE(QList<QByteArray>)
 Q_DECLARE_METATYPE(QList<unsigned>)
@@ -334,7 +293,7 @@ void tst_QMessageStore::testMessage_data()
     QTest::addColumn<QByteArray>("bodyType");
     QTest::addColumn<QByteArray>("bodySubType");
     QTest::addColumn<unsigned>("bodySize");
-    QTest::addColumn<QStringList>("attachments");
+    QTest::addColumn<QList<QByteArray> >("attachments");
     QTest::addColumn<QList<QByteArray> >("attachmentType");
     QTest::addColumn<QList<QByteArray> >("attachmentSubType");
     QTest::addColumn<QList<unsigned> >("attachmentSize");
@@ -356,7 +315,7 @@ void tst_QMessageStore::testMessage_data()
         << QByteArray("text")
         << QByteArray("plain")
         << 24u
-        << QStringList()
+        << QList<QByteArray>()
         << QList<QByteArray>()
         << QList<QByteArray>()
         << QList<unsigned>()
@@ -374,7 +333,7 @@ void tst_QMessageStore::testMessage_data()
         << QByteArray("text")
         << QByteArray("html")
         << 64u
-        << QStringList()
+        << QList<QByteArray>()
         << QList<QByteArray>()
         << QList<QByteArray>()
         << QList<unsigned>()
@@ -392,7 +351,7 @@ void tst_QMessageStore::testMessage_data()
         << QByteArray("text")
         << QByteArray("plain")
         << 24u
-        << ( QStringList() << "1.txt" )
+        << ( QList<QByteArray>() << "1.txt" )
         << ( QList<QByteArray>() << "text" )
         << ( QList<QByteArray>() << "plain" )
         << ( QList<unsigned>() << 512u )
@@ -405,12 +364,16 @@ void tst_QMessageStore::testMessage_data()
         << "Last HTML message..."
         << QByteArray("multipart")
         << QByteArray("mixed")
+#if defined(Q_OS_WIN) && !defined(_WIN32_WCE)
+        << 5120u
+#else
         << 4096u
+#endif
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
         << QByteArray("html")
         << 64u
-        << ( QStringList() << "1.txt" << "qtlogo.png" )
+        << ( QList<QByteArray>() << "1.txt" << "qtlogo.png" )
         << ( QList<QByteArray>() << "text" << "image" )
         << ( QList<QByteArray>() << "plain" << "png" )
         << ( QList<unsigned>() << 512u << 4096u )
@@ -424,23 +387,6 @@ void tst_QMessageStore::testMessage()
 
     QMessageAccountId testAccountId;
     QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter::byName(testAccountName)));
-#if defined(Q_OS_WIN) && !defined(ACCOUNT_FILTERING_IMPLEMENTED)
-{
-    // Filtering is not implemented yet
-    QMessageAccountIdList::iterator it = accountIds.begin(), end = accountIds.end();
-    while (it != end) {
-        QMessageAccount acct(*it);
-        if (acct.name() == testAccountName) {
-            accountIds.clear();
-            accountIds.append(acct.id());
-            break;
-        }
-        if (++it == end) {
-            accountIds.clear();
-        }
-    }
-}
-#endif
     if (accountIds.isEmpty()) {
         Support::Parameters p;
         p.insert("name", testAccountName);
@@ -451,27 +397,9 @@ void tst_QMessageStore::testMessage()
     }
     QVERIFY(testAccountId.isValid());
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderId testFolderId;
     QMessageFolderFilter filter(QMessageFolderFilter::byDisplayName("Inbox") & QMessageFolderFilter::byParentAccountId(testAccountId));
     QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(filter));
-#if defined(Q_OS_WIN) && !defined(FOLDER_FILTERING_IMPLEMENTED)
-{
-    // Filtering is not implemented yet
-    QMessageFolderIdList::iterator it = folderIds.begin(), end = folderIds.end();
-    while (it != end) {
-        QMessageFolder fldr(*it);
-        if ((fldr.parentAccountId() == testAccountId) && (fldr.displayName() == "Inbox")) {
-            folderIds.clear();
-            folderIds.append(fldr.id());
-            break;
-        }
-        if (++it == end) {
-            folderIds.clear();
-        }
-    }
-}
-#endif
     if (folderIds.isEmpty()) {
         Support::Parameters p;
         p.insert("path", "Inbox");
@@ -484,7 +412,6 @@ void tst_QMessageStore::testMessage()
     QVERIFY(testFolderId.isValid());
 
     QMessageFolder testFolder(testFolderId);
-#endif
 
     SignalCatcher catcher;
     connect(QMessageStore::instance(), SIGNAL(messageAdded(QMessageId, QMessageStore::NotificationFilterIdSet)), &catcher, SLOT(messageAdded(QMessageId, QMessageStore::NotificationFilterIdSet)));
@@ -508,7 +435,7 @@ void tst_QMessageStore::testMessage()
     QFETCH(QByteArray, bodyType);
     QFETCH(QByteArray, bodySubType);
     QFETCH(unsigned, bodySize);
-    QFETCH(QStringList, attachments);
+    QFETCH(QList<QByteArray>, attachments);
     QFETCH(QList<QByteArray>, attachmentType);
     QFETCH(QList<QByteArray>, attachmentSubType);
     QFETCH(QList<unsigned>, attachmentSize);
@@ -522,9 +449,8 @@ void tst_QMessageStore::testMessage()
     p.insert("mimeType", bodyType + '/' + bodySubType);
     p.insert("text", text);
     p.insert("parentAccountName", testAccountName);
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     p.insert("parentFolderPath", testFolder.path());
-#endif
+
     if (!attachments.isEmpty()) {
         QStringList attachmentPaths;
         foreach (const QString &fileName, attachments) {
@@ -541,16 +467,17 @@ void tst_QMessageStore::testMessage()
     QVERIFY(messageId != QMessageId());
     QCOMPARE(QMessageStore::instance()->countMessages(), originalCount + 1);
 
+#if defined(Q_OS_WIN)
+	// Give MAPI enough time to emit the message added notification
+	QTest::qSleep(1000);
+#endif
     while (QCoreApplication::hasPendingEvents())
         QCoreApplication::processEvents();
 
     QCOMPARE(catcher.added.count(), 1);
     QCOMPARE(catcher.added.first().first, messageId);
-#ifndef Q_OS_WIN
-    // Filters not yet implemented on windows
     QCOMPARE(catcher.added.first().second.count(), 2);
     QCOMPARE(catcher.added.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2->id << filter3->id);
-#endif
 
     QMessage message(messageId);
     QCOMPARE(message.id(), messageId);
@@ -599,11 +526,15 @@ void tst_QMessageStore::testMessage()
         QCOMPARE(attachmentId != QMessageContentContainerId(), true);
         QCOMPARE(QMessageContentContainerId(attachmentId.toString()), attachmentId);
 
+        // With MAPI, attachment order is not preserved
         QMessageContentContainer attachment(message.find(attachmentId));
-        QCOMPARE(attachment.contentType().toLower(), attachmentType[i].toLower());
-        QCOMPARE(attachment.contentSubType().toLower(), attachmentSubType[i].toLower());
-        QCOMPARE(attachment.suggestedFileName(), attachments[i].toAscii());
-        QAPPROXIMATECOMPARE(attachment.size(), attachmentSize[i], (attachmentSize[i] / 2));
+        int index = attachments.indexOf(attachment.suggestedFileName());
+        QVERIFY(index != -1);
+
+        QCOMPARE(attachment.contentType().toLower(), attachmentType[index].toLower());
+        QCOMPARE(attachment.contentSubType().toLower(), attachmentSubType[index].toLower());
+        QCOMPARE(attachment.suggestedFileName(), attachments[index]);
+        QAPPROXIMATECOMPARE(attachment.size(), attachmentSize[index], (attachmentSize[index] / 2));
     }
 
     QMessageIdList messageIds(QMessageStore::instance()->queryMessages());
@@ -625,17 +556,17 @@ void tst_QMessageStore::testMessage()
     QMessageStore::instance()->updateMessage(&message);
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
 
+#if defined(Q_OS_WIN)
+	QTest::qSleep(1000);
+#endif
     while (QCoreApplication::hasPendingEvents())
         QCoreApplication::processEvents();
 
     // MAPI generates multiple update notifications per message updated
     QVERIFY(catcher.updated.count() > 0);
     QCOMPARE(catcher.updated.first().first, messageId);
-#ifndef Q_OS_WIN
-    // Filters not yet implemented on windows
     QCOMPARE(catcher.updated.first().second.count(), 2);
     QCOMPARE(catcher.updated.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2->id << filter3->id);
-#endif
 
     QMessage updated(message.id());
 
@@ -662,15 +593,15 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
     QCOMPARE(QMessageStore::instance()->countMessages(), originalCount);
 
+#if defined(Q_OS_WIN)
+	QTest::qSleep(1000);
+#endif
     while (QCoreApplication::hasPendingEvents())
         QCoreApplication::processEvents();
 
     QCOMPARE(removeCatcher.removed.count(), 1);
     QCOMPARE(removeCatcher.removed.first().first, messageId);
-#ifndef Q_OS_WIN
-    // Filters not yet implemented on windows
     QCOMPARE(removeCatcher.removed.first().second.count(), 1);
     QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageStore::NotificationFilterId>() << filter3->id);
-#endif
 }
 

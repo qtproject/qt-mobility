@@ -38,43 +38,44 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QLOCATIONGLOBAL_H
-#define QLOCATIONGLOBAL_H
+#include <QObject>
 
-#if defined(QTM_BUILD_UNITTESTS)
-# include <qconfig.h>
-# if !defined(QT_BUILD_INTERNAL)
-#   define QT_BUILD_INTERNAL
-# endif
-#endif
+class CntSymbianEngine;
 
-#include <QtCore/qglobal.h>
+class TestSymbianEngine : public QObject
+{
+    Q_OBJECT
 
-#if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
-#  if defined(QT_NODLL)
-#    undef QT_MAKEDLL
-#    undef QT_DLL
-#  elif defined(QT_MAKEDLL)
-#    if defined(QT_DLL)
-#      undef QT_DLL
-#    endif
-#    if defined(QT_BUILD_LOCATION_LIB)
-#      define Q_LOCATION_EXPORT Q_DECL_EXPORT
-#    else
-#      define Q_LOCATION_EXPORT Q_DECL_IMPORT
-#    endif
-#  elif defined(QT_DLL) /* use a Qt DLL library */
-#    define Q_LOCATION_EXPORT Q_DECL_IMPORT
-#  endif
-#else
-#endif
+private slots:
+    void initTestCase();    
+    void cleanupTestCase();
+    
+    void init();
+    void cleanup();
+    
+    void ctors();
+    void saveContact();
+    void saveContacts();
+    void retrieveContact();
+    void retrieveContacts();
+    void updateContact();
+    void removeContact();
+    void removeContacts();
+    void addOwnCard();
+    void retrieveOwnCard();
+    void filterSupport();
+    void featureSupport();
+    void addGroup();
+    void retrieveGroup();
+    void singleRelationship();
+    void batchRelationships();
+    void dataTypeSupport();
+    void synthesizeDisplaylable();
+    void definitionDetails();
+    
+private:
+    void removeAllContacts();
 
-#if !defined(Q_LOCATION_EXPORT)
-#  if defined(QT_SHARED)
-#    define Q_LOCATION_EXPORT Q_DECL_EXPORT
-#  else
-#    define Q_LOCATION_EXPORT
-#  endif
-#endif
-
-#endif
+private:
+    CntSymbianEngine   *m_engine;
+};

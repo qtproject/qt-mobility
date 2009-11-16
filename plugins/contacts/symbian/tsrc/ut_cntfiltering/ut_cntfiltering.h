@@ -38,43 +38,48 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <QObject>
+#include <QHash>
+#include <qcontactfilter.h>
+#include <qcontactmanager.h>
 
-#ifndef QMULTIMEDIAGLOBAL_H
-#define QMULTIMEDIAGLOBAL_H
+class CntSymbianFilterSqlHelper;
 
-#if defined(QTM_BUILD_UNITTESTS)
-# include <qconfig.h>
-# if !defined(QT_BUILD_INTERNAL)
-#   define QT_BUILD_INTERNAL
-# endif
-#endif
-#include <QtCore/qglobal.h>
+typedef struct {
+    QContactFilter filter;
+    QString name;
+    int result;
+    int error;
+} TFilter;
 
-#if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
-#  if defined(QT_NODLL)
-#    undef QT_MAKEDLL
-#    undef QT_DLL
-#  elif defined(QT_MAKEDLL)
-#    if defined(QT_DLL)
-#      undef QT_DLL
-#    endif
-#    if defined(QT_BUILD_MEDIA_LIB)
-#      define Q_MEDIA_EXPORT Q_DECL_EXPORT
-#    else
-#      define Q_MEDIA_EXPORT Q_DECL_IMPORT
-#    endif
-#  elif defined(QT_DLL) /* use a Qt DLL library */
-#    define Q_MEDIA_EXPORT Q_DECL_IMPORT
-#  endif
-#else
-#endif
+class TestFiltering : public QObject
+{
+    Q_OBJECT
 
-#if !defined(Q_MEDIA_EXPORT)
-#  if defined(QT_SHARED)
-#    define Q_MEDIA_EXPORT Q_DECL_EXPORT
-#  else
-#    define Q_MEDIA_EXPORT
-#  endif
-#endif
+private slots:  // Init & cleanup
+	void initTestCase();
+	void cleanupTestCase();
+	
+private:
+    void parseFilters();
+    void addFilter(QVector<QString> param);
+    void createContacts();
+    Qt::MatchFlags flag(int f);
 
-#endif
+private slots:  // Test cases
+    void testInvalidFilter();
+    void testContactDetailFilter();
+    void testContactDetailRangeFilter();
+    void testChangeLogFilter();
+    void testActionFilter();
+    void testRelationshipFilter();
+    void testIntersectionFilter();
+    void testUnionFilter();
+    void testLocalIdFilter();
+    void testDefaultFilter();
+    
+private:
+    QContactManager                             *mCntMng;
+    CntSymbianFilterSqlHelper                   *mSqlFilter;
+    QHash<QContactFilter::FilterType, TFilter>  *mFilters;
+};

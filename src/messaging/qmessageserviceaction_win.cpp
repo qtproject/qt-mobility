@@ -69,6 +69,7 @@ class QMessageServiceActionPrivate : public QObject
 
 public:
     QMessageServiceActionPrivate(QMessageServiceAction* parent);
+    ~QMessageServiceActionPrivate();
 
     bool send(const QMessage& message, bool showComposer = false);
     bool show(const QMessageId& id);
@@ -104,6 +105,8 @@ public:
     QMessageId m_bodyDownloadTarget;
     QMessageStore::NotificationFilterId m_bodyDownloadFilterId;
     bool m_registeredUpdates;
+    QThread *m_queryThread;
+    QList<QThread*> m_obsoleteThreads;
 };
 
 
@@ -119,9 +122,6 @@ void QMessageServiceActionPrivate::reportMatchingIds()
         emit messagesFound(_candidateIds);
     }
     completed();
-
-    // Delete the completed thread that generated this event
-    delete sender();
 }
 
 void QMessageServiceActionPrivate::reportMessagesCounted()
@@ -130,9 +130,6 @@ void QMessageServiceActionPrivate::reportMessagesCounted()
         emit messagesCounted(_candidateIds.count());
     }
     completed();
-
-    // Delete the completed thread that generated this event
-    delete sender();
 }
 
 #ifdef _WIN32_WCE
@@ -158,8 +155,16 @@ QMessageServiceActionPrivate::QMessageServiceActionPrivate(QMessageServiceAction
     :q_ptr(parent),
      _active(false),
      _state(QMessageServiceAction::Pending),
-     m_registeredUpdates(false)
+     m_registeredUpdates(false),
+     m_queryThread(0)
 {
+}
+
+QMessageServiceActionPrivate::~QMessageServiceActionPrivate()
+{
+    qDeleteAll(m_obsoleteThreads);
+    delete m_queryThread;
+    QMessageStore::instance()->unregisterNotificationFilter(m_bodyDownloadFilterId);
 }
 
 static Lptstr createMCFRecipients(const QMessageAddressList& addressList, QMessageAddress::Type filterAddressType)
@@ -647,6 +652,16 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
     QueryThread *query = new QueryThread(d_ptr, filter, body, options, ordering, limit, offset);
     connect(query, SIGNAL(completed()), d_ptr, SLOT(reportMatchingIds()), Qt::QueuedConnection);
     query->start();
+
+    if (d_ptr->m_queryThread) {
+        // Don't delete the previous thread object immediately
+        if (!d_ptr->m_obsoleteThreads.isEmpty()) {
+            qDeleteAll(d_ptr->m_obsoleteThreads);
+        }
+        d_ptr->m_obsoleteThreads.append(d_ptr->m_queryThread);
+    }
+    d_ptr->m_queryThread = query;
+
     return true;
 }
 
@@ -665,6 +680,16 @@ bool QMessageServiceAction::countMessages(const QMessageFilter &filter)
     QueryThread *query = new QueryThread(d_ptr, filter, QString(), QMessageDataComparator::Options(), QMessageOrdering(), 0, 0);
     connect(query, SIGNAL(completed()), d_ptr, SLOT(reportMessagesCounted()), Qt::QueuedConnection);
     query->start();
+
+    if (d_ptr->m_queryThread) {
+        // Don't delete the previous thread object immediately
+        if (!d_ptr->m_obsoleteThreads.isEmpty()) {
+            qDeleteAll(d_ptr->m_obsoleteThreads);
+        }
+        d_ptr->m_obsoleteThreads.append(d_ptr->m_queryThread);
+    }
+    d_ptr->m_queryThread = query;
+
     return true;
 }
 

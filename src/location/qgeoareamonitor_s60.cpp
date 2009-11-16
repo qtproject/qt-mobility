@@ -131,60 +131,6 @@ void QGeoAreaMonitorS60::handleTriggerEvent(TPositionInfo aPosInfo, enTriggerTyp
 
 }
 
-//callback from the QMLBackendTriggerChangeAO object for changes in the
-//trigger properties
-void QGeoAreaMonitorS60::handleTriggerChangeEvent(TLbtTriggerChangeEventType aEvent, CLbtTriggerInfo* aInfo, TLbtTriggerId aId)
-{
-
-#if 0
-    //Commented since the updation of the coordinates or Radius is not
-    //available currently from the LBT UI.The below code must be uncommented once
-    //the support is made available
-    TCoordinate tCoord;
-
-    QGeoCoordinate qCoord;
-
-    qreal radius;
-
-    CLbtTriggerEntry* entry = aInfo->TriggerEntry();
-
-    //TLbtTriggerId triggerId = entry->Id();
-
-    CLbtTriggerConditionArea* cond = NULL;
-
-    cond = (CLbtTriggerConditionArea*)entry->GetCondition();
-
-    CLbtGeoCircle* trigArea = (CLbtGeoCircle*)cond->TriggerArea();
-
-    tCoord = trigArea->Center();
-
-    radius = trigArea->Radius();
-
-    qCoord.setLatitude(tCoord.Latitude());
-
-    qCoord.setLongitude(tCoord.Longitude());
-
-    qCoord.setAltitude(tCoord.Altitude());
-
-    //set the base coordinates only if it differs from the qCoord
-    if ((qCoord != QGeoAreaMonitor::center()) ||
-            (radius != QGeoAreaMonitor::radius())) {
-        QGeoAreaMonitor::setCenter(qCoord);
-
-        QGeoAreaMonitor::setRadius(radius);
-
-        //carrying trigger changes to another trigger
-        if (aId && (cond->Direction() == CLbtTriggerConditionArea::EFireOnEnter)) {
-            //update the exit trigger
-            iTriggerCreateAO->InitializeTrigger(this,ExitTrigger,tCoord,radius);
-        } else if (aId && (cond->Direction() == CLbtTriggerConditionArea::EFireOnExit)) {
-            //update the entry trigger
-            iTriggerCreateAO->InitializeTrigger(this,EntryTrigger,tCoord,radius);
-        }
-
-    }
-#endif
-}
 
 
 //destructor cleaning up the resources

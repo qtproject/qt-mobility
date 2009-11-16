@@ -46,7 +46,6 @@
 #include <cntdef.h>
 #include <cntfield.h>
 #include "cnttransformcontact.h"
-#include "cntsymbianengine_p.h"
 
 typedef QList<QContactLocalId> QContactLocalIdList;
 
@@ -153,17 +152,6 @@ QList<QContactLocalId> CntSymbianSorterDbms::contactsL(const QList<QContactSortO
             ids->Remove(index);
     }
     CleanupStack::PopAndDestroy(templateIds);
-
-    // Remove groups from the list
-    CContactIdArray *groupIds = m_contactDatabase.GetGroupIdListL();
-    CleanupStack::PushL(groupIds);
-    for(TInt i(0); i < groupIds->Count(); i++) {
-        TContactItemId id = (*groupIds)[i];
-        TInt index = ids->Find(id);
-        if(index > KErrNotFound)
-            ids->Remove(index);
-    }
-    CleanupStack::PopAndDestroy(groupIds);
 
     // Sort the list
     CContactIdArray* sortedIds = sortL(ids, sortOrders);

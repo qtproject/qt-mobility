@@ -958,7 +958,6 @@ QMessageFilter QMessageFilter::byStandardFolder(QMessage::StandardFolder folder,
     return result;
 }
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFilter QMessageFilter::byParentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageFilter result;
@@ -996,4 +995,3 @@ QMessageFilter QMessageFilter::byAncestorFolderIds(const QMessageFolderFilter &f
     // TODO:
     return QMessageFilter(); // stub
 }
-#endif

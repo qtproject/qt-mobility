@@ -73,6 +73,7 @@ QHash<QString, int> QContactManagerData::m_vendormap;
 QHash<QString, int> QContactManagerData::m_actionmap;
 
 bool QContactManagerData::m_discovered;
+QStringList QContactManagerData::m_pluginPaths;
 
 static void qContactsCleanEngines()
 {
@@ -94,20 +95,58 @@ static void qContactsCleanEngines()
     QContactManagerData::m_vendormap.clear();
 }
 
+
+static int parameterValue(const QMap<QString, QString>& parameters, const char* key, int defaultValue)
+{
+    if (parameters.contains(QString::fromAscii(key))) {
+        bool ok;
+        int version = parameters.value(QString::fromAscii(key)).toInt(&ok);
+        
+        if (ok)
+            return version;
+    }
+    return defaultValue;
+}
+
 void QContactManagerData::createEngine(const QString& managerName, const QMap<QString, QString>& parameters)
 {
+    int apiVersion = parameterValue(parameters, QTCONTACTS_VERSION_NAME, QContactManager::version());
+    m_engine = 0;
+
+    if (apiVersion != QContactManager::version()) {
+        m_error = QContactManager::VersionMismatchError;
+        m_engine = new QContactInvalidEngine(); // XXX share
+        return;
+    }
+
     QString builtManagerName = managerName.isEmpty() ? QContactManager::availableManagers().value(0) : managerName;
     if (builtManagerName == QLatin1String("memory"))
         m_engine = QContactMemoryEngine::createMemoryEngine(parameters);
     else {
+        int implementationVersion = parameterValue(parameters, QTCONTACTS_IMPLEMENTATION_VERSION_NAME, -1);
         /* Look for a factory */
         loadFactories();
-        QContactManagerEngineFactory *factory = m_engines.value(builtManagerName);
+        QList<QContactManagerEngineFactory*> factories = m_engines.values(builtManagerName);
         m_error = QContactManager::NoError;
-        if (factory)
-            m_engine = factory->engine(parameters, m_error);
-        else
+
+        
+        foreach (QContactManagerEngineFactory* f, factories) {
+            QList<int> versions = f->supportedImplementationVersions();
+            if (f && f->version() == apiVersion) {
+                if (implementationVersion == -1 ||//no given implementation version required
+                    versions.isEmpty() || //the manager engine factory does not report any version
+                    versions.contains(implementationVersion)) {
+                    m_engine = f->engine(parameters, m_error);
+                    break;
+                }
+            }
+        }
+
+        // the engine factory could lie to us, so check the real implementation version
+        if (m_engine->version() != apiVersion || (implementationVersion != -1 && m_engine->implementationVersion() != implementationVersion)) {
+            m_error = QContactManager::VersionMismatchError;
             m_engine = 0;
+        }
 
         if (!m_engine) {
             if (m_error == QContactManager::NoError)
@@ -120,8 +159,9 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
 /* Plugin loader */
 void QContactManagerData::loadFactories()
 {
-    if (!m_discovered) {
+    if (!m_discovered || QApplication::libraryPaths() != m_pluginPaths) {
         m_discovered = true;
+        m_pluginPaths = QApplication::libraryPaths();
 
         /* Clean stuff up at the end */
         qAddPostRoutine(qContactsCleanEngines);
@@ -134,14 +174,15 @@ void QContactManagerData::loadFactories()
         for (int i=0; i < staticPlugins.count(); i++ ){
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(staticPlugins.at(i));
             QContactActionFactory *g = qobject_cast<QContactActionFactory*>(staticPlugins.at(i));
-            if (f) {
+            if (f && f->version() == QContactManager::version()) {
                 QString name = f->managerName();
                 qDebug() << "Static: found an engine plugin" << f << "with name" << name;
                 if (name != QLatin1String("memory") && name != QLatin1String("invalid") && !name.isEmpty()) {
-                    if(!m_engines.contains(name)) {
-                        m_engines.insert(name, f);
+                    // we also need to ensure that we haven't already loaded this factory.
+                    if (m_engines.keys().contains(name)) {
+                        qWarning() << "Static contacts plugin" << name << "has the same name as a currently loaded plugin; ignored";
                     } else {
-                        qWarning() << "Duplicate Contacts static plugin with id" << name;
+                        m_engines.insertMulti(name, f);
                     }
                 } else {
                     qWarning() << "Static contacts plugin with reserved name" << name << "ignored";
@@ -152,16 +193,20 @@ void QContactManagerData::loadFactories()
                 QString name = g->name();
                 qDebug() << "Static: found an action factory" << g << "with name" << name;
 
-                m_actionfactories.append(g);
+                if (m_actionfactories.contains(g)) {
+                    qWarning() << "Static contacts plugin" << name << "has the same name as currently loaded plugin; ignored";
+                } else {
+                    m_actionfactories.append(g);
 
-                QList<QContactActionDescriptor> actions = g->actionDescriptors();
-                QMap<QContactActionDescriptor, QContactActionFactory*>::iterator it;
-                for (int j = 0; j < actions.size(); j++) {
-                    QContactActionDescriptor desc = actions.at(j);
-                    m_descriptormap.insert(desc, g);
-                    m_descriptors.append(desc);
-                    m_actionmap.insertMulti(desc.actionName(), m_descriptors.count() - 1);
-                    m_vendormap.insertMulti(desc.vendorName(), m_descriptors.count() - 1);
+                    QList<QContactActionDescriptor> actions = g->actionDescriptors();
+                    QMap<QContactActionDescriptor, QContactActionFactory*>::iterator it;
+                    for (int j = 0; j < actions.size(); j++) {
+                        QContactActionDescriptor desc = actions.at(j);
+                        m_descriptormap.insert(desc, g);
+                        m_descriptors.append(desc);
+                        m_actionmap.insertMulti(desc.actionName(), m_descriptors.count() - 1);
+                        m_vendormap.insertMulti(desc.vendorName(), m_descriptors.count() - 1);
+                    }
                 }
             }
         }
@@ -170,8 +215,8 @@ void QContactManagerData::loadFactories()
         QSet<QString> processed;
 
         paths << QApplication::applicationDirPath() << QApplication::libraryPaths();
-
         qDebug() << "Plugin paths:" << paths;
+
         /* Enumerate our plugin paths */
         for (int i=0; i < paths.count(); i++) {
             if (processed.contains(paths.at(i)))
@@ -208,10 +253,11 @@ void QContactManagerData::loadFactories()
                 qDebug() << "Dynamic: found an engine plugin" << f << "with name" << name;
 
                 if (name != QLatin1String("memory") && name != QLatin1String("invalid") && !name.isEmpty()) {
-                    if(!m_engines.contains(name)) {
-                        m_engines.insert(name, f);
+                    // we also need to ensure that we haven't already loaded this factory.
+                    if (m_engines.keys().contains(name)) {
+                        qWarning() << "Contacts plugin" << plugins.at(i) << "has the same name as currently loaded plugin" << name << "; ignored";
                     } else {
-                        qWarning() << "Duplicate Contacts plugin with id" << name;
+                        m_engines.insertMulti(name, f);
                     }
                 } else {
                     qWarning() << "Contacts plugin" << plugins.at(i) << "with reserved name" << name << "ignored";
@@ -222,16 +268,21 @@ void QContactManagerData::loadFactories()
                 QString name = g->name();
                 qDebug() << "Dynamic: found an action factory" << g << "with name" << name;
 
-                m_actionfactories.append(g);
+                // we also need to ensure that we haven't already loaded this factory.
+                if (m_actionfactories.contains(g)) {
+                    qWarning() << "Contacts plugin" << plugins.at(i) << "has the same name as currently loaded plugin" << name << "; ignored";
+                } else {
+                    m_actionfactories.append(g);
 
-                QList<QContactActionDescriptor> actions = g->actionDescriptors();
-                QMap<QContactActionDescriptor, QContactActionFactory*>::iterator it;
-                for (int j = 0; j < actions.size(); j++) {
-                    const QContactActionDescriptor& desc = actions.at(j);
-                    m_descriptormap.insert(desc, g);
-                    m_descriptors.append(desc);
-                    m_actionmap.insertMulti(desc.actionName(), m_descriptors.count() - 1);
-                    m_vendormap.insertMulti(desc.vendorName(), m_descriptors.count() - 1);
+                    QList<QContactActionDescriptor> actions = g->actionDescriptors();
+                    QMap<QContactActionDescriptor, QContactActionFactory*>::iterator it;
+                    for (int j = 0; j < actions.size(); j++) {
+                        const QContactActionDescriptor& desc = actions.at(j);
+                        m_descriptormap.insert(desc, g);
+                        m_descriptors.append(desc);
+                        m_actionmap.insertMulti(desc.actionName(), m_descriptors.count() - 1);
+                        m_vendormap.insertMulti(desc.vendorName(), m_descriptors.count() - 1);
+                    }
                 }
             }
 
@@ -241,7 +292,16 @@ void QContactManagerData::loadFactories()
             }
         }
 
-        qDebug() << "Found engines:" << m_engines.keys();
+        
+        QStringList engineNames;
+        foreach (QContactManagerEngineFactory* f, m_engines.values()) {
+            QStringList versions;
+            foreach (int v, f->supportedImplementationVersions()) {
+                versions << QString::fromAscii("%1.%2").arg(f->version()).arg(v);
+            }
+            engineNames << QString::fromAscii("%1[%2]").arg(f->managerName()).arg(versions.join(QString::fromAscii(",")));
+        }
+        qDebug() << "Found engines:" << engineNames;
         qDebug() << "Found actions:" << m_actionmap.keys();
     }
 }

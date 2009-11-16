@@ -38,48 +38,23 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSYSINFOGLOBAL_H
-#define QSYSINFOGLOBAL_H
 
-#if defined(QTM_BUILD_UNITTESTS)
-# include <qconfig.h>
-# if !defined(QT_BUILD_INTERNAL)
-#   define QT_BUILD_INTERNAL
-# endif
-#endif
 
-#include <QtCore/qglobal.h>
+#ifndef NOTIFICATIONSATELLITECALLBACK_H_
+#define NOTIFICATIONSATELLITECALLBACK_H_
 
-#if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
-#  if defined(QT_NODLL)
-#    undef QT_MAKEDLL
-#    undef QT_DLL
-#  elif defined(QT_MAKEDLL)
-#    if defined(QT_DLL)
-#      undef QT_DLL
-#    endif
-#    if defined(QT_BUILD_SYSINFO_LIB)
-#      define Q_SYSINFO_EXPORT Q_DECL_EXPORT
-#    else
-#      define Q_SYSINFO_EXPORT Q_DECL_IMPORT
-#    endif
-#  elif defined(QT_DLL) /* use a Qt DLL library */
-#    define Q_SYSINFO_EXPORT Q_DECL_IMPORT
-#  endif
-//#include <api/ntddvdeo.h>
-#define IOCTL_VIDEO_QUERY_DISPLAY_BRIGHTNESS \
-  CTL_CODE(FILE_DEVICE_VIDEO, 0x126, METHOD_BUFFERED, FILE_ANY_ACCESS)
-#define IOCTL_VIDEO_QUERY_SUPPORTED_BRIGHTNESS \
-  CTL_CODE(FILE_DEVICE_VIDEO, 0x125, METHOD_BUFFERED, FILE_ANY_ACCESS)
-#else
-#endif
+#include <e32base.h>    // For CActive, link against: euser.lib
+#include <lbs.h>
+#include <lbscommon.h>
+#include <lbssatellite.h>
 
-#if !defined(Q_SYSINFO_EXPORT)
-#  if defined(QT_SHARED)
-#    define Q_SYSINFO_EXPORT Q_DECL_EXPORT
-#  else
-#    define Q_SYSINFO_EXPORT
-#  endif
-#endif
+class INotificationSatelliteCallback
+{
+public:
 
-#endif // QSYSINFOGLOBAL_H
+    virtual void updateDeviceStatus(void) = 0 ;
+
+    virtual void updatePosition(TPositionSatelliteInfo  aSatInfo, int error, bool isStartUpdate) = 0 ;
+};
+
+#endif /* NOTIFICATIONSATELLITECALLBACK_H_ */

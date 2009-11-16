@@ -41,7 +41,7 @@
 #ifndef QGEOAREAMONITOR_H
 #define QGEOAREAMONITOR_H
 
-#include "qlocationglobal.h"
+#include "qmobilityglobal.h"
 #include "qgeocoordinate.h"
 
 #include <QObject>

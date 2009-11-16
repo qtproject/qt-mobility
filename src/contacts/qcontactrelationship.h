@@ -53,23 +53,23 @@
 
 class QContactRelationshipPrivate;
 
-class QTCONTACTS_EXPORT QContactRelationship
+class Q_CONTACTS_EXPORT QContactRelationship
 {
 public:
 #ifdef Q_QDOC
     const char* HasMember;
     const char* Aggregates;
     const char* Is;
-    const char* IsAssistantOf;
-    const char* IsManagerOf;
-    const char* IsSpouseOf;
+    const char* HasAssistant;
+    const char* HasManager;
+    const char* HasSpouse;
 #else
     Q_DECLARE_LATIN1_LITERAL(HasMember, "HasMember");
     Q_DECLARE_LATIN1_LITERAL(Aggregates, "Aggregates");
     Q_DECLARE_LATIN1_LITERAL(Is, "Is");
-    Q_DECLARE_LATIN1_LITERAL(IsAssistantOf, "IsAssistantOf");
-    Q_DECLARE_LATIN1_LITERAL(IsManagerOf, "IsManagerOf");
-    Q_DECLARE_LATIN1_LITERAL(IsSpouseOf, "IsSpouseOf");
+    Q_DECLARE_LATIN1_LITERAL(HasAssistant, "HasAssistant");
+    Q_DECLARE_LATIN1_LITERAL(HasManager, "HasManager");
+    Q_DECLARE_LATIN1_LITERAL(HasSpouse, "HasSpouse");
 #endif
 
     QContactRelationship();

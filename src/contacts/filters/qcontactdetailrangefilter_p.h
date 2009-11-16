@@ -107,7 +107,7 @@ public:
     QString m_fieldId;
     QVariant m_minValue;
     QVariant m_maxValue;
-    Qt::MatchFlags m_flags;
+    QContactFilter::MatchFlags m_flags;
     QContactDetailRangeFilter::RangeFlags m_rangeflags;
 };
 
