@@ -69,30 +69,11 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QValueSpace::LayerOption
-
-    This enum describes the behaviour of the Value Space layer.  In addition this enum is used as
-    a filter when constructing a QValueSpaceProvider or QValueSpaceSubscriber.
-
-    \value UnspecifiedLayer     Used as a filter to specify that any layer should be used.
-    \value PermanentLayer       Indicates that the layer uses a permanent backing store.  When used
-                                as a filter only layers that use a permanent backing store will be
-                                used.
-    \value NonPermanentLayer    Indicates that the layer does not use a permanent backing store.
-                                When used as a filter only layers that do not use permanent backing
-                                stores will be used.
-    \value WriteableLayer       Indicates that the layer can update its contents.  When used as a
-                                filter only layers that are writeable will be used.
-    \value NonWriteableLayer    Indicates that the layer cannot update its contents.  When used as
-                                a filter only layers that are read-only will be used.
-*/
-
-/*!
     \macro QVALUESPACE_AUTO_INSTALL_LAYER(className)
 
     \relates QAbstractValueSpaceLayer
 
-    This macro installs new value space layer. \a className is the name of the class implementing
+    This macro installs new Value Space layer. \a className is the name of the class implementing
     the new layer.
 
     The method \c {className *className::instance()} must exist and return a pointer to an instance
@@ -107,7 +88,7 @@ QT_BEGIN_NAMESPACE
     \typedef QAbstractValueSpaceLayer::Handle
 
     The Handle type is an opaque, pointer sized contextual handle used to represent paths within
-    value space layers.  Handles are only ever created by QAbstractValueSpaceLayer::item() and are
+    Value Space layers.  Handles are only ever created by QAbstractValueSpaceLayer::item() and are
     always released by calls to QAbstractValueSpaceLayer::removeHandle().  The special value,
     \c {InvalidHandle} is reserved to represent an invalid handle.
 */
@@ -116,7 +97,7 @@ QT_BEGIN_NAMESPACE
     \enum QAbstractValueSpaceLayer::Type
 
     Value Space layers are initialized in either a "Server" or a "Client" context.  There is only
-    a single server in the value space architecture, and its layers are always initialized before
+    a single server in the Value Space architecture, and its layers are always initialized before
     any clients.  This distinction allows layers to implement Client/Server architecture
     \i {if required}.  If not, layers are free to treat Server and Client contexts identically.
 
@@ -250,7 +231,7 @@ QT_BEGIN_NAMESPACE
                                                 const QString &subPath, const QVariant &value)
 
     Process calls to QValueSpaceProvider::setAttribute() by setting the value specified by the
-    \a subPath under \a handle to \a value.  Ownership of the value space item is assigned to
+    \a subPath under \a handle to \a value.  Ownership of the Value Space item is assigned to
     \a creator.
 
     Returns true on success; otherwise returns false.
@@ -260,7 +241,7 @@ QT_BEGIN_NAMESPACE
     \fn bool QAbstractValueSpaceLayer::removeValue(QValueSpaceProvider *creator, Handle handle,
                                                    const QString &subPath)
 
-    Process calls to QValueSpaceProvider::removeAttribute() by removing the value space item
+    Process calls to QValueSpaceProvider::removeAttribute() by removing the Value Space item
     identified by \a handle and \a subPath and created by \a creator.
 
     Returns true on success; otherwise returns false.
@@ -318,13 +299,51 @@ void QAbstractValueSpaceLayer::emitAttributeInterestChanged(QValueSpaceProvider 
 
 /*!
     \namespace QValueSpace
-    \brief The QValueSpace namespace provides methods that are useful to Value Space layer
-           implementors.
+    \brief The QValueSpace namespace contains miscellaneous identifiers used throughtout the
+           Publish and Subscribe API.
     \ingroup publishsubscribe
+*/
 
-    Value Space layers that are available at link time can be automatically installed using
-    QVALUESPACE_AUTO_INSTALL_LAYER() macro.  Value Space layers that are only available at run-time
-    can be installed using installLayer().
+/*!
+    \enum QValueSpace::LayerOption
+
+    This enum describes the behaviour of the Value Space layer.  In addition this enum is used as
+    a filter when constructing a QValueSpaceProvider or QValueSpaceSubscriber.
+
+    \value UnspecifiedLayer     Used as a filter to specify that any layer should be used.
+    \value PermanentLayer       Indicates that the layer uses a permanent backing store.  When used
+                                as a filter only layers that use a permanent backing store will be
+                                used.
+                                \br
+                                Values stored in a layer with this option will persist with in the
+                                layer after the QValueSpaceProvider that published them is
+                                destroyed.  Whether the value persists in the layer after the
+                                server or device is restarted is system dependent.
+                                \br
+                                This option and the NonPermanentLayer option are mutually
+                                exclusive.
+    \value NonPermanentLayer    Indicates that the layer does not use a permanent backing store.
+                                When used as a filter only layers that do not use permanent backing
+                                stores will be used.
+                                \br
+                                Values stored in a layer with this option will be removed when the
+                                QValueSpaceProvider that published them is destroyed.
+                                \br
+                                This option and the PermanentLayer option are mutually exclusive.
+    \value WriteableLayer       Indicates that the layer can update its contents.  When used as a
+                                filter only layers that are writable will be used.
+                                \br
+                                Applications can use QValueSpaceProvider to publish values to
+                                layers that have this option.
+                                \br
+                                This option and the NonWriteableLayer option are mutually
+                                exclusive.
+    \value NonWriteableLayer    Indicates that the layer cannot update its contents.  When used as
+                                a filter only layers that are read-only will be used.
+                                \br
+                                Applications can not publish values to layers with this option.
+                                \br
+                                This option and the WriteableLayer option are mutually exclusive.
 */
 
 /*!
@@ -344,12 +363,12 @@ void QAbstractValueSpaceLayer::emitAttributeInterestChanged(QValueSpaceProvider 
 /*!
     \fn QValueSpace::AutoInstall::AutoInstall(LayerCreateFunc func)
 
-    Installs the Value Space layer at construction time by calling the layer creation function
-    \a func.
+    Installs the Value Space layer at static construction time by calling the layer creation
+    function \a func.
 */
 
 /*!
-    Initialize the value space manager as the server.  This method only needs to be called by the
+    Initialize the Value Space manager as the server.  This method only needs to be called by the
     process acting as the server and should be called before any process in the system uses a value
     space class.
 */
@@ -359,7 +378,7 @@ void QValueSpace::initValueSpaceServer()
 }
 
 /*!
-    Used by value space layer implementations to install themselves into the system.  \a layer
+    Used by Value Space layer implementations to install themselves into the system.  \a layer
     should be a pointer to the layer to install.
 
     \sa QVALUESPACE_AUTO_INSTALL_LAYER()
@@ -384,13 +403,13 @@ void QValueSpace::installLayer(LayerCreateFunc func)
     \macro QVALUESPACE_SHAREDMEMORY_LAYER
     \relates QValueSpace
 
-    The UUID of the Shared Memory Layer as a QUuid.  The actual UUID value is
+    The UUID of the Shared Memory layer as a QUuid.  The actual UUID value is
     {d81199c1-6f60-4432-934e-0ce4d37ef252}.
 
-    This value can be passed to the constructor of QValueSpaceProvider to force the constructed
-    value space provider to publish its values in the Shared Memory Layer.
+    This value can be passed to the constructor of QValueSpaceProvider or QValueSpaceSubscriber to
+    force the constructed object to only access the Shared Memory layer.
 
-    You can test if the Shared Memory Layer is available by checking if the list returned by
+    You can test if the Shared Memory layer is available by checking if the list returned by
     QValueSpace::availableLayers() contains this value.
 */
 
@@ -398,14 +417,14 @@ void QValueSpace::installLayer(LayerCreateFunc func)
     \macro QVALUESPACE_VOLATILEREGISTRY_LAYER
     \relates QValueSpace
 
-    The UUID of the Volatile Registry Layer as a QUuid.  The actual UUID value is
+    The UUID of the Volatile Registry layer as a QUuid.  The actual UUID value is
     {8ceb5811-4968-470f-8fc2-264767e0bbd9}.
 
-    This value can be passed to the constructor of QValueSpaceProvider to force the constructed
-    value space provider to publish its values in the Volatile Registry Layer.
+    This value can be passed to the constructor of QValueSpaceProvider or QValueSpaceSubscriber to
+    force the constructed object to only access the Volatile Registry layer.
 
-    You can test if the Volatile Registry Layer is available by checking if the list returned by
-    QValueSpace::availableLayers() contains this value.  The Volatile Registry Layer is only
+    You can test if the Volatile Registry layer is available by checking if the list returned by
+    QValueSpace::availableLayers() contains this value.  The Volatile Registry layer is only
     available on Windows platforms.
 */
 
@@ -413,14 +432,14 @@ void QValueSpace::installLayer(LayerCreateFunc func)
     \macro QVALUESPACE_NONVOLATILEREGISTRY_LAYER
     \relates QValueSpace
 
-    The UUID of the Non-Volatile Registry Layer as a QUuid.  The actual UUID value is
+    The UUID of the Non-Volatile Registry layer as a QUuid.  The actual UUID value is
     {8e29561c-a0f0-4e89-ba56-080664abc017}.
 
-    This value can be passed to the constructor of QValueSpaceProvider to force the constructed
-    value space provider to publish its values in the Non-Volatile Registry Layer.
+    This value can be passed to the constructor of QValueSpaceProvider or QValueSpaceSubscriber to
+    force the constructed object to only access the Non-Volatile Registry layer.
 
-    You can test if the Non-Volatile Registry Layer is available by checking if the list returned
-    by QValueSpace::availableLayers() contains this value.  The Non-Volatile Registry Layer is only
+    You can test if the Non-Volatile Registry layer is available by checking if the list returned
+    by QValueSpace::availableLayers() contains this value.  The Non-Volatile Registry layer is only
     available on Windows platforms.
 */
 
@@ -428,13 +447,13 @@ void QValueSpace::installLayer(LayerCreateFunc func)
     \macro QVALUESPACE_CONTEXTKIT_LAYER
     \relates QValueSpace
 
-    The UUID of the ContextKit Layer as a QUuid.  The actual UUID values is
+    The UUID of the ContextKit layer as a QUuid.  The actual UUID values is
     {2c769b9e-d949-4cd1-848f-d32241fe07ff}.
 
-    This values can be passed to the constructor of QValueSpaceProvider to force the constructed
-    value space provider to publish its values in the ContextKit Layer.
+    This value can be passed to the constructor of QValueSpaceProvider or QValueSpaceSubscriber to
+    force the constructed object to only access the ContextKit layer.
 
-    You can test if the ContextKit Layer is available by checking if the list returned by
+    You can test if the ContextKit layer is available by checking if the list returned by
     QValueSpace::availableLayers() contains this value.
 */
 
