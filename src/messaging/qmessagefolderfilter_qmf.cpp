@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderfilter.h"
 #include "qmfhelpers_p.h"
 
@@ -264,4 +263,3 @@ QMessageFolderFilter QMessageFolderFilter::byAncestorFolderIds(const QMessageFol
     result.d_ptr->_key = QMailFolderKey::ancestorFolderIds(convert(filter), convert(cmp));
     return result;
 }
-#endif

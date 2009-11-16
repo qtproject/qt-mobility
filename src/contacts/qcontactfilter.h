@@ -80,6 +80,18 @@ public:
 
     FilterType type() const;
 
+    // Qt::MatchFlags don't quite match here
+    enum MatchFlag {
+        MatchExactly = Qt::MatchExactly,    // 0
+        MatchContains = Qt::MatchContains,  // 1
+        MatchStartsWith = Qt::MatchStartsWith,  // 2
+        MatchEndsWith = Qt::MatchEndsWith, // 3
+        MatchFixedString = Qt::MatchFixedString, // 8
+        MatchCaseSensitive = Qt::MatchCaseSensitive, // 16
+        MatchPhoneNumber = 1024,
+    };
+    Q_DECLARE_FLAGS(MatchFlags, MatchFlag)
+
     bool operator==(const QContactFilter& other) const;
     bool operator!=(const QContactFilter& other) const {return !operator==(other);}
 
@@ -91,7 +103,7 @@ protected:
     QSharedDataPointer<QContactFilterPrivate> d_ptr;
 };
 
-const QTCONTACTS_EXPORT QContactFilter operator&&(const QContactFilter& left, const QContactFilter& right);
-const QTCONTACTS_EXPORT QContactFilter operator||(const QContactFilter& left, const QContactFilter& right);
+const QTCONTACTS_EXPORT QContactFilter operator&(const QContactFilter& left, const QContactFilter& right);
+const QTCONTACTS_EXPORT QContactFilter operator|(const QContactFilter& left, const QContactFilter& right);
 
 #endif

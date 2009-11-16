@@ -61,7 +61,6 @@
 
 #include "qcontactmanager.h"
 #include "qcontactmanagerengine.h"
-#include "qcontactmanagerinfo.h"
 
 #include "qcontactactiondescriptor.h"
 #include "qcontactactionfactory.h"
@@ -74,8 +73,7 @@ class QContactManagerData
 public:
     QContactManagerData()
         : m_engine(0),
-        m_error(QContactManager::NoError),
-        m_info(0)
+        m_error(QContactManager::NoError)
     {
     }
 
@@ -94,12 +92,10 @@ public:
     QContactManagerEngine* m_engine;
     QContactManager::Error m_error;
 
-    /* Information object */
-    QContactManagerInfo *m_info;
-
     /* Manager plugins */
     static QHash<QString, QContactManagerEngineFactory*> m_engines;
     static bool m_discovered;
+    static QStringList m_pluginPaths;
     static void loadFactories();
 
     /* Action Implementations */

@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderordering.h"
 
 #include <qmailfoldersortkey.h>
@@ -149,4 +148,3 @@ QMessageFolderOrdering QMessageFolderOrdering::byPath(Qt::SortOrder order)
     ordering.d_ptr->_key = QMailFolderSortKey::path(order);
     return ordering;
 }
-#endif

@@ -6,7 +6,7 @@ imagedirs = images
 headerdirs = ../../src/bearer \
              ../../src/serviceframework \
              ../../src/location \
-             ../../src/context \
+             ../../src/publishsubscribe \
              ../../src/systeminfo \
              ../../src/contacts \
              ../../src/multimedia \
@@ -16,7 +16,7 @@ headerdirs = ../../src/bearer \
 sourcedirs = ../../src/bearer \
              ../../src/serviceframework \
              ../../src/location \
-             ../../src/context \
+             ../../src/publishsubscribe \
              ../../src/systeminfo \
              ../../src/contacts \
              ../../src/multimedia \
@@ -42,8 +42,6 @@ base                    = file:./doc/html
 
 defines                 = Q_QDOC \
                           __cplusplus \
-                          QMESSAGING_OPTIONAL \
-                          QMESSAGING_OPTIONAL_FOLDER
 
 examples.fileextensions = "*.cpp *.h *.svg"
 

@@ -63,14 +63,14 @@ QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QCo
 	}
 
 	// online account
-	else if (subTypes.contains(QContactOnlineAccount::SubTypeXmpp))
+	else if (subTypes.contains(QContactOnlineAccount::SubTypeImpp))
 	{
         newField->AddFieldTypeL(KUidContactFieldIMPP);
         newField->SetMapping(KUidContactFieldVCardMapUnknown);
 	}
 
 	//internet
-	else if (subTypes.contains(QContactOnlineAccount::SubTypeInternet))
+	else if (subTypes.contains(QContactOnlineAccount::SubTypeSipVoip))
 	{
 		newField->AddFieldTypeL(KUidContactFieldSIPID);
 		newField->SetMapping(KUidContactFieldVCardMapSIPID);
@@ -78,7 +78,7 @@ QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QCo
 	}
 
 	//share video
-	else if	(subTypes.contains(QContactOnlineAccount::SubTypeShareVideo))
+	else if	(subTypes.contains(QContactOnlineAccount::SubTypeVideoShare))
 	{
 		newField->AddFieldTypeL(KUidContactFieldSIPID);
 		newField->SetMapping(KUidContactFieldVCardMapSIPID);
@@ -119,13 +119,13 @@ QContactDetail *CntTransformOnlineAccount::transformItemField(const CContactItem
 	onlineAccount->setAccountUri(onlineAccountString);
 
     if (field.ContentType().ContainsFieldType(KUidContactFieldIMPP)) {
-        onlineAccount->setSubTypes(QContactOnlineAccount::SubTypeXmpp);
+        onlineAccount->setSubTypes(QContactOnlineAccount::SubTypeImpp);
     }
 	else if (field.ContentType().ContainsFieldType(KUidContactFieldVCardMapVOIP)) {
-        onlineAccount->setSubTypes(QContactOnlineAccount::SubTypeInternet);
+        onlineAccount->setSubTypes(QContactOnlineAccount::SubTypeSipVoip);
     }
     else if (field.ContentType().ContainsFieldType(KUidContactFieldVCardMapSWIS)) {
-        onlineAccount->setSubTypes(QContactOnlineAccount::SubTypeShareVideo);
+        onlineAccount->setSubTypes(QContactOnlineAccount::SubTypeVideoShare);
     }
     else if (field.ContentType().ContainsFieldType(KUidContactFieldVCardMapSIPID)) {
         onlineAccount->setSubTypes(QContactOnlineAccount::SubTypeSip);
@@ -194,57 +194,27 @@ quint32 CntTransformOnlineAccount::getIdForField(const QString& fieldName) const
         return 0;
     else if (QContactOnlineAccount::SubTypeSip == fieldName)
         return KUidContactFieldSIPID.iUid;
-    else if (QContactOnlineAccount::SubTypeH323 == fieldName)
-        return 0;
-    else if (QContactOnlineAccount::SubTypeXmpp == fieldName)
+    else if (QContactOnlineAccount::SubTypeImpp == fieldName)
         return KUidContactFieldIMPP.iUid;
-    else if (QContactOnlineAccount::SubTypeInternet == fieldName)
+    else if (QContactOnlineAccount::SubTypeSipVoip == fieldName)
         return 0;
-    else if (QContactOnlineAccount::SubTypeShareVideo == fieldName)
+    else if (QContactOnlineAccount::SubTypeVideoShare == fieldName)
         return 0;
-    else 
+    else
         return 0;
 }
 
 /*!
- * Adds the detail definitions for the details this transform class supports.
+ * Modifies the detail definitions. The default detail definitions are
+ * queried from QContactManagerEngine::schemaDefinitions and then modified
+ * with this function in the transform leaf classes.
  *
- * \a definitions On return, the supported detail definitions have been added.
+ * \a definitions The detail definitions to modify.
+ * \a contactType The contact type the definitions apply for.
  */
-void CntTransformOnlineAccount::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformOnlineAccount::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
-    QContactDetailDefinition d;
-    QVariantList subTypes;
-
-    // fields
-    d.setName(QContactOnlineAccount::DefinitionName);
-    f.dataType = QVariant::String;
-    fields.insert(QContactOnlineAccount::FieldAccountUri, f);
-
-    // sub-types
-    f.dataType = QVariant::StringList; // can implement multiple subtypes
-    subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeXmpp));
-    subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeInternet));
-    subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeShareVideo));
-    subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeSip));
-    f.allowableValues = subTypes;
-    fields.insert(QContactPhoneNumber::FieldSubTypes, f);
-
-    // Contexts
-    /* TODO: does not work for some reason:
-tst_QContactManager::add(mgr='symbian') A contact had extra detail: "OnlineAccount" QMap(("AccountUri", QVariant(QString, "AccountUri") ) ( "Context" ,  QVariant(QStringList, ("Xmpp") ) ) ( "SubTypes" ,  QVariant(QStringList, ("Xmpp") ) ) )
-tst_QContactManager::add(mgr='symbian') B contact had extra detail: "OnlineAccount" QMap(("AccountUri", QVariant(QString, "AccountUri") ) ( "SubTypes" ,  QVariant(QStringList, ("Xmpp") ) ) )
-
-    f.dataType = QVariant::StringList;
-    f.allowableValues << QString(QLatin1String(QContactDetail::ContextHome)) << QString(QLatin1String(QContactDetail::ContextWork)) << QString(QLatin1String(QContactDetail::ContextOther));
-    fields.insert(QContactDetail::FieldContext, f);
-     */
-
-    d.setFields(fields);
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-
-    definitions.insert(d.name(), d);
+    Q_UNUSED(definitions);
+    Q_UNUSED(contactType);
+    // Does not modify the default schema
 }

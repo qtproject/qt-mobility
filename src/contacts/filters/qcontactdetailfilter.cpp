@@ -45,11 +45,10 @@
 #include "qcontactmanager.h"
 
 /*!
-  \class QContactDetailFilter
-  \brief The QContactDetailFilter class provides a filter based around a detail value criterion.
-   \ingroup contacts-filters
- 
-  It may be used to select contacts which contain a detail of a particular definition with a particular value
+ * \class QContactDetailFilter
+ * \brief The QContactDetailFilter class provides a filter based around a detail value criterion
+ *
+ * It may be used to select contacts which contain a detail of a particular definition with a particular value
  */
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactDetailFilter);
@@ -93,7 +92,7 @@ void QContactDetailFilter::setValue(const QVariant& value)
  * Sets the semantics of the value matching criterion to those defined in \a flags
  * \sa matchFlags()
  */
-void QContactDetailFilter::setMatchFlags(Qt::MatchFlags flags)
+void QContactDetailFilter::setMatchFlags(QContactFilter::MatchFlags flags)
 {
     Q_D(QContactDetailFilter);
     d->m_flags = flags;
@@ -103,7 +102,7 @@ void QContactDetailFilter::setMatchFlags(Qt::MatchFlags flags)
  * Returns the semantics of the value matching criterion
  * \sa setMatchFlags()
  */
-Qt::MatchFlags QContactDetailFilter::matchFlags() const
+QContactFilter::MatchFlags QContactDetailFilter::matchFlags() const
 {
     Q_D(const QContactDetailFilter);
     return d->m_flags;

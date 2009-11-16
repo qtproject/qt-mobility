@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderid_p.h"
 
 /*!
@@ -129,5 +128,3 @@ bool QMessageFolderId::operator!=(const QMessageFolderId &other) const
 
     Qt-style synonym for QList<QMessageFolderId>
 */
-
-#endif

@@ -4,8 +4,8 @@
 TEMPLATE = app
 TARGET = 
 QT += testlib
-CONFIG += qtestlib \
-          symbian_test
+CONFIG += qtestlib
+
 DEFINES += PBK_UNIT_TEST
 DEPENDPATH += .
 INCLUDEPATH += .

@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolder.h"
 
 QMessageFolder::QMessageFolder()
@@ -89,4 +88,3 @@ QString QMessageFolder::path() const
 {
     return QString::null; // stub
 }
-#endif

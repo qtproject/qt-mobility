@@ -38,36 +38,22 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QObject>
+#ifndef TRANSFORMEMPTY_H
+#define TRANSFORMEMPTY_H
 
-class CntSymbianEnginePrivate;
+#include "cnttransformcontactdata.h"
 
-class TestSymbianEnginePrivate : public QObject
+class CntTransformEmpty : public CntTransformContactData
 {
-    Q_OBJECT
-
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
-    
-    void init();
-    void clean();
-    
-    void addContact();
-    void retrieveContact();
-    void updateContact();
-    void removeContact();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void addGroup();
-    void retrieveGroup();
-    void batchContacts();
-    void singleRelationship();
-    void batchRelationships();
-
-private:
-    void removeAllContacts();
-
-private:
-    CntSymbianEnginePrivate   *m_engine;
+protected:
+	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
+	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
+	bool supportsField(TUint32 fieldType) const;
+	bool supportsDetail(QString detailName) const;
+	QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const;
+    bool supportsSubType(const QString& subType) const;
+    quint32 getIdForField(const QString& fieldName) const;
+    void detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const;
 };
+
+#endif

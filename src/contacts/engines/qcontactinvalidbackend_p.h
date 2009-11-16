@@ -57,19 +57,16 @@
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
 
-#include "qcontactmanagerinfo.h"
-
 #include <QMap>
 #include <QString>
 
-class QContactManagerInfoPrivate;
 class QContactInvalidEngine : public QContactManagerEngine
 {
 public:
     QContactInvalidEngine();
     void deref();
     QString managerName() const;
-    QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 };
 
 #endif

@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderordering.h"
 #include "qmessagefolderordering_p.h"
 
@@ -159,4 +158,3 @@ QMessageFolderOrdering QMessageFolderOrdering::byPath(Qt::SortOrder order)
     result.d_ptr->_fieldOrderList.append(fieldOrder);
     return result;
 }
-#endif

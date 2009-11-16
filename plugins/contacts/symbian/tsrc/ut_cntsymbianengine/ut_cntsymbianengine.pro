@@ -15,7 +15,6 @@ INCLUDEPATH += ..\..\inc
 INCLUDEPATH += ..\..\rss
 INCLUDEPATH += ..\..\..\..\contacts
 INCLUDEPATH += ..\..\..\..\..\src\contacts
-
 include(../tsrc.pri)
 
 symbian:
@@ -25,10 +24,10 @@ symbian:
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     
     # Input
-    HEADERS += ut_cntsymbianengine_p.h \
+    HEADERS += ut_cntsymbianengine.h \
             $$SYMBIAN_HEADERS
     
-    SOURCES += ut_cntsymbianengine_p.cpp \
+    SOURCES += ut_cntsymbianengine.cpp \
             $$SYMBIAN_SOURCES
             
     TARGET.CAPABILITY = ALL \

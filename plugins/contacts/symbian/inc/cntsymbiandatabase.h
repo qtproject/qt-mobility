@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtCore module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,48 +38,57 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QObject>
-#include <QHash>
-#include <qcontactfilter.h>
-#include <qcontactmanager.h>
+#ifndef CNTSRVCONNECTION_H
+#define CNTSRVCONNECTION_H
 
-class CntSymbianFilterSqlHelper;
+// System includes
+#include <QList>
+#include <e32std.h>
+#include <cntdb.h>
+#include <cntdbobs.h>
 
-typedef struct {
-    QContactFilter filter;
-    QString name;
-    int result;
-    int error;
-} TFilter;
+// User includes
+#include "qcontactmanager.h"
 
-class TestSqlFiltering : public QObject
+// Forward declarations
+class QContactManagerEngine;
+
+// External data types
+
+// Constants
+
+class CntSymbianDatabase : public QObject, public MContactDbObserver
 {
-    Q_OBJECT
+Q_OBJECT
 
-private slots:  // Init & cleanup
-	void initTestCase();
-	void cleanupTestCase();
-	
-private:
-    void parseFilters();
-    void addFilter(QVector<QString> param);
-    void createContacts();
-    Qt::MatchFlags flag(int f);
+public:
+    CntSymbianDatabase(QContactManagerEngine *engine, QContactManager::Error& error);
+    ~CntSymbianDatabase();
 
-private slots:  // Test cases
-    void testInvalidFilter();
-    void testContactDetailFilter();
-    void testContactDetailRangeFilter();
-    void testChangeLogFilter();
-    void testActionFilter();
-    void testRelationshipFilter();
-    void testIntersectionFilter();
-    void testUnionFilter();
-    void testLocalIdFilter();
-    void testDefaultFilter();
-    
+public:
+    CContactDatabase* contactDatabase();
+    void appendContactsEmitted(const QList<QContactLocalId>& contactList);
+    void appendContactEmitted(QContactLocalId id);
+
+public:
+    // From MContactDbObserver
+    void HandleDatabaseEventL(TContactDbObserverEvent aEvent);
+
+signals:
+    void ownCardChanged(const QContactLocalId& oldId, const QContactLocalId& newId);
+
 private:
-    QContactManager                             *mCntMng;
-    CntSymbianFilterSqlHelper                   *mSqlFilter;
-    QHash<QContactFilter::FilterType, TFilter>  *mFilters;
+    CContactDatabase* m_contactDatabase;
+#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
+    CContactChangeNotifier* m_contactChangeNotifier;
+#endif
+    QContactManagerEngine *m_engine;
+    QList<QContactLocalId> m_contactsEmitted;
+    QContactLocalId m_ownCardId;
 };
+
+
+
+
+
+#endif CNTSRVCONNECTION_H

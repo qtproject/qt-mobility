@@ -61,13 +61,17 @@
 #include "qcontactname.h"
 #include "qcontactphonenumber.h"
 #include "qcontactmanager.h"
-#include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
 
-
-class CntSymbianEnginePrivate;
 class QContactChangeSet;
+class CntSymbianDatabase;
+class CntTransformContact;
+class CntAbstractContactFilter;
+class CntAbstractContactSorter;
+class CntRelationship;
+
+#define CNT_SYMBIAN_MANAGER_NAME "symbian"
 
 class CntSymbianEngine : public QContactManagerEngine
 {
@@ -84,7 +88,7 @@ public:
     QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QList<QContactLocalId> contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    
+
     QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
     bool saveContact(QContact* contact, QContactManager::Error& error);
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
@@ -99,15 +103,15 @@ public:
     QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
 
     /* Definitions */
-    QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
+    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
 
     /* Capabilities reporting */
-    bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
+    bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
     bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
-    /* Synthesise the display label of a contact */
-    QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    /* Synthesize the display label of a contact */
+    QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 
     /* "Self" contact id (MyCard) */
     bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error);
@@ -115,21 +119,45 @@ public:
 
     QString managerName() const;
 
-private slots:
-        void eventContactAdded(const QContactLocalId &contactId);
-        void eventContactRemoved(const QContactLocalId &contactId);
-        void eventContactChanged(const QContactLocalId &contactId);
-        void eventRelationshipAdded(const QContactLocalId &contactId);
-        void eventRelationshipRemoved(const QContactLocalId &contactId);
-        
 private:
     QList<QContactLocalId> slowFilter(const QContactFilter& filter, const QList<QContactLocalId>& contacts, QContactManager::Error& error) const;
     QList<QContactLocalId> slowSort(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     bool doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error);
-    void updateDisplayLabel(QContact& contact) const;
-    CntSymbianEnginePrivate *d;
-};
 
+    /* Fetch contact */
+    QContact fetchContact(const QContactLocalId& contactId, QContactManager::Error& qtError) const;
+    QContact fetchContactL(const QContactLocalId &localId) const;
+
+    /* Add contact */
+    bool addContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
+    int addContactL(QContact &contact);
+
+    /* Update contact */
+    bool updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
+    void updateContactL(QContact &contact);
+
+    /* Remove contact */
+    bool removeContact(const QContactLocalId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError);
+    int removeContactL(QContactLocalId id);
+
+    /* Groups */
+    QList<QContactLocalId> groups(QContactManager::Error& qtError) const;
+    QList<QContactLocalId> groupsL() const;
+
+    void updateDisplayLabel(QContact& contact) const;
+
+private:
+    CntSymbianDatabase *m_dataBase;
+    QString m_managerUri;
+    CntTransformContact *m_transformContact;
+    CntAbstractContactFilter *m_contactFilter;
+    CntAbstractContactSorter *m_contactSorter;
+    CntRelationship *m_relationship;
+#ifdef PBK_UNIT_TEST
+    friend class TestSymbianEngine;
+#endif  //PBK_UNIT_TEST
+};
+#ifndef PBK_UNIT_TEST
 class Q_DECL_EXPORT CntSymbianFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
@@ -138,5 +166,5 @@ class Q_DECL_EXPORT CntSymbianFactory : public QObject, public QContactManagerEn
         QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
         QString managerName() const;
 };
-
-#endif
+#endif  //PBK_UNIT_TEST
+#endif  //CNTSYMBIANBACKEND_P_H
