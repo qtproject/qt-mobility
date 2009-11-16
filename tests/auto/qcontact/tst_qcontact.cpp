@@ -555,7 +555,7 @@ void tst_QContact::relationships()
     secondId.setLocalId(QContactLocalId(5));
     dummyRel.setFirst(firstId);
     dummyRel.setSecond(secondId);
-    dummyRel.setRelationshipType(QContactRelationship::IsAssistantOf);
+    dummyRel.setRelationshipType(QContactRelationship::HasAssistant);
 
     QList<QContactRelationship> reorderedList;
     reorderedList.append(dummyRel);

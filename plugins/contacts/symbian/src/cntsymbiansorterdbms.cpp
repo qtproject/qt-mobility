@@ -46,7 +46,6 @@
 #include <cntdef.h>
 #include <cntfield.h>
 #include "cnttransformcontact.h"
-#include "cntsymbianengine_p.h"
 
 typedef QList<QContactLocalId> QContactLocalIdList;
 

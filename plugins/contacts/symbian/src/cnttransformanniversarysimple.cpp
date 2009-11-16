@@ -122,23 +122,35 @@ quint32 CntTransformAnniversarySimple::getIdForField(const QString& fieldName) c
 }
 
 /*!
- * Adds the detail definitions for the details this transform class supports.
+ * Modifies the detail definitions. The default detail definitions are
+ * queried from QContactManagerEngine::schemaDefinitions and then modified
+ * with this function in the transform leaf classes.
  *
- * \a definitions On return, the supported detail definitions have been added.
+ * \a definitions The detail definitions to modify.
+ * \a contactType The contact type the definitions apply for.
  */
-void CntTransformAnniversarySimple::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformAnniversarySimple::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField f;
-    QContactDetailDefinition d;
+    Q_UNUSED(contactType);
 
-    d.setName(QContactAnniversary::DefinitionName);
-    f.setDataType(QVariant::Date);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QContactAnniversary::FieldOriginalDate, f);
+    if(definitions.contains(QContactAnniversary::DefinitionName)) {
+        QContactDetailDefinition d = definitions.value(QContactAnniversary::DefinitionName);
+        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
 
-    d.setFields(fields);
-    d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-    definitions.insert(d.name(), d);
+        // Following fields not supported in symbian (pre-10.1) back-end, remove
+        fields.remove(QContactAnniversary::FieldCalendarId);
+        fields.remove(QContactAnniversary::FieldEvent);
+
+        // Sub-types not supported in symbian back-end, remove
+        fields.remove(QContactAnniversary::FieldSubType);
+
+        // Context not supported in symbian back-end, remove
+        fields.remove(QContactAnniversary::FieldContext);
+
+        d.setFields(fields);
+        d.setUnique(true);
+
+        // Replace original definitions
+        definitions.insert(d.name(), d);
+    }
 }

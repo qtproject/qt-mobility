@@ -53,11 +53,9 @@
 // We mean it.
 //
 
-#include "qcontact_p.h"
 #include "qcontactmanager.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
-#include "qcontactmanager_p.h"
 
 #include <QObject>
 #include <QString>
