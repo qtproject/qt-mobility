@@ -1022,18 +1022,28 @@ namespace {
                         qWarning() << "Unable to set submit time in message.";
                         *lastError = QMessageStore::FrameworkFault;
                     } else {
-                        QStringList headers;
-                        foreach (const QByteArray &name, source.headerFields()) {
-                            foreach (const QString &value, source.headerFieldValues(name)) {
-                                // TODO: Do we need soft line-breaks?
-                                headers.append(QString("%1: %2").arg(QString(name)).arg(value));
+                        QDateTime receivedDate(source.receivedDate());
+                        if (receivedDate.isValid()) {
+                            if (!setMapiProperty(message, PR_MESSAGE_DELIVERY_TIME, toFileTime(receivedDate))) {
+                                qWarning() << "Unable to set delivery time in message.";
+                                *lastError = QMessageStore::FrameworkFault;
                             }
                         }
-                        if (!headers.isEmpty()) {
-                            QString transportHeaders = headers.join("\r\n").append("\r\n\r\n");
-                            if (!setMapiProperty(message, PR_TRANSPORT_MESSAGE_HEADERS, transportHeaders)) {
-                                qWarning() << "Unable to set transport headers in message.";
-                                *lastError = QMessageStore::FrameworkFault;
+
+                        if (*lastError == QMessageStore::NoError) {
+                            QStringList headers;
+                            foreach (const QByteArray &name, source.headerFields()) {
+                                foreach (const QString &value, source.headerFieldValues(name)) {
+                                    // TODO: Do we need soft line-breaks?
+                                    headers.append(QString("%1: %2").arg(QString(name)).arg(value));
+                                }
+                            }
+                            if (!headers.isEmpty()) {
+                                QString transportHeaders = headers.join("\r\n").append("\r\n\r\n");
+                                if (!setMapiProperty(message, PR_TRANSPORT_MESSAGE_HEADERS, transportHeaders)) {
+                                    qWarning() << "Unable to set transport headers in message.";
+                                    *lastError = QMessageStore::FrameworkFault;
+                                }
                             }
                         }
                     }
