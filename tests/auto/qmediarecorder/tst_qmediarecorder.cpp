@@ -120,14 +120,14 @@ public:
     QVideoEncoderSettings videoSettings() const { return m_videoSettings; }
     void setVideoSettings(const QVideoEncoderSettings &settings) { m_videoSettings = settings; };
 
-    QSize minimumResolution() const { return QSize(320,240); }
-    QSize maximumResolution() const { return QSize(640,480); }
-    QList<QSize> supportedResolutions() const { return m_sizes; }
+    QSize minimumResolution(const QVideoEncoderSettings & = QVideoEncoderSettings()) const { return QSize(320,240); }
+    QSize maximumResolution(const QVideoEncoderSettings & = QVideoEncoderSettings()) const { return QSize(640,480); }
+    QList<QSize> supportedResolutions(const QVideoEncoderSettings & = QVideoEncoderSettings()) const { return m_sizes; }
 
 
-    qreal minimumFrameRate() const { return 1.0; }
-    qreal maximumFrameRate() const { return 30.0; }
-    QList<qreal> supportedFrameRates() const { return m_framerates; }
+    qreal minimumFrameRate(const QVideoEncoderSettings & = QVideoEncoderSettings()) const { return 1.0; }
+    qreal maximumFrameRate(const QVideoEncoderSettings & = QVideoEncoderSettings()) const { return 30.0; }
+    QList<qreal> supportedFrameRates(const QVideoEncoderSettings & = QVideoEncoderSettings()) const { return m_framerates; }
 
     QStringList supportedVideoCodecs() const { return m_videoCodecs; }
     QString videoCodecDescription(const QString &codecName) const { return codecName; }
@@ -177,7 +177,7 @@ public:
     QAudioEncoderSettings audioSettings() const { return m_audioSettings; }
     void setAudioSettings(const QAudioEncoderSettings &settings) { m_audioSettings = settings; }
 
-    QList<int> supportedSampleRates() const { return QList<int>() << 44100; }
+    QList<int> supportedSampleRates(const QAudioEncoderSettings & = QAudioEncoderSettings()) const { return QList<int>() << 44100; }
 
     QStringList supportedAudioCodecs() const
     {

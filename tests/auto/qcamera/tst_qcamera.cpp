@@ -435,11 +435,23 @@ public:
     {
     }
 
-    QSize minimumResolution() const { return m_minimumResolution; }
+    QSize minimumResolution(const QImageEncoderSettings & = QImageEncoderSettings()) const
+    {
+        return m_minimumResolution;
+    }
     void setMinimumResolution(const QSize &resolution) { m_minimumResolution = resolution; }
-    QSize maximumResolution() const { return m_maximumResolution; }
+
+    QSize maximumResolution(const QImageEncoderSettings & = QImageEncoderSettings()) const
+    {
+        return m_maximumResolution;
+    }
     void setMaximumResolution(const QSize &resolution) { m_maximumResolution = resolution; }
-    QList<QSize> supportedResolutions() const { return m_supportedResolutions; }
+
+    QList<QSize> supportedResolutions(const QImageEncoderSettings & = QImageEncoderSettings()) const
+    {
+        return m_supportedResolutions;
+    }
+
     void setSupportedResolutions(const QList<QSize> &resolutions) {
         m_supportedResolutions = resolutions; }
 

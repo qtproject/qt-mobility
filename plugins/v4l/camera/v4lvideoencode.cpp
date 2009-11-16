@@ -92,7 +92,7 @@ QSize V4LVideoEncode::maximumResolution() const
         return QSize();
 }
 
-QList<QSize> V4LVideoEncode::supportedResolutions() const
+QList<QSize> V4LVideoEncode::supportedResolutions(const QVideoEncoderSettings &) const
 {
     if(m_session)
         return m_session->supportedResolutions();
@@ -101,24 +101,24 @@ QList<QSize> V4LVideoEncode::supportedResolutions() const
     return res;
 }
 
-qreal V4LVideoEncode::minimumFrameRate() const
+qreal V4LVideoEncode::minimumFrameRate(const QVideoEncoderSettings &) const
 {
     return 12;
 }
 
-qreal V4LVideoEncode::maximumFrameRate() const
+qreal V4LVideoEncode::maximumFrameRate(const QVideoEncoderSettings &) const
 {
     return 24;
 }
 
-QList< qreal > V4LVideoEncode::supportedFrameRates() const
+QList< qreal > V4LVideoEncode::supportedFrameRates(const QVideoEncoderSettings &) const
 {
     QList<qreal> res;
     res << 24.0 << 12.0;
     return res;
 }
 
-QStringList V4LVideoEncode::supportedVideoCodecs() const
+QStringList V4LVideoEncode::supportedVideoCodecs(const QVideoEncoderSettings &) const
 {
     return m_codecs;
 }

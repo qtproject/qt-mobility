@@ -84,23 +84,21 @@ QImageEncoderControl::~QImageEncoderControl()
 }
 
 /*!
-    \fn QImageEncoderControl::supportedResolutions() const
+    \fn QImageEncoderControl::supportedResolutions(const QImageEncoderSettings &settings = QImageEncoderSettings()) const
 
     Returns a list of supported resolutions.  This will return an empty list if the encoder supports
     arbitrary resolutions within the minimum and maximum range.
+
+    If non null image \a settings parameter is passed,
+    the returned list is reduced to resolutions supported with partial settings applied.
+    It can be used to query the list of resolutions, supported by specific image codec.
 
     \sa resolution(), minimumResolution(), maximumResolution()
 
 */
 
 /*!
-    \fn QImageEncoderControl::resolution() const
-
-    Returns the resolution of the encoded image.
-*/
-
-/*!
-    \fn QImageEncoderControl::minimumResolution() const
+    \fn QImageEncoderControl::minimumResolution(const QImageEncoderSettings &settings = QImageEncoderSettings()) const
 
     Returns the minimum supported resolution.
 
@@ -108,20 +106,11 @@ QImageEncoderControl::~QImageEncoderControl()
 */
 
 /*!
-    \fn QImageEncoderControl::maximumResolution() const
+    \fn QImageEncoderControl::maximumResolution(const QImageEncoderSettings &settings = QImageEncoderSettings()) const
 
     Returns the maximum supported resolution.
 
     \sa resolution()
-*/
-
-/*!
-    \fn QImageEncoderControl::setResolution(const QSize &resolution)
-
-    Sets the \a resolution of the encoded image.
-
-    An empty QSize indicates the encoder should make an optimal choice based on what is available
-    from the video source and the limitations of the codec.
 */
 
 /*!
@@ -131,35 +120,8 @@ QImageEncoderControl::~QImageEncoderControl()
 */
 
 /*!
-    \fn QImageEncoderControl::imageCodec() const
-
-    Returns the selected image codec.
-*/
-
-/*!
-    \fn QImageEncoderControl::setImageCodec(const QString &codec)
-
-    Sets the selected image \a codec.
-
-    Returns true if the codec was accepted; and false otherwise.
-*/
-
-/*!
     \fn QImageEncoderControl::imageCodecDescription(const QString &codec) const
 
     Returns a description of an image \a codec.
 */
 
-/*!
-    \fn QImageEncoderControl::quality() const
-
-    Returns the image encoding quality.
-*/
-
-/*!
-    \fn QImageEncoderControl::setQuality(QtMedia::EncodingQuality quality)
-
-    Sets the image encoding \a quality.
-
-    \sa quality()
-*/

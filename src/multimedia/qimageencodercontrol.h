@@ -58,9 +58,9 @@ class Q_MEDIA_EXPORT QImageEncoderControl : public QMediaControl
 public:
     virtual ~QImageEncoderControl();
 
-    virtual QSize minimumResolution() const = 0;
-    virtual QSize maximumResolution() const = 0;
-    virtual QList<QSize> supportedResolutions() const = 0;
+    virtual QSize minimumResolution(const QImageEncoderSettings &settings = QImageEncoderSettings()) const = 0;
+    virtual QSize maximumResolution(const QImageEncoderSettings &settings = QImageEncoderSettings()) const = 0;
+    virtual QList<QSize> supportedResolutions(const QImageEncoderSettings &settings = QImageEncoderSettings()) const = 0;
 
     virtual QStringList supportedImageCodecs() const = 0;
     virtual QString imageCodecDescription(const QString &codecName) const = 0;

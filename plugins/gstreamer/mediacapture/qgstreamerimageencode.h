@@ -58,9 +58,9 @@ public:
     QGstreamerImageEncode(QGstreamerCaptureSession *session);
     virtual ~QGstreamerImageEncode();
 
-    QSize minimumResolution() const;
-    QSize maximumResolution() const;
-    QList<QSize> supportedResolutions() const;
+    QSize minimumResolution(const QImageEncoderSettings &settings = QImageEncoderSettings()) const;
+    QSize maximumResolution(const QImageEncoderSettings &settings = QImageEncoderSettings()) const;
+    QList<QSize> supportedResolutions(const QImageEncoderSettings &settings = QImageEncoderSettings()) const;
 
     QStringList supportedImageCodecs() const;
     QString imageCodecDescription(const QString &codecName) const;
