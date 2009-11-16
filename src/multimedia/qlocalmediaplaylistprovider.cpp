@@ -86,6 +86,23 @@ bool QLocalMediaPlaylistProvider::appendItem(const QMediaContent &content)
     return true;
 }
 
+bool QLocalMediaPlaylistProvider::appendItems(const QList<QMediaContent> &items)
+{
+    Q_D(QLocalMediaPlaylistProvider);
+
+    if (items.isEmpty())
+        return true;
+
+    int pos = d->resources.count();
+    int end = pos+items.count()-1;
+
+    emit itemsAboutToBeInserted(pos, end);
+    d->resources.append(items);
+    emit itemsInserted(pos, end);
+
+    return true;
+}
+
 
 bool QLocalMediaPlaylistProvider::insertItem(int pos, const QMediaContent &content)
 {

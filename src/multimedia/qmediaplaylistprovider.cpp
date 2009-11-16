@@ -167,6 +167,21 @@ bool QMediaPlaylistProvider::appendItem(const QMediaContent &media)
 }
 
 /*!
+    Append multiple media \a items to a playlist.
+
+    Returns true if the media items were appended; and false otherwise.
+*/
+bool QMediaPlaylistProvider::appendItems(const QList<QMediaContent> &items)
+{
+    foreach(const QMediaContent &item, items) {
+        if (!appendItem(item))
+            return false;
+    }
+
+    return true;
+}
+
+/*!
     Inserts \a media into a playlist at \a position.
 
     Returns true if the media was inserted; and false otherwise.
@@ -177,6 +192,22 @@ bool QMediaPlaylistProvider::insertItem(int position, const QMediaContent &media
     Q_UNUSED(media);
     return false;
 }
+
+/*!
+    Inserts multiple media items into a playlist at \a position.
+
+    Returns true if the media items were inserted; and false otherwise.
+*/
+bool QMediaPlaylistProvider::insertItems(int position, const QList<QMediaContent> &items)
+{
+    for (int i=0; i<items.count(); i++) {
+        if (!insertItem(position+i,items.at(i)))
+            return false;
+    }
+
+    return true;
+}
+
 
 /*!
     Removes the media at \a position from a playlist.
