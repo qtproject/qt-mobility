@@ -65,7 +65,7 @@ QContactLocalId url2UniqueId(const QString &contactUrl)
         id = rx.cap(1).toUInt(&conversion, 10);
     }
     if( !conversion )
-        warning() << Q_FUNC_INFO << "unparsed uri to uniqueI:" << contactUrl;
+        qWarning() << Q_FUNC_INFO << "unparsed uri to uniqueI:" << contactUrl;
     return id;
 
 }
@@ -77,7 +77,7 @@ void TrackerChangeListener::subjectsAdded(const QStringList &subjects)
     {
         added << url2UniqueId(uri);
     }
-    debug() << Q_FUNC_INFO << "added contactids:" << added;
+    qDebug() << Q_FUNC_INFO << "added contactids:" << added;
     emit contactsAdded(added);
 }
 
@@ -88,7 +88,7 @@ void TrackerChangeListener::subjectsRemoved(const QStringList &subjects)
     {
         added << url2UniqueId(uri);
     }
-    debug() << Q_FUNC_INFO << "removed contactids:" << added;
+    qDebug() << Q_FUNC_INFO << "removed contactids:" << added;
     emit contactsRemoved(added);
 }
 
@@ -100,13 +100,13 @@ void TrackerChangeListener::subjectsChanged(const QStringList &subjects)
     {
         added << url2UniqueId(uri);
     }
-    debug() << Q_FUNC_INFO << "changed contactids:" << added;
+    qDebug() << Q_FUNC_INFO << "changed contactids:" << added;
     emit contactsChanged(added);
 }
 
 void TrackerChangeListener::imAccountChanged(const QStringList& subjects) {
     // leave the debug output for few days as TODO remainder to fix writing to tracker
-    debug() << Q_FUNC_INFO << subjects;
+    qDebug() << Q_FUNC_INFO << subjects;
 
     RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
     // fetch all changed contacts at once
