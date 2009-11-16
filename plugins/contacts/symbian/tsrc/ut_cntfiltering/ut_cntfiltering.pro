@@ -14,6 +14,7 @@ INCLUDEPATH += ..\..\inc
 INCLUDEPATH += ..\..\rss
 INCLUDEPATH += ..\..\..\..\contacts
 INCLUDEPATH += ..\..\..\..\..\src\contacts
+INCLUDEPATH += ..\..\..\..\..\src\global
 include(../tsrc.pri)
 
 symbian:
