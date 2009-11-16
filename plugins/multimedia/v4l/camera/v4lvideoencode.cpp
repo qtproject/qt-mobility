@@ -58,7 +58,7 @@ V4LVideoEncode::~V4LVideoEncode()
 {
 }
 
-QSize V4LVideoEncode::minimumResolution() const
+QSize V4LVideoEncode::minimumResolution(const QVideoEncoderSettings &) const
 {
     if(m_session) {
         QSize minimum;
@@ -75,7 +75,7 @@ QSize V4LVideoEncode::minimumResolution() const
         return QSize();
 }
 
-QSize V4LVideoEncode::maximumResolution() const
+QSize V4LVideoEncode::maximumResolution(const QVideoEncoderSettings &) const
 {
     if(m_session) {
         QSize maximum;
@@ -118,7 +118,7 @@ QList< qreal > V4LVideoEncode::supportedFrameRates(const QVideoEncoderSettings &
     return res;
 }
 
-QStringList V4LVideoEncode::supportedVideoCodecs(const QVideoEncoderSettings &) const
+QStringList V4LVideoEncode::supportedVideoCodecs() const
 {
     return m_codecs;
 }
