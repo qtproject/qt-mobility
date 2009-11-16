@@ -40,18 +40,21 @@
 ****************************************************************************/
 
 
-#ifndef NOTIFICATIONMONITORCALLBACK_H_
-#define NOTIFICATIONMONITORCALLBACK_H_
+#ifndef NOTIFICATIONSATELLITECALLBACK_H_
+#define NOTIFICATIONSATELLITECALLBACK_H_
 
 #include <e32base.h>    // For CActive, link against: euser.lib
 #include <lbs.h>
+#include <lbscommon.h>
+#include <lbssatellite.h>
 
-class INotificationMonitorCallback
+class INotificationSatelliteCallback
 {
 public:
-    //callback called for trigger change event
-    virtual void handleTriggerEvent(TPositionInfo aPosInfo, enTriggerType aStatus) =0;
 
+    virtual void updateDeviceStatus(void) = 0 ;
+
+    virtual void updatePosition(TPositionSatelliteInfo  aSatInfo, int error, bool isStartUpdate) = 0 ;
 };
 
-#endif /* NOTIFICATIONMONITORCALLBACK_H_ */
+#endif /* NOTIFICATIONSATELLITECALLBACK_H_ */
