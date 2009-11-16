@@ -3,24 +3,24 @@ description = Qt Mobility Library Reference Documentation
 
 imagedirs = images
 
-headerdirs = ../../bearer \
-             ../../serviceframework \
-             ../../location \
-             ../../context \
-             ../../systeminfo \
-             ../../contacts \
-             ../../multimedia \
-             ../../messaging \
+headerdirs = ../../src/bearer \
+             ../../src/serviceframework \
+             ../../src/location \
+             ../../src/publishsubscribe \
+             ../../src/systeminfo \
+             ../../src/contacts \
+             ../../src/multimedia \
+             ../../src/messaging \
              .
 
-sourcedirs = ../../bearer \
-             ../../serviceframework \
-             ../../location \
-             ../../context \
-             ../../systeminfo \
-             ../../contacts \
-             ../../multimedia \
-             ../../messaging \
+sourcedirs = ../../src/bearer \
+             ../../src/serviceframework \
+             ../../src/location \
+             ../../src/publishsubscribe \
+             ../../src/systeminfo \
+             ../../src/contacts \
+             ../../src/multimedia \
+             ../../src/messaging \
              .
 
 exampledirs = ../../examples \
@@ -42,8 +42,6 @@ base                    = file:./doc/html
 
 defines                 = Q_QDOC \
                           __cplusplus \
-                          QMESSAGING_OPTIONAL \
-                          QMESSAGING_OPTIONAL_FOLDER
 
 examples.fileextensions = "*.cpp *.h *.svg"
 

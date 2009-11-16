@@ -62,6 +62,7 @@
 
     #include &quot;qcontactrelationship.h&quot;
     #include &quot;qcontacttype.h&quot;
+    #include &quot;qcontactdetailfilter.h&quot;
 
     GroupDetailsDialog::GroupDetailsDialog(QWidget *parent, QContactManager *contactManager, const QContact &amp;contact)
             : QDialog(parent), cm(contactManager)
@@ -106,7 +107,10 @@
     {
         listWidget-&gt;clear();
 
-        QList&lt;QContactLocalId&gt; grpList = cm-&gt;contacts(QString(QLatin1String(QContactType::TypeGroup)));
+        QContactDetailFilter groupFilter;
+        groupFilter.setDetailDefinitionName(QContactType::DefinitionName, QContactType::FieldType);
+        groupFilter.setValue(QString(QLatin1String(QContactType::TypeGroup)));
+        QList&lt;QContactLocalId&gt; grpList = cm-&gt;contacts(groupFilter);
         for (int index=0; index &lt; grpList.count(); index++){
             QContact grp = cm-&gt;contact(grpList[index]);
             QListWidgetItem *item = new QListWidgetItem(grp.displayLabel().label(), listWidget);

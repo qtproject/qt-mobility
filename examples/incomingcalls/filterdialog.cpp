@@ -67,7 +67,7 @@ FilterDialog::FilterDialog(QWidget* parent)
     add = new QPushButton(tr("Add Filter"));
     done = new QPushButton(tr("Done"));
 
-	connect(cancel, SIGNAL(clicked()), this, SLOT(cancelClicked()));
+    connect(cancel, SIGNAL(clicked()), this, SLOT(cancelClicked()));
     connect(add, SIGNAL(clicked()), this, SLOT(addClicked()));
     connect(done, SIGNAL(clicked()), this, SLOT(doneClicked()));
 
@@ -94,9 +94,9 @@ FilterDialog::FilterDialog(QWidget* parent)
     btnLayout->addWidget(add);
     btnLayout->addWidget(done);
 	
-	vertLayout->addLayout(formLayout);
-	vertLayout->addWidget(expression);
-	formLayout->addRow(btnLayout);
+    vertLayout->addLayout(formLayout);
+    vertLayout->addWidget(expression);
+    formLayout->addRow(btnLayout);
 
     setLayout(vertLayout);
 }
@@ -173,11 +173,11 @@ void FilterDialog::addClicked()
     fil.setDetailDefinitionName(defName, fieldName);
     fil.setValue(value->text());
 
-    Qt::MatchFlags matchFlags;
+    QContactFilter::MatchFlags matchFlags;
     switch (match->currentIndex()) {
         case 0:
         {
-            matchFlags |= Qt::MatchExactly;
+            matchFlags |= QContactFilter::MatchExactly;
 
             exprMatch = "EQUALS";
         }
@@ -185,7 +185,7 @@ void FilterDialog::addClicked()
 
         case 1:
         {
-            matchFlags |= Qt::MatchStartsWith;
+            matchFlags |= QContactFilter::MatchStartsWith;
 
             exprMatch = "STARTSWITH";
         }
@@ -193,7 +193,7 @@ void FilterDialog::addClicked()
 
         case 2:
         {
-            matchFlags |= Qt::MatchContains;
+            matchFlags |= QContactFilter::MatchContains;
 
             exprMatch = "CONTAINS";
         }
@@ -201,7 +201,7 @@ void FilterDialog::addClicked()
 
         default:
         {
-            matchFlags |= Qt::MatchEndsWith;
+            matchFlags |= QContactFilter::MatchEndsWith;
 
             exprMatch = "ENDSWITH";
         }
@@ -259,5 +259,5 @@ void FilterDialog::showDialog()
     match->setCurrentIndex(0);
     join->setCurrentIndex(0);
     expression->setText(tr("Cumulative Expression:"));
-	show();
+    show();
 }

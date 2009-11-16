@@ -1,6 +1,6 @@
 TEMPLATE      = lib
 CONFIG       += plugin testplugin
-INCLUDEPATH  += ../../serviceframework
+INCLUDEPATH  += ../../src/serviceframework
 HEADERS       = testserviceplugin.h testservice.h testserviceinterface.h
 SOURCES       = testserviceplugin.cpp
 TARGET        = tst_sfw_testservice2plugin

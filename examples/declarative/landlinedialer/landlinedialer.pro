@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-INCLUDEPATH += ../../../serviceframework
+INCLUDEPATH += ../../../src/serviceframework
 TARGET = serviceframework_landlinedialerservice
 include(../../../common.pri)
 

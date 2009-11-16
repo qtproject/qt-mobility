@@ -129,7 +129,7 @@ quint32 CntTransformEmail::getIdForField(const QString& fieldName) const
 {
     if (QContactEmailAddress::FieldEmailAddress == fieldName)
         return KUidContactFieldEMail.iUid;
-    else 
+    else
         return 0;
 }
 
@@ -140,18 +140,21 @@ quint32 CntTransformEmail::getIdForField(const QString& fieldName) const
  */
 void CntTransformEmail::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
     QContactDetailDefinition d;
 
     d.setName(QContactEmailAddress::DefinitionName);
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
     fields.insert(QContactEmailAddress::FieldEmailAddress, f);
-    f.dataType = QVariant::StringList;
 
     // Contexts
-    f.allowableValues << QString(QLatin1String(QContactDetail::ContextHome)) << QString(QLatin1String(QContactDetail::ContextWork)) << QString(QLatin1String(QContactDetail::ContextOther));
+    f.setDataType(QVariant::StringList);
+    f.setAllowableValues(QVariantList()
+            << QString(QLatin1String(QContactDetail::ContextHome))
+            << QString(QLatin1String(QContactDetail::ContextWork))
+            << QString(QLatin1String(QContactDetail::ContextOther)));
     fields.insert(QContactDetail::FieldContext, f);
 
     d.setFields(fields);

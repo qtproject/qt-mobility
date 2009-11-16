@@ -80,7 +80,11 @@ SUBDIRS += \             #Multimedia
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
-#        qvideowidget
+        qvideowidget
+
+# This causes X11 to crash in some places.
+# Remove it until it can be debugged manually
+linux*:SUBDIRS -= qvideowidget
 
 contains(QT_CONFIG, multimedia) {
     SUBDIRS += \

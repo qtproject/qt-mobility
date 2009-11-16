@@ -120,7 +120,7 @@ quint32 CntTransformNote::getIdForField(const QString& fieldName) const
 {
    if (QContactNote::FieldNote == fieldName)
        return KUidContactFieldNote.iUid;
-   else 
+   else
        return 0;
 }
 
@@ -131,12 +131,12 @@ quint32 CntTransformNote::getIdForField(const QString& fieldName) const
  */
 void CntTransformNote::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
     QContactDetailDefinition d;
 
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
     d.setName(QContactNote::DefinitionName);
     fields.insert(QContactNote::FieldNote, f);
 

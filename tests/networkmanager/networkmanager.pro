@@ -9,7 +9,7 @@ CONFIG += testcase
 
 requires(contains(QT_CONFIG,dbus))
 
-INCLUDEPATH += ../../bearer
+INCLUDEPATH += ../../src/bearer
 include(../../common.pri)
 
 qtAddLibrary(QtBearer)

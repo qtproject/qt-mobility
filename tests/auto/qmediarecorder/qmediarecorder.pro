@@ -1,5 +1,5 @@
 TARGET = tst_qmediarecorder
-INCLUDEPATH += ../../../multimedia
+INCLUDEPATH += ../../../src/multimedia
 CONFIG += testcase
 
 SOURCES += tst_qmediarecorder.cpp

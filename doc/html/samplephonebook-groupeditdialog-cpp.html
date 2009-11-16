@@ -59,6 +59,8 @@
     #include &lt;QtGui&gt;
     #include &quot;qcontact.h&quot;
     #include &quot;qcontactmanager.h&quot;
+    #include &quot;qcontactdetailfilter.h&quot;
+    #include &quot;qcontactname.h&quot;
 
     GroupEditDialog::GroupEditDialog(QWidget *parent, QContactManager *contactManager)
             : QDialog(parent), cm(contactManager)
@@ -110,7 +112,10 @@
     void GroupEditDialog::repopulateGroupList()
     {
         listWidget-&gt;clear();
-        QList&lt;QContactLocalId&gt; grpList = cm-&gt;contacts(QString(QLatin1String(QContactType::TypeGroup)));
+        QContactDetailFilter groupFilter;
+        groupFilter.setDetailDefinitionName(QContactType::DefinitionName, QContactType::FieldType);
+        groupFilter.setValue(QString(QLatin1String(QContactType::TypeGroup)));
+        QList&lt;QContactLocalId&gt; grpList = cm-&gt;contacts(groupFilter);
         for (int index=0; index &lt; grpList.count(); index++){
             QContact grp = cm-&gt;contact(grpList[index]);
             QListWidgetItem *item = new QListWidgetItem(grp.displayLabel().label(), listWidget);
@@ -131,7 +136,9 @@
             QContact grp;
             grp.setType(QContactType::TypeGroup);
             bool result;
-            grp.setDisplayLabel(groupNameEdit-&gt;text());
+            QContactName groupName;
+            groupName.setCustomLabel(groupNameEdit-&gt;text());
+            grp.saveDetail(&amp;groupName);
             result = cm-&gt;saveContact(&amp;grp);
 
             if (!result){

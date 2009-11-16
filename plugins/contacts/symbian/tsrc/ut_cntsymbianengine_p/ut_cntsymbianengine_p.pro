@@ -14,7 +14,7 @@ INCLUDEPATH += .\inc
 INCLUDEPATH += ..\..\inc
 INCLUDEPATH += ..\..\rss
 INCLUDEPATH += ..\..\..\..\contacts
-INCLUDEPATH += ..\..\..\..\..\contacts
+INCLUDEPATH += ..\..\..\..\..\src\contacts
 
 include(../tsrc.pri)
 
@@ -38,5 +38,6 @@ symbian:
         -lcntmodel \
         -lQtContacts \
         -lcentralrepository \
-        -lestor
+        -lestor \
+        -lflogger
 }

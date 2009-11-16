@@ -100,9 +100,9 @@
         retn += &quot;;&quot;;
 
         retn += &quot;preferredFor=&quot;;
-        foreach(const QString&amp; actionId, contact.availableActions()) {
-            if (contact.isPreferredDetail(actionId, detail)) {
-                retn += escaped(actionId) + &quot;,&quot;;
+        foreach(const QContactActionDescriptor&amp; actionDescr, contact.availableActions(QString())) {
+            if (contact.isPreferredDetail(actionDescr.actionName(), detail)) {
+                retn += escaped(actionDescr.actionName()) + &quot;,&quot;;
             }
         }
 
@@ -691,8 +691,8 @@
 
     bool Serialiser::detailIsPreferredForAnything(const QContact&amp; contact, const QContactDetail&amp; detail)
     {
-        foreach (const QString&amp; actionId, contact.availableActions()) {
-            if (contact.isPreferredDetail(actionId, detail)) {
+        foreach (const QContactActionDescriptor&amp; actionDescr, contact.availableActions(QString())) {
+            if (contact.isPreferredDetail(actionDescr.actionName(), detail)) {
                 return true;
             }
         }

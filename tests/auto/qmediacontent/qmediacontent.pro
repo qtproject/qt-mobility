@@ -1,5 +1,5 @@
 TARGET = tst_qmediacontent
-INCLUDEPATH += ../../../multimedia
+INCLUDEPATH += ../../../src/multimedia
 CONFIG += testcase
 
 include (../../../common.pri)

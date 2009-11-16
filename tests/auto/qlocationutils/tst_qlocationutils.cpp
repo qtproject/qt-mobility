@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "../../../location/qlocationutils_p.h"
+#include "../../../src/location/qlocationutils_p.h"
 #include "qgeopositioninfo.h"
 
 #include <QDebug>

@@ -53,8 +53,8 @@ V4LVideoDeviceControl::V4LVideoDeviceControl(QObject *parent)
     QFile video0("/sys/class/video4linux/video0/name");
     if (video0.exists()) {
         devices.append("v4l:/dev/video0");
-        char str[30];
-        memset(str,0,30);
+        char str[31];
+        memset(str,0,31);
         video0.open(QIODevice::ReadOnly);
         video0.read(str,30);
         name = QString(str);
@@ -65,8 +65,8 @@ V4LVideoDeviceControl::V4LVideoDeviceControl(QObject *parent)
     QFile video1("/sys/class/video4linux/video1/name");
     if (video0.exists()) {
         devices.append("v4l:/dev/video1");
-        char str[30];
-        memset(str,0,30);
+        char str[31];
+        memset(str,0,31);
         video1.open(QIODevice::ReadOnly);
         video1.read(str,30);
         name = QString(str);
