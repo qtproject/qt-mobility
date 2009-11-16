@@ -111,19 +111,21 @@ QStringList S60MediaMetaDataProvider::availableExtendedMetaData() const
 
 QString S60MediaMetaDataProvider::metaDataKeyAsString(QtMedia::MetaData key) const
 {
-    QString metaDataKey;
-
     switch(key) {
-        case QtMedia::Title: metaDataKey = QString("title"); break;
-        case QtMedia::AlbumArtist: metaDataKey = QString("artist"); break;
-        case QtMedia::Comment: metaDataKey = QString("comment"); break;
-        case QtMedia::Genre: metaDataKey = QString("genre"); break;
-        case QtMedia::Year: metaDataKey = QString("year"); break;
-        case QtMedia::Copyright: metaDataKey = QString("copyright"); break;
-        case QtMedia::AlbumTitle: metaDataKey = QString("album"); break;
-        case QtMedia::Composer: metaDataKey = QString("composer"); break;
-        case QtMedia::TrackNumber: metaDataKey = QString("albumtrack");
-        case QtMedia::SubTitle: break; // TODO: Find the matching metadata keys
+        case QtMedia::Title: return "title";
+        case QtMedia::AlbumArtist: return "artist";
+        case QtMedia::Comment: return "comment";
+        case QtMedia::Genre: return "genre";
+        case QtMedia::Year: return "year";
+        case QtMedia::Copyright: return "copyright";
+        case QtMedia::AlbumTitle: return "album";
+        case QtMedia::Composer: return "composer";
+        case QtMedia::TrackNumber: return "albumtrack";
+        case QtMedia::AudioBitrate: return "audiobitrate";
+        case QtMedia::VideoBitRate: return "videobitrate";
+        case QtMedia::Duration: return "duration";
+        case QtMedia::MediaType: return "contenttype";
+        case QtMedia::SubTitle: // TODO: Find the matching metadata keys
         case QtMedia::Description:
         case QtMedia::Category:
         case QtMedia::Date:
@@ -134,9 +136,6 @@ QString S60MediaMetaDataProvider::metaDataKeyAsString(QtMedia::MetaData key) con
         case QtMedia::ParentalRating:
         case QtMedia::RatingOrganisation:       
         case QtMedia::Size:
-        case QtMedia::MediaType:
-        case QtMedia::Duration:
-        case QtMedia::AudioBitrate:
         case QtMedia::AudioCodec:
         case QtMedia::AverageLevel:
         case QtMedia::Channels:
@@ -153,7 +152,6 @@ QString S60MediaMetaDataProvider::metaDataKeyAsString(QtMedia::MetaData key) con
         case QtMedia::Resolution:
         case QtMedia::PixelAspectRatio:
         case QtMedia::VideoFrameRate:
-        case QtMedia::VideoBitRate:
         case QtMedia::VideoCodec:
         case QtMedia::PosterUri:
         case QtMedia::ChapterNumber:
@@ -168,5 +166,5 @@ QString S60MediaMetaDataProvider::metaDataKeyAsString(QtMedia::MetaData key) con
             break;
     }
     
-    return metaDataKey;
+    return QString();
 }
