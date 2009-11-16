@@ -156,7 +156,8 @@ void S60AudioPlayerSession::stop()
 void S60AudioPlayerSession::seek(qint64 ms)
 {   
     m_player->Pause();
-    m_player->SetPosition(ms);
+    m_player->SetPosition(ms*1000);
+    m_player->Play();
     emit positionChanged(position());
 }
 

@@ -199,7 +199,8 @@ void S60VideoPlayerSession::stop()
 void S60VideoPlayerSession::seek(qint64 ms)
 {
     m_player->PauseL();
-    m_player->SetPositionL(ms);
+    m_player->SetPositionL(ms*1000);
+    m_player->Play();
     emit positionChanged(position());
 }
 
