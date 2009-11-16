@@ -4,13 +4,13 @@ TARGET = $$qtLibraryTarget(v4lengine)
 
 PLUGIN_TYPE = mediaservice
 
-include (../../common.pri)
+include (../../../common.pri)
 
 qtAddLibrary(QtMedia)
 
 DEPENDPATH += .
 
-INCLUDEPATH += ../../src/multimedia
+INCLUDEPATH += ../../../src/multimedia
 
 HEADERS += v4lserviceplugin.h
 SOURCES += v4lserviceplugin.cpp

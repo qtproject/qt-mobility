@@ -4,13 +4,13 @@ TARGET = $$qtLibraryTarget(m3u)
 
 PLUGIN_TYPE = playlistformats
 
-include (../../common.pri)
+include (../../../common.pri)
 
 qtAddLibrary(QtMedia)
 
 DEPENDPATH += .
 INCLUDEPATH += . \
-    ../../src/multimedia
+    ../../../src/multimedia
 
 HEADERS += qm3uhandler.h
 SOURCES += main.cpp \

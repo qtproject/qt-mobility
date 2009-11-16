@@ -4,8 +4,8 @@ TARGET = $$qtLibraryTarget(qwmp)
 
 PLUGIN_TYPE = mediaservice
 
-INCLUDEPATH+=../../src/multimedia
-include(../../common.pri)
+INCLUDEPATH+=../../../src/multimedia
+include(../../../common.pri)
 
 TMP_INCLUDE = $$quote($$(INCLUDE))
 TMP_SEARCHPATHS = $$split(TMP_INCLUDE, ";") $$QMAKE_INCDIR

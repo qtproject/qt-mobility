@@ -5,11 +5,11 @@ TARGET = $$qtLibraryTarget(phononengine)
 
 PLUGIN_TYPE = mediaservice
 
-include (../../common.pri)
+include (../../../common.pri)
 
 qtAddLibrary(QtMedia)
 
-INCLUDEPATH += ../../src/multimedia
+INCLUDEPATH += ../../../src/multimedia
 
 DEPENDPATH += .
 
