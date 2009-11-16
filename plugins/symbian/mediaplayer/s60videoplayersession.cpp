@@ -229,7 +229,7 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 }
 
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
-{
+{    
     m_metaDataMap.clear();
     m_numberOfMetaDataEntries = 0;
     TRAP_IGNORE(m_numberOfMetaDataEntries = m_player->NumberOfMetaDataEntriesL();)
@@ -245,6 +245,7 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
         entry = NULL;
     }
     
+    emit durationChanged(duration());
     emit metaDataChanged();
 }
 
@@ -256,6 +257,7 @@ void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
 
 void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
 {
+    stopTimer();
     m_state = QMediaPlayer::StoppedState;
     emit stateChanged(QMediaPlayer::StoppedState);
     emit positionChanged(position());
