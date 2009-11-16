@@ -9,23 +9,22 @@ CONFIG += plugin
 TARGET = $$qtLibraryTarget(mobapicontactspluginsymbian)
 include(../../../common.pri)
 symbian: { 
-	load(data_caging_paths)
+    load(data_caging_paths)
+    
+    TARGET.CAPABILITY = ALL -TCB
+    TARGET.EPOCALLOWDLLDATA = 1
+    TARGET.UID3 = 0x2002AC7B
 
-	TARGET.CAPABILITY = ALL -TCB
-	TARGET.EPOCALLOWDLLDATA = 1
-  TARGET.UID3 = 0xE5E2F4B4
-  
-  INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
-  
-  INCLUDEPATH += inc
-	INCLUDEPATH += rss
-	INCLUDEPATH += $$SOURCE_DIR/contacts 
-	INCLUDEPATH += $$SOURCE_DIR/contacts/details 
-	INCLUDEPATH += $$SOURCE_DIR/contacts/filters 
-	INCLUDEPATH += $$SOURCE_DIR/contacts/requests
+    INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
-	
-  HEADERS += \
+    INCLUDEPATH += inc
+        INCLUDEPATH += rss
+        INCLUDEPATH += $$SOURCE_DIR/contacts 
+        INCLUDEPATH += $$SOURCE_DIR/contacts/details 
+        INCLUDEPATH += $$SOURCE_DIR/contacts/filters 
+        INCLUDEPATH += $$SOURCE_DIR/contacts/requests
+
+    HEADERS += \
         $$PUBLIC_HEADERS \
         inc/cntsymbianengine.h \
         inc/cnttransformcontact.h \
@@ -62,7 +61,7 @@ symbian: {
         inc/cntsymbiantransformerror.h \
         inc/cntsymbiandatabase.h
       
-  SOURCES += \
+    SOURCES += \
         src/cntsymbianengine.cpp \
         src/cnttransformcontact.cpp \
         src/cnttransformcontactdata.cpp \
@@ -96,7 +95,7 @@ symbian: {
         src/cntsymbiantransformerror.cpp \
         src/cntsymbiandatabase.cpp
       
-  LIBS += \
+    LIBS += \
   				-lcntmodel \
   				-lcentralrepository \
   				-lQtContacts \
@@ -114,7 +113,6 @@ symbian: {
         MMP_RULES += cntmodelResourceFile
     }
 
- 
 	symbianplugin.sources = $${TARGET}.dll
 	symbianplugin.path = /resource/qt/plugins/contacts
 	DEPLOYMENT += symbianplugin
