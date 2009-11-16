@@ -14,7 +14,6 @@
 
 #include "trackerchangelistener.h"
 #include "qcontact.h"
-#include "debuglevel.h"
 
 using namespace SopranoLive;
 using namespace hcontacts;

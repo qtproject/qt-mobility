@@ -18,7 +18,6 @@
 #include "qcontactfilters.h"
 #include "qcontactrequests.h"
 #include "qtrackercontactasyncrequest.h"
-#include "debuglevel.h"
 
 using namespace SopranoLive;
 using namespace hcontacts;

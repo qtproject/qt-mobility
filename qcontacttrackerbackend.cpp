@@ -23,7 +23,6 @@
 #include "qcontact_p.h"
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
-#include "debuglevel.h"
 
 #include "trackerchangelistener.h"
 #include "qtrackercontactsaverequest.h"
