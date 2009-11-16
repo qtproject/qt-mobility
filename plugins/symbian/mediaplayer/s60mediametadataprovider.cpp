@@ -90,7 +90,16 @@ void S60MediaMetaDataProvider::setMetaData(QtMedia::MetaData key, QVariant const
 }
 QList<QtMedia::MetaData> S60MediaMetaDataProvider::availableMetaData() const
 {
-    // TODO:
+    QList<QtMedia::MetaData> metaDataTags;
+    for (int i = QtMedia::Title; i <= QtMedia::DeviceSettingDescription; i++) {
+        QString metaData = metaDataKeyAsString((QtMedia::MetaData)i);
+        if (!metaData.isEmpty()) {
+            if (!m_session->metaData(metaData).toString().isEmpty()) {
+                metaDataTags.append((QtMedia::MetaData)i);
+            }        
+        }
+    }
+    return metaDataTags;
 }
 
 QVariant S60MediaMetaDataProvider::extendedMetaData(const QString &key) const
