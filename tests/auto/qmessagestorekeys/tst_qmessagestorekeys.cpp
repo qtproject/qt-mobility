@@ -45,6 +45,13 @@
 #include "qtmessaging.h"
 #include "../support/support.h"
 
+#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) && defined(_WIN32_WCE))
+# if defined(TESTDATA_DIR)
+#  undef TESTDATA_DIR
+# endif
+# define TESTDATA_DIR "."
+#endif
+
 //TESTED_CLASS=
 //TESTED_FILES=
 
@@ -218,6 +225,9 @@ void tst_QMessageStoreKeys::initTestCase()
 
     existingMessageIds = QMessageStore::instance()->queryMessages(~existingAccountsFilter).toSet();
 
+    // For windows at least, we can't have HasAttachments set without a real attachment
+    const char *attachmentPaths = TESTDATA_DIR "/testdata/1.txt";
+
     QList<Support::Parameters> messageParams;
     messageParams << Params()("parentAccountName", "Alter Ego")
                              ("parentFolderPath", "My messages")
@@ -246,6 +256,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("priority", "High")
                              ("size", "10240")
                              ("status-hasAttachments", "true")
+			     ("attachments", attachmentPaths)
                              ("custom-spam", "filter:no")
                              ("custom-flagged", "true")
                   << Params()("parentAccountName", "Work")
@@ -259,6 +270,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("priority", "High")
                              ("size", "20480")
                              ("status-hasAttachments", "true")
+			     ("attachments", attachmentPaths)
                              ("custom-spam", "filter:no")
                   << Params()("parentAccountName", "Work")
                              ("parentFolderPath", "Innbox/X-Announce")
@@ -284,6 +296,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("size", "4096")
                              ("status-read", "true")
                              ("status-hasAttachments", "true")
+			     ("attachments", attachmentPaths)
                              ("custom-spam", "filter:yes");
 
     foreach (const Support::Parameters &params, messageParams) {
@@ -1823,7 +1836,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[4] );
 
-#ifndef NO_SET_SUPPORT
     QTest::newRow("status equality 1")
         << QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
@@ -1894,6 +1906,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList()
         << messageIds;
 
+#ifndef NO_SET_SUPPORT
     QTest::newRow("priority equality 1")
         << QMessageFilter::byPriority(QMessage::HighPriority, QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )

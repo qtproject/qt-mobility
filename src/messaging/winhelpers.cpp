@@ -1031,6 +1031,15 @@ namespace {
                         }
 
                         if (*lastError == QMessageStore::NoError) {
+                            // Mark this message as read/unread
+                            LONG flags = source.status() & QMessage::Read ? MSGFLAG_READ : 0;
+                            if (!setMapiProperty(message, PR_MESSAGE_FLAGS, flags)) {
+                                qWarning() << "Unable to set flags in message.";
+                                *lastError = QMessageStore::FrameworkFault;
+                            }
+                        }
+
+                        if (*lastError == QMessageStore::NoError) {
                             QStringList headers;
                             foreach (const QByteArray &name, source.headerFields()) {
                                 foreach (const QString &value, source.headerFieldValues(name)) {
@@ -3891,6 +3900,9 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                         break;
                     case PR_HASATTACH:
                         msg->d_ptr->_hasAttachments = (prop.Value.b != FALSE);
+                        if (prop.Value.b) {
+                            flags |= QMessage::HasAttachments;
+                        }
                         break;
 #ifndef _WIN32_WCE
                     case PR_MSG_EDITOR_FORMAT:
