@@ -56,9 +56,7 @@ typedef QMap<QString, QString> Parameters;
 Q_MESSAGING_SUPPORT_EXPORT void clearMessageStore();
 
 Q_MESSAGING_SUPPORT_EXPORT QMessageAccountId addAccount(const Parameters &params);
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 Q_MESSAGING_SUPPORT_EXPORT QMessageFolderId addFolder(const Parameters &params);
-#endif
 Q_MESSAGING_SUPPORT_EXPORT QMessageId addMessage(const Parameters &params);
 
 }

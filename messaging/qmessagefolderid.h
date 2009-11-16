@@ -40,7 +40,6 @@
 ****************************************************************************/
 #ifndef QMESSAGEFOLDERID_H
 #define QMESSAGEFOLDERID_H
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include <QString>
 #include <QList>
 #include <qmessageglobal.h>
@@ -77,5 +76,4 @@ typedef QList<QMessageFolderId> QMessageFolderIdList;
 
 Q_MESSAGING_EXPORT uint qHash(const QMessageFolderId &id);
 
-#endif
 #endif

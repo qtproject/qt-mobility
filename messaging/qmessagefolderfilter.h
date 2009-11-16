@@ -40,7 +40,6 @@
 ****************************************************************************/
 #ifndef QMESSAGEFOLDERFILTER_H
 #define QMESSAGEFOLDERFILTER_H
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include <qmessageglobal.h>
 #include <qmessagedatacomparator.h>
 #include <qmessageid.h>
@@ -98,5 +97,4 @@ public:
 private:
     QMessageFolderFilterPrivate *d_ptr;
 };
-#endif
 #endif

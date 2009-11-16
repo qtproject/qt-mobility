@@ -1208,7 +1208,6 @@ QMessageAccountId addAccount(const Parameters &params)
     return result;
 }
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderId addFolder(const Parameters &params)
 {
     QMessageFolderId result;
@@ -1257,7 +1256,6 @@ QMessageFolderId addFolder(const Parameters &params)
                             QByteArray recordKey = folderRecordKey(newFolder);
 #else
                             QByteArray recordKey;
-#endif
                             QByteArray entryId = folderEntryId(newFolder);
                             QByteArray storeKey = storeRecordKey(store);
                             result = folderIdFromProperties(recordKey, entryId, storeKey);
