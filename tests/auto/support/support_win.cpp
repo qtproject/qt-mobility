@@ -1256,6 +1256,7 @@ QMessageFolderId addFolder(const Parameters &params)
                             QByteArray recordKey = folderRecordKey(newFolder);
 #else
                             QByteArray recordKey;
+#endif
                             QByteArray entryId = folderEntryId(newFolder);
                             QByteArray storeKey = storeRecordKey(store);
                             result = folderIdFromProperties(recordKey, entryId, storeKey);
@@ -1280,7 +1281,6 @@ QMessageFolderId addFolder(const Parameters &params)
 
     return result;
 }
-#endif
 
 }
 
