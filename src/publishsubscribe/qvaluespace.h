@@ -42,7 +42,7 @@
 #ifndef QVALUESPACE_H
 #define QVALUESPACE_H
 
-#include "qcontextglobal.h"
+#include "qpublishsubscribeglobal.h"
 
 #include <QList>
 #include <QUuid>
@@ -65,9 +65,9 @@ namespace QValueSpace {
     };
     Q_DECLARE_FLAGS(LayerOptions, LayerOption);
 
-    Q_CFW_EXPORT void initValueSpaceServer();
+    Q_PUBLISHSUBSCRIBE_EXPORT void initValueSpaceServer();
 
-    Q_CFW_EXPORT QList<QUuid> availableLayers();
+    Q_PUBLISHSUBSCRIBE_EXPORT QList<QUuid> availableLayers();
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QValueSpace::LayerOptions);
