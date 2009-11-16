@@ -326,10 +326,7 @@ void QWindowVideoWidgetBackend::showEvent(QShowEvent *)
 {
     m_windowControl->setWinId(m_widget->winId());
 
-    QRect displayRect = m_widget->rect();
-    displayRect.moveTo(m_widget->mapTo(m_widget->nativeParentWidget(), displayRect.topLeft()));
-
-    m_windowControl->setDisplayRect(displayRect);
+    m_windowControl->setDisplayRect(m_widget->rect());
 }
 
 void QWindowVideoWidgetBackend::hideEvent(QHideEvent *)
@@ -338,18 +335,12 @@ void QWindowVideoWidgetBackend::hideEvent(QHideEvent *)
 
 void QWindowVideoWidgetBackend::moveEvent(QMoveEvent *)
 {
-    QRect displayRect = m_widget->rect();
-    displayRect.moveTo(m_widget->mapTo(m_widget->nativeParentWidget(), displayRect.topLeft()));
-
-    m_windowControl->setDisplayRect(displayRect);
+    m_windowControl->setDisplayRect(m_widget->rect());
 }
 
 void QWindowVideoWidgetBackend::resizeEvent(QResizeEvent *)
 {
-    QRect displayRect = m_widget->rect();
-    displayRect.moveTo(m_widget->mapTo(m_widget->nativeParentWidget(), displayRect.topLeft()));
-
-    m_windowControl->setDisplayRect(displayRect);
+    m_windowControl->setDisplayRect(m_widget->rect());
 }
 
 void QWindowVideoWidgetBackend::paintEvent(QPaintEvent *event)
