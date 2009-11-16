@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-#include <QDebug>
 #include <QTimer>
 
 #include "qcontactrequests.h"
@@ -104,7 +103,11 @@ void QContactRequestWorker::stop()
 
         d->m_mutex.lock();
         bool finished = d->m_finished;
-        d->m_newRequestAdded.wakeAll();
+        
+        if (d->m_requestQueue.isEmpty()) {
+            d->m_newRequestAdded.wakeAll();
+        }
+        
         d->m_mutex.unlock();
 
         if (finished) {
@@ -139,7 +142,7 @@ void QContactRequestWorker::run()
     for(;;) {
         // get a new request from the queue (also sets the m_currentRequest ptr to this request)
         req = d->takeFirstRequest();
-        if (req == 0) {
+        if (req == 0 || d->m_stop) {
             // stopped! m_currentRequest ptr will still be zero.
             break;
         }
@@ -150,7 +153,6 @@ void QContactRequestWorker::run()
             QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Cancelled);
             continue;
         }
-
         // Now perform the active request and emit required signals.
         switch (req->type()) {
             case QContactAbstractRequest::ContactFetchRequest:
@@ -187,6 +189,7 @@ void QContactRequestWorker::run()
                 break;
         }
         req->d_ptr->m_condition.wakeAll();
+        d->m_currentRequest = 0;
     }
 
     // we were stopped.  clean up our requests by cancelling them all.
@@ -243,11 +246,17 @@ bool QContactRequestWorker::addRequest(QContactAbstractRequest* req)
  */
 bool QContactRequestWorker::removeRequest(QContactAbstractRequest* req)
 {
+    QMutexLocker threadLocker(&d->m_mutex);
+    if(!d->m_requestQueue.contains(req)) {
+        threadLocker.unlock();
+        while (req == d->m_currentRequest){
+            usleep(10);
+        }
+        threadLocker.relock();
+        return true;
+    }
     if (req) {
-        QMutexLocker threadLocker(&d->m_mutex);
         d->m_requestQueue.removeOne(req);
-        if (req == d->m_currentRequest)
-            d->m_currentRequest = 0;
         if (req->d_ptr->m_waiting)
             req->d_ptr->m_condition.wakeAll();
         return true;
@@ -314,14 +323,11 @@ void QContactRequestWorker::processContactFetchRequest(QContactFetchRequest* req
         QContactFilter filter = req->filter();
         QList<QContactSortOrder> sorting = req->sorting();
         QStringList defs = req->definitionRestrictions();
-
         QContactManager::Error operationError;
         QList<QContactManager::Error> operationErrors;
         QList<QContact> requestedContacts;
-
         QList<QContactLocalId> requestedContactIds = req->manager()->contacts(filter, sorting);
         operationError = req->manager()->error();
-
         QContactManager::Error tempError;
         for (int i = 0; i < requestedContactIds.size(); i++) {
             QContact current = req->manager()->contact(requestedContactIds.at(i));
@@ -343,11 +349,9 @@ void QContactRequestWorker::processContactFetchRequest(QContactFetchRequest* req
                     }
                 }
             }
-
             // add the contact to the result list.
             requestedContacts.append(current);
         }
-
         // update the request with the results.
         QContactManagerEngine::updateRequest(req, requestedContacts, operationError, operationErrors, QContactAbstractRequest::Finished);
     }

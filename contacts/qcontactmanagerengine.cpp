@@ -53,7 +53,6 @@
 #include "qcontactrequests_p.h"
 
 #include "qcontact_p.h"
-
 /*!
  * \class QContactManagerEngine
  * \preliminary
@@ -1789,6 +1788,7 @@ bool QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
     if (!req->d_ptr->stateTransition(req, error, errors, status))
         return false;
 
+    QMutexLocker locker(&req->d_ptr->m_mutex);
     switch (requestType) {
         case QContactAbstractRequest::ContactFetchRequest:
         {
@@ -1899,7 +1899,7 @@ bool QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
     if (req->type() == QContactAbstractRequest::ContactFetchRequest) {
         QContactManager::Error tempCopy = error;
         QList<QContactManager::Error> tempCopyList = errors;
-        if (!req->d_ptr->stateTransition(req, tempCopy, tempCopyList, status)) {
+    if (!req->d_ptr->stateTransition(req, tempCopy, tempCopyList, status)) {
             qWarning("Fatal thread error - unable to set status! (2)");
             return false;
         }
@@ -1908,9 +1908,9 @@ bool QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
         rd->setContacts(result);
         QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
         emit r->progress(r, appendOnly);
+
         return true;
     }
-
     if (req->type() == QContactAbstractRequest::ContactSaveRequest) {
         QContactManager::Error tempCopy = error;
         QList<QContactManager::Error> tempCopyList = errors;
@@ -1924,7 +1924,6 @@ bool QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
         emit r->progress(r);
         return true;
     }
-
     return false;
 }
 

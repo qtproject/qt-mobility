@@ -94,7 +94,7 @@ public:
     QWaitCondition m_newRequestAdded;
     QQueue<QContactAbstractRequest*> m_requestQueue; 
     QList<QContactAbstractRequest*> m_removedRequests; 
-    QContactAbstractRequest* m_currentRequest;
+    mutable QContactAbstractRequest* m_currentRequest;
 };
 #endif
 
