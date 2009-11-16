@@ -132,27 +132,28 @@ if (QContactGender::FieldGender == fieldName)
 }
 
 /*!
- * Adds the detail definitions for the details this transform class supports.
+ * Modifies the detail definitions. The default detail definitions are
+ * queried from QContactManagerEngine::schemaDefinitions and then modified
+ * with this function in the transform leaf classes.
  *
- * \a definitions On return, the supported detail definitions have been added.
+ * \a definitions The detail definitions to modify.
+ * \a contactType The contact type the definitions apply for.
  */
-void CntTransformGender::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformGender::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField f;
-    QContactDetailDefinition d;
+    Q_UNUSED(contactType);
 
-    d.setName(QContactGender::DefinitionName);
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList()
-            << QString(QLatin1String(QContactGender::GenderMale))
-            << QString(QLatin1String(QContactGender::GenderFemale))
-            << QString(QLatin1String(QContactGender::GenderUnspecified)));
-    fields.insert(QContactGender::FieldGender, f);
+    if(definitions.contains(QContactGender::DefinitionName)) {
+        QContactDetailDefinition d = definitions.value(QContactGender::DefinitionName);
+        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
 
-    d.setFields(fields);
-    d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+        // Context not supported in symbian back-end, remove
+        fields.remove(QContactGender::FieldContext);
 
-    definitions.insert(d.name(), d);
+        d.setFields(fields);
+        d.setUnique(true);
+
+        // Replace original definitions
+        definitions.insert(d.name(), d);
+    }
 }

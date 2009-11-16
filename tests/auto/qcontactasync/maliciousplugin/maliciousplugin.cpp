@@ -51,10 +51,7 @@
 #define makename(x) makestr(x)
 
 #include "maliciousplugin_p.h"
-
-#include "qcontact_p.h"
 #include "qcontactmanager.h"
-#include "qcontactmanager_p.h"
 
 MaliciousAsyncManagerEngine::MaliciousAsyncManagerEngine()
         : QContactManagerEngine()

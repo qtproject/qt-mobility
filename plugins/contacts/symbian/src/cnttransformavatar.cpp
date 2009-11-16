@@ -170,33 +170,37 @@ quint32 CntTransformAvatar::getIdForField(const QString& fieldName) const
 }
 
 /*!
- * Adds the detail definitions for the details this transform class supports.
+ * Modifies the detail definitions. The default detail definitions are
+ * queried from QContactManagerEngine::schemaDefinitions and then modified
+ * with this function in the transform leaf classes.
  *
- * \a definitions On return, the supported detail definitions have been added.
+ * \a definitions The detail definitions to modify.
+ * \a contactType The contact type the definitions apply for.
  */
-void CntTransformAvatar::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformAvatar::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField f;
-    QContactDetailDefinition d;
-    QVariantList subTypes;
+    Q_UNUSED(contactType);
 
-    // fields
-    d.setName(QContactAvatar::DefinitionName);
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QContactAvatar::FieldAvatar, f);
+    if(definitions.contains(QContactAvatar::DefinitionName)) {
+        QContactDetailDefinition d = definitions.value(QContactAvatar::DefinitionName);
+        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
 
-    // Sub-types
-    f.setDataType(QVariant::String); // only allowed to be a single subtype
-    f.setAllowableValues(QVariantList()
-            << QString(QLatin1String(QContactAvatar::SubTypeImage))
-            << QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone))
-            << QString(QLatin1String(QContactAvatar::SubTypeVideoRingtone)));
-    fields.insert(QContactUrl::FieldSubType, f);
+        // Update sub-types
+        QContactDetailDefinitionField f;
+        f.setDataType(QVariant::String); // only allowed to be a single subtype
+        f.setAllowableValues(QVariantList()
+                << QString(QLatin1String(QContactAvatar::SubTypeImage))
+                << QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone))
+                << QString(QLatin1String(QContactAvatar::SubTypeVideoRingtone)));
+        fields.insert(QContactAvatar::FieldSubType, f);
 
-    d.setFields(fields);
-    d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-    definitions.insert(d.name(), d);
+        // Context not supported in symbian back-end, remove
+        fields.remove(QContactAvatar::FieldContext);
+
+        d.setFields(fields);
+        d.setUnique(true);
+
+        // Replace original definitions
+        definitions.insert(d.name(), d);
+    }
 }

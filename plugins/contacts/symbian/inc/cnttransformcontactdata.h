@@ -69,7 +69,7 @@ public:
 	virtual QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const = 0;
 	virtual bool supportsSubType(const QString& detailName) const = 0;
 	virtual quint32 getIdForField(const QString& detailName) const = 0;
-	virtual void detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const = 0;
+	virtual void detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const = 0;
 };
 
 #endif

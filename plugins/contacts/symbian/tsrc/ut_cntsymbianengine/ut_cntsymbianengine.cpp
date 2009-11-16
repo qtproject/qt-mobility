@@ -40,11 +40,13 @@
 ****************************************************************************/
 
 #include "ut_cntsymbianengine.h"
-#include "cntsymbianengine_p.h"
 #include "cntsymbianengine.h"
 #include "qcontactrelationship.h"
 #include "qcontactrelationshipfilter.h"
+
 #include <qcontactmanager.h>
+#include <qcontactdetailfilter.h>
+#include <qcontactorganization.h>
 
 #include <QtTest/QtTest>
 
@@ -70,7 +72,7 @@ void TestSymbianEngine::init()
 {
 }
 
-void TestSymbianEngine::clean()
+void TestSymbianEngine::cleanup()
 {
     removeAllContacts();
 }
@@ -90,6 +92,55 @@ void TestSymbianEngine::removeAllContacts()
     }
 }
 
+void TestSymbianEngine::ctors()
+{
+    QContactManager::Error error;
+    QMap<QString, QString> params;
+    
+    // Ctor
+    CntSymbianEngine *ce;
+    ce = new CntSymbianEngine(params, error);
+    QVERIFY(ce != NULL);
+    QVERIFY(error == QContactManager::NoError);
+    if (error == QContactManager::NoError) {
+        QVERIFY(ce->managerName() == CNT_SYMBIAN_MANAGER_NAME);
+        QVERIFY(ce->m_contactFilter != 0);
+        QVERIFY(ce->m_contactSorter != 0);
+        QVERIFY(ce->m_dataBase != 0);
+        QVERIFY(ce->m_relationship != 0);
+        QVERIFY(ce->m_transformContact != 0);
+    } else {
+        QSKIP("Error creating CntSymbianEngine in ctor", SkipSingle);
+    }
+    // copy ctor
+    CntSymbianEngine *ce1(ce);
+    QVERIFY(ce->managerName() == ce1->managerName());
+    QVERIFY(ce->m_contactFilter == ce1->m_contactFilter);
+    QVERIFY(ce->m_contactSorter == ce1->m_contactSorter);
+    QVERIFY(ce->m_dataBase == ce1->m_dataBase);
+    QVERIFY(ce->m_relationship == ce1->m_relationship);
+    QVERIFY(ce->m_transformContact == ce1->m_transformContact);
+    
+    // assignment
+    CntSymbianEngine *ce2 = ce;
+    QVERIFY(ce->managerName() == ce2->managerName());
+    QVERIFY(ce->m_contactFilter == ce2->m_contactFilter);
+    QVERIFY(ce->m_contactSorter == ce2->m_contactSorter);
+    QVERIFY(ce->m_dataBase == ce2->m_dataBase);
+    QVERIFY(ce->m_relationship == ce2->m_relationship);
+    QVERIFY(ce->m_transformContact == ce2->m_transformContact);
+
+    // dref
+    ce->deref();
+    /*
+    QVERIFY(ce->m_contactFilter == 0xDEDEDEDE);
+    QVERIFY(ce->m_contactSorter == 0xDEDEDEDE);
+    QVERIFY(ce->m_dataBase == 0xDEDEDEDE);
+    QVERIFY(ce->m_relationship == 0xDEDEDEDE);
+    QVERIFY(ce->m_transformContact == 0xDEDEDEDE);
+    */
+}
+
 void TestSymbianEngine::saveContact()
 {
     QContactManager::Error err;
@@ -103,6 +154,20 @@ void TestSymbianEngine::saveContact()
     QVERIFY(!m_engine->saveContact(NULL, err));
     QVERIFY(err == QContactManager::BadArgumentError);
     int current_count = m_engine->contacts(sortOrders, err).count();
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(init_count == current_count);
+    
+    // Save a contact that is not in database
+    QContact invaId;
+    QVERIFY(m_engine->saveContact(&invaId, err));   // Add to db
+    QVERIFY(err == QContactManager::NoError);
+    QContactId cId = invaId.id();
+    m_engine->removeContact(invaId.localId(), err);   // Ensure not in db
+    QVERIFY(err == QContactManager::NoError);
+    invaId.setId(cId);
+    QVERIFY(!m_engine->saveContact(&invaId, err));   // Update non existent contact
+    QVERIFY(err == QContactManager::DoesNotExistError);
+    current_count = m_engine->contacts(sortOrders, err).count();
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(init_count == current_count);
     
@@ -156,7 +221,6 @@ void TestSymbianEngine::saveContacts()
         alice.setType("Jargon");
         contacts.append(alice);
     }
-    errors.clear();
     errors = m_engine->saveContacts(&contacts, err);
     QVERIFY(err == QContactManager::InvalidDetailError);
     foreach(QContactManager::Error err, errors) {
@@ -170,7 +234,6 @@ void TestSymbianEngine::saveContacts()
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(init_count == current_count);
     contacts.clear();
-    errors.clear();
     
     // Save valid contacts
     for(int i=0; i<count; i++) {
@@ -192,7 +255,6 @@ void TestSymbianEngine::saveContacts()
     current_count = m_engine->contacts(sortOrders, err).count();
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(init_count + count == current_count);
-    errors.clear();
     contacts.clear();
     
     // Save with one invalid contact in list
@@ -229,11 +291,10 @@ void TestSymbianEngine::saveContacts()
     current_count = m_engine->contacts(sortOrders, err).count();
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(init_count + count == current_count);
-    errors.clear();
     contacts.clear();    
 }
 
-void TestSymbianEngine::contact()
+void TestSymbianEngine::retrieveContact()
 {
     QContactManager::Error err;
     
@@ -253,6 +314,83 @@ void TestSymbianEngine::contact()
     c = m_engine->contact(aid, err);
     QVERIFY(&c != NULL);
     QVERIFY(c.localId() == aid);
+    QVERIFY(err == QContactManager::NoError);
+}
+
+void TestSymbianEngine::retrieveContacts()
+{
+    QContactManager::Error err;
+    QContactFilter f;
+    QList<QContactSortOrder> s;
+    QList<QContactLocalId> cnt_ids;
+    
+    QContact c;
+    c.setType(QContactType::TypeContact);
+    QContactName cn;
+    cn.setFirst("aaa");
+    QVERIFY(c.saveDetail(&cn));
+    
+    QContactPhoneNumber number;
+    number.setContexts("Home");
+    number.setSubTypes("Mobile");
+    number.setNumber("12345678");
+    QVERIFY(c.saveDetail(&number));
+    QVERIFY(m_engine->saveContact(&c, err));
+    QVERIFY(err == QContactManager::NoError);
+    
+    QContact d;
+    d.setType(QContactType::TypeContact);
+    QContactName dn;
+    dn.setFirst("bbb");
+    QVERIFY(d.saveDetail(&dn));
+    QVERIFY(m_engine->saveContact(&d, err));
+    QVERIFY(err == QContactManager::NoError);
+    
+    QContact e;
+    e.setType(QContactType::TypeGroup);
+    QContactName en;
+    en.setFirst("ccc");
+    QVERIFY(e.saveDetail(&en));
+    QVERIFY(m_engine->saveContact(&e, err));
+    QVERIFY(err == QContactManager::NoError);
+    
+    // Retrieve all contacts
+    cnt_ids = m_engine->contacts(f, s, err);
+    QVERIFY(err == QContactManager::NoError);
+    
+    QContactDetailFilter mobileFilter;
+    mobileFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldSubTypes);
+    mobileFilter.setValue(QLatin1String(QContactPhoneNumber::SubTypeMobile));
+    
+    // Retrieve contacts with mobile number
+    cnt_ids = m_engine->contacts(mobileFilter, s, err);
+    QVERIFY(err == QContactManager::NoError);
+
+    QContactDetailFilter invalidFilter;
+    mobileFilter.setDetailDefinitionName("asfdasdf", "asdfasdf");
+    
+    // Retrieve contacts with invalid filter
+    cnt_ids = m_engine->contacts(invalidFilter, s, err);
+    QVERIFY(err == QContactManager::NoError);
+    
+    // Retrieve sorted contacts
+    QContactSortOrder sortOrder;
+    QList<QContactSortOrder> s1;
+    sortOrder.setDetailDefinitionName(QContactName::DefinitionName,  QContactName::FieldFirst);
+    sortOrder.setBlankPolicy(QContactSortOrder::BlanksLast);
+    sortOrder.setDirection(Qt::AscendingOrder);
+    sortOrder.setCaseSensitivity(Qt::CaseInsensitive);
+    s1.append(sortOrder);
+    
+    cnt_ids = m_engine->contacts(s1, err);
+    QVERIFY(err == QContactManager::NoError);
+    
+    // Retrieve with invalid sort order
+    QContactSortOrder sortOrder1;
+    QList<QContactSortOrder> s2;
+    sortOrder1.setDetailDefinitionName("asdfasdf", "asdfasd");
+    
+    cnt_ids = m_engine->contacts(s2, err);
     QVERIFY(err == QContactManager::NoError);
 }
 
@@ -326,7 +464,6 @@ void TestSymbianEngine::removeContacts()
     QVERIFY(errors.count() == 0);
         
     // NULL argument
-    errors.clear();
     errors = m_engine->removeContacts(NULL, err);
     QVERIFY(errors.count() == 0);
     QVERIFY(err == QContactManager::BadArgumentError);
@@ -339,7 +476,6 @@ void TestSymbianEngine::removeContacts()
         QVERIFY(err == QContactManager::NoError);
         contacts.append(c.localId());
     }
-    errors.clear();
     errors = m_engine->removeContacts(&contacts, err);
     QVERIFY(err == QContactManager::NoError);
     foreach(QContactManager::Error e, errors) {
@@ -364,7 +500,6 @@ void TestSymbianEngine::removeContacts()
     }
     contacts.insert(3, 0);
     
-    errors.clear();
     errors = m_engine->removeContacts(&contacts, err);
     QVERIFY(err == QContactManager::DoesNotExistError);
     for(int i=0; i<errors.count(); i++) {
@@ -435,29 +570,32 @@ void TestSymbianEngine::retrieveOwnCard()
     QVERIFY(idr == 0);
 }
 
-void TestSymbianEngine::simpleFilterTest()
+void TestSymbianEngine::filterSupport()
 {
-    QContactManager::Error err = QContactManager::NoError;
-    QContactFilter filter;
-    QList<QContactSortOrder> sortOrders;
-    
-    // Filters logic is tested somewhere else.
-    // Test that a valid list object is returned
-    // We do not care if its empty or not
-    QList<QContactLocalId> ids = m_engine->contacts(filter, sortOrders, err);
-    QVERIFY(&ids != NULL);
- 
-    /*// We test that valid values are returned
-    CntAbstractContactFilter::FilterSupport support = m_engine->filterSupported(filter);
-    bool isValid(false);
-    if (support == CntAbstractContactFilter::NotSupported ||
-        support == CntAbstractContactFilter::Supported ||
-        support == CntAbstractContactFilter::SupportedPreFilterOnly) {
-        isValid = true;
-    }
-    QVERIFY(isValid);
-    */
-
+    // Filter feature support
+    QContactDetailFilter df;
+    df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldSubTypes);
+    QVERIFY(m_engine->filterSupported(df));
+    /*  To move to filter test cases
+    QContactActionFilter af;
+    QVERIFY(!m_engine->filterSupported(af));
+    QContactChangeLogFilter clf;
+    QVERIFY(!m_engine->filterSupported(clf));
+    QContactDetailRangeFilter drf;
+    QVERIFY(!m_engine->filterSupported(drf));
+    QContactIntersectionFilter isf;
+    QVERIFY(!m_engine->filterSupported(isf));
+    QContactInvalidFilter invf;
+    QVERIFY(!m_engine->filterSupported(invf));
+    QContactLocalIdFilter liff;
+    QVERIFY(!m_engine->filterSupported(liff));
+    QContactRelationshipFilter rf;
+    QVERIFY(!m_engine->filterSupported(rf));
+    QContactUnionFilter uf;
+    QVERIFY(!m_engine->filterSupported(uf));
+    */    
+    QContactFilter f;
+    QVERIFY(!m_engine->filterSupported(f));
 }
 
 void TestSymbianEngine::featureSupport()
@@ -518,18 +656,16 @@ void TestSymbianEngine::featureSupport()
     QVERIFY(!m_engine->hasFeature(QContactManager::ChangeLogs, QContactType::TypeContact));    
 }
 
-/*
 void TestSymbianEngine::addGroup()
 {
     QContactManager::Error err = QContactManager::NoError;
-    QContactChangeSet cs;
     QContactId empty;
 
     // Add valid group contact
     QContact g;
     g.setType(QContactType::TypeGroup);
 
-    QVERIFY(m_engine->addContact(g, cs, err));
+    QVERIFY(m_engine->saveContact(&g, err));
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(g.id() != empty);
     QVERIFY(g.localId() != 0);
@@ -540,7 +676,7 @@ void TestSymbianEngine::addGroup()
     QContact g1;
     g1.setType("Jargon");
             
-    QVERIFY(!m_engine->addContact(g1, cs, err));
+    QVERIFY(!m_engine->saveContact(&g1, err));
     QVERIFY(err == QContactManager::InvalidDetailError);
     QVERIFY(g1.id() == empty);
     QVERIFY(g1.localId() == 0);
@@ -548,24 +684,24 @@ void TestSymbianEngine::addGroup()
 
 void TestSymbianEngine::retrieveGroup()
 {
-    QContactManager::Error err = QContactManager::NoError;
-    QContactChangeSet cs;
-    QContactId empty;
+    QContactManager::Error err;
+    QList<QContactSortOrder> s;
     
     // retrieve group contacts
+    QList<QContactLocalId> grp_ids = m_engine->contacts(QContactType::TypeGroup, s, err);
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(err == QContactManager::NoError);
+    
     QContact g;
     g.setType(QContactType::TypeGroup);
-    
-    QList<QContactLocalId> grp_ids = m_engine->groups(err);
+    QVERIFY(m_engine->saveContact(&g, err));
     QVERIFY(err == QContactManager::NoError);
     
-    QVERIFY(m_engine->addContact(g, cs, err));
+    QList<QContactLocalId> grp_ids1 = m_engine->contacts(QContactType::TypeGroup, s, err);
     QVERIFY(err == QContactManager::NoError);
+    QVERIFY(grp_ids.count() + 1 == grp_ids1.count());
     
-    QVERIFY(grp_ids.count() + 1 == m_engine->groups(err).count());
-    QVERIFY(err == QContactManager::NoError);
 }
-*/
 
 void TestSymbianEngine::singleRelationship()
 {
@@ -658,6 +794,81 @@ void TestSymbianEngine::batchRelationships()
             isValid = false;
         QVERIFY(isValid);
     }
+}
+
+void TestSymbianEngine::dataTypeSupport()
+{
+    QList<QVariant::Type> support = m_engine->supportedDataTypes();
+    QVERIFY(support.contains(QVariant::String));
+}
+
+void TestSymbianEngine::synthesizeDisplaylable()
+{
+    QContactManager::Error err = QContactManager::NoError;
+    
+    QContact empty;
+    QString label = m_engine->synthesizeDisplayLabel(empty, err);
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(label == QString("Unnamed"));
+    
+    QContact first;
+    QContactName fn;
+    fn.setFirst("Alice");
+    first.saveDetail(&fn);
+    label = m_engine->synthesizeDisplayLabel(first, err);
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(label == QString("Alice"));
+    
+    QContact last;
+    QContactName ln;
+    ln.setLast("Jones");
+    last.saveDetail(&ln);
+    label = m_engine->synthesizeDisplayLabel(last, err);
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(label == QString("Jones"));
+    
+    QContact orgContact;
+    QContactOrganization org;
+    org.setName("Nokia");
+    org.setDepartment(QStringList("Services"));
+    org.setTitle("Assistant Manager");
+    org.setLocation("Nokia Cyber Park");
+    orgContact.saveDetail(&org);
+    label = m_engine->synthesizeDisplayLabel(orgContact, err);
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(label == QString("Nokia"));
+    
+    QContact jargon;
+    jargon.setType("jargon");
+    label = m_engine->synthesizeDisplayLabel(jargon, err);
+    QVERIFY(err == QContactManager::InvalidContactTypeError);
+    QVERIFY(label.isEmpty());
+    
+    QContact group;
+    group.setType(QContactType::TypeGroup);
+    QContactName gn;
+    gn.setCustomLabel("grouplable");
+    group.saveDetail(&gn);
+    label = m_engine->synthesizeDisplayLabel(group, err);
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(label == QString("grouplable"));
+}
+
+void TestSymbianEngine::definitionDetails()
+{
+    QMap<QString, QContactDetailDefinition> defs;
+    QContactManager::Error err;
+    
+    // Wrong contact type
+    defs = m_engine->detailDefinitions("aerafa", err);
+    QVERIFY(err = QContactManager::InvalidContactTypeError);
+    QVERIFY(defs.count() == 0);
+    
+    // Valid defs
+    defs = m_engine->detailDefinitions(QContactType::TypeContact, err);
+    QVERIFY(err == QContactManager::NoError);
+    defs = m_engine->detailDefinitions(QContactType::TypeGroup, err);
+    QVERIFY(err == QContactManager::NoError);
 }
 
 QTEST_MAIN(TestSymbianEngine);

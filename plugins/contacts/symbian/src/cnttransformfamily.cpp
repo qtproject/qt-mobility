@@ -146,12 +146,18 @@ quint32 CntTransformFamily::getIdForField(const QString& fieldName) const
 }
 
 /*!
- * Adds the detail definitions for the details this transform class supports.
+ * Modifies the detail definitions. The default detail definitions are
+ * queried from QContactManagerEngine::schemaDefinitions and then modified
+ * with this function in the transform leaf classes.
  *
- * \a definitions On return, the supported detail definitions have been added.
+ * \a definitions The detail definitions to modify.
+ * \a contactType The contact type the definitions apply for.
  */
-void CntTransformFamily::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformFamily::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
+    Q_UNUSED(contactType);
+
+    // Note: Family is not defined in the default schema
     QMap<QString, QContactDetailDefinitionField> fields;
     QContactDetailDefinitionField f;
     QContactDetailDefinition d;

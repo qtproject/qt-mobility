@@ -127,27 +127,35 @@ quint32 CntTransformSyncTarget::getIdForField(const QString& fieldName) const
 }
 
 /*!
- * Adds the detail definitions for the details this transform class supports.
+ * Modifies the detail definitions. The default detail definitions are
+ * queried from QContactManagerEngine::schemaDefinitions and then modified
+ * with this function in the transform leaf classes.
  *
- * \a definitions On return, the supported detail definitions have been added.
+ * \a definitions The detail definitions to modify.
+ * \a contactType The contact type the definitions apply for.
  */
-void CntTransformSyncTarget::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformSyncTarget::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField f;
-    QContactDetailDefinition d;
+    Q_UNUSED(contactType);
 
-    d.setName(QContactSyncTarget::DefinitionName);
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList()
-            << QString("private")
-            << QString("public")
-            << QString("none"));
-    fields.insert(QContactSyncTarget::FieldSyncTarget, f);
+    if(definitions.contains(QContactSyncTarget::DefinitionName)) {
+        QContactDetailDefinition d = definitions.value(QContactSyncTarget::DefinitionName);
+        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
+        QContactDetailDefinitionField f;
 
-    d.setFields(fields);
-    d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+        // Not all fields are supported, replace:
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList()
+                << QString("private")
+                << QString("public")
+                << QString("none"));
+        fields.insert(QContactSyncTarget::FieldSyncTarget, f);
 
-    definitions.insert(d.name(), d);
+        d.setFields(fields);
+        d.setUnique(true);
+
+        // Replace original definitions
+        definitions.insert(d.name(), d);
+    }
 }

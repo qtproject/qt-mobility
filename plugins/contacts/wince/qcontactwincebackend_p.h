@@ -61,7 +61,6 @@
 #include "qcontactname.h"
 #include "qcontactphonenumber.h"
 #include "qcontactmanager.h"
-#include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
 #include "qcontactrequestworker_p.h"

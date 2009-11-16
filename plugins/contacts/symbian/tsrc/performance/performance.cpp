@@ -161,7 +161,7 @@ void SymbianPluginPerfomance::createComplexContacts()
         org.setDepartment(QStringList("Services"));
         org.setTitle("Assistant Manager");
         org.setLocation("Nokia Cyber Park");
-        alice.saveDetail(&email);
+        alice.saveDetail(&org);
 
         contactsList.append(alice);
     }

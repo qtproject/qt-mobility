@@ -41,13 +41,12 @@
 
 #include "qcontactmanager.h"
 
-#include "qcontact_p.h"
 #include "qcontactdetaildefinition.h"
-#include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactabstractrequest.h"
 #include "qcontactrequests.h"
 #include "qcontactchangeset.h"
+#include "qcontactdetails.h"
 
 #include "qcontactmemorybackend_p.h"
 

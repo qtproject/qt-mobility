@@ -252,6 +252,15 @@ void QContactManager::createEngine(const QString& managerName, const QMap<QStrin
     connect(d->m_engine, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)), this, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
 }
 
+/*!
+ * Constructs a QContactManager whose backend has the name \a managerName and version \a implementationVersion, where the manager
+ * is constructed with the provided \a parameters.
+ *
+ * The \a parent QObject will be used as the parent of this QContactManager.
+ *
+ * If an empty \a managerName is specified, the default implementation for the platform will be instantiated.
+ * If the specified implementation version is not available, the manager with the name \a managerName with the default implementation version is instantiated.
+ */
 QContactManager::QContactManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters, QObject* parent) 
     : QObject(parent), 
     d(new QContactManagerData) 
@@ -582,7 +591,7 @@ bool QContactManager::removeDetailDefinition(const QString& definitionName, cons
  */
 
 /*!
- * Returns true if the given \a feature is supported by the manager
+ * Returns true if the given feature \a feature is supported by the manager, for the specified type of contact \a contactType
  */
 bool QContactManager::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const
 {
