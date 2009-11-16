@@ -47,9 +47,6 @@
 
 #include <qtcontacts.h>
 
-#include "qcontact_p.h"
-#include "qcontactmanager_p.h"
-
 #include "cntsymbianengine.h"
 #include "qcontactchangeset.h"
 #include "cntsymbiandatabase.h"
