@@ -44,6 +44,7 @@
 
 #include "qcontactmanager.h"
 #include "qcontactchangeset.h"
+#include "qtcontacts.h"
 
 #define INITGUID
 #include "qcontactwincebackend_p.h"
