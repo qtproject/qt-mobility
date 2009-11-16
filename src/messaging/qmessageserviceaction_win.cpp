@@ -164,6 +164,7 @@ QMessageServiceActionPrivate::~QMessageServiceActionPrivate()
 {
     qDeleteAll(m_obsoleteThreads);
     delete m_queryThread;
+    QMessageStore::instance()->unregisterNotificationFilter(m_bodyDownloadFilterId);
 }
 
 static Lptstr createMCFRecipients(const QMessageAddressList& addressList, QMessageAddress::Type filterAddressType)

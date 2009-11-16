@@ -56,9 +56,7 @@ namespace Support {
     void clearMessageStore();
 
     QMessageAccountId addAccount(const Parameters &params);
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderId addFolder(const Parameters &params);
-#endif
     QMessageId addMessage(const Parameters &params);
 
 }

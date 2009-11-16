@@ -143,11 +143,8 @@ private slots:
     void testAccount_data();
     void testAccount();
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
-
     void testFolder_data();
     void testFolder();
-#endif
 
     void testMessage_data();
     void testMessage();
@@ -211,8 +208,6 @@ void tst_QMessageStore::testAccount()
     QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts());
     QVERIFY(accountIds.contains(accountId));
 }
-
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 
 void tst_QMessageStore::testFolder_data()
 {
@@ -278,8 +273,6 @@ void tst_QMessageStore::testFolder()
     QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders());
     QVERIFY(folderIds.contains(folderId));
 }
-
-#endif
 
 Q_DECLARE_METATYPE(QList<QByteArray>)
 Q_DECLARE_METATYPE(QList<unsigned>)
@@ -404,7 +397,6 @@ void tst_QMessageStore::testMessage()
     }
     QVERIFY(testAccountId.isValid());
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderId testFolderId;
     QMessageFolderFilter filter(QMessageFolderFilter::byDisplayName("Inbox") & QMessageFolderFilter::byParentAccountId(testAccountId));
     QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(filter));
@@ -420,7 +412,6 @@ void tst_QMessageStore::testMessage()
     QVERIFY(testFolderId.isValid());
 
     QMessageFolder testFolder(testFolderId);
-#endif
 
     SignalCatcher catcher;
     connect(QMessageStore::instance(), SIGNAL(messageAdded(QMessageId, QMessageStore::NotificationFilterIdSet)), &catcher, SLOT(messageAdded(QMessageId, QMessageStore::NotificationFilterIdSet)));
@@ -458,9 +449,8 @@ void tst_QMessageStore::testMessage()
     p.insert("mimeType", bodyType + '/' + bodySubType);
     p.insert("text", text);
     p.insert("parentAccountName", testAccountName);
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     p.insert("parentFolderPath", testFolder.path());
-#endif
+
     if (!attachments.isEmpty()) {
         QStringList attachmentPaths;
         foreach (const QString &fileName, attachments) {

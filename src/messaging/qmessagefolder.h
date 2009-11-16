@@ -40,7 +40,6 @@
 ****************************************************************************/
 #ifndef QMESSAGEFOLDER_H
 #define QMESSAGEFOLDER_H
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include <QString>
 #include <qmessageglobal.h>
 #include <qmessagefolderid.h>
@@ -70,5 +69,4 @@ public:
 private:
     QMessageFolderPrivate *d_ptr;
 };
-#endif
 #endif

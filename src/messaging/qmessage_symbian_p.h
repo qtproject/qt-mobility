@@ -62,9 +62,7 @@ private:
     QString _body;
     uint _size;
     QMessageAccountId _parentAccountId;
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderId _parentFolderId;
-#endif
     QMessage::StandardFolder _standardFolder;
     QMessageAddress _from;
     QString _senderName;

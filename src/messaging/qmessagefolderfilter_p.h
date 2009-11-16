@@ -40,7 +40,6 @@
 ****************************************************************************/
 #ifndef QMESSAGEFOLDERFILTERPRIVATE_H
 #define QMESSAGEFOLDERFILTERPRIVATE_H
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderfilter.h"
 
 #ifdef Q_OS_SYMBIAN
@@ -140,5 +139,4 @@ public:
     static bool QMessageFolderFilterPrivate::isNonMatching(const QMessageFolderFilter &filter);
 #endif
 };
-#endif
 #endif

@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolder.h"
 #include "qmessagefolder_p.h"
 
@@ -124,4 +123,3 @@
     
     Returns the path of the folder.
 */
-#endif

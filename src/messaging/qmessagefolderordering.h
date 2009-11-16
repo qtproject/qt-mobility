@@ -40,7 +40,6 @@
 ****************************************************************************/
 #ifndef QMESSAGEFOLDERORDERING_H
 #define QMESSAGEFOLDERORDERING_H
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include <Qt>
 #include <qmessageglobal.h>
 
@@ -72,5 +71,4 @@ public:
 private:
     QMessageFolderOrderingPrivate *d_ptr;
 };
-#endif
 #endif

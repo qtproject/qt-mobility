@@ -199,9 +199,7 @@ public:
 
     MapiEntryId messageEntryId(QMessageStore::ErrorCode *lastError, const MapiRecordKey &messagekey);
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderId id() const;
-#endif
 
     QMessageAccountId accountId() const;
     QMessageFolderId parentId() const;
@@ -258,10 +256,8 @@ public:
 
     MapiFolderPtr findFolder(QMessageStore::ErrorCode *lastError, QMessage::StandardFolder sf);
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderIdList folderIds(QMessageStore::ErrorCode *lastError) const;
     QMessageFolder folderFromId(QMessageStore::ErrorCode *lastError, const QMessageFolderId &folderId);
-#endif
 
     QList<MapiFolderPtr> filterFolders(QMessageStore::ErrorCode *lastError, const QMessageFolderFilter &filter) const;
 
