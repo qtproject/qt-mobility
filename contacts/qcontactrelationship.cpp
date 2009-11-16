@@ -82,22 +82,22 @@ Q_DEFINE_LATIN1_LITERAL(QContactRelationship::Aggregates, "Aggregates");
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::Is, "Is");
 
 /*!
- * \variable QContactRelationship::IsAssistantOf
- * The relationship type which identifies the first contact as being the assistant of the second contact
+ * \variable QContactRelationship::HasAssistant
+ * The relationship type which identifies the second contact as being the assistant of the first contact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::IsAssistantOf, "IsAssistantOf");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::HasAssistant, "HasAssistant");
 
 /*!
- * \variable QContactRelationship::IsManagerOf
- * The relationship type which identifies the first contact as being the manager of the second contact
+ * \variable QContactRelationship::HasManager
+ * The relationship type which identifies the second contact as being the manager of the first contact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::IsManagerOf, "IsManagerOf");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::HasManager, "HasManager");
 
 /*!
- * \variable QContactRelationship::IsSpouseOf
- * The relationship type which identifies the first contact as being the spouse of the second contact
+ * \variable QContactRelationship::HasSpouse
+ * The relationship type which identifies the second contact as being the spouse of the first contact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::IsSpouseOf, "IsSpouseOf");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::HasSpouse, "HasSpouse");
 
 /*!
  * Constructs a new relationship
