@@ -71,6 +71,7 @@ private slots:
     void createNewObject();
     void intValueChanged(int value);
     void setStringValue();
+    void setByteArrayValue();
 //! [0]
 
 private:

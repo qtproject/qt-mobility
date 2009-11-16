@@ -68,7 +68,8 @@ ProviderDialog::ProviderDialog(QWidget *parent) :
     //! [1]
     connect(ui->connectButton, SIGNAL(clicked()), this, SLOT(createNewObject()));
     connect(ui->intValue, SIGNAL(valueChanged(int)), this, SLOT(intValueChanged(int)));
-    connect(ui->setButton, SIGNAL(clicked()), this, SLOT(setStringValue()));
+    connect(ui->setStringButton, SIGNAL(clicked()), this, SLOT(setStringValue()));
+    connect(ui->setByteArrayButton, SIGNAL(clicked()), this, SLOT(setByteArrayValue()));
     //! [1]
 
     //! [3]
@@ -104,6 +105,12 @@ void ProviderDialog::setStringValue()
 {
     provider->setAttribute("stringValue", ui->stringValue->text());
 }
+
+void ProviderDialog::setByteArrayValue()
+{
+    provider->setAttribute("byteArrayValue", ui->byteArrayValue->text().toAscii());
+}
+
 //! [0]
 
 //! [2]
@@ -115,5 +122,6 @@ void ProviderDialog::createNewObject()
     provider = new QValueSpaceProvider(ui->basePath->text());
     intValueChanged(ui->intValue->value());
     setStringValue();
+    setByteArrayValue();
 }
 //! [2]

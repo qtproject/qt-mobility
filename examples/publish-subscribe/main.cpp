@@ -89,8 +89,10 @@ int main(int argc, char *argv[])
     }
 
 #ifdef Q_OS_SYMBIAN
-    QObject::connect(provider, SIGNAL(switchRequested()), consumer, SLOT(raise()));
-    QObject::connect(consumer, SIGNAL(switchRequested()), provider, SLOT(raise()));
+    QObject::connect(consumer, SIGNAL(switchRequested()), consumer, SLOT(hide()));
+    QObject::connect(provider, SIGNAL(switchRequested()), consumer, SLOT(showFullScreen()));
+    QObject::connect(provider, SIGNAL(switchRequested()), provider, SLOT(hide()));
+    QObject::connect(consumer, SIGNAL(switchRequested()), provider, SLOT(showFullScreen()));
 #endif
 
     int result = app.exec();
