@@ -943,11 +943,6 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
     return isInhibited;
 }
 
-bool QSystemScreenSaverPrivate::isScreenLockOn()
-{
-    return false;
-}
-
 void QSystemScreenSaverPrivate::activityTimeout()
 {
     UpdateSystemActivity(OverallAct);

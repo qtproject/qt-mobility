@@ -234,7 +234,6 @@ public:
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
-    bool isScreenLockOn();
 
 private:
     QString screenPath;

@@ -1998,27 +1998,6 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
     return false;
 }
 
-bool QSystemScreenSaverPrivate::isScreenLockOn()
-{
-    if(kdeIsRunning) {
-        QString kdeSSConfig;
-        if(QDir( QDir::homePath()+"/.kde4/").exists()) {
-            kdeSSConfig = QDir::homePath()+"/.kde4/share/config/kscreensaverrc";
-        } else if(QDir(QDir::homePath()+"/.kde/").exists()) {
-            kdeSSConfig = QDir::homePath()+"/.kde/share/config/kscreensaverrc";
-        }
-        QSettings kdeScreenSaveConfig(kdeSSConfig, QSettings::IniFormat);
-        kdeScreenSaveConfig.beginGroup("ScreenSaver");
-        if(kdeScreenSaveConfig.status() == QSettings::NoError) {
-            return kdeScreenSaveConfig.value("Lock").toBool();
-        }
-    } else if(gnomeIsRunning) {
-
-    }
-
-   return false;
-}
-
 void QSystemScreenSaverPrivate::whichWMRunning()
 {
 #if !defined(QT_NO_DBUS)

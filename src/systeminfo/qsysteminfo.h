@@ -352,7 +352,6 @@ class  Q_SYSINFO_EXPORT QSystemScreenSaver : public QObject
     Q_OBJECT
     Q_ENUMS(ScreenSaverState)
     Q_PROPERTY(bool screenSaverInhibited READ screenSaverInhibited)
-    Q_PROPERTY(bool isScreenLockOn READ isScreenLockOn)
 
 public:
 
@@ -364,8 +363,6 @@ public:
 
      //TODO: to Qt QDesktopWidget
     bool setScreenSaverInhibit();
-     //TODO: to Qt QDesktopWidget
-    static bool isScreenLockOn();
 
 private:
     bool screenSaverIsInhibited;

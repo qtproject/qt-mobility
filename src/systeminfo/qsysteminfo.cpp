@@ -873,16 +873,5 @@ bool QSystemScreenSaver::screenSaverInhibited()
     return d->screenSaverInhibited();
 }
 
-/*!
-  \property QSystemScreenSaver::isScreenLockOn
-  \brief screen lock on.
-
-    Returns whether the systems screen lock is turned on.
-*/
-bool QSystemScreenSaver::isScreenLockOn()
-{
-    QSystemScreenSaverPrivate dp;
-    return dp.isScreenLockOn();
-}
 
 QT_END_NAMESPACE

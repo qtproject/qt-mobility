@@ -411,8 +411,6 @@ void Dialog::setupSaver()
 {
     if (!saver) {
         saver = new QSystemScreenSaver(this);
-        ui->screenLockCheckBox->setChecked(saver->isScreenLockOn());
-        ui->screenLockCheckBox->show();
     }
 
     bool saverEnabled = saver->screenSaverInhibited();
@@ -430,15 +428,12 @@ void Dialog::setSaverEnabled(bool b)
     if (b) {
         if (!saver) {
             saver = new QSystemScreenSaver(this);
-            ui->screenLockCheckBox->setChecked(saver->isScreenLockOn());
-            ui->screenLockCheckBox->show();
         }
        if(saver->setScreenSaverInhibit()) {
         }
     } else {
         delete saver;
         saver = NULL;
-        ui->screenLockCheckBox->hide();
     }
 }
 
