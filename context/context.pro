@@ -27,11 +27,14 @@ SOURCES += \
 symbian {
     DEFINES += QT_BUILD_INTERNAL
     HEADERS += settingslayer_symbian.h \
-        pathmapper_symbian.h
+        pathmapper_symbian.h \
+        qcrmlparser_p.h
     SOURCES += settingslayer_symbian.cpp \
-        pathmapper_symbian.cpp
+        pathmapper_symbian.cpp \
+        qcrmlparser.cpp
     MMP_RULES += "EXPORTUNFROZEN"
     TARGET.CAPABILITY = ALL -TCB
+    TARGET.UID3 = 0x2002AC78
 }
 
 unix:!symbian {

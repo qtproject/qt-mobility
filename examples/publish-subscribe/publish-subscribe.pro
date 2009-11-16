@@ -1,6 +1,14 @@
 TEMPLATE = app
 TARGET = publish-subscribe
 
+symbian {
+    crmlFiles.sources = example.qcrml
+    crmlFiles.path = c:/resource/qt/crml
+    DEPLOYMENT += crmlFiles
+
+    TARGET.UID3 = 0x2002AC79
+}
+
 INCLUDEPATH += ../../context
 DEPENDPATH += ../../context
 

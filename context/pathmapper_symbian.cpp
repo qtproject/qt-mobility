@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #include "pathmapper_symbian.h"
+#include <QDir>
 
 #include <QDebug>
 
@@ -46,35 +47,52 @@ QT_BEGIN_NAMESPACE
 
 PathMapper::PathMapper()
 {
-    qDebug("PathMapper::PathMapper()");
+    const QDir crmlDir("c:\\resource\\qt\\crml");
+    QStringList filters;
+    filters << "*.qcrml" << "*.confml";
+    QStringList files = crmlDir.entryList(filters, QDir::Files);
+    foreach (QString fileName, files) {
+        QList<KeyData> keyDatas = m_crmlParser.parseQCrml(QDir::toNativeSeparators(crmlDir.filePath(fileName)));
+        if (m_crmlParser.error() != QCrmlParser::NoError) {
+            qDebug() << "error:" << m_crmlParser.errorString();
+        }
+        foreach (KeyData keyData, keyDatas) {
+            m_paths.insert(keyData.path(), PathData(PathMapper::Target(keyData.target()), keyData.repoId(), keyData.keyId()));
+        }
+    }
 }
 
 PathMapper::~PathMapper()
 {
-    qDebug("PathMapper::~PathMapper()");
 }
 
 bool PathMapper::getChildren(QString path, QSet<QString> &children) const
 {
-    if (path == "/example") {
-        children << "intValue" << "stringValue";
-        return true;
+    bool found = false;
+    QHashIterator<QString, PathData> i(m_paths);
+    while (i.hasNext()) {
+        i.next();
+        if (path.right(1) != QString(QLatin1Char('/')))
+            path += QLatin1Char('/');
+        if (i.key().startsWith(path)) {
+            QString value = i.key().mid(path.size());
+            int index = value.indexOf(QLatin1Char('/'));
+            if (index != -1)
+                value = value.mid(0, index);
+            children.insert(value);
+            found = true;
+        }
     }
-    return false;
+    return found;
 }
 
-bool PathMapper::resolvePath(QString path, Target &target, qlonglong &category, qlonglong &key) const
+bool PathMapper::resolvePath(QString path, Target &target, quint32 &category, quint32 &key) const
 {
-    if (path == "/example/intValue") {
-        target = TargetRPropery;
-        category = 0x12;
-        key = 0x34;
-        return true;
-    }
-    if (path == "/example/stringValue") {
-        target = TargetCRepository;
-        category = 0x56;
-        key = 0x78;
+    if (m_paths.contains(path)) {
+        const PathData &data = m_paths.value(path);
+        target = data.m_target;
+        category = data.m_category;
+        key = data.m_key;
         return true;
     }
     return false;

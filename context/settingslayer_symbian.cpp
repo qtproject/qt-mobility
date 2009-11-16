@@ -156,8 +156,8 @@ bool SymbianSettingsLayer::value(Handle handle, const QString &subPath, QVariant
     if (sh) {
         qDebug() << "TODO: Actual code for reading data" << fullPath;
         PathMapper::Target target;
-        qlonglong category;
-        qlonglong key;
+        quint32 category;
+        quint32 key;
         if (pathMapper.resolvePath(fullPath, target, category, key)) {
             qDebug() << "pathMapper.resolvePath" << target << category << key;
         }
@@ -178,10 +178,7 @@ QSet<QString> SymbianSettingsLayer::children(Handle handle)
     if (!sh)
         return foundChildren;
 
-    qDebug() << "TODO: Actual code for retrieving children" << sh->path;
     pathMapper.getChildren(sh->path, foundChildren);
-    qDebug() << "foundChildren" << foundChildren;
-
     return foundChildren;
 }
 
@@ -294,8 +291,8 @@ bool SymbianSettingsLayer::setValue(QValueSpaceProvider *creator, Handle handle,
     //TODO: Write data
     qDebug() << "TODO: Actual code for writing data" << fullPath << data;
     PathMapper::Target target;
-    qlonglong category;
-    qlonglong key;
+    quint32 category;
+    quint32 key;
     if (pathMapper.resolvePath(fullPath, target, category, key)) {
         qDebug() << "pathMapper.resolvePath" << target << category << key;
     }

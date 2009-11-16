@@ -42,7 +42,9 @@
 #define PATHMAPPER_H
 
 #include <QStringList>
-#include <QPair>
+#include <QHash>
+
+#include "qcrmlparser_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -57,7 +59,24 @@ public:
     enum Target {TargetRPropery, TargetCRepository};
 
     bool getChildren(QString path, QSet<QString> &children) const;
-    bool resolvePath(QString path, Target &target, qlonglong &category, qlonglong &key) const;
+    bool resolvePath(QString path, Target &target, quint32 &category, quint32 &key) const;
+
+private:
+    class PathData
+    {
+    public:
+        PathData() : m_target(TargetRPropery), m_category(0), m_key(0) {}
+        PathData(Target target, quint32 category, quint32 key) :
+            m_target(target), m_category(category), m_key(key) {}
+    public:
+        Target m_target;
+        quint32 m_category;
+        quint32 m_key;
+    };
+
+private:
+    QHash<QString, PathData> m_paths;
+    QCrmlParser m_crmlParser;
 };
 
 QT_END_NAMESPACE
