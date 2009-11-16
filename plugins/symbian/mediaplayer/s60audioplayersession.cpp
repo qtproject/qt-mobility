@@ -116,8 +116,7 @@ int S60AudioPlayerSession::volume() const
 
 bool S60AudioPlayerSession::isMuted() const
 {
-    //TODO:
-    return false;
+    return (m_volume == 0);
 }
 
 bool S60AudioPlayerSession::isVideoAvailable() const
@@ -155,22 +154,27 @@ void S60AudioPlayerSession::stop()
 
 void S60AudioPlayerSession::seek(qint64 ms)
 {   
+    stopTimer();
     m_player->Pause();
     m_player->SetPosition(ms*1000);
     m_player->Play();
+    startTimer();
     emit positionChanged(position());
 }
 
 void S60AudioPlayerSession::setVolume(int volume)
 {
     m_volume = volume;
-    // TODO: m_player->SetVolume(volume);
+    m_player->SetVolume(volume);
 }
 
 void S60AudioPlayerSession::setMuted(bool muted)
 {
-    if (muted)
+    if (muted) {
         m_player->SetVolume(0);
+    } else {
+        m_player->SetVolume(m_volume);
+    }
 }
 
 void S60AudioPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)

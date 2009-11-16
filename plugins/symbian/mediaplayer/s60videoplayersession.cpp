@@ -115,7 +115,7 @@ int S60VideoPlayerSession::volume() const
 
 bool S60VideoPlayerSession::isMuted() const
 {
-    return m_muted;
+    return (m_volume == 0);
 }
 
 void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
@@ -198,21 +198,27 @@ void S60VideoPlayerSession::stop()
 
 void S60VideoPlayerSession::seek(qint64 ms)
 {
+    stopTimer();
     m_player->PauseL();
     m_player->SetPositionL(ms*1000);
     m_player->Play();
+    startTimer();
     emit positionChanged(position());
 }
 
 void S60VideoPlayerSession::setVolume(int volume)
 {
+    m_volume = volume;
     m_player->SetVolumeL(volume);
 }
 
 void S60VideoPlayerSession::setMuted(bool muted)
 {
-    if (muted)
+    if (muted) {
         m_player->SetVolumeL(0);
+    } else {
+        m_player->SetVolumeL(m_volume);
+    }
 }
 
 void S60VideoPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
