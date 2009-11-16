@@ -1032,9 +1032,17 @@ namespace {
 
                         if (*lastError == QMessageStore::NoError) {
                             // Mark this message as read/unread
-                            LONG flags = source.status() & QMessage::Read ? MSGFLAG_READ : 0;
+                            LONG flags = (source.status() & QMessage::Read ? MSGFLAG_READ : 0);
                             if (!setMapiProperty(message, PR_MESSAGE_FLAGS, flags)) {
                                 qWarning() << "Unable to set flags in message.";
+                                *lastError = QMessageStore::FrameworkFault;
+                            }
+                        }
+
+                        if (*lastError == QMessageStore::NoError) {
+                            LONG priority = (source.priority() == QMessage::HighPriority ? PRIO_URGENT : (source.priority() == QMessage::NormalPriority ? PRIO_NORMAL : PRIO_NONURGENT));
+                            if (!setMapiProperty(message, PR_PRIORITY, priority)) {
+                                qWarning() << "Unable to set priority in message.";
                                 *lastError = QMessageStore::FrameworkFault;
                             }
                         }
@@ -3809,9 +3817,9 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
         IMessage *message = openMapiMessage(lastError, msg->id(), &store);
         if (*lastError == QMessageStore::NoError) {
 #ifndef _WIN32_WCE
-            const int np = 14;
+            const int np = 15;
 #else
-            const int np = 12;
+            const int np = 13;
 #endif
             SizedSPropTagArray(np, msgCols) = {np, { PR_PARENT_ENTRYID,
                                                      PR_MESSAGE_FLAGS,
@@ -3824,6 +3832,7 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                                                      PR_TRANSPORT_MESSAGE_HEADERS,
                                                      PR_HASATTACH,
                                                      PR_SUBJECT,
+													 PR_PRIORITY,
 #ifndef _WIN32_WCE
                                                      PR_MSG_EDITOR_FORMAT,
                                                      PR_RTF_IN_SYNC,
@@ -3902,6 +3911,15 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                         msg->d_ptr->_hasAttachments = (prop.Value.b != FALSE);
                         if (prop.Value.b) {
                             flags |= QMessage::HasAttachments;
+                        }
+                        break;
+                    case PR_PRIORITY:
+                        if (prop.Value.l == PRIO_URGENT) {
+                            msg->setPriority(QMessage::HighPriority);
+                        } else if (prop.Value.l == PRIO_NONURGENT) {
+                            msg->setPriority(QMessage::LowPriority);
+                        } else {
+                            msg->setPriority(QMessage::NormalPriority);
                         }
                         break;
 #ifndef _WIN32_WCE

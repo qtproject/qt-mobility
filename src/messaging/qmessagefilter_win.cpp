@@ -1019,18 +1019,18 @@ MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
             break;
         }
         case QMessageFilterPrivate::Priority: {
-            _restriction.res.resProperty.ulPropTag = PR_IMPORTANCE;
-            _keyProp.ulPropTag = PR_IMPORTANCE;
+            _restriction.res.resProperty.ulPropTag = PR_PRIORITY;
+            _keyProp.ulPropTag = PR_PRIORITY;
             QMessage::Priority priority(static_cast<QMessage::Priority>(d_ptr->_value.toInt()));
             switch (priority) { // TODO: Double check that priority filtering is working
             case QMessage::HighPriority:
-                _keyProp.Value.ul = PRIO_URGENT;
+                _keyProp.Value.l = PRIO_URGENT;
                 break;
             case QMessage::NormalPriority:
-                _keyProp.Value.ul = PRIO_NORMAL;
+                _keyProp.Value.l = PRIO_NORMAL;
                 break;
             case QMessage::LowPriority:
-                _keyProp.Value.ul = PRIO_NONURGENT;
+                _keyProp.Value.l = PRIO_NONURGENT;
                 break;
             default:
                 qWarning("Unknown priority encountered during filter processing");

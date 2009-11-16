@@ -1906,7 +1906,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList()
         << messageIds;
 
-#ifndef NO_SET_SUPPORT
     QTest::newRow("priority equality 1")
         << QMessageFilter::byPriority(QMessage::HighPriority, QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
@@ -1937,6 +1936,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] );
 
+#ifndef NO_SET_SUPPORT
     QTest::newRow("size equality 1")
         << QMessageFilter::bySize(1056, QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[3] )
