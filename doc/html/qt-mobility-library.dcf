@@ -2877,9 +2877,9 @@
         <keyword ref="qvaluespace.html#LayerOption-enum">LayerOption</keyword>
         <keyword ref="qvaluespace.html#LayerOption-enum">LayerOptions</keyword>
         <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::UnspecifiedLayer</keyword>
-        <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::WriteableLayer</keyword>
         <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::PermanentLayer</keyword>
-        <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::NonWriteableLayer</keyword>
+        <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::WritableLayer</keyword>
+        <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::NonWritableLayer</keyword>
         <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::NonPermanentLayer</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER">QVALUESPACE_CONTEXTKIT_LAYER</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_NONVOLATILEREGISTRY_LAYER">QVALUESPACE_NONVOLATILEREGISTRY_LAYER</keyword>

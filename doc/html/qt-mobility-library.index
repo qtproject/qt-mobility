@@ -200,8 +200,8 @@
                 <value name="UnspecifiedLayer" value="0x0000"/>
                 <value name="PermanentLayer" value="0x0001"/>
                 <value name="NonPermanentLayer" value="0x0002"/>
-                <value name="WriteableLayer" value="0x0004"/>
-                <value name="NonWriteableLayer" value="0x0008"/>
+                <value name="WritableLayer" value="0x0004"/>
+                <value name="NonWritableLayer" value="0x0008"/>
             </enum>
             <typedef access="public" threadsafety="unspecified" status="commendable" name="LayerOptions" fullname="QValueSpace::LayerOptions" href="qvaluespace.html#LayerOptions-typedef" location="qvaluespace.h" enum="QValueSpace::LayerOption"/>
         </namespace>
@@ -4470,21 +4470,21 @@
                 <parameter left="const QString &amp;" right="" name="path" default=""/>
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceProvider" fullname="QValueSpaceProvider::QValueSpaceProvider" href="qvaluespaceprovider.html#QValueSpaceProvider-2" location="qvaluespaceprovider.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QValueSpaceProvider(const char * path, QObject * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceProvider" fullname="QValueSpaceProvider::QValueSpaceProvider" href="qvaluespaceprovider.html#QValueSpaceProvider-4" location="qvaluespaceprovider.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="4" type="" signature="QValueSpaceProvider(const char * path, QObject * parent)">
                 <parameter left="const char *" right="" name="path" default=""/>
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceProvider" fullname="QValueSpaceProvider::QValueSpaceProvider" href="qvaluespaceprovider.html#QValueSpaceProvider-3" location="qvaluespaceprovider.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QValueSpaceProvider(const QString &amp; path, QFlags&lt;QValueSpace::LayerOption&gt; filter, QObject * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceProvider" fullname="QValueSpaceProvider::QValueSpaceProvider" href="qvaluespaceprovider.html#QValueSpaceProvider-2" location="qvaluespaceprovider.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QValueSpaceProvider(const QString &amp; path, QFlags&lt;QValueSpace::LayerOption&gt; filter, QObject * parent)">
                 <parameter left="const QString &amp;" right="" name="path" default=""/>
                 <parameter left="QFlags&lt;QValueSpace::LayerOption&gt;" right="" name="filter" default=""/>
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceProvider" fullname="QValueSpaceProvider::QValueSpaceProvider" href="qvaluespaceprovider.html#QValueSpaceProvider-4" location="qvaluespaceprovider.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="4" type="" signature="QValueSpaceProvider(const char * path, QFlags&lt;QValueSpace::LayerOption&gt; filter, QObject * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceProvider" fullname="QValueSpaceProvider::QValueSpaceProvider" href="qvaluespaceprovider.html#QValueSpaceProvider-5" location="qvaluespaceprovider.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="5" type="" signature="QValueSpaceProvider(const char * path, QFlags&lt;QValueSpace::LayerOption&gt; filter, QObject * parent)">
                 <parameter left="const char *" right="" name="path" default=""/>
                 <parameter left="QFlags&lt;QValueSpace::LayerOption&gt;" right="" name="filter" default=""/>
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceProvider" fullname="QValueSpaceProvider::QValueSpaceProvider" href="qvaluespaceprovider.html#QValueSpaceProvider-5" location="qvaluespaceprovider.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="5" type="" signature="QValueSpaceProvider(const QString &amp; path, const QUuid &amp; uuid, QObject * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceProvider" fullname="QValueSpaceProvider::QValueSpaceProvider" href="qvaluespaceprovider.html#QValueSpaceProvider-3" location="qvaluespaceprovider.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QValueSpaceProvider(const QString &amp; path, const QUuid &amp; uuid, QObject * parent)">
                 <parameter left="const QString &amp;" right="" name="path" default=""/>
                 <parameter left="const QUuid &amp;" right="" name="uuid" default=""/>
                 <parameter left="QObject *" right="" name="parent" default="0"/>
@@ -5646,21 +5646,21 @@
                 <parameter left="const QString &amp;" right="" name="path" default=""/>
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceSubscriber" fullname="QValueSpaceSubscriber::QValueSpaceSubscriber" href="qvaluespacesubscriber.html#QValueSpaceSubscriber-3" location="qvaluespacesubscriber.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QValueSpaceSubscriber(const char * path, QObject * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceSubscriber" fullname="QValueSpaceSubscriber::QValueSpaceSubscriber" href="qvaluespacesubscriber.html#QValueSpaceSubscriber-5" location="qvaluespacesubscriber.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="5" type="" signature="QValueSpaceSubscriber(const char * path, QObject * parent)">
                 <parameter left="const char *" right="" name="path" default=""/>
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceSubscriber" fullname="QValueSpaceSubscriber::QValueSpaceSubscriber" href="qvaluespacesubscriber.html#QValueSpaceSubscriber-4" location="qvaluespacesubscriber.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="4" type="" signature="QValueSpaceSubscriber(const QString &amp; path, QFlags&lt;QValueSpace::LayerOption&gt; filter, QObject * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceSubscriber" fullname="QValueSpaceSubscriber::QValueSpaceSubscriber" href="qvaluespacesubscriber.html#QValueSpaceSubscriber-3" location="qvaluespacesubscriber.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QValueSpaceSubscriber(const QString &amp; path, QFlags&lt;QValueSpace::LayerOption&gt; filter, QObject * parent)">
                 <parameter left="const QString &amp;" right="" name="path" default=""/>
                 <parameter left="QFlags&lt;QValueSpace::LayerOption&gt;" right="" name="filter" default=""/>
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceSubscriber" fullname="QValueSpaceSubscriber::QValueSpaceSubscriber" href="qvaluespacesubscriber.html#QValueSpaceSubscriber-5" location="qvaluespacesubscriber.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="5" type="" signature="QValueSpaceSubscriber(const char * path, QFlags&lt;QValueSpace::LayerOption&gt; filter, QObject * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceSubscriber" fullname="QValueSpaceSubscriber::QValueSpaceSubscriber" href="qvaluespacesubscriber.html#QValueSpaceSubscriber-6" location="qvaluespacesubscriber.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="6" type="" signature="QValueSpaceSubscriber(const char * path, QFlags&lt;QValueSpace::LayerOption&gt; filter, QObject * parent)">
                 <parameter left="const char *" right="" name="path" default=""/>
                 <parameter left="QFlags&lt;QValueSpace::LayerOption&gt;" right="" name="filter" default=""/>
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceSubscriber" fullname="QValueSpaceSubscriber::QValueSpaceSubscriber" href="qvaluespacesubscriber.html#QValueSpaceSubscriber-6" location="qvaluespacesubscriber.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="6" type="" signature="QValueSpaceSubscriber(const QString &amp; path, const QUuid &amp; uuid, QObject * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceSubscriber" fullname="QValueSpaceSubscriber::QValueSpaceSubscriber" href="qvaluespacesubscriber.html#QValueSpaceSubscriber-4" location="qvaluespacesubscriber.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="4" type="" signature="QValueSpaceSubscriber(const QString &amp; path, const QUuid &amp; uuid, QObject * parent)">
                 <parameter left="const QString &amp;" right="" name="path" default=""/>
                 <parameter left="const QUuid &amp;" right="" name="uuid" default=""/>
                 <parameter left="QObject *" right="" name="parent" default="0"/>

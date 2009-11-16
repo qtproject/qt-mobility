@@ -42,7 +42,7 @@
 #ifndef QSYSTEMREADWRITELOCK_H
 #define QSYSTEMREADWRITELOCK_H
 
-#include "qcontextglobal.h"
+#include "qpublishsubscribeglobal.h"
 #include <QString>
 
 QT_BEGIN_NAMESPACE

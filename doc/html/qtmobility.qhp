@@ -2863,8 +2863,8 @@
             <keyword name="QValueSpace::UnspecifiedLayer" id="QValueSpace::UnspecifiedLayer" ref="qvaluespace.html#LayerOption-enum"/>
             <keyword name="QValueSpace::PermanentLayer" id="QValueSpace::PermanentLayer" ref="qvaluespace.html#LayerOption-enum"/>
             <keyword name="QValueSpace::NonPermanentLayer" id="QValueSpace::NonPermanentLayer" ref="qvaluespace.html#LayerOption-enum"/>
-            <keyword name="QValueSpace::WriteableLayer" id="QValueSpace::WriteableLayer" ref="qvaluespace.html#LayerOption-enum"/>
-            <keyword name="QValueSpace::NonWriteableLayer" id="QValueSpace::NonWriteableLayer" ref="qvaluespace.html#LayerOption-enum"/>
+            <keyword name="QValueSpace::WritableLayer" id="QValueSpace::WritableLayer" ref="qvaluespace.html#LayerOption-enum"/>
+            <keyword name="QValueSpace::NonWritableLayer" id="QValueSpace::NonWritableLayer" ref="qvaluespace.html#LayerOption-enum"/>
             <keyword name="QValueSpace::LayerOptions" id="QValueSpace::LayerOptions" ref="qvaluespace.html#LayerOption-enum"/>
             <keyword name="QValueSpaceProvider" id="QValueSpaceProvider" ref="qvaluespaceprovider.html"/>
             <keyword name="attributeInterestChanged" id="QValueSpaceProvider::attributeInterestChanged" ref="qvaluespaceprovider.html#attributeInterestChanged"/>

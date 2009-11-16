@@ -38,10 +38,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QMALLOCPOOL_H
 #define QMALLOCPOOL_H
 
-#include "qcontextglobal.h"
+#include "qpublishsubscribeglobal.h"
 #include <cstdlib>
 #include <QString>
 

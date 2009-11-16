@@ -42,7 +42,7 @@
 #ifndef QVALUESPACEPROVIDER_H
 #define QVALUESPACEPROVIDER_H
 
-#include "qcontextglobal.h"
+#include "qpublishsubscribeglobal.h"
 #include "qvaluespace.h"
 
 #include <QObject>
@@ -53,7 +53,7 @@ QT_BEGIN_HEADER
 QT_BEGIN_NAMESPACE
 
 class QValueSpaceProviderPrivate;
-class Q_CFW_EXPORT QValueSpaceProvider : public QObject
+class Q_PUBLISHSUBSCRIBE_EXPORT QValueSpaceProvider : public QObject
 {
     friend class QAbstractValueSpaceLayer;
 
