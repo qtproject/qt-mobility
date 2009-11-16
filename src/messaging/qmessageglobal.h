@@ -42,35 +42,7 @@
 #ifndef QMESSAGINGGLOBAL_H
 #define QMESSAGINGGLOBAL_H
 
-#if defined(QTM_BUILD_UNITTESTS)
-# include <qconfig.h>
-# if !defined(QT_BUILD_INTERNAL)
-#   define QT_BUILD_INTERNAL
-# endif
-#endif
-
-#include <QtCore/qglobal.h>
-
-#if !defined(Q_MESSAGING_EXPORT)
-#  if defined(QT_BUILD_MESSAGING_LIB)
-#    define Q_MESSAGING_EXPORT Q_DECL_EXPORT
-#  else
-#    define Q_MESSAGING_EXPORT Q_DECL_IMPORT
-#  endif
-#endif
-
-// Support code is currently linked directly rather than via a library
-#undef Q_MESSAGING_SUPPORT_EXPORT
-#define Q_MESSAGING_SUPPORT_EXPORT
-/*
-#if !defined(Q_MESSAGING_SUPPORT_EXPORT)
-#  if defined(QT_BUILD_MESSAGING_SUPPORT_LIB)
-#    define Q_MESSAGING_SUPPORT_EXPORT Q_DECL_EXPORT
-#  else
-#    define Q_MESSAGING_SUPPORT_EXPORT Q_DECL_IMPORT
-#  endif
-#endif
-*/
+#include <qmobilityglobal.h>
 
 // A variant of Q_GLOBAL_STATIC for use in class scope
 #define Q_SCOPED_STATIC_DECLARE(TYPE, NAME)                      \

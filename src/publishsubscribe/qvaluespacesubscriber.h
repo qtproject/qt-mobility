@@ -42,7 +42,7 @@
 #ifndef QVALUESPACESUBSCRIBER_H
 #define QVALUESPACESUBSCRIBER_H
 
-#include "qcontextglobal.h"
+#include "qpublishsubscribeglobal.h"
 #include "qvaluespace.h"
 
 #include <QObject>
@@ -56,7 +56,7 @@ QT_BEGIN_NAMESPACE
 
 class QValueSpaceSubscriberPrivate;
 
-class Q_CFW_EXPORT QValueSpaceSubscriber : public QObject
+class Q_PUBLISHSUBSCRIBE_EXPORT QValueSpaceSubscriber : public QObject
 {
     Q_OBJECT
 

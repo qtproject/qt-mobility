@@ -38,10 +38,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QPACKETPROTOCOL_H
 #define QPACKETPROTOCOL_H
 
-#include "qcontextglobal.h"
+#include "qpublishsubscribeglobal.h"
 #include <QObject>
 #include <QDataStream>
 

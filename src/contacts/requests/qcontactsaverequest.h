@@ -49,7 +49,7 @@
 #include <QList>
 
 class QContactSaveRequestPrivate;
-class QTCONTACTS_EXPORT QContactSaveRequest : public QContactAbstractRequest
+class Q_CONTACTS_EXPORT QContactSaveRequest : public QContactAbstractRequest
 {
     Q_OBJECT
 

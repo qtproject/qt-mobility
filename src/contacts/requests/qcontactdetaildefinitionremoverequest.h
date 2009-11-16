@@ -48,7 +48,7 @@
 #include <QStringList>
 
 class QContactDetailDefinitionRemoveRequestPrivate;
-class QTCONTACTS_EXPORT QContactDetailDefinitionRemoveRequest : public QContactAbstractRequest
+class Q_CONTACTS_EXPORT QContactDetailDefinitionRemoveRequest : public QContactAbstractRequest
 {
     Q_OBJECT
 

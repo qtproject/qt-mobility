@@ -47,7 +47,7 @@
 
 class QContactManagerEngine;
 class QContactAbstractRequestPrivate;
-class QTCONTACTS_EXPORT QContactAbstractRequest : public QObject
+class Q_CONTACTS_EXPORT QContactAbstractRequest : public QObject
 {
     Q_OBJECT
 

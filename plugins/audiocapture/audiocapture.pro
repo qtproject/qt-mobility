@@ -25,5 +25,9 @@ SOURCES += audioencodercontrol.cpp \
     audiocaptureserviceplugin.cpp \
     audiocapturesession.cpp
 
+symbian {
+    TARGET.CAPABILITY = ALL -TCB
+    TARGET.EPOCALLOWDLLDATA = 1
+}
 target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
 INSTALLS+=target

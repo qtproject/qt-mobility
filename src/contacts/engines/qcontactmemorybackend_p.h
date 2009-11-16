@@ -116,7 +116,7 @@ public:
     QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
 };
 
-class QTCONTACTS_EXPORT QContactMemoryEngine : public QContactManagerEngine
+class QContactMemoryEngine : public QContactManagerEngine
 {
     Q_OBJECT
 

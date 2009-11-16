@@ -42,7 +42,7 @@
 #ifndef QSERVICEMANAGER_H
 #define QSERVICEMANAGER_H
 
-#include "qserviceglobal.h"
+#include "qmobilityglobal.h"
 
 #include "qserviceinterfacedescriptor.h"
 #include "qservicefilter.h"

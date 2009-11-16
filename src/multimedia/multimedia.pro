@@ -45,7 +45,6 @@ PUBLIC_HEADERS += \
     qmediaserviceproviderplugin.h \
     qmetadatacontrol.h \
     qmediastreamscontrol.h \
-    qmultimediaglobal.h \
     qradiotuner.h \
     qradiotunercontrol.h \
     qtmedianamespace.h \

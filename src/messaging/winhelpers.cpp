@@ -1022,18 +1022,45 @@ namespace {
                         qWarning() << "Unable to set submit time in message.";
                         *lastError = QMessageStore::FrameworkFault;
                     } else {
-                        QStringList headers;
-                        foreach (const QByteArray &name, source.headerFields()) {
-                            foreach (const QString &value, source.headerFieldValues(name)) {
-                                // TODO: Do we need soft line-breaks?
-                                headers.append(QString("%1: %2").arg(QString(name)).arg(value));
+                        QDateTime receivedDate(source.receivedDate());
+                        if (receivedDate.isValid()) {
+                            if (!setMapiProperty(message, PR_MESSAGE_DELIVERY_TIME, toFileTime(receivedDate))) {
+                                qWarning() << "Unable to set delivery time in message.";
+                                *lastError = QMessageStore::FrameworkFault;
                             }
                         }
-                        if (!headers.isEmpty()) {
-                            QString transportHeaders = headers.join("\r\n").append("\r\n\r\n");
-                            if (!setMapiProperty(message, PR_TRANSPORT_MESSAGE_HEADERS, transportHeaders)) {
-                                qWarning() << "Unable to set transport headers in message.";
+
+                        if (*lastError == QMessageStore::NoError) {
+                            // Mark this message as read/unread
+                            LONG flags = (source.status() & QMessage::Read ? MSGFLAG_READ : 0);
+                            if (!setMapiProperty(message, PR_MESSAGE_FLAGS, flags)) {
+                                qWarning() << "Unable to set flags in message.";
                                 *lastError = QMessageStore::FrameworkFault;
+                            }
+                        }
+
+                        if (*lastError == QMessageStore::NoError) {
+                            LONG priority = (source.priority() == QMessage::HighPriority ? PRIO_URGENT : (source.priority() == QMessage::NormalPriority ? PRIO_NORMAL : PRIO_NONURGENT));
+                            if (!setMapiProperty(message, PR_PRIORITY, priority)) {
+                                qWarning() << "Unable to set priority in message.";
+                                *lastError = QMessageStore::FrameworkFault;
+                            }
+                        }
+
+                        if (*lastError == QMessageStore::NoError) {
+                            QStringList headers;
+                            foreach (const QByteArray &name, source.headerFields()) {
+                                foreach (const QString &value, source.headerFieldValues(name)) {
+                                    // TODO: Do we need soft line-breaks?
+                                    headers.append(QString("%1: %2").arg(QString(name)).arg(value));
+                                }
+                            }
+                            if (!headers.isEmpty()) {
+                                QString transportHeaders = headers.join("\r\n").append("\r\n\r\n");
+                                if (!setMapiProperty(message, PR_TRANSPORT_MESSAGE_HEADERS, transportHeaders)) {
+                                    qWarning() << "Unable to set transport headers in message.";
+                                    *lastError = QMessageStore::FrameworkFault;
+                                }
                             }
                         }
                     }
@@ -3790,9 +3817,9 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
         IMessage *message = openMapiMessage(lastError, msg->id(), &store);
         if (*lastError == QMessageStore::NoError) {
 #ifndef _WIN32_WCE
-            const int np = 14;
+            const int np = 15;
 #else
-            const int np = 12;
+            const int np = 13;
 #endif
             SizedSPropTagArray(np, msgCols) = {np, { PR_PARENT_ENTRYID,
                                                      PR_MESSAGE_FLAGS,
@@ -3805,6 +3832,7 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                                                      PR_TRANSPORT_MESSAGE_HEADERS,
                                                      PR_HASATTACH,
                                                      PR_SUBJECT,
+													 PR_PRIORITY,
 #ifndef _WIN32_WCE
                                                      PR_MSG_EDITOR_FORMAT,
                                                      PR_RTF_IN_SYNC,
@@ -3881,6 +3909,18 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                         break;
                     case PR_HASATTACH:
                         msg->d_ptr->_hasAttachments = (prop.Value.b != FALSE);
+                        if (prop.Value.b) {
+                            flags |= QMessage::HasAttachments;
+                        }
+                        break;
+                    case PR_PRIORITY:
+                        if (prop.Value.l == PRIO_URGENT) {
+                            msg->setPriority(QMessage::HighPriority);
+                        } else if (prop.Value.l == PRIO_NONURGENT) {
+                            msg->setPriority(QMessage::LowPriority);
+                        } else {
+                            msg->setPriority(QMessage::NormalPriority);
+                        }
                         break;
 #ifndef _WIN32_WCE
                     case PR_MSG_EDITOR_FORMAT:

@@ -48,7 +48,7 @@
 #include "qtcontactsglobal.h"
 
 class QContactIdPrivate;
-class QTCONTACTS_EXPORT QContactId
+class Q_CONTACTS_EXPORT QContactId
 {
 public:
     QContactId();

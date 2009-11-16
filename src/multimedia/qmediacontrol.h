@@ -42,7 +42,7 @@
 #ifndef QABSTRACTMEDIACONTROL_H
 #define QABSTRACTMEDIACONTROL_H
 
-#include <qmultimediaglobal.h>
+#include <qmobilityglobal.h>
 
 #include <QtCore/qobject.h>
 #include <QtCore/qstring.h>

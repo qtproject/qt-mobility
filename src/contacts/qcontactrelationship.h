@@ -53,7 +53,7 @@
 
 class QContactRelationshipPrivate;
 
-class QTCONTACTS_EXPORT QContactRelationship
+class Q_CONTACTS_EXPORT QContactRelationship
 {
 public:
 #ifdef Q_QDOC

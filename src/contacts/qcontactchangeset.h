@@ -51,7 +51,7 @@
 
 class QContactManagerEngine;
 class QContactChangeSetData;
-class QTCONTACTS_EXPORT QContactChangeSet
+class Q_CONTACTS_EXPORT QContactChangeSet
 {
 public:
     QContactChangeSet();

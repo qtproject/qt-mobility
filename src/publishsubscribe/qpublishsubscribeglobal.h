@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QBEARERGLOBAL_H
-#define QBEARERGLOBAL_H
+#ifndef QPUBLISHSUBSCRIBEGLOBAL_H
+#define QPUBLISHSUBSCRIBEGLOBAL_H
 
 #if defined(QTM_BUILD_UNITTESTS)
 # include <qconfig.h>
@@ -51,6 +51,10 @@
 
 #include <QtCore/qglobal.h>
 
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
+
 #if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
 #  if defined(QT_NODLL)
 #    undef QT_MAKEDLL
@@ -59,23 +63,27 @@
 #    if defined(QT_DLL)
 #      undef QT_DLL
 #    endif
-#    if defined(QT_BUILD_BEARER_LIB)
-#      define Q_BEARER_EXPORT Q_DECL_EXPORT
+#    if defined(QT_BUILD_CFW_LIB)
+#      define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_EXPORT
 #    else
-#      define Q_BEARER_EXPORT Q_DECL_IMPORT
+#      define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_IMPORT
 #    endif
 #  elif defined(QT_DLL) /* use a Qt DLL library */
-#    define Q_BEARER_EXPORT Q_DECL_IMPORT
+#    define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_IMPORT
 #  endif
 #else
 #endif
 
-#if !defined(Q_BEARER_EXPORT)
+#if !defined(Q_PUBLISHSUBSCRIBE_EXPORT)
 #  if defined(QT_SHARED)
-#    define Q_BEARER_EXPORT Q_DECL_EXPORT
+#    define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_EXPORT
 #  else
-#    define Q_BEARER_EXPORT
+#    define Q_PUBLISHSUBSCRIBE_EXPORT
 #  endif
 #endif
 
-#endif // QBEARERGLOBAL_H
+QT_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif // QPUBLISHSUBSCRIBEGLOBAL_H
