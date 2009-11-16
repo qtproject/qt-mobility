@@ -566,33 +566,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     case QSystemInfo::BluetoothFeature :
         {
 #if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
-//            WSADATA wsd;
-//            WSAStartup (MAKEWORD(1,0), &wsd);
-//
-//            WSAQUERYSET wsaq;
-//            HANDLE hLookup;
-//            qWarning() << hLookup;
-//            union {
-//                CHAR buf[5000];
-//                double __unused; // ensure proper alignment
-//            };
-//            LPWSAQUERYSET pwsaResults = (LPWSAQUERYSET) buf;
-//            DWORD dwSize  = sizeof(buf);
-//            BOOL bHaveName;
-//            ZeroMemory(&wsaq, sizeof(wsaq));
-//            wsaq.dwSize = sizeof(wsaq);
-//            wsaq.dwNameSpace = NS_BTH;
-//            wsaq.lpcsaBuffer = NULL;
-//            int res = WSALookupServiceBegin (&wsaq, LUP_RES_SERVICE, &hLookup);
-//            qWarning() << __FUNCTION__ << res;
-//            if (ERROR_SUCCESS != res) {
-//                qWarning() << "WSALookupServiceBegin failed" << WSAGetLastError() << hLookup;
-//                return false;
-//            } else {
-//                return true;
-//            }
-        //
-//
+
             resolveLibrary();
             if(local_BluetoothFindFirstRadio == 0 ) {
                 qWarning() << "Bluetooth library could not resolve or be loaded";
@@ -606,14 +580,8 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
                 local_BluetoothFindRadioClose(radio);
             } else {
 
-         //       qWarning() << "Not available" << GetLastError();
             }
 #endif
-            //            qWarning() << IsBluetoothVersionAvailable("1","0");
-            //            QSystemNetworkInfo ni;
-            //            if(ni.interfaceForMode(QSystemNetworkInfo::BluetoothMode).isValid()) {
-            //                featureSupported = true;
-            //            }
         }
         break;
     case QSystemInfo::CameraFeature :
@@ -666,11 +634,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     case QSystemInfo::LedFeature :
         {
 #ifdef Q_OS_WINCE
-//            NLED_COUNT_INFO info;
-//            NLedDriverGetDeviceInfo(NLED_COUNT_INFO_ID,&info);
-//            if(info > 0) {
-//                    featureSupported = true;
- //           }
+
 #else
 #endif
         }
@@ -704,10 +668,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     case QSystemInfo::VibFeature :
         {
 #ifdef Q_OS_WINCE
-//            VIBRATEDEVICECAPS caps;
-//            if(VibrateGetDeviceCaps(&caps) != 0) {
-//                featureSupported = true;
- //           }
+
 #else
 #endif
         }
@@ -736,12 +697,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     case QSystemInfo::LocationFeature :
         {
 #ifdef Q_OS_WINCE
-//            HLOCATION location;
-//            location = LocationOpen(LOCATION_FRAMEWORK_VERSION_CURRENT,NULL,0);
-//            if(location != NULL) {
-//                featureSupported = true;
-//                LocationClose(location);
-//            }
+
 #else
 #endif
         }
@@ -910,7 +866,6 @@ void QSystemNetworkInfoPrivate::emitNetworkStatusChanged(QSystemNetworkInfo::Net
 
 void QSystemNetworkInfoPrivate::emitNetworkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode,int /*strength*/)
 {
-    //qWarning() << __FUNCTION__ << mode << strength;
     switch(QSysInfo::WindowsVersion) {
     case QSysInfo::WV_VISTA:
     case QSysInfo::WV_WINDOWS7:
@@ -934,7 +889,6 @@ void QSystemNetworkInfoPrivate::timerEvent(QTimerEvent *event)
 
 void QSystemNetworkInfoPrivate::networkStrengthTimeout()
 {
-//   qWarning() << __FUNCTION__;
     QList<QSystemNetworkInfo::NetworkMode> modeList;
     modeList << QSystemNetworkInfo::GsmMode;
     modeList << QSystemNetworkInfo::CdmaMode;
@@ -960,7 +914,6 @@ void QSystemNetworkInfoPrivate::networkStrengthTimeout()
 
 void QSystemNetworkInfoPrivate::networkStatusTimeout()
 {
-//   qWarning() << __FUNCTION__;
     QList<QSystemNetworkInfo::NetworkMode> modeList;
     modeList << QSystemNetworkInfo::GsmMode;
     modeList << QSystemNetworkInfo::CdmaMode;
@@ -1358,12 +1311,10 @@ bool QSystemNetworkInfoPrivate::isDefaultMode(QSystemNetworkInfo::NetworkMode mo
     };
 
     QSettings deviceSettings(deviceNameReg, QSettings::NativeFormat);
-//    qWarning() <<netInterface.name() << deviceSettings.value("DhcpDefaultGateway");
 
     if(!deviceSettings.value("DhcpDefaultGateway").toStringList().isEmpty()
          || !deviceSettings.value("DefaultGateway").toStringList().isEmpty()) {
         isDefaultGateway = true;
-     //   qWarning() <<"Default!"<<netInterface.humanReadableName() << netInterface.hardwareAddress();
     }
     return isDefaultGateway;
 }
@@ -1381,7 +1332,6 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
 {
-//#if WINVER > 0x0600
 #if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
     WMIHelper *wHelper;
     wHelper = new WMIHelper(this);
@@ -1393,96 +1343,6 @@ int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
 
     return v.toUInt();
 #endif
-//#else
-//    //    Q_UNUSED(screen);
-   // qint32 brightness = 0;
-   // QString brightness;
-
-//    HANDLE display = CreateFile(L"\\\\.\\LCD",GENERIC_READ,FILE_SHARE_READ | FILE_SHARE_WRITE
-//                                ,NULL,OPEN_EXISTING,0,NULL);
-//    if(display != INVALID_HANDLE_VALUE) {
-//        DISPLAY_BRIGHTNESS brightnessBuffer;
-//        DWORD bytesReturned = 0;
-//
-//        if(DeviceIoControl(display,IOCTL_VIDEO_QUERY_DISPLAY_BRIGHTNESS,
-//                           NULL,0,&brightnessBuffer,sizeof(brightnessBuffer),
-//                           &bytesReturned,NULL)) {
-//            QString brightness;//((QChar *)brightnessBuffer.ucACBrightness);
-//
-//            char *uc = (char *)brightnessBuffer.ucACBrightness;
-////            brightness = uc;
-////            for(uint i = 0; sizeof(brightnessBuffer.ucACBrightness); i++) {
-////                brightness += QChar(brightnessBuffer.ucACBrightness);
-////            }
-//
-//            qWarning()
-//                    << sizeof(brightnessBuffer.ucACBrightness)
-//                    << QChar(brightnessBuffer.ucACBrightness)
-//                 //   << brightness
-//                    << brightnessBuffer.ucDisplayPolicy
-//                    << brightnessBuffer.ucDCBrightness
-//                    << brightnessBuffer.ucACBrightness;
-//
-//        }
-//        CloseHandle(display);
-//    } else {
-//        qWarning() << "invalid handle";
-//    }
-  //  UCHAR
-//#endif
-
-    // Get the number of physical monitors.
-    // vista only
-//    HMONITOR hMonitor = NULL;
-//
-//    QDesktopWidget wid;
-//
-//    HWND hWnd = wid.screen(screen)->winId();
-//    DWORD cPhysicalMonitors = 1;
-//    LPPHYSICAL_MONITOR pPhysicalMonitors = NULL;
-//
-//    // Get the monitor handle.
-//    hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTOPRIMARY);
-//    if(hMonitor == NULL) {
-//        qWarning() << "NULL";
-//    }
-//    bool bSuccess = GetNumberOfPhysicalMonitorsFromHMONITOR(hMonitor, &cPhysicalMonitors);
-////    if (bSuccess) {
-//        // Allocate the array of PHYSICAL_MONITOR structures.
-//        pPhysicalMonitors = (LPPHYSICAL_MONITOR)malloc(
-//                cPhysicalMonitors* sizeof(PHYSICAL_MONITOR));
-//
-//        if (pPhysicalMonitors != NULL) {
-//            bSuccess = GetPhysicalMonitorsFromHMONITOR(
-//                    hMonitor, cPhysicalMonitors, pPhysicalMonitors);
-//
-//            DWORD pdwMonitorCapabilities = 0;
-//            DWORD pdwSupportedColorTemperatures = 0;
-//
-//            GetMonitorCapabilities(hMonitor, &pdwMonitorCapabilities, &pdwSupportedColorTemperatures);
-//           // qWarning() << pdwMonitorCapabilities;
-//
-//            if (pdwMonitorCapabilities & MC_CAPS_BRIGHTNESS) {
-//                qWarning() << "XXXXXXXXXXXXXXXX has brightness";
-//            } else {
-//                qWarning() << "XXXXXXXXXXXXXXXX NO brightness";
-//
-//            }
-//
-//            // Close the monitor handles.
-//            bSuccess = DestroyPhysicalMonitors(
-//                    cPhysicalMonitors,
-//                    pPhysicalMonitors);
-//
-//            // Free the array.
-//            free(pPhysicalMonitors);
-//        } else {
-//            qWarning() << "XXXXXXXXXXXXXX" << GetLastError();
-//        }
-//
-//    }
-    //////////////////////////////////
-
     return -1;
 }
 
@@ -1585,7 +1445,6 @@ bool qax_winEventFilter(void *message)
 {
     MSG *pMsg = (MSG*)message;
     if( pMsg->message == WM_POWERBROADCAST) {
-//        qWarning() << "XXXXXXXXXXX we've got the power!";
         switch (pMsg->wParam) {
         case PBT_APMPOWERSTATUSCHANGE:
             QSystemDeviceInfoPrivate::instance()->batteryLevel();
@@ -1719,13 +1578,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 
 QString QSystemDeviceInfoPrivate::imei()
 {
-//    if(this->getSimStatus() == QSystemDeviceInfo::SimNotAvailable)
         return "Sim Not Available";
 }
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-//    if(getSimStatus() == QSystemDeviceInfo::SimNotAvailable)
         return "Sim Not Available";
 }
 
@@ -1755,32 +1612,6 @@ QString QSystemDeviceInfoPrivate::model()
     WMIHelper *wHelper;
     wHelper = new WMIHelper(this);
     wHelper->setWmiNamespace("root/cimv2");
-
-    //    wHelper->setClassName("Win32_Processor");
-//    wHelper->setClassProperty(QStringList() << "Architecture");
-//    QVariant v = wHelper->getWMIData();
-//    QString model;
-//    switch(v.toUInt()) {
-//    case 0:
-//        model = "x86 ";
-//        break;
-//    case 1:
-//        model = "MIPS ";
-//        break;
-//    case 2:
-//        model = "Alpha ";
-//        break;
-//    case 3:
-//        model = "PowerPC ";
-//        break;
-//    case 6:
-//        model = "Intel Itanium ";
-//        break;
-//    case 9:
-//        model = "x64 ";
-//        break;
-//    }
-
 
     wHelper->setClassName("Win32_ComputerSystem");
     wHelper->setClassProperty(QStringList() << "Model");
