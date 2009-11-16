@@ -182,7 +182,7 @@ void AudioEncoderControl::setSampleRate(int sampleRate)
     m_session->setFormat(fmt);
 }
 
-QList<int> AudioEncoderControl::supportedSampleRates() const
+QList<int> AudioEncoderControl::supportedSampleRates(const QAudioEncoderSettings &) const
 {
     return m_session->deviceInfo()->supportedFrequencies();
 }

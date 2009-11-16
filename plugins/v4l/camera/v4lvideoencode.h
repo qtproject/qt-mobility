@@ -55,13 +55,13 @@ public:
     V4LVideoEncode(QObject *parent);
     virtual ~V4LVideoEncode();
 
-    QSize minimumResolution() const;
-    QSize maximumResolution() const;
-    QList<QSize> supportedResolutions() const;
+    QSize minimumResolution(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
+    QSize maximumResolution(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
+    QList<QSize> supportedResolutions(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
 
-    qreal minimumFrameRate() const;
-    qreal maximumFrameRate() const;
-    QList< qreal > supportedFrameRates() const;
+    qreal minimumFrameRate(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
+    qreal maximumFrameRate(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
+    QList< qreal > supportedFrameRates(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
 
     QPair<int,int> rateAsRational() const;
 

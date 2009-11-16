@@ -70,9 +70,9 @@ public:
     QVariant encodingOption(const QString &codec, const QString &name) const;
     void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
 
-    QList<int> supportedSampleRates() const;
-    QList<int> supportedChannelCounts() const;
-    QList<int> supportedSampleSizes() const;
+    QList<int> supportedSampleRates(const QAudioEncoderSettings &settings = QAudioEncoderSettings()) const;
+    QList<int> supportedChannelCounts(const QAudioEncoderSettings &settings = QAudioEncoderSettings()) const;
+    QList<int> supportedSampleSizes(const QAudioEncoderSettings &settings = QAudioEncoderSettings()) const;
 
     QAudioEncoderSettings audioSettings() const;
     void setAudioSettings(const QAudioEncoderSettings&);
