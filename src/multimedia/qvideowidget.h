@@ -44,7 +44,7 @@
 
 #include <QtGui/qwidget.h>
 
-#include <qmultimediaglobal.h>
+#include <qmobilityglobal.h>
 
 class QMediaObject;
 

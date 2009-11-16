@@ -48,7 +48,7 @@
 #include <QSharedDataPointer>
 
 class QContactActionDescriptorPrivate;
-class QTCONTACTS_EXPORT QContactActionDescriptor
+class Q_CONTACTS_EXPORT QContactActionDescriptor
 {
 public:
     QContactActionDescriptor(const QString& actionName = QString(), const QString& vendorName = QString(), int vendorVersion = -1);

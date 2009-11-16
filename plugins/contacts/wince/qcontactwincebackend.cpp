@@ -38,13 +38,13 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QDebug>
 
+#include <QDebug>
 #include <QMutex>
-#include "qcontact_p.h"
+
 #include "qcontactmanager.h"
-#include "qcontactmanager_p.h"
 #include "qcontactchangeset.h"
+#include "qtcontacts.h"
 
 #define INITGUID
 #include "qcontactwincebackend_p.h"

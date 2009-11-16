@@ -45,7 +45,7 @@
 #include "qcontactfilter.h"
 
 class QContactLocalIdFilterPrivate;
-class QTCONTACTS_EXPORT QContactLocalIdFilter : public QContactFilter
+class Q_CONTACTS_EXPORT QContactLocalIdFilter : public QContactFilter
 {
 public:
     QContactLocalIdFilter();

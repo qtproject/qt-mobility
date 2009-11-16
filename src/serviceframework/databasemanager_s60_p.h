@@ -53,12 +53,12 @@
 // We mean it.
 //
 
+#include "qmobilityglobal.h"
 #include <QObject>
 #include <QList>
 
 #include <servicemetadata_p.h>
 #include "dberror_p.h"
-#include "qserviceglobal.h"
 #include <e32base.h>
 class QServiceFilter;
 
@@ -117,7 +117,7 @@ class RDatabaseManagerSession : public RSessionBase
 
 class DatabaseManagerSignalMonitor;
 
-class DatabaseManager : public QObject
+class Q_AUTOTEST_EXPORT DatabaseManager : public QObject
 {
     Q_OBJECT
 

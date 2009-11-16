@@ -40,10 +40,8 @@
 ****************************************************************************/
 #include <QDebug>
 
-#include "qcontact_p.h"
 #include "qcontactmanager.h"
-#include "qcontactmanager_p.h"
-
+#include "qtcontacts.h"
 #include "qcontactwincebackend_p.h"
 
 /*!

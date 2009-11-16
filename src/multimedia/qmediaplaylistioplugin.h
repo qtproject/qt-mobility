@@ -46,7 +46,7 @@
 #include <QtCore/qplugin.h>
 #include <QtCore/qfactoryinterface.h>
 
-#include <qmultimediaglobal.h>
+#include <qmobilityglobal.h>
 
 #include <qmediacontent.h>
 

@@ -13,7 +13,6 @@
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactManager Class Reference</h1>
-<p>The QContactManager class provides control over contacts and groups. <a href="#details">More...</a></p>
 <pre>    #include &lt;QContactManager&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qcontactmanager-members.html">List of all members, including inherited members</a></li>
@@ -105,8 +104,7 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QContactManager class provides control over contacts and groups.</p>
-<p>This class provides adding, updating and removal of contacts and groups. It also provides definitions for fields that can be found in contacts.</p>
+<p>This class provides adding, updating and removal of contacts. It also provides definitions for fields that can be found in contacts.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="Error-enum"></a>enum QContactManager::Error</h3>
@@ -149,6 +147,9 @@
 <p>The <i>parent</i> <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> will be used as the parent of this <a href="qcontactmanager.html">QContactManager</a>.</p>
 <p>If an empty <i>managerName</i> is specified, the default implementation for the platform will be used.</p>
 <h3 class="fn"><a name="QContactManager-2"></a>QContactManager::QContactManager ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>managerName</i>, int <i>implementationVersion</i>, const <a href="http://qt.nokia.com/doc/4.5/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>&gt; &amp; <i>parameters</i> = 0, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a <a href="qcontactmanager.html">QContactManager</a> whose backend has the name <i>managerName</i> and version <i>implementationVersion</i>, where the manager is constructed with the provided <i>parameters</i>.</p>
+<p>The <i>parent</i> <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> will be used as the parent of this <a href="qcontactmanager.html">QContactManager</a>.</p>
+<p>If an empty <i>managerName</i> is specified, the default implementation for the platform will be instantiated. If the specified implementation version is not available, the manager with the name <i>managerName</i> with the default implementation version is instantiated.</p>
 <h3 class="fn"><a name="dtor.QContactManager"></a>QContactManager::~QContactManager ()</h3>
 <p>Frees the memory used by the <a href="qcontactmanager.html">QContactManager</a></p>
 <h3 class="fn"><a name="availableManagers"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QContactManager::availableManagers ()&nbsp;&nbsp;<tt> [static]</tt></h3>
@@ -183,7 +184,7 @@
 <h3 class="fn"><a name="fromUri"></a>QContactManager * QContactManager::fromUri ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>storeUri</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Constructs a <a href="qcontactmanager.html">QContactManager</a> whose implementation, store and parameters are specified in the given <i>storeUri</i>, and whose parent object is <i>parent</i>.</p>
 <h3 class="fn"><a name="hasFeature"></a>bool QContactManager::hasFeature ( <a href="qcontactmanager.html#ManagerFeature-enum">QContactManager::ManagerFeature</a> <i>feature</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>contactType</i> = QContactType::TypeContact ) const</h3>
-<p>Returns true if the given <i>feature</i> is supported by the manager</p>
+<p>Returns true if the given feature <i>feature</i> is supported by the manager, for the specified type of contact <i>contactType</i></p>
 <h3 class="fn"><a name="implementationVersion"></a>int QContactManager::implementationVersion () const</h3>
 <p>Returns the engine backend implementation version number</p>
 <h3 class="fn"><a name="managerName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactManager::managerName () const</h3>

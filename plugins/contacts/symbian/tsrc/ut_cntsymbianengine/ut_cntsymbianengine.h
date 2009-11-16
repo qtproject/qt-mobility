@@ -51,24 +51,27 @@ private slots:
     void cleanupTestCase();
     
     void init();
-    void clean();
+    void cleanup();
     
+    void ctors();
     void saveContact();
     void saveContacts();
-    void contact();
+    void retrieveContact();
+    void retrieveContacts();
     void updateContact();
     void removeContact();
     void removeContacts();
     void addOwnCard();
     void retrieveOwnCard();
-    void simpleFilterTest();
+    void filterSupport();
     void featureSupport();
-    /*
     void addGroup();
     void retrieveGroup();
-    */
     void singleRelationship();
     void batchRelationships();
+    void dataTypeSupport();
+    void synthesizeDisplaylable();
+    void definitionDetails();
     
 private:
     void removeAllContacts();

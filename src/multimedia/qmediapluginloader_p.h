@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include <qmultimediaglobal.h>
+#include <qmobilityglobal.h>
 #include <QObject>
 #include <QtCore/qstring.h>
 #include <QtCore/qmap.h>

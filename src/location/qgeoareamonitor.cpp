@@ -168,7 +168,9 @@ qreal QGeoAreaMonitor::radius() const
 QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject *parent)
 {
 #if defined(Q_OS_SYMBIAN) && defined(QT_LOCATION_S60_MONITORING)
-    return QGeoAreaMonitorS60::NewL(parent);
+    QGeoAreaMonitor *ret = NULL;
+    TRAPD(error,ret = QGeoAreaMonitorS60::NewL(parent));
+    return ret;
 #else
     Q_UNUSED(parent);
 #endif

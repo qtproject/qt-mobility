@@ -432,7 +432,7 @@ void tst_QContactManager::uriParsing()
         QVERIFY(QContactManager::splitUri(uri, 0, &outparameters));
 
         QCONTACTMANAGER_REMOVE_VERSIONS_FROM_URI(outparameters);
-        
+
         QCOMPARE(parameters, outparameters);
 
         outmanager.clear();
@@ -440,7 +440,7 @@ void tst_QContactManager::uriParsing()
         QVERIFY(QContactManager::splitUri(uri, &outmanager, &outparameters));
 
         QCONTACTMANAGER_REMOVE_VERSIONS_FROM_URI(outparameters);
-        
+
         QCOMPARE(manager, outmanager);
         QCOMPARE(parameters, outparameters);
     } else {
@@ -700,9 +700,6 @@ void tst_QContactManager::add()
         megacontact.saveDetail(&det);
     }
 
-    QContactName testName;
-    testName.setCustomLabel("testlabel");
-    megacontact.saveDetail(&testName);
     QVERIFY(cm->saveContact(&megacontact)); // must be able to save since built from definitions.
     QContact retrievedMegacontact = cm->contact(megacontact.id().localId());
     if (retrievedMegacontact != megacontact) {
@@ -2170,7 +2167,7 @@ void tst_QContactManager::selfContactId()
     // Setup signal spy
     qRegisterMetaType<QContactLocalId>("QContactLocalId");
     QSignalSpy spy(cm, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
-        
+
     // Set new self contact
     QVERIFY(cm->setSelfContactId(newSelfContact));
     QVERIFY(cm->error() == QContactManager::NoError);
@@ -2181,17 +2178,17 @@ void tst_QContactManager::selfContactId()
     QVERIFY(*((const QContactLocalId*) spy.at(0).at(0).constData()) == selfContact);
     QVERIFY(*((const QContactLocalId*) spy.at(0).at(1).constData()) == newSelfContact);
     QVERIFY(cm->selfContactId() == newSelfContact);
-    
+
     // Remove self contact
     if(!cm->removeContact(self.localId())) {
         QSKIP("Unable to remove self contact", SkipSingle);
-    }        
+    }
     QTRY_VERIFY(spy.count() == 2);
     QVERIFY(spy.at(1).count() == 2);
     QVERIFY(*((const QContactLocalId*) spy.at(1).at(0).constData()) == newSelfContact);
     QVERIFY(*((const QContactLocalId*) spy.at(1).at(1).constData()) == QContactLocalId(0));
-    QVERIFY(cm->selfContactId() == QContactLocalId(0)); // ensure reset after removed.    
-    
+    QVERIFY(cm->selfContactId() == QContactLocalId(0)); // ensure reset after removed.
+
     // reset to original state.
     cm->setSelfContactId(selfContact);
 }
@@ -2284,16 +2281,16 @@ void tst_QContactManager::relationships()
         QSKIP("Skipping: This manager does not support relationships!", SkipSingle);
 
     int totalRelationships = cm->relationships().size();
-    int totalManagerRelationships = cm->relationships(QContactRelationship::IsManagerOf).size();
+    int totalManagerRelationships = cm->relationships(QContactRelationship::HasManager).size();
 
     QStringList availableRelationshipTypes = cm->supportedRelationshipTypes();
     if (availableRelationshipTypes.isEmpty()) {
         // if empty, but has the relationships feature, then it must support arbitrary types.
         // so, add a few types that we can use.
         // if it doesn't support relationships, then it doesn't matter anyway.
-        availableRelationshipTypes.append(QContactRelationship::IsManagerOf);
-        availableRelationshipTypes.append(QContactRelationship::IsSpouseOf);
-        availableRelationshipTypes.append(QContactRelationship::IsAssistantOf);
+        availableRelationshipTypes.append(QContactRelationship::HasManager);
+        availableRelationshipTypes.append(QContactRelationship::HasSpouse);
+        availableRelationshipTypes.append(QContactRelationship::HasAssistant);
     }
 
     QContact source;
@@ -2372,7 +2369,7 @@ void tst_QContactManager::relationships()
     }
 
     totalRelationships = cm->relationships().size();
-    totalManagerRelationships = cm->relationships(QContactRelationship::IsManagerOf).size();
+    totalManagerRelationships = cm->relationships(QContactRelationship::HasManager).size();
 
     QContactId dest1Uri = dest1.id();
     QContactId dest1EmptyUri;
@@ -2518,7 +2515,7 @@ void tst_QContactManager::relationships()
     br2.setRelationshipType(QContactRelationship::HasMember);
     br3.setFirst(source.id());
     br3.setSecond(dest3.id());
-    br3.setRelationshipType(QContactRelationship::IsAssistantOf);
+    br3.setRelationshipType(QContactRelationship::HasAssistant);
     batchList << br1 << br2 << br3;
 
     // ensure that the batch save works properly

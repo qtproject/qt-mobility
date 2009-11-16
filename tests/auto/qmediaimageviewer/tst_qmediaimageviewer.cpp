@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qmultimediaglobal.h>
+#include <qmobilityglobal.h>
 #include <QtTest/QtTest>
 
 #include <QtCore/qdir.h>
