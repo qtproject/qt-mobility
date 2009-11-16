@@ -58,8 +58,8 @@ namespace QValueSpace {
         NonPermanentLayer = 0x0002,
         // UnspecifiedLayerPermanence = 0x0000,
         // InvalidLayerPermanence = 0x0003,
-        WriteableLayer = 0x0004,
-        NonWriteableLayer = 0x0008,
+        WritableLayer = 0x0004,
+        NonWritableLayer = 0x0008,
         // UnspecifiedLayerWriteability = 0x0000,
         // InvalidLayerWriteability = 0x000C,
     };

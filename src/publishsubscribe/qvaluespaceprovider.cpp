@@ -137,8 +137,8 @@ QValueSpaceProviderPrivate::QValueSpaceProviderPrivate(const QString &_path,
 
     if ((filter & QValueSpace::PermanentLayer &&
          filter & QValueSpace::NonPermanentLayer) ||
-        (filter & QValueSpace::WriteableLayer &&
-         filter & QValueSpace::NonWriteableLayer)) {
+        (filter & QValueSpace::WritableLayer &&
+         filter & QValueSpace::NonWritableLayer)) {
         return;
     }
 

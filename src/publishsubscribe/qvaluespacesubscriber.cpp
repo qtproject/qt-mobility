@@ -171,8 +171,8 @@ static LayerList matchLayers(const QString &path, QValueSpace::LayerOptions filt
     // Invalid filter combination.
     if ((filter & QValueSpace::PermanentLayer &&
          filter & QValueSpace::NonPermanentLayer) ||
-        (filter & QValueSpace::WriteableLayer &&
-         filter & QValueSpace::NonWriteableLayer)) {
+        (filter & QValueSpace::WritableLayer &&
+         filter & QValueSpace::NonWritableLayer)) {
         return list;
     }
 

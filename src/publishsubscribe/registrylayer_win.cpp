@@ -340,7 +340,7 @@ unsigned int VolatileRegistryLayer::order()
 
 QValueSpace::LayerOptions VolatileRegistryLayer::layerOptions() const
 {
-    return QValueSpace::NonPermanentLayer | QValueSpace::WriteableLayer;
+    return QValueSpace::NonPermanentLayer | QValueSpace::WritableLayer;
 }
 
 VolatileRegistryLayer *VolatileRegistryLayer::instance()
@@ -376,7 +376,7 @@ unsigned int NonVolatileRegistryLayer::order()
 
 QValueSpace::LayerOptions NonVolatileRegistryLayer::layerOptions() const
 {
-    return QValueSpace::PermanentLayer | QValueSpace::WriteableLayer;
+    return QValueSpace::PermanentLayer | QValueSpace::WritableLayer;
 }
 
 NonVolatileRegistryLayer *NonVolatileRegistryLayer::instance()
