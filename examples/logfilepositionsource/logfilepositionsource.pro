@@ -1,5 +1,5 @@
 TEMPLATE=app
-INCLUDEPATH += ../../location
+INCLUDEPATH += ../../src/location
 
 HEADERS = logfilepositionsource.h \
           clientapplication.h

@@ -41,13 +41,21 @@
 //system includes
 #include <e32base.h>
 #include <s32mem.h>
+#include <centralrepository.h>
 
 //user includes
 #include "cntsymbianfiltersqlhelper.h"
 #include "qcontactdetailfilter.h"
 #include "cnttransformcontact.h"
 
-
+// Telephony Configuration API
+// Keys under this category are used in defining telephony configuration.
+const TUid KCRUidTelConfiguration = {0x102828B8};
+// Amount of digits to be used in contact matching.
+// This allows a customer to variate the amount of digits to be matched.
+const TUint32 KTelMatchDigits                               = 0x00000001;
+// Default match length
+const TInt KDefaultMatchLength(7);
 //Class documentation go here:
 /*!
     \class CntSymbianFilterSqlHelper
@@ -60,21 +68,39 @@
  Q_DEFINE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::EqualTo,"=") ;
  Q_DEFINE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::SqlLike,"LIKE") ;
  Q_DEFINE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::SqlNotNull,"NOT NULL") ;
+ Q_DEFINE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::contactsTable,"contact") ;
+ Q_DEFINE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::commAddrTable,"comm_addr") ;
 
 /*!
  * The constructor
  */
-CntSymbianFilterSqlHelper::CntSymbianFilterSqlHelper()
+CntSymbianFilterSqlHelper::CntSymbianFilterSqlHelper(CContactDatabase& contactDatabase)
+                                               :isSearchingDone(false),
+                                                m_contactDatabase(contactDatabase)
 {
    m_srvConnection = new CntSymbianSrvConnection();
+   
+   
+   contactsTableIdColumNameMapping.insert(KUidContactFieldGivenName.iUid,"first_name" );
+   contactsTableIdColumNameMapping.insert(KUidContactFieldGivenNamePronunciation.iUid,"firstname_prn" );
+   contactsTableIdColumNameMapping.insert(KUidContactFieldFamilyName.iUid,"last_name" );
+   contactsTableIdColumNameMapping.insert(KUidContactFieldFamilyNamePronunciation.iUid,"lastname_prn" );
+   contactsTableIdColumNameMapping.insert(KUidContactFieldCompanyName.iUid,"company_name" );
+   contactsTableIdColumNameMapping.insert(KUidContactFieldCompanyNamePronunciation.iUid,"companyname_prn" );
+
+   //commAddrTableIdColumNameMapping.insert(KUidContactFieldIMPP.iUid,ESipAddress );
+   commAddrTableIdColumNameMapping.insert(KUidContactFieldSIPID.iUid,ESipAddress );
 }
 
 /*!
  * Destructor 
  */
 CntSymbianFilterSqlHelper::~CntSymbianFilterSqlHelper()
+                                
 {
     delete m_srvConnection;
+    contactsTableIdColumNameMapping.clear();
+    commAddrTableIdColumNameMapping.clear();
 }
 
 /*!
@@ -87,15 +113,24 @@ CntSymbianFilterSqlHelper::~CntSymbianFilterSqlHelper()
 QList<QContactLocalId> CntSymbianFilterSqlHelper::searchContacts(const QContactFilter& filter, 
                                                                   QContactManager::Error& error)
 {
-    // Create swl query from the filters
-    QString sqlQuery;
-    createSqlQuery(filter, sqlQuery, error);
-
-    if( error != QContactManager::NoError) {
+    if(filterSupported(filter)){
+        
+        // Create sql query from the filters
+        QString sqlQuery;
+        createSqlQuery(filter, sqlQuery, error);
+    
+        if( error != QContactManager::NoError) {
+            return QList<QContactLocalId>();
+        }
+        // Query the database
+        if(!isSearchingDone){
+            return m_srvConnection->searchContacts(sqlQuery, error);
+        }
+    }
+    else{
         return QList<QContactLocalId>();
     }
-    // Query the database
-    return m_srvConnection->searchContacts(sqlQuery, error);
+        
 }
 
 /*!
@@ -174,8 +209,7 @@ void  CntSymbianFilterSqlHelper::updateSqlQueryForSingleFilter( const QContactFi
                                                                 QContactManager::Error& error)
 { 
 
-    //Currently we are using only contact table.
-    sqlQuery += "SELECT contact_id FROM contact WHERE ";
+    
 
     switch (filter.type()) {
            case QContactFilter::InvalidFilter :
@@ -229,46 +263,57 @@ void CntSymbianFilterSqlHelper::updateSqlQueryForDetailFilter(const QContactFilt
                                                               QString& sqlQuery,
                                                               QContactManager::Error& error)    
 {
+    
+    
     // cast the filter into detail filter
-    const QContactDetailFilter cdf(filter);
+    const QContactDetailFilter detailFilter(filter);
 
-    //Get the field id for the detail field name
-    CntTransformContact transformContact;
+    QString sqlWhereClause =  Space  + " WHERE ";
+    
+    //Get the table name and the column name
     bool isSubType;
-    quint32 fieldId  = transformContact.GetIdForDetailL(cdf, isSubType);
-    if(fieldId){
-        // Id supported, get the corresponding column name 
-        QString sqlDbTableColumnName;
-        convertFieldIdToSqlDbColumnName(fieldId,sqlDbTableColumnName );
-        if(sqlDbTableColumnName == "") {
+    QString columnName;
+    QString tableName;
+    
+    //Check for phonenumber. Special handling needed 
+    if(detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName){
+    
+        HandlePhonenumberDetailFilter(detailFilter);
+        return;//No need to continue,we can return from here.
+    }
+    getSqlDbTableAndColumnNameforDetailFilter(detailFilter,isSubType,tableName,columnName);
+    
+    //return if tableName is empty
+    if(tableName == "" ){
         error = QContactManager::NotSupportedError;
-        } else if(isSubType) {
-            sqlQuery += sqlDbTableColumnName;
-            sqlQuery += " NOT NULL ";
-        } else {
-        
-            sqlQuery += Space + sqlDbTableColumnName + Space ;
-            QString fieldToUpdate;
-            //Update the value depending on the match flag
-            updateFieldForDeatilFilterMatchFlag(cdf,fieldToUpdate,error);
-            sqlQuery +=  fieldToUpdate ;
-        }
-        
-        
-    } else {
-        // Id not supported
-        error = QContactManager::BadArgumentError;
+        return;
+    }
     
-    
+    //check columnName 
+    if(columnName == "") {
+        error = QContactManager::NotSupportedError;
+        return;
+    } 
+    else if(isSubType) {
+        sqlWhereClause += columnName;
+        sqlWhereClause += " NOT NULL ";
+    }
+    else {
+        
+        sqlWhereClause += Space + columnName + Space ;
+        QString fieldToUpdate;
+        //Update the value depending on the match flag
+        updateFieldForDeatilFilterMatchFlag(detailFilter,fieldToUpdate,error);
+        sqlWhereClause +=  fieldToUpdate;
     }
         
-
+        
+    //Create the sql query 
+    sqlQuery += "SELECT DISTINCT contact_id FROM " + Space + tableName + Space + sqlWhereClause;
     
-
-
+    
 }
-
-
+ 
 /*!
  * Converts filed id to column name of the database table.
  * QContactManager::contacts function.
@@ -284,16 +329,16 @@ void CntSymbianFilterSqlHelper::updateFieldForDeatilFilterMatchFlag(
     // Modify the filed depending on the query
     switch(filter.matchFlags())
         {
-            case Qt::MatchExactly:
+            case QContactFilter::MatchExactly:
                 {
                 // Pattern for MatchExactly: 
-                // " ='xyz%'"
+                // " ='xyz'"
                 fieldToUpdate = Space + EqualTo + SingleQuote 
                                + filter.value().toString() + SingleQuote;
                 error = QContactManager::NoError;
                 break;
                 }
-            case Qt::MatchContains:
+            case QContactFilter::MatchContains:
                 {
                 // Pattern for MatchContains: 
                 // " LIKE '%xyz%'"
@@ -302,16 +347,16 @@ void CntSymbianFilterSqlHelper::updateFieldForDeatilFilterMatchFlag(
                 error = QContactManager::NoError;
                 break;
                 }
-            case Qt::MatchStartsWith:
+            case QContactFilter::MatchStartsWith:
                 {
                 // Pattern for MatchStartsWith: 
                 // " LIKE 'xyz%'"
                 fieldToUpdate = Space + SqlLike + Space + SingleQuote 
-                               +  filter.value().toString() + PercentSign + SingleQuote ;
+                               +  filter.value().toString() + PercentSign + SingleQuote  ;
                 error = QContactManager::NoError;
                 break;
                 }
-            case Qt::MatchEndsWith:
+            case QContactFilter::MatchEndsWith:
                 {
                 // Pattern for MatchEndsWith: 
                 // " LIKE '%xyz'"
@@ -320,32 +365,12 @@ void CntSymbianFilterSqlHelper::updateFieldForDeatilFilterMatchFlag(
                 error = QContactManager::NoError;
                 break;
                 }
-            case Qt::MatchRegExp:
+            case QContactFilter::MatchFixedString:
                 {
                 error = QContactManager::NotSupportedError;
                 break;
                 }
-            case Qt::MatchWildcard:
-                {
-                error = QContactManager::NotSupportedError;
-                break;
-                }
-            case Qt::MatchFixedString:
-                {
-                error = QContactManager::NotSupportedError;
-                break;
-                }
-            case Qt::MatchCaseSensitive:
-                {
-                error = QContactManager::NotSupportedError;
-                break;
-                }
-            case Qt::MatchWrap:
-                {
-                error = QContactManager::NotSupportedError;
-                break;
-                }
-            case Qt::MatchRecursive:
+            case QContactFilter::MatchCaseSensitive:
                 {
                 error = QContactManager::NotSupportedError;
                 break;
@@ -365,30 +390,149 @@ void CntSymbianFilterSqlHelper::updateFieldForDeatilFilterMatchFlag(
  * \a fieldId field id representing the detail field name 
  * \a sqlDbTableColumnName On return,contains the column name in the database 
  */
-void CntSymbianFilterSqlHelper::convertFieldIdToSqlDbColumnName(const quint32 fieldId,
-                                                                QString& sqlDbTableColumnName )
+void CntSymbianFilterSqlHelper::getSqlDbTableAndColumnNameforDetailFilter(
+                                                    const QContactDetailFilter& detailFilter ,
+                                                    bool& isSubType,
+                                                    QString& tableName,
+                                                    QString& columnName )
 {
-    if(fieldId == KUidContactFieldGivenName.iUid) { 
-        // First name
-        sqlDbTableColumnName += "first_name";
-    } else if (fieldId == KUidContactFieldGivenNamePronunciation.iUid){
-        // First name Pronunciation
-        sqlDbTableColumnName += "firstname_prn";
-    } else if (fieldId == KUidContactFieldFamilyName.iUid){
-        // Last name
-        sqlDbTableColumnName += "last_name";
-    }else if (fieldId == KUidContactFieldFamilyNamePronunciation.iUid){
-        // Last name Pronunciation
-        sqlDbTableColumnName += "lastname_prn";
-    } else if (fieldId == KUidContactFieldCompanyName.iUid){
-        // Company name
-        sqlDbTableColumnName += "company_name";
-    }else if (fieldId == KUidContactFieldCompanyNamePronunciation.iUid){
-        // Company name Pronunciation
-        sqlDbTableColumnName += "companyname_prn";
-    }else{
-        // Empty string for not supported field
-        sqlDbTableColumnName += "";       
+  
+    //Get the field id for the detail field name
+    CntTransformContact transformContact;
+    quint32 fieldId  = transformContact.GetIdForDetailL(detailFilter, isSubType);
+    
+    //check contacts table
+    columnName = "";
+    tableName = "";
+ 
+    if (contactsTableIdColumNameMapping.contains(fieldId)){
+         columnName = contactsTableIdColumNameMapping.value(fieldId);
+         tableName = "contact";
+     }
+     
+    if( ("" == columnName)  || ("" == tableName)){
+        //Search comm Addr table
+        if (commAddrTableIdColumNameMapping.contains(fieldId)){
+                // communication address table has slightly differnt format, so we make the column name as
+                //  "type = <type> and value "
+                int typeval = commAddrTableIdColumNameMapping.value(fieldId) ;
+                columnName = Space + "TYPE = ";
+                columnName.append('0'+ typeval)
+                + typeval + Space;   
+                columnName += " and value " ;               
+                tableName = "comm_addr";
+             }
+        
     }
 }
 
+void CntSymbianFilterSqlHelper::HandlePhonenumberDetailFilter(const QContactDetailFilter detailFilter)
+    {
+
+    CContactIdArray* idArray(0);
+    // Phone numbers need separate handling
+            if ((filterSupported(detailFilter) == CntAbstractContactFilter::Supported || 
+                 filterSupported(detailFilter) == CntAbstractContactFilter::SupportedPreFilterOnly))
+            {
+                QString number((detailFilter.value()).toString());
+                TPtrC commPtr(reinterpret_cast<const TUint16*>(number.utf16()));
+
+                TInt matchLength(KDefaultMatchLength);
+                // no need to propagate error, we can use the default match length
+                TRAP_IGNORE(getMatchLengthL(matchLength));
+
+                TInt err = searchPhoneNumbers(idArray, commPtr, matchLength);
+                if(err != KErrNone)
+                {
+                    //CntSymbianTransformError::transformError(err, error);
+                }
+            }
+    
+    }
+
+
+/*!
+ * The contact database version implementation for
+ * QContactManager::filterSupported function. The possible return values are
+ * Supported, NotSupported and SupportedPreFilterOnly. Supported means that
+ * the filtering is implemented directly by the underlying database.
+ * NotSupported means that CntSymbianFilterDbms::contacts will return an
+ * error. And SupportedPreFilterOnly means that the filter is not supported,
+ * but the CntSymbianFilterDbms::contacts will act like the filter was
+ * supported. This means that the client must filter the pre-filtered set of
+ * contacts to see if there are false positives included. Note that in some
+ * cases the pre-filtering is not very effective.
+ *
+ * \a filter The QContactFilter to be checked.
+ * \a return Supported in case the filter is supported. NotSupported in case
+ * the filter is not supported. returns
+ *
+ */
+CntAbstractContactFilter::FilterSupport CntSymbianFilterSqlHelper::filterSupported(const QContactFilter& filter)
+{
+    CntAbstractContactFilter::FilterSupport filterSupported(CntAbstractContactFilter::NotSupported);
+    if (filter.type() == QContactFilter::ContactDetailFilter) {
+        const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
+        QContactFilter::MatchFlags matchFlags = detailFilter.matchFlags();
+
+        // Phone numbers
+        if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName) {
+            if (matchFlags == QContactFilter::MatchEndsWith){
+                filterSupported = CntAbstractContactFilter::Supported;
+            }    
+            else if (matchFlags == QContactFilter::MatchExactly){
+                filterSupported = CntAbstractContactFilter::SupportedPreFilterOnly;
+            }    
+        }
+        // Names , Email etc
+        else if (detailFilter.detailDefinitionName() == QContactName::DefinitionName
+                || detailFilter.detailDefinitionName() == QContactEmailAddress::DefinitionName
+                || detailFilter.detailDefinitionName() == QContactOnlineAccount::DefinitionName){
+            QContactFilter::MatchFlags supportedPreFilterFlags =
+                    QContactFilter::MatchExactly & 
+                    QContactFilter::MatchStartsWith & 
+                    QContactFilter::MatchEndsWith & 
+                    QContactFilter::MatchCaseSensitive;
+            if (  (matchFlags == QContactFilter::MatchContains)|| 
+                  (matchFlags == QContactFilter::MatchStartsWith)||
+                  (matchFlags == QContactFilter::MatchEndsWith)||
+                  (matchFlags == QContactFilter::MatchExactly)){
+                filterSupported = CntAbstractContactFilter::Supported;
+            }
+            
+        }
+    }
+    return filterSupported;
+}
+
+/*
+ * Get the match length setting. Digits to be used in matching (counted from
+ * right).
+ */
+void CntSymbianFilterSqlHelper::getMatchLengthL(TInt& matchLength)
+{
+    //Get number of digits used to match
+    CRepository* repository = CRepository::NewL(KCRUidTelConfiguration);
+    CleanupStack::PushL(repository);
+    User::LeaveIfError(repository->Get(KTelMatchDigits, matchLength));
+    CleanupStack::PopAndDestroy(repository);
+}
+
+/*
+ * Find contacts based on a phone number.
+ * \a idArray On return contains the ids of the contacts that match the phonenumber.
+ * \a phoneNumber The phone number to match
+ * \a matchLength Match length; digits from right.
+ */
+TInt CntSymbianFilterSqlHelper::searchPhoneNumbers(
+        CContactIdArray*& idArray,
+        const TDesC& phoneNumber,
+        const TInt matchLength)
+{
+    CContactIdArray* idArrayTmp(0);
+    TRAPD( err, idArrayTmp = m_contactDatabase.MatchPhoneNumberL(phoneNumber, matchLength));
+    if(err == KErrNone){
+       idArray = idArrayTmp;
+    }
+    return 0;
+}

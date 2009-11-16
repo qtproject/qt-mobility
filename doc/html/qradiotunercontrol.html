@@ -13,7 +13,7 @@
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QRadioTunerControl Class Reference</h1>
-<p>The QRadioTunerControl class is an abstract class for controlling the tuning of analog radio devices. <a href="#details">More...</a></p>
+<p>The QRadioTunerControl class provides access to the radio tuning functionality of a <a href="qmediaservice.html">QMediaService</a>. <a href="#details">More...</a></p>
 <pre>    #include &lt;QRadioTunerControl&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <p>Inherits <a href="qmediacontrol.html">QMediaControl</a>.</p>
 <ul>
@@ -56,11 +56,11 @@
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#bandChanged">bandChanged</a></b> ( QRadioTuner::Band <i>band</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#error-2">error</a></b> ( QRadioTuner::Error <i>err</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#error-2">error</a></b> ( QRadioTuner::Error <i>error</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#frequencyChanged">frequencyChanged</a></b> ( int <i>frequency</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#mutingChanged">mutingChanged</a></b> ( bool <i>muted</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#searchingStatusChanged">searchingStatusChanged</a></b> ( bool <i>searching</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#signalStrengthChanged">signalStrengthChanged</a></b> ( int <i>signalStrength</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#signalStrengthChanged">signalStrengthChanged</a></b> ( int <i>strength</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#stereoStatusChanged">stereoStatusChanged</a></b> ( bool <i>stereo</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#volumeChanged">volumeChanged</a></b> ( int <i>volume</i> )</td></tr>
 </table>
@@ -93,86 +93,93 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QRadioTunerControl class is an abstract class for controlling the tuning of analog radio devices.</p>
+<p>The QRadioTunerControl class provides access to the radio tuning functionality of a <a href="qmediaservice.html">QMediaService</a>.</p>
+<p>If a <a href="qmediaservice.html">QMediaService</a> can tune an anolog radio device it will implement QRadioTunerControl. This control provides a means to tune a radio device to a specific <a href="qradiotunercontrol.html#setFrequency">frequency</a> as well as search <a href="qradiotunercontrol.html#searchForward">forwards</a> and <a href="qradiotunercontrol.html#searchBackward">backwards</a> for a signal.</p>
+<p>The functionality provided by this control is exposed to application code through the <a href="qradiotuner.html">QRadioTuner</a> class.</p>
 <p>The interface name of QRadioTunerControl is <tt>com.nokia.Qt.QRadioTunerControl/1.0</tt> as defined in <a href="qradiotunercontrol.html#QRadioTunerControl_iid">QRadioTunerControl_iid</a>.</p>
 <p>See also <a href="qmediaservice.html#control">QMediaService::control</a>() and <a href="qradiotuner.html">QRadioTuner</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QRadioTunerControl"></a>QRadioTunerControl::QRadioTunerControl ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [protected]</tt></h3>
-<p>Construct a radio tuner control class parented to <i>parent</i>.</p>
+<p>Constructs a radio tuner control with the given <i>parent</i>.</p>
 <h3 class="fn"><a name="dtor.QRadioTunerControl"></a>QRadioTunerControl::~QRadioTunerControl ()</h3>
-<p>Destruct the radio tuner control class.</p>
+<p>Destroys a radio tuner control.</p>
 <h3 class="fn"><a name="band"></a><a href="qradiotuner.html#Band-enum">QRadioTuner::Band</a> QRadioTunerControl::band () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns the current band being used.</p>
+<p>Returns the frequency band a radio tuner is tuned to.</p>
 <p>See also <a href="qradiotunercontrol.html#setBand">setBand</a>().</p>
 <h3 class="fn"><a name="bandChanged"></a>void QRadioTunerControl::bandChanged ( <a href="qradiotuner.html#Band-enum">QRadioTuner::Band</a> <i>band</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal emitted when <i>band</i> changed.</p>
+<p>Signals that the frequency <i>band</i> a radio tuner is tuned to has changed.</p>
 <h3 class="fn"><a name="cancelSearch"></a>void QRadioTunerControl::cancelSearch ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Stop any scanning being done.</p>
+<p>Stops scanning for a signal.</p>
 <h3 class="fn"><a name="error"></a><a href="qradiotuner.html#Error-enum">QRadioTuner::Error</a> QRadioTunerControl::error () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns the error state that has occurred.</p>
-<h3 class="fn"><a name="error-2"></a>void QRadioTunerControl::error ( <a href="qradiotuner.html#Error-enum">QRadioTuner::Error</a> <i>err</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal emitted when an error of <i>err</i> has occurred.</p>
+<p>Returns the error state of a radio tuner.</p>
+<h3 class="fn"><a name="error-2"></a>void QRadioTunerControl::error ( <a href="qradiotuner.html#Error-enum">QRadioTuner::Error</a> <i>error</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that an <i>error</i> has occured.</p>
 <h3 class="fn"><a name="errorString"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QRadioTunerControl::errorString () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns the current error string.</p>
+<p>Returns a string describing a radio tuner's error state.</p>
 <h3 class="fn"><a name="frequency"></a>int QRadioTunerControl::frequency () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns the current frequency being used.</p>
+<p>Returns the frequency a radio tuner is tuned to.</p>
 <p>See also <a href="qradiotunercontrol.html#setFrequency">setFrequency</a>().</p>
 <h3 class="fn"><a name="frequencyChanged"></a>void QRadioTunerControl::frequencyChanged ( int <i>frequency</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal emitted when <i>frequency</i> changed.</p>
+<p>Signals that the <i>frequency</i> a radio tuner is tuned to has changed.</p>
 <h3 class="fn"><a name="frequencyRange"></a><a href="http://qt.nokia.com/doc/4.5/qpair.html">QPair</a>&lt;int, int&gt; QRadioTunerControl::frequencyRange ( <a href="qradiotuner.html#Band-enum">QRadioTuner::Band</a> <i>band</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns the frequency range for the <i>band</i>.</p>
+<p>Returns a frequency <i>band</i>'s minimum and maximum frequency.</p>
 <h3 class="fn"><a name="frequencyStep"></a>int QRadioTunerControl::frequencyStep ( <a href="qradiotuner.html#Band-enum">QRadioTuner::Band</a> <i>band</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns the incremental step size in Hertz when changing frequency for <i>band</i>.</p>
+<p>Returns the number of Hertz to increment the frequency by when stepping through frequencies within a given <i>band</i>.</p>
 <h3 class="fn"><a name="isBandSupported"></a>bool QRadioTunerControl::isBandSupported ( <a href="qradiotuner.html#Band-enum">QRadioTuner::Band</a> <i>band</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Return true if <i>band</i> is available.</p>
+<p>Identifies if a frequency <i>band</i> is supported.</p>
+<p>Returns true if the band is supported, and false if it is not.</p>
 <h3 class="fn"><a name="isMuted"></a>bool QRadioTunerControl::isMuted () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns true if muted.</p>
+<p>Identifies if a radio tuner's audio output is muted.</p>
+<p>Returns true if the audio is muted, and false if it is not.</p>
 <h3 class="fn"><a name="isSearching"></a>bool QRadioTunerControl::isSearching () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns true if currently scanning.</p>
+<p>Identifies if a radio tuner is currently scanning for signal.</p>
+<p>Returns true if the tuner is scanning, and false if it is not.</p>
 <h3 class="fn"><a name="isStereo"></a>bool QRadioTunerControl::isStereo () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Return true if in stereo mode.</p>
+<p>Identifies if a radio tuner is receiving a stereo signal.</p>
+<p>Returns true if the tuner is receiving a stereo signal, and false if it is not.</p>
 <h3 class="fn"><a name="mutingChanged"></a>void QRadioTunerControl::mutingChanged ( bool <i>muted</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal emitted when <i>muted</i> state changed.</p>
+<p>Signals that the <i>muted</i> state of a radio tuner's audio output has changed.</p>
 <h3 class="fn"><a name="searchBackward"></a>void QRadioTunerControl::searchBackward ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Start scanning, descending frequency.</p>
+<p>Starts a backwards scan for a signal, starting from the current <a href="qradiotunercontrol.html#frequency">frequency</a>().</p>
 <h3 class="fn"><a name="searchForward"></a>void QRadioTunerControl::searchForward ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Start scanning, ascending freqeuncy.</p>
+<p>Starts a forward scan for a signal, starting from the current <a href="qradiotunercontrol.html#frequency">frequency</a>().</p>
 <h3 class="fn"><a name="searchingStatusChanged"></a>void QRadioTunerControl::searchingStatusChanged ( bool <i>searching</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal emitted when <i>searching</i> status changed.</p>
+<p>Signals that the <i>searching</i> state of a radio tuner has changed.</p>
 <h3 class="fn"><a name="setBand"></a>void QRadioTunerControl::setBand ( <a href="qradiotuner.html#Band-enum">QRadioTuner::Band</a> <i>band</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Set current band to <i>band</i>.</p>
+<p>Sets the frequecy <i>band</i> a radio tuner is tuned to.</p>
+<p>Changing the frequency band will reset the frequency to the minimum frequency of the new band.</p>
 <p>See also <a href="qradiotunercontrol.html#band">band</a>().</p>
 <h3 class="fn"><a name="setFrequency"></a>void QRadioTunerControl::setFrequency ( int <i>frequency</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Set the frequency to <i>frequency</i>.</p>
+<p>Sets the <i>frequency</i> a radio tuner is tuned to.</p>
 <p>See also <a href="qradiotunercontrol.html#frequency">frequency</a>().</p>
 <h3 class="fn"><a name="setMuted"></a>void QRadioTunerControl::setMuted ( bool <i>muted</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Set mute state to <i>muted</i>.</p>
+<p>Sets the <i>muted</i> state of a radio tuner's audio output.</p>
 <p>See also <a href="qradiotunercontrol.html#isMuted">isMuted</a>().</p>
 <h3 class="fn"><a name="setStereoMode"></a>void QRadioTunerControl::setStereoMode ( <a href="qradiotuner.html#StereoMode-enum">QRadioTuner::StereoMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Sets stereo mode to <i>mode</i>.</p>
+<p>Sets a radio tuner's stereo <i>mode</i>.</p>
 <p>See also <a href="qradiotunercontrol.html#stereoMode">stereoMode</a>() and <a href="qradiotuner.html#StereoMode-enum">QRadioTuner::StereoMode</a>.</p>
 <h3 class="fn"><a name="setVolume"></a>void QRadioTunerControl::setVolume ( int <i>volume</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Set the volume to <i>volume</i> (percentage)</p>
+<p>Sets the percentage <i>volume</i> of a radio tuner's audio output.</p>
 <p>See also <a href="qradiotunercontrol.html#volume">volume</a>().</p>
 <h3 class="fn"><a name="signalStrength"></a>int QRadioTunerControl::signalStrength () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Return the current signal strength as a percentage.</p>
-<h3 class="fn"><a name="signalStrengthChanged"></a>void QRadioTunerControl::signalStrengthChanged ( int <i>signalStrength</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal emitted when <i>signalStrength</i> changed (percentage).</p>
+<p>Return a radio tuner's current signal strength as a percentage.</p>
+<h3 class="fn"><a name="signalStrengthChanged"></a>void QRadioTunerControl::signalStrengthChanged ( int <i>strength</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that the percentage <i>strength</i> of the signal received by a radio tuner has changed.</p>
 <h3 class="fn"><a name="start"></a>void QRadioTunerControl::start ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Activate the radio device.</p>
 <h3 class="fn"><a name="stereoMode"></a><a href="qradiotuner.html#StereoMode-enum">QRadioTuner::StereoMode</a> QRadioTunerControl::stereoMode () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns the stereo mode.</p>
+<p>Returns a radio tuner's stereo mode.</p>
 <p>See also <a href="qradiotunercontrol.html#setStereoMode">setStereoMode</a>() and <a href="qradiotuner.html#StereoMode-enum">QRadioTuner::StereoMode</a>.</p>
 <h3 class="fn"><a name="stereoStatusChanged"></a>void QRadioTunerControl::stereoStatusChanged ( bool <i>stereo</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal emitted when <i>stereo</i> mode changed.</p>
+<p>Signals that the <i>stereo</i> state of a radio tuner has changed.</p>
 <h3 class="fn"><a name="stop"></a>void QRadioTunerControl::stop ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Deactivate the radio device.</p>
 <h3 class="fn"><a name="volume"></a>int QRadioTunerControl::volume () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns the volume as a percentage.</p>
+<p>Returns the volume of a radio tuner's audio output as a percentage.</p>
 <p>See also <a href="qradiotunercontrol.html#setVolume">setVolume</a>().</p>
 <h3 class="fn"><a name="volumeChanged"></a>void QRadioTunerControl::volumeChanged ( int <i>volume</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal emitted when <i>volume</i> changed (percentage).</p>
+<p>Signals that the percentage <i>volume</i> of radio tuner's audio output has changed.</p>
 <hr />
 <h2>Macro Documentation</h2>
 <h3 class="fn"><a name="QRadioTunerControl_iid"></a>QRadioTunerControl_iid</h3>

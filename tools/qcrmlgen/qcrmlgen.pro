@@ -2,8 +2,8 @@ TEMPLATE=app
 TARGET=qcrmlgen
 CONFIG += core gui
 
-INCLUDEPATH += ../../context
-DEPENDPATH += ../../context
+INCLUDEPATH += ../../src/publishsubscribe
+DEPENDPATH += ../../src/publishsubscribe
 
 HEADERS = qcrmlgen.h \
           qcrmlparser_p.h

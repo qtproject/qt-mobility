@@ -3,24 +3,24 @@ description = Qt Mobility Library Reference Documentation
 
 imagedirs = images
 
-headerdirs = ../../bearer \
-             ../../serviceframework \
-             ../../location \
-             ../../context \
-             ../../systeminfo \
-             ../../contacts \
-             ../../multimedia \
-             ../../messaging \
+headerdirs = ../../src/bearer \
+             ../../src/serviceframework \
+             ../../src/location \
+             ../../src/publishsubscribe \
+             ../../src/systeminfo \
+             ../../src/contacts \
+             ../../src/multimedia \
+             ../../src/messaging \
              .
 
-sourcedirs = ../../bearer \
-             ../../serviceframework \
-             ../../location \
-             ../../context \
-             ../../systeminfo \
-             ../../contacts \
-             ../../multimedia \
-             ../../messaging \
+sourcedirs = ../../src/bearer \
+             ../../src/serviceframework \
+             ../../src/location \
+             ../../src/publishsubscribe \
+             ../../src/systeminfo \
+             ../../src/contacts \
+             ../../src/multimedia \
+             ../../src/messaging \
              .
 
 exampledirs = ../../examples \

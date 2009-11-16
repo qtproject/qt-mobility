@@ -59,8 +59,8 @@ public:
         /* The filter is not directly supported, but for performance reasons
          * the contact filter implementation pretends supporting the filter
          * when it actually maps the filter to another, less strict filter.
-         * For example if the caller uses match flag Qt::MatchExactly, the
-         * filter actually gives the result as Qt::MatchContains (because of
+         * For example if the caller uses match flag QContactFilter::MatchExactly, the
+         * filter actually gives the result as QContactFilter::MatchContains (because of
          * the limitations in the underlying database).
          * The result then needs to be filtered by the caller (for example by
          * using QContactManagerEngine::testFilter). */

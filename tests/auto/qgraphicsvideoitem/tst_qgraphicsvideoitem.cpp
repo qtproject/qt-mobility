@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include <qmultimediaglobal.h>
 #include <QtTest/QtTest>
 
 #include "qgraphicsvideoitem.h"

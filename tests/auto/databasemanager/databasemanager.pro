@@ -1,11 +1,11 @@
 TARGET=tst_databasemanager
 QT = core sql
-INCLUDEPATH += ../../../serviceframework
+INCLUDEPATH += ../../../src/serviceframework
 
 symbian {
-    INCLUDEPATH += ../../../serviceframework/symbian
-    DEPENDPATH += ../../../serviceframework \
-                  ../../../serviceframework/symbian
+    INCLUDEPATH += ../../../src/serviceframework/symbian
+    DEPENDPATH += ../../../src/serviceframework \
+                  ../../../src/serviceframework/symbian
 }
 
 wince*|symbian*: {
@@ -46,7 +46,7 @@ symbian {
     LIBS += -lefsrv
 
 } else {
-    DEPENDPATH += ../../../serviceframework
+    DEPENDPATH += ../../../src/serviceframework
     HEADERS += ../qsfwtestutil.h \
 
 

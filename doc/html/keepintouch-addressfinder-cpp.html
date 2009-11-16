@@ -177,7 +177,9 @@
                     QTimer::singleShot(0, this, SLOT(continueSearch()));
                 } else {
                     searchAction-&gt;setEnabled(true);
+    #ifndef _WIN32_WCE
                     searchButton-&gt;setEnabled(true);
+    #endif
                 }
             }
         } else if (s == QMessageServiceAction::Failed) {

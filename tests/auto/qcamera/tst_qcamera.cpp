@@ -70,7 +70,7 @@ public:
     virtual void stop() { m_state = QCamera::StoppedState; }
     QCamera::State state() const { return m_state; }
 
-    QCamera::State m_state;        
+    QCamera::State m_state;
 };
 
 class MockCaptureControl : public QImageCaptureControl
@@ -432,12 +432,9 @@ class MockImageEncoderControl : public QImageEncoderControl
 public:
     MockImageEncoderControl(QObject *parent = 0)
         : QImageEncoderControl(parent)
-        , m_quality(QtMedia::HighQuality)
     {
     }
 
-    QSize resolution() const { return m_resolution; }
-    void setResolution(const QSize &resolution) { m_resolution = resolution; }
     QSize minimumResolution() const { return m_minimumResolution; }
     void setMinimumResolution(const QSize &resolution) { m_minimumResolution = resolution; }
     QSize maximumResolution() const { return m_maximumResolution; }
@@ -448,26 +445,23 @@ public:
 
     QStringList supportedImageCodecs() const { return m_supportedCodecs; }
     void setSupportedImageCodecs(const QStringList &codecs) { m_supportedCodecs = codecs; }
-    QString imageCodec() const { return m_imageCodec; }
-    bool setImageCodec(const QString &codecName) { m_imageCodec = codecName; return true; }
 
     QString imageCodecDescription(const QString &codecName) const {
         return m_codecDescriptions.value(codecName); }
     void setImageCodecDescriptions(const QMap<QString, QString> &descriptions) {
         m_codecDescriptions = descriptions; }
 
-    QtMedia::EncodingQuality quality() const { return m_quality; }
-    void setQuality(QtMedia::EncodingQuality quality) { m_quality = quality; }
+    QImageEncoderSettings imageSettings() const { return m_settings; }
+    void setImageSettings(const QImageEncoderSettings &settings) { m_settings = settings; }
 
 private:
-    QSize m_resolution;
+    QImageEncoderSettings m_settings;
+
     QSize m_minimumResolution;
     QSize m_maximumResolution;
     QList<QSize> m_supportedResolutions;
     QStringList m_supportedCodecs;
-    QString m_imageCodec;
     QMap<QString, QString> m_codecDescriptions;
-    QtMedia::EncodingQuality m_quality;
 };
 
 class MockSimpleCameraService : public QMediaService
@@ -488,7 +482,6 @@ public:
     {
         if (qstrcmp(iid, QCameraControl_iid) == 0)
             return mockControl;
-
         return 0;
     }
 
@@ -581,6 +574,7 @@ private slots:
     void testCameraExposure();
     void testCameraFocus();
     void testCameraCapture();
+    void testImageSettings();
 
 private:
     MockSimpleCameraService  *mockSimpleCameraService;
@@ -942,6 +936,99 @@ void tst_QCamera::testCameraFocus()
     camera.unlockFocus();
     QCOMPARE(camera.isFocusLocked(), false);
 }
+
+void tst_QCamera::testImageSettings()
+{
+    QImageEncoderSettings settings;
+    QVERIFY(settings.isNull());
+    QVERIFY(settings == QImageEncoderSettings());
+
+    QCOMPARE(settings.codec(), QString());
+    settings.setCodec(QLatin1String("codecName"));
+    QCOMPARE(settings.codec(), QLatin1String("codecName"));
+    QVERIFY(!settings.isNull());
+    QVERIFY(settings != QImageEncoderSettings());
+
+    settings = QImageEncoderSettings();
+    QCOMPARE(settings.quality(), QtMedia::NormalQuality);
+    settings.setQuality(QtMedia::HighQuality);
+    QCOMPARE(settings.quality(), QtMedia::HighQuality);
+    QVERIFY(!settings.isNull());
+
+    settings = QImageEncoderSettings();
+    QCOMPARE(settings.resolution(), QSize());
+    settings.setResolution(QSize(320,240));
+    QCOMPARE(settings.resolution(), QSize(320,240));
+    settings.setResolution(800,600);
+    QCOMPARE(settings.resolution(), QSize(800,600));
+    QVERIFY(!settings.isNull());
+
+    settings = QImageEncoderSettings();
+    QVERIFY(settings.isNull());
+    QCOMPARE(settings.codec(), QString());
+    QCOMPARE(settings.quality(), QtMedia::NormalQuality);
+    QCOMPARE(settings.resolution(), QSize());
+
+    {
+        QImageEncoderSettings settings1;
+        QImageEncoderSettings settings2;
+        QCOMPARE(settings2, settings1);
+
+        settings2 = settings1;
+        QCOMPARE(settings2, settings1);
+        QVERIFY(settings2.isNull());
+
+        settings1.setQuality(QtMedia::HighQuality);
+
+        QVERIFY(settings2.isNull());
+        QVERIFY(!settings1.isNull());
+        QVERIFY(settings1 != settings2);
+    }
+
+    {
+        QImageEncoderSettings settings1;
+        QImageEncoderSettings settings2(settings1);
+        QCOMPARE(settings2, settings1);
+
+        settings2 = settings1;
+        QCOMPARE(settings2, settings1);
+        QVERIFY(settings2.isNull());
+
+        settings1.setQuality(QtMedia::HighQuality);
+
+        QVERIFY(settings2.isNull());
+        QVERIFY(!settings1.isNull());
+        QVERIFY(settings1 != settings2);
+    }
+
+    QImageEncoderSettings settings1;
+    QImageEncoderSettings settings2;
+
+    settings1 = QImageEncoderSettings();
+    settings1.setResolution(800,600);
+    settings2 = QImageEncoderSettings();
+    settings2.setResolution(QSize(800,600));
+    QVERIFY(settings1 == settings2);
+    settings2.setResolution(QSize(400,300));
+    QVERIFY(settings1 != settings2);
+
+    settings1 = QImageEncoderSettings();
+    settings1.setCodec("codec1");
+    settings2 = QImageEncoderSettings();
+    settings2.setCodec("codec1");
+    QVERIFY(settings1 == settings2);
+    settings2.setCodec("codec2");
+    QVERIFY(settings1 != settings2);
+
+    settings1 = QImageEncoderSettings();
+    settings1.setQuality(QtMedia::NormalQuality);
+    settings2 = QImageEncoderSettings();
+    settings2.setQuality(QtMedia::NormalQuality);
+    QVERIFY(settings1 == settings2);
+    settings2.setQuality(QtMedia::LowQuality);
+    QVERIFY(settings1 != settings2);
+}
+
 
 
 QTEST_MAIN(tst_QCamera)

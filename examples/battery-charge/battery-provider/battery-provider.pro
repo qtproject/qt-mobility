@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = battery-provider
-INCLUDEPATH += ../../../context
-DEPENDPATH += ../../../context
+INCLUDEPATH += ../../../src/publishsubscribe
+DEPENDPATH += ../../../src/publishsubscribe
 
 HEADERS = batteryprovider.h
 
