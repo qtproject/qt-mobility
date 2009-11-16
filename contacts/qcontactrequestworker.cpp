@@ -65,6 +65,7 @@
 QContactRequestWorker::QContactRequestWorker()
     :QThread(), d(new QContactRequestWorkerData)
 {
+    QObject::moveToThread(this);
 }
 
 /*! Initializes this QContactRequestWorker from \a other */
@@ -139,7 +140,7 @@ void QContactRequestWorker::run()
 {
     QContactAbstractRequest *req;
     
-    for(;;) {
+    forever {
         // get a new request from the queue (also sets the m_currentRequest ptr to this request)
         req = d->takeFirstRequest();
         if (req == 0 || d->m_stop) {
@@ -188,7 +189,8 @@ void QContactRequestWorker::run()
             default:
                 break;
         }
-        req->d_ptr->m_condition.wakeAll();
+        if (req && req->d_ptr)
+            req->d_ptr->m_condition.wakeAll();
         d->m_currentRequest = 0;
     }
 
@@ -246,23 +248,20 @@ bool QContactRequestWorker::addRequest(QContactAbstractRequest* req)
  */
 bool QContactRequestWorker::removeRequest(QContactAbstractRequest* req)
 {
-    QMutexLocker threadLocker(&d->m_mutex);
-    if(!d->m_requestQueue.contains(req)) {
-        threadLocker.unlock();
-        while (req == d->m_currentRequest){
-            usleep(10);
-        }
-        threadLocker.relock();
-        return true;
-    }
-    if (req) {
+    while (req) {
+        QMutexLocker threadLocker(&d->m_mutex);
+        if (req == d->m_currentRequest)
+            break;
         d->m_requestQueue.removeOne(req);
         if (req->d_ptr->m_waiting)
             req->d_ptr->m_condition.wakeAll();
         return true;
     }
+    while(req == d->m_currentRequest)
+        usleep(10);
     return false;
 }
+
 
 /*!
  * Update the status of the given request \a req to QContactAbstractRequest::Cancelling, returns true if sucessful, false if not.

@@ -97,8 +97,11 @@ QContactAbstractRequest::~QContactAbstractRequest()
         if (engine) {
             QMutexLocker locker(&d_ptr->m_mutex);
             engine->requestDestroyed(this);
+            QCoreApplication::processEvents();
         }
-        delete d_ptr;
+        QContactAbstractRequestPrivate* deleted = d_ptr;
+        d_ptr = 0;
+        delete deleted;
     }
 }
 
