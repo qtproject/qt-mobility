@@ -74,9 +74,6 @@ public:
     // From MContactDbObserver
     void HandleDatabaseEventL(TContactDbObserverEvent aEvent);
 
-signals:
-    void ownCardChanged(const QContactLocalId& oldId, const QContactLocalId& newId);
-
 private:
     CContactDatabase* m_contactDatabase;
 #ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
@@ -84,7 +81,7 @@ private:
 #endif
     QContactManagerEngine *m_engine;
     QList<QContactLocalId> m_contactsEmitted;
-    QContactLocalId m_ownCardId;
+    QContactLocalId m_currentOwnCardId;
 };
 
 
