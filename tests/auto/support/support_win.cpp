@@ -1312,44 +1312,10 @@ public:
             !parentAccountName.isEmpty() && !parentFolderPath.isEmpty()) {
             // Find the named account
             QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter::byName(parentAccountName)));
-#if defined(Q_OS_WIN) && !defined(ACCOUNT_FILTERING_IMPLEMENTED)
-{
-    // Not implemented yet...
-    QMessageAccountIdList::iterator it = accountIds.begin(), end = accountIds.end();
-    while (it != end) {
-        QMessageAccount acct(*it);
-        if (acct.name() == parentAccountName) {
-            accountIds.clear();
-            accountIds.append(acct.id());
-            break;
-        }
-        if (++it == end) {
-            accountIds.clear();
-        }
-    }
-}
-#endif
             if (accountIds.count() == 1) {
                 // Find the specified folder
                 QMessageFolderFilter filter(QMessageFolderFilter::byPath(parentFolderPath) & QMessageFolderFilter::byParentAccountId(accountIds.first()));
                 QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(filter));
-#if defined(Q_OS_WIN) && !defined(FOLDER_FILTERING_IMPLEMENTED)
-{
-    // Keys aren't implemented yet...
-    QMessageFolderIdList::iterator it = folderIds.begin(), end = folderIds.end();
-    while (it != end) {
-        QMessageFolder fldr(*it);
-        if ((fldr.path() == parentFolderPath) && (fldr.parentAccountId() == accountIds.first())) {
-            folderIds.clear();
-            folderIds.append(fldr.id());
-            break;
-        }
-        if (++it == end) {
-            folderIds.clear();
-        }
-    }
-}
-#endif
                 if (folderIds.count() == 1) {
                     QMessage message;
 
