@@ -169,7 +169,8 @@ void S60AudioPlayerSession::setVolume(int volume)
 
 void S60AudioPlayerSession::setMuted(bool muted)
 {
-    // TODO:
+    if (muted)
+        m_player->SetVolume(0);
 }
 
 void S60AudioPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
