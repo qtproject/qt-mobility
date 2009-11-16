@@ -27,8 +27,6 @@
 #include "trackerchangelistener.h"
 #include "qtrackercontactsaverequest.h"
 
-using namespace hcontacts;
-
 QContactManagerEngine* ContactTrackerFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
     Q_UNUSED(error);

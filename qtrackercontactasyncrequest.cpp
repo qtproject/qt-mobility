@@ -20,7 +20,6 @@
 #include "qtrackercontactasyncrequest.h"
 
 using namespace SopranoLive;
-using namespace hcontacts;
 
 void matchPhoneNumber(RDFVariable &variable, QContactDetailFilter &filter)
 {

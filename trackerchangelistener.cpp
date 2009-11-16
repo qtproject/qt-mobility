@@ -16,7 +16,6 @@
 #include "qcontact.h"
 
 using namespace SopranoLive;
-using namespace hcontacts;
 
 TrackerChangeListener::TrackerChangeListener(QObject* parent)
 :QObject(parent)
