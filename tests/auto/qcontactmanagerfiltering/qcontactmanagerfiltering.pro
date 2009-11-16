@@ -4,7 +4,7 @@ TARGET=tst_qcontactmanagerfiltering
 CONFIG+=testcase
 
 include(../../../common.pri)
-
+INCLUDEPATH += $$SOURCE_DIR/tests/auto
 SOURCES  += tst_qcontactmanagerfiltering.cpp
 
 qtAddLibrary(QtContacts)

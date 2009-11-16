@@ -9,7 +9,7 @@ CONFIG += plugin testplugin
 TARGET = contacts_sendemailactionfactory
 
 include(../../../../common.pri)
-
+INCLUDEPATH += $$SOURCE_DIR/tests/auto
 DEFINES += ACTIONFACTORYPLUGINTARGET=contacts_sendemailactionfactory
 DEFINES += ACTIONFACTORYPLUGINNAME=SendEmailActionFactory
 

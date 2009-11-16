@@ -9,7 +9,7 @@ CONFIG += plugin testplugin
 TARGET = contacts_maliciousplugin
 
 include(../../../../common.pri)
-
+INCLUDEPATH += $$SOURCE_DIR/tests/auto
 DEFINES += MALICIOUSPLUGINTARGET=contacts_maliciousplugin
 DEFINES += MALICIOUSPLUGINNAME=maliciousplugin
 

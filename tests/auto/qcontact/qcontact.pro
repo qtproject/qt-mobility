@@ -5,6 +5,8 @@ CONFIG+=testcase
 
 include(../../../common.pri)
 
+INCLUDEPATH += $$SOURCE_DIR/tests/auto
+
 SOURCES  += tst_qcontact.cpp
 
 qtAddLibrary(QtContacts)
