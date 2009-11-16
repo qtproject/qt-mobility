@@ -717,7 +717,7 @@ void TestSymbianEngine::singleRelationship()
     QContactRelationship rel;
     rel.setFirst(a.id());
     rel.setSecond(b.id());
-    rel.setRelationshipType(QContactRelationship::IsSpouseOf);
+    rel.setRelationshipType(QContactRelationship::HasSpouse);
     
     // Add relationship
     m_engine->saveRelationship(&rel, error);
@@ -752,7 +752,7 @@ void TestSymbianEngine::batchRelationships()
     QContactRelationship rel;
     rel.setFirst(a.id());
     rel.setSecond(b.id());
-    rel.setRelationshipType(QContactRelationship::IsSpouseOf);
+    rel.setRelationshipType(QContactRelationship::HasSpouse);
     
     QList<QContactRelationship> list;
     list.append(rel);
@@ -774,7 +774,7 @@ void TestSymbianEngine::batchRelationships()
     QContactRelationshipFilter::Role role;
     role = QContactRelationshipFilter::First;
     list.clear();
-    list = m_engine->relationships(QContactRelationship::IsSpouseOf, a.id(), role, error);
+    list = m_engine->relationships(QContactRelationship::HasSpouse, a.id(), role, error);
     QVERIFY(&list != NULL);
     if (error == QContactManager::NoError ||
         error == QContactManager::NotSupportedError)
