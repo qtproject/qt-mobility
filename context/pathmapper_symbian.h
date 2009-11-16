@@ -56,7 +56,7 @@ public:
     PathMapper();
     /*virtual*/ ~PathMapper();
 
-    enum Target {TargetRPropery, TargetCRepository};
+    enum Target {TargetCRepository, TargetRPropery};
 
     bool getChildren(QString path, QSet<QString> &children) const;
     bool resolvePath(QString path, Target &target, quint32 &category, quint32 &key) const;

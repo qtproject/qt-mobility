@@ -40,6 +40,8 @@
 ****************************************************************************/
 #include "settingslayer_symbian.h"
 #include <QVariant>
+#include "xqsettingskey.h"
+#include "xqpublishandsubscribeutils.h"
 
 #include <QDebug>
 
@@ -153,20 +155,24 @@ bool SymbianSettingsLayer::value(Handle handle, const QString &subPath, QVariant
 
     fullPath.append(value);
 
+    bool success = false;
     if (sh) {
-        qDebug() << "TODO: Actual code for reading data" << fullPath;
         PathMapper::Target target;
         quint32 category;
         quint32 key;
         if (pathMapper.resolvePath(fullPath, target, category, key)) {
-            qDebug() << "pathMapper.resolvePath" << target << category << key;
+            XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
+            *data = m_settingsManager.readItemValue(settingsKey);
+            if (!data->isNull()) {
+                success = true;
+            }
         }
     }
 
     if (createdHandle)
         removeHandle(handle);
 
-    return true;
+    return success;
 }
 
 QSet<QString> SymbianSettingsLayer::children(Handle handle)
@@ -288,19 +294,32 @@ bool SymbianSettingsLayer::setValue(QValueSpaceProvider *creator, Handle handle,
 
     fullPath.append(value);
 
-    //TODO: Write data
-    qDebug() << "TODO: Actual code for writing data" << fullPath << data;
+    bool success = false;
     PathMapper::Target target;
     quint32 category;
     quint32 key;
     if (pathMapper.resolvePath(fullPath, target, category, key)) {
-        qDebug() << "pathMapper.resolvePath" << target << category << key;
+        if (target == PathMapper::TargetRPropery) {
+            XQPublishAndSubscribeUtils utils(m_settingsManager);
+
+            XQSettingsManager::Type type = XQSettingsManager::TypeVariant;
+            switch (data.type()) {
+            case QVariant::Int: type = XQSettingsManager::TypeInt; break;
+            case QVariant::String: type = XQSettingsManager::TypeString; break;
+            case QVariant::ByteArray: type = XQSettingsManager::TypeByteArray; break;
+            default:
+                return false;
+            }
+            utils.defineProperty(XQPublishAndSubscribeSettingsKey((long)category, (unsigned long)key), type);
+        }
+        XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);        
+        success = m_settingsManager.writeItemValue(settingsKey, data);
     }
 
     if (createdHandle)
         removeHandle(Handle(sh));
 
-    return true;
+    return success;
 }
 
 void SymbianSettingsLayer::sync()

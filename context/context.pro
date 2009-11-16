@@ -25,6 +25,11 @@ SOURCES += \
            qvaluespacesubscriber.cpp
 
 symbian {
+    DEPENDPATH += symbian
+    INCLUDEPATH += symbian
+    DEFINES += XQSETTINGSMANAGER_NO_LIBRARY
+    include(symbian/settingsmanager.pri)
+
     DEFINES += QT_BUILD_INTERNAL
     HEADERS += settingslayer_symbian.h \
         pathmapper_symbian.h \

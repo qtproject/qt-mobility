@@ -48,6 +48,7 @@
 #include <QMultiMap>
 
 #include "pathmapper_symbian.h"
+#include "xqsettingsmanager.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -124,6 +125,7 @@ private:
     }
 
     PathMapper pathMapper;
+    XQSettingsManager m_settingsManager;
 };
 
 QT_END_NAMESPACE
