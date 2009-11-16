@@ -57,7 +57,6 @@ S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
       m_playbackRate(1.0),
       m_muted(false),
       m_videoAvailable(false),
-      m_seekable(false),
       m_lastPosition(0),
       m_duration(-1),
       m_timer(new QTimer(this))
@@ -121,7 +120,7 @@ bool S60MediaPlayerSession::isVideoAvailable() const
 
 bool S60MediaPlayerSession::isSeekable() const
 {
-    return m_seekable;
+    return false;
 }
 
 void S60MediaPlayerSession::play()
@@ -152,17 +151,13 @@ void S60MediaPlayerSession::setVolume(int volume)
     // TODO: setvolume
 }
 
-void S60MediaPlayerSession::setMuted(bool muted)
-{
-    // TODO: setmuted
-}
-
 void S60MediaPlayerSession::setSeekable(bool seekable)
 {
-    if (seekable != m_seekable) {
+    //TODO:
+    /*if (seekable != m_seekable) {
         m_seekable = seekable;
         emit seekableChanged(m_seekable);
-    }
+    }*/
 }
 
 void S60MediaPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)

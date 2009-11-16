@@ -126,7 +126,7 @@ bool S60AudioPlayerSession::isVideoAvailable() const
 
 bool S60AudioPlayerSession::isSeekable() const
 {
-    return true;
+    return m_metaDataMap.value("seekable").toBool();
 }
 
 void S60AudioPlayerSession::play()

@@ -171,7 +171,7 @@ bool S60VideoPlayerSession::isVideoAvailable() const
 
 bool S60VideoPlayerSession::isSeekable() const
 {
-    return m_seekable;
+    return m_metaDataMap.value("seekable").toBool();
 }
 
 void S60VideoPlayerSession::play()

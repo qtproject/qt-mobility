@@ -130,7 +130,6 @@ protected:
     qreal m_playbackRate;
     bool m_muted;
     bool m_videoAvailable;
-    bool m_seekable;
 
     qint64 m_lastPosition;
     qint64 m_duration;
