@@ -41,6 +41,7 @@
 #include <QDebug>
 
 #include "qcontactmanager.h"
+#include "qtcontacts.h"
 #include "qcontactwincebackend_p.h"
 
 /*!
