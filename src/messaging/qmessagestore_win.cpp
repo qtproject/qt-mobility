@@ -221,7 +221,6 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     return result;
 }
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset) const
 {
     QMessageFolderIdList result;
@@ -244,7 +243,6 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &fil
 
     return result;
 }
-#endif
 
 QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset) const
 {
@@ -274,12 +272,10 @@ int QMessageStore::countMessages(const QMessageFilter& filter) const
     return queryMessages(filter).count();
 }
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 int QMessageStore::countFolders(const QMessageFolderFilter& filter) const
 {
     return queryFolders(filter).count();
 }
-#endif
 
 int QMessageStore::countAccounts(const QMessageAccountFilter& filter) const
 {
@@ -507,7 +503,6 @@ QMessage QMessageStore::message(const QMessageId& id) const
     return d_ptr->p_ptr->session->message(&d_ptr->p_ptr->lastError, id);
 }
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
 {
     QMessageFolder result;
@@ -527,7 +522,6 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
 
     return d_ptr->p_ptr->session->folder(&d_ptr->p_ptr->lastError, id);
 }
-#endif
 
 QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 {

@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSERVICEFRAMEWORKGLOBAL_H
-#define QSERVICEFRAMEWORKGLOBAL_H
+#ifndef QMOBILITYGLOBAL_H
+#define QMOBILITYGLOBAL_H
 
 #if defined(QTM_BUILD_UNITTESTS)
 # include <qconfig.h>
@@ -60,23 +60,78 @@
 #      if defined(QT_DLL)
 #        undef QT_DLL
 #      endif
+#      if defined(QT_BUILD_BEARER_LIB)
+#        define Q_BEARER_EXPORT Q_DECL_EXPORT
+#      else
+#        define Q_BEARER_EXPORT Q_DECL_IMPORT
+#      endif
+#      if defined(QT_BUILD_CFW_LIB)
+#        define Q_CFW_EXPORT Q_DECL_EXPORT
+#      else
+#        define Q_CFW_EXPORT Q_DECL_IMPORT
+#      endif
+#      if defined(QT_BUILD_CONTACTS_LIB)
+#        define Q_CONTACTS_EXPORT Q_DECL_EXPORT
+#      else
+#        define Q_CONTACTS_EXPORT Q_DECL_IMPORT
+#      endif
+#      if defined(QT_BUILD_LOCATION_LIB)
+#        define Q_LOCATION_EXPORT Q_DECL_EXPORT
+#      else
+#        define Q_LOCATION_EXPORT Q_DECL_IMPORT
+#      endif
+#      if defined(QT_BUILD_MESSAGING_LIB)
+#        define Q_MESSAGING_EXPORT Q_DECL_EXPORT
+#      else
+#        define Q_MESSAGING_EXPORT Q_DECL_IMPORT
+#      endif
+#      if defined(QT_BUILD_MEDIA_LIB)
+#        define Q_MEDIA_EXPORT Q_DECL_EXPORT
+#      else
+#        define Q_MEDIA_EXPORT Q_DECL_IMPORT
+#      endif
 #      if defined(QT_BUILD_SFW_LIB)
 #        define Q_SFW_EXPORT Q_DECL_EXPORT
 #      else
 #        define Q_SFW_EXPORT Q_DECL_IMPORT
 #      endif
+#      if defined(QT_BUILD_SYSINFO_LIB)
+#        define Q_SYSINFO_EXPORT Q_DECL_EXPORT
+#      else
+#        define Q_SYSINFO_EXPORT Q_DECL_IMPORT
+#      endif
 #    elif defined(QT_DLL) /* use a Qt DLL library */
+#      define Q_BEARER_EXPORT Q_DECL_IMPORT
+#      define Q_CFW_EXPORT Q_DECL_IMPORT
+#      define Q_CONTACTS_EXPORT Q_DECL_IMPORT
+#      define Q_LOCATION_EXPORT Q_DECL_IMPORT
+#      define Q_MEDIA_EXPORT Q_DECL_IMPORT
+#      define Q_MESSAGING_EXPORT Q_DECL_IMPORT
 #      define Q_SFW_EXPORT Q_DECL_IMPORT
+#      define Q_SYSINFO_EXPORT Q_DECL_IMPORT
 #    endif
 #  else
 #  endif
-
 #  if !defined(Q_SFW_EXPORT)
 #    if defined(QT_SHARED)
+#      define Q_BEARER_EXPORT Q_DECL_EXPORT
+#      define Q_CFW_EXPORT Q_DECL_EXPORT
+#      define Q_CONTACTS_EXPORT Q_DECL_EXPORT
+#      define Q_LOCATION_EXPORT Q_DECL_EXPORT
+#      define Q_MEDIA_EXPORT Q_DECL_EXPORT
+#      define Q_MESSAGING_EXPORT Q_DECL_EXPORT
 #      define Q_SFW_EXPORT Q_DECL_EXPORT
+#      define Q_SYSINFO_EXPORT Q_DECL_EXPORT
 #    else
+#      define Q_BEARER_EXPORT
+#      define Q_CFW_EXPORT
+#      define Q_CONTACTS_EXPORT
+#      define Q_LOCATION_EXPORT
+#      define Q_MEDIA_EXPORT
+#      define Q_MESSAGING_EXPORT
 #      define Q_SFW_EXPORT
+#      define Q_SYSINFO_EXPORT
 #    endif
 #  endif
 #endif
-#endif // QSERVICEFRAMEWORKGLOBAL_H
+#endif // QMOBILITYGLOBAL_H

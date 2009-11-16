@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderordering.h"
 #include "qmessagefolderordering_p.h"
 
@@ -101,4 +100,3 @@ QMessageFolderOrdering QMessageFolderOrdering::byPath(Qt::SortOrder order)
     Q_UNUSED(order)
     return QMessageFolderOrdering(); // stub
 }
-#endif

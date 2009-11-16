@@ -38,48 +38,22 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QObject>
-#include <QHash>
-#include <qcontactfilter.h>
-#include <qcontactmanager.h>
+#ifndef TRANSFORMEMPTY_H
+#define TRANSFORMEMPTY_H
 
-class CntSymbianFilterSqlHelper;
+#include "cnttransformcontactdata.h"
 
-typedef struct {
-    QContactFilter filter;
-    QString name;
-    int result;
-    int error;
-} TFilter;
-
-class TestSqlFiltering : public QObject
+class CntTransformEmpty : public CntTransformContactData
 {
-    Q_OBJECT
-
-private slots:  // Init & cleanup
-	void initTestCase();
-	void cleanupTestCase();
-	
-private:
-    void parseFilters();
-    void addFilter(QVector<QString> param);
-    void createContacts();
-    Qt::MatchFlags flag(int f);
-
-private slots:  // Test cases
-    void testInvalidFilter();
-    void testContactDetailFilter();
-    void testContactDetailRangeFilter();
-    void testChangeLogFilter();
-    void testActionFilter();
-    void testRelationshipFilter();
-    void testIntersectionFilter();
-    void testUnionFilter();
-    void testLocalIdFilter();
-    void testDefaultFilter();
-    
-private:
-    QContactManager                             *mCntMng;
-    CntSymbianFilterSqlHelper                   *mSqlFilter;
-    QHash<QContactFilter::FilterType, TFilter>  *mFilters;
+protected:
+	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
+	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
+	bool supportsField(TUint32 fieldType) const;
+	bool supportsDetail(QString detailName) const;
+	QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const;
+    bool supportsSubType(const QString& subType) const;
+    quint32 getIdForField(const QString& fieldName) const;
+    void detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const;
 };
+
+#endif

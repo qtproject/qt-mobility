@@ -142,7 +142,7 @@ void TestCntTransformContactData::executeCntTransformBithday()
     TDateTime dateTime(2009, ESeptember, 27, 0, 0, 0, 0);
     TTime field(dateTime);
     QDate detail(2009, 9, 28);
-    
+
     TRAPD(err, validateCntTransformBirthdayL(field, detail););
     QVERIFY(err == 0);
 }
@@ -158,11 +158,11 @@ void TestCntTransformContactData::executeCntTransformOnlineAccount()
 void TestCntTransformContactData::executeCntTransformOrganisation()
 {
     TRAPD(err, validateCntTransformOrganisationL(_L("dummycompany"), QString("dummycompany"),
-                                  _L("dummydepartment"), QString("dummydepartment"),
+                                  _L("dummydepartment"), QStringList("dummydepartment"),
                                   _L("dummyjobtitle"), QString("dummyjobtitle"),
                                   _L("dummyassistant"), QString("dummyassistant"));
         validateCntTransformOrganisationL(_L(""), QString(""),
-                                  _L(""), QString(""),
+                                  _L(""), QStringList(""),
                                   _L(""), QString(""),
                                   _L(""), QString(""));
         );
@@ -236,14 +236,24 @@ void TestCntTransformContactData::validateCntTransformEmailL(TPtrC16 field, QStr
     CntTransformContactData* transformEmail = new CntTransformEmail();
     QVERIFY(transformEmail != 0);
     QVERIFY(transformEmail->supportsField(KUidContactFieldEMail.iUid));
+    QVERIFY(!(transformEmail->supportsField(0))); //Test for Wrong value
     QVERIFY(transformEmail->supportsDetail(QContactEmailAddress::DefinitionName));
+    QVERIFY(!(transformEmail->supportsDetail("WrongValue")));
+    //Test getIdForField
     validateGetIdForField(*transformEmail, QContactEmailAddress::FieldEmailAddress,
                            KUidContactFieldEMail.iUid);
     validateGetIdForField(*transformEmail, "WrongValue",0);
     QVERIFY( !(transformEmail->supportsSubType("WrongValue")));    
     
+    //Test supportedSortingFieldTypes
+    QList<TUid> uidsToVerify;
+    uidsToVerify << KUidContactFieldEMail;
+    validateSupportedSortingFieldTypes(*transformEmail,QContactEmailAddress::FieldEmailAddress,uidsToVerify);
+    uidsToVerify.clear();
+    validateSupportedSortingFieldTypes(*transformEmail,"WrongValue",uidsToVerify);
+            
     validateContextsL(transformEmail);
-    
+
     QContactEmailAddress email;
     email.setEmailAddress(detail);
     QList<CContactItemField *> fields = transformEmail->transformDetailL(email);
@@ -251,14 +261,14 @@ void TestCntTransformContactData::validateCntTransformEmailL(TPtrC16 field, QStr
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldEMail));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
-    
+
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldEMail);
     newField->TextStorage()->SetTextL(field);
     QContact contact;
     QContactDetail* contactDetail = transformEmail->transformItemField(*newField, contact);
     const QContactEmailAddress* emailAddress(static_cast<const QContactEmailAddress*>(contactDetail));
     QCOMPARE(emailAddress->emailAddress(), detail);
-        
+
     delete contactDetail;
     delete newField;
     delete transformEmail;
@@ -277,8 +287,9 @@ void TestCntTransformContactData::validateCntTransformNameL(TPtrC16 prefixField,
     QVERIFY(transformName->supportsField(KUidContactFieldAdditionalName.iUid));
     QVERIFY(transformName->supportsField(KUidContactFieldFamilyName.iUid));
     QVERIFY(transformName->supportsField(KUidContactFieldSuffixName.iUid));
+    QVERIFY(!(transformName->supportsField(0))); //Test for Wrong value
     QVERIFY(transformName->supportsDetail(QContactName::DefinitionName));
-    
+    QVERIFY(!(transformName->supportsDetail("WrongValue")));
     validateGetIdForField(*transformName, QContactName::FieldPrefix,KUidContactFieldPrefixName.iUid);
     validateGetIdForField(*transformName, QContactName::FieldFirst, KUidContactFieldGivenName.iUid);
     validateGetIdForField(*transformName, QContactName::FieldMiddle,KUidContactFieldAdditionalName.iUid);
@@ -286,8 +297,40 @@ void TestCntTransformContactData::validateCntTransformNameL(TPtrC16 prefixField,
     validateGetIdForField(*transformName, QContactName::FieldSuffix,KUidContactFieldSuffixName.iUid);
     validateGetIdForField(*transformName, "WrongValue", 0);    
     QVERIFY( !(transformName->supportsSubType("WrongValue"))); 
-    validateContextsL(transformName);
+    //Test supportedSortingFieldTypes
+    //supportedSortingFieldTypes - FieldPrefix
+    QList<TUid> uidsToVerify;
+    uidsToVerify << KUidContactFieldPrefixName;
+    validateSupportedSortingFieldTypes(*transformName,QContactName::FieldPrefix,uidsToVerify);
     
+    //supportedSortingFieldTypes - FieldFirst
+    uidsToVerify.clear();
+    uidsToVerify << KUidContactFieldGivenName;
+    validateSupportedSortingFieldTypes(*transformName,QContactName::FieldFirst,uidsToVerify);
+    
+    //supportedSortingFieldTypes - FieldMiddle
+    uidsToVerify.clear();
+    uidsToVerify << KUidContactFieldAdditionalName;
+    validateSupportedSortingFieldTypes(*transformName,QContactName::FieldMiddle,uidsToVerify);
+    
+    //supportedSortingFieldTypes - FieldLast
+    uidsToVerify.clear();
+    uidsToVerify << KUidContactFieldFamilyName;
+    validateSupportedSortingFieldTypes(*transformName,QContactName::FieldLast,uidsToVerify);
+    
+    //supportedSortingFieldTypes - FieldSuffix
+    uidsToVerify.clear();
+    uidsToVerify << KUidContactFieldSuffixName;
+    validateSupportedSortingFieldTypes(*transformName,QContactName::FieldSuffix,uidsToVerify);
+    
+    //supportedSortingFieldTypes - Wrongfieldvalue
+    uidsToVerify.clear();
+    validateSupportedSortingFieldTypes(*transformName,"WrongValue",uidsToVerify);
+    
+    
+    
+    validateContextsL(transformName);
+
     QContactName name;
     name.setPrefix(prefixDetail);
     name.setFirst(firstnameDetail);
@@ -311,7 +354,7 @@ void TestCntTransformContactData::validateCntTransformNameL(TPtrC16 prefixField,
     QVERIFY(fields.at(4)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(4)->ContentType().ContainsFieldType(KUidContactFieldSuffixName));
     QCOMPARE(fields.at(4)->TextStorage()->Text().CompareF(suffixField), 0);
-    
+
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPrefixName);
     newField->TextStorage()->SetTextL(prefixField);
     QContact contact;
@@ -322,7 +365,7 @@ void TestCntTransformContactData::validateCntTransformNameL(TPtrC16 prefixField,
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldGivenName);
     newField->TextStorage()->SetTextL(firstnameField);
     contactDetail = transformName->transformItemField(*newField, contact);
@@ -332,7 +375,7 @@ void TestCntTransformContactData::validateCntTransformNameL(TPtrC16 prefixField,
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldAdditionalName);
     newField->TextStorage()->SetTextL(middlenameField);
     contactDetail = transformName->transformItemField(*newField, contact);
@@ -342,7 +385,7 @@ void TestCntTransformContactData::validateCntTransformNameL(TPtrC16 prefixField,
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldFamilyName);
     newField->TextStorage()->SetTextL(lastnameField);
     contactDetail = transformName->transformItemField(*newField, contact);
@@ -352,7 +395,7 @@ void TestCntTransformContactData::validateCntTransformNameL(TPtrC16 prefixField,
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSuffixName);
     newField->TextStorage()->SetTextL(suffixField);
     contactDetail = transformName->transformItemField(*newField, contact);
@@ -362,7 +405,7 @@ void TestCntTransformContactData::validateCntTransformNameL(TPtrC16 prefixField,
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     delete transformName;
 }
 
@@ -371,13 +414,23 @@ void TestCntTransformContactData::validateCntTransformNicknameL(TPtrC16 field, Q
     CntTransformContactData* transformNickname = new CntTransformNickname();
     QVERIFY(transformNickname != 0);
     QVERIFY(transformNickname->supportsField(KUidContactFieldSecondName.iUid));
+    QVERIFY(!(transformNickname->supportsField(0))); //Test for Wrong value
     QVERIFY(transformNickname->supportsDetail(QContactNickname::DefinitionName));
+    QVERIFY(!(transformNickname->supportsDetail("WrongValue")));
     validateGetIdForField(*transformNickname, QContactNickname::FieldNickname,KUidContactFieldSecondName.iUid);
     validateGetIdForField(*transformNickname, "WrongValue", 0);    
     QVERIFY( !(transformNickname->supportsSubType("WrongValue"))); 
     
+    //Test supportedSortingFieldTypes
+    QList<TUid> uidsToVerify;
+    uidsToVerify << KUidContactFieldSecondName;
+    validateSupportedSortingFieldTypes(*transformNickname,QContactNickname::FieldNickname,uidsToVerify);
+    uidsToVerify.clear();
+    validateSupportedSortingFieldTypes(*transformNickname,"WrongValue",uidsToVerify);
+                
+
     validateContextsL(transformNickname);
-    
+
     QContactNickname nickname;
     nickname.setNickname(detail);
     QList<CContactItemField *> fields = transformNickname->transformDetailL(nickname);
@@ -385,14 +438,14 @@ void TestCntTransformContactData::validateCntTransformNicknameL(TPtrC16 field, Q
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldSecondName));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
-    
+
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSecondName);
     newField->TextStorage()->SetTextL(field);
     QContact contact;
     QContactDetail* contactDetail = transformNickname->transformItemField(*newField, contact);
     const QContactNickname* nicknameInfo(static_cast<const QContactNickname*>(contactDetail));
     QCOMPARE(nicknameInfo->nickname(), detail);
-        
+
     delete contactDetail;
     delete newField;
     delete transformNickname;
@@ -404,8 +457,10 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     QVERIFY(transformPhoneNumber != 0);
     QVERIFY(transformPhoneNumber->supportsField(KUidContactFieldPhoneNumber.iUid));
     QVERIFY(transformPhoneNumber->supportsField(KUidContactFieldFax.iUid));
+    QVERIFY(transformPhoneNumber->supportsField(KUidContactFieldDTMF.iUid));
+    QVERIFY(!(transformPhoneNumber->supportsField(0))); //some wrong value
     QVERIFY(transformPhoneNumber->supportsDetail(QContactPhoneNumber::DefinitionName));
-    
+    QVERIFY(!(transformPhoneNumber->supportsDetail("WrongValue")));
     validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::FieldNumber,0);
     validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeLandline,0);
     validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeMobile,0);
@@ -423,8 +478,18 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     QVERIFY(transformPhoneNumber->supportsSubType(QContactPhoneNumber::FieldSubTypes)); 
     QVERIFY( !(transformPhoneNumber->supportsSubType("WrongValue"))); 
 
+    //Test supportedSortingFieldTypes
+    //supportedSortingFieldTypes - FieldPrefix
+    QList<TUid> uidsToVerify;
+    uidsToVerify << KUidContactFieldPhoneNumber;
+    uidsToVerify << KUidContactFieldFax;
+    uidsToVerify << KUidContactFieldDTMF;
+    validateSupportedSortingFieldTypes(*transformPhoneNumber,QContactPhoneNumber::FieldNumber,uidsToVerify);
+    uidsToVerify.clear();
+    validateSupportedSortingFieldTypes(*transformPhoneNumber,"WrongValue",uidsToVerify);
+ 
     validateContextsL(transformPhoneNumber);
-    
+
     QContactPhoneNumber phoneNumber1;
     phoneNumber1.setNumber(detail);
     QList<CContactItemField *> fields = transformPhoneNumber->transformDetailL(phoneNumber1);
@@ -443,7 +508,7 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapTEL);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVCardMapVOICE));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
-    
+
     QContactPhoneNumber phoneNumber3;
     phoneNumber3.setNumber(detail);
     phoneNumber3.setSubTypes(QContactPhoneNumber::SubTypeMobile);
@@ -454,7 +519,7 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapTEL);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVCardMapCELL));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
-    
+
     QContactPhoneNumber phoneNumber4;
     phoneNumber4.setNumber(detail);
     phoneNumber4.setSubTypes(QContactPhoneNumber::SubTypeFacsimile);
@@ -465,7 +530,7 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapTEL);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVCardMapFAX));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
-    
+
     QContactPhoneNumber phoneNumber5;
     phoneNumber5.setNumber(detail);
     phoneNumber5.setSubTypes(QContactPhoneNumber::SubTypePager);
@@ -476,7 +541,7 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapTEL);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVCardMapPAGER));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
-    
+
     QContactPhoneNumber phoneNumber6;
     phoneNumber6.setNumber(detail);
     phoneNumber6.setSubTypes(QContactPhoneNumber::SubTypeBulletinBoardSystem);
@@ -487,7 +552,7 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapTEL);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVCardMapBBS));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
-    
+
     QContactPhoneNumber phoneNumber7;
     phoneNumber7.setNumber(detail);
     phoneNumber7.setSubTypes(QContactPhoneNumber::SubTypeCar);
@@ -498,7 +563,7 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapTEL);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVCardMapCAR));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
-    
+
     QContactPhoneNumber phoneNumber8;
     phoneNumber8.setNumber(detail);
     phoneNumber8.setSubTypes(QContactPhoneNumber::SubTypeDtmfMenu);
@@ -507,7 +572,7 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldDTMF));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
-    
+
     QContactPhoneNumber phoneNumber9;
     phoneNumber9.setNumber(detail);
     phoneNumber9.setSubTypes(QContactPhoneNumber::SubTypeAssistant);
@@ -517,7 +582,7 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldPhoneNumber));
     QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapAssistantTel);
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
-    
+
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPhoneNumber);
     newField->TextStorage()->SetTextL(field);
     QContact contact;
@@ -529,7 +594,7 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     contactDetail = 0;
     delete newField;
     newField = 0;
-   
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPhoneNumber);
     newField->TextStorage()->SetTextL(field);
     newField->AddFieldTypeL(KUidContactFieldVCardMapVOICE);
@@ -541,7 +606,7 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPhoneNumber);
     newField->TextStorage()->SetTextL(field);
     newField->AddFieldTypeL(KUidContactFieldVCardMapCELL);
@@ -553,7 +618,7 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPhoneNumber);
     newField->TextStorage()->SetTextL(field);
     newField->AddFieldTypeL(KUidContactFieldVCardMapPAGER);
@@ -565,7 +630,7 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldFax);
     newField->TextStorage()->SetTextL(field);
     contactDetail = transformPhoneNumber->transformItemField(*newField, contact);
@@ -576,7 +641,7 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPhoneNumber);
     newField->TextStorage()->SetTextL(field);
     newField->AddFieldTypeL(KUidContactFieldVCardMapBBS);
@@ -588,7 +653,7 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPhoneNumber);
     newField->TextStorage()->SetTextL(field);
     newField->AddFieldTypeL(KUidContactFieldVCardMapCAR);
@@ -600,7 +665,7 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldDTMF);
     newField->TextStorage()->SetTextL(field);
     contactDetail = transformPhoneNumber->transformItemField(*newField, contact);
@@ -611,7 +676,7 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPhoneNumber);
     newField->TextStorage()->SetTextL(field);
     newField->SetMapping(KUidContactFieldVCardMapAssistantTel);
@@ -623,8 +688,8 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
-    delete transformPhoneNumber; 
+
+    delete transformPhoneNumber;
 }
 
 void TestCntTransformContactData::validateCntTransformAddressL(TPtrC16 countryField, QString countryDetail,
@@ -642,7 +707,9 @@ void TestCntTransformContactData::validateCntTransformAddressL(TPtrC16 countryFi
     QVERIFY(transformAddress->supportsField(KUidContactFieldLocality.iUid));
     QVERIFY(transformAddress->supportsField(KUidContactFieldRegion.iUid));
     QVERIFY(transformAddress->supportsField(KUidContactFieldPostOffice.iUid));
+    QVERIFY(!(transformAddress->supportsField(0))); //Test for Wrong value
     QVERIFY(transformAddress->supportsDetail(QContactAddress::DefinitionName));
+    QVERIFY(!(transformAddress->supportsDetail("WrongValue")));
     
     validateGetIdForField(*transformAddress, QContactAddress::FieldStreet,KUidContactFieldAddress.iUid);
     validateGetIdForField(*transformAddress, QContactAddress::FieldLocality,KUidContactFieldLocality.iUid);
@@ -658,8 +725,47 @@ void TestCntTransformContactData::validateCntTransformAddressL(TPtrC16 countryFi
     QVERIFY(transformAddress->supportsSubType(QContactAddress::FieldSubTypes)); 
     QVERIFY( !(transformAddress->supportsSubType("WrongValue"))); 
     
-    validateContextsL(transformAddress);
+    //Test supportedSortingFieldTypes
+    //supportedSortingFieldTypes - FieldStreet
+    QList<TUid> uidsToVerify;
+    uidsToVerify << KUidContactFieldAddress;
+    validateSupportedSortingFieldTypes(*transformAddress,QContactAddress::FieldStreet,uidsToVerify);
     
+    //supportedSortingFieldTypes - FieldLocality
+    uidsToVerify.clear();
+    uidsToVerify << KUidContactFieldLocality;
+    validateSupportedSortingFieldTypes(*transformAddress,QContactAddress::FieldLocality,uidsToVerify);
+        
+
+    //supportedSortingFieldTypes - FieldRegion
+    uidsToVerify.clear();
+    uidsToVerify << KUidContactFieldRegion;
+    validateSupportedSortingFieldTypes(*transformAddress,QContactAddress::FieldRegion,uidsToVerify);
+   
+
+    //supportedSortingFieldTypes - FieldPostcode
+    uidsToVerify.clear();
+    uidsToVerify << KUidContactFieldPostcode;
+    validateSupportedSortingFieldTypes(*transformAddress,QContactAddress::FieldPostcode,uidsToVerify);
+   
+
+    //supportedSortingFieldTypes - FieldCountry
+    uidsToVerify.clear();
+    uidsToVerify << KUidContactFieldCountry;
+    validateSupportedSortingFieldTypes(*transformAddress,QContactAddress::FieldCountry,uidsToVerify);
+    
+
+    //supportedSortingFieldTypes - FieldPostOfficeBox
+    uidsToVerify.clear();
+    uidsToVerify << KUidContactFieldPostOffice;
+    validateSupportedSortingFieldTypes(*transformAddress,QContactAddress::FieldPostOfficeBox,uidsToVerify);
+    
+    //supportedSortingFieldTypes - Wrongvalue
+    uidsToVerify.clear();
+    validateSupportedSortingFieldTypes(*transformAddress,"WrongValue",uidsToVerify);
+        
+    validateContextsL(transformAddress);
+
     QContactAddress address;
     address.setCountry(countryDetail);
     address.setPostcode(postcodeDetail);
@@ -687,7 +793,7 @@ void TestCntTransformContactData::validateCntTransformAddressL(TPtrC16 countryFi
     QVERIFY(fields.at(5)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(5)->ContentType().ContainsFieldType(KUidContactFieldPostOffice));
     QCOMPARE(fields.at(5)->TextStorage()->Text().CompareF(postOfficeBoxField), 0);
-    
+
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldCountry);
     newField->TextStorage()->SetTextL(countryField);
     QContact contact;
@@ -698,7 +804,7 @@ void TestCntTransformContactData::validateCntTransformAddressL(TPtrC16 countryFi
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPostcode);
     newField->TextStorage()->SetTextL(postcodeField);
     contactDetail = transformAddress->transformItemField(*newField, contact);
@@ -708,7 +814,7 @@ void TestCntTransformContactData::validateCntTransformAddressL(TPtrC16 countryFi
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldAddress);
     newField->TextStorage()->SetTextL(streetField);
     contactDetail = transformAddress->transformItemField(*newField, contact);
@@ -718,7 +824,7 @@ void TestCntTransformContactData::validateCntTransformAddressL(TPtrC16 countryFi
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldLocality);
     newField->TextStorage()->SetTextL(localityField);
     contactDetail = transformAddress->transformItemField(*newField, contact);
@@ -728,7 +834,7 @@ void TestCntTransformContactData::validateCntTransformAddressL(TPtrC16 countryFi
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldRegion);
     newField->TextStorage()->SetTextL(regionField);
     contactDetail = transformAddress->transformItemField(*newField, contact);
@@ -748,7 +854,7 @@ void TestCntTransformContactData::validateCntTransformAddressL(TPtrC16 countryFi
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     delete transformAddress;
 }
 
@@ -758,9 +864,24 @@ void TestCntTransformContactData::validateCntTransformUrlL(TPtrC16 field, QStrin
     QVERIFY(transformUrl != 0);
     QVERIFY(transformUrl->supportsField(KUidContactFieldUrl.iUid));
     QVERIFY(transformUrl->supportsDetail(QContactUrl::DefinitionName));
-    
+    QVERIFY(!(transformUrl->supportsDetail("WrongValue")));
+    validateGetIdForField(*transformUrl, QContactUrl::FieldUrl,0);
+    validateGetIdForField(*transformUrl, QContactUrl::SubTypeHomePage,0);
+    validateGetIdForField(*transformUrl, QContactUrl::SubTypeFavourite,0);
+    validateGetIdForField(*transformUrl, "WrongValue", 0); 
+    QVERIFY(transformUrl->supportsSubType(QContactUrl::FieldSubType));
+    QVERIFY( !(transformUrl->supportsSubType("WrongValue"))); 
+
+    //Test supportedSortingFieldTypes
+   //supportedSortingFieldTypes - FieldUrl
+   QList<TUid> uidsToVerify;
+   uidsToVerify << KUidContactFieldUrl;
+   validateSupportedSortingFieldTypes(*transformUrl,QContactUrl::FieldUrl,uidsToVerify);
+   uidsToVerify.clear();
+   validateSupportedSortingFieldTypes(*transformUrl,"WrongValue",uidsToVerify);
+   
     validateContextsL(transformUrl);
-    
+
     QContactUrl url;
     url.setUrl(detail);
     url.setSubType(QContactUrl::SubTypeHomePage);
@@ -769,14 +890,14 @@ void TestCntTransformContactData::validateCntTransformUrlL(TPtrC16 field, QStrin
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldUrl));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
-    
+
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldUrl);
     newField->TextStorage()->SetTextL(field);
     QContact contact;
     QContactDetail* contactDetail = transformUrl->transformItemField(*newField, contact);
     const QContactUrl* urlAddress(static_cast<const QContactUrl*>(contactDetail));
     QCOMPARE(urlAddress->url(), detail);
-        
+
     delete contactDetail;
     delete newField;
     delete transformUrl;
@@ -787,14 +908,24 @@ void TestCntTransformContactData::validateCntTransformBirthdayL(TTime field, QDa
     CntTransformContactData* transformBirthday = new CntTransformBirthday();
     QVERIFY(transformBirthday != 0);
     QVERIFY(transformBirthday->supportsField(KUidContactFieldBirthday.iUid));
+    QVERIFY(!(transformBirthday->supportsField(0))); //Test for Wrong value
     QVERIFY(transformBirthday->supportsDetail(QContactBirthday::DefinitionName));
+    QVERIFY(!(transformBirthday->supportsDetail("WrongValue")));
     
     validateGetIdForField(*transformBirthday, QContactBirthday::FieldBirthday,KUidContactFieldBirthday.iUid);
     validateGetIdForField(*transformBirthday, "WrongValue", 0);    
     QVERIFY( !(transformBirthday->supportsSubType("WrongValue"))); 
       
+    //Test supportedSortingFieldTypes
+    //supportedSortingFieldTypes - FieldBirthday
+    QList<TUid> uidsToVerify;
+    uidsToVerify << KUidContactFieldBirthday;
+    validateSupportedSortingFieldTypes(*transformBirthday,QContactBirthday::FieldBirthday,uidsToVerify);
+    uidsToVerify.clear();
+    validateSupportedSortingFieldTypes(*transformBirthday,"WrongValue",uidsToVerify);
+  
     validateContextsL(transformBirthday);
-    
+
     QContactBirthday birthday;
     birthday.setDate(detail);
     QList<CContactItemField *> fields = transformBirthday->transformDetailL(birthday);
@@ -804,7 +935,7 @@ void TestCntTransformContactData::validateCntTransformBirthdayL(TTime field, QDa
     QCOMPARE(fields.at(0)->DateTimeStorage()->Time().DateTime().Year(), detail.year());
     QCOMPARE(fields.at(0)->DateTimeStorage()->Time().DateTime().Month() + 1, detail.month());
     QCOMPARE(fields.at(0)->DateTimeStorage()->Time().DateTime().Day() + 1, detail.day());
-    
+
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeDateTime, KUidContactFieldBirthday);
     newField->DateTimeStorage()->SetTime(field);
     QContact contact;
@@ -813,10 +944,10 @@ void TestCntTransformContactData::validateCntTransformBirthdayL(TTime field, QDa
     QCOMPARE(birthdayInfo->date().year(), field.DateTime().Year());
     QCOMPARE(birthdayInfo->date().month(), field.DateTime().Month() + 1);
     QCOMPARE(birthdayInfo->date().day(), field.DateTime().Day() + 1);
-        
+
     delete contactDetail;
     delete newField;
-    delete transformBirthday;  
+    delete transformBirthday;
 }
 
 void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sipField, QString sipDetail)
@@ -825,22 +956,32 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
     QVERIFY(transformOnlineAccount != 0);
     QVERIFY(transformOnlineAccount->supportsField(KUidContactFieldSIPID.iUid));
     QVERIFY(transformOnlineAccount->supportsField(KUidContactFieldIMPP.iUid));
+    QVERIFY(!(transformOnlineAccount->supportsField(0))); //Test for Wrong value
     QVERIFY(transformOnlineAccount->supportsDetail(QContactOnlineAccount::DefinitionName));
-     
+    QVERIFY(!(transformOnlineAccount->supportsDetail("WrongValue")));
+    
     validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::FieldAccountUri,0);
     validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeSip,KUidContactFieldSIPID.iUid);
-    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeH323,0);
-    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeXmpp, KUidContactFieldIMPP.iUid);
-    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeInternet,0);
-    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeShareVideo,0);
+    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeImpp, KUidContactFieldIMPP.iUid);
+    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeSipVoip,0);
+    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeVideoShare,0);
     validateGetIdForField(*transformOnlineAccount, "WrongValue", 0);    
     QVERIFY( !(transformOnlineAccount->supportsSubType("WrongValue"))); 
+    
+    //Test supportedSortingFieldTypes
+    //supportedSortingFieldTypes - FieldAccountUri
+    QList<TUid> uidsToVerify;
+    uidsToVerify << KUidContactFieldIMPP;
+    uidsToVerify << KUidContactFieldSIPID;
+    validateSupportedSortingFieldTypes(*transformOnlineAccount,QContactOnlineAccount::FieldAccountUri,uidsToVerify);
+    uidsToVerify.clear();
+    validateSupportedSortingFieldTypes(*transformOnlineAccount,"WrongValue",uidsToVerify);
     
     validateContextsL(transformOnlineAccount);
      
     QContactOnlineAccount onlineAccount1;
     onlineAccount1.setAccountUri(sipDetail);
-    onlineAccount1.setSubTypes(QContactOnlineAccount::SubTypeInternet);
+    onlineAccount1.setSubTypes(QContactOnlineAccount::SubTypeSipVoip);
     QList<CContactItemField *> fields = transformOnlineAccount->transformDetailL(onlineAccount1);
     QVERIFY(fields.count() == 1);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
@@ -848,10 +989,10 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
     QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapSIPID);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVCardMapVOIP));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(sipField), 0);
-    
+
     QContactOnlineAccount onlineAccount2;
     onlineAccount2.setAccountUri(sipDetail);
-    onlineAccount2.setSubTypes(QContactOnlineAccount::SubTypeShareVideo);
+    onlineAccount2.setSubTypes(QContactOnlineAccount::SubTypeVideoShare);
     fields = transformOnlineAccount->transformDetailL(onlineAccount2);
     QVERIFY(fields.count() == 1);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
@@ -859,7 +1000,7 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
     QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapSIPID);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVCardMapSWIS));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(sipField), 0);
- 
+
     QContactOnlineAccount onlineAccount3;
     onlineAccount3.setAccountUri(sipDetail);
     onlineAccount3.setSubTypes(QContactOnlineAccount::SubTypeSip);
@@ -870,17 +1011,17 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
     QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapSIPID);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVCardMapSIPID));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(sipField), 0);
-    
+
     QContactOnlineAccount onlineAccount4;
     onlineAccount4.setAccountUri(sipDetail);
-    onlineAccount4.setSubTypes(QContactOnlineAccount::SubTypeXmpp);
+    onlineAccount4.setSubTypes(QContactOnlineAccount::SubTypeImpp);
     fields = transformOnlineAccount->transformDetailL(onlineAccount4);
     QVERIFY(fields.count() == 1);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldIMPP));
     QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapUnknown);
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(sipField), 0);
-    
+
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSIPID);
     newField->TextStorage()->SetTextL(sipField);
     newField->AddFieldTypeL(KUidContactFieldVCardMapVOIP);
@@ -888,24 +1029,24 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
     QContactDetail* contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
     const QContactOnlineAccount* onlineAccountDetail1(static_cast<const QContactOnlineAccount*>(contactDetail));
     QCOMPARE(onlineAccountDetail1->accountUri(), sipDetail);
-    QVERIFY(onlineAccountDetail1->subTypes().contains(QContactOnlineAccount::SubTypeInternet));
+    QVERIFY(onlineAccountDetail1->subTypes().contains(QContactOnlineAccount::SubTypeSipVoip));
     delete contactDetail;
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSIPID);
     newField->TextStorage()->SetTextL(sipField);
     newField->AddFieldTypeL(KUidContactFieldVCardMapSWIS);
     contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
     const QContactOnlineAccount* onlineAccountDetail2(static_cast<const QContactOnlineAccount*>(contactDetail));
     QCOMPARE(onlineAccountDetail2->accountUri(), sipDetail);
-    QVERIFY(onlineAccountDetail2->subTypes().contains(QContactOnlineAccount::SubTypeShareVideo));
+    QVERIFY(onlineAccountDetail2->subTypes().contains(QContactOnlineAccount::SubTypeVideoShare));
     delete contactDetail;
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSIPID);
     newField->TextStorage()->SetTextL(sipField);
     newField->AddFieldTypeL(KUidContactFieldVCardMapSIPID);
@@ -917,23 +1058,23 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldIMPP);
     newField->TextStorage()->SetTextL(sipField);
     contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
     const QContactOnlineAccount* onlineAccountDetail4(static_cast<const QContactOnlineAccount*>(contactDetail));
     QCOMPARE(onlineAccountDetail4->accountUri(), sipDetail);
-    QVERIFY(onlineAccountDetail4->subTypes().contains(QContactOnlineAccount::SubTypeXmpp));
+    QVERIFY(onlineAccountDetail4->subTypes().contains(QContactOnlineAccount::SubTypeImpp));
     delete contactDetail;
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     delete transformOnlineAccount;
 }
 
 void TestCntTransformContactData::validateCntTransformOrganisationL(TPtrC16 companyField, QString companyDetail,
-                                TPtrC16 departmentField, QString departmentDetail,
+                                TPtrC16 departmentField, QStringList departmentDetail,
                                 TPtrC16 jobtitleField, QString jobtitleDetail,
                                 TPtrC16 assistantField, QString assistantDetail)
 {
@@ -943,7 +1084,9 @@ void TestCntTransformContactData::validateCntTransformOrganisationL(TPtrC16 comp
     QVERIFY(transformOrganisation->supportsField(KUidContactFieldDepartmentName.iUid));
     QVERIFY(transformOrganisation->supportsField(KUidContactFieldJobTitle.iUid));
     QVERIFY(transformOrganisation->supportsField(KUidContactFieldAssistant.iUid));
+    QVERIFY(!(transformOrganisation->supportsField(0))); //Test for Wrong value
     QVERIFY(transformOrganisation->supportsDetail(QContactOrganization::DefinitionName));
+    QVERIFY(!(transformOrganisation->supportsDetail("WrongValue")));
     
     validateGetIdForField(*transformOrganisation, QContactOrganization::FieldName,KUidContactFieldCompanyName.iUid);
     validateGetIdForField(*transformOrganisation, QContactOrganization::FieldLogo,0);
@@ -954,8 +1097,33 @@ void TestCntTransformContactData::validateCntTransformOrganisationL(TPtrC16 comp
     validateGetIdForField(*transformOrganisation, "WrongValue", 0);    
     QVERIFY( !(transformOrganisation->supportsSubType("WrongValue"))); 
        
-    validateContextsL(transformOrganisation);
+    //Test supportedSortingFieldTypes
+    //supportedSortingFieldTypes - FieldPrefix
+    QList<TUid> uidsToVerify;
+    uidsToVerify << KUidContactFieldCompanyName;
+    validateSupportedSortingFieldTypes(*transformOrganisation,QContactOrganization::FieldName,uidsToVerify);
     
+    //supportedSortingFieldTypes - FieldDepartment
+    uidsToVerify.clear();
+    uidsToVerify << KUidContactFieldDepartmentName;
+    validateSupportedSortingFieldTypes(*transformOrganisation,QContactOrganization::FieldDepartment,uidsToVerify);
+     
+    //supportedSortingFieldTypes - FieldTitle
+    uidsToVerify.clear();
+    uidsToVerify << KUidContactFieldJobTitle;
+    validateSupportedSortingFieldTypes(*transformOrganisation,QContactOrganization::FieldTitle,uidsToVerify);
+        
+    //supportedSortingFieldTypes - FieldAssistantName
+    uidsToVerify.clear();
+    uidsToVerify << KUidContactFieldAssistant;
+    validateSupportedSortingFieldTypes(*transformOrganisation,QContactOrganization::FieldAssistantName,uidsToVerify);
+        
+    //supportedSortingFieldTypes - Wrongvalue
+    uidsToVerify.clear();
+    validateSupportedSortingFieldTypes(*transformOrganisation,"WrongValue",uidsToVerify);  
+    
+    validateContextsL(transformOrganisation);
+
     QContactOrganization organisation;
     organisation.setName(companyDetail);
     organisation.setDepartment(departmentDetail);
@@ -976,7 +1144,7 @@ void TestCntTransformContactData::validateCntTransformOrganisationL(TPtrC16 comp
     QVERIFY(fields.at(3)->ContentType().ContainsFieldType(KUidContactFieldAssistant));
     QCOMPARE(fields.at(3)->TextStorage()->Text().CompareF(assistantField), 0);
 
-    
+
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldCompanyName);
     newField->TextStorage()->SetTextL(companyField);
     QContact contact;
@@ -987,7 +1155,7 @@ void TestCntTransformContactData::validateCntTransformOrganisationL(TPtrC16 comp
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldDepartmentName);
     newField->TextStorage()->SetTextL(departmentField);
     contactDetail = transformOrganisation->transformItemField(*newField, contact);
@@ -997,7 +1165,7 @@ void TestCntTransformContactData::validateCntTransformOrganisationL(TPtrC16 comp
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldJobTitle);
     newField->TextStorage()->SetTextL(jobtitleField);
     contactDetail = transformOrganisation->transformItemField(*newField, contact);
@@ -1007,7 +1175,7 @@ void TestCntTransformContactData::validateCntTransformOrganisationL(TPtrC16 comp
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldAssistant);
     newField->TextStorage()->SetTextL(assistantField);
     contactDetail = transformOrganisation->transformItemField(*newField, contact);
@@ -1017,7 +1185,7 @@ void TestCntTransformContactData::validateCntTransformOrganisationL(TPtrC16 comp
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     delete transformOrganisation;
 }
 
@@ -1028,7 +1196,9 @@ void TestCntTransformContactData::validateCntTransformAvatarL(TPtrC16 field, QSt
     QVERIFY(transformAvatar->supportsField(KUidContactFieldPicture.iUid));
     QVERIFY(transformAvatar->supportsField(KUidContactFieldRingTone.iUid));
     QVERIFY(transformAvatar->supportsField(KUidContactFieldVideoRingTone.iUid));
+    QVERIFY(!(transformAvatar->supportsField(0))); //Test for Wrong value
     QVERIFY(transformAvatar->supportsDetail(QContactAvatar::DefinitionName));
+    QVERIFY(!(transformAvatar->supportsDetail("WrongValue")));
     
     validateGetIdForField(*transformAvatar, QContactAvatar::FieldAvatar,0);
     validateGetIdForField(*transformAvatar, QContactAvatar::SubTypeImage,0);
@@ -1039,8 +1209,13 @@ void TestCntTransformContactData::validateCntTransformAvatarL(TPtrC16 field, QSt
     validateGetIdForField(*transformAvatar, "WrongValue", 0);    
     QVERIFY(transformAvatar->supportsSubType(QContactAvatar::FieldSubType)); 
     QVERIFY( !(transformAvatar->supportsSubType("WrongValue"))); 
-    validateContextsL(transformAvatar);
     
+    //Test supportedSortingFieldTypes
+    QList<TUid> uidsToVerify;
+    validateSupportedSortingFieldTypes(*transformAvatar,"WrongValue",uidsToVerify);   
+       
+    validateContextsL(transformAvatar);
+
     QContactAvatar avatar1;
     avatar1.setAvatar(detail);
     avatar1.setSubType(QContactAvatar::SubTypeImage);
@@ -1058,7 +1233,7 @@ void TestCntTransformContactData::validateCntTransformAvatarL(TPtrC16 field, QSt
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldRingTone));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
-    
+
     QContactAvatar avatar3;
     avatar2.setAvatar(detail);
     avatar2.setSubType(QContactAvatar::SubTypeVideoRingtone);
@@ -1067,7 +1242,7 @@ void TestCntTransformContactData::validateCntTransformAvatarL(TPtrC16 field, QSt
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVideoRingTone));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
-    
+
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPicture);
     newField->TextStorage()->SetTextL(field);
     QContact contact;
@@ -1079,7 +1254,7 @@ void TestCntTransformContactData::validateCntTransformAvatarL(TPtrC16 field, QSt
     contactDetail = 0;
     delete newField;
     newField = 0;
-   
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldRingTone);
     newField->TextStorage()->SetTextL(field);
     contactDetail = transformAvatar->transformItemField(*newField, contact);
@@ -1100,38 +1275,47 @@ void TestCntTransformContactData::validateCntTransformAvatarL(TPtrC16 field, QSt
     delete contactDetail;
     contactDetail = 0;
     delete newField;
-    newField = 0;    
-    
-    delete transformAvatar; 
+    newField = 0;
+
+    delete transformAvatar;
 }
 
 void TestCntTransformContactData::validateCntTransformSyncTargetL(TPtrC16 field, QString detail)
 {
     CntTransformContactData* transformSyncTarget = new CntTransformSyncTarget();
     QVERIFY(transformSyncTarget != 0);
-    QVERIFY(transformSyncTarget->supportsField(KUidContactFieldSyncTarget.iUid));
+    QVERIFY(transformSyncTarget->supportsField(KUidContactFieldClass.iUid));
     QVERIFY(transformSyncTarget->supportsDetail(QContactSyncTarget::DefinitionName));
-    validateGetIdForField(*transformSyncTarget,QContactSyncTarget::FieldSyncTarget,KUidContactFieldSyncTarget.iUid);
+    QVERIFY(!(transformSyncTarget->supportsDetail("WrongValue")));
+    
+    validateGetIdForField(*transformSyncTarget,QContactSyncTarget::FieldSyncTarget,KUidContactFieldClass.iUid);
     validateGetIdForField(*transformSyncTarget, "WrongValue", 0);   
     QVERIFY( !(transformSyncTarget->supportsSubType("WrongValue"))); 
+   
+    //Test supportedSortingFieldTypes
+    QList<TUid> uidsToVerify;
+    uidsToVerify << KUidContactFieldClass;
+    validateSupportedSortingFieldTypes(*transformSyncTarget,QContactSyncTarget::FieldSyncTarget,uidsToVerify);
+    uidsToVerify.clear();
+    validateSupportedSortingFieldTypes(*transformSyncTarget,"WrongValue",uidsToVerify);
     
     validateContextsL(transformSyncTarget);
-    
+
     QContactSyncTarget syncTarget;
     syncTarget.setSyncTarget(detail);
     QList<CContactItemField *> fields = transformSyncTarget->transformDetailL(syncTarget);
     QVERIFY(fields.count() == 1);
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
-    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldSyncTarget));
+    QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldClass));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
     
-    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSyncTarget);
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldClass);
     newField->TextStorage()->SetTextL(field);
     QContact contact;
     QContactDetail* contactDetail = transformSyncTarget->transformItemField(*newField, contact);
     const QContactSyncTarget* syncTargetInfo(static_cast<const QContactSyncTarget*>(contactDetail));
     QCOMPARE(syncTargetInfo->syncTarget(), detail);
-        
+
     delete contactDetail;
     delete newField;
     delete transformSyncTarget;
@@ -1142,7 +1326,9 @@ void TestCntTransformContactData::validateCntTransformGenderL(TPtrC16 field, QSt
     CntTransformContactData* transformGender = new CntTransformGender();
     QVERIFY(transformGender != 0);
     QVERIFY(transformGender->supportsField(KUidContactFieldGender.iUid));
+    QVERIFY(!(transformGender->supportsField(0))); //Test for Wrong value
     QVERIFY(transformGender->supportsDetail(QContactGender::DefinitionName));
+    QVERIFY(!(transformGender->supportsDetail("WrongValue")));
     
     validateGetIdForField(*transformGender, QContactGender::FieldGender,KUidContactFieldGender.iUid);
     validateGetIdForField(*transformGender, QContactGender::GenderMale,0);
@@ -1151,8 +1337,15 @@ void TestCntTransformContactData::validateCntTransformGenderL(TPtrC16 field, QSt
     validateGetIdForField(*transformGender, "WrongValue", 0);     
     QVERIFY( !(transformGender->supportsSubType("WrongValue"))); 
     
+    //Test supportedSortingFieldTypes
+    QList<TUid> uidsToVerify;
+    uidsToVerify << KUidContactFieldGender;
+    validateSupportedSortingFieldTypes(*transformGender,QContactGender::FieldGender,uidsToVerify);
+    uidsToVerify.clear();
+    validateSupportedSortingFieldTypes(*transformGender,"WrongValue",uidsToVerify);
+   
     validateContextsL(transformGender);
-    
+
     QContactGender gender;
     gender.setGender(detail);
     QList<CContactItemField *> fields = transformGender->transformDetailL(gender);
@@ -1160,14 +1353,14 @@ void TestCntTransformContactData::validateCntTransformGenderL(TPtrC16 field, QSt
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldGender));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
-    
+
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldGender);
     newField->TextStorage()->SetTextL(field);
     QContact contact;
     QContactDetail* contactDetail = transformGender->transformItemField(*newField, contact);
     const QContactGender* genderInfo(static_cast<const QContactGender*>(contactDetail));
     QCOMPARE(genderInfo->gender(), detail);
-        
+
     delete contactDetail;
     delete newField;
     delete transformGender;
@@ -1178,7 +1371,9 @@ void TestCntTransformContactData::validateCntTransformAnniversaryL(TPtrC16 field
     CntTransformContactData* transformAnniversary = new CntTransformAnniversary();
     QVERIFY(transformAnniversary != 0);
     QVERIFY(transformAnniversary->supportsField(KUidContactFieldAnniversary.iUid));
+    QVERIFY(!(transformAnniversary->supportsField(0))); //Test for Wrong value
     QVERIFY(transformAnniversary->supportsDetail(QContactAnniversary::DefinitionName));
+    QVERIFY(!(transformAnniversary->supportsDetail("WrongValue")));
     
     validateGetIdForField(*transformAnniversary, QContactAnniversary::FieldCalendarId,0);
     validateGetIdForField(*transformAnniversary, QContactAnniversary::FieldOriginalDate,0);
@@ -1192,8 +1387,12 @@ void TestCntTransformContactData::validateCntTransformAnniversaryL(TPtrC16 field
     QVERIFY(transformAnniversary->supportsSubType(QContactAnniversary::FieldSubType)); 
     QVERIFY( !(transformAnniversary->supportsSubType("WrongValue"))); 
     
-    validateContextsL(transformAnniversary);
+    //Test supportedSortingFieldTypes
+    QList<TUid> uidsToVerify;    
+    validateSupportedSortingFieldTypes(*transformAnniversary,"WrongValue",uidsToVerify);
     
+    validateContextsL(transformAnniversary);
+
     QContactAnniversary anniversary;
     anniversary.setOriginalDate(dateDetail);
     anniversary.setEvent(eventDetail);
@@ -1202,7 +1401,7 @@ void TestCntTransformContactData::validateCntTransformAnniversaryL(TPtrC16 field
     QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldAnniversary));
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
-    
+
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldAnniversary);
     newField->TextStorage()->SetTextL(field);
     QContact contact;
@@ -1212,10 +1411,10 @@ void TestCntTransformContactData::validateCntTransformAnniversaryL(TPtrC16 field
     if (dateDetail.isValid()) {
         QCOMPARE(anniversaryInfo->originalDate(), dateDetail);
     }
-        
+
     delete contactDetail;
     delete newField;
-    delete transformAnniversary;  
+    delete transformAnniversary;
 }
 
 void TestCntTransformContactData::validateCntTransformGeolocationL(TPtrC16 field, double latitudeDetail, double longitudeDetail)
@@ -1223,7 +1422,9 @@ void TestCntTransformContactData::validateCntTransformGeolocationL(TPtrC16 field
     CntTransformContactData* transformGeolocation = new CntTransformGeolocation();
     QVERIFY(transformGeolocation != 0);
     QVERIFY(transformGeolocation->supportsField(KUidContactFieldGEO.iUid));
+    QVERIFY(!(transformGeolocation->supportsField(0))); //Test for Wrong value
     QVERIFY(transformGeolocation->supportsDetail(QContactGeolocation::DefinitionName));
+    QVERIFY(!(transformGeolocation->supportsDetail("WrongValue")));
     
     validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldLabel,0);
     validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldLatitude,0);
@@ -1237,8 +1438,13 @@ void TestCntTransformContactData::validateCntTransformGeolocationL(TPtrC16 field
     validateGetIdForField(*transformGeolocation, "WrongValue", 0); 
     QVERIFY( !(transformGeolocation->supportsSubType("WrongValue"))); 
     
-    validateContextsL(transformGeolocation);
+    //Test supportedSortingFieldTypes
+    QList<TUid> uidsToVerify;    
+    validateSupportedSortingFieldTypes(*transformGeolocation,"WrongValue",uidsToVerify);
+       
     
+    validateContextsL(transformGeolocation);
+
     QContactGeolocation geolocation;
     geolocation.setLatitude(latitudeDetail);
     geolocation.setLongitude(longitudeDetail);
@@ -1252,7 +1458,7 @@ void TestCntTransformContactData::validateCntTransformGeolocationL(TPtrC16 field
     else {
         QVERIFY(fields.count() == 0);
     }
-    
+
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldGEO);
     newField->TextStorage()->SetTextL(field);
     QContact contact;
@@ -1271,10 +1477,10 @@ void TestCntTransformContactData::validateCntTransformGeolocationL(TPtrC16 field
     else {
         QCOMPARE(geolocationInfo->longitude(), -1.0);
     }
-    
+
     delete contactDetail;
     delete newField;
-    delete transformGeolocation; 
+    delete transformGeolocation;
 }
 
 void TestCntTransformContactData::validateCntTransformNoteL(TPtrC16 field, QString detail)
@@ -1282,14 +1488,24 @@ void TestCntTransformContactData::validateCntTransformNoteL(TPtrC16 field, QStri
     CntTransformContactData* transformNote = new CntTransformNote();
     QVERIFY(transformNote != 0);
     QVERIFY(transformNote->supportsField(KUidContactFieldNote.iUid));
+    QVERIFY(!(transformNote->supportsField(0))); //Test for Wrong value
     QVERIFY(transformNote->supportsDetail(QContactNote::DefinitionName));
+    QVERIFY(!(transformNote->supportsDetail("WrongValue")));
     
     validateGetIdForField(*transformNote, QContactNote::FieldNote,KUidContactFieldNote.iUid);
     validateGetIdForField(*transformNote, "WrongValue", 0);
     QVERIFY( !(transformNote->supportsSubType("WrongValue"))); 
     
-    validateContextsL(transformNote);
+    //Test supportedSortingFieldTypes
+    QList<TUid> uidsToVerify;
+    uidsToVerify << KUidContactFieldNote;
+    validateSupportedSortingFieldTypes(*transformNote,QContactNote::FieldNote,uidsToVerify);
+    uidsToVerify.clear();
+    validateSupportedSortingFieldTypes(*transformNote,"WrongValue",uidsToVerify);
+           
     
+    validateContextsL(transformNote);
+
     QContactNote note;
     note.setNote(detail);
     QList<CContactItemField *> fields = transformNote->transformDetailL(note);
@@ -1298,14 +1514,14 @@ void TestCntTransformContactData::validateCntTransformNoteL(TPtrC16 field, QStri
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldNote));
     QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapNOTE);
     QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
-    
+
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldNote);
     newField->TextStorage()->SetTextL(field);
     QContact contact;
     QContactDetail* contactDetail = transformNote->transformItemField(*newField, contact);
     const QContactNote* noteInfo(static_cast<const QContactNote*>(contactDetail));
     QCOMPARE(noteInfo->note(), detail);
-        
+
     delete contactDetail;
     delete newField;
     delete transformNote;
@@ -1318,15 +1534,21 @@ void TestCntTransformContactData::validateCntTransformFamilyL(TPtrC16 spouseFiel
     QVERIFY(transformFamily != 0);
     QVERIFY(transformFamily->supportsField(KUidContactFieldSpouse.iUid));
     QVERIFY(transformFamily->supportsField(KUidContactFieldChildren.iUid));
+    QVERIFY(!(transformFamily->supportsField(0))); //Test for Wrong value
     QVERIFY(transformFamily->supportsDetail(QContactFamily::DefinitionName));
+    QVERIFY(!(transformFamily->supportsDetail("WrongValue")));
     
     validateGetIdForField(*transformFamily, QContactFamily::FieldSpouse,KUidContactFieldSpouse.iUid);
     validateGetIdForField(*transformFamily, QContactFamily::FieldChildren,KUidContactFieldChildren.iUid);
     validateGetIdForField(*transformFamily, "WrongValue", 0);    
     QVERIFY( !(transformFamily->supportsSubType("WrongValue"))); 
        
+    //Test supportedSortingFieldTypes
+    QList<TUid> uidsToVerify;    
+    validateSupportedSortingFieldTypes(*transformFamily,"WrongValue",uidsToVerify);
+       
     validateContextsL(transformFamily);
-    
+
     QContactFamily family;
     family.setSpouse(spouseDetail);
     family.setChildren(QStringList(childDetail));
@@ -1338,7 +1560,7 @@ void TestCntTransformContactData::validateCntTransformFamilyL(TPtrC16 spouseFiel
     QVERIFY(fields.at(1)->StorageType() == KStorageTypeText);
     QVERIFY(fields.at(1)->ContentType().ContainsFieldType(KUidContactFieldChildren));
     QCOMPARE(fields.at(1)->TextStorage()->Text().CompareF(childField), 0);
-    
+
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSpouse);
     newField->TextStorage()->SetTextL(spouseField);
     QContact contact;
@@ -1349,11 +1571,11 @@ void TestCntTransformContactData::validateCntTransformFamilyL(TPtrC16 spouseFiel
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldChildren);
     newField->TextStorage()->SetTextL(childField);
     contactDetail = transformFamily->transformItemField(*newField, contact);
-    contact.saveDetail(contactDetail);    
+    contact.saveDetail(contactDetail);
     const QContactFamily* familyInfo2(static_cast<const QContactFamily*>(contactDetail));
     QCOMPARE(familyInfo2->children().count(), 1);
     QCOMPARE(familyInfo2->children().at(0), childDetail);
@@ -1361,7 +1583,7 @@ void TestCntTransformContactData::validateCntTransformFamilyL(TPtrC16 spouseFiel
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldChildren);
     newField->TextStorage()->SetTextL(childField);
     contactDetail = transformFamily->transformItemField(*newField, contact);
@@ -1372,7 +1594,7 @@ void TestCntTransformContactData::validateCntTransformFamilyL(TPtrC16 spouseFiel
     contactDetail = 0;
     delete newField;
     newField = 0;
-    
+
     delete transformFamily;
 }
 
@@ -1382,18 +1604,18 @@ void TestCntTransformContactData::validateContextsL(CntTransformContactData* tra
     transformContactData->setContexts(KUidContactFieldVCardMapHOME, detail1);
     QVERIFY(detail1.contexts().count() == 1);
     QVERIFY(detail1.contexts().at(0) == QContactDetail::ContextHome);
-    
+
     CContactItemField* itemField = CContactItemField::NewL(KStorageTypeText);
     transformContactData->setContextsL(detail1, *itemField);
     QVERIFY(itemField->ContentType().ContainsFieldType(KUidContactFieldVCardMapHOME));
     delete itemField;
     itemField = 0;
-    
+
     QContactDetail detail2;
     transformContactData->setContexts(KUidContactFieldVCardMapWORK, detail2);
     QVERIFY(detail2.contexts().count() == 1);
     QVERIFY(detail2.contexts().at(0) == QContactDetail::ContextWork);
-    
+
     itemField = CContactItemField::NewL(KStorageTypeText);
     transformContactData->setContextsL(detail2, *itemField);
     QVERIFY(itemField->ContentType().ContainsFieldType(KUidContactFieldVCardMapWORK));
@@ -1402,7 +1624,7 @@ void TestCntTransformContactData::validateContextsL(CntTransformContactData* tra
 }
 
 /*!
- * Validates the getIdForField function 
+ * Validates the getIdForField function
  *
  * \a transformContactData the tranformcontact instance
  * \a filedname - The filedname which has to be checked
@@ -1412,12 +1634,30 @@ void TestCntTransformContactData::validateContextsL(CntTransformContactData* tra
 void TestCntTransformContactData::validateGetIdForField(
                     const CntTransformContactData& transformContactData,
                     const QString& filedname,
-                    const quint32  idValue )const 
+                    const quint32  idValue )const
 {
     //Ravikiran
     quint32 idForField =  transformContactData.getIdForField(filedname);
     QVERIFY(idValue == idForField );
 }
-
+void TestCntTransformContactData::validateSupportedSortingFieldTypes(
+        const CntTransformContactData& transformContactData,
+        const QString& filedname,
+        const QList<TUid>&  checkSortFieldList )const
+{
+    QList<TUid> sortFieldList = transformContactData.supportedSortingFieldTypes(filedname);
+     
+    QVERIFY(sortFieldList.count() == checkSortFieldList.count() );
+    if(sortFieldList.count() == checkSortFieldList.count()){
+    
+    for(int i = 0; i<sortFieldList.count() ; i++ )
+        {
+        QVERIFY(sortFieldList.at(i) == checkSortFieldList.at(i));
+        }
+    
+    }
+        
+    
+}
 
 QTEST_MAIN(TestCntTransformContactData);

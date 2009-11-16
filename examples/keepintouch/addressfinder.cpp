@@ -138,8 +138,10 @@ void AddressFinder::searchMessages()
         default: break;
     }
 
-    QMessageFilter includeFilter(QMessageFilter::byTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual));
-    QMessageFilter excludeFilter(QMessageFilter::byTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual));
+    QMessageFilter includeFilter((QMessageFilter::byTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual))
+        | (QMessageFilter::byReceptionTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual)));
+    QMessageFilter excludeFilter((QMessageFilter::byTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual))
+        | (QMessageFilter::byReceptionTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual)));
     QMessageFilter sentFilter(QMessageFilter::byStandardFolder(QMessage::SentFolder));
 
     // Search for messages containing addresses to exclude

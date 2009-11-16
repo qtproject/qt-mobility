@@ -52,7 +52,7 @@ class TestCntTransformContactData : public QObject
 private slots:
 	void initTestCase();
 	void cleanupTestCase();
-	
+
 	void executeCntTransformEmail();
 	void executeCntTransformName();
 	void executeCntTransformNickname();
@@ -69,7 +69,7 @@ private slots:
 	void executeCntTransformGeolocation();
 	void executeCntTransformNote();
 	void executeCntTransformFamily();
-	
+
 private:
     void validateCntTransformEmailL(TPtrC16 field, QString detail);
     void validateCntTransformNameL(TPtrC16 prefixField, QString prefixDetail,
@@ -89,7 +89,7 @@ private:
     void validateCntTransformBirthdayL(TTime field, QDate detail);
     void validateCntTransformOnlineAccountL(TPtrC16 sipField, QString sipDetail);
     void validateCntTransformOrganisationL(TPtrC16 companyField, QString companyDetail,
-                                       TPtrC16 departmentField, QString departmentDetail,
+                                       TPtrC16 departmentField, QStringList departmentDetail,
                                        TPtrC16 jobtitleField, QString jobtitleDetail,
                                        TPtrC16 assistantField, QString assistantDetail);
     void validateCntTransformAvatarL(TPtrC16 field, QString detail);
@@ -100,9 +100,13 @@ private:
     void validateCntTransformNoteL(TPtrC16 field, QString detail);
     void validateCntTransformFamilyL(TPtrC16 spouseField, QString spouseDetail,
                                  TPtrC16 childField, QString childDetail);
-    void validateContextsL(CntTransformContactData* transformContactData) const; 
+    void validateContextsL(CntTransformContactData* transformContactData) const;
     void TestCntTransformContactData::validateGetIdForField(
                         const CntTransformContactData& transformContactData,
                         const QString& filedname,
                         const quint32  idValue) const;
+    void TestCntTransformContactData::validateSupportedSortingFieldTypes(
+            const CntTransformContactData& transformContactData,
+            const QString& filedname,
+            const QList<TUid>&  checkSortFieldList )const;
 };

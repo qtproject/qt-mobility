@@ -61,7 +61,7 @@
 #include <QMutex>
 
 #include "qsysteminfo.h"
-#include "qsysinfoglobal.h"
+#include "qmobilityglobal.h"
 
 #include <winsock2.h>
 #include <mswsock.h>

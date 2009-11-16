@@ -49,9 +49,10 @@
 #include <QVariant>
 
 #include "qtcontactsglobal.h"
+#include "qcontactdetaildefinitionfield.h"
 
 class QContactDetailDefinitionData;
-class QTCONTACTS_EXPORT QContactDetailDefinition
+class Q_CONTACTS_EXPORT QContactDetailDefinition
 {
     friend class QContactManager;
 
@@ -75,24 +76,16 @@ public:
     void setName(const QString& definitionName);
     QString name() const;
 
-    /* can you have more than one of these? */
+    /* can you have more than one detail of this definition? */
     void setUnique(bool unique);
     bool isUnique() const;
 
-    /* Field Structure - a detail consists of one or more fields. */
-    struct QTCONTACTS_EXPORT Field {
-        Field() : dataType(QVariant::Invalid) {}
-        QVariant::Type dataType;
-        QVariantList allowableValues;
-        bool operator==(const QContactDetailDefinition::Field& other) const;
-        bool operator!=(const QContactDetailDefinition::Field& other) const {return !operator==(other);}
-    };
-
     /* Mapping of field key to fields allowed in details of this definition */
-    void setFields(const QMap<QString, QContactDetailDefinition::Field>& fields);
-    QMap<QString, QContactDetailDefinition::Field> fields() const;
-    QMap<QString, QContactDetailDefinition::Field>& fields();
+    void setFields(const QMap<QString, QContactDetailDefinitionField>& fields);
+    QMap<QString, QContactDetailDefinitionField> fields() const;
+    QMap<QString, QContactDetailDefinitionField>& fields();
 
+    /* Access constraints which may apply to details of a definition */
     enum AccessConstraint {
         NoConstraint = 0,
         ReadOnly,
@@ -100,8 +93,8 @@ public:
     };
 
     /* Accessor and mutator for access constraints on details of this definition */
-    AccessConstraint accessConstraint() const;
-    void setAccessConstraint(const AccessConstraint& constraint);
+    QContactDetailDefinition::AccessConstraint accessConstraint() const;
+    void setAccessConstraint(const QContactDetailDefinition::AccessConstraint& constraint);
 
 private:
     QSharedDataPointer<QContactDetailDefinitionData> d;

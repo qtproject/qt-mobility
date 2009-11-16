@@ -63,7 +63,7 @@ class QContactManager;
 class QContactData;
 class QContactName;
 
-class QTCONTACTS_EXPORT QContact
+class Q_CONTACTS_EXPORT QContact
 {
 public:
     QContact();
@@ -86,10 +86,12 @@ public:
     void setType(const QString& type);
     void setType(const QContactType& type);
 
-    /* The (possibly synthesised) display label of the contact */
+    /* The (possibly synthesized) display label of the contact - DEPRECATED, see Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a */
     QContactDisplayLabel displayLabel() const;
     void setDisplayLabel(const QContactDisplayLabel& label);
     void setDisplayLabel(const QString& label);
+    /* The synthesized display label of the contact */
+    // QString displayLabel() const; // THIS FUNCTION WILL REPLACE THE THREE ABOVE!
 
     /* Is this an empty contact? */
     bool isEmpty() const;
@@ -140,7 +142,8 @@ public:
     QList<QContactRelationship> relationshipOrder() const;
 
     /* Actions available to be performed on this contact */
-    QStringList availableActions() const;
+    QStringList Q_DECL_DEPRECATED availableActions() const; // THIS FUNCTION HAS BEEN DEPRECATED and will be replaced - see commit dd7d9904cc52bbbda22bac5c1aaa3876ee5724e6
+    QList<QContactActionDescriptor> availableActions(const QString& vendorName, int implementationVersion = -1) const;
 
     /* Preferences (eg, set a particular detail preferred for the SMS action) */
     bool setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail);

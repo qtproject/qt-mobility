@@ -10,7 +10,6 @@ INCLUDEPATH += .
 DEFINES += QT_BUILD_MESSAGING_LIB QT_MAKEDLL
 
 PUBLIC_HEADERS += \
-           qmessageglobal.h \
            qmessageid.h \
            qmessagecontentcontainerid.h \
            qmessagefolderid.h \

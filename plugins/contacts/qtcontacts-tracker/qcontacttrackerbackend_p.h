@@ -64,7 +64,6 @@ using namespace SopranoLive;
 #include "qcontactname.h"
 #include "qcontactphonenumber.h"
 #include "qcontactmanager.h"
-#include "qcontactmanager_p.h"
 #include "qcontactmanagerenginefactory.h"
 #include "qtrackercontactasyncrequest.h"
 

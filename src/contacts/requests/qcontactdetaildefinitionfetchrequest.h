@@ -50,7 +50,7 @@
 #include <QStringList>
 
 class QContactDetailDefinitionFetchRequestPrivate;
-class QTCONTACTS_EXPORT QContactDetailDefinitionFetchRequest : public QContactAbstractRequest
+class Q_CONTACTS_EXPORT QContactDetailDefinitionFetchRequest : public QContactAbstractRequest
 {
     Q_OBJECT
 
@@ -61,6 +61,8 @@ public:
     /* Selection */
     void setNames(const QStringList& names);
     QStringList names() const;
+    void setContactType(const QString& contactType);
+    QString contactType() const;
 
     /* Results */
     QMap<QString, QContactDetailDefinition> definitions() const;

@@ -40,7 +40,6 @@
 ****************************************************************************/
 #ifndef QMESSAGEFOLDERFILTERPRIVATE_H
 #define QMESSAGEFOLDERFILTERPRIVATE_H
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderfilter.h"
 
 #ifdef Q_OS_SYMBIAN
@@ -136,10 +135,8 @@ public:
 #ifdef Q_OS_WIN
     static QMessageFolderFilter preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, const QMessageFolderFilter &filter);
     static void preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFolderFilter *filter);
-    static bool matchesStore(const QMessageFolderFilter &filter, const MapiStorePtr &store);
     static bool matchesFolder(const QMessageFolderFilter &filter, const MapiFolderPtr &folder);
     static bool QMessageFolderFilterPrivate::isNonMatching(const QMessageFolderFilter &filter);
 #endif
 };
-#endif
 #endif

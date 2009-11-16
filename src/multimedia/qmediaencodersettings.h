@@ -45,7 +45,7 @@
 #include <QtCore/qsharedpointer.h>
 #include <QtCore/qstring.h>
 #include <QtCore/qsize.h>
-#include <qmultimediaglobal.h>
+#include <qmobilityglobal.h>
 #include <qtmedianamespace.h>
 
 

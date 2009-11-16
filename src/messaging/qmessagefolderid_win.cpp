@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderid_p.h"
 #include "winhelpers_p.h"
 #include <QByteArray>
@@ -220,5 +219,3 @@ uint qHash(const QMessageFolderId &id)
     return (qHash(id.d_ptr->_valid) ^ qHash(id.d_ptr->_folderRecordKey) ^ qHash(id.d_ptr->_storeRecordKey));
 #endif
 }
-
-#endif

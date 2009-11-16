@@ -64,11 +64,9 @@ public:
     int countAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter()) const;
     QMessageAccount account(const QMessageAccountId &id) const;
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderIdList queryFolders(const QMessageFolderFilter &filter = QMessageFolderFilter(), const QMessageFolderOrdering &ordering = QMessageFolderOrdering(), uint limit = 0, uint offset = 0) const;
     int countFolders(const QMessageFolderFilter &filter = QMessageFolderFilter()) const;
     QMessageFolder folder(const QMessageFolderId &id) const;
-#endif
     
     bool addMessage(QMessage *m);
     bool updateMessage(QMessage *m);

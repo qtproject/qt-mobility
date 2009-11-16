@@ -51,7 +51,7 @@
 
 /* Leaf class */
 //! [0]
-class QTCONTACTS_EXPORT QContactPhoneNumber : public QContactDetail
+class Q_CONTACTS_EXPORT QContactPhoneNumber : public QContactDetail
 {
 public:
 #ifdef Q_QDOC

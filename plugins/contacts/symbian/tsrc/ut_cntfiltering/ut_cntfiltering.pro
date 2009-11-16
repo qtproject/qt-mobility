@@ -5,7 +5,6 @@ TEMPLATE = app
 TARGET = 
 QT += testlib
 CONFIG += qtestlib
-CONFIG += testcase
 
 DEFINES += PBK_UNIT_TEST
 DEPENDPATH += .
@@ -15,24 +14,25 @@ INCLUDEPATH += ..\..\inc
 INCLUDEPATH += ..\..\rss
 INCLUDEPATH += ..\..\..\..\contacts
 INCLUDEPATH += ..\..\..\..\..\src\contacts
-
+INCLUDEPATH += ..\..\..\..\..\src\global
 include(../tsrc.pri)
 
 symbian:
-{ 
-    load(data_caging_paths)
-    
+ { 
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     
     # Input
-    HEADERS += ut_cntsymbianengine_p.h \
+    HEADERS += ut_cntfiltering.h \
             $$SYMBIAN_HEADERS
-    
-    SOURCES += ut_cntsymbianengine_p.cpp \
-            $$SYMBIAN_SOURCES
+            
+    SOURCES += ut_cntfiltering.cpp \
+            $$SYMBIAN_SOURCES            
             
     TARGET.CAPABILITY = ALL \
-            -TCB
+        -TCB
+        
+    BLD_INF_RULES.prj_exports += \
+        "test_data.txt \epoc32\winscw\c\filtering\test_data.txt"
     
     LIBS += \
         -lcntmodel \
