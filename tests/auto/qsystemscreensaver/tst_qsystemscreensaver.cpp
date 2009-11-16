@@ -49,7 +49,6 @@ private slots:
         void initTestCase();
     void tst_screenSaverInhibited();
     void tst_setScreenSaverInhibit();
-    void tst_isScreenLockOn();
 
 };
 
@@ -71,13 +70,6 @@ void tst_QSystemScreenSaver::tst_setScreenSaverInhibit()
     bool enabled = si.setScreenSaverInhibit();
     QVERIFY( enabled || !enabled);
 }
-
-void tst_QSystemScreenSaver::tst_isScreenLockOn()
-{
-    QSystemScreenSaver si;
-    bool enabled = si.isScreenLockOn();
-    QVERIFY( enabled || !enabled);
-
 }
 
 QTEST_MAIN(tst_QSystemScreenSaver)
