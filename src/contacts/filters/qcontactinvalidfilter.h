@@ -45,7 +45,7 @@
 #include "qcontactfilter.h"
 
 class QContactInvalidFilterPrivate;
-class QTCONTACTS_EXPORT QContactInvalidFilter : public QContactFilter
+class Q_CONTACTS_EXPORT QContactInvalidFilter : public QContactFilter
 {
 public:
     QContactInvalidFilter();

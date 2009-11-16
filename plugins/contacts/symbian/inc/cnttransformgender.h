@@ -53,7 +53,7 @@ protected:
 	QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const;
     bool supportsSubType(const QString& subType) const;
     quint32 getIdForField(const QString& fieldName) const;
-    void detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const;
+    void detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const;
 };
 
 #endif

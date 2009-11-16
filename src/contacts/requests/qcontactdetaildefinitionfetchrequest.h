@@ -50,7 +50,7 @@
 #include <QStringList>
 
 class QContactDetailDefinitionFetchRequestPrivate;
-class QTCONTACTS_EXPORT QContactDetailDefinitionFetchRequest : public QContactAbstractRequest
+class Q_CONTACTS_EXPORT QContactDetailDefinitionFetchRequest : public QContactAbstractRequest
 {
     Q_OBJECT
 

@@ -40,7 +40,7 @@
 ****************************************************************************/
 #ifndef QSYSTEMINFO_H
 #define QSYSTEMINFO_H
-#include "qsysinfoglobal.h"
+#include "qmobilityglobal.h"
 
 #include <QObject>
 #include <QSize>

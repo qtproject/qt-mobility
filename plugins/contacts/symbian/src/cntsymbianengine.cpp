@@ -47,9 +47,6 @@
 
 #include <qtcontacts.h>
 
-#include "qcontact_p.h"
-#include "qcontactmanager_p.h"
-
 #include "cntsymbianengine.h"
 #include "qcontactchangeset.h"
 #include "cntsymbiandatabase.h"
@@ -61,7 +58,19 @@
 #include "cntrelationship.h"
 
 typedef QList<QContactLocalId> QContactLocalIdList;
-#define CNT_SYMBIAN_MANAGER_NAME "symbian"
+
+// NOTE: There is a bug with RVCT compiler which causes the local stack
+// variable to corrupt if the called function leaves. As a workaround we are
+// reserving the objects from heap so it will not get corrupted.
+// This of course applies only to those stack variables which are passed to
+// the called function or the return value of the function is placed to the
+// variable
+
+/* ... The macros changed names */
+#if QT_VERSION < QT_VERSION_CHECK(4, 6, 0)
+#define QT_TRAP_THROWING QT_TRANSLATE_SYMBIAN_LEAVE_TO_EXCEPTION
+#define QT_TRYCATCH_LEAVING QT_TRANSLATE_EXCEPTION_TO_SYMBIAN_LEAVE
+#endif
 
 CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
@@ -76,6 +85,7 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
         m_contactFilter    = new CntSymbianFilterDbms(*m_dataBase->contactDatabase());
         m_contactSorter    = new CntSymbianSorterDbms(*m_dataBase->contactDatabase(), *m_transformContact);
         m_relationship     = new CntRelationship(m_dataBase->contactDatabase());
+        connect(m_dataBase, SIGNAL(ownCardChanged(QContactLocalId,QContactLocalId)), this, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
     }
 }
 
@@ -128,7 +138,7 @@ QList<QContactLocalId> CntSymbianEngine::contacts(
         QContactManager::Error& error) const
 {
     QList<QContactLocalId> result;
-
+    error = QContactManager::NoError;
     // Check if the filter is supported by the underlying filter implementation
     CntAbstractContactFilter::FilterSupport filterSupport = m_contactFilter->filterSupported(filter);
 
@@ -176,6 +186,17 @@ QList<QContactLocalId> CntSymbianEngine::contacts(const QList<QContactSortOrder>
     return slowSort(unsortedIds, sortOrders, error);
 }
 
+/*!
+ * Complete list of sorted contact IDs of a certain contact
+ * type from the database based on a list of sort orders.
+ *
+ * \param contactType Contact type
+ * \param sortOrders Sort order
+ * \param error Qt error code.
+ * \return List of all IDs for contact entries in the database,
+ *  or an empty list if there was a problem or the database is
+ *  empty.
+ */
 QList<QContactLocalId> CntSymbianEngine::contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     QList<QContactLocalId> contactIds;
@@ -203,9 +224,20 @@ QList<QContactLocalId> CntSymbianEngine::contacts(const QString& contactType, co
     return contactIds; // empty
 }
 
+/*!
+ * Read a contact from the contact database.
+ *
+ * \param contactId The Id of the contact to be retrieved.
+ * \param error Qt error code.
+ * \return A QContact for the requested QContactLocalId value or 0 if the read
+ *  operation was unsuccessful (e.g. contact not found).
+ */
 QContact CntSymbianEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
-    return fetchContact(contactId, error);
+    QContact contact = fetchContact(contactId, error);
+    if(error == QContactManager::NoError)
+        updateDisplayLabel(contact);
+    return contact;
 }
 
 bool CntSymbianEngine::saveContact(QContact* contact, QContactManager::Error& error)
@@ -216,6 +248,14 @@ bool CntSymbianEngine::saveContact(QContact* contact, QContactManager::Error& er
     return ret;
 }
 
+/*!
+ * Add a list of contacts to the database.
+ *
+ * \param contacts List of QContact to be saved.
+ * \param error Qt error code.
+ * \return List of all error codes corresponding to each QContact in the
+ *  list of contacts to be saved.
+ */
 QList<QContactManager::Error> CntSymbianEngine::saveContacts(QList<QContact>* contacts, QContactManager::Error& error)
 {
     QContactChangeSet changeSet;
@@ -277,6 +317,8 @@ QList<QContactLocalId> CntSymbianEngine::slowSort(
 bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error)
 {
     bool ret = false;
+    if(contact && !validateContact(*contact, error))
+        return false;
 
     // If contact has GUid and no local Id, try to find it in database
     if (contact && !contact->localId() &&
@@ -313,6 +355,10 @@ bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& chang
     } else {
         ret = addContact(*contact, changeSet, error);
     }
+
+    if (ret)
+        updateDisplayLabel(*contact);
+
     return ret;
 }
 
@@ -348,19 +394,16 @@ QContact CntSymbianEngine::fetchContactL(const QContactLocalId &localId) const
         User::Leave(KErrNotFound);
 
     // Read the contact from the CContactDatabase
-    CContactItem* symContact = m_dataBase->contactDatabase()->ReadContactL(localId);
-    CleanupStack::PushL(symContact);
+    CContactItem* contactItem = m_dataBase->contactDatabase()->ReadContactL(localId);
+    CleanupStack::PushL(contactItem);
 
     // Convert to a QContact
-    QContact contact = m_transformContact->transformContactL(*symContact, *m_dataBase->contactDatabase());
+    QContact contact = m_transformContact->transformContactL(*contactItem);
 
-    // Convert id
-    QContactId contactId;
-    contactId.setLocalId(localId);
-    contactId.setManagerUri(m_managerUri);
-    contact.setId(contactId);
+    // Transform details that are not available until the contact has been saved
+    m_transformContact->transformPostSaveDetailsL(*contactItem, contact, *m_dataBase->contactDatabase(), m_managerUri);
 
-    CleanupStack::PopAndDestroy(symContact);
+    CleanupStack::PopAndDestroy(contactItem);
 
     return contact;
 }
@@ -397,39 +440,29 @@ bool CntSymbianEngine::addContact(QContact& contact, QContactChangeSet& changeSe
  */
 int CntSymbianEngine::addContactL(QContact &contact)
 {
-    CContactItem* contactItem(0);
     int id(0);
 
     //handle normal contact
     if(contact.type() == QContactType::TypeContact)
     {
         // Create a new contact card.
-        contactItem = CContactCard::NewLC();
+        CContactItem* contactItem = CContactCard::NewLC();
         m_transformContact->transformContactL(contact, *contactItem);
         // Add to the database
         id = m_dataBase->contactDatabase()->AddNewContactL(*contactItem);
+        // Reload contact item
         CleanupStack::PopAndDestroy(contactItem);
-
-        // Update the changed values to the QContact
-        // id
-        QScopedPointer<QContactId> contactId(new QContactId());
-        contactId->setLocalId(id);
-        contactId->setManagerUri(m_managerUri);
-        contact.setId(*contactId);
+        contactItem = 0;
         contactItem = m_dataBase->contactDatabase()->ReadContactLC(id);
-        // Guid
-        QContactDetail* detail = m_transformContact->transformGuidItemFieldL(*contactItem, *m_dataBase->contactDatabase());
-        contact.saveDetail(detail);
-        // Timestamp
-        detail = m_transformContact->transformTimestampItemFieldL(*contactItem, *m_dataBase->contactDatabase());
-        contact.saveDetail(detail);
+        // Transform details that are not available until the contact has been saved
+        m_transformContact->transformPostSaveDetailsL(*contactItem, contact, *m_dataBase->contactDatabase(), m_managerUri);
         CleanupStack::PopAndDestroy(contactItem);
     }
     //group contact
     else if(contact.type() == QContactType::TypeGroup)
     {
         // Create a new group, which is added to the database
-        contactItem = m_dataBase->contactDatabase()->CreateContactGroupLC();
+        CContactItem* contactItem = m_dataBase->contactDatabase()->CreateContactGroupLC();
 
         //set the id for the contact, needed by update
         id = contactItem->Id();
@@ -440,6 +473,8 @@ int CntSymbianEngine::addContactL(QContact &contact)
 
         //update contact, will add the fields to the already saved group
         updateContactL(contact);
+        // Transform details that are not available until the contact has been saved
+        m_transformContact->transformPostSaveDetailsL(*contactItem, contact, *m_dataBase->contactDatabase(), m_managerUri);
 
         CleanupStack::PopAndDestroy(contactItem);
     }
@@ -550,19 +585,6 @@ int CntSymbianEngine::removeContactL(QContactLocalId id)
     return 0;
 }
 
-
-void CntSymbianEngine::updateDisplayLabel(QContact& contact) const
-{
-    QContactManager::Error error(QContactManager::NoError);
-    QContactDisplayLabel label = contact.displayLabel();
-    QString labelString = synthesizeDisplayLabel(contact, error);
-    if(error == QContactManager::NoError) {
-        label.setLabel(labelString);
-        label.setSynthesized(true);
-        contact.setDisplayLabel(label);
-    }
-}
-
 bool CntSymbianEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
 {
     QContactManager::Error err;
@@ -573,6 +595,15 @@ bool CntSymbianEngine::removeContact(const QContactLocalId& contactId, QContactM
         emit selfContactIdChanged(selfCntId, QContactLocalId(0));
     changeSet.emitSignals(this);
     return ret;
+}
+
+void CntSymbianEngine::updateDisplayLabel(QContact& contact) const
+{
+    QContactManager::Error error(QContactManager::NoError);
+    QString label = synthesizeDisplayLabel(contact, error);
+    if(error == QContactManager::NoError) {
+        contact = setContactDisplayLabel(label, contact);
+    }
 }
 
 QList<QContactManager::Error> CntSymbianEngine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error)
@@ -657,7 +688,7 @@ bool CntSymbianEngine::saveRelationship(QContactRelationship* relationship, QCon
     bool returnValue = m_relationship->saveRelationship(&changeSet.addedRelationshipsContacts(), relationship, error);
 
     //add contacts to the list that shouldn't be emitted
-    m_dataBase->appendContactsEmitted(&changeSet.addedRelationshipsContacts().toList());
+    m_dataBase->appendContactsEmitted(changeSet.addedRelationshipsContacts().toList());
 
     //emit signals
     changeSet.emitSignals(this);
@@ -674,7 +705,7 @@ QList<QContactManager::Error> CntSymbianEngine::saveRelationships(QList<QContact
     QList<QContactManager::Error> returnValue = m_relationship->saveRelationships(&changeSet.addedRelationshipsContacts(), relationships, error);
 
     //add contacts to the list that shouldn't be emitted
-    m_dataBase->appendContactsEmitted(&changeSet.addedRelationshipsContacts().toList());
+    m_dataBase->appendContactsEmitted(changeSet.addedRelationshipsContacts().toList());
 
     //emit signals
     changeSet.emitSignals(this);
@@ -691,7 +722,7 @@ bool CntSymbianEngine::removeRelationship(const QContactRelationship& relationsh
     bool returnValue = m_relationship->removeRelationship(&changeSet.removedRelationshipsContacts(), relationship, error);
 
     //add contacts to the list that shouldn't be emitted
-    m_dataBase->appendContactsEmitted(&changeSet.removedRelationshipsContacts().toList());
+    m_dataBase->appendContactsEmitted(changeSet.removedRelationshipsContacts().toList());
 
     //emit signals
     changeSet.emitSignals(this);
@@ -708,7 +739,7 @@ QList<QContactManager::Error> CntSymbianEngine::removeRelationships(const QList<
     QList<QContactManager::Error> returnValue = m_relationship->removeRelationships(&changeSet.removedRelationshipsContacts(), relationships, error);
 
     //add contacts to the list that shouldn't be emitted
-    m_dataBase->appendContactsEmitted(&changeSet.removedRelationshipsContacts().toList());
+    m_dataBase->appendContactsEmitted(changeSet.removedRelationshipsContacts().toList());
 
     //emit signals
     changeSet.emitSignals(this);
@@ -726,12 +757,14 @@ QMap<QString, QContactDetailDefinition> CntSymbianEngine::detailDefinitions(cons
 
     error = QContactManager::NoError;
 
-    // Get the supported detail definitions from the contact transformer
-    CntTransformContact *transformContact = new CntTransformContact;
-    QMap<QString, QContactDetailDefinition> defMap = transformContact->detailDefinitions(error);
-    delete transformContact;
+    // First get the default definitions
+    QMap<QString, QMap<QString, QContactDetailDefinition> > schemaDefinitions = QContactManagerEngine::schemaDefinitions();
 
-    return defMap;
+    // And then ask contact transformer to do the modifications required
+    QMap<QString, QContactDetailDefinition> schemaForType = schemaDefinitions.value(contactType);
+    m_transformContact->detailDefinitions(schemaForType, contactType, error);
+
+    return schemaForType;
 }
 
 bool CntSymbianEngine::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const
@@ -779,29 +812,43 @@ bool CntSymbianEngine::filterSupported(const QContactFilter& filter) const
 }
 
 /* Synthesise the display label of a contact */
-QString CntSymbianEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& /*error*/) const
+QString CntSymbianEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
+    QString label("");
+    error = QContactManager::NoError;
     QContactName name = contact.detail<QContactName>();
-    QContactOrganization org = contact.detail<QContactOrganization>();
+    if(contact.type() == QContactType::TypeContact) {
+        QContactOrganization org = contact.detail<QContactOrganization>();
+        QString firstName = name.first();
+        QString lastName = name.last();
 
-    QString firstName = name.first();
-    QString lastName = name.last();
-
-    if (!name.last().isEmpty()) {
-        if (!name.first().isEmpty()) {
-            return QString(QLatin1String("%1, %2")).arg(name.last()).arg(name.first());
+        if (!name.last().isEmpty()) {
+            if (!name.first().isEmpty()) {
+                label = QString(QLatin1String("%1, %2")).arg(name.last()).arg(name.first());
+            } else {
+                // Just last
+                label = name.last();
+            }
+        } else if (!name.first().isEmpty()) {
+            label = name.first();
+        } else if (!org.name().isEmpty()) {
+            label = org.name();
         } else {
-            // Just last
-            return name.last();
+            // TODO: localize?
+            label = QLatin1String("Unnamed");
         }
-    } else if (!name.first().isEmpty()) {
-        return name.first();
-    } else if (!org.name().isEmpty()) {
-        return org.name();
-    } else {
-        // XXX grargh.
-        return QLatin1String("Unnamed");
+    } else if (contact.type() == QContactType::TypeGroup) {
+        if (!name.customLabel().isEmpty()) {
+            label = name.customLabel();
+        } else {
+            // TODO: localize?
+            label = QLatin1String("Unnamed");
+        }
     }
+    else {
+        error = QContactManager::InvalidContactTypeError;
+    }
+    return label;
 }
 
 bool CntSymbianEngine::setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error)
@@ -852,7 +899,7 @@ QString CntSymbianEngine::managerName() const
 {
     return CNT_SYMBIAN_MANAGER_NAME;
 }
-
+#ifndef PBK_UNIT_TEST
 /* Factory lives here in the basement */
 QContactManagerEngine* CntSymbianFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
@@ -865,3 +912,4 @@ QString CntSymbianFactory::managerName() const
 }
 
 Q_EXPORT_PLUGIN2(mobapicontactspluginsymbian, CntSymbianFactory);
+#endif  //PBK_UNIT_TEST

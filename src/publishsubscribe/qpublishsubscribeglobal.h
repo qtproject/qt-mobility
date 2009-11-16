@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTEXTFRAMEWORKGLOBAL_H
-#define QCONTEXTFRAMEWORKGLOBAL_H
+#ifndef QPUBLISHSUBSCRIBEGLOBAL_H
+#define QPUBLISHSUBSCRIBEGLOBAL_H
 
 #if defined(QTM_BUILD_UNITTESTS)
 # include <qconfig.h>
@@ -64,21 +64,21 @@ QT_BEGIN_NAMESPACE
 #      undef QT_DLL
 #    endif
 #    if defined(QT_BUILD_CFW_LIB)
-#      define Q_CFW_EXPORT Q_DECL_EXPORT
+#      define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_EXPORT
 #    else
-#      define Q_CFW_EXPORT Q_DECL_IMPORT
+#      define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_IMPORT
 #    endif
 #  elif defined(QT_DLL) /* use a Qt DLL library */
-#    define Q_CFW_EXPORT Q_DECL_IMPORT
+#    define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_IMPORT
 #  endif
 #else
 #endif
 
-#if !defined(Q_CFW_EXPORT)
+#if !defined(Q_PUBLISHSUBSCRIBE_EXPORT)
 #  if defined(QT_SHARED)
-#    define Q_CFW_EXPORT Q_DECL_EXPORT
+#    define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_EXPORT
 #  else
-#    define Q_CFW_EXPORT
+#    define Q_PUBLISHSUBSCRIBE_EXPORT
 #  endif
 #endif
 
@@ -86,4 +86,4 @@ QT_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QCONTEXTFRAMEWORKGLOBAL_H
+#endif // QPUBLISHSUBSCRIBEGLOBAL_H

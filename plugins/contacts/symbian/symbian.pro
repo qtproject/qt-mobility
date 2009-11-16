@@ -23,7 +23,6 @@ symbian: {
   HEADERS += \
         $$PUBLIC_HEADERS \
         inc/cntsymbianengine.h \
-        inc/cntsymbianengine_p.h \
         inc/cnttransformcontact.h \
         inc/cnttransformcontactdata.h \
         inc/cnttransformname.h \
@@ -44,6 +43,7 @@ symbian: {
         inc/cnttransformgeolocation.h \
         inc/cnttransformnote.h \
         inc/cnttransformfamily.h \  
+        inc/cnttransformempty.h \  
         inc/cntabstractcontactfilter.h \
         inc/cntsymbianfilterdbms.h \
         inc/cntsymbianfiltersql.h \
@@ -59,7 +59,6 @@ symbian: {
       
   SOURCES += \
         src/cntsymbianengine.cpp \
-        src/cntsymbianengine_p.cpp \
         src/cnttransformcontact.cpp \
         src/cnttransformcontactdata.cpp \
         src/cnttransformname.cpp \
@@ -80,6 +79,7 @@ symbian: {
         src/cnttransformgeolocation.cpp \
         src/cnttransformnote.cpp \
         src/cnttransformfamily.cpp \  
+        src/cnttransformempty.cpp \
         src/cntsymbianfilterdbms.cpp \
         src/cntsymbianfiltersql.cpp \
         src/cntsymbiansorterdbms.cpp \

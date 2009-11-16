@@ -51,7 +51,7 @@
 #include <QVariant>
 
 class QContactDetailPrivate;
-class QTCONTACTS_EXPORT QContactDetail
+class Q_CONTACTS_EXPORT QContactDetail
 {
 public:
     QContactDetail();

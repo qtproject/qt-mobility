@@ -41,7 +41,7 @@
 #ifndef QGEOSATELLITEINFOSOURCE_H
 #define QGEOSATELLITEINFOSOURCE_H
 
-#include "qlocationglobal.h"
+#include "qmobilityglobal.h"
 #include "qgeosatelliteinfo.h"
 
 #include <QObject>

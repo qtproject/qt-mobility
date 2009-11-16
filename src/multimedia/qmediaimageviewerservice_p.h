@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include <qmultimediaglobal.h>
+#include <qmobilityglobal.h>
 #include <qmediaservice.h>
 #include <qmediaimageviewer.h>
 #include <qvideooutputcontrol.h>

@@ -38,36 +38,23 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QObject>
 
-class CntSymbianEnginePrivate;
 
-class TestSymbianEnginePrivate : public QObject
+#ifndef NOTIFICATIONSATELLITECALLBACK_H_
+#define NOTIFICATIONSATELLITECALLBACK_H_
+
+#include <e32base.h>    // For CActive, link against: euser.lib
+#include <lbs.h>
+#include <lbscommon.h>
+#include <lbssatellite.h>
+
+class INotificationSatelliteCallback
 {
-    Q_OBJECT
+public:
 
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
-    
-    void init();
-    void clean();
-    
-    void addContact();
-    void retrieveContact();
-    void updateContact();
-    void removeContact();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void addGroup();
-    void retrieveGroup();
-    void batchContacts();
-    void singleRelationship();
-    void batchRelationships();
+    virtual void updateDeviceStatus(void) = 0 ;
 
-private:
-    void removeAllContacts();
-
-private:
-    CntSymbianEnginePrivate   *m_engine;
+    virtual void updatePosition(TPositionSatelliteInfo  aSatInfo, int error, bool isStartUpdate) = 0 ;
 };
+
+#endif /* NOTIFICATIONSATELLITECALLBACK_H_ */

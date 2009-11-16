@@ -7,7 +7,7 @@ include(../../common.pri)
 DEFINES += QT_BUILD_CFW_LIB QT_MAKEDLL
 
 
-PUBLIC_HEADERS += qcontextglobal.h \
+PUBLIC_HEADERS += qpublishsubscribeglobal.h \
            qvaluespace.h \
            qvaluespaceprovider.h \
            qvaluespacesubscriber.h

@@ -41,7 +41,10 @@
 
 #ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
 
+#include <qcontactdetail.h>
+
 #include "cntsymbianfilterdbms.h"
+#include "cnttransformcontact.h"
 #include "cntsymbiantransformerror.h"
 
 #include <cntdb.h>
@@ -53,7 +56,6 @@
 #include "qcontactname.h"
 #include "qcontactdetailfilter.h"
 #include "qcontactphonenumber.h"
-#include "cntsymbianengine_p.h"
 #include "cntsymbiansorterdbms.h"
 
 // Telephony Configuration API

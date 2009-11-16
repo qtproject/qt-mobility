@@ -165,4 +165,5 @@ HTML.footer             = "<p /><address><hr /><div align=\"center\">\n" \
                           "</tr></table></div></address>"
 
 macro.raisedaster.HTML  = "<sup>*</sup>"
+macro.br.HTML = "<br/>"
 

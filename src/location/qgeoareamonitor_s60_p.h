@@ -67,8 +67,6 @@ public :
     void setCenter(const QGeoCoordinate &coordinate);
     void setRadius(qreal radius);
     void handleTriggerEvent(TPositionInfo aPosInfo, enTriggerType aStatus);
-    void handleTriggerChangeEvent(TLbtTriggerChangeEventType aEvent,
-                                  CLbtTriggerInfo* aInfo, TLbtTriggerId aId);
     ~QGeoAreaMonitorS60();
 
     /*

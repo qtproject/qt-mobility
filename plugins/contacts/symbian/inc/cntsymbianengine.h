@@ -61,7 +61,6 @@
 #include "qcontactname.h"
 #include "qcontactphonenumber.h"
 #include "qcontactmanager.h"
-#include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
 
@@ -71,6 +70,8 @@ class CntTransformContact;
 class CntAbstractContactFilter;
 class CntAbstractContactSorter;
 class CntRelationship;
+
+#define CNT_SYMBIAN_MANAGER_NAME "symbian"
 
 class CntSymbianEngine : public QContactManagerEngine
 {
@@ -138,11 +139,11 @@ private:
     /* Remove contact */
     bool removeContact(const QContactLocalId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError);
     int removeContactL(QContactLocalId id);
-    
+
     /* Groups */
     QList<QContactLocalId> groups(QContactManager::Error& qtError) const;
     QList<QContactLocalId> groupsL() const;
-    
+
     void updateDisplayLabel(QContact& contact) const;
 
 private:
@@ -152,8 +153,11 @@ private:
     CntAbstractContactFilter *m_contactFilter;
     CntAbstractContactSorter *m_contactSorter;
     CntRelationship *m_relationship;
+#ifdef PBK_UNIT_TEST
+    friend class TestSymbianEngine;
+#endif  //PBK_UNIT_TEST
 };
-
+#ifndef PBK_UNIT_TEST
 class Q_DECL_EXPORT CntSymbianFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
@@ -162,5 +166,5 @@ class Q_DECL_EXPORT CntSymbianFactory : public QObject, public QContactManagerEn
         QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
         QString managerName() const;
 };
-
-#endif
+#endif  //PBK_UNIT_TEST
+#endif  //CNTSYMBIANBACKEND_P_H

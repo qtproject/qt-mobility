@@ -52,7 +52,7 @@
 #include "qcontactdetaildefinitionfield.h"
 
 class QContactDetailDefinitionData;
-class QTCONTACTS_EXPORT QContactDetailDefinition
+class Q_CONTACTS_EXPORT QContactDetailDefinition
 {
     friend class QContactManager;
 

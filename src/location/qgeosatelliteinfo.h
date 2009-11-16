@@ -41,7 +41,7 @@
 #ifndef QGEOSATELLITEINFO_H
 #define QGEOSATELLITEINFO_H
 
-#include "qlocationglobal.h"
+#include "qmobilityglobal.h"
 
 class QDebug;
 class QGeoSatelliteInfoPrivate;

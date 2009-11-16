@@ -41,13 +41,12 @@
 
 #include "qcontactmanager.h"
 
-#include "qcontact_p.h"
 #include "qcontactdetaildefinition.h"
-#include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactabstractrequest.h"
 #include "qcontactrequests.h"
 #include "qcontactchangeset.h"
+#include "qcontactdetails.h"
 
 #include "qcontactmemorybackend_p.h"
 
@@ -151,8 +150,9 @@ bool QContactMemoryEngine::setSelfContactId(const QContactLocalId& contactId, QC
         QContactLocalId oldId = d->m_selfContactId;
         d->m_selfContactId = contactId;
 
-        // XXX TODO: use changeset for this?
-        emit selfContactIdChanged(oldId, contactId);
+        QContactChangeSet cs;
+        cs.oldAndNewSelfContactId() = QPair<QContactLocalId, QContactLocalId>(oldId, contactId);
+        cs.emitSignals(this);
         return true;
     }
 
@@ -388,7 +388,7 @@ bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QCont
     // and if it was the self contact, reset the self contact id
     if (contactId == d->m_selfContactId) {
         d->m_selfContactId = QContactLocalId(0);
-        emit selfContactIdChanged(contactId, QContactLocalId(0));
+        changeSet.oldAndNewSelfContactId() = QPair<QContactLocalId, QContactLocalId>(contactId, QContactLocalId(0));
     }
 
     changeSet.removedContacts().insert(contactId);

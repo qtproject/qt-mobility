@@ -43,19 +43,19 @@
 #include "qcontactmanagerenginefactory.h"
 
 /*!
-  \class QContactManagerEngineFactory
-  \preliminary
-  \brief This class is the interface for plugins that implement
-  QContactManagerEngine functionality.
- 
-  This class provides a simple interface for the creation of
-  manager engine instances.  Each factory has a specific id
-  associated with it, which forms the \c managerName parameter
-  when creating \l QContactManager objects.
- 
-  More information on writing a contacts engine plugin is TODO.
- 
-  \sa QContactManager, QContactManagerEngine
+ * \class QContactManagerEngineFactory
+ * \preliminary
+ * \brief This class is the interface for plugins that implement
+ * QContactManagerEngine functionality.
+ *
+ * This class provides a simple interface for the creation of
+ * manager engine instances.  Each factory has a specific id
+ * associated with it, which forms the \c managerName parameter
+ * when creating \l QContactManager objects.
+ *
+ * More information on writing a contacts engine plugin is TODO.
+ *
+ * \sa QContactManager, QContactManagerEngine
  */
 
 /*!
@@ -86,4 +86,16 @@
  *
  * Typically this would be of the form "com.nokia.qt.contacts.engines.memory", with
  * the appropriate domain and engine name substituted.
+ */
+
+/*!
+ * \fn QContactManagerEngineFactory::supportedImplementationVersions() const
+ *
+ * This function should return a list of versions of the engine which this factory can instantiate.
+ */
+
+/*!
+ * \fn QContactManagerEngineFactory::version() const
+ *
+ * Returns the version of the Qt Mobility Contacts API which is implemented by engines instantiated by this factory.
  */

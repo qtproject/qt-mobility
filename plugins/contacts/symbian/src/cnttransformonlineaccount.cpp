@@ -205,61 +205,16 @@ quint32 CntTransformOnlineAccount::getIdForField(const QString& fieldName) const
 }
 
 /*!
- * Adds the detail definitions for the details this transform class supports.
+ * Modifies the detail definitions. The default detail definitions are
+ * queried from QContactManagerEngine::schemaDefinitions and then modified
+ * with this function in the transform leaf classes.
  *
- * \a definitions On return, the supported detail definitions have been added.
+ * \a definitions The detail definitions to modify.
+ * \a contactType The contact type the definitions apply for.
  */
-void CntTransformOnlineAccount::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformOnlineAccount::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField f;
-    QContactDetailDefinition d;
-    QVariantList subTypes;
-
-    d.setName(QContactOnlineAccount::DefinitionName);
-    // fields
-    f.setDataType(QVariant::String);
-    fields.insert(QContactOnlineAccount::FieldAccountUri, f);
-    f.setDataType(QVariant::StringList);
-    f.setDataType(QVariant::String);
-    fields.insert(QContactOnlineAccount::FieldAccountUri, f);
-    fields.insert(QContactOnlineAccount::FieldServiceProvider, f);
-    f.setAccessConstract(QContactDetailDefinitionField::ReadOnly);
-    fields.insert(QContactOnlineAccount::FieldNickname, f);
-    fields.insert(QContactOnlineAccount::FieldStatusMessage, f);
-
-    // presence
-    QVariantList presenceValues;
-    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceAvailable));
-    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceHidden));
-    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceBusy));
-    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceAway));
-    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceExtendedAway));
-    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceUnknown));
-    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceOffline));
-    f.setAllowableValues(presenceValues);
-    fields.insert(QContactOnlineAccount::FieldPresence, f);
-
-    // contexts
-    f.setDataType(QVariant::StringList);
-    f.setAccessConstract(QContactDetailDefinitionField::NoConstraint);
-    f.setAllowableValues(QVariantList()
-            << QString(QLatin1String(QContactDetail::ContextHome))
-            << QString(QLatin1String(QContactDetail::ContextWork))
-            << QString(QLatin1String(QContactDetail::ContextOther)));
-    fields.insert(QContactDetail::FieldContext, f);
-
-    // subtypes
-    f.setAllowableValues(QVariantList()
-            << QString(QLatin1String(QContactOnlineAccount::SubTypeImpp))
-            << QString(QLatin1String(QContactOnlineAccount::SubTypeSipVoip))
-            << QString(QLatin1String(QContactOnlineAccount::SubTypeVideoShare))
-            << QString(QLatin1String(QContactOnlineAccount::SubTypeSip)));
-    fields.insert(QContactOnlineAccount::FieldSubTypes, f);
-    d.setFields(fields);
-
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-
-    definitions.insert(d.name(), d);
+    Q_UNUSED(definitions);
+    Q_UNUSED(contactType);
+    // Does not modify the default schema
 }

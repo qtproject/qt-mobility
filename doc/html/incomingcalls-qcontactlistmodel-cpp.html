@@ -353,7 +353,9 @@
             foreach (int row, newCacheRows) {
                 if (!d-&gt;m_cache.contains(row)) {
                     QContact temp;
-                    temp.setDisplayLabel(QString(tr(&quot;Loading...&quot;)));
+                    QContactName loadingName;
+                    loadingName.setCustomLabel(QString(tr(&quot;Loading...&quot;)));
+                    temp.saveDetail(&amp;loadingName);
                     d-&gt;m_cache.insert(row, temp);
                 }
             }
@@ -373,8 +375,11 @@
             }
 
             <span class="comment">// ensure that the current row's contact is cached; if not create a placeholder.</span>
-            if (!d-&gt;m_cache.contains(d-&gt;m_currentRow))
-                currentContact.setDisplayLabel(QString(tr(&quot;Loading...&quot;)));
+            if (!d-&gt;m_cache.contains(d-&gt;m_currentRow)) {
+                QContactName loadingName;
+                loadingName.setCustomLabel(QString(tr(&quot;Loading...&quot;)));
+                currentContact.saveDetail(&amp;loadingName);
+            }
 
             <span class="comment">// now fire off an asynchronous request to update our cache</span>
             QContactFetchRequest* req = new QContactFetchRequest;
@@ -420,8 +425,8 @@
                 }
 
                 <span class="comment">// grab the possible presence values; they should be in order from (unknown) to least present to most present.</span>
-                QContactDetailDefinition presenceDef = d-&gt;m_manager-&gt;detailDefinition(QContactPresence::DefinitionName);
-                QList&lt;QVariant&gt; allowablePresenceValues = presenceDef.fields().value(QContactPresence::FieldPresence).allowableValues;
+                QContactDetailDefinition presenceDef = d-&gt;m_manager-&gt;detailDefinition(QContactOnlineAccount::DefinitionName);
+                QList&lt;QVariant&gt; allowablePresenceValues = presenceDef.fields().value(QContactOnlineAccount::FieldPresence).allowableValues();
                 if (presenceDef.isEmpty() || allowablePresenceValues.isEmpty()) {
                     <span class="comment">// the manager does not support presence details.</span>
                     break;
@@ -429,8 +434,8 @@
 
                 <span class="comment">// calculate the &quot;global presence&quot; of the contact in a naive way.</span>
                 int bestPresenceSoFar = 0; <span class="comment">// unknown</span>
-                QList&lt;QContactDetail&gt; presenceDetails = currentContact.details(QContactPresence::DefinitionName);
-                foreach (const QContactPresence&amp; pres, presenceDetails) {
+                QList&lt;QContactDetail&gt; presenceDetails = currentContact.details(QContactOnlineAccount::DefinitionName);
+                foreach (const QContactOnlineAccount&amp; pres, presenceDetails) {
                     int index = allowablePresenceValues.indexOf(pres.presence());
                     if (index &gt; bestPresenceSoFar) {
                         bestPresenceSoFar = index;

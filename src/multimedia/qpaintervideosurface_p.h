@@ -55,7 +55,7 @@
 
 #ifndef QT_NO_MULTIMEDIA
 
-#include <qmultimediaglobal.h>
+#include <qmobilityglobal.h>
 #include <QtCore/qsize.h>
 #include <QtGui/qimage.h>
 #include <QtGui/qmatrix4x4.h>
