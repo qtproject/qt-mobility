@@ -1312,7 +1312,7 @@ public:
             QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter::byName(parentAccountName)));
             if (accountIds.count() == 1) {
                 // Find the specified folder
-                QMessageFolderFilter filter(QMessageFolderFilter::byPath(parentFolderPath) & QMessageFolderFilter::byParentAccountId(accountIds.first()));
+                QMessageFolderFilter filter(QMessageFolderFilter::byPath(parentFolderPath, QMessageDataComparator::Equal) & QMessageFolderFilter::byParentAccountId(accountIds.first()));
                 QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(filter));
                 if (folderIds.count() == 1) {
                     QMessage message;
