@@ -178,7 +178,7 @@ void TestQGeoSatelliteInfoSource::createDefaultSource()
     QGeoSatelliteInfoSource *source = QGeoSatelliteInfoSource::createDefaultSource(parent);
 #if defined(Q_OS_SYMBIAN)
     QVERIFY(source != 0);
-#elseif defined(Q_OS_WINCE)
+#elif defined(Q_OS_WINCE)
     QVERIFY(source != 0);
 #else
     QVERIFY(source == 0);
@@ -194,7 +194,7 @@ void TestQGeoSatelliteInfoSource::createDefaultSource_noParent()
     QGeoSatelliteInfoSource *source = QGeoSatelliteInfoSource::createDefaultSource(0);
 #if defined(Q_OS_SYMBIAN)
     QVERIFY(source != 0);
-#elseif defined(Q_OS_WINCE)
+#elif defined(Q_OS_WINCE)
     QVERIFY(source != 0);
 #else
     QVERIFY(source == 0);
