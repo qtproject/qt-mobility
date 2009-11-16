@@ -573,16 +573,16 @@ void QVideoWidget::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 
 void QVideoWidget::setFullScreen(bool fullScreen)
 {
-    if (fullScreen) {
-#ifdef Q_WS_MAC
-        Q_D(QVideoWidget);
+    Q_D(QVideoWidget);
 
+    if (fullScreen) {
         Qt::WindowFlags flags = windowFlags();
-        d->nonFullScreenFlags = flags & (Qt::Window | Qt::SubWindow);
-        flags |= Qt::Window;
-        flags &= ~Qt::SubWindow;
-        setWindowFlags(flags);
-#endif
+        if (!(flags & Qt::Window)) {
+            d->nonFullScreenFlags = flags & (Qt::Window | Qt::SubWindow);
+            flags |= Qt::Window;
+            flags ^= Qt::SubWindow;
+            setWindowFlags(flags);
+        }
         showFullScreen();
     } else {
         showNormal();
@@ -752,13 +752,12 @@ bool QVideoWidget::event(QEvent *event)
         Qt::WindowFlags flags = windowFlags();
 
         if (windowState() & Qt::WindowFullScreen) {
-#ifndef Q_WS_MAC
-            d->nonFullScreenFlags = flags & (Qt::Window | Qt::SubWindow);
-            flags |= Qt::Window;
-            flags &= ~Qt::SubWindow;
-            setWindowFlags(flags);
-#endif
-
+            if (!(flags & Qt::Window)) {
+                d->nonFullScreenFlags = flags & (Qt::Window | Qt::SubWindow);
+                flags |= Qt::Window;
+                flags ^= Qt::SubWindow;
+                setWindowFlags(flags);
+            }
             if (!d->wasFullScreen)
                 emit fullScreenChanged(d->wasFullScreen = true);
 
@@ -768,9 +767,11 @@ bool QVideoWidget::event(QEvent *event)
             if (d->currentBackend)
                 d->currentBackend->setFullScreen(false);
 
-            flags &= ~(Qt::Window | Qt::SubWindow); //clear the flags...
-            flags |= d->nonFullScreenFlags; //then we reset the flags (window and subwindow)
-            setWindowFlags(flags);
+            if (isVisible()) {
+                flags ^= (Qt::Window | Qt::SubWindow); //clear the flags...
+                flags |= d->nonFullScreenFlags; //then we reset the flags (window and subwindow)
+                setWindowFlags(flags);
+            }
 
             if (d->wasFullScreen)
                 emit fullScreenChanged(d->wasFullScreen = false);
