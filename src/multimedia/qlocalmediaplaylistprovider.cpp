@@ -115,6 +115,23 @@ bool QLocalMediaPlaylistProvider::insertItem(int pos, const QMediaContent &conte
     return true;
 }
 
+bool QLocalMediaPlaylistProvider::insertItems(int pos, const QList<QMediaContent> &items)
+{
+    Q_D(QLocalMediaPlaylistProvider);
+
+    if (items.isEmpty())
+        return true;
+
+    const int last = pos+items.count()-1;
+
+    emit itemsAboutToBeInserted(pos, last);
+    for (int i=0; i<items.count(); i++)
+        d->resources.insert(pos+i, items.at(i));
+    emit itemsInserted(pos, last);
+
+    return true;
+}
+
 bool QLocalMediaPlaylistProvider::removeItems(int fromPos, int toPos)
 {
     Q_D(QLocalMediaPlaylistProvider);
