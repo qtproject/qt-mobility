@@ -75,8 +75,8 @@ public:
     qreal playbackRate() const;
     void setPlaybackRate(qreal rate);
     
-    bool isMetadataAvailable(); 
-    QVariant metaData(QtMedia::MetaData key);
+    bool isMetadataAvailable() const; 
+    QVariant metaData(const QString& key) const;
 
 private: // From MMdaAudioPlayerCallback
     void MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration);

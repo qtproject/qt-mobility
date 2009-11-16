@@ -188,12 +188,12 @@ QPair<qint64, qint64> S60MediaPlayerSession::seekRange() const
     
 }
 
-bool S60MediaPlayerSession::isMetadataAvailable()
+bool S60MediaPlayerSession::isMetadataAvailable() const
 {
     return false;
 }
 
-QVariant S60MediaPlayerSession::metaData(QtMedia::MetaData key)
+QVariant S60MediaPlayerSession::metaData(const QString& key) const
 {
     Q_UNUSED(key);
     return QVariant();

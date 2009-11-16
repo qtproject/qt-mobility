@@ -209,79 +209,12 @@ void S60AudioPlayerSession::MapcPlayComplete(TInt aError)
 
 }
 
-bool S60AudioPlayerSession::isMetadataAvailable()
+bool S60AudioPlayerSession::isMetadataAvailable() const
 {
     return (m_numberOfMetaDataEntries > 0);
 }
 
-QVariant S60AudioPlayerSession::metaData(QtMedia::MetaData key)
+QVariant S60AudioPlayerSession::metaData(const QString& key) const
 {
-    QString keyString;
-
-    switch(key) {
-        case QtMedia::Title: keyString = QString("title"); break;
-        case QtMedia::AlbumArtist: keyString = QString("artist"); break;
-        case QtMedia::Comment: keyString = QString("comment"); break;
-        case QtMedia::Genre: keyString = QString("genre"); break;
-        case QtMedia::Year: keyString = QString("year"); break;
-        case QtMedia::Copyright: keyString = QString("copyright"); break;
-        case QtMedia::AlbumTitle: keyString = QString("album"); break;
-        case QtMedia::Composer: keyString = QString("composer"); break;
-        case QtMedia::TrackNumber: keyString = QString("albumtrack"); // TODO: Is this ok? Should there be some track name?
-        case QtMedia::SubTitle:
-        case QtMedia::Description:
-        case QtMedia::Category:
-        case QtMedia::Date:
-        case QtMedia::UserRating:
-        case QtMedia::Keywords:
-        case QtMedia::Language:
-        case QtMedia::Publisher:
-        case QtMedia::ParentalRating:
-        case QtMedia::RatingOrganisation:       
-        case QtMedia::Size:
-        case QtMedia::MediaType:
-        case QtMedia::Duration:
-        case QtMedia::AudioBitrate:
-        case QtMedia::AudioCodec:
-        case QtMedia::AverageLevel:
-        case QtMedia::Channels:
-        case QtMedia::PeakValue:
-        case QtMedia::Frequency:
-        case QtMedia::Author:
-        case QtMedia::ContributingArtist:
-        case QtMedia::Conductor:
-        case QtMedia::Lyrics:
-        case QtMedia::Mood:
-        case QtMedia::TrackCount:
-        case QtMedia::CoverArtUriSmall:
-        case QtMedia::CoverArtUriLarge:
-        case QtMedia::Resolution:
-        case QtMedia::PixelAspectRatio:
-        case QtMedia::VideoFrameRate:
-        case QtMedia::VideoBitRate:
-        case QtMedia::VideoCodec:
-        case QtMedia::PosterUri:
-        case QtMedia::ChapterNumber:
-        case QtMedia::Director:
-        case QtMedia::LeadPerformer:
-        case QtMedia::Writer:
-        case QtMedia::CameraManufacturer:
-        case QtMedia::CameraModel:
-        case QtMedia::Event:
-        case QtMedia::Subject:
-        default: return QVariant();
-    }
-
-    //TODO: Should those cases be handled?
-    //_LIT(KMMFMetaEntryOriginalArtist, 	"originalartist");
-    //_LIT(KMMFMetaEntryAPIC, 	"attachedpicture");
-    //_LIT(KMMFMetaEntryWOAF, 	"officialaudiofilewebpage");
-    //_LIT(KMMFMetaEntryWOAR, 	"officialartistwebpage");
-    //_LIT(KMMFMetaEntryWOAS, 	"officialaudiosourcewebpage");
-    //_LIT(KMMFMetaEntryWORS, 	"officialinternetradiostationhomepage");
-    //_LIT(KMMFMetaEntryWPAY, 	"payment");
-    //_LIT(KMMFMetaEntryWPUB, 	"publishersofficialwebpage");
-    //_LIT(KMMFMetaEntryWXXX, 	"userdefinedurllinkframe");
-    //_LIT(KMMFMetaEntryVendorID,	"vendorid");
-    return m_metaDataMap.value(keyString);
+    return m_metaDataMap.value(key);
 }

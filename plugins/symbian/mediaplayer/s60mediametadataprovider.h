@@ -65,6 +65,9 @@ public:
     QVariant extendedMetaData(const QString &key) const ;
     void setExtendedMetaData(const QString &key, const QVariant &value);
     QStringList availableExtendedMetaData() const;
+    
+private:
+    QString metaDataKeyAsString(QtMedia::MetaData key) const;
 
 private:
     mutable S60MediaPlayerSession *m_session;

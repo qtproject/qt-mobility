@@ -79,7 +79,7 @@ QVariant S60MediaMetaDataProvider::metaData(QtMedia::MetaData key) const
 {
     m_session = m_mediaPlayerResolver.PlayerSession();
     if (m_session && m_session->isMetadataAvailable())
-        return m_session->metaData(key);
+        return m_session->metaData(metaDataKeyAsString(key));
     return QVariant();
 }
 
@@ -90,12 +90,12 @@ void S60MediaMetaDataProvider::setMetaData(QtMedia::MetaData key, QVariant const
 }
 QList<QtMedia::MetaData> S60MediaMetaDataProvider::availableMetaData() const
 {
-
+    // TODO:
 }
 
 QVariant S60MediaMetaDataProvider::extendedMetaData(const QString &key) const
 {
-    return QVariant(); //TODO:m_session->tags().value(key.toLatin1());
+    return QVariant(); //TODO:
 }
 
 void S60MediaMetaDataProvider::setExtendedMetaData(const QString &key, QVariant const &value)
@@ -106,5 +106,67 @@ void S60MediaMetaDataProvider::setExtendedMetaData(const QString &key, QVariant 
 
 QStringList S60MediaMetaDataProvider::availableExtendedMetaData() const
 {
+    return QStringList(); // TODO: 
+}
 
+QString S60MediaMetaDataProvider::metaDataKeyAsString(QtMedia::MetaData key) const
+{
+    QString metaDataKey;
+
+    switch(key) {
+        case QtMedia::Title: metaDataKey = QString("title"); break;
+        case QtMedia::AlbumArtist: metaDataKey = QString("artist"); break;
+        case QtMedia::Comment: metaDataKey = QString("comment"); break;
+        case QtMedia::Genre: metaDataKey = QString("genre"); break;
+        case QtMedia::Year: metaDataKey = QString("year"); break;
+        case QtMedia::Copyright: metaDataKey = QString("copyright"); break;
+        case QtMedia::AlbumTitle: metaDataKey = QString("album"); break;
+        case QtMedia::Composer: metaDataKey = QString("composer"); break;
+        case QtMedia::TrackNumber: metaDataKey = QString("albumtrack");
+        case QtMedia::SubTitle: break; // TODO: Find the matching metadata keys
+        case QtMedia::Description:
+        case QtMedia::Category:
+        case QtMedia::Date:
+        case QtMedia::UserRating:
+        case QtMedia::Keywords:
+        case QtMedia::Language:
+        case QtMedia::Publisher:
+        case QtMedia::ParentalRating:
+        case QtMedia::RatingOrganisation:       
+        case QtMedia::Size:
+        case QtMedia::MediaType:
+        case QtMedia::Duration:
+        case QtMedia::AudioBitrate:
+        case QtMedia::AudioCodec:
+        case QtMedia::AverageLevel:
+        case QtMedia::Channels:
+        case QtMedia::PeakValue:
+        case QtMedia::Frequency:
+        case QtMedia::Author:
+        case QtMedia::ContributingArtist:
+        case QtMedia::Conductor:
+        case QtMedia::Lyrics:
+        case QtMedia::Mood:
+        case QtMedia::TrackCount:
+        case QtMedia::CoverArtUriSmall:
+        case QtMedia::CoverArtUriLarge:
+        case QtMedia::Resolution:
+        case QtMedia::PixelAspectRatio:
+        case QtMedia::VideoFrameRate:
+        case QtMedia::VideoBitRate:
+        case QtMedia::VideoCodec:
+        case QtMedia::PosterUri:
+        case QtMedia::ChapterNumber:
+        case QtMedia::Director:
+        case QtMedia::LeadPerformer:
+        case QtMedia::Writer:
+        case QtMedia::CameraManufacturer:
+        case QtMedia::CameraModel:
+        case QtMedia::Event:
+        case QtMedia::Subject:
+        default:
+            break;
+    }
+    
+    return metaDataKey;
 }

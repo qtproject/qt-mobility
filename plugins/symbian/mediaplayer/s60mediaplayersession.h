@@ -82,8 +82,8 @@ public:
     
     virtual void setMedia(const QMediaContent&, QIODevice *);
     
-    virtual bool isMetadataAvailable(); 
-    virtual QVariant metaData(QtMedia::MetaData key);
+    virtual bool isMetadataAvailable() const; 
+    virtual QVariant metaData(const QString& key) const;
     
 public slots:
     virtual void load(const QUrl &url) = 0;
