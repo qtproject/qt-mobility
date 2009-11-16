@@ -819,7 +819,7 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     f.setDataType(QVariant::String);
     fields.insert(QContactOnlineAccount::FieldAccountUri, f);
     fields.insert(QContactOnlineAccount::FieldServiceProvider, f);
-    f.setAccessConstract(QContactDetailDefinitionField::ReadOnly);
+    f.setAccessConstraint(QContactDetailDefinitionField::ReadOnly);
     fields.insert(QContactOnlineAccount::FieldNickname, f);
     fields.insert(QContactOnlineAccount::FieldStatusMessage, f);
     QVariantList presenceValues;
@@ -833,7 +833,7 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     f.setAllowableValues(presenceValues);
     fields.insert(QContactOnlineAccount::FieldPresence, f);
     f.setDataType(QVariant::StringList);
-    f.setAccessConstract(QContactDetailDefinitionField::NoConstraint);
+    f.setAccessConstraint(QContactDetailDefinitionField::NoConstraint);
     f.setAllowableValues(contexts);
     fields.insert(QContactDetail::FieldContext, f);
     f.setAllowableValues(QVariantList()); // allow any subtypes!
