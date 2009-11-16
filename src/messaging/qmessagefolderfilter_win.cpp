@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderfilter.h"
 #include "qmessagefolderfilter_p.h"
 
@@ -127,12 +126,6 @@ bool QMessageFolderFilterPrivate::operator==(const QMessageFolderFilterPrivate &
             return false;
         }
     }
-    return true;
-}
-
-bool QMessageFolderFilterPrivate::matchesStore(const QMessageFolderFilter &filter, const MapiStorePtr &store)
-{
-    // TODO - return false if the filter excludes the entire store
     return true;
 }
 
@@ -607,4 +600,3 @@ QMessageFolderFilter QMessageFolderFilter::byAncestorFolderIds(const QMessageFol
     result.d_ptr->_criterion = QMessageFolderFilterPrivate::AncestorFolderFilter;
     return result;
 }
-#endif

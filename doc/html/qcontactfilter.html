@@ -23,6 +23,8 @@
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfilter.html#FilterType-enum">FilterType</a></b> { InvalidFilter, ContactDetailFilter, ContactDetailRangeFilter, ChangeLogFilter, ..., DefaultFilter }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfilter.html#MatchFlag-enum">MatchFlag</a></b> { MatchExactly, MatchContains, MatchStartsWith, MatchEndsWith, ..., MatchPhoneNumber }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfilter.html#MatchFlag-enum">MatchFlags</a></b></td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
@@ -64,6 +66,19 @@
 <tr><td valign="top"><tt>QContactFilter::LocalIdFilter</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">A filter which matches any contact whose local id is contained in a particular list of contact local ids</td></tr>
 <tr><td valign="top"><tt>QContactFilter::DefaultFilter</tt></td><td align="center" valign="top"><tt>9</tt></td><td valign="top">A filter which matches everything</td></tr>
 </table></p>
+<h3 class="flags"><a name="MatchFlag-enum"></a>enum QContactFilter::MatchFlag<br />flags QContactFilter::MatchFlags</h3>
+<p>Describes the semantics of matching followed by the filter</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QContactFilter::MatchExactly</tt></td><td align="center" valign="top"><tt>Qt::MatchExactly</tt></td><td valign="top">Performs <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a>-based matching</td></tr>
+<tr><td valign="top"><tt>QContactFilter::MatchContains</tt></td><td align="center" valign="top"><tt>Qt::MatchContains</tt></td><td valign="top">The search term is contained in the item</td></tr>
+<tr><td valign="top"><tt>QContactFilter::MatchStartsWith</tt></td><td align="center" valign="top"><tt>Qt::MatchStartsWith</tt></td><td valign="top">The search term matches the start of the item</td></tr>
+<tr><td valign="top"><tt>QContactFilter::MatchEndsWith</tt></td><td align="center" valign="top"><tt>Qt::MatchEndsWith</tt></td><td valign="top">The search term matches the end of the item</td></tr>
+<tr><td valign="top"><tt>QContactFilter::MatchFixedString</tt></td><td align="center" valign="top"><tt>Qt::MatchFixedString</tt></td><td valign="top">Performs string-based matching. String-based comparisons are case-insensitive unless the <tt>MatchCaseSensitive</tt> flag is also specified</td></tr>
+<tr><td valign="top"><tt>QContactFilter::MatchCaseSensitive</tt></td><td align="center" valign="top"><tt>Qt::MatchCaseSensitive</tt></td><td valign="top">The search is case sensitive</td></tr>
+<tr><td valign="top"><tt>QContactFilter::MatchPhoneNumber</tt></td><td align="center" valign="top"><tt>1024</tt></td><td valign="top">The search term is considered to be contained in the item by the platform where the search term is a phone number</td></tr>
+</table></p>
+<p>The MatchFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;MatchFlag&gt;. It stores an OR combination of MatchFlag values.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QContactFilter"></a>QContactFilter::QContactFilter ()</h3>

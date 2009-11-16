@@ -87,15 +87,13 @@ public:
 
     QMessageIdList queryMessages(const QMessageFilter &filter = QMessageFilter(), const QMessageOrdering &ordering = QMessageOrdering(), uint limit = 0, uint offset = 0) const;
     QMessageIdList queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options = 0, const QMessageOrdering &ordering = QMessageOrdering(), uint limit = 0, uint offset = 0) const;
-#ifdef QMESSAGING_OPTIONAL_FOLDER
+
     QMessageFolderIdList queryFolders(const QMessageFolderFilter &filter = QMessageFolderFilter(), const QMessageFolderOrdering &ordering = QMessageFolderOrdering(), uint limit = 0, uint offset = 0) const;
-#endif
+
     QMessageAccountIdList queryAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter(), const QMessageAccountOrdering &ordering = QMessageAccountOrdering(), uint limit = 0, uint offset = 0) const;
 
     int countMessages(const QMessageFilter &filter = QMessageFilter()) const;
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     int countFolders(const QMessageFolderFilter &filter = QMessageFolderFilter()) const;
-#endif
     int countAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter()) const;
 
     bool addMessage(QMessage *m);
@@ -104,9 +102,7 @@ public:
     bool removeMessages(const QMessageFilter &filter, RemovalOption option = RemoveOnOriginatingServer);
 
     QMessage message(const QMessageId &id) const;
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolder folder(const QMessageFolderId &id) const;
-#endif
     QMessageAccount account(const QMessageAccountId &id) const;
 
     NotificationFilterId registerNotificationFilter(const QMessageFilter &filter);

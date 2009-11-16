@@ -40,7 +40,6 @@
 ****************************************************************************/
 #ifndef QMESSAGEFOLDERIDPRIVATE_H
 #define QMESSAGEFOLDERIDPRIVATE_H
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderid.h"
 #if defined(Q_OS_WIN)
 #include "winhelpers_p.h"
@@ -82,5 +81,4 @@ public:
 #endif    
 };
 
-#endif
 #endif

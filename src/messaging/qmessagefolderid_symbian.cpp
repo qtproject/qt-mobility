@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderid.h"
 #include "qmessagefolderid_p.h"
 
@@ -116,5 +115,3 @@ uint qHash(const QMessageFolderId &id)
 {
     return qHash(id.toString());
 }
-
-#endif

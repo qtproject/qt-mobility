@@ -128,13 +128,13 @@ quint32 CntTransformAnniversarySimple::getIdForField(const QString& fieldName) c
  */
 void CntTransformAnniversarySimple::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
     QContactDetailDefinition d;
 
     d.setName(QContactAnniversary::DefinitionName);
-    f.dataType = QVariant::Date;
-    f.allowableValues = QVariantList();
+    f.setDataType(QVariant::Date);
+    f.setAllowableValues(QVariantList());
     fields.insert(QContactAnniversary::FieldOriginalDate, f);
 
     d.setFields(fields);

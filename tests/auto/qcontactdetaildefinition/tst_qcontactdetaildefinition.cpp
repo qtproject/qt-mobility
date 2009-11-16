@@ -96,11 +96,11 @@ void tst_QContactDetailDefinition::testCtor()
     QVERIFY(def.isUnique() == false);
 
     /* Set a few things */
-    QMap<QString, QContactDetailDefinition::Field> map;
-    QContactDetailDefinition::Field currField;
-    currField.dataType = QVariant::String;
+    QMap<QString, QContactDetailDefinitionField> map;
+    QContactDetailDefinitionField currField;
+    currField.setDataType(QVariant::String);
     map.insert("string", currField);
-    currField.dataType = QVariant::DateTime;
+    currField.setDataType(QVariant::DateTime);
     map.insert("datetime", currField);
 
     def.setName("Test ID");
@@ -166,24 +166,24 @@ void tst_QContactDetailDefinition::testGetSet()
     QVERIFY(def.accessConstraint() == QContactDetailDefinition::CreateOnly);
 
     /* Type map */
-    QMap<QString, QContactDetailDefinition::Field> map;
-    QContactDetailDefinition::Field currField;
-    currField.dataType = QVariant::String;
+    QMap<QString, QContactDetailDefinitionField> map;
+    QContactDetailDefinitionField currField;
+    currField.setDataType(QVariant::String);
     map.insert("string", currField);
-    currField.dataType = QVariant::DateTime;
+    currField.setDataType(QVariant::DateTime);
     map.insert("datetime", currField);
 
     def.setFields(map);
     QVERIFY(def.fields() == map);
 
-    def.setFields(QMap<QString, QContactDetailDefinition::Field>());
+    def.setFields(QMap<QString, QContactDetailDefinitionField>());
     QVERIFY(def.fields().isEmpty());
 
     /* Non const accessor */
     def.fields() = map;
     QVERIFY(def.fields() == map);
 
-    QMap<QString, QContactDetailDefinition::Field>& rmap = def.fields();
+    QMap<QString, QContactDetailDefinitionField>& rmap = def.fields();
     def.fields().clear();
 
     QVERIFY(rmap == def.fields());
@@ -199,9 +199,9 @@ void tst_QContactDetailDefinition::testEmpty()
     QVERIFY(!def.isEmpty());
     def.setName(QString());
     QVERIFY(def.isEmpty());
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
-    f.dataType = QVariant::String;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
+    f.setDataType(QVariant::String);
     fields.insert("Field", f);
     def.setFields(fields);
     QVERIFY(!def.isEmpty());
@@ -258,28 +258,28 @@ void tst_QContactDetailDefinition::testEquality()
     QVERIFY(def2 == def1);
 
     /* Test Fields */
-    QContactDetailDefinition::Field f1, f2;
+    QContactDetailDefinitionField f1, f2;
     QVERIFY(f1 == f2);
-    QVERIFY(f1.allowableValues.count() == 0);
-    QVERIFY(f1.dataType == QVariant::Invalid);
+    QVERIFY(f1.allowableValues().count() == 0);
+    QVERIFY(f1.dataType() == QVariant::Invalid);
 
-    f1.dataType = QVariant::String;
+    f1.setDataType(QVariant::String);
     QVERIFY(f1 != f2);
-    f1.dataType = QVariant::Invalid;
+    f1.setDataType(QVariant::Invalid);
     QVERIFY(f1 == f2);
     QVariantList vlist;
     vlist << "string" << 56;
-    f1.allowableValues = vlist;
+    f1.setAllowableValues(vlist);
     QVERIFY(f1 != f2);
-    f2.allowableValues = vlist;
+    f2.setAllowableValues(vlist);
     QVERIFY(f1 == f2);
 
     /* Field map */
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field currField;
-    currField.dataType = QVariant::String;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField currField;
+    currField.setDataType(QVariant::String);
     fields.insert("string", currField);
-    currField.dataType = QVariant::DateTime;
+    currField.setDataType(QVariant::DateTime);
     fields.insert("datetime", currField);
 
     def1.setFields(fields);
@@ -295,7 +295,7 @@ void tst_QContactDetailDefinition::testEquality()
     /* Same map done a different way */
     fields.clear();
     fields.insert("datetime", currField);
-    currField.dataType = QVariant::String;
+    currField.setDataType(QVariant::String);
     fields.insert("string", currField);
     def2.setFields(fields);
     QVERIFY(def1 == def2);

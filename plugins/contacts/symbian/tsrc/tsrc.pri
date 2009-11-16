@@ -1,5 +1,6 @@
 # Symbian plugin header and source files
 SYMBIAN_HEADERS += \
+        ../../inc/cntsymbianengine.h \
         ../../inc/cntsymbianengine_p.h \
         ../../inc/cnttransformcontact.h \
         ../../inc/cnttransformcontactdata.h \
@@ -13,6 +14,7 @@ SYMBIAN_HEADERS += \
         ../../inc/cnttransformonlineaccount.h \
         ../../inc/cnttransformorganisation.h \
         ../../inc/cnttransformavatar.h \
+        ../../inc/cnttransformavatarsimple.h \
         ../../inc/cnttransformsynctarget.h \
         ../../inc/cnttransformgender.h \
         ../../inc/cnttransformanniversary.h \
@@ -30,9 +32,11 @@ SYMBIAN_HEADERS += \
         ../../inc/cntrelationshipgroup.h \
         ../../inc/cntsymbianfiltersqlhelper.h \
         ../../inc/cntsymbiansrvconnection.h \
-        ../../inc/cntsymbiantransformerror.h
+        ../../inc/cntsymbiantransformerror.h \
+        ../../inc/cntsymbiandatabase.h
 
 SYMBIAN_SOURCES += \
+        ../../src/cntsymbianengine.cpp \
         ../../src/cntsymbianengine_p.cpp \
         ../../src/cnttransformcontact.cpp \
         ../../src/cnttransformcontactdata.cpp \
@@ -46,6 +50,7 @@ SYMBIAN_SOURCES += \
         ../../src/cnttransformonlineaccount.cpp \
         ../../src/cnttransformorganisation.cpp \
         ../../src/cnttransformavatar.cpp \
+        ../../src/cnttransformavatarsimple.cpp \
         ../../src/cnttransformsynctarget.cpp \
         ../../src/cnttransformgender.cpp \
         ../../src/cnttransformanniversarysimple.cpp \
@@ -61,4 +66,5 @@ SYMBIAN_SOURCES += \
         ../../src/cntrelationshipgroup.cpp \
         ../../src/cntsymbianfiltersqlhelper.cpp \
         ../../src/cntsymbiansrvconnection.cpp \
-        ../../src/cntsymbiantransformerror.cpp
+        ../../src/cntsymbiantransformerror.cpp \
+        ../../src/cntsymbiandatabase.cpp

@@ -184,7 +184,7 @@ quint32 CntTransformGeolocation::getIdForField(const QString& fieldName) const
         return 0;
     else if (QContactGeolocation::FieldTimestamp == fieldName)
         return 0;
-    else 
+    else
         return 0;
 
 }
@@ -196,17 +196,16 @@ quint32 CntTransformGeolocation::getIdForField(const QString& fieldName) const
  */
 void CntTransformGeolocation::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
     QContactDetailDefinition d;
 
     // Geolocation fields
     d.setName(QContactGeolocation::DefinitionName);
-    fields.clear();
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
     fields.insert(QContactGeolocation::FieldLabel, f);
-    f.dataType = QVariant::Double;
+    f.setDataType(QVariant::Double);
     fields.insert(QContactGeolocation::FieldLatitude, f);
     fields.insert(QContactGeolocation::FieldLongitude, f);
     /*
@@ -221,8 +220,11 @@ void CntTransformGeolocation::detailDefinitions(QMap<QString, QContactDetailDefi
     */
 
     // Contexts
-    f.dataType = QVariant::StringList;
-    f.allowableValues << QString(QLatin1String(QContactDetail::ContextHome)) << QString(QLatin1String(QContactDetail::ContextWork)) << QString(QLatin1String(QContactDetail::ContextOther));
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList()
+            << QString(QLatin1String(QContactDetail::ContextHome))
+            << QString(QLatin1String(QContactDetail::ContextWork))
+            << QString(QLatin1String(QContactDetail::ContextOther)));
     fields.insert(QContactDetail::FieldContext, f);
 
     d.setFields(fields);

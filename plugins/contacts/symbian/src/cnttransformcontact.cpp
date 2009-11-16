@@ -51,6 +51,7 @@
 #include "cnttransformonlineaccount.h"
 #include "cnttransformorganisation.h"
 #include "cnttransformavatar.h"
+#include "cnttransformavatarsimple.h"
 #include "cnttransformsynctarget.h"
 #include "cnttransformgender.h"
 #include "cnttransformanniversary.h"
@@ -97,16 +98,17 @@ void CntTransformContact::initializeCntTransformContactData()
 	m_transformContactData.insert(URL, new CntTransformUrl);
 	m_transformContactData.insert(Birthday, new CntTransformBirthday);
 	m_transformContactData.insert(Organisation, new CntTransformOrganisation);
+	m_transformContactData.insert(SyncTarget, new CntTransformSyncTarget);
 	m_transformContactData.insert(Note, new CntTransformNote);
 	m_transformContactData.insert(Family, new CntTransformFamily);
 
 #ifdef USE_CUSTOM_CNT_MODEL_FIELDS
-	// These are not supported on pre-10.1
+	// variated transform classes
+    m_transformContactData.insert(Avatar, new CntTransformAvatar);
     m_transformContactData.insert(Anniversary, new CntTransformAnniversary);
-	m_transformContactData.insert(Geolocation, new CntTransformGeolocation);
 
-    // Causes a "CPbk2ContactEdit.. 2" panic in Phonebook2 contact editor
-    // It is probably ok to use this only in 10.1 and newer
+    // not supported on pre-10.1
+	m_transformContactData.insert(Geolocation, new CntTransformGeolocation);
     m_transformContactData.insert(Gender, new CntTransformGender);
 
     // Causes a "CPbk2ContactEdit.. 2" panic in Phonebook2 contact editor
@@ -115,17 +117,10 @@ void CntTransformContact::initializeCntTransformContactData()
     // at all.
     m_transformContactData.insert(OnlineAccount, new CntTransformOnlineAccount);
 
-    // TODO: The following transform classes should be checked. What do we
-	// need to change to make them compatible with Virtual Phonebook and
-	// Phonebook2?
-
-    // Causes a "CPbk2ContactEdit.. 2" panic in Phonebook2 contact editor.
-    // Avatar is probably not correctly mapped to image fields of a contact item
-    m_transformContactData.insert(Avatar, new CntTransformAvatar);
-    // Causes a "CPbk2ContactEdit.. 2" panic in Phonebook2 contact editor
-    m_transformContactData.insert(SyncTarget, new CntTransformSyncTarget);
 #else
+    // variated transform classes
     m_transformContactData.insert(Anniversary, new CntTransformAnniversarySimple);
+    m_transformContactData.insert(Avatar, new CntTransformAvatarSimple);
 #endif
 }
 
@@ -216,7 +211,7 @@ void CntTransformContact::transformContactL(
 	    if (!detail->isEmpty()) {
             QList<CContactItemField *> fieldList = transformDetailL(*detail);
             int fieldCount = fieldList.count();
-            
+
             // check if the contact has any unsupported details
             if(fieldCount == 0) {
                 if (detail->definitionName() != QContactDisplayLabel::DefinitionName
@@ -226,7 +221,7 @@ void CntTransformContact::transformContactL(
                 User::Leave(KErrInvalidContactDetail);
                 }
             }
-    
+
             for (int j = 0; j < fieldCount; j++)
             {
                 //Add field to fieldSet
@@ -292,12 +287,31 @@ TUint32 CntTransformContact::GetIdForDetailL(const QContactDetailFilter& detailF
 QMap<QString, QContactDetailDefinition> CntTransformContact::detailDefinitions(QContactManager::Error& error) const
 {
     Q_UNUSED(error);
+
+    // Add definitions implemented by the transform leaf classes
     QMap<QString, QContactDetailDefinition> defMap;
     QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
     while (i != m_transformContactData.constEnd()) {
         i.value()->detailDefinitions(defMap);
         i++;
     }
+
+    // Add definitions for contact types
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
+    QContactDetailDefinition d;
+
+    d.setName(QContactType::DefinitionName);
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList()
+            << QString(QLatin1String(QContactType::TypeContact))
+            << QString(QLatin1String(QContactType::TypeGroup)));
+    fields.insert(QContactType::FieldType, f); // note: NO CONTEXT!!
+    d.setFields(fields);
+    d.setUnique(true);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+    defMap.insert(d.name(), d);
+
     return defMap;
 }
 
