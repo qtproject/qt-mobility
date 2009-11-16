@@ -2281,16 +2281,16 @@ void tst_QContactManager::relationships()
         QSKIP("Skipping: This manager does not support relationships!", SkipSingle);
 
     int totalRelationships = cm->relationships().size();
-    int totalManagerRelationships = cm->relationships(QContactRelationship::IsManagerOf).size();
+    int totalManagerRelationships = cm->relationships(QContactRelationship::HasManager).size();
 
     QStringList availableRelationshipTypes = cm->supportedRelationshipTypes();
     if (availableRelationshipTypes.isEmpty()) {
         // if empty, but has the relationships feature, then it must support arbitrary types.
         // so, add a few types that we can use.
         // if it doesn't support relationships, then it doesn't matter anyway.
-        availableRelationshipTypes.append(QContactRelationship::IsManagerOf);
-        availableRelationshipTypes.append(QContactRelationship::IsSpouseOf);
-        availableRelationshipTypes.append(QContactRelationship::IsAssistantOf);
+        availableRelationshipTypes.append(QContactRelationship::HasManager);
+        availableRelationshipTypes.append(QContactRelationship::HasSpouse);
+        availableRelationshipTypes.append(QContactRelationship::HasAssistant);
     }
 
     QContact source;
@@ -2369,7 +2369,7 @@ void tst_QContactManager::relationships()
     }
 
     totalRelationships = cm->relationships().size();
-    totalManagerRelationships = cm->relationships(QContactRelationship::IsManagerOf).size();
+    totalManagerRelationships = cm->relationships(QContactRelationship::HasManager).size();
 
     QContactId dest1Uri = dest1.id();
     QContactId dest1EmptyUri;
@@ -2515,7 +2515,7 @@ void tst_QContactManager::relationships()
     br2.setRelationshipType(QContactRelationship::HasMember);
     br3.setFirst(source.id());
     br3.setSecond(dest3.id());
-    br3.setRelationshipType(QContactRelationship::IsAssistantOf);
+    br3.setRelationshipType(QContactRelationship::HasAssistant);
     batchList << br1 << br2 << br3;
 
     // ensure that the batch save works properly

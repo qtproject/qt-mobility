@@ -49,20 +49,18 @@
 #include <QString>
 
 /*!
-  \class QContactRelationship
-  \brief The QContactRelationship class describes a one-to-one relationship
-    between a locally-stored contact and another (possibly remote) contact.
- 
-  Each relationship is uniquely identified by the combination of the first contact id, second contact id, and the relationship type.
- 
-  A relationship should not contain a second contact which is the same as the first contact.
-  Any local contacts which are referenced in the relationship (that is, any source contact, or any second contact whose manager
-  URI is left empty or whose manager URI references the manager that stores the source contact, and in which the relationship
-  will be saved) should exist.
- 
-  If any of these requirements are not met, validation of the relationship may fail when attempting to save the relationship
-  in a QContactManager.
-  \ingroup contacts-details
+ * \class QContactRelationship
+ * \brief Describes a one-to-one relationship between a locally-stored contact and another (possibly remote) contact.
+ *
+ * Each relationship is uniquely identified by the combination of the first contact id, second contact id, and the relationship type.
+ *
+ * A relationship should not contain a second contact which is the same as the first contact.
+ * Any local contacts which are referenced in the relationship (that is, any source contact, or any second contact whose manager
+ * URI is left empty or whose manager URI references the manager that stores the source contact, and in which the relationship
+ * will be saved) should exist.
+ *
+ * If any of these requirements are not met, validation of the relationship may fail when attempting to save the relationship
+ * in a QContactManager.
  */
 
 /*!
@@ -84,22 +82,22 @@ Q_DEFINE_LATIN1_LITERAL(QContactRelationship::Aggregates, "Aggregates");
 Q_DEFINE_LATIN1_LITERAL(QContactRelationship::Is, "Is");
 
 /*!
- * \variable QContactRelationship::IsAssistantOf
- * The relationship type which identifies the first contact as being the assistant of the second contact
+ * \variable QContactRelationship::HasAssistant
+ * The relationship type which identifies the second contact as being the assistant of the first contact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::IsAssistantOf, "IsAssistantOf");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::HasAssistant, "HasAssistant");
 
 /*!
- * \variable QContactRelationship::IsManagerOf
- * The relationship type which identifies the first contact as being the manager of the second contact
+ * \variable QContactRelationship::HasManager
+ * The relationship type which identifies the second contact as being the manager of the first contact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::IsManagerOf, "IsManagerOf");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::HasManager, "HasManager");
 
 /*!
- * \variable QContactRelationship::IsSpouseOf
- * The relationship type which identifies the first contact as being the spouse of the second contact
+ * \variable QContactRelationship::HasSpouse
+ * The relationship type which identifies the second contact as being the spouse of the first contact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::IsSpouseOf, "IsSpouseOf");
+Q_DEFINE_LATIN1_LITERAL(QContactRelationship::HasSpouse, "HasSpouse");
 
 /*!
  * Constructs a new relationship

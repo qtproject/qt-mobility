@@ -467,6 +467,10 @@ void tst_QMessageStore::testMessage()
     QVERIFY(messageId != QMessageId());
     QCOMPARE(QMessageStore::instance()->countMessages(), originalCount + 1);
 
+#if defined(Q_OS_WIN)
+	// Give MAPI enough time to emit the message added notification
+	QTest::qSleep(1000);
+#endif
     while (QCoreApplication::hasPendingEvents())
         QCoreApplication::processEvents();
 
@@ -552,6 +556,9 @@ void tst_QMessageStore::testMessage()
     QMessageStore::instance()->updateMessage(&message);
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
 
+#if defined(Q_OS_WIN)
+	QTest::qSleep(1000);
+#endif
     while (QCoreApplication::hasPendingEvents())
         QCoreApplication::processEvents();
 
@@ -586,6 +593,9 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
     QCOMPARE(QMessageStore::instance()->countMessages(), originalCount);
 
+#if defined(Q_OS_WIN)
+	QTest::qSleep(1000);
+#endif
     while (QCoreApplication::hasPendingEvents())
         QCoreApplication::processEvents();
 
