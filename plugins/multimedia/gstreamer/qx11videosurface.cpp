@@ -190,6 +190,8 @@ void QX11VideoSurface::setWinId(WId id)
 
         QAbstractVideoSurface::stop();
     }
+
+    emit supportedFormatsChanged();
 }
 
 QRect QX11VideoSurface::displayRect() const

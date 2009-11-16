@@ -77,8 +77,9 @@ public:
     int hue() const;
     int saturation() const;
 
+    QSize sizeHint() const;
+
 public Q_SLOTS:
-    void setVisible(bool visible);
     void setFullScreen(bool fullScreen);
     void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
     void setBrightness(int brightness);
@@ -95,6 +96,11 @@ Q_SIGNALS:
 
 protected:
     bool event(QEvent *event);
+    void showEvent(QShowEvent *event);
+    void hideEvent(QHideEvent *event);
+    void resizeEvent(QResizeEvent *event);
+    void moveEvent(QMoveEvent *event);
+    void paintEvent(QPaintEvent *event);
 
 protected:
     QVideoWidgetPrivate *d_ptr;
@@ -107,6 +113,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_hueChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_saturationChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_fullScreenChanged(bool))
+    Q_PRIVATE_SLOT(d_func(), void _q_dimensionsChanged());
 };
 
 #endif
