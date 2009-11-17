@@ -72,10 +72,20 @@
     recording functions of other media objects, like QRadioTuner,
     QCamera or QAudioCaptureSource.
 
+    If the camera or radio is used as a source, recording
+    is only possible when the source is in appropriate state
+    like QCamera::ActiveState for camera.
+
     \code
     // Audio only recording
     audioSource = new QAudioCaptureSource;
     recorder = new QMediaRecorder(audioSource);
+
+    QAudioEncoderSettings audioSettings;
+    audioSettings.setCodec("audio/vorbis");
+    audioSettings.setQuality(QtMedia::HighQuality);
+
+    recorder->setEncodingSettings(audioSettings);
 
     recorder->setOutputLocation(QUrl::fromLocalFile(fileName));
     recorder->record();
@@ -85,7 +95,10 @@
     // Audio/Video recording
     camera = new QCamera(deviceName);
     recorder = new QMediaRecorder(camera);
+    preview = new QVideoWidget(camera);
+    camera->start();
 
+    //record with deafult settings after the camera has started
     recorder->setOutputLocation(QUrl::fromLocalFile(fileName));
     recorder->record();
     \endcode
@@ -192,7 +205,7 @@ QMediaRecorder::QMediaRecorder(QMediaObject *mediaObject, QObject *parent):
 }
 
 /*!
-    Destroys a media object.
+    Destroys a media recorder object.
 */
 
 QMediaRecorder::~QMediaRecorder()
@@ -202,19 +215,16 @@ QMediaRecorder::~QMediaRecorder()
 /*!
     \property QMediaRecorder::outputLocation
     \brief the destination location of media content.
+
+    Setting the location can fail for example when the service supports
+    only local file system locations while the network url was passed,
+    or the service doesn't support media recording.
 */
 
 QUrl QMediaRecorder::outputLocation() const
 {
     return d_func()->control ? d_func()->control->outputLocation() : QUrl();
 }
-
-/*!
-    Sets the output \a location and returns true if this operation was successful.
-    Setting the location can fail for example when the service supports
-    only local file system locations while the network url was passed,
-    or the service doesn't support media recording.
-*/
 
 bool QMediaRecorder::setOutputLocation(const QUrl &location)
 {
@@ -315,46 +325,54 @@ QString QMediaRecorder::audioCodecDescription(const QString &codec) const
 
 /*!
     Returns a list of supported audio sample rates.
+
+    If non null audio \a settings parameter is passed,
+    the returned list is reduced to sample rates supported with partial settings applied.
+
+    It can be used for example to query the list of sample rates, supported by specific audio codec.
 */
 
-QList<int> QMediaRecorder::supportedAudioSampleRates() const
+QList<int> QMediaRecorder::supportedAudioSampleRates(const QAudioEncoderSettings &settings) const
 {
     return d_func()->audioControl ?
-           d_func()->audioControl->supportedSampleRates() : QList<int>();
+           d_func()->audioControl->supportedSampleRates(settings) : QList<int>();
 }
 
 /*!
     Return the minimum resolution video can be encoded at.
 
-    \sa QVideoEncoderSettings::resolution(), maximumResolution()
+    \sa supportedResolutions(), QVideoEncoderSettings::resolution(), maximumResolution()
 */
-QSize QMediaRecorder::minimumResolution() const
+QSize QMediaRecorder::minimumResolution(const QVideoEncoderSettings &settings) const
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->minimumResolution() : QSize();
+           d_func()->videoControl->minimumResolution(settings) : QSize();
 }
 
 /*!
     Returns the maximum resolution video can be encoded at.
 
-    \sa QVideoEncoderSettings::resolution(), minimumResolution()
+    \sa supportedResolutions(), QVideoEncoderSettings::resolution(), minimumResolution()
 */
-QSize QMediaRecorder::maximumResolution() const
+QSize QMediaRecorder::maximumResolution(const QVideoEncoderSettings &settings) const
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->maximumResolution() : QSize();
+           d_func()->videoControl->maximumResolution(settings) : QSize();
 }
 
 /*!
     Returns a list of resolutions video can be encoded at.  An empty list is returned if the video
     encoder supports arbitrary resolutions within the minimum and maximum range.
 
+    If non null video \a settings parameter is passed,
+    the returned list is reduced to resolution supported with partial settings like video codec or framerate applied.
+
     \sa QVideoEncoderSettings::resolution(), minimumResolution(), maximumResolution()
 */
-QList<QSize> QMediaRecorder::supportedResolutions() const
+QList<QSize> QMediaRecorder::supportedResolutions(const QVideoEncoderSettings &settings) const
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->supportedResolutions() : QList<QSize>();
+           d_func()->videoControl->supportedResolutions(settings) : QList<QSize>();
 }
 
 /*!
@@ -362,10 +380,10 @@ QList<QSize> QMediaRecorder::supportedResolutions() const
 
     \sa QVideoEncoderSettings::frameRate(), maximumFrameRate()
 */
-qreal QMediaRecorder::minimumFrameRate()
+qreal QMediaRecorder::minimumFrameRate(const QVideoEncoderSettings &settings)
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->minimumFrameRate() : 0.0;
+           d_func()->videoControl->minimumFrameRate(settings) : 0.0;
 }
 
 /*!
@@ -373,24 +391,26 @@ qreal QMediaRecorder::minimumFrameRate()
 
     \sa QVideoEncoderSettings::frameRate(), minimumFrameRate()
 */
-qreal QMediaRecorder::maximumFrameRate()
+qreal QMediaRecorder::maximumFrameRate(const QVideoEncoderSettings &settings)
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->maximumFrameRate() : 0.0;
+           d_func()->videoControl->maximumFrameRate(settings) : 0.0;
 }
 
 /*!
     Returns a list of frame rates video can be encoded at. An empty list is returned if the encoder
     supports arbitrary frame rates within the minimum and maximum range.
 
+    If non null video \a settings parameter is passed,
+    the returned list is reduced to frame rates supported with partial settings like video codec or resolution applied.
+
     \sa QVideoEncoderSettings::frameRate(), minimumFrameRate(), maximumFrameRate()
 */
-QList<qreal> QMediaRecorder::supportedFrameRates() const
+QList<qreal> QMediaRecorder::supportedFrameRates(const QVideoEncoderSettings &settings) const
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->supportedFrameRates() : QList<qreal>();
+           d_func()->videoControl->supportedFrameRates(settings) : QList<qreal>();
 }
-
 
 /*!
     Returns a list of supported video codecs.
@@ -403,6 +423,8 @@ QStringList QMediaRecorder::supportedVideoCodecs() const
 
 /*!
     Returns a description of a video \a codec.
+
+    \sa setEncodingSettings()
 */
 QString QMediaRecorder::videoCodecDescription(const QString &codec) const
 {
@@ -412,6 +434,8 @@ QString QMediaRecorder::videoCodecDescription(const QString &codec) const
 
 /*!
     Returns the audio encoder settings being used.
+
+    \sa setEncodingSettings()
 */
 
 QAudioEncoderSettings QMediaRecorder::audioSettings() const
@@ -422,6 +446,8 @@ QAudioEncoderSettings QMediaRecorder::audioSettings() const
 
 /*!
     Returns the video encoder settings being used.
+
+    \sa setEncodingSettings()
 */
 
 QVideoEncoderSettings QMediaRecorder::videoSettings() const
@@ -432,6 +458,17 @@ QVideoEncoderSettings QMediaRecorder::videoSettings() const
 
 /*!
     Sets the \a audio and \a video encoder settings and container \a format MIME type.
+
+    It's only possible to change setttings when the encoder
+    is in the QMediaEncoder::StoppedState state.
+
+    If some parameters are not specified, or null settings are passed,
+    the encoder choose the default encoding parameters, depending on
+    media source properties.
+    But while setEncodingSettings is optional, the backend can preload
+    encoding pipeline to improve recording startup time.
+
+    \sa audioSettings(), videoSettings(), format()
 */
 
 void QMediaRecorder::setEncodingSettings(const QAudioEncoderSettings &audio,
@@ -456,6 +493,10 @@ void QMediaRecorder::setEncodingSettings(const QAudioEncoderSettings &audio,
 
 /*!
     Start recording.
+
+    This is an asynchronous call, with signal
+    stateCahnged(QMediaRecorder::RecordingState) being emited
+    when recording started, otherwise error() signal is emited.
 */
 
 void QMediaRecorder::record()
