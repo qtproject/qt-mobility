@@ -70,7 +70,6 @@ void tst_QSystemScreenSaver::tst_setScreenSaverInhibit()
     bool enabled = si.setScreenSaverInhibit();
     QVERIFY( enabled || !enabled);
 }
-}
 
 QTEST_MAIN(tst_QSystemScreenSaver)
 #include "tst_qsystemscreensaver.moc"
