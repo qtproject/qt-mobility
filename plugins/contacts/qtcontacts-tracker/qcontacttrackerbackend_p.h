@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-
 #ifndef QCONTACTTRACKERBACKEND_P_H
 #define QCONTACTTRACKERBACKEND_P_H
 
@@ -64,6 +63,8 @@ using namespace SopranoLive;
 #include "qcontactname.h"
 #include "qcontactphonenumber.h"
 #include "qcontactmanager.h"
+#include "qcontactmanagerinfo.h"
+#include "qcontactmanager_p.h"
 #include "qcontactmanagerenginefactory.h"
 #include "qtrackercontactasyncrequest.h"
 
@@ -122,10 +123,7 @@ public:
     QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
 
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
-    QContactDetailDefinition detailDefinition(const QString& definitionId, QContactManager::Error& error) const;
-    bool saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
-    bool removeDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
+    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
 
     /* Asynchronous Request Support */
     void requestDestroyed(QContactAbstractRequest* req);
@@ -136,6 +134,9 @@ public:
     bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
     bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
+
+    /* Synthesise the display label of a contact */
+    QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 
 
 private:

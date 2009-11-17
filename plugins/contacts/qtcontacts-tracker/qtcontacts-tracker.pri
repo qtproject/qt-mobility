@@ -3,7 +3,6 @@ message("qtcontacts-tracker.pri")
 message(" ^ including")
 DEFINES += QTCONTACTS_TRACKER_PRI
 
-include(../../common/debuglevel.pri)
 
 INCLUDEPATH += /usr/include/qt4/QtContacts
 INCLUDEPATH += $$PWD
