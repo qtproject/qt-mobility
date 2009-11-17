@@ -129,7 +129,7 @@ private:
     struct DATAHeader
     {
         chunk       descriptor;
-        quint8      data[];
+//        quint8      data[];
     };
 
     struct CombinedHeader
