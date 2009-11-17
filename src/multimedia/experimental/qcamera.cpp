@@ -866,6 +866,9 @@ void QCamera::capture(const QString &file)
 /*!
     \enum QCamera::State
     \value ActiveState  The camera has been started and can produce data.
+    \value SuspendedState The camera is temporary not available,
+           usually as a result of higher priority client requested
+           the camera device.
     \value StoppedState The camera has been stopped.
 */
 
