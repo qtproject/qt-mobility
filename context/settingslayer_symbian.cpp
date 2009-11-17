@@ -53,6 +53,8 @@ QT_BEGIN_NAMESPACE
 SymbianSettingsLayer::SymbianSettingsLayer()
 {
     qDebug("SymbianSettingsLayer::SymbianSettingsLayer()");
+    connect(&m_settingsManager, SIGNAL(valueChanged(const XQSettingsKey&, const QVariant&)),
+            this, SLOT(valueChanged(const XQSettingsKey&, const QVariant&)));
 }
 
 SymbianSettingsLayer::~SymbianSettingsLayer()
@@ -234,11 +236,39 @@ void SymbianSettingsLayer::setProperty(Handle handle, Properties properties)
     if (!sh)
         return;
     if (properties & QAbstractValueSpaceLayer::Publish) {
-        qDebug() << "TODO: Actual code for start monitoring" << sh->path;
+        QSet<QString> children;
+        pathMapper.getChildren(sh->path, children);
+        foreach(QString child, children) {
+            QString fullPath = sh->path;
+            if (fullPath.right(1) != QLatin1String("/"))
+                fullPath += QLatin1Char('/');
+            fullPath += child;
+
+            PathMapper::Target target;
+            quint32 category;
+            quint32 key;
+            if (pathMapper.resolvePath(fullPath, target, category, key)) {
+                XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
+                m_settingsManager.startMonitoring(settingsKey);
+            }
+            QByteArray hash;
+            hash += qHash(target);
+            hash += qHash((long)category);
+            hash += qHash((unsigned long)key);
+            m_monitoringHandles[hash] = sh;
+        }
     }
 
     if (!(properties & QAbstractValueSpaceLayer::Publish)) {
-        qDebug() << "TODO: Actual code for stop monitoring" << sh->path;
+        QSet<QString> children;
+        pathMapper.getChildren(sh->path, children);
+        foreach(QString child, children) {
+            QString fullPath = sh->path;
+            if (fullPath.right(1) != QLatin1String("/"))
+                fullPath += QLatin1Char('/');
+            fullPath += child;
+            qDebug() << "TODO: Actual code for stop monitoring" << fullPath;
+        }
     }
 }
 
@@ -365,5 +395,19 @@ bool SymbianSettingsLayer::notifyInterest(Handle, bool)
     qDebug("bool SymbianSettingsLayer::notifyInterest(Handle, bool)");
     return false;
 }
+
+void SymbianSettingsLayer::valueChanged(const XQSettingsKey& key, const QVariant& value)
+{
+    qDebug("void SymbianSettingsLayer::valueChanged(const XQSettingsKey& key, const QVariant& value)");
+    QByteArray hash;
+    hash += qHash(key.target());
+    hash += qHash(key.uid());
+    hash += qHash(key.key());
+
+    if (m_monitoringHandles.contains(hash)) {
+        emit handleChanged(Handle(m_monitoringHandles.value(hash)));
+    }
+}
+
 
 QT_END_NAMESPACE

@@ -45,6 +45,7 @@
 #include "qvaluespaceprovider.h"
 
 #include <QHash>
+#include <QByteArray>
 #include <QMultiMap>
 
 #include "pathmapper_symbian.h"
@@ -124,8 +125,13 @@ private:
         return 0;
     }
 
+private slots:
+    void valueChanged(const XQSettingsKey& key, const QVariant& value);
+
+private:    //data
     PathMapper pathMapper;
     XQSettingsManager m_settingsManager;
+    QHash<QByteArray, SymbianSettingsHandle *> m_monitoringHandles;
 };
 
 QT_END_NAMESPACE
