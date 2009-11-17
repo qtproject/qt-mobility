@@ -41,10 +41,10 @@
 
 #include <QtTest/QtTest>
 
-#include <multimedia/qaudiodevicecontrol.h>
-#include <multimedia/qvideodevicecontrol.h>
-#include <multimedia/qmediacontrol.h>
-#include <multimedia/qmediaservice.h>
+#include <qaudiodevicecontrol.h>
+#include <qvideodevicecontrol.h>
+#include <qmediacontrol.h>
+#include <qmediaservice.h>
 
 #include <QtGui/qapplication.h>
 #include <QtGui/qstyle.h>

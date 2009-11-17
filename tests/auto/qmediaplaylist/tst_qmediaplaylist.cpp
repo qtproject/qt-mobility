@@ -41,11 +41,11 @@
 
 #include <QtTest/QtTest>
 #include <QDebug>
-#include "multimedia/qmediaservice.h"
-#include "multimedia/qmediaplaylist.h"
-#include "multimedia/qmediaplaylistcontrol.h"
-#include "multimedia/qmediaplaylistnavigator.h"
-#include "multimedia/qmediapluginloader_p.h"
+#include "qmediaservice.h"
+#include "qmediaplaylist.h"
+#include "qmediaplaylistcontrol.h"
+#include "qmediaplaylistnavigator.h"
+#include "qmediapluginloader_p.h"
 
 #include "qm3uhandler.h"
 
@@ -197,9 +197,45 @@ void tst_QMediaPlaylist::append()
     QCOMPARE(playlist.size(), 1);
     QCOMPARE(playlist.media(0), content1);
 
+    QSignalSpy aboutToBeInsertedSignalSpy(&playlist, SIGNAL(itemsAboutToBeInserted(int,int)));
+    QSignalSpy insertedSignalSpy(&playlist, SIGNAL(itemsInserted(int,int)));
     playlist.appendItem(content2);
     QCOMPARE(playlist.size(), 2);
     QCOMPARE(playlist.media(1), content2);
+
+    QCOMPARE(aboutToBeInsertedSignalSpy.count(), 1);
+    QCOMPARE(aboutToBeInsertedSignalSpy.first()[0].toInt(), 1);
+    QCOMPARE(aboutToBeInsertedSignalSpy.first()[1].toInt(), 1);
+
+    QCOMPARE(insertedSignalSpy.count(), 1);
+    QCOMPARE(insertedSignalSpy.first()[0].toInt(), 1);
+    QCOMPARE(insertedSignalSpy.first()[1].toInt(), 1);
+
+    aboutToBeInsertedSignalSpy.clear();
+    insertedSignalSpy.clear();
+
+    QMediaContent content4(QUrl(QLatin1String("file:///4")));
+    QMediaContent content5(QUrl(QLatin1String("file:///5")));
+    playlist.appendItems(QList<QMediaContent>() << content3 << content4 << content5);
+    QCOMPARE(playlist.size(), 5);
+    QCOMPARE(playlist.media(2), content3);
+    QCOMPARE(playlist.media(3), content4);
+    QCOMPARE(playlist.media(4), content5);
+
+    QCOMPARE(aboutToBeInsertedSignalSpy.count(), 1);
+    QCOMPARE(aboutToBeInsertedSignalSpy[0][0].toInt(), 2);
+    QCOMPARE(aboutToBeInsertedSignalSpy[0][1].toInt(), 4);
+
+    QCOMPARE(insertedSignalSpy.count(), 1);
+    QCOMPARE(insertedSignalSpy[0][0].toInt(), 2);
+    QCOMPARE(insertedSignalSpy[0][1].toInt(), 4);
+
+    aboutToBeInsertedSignalSpy.clear();
+    insertedSignalSpy.clear();
+
+    playlist.appendItems(QList<QMediaContent>());
+    QCOMPARE(aboutToBeInsertedSignalSpy.count(), 0);
+    QCOMPARE(insertedSignalSpy.count(), 0);
 }
 
 void tst_QMediaPlaylist::insert()
@@ -231,6 +267,33 @@ void tst_QMediaPlaylist::insert()
     QCOMPARE(insertedSignalSpy.count(), 1);
     QCOMPARE(insertedSignalSpy.first()[0].toInt(), 1);
     QCOMPARE(insertedSignalSpy.first()[1].toInt(), 1);
+
+    aboutToBeInsertedSignalSpy.clear();
+    insertedSignalSpy.clear();
+
+    QMediaContent content4(QUrl(QLatin1String("file:///4")));
+    QMediaContent content5(QUrl(QLatin1String("file:///5")));
+    playlist.insertItems(1, QList<QMediaContent>() << content4 << content5);
+
+    QCOMPARE(playlist.media(0), content1);
+    QCOMPARE(playlist.media(1), content4);
+    QCOMPARE(playlist.media(2), content5);
+    QCOMPARE(playlist.media(3), content3);
+    QCOMPARE(playlist.media(4), content2);
+    QCOMPARE(aboutToBeInsertedSignalSpy.count(), 1);
+    QCOMPARE(aboutToBeInsertedSignalSpy[0][0].toInt(), 1);
+    QCOMPARE(aboutToBeInsertedSignalSpy[0][1].toInt(), 2);
+
+    QCOMPARE(insertedSignalSpy.count(), 1);
+    QCOMPARE(insertedSignalSpy[0][0].toInt(), 1);
+    QCOMPARE(insertedSignalSpy[0][1].toInt(), 2);
+
+    aboutToBeInsertedSignalSpy.clear();
+    insertedSignalSpy.clear();
+
+    playlist.insertItems(1, QList<QMediaContent>());
+    QCOMPARE(aboutToBeInsertedSignalSpy.count(), 0);
+    QCOMPARE(insertedSignalSpy.count(), 0);
 }
 
 
@@ -483,7 +546,11 @@ void tst_QMediaPlaylist::readOnlyPlaylist()
     //it's a read only playlist, so all the modification should fail
     QVERIFY(!playlist.appendItem(content1));
     QCOMPARE(playlist.size(), 3);
+    QVERIFY(!playlist.appendItems(QList<QMediaContent>() << content1 << content2));
+    QCOMPARE(playlist.size(), 3);
     QVERIFY(!playlist.insertItem(1, content1));
+    QCOMPARE(playlist.size(), 3);
+    QVERIFY(!playlist.insertItems(1, QList<QMediaContent>() << content1 << content2));
     QCOMPARE(playlist.size(), 3);
     QVERIFY(!playlist.removeItem(1));
     QCOMPARE(playlist.size(), 3);
@@ -491,6 +558,10 @@ void tst_QMediaPlaylist::readOnlyPlaylist()
     QCOMPARE(playlist.size(), 3);
     QVERIFY(!playlist.clear());
     QCOMPARE(playlist.size(), 3);
+
+    //but it is still allowed to append/insert an empty list
+    QVERIFY(playlist.appendItems(QList<QMediaContent>()));
+    QVERIFY(playlist.insertItems(1, QList<QMediaContent>()));
 
     playlist.shuffle();
     //it's still the same

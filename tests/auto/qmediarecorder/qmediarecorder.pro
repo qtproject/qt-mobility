@@ -1,10 +1,10 @@
 TARGET = tst_qmediarecorder
-
+INCLUDEPATH += ../../../src/multimedia
 CONFIG += testcase
 
 SOURCES += tst_qmediarecorder.cpp
 
 include (../../../common.pri)
 
-LIBS += -lQtMedia
+qtAddLibrary(QtMedia)
 

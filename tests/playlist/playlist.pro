@@ -1,17 +1,12 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2009-06-23T14:24:15
-#
-#-------------------------------------------------
-
 QT       += phonon
-
 TARGET = playlist
 TEMPLATE = app
 
-INCLUDEPATH += ../..
+INCLUDEPATH += ../../src/multimedia
 
-LIBS +=  ../../playlistformats/m3u/libqm3u.a -L$$OUT_PWD/../../../lib -lQtMedia
+qtAddLibrary(QtMedia)
+
+LIBS +=  ../../playlistformats/m3u/libqm3u.a
 
 SOURCES += main.cpp\
         imageviewer.cpp

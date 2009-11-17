@@ -42,8 +42,8 @@
 #include <QtTest/QtTest>
 #include <QDebug>
 
-#include <multimedia/qmediapluginloader_p.h>
-#include <multimedia/qmediaserviceproviderplugin.h>
+#include <qmediapluginloader_p.h>
+#include <qmediaserviceproviderplugin.h>
 
 
 class tst_QMediaPluginLoader : public QObject

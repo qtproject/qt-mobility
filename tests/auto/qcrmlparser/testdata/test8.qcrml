@@ -1,0 +1,17 @@
+<repository uidValue="0x12345678">
+  <key int="0x1">
+    <bit ref="Dharma/Swan">1</bit>
+    <bit ref="Dharma/Pearl">2</bit>
+    <bit ref="Dharma/Hydra">32</bit>
+    <bit ref="Dharma/LookingGlass">4</bit>
+  </key>
+<key name="Others" int="0xA">
+  <desc>List</desc>
+  <bit ref="Ben">
+    <desc>leader</desc>
+    2
+  </bit>
+  <bit ref="Tom">4</bit>
+  <bit ref="Ethan">5</bit>
+  </key>
+</repository>

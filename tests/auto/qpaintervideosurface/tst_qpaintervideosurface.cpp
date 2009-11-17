@@ -41,7 +41,7 @@
 
 #include <QtTest/QtTest>
 
-#include <multimedia/qpaintervideosurface_p.h>
+#include <qpaintervideosurface_p.h>
 
 #include <QtGui/qapplication.h>
 #include <QtMultimedia/qvideosurfaceformat.h>

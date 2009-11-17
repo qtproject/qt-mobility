@@ -1,9 +1,12 @@
 TEMPLATE = app
 CONFIG += example
 
-include (../../common.pri)
+contains(QT_CONFIG, multimedia): QT += multimedia
 
-LIBS += -lQtMedia
+INCLUDEPATH += ../../src/multimedia
+include(../examples.pri)
+
+qtAddLibrary(QtMedia)
 
 QMAKE_RPATHDIR += $$DESTDIR
 

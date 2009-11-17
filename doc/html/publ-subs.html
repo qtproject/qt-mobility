@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- publ-subs.qdoc -->
+<head>
+  <title>Publish and Subscribe</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Publish and Subscribe<br /><span class="subtitle"></span>
+</h1>
+<p>The Publish and Subscribe API enables applications to read item values, navigate through and subscribe to change notifications.</p>
+<ul><li><a href="#overview">Overview</a></li>
+<li><a href="#detailed-layer-descriptions">Detailed Layer Descriptions</a></li>
+<ul><li><a href="#shared-memory-layer">Shared Memory Layer</a></li>
+</ul>
+<li><a href="#examples">Examples</a></li>
+<ul><li><a href="#publish-and-subscribe">Publish and Subscribe</a></li>
+<li><a href="#battery-charging-accessing-publish-and-subscribe-from-qml">Battery Charging - Accessing Publish and Subscribe from QML</a></li>
+</ul>
+<li><a href="#namespaces-and-classes">Namespaces and Classes</a></li>
+</ul>
+<a name="overview"></a>
+<h3>Overview</h3>
+<p>The Qt Value Space unifies various sources of hierarchical data into a single consistent model. Conceptually the Value Space is a hierarchical tree of which each node or leaf can optionally contain a <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> value. A serialized version of a simple example Value Space might look like this.</p>
+<pre>    /Device/Buttons = 3
+    /Device/Buttons/1/Name = Menu
+    /Device/Buttons/1/Usable = true
+    /Device/Buttons/2/Name = Select
+    /Device/Buttons/2/Usable = false
+    /Device/Buttons/3/Name = Back
+    /Device/Buttons/3/Usable = true</pre>
+<p>Existing values within the Value Space are accessed through the <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> class. This class provides a means to read values, receive change notifications for a given path and navigate through the Value Space.</p>
+<p>New values are added to the Value Space via the <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> class. This class allows applications to publish values and receive interest notifications when applications connect to a path. Interest notifications can be used to refrain from updating values in the Value Space when there are no interested parties.</p>
+<p>Nodes in the Value Space can be thought of as representing schema objects. Obviously this is a conceptual differentiation and not a physical one, as internally the Value Space is treated as one large tree. By applying structured schema to the space &quot;explore-ability&quot; is increased. For example, the <tt>/Device/Buttons</tt> schema can be defined as containing a value representing the number of mappable buttons on a device, and a sub-item for each adhering to the <tt>MappableButton</tt> schema. The <tt>MappableButton</tt> schema itself may be defined as containing two attributes <tt>Name</tt> and <tt>Usable</tt>. Change notification is modeled in this fashion also. Were the <tt>/Device/Buttons/1/Name</tt> item to change, the <tt>/Device/Buttons/1</tt> item would also be marked as changed, and so on up the tree. This allows, for example, subscription to just <tt>/Device/Buttons</tt> to be notified when anything &quot;button&quot; related changes.</p>
+<p>Internally, the Value Space consists of an arbitrary number of data source trees, or layers, which are stacked on top of each other to form the final unified view. If a &quot;higher&quot; layer contains an item, it shadows the value of items in the layers below it. Consider the Value Space item <tt>/Device/Buttons</tt>. If two layers contained this item, the value in the layer with the higher layer order would shadow that with the lower layer order. However, if only the layer with the lower order contained this item, it would be visible through the <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> class, even if the higher order layer contained sub-items such as <tt>/Device/Buttons/1</tt>. That is, layer shadowing occurs by value not by path.</p>
+<p>Layer order is fixed and is defined in the layer implementation.</p>
+<p>The following Value Space layers are available:</p>
+<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Layer</th><th>Description</th></tr></thead>
+<tr valign="top" class="odd"><td><a href="#shared-memory-layer">Shared Memory Layer</a></td><td>The Shared Memory layer provides a non-permanent Value Space backing store using shared memory and local sockets. The Shared Memory layer is only available on Unix platforms.<p>The Shared Memory layer has an order of 0x10000000.</p>
+</td></tr>
+<tr valign="top" class="even"><td>Volatile Registry Layer</td><td>The Volatile Registry layer provides a non-permanent Value Space backing store using volatile keys stored in the Windows' registry. The Volatile Registry layer is only available on Windows platforms.<p>The Volatile Registry layer has an order of 0x1000.</p>
+</td></tr>
+<tr valign="top" class="odd"><td>Non-volatile Registry Layer</td><td>The Non-volatile Registry layer provides a permanent Value Space backing store using keys stored in the Windows' registry. The Non-volatile Registry layer is only available on Windows platforms. The Non-volatile Registry layer has an order of 0.</td></tr>
+<tr valign="top" class="even"><td>ContextKit Layer</td><td>The ContextKit layer provides a non-permanent Value Space backing store using ContextKit. Publishing values to this layer via <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> is currently not supported. The ContextKit layer has an order of 0.</td></tr>
+</table></p>
+<p>The Value Space has support for both client/server and peer-to-peer layer architectures. If a layer that uses a client/server architecture is used and a server process is not provided by the underlying system it will be necessary to start one. This can be done by calling QValueSpace::initValueSpaceServer() prior to any other use of the Value Space.</p>
+<a name="detailed-layer-descriptions"></a>
+<h3>Detailed Layer Descriptions</h3>
+<a name="shared-memory-layer"></a>
+<h4>Shared Memory Layer</h4>
+<p>The Shared Memory layer stores all values in a 10MB block of shared memory which is reserved when the Value Space server initializes. As the layer creates this region at startup, it is assumed that the operating system lazily commits memory. If this assumption is invalid, the Shared Memory layer will unnecessarily consume 10MB of memory.</p>
+<p>Value Space clients read from the Shared Memory layer's shared memory region directly. A kernel lock is acquired for each read to prevent corruption. While the layer supports concurrent readers, it is possible that a faulty or malicious application could acquire and refuse to release this lock causing any layer updates to be delayed indefinitely.</p>
+<p>Only the Value Space server ever writes to the shared memory region. When clients attempt to add items to the layer, their changes are transmitted via a <a href="http://qt.nokia.com/doc/4.5/qlocalsocket.html">QLocalSocket</a> (e.g&#x2e; <tt>/tmp/qt/valuespace_shmlayer</tt> domain socket on Unix systems) to the server where the update is performed. Updates are batched in-process and sent when the process re-enters the Qt event loop. Transmission and synchronization of changes can be forced manually by the <a href="qvaluespaceprovider.html#sync">QValueSpaceProvider::sync</a>() function, although as this requires a round trip between the client and server, doing so frequently may significantly degrade performance.</p>
+<p>Change notifications are transmitted to clients in the form of &quot;something has changed&quot; messages. Nodes within the shared memory region are versioned, which allows clients to quickly determine exactly what has changed without the need for a bulkier change notification protocol.</p>
+<a name="examples"></a>
+<h3>Examples</h3>
+<a name="publish-and-subscribe"></a>
+<h4>Publish and Subscribe</h4>
+<p>In the example <a href="publish-subscribe.html">Publish and Subscribe</a> the Value Space is used as a method of communicating changes in one dialog (the provider) to another dialog (the consumer).</p>
+<a name="battery-charging-accessing-publish-and-subscribe-from-qml"></a>
+<h4>Battery Charging - Accessing Publish and Subscribe from QML</h4>
+<p>In the example <a href="battery-charge.html">Accessing Publish and Subscribe from QML</a> the Publish and Subscribe concept is now extended to make the provider an input of the level of charge in a battery. A slider on the provider dialog represents the modifiable level of charge. The Value Space acts as a communications medium between the provider dialog and the consumer graphical battery animation. The battery is implemented in QML and C++ with Value Space supplying the charge level for the animation to represent.</p>
+<a name="namespaces-and-classes"></a>
+<h3>Namespaces and Classes</h3>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</a></th><td>Support for adding new logical data layers to the Qt Value Space</td></tr>
+<tr valign="top" class="even"><th><a href="qvaluespace.html">QValueSpace</a></th><td>Contains miscellaneous identifiers used throughtout the Publish and Subscribe API</td></tr>
+<tr valign="top" class="odd"><th><a href="qvaluespaceprovider.html">QValueSpaceProvider</a></th><td>Allows applications to publish values in the Value Space</td></tr>
+<tr valign="top" class="even"><th><a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a></th><td>Allows applications to read and subscribe to Value Space paths</td></tr>
+</table></p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Qt Mobility API</div></td>
+</tr></table></div></address></body>
+</html>

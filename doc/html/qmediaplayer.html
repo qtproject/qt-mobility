@@ -10,10 +10,10 @@
 <body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
-<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
-<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaPlayer Class Reference</h1>
-<p>The QMediaPlayer class is used for the playback of media sources. <a href="#details">More...</a></p>
+<p>The QMediaPlayer class allows the playing of a media source. <a href="#details">More...</a></p>
 <pre>    #include &lt;QMediaPlayer&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <p>Inherits <a href="qmediaobject.html">QMediaObject</a>.</p>
 <ul>
@@ -76,7 +76,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#volume-prop">volume</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>9 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
+<li><div bar="2" class="fn"></div>11 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
@@ -120,7 +120,7 @@
 <a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QtMedia::SupportEstimate </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#canPlay">canPlay</a></b> ( const QString &amp; <i>mimeType</i>, const QStringList &amp; <i>codecs</i> = QStringList(), Flags <i>flags</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QtMedia::SupportEstimate </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#hasSupport">hasSupport</a></b> ( const QString &amp; <i>mimeType</i>, const QStringList &amp; <i>codecs</i> = QStringList(), Flags <i>flags</i> = 0 )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
@@ -135,14 +135,25 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QMediaPlayer class is used for the playback of media sources.</p>
+<p>The QMediaPlayer class allows the playing of a media source.</p>
 <p>The QMediaPlayer class is a high level media playback class. It can be used to playback such content as songs, movies and internet radio. The content to playback is specified as a <a href="qmediacontent.html">QMediaContent</a>, which can be thought of as a main or canonical URL with addition information attached. When provided with a <a href="qmediacontent.html">QMediaContent</a> playback may be able to commence.</p>
 <pre>    player = new QMediaPlayer;
     connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
     player-&gt;setMedia(QUrl::fromLocalFile(&quot;/Users/me/Music/coolsong.mp3&quot;));
     player-&gt;setVolume(50);
     player-&gt;play();</pre>
-<p>See also <a href="qmediaobject.html">QMediaObject</a> and <a href="qmediaservice.html">QMediaService</a>.</p>
+<p><a href="qvideowidget.html">QVideoWidget</a> can be used with QMediaPlayer for video rendering and <a href="qmediaplaylist.html">QMediaPlaylist</a> for accessing playlist functionality.</p>
+<pre>    player = new QMediaPlayer;
+
+    playlist = new QMediaPlaylist(player);
+    playlist-&gt;append(QUrl(&quot;http:<span class="comment">//example.com/movie1.mp4&quot;));</span>
+    playlist-&gt;append(QUrl(&quot;http:<span class="comment">//example.com/movie2.mp4&quot;));</span>
+
+    widget = new QVideoWidget(player);
+    widget-&gt;show();
+
+    player-&gt;play();</pre>
+<p>See also <a href="qmediaobject.html">QMediaObject</a>, <a href="qmediaservice.html">QMediaService</a>, <a href="qvideowidget.html">QVideoWidget</a>, and <a href="qmediaplaylist.html">QMediaPlaylist</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="Error-enum"></a>enum QMediaPlayer::Error</h3>
@@ -157,6 +168,10 @@
 <tr><td valign="top"><tt>QMediaPlayer::ServiceMissingError</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">A valid playback service was not found, playback cannot proceed.</td></tr>
 </table></p>
 <h3 class="flags"><a name="Flag-enum"></a>enum QMediaPlayer::Flag<br />flags QMediaPlayer::Flags</h3>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QMediaPlayer::LowLatency</tt></td><td align="center" valign="top"><tt>0x01</tt></td><td valign="top">The player is expected to be used with simple audio formats, but playback should start without significant delay. Such playback service can be used for beeps, ringtones, etc.</td></tr>
+</table></p>
 <p>The Flags type is a typedef for <a href="qflags.html">QFlags</a>&lt;Flag&gt;. It stores an OR combination of Flag values.</p>
 <h3 class="fn"><a name="MediaStatus-enum"></a>enum QMediaPlayer::MediaStatus</h3>
 <p>Defines the status of a media player's current media.</p>
@@ -325,14 +340,13 @@
 </table>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMediaPlayer"></a>QMediaPlayer::QMediaPlayer ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0, <a href="qmediaplayer.html#Flag-enum">Flags</a> <i>flags</i> = 0, QMediaServiceProvider * <i>provider</i> = QMediaServiceProvider::defaultServiceProvider() )</h3>
-<p>Construct a <a href="qmediaplayer.html">QMediaPlayer</a> that uses the playback service from <i>provider</i>, parented to <i>parent</i>.</p>
+<h3 class="fn"><a name="QMediaPlayer"></a>QMediaPlayer::QMediaPlayer ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0, <a href="qmediaplayer.html#Flag-enum">Flags</a> <i>flags</i> = 0, <a href="qmediaserviceprovider.html">QMediaServiceProvider</a> * <i>provider</i> = QMediaServiceProvider::defaultServiceProvider() )</h3>
+<p>Construct a <a href="qmediaplayer.html">QMediaPlayer</a> that uses the playback service from <i>provider</i>, parented to <i>parent</i> and with <i>flags</i>.</p>
 <p>If a playback service is not specified the system default will be used.</p>
 <h3 class="fn"><a name="dtor.QMediaPlayer"></a>QMediaPlayer::~QMediaPlayer ()</h3>
 <p>Destroys the player object.</p>
 <h3 class="fn"><a name="bufferStatusChanged"></a>void QMediaPlayer::bufferStatusChanged ( int <i>percentFilled</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal the amount of the local buffer filled as a percentage by <i>percentFilled</i>.</p>
-<h3 class="fn"><a name="canPlay"></a><a href="qtmedia.html#SupportEstimate-enum">QtMedia::SupportEstimate</a> QMediaPlayer::canPlay ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>mimeType</i>, const <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> &amp; <i>codecs</i> = QStringList(), <a href="qmediaplayer.html#Flag-enum">Flags</a> <i>flags</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <h3 class="fn"><a name="durationChanged"></a>void QMediaPlayer::durationChanged ( <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qint64-typedef">qint64</a> <i>duration</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal the duration of the content has changed to <i>duration</i>, expressed in milliseconds.</p>
 <h3 class="fn"><a name="error"></a><a href="qmediaplayer.html#Error-enum">Error</a> QMediaPlayer::error () const</h3>
@@ -340,6 +354,9 @@
 <h3 class="fn"><a name="error-2"></a>void QMediaPlayer::error ( <a href="qmediaplayer.html#Error-enum">QMediaPlayer::Error</a> <i>error</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that an <i>error</i> condition has occurred.</p>
 <p>See also <a href="qmediaplayer.html#error-prop">errorString</a>().</p>
+<h3 class="fn"><a name="hasSupport"></a><a href="qtmedia.html#SupportEstimate-enum">QtMedia::SupportEstimate</a> QMediaPlayer::hasSupport ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>mimeType</i>, const <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> &amp; <i>codecs</i> = QStringList(), <a href="qmediaplayer.html#Flag-enum">Flags</a> <i>flags</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Returns the level of support a media player has for a <i>mimeType</i> and a set of <i>codecs</i>.</p>
+<p>The <i>flags</i> argument allows additional requirements such as performance indicators to be specified.</p>
 <h3 class="fn"><a name="mediaChanged"></a>void QMediaPlayer::mediaChanged ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>media</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the current playing content will be obtained from <i>media</i>.</p>
 <p>See also <a href="qmediaplayer.html#media-prop">media</a>().</p>
@@ -367,12 +384,12 @@
 <h3 class="fn"><a name="stop"></a>void QMediaPlayer::stop ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Stop playing, and reset the play position to the beginning.</p>
 <h3 class="fn"><a name="videoAvailabilityChanged"></a>void QMediaPlayer::videoAvailabilityChanged ( bool <i>videoAvailable</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal the availability of visual cntent has changed to <i>videoAvailable</i>.</p>
+<p>Signal the availability of visual content has changed to <i>videoAvailable</i>.</p>
 <h3 class="fn"><a name="volumeChanged"></a>void QMediaPlayer::volumeChanged ( int <i>volume</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal the playback volume has changed to <i>volume</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Multimedia API</div></td>
+<td align="right"><div align="right">Qt Mobility API</div></td>
 </tr></table></div></address></body>
 </html>

@@ -1,0 +1,87 @@
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+    \example samplephonebook
+    \title Sample Phonebook Example
+
+    \tableofcontents
+
+    \section1 Phone Book
+
+    This example shows how to write a simple phonebook with the \l{Contacts}{Contacts API}.
+
+    \section2 Motivation
+    This application was written to provide an example to developers of how to use the Qt Contacts API.
+    It also provides an example implementation of a vCard* serialiser and deserialiser, which enables
+    persistent storage of QContact objects if no other persistent-storage backend is available.
+
+    [*] \i{vCard is a registered trademark of the Internet Mail Consortium}
+
+    \section2 Use Case
+    Most people have a need to store information (such as addresses, telephone numbers and email addresses)
+    of people that they know.  This sample application provides a simple phone book which allows users
+    to store certain pieces of information about their contacts, and save them to disc.
+
+    \section2 Interface
+    The application is aimed at desktop platforms as opposed to mobile platforms, and thus uses regular widgets
+    as the basis of the interface.  The main screen consists of a list view on the left, the current contact's
+    details in the middle, and several navigation and control buttons on the right.
+
+    \image spb-screen.png Screenshot of the sample phone book
+
+    The interface of the application is similar to that found in the Qt Addressbook Tutorial.
+    Indeed, several sections of its code (including the "Find Contact" dialog code, and some of the main window
+    interface and initialisation code) was recycled.
+
+    \section2 Known Issues
+    The example is not intended to be feature complete.  Only a very limited subset of detail types are
+    supported by the application.  It exercises only a very small portion of the Qt Contacts API.
+
+    Furthermore:
+    \list
+        \o You cannot export an unsaved contact.
+        \o Exporting a saved contact to which changes have been made where those changes have not been saved
+    will result in the original, currently saved contact being exported.
+        \o Duplicate contacts are not filtered out - importing the same contact twice results in two identical contacts
+    appearing in the list.
+    \endlist
+*/

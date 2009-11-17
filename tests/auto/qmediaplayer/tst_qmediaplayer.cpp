@@ -43,11 +43,11 @@
 #include <QtCore/qdebug.h>
 #include <QtCore/qbuffer.h>
 
-#include <multimedia/qmediaplayer.h>
-#include <multimedia/qmediaplayercontrol.h>
-#include <multimedia/qmediaplaylist.h>
-#include <multimedia/qmediaservice.h>
-#include <multimedia/qmediastreamscontrol.h>
+#include <qmediaplayer.h>
+#include <qmediaplayercontrol.h>
+#include <qmediaplaylist.h>
+#include <qmediaservice.h>
+#include <qmediastreamscontrol.h>
 
 
 class AutoConnection
@@ -479,7 +479,7 @@ void tst_QMediaPlayer::testMedia()
     QBuffer stream;
     player->setMedia(mediaContent, &stream);
     QCOMPARE(player->media(), mediaContent);
-    QCOMPARE(player->mediaStream(), &stream);
+    QCOMPARE((QBuffer*)player->mediaStream(), &stream);
 }
 
 void tst_QMediaPlayer::testDuration()
@@ -744,6 +744,8 @@ void tst_QMediaPlayer::testMediaStatus()
 {
     QFETCH_GLOBAL(int, bufferStatus);
     int bufferSignals = 0;
+
+    player->setNotifyInterval(10);
 
     mockService->setMediaStatus(QMediaPlayer::NoMedia);
     mockService->setBufferStatus(bufferStatus);

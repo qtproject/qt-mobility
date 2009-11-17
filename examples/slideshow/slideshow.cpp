@@ -41,9 +41,9 @@
 
 #include "slideshow.h"
 
-#include <multimedia/qmediaservice.h>
-#include <multimedia/qmediaplaylist.h>
-#include <multimedia/qvideowidget.h>
+#include <qmediaservice.h>
+#include <qmediaplaylist.h>
+#include <qvideowidget.h>
 
 #include <QtGui>
 

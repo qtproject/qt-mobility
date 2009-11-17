@@ -45,7 +45,7 @@
 #include <QtGui>
 #include <QPair>
 
-#include <multimedia/qmediarecorder.h>
+#include <qmediarecorder.h>
 
 class QComboBox;
 class QLabel;

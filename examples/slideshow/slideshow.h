@@ -43,7 +43,7 @@
 #define SLIDESHOW_H
 
 #include <QWidget>
-#include <multimedia/qmediaimageviewer.h>
+#include <qmediaimageviewer.h>
 
 class QAbstractButton;
 class QLabel;

@@ -43,9 +43,9 @@
 
 #include <QtCore/qtimer.h>
 
-#include <multimedia/qmediaobject.h>
-#include <multimedia/qmediaservice.h>
-#include <multimedia/qmetadatacontrol.h>
+#include <qmediaobject.h>
+#include <qmediaservice.h>
+#include <qmetadatacontrol.h>
 
 class tst_QMediaObject : public QObject
 {

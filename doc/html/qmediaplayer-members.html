@@ -10,8 +10,8 @@
 <body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
-<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
-<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">List of All Members for QMediaPlayer</h1>
 <p>This is the complete list of members for <a href="qmediaplayer.html">QMediaPlayer</a>, including inherited members.</p>
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -24,10 +24,11 @@
 <li><div class="fn"><b><a href="qmediaplayer.html#QMediaPlayer">QMediaPlayer</a></b> ( QObject *, Flags, QMediaServiceProvider * )</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#dtor.QMediaPlayer">~QMediaPlayer</a></b> ()</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#addPropertyWatch">addPropertyWatch</a></b> ( QByteArray const &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#availableExtendedMetaData">availableExtendedMetaData</a></b> () const : QStringList</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#availableMetaData">availableMetaData</a></b> () const : QList&lt;QtMedia::MetaData&gt;</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#blockSignals">blockSignals</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#bufferStatus-prop">bufferStatus</a></b> () const : int</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#bufferStatusChanged">bufferStatusChanged</a></b> ( int )</div></li>
-<li><div class="fn"><b><a href="qmediaplayer.html#canPlay">canPlay</a></b> ( const QString &amp;, const QStringList &amp;, Flags ) : QtMedia::SupportEstimate</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#childEvent">childEvent</a></b> ( QChildEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#children">children</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#connect">connect</a></b> ( const QObject *, const char *, const QObject *, const char *, Qt::ConnectionType )</div></li>
@@ -55,6 +56,7 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#findChild">findChild</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#findChildren">findChildren</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#findChildren-2">findChildren</a></b> ( const QRegExp &amp; ) const</div></li>
+<li><div class="fn"><b><a href="qmediaplayer.html#hasSupport">hasSupport</a></b> ( const QString &amp;, const QStringList &amp;, Flags ) : QtMedia::SupportEstimate</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#inherits">inherits</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#installEventFilter">installEventFilter</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#metaDataAvailable-prop">isMetaDataAvailable</a></b> () const : bool</div></li>
@@ -66,8 +68,8 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#killTimer">killTimer</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#media-prop">media</a></b> () const : QMediaContent</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#mediaChanged">mediaChanged</a></b> ( const QMediaContent &amp; )</div></li>
-<li><div class="fn"><b><a href="qmediaplayer.html#mediaStatus-prop">mediaStatus</a></b> () const : MediaStatus</div></li>
 </ul></td><td valign="top"><ul>
+<li><div class="fn"><b><a href="qmediaplayer.html#mediaStatus-prop">mediaStatus</a></b> () const : MediaStatus</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#mediaStatusChanged">mediaStatusChanged</a></b> ( QMediaPlayer::MediaStatus )</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#mediaStream">mediaStream</a></b> () const : const QIODevice *</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#metaData">metaData</a></b> ( QtMedia::MetaData ) const : QVariant</div></li>
@@ -125,6 +127,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Multimedia API</div></td>
+<td align="right"><div align="right">Qt Mobility API</div></td>
 </tr></table></div></address></body>
 </html>

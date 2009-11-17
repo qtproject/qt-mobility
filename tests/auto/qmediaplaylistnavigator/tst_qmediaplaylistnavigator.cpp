@@ -41,8 +41,8 @@
 
 #include <QtTest/QtTest>
 #include <QDebug>
-#include "multimedia/qlocalmediaplaylistprovider.h"
-#include "multimedia/qmediaplaylistnavigator.h"
+#include "qlocalmediaplaylistprovider.h"
+#include "qmediaplaylistnavigator.h"
 
 class tst_QMediaPlaylistNavigator : public QObject
 {
@@ -91,7 +91,7 @@ void tst_QMediaPlaylistNavigator::setPlaylist()
     QCOMPARE(playlist.size(), 0);
 
     navigator.setPlaylist(&playlist);
-    QCOMPARE(navigator.playlist(), &playlist);
+    QCOMPARE(navigator.playlist(), (QMediaPlaylistProvider*)&playlist);
     QCOMPARE(navigator.playlist()->size(), 0);
     QVERIFY(!navigator.playlist()->isReadOnly() );
 }

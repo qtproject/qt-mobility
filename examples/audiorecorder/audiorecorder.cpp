@@ -41,15 +41,15 @@
 
 #include <QtGui>
 
-#include <multimedia/qaudiocapturesource.h>
-#include <multimedia/qmediarecorder.h>
-#include <multimedia/qmediaservice.h>
+#include <qaudiocapturesource.h>
+#include <qmediarecorder.h>
+#include <qmediaservice.h>
 
 
 #ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qaudioformat.h>
 #else
-#include <multimedia/qaudioformat.h>
+#include <qaudioformat.h>
 #endif
 
 #include "audiorecorder.h"

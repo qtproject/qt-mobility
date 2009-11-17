@@ -10,10 +10,10 @@
 <body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
-<td align="left" valign="top" width="32"><img src="images/qtlogo.png" align="left" border="0" /></td>
-<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a></td>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QCameraExposureControl Class Reference</h1>
-<p>Media control for exposure related camera parameters. <a href="#details">More...</a></p>
+<p>The QCameraExposureControl class supplies control for exposure related camera parameters. <a href="#details">More...</a></p>
 <pre>    #include &lt;QCameraExposureControl&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <p>Inherits <a href="qmediacontrol.html">QMediaControl</a>.</p>
 <ul>
@@ -52,7 +52,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;qreal&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#supportedApertures">supportedApertures</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::ExposureModes </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#supportedExposureModes">supportedExposureModes</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::FlashModes </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#supportedFlashModes">supportedFlashModes</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;int&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#supportedIsoSenitivities">supportedIsoSenitivities</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;int&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#supportedIsoSensitivities">supportedIsoSensitivities</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::MeteringModes </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#supportedMeteringModes">supportedMeteringModes</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;qreal&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#supportedShutterSpeeds">supportedShutterSpeeds</a></b> () const = 0</td></tr>
 </table>
@@ -73,12 +73,12 @@
 <a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#apertureChanged">apertureChanged</a></b> ( qreal )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#apertureChanged">apertureChanged</a></b> ( qreal <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#apertureRangeChanged">apertureRangeChanged</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#exposureLocked">exposureLocked</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#flashReady">flashReady</a></b> ( bool <i>ready</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#isoSensitivityChanged">isoSensitivityChanged</a></b> ( int )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#shutterSpeedChanged">shutterSpeedChanged</a></b> ( qreal )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#isoSensitivityChanged">isoSensitivityChanged</a></b> ( int <i>value</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#shutterSpeedChanged">shutterSpeedChanged</a></b> ( qreal <i>value</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
@@ -87,11 +87,17 @@
 <a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#QCameraExposureControl">QCameraExposureControl</a></b> ( QObject * <i>parent</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#QCameraExposureControl">QCameraExposureControl</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
 </ul>
+<hr />
+<a name="macros"></a>
+<h2>Macros</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#QCameraExposureControl_iid">QCameraExposureControl_iid</a></b></td></tr>
+</table>
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
@@ -102,18 +108,21 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>Media control for exposure related camera parameters.</p>
-<p>See also <a href="qcamera.html">QCamera</a>.</p>
+<p>The QCameraExposureControl class supplies control for exposure related camera parameters.</p>
+<p>The interface name of QCameraExposureControl is <tt>com.nokia.Qt.QCameraExposureControl/1.0</tt> as defined in <a href="qcameraexposurecontrol.html#QCameraExposureControl_iid">QCameraExposureControl_iid</a>.</p>
+<p>See also <a href="qmediaservice.html#control">QMediaService::control</a>() and <a href="qcamera.html">QCamera</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QCameraExposureControl"></a>QCameraExposureControl::QCameraExposureControl ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<h3 class="fn"><a name="QCameraExposureControl"></a>QCameraExposureControl::QCameraExposureControl ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Constructs a camera exposure control object with <i>parent</i>.</p>
 <h3 class="fn"><a name="dtor.QCameraExposureControl"></a>QCameraExposureControl::~QCameraExposureControl ()</h3>
 <p>Destruct the camera control object.</p>
 <h3 class="fn"><a name="aperture"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QCameraExposureControl::aperture () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the aperture</p>
-<h3 class="fn"><a name="apertureChanged"></a>void QCameraExposureControl::apertureChanged ( <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="apertureChanged"></a>void QCameraExposureControl::apertureChanged ( <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> <i>value</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal emitted when the aperture value has changed to <i>value</i>.</p>
 <h3 class="fn"><a name="apertureRangeChanged"></a>void QCameraExposureControl::apertureRangeChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal emitted when the aperture range has changed.</p>
 <h3 class="fn"><a name="exposureCompensation"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QCameraExposureControl::exposureCompensation () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the exposure compensation in EV.</p>
 <p>See also <a href="qcameraexposurecontrol.html#setExposureCompensation">setExposureCompensation</a>().</p>
@@ -133,18 +142,25 @@
 <p>Returns true if flash is charged.</p>
 <h3 class="fn"><a name="isoSensitivity"></a>int QCameraExposureControl::isoSensitivity () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the ISO sensitivity, or -1 if unknown.</p>
-<h3 class="fn"><a name="isoSensitivityChanged"></a>void QCameraExposureControl::isoSensitivityChanged ( int )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="isoSensitivityChanged"></a>void QCameraExposureControl::isoSensitivityChanged ( int <i>value</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal emitted when sensitity value changes to <i>value</i>.</p>
 <h3 class="fn"><a name="lockExposure"></a>void QCameraExposureControl::lockExposure ()&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
 <p>Lock the exposure.</p>
 <h3 class="fn"><a name="maximumAperture"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QCameraExposureControl::maximumAperture () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the maximum aperture available.</p>
 <h3 class="fn"><a name="maximumIsoSensitivity"></a>int QCameraExposureControl::maximumIsoSensitivity () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the maximum iso sensitivity.</p>
 <h3 class="fn"><a name="maximumShutterSpeed"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QCameraExposureControl::maximumShutterSpeed () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the maximum shutter speed.</p>
 <h3 class="fn"><a name="meteringMode"></a><a href="qcamera.html#MeteringMode-enum">QCamera::MeteringMode</a> QCameraExposureControl::meteringMode () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the current metering mode.</p>
 <p>See also <a href="qcameraexposurecontrol.html#setMeteringMode">setMeteringMode</a>().</p>
 <h3 class="fn"><a name="minimumAperture"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QCameraExposureControl::minimumAperture () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the minimum aperture available.</p>
 <h3 class="fn"><a name="minimumIsoSensitivity"></a>int QCameraExposureControl::minimumIsoSensitivity () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the minimum iso sensitivity.</p>
 <h3 class="fn"><a name="minimumShutterSpeed"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QCameraExposureControl::minimumShutterSpeed () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the maximum shutter speed.</p>
 <h3 class="fn"><a name="setAutoAperture"></a>void QCameraExposureControl::setAutoAperture ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Turn on auto aperture</p>
 <h3 class="fn"><a name="setAutoIsoSensitivity"></a>void QCameraExposureControl::setAutoIsoSensitivity ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
@@ -171,21 +187,30 @@
 <p>See also <a href="qcameraexposurecontrol.html#meteringMode">meteringMode</a>().</p>
 <h3 class="fn"><a name="shutterSpeed"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QCameraExposureControl::shutterSpeed () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the shutter speed</p>
-<h3 class="fn"><a name="shutterSpeedChanged"></a>void QCameraExposureControl::shutterSpeedChanged ( <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="shutterSpeedChanged"></a>void QCameraExposureControl::shutterSpeedChanged ( <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> <i>value</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal emitted when the shutter speed changes to <i>value</i>.</p>
 <h3 class="fn"><a name="supportedApertures"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a>&gt; QCameraExposureControl::supportedApertures () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the supported apertures.</p>
 <h3 class="fn"><a name="supportedExposureModes"></a><a href="qcamera.html#ExposureMode-enum">QCamera::ExposureModes</a> QCameraExposureControl::supportedExposureModes () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the available exposure modes.</p>
 <h3 class="fn"><a name="supportedFlashModes"></a><a href="qcamera.html#FlashMode-enum">QCamera::FlashModes</a> QCameraExposureControl::supportedFlashModes () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the flash modes available.</p>
-<h3 class="fn"><a name="supportedIsoSenitivities"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;int&gt; QCameraExposureControl::supportedIsoSenitivities () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="supportedIsoSensitivities"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;int&gt; QCameraExposureControl::supportedIsoSensitivities () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the available sensitivities.</p>
 <h3 class="fn"><a name="supportedMeteringModes"></a><a href="qcamera.html#MeteringMode-enum">QCamera::MeteringModes</a> QCameraExposureControl::supportedMeteringModes () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Return the metering modes available.</p>
 <h3 class="fn"><a name="supportedShutterSpeeds"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a>&gt; QCameraExposureControl::supportedShutterSpeeds () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the available shutter speeds.</p>
 <h3 class="fn"><a name="unlockExposure"></a>void QCameraExposureControl::unlockExposure ()&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
 <p>Unlock the exposure.</p>
+<hr />
+<h2>Macro Documentation</h2>
+<h3 class="fn"><a name="QCameraExposureControl_iid"></a>QCameraExposureControl_iid</h3>
+<p><tt>com.nokia.Qt.QCameraExposureControl/1.0</tt></p>
+<p>Defines the interface name of the <a href="qcameraexposurecontrol.html">QCameraExposureControl</a> class.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Multimedia API</div></td>
+<td align="right"><div align="right">Qt Mobility API</div></td>
 </tr></table></div></address></body>
 </html>

@@ -39,17 +39,18 @@
 **
 ****************************************************************************/
 
+#include <qmobilityglobal.h>
 #include <QtTest/QtTest>
 
 #include <QtCore/qdir.h>
 
-#include <multimedia/qmediaimageviewer.h>
-#include <multimedia/qmediaimageviewerservice_p.h>
-#include <multimedia/qmediaplaylist.h>
-#include <multimedia/qmediaservice.h>
-#include <multimedia/qvideooutputcontrol.h>
-#include <multimedia/qvideorenderercontrol.h>
-#include <multimedia/qvideowidgetcontrol.h>
+#include <qmediaimageviewer.h>
+#include <qmediaimageviewerservice_p.h>
+#include <qmediaplaylist.h>
+#include <qmediaservice.h>
+#include <qvideooutputcontrol.h>
+#include <qvideorenderercontrol.h>
+#include <qvideowidgetcontrol.h>
 
 #include <QtCore/qfile.h>
 #include <QtNetwork/qnetworkaccessmanager.h>
@@ -58,6 +59,10 @@
 #ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideosurfaceformat.h>
+#endif
+
+#if defined(Q_OS_SYMBIAN)
+# define TESTDATA_DIR "./tst_qmediaimageviewer_images"
 #endif
 
 class QtTestNetworkAccessManager;
@@ -1050,7 +1055,7 @@ void tst_QMediaImageViewer::rendererControl()
     QVERIFY(rendererControl != 0);
 
     rendererControl->setSurface(&surfaceA);
-    QCOMPARE(rendererControl->surface(), &surfaceA);
+    QCOMPARE(rendererControl->surface(), (QAbstractVideoSurface *)&surfaceA);
 
     outputControl->setOutput(QVideoOutputControl::RendererOutput);
 

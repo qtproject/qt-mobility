@@ -39,15 +39,16 @@
 **
 ****************************************************************************/
 
+#include <qmobilityglobal.h>
 #include <QtTest/QtTest>
 
-#include "multimedia/qgraphicsvideoitem.h"
+#include "qgraphicsvideoitem.h"
 
-#include "multimedia/qmediaobject.h"
-#include "multimedia/qmediaservice.h"
-#include "multimedia/qpaintervideosurface_p.h"
-#include "multimedia/qvideooutputcontrol.h"
-#include "multimedia/qvideorenderercontrol.h"
+#include "qmediaobject.h"
+#include "qmediaservice.h"
+#include "qpaintervideosurface_p.h"
+#include "qvideooutputcontrol.h"
+#include "qvideorenderercontrol.h"
 
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideosurfaceformat.h>

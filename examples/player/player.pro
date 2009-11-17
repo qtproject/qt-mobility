@@ -1,8 +1,13 @@
 TEMPLATE = app
-CONFIG += example
-include (../../common.pri)
-LIBS += -lQtMedia
-HEADERS = player.h \
+TARGET = player
+
+INCLUDEPATH += ../../src/multimedia
+
+include(../examples.pri)
+qtAddLibrary(QtMedia)
+
+HEADERS = \
+    player.h \
     playercontrols.h \
     playlistmodel.h \
     videowidget.h

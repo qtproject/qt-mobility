@@ -1,21 +1,25 @@
 TARGET = tst_qmediaimageviewer
 CONFIG += testcase
+INCLUDEPATH += ../../../src/multimedia
 
 include (../../../common.pri)
 
 SOURCES += tst_qmediaimageviewer.cpp
 
 QT += network
-LIBS += -lQtMedia
+qtAddLibrary(QtMedia)
 
 !contains(QT_CONFIG, no-jpeg):DEFINES += QTEST_HAVE_JPEG
 
 wince*|symbian {
-    DEFINES += TESTDATA_DIR=\\\"./tst_qmediaimageviewer_images\\\"
-
     addFiles.sources = images/*
     addFiles.path = tst_qmediaimageviewer_images
     DEPLOYMENT += addFiles
-} else {
+}
+
+wince* {
+    DEFINES += TESTDATA_DIR=\\\"./tst_qmediaimageviewer_images\\\"
+    !contains(QT_CONFIG, no-jpeg): DEPLOYMENT_PLUGIN += qjpeg
+} else: !symbian {
     DEFINES += TESTDATA_DIR=\\\"$$PWD/images\\\"
 }

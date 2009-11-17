@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>playercontrols.cpp Example File (player/playercontrols.cpp)</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">playercontrols.cpp Example File<br /><span class="small-subtitle">player/playercontrols.cpp</span>
+</h1>
+<pre><span class="comment">    /****************************************************************************
+    **
+    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** All rights reserved.
+    ** Contact: Nokia Corporation (qt-info@nokia.com)
+    **
+    ** This file is part of the Qt Mobility Components.
+    **
+    ** $QT_BEGIN_LICENSE:LGPL$
+    ** No Commercial Usage
+    ** This file contains pre-release code and may not be distributed.
+    ** You may use this file in accordance with the terms and conditions
+    ** contained in the Technology Preview License Agreement accompanying
+    ** this package.
+    **
+    ** GNU Lesser General Public License Usage
+    ** Alternatively, this file may be used under the terms of the GNU Lesser
+    ** General Public License version 2.1 as published by the Free Software
+    ** Foundation and appearing in the file LICENSE.LGPL included in the
+    ** packaging of this file.  Please review the following information to
+    ** ensure the GNU Lesser General Public License version 2.1 requirements
+    ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+    **
+    ** In addition, as a special exception, Nokia gives you certain additional
+    ** rights.  These rights are described in the Nokia Qt LGPL Exception
+    ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+    **
+    ** If you have questions regarding the use of this file, please contact
+    ** Nokia at qt-info@nokia.com.
+    **
+    **
+    **
+    **
+    **
+    **
+    **
+    **
+    ** $QT_END_LICENSE$
+    **
+    ****************************************************************************/</span>
+
+    #include &quot;playercontrols.h&quot;
+
+    #include &lt;QtGui/qboxlayout.h&gt;
+    #include &lt;QtGui/qslider.h&gt;
+    #include &lt;QtGui/qstyle.h&gt;
+    #include &lt;QtGui/qtoolbutton.h&gt;
+    #include &lt;QtGui/qcombobox.h&gt;
+
+    PlayerControls::PlayerControls(QWidget *parent)
+        : QWidget(parent)
+        , playerState(QMediaPlayer::StoppedState)
+        , playerMuted(false)
+        , playButton(0)
+        , stopButton(0)
+        , nextButton(0)
+        , previousButton(0)
+        , muteButton(0)
+        , volumeSlider(0)
+        , rateBox(0)
+    {
+        playButton = new QToolButton;
+        playButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_MediaPlay));
+
+        connect(playButton, SIGNAL(clicked()), this, SLOT(playClicked()));
+
+        stopButton = new QToolButton;
+        stopButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_MediaStop));
+        stopButton-&gt;setEnabled(false);
+
+        connect(stopButton, SIGNAL(clicked()), this, SIGNAL(stop()));
+
+        nextButton = new QToolButton;
+        nextButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_MediaSkipForward));
+
+        connect(nextButton, SIGNAL(clicked()), this, SIGNAL(next()));
+
+        previousButton = new QToolButton;
+        previousButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_MediaSkipBackward));
+
+        connect(previousButton, SIGNAL(clicked()), this, SIGNAL(previous()));
+
+        muteButton = new QToolButton;
+        muteButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_MediaVolume));
+
+        connect(muteButton, SIGNAL(clicked()), this, SLOT(muteClicked()));
+
+        volumeSlider = new QSlider(Qt::Horizontal);
+        volumeSlider-&gt;setRange(0, 100);
+
+        connect(volumeSlider, SIGNAL(sliderMoved(int)), this, SIGNAL(changeVolume(int)));
+
+        rateBox = new QComboBox;
+        rateBox-&gt;addItem(&quot;0.5x&quot;, QVariant(0.5));
+        rateBox-&gt;addItem(&quot;1.0x&quot;, QVariant(1.0));
+        rateBox-&gt;addItem(&quot;2.0x&quot;, QVariant(2.0));
+        rateBox-&gt;setCurrentIndex(1);
+
+        connect(rateBox, SIGNAL(activated(int)), SLOT(updateRate()));
+
+        QBoxLayout *layout = new QHBoxLayout;
+        layout-&gt;setMargin(0);
+        layout-&gt;addWidget(stopButton);
+        layout-&gt;addWidget(previousButton);
+        layout-&gt;addWidget(playButton);
+        layout-&gt;addWidget(nextButton);
+        layout-&gt;addWidget(muteButton);
+        layout-&gt;addWidget(volumeSlider);
+        layout-&gt;addWidget(rateBox);
+        setLayout(layout);
+    }
+
+    QMediaPlayer::State PlayerControls::state() const
+    {
+        return playerState;
+    }
+
+    void PlayerControls::setState(QMediaPlayer::State state)
+    {
+        if (state != playerState) {
+            playerState = state;
+
+            switch (state) {
+            case QMediaPlayer::StoppedState:
+                stopButton-&gt;setEnabled(false);
+                playButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_MediaPlay));
+                break;
+            case QMediaPlayer::PlayingState:
+                stopButton-&gt;setEnabled(true);
+                playButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_MediaPause));
+                break;
+            case QMediaPlayer::PausedState:
+                stopButton-&gt;setEnabled(true);
+                playButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_MediaPlay));
+                break;
+            }
+        }
+    }
+
+    int PlayerControls::volume() const
+    {
+        return volumeSlider-&gt;value();
+    }
+
+    void PlayerControls::setVolume(int volume)
+    {
+        volumeSlider-&gt;setValue(volume);
+    }
+
+    bool PlayerControls::isMuted() const
+    {
+        return playerMuted;
+    }
+
+    void PlayerControls::setMuted(bool muted)
+    {
+        if (muted != playerMuted) {
+            playerMuted = muted;
+
+            muteButton-&gt;setIcon(style()-&gt;standardIcon(muted
+                    ? QStyle::SP_MediaVolumeMuted
+                    : QStyle::SP_MediaVolume));
+        }
+    }
+
+    void PlayerControls::playClicked()
+    {
+        switch (playerState) {
+        case QMediaPlayer::StoppedState:
+        case QMediaPlayer::PausedState:
+            emit play();
+            break;
+        case QMediaPlayer::PlayingState:
+            emit pause();
+            break;
+        }
+    }
+
+    void PlayerControls::muteClicked()
+    {
+        emit changeMuting(!playerMuted);
+    }
+
+    qreal PlayerControls::playbackRate() const
+    {
+        return rateBox-&gt;itemData(rateBox-&gt;currentIndex()).toDouble();
+    }
+
+    void PlayerControls::setPlaybackRate(float rate)
+    {
+        for (int i=0; i&lt;rateBox-&gt;count(); i++) {
+            if (qFuzzyCompare(rate, float(rateBox-&gt;itemData(i).toDouble()))) {
+                rateBox-&gt;setCurrentIndex(i);
+                return;
+            }
+        }
+
+        rateBox-&gt;addItem( QString(&quot;%1x&quot;).arg(rate), QVariant(rate));
+        rateBox-&gt;setCurrentIndex(rateBox-&gt;count()-1);
+    }
+
+    void PlayerControls::updateRate()
+    {
+        emit changeRate(playbackRate());
+    }</pre>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Qt Mobility API</div></td>
+</tr></table></div></address></body>
+</html>

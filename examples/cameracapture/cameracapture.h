@@ -42,8 +42,8 @@
 #ifndef RECORDER_H
 #define RECORDER_H
 
-#include <multimedia/experimental/qcamera.h>
-#include <multimedia/qmediarecorder.h>
+#include <experimental/qcamera.h>
+#include <qmediarecorder.h>
 
 namespace Ui {
     class CameraCapture;

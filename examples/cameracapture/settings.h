@@ -43,7 +43,7 @@
 #define SETTINGS_H
 
 #include <QtGui/QDialog>
-#include <multimedia/qmediaencodersettings.h>
+#include <qmediaencodersettings.h>
 
 class QComboBox;
 class QMediaRecorder;

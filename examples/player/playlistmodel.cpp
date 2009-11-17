@@ -44,7 +44,7 @@
 #include <QtCore/qfileinfo.h>
 #include <QtCore/qurl.h>
 
-#include <multimedia/qmediaplaylist.h>
+#include <qmediaplaylist.h>
 
 PlaylistModel::PlaylistModel(QObject *parent)
     : QAbstractItemModel(parent)

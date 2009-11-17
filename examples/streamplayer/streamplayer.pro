@@ -1,9 +1,10 @@
 TEMPLATE = app
-CONFIG += example
+TARGET=streamplayer
 
-include (../../common.pri)
+INCLUDEPATH+=../../src/multimedia
+include (../examples.pri)
 
-LIBS += -lQtMedia
+qtAddLibrary(QtMedia)
 
 HEADERS = \
     streamplayer.h

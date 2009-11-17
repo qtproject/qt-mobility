@@ -45,13 +45,13 @@
 #ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qaudioformat.h>
 #else
-#include <multimedia/qaudioformat.h>
+#include <qaudioformat.h>
 #endif
 
-#include <multimedia/qaudiocapturesource.h>
-#include <multimedia/qaudioencodercontrol.h>
-#include <multimedia/qmediarecordercontrol.h>
-#include <multimedia/qaudiodevicecontrol.h>
+#include <qaudiocapturesource.h>
+#include <qaudioencodercontrol.h>
+#include <qmediarecordercontrol.h>
+#include <qaudiodevicecontrol.h>
 
 class MockAudioEncoderControl : public QAudioEncoderControl
 {
@@ -76,8 +76,8 @@ public:
     QVariant encodingOption(const QString &, const QString &) const { return m_optionValue; }
     void setEncodingOption(const QString &, const QString &, const QVariant &value) { m_optionValue = value; }
 
-    QList<int> supportedSampleRates() const { return m_freqs; }
-    QList<int> supportedChannelCounts() const { QList<int> list; list << 1 << 2; return list; }
+    QList<int> supportedSampleRates(const QAudioEncoderSettings & = QAudioEncoderSettings()) const { return m_freqs; }
+    QList<int> supportedChannelCounts(const QAudioEncoderSettings & = QAudioEncoderSettings()) const { QList<int> list; list << 1 << 2; return list; }
 
     QAudioEncoderSettings audioSettings() const { return m_audioSettings; }
     void setAudioSettings(const QAudioEncoderSettings &settings) { m_audioSettings = settings;}
@@ -335,7 +335,7 @@ void tst_QAudioCaptureSource::testAudioSource()
 {
     audiosource = new QAudioCaptureSource(0, mockProvider);
 
-    QCOMPARE(audiosource->service(), mockAudioSourceService);
+    QCOMPARE(audiosource->service(),(QMediaService *) mockAudioSourceService);
 }
 
 void tst_QAudioCaptureSource::testOptions()

@@ -45,8 +45,8 @@
 #include "playlistmodel.h"
 #include "videowidget.h"
 
-#include <multimedia/qmediaservice.h>
-#include <multimedia/qmediaplaylist.h>
+#include <qmediaservice.h>
+#include <qmediaplaylist.h>
 
 #include <QtGui>
 

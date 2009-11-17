@@ -44,8 +44,8 @@
 
 #include <QtGui/qcombobox.h>
 #include <QtCore/qdebug.h>
-#include <multimedia/qmediarecorder.h>
-#include <multimedia/qmediaservice.h>
+#include <qmediarecorder.h>
+#include <qmediaservice.h>
 
 
 

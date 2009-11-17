@@ -43,10 +43,10 @@
 #include "ui_cameracapture.h"
 #include "settings.h"
 
-#include <multimedia/qmediaservice.h>
-#include <multimedia/qmediarecorder.h>
-#include <multimedia/experimental/qcamera.h>
-#include <multimedia/qvideowidget.h>
+#include <qmediaservice.h>
+#include <qmediarecorder.h>
+#include <experimental/qcamera.h>
+#include <qvideowidget.h>
 
 #include <QtGui>
 
@@ -162,7 +162,7 @@ void CameraCapture::updateRecordTime()
 
 void CameraCapture::processCapturedImage(const QString& fname, const QImage& img)
 {
-    Q_UNUSED(img);
+    ui->lastImagePreviewLabel->setPixmap( QPixmap::fromImage(img.scaledToWidth(128)) );
     qDebug() << "image captured:" << fname;
 }
 
