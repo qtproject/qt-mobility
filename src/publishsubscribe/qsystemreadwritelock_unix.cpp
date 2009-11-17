@@ -253,6 +253,12 @@ QSystemReadWriteLock::QSystemReadWriteLock(const QString &key, AccessMode mode)
         if (errno == EEXIST) {
             d->semId = ::semget(d->id, 4,
                     (mode == QSystemReadWriteLock::Create)?IPC_CREAT|0666:0);
+            if (d->semId == -1) {
+                d->setError(QObject::tr("QSystemReadWriteLock::QSystemReadWriteLock: "
+                                    "Unable to access semaphore set for key %1(%2)")
+                                    .arg(key).arg(::strerror(errno)));
+                return;
+            }
         } else {
             d->setError(QObject::tr("QSystemReadWriteLock:QSystemReadWriteLock: "
                         "Unable to access semaphore set for key %1(%2)")
