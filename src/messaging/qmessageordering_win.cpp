@@ -77,10 +77,6 @@ bool QMessageOrderingPrivate::lessThan(const QMessageOrdering &ordering, const Q
             right = &l; 
         }
 
-        //TODO: Type and Priority will require multiple filter passes in QMessageStore
-        //TODO: Recipients won't be supported
-        //TODO: Status may require multiple passes, or may not be implementable with MAPI
-
         switch (field)
         {
         case Type: COMPARE(left->type(), right->type())
@@ -103,7 +99,7 @@ bool QMessageOrderingPrivate::lessThan(const QMessageOrdering &ordering, const Q
         case HasAttachments: COMPARE(left->status() & QMessage::HasAttachments, right->status() & QMessage::HasAttachments)
         case Incoming: COMPARE(left->status() & QMessage::Incoming, right->status() & QMessage::Incoming)
         case Removed: COMPARE(left->status() & QMessage::Removed, right->status() & QMessage::Removed)
-        case Priority: COMPARE(left->priority(), right->priority())
+        case Priority: COMPARE(right->priority(), left->priority()) // Low priority comes first
         case Size: COMPARE(left->size(), right->size())
         }
     }
