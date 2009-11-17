@@ -326,6 +326,8 @@ QMessageOrdering QMessageOrdering::operator+(const QMessageOrdering& other) cons
     if (!thisIsFilterType && !otherIsFilterType)
         sum.d_ptr->_valid = false;
 #endif
+    if (!this->isSupported() || !other.isSupported())
+        sum.d_ptr->_valid = false;
     return sum;
 }
 
@@ -341,6 +343,8 @@ QMessageOrdering& QMessageOrdering::operator+=(const QMessageOrdering& other)
     if (!thisIsFilterType && !otherIsFilterType)
         d_ptr->_valid = false;
 #endif;
+    if (!other.isSupported())
+        d_ptr->_valid = false;
     return *this;
 }
 
@@ -352,7 +356,6 @@ bool QMessageOrdering::operator==(const QMessageOrdering& other) const
 QMessageOrdering QMessageOrdering::byType(Qt::SortOrder order)
 {
     QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Type, order));
-    result.d_ptr->_valid = false; // Not yet implemented
     return result;
 }
 

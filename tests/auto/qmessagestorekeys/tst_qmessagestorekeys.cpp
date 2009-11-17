@@ -2529,7 +2529,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] ) // contains body but does not match filter
         << "summer";
-
 }
 
 void tst_QMessageStoreKeys::testMessageFilter()
@@ -2563,13 +2562,21 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
 
     QTest::newRow("type ascending")
         << QMessageOrdering::byType(Qt::AscendingOrder)
+#ifdef Q_OS_WIN
+        << ( MessageListList() << messageIds ); // All messages are Email type
+#else
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
                                << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] ) );
+#endif
 
     QTest::newRow("type descending")
         << QMessageOrdering::byType(Qt::DescendingOrder)
+#ifdef Q_OS_WIN
+        << ( MessageListList() << messageIds ); // All messages are Email type
+#else
         << ( MessageListList() << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
                                << ( QMessageIdList() << messageIds[0] ) );
+#endif
 
     QTest::newRow("sender ascending")
         << QMessageOrdering::bySender(Qt::AscendingOrder)
