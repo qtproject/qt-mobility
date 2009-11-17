@@ -48,6 +48,7 @@
 #include "qmessage_p.h"
 #include "qmessagestore_p.h"
 #include "qmessagecontentcontainer_p.h"
+#include "qmessagecontentcontainerid_p.h"
 #include <QDebug>
 #include <QThread>
 #include <QTimer>
@@ -740,7 +741,7 @@ bool QMessageServiceAction::compose(const QMessage &message)
 
 bool QMessageServiceAction::retrieveHeader(const QMessageId& id)
 {
-    //NO-OP
+    Q_UNUSED(id);
     return true;
 }
 
@@ -779,8 +780,23 @@ bool QMessageServiceAction::retrieveBody(const QMessageId& id)
 
 bool QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
 {
-    //NO-OP
-    return true;
+#ifdef _WIN32_WCE
+    QMessageId messageId = QMessageContentContainerIdPrivate::messageId(id);
+
+    if(!messageId.isValid())
+        return false;
+
+    QMessage message(messageId);
+
+    bool isBodyContainer = message.bodyId() == id;
+
+    if(isBodyContainer)
+        return retrieveBody(messageId);
+
+    //TODO download message attachment programatically using MAPI impossible?
+#endif
+
+    return false;
 }
 
 bool QMessageServiceAction::show(const QMessageId& id)
@@ -806,7 +822,7 @@ bool QMessageServiceAction::show(const QMessageId& id)
 
 bool QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
 {
-   //NOOP
+    Q_UNUSED(id);
     return true;
 }
 
