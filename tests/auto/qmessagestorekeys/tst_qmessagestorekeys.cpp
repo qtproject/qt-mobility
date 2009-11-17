@@ -1276,11 +1276,6 @@ void tst_QMessageStoreKeys::testFolderOrdering()
     }
 }
 
-#ifdef Q_OS_WIN
-// No support for setting 
-#define NO_SET_SUPPORT
-#endif
-
 void tst_QMessageStoreKeys::testMessageFilter_data()
 {
     QTest::addColumn<QMessageFilter>("filter");
@@ -2566,7 +2561,6 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
     QTest::addColumn<QMessageOrdering>("ordering");
     QTest::addColumn<MessageListList>("ids");
 
-#ifndef NO_SET_SUPPORT // setting type not supported on WIN
     QTest::newRow("type ascending")
         << QMessageOrdering::byType(Qt::AscendingOrder)
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
@@ -2576,7 +2570,6 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
         << QMessageOrdering::byType(Qt::DescendingOrder)
         << ( MessageListList() << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
                                << ( QMessageIdList() << messageIds[0] ) );
-#endif
 
     QTest::newRow("sender ascending")
         << QMessageOrdering::bySender(Qt::AscendingOrder)
@@ -2631,8 +2624,8 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
         << ( MessageListList() << ( QMessageIdList() << messageIds[2] << messageIds[3] )
                                << ( QMessageIdList() << messageIds[0] << messageIds[1] )
                                << ( QMessageIdList() << messageIds[4] ) );
-#ifndef NO_SET_SUPPORT // setting receptionTimeStamp, priority and size and type not supported on WIN
-    QTest::newRow("receptionTimeStamp ascending")
+
+	QTest::newRow("receptionTimeStamp ascending")
         << QMessageOrdering::byReceptionTimeStamp(Qt::AscendingOrder)
         << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[0] )
@@ -2739,7 +2732,6 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
                                << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[0] ) );
-#endif
 }
 
 void tst_QMessageStoreKeys::testMessageOrdering()
