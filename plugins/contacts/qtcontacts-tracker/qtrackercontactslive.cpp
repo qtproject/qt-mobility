@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-
 #include "qtrackercontactslive.h"
 
 QTrackerContactsLive::QTrackerContactsLive()
@@ -81,21 +80,10 @@ void QTrackerContactsLive::saveName() {
     QContactNickname nickname = editedContact_.detail<QContactNickname>();
 
     if(!name.isEmpty()) {
-        if(!name.prefix().isEmpty()) {
-            liveContact_->setNameHonorificPrefix(name.prefix());
-        }
-
-        if(!name.first().isEmpty()) {
-            liveContact_->setNameGiven(name.first());
-        }
-
-        if(!name.middle().isEmpty()) {
-            liveContact_->setNameAdditional(name.middle());
-        }
-
-        if(!name.last().isEmpty()) {
-            liveContact_->setNameFamily(name.last());
-        }
+        liveContact_->setNameHonorificPrefix(name.prefix());
+        liveContact_->setNameGiven(name.first());
+        liveContact_->setNameAdditional(name.middle());
+        liveContact_->setNameFamily(name.last());
     }
 
     if(!nickname.isEmpty()) {

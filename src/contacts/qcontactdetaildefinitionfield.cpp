@@ -130,7 +130,7 @@ QContactDetailDefinitionField::AccessConstraint QContactDetailDefinitionField::a
 /*!
  * Sets the access constraints which apply to this field to \a constraint
  */
-void QContactDetailDefinitionField::setAccessConstract(QContactDetailDefinitionField::AccessConstraint constraint)
+void QContactDetailDefinitionField::setAccessConstraint(QContactDetailDefinitionField::AccessConstraint constraint)
 {
     d->m_accessConstraint = constraint;
 }

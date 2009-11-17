@@ -57,7 +57,7 @@ symbian: {
         inc/cntsymbiantransformerror.h \
         inc/cntsymbiandatabase.h
       
-  SOURCES += \
+    SOURCES += \
         src/cntsymbianengine.cpp \
         src/cnttransformcontact.cpp \
         src/cnttransformcontactdata.cpp \

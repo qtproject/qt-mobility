@@ -41,7 +41,7 @@
 #include "qtcontactsglobal.h"
 
 class QContactDetailDefinitionFieldPrivate;
-class Q_CONTACTS_EXPORT QContactDetailDefinitionField
+class QTCONTACTS_EXPORT QContactDetailDefinitionField
 {
 public:
     QContactDetailDefinitionField();
@@ -62,7 +62,7 @@ public:
     };
 
     QContactDetailDefinitionField::AccessConstraint accessConstraint() const;
-    void setAccessConstract(QContactDetailDefinitionField::AccessConstraint constraint);
+    void setAccessConstraint(QContactDetailDefinitionField::AccessConstraint constraint);
 
     bool operator==(const QContactDetailDefinitionField& other) const;
     bool operator!=(const QContactDetailDefinitionField& other) const;

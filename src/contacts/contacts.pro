@@ -82,6 +82,7 @@ HEADERS += \
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
+    TARGET.UID3 = 0x2002AC7A
 
     ### Contacts
     # Main library
