@@ -341,6 +341,9 @@ QList<int> QMediaRecorder::supportedAudioSampleRates(const QAudioEncoderSettings
 /*!
     Return the minimum resolution video can be encoded at.
 
+    If non null video \a settings parameter is passed,
+    returns the minimum supported resolution with partial settings applied.
+
     \sa supportedResolutions(), QVideoEncoderSettings::resolution(), maximumResolution()
 */
 QSize QMediaRecorder::minimumResolution(const QVideoEncoderSettings &settings) const
@@ -351,6 +354,9 @@ QSize QMediaRecorder::minimumResolution(const QVideoEncoderSettings &settings) c
 
 /*!
     Returns the maximum resolution video can be encoded at.
+
+    If non null video \a settings parameter is passed,
+    returns the maximum supported resolution with partial settings applied.
 
     \sa supportedResolutions(), QVideoEncoderSettings::resolution(), minimumResolution()
 */
@@ -378,6 +384,10 @@ QList<QSize> QMediaRecorder::supportedResolutions(const QVideoEncoderSettings &s
 /*!
     Returns the minimum frame rate video can encoded at.
 
+    If non null video \a settings parameter is passed,
+    returns the minimum supported frame rate with partial settings like
+    \l {QVideoEncoderSettings::setResolution()}{video resolution} applied.
+
     \sa QVideoEncoderSettings::frameRate(), maximumFrameRate()
 */
 qreal QMediaRecorder::minimumFrameRate(const QVideoEncoderSettings &settings)
@@ -388,6 +398,10 @@ qreal QMediaRecorder::minimumFrameRate(const QVideoEncoderSettings &settings)
 
 /*!
     Returns the maximum frame rate video can be encoded at.
+
+    If non null video \a settings parameter is passed,
+    returns the maximum supported frame rate with partial settings like
+    \l {QVideoEncoderSettings::setResolution()}{video resolution} applied.
 
     \sa QVideoEncoderSettings::frameRate(), minimumFrameRate()
 */

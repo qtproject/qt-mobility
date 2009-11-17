@@ -94,7 +94,7 @@ QRadioTunerControl::~QRadioTunerControl()
 }
 
 /*!
-    \fn QRadioTuner::State state() const
+    \fn QRadioTuner::State QRadioTunerControl::state() const
 
     Returns the current radio tuner state.
 */

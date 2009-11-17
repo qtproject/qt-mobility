@@ -507,6 +507,16 @@ QString QRadioTuner::errorString() const
 */
 
 /*!
+    \enum QRadioTuner::State
+
+    Enumerates radio tuner states.
+
+    \value ActiveState The tuner is started and active.
+    \value StoppedState The tuner device is stopped.
+*/
+
+
+/*!
     \enum QRadioTuner::Band
 
     Enumerates radio frequency bands.
