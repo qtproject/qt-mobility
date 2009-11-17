@@ -72,10 +72,20 @@
     recording functions of other media objects, like QRadioTuner,
     QCamera or QAudioCaptureSource.
 
+    If the camera or radio is used as a source, recording
+    is only possible when the source is in appropriate state
+    like QCamera::ActiveState for camera.
+
     \code
     // Audio only recording
     audioSource = new QAudioCaptureSource;
     recorder = new QMediaRecorder(audioSource);
+
+    QAudioEncoderSettings audioSettings;
+    audioSettings.setCodec("audio/vorbis");
+    audioSettings.setQuality(QtMedia::HighQuality);
+
+    recorder->setEncodingSettings(audioSettings);
 
     recorder->setOutputLocation(QUrl::fromLocalFile(fileName));
     recorder->record();
@@ -85,7 +95,10 @@
     // Audio/Video recording
     camera = new QCamera(deviceName);
     recorder = new QMediaRecorder(camera);
+    preview = new QVideoWidget(camera);
+    camera->start();
 
+    //record with deafult settings after the camera has started
     recorder->setOutputLocation(QUrl::fromLocalFile(fileName));
     recorder->record();
     \endcode
@@ -192,7 +205,7 @@ QMediaRecorder::QMediaRecorder(QMediaObject *mediaObject, QObject *parent):
 }
 
 /*!
-    Destroys a media object.
+    Destroys a media recorder object.
 */
 
 QMediaRecorder::~QMediaRecorder()
@@ -202,19 +215,16 @@ QMediaRecorder::~QMediaRecorder()
 /*!
     \property QMediaRecorder::outputLocation
     \brief the destination location of media content.
+
+    Setting the location can fail for example when the service supports
+    only local file system locations while the network url was passed,
+    or the service doesn't support media recording.
 */
 
 QUrl QMediaRecorder::outputLocation() const
 {
     return d_func()->control ? d_func()->control->outputLocation() : QUrl();
 }
-
-/*!
-    Sets the output \a location and returns true if this operation was successful.
-    Setting the location can fail for example when the service supports
-    only local file system locations while the network url was passed,
-    or the service doesn't support media recording.
-*/
 
 bool QMediaRecorder::setOutputLocation(const QUrl &location)
 {
@@ -391,7 +401,6 @@ QList<qreal> QMediaRecorder::supportedFrameRates() const
            d_func()->videoControl->supportedFrameRates() : QList<qreal>();
 }
 
-
 /*!
     Returns a list of supported video codecs.
 */
@@ -403,6 +412,8 @@ QStringList QMediaRecorder::supportedVideoCodecs() const
 
 /*!
     Returns a description of a video \a codec.
+
+    \sa setEncodingSettings()
 */
 QString QMediaRecorder::videoCodecDescription(const QString &codec) const
 {
@@ -412,6 +423,8 @@ QString QMediaRecorder::videoCodecDescription(const QString &codec) const
 
 /*!
     Returns the audio encoder settings being used.
+
+    \sa setEncodingSettings()
 */
 
 QAudioEncoderSettings QMediaRecorder::audioSettings() const
@@ -422,6 +435,8 @@ QAudioEncoderSettings QMediaRecorder::audioSettings() const
 
 /*!
     Returns the video encoder settings being used.
+
+    \sa setEncodingSettings()
 */
 
 QVideoEncoderSettings QMediaRecorder::videoSettings() const
@@ -432,6 +447,17 @@ QVideoEncoderSettings QMediaRecorder::videoSettings() const
 
 /*!
     Sets the \a audio and \a video encoder settings and container \a format MIME type.
+
+    It's only possible to change setttings when the encoder
+    is in the QMediaEncoder::StoppedState state.
+
+    If some parameters are not specified, or null settings are passed,
+    the encoder choose the default encoding parameters, depending on
+    media source properties.
+    But while setEncodingSettings is optional, the backend can preload
+    encoding pipeline to improve recording startup time.
+
+    \sa audioSettings(), videoSettings(), format()
 */
 
 void QMediaRecorder::setEncodingSettings(const QAudioEncoderSettings &audio,
@@ -456,6 +482,10 @@ void QMediaRecorder::setEncodingSettings(const QAudioEncoderSettings &audio,
 
 /*!
     Start recording.
+
+    This is an asynchronous call, with signal
+    stateCahnged(QMediaRecorder::RecordingState) being emited
+    when recording started, otherwise error() signal is emited.
 */
 
 void QMediaRecorder::record()
