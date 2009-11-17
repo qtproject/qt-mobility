@@ -57,7 +57,7 @@
 #include <QObject>
 #include <QStringList>
 
-#include "qsysinfoglobal.h"
+#include "qmobilityglobal.h"
 #include "qsysteminfo.h"
 
 #include <f32file.h>

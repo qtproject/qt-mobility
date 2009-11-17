@@ -44,7 +44,7 @@
 
 #include <QtCore/qobject.h>
 #include <QtCore/qshareddata.h>
-#include <qmultimediaglobal.h>
+#include <qmobilityglobal.h>
 #include <qtmedianamespace.h>
 
 class QMediaService;

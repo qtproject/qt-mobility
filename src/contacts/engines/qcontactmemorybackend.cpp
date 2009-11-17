@@ -41,13 +41,12 @@
 
 #include "qcontactmanager.h"
 
-#include "qcontact_p.h"
 #include "qcontactdetaildefinition.h"
-#include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactabstractrequest.h"
 #include "qcontactrequests.h"
 #include "qcontactchangeset.h"
+#include "qcontactdetails.h"
 
 #include "qcontactmemorybackend_p.h"
 
@@ -144,6 +143,33 @@ QMap<QString, QString> QContactMemoryEngine::managerParameters() const
 }
 
 /*! \reimp */
+bool QContactMemoryEngine::setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error)
+{
+    if (contactId == QContactLocalId(0) || d->m_contactIds.contains(contactId)) {
+        error = QContactManager::NoError;
+        QContactLocalId oldId = d->m_selfContactId;
+        d->m_selfContactId = contactId;
+
+        QContactChangeSet cs;
+        cs.oldAndNewSelfContactId() = QPair<QContactLocalId, QContactLocalId>(oldId, contactId);
+        cs.emitSignals(this);
+        return true;
+    }
+
+    error = QContactManager::DoesNotExistError;
+    return false;
+}
+
+/*! \reimp */
+QContactLocalId QContactMemoryEngine::selfContactId(QContactManager::Error& error) const
+{
+    error = QContactManager::DoesNotExistError;
+    if (d->m_selfContactId != QContactLocalId(0))
+        error = QContactManager::NoError;
+    return d->m_selfContactId;
+}
+
+/*! \reimp */
 QList<QContactLocalId> QContactMemoryEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     // TODO: this needs to be done properly...
@@ -166,13 +192,12 @@ QContact QContactMemoryEngine::contact(const QContactLocalId& contactId, QContac
         error = QContactManager::NoError;
         QContact retn = d->m_contacts.at(index);
 
-        // synthesise the display label if we need to.
+        // synthesize the display label if we need to.
         QContactDisplayLabel dl = retn.detail(QContactDisplayLabel::DefinitionName);
         if (dl.label().isEmpty()) {
             QContactManager::Error synthError;
-            dl.setLabel(synthesiseDisplayLabel(retn, synthError));
-            dl.setSynthesised(true);
-            retn.saveDetail(&dl);
+            retn = setContactDisplayLabel(synthesizeDisplayLabel(retn, synthError), retn);
+            // XXX TODO: ensure this is correct after removing the deprecated API
         }
 
         // also, retrieve the current relationships the contact is involved with.
@@ -200,7 +225,7 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
         /* We also need to check that there are no modified create only details */
         QContact oldContact = d->m_contacts.at(index);
 
-        QSetIterator<QString> it(d->m_createOnlyIds);
+        QSetIterator<QString> it(d->m_createOnlyIds.value(theContact->type()));
         while (it.hasNext()) {
             const QString& id = it.next();
             QList<QContactDetail> details = oldContact.details(id);
@@ -250,9 +275,13 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
             d->m_orderedRelationships.insert(theContact->localId(), orderedList);
         }
 
+        // synthesize the display label for the contact.
+        QContact saveContact = setContactDisplayLabel(synthesizeDisplayLabel(*theContact, error), *theContact);
+        *theContact = saveContact;
+
         // Looks ok, so continue
         d->m_contacts.replace(index, *theContact);
-        changeSet.changedContacts().insert(theContact->id().localId());
+        changeSet.changedContacts().insert(theContact->localId());
     } else {
         // id does not exist; if not zero, fail.
         QContactId newId;
@@ -272,6 +301,10 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
         // update the contact item - set its ID
         newId.setLocalId(++d->m_nextContactId);
         theContact->setId(newId);
+
+        // synthesize the display label for the contact.
+        QContact saveContact = setContactDisplayLabel(synthesizeDisplayLabel(*theContact, error), *theContact);
+        *theContact = saveContact;
 
         // finally, add the contact to our internal lists and return
         d->m_contacts.append(*theContact);                   // add contact to list
@@ -351,6 +384,12 @@ bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QCont
     d->m_contacts.removeAt(index);
     d->m_contactIds.removeAt(index);
     error = QContactManager::NoError;
+
+    // and if it was the self contact, reset the self contact id
+    if (contactId == d->m_selfContactId) {
+        d->m_selfContactId = QContactLocalId(0);
+        changeSet.oldAndNewSelfContactId() = QPair<QContactLocalId, QContactLocalId>(contactId, QContactLocalId(0));
+    }
 
     changeSet.removedContacts().insert(contactId);
     return true;
@@ -569,26 +608,32 @@ QList<QContactManager::Error> QContactMemoryEngine::removeRelationships(const QL
 }
 
 /*! \reimp */
-QMap<QString, QContactDetailDefinition> QContactMemoryEngine::detailDefinitions(QContactManager::Error& error) const
+QMap<QString, QContactDetailDefinition> QContactMemoryEngine::detailDefinitions(const QString& contactType, QContactManager::Error& error) const
 {
     // lazy initialisation of schema definitions.
     if (d->m_definitions.isEmpty()) {
         d->m_definitions = QContactManagerEngine::schemaDefinitions();
 
         // Extract create only definitions
-        QMapIterator<QString, QContactDetailDefinition> it(d->m_definitions);
-        while (it.hasNext()) {
-            it.next();
-            if (it.value().accessConstraint() == QContactDetailDefinition::CreateOnly)
-                d->m_createOnlyIds.insert(it.key());
+        QMap<QString, QContactDetailDefinition> defMapForThisType(d->m_definitions.value(contactType));
+        QStringList defMapKeys = defMapForThisType.keys();
+        QSet<QString> createOnlyDefs;
+        for (int i = 0; i < defMapKeys.size(); i++) {
+            if (defMapForThisType.value(defMapKeys.at(i)).accessConstraint() == QContactDetailDefinition::CreateOnly) {
+                createOnlyDefs.insert(defMapKeys.at(i));
+            }
+        }
+
+        if (!createOnlyDefs.isEmpty()) {
+            d->m_createOnlyIds.insert(contactType, createOnlyDefs);
         }
     }
 
     error = QContactManager::NoError;
-    return d->m_definitions;
+    return d->m_definitions.value(contactType);
 }
 
-bool QContactMemoryEngine::saveDetailDefinition(const QContactDetailDefinition& def, QContactChangeSet& changeSet, QContactManager::Error& error)
+bool QContactMemoryEngine::saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactChangeSet& changeSet, QContactManager::Error& error)
 {
     // we should check for changes to the database in this function, and add ids of changed data to changeSet. TODO.
     Q_UNUSED(changeSet);
@@ -597,25 +642,30 @@ bool QContactMemoryEngine::saveDetailDefinition(const QContactDetailDefinition& 
         return false;
     }
 
-    detailDefinitions(error); // just to populate the definitions if we haven't already.
-    d->m_definitions.insert(def.name(), def);
-    if (def.accessConstraint() == QContactDetailDefinition::CreateOnly)
-        d->m_createOnlyIds.insert(def.name());
+    detailDefinitions(contactType, error); // just to populate the definitions if we haven't already.
+    QMap<QString, QContactDetailDefinition> defsForThisType = d->m_definitions.value(contactType);
+    defsForThisType.insert(def.name(), def);
+    d->m_definitions.insert(contactType, defsForThisType);
+    if (def.accessConstraint() == QContactDetailDefinition::CreateOnly) {
+        QSet<QString> createOnlyDefs = d->m_createOnlyIds.value(contactType);
+        createOnlyDefs.insert(def.name());
+        d->m_createOnlyIds.insert(contactType, createOnlyDefs);
+    }
 
     error = QContactManager::NoError;
     return true;
 }
 
 /*! \reimp */
-bool QContactMemoryEngine::saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error)
+bool QContactMemoryEngine::saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error& error)
 {
     QContactChangeSet changeSet;
-    bool retn = saveDetailDefinition(def, changeSet, error);
+    bool retn = saveDetailDefinition(def, contactType, changeSet, error);
     changeSet.emitSignals(this);
     return retn;
 }
 
-bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, QContactChangeSet& changeSet, QContactManager::Error& error)
+bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactChangeSet& changeSet, QContactManager::Error& error)
 {
     // we should check for changes to the database in this function, and add ids of changed data to changeSet...
     // we should also check to see if the changes have invalidated any contact data, and add the ids of those contacts
@@ -627,9 +677,13 @@ bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, Q
         return false;
     }
 
-    detailDefinitions(error); // just to populate the definitions if we haven't already.
-    bool success = d->m_definitions.remove(definitionId);
-    d->m_createOnlyIds.remove(definitionId);
+    detailDefinitions(contactType, error); // just to populate the definitions if we haven't already.
+    QMap<QString, QContactDetailDefinition> defsForThisType = d->m_definitions.value(contactType);
+    bool success = defsForThisType.remove(definitionId);
+    d->m_definitions.insert(contactType, defsForThisType);
+    QSet<QString> createOnlyDefsForThisType = d->m_createOnlyIds.value(contactType);
+    createOnlyDefsForThisType.remove(definitionId);
+    d->m_createOnlyIds.insert(contactType, createOnlyDefsForThisType);
     if (success)
         error = QContactManager::NoError;
     else
@@ -638,10 +692,10 @@ bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, Q
 }
 
 /*! \reimp */
-bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, QContactManager::Error& error)
+bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error& error)
 {
     QContactChangeSet changeSet;
-    bool retn = removeDetailDefinition(definitionId, changeSet, error);
+    bool retn = removeDetailDefinition(definitionId, contactType, changeSet, error);
     changeSet.emitSignals(this);
     return retn;
 }
@@ -830,11 +884,11 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QMap<QString, QContactDetailDefinition> requestedDefinitions;
             QStringList names = r->names();
             if (names.isEmpty())
-                names = detailDefinitions(operationError).keys(); // all definitions.
+                names = detailDefinitions(r->contactType(), operationError).keys(); // all definitions.
 
             QContactManager::Error tempError;
             for (int i = 0; i < names.size(); i++) {
-                QContactDetailDefinition current = detailDefinition(names.at(i), tempError);
+                QContactDetailDefinition current = detailDefinition(names.at(i), r->contactType(), tempError);
                 operationErrors.append(tempError);
                 requestedDefinitions.insert(names.at(i), current);
 
@@ -858,7 +912,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QContactManager::Error tempError;
             for (int i = 0; i < definitions.size(); i++) {
                 QContactDetailDefinition current = definitions.at(i);
-                saveDetailDefinition(current, changeSet, tempError);
+                saveDetailDefinition(current, r->contactType(), changeSet, tempError);
                 savedDefinitions.append(current);
                 operationErrors.append(tempError);
 
@@ -881,7 +935,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
 
             for (int i = 0; i < names.size(); i++) {
                 QContactManager::Error tempError;
-                removeDetailDefinition(names.at(i), changeSet, tempError);
+                removeDetailDefinition(names.at(i), r->contactType(), changeSet, tempError);
                 operationErrors.append(tempError);
 
                 if (tempError != QContactManager::NoError)
@@ -1012,19 +1066,24 @@ void QContactMemoryEngine::performAsynchronousOperation()
 /*!
  * \reimp
  */
-bool QContactMemoryEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
+bool QContactMemoryEngine::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const
 {
+    if (!supportedContactTypes().contains(contactType))
+        return false;
+
     switch (feature) {
-        case QContactManagerInfo::Groups:
-        case QContactManagerInfo::ActionPreferences:
-        case QContactManagerInfo::Relationships:
+        case QContactManager::Groups:
+        case QContactManager::ActionPreferences:
+        case QContactManager::Relationships:
             return true;
-        case QContactManagerInfo::ArbitraryRelationshipTypes:
+        case QContactManager::ArbitraryRelationshipTypes:
             return true;
-        case QContactManagerInfo::MutableDefinitions:
+        case QContactManager::MutableDefinitions:
             return true;
-        case QContactManagerInfo::Anonymous:
+        case QContactManager::Anonymous:
             return d->m_anonymous;
+        case QContactManager::SelfContact:
+            return true;
 
         default:
             return false;

@@ -43,11 +43,8 @@
 #include "qcontactrequests_p.h"
 
 /*!
-  \class QContactDetailDefinitionSaveRequest
-  \brief The QContactDetailDefinitionSaveRequest class allows a client to
-    asynchronously request that certain detail definitions be saved in a
-    contacts store.
-   \ingroup contacts-requests
+ * \class QContactDetailDefinitionSaveRequest
+ * \brief Allows a client to asynchronously request that certain detail definitions be saved in a contacts store
  */
 
 /*!
@@ -81,4 +78,18 @@ QList<QContactDetailDefinition> QContactDetailDefinitionSaveRequest::definitions
 {
     Q_D(const QContactDetailDefinitionSaveRequest);
     return d->m_definitions;
+}
+
+/*! Sets the type of contact for which detail definitions should be saved to \a contactType */
+void QContactDetailDefinitionSaveRequest::setContactType(const QString& contactType)
+{
+    Q_D(QContactDetailDefinitionSaveRequest);
+    d->m_contactType = contactType;
+}
+
+/*! Returns the type of contact for which detail definitions will be saved */
+QString QContactDetailDefinitionSaveRequest::contactType() const
+{
+    Q_D(const QContactDetailDefinitionSaveRequest);
+    return d->m_contactType;
 }

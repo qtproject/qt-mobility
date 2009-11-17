@@ -14,6 +14,7 @@ DEPENDPATH += ../../inc
 INCLUDEPATH += .
 INCLUDEPATH += ../../src
 INCLUDEPATH += ../../inc
+INCLUDEPATH += ../../../../../src/global
 
 
 symbian:

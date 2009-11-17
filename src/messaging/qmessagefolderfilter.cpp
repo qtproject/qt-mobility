@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderfilter.h"
 #include "qmessagefolderfilter_p.h"
 
@@ -278,4 +277,3 @@ bool QMessageFolderFilter::operator!=(const QMessageFolderFilter& other) const
 
     \sa QMessageFolder::id()
 */
-#endif

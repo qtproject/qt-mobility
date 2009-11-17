@@ -363,7 +363,6 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     \sa QMessage::parentAccountId()
 */
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 /*!
     \fn QMessageFilter::byParentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
   
@@ -397,4 +396,3 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
         
     \sa QMessage::parentFolderId()
 */
-#endif

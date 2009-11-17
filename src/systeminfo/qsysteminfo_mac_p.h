@@ -59,7 +59,7 @@
 #include <QHash>
 
 #include "qsysteminfo.h"
-#include <qsysinfoglobal.h>
+#include <qmobilityglobal.h>
 
 #include <QTimer>
 

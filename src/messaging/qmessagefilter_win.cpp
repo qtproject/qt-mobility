@@ -44,9 +44,7 @@
 #include "qdebug.h"
 #include "winhelpers_p.h"
 #include "qmessageaccountid_p.h"
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderid_p.h"
-#endif
 #include "qmessageid_p.h"
 #include "addresshelper_p.h"
 
@@ -322,10 +320,10 @@ QMessageFilter QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastE
 }
 
 // returns true if filter is modified
-void QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFilter *filter)
+bool QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFilter *filter)
 {
     if (!filter)
-        return;
+        return false;
 
     // incl only used if filter->d_ptr->field is == *Filter
     QMessageDataComparator::InclusionComparator incl(static_cast<QMessageDataComparator::InclusionComparator>(filter->d_ptr->_comparatorValue));
@@ -357,7 +355,6 @@ void QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, Mapi
                 }
             }
         }
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     } else if (filter->d_ptr->_field == FolderFilter) {
         if (filter->d_ptr->_folderFilter->isEmpty()) {
             result = ~result;  // match all for include, match none for exclude
@@ -380,33 +377,35 @@ void QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, Mapi
                 result &= QMessageFilter::byAncestorFolderIds(folder->id(), QMessageDataComparator::Excludes);
             }
         }
-#endif
     } else {
         QMessageFilter *l(filter->d_ptr->_left);
         QMessageFilter *r(filter->d_ptr->_right);
-        preprocess(lastError, session, l);
-        preprocess(lastError, session, r);
+        bool modified(true); //TODO: should default to false but tst_qmessagestorekeys (id list exclusion 3) is failing
+        modified |= preprocess(lastError, session, l);
+        modified |= preprocess(lastError, session, r);
 
         // It's necessary to recombine bool op filters, because the operands may now have non-empty containerFilter parts,
         // specifically in the case that one of the operands has a *Filter field.
-        switch (filter->d_ptr->_operator) {
-        case And:
-            *filter = filter->d_ptr->containerFiltersPart() & (*l & *r);
-            break;
-        case Nand:
-            *filter = filter->d_ptr->containerFiltersPart() &  ~(*l & *r);
-            break;
-        case Or:
-            *filter = filter->d_ptr->containerFiltersPart() &  (*l | *r);
-            break;
-        case Nor:
-            *filter = filter->d_ptr->containerFiltersPart() &  ~(*l | *r);
-            break;
+        if (modified) {
+            switch (filter->d_ptr->_operator) {
+            case And:
+                *filter = filter->d_ptr->containerFiltersPart() & (*l & *r);
+                break;
+            case Nand:
+                *filter = filter->d_ptr->containerFiltersPart() &  ~(*l & *r);
+                break;
+            case Or:
+                *filter = filter->d_ptr->containerFiltersPart() &  (*l | *r);
+                break;
+            case Nor:
+                *filter = filter->d_ptr->containerFiltersPart() &  ~(*l | *r);
+                break;
+            }
         }
-        return;
+        return modified;
     }
     *filter = filter->d_ptr->containerFiltersPart() & result; // Must preserve container filters part
-    return;
+    return true;
 }
 
 bool QMessageFilterPrivate::restrictionPermitted(const QMessageFilter &filter)
@@ -447,14 +446,21 @@ bool QMessageFilterPrivate::isNonMatching(const QMessageFilter &filter)
 }
 
 
-bool QMessageFilterPrivate::matchesMessage(const QMessageFilter &filter, const QMessage &message, MapiStorePtr store)
+bool QMessageFilterPrivate::matchesMessage(const QMessageFilter &filter, const QMessage &message, MapiStore *store)
 {
+    if (filter.isEmpty())
+        return true;
+
     QMessageAccountId accountId(message.parentAccountId());
     if (!sAccountIdMatches(accountId, filter.d_ptr->_accountsInclude, filter.d_ptr->_accountsExclude))
         return false;
 
     QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
-    MapiFolderPtr folder(store->openFolder(&ignoredError, QMessageIdPrivate::entryId(message.id())));
+#ifdef _WIN32_WCE
+    MapiFolderPtr folder = store->openFolder(&ignoredError, QMessageIdPrivate::folderRecordKey(message.id()));
+#else
+    MapiFolderPtr folder = store->openFolderWithKey(&ignoredError, QMessageIdPrivate::folderRecordKey(message.id()));
+#endif
     if (ignoredError != QMessageStore::NoError)
         return false;
     if (!sFolderMatches(folder, 
@@ -723,7 +729,6 @@ MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
      _left(0),
      _right(0)
 {
-    // TODO: Could refactor this code so that different Operators/Fields each have a separate class, with a separate constructor
     QMessageFilter filter;
     QMessageFilterPrivate *d_ptr(QMessageFilterPrivate::implementation(aFilter));
 
@@ -1014,18 +1019,18 @@ MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
             break;
         }
         case QMessageFilterPrivate::Priority: {
-            _restriction.res.resProperty.ulPropTag = PR_IMPORTANCE;
-            _keyProp.ulPropTag = PR_IMPORTANCE;
+            _restriction.res.resProperty.ulPropTag = PR_PRIORITY;
+            _keyProp.ulPropTag = PR_PRIORITY;
             QMessage::Priority priority(static_cast<QMessage::Priority>(d_ptr->_value.toInt()));
             switch (priority) { // TODO: Double check that priority filtering is working
             case QMessage::HighPriority:
-                _keyProp.Value.ul = PRIO_URGENT;
+                _keyProp.Value.l = PRIO_URGENT;
                 break;
             case QMessage::NormalPriority:
-                _keyProp.Value.ul = PRIO_NORMAL;
+                _keyProp.Value.l = PRIO_NORMAL;
                 break;
             case QMessage::LowPriority:
-                _keyProp.Value.ul = PRIO_NONURGENT;
+                _keyProp.Value.l = PRIO_NONURGENT;
                 break;
             default:
                 qWarning("Unknown priority encountered during filter processing");
@@ -1182,9 +1187,7 @@ QMessageFilterPrivate::QMessageFilterPrivate(QMessageFilter *messageFilter)
 #endif
     _messageFilter(0),
     _accountFilter(0),
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     _folderFilter(0),
-#endif
      _complex(false)
 {
 }
@@ -1254,10 +1257,8 @@ QMessageFilter QMessageFilterPrivate::nonContainerFiltersPart()
         result.d_ptr->_messageFilter = new QMessageFilter(*_messageFilter);
     if (_accountFilter)
         result.d_ptr->_accountFilter = new QMessageAccountFilter(*_accountFilter);
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     if (_folderFilter)
         result.d_ptr->_folderFilter = new QMessageFolderFilter(*_folderFilter);
-#endif
     result.d_ptr->_valid = _valid;
     result.d_ptr->_complex = _complex;
     return result;
@@ -1316,10 +1317,8 @@ QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
         d_ptr->_messageFilter = new QMessageFilter(*other.d_ptr->_messageFilter);
     if (other.d_ptr->_accountFilter)
         d_ptr->_accountFilter = new QMessageAccountFilter(*other.d_ptr->_accountFilter);
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     if (other.d_ptr->_folderFilter)
         d_ptr->_folderFilter = new QMessageFolderFilter(*other.d_ptr->_folderFilter);
-#endif
 
     if (other.d_ptr->_left)
         d_ptr->_left = new QMessageFilter(*other.d_ptr->_left);
@@ -1658,14 +1657,12 @@ bool QMessageFilter::operator==(const QMessageFilter& other) const
             || !(*other.d_ptr->_accountFilter == *d_ptr->_accountFilter))
             return false;
     }
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     if (other.d_ptr->_folderFilter || d_ptr->_folderFilter) {
         if (!other.d_ptr->_folderFilter
             || !d_ptr->_folderFilter
             || !(*other.d_ptr->_folderFilter == *d_ptr->_folderFilter))
             return false;
     }
-#endif
 
     if (d_ptr->_operator == QMessageFilterPrivate::Identity) {
         if (other.d_ptr->_operator != QMessageFilterPrivate::Identity)
@@ -1936,7 +1933,6 @@ QMessageFilter QMessageFilter::byRecipients(const QString &value, QMessageDataCo
 
 QMessageFilter QMessageFilter::bySubject(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
-    // TODO: Test this filter
     return QMessageFilterPrivate::from(QMessageFilterPrivate::Subject, QVariant(value), cmp);
 }
 
@@ -2042,7 +2038,6 @@ QMessageFilter QMessageFilter::byStandardFolder(QMessage::StandardFolder folder,
     return result;
 }
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFilter QMessageFilter::byParentFolderId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageFilter result;
@@ -2136,4 +2131,3 @@ void QMessageFilterPrivate::debug(const QMessageFilter &filter, const QString &i
         QMessageFilterPrivate::debug(*filter.d_ptr->_right, indent + " ");
     }
 }
-#endif

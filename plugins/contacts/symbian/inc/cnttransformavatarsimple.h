@@ -38,52 +38,22 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef TRANSFORMAVATAR_SIMPLE_H
+#define TRANSFORMAVATAR_SIMPLE_H
 
-#ifndef QCONTEXTFRAMEWORKGLOBAL_H
-#define QCONTEXTFRAMEWORKGLOBAL_H
+#include "cnttransformcontactdata.h"
 
-#if defined(QTM_BUILD_UNITTESTS)
-# include <qconfig.h>
-# if !defined(QT_BUILD_INTERNAL)
-#   define QT_BUILD_INTERNAL
-# endif
+class CntTransformAvatarSimple : public CntTransformContactData
+{
+protected:
+	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
+	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
+	bool supportsField(TUint32 fieldType) const;
+	bool supportsDetail(QString detailName) const;
+	QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const;
+    bool supportsSubType(const QString& subType) const;
+    quint32 getIdForField(const QString& fieldName) const;
+    void detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const;
+};
+
 #endif
-
-#include <QtCore/qglobal.h>
-
-QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-
-#if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
-#  if defined(QT_NODLL)
-#    undef QT_MAKEDLL
-#    undef QT_DLL
-#  elif defined(QT_MAKEDLL)
-#    if defined(QT_DLL)
-#      undef QT_DLL
-#    endif
-#    if defined(QT_BUILD_CFW_LIB)
-#      define Q_CFW_EXPORT Q_DECL_EXPORT
-#    else
-#      define Q_CFW_EXPORT Q_DECL_IMPORT
-#    endif
-#  elif defined(QT_DLL) /* use a Qt DLL library */
-#    define Q_CFW_EXPORT Q_DECL_IMPORT
-#  endif
-#else
-#endif
-
-#if !defined(Q_CFW_EXPORT)
-#  if defined(QT_SHARED)
-#    define Q_CFW_EXPORT Q_DECL_EXPORT
-#  else
-#    define Q_CFW_EXPORT
-#  endif
-#endif
-
-QT_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QCONTEXTFRAMEWORKGLOBAL_H

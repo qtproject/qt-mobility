@@ -11,8 +11,7 @@ DEFINES += QT_BUILD_BEARER_LIB QT_MAKEDLL
 
 PUBLIC_HEADERS += qnetworkconfiguration.h \
            qnetworksession.h \
-           qnetworkconfigmanager.h \
-           qbearerglobal.h
+           qnetworkconfigmanager.h
 
 HEADERS += $$PUBLIC_HEADERS
 SOURCES += qnetworksession.cpp \

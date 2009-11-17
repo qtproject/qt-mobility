@@ -45,24 +45,21 @@
 #include "qcontactfilter.h"
 #include "qcontactdetaildefinition.h"
 #include "qcontactmanager_p.h"
-#include "qcontactmanagerinfo.h"
 
 #include <QSharedData>
 #include <QPair>
 #include <QSet>
 
 /*!
-  \class QContactManager
-  \brief The QContactManager class provides control over contacts and groups.
-  \ingroup contacts-main
- 
-  This class provides adding, updating and removal of contacts and groups.
-  It also provides definitions for fields that can be found in contacts.
+ * \class QContactManager
+ *
+ * This class provides adding, updating and removal of contacts.
+ * It also provides definitions for fields that can be found in contacts.
  */
 
 /*!
  * \fn QContactManager::dataChanged()
- * signal is emitted by the manager if its internal state changes, and it is unable to determine the changes
+ * This signal is emitted by the manager if its internal state changes, and it is unable to determine the changes
  * which occurred, or if the manager considers the changes to be radical enough to require clients to reload all data.
  * If this signal is emitted, no other signals will be emitted for the associated changes.
  */
@@ -95,6 +92,13 @@
  * \fn QContactManager::relationshipsRemoved(const QList<QContactLocalId>& affectedContactIds)
  * This signal is emitted at some point after relationships have eben removed from the manager which involve the contacts identified by \a affectedContactIds.
  * This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
+ */
+
+/*!
+ * \fn QContactManager::selfContactIdChanged(const QContactLocalId& oldId, const QContactLocalId& newId)
+ * This signal is emitted at some point after the id of the self-contact is changed from \a oldId to \a newId in the manager.
+ * If the \a newId is the invalid, zero id, then the self contact was deleted or no self contact exists.
+ * This signal must not be emitted if the dataChanged() signal was previously emitted for this change.
  */
 
 
@@ -168,8 +172,8 @@ bool QContactManager::splitUri(const QString& uri, QString* pManagerId, QMap<QSt
     return true;
 }
 
-/*! Returns a URI that completely describes a manager implementation, datastore, and the parameters with which to instantiate the manager, from the given \a managerName and \a params */
-QString QContactManager::buildUri(const QString& managerName, const QMap<QString, QString>& params)
+/*! Returns a URI that completely describes a manager implementation, datastore, and the parameters with which to instantiate the manager, from the given \a managerName, \a params and an optional \a implementationVersion */
+QString QContactManager::buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion) 
 {
     QString ret(QLatin1String("qtcontacts:%1:%2"));
     // we have to escape each param
@@ -185,6 +189,19 @@ QString QContactManager::buildUri(const QString& managerName, const QMap<QString
         key = key + QLatin1Char('=') + arg;
         escapedParams.append(key);
     }
+
+    QString versionString = QString(QLatin1String(QTCONTACTS_VERSION_NAME));
+    versionString += QString::fromAscii("=");
+    versionString += QString::number(version());
+    escapedParams.append(versionString);
+
+    if (implementationVersion != -1) {
+        versionString = QString(QLatin1String(QTCONTACTS_IMPLEMENTATION_VERSION_NAME));
+        versionString += QString::fromAscii("=");
+        versionString += QString::number(implementationVersion);
+        escapedParams.append(versionString);
+    }
+
     return ret.arg(managerName, escapedParams.join(QLatin1String("&")));
 }
 
@@ -220,6 +237,11 @@ QContactManager::QContactManager(const QString& managerName, const QMap<QString,
     : QObject(parent),
     d(new QContactManagerData)
 {
+    createEngine(managerName, parameters); 
+} 
+
+void QContactManager::createEngine(const QString& managerName, const QMap<QString, QString>& parameters) 
+{ 
     d->createEngine(managerName, parameters);
     connect(d->m_engine, SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
     connect(d->m_engine, SIGNAL(contactsAdded(QList<QContactLocalId>)), this, SIGNAL(contactsAdded(QList<QContactLocalId>)));
@@ -227,12 +249,30 @@ QContactManager::QContactManager(const QString& managerName, const QMap<QString,
     connect(d->m_engine, SIGNAL(contactsRemoved(QList<QContactLocalId>)), this, SIGNAL(contactsRemoved(QList<QContactLocalId>)));
     connect(d->m_engine, SIGNAL(relationshipsAdded(QList<QContactLocalId>)), this, SIGNAL(relationshipsAdded(QList<QContactLocalId>)));
     connect(d->m_engine, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)), this, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)));
+    connect(d->m_engine, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)), this, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
 }
 
+/*!
+ * Constructs a QContactManager whose backend has the name \a managerName and version \a implementationVersion, where the manager
+ * is constructed with the provided \a parameters.
+ *
+ * The \a parent QObject will be used as the parent of this QContactManager.
+ *
+ * If an empty \a managerName is specified, the default implementation for the platform will be instantiated.
+ * If the specified implementation version is not available, the manager with the name \a managerName with the default implementation version is instantiated.
+ */
+QContactManager::QContactManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters, QObject* parent) 
+    : QObject(parent), 
+    d(new QContactManagerData) 
+{ 
+    QMap<QString, QString> params = parameters; 
+    params[QString(QLatin1String(QTCONTACTS_IMPLEMENTATION_VERSION_NAME))] = QString::number(implementationVersion);
+    createEngine(managerName, params); 
+} 
+ 
 /*! Frees the memory used by the QContactManager */
 QContactManager::~QContactManager()
 {
-    delete d->m_info;
     delete d;
 }
 
@@ -246,10 +286,13 @@ QContactManager::~QContactManager()
  * \value AlreadyExistsError The most recent operation failed because the specified contact or detail definition already exists
  * \value InvalidDetailError The most recent operation failed because the specified contact contains details which do not conform to their definition
  * \value InvalidRelationshipError The most recent operation failed because the specified relationship is circular or references an invalid local contact
+ * \value InvalidContactTypeError The most recent operation failed because the contact type specified was not valid for the operation
  * \value LockedError The most recent operation failed because the datastore specified is currently locked
  * \value DetailAccessError The most recent operation failed because a detail was modified or removed and its access method does not allow that
  * \value PermissionsError The most recent operation failed because the caller does not have permission to perform the operation
  * \value OutOfMemoryError The most recent operation failed due to running out of memory
+ * \value VersionMismatchError The most recent operation failed because the backend of the manager is not of the required version
+ * \value LimitReachedError The most recent operation failed because the limit for that type of object has been reached
  * \value NotSupportedError The most recent operation failed because the requested operation is not supported in the specified store
  * \value BadArgumentError The most recent operation failed because one or more of the parameters to the operation were invalid
  * \value UnspecifiedError The most recent operation failed for an undocumented reason
@@ -268,6 +311,8 @@ QList<QContactLocalId> QContactManager::contacts(const QList<QContactSortOrder>&
 }
 
 /*!
+ * \deprecated
+ *
  * Returns a list of contact ids that match the given \a filter, sorted according to the given list of \a sortOrders.
  *
  * Depending on the backend, this filtering operation may involve retrieving all the contacts.
@@ -282,6 +327,7 @@ QList<QContactLocalId> QContactManager::contacts(const QContactFilter &filter, c
  */
 QList<QContactLocalId> QContactManager::contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders) const
 {
+    qWarning("This function is deprecated and will be removed in week 47 - see email discussion from week 45!  Use a detail filter with definition set to QContactType::DefinitionName and field name set to QContactType::FieldType instead!");
     return d->m_engine->contacts(contactType, sortOrders, d->m_error);
 }
 
@@ -315,6 +361,8 @@ QContact QContactManager::contact(const QContactLocalId& contactId) const
  * included in the list.  If these conditions are not met, the function will
  * return \c false and calling error() will return
  * \c QContactManager::InvalidRelationshipError.
+ *
+ * The manager will automatically synthesize the display label of the contact when it is saved.
  *
  * Returns false on failure, or true on
  * success.  On successful save of a contact with an id of zero, its
@@ -379,10 +427,10 @@ QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactLoca
     return d->m_engine->removeContacts(idList, d->m_error);
 }
 
-/*! Returns a display label for a \a contact which is synthesised from its details in a platform-specific manner */
-QString QContactManager::synthesiseDisplayLabel(const QContact& contact) const
+/*! Returns a display label for a \a contact which is synthesized from its details in a platform-specific manner */
+QString QContactManager::synthesizeDisplayLabel(const QContact& contact) const
 {
-    return d->m_engine->synthesiseDisplayLabel(contact, d->m_error);
+    return d->m_engine->synthesizeDisplayLabel(contact, d->m_error);
 }
 
 /*!
@@ -483,45 +531,131 @@ QList<QContactManager::Error> QContactManager::removeRelationships(const QList<Q
 }
 
 /*!
- * Returns a map of identifier to detail definition for the registered detail definitions
+ * Returns a map of identifier to detail definition for the registered detail definitions which are valid for contacts whose type is the given \a contactType
  * which are valid for the contacts in this store
  */
-QMap<QString, QContactDetailDefinition> QContactManager::detailDefinitions() const
+QMap<QString, QContactDetailDefinition> QContactManager::detailDefinitions(const QString& contactType) const
 {
-    return d->m_engine->detailDefinitions(d->m_error);
+    if (!supportedContactTypes().contains(contactType)) {
+        d->m_error = QContactManager::InvalidContactTypeError;
+        return QMap<QString, QContactDetailDefinition>();
+    }
+
+    return d->m_engine->detailDefinitions(contactType, d->m_error);
 }
 
-/*! Returns the definition identified by the given \a definitionName that is valid for the contacts in this store, or a default-constructed QContactDetailDefinition if no such definition exists */
-QContactDetailDefinition QContactManager::detailDefinition(const QString& definitionName) const
+/*! Returns the definition identified by the given \a definitionName that is valid for the contacts whose type is the given \a contactType in this store, or a default-constructed QContactDetailDefinition if no such definition exists */
+QContactDetailDefinition QContactManager::detailDefinition(const QString& definitionName, const QString& contactType) const
 {
-    return d->m_engine->detailDefinition(definitionName, d->m_error);
+    if (!supportedContactTypes().contains(contactType)) {
+        d->m_error = QContactManager::InvalidContactTypeError;
+        return QContactDetailDefinition();
+    }
+
+    return d->m_engine->detailDefinition(definitionName, contactType, d->m_error);
 }
 
-/*! Persists the given definition \a def in the database.  Returns true if the definition was saved successfully, otherwise returns false */
-bool QContactManager::saveDetailDefinition(const QContactDetailDefinition& def)
+/*! Persists the given definition \a def in the database, which is valid for contacts whose type is the given \a contactType.  Returns true if the definition was saved successfully, otherwise returns false */
+bool QContactManager::saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType)
 {
-    return d->m_engine->saveDetailDefinition(def, d->m_error);
+    if (!supportedContactTypes().contains(contactType)) {
+        d->m_error = QContactManager::InvalidContactTypeError;
+        return false;
+    }
+
+    return d->m_engine->saveDetailDefinition(def, contactType, d->m_error);
 }
 
-/*! Removes the detail definition identified by \a definitionName from the database.  Returns true if the definition was removed successfully, otherwise returns false */
-bool QContactManager::removeDetailDefinition(const QString& definitionName)
+/*! Removes the detail definition identified by \a definitionName from the database, which is valid for contacts whose type is the given \a contactType.  Returns true if the definition was removed successfully, otherwise returns false */
+bool QContactManager::removeDetailDefinition(const QString& definitionName, const QString& contactType)
 {
-    return d->m_engine->removeDetailDefinition(definitionName, d->m_error);
+    if (!supportedContactTypes().contains(contactType)) {
+        d->m_error = QContactManager::InvalidContactTypeError;
+        return false;
+    }
+
+    return d->m_engine->removeDetailDefinition(definitionName, contactType, d->m_error);
 }
 
 /*!
-    Returns an object describing the supported functionality of this QContactManager.
-
-    \sa QContactManagerInfo
+ * \enum QContactManager::ManagerFeature
+ * This enum describes the possible features that a particular manager may support
+ * \value Groups The manager supports all QContactGroup related operations, and emits the appropriate signals
+ * \value ActionPreferences The manager supports saving preferred details per action per contact
+ * \value Relationships The manager supports at least some types of relationships between contacts
+ * \value ArbitraryRelationshipTypes The manager supports relationships of arbitrary types between contacts
+ * \value MutableDefinitions The manager supports saving, updating or removing detail definitions.  Some built-in definitions may still be immutable
+ * \value SelfContact The manager supports the concept of saving a contact which represents the current user
+ * \value ChangeLogs The manager supports reporting of timestamps of changes, and filtering and sorting by those timestamps
+ * \value Anonymous The manager is isolated from other managers
  */
-QContactManagerInfo* QContactManager::information() const
+
+/*!
+ * Returns true if the given feature \a feature is supported by the manager, for the specified type of contact \a contactType
+ */
+bool QContactManager::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const
 {
-    if (!d->m_info) {
-        d->m_info = new QContactManagerInfo;
-        d->m_info->d = d;
-    }
-    return d->m_info;
+    return d->m_engine->hasFeature(feature, contactType);
 }
+
+/*!
+ * Returns the list of data types supported by the manager
+ */
+QList<QVariant::Type> QContactManager::supportedDataTypes() const
+{
+    return d->m_engine->supportedDataTypes();
+}
+
+/*!
+ * Returns true if the given \a filter is supported natively by the
+ * manager, and false if the filter behaviour would be emulated.
+ *
+ * Note: In some cases, the behaviour of an unsupported filter
+ * cannot be emulated.  For example, a filter that requests contacts
+ * that have changed since a given time depends on having that information
+ * available.  In these cases, the filter will fail.
+ */
+bool QContactManager::filterSupported(const QContactFilter& filter) const
+{
+    return d->m_engine->filterSupported(filter);
+}
+
+/*!
+ * Returns the list of relationship types which are supported by this manager for contacts of
+ * the given \a contactType.
+ * If the backend does not support the \c QContactManager::Relationships feature, this list should
+ * be empty.  If the backend supports the \c QContactManager::Relationships feature and also
+ * supports the \c QContactManager::ArbitraryRelationshipTypes feature, the list will
+ * contain the natively supported (well-known) relationship types contained in the list, but clients
+ * are able to add relationships of any custom type also.
+ */
+QStringList QContactManager::supportedRelationshipTypes(const QString& contactType) const
+{
+    return d->m_engine->supportedRelationshipTypes(contactType);
+}
+
+/*!
+ * Returns the list of contact types which are supported by this manager.
+ * This is a convenience function, equivalent to retrieving the allowable values
+ * for the \c QContactType::FieldType field of the QContactType definition
+ * which is valid in this manager.
+ */
+QStringList QContactManager::supportedContactTypes() const
+{
+    return d->m_engine->supportedContactTypes();
+}
+
+/*! Returns the version number of the Qt Mobility Contacts API */
+int QContactManager::version() 
+{ 
+    return QTCONTACTS_VERSION; 
+} 
+
+/*! Returns the engine backend implementation version number */
+int QContactManager::implementationVersion() const 
+{ 
+    return d->m_engine->implementationVersion(); 
+} 
 
 /*! Returns the manager name for this QContactManager */
 QString QContactManager::managerName() const
@@ -530,9 +664,13 @@ QString QContactManager::managerName() const
 }
 
 /*! Return the parameters relevant to the creation of this QContactManager */
-QMap<QString, QString>QContactManager::managerParameters() const
+QMap<QString, QString> QContactManager::managerParameters() const
 {
-    return d->m_engine->managerParameters();
+    QMap<QString, QString> params = d->m_engine->managerParameters();
+    
+    params.remove(QString::fromAscii(QTCONTACTS_VERSION_NAME));
+    params.remove(QString::fromAscii(QTCONTACTS_IMPLEMENTATION_VERSION_NAME));
+    return params;
 }
 
 /*!

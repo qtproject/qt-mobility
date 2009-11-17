@@ -111,13 +111,13 @@ Q_IMPORT_PLUGIN(contacts_testdummystaticactionfactorycopy)
 tst_QContactActions::tst_QContactActions()
 {
     // set the correct path to look for plugins
-    QString path = QApplication::applicationDirPath() + "/dummyplugin";
+    QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins";
     QApplication::addLibraryPath(path);
 }
 
 tst_QContactActions::~tst_QContactActions()
 {
-    QString path = QApplication::applicationDirPath() + "/dummyplugin";
+    QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins";
     QApplication::removeLibraryPath(path);
 }
 

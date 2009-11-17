@@ -11,7 +11,7 @@ include(../../../../common.pri)
 qtAddLibrary(QtBearer)
 
 wince* {
-    LACKEY.sources = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/qnetworksessionlackey.exe
+    LACKEY.sources = $$OUTPUT_DIR/build/tests/bin/qnetworksessionlackey.exe
     LACKEY.path = .
     DEPLOYMENT += LACKEY
 }

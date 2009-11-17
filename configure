@@ -334,8 +334,9 @@ echo "Generating Mobility Headers..."
 #remove old headers
 rm -rf $shadowpath/include
 mkdir $shadowpath/include
+$relpath/bin/syncheaders $shadowpath/include $relpath/src/global
 $relpath/bin/syncheaders $shadowpath/include $relpath/src/bearer
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/context
+$relpath/bin/syncheaders $shadowpath/include $relpath/src/publishsubscribe
 $relpath/bin/syncheaders $shadowpath/include $relpath/src/location
 $relpath/bin/syncheaders $shadowpath/include $relpath/src/serviceframework
 $relpath/bin/syncheaders $shadowpath/include $relpath/src/systeminfo

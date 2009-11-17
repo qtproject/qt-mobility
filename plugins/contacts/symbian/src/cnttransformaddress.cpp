@@ -239,7 +239,7 @@ bool CntTransformAddress::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformAddress::getIdForField(const QString& fieldName) const
 {
-       
+
     if (QContactAddress::FieldStreet  == fieldName)
         return KUidContactFieldAddress.iUid;
     else if (QContactAddress::FieldLocality == fieldName)
@@ -260,39 +260,31 @@ quint32 CntTransformAddress::getIdForField(const QString& fieldName) const
         return 0;
     else if (QContactAddress::SubTypeInternational == fieldName)
         return 0;
-    else 
+    else
         return 0;
 }
 
 /*!
- * Adds the detail definitions for the details this transform class supports.
+ * Modifies the detail definitions. The default detail definitions are
+ * queried from QContactManagerEngine::schemaDefinitions and then modified
+ * with this function in the transform leaf classes.
  *
- * \a definitions On return, the supported detail definitions have been added.
+ * \a definitions The detail definitions to modify.
+ * \a contactType The contact type the definitions apply for.
  */
-void CntTransformAddress::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformAddress::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
-    QContactDetailDefinition d;
+    Q_UNUSED(contactType);
 
-    // Address fields
-    d.setName(QContactAddress::DefinitionName);
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
-    fields.insert(QContactAddress::FieldPostOfficeBox, f);
-    fields.insert(QContactAddress::FieldStreet, f);
-    fields.insert(QContactAddress::FieldLocality, f);
-    fields.insert(QContactAddress::FieldRegion, f);
-    fields.insert(QContactAddress::FieldPostcode, f);
-    fields.insert(QContactAddress::FieldCountry, f);
+    if(definitions.contains(QContactAddress::DefinitionName)) {
+        QContactDetailDefinition d = definitions.value(QContactAddress::DefinitionName);
+        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
 
-    // Contexts
-    f.dataType = QVariant::StringList;
-    f.allowableValues << QString(QLatin1String(QContactDetail::ContextHome)) << QString(QLatin1String(QContactDetail::ContextWork)) << QString(QLatin1String(QContactDetail::ContextOther));
-    fields.insert(QContactDetail::FieldContext, f);
+        // Sub-types not supported in symbian back-end, remove
+        fields.remove(QContactAddress::FieldSubTypes);
+        d.setFields(fields);
 
-    d.setFields(fields);
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-    definitions.insert(d.name(), d);
+        // Replace original definitions
+        definitions.insert(d.name(), d);
+    }
 }

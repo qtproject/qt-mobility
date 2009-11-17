@@ -52,7 +52,7 @@
 #include <QString>
 
 class QContactRelationshipFilterPrivate;
-class QTCONTACTS_EXPORT QContactRelationshipFilter : public QContactFilter
+class Q_CONTACTS_EXPORT QContactRelationshipFilter : public QContactFilter
 {
 public:
     QContactRelationshipFilter();

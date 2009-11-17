@@ -48,7 +48,7 @@
 #include <QStringList>
 
 class QContactDetailDefinitionRemoveRequestPrivate;
-class QTCONTACTS_EXPORT QContactDetailDefinitionRemoveRequest : public QContactAbstractRequest
+class Q_CONTACTS_EXPORT QContactDetailDefinitionRemoveRequest : public QContactAbstractRequest
 {
     Q_OBJECT
 
@@ -59,6 +59,8 @@ public:
     /* Selection */
     void setNames(const QStringList& names);
     QStringList names() const;
+    void setContactType(const QString& contactType);
+    QString contactType() const;
 
 signals:
     void progress(QContactDetailDefinitionRemoveRequest* self);

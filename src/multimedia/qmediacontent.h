@@ -47,7 +47,7 @@
 
 #include <qmediaresource.h>
 
-#include <qmultimediaglobal.h>
+#include <qmobilityglobal.h>
 
 
 class QMediaContentPrivate;

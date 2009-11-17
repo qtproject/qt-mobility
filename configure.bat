@@ -45,9 +45,9 @@
 set QT_MOBILITY_PREFIX= C:\QtMobility
 set BUILD_PATH=%CD%
 set SOURCE_PATH= %~dp0
-cd %SOURCE_PATH%
+cd /D %SOURCE_PATH%
 set SOURCE_PATH=%CD%
-cd %BUILD_PATH%
+cd /D %BUILD_PATH%
 
 set PROJECT_CONFIG= %BUILD_PATH%\config.in
 set PROJECT_LOG= %BUILD_PATH%\config.log
@@ -191,9 +191,9 @@ echo %CURRENTDIR%
 if exist %QT_MOBILITY_PREFIX% goto prefixExists
 mkdir %QT_MOBILITY_PREFIX%
 if errorlevel 1 goto invalidPrefix
-cd %QT_MOBILITY_PREFIX%
+cd /D %QT_MOBILITY_PREFIX%
 set QT_MOBILITY_PREFIX=%CD%
-cd %CURRENTDIR%
+cd /D %CURRENTDIR%
 rd /S /Q %QT_MOBILITY_PREFIX%
 goto endprefixProcessing
 
@@ -202,9 +202,9 @@ echo "%QT_MOBILITY_PREFIX%" is not a valid directory path.
 goto :exitTag
 
 :prefixExists
-cd %QT_MOBILITY_PREFIX%
+cd /D %QT_MOBILITY_PREFIX%
 set QT_MOBILITY_PREFIX=%CD%
-cd %CURRENTDIR%
+cd /D %CURRENTDIR%
 
 :endprefixProcessing
 echo QT_MOBILITY_PREFIX = %QT_MOBILITY_PREFIX% >> %PROJECT_CONFIG%
@@ -252,11 +252,12 @@ goto testingMake
 :gnumake
 echo Checking for GNU make...
 make -v >> %PROJECT_LOG% 2>&1
-if errorlevel 1 goto gnumake
+if errorlevel 1 goto noMake
 echo       Using GNU make
 set MAKE=make
 goto testingMake
 
+:noMake
 echo >&2 "Cannot find 'nmake', 'mingw32-make' or 'make' in your PATH"
 echo >&2 "Aborting."
 
@@ -271,6 +272,7 @@ if not exist "%BUILD_PATH%\features" mkdir %BUILD_PATH%\features
 echo "Generating Mobility Headers..."
 rd /s /q %BUILD_PATH%\include
 mkdir %BUILD_PATH%\include
+perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\global
 perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\bearer
 perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\context
 perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\location

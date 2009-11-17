@@ -55,22 +55,23 @@
 #include "qcontact.h"
 #include "qcontactid.h"
 #include "qcontactrelationship.h"
-#include "qcontactmanagerinfo.h"
 #include "qcontactsortorder.h"
 
 class QContactFilter;
 class QContactAction;
 
 class QContactManagerData;
-class QTCONTACTS_EXPORT QContactManager : public QObject
+class Q_CONTACTS_EXPORT QContactManager : public QObject
 {
     Q_OBJECT
 
 public:
 #if Q_QDOC // qdoc's parser fails to recognise the default map argument
     QContactManager(const QString& managerName = QString(), const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
+    QContactManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
 #else
     QContactManager(const QString& managerName = QString(), const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
+    QContactManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
 #endif
 
     static QContactManager* fromUri(const QString& uri, QObject* parent = 0);
@@ -81,7 +82,7 @@ public:
     QString managerUri() const;                        // managerName + managerParameters
 
     static bool splitUri(const QString& uri, QString* managerName, QMap<QString, QString>* params);
-    static QString buildUri(const QString& managerName, const QMap<QString, QString>& params);
+    static QString buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion = -1);
 
     /* The values of the Error enum are still to be decided! */
     enum Error {
@@ -96,7 +97,10 @@ public:
         OutOfMemoryError,
         NotSupportedError,
         BadArgumentError,
-        UnspecifiedError
+        UnspecifiedError,
+        VersionMismatchError,
+        LimitReachedError,
+        InvalidContactTypeError
     };
 
     /* Error reporting */
@@ -105,7 +109,7 @@ public:
     /* Contacts - Accessors and Mutators */
     QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const;    // retrieve contact ids
     QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve ids of contacts matching the filter
-    QList<QContactLocalId> contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve contacts of the given type
+    QList<QContactLocalId> Q_DECL_DEPRECATED contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve contacts of the given type
 
     QContact contact(const QContactLocalId& contactId) const;  // retrieve a contact
 
@@ -114,8 +118,8 @@ public:
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts);       // batch API - save
     QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds);  // batch API - remove
 
-    /* Synthesise the display label of a contact */
-    QString synthesiseDisplayLabel(const QContact& contact) const;
+    /* Synthesize the display label of a contact */
+    QString synthesizeDisplayLabel(const QContact& contact) const;
 
     /* "Self" contact id (MyCard) */
     bool setSelfContactId(const QContactLocalId& contactId);
@@ -130,13 +134,31 @@ public:
     QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships);
 
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QContactDetailDefinition> detailDefinitions() const;
-    QContactDetailDefinition detailDefinition(const QString& definitionName) const;
-    bool saveDetailDefinition(const QContactDetailDefinition& def);
-    bool removeDetailDefinition(const QString& definitionName);
+    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType = QContactType::TypeContact) const;
+    QContactDetailDefinition detailDefinition(const QString& definitionName, const QString& contactType = QContactType::TypeContact) const;
+    bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType = QContactType::TypeContact);
+    bool removeDetailDefinition(const QString& definitionName, const QString& contactType = QContactType::TypeContact);
 
     /* Functionality reporting */
-    QContactManagerInfo* information() const;
+    enum ManagerFeature {
+        Groups = 0,
+        ActionPreferences,
+        MutableDefinitions,
+        Relationships,
+        ArbitraryRelationshipTypes,
+        SelfContact,
+        Anonymous,
+        ChangeLogs
+    };
+    bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType = QContactType::TypeContact) const;
+    QStringList supportedRelationshipTypes(const QString& contactType = QContactType::TypeContact) const;
+    QList<QVariant::Type> supportedDataTypes() const;
+    bool filterSupported(const QContactFilter& filter) const;
+    QStringList supportedContactTypes() const;
+
+    /* Versions */ 
+    static int version(); 
+    int implementationVersion() const; 
 
     /* return a list of available backends for which a QContactManager can be constructed. */
     static QStringList availableManagers();
@@ -148,9 +170,11 @@ signals:
     void contactsRemoved(const QList<QContactLocalId>& contactIds);
     void relationshipsAdded(const QList<QContactLocalId>& affectedContactIds);
     void relationshipsRemoved(const QList<QContactLocalId>& affectedContactIds);
+    void selfContactIdChanged(const QContactLocalId& oldId, const QContactLocalId& newId); // need both? or just new?
 
 private:
     friend class QContactManagerData;
+    void createEngine(const QString& managerName, const QMap<QString, QString>& parameters); 
     Q_DISABLE_COPY(QContactManager)
     // private data pointer
     QContactManagerData* d;

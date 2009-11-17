@@ -40,7 +40,6 @@
 ****************************************************************************/
 #ifndef QMESSAGEFOLDERORDERINGPRIVATE_H
 #define QMESSAGEFOLDERORDERINGPRIVATE_H
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 #include "qmessagefolderordering.h"
 #include "qmessagefolder.h"
 #include "qpair.h"
@@ -67,5 +66,4 @@ public:
     static bool lessThan(const QMessageFolderOrdering &ordering, const QMessageFolder &folder1, const QMessageFolder &folder2);
 #endif    
 };
-#endif
 #endif

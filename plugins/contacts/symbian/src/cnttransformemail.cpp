@@ -129,34 +129,21 @@ quint32 CntTransformEmail::getIdForField(const QString& fieldName) const
 {
     if (QContactEmailAddress::FieldEmailAddress == fieldName)
         return KUidContactFieldEMail.iUid;
-    else 
+    else
         return 0;
 }
 
 /*!
- * Adds the detail definitions for the details this transform class supports.
+ * Modifies the detail definitions. The default detail definitions are
+ * queried from QContactManagerEngine::schemaDefinitions and then modified
+ * with this function in the transform leaf classes.
  *
- * \a definitions On return, the supported detail definitions have been added.
+ * \a definitions The detail definitions to modify.
+ * \a contactType The contact type the definitions apply for.
  */
-void CntTransformEmail::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions) const
+void CntTransformEmail::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
-    QContactDetailDefinition d;
-
-    d.setName(QContactEmailAddress::DefinitionName);
-    f.dataType = QVariant::String;
-    f.allowableValues = QVariantList();
-    fields.insert(QContactEmailAddress::FieldEmailAddress, f);
-    f.dataType = QVariant::StringList;
-
-    // Contexts
-    f.allowableValues << QString(QLatin1String(QContactDetail::ContextHome)) << QString(QLatin1String(QContactDetail::ContextWork)) << QString(QLatin1String(QContactDetail::ContextOther));
-    fields.insert(QContactDetail::FieldContext, f);
-
-    d.setFields(fields);
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-
-    definitions.insert(d.name(), d);
+    Q_UNUSED(definitions);
+    Q_UNUSED(contactType);
+    // Does not modify the default schema
 }

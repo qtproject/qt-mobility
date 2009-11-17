@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QMULTIMEDIAGLOBAL_H
-#define QMULTIMEDIAGLOBAL_H
+#ifndef QPUBLISHSUBSCRIBEGLOBAL_H
+#define QPUBLISHSUBSCRIBEGLOBAL_H
 
 #if defined(QTM_BUILD_UNITTESTS)
 # include <qconfig.h>
@@ -48,7 +48,12 @@
 #   define QT_BUILD_INTERNAL
 # endif
 #endif
+
 #include <QtCore/qglobal.h>
+
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
 
 #if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
 #  if defined(QT_NODLL)
@@ -58,23 +63,27 @@
 #    if defined(QT_DLL)
 #      undef QT_DLL
 #    endif
-#    if defined(QT_BUILD_MEDIA_LIB)
-#      define Q_MEDIA_EXPORT Q_DECL_EXPORT
+#    if defined(QT_BUILD_CFW_LIB)
+#      define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_EXPORT
 #    else
-#      define Q_MEDIA_EXPORT Q_DECL_IMPORT
+#      define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_IMPORT
 #    endif
 #  elif defined(QT_DLL) /* use a Qt DLL library */
-#    define Q_MEDIA_EXPORT Q_DECL_IMPORT
+#    define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_IMPORT
 #  endif
 #else
 #endif
 
-#if !defined(Q_MEDIA_EXPORT)
+#if !defined(Q_PUBLISHSUBSCRIBE_EXPORT)
 #  if defined(QT_SHARED)
-#    define Q_MEDIA_EXPORT Q_DECL_EXPORT
+#    define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_EXPORT
 #  else
-#    define Q_MEDIA_EXPORT
+#    define Q_PUBLISHSUBSCRIBE_EXPORT
 #  endif
 #endif
 
-#endif
+QT_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif // QPUBLISHSUBSCRIBEGLOBAL_H

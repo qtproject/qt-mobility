@@ -42,7 +42,7 @@
 #ifndef QSERVICECONTEXT_H
 #define QSERVICECONTEXT_H
 
-#include "qserviceglobal.h"
+#include "qmobilityglobal.h"
 #include <QObject>
 #include <QVariant>
 #include <QString>

@@ -294,7 +294,7 @@ void tst_QValueSpaceProvider::testFilterConstructor_data()
 
     ADD(QValueSpace::PermanentLayer | QValueSpace::NonPermanentLayer,
         false);
-    ADD(QValueSpace::WriteableLayer | QValueSpace::NonWriteableLayer,
+    ADD(QValueSpace::WritableLayer | QValueSpace::NonWritableLayer,
         false);
 }
 

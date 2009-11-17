@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtCore module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,44 +38,57 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef CNTSRVCONNECTION_H
+#define CNTSRVCONNECTION_H
 
-#ifndef QBEARERGLOBAL_H
-#define QBEARERGLOBAL_H
+// System includes
+#include <QList>
+#include <e32std.h>
+#include <cntdb.h>
+#include <cntdbobs.h>
 
-#if defined(QTM_BUILD_UNITTESTS)
-# include <qconfig.h>
-# if !defined(QT_BUILD_INTERNAL)
-#   define QT_BUILD_INTERNAL
-# endif
+// User includes
+#include "qcontactmanager.h"
+
+// Forward declarations
+class QContactManagerEngine;
+
+// External data types
+
+// Constants
+
+class CntSymbianDatabase : public QObject, public MContactDbObserver
+{
+Q_OBJECT
+
+public:
+    CntSymbianDatabase(QContactManagerEngine *engine, QContactManager::Error& error);
+    ~CntSymbianDatabase();
+
+public:
+    CContactDatabase* contactDatabase();
+    void appendContactsEmitted(const QList<QContactLocalId>& contactList);
+    void appendContactEmitted(QContactLocalId id);
+
+public:
+    // From MContactDbObserver
+    void HandleDatabaseEventL(TContactDbObserverEvent aEvent);
+
+signals:
+    void ownCardChanged(const QContactLocalId& oldId, const QContactLocalId& newId);
+
+private:
+    CContactDatabase* m_contactDatabase;
+#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
+    CContactChangeNotifier* m_contactChangeNotifier;
 #endif
+    QContactManagerEngine *m_engine;
+    QList<QContactLocalId> m_contactsEmitted;
+    QContactLocalId m_ownCardId;
+};
 
-#include <QtCore/qglobal.h>
 
-#if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
-#  if defined(QT_NODLL)
-#    undef QT_MAKEDLL
-#    undef QT_DLL
-#  elif defined(QT_MAKEDLL)
-#    if defined(QT_DLL)
-#      undef QT_DLL
-#    endif
-#    if defined(QT_BUILD_BEARER_LIB)
-#      define Q_BEARER_EXPORT Q_DECL_EXPORT
-#    else
-#      define Q_BEARER_EXPORT Q_DECL_IMPORT
-#    endif
-#  elif defined(QT_DLL) /* use a Qt DLL library */
-#    define Q_BEARER_EXPORT Q_DECL_IMPORT
-#  endif
-#else
-#endif
 
-#if !defined(Q_BEARER_EXPORT)
-#  if defined(QT_SHARED)
-#    define Q_BEARER_EXPORT Q_DECL_EXPORT
-#  else
-#    define Q_BEARER_EXPORT
-#  endif
-#endif
 
-#endif // QBEARERGLOBAL_H
+
+#endif CNTSRVCONNECTION_H

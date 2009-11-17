@@ -324,7 +324,9 @@ void QNlaThread::run()
         }
 
 #ifndef Q_OS_WINCE
-        WaitForSingleObjectEx(changeEvent, WSA_INFINITE, true);
+        // Not interested in unrelated IO completion events
+        // although we also don't want to block them
+        while (WaitForSingleObjectEx(changeEvent, WSA_INFINITE, true) != WAIT_IO_COMPLETION) {}
 #else
         WaitForSingleObject(changeEvent, WSA_INFINITE);
 #endif
@@ -334,6 +336,7 @@ void QNlaThread::run()
             result = WSALookupServiceEnd(handle);
             if (result == SOCKET_ERROR) {
                 qWarning("WSALookupServiceEnd error %d", WSAGetLastError());
+                mutex.unlock();
                 break;
             }
             handle = 0;

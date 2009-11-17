@@ -49,7 +49,7 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
-class QTCONTACTS_EXPORT QContactName : public QContactDetail
+class Q_CONTACTS_EXPORT QContactName : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
@@ -59,6 +59,7 @@ public:
     const char* FieldMiddle;
     const char* FieldLast;
     const char* FieldSuffix;
+    const char* FieldCustomLabel;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactName, "Name")
     Q_DECLARE_LATIN1_LITERAL(FieldPrefix, "Prefix");
@@ -66,6 +67,7 @@ public:
     Q_DECLARE_LATIN1_LITERAL(FieldMiddle, "Middle");
     Q_DECLARE_LATIN1_LITERAL(FieldLast, "Last");
     Q_DECLARE_LATIN1_LITERAL(FieldSuffix, "Suffix");
+    Q_DECLARE_LATIN1_LITERAL(FieldCustomLabel, "CustomLabel");
 #endif
 
     QString prefix() const {return value(FieldPrefix);}
@@ -73,12 +75,14 @@ public:
     QString middle() const {return value(FieldMiddle);}
     QString last() const {return value(FieldLast);}
     QString suffix() const {return value(FieldSuffix);}
+    QString customLabel() const{return value(FieldCustomLabel);}
 
     void setPrefix(const QString& prefix) {setValue(FieldPrefix, prefix);}
     void setFirst(const QString& first) {setValue(FieldFirst, first);}
     void setMiddle(const QString& middle) {setValue(FieldMiddle, middle);}
     void setLast(const QString& last) {setValue(FieldLast, last);}
     void setSuffix(const QString& suffix) {setValue(FieldSuffix, suffix);}
+    void setCustomLabel(const QString& customLabel) {setValue(FieldCustomLabel, customLabel);}
 };
 
 #endif

@@ -236,7 +236,6 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     }
 }
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset) const
 {
     if (filter.options() != 0) {
@@ -247,7 +246,6 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &fil
     d_ptr->_error = QMessageStore::NoError;
     return convert(d_ptr->_store->queryFolders(convert(filter), convert(ordering), limit, offset));
 }
-#endif
 
 QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset) const
 {
@@ -271,7 +269,6 @@ int QMessageStore::countMessages(const QMessageFilter& filter) const
     return d_ptr->_store->countMessages(convert(filter));
 }
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 int QMessageStore::countFolders(const QMessageFolderFilter& filter) const
 {
     if (filter.options() != 0) {
@@ -282,7 +279,6 @@ int QMessageStore::countFolders(const QMessageFolderFilter& filter) const
     d_ptr->_error = QMessageStore::NoError;
     return d_ptr->_store->countFolders(convert(filter));
 }
-#endif
 
 int QMessageStore::countAccounts(const QMessageAccountFilter& filter) const
 {
@@ -335,13 +331,11 @@ QMessage QMessageStore::message(const QMessageId& id) const
     return convert(d_ptr->_store->message(convert(id)));
 }
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
 QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
 {
     d_ptr->_error = QMessageStore::NoError;
     return convert(d_ptr->_store->folder(convert(id)));
 }
-#endif
 
 QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 {
