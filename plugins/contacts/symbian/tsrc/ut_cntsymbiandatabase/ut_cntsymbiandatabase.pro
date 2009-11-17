@@ -7,26 +7,30 @@ QT += testlib
 CONFIG += qtestlib
 include(../tsrc.pri)
 
-DEFINES += PBK_UNIT_TEST
+DEFINES += CNTSYMBIANDATABASE_UNIT_TEST
 DEPENDPATH += .
 INCLUDEPATH += .
 INCLUDEPATH += $$SYMBIAN_PATHS
 
 symbian:
 { 
-    load(data_caging_paths)
-    
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     
     # Input
-    HEADERS += ut_cntsymbianengine.h \
-            $$SYMBIAN_HEADERS
-    
-    SOURCES += ut_cntsymbianengine.cpp \
-            $$SYMBIAN_SOURCES
+    HEADERS += ut_cntsymbiandatabase.h \
+            mock_cntdb.h \
+            ../../inc/cntsymbiandatabase.h \
+            ../../inc/cntsymbiantransformerror.h
+            
+    SOURCES += ut_cntsymbiandatabase.cpp \
+            mock_cntdb.cpp \
+            ../../src/cntsymbiandatabase.cpp \
+            ../../src/cntsymbiantransformerror.cpp
             
     TARGET.CAPABILITY = ALL \
-            -TCB
-    
-    LIBS += $$SYMBIAN_LIBS
+        -TCB
+        
+    LIBS += \
+        -lcntmodel \
+        -lQtContacts
 }

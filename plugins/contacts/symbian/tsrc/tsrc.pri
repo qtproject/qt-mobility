@@ -1,4 +1,9 @@
 # Symbian plugin header and source files
+SYMBIAN_PATHS += \
+        ..\..\inc \
+        ..\..\rss \
+        ..\..\..\..\..\contacts
+        
 SYMBIAN_HEADERS += \
         ../../inc/cntsymbianengine.h \
         ../../inc/cnttransformcontact.h \
@@ -68,3 +73,9 @@ SYMBIAN_SOURCES += \
         ../../src/cntsymbiansrvconnection.cpp \
         ../../src/cntsymbiantransformerror.cpp \
         ../../src/cntsymbiandatabase.cpp
+
+SYMBIAN_LIBS += \
+        -lcntmodel \
+        -lQtContacts \
+        -lcentralrepository \
+        -lestor

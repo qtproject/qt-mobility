@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,62 +38,27 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef CNTSRVCONNECTION_H
-#define CNTSRVCONNECTION_H
+#ifndef TESTRELATIONSHIP_H
+#define TESTRELATIONSHIP_H
 
-// System includes
-#include <QList>
+#ifndef CNTSYMBIANDATABASE_UNIT_TEST
+#define CNTSYMBIANDATABASE_UNIT_TEST
+#endif
+
 #include <QObject>
-#include <e32std.h>
-#ifdef CNTSYMBIANDATABASE_UNIT_TEST
-#include "mock_cntdb.h"
-#else
-#include <cntdb.h>
-#include <cntdbobs.h>
-#endif
 
-// User includes
-#include "qcontactmanager.h"
-
-// Forward declarations
-class QContactManagerEngine;
-
-// External data types
-
-// Constants
-
-class CntSymbianDatabase : public QObject, public MContactDbObserver
+class TestCntSymbianDatabase : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 
-public:
-    CntSymbianDatabase(QContactManagerEngine *engine, QContactManager::Error& error);
-    ~CntSymbianDatabase();
-
-public:
-    CContactDatabase* contactDatabase();
-    void appendContactsEmitted(const QList<QContactLocalId>& contactList);
-    void appendContactEmitted(QContactLocalId id);
-
-public:
-    // From MContactDbObserver
-    void HandleDatabaseEventL(TContactDbObserverEvent aEvent);
-
-private:
-    CContactDatabase* m_contactDatabase;
-#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
-    CContactChangeNotifier* m_contactChangeNotifier;
-#endif
-    QContactManagerEngine *m_engine;
-    QList<QContactLocalId> m_contactsEmitted;
-    QContactLocalId m_currentOwnCardId;
-#ifdef CNTSYMBIANDATABASE_UNIT_TEST
-    friend class TestCntSymbianDatabase;
-#endif  //CNTSYMBIANDATABASE_UNIT_TEST
+private slots:
+    void initTestCase();
+    void cleanupTestCase();
+        
+    void ctor();
+    void contactDatabase();
+    void appendFunctions();
+    void databaseEvents();
 };
 
-
-
-
-
-#endif CNTSRVCONNECTION_H
+#endif
