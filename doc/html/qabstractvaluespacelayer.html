@@ -93,7 +93,7 @@
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="Handle-typedef"></a>typedef QAbstractValueSpaceLayer::Handle</h3>
-<p>The Handle type is an opaque, pointer sized contextual handle used to represent paths within value space layers. Handles are only ever created by <a href="qabstractvaluespacelayer.html#item">QAbstractValueSpaceLayer::item</a>() and are always released by calls to <a href="qabstractvaluespacelayer.html#removeHandle">QAbstractValueSpaceLayer::removeHandle</a>(). The special value, <tt>InvalidHandle</tt> is reserved to represent an invalid handle.</p>
+<p>The Handle type is an opaque, pointer sized contextual handle used to represent paths within Value Space layers. Handles are only ever created by <a href="qabstractvaluespacelayer.html#item">QAbstractValueSpaceLayer::item</a>() and are always released by calls to <a href="qabstractvaluespacelayer.html#removeHandle">QAbstractValueSpaceLayer::removeHandle</a>(). The special value, <tt>InvalidHandle</tt> is reserved to represent an invalid handle.</p>
 <h3 class="fn"><a name="Properties-enum"></a>enum QAbstractValueSpaceLayer::Properties</h3>
 <p>To allow for efficient layer implementations, expensive handle operations, currently only monitoring for changes, are enabled and disabled as needed on a per-handle basis. The Properties enumeration is a bitmask representing the different properties that can exist on a handle.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -101,7 +101,7 @@
 <tr><td valign="top"><tt>QAbstractValueSpaceLayer::Publish</tt></td><td align="center" valign="top"><tt>0x00000001</tt></td><td valign="top">Enable change notification for the handle. When set, the layer should emit <a href="qabstractvaluespacelayer.html#handleChanged">QAbstractValueSpaceLayer::handleChanged</a>() signals when appropriate for the handle.</td></tr>
 </table></p>
 <h3 class="fn"><a name="Type-enum"></a>enum QAbstractValueSpaceLayer::Type</h3>
-<p>Value Space layers are initialized in either a &quot;Server&quot; or a &quot;Client&quot; context. There is only a single server in the value space architecture, and its layers are always initialized before any clients. This distinction allows layers to implement Client/Server architecture <i>if required</i>. If not, layers are free to treat Server and Client contexts identically.</p>
+<p>Value Space layers are initialized in either a &quot;Server&quot; or a &quot;Client&quot; context. There is only a single server in the Value Space architecture, and its layers are always initialized before any clients. This distinction allows layers to implement Client/Server architecture <i>if required</i>. If not, layers are free to treat Server and Client contexts identically.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QAbstractValueSpaceLayer::Server</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The layer is being initialized in the &quot;server&quot; context.</td></tr>
@@ -144,7 +144,7 @@
 <p>Process calls to QValueSpaceProvider::~QValueSpaceProvider() by removing the entire sub tree created by <i>creator</i> under <i>handle</i>.</p>
 <p>Returns true on success; otherwise returns false.</p>
 <h3 class="fn"><a name="removeValue"></a>bool QAbstractValueSpaceLayer::removeValue ( <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>subPath</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Process calls to <a href="qvaluespaceprovider.html#removeAttribute">QValueSpaceProvider::removeAttribute</a>() by removing the value space item identified by <i>handle</i> and <i>subPath</i> and created by <i>creator</i>.</p>
+<p>Process calls to <a href="qvaluespaceprovider.html#removeAttribute">QValueSpaceProvider::removeAttribute</a>() by removing the Value Space item identified by <i>handle</i> and <i>subPath</i> and created by <i>creator</i>.</p>
 <p>Returns true on success; otherwise returns false.</p>
 <h3 class="fn"><a name="removeWatches"></a>void QAbstractValueSpaceLayer::removeWatches ( <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>parent</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Removes all registered change notifications for <i>creator</i> under <i>parent</i>.</p>
@@ -152,7 +152,7 @@
 <h3 class="fn"><a name="setProperty"></a>void QAbstractValueSpaceLayer::setProperty ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, <a href="qabstractvaluespacelayer.html#Properties-enum">Properties</a> <i>property</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Apply the specified <i>property</i> mask to <i>handle</i>.</p>
 <h3 class="fn"><a name="setValue"></a>bool QAbstractValueSpaceLayer::setValue ( <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>subPath</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Process calls to <a href="qvaluespaceprovider.html#setAttribute">QValueSpaceProvider::setAttribute</a>() by setting the value specified by the <i>subPath</i> under <i>handle</i> to <i>value</i>. Ownership of the value space item is assigned to <i>creator</i>.</p>
+<p>Process calls to <a href="qvaluespaceprovider.html#setAttribute">QValueSpaceProvider::setAttribute</a>() by setting the value specified by the <i>subPath</i> under <i>handle</i> to <i>value</i>. Ownership of the Value Space item is assigned to <i>creator</i>.</p>
 <p>Returns true on success; otherwise returns false.</p>
 <p>See also <a href="qabstractvaluespacelayer.html#value">value</a>().</p>
 <h3 class="fn"><a name="startup"></a>bool QAbstractValueSpaceLayer::startup ( <a href="qabstractvaluespacelayer.html#Type-enum">Type</a> <i>type</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
@@ -170,7 +170,7 @@
 <hr />
 <h2>Macro Documentation</h2>
 <h3 class="fn"><a name="QVALUESPACE_AUTO_INSTALL_LAYER"></a>QVALUESPACE_AUTO_INSTALL_LAYER (  <i>className</i> )</h3>
-<p>This macro installs new value space layer. <i>className</i> is the name of the class implementing the new layer.</p>
+<p>This macro installs new Value Space layer. <i>className</i> is the name of the class implementing the new layer.</p>
 <p>The method <tt>className *className::instance()</tt> must exist and return a pointer to an instance of the layer to install. This method will only be invoked <i>after</i> <a href="http://qt.nokia.com/doc/4.5/qapplication.html">QApplication</a> has been constructed, making it safe to use any Qt class in your layer's constructor.</p>
 <p>This macro can only be used once for any given class and it should be used where the implementation is written rather than in a header file.</p>
 <p /><address><hr /><div align="center">

@@ -3,10 +3,10 @@ CONFIG += plugin testplugin
 TARGET = $$qtLibraryTarget(contacts_testdummymemory)
 PLUGIN_TYPE=contacts
 
-INCLUDEPATH += ../../../../contacts \
-               ../../../../contacts/details \
-               ../../../../contacts/requests \
-               ../../../../contacts/filters
+INCLUDEPATH += ../../../../src/contacts \
+               ../../../../src/contacts/details \
+               ../../../../src/contacts/requests \
+               ../../../../src/contacts/filters
 
 qtAddLibrary(QtContacts)
 

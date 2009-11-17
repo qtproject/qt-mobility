@@ -1,5 +1,5 @@
 TARGET=tst_servicemetadata
-INCLUDEPATH += ../../../serviceframework
+INCLUDEPATH += ../../../src/serviceframework
 
 wince*|symbian*: {
     addFiles.sources = testdata/*
@@ -27,3 +27,5 @@ SOURCES += tst_servicemetadata.cpp
 symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
+
+qtAddLibrary(QtServiceFramework)

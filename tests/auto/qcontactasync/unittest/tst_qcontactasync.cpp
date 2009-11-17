@@ -112,7 +112,7 @@ Q_DECLARE_METATYPE(QContactLocalIdList);
 tst_QContactAsync::tst_QContactAsync()
 {
     // ensure we can load all of the plugins we need to.
-    QString path = QApplication::applicationDirPath() + "/dummyplugin";
+    QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins";
     QApplication::addLibraryPath(path);
 
     qRegisterMetaType<QContactLocalIdList>("QList<QContactLocalId>");
@@ -120,7 +120,7 @@ tst_QContactAsync::tst_QContactAsync()
 
 tst_QContactAsync::~tst_QContactAsync()
 {
-    QString path = QApplication::applicationDirPath() + "/dummyplugin";
+    QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins";
     QApplication::removeLibraryPath(path);
 }
 
@@ -303,8 +303,8 @@ void tst_QContactAsync::contactFetch()
     sorting.clear();
     cfr.setFilter(fil);
     cfr.setSorting(sorting);
-    cfr.setDefinitionRestrictions(QStringList(QContactDisplayLabel::DefinitionName));
-    QCOMPARE(cfr.definitionRestrictions(), QStringList(QContactDisplayLabel::DefinitionName));
+    cfr.setDefinitionRestrictions(QStringList(QContactName::DefinitionName));
+    QCOMPARE(cfr.definitionRestrictions(), QStringList(QContactName::DefinitionName));
     QVERIFY(!cfr.cancel()); // not started
     QVERIFY(cfr.start());
     QVERIFY(cfr.isActive());
@@ -325,7 +325,15 @@ void tst_QContactAsync::contactFetch()
         QContact currFull = cm->contact(contactIds.at(i));
         QContact currRestricted;
         currRestricted.setId(currFull.id());
-        currRestricted.setDisplayLabel(currFull.displayLabel());
+        QList<QContactName> names = currFull.details<QContactName>();
+        foreach (const QContactName& name, names) {
+            QContactName fullName = name;
+            if (!fullName.isEmpty()) {
+                currRestricted.saveDetail(&fullName);
+            }
+        }
+
+        // ensure that the contact is the same
         QVERIFY(contacts.at(i) == currRestricted);
     }
 
@@ -568,7 +576,9 @@ void tst_QContactAsync::contactRemove()
 
     // cancelling
     QContact temp;
-    temp.setDisplayLabel("should not be removed");
+    QContactName nameDetail;
+    nameDetail.setCustomLabel("Should not be removed");
+    temp.saveDetail(&nameDetail);
     cm->saveContact(&temp);
     crr.setFilter(dfil);
     QVERIFY(!crr.cancel()); // not started
@@ -611,6 +621,7 @@ void tst_QContactAsync::contactRemove()
 
     QCOMPARE(cm->contacts().size(), 1);
     QCOMPARE(cm->contact(cm->contacts().first()), temp);
+    cm->removeContact(temp.localId()); // clean up
 
     delete cm;
 }
@@ -633,7 +644,9 @@ void tst_QContactAsync::contactSave()
     // save a new contact
     int originalCount = cm->contacts().size();
     QContact testContact;
-    testContact.setDisplayLabel("Test Contact");
+    QContactName nameDetail;
+    nameDetail.setCustomLabel("Test Contact");
+    testContact.saveDetail(&nameDetail);
     QList<QContact> saveList;
     saveList << testContact;
     csr.setManager(cm);
@@ -767,6 +780,8 @@ void tst_QContactAsync::definitionFetch()
     QContactManager* cm = prepareModel(uri);
     QContactDetailDefinitionFetchRequest dfr;
     QVERIFY(dfr.type() == QContactAbstractRequest::DetailDefinitionFetchRequest);
+    dfr.setContactType(QContactType::TypeContact);
+    QVERIFY(dfr.contactType() == QString(QLatin1String(QContactType::TypeContact)));
 
     // initial state - not started, no manager.
     QVERIFY(!dfr.isActive());
@@ -868,11 +883,13 @@ void tst_QContactAsync::definitionRemove()
 {
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
-    if (!cm->information()->hasFeature(QContactManagerInfo::MutableDefinitions)) {
+    if (!cm->hasFeature(QContactManager::MutableDefinitions, QContactType::TypeContact)) {
        QSKIP("This contact manager doest not support mutable definitions, can't remove a definition!", SkipSingle);
     }
     QContactDetailDefinitionRemoveRequest drr;
     QVERIFY(drr.type() == QContactAbstractRequest::DetailDefinitionRemoveRequest);
+    drr.setContactType(QContactType::TypeContact);
+    QVERIFY(drr.contactType() == QString(QLatin1String(QContactType::TypeContact)));
 
     // initial state - not started, no manager.
     QVERIFY(!drr.isActive());
@@ -1018,12 +1035,14 @@ void tst_QContactAsync::definitionSave()
     QFETCH(QString, uri);
     QContactManager* cm = prepareModel(uri);
     
-    if (!cm->information()->hasFeature(QContactManagerInfo::MutableDefinitions)) {
+    if (!cm->hasFeature(QContactManager::MutableDefinitions, QContactType::TypeContact)) {
        QSKIP("This contact manager doest not support mutable definitions, can't save a definition!", SkipSingle);
     }
     
     QContactDetailDefinitionSaveRequest dsr;
     QVERIFY(dsr.type() == QContactAbstractRequest::DetailDefinitionSaveRequest);
+    dsr.setContactType(QContactType::TypeContact);
+    QVERIFY(dsr.contactType() == QString(QLatin1String(QContactType::TypeContact)));
 
     // initial state - not started, no manager.
     QVERIFY(!dsr.isActive());
@@ -1033,13 +1052,13 @@ void tst_QContactAsync::definitionSave()
     QVERIFY(!dsr.waitForFinished());
     QVERIFY(!dsr.waitForProgress());
 
-    // save a new group
+    // save a new detail definition
     int originalCount = cm->detailDefinitions().keys().size();
     QContactDetailDefinition testDef;
     testDef.setName("TestDefinitionId");
-    QMap<QString, QContactDetailDefinition::Field> fields;
-    QContactDetailDefinition::Field f;
-    f.dataType = QVariant::String;
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
+    f.setDataType(QVariant::String);
     fields.insert("TestDefinitionField", f);
     testDef.setFields(fields);
     QList<QContactDetailDefinition> saveList;
@@ -1197,7 +1216,7 @@ void tst_QContactAsync::relationshipFetch()
     QCOMPARE(rels, result);
 
     // specific relationship type retrieval
-    rfr.setRelationshipType(QContactRelationship::IsManagerOf);
+    rfr.setRelationshipType(QContactRelationship::HasManager);
     QVERIFY(!rfr.cancel()); // not started
     QVERIFY(rfr.start());
     QVERIFY(rfr.isActive());
@@ -1210,7 +1229,7 @@ void tst_QContactAsync::relationshipFetch()
     QVERIFY(rfr.isFinished());
     QVERIFY(!rfr.isActive());
 
-    rels = cm->relationships(QContactRelationship::IsManagerOf);
+    rels = cm->relationships(QContactRelationship::HasManager);
     result = rfr.relationships();
     QCOMPARE(rels, result);
 
@@ -1220,7 +1239,7 @@ void tst_QContactAsync::relationshipFetch()
     QContactId aId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.displayLabel().label() == QString("Aaron Aaronson")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Aaron Aaronson")) {
             aId = curr.id();
             break;
         }
@@ -1248,7 +1267,7 @@ void tst_QContactAsync::relationshipFetch()
     QContactId bId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.displayLabel().label() == QString("Bob Aaronsen")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Bob Aaronsen")) {
             bId = curr.id();
             break;
         }
@@ -1278,7 +1297,7 @@ void tst_QContactAsync::relationshipFetch()
     QContactId cId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.displayLabel().label() == QString("Borris Aaronsun")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Borris Aaronsun")) {
             cId = curr.id();
             break;
         }
@@ -1381,15 +1400,15 @@ void tst_QContactAsync::relationshipRemove()
     QContactId aId, bId, cId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.displayLabel().label() == QString("Aaron Aaronson")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Aaron Aaronson")) {
             aId = curr.id();
             continue;
         }
-        if (curr.displayLabel().label() == QString("Bob Aaronsen")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Bob Aaronsen")) {
             bId = curr.id();
             continue;
         }
-        if (curr.displayLabel().label() == QString("Borris Aaronsun")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Borris Aaronsun")) {
             cId = curr.id();
             continue;
         }
@@ -1398,7 +1417,7 @@ void tst_QContactAsync::relationshipRemove()
     // specific source, destination and type removal
     rrr.setFirst(aId);
     rrr.setSecond(cId);
-    rrr.setRelationshipType(QContactRelationship::IsAssistantOf);
+    rrr.setRelationshipType(QContactRelationship::HasAssistant);
     rrr.setManager(cm);
     qRegisterMetaType<QContactRelationshipRemoveRequest*>("QContactRelationshipRemoveRequest*");
     QSignalSpy spy(&rrr, SIGNAL(progress(QContactRelationshipRemoveRequest*)));
@@ -1408,7 +1427,7 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(!rrr.cancel());
     QVERIFY(!rrr.waitForFinished());
     QVERIFY(!rrr.waitForProgress());
-    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::IsAssistantOf)));
+    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::HasAssistant)));
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
     QVERIFY(rrr.isActive());
@@ -1420,19 +1439,19 @@ void tst_QContactAsync::relationshipRemove()
     QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
     QVERIFY(rrr.isFinished());
     QVERIFY(!rrr.isActive());
-    QCOMPARE(cm->relationships(QContactRelationship::IsAssistantOf, cId, QContactRelationshipFilter::Second).size(), 1);
+    QCOMPARE(cm->relationships(QContactRelationship::HasAssistant, cId, QContactRelationshipFilter::Second).size(), 1);
 
     // specific relationship type removal
     rrr.setFirst(QContactId());
     rrr.setSecond(QContactId());
-    rrr.setRelationshipType(QContactRelationship::IsSpouseOf);
+    rrr.setRelationshipType(QContactRelationship::HasSpouse);
     rrr.setManager(cm);
     QCOMPARE(rrr.manager(), cm);
     QVERIFY(!rrr.isActive());
     QVERIFY(!rrr.cancel());
     QVERIFY(!rrr.waitForFinished());
     QVERIFY(!rrr.waitForProgress());
-    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::IsSpouseOf)));
+    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::HasSpouse)));
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
     QVERIFY(rrr.isActive());
@@ -1445,14 +1464,14 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(rrr.isFinished());
     QVERIFY(!rrr.isActive());
 
-    QCOMPARE(cm->relationships(QContactRelationship::IsSpouseOf).size(), 0);
-    (void)(cm->relationships(QContactRelationship::IsSpouseOf)); // check that it has already been removed.
+    QCOMPARE(cm->relationships(QContactRelationship::HasSpouse).size(), 0);
+    (void)(cm->relationships(QContactRelationship::HasSpouse)); // check that it has already been removed.
     QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
     // remove (asynchronously) a nonexistent relationship - should fail.
     rrr.setFirst(cId);
     rrr.setSecond(aId);
-    rrr.setRelationshipType(QContactRelationship::IsManagerOf);
+    rrr.setRelationshipType(QContactRelationship::HasManager);
     rrr.setManager(cm);
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
@@ -1466,20 +1485,20 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(rrr.isFinished());
     QVERIFY(!rrr.isActive());
 
-    QCOMPARE(cm->relationships(QContactRelationship::IsManagerOf, cId, QContactRelationshipFilter::First).size(), 0);
+    QCOMPARE(cm->relationships(QContactRelationship::HasManager, cId, QContactRelationshipFilter::First).size(), 0);
     QCOMPARE(rrr.error(), QContactManager::DoesNotExistError);
 
     // specific relationship type plus source removal
     rrr.setFirst(bId);
     rrr.setSecond(QContactId());
-    rrr.setRelationshipType(QContactRelationship::IsAssistantOf);
+    rrr.setRelationshipType(QContactRelationship::HasAssistant);
     rrr.setManager(cm);
     QCOMPARE(rrr.manager(), cm);
     QVERIFY(!rrr.isActive());
     QVERIFY(!rrr.cancel());
     QVERIFY(!rrr.waitForFinished());
     QVERIFY(!rrr.waitForProgress());
-    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::IsAssistantOf)));
+    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::HasAssistant)));
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
     QVERIFY(rrr.isActive());
@@ -1492,7 +1511,7 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(rrr.isFinished());
     QVERIFY(!rrr.isActive());
 
-    QCOMPARE(cm->relationships(QContactRelationship::IsAssistantOf, bId, QContactRelationshipFilter::First).size(), 0);
+    QCOMPARE(cm->relationships(QContactRelationship::HasAssistant, bId, QContactRelationshipFilter::First).size(), 0);
     QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
     // specific source removal
@@ -1585,11 +1604,11 @@ void tst_QContactAsync::relationshipSave()
     QContactId cId, aId, bId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.displayLabel().label() == QString("Borris Aaronsun")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Borris Aaronsun")) {
             cId = curr.id();
-        } else if (curr.displayLabel().label() == QString("Bob Aaronsen")) {
+        } else if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Bob Aaronsen")) {
             bId = curr.id();
-        } else if (curr.displayLabel().label() == QString("Aaron Aaronson")) {
+        } else if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Aaron Aaronson")) {
             aId = curr.id();
         }
     }
@@ -1598,7 +1617,7 @@ void tst_QContactAsync::relationshipSave()
     int originalCount = cm->relationships(aId).size();
     QContactRelationship testRel;
     testRel.setFirst(aId);
-    testRel.setRelationshipType(QContactRelationship::IsSpouseOf);
+    testRel.setRelationshipType(QContactRelationship::HasSpouse);
     testRel.setSecond(bId);
     QList<QContactRelationship> saveList;
     saveList << testRel;
@@ -1625,7 +1644,7 @@ void tst_QContactAsync::relationshipSave()
     QVERIFY(rsr.isFinished());
     QVERIFY(!rsr.isActive());
 
-    QList<QContactRelationship> expected = cm->relationships(QContactRelationship::IsSpouseOf, aId, QContactRelationshipFilter::First);
+    QList<QContactRelationship> expected = cm->relationships(QContactRelationship::HasSpouse, aId, QContactRelationshipFilter::First);
     QList<QContactRelationship> result = rsr.relationships();
     QCOMPARE(expected, result);
     QVERIFY(result.contains(testRel));
@@ -1650,7 +1669,7 @@ void tst_QContactAsync::relationshipSave()
     QVERIFY(!rsr.isActive());
 
     expected.clear();
-    expected = cm->relationships(QContactRelationship::IsSpouseOf, aId, QContactRelationshipFilter::First);
+    expected = cm->relationships(QContactRelationship::HasSpouse, aId, QContactRelationshipFilter::First);
     result = rsr.relationships();
     QCOMPARE(result, QList<QContactRelationship>() << testRel);
     QVERIFY(expected.contains(testRel));
@@ -1891,10 +1910,22 @@ QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
 {
     QContactManager* cm = QContactManager::fromUri(managerUri);
 
+    // XXX TODO: ensure that this is the case:
+    // there should be no contacts in the database.
+    QList<QContactLocalId> toRemove = cm->contacts();
+    foreach (const QContactLocalId& removeId, toRemove)
+        cm->removeContact(removeId);
+
     QContact a, b, c;
-    a.setDisplayLabel("Aaron Aaronson");
-    b.setDisplayLabel("Bob Aaronsen");
-    c.setDisplayLabel("Borris Aaronsun");
+    QContactName aNameDetail;
+    aNameDetail.setCustomLabel("Aaron Aaronson");
+    a.saveDetail(&aNameDetail);
+    QContactName bNameDetail;
+    bNameDetail.setCustomLabel("Bob Aaronsen");
+    b.saveDetail(&bNameDetail);
+    QContactName cNameDetail;
+    cNameDetail.setCustomLabel("Borris Aaronsun");
+    c.saveDetail(&cNameDetail);
 
     QContactPhoneNumber phn;
     phn.setNumber("0123");
@@ -1915,25 +1946,25 @@ QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
     QContactRelationship arb;
     arb.setFirst(a.id());
     arb.setSecond(b.id());
-    arb.setRelationshipType(QContactRelationship::IsManagerOf);
+    arb.setRelationshipType(QContactRelationship::HasManager);
     cm->saveRelationship(&arb);
 
     QContactRelationship brc;
     brc.setFirst(b.id());
     brc.setSecond(c.id());
-    brc.setRelationshipType(QContactRelationship::IsAssistantOf);
+    brc.setRelationshipType(QContactRelationship::HasAssistant);
     cm->saveRelationship(&brc);
 
     QContactRelationship cra;
     cra.setFirst(c.id());
     cra.setSecond(a.id());
-    cra.setRelationshipType(QContactRelationship::IsSpouseOf);
+    cra.setRelationshipType(QContactRelationship::HasSpouse);
     cm->saveRelationship(&cra);
 
     QContactRelationship arc;
     arc.setFirst(a.id());
     arc.setSecond(c.id());
-    arc.setRelationshipType(QContactRelationship::IsAssistantOf);
+    arc.setRelationshipType(QContactRelationship::HasAssistant);
     cm->saveRelationship(&arc);
 
     QContactRelationship crb;

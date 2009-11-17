@@ -56,6 +56,10 @@ public:
 
     static TestQGeoSatelliteInfoSource *createDefaultSourceTest();
 
+public slots:
+	void test_slot1();
+	void test_slot2();
+
 protected:
     virtual QGeoSatelliteInfoSource *createTestSource() = 0;
 
@@ -64,7 +68,6 @@ protected:
     void base_init();
     void base_cleanup();
     void base_cleanupTestCase();
-
 
 private slots:
     void initTestCase();
@@ -76,6 +79,7 @@ private slots:
     void constructor_noParent();
 
     void createDefaultSource();
+    void createDefaultSource_noParent();
 
     void startUpdates();
     void startUpdates_moreThanOnce();
@@ -89,13 +93,19 @@ private slots:
     void requestUpdate_defaultTimeout();
     void requestUpdate_repeatedCalls();
     void requestUpdate_overlappingCalls();
+    void requestUpdate_overlappingCallsWithTimeout();
 
     void requestUpdateBeforeStartUpdates();
     void requestUpdateAfterStartUpdates();
+    
+    void removeSlotForRequestTimeout();
+    void removeSlotForSatellitesInUseUpdated();
+    void removeSlotForsatellitesInViewUpdated();
 
 private:
     QGeoSatelliteInfoSource *m_source;
     bool m_testingDefaultSource;
+    bool m_testSlot2Called;
 };
 
 #endif // #ifndef TESTQGEOSATELLITEINFOSOURCE_H

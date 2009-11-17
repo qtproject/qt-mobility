@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include <qmobilityglobal.h>
 #include <QtTest/QtTest>
 
 #include "qvideowidget.h"
@@ -236,7 +237,7 @@ private:
     {
     public:
         QSize sizeHint() const { return m_sizeHint; }
-        void setSizeHint(const QSize &size) { m_sizeHint = size; }
+        void setSizeHint(const QSize &size) { m_sizeHint = size; updateGeometry(); }
     private:
         QSize m_sizeHint;
     } m_widget;
@@ -724,11 +725,12 @@ void tst_QVideoWidget::sizeHintWindowControl()
     QtTestVideoObject object(new QtTestWindowControl, 0, 0);
     QVideoWidget widget(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
+    widget.show();
+    QTest::qWaitForWindowShown(&widget);
 
     QVERIFY(widget.sizeHint().isEmpty());
 
     object.testService->windowControl->setNativeSize(size);
-
     QCOMPARE(widget.sizeHint(), size);
 }
 
@@ -739,11 +741,12 @@ void tst_QVideoWidget::sizeHintWidgetControl()
     QtTestVideoObject object(0, new QtTestWidgetControl, 0);
     QVideoWidget widget(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
+    widget.show();
+    QTest::qWaitForWindowShown(&widget);
 
     QVERIFY(widget.sizeHint().isEmpty());
 
     object.testService->widgetControl->setSizeHint(size);
-
     QCOMPARE(widget.sizeHint(), size);
 }
 

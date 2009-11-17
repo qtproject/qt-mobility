@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include <qmobilityglobal.h>
 #include <QtTest/QtTest>
 
 #include <QtCore/qdir.h>

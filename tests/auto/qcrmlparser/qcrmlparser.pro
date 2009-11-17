@@ -1,12 +1,12 @@
 TARGET = tst_qcrmlparser
-INCLUDEPATH += ../../../context
-DEPENDPATH += ../../../context
+INCLUDEPATH += ../../../src/publishsubscribe
+DEPENDPATH += ../../../src/publishsubscribe
 CONFIG += testcase
 QT = core xml
 include(../../../common.pri)
 
 # Input
-SOURCES += ../../../context/qcrmlparser.cpp \ 
+SOURCES += ../../../src/publishsubscribe/qcrmlparser.cpp \ 
         tst_qcrmlparser.cpp
 
 wince* {

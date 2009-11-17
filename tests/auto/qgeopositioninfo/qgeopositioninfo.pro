@@ -4,7 +4,7 @@ TARGET=tst_qgeopositioninfo
 
 include (../../../common.pri)
 
-INCLUDEPATH += ../../../location
+INCLUDEPATH += ../../../src/location
 
 # Input 
 SOURCES += tst_qgeopositioninfo.cpp

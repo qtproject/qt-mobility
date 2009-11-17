@@ -11,7 +11,7 @@ TARGET = bearercloud
 
 QT = core gui network svg
 
-INCLUDEPATH += ../../bearer
+INCLUDEPATH += ../../src/bearer
 
 include(../examples.pri)
 

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "../../../context/qcrmlparser_p.h"
+#include "../../../src/publishsubscribe/qcrmlparser_p.h"
 
 #include <QtTest/QTest>
 #include <QDebug>
@@ -68,10 +68,11 @@ private slots:
     void noRepositoryUidValue();
     void keyMissingEndTag();
     void outOfPlaceEndTag();
+    void invalidTarget();
 
 private:
     bool verifyKeyData(const QHash<QString,KeyData> &keyHash, const QString &key,
-                    quint64 uid, quint32 bitIndex = 0);
+                    quint64 uid, KeyData::Target target = KeyData::CRepository, quint32 bitIndex = 0);
     QHash<QString,KeyData> makeHash(const QList<KeyData> &keyList);
     void printKeyList(const QList<KeyData> &list);
     QDir testData;
@@ -91,14 +92,16 @@ void tst_QCrmlParser::simple()
     QVERIFY(keyData.count() == 0);
 
     keyData = parser.parseQCrml(testData.absoluteFilePath("test1.qcrml"));
+    QVERIFY(parser.error() == QCrmlParser::NoError);
     QHash<QString, KeyData> keyHash = makeHash(keyData);
 
+    KeyData::Target target = KeyData::CRepository;
     QVERIFY(verifyKeyData(keyHash, "/sensors/accelerometer/x",
-                          Q_UINT64_C(0x4815162300000000)));
+                          Q_UINT64_C(0x4815162300000000),target));
     QVERIFY(verifyKeyData(keyHash, "/sensors/accelerometer/y",
-                          Q_UINT64_C(0x4815162300000001)));
+                          Q_UINT64_C(0x4815162300000001),target));
     QVERIFY(verifyKeyData(keyHash, "/sensors/accelerometer/z",
-                          Q_UINT64_C(0x4815162300000002)));
+                          Q_UINT64_C(0x4815162300000002),target));
 
     QVERIFY(parser.error() == QCrmlParser::NoError);
 }
@@ -142,10 +145,11 @@ void tst_QCrmlParser::bitmaskKey()
 
     quint64 uid = Q_UINT64_C(0x1234567800000001);
 
-    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Swan"), uid,1));
-    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Pearl"), uid,2));
-    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Hydra"), uid,32));
-    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/LookingGlass"), uid,4));
+    KeyData::Target target = KeyData::CRepository;
+    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Swan"), uid, target, 1));
+    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Pearl"), uid, target, 2));
+    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Hydra"), uid, target,32));
+    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/LookingGlass"), uid, target, 4));
 }
 
 void tst_QCrmlParser::keyWithUnknownElements()
@@ -156,12 +160,13 @@ void tst_QCrmlParser::keyWithUnknownElements()
     QCOMPARE(keyData.count(), 3);
     QHash<QString, KeyData> keyHash = makeHash(keyData);
 
+    KeyData::Target target  = KeyData::RProperty;
     QVERIFY(verifyKeyData(keyHash, "/sensors/accelerometer/x",
-                          Q_UINT64_C(0x4815162300000000)));
+                          Q_UINT64_C(0x4815162300000000),target));
     QVERIFY(verifyKeyData(keyHash, "/sensors/accelerometer/y",
-                          Q_UINT64_C(0x4815162300000001)));
+                          Q_UINT64_C(0x4815162300000001),target));
     QVERIFY(verifyKeyData(keyHash, "/sensors/accelerometer/z",
-                          Q_UINT64_C(0x4815162300000002)));
+                          Q_UINT64_C(0x4815162300000002),target));
 
 }
 
@@ -237,14 +242,16 @@ void tst_QCrmlParser::multipleBitmaskKeys()
     keyData = parser.parseQCrml(testData.absoluteFilePath("test8.qcrml"));
     QCOMPARE(keyData.count(), 7);
     QHash<QString, KeyData> keyHash = makeHash(keyData);
-    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Swan"),Q_UINT64_C(0x1234567800000001),1));
-    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Pearl"),Q_UINT64_C(0x1234567800000001),2));
-    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Hydra"),Q_UINT64_C(0x1234567800000001),32));
-    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/LookingGlass"),Q_UINT64_C(0x1234567800000001),4));
+    
+    KeyData::Target target = KeyData::CRepository;
+    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Swan"),Q_UINT64_C(0x1234567800000001),target,1));
+    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Pearl"),Q_UINT64_C(0x1234567800000001),target,2));
+    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Hydra"),Q_UINT64_C(0x1234567800000001),target,32));
+    QVERIFY(verifyKeyData(keyHash, QString("/Dharma/LookingGlass"),Q_UINT64_C(0x1234567800000001),target,4));
 
-    QVERIFY(verifyKeyData(keyHash, QString("/Ben"),Q_UINT64_C(0x123456780000000A),2));
-    QVERIFY(verifyKeyData(keyHash, QString("/Tom"),Q_UINT64_C(0x123456780000000A),4));
-    QVERIFY(verifyKeyData(keyHash, QString("/Ethan"),Q_UINT64_C(0x123456780000000A),5));
+    QVERIFY(verifyKeyData(keyHash, QString("/Ben"),Q_UINT64_C(0x123456780000000A),target,2));
+    QVERIFY(verifyKeyData(keyHash, QString("/Tom"),Q_UINT64_C(0x123456780000000A),target,4));
+    QVERIFY(verifyKeyData(keyHash, QString("/Ethan"),Q_UINT64_C(0x123456780000000A),target,5));
 }
 
 void tst_QCrmlParser::wrongXmlFile()
@@ -281,20 +288,37 @@ void tst_QCrmlParser::outOfPlaceEndTag()
     QVERIFY(keyData.count() == 0);
 }
 
+void tst_QCrmlParser::invalidTarget()
+{
+    QCrmlParser parser;
+    QList<KeyData> keyData;
+    keyData = parser.parseQCrml(testData.absoluteFilePath("error5.qcrml"));
+    QVERIFY(parser.error() == QCrmlParser::ParseError);
+    QVERIFY(keyData.count() == 0);
+}
+
 bool tst_QCrmlParser::verifyKeyData(const QHash<QString,KeyData> &keyHash, const QString &key,
-                    quint64 uid, quint32 bitIndex) {
+                    quint64 uid, KeyData::Target target, quint32 bitIndex) {
     KeyData data = keyHash.value(key);
+
+    if (data.target() != target) {
+        qWarning() << "Target does not match, expected" << target
+                << "\n actual:" << data.target();
+        return false;
+    }
+
     if ( data.uid()!= uid ) {
-        qWarning() << "UID does not match expected:" << QString::number(uid,16) << "\n actual: "
+        qWarning() << "UID does not match expected:" << QString::number(uid,16) << "\n actual:"
                 << QString::number(data.uid(),16);
         return false;
     }
 
     if (data.bitIndex() != bitIndex) {
         qWarning() << "BitIndex does not match, expected: " << QString::number(bitIndex,16)
-                << "\n actual" << QString::number(data.bitIndex(),16);
+                << "\n actual:" << QString::number(data.bitIndex(),16);
         return false;
     }
+
     return true;
 }
 
