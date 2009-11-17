@@ -83,6 +83,11 @@ V4LRadioControl::~V4LRadioControl()
         ::close(fd);
 }
 
+QRadioTuner::State V4LRadioControl::state() const
+{
+    return fd > 0 ? QRadioTuner::ActiveState : QRadioTuner::StoppedState;
+}
+
 QRadioTuner::Band V4LRadioControl::band() const
 {
     return currentBand;

@@ -56,9 +56,15 @@ class MockControl : public QRadioTunerControl
 public:
     MockControl(QObject *parent):
         QRadioTunerControl(parent),
+        m_active(false),
         m_searching(false),m_muted(false),m_stereo(true),
         m_volume(100),m_signal(0),m_frequency(0),
         m_band(QRadioTuner::FM) {}
+
+    QRadioTuner::State state() const
+    {
+        return m_active ? QRadioTuner::ActiveState : QRadioTuner::StoppedState;
+    }
 
     QRadioTuner::Band band() const
     {
@@ -182,13 +188,22 @@ public:
 
     void start()
     {
+        if (!m_active) {
+            m_active = true;
+            emit stateChanged(state());
+        }
     }
 
     void stop()
     {
+        if (m_active) {
+            m_active = false;
+            emit stateChanged(state());
+        }
     }
 
 public:
+    bool m_active;
     bool m_searching;
     bool m_muted;
     bool m_stereo;
@@ -265,6 +280,7 @@ void tst_QRadioTuner::initTestCase()
     radio = new QRadioTuner(0,provider);
     QVERIFY(radio->service() != 0);
     radio->start();
+    QCOMPARE(radio->state(), QRadioTuner::ActiveState);
 }
 
 void tst_QRadioTuner::cleanupTestCase()
@@ -273,6 +289,7 @@ void tst_QRadioTuner::cleanupTestCase()
     QVERIFY(radio->errorString().isEmpty());
 
     radio->stop();
+    QCOMPARE(radio->state(), QRadioTuner::StoppedState);
     delete radio;
     delete service;
     delete provider;

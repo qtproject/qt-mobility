@@ -94,6 +94,12 @@ QRadioTunerControl::~QRadioTunerControl()
 }
 
 /*!
+    \fn QRadioTuner::State state() const
+
+    Returns the current radio tuner state.
+*/
+
+/*!
     \fn QRadioTuner::Band QRadioTunerControl::band() const
 
     Returns the frequency band a radio tuner is tuned to.
@@ -251,6 +257,13 @@ QRadioTunerControl::~QRadioTunerControl()
 
     Returns a string describing a radio tuner's error state.
 */
+
+/*!
+    \fn void QRadioTunerControl::stateChanged(QRadioTuner::State state)
+
+    Signals that the \a state of a radio tuner has changed.
+*/
+
 
 /*!
     \fn void QRadioTunerControl::frequencyChanged(int frequency)
