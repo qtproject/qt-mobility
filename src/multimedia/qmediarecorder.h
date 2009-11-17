@@ -61,8 +61,7 @@ class Q_MEDIA_EXPORT QMediaRecorder : public QMediaObject
 {
     Q_OBJECT
     Q_ENUMS(State)
-    Q_ENUMS(Error)
-    Q_ENUMS(EncodingQuality)
+    Q_ENUMS(Error)    
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(QUrl outputLocation READ outputLocation WRITE setOutputLocation)
 public:
@@ -139,5 +138,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
 };
 
+Q_DECLARE_METATYPE(QMediaRecorder::State);
+Q_DECLARE_METATYPE(QMediaRecorder::Error);
 
 #endif  // QMEDIARECORDER_H
