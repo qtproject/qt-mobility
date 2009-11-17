@@ -100,9 +100,16 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
             connect(m_videoOutputControl, SIGNAL(outputChanged(QVideoOutputControl::Output)),
                     this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
 #ifdef QWMP_EVR
-            if (HINSTANCE evrHwnd = LoadLibrary(L"evr")) {
-                m_evrVideoOverlay = new QEvrVideoOverlay(evrHwnd);
-            } else {
+            IWMPVideoRenderConfig *config = 0;
+            if (m_player->QueryInterface(
+                    __uuidof(IWMPVideoRenderConfig), reinterpret_cast<void **>(&config)) == S_OK) {
+                if (HINSTANCE evrHwnd = LoadLibrary(L"evr"))
+                    m_evrVideoOverlay = new QEvrVideoOverlay(evrHwnd);
+
+                config->Release();
+            }
+
+            if (!m_evrVideoOverlay) {
 #else
             {
 #endif
