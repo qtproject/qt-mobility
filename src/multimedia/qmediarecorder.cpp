@@ -325,46 +325,54 @@ QString QMediaRecorder::audioCodecDescription(const QString &codec) const
 
 /*!
     Returns a list of supported audio sample rates.
+
+    If non null audio \a settings parameter is passed,
+    the returned list is reduced to sample rates supported with partial settings applied.
+
+    It can be used for example to query the list of sample rates, supported by specific audio codec.
 */
 
-QList<int> QMediaRecorder::supportedAudioSampleRates() const
+QList<int> QMediaRecorder::supportedAudioSampleRates(const QAudioEncoderSettings &settings) const
 {
     return d_func()->audioControl ?
-           d_func()->audioControl->supportedSampleRates() : QList<int>();
+           d_func()->audioControl->supportedSampleRates(settings) : QList<int>();
 }
 
 /*!
     Return the minimum resolution video can be encoded at.
 
-    \sa QVideoEncoderSettings::resolution(), maximumResolution()
+    \sa supportedResolutions(), QVideoEncoderSettings::resolution(), maximumResolution()
 */
-QSize QMediaRecorder::minimumResolution() const
+QSize QMediaRecorder::minimumResolution(const QVideoEncoderSettings &settings) const
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->minimumResolution() : QSize();
+           d_func()->videoControl->minimumResolution(settings) : QSize();
 }
 
 /*!
     Returns the maximum resolution video can be encoded at.
 
-    \sa QVideoEncoderSettings::resolution(), minimumResolution()
+    \sa supportedResolutions(), QVideoEncoderSettings::resolution(), minimumResolution()
 */
-QSize QMediaRecorder::maximumResolution() const
+QSize QMediaRecorder::maximumResolution(const QVideoEncoderSettings &settings) const
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->maximumResolution() : QSize();
+           d_func()->videoControl->maximumResolution(settings) : QSize();
 }
 
 /*!
     Returns a list of resolutions video can be encoded at.  An empty list is returned if the video
     encoder supports arbitrary resolutions within the minimum and maximum range.
 
+    If non null video \a settings parameter is passed,
+    the returned list is reduced to resolution supported with partial settings like video codec or framerate applied.
+
     \sa QVideoEncoderSettings::resolution(), minimumResolution(), maximumResolution()
 */
-QList<QSize> QMediaRecorder::supportedResolutions() const
+QList<QSize> QMediaRecorder::supportedResolutions(const QVideoEncoderSettings &settings) const
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->supportedResolutions() : QList<QSize>();
+           d_func()->videoControl->supportedResolutions(settings) : QList<QSize>();
 }
 
 /*!
@@ -372,10 +380,10 @@ QList<QSize> QMediaRecorder::supportedResolutions() const
 
     \sa QVideoEncoderSettings::frameRate(), maximumFrameRate()
 */
-qreal QMediaRecorder::minimumFrameRate()
+qreal QMediaRecorder::minimumFrameRate(const QVideoEncoderSettings &settings)
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->minimumFrameRate() : 0.0;
+           d_func()->videoControl->minimumFrameRate(settings) : 0.0;
 }
 
 /*!
@@ -383,22 +391,25 @@ qreal QMediaRecorder::minimumFrameRate()
 
     \sa QVideoEncoderSettings::frameRate(), minimumFrameRate()
 */
-qreal QMediaRecorder::maximumFrameRate()
+qreal QMediaRecorder::maximumFrameRate(const QVideoEncoderSettings &settings)
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->maximumFrameRate() : 0.0;
+           d_func()->videoControl->maximumFrameRate(settings) : 0.0;
 }
 
 /*!
     Returns a list of frame rates video can be encoded at. An empty list is returned if the encoder
     supports arbitrary frame rates within the minimum and maximum range.
 
+    If non null video \a settings parameter is passed,
+    the returned list is reduced to frame rates supported with partial settings like video codec or resolution applied.
+
     \sa QVideoEncoderSettings::frameRate(), minimumFrameRate(), maximumFrameRate()
 */
-QList<qreal> QMediaRecorder::supportedFrameRates() const
+QList<qreal> QMediaRecorder::supportedFrameRates(const QVideoEncoderSettings &settings) const
 {
     return d_func()->videoControl ?
-           d_func()->videoControl->supportedFrameRates() : QList<qreal>();
+           d_func()->videoControl->supportedFrameRates(settings) : QList<qreal>();
 }
 
 /*!
