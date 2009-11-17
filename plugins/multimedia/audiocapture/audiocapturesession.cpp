@@ -208,11 +208,9 @@ void AudioCaptureSession::record()
     if(m_audioInput) {
         if(m_state == QMediaRecorder::StoppedState) {
             if(file.open(QIODevice::WriteOnly)) {
-                //TODO: write wav header id wavFile true
-
                 memset(&header,0,sizeof(CombinedHeader));
                 memcpy(header.riff.descriptor.id,"RIFF",4);
-                header.riff.descriptor.size = 0xFFFFFFFF; // This should be updated on stop() TODO! filesize-8
+                header.riff.descriptor.size = 0xFFFFFFFF; // This should be updated on stop(), filesize-8
                 memcpy(header.riff.type,"WAVE",4);
                 memcpy(header.wave.descriptor.id,"fmt ",4);
                 header.wave.descriptor.size = 16;
@@ -223,7 +221,7 @@ void AudioCaptureSession::record()
                 header.wave.blockAlign = m_format.channels()*m_format.sampleSize()/8;
                 header.wave.bitsPerSample = m_format.sampleSize();
                 memcpy(header.data.descriptor.id,"data",4);
-                header.data.descriptor.size = 0xFFFFFFFF; // This should be updated on stop() TODO! samples*channels*sampleSize/8
+                header.data.descriptor.size = 0xFFFFFFFF; // This should be updated on stop(),samples*channels*sampleSize/8
                 file.write((char*)&header,sizeof(CombinedHeader));
 
                 m_audioInput->start(qobject_cast<QIODevice*>(&file));
@@ -252,26 +250,14 @@ void AudioCaptureSession::stop()
         m_audioInput->stop();
         file.close();
 
-        QFile tmpFile("record.tmp");
-        tmpFile.open(QIODevice::WriteOnly);
-
         qint32 fileSize = file.size()-8;
-        if(file.open(QIODevice::ReadOnly)) {
-            file.read((char*)&header,sizeof(CombinedHeader));
-            header.riff.descriptor.size = fileSize; // filesize-8
-            header.data.descriptor.size = fileSize-44; // samples*channels*sampleSize/8
-            tmpFile.write((char*)&header,sizeof(CombinedHeader));
-            char buf[4096];
-            while(!file.atEnd()) {
-                int l = file.read(buf,4096);
-                if(l > 0)
-                    tmpFile.write(buf,l);
-            }
-            tmpFile.close();
-            file.close();
-            file.remove();
-            tmpFile.rename(file.fileName());
-        }
+        file.open(QIODevice::ReadWrite | QIODevice::Unbuffered);
+        file.read((char*)&header,sizeof(CombinedHeader));
+        header.riff.descriptor.size = fileSize; // filesize-8
+        header.data.descriptor.size = fileSize-44; // samples*channels*sampleSize/8
+        file.seek(0);
+        file.write((char*)&header,sizeof(CombinedHeader));
+        file.close();
         m_position = 0;
     }
     m_state = QMediaRecorder::StoppedState;
