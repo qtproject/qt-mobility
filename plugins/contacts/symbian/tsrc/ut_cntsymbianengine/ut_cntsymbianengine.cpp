@@ -194,6 +194,18 @@ void TestSymbianEngine::saveContact()
     current_count = m_engine->contacts(sortOrders, err).count();
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(init_count + 1 == current_count);
+    
+    // Save a valid contact
+    QContact g;
+    g.setType(QContactType::TypeGroup);
+    QContactName en;
+    en.setCustomLabel("ccc");
+    QVERIFY(g.saveDetail(&en));
+    QVERIFY(m_engine->saveContact(&g, err));
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(g.id() != empty);
+    QVERIFY(g.localId() != 0);
+    QVERIFY(g.id().managerUri().contains(uri, Qt::CaseInsensitive));
 }
 
 void TestSymbianEngine::saveContacts()
