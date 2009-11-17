@@ -235,39 +235,34 @@ void SymbianSettingsLayer::setProperty(Handle handle, Properties properties)
     SymbianSettingsHandle *sh = symbianSettingsHandle(handle);
     if (!sh)
         return;
-    if (properties & QAbstractValueSpaceLayer::Publish) {
-        QSet<QString> children;
-        pathMapper.getChildren(sh->path, children);
-        foreach(QString child, children) {
-            QString fullPath = sh->path;
-            if (fullPath.right(1) != QLatin1String("/"))
-                fullPath += QLatin1Char('/');
-            fullPath += child;
 
-            PathMapper::Target target;
-            quint32 category;
-            quint32 key;
-            if (pathMapper.resolvePath(fullPath, target, category, key)) {
-                XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
-                m_settingsManager.startMonitoring(settingsKey);
-            }
+    QSet<QString> children;
+    pathMapper.getChildren(sh->path, children);
+    foreach(QString child, children) {
+        QString fullPath = sh->path;
+        if (fullPath.right(1) != QLatin1String("/"))
+            fullPath += QLatin1Char('/');
+        fullPath += child;
+
+        PathMapper::Target target;
+        quint32 category;
+        quint32 key;
+        if (pathMapper.resolvePath(fullPath, target, category, key)) {
+            XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
             QByteArray hash;
             hash += qHash(target);
             hash += qHash((long)category);
             hash += qHash((unsigned long)key);
-            m_monitoringHandles[hash] = sh;
-        }
-    }
 
-    if (!(properties & QAbstractValueSpaceLayer::Publish)) {
-        QSet<QString> children;
-        pathMapper.getChildren(sh->path, children);
-        foreach(QString child, children) {
-            QString fullPath = sh->path;
-            if (fullPath.right(1) != QLatin1String("/"))
-                fullPath += QLatin1Char('/');
-            fullPath += child;
-            qDebug() << "TODO: Actual code for stop monitoring" << fullPath;
+            if (properties & QAbstractValueSpaceLayer::Publish) {
+                qDebug() << "Start monitoring" << fullPath;
+                m_settingsManager.startMonitoring(settingsKey);
+                m_monitoringHandles[hash] = sh;
+            } else {
+                qDebug() << "Stop monitoring" << fullPath;
+                m_settingsManager.stopMonitoring(settingsKey);
+                m_monitoringHandles.remove(hash);
+            }
         }
     }
 }
