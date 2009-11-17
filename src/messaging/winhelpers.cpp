@@ -3836,10 +3836,8 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
 #ifndef _WIN32_WCE
                                                      PR_MSG_EDITOR_FORMAT,
                                                      PR_RTF_IN_SYNC,
-                                                     PR_MESSAGE_SIZE
-#else
-                                                     PR_CONTENT_LENGTH
 #endif
+                                                     PR_MESSAGE_SIZE
                                                      }};
             ULONG count = 0;
             LPSPropValue properties;
@@ -3929,12 +3927,9 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                     case PR_RTF_IN_SYNC:
                         msg->d_ptr->_rtfInSync = (prop.Value.b != FALSE);;
                         break;
-                    case PR_MESSAGE_SIZE:
-#else
-                    case PR_CONTENT_LENGTH:
 #endif
-                        // Increase the size estimate by a third to allow for transfer encoding
-                        QMessagePrivate::setSize(*msg, prop.Value.ul * 4 / 3);
+                    case PR_MESSAGE_SIZE:
+                        QMessagePrivate::setSize(*msg, prop.Value.l);
                         break;
                     default:
                         break;

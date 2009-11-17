@@ -101,6 +101,8 @@ private:
     QMessageFilter existingAccountsFilter;
     QMessageIdList messageIds;
 
+    QList<int> messageSizes;
+
     uint unsupportedCount;
 };
 
@@ -257,7 +259,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("priority", "High")
                              ("size", "10240")
                              ("status-hasAttachments", "true")
-			     ("attachments", attachmentPaths)
+                             ("attachments", attachmentPaths)
                              ("custom-spam", "filter:no")
                              ("custom-flagged", "true")
                   << Params()("parentAccountName", "Work")
@@ -272,7 +274,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("priority", "High")
                              ("size", "20480")
                              ("status-hasAttachments", "true")
-			     ("attachments", attachmentPaths)
+                             ("attachments", attachmentPaths)
                              ("custom-spam", "filter:no")
                   << Params()("parentAccountName", "Work")
                              ("parentFolderPath", "Innbox/X-Announce")
@@ -298,12 +300,16 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("size", "4096")
                              ("status-read", "true")
                              ("status-hasAttachments", "true")
-			     ("attachments", attachmentPaths)
+                             ("attachments", attachmentPaths)
                              ("custom-spam", "filter:yes");
 
     foreach (const Support::Parameters &params, messageParams) {
         messageIds.append(Support::addMessage(params));
         QVERIFY(messageIds.last().isValid());
+
+        // Use the resultant message sizes in testing - the configured sizes aren't honoured by MAPI
+        QMessage m(messageIds.last());
+        messageSizes.append(m.size());
     }
 }
 
@@ -2062,15 +2068,14 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[0] << messageIds[3] )
         << "";
 
-#ifndef NO_SET_SUPPORT
     QTest::newRow("size equality 1")
-        << QMessageFilter::bySize(1056, QMessageDataComparator::Equal) 
+        << QMessageFilter::bySize(messageSizes[3], QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[3] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[4] )
         << "";
 
     QTest::newRow("size equality 2")
-        << QMessageFilter::bySize(20480, QMessageDataComparator::Equal) 
+        << QMessageFilter::bySize(messageSizes[2], QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[3] << messageIds[4] )
         << "";
@@ -2088,13 +2093,13 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << "";
 
     QTest::newRow("size inequality 1")
-        << QMessageFilter::bySize(1056, QMessageDataComparator::NotEqual) 
+        << QMessageFilter::bySize(messageSizes[3], QMessageDataComparator::NotEqual) 
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[4] )
         << ( QMessageIdList() << messageIds[3] )
         << "";
 
     QTest::newRow("size inequality 2")
-        << QMessageFilter::bySize(20480, QMessageDataComparator::NotEqual) 
+        << QMessageFilter::bySize(messageSizes[2], QMessageDataComparator::NotEqual) 
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[2] )
         << "";
@@ -2111,7 +2116,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList()
         << "";
 
-    uint discriminator(10240);
+    uint discriminator(messageSizes[1]);
 
     QTest::newRow("size less than")
         << QMessageFilter::bySize(discriminator, QMessageDataComparator::LessThan) 
@@ -2136,7 +2141,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
         << "";
-#endif // NO_SET_SUPPORT
 
     QTest::newRow("parentAccountId equality 1")
         << QMessageFilter::byParentAccountId(accountIds[0], QMessageDataComparator::Equal) 
@@ -2235,7 +2239,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << "";
 
     /* 
-       << "";ODO: determine the correct results...
+       << TODO: determine the correct results...
     QTest::newRow("standardFolder equality 1")
         << QMessageFilter::byStandardFolder(QMessage::InnboxFolder, QMessageDataComparator::Equal) 
         << ( QMessageIdList() )
@@ -2453,7 +2457,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList()
         << "";
 
-#ifndef NO_SET_SUPPORT
     // Test some basic combinations
     QTest::newRow("status mask inclusion AND timeStamp greater than")
         << ( QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Includes) &
@@ -2468,7 +2471,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[0] << messageIds[4] )
         << "";
-#endif
 
     QTest::newRow("sender inclusion AND timeStamp greater than")
         << ( QMessageFilter::bySender("Boss", QMessageDataComparator::Includes) &
