@@ -419,5 +419,9 @@ QMessageOrdering QMessageOrdering::byPriority(Qt::SortOrder order)
 
 QMessageOrdering QMessageOrdering::bySize(Qt::SortOrder order)
 {
-    return QMessageOrderingPrivate::from(QMessageOrderingPrivate::Size, order);
+    QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Size, order));
+#ifdef _WIN32_WCE
+    result.d_ptr->_valid = false; // Not supported on WinCE
+#endif
+    return result;
 }
