@@ -272,15 +272,23 @@ private:
 
 void tst_QRadioTuner::initTestCase()
 {
-    qRegisterMetaType<QRadioTuner::Band>("QRadioTuner::Band");
+    qRegisterMetaType<QRadioTuner::State>();
+    qRegisterMetaType<QRadioTuner::Band>();
 
     mock = new MockControl(this);
     service = new MockService(this, mock);
     provider = new MockProvider(service);
     radio = new QRadioTuner(0,provider);
     QVERIFY(radio->service() != 0);
+
+    QSignalSpy stateSpy(radio, SIGNAL(stateChanged(QRadioTuner::State)));
+
+    QCOMPARE(radio->state(), QRadioTuner::StoppedState);    
     radio->start();
     QCOMPARE(radio->state(), QRadioTuner::ActiveState);
+
+    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(stateSpy.first()[0].value<QRadioTuner::State>(), QRadioTuner::ActiveState);
 }
 
 void tst_QRadioTuner::cleanupTestCase()
@@ -288,8 +296,13 @@ void tst_QRadioTuner::cleanupTestCase()
     QVERIFY(radio->error() == QRadioTuner::NoError);
     QVERIFY(radio->errorString().isEmpty());
 
+    QSignalSpy stateSpy(radio, SIGNAL(stateChanged(QRadioTuner::State)));
+
     radio->stop();
     QCOMPARE(radio->state(), QRadioTuner::StoppedState);
+    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(stateSpy.first()[0].value<QRadioTuner::State>(), QRadioTuner::StoppedState);
+
     delete radio;
     delete service;
     delete provider;
