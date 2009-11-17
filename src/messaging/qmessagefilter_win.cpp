@@ -998,7 +998,7 @@ MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
         case QMessageFilterPrivate::Size: {
             _restriction.res.resProperty.ulPropTag = PR_MESSAGE_SIZE;
             _keyProp.ulPropTag = PR_MESSAGE_SIZE;
-            _keyProp.Value.ul = d_ptr->_value.toInt();
+            _keyProp.Value.l = d_ptr->_value.toInt();
             _valid = true;
             break;
         }
