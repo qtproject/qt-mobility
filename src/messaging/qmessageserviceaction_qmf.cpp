@@ -493,8 +493,9 @@ bool QMessageServiceAction::retrieveBody(const QMessageId& id)
     return true;
 }
 
-bool QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
+bool QMessageServiceAction::retrieve(const QMessageId &messageId, const QMessageContentContainerId& id)
 {
+    Q_UNUSED(messageId)
     if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::InProgress))) {
         qWarning() << "Action is currently busy";
         return false;

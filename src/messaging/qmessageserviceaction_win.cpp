@@ -778,8 +778,9 @@ bool QMessageServiceAction::retrieveBody(const QMessageId& id)
 #endif
 }
 
-bool QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
+bool QMessageServiceAction::retrieve(const QMessageId &messageId, const QMessageContentContainerId& id)
 {
+    Q_UNUSED(messageId)
 #ifdef _WIN32_WCE
     QMessageId messageId = QMessageContentContainerIdPrivate::messageId(id);
 
