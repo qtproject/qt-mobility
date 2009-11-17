@@ -377,8 +377,6 @@ static void resolveLibrary()
                                              QLibrary::resolve(QLatin1String("wlanapi.dll"), "WlanRegisterNotification");
             local_WlanEnumInterfaces = (WlanEnumInterfacesProto)
                                        QLibrary::resolve(QLatin1String("wlanapi.dll"), "WlanEnumInterfaces");
-            //            local_WlanGetAvailableNetworkList = (WlanGetAvailableNetworkListProto)
-            //                QLibrary::resolve(QLatin1String("wlanapi.dll"), "WlanGetAvailableNetworkList");
             local_WlanQueryInterface = (WlanQueryInterfaceProto)
                                        QLibrary::resolve(QLatin1String("wlanapi.dll"), "WlanQueryInterface");
             local_WlanFreeMemory = (WlanFreeMemoryProto)
@@ -397,9 +395,7 @@ static void resolveLibrary()
     }
 #endif
 }
-//
 
-//static WlanRegisterNotificationProto local_WlanRegisterNotification = 0;
 Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, qsystemNetworkInfoPrivate)
 
 typedef struct _DISPLAY_BRIGHTNESS {
@@ -422,7 +418,6 @@ static WLAN_CONNECTION_ATTRIBUTES *getWifiConnectionAttributes()
     WLAN_INTERFACE_INFO_LIST *interfacesInfoList = NULL;
     result = local_WlanOpenHandle( 2, NULL, &version, &clientHandle );
     if( result != ERROR_SUCCESS) {
-//       qWarning() << "Error opening Wlanapi" << result ;
         local_WlanFreeMemory(connAtts);
         local_WlanCloseHandle(clientHandle,  0);
         return NULL;
@@ -430,7 +425,6 @@ static WLAN_CONNECTION_ATTRIBUTES *getWifiConnectionAttributes()
     result = local_WlanEnumInterfaces(clientHandle, NULL, &interfacesInfoList);
 
     if( result != ERROR_SUCCESS) {
- //       qWarning() << "Error in enumerating wireless interfaces" << result;
         local_WlanCloseHandle(clientHandle, NULL);
         local_WlanFreeMemory(connAtts);
         return NULL;
@@ -442,14 +436,12 @@ static WLAN_CONNECTION_ATTRIBUTES *getWifiConnectionAttributes()
         WLAN_INTERFACE_STATE wlanInterfaceState = interfaceInfo->isState;
 
         if( wlanInterfaceState == wlan_interface_state_not_ready ) {
-           // qWarning() << "Interface not ready";
             continue;
         }
 
         ULONG size = 0;
         result = local_WlanQueryInterface( clientHandle, &guid,  wlan_intf_opcode_current_connection, NULL, &size, (PVOID*) &connAtts, NULL );
         if( result != ERROR_SUCCESS ) {
-         //   qWarning() << "Error querying wireless interfaces"<< result ;
             continue;
         }
     }
@@ -491,7 +483,6 @@ QString QSystemInfoPrivate::currentLanguage() const
     }
     return lang;
 }
-//WM_SETTINGSCHANGE
 
 
 // 2 letter ISO 639-1
@@ -575,7 +566,6 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
             BLUETOOTH_FIND_RADIO_PARAMS  radioParams = { sizeof(BLUETOOTH_FIND_RADIO_PARAMS)};
             HANDLE radio;
             if(local_BluetoothFindFirstRadio(&radioParams, &radio) != NULL) {
-           //     qWarning() << "available";
                 featureSupported = true;
                 local_BluetoothFindRadioClose(radio);
             } else {
@@ -704,8 +694,6 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::VideoOutFeature :
         {
-           //IOCTL_VIDEO_QUERY_AVAIL_MODES
-//VIDEO_MODE_INFORMATION vInfo;
 #if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
             WMIHelper *wHelper;
             wHelper = new WMIHelper(this);
@@ -738,35 +726,28 @@ Q_DECLARE_METATYPE(QSystemNetworkInfo::NetworkStatus)
 void wlanNotificationCallback(WLAN_NOTIFICATION_DATA *pNotifyData, QSystemNetworkInfoPrivate *netInfo)
 {
     // xp only supports disconnected and complete
-   // qWarning() << __FUNCTION__ << pNotifyData->NotificationCode;
     switch(pNotifyData->NotificationCode) {
     case wlan_notification_acm_scan_complete:
         break;
     case wlan_notification_acm_disconnecting:
-       // qWarning() << "disconnecting";
         break;
     case wlan_notification_acm_disconnected:
     case wlan_notification_acm_connection_attempt_fail:
     case wlan_notification_acm_network_not_available:
         netInfo->emitNetworkStatusChanged(QSystemNetworkInfo::WlanMode,
                                           QSystemNetworkInfo::NoNetworkAvailable);
-    //    qWarning() << "disconnected";
         break;
     case wlan_notification_acm_profile_name_change:
-    //    qWarning() << "profile name change" << pNotifyData->pData;
         break;
     case  wlan_notification_msm_connected:
         netInfo->emitNetworkStatusChanged(QSystemNetworkInfo::WlanMode,
                                           QSystemNetworkInfo::Connected);
-    //    qWarning() << "connection complete";
         break;
     case wlan_notification_acm_connection_start:
         netInfo->emitNetworkStatusChanged(QSystemNetworkInfo::WlanMode,
                                           QSystemNetworkInfo::Searching);
-        //            qWarning() << "connection start";
         break;
     case wlan_notification_msm_signal_quality_change:
- //       qWarning() << "signal quality change" <<  QString::number((ulong)pNotifyData->pData);
         netInfo->emitNetworkSignalStrengthChanged(QSystemNetworkInfo::WlanMode,
                                                   reinterpret_cast<qint32>(pNotifyData->pData));
         break;
@@ -787,7 +768,6 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     startWifiCallback();
 
      timerMs = 5000;
-  //   qWarning() << "Windows version"<<QSysInfo::WindowsVersion << QSysInfo::WV_VISTA << QSysInfo::WV_WINDOWS7;
      switch(QSysInfo::WindowsVersion) {
      case  QSysInfo::WV_VISTA:
      case QSysInfo::WV_WINDOWS7:
@@ -1051,7 +1031,6 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
                     result = local_WlanQueryInterface( hWlan, &guid,  wlan_intf_opcode_current_connection, NULL, &size, (PVOID*) &connAtts, NULL );
 
                     if( result != ERROR_SUCCESS ) {
-                        //                    qWarning() << "Error querying wireless interfaces"<< result ;
                         continue;
                     }
                     ulong sig =  connAtts->wlanAssociationAttributes.wlanSignalQuality;
@@ -1060,7 +1039,6 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
 
                     if (sig != wifiStrength) {
                         emit networkSignalStrengthChanged(mode, sig);
-                        //   qWarning() << "signal strength changed" << sig;
                         wifiStrength = sig;
                     }
                     return sig;
@@ -1083,7 +1061,6 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
             QVariant v = wHelper->getWMIData();
             quint32 strength = v.toUInt();
             quint32 tmpStrength;
-//            qWarning() << strength << ethStrength;
 
             if( strength == 2
                || strength == 9) {
@@ -1232,11 +1209,6 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
             result = DeviceIoControl(handle, IOCTL_NDIS_QUERY_GLOBAL_STATS, &oid, sizeof(oid),
                                      &physicalMedium, sizeof(physicalMedium), &bytesWritten, 0);
 
-            //        qWarning()
-            //                << netInterface.name()
-            //                << netInterface.hardwareAddress();
-            //
-            //        qWarning() << medium << physicalMedium << result;
 
             if (!result) {
                 CloseHandle(handle);
@@ -1688,9 +1660,8 @@ int QSystemDeviceInfoPrivate::batteryLevel()
 #ifdef Q_OS_WINCE
     SYSTEM_POWER_STATUS_EX status;
     if(GetSystemPowerStatusEx(&status, true) ) {
-        qWarning() <<"battery level" <</* status.ACLineStatus << status.BatteryFlag <<*/ status.BatteryLifePercent;
         return status.BatteryLifePercent;
-} else {
+    } else {
        qWarning() << "Battery status failed";
     }
 #else
@@ -1751,6 +1722,7 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
+    qWarning()<< __FUNCTION__;
 #ifdef Q_OS_WINCE
     HSIM handle;
     DWORD lockedState;
@@ -1761,6 +1733,12 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
             return true;
         }
     }
+#else
+    QSystemScreenSaverPrivate si;
+    if( SystemParametersInfo( SPI_GETSCREENSAVERRUNNING,true,0,0)
+        && si.screenSaverSecureEnabled() )
+        return true;
+
 #endif
     return false;
 }
@@ -1769,6 +1747,11 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 ///////
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
         : QObject(parent)
+{
+    screenSaverSecureEnabled();
+}
+
+bool QSystemScreenSaverPrivate::screenSaverSecureEnabled()
 {
     screenSaverSecure = false;
     QSettings screenSettingsTmp("HKEY_CURRENT_USER\\Software\\Policies\\Microsoft\\Windows\\Control Panel\\Desktop", QSettings::NativeFormat);
@@ -1780,9 +1763,11 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
 
     QSettings screenSettings(settingsPath, QSettings::NativeFormat);
     if(screenSettings.value("ScreenSaverIsSecure").toString() == "1") {
+        qWarning() << "screensaver enabled";
         screenSaverSecure = true;
     }
     screenPath = screenSettings.value("SCRNSAVE.EXE").toString();
+    return screenSaverSecure;
 }
 
 
