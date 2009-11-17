@@ -745,6 +745,8 @@ void tst_QMediaPlayer::testMediaStatus()
     QFETCH_GLOBAL(int, bufferStatus);
     int bufferSignals = 0;
 
+    player->setNotifyInterval(10);
+
     mockService->setMediaStatus(QMediaPlayer::NoMedia);
     mockService->setBufferStatus(bufferStatus);
 
