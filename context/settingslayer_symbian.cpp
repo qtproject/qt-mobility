@@ -150,6 +150,8 @@ bool SymbianSettingsLayer::value(Handle handle, const QString &subPath, QVariant
     }
 
     SymbianSettingsHandle *sh = symbianSettingsHandle(handle);
+    if (!sh)
+        return false;
 
     QString fullPath(sh->path);
     if (fullPath != QLatin1String("/"))
