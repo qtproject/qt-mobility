@@ -2116,30 +2116,55 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList()
         << "";
 
+#if defined(Q_OS_WIN) && defined(_WIN32_WCE)
+	// Sizes are ordered differently on CE
+    uint discriminator(messageSizes[2]);
+#else
     uint discriminator(messageSizes[1]);
+#endif
 
     QTest::newRow("size less than")
         << QMessageFilter::bySize(discriminator, QMessageDataComparator::LessThan) 
+#if defined(Q_OS_WIN) && defined(_WIN32_WCE)
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[4] )
+        << ( QMessageIdList() << messageIds[2] << messageIds[3] )
+#else
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
+#endif
         << "";
 
     QTest::newRow("size less than equal")
         << QMessageFilter::bySize(discriminator, QMessageDataComparator::LessThanEqual) 
+#if defined(Q_OS_WIN) && defined(_WIN32_WCE)
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[4] )
+        << ( QMessageIdList() << messageIds[3] )
+#else
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[2] )
+#endif
         << "";
 
     QTest::newRow("size greater than")
         << QMessageFilter::bySize(discriminator, QMessageDataComparator::GreaterThan) 
+#if defined(Q_OS_WIN) && defined(_WIN32_WCE)
+        << ( QMessageIdList() << messageIds[3] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[4] )
+#else
         << ( QMessageIdList() << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[3] << messageIds[4] )
+#endif
         << "";
 
     QTest::newRow("size greater than equal")
         << QMessageFilter::bySize(discriminator, QMessageDataComparator::GreaterThanEqual) 
+#if defined(Q_OS_WIN) && defined(_WIN32_WCE)
+        << ( QMessageIdList() << messageIds[2] << messageIds[3] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[4] )
+#else
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
+#endif
         << "";
 
     QTest::newRow("parentAccountId equality 1")
@@ -2468,8 +2493,13 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
     QTest::newRow("size greater than equal OR timeStamp greater than")
         << ( QMessageFilter::bySize(discriminator, QMessageDataComparator::GreaterThanEqual) |
              QMessageFilter::byTimeStamp(epoch, QMessageDataComparator::GreaterThan) )
+#if defined(Q_OS_WIN) && defined(_WIN32_WCE)
+        << ( QMessageIdList() << messageIds[2] << messageIds[3] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[4] )
+#else
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[0] << messageIds[4] )
+#endif
         << "";
 
     QTest::newRow("sender inclusion AND timeStamp greater than")
