@@ -2686,6 +2686,26 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
 #endif
                                << ( QMessageIdList() << messageIds[0] ) );
 
+    QTest::newRow("status:HasAttachments ascending")
+        << QMessageOrdering::byStatus(QMessage::HasAttachments, Qt::AscendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[0] << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[4] ) );
+
+    QTest::newRow("status:HasAttachments descending")
+        << QMessageOrdering::byStatus(QMessage::HasAttachments, Qt::DescendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[0] << messageIds[3] ) );
+
+    QTest::newRow("status:Read ascending")
+        << QMessageOrdering::byStatus(QMessage::Read, Qt::AscendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[1] << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] ) );
+
+    QTest::newRow("status:Read descending")
+        << QMessageOrdering::byStatus(QMessage::Read, Qt::DescendingOrder)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[1] << messageIds[2] ) );
+
     QTest::newRow("type ascending, priority ascending, size ascending")
         << QMessageOrdering::byType(Qt::AscendingOrder) + QMessageOrdering::byPriority(Qt::AscendingOrder) + QMessageOrdering::bySize(Qt::AscendingOrder)
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
