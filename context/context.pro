@@ -40,6 +40,11 @@ symbian {
     MMP_RULES += "EXPORTUNFROZEN"
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC78
+
+    QtPublishSubscribeDeployment.sources = QtPublishSubscribe.dll
+    QtPublishSubscribeDeployment.path = /sys/bin
+
+    DEPLOYMENT += QtPublishSubscribeDeployment
 }
 
 unix:!symbian {
