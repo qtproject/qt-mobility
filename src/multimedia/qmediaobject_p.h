@@ -54,7 +54,7 @@
 //
 
 #include <QtCore/qbytearray.h>
-#include <QtCore/qlist.h>
+#include <QtCore/qset.h>
 #include <QtCore/qtimer.h>
 
 #include <qmediaobject.h>
@@ -78,7 +78,7 @@ public:
     QMediaService *service;
     QMetaDataControl *metaDataControl;
     QTimer* notifyTimer;
-    QList<QByteArray>   notifyProperties;
+    QSet<int> notifyProperties;
 
     QMediaObject *q_ptr;
 };

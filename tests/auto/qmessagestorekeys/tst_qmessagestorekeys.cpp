@@ -101,6 +101,8 @@ private:
     QMessageFilter existingAccountsFilter;
     QMessageIdList messageIds;
 
+    QList<int> messageSizes;
+
     uint unsupportedCount;
 };
 
@@ -257,7 +259,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("priority", "High")
                              ("size", "10240")
                              ("status-hasAttachments", "true")
-			     ("attachments", attachmentPaths)
+                             ("attachments", attachmentPaths)
                              ("custom-spam", "filter:no")
                              ("custom-flagged", "true")
                   << Params()("parentAccountName", "Work")
@@ -272,7 +274,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("priority", "High")
                              ("size", "20480")
                              ("status-hasAttachments", "true")
-			     ("attachments", attachmentPaths)
+                             ("attachments", attachmentPaths)
                              ("custom-spam", "filter:no")
                   << Params()("parentAccountName", "Work")
                              ("parentFolderPath", "Innbox/X-Announce")
@@ -298,12 +300,16 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("size", "4096")
                              ("status-read", "true")
                              ("status-hasAttachments", "true")
-			     ("attachments", attachmentPaths)
+                             ("attachments", attachmentPaths)
                              ("custom-spam", "filter:yes");
 
     foreach (const Support::Parameters &params, messageParams) {
         messageIds.append(Support::addMessage(params));
         QVERIFY(messageIds.last().isValid());
+
+        // Use the resultant message sizes in testing - the configured sizes aren't honoured by MAPI
+        QMessage m(messageIds.last());
+        messageSizes.append(m.size());
     }
 }
 
@@ -1270,11 +1276,6 @@ void tst_QMessageStoreKeys::testFolderOrdering()
     }
 }
 
-#ifdef Q_OS_WIN
-// No support for setting 
-#define NO_SET_SUPPORT
-#endif
-
 void tst_QMessageStoreKeys::testMessageFilter_data()
 {
     QTest::addColumn<QMessageFilter>("filter");
@@ -2062,15 +2063,14 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[0] << messageIds[3] )
         << "";
 
-#ifndef NO_SET_SUPPORT
     QTest::newRow("size equality 1")
-        << QMessageFilter::bySize(1056, QMessageDataComparator::Equal) 
+        << QMessageFilter::bySize(messageSizes[3], QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[3] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[4] )
         << "";
 
     QTest::newRow("size equality 2")
-        << QMessageFilter::bySize(20480, QMessageDataComparator::Equal) 
+        << QMessageFilter::bySize(messageSizes[2], QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[3] << messageIds[4] )
         << "";
@@ -2088,13 +2088,13 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << "";
 
     QTest::newRow("size inequality 1")
-        << QMessageFilter::bySize(1056, QMessageDataComparator::NotEqual) 
+        << QMessageFilter::bySize(messageSizes[3], QMessageDataComparator::NotEqual) 
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[4] )
         << ( QMessageIdList() << messageIds[3] )
         << "";
 
     QTest::newRow("size inequality 2")
-        << QMessageFilter::bySize(20480, QMessageDataComparator::NotEqual) 
+        << QMessageFilter::bySize(messageSizes[2], QMessageDataComparator::NotEqual) 
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[2] )
         << "";
@@ -2111,32 +2111,56 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList()
         << "";
 
-    uint discriminator(10240);
+#if defined(Q_OS_WIN) && defined(_WIN32_WCE)
+	// Sizes are ordered differently on CE
+    uint discriminator(messageSizes[2]);
+#else
+    uint discriminator(messageSizes[1]);
+#endif
 
     QTest::newRow("size less than")
         << QMessageFilter::bySize(discriminator, QMessageDataComparator::LessThan) 
+#if defined(Q_OS_WIN) && defined(_WIN32_WCE)
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[4] )
+        << ( QMessageIdList() << messageIds[2] << messageIds[3] )
+#else
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
+#endif
         << "";
 
     QTest::newRow("size less than equal")
         << QMessageFilter::bySize(discriminator, QMessageDataComparator::LessThanEqual) 
+#if defined(Q_OS_WIN) && defined(_WIN32_WCE)
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[4] )
+        << ( QMessageIdList() << messageIds[3] )
+#else
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[2] )
+#endif
         << "";
 
     QTest::newRow("size greater than")
         << QMessageFilter::bySize(discriminator, QMessageDataComparator::GreaterThan) 
+#if defined(Q_OS_WIN) && defined(_WIN32_WCE)
+        << ( QMessageIdList() << messageIds[3] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[4] )
+#else
         << ( QMessageIdList() << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[3] << messageIds[4] )
+#endif
         << "";
 
     QTest::newRow("size greater than equal")
         << QMessageFilter::bySize(discriminator, QMessageDataComparator::GreaterThanEqual) 
+#if defined(Q_OS_WIN) && defined(_WIN32_WCE)
+        << ( QMessageIdList() << messageIds[2] << messageIds[3] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[4] )
+#else
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
+#endif
         << "";
-#endif // NO_SET_SUPPORT
 
     QTest::newRow("parentAccountId equality 1")
         << QMessageFilter::byParentAccountId(accountIds[0], QMessageDataComparator::Equal) 
@@ -2235,7 +2259,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << "";
 
     /* 
-       << "";ODO: determine the correct results...
+       << TODO: determine the correct results...
     QTest::newRow("standardFolder equality 1")
         << QMessageFilter::byStandardFolder(QMessage::InnboxFolder, QMessageDataComparator::Equal) 
         << ( QMessageIdList() )
@@ -2453,7 +2477,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList()
         << "";
 
-#ifndef NO_SET_SUPPORT
     // Test some basic combinations
     QTest::newRow("status mask inclusion AND timeStamp greater than")
         << ( QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Includes) &
@@ -2465,10 +2488,14 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
     QTest::newRow("size greater than equal OR timeStamp greater than")
         << ( QMessageFilter::bySize(discriminator, QMessageDataComparator::GreaterThanEqual) |
              QMessageFilter::byTimeStamp(epoch, QMessageDataComparator::GreaterThan) )
+#if defined(Q_OS_WIN) && defined(_WIN32_WCE)
+        << ( QMessageIdList() << messageIds[2] << messageIds[3] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[4] )
+#else
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[0] << messageIds[4] )
-        << "";
 #endif
+        << "";
 
     QTest::newRow("sender inclusion AND timeStamp greater than")
         << ( QMessageFilter::bySender("Boss", QMessageDataComparator::Includes) &
@@ -2502,7 +2529,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] ) // contains body but does not match filter
         << "summer";
-
 }
 
 void tst_QMessageStoreKeys::testMessageFilter()
@@ -2534,14 +2560,20 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
     QTest::addColumn<QMessageOrdering>("ordering");
     QTest::addColumn<MessageListList>("ids");
 
-#ifndef NO_SET_SUPPORT // setting type not supported on WIN
     QTest::newRow("type ascending")
         << QMessageOrdering::byType(Qt::AscendingOrder)
+#ifdef Q_OS_WIN
+        << ( MessageListList() << messageIds ); // All messages are Email type
+#else
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
                                << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] ) );
+#endif
 
     QTest::newRow("type descending")
         << QMessageOrdering::byType(Qt::DescendingOrder)
+#ifdef Q_OS_WIN
+        << ( MessageListList() << messageIds ); // All messages are Email type
+#else
         << ( MessageListList() << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
                                << ( QMessageIdList() << messageIds[0] ) );
 #endif
@@ -2599,8 +2631,8 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
         << ( MessageListList() << ( QMessageIdList() << messageIds[2] << messageIds[3] )
                                << ( QMessageIdList() << messageIds[0] << messageIds[1] )
                                << ( QMessageIdList() << messageIds[4] ) );
-#ifndef NO_SET_SUPPORT // setting receptionTimeStamp, priority and size and type not supported on WIN
-    QTest::newRow("receptionTimeStamp ascending")
+
+	QTest::newRow("receptionTimeStamp ascending")
         << QMessageOrdering::byReceptionTimeStamp(Qt::AscendingOrder)
         << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[0] )
@@ -2631,8 +2663,13 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
     QTest::newRow("size ascending")
         << QMessageOrdering::bySize(Qt::AscendingOrder)
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
+#if defined(Q_OS_WIN)
+                               << ( QMessageIdList() << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[3] )
+#else
                                << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[4] )
+#endif
                                << ( QMessageIdList() << messageIds[1] )
                                << ( QMessageIdList() << messageIds[2] ) );
 
@@ -2640,8 +2677,13 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
         << QMessageOrdering::bySize(Qt::DescendingOrder)
         << ( MessageListList() << ( QMessageIdList() << messageIds[2] )
                                << ( QMessageIdList() << messageIds[1] )
+#if defined(Q_OS_WIN)
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[4] )
+#else
                                << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[3] )
+#endif
                                << ( QMessageIdList() << messageIds[0] ) );
 
     QTest::newRow("type ascending, priority ascending, size ascending")
@@ -2707,7 +2749,6 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
                                << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[0] ) );
-#endif
 }
 
 void tst_QMessageStoreKeys::testMessageOrdering()

@@ -436,7 +436,7 @@ void QMessage::setBody(const QString &bodyText, const QByteArray &mimeType)
 
     QMessageContentContainerId existingBodyId(bodyId());
     if (existingBodyId.isValid()) {
-        if (existingBodyId == QMessageContentContainerPrivate::bodyContentId()) {
+        if (existingBodyId == container->bodyContentId()) {
             // The body content is in the message itself
             container->setContent(bodyText, mainType, subType, charset);
         } else {
@@ -448,7 +448,7 @@ void QMessage::setBody(const QString &bodyText, const QByteArray &mimeType)
         if (container->_attachments.isEmpty()) {
             // Put the content directly into the message
             container->setContent(bodyText, mainType, subType, charset);
-            d_ptr->_bodyId = QMessageContentContainerPrivate::bodyContentId();
+            d_ptr->_bodyId = container->bodyContentId();
         } else {
             // Add the body as the first attachment
             QMessageContentContainer newBody;
@@ -488,7 +488,7 @@ void QMessage::appendAttachments(const QStringList &fileNames)
 
         if (container->_attachments.isEmpty()) {
             QMessageContentContainerId existingBodyId(bodyId());
-            if (existingBodyId == QMessageContentContainerPrivate::bodyContentId()) {
+            if (existingBodyId == container->bodyContentId()) {
                 // The body content is in the message itself - move it to become the first attachment
                 QMessageContentContainer newBody(*this);
                 newBody.setDerivedMessage(0);
