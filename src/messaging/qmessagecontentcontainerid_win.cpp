@@ -75,7 +75,6 @@ QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessage
 {
     if (&other != this) {
         d_ptr->_number = other.d_ptr->_number;
-        d_ptr->_messageId = other.d_ptr->_messageId;
     }
 
     return *this;
