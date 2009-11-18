@@ -3,7 +3,7 @@
 # #####################################################################
 
 # include version number for the plugin
-include(../../version.pri)
+include(version.pri)
 
 include(qtcontacts-tracker.pri)
 
