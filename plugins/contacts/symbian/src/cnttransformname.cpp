@@ -44,73 +44,21 @@
 
 QList<CContactItemField *> CntTransformName::transformDetailL(const QContactDetail &detail)
 {
-    QList<CContactItemField *> fieldList;
-
     if(detail.definitionName() != QContactName::DefinitionName)
        User::Leave(KErrArgument);
+
+    QList<CContactItemField *> fieldList;
 
     //cast to name
     const QContactName &name(static_cast<const QContactName&>(detail));
 
-    //Prefix
-    TPtrC fieldTextPrefix(reinterpret_cast<const TUint16*>(name.prefix().utf16()));
-    if(fieldTextPrefix.Length()) {
-        CContactItemField* prefix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldPrefixName);
-        prefix->TextStorage()->SetTextL(fieldTextPrefix);
-        prefix->SetMapping(KUidContactFieldVCardMapUnusedN);
-        fieldList.append(prefix);
-        CleanupStack::Pop(prefix);
-    }
-
-    //First Name
-    TPtrC fieldTextFirstName(reinterpret_cast<const TUint16*>(name.first().utf16()));
-    if(fieldTextFirstName.Length()) {
-        CContactItemField* firstName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldGivenName);
-        firstName->TextStorage()->SetTextL(fieldTextFirstName);
-        firstName->SetMapping(KUidContactFieldVCardMapUnusedN);
-        fieldList.append(firstName);
-        CleanupStack::Pop(firstName);
-    }
-
-    //Middle Name
-    TPtrC fieldTextMiddleName(reinterpret_cast<const TUint16*>(name.middle().utf16()));
-    if(fieldTextMiddleName.Length()) {
-        CContactItemField* middleName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldAdditionalName);
-        middleName->TextStorage()->SetTextL(fieldTextMiddleName);
-        middleName->SetMapping(KUidContactFieldVCardMapUnusedN);
-        fieldList.append(middleName);
-        CleanupStack::Pop(middleName);
-    }
-
-    //Last Name
-    TPtrC fieldTextLastName(reinterpret_cast<const TUint16*>(name.last().utf16()));
-    if(fieldTextLastName.Length()) {
-        CContactItemField* lastName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldFamilyName);
-        lastName->TextStorage()->SetTextL(fieldTextLastName);
-        lastName->SetMapping(KUidContactFieldVCardMapUnusedN);
-        fieldList.append(lastName);
-        CleanupStack::Pop(lastName);
-    }
-
-    //Suffix
-    TPtrC fieldTextSuffix(reinterpret_cast<const TUint16*>(name.suffix().utf16()));
-    if(fieldTextSuffix.Length()) {
-        CContactItemField* suffix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldSuffixName);
-        suffix->TextStorage()->SetTextL(fieldTextSuffix);
-        suffix->SetMapping(KUidContactFieldVCardMapUnusedN);
-        fieldList.append(suffix);
-        CleanupStack::Pop(suffix);
-    }
-
-    // Custom label
-    TPtrC fieldTextLabel(reinterpret_cast<const TUint16*>(name.customLabel().utf16()));
-    if(fieldTextLabel.Length()) {
-        CContactItemField* templateLabel = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldTemplateLabel);
-        templateLabel->TextStorage()->SetTextL(fieldTextLabel);
-        templateLabel->SetMapping(KUidContactFieldVCardMapUnusedN);
-        fieldList.append(templateLabel);
-        CleanupStack::Pop(templateLabel);
-    }
+    //create new fields without contexts
+    transformToTextFieldL(name, fieldList, name.prefix(), KUidContactFieldPrefixName, KUidContactFieldVCardMapUnusedN, false);
+    transformToTextFieldL(name, fieldList, name.first(), KUidContactFieldGivenName, KUidContactFieldVCardMapUnusedN, false);
+    transformToTextFieldL(name, fieldList, name.middle(), KUidContactFieldAdditionalName, KUidContactFieldVCardMapUnusedN, false);
+    transformToTextFieldL(name, fieldList, name.last(), KUidContactFieldFamilyName, KUidContactFieldVCardMapUnusedN, false);
+    transformToTextFieldL(name, fieldList, name.suffix(), KUidContactFieldSuffixName, KUidContactFieldVCardMapUnusedN, false);
+    transformToTextFieldL(name, fieldList, name.customLabel(), KUidContactFieldTemplateLabel, KUidContactFieldVCardMapUnusedN, false);
 
     return fieldList;
 }
