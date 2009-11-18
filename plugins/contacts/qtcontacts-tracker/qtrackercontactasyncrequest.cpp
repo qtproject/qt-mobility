@@ -39,15 +39,11 @@
 **
 ****************************************************************************/
 
-#include "qcontactabstractrequest.h"
-#include "qcontactmanagerengine.h"
 
 #include <QtTracker/ontologies/nie.h>
 #include <QtTracker/ontologies/nco.h>
 
-#include "qcontactdetails.h"
-#include "qcontactfilters.h"
-#include "qcontactrequests.h"
+#include "qtcontacts.h"
 #include "qtrackercontactasyncrequest.h"
 
 using namespace SopranoLive;

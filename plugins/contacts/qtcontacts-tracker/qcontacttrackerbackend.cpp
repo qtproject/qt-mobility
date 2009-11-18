@@ -50,10 +50,7 @@
 #include <QFile>
 #include <QSet>
 
-#include "qcontactdetaildefinitionfield.h"
-#include "qcontact_p.h"
-#include "qcontactmanager.h"
-#include "qcontactmanager_p.h"
+#include "qtcontacts.h"
 
 #include "trackerchangelistener.h"
 #include "qtrackercontactsaverequest.h"
@@ -61,7 +58,7 @@
 QContactManagerEngine* ContactTrackerFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
     Q_UNUSED(error);
-    return new QContactTrackerEngine(parameters);
+    return new QContactTrackerEngine(managerName(), 1, parameters);
 }
 
 QString ContactTrackerFactory::managerName() const
@@ -69,6 +66,17 @@ QString ContactTrackerFactory::managerName() const
     return QString("tracker");
 }
 Q_EXPORT_PLUGIN2(qtcontacts_tracker, ContactTrackerFactory);
+
+QContactTrackerEngine::QContactTrackerEngine(const QString& engineName, int engineVersion, const QMap<QString, QString>& parameters)
+    : d(new QContactTrackerEngineData),
+    contactArchiveFile("removed"),
+    contactArchiveDir(QDir::homePath()+"/.contacts")
+{
+    Q_UNUSED(parameters);
+    d->m_engineName = engineName;
+    d->m_engineVersion = engineVersion;
+    connectToSignals();
+}
 
 QContactTrackerEngine::QContactTrackerEngine(const QMap<QString, QString>& parameters)
     : d(new QContactTrackerEngineData),
@@ -452,6 +460,22 @@ QList<QVariant::Type> QContactTrackerEngine::supportedDataTypes() const
     st.append(QVariant::Date);
     st.append(QVariant::DateTime);
     return st;
+}
+
+/*!
+ * Returns the name of the Tracker engine
+ */
+QString QContactTrackerEngine::managerName() const
+{
+    return d->m_engineName;
+}
+
+/*!
+ * Returns the implementation version of this engine
+ */
+int QContactTrackerEngine::implementationVersion() const
+{
+    return d->m_engineVersion;
 }
 
 RDFVariable QContactTrackerEngine::contactDetail2Rdf(const RDFVariable& rdfContact, const QString& definitionName,
