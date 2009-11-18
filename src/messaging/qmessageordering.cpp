@@ -75,6 +75,9 @@
     non-empty ordering.
 
     The result of combining two empty keys is an empty ordering.
+    
+    Windows mobile and desktop platforms do not support ordering bySender() and byRecipients(), 
+    additionally the Windows mobile platform does not support ordering byTimeStamp() and bySize().
 */
 
 /*!
@@ -113,6 +116,9 @@
     of ordering \a other.
 
     This function determines sorting precedence.
+    
+    On the Windows Mobile platform bySubject() and byReceptionTimeStamp() orderings can not 
+    be combined with each other.
 */
 
 /*!
@@ -122,6 +128,9 @@
     to this ordering.
 
     This function determines sorting precedence.
+
+    On the Windows Mobile platform bySubject() and byReceptionTimeStamp() orderings can not 
+    be combined with each other.
 */
 
 /*!
@@ -149,6 +158,8 @@ bool QMessageOrdering::operator!=(const QMessageOrdering& other) const
     \fn QMessageOrdering::bySender(Qt::SortOrder order)
   
     Returns an ordering that sorts messages by the address from which they were sent, according to \a order.
+    
+    Not supported on the Windows mobile and desktop platforms.
 
     \sa QMessage::from()
 */
@@ -158,6 +169,8 @@ bool QMessageOrdering::operator!=(const QMessageOrdering& other) const
   
     Returns an ordering that sorts messages by the addresses to which they were sent, according to \a order.
 
+    Not supported on the Windows mobile and desktop platforms.
+    
     \sa QMessage::to()
 */
 
@@ -174,7 +187,9 @@ bool QMessageOrdering::operator!=(const QMessageOrdering& other) const
   
     Returns an ordering that sorts messages by their origination timestamp, according to \a order.
 
-    \sa QMessage::date()
+    Not supported on the Windows mobile platform.
+    
+    \sa QMessage::date(), byReceptionTimeStamp()
 */
 
 /*!
@@ -206,5 +221,7 @@ bool QMessageOrdering::operator!=(const QMessageOrdering& other) const
   
     Returns an ordering that sorts messages by their size, according to \a order.
 
+    Not supported on the Windows mobile platform.
+    
     \sa QMessage::size()
 */

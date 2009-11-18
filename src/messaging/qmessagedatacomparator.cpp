@@ -86,6 +86,6 @@
 
     This enum describes additional matching criteria when performing a search.
     
-    \value FullWord        The key should only match a complete word
-    \value CaseSensitive   The key should be case sensitive.
+    \value FullWord        The key should only match a complete word. Not supported on Windows and QMF platforms.
+    \value CaseSensitive   The key should be case sensitive. Not supported on QMF platform.
 */
