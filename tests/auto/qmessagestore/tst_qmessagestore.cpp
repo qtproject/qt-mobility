@@ -207,6 +207,8 @@ void tst_QMessageStore::testAccount()
 
     QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts());
     QVERIFY(accountIds.contains(accountId));
+
+    QVERIFY(QMessageAccount::defaultAccount(QMessage::Email).isValid());
 }
 
 void tst_QMessageStore::testFolder_data()
@@ -310,7 +312,11 @@ void tst_QMessageStore::testMessage_data()
         << "Last message..."
         << QByteArray("text")
         << QByteArray("plain")
+#if defined(Q_OS_WIN)
+        << 32u
+#else
         << 1536u
+#endif
         << "...before Y2K"
         << QByteArray("text")
         << QByteArray("plain")
@@ -328,7 +334,11 @@ void tst_QMessageStore::testMessage_data()
         << "Last HTML message..."
         << QByteArray("text")
         << QByteArray("html")
+#if defined(Q_OS_WIN)
+        << 64u
+#else
         << 1536u
+#endif
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
         << QByteArray("html")
@@ -346,7 +356,11 @@ void tst_QMessageStore::testMessage_data()
         << "Last message..."
         << QByteArray("multipart")
         << QByteArray("mixed")
+#if defined(Q_OS_WIN)
+        << 512u
+#else
         << 1536u
+#endif
         << "...before Y2K"
         << QByteArray("text")
         << QByteArray("plain")
