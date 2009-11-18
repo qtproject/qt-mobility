@@ -1110,9 +1110,10 @@ MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
                 _valid = true;
                 return;
             case QMessage::HasAttachments:
-                _restriction.res.resBitMask.relBMR = BMR_NEZ;
-                _restriction.res.resBitMask.ulPropTag = PR_MESSAGE_FLAGS;
-                _restriction.res.resBitMask.ulMask = MSGFLAG_HASATTACH; // Found in PR_HASATTACH msdn doc, but not covered in PR_MESSAGE_FLAGS doc
+                _restriction.rt = RES_EXIST;
+                _restriction.res.resExist.ulReserved1 = 0;
+                _restriction.res.resExist.ulPropTag = PR_HASATTACH;
+                _restriction.res.resExist.ulReserved2 = 0;
                 _valid = true;
                 return;
             default:
