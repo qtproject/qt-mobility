@@ -3836,10 +3836,8 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
 #ifndef _WIN32_WCE
                                                      PR_MSG_EDITOR_FORMAT,
                                                      PR_RTF_IN_SYNC,
-                                                     PR_MESSAGE_SIZE
-#else
-                                                     PR_CONTENT_LENGTH
 #endif
+                                                     PR_MESSAGE_SIZE
                                                      }};
             ULONG count = 0;
             LPSPropValue properties;
@@ -3929,12 +3927,9 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                     case PR_RTF_IN_SYNC:
                         msg->d_ptr->_rtfInSync = (prop.Value.b != FALSE);;
                         break;
-                    case PR_MESSAGE_SIZE:
-#else
-                    case PR_CONTENT_LENGTH:
 #endif
-                        // Increase the size estimate by a third to allow for transfer encoding
-                        QMessagePrivate::setSize(*msg, prop.Value.ul * 4 / 3);
+                    case PR_MESSAGE_SIZE:
+                        QMessagePrivate::setSize(*msg, prop.Value.l);
                         break;
                     default:
                         break;
@@ -4281,7 +4276,7 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                 if (!msg->d_ptr->_hasAttachments) {
                     // Make the body the entire content of the message
                     messageContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
-                    msg->d_ptr->_bodyId = QMessageContentContainerPrivate::bodyContentId();
+                    msg->d_ptr->_bodyId = messageContainer->bodyContentId();
                     messageContainer->_available = bodyDownloaded;
 
                 } else {
