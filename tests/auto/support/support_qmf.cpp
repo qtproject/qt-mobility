@@ -171,6 +171,7 @@ QMessageId addMessage(const Parameters &params)
                 QMailMessage message;
 
                 message.setStatus(QMailMessage::LocalOnly, true);
+                message.setStatus(QMailMessage::Incoming, true);
 
                 message.setParentAccountId(accountIds.first());
                 message.setParentFolderId(folderIds.first());
