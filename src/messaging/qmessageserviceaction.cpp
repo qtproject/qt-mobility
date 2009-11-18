@@ -204,6 +204,8 @@
   
     Returns true if the action can be initiated; otherwise returns false.
     
+    Not implemented on QMF platform.
+    
     \sa QMessage::type()
 */
 
@@ -254,6 +256,8 @@
     The default application for handling the type of message that \a id identifies should be used.
 
     Returns true if the action can be initiated; otherwise returns false.
+    
+    Not implemented on QMF platform.
     
     \sa QMessageId, QMessage::type()
 */
