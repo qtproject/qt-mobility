@@ -534,6 +534,7 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(message.contentType().toLower(), messageType.toLower());
     QCOMPARE(message.contentSubType().toLower(), messageSubType.toLower());
 
+    QCOMPARE(message.parentAccountId(), testAccountId);
     QCOMPARE(message.parentFolderId(), testFolderId);
     QCOMPARE(message.standardFolder(), QMessage::InboxFolder);
 
