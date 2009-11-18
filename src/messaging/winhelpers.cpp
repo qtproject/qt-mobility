@@ -1032,11 +1032,20 @@ namespace {
 
                         if (*lastError == QMessageStore::NoError) {
                             // Mark this message as read/unread
+#ifndef _WIN32_WCE
+                            LONG flags = (source.status() & QMessage::Read ? 0 : CLEAR_READ_FLAG);
+                            HRESULT rv = message->SetReadFlag(flags);
+                            if (HR_FAILED(rv)) {
+                                qWarning() << "Unable to set flags in message.";
+                                *lastError = QMessageStore::FrameworkFault;
+                            }
+#else
                             LONG flags = (source.status() & QMessage::Read ? MSGFLAG_READ : 0);
                             if (!setMapiProperty(message, PR_MESSAGE_FLAGS, flags)) {
                                 qWarning() << "Unable to set flags in message.";
                                 *lastError = QMessageStore::FrameworkFault;
                             }
+#endif
                         }
 
                         if (*lastError == QMessageStore::NoError) {

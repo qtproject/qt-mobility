@@ -314,10 +314,10 @@ void tst_QMessageStore::testMessage_data()
         << "Last message..."
         << QByteArray("text")
         << QByteArray("plain")
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && defined(_WIN32_WCE)
         << 32u
 #else
-        << 1536u
+        << 1400u
 #endif
         << "...before Y2K"
         << QByteArray("text")
@@ -337,7 +337,7 @@ void tst_QMessageStore::testMessage_data()
         << "Last HTML message..."
         << QByteArray("text")
         << QByteArray("html")
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && defined(_WIN32_WCE)
         << 64u
 #else
         << 1536u
@@ -360,7 +360,7 @@ void tst_QMessageStore::testMessage_data()
         << "Last message..."
         << QByteArray("multipart")
         << QByteArray("mixed")
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && defined(_WIN32_WCE)
         << 512u
 #else
         << 1536u

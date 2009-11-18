@@ -190,30 +190,6 @@ QMessage::~QMessage()
     d_ptr = 0;
 }
 
-QMessage QMessage::fromTransmissionFormat(Type t, const QByteArray &ba)
-{
-    Q_UNUSED(t)
-    Q_UNUSED(ba)
-    return QMessage(); // stub
-}
-
-QMessage QMessage::fromTransmissionFormatFile(Type t, const QString& fileName)
-{
-    Q_UNUSED(t)
-    Q_UNUSED(fileName)
-    return QMessage(); // stub
-}
-
-QByteArray QMessage::toTransmissionFormat() const
-{
-    return QByteArray(); // stub
-}
-
-void QMessage::toTransmissionFormat(QDataStream& out) const
-{
-    Q_UNUSED(out)
-}
-
 QMessageId QMessage::id() const
 {
     return d_ptr->_id;
@@ -636,6 +612,19 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
                 if (QFile::exists(path)) {
                     if (!QFile::remove(path)) {
                         qWarning() << "Unable to remove temporary file:" << path;
+                    }
+                }
+
+                QString partialPath(QDir::tempPath() + "/qtmobility");
+                if (!QFile::exists(partialPath)) {
+                    if (!QDir::temp().mkdir("qtmobility")) {
+                        qWarning() << "Unable to create temporary directory:" << partialPath;
+                    }
+                }
+                partialPath.append("/messaging");
+                if (!QFile::exists(partialPath)) {
+                    if (!QDir(QDir::tempPath() + "/qtmobility").mkdir("messaging")) {
+                        qWarning() << "Unable to create temporary directory:" << partialPath;
                     }
                 }
 

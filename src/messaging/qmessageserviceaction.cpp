@@ -261,7 +261,8 @@
 /*!
     \fn QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
   
-    Iniate synchronization with external servers of local changes that have been queued by message store operations.
+    Iniate synchronization with external servers of local changes that have been queued by message store operations, 
+    for messages with parent account \a id.
 
     On MAPI platforms this function performs no operation, as when a connection is available, local changes are 
     opportunistically synchronized with external servers.

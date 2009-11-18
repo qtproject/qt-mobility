@@ -141,6 +141,7 @@
     \value NotYetImplemented      The operation failed because the messaging store does not yet implement the operation.
     \value FrameworkFault         The operation failed because the messaging store encountered an error in performing the operation.
     \value WorkingMemoryOverflow  The operation failed because the messaging store exhausted all memory available for evaluating queries.
+    \value Busy                   The operation failed because the messaging store is being used by another thread.
 */
 
 /*!
