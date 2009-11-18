@@ -72,6 +72,7 @@ QMessageAccountId addAccount(const Parameters &params)
         QMailAccount account;
         account.setName(name);
         account.setStatus(QMailAccount::Enabled, true);
+        account.setStatus(QMailAccount::CanTransmit, true);
         account.setMessageType(QMailMessage::Email);
 
         if (!fromAddress.isEmpty()) {
