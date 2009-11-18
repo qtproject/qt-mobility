@@ -70,7 +70,8 @@ public:
         : QSharedData(),
         m_stop(false),
         m_finished(false),
-        m_currentRequest(0)
+        m_currentRequest(0),
+        m_threadId(0)
     {
     }
 
@@ -91,9 +92,10 @@ public:
     bool m_stop;
     bool m_finished;
     QMutex m_mutex;
+    QMutex m_requestMtx;
+    Qt::HANDLE m_threadId;
     QWaitCondition m_newRequestAdded;
     QQueue<QContactAbstractRequest*> m_requestQueue; 
-    QList<QContactAbstractRequest*> m_removedRequests; 
     mutable QContactAbstractRequest* m_currentRequest;
 };
 #endif

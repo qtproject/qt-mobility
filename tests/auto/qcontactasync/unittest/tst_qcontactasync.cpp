@@ -2116,7 +2116,6 @@ void tst_QContactAsync::testQuickDestruction()
         cfr.start();
         delete cm;
     }
-
     // in this test, we create a manager, fire off a request, delete the request, then delete the manager, all in quick succession
     // this is to test for segfaults, etc.
     for (int i = 0; i < 10; i++) {
@@ -2127,7 +2126,6 @@ void tst_QContactAsync::testQuickDestruction()
         delete cfr;
         delete cm;
     }
-
     // in this test, we create a manager, fire off a request, delete the manager, then delete the request, all in quick succession
     // this is to test for segfaults, etc.
     for (int i = 0; i < 10; i++) {
@@ -2138,7 +2136,6 @@ void tst_QContactAsync::testQuickDestruction()
         delete cm;
         delete cfr;
     }
-
     // in this test, we create a manager, fire off a request, and delete the request, all in quick succession
     // this is to test for segfaults, etc.
     QContactManager *cm = prepareModel(uri);
@@ -2206,10 +2203,12 @@ void tst_QContactAsync::addManagers()
 
     foreach(QString mgr, managers) {
         QMap<QString, QString> params;
-        QTest::newRow(QString("mgr='%1'").arg(mgr).toLatin1().constData()) << QContactManager::buildUri(mgr, params);
         if (mgr == "memory") {
             params.insert("id", "tst_QContactManager");
             QTest::newRow(QString("mgr='%1', params").arg(mgr).toLatin1().constData()) << QContactManager::buildUri(mgr, params);
+            QTest::newRow(QString("mgr='%1'").arg(mgr).toLatin1().constData()) << QContactManager::buildUri(mgr, params);
+        } else {
+            QTest::newRow(QString("mgr='%1'").arg(mgr).toLatin1().constData()) << QContactManager::buildUri(mgr, params);
         }
     }
 }

@@ -95,7 +95,6 @@ QContactAbstractRequest::~QContactAbstractRequest()
     if (d_ptr) {
         QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
         if (engine) {
-            QMutexLocker locker(&d_ptr->m_mutex);
             engine->requestDestroyed(this);
             QCoreApplication::processEvents();
         }

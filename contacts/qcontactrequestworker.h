@@ -104,6 +104,7 @@ protected:
 
 private:
     QSharedDataPointer<QContactRequestWorkerData> d;
+    void cleanupRequests();
 };
 #endif
 
