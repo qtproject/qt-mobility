@@ -310,7 +310,6 @@ void tst_QMessageStoreKeys::initTestCase()
         // Use the resultant message sizes in testing - the configured sizes aren't honoured by MAPI
         QMessage m(messageIds.last());
         messageSizes.append(m.size());
-        qDebug() << "sf:" << m.standardFolder();
     }
 }
 
