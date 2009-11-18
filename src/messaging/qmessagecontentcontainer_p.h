@@ -354,7 +354,6 @@ public:
         }
 #endif
         container.d_ptr->_id = QMessageContentContainerId(QString::number(_attachments.count()+1));
-        QMessageContentContainerIdPrivate::setMessageId(container.d_ptr->_id,_containingMessageId);
         _attachments.append(container);
         return container.d_ptr->_id;
     }
@@ -370,16 +369,13 @@ public:
         _attachments.prepend(container);
         for (int i = 0; i < _attachments.count(); ++i) {
             _attachments[i].d_ptr->_id = QMessageContentContainerId(QString::number(i+1));
-            QMessageContentContainerIdPrivate::setMessageId(_attachments[i].d_ptr->_id, _containingMessageId);
         }
         return _attachments[0].d_ptr->_id;
     }
 
     QMessageContentContainerId bodyContentId() const
     {
-        QMessageContentContainerId bodyId(QString::number(0));
-        QMessageContentContainerIdPrivate::setMessageId(bodyId, _message->id());
-        return bodyId;
+        return QMessageContentContainerId(QString::number(0));
     }
 
     static QString attachmentFilename(const QMessageContentContainer& container)

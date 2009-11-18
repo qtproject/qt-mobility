@@ -52,19 +52,7 @@ public:
 #ifdef Q_OS_WIN
     enum { Invalid = -1, Body = 0 };
     int _number;
-    QMessageId _messageId;
     QMessageContentContainerIdPrivate() : _number(Invalid) {}
-
-    static QMessageId messageId(const QMessageContentContainerId& id)
-    {
-        return id.d_ptr->_messageId;
-    }
-
-    static void setMessageId(QMessageContentContainerId& id, const QMessageId messageId)
-    {
-        id.d_ptr->_messageId = messageId;
-    }
-
 #else
     QMessageContentContainerIdPrivate()
     {
