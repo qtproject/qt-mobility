@@ -792,7 +792,7 @@ bool QMessageServiceAction::retrieve(const QMessageId &aMessageId, const QMessag
     bool isBodyContainer = message.bodyId() == id;
 
     if(isBodyContainer)
-        return retrieveBody(messageId);
+        return retrieveBody(aMessageId);
 
     //TODO download message attachment programatically using MAPI impossible?
 #endif
