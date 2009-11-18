@@ -97,7 +97,7 @@ unsigned int SymbianSettingsLayer::order()
 QValueSpace::LayerOptions SymbianSettingsLayer::layerOptions() const
 {
     return QValueSpace::PermanentLayer |
-        QValueSpace::WriteableLayer;
+        QValueSpace::WritableLayer;
 }
 
 SymbianSettingsLayer *SymbianSettingsLayer::instance()

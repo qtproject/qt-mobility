@@ -13,5 +13,6 @@ crml.sources = resources.qcrml profile.qcrml
 crml.path = c:/resource/qt/crml
 DEPLOYMENT += crml
 TARGET.CAPABILITY = ReadUserData
+TARGET.UID3 = 0x2002ac7c
 
 qtAddLibrary(QtPublishSubscribe)
