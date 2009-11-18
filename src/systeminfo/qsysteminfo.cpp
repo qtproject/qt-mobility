@@ -96,7 +96,11 @@ QT_BEGIN_NAMESPACE
 \row
     \o QSystemScreenSaver::setScreenSaverInhibit
 \endtable
-  */
+
+\note Platform notes
+    Some functionality may or may not be supported on various platforms. Depending on if there
+is a reliable way to gather such information.
+*/
 
 /*!
     \enum QSystemInfo::Version
