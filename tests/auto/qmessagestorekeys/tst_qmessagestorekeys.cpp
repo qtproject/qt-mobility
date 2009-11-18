@@ -310,6 +310,7 @@ void tst_QMessageStoreKeys::initTestCase()
         // Use the resultant message sizes in testing - the configured sizes aren't honoured by MAPI
         QMessage m(messageIds.last());
         messageSizes.append(m.size());
+        qDebug() << "sf:" << m.standardFolder();
     }
 }
 
@@ -2258,32 +2259,29 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList()
         << "";
 
-    /* 
-       << TODO: determine the correct results...
     QTest::newRow("standardFolder equality 1")
-        << QMessageFilter::byStandardFolder(QMessage::InnboxFolder, QMessageDataComparator::Equal) 
-        << ( QMessageIdList() )
+        << QMessageFilter::byStandardFolder(QMessage::InboxFolder, QMessageDataComparator::Equal) 
+        << messageIds
         << ( QMessageIdList() )
         << "";
 
     QTest::newRow("standardFolder equality 2")
         << QMessageFilter::byStandardFolder(QMessage::TrashFolder, QMessageDataComparator::Equal) 
         << ( QMessageIdList() )
-        << ( QMessageIdList() )
+        << messageIds
         << "";
 
     QTest::newRow("standardFolder inequality 1")
-        << QMessageFilter::byStandardFolder(QMessage::InnboxFolder, QMessageDataComparator::NotEqual) 
+        << QMessageFilter::byStandardFolder(QMessage::InboxFolder, QMessageDataComparator::NotEqual) 
         << ( QMessageIdList() )
-        << ( QMessageIdList() )
+        << messageIds
         << "";
 
     QTest::newRow("standardFolder inequality 2")
         << QMessageFilter::byStandardFolder(QMessage::TrashFolder, QMessageDataComparator::NotEqual) 
+        << messageIds
         << ( QMessageIdList() )
-        << ( QMessageIdList() )
-        << """;
-    */
+        << "";
 
     QTest::newRow("parentFolderId equality 1")
         << QMessageFilter::byParentFolderId(folderIds[0], QMessageDataComparator::Equal) 
