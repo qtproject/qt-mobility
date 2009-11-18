@@ -45,6 +45,8 @@
 #include <qmessagefolderid.h>
 #include <qmessageaccountid.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageFolderPrivate;
 
 class Q_MESSAGING_EXPORT QMessageFolder
@@ -69,4 +71,6 @@ public:
 private:
     QMessageFolderPrivate *d_ptr;
 };
+
+QTM_END_NAMESPACE
 #endif

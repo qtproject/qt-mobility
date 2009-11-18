@@ -46,13 +46,11 @@
 
 #include <QObject>
 
-class QGeoPositionInfoSourcePrivate;
-
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-
+class QGeoPositionInfoSourcePrivate;
 class Q_LOCATION_EXPORT QGeoPositionInfoSource : public QObject
 {
     Q_OBJECT

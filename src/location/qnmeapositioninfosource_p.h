@@ -59,7 +59,6 @@
 #include <QQueue>
 #include <QPointer>
 
-class QNmeaReader;
 class QBasicTimer;
 class QTimerEvent;
 class QTimer;
@@ -68,6 +67,7 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QNmeaReader;
 struct QPendingGeoPositionInfo
 {
     QGeoPositionInfo info;

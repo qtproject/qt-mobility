@@ -84,6 +84,8 @@
     \endcode
 */
 
+QTM_BEGIN_NAMESPACE
+
 class QGeoAreaMonitorPrivate
 {
 public:
@@ -194,3 +196,5 @@ QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject *parent)
 
     The \a update holds the new position.
 */
+
+QTM_END_NAMESPACE

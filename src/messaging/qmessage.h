@@ -50,6 +50,9 @@
 #include <QStringList>
 #include <QTextStream>
 
+
+QTM_BEGIN_NAMESPACE
+
 class QMessagePrivate;
 
 class Q_MESSAGING_EXPORT QMessage : public QMessageContentContainer
@@ -187,4 +190,6 @@ private:
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QMessage::TypeFlags)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QMessage::StatusFlags)
+
+QTM_END_NAMESPACE
 #endif

@@ -41,6 +41,8 @@
 #include "qmessagefolderfilter.h"
 #include "qmessagefolderfilter_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMessageFolderFilter
 
@@ -277,3 +279,5 @@ bool QMessageFolderFilter::operator!=(const QMessageFolderFilter& other) const
 
     \sa QMessageFolder::id()
 */
+
+QTM_END_NAMESPACE

@@ -49,7 +49,21 @@
 #include <QFileInfo>
 #include <QRegExp>
 
-using namespace QmfHelpers;
+using namespace QTM_PREPEND_NAMESPACE(QmfHelpers);
+
+// This class has friend access to QMailMessage
+// and hsould not be within QTM_NAMESPACE
+struct QMailStorePrivate
+{
+    static inline void setUnmodified(QMailMessage *msg)
+    {
+        msg->setUnmodified();
+    }
+};
+
+
+
+QTM_BEGIN_NAMESPACE
 
 Q_SCOPED_STATIC_DEFINE(QMessagePrivate::StandardFolderMap,QMessagePrivate,standardFolderMap);
 
@@ -207,15 +221,6 @@ QByteArray charsetFor(const QString &input)
 }
 
 }
-
-// This class has friend access to QMailMessage
-struct QMailStorePrivate
-{
-    static inline void setUnmodified(QMailMessage *msg)
-    {
-        msg->setUnmodified();
-    }
-};
 
 QMessage::QMessage()
     : d_ptr(new QMessagePrivate)
@@ -726,3 +731,5 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
     return response;
 }
 
+
+QTM_END_NAMESPACE

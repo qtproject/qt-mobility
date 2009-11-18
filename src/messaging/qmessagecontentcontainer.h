@@ -54,6 +54,8 @@
 #include <windows.h>
 #endif
 
+QTM_BEGIN_NAMESPACE
+
 class QMessage;
 class QMessageContentContainerPrivate;
 
@@ -103,4 +105,6 @@ private:
 
     QMessageContentContainerPrivate* d_ptr;
 };
+
+QTM_END_NAMESPACE
 #endif

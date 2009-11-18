@@ -45,6 +45,8 @@
 #include "qgeopositioninfosource_wince_p.h"
 #include "qgeoinfothread_wince_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 // ========== QGeoPositionInfoValidator ==========
 
 QGeoPositionInfoValidator::QGeoPositionInfoValidator() : QGeoInfoValidator() {}
@@ -177,3 +179,5 @@ void QGeoPositionInfoSourceWinCE::dataUpdated(GPS_POSITION data)
     lastPosition = pos;
     emit positionUpdated(pos);
 }
+
+QTM_END_NAMESPACE

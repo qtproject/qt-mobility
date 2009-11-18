@@ -45,6 +45,9 @@
 #include <qmessagestore.h>
 #include <qmessage.h>
 
+
+QTM_BEGIN_NAMESPACE
+
 class QMessageServiceActionPrivate;
 
 class Q_MESSAGING_EXPORT QMessageServiceAction : public QObject
@@ -92,4 +95,6 @@ signals:
 private:
     QMessageServiceActionPrivate *d_ptr;
 };
+
+QTM_END_NAMESPACE
 #endif

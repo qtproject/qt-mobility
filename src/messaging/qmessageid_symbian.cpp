@@ -40,6 +40,9 @@
 ****************************************************************************/
 #include "qmessageid.h"
 
+
+QTM_BEGIN_NAMESPACE
+
 class QMessageIdPrivate
 {
 public:
@@ -114,3 +117,5 @@ uint qHash(const QMessageId &id)
     return qHash(id.toString());
 }
 
+
+QTM_END_NAMESPACE

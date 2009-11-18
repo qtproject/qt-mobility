@@ -47,12 +47,12 @@
 #include <QObject>
 #include <QList>
 
-class QGeoSatelliteInfoSourcePrivate;
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoSatelliteInfoSourcePrivate;
 class Q_LOCATION_EXPORT QGeoSatelliteInfoSource : public QObject
 {
     Q_OBJECT

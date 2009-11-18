@@ -48,6 +48,9 @@
 #include "winhelpers_p.h"
 #include <QDebug>
 
+
+QTM_BEGIN_NAMESPACE
+
 namespace {
 
 QByteArray charsetFor(const QString &input)
@@ -536,3 +539,5 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
     Q_UNUSED(type)
     return QMessage(); // stub
 }
+
+QTM_END_NAMESPACE

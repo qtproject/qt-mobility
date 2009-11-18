@@ -56,6 +56,8 @@
 // included here rather than in the cpp file to make sure it is included after <windows.h>
 #include <service.h> // used for SERVICE_STATE_ constants
 
+QTM_BEGIN_NAMESPACE
+
 // Used to determine if the dataUpdated signal should be emitted by a QGeoInfoThreadWinCE instance.
 // If valid() returns false the QGeoInfoThreadWinCE instance will ignore the data.
 // This is subclassed in order to filter for valid position or satellite data in GPS_POSITION
@@ -124,5 +126,7 @@ private:
     HANDLE m_gpsStateChange;
     HANDLE m_wakeUpEvent;
 };
+
+QTM_END_NAMESPACE
 
 #endif //#ifndef QGEOINFOTHREAD_WINCE_P_H

@@ -682,6 +682,6 @@ QString QContactManager::managerUri() const
     return d->m_engine->managerUri();
 }
 
-#include "moc_qcontactmanager.cpp"
+//#include "moc_qcontactmanager.cpp"
 
 QTM_END_NAMESPACE

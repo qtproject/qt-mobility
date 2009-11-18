@@ -40,6 +40,8 @@
 ****************************************************************************/
 #include "qmessageaccountid_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMessageAccountId
     \ingroup messaging
@@ -131,3 +133,4 @@ bool QMessageAccountId::operator!=(const QMessageAccountId &other) const
     Qt-style synonym for QList<QMessageAccountId>
 */
 
+QTM_END_NAMESPACE

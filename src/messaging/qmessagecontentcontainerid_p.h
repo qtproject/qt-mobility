@@ -42,6 +42,8 @@
 #define QMESSAGECONTENTCONTAINERIDPRIVATE_H
 #include "qmessagecontentcontainerid.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageContentContainerIdPrivate
 {
 public:
@@ -49,4 +51,6 @@ public:
     {
     }
 };
+
+QTM_END_NAMESPACE
 #endif

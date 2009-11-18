@@ -42,6 +42,9 @@
 #define QMESSAGESTOREPRIVATE_H
 #include "qmessagestore.h"
 
+
+QTM_BEGIN_NAMESPACE
+
 class QMessageStorePrivatePlatform;
 
 class QMessageStorePrivate
@@ -57,4 +60,6 @@ public:
     QMessageStore *q_ptr;
     QMessageStorePrivatePlatform *p_ptr;
 };
+
+QTM_END_NAMESPACE
 #endif

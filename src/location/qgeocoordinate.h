@@ -47,12 +47,12 @@
 
 class QDebug;
 class QDataStream;
-class QGeoCoordinatePrivate;
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoCoordinatePrivate;
 class Q_LOCATION_EXPORT QGeoCoordinate
 {
 public:

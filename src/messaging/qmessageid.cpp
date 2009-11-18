@@ -40,6 +40,9 @@
 ****************************************************************************/
 #include "qmessageid_p.h"
 
+
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMessageId
     \ingroup messaging
@@ -131,3 +134,5 @@ bool QMessageId::operator!=(const QMessageId &other) const
 */
 
 static const int registrationId = qRegisterMetaType<QMessageId>();
+
+QTM_END_NAMESPACE

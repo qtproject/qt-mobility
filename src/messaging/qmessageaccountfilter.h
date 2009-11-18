@@ -44,6 +44,8 @@
 #include <qmessagedatacomparator.h>
 #include <qmessageaccountid.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageAccountFilterPrivate;
 
 class Q_MESSAGING_EXPORT QMessageAccountFilter
@@ -82,4 +84,6 @@ public:
 private:
     QMessageAccountFilterPrivate *d_ptr;
 };
+
+QTM_END_NAMESPACE
 #endif

@@ -59,6 +59,9 @@
 #endif
 
 using namespace WinHelpers;
+
+QTM_BEGIN_NAMESPACE
+
 static const unsigned long SmsCharLimit = 160;
 
 class QMessageServiceActionPrivate : public QObject
@@ -826,3 +829,5 @@ QMessageStore::ErrorCode QMessageServiceAction::lastError() const
 }
 
 #include <qmessageserviceaction_win.moc>
+
+QTM_END_NAMESPACE

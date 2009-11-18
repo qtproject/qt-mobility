@@ -113,6 +113,9 @@ extern "C++"
 #define IID_PPV_ARGS(ppType) __uuidof(**(ppType)), IID_PPV_ARGS_Helper(ppType)
 #endif //IID_PPV_ARGS
 
+
+QTM_BEGIN_NAMESPACE
+
 namespace WinHelpers
 {
     bool setMapiProperty(IMAPIProp *object, ULONG tag, const QString &value)
@@ -4738,3 +4741,5 @@ QMessageContentContainerPrivate *MapiSession::containerImpl(const QMessageConten
 }
 
 #include "winhelpers.moc"
+
+QTM_END_NAMESPACE

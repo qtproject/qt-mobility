@@ -48,12 +48,12 @@
 
 class QDebug;
 class QDataStream;
-class QGeoPositionInfoPrivate;
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoPositionInfoPrivate;
 class Q_LOCATION_EXPORT QGeoPositionInfo
 {
 public:

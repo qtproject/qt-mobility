@@ -42,6 +42,9 @@
 #include "qmessage_symbian_p.h"
 #include "qmessagecontentcontainer_symbian_p.h"
 
+
+QTM_BEGIN_NAMESPACE
+
 QMessagePrivate::QMessagePrivate(QMessage *message)
  : q_ptr(message),
    _size(0),
@@ -343,3 +346,5 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
     return QMessage(); // stub
 }
 
+
+QTM_END_NAMESPACE

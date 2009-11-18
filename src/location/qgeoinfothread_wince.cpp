@@ -43,6 +43,8 @@
 
 #include "qgeoinfothread_wince_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 // ========== QGeoInfoValidator ==========
 
 QGeoInfoValidator::QGeoInfoValidator() {}
@@ -351,3 +353,5 @@ void QGeoInfoThreadWinCE::run()
 
     GPSCloseDevice(m_gps);
 }
+
+QTM_END_NAMESPACE

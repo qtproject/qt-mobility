@@ -44,6 +44,8 @@
 #include <QList>
 #include <qmessageglobal.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageAddressPrivate;
 
 class Q_MESSAGING_EXPORT QMessageAddress
@@ -80,5 +82,7 @@ private:
 };
 
 typedef QList<QMessageAddress> QMessageAddressList;
+
+QTM_END_NAMESPACE
 
 #endif

@@ -61,6 +61,8 @@
 #include <QFile>
 #include <QFileInfo>
 
+QTM_BEGIN_NAMESPACE
+
 #ifdef USE_QMF_IMPLEMENTATION
 class QMessageContentContainerPrivate
 {
@@ -383,5 +385,7 @@ public:
     }
 };
 #endif
+
+QTM_END_NAMESPACE
 
 #endif

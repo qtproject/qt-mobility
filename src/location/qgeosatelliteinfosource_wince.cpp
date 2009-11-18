@@ -47,6 +47,8 @@
 #include "qgeosatelliteinfosource_wince_p.h"
 #include "qgeoinfothread_wince_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 // ========== QGeoSatelliteInfoValidator ==========
 
 QGeoSatelliteInfoValidator::QGeoSatelliteInfoValidator() : QGeoInfoValidator() {}
@@ -161,3 +163,5 @@ void QGeoSatelliteInfoSourceWinCE::dataUpdated(GPS_POSITION data)
 
     emit satellitesInUseUpdated(satellitesInUse);
 }
+
+QTM_END_NAMESPACE

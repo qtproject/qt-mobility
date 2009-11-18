@@ -51,6 +51,9 @@
 #include <QMutex>
 #include <qdebug.h>
 
+
+QTM_BEGIN_NAMESPACE
+
 namespace {
 
 class MutexTryLocker
@@ -585,3 +588,5 @@ void QMessageStore::unregisterNotificationFilter(NotificationFilterId notificati
 }
 
 #include "qmessagestore_win.moc"
+
+QTM_END_NAMESPACE

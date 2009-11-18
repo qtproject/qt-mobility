@@ -41,6 +41,7 @@
 #include "qmessageaccountordering.h"
 #include "qmessageaccountordering_p.h"
 
+QTM_BEGIN_NAMESPACE
 
 QMessageAccountOrdering::QMessageAccountOrdering()
 {
@@ -82,3 +83,5 @@ QMessageAccountOrdering QMessageAccountOrdering::byName(Qt::SortOrder order)
     Q_UNUSED(order)
     return QMessageAccountOrdering(); // stub
 }
+
+QTM_END_NAMESPACE

@@ -46,6 +46,9 @@
 #include "qmessagefolderfilter.h"
 #include "QMessageServiceAction.h"
 
+
+QTM_BEGIN_NAMESPACE
+
 class CRichText;
 class CCharFormatLayer;
 class CParaFormatLayer;
@@ -280,4 +283,6 @@ private: // Data
     mutable RTimer iTimer;
 };
 
+
+QTM_END_NAMESPACE
 #endif // QMTMENGINE_SYMBIAN_H

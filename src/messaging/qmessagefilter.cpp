@@ -41,6 +41,8 @@
 #include "qmessagefilter.h"
 #include "qmessagefilter_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMessageFilter
 
@@ -396,3 +398,5 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
         
     \sa QMessage::parentFolderId()
 */
+
+QTM_END_NAMESPACE

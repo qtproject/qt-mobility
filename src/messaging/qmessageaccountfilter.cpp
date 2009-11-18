@@ -41,6 +41,8 @@
 #include "qmessageaccountfilter.h"
 #include "qmessageaccountfilter_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMessageAccountFilter
 
@@ -213,3 +215,5 @@ bool QMessageAccountFilter::operator!=(const QMessageAccountFilter& other) const
 
     \sa QMessageAccount::name()
 */
+
+QTM_END_NAMESPACE

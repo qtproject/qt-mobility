@@ -54,6 +54,8 @@
 #include <lbttriggerconditionarea.h>
 #include <lbtgeocircle.h>
 
+QTM_BEGIN_NAMESPACE
+
 /**
  *  QGeoAreaMonitorS60
  *
@@ -99,5 +101,7 @@ private:
     QMLBackendMonitorCreateTriggerAO* iTriggerCreateAO;
     QMLBackendTriggerChangeAO *iNotifyTriggerAO;
 };
+
+QTM_END_NAMESPACE
 
 #endif /* QGEOAREAMONITORS60_H_ */

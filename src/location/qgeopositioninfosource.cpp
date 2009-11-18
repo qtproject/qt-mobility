@@ -46,6 +46,8 @@
 #   include "qgeopositioninfosource_wince_p.h"
 #endif
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QGeoPositionInfoSource
     \brief The QGeoPositionInfoSource class is an abstract base class for the distribution of positional updates.
@@ -268,3 +270,5 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
     Emitted if requestUpdate() was called and the current position could
     not be retrieved within the specified timeout.
 */
+
+QTM_END_NAMESPACE

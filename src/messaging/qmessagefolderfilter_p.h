@@ -52,6 +52,8 @@
 #endif
 #include <QSet>
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageFolderFilterPrivate
 {
     Q_DECLARE_PUBLIC(QMessageFolderFilter)
@@ -139,4 +141,6 @@ public:
     static bool QMessageFolderFilterPrivate::isNonMatching(const QMessageFolderFilter &filter);
 #endif
 };
+
+QTM_END_NAMESPACE
 #endif

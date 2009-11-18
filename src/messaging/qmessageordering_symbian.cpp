@@ -50,6 +50,9 @@ if ((x) < (y)) { \
     continue; \
 }
 
+
+QTM_BEGIN_NAMESPACE
+
 QMessageOrderingPrivate::QMessageOrderingPrivate(QMessageOrdering *ordering)
  : q_ptr(ordering),
    _valid(true)
@@ -241,3 +244,5 @@ QMessageOrdering QMessageOrdering::bySize(Qt::SortOrder order)
 	QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Size, order));
 	return result;
 }
+
+QTM_END_NAMESPACE

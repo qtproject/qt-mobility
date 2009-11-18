@@ -45,6 +45,8 @@
 #include <MAPIUtil.h>
 #include <QDebug>
 
+QTM_BEGIN_NAMESPACE
+
 #ifdef _WIN32_WCE
 
 QMessageFolderId QMessageFolderIdPrivate::from(const MapiRecordKey &folderKey, const MapiEntryId &storeKey, const MapiEntryId &entryId)
@@ -219,3 +221,5 @@ uint qHash(const QMessageFolderId &id)
     return (qHash(id.d_ptr->_valid) ^ qHash(id.d_ptr->_folderRecordKey) ^ qHash(id.d_ptr->_storeRecordKey));
 #endif
 }
+
+QTM_END_NAMESPACE

@@ -40,6 +40,9 @@
 ****************************************************************************/
 #include "qmessageserviceaction.h"
 
+
+QTM_BEGIN_NAMESPACE
+
 QMessageServiceAction::QMessageServiceAction(QObject *parent)
     : QObject(parent)
 {
@@ -131,3 +134,5 @@ QMessageStore::ErrorCode QMessageServiceAction::lastError() const
 {
     return QMessageStore::NoError;
 }
+
+QTM_END_NAMESPACE

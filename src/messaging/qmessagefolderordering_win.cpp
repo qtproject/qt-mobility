@@ -41,6 +41,7 @@
 #include "qmessagefolderordering.h"
 #include "qmessagefolderordering_p.h"
 
+QTM_BEGIN_NAMESPACE
 
 bool QMessageFolderOrderingPrivate::lessthan(const QMessageFolderOrdering &ordering, const QMessageFolder &l, const QMessageFolder &r)
 {
@@ -158,3 +159,5 @@ QMessageFolderOrdering QMessageFolderOrdering::byPath(Qt::SortOrder order)
     result.d_ptr->_fieldOrderList.append(fieldOrder);
     return result;
 }
+
+QTM_END_NAMESPACE
