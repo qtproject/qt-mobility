@@ -207,6 +207,8 @@ void tst_QMessageStore::testAccount()
 
     QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts());
     QVERIFY(accountIds.contains(accountId));
+
+    QVERIFY(QMessageAccount::defaultAccount(QMessage::Email).isValid());
 }
 
 void tst_QMessageStore::testFolder_data()
@@ -284,6 +286,7 @@ void tst_QMessageStore::testMessage_data()
 {
     QTest::addColumn<QString>("to");
     QTest::addColumn<QString>("from");
+    QTest::addColumn<QString>("cc");
     QTest::addColumn<QString>("date");
     QTest::addColumn<QString>("subject");
     QTest::addColumn<QByteArray>("messageType");
@@ -306,11 +309,16 @@ void tst_QMessageStore::testMessage_data()
     QTest::newRow("1")
         << "alice@example.com"
         << "bob@example.com"
+        << ""
         << "1999-12-31T23:59:59Z"
         << "Last message..."
         << QByteArray("text")
         << QByteArray("plain")
+#if defined(Q_OS_WIN)
+        << 32u
+#else
         << 1536u
+#endif
         << "...before Y2K"
         << QByteArray("text")
         << QByteArray("plain")
@@ -324,11 +332,16 @@ void tst_QMessageStore::testMessage_data()
     QTest::newRow("2")
         << "alice@example.com"
         << "bob@example.com"
+        << "charlie@example.com, donald@example.com"
         << "1999-12-31T23:59:59Z"
         << "Last HTML message..."
         << QByteArray("text")
         << QByteArray("html")
+#if defined(Q_OS_WIN)
+        << 64u
+#else
         << 1536u
+#endif
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
         << QByteArray("html")
@@ -342,11 +355,16 @@ void tst_QMessageStore::testMessage_data()
     QTest::newRow("3")
         << "alice@example.com"
         << "bob@example.com"
+        << ""
         << "1999-12-31T23:59:59Z"
         << "Last message..."
         << QByteArray("multipart")
         << QByteArray("mixed")
+#if defined(Q_OS_WIN)
+        << 512u
+#else
         << 1536u
+#endif
         << "...before Y2K"
         << QByteArray("text")
         << QByteArray("plain")
@@ -360,6 +378,7 @@ void tst_QMessageStore::testMessage_data()
     QTest::newRow("4")
         << "alice@example.com"
         << "bob@example.com"
+        << ""
         << "1999-12-31T23:59:59Z"
         << "Last HTML message..."
         << QByteArray("multipart")
@@ -426,6 +445,7 @@ void tst_QMessageStore::testMessage()
 
     QFETCH(QString, to);
     QFETCH(QString, from);
+    QFETCH(QString, cc);
     QFETCH(QString, date);
     QFETCH(QString, subject);
     QFETCH(QByteArray, messageType);
@@ -444,6 +464,7 @@ void tst_QMessageStore::testMessage()
     Support::Parameters p;
     p.insert("to", to);
     p.insert("from", from);
+    p.insert("cc", cc);
     p.insert("date", date);
     p.insert("subject", subject);
     p.insert("mimeType", bodyType + '/' + bodySubType);
@@ -462,6 +483,7 @@ void tst_QMessageStore::testMessage()
 
     int originalCount = QMessageStore::instance()->countMessages();
 
+    // Test message addition
     QMessageId messageId(Support::addMessage(p));
     QVERIFY(messageId.isValid());
     QVERIFY(messageId != QMessageId());
@@ -479,6 +501,7 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(catcher.added.first().second.count(), 2);
     QCOMPARE(catcher.added.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2->id << filter3->id);
 
+    // Test message retrieval
     QMessage message(messageId);
     QCOMPARE(message.id(), messageId);
     QCOMPARE(message.isModified(), false);
@@ -486,6 +509,7 @@ void tst_QMessageStore::testMessage()
     QMessageAddress toAddress;
     toAddress.setRecipient(to);
     toAddress.setType(QMessageAddress::Email);
+    QVERIFY(!message.to().isEmpty());
     QCOMPARE(message.to().first(), toAddress);
     QCOMPARE(message.to().first().recipient(), to);
 
@@ -495,11 +519,24 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(message.from(), fromAddress);
     QCOMPARE(message.from().recipient(), from);
 
+    QList<QMessageAddress> ccAddresses;
+    foreach (const QString &element, cc.split(",", QString::SkipEmptyParts)) {
+        QMessageAddress addr;
+        addr.setRecipient(element.trimmed());
+        addr.setType(QMessageAddress::Email);
+        ccAddresses.append(addr);
+    }
+    QCOMPARE(message.cc(), ccAddresses);
+
     QCOMPARE(message.date(), QDateTime::fromString(date, Qt::ISODate));
     QCOMPARE(message.subject(), subject);
 
     QCOMPARE(message.contentType().toLower(), messageType.toLower());
     QCOMPARE(message.contentSubType().toLower(), messageSubType.toLower());
+
+    QCOMPARE(message.parentAccountId(), testAccountId);
+    QCOMPARE(message.parentFolderId(), testFolderId);
+    QCOMPARE(message.standardFolder(), QMessage::InboxFolder);
 
     QAPPROXIMATECOMPARE(message.size(), messageSize, (messageSize / 2));
 
@@ -589,6 +626,24 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(body.textContent(), replacementText);
     QAPPROXIMATECOMPARE(body.size(), 72u, 36u);
 
+    // Test response message properties
+    QMessage reply(updated.createResponseMessage(QMessage::ReplyToSender));
+    QCOMPARE(reply.subject(), updated.subject().prepend("Re:"));
+    QCOMPARE(reply.to(), QList<QMessageAddress>() << updated.from());
+    QCOMPARE(reply.cc(), QList<QMessageAddress>());
+    QVERIFY(reply.bodyId().isValid());
+
+    QMessage replyToAll(updated.createResponseMessage(QMessage::ReplyToAll));
+    QCOMPARE(replyToAll.subject(), updated.subject().prepend("Re:"));
+    QCOMPARE(replyToAll.to(), QList<QMessageAddress>() << updated.from());
+    QCOMPARE(replyToAll.cc(), QList<QMessageAddress>() << updated.to() << updated.cc());
+    QVERIFY(replyToAll.bodyId().isValid());
+
+    QMessage forward(updated.createResponseMessage(QMessage::Forward));
+    QCOMPARE(forward.subject(), updated.subject().prepend("Fwd:"));
+    QVERIFY(forward.bodyId().isValid());
+
+    // Test message removal
     QMessageStore::instance()->removeMessage(message.id());
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
     QCOMPARE(QMessageStore::instance()->countMessages(), originalCount);

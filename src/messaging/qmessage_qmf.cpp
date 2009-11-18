@@ -711,7 +711,7 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
             if (!existingText.isEmpty()) {
                 existingText = existingText.replace("\n", "\n> ");
 
-                QString prefix(qApp->translate("QMessage", "On %1 you wrote:\n"));
+                QString prefix(qApp->translate("QMessage", "On %1 you wrote:\n> "));
                 prefix = prefix.arg(d_ptr->_message.date().toLocalTime().toString());
                 response.setBody(prefix + existingText);
             }

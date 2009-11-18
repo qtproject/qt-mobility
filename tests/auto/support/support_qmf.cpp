@@ -72,6 +72,7 @@ QMessageAccountId addAccount(const Parameters &params)
         QMailAccount account;
         account.setName(name);
         account.setStatus(QMailAccount::Enabled, true);
+        account.setStatus(QMailAccount::CanTransmit, true);
         account.setMessageType(QMailMessage::Email);
 
         if (!fromAddress.isEmpty()) {
@@ -145,6 +146,7 @@ QMessageId addMessage(const Parameters &params)
     QString parentFolderPath(params["parentFolderPath"]);
     QString to(params["to"]);
     QString from(params["from"]);
+    QString cc(params["cc"]);
     QString date(params["date"]);
     QString receivedDate(params["receivedDate"]);
     QString subject(params["subject"]);
@@ -173,8 +175,16 @@ QMessageId addMessage(const Parameters &params)
                 message.setParentAccountId(accountIds.first());
                 message.setParentFolderId(folderIds.first());
 
-                message.setTo(QMailAddress::fromStringList(to));
-                message.setFrom(QMailAddress(from));
+                if (!to.isEmpty()) {
+                    message.setTo(QMailAddress::fromStringList(to));
+                }
+                if (!from.isEmpty()) {
+                    message.setFrom(QMailAddress(from));
+                }
+                if (!cc.isEmpty()) {
+                    message.setCc(QMailAddress::fromStringList(cc));
+                }
+
                 message.setSubject(subject);
 
                 QDateTime dt(QDateTime::fromString(date, Qt::ISODate));
