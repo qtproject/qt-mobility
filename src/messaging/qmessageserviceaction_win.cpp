@@ -601,8 +601,7 @@ public:
         // Ensure that this thread has initialized MAPI
         WinHelpers::MapiInitializationToken token(WinHelpers::initializeMapi());
 
-        // TODO: body text search
-        _parent->_candidateIds = QMessageStore::instance()->queryMessages(_filter, _ordering, _limit, _offset);
+        _parent->_candidateIds = QMessageStore::instance()->queryMessages(_filter, _body, _options, _ordering, _limit, _offset);
         _parent->_lastError = QMessageStore::instance()->lastError();
         emit completed();
     }
