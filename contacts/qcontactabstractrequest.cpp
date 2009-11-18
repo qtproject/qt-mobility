@@ -45,6 +45,7 @@
 #include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
 #include <QCoreApplication>
+
 /*!
  * \class QContactAbstractRequest
  * \brief Allows a client to asynchronously request some functionality of a particular QContactManager.
@@ -131,12 +132,14 @@ bool QContactAbstractRequest::isFinished() const
 /*! Returns the overall error of the most recent asynchronous operation */
 QContactManager::Error QContactAbstractRequest::error() const
 {
+    QMutexLocker locker(&d_ptr->m_mutex);
     return d_ptr->m_error;
 }
 
 /*! Returns the list of errors which occurred during the most recent asynchronous operation.  Each individual error in the list corresponds to a result in the result list. */
 QList<QContactManager::Error> QContactAbstractRequest::errors() const
 {
+    QMutexLocker locker(&d_ptr->m_mutex);
     return d_ptr->m_errors;
 }
 
@@ -145,6 +148,7 @@ QList<QContactManager::Error> QContactAbstractRequest::errors() const
  */
 QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
 {
+    QMutexLocker locker(&d_ptr->m_mutex);
     return d_ptr->type();
 }
 
@@ -162,13 +166,18 @@ QContactAbstractRequest::Status QContactAbstractRequest::status() const
 /*! Returns a pointer to the manager of which this request instance requests operations */
 QContactManager* QContactAbstractRequest::manager() const
 {
+    QMutexLocker locker(&d_ptr->m_mutex);
     return d_ptr->m_manager;
 }
 
 /*! Sets the manager of which this request instance requests operations to \a manager */
 void QContactAbstractRequest::setManager(QContactManager* manager)
 {
-    d_ptr->m_manager = manager;
+    QMutexLocker locker(&d_ptr->m_mutex);
+    QContactManagerEngine *engine = QContactManagerData::engine(manager);
+    if (engine) {
+        d_ptr->m_manager = manager;
+    }
 }
 
 /*! Attempts to start the request.  Returns false if the request is not in the \c QContactAbstractRequest::Inactive, \c QContactAbstractRequest::Finished or \c QContactAbstractRequest::Cancelled states,

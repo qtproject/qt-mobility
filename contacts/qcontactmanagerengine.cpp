@@ -2009,3 +2009,12 @@ bool QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
 
     return false;
 }
+
+
+/*!
+ * Remove all pending requests from the manager engine if these requests are managered by the given \a manager.
+ */
+void QContactManagerEngine::removeRequestsForManager(QContactManager* manager)
+{
+    Q_UNUSED(manager);
+}

@@ -733,3 +733,11 @@ bool QContactMemoryEngine::filterSupported(const QContactFilter& filter) const
     return false;
 }
 
+
+/*!
+ * \reimp
+ */
+void QContactMemoryEngine::removeRequestsForManager(QContactManager* manager)
+{
+    d->m_requestWorker->removeRequestForManager(manager);
+}
