@@ -544,6 +544,7 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(bodyId.isValid(), true);
     QCOMPARE(bodyId != QMessageContentContainerId(), true);
     QCOMPARE(QMessageContentContainerId(bodyId.toString()), bodyId);
+    QVERIFY(message.contains(bodyId));
 
     QMessageContentContainer body(message.find(bodyId));
 
@@ -562,6 +563,7 @@ void tst_QMessageStore::testMessage()
         QCOMPARE(attachmentId.isValid(), true);
         QCOMPARE(attachmentId != QMessageContentContainerId(), true);
         QCOMPARE(QMessageContentContainerId(attachmentId.toString()), attachmentId);
+        QVERIFY(message.contains(attachmentId));
 
         // With MAPI, attachment order is not preserved
         QMessageContentContainer attachment(message.find(attachmentId));
@@ -614,6 +616,7 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(bodyId.isValid(), true);
     QCOMPARE(bodyId != QMessageContentContainerId(), true);
     QCOMPARE(QMessageContentContainerId(bodyId.toString()), bodyId);
+    QVERIFY(updated.contains(bodyId));
 
     body = updated.find(bodyId);
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
