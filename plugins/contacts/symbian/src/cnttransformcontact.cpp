@@ -51,6 +51,7 @@
 #include "cnttransformonlineaccount.h"
 #include "cnttransformorganisation.h"
 #include "cnttransformavatar.h"
+#include "cnttransformavatarsimple.h"
 #include "cnttransformsynctarget.h"
 #include "cnttransformgender.h"
 #include "cnttransformanniversary.h"
@@ -58,6 +59,7 @@
 #include "cnttransformgeolocation.h"
 #include "cnttransformnote.h"
 #include "cnttransformfamily.h"
+#include "cnttransformempty.h"
 #include "cntsymbiantransformerror.h"
 
 #include <qtcontacts.h>
@@ -97,16 +99,17 @@ void CntTransformContact::initializeCntTransformContactData()
 	m_transformContactData.insert(URL, new CntTransformUrl);
 	m_transformContactData.insert(Birthday, new CntTransformBirthday);
 	m_transformContactData.insert(Organisation, new CntTransformOrganisation);
+	m_transformContactData.insert(SyncTarget, new CntTransformSyncTarget);
 	m_transformContactData.insert(Note, new CntTransformNote);
 	m_transformContactData.insert(Family, new CntTransformFamily);
 
 #ifdef USE_CUSTOM_CNT_MODEL_FIELDS
-	// These are not supported on pre-10.1
+	// variated transform classes
+    m_transformContactData.insert(Avatar, new CntTransformAvatar);
     m_transformContactData.insert(Anniversary, new CntTransformAnniversary);
-	m_transformContactData.insert(Geolocation, new CntTransformGeolocation);
 
-    // Causes a "CPbk2ContactEdit.. 2" panic in Phonebook2 contact editor
-    // It is probably ok to use this only in 10.1 and newer
+    // not supported on pre-10.1
+	m_transformContactData.insert(Geolocation, new CntTransformGeolocation);
     m_transformContactData.insert(Gender, new CntTransformGender);
 
     // Causes a "CPbk2ContactEdit.. 2" panic in Phonebook2 contact editor
@@ -115,29 +118,25 @@ void CntTransformContact::initializeCntTransformContactData()
     // at all.
     m_transformContactData.insert(OnlineAccount, new CntTransformOnlineAccount);
 
-    // TODO: The following transform classes should be checked. What do we
-	// need to change to make them compatible with Virtual Phonebook and
-	// Phonebook2?
-
-    // Causes a "CPbk2ContactEdit.. 2" panic in Phonebook2 contact editor.
-    // Avatar is probably not correctly mapped to image fields of a contact item
-    m_transformContactData.insert(Avatar, new CntTransformAvatar);
-    // Causes a "CPbk2ContactEdit.. 2" panic in Phonebook2 contact editor
-    m_transformContactData.insert(SyncTarget, new CntTransformSyncTarget);
 #else
+    // Empty transform class for removing unsupported detail definitions
+    m_transformContactData.insert(Empty, new CntTransformEmpty);
+
+    // variated transform classes
     m_transformContactData.insert(Anniversary, new CntTransformAnniversarySimple);
+    m_transformContactData.insert(Avatar, new CntTransformAvatarSimple);
 #endif
 }
 
 /*!
- * Converts Symbian contact item to QContact. Note that the contact id is not
- * converted to QContactId so the caller is responsible of setting the contact
- * id if needed.
+ * Converts Symbian contact item to QContact. Note that the contact is not
+ * saved into contacts database so the details that require contact to exist
+ * in the database are not transformed. Use transformPostSaveDetailsL to
+ * transform those details after the contact item has been saved.
  * \param contact A reference to a symbian contact item to be converted.
- * \param contactDatabase Reference to an opened Symbian contact database instance.
  * \return Qt Contact
  */
-QContact CntTransformContact::transformContactL(CContactItem &contact, CContactDatabase &contactDatabase) const
+QContact CntTransformContact::transformContactL(CContactItem &contact) const
 {
     // Create a new QContact
     QContact newQtContact;
@@ -170,25 +169,54 @@ QContact CntTransformContact::transformContactL(CContactItem &contact, CContactD
         }
     }
 
-    // Add contact's GUID
-    QContactDetail *detailUid = transformGuidItemFieldL(contact, contactDatabase);
+    return newQtContact;
+}
+
+/*!
+ * Transforms details that are not available until the CContactItem has been
+ * saved into contacts database.
+ */
+void CntTransformContact::transformPostSaveDetailsL(
+        const CContactItem& contactItem,
+        QContact& contact,
+        const CContactDatabase &contactDatabase,
+        QString managerUri) const
+{
+    // Id
+    QContactId contactId;
+    contactId.setLocalId(contactItem.Id());
+    contactId.setManagerUri(managerUri);
+    contact.setId(contactId);
+
+    // GUID
+    QContactDetail *detailUid = transformGuidItemFieldL(contactItem, contactDatabase);
     if(detailUid)
     {
-        newQtContact.saveDetail(detailUid);
+        // replace detail
+        QList<QContactDetail> guids = contact.details(QContactGuid::DefinitionName);
+        for(int i(0); i < guids.count(); i++) {
+            QContactGuid guidDetail = guids[i];
+            contact.removeDetail(&guidDetail);
+        }
+        contact.saveDetail(detailUid);
         delete detailUid;
         detailUid = 0;
     }
 
-    // Add contact's timestamp
-    QContactDetail *detailTimestamp = transformTimestampItemFieldL(contact, contactDatabase);
+    // Timestamp
+    QContactDetail *detailTimestamp = transformTimestampItemFieldL(contactItem, contactDatabase);
     if(detailTimestamp)
     {
-        newQtContact.saveDetail(detailTimestamp);
+        // replace detail
+        QList<QContactDetail> timestamps = contact.details(QContactTimestamp::DefinitionName);
+        for(int i(0); i < timestamps.count(); i++) {
+            QContactTimestamp timestampDetail = timestamps[i];
+            contact.removeDetail(&timestampDetail);
+        }
+        contact.saveDetail(detailTimestamp);
         delete detailTimestamp;
         detailTimestamp = 0;
     }
-
-    return newQtContact;
 }
 
 /*! CntTransform a QContact into a Symbian CContactItem.
@@ -214,9 +242,10 @@ void CntTransformContact::transformContactL(
 	{
 	    QScopedPointer<QContactDetail> detail(new QContactDetail(detailList.at(i)));
 	    if (!detail->isEmpty()) {
+            QString detailName = detail->definitionName();
             QList<CContactItemField *> fieldList = transformDetailL(*detail);
             int fieldCount = fieldList.count();
-            
+
             // check if the contact has any unsupported details
             if(fieldCount == 0) {
                 if (detail->definitionName() != QContactDisplayLabel::DefinitionName
@@ -226,7 +255,7 @@ void CntTransformContact::transformContactL(
                 User::Leave(KErrInvalidContactDetail);
                 }
             }
-    
+
             for (int j = 0; j < fieldCount; j++)
             {
                 //Add field to fieldSet
@@ -289,16 +318,19 @@ TUint32 CntTransformContact::GetIdForDetailL(const QContactDetailFilter& detailF
 
     }
 
-QMap<QString, QContactDetailDefinition> CntTransformContact::detailDefinitions(QContactManager::Error& error) const
+void CntTransformContact::detailDefinitions(
+        QMap<QString, QContactDetailDefinition>& defaultSchema,
+        const QString& contactType,
+        QContactManager::Error& error) const
 {
     Q_UNUSED(error);
-    QMap<QString, QContactDetailDefinition> defMap;
+
+    // Ask leaf classes to do the modifications required to the default schema
     QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
     while (i != m_transformContactData.constEnd()) {
-        i.value()->detailDefinitions(defMap);
+        i.value()->detailDefinitions(defaultSchema, contactType);
         i++;
     }
-    return defMap;
 }
 
 QList<CContactItemField *> CntTransformContact::transformDetailL(const QContactDetail &detail) const
@@ -334,7 +366,7 @@ QContactDetail *CntTransformContact::transformItemField(const CContactItemField&
 	return detail;
 }
 
-QContactDetail* CntTransformContact::transformGuidItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const
+QContactDetail* CntTransformContact::transformGuidItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase) const
 {
     QContactGuid *guidDetail = 0;
     QString guid = QString::fromUtf16(contactItem.UidStringL(contactDatabase.MachineId()).Ptr(),
@@ -347,7 +379,7 @@ QContactDetail* CntTransformContact::transformGuidItemFieldL(CContactItem &conta
     return guidDetail;
 }
 
-QContactDetail* CntTransformContact::transformTimestampItemFieldL(CContactItem &contactItem, CContactDatabase &contactDatabase) const
+QContactDetail* CntTransformContact::transformTimestampItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase) const
 {
     QContactTimestamp *timestampDetail = 0;
 

@@ -1,6 +1,9 @@
 TEMPLATE = app
 TARGET = publish-subscribe
 
+INCLUDEPATH += ../../src/publishsubscribe
+DEPENDPATH += ../../src/publishsubscribe
+
 symbian {
     crmlFiles.sources = example.qcrml
     crmlFiles.path = c:/resource/qt/crml
@@ -9,8 +12,6 @@ symbian {
     TARGET.UID3 = 0x2002AC79
 }
 
-INCLUDEPATH += ../../context
-DEPENDPATH += ../../context
 
 HEADERS = providerdialog.h \
           consumerdialog.h

@@ -1,6 +1,6 @@
 TARGET = tst_qvaluespacesubscriber
-INCLUDEPATH += ../../../../context
-DEPENDPATH += ../../../../context
+INCLUDEPATH += ../../../../src/publishsubscribe
+DEPENDPATH += ../../../../src/publishsubscribe
 
 CONFIG+=testcase
 

@@ -91,7 +91,7 @@ int AudioDeviceControl::defaultDevice() const
 {
     QAudioDeviceInfo idx = QAudioDeviceInfo::defaultInputDevice();
     QList<QAudioDeviceInfo> devices;
-    devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
+    devices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
     QString devName = QAudioDeviceInfo(idx).deviceName();
     for(int i=0;i<m_names.count();i++) {
         if(qstrcmp(devName.toLocal8Bit().constData(),
@@ -123,7 +123,7 @@ void AudioDeviceControl::update()
     m_descriptions.clear();
 
     QList<QAudioDeviceInfo> devices;
-    devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
+    devices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
     for(int i = 0; i < devices.size(); ++i) {
         m_names.append(devices.at(i).deviceName());
         m_descriptions.append(devices.at(i).deviceName());

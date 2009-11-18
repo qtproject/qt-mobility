@@ -117,9 +117,7 @@ private slots:
 
 private:
     QMessageAccountId testAccountId;
-#ifdef QMESSAGING_OPTIONAL_FOLDER
     QMessageFolderId testFolderId;
-#endif
 };
 
 QTEST_MAIN(tst_QMessage)
@@ -152,10 +150,8 @@ void tst_QMessage::initTestCase()
         p.insert("displayName", "Root");
         p.insert("parentAccountName", "testAccount");
 
-#ifdef QMESSAGING_OPTIONAL_FOLDER
         testFolderId = Support::addFolder(p);
         QVERIFY(testFolderId.isValid());
-#endif
     }
 }
 

@@ -39,18 +39,17 @@
 **
 ****************************************************************************/
 
-
 /*!
 \page publ-subs.html
 
-\title Publish-Subscribe
-\brief The Publish-Subscribe API, containing Value Space, enables 
+\title Publish and Subscribe
+\brief The Publish and Subscribe API, containing Value Space, enables
 applications to read item values, navigate through and subscribe
 to change notifications.
 
 \ingroup mobility
 
-The Publish-Subscribe API enables applications to read item values,
+The Publish and Subscribe API enables applications to read item values,
 navigate through and subscribe to change notifications.
 
 \tableofcontents
@@ -80,7 +79,7 @@ through the Value Space.
 New values are added to the Value Space via the QValueSpaceProvider class.  This class allows
 applications to publish values and receive interest notifications when applications connect to a
 path.  Interest notifications can be used to refrain from updating values in the Value Space when
-their is no interested parties.
+there are no interested parties.
 
 Nodes in the Value Space can be thought of as representing schema objects.
 Obviously this is a conceptual differentiation and not a physical one, as
@@ -99,15 +98,15 @@ subscription to just \c {/Device/Buttons} to be notified when anything
 Internally, the Value Space consists of an arbitrary number of data source trees, or layers, which
 are stacked on top of each other to form the final unified view.  If a "higher" layer contains an
 item, it shadows the value of items in the layers below it.  Consider the Value Space item
-\c {/Device/Buttons}.  If two layer contained this item, the value in the layer with the higher
-layer order (see \l {QAbstractValueSpaceLayer::order()}) would shadow that with the lower layer
-order.  However, if only the layer with the lower order contained this item, it would be visible
-through the QValueSpaceSubscriber class, even if the higher order layer contained sub-items such as
-\c {/Device/Buttons/1}.  That is, layer shadowing occurs by value not by path.
+\c {/Device/Buttons}.  If two layers contained this item, the value in the layer with the higher
+layer order would shadow that with the lower layer order.  However, if only the layer with the
+lower order contained this item, it would be visible through the QValueSpaceSubscriber class, even
+if the higher order layer contained sub-items such as \c {/Device/Buttons/1}.  That is, layer
+shadowing occurs by value not by path.
 
 Layer order is fixed and is defined in the layer implementation.
 
-The Qt Value Space contains the following layers:
+The following Value Space layers are available:
 
 \table
     \header
@@ -117,24 +116,30 @@ The Qt Value Space contains the following layers:
         \o \l{Shared Memory Layer}
         \o The Shared Memory layer provides a non-permanent Value Space backing store using shared
            memory and local sockets.  The Shared Memory layer is only available on Unix platforms.
+
+The Shared Memory layer has an order of 0x10000000.
     \row
         \o Volatile Registry Layer
         \o The Volatile Registry layer provides a non-permanent Value Space backing store using
            volatile keys stored in the Windows' registry.  The Volatile Registry layer is only
            available on Windows platforms.
+
+           The Volatile Registry layer has an order of 0x1000.
     \row
         \o Non-volatile Registry Layer
         \o The Non-volatile Registry layer provides a permanent Value Space backing store using
            keys stored in the Windows' registry.  The Non-volatile Registry layer is only available
            on Windows platforms.
+           The Non-volatile Registry layer has an order of 0.
     \row
         \o ContextKit Layer
         \o The ContextKit layer provides a non-permanent Value Space backing store using
            ContextKit.  Publishing values to this layer via QValueSpaceProvider is currently not
            supported.
+           The ContextKit layer has an order of 0.
 \endtable
 
-The Qt Value Space has support for both client/server and peer-to-peer layer architectures.  If a
+The Value Space has support for both client/server and peer-to-peer layer architectures.  If a
 layer that uses a client/server architecture is used and a server process is not provided by the
 underlying system it will be necessary to start one.  This can be done by calling
 QValueSpace::initValueSpaceServer() prior to any other use of the Value Space.
@@ -169,20 +174,17 @@ exactly what has changed without the need for a bulkier change notification prot
 
 \section2 Publish and Subscribe
 
-In the example \l{publish-subscribe}{Publish and Subscribe} the Qt Value Space
-is used as a method of communicating changes in one dialog (the provider) to 
-another dialog (the consumer).
+In the example \l {publish-subscribe}{Publish and Subscribe} the Value Space is used as a method of
+communicating changes in one dialog (the provider) to another dialog (the consumer).
 
 \section2 Battery Charging - Accessing Publish and Subscribe from QML
 
-In the example \l{battery-charge}{Accessing Publish and Subscribe from QML} the
-\l{publish-subscribe}{Publish and Subscribe} concept is now extended to make
-the provider an input of the level of charge in a battery. A slider on the 
-provider dialog represents the modifiable level of charge. The Qt Value Space 
-acts as a communications medium between the provider dialog and the consumer graphical
-battery animation. The battery is implemented in QML and C++ with Qt Value Space 
-supplying the charge level for the animation to represent.
-
+In the example \l {battery-charge}{Accessing Publish and Subscribe from QML} the Publish and
+Subscribe concept is now extended to make the provider an input of the level of charge in a
+battery.  A slider on the provider dialog represents the modifiable level of charge.  The Value
+Space acts as a communications medium between the provider dialog and the consumer graphical
+battery animation. The battery is implemented in QML and C++ with Value Space supplying the
+charge level for the animation to represent.
 
 \section1 Namespaces and Classes
 

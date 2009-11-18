@@ -3,7 +3,7 @@ CONFIG += example
 
 contains(QT_CONFIG, multimedia): QT += multimedia
 
-INCLUDEPATH += ../../multimedia ../../multimedia/endpoints
+INCLUDEPATH += ../../src/multimedia
 include(../examples.pri)
 
 qtAddLibrary(QtMedia)

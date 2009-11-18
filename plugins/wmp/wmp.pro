@@ -4,7 +4,7 @@ TARGET = $$qtLibraryTarget(qwmp)
 
 PLUGIN_TYPE = mediaservice
 
-INCLUDEPATH+=../../multimedia
+INCLUDEPATH+=../../src/multimedia
 include(../../common.pri)
 
 TMP_INCLUDE = $$quote($$(INCLUDE))

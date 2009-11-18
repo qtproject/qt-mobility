@@ -10,11 +10,15 @@ qtAddLibrary(QtMedia)
 
 DEPENDPATH += .
 INCLUDEPATH += . \
-    ../../multimedia
+    ../../src/multimedia
 
 HEADERS += qm3uhandler.h
 SOURCES += main.cpp \
            qm3uhandler.cpp
+symbian {
+    TARGET.CAPABILITY = ALL -TCB
+    TARGET.EPOCALLOWDLLDATA = 1
+}
 
 target.path=$$QT_MOBILITY_PREFIX/plugins/playlistformats
 INSTALLS+=target

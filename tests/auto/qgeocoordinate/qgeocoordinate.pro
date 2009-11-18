@@ -4,7 +4,7 @@ TARGET=tst_qgeocoordinate
 
 include (../../../common.pri)
 
-INCLUDEPATH += ../../../location
+INCLUDEPATH += ../../../src/location
 
 # Input 
 HEADERS += ../qlocationtestutils_p.h

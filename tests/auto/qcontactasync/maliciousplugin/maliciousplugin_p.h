@@ -53,11 +53,9 @@
 // We mean it.
 //
 
-#include "qcontact_p.h"
 #include "qcontactmanager.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
-#include "qcontactmanager_p.h"
 
 #include <QObject>
 #include <QString>
@@ -70,7 +68,7 @@ public:
     MaliciousAsyncManagerEngine();
     void deref();
 
-    QString synthesiseDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
     QString managerName() const;
     bool startRequest(QContactAbstractRequest* req);
     bool cancelRequest(QContactAbstractRequest *req);

@@ -109,7 +109,7 @@ bool AudioCaptureSession::setFormat(const QAudioFormat &format)
             m_format = fmt;
             if(m_audioInput) delete m_audioInput;
             m_audioInput = 0;
-            QList<QAudioDeviceInfo> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
+            QList<QAudioDeviceInfo> devices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
             for(int i=0;i<devices.size();i++) {
                 if(qstrcmp(m_deviceInfo->deviceName().toLocal8Bit().constData(),
                             devices.at(i).deviceName().toLocal8Bit().constData()) == 0) {
@@ -306,7 +306,7 @@ void AudioCaptureSession::setCaptureDevice(const QString &deviceName)
 
     m_deviceInfo = 0;
 
-    QList<QAudioDeviceInfo> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
+    QList<QAudioDeviceInfo> devices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
     for(int i = 0; i < devices.size(); i++) {
         if(qstrcmp(m_captureDevice.toLocal8Bit().constData(),
                     devices.at(i).deviceName().toLocal8Bit().constData())==0){

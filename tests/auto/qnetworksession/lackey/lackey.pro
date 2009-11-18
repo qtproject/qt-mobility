@@ -1,7 +1,7 @@
 SOURCES += main.cpp
 TARGET = qnetworksessionlackey
-INCLUDEPATH += ../../../../bearer
-DEPENDPATH += ../../../../bearer
+INCLUDEPATH += ../../../../src/bearer
+DEPENDPATH += ../../../../src/bearer
 
 QT = core network
 

@@ -328,11 +328,11 @@ void tst_QContactManagerFiltering::detailStringFiltering()
     QContactDetailFilter df;
     df.setDetailDefinitionName(defname, fieldname);
     df.setValue(value);
-    df.setMatchFlags(Qt::MatchFlags(matchflags));
+    df.setMatchFlags(QContactFilter::MatchFlags(matchflags));
 
     if (cm->managerName() == "memory") {
         /* At this point, since we're using memory, assume the filter isn't really supported */
-        QVERIFY(cm->information()->filterSupported(df) == false);
+        QVERIFY(cm->filterSupported(df) == false);
     }
 
     ids = cm->contacts(df);
@@ -600,7 +600,7 @@ void tst_QContactManagerFiltering::detailVariantFiltering()
 
     if (cm->managerName() == "memory") {
         /* At this point, since we're using memory, assume the filter isn't really supported */
-        QVERIFY(cm->information()->filterSupported(df) == false);
+        QVERIFY(cm->filterSupported(df) == false);
     }
 
     ids = cm->contacts(df);
@@ -766,7 +766,7 @@ void tst_QContactManagerFiltering::rangeFiltering()
     QFETCH(QString, expected);
 
     QContactDetailRangeFilter::RangeFlags rangeflags = (QContactDetailRangeFilter::RangeFlags)rangeflagsi;
-    Qt::MatchFlags matchflags = (Qt::MatchFlags) matchflagsi;
+    QContactFilter::MatchFlags matchflags = (QContactFilter::MatchFlags) matchflagsi;
 
     QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
     QList<QContactLocalId> ids;
@@ -783,8 +783,7 @@ void tst_QContactManagerFiltering::rangeFiltering()
 
     if (cm->managerName() == "memory") {
         /* At this point, since we're using memory, assume the filter isn't really supported */
-        QContactManagerInfo *info = cm->information();
-        QVERIFY(info->filterSupported(drf) == false);
+        QVERIFY(cm->filterSupported(drf) == false);
     }
     ids = cm->contacts(drf);
 
@@ -1195,31 +1194,31 @@ void tst_QContactManagerFiltering::intersectionFiltering()
     QContactIntersectionFilter resultFilter;
     if (sX) {
         if (mY && eZ)
-            resultFilter = *x && *y && *z;
+            resultFilter = *x & *y & *z;
         else if (mZ && eY)
-            resultFilter = *x && *z && *y;
+            resultFilter = *x & *z & *y;
         else if (eY)
-            resultFilter = *x && *y;
+            resultFilter = *x & *y;
         else if (eZ)
-            resultFilter = *x && *z;
+            resultFilter = *x & *z;
     } else if (sY) {
         if (mX && eZ)
-            resultFilter = *y && *x && *z;
+            resultFilter = *y & *x & *z;
         else if (mZ && eX)
-            resultFilter = *y && *z && *x;
+            resultFilter = *y & *z & *x;
         else if (eX)
-            resultFilter = *y && *x;
+            resultFilter = *y & *x;
         else if (eZ)
-            resultFilter = *y && *z;
+            resultFilter = *y & *z;
     } else if (sZ) {
         if (mX && eY)
-            resultFilter = *z && *x && *y;
+            resultFilter = *z & *x & *y;
         else if (mY && eX)
-            resultFilter = *z && *y && *x;
+            resultFilter = *z & *y & *x;
         else if (eX)
-            resultFilter = *z && *x;
+            resultFilter = *z & *x;
         else if (eY)
-            resultFilter = *z && *y;
+            resultFilter = *z & *y;
     }
 
     QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
@@ -1638,31 +1637,31 @@ void tst_QContactManagerFiltering::unionFiltering()
     QContactUnionFilter resultFilter;
     if (sX) {
         if (mY && eZ)
-            resultFilter = *x || *y || *z;
+            resultFilter = *x | *y | *z;
         else if (mZ && eY)
-            resultFilter = *x || *z || *y;
+            resultFilter = *x | *z | *y;
         else if (eY)
-            resultFilter = *x || *y;
+            resultFilter = *x | *y;
         else if (eZ)
-            resultFilter = *x || *z;
+            resultFilter = *x | *z;
     } else if (sY) {
         if (mX && eZ)
-            resultFilter = *y || *x || *z;
+            resultFilter = *y | *x | *z;
         else if (mZ && eX)
-            resultFilter = *y || *z || *x;
+            resultFilter = *y | *z | *x;
         else if (eX)
-            resultFilter = *y || *x;
+            resultFilter = *y | *x;
         else if (eZ)
-            resultFilter = *y || *z;
+            resultFilter = *y | *z;
     } else if (sZ) {
         if (mX && eY)
-            resultFilter = *z || *x || *y;
+            resultFilter = *z | *x | *y;
         else if (mY && eX)
-            resultFilter = *z || *y || *x;
+            resultFilter = *z | *y | *x;
         else if (eX)
-            resultFilter = *z || *x;
+            resultFilter = *z | *x;
         else if (eY)
-            resultFilter = *z || *y;
+            resultFilter = *z | *y;
     }
 
     QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
@@ -2162,10 +2161,10 @@ void tst_QContactManagerFiltering::invalidFiltering()
     QVERIFY(ids.count() == 0);
 
     // Try unions/intersections of invalids too
-    ids = cm->contacts(f || f);
+    ids = cm->contacts(f | f);
     QVERIFY(ids.count() == 0);
 
-    ids = cm->contacts(f && f);
+    ids = cm->contacts(f & f);
     QVERIFY(ids.count() == 0);
 }
 
@@ -2192,11 +2191,11 @@ void tst_QContactManagerFiltering::allFiltering()
     QCOMPARE(output, expected);
 
     // Try unions/intersections of defaults
-    ids = cm->contacts(f || f);
+    ids = cm->contacts(f | f);
     output = convertIds(contacts, ids);
     QCOMPARE_UNSORTED(output, expected);
 
-    ids = cm->contacts(f && f);
+    ids = cm->contacts(f & f);
     output = convertIds(contacts, ids);
     QCOMPARE_UNSORTED(output, expected);
 }
@@ -2216,7 +2215,7 @@ void tst_QContactManagerFiltering::changelogFiltering_data()
     for (int i = 0; i < managers.size(); i++) {
         QContactManager *manager = managers.at(i);
 
-        if (manager->information()->hasFeature(QContactManagerInfo::ChangeLogs)) {
+        if (manager->hasFeature(QContactManager::ChangeLogs)) {
             QList<QContactLocalId> contacts = contactsAddedToManagers.values(manager);
             QContact a,b,c,d;
             a = manager->contact(contacts.at(0));
@@ -2278,7 +2277,7 @@ void tst_QContactManagerFiltering::changelogFiltering()
     QFETCH(QContactManager*, cm);
     QFETCH(QList<QContactLocalId>, contacts);
 
-    if (cm->information()->hasFeature(QContactManagerInfo::ChangeLogs)) {
+    if (cm->hasFeature(QContactManager::ChangeLogs)) {
         QList<QContactLocalId> ids;
 
         QContactChangeLogFilter clf((QContactChangeLogFilter::EventType)eventType);
@@ -2299,7 +2298,6 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
     QString definitionName, fieldName;
 
     // step one: search for an existing definition with a field of the specified type
-    QContactManagerInfo *info = cm->information();
     QMap<QString, QContactDetailDefinition> allDefs = cm->detailDefinitions();
     QStringList defNames = allDefs.keys();
     bool found = false;
@@ -2317,13 +2315,13 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
         // we only consider the definition if it only has a SINGLE FIELD, and
         // if that field is of the required type.  This avoids nasty presence test
         // failures which aren't.
-        QMap<QString, QContactDetailDefinition::Field> allFields = def.fields();
+        QMap<QString, QContactDetailDefinitionField> allFields = def.fields();
         QList<QString> fNames = allFields.keys();
         if (fNames.size() > 1)
             break;
         foreach (const QString& fName, fNames) {
-            QContactDetailDefinition::Field field = allFields.value(fName);
-            if (field.dataType == type) {
+            QContactDetailDefinitionField field = allFields.value(fName);
+            if (field.dataType() == type) {
                 // this field of the current definition is of the required type.
                 definitionName = defName;
                 fieldName = fName;
@@ -2332,7 +2330,7 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
                 // step two: check to see whether the definition/field is natively filterable
                 QContactDetailFilter filter;
                 filter.setDetailDefinitionName(definitionName, fieldName);
-                bool isNativelyFilterable = info->filterSupported(filter);
+                bool isNativelyFilterable = cm->filterSupported(filter);
 
                 if (isNativelyFilterable) {
                     // we've found the optimal definition + field for our test.
@@ -2357,7 +2355,7 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
 
     // step three (or, if not step one): check to see whether the manager allows mutable definitions
     // no existing definition matched our requirements, but we might be able to add one that does.
-    if (info->supportedDataTypes().contains(type) && info->hasFeature(QContactManagerInfo::MutableDefinitions)) {
+    if (cm->supportedDataTypes().contains(type) && cm->hasFeature(QContactManager::MutableDefinitions)) {
         // ok, the manager does not have a definition matching our criteria, but we could probably add it.
         int defCount = detailDefinitionsAddedToManagers.values(cm).count();
         QString generatedDefinitionName = QString("x-nokia-mobility-contacts-test-definition-") + QString::number((defCount+1));
@@ -2365,9 +2363,9 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
         // build a definition that matches the criteria.
         QContactDetailDefinition generatedDefinition;
         generatedDefinition.setName(generatedDefinitionName);
-        QContactDetailDefinition::Field generatedField;
-        generatedField.dataType = type;
-        QMap<QString, QContactDetailDefinition::Field> fields;
+        QContactDetailDefinitionField generatedField;
+        generatedField.setDataType(type);
+        QMap<QString, QContactDetailDefinitionField> fields;
         fields.insert("generatedField", generatedField);
         generatedDefinition.setFields(fields);
         generatedDefinition.setAccessConstraint(QContactDetailDefinition::NoConstraint);
@@ -2397,7 +2395,7 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     QPair<QString, QString> defAndFieldNames;
     bool nativelyFilterable;
     // If the engine doesn't support changelogs, don't insert pauses.
-    bool supportsChangelog = cm->information()->hasFeature(QContactManagerInfo::ChangeLogs);
+    bool supportsChangelog = cm->hasFeature(QContactManager::ChangeLogs);
     int napTime = supportsChangelog ? 2000 : 1;
 
     /* String */
@@ -2672,13 +2670,19 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
 
     /* Ensure the last modified times are different */
     QTest::qSleep(napTime);
-    c.setDisplayLabel("Clarence");
+    QContactName modifiedName = c.detail(QContactName::DefinitionName);
+    modifiedName.setCustomLabel("Clarence");
+    c.saveDetail(&modifiedName);
     cm->saveContact(&c);
     QTest::qSleep(napTime);
-    b.setDisplayLabel("Boris");
+    modifiedName = b.detail(QContactName::DefinitionName);
+    modifiedName.setCustomLabel("Boris");
+    b.saveDetail(&modifiedName);
     cm->saveContact(&b);
     QTest::qSleep(napTime);
-    a.setDisplayLabel("Albert");
+    modifiedName = a.detail(QContactName::DefinitionName);
+    modifiedName.setCustomLabel("Albert");
+    a.saveDetail(&modifiedName);
     cm->saveContact(&a);
     QTest::qSleep(napTime);
 
@@ -2735,10 +2739,13 @@ void tst_QContactManagerFiltering::dumpContactDifferences(const QContact& ca, co
     QCOMPARE(n1.last(), n2.last());
     QCOMPARE(n1.prefix(), n2.prefix());
     QCOMPARE(n1.suffix(), n2.suffix());
+    QCOMPARE(n1.customLabel(), n2.customLabel());
 
+#if 0 // XXX TODO: update this after removing deprecated API
     // Check the display label
     QCOMPARE(a.displayLabel().label(), b.displayLabel().label());
-    QCOMPARE(a.displayLabel().isSynthesised(), b.displayLabel().isSynthesised());
+    QCOMPARE(a.displayLabel().isSynthesized(), b.displayLabel().isSynthesized());
+#endif
 
     // Now look at the rest
     QList<QContactDetail> aDetails = a.details();
@@ -2815,7 +2822,7 @@ bool tst_QContactManagerFiltering::isSuperset(const QContact& ca, const QContact
 void tst_QContactManagerFiltering::dumpContact(const QContact& contact)
 {
     QContactManager m;
-    qDebug() << "Contact: " << contact.id().localId() << "(" << m.synthesiseDisplayLabel(contact) << ")";
+    qDebug() << "Contact: " << contact.id().localId() << "(" << m.synthesizeDisplayLabel(contact) << ")";
     QList<QContactDetail> details = contact.details();
     foreach(QContactDetail d, details) {
         qDebug() << "  " << d.definitionName() << ":";
@@ -2977,7 +2984,7 @@ public:
         df2.setValue(value);
 
         /* We like either doubles or integers */
-        return df || df2;
+        return df | df2;
     }
     bool supportsDetail(const QContactDetail& detail) const
     {
@@ -3162,7 +3169,7 @@ public:
         /* Slightly looser filter */
         QContactActionFilter af;
         af.setActionName("PairRecursive");
-        return af && QContactFilter() && af;
+        return af & QContactFilter() & af;
     }
 };
 
@@ -3183,7 +3190,7 @@ public:
         /* Slightly looser filter */
         QContactActionFilter af;
         af.setActionName("PairRecursive");
-        return af || QContactInvalidFilter() || af;
+        return af | QContactInvalidFilter() | af;
     }
 };
 

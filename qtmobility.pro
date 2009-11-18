@@ -28,24 +28,14 @@ symbian:system(type $${QT_MOBILITY_SOURCE_TREE}\features\mobility.prf.template >
 # install feature file
 feature.path = $$[QT_INSTALL_DATA]/mkspecs/features
 feature.files = $$QT_MOBILITY_BUILD_TREE/features/mobility.prf
-
 INSTALLS += feature
 
 TEMPLATE = subdirs
 CONFIG+=ordered
 
-SUBDIRS += serviceframework
-symbian:SUBDIRS += serviceframework/symbian/dll/databasemanagerserver_dll.pro \
-                   serviceframework/symbian/exe/databasemanagerserver_exe.pro
-
-SUBDIRS += bearer location contacts multimedia context systeminfo tools plugins
-SUBDIRS += doc   #built documentation snippets
-
-
-contains(qmf_enabled, yes)|wince*|win32|symbian|maemo {
-    SUBDIRS += messaging
-}
-
+SUBDIRS += src tools plugins
+#built documentation snippets
+SUBDIRS += doc   
 
 contains(build_unit_tests, yes):SUBDIRS+=tests
 contains(build_examples, yes):SUBDIRS+=examples
