@@ -160,14 +160,13 @@ void QMessageOrderingPrivate::sortTable(QMessageStore::ErrorCode *lastError, con
             continue;
         default:
             qWarning("Unhandled sort criteria");
-            propTag = PR_SUBJECT; // TODO handle all cases
+            propTag = PR_MESSAGE_DELIVERY_TIME;
         }
         multiSort.aSort[i].ulPropTag = propTag;
         multiSort.aSort[i].ulOrder = order;
     }
 
-    //Note: WinCE does not support multiple sort levels and should return an error if more than 1 level is used
-    //TODO: Update doc to reflect this
+    //Note: Windows Mobile does not support multiple sort levels
     multiSort.cSorts = qMin<int>(maxSortOrders, fieldOrderList.count());
     if (messagesTable->SortTable(reinterpret_cast<SSortOrderSet*>(&multiSort), 0) != S_OK) {
         *lastError = QMessageStore::NotYetImplemented;
