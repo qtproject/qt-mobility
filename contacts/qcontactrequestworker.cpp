@@ -133,7 +133,7 @@ void QContactRequestWorker::run()
     d->m_stop = false;
     
     forever {
-        QMutexLocker requestLocker (&d->m_requestMtx);
+        QMutexLocker requestLocker (&d->m_mutexForCurrentRequest);
         // get a new request from the queue (also sets the m_currentRequest ptr to this request)
         req = d->takeFirstRequest();
         usleep(10);
@@ -265,7 +265,7 @@ bool QContactRequestWorker::removeRequest(QContactAbstractRequest* req)
             
         } else {
             if (!d->m_requestQueue.isEmpty()) {
-                QMutexLocker requestLocker (&d->m_requestMtx);
+                QMutexLocker requestLocker (&d->m_mutexForCurrentRequest);
                 //called externally
                 {
                     QMutexLocker threadLocker(&d->m_mutex);

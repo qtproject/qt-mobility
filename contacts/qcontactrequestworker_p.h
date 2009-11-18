@@ -92,7 +92,7 @@ public:
     bool m_stop;
     bool m_finished;
     QMutex m_mutex;
-    QMutex m_requestMtx;
+    QMutex m_mutexForCurrentRequest;
     Qt::HANDLE m_threadId;
     QWaitCondition m_newRequestAdded;
     QQueue<QContactAbstractRequest*> m_requestQueue; 
