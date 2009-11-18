@@ -356,6 +356,11 @@ QList<QContactManager::Error> QContactTrackerEngine::removeContacts(QList<QConta
 QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions(const QString& contactType,
                                                                                  QContactManager::Error& error) const
 {
+    if (contactType != QContactType::TypeContact) {
+        error = QContactManager::InvalidContactTypeError;
+        return QMap<QString, QContactDetailDefinition>();
+    }
+
     // lazy initialisation of schema definitions.
     if (d->m_definitions.isEmpty()) {
         // none in the list?  get the schema definitions, and modify them to match our capabilities.
