@@ -155,6 +155,8 @@
     Supports the sending of messages with attachments, and in situations of
     low battery to leave attachments on the server unless opened.
 
+    For more details see the \l {Messaging API} {messaging API overview}.
+
     \section2 Messaging dependencies and requirements
 
     The Linux backend depends on QMF, for information on QMF see the 
@@ -166,7 +168,7 @@
     Whilst not supported for this release the Windows Desktop backend 
     depends on Microsoft Outlook 2003 or later being installed.
 
-    The messaging library SMS/MMS functionality requires that the platform 
+    The messaging API SMS/MMS functionality requires that the platform 
     provides SMS/MMS facilites. Email functionality requires that an email 
     account is available on the platform.
 
