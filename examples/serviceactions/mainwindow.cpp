@@ -73,15 +73,6 @@ static const QSize WindowGeometry(400,300);
 static const QString WindowTitle("Service-actions Example");
 static unsigned int RecentMessagesCount = 50;
 
-typedef struct
-{
-    QMessageId id;
-    QString subject;
-    bool partial;
-} MessageInfo;
-
-typedef QList<MessageInfo> MessageInfoList;
-
 class AccountsWidget : public QWidget
 {
     Q_OBJECT

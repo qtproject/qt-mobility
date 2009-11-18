@@ -160,14 +160,13 @@ void QMessageOrderingPrivate::sortTable(QMessageStore::ErrorCode *lastError, con
             continue;
         default:
             qWarning("Unhandled sort criteria");
-            propTag = PR_SUBJECT; // TODO handle all cases
+            propTag = PR_MESSAGE_DELIVERY_TIME;
         }
         multiSort.aSort[i].ulPropTag = propTag;
         multiSort.aSort[i].ulOrder = order;
     }
 
-    //Note: WinCE does not support multiple sort levels and should return an error if more than 1 level is used
-    //TODO: Update doc to reflect this
+    //Note: Windows Mobile does not support multiple sort levels
     multiSort.cSorts = qMin<int>(maxSortOrders, fieldOrderList.count());
     if (messagesTable->SortTable(reinterpret_cast<SSortOrderSet*>(&multiSort), 0) != S_OK) {
         *lastError = QMessageStore::NotYetImplemented;
@@ -229,8 +228,8 @@ QList<QMessageFilter> QMessageOrderingPrivate::normalize(const QList<QMessageFil
                 QList<QMessageFilter> previous(result);
                 result.clear();
                 foreach(QMessageFilter filter, previous) {
-                    result.append(QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Equal) & filter);
-                    result.append(QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::NotEqual) & filter);
+                    result.append(QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Includes) & filter);
+                    result.append(QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Excludes) & filter);
                 }
             } break;
             case HasAttachments:
@@ -238,8 +237,8 @@ QList<QMessageFilter> QMessageOrderingPrivate::normalize(const QList<QMessageFil
                 QList<QMessageFilter> previous(result);
                 result.clear();
                 foreach(QMessageFilter filter, previous) {
-                    result.append(QMessageFilter::byStatus(QMessage::HasAttachments, QMessageDataComparator::Equal) & filter);
-                    result.append(QMessageFilter::byStatus(QMessage::HasAttachments, QMessageDataComparator::NotEqual) & filter);
+                    result.append(QMessageFilter::byStatus(QMessage::HasAttachments, QMessageDataComparator::Includes) & filter);
+                    result.append(QMessageFilter::byStatus(QMessage::HasAttachments, QMessageDataComparator::Excludes) & filter);
                 }
             } break;
             case Incoming:
@@ -247,8 +246,8 @@ QList<QMessageFilter> QMessageOrderingPrivate::normalize(const QList<QMessageFil
                 QList<QMessageFilter> previous(result);
                 result.clear();
                 foreach(QMessageFilter filter, previous) {
-                    result.append(QMessageFilter::byStatus(QMessage::Incoming, QMessageDataComparator::Equal) & filter);
-                    result.append(QMessageFilter::byStatus(QMessage::Incoming, QMessageDataComparator::NotEqual) & filter);
+                    result.append(QMessageFilter::byStatus(QMessage::Incoming, QMessageDataComparator::Includes) & filter);
+                    result.append(QMessageFilter::byStatus(QMessage::Incoming, QMessageDataComparator::Excludes) & filter);
                 }
             } break;
             case Removed:
@@ -256,8 +255,8 @@ QList<QMessageFilter> QMessageOrderingPrivate::normalize(const QList<QMessageFil
                 QList<QMessageFilter> previous(result);
                 result.clear();
                 foreach(QMessageFilter filter, previous) {
-                    result.append(QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::Equal) & filter);
-                    result.append(QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::NotEqual) & filter);
+                    result.append(QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::Includes) & filter);
+                    result.append(QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::Excludes) & filter);
                 }
             } break;
             case Priority:
@@ -400,12 +399,16 @@ QMessageOrdering QMessageOrdering::byStatus(QMessage::Status flag, Qt::SortOrder
     switch (flag) {
     case QMessage::Read:
         result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::Read, order);
+        break;
     case QMessage::HasAttachments:
         result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::HasAttachments, order);
+        break;
     case QMessage::Incoming:
         result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::Incoming, order);
+        break;
     case QMessage::Removed:
         result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::Removed, order);
+        break;
     }
     return result;
 }

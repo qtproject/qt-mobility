@@ -567,6 +567,20 @@ void tst_QMessageStoreKeys::testAccountFilter_data()
              QMessageAccountFilter::byName("Personal", QMessageDataComparator::NotEqual) )
         << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] )
         << ( QMessageAccountIdList() << accountIds[1] );
+
+    QMessageAccountFilter andEquals(QMessageAccountFilter::byId(accountIds[0], QMessageDataComparator::NotEqual));
+    andEquals &= QMessageAccountFilter::byName("Personal", QMessageDataComparator::Equal);
+    QTest::newRow("id inequality AND name equality")
+        << andEquals
+        << ( QMessageAccountIdList() << accountIds[1] )
+        << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] );
+
+    QMessageAccountFilter orEquals(QMessageAccountFilter::byId(accountIds[0], QMessageDataComparator::Equal));
+    orEquals |= QMessageAccountFilter::byName("Personal", QMessageDataComparator::NotEqual);
+    QTest::newRow("id equality OR name inequality")
+        << orEquals
+        << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] )
+        << ( QMessageAccountIdList() << accountIds[1] );
 }
 
 void tst_QMessageStoreKeys::testAccountFilter()
@@ -1209,6 +1223,20 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
              QMessageFolderFilter::byDisplayName("X-Announce", QMessageDataComparator::Equal) )
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[2] )
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[3] );
+
+    QMessageFolderFilter andEquals(QMessageFolderFilter::byId(folderIds[0], QMessageDataComparator::NotEqual));
+    andEquals &= QMessageFolderFilter::byDisplayName("X-A", QMessageDataComparator::Includes);
+    QTest::newRow("QMessageFolderFilter::operator&=")
+        << andEquals
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] );
+
+    QMessageFolderFilter orEquals(QMessageFolderFilter::byId(folderIds[0], QMessageDataComparator::Equal));
+    orEquals |= QMessageFolderFilter::byDisplayName("X-Announce", QMessageDataComparator::Equal);
+    QTest::newRow("QMessageFolderFilter::operator|=")
+        << orEquals
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[2] )
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[3] );
 }
 
 void tst_QMessageStoreKeys::testFolderFilter()
@@ -1371,6 +1399,25 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageFilter::byId(QMessageIdList(), QMessageDataComparator::Excludes) 
         << messageIds
         << QMessageIdList()
+        << "";
+
+    QTest::newRow("id filter inclusion empty")
+        << QMessageFilter::byId(QMessageFilter(), QMessageDataComparator::Includes) 
+        << messageIds
+        << QMessageIdList()
+        << "";
+
+    QTest::newRow("id filter inclusion non matching")
+        << QMessageFilter::byId(~QMessageFilter(), QMessageDataComparator::Includes) 
+        << QMessageIdList()
+        << messageIds
+        << "";
+
+    QTest::newRow("id filter inclusion 1")
+        << QMessageFilter::byId(QMessageFilter::bySubject("Free beer", QMessageDataComparator::Equal), 
+                                QMessageDataComparator::Includes)
+        << ( QMessageIdList() << messageIds[4] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << "";
 
     QTest::newRow("type equality 1")
@@ -2508,9 +2555,18 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[0] << messageIds[4] )
         << "";
 
-    QTest::newRow("subject inclusion OR subject exclusion")
-        << ( QMessageFilter::bySubject("agenda", QMessageDataComparator::Includes) |
-             QMessageFilter::bySubject("ee", QMessageDataComparator::Excludes) )
+    QMessageFilter andEquals(QMessageFilter::bySender("Boss", QMessageDataComparator::Includes));
+    andEquals &= QMessageFilter::byTimeStamp(epoch, QMessageDataComparator::GreaterThan);
+    QTest::newRow("QMessageFilter::operator&=")
+        << andEquals
+        << ( QMessageIdList() << messageIds[2] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[3] << messageIds[4] )
+        << "";
+
+    QMessageFilter orEquals(QMessageFilter::bySubject("agenda", QMessageDataComparator::Includes));
+    orEquals |= QMessageFilter::bySubject("ee", QMessageDataComparator::Excludes);
+    QTest::newRow("QMessageFilter::operator|=")
+        << orEquals
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[0] << messageIds[4] )
         << "";

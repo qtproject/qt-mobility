@@ -81,6 +81,7 @@
 #include "qmessageaccount_p.h"
 #include "qmessageaccountfilter_p.h"
 #include "qmessageaccountordering_p.h"
+#include "qmessagestore_p.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -88,6 +89,7 @@
 #include <QTextCodec>
 #include <QThreadStorage>
 #include <QTimer>
+#include <QMutexLocker>
 
 #include <shlwapi.h>
 #include <shlguid.h>
@@ -1561,27 +1563,15 @@ namespace {
         }
     }
 
-    class NotifyEvent : public QEvent
-    {
-    public:
-        static QEvent::Type eventType();
+}
 
-        NotifyEvent(MapiStore *store, const QMessageId &id, MapiSession::NotifyType type);
-
-        virtual Type type();
-
-        MapiStore *_store;
-        QMessageId _id;
-        MapiSession::NotifyType _notifyType;
-    };
-
-    QEvent::Type NotifyEvent::eventType()
+    QEvent::Type MapiSession::NotifyEvent::eventType()
     {
         static int result = QEvent::registerEventType();
         return static_cast<QEvent::Type>(result);
     }
 
-    NotifyEvent::NotifyEvent(MapiStore *store, const QMessageId &id, MapiSession::NotifyType type)
+    MapiSession::NotifyEvent::NotifyEvent(MapiStore *store, const QMessageId &id, MapiSession::NotifyType type)
         : QEvent(eventType()),
           _store(store),
           _id(id),
@@ -1589,11 +1579,10 @@ namespace {
     {
     }
 
-    QEvent::Type NotifyEvent::type()
+    QEvent::Type MapiSession::NotifyEvent::type()
     {
         return eventType();
     }
-}
 
 namespace WinHelpers {
 
@@ -3147,7 +3136,7 @@ ULONG MapiStore::AdviseSink::OnNotify(ULONG notificationCount, LPNOTIFICATION no
                         }
 
                         // Create an event to be processed by the UI thread
-                        QCoreApplication::postEvent(session.data(), new NotifyEvent(_store, messageId, notifyType));
+                        QCoreApplication::postEvent(session.data(), new MapiSession::NotifyEvent(_store, messageId, notifyType));
                     } else {
                         qWarning() << "Received notification, but no entry ID";
                     }
@@ -4692,7 +4681,16 @@ bool MapiSession::event(QEvent *e)
 {
     if (e->type() == NotifyEvent::eventType()) {
         if (NotifyEvent *ne = static_cast<NotifyEvent*>(e)) {
-            notify(ne->_store, ne->_id, ne->_notifyType);
+
+            QMutex* storeMutex = QMessageStorePrivate::mutex(QMessageStore::instance());
+
+            if(!storeMutex->tryLock())
+                addToNotifyQueue(*ne);
+            else
+            {
+                notify(ne->_store, ne->_id, ne->_notifyType);
+                storeMutex->unlock();
+            }
             return true;
         }
     }
@@ -4777,6 +4775,23 @@ void MapiSession::dispatchNotifications()
     QTimer::singleShot(1000, this, SLOT(dispatchNotifications()));
 }
 
+void MapiSession::processNotifyQueue()
+{
+     foreach(const NotifyEvent& e, _notifyEventQueue)
+     {
+         QMutex* storeMutex = QMessageStorePrivate::mutex(QMessageStore::instance());
+         if(storeMutex->tryLock())
+         {
+             NotifyEvent ne = _notifyEventQueue.dequeue();
+             notify(e._store,e._id,e._notifyType);
+             storeMutex->unlock();
+         }
+         else break;
+     }
+     if(!_notifyEventQueue.isEmpty())
+        qWarning() << QString("Notify queue processing interrupted: pending %1").arg(_notifyEventQueue.length());
+}
+
 QMessagePrivate *MapiSession::messageImpl(const QMessage &message)
 {
     return message.d_ptr;
@@ -4786,5 +4801,18 @@ QMessageContentContainerPrivate *MapiSession::containerImpl(const QMessageConten
 {
     return container.d_ptr;
 }
+
+void MapiSession::addToNotifyQueue(const NotifyEvent& e)
+{
+    _notifyEventQueue.enqueue(e);
+    qWarning() << QString("Store busy...adding notify to queue: pending %1").arg(_notifyEventQueue.length());
+}
+
+void MapiSession::flushNotifyQueue()
+{
+    QTimer::singleShot(0, this, SLOT(processNotifyQueue()));
+}
+
+
 
 #include "winhelpers.moc"
