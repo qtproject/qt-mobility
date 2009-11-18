@@ -535,7 +535,7 @@ int QContactManagerEngine::version()
  */ 
 int QContactManagerEngine::implementationVersion() const 
 { 
-    return 0; 
+    return 0;
 } 
   
 
