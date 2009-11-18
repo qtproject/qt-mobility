@@ -241,6 +241,7 @@ void QMessage::setParentAccountId(const QMessageAccountId &accountId)
 
 QMessageFolderId QMessage::parentFolderId() const
 {
+    d_ptr->ensurePropertiesPresent(const_cast<QMessage*>(this));
     return d_ptr->_parentFolderId;
 }
 

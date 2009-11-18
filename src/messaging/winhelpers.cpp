@@ -3937,6 +3937,7 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                 }
 
                 msg->setStatus(flags);
+                msg->setParentAccountId(store->id());
 
                 if (!senderName.isEmpty() || !senderAddress.isEmpty()) {
                     msg->setFrom(createAddress(senderName, senderAddress));
@@ -3945,6 +3946,11 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
 
                 if (!parentEntryId.isEmpty()) {
                     QMessagePrivate::setStandardFolder(*msg, store->standardFolder(parentEntryId));
+
+                    MapiFolderPtr parentFolder(store->openFolder(lastError, parentEntryId));
+                    if (parentFolder) {
+                        QMessagePrivate::setParentFolderId(*msg, parentFolder->id());
+                    }
                 }
 
                 if (!isModified) {
