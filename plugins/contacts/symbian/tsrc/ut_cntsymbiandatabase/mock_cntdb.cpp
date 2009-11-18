@@ -41,7 +41,7 @@
 
 #include "mock_cntdb.h"
 
-#include <e32err.h>
+#include <e32std.h>
 
 CContactDatabase* CContactDatabase::OpenL()
 {
