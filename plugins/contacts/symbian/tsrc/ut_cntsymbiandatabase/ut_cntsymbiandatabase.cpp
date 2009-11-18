@@ -56,7 +56,7 @@ void TestCntSymbianDatabase::cleanupTestCase()
 
 void TestCntSymbianDatabase::ctor()
 {
-    QContactManagerEngine *engine;
+    QContactManagerEngine *engine = 0;
     QContactManager::Error error;
     CntSymbianDatabase *db = 0;
     db = new CntSymbianDatabase(engine, error);

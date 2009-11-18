@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef CNTSRVCONNECTION_H
-#define CNTSRVCONNECTION_H
+#ifndef CNTSYMBIANDATABASE_H
+#define CNTSYMBIANDATABASE_H
 
 // System includes
 #include <QList>
@@ -92,8 +92,4 @@ private:
 #endif  //CNTSYMBIANDATABASE_UNIT_TEST
 };
 
-
-
-
-
-#endif CNTSRVCONNECTION_H
+#endif // CNTSYMBIANDATABASE_H

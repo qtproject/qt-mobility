@@ -62,7 +62,7 @@ void CContactDatabase::sendEventsL()
 {
     if (!iObserver)
         User::Leave(KErrBadHandle);
-    TContactDbObserverEvent event;
+    TContactDbObserverEvent event = {EContactDbObserverEventNull, TContactItemId(0)};
     event.iType = EContactDbObserverEventContactAdded;
     iObserver->HandleDatabaseEventL(event);
     event.iType = EContactDbObserverEventOwnCardDeleted;

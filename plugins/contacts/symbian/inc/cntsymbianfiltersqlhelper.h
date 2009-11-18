@@ -115,9 +115,9 @@ private:
             const TDesC& phoneNumber,
             const TInt matchLength);
 private:
-    CntSymbianSrvConnection* m_srvConnection;
     CContactDatabase &m_contactDatabase;
     bool isSearchingDone;
+    CntSymbianSrvConnection* m_srvConnection;
     QHash<int,QString> contactsTableIdColumNameMapping;
     QHash<int,int> commAddrTableIdColumNameMapping;
 };

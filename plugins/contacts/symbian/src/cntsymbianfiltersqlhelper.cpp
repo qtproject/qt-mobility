@@ -75,12 +75,11 @@ const TInt KDefaultMatchLength(7);
  * The constructor
  */
 CntSymbianFilterSqlHelper::CntSymbianFilterSqlHelper(CContactDatabase& contactDatabase)
-                                               :isSearchingDone(false),
-                                                m_contactDatabase(contactDatabase)
+                                               :m_contactDatabase(contactDatabase),
+                                               isSearchingDone(false)
 {
    m_srvConnection = new CntSymbianSrvConnection();
-   
-   
+      
    contactsTableIdColumNameMapping.insert(KUidContactFieldGivenName.iUid,"first_name" );
    contactsTableIdColumNameMapping.insert(KUidContactFieldGivenNamePronunciation.iUid,"firstname_prn" );
    contactsTableIdColumNameMapping.insert(KUidContactFieldFamilyName.iUid,"last_name" );
@@ -96,7 +95,6 @@ CntSymbianFilterSqlHelper::CntSymbianFilterSqlHelper(CContactDatabase& contactDa
  * Destructor 
  */
 CntSymbianFilterSqlHelper::~CntSymbianFilterSqlHelper()
-                                
 {
     delete m_srvConnection;
     contactsTableIdColumNameMapping.clear();
@@ -126,11 +124,8 @@ QList<QContactLocalId> CntSymbianFilterSqlHelper::searchContacts(const QContactF
         if(!isSearchingDone){
             return m_srvConnection->searchContacts(sqlQuery, error);
         }
-    }
-    else{
-        return QList<QContactLocalId>();
-    }
-        
+    }        
+    return QList<QContactLocalId>();
 }
 
 /*!
