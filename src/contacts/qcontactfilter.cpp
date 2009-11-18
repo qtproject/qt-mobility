@@ -47,6 +47,8 @@
 
 #include "qcontactmanager.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactFilter
  * \brief The QContactFilter class is used to select contacts made available through a QContactManager
@@ -197,4 +199,4 @@ const QContactFilter operator|(const QContactFilter& left, const QContactFilter&
     nif << left << right;
     return nif;
 }
-
+QTM_END_NAMESPACE

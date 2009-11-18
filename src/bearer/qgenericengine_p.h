@@ -58,7 +58,7 @@
 #include <QMap>
 #include <QTimer>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QNetworkConfigurationPrivate;
 
@@ -88,7 +88,7 @@ private:
     QTimer pollTimer;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif
 

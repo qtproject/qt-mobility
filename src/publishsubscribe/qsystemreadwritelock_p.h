@@ -45,7 +45,7 @@
 #include "qcontextglobal.h"
 #include <QString>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QSystemReadWriteLockPrivate;
 class Q_AUTOTEST_EXPORT QSystemReadWriteLock
@@ -78,6 +78,6 @@ private:
     QSystemReadWriteLockPrivate *d;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif

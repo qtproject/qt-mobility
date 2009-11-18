@@ -53,7 +53,7 @@
 #include "qnetworksessionengine_win_p.h"
 #endif
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(QGenericEngine, genericEngine)
 
@@ -229,5 +229,6 @@ QGenericEngine *QGenericEngine::instance()
     return genericEngine();
 }
 
-QT_END_NAMESPACE
+#include "moc_qgenericengine_p.cpp"
+QTM_END_NAMESPACE
 

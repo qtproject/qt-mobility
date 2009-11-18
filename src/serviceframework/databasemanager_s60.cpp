@@ -49,7 +49,7 @@
 #include <s32mem.h>
 
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*
     \class DatabaseManager
@@ -523,4 +523,4 @@ void RDatabaseManagerSession::CancelNotifyServiceSignal() const
         }
 #endif
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

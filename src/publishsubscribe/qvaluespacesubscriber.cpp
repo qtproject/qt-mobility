@@ -49,7 +49,7 @@
 #include <QSharedData>
 #include <QMutex>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QValueSpaceSubscriber
@@ -657,6 +657,6 @@ QStringList QValueSpaceSubscriber::subPaths() const
     return rvs;
 }
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #include "qvaluespacesubscriber.moc"

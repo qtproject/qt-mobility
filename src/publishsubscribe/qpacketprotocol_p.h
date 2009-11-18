@@ -45,7 +45,7 @@
 #include <QObject>
 #include <QDataStream>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QIODevice;
 class QBuffer;
@@ -111,6 +111,6 @@ private:
     QPacketProtocol * p;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif

@@ -49,6 +49,7 @@
 
 #include "qcontactmanager.h"
 
+QTM_BEGIN_NAMESPACE
 /* Backend plugin API interface, creates engines for us */
 class QContactManagerEngine;
 class Q_CONTACTS_EXPORT QContactManagerEngineFactory
@@ -68,7 +69,9 @@ public:
     virtual QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error) = 0;
     virtual QString managerName() const = 0;
 };
+QTM_END_NAMESPACE
+
 #define QT_CONTACTS_BACKEND_INTERFACE "com.nokia.qt.mobility.contacts.enginefactory/1.0"
-Q_DECLARE_INTERFACE(QContactManagerEngineFactory, QT_CONTACTS_BACKEND_INTERFACE);
+Q_DECLARE_INTERFACE(QTM_PREPEND_NAMESPACE(QContactManagerEngineFactory), QT_CONTACTS_BACKEND_INTERFACE);
 
 #endif

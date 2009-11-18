@@ -48,7 +48,7 @@
 
 #include <QtCore/qdebug.h>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QValueSpaceProvider
@@ -475,4 +475,4 @@ void QValueSpaceProvider::connectNotify(const char *member)
     QObject::connectNotify(member);
 }
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

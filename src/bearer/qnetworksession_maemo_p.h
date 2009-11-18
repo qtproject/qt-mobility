@@ -62,7 +62,7 @@
 
 #include <icd/dbus_api.h>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QNetworkSessionPrivate : public QObject
 {
@@ -161,7 +161,7 @@ private:
     void cleanupSession(void);
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif //QNETWORKSESSIONPRIVATE_H
 

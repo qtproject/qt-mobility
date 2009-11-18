@@ -55,7 +55,7 @@
 #include <QCoreApplication>
 #include <QDir>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 
 static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
@@ -713,6 +713,6 @@ void QServiceManager::disconnectNotify(const char *signal)
     }
 }
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #include "qservicemanager.moc"

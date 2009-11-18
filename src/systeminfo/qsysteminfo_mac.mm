@@ -926,4 +926,4 @@ void QSystemScreenSaverPrivate::activityTimeout()
 }
 
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

@@ -1020,4 +1020,4 @@ void QSystemScreenSaverPrivate::resetInactivityTime()
     User::ResetInactivityTime();
 }
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

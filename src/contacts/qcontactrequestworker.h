@@ -48,6 +48,8 @@
 
 #include "qtcontactsglobal.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactRequestWorkerData;
 class QContactAbstractRequest;
 class QContactFetchRequest;
@@ -105,5 +107,8 @@ protected:
 private:
     QSharedDataPointer<QContactRequestWorkerData> d;
 };
+
+QTM_END_NAMESPACE
+
 #endif
 

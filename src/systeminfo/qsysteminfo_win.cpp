@@ -1981,4 +1981,4 @@ bool QSystemScreenSaverPrivate::isScreenLockOn()
 }
 
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

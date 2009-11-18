@@ -47,6 +47,8 @@
 #include "qcontactmanager_p.h"
 #include "qcontactaction.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContact
  *
@@ -674,3 +676,5 @@ QContactDetail QContact::preferredDetail(const QString& actionName) const
 
     return retn;
 }
+
+QTM_END_NAMESPACE

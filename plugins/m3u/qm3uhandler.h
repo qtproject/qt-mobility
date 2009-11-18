@@ -45,7 +45,7 @@
 #include <qmediaplaylistioplugin.h>
 #include <QObject>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QM3uPlaylistPlugin : public QMediaPlaylistIOPlugin
 {
@@ -67,6 +67,6 @@ public:
     virtual QMediaPlaylistWriter *createWriter(QIODevice *device, const QByteArray &format);
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QM3UHANDLER_H

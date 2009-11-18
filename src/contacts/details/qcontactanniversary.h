@@ -48,6 +48,8 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
+QTM_BEGIN_NAMESPACE
+
 /* Leaf class */
 class Q_CONTACTS_EXPORT QContactAnniversary : public QContactDetail
 {
@@ -86,6 +88,8 @@ public:
     void setSubType(const QString& subType) {setValue(FieldSubType, subType);}
     QString subType() const {return value(FieldSubType);}
 };
+
+QTM_END_NAMESPACE
 
 #endif
 

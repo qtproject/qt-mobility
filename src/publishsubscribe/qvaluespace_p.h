@@ -48,7 +48,7 @@
 #include <QObject>
 #include <QUuid>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QValueSpaceProvider;
 
@@ -123,6 +123,6 @@ QAbstractValueSpaceLayer * _qvaluespaceauto_layercreate_ ## name() \
 } \
 static QValueSpace::AutoInstall _qvaluespaceauto_ ## name(_qvaluespaceauto_layercreate_ ## name);
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QVALUESPACE_P_H

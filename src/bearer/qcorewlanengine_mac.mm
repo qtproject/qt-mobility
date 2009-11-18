@@ -63,7 +63,7 @@
 #include <SystemConfiguration/SCNetworkConfiguration.h>
 QMap <QString, QString> networkInterfaces;
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(QCoreWlanEngine, coreWlanEngine)
 
@@ -456,5 +456,5 @@ bool QCoreWlanEngine::getAllScInterfaces()
 }
 
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 

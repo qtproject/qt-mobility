@@ -48,6 +48,8 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
+QTM_BEGIN_NAMESPACE
+
 /* Leaf class */
 class Q_CONTACTS_EXPORT QContactNote : public QContactDetail
 {
@@ -63,6 +65,8 @@ public:
     void setNote(const QString& note) {setValue(FieldNote, note);}
     QString note() const {return value(FieldNote);}
 };
+
+QTM_END_NAMESPACE
 
 #endif
 

@@ -52,7 +52,7 @@ class QGeoPositionInfoPrivate;
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class Q_LOCATION_EXPORT QGeoPositionInfo
 {
@@ -110,7 +110,7 @@ Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoPositio
 Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &update);
 #endif
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

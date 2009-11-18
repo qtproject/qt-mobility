@@ -49,6 +49,8 @@
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"
 
+QTM_BEGIN_NAMESPACE
+
 /* Leaf class */
 class Q_CONTACTS_EXPORT QContactDisplayLabel : public QContactDetail
 {
@@ -73,5 +75,7 @@ public:
     void Q_DECL_DEPRECATED setSynthesized(bool synthesized) {qWarning("setSynthesized(): This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!");setValue(FieldSynthesized, synthesized);}
     bool Q_DECL_DEPRECATED isSynthesized() const {qWarning("synthesized(): This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!");return value<bool>(FieldSynthesized);}
 };
+
+QTM_END_NAMESPACE
 
 #endif

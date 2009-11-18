@@ -55,7 +55,7 @@
 
 #include <QtCore/qdebug.h>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QAbstractValueSpaceLayer
@@ -480,4 +480,4 @@ QString qCanonicalPath(const QString &path)
     return result;
 }
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

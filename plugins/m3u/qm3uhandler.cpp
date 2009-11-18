@@ -47,7 +47,7 @@
 #include <QFile>
 #include <QUrl>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QM3uPlaylistReader : public QMediaPlaylistReader
 {
@@ -205,4 +205,4 @@ QMediaPlaylistWriter *QM3uPlaylistPlugin::createWriter(QIODevice *device, const 
 }
 
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

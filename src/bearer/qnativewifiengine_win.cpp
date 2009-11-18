@@ -52,7 +52,7 @@
 #include <wtypes.h>
 #undef interface
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(QNativeWifiEngine, nativeWifiEngine)
 
@@ -721,4 +721,4 @@ QNativeWifiEngine *QNativeWifiEngine::instance()
     return engine;
 }
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

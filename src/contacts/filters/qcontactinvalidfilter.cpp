@@ -50,6 +50,8 @@
   This class provides a filter which will never match any contacts
  */
 
+QTM_BEGIN_NAMESPACE
+
 class QContactInvalidFilterPrivate : public QContactFilterPrivate
 {
 public:
@@ -94,3 +96,5 @@ QContactInvalidFilter::QContactInvalidFilter(const QContactFilter& other)
     // Initializing a QCIF from anything is the same as just constructing a QCIF
     Q_UNUSED(other);
 }
+
+QTM_END_NAMESPACE

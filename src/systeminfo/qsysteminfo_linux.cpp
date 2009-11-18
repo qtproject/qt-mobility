@@ -109,7 +109,7 @@
 
 
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 static bool halAvailable()
 {
@@ -2044,4 +2044,4 @@ void QSystemScreenSaverPrivate::whichWMRunning()
 }
 
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

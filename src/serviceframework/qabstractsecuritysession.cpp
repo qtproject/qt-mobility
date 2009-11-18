@@ -41,7 +41,7 @@
 
 #include "qabstractsecuritysession.h"
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QAbstractSecuritySession
@@ -99,4 +99,4 @@ QAbstractSecuritySession::~QAbstractSecuritySession()
     service \a capabilities. 
 */
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

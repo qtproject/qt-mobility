@@ -50,7 +50,7 @@
 #include <QNetworkInterface>
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QStringList;
 
@@ -372,7 +372,7 @@ private:
     QSystemScreenSaverPrivate *d;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

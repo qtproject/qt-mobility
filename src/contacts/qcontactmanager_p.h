@@ -65,6 +65,8 @@
 #include "qcontactactiondescriptor.h"
 #include "qcontactactionfactory.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactManagerEngineFactory;
 
 /* Data and stuff that is shared amongst all backends */
@@ -155,5 +157,7 @@ public:
 private:
     QMap<QString, QList<QContact> > savedContacts;
 };
+
+QTM_END_NAMESPACE
 
 #endif

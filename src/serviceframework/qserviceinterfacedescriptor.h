@@ -53,7 +53,7 @@
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 
 class QDebug;
@@ -116,7 +116,7 @@ Q_SFW_EXPORT QDebug operator<<(QDebug, const QServiceInterfaceDescriptor &);
 #endif
 
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

@@ -44,6 +44,8 @@
 
 #include "qcontactfilter.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactInvalidFilterPrivate;
 class Q_CONTACTS_EXPORT QContactInvalidFilter : public QContactFilter
 {
@@ -51,5 +53,7 @@ public:
     QContactInvalidFilter();
     QContactInvalidFilter(const QContactFilter& other);
 };
+
+QTM_END_NAMESPACE
 
 #endif

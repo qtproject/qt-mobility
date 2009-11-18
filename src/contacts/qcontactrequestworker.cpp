@@ -46,6 +46,8 @@
 #include "qcontactmanagerengine.h"
 #include "qcontactrequestworker_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactRequestWorker
  *
@@ -658,3 +660,7 @@ void QContactRequestWorkerData::cleanUpFinishedRequests(bool waitForAll)
         }
     }
 }
+
+#include "moc_qcontactrequestworker.cpp"
+
+QTM_END_NAMESPACE

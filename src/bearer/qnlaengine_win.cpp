@@ -51,7 +51,7 @@
 
 #include "qnetworksessionengine_win_p.h"
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(QNlaEngine, nlaEngine)
 
@@ -584,7 +584,7 @@ QNlaEngine *QNlaEngine::instance()
     return nlaEngine();
 }
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #include "qnlaengine_win.moc"
 

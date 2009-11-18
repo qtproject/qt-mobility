@@ -57,7 +57,7 @@
 #include <QTime>
 #include <QThread>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 #define VERSION_TABLE_ENTRIES 8191
 #define ROOT_VERSION_ENTRY 0
@@ -3393,6 +3393,6 @@ void SharedMemoryLayer::removeWatches(QValueSpaceProvider *creator, Handle paren
     remWatch(owner, readHandle->path);
 }
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #include "sharedmemorylayer.moc"

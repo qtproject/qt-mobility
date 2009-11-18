@@ -65,7 +65,7 @@ class QServiceFilter;
 typedef TPckgBuf<TInt> TError; 
 
 QT_BEGIN_HEADER
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class CDatabaseManagerServerThread;
 
@@ -185,7 +185,7 @@ class DatabaseManagerSignalMonitor : public CActive
         RDatabaseManagerSession& iDatabaseManagerSession;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 QT_END_HEADER
 
 #endif

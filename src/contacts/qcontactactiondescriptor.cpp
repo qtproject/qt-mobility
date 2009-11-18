@@ -42,6 +42,8 @@
 #include "qcontactactiondescriptor.h"
 #include "qcontactactiondescriptor_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
   \class QContactActionDescriptor
   \brief The QContactActionDescriptor class contains information that
@@ -163,3 +165,5 @@ bool QContactActionDescriptor::operator!=(const QContactActionDescriptor& other)
 {
     return !(*this == other);
 }
+
+QTM_END_NAMESPACE

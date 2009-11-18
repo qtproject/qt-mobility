@@ -66,7 +66,7 @@
 #define RegistryCallback WAITORTIMERCALLBACK
 #endif
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 #ifdef Q_OS_WINCE
 class QWindowsCENotify : public QThread
@@ -1395,7 +1395,7 @@ bool RegistryLayer::notifyInterest(Handle, bool)
     return false;
 }
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #include <registrylayer_win.moc>
 

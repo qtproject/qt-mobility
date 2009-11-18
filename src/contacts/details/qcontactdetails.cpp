@@ -41,6 +41,8 @@
 
 #include "qcontactdetails.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactAddress
  * \brief An address of a contact
@@ -1690,3 +1692,4 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  * Commit SHA1: e70e29ae3d30288d793336a77829919d16171acb
  */
 
+QTM_END_NAMESPACE

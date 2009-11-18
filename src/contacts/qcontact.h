@@ -59,6 +59,8 @@
 #include "qcontactrelationshipfilter.h"
 #include "qcontacttype.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactManager;
 class QContactData;
 class QContactName;
@@ -157,6 +159,8 @@ private:
 
     QSharedDataPointer<QContactData> d;
 };
+
+QTM_END_NAMESPACE
 
 #endif
 

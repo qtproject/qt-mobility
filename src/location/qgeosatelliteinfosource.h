@@ -51,7 +51,7 @@ class QGeoSatelliteInfoSourcePrivate;
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class Q_LOCATION_EXPORT QGeoSatelliteInfoSource : public QObject
 {
@@ -77,7 +77,7 @@ private:
     QGeoSatelliteInfoSourcePrivate *d;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

@@ -49,6 +49,8 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
+QTM_BEGIN_NAMESPACE
+
 /* Leaf class */
 class Q_CONTACTS_EXPORT QContactAddress : public QContactDetail
 {
@@ -98,6 +100,8 @@ public:
     void setSubTypes(const QString& subType) {setValue(FieldSubTypes, QStringList(subType));}
     QStringList subTypes() const {return value<QStringList>(FieldSubTypes);}
 };
+
+QTM_END_NAMESPACE
 
 #endif
 

@@ -44,6 +44,8 @@
 #include "qcontactfilter_p.h"
 #include "qcontactmanager.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
   \class QContactChangeLogFilter
   \brief The QContactChangeLogFilter class provides a filter based around a contact timestamp criterion.
@@ -114,3 +116,5 @@ QContactChangeLogFilter::EventType QContactChangeLogFilter::eventType() const
     Q_D(const QContactChangeLogFilter);
     return d->m_eventType;
 }
+
+QTM_END_NAMESPACE

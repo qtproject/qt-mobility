@@ -67,7 +67,7 @@
 
 #include <locale.h>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
   /*!
     \class QSystemInfo
@@ -885,4 +885,4 @@ bool QSystemScreenSaver::isScreenLockOn()
     return dp.isScreenLockOn();
 }
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

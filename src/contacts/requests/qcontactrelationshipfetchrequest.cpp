@@ -44,6 +44,8 @@
 #include "qcontactrelationshipfilter.h"
 #include "qcontactrequests_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactRelationshipFetchRequest
  * \brief Allows a client to asynchronously request relationships from a contacts store manager
@@ -141,3 +143,7 @@ QList<QContactRelationship> QContactRelationshipFetchRequest::relationships() co
     Q_D(const QContactRelationshipFetchRequest);
     return d->m_relationships;
 }
+
+#include "moc_qcontactrelationshipfetchrequest.cpp"
+
+QTM_END_NAMESPACE

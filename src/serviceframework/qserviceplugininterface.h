@@ -47,7 +47,7 @@
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QServiceInterfaceDescriptor;
 class QServiceContext;
@@ -69,7 +69,7 @@ public:
 
 Q_DECLARE_INTERFACE(QServicePluginInterface, "com.nokia.qt.QServicePluginInterface/1.0")
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 #endif

@@ -49,7 +49,7 @@
 #include <QDebug>
 #endif
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QSystemReadWriteLockPrivate
 {
@@ -325,4 +325,4 @@ QString QSystemReadWriteLock::key() const
     return d->m_key;
 }
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

@@ -49,6 +49,8 @@
  * The invalid engine may be used as a reference or test engine, but does nothing.
  */
 
+QTM_BEGIN_NAMESPACE
+
 /*! Constructs a new invalid contacts backend. */
 QContactInvalidEngine::QContactInvalidEngine()
 {
@@ -73,3 +75,5 @@ QString QContactInvalidEngine::synthesizeDisplayLabel(const QContact& contact, Q
     error = QContactManager::NotSupportedError;
     return QString();
 }
+
+QTM_END_NAMESPACE

@@ -72,6 +72,8 @@
 #include "qcontactabstractrequest.h"
 #include "qcontactchangeset.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactAbstractRequest;
 class QContactMemoryEngineData : public QSharedData
 {
@@ -184,6 +186,8 @@ private:
     QContactMemoryEngineData* d;
     static QMap<QString, QContactMemoryEngine*> engines;
 };
+
+QTM_END_NAMESPACE
 
 #endif
 

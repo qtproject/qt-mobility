@@ -49,7 +49,7 @@ class QIODevice;
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class Q_LOCATION_EXPORT QNmeaPositionInfoSource : public QGeoPositionInfoSource
 {
@@ -85,7 +85,7 @@ private:
     QNmeaPositionInfoSourcePrivate *d;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

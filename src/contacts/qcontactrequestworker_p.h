@@ -61,6 +61,8 @@
 
 #include "qcontactrequestworker.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactAbstractRequest;
 
 struct QContactRequestElement
@@ -100,5 +102,8 @@ public:
     QQueue<QContactRequestElement*> m_requestQueue; 
     QList<QContactRequestElement*> m_removedRequests; 
 };
+
+QTM_END_NAMESPACE
+
 #endif
 

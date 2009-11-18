@@ -55,6 +55,8 @@
 
 #include "qcontact_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactManagerEngine
  * \preliminary
@@ -2090,3 +2092,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
         emit r->progress(r, appendOnly);
     }
 }
+
+#include "moc_qcontactmanagerengine.cpp"
+
+QTM_END_NAMESPACE

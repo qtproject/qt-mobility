@@ -54,6 +54,8 @@
 #include <QVariant>
 #include <QList>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactDetailDefinitionFieldPrivate : public QSharedData
 {
 public:
@@ -80,5 +82,7 @@ public:
     QVariant::Type m_dataType;
     QContactDetailDefinitionField::AccessConstraint m_accessConstraint;
 };
+
+QTM_END_NAMESPACE
 
 #endif

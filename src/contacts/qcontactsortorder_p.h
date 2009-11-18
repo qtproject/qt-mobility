@@ -57,6 +57,8 @@
 
 #include <QSharedData>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactSortOrderPrivate : public QSharedData
 {
 public:
@@ -78,5 +80,7 @@ public:
     QString m_definitionName;
     QString m_fieldName;
 };
+
+QTM_END_NAMESPACE
 
 #endif

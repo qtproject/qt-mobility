@@ -48,6 +48,8 @@
 #include <QSharedData>
 #include <QList>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactSortOrderPrivate;
 class Q_CONTACTS_EXPORT QContactSortOrder
 {
@@ -87,5 +89,7 @@ public:
 private:
     QSharedDataPointer<QContactSortOrderPrivate> d;
 };
+
+QTM_END_NAMESPACE
 
 #endif

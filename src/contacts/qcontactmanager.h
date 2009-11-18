@@ -57,6 +57,8 @@
 #include "qcontactrelationship.h"
 #include "qcontactsortorder.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactFilter;
 class QContactAction;
 
@@ -179,5 +181,7 @@ private:
     // private data pointer
     QContactManagerData* d;
 };
+
+QTM_END_NAMESPACE
 
 #endif

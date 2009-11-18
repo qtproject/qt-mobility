@@ -134,4 +134,19 @@
 #    endif
 #  endif
 #endif
+
+#define QTM_NAMESPACE QtMobility
+
+#ifdef QTM_NAMESPACE
+# define QTM_PREPEND_NAMESPACE(name) ::QTM_NAMESPACE::name
+# define QTM_BEGIN_NAMESPACE namespace QTM_NAMESPACE {
+# define QTM_END_NAMESPACE }
+# define QTM_USE_NAMESPACE using namespace QTM_NAMESPACE;
+#else
+# define QTM_PREPEND_NAMESPACE(name) ::name
+# define QTM_BEGIN_NAMESPACE
+# define QTM_END_NAMESPACE
+# define QTM_USE_NAMESPACE
+#endif
+
 #endif // QMOBILITYGLOBAL_H
