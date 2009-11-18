@@ -42,7 +42,7 @@
 #include "s60mediaplayercontrol.h"
 #include "s60mediaplayersession.h"
 
-#include <multimedia/qmediaplaylistnavigator.h>
+#include <QMediaPlaylistNavigator>
 
 #include <QtCore/qdir.h>
 #include <QtCore/qsocketnotifier.h>

@@ -42,7 +42,8 @@
 #ifndef S60VIDEOWIDGET_H
 #define S60VIDEOWIDGET_H
 
-#include <multimedia/qvideowidgetcontrol.h>
+#include <QVideoWidgetControl>
+#include <QObject>
 
 class S60VideoWidget;
 

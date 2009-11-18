@@ -44,8 +44,8 @@
 
 #include <QtCore/qobject.h>
 
-#include <multimedia/qmediarecorder.h>
-#include <multimedia/qmediarecordercontrol.h>
+#include <QMediaRecorder>
+#include <QMediaRecorderControl>
 
 class S60AudioCaptureSession;
 

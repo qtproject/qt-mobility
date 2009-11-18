@@ -42,7 +42,7 @@
 #include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>
 
-#include <multimedia/qmediarecorder.h>
+#include <QMediaRecorder>
 
 #include "s60audiocapturesession.h"
 

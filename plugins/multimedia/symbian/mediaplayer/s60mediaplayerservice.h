@@ -44,8 +44,8 @@
 
 #include <QtCore/qobject.h>
 
-#include <multimedia/qmediaservice.h>
-#include <multimedia/qvideooutputcontrol.h>
+#include <QMediaService>
+#include <QVideoOutputControl>
 
 #include "s60videooutputcontrol.h"
 #include "ms60mediaplayerresolver.h"

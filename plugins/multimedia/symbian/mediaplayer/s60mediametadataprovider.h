@@ -42,7 +42,7 @@
 #ifndef S60MEDIAMETADATAPROVIDER_H
 #define S60MEDIAMETADATAPROVIDER_H
 
-#include <multimedia/qmetadatacontrol.h>
+#include <QMetaDataControl>
 #include "ms60mediaplayerresolver.h"
 
 class S60MediaPlayerSession;

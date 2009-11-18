@@ -41,7 +41,7 @@
 
 #include "s60videooverlay.h"
 
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <QVideoSurfaceFormat>
 
 #include "s60videosurface.h"
 

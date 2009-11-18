@@ -45,7 +45,7 @@
 #ifndef QT_NO_MULTIMEDIA
 
 #include <QtGui/qwidget.h>
-#include <QtMultimedia/qabstractvideosurface.h>
+#include <QAbstractVideoSurface>
 
 class S60VideoSurface : public QAbstractVideoSurface
 {

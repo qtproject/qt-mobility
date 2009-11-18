@@ -48,6 +48,7 @@ S60RadioTunerControl::S60RadioTunerControl(QObject *parent)
     :QRadioTunerControl(parent)
 {
     initRadio();
+    m_tunerState = QRadioTuner::StoppedState;
     m_muted = false;
     m_stereo = false;
     sig = 0;
@@ -64,6 +65,10 @@ S60RadioTunerControl::S60RadioTunerControl(QObject *parent)
 S60RadioTunerControl::~S60RadioTunerControl()
 {
     timer->stop();
+}
+QRadioTuner::State S60RadioTunerControl::state() const
+{
+    return m_tunerState;
 }
 
 QRadioTuner::Band S60RadioTunerControl::band() const

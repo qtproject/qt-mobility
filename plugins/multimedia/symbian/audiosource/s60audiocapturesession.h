@@ -49,7 +49,7 @@
 #include "s60audiodevicecontrol.h"
 #include "s60audiomediarecordercontrol.h"
 
-#include <multimedia/qaudioformat.h>
+#include <QAudioFormat>
 
 #include <Mda\Common\Audio.h>
 #include <Mda\Common\Resource.h>

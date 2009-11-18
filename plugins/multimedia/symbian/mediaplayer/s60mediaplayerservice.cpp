@@ -56,8 +56,8 @@
 #include "s60videorenderer.h"
 #endif
 
-#include <multimedia/qmediaplaylistnavigator.h>
-#include <multimedia/qmediaplaylist.h>
+#include <QMediaPlaylistNavigator>
+#include <QMediaPlaylist>
 
 S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
     : QMediaService(parent),

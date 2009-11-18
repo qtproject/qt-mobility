@@ -44,7 +44,8 @@
 
 #ifndef QT_NO_MULTIMEDIA
 
-#include <multimedia/qvideowindowcontrol.h>
+#include <QObject>
+#include <QVideoWindowControl>
 
 class QAbstractVideoSurface;
 class S60VideoSurface;

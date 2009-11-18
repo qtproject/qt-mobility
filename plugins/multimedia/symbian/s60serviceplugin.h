@@ -43,7 +43,11 @@
 #ifndef S60SERVICEPLUGIN_H
 #define S60SERVICEPLUGIN_H
 
-#include <multimedia/qmediaserviceproviderplugin.h>
+#include <QObject>
+#include <QMediaService>
+//#include "qmediaservice.h"
+#include <QMediaServiceProviderPlugin>
+//#include "qmediaserviceproviderplugin.h"
 
 class S60ServicePlugin : public QMediaServiceProviderPlugin//, public QMediaServiceSupportedDevicesInterface
 {

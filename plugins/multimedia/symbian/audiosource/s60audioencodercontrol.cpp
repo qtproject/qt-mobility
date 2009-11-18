@@ -42,7 +42,7 @@
 #include "s60audioencodercontrol.h"
 #include "s60audiocapturesession.h"
 
-#include <multimedia/qaudioformat.h>
+#include <QAudioFormat>
 
 #include <QtCore/qdebug.h>
 
@@ -180,8 +180,9 @@ void S60AudioEncoderControl::setSampleRate(int sampleRate)
     m_session->setFormat(fmt);
 }
 
-QList<int> S60AudioEncoderControl::supportedSampleRates() const
+QList<int> S60AudioEncoderControl::supportedSampleRates(const QAudioEncoderSettings &settings) const
 {
+    //TODO: return supported sample rates
     return QList<int>(); //m_session->deviceInfo()->supportedFrequencies();
 }
 

@@ -44,7 +44,7 @@
 
 #include <QtCore/qobject.h>
 
-#include <multimedia/qmediaservice.h>
+#include <QMediaService>
 
 class S60AudioCaptureSession;
 class S60AudioEncoderControl;

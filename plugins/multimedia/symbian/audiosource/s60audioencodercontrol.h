@@ -42,12 +42,12 @@
 #ifndef AUDIOENCODERCONTROL_H
 #define AUDIOENCODERCONTROL_H
 
-#include <multimedia/qaudioencodercontrol.h>
+#include <QAudioEncoderControl>
 
 #include <QtCore/qstringlist.h>
 #include <QtCore/qmap.h>
 
-#include <multimedia/qaudioformat.h>
+#include <QAudioFormat>
 
 class S60AudioCaptureSession;
 
@@ -76,8 +76,8 @@ public:
 
     int sampleRate() const;
     void setSampleRate(int sampleRate);
-    QList<int> supportedSampleRates() const;
-
+    QList<int> supportedSampleRates(const QAudioEncoderSettings &settings) const;
+    
     int channels() const;
     void setChannels(int channels);
     QList<int> supportedChannelCounts() const;

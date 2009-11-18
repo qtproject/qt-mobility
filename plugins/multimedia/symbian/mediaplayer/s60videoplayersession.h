@@ -45,9 +45,9 @@
 #include <QObject>
 #include <QUrl>
 #include <QSize>
+#include <QMediaPlayer>
 #include "s60mediaplayercontrol.h"
 #include "s60videowidget.h"
-#include <multimedia/qmediaplayer.h>
 #include <VideoPlayer.h>
 #include "s60mediaplayersession.h"
 

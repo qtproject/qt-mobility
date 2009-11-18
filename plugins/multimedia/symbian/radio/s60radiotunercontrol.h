@@ -46,8 +46,8 @@
 #include <QtCore/qtimer.h>
 #include <QTime>
 
-#include "qradiotunercontrol.h"
-#include "qradiotuner.h"
+#include <QRadioTunerControl>
+#include <QRadioTuner>
 
 class S60RadioTunerService;
 
@@ -57,6 +57,8 @@ class S60RadioTunerControl : public QRadioTunerControl
 public:
     S60RadioTunerControl(QObject *parent = 0);
     ~S60RadioTunerControl();
+    
+    QRadioTuner::State state() const;
 
     QRadioTuner::Band band() const;
     void setBand(QRadioTuner::Band b);
@@ -119,6 +121,7 @@ private:
     qint64 freqMax;
     qint64 currentFreq;
     QTime  playTime;
+    QRadioTuner::State m_tunerState;
 };
 
 #endif

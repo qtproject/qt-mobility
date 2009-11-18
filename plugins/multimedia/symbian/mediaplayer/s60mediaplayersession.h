@@ -45,7 +45,7 @@
 #include <QObject>
 #include <QUrl>
 #include <QSize>
-#include <multimedia/qmediaplayer.h>
+#include <QMediaPlayer>
 #include <QPair>
 class QTimer;
 

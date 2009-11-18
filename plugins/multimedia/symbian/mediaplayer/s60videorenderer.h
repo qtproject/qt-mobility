@@ -44,7 +44,8 @@
 
 #ifndef QT_NO_MULTIMEDIA
 
-#include <multimedia/qvideorenderercontrol.h>
+#include <QObject>
+#include <QVideoRendererControl>
 
 class S60VideoRenderer : public QVideoRendererControl
 {
