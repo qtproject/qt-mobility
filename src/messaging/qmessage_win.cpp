@@ -615,6 +615,19 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
                     }
                 }
 
+                QString partialPath(QDir::tempPath() + "/qtmobility");
+                if (!QFile::exists(partialPath)) {
+                    if (!QDir::temp().mkdir("qtmobility")) {
+                        qWarning() << "Unable to create temporary directory:" << partialPath;
+                    }
+                }
+                partialPath.append("/messaging");
+                if (!QFile::exists(partialPath)) {
+                    if (!QDir(QDir::tempPath() + "/qtmobility").mkdir("messaging")) {
+                        qWarning() << "Unable to create temporary directory:" << partialPath;
+                    }
+                }
+
                 QFile out(path);
                 if (!out.open(QFile::WriteOnly)) {
                     qWarning() << "Unable to open temporary file:" << path;
