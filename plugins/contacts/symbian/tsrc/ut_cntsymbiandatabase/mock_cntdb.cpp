@@ -58,6 +58,8 @@ void CContactDatabase::AddObserverL(MContactDbObserver& aObserver)
 
 void CContactDatabase::sendEventsL()
 {
+    if (!iObserver)
+        User::Leave(KErrBadHandle);
     TContactDbObserverEvent event;
     event.iType = EContactDbObserverEventContactAdded;
     iObserver->HandleDatabaseEventL(event);
