@@ -252,6 +252,8 @@
     
     To ensure the change is propagated to any affected external server
     QMessageServiceAction::exportUpdates() should be subsequently called.
+    
+    \a option is ignored on Windows mobile and desktop platforms.
 
     \sa removeMessages(), addMessage(), updateMessage(), QMessageServiceAction::exportUpdates()
 */
@@ -268,7 +270,9 @@
     To ensure the change is propagated to any affected external server
     QMessageServiceAction::exportUpdates() should be subsequently called.
 
+    \a option is ignored on Windows mobile and desktop platforms.
 
+    
     For example:
 
     To implement a function to remove a list messages identified by QMessageIds
