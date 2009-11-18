@@ -39,16 +39,8 @@
 **
 ****************************************************************************/
 #include "qmessagecontentcontainerid.h"
+#include "qmessagecontentcontainerid_p.h"
 
-class QMessageContentContainerIdPrivate
-{
-public:
-    enum { Invalid = -1, Body = 0 };
-
-    int _number;
-
-    QMessageContentContainerIdPrivate() : _number(Invalid) {}
-};
 
 QMessageContentContainerId::QMessageContentContainerId()
     : d_ptr(new QMessageContentContainerIdPrivate)
@@ -83,6 +75,7 @@ QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessage
 {
     if (&other != this) {
         d_ptr->_number = other.d_ptr->_number;
+        d_ptr->_messageId = other.d_ptr->_messageId;
     }
 
     return *this;

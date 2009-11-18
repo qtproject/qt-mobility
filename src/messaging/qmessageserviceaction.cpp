@@ -236,9 +236,9 @@
 */
 
 /*!
-    \fn QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
+    \fn QMessageServiceAction::retrieve(const QMessageId &messageId, const QMessageContentContainerId& id)
   
-    Retrieve the container identified by \a id, the contents of the container should also be 
+    Retrieve the container identified by \a messageId and \a id, the contents of the container should also be 
     retrieved.
     
     Returns true if the action can be initiated; otherwise returns false.

@@ -82,7 +82,9 @@ public:
     bool isReadOnly() const;
 
     bool appendItem(const QMediaContent &content);
+    bool appendItems(const QList<QMediaContent> &items);
     bool insertItem(int index, const QMediaContent &content);
+    bool insertItems(int index, const QList<QMediaContent> &items);
     bool removeItem(int pos);
     bool removeItems(int start, int end);
     bool clear();

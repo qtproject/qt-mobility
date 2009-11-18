@@ -100,6 +100,7 @@ QRadioTuner::QRadioTuner(QObject *parent, QMediaServiceProvider* provider):
     if (d->service != 0) {
         d->control = qobject_cast<QRadioTunerControl*>(d->service->control(QRadioTunerControl_iid));
         if (d->control != 0) {
+            connect(d->control, SIGNAL(stateChanged(QRadioTuner::State)), SIGNAL(stateChanged(QRadioTuner::State)));
             connect(d->control, SIGNAL(bandChanged(QRadioTuner::Band)), SIGNAL(bandChanged(QRadioTuner::Band)));
             connect(d->control, SIGNAL(frequencyChanged(int)), SIGNAL(frequencyChanged(int)));
             connect(d->control, SIGNAL(stereoStatusChanged(bool)), SIGNAL(stereoStatusChanged(bool)));
@@ -120,6 +121,19 @@ QRadioTuner::~QRadioTuner()
     Q_D(QRadioTuner);
 
     d->provider->releaseService(d->service);
+}
+
+/*!
+    \property QRadioTuner::state
+    Return the current radio tuner state.
+
+    \sa QRadioTuner::State
+*/
+
+QRadioTuner::State QRadioTuner::state() const
+{
+    return d_func()->control ?
+            d_func()->control->state() : QRadioTuner::StoppedState;
 }
 
 /*!
@@ -491,6 +505,16 @@ QString QRadioTuner::errorString() const
 
     Signals that an \a error occurred.
 */
+
+/*!
+    \enum QRadioTuner::State
+
+    Enumerates radio tuner states.
+
+    \value ActiveState The tuner is started and active.
+    \value StoppedState The tuner device is stopped.
+*/
+
 
 /*!
     \enum QRadioTuner::Band

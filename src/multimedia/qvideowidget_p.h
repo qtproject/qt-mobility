@@ -63,10 +63,10 @@
 #include <qpaintervideosurface_p.h>
 #endif
 
-class QVideoWidgetBackendInterface
+class QVideoWidgetControlInterface
 {
 public:
-    virtual ~QVideoWidgetBackendInterface() {}
+    virtual ~QVideoWidgetControlInterface() {}
 
     virtual void setBrightness(int brightness) = 0;
     virtual void setContrast(int contrast) = 0;
@@ -77,17 +77,28 @@ public:
 
     virtual QVideoWidget::AspectRatioMode aspectRatioMode() const = 0;
     virtual void setAspectRatioMode(QVideoWidget::AspectRatioMode mode) = 0;
+};
 
-    virtual QWidget *widget() = 0;
+class QVideoWidgetBackend : public QObject, public QVideoWidgetControlInterface
+{
+    Q_OBJECT
+public:
+    virtual QSize sizeHint() const = 0;
+
+    virtual void showEvent(QShowEvent *event) = 0;
+    virtual void hideEvent(QHideEvent *event) = 0;
+    virtual void resizeEvent(QResizeEvent *event) = 0;
+    virtual void moveEvent(QMoveEvent *event) = 0;
+    virtual void paintEvent(QPaintEvent *event) = 0;
 };
 
 class QVideoWidgetControl;
 
-class QVideoWidgetControlBackend : public QObject, public QVideoWidgetBackendInterface
+class QVideoWidgetControlBackend : public QObject, public QVideoWidgetControlInterface
 {
     Q_OBJECT
 public:
-    QVideoWidgetControlBackend(QVideoWidgetControl *control);
+    QVideoWidgetControlBackend(QVideoWidgetControl *control, QWidget *widget);
 
     void setBrightness(int brightness);
     void setContrast(int contrast);
@@ -98,7 +109,6 @@ public:
 
     QVideoWidget::AspectRatioMode aspectRatioMode() const;
     void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
-    QWidget *widget();
 
 private:
     QVideoWidgetControl *m_widgetControl;
@@ -108,18 +118,12 @@ private:
 
 class QVideoRendererControl;
 
-class QVideoRendererWidget
-#ifndef QT_NO_OPENGL
-    : public QGLWidget
-#else
-    : public QWidget
-#endif
-    , public QVideoWidgetBackendInterface
+class QRendererVideoWidgetBackend : public QVideoWidgetBackend
 {
     Q_OBJECT
 public:
-    QVideoRendererWidget(QVideoRendererControl *control, QWidget *parent = 0);
-    ~QVideoRendererWidget();
+    QRendererVideoWidgetBackend(QVideoRendererControl *control, QWidget *widget);
+    ~QRendererVideoWidgetBackend();
 
     void clearSurface();
 
@@ -133,44 +137,41 @@ public:
     QVideoWidget::AspectRatioMode aspectRatioMode() const;
     void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
 
-    QWidget *widget();
-
     QSize sizeHint() const;
 
+    void showEvent(QShowEvent *event);
+    void hideEvent(QHideEvent *event);
+    void resizeEvent(QResizeEvent *event);
+    void moveEvent(QMoveEvent *event);
+    void paintEvent(QPaintEvent *event);
+
 Q_SIGNALS:
+    void fullScreenChanged(bool fullScreen);
     void brightnessChanged(int brightness);
     void contrastChanged(int contrast);
     void hueChanged(int hue);
     void saturationChanged(int saturation);
 
-protected:
-#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
-	void initializeGL();
-#endif
-
-    void paintEvent(QPaintEvent *event);
-
-private Q_SLOTS:
-    void dimensionsChanged();
-
 private:
     QRect displayRect() const;
 
     QVideoRendererControl *m_rendererControl;
+    QWidget *m_widget;
     QPainterVideoSurface *m_surface;
     QVideoWidget::AspectRatioMode m_aspectRatioMode;
     QSize m_aspectRatio;
+    bool m_updatePaintDevice;
 };
 #endif
 
 class QVideoWindowControl;
 
-class QVideoWindowWidget : public QWidget, public QVideoWidgetBackendInterface
+class QWindowVideoWidgetBackend : public QVideoWidgetBackend
 {
     Q_OBJECT
 public:
-    QVideoWindowWidget(QVideoWindowControl *control, QWidget *parent = 0);
-    ~QVideoWindowWidget();
+    QWindowVideoWidgetBackend(QVideoWindowControl *control, QWidget *widget);
+    ~QWindowVideoWidgetBackend();
 
     void setBrightness(int brightness);
     void setContrast(int contrast);
@@ -182,21 +183,17 @@ public:
     QVideoWidget::AspectRatioMode aspectRatioMode() const;
     void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
 
-    QWidget *widget();
-
     QSize sizeHint() const;
 
-public Q_SLOTS:
-    void setVisible(bool visible);
-
-
-protected:
-    void moveEvent(QMoveEvent *event);
+    void showEvent(QShowEvent *event);
+    void hideEvent(QHideEvent *event);
     void resizeEvent(QResizeEvent *event);
+    void moveEvent(QMoveEvent *event);
     void paintEvent(QPaintEvent *event);
 
 private:
     QVideoWindowControl *m_windowControl;
+    QWidget *m_widget;
     QVideoWidget::AspectRatioMode m_aspectRatioMode;
     QSize m_pixelAspectRatio;
 };
@@ -211,7 +208,6 @@ class QVideoWidgetPrivate
 public:
     QVideoWidgetPrivate()
         : q_ptr(0)
-        , layout(0)
         , service(0)
         , outputControl(0)
         , widgetBackend(0)
@@ -219,6 +215,7 @@ public:
 #ifndef QT_NO_MULTIMEDIA
         , rendererBackend(0)
 #endif
+        , currentControl(0)
         , currentBackend(0)
         , brightness(0)
         , contrast(0)
@@ -231,15 +228,15 @@ public:
     }
 
     QVideoWidget *q_ptr;
-    QStackedLayout *layout;
     QMediaService *service;
     QVideoOutputControl *outputControl;
     QVideoWidgetControlBackend *widgetBackend;
-    QVideoWindowWidget *windowBackend;
+    QWindowVideoWidgetBackend *windowBackend;
 #ifndef QT_NO_MULTIMEDIA
-    QVideoRendererWidget *rendererBackend;
+    QRendererVideoWidgetBackend *rendererBackend;
 #endif
-    QVideoWidgetBackendInterface *currentBackend;
+    QVideoWidgetControlInterface *currentControl;
+    QVideoWidgetBackend *currentBackend;
     int brightness;
     int contrast;
     int hue;
@@ -248,7 +245,7 @@ public:
     Qt::WindowFlags nonFullScreenFlags;
     bool wasFullScreen;
 
-    void setCurrentBackend(QVideoWidgetBackendInterface *backend);
+    void setCurrentControl(QVideoWidgetControlInterface *control);
 
     void _q_serviceDestroyed();
     void _q_brightnessChanged(int brightness);
@@ -256,6 +253,7 @@ public:
     void _q_hueChanged(int hue);
     void _q_saturationChanged(int saturation);
     void _q_fullScreenChanged(bool fullScreen);
+    void _q_dimensionsChanged();
 };
 
 #endif

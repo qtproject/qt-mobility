@@ -56,9 +56,15 @@ class MockControl : public QRadioTunerControl
 public:
     MockControl(QObject *parent):
         QRadioTunerControl(parent),
+        m_active(false),
         m_searching(false),m_muted(false),m_stereo(true),
         m_volume(100),m_signal(0),m_frequency(0),
         m_band(QRadioTuner::FM) {}
+
+    QRadioTuner::State state() const
+    {
+        return m_active ? QRadioTuner::ActiveState : QRadioTuner::StoppedState;
+    }
 
     QRadioTuner::Band band() const
     {
@@ -182,13 +188,22 @@ public:
 
     void start()
     {
+        if (!m_active) {
+            m_active = true;
+            emit stateChanged(state());
+        }
     }
 
     void stop()
     {
+        if (m_active) {
+            m_active = false;
+            emit stateChanged(state());
+        }
     }
 
 public:
+    bool m_active;
     bool m_searching;
     bool m_muted;
     bool m_stereo;
@@ -257,14 +272,23 @@ private:
 
 void tst_QRadioTuner::initTestCase()
 {
-    qRegisterMetaType<QRadioTuner::Band>("QRadioTuner::Band");
+    qRegisterMetaType<QRadioTuner::State>();
+    qRegisterMetaType<QRadioTuner::Band>();
 
     mock = new MockControl(this);
     service = new MockService(this, mock);
     provider = new MockProvider(service);
     radio = new QRadioTuner(0,provider);
     QVERIFY(radio->service() != 0);
+
+    QSignalSpy stateSpy(radio, SIGNAL(stateChanged(QRadioTuner::State)));
+
+    QCOMPARE(radio->state(), QRadioTuner::StoppedState);    
     radio->start();
+    QCOMPARE(radio->state(), QRadioTuner::ActiveState);
+
+    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(stateSpy.first()[0].value<QRadioTuner::State>(), QRadioTuner::ActiveState);
 }
 
 void tst_QRadioTuner::cleanupTestCase()
@@ -272,7 +296,13 @@ void tst_QRadioTuner::cleanupTestCase()
     QVERIFY(radio->error() == QRadioTuner::NoError);
     QVERIFY(radio->errorString().isEmpty());
 
+    QSignalSpy stateSpy(radio, SIGNAL(stateChanged(QRadioTuner::State)));
+
     radio->stop();
+    QCOMPARE(radio->state(), QRadioTuner::StoppedState);
+    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(stateSpy.first()[0].value<QRadioTuner::State>(), QRadioTuner::StoppedState);
+
     delete radio;
     delete service;
     delete provider;

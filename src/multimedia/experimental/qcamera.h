@@ -67,7 +67,7 @@ class Q_MEDIA_EXPORT QCamera : public QMediaObject
     Q_PROPERTY(int isoSensitivity READ isoSensitivity WRITE setManualIsoSensitivity NOTIFY isoSensitivityChanged)
 
 public:
-    enum State { ActiveState, StoppedState };
+    enum State { ActiveState, SuspendedState, StoppedState };
 
     enum Error
     {

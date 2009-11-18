@@ -40,13 +40,36 @@
 ****************************************************************************/
 #ifndef QMESSAGECONTENTCONTAINERIDPRIVATE_H
 #define QMESSAGECONTENTCONTAINERIDPRIVATE_H
+
 #include "qmessagecontentcontainerid.h"
+#ifdef Q_OS_WIN
+#include "qmessageid.h"
+#endif
 
 class QMessageContentContainerIdPrivate
 {
 public:
+#ifdef Q_OS_WIN
+    enum { Invalid = -1, Body = 0 };
+    int _number;
+    QMessageId _messageId;
+    QMessageContentContainerIdPrivate() : _number(Invalid) {}
+
+    static QMessageId messageId(const QMessageContentContainerId& id)
+    {
+        return id.d_ptr->_messageId;
+    }
+
+    static void setMessageId(QMessageContentContainerId& id, const QMessageId messageId)
+    {
+        id.d_ptr->_messageId = messageId;
+    }
+
+#else
     QMessageContentContainerIdPrivate()
     {
     }
+#endif
 };
+
 #endif
