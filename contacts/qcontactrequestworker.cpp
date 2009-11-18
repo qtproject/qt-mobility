@@ -138,6 +138,8 @@ void QContactRequestWorker::run()
         req = d->takeFirstRequest();
         if (req == 0 || d->m_stop) {
             // stopped! m_curFrentRequest ptr will still be zero.
+            d->m_stop = true;
+            d->m_currentRequest = 0;
             cleanupRequests();
             break;
         }
@@ -145,6 +147,7 @@ void QContactRequestWorker::run()
         if (req->status() == QContactAbstractRequest::Cancelling) {
             QList<QContactManager::Error> dummy;
             QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Cancelled);
+            d->m_currentRequest = 0;
             continue;
         }
         // Now perform the active request and emit required signals.
@@ -183,7 +186,8 @@ void QContactRequestWorker::run()
                 break;
         }
         d->m_mutex.lock();
-        if (req && req->d_ptr) {
+        if (req && req->d_ptr && req->d_ptr->m_waiting) {
+            req->d_ptr->m_waiting = false;
             req->d_ptr->m_condition.wakeAll();
         }
         d->m_currentRequest = 0;
@@ -246,11 +250,13 @@ void QContactRequestWorker::removeRequestForManager(QContactManager* manager)
 {
     QList<QContactAbstractRequest*> requests;
     if (manager) {
-        QMutexLocker threadLocker(&d->m_mutex);
-
-        foreach (QContactAbstractRequest* req, d->m_requestQueue) {
-            if (!req || req->manager() == manager) {
-                requests << req;
+        {
+            QMutexLocker threadLocker(&d->m_mutex);
+            requests = d->m_requestQueue;
+        }
+        foreach (QContactAbstractRequest* req, requests) {
+            if (req && req->manager() != manager) {
+                requests.removeAll(req);
             }
         }
     }
@@ -272,28 +278,36 @@ bool QContactRequestWorker::removeRequest(QContactAbstractRequest* req)
             if (!d->m_stop) {
                 QMutexLocker threadLocker(&d->m_mutex);
                 d->m_requestQueue.removeOne(req);
-                if (req->d_ptr->m_waiting)
+                if (req->d_ptr->m_waiting) {
+                    req->d_ptr->m_waiting = false;
                     req->d_ptr->m_condition.wakeAll();
+                }
             } else {
                 //cleanup
                 d->m_requestQueue.removeOne(req);
-                if (req->d_ptr->m_waiting)
+                if (req->d_ptr->m_waiting) {
+                    req->d_ptr->m_waiting = false;
                     req->d_ptr->m_condition.wakeAll();
+                }
             }
             
         } else {
-            if (!d->m_requestQueue.isEmpty()) {
-                QMutexLocker requestLocker (&d->m_mutexForCurrentRequest);
-                //called externally
-                {
-                    QMutexLocker threadLocker(&d->m_mutex);
-                    if (!d->m_requestQueue.isEmpty()) {
-                        d->m_requestQueue.removeOne(req);
-                        if (req->d_ptr->m_waiting)
-                            req->d_ptr->m_condition.wakeAll();
+            //called externally
+            {
+                QMutexLocker threadLocker(&d->m_mutex);
+                if (!d->m_requestQueue.isEmpty()) {
+                    d->m_requestQueue.removeOne(req);
+                    if (req->d_ptr->m_waiting) {
+                        req->d_ptr->m_waiting = false;
+                         req->d_ptr->m_condition.wakeAll();
                     }
                 }
             }
+
+            while (req == d->m_currentRequest) {
+                usleep(10);
+            }
+
         }
         return true;
     }
