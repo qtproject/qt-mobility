@@ -76,7 +76,28 @@ QT_BEGIN_NAMESPACE
 
     \brief The QSystemInfo class provides access to various general information from the system.
 
+\note In the future, parts of the QtSystemInfo API may be moved and renamed into an existing Qt class that provides similiar functionality.
+
+\table
+\header
+    \o Class
+\row
+    \o QSystemInfo::currentLanguage
+\row
+    \o QSystemInfo::availableLanguages
+\row
+    \o QSystemInfo::currentCountryCode
+\row
+    \o QSystemDisplayInfo::displayBrightness
+\row
+    \o QSystemDisplayInfo::colorDepth
+\row
+    \o QSystemScreenSaver::screenSaverInhibited
+\row
+    \o QSystemScreenSaver::setScreenSaverInhibit
+\endtable
   */
+
 /*!
     \enum QSystemInfo::Version
     This enum describes the version component.
