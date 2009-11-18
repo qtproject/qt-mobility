@@ -26,3 +26,5 @@ INCLUDEPATH += $$SOURCE_DIR/contacts/details
 INCLUDEPATH += $$SOURCE_DIR/contacts/filters
 INCLUDEPATH += $$SOURCE_DIR/contacts/requests
 
+target.path = $$SOURCE_DIR/plugins/contacts
+INSTALLS += target

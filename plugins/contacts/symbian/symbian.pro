@@ -18,11 +18,11 @@ symbian: {
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
     INCLUDEPATH += inc
-        INCLUDEPATH += rss
-        INCLUDEPATH += $$SOURCE_DIR/contacts 
-        INCLUDEPATH += $$SOURCE_DIR/contacts/details 
-        INCLUDEPATH += $$SOURCE_DIR/contacts/filters 
-        INCLUDEPATH += $$SOURCE_DIR/contacts/requests
+    INCLUDEPATH += rss
+    INCLUDEPATH += $$SOURCE_DIR/contacts
+    INCLUDEPATH += $$SOURCE_DIR/contacts/details
+    INCLUDEPATH += $$SOURCE_DIR/contacts/filters
+    INCLUDEPATH += $$SOURCE_DIR/contacts/requests
 
     HEADERS += \
         $$PUBLIC_HEADERS \
@@ -95,14 +95,16 @@ symbian: {
         src/cntsymbiantransformerror.cpp \
         src/cntsymbiandatabase.cpp
       
-    LIBS += \
-  				-lcntmodel \
-  				-lcentralrepository \
-  				-lQtContacts \
-  				-lestor \
+    qtAddLibrary(QtContacts)
 
-	target.path = /sys/bin
-	INSTALLS += target
+    LIBS += \
+            -lcntmodel \
+            -lcentralrepository \
+            -lestor \
+            -lflogger
+
+    target.path = /sys/bin
+    INSTALLS += target
 
     exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
         DEFINES += USE_CUSTOM_CNT_MODEL_FIELDS
@@ -113,7 +115,8 @@ symbian: {
         MMP_RULES += cntmodelResourceFile
     }
 
-	symbianplugin.sources = $${TARGET}.dll
-	symbianplugin.path = /resource/qt/plugins/contacts
-	DEPLOYMENT += symbianplugin
+    symbianplugin.sources = $${TARGET}.dll
+    symbianplugin.path = /resource/qt/plugins/contacts
+    DEPLOYMENT += symbianplugin
 }
+
