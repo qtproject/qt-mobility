@@ -4276,7 +4276,7 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                 if (!msg->d_ptr->_hasAttachments) {
                     // Make the body the entire content of the message
                     messageContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
-                    msg->d_ptr->_bodyId = QMessageContentContainerPrivate::bodyContentId();
+                    msg->d_ptr->_bodyId = messageContainer->bodyContentId();
                     messageContainer->_available = bodyDownloaded;
 
                 } else {
