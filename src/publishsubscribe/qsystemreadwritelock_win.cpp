@@ -255,18 +255,18 @@ bool QSystemReadWriteLock::lockForWrite()
     return true;
 }
 
-bool QSystemReadWriteLock::unlock()
+void QSystemReadWriteLock::unlock()
 {
     if (!d->m_isInitialized) {
         d->m_error = QSystemReadWriteLock::FailedToInitialize;
         d->m_errorString = QObject::tr("QSystemReadWriteLock::unlock(): cannot peform operation, lock initialization had not been successful");
-        return false;
+        return;
     }
 
     if(!d->m_counts.lock()) {
         d->m_error = d->convertError(d->m_counts.error());
         d->m_errorString = QObject::tr("QSystemReadWriteLock::lockForwrite(): cannot perform operation, locking of shared memory was unsuccessful");
-        return false;
+        return;
     }
 
     Q_ASSERT_X(d->accessCount() != 0, "QSystemReadWriteLock::unlock()", "Cannot unlock an unlocked lock");
@@ -292,7 +292,7 @@ bool QSystemReadWriteLock::unlock()
     d->m_error = QSystemReadWriteLock::NoError;
     d->m_errorString.clear();
     d->m_counts.unlock();
-    return true;
+    return;
 }
 
 int& QSystemReadWriteLockPrivate::accessCount()
@@ -310,12 +310,12 @@ unsigned int &QSystemReadWriteLockPrivate::waitingWriters()
     return *(((unsigned int*)m_counts.data())+2);
 }
 
-QSystemReadWriteLock::SystemReadWriteLockError QSystemReadWriteLock::error()
+QSystemReadWriteLock::SystemReadWriteLockError QSystemReadWriteLock::error() const
 {
     return d->m_error;
 }
 
-QString QSystemReadWriteLock::errorString()
+QString QSystemReadWriteLock::errorString() const
 {
     return d->m_errorString;
 }
