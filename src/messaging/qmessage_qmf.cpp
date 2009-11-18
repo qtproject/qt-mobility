@@ -257,40 +257,6 @@ QMessage::~QMessage()
     delete d_ptr;
 }
 
-QMessage QMessage::fromTransmissionFormat(Type t, const QByteArray &ba)
-{
-    QMessage result;
-
-    QMailMessage msg = QMailMessage::fromRfc2822(ba);
-    msg.setMessageType(convert(t));
-    msg.setStatus(QMailMessage::LocalOnly, true);
-
-    result.d_ptr->_message = msg;
-    return result;
-}
-
-QMessage QMessage::fromTransmissionFormatFile(Type t, const QString& fileName)
-{
-    QMessage result;
-
-    QMailMessage msg = QMailMessage::fromRfc2822File(fileName);
-    msg.setMessageType(convert(t));
-    msg.setStatus(QMailMessage::LocalOnly, true);
-
-    result.d_ptr->_message = msg;
-    return result;
-}
-
-QByteArray QMessage::toTransmissionFormat() const
-{
-    return d_ptr->_message.toRfc2822(QMailMessage::TransmissionFormat);
-}
-
-void QMessage::toTransmissionFormat(QDataStream& out) const
-{
-    d_ptr->_message.toRfc2822(out, QMailMessage::TransmissionFormat);
-}
-
 QMessageId QMessage::id() const
 {
     return convert(d_ptr->_message.id());
@@ -651,7 +617,8 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
                 {
                     // Include the entirety of this message as a nested part
                     QMailMessageContentType ct("message/rfc822");
-                    QMailMessagePart part(QMailMessagePart::fromData(toTransmissionFormat(), cd, ct, QMailMessageBody::Base64));
+                    QByteArray responseData(d_ptr->_message.toRfc2822(QMailMessage::TransmissionFormat));
+                    QMailMessagePart part(QMailMessagePart::fromData(responseData, cd, ct, QMailMessageBody::Base64));
                     msg->appendPart(part);
                 }
             }
