@@ -62,11 +62,11 @@
 
     Type "./configure -help" to get a list of all available options.
     
-    To create all the libraries, tools and examples, type:
+    To create all the libraries and tools, type:
 
         make
 
-    To install the libraries, tools and examples, type:
+    To install the libraries and tools, type:
 
         make install
 
@@ -93,7 +93,7 @@
 
     The actual commands needed to build Qt Mobility depends on your
     development system.  For Microsoft Visual Studio to create the
-    libraries, tools and examples type:
+    libraries and tools type:
         
         nmake
 
