@@ -48,6 +48,7 @@
 
 #include "qgstreamervideorendererinterface.h"
 
+QTM_USE_NAMESPACE
 
 class QAbstractVideoSurface;
 class QX11VideoSurface;

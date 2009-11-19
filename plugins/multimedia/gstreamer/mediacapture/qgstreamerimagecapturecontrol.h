@@ -45,6 +45,7 @@
 
 #include <experimental/qimagecapturecontrol.h>
 #include "qgstreamercapturesession.h"
+QTM_USE_NAMESPACE
 
 class QGstreamerImageCaptureControl : public QImageCaptureControl
 {

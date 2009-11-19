@@ -50,6 +50,7 @@ class QGstreamerCaptureSession;
 #include <QtCore/qmap.h>
 
 #include <gst/gst.h>
+QTM_USE_NAMESPACE
 
 class QGstreamerImageEncode : public QImageEncoderControl
 {

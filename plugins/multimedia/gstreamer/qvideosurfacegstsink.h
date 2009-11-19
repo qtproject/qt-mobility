@@ -53,7 +53,6 @@
 #include <QtMultimedia/qvideosurfaceformat.h>
 #include <QtMultimedia/qvideoframe.h>
 
-QTM_BEGIN_NAMESPACE
 class QAbstractVideoSurface;
 
 class QVideoSurfaceGstDelegate : public QObject
@@ -133,7 +132,6 @@ public:
 };
 
 
-QTM_END_NAMESPACE
 
 #endif
 

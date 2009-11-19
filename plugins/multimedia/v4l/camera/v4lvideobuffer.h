@@ -49,8 +49,6 @@
 #include <QtMultimedia/QAbstractVideoBuffer>
 #include <linux/videodev2.h>
 
-QTM_BEGIN_NAMESPACE
-
 class V4LVideoBuffer : public QAbstractVideoBuffer
 {
 public:
@@ -73,8 +71,6 @@ private:
     v4l2_buffer m_buf;
 };
 
-
-QTM_END_NAMESPACE
 
 #endif
 

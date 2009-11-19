@@ -48,8 +48,6 @@
 
 #include <gst/gst.h>
 
-QTM_BEGIN_NAMESPACE
-
 class QGstVideoBuffer : public QAbstractVideoBuffer
 {
 public:
@@ -67,8 +65,6 @@ private:
     MapMode m_mode;
 };
 
-
-QTM_END_NAMESPACE
 
 #endif
 

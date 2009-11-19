@@ -42,9 +42,6 @@
 #include "qm3uhandler.h"
 #include <qstringlist.h>
 
-QTM_BEGIN_NAMESPACE
 
 Q_EXPORT_STATIC_PLUGIN(QM3uPlaylistPlugin)
 Q_EXPORT_PLUGIN2(qm3u, QM3uPlaylistPlugin)
-
-QTM_END_NAMESPACE

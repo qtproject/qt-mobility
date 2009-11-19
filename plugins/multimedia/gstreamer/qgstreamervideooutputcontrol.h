@@ -46,6 +46,8 @@
 
 #include <gst/gst.h>
 
+QTM_USE_NAMESPACE
+
 class QGstreamerVideoRendererInterface
 {
 public:

@@ -54,6 +54,7 @@
 #include <QtMultimedia/qabstractvideosurface.h>
 
 #include "cameraformatconverter.h"
+QTM_USE_NAMESPACE
 
 class V4LVideoRenderer;
 
