@@ -42,7 +42,7 @@
     archiving utility.  Note on some systems it is called gtar.
 
     On windows, uncompress the files into the directory you want
-    Qt Mobility installed, e.g. C:\QtMobility\%VERSION%.
+    Qt Mobility installed, e.g. C:\QtMobility\1.0.0
 
     NOTE: The install path must not contain any spaces.
 
@@ -62,11 +62,11 @@
 
     Type "./configure -help" to get a list of all available options.
     
-    To create all the libraries, tools and examples, type:
+    To create all the libraries and tools, type:
 
         make
 
-    To install the libraries, tools and examples, type:
+    To install the libraries and tools, type:
 
         make install
 
@@ -86,14 +86,14 @@
 4.2 Building On Windows
 
     To configure Qt Mobility for your machine type:
-        cd c:\QtMobility\%VERSION%
+        cd c:\QtMobility\1.0.0
         configure
 
     Type "configure -help" to get a list of all available options.
 
     The actual commands needed to build Qt Mobility depends on your
     development system.  For Microsoft Visual Studio to create the
-    libraries, tools and examples type:
+    libraries and tools type:
         
         nmake
 
