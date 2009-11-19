@@ -458,22 +458,12 @@ void RecentMessagesWidget::updateState()
         }
         break;
         case Processing:
-        {
             m_layout->setCurrentWidget(m_messageListWidget);
-            //m_messageListWidget->setEnabled(false);
-            //m_messageListWidget->blockSignals(true);
-        }
         break;
         case LoadFailed:
         {
             m_statusLabel->setText("Load failed!");
             m_layout->setCurrentWidget(m_statusLabel);
-        }
-        break;
-        case Done:
-        {
-            //m_messageListWidget->setEnabled(true);
-            //m_messageListWidget->blockSignals(false);
         }
         break;
     }
@@ -501,10 +491,7 @@ void RecentMessagesWidget::processResults()
 {
     if(!m_ids.isEmpty())
     {
-        //m_messageListWidget->setEnabled(false);
-        //m_messageListWidget->blockSignals(true);
         QMessageId id = m_ids.takeFirst();
-
         QMessage message(id);
 
         QListWidgetItem* newItem = new QListWidgetItem(message.subject());
