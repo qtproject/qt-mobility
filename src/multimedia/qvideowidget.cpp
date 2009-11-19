@@ -797,6 +797,9 @@ void QVideoWidget::hideEvent(QHideEvent *event)
 {
     Q_D(QVideoWidget);
 
+    if (d->currentBackend)
+        d->currentBackend->hideEvent(event);
+
     if (d->outputControl)
         d->outputControl->setOutput(QVideoOutputControl::NoOutput);
 
