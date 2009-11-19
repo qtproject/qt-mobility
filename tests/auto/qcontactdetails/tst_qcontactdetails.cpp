@@ -553,6 +553,15 @@ void tst_QContactDetails::onlineAccount()
     o1.setAccountUri("test@nokia.com");
     QCOMPARE(o1.accountUri(), QString("test@nokia.com"));
     QCOMPARE(o1.value(QContactOnlineAccount::FieldAccountUri), QString("test@nokia.com"));
+    o1.setNickname("test");
+    QCOMPARE(o1.nickname(), QString("test"));
+    QCOMPARE(o1.value(QContactOnlineAccount::FieldNickname), QString("test"));
+    o1.setStatusMessage("Gone Fishing");
+    QCOMPARE(o1.statusMessage(), QString("Gone Fishing"));
+    QCOMPARE(o1.value(QContactOnlineAccount::FieldStatusMessage), QString("Gone Fishing"));
+    o1.setPresence("Extended Away");
+    QCOMPARE(o1.presence(), QString("Extended Away"));
+    QCOMPARE(o1.value(QContactOnlineAccount::FieldPresence), QString("Extended Away"));
 
     // Sub types
     o1.setSubTypes(QContactOnlineAccount::SubTypeSip);
@@ -563,9 +572,16 @@ void tst_QContactDetails::onlineAccount()
     o1.setSubTypes(sl);
     QCOMPARE(o1.subTypes(), sl);
 
+    o1 = QContactOnlineAccount();
+    o1.setAccountUri("test@nokia.com");
+
     // test property add
     QVERIFY(c.saveDetail(&o1));
     QCOMPARE(c.details(QContactOnlineAccount::DefinitionName).count(), 1);
+    QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).accountUri(), o1.accountUri());
+    QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).presence(), o1.presence());
+    QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).nickname(), o1.nickname());
+    QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).statusMessage(), o1.statusMessage());
     QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).accountUri(), o1.accountUri());
 
     // test property update
