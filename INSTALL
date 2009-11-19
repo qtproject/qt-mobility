@@ -116,6 +116,10 @@
         make
         make install
 
+    or on Windows:
+        cd src\bearer
+        nmake
+
 5.  Qt Mobility has been installed.
     Further information on Qt Mobility can be found
     at <TODO: QtMobility URL>
