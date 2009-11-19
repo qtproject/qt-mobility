@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include <qmobilityglobal.h>
 #include <qradiotunercontrol.h>
 #include <qmediacontrol_p.h>
 

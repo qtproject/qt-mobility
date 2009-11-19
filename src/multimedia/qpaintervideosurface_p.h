@@ -63,12 +63,11 @@
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideoframe.h>
 
+class QGLContext;
+
 QTM_BEGIN_NAMESPACE
 
-
-class QGLContext;
 class QVideoSurfacePainter;
-
 class Q_AUTOTEST_EXPORT QPainterVideoSurface : public QAbstractVideoSurface
 {
     Q_OBJECT

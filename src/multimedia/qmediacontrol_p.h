@@ -53,6 +53,8 @@
 // We mean it.
 //
 
+#include <qmobilityglobal.h>
+
 QTM_BEGIN_NAMESPACE
 
 class QMediaControl;

@@ -42,10 +42,10 @@
 #ifndef QRADIOTUNERCONTROL_H
 #define QRADIOTUNERCONTROL_H
 
-QTM_BEGIN_NAMESPACE
-
 #include <qmediacontrol.h>
 #include <qradiotuner.h>
+
+QTM_BEGIN_NAMESPACE
 
 class Q_MEDIA_EXPORT QRadioTunerControl : public QMediaControl
 {

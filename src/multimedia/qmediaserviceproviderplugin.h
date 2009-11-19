@@ -58,20 +58,28 @@ struct Q_MEDIA_EXPORT QMediaServiceProviderFactoryInterface : public QFactoryInt
     virtual QMediaService* create(QString const& key) = 0;
     virtual void release(QMediaService *service) = 0;
 };
+
+QTM_END_NAMESPACE
+
 #define QMediaServiceProviderFactoryInterface_iid \
     "com.nokia.Qt.QMediaServiceProviderFactoryInterface/1.0"
-Q_DECLARE_INTERFACE(QMediaServiceProviderFactoryInterface, QMediaServiceProviderFactoryInterface_iid)
+Q_DECLARE_INTERFACE(QtMobility::QMediaServiceProviderFactoryInterface, QMediaServiceProviderFactoryInterface_iid)
 
+QTM_BEGIN_NAMESPACE
 
 struct Q_MEDIA_EXPORT QMediaServiceSupportedFormatsInterface
 {
     virtual ~QMediaServiceSupportedFormatsInterface() {}
     virtual QtMedia::SupportEstimate hasSupport(const QString &mimeType, const QStringList& codecs) const = 0;
 };
+
+QTM_END_NAMESPACE
+
 #define QMediaServiceSupportedFormatsInterface_iid \
     "com.nokia.Qt.QMediaServiceSupportedFormatsInterface/1.0"
-Q_DECLARE_INTERFACE(QMediaServiceSupportedFormatsInterface, QMediaServiceSupportedFormatsInterface_iid)
+Q_DECLARE_INTERFACE(QtMobility::QMediaServiceSupportedFormatsInterface, QMediaServiceSupportedFormatsInterface_iid)
 
+QTM_BEGIN_NAMESPACE
 
 struct Q_MEDIA_EXPORT QMediaServiceSupportedDevicesInterface
 {
@@ -79,24 +87,34 @@ struct Q_MEDIA_EXPORT QMediaServiceSupportedDevicesInterface
     virtual QList<QByteArray> devices(const QByteArray &service) const = 0;
     virtual QString deviceDescription(const QByteArray &service, const QByteArray &device) = 0;
 };
+
+QTM_END_NAMESPACE
+
 #define QMediaServiceSupportedDevicesInterface_iid \
     "com.nokia.Qt.QMediaServiceSupportedDevicesInterface/1.0"
-Q_DECLARE_INTERFACE(QMediaServiceSupportedDevicesInterface, QMediaServiceSupportedDevicesInterface_iid)
+Q_DECLARE_INTERFACE(QtMobility::QMediaServiceSupportedDevicesInterface, QMediaServiceSupportedDevicesInterface_iid)
+
+QTM_BEGIN_NAMESPACE
 
 struct Q_MEDIA_EXPORT QMediaServiceFeaturesInterface
 {
     virtual ~QMediaServiceFeaturesInterface() {}
     virtual QMediaServiceProviderHint::Features supportedFeatures(const QByteArray &service) const = 0;
 };
+
+QTM_END_NAMESPACE
+
+//MOC doesn't recognire paramitized macros
 #define QMediaServiceFeaturesInterface_iid \
     "com.nokia.Qt.QMediaServiceFeaturesInterface/1.0"
-Q_DECLARE_INTERFACE(QMediaServiceFeaturesInterface, QMediaServiceFeaturesInterface_iid)
+Q_DECLARE_INTERFACE(QtMobility::QMediaServiceFeaturesInterface, QMediaServiceFeaturesInterface_iid)
 
+QTM_BEGIN_NAMESPACE
 
 class Q_MEDIA_EXPORT QMediaServiceProviderPlugin : public QObject, public QMediaServiceProviderFactoryInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QMediaServiceProviderFactoryInterface:QFactoryInterface)
+    Q_INTERFACES(QtMobility::QMediaServiceProviderFactoryInterface:QFactoryInterface)
 
 public:
     virtual QStringList keys() const = 0;

@@ -46,9 +46,9 @@
 
 #include <qvideowidget.h>
 
-QTM_BEGIN_NAMESPACE
-
 class QVideoSurfaceFormat;
+
+QTM_BEGIN_NAMESPACE
 
 class QGraphicsVideoItemPrivate;
 class  Q_MEDIA_EXPORT QGraphicsVideoItem : public QObject, public QGraphicsItem

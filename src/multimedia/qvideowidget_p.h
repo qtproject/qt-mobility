@@ -63,6 +63,7 @@
 #include <qpaintervideosurface_p.h>
 #endif
 
+class QStackedLayout;
 QTM_BEGIN_NAMESPACE
 
 class QVideoWidgetBackendInterface
@@ -204,7 +205,6 @@ private:
 };
 
 class QMediaService;
-class QStackedLayout;
 class QVideoOutputControl;
 
 class QVideoWidgetPrivate

@@ -216,6 +216,5 @@ QVariant QGraphicsVideoItem::itemChange(GraphicsItemChange change, const QVarian
     }
 }
 
-QTM_END_NAMESPACE
-
 #include "moc_qgraphicsvideoitem.cpp"
+QTM_END_NAMESPACE
