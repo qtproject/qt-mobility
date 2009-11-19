@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 #include "qmessagecontentcontainerid.h"
-#include "qmessagecontentcontainerid_p.h"
 
 /*!
     \class QMessageContentContainerId
