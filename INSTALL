@@ -1,0 +1,123 @@
+1.  Prerequisites & Dependencies:
+    To install Qt Mobility you must already have installed
+    Qt 4.6 or higher, visit http://qt.nokia.com/downloads to obtain
+    a copy.
+
+    Qt Mobility is comprised of a number of components.
+    Some of these components have dependencies and
+    these are outlined below:
+    
+    Messaging: 
+    The linux backend depends on QMF.
+    For more information on QMF visit 
+    http://labs.trolltech.com/blogs/category/qtmessaging
+
+    The Windows Mobile backend depends on ActiveSync version 4.5.
+
+    Service Framework:
+    The service framework depends on SQLite version 3 and that
+    Qt has been built with an sqlite driver.  Building
+    the driver by Qt is most easily achieved by 
+    using one of the following configure options:
+    -qt-sql-sqlite
+    -plugin-sql-sqlite
+    -system-sqlite
+    
+    Multimedia:
+    The multimedia component depends on the QtMultimedia
+    module in Qt.  Qt by default is configured to make this
+    module with the -multimedia option.
+
+    For more details about dependencies see:
+    <TODO: QtMobility URL>
+
+2.  Unpack the Qt Mobility archive if you have not done so already:
+    On Unix (X11 and Mac):
+        cd /tmp
+        gunzip %DISTNAME%.tar.gz        #uncompress the archive
+        tar xvf %DISTNAME%.tar          #unpack it
+
+    This creates the directory /tmp/%DISTNAME% containing the files
+    from the archive.  We only support the GNU version of the tar
+    archiving utility.  Note on some systems it is called gtar.
+
+    On windows, uncompress the files into the directory you want
+    Qt Mobility installed, e.g. C:\QtMobility\%VERSION%.
+
+    NOTE: The install path must not contain any spaces.
+
+4.  Building
+4.1 Building On Unix
+    
+    To configure the Qt Mobility libraries for your machine, run the
+    ./configure script in the package directory.
+
+    By default, Qt Mobility is configured for installation into the
+    install directory of the package directory. eg
+    /tmp/%DISTNAME%/install, but this can be changed using
+    the -prefix option.
+
+    cd /tmp/%DISTNAME%
+    ./configure
+
+    Type "./configure -help" to get a list of all available options.
+    
+    To create all the libraries, tools and examples, type:
+
+        make
+
+    To install the libraries, tools and examples, type:
+
+        make install
+
+    If you have specified an install directory with root ownership,
+    you will need to type:
+
+    su -c "make install"
+        or
+    sudo make install
+   
+    and enter in the appropriate password.
+
+    Note that on some systems the make utility is named differently,
+    e.g. gmake.  The configure script tells you which make utility to
+    use.
+
+4.2 Building On Windows
+
+    To configure Qt Mobility for your machine type:
+        cd c:\QtMobility\%VERSION%
+        configure
+
+    Type "configure -help" to get a list of all available options.
+
+    The actual commands needed to build Qt Mobility depends on your
+    development system.  For Microsoft Visual Studio to create the
+    libraries, tools and examples type:
+        
+        nmake
+
+4.3 Building Individual Qt Mobility Components
+
+    Qt Mobility is comprised of several components but all of
+    these may not need to be built.  To build a single component,
+    perform the configure step as outlined in 4.1 and 4.2,
+    and then perform the make step in the appropriate directory
+    to create the desired library.
+
+    The directory structure will look something like
+    ./src/bearer
+    ./src/contacts
+    ./src/global
+    ... etc
+
+    e.g. To build bearer:
+        cd ./src/bearer
+        make
+        make install
+
+5.  Qt Mobility has been installed.
+    Further information on Qt Mobility can be found
+    at <TODO: QtMobility URL>
+
+    We hope you enjoy using Qt Mobility. Good luck!
