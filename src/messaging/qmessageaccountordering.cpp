@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 #include "qmessageaccountordering.h"
-#include "qmessageaccountordering_p.h"
 
 /*!
     \class QMessageAccountOrdering

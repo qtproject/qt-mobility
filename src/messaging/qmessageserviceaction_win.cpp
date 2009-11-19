@@ -292,6 +292,8 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
     }
 
     QMessage outgoing(message);
+    //ensure the message is marked read otherwise showForm displays the message as incomming
+    outgoing.setStatus(QMessage::Read,true);
 
     if(!outgoing.parentAccountId().isValid())
     {
