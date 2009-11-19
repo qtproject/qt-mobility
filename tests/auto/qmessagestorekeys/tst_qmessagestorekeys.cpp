@@ -2618,6 +2618,30 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] ) // contains body but does not match filter
         << "summer";
+
+    // Test options
+    QMessageFilter caseInsensitive1(QMessageFilter::bySubject("free beer", QMessageDataComparator::Equal));
+    QTest::newRow("options:caseInsensitive 1")
+        << caseInsensitive1
+        << ( QMessageIdList() << messageIds[4] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
+        << "";
+
+    QMessageFilter caseSensitive1(QMessageFilter::bySubject("free beer", QMessageDataComparator::Equal));
+    caseSensitive1.setOptions(QMessageDataComparator::CaseSensitive);
+    QTest::newRow("options:caseSensitive 1")
+        << caseSensitive1
+        << QMessageIdList()
+        << messageIds
+        << "";
+
+    QMessageFilter caseSensitive2(QMessageFilter::bySubject("Free beer", QMessageDataComparator::Equal));
+    caseSensitive2.setOptions(QMessageDataComparator::CaseSensitive);
+    QTest::newRow("options:caseSensitive 2")
+        << caseSensitive2
+        << ( QMessageIdList() << messageIds[4] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
+        << "";
 }
 
 void tst_QMessageStoreKeys::testMessageFilter()
