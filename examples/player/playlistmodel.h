@@ -42,9 +42,14 @@
 #ifndef PLAYLISTMODEL_H
 #define PLAYLISTMODEL_H
 
+#include <qmobilityglobal.h>
 #include <QtCore/qabstractitemmodel.h>
 
+QTM_BEGIN_NAMESPACE
 class QMediaPlaylist;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class PlaylistModel : public QAbstractItemModel
 {

@@ -47,6 +47,8 @@
 #include <QString>
 #include <QStringList>
 
+QTM_USE_NAMESPACE
+
 class Serialiser
 {
 public:

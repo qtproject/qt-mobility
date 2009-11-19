@@ -50,6 +50,8 @@ class QAbstractButton;
 class QAbstractSlider;
 class QComboBox;
 
+QTM_USE_NAMESPACE
+
 class PlayerControls : public QWidget
 {
     Q_OBJECT

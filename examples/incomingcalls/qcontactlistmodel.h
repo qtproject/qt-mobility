@@ -61,9 +61,13 @@
 #include <QAbstractListModel>
 #include <QSharedData>
 
+QTM_BEGIN_NAMESPACE
 class QContactManager;
 class QContactFetchRequest;
 class QContactLocalIdFetchRequest;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class QContactListModelPrivate;
 class QContactListModel : public QAbstractListModel

@@ -46,6 +46,8 @@
 
 #include <qnetworksession.h>
 
+QTM_USE_NAMESPACE
+
 class SessionWidget : public QWidget, public Ui_SessionWidget
 {
     Q_OBJECT
