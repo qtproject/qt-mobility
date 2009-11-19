@@ -99,7 +99,7 @@ static QStringList validPluginFiles()
     // these are the plugins under tests/ which point to real service plugins
     // that can be used for testing (i.e. plugins that can be loaded, invoked)
     QStringList files;
-    files << "tst_sfw_sampleserviceplugin" << "tst_sfw_sampleserviceplugin2";
+    files << "plugins/tst_sfw_sampleserviceplugin" << "plugins/tst_sfw_sampleserviceplugin2";
     return files;
 }
 static const QStringList VALID_PLUGIN_FILES = validPluginFiles();
@@ -140,7 +140,7 @@ class tst_QServiceManager: public QObject
 private:
     QString xmlTestDataPath(const QString &xmlFileName)
     {
-        return QCoreApplication::applicationDirPath() + "/xmldata/" + xmlFileName;
+        return QCoreApplication::applicationDirPath() + "/plugins/xmldata/" + xmlFileName;
     }
 
     QByteArray createServiceXml(const QString &serviceName, const QByteArray &interfaceXml, const QString &path, const QString &description = QString()) const
@@ -801,16 +801,18 @@ void tst_QServiceManager::loadInterface_descriptor_data()
     QServiceInterfaceDescriptorPrivate *priv = new QServiceInterfaceDescriptorPrivate;
     priv->interfaceName = "com.nokia.qt.TestInterfaceA";    // needed by service plugin implementation
 
-    lib.setFileName(QCoreApplication::applicationDirPath() + "/tst_sfw_sampleserviceplugin");
+    lib.setFileName(QCoreApplication::applicationDirPath() + "/plugins/tst_sfw_sampleserviceplugin");
     QVERIFY(lib.load());
+    QVERIFY(lib.unload());
     priv->properties[QServiceInterfaceDescriptor::Location] = lib.fileName();
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
     QTest::newRow("tst_sfw_sampleserviceplugin")
             << descriptor
             << "SampleServicePluginClass";
 
-    lib.setFileName(QCoreApplication::applicationDirPath() + "/tst_sfw_testservice2plugin");
+    lib.setFileName(QCoreApplication::applicationDirPath() + "/plugins/tst_sfw_testservice2plugin");
     QVERIFY(lib.load());
+    QVERIFY(lib.unload());
     priv->properties[QServiceInterfaceDescriptor::Location] = lib.fileName();
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
     QTest::newRow("tst_sfw2_sampleserviceplugin")
@@ -823,8 +825,9 @@ void tst_QServiceManager::loadInterface_testLoadedObjectAttributes()
 #if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
     QSfwTestUtil::removeDatabases();
 #endif
-    QLibrary lib(QCoreApplication::applicationDirPath() + "/tst_sfw_testservice2plugin");
+    QLibrary lib(QCoreApplication::applicationDirPath() + "/plugins/tst_sfw_testservice2plugin");
     QVERIFY(lib.load());
+    QVERIFY(lib.unload());
 
     QServiceInterfaceDescriptor descriptor;
     QServiceInterfaceDescriptorPrivate *priv = new QServiceInterfaceDescriptorPrivate;
@@ -890,7 +893,7 @@ void tst_QServiceManager::getInterface()
     QSfwTestUtil::removeDatabases();
 #endif
     //ensure the plugin exists 
-    QLibrary lib(QCoreApplication::applicationDirPath() + "/tst_sfw_sampleserviceplugin");
+    QLibrary lib(QCoreApplication::applicationDirPath() + "/plugins/tst_sfw_sampleserviceplugin");
     QCOMPARE(lib.load(), true);
     lib.unload();
 
@@ -1298,7 +1301,7 @@ void tst_QServiceManager::serviceAdded()
     }
 
     // Pause between file changes so they are detected separately
-    QTest::qWait(1000);
+    QTest::qWait(2000);
 
     QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)));
     QVERIFY(mgr_modify.removeService(serviceName));
@@ -1313,6 +1316,9 @@ void tst_QServiceManager::serviceAdded()
 #ifndef Q_OS_WIN    // on win, cannot delete the database while it is in use
     // try it again after deleting the database
     deleteTestDatabasesAndWaitUntilDone();
+#else
+    // Pause between file changes so they are detected separately
+    QTest::qWait(2000);
 #endif
 
     spyAdd.clear();
@@ -1391,7 +1397,7 @@ void tst_QServiceManager::serviceRemoved()
     }
 
     // Pause between file changes so they are detected separately
-    QTest::qWait(1000);
+    QTest::qWait(2000);
 
     QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QServiceManager::Scope)));
     QVERIFY(mgr_modify.removeService(serviceName));
@@ -1410,6 +1416,9 @@ void tst_QServiceManager::serviceRemoved()
 #ifndef Q_OS_WIN    // on win, cannot delete the database while it is in use
     // try it again after deleting the database
     deleteTestDatabasesAndWaitUntilDone();
+#else
+    // Pause between file changes so they are detected separately
+    QTest::qWait(2000);
 #endif
 
     spyAdd.clear();
@@ -1425,7 +1434,7 @@ void tst_QServiceManager::serviceRemoved()
     spyRemove.clear();
 
     // Pause between file changes so they are detected separately
-    QTest::qWait(1000);
+    QTest::qWait(2000);
 
     QVERIFY(mgr_modify.removeService(serviceName));
     if (!expectSignal) {

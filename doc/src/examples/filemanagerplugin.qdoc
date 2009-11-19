@@ -43,5 +43,5 @@
     \example filemanagerplugin
     \title File Manager Plugin Example
 
-    This example shows how to write a service plugin for the \l{Qt Service Framework Developer Resources}{Service Framework}.
+    This example shows how to write a service plugin for the \l{Qt Service Framework}{Service Framework}.
 */

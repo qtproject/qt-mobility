@@ -43,14 +43,8 @@
 #define private public
 #include <qserviceinterfacedescriptor.h>
 #include <qserviceinterfacedescriptor_p.h>
-#include "../../../serviceframework/qserviceinterfacedescriptor.cpp"
-#include <servicedatabase_p.h>
-#include "../../../serviceframework/servicemetadata.cpp"
-#include "../../../serviceframework/servicedatabase.cpp"
-#include <qservicefilter.h>
-#include <databasemanager_p.h>
-#include "../../../serviceframework/databasemanager.cpp"
 #include "../qsfwtestutil.h"
+#include <databasemanager_p.h>
 
 #if defined(Q_OS_SYMBIAN)
 # define TESTDATA_DIR "."

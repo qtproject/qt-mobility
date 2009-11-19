@@ -40,310 +40,148 @@
 ****************************************************************************/
 
 /*!
-
-\page index.html
-
-\title Qt Service Framework Developer Resources
-
-\tableofcontents
-
-
-\section1 Introduction
-
-The Qt Service framework provides a set of APIs that allows clients to discover and instantiate arbitrary services. 
-This is achieved by defining a unified way of finding, implementing and accessing services across multiple platforms.
-Due to the service frameworks knowledge of service interfaces, their versions and QObject-based introspection
-it may even be used to unify and access multiple platform specific service implementations via the same Qt-based 
-client application.
-
-\section1 Overview 
-
-A service is an independent component that allows a client to perform a well-defined operation. Clients
-can find services based on their name and version as well as the interface that is implemented by the service object.
-Once the service has been identified the framework starts the service and returns a pointer
-to it. QServiceManager is the main interface through which clients can access the mentioned
-framework functionality. In addition services themselves may also act as clients to the service framework by requesting
-other services installed on the system.
-
-Service provider are implemented via plug-ins. QServicePluginInterface defines the main interface for each plug-in.
-In order to avoid that clients have to link against service specific libraries each service object must be derived
-from QObject. Therefore the QMetaObject system can be used to dynamically discover and invoke the service's capabilities.
-To achieve the best level of access via the Qt meta object system services should be implemented in such a way that 
-their entire functionality is accessable via the signals, slots, properties or invokable functions 
-(see Q_INVOKABLE macro for more details).
-
-Each service plug-in implements one service only but can provide multiple implementations for multiple interfaces. 
-Therefore a service (plug-in) can retain a certain level of backwards compatibility even if the main service interface breaks
-in such a way that a new interface name has to be used. Existing clients can still use the previous version of service interface
-whereas new clients can utilize the new interface. 
-
-Future versions of this framework may also enable access to out-of-process service provider. 
-
-\section1 Using the framework
-
-This section assumes that the user wants to access the \i FileManager service which offers an implementation for the \i com.nokia.qt.examples.FileStorage interface
-The service framework enables multiple ways of accessing those implementations. 
-
-QServiceManager is the main class to lookup and instantiate services. Services can be found by constraining the search via service meta data or
-by using the default lookup mechanism.
-
-\section2 Verbose lookup
-
-The client code has precise knowledge of the service and its interfaces. 
-
-\code
-    QServiceManager manager;
-    QServiceFilter filter("com.nokia.qt.examples.FileStorage");
-    filter.setServiceName("FileManager");
-
-    // find services complying with filter
-    QList<QServiceInterfaceDescriptor> foundServices
-    foundServices = manager.findInterfaces(filter);
-    Q_ASSERT(foundServices.count());
-
-    // instantiate the FileStorage object
-    QObject *fileStorage;
-    fileStorage = manager.loadInterface(foundServices.at(0));
-\endcode
-
-\section2 Default lookup
-
-The client code has knowledge of the interface and doesn't really care about the service that implements the interface. In such cases 
-the default service lookup can be utilized to create a service object instance. If the same service provides multiple versions of 
-the same interface the latest version is returned. Therefore subsequent versions of the same interface must always be binary 
-compatible to previous versions.
-
-\code
-    QServiceManager manager;
-    QObject *storage;
-    storage = manager.loadInterface("com.nokia.qt.examples.FileStorage");
-\endcode
-
-\section2 Header lookup
-
-So far all lookup mechanism returned a QObject pointer. This pointer can be utilised by introspecting the object using 
-Qt's meta object system. Therefore the client does not have to have any knowledge of the object header or symbols. However in some use cases 
-it may be more convenient to directly interact with the service object by including the service header and/or linking against the service provider.
-The subsequent code snippet demonstrates how this may look like:
-
-\code
-#include <filestorage.h>
-...
-QServiceManager manager;
-FileStorage *storage = 0;
-...
-manager.setInterfaceDefault("FileManager", "com.nokia.qt.examples.FileStorage");
-storage = manager.getInterface<FileStorage>("com.nokia.qt.examples.FileStorage");
-
-\endcode
-
-
-\section2 Service scope
-
-The QServiceManager operates in either \l{QServiceManager::UserScope}{User scope} or \l{QServiceManager::SystemScope}{System scope}. By default, it operates in user scope. The choice of scope affects whether registered services are available system-wide or only to the current user, and whether service and interface lookups are limited to system-wide service or whether the current user's together with system service configurations are considered.
-
-\section3 User scope
-
-In user scope, services are registered in a storage location specific to the current user. When a default service is set for an interface using \l{QServiceManager::setInterfaceDefault()}{setInterfaceDefault()}, the referenced service can be either a user-specific or system-wide service.
-
-For service and interface lookups, a manager will first search the user-specific services; if the requested component is not found, the manager then searches the system-wide services, if the user has sufficient permissions to do so.
-
-The \l{QServiceManager::serviceAdded()} and \l{QServiceManager::serviceRemoved()} notifications are emitted when services are added or removed from either the user-specific or system-wide services. These signals have a \c scope parameter to indicate the scope in which the service was added or removed. (Note the system-wide service notifications are only available if the user has sufficient permissions to access the system-wide service storage.)
-
-\section3 System scope
-
-In system scope, services are registered in a system-wide storage location. The manager does not access user-specific services for any operations. Service and interface lookups fail if the requested services are not found in the system-wide service storage. Service registration is performed in the system-wide storage.
-
-If \l{QServiceManager::setInterfaceDefault()}{setInterfaceDefault()} is called for a user-specific service, the operation fails.
-
-Also, the \l{QServiceManager::serviceAdded()} and \l{QServiceManager::serviceRemoved()} notifications are only emitted for system-wide services.
-
-
-
-\section1 Adding and removing of services
-
-New services can be installed and removed at runtime. An XML file is used to describe the service meta data and links the service code
-to its meta description.
-
-\section2 XML format
-
-Services are installed via an XML file which describes the meta data and location of the service. The xml file can be described via the following 
-DTD:
-
-\code
-    <!ELEMENT service ( name, filepath, description?, interface+ ) >
-    <!ELEMENT description ( #CDATA ) >
-    <!ELEMENT filepath ( #PCDATA ) >
-    <!ELEMENT interface ( name, version, description?, capabilities?, customproperty* ) >
-    <!ELEMENT capabilities ( #PCDATA ) >
-    <!ELEMENT name ( #PCDATA ) >
-    <!ELEMENT version ( #PCDATA ) >
-    <!ELEMENT customproperty ( #CDATA ) >
-    <!ATTLIST customproperty key NMTOKEN #REQUIRED >
-
-\endcode
-
-The elements and attributes have the following meanings:
-
-\table
-    \header
-        \o Element \o SubElement \o Description
-   \row
-        \o service
-        \o 
-        \o The \i service tag can contain an arbitrary number of \i interface tags and one description tag.
-    \row
-        \o "
-        \o description
-        \o A user readable description of the purpose of the service.
-    \row
-        \o "
-        \o filepath
-        \o The absolute path and name of the plug-in to be loaded when this service is requested. Alternatively if the plug-in
-           name only is provided the standard library paths (see QCoreApplication::libraryPaths()) are used to find the plug-in.
-           Note that if the plugin name is given only, platform specific parts such as the suffix ".dll" and ".so" or plugin prefix "lib"
-           should be removed to enable cross platform resolution. QLibrary is used to determine the platform specific parts of the plugin.
-    \row
-        \o "
-        \o name
-        \o The name of the service.
-    \row
-        \o interface
-        \o
-        \o The \i interface describes the properties of the interface.
-    \row
-        \o "
-        \o capabilities
-        \o This property is a list of arbitrary strings which are interpreted as permissions/capabilities. This list can be empty.
-    \row
-        \o "
-        \o name
-        \o The name of the interface using the Java class name notation. (e.g. com.nokia.qt.TestService)
-    \row
-        \o "
-        \o version
-        \o This property contains the interface and implementation version. The version tag follows the \i major.minor notation. The major version indicates the interface version the minor version the implementation version.
-
-           The version number \bold must be greater than 1.0. The version cannot be less than 1.0 because the Service Framework is dependent on the fact that services must be binary compatible between major versions, and services with versions less than 1.0 are unlikely to be binary compatible with later versions.
-    \row
-        \o "
-        \o description
-        \o A user readable description of the purpose of the interface.
-    \row
-        \o "
-        \o customproperty
-        \o An implementation specific key value pair which can be used for filtering or as description.
- 
-\endtable
-
-
-An example for a valid XML service description could be the following \i TestService:
-
-\code
-    <?xml version="1.0" encoding="utf-8" ?>
-    <service>
-        <name>TestService</name>
-        <filepath>testserviceplugin</filepath>
-        <description>Test service description</description>
-        <interface>
-            <name>com.nokia.qt.ILocation</name>
-            <version>1.4</version>
-            <capabilities></capabilities>
-            <description>Interface that provides location support</description>
-        </interface>
-        <interface>
-            <name>com.nokia.qt.ILocation</name>
-            <version>1.5</version>
-            <capabilities></capabilities>
-            <description>Interface that provides location support</description>
-        </interface>
-        <interface>
-            <name>com.nokia.qt.ISysInfo</name>
-            <capabilities>ReadUserData</capabilities>
-            <version>2.3</version>
-            <description>Interface that provides system information support</description>
-            <customproperty key="key1">value1</customproperty>
-            <customproperty key="key2">value2</customproperty>
-        </interface>  
-    </service>
-\endcode
-
-\section2 Tools for XML generation
-
-The framework includes a GUI tool under \tt tools/servicexmlgen for generating and inspecting service XML files. This makes it easy to enter service metadata and interface details and generate the appropriate XML to describe the service. It can also be used to load and inspect existing service XML files.
-
-Here is a screenshot of the application, loaded with the \i TestService XML description provided above.
-
-\image servicexmlgen.png
-
-
-\section2 Installing the service at runtime
-
-New services can be added and removed at any time via QServiceManager::addService() and QServiceManager::removeService().
-
-
-\section1 Identifying services
-
-Each implementation is identified by a service name, an interface name and its version. This information is encapsulated 
-by QServiceInterfaceDescriptor which can be used to request references to service objects. 
-
-QServiceFilter simplifies the lookup of already installed services. Developers specifies the criteria used during the meta data lookup. The subsequent example
-demonstrates the interaction between QServiceInterfaceDescriptor and QServiceFilter by creating references to all services that implement the 
-interface \i com.nokia.qt.ILocation:
-
-\code
-    QServiceManager mgr;
-    QServiceFilter filter;
-    filter.setInterfaceName("com.nokia.qt.ILocation");
-    QList<QServiceInterfaceDescriptor> list = mgr.findInterfaces(filter);
-    for(int i = 0; i < list.size(); i++) {
-        QObject *serviceObject;
-        serviceObject = mgr.loadInterface(list[i]);
-
-        // returned object owned by client
-        if (serviceObject)
-            serviceObject->setParent(this);
-    }
-\endcode
-
-\section1 Upgrading services
-There are two ways in which to upgrade a service.  The first is an incremental approach whereby QServiceManager::addService() is used to register 
-an XML descriptor whose service name already exists but defines new interface implementations.  For example an already existing service, "ovi"
-may define version 1.0 of interface,"IDownload".  QServiceManager::addService() is then called with an XML descriptor that declares itself
-as belonging the "ovi" service, but implements version 1.1 of the interface "IDownload".  Both implementation versions will be
-available for use.
-
-The second method is a replacement approach whereby an existing service is completely removed and replaced by a new service.
-As an example the already existing "ovi" service may implement interface "IDownload" version 1.0, the new "ovi" service may 
-implement "IDownload" version 1.0 and version 1.1.  In this case the old service implementation must be first be removed using
-QServiceManager::removeService() to make way for the new service implementation.
-
-\section1 Building and compiling
-
-This library requires Qt 4.5 to be installed.
-
-To build the library, run \tt qmake and \tt make.
-
-
-\section1 Reference documentation
-
-\section2 Main classes
-
-\list
-    \o \l{QServiceContext}
-    \o \l{QServiceFilter}
-    \o \l{QServiceInterfaceDescriptor}
-    \o \l{QServiceManager}
-    \o \l{QServicePluginInterface}
-    \o \l{QAbstractSecuritySession}
-\endlist
-
-\section2 Examples
-
-\list
-    \o \l{File Manager Plugin Example}
-    \o \l{Bluetooth Transfer Plugin Example}
-    \o \l{Service Browser Example}
-\endlist
+    \group mobility
+    \title Qt Mobility APIs
+
+    The Qt Mobility is a set of APIs which have the goal of supplying features
+    for various mobile devices.
 
 */
+
+/*!
+    \page index.html
+    \startpage index.html  Qt Reference Documentation
+
+    \title Qt Mobility Overview
+
+    \brief An overview of the Qt Mobility APIs.
+
+    The Qt Mobility is a set of APIs which have the goal of supplying features
+    for various mobile devices.
+
+    \tableofcontents
+
+    \raw HTML
+    <a href="classlists.html">List of Mobility Classes and Functions</a>
+    \endraw
+
+    \section1 Mobility Component APIs
+
+    \annotatedlist  mobility
+
+    \section1 Overview
+    
+    These APIs give the developer a wide range of desirable functions for a
+    mobile platform. A mobile device using the Qt Mobility API should be able
+    to
+        \list
+        \o Locate services on-board or remotely. Find an optimal
+    connection to the network for the particular service.
+        \o Services built on top of this would include Internet applications
+    such as email and web browsing.
+        \o Multimedia features enable image and video capture with audio ,
+    audio recording, and the playing of music or video clips.
+        \o Location will make the device aware of its geographical location
+    to support GIS applications.
+        \o Publish-Subscribe enables a flexible behavior for changed circumstances.
+        \endlist
+
+    \section1 Bearer Management
+
+    Although not a network manager, this component manages the connectivity
+    state to the network. So it does not manage network configurations, which
+    are the role of the platform provider, but it does allow the user to start
+    or stop network interfaces. Some higher level management of the connection
+    session may also be possible as well depending on the platform.
+
+    Some platforms can have a set of grouped access points perhaps based on a
+    common purpose. Bearer Management allows comparison and prioritization
+    of the access and use of these points. 
+
+    The aim of Bearer Management is to reduce the need for the developer to be
+    concerned about trying to locate the best connection from a list of
+    possible IP bearers and 3G connections. The user can select the best or
+    it can be selected transparently so that WLAN roaming can occur
+    seemlessly.
+
+    Some examples of the Bearer Management functionality,
+        \list
+        \o On demand use of the appropriate Access Point. When a user starts
+    to use a browser, the appropriate access point is selected from those
+    available and a connection is transparently made.
+        \o Always-on applications such as email or IM roam automatically
+    between cellular packet data and WLAN networks. The application developer
+    is in control and for example the application can gracefully close TCP
+    connections over the old bearer after setting up new TCP connections
+    over the new bearer.
+        \o Application developer can create a settings user interface, where
+    the user can select a certain connection to be used with the application
+        \o A connection manager application can be implemented with Qt. This
+    application enumerates available connections, shows counters, and allows
+    the user to connect or disconnect
+        \endlist
+
+    \section1 Contacts
+
+    The structure and retrieval of contact data from local or remote backends.
+    It includes the ability to create, edit, list, delete and lookup contact
+    information whether it is stored locally or remotely.
+
+    \section1 Publish and Subscribe
+
+    Enables context sensitive access to information. Data is organized as a tree, with
+    data being able to 'shadow' other data with the 'same key', a string
+    specifying the leaf or node. The context is an example of a context ontology,
+    a defined set of relationships. As the context changes the values of the
+    objects change but the relationships remain the same. It is intended to
+    be an enabling technology, the basis of a range future applications.
+
+    For example, this will make personalization easier as different people
+    would represent a different context. Or behavior of the device that
+    changes depending on physical location or device status.
+
+    \section1 Location
+
+    The C++ API is one layer of this feature. This API encapsulates basic
+    geographical information obtained from satellite or other sources about
+    the user, including latitude and longitude, bearing, speed and altitude.
+    It will enable a range of geographical applications, for example, maps.
+
+    \section1 Messaging
+
+    A common interface for handling SMS, MMS, XMPP, Email and partial MIME.
+    Sending, notification and retrieval of messages as well as the ability to
+    use a native app to create, edit, reply-to, send and display messages.
+    Supports the sending of messages with attachments, and in situations of
+    low battery to leave attachments on the server unless opened.
+
+    \section1 Multimedia
+
+    An API to record and play audio and video of various formats. The playing
+    and managing of a FM radio. This includes the typical functionality you
+    would find on a music player, combined with FM radio, and camera for still
+    and video recording.
+
+    \section1 Service Framework
+
+    A platform independent method of finding Services. A 'service' is an
+    independent component that allows a client to perform a well-defined 
+    operation.
+
+    The services are implemented as plugins installed on the device and can
+    look for supporting external services running on a central server. E.g.
+    weather, local tourist attractions etc. Also default applications can use
+    the layer to locate servers. Since this is a level of abstraction then the
+    app does not need to be concerned with the underlying protocol, where the
+    servers are, the hardware peculiarities with networking and other low
+    level details.
+
+    \section1 System Information
+
+    An API to discover system related information and capabilities. Information
+    available will cover software version numbers, hardware features,
+    network connection types and status, display, data storage devices,
+    device information and the screensaver.
+    
+*/
+

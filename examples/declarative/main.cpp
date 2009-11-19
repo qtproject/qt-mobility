@@ -44,7 +44,7 @@
 #include <QFileInfo>
 #include <QString>
 #include <QUrl>
-#include <QFxView>
+#include <QmlView>
 #include <QtCore>
 #include <qml.h>
 #include <qmlcontext.h>
@@ -81,7 +81,7 @@ int main(int argc, char** argv)
         url = QUrl::fromLocalFile(fi.absoluteFilePath());
 
     ServiceRegister registration;
-    QFxView canvas;
+    QmlView canvas;
     canvas.setUrl(url);
     QmlContext* ctxt = canvas.rootContext();
     ctxt->addDefaultObject(&registration);

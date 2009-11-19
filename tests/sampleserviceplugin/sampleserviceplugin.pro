@@ -1,13 +1,13 @@
 TEMPLATE      = lib
 CONFIG       += plugin testplugin
-INCLUDEPATH  += ../../serviceframework
+INCLUDEPATH  += ../../src/serviceframework
 HEADERS       = sampleserviceplugin.h
 SOURCES       = sampleserviceplugin.cpp
 TARGET        = tst_sfw_sampleserviceplugin
 DESTDIR = .
 
 include(../../common.pri)
-LIBS += -lQtServiceFramework
+qtAddLibrary(QtServiceFramework)
 
 symbian {
     load(data_caging_paths)
@@ -25,3 +25,4 @@ xml.files = xml/sampleservice.xml
 xml.CONFIG = no_link no_dependencies explicit_dependencies no_build combine ignore_no_exist no_clean
 INSTALLS += xml
 build_pass:ALL_DEPS+=install_xml
+

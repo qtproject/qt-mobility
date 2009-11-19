@@ -1,8 +1,8 @@
 TEMPLATE=app
 TARGET=sfw-kinetic-example
-INCLUDEPATH += ../../../serviceframework
+INCLUDEPATH += ../../../src/serviceframework
 
-include(../../../common.pri)
+include(../../examples.pri)
 
 QT += gui declarative
 
@@ -11,7 +11,7 @@ HEADERS += ../sfwexample.h
 SOURCES += ../sfwexample.cpp \
            ../main.cpp
 
-LIBS += -lQtServiceFramework
+qtAddLibrary(QtServiceFramework)
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

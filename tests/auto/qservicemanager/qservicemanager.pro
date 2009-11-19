@@ -1,9 +1,9 @@
 TARGET = tst_qservicemanager
-INCLUDEPATH += ../../../serviceframework
+INCLUDEPATH += ../../../src/serviceframework
 
 CONFIG+=testcase
 
-QT = core
+QT = core sql
 
 include(../../../common.pri)
 
@@ -14,7 +14,7 @@ SOURCES += tst_qservicemanager.cpp \
            ../../sampleserviceplugin/sampleserviceplugin.cpp \
            ../qsfwtestutil.cpp
 
-LIBS += -lQtServiceFramework
+qtAddLibrary(QtServiceFramework)
 
 symbian|wince* {
     symbian {
@@ -23,16 +23,17 @@ symbian|wince* {
     }
     wince* {
         SFWTEST_PLUGIN_DEPLOY.sources = \
-                $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/tst_sfw_sampleserviceplugin.dll \
-                $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/tst_sfw_sampleserviceplugin2.dll \
-                $$OUTPUT_DIR/build/tests/$$SUBDIRPART/bin/tst_sfw_testservice2plugin.dll
-        SFWTEST_PLUGIN_DEPLOY.path = .
+                $$OUTPUT_DIR/build/tests/bin/plugins/tst_sfw_sampleserviceplugin.dll \
+                $$OUTPUT_DIR/build/tests/bin/plugins/tst_sfw_sampleserviceplugin2.dll \
+                $$OUTPUT_DIR/build/tests/bin/plugins/tst_sfw_testservice2plugin.dll
+        SFWTEST_PLUGIN_DEPLOY.path = plugins
         DEPLOYMENT += SFWTEST_PLUGIN_DEPLOY
+        DEPLOYMENT_PLUGIN += qsqlite
     }
 
     addFiles.sources = ../../testservice2/xml/testserviceplugin.xml \
                        ../../sampleserviceplugin/xml/sampleservice.xml \
                        ../../sampleserviceplugin2/xml/sampleservice2.xml
-    addFiles.path = xmldata
+    addFiles.path = plugins/xmldata
     DEPLOYMENT += addFiles
 }

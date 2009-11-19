@@ -1,0 +1,189 @@
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+
+/*!
+\page publ-subs.html
+
+\title Publish and Subscribe
+\brief The Publish and Subscribe API, containing Value Space, enables
+applications to read item values, navigate through and subscribe
+to change notifications.
+
+\ingroup mobility
+
+The Publish and Subscribe API enables applications to read item values,
+navigate through and subscribe to change notifications.
+
+\tableofcontents
+
+
+\section1 Overview
+
+The Qt Value Space unifies various sources of hierarchical data into a
+single consistent model.  Conceptually the Value Space is a hierarchical tree
+of which each node or leaf can optionally contain a QVariant value.  A
+serialized version of a simple example Value Space might look like this.
+
+\code
+/Device/Buttons = 3
+/Device/Buttons/1/Name = Menu
+/Device/Buttons/1/Usable = true
+/Device/Buttons/2/Name = Select
+/Device/Buttons/2/Usable = false
+/Device/Buttons/3/Name = Back
+/Device/Buttons/3/Usable = true
+\endcode
+
+Existing values within the Value Space are accessed through the QValueSpaceSubscriber class.  This
+class provides a means to read values, receive change notifications for a given path and navigate
+through the Value Space.
+
+New values are added to the Value Space via the QValueSpaceProvider class.  This class allows
+applications to publish values and receive interest notifications when applications connect to a
+path.  Interest notifications can be used to refrain from updating values in the Value Space when
+there are no interested parties.
+
+Nodes in the Value Space can be thought of as representing schema objects.
+Obviously this is a conceptual differentiation and not a physical one, as
+internally the Value Space is treated as one large tree.  By applying
+structured schema to the space "explore-ability" is increased.  For example,
+the \c {/Device/Buttons} schema can be defined as containing a value
+representing the number of mappable buttons on a device, and a sub-item for
+each adhering to the \c {MappableButton} schema.  The \c {MappableButton}
+schema itself may be defined as containing two attributes \c {Name} and
+\c {Usable}.  Change notification is modeled in this fashion also.  Were the
+\c {/Device/Buttons/1/Name} item to change, the \c {/Device/Buttons/1} item
+would also be marked as changed, and so on up the tree.  This allows, for example,
+subscription to just \c {/Device/Buttons} to be notified when anything
+"button" related changes.
+
+Internally, the Value Space consists of an arbitrary number of data source trees, or layers, which
+are stacked on top of each other to form the final unified view.  If a "higher" layer contains an
+item, it shadows the value of items in the layers below it.  Consider the Value Space item
+\c {/Device/Buttons}.  If two layer contained this item, the value in the layer with the higher
+layer order (see \l {QAbstractValueSpaceLayer::order()}) would shadow that with the lower layer
+order.  However, if only the layer with the lower order contained this item, it would be visible
+through the QValueSpaceSubscriber class, even if the higher order layer contained sub-items such as
+\c {/Device/Buttons/1}.  That is, layer shadowing occurs by value not by path.
+
+Layer order is fixed and is defined in the layer implementation.
+
+The Qt Value Space contains the following layers:
+
+\table
+    \header
+        \o Layer
+        \o Description
+    \row
+        \o \l{Shared Memory Layer}
+        \o The Shared Memory layer provides a non-permanent Value Space backing store using shared
+           memory and local sockets.  The Shared Memory layer is only available on Unix platforms.
+    \row
+        \o Volatile Registry Layer
+        \o The Volatile Registry layer provides a non-permanent Value Space backing store using
+           volatile keys stored in the Windows' registry.  The Volatile Registry layer is only
+           available on Windows platforms.
+    \row
+        \o Non-volatile Registry Layer
+        \o The Non-volatile Registry layer provides a permanent Value Space backing store using
+           keys stored in the Windows' registry.  The Non-volatile Registry layer is only available
+           on Windows platforms.
+    \row
+        \o ContextKit Layer
+        \o The ContextKit layer provides a non-permanent Value Space backing store using
+           ContextKit.  Publishing values to this layer via QValueSpaceProvider is currently not
+           supported.
+\endtable
+
+The Qt Value Space has support for both client/server and peer-to-peer layer architectures.  If a
+layer that uses a client/server architecture is used and a server process is not provided by the
+underlying system it will be necessary to start one.  This can be done by calling
+QValueSpace::initValueSpaceServer() prior to any other use of the Value Space.
+
+\section1 Detailed Layer Descriptions
+
+\section2 Shared Memory Layer
+
+The Shared Memory layer stores all values in a 10MB block of shared memory which is reserved when
+the Value Space server initializes.  As the layer creates this region at startup, it is assumed
+that the operating system lazily commits memory.  If this assumption is invalid, the Shared Memory
+layer will unnecessarily consume 10MB of memory.
+
+Value Space clients read from the Shared Memory layer's shared memory region directly.  A kernel
+lock is acquired for each read to prevent corruption.  While the layer supports concurrent readers,
+it is possible that a faulty or malicious application could acquire and refuse to release this lock
+causing any layer updates to be delayed indefinitely.
+
+Only the Value Space server ever writes to the shared memory region.  When clients attempt to add
+items to the layer, their changes are transmitted via a QLocalSocket (e.g.
+\c {/tmp/qt/valuespace_shmlayer} domain socket on Unix systems) to the server where the update is
+performed.  Updates are batched in-process and sent when the process re-enters the Qt event loop.
+Transmission and synchronization of changes can be forced manually by the
+QValueSpaceProvider::sync() function, although as this requires a round trip between the client and
+server, doing so frequently may significantly degrade performance.
+
+Change notifications are transmitted to clients in the form of "something has changed" messages.
+Nodes within the shared memory region are versioned, which allows clients to quickly determine
+exactly what has changed without the need for a bulkier change notification protocol.
+
+\section1 Examples
+
+\section2 Publish and Subscribe
+
+In the example \l{publish-subscribe}{Publish and Subscribe} the Qt Value Space
+is used as a method of communicating changes in one dialog (the provider) to 
+another dialog (the consumer).
+
+\section2 Battery Charging - Accessing Publish and Subscribe from QML
+
+In the example \l {battery-charge}{Accessing Publish and Subscribe from QML} the Publish and
+Subscribe concept is now extended to make the provider an input of the level of charge in a
+battery.  A slider on the provider dialog represents the modifiable level of charge.  The Qt Value
+Space acts as a communications medium between the provider dialog and the consumer graphical
+battery animation. The battery is implemented in QML and C++ with Qt Value Space supplying the
+charge level for the animation to represent.
+
+\section1 Namespaces and Classes
+
+\annotatedlist publishsubscribe
+
+*/

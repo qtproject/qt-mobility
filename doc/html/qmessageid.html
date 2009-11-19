@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qmessageid.cpp -->
+<head>
+  <title>QMessageId Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMessageId Class Reference</h1>
+<p>The QMessageId class provides a unique identifier for a <a href="qmessage.html">QMessage</a> message within the scope of the messaging store. <a href="#details">More...</a></p>
+<pre>    #include &lt;QMessageId&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<ul>
+<li><a href="qmessageid-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessageid.html#QMessageId">QMessageId</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessageid.html#QMessageId-2">QMessageId</a></b> ( const QMessageId &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessageid.html#QMessageId-3">QMessageId</a></b> ( const QString &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessageid.html#dtor.QMessageId">~QMessageId</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageid.html#isValid">isValid</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmessageid.html#toString">toString</a></b> () const</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QMessageId class provides a unique identifier for a <a href="qmessage.html">QMessage</a> message within the scope of the messaging store.</p>
+<p>A QMessageId can be constructed from a string, or converted to a string with <a href="qmessageid.html#toString">toString</a>().</p>
+<p>A QMessageId instance can be tested for validity with <a href="qmessageid.html#isValid">isValid</a>(), and compared to other instances for equality.</p>
+<p>If the message a QMessageId identifies is removed from the messaging store then the identifier will not be reused.</p>
+<p>The QMessageId implementation should be as small as is practical for the underlying platform.</p>
+<p>See also <a href="qmessage.html">QMessage</a> and <a href="qmessagestore.html">QMessageStore</a>.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QMessageId"></a>QMessageId::QMessageId ()</h3>
+<p>Creates an invalid identifier, <a href="qmessageid.html#toString">toString</a>() will return a null string.</p>
+<h3 class="fn"><a name="QMessageId-2"></a>QMessageId::QMessageId ( const QMessageId &amp; <i>other</i> )</h3>
+<p>Constructs a copy of <i>other</i>.</p>
+<h3 class="fn"><a name="QMessageId-3"></a>QMessageId::QMessageId ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>id</i> )</h3>
+<p>Constructs an identifier from <i>id</i>.</p>
+<p>See also <a href="qmessageid.html#toString">toString</a>().</p>
+<h3 class="fn"><a name="dtor.QMessageId"></a>QMessageId::~QMessageId ()</h3>
+<p>Destroys the identifier.</p>
+<h3 class="fn"><a name="isValid"></a>bool QMessageId::isValid () const</h3>
+<p>Returns true if this identifier is valid; otherwise returns false.</p>
+<h3 class="fn"><a name="toString"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMessageId::toString () const</h3>
+<p>Returns the string representation of this identifier.</p>
+<p>A null string should be returned if and only if the identifier is invalid.</p>
+<p>String representations of identifiers should not be used to test for equality, instead the equality operator should be used.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Qt Mobility API</div></td>
+</tr></table></div></address></body>
+</html>

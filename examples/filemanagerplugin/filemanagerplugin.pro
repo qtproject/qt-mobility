@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-INCLUDEPATH += ../../serviceframework
+INCLUDEPATH += ../../src/serviceframework
 HEADERS += filemanagerplugin.h \
            filemanagerstorage.h \
            filemanagertransfer.h
@@ -10,8 +10,8 @@ SOURCES += filemanagerplugin.cpp \
 TARGET = serviceframework_filemanagerplugin
 DESTDIR = .
 
-include(../../common.pri)
-LIBS += -lQtServiceFramework
+include(../examples.pri)
+qtAddLibrary(QtServiceFramework)
 
 symbian {
     load(data_caging_paths)

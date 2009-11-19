@@ -1,7 +1,7 @@
 TARGET=tst_servicedatabase
 QT = core sql
-INCLUDEPATH += ../../../serviceframework
-DEPENDPATH += ../../../serviceframework 
+INCLUDEPATH += ../../../src/serviceframework
+DEPENDPATH += ../../../src/serviceframework
 
 wince*|symbian*: {
     addFiles.sources = testdata/*
@@ -21,8 +21,8 @@ include(../../../common.pri)
 
 # Input 
 SOURCES += tst_servicedatabase.cpp \
-
-LIBS += -lQtServiceFramework
+            
+qtAddLibrary(QtServiceFramework)
 
 symbian {
     libBlock = \
@@ -36,3 +36,6 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
 
+wince* {
+    DEPLOYMENT_PLUGIN += qsqlite
+}

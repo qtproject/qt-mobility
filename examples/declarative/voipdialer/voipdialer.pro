@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-INCLUDEPATH += ../../../serviceframework
+INCLUDEPATH += ../../../src/serviceframework
 TARGET = serviceframework_voipdialerservice
 include(../../../common.pri)
 
@@ -10,7 +10,7 @@ QT += gui
 HEADERS += voipdialer.h voipdialerplugin.h
 SOURCES += voipdialer.cpp voipdialerplugin.cpp
 
-LIBS += -lQtServiceFramework
+qtAddLibrary(QtServiceFramework)
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

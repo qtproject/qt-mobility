@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-INCLUDEPATH += ../../../serviceframework
+INCLUDEPATH += ../../../src/serviceframework
 TARGET = serviceframework_landlinedialerservice
 include(../../../common.pri)
 
@@ -10,7 +10,7 @@ QT += gui
 HEADERS += landlinedialer.h landlinedialerplugin.h
 SOURCES += landlinedialer.cpp landlinedialerplugin.cpp
 
-LIBS += -lQtServiceFramework
+qtAddLibrary(QtServiceFramework)
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

@@ -1,6 +1,6 @@
 TARGET=tst_qservicefilter
 SOURCES += tst_qservicefilter.cpp
-INCLUDEPATH += ../../../serviceframework
+INCLUDEPATH += ../../../src/serviceframework
 
 CONFIG+=testcase
 
@@ -8,7 +8,7 @@ QT = core
 
 include(../../../common.pri)
 
-LIBS += -lQtServiceFramework
+qtAddLibrary(QtServiceFramework)
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

@@ -1,8 +1,8 @@
 TEMPLATE = app
 TARGET = servicebrowser
-INCLUDEPATH += ../../serviceframework
+INCLUDEPATH += ../../src/serviceframework
 
-include(../../common.pri)
+include(../examples.pri)
 
 QT += gui
 
@@ -11,7 +11,7 @@ HEADERS += servicebrowser.h
 SOURCES += servicebrowser.cpp \
            main.cpp
 
-LIBS += -lQtServiceFramework
+qtAddLibrary(QtServiceFramework)
 
 symbian {
     addFiles.sources = ../filemanagerplugin/filemanagerservice.xml

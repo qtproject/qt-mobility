@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-INCLUDEPATH += ../../serviceframework
+INCLUDEPATH += ../../src/serviceframework
 HEADERS += bluetoothtransferplugin.h \
            bluetoothtransfer.h
 SOURCES += bluetoothtransferplugin.cpp \
@@ -8,8 +8,8 @@ SOURCES += bluetoothtransferplugin.cpp \
 TARGET = serviceframework_bluetoothtransferplugin
 DESTDIR = .
 
-include(../../common.pri)
-LIBS += -lQtServiceFramework
+include(../examples.pri)
+qtAddLibrary(QtServiceFramework)
 
 symbian {
     load(data_caging_paths)
