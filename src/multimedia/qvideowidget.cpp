@@ -376,6 +376,7 @@ void QVideoWidgetPrivate::_q_serviceDestroyed()
     rendererBackend = 0;
 #endif
 
+    currentControl = 0;
     currentBackend = 0;
     outputControl = 0;
     service = 0;
@@ -414,7 +415,6 @@ void QVideoWidgetPrivate::_q_fullScreenChanged(bool fullScreen)
 
 void QVideoWidgetPrivate::_q_dimensionsChanged()
 {
-    qDebug("Update geometry");
     q_func()->updateGeometry();
 }
 
@@ -568,12 +568,12 @@ void QVideoWidget::setFullScreen(bool fullScreen)
 
     if (fullScreen) {
         Qt::WindowFlags flags = windowFlags();
-        if (!(flags & Qt::Window)) {
-            d->nonFullScreenFlags = flags & (Qt::Window | Qt::SubWindow);
-            flags |= Qt::Window;
-            flags ^= Qt::SubWindow;
-            setWindowFlags(flags);
-        }
+
+        d->nonFullScreenFlags = flags & (Qt::Window | Qt::SubWindow);
+        flags |= Qt::Window;
+        flags &= ~Qt::SubWindow;
+        setWindowFlags(flags);
+        
         showFullScreen();
     } else {
         showNormal();
@@ -743,29 +743,22 @@ bool QVideoWidget::event(QEvent *event)
         Qt::WindowFlags flags = windowFlags();
 
         if (windowState() & Qt::WindowFullScreen) {
-            if (!(flags & Qt::Window)) {
-                d->nonFullScreenFlags = flags & (Qt::Window | Qt::SubWindow);
-                flags |= Qt::Window;
-                flags ^= Qt::SubWindow;
-                setWindowFlags(flags);
-            }
+            if (d->currentControl)
+                d->currentControl->setFullScreen(true);
+
             if (!d->wasFullScreen)
                 emit fullScreenChanged(d->wasFullScreen = true);
-
-            if (d->currentBackend)
-                d->currentBackend->setFullScreen(true);
         } else {
-            if (d->currentBackend)
-                d->currentBackend->setFullScreen(false);
+            if (d->currentControl)
+                d->currentControl->setFullScreen(false);
 
-            if (isVisible()) {
-                flags ^= (Qt::Window | Qt::SubWindow); //clear the flags...
+            if (d->wasFullScreen) {
+                flags &= ~(Qt::Window | Qt::SubWindow); //clear the flags...
                 flags |= d->nonFullScreenFlags; //then we reset the flags (window and subwindow)
                 setWindowFlags(flags);
-            }
 
-            if (d->wasFullScreen)
                 emit fullScreenChanged(d->wasFullScreen = false);
+            }
         }
     }
     return QWidget::event(event);
@@ -803,6 +796,9 @@ void QVideoWidget::showEvent(QShowEvent *event)
 void QVideoWidget::hideEvent(QHideEvent *event)
 {
     Q_D(QVideoWidget);
+
+    if (d->currentBackend)
+        d->currentBackend->hideEvent(event);
 
     if (d->outputControl)
         d->outputControl->setOutput(QVideoOutputControl::NoOutput);
