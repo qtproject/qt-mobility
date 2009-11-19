@@ -101,9 +101,7 @@ QContactAbstractRequest::~QContactAbstractRequest()
         }
 
         delete d_ptr;
-        QContactAbstractRequestPrivate* deleted = d_ptr;
         d_ptr = 0;
-        delete deleted;
     }
 }
 
