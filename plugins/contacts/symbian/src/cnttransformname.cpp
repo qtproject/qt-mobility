@@ -206,6 +206,9 @@ void CntTransformName::detailDefinitions(QMap<QString, QContactDetailDefinition>
             fields.remove(QContactName::FieldMiddle);
             fields.remove(QContactName::FieldLast);
             fields.remove(QContactName::FieldSuffix);
+        // contacts do not support custom label
+        } else {
+            fields.remove(QContactName::FieldCustomLabel);
         }
 
         // Context not supported in symbian back-end, remove
