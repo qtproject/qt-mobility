@@ -100,8 +100,9 @@ bool QMessageServiceAction::retrieveBody(const QMessageId& id)
     return false; // stub
 }
 
-bool QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
+bool QMessageServiceAction::retrieve(const QMessageId &messageId, const QMessageContentContainerId& id)
 {
+    Q_UNUSED(messageId)
     Q_UNUSED(id)
     return false; // stub
 }

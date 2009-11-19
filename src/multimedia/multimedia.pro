@@ -125,6 +125,7 @@ symbian {
     DEPLOYMENT += QtMediaDeployment
     TARGET.UID3=0x2002AC77
     MMP_RULES += EXPORTUNFROZEN
+    TARGET.CAPABILITY = ALL -TCB
 }
 
 include(../../features/deploy.pri)

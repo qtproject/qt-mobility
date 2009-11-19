@@ -73,6 +73,7 @@ QMediaPlaylistProvider::QMediaPlaylistProvider(QMediaPlaylistProviderPrivate &dd
 */
 QMediaPlaylistProvider::~QMediaPlaylistProvider()
 {
+    delete d_ptr;
 }
 
 /*!

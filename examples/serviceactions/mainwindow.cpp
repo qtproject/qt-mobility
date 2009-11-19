@@ -819,14 +819,16 @@ void MessageViewWidget::view(const QMessageId& messageId)
 
 bool MessageViewWidget::retrieveBody()
 {
-
     if(m_state != Loading && !m_loadTimer.isActive())
     {
         m_loadTimer.setSingleShot(true);
         m_loadTimer.start(LoadTimeLimit * 1000);
         m_state = Unloaded;
+
+        return m_service->retrieveBody(m_messageId);
     }
-    return m_service->retrieveBody(m_messageId);
+
+    return false;
 }
 
 void MessageViewWidget::showEvent(QShowEvent* e)

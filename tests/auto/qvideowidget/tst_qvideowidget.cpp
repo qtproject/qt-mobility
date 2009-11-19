@@ -573,6 +573,12 @@ void tst_QVideoWidget::showWindowControl()
 
     QVERIFY(object.testService->windowControl->repaintCount() > 0);
 
+    widget.resize(640, 480);
+    QCOMPARE(object.testService->windowControl->displayRect(), QRect(0, 0, 640, 480));
+
+    widget.move(10, 10);
+    QCOMPARE(object.testService->windowControl->displayRect(), QRect(0, 0, 640, 480));
+
     widget.hide();
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
@@ -591,6 +597,10 @@ void tst_QVideoWidget::showWidgetControl()
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::WidgetOutput);
     QCOMPARE(object.testService->widgetControl->videoWidget()->isVisible(), true);
+
+    widget.resize(640, 480);
+
+    widget.move(10, 10);
 
     widget.hide();
 
@@ -612,6 +622,10 @@ void tst_QVideoWidget::showRendererControl()
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::RendererOutput);
     QVERIFY(object.testService->rendererControl->surface() != 0);
+
+    widget.resize(640, 480);
+
+    widget.move(10, 10);
 
     widget.hide();
 

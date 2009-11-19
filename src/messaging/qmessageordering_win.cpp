@@ -77,10 +77,6 @@ bool QMessageOrderingPrivate::lessThan(const QMessageOrdering &ordering, const Q
             right = &l; 
         }
 
-        //TODO: Type and Priority will require multiple filter passes in QMessageStore
-        //TODO: Recipients won't be supported
-        //TODO: Status may require multiple passes, or may not be implementable with MAPI
-
         switch (field)
         {
         case Type: COMPARE(left->type(), right->type())
@@ -103,7 +99,7 @@ bool QMessageOrderingPrivate::lessThan(const QMessageOrdering &ordering, const Q
         case HasAttachments: COMPARE(left->status() & QMessage::HasAttachments, right->status() & QMessage::HasAttachments)
         case Incoming: COMPARE(left->status() & QMessage::Incoming, right->status() & QMessage::Incoming)
         case Removed: COMPARE(left->status() & QMessage::Removed, right->status() & QMessage::Removed)
-        case Priority: COMPARE(left->priority(), right->priority())
+        case Priority: COMPARE(right->priority(), left->priority()) // Low priority comes first
         case Size: COMPARE(left->size(), right->size())
         }
     }
@@ -151,11 +147,7 @@ void QMessageOrderingPrivate::sortTable(QMessageStore::ErrorCode *lastError, con
             propTag = PR_SENDER_NAME; // MAPI is limited to sorting by sender name only, sender name + sender address does not appear to be supported
             break;
         case Size:
-#ifdef _WIN32_WCE
-            propTag = PR_CONTENT_LENGTH;
-#else
             propTag = PR_MESSAGE_SIZE;
-#endif
             break;
         case Type:
         case Read:
@@ -334,6 +326,8 @@ QMessageOrdering QMessageOrdering::operator+(const QMessageOrdering& other) cons
     if (!thisIsFilterType && !otherIsFilterType)
         sum.d_ptr->_valid = false;
 #endif
+    if (!this->isSupported() || !other.isSupported())
+        sum.d_ptr->_valid = false;
     return sum;
 }
 
@@ -349,6 +343,8 @@ QMessageOrdering& QMessageOrdering::operator+=(const QMessageOrdering& other)
     if (!thisIsFilterType && !otherIsFilterType)
         d_ptr->_valid = false;
 #endif;
+    if (!other.isSupported())
+        d_ptr->_valid = false;
     return *this;
 }
 
@@ -360,7 +356,6 @@ bool QMessageOrdering::operator==(const QMessageOrdering& other) const
 QMessageOrdering QMessageOrdering::byType(Qt::SortOrder order)
 {
     QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Type, order));
-    result.d_ptr->_valid = false; // Not yet implemented
     return result;
 }
 
@@ -423,5 +418,9 @@ QMessageOrdering QMessageOrdering::byPriority(Qt::SortOrder order)
 
 QMessageOrdering QMessageOrdering::bySize(Qt::SortOrder order)
 {
-    return QMessageOrderingPrivate::from(QMessageOrderingPrivate::Size, order);
+    QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Size, order));
+#ifdef _WIN32_WCE
+    result.d_ptr->_valid = false; // Not supported on WinCE
+#endif
+    return result;
 }
