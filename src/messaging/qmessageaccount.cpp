@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 #include "qmessageaccount.h"
-#include "qmessageaccount_p.h"
 
 /*!
     \class QMessageAccount
