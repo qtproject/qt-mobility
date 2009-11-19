@@ -427,8 +427,6 @@ private:
     QVideoEncoderControl* videoEncode;
 };
 
-Q_DECLARE_METATYPE(QMediaRecorder::Error);
-
 void tst_QMediaRecorder::initTestCase()
 {
     qRegisterMetaType<QMediaRecorder::State>("QMediaRecorder::State");
@@ -438,6 +436,7 @@ void tst_QMediaRecorder::initTestCase()
     service = new MockService(this, mock);
     object = new MockObject(this, service);
     capture = new QMediaRecorder(object);
+    capture->setNotifyInterval(100);
 
     audio = qobject_cast<QAudioDeviceControl*>(capture->service()->control(QAudioDeviceControl_iid));
     encode = qobject_cast<QAudioEncoderControl*>(capture->service()->control(QAudioEncoderControl_iid));
@@ -574,22 +573,22 @@ void tst_QMediaRecorder::testRecord()
     QSignalSpy stateSignal(capture,SIGNAL(stateChanged(QMediaRecorder::State)));
     QSignalSpy progressSignal(capture, SIGNAL(durationChanged(qint64)));
     capture->record();
-    QVERIFY(capture->state() == QMediaRecorder::RecordingState);
-    QVERIFY(capture->error() == QMediaRecorder::NoError);
-    QVERIFY(capture->errorString() == QString());
+    QCOMPARE(capture->state(), QMediaRecorder::RecordingState);
+    QCOMPARE(capture->error(), QMediaRecorder::NoError);
+    QCOMPARE(capture->errorString(), QString());
     QTestEventLoop::instance().enterLoop(1);
-    QVERIFY(stateSignal.count() == 1);
-    QVERIFY(progressSignal.count() == 1);
+    QCOMPARE(stateSignal.count(), 1);
+    QVERIFY(progressSignal.count() > 0);
     capture->pause();
-    QVERIFY(capture->state() == QMediaRecorder::PausedState);
+    QCOMPARE(capture->state(), QMediaRecorder::PausedState);
     QTestEventLoop::instance().enterLoop(1);
-    QVERIFY(stateSignal.count() == 2);
+    QCOMPARE(stateSignal.count(), 2);
     capture->stop();
-    QVERIFY(capture->state() == QMediaRecorder::StoppedState);
+    QCOMPARE(capture->state(), QMediaRecorder::StoppedState);
     QTestEventLoop::instance().enterLoop(1);
-    QVERIFY(stateSignal.count() == 3);
+    QCOMPARE(stateSignal.count(), 3);
     mock->stop();
-    QVERIFY(stateSignal.count() == 3);
+    QCOMPARE(stateSignal.count(), 3);
 
 }
 

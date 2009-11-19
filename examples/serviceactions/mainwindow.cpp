@@ -73,15 +73,6 @@ static const QSize WindowGeometry(400,300);
 static const QString WindowTitle("Service-actions Example");
 static unsigned int RecentMessagesCount = 50;
 
-typedef struct
-{
-    QMessageId id;
-    QString subject;
-    bool partial;
-} MessageInfo;
-
-typedef QList<MessageInfo> MessageInfoList;
-
 class AccountsWidget : public QWidget
 {
     Q_OBJECT
@@ -819,14 +810,16 @@ void MessageViewWidget::view(const QMessageId& messageId)
 
 bool MessageViewWidget::retrieveBody()
 {
-
     if(m_state != Loading && !m_loadTimer.isActive())
     {
         m_loadTimer.setSingleShot(true);
         m_loadTimer.start(LoadTimeLimit * 1000);
         m_state = Unloaded;
+
+        return m_service->retrieveBody(m_messageId);
     }
-    return m_service->retrieveBody(m_messageId);
+
+    return false;
 }
 
 void MessageViewWidget::showEvent(QShowEvent* e)

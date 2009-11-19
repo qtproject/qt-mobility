@@ -45,17 +45,21 @@
 /*!
     \class QImageEncoderControl
     \preliminary
+    \ingroup multimedia
+    \ingroup multimedia-serv
+
     \brief The QImageEncoderControl class provides access to the settings of a media service that
     performs image encoding.
 
-    If a QMediaService supports encoding image data it will implement QImageEncoderControl.  This
-    control provides functions for setting the image \l {setImageCodec()}{codec}, and the
-    \l {setResolution()}{resolution} and \l {setQuality()}{quality} of the encoded image.
+    If a QMediaService supports encoding image data it will implement QImageEncoderControl.
+    This control allows to \l {setImageSettings()}{set image encoding settings} and
+    provides functions for quering supported image \l {supportedImageCodecs()}{codecs} and
+    \l {supportedResolutions()}{resolutions}.
 
     The interface name of QImageEncoderControl is \c com.nokia.Qt.QImageEncoderControl/1.0 as
     defined in QImageEncoderControl_iid.
 
-    \sa QMediaService::control()
+    \sa QImageEncoderSettings, QMediaService::control()
 */
 
 /*!
@@ -93,7 +97,7 @@ QImageEncoderControl::~QImageEncoderControl()
     the returned list is reduced to resolutions supported with partial settings applied.
     It can be used to query the list of resolutions, supported by specific image codec.
 
-    \sa resolution(), minimumResolution(), maximumResolution()
+    \sa minimumResolution(), maximumResolution()
 
 */
 
@@ -102,7 +106,10 @@ QImageEncoderControl::~QImageEncoderControl()
 
     Returns the minimum supported resolution.
 
-    \sa resolution()
+    If non null image \a settings parameter is passed,
+    the minimum supported resolution with partial settings applied is returned.
+
+    \sa supportedResolutions()
 */
 
 /*!
@@ -110,7 +117,10 @@ QImageEncoderControl::~QImageEncoderControl()
 
     Returns the maximum supported resolution.
 
-    \sa resolution()
+    If non null image \a settings parameter is passed,
+    the maximum supported resolution with partial settings applied is returned.
+
+    \sa supportedResolutions()
 */
 
 /*!
@@ -125,3 +135,14 @@ QImageEncoderControl::~QImageEncoderControl()
     Returns a description of an image \a codec.
 */
 
+/*!
+    \fn QImageEncoderControl::imageSettings() const
+
+    Returns the currently used image encoder settings.
+*/
+
+/*!
+    \fn QImageEncoderControl::setImageSettings(const QImageEncoderSettings &settings)
+
+    Sets the selected image encoder \a settings.
+*/

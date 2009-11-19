@@ -46,7 +46,10 @@
 #include "qmessagecontentcontainer_p.h"
 #include "qmessagefolderid_p.h"
 #include "winhelpers_p.h"
+#include <QCoreApplication>
 #include <QDebug>
+#include <QDir>
+#include <QFile>
 
 namespace {
 
@@ -187,30 +190,6 @@ QMessage::~QMessage()
     d_ptr = 0;
 }
 
-QMessage QMessage::fromTransmissionFormat(Type t, const QByteArray &ba)
-{
-    Q_UNUSED(t)
-    Q_UNUSED(ba)
-    return QMessage(); // stub
-}
-
-QMessage QMessage::fromTransmissionFormatFile(Type t, const QString& fileName)
-{
-    Q_UNUSED(t)
-    Q_UNUSED(fileName)
-    return QMessage(); // stub
-}
-
-QByteArray QMessage::toTransmissionFormat() const
-{
-    return QByteArray(); // stub
-}
-
-void QMessage::toTransmissionFormat(QDataStream& out) const
-{
-    Q_UNUSED(out)
-}
-
 QMessageId QMessage::id() const
 {
     return d_ptr->_id;
@@ -241,6 +220,7 @@ void QMessage::setParentAccountId(const QMessageAccountId &accountId)
 
 QMessageFolderId QMessage::parentFolderId() const
 {
+    d_ptr->ensurePropertiesPresent(const_cast<QMessage*>(this));
     return d_ptr->_parentFolderId;
 }
 
@@ -436,7 +416,7 @@ void QMessage::setBody(const QString &bodyText, const QByteArray &mimeType)
 
     QMessageContentContainerId existingBodyId(bodyId());
     if (existingBodyId.isValid()) {
-        if (existingBodyId == QMessageContentContainerPrivate::bodyContentId()) {
+        if (existingBodyId == container->bodyContentId()) {
             // The body content is in the message itself
             container->setContent(bodyText, mainType, subType, charset);
         } else {
@@ -448,7 +428,7 @@ void QMessage::setBody(const QString &bodyText, const QByteArray &mimeType)
         if (container->_attachments.isEmpty()) {
             // Put the content directly into the message
             container->setContent(bodyText, mainType, subType, charset);
-            d_ptr->_bodyId = QMessageContentContainerPrivate::bodyContentId();
+            d_ptr->_bodyId = container->bodyContentId();
         } else {
             // Add the body as the first attachment
             QMessageContentContainer newBody;
@@ -488,7 +468,7 @@ void QMessage::appendAttachments(const QStringList &fileNames)
 
         if (container->_attachments.isEmpty()) {
             QMessageContentContainerId existingBodyId(bodyId());
-            if (existingBodyId == QMessageContentContainerPrivate::bodyContentId()) {
+            if (existingBodyId == container->bodyContentId()) {
                 // The body content is in the message itself - move it to become the first attachment
                 QMessageContentContainer newBody(*this);
                 newBody.setDerivedMessage(0);
@@ -533,6 +513,136 @@ bool QMessage::isModified() const
 
 QMessage QMessage::createResponseMessage(ResponseType type) const
 {
-    Q_UNUSED(type)
-    return QMessage(); // stub
+    QMessage response;
+
+    if (type == Forward) {
+        response.setSubject("Fwd:" + subject());
+
+        if (contentType().toLower() == "text") {
+            // Forward the text content inline
+            QStringList addresses;
+            foreach (const QMessageAddress &address, to()) {
+                addresses.append(address.recipient());
+            }
+
+            QString existingText(textContent());
+
+            QString prefix(QString("\r\n----- %1 -----\r\n\r\n").arg(qApp->translate("QMessage", "Forwarded Message")));
+            prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "Subject")).arg(subject()));
+            prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "Date")).arg(date().toString()));
+            prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "From")).arg(from().recipient()));
+            prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "To")).arg(addresses.join(",")));
+
+            QString postfix("\r\n\r\n-----------------------------\r\n");
+
+            response.setBody(prefix + existingText + postfix);
+        } else {
+            // Add an empty text body to be composed into
+            response.setBody(QString(), "text/plain");
+
+            // We can only forward the original content if it is a single part
+            if (contentType().toLower() != "multipart") {
+                QByteArray fileName(suggestedFileName());
+                if (!fileName.isEmpty()) {
+                    // Write the content to a file that we can attach to our response
+                    QString path(QDir::tempPath() + "/qtmobility/messaging/" + fileName);
+                    if (QFile::exists(path)) {
+                        if (!QFile::remove(path)) {
+                            qWarning() << "Unable to remove temporary file:" << path;
+                        }
+                    }
+
+                    QFile out(path);
+                    if (!out.open(QFile::WriteOnly)) {
+                        qWarning() << "Unable to open temporary file:" << path;
+                    } else {
+                        out.write(content());
+                        out.flush();
+                        out.close();
+                    }
+
+                    response.appendAttachments(QStringList() << path);
+                }
+            }
+        }
+    } else {
+        // Prefer to reply to the trply-to address, if present
+        QString replyTo(headerFieldValue("Reply-To"));
+        if (!replyTo.isEmpty()) {
+            response.setTo(QMessageAddressList() << QMessageAddress(replyTo, QMessageAddress::Email));
+        } else {
+            response.setTo(QMessageAddressList() << from());
+        }
+
+        if (type == ReplyToAll) {
+            response.setCc(to() + cc());
+        }
+
+        response.setSubject("Re:" + subject());
+
+        // Put the existing text into the reply body
+        QString existingText;
+        QMessageContentContainerIdList attachments;
+        if (contentType().toLower() == "text") {
+            existingText = textContent();
+        } else {
+            QMessageContentContainerId textId(bodyId());
+            if (textId.isValid()) {
+                existingText = find(textId).textContent();
+            }
+
+            attachments = attachmentIds();
+        }
+
+        if (!existingText.isEmpty()) {
+            existingText = existingText.replace("\n", "\n> ");
+
+            QString prefix(qApp->translate("QMessage", "On %1 you wrote:\n> "));
+            response.setBody(prefix.arg(date().toLocalTime().toString()) + existingText);
+        }
+
+        // Add any attachment parts as attachments
+        QStringList attachmentPaths;
+        foreach (const QMessageContentContainerId &attachmentId, attachments) {
+            QMessageContentContainer attachment(find(attachmentId));
+
+            QByteArray fileName(attachment.suggestedFileName());
+            if (!fileName.isEmpty()) {
+                QString path(QDir::tempPath() + "/qtmobility/messaging/" + fileName);
+                if (QFile::exists(path)) {
+                    if (!QFile::remove(path)) {
+                        qWarning() << "Unable to remove temporary file:" << path;
+                    }
+                }
+
+                QString partialPath(QDir::tempPath() + "/qtmobility");
+                if (!QFile::exists(partialPath)) {
+                    if (!QDir::temp().mkdir("qtmobility")) {
+                        qWarning() << "Unable to create temporary directory:" << partialPath;
+                    }
+                }
+                partialPath.append("/messaging");
+                if (!QFile::exists(partialPath)) {
+                    if (!QDir(QDir::tempPath() + "/qtmobility").mkdir("messaging")) {
+                        qWarning() << "Unable to create temporary directory:" << partialPath;
+                    }
+                }
+
+                QFile out(path);
+                if (!out.open(QFile::WriteOnly)) {
+                    qWarning() << "Unable to open temporary file:" << path;
+                } else {
+                    out.write(attachment.content());
+                    out.flush();
+                    out.close();
+
+                    attachmentPaths.append(path);
+                }
+            }
+        }
+
+        response.appendAttachments(attachmentPaths);
+    }
+
+    return response;
 }

@@ -998,7 +998,7 @@ MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
         case QMessageFilterPrivate::Size: {
             _restriction.res.resProperty.ulPropTag = PR_MESSAGE_SIZE;
             _keyProp.ulPropTag = PR_MESSAGE_SIZE;
-            _keyProp.Value.ul = d_ptr->_value.toInt();
+            _keyProp.Value.l = d_ptr->_value.toInt();
             _valid = true;
             break;
         }
@@ -1110,9 +1110,16 @@ MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
                 _valid = true;
                 return;
             case QMessage::HasAttachments:
+#ifdef _WIN32_WCE
+                _restriction.rt = RES_EXIST;
+                _restriction.res.resExist.ulReserved1 = 0;
+                _restriction.res.resExist.ulPropTag = PR_HASATTACH;
+                _restriction.res.resExist.ulReserved2 = 0;
+#else
                 _restriction.res.resBitMask.relBMR = BMR_NEZ;
                 _restriction.res.resBitMask.ulPropTag = PR_MESSAGE_FLAGS;
-                _restriction.res.resBitMask.ulMask = MSGFLAG_HASATTACH; // Found in PR_HASATTACH msdn doc, but not covered in PR_MESSAGE_FLAGS doc
+                _restriction.res.resBitMask.ulMask = MSGFLAG_HASATTACH;
+#endif
                 _valid = true;
                 return;
             default:

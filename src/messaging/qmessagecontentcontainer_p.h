@@ -51,6 +51,7 @@
 #include "qmessage_p.h"
 #if defined(Q_OS_WIN)
 #include "winhelpers_p.h"
+#include "qmessagecontentcontainerid_p.h"
 #endif
 #endif
 
@@ -372,7 +373,7 @@ public:
         return _attachments[0].d_ptr->_id;
     }
 
-    static QMessageContentContainerId bodyContentId()
+    QMessageContentContainerId bodyContentId() const
     {
         return QMessageContentContainerId(QString::number(0));
     }

@@ -77,10 +77,6 @@ bool QMessageOrderingPrivate::lessThan(const QMessageOrdering &ordering, const Q
             right = &l; 
         }
 
-        //TODO: Type and Priority will require multiple filter passes in QMessageStore
-        //TODO: Recipients won't be supported
-        //TODO: Status may require multiple passes, or may not be implementable with MAPI
-
         switch (field)
         {
         case Type: COMPARE(left->type(), right->type())
@@ -103,7 +99,7 @@ bool QMessageOrderingPrivate::lessThan(const QMessageOrdering &ordering, const Q
         case HasAttachments: COMPARE(left->status() & QMessage::HasAttachments, right->status() & QMessage::HasAttachments)
         case Incoming: COMPARE(left->status() & QMessage::Incoming, right->status() & QMessage::Incoming)
         case Removed: COMPARE(left->status() & QMessage::Removed, right->status() & QMessage::Removed)
-        case Priority: COMPARE(left->priority(), right->priority())
+        case Priority: COMPARE(right->priority(), left->priority()) // Low priority comes first
         case Size: COMPARE(left->size(), right->size())
         }
     }
@@ -151,11 +147,7 @@ void QMessageOrderingPrivate::sortTable(QMessageStore::ErrorCode *lastError, con
             propTag = PR_SENDER_NAME; // MAPI is limited to sorting by sender name only, sender name + sender address does not appear to be supported
             break;
         case Size:
-#ifdef _WIN32_WCE
-            propTag = PR_CONTENT_LENGTH;
-#else
             propTag = PR_MESSAGE_SIZE;
-#endif
             break;
         case Type:
         case Read:
@@ -168,14 +160,13 @@ void QMessageOrderingPrivate::sortTable(QMessageStore::ErrorCode *lastError, con
             continue;
         default:
             qWarning("Unhandled sort criteria");
-            propTag = PR_SUBJECT; // TODO handle all cases
+            propTag = PR_MESSAGE_DELIVERY_TIME;
         }
         multiSort.aSort[i].ulPropTag = propTag;
         multiSort.aSort[i].ulOrder = order;
     }
 
-    //Note: WinCE does not support multiple sort levels and should return an error if more than 1 level is used
-    //TODO: Update doc to reflect this
+    //Note: Windows Mobile does not support multiple sort levels
     multiSort.cSorts = qMin<int>(maxSortOrders, fieldOrderList.count());
     if (messagesTable->SortTable(reinterpret_cast<SSortOrderSet*>(&multiSort), 0) != S_OK) {
         *lastError = QMessageStore::NotYetImplemented;
@@ -237,8 +228,8 @@ QList<QMessageFilter> QMessageOrderingPrivate::normalize(const QList<QMessageFil
                 QList<QMessageFilter> previous(result);
                 result.clear();
                 foreach(QMessageFilter filter, previous) {
-                    result.append(QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Equal) & filter);
-                    result.append(QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::NotEqual) & filter);
+                    result.append(QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Includes) & filter);
+                    result.append(QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Excludes) & filter);
                 }
             } break;
             case HasAttachments:
@@ -246,8 +237,8 @@ QList<QMessageFilter> QMessageOrderingPrivate::normalize(const QList<QMessageFil
                 QList<QMessageFilter> previous(result);
                 result.clear();
                 foreach(QMessageFilter filter, previous) {
-                    result.append(QMessageFilter::byStatus(QMessage::HasAttachments, QMessageDataComparator::Equal) & filter);
-                    result.append(QMessageFilter::byStatus(QMessage::HasAttachments, QMessageDataComparator::NotEqual) & filter);
+                    result.append(QMessageFilter::byStatus(QMessage::HasAttachments, QMessageDataComparator::Includes) & filter);
+                    result.append(QMessageFilter::byStatus(QMessage::HasAttachments, QMessageDataComparator::Excludes) & filter);
                 }
             } break;
             case Incoming:
@@ -255,8 +246,8 @@ QList<QMessageFilter> QMessageOrderingPrivate::normalize(const QList<QMessageFil
                 QList<QMessageFilter> previous(result);
                 result.clear();
                 foreach(QMessageFilter filter, previous) {
-                    result.append(QMessageFilter::byStatus(QMessage::Incoming, QMessageDataComparator::Equal) & filter);
-                    result.append(QMessageFilter::byStatus(QMessage::Incoming, QMessageDataComparator::NotEqual) & filter);
+                    result.append(QMessageFilter::byStatus(QMessage::Incoming, QMessageDataComparator::Includes) & filter);
+                    result.append(QMessageFilter::byStatus(QMessage::Incoming, QMessageDataComparator::Excludes) & filter);
                 }
             } break;
             case Removed:
@@ -264,8 +255,8 @@ QList<QMessageFilter> QMessageOrderingPrivate::normalize(const QList<QMessageFil
                 QList<QMessageFilter> previous(result);
                 result.clear();
                 foreach(QMessageFilter filter, previous) {
-                    result.append(QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::Equal) & filter);
-                    result.append(QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::NotEqual) & filter);
+                    result.append(QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::Includes) & filter);
+                    result.append(QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::Excludes) & filter);
                 }
             } break;
             case Priority:
@@ -334,6 +325,8 @@ QMessageOrdering QMessageOrdering::operator+(const QMessageOrdering& other) cons
     if (!thisIsFilterType && !otherIsFilterType)
         sum.d_ptr->_valid = false;
 #endif
+    if (!this->isSupported() || !other.isSupported())
+        sum.d_ptr->_valid = false;
     return sum;
 }
 
@@ -349,6 +342,8 @@ QMessageOrdering& QMessageOrdering::operator+=(const QMessageOrdering& other)
     if (!thisIsFilterType && !otherIsFilterType)
         d_ptr->_valid = false;
 #endif;
+    if (!other.isSupported())
+        d_ptr->_valid = false;
     return *this;
 }
 
@@ -360,7 +355,6 @@ bool QMessageOrdering::operator==(const QMessageOrdering& other) const
 QMessageOrdering QMessageOrdering::byType(Qt::SortOrder order)
 {
     QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Type, order));
-    result.d_ptr->_valid = false; // Not yet implemented
     return result;
 }
 
@@ -405,12 +399,16 @@ QMessageOrdering QMessageOrdering::byStatus(QMessage::Status flag, Qt::SortOrder
     switch (flag) {
     case QMessage::Read:
         result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::Read, order);
+        break;
     case QMessage::HasAttachments:
         result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::HasAttachments, order);
+        break;
     case QMessage::Incoming:
         result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::Incoming, order);
+        break;
     case QMessage::Removed:
         result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::Removed, order);
+        break;
     }
     return result;
 }
@@ -423,5 +421,9 @@ QMessageOrdering QMessageOrdering::byPriority(Qt::SortOrder order)
 
 QMessageOrdering QMessageOrdering::bySize(Qt::SortOrder order)
 {
-    return QMessageOrderingPrivate::from(QMessageOrderingPrivate::Size, order);
+    QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Size, order));
+#ifdef _WIN32_WCE
+    result.d_ptr->_valid = false; // Not supported on WinCE
+#endif
+    return result;
 }

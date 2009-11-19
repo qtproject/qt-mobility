@@ -60,6 +60,8 @@ public:
     V4LRadioControl(QObject *parent = 0);
     ~V4LRadioControl();
 
+    QRadioTuner::State state() const;
+
     QRadioTuner::Band band() const;
     void setBand(QRadioTuner::Band b);
     bool isBandSupported(QRadioTuner::Band b) const;
