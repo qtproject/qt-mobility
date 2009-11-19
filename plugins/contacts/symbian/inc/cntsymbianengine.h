@@ -96,6 +96,7 @@ public:
     QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
 
     /* Relationships between contacts */
+    QStringList supportedRelationshipTypes(const QString& contactType) const;
     QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
     bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
     QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);

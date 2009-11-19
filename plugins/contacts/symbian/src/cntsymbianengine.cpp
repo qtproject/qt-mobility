@@ -676,6 +676,11 @@ QList<QContactLocalId> CntSymbianEngine::groupsL() const
 
 /* relationships */
 
+QStringList CntSymbianEngine::supportedRelationshipTypes(const QString& contactType) const
+{
+    return m_relationship->supportedRelationshipTypes(contactType);
+}
+
 QList<QContactRelationship> CntSymbianEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
 {
     //retrieve the relationships
@@ -822,10 +827,13 @@ QString CntSymbianEngine::synthesizeDisplayLabel(const QContact& contact, QConta
     QContactName name = contact.detail<QContactName>();
     if(contact.type() == QContactType::TypeContact) {
         QContactOrganization org = contact.detail<QContactOrganization>();
+        QString customLabel = name.customLabel();
         QString firstName = name.first();
         QString lastName = name.last();
 
-        if (!name.last().isEmpty()) {
+        if(!customLabel.isEmpty()) {
+            label = name.customLabel();
+        } else if (!name.last().isEmpty()) {
             if (!name.first().isEmpty()) {
                 label = QString(QLatin1String("%1, %2")).arg(name.last()).arg(name.first());
             } else {
