@@ -601,8 +601,7 @@ public:
         // Ensure that this thread has initialized MAPI
         WinHelpers::MapiInitializationToken token(WinHelpers::initializeMapi());
 
-        // TODO: body text search
-        _parent->_candidateIds = QMessageStore::instance()->queryMessages(_filter, _ordering, _limit, _offset);
+        _parent->_candidateIds = QMessageStore::instance()->queryMessages(_filter, _body, _options, _ordering, _limit, _offset);
         _parent->_lastError = QMessageStore::instance()->lastError();
         emit completed();
     }
@@ -774,6 +773,7 @@ bool QMessageServiceAction::retrieveBody(const QMessageId& id)
 
     return result;
 #else
+    Q_UNUSED(id);
     return false;
 #endif
 }
@@ -782,17 +782,16 @@ bool QMessageServiceAction::retrieve(const QMessageId &aMessageId, const QMessag
 {
     Q_UNUSED(aMessageId)
 #ifdef _WIN32_WCE
-    QMessageId messageId = QMessageContentContainerIdPrivate::messageId(id);
 
-    if(!messageId.isValid())
+    if(!aMessageId.isValid())
         return false;
 
-    QMessage message(messageId);
+    QMessage message(aMessageId);
 
     bool isBodyContainer = message.bodyId() == id;
 
     if(isBodyContainer)
-        return retrieveBody(messageId);
+        return retrieveBody(aMessageId);
 
     //TODO download message attachment programatically using MAPI impossible?
 #endif

@@ -108,12 +108,6 @@ public:
 
     QMessage& operator=(const QMessage &other);
 
-    static QMessage fromTransmissionFormat(Type t, const QByteArray &ba);
-    static QMessage fromTransmissionFormatFile(Type t, const QString &fileName);
-
-    QByteArray toTransmissionFormat() const;
-    void toTransmissionFormat(QDataStream &out) const;
-
     QMessageId id() const;
 
     Type type() const;
