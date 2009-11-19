@@ -61,7 +61,7 @@ class QContactFilter;
 class QContactAction;
 
 class QContactManagerData;
-class QTCONTACTS_EXPORT QContactManager : public QObject
+class Q_CONTACTS_EXPORT QContactManager : public QObject
 {
     Q_OBJECT
 

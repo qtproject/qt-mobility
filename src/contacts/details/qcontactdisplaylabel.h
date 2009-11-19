@@ -49,7 +49,7 @@
 #include "qcontactdetail.h"
 
 /* Leaf class */
-class QTCONTACTS_EXPORT QContactDisplayLabel : public QContactDetail
+class Q_CONTACTS_EXPORT QContactDisplayLabel : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
