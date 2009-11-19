@@ -58,6 +58,8 @@
 
 #include <QList>
 #include <QPointer>
+#include <QMutex>
+#include <QWaitCondition>
 
 class QContactAbstractRequestPrivate
 {

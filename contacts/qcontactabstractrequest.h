@@ -46,6 +46,7 @@
 #include <QObject>
 
 class QContactManagerEngine;
+class QContactRequestWorker;
 class QContactAbstractRequestPrivate;
 class QTCONTACTS_EXPORT QContactAbstractRequest : public QObject
 {
@@ -105,6 +106,7 @@ protected:
 private:
     Q_DISABLE_COPY(QContactAbstractRequest)
     friend class QContactManagerEngine;
+    friend class QContactRequestWorker;
 };
 
 #endif

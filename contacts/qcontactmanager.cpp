@@ -273,7 +273,6 @@ QContactManager::QContactManager(const QString& managerName, int implementationV
 QContactManager::~QContactManager()
 {
     d->m_engine->removeRequestsForManager(this);
-    delete d->m_info;
     delete d;
 }
 

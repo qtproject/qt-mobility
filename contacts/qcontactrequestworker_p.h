@@ -84,16 +84,16 @@ public:
     {
     }
 
-    QContactRequestElement* takeFirstRequestElement();
+    QContactAbstractRequest* takeFirstRequest();
     void cleanUpFinishedRequests(bool waitForAll = false);
 
     bool m_stop;
     bool m_finished;
-    QMutex m_mutex;
-    Qt::HANDLE m_threadId;
-    QWaitCondition m_newRequestAdded;
-    QQueue<QContactAbstractRequest*> m_requestQueue; 
     QContactAbstractRequest* volatile m_currentRequest;
+    Qt::HANDLE m_threadId;
+    QMutex m_mutex;
+    QWaitCondition m_newRequestAdded;
+    QQueue<QContactAbstractRequest*> m_requestQueue;
 };
 #endif
 

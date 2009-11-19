@@ -71,6 +71,7 @@
 #include "qcontactdetaildefinition.h"
 #include "qcontactabstractrequest.h"
 #include "qcontactchangeset.h"
+#include "qcontactrequestworker.h"
 
 class QContactAbstractRequest;
 class QContactMemoryEngineData : public QSharedData
@@ -82,7 +83,7 @@ public:
         m_selfContactId(0),
         m_nextContactId(1),
         m_anonymous(false),
-        m_engineVersion(0)
+        m_engineVersion(0),
         m_requestWorker(0)
     {
     }
@@ -93,7 +94,7 @@ public:
         m_selfContactId(other.m_selfContactId),
         m_nextContactId(other.m_nextContactId),
         m_anonymous(other.m_anonymous),
-        m_engineVersion(0)
+        m_engineVersion(0),
         m_requestWorker(0)
     {
     }
@@ -119,6 +120,7 @@ public:
     int m_engineVersion;                           // version of this engine as supplied by factory
 
     QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
+    QContactRequestWorker *m_requestWorker;
 };
 
 class QTCONTACTS_EXPORT QContactMemoryEngine : public QContactManagerEngine
