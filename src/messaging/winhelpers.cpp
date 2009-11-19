@@ -2404,7 +2404,7 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
         //On Windows Mobile occurs by default and at discretion of mail client settings.
 
         MapiFolderPtr sentFolder = _store->findFolder(lastError,QMessage::SentFolder);
-        if (!sentFolder.isNull() && *lastError != QMessageStore::NoError) {
+        if (!sentFolder.isNull() && *lastError == QMessageStore::NoError) {
             if (!setMapiProperty(mapiMessage, PR_SENTMAIL_ENTRYID, sentFolder->entryId())) {
                 qWarning() << "Unable to set sent folder entry id on message";
             }
