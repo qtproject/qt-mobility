@@ -57,18 +57,16 @@
 #include <QMutex>
 #include <QWaitCondition>
 #include <QQueue>
-#include <QSharedData>
 
 #include "qcontactrequestworker.h"
 
 class QContactAbstractRequest;
 
-class QContactRequestWorkerData : public QSharedData
+class QContactRequestWorkerData
 {
 public:
     QContactRequestWorkerData()
-        : QSharedData(),
-        m_stop(false),
+       :m_stop(false),
         m_finished(false),
         m_currentRequest(0),
         m_threadId(0)
@@ -76,8 +74,7 @@ public:
     }
 
     QContactRequestWorkerData(const QContactRequestWorkerData& other)
-        : QSharedData(other),
-        m_stop(other.m_stop),
+       :m_stop(other.m_stop),
         m_finished(other.m_finished),
         m_currentRequest(other.m_currentRequest)
     {
@@ -92,11 +89,10 @@ public:
     bool m_stop;
     bool m_finished;
     QMutex m_mutex;
-    QMutex m_mutexForCurrentRequest;
     Qt::HANDLE m_threadId;
     QWaitCondition m_newRequestAdded;
     QQueue<QContactAbstractRequest*> m_requestQueue; 
-    mutable QContactAbstractRequest* m_currentRequest;
+    QContactAbstractRequest* volatile m_currentRequest;
 };
 #endif
 

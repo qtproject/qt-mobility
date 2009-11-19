@@ -739,5 +739,5 @@ bool QContactMemoryEngine::filterSupported(const QContactFilter& filter) const
  */
 void QContactMemoryEngine::removeRequestsForManager(QContactManager* manager)
 {
-    d->m_requestWorker->removeRequestForManager(manager);
+    d->m_requestWorker->removeRequestsForManager(manager);
 }

@@ -119,6 +119,7 @@ public:
     virtual bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
     virtual void removeRequestsForManager(QContactManager* manager);
     static bool updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
+    static void emitRequestProgressSignal(QContactAbstractRequest* req, QContactAbstractRequest::RequestType requestType, bool appendOnly = false);
     static bool updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
     static bool updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
     static bool updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status);

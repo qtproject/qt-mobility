@@ -133,7 +133,6 @@ void QContactRequestWorker::run()
     d->m_stop = false;
     
     forever {
-        QMutexLocker requestLocker (&d->m_mutexForCurrentRequest);
         // get a new request from the queue (also sets the m_currentRequest ptr to this request)
         req = d->takeFirstRequest();
         if (req == 0 || d->m_stop) {
@@ -185,13 +184,13 @@ void QContactRequestWorker::run()
             default:
                 break;
         }
-        d->m_mutex.lock();
+        //d->m_mutex.lock();
         if (req && req->d_ptr && req->d_ptr->m_waiting) {
             req->d_ptr->m_waiting = false;
             req->d_ptr->m_condition.wakeAll();
         }
         d->m_currentRequest = 0;
-        d->m_mutex.unlock();
+        //d->m_mutex.unlock();
     }
 
 }
@@ -225,14 +224,12 @@ bool QContactRequestWorker::addRequest(QContactAbstractRequest* req)
         bool exists = false;
         QMutexLocker threadLocker(&d->m_mutex);
         exists = d->m_requestQueue.contains(req);
-        //threadLocker.unlock();
 
         // we update the request first, then lock the thread and add it to the queue..
         if (!exists) {
             QList<QContactManager::Error> dummy;
             bool ret = QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Active);
 
-            //threadLocker.relock();
             if (ret)
                 d->m_requestQueue.enqueue(req);
             
@@ -246,7 +243,38 @@ bool QContactRequestWorker::addRequest(QContactAbstractRequest* req)
     return false;
 }
 
-void QContactRequestWorker::removeRequestForManager(QContactManager* manager)
+void QContactRequestWorker::removeRequestAndEmitSignals(QContactAbstractRequest* req)
+{
+    if (req && req->d_ptr) {
+        d->m_requestQueue.removeOne(req);
+
+        if (req->d_ptr->m_waiting) {
+            req->d_ptr->m_waiting = false;
+            req->d_ptr->m_condition.wakeAll();
+        }
+        QContactAbstractRequest::RequestType requestType = req->type();
+        req->d_ptr->m_mutex.lock();
+        // manually cancel and remove all requests from the queue.
+        QList<QContactManager::Error> dummy;
+        switch (req->d_ptr->m_status) {
+            case QContactAbstractRequest::Inactive:
+                req->d_ptr->m_status = QContactAbstractRequest::Active;
+                QContactManagerEngine::emitRequestProgressSignal(req, requestType);
+            case QContactAbstractRequest::Active:
+                req->d_ptr->m_status = QContactAbstractRequest::Cancelling;
+                QContactManagerEngine::emitRequestProgressSignal(req, requestType);
+            case QContactAbstractRequest::Cancelling:
+                req->d_ptr->m_status = QContactAbstractRequest::Cancelled;
+                QContactManagerEngine::emitRequestProgressSignal(req, requestType);
+            default:
+                break;
+
+        }
+        req->d_ptr->m_mutex.unlock();
+    }
+}
+
+void QContactRequestWorker::removeRequestsForManager(QContactManager* manager)
 {
     QList<QContactAbstractRequest*> requests;
     if (manager) {
@@ -277,6 +305,7 @@ bool QContactRequestWorker::removeRequest(QContactAbstractRequest* req)
             //in thread worker
             if (!d->m_stop) {
                 QMutexLocker threadLocker(&d->m_mutex);
+                //removeRequestAndEmitSignals(req);
                 d->m_requestQueue.removeOne(req);
                 if (req->d_ptr->m_waiting) {
                     req->d_ptr->m_waiting = false;
@@ -284,6 +313,7 @@ bool QContactRequestWorker::removeRequest(QContactAbstractRequest* req)
                 }
             } else {
                 //cleanup
+                //removeRequestAndEmitSignals(req);
                 d->m_requestQueue.removeOne(req);
                 if (req->d_ptr->m_waiting) {
                     req->d_ptr->m_waiting = false;
@@ -295,7 +325,9 @@ bool QContactRequestWorker::removeRequest(QContactAbstractRequest* req)
             //called externally
             {
                 QMutexLocker threadLocker(&d->m_mutex);
+
                 if (!d->m_requestQueue.isEmpty()) {
+                    //removeRequestAndEmitSignals(req);
                     d->m_requestQueue.removeOne(req);
                     if (req->d_ptr->m_waiting) {
                         req->d_ptr->m_waiting = false;
@@ -699,25 +731,17 @@ QContactAbstractRequest* QContactRequestWorkerData::takeFirstRequest()
 {
     // check that I'm not already stopped.
     m_mutex.lock();
-    if (m_stop) {
-        m_mutex.unlock();
-        return 0;
-    }
 
     // take the first pending request and finish it
-    if (m_requestQueue.isEmpty()) {
+    while (!m_stop && m_requestQueue.isEmpty())
         m_newRequestAdded.wait(&m_mutex);
-    }
 
-    // we were woken up; check for new request or stop.
-    if (!m_requestQueue.isEmpty()) {
-        // we have a new request to process.
-        m_currentRequest = m_requestQueue.head();
-        m_mutex.unlock();
-        return m_currentRequest;
+    QContactAbstractRequest* result = 0;
+    if (!m_stop && !m_requestQueue.isEmpty()) {
+        result = m_currentRequest = m_requestQueue.head();
     }
 
     // means that we are stopping the request worker (ie, deleting the manager)
     m_mutex.unlock();
-    return 0;
+    return result;
 }

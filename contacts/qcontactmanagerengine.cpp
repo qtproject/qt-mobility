@@ -1777,18 +1777,9 @@ bool QContactManagerEngine::waitForRequestFinished(QContactAbstractRequest* req,
     return false;
 }
 
-/*!
- * Updates the given asynchronous request \a req by setting the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability.
- * Returns true if the request was updated successfully, false if it was not.
- */
-bool QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+void QContactManagerEngine::emitRequestProgressSignal(QContactAbstractRequest* req, QContactAbstractRequest::RequestType requestType, bool appendOnly)
 {
-    QContactAbstractRequest::RequestType requestType = req->type();
-    // convenience function that simply sets the operation error and status
-    if (!req->d_ptr->stateTransition(req, error, errors, status))
-        return false;
-
-    QMutexLocker locker(&req->d_ptr->m_mutex);
+    
     switch (requestType) {
         case QContactAbstractRequest::ContactFetchRequest:
         {
@@ -1863,6 +1854,20 @@ bool QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
         default: // unknown request type.
         break;
     }
+}
+/*!
+ * Updates the given asynchronous request \a req by setting the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a status of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability.
+ * Returns true if the request was updated successfully, false if it was not.
+ */
+bool QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+{
+    QContactAbstractRequest::RequestType requestType = req->type();
+    // convenience function that simply sets the operation error and status
+    if (!req->d_ptr->stateTransition(req, error, errors, status))
+        return false;
+
+    QMutexLocker locker(&req->d_ptr->m_mutex);
+    emitRequestProgressSignal(req, requestType, appendOnly);
     return true;
 }
 

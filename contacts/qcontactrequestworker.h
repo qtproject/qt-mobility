@@ -90,7 +90,7 @@ public:
     /* waiting for a request*/
     bool waitRequest(QContactAbstractRequest* req, int msecs);
 
-    void removeRequestForManager(QContactManager* manager);
+    void removeRequestsForManager(QContactManager* manager);
 
 protected:
     /* Actual asynchronous requests process functions*/
@@ -106,7 +106,8 @@ protected:
     virtual void processContactDetailDefinitionRemoveRequest(QContactDetailDefinitionRemoveRequest* req);
 
 private:
-    QSharedDataPointer<QContactRequestWorkerData> d;
+    QContactRequestWorkerData* d;
+    void removeRequestAndEmitSignals(QContactAbstractRequest* req);
     void cleanupRequests();
 };
 #endif
