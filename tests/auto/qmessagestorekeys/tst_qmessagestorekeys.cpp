@@ -578,7 +578,6 @@ void tst_QMessageStoreKeys::testAccountFilter_data()
 
     // Test options
     QMessageAccountFilter caseInsensitive1(QMessageAccountFilter::byName("work", QMessageDataComparator::Equal));
-    caseInsensitive1.setOptions(QMessageDataComparator::CaseSensitive);
     QTest::newRow("options:caseInsensitive 1")
         << caseInsensitive1
         << ( QMessageAccountIdList() << accountIds[0] )
