@@ -101,6 +101,10 @@ public:
 
     ~QContactMemoryEngineData()
     {
+        if (m_requestWorker) {
+            delete m_requestWorker;
+            m_requestWorker = 0;
+        }
     }
 
     QAtomicInt m_refCount;
@@ -119,7 +123,6 @@ public:
     QString m_engineName;                          // name of this engine as supplied by factory (memory)
     int m_engineVersion;                           // version of this engine as supplied by factory
 
-    QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
     QContactRequestWorker *m_requestWorker;
 };
 
@@ -178,9 +181,6 @@ public:
 
 protected:
     QContactMemoryEngine(const QMap<QString, QString>& parameters);
-
-private slots:
-    void performAsynchronousOperation();
 
 private:
     /* Implement "signal coalescing" for batch functions via change set */
