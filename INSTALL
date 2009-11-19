@@ -111,7 +111,7 @@
     ./src/global
     ... etc
 
-    e.g. To build bearer:
+    e.g. To build bearer on Unix:
         cd ./src/bearer
         make
         make install
