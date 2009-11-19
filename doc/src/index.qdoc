@@ -166,7 +166,7 @@
     The Windows Mobile backend depends on ActiveSync version 4.5.
 
     Whilst not supported for this release the Windows Desktop backend 
-    depends on Microsoft Outlook 2003 or later being installed.
+    requires Microsoft Outlook 2003 or later, and Microsoft Windows XP to be installed.
 
     The messaging API SMS/MMS functionality requires that the platform 
     provides SMS/MMS facilites. Email functionality requires that an email 
