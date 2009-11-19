@@ -415,7 +415,6 @@ void QVideoWidgetPrivate::_q_fullScreenChanged(bool fullScreen)
 
 void QVideoWidgetPrivate::_q_dimensionsChanged()
 {
-    qDebug("Update geometry");
     q_func()->updateGeometry();
 }
 
