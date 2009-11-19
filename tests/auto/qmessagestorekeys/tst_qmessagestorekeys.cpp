@@ -102,8 +102,6 @@ private:
     QMessageIdList messageIds;
 
     QList<int> messageSizes;
-
-    uint unsupportedCount;
 };
 
 Q_DECLARE_METATYPE(QMessageAccountIdList)
@@ -173,7 +171,6 @@ public:
 
 void tst_QMessageStoreKeys::init()
 {
-    unsupportedCount = 0;
 }
 
 void tst_QMessageStoreKeys::initTestCase()
@@ -315,9 +312,6 @@ void tst_QMessageStoreKeys::initTestCase()
 
 void tst_QMessageStoreKeys::cleanup()
 {
-    if (unsupportedCount != 0) {
-        qWarning() << QString("%1 unsupported tests bypassed").arg(unsupportedCount);
-    }
 }
 
 void tst_QMessageStoreKeys::cleanupTestCase()
@@ -597,7 +591,7 @@ void tst_QMessageStoreKeys::testAccountFilter()
         QCOMPARE(QMessageStore::instance()->queryAccounts(filter).toSet().subtract(existingAccountIds), ids.toSet());
         QCOMPARE(QMessageStore::instance()->queryAccounts(~filter).toSet().subtract(existingAccountIds), negatedIds.toSet());
     } else {
-        ++unsupportedCount;
+        QSKIP("Unsupported for this configuration", SkipSingle);
     }
 }
 
@@ -636,7 +630,7 @@ void tst_QMessageStoreKeys::testAccountOrdering()
 
         QCOMPARE(sortedIds, ids);
     } else {
-        ++unsupportedCount;
+        QSKIP("Unsupported for this configuration", SkipSingle);
     }
 }
 
@@ -1253,7 +1247,7 @@ void tst_QMessageStoreKeys::testFolderFilter()
         QCOMPARE(QMessageStore::instance()->queryFolders(filter).toSet().subtract(existingFolderIds), ids.toSet());
         QCOMPARE(QMessageStore::instance()->queryFolders(~filter).toSet().subtract(existingFolderIds), negatedIds.toSet());
     } else {
-        ++unsupportedCount;
+        QSKIP("Unsupported for this configuration", SkipSingle);
     }
 }
 
@@ -1300,7 +1294,7 @@ void tst_QMessageStoreKeys::testFolderOrdering()
 
         QCOMPARE(sortedIds, ids);
     } else {
-        ++unsupportedCount;
+        QSKIP("Unsupported for this configuration", SkipSingle);
     }
 }
 
@@ -2604,7 +2598,7 @@ void tst_QMessageStoreKeys::testMessageFilter()
             QCOMPARE(QMessageStore::instance()->queryMessages(~filter&~existingAccountsFilter, body).toSet().subtract(existingMessageIds), negatedIds.toSet());
         }
     } else {
-        ++unsupportedCount;
+        QSKIP("Unsupported for this configuration", SkipSingle);
     }
 }
 
@@ -2869,7 +2863,7 @@ void tst_QMessageStoreKeys::testMessageOrdering()
         QVERIFY(match);
         QVERIFY(iit == ids.end());
     } else {
-        ++unsupportedCount;
+        QSKIP("Unsupported for this configuration", SkipSingle);
     }
 }
 
