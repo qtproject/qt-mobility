@@ -2753,38 +2753,72 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
                                << ( QMessageIdList() << messageIds[1] << messageIds[2] ) );
 
+    // On Windows, the following tests do not vary by type (which is always Email)
     QTest::newRow("type ascending, priority ascending, size ascending")
         << QMessageOrdering::byType(Qt::AscendingOrder) + QMessageOrdering::byPriority(Qt::AscendingOrder) + QMessageOrdering::bySize(Qt::AscendingOrder)
+#if defined(Q_OS_WIN)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[2] ) );
+#else
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
                                << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[1] )
                                << ( QMessageIdList() << messageIds[2] ) );
+#endif
 
     QTest::newRow("type ascending, priority ascending, size descending")
         << QMessageOrdering::byType(Qt::AscendingOrder) + QMessageOrdering::byPriority(Qt::AscendingOrder) + QMessageOrdering::bySize(Qt::DescendingOrder)
+#if defined(Q_OS_WIN)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[1] ) );
+#else
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
                                << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[2] )
                                << ( QMessageIdList() << messageIds[1] ) );
+#endif
 
     QTest::newRow("type ascending, priority descending, size ascending")
         << QMessageOrdering::byType(Qt::AscendingOrder) + QMessageOrdering::byPriority(Qt::DescendingOrder) + QMessageOrdering::bySize(Qt::AscendingOrder)
+#if defined(Q_OS_WIN)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[4] ) );
+#else
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
                                << ( QMessageIdList() << messageIds[1] )
                                << ( QMessageIdList() << messageIds[2] )
                                << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[4] ) );
+#endif
 
     QTest::newRow("type ascending, priority descending, size descending")
         << QMessageOrdering::byType(Qt::AscendingOrder) + QMessageOrdering::byPriority(Qt::DescendingOrder) + QMessageOrdering::bySize(Qt::DescendingOrder)
+#if defined(Q_OS_WIN)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[4] ) );
+#else
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
                                << ( QMessageIdList() << messageIds[2] )
                                << ( QMessageIdList() << messageIds[1] )
                                << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[4] ) );
+#endif
 
+#if !defined(Q_OS_WIN)
     QTest::newRow("type descending, priority ascending, size ascending")
         << QMessageOrdering::byType(Qt::DescendingOrder) + QMessageOrdering::byPriority(Qt::AscendingOrder) + QMessageOrdering::bySize(Qt::AscendingOrder)
         << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
@@ -2816,6 +2850,7 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
                                << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[0] ) );
+#endif
 }
 
 void tst_QMessageStoreKeys::testMessageOrdering()
