@@ -86,12 +86,8 @@ public:
     void setType(const QString& type);
     void setType(const QContactType& type);
 
-    /* The (possibly synthesized) display label of the contact - DEPRECATED, see Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a */
-    QContactDisplayLabel displayLabel() const;
-    void setDisplayLabel(const QContactDisplayLabel& label);
-    void setDisplayLabel(const QString& label);
-    /* The synthesized display label of the contact */
-    // QString displayLabel() const; // THIS FUNCTION WILL REPLACE THE THREE ABOVE!
+    /* The (backend synthesized) display label of the contact */
+    QString displayLabel() const;
 
     /* Is this an empty contact? */
     bool isEmpty() const;

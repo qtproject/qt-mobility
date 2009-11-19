@@ -5,18 +5,12 @@ TEMPLATE = app
 TARGET = 
 QT += testlib
 CONFIG += qtestlib
-CONFIG += testcase
+include(../tsrc.pri)
 
 DEFINES += PBK_UNIT_TEST
 DEPENDPATH += .
 INCLUDEPATH += .
-INCLUDEPATH += .\inc
-INCLUDEPATH += ..\..\inc
-INCLUDEPATH += ..\..\rss
-INCLUDEPATH += ..\..\..\..\contacts
-INCLUDEPATH += ..\..\..\..\..\src\contacts
-INCLUDEPATH += ..\..\..\..\..\src\global
-include(../tsrc.pri)
+INCLUDEPATH += $$SYMBIAN_PATHS
 
 symbian:
 { 
@@ -34,9 +28,5 @@ symbian:
     TARGET.CAPABILITY = ALL \
             -TCB
     
-    LIBS += \
-        -lcntmodel \
-        -lQtContacts \
-        -lcentralrepository \
-        -lestor
+    LIBS += $$SYMBIAN_LIBS
 }

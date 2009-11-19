@@ -166,7 +166,7 @@
     The Windows Mobile backend depends on ActiveSync version 4.5.
 
     Whilst not supported for this release the Windows Desktop backend 
-    depends on Microsoft Outlook 2003 or later being installed.
+    requires Microsoft Outlook 2003 or later, and Microsoft Windows XP to be installed.
 
     The messaging API SMS/MMS functionality requires that the platform 
     provides SMS/MMS facilites. Email functionality requires that an email 
@@ -178,6 +178,10 @@
     and managing of a FM radio. This includes the typical functionality you
     would find on a music player, combined with FM radio, and camera for still
     and video recording.
+
+    \section2 Multimedia Dependencies and Requirements
+
+    Multimedia is dependent on the QtMultimedia module of Qt. 
 
     \section1 Service Framework
 
@@ -192,6 +196,11 @@
     app does not need to be concerned with the underlying protocol, where the
     servers are, the hardware peculiarities with networking and other low
     level details.
+
+    \section2 Service Framework Dependencies and Requirements
+
+    The Service Framework is dependent on SQLite version 3 and that
+    Qt has been built with the \l {QSQLITE} {QSQLITE driver}.
 
     \section1 System Information
 

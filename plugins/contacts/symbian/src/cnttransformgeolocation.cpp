@@ -45,7 +45,10 @@ const char separator = ',';
 
 QList<CContactItemField *> CntTransformGeolocation::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList;
+    if(detail.definitionName() != QContactGeolocation::DefinitionName)
+       User::Leave(KErrArgument);
+
+    QList<CContactItemField *> fieldList;
 
 	//cast to geolocation
 	const QContactGeolocation &geolocation(static_cast<const QContactGeolocation&>(detail));
@@ -61,16 +64,8 @@ QList<CContactItemField *> CntTransformGeolocation::transformDetailL(const QCont
     }
 
     if (formattedGeolocation.length() > 1) {
-        TPtrC fieldText(reinterpret_cast<const TUint16*>(formattedGeolocation.utf16()));
-        CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldGEO);
-        newField->TextStorage()->SetTextL(fieldText);
-        newField->SetMapping(KUidContactFieldVCardMapGEO);
-
-        //contexts
-        setContextsL(geolocation, *newField);
-
-        fieldList.append(newField);
-        CleanupStack::Pop(newField);
+        //create new field with contexts
+        transformToTextFieldL(geolocation, fieldList, formattedGeolocation, KUidContactFieldGEO, KUidContactFieldVCardMapGEO, true);
     }
 
 	return fieldList;

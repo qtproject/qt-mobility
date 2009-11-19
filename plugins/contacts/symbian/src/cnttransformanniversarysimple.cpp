@@ -42,6 +42,9 @@
 
 QList<CContactItemField *> CntTransformAnniversarySimple::transformDetailL(const QContactDetail &detail)
 {
+    if(detail.definitionName() != QContactAnniversary::DefinitionName)
+       User::Leave(KErrArgument);
+
     QList<CContactItemField *> fieldList;
 
     //cast to anniversary

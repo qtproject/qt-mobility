@@ -31,7 +31,6 @@ PUBLIC_HEADERS += \
     qcontactmanager.h \
     qcontactmanagerengine.h \
     qcontactmanagerenginefactory.h \
-    qcontactmanagerinfo.h \
     qcontactrelationship.h \
     qcontactsortorder.h \
     qtcontactsglobal.h \
@@ -70,7 +69,6 @@ SOURCES += \
     qcontactmanager.cpp \
     qcontactmanagerengine.cpp \
     qcontactmanagerenginefactory.cpp \
-    qcontactmanagerinfo.cpp \
     qcontactrelationship.cpp \
     qcontactrequestworker.cpp \
     qcontactsortorder.cpp
@@ -82,6 +80,7 @@ HEADERS += \
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
+    TARGET.UID3 = 0x2002AC7A
 
     ### Contacts
     # Main library
