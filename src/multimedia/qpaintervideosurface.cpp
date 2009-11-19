@@ -51,6 +51,8 @@
 #include <qglshaderprogram.h>
 #endif
 
+QTM_BEGIN_NAMESPACE
+
 class QVideoSurfacePainter
 {
 public:
@@ -1353,4 +1355,6 @@ void QPainterVideoSurface::createPainter()
     m_painter = new QVideoSurfaceRasterPainter;
 #endif
 }
+QTM_END_NAMESPACE
+
 

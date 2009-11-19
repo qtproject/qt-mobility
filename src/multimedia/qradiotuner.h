@@ -49,6 +49,8 @@
 
 #include <QPair>
 
+QTM_BEGIN_NAMESPACE
+
 class QRadioTunerPrivate;
 class Q_MEDIA_EXPORT QRadioTuner : public QMediaObject
 {
@@ -123,5 +125,7 @@ private:
     Q_DISABLE_COPY(QRadioTuner)
     Q_DECLARE_PRIVATE(QRadioTuner)
 };
+
+QTM_END_NAMESPACE
 
 #endif  // QRADIOPLAYER_H

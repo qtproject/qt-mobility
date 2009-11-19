@@ -43,6 +43,8 @@
 #include <qmediacontrol_p.h>
 #include <qmediaplayer.h>
 
+QTM_BEGIN_NAMESPACE
+
 
 /*!
     \class QMediaPlayerControl
@@ -347,4 +349,6 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     Signal emitted when playback rate changes to \a rate.
 */
 
+
+QTM_END_NAMESPACE
 

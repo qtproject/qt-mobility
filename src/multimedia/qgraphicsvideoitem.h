@@ -46,6 +46,7 @@
 
 #include <qvideowidget.h>
 
+QTM_BEGIN_NAMESPACE
 
 class QVideoSurfaceFormat;
 
@@ -73,5 +74,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_formatChanged(const QVideoSurfaceFormat &))
     Q_PRIVATE_SLOT(d_func(), void _q_serviceDestroyed())
 };
+
+QTM_END_NAMESPACE
 
 #endif

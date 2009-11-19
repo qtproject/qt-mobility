@@ -41,14 +41,15 @@
 #ifndef QPACKETPROTOCOL_H
 #define QPACKETPROTOCOL_H
 
-#include "qcontextglobal.h"
+#include "qmobilityglobal.h"
 #include <QObject>
 #include <QDataStream>
 
-QTM_BEGIN_NAMESPACE
-
 class QIODevice;
 class QBuffer;
+
+QTM_BEGIN_NAMESPACE
+
 class QPacket;
 class QPacketAutoSend;
 class QPacketProtocolPrivate;

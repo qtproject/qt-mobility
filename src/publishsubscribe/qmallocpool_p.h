@@ -41,7 +41,7 @@
 #ifndef QMALLOCPOOL_H
 #define QMALLOCPOOL_H
 
-#include "qcontextglobal.h"
+#include "qmobilityglobal.h"
 #include <cstdlib>
 #include <QString>
 

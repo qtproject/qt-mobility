@@ -62,6 +62,8 @@
 
 #include <QtCore/qdebug.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMediaPlaylistControl;
 class QMediaPlaylistProvider;
 class QMediaPlaylistReader;
@@ -141,5 +143,7 @@ private:
     QMediaPlaylistNavigator *m_navigator;
 };
 
+
+QTM_END_NAMESPACE
 
 #endif // QMEDIAPLAYLIST_P_H

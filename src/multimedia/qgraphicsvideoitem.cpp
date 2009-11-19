@@ -49,6 +49,8 @@
 
 #include <QtMultimedia/qvideosurfaceformat.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QGraphicsVideoItemPrivate
 {
 public:
@@ -213,5 +215,7 @@ QVariant QGraphicsVideoItem::itemChange(GraphicsItemChange change, const QVarian
         return QGraphicsItem::itemChange(change, value);
     }
 }
+
+QTM_END_NAMESPACE
 
 #include "moc_qgraphicsvideoitem.cpp"

@@ -63,6 +63,8 @@
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideoframe.h>
 
+QTM_BEGIN_NAMESPACE
+
 
 class QGLContext;
 class QVideoSurfacePainter;
@@ -148,6 +150,8 @@ private:
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QPainterVideoSurface::ShaderTypes)
 #endif
+
+QTM_END_NAMESPACE
 
 #endif
 

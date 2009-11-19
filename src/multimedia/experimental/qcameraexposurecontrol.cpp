@@ -42,6 +42,8 @@
 #include <experimental/qcameraexposurecontrol.h>
 #include  "qmediacontrol_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QCameraExposureControl
     \ingroup multimedia
@@ -340,4 +342,6 @@ Set the metering mode to \a mode.
 
     Signal emitted when sensitity value changes to \a value.
 */
+
+QTM_END_NAMESPACE
 

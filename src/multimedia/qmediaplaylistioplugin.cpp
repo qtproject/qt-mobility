@@ -41,6 +41,8 @@
 
 #include <qmediaplaylistioplugin.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMediaPlaylistReader
     \preliminary
@@ -180,3 +182,5 @@ QMediaPlaylistIOPlugin::~QMediaPlaylistIOPlugin()
 
     If the device is invalid or the format is unsupported this will return a null pointer.
 */
+QTM_END_NAMESPACE
+

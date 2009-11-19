@@ -42,6 +42,8 @@
 #include "qmediastreamscontrol.h"
 #include "qmediacontrol_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMediaStreamsControl
     \preliminary
@@ -140,3 +142,5 @@ QMediaStreamsControl::~QMediaStreamsControl()
 
     The signal is emited when the active streams list is changed.
 */
+QTM_END_NAMESPACE
+

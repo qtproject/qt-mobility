@@ -42,6 +42,8 @@
 #include <experimental/qcamerafocuscontrol.h>
 #include  "qmediacontrol_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QCameraFocusControl
     \ingroup multimedia
@@ -197,3 +199,5 @@ QCameraFocusControl::~QCameraFocusControl()
 
     Signal emitted when \a zoom value changed.
 */
+QTM_END_NAMESPACE
+

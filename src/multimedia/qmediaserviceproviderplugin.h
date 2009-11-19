@@ -48,6 +48,8 @@
 #include <qmobilityglobal.h>
 #include <qmediaserviceprovider.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMediaService;
 
 struct Q_MEDIA_EXPORT QMediaServiceProviderFactoryInterface : public QFactoryInterface
@@ -101,6 +103,8 @@ public:
     virtual QMediaService* create(const QString& key) = 0;
     virtual void release(QMediaService *service) = 0;
 };
+
+QTM_END_NAMESPACE
 
 
 #endif  // QMEDIASERVICEPROVIDERPLUGIN_H

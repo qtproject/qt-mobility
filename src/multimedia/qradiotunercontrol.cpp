@@ -42,6 +42,8 @@
 #include <qradiotunercontrol.h>
 #include <qmediacontrol_p.h>
 
+QTM_BEGIN_NAMESPACE
+
 
 /*!
     \class QRadioTunerControl
@@ -293,3 +295,5 @@ QRadioTunerControl::~QRadioTunerControl()
 
     Signals that an \a error has occured.
 */
+QTM_END_NAMESPACE
+

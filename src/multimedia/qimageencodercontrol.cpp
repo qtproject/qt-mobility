@@ -42,6 +42,8 @@
 #include <qimageencodercontrol.h>
 #include <QtCore/qstringlist.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QImageEncoderControl
     \preliminary
@@ -163,3 +165,5 @@ QImageEncoderControl::~QImageEncoderControl()
 
     \sa quality()
 */
+QTM_END_NAMESPACE
+

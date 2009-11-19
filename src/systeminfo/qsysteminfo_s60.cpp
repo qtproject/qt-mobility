@@ -62,6 +62,8 @@
 #include <bttypes.h>
 #include <Etel3rdParty.h>
 
+QTM_BEGIN_NAMESPACE
+
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
     : QObject(parent)

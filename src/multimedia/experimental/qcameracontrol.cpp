@@ -42,6 +42,8 @@
 #include <experimental/qcameracontrol.h>
 #include  "qmediacontrol_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QCameraControl
     \ingroup multimedia
@@ -115,3 +117,4 @@ QCameraControl::~QCameraControl()
     a description of the error \a errorString.
 */
 
+QTM_END_NAMESPACE

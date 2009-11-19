@@ -42,7 +42,7 @@
 #ifndef QSYSTEMREADWRITELOCK_H
 #define QSYSTEMREADWRITELOCK_H
 
-#include "qcontextglobal.h"
+#include "qmobilityglobal.h"
 #include <QString>
 
 QTM_BEGIN_NAMESPACE

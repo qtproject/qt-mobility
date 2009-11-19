@@ -59,6 +59,8 @@
 
 #include <qmediaobject.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMetaDataControl;
 
 #define Q_DECLARE_NON_CONST_PUBLIC(Class) \
@@ -82,5 +84,7 @@ public:
 
     QMediaObject *q_ptr;
 };
+
+QTM_END_NAMESPACE
 
 #endif

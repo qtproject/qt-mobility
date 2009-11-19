@@ -46,11 +46,12 @@
 
 #include "qmobilityglobal.h"
 
+class QDataStream;
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QDataStream;
 class QServiceFilterPrivate;
 class Q_SFW_EXPORT QServiceFilter
 {

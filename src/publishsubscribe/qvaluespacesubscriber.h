@@ -42,7 +42,7 @@
 #ifndef QVALUESPACESUBSCRIBER_H
 #define QVALUESPACESUBSCRIBER_H
 
-#include "qcontextglobal.h"
+#include "qmobilityglobal.h"
 #include "qvaluespace.h"
 
 #include <QObject>

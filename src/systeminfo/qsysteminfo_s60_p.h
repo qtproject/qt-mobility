@@ -61,12 +61,12 @@
 #include "qsysteminfo.h"
 
 #include <f32file.h>
+#include "telephonyinfo_s60.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-#include "telephonyinfo_s60.h"
 
 //////// QSystemInfo
 class QSystemInfoPrivate : public QObject

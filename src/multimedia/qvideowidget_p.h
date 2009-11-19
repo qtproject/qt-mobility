@@ -63,6 +63,8 @@
 #include <qpaintervideosurface_p.h>
 #endif
 
+QTM_BEGIN_NAMESPACE
+
 class QVideoWidgetBackendInterface
 {
 public:
@@ -257,5 +259,7 @@ public:
     void _q_saturationChanged(int saturation);
     void _q_fullScreenChanged(bool fullScreen);
 };
+
+QTM_END_NAMESPACE
 
 #endif

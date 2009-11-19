@@ -47,6 +47,8 @@
 
 
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMediaControl
     \ingroup multimedia
@@ -132,4 +134,6 @@ QMediaControl::QMediaControl(QMediaControlPrivate &dd, QObject *parent)
     d_ptr->q_ptr = this;
 }
 
+
+QTM_END_NAMESPACE
 

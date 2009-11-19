@@ -41,6 +41,8 @@
 
 #include <qvideodevicecontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QVideoDeviceControl
     \preliminary
@@ -138,3 +140,5 @@ QVideoDeviceControl::~QVideoDeviceControl()
 
     Signals that the selected video device \a name has changed.
 */
+QTM_END_NAMESPACE
+

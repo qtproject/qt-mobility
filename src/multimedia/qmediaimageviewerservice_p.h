@@ -66,6 +66,8 @@
 class QAbstractVideoSurface;
 class QNetworkAccessManager;
 
+QTM_BEGIN_NAMESPACE
+
 class QMediaImageViewerServicePrivate;
 
 class Q_AUTOTEST_EXPORT QMediaImageViewerService : public QMediaService
@@ -203,5 +205,7 @@ Q_SIGNALS:
 private:
     Output m_output;
 };
+
+QTM_END_NAMESPACE
 
 #endif

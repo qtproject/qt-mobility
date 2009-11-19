@@ -65,11 +65,12 @@
 
 QT_BEGIN_HEADER
 
+class QStringList;
+class QTimer;
+
 QTM_BEGIN_NAMESPACE
 
-class QStringList;
 class QSystemNetworkInfo;
-class QTimer;
 
 class QSystemInfoPrivate : public QObject
 {

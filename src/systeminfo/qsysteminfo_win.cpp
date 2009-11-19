@@ -71,10 +71,18 @@
 #include <qabstracteventdispatcher.h>
 
 #include <locale.h>
+#ifdef Q_OS_WINCE
+#include <simmgr.h>
+#include <Winbase.h>
+#include <Winuser.h>
+#endif
+
 
 #if !defined( Q_CC_MINGW)
 #ifndef Q_OS_WINCE
 #include "qwmihelper_win_p.h"
+
+QTM_BEGIN_NAMESPACE
 
 enum NDIS_MEDIUM {
     NdisMedium802_3 = 0,
@@ -95,12 +103,6 @@ enum NDIS_PHYSICAL_MEDIUM {
     CTL_CODE(FILE_DEVICE_PHYSICAL_NETCARD, 0, METHOD_OUT_DIRECT, FILE_ANY_ACCESS)
 
 #endif
-#endif
-
-#ifdef Q_OS_WINCE
-#include <simmgr.h>
-#include <Winbase.h>
-#include <Winuser.h>
 #endif
 
 

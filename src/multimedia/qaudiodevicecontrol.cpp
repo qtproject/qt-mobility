@@ -41,6 +41,8 @@
 
 #include <qaudiodevicecontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QAudioDeviceControl
     \preliminary
@@ -141,3 +143,5 @@ QAudioDeviceControl::~QAudioDeviceControl()
 
     Signals that list of available devices was changed.
 */
+QTM_END_NAMESPACE
+

@@ -48,6 +48,8 @@
 #include <qmediapluginloader_p.h>
 #include <qmediaplayer.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMediaServiceProviderHintPrivate : public QSharedData
 {
 public:
@@ -617,3 +619,5 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
 
     Returns a set of features supported by a plug-in \a service.
 */
+QTM_END_NAMESPACE
+

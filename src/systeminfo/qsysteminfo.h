@@ -48,12 +48,10 @@
 #include <QString>
 #include <QStringList>
 #include <QNetworkInterface>
+
+
 QT_BEGIN_HEADER
-
 QTM_BEGIN_NAMESPACE
-
-class QStringList;
-
 class QSystemInfoPrivate;
 class QSystemNetworkInfoPrivate;
 class QSystemStorageInfoPrivate;

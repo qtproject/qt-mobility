@@ -105,6 +105,8 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 
+
+QTM_BEGIN_NAMESPACE
 //
 ////////
 static QString stringFromCFString(CFStringRef value) {

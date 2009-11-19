@@ -52,7 +52,9 @@
 
 #include "qhalservice_linux_p.h"
 
- static QDBusConnection dbusConnection = QDBusConnection::systemBus();
+QTM_BEGIN_NAMESPACE
+
+static QDBusConnection dbusConnection = QDBusConnection::systemBus();
 
 class QHalInterfacePrivate
 {
@@ -357,3 +359,5 @@ quint32 QHalDeviceKillSwitchInterface::getPower()
     }
     return -1;
 }
+
+QTM_END_NAMESPACE

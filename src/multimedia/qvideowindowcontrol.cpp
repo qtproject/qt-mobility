@@ -41,6 +41,8 @@
 
 #include <qvideowindowcontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QVideoWindowControl
     \preliminary
@@ -261,3 +263,5 @@ QVideoWindowControl::~QVideoWindowControl()
 
     Signals that a video overlay's \a saturation adjustment has changed.
 */
+QTM_END_NAMESPACE
+

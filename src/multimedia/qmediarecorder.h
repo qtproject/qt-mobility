@@ -50,8 +50,11 @@
 
 
 class QUrl;
-class QAudioFormat;
 class QSize;
+
+QTM_BEGIN_NAMESPACE
+
+class QAudioFormat;
 class QMediaRecorderService;
 class QAudioEncoderSettings;
 class QVideoEncoderSettings;
@@ -139,5 +142,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
 };
 
+
+QTM_END_NAMESPACE
 
 #endif  // QMEDIARECORDER_H

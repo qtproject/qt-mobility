@@ -49,6 +49,8 @@
 
 
 
+QTM_BEGIN_NAMESPACE
+
 
 /*!
     \class QMediaService
@@ -246,4 +248,6 @@ QStringList QMediaService::supportedEndpoints(QMediaService::MediaEndpoint endpo
 
     This signal emitted when the active endpoint of type \a endpointType has been changed to \a endpoint.
 */
+
+QTM_END_NAMESPACE
 

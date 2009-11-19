@@ -56,6 +56,8 @@ class QByteArray;
 class QIODevice;
 class QStringList;
 
+QTM_BEGIN_NAMESPACE
+
 class Q_MEDIA_EXPORT QMediaPlaylistReader
 {
 public:
@@ -111,5 +113,7 @@ public:
 
     virtual QMediaPlaylistWriter *createWriter(QIODevice *device, const QByteArray &format) = 0;
 };
+
+QTM_END_NAMESPACE
 
 #endif // QMEDIAPLAYLISTIOPLUGIN_H

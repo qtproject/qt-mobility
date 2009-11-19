@@ -61,6 +61,8 @@
 
 #include <QStringList>
 
+QTM_BEGIN_NAMESPACE
+
 class WMIHelper : public QObject
 {
 public:
@@ -90,5 +92,7 @@ private:
   // QHash <QString, bool> initializedNamespaces;
 
 };
+
+QTM_END_NAMESPACE
 #endif
 #endif // WMIHELPER_H

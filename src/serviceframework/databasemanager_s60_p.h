@@ -60,14 +60,14 @@
 #include <servicemetadata_p.h>
 #include "dberror_p.h"
 #include <e32base.h>
-class QServiceFilter;
 
-typedef TPckgBuf<TInt> TError; 
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class CDatabaseManagerServerThread;
+class QServiceFilter;
+typedef TPckgBuf<TInt> TError; 
 
 class QServiceInterfaceDescriptor;
 

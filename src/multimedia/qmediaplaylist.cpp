@@ -56,6 +56,8 @@
 
 #include <qmediapluginloader_p.h>
 
+QTM_BEGIN_NAMESPACE
+
 Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
         (QMediaPlaylistIOInterface_iid, QLatin1String("/playlistformats"), Qt::CaseInsensitive))
 
@@ -624,3 +626,5 @@ void QMediaPlaylist::setCurrentPosition(int playlistPosition)
 */
 
 #include "moc_qmediaplaylist.cpp"
+QTM_END_NAMESPACE
+

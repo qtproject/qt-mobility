@@ -52,6 +52,8 @@
 
 #include <qmediaserviceprovider.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QCameraControl;
 
 
@@ -271,5 +273,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::ExposureModes)
 Q_DECLARE_METATYPE(QCamera::State)
 Q_DECLARE_METATYPE(QCamera::Error)
 Q_DECLARE_METATYPE(QCamera::FocusStatus)
+
+QTM_END_NAMESPACE
 
 #endif  // QCAMERA_H

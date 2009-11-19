@@ -68,15 +68,14 @@
 
 #include <QBasicTimer>
 
+class QStringList;
+class QTimer;
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QStringList;
 class QSystemNetworkInfo;
-class QTimer;
-
 class QSystemInfoPrivate : public QObject
 {
     Q_OBJECT

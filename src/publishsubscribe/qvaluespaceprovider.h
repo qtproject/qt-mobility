@@ -42,7 +42,7 @@
 #ifndef QVALUESPACEPROVIDER_H
 #define QVALUESPACEPROVIDER_H
 
-#include "qcontextglobal.h"
+#include "qmobilityglobal.h"
 #include "qvaluespace.h"
 
 #include <QObject>

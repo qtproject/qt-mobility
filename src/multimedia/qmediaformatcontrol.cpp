@@ -42,6 +42,8 @@
 
 #include <qmediaformatcontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMediaFormatControl
     \preliminary
@@ -109,3 +111,5 @@ QMediaFormatControl::~QMediaFormatControl()
 
     Returns a description of the format identified by the given \a mimeType.
 */
+QTM_END_NAMESPACE
+

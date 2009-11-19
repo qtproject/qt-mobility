@@ -42,6 +42,8 @@
 #include <qmediacontrol_p.h>
 #include <qmetadatacontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 
 /*!
     \class QMetaDataControl
@@ -173,3 +175,5 @@ QMetaDataControl::~QMetaDataControl()
     Signal a change in the writable status of meta-data, \a writable will be
     true if meta-data elements can be added or adjusted.
 */
+QTM_END_NAMESPACE
+

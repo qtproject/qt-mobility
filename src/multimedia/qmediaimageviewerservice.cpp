@@ -68,6 +68,8 @@
 # include <QtMultimedia/qvideosurfaceformat.h>
 #endif
 
+QTM_BEGIN_NAMESPACE
+
 class QMediaImageViewerServicePrivate : public QMediaServicePrivate
 {
 public:
@@ -601,3 +603,5 @@ void QMediaImageViewerControl::showMedia(const QMediaContent &media)
 
 
 #include "moc_qmediaimageviewerservice_p.cpp"
+QTM_END_NAMESPACE
+

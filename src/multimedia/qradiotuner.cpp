@@ -47,6 +47,8 @@
 #include <QPair>
 
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QRadioTuner
     \brief The QRadioTuner class provides an interface to the systems analog radio device.
@@ -524,4 +526,6 @@ QString QRadioTuner::errorString() const
     \value ForceMono   Provide mono mode, converting if required.
 */
 
+
+QTM_END_NAMESPACE
 

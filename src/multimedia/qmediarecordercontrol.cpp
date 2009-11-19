@@ -41,6 +41,8 @@
 
 #include <qmediarecordercontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 
 /*!
     \class QMediaRecorderControl
@@ -162,3 +164,5 @@ QMediaRecorderControl::~QMediaRecorderControl()
 
     Signals that an \a error has occurred.  The \a errorString describes the error.
 */
+QTM_END_NAMESPACE
+

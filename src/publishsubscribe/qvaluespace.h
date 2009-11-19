@@ -42,7 +42,7 @@
 #ifndef QVALUESPACE_H
 #define QVALUESPACE_H
 
-#include "qcontextglobal.h"
+#include "qmobilityglobal.h"
 
 #include <QList>
 #include <QUuid>

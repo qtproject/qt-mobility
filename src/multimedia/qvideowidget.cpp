@@ -59,6 +59,8 @@
 #include <qdialog.h>
 #include <qstackedlayout.h>
 
+QTM_BEGIN_NAMESPACE
+
 QVideoWidgetControlBackend::QVideoWidgetControlBackend(QVideoWidgetControl *control)
     : m_widgetControl(control)
 {
@@ -808,3 +810,5 @@ bool QVideoWidget::event(QEvent *event)
 }
 
 #include "moc_qvideowidget.cpp"
+QTM_END_NAMESPACE
+
