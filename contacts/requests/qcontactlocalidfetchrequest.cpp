@@ -99,5 +99,6 @@ QList<QContactSortOrder> QContactLocalIdFetchRequest::sorting() const
 QList<QContactLocalId> QContactLocalIdFetchRequest::ids() const
 {
     Q_D(const QContactLocalIdFetchRequest);
+    QMutexLocker locker(&d->m_mutex);
     return d->m_ids;
 }

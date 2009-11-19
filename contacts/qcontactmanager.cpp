@@ -49,7 +49,6 @@
 #include <QSharedData>
 #include <QPair>
 #include <QSet>
-
 /*!
  * \class QContactManager
  *
@@ -273,6 +272,8 @@ QContactManager::QContactManager(const QString& managerName, int implementationV
 /*! Frees the memory used by the QContactManager */
 QContactManager::~QContactManager()
 {
+    d->m_engine->removeRequestsForManager(this);
+    delete d->m_info;
     delete d;
 }
 

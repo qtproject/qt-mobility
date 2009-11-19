@@ -39,13 +39,14 @@
 **
 ****************************************************************************/
 
-#include <QDebug>
 #include <QTimer>
 
 #include "qcontactrequests.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactrequestworker_p.h"
 
+#include "qcontactabstractrequest_p.h"
+#include <QDebug>
 /*!
  * \class QContactRequestWorker
  *
@@ -65,6 +66,7 @@
 QContactRequestWorker::QContactRequestWorker()
     :QThread(), d(new QContactRequestWorkerData)
 {
+    QObject::moveToThread(this);
 }
 
 /*! Initializes this QContactRequestWorker from \a other */
@@ -86,8 +88,6 @@ QContactRequestWorker::~QContactRequestWorker()
 {
     stop();
     quit();
-    while (isRunning() && !wait(1)) 
-        d->m_newRequestAdded.wakeAll();
 }
 
 /*!
@@ -97,9 +97,14 @@ QContactRequestWorker::~QContactRequestWorker()
  */
 void QContactRequestWorker::stop()
 {
-    QMutexLocker locker(&d->m_mutex);
+    d->m_mutex.lock();
     d->m_stop = true;
-    d->m_newRequestAdded.wakeAll();
+    d->m_mutex.unlock();
+
+    while (isRunning()) {
+        d->m_newRequestAdded.wakeAll();
+        usleep(10);
+    }
 }
 
 /*!
@@ -122,28 +127,29 @@ void QContactRequestWorker::stop()
  */
 void QContactRequestWorker::run()
 {
-    QContactRequestElement *re;
+    QContactAbstractRequest *req;
+    d->m_threadId = currentThreadId();
+    d->m_currentRequest = 0;
+    d->m_finished = false;
+    d->m_stop = false;
     
-    for(;;) {
-        
-        d->cleanUpFinishedRequests();
-        re = d->takeFirstRequestElement();
-        if (d->m_stop)
-           break;
-        
-        Q_ASSERT(re && re->request);
-        
+    forever {
+        // get a new request from the queue (also sets the m_currentRequest ptr to this request)
+        req = d->takeFirstRequest();
+        if (req == 0 || d->m_stop) {
+            // stopped! m_curFrentRequest ptr will still be zero.
+            d->m_stop = true;
+            d->m_currentRequest = 0;
+            cleanupRequests();
+            break;
+        }
         // check to see if it is cancelling; if so, cancel it and perform update.
         if (re->request->status() == QContactAbstractRequest::Cancelling) {
             QList<QContactManager::Error> dummy;
-            QContactManagerEngine::updateRequestStatus(re->request, QContactManager::NoError, dummy, QContactAbstractRequest::Cancelled);
-        }
-
-        if (re->request->isFinished() || !re->request->manager()) {
-            removeRequest(re->request);
+            QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Cancelled);
+            d->m_currentRequest = 0;
             continue;
         }
-
         // Now perform the active request and emit required signals.
         Q_ASSERT(re->request->status() == QContactAbstractRequest::Active);
         switch (re->request->type()) {
@@ -190,12 +196,32 @@ void QContactRequestWorker::run()
             if (re)
                 removeRequest(re->request);
         }
-        d->m_requestQueue.clear();
-        d->m_requestMap.clear();
-        d->cleanUpFinishedRequests(true);
+        //d->m_mutex.lock();
+        if (req && req->d_ptr && req->d_ptr->m_waiting) {
+            req->d_ptr->m_waiting = false;
+            req->d_ptr->m_condition.wakeAll();
+        }
+        d->m_currentRequest = 0;
+        //d->m_mutex.unlock();
     }
-}
 
+}
+void QContactRequestWorker::cleanupRequests()
+{
+    QMutexLocker threadLocker(&d->m_mutex);
+    // we were stopped.  clean up our requests by cancelling them all.
+    foreach (QContactAbstractRequest* req, d->m_requestQueue) {
+        if (req && req->d_ptr) {
+            // manually cancel and remove all requests from the queue.
+            QList<QContactManager::Error> dummy;
+            QContactManagerEngine::updateRequestStatus(req, QContactManager::UnspecifiedError, dummy, QContactAbstractRequest::Cancelling);
+            QContactManagerEngine::updateRequestStatus(req, QContactManager::UnspecifiedError, dummy, QContactAbstractRequest::Cancelled);
+            d->m_requestQueue.removeOne(req);
+        }
+    }
+    d->m_requestQueue.clear();
+    d->m_finished = true;
+}
 
 /*!
  * Returns true if the given \a req successfully added into the working queue, false if not.
@@ -204,24 +230,80 @@ void QContactRequestWorker::run()
  */
 bool QContactRequestWorker::addRequest(QContactAbstractRequest* req)
 {
-    if (req) {
-        QMutexLocker locker(&d->m_mutex);
-        
-        if (!d->m_requestMap.contains(req)) {
-            QContactRequestElement* re = new QContactRequestElement;
-            if (re) {
-                re->request = req;
-                re->waiting = false;
-                d->m_requestQueue.enqueue(re);
-                d->m_requestMap.insert(req, re);
-                QList<QContactManager::Error> dummy;
-                QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Active);
-                d->m_newRequestAdded.wakeAll();
-                return true;
-            }
+    // we have to be careful with the order of locks - if request is deleted, then it will be removed
+    // when removeRequest is called, locks are acquired; so we need to ensure order is not violated.
+    if (req && req->manager()) {
+        bool exists = false;
+        QMutexLocker threadLocker(&d->m_mutex);
+        exists = d->m_requestQueue.contains(req);
+
+        // we update the request first, then lock the thread and add it to the queue..
+        if (!exists) {
+            QList<QContactManager::Error> dummy;
+            bool ret = QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Active);
+
+            if (ret)
+                d->m_requestQueue.enqueue(req);
+            
+            if (!isRunning())
+                start();
+
+            d->m_newRequestAdded.wakeAll();
+            return ret;
         }
     }
     return false;
+}
+
+void QContactRequestWorker::removeRequestAndEmitSignals(QContactAbstractRequest* req)
+{
+    if (req && req->d_ptr) {
+        d->m_requestQueue.removeOne(req);
+
+        if (req->d_ptr->m_waiting) {
+            req->d_ptr->m_waiting = false;
+            req->d_ptr->m_condition.wakeAll();
+        }
+        QContactAbstractRequest::RequestType requestType = req->type();
+        req->d_ptr->m_mutex.lock();
+        // manually cancel and remove all requests from the queue.
+        QList<QContactManager::Error> dummy;
+        switch (req->d_ptr->m_status) {
+            case QContactAbstractRequest::Inactive:
+                req->d_ptr->m_status = QContactAbstractRequest::Active;
+                QContactManagerEngine::emitRequestProgressSignal(req, requestType);
+            case QContactAbstractRequest::Active:
+                req->d_ptr->m_status = QContactAbstractRequest::Cancelling;
+                QContactManagerEngine::emitRequestProgressSignal(req, requestType);
+            case QContactAbstractRequest::Cancelling:
+                req->d_ptr->m_status = QContactAbstractRequest::Cancelled;
+                QContactManagerEngine::emitRequestProgressSignal(req, requestType);
+            default:
+                break;
+
+        }
+        req->d_ptr->m_mutex.unlock();
+    }
+}
+
+void QContactRequestWorker::removeRequestsForManager(QContactManager* manager)
+{
+    QList<QContactAbstractRequest*> requests;
+    if (manager) {
+        {
+            QMutexLocker threadLocker(&d->m_mutex);
+            requests = d->m_requestQueue;
+        }
+        foreach (QContactAbstractRequest* req, requests) {
+            if (req && req->manager() != manager) {
+                requests.removeAll(req);
+            }
+        }
+    }
+
+    foreach (QContactAbstractRequest* req, requests) {
+        removeRequest(req);
+    }
 }
 
 /*!
@@ -231,17 +313,50 @@ bool QContactRequestWorker::addRequest(QContactAbstractRequest* req)
 bool QContactRequestWorker::removeRequest(QContactAbstractRequest* req)
 {
     if (req) {
-        QMutexLocker locker(&d->m_mutex);
-        QContactRequestElement * re = d->m_requestMap.value(req);
-        if (re) {
-            d->m_requestQueue.removeOne(re);
-            d->m_requestMap.remove(req);
-            d->m_removedRequests.append(re);
-            return true;
+        if (currentThreadId() == d->m_threadId) {
+            //in thread worker
+            if (!d->m_stop) {
+                QMutexLocker threadLocker(&d->m_mutex);
+                //removeRequestAndEmitSignals(req);
+                d->m_requestQueue.removeOne(req);
+                if (req->d_ptr->m_waiting) {
+                    req->d_ptr->m_waiting = false;
+                    req->d_ptr->m_condition.wakeAll();
+                }
+            } else {
+                //cleanup
+                //removeRequestAndEmitSignals(req);
+                d->m_requestQueue.removeOne(req);
+                if (req->d_ptr->m_waiting) {
+                    req->d_ptr->m_waiting = false;
+                    req->d_ptr->m_condition.wakeAll();
+                }
+            }
+            
+        } else {
+            //called externally
+            {
+                QMutexLocker threadLocker(&d->m_mutex);
+
+                if (!d->m_requestQueue.isEmpty()) {
+                    //removeRequestAndEmitSignals(req);
+                    d->m_requestQueue.removeOne(req);
+                    if (req->d_ptr->m_waiting) {
+                        req->d_ptr->m_waiting = false;
+                         req->d_ptr->m_condition.wakeAll();
+                    }
+                }
+            }
+
+            while (req == d->m_currentRequest) {
+                usleep(10);
+            }
+
         }
     }
     return false;
 }
+
 
 /*!
  * Update the status of the given request \a req to QContactAbstractRequest::Cancelling, returns true if sucessful, false if not.
@@ -249,8 +364,9 @@ bool QContactRequestWorker::removeRequest(QContactAbstractRequest* req)
  */
 bool QContactRequestWorker::cancelRequest(QContactAbstractRequest* req)
 {
+    // we have to be careful with the order of locks - if request is deleted, then it will be removed
+    // when removeRequest is called, locks are acquired; so we need to ensure order is not violated.
     if (req) {
-        QMutexLocker locker(&d->m_mutex);
         QList<QContactManager::Error> dummy;
         QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy, QContactAbstractRequest::Cancelling);
         return true;
@@ -270,10 +386,10 @@ bool QContactRequestWorker::waitRequest(QContactAbstractRequest* req, int msecs)
 {
     bool ret = false;
     if (req) {
-        QContactRequestElement* re = d->m_requestMap.value(req);
-        if (re) {
-            QMutexLocker locker(&re->mutex);
-            re->waiting = true;
+        QMutexLocker requestLocker(&req->d_ptr->m_mutex);
+        QContactAbstractRequest::Status status = req->d_ptr->m_status;
+        if (status == QContactAbstractRequest::Active || status == QContactAbstractRequest::Cancelling) {
+            req->d_ptr->m_waiting = true;
             if (msecs) {
                 ret = re->condition.wait(&re->mutex, msecs);
             }
@@ -294,14 +410,11 @@ void QContactRequestWorker::processContactFetchRequest(QContactFetchRequest* req
         QContactFilter filter = req->filter();
         QList<QContactSortOrder> sorting = req->sorting();
         QStringList defs = req->definitionRestrictions();
-
         QContactManager::Error operationError;
         QList<QContactManager::Error> operationErrors;
         QList<QContact> requestedContacts;
-
         QList<QContactLocalId> requestedContactIds = req->manager()->contacts(filter, sorting);
         operationError = req->manager()->error();
-
         QContactManager::Error tempError;
         for (int i = 0; i < requestedContactIds.size(); i++) {
             QContact current = req->manager()->contact(requestedContactIds.at(i));
@@ -323,11 +436,9 @@ void QContactRequestWorker::processContactFetchRequest(QContactFetchRequest* req
                     }
                 }
             }
-
             // add the contact to the result list.
             requestedContacts.append(current);
         }
-
         // update the request with the results.
         QContactManagerEngine::updateRequest(req, requestedContacts, operationError, operationErrors, QContactAbstractRequest::Finished);
     }
@@ -433,8 +544,10 @@ void QContactRequestWorker::processContactDetailDefinitionFetchRequest(QContactD
             operationErrors.append(tempError);
             requestedDefinitions.insert(names.at(i), current);
 
+
             if (tempError != QContactManager::NoError)
                 operationError = tempError;
+
         }
 
         // update the request with the results.
@@ -620,14 +733,21 @@ void QContactRequestWorker::processContactRelationshipSaveRequest(QContactRelati
 
 QContactRequestElement* QContactRequestWorkerData::takeFirstRequestElement()
 {
-    QMutexLocker locker(&m_mutex);
+    // check that I'm not already stopped.
+    m_mutex.lock();
 
     // take the first pending request and finish it
-    if (m_requestQueue.isEmpty())
+    while (!m_stop && m_requestQueue.isEmpty())
         m_newRequestAdded.wait(&m_mutex);
-    if (!m_requestQueue.isEmpty())
-        return m_requestQueue.head();
-    return 0;
+
+    QContactAbstractRequest* result = 0;
+    if (!m_stop && !m_requestQueue.isEmpty()) {
+        result = m_currentRequest = m_requestQueue.head();
+    }
+
+    // means that we are stopping the request worker (ie, deleting the manager)
+    m_mutex.unlock();
+    return result;
 }
 
 void QContactRequestWorkerData::cleanUpFinishedRequests(bool waitForAll)

@@ -98,5 +98,6 @@ QString QContactDetailDefinitionFetchRequest::contactType() const
 QMap<QString, QContactDetailDefinition> QContactDetailDefinitionFetchRequest::definitions() const
 {
     Q_D(const QContactDetailDefinitionFetchRequest);
+    QMutexLocker locker(&d->m_mutex);
     return d->m_definitions;
 }

@@ -78,10 +78,15 @@ public:
         return QContactAbstractRequest::InvalidRequest;
     }
 
+    bool stateTransition(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status newStatus, bool deleteFinishedRequest = true);
+
     QContactManager::Error m_error;
     QContactAbstractRequest::Status m_status;
     QPointer<QContactManager> m_manager;
     QList<QContactManager::Error> m_errors;
+    mutable QMutex m_mutex;
+    QWaitCondition m_condition;
+    bool volatile m_waiting;
 };
 
 #endif

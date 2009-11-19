@@ -223,6 +223,7 @@ public:
     bool cancelRequest(QContactAbstractRequest* req);
     bool waitForRequestProgress(QContactAbstractRequest* req, int msecs);
     bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
+    void removeRequestsForManager(QContactManager* manager);
 
     /* Capabilities reporting */
     bool hasFeature(QContactManager::ManagerFeature feature) const;

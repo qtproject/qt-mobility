@@ -44,6 +44,7 @@
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
+#include <QCoreApplication>
 
 /*!
  * \class QContactAbstractRequest
@@ -96,9 +97,13 @@ QContactAbstractRequest::~QContactAbstractRequest()
         QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
         if (engine) {
             engine->requestDestroyed(this);
+            QCoreApplication::processEvents();
         }
 
         delete d_ptr;
+        QContactAbstractRequestPrivate* deleted = d_ptr;
+        d_ptr = 0;
+        delete deleted;
     }
 }
 
@@ -127,12 +132,14 @@ bool QContactAbstractRequest::isFinished() const
 /*! Returns the overall error of the most recent asynchronous operation */
 QContactManager::Error QContactAbstractRequest::error() const
 {
+    QMutexLocker locker(&d_ptr->m_mutex);
     return d_ptr->m_error;
 }
 
 /*! Returns the list of errors which occurred during the most recent asynchronous operation.  Each individual error in the list corresponds to a result in the result list. */
 QList<QContactManager::Error> QContactAbstractRequest::errors() const
 {
+    QMutexLocker locker(&d_ptr->m_mutex);
     return d_ptr->m_errors;
 }
 
@@ -141,6 +148,7 @@ QList<QContactManager::Error> QContactAbstractRequest::errors() const
  */
 QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
 {
+    QMutexLocker locker(&d_ptr->m_mutex);
     return d_ptr->type();
 }
 
@@ -157,13 +165,18 @@ QContactAbstractRequest::Status QContactAbstractRequest::status() const
 /*! Returns a pointer to the manager of which this request instance requests operations */
 QContactManager* QContactAbstractRequest::manager() const
 {
+    QMutexLocker locker(&d_ptr->m_mutex);
     return d_ptr->m_manager;
 }
 
 /*! Sets the manager of which this request instance requests operations to \a manager */
 void QContactAbstractRequest::setManager(QContactManager* manager)
 {
-    d_ptr->m_manager = manager;
+    QMutexLocker locker(&d_ptr->m_mutex);
+    QContactManagerEngine *engine = QContactManagerData::engine(manager);
+    if (engine) {
+        d_ptr->m_manager = manager;
+    }
 }
 
 /*! Attempts to start the request.  Returns false if the request is not in the \c QContactAbstractRequest::Inactive, \c QContactAbstractRequest::Finished or \c QContactAbstractRequest::Cancelled states,
@@ -209,9 +222,33 @@ bool QContactAbstractRequest::waitForFinished(int msecs)
 bool QContactAbstractRequest::waitForProgress(int msecs)
 {
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine && isActive()) {
-        return engine->waitForRequestProgress(this, msecs);
+    if (engine) {
+        ret = engine->waitForRequestProgress(this, msecs);
+        QCoreApplication::processEvents();
+    }
+    return ret;
+}
+
+
+bool QContactAbstractRequestPrivate::stateTransition(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status newStatus, bool deleteFinishedRequest)
+{
+    QMutexLocker locker(&m_mutex);
+    QContactManagerEngine *engine = QContactManagerData::engine(m_manager);
+    if (!engine)
+        return false;
+    //XXX more state transition check
+    if ((m_status == QContactAbstractRequest::Cancelling && newStatus == QContactAbstractRequest::Finished) ||
+        (m_status == QContactAbstractRequest::Cancelling && newStatus == QContactAbstractRequest::Active) ||
+        (m_status == QContactAbstractRequest::Inactive && newStatus != QContactAbstractRequest::Active) ||
+        ((m_status == QContactAbstractRequest::Finished || m_status == QContactAbstractRequest::Cancelled) && newStatus != QContactAbstractRequest::Active)) {
+            return false;
     }
 
-    return false; // unable to wait for operation; not in progress or no engine.
+    m_error = error;
+    m_errors = errors;
+    m_status = newStatus;
+    if ((newStatus == QContactAbstractRequest::Finished || newStatus == QContactAbstractRequest::Cancelled) && deleteFinishedRequest) {
+        engine->requestDestroyed(req);
+    }
+    return true;
 }

@@ -83,6 +83,7 @@ public:
         m_nextContactId(1),
         m_anonymous(false),
         m_engineVersion(0)
+        m_requestWorker(0)
     {
     }
 
@@ -93,6 +94,7 @@ public:
         m_nextContactId(other.m_nextContactId),
         m_anonymous(other.m_anonymous),
         m_engineVersion(0)
+        m_requestWorker(0)
     {
     }
 
@@ -163,7 +165,7 @@ public:
     bool cancelRequest(QContactAbstractRequest* req);
     bool waitForRequestProgress(QContactAbstractRequest* req, int msecs);
     bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
-
+    void removeRequestsForManager(QContactManager* manager);
     /* Capabilities reporting */
     bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
     bool filterSupported(const QContactFilter& filter) const;
