@@ -575,6 +575,28 @@ void tst_QMessageStoreKeys::testAccountFilter_data()
         << orEquals
         << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] )
         << ( QMessageAccountIdList() << accountIds[1] );
+
+    // Test options
+    QMessageAccountFilter caseInsensitive1(QMessageAccountFilter::byName("work", QMessageDataComparator::Equal));
+    caseInsensitive1.setOptions(QMessageDataComparator::CaseSensitive);
+    QTest::newRow("options:caseInsensitive 1")
+        << caseInsensitive1
+        << ( QMessageAccountIdList() << accountIds[0] )
+        << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] );
+
+    QMessageAccountFilter caseSensitive1(QMessageAccountFilter::byName("work", QMessageDataComparator::Equal));
+    caseSensitive1.setOptions(QMessageDataComparator::CaseSensitive);
+    QTest::newRow("options:caseSensitive 1")
+        << caseSensitive1
+        << QMessageAccountIdList()
+        << accountIds;
+
+    QMessageAccountFilter caseSensitive2(QMessageAccountFilter::byName("Work", QMessageDataComparator::Equal));
+    caseSensitive2.setOptions(QMessageDataComparator::CaseSensitive);
+    QTest::newRow("options:caseSensitive 2")
+        << caseSensitive2
+        << ( QMessageAccountIdList() << accountIds[0] )
+        << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] );
 }
 
 void tst_QMessageStoreKeys::testAccountFilter()
@@ -1231,6 +1253,27 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << orEquals
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[2] )
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[3] );
+
+    // Test options
+    QMessageFolderFilter caseInsensitive1(QMessageFolderFilter::byDisplayName("x-a", QMessageDataComparator::Includes));
+    QTest::newRow("options:caseInsensitive 1")
+        << caseInsensitive1
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] );
+    
+    QMessageFolderFilter caseSensitive1(QMessageFolderFilter::byDisplayName("x-a", QMessageDataComparator::Includes));
+    caseSensitive1.setOptions(QMessageDataComparator::CaseSensitive);
+    QTest::newRow("options:caseSensitive 1")
+        << caseSensitive1
+        << QMessageFolderIdList()
+        << folderIds;
+
+    QMessageFolderFilter caseSensitive2(QMessageFolderFilter::byDisplayName("X-A", QMessageDataComparator::Includes));
+    caseSensitive2.setOptions(QMessageDataComparator::CaseSensitive);
+    QTest::newRow("options:caseSensitive 2")
+        << caseSensitive2
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] );
 }
 
 void tst_QMessageStoreKeys::testFolderFilter()
