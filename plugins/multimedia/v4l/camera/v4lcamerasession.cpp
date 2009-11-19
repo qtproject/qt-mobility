@@ -327,6 +327,25 @@ void V4LCameraSession::setDevice(const QString &device)
 
     if (sfd != -1) {
         available = true;
+
+        // get formats available
+        v4l2_fmtdesc fmt;
+        memset(&fmt, 0, sizeof(v4l2_fmtdesc));
+        fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        int sanity = 0;
+        for (fmt.index = 0;; fmt.index++) {
+            if (sanity++ > 8)
+                break;
+            if(  ::ioctl(sfd, VIDIOC_ENUM_FMT, &fmt) == -1) {
+                if(errno == EINVAL)
+                    break;
+            }
+            formats.append(fmt.pixelformat);
+        }
+
+        // get sizes available
+        resolutions << QSize(176, 144) << QSize(320, 240) << QSize(640, 480);
+
         ::close(sfd);
         sfd = -1;
     }
