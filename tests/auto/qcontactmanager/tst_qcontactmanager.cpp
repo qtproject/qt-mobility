@@ -123,6 +123,7 @@ private:
     bool isSuperset(const QContact& ca, const QContact& cb);
     QList<QContactDetail> removeAllDefaultDetails(const QList<QContactDetail>& details);
     void addManagers(); // add standard managers to the data
+    void setContactName(QContactDetailDefinition nameDef, QContactName& contactName, const QString &name) const;
 
     QContactManagerDataHolder managerDataHolder;
 
@@ -386,6 +387,21 @@ void tst_QContactManager::addManagers()
     }
 }
 
+void tst_QContactManager::setContactName(QContactDetailDefinition nameDef, QContactName& contactName, const QString &name) const
+{
+    // check which name fields are supported in the following order:
+    // 1. custom label, 2. first name, 3. last name
+    if(nameDef.fields().contains(QContactName::FieldCustomLabel)) {
+        contactName.setCustomLabel(name);
+    } else if(nameDef.fields().contains(QContactName::FieldFirst)) {
+        contactName.setFirst(name);
+    } else if(nameDef.fields().contains(QContactName::FieldLast)) {
+        contactName.setLast(name);
+    } else {
+        // Assume that at least one of the above name fields is supported by the backend
+        QVERIFY(false);
+    }
+}
 
 void tst_QContactManager::metadata()
 {
@@ -584,7 +600,6 @@ void tst_QContactManager::add()
     QContactName na;
     na.setFirst("Alice");
     na.setLast("inWonderland");
-    na.setCustomLabel(cm->synthesizeDisplayLabel(alice));
     alice.saveDetail(&na);
 
     QContactPhoneNumber ph;
@@ -613,7 +628,7 @@ void tst_QContactManager::add()
     // now try adding a contact that does not exist in the database with non-zero id
     QContact nonexistent;
     QContactName name;
-    name.setCustomLabel("nonexistent contact");
+    setContactName(cm->detailDefinition(QContactName::DefinitionName, QContactType::TypeContact), name, "nonexistent contact");
     nonexistent.saveDetail(&name);
     QVERIFY(cm->saveContact(&nonexistent));       // should work
     QVERIFY(cm->removeContact(nonexistent.id().localId())); // now nonexistent has an id which does not exist
@@ -712,7 +727,7 @@ void tst_QContactManager::add()
     // this will fail on some backends; how do we query for this capability?
     QContact veryContactable;
     QContactName contactableName;
-    contactableName.setCustomLabel("Very Contactable");
+    setContactName(cm->detailDefinition(QContactName::DefinitionName, QContactType::TypeContact), contactableName, "Very Contactable");
     veryContactable.saveDetail(&contactableName);
     for (int i = 0; i < 50; i++) {
         QString phnStr = QString::number(i);
@@ -1744,14 +1759,15 @@ void tst_QContactManager::signalEmission()
     QTRY_COMPARE(spyCR.count(), 0);
 
     /* Batch modifies */
+    QContactDetailDefinition nameDef = m1->detailDefinition(QContactName::DefinitionName, QContactType::TypeContact);
     QContactName modifiedName = c.detail(QContactName::DefinitionName);
-    modifiedName.setCustomLabel("This is modified number 1");
+    setContactName(nameDef, modifiedName, "This is modified number 1");
     c.saveDetail(&modifiedName);
     modifiedName = c2.detail(QContactName::DefinitionName);
-    modifiedName.setCustomLabel("This is modified number 2");
+    setContactName(nameDef, modifiedName, "This is modified number 2");
     c2.saveDetail(&modifiedName);
     modifiedName = c3.detail(QContactName::DefinitionName);
-    modifiedName.setCustomLabel("This is modified number 3");
+    setContactName(nameDef, modifiedName, "This is modified number 3");
     c3.saveDetail(&modifiedName);
 
     batchAdd.clear();
@@ -1999,7 +2015,7 @@ void tst_QContactManager::displayName()
     /* Try to make this a bit more consistent by using a single name */
     QContact d;
     QContactName name;
-    name.setCustomLabel("Wesley");
+    setContactName(cm->detailDefinition(QContactName::DefinitionName, QContactType::TypeContact), name, "Wesley");
 
     QVERIFY(d.displayLabel().isEmpty());
     QVERIFY(d.saveDetail(&name));
@@ -2058,7 +2074,7 @@ void tst_QContactManager::actionPreferences()
     QContactUrl u;
     u.setUrl("http://test.nokia.com");
     QContactName n;
-    n.setCustomLabel("TestContact");
+    setContactName(cm->detailDefinition(QContactName::DefinitionName, QContactType::TypeContact), n, "TestContact");
 
     QContact c;
     c.saveDetail(&a);

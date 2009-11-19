@@ -290,8 +290,7 @@ QContact PhoneBook::buildContact() const
 {
     // builds the contact from the current index / current UI.
     QContact c;
-    QContactName contactName;
-    contactName.setCustomLabel(nameLine->text());
+    QContactName contactName = buildName(nameLine->text());
     c.saveDetail(&contactName);
 
     QContactEmailAddress emailAddress;
@@ -323,6 +322,25 @@ QContact PhoneBook::buildContact() const
         c.saveDetail(&address);
 
     return c;
+}
+
+/*!
+ * Build QContactName with one of the following set:
+ * 1. custom label, 2. first name, 3. last name
+ * If none is supported the returned QContactName is left empty.
+ */
+QContactName PhoneBook::buildName(const QString &name) const
+{
+    QContactName contactName;
+    QContactDetailDefinition nameDef = cm->detailDefinition(QContactName::DefinitionName, QContactType::TypeContact);
+    if(nameDef.fields().contains(QContactName::FieldCustomLabel)) {
+        contactName.setCustomLabel(name);
+    } else if(nameDef.fields().contains(QContactName::FieldFirst)) {
+        contactName.setFirst(name);
+    } else if(nameDef.fields().contains(QContactName::FieldLast)) {
+        contactName.setLast(name);
+    }
+    return contactName;
 }
 
 void PhoneBook::displayContact()
