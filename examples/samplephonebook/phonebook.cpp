@@ -270,7 +270,7 @@ void PhoneBook::populateList(const QContact& currentContact)
     // and repopulate the list widget.
     contactsList->clear();
     foreach (const QContact& contact, contacts) {
-        new QListWidgetItem(contact.displayLabel().label(), contactsList);
+        new QListWidgetItem(contact.displayLabel(), contactsList);
     }
 
     // now find out what our new current index is
@@ -341,7 +341,7 @@ void PhoneBook::displayContact()
     contactGroups = currentGroups;
 
     // display the name
-    nameLine->setText(c.displayLabel().label());
+    nameLine->setText(c.displayLabel());
 
     // display the email address
     emailLine->setText(c.detail(QContactEmailAddress::DefinitionName).value(QContactEmailAddress::FieldEmailAddress));
@@ -593,7 +593,7 @@ void PhoneBook::findContact()
                 for (int index = 0; index < matchedContacts.count(); index++){
                     matchedContact = cm->contact(matchedContacts[index]);
                     if (!matchedContact.isEmpty())
-                        matchedContactNames.append("\"" + matchedContact.displayLabel().label() + "\"");
+                        matchedContactNames.append("\"" + matchedContact.displayLabel() + "\"");
                 }
                 QMessageBox::information(this, tr("Contact(s) Found"), tr("Matched contact(s): %1").arg(matchedContactNames.join(",")));
             }else{

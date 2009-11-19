@@ -110,6 +110,7 @@ QMessageFolderFilter& QMessageFolderFilter::operator=(const QMessageFolderFilter
 {
     if (&other != this) {
         d_ptr->_key = other.d_ptr->_key;
+        d_ptr->_options = other.d_ptr->_options;
     }
 
     return *this;
@@ -117,7 +118,7 @@ QMessageFolderFilter& QMessageFolderFilter::operator=(const QMessageFolderFilter
 
 void QMessageFolderFilter::setOptions(QMessageDataComparator::Options options)
 {
-    d_ptr->_options |= options;
+    d_ptr->_options = options;
 }
 
 QMessageDataComparator::Options QMessageFolderFilter::options() const
@@ -132,7 +133,7 @@ bool QMessageFolderFilter::isEmpty() const
 
 bool QMessageFolderFilter::isSupported() const
 {
-    return true;
+    return !d_ptr->_options;
 }
 
 QMessageFolderFilter QMessageFolderFilter::operator~() const
@@ -146,6 +147,7 @@ QMessageFolderFilter QMessageFolderFilter::operator&(const QMessageFolderFilter&
 {
     QMessageFolderFilter result;
     result.d_ptr->_key = d_ptr->_key & other.d_ptr->_key;
+    result.d_ptr->_options = d_ptr->_options | other.d_ptr->_options; // options not supported
     return result;
 }
 
@@ -153,24 +155,28 @@ QMessageFolderFilter QMessageFolderFilter::operator|(const QMessageFolderFilter&
 {
     QMessageFolderFilter result;
     result.d_ptr->_key = d_ptr->_key | other.d_ptr->_key;
+    result.d_ptr->_options = d_ptr->_options | other.d_ptr->_options; // options not supported
     return result;
 }
 
 const QMessageFolderFilter& QMessageFolderFilter::operator&=(const QMessageFolderFilter& other)
 {
     d_ptr->_key &= other.d_ptr->_key;
+    d_ptr->_options |= other.d_ptr->_options; // options not supported
     return *this;
 }
 
 const QMessageFolderFilter& QMessageFolderFilter::operator|=(const QMessageFolderFilter& other)
 {
     d_ptr->_key |= other.d_ptr->_key;
+    d_ptr->_options |= other.d_ptr->_options; // options not supported
     return *this;
 }
 
 bool QMessageFolderFilter::operator==(const QMessageFolderFilter& other) const
 {
-    return (d_ptr->_key == other.d_ptr->_key);
+    return ((d_ptr->_key == other.d_ptr->_key)
+            && (d_ptr->_options == other.d_ptr->_options));
 }
 
 QMessageFolderFilter QMessageFolderFilter::byId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)

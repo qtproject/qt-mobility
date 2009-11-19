@@ -42,22 +42,16 @@
 
 QList<CContactItemField *> CntTransformEmail::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList;
+    if(detail.definitionName() != QContactEmailAddress::DefinitionName)
+        User::Leave(KErrArgument);
+
+    QList<CContactItemField *> fieldList;
 
 	//cast to email
 	const QContactEmailAddress &email(static_cast<const QContactEmailAddress&>(detail));
 
-	//create new field
-	TPtrC fieldText(reinterpret_cast<const TUint16*>(email.emailAddress().utf16()));
-	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldEMail);
- 	newField->TextStorage()->SetTextL(fieldText);
-	newField->SetMapping(KUidContactFieldVCardMapEMAILINTERNET);
-
-	//contexts
-	setContextsL(email, *newField);
-
-	fieldList.append(newField);
-	CleanupStack::Pop(newField);
+	//create new field with contexts
+    transformToTextFieldL(email, fieldList, email.emailAddress(), KUidContactFieldEMail, KUidContactFieldVCardMapEMAILINTERNET, true);
 
 	return fieldList;
 }

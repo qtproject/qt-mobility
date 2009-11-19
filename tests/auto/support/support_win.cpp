@@ -1293,6 +1293,7 @@ public:
         QString parentAccountName(params["parentAccountName"]);
         QString parentFolderPath(params["parentFolderPath"]);
         QString to(params["to"]);
+        QString cc(params["cc"]);
         QString from(params["from"]);
         QString date(params["date"]);
         QString receivedDate(params["receivedDate"]);
@@ -1321,10 +1322,19 @@ public:
                     message.d_ptr->_parentFolderId = folderIds.first();
 
                     QList<QMessageAddress> toList;
-                    foreach (const QString &addr, to.split(",")) {
+                    foreach (const QString &addr, to.split(",", QString::SkipEmptyParts)) {
                         toList.append(QMessageAddress(addr.trimmed(), QMessageAddress::Email));
                     }
                     message.setTo(toList);
+
+                    QList<QMessageAddress> ccList;
+                    foreach (const QString &addr, cc.split(",", QString::SkipEmptyParts)) {
+                        ccList.append(QMessageAddress(addr.trimmed(), QMessageAddress::Email));
+                    }
+                    if (!ccList.isEmpty()) {
+                        message.setCc(ccList);
+                    }
+
                     message.setFrom(QMessageAddress(from, QMessageAddress::Email));
                     message.setSubject(subject);
 
