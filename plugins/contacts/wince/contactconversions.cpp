@@ -166,9 +166,9 @@ static void processName(const QContactWinCEEngine*, const QVariantList& values, 
         ret.saveDetail(&name);
 }
 
-static void processFileAs(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
+static void processFileAs(const QContactWinCEEngine* engine, const QVariantList& values, QContact& ret)
 {
-    ret.setDisplayLabel(values[0].toString());
+    ret = engine->setContactDisplayLabel(values[0].toString(), ret);
     // isSynthesized gets fixed up after the whole contact is retrieved
 }
 
