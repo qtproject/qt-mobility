@@ -407,18 +407,18 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
 /*!
  * \reimp
  */
-bool QContactTrackerEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
+bool QContactTrackerEngine::hasFeature(QContactManager::ManagerFeature feature) const
 {
     switch (feature) {
-        case QContactManagerInfo::Groups:
-        case QContactManagerInfo::ActionPreferences:
-        case QContactManagerInfo::Relationships:
+        case QContactManager::Groups:
+        case QContactManager::ActionPreferences:
+        case QContactManager::Relationships:
             return true;
-        case QContactManagerInfo::ArbitraryRelationshipTypes:
+        case QContactManager::ArbitraryRelationshipTypes:
             return true;
-        case QContactManagerInfo::MutableDefinitions:
+        case QContactManager::MutableDefinitions:
             return true;
-        case QContactManagerInfo::ChangeLogs:
+        case QContactManager::ChangeLogs:
             return true;
         default:
             return false;
