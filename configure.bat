@@ -265,25 +265,25 @@ setlocal
 
     if %MAKETYPE% == symbian-abld (
         make -h >> %PROJECT_LOG% 2>&1
-        if errorlevel 0 (
+        if not errorlevel 1 (
             echo ... Symbian abld make found.
             set MAKE=make
         )
     ) else if %MAKETYPE% == symbian-sbsv2 (
         make -h >> %PROJECT_LOG% 2>&1
-        if errorlevel 0 (
+        if not errorlevel 1 (
             echo ... Symbian sbsv2 make found.
             set MAKE=make
         )
     ) else if %MAKETYPE% == win32-nmake (
         nmake /? >> %PROJECT_LOG% 2>&1
-        if errorlevel 0 (
+        if not errorlevel 1 (
             echo ... nmake found.
             set MAKE=nmake
         )
     ) else if %MAKETYPE% == win32-mingw (
         make -v >> %PROJECT_LOG% 2>&1
-        if errorlevel 0 (
+        if not errorlevel 1 (
             echo ... mingw32-make found.
             set MAKE=make
         )
