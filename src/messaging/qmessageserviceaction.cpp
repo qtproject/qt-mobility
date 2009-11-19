@@ -204,7 +204,8 @@
   
     Returns true if the action can be initiated; otherwise returns false.
     
-    Not implemented on QMF platform.
+    On the QMF platform implementation of this function is left as a task for system 
+    integrators.
     
     \sa QMessage::type()
 */
@@ -257,7 +258,8 @@
 
     Returns true if the action can be initiated; otherwise returns false.
     
-    Not implemented on QMF platform.
+    On the QMF platform implementation of this function is left as a task for system 
+    integrators.
     
     \sa QMessageId, QMessage::type()
 */

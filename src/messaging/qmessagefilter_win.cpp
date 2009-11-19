@@ -340,7 +340,7 @@ bool QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, Mapi
             result = ~result;  // match all for include, match none for exclude
         } else {
             QMessageIdList ids(session->queryMessages(lastError, *filter->d_ptr->_messageFilter));
-            result = QMessageFilter::byId(ids, incl);
+            result = QMessageFilter::byId(ids, inclusion ? QMessageDataComparator::Includes : QMessageDataComparator::Excludes);
         }
     } else if (filter->d_ptr->_field == AccountFilter) {
         if (filter->d_ptr->_accountFilter->isEmpty()) {
