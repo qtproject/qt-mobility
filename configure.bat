@@ -294,7 +294,7 @@ endlocal&set %1=%MAKE%&set %2=%MAKETYPE%&goto :EOF
 :checkMake
 echo Checking make
 call :makeTest MAKE MAKETYPE
-if not %MAKE%=="" goto compileTests
+if not "%MAKE%" == "" goto compileTests
 
 echo >&2 "Cannot find 'nmake', 'mingw32-make' or 'make' in your PATH"
 echo >&2 "Aborting."
