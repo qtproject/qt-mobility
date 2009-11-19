@@ -150,11 +150,8 @@ void matchCall(QContactManager* cm, const QString& incomingCallNbr)
         qDebug() << "Incoming call from unknown contact (" << incomingCallNbr << ")";
     } else {
         QContact match = cm->contact(matchingContacts.at(0));
-
-        // XXX TODO: replace the following with match.displayLabel() after week 47.
-        QContactDisplayLabel cdl = match.detail(QContactDisplayLabel::DefinitionName);
         qDebug() << "Incoming call from"
-                 << cdl.label()
+                 << match.displayLabel()
                  << "(" << incomingCallNbr << ")";
     }
 }
@@ -165,10 +162,7 @@ void viewSpecificDetail(QContactManager* cm)
 {
     QList<QContactLocalId> contactIds = cm->contacts();
     QContact a = cm->contact(contactIds.first());
-
-    // XXX TODO: replace the following with a.displayLabel() after week 47.
-    QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
-    qDebug() << "The first phone number of" << cdl.label()
+    qDebug() << "The first phone number of" << a.displayLabel()
              << "is" << a.detail(QContactPhoneNumber::DefinitionName).value(QContactPhoneNumber::FieldNumber);
 }
 //! [Viewing a specific detail of a contact]
@@ -178,10 +172,7 @@ void viewDetails(QContactManager* cm)
 {
     QList<QContactLocalId> contactIds = cm->contacts();
     QContact a = cm->contact(contactIds.first());
-
-    // XXX TODO: replace the following with match.displayLabel() after week 47.
-    QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
-    qDebug() << "Viewing the details of" << cdl.label();
+    qDebug() << "Viewing the details of" << a.displayLabel();
 
     QList<QContactDetail> allDetails = a.details();
     for (int i = 0; i < allDetails.size(); i++) {
@@ -227,10 +218,7 @@ void editView(QContactManager* cm)
 {
     QList<QContactLocalId> contactIds = cm->contacts();
     QContact a = cm->contact(contactIds.first());
-
-    // XXX TODO: replace the following with match.displayLabel() after week 47.
-    QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
-    qDebug() << "Modifying the details of" << cdl.label();
+    qDebug() << "Modifying the details of" << a.displayLabel();
 
     /* Change the first phone number */
     QList<QContactDetail> numbers = a.details(QContactPhoneNumber::DefinitionName);
@@ -278,12 +266,12 @@ void RequestExample::printContacts(QContactFetchRequest* request, bool appendOnl
     if (appendOnly) {
         // we know that the results are still in the same order; just display the new results.
         for (m_previousLastIndex += 1; m_previousLastIndex < results.size(); m_previousLastIndex++) {
-            qDebug() << "Found another Alice:" << results.at(m_previousLastIndex).displayLabel().label();
+            qDebug() << "Found another Alice:" << results.at(m_previousLastIndex).displayLabel();
         }
     } else {
         // the order of results has changed; display them all.
         for (m_previousLastIndex = 0; m_previousLastIndex < results.size(); m_previousLastIndex++) {
-            qDebug() << "Found another Alice:" << results.at(m_previousLastIndex).displayLabel().label();
+            qDebug() << "Found another Alice:" << results.at(m_previousLastIndex).displayLabel();
         }
     }
 
@@ -301,10 +289,7 @@ void loadManager()
     QList<QContactLocalId> contactIds = cm->contacts();
     if (!contactIds.isEmpty()) {
         QContact a = cm->contact(contactIds.first());
-
-        // XXX TODO: replace the following with a.displayLabel() after week 47.
-        QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
-        qDebug() << "This manager contains" << cdl.label();
+        qDebug() << "This manager contains" << a.displayLabel();
     } else {
         qDebug() << "This manager contains no contacts";
     }
