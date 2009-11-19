@@ -102,6 +102,7 @@ QContactMemoryEngine* QContactMemoryEngine::createMemoryEngine(const QMap<QStrin
         engine->d->m_engineVersion = 1;
         engine->d->m_id = idValue;
         engine->d->m_anonymous = anonymous;
+        engine->d->m_requestWorker = new QContactRequestWorker;
         engines.insert(idValue, engine);
         return engine;
     }

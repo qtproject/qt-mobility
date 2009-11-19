@@ -101,6 +101,10 @@ public:
 
     ~QContactMemoryEngineData()
     {
+        if (m_requestWorker) {
+            delete m_requestWorker;
+            m_requestWorker = 0;
+        }
     }
 
     QAtomicInt m_refCount;
