@@ -100,7 +100,7 @@ private slots:
     
     void removeSlotForRequestTimeout();
     void removeSlotForSatellitesInUseUpdated();
-    void removeSlotForsatellitesInViewUpdated();
+    void removeSlotForSatellitesInViewUpdated();
 
 private:
     QGeoSatelliteInfoSource *m_source;

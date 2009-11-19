@@ -119,6 +119,15 @@ TestQGeoPositionInfoSource *TestQGeoPositionInfoSource::createDefaultSourceTest(
     return test;
 }
 
+void TestQGeoPositionInfoSource::test_slot1()
+{
+}
+
+void TestQGeoPositionInfoSource::test_slot2()
+{
+	m_testSlot2Called = true;
+}
+
 void TestQGeoPositionInfoSource::base_initTestCase()
 {
     qRegisterMetaType<QGeoPositionInfo>();
@@ -127,6 +136,7 @@ void TestQGeoPositionInfoSource::base_initTestCase()
 void TestQGeoPositionInfoSource::base_init()
 {
     m_source = createTestSource();
+    m_testSlot2Called = false;
 }
 
 void TestQGeoPositionInfoSource::base_cleanup()
@@ -682,6 +692,39 @@ void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_SmallInterval()
     QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 1, 12000);
 
     m_source->stopUpdates();
+}
+
+void TestQGeoPositionInfoSource::removeSlotForRequestTimeout()
+{
+	CHECK_SOURCE_VALID;
+	
+	bool i = connect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot1()));
+	QVERIFY(i==true);
+	i = connect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot2()));
+	QVERIFY(i==true);
+	i = disconnect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot1()));
+	QVERIFY(i==true);
+	
+	m_source->requestUpdate(-1);
+    QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 1000);
+}
+
+void TestQGeoPositionInfoSource::removeSlotForPositionUpdated()
+{
+	CHECK_SOURCE_VALID;
+	
+	bool i = connect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo &)), this, SLOT(test_slot1()));
+	QVERIFY(i==true);
+	i = connect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo &)), this, SLOT(test_slot2()));
+	QVERIFY(i==true);
+	i = disconnect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo &)), this, SLOT(test_slot1()));
+	QVERIFY(i==true);
+	
+	m_source->requestUpdate(60000);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
+    QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 60000);
 }
 
 #include "testqgeopositioninfosource.moc"

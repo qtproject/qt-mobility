@@ -467,8 +467,8 @@ void TestQGeoSatelliteInfoSource::removeSlotForRequestTimeout()
 	i = disconnect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot1()));
 	QVERIFY(i==true);
 	
-	m_source->requestUpdate(60000);
-    QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 60000);
+	m_source->requestUpdate(-1);
+    QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 1000);
 }
 
 void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInUseUpdated()
@@ -489,7 +489,7 @@ void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInUseUpdated()
     QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 60000);
 }
 
-void TestQGeoSatelliteInfoSource::removeSlotForsatellitesInViewUpdated()
+void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInViewUpdated()
 {
 	CHECK_SOURCE_VALID;
 	
