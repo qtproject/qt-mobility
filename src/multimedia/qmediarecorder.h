@@ -64,8 +64,7 @@ class Q_MEDIA_EXPORT QMediaRecorder : public QMediaObject
 {
     Q_OBJECT
     Q_ENUMS(State)
-    Q_ENUMS(Error)
-    Q_ENUMS(EncodingQuality)
+    Q_ENUMS(Error)    
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(QUrl outputLocation READ outputLocation WRITE setOutputLocation)
 public:
@@ -103,18 +102,18 @@ public:
     QStringList supportedAudioCodecs() const;
     QString audioCodecDescription(const QString &codecName) const;
 
-    QList<int> supportedAudioSampleRates() const;
+    QList<int> supportedAudioSampleRates(const QAudioEncoderSettings &settings = QAudioEncoderSettings()) const;
 
     QStringList supportedVideoCodecs() const;
     QString videoCodecDescription(const QString &codecName) const;
 
-    QSize minimumResolution() const;
-    QSize maximumResolution() const;
-    QList<QSize> supportedResolutions() const;
+    QSize minimumResolution(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
+    QSize maximumResolution(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
+    QList<QSize> supportedResolutions(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
 
-    qreal minimumFrameRate();
-    qreal maximumFrameRate();
-    QList<qreal> supportedFrameRates() const;
+    qreal minimumFrameRate(const QVideoEncoderSettings &settings = QVideoEncoderSettings());
+    qreal maximumFrameRate(const QVideoEncoderSettings &settings = QVideoEncoderSettings());
+    QList<qreal> supportedFrameRates(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
 
     QAudioEncoderSettings audioSettings() const;
     QVideoEncoderSettings videoSettings() const;
@@ -142,7 +141,10 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
 };
 
-
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaRecorder)::State);
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaRecorder)::Error);
+
 
 #endif  // QMEDIARECORDER_H

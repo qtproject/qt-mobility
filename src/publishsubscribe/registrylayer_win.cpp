@@ -220,7 +220,10 @@ private:
 
     QMap<RegistryHandle *, HKEY> hKeys;
     QMultiMap<RegistryHandle *, RegistryHandle *> notifyProxies;
-    QMap<HKEY, QPair<::HANDLE, ::HANDLE> > waitHandles;
+    // MinGW complains about QPair<::HANDLE, ::HANDLE>
+    typedef ::HANDLE HandleType;
+    typedef QPair<HandleType, HandleType> HandlePair;
+    QMap<HKEY, HandlePair > waitHandles;
 #ifdef Q_OS_WINCE
     QWindowsCENotify *notifyThread;
 #endif
@@ -337,7 +340,7 @@ unsigned int VolatileRegistryLayer::order()
 
 QValueSpace::LayerOptions VolatileRegistryLayer::layerOptions() const
 {
-    return QValueSpace::NonPermanentLayer | QValueSpace::WriteableLayer;
+    return QValueSpace::NonPermanentLayer | QValueSpace::WritableLayer;
 }
 
 VolatileRegistryLayer *VolatileRegistryLayer::instance()
@@ -373,7 +376,7 @@ unsigned int NonVolatileRegistryLayer::order()
 
 QValueSpace::LayerOptions NonVolatileRegistryLayer::layerOptions() const
 {
-    return QValueSpace::PermanentLayer | QValueSpace::WriteableLayer;
+    return QValueSpace::PermanentLayer | QValueSpace::WritableLayer;
 }
 
 NonVolatileRegistryLayer *NonVolatileRegistryLayer::instance()
@@ -387,8 +390,9 @@ RegistryLayer::RegistryLayer(const QString &basePath, bool volatileKeys, Registr
 {
     // Ensure that the m_basePath key exists and is non-volatile.
     HKEY key;
-    RegCreateKeyEx(HKEY_CURRENT_USER, qConvertPath(m_basePath).utf16(),
-                   0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, 0, &key, 0);
+    RegCreateKeyEx(HKEY_CURRENT_USER,
+                    reinterpret_cast<const wchar_t*>(qConvertPath(m_basePath).utf16()),
+                    0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, 0, &key, 0);
 
     RegCloseKey(key);
 
@@ -479,7 +483,8 @@ bool RegistryLayer::value(Handle handle, const QString &subPath, QVariant *data)
     HKEY key = hKeys.value(rh);
 
     DWORD regSize = 0;
-    long result = RegQueryValueEx(key, value.utf16(), 0, 0, 0, &regSize);
+    long result = RegQueryValueEx(key,
+            reinterpret_cast<const wchar_t*>(value.utf16()), 0, 0, 0, &regSize);
     if (result == ERROR_FILE_NOT_FOUND) {
         *data = QVariant();
         if (createdHandle)
@@ -495,7 +500,9 @@ bool RegistryLayer::value(Handle handle, const QString &subPath, QVariant *data)
     BYTE *regData = new BYTE[regSize];
     DWORD regType;
 
-    result = RegQueryValueEx(key, value.utf16(), 0, &regType, regData, &regSize);
+    result = RegQueryValueEx(key,
+            reinterpret_cast<const wchar_t*>(value.utf16()), 
+            0, &regType, regData, &regSize);
     if (result != ERROR_SUCCESS) {
         qDebug() << "real RegQueryValueEx failed with error" << result;
         if (createdHandle)
@@ -709,7 +716,8 @@ void RegistryLayer::setProperty(Handle handle, Properties properties)
             return;
         }
 
-        waitHandles.insert(key, QPair<::HANDLE, ::HANDLE>(event, waitHandle));
+        //waitHandles.insert(key, QPair<::HANDLE, ::HANDLE>(event, waitHandle));
+        waitHandles.insert(key, HandlePair(event, waitHandle));
 #endif
     }
     if (!(properties & QAbstractValueSpaceLayer::Publish)) {
@@ -720,7 +728,8 @@ void RegistryLayer::setProperty(Handle handle, Properties properties)
         HKEY key = hKeys.value(rh);
 
         if (waitHandles.contains(key)) {
-            QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
+            //QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
+            HandlePair wait = waitHandles.take(key);
 
 #ifdef Q_OS_WINCE
             notifyThread->removeHandle(wait.first);
@@ -771,7 +780,8 @@ void RegistryLayer::closeRegistryKey(RegistryHandle *handle)
         return;
 
     if (waitHandles.contains(key)) {
-        QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
+        //QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
+        HandlePair wait = waitHandles.take(key);
 
 #ifdef Q_OS_WINCE
         notifyThread->removeHandle(wait.first);
@@ -870,9 +880,9 @@ bool RegistryLayer::removeRegistryValue(RegistryHandle *handle, const QString &s
 
     HKEY key = hKeys.value(rh);
 
-    long result = RegDeleteValue(key, value.utf16());
+    long result = RegDeleteValue(key, reinterpret_cast<const wchar_t*>(value.utf16()));
     if (result == ERROR_FILE_NOT_FOUND) {
-        result = qRegDeleteTree(key, value.utf16());
+        result = qRegDeleteTree(key, reinterpret_cast<const wchar_t*>(value.utf16()));
         if (result == ERROR_SUCCESS) {
             const QString rootPath = rh->path;
 
@@ -1015,7 +1025,8 @@ bool RegistryLayer::setValue(QValueSpaceProvider *creator, Handle handle, const 
     }
     };
 
-    long result = RegSetValueEx(key, value.utf16(), 0, regType, regData, regSize);
+    long result = RegSetValueEx(key, reinterpret_cast<const wchar_t*>(value.utf16()), 
+            0, regType, regData, regSize);
 
     QString fullPath(rh->path);
     if (fullPath != QLatin1String("/"))
@@ -1069,7 +1080,8 @@ void RegistryLayer::emitHandleChanged(void *k)
     QList<RegistryHandle *> changedHandles = hKeys.keys(key);
     if (changedHandles.isEmpty()) {
         if (waitHandles.contains(key)) {
-            QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
+            //QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
+            HandlePair wait = waitHandles.take(key);
 
 #ifdef Q_OS_WINCE
             notifyThread->removeHandle(wait.first);
@@ -1099,7 +1111,8 @@ void RegistryLayer::emitHandleChanged(void *k)
     }
 
     if (waitHandles.contains(key)) {
-        QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
+        //QPair<::HANDLE, ::HANDLE> wait = waitHandles.take(key);
+        HandlePair wait = waitHandles.take(key);
 
         ::HANDLE event = wait.first;
 
@@ -1168,7 +1181,8 @@ void RegistryLayer::emitHandleChanged(void *k)
             return;
         }
 
-        waitHandles.insert(key, QPair<::HANDLE, ::HANDLE>(event, waitHandle));
+        //waitHandles.insert(key, QPair<::HANDLE, ::HANDLE>(event, waitHandle));
+        waitHandles.insert(key, HandlePair(event, waitHandle));
 #endif
     }
 }
@@ -1200,8 +1214,9 @@ void RegistryLayer::openRegistryKey(RegistryHandle *handle)
 
     // Attempt to open registry key path
     HKEY key;
-    long result = RegOpenKeyEx(HKEY_CURRENT_USER, fullPath.utf16(),
-                               0, KEY_ALL_ACCESS, &key);
+    long result = RegOpenKeyEx(HKEY_CURRENT_USER,
+                                reinterpret_cast<const wchar_t*>(fullPath.utf16()),
+                                0, KEY_ALL_ACCESS, &key);
 
     if (result == ERROR_SUCCESS) {
         hKeys.insert(handle, key);
@@ -1249,7 +1264,8 @@ bool RegistryLayer::createRegistryKey(RegistryHandle *handle)
     // Attempt to open registry key path
     HKEY key;
     DWORD disposition;
-    long result = RegCreateKeyEx(HKEY_CURRENT_USER, fullPath.utf16(),
+    long result = RegCreateKeyEx(HKEY_CURRENT_USER,
+                                reinterpret_cast<const wchar_t*>(fullPath.utf16()),
                                  0, 0,
                                  (m_volatileKeys ? REG_OPTION_VOLATILE : REG_OPTION_NON_VOLATILE),
                                  KEY_ALL_ACCESS, 0, &key, &disposition);
@@ -1320,7 +1336,7 @@ void RegistryLayer::pruneEmptyKeys(RegistryHandle *handle)
 
         HKEY key = hKeys.value(rh);
 
-        long result = RegDeleteKey(key, value.utf16());
+        long result = RegDeleteKey(key, reinterpret_cast<const wchar_t*>(value.utf16()));
         if (result == ERROR_SUCCESS) {
             QList<QString> paths = handles.keys();
             while (!paths.isEmpty()) {

@@ -39,18 +39,9 @@
 **
 ****************************************************************************/
 #include "qmessagecontentcontainerid.h"
+#include "qmessagecontentcontainerid_p.h"
 
 QTM_BEGIN_NAMESPACE
-
-class QMessageContentContainerIdPrivate
-{
-public:
-    enum { Invalid = -1, Body = 0 };
-
-    int _number;
-
-    QMessageContentContainerIdPrivate() : _number(Invalid) {}
-};
 
 QMessageContentContainerId::QMessageContentContainerId()
     : d_ptr(new QMessageContentContainerIdPrivate)

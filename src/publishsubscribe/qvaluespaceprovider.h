@@ -53,7 +53,7 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QValueSpaceProviderPrivate;
-class Q_CFW_EXPORT QValueSpaceProvider : public QObject
+class Q_PUBLISHSUBSCRIBE_EXPORT QValueSpaceProvider : public QObject
 {
     friend class QAbstractValueSpaceLayer;
 

@@ -54,6 +54,8 @@ class Q_MEDIA_EXPORT QRadioTunerControl : public QMediaControl
 public:
     ~QRadioTunerControl();
 
+    virtual QRadioTuner::State state() const = 0;
+
     virtual QRadioTuner::Band band() const = 0;
     virtual void setBand(QRadioTuner::Band b) = 0;
     virtual bool isBandSupported(QRadioTuner::Band b) const = 0;
@@ -88,6 +90,7 @@ public:
     virtual QString errorString() const = 0;
 
 Q_SIGNALS:
+    void stateChanged(QRadioTuner::State state);
     void bandChanged(QRadioTuner::Band band);
     void frequencyChanged(int frequency);
     void stereoStatusChanged(bool stereo);

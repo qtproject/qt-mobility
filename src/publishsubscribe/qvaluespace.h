@@ -58,16 +58,16 @@ namespace QValueSpace {
         NonPermanentLayer = 0x0002,
         // UnspecifiedLayerPermanence = 0x0000,
         // InvalidLayerPermanence = 0x0003,
-        WriteableLayer = 0x0004,
-        NonWriteableLayer = 0x0008,
+        WritableLayer = 0x0004,
+        NonWritableLayer = 0x0008,
         // UnspecifiedLayerWriteability = 0x0000,
         // InvalidLayerWriteability = 0x000C,
     };
     Q_DECLARE_FLAGS(LayerOptions, LayerOption);
 
-    Q_CFW_EXPORT void initValueSpaceServer();
+    Q_PUBLISHSUBSCRIBE_EXPORT void initValueSpaceServer();
 
-    Q_CFW_EXPORT QList<QUuid> availableLayers();
+    Q_PUBLISHSUBSCRIBE_EXPORT QList<QUuid> availableLayers();
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QValueSpace::LayerOptions);

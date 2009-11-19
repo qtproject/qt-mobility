@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QPACKETPROTOCOL_H
 #define QPACKETPROTOCOL_H
 

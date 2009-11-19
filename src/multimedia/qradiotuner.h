@@ -55,6 +55,7 @@ class QRadioTunerPrivate;
 class Q_MEDIA_EXPORT QRadioTuner : public QMediaObject
 {
     Q_OBJECT
+    Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(Band band READ band WRITE setBand NOTIFY bandChanged)
     Q_PROPERTY(int frequency READ frequency WRITE setFrequency NOTIFY frequencyChanged)
     Q_PROPERTY(bool stereo READ isStereo NOTIFY stereoStatusChanged)
@@ -63,17 +64,21 @@ class Q_MEDIA_EXPORT QRadioTuner : public QMediaObject
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutingChanged)
     Q_PROPERTY(bool searching READ isSearching NOTIFY searchingStatusChanged)
+    Q_ENUMS(State)
     Q_ENUMS(Band)
     Q_ENUMS(Error)
     Q_ENUMS(StereoMode)
 
 public:
+    enum State { ActiveState, StoppedState };
     enum Band { AM, FM, SW, LW };
     enum Error { NoError, ResourceError, OpenError, OutOfRangeError };
     enum StereoMode { ForceStereo, ForceMono, Auto };
 
     QRadioTuner(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QRadioTuner();
+
+    State state() const;
 
     Band band() const;
 
@@ -112,6 +117,7 @@ public Q_SLOTS:
     void stop();
 
 Q_SIGNALS:
+    void stateChanged(QRadioTuner::State state);
     void bandChanged(QRadioTuner::Band band);
     void frequencyChanged(int frequency);
     void stereoStatusChanged(bool stereo);
@@ -127,5 +133,10 @@ private:
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QRadioTuner)::State);
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QRadioTuner)::Band);
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QRadioTuner)::Error);
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QRadioTuner)::StereoMode);
 
 #endif  // QRADIOPLAYER_H

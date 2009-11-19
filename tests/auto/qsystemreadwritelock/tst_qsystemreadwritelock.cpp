@@ -236,10 +236,12 @@ public:
         QSystemReadWriteLock testRwLock("Viper");
         t.start();
         while (t.elapsed() < runTime)  {
+            if (print) qDebug() << "About to lock for write";
             testRwLock.lockForWrite();
-            if (print) printf(".");
+            if (print) qDebug() << "Locked for Write";
             if (holdTime) msleep(holdTime);
             testRwLock.unlock();
+            if (print) qDebug() << "unlocked";
             if (waitTime) msleep(waitTime);
         }
     }
@@ -515,7 +517,7 @@ void tst_QSystemReadWriteLock::multipleReadersLoop()
     ReadLockLoopThread *threads[numthreads];
     int i;
     for (i=0; i < numthreads; ++i)
-        threads[i] = new ReadLockLoopThread(time, hold, wait,true);
+        threads[i] = new ReadLockLoopThread(time, hold, wait,false);
     for (i=0; i<numthreads; ++i)
         threads[i]->start();
     for (i=0; i<numthreads; ++i)

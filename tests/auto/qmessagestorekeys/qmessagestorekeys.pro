@@ -16,6 +16,18 @@ symbian|win32 {
 LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
 }
 
+wince*|symbian*: {
+    addFiles.sources = testdata/*
+    addFiles.path = testdata
+    DEPLOYMENT += addFiles
+}
+
+wince* {
+    DEFINES += TEADATA_DIR=\\\".\\\"
+} !symbian {
+    DEFINES += TESTDATA_DIR=\\\"$$PWD/\\\"
+}
+
 SOURCES += \
     tst_qmessagestorekeys.cpp
 

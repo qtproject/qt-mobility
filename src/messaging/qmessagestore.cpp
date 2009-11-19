@@ -69,9 +69,10 @@ QTM_BEGIN_NAMESPACE
     and \l{QMessageServiceAction::queryMessages()}{queryMessages} functions of the
     QMessageServiceAction class.
     
-    With the exception of MAPI based platforms, QMessageStore functions should not initiate 
-    network activity. Instead they are restricted to operating on data already on the device.
-    See QMessageServiceAction for functions related to initiating network activity.
+    With the exception of Windows mobile and desktop platforms, QMessageStore functions 
+    should not initiate network activity. Instead functions are restricted to operating 
+    on data already on the device. See QMessageServiceAction for functions related to 
+    initiating network activity.
 
     If a QMessageStore operation fails, the lastError() function will return an error code
     value indicating the failure mode encountered.  A successful operation will set the 
@@ -113,25 +114,6 @@ QTM_BEGIN_NAMESPACE
     This type contains a set of values identifying registered message filters.
 */
 
-/*
-    TODO capabilities AtomicBooleanSearch AtomicSlices Sms Mms Email Xmpp Presence AtomicExtendedSearching AtomicBodySearching
-      ExtendedServices AtomicCustomSearching CaseInsensitiveSearching FullWordSearching
-      
-    Maybe capabilities are not necessary.
-      Sms, Mms, Email, Xmpp are only enabled if a valid default account exists for that type.
-    All other capabilities are searching related, lack of support for them can be detected by a QMailStore::lastError of NotYetImplemented.
-
-    Activate/deactive on only adds, deletes or updates? Requires enum,
-    enum NotificationType 
-    {
-        Add = 1,
-        Removed,
-        Changed
-    }
-    
-    MAPI has move and copy signals, QMF does not.
-*/
-
 /*!
     \enum QMessageStore::ErrorCode
 
@@ -144,6 +126,7 @@ QTM_BEGIN_NAMESPACE
     \value NotYetImplemented      The operation failed because the messaging store does not yet implement the operation.
     \value FrameworkFault         The operation failed because the messaging store encountered an error in performing the operation.
     \value WorkingMemoryOverflow  The operation failed because the messaging store exhausted all memory available for evaluating queries.
+    \value Busy                   The operation failed because the messaging store is being used by another thread.
 */
 
 /*!
@@ -272,6 +255,8 @@ QTM_BEGIN_NAMESPACE
     
     To ensure the change is propagated to any affected external server
     QMessageServiceAction::exportUpdates() should be subsequently called.
+    
+    \a option is ignored on Windows mobile and desktop platforms.
 
     \sa removeMessages(), addMessage(), updateMessage(), QMessageServiceAction::exportUpdates()
 */
@@ -288,7 +273,9 @@ QTM_BEGIN_NAMESPACE
     To ensure the change is propagated to any affected external server
     QMessageServiceAction::exportUpdates() should be subsequently called.
 
+    \a option is ignored on Windows mobile and desktop platforms.
 
+    
     For example:
 
     To implement a function to remove a list messages identified by QMessageIds

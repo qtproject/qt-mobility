@@ -55,7 +55,7 @@ class Q_MESSAGING_EXPORT QMessageContentContainerId
 public:
     QMessageContentContainerId();
     QMessageContentContainerId(const QMessageContentContainerId &other);
-    QMessageContentContainerId(const QString &id);
+    QMessageContentContainerId(const QString& id);
     ~QMessageContentContainerId();
 
     QMessageContentContainerId& operator=(const QMessageContentContainerId &other);

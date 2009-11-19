@@ -212,8 +212,9 @@ bool QMessageServiceAction::retrieveBody(const QMessageId& id)
 	return d_ptr->retrieveBody(id);
 }
 
-bool QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
+bool QMessageServiceAction::retrieve(const QMessageId &messageId, const QMessageContentContainerId& id)
 {
+    Q_UNUSED(messageId)
 	return d_ptr->retrieve(id);
 }
 

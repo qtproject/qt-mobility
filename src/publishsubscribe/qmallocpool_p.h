@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QMALLOCPOOL_H
 #define QMALLOCPOOL_H
 

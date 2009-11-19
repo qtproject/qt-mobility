@@ -155,6 +155,23 @@
     Supports the sending of messages with attachments, and in situations of
     low battery to leave attachments on the server unless opened.
 
+    For more details see the \l {Messaging API} {messaging API overview}.
+
+    \section2 Messaging dependencies and requirements
+
+    The Linux backend depends on QMF, for information on QMF see the 
+    \l {http://labs.trolltech.com/blogs/category/qtmessaging/} 
+    {QMF Labs article}
+
+    The Windows Mobile backend depends on ActiveSync version 4.5.
+
+    Whilst not supported for this release the Windows Desktop backend 
+    depends on Microsoft Outlook 2003 or later being installed.
+
+    The messaging API SMS/MMS functionality requires that the platform 
+    provides SMS/MMS facilites. Email functionality requires that an email 
+    account is available on the platform.
+
     \section1 Multimedia
 
     An API to record and play audio and video of various formats. The playing

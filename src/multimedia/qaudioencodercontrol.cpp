@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
     \ingroup multimedia-serv
 
     \preliminary
-    
+
     \brief The QAudioEncoderControl class provides access to the settings of a media service that
     performs audio encoding.
 
@@ -107,9 +107,14 @@ QAudioEncoderControl::~QAudioEncoderControl()
 */
 
 /*!
-  \fn QAudioEncoderControl::supportedSampleRates() const
+  \fn QAudioEncoderControl::supportedSampleRates(const QAudioEncoderSettings &settings = QAudioEncoderSettings()) const
 
   Returns the list of supported audio sample rates, if known.
+
+  If non null audio \a settings parameter is passed,
+  the returned list is reduced to sample rates supported with partial settings applied.
+
+  It can be used for example to query the list of sample rates, supported by specific audio codec.
 */
 
 /*!

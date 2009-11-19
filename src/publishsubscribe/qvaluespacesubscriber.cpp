@@ -54,17 +54,20 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QValueSpaceSubscriber
 
-    \brief The QValueSpaceSubscriber class provides access to values stored in the Value Space.
+    \brief The QValueSpaceSubscriber class allows applications to read and subscribe to Value Space
+           paths.
 
     \ingroup publishsubscribe
 
-    The Value Space is an inter-application hierarchy of readable, writable and
-    subscribable data.  The QValueSpaceSubscriber class allows applications to read
-    and subscribe to this data.
+    By default QValueSpaceSubscriber can read values from and report change notifications for all
+    available Value Space layers.  Only data from the layer with the highest order and that
+    contains the specific key is returned by this class.
 
-    Conceptually, the Value Space is a hierarchical tree of which each item can
-    optionally contain a QVariant value and sub-items.  A serialized version of a
-    simple example might look like this.
+    The layers that QValueSpaceSubscriber accesses can be limited by specifying either a
+    \l {QValueSpace::LayerOptions}{filter} or a QUuid at construction time.
+
+    Applications subscribe to a particular path in the Value Space.  If anything under that path
+    changes the contextChanged() signal is emitted.  For example given the schema:
 
     \code
     /Device/Buttons = 3
@@ -76,68 +79,25 @@ QTM_BEGIN_NAMESPACE
     /Device/Buttons/3/Usable = true
     \endcode
 
-    Any application in Qt can read values from the Value Space, or be notified
-    asynchronously when they change using the QValueSpaceSubscriber class.
-
-    Items in the Value Space can be thought of as representing "objects" adhering
-    to a well known schema.  This is a conceptual differentiation, not a physical
-    one, as internally the Value Space is treated as one large tree.  In the
-    sample above, the \c {/Device/Buttons} schema can be defined as containing a
-    value representing the number of mappable buttons on a device, and a sub-item
-    for each.  Likewise, the sub-item object schema contains two attributes -
-    \c {Name} and \c {Usable}.
-
-    Applications may use the QValueSpaceProvider class to create a schema object
-    within the Value Space.  Objects remain in the Value Space as long as the
-    QValueSpaceProvider instance exists - that is, they are not persistent.  If
-    the object is destroyed, or the application containing it exits (or crashes)
-    the items are removed.
-
-    Change notification is modeled in a similar way.  Applications subscribe to notifications at a
-    particular path in the tree.  If anything under that path changes, the application is notified.
-    This allows, for example, subscription to just the \c {/Device/Buttons} item to receive
-    notification when anything "button" related changes.
-
-    For example,
+    The code:
 
     \code
-    QValueSpaceSubscriber *buttons = new QValueSpaceSubscriber("/Device/Buttons");
-    qWarning() << "There are" << buttons->value().toUInt() << "buttons";
-    QObject::connect(buttons, SIGNAL(contentsChanged()),
-                   this, SLOT(buttonInfoChanged()));
+        QValueSpaceSubscriber *buttons = new QValueSpaceSubscriber("/Device/Buttons");
+        QObject::connect(buttons, SIGNAL(contentsChanged()), this, SLOT(buttonInfoChanged()));
     \endcode
 
-    will invoke the \c {buttonInfoChanged()} slot whenever any values under
-    \c {/Device/Buttons} changes.  This includes the value of \c {/Device/Buttons}
-    itself, a change of a sub-object such as \c {/Device/Buttons/2/Name} or the
-    creation (or removal) of a new sub-object, such as \c {/Device/Buttons/4}.
-
-    When a QValueSpaceSubscriber is constructed it will access zero, one or many
-    \l {QAbstractValueSpaceLayer}{layers}, depending on the constructor and filter parameters used
-    to construct it.  Calls to value() will return the value that is stored in the layer with the
-    highest \l {QAbstractValueSpaceLayer::order()}{order} of all the accessible layers that contain
-    the specified key.
-
-    For example,
-
-    \code
-    QValueSpaceSubscriber *buttons = new QValueSpaceSubscriber("/Device/Buttons",
-                                                   QAbstractValueSpaceLayer::NonPermanentLayer);
-    qWarning() << "There are" << buttons->value().toUInt() << "buttons";
-    \endcode
-
-    will print out the number of buttons defined in all non-permanent layers.  If the same button
-    is defined in multiple non-permanent layers only the values from the layer with the highest
-    \l {QAbstractValueSpaceLayer::order()}{order} will be visible.
-
-    \i {Note:} The QValueSpaceSubscriber class is not thread safe and may only be used from
-    an application's main thread.
+    will invoke the \c {buttonInfoChanged()} slot whenever any value under \c {/Device/Buttons}
+    changes.  This includes the value of \c {/Device/Buttons} itself, a change of a subpath such as
+    \c {/Device/Buttons/2/Name} or the creation or removal of a subpath.
 */
 
 /*!
     \fn QValueSpaceSubscriber::contentsChanged()
 
-    Emitted whenever any value under this subscriber path changes.
+    Emitted whenever any value under the current path changes.
+
+    \bold {Note:} that if a value changes multiple times in quick succession, only the most recent
+    value may be accessible via the value() function.
 */
 
 /*!
@@ -211,8 +171,8 @@ static LayerList matchLayers(const QString &path, QValueSpace::LayerOptions filt
     // Invalid filter combination.
     if ((filter & QValueSpace::PermanentLayer &&
          filter & QValueSpace::NonPermanentLayer) ||
-        (filter & QValueSpace::WriteableLayer &&
-         filter & QValueSpace::NonWriteableLayer)) {
+        (filter & QValueSpace::WritableLayer &&
+         filter & QValueSpace::NonWritableLayer)) {
         return list;
     }
 
@@ -346,10 +306,7 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(QObject *parent)
 }
 
 /*!
-    \overload
-
-    Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.  This
-    constructor is equivalent to calling \c {QValueSpaceSubscriber(path.toUtf8(), parent)}.
+    Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.
 
     The constructed Value Space subscriber will access all available
     \l {QAbstractValueSpaceLayer}{layers}.
@@ -364,7 +321,8 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path, QObject *paren
     \overload
 
     Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.  This
-    constructor is equivalent to calling \c {QValueSpaceSubscriber(QString(path), parent)}.
+    constructor is equivalent to calling
+    \c {QValueSpaceSubscriber(QString::fromLatin1(path), parent)}.
 
     The constructed Value Space subscriber will access all available
     \l {QAbstractValueSpaceLayer}{layers}.
@@ -376,11 +334,8 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path, QObject *parent)
 }
 
 /*!
-    \overload
-
     Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.  The
-    \a filter parameter is used to limit which layers this QValueSpaceSubscriber will access.  This
-    constructor is equivalent to calling \c {QValueSpaceSubscriber(path.toUtf8(), filter, parent)}.
+    \a filter parameter is used to limit which layers this QValueSpaceSubscriber will access.
 
     If a layer matching \a filter is not found, the constructed QValueSpaceSubscriber will be
     unconnected.
@@ -400,7 +355,8 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path,
 
     Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.  The
     \a filter parameter is used to limit which layers this QValueSpaceSubscriber will access.  This
-    constructor is equivalent to calling \c {QValueSpaceSubscriber(QString(path), filter, parent)}.
+    constructor is equivalent to calling
+    \c {QValueSpaceSubscriber(QString::fromLatin1(path), filter, parent)}.
 
     If a layer matching \a filter is not found, the constructed QValueSpaceSubscriber will be
     unconnected.
@@ -416,11 +372,8 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path,
 }
 
 /*!
-    \overload
-
     Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.  This
-    QValueSpaceSubscriber will only use the layer identified by \a uuid.  This constructor is
-    equivalent to calling \c {QValueSpaceSubscriber(path.toUtf8(), uuid, parent)}.
+    QValueSpaceSubscriber will only use the layer identified by \a uuid.
 
     Use of this constructor is not platform agnostic.  If possible use one of the constructors that
     take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
@@ -443,7 +396,7 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path,
 
     Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.  This
     QValueSpaceSubscriber will only use the layer identified by \a uuid.  This constructor is
-    equivalent to calling \c {QValueSpaceSubscriber(QString(path), uuid, parent)}.
+    equivalent to calling \c {QValueSpaceSubscriber(QString::fromLatin1(path), uuid, parent)}.
 
     Use of this constructor is not platform agnostic.  If possible use one of the constructors that
     take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
@@ -460,7 +413,7 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path, const QUuid &uuid
 }
 
 /*!
-    Destroys the QValueSpaceSubscriber
+    Destroys the QValueSpaceSubscriber.
 */
 QValueSpaceSubscriber::~QValueSpaceSubscriber()
 {
@@ -491,7 +444,7 @@ void QValueSpaceSubscriber::setPath(const QString &path)
     Sets the path to the same path as \a subscriber.
 
     Calling this function causes the QValueSpaceSubscriber to disconnect and reconnect to the value
-    space with the a path.
+    space with the specified \a path.
 
     Calling this function disconnects all signal/slot connections.
 */
@@ -510,7 +463,8 @@ QString QValueSpaceSubscriber::path() const
 }
 
 /*!
-    Changes the path to \a path.
+    Changes the path to the absolute path if \a path starts with a '/'; otherwise changes to the
+    sub path of the current path.
 */
 void QValueSpaceSubscriber::cd(const QString &path)
 {

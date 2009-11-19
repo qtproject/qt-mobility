@@ -53,21 +53,12 @@ void QMediaObjectPrivate::_q_notify()
 {
     Q_Q(QMediaObject);
 
-    const int len = notifyProperties.length();
+    const QMetaObject* m = q->metaObject();
 
-    for (int i = 0; i < len; ++i) {
-        const char *name = notifyProperties.at(i).constData();
-
-        const QMetaObject* m = q->metaObject();
-
-        int pi = m->indexOfProperty(name);
-        if (pi == -1)
-            continue;
-
+    foreach (int pi, notifyProperties) {
         QMetaProperty p = m->property(pi);
-        if (p.hasNotifySignal())
-            p.notifySignal().invoke(q, QGenericArgument(QMetaType::typeName(p.userType()),
-                                                        p.read(q).data()));
+        p.notifySignal().invoke(
+            q, QGenericArgument(QMetaType::typeName(p.userType()), p.read(q).data()));
     }
 }
 
@@ -190,10 +181,16 @@ void QMediaObject::addPropertyWatch(QByteArray const &name)
 {
     Q_D(QMediaObject);
 
-    d->notifyProperties << name;
+    const QMetaObject* m = metaObject();
 
-    if (!d->notifyTimer->isActive())
-        d->notifyTimer->start();
+    int index = m->indexOfProperty(name.constData());
+
+    if (index != -1 && m->property(index).hasNotifySignal()) {
+        d->notifyProperties.insert(index);
+
+        if (!d->notifyTimer->isActive())
+            d->notifyTimer->start();
+    }
 }
 
 /*!
@@ -207,10 +204,14 @@ void QMediaObject::removePropertyWatch(QByteArray const &name)
 {
     Q_D(QMediaObject);
 
-    d->notifyProperties.removeAll(name);
+    int index = metaObject()->indexOfProperty(name.constData());
 
-    if (d->notifyProperties.isEmpty())
-        d->notifyTimer->stop();
+    if (index != -1) {
+        d->notifyProperties.remove(index);
+
+        if (d->notifyProperties.isEmpty())
+            d->notifyTimer->stop();
+    }
 }
 
 /*!

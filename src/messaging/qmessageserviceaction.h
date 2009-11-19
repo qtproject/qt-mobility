@@ -76,7 +76,7 @@ public:
     bool compose(const QMessage &message);
     bool retrieveHeader(const QMessageId &id);
     bool retrieveBody(const QMessageId &id);
-    bool retrieve(const QMessageContentContainerId &id);
+    bool retrieve(const QMessageId &messageId, const QMessageContentContainerId &id);
     bool show(const QMessageId &id);
     bool exportUpdates(const QMessageAccountId &id);
 

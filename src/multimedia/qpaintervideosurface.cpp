@@ -1322,6 +1322,9 @@ void QPainterVideoSurface::setShaderType(ShaderType type)
 
             setError(ResourceError);
             QAbstractVideoSurface::stop();
+        } else {
+            delete m_painter;
+            m_painter = 0;
         }
         emit supportedFormatsChanged();
     }

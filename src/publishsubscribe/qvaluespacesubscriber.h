@@ -56,7 +56,7 @@ QTM_BEGIN_NAMESPACE
 
 class QValueSpaceSubscriberPrivate;
 
-class Q_CFW_EXPORT QValueSpaceSubscriber : public QObject
+class Q_PUBLISHSUBSCRIBE_EXPORT QValueSpaceSubscriber : public QObject
 {
     Q_OBJECT
 

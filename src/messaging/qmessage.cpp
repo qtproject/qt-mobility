@@ -72,10 +72,6 @@ QList<QByteArray> charsets;
     QMessage can also be constructed piece by piece using functions such as 
     setType(), setFrom(), setTo(), setSubject(), setBody() and appendAttachments(). 
     
-    Alternatively a message can be initialized from raw data using fromTransmissionFormat().
-    A message may be serialized to a QDataStream, or returned as a QByteArray using 
-    toTransmissionFormat().
-    
     If a message has been modified since it was last constructed isModified() returns true.
 
     A list of attachments identifiers will be returned by attachmentIds() and an identifier for the 
@@ -211,48 +207,6 @@ QList<QByteArray> charsets;
     \fn QMessage::~QMessage()
     
     Destroys the message.
-*/
-
-/*!
-    \fn QMessage::fromTransmissionFormat(Type t, const QByteArray &ba)
-    
-    Constructs a message of type \a t from the data contained in \a ba.
-    
-    See the class description for a list of supported message encapsulations.
-    
-    \sa toTransmissionFormat()
-*/
-    
-/*!
-    \fn QMessage::fromTransmissionFormatFile(Type t, const QString& fileName)
-    
-    Constructs a message of type \a t from the data contained in \a fileName.
-
-    See the class description for a list of supported message encapsulations.
-    
-    \sa toTransmissionFormat()
-*/
-
-/*!
-    \fn QMessage::toTransmissionFormat() const
-    
-    Returns the message in a format suitable for transmission.
-    
-    See the class description for the encapsulations used for each
-    message type.
-    
-    \sa fromTransmissionFormat()
-*/
-
-/*!
-    \fn QMessage::toTransmissionFormat(QDataStream& out) const
-  
-    Writes the message to the output stream \a out.
-    
-    See the class description for the encapsulations used for each
-    message type.
-
-    \sa fromTransmissionFormat()
 */
 
 /*!
@@ -568,7 +522,7 @@ QList<QByteArray> charsets;
     Sets the ordered-by-preference list of names of charsets to use when encoding 
     unicode QString data to a serialized form to \a charsetNames.
 
-    \sa preferredCharsets(), preferredCharsetFor(), toTransmissionFormat(), setBody()
+    \sa preferredCharsets(), preferredCharsetFor(), setBody()
 */
 void QMessage::setPreferredCharsets(const QList<QByteArray> &charsetNames)
 {
@@ -581,7 +535,7 @@ void QMessage::setPreferredCharsets(const QList<QByteArray> &charsetNames)
     Returns an ordered-by-preference list of charset names to use when encoding 
     unicode QString data to a serialized form.
 
-    \sa setPreferredCharsets(), preferredCharsetFor(), toTransmissionFormat(), setBody()
+    \sa setPreferredCharsets(), preferredCharsetFor(), setBody()
 */
 QList<QByteArray> QMessage::preferredCharsets()
 {
@@ -592,7 +546,7 @@ QList<QByteArray> QMessage::preferredCharsets()
     Returns the first charset from the preferred list that is capable of encoding
     the content of \a text.
 
-    \sa preferredCharsets(), toTransmissionFormat(), setBody()
+    \sa preferredCharsets(), setBody()
 */
 QByteArray QMessage::preferredCharsetFor(const QString &text)
 {

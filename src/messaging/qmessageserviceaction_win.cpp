@@ -48,6 +48,7 @@
 #include "qmessage_p.h"
 #include "qmessagestore_p.h"
 #include "qmessagecontentcontainer_p.h"
+#include "qmessagecontentcontainerid_p.h"
 #include <QDebug>
 #include <QThread>
 #include <QTimer>
@@ -603,8 +604,7 @@ public:
         // Ensure that this thread has initialized MAPI
         WinHelpers::MapiInitializationToken token(WinHelpers::initializeMapi());
 
-        // TODO: body text search
-        _parent->_candidateIds = QMessageStore::instance()->queryMessages(_filter, _ordering, _limit, _offset);
+        _parent->_candidateIds = QMessageStore::instance()->queryMessages(_filter, _body, _options, _ordering, _limit, _offset);
         _parent->_lastError = QMessageStore::instance()->lastError();
         emit completed();
     }
@@ -743,7 +743,7 @@ bool QMessageServiceAction::compose(const QMessage &message)
 
 bool QMessageServiceAction::retrieveHeader(const QMessageId& id)
 {
-    //NO-OP
+    Q_UNUSED(id);
     return true;
 }
 
@@ -776,14 +776,30 @@ bool QMessageServiceAction::retrieveBody(const QMessageId& id)
 
     return result;
 #else
+    Q_UNUSED(id);
     return false;
 #endif
 }
 
-bool QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
+bool QMessageServiceAction::retrieve(const QMessageId &aMessageId, const QMessageContentContainerId& id)
 {
-    //NO-OP
-    return true;
+    Q_UNUSED(aMessageId)
+#ifdef _WIN32_WCE
+
+    if(!aMessageId.isValid())
+        return false;
+
+    QMessage message(aMessageId);
+
+    bool isBodyContainer = message.bodyId() == id;
+
+    if(isBodyContainer)
+        return retrieveBody(aMessageId);
+
+    //TODO download message attachment programatically using MAPI impossible?
+#endif
+
+    return false;
 }
 
 bool QMessageServiceAction::show(const QMessageId& id)
@@ -809,7 +825,7 @@ bool QMessageServiceAction::show(const QMessageId& id)
 
 bool QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
 {
-   //NOOP
+    Q_UNUSED(id);
     return true;
 }
 

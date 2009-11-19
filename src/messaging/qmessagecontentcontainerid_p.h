@@ -40,16 +40,26 @@
 ****************************************************************************/
 #ifndef QMESSAGECONTENTCONTAINERIDPRIVATE_H
 #define QMESSAGECONTENTCONTAINERIDPRIVATE_H
+
 #include "qmessagecontentcontainerid.h"
+#ifdef Q_OS_WIN
+#include "qmessageid.h"
+#endif
 
 QTM_BEGIN_NAMESPACE
 
 class QMessageContentContainerIdPrivate
 {
 public:
+#ifdef Q_OS_WIN
+    enum { Invalid = -1, Body = 0 };
+    int _number;
+    QMessageContentContainerIdPrivate() : _number(Invalid) {}
+#else
     QMessageContentContainerIdPrivate()
     {
     }
+#endif
 };
 
 QTM_END_NAMESPACE
