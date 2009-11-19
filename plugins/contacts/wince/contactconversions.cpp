@@ -827,15 +827,10 @@ QContact QContactWinCEEngine::convertToQContact(IItem *contact) const
         HeapFree(GetProcessHeap(), 0, propvals);
     }
 
-    // Now, we need to check whether we got a display label
-    QContactDisplayLabel label = ret.displayLabel();
+    // Synthesize the display label.
     QContactManager::Error error;
     QString synth = synthesizeDisplayLabel(ret, error);
-    if (label.label().isEmpty() || label.label() == synth) {
-        label.setLabel(synth);
-        label.setSynthesized(true);
-        ret.saveDetail(&label);
-    }
+    ret = setContactDisplayLabel(synth, ret);
 
     return ret;
 }
