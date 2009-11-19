@@ -47,6 +47,10 @@
 #include <qmediacontent.h>
 #include <qmediaplaylist.h>
 
+#ifdef Q_MOC_RUN
+# pragma Q_MOC_EXPAND_MACROS
+#endif
+
 class QString;
 
 QTM_BEGIN_NAMESPACE

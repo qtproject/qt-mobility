@@ -44,6 +44,10 @@
 #include "qmfhelpers_p.h"
 #include "qmessagestore.h"
 
+#ifdef Q_MOC_RUN
+# pragma Q_MOC_EXPAND_MACROS
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 class QMessageStorePrivate : public QObject

@@ -47,6 +47,10 @@
 #include <QtCore/qlist.h>
 #include <QtCore/qpair.h>
 
+#ifdef Q_MOC_RUN
+# pragma Q_MOC_EXPAND_MACROS
+#endif
+
 
 class QStringList;
 

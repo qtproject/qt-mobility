@@ -3393,6 +3393,6 @@ void SharedMemoryLayer::removeWatches(QValueSpaceProvider *creator, Handle paren
     remWatch(owner, readHandle->path);
 }
 
+#include "sharedmemorylayer.moc"
 QTM_END_NAMESPACE
 
-#include "sharedmemorylayer.moc"

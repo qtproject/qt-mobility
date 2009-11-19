@@ -64,6 +64,10 @@
 #include <qhalservice_linux_p.h>
 #endif
 
+#ifdef Q_MOC_RUN
+# pragma Q_MOC_EXPAND_MACROS
+#endif
+
 QT_BEGIN_HEADER
 
 class QStringList;

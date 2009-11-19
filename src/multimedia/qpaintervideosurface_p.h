@@ -63,6 +63,10 @@
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideoframe.h>
 
+#ifdef Q_MOC_RUN
+# pragma Q_MOC_EXPAND_MACROS
+#endif
+
 class QGLContext;
 
 QTM_BEGIN_NAMESPACE

@@ -17,8 +17,8 @@ SOURCES = servicexmlgen.cpp \
           interfacewidget.cpp \
           mandatorylineedit.cpp \
           errorcollector.cpp \
-	  ../../serviceframework/servicemetadata.cpp \
-	  ../../serviceframework/qserviceinterfacedescriptor.cpp
+	  ../../src/serviceframework/servicemetadata.cpp \
+	  ../../src/serviceframework/qserviceinterfacedescriptor.cpp
 
 include(../../common.pri)
 

@@ -47,6 +47,10 @@
 
 #include <QtCore/qpair.h>
 
+#ifdef Q_MOC_RUN
+# pragma Q_MOC_EXPAND_MACROS
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 class QMediaPlaylist;

@@ -481,6 +481,6 @@ QPacketAutoSend::~QPacketAutoSend()
         p->send(*this);
 }
 
+#include "qpacketprotocol.moc"
 QTM_END_NAMESPACE
 
-#include "qpacketprotocol.moc"

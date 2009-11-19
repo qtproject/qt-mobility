@@ -47,6 +47,10 @@
 #include <QVariant>
 #include <QString>
 
+#ifdef Q_MOC_RUN
+# pragma Q_MOC_EXPAND_MACROS
+#endif
+
 
 QT_BEGIN_HEADER
 

@@ -657,6 +657,6 @@ QStringList QValueSpaceSubscriber::subPaths() const
     return rvs;
 }
 
+#include "qvaluespacesubscriber.moc"
 QTM_END_NAMESPACE
 
-#include "qvaluespacesubscriber.moc"

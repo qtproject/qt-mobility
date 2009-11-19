@@ -41,6 +41,7 @@
 #ifndef INTERFACEWIDGET_H
 #define INTERFACEWIDGET_H
 
+#include <qmobilityglobal.h>
 #include <QWidget>
 #include <QXmlStreamWriter>
 
@@ -48,8 +49,11 @@ class QLineEdit;
 class QSpinBox;
 class CapabilitiesWidget;
 class CustomPropertiesWidget;
-class ServiceMetaData;
+
+QTM_BEGIN_NAMESPACE
 class QServiceInterfaceDescriptor;
+QTM_END_NAMESPACE
+
 class MandatoryLineEdit;
 class ErrorCollector;
 
@@ -61,7 +65,7 @@ public:
     void init();
 
     QString title() const;
-    void load(const QServiceInterfaceDescriptor &info);
+    void load(const QTM_PREPEND_NAMESPACE(QServiceInterfaceDescriptor) &info);
 
     void validate(ErrorCollector *errors);
     void writeXml(QXmlStreamWriter *device) const;

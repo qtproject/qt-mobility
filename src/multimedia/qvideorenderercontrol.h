@@ -42,6 +42,11 @@
 #ifndef QVIDEORENDERERCONTROL_H
 #define QVIDEORENDERERCONTROL_H
 
+#ifdef Q_MOC_RUN
+# pragma Q_MOC_EXPAND_MACROS
+#endif
+
+
 #ifndef QT_NO_MULTIMEDIA
 
 #include <qmediacontrol.h>

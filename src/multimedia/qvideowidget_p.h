@@ -63,6 +63,10 @@
 #include <qpaintervideosurface_p.h>
 #endif
 
+#ifdef Q_MOC_RUN
+# pragma Q_MOC_EXPAND_MACROS
+#endif
+
 class QStackedLayout;
 QTM_BEGIN_NAMESPACE
 
