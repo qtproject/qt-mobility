@@ -105,7 +105,7 @@ void GroupEditDialog::repopulateGroupList()
     QList<QContactLocalId> grpList = cm->contacts(groupFilter);
     for (int index=0; index < grpList.count(); index++){
         QContact grp = cm->contact(grpList[index]);
-        QListWidgetItem *item = new QListWidgetItem(grp.displayLabel().label(), listWidget);
+        QListWidgetItem *item = new QListWidgetItem(grp.displayLabel(), listWidget);
         // store the group ID as Qt::UserRole + 1
         item->setData(Qt::UserRole + 1, grpList[index]);
     }
@@ -130,7 +130,7 @@ void GroupEditDialog::addButtonClicked()
 
         if (!result){
             QMessageBox::information(this, tr("Group Add"),
-                tr("Failed to add Group '%1'.").arg(grp.displayLabel().label()));
+                tr("Failed to add Group '%1'.").arg(grp.displayLabel()));
         }else{
             repopulateGroupList();
             // select the added group name
@@ -156,7 +156,9 @@ void GroupEditDialog::saveButtonClicked()
         QContact grp = cm->contact(grpID);
         bool result = false;
         if (!grp.isEmpty()){
-            grp.setDisplayLabel(groupNameEdit->text());
+            QContactName groupName;
+            groupName.setCustomLabel(groupNameEdit->text());
+            grp.saveDetail(&groupName);
             result = cm->saveContact(&grp);
         }
         if (!result){

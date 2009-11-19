@@ -14,11 +14,11 @@ symbian: {
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
   
     INCLUDEPATH += inc
-	INCLUDEPATH += rss
-	INCLUDEPATH += $$SOURCE_DIR/src/contacts 
-	INCLUDEPATH += $$SOURCE_DIR/src/contacts/details 
-	INCLUDEPATH += $$SOURCE_DIR/src/contacts/filters 
-	INCLUDEPATH += $$SOURCE_DIR/src/contacts/requests
+    INCLUDEPATH += rss
+    INCLUDEPATH += $$SOURCE_DIR/contacts
+    INCLUDEPATH += $$SOURCE_DIR/contacts/details
+    INCLUDEPATH += $$SOURCE_DIR/contacts/filters
+    INCLUDEPATH += $$SOURCE_DIR/contacts/requests
 
   HEADERS += \
         $$PUBLIC_HEADERS \

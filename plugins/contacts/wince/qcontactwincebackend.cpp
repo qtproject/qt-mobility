@@ -313,7 +313,6 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(c
 
     // Remove the details we don't support
     defns[contactType].remove(QContactSyncTarget::DefinitionName);
-    defns[contactType].remove(QContactPresence::DefinitionName);
     defns[contactType].remove(QContactGeolocation::DefinitionName);
     defns[contactType].remove(QContactTimestamp::DefinitionName);
     defns[contactType].remove(QContactGuid::DefinitionName);

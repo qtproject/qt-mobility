@@ -38,32 +38,27 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef TESTRELATIONSHIP_H
+#define TESTRELATIONSHIP_H
 
-#ifndef QCONTACTDETAILS_H
-#define QCONTACTDETAILS_H
+#ifndef CNTSYMBIANDATABASE_UNIT_TEST
+#define CNTSYMBIANDATABASE_UNIT_TEST
+#endif
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Contacts API.
+#include <QObject>
 
-#include "qcontactaddress.h"
-#include "qcontactanniversary.h"
-#include "qcontactavatar.h"
-#include "qcontactbirthday.h"
-#include "qcontactdisplaylabel.h"
-#include "qcontactemailaddress.h"
-#include "qcontactfamily.h"
-#include "qcontactgender.h"
-#include "qcontactgeolocation.h"
-#include "qcontactguid.h"
-#include "qcontactname.h"
-#include "qcontactnickname.h"
-#include "qcontactnote.h"
-#include "qcontactonlineaccount.h"
-#include "qcontactorganization.h"
-#include "qcontactphonenumber.h"
-#include "qcontactsynctarget.h"
-#include "qcontacttimestamp.h"
-#include "qcontacttype.h"
-#include "qcontacturl.h"
+class TestCntSymbianDatabase : public QObject
+{
+    Q_OBJECT
+
+private slots:
+    void initTestCase();
+    void cleanupTestCase();
+        
+    void ctor();
+    void contactDatabase();
+    void appendFunctions();
+    void databaseEvents();
+};
 
 #endif

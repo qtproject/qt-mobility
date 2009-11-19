@@ -42,64 +42,21 @@
 
 QList<CContactItemField *> CntTransformAddress::transformDetailL(const QContactDetail &detail)
 {
+    if(detail.definitionName() != QContactAddress::DefinitionName)
+        User::Leave(KErrArgument);
+
     QList<CContactItemField *> fieldList;
 
     //cast to address
     const QContactAddress& address(static_cast<const QContactAddress&>(detail));
 
-    //country
-    TPtrC fieldTextCountry(reinterpret_cast<const TUint16*>(address.country().utf16()));
-    CContactItemField* country = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldCountry);
-    country->TextStorage()->SetTextL(fieldTextCountry);
-    country->SetMapping(KUidContactFieldVCardMapCOUNTRY);
-    setContextsL(address, *country);
-    fieldList.append(country);
-    CleanupStack::Pop(country);
-
-    //post code
-    TPtrC fieldTextPostCode(reinterpret_cast<const TUint16*>(address.postcode().utf16()));
-    CContactItemField* postCode = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldPostcode);
-    postCode->TextStorage()->SetTextL(fieldTextPostCode);
-    postCode->SetMapping(KUidContactFieldVCardMapPOSTCODE);
-    setContextsL(address, *postCode);
-    fieldList.append(postCode);
-    CleanupStack::Pop(postCode);
-
-    //street
-    TPtrC fieldTextStreet(reinterpret_cast<const TUint16*>(address.street().utf16()));
-    CContactItemField* street = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldAddress);
-    street->TextStorage()->SetTextL(fieldTextStreet);
-    street->SetMapping(KUidContactFieldVCardMapADR);
-    setContextsL(address, *street);
-    fieldList.append(street);
-    CleanupStack::Pop(street);
-
-    //locality(city)
-    TPtrC fieldTextLocality(reinterpret_cast<const TUint16*>(address.locality().utf16()));
-    CContactItemField* locality = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldLocality);
-    locality->TextStorage()->SetTextL(fieldTextLocality);
-    locality->SetMapping(KUidContactFieldVCardMapLOCALITY);
-    setContextsL(address, *locality);
-    fieldList.append(locality);
-    CleanupStack::Pop(locality);
-
-    //region
-    TPtrC fieldTextRegion(reinterpret_cast<const TUint16*>(address.region().utf16()));
-    CContactItemField* region = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldRegion);
-    region->TextStorage()->SetTextL(fieldTextRegion);
-    region->SetMapping(KUidContactFieldVCardMapREGION);
-    setContextsL(address, *region);
-    fieldList.append(region);
-    CleanupStack::Pop(region);
-
-    //post office box
-    TPtrC fieldTextPostOfficeBox(reinterpret_cast<const TUint16*>(address.postOfficeBox().utf16()));
-    CContactItemField* postOfficeBox = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldPostOffice);
-    postOfficeBox->TextStorage()->SetTextL(fieldTextPostOfficeBox);
-    postOfficeBox->SetMapping(KUidContactFieldVCardMapPOSTOFFICE);
-    setContextsL(address, *postOfficeBox);
-    fieldList.append(postOfficeBox);
-    CleanupStack::Pop(postOfficeBox);
+    // create new fields with contexts
+    transformToTextFieldL(address, fieldList, address.country(), KUidContactFieldCountry, KUidContactFieldVCardMapCOUNTRY, true);
+    transformToTextFieldL(address, fieldList, address.postcode(), KUidContactFieldPostcode, KUidContactFieldVCardMapPOSTCODE, true);
+    transformToTextFieldL(address, fieldList, address.street(), KUidContactFieldAddress, KUidContactFieldVCardMapADR, true);
+    transformToTextFieldL(address, fieldList, address.locality(), KUidContactFieldLocality, KUidContactFieldVCardMapLOCALITY, true);
+    transformToTextFieldL(address, fieldList, address.region(), KUidContactFieldRegion, KUidContactFieldVCardMapREGION, true);
+    transformToTextFieldL(address, fieldList, address.postOfficeBox(), KUidContactFieldPostOffice, KUidContactFieldVCardMapPOSTOFFICE, true);
 
     return fieldList;
 }

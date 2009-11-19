@@ -165,10 +165,12 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
             changeSet.changedContacts().insert(id); //group is a contact
         break;
     case EContactDbObserverEventOwnCardChanged:
-        QOwnCardPair ownCard(m_currentOwnCardId, QContactLocalId(id));
-        changeSet.oldAndNewSelfContactId() = ownCard;
-        m_currentOwnCardId = QContactLocalId(id);
-        break;
+        {
+            QOwnCardPair ownCard(m_currentOwnCardId, QContactLocalId(id));
+            changeSet.oldAndNewSelfContactId() = ownCard;
+            m_currentOwnCardId = QContactLocalId(id);
+            break;
+        }
     default:
         break; // ignore other events
     }

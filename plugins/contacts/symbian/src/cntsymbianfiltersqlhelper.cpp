@@ -90,6 +90,8 @@ CntSymbianFilterSqlHelper::CntSymbianFilterSqlHelper(CContactDatabase& contactDa
 
    //commAddrTableIdColumNameMapping.insert(KUidContactFieldIMPP.iUid,ESipAddress );
    commAddrTableIdColumNameMapping.insert(KUidContactFieldSIPID.iUid,ESipAddress );
+   commAddrTableIdColumNameMapping.insert(KUidContactFieldEMail.iUid,EEmailAddress );
+   
 }
 
 /*!
@@ -113,6 +115,7 @@ CntSymbianFilterSqlHelper::~CntSymbianFilterSqlHelper()
 QList<QContactLocalId> CntSymbianFilterSqlHelper::searchContacts(const QContactFilter& filter, 
                                                                   QContactManager::Error& error)
 {
+    QList<QContactLocalId> idList;
     if(filterSupported(filter)){
         
         // Create sql query from the filters
@@ -124,12 +127,11 @@ QList<QContactLocalId> CntSymbianFilterSqlHelper::searchContacts(const QContactF
         }
         // Query the database
         if(!isSearchingDone){
-            return m_srvConnection->searchContacts(sqlQuery, error);
+        idList =  m_srvConnection->searchContacts(sqlQuery, error);
         }
     }
-    else{
-        return QList<QContactLocalId>();
-    }
+    return idList;
+    
         
 }
 
@@ -145,11 +147,7 @@ void CntSymbianFilterSqlHelper::createSqlQuery(const QContactFilter& filter,
                                                  QContactManager::Error& error)
 {
     //Check if it is a single filter
-    bool IsOneLevelFilter  = isSingleFilter(filter,error);
-    if( error != QContactManager::NoError) {  
-        return;
-    }
-
+    bool IsOneLevelFilter  = isSingleFilter(filter);
     if(IsOneLevelFilter) {
         //Single Filter, get the sql query here
         updateSqlQueryForSingleFilter(filter,sqlQuery,error);
@@ -164,18 +162,16 @@ void CntSymbianFilterSqlHelper::createSqlQuery(const QContactFilter& filter,
  * Checks if the given filter is a single filter or combination of filters
  *
  * \a filter The QContactFilter to be used.
- * \a error On return, contains the possible error in filtering/sorting.
  * \return True if the filters is single filter
  */
 
-bool CntSymbianFilterSqlHelper::isSingleFilter(const QContactFilter& singlefilter, 
-                                               QContactManager::Error& error) const 
+bool CntSymbianFilterSqlHelper::isSingleFilter(const QContactFilter& singlefilter) const 
 {
-    error = QContactManager::NoError;
+    
     bool returnValue = false;
     switch (singlefilter.type()) {
-        case QContactFilter::InvalidFilter :
         case QContactFilter::ContactDetailFilter:
+        case QContactFilter::InvalidFilter :
         case QContactFilter::ContactDetailRangeFilter:
         case QContactFilter::ChangeLogFilter:
         case QContactFilter::DefaultFilter:
@@ -185,12 +181,11 @@ bool CntSymbianFilterSqlHelper::isSingleFilter(const QContactFilter& singlefilte
         case QContactFilter::ActionFilter:
         case QContactFilter::IntersectionFilter:
         case QContactFilter::UnionFilter:
+           
                         //All these are multiple filters
-                        error = QContactManager::NotSupportedError;
                         returnValue = false;
                         break;
         default:
-                        error = QContactManager::NotSupportedError;
                         returnValue = false;
                         break;
     };
@@ -440,7 +435,9 @@ void CntSymbianFilterSqlHelper::HandlePhonenumberDetailFilter(const QContactDeta
                 TInt matchLength(KDefaultMatchLength);
                 // no need to propagate error, we can use the default match length
                 TRAP_IGNORE(getMatchLengthL(matchLength));
-
+                int actualLength = number.length();
+                if(actualLength > matchLength)
+                    matchLength = actualLength;
                 TInt err = searchPhoneNumbers(idArray, commPtr, matchLength);
                 if(err != KErrNone)
                 {
@@ -471,10 +468,31 @@ void CntSymbianFilterSqlHelper::HandlePhonenumberDetailFilter(const QContactDeta
 CntAbstractContactFilter::FilterSupport CntSymbianFilterSqlHelper::filterSupported(const QContactFilter& filter)
 {
     CntAbstractContactFilter::FilterSupport filterSupported(CntAbstractContactFilter::NotSupported);
-    if (filter.type() == QContactFilter::ContactDetailFilter) {
-        const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
-        QContactFilter::MatchFlags matchFlags = detailFilter.matchFlags();
+    switch (filter.type()) {
+            case QContactFilter::ContactDetailFilter:
+                const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
+                filterSupported = checkIfDetailFilterSupported(detailFilter);
+                                  break;
+            case QContactFilter::InvalidFilter :
+            case QContactFilter::ContactDetailRangeFilter:
+            case QContactFilter::ChangeLogFilter:
+            case QContactFilter::DefaultFilter:                           
+            case QContactFilter::ActionFilter:
+            case QContactFilter::IntersectionFilter:
+            case QContactFilter::UnionFilter:
+            default:
+                    filterSupported = CntAbstractContactFilter::NotSupported;
+                         
+        }
+    return filterSupported;
+}
+CntAbstractContactFilter::FilterSupport CntSymbianFilterSqlHelper::checkIfDetailFilterSupported
+                                                                    (const QContactDetailFilter& detailFilter) const
+{
 
+        CntAbstractContactFilter::FilterSupport filterSupported(CntAbstractContactFilter::NotSupported);
+        //Get the match flags
+        QContactFilter::MatchFlags matchFlags = detailFilter.matchFlags();
         // Phone numbers
         if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName) {
             if (matchFlags == QContactFilter::MatchEndsWith){
@@ -484,27 +502,19 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilterSqlHelper::filterSupport
                 filterSupported = CntAbstractContactFilter::SupportedPreFilterOnly;
             }    
         }
-        // Names , Email etc
-        else if (detailFilter.detailDefinitionName() == QContactName::DefinitionName
-                || detailFilter.detailDefinitionName() == QContactEmailAddress::DefinitionName
-                || detailFilter.detailDefinitionName() == QContactOnlineAccount::DefinitionName){
-            QContactFilter::MatchFlags supportedPreFilterFlags =
-                    QContactFilter::MatchExactly & 
-                    QContactFilter::MatchStartsWith & 
-                    QContactFilter::MatchEndsWith & 
-                    QContactFilter::MatchCaseSensitive;
-            if (  (matchFlags == QContactFilter::MatchContains)|| 
-                  (matchFlags == QContactFilter::MatchStartsWith)||
-                  (matchFlags == QContactFilter::MatchEndsWith)||
-                  (matchFlags == QContactFilter::MatchExactly)){
+        // Names , Email,Sip address 
+        else if ( detailFilter.detailDefinitionName() == QContactName::DefinitionName ||
+                  detailFilter.detailDefinitionName() == QContactEmailAddress::DefinitionName ||
+                  detailFilter.detailDefinitionName() == QContactOnlineAccount::DefinitionName){
+               if (  (matchFlags == QContactFilter::MatchContains)|| (matchFlags == QContactFilter::MatchStartsWith)||
+                     (matchFlags == QContactFilter::MatchEndsWith)|| (matchFlags == QContactFilter::MatchExactly)){
                 filterSupported = CntAbstractContactFilter::Supported;
-            }
+               }
             
         }
-    }
-    return filterSupported;
+        return filterSupported;
+        
 }
-
 /*
  * Get the match length setting. Digits to be used in matching (counted from
  * right).
