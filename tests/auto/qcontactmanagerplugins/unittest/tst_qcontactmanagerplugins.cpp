@@ -48,7 +48,7 @@
 #include "qtcontacts.h"
 
 #include <QApplication>
-#include "qcontactmanager_p.h"
+#include "qcontactmanagerdataholder.h"
 //TESTED_CLASS=
 //TESTED_FILES=
 

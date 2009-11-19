@@ -40,9 +40,15 @@
 ****************************************************************************/
 
 
-#ifndef QCONTACTMANAGER_P_H
-#define QCONTACTMANAGER_P_H
+#ifndef QCONTACTMANAGERDATAHOLDER_H
+#define QCONTACTMANAGERDATAHOLDER_H
 
+#include <QMap>
+#include <QMultiMap>
+#include <QList>
+#include <QString>
+
+#include "qcontactmanager.h"
 //
 //  W A R N I N G
 //  -------------
@@ -54,61 +60,48 @@
 // We mean it.
 //
 
-#include <QMap>
-#include <QMultiMap>
-#include <QList>
-#include <QString>
-
-#include "qcontactmanager.h"
-#include "qcontactmanagerengine.h"
-
-#include "qcontactactiondescriptor.h"
-#include "qcontactactionfactory.h"
-
-class QContactManagerEngineFactory;
-
-/* Data and stuff that is shared amongst all backends */
-class QContactManagerData
+class QContact;
+class QContactManagerDataHolder
 {
 public:
-    QContactManagerData()
-        : m_engine(0),
-        m_error(QContactManager::NoError)
+    QContactManagerDataHolder()
     {
+        QStringList managerNames = QContactManager::availableManagers();
+
+        foreach(QString mgr, managerNames) {
+            QMap<QString, QString> params;
+            QString mgrUri = QContactManager::buildUri(mgr, params);
+            QContactManager* cm = QContactManager::fromUri(mgrUri);
+            if (cm) {
+                QList<QContact> contacts;
+                foreach (const QContactLocalId id,  cm->contacts()) {
+                    contacts.push_back(cm->contact(id));
+                }
+                savedContacts.insert(cm->managerName(),contacts);
+                QList<QContactLocalId> ids = cm->contacts();
+                cm->removeContacts(&ids);
+            }
+        }
     }
 
-    ~QContactManagerData()
+    ~QContactManagerDataHolder()
     {
-        if (m_engine)
-            m_engine->deref();
-        // We rely on the owning manager to delete m_info
+        QStringList managerNames = QContactManager::availableManagers();
+
+        foreach(QString mgr, managerNames) {
+            QMap<QString, QString> params;
+            QString mgrUri = QContactManager::buildUri(mgr, params);
+            QContactManager* cm = QContactManager::fromUri(mgrUri);
+            if (cm) {
+                QList<QContact> contacts = savedContacts.value(cm->managerName());
+                foreach(QContact c, contacts) {
+                    c.setId(QContactId());
+                    cm->saveContact(&c);
+                }
+            }
+        }
     }
-
-    void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);
-    static QContactManagerEngine* engine(const QContactManager* manager);
-    static QList<QContactActionDescriptor> actionDescriptors(const QString& actionName = QString(), const QString& vendorName = QString(), int implementationVersion = -1);
-    static QContactAction* action(const QContactActionDescriptor& actionDescriptor);
-
-    QContactManagerEngine* m_engine;
-    QContactManager::Error m_error;
-
-    /* Manager plugins */
-    static QHash<QString, QContactManagerEngineFactory*> m_engines;
-    static bool m_discovered;
-    static QStringList m_pluginPaths;
-    static void loadFactories();
-
-    /* Action Implementations */
-    typedef QHash<QContactActionDescriptor, QContactActionFactory*> DescriptorHash;
-    static QList<QContactActionFactory*> m_actionfactories; // list of all factories
-    static QList<QContactActionDescriptor> m_descriptors; // all descriptors
-    static DescriptorHash m_descriptormap;
-    static QHash<QString, int> m_actionmap;
-    static QHash<QString, int> m_vendormap;
-
 private:
-    Q_DISABLE_COPY(QContactManagerData)
+    QMap<QString, QList<QContact> > savedContacts;
 };
-
-
 #endif

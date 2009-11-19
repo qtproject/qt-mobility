@@ -6,7 +6,7 @@ CONFIG+=testcase
 PLUGIN_SUBDIR=dummyplugin/plugins
 
 include(../../../../common.pri)
-
+INCLUDEPATH += $$SOURCE_DIR/tests/auto
 SOURCES  += tst_qcontactasync.cpp
 
 qtAddLibrary(QtContacts)

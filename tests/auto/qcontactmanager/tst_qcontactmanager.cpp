@@ -43,7 +43,7 @@
 
 #include "qtcontacts.h"
 #include "qcontactchangeset.h"
-#include "qcontactmanager_p.h"
+#include "qcontactmanagerdataholder.h"
 
 // Eventually these will make it into qtestcase.h
 // but we might need to tweak the timeout values here.

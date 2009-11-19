@@ -43,7 +43,7 @@
 
 #include <QCoreApplication>
 #include "qtcontacts.h"
-#include "qcontactmanager_p.h" //QContactManagerDataHolder
+#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 
 /* Define an innocuous request (fetch ie doesn't mutate) to "fill up" any queues */
 #define FILL_QUEUE_WITH_FETCH_REQUESTS() QContactFetchRequest fqcfr1, fqcfr2, fqcfr3; \
