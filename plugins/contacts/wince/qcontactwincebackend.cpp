@@ -467,7 +467,7 @@ QList<QVariant::Type> QContactWinCEEngine::supportedDataTypes() const
  */
 void QContactWinCEEngine::removeRequestsForManager(QContactManager* manager)
 {
-    d->m_requestWorker->removeRequestsForManager(manager);
+    d->m_requestWorker.removeRequestsForManager(manager);
 }
 
 /* The default constructor of wince contact manager engine factory */

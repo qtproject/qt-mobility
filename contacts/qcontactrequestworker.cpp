@@ -40,12 +40,14 @@
 ****************************************************************************/
 
 #include <QTimer>
-
+#include <QMutex>
 #include "qcontactrequests.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactrequestworker_p.h"
 #include "qcontactabstractrequest_p.h"
+
 #include <QDebug>
+
 /*!
  * \class QContactRequestWorker
  *

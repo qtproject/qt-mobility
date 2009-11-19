@@ -55,6 +55,7 @@
 #include <QSharedData>
 #include <windows.h>
 #include <pimstore.h>
+#include <QMutex>
 
 #include "qtcontactsglobal.h"
 #include "qcontact.h"
@@ -63,7 +64,7 @@
 #include "qcontactmanager.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
-#include "qcontactrequestworker_p.h"
+#include "qcontactrequestworker.h"
 
 /*
  * Simple "smart" pointer for IUnknown management - takes ownership when assigning, calls release at dtor
@@ -246,7 +247,7 @@ private:
     friend class ContactWinceFactory;
 };
 
-class QMutex;
+
 class Q_DECL_EXPORT ContactWinceFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
