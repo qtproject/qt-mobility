@@ -296,5 +296,7 @@ QRadioTunerControl::~QRadioTunerControl()
 
     Signals that an \a error has occured.
 */
+
+#include "moc_qradiotunercontrol.cpp"
 QTM_END_NAMESPACE
 

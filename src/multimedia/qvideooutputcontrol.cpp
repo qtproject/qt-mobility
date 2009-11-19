@@ -124,5 +124,7 @@ QVideoOutputControl::~QVideoOutputControl()
 
     Signals that available set of video \a outputs has changed.
 */
+
+#include "moc_qvideooutputcontrol.cpp"
 QTM_END_NAMESPACE
 

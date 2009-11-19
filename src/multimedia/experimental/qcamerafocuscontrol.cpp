@@ -199,5 +199,7 @@ QCameraFocusControl::~QCameraFocusControl()
 
     Signal emitted when \a zoom value changed.
 */
+
+#include "moc_qcamerafocuscontrol.cpp"
 QTM_END_NAMESPACE
 

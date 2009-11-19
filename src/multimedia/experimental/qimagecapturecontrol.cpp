@@ -113,5 +113,7 @@ QImageCaptureControl::~QImageCaptureControl()
 
     Signals that an captured image has been saved to \a fileName.
 */
+
+#include "moc_qimagecapturecontrol.cpp"
 QTM_END_NAMESPACE
 

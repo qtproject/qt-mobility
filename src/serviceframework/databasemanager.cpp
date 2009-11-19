@@ -795,4 +795,6 @@ void DatabaseManager::setChangeNotificationsEnabled(DbScope scope, bool enabled)
             m_systemDb : m_userDb, enabled);
 }
 
+#include "moc_databasemanager_p.cpp"
+
 QTM_END_NAMESPACE

@@ -1049,4 +1049,6 @@ QStringList QNetworkManagerIp4Config::domains() const
     return d->connectionInterface->property("Domains").toStringList();
 }
 
+#include "moc_qnetworkmanagerservice_linux_p.cpp"
+
 QTM_END_NAMESPACE

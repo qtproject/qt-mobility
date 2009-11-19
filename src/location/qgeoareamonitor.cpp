@@ -197,4 +197,6 @@ QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject *parent)
     The \a update holds the new position.
 */
 
+//#include "moc_qgeoareamonitor.cpp"
+
 QTM_END_NAMESPACE

@@ -55,10 +55,6 @@
 #include <QCoreApplication>
 #include <QDir>
 
-#ifdef Q_MOC_RUN
-# pragma Q_MOC_EXPAND_MACROS
-#endif
-
 QTM_BEGIN_NAMESPACE
 
 
@@ -717,6 +713,7 @@ void QServiceManager::disconnectNotify(const char *signal)
     }
 }
 
+#include "moc_qservicemanager.cpp"
+#include "qservicemanager.moc"
 QTM_END_NAMESPACE
 
-#include "qservicemanager.moc"

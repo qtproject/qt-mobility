@@ -45,10 +45,6 @@
 #include <qmediacontrol.h>
 #include <qmediarecorder.h>
 
-#ifdef Q_MOC_RUN
-# pragma Q_MOC_EXPAND_MACROS
-#endif
-
 class QUrl;
 
 QTM_BEGIN_NAMESPACE

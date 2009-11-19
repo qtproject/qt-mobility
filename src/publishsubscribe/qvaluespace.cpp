@@ -480,4 +480,6 @@ QString qCanonicalPath(const QString &path)
     return result;
 }
 
+#include "moc_qvaluespace_p.cpp"
+
 QTM_END_NAMESPACE

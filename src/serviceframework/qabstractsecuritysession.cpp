@@ -99,4 +99,6 @@ QAbstractSecuritySession::~QAbstractSecuritySession()
     service \a capabilities. 
 */
 
+#include "moc_qabstractsecuritysession.cpp"
+
 QTM_END_NAMESPACE

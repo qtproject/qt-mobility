@@ -326,5 +326,7 @@ QMessageStore* QMessageStore::instance()
 
     return store;
 }
+
+#include "moc_qmessagestore_qmf_p.cpp"
     
 QTM_END_NAMESPACE

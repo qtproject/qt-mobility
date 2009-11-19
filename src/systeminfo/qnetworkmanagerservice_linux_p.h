@@ -108,10 +108,6 @@ typedef enum
 #define NM_DBUS_INTERFACE_ACTIVE_CONNECTION NM_DBUS_INTERFACE ".Connection.Active"
 #define NM_DBUS_INTERFACE_IP4_CONFIG        NM_DBUS_INTERFACE ".IP4Config"
 
-#ifdef Q_MOC_RUN
-# pragma Q_MOC_EXPAND_MACROS
-#endif
-
 QTM_BEGIN_NAMESPACE
 typedef QMap< QString, QMap<QString,QVariant> > QNmSettingsMap;
 typedef QList<quint32> ServerThing;

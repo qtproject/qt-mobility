@@ -235,6 +235,6 @@ void QAudioCaptureSource::setSelectedDevice(int index)
 
     Signal is emitted when the available audio input devices has changed.
 */
-
+#include "moc_qaudiocapturesource.cpp"
 QTM_END_NAMESPACE
 

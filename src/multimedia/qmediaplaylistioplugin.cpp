@@ -182,5 +182,7 @@ QMediaPlaylistIOPlugin::~QMediaPlaylistIOPlugin()
 
     If the device is invalid or the format is unsupported this will return a null pointer.
 */
+
+#include "moc_qmediaplaylistioplugin.cpp"
 QTM_END_NAMESPACE
 

@@ -885,4 +885,6 @@ bool QSystemScreenSaver::isScreenLockOn()
     return dp.isScreenLockOn();
 }
 
+#include "moc_qsysteminfo.cpp"
+
 QTM_END_NAMESPACE

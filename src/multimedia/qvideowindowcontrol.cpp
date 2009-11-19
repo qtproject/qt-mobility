@@ -263,5 +263,7 @@ QVideoWindowControl::~QVideoWindowControl()
 
     Signals that a video overlay's \a saturation adjustment has changed.
 */
+
+#include "moc_qvideowindowcontrol.cpp"
 QTM_END_NAMESPACE
 

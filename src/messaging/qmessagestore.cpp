@@ -416,4 +416,6 @@ QTM_BEGIN_NAMESPACE
 static const int registrationId1 = qRegisterMetaType<QMessageStore::NotificationFilterId>();
 static const int registrationId2 = qRegisterMetaType<QMessageStore::NotificationFilterIdSet>();
 
+#include "moc_qmessagestore.cpp"
+
 QTM_END_NAMESPACE

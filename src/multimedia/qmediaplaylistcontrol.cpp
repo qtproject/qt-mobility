@@ -198,6 +198,6 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
   Signal emitted when current media changes to \a content.
 */
 
-
+#include "moc_qmediaplaylistcontrol.cpp"
 QTM_END_NAMESPACE
 

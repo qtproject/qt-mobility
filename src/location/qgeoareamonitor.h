@@ -46,13 +46,10 @@
 
 #include <QObject>
 
-#ifdef Q_MOC_RUN
-# pragma Q_MOC_EXPAND_MACROS
-#endif
-
 QT_BEGIN_HEADER
 
-QTM_BEGIN_NAMESPACE
+//QTM_BEGIN_NAMESPACE
+namespace QtMobility {
 
 class QGeoPositionInfo;
 class QGeoAreaMonitorPrivate;
@@ -83,7 +80,8 @@ private:
     QGeoAreaMonitorPrivate *d;
 }; 
 
-QTM_END_NAMESPACE
+//QTM_END_NAMESPACE
+}
 
 QT_END_HEADER
 

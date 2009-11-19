@@ -81,10 +81,6 @@
 #define HAL_DEVICES_LAPTOPPANEL_INTERFACE "org.freedesktop.Hal.Device.LaptopPanel"
 #define HAL_DEVICE_KILLSWITCH_INTERFACE "org.freedesktop.Hal.Device.KillSwitch"
 
-#ifdef Q_MOC_RUN
-# pragma Q_MOC_EXPAND_MACROS
-#endif
-
 QTM_BEGIN_NAMESPACE
 
 typedef struct halProp {

@@ -143,5 +143,7 @@ QAudioDeviceControl::~QAudioDeviceControl()
 
     Signals that list of available devices was changed.
 */
+
+#include "moc_qaudiodevicecontrol.cpp"
 QTM_END_NAMESPACE
 

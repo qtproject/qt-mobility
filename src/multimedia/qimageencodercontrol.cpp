@@ -165,5 +165,7 @@ QImageEncoderControl::~QImageEncoderControl()
 
     \sa quality()
 */
+
+#include "moc_qimageencodercontrol.cpp"
 QTM_END_NAMESPACE
 

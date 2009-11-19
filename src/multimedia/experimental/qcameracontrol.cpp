@@ -117,4 +117,5 @@ QCameraControl::~QCameraControl()
     a description of the error \a errorString.
 */
 
+#include "moc_qcameracontrol.cpp"
 QTM_END_NAMESPACE

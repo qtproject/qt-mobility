@@ -526,6 +526,6 @@ QString QRadioTuner::errorString() const
     \value ForceMono   Provide mono mode, converting if required.
 */
 
-
+#include "moc_qradiotuner.cpp"
 QTM_END_NAMESPACE
 

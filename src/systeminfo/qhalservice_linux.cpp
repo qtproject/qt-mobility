@@ -360,4 +360,6 @@ quint32 QHalDeviceKillSwitchInterface::getPower()
     return -1;
 }
 
+#include "moc_qhalservice_linux_p.cpp"
+
 QTM_END_NAMESPACE

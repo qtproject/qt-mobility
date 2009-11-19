@@ -141,5 +141,7 @@ QAudioEncoderControl::~QAudioEncoderControl()
 
     Sets the selected audio \a settings.
 */
+
+#include "moc_qaudioencodercontrol.cpp"
 QTM_END_NAMESPACE
 

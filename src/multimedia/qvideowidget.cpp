@@ -810,5 +810,6 @@ bool QVideoWidget::event(QEvent *event)
 }
 
 #include "moc_qvideowidget.cpp"
+#include "moc_qvideowidget_p.cpp"
 QTM_END_NAMESPACE
 

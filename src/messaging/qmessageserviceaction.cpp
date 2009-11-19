@@ -335,5 +335,5 @@ QTM_BEGIN_NAMESPACE
     Returns a value indicating the last error condition encountered by the action.
 */
 
-
+#include "moc_qmessageserviceaction.cpp"
 QTM_END_NAMESPACE

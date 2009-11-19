@@ -626,5 +626,6 @@ void QMediaPlaylist::setCurrentPosition(int playlistPosition)
 */
 
 #include "moc_qmediaplaylist.cpp"
+#include "moc_qmediaplaylist_p.cpp"
 QTM_END_NAMESPACE
 

@@ -2043,5 +2043,6 @@ void QSystemScreenSaverPrivate::whichWMRunning()
 #endif
 }
 
+#include "moc_qsysteminfo_linux_p.cpp"
 
 QTM_END_NAMESPACE

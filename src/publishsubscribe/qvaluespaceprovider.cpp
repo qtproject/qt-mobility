@@ -475,4 +475,5 @@ void QValueSpaceProvider::connectNotify(const char *member)
     QObject::connectNotify(member);
 }
 
+#include "moc_qvaluespaceprovider.cpp"
 QTM_END_NAMESPACE

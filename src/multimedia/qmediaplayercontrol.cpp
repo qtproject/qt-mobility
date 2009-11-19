@@ -349,6 +349,6 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     Signal emitted when playback rate changes to \a rate.
 */
 
-
+#include "moc_qmediaplayercontrol.cpp"
 QTM_END_NAMESPACE
 

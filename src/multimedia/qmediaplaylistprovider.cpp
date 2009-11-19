@@ -267,5 +267,7 @@ void QMediaPlaylistProvider::shuffle()
 
     Signals that a load failed() due to an \a error.  The \a errorMessage provides more information.
 */
+
+#include "moc_qmediaplaylistprovider.cpp"
 QTM_END_NAMESPACE
 

@@ -154,4 +154,6 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
     information could not be retrieved within the specified timeout.
 */
 
+#include "moc_qgeosatelliteinfosource.cpp"
+
 QTM_END_NAMESPACE

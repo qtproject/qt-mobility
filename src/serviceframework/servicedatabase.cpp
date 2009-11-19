@@ -2021,4 +2021,6 @@ bool ServiceDatabase::populateServiceProperties(QServiceInterfaceDescriptor *int
     return true;
 }
 
+#include "moc_servicedatabase_p.cpp"
+
 QTM_END_NAMESPACE

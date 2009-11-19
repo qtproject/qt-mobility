@@ -167,6 +167,6 @@ QImageProcessingControl::~QImageProcessingControl()
     Returns the sharpening level.
 */
 
-
+#include "moc_qimageprocessingcontrol.cpp"
 QTM_END_NAMESPACE
 

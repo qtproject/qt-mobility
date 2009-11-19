@@ -154,5 +154,7 @@ void QLocalMediaPlaylistProvider::shuffle()
     }
 
 }
+
+#include "moc_qlocalmediaplaylistprovider.cpp"
 QTM_END_NAMESPACE
 

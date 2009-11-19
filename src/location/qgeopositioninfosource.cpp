@@ -271,4 +271,6 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
     not be retrieved within the specified timeout.
 */
 
+#include "moc_qgeopositioninfosource.cpp"
+
 QTM_END_NAMESPACE
