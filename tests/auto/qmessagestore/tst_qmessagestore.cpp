@@ -207,6 +207,7 @@ void tst_QMessageStore::testAccount()
 
     QCOMPARE(QMessageAccount(account).id(), accountId);
     QVERIFY(!(accountId < accountId));
+    QVERIFY((QMessageAccountId() < accountId) || (accountId < QMessageAccountId()));
 
     QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts());
     QVERIFY(accountIds.contains(accountId));
@@ -270,6 +271,7 @@ void tst_QMessageStore::testFolder()
 
     QCOMPARE(QMessageFolder(folder).id(), folderId);
     QVERIFY(!(folderId < folderId));
+    QVERIFY((QMessageFolderId() < folderId) || (folderId < QMessageFolderId()));
 
     if (!parentFolderPath.isEmpty()) {
         QMessageFolderFilter filter(QMessageFolderFilter::byPath(parentFolderPath) & QMessageFolderFilter::byParentAccountId(testAccountId));
@@ -626,6 +628,7 @@ void tst_QMessageStore::testMessage()
 
     QCOMPARE(QMessage(message).id(), message.id());
     QVERIFY(!(message.id() < message.id()));
+    QVERIFY((QMessageId() < message.id()) || (message.id() < QMessageId()));
 
     bodyId = updated.bodyId();
     QCOMPARE(bodyId.isValid(), true);
