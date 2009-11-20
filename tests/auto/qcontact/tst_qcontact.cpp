@@ -396,6 +396,18 @@ void tst_QContact::actions()
     availableActions = c2.availableActions(QString());
     QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
 
+    // try various combinations of version and name
+    availableActions = c2.availableActions();
+    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
+    availableActions = c2.availableActions("Test");
+    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
+    availableActions = c2.availableActions("Test", 1);
+    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
+    availableActions = c2.availableActions("Test", 5);
+    QVERIFY(availableActions.isEmpty()); // should NOT contain SendEmail
+    availableActions = c2.availableActions(QString(), 1);
+    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
+
     // detail with action:
     // empty contact
     d = c.detailWithAction("SendEmail");
