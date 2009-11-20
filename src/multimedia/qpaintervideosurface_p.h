@@ -53,8 +53,6 @@
 // We mean it.
 //
 
-#ifndef QT_NO_MULTIMEDIA
-
 #include <qmobilityglobal.h>
 #include <QtCore/qsize.h>
 #include <QtGui/qimage.h>
@@ -147,8 +145,6 @@ private:
 
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QPainterVideoSurface::ShaderTypes)
-#endif
-
 #endif
 
 #endif

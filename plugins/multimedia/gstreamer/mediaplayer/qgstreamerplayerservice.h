@@ -58,10 +58,8 @@ class QGstreamerPlayerControl;
 class QGstreamerPlayerSession;
 class QGstreamerMetaDataProvider;
 class QGstreamerStreamsControl;
-#ifndef QT_NO_MULTIMEDIA
 class QGstreamerVideoRenderer;
 class QGstreamerVideoOverlay;
-#endif
 class QGstreamerVideoWidgetControl;
 
 class QMediaPlaylistNavigator;
@@ -87,10 +85,8 @@ private:
     QGstreamerVideoOutputControl *m_videoOutput;
     QGstreamerStreamsControl *m_streamsControl;
 
-#ifndef QT_NO_MULTIMEDIA
     QGstreamerVideoRenderer *m_videoRenderer;
     QGstreamerVideoOverlay *m_videoWindow;
-#endif
     QGstreamerVideoWidgetControl *m_videoWidget;
 };
 
