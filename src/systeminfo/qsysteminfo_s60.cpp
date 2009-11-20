@@ -81,7 +81,7 @@ QString QSystemInfoPrivate::currentLanguage() const
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
     QStringList languages;
-    TRAPD(err,
+    TRAP_IGNORE(
         CPtiEngine *ptiEngine = CPtiEngine::NewL();
         CleanupStack::PushL(ptiEngine);
         RArray<TInt> languageCodes;
@@ -158,10 +158,10 @@ QString QSystemInfoPrivate::TLanguageToISO639_1(TLanguage language) const
         case ELangCroatian: return "hr";
         case ELangEstonian: return "et";
         case ELangFarsi: return "fa";
-        case ELangScotsGaelic: "gd";
+        case ELangScotsGaelic: return "gd";
         case ELangGeorgian: return "ka";
         case ELangGreek:
-        case ELangCyprusGreek: "el";
+        case ELangCyprusGreek: return "el";
         case ELangGujarati: return "gu";
         case ELangHebrew: return "he";
         case ELangHindi: return "hi";
@@ -461,7 +461,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
             const TUint KPSWlanMacAddressLength = 6;
             TBuf8<KPSWlanMacAddressLength> wlanMacAddr;
             if (RProperty::Get(KPSUidWlan, KPSWlanMacAddress, wlanMacAddr) == KErrNone) {
-                for (TInt i = 0; i < KPSWlanMacAddressLength - 1; ++i) {
+                for (TUint i = 0; i < KPSWlanMacAddressLength - 1; ++i) {
                     address += QString(QByteArray((const char*)wlanMacAddr.Mid(i, 1).Ptr(), 1).toHex());
                     address += ":";
                 }
@@ -883,8 +883,6 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
         {
             if (DeviceInfo::instance()->batteryInfo()->batteryLevel() < 100) { //TODO: Use real indicator, EPSHWRMChargingStatus::EChargingStatusNotCharging?
                 return QSystemDeviceInfo::WallPowerChargingBattery;
-            } else {
-                return QSystemDeviceInfo::WallPower;
             }
             return QSystemDeviceInfo::WallPower;
         }
