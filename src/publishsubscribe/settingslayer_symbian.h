@@ -102,12 +102,11 @@ public:
 private:
     struct SymbianSettingsHandle {
         SymbianSettingsHandle(const QString &p)
-        :   path(p), valueHandle(false), refCount(1)
+        :   path(p), refCount(1)
         {
         }
 
         QString path;
-        bool valueHandle;
         unsigned int refCount;
     };
 

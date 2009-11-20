@@ -45,33 +45,20 @@
 
 #include <QDebug>
 
+QT_BEGIN_NAMESPACE
+
 Q_GLOBAL_STATIC(SymbianSettingsLayer, symbianSettingsLayer);
 QVALUESPACE_AUTO_INSTALL_LAYER(SymbianSettingsLayer);
 
-QT_BEGIN_NAMESPACE
-
 SymbianSettingsLayer::SymbianSettingsLayer()
 {
-    qDebug("SymbianSettingsLayer::SymbianSettingsLayer()");
     connect(&m_settingsManager, SIGNAL(valueChanged(const XQSettingsKey&, const QVariant&)),
             this, SLOT(valueChanged(const XQSettingsKey&, const QVariant&)));
 }
 
 SymbianSettingsLayer::~SymbianSettingsLayer()
 {
-    qDebug("SymbianSettingsLayer::~SymbianSettingsLayer()");
-
     QMutableHashIterator<QString, SymbianSettingsHandle *> i(handles);
-    while (i.hasNext()) {
-        i.next();
-
-        SymbianSettingsHandle *handle = i.value();
-
-        if (handle->valueHandle)
-            removeHandle(Handle(handle));
-    }
-
-    i.toFront();
     while (i.hasNext()) {
         i.next();
 
@@ -107,13 +94,11 @@ SymbianSettingsLayer *SymbianSettingsLayer::instance()
 
 bool SymbianSettingsLayer::startup(Type type)
 {
-    qDebug("bool SymbianSettingsLayer::startup(Type type)");
     return true;
 }
 
 bool SymbianSettingsLayer::value(Handle handle, QVariant *data)
 {
-    qDebug("bool SymbianSettingsLayer::value(Handle handle, QVariant *data)");
     SymbianSettingsHandle *sh = symbianSettingsHandle(handle);
     if (!sh)
         return false;
@@ -123,7 +108,6 @@ bool SymbianSettingsLayer::value(Handle handle, QVariant *data)
 
 bool SymbianSettingsLayer::value(Handle handle, const QString &subPath, QVariant *data)
 {
-    qDebug("bool SymbianSettingsLayer::value(Handle handle, const QString &subPath, QVariant *data)");
     if (handle != InvalidHandle && !symbianSettingsHandle(handle))
         return false;
 
@@ -181,7 +165,6 @@ bool SymbianSettingsLayer::value(Handle handle, const QString &subPath, QVariant
 
 QSet<QString> SymbianSettingsLayer::children(Handle handle)
 {
-    qDebug("QSet<QString> SymbianSettingsLayer::children(Handle handle)");
     QSet<QString> foundChildren;
 
     SymbianSettingsHandle *sh = symbianSettingsHandle(handle);
@@ -194,7 +177,6 @@ QSet<QString> SymbianSettingsLayer::children(Handle handle)
 
 QAbstractValueSpaceLayer::Handle SymbianSettingsLayer::item(Handle parent, const QString &path)
 {
-    qDebug("QAbstractValueSpaceLayer::Handle SymbianSettingsLayer::item(Handle parent, const QString &path)");
     QString fullPath;
 
     // Fail on invalid path.
@@ -233,7 +215,6 @@ QAbstractValueSpaceLayer::Handle SymbianSettingsLayer::item(Handle parent, const
 
 void SymbianSettingsLayer::setProperty(Handle handle, Properties properties)
 {
-    qDebug("void SymbianSettingsLayer::setProperty(Handle handle, Properties properties)");
     SymbianSettingsHandle *sh = symbianSettingsHandle(handle);
     if (!sh)
         return;
@@ -271,7 +252,6 @@ void SymbianSettingsLayer::setProperty(Handle handle, Properties properties)
 
 void SymbianSettingsLayer::removeHandle(Handle handle)
 {
-    qDebug("void SymbianSettingsLayer::removeHandle(Handle handle)");
     SymbianSettingsHandle *sh = symbianSettingsHandle(handle);
     if (!sh)
         return;
@@ -287,7 +267,6 @@ void SymbianSettingsLayer::removeHandle(Handle handle)
 bool SymbianSettingsLayer::setValue(QValueSpaceProvider *creator, Handle handle, const QString &subPath,
     const QVariant &data)
 {
-    qDebug("bool SymbianSettingsLayer::setValue(QValueSpaceProvider *creator, Handle handle, const QString &subPath, const QVariant &data)");
     SymbianSettingsHandle *sh = symbianSettingsHandle(handle);
     if (!sh)
         return false;
@@ -351,14 +330,12 @@ bool SymbianSettingsLayer::setValue(QValueSpaceProvider *creator, Handle handle,
 
 void SymbianSettingsLayer::sync()
 {
-    qDebug("void SymbianSettingsLayer::sync()");
-    //TODO: Is this needed in Symbian?
+    //Not needed
 }
 
 bool SymbianSettingsLayer::removeSubTree(QValueSpaceProvider *creator, Handle handle)
 {
-    qDebug("bool SymbianSettingsLayer::removeSubTree(QValueSpaceProvider *creator, Handle handle)");
-    //TODO: Is this needed in Symbian?
+    //Not needed
     return false;
 }
 
@@ -373,23 +350,22 @@ bool SymbianSettingsLayer::removeValue(QValueSpaceProvider *creator,
 
 void SymbianSettingsLayer::addWatch(QValueSpaceProvider *, Handle)
 {
-    qDebug("void SymbianSettingsLayer::addWatch(QValueSpaceProvider *, Handle)");
+    //Not needed
 }
 
 void SymbianSettingsLayer::removeWatches(QValueSpaceProvider *, Handle)
 {
-    qDebug("void SymbianSettingsLayer::removeWatches(QValueSpaceProvider *, Handle)");
+    //Not needed
 }
 
 bool SymbianSettingsLayer::supportsInterestNotification() const
 {
-    qDebug("bool SymbianSettingsLayer::supportsInterestNotification() const");
     return false;
 }
 
 bool SymbianSettingsLayer::notifyInterest(Handle, bool)
 {
-    qDebug("bool SymbianSettingsLayer::notifyInterest(Handle, bool)");
+    //Not needed
     return false;
 }
 
