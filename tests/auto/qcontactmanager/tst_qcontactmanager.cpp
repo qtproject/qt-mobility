@@ -195,6 +195,7 @@ void tst_QContactManager::init()
     /* Make sure these other test plugins are NOT loaded by default */
     QVERIFY(!QContactManager::availableManagers().contains("testdummy"));
     QVERIFY(!QContactManager::availableManagers().contains("teststaticdummy"));
+    QVERIFY(!QContactManager::availableManagers().contains("maliciousplugin"));
 }
 
 void tst_QContactManager::cleanup()
