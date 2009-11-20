@@ -56,10 +56,8 @@
 #include <QtNetwork/qnetworkaccessmanager.h>
 #include <QtNetwork/qnetworkreply.h>
 
-#ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideosurfaceformat.h>
-#endif
 
 #if defined(Q_OS_SYMBIAN)
 # define TESTDATA_DIR "./tst_qmediaimageviewer_images"
@@ -85,9 +83,7 @@ private slots:
     void elapsedTime();
     void outputControl();
     void widgetControl();
-#ifndef QT_NO_MULTIMEDIA
     void rendererControl();
-#endif
 
 public:
     tst_QMediaImageViewer() : m_network(0), m_imageDir(QLatin1String(TESTDATA_DIR)) {}
@@ -106,7 +102,6 @@ private:
 Q_DECLARE_METATYPE(QMediaImageViewer::State)
 Q_DECLARE_METATYPE(QMediaImageViewer::MediaStatus);
 
-#ifndef QT_NO_MULTIMEDIA
 class QtTestVideoSurface : public QAbstractVideoSurface
 {
 public:
@@ -126,7 +121,6 @@ public:
 private:
     QVideoFrame m_frame;
 };
-#endif
 
 class QtTestNetworkReply : public QNetworkReply
 {
@@ -930,9 +924,7 @@ void tst_QMediaImageViewer::outputControl()
     QVERIFY(outputControl != 0);
 
     QVERIFY(outputControl->availableOutputs().contains(QVideoOutputControl::WidgetOutput));
-#ifndef QT_NO_MULTIMEDIA
     QVERIFY(outputControl->availableOutputs().contains(QVideoOutputControl::RendererOutput));
-#endif
     QVERIFY(!outputControl->availableOutputs().contains(QVideoOutputControl::UserOutput));
 
     QCOMPARE(outputControl->output(), QVideoOutputControl::NoOutput);
@@ -940,10 +932,8 @@ void tst_QMediaImageViewer::outputControl()
     outputControl->setOutput(QVideoOutputControl::WidgetOutput);
     QCOMPARE(outputControl->output(), QVideoOutputControl::WidgetOutput);
 
-#ifndef QT_NO_MULTIMEDIA
     outputControl->setOutput(QVideoOutputControl::RendererOutput);
     QCOMPARE(outputControl->output(), QVideoOutputControl::RendererOutput);
-#endif
 
     outputControl->setOutput(QVideoOutputControl::UserOutput);
     QCOMPARE(outputControl->output(), QVideoOutputControl::NoOutput);
@@ -1032,7 +1022,6 @@ void tst_QMediaImageViewer::widgetControl()
     QTestEventLoop::instance().enterLoop(1);
 }
 
-#ifndef QT_NO_MULTIMEDIA
 void tst_QMediaImageViewer::rendererControl()
 {
     QtTestVideoSurface surfaceA;
@@ -1126,7 +1115,6 @@ void tst_QMediaImageViewer::rendererControl()
     rendererControl->setSurface(0);
     QCOMPARE(rendererControl->surface(), nullSurface);
 }
-#endif
 
 QTEST_MAIN(tst_QMediaImageViewer)
 

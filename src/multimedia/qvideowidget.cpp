@@ -47,12 +47,10 @@
 #include <qvideowindowcontrol.h>
 #include <qvideowidgetcontrol.h>
 
-#ifndef QT_NO_MULTIMEDIA
 #include <qpaintervideosurface_p.h>
 #include <qvideorenderercontrol.h>
-#include "qvideosurfaceformat.h"
+#include <QtMultimedia/qvideosurfaceformat.h>
 #include <qpainter.h>
-#endif
 
 #include <qapplication.h>
 #include <qevent.h>
@@ -113,7 +111,6 @@ void QVideoWidgetControlBackend::setAspectRatioMode(QVideoWidget::AspectRatioMod
     m_widgetControl->setAspectRatioMode(mode);
 }
 
-#ifndef QT_NO_MULTIMEDIA
 
 QRendererVideoWidgetBackend::QRendererVideoWidgetBackend(
         QVideoRendererControl *control, QWidget *widget)
@@ -263,7 +260,6 @@ QRect QRendererVideoWidgetBackend::displayRect() const
     return displayRect;
 }
 
-#endif
 
 QWindowVideoWidgetBackend::QWindowVideoWidgetBackend(QVideoWindowControl *control, QWidget *widget)
     : m_windowControl(control)
@@ -371,10 +367,8 @@ void QVideoWidgetPrivate::_q_serviceDestroyed()
     delete windowBackend;
     windowBackend = 0;
 
-#ifndef QT_NO_MULTIMEDIA
     delete rendererBackend;
     rendererBackend = 0;
-#endif
 
     currentControl = 0;
     currentBackend = 0;
@@ -495,13 +489,11 @@ QVideoWidget::QVideoWidget(QMediaObject *object, QWidget *parent)
         if (windowControl != 0)
             d->windowBackend = new QWindowVideoWidgetBackend(windowControl, this);
 
-#ifndef QT_NO_MULTIMEDIA
         QVideoRendererControl *rendererControl = qobject_cast<QVideoRendererControl *>(
                 d->service->control(QVideoRendererControl_iid));
 
         if (rendererControl != 0)
             d->rendererBackend = new QRendererVideoWidgetBackend(rendererControl, this);
-#endif
     }
 }
 
@@ -524,13 +516,11 @@ QVideoWidget::~QVideoWidget()
             delete d_ptr->widgetBackend;
         }
         delete d_ptr->windowBackend;
-#ifndef QT_NO_MULTIMEDIA
         if (d_ptr->rendererBackend) {
             d_ptr->rendererBackend->clearSurface();
 
             delete d_ptr->rendererBackend;
         }
-#endif
     }
     delete d_ptr;
 }
@@ -780,13 +770,11 @@ void QVideoWidget::showEvent(QShowEvent *event)
             d->currentBackend = d->windowBackend;
             d->setCurrentControl(d->windowBackend);
             d->outputControl->setOutput(QVideoOutputControl::WindowOutput);
-#ifndef QT_NO_MULTIMEDIA
         } else if (d->rendererBackend != 0) {
             d->rendererBackend->showEvent(event);
             d->currentBackend = d->rendererBackend;
             d->setCurrentControl(d->rendererBackend);
             d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
-#endif
         } else {
             d->outputControl->setOutput(QVideoOutputControl::NoOutput);
         }

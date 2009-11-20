@@ -42,8 +42,6 @@
 #ifndef V4LVIDEOBUFFER_H
 #define V4LVIDEOBUFFER_H
 
-#ifndef QT_NO_MULTIMEDIA
-
 #include <QSize>
 
 #include <QtMultimedia/QAbstractVideoBuffer>
@@ -79,7 +77,5 @@ private:
 
 
 QT_END_NAMESPACE
-
-#endif
 
 #endif

@@ -2,6 +2,8 @@ TARGET = tst_qpaintervideosurface
 CONFIG += testcase
 INCLUDEPATH += ../../../src/multimedia
 
+QT += multimedia
+
 contains(QT_CONFIG, opengl): QT += opengl
 
 include (../../../common.pri)
