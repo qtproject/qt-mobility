@@ -47,6 +47,10 @@
 #include <QSize>
 
 #include <QtMultimedia/QAbstractVideoBuffer>
+
+#include <linux/types.h>
+#include <sys/time.h>
+#include <sys/ioctl.h>
 #include <linux/videodev2.h>
 
 QT_BEGIN_NAMESPACE

@@ -166,7 +166,7 @@ QString makePlatformSafeKey(const QString &key,
     return QDir::tempPath() + QLatin1Char('/') + result;
 }
 
-/*!
+/*
    \class QSystemReadWriteLock
 
    \brief The QSystemReadWriteLock class provides read-write locking between
@@ -215,7 +215,7 @@ QString makePlatformSafeKey(const QString &key,
   means there's an free slot for a writer to become active.
  */
 
-/*!
+/*
   Construct a system read write lock from the provided \a key.
 
   The \a mode parameter is only used in Unix systems to handle the case
@@ -316,7 +316,7 @@ QSystemReadWriteLock::QSystemReadWriteLock(const QString &key, AccessMode mode)
     }
 }
 
-/*!
+/*
   Destroy the lock instance.  The last QSystemReadWriteLock instance
   for a particular key will destroy the underlying system resources.
  */
@@ -366,7 +366,7 @@ QSystemReadWriteLock::~QSystemReadWriteLock()
     d = 0;
 }
 
-/*!
+/*
   Return the key of the lock as passed to the constructor.
  */
 QString QSystemReadWriteLock::key() const
@@ -374,7 +374,7 @@ QString QSystemReadWriteLock::key() const
     return d->key;
 }
 
-/*!
+/*
   Locks the lock for reading.  The function will block if any thread/process
   has locked for writing.
  */
@@ -408,7 +408,7 @@ bool QSystemReadWriteLock::lockForRead()
     }
 }
 
-/*!
+/*
    Locks the lock for writing.  This function will block if another thread/process
    has locked for reading or writing.
  */
@@ -473,7 +473,7 @@ bool QSystemReadWriteLock::lockForWrite()
     }
 }
 
-/*!
+/*
   Release the lock.
  */
 void QSystemReadWriteLock::unlock()
@@ -525,14 +525,14 @@ void QSystemReadWriteLock::unlock()
     d->error = NoError;
 }
 
-/*!
+/*
   Returns the error code of the last encountered error
  */
 QSystemReadWriteLock::SystemReadWriteLockError QSystemReadWriteLock::error() const {
     return d->error;
 }
 
-/*!
+/*
   Returns a string describing the last encountered error
  */
 QString QSystemReadWriteLock::errorString() const

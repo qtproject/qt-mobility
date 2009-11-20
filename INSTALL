@@ -120,7 +120,39 @@
         cd src\bearer
         nmake
 
-5.  Qt Mobility has been installed.
+5.  Environment Variables
+    In order to use QtMobility some environment variables
+    need to be extended to locate the libraries, which are
+    placed in the lib directory of the install path.
+
+    On Unix:
+    LD_LIBRARY_PATH should be extended to include:
+    /tmp/%DISTNAME%/install/lib
+
+    In .profile (if your Unix shell is bash,ksh,zsh or sh),
+    add the following lines
+   
+        LD_LIBRARY_PATH=/tmp/%DISTNAME%/install/lib:$LD_LIBRARY_PATH
+        export LD_LIBRARY_PATH
+
+    In .login (incase your shell is csh or tcsh), add the following
+    line:
+
+        setenv LD_LIBRARY_PATH=/tmp/%DISTNAME%/install/lib:$LD_LIBRARY_PATH
+
+    If you use a different Unix shell, please modify your
+    your environment variables accordingly.
+
+    On Windows:
+    PATH should be extended to include:
+    C:\QtMobility\1.0.0\install\lib
+
+    For newer versions of windows, PATH can be extended
+    through
+    "Control Panel->System->Advanced->Environment variables"
+    and for older versions by editing C:\autoexec.bat
+
+6.  Qt Mobility has been installed.
     Further information on Qt Mobility can be found
     at <TODO: QtMobility URL>
 
