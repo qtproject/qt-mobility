@@ -1313,6 +1313,16 @@ void tst_QMessageStoreKeys::testFolderOrdering_data()
     QTest::newRow("displayName descending")
         << QMessageFolderOrdering::byDisplayName(Qt::DescendingOrder)
         << ( QMessageFolderIdList() << folderIds[3] << folderIds[2] << folderIds[0] << folderIds[1] );
+    
+    QTest::newRow("path ascending + displayName ascending")
+        << ( QMessageFolderOrdering::byPath(Qt::AscendingOrder) + QMessageFolderOrdering::byDisplayName(Qt::AscendingOrder) )
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] << folderIds[0] );
+
+    QMessageFolderOrdering plusEquals(QMessageFolderOrdering::byPath(Qt::AscendingOrder));
+    plusEquals += QMessageFolderOrdering::byDisplayName(Qt::AscendingOrder);
+    QTest::newRow("path ascending += displayName ascending")
+        << plusEquals
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] << folderIds[0] );
 }
 
 void tst_QMessageStoreKeys::testFolderOrdering()
