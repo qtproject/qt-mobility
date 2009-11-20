@@ -57,44 +57,37 @@ public:
     S60MediaPlayerSession(QObject *parent);
     virtual ~S60MediaPlayerSession();
 
-    virtual QUrl url() const;
-
+    virtual QUrl url()const { return m_url; };
     virtual QMediaPlayer::State state() const { return m_state; }
     virtual QMediaPlayer::MediaStatus mediaStatus() const { return m_mediaStatus; }
 
-    virtual qint64 duration() const;
-    virtual qint64 position() const;
-
-    virtual bool isBuffering() const;
-    virtual int bufferingProgress() const;
-
-    virtual int volume() const;
-    virtual bool isMuted() const;
+    virtual qint64 duration() const = 0;
+    virtual qint64 position() const = 0;
+    
+    int volume() const;
+    bool isMuted() const;
 
     virtual void setVideoRenderer(QObject *renderer);
     virtual bool isVideoAvailable() const;
 
-    virtual bool isSeekable() const = 0;
+    bool isSeekable() const;
     virtual QPair<qint64, qint64> seekRange() const;
 
-    virtual qreal playbackRate() const = 0;
-    virtual void setPlaybackRate(qreal rate) = 0;
-    
-    virtual void setMedia(const QMediaContent&, QIODevice *);
-    
-    virtual bool isMetadataAvailable() const; 
-    virtual QVariant metaData(const QString& key) const;
-    
-public slots:
+    qreal playbackRate() const;
+    virtual void setPlaybackRate(qreal rate) = 0 ;
+   
+    bool isMetadataAvailable() const; 
+    QVariant metaData(const QString& key) const;
+        
     virtual void load(const QUrl &url) = 0;
 
     virtual void play() = 0;
     virtual void pause() = 0;
     virtual void stop() = 0;
 
-    virtual void seek(qint64 pos) = 0;
+    virtual void setPosition(qint64 pos) = 0;
 
-    virtual void setVolume(int volume) = 0;
+    virtual void setVolume(int volume);
     virtual void setMuted(bool muted) = 0;
 
 signals:
@@ -113,7 +106,6 @@ signals:
     void metaDataChanged();
     
 protected slots:
-    virtual void setSeekable(bool);
     void tick();
     bool startTimer();
     void stopTimer();
@@ -126,7 +118,6 @@ protected:
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;
 
-    int m_volume;
     qreal m_playbackRate;
     bool m_muted;
     bool m_videoAvailable;
@@ -136,6 +127,8 @@ protected:
 
     QMap<QString, QVariant> m_metaDataMap;
     QTimer* m_timer;
+    int m_volume;
+    bool m_playCalled;
 };
 
 #endif

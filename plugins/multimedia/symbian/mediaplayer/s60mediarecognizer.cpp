@@ -71,7 +71,7 @@ bool S60MediaRecognizer::checkUrl(const QUrl& url)
    return validUrl;
 }
 
-S60MediaRecognizer::MediaType S60MediaRecognizer::IdentifyMediaTypeL(const QUrl& url)
+S60MediaRecognizer::MediaType S60MediaRecognizer::IdentifyMediaType(const QUrl& url)
 {
    CMPMediaRecognizer::TMPMediaType type;
    QString filePath = QDir::toNativeSeparators(url.toLocalFile());

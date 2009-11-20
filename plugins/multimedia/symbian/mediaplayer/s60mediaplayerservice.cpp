@@ -89,9 +89,6 @@ QMediaControl *S60MediaPlayerService::control(const char *name) const
         return m_control;
 
     if (qstrcmp(name, QMetaDataControl_iid) == 0) {
-        //if (!m_metaData) {
-        //    m_metaData = new S60MediaMetaDataProvider(const_cast<S60MediaPlayerService&>(*this));
-        //}
         return m_metaData;
     }
 
@@ -163,7 +160,7 @@ void S60MediaPlayerService::videoOutputChanged(QVideoOutputControl::Output outpu
 S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
 {
     QUrl url = m_control->media().canonicalUri();
-    S60MediaRecognizer::MediaType mediaType = m_mediaRecognizer->IdentifyMediaTypeL(url);
+    S60MediaRecognizer::MediaType mediaType = m_mediaRecognizer->IdentifyMediaType(url);
     
     if (mediaType == S60MediaRecognizer::Video) {
         return VideoPlayerSession();
@@ -171,13 +168,18 @@ S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
         return AudioPlayerSession();
     }
    
-    return 0;
+    return NULL;
 }
 
 S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
 {
     if (!m_videoPlayerSession) {
         m_videoPlayerSession = new S60VideoPlayerSession(this);
+
+        m_videoPlayerSession->setVolume(m_control->mediaControlSettings().m_vol);
+        m_videoPlayerSession->setPlaybackRate(m_control->mediaControlSettings().m_playbackRate);
+        m_videoPlayerSession->setPosition(m_control->mediaControlSettings().m_position);
+        m_videoPlayerSession->setMuted(m_control->mediaControlSettings().m_muted);
         
         connect(m_videoPlayerSession, SIGNAL(positionChanged(qint64)),
                 m_control, SIGNAL(positionChanged(qint64)));
@@ -207,6 +209,11 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
 {
     if (!m_audioPlayerSession) {
         m_audioPlayerSession = new S60AudioPlayerSession(this);
+        
+        m_audioPlayerSession->setVolume(m_control->mediaControlSettings().m_vol);
+        m_audioPlayerSession->setPlaybackRate(m_control->mediaControlSettings().m_playbackRate);
+        m_audioPlayerSession->setPosition(m_control->mediaControlSettings().m_position);
+        m_audioPlayerSession->setMuted(m_control->mediaControlSettings().m_muted);
         
         connect(m_audioPlayerSession, SIGNAL(positionChanged(qint64)),
                 m_control, SIGNAL(positionChanged(qint64)));

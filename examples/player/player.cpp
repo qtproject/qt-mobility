@@ -69,7 +69,7 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
 
     videoWidget = new VideoWidget(player);
-    qDebug() << "windid: " << videoWidget->winId();
+
     playlistModel = new PlaylistModel(this);
     playlistModel->setPlaylist(playlist);
 

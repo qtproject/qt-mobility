@@ -52,8 +52,8 @@
 S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     : QObject(parent),
       m_state(QMediaPlayer::StoppedState),
-      m_mediaStatus(QMediaPlayer::UnknownMediaStatus),
-      m_volume(100),
+      m_mediaStatus(QMediaPlayer::NoMedia),
+      m_volume(-1),
       m_playbackRate(1.0),
       m_muted(false),
       m_videoAvailable(false),
@@ -68,46 +68,16 @@ S60MediaPlayerSession::~S60MediaPlayerSession()
 {
 }
 
-QUrl S60MediaPlayerSession::url() const
-{
-    return m_url;
-}
-
-qint64 S60MediaPlayerSession::duration() const
-{
-    return -1;
-}
-
-qint64 S60MediaPlayerSession::position() const
-{
-    return 0;
-}
-
-qreal S60MediaPlayerSession::playbackRate() const
-{
-    return m_playbackRate;
-}
-
-void S60MediaPlayerSession::setPlaybackRate(qreal rate)
-{
-    m_playbackRate = rate;
-}
-
-bool S60MediaPlayerSession::isBuffering() const
-{
-    return false;
-}
-
-int S60MediaPlayerSession::bufferingProgress() const
-{
-    return 0;
-}
-
 int S60MediaPlayerSession::volume() const
 {
     return m_volume;
 }
-
+void S60MediaPlayerSession::setVolume(int volume)
+{
+    if (m_volume != volume)
+        emit volumeChanged(m_volume);
+    m_volume = volume;
+}
 bool S60MediaPlayerSession::isMuted() const
 {
     return m_muted;
@@ -120,7 +90,7 @@ bool S60MediaPlayerSession::isVideoAvailable() const
 
 bool S60MediaPlayerSession::isSeekable() const
 {
-    return false;
+    return m_metaDataMap.value("seekable").toBool();
 }
 
 void S60MediaPlayerSession::play()
@@ -135,29 +105,8 @@ void S60MediaPlayerSession::pause()
 
 void S60MediaPlayerSession::stop()
 {
-    // TODO: Stop()
     m_state = QMediaPlayer::StoppedState;
     emit stateChanged(QMediaPlayer::StoppedState);
-}
-
-void S60MediaPlayerSession::seek(qint64 ms)
-{
-    // TODO: seek
-}
-
-void S60MediaPlayerSession::setVolume(int volume)
-{
-    m_volume = volume;
-    // TODO: setvolume
-}
-
-void S60MediaPlayerSession::setSeekable(bool seekable)
-{
-    //TODO:
-    /*if (seekable != m_seekable) {
-        m_seekable = seekable;
-        emit seekableChanged(m_seekable);
-    }*/
 }
 
 void S60MediaPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
@@ -170,43 +119,48 @@ void S60MediaPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
 
 void S60MediaPlayerSession::setVideoRenderer(QObject *renderer)
 {
-    
-}
-
-void S60MediaPlayerSession::setMedia(const QMediaContent&, QIODevice *)
-{
-    
+    Q_UNUSED(renderer);   
 }
 
 QPair<qint64, qint64> S60MediaPlayerSession::seekRange() const
 {
-    
+    return QPair<qint64, qint64>();
 }
 
 bool S60MediaPlayerSession::isMetadataAvailable() const
 {
-    return false;
+    return (!m_metaDataMap.isEmpty());
 }
 
 QVariant S60MediaPlayerSession::metaData(const QString& key) const
 {
-    Q_UNUSED(key);
-    return QVariant();
+    return m_metaDataMap.value(key);
 }
 
 void S60MediaPlayerSession::tick()
 {
-    emit positionChanged(position());
+    if (m_timer->isActive()) {
+        emit positionChanged(position());
+    }
 }
 
 bool S60MediaPlayerSession::startTimer()
 {
     if (!m_timer->isActive()) {
         m_timer->start(1000);
+        return true;
     }
+    return false;
 }
 
 void S60MediaPlayerSession::stopTimer()
 {
-    m_timer->stop();
+    if (m_timer->isActive()) {
+        m_timer->stop();
+    }
 }
+qreal S60MediaPlayerSession::playbackRate() const
+{
+    return m_playbackRate;
+}
+

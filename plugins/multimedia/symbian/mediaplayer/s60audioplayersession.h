@@ -62,34 +62,20 @@ public:
     qint64 duration() const;
     qint64 position() const;
 
-    bool isBuffering() const;
-    int bufferingProgress() const;
-
-    int volume() const;
-    bool isMuted() const;
-
     bool isVideoAvailable() const;
-
-    bool isSeekable() const;
-
-    qreal playbackRate() const;
     void setPlaybackRate(qreal rate);
-    
-    bool isMetadataAvailable() const; 
-    QVariant metaData(const QString& key) const;
 
-private: // From MMdaAudioPlayerCallback
-    void MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration);
-    void MapcPlayComplete(TInt aError);
-    
-public slots:
     void play();
     void pause();
     void stop();
-    void seek(qint64 pos);
+    void setPosition(qint64 pos);
     void setVolume(int volume);
     void setMuted(bool muted);
     void load(const QUrl &url);
+    
+private: // From MMdaAudioPlayerCallback
+    void MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration);
+    void MapcPlayComplete(TInt aError);
 
 private: 
     void getNativeHandles();
@@ -99,7 +85,6 @@ private:
     
 private:
     CMdaAudioPlayerUtility *m_player;
-    int m_numberOfMetaDataEntries;
 };
 
 #endif

@@ -469,3 +469,7 @@ void S60VideoSurface::querySupportedFormats()
         XFree(attributes);
     }*/
 }
+
+bool S60VideoSurface::isFormatSupported(const QVideoSurfaceFormat &format) const
+{
+}

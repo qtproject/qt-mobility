@@ -45,9 +45,7 @@
 
 #include <QObject>
 #include <QMediaService>
-//#include "qmediaservice.h"
 #include <QMediaServiceProviderPlugin>
-//#include "qmediaserviceproviderplugin.h"
 
 class S60ServicePlugin : public QMediaServiceProviderPlugin//, public QMediaServiceSupportedDevicesInterface
 {

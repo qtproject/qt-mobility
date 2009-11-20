@@ -61,7 +61,7 @@ public:
     S60MediaRecognizer(QObject *parent = 0);
     ~S60MediaRecognizer();
     bool checkUrl(const QUrl& url);
-    MediaType IdentifyMediaTypeL(const QUrl& url);
+    MediaType IdentifyMediaType(const QUrl& url);
 
 private:
     CMPMediaRecognizer *m_recognizer;

@@ -54,6 +54,15 @@ class S60MediaPlayerSession;
 class S60MediaPlayerService;
 class QMediaPlaylistNavigator;
 
+class S60MediaControlSettings
+{
+public:
+    int m_vol;
+    bool m_muted;
+    qreal m_playbackRate;
+    int m_position;
+};
+
 class S60MediaPlayerControl : public QMediaPlayerControl
 {
     Q_OBJECT
@@ -86,6 +95,8 @@ public:
     const QIODevice *mediaStream() const;
     void setMedia(const QMediaContent&, QIODevice *);
 
+    const S60MediaControlSettings& mediaControlSettings() const;
+    
 public Q_SLOTS:
     void setPosition(qint64 pos);
 
@@ -104,6 +115,7 @@ private:
     S60MediaPlayerSession *m_session;
     QMediaContent m_currentResource; 
     QIODevice *m_stream;
+    S60MediaControlSettings m_controlSettings;
 };
 
 #endif

@@ -62,10 +62,6 @@ public:
     qint64 duration() const;
     qint64 position() const;
 
-    bool isBuffering() const;
-
-    int bufferingProgress() const;
-
     int volume() const;
     bool isMuted() const;
 
@@ -77,20 +73,16 @@ public:
     qreal playbackRate() const;
     void setPlaybackRate(qreal rate);
     
-    bool isMetadataAvailable() const; 
-    QVariant metaData(const QString& key) const;
-    
-public slots:
     void load(const QUrl &url);
     void play();
     void pause();
     void stop();
-    void seek(qint64 pos);
+    void setPosition(qint64 pos);
     void setVolume(int volume);
     void setMuted(bool muted);
 
 private: 
-    void getNativeHandles();
+    void nativeHandles();
     
 private: // From MVideoPlayerUtilityObserver
     void MvpuoOpenComplete(TInt aError);
@@ -103,15 +95,15 @@ private:
     void setMediaStatus(QMediaPlayer::MediaStatus);
 
     CVideoPlayerUtility* m_player;
-    S60VideoWidgetControl* m_testWidget;
+    S60VideoWidgetControl* m_videoWidgetControl;
+    QWidget *m_dummyWidget;
     RWsSession* m_wsSession;
     CWsScreenDevice* m_screenDevice;
     RWindowBase* m_window;
     TRect m_windowRect;
     TRect m_clipRect;
-    QSize m_frameSize;
     
-    int m_numberOfMetaDataEntries;
+    CCoeControl* control; 
 };
 
 #endif

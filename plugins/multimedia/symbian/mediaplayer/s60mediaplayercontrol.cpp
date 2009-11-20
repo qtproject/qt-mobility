@@ -54,6 +54,10 @@ S60MediaPlayerControl::S60MediaPlayerControl(MS60MediaPlayerResolver& mediaPlaye
       m_mediaPlayerResolver(mediaPlayerResolver),
       m_session(NULL)
 {
+    m_controlSettings.m_vol = -1;
+    m_controlSettings.m_muted = false;
+    m_controlSettings.m_playbackRate = -1;
+    m_controlSettings.m_position = -1;
 }
 
 S60MediaPlayerControl::~S60MediaPlayerControl()
@@ -64,12 +68,15 @@ qint64 S60MediaPlayerControl::position() const
 {
     if (m_session)
         return m_session->position();
+    
+    return m_controlSettings.m_position;
 }
 
 qint64 S60MediaPlayerControl::duration() const
 {
     if (m_session)
         return m_session->duration();
+    return -1;
 }
 
 QMediaPlayer::State S60MediaPlayerControl::state() const
@@ -89,26 +96,31 @@ QMediaPlayer::MediaStatus S60MediaPlayerControl::mediaStatus() const
 
 int S60MediaPlayerControl::bufferStatus() const
 {
-    return 100;
+    return -1;
 }
 
 int S60MediaPlayerControl::volume() const
 {
-    if (!m_session)
-        return -1;
-    return m_session->volume();
+    if (m_session)
+        return m_session->volume();
+    
+    return m_controlSettings.m_vol;
 }
 
 bool S60MediaPlayerControl::isMuted() const
 {
    if (m_session)
        return  m_session->isMuted();
+   
+   return m_controlSettings.m_muted;
 }
 
 bool S60MediaPlayerControl::isSeekable() const
 {
     if (m_session)
        return  m_session->isSeekable();
+    
+    return m_controlSettings.m_position;
 }
 
 QPair<qint64, qint64> S60MediaPlayerControl::seekRange() const
@@ -118,30 +130,37 @@ QPair<qint64, qint64> S60MediaPlayerControl::seekRange() const
             ? qMakePair<qint64, qint64>(0, m_session->duration())
             : qMakePair<qint64, qint64>(0, 0);
     }
+    return QPair<qint64, qint64>();
 }
 
 qreal S60MediaPlayerControl::playbackRate() const
 {
     if (m_session)
         return  m_session->playbackRate();
+    return -1;
 }
 
 void S60MediaPlayerControl::setPlaybackRate(qreal rate)
 {
+    m_controlSettings.m_playbackRate = rate;
+    
     if (m_session)
         m_session->setPlaybackRate(rate);
 }
 
 void S60MediaPlayerControl::setPosition(qint64 pos)
 {
+    m_controlSettings.m_position = pos;
     if (m_session)
-        m_session->seek(pos);
+        m_session->setPosition(pos);
 }
 
 void S60MediaPlayerControl::play()
 {
     if (m_session)
         m_session->play();
+    else // to ensure that api know we can't play this
+        emit mediaStatusChanged(QMediaPlayer::InvalidMedia);
 }
 
 void S60MediaPlayerControl::pause()
@@ -158,12 +177,14 @@ void S60MediaPlayerControl::stop()
 
 void S60MediaPlayerControl::setVolume(int volume)
 {
+    m_controlSettings.m_vol = volume;
     if (m_session)
         m_session->setVolume(volume);
 }
 
 void S60MediaPlayerControl::setMuted(bool muted)
 {
+    m_controlSettings.m_muted = muted;
     if (m_session)
         m_session->setMuted(muted);
 }
@@ -181,13 +202,19 @@ const QIODevice *S60MediaPlayerControl::mediaStream() const
 void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *stream)
 {
     Q_UNUSED(stream)
+    // we don't want to set & load media again when it is already loaded    
+    if (m_session && (m_currentResource == source) && m_session->state() == QMediaPlayer::LoadedMedia) {
+        return;
+    }
+
+    
     // store to variable as session is created based on the content type.
     m_currentResource = source;
+    if (m_session) {
+        m_session->stop();
+    }
     m_session = currentPlayerSession();
 
-    /*if (m_session)
-        m_session->stop();
-    */
     QUrl url;
     if (!source.isNull() && m_session) {
         url = source.canonicalUri();
@@ -211,9 +238,14 @@ bool S60MediaPlayerControl::isVideoAvailable() const
 {
     if (m_session)
         return m_session->isVideoAvailable();
+    return false;
 }
 
 S60MediaPlayerSession* S60MediaPlayerControl::currentPlayerSession() 
 {
     return m_mediaPlayerResolver.PlayerSession();   
+}
+const S60MediaControlSettings& S60MediaPlayerControl::mediaControlSettings() const
+{
+    return m_controlSettings;
 }

@@ -42,7 +42,6 @@
 #include "s60mediametadataprovider.h"
 #include "s60mediaplayersession.h"
 #include <QDebug>
-//#include <MmfMeta.h> // mmf defined metadata constants
 
 struct S60VideoMetaDataKeyLookup
 {
@@ -55,7 +54,6 @@ S60MediaMetaDataProvider::S60MediaMetaDataProvider(MS60MediaPlayerResolver& medi
       m_mediaPlayerResolver(mediaPlayerResolver),
       m_session(NULL)
 {
-   // connect(m_session, SIGNAL(tagsChanged()), SLOT(updateTags()));
 }
 
 S60MediaMetaDataProvider::~S60MediaMetaDataProvider()

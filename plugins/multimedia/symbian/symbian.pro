@@ -13,7 +13,6 @@ INCLUDEPATH += . \
     $${SOURCE_DIR}/include \
     $${SOURCE_DIR}/src/multimedia
 
-message($$INCLUDEPATH)
 
 HEADERS += s60serviceplugin.h \
            s60videowidget.h \
