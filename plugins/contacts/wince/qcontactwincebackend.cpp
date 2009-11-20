@@ -62,7 +62,6 @@
  * - use QScopedPointer
  * - pronunciation (needs schema update)
  * - any XXX comments
- * - change factory to create the data, if any failures, return NULL manager.
  * - store extra metadata
  *  - Voice subtype for phone, don't always assume
  * - Address formatting - PIMPR_HOME_ADDRESS seems to be read only
@@ -474,7 +473,6 @@ QContactManagerEngine* ContactWinceFactory::engine(const QMap<QString, QString>&
             m_engine = new QContactWinCEEngine(managerName(), parameters, error);
         }
     }
-    m_engine->d->m_refCount.ref();
     return m_engine;
 }
 
