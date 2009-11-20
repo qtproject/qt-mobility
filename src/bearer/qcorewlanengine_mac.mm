@@ -455,6 +455,7 @@ bool QCoreWlanEngine::getAllScInterfaces()
     return true;
 }
 
+#include "moc_qcorewlanengine_mac_p.cpp"
 
 QTM_END_NAMESPACE
 

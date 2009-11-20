@@ -927,5 +927,6 @@ void QSystemScreenSaverPrivate::activityTimeout()
     UpdateSystemActivity(OverallAct);
 }
 
+#include "moc_qsysteminfo_mac_p.cpp"
 
 QTM_END_NAMESPACE
