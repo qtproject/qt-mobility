@@ -49,6 +49,7 @@
 #include <QString>
 
 #include "qcontactmanager.h"
+
 //
 //  W A R N I N G
 //  -------------
@@ -104,4 +105,6 @@ public:
 private:
     QMap<QString, QList<QContact> > savedContacts;
 };
+
 #endif
+
