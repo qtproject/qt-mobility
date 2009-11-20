@@ -220,11 +220,8 @@ void tst_QContactManager::dumpContactDifferences(const QContact& ca, const QCont
     QCOMPARE(n1.suffix(), n2.suffix());
     QCOMPARE(n1.customLabel(), n2.customLabel());
 
-#if 0 // XXX TODO: update this after removing deprecated API
     // Check the display label
-    QCOMPARE(a.displayLabel().label(), b.displayLabel().label());
-    QCOMPARE(a.displayLabel().isSynthesized(), b.displayLabel().isSynthesized());
-#endif
+    QCOMPARE(a.displayLabel(), b.displayLabel());
 
     // Now look at the rest
     QList<QContactDetail> aDetails = a.details();
@@ -2143,6 +2140,22 @@ void tst_QContactManager::changeSet()
     QVERIFY(cs.dataChanged() == true);
     QVERIFY(cs.dataChanged() != cs2.dataChanged());
     QVERIFY(cs.dataChanged() != cs3.dataChanged());
+    cs.emitSignals(0);
+
+    cs.addedRelationshipsContacts().insert(id);
+    cs.emitSignals(0);
+    cs.removedRelationshipsContacts().insert(id);
+    cs.emitSignals(0);
+
+    cs.oldAndNewSelfContactId() = QPair<QContactLocalId, QContactLocalId>(QContactLocalId(0), id);
+    cs2 = cs;
+    QVERIFY(cs2.addedRelationshipsContacts() == cs.addedRelationshipsContacts());
+    QVERIFY(cs2.removedRelationshipsContacts() == cs.removedRelationshipsContacts());
+    QVERIFY(cs2.oldAndNewSelfContactId() == cs.oldAndNewSelfContactId());
+    cs.emitSignals(0);
+    cs.oldAndNewSelfContactId() = QPair<QContactLocalId, QContactLocalId>(id, QContactLocalId(0));
+    QVERIFY(cs2.oldAndNewSelfContactId() != cs.oldAndNewSelfContactId());
+    cs.dataChanged() = true;
     cs.emitSignals(0);
 }
 
