@@ -193,9 +193,10 @@ tst_QContactManager::~tst_QContactManager()
 void tst_QContactManager::init()
 {
     /* Make sure these other test plugins are NOT loaded by default */
-    QVERIFY(!QContactManager::availableManagers().contains("testdummy"));
-    QVERIFY(!QContactManager::availableManagers().contains("teststaticdummy"));
-    QVERIFY(!QContactManager::availableManagers().contains("maliciousplugin"));
+    // These are now removed from the list of managers in addManagers()
+    //QVERIFY(!QContactManager::availableManagers().contains("testdummy"));
+    //QVERIFY(!QContactManager::availableManagers().contains("teststaticdummy"));
+    //QVERIFY(!QContactManager::availableManagers().contains("maliciousplugin"));
 }
 
 void tst_QContactManager::cleanup()
@@ -377,6 +378,9 @@ void tst_QContactManager::addManagers()
 
     /* Known one that will not pass */
     managers.removeAll("invalid");
+    managers.removeAll("testdummy");
+    managers.removeAll("teststaticdummy");
+    managers.removeAll("maliciousplugin");
 
     foreach(QString mgr, managers) {
         QMap<QString, QString> params;

@@ -70,6 +70,7 @@ private slots:
     void birthday();
     void displayLabel();
     void emailAddress();
+    void family();
     void gender();
     void geolocation();
     void guid();
@@ -343,6 +344,42 @@ void tst_QContactDetails::emailAddress()
     QCOMPARE(c.details(QContactEmailAddress::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&e2) == false);
     QCOMPARE(c.details(QContactEmailAddress::DefinitionName).count(), 0);
+}
+
+void tst_QContactDetails::family()
+{
+    QContact c;
+    QContactFamily f1, f2;
+
+    // test property set
+    f1.setSpouse("1234");
+    QCOMPARE(f1.spouse(), QString("1234"));
+    QCOMPARE(f1.value(QContactFamily::FieldSpouse), QString("1234"));
+
+    // test property add
+    QVERIFY(c.saveDetail(&f1));
+    QCOMPARE(c.details(QContactFamily::DefinitionName).count(), 1);
+    QCOMPARE(QContactFamily(c.details(QContactFamily::DefinitionName).value(0)).spouse(), f1.spouse());
+
+    // test property update
+    f1.setValue("label","label1");
+    f1.setSpouse("12345");
+    f1.setChildren(QStringList("54321"));
+    QVERIFY(c.saveDetail(&f1));
+    QCOMPARE(c.details(QContactFamily::DefinitionName).value(0).value("label"), QString("label1"));
+    QCOMPARE(c.details(QContactFamily::DefinitionName).value(0).value(QContactFamily::FieldSpouse), QString("12345"));
+    QCOMPARE(c.details(QContactFamily::DefinitionName).value(0).value<QStringList>(QContactFamily::FieldChildren), QStringList("54321"));
+
+    // test property remove
+    f2.setSpouse("1111");
+    QVERIFY(c.removeDetail(&f1));
+    QCOMPARE(c.details(QContactFamily::DefinitionName).count(), 0);
+    QVERIFY(c.saveDetail(&f2));
+    QCOMPARE(c.details(QContactFamily::DefinitionName).count(), 1);
+    QVERIFY(c.removeDetail(&f2));
+    QCOMPARE(c.details(QContactFamily::DefinitionName).count(), 0);
+    QVERIFY(c.removeDetail(&f2) == false);
+    QCOMPARE(c.details(QContactFamily::DefinitionName).count(), 0);
 }
 
 void tst_QContactDetails::gender()
