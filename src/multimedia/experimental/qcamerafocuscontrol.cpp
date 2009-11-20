@@ -44,7 +44,6 @@
 
 /*!
     \class QCameraFocusControl
-    \ingroup multimedia
 
     \preliminary
     \brief The QCameraFocusControl class supplies control for

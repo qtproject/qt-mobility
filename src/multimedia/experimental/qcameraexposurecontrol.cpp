@@ -44,7 +44,6 @@
 
 /*!
     \class QCameraExposureControl
-    \ingroup multimedia
 
     \preliminary
     \brief The QCameraExposureControl class supplies control for exposure

@@ -44,7 +44,6 @@
 
 /*!
     \class QCameraControl
-    \ingroup multimedia
 
     \preliminary
     \brief The abstract class for controling still or video cameras, this is provided

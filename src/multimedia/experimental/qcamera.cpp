@@ -54,7 +54,6 @@
 
 /*!
     \class QCamera
-    \ingroup multimedia
 
     \preliminary
     \brief The QCamera class provides interface for system

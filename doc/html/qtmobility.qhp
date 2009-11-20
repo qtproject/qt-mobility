@@ -468,6 +468,7 @@
                     <section ref="incomingcalls.html" title="Incoming Calls Example"/>
                     <section ref="keepintouch.html" title="Keep in Touch Example"/>
                     <section ref="logfilepositionsource.html" title="Log File Position Source Example"/>
+                    <section ref="player.html" title="Media Player Example"/>
                     <section ref="player.html" title="Player Example"/>
                     <section ref="publish-subscribe.html" title="Publish and Subscribe Example"/>
                     <section ref="querymessages.html" title="Query Messages Example"/>
@@ -477,6 +478,7 @@
                     <section ref="sendmessage.html" title="Send Message Example"/>
                     <section ref="serviceactions.html" title="Service Actions Example"/>
                     <section ref="servicebrowser.html" title="Service Browser Example"/>
+                    <section ref="slideshow.html" title="SlideShow Example"/>
                     <section ref="slideshow.html" title="Slideshow Example"/>
                     <section ref="streamplayer.html" title="Stream Player Example"/>
                     <section ref="sysinfo.html" title="System Information Example"/>
@@ -529,6 +531,7 @@
             <keyword name="Location" id="Location" ref="location-overview.html"/>
             <keyword name="Location Library Release Notes" id="Location Library Release Notes" ref="location-releasenotes.html"/>
             <keyword name="Log File Position Source Example" id="Log File Position Source Example" ref="logfilepositionsource.html"/>
+            <keyword name="Media Player Example" id="Media Player Example" ref="player.html"/>
             <keyword name="Messaging" id="Messaging" ref="messaging.html"/>
             <keyword name="Mobility Multimedia" id="Mobility Multimedia" ref="multimedia.html"/>
             <keyword name="Multimedia" id="Multimedia" ref="multimedia.html"/>
@@ -695,6 +698,7 @@
             <keyword name="QCamera::MeteringModes" id="QCamera::MeteringModes" ref="qcamera.html#MeteringMode-enum"/>
             <keyword name="QCamera::State" id="QCamera::State" ref="qcamera.html#State-enum"/>
             <keyword name="QCamera::ActiveState" id="QCamera::ActiveState" ref="qcamera.html#State-enum"/>
+            <keyword name="QCamera::SuspendedState" id="QCamera::SuspendedState" ref="qcamera.html#State-enum"/>
             <keyword name="QCamera::StoppedState" id="QCamera::StoppedState" ref="qcamera.html#State-enum"/>
             <keyword name="QCamera::WhiteBalanceMode" id="QCamera::WhiteBalanceMode" ref="qcamera.html#WhiteBalanceMode-enum"/>
             <keyword name="QCamera::WhiteBalanceManual" id="QCamera::WhiteBalanceManual" ref="qcamera.html#WhiteBalanceMode-enum"/>
@@ -1877,6 +1881,7 @@
             <keyword name="QMediaPlaylist::Loop" id="QMediaPlaylist::Loop" ref="qmediaplaylist.html#PlaybackMode-enum"/>
             <keyword name="QMediaPlaylist::Random" id="QMediaPlaylist::Random" ref="qmediaplaylist.html#PlaybackMode-enum"/>
             <keyword name="appendItem" id="QMediaPlaylist::appendItem" ref="qmediaplaylist.html#appendItem"/>
+            <keyword name="appendItems" id="QMediaPlaylist::appendItems" ref="qmediaplaylist.html#appendItems"/>
             <keyword name="clear" id="QMediaPlaylist::clear" ref="qmediaplaylist.html#clear"/>
             <keyword name="currentMedia" id="QMediaPlaylist::currentMedia" ref="qmediaplaylist.html#currentMedia-prop"/>
             <keyword name="currentMediaChanged" id="QMediaPlaylist::currentMediaChanged" ref="qmediaplaylist.html#currentMediaChanged"/>
@@ -1884,6 +1889,7 @@
             <keyword name="error" id="QMediaPlaylist::error" ref="qmediaplaylist.html#error"/>
             <keyword name="errorString" id="QMediaPlaylist::errorString" ref="qmediaplaylist.html#errorString"/>
             <keyword name="insertItem" id="QMediaPlaylist::insertItem" ref="qmediaplaylist.html#insertItem"/>
+            <keyword name="insertItems" id="QMediaPlaylist::insertItems" ref="qmediaplaylist.html#insertItems"/>
             <keyword name="isEmpty" id="QMediaPlaylist::isEmpty" ref="qmediaplaylist.html#isEmpty"/>
             <keyword name="isReadOnly" id="QMediaPlaylist::isReadOnly" ref="qmediaplaylist.html#isReadOnly"/>
             <keyword name="itemsAboutToBeInserted" id="QMediaPlaylist::itemsAboutToBeInserted" ref="qmediaplaylist.html#itemsAboutToBeInserted"/>
@@ -1956,8 +1962,10 @@
             <keyword name="~QMediaPlaylistNavigator" id="QMediaPlaylistNavigator::~QMediaPlaylistNavigator" ref="qmediaplaylistnavigator.html#dtor.QMediaPlaylistNavigator"/>
             <keyword name="QMediaPlaylistProvider" id="QMediaPlaylistProvider" ref="qmediaplaylistprovider.html"/>
             <keyword name="appendItem" id="QMediaPlaylistProvider::appendItem" ref="qmediaplaylistprovider.html#appendItem"/>
+            <keyword name="appendItems" id="QMediaPlaylistProvider::appendItems" ref="qmediaplaylistprovider.html#appendItems"/>
             <keyword name="clear" id="QMediaPlaylistProvider::clear" ref="qmediaplaylistprovider.html#clear"/>
             <keyword name="insertItem" id="QMediaPlaylistProvider::insertItem" ref="qmediaplaylistprovider.html#insertItem"/>
+            <keyword name="insertItems" id="QMediaPlaylistProvider::insertItems" ref="qmediaplaylistprovider.html#insertItems"/>
             <keyword name="isReadOnly" id="QMediaPlaylistProvider::isReadOnly" ref="qmediaplaylistprovider.html#isReadOnly"/>
             <keyword name="itemsAboutToBeInserted" id="QMediaPlaylistProvider::itemsAboutToBeInserted" ref="qmediaplaylistprovider.html#itemsAboutToBeInserted"/>
             <keyword name="itemsAboutToBeRemoved" id="QMediaPlaylistProvider::itemsAboutToBeRemoved" ref="qmediaplaylistprovider.html#itemsAboutToBeRemoved"/>
@@ -2557,6 +2565,9 @@
             <keyword name="QRadioTuner::ResourceError" id="QRadioTuner::ResourceError" ref="qradiotuner.html#Error-enum"/>
             <keyword name="QRadioTuner::OpenError" id="QRadioTuner::OpenError" ref="qradiotuner.html#Error-enum"/>
             <keyword name="QRadioTuner::OutOfRangeError" id="QRadioTuner::OutOfRangeError" ref="qradiotuner.html#Error-enum"/>
+            <keyword name="QRadioTuner::State" id="QRadioTuner::State" ref="qradiotuner.html#State-enum"/>
+            <keyword name="QRadioTuner::ActiveState" id="QRadioTuner::ActiveState" ref="qradiotuner.html#State-enum"/>
+            <keyword name="QRadioTuner::StoppedState" id="QRadioTuner::StoppedState" ref="qradiotuner.html#State-enum"/>
             <keyword name="QRadioTuner::StereoMode" id="QRadioTuner::StereoMode" ref="qradiotuner.html#StereoMode-enum"/>
             <keyword name="QRadioTuner::ForceStereo" id="QRadioTuner::ForceStereo" ref="qradiotuner.html#StereoMode-enum"/>
             <keyword name="QRadioTuner::ForceMono" id="QRadioTuner::ForceMono" ref="qradiotuner.html#StereoMode-enum"/>
@@ -2588,6 +2599,8 @@
             <keyword name="signalStrength" id="QRadioTuner::signalStrength" ref="qradiotuner.html#signalStrength-prop"/>
             <keyword name="signalStrengthChanged" id="QRadioTuner::signalStrengthChanged" ref="qradiotuner.html#signalStrengthChanged"/>
             <keyword name="start" id="QRadioTuner::start" ref="qradiotuner.html#start"/>
+            <keyword name="state" id="QRadioTuner::state" ref="qradiotuner.html#state-prop"/>
+            <keyword name="stateChanged" id="QRadioTuner::stateChanged" ref="qradiotuner.html#stateChanged"/>
             <keyword name="stereo" id="QRadioTuner::stereo" ref="qradiotuner.html#stereo-prop"/>
             <keyword name="stereoMode" id="QRadioTuner::stereoMode" ref="qradiotuner.html#stereoMode-prop"/>
             <keyword name="stereoStatusChanged" id="QRadioTuner::stereoStatusChanged" ref="qradiotuner.html#stereoStatusChanged"/>
@@ -2621,6 +2634,8 @@
             <keyword name="signalStrength" id="QRadioTunerControl::signalStrength" ref="qradiotunercontrol.html#signalStrength"/>
             <keyword name="signalStrengthChanged" id="QRadioTunerControl::signalStrengthChanged" ref="qradiotunercontrol.html#signalStrengthChanged"/>
             <keyword name="start" id="QRadioTunerControl::start" ref="qradiotunercontrol.html#start"/>
+            <keyword name="state" id="QRadioTunerControl::state" ref="qradiotunercontrol.html#state"/>
+            <keyword name="stateChanged" id="QRadioTunerControl::stateChanged" ref="qradiotunercontrol.html#stateChanged"/>
             <keyword name="stereoMode" id="QRadioTunerControl::stereoMode" ref="qradiotunercontrol.html#stereoMode"/>
             <keyword name="stereoStatusChanged" id="QRadioTunerControl::stereoStatusChanged" ref="qradiotunercontrol.html#stereoStatusChanged"/>
             <keyword name="stop" id="QRadioTunerControl::stop" ref="qradiotunercontrol.html#stop"/>
@@ -2962,9 +2977,13 @@
             <keyword name="contrastChanged" id="QVideoWidget::contrastChanged" ref="qvideowidget.html#contrastChanged"/>
             <keyword name="fullScreen" id="QVideoWidget::fullScreen" ref="qvideowidget.html#fullScreen-prop"/>
             <keyword name="fullScreenChanged" id="QVideoWidget::fullScreenChanged" ref="qvideowidget.html#fullScreenChanged"/>
+            <keyword name="hideEvent" id="QVideoWidget::hideEvent" ref="qvideowidget.html#hideEvent"/>
             <keyword name="hue" id="QVideoWidget::hue" ref="qvideowidget.html#hue-prop"/>
             <keyword name="hueChanged" id="QVideoWidget::hueChanged" ref="qvideowidget.html#hueChanged"/>
             <keyword name="isFullScreen" id="QVideoWidget::isFullScreen" ref="qvideowidget.html#fullScreen-prop"/>
+            <keyword name="moveEvent" id="QVideoWidget::moveEvent" ref="qvideowidget.html#moveEvent"/>
+            <keyword name="paintEvent" id="QVideoWidget::paintEvent" ref="qvideowidget.html#paintEvent"/>
+            <keyword name="resizeEvent" id="QVideoWidget::resizeEvent" ref="qvideowidget.html#resizeEvent"/>
             <keyword name="saturation" id="QVideoWidget::saturation" ref="qvideowidget.html#saturation-prop"/>
             <keyword name="saturationChanged" id="QVideoWidget::saturationChanged" ref="qvideowidget.html#saturationChanged"/>
             <keyword name="setAspectRatioMode" id="QVideoWidget::setAspectRatioMode" ref="qvideowidget.html#aspectRatioMode-prop"/>
@@ -2973,6 +2992,8 @@
             <keyword name="setFullScreen" id="QVideoWidget::setFullScreen" ref="qvideowidget.html#fullScreen-prop"/>
             <keyword name="setHue" id="QVideoWidget::setHue" ref="qvideowidget.html#hue-prop"/>
             <keyword name="setSaturation" id="QVideoWidget::setSaturation" ref="qvideowidget.html#saturation-prop"/>
+            <keyword name="showEvent" id="QVideoWidget::showEvent" ref="qvideowidget.html#showEvent"/>
+            <keyword name="sizeHint" id="QVideoWidget::sizeHint" ref="qvideowidget.html#sizeHint"/>
             <keyword name="~QVideoWidget" id="QVideoWidget::~QVideoWidget" ref="qvideowidget.html#dtor.QVideoWidget"/>
             <keyword name="QVideoWidgetControl" id="QVideoWidgetControl" ref="qvideowidgetcontrol.html"/>
             <keyword name="aspectRatioMode" id="QVideoWidgetControl::aspectRatioMode" ref="qvideowidgetcontrol.html#aspectRatioMode"/>
@@ -3130,6 +3151,7 @@
             <keyword name="Service Actions Example" id="Service Actions Example" ref="serviceactions.html"/>
             <keyword name="Service Browser Example" id="Service Browser Example" ref="servicebrowser.html"/>
             <keyword name="Service Frameworks Classes" id="Service Frameworks Classes" ref="servicefw.html"/>
+            <keyword name="SlideShow Example" id="SlideShow Example" ref="slideshow.html"/>
             <keyword name="Slideshow Example" id="Slideshow Example" ref="slideshow.html"/>
             <keyword name="Stream Player Example" id="Stream Player Example" ref="streamplayer.html"/>
             <keyword name="System Information" id="System Information" ref="systeminfo.html"/>
@@ -3198,6 +3220,7 @@
             <file>qmediacontrol-members.html</file>
             <file>bluetoothtransferplugin.html</file>
             <file>battery-charge-battery-charge-pro.html</file>
+            <file>images/slideshow-img1.png</file>
             <file>keepintouch-main-cpp.html</file>
             <file>qaudiocapturesource-members.html</file>
             <file>qmediaplayercontrol-members.html</file>
@@ -3655,6 +3678,7 @@
             <file>images/publish-subscribe-provider.png</file>
             <file>images/qtlogo.png</file>
             <file>images/spb-screen.png</file>
+            <file>images/slideshow-img1.png</file>
             <file>images/battery-provider.png</file>
             <file>images/battery-consumer.png</file>
         </files>
