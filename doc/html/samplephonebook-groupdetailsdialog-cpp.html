@@ -72,13 +72,13 @@
 
         QFormLayout *layout = new QFormLayout;
 
-    qDebug() &lt;&lt; &quot;constructed group details dialog for contact:&quot; &lt;&lt; contact.displayLabel().label();
+    qDebug() &lt;&lt; &quot;constructed group details dialog for contact:&quot; &lt;&lt; contact.displayLabel();
     qDebug() &lt;&lt; &quot;   id =&quot; &lt;&lt; contact.id().managerUri() &lt;&lt; &quot;:&quot; &lt;&lt; contact.id().localId();
 
         localContact = contact;
         contactNameEdit = new QLineEdit(this);
         contactNameEdit-&gt;setReadOnly(true);
-        contactNameEdit-&gt;setText(contact.displayLabel().label());
+        contactNameEdit-&gt;setText(contact.displayLabel());
         listWidget = new QListWidget(this);
         okButton = new QPushButton(tr(&quot;&amp;Ok&quot;), this);
         cancelButton = new QPushButton(tr(&quot;&amp;Cancel&quot;), this);
@@ -113,7 +113,7 @@
         QList&lt;QContactLocalId&gt; grpList = cm-&gt;contacts(groupFilter);
         for (int index=0; index &lt; grpList.count(); index++){
             QContact grp = cm-&gt;contact(grpList[index]);
-            QListWidgetItem *item = new QListWidgetItem(grp.displayLabel().label(), listWidget);
+            QListWidgetItem *item = new QListWidgetItem(grp.displayLabel(), listWidget);
             item-&gt;setFlags(item-&gt;flags() | Qt::ItemIsUserCheckable);
             bool foundInGroup = false;
 

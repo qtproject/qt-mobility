@@ -50,8 +50,8 @@
 <p>This enum describes additional matching criteria when performing a search.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMessageDataComparator::FullWord</tt></td><td align="center" valign="top"><tt>0x1</tt></td><td valign="top">The key should only match a complete word</td></tr>
-<tr><td valign="top"><tt>QMessageDataComparator::CaseSensitive</tt></td><td align="center" valign="top"><tt>0x2</tt></td><td valign="top">The key should be case sensitive.</td></tr>
+<tr><td valign="top"><tt>QMessageDataComparator::FullWord</tt></td><td align="center" valign="top"><tt>0x1</tt></td><td valign="top">The key should only match a complete word. Not supported on Windows and QMF platforms.</td></tr>
+<tr><td valign="top"><tt>QMessageDataComparator::CaseSensitive</tt></td><td align="center" valign="top"><tt>0x2</tt></td><td valign="top">The key should be case sensitive. Not supported on QMF platform.</td></tr>
 </table></p>
 <p>The Options type is a typedef for <a href="qflags.html">QFlags</a>&lt;Option&gt;. It stores an OR combination of Option values.</p>
 <h3 class="fn"><a name="RelationComparator-enum"></a>enum QMessageDataComparator::RelationComparator</h3>

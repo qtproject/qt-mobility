@@ -284,7 +284,7 @@
         <span class="comment">// and repopulate the list widget.</span>
         contactsList-&gt;clear();
         foreach (const QContact&amp; contact, contacts) {
-            new QListWidgetItem(contact.displayLabel().label(), contactsList);
+            new QListWidgetItem(contact.displayLabel(), contactsList);
         }
 
         <span class="comment">// now find out what our new current index is</span>
@@ -304,8 +304,7 @@
     {
         <span class="comment">// builds the contact from the current index / current UI.</span>
         QContact c;
-        QContactName contactName;
-        contactName.setCustomLabel(nameLine-&gt;text());
+        QContactName contactName = buildName(nameLine-&gt;text());
         c.saveDetail(&amp;contactName);
 
         QContactEmailAddress emailAddress;
@@ -339,6 +338,25 @@
         return c;
     }
 
+<span class="comment">    /*!
+     * Build QContactName with one of the following set:
+     * 1. custom label, 2. first name, 3. last name
+     * If none is supported the returned QContactName is left empty.
+     */</span>
+    QContactName PhoneBook::buildName(const QString &amp;name) const
+    {
+        QContactName contactName;
+        QContactDetailDefinition nameDef = cm-&gt;detailDefinition(QContactName::DefinitionName, QContactType::TypeContact);
+        if(nameDef.fields().contains(QContactName::FieldCustomLabel)) {
+            contactName.setCustomLabel(name);
+        } else if(nameDef.fields().contains(QContactName::FieldFirst)) {
+            contactName.setFirst(name);
+        } else if(nameDef.fields().contains(QContactName::FieldLast)) {
+            contactName.setLast(name);
+        }
+        return contactName;
+    }
+
     void PhoneBook::displayContact()
     {
         QContact c = contacts.value(currentIndex);
@@ -355,7 +373,7 @@
         contactGroups = currentGroups;
 
         <span class="comment">// display the name</span>
-        nameLine-&gt;setText(c.displayLabel().label());
+        nameLine-&gt;setText(c.displayLabel());
 
         <span class="comment">// display the email address</span>
         emailLine-&gt;setText(c.detail(QContactEmailAddress::DefinitionName).value(QContactEmailAddress::FieldEmailAddress));
@@ -607,7 +625,7 @@
                     for (int index = 0; index &lt; matchedContacts.count(); index++){
                         matchedContact = cm-&gt;contact(matchedContacts[index]);
                         if (!matchedContact.isEmpty())
-                            matchedContactNames.append(&quot;\&quot;&quot; + matchedContact.displayLabel().label() + &quot;\&quot;&quot;);
+                            matchedContactNames.append(&quot;\&quot;&quot; + matchedContact.displayLabel() + &quot;\&quot;&quot;);
                     }
                     QMessageBox::information(this, tr(&quot;Contact(s) Found&quot;), tr(&quot;Matched contact(s): %1&quot;).arg(matchedContactNames.join(&quot;,&quot;)));
                 }else{

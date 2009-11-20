@@ -74,8 +74,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">StatusFlags </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#status">status</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#subject">subject</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMessageAddressList </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#to">to</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QByteArray </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#toTransmissionFormat-2">toTransmissionFormat</a></b> ( QDataStream &amp; <i>out</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Type </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#type">type</a></b> () const</td></tr>
 </table>
 <ul>
@@ -85,8 +83,6 @@
 <a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QMessage </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</a></b> ( Type <i>t</i>, const QByteArray &amp; <i>ba</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMessage </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#fromTransmissionFormatFile">fromTransmissionFormatFile</a></b> ( Type <i>t</i>, const QString &amp; <i>fileName</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QByteArray </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#preferredCharsetFor">preferredCharsetFor</a></b> ( const QString &amp; <i>text</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QByteArray&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#preferredCharsets">preferredCharsets</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setPreferredCharsets">setPreferredCharsets</a></b> ( const QList&lt;QByteArray&gt; &amp; <i>charsetNames</i> )</td></tr>
@@ -97,7 +93,6 @@
 <p>The QMessage class provides a convenient interface for working with messages.</p>
 <p>QMessage supports a number of types. Including internet email messages, the telephony types SMS and MMS, and also XMPP messages.</p>
 <p>The <a href="qmessageid.html">QMessageId</a> identifier for a message is returned by <a href="qmessage.html#id">id</a>(). Messages can be constructed by retrieval from the messaging store via their identifier using <a href="qmessagestore.html#message">QMessageStore::message</a>(). A QMessage can also be constructed piece by piece using functions such as <a href="qmessage.html#setType">setType</a>(), <a href="qmessage.html#setFrom">setFrom</a>(), <a href="qmessage.html#setTo">setTo</a>(), <a href="qmessage.html#setSubject">setSubject</a>(), <a href="qmessage.html#setBody">setBody</a>() and <a href="qmessage.html#appendAttachments">appendAttachments</a>().</p>
-<p>Alternatively a message can be initialized from raw data using <a href="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</a>(). A message may be serialized to a <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a>, or returned as a <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> using <a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a>().</p>
 <p>If a message has been modified since it was last constructed <a href="qmessage.html#isModified">isModified</a>() returns true.</p>
 <p>A list of attachments identifiers will be returned by <a href="qmessage.html#attachmentIds">attachmentIds</a>() and an identifier for the message body will be returned by <a href="qmessage.html#bodyId">bodyId</a>(). Attachments can be appended to the content of the message using <a href="qmessage.html#appendAttachments">appendAttachments</a>(), the body of the message can be set with <a href="qmessage.html#setBody">setBody</a>() or setBodyFromFile().</p>
 <p>The folder and account a message is associated with are returned by <a href="qmessage.html#parentFolderId">parentFolderId</a>() and <a href="qmessage.html#parentAccountId">parentAccountId</a>() respectively.</p>
@@ -203,14 +198,6 @@
 <h3 class="fn"><a name="from"></a><a href="qmessageaddress.html">QMessageAddress</a> QMessage::from () const</h3>
 <p>Returns the originating address of the message.</p>
 <p>See also <a href="qmessage.html#setFrom">setFrom</a>() and <a href="qmessagefilter.html#bySender">QMessageFilter::bySender</a>().</p>
-<h3 class="fn"><a name="fromTransmissionFormat"></a>QMessage QMessage::fromTransmissionFormat ( <a href="qmessage.html#Type-enum">Type</a> <i>t</i>, const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>ba</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
-<p>Constructs a message of type <i>t</i> from the data contained in <i>ba</i>.</p>
-<p>See the class description for a list of supported message encapsulations.</p>
-<p>See also <a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a>().</p>
-<h3 class="fn"><a name="fromTransmissionFormatFile"></a>QMessage QMessage::fromTransmissionFormatFile ( <a href="qmessage.html#Type-enum">Type</a> <i>t</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>fileName</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
-<p>Constructs a message of type <i>t</i> from the data contained in <i>fileName</i>.</p>
-<p>See the class description for a list of supported message encapsulations.</p>
-<p>See also <a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a>().</p>
 <h3 class="fn"><a name="id"></a><a href="qmessageid.html">QMessageId</a> QMessage::id () const</h3>
 <p>Returns the identifier of the message.</p>
 <p>See also <a href="qmessagefilter.html#byId">QMessageFilter::byId</a>().</p>
@@ -223,10 +210,10 @@
 <p>Returns the identifier of the folder that contains the message if any; otherwise returns an invalid identifier.</p>
 <h3 class="fn"><a name="preferredCharsetFor"></a><a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> QMessage::preferredCharsetFor ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>text</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the first charset from the preferred list that is capable of encoding the content of <i>text</i>.</p>
-<p>See also <a href="qmessage.html#preferredCharsets">preferredCharsets</a>(), <a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a>(), and <a href="qmessage.html#setBody">setBody</a>().</p>
+<p>See also <a href="qmessage.html#preferredCharsets">preferredCharsets</a>() and <a href="qmessage.html#setBody">setBody</a>().</p>
 <h3 class="fn"><a name="preferredCharsets"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a>&gt; QMessage::preferredCharsets ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns an ordered-by-preference list of charset names to use when encoding unicode <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> data to a serialized form.</p>
-<p>See also <a href="qmessage.html#setPreferredCharsets">setPreferredCharsets</a>(), <a href="qmessage.html#preferredCharsetFor">preferredCharsetFor</a>(), <a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a>(), and <a href="qmessage.html#setBody">setBody</a>().</p>
+<p>See also <a href="qmessage.html#setPreferredCharsets">setPreferredCharsets</a>(), <a href="qmessage.html#preferredCharsetFor">preferredCharsetFor</a>(), and <a href="qmessage.html#setBody">setBody</a>().</p>
 <h3 class="fn"><a name="priority"></a><a href="qmessage.html#Priority-enum">Priority</a> QMessage::priority () const</h3>
 <p>Returns the priority of the message.</p>
 <p>The default is <a href="qmessage.html#Priority-enum">NormalPriority</a>.</p>
@@ -260,7 +247,7 @@
 <p>See also <a href="qmessage.html#parentAccountId">parentAccountId</a>().</p>
 <h3 class="fn"><a name="setPreferredCharsets"></a>void QMessage::setPreferredCharsets ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a>&gt; &amp; <i>charsetNames</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Sets the ordered-by-preference list of names of charsets to use when encoding unicode <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> data to a serialized form to <i>charsetNames</i>.</p>
-<p>See also <a href="qmessage.html#preferredCharsets">preferredCharsets</a>(), <a href="qmessage.html#preferredCharsetFor">preferredCharsetFor</a>(), <a href="qmessage.html#toTransmissionFormat">toTransmissionFormat</a>(), and <a href="qmessage.html#setBody">setBody</a>().</p>
+<p>See also <a href="qmessage.html#preferredCharsets">preferredCharsets</a>(), <a href="qmessage.html#preferredCharsetFor">preferredCharsetFor</a>(), and <a href="qmessage.html#setBody">setBody</a>().</p>
 <h3 class="fn"><a name="setPriority"></a>void QMessage::setPriority ( <a href="qmessage.html#Priority-enum">Priority</a> <i>newPriority</i> )</h3>
 <p>Sets the priority of the message to <i>newPriority</i>.</p>
 <p>See also <a href="qmessage.html#priority">priority</a>().</p>
@@ -301,14 +288,6 @@
 <h3 class="fn"><a name="to"></a>QMessageAddressList QMessage::to () const</h3>
 <p>Returns the list of primary recipients for the message.</p>
 <p>See also <a href="qmessage.html#setTo">setTo</a>() and <a href="qmessagefilter.html#byRecipients">QMessageFilter::byRecipients</a>().</p>
-<h3 class="fn"><a name="toTransmissionFormat"></a><a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> QMessage::toTransmissionFormat () const</h3>
-<p>Returns the message in a format suitable for transmission.</p>
-<p>See the class description for the encapsulations used for each message type.</p>
-<p>See also <a href="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</a>().</p>
-<h3 class="fn"><a name="toTransmissionFormat-2"></a>void QMessage::toTransmissionFormat ( <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>out</i> ) const</h3>
-<p>Writes the message to the output stream <i>out</i>.</p>
-<p>See the class description for the encapsulations used for each message type.</p>
-<p>See also <a href="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</a>().</p>
 <h3 class="fn"><a name="type"></a><a href="qmessage.html#Type-enum">Type</a> QMessage::type () const</h3>
 <p>Returns the Type of the message.</p>
 <p>See also <a href="qmessage.html#setType">setType</a>() and <a href="qmessagefilter.html#byType">QMessageFilter::byType</a>().</p>

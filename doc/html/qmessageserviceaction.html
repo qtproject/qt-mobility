@@ -87,7 +87,7 @@
 <p>A client may attempt to cancel an operation after it has been initiated. The <a href="qmessageserviceaction.html#cancelOperation">cancelOperation</a>() slot is provided for this purpose.</p>
 <p>A QMessageServiceAction instance supports only a single request at any time. Attempting to initiate an operation on a QMessageServiceAction while another operation is already in progress will result in the later initiating function returning false. A client may, however, use multiple QMessageServiceAction instances to create a queue of requests that will be performed sequentially.</p>
 <p>Each QMessageServiceAction instance will report only the changes pertaining to the request that instance delivers.</p>
-<p>Except where noted QMessageServiceActions may initiate network activity. Other functions in the mobility messaging API will not initiate network activity, with the exception of MAPI based platforms which may initiate network activity during the evaluation of any function call.</p>
+<p>Except where noted QMessageServiceActions may initiate network activity. Other functions in the mobility messaging API will not initiate network activity, with the exception of Windows mobile and desktop platforms which may initiate network activity during the evaluation of any function call.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="State-enum"></a>enum QMessageServiceAction::State</h3>
@@ -112,6 +112,7 @@
 <p>Open a composer application using <i>message</i> as a prototype.</p>
 <p>The default application for handling the type of <i>message</i> should be used.</p>
 <p>Returns true if the action can be initiated; otherwise returns false.</p>
+<p>On the QMF platform implementation of this function is left as a task for system integrators.</p>
 <p>See also <a href="qmessage.html#type">QMessage::type</a>().</p>
 <h3 class="fn"><a name="countMessages"></a>bool QMessageServiceAction::countMessages ( const <a href="qmessagefilter.html">QMessageFilter</a> &amp; <i>filter</i> = QMessageFilter() )</h3>
 <p>Emits via a <a href="qmessageserviceaction.html#messagesCounted">messagesCounted</a>() signal the number messages in the messaging store matching <i>filter</i>.</p>
@@ -120,8 +121,8 @@
 <p>Note: This function should not initiate network activity, instead only message data already stored on the device will be used during evaluation of the function.</p>
 <p>See also <a href="qmessage.html">QMessage</a>, <a href="qmessagefilter.html">QMessageFilter</a>, <a href="qmessageserviceaction.html#messagesCounted">messagesCounted</a>(), <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>(), and <a href="qmessageserviceaction.html#queryMessages">queryMessages</a>().</p>
 <h3 class="fn"><a name="exportUpdates"></a>bool QMessageServiceAction::exportUpdates ( const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>id</i> )</h3>
-<p>Iniate synchronization with external servers of local changes that have been queued by message store operations.</p>
-<p>On MAPI platforms this function performs no operation, as when a connection is available, local changes are opportunistically synchronized with external servers.</p>
+<p>Iniate synchronization with external servers of local changes that have been queued by message store operations, for messages with parent account <i>id</i>.</p>
+<p>On Windows mobile and desktop platforms this function performs no operation, as when a connection is available, local changes are opportunistically synchronized with external servers.</p>
 <p>Returns true if the action can be initiated; otherwise returns false.</p>
 <p>See also <a href="qmessagestore.html#addMessage">QMessageStore::addMessage</a>(), <a href="qmessagestore.html#updateMessage">QMessageStore::updateMessage</a>(), <a href="qmessagestore.html#removeMessage">QMessageStore::removeMessage</a>(), and <a href="qmessagestore.html#removeMessages">QMessageStore::removeMessages</a>().</p>
 <h3 class="fn"><a name="lastError"></a><a href="qmessagestore.html#ErrorCode-enum">QMessageStore::ErrorCode</a> QMessageServiceAction::lastError () const</h3>
@@ -174,6 +175,7 @@
 <p>Show the message identified by <i>id</i>.</p>
 <p>The default application for handling the type of message that <i>id</i> identifies should be used.</p>
 <p>Returns true if the action can be initiated; otherwise returns false.</p>
+<p>On the QMF platform implementation of this function is left as a task for system integrators.</p>
 <p>See also <a href="qmessageid.html">QMessageId</a> and <a href="qmessage.html#type">QMessage::type</a>().</p>
 <h3 class="fn"><a name="state"></a><a href="qmessageserviceaction.html#State-enum">State</a> QMessageServiceAction::state () const</h3>
 <p>Returns the current state of the action.</p>

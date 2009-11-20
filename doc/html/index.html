@@ -25,8 +25,14 @@
 <li><a href="#publish-and-subscribe">Publish and Subscribe</a></li>
 <li><a href="#location">Location</a></li>
 <li><a href="#messaging">Messaging</a></li>
+<ul><li><a href="#messaging-dependencies-and-requirements">Messaging dependencies and requirements</a></li>
+</ul>
 <li><a href="#multimedia">Multimedia</a></li>
+<ul><li><a href="#multimedia-dependencies-and-requirements">Multimedia Dependencies and Requirements</a></li>
+</ul>
 <li><a href="#service-framework">Service Framework</a></li>
+<ul><li><a href="#service-framework-dependencies-and-requirements">Service Framework Dependencies and Requirements</a></li>
+</ul>
 <li><a href="#system-information">System Information</a></li>
 <li><a href="#platform-compatability">Platform Compatability</a></li>
 </ul>
@@ -37,7 +43,7 @@
 <tr valign="top" class="odd"><th><a href="bearer-management.html">Bearer Management</a></th><td>An API to control the system's connectivity state.</td></tr>
 <tr valign="top" class="even"><th><a href="contacts.html">Contacts</a></th><td>An API enabling clients to request contact data from local or remote backends.</td></tr>
 <tr valign="top" class="odd"><th><a href="location-overview.html">Location</a></th><td>The Location API provides a library for distributing and receiving location data using arbitrary data sources.</td></tr>
-<tr valign="top" class="even"><th><a href="messaging.html">Messaging</a></th><td>The Messaging API enables access to messaging services.</td></tr>
+<tr valign="top" class="even"><th><a href="messaging.html">Messaging API</a></th><td>The Messaging API enables access to messaging services.</td></tr>
 <tr valign="top" class="odd"><th><a href="multimedia.html">Multimedia</a></th><td>Provides a set of APIs to play and record media, and manage a collection of media content.</td></tr>
 <tr valign="top" class="even"><th><a href="publ-subs.html">Publish and Subscribe</a></th><td>The Publish and Subscribe API, containing Value Space, enables applications to read item values, navigate through and subscribe to change notifications.</td></tr>
 <tr valign="top" class="odd"><th><a href="service-frameworks.html">Qt Service Framework</a></th><td>A set of APIs to that allows clients to discover and instantiate arbitrary services.</td></tr>
@@ -79,14 +85,27 @@
 <a name="messaging"></a>
 <h3>Messaging</h3>
 <p>A common interface for handling SMS, MMS, XMPP, Email and partial MIME. Sending, notification and retrieval of messages as well as the ability to use a native app to create, edit, reply-to, send and display messages. Supports the sending of messages with attachments, and in situations of low battery to leave attachments on the server unless opened.</p>
+<p>For more details see the <a href="messaging.html">messaging API overview</a>.</p>
+<a name="messaging-dependencies-and-requirements"></a>
+<h4>Messaging dependencies and requirements</h4>
+<p>The Linux backend depends on QMF, for information on QMF see the <a href="http://labs.trolltech.com/blogs/category/qtmessaging/">QMF Labs article</a></p>
+<p>The Windows Mobile backend depends on ActiveSync version 4.5&#x2e;</p>
+<p>Whilst not supported for this release the Windows Desktop backend requires Microsoft Outlook 2003 or later, and Microsoft Windows XP to be installed.</p>
+<p>The messaging API SMS/MMS functionality requires that the platform provides SMS/MMS facilites. Email functionality requires that an email account is available on the platform.</p>
 <a name="multimedia"></a>
 <h3>Multimedia</h3>
 <p>An API to play audio and video of various formats. Record audio. The playing and managing of an FM radio. This includes the typical functionality you would find on a music and video player, combined with an FM radio.</p>
+<a name="multimedia-dependencies-and-requirements"></a>
+<h4>Multimedia Dependencies and Requirements</h4>
+<p>Multimedia is dependent on the <a href="http://qt.nokia.com/doc/4.5/qtmultimedia.html">QtMultimedia</a> module of Qt.</p>
 <a name="service-framework"></a>
 <h3>Service Framework</h3>
 <p>A platform independent method of finding Services. A 'service' is an independent component that allows a client to perform a well-defined operation.</p>
 <p>The services are implemented as plugins installed on the device and can look for supporting external services running on a central server. E.g&#x2e; weather, local tourist attractions etc. Default applications can use the layer to locate servers.</p>
 <p>Since this is an abstraction layer then the app does not need to be concerned with the underlying protocol, where the servers are, the hardware peculiarities with networking and other low level details.</p>
+<a name="service-framework-dependencies-and-requirements"></a>
+<h4>Service Framework Dependencies and Requirements</h4>
+<p>The Service Framework is dependent on SQLite version 3 and that Qt has been built with the <a href="http://qt.nokia.com/doc/4.5/sql-driver.html">QSQLITE driver</a>.</p>
 <a name="system-information"></a>
 <h3>System Information</h3>
 <p>An API to discover system related information and capabilities. Information available will cover software version numbers, hardware features, network connection types and status, display, data storage devices, device information and the screensaver.</p>

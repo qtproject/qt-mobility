@@ -111,11 +111,8 @@
             qDebug() &lt;&lt; &quot;Incoming call from unknown contact (&quot; &lt;&lt; incomingCallNbr &lt;&lt; &quot;)&quot;;
         } else {
             QContact match = cm-&gt;contact(matchingContacts.at(0));
-
-            <span class="comment">// XXX TODO: replace the following with match.displayLabel() after week 47.</span>
-            QContactDisplayLabel cdl = match.detail(QContactDisplayLabel::DefinitionName);
             qDebug() &lt;&lt; &quot;Incoming call from&quot;
-                     &lt;&lt; cdl.label()
+                     &lt;&lt; match.displayLabel()
                      &lt;&lt; &quot;(&quot; &lt;&lt; incomingCallNbr &lt;&lt; &quot;)&quot;;
         }
     }</pre>
@@ -126,10 +123,7 @@
     {
         QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
         QContact a = cm-&gt;contact(contactIds.first());
-
-        <span class="comment">// XXX TODO: replace the following with a.displayLabel() after week 47.</span>
-        QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
-        qDebug() &lt;&lt; &quot;The first phone number of&quot; &lt;&lt; cdl.label()
+        qDebug() &lt;&lt; &quot;The first phone number of&quot; &lt;&lt; a.displayLabel()
                  &lt;&lt; &quot;is&quot; &lt;&lt; a.detail(QContactPhoneNumber::DefinitionName).value(QContactPhoneNumber::FieldNumber);
     }</pre>
 <a name="viewing-all-of-the-details-of-a-contact"></a>
@@ -139,10 +133,7 @@
     {
         QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
         QContact a = cm-&gt;contact(contactIds.first());
-
-        <span class="comment">// XXX TODO: replace the following with match.displayLabel() after week 47.</span>
-        QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
-        qDebug() &lt;&lt; &quot;Viewing the details of&quot; &lt;&lt; cdl.label();
+        qDebug() &lt;&lt; &quot;Viewing the details of&quot; &lt;&lt; a.displayLabel();
 
         QList&lt;QContactDetail&gt; allDetails = a.details();
         for (int i = 0; i &lt; allDetails.size(); i++) {
@@ -188,10 +179,7 @@
     {
         QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
         QContact a = cm-&gt;contact(contactIds.first());
-
-        <span class="comment">// XXX TODO: replace the following with match.displayLabel() after week 47.</span>
-        QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
-        qDebug() &lt;&lt; &quot;Modifying the details of&quot; &lt;&lt; cdl.label();
+        qDebug() &lt;&lt; &quot;Modifying the details of&quot; &lt;&lt; a.displayLabel();
 
         <span class="comment">/* Change the first phone number */</span>
         QList&lt;QContactDetail&gt; numbers = a.details(QContactPhoneNumber::DefinitionName);
@@ -243,12 +231,12 @@
         if (appendOnly) {
             <span class="comment">// we know that the results are still in the same order; just display the new results.</span>
             for (m_previousLastIndex += 1; m_previousLastIndex &lt; results.size(); m_previousLastIndex++) {
-                qDebug() &lt;&lt; &quot;Found another Alice:&quot; &lt;&lt; results.at(m_previousLastIndex).displayLabel().label();
+                qDebug() &lt;&lt; &quot;Found another Alice:&quot; &lt;&lt; results.at(m_previousLastIndex).displayLabel();
             }
         } else {
             <span class="comment">// the order of results has changed; display them all.</span>
             for (m_previousLastIndex = 0; m_previousLastIndex &lt; results.size(); m_previousLastIndex++) {
-                qDebug() &lt;&lt; &quot;Found another Alice:&quot; &lt;&lt; results.at(m_previousLastIndex).displayLabel().label();
+                qDebug() &lt;&lt; &quot;Found another Alice:&quot; &lt;&lt; results.at(m_previousLastIndex).displayLabel();
             }
         }
 
@@ -273,10 +261,7 @@
         QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
         if (!contactIds.isEmpty()) {
             QContact a = cm-&gt;contact(contactIds.first());
-
-            <span class="comment">// XXX TODO: replace the following with a.displayLabel() after week 47.</span>
-            QContactDisplayLabel cdl = a.detail(QContactDisplayLabel::DefinitionName);
-            qDebug() &lt;&lt; &quot;This manager contains&quot; &lt;&lt; cdl.label();
+            qDebug() &lt;&lt; &quot;This manager contains&quot; &lt;&lt; a.displayLabel();
         } else {
             qDebug() &lt;&lt; &quot;This manager contains no contacts&quot;;
         }

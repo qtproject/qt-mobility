@@ -104,6 +104,7 @@
 
     private:
         QContact buildContact() const;
+        QContactName buildName(const QString &amp;name) const;
         void displayContact();
         void updateButtons();
         bool eventFilter(QObject* watched, QEvent* event);
