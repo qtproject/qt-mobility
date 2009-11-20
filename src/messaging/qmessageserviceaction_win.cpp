@@ -813,14 +813,18 @@ bool QMessageServiceAction::compose(const QMessage &message)
     d_ptr->_active = true;
     d_ptr->_lastError = QMessageStore::NoError;
 
-    if(!d_ptr->send(message,true))
-    {
-        d_ptr->_state = QMessageServiceAction::Failed;
-        emit stateChanged(d_ptr->_state);
-        d_ptr->_active = false;
-        return false;
+    bool result = d_ptr->send(message,true);
+#ifndef _WIN32_WCE
+    if(!result) {
+#endif
+    d_ptr->_state = result ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
+    emit stateChanged(d_ptr->_state);
+    d_ptr->_active = false;
+    return result;
+#ifndef _WIN32_WCE
     }
     return true;
+#endif
 }
 
 bool QMessageServiceAction::retrieveHeader(const QMessageId& id)
@@ -898,20 +902,24 @@ bool QMessageServiceAction::show(const QMessageId& id)
     d_ptr->_lastError = QMessageStore::NoError;
     d_ptr->_active = true;
 
-    if(!d_ptr->show(id))
-    {
-        d_ptr->_state = QMessageServiceAction::Failed;
-        emit stateChanged(d_ptr->_state);
-        d_ptr->_active = false;
-        return false;
+    bool result = d_ptr->show(id);
+#ifndef _WIN32_WCE
+    if(!result) {
+#endif
+    d_ptr->_state = result ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
+    emit stateChanged(d_ptr->_state);
+    d_ptr->_active = false;
+    return result;
+#ifndef _WIN32_WCE
     }
     return true;
+#endif
 }
 
 bool QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
 {
     Q_UNUSED(id);
-    return true;
+    return false;
 }
 
 QMessageServiceAction::State QMessageServiceAction::state() const
