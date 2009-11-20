@@ -58,14 +58,13 @@ QList<CContactItemField *> CntTransformAvatarSimple::transformDetailL(const QCon
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(avatar.avatar().utf16()));
 
 	if(fieldText.Length()) {
-	    //supported subTypes
-	    const QString& subTypeImage(QContactAvatar::SubTypeImage);
-	    const QString& subTypeAudioRingtone(QContactAvatar::SubTypeAudioRingtone);
-
-	    TUid uid(KNullUid);
-	    if (avatar.subType().compare(subTypeImage) == 0) {
+        QString subType = avatar.subType();
+        TUid uid(KNullUid);
+        if(subType.isEmpty()) {
+            uid = KUidContactFieldCodImage;
+        } else if (subType.compare(QContactAvatar::SubTypeImage) == 0) {
 	        uid = KUidContactFieldCodImage;
-	    } else if (avatar.subType().compare(subTypeAudioRingtone) == 0) {
+	    } else if (subType.compare(QContactAvatar::SubTypeAudioRingtone) == 0) {
 	        uid = KUidContactFieldRingTone;
 	    } else {
 	        User::LeaveIfError(KErrNotSupported);
