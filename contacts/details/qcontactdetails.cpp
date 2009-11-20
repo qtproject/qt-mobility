@@ -1329,33 +1329,10 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  * Sets the type of the contact to be the give \a type
  */
 
-/*!
- * \fn QContactDisplayLabel::isSynthesized() const
- * \deprecated
- * Returns true if the display label was synthesized automatically by the manager backend.
- * This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!
- * See: Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a
- */
 
 /*!
  * \fn QContactDisplayLabel::label() const
  * Returns the display label of the contact
- */
-
-/*!
- * \fn QContactDisplayLabel::setLabel(const QString& label)
- * \deprecated
- * Sets the display label of the contact to \a label.
- * This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!
- * See: Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a
- */
-
-/*!
- * \fn QContactDisplayLabel::setSynthesized(bool synthesized)
- * \deprecated
- * Sets the synthetic status of the display label to \a synthesized.
- * This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!
- * See: Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a
  */
 
 /*!
