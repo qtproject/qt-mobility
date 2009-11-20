@@ -106,6 +106,7 @@ unix: {
 
         TARGET.CAPABILITY = ALL -TCB
         TARGET.EPOCALLOWDLLDATA = 1
+        TARGET.UID3 = 0x2002ac7d
         MMP_RULES += EXPORTUNFROZEN
         
 
