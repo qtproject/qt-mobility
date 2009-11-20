@@ -61,6 +61,7 @@
 #include <bt_subscribe.h>
 #include <bttypes.h>
 #include <Etel3rdParty.h>
+#include <aknkeylock.h>
 
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
@@ -955,7 +956,16 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
-    return false;   //TODO
+    bool isLocked = false;
+
+    RAknKeylock2 keyLock;
+    TInt err = keyLock.Connect();
+    if (err == KErrNone) {
+        isLocked = keyLock.IsKeyLockEnabled();
+        keyLock.Close();
+    }
+
+    return isLocked;
 }
 
 void QSystemDeviceInfoPrivate::batteryLevelChanged()
