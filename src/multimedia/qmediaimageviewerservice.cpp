@@ -83,8 +83,6 @@ public:
     QMediaImageViewerControl *viewerControl;
     QMediaImageViewerOutputControl *outputControl;
     QMediaImageViewerRenderer *rendererControl;
-    QMediaImageViewerWidgetControl *widgetControl;
-    QMediaImageViewerWidget *widget;
     QNetworkAccessManager *network;
     QNetworkAccessManager *internalNetwork;
     QImage m_image;
@@ -141,82 +139,6 @@ void QMediaImageViewerRenderer::showImage(const QImage &image)
     }
 }
 
-
-QMediaImageViewerWidget::QMediaImageViewerWidget(QWidget *parent)
-    : QWidget(parent)
-    , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
-{
-}
-
-void QMediaImageViewerWidget::showImage(const QImage &image)
-{
-    m_image = image;
-
-    update();
-}
-
-void QMediaImageViewerWidget::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
-{
-    m_aspectRatioMode = mode;
-
-    updateGeometry();
-}
-
-QSize QMediaImageViewerWidget::sizeHint() const
-{
-    return m_image.size();
-}
-
-void QMediaImageViewerWidget::paintEvent(QPaintEvent *)
-{
-    if (!m_image.isNull()) {
-        QPainter painter(this);
-
-        QRect displayRect = rect();
-
-        QSize size = m_image.size();
-
-        switch (m_aspectRatioMode) {
-        case QVideoWidget::KeepAspectRatio:
-            size.scale(displayRect.size(), Qt::KeepAspectRatio);
-            {
-                QRect rect(QPoint(0, 0), size);
-                rect.moveCenter(displayRect.center());
-
-                displayRect = rect;
-            }
-            break;
-        case QVideoWidget::IgnoreAspectRatio:
-            break;
-        }
-
-        painter.drawImage(displayRect, m_image);
-    }
-}
-
-QMediaImageViewerWidgetControl::QMediaImageViewerWidgetControl(
-        QMediaImageViewerWidget *widget, QObject *parent)
-    : QVideoWidgetControl(parent)
-    , m_widget(widget)
-    , m_fullScreen(false)
-{
-}
-
-QWidget *QMediaImageViewerWidgetControl::videoWidget()
-{
-    return m_widget;
-}
-
-void QMediaImageViewerWidgetControl::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
-{
-    m_widget->setAspectRatioMode(mode);
-}
-
-void QMediaImageViewerWidgetControl::setFullScreen(bool fullScreen)
-{
-    emit fullScreenChanged(m_fullScreen = fullScreen);
-}
-
 QMediaImageViewerOutputControl::QMediaImageViewerOutputControl(QObject *parent)
     : QVideoOutputControl(parent)
     , m_output(NoOutput)
@@ -226,15 +148,13 @@ QMediaImageViewerOutputControl::QMediaImageViewerOutputControl(QObject *parent)
 QList<QVideoOutputControl::Output> QMediaImageViewerOutputControl::availableOutputs() const
 {
     return QList<Output>()
-            << RendererOutput
-            << WidgetOutput;
+            << RendererOutput;
 }
 
 void QMediaImageViewerOutputControl::setOutput(Output output)
 {
     switch (output) {
     case RendererOutput:
-    case WidgetOutput:
         emit m_output = output;
         break;
     default:
@@ -253,9 +173,7 @@ bool QMediaImageViewerServicePrivate::load(QIODevice *device)
         m_image = reader.read();
     }
 
-    if (outputControl->output() == QVideoOutputControl::WidgetOutput)
-        widget->showImage(m_image);
-    else if (outputControl->output() == QVideoOutputControl::RendererOutput)
+    if (outputControl->output() == QVideoOutputControl::RendererOutput)
         rendererControl->showImage(m_image);
 
     return !m_image.isNull();
@@ -265,22 +183,16 @@ void QMediaImageViewerServicePrivate::clear()
 {
     m_image = QImage();
 
-    if (outputControl->output() == QVideoOutputControl::WidgetOutput)
-        widget->showImage(m_image);
-    else if (outputControl->output() == QVideoOutputControl::RendererOutput)
+    if (outputControl->output() == QVideoOutputControl::RendererOutput)
         rendererControl->showImage(m_image);
 }
 
 void QMediaImageViewerServicePrivate::_q_outputChanged(QVideoOutputControl::Output output)
 {
-    if (output != QVideoOutputControl::WidgetOutput)
-        widget->showImage(QImage());
     if (output != QVideoOutputControl::RendererOutput)
         rendererControl->showImage(QImage());
 
-    if (output == QVideoOutputControl::WidgetOutput)
-        widget->showImage(m_image);
-    else if (output == QVideoOutputControl::RendererOutput)
+    if (output == QVideoOutputControl::RendererOutput)
         rendererControl->showImage(m_image);
 }
 
@@ -302,8 +214,6 @@ QMediaImageViewerService::QMediaImageViewerService(QObject *parent)
             SLOT(_q_outputChanged(QVideoOutputControl::Output)));
 
     d->rendererControl = new QMediaImageViewerRenderer;
-    d->widget = new QMediaImageViewerWidget;
-    d->widgetControl = new QMediaImageViewerWidgetControl(d->widget);
 }
 
 /*!
@@ -312,8 +222,6 @@ QMediaImageViewerService::~QMediaImageViewerService()
 {
     Q_D(QMediaImageViewerService);
 
-    delete d->widgetControl;
-    delete d->widget;
     delete d->rendererControl;
     delete d->outputControl;
     delete d->viewerControl;
@@ -331,8 +239,6 @@ QMediaControl *QMediaImageViewerService::control(const char *name) const
         return d->outputControl;
     } else if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
         return d->rendererControl;
-    } else if (qstrcmp(name, QVideoWidgetControl_iid) == 0) {
-        return d->widgetControl;
     } else {
         return 0;
     }

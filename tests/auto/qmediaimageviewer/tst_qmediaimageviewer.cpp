@@ -82,7 +82,6 @@ private slots:
     void invalidPlaylist();
     void elapsedTime();
     void outputControl();
-    void widgetControl();
     void rendererControl();
 
 public:
@@ -923,103 +922,20 @@ void tst_QMediaImageViewer::outputControl()
 
     QVERIFY(outputControl != 0);
 
-    QVERIFY(outputControl->availableOutputs().contains(QVideoOutputControl::WidgetOutput));
     QVERIFY(outputControl->availableOutputs().contains(QVideoOutputControl::RendererOutput));
+    QVERIFY(!outputControl->availableOutputs().contains(QVideoOutputControl::WidgetOutput));
     QVERIFY(!outputControl->availableOutputs().contains(QVideoOutputControl::UserOutput));
 
     QCOMPARE(outputControl->output(), QVideoOutputControl::NoOutput);
 
     outputControl->setOutput(QVideoOutputControl::WidgetOutput);
-    QCOMPARE(outputControl->output(), QVideoOutputControl::WidgetOutput);
+    QCOMPARE(outputControl->output(), QVideoOutputControl::NoOutput);
 
     outputControl->setOutput(QVideoOutputControl::RendererOutput);
     QCOMPARE(outputControl->output(), QVideoOutputControl::RendererOutput);
 
     outputControl->setOutput(QVideoOutputControl::UserOutput);
     QCOMPARE(outputControl->output(), QVideoOutputControl::NoOutput);
-}
-
-void tst_QMediaImageViewer::widgetControl()
-{
-    QMediaImageViewer viewer;
-
-    QMediaService *service = viewer.service();
-    if (service == 0)
-        QSKIP("Image viewer object has no service.", SkipSingle);
-
-    QVideoOutputControl *outputControl = qobject_cast<QVideoOutputControl *>(
-            service->control(QVideoOutputControl_iid));
-    if (outputControl == 0)
-        QSKIP("Image viewer object has no video output control.", SkipSingle);
-
-    QVideoWidgetControl *widgetControl = qobject_cast<QVideoWidgetControl *>(
-            service->control(QVideoWidgetControl_iid));
-    QVERIFY(widgetControl != 0);
-
-    QWidget *widget = widgetControl->videoWidget();
-    QVERIFY(widget != 0);
-
-    outputControl->setOutput(QVideoOutputControl::WidgetOutput);
-
-    // Test initial values.
-    QCOMPARE(widgetControl->brightness(), 0);
-    QCOMPARE(widgetControl->contrast(), 0);
-    QCOMPARE(widgetControl->hue(), 0);
-    QCOMPARE(widgetControl->saturation(), 0);
-    QCOMPARE(widgetControl->isFullScreen(), false);
-    QCOMPARE(widgetControl->aspectRatioMode(), QVideoWidget::KeepAspectRatio);
-
-    // Test setting color adjustment values.  Unsupported, so they stay at 0.
-    widgetControl->setBrightness(12);
-    QCOMPARE(widgetControl->brightness(), 0);
-    widgetControl->setContrast(12);
-    QCOMPARE(widgetControl->contrast(), 0);
-    widgetControl->setHue(12);
-    QCOMPARE(widgetControl->hue(), 0);
-    widgetControl->setSaturation(12);
-    QCOMPARE(widgetControl->saturation(), 0);
-
-    {   // Test full screen mode.  Doesn't do anything more than adknowledge the change in mode.
-        QSignalSpy fullScreenSpy(widgetControl, SIGNAL(fullScreenChanged(bool)));
-
-        widgetControl->setFullScreen(true);
-        QCOMPARE(widgetControl->isFullScreen(), true);
-        QCOMPARE(fullScreenSpy.count(), 1);
-        QCOMPARE(fullScreenSpy.value(0).value(0).toBool(), true);
-
-        widgetControl->setFullScreen(false);
-        QCOMPARE(widgetControl->isFullScreen(), false);
-        QCOMPARE(fullScreenSpy.count(), 2);
-        QCOMPARE(fullScreenSpy.value(1).value(0).toBool(), false);
-    }
-
-    widget->setMinimumSize(50, 50);
-    widget->show();
-    QTestEventLoop::instance().enterLoop(1);
-
-    // Load an image so the viewer has some dimensions to work with.
-    viewer.setMedia(QMediaContent(imageUri("image.png")));
-
-    connect(&viewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
-            &QTestEventLoop::instance(), SLOT(exitLoop()));
-    QTestEventLoop::instance().enterLoop(2);
-
-    if (viewer.mediaStatus() != QMediaImageViewer::LoadedMedia)
-        QSKIP("failed to load test image", SkipSingle);
-
-
-    QCOMPARE(widget->sizeHint(), QSize(75, 50));
-
-    widget->update();
-    QTestEventLoop::instance().enterLoop(1);
-
-    widgetControl->setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
-    QCOMPARE(widgetControl->aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
-
-    QTestEventLoop::instance().enterLoop(1);
-
-    viewer.setMedia(QMediaContent());
-    QTestEventLoop::instance().enterLoop(1);
 }
 
 void tst_QMediaImageViewer::rendererControl()
