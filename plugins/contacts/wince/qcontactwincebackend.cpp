@@ -318,7 +318,9 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(c
     defns[contactType].remove(QContactGuid::DefinitionName);
     defns[contactType].remove(QContactGender::DefinitionName); // ? Surprising
 
+
     // Remove the fields we don't support
+    defns[contactType][QContactName::DefinitionName].fields().remove(QContactName::FieldCustomLabel);
 
     // Simple anniversarys
     defns[contactType][QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldCalendarId);
@@ -329,9 +331,7 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(c
     defns[contactType][QContactOrganization::DefinitionName].fields().remove(QContactOrganization::FieldLogo);
 
     // No subtypes for these details
-    defns[contactType][QContactAddress::DefinitionName].fields().remove(QContactAddress::FieldSubTypes);
     defns[contactType][QContactUrl::DefinitionName].fields().remove(QContactUrl::FieldSubType);
-    defns[contactType][QContactAvatar::DefinitionName].fields().remove(QContactAvatar::FieldSubType);
 
     // No contexts for these details
     defns[contactType][QContactAvatar::DefinitionName].fields().remove(QContactDetail::FieldContext);
@@ -352,7 +352,6 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(c
 
     // XXX temporary definitions that we should support but don't yet.
     defns[contactType].remove(QContactOnlineAccount::DefinitionName);
-    defns[contactType].remove(QContactAvatar::DefinitionName);
 
     return defns[contactType];
 }
