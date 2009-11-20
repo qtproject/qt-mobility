@@ -1176,5 +1176,6 @@ QNetworkSession::SessionError QNetworkSessionPrivate::error() const
 }
 
 #include "qnetworksession_maemo.moc"
+#include "moc_qnetworksession_maemo_p.cpp"
 
 QTM_END_NAMESPACE

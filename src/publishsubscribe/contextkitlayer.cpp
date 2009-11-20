@@ -346,6 +346,6 @@ QSet<QString> ContextKitLayer::children (Handle handle)
     return h->children ();
 }
 
+#include "contextkitlayer.moc"
 QTM_END_NAMESPACE
 
-#include "contextkitlayer.moc"

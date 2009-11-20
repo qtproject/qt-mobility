@@ -755,5 +755,6 @@ void QNetworkConfigurationManagerPrivate::configChanged(QNetworkConfigurationPri
 
 
 #include "qnetworkconfigmanager_maemo.moc"
+#include "moc_qnetworkconfigmanager_maemo_p.cpp"
 
 QTM_END_NAMESPACE
