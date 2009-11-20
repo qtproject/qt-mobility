@@ -146,8 +146,3 @@ LIBS += -L$$OUTPUT_DIR/lib
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global
 
-contains(QT_CONFIG, multimedia) {
-    QT += multimedia
-} else {
-    DEFINES *= QT_NO_MULTIMEDIA
-}

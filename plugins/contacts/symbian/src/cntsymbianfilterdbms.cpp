@@ -155,7 +155,6 @@ QList<QContactLocalId> CntSymbianFilterDbms::contacts(
     if(idArray && (error == QContactManager::NoError)) {
         // copy the matching contact ids
         for(int i(0); i < idArray->Count(); i++) {
-            QContactLocalId id((*idArray)[i]);
             matches.append(QContactLocalId((*idArray)[i]));
         }
 

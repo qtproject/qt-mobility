@@ -57,13 +57,13 @@ GroupDetailsDialog::GroupDetailsDialog(QWidget *parent, QContactManager *contact
 
     QFormLayout *layout = new QFormLayout;
 
-qDebug() << "constructed group details dialog for contact:" << contact.displayLabel().label();
+qDebug() << "constructed group details dialog for contact:" << contact.displayLabel();
 qDebug() << "   id =" << contact.id().managerUri() << ":" << contact.id().localId();
 
     localContact = contact;
     contactNameEdit = new QLineEdit(this);
     contactNameEdit->setReadOnly(true);
-    contactNameEdit->setText(contact.displayLabel().label());
+    contactNameEdit->setText(contact.displayLabel());
     listWidget = new QListWidget(this);
     okButton = new QPushButton(tr("&Ok"), this);
     cancelButton = new QPushButton(tr("&Cancel"), this);
@@ -99,7 +99,7 @@ void GroupDetailsDialog::repopulateGroupList()
     QList<QContactLocalId> grpList = cm->contacts(groupFilter);
     for (int index=0; index < grpList.count(); index++){
         QContact grp = cm->contact(grpList[index]);
-        QListWidgetItem *item = new QListWidgetItem(grp.displayLabel().label(), listWidget);
+        QListWidgetItem *item = new QListWidgetItem(grp.displayLabel(), listWidget);
         item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
         bool foundInGroup = false;
 

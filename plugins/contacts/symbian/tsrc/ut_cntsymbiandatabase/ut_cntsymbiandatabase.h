@@ -38,54 +38,27 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef TESTRELATIONSHIP_H
+#define TESTRELATIONSHIP_H
 
-#ifndef IMAGEVIEWER_H
-#define IMAGEVIEWER_H
+#ifndef CNTSYMBIANDATABASE_UNIT_TEST
+#define CNTSYMBIANDATABASE_UNIT_TEST
+#endif
 
-#include <QtGui/QMainWindow>
+#include <QObject>
 
-#include "qmediaplaylist.h"
-#include "qmediaplaylistnavigator.h"
-#include "qmediaplaylistmodel.h"
-
-namespace Ui
-{
-    class ImageViewer;
-}
-
-class ImageViewer : public QMainWindow
+class TestCntSymbianDatabase : public QObject
 {
     Q_OBJECT
 
-public:
-    ImageViewer(QWidget *parent = 0);
-    ~ImageViewer();
-
-public slots:
-    void addImage();
-    void advance();
-    void back();
-    void shuffle();
-
-    void display(const QMediaResourceList &);
-
-    void jump(const QModelIndex &index);
-
-    void loadPlaylist();
-    void savePlaylist();
-
-    void setPlaybackMode(int mode);
-
 private slots:
-    void updatePlaybackMode(QMediaPlaylistNavigator::PlaybackMode mode);
-    void updateNavigationActions();
-
-private:
-    Ui::ImageViewer *ui;
-
-    QMediaPlaylist *playlist;
-    QMediaPlaylistModel *model;
-    QMediaPlaylistNavigator *navigator;
+    void initTestCase();
+    void cleanupTestCase();
+        
+    void ctor();
+    void contactDatabase();
+    void appendFunctions();
+    void databaseEvents();
 };
 
-#endif // IMAGEVIEWER_H
+#endif

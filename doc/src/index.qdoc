@@ -172,11 +172,32 @@
     Supports the sending of messages with attachments, and in situations of
     low battery to leave attachments on the server unless opened.
 
+    For more details see the \l {Messaging API} {messaging API overview}.
+
+    \section2 Messaging dependencies and requirements
+
+    The Linux backend depends on QMF, for information on QMF see the 
+    \l {http://labs.trolltech.com/blogs/category/qtmessaging/} 
+    {QMF Labs article}
+
+    The Windows Mobile backend depends on ActiveSync version 4.5.
+
+    Whilst not supported for this release the Windows Desktop backend 
+    requires Microsoft Outlook 2003 or later, and Microsoft Windows XP to be installed.
+
+    The messaging API SMS/MMS functionality requires that the platform 
+    provides SMS/MMS facilites. Email functionality requires that an email 
+    account is available on the platform.
+
     \section1 Multimedia
 
     An API to play audio and video of various formats. Record audio. The playing
     and managing of an FM radio. This includes the typical functionality you
     would find on a music and video player, combined with an FM radio.
+
+    \section2 Multimedia Dependencies and Requirements
+
+    Multimedia is dependent on the QtMultimedia module of Qt. 
 
     \section1 Service Framework
 
@@ -192,6 +213,11 @@
     Since this is an abstraction layer then the app does not need to be
     concerned with the underlying protocol, where the servers are, the
     hardware peculiarities with networking and other low level details.
+
+    \section2 Service Framework Dependencies and Requirements
+
+    The Service Framework is dependent on SQLite version 3 and that
+    Qt has been built with the \l {QSQLITE} {QSQLITE driver}.
 
     \section1 System Information
 

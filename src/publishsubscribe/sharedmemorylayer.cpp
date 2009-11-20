@@ -1926,7 +1926,7 @@ bool SharedMemoryLayer::startup(Type type)
             //qDebug() << "Reattaching to existing memory";
             shm->attach();
         }
-        lock = new QSystemReadWriteLock(socket(), QSystemReadWriteLock::Create);
+        lock = new QSystemReadWriteLock(socket() + "_lock", QSystemReadWriteLock::Create);
     } else {
         shm = new QSharedMemory(socket(), this);
         shm->attach(QSharedMemory::ReadOnly);
@@ -1937,7 +1937,7 @@ bool SharedMemoryLayer::startup(Type type)
                        << subShm->errorString() << subShm->key();
         }
 
-        lock = new QSystemReadWriteLock(socket(), QSystemReadWriteLock::Open);
+        lock = new QSystemReadWriteLock(socket() + "_lock", QSystemReadWriteLock::Open);
     }
 
     if (shm->error() != QSharedMemory::NoError ||

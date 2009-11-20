@@ -387,7 +387,7 @@ QVariant QContactListModel::data(const QModelIndex& index, int role) const
     switch (role) {
         case QContactListModel::DisplayLabelRole:
         {
-            ret = currentContact.displayLabel().label();
+            ret = currentContact.displayLabel();
         }
         break;
 

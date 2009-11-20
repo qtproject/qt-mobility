@@ -42,8 +42,6 @@
 #ifndef VIDEOSURFACEGSTSINK_H
 #define VIDEOSURFACEGSTSINK_H
 
-#ifndef QT_NO_MULTIMEDIA
-
 #include <gst/video/gstvideosink.h>
 
 #include <QtCore/qlist.h>
@@ -134,7 +132,5 @@ public:
 
 
 QT_END_NAMESPACE
-
-#endif
 
 #endif

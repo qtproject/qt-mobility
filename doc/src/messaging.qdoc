@@ -43,7 +43,7 @@
 \page messaging.html
 \ingroup mobility
 
-\title Messaging
+\title Messaging API
 
 \brief The Messaging API enables access to messaging services.
 

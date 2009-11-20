@@ -119,7 +119,8 @@ bool AudioCaptureSession::setFormat(const QAudioFormat &format)
                     break;
                 }
             }
-        }
+        } else
+            m_format = m_deviceInfo->preferredFormat();
     }
     return false;
 }

@@ -51,11 +51,7 @@
 #include <qmediaformatcontrol.h>
 #include <qvideoencodercontrol.h>
 
-#ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qaudioformat.h>
-#else
-#include <qaudioformat.h>
-#endif
 
 class MockMediaFormatControl : public QMediaFormatControl
 {

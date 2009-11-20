@@ -43,7 +43,7 @@ SUBDIRS += player \
 
 #Messaging examples
 contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
-    SUBDIRS += \
+    !win32-g++:SUBDIRS += \
         keepintouch\
         querymessages\
         sendmessage\

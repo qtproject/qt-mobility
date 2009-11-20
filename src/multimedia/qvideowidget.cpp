@@ -47,12 +47,10 @@
 #include <qvideowindowcontrol.h>
 #include <qvideowidgetcontrol.h>
 
-#ifndef QT_NO_MULTIMEDIA
 #include <qpaintervideosurface_p.h>
 #include <qvideorenderercontrol.h>
-#include "qvideosurfaceformat.h"
+#include <QtMultimedia/qvideosurfaceformat.h>
 #include <qpainter.h>
-#endif
 
 #include <qapplication.h>
 #include <qevent.h>
@@ -113,7 +111,6 @@ void QVideoWidgetControlBackend::setAspectRatioMode(QVideoWidget::AspectRatioMod
     m_widgetControl->setAspectRatioMode(mode);
 }
 
-#ifndef QT_NO_MULTIMEDIA
 
 QRendererVideoWidgetBackend::QRendererVideoWidgetBackend(
         QVideoRendererControl *control, QWidget *widget)
@@ -263,7 +260,6 @@ QRect QRendererVideoWidgetBackend::displayRect() const
     return displayRect;
 }
 
-#endif
 
 QWindowVideoWidgetBackend::QWindowVideoWidgetBackend(QVideoWindowControl *control, QWidget *widget)
     : m_windowControl(control)
@@ -371,11 +367,10 @@ void QVideoWidgetPrivate::_q_serviceDestroyed()
     delete windowBackend;
     windowBackend = 0;
 
-#ifndef QT_NO_MULTIMEDIA
     delete rendererBackend;
     rendererBackend = 0;
-#endif
 
+    currentControl = 0;
     currentBackend = 0;
     outputControl = 0;
     service = 0;
@@ -414,7 +409,6 @@ void QVideoWidgetPrivate::_q_fullScreenChanged(bool fullScreen)
 
 void QVideoWidgetPrivate::_q_dimensionsChanged()
 {
-    qDebug("Update geometry");
     q_func()->updateGeometry();
 }
 
@@ -495,13 +489,11 @@ QVideoWidget::QVideoWidget(QMediaObject *object, QWidget *parent)
         if (windowControl != 0)
             d->windowBackend = new QWindowVideoWidgetBackend(windowControl, this);
 
-#ifndef QT_NO_MULTIMEDIA
         QVideoRendererControl *rendererControl = qobject_cast<QVideoRendererControl *>(
                 d->service->control(QVideoRendererControl_iid));
 
         if (rendererControl != 0)
             d->rendererBackend = new QRendererVideoWidgetBackend(rendererControl, this);
-#endif
     }
 }
 
@@ -524,13 +516,11 @@ QVideoWidget::~QVideoWidget()
             delete d_ptr->widgetBackend;
         }
         delete d_ptr->windowBackend;
-#ifndef QT_NO_MULTIMEDIA
         if (d_ptr->rendererBackend) {
             d_ptr->rendererBackend->clearSurface();
 
             delete d_ptr->rendererBackend;
         }
-#endif
     }
     delete d_ptr;
 }
@@ -568,12 +558,12 @@ void QVideoWidget::setFullScreen(bool fullScreen)
 
     if (fullScreen) {
         Qt::WindowFlags flags = windowFlags();
-        if (!(flags & Qt::Window)) {
-            d->nonFullScreenFlags = flags & (Qt::Window | Qt::SubWindow);
-            flags |= Qt::Window;
-            flags ^= Qt::SubWindow;
-            setWindowFlags(flags);
-        }
+
+        d->nonFullScreenFlags = flags & (Qt::Window | Qt::SubWindow);
+        flags |= Qt::Window;
+        flags &= ~Qt::SubWindow;
+        setWindowFlags(flags);
+        
         showFullScreen();
     } else {
         showNormal();
@@ -743,29 +733,22 @@ bool QVideoWidget::event(QEvent *event)
         Qt::WindowFlags flags = windowFlags();
 
         if (windowState() & Qt::WindowFullScreen) {
-            if (!(flags & Qt::Window)) {
-                d->nonFullScreenFlags = flags & (Qt::Window | Qt::SubWindow);
-                flags |= Qt::Window;
-                flags ^= Qt::SubWindow;
-                setWindowFlags(flags);
-            }
+            if (d->currentControl)
+                d->currentControl->setFullScreen(true);
+
             if (!d->wasFullScreen)
                 emit fullScreenChanged(d->wasFullScreen = true);
-
-            if (d->currentBackend)
-                d->currentBackend->setFullScreen(true);
         } else {
-            if (d->currentBackend)
-                d->currentBackend->setFullScreen(false);
+            if (d->currentControl)
+                d->currentControl->setFullScreen(false);
 
-            if (isVisible()) {
-                flags ^= (Qt::Window | Qt::SubWindow); //clear the flags...
+            if (d->wasFullScreen) {
+                flags &= ~(Qt::Window | Qt::SubWindow); //clear the flags...
                 flags |= d->nonFullScreenFlags; //then we reset the flags (window and subwindow)
                 setWindowFlags(flags);
-            }
 
-            if (d->wasFullScreen)
                 emit fullScreenChanged(d->wasFullScreen = false);
+            }
         }
     }
     return QWidget::event(event);
@@ -787,13 +770,11 @@ void QVideoWidget::showEvent(QShowEvent *event)
             d->currentBackend = d->windowBackend;
             d->setCurrentControl(d->windowBackend);
             d->outputControl->setOutput(QVideoOutputControl::WindowOutput);
-#ifndef QT_NO_MULTIMEDIA
         } else if (d->rendererBackend != 0) {
             d->rendererBackend->showEvent(event);
             d->currentBackend = d->rendererBackend;
             d->setCurrentControl(d->rendererBackend);
             d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
-#endif
         } else {
             d->outputControl->setOutput(QVideoOutputControl::NoOutput);
         }
@@ -803,6 +784,9 @@ void QVideoWidget::showEvent(QShowEvent *event)
 void QVideoWidget::hideEvent(QHideEvent *event)
 {
     Q_D(QVideoWidget);
+
+    if (d->currentBackend)
+        d->currentBackend->hideEvent(event);
 
     if (d->outputControl)
         d->outputControl->setOutput(QVideoOutputControl::NoOutput);

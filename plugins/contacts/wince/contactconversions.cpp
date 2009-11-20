@@ -166,9 +166,9 @@ static void processName(const QContactWinCEEngine*, const QVariantList& values, 
         ret.saveDetail(&name);
 }
 
-static void processFileAs(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
+static void processFileAs(const QContactWinCEEngine* engine, const QVariantList& values, QContact& ret)
 {
-    ret.setDisplayLabel(values[0].toString());
+    ret = engine->setContactDisplayLabel(values[0].toString(), ret);
     // isSynthesized gets fixed up after the whole contact is retrieved
 }
 
@@ -395,13 +395,13 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
 
         // Work address
         PoomContactElement workAddress;
-        workAddress.poom << PIMPR_BUSINESS_ADDRESS_STREET << PIMPR_BUSINESS_ADDRESS_POSTAL_CODE << PIMPR_BUSINESS_ADDRESS_CITY << PIMPR_HOME_ADDRESS_STATE << PIMPR_BUSINESS_ADDRESS_COUNTRY;
+        workAddress.poom << PIMPR_BUSINESS_ADDRESS_STREET << PIMPR_BUSINESS_ADDRESS_POSTAL_CODE << PIMPR_BUSINESS_ADDRESS_CITY << PIMPR_BUSINESS_ADDRESS_STATE << PIMPR_BUSINESS_ADDRESS_COUNTRY;
         workAddress.func = processWorkAddress;
         list.append(workAddress);
 
         // Other address
         PoomContactElement otherAddress;
-        otherAddress.poom << PIMPR_OTHER_ADDRESS_STREET << PIMPR_OTHER_ADDRESS_POSTAL_CODE << PIMPR_OTHER_ADDRESS_CITY << PIMPR_HOME_ADDRESS_STATE << PIMPR_OTHER_ADDRESS_COUNTRY;
+        otherAddress.poom << PIMPR_OTHER_ADDRESS_STREET << PIMPR_OTHER_ADDRESS_POSTAL_CODE << PIMPR_OTHER_ADDRESS_CITY << PIMPR_OTHER_ADDRESS_STATE << PIMPR_OTHER_ADDRESS_COUNTRY;
         otherAddress.func = processOtherAddress;
         list.append(otherAddress);
 
@@ -827,15 +827,10 @@ QContact QContactWinCEEngine::convertToQContact(IItem *contact) const
         HeapFree(GetProcessHeap(), 0, propvals);
     }
 
-    // Now, we need to check whether we got a display label
-    QContactDisplayLabel label = ret.displayLabel();
+    // Synthesize the display label.
     QContactManager::Error error;
     QString synth = synthesizeDisplayLabel(ret, error);
-    if (label.label().isEmpty() || label.label() == synth) {
-        label.setLabel(synth);
-        label.setSynthesized(true);
-        ret.saveDetail(&label);
-    }
+    ret = setContactDisplayLabel(synth, ret);
 
     return ret;
 }

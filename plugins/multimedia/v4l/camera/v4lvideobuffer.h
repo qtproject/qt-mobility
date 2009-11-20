@@ -42,11 +42,13 @@
 #ifndef V4LVIDEOBUFFER_H
 #define V4LVIDEOBUFFER_H
 
-#ifndef QT_NO_MULTIMEDIA
-
 #include <QSize>
 
 #include <QtMultimedia/QAbstractVideoBuffer>
+
+#include <linux/types.h>
+#include <sys/time.h>
+#include <sys/ioctl.h>
 #include <linux/videodev2.h>
 
 QT_BEGIN_NAMESPACE
@@ -75,7 +77,5 @@ private:
 
 
 QT_END_NAMESPACE
-
-#endif
 
 #endif

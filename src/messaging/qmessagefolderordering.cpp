@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 #include "qmessagefolderordering.h"
-#include "qmessagefolderordering_p.h"
 
 /*!
     \class QMessageFolderOrdering

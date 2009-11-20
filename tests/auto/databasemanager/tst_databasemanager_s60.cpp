@@ -48,7 +48,7 @@
 #include "servicemetadata_p.h"
 #include "databasemanager_s60_p.h"
 
-class DatabaseManagerUnitTest: public QObject
+class tst_DatabaseManager: public QObject
 {
     Q_OBJECT
 private slots:
@@ -86,7 +86,7 @@ private:
         QDir m_testdir;
 };
 
-void DatabaseManagerUnitTest::initTestCase()
+void tst_DatabaseManager::initTestCase()
 {
 #if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
     QSfwTestUtil::removeDatabases();
@@ -94,7 +94,7 @@ void DatabaseManagerUnitTest::initTestCase()
     m_dbm = new DatabaseManager;
 }
 
-void DatabaseManagerUnitTest::registerService()
+void tst_DatabaseManager::registerService()
 {
     m_testdir = QDir(QDir::currentPath() + "/testdata");
     ServiceMetaData parser("");
@@ -128,7 +128,7 @@ void DatabaseManagerUnitTest::registerService()
     }
 }
 
-void DatabaseManagerUnitTest::getInterfaces()
+void tst_DatabaseManager::getInterfaces()
 {
     QString iface("com.omni.device.accelerometer");
     QServiceFilter filter(iface);
@@ -198,7 +198,7 @@ void DatabaseManagerUnitTest::getInterfaces()
     QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
 }
 
-void DatabaseManagerUnitTest::getServiceNames()
+void tst_DatabaseManager::getServiceNames()
 {
     //try getting a lost of service names only in user database
     QStringList serviceNames;
@@ -236,7 +236,7 @@ void DatabaseManagerUnitTest::getServiceNames()
         QVERIFY(serviceNames.contains(expectedName, Qt::CaseInsensitive));
 }
 
-void DatabaseManagerUnitTest::defaultService()
+void tst_DatabaseManager::defaultService()
 {
     QServiceInterfaceDescriptor descriptor;
 
@@ -362,7 +362,7 @@ void DatabaseManagerUnitTest::defaultService()
     QCOMPARE(m_dbm->lastError().code(), DBError::NotFound);
 }
 
-void DatabaseManagerUnitTest::unregisterService()
+void tst_DatabaseManager::unregisterService()
 {
     //try remove a service that only exists in the user database
     QServiceFilter filter;
@@ -415,7 +415,7 @@ void DatabaseManagerUnitTest::unregisterService()
 #endif
 }
 
-bool DatabaseManagerUnitTest::compareDescriptor(QServiceInterfaceDescriptor interface,
+bool tst_DatabaseManager::compareDescriptor(QServiceInterfaceDescriptor interface,
         QString interfaceName, QString serviceName, int majorVersion, int minorVersion)
 {
 
@@ -427,7 +427,7 @@ bool DatabaseManagerUnitTest::compareDescriptor(QServiceInterfaceDescriptor inte
             QStringList());
 }
 
-bool DatabaseManagerUnitTest::compareDescriptor(QServiceInterfaceDescriptor interface,
+bool tst_DatabaseManager::compareDescriptor(QServiceInterfaceDescriptor interface,
     QString interfaceName, QString serviceName, int majorVersion, int minorVersion,
     QStringList capabilities, QString filePath, QString serviceDescription,
     QString interfaceDescription)
@@ -503,7 +503,7 @@ bool DatabaseManagerUnitTest::compareDescriptor(QServiceInterfaceDescriptor inte
     return true;
 }
 
-void DatabaseManagerUnitTest::CWRTXmlCompatability()
+void tst_DatabaseManager::CWRTXmlCompatability()
 {
     if (m_dbm != 0 ) {
         delete m_dbm;
@@ -554,7 +554,7 @@ void DatabaseManagerUnitTest::CWRTXmlCompatability()
    
 } 
 
-void DatabaseManagerUnitTest::modifyPermissionSet(QFile::Permissions &permsSet,
+void tst_DatabaseManager::modifyPermissionSet(QFile::Permissions &permsSet,
                                                     int perm)
 {
 
@@ -600,14 +600,14 @@ void DatabaseManagerUnitTest::modifyPermissionSet(QFile::Permissions &permsSet,
     }
 }
 
-void DatabaseManagerUnitTest::cleanupTestCase()
+void tst_DatabaseManager::cleanupTestCase()
 {
 #if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
     QSfwTestUtil::removeDatabases();
 #endif
 }
 
-QTEST_MAIN(DatabaseManagerUnitTest)
+QTEST_MAIN(tst_DatabaseManager)
 
 #include "tst_databasemanager_s60.moc"
 

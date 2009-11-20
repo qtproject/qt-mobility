@@ -10,6 +10,8 @@ INCLUDEPATH += ../../../../src/contacts \
                ../../../../src/contacts/requests \
                ../../../../src/contacts/filters
 
+INCLUDEPATH += ../../
+
 qtAddLibrary(QtContacts)
 
 DEFINES += MALICIOUSPLUGINTARGET=contacts_maliciousplugin
