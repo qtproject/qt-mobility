@@ -27,13 +27,9 @@ include(../../../common.pri)
 
 symbian {
     SOURCES += tst_databasemanager_s60.cpp \
-                    servicemetadata.cpp \
-                    databasemanager_s60.cpp \
-                    dberror.cpp \
-                    ../qsfwtestutil.cpp
+               ../qsfwtestutil.cpp
 
-    HEADERS += databasemanager_s60_p.h \
-               dberror_p.h \
+    HEADERS += \
                ../qsfwtestutil.h
 
    libBlock = \

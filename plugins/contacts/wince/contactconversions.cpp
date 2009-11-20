@@ -41,6 +41,7 @@
 #include <QDebug>
 
 #include "qcontactmanager.h"
+#include "qtcontacts.h"
 #include "qcontactwincebackend_p.h"
 
 /*!
@@ -165,9 +166,9 @@ static void processName(const QContactWinCEEngine*, const QVariantList& values, 
         ret.saveDetail(&name);
 }
 
-static void processFileAs(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
+static void processFileAs(const QContactWinCEEngine* engine, const QVariantList& values, QContact& ret)
 {
-    ret.setDisplayLabel(values[0].toString());
+    ret = engine->setContactDisplayLabel(values[0].toString(), ret);
     // isSynthesized gets fixed up after the whole contact is retrieved
 }
 
@@ -826,15 +827,10 @@ QContact QContactWinCEEngine::convertToQContact(IItem *contact) const
         HeapFree(GetProcessHeap(), 0, propvals);
     }
 
-    // Now, we need to check whether we got a display label
-    QContactDisplayLabel label = ret.displayLabel();
+    // Synthesize the display label.
     QContactManager::Error error;
     QString synth = synthesizeDisplayLabel(ret, error);
-    if (label.label().isEmpty() || label.label() == synth) {
-        label.setLabel(synth);
-        label.setSynthesized(true);
-        ret.saveDetail(&label);
-    }
+    ret = setContactDisplayLabel(synth, ret);
 
     return ret;
 }

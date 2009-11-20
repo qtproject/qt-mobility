@@ -41,7 +41,7 @@
 #ifndef QGEOPOSITIONINFO_H
 #define QGEOPOSITIONINFO_H
 
-#include "qlocationglobal.h"
+#include "qmobilityglobal.h"
 #include "qgeocoordinate.h"
 
 #include <QDateTime>

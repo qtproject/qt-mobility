@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "qserviceglobal.h"
+#include "qmobilityglobal.h"
 #include <QtSql>
 #include <QList>
 #include "servicemetadata_p.h"

@@ -42,19 +42,16 @@
 
 QList<CContactItemField *> CntTransformNote::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList;
+    if(detail.definitionName() != QContactNote::DefinitionName)
+       User::Leave(KErrArgument);
+
+    QList<CContactItemField *> fieldList;
 
 	//cast to note
 	const QContactNote &note(static_cast<const QContactNote&>(detail));
 
-	//create new field
-	TPtrC fieldText(reinterpret_cast<const TUint16*>(note.note().utf16()));
-	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldNote);
- 	newField->TextStorage()->SetTextL(fieldText);
-	newField->SetMapping(KUidContactFieldVCardMapNOTE);
-
-	fieldList.append(newField);
-	CleanupStack::Pop(newField);
+    //create new fields without contexts
+    transformToTextFieldL(note, fieldList, note.note(), KUidContactFieldNote, KUidContactFieldVCardMapNOTE, false);
 
 	return fieldList;
 }

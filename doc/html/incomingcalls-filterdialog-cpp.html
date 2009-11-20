@@ -82,7 +82,7 @@
         add = new QPushButton(tr(&quot;Add Filter&quot;));
         done = new QPushButton(tr(&quot;Done&quot;));
 
-            connect(cancel, SIGNAL(clicked()), this, SLOT(cancelClicked()));
+        connect(cancel, SIGNAL(clicked()), this, SLOT(cancelClicked()));
         connect(add, SIGNAL(clicked()), this, SLOT(addClicked()));
         connect(done, SIGNAL(clicked()), this, SLOT(doneClicked()));
 
@@ -109,9 +109,9 @@
         btnLayout-&gt;addWidget(add);
         btnLayout-&gt;addWidget(done);
 
-            vertLayout-&gt;addLayout(formLayout);
-            vertLayout-&gt;addWidget(expression);
-            formLayout-&gt;addRow(btnLayout);
+        vertLayout-&gt;addLayout(formLayout);
+        vertLayout-&gt;addWidget(expression);
+        formLayout-&gt;addRow(btnLayout);
 
         setLayout(vertLayout);
     }
@@ -188,11 +188,11 @@
         fil.setDetailDefinitionName(defName, fieldName);
         fil.setValue(value-&gt;text());
 
-        Qt::MatchFlags matchFlags;
+        QContactFilter::MatchFlags matchFlags;
         switch (match-&gt;currentIndex()) {
             case 0:
             {
-                matchFlags |= Qt::MatchExactly;
+                matchFlags |= QContactFilter::MatchExactly;
 
                 exprMatch = &quot;EQUALS&quot;;
             }
@@ -200,7 +200,7 @@
 
             case 1:
             {
-                matchFlags |= Qt::MatchStartsWith;
+                matchFlags |= QContactFilter::MatchStartsWith;
 
                 exprMatch = &quot;STARTSWITH&quot;;
             }
@@ -208,7 +208,7 @@
 
             case 2:
             {
-                matchFlags |= Qt::MatchContains;
+                matchFlags |= QContactFilter::MatchContains;
 
                 exprMatch = &quot;CONTAINS&quot;;
             }
@@ -216,7 +216,7 @@
 
             default:
             {
-                matchFlags |= Qt::MatchEndsWith;
+                matchFlags |= QContactFilter::MatchEndsWith;
 
                 exprMatch = &quot;ENDSWITH&quot;;
             }
@@ -274,7 +274,7 @@
         match-&gt;setCurrentIndex(0);
         join-&gt;setCurrentIndex(0);
         expression-&gt;setText(tr(&quot;Cumulative Expression:&quot;));
-            show();
+        show();
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

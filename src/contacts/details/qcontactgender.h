@@ -49,7 +49,7 @@
 #include "qcontact.h"
 
 /* Leaf class */
-class QTCONTACTS_EXPORT QContactGender : public QContactDetail
+class Q_CONTACTS_EXPORT QContactGender : public QContactDetail
 {
 public:
 #ifdef Q_QDOC

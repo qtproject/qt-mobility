@@ -179,6 +179,10 @@
     would find on a music player, combined with FM radio, and camera for still
     and video recording.
 
+    \section2 Multimedia Dependencies and Requirements
+
+    Multimedia is dependent on the QtMultimedia module of Qt. 
+
     \section1 Service Framework
 
     A platform independent method of finding Services. A 'service' is an
@@ -192,6 +196,11 @@
     app does not need to be concerned with the underlying protocol, where the
     servers are, the hardware peculiarities with networking and other low
     level details.
+
+    \section2 Service Framework Dependencies and Requirements
+
+    The Service Framework is dependent on SQLite version 3 and that
+    Qt has been built with the \l {QSQLITE} {QSQLITE driver}.
 
     \section1 System Information
 

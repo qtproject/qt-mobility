@@ -45,7 +45,7 @@
 #include "qcontactfilter.h"
 
 class QContactDetailRangeFilterPrivate;
-class QTCONTACTS_EXPORT QContactDetailRangeFilter : public QContactFilter
+class Q_CONTACTS_EXPORT QContactDetailRangeFilter : public QContactFilter
 {
 public:
     QContactDetailRangeFilter();

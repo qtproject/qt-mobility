@@ -44,7 +44,7 @@
 
 #include <QStringList>
 
-#include "qserviceglobal.h"
+#include "qmobilityglobal.h"
 
 QT_BEGIN_HEADER
 

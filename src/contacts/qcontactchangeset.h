@@ -46,11 +46,12 @@
 #include "qtcontactsglobal.h"
 
 #include <QSet>
+#include <QPair>
 #include <QSharedDataPointer>
 
 class QContactManagerEngine;
 class QContactChangeSetData;
-class QTCONTACTS_EXPORT QContactChangeSet
+class Q_CONTACTS_EXPORT QContactChangeSet
 {
 public:
     QContactChangeSet();
@@ -67,6 +68,7 @@ public:
     QSet<QContactLocalId>& removedContacts();
     QSet<QContactLocalId>& addedRelationshipsContacts();
     QSet<QContactLocalId>& removedRelationshipsContacts();
+    QPair<QContactLocalId, QContactLocalId>& oldAndNewSelfContactId();
 
     void clear();
 

@@ -5,16 +5,12 @@ TEMPLATE = app
 TARGET = 
 QT += testlib
 CONFIG += qtestlib
+include(../tsrc.pri)
 
 DEFINES += PBK_UNIT_TEST
 DEPENDPATH += .
 INCLUDEPATH += .
-INCLUDEPATH += .\inc
-INCLUDEPATH += ..\..\inc
-INCLUDEPATH += ..\..\rss
-INCLUDEPATH += ..\..\..\..\contacts
-INCLUDEPATH += ..\..\..\..\..\contacts
-include(../tsrc.pri)
+INCLUDEPATH += $$SYMBIAN_PATHS
 
 symbian:
  { 
@@ -33,9 +29,5 @@ symbian:
     BLD_INF_RULES.prj_exports += \
         "test_data.txt \epoc32\winscw\c\filtering\test_data.txt"
     
-    LIBS += \
-        -lcntmodel \
-        -lQtContacts \
-        -lcentralrepository \
-        -lestor
+    LIBS += $$SYMBIAN_LIBS
 }

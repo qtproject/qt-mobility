@@ -7,7 +7,7 @@ include(../../common.pri)
 DEFINES += QT_BUILD_CFW_LIB QT_MAKEDLL
 
 
-PUBLIC_HEADERS += qcontextglobal.h \
+PUBLIC_HEADERS += qpublishsubscribeglobal.h \
            qvaluespace.h \
            qvaluespaceprovider.h \
            qvaluespacesubscriber.h
@@ -48,7 +48,7 @@ unix:!symbian {
 		   qpacketprotocol_p.h
         SOURCES += sharedmemorylayer.cpp \
            	   qmallocpool.cpp \
-                   qsystemreadwritelock.cpp \
+                   qsystemreadwritelock_unix.cpp \
 		   qpacketprotocol.cpp
     }
 }
@@ -56,7 +56,7 @@ unix:!symbian {
 win32 {
     HEADERS += qsystemreadwritelock_p.h
     SOURCES += \
-               qsystemreadwritelock.cpp \
+               qsystemreadwritelock_win.cpp \
                registrylayer_win.cpp
 
     !wince*:LIBS += -ladvapi32

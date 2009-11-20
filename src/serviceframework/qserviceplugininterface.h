@@ -42,7 +42,7 @@
 #ifndef QSERVICEPLUGININTERFACE_H
 #define QSERVICEPLUGININTERFACE_H
 
-#include "qserviceglobal.h"
+#include "qmobilityglobal.h"
 #include <QtPlugin>
 
 QT_BEGIN_HEADER

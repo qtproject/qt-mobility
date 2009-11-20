@@ -2741,11 +2741,8 @@ void tst_QContactManagerFiltering::dumpContactDifferences(const QContact& ca, co
     QCOMPARE(n1.suffix(), n2.suffix());
     QCOMPARE(n1.customLabel(), n2.customLabel());
 
-#if 0 // XXX TODO: update this after removing deprecated API
     // Check the display label
-    QCOMPARE(a.displayLabel().label(), b.displayLabel().label());
-    QCOMPARE(a.displayLabel().isSynthesized(), b.displayLabel().isSynthesized());
-#endif
+    QCOMPARE(a.displayLabel(), b.displayLabel());
 
     // Now look at the rest
     QList<QContactDetail> aDetails = a.details();

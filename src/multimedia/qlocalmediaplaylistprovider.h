@@ -58,7 +58,9 @@ public:
     virtual bool isReadOnly() const;
 
     virtual bool appendItem(const QMediaContent &content);
+    virtual bool appendItems(const QList<QMediaContent> &items);
     virtual bool insertItem(int pos, const QMediaContent &content);
+    virtual bool insertItems(int pos, const QList<QMediaContent> &items);
     virtual bool removeItem(int pos);
     virtual bool removeItems(int start, int end);
     virtual bool clear();

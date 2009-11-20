@@ -42,25 +42,12 @@
 #ifndef QTCONTACTSGLOBAL_H
 #define QTCONTACTSGLOBAL_H
 
-#include <qglobal.h>
+#include <qmobilityglobal.h>
 #include <QString>
 
-#ifdef BUILD_QTCONTACTS
-#define QTCONTACTS_EXPORT Q_DECL_EXPORT
-#else
-#define QTCONTACTS_EXPORT Q_DECL_IMPORT
-#endif
-
- #define QTCONTACTS_VERSION_NAME "com.nokia.qt.mobility.contacts.api.version" 
- #define QTCONTACTS_IMPLEMENTATION_VERSION_NAME "com.nokia.qt.mobility.contacts.implementation.version" 
- #define QTCONTACTS_VERSION 1 
-
-// XXX
-#if defined(EXPORT_PRIVATE)
-#define QTCONTACTS_PRIVATE_EXPORT HB_EXPORT
-#else
-#define QTCONTACTS_PRIVATE_EXPORT
-#endif
+#define QTCONTACTS_VERSION_NAME "com.nokia.qt.mobility.contacts.api.version" 
+#define QTCONTACTS_IMPLEMENTATION_VERSION_NAME "com.nokia.qt.mobility.contacts.implementation.version" 
+#define QTCONTACTS_VERSION 1 
 
 typedef quint32 QContactLocalId; // XXX Put this else where
 

@@ -76,7 +76,8 @@ private:
                                TPtrC16 firstnameField, QString firstnameDetail,
                                TPtrC16 middlenameField, QString middlenameDetail,
                                TPtrC16 lastnameField, QString lastnameDetail,
-                               TPtrC16 suffixField, QString suffixDetail);
+                               TPtrC16 suffixField, QString suffixDetail,
+                               TPtrC16 customLabelField, QString customLabelDetail);
     void validateCntTransformNicknameL(TPtrC16 field, QString detail);
     void validateCntTransformPhonenumberL(TPtrC16 field, QString detail);
     void validateCntTransformAddressL(TPtrC16 countryField, QString countryDetail,
@@ -101,11 +102,11 @@ private:
     void validateCntTransformFamilyL(TPtrC16 spouseField, QString spouseDetail,
                                  TPtrC16 childField, QString childDetail);
     void validateContextsL(CntTransformContactData* transformContactData) const;
-    void TestCntTransformContactData::validateGetIdForField(
+    void validateGetIdForField(
                         const CntTransformContactData& transformContactData,
                         const QString& filedname,
                         const quint32  idValue) const;
-    void TestCntTransformContactData::validateSupportedSortingFieldTypes(
+    void validateSupportedSortingFieldTypes(
             const CntTransformContactData& transformContactData,
             const QString& filedname,
             const QList<TUid>&  checkSortFieldList )const;

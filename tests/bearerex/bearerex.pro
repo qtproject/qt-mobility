@@ -12,6 +12,8 @@ FORMS += sessiondialog.ui \
 #not really a test case but deployment happens same way
 CONFIG += testcase
 
+include(../../common.pri)
+
 DEPENDPATH += .
 INCLUDEPATH += . \
                ../../src/bearer

@@ -333,8 +333,34 @@ void tst_QContactAsync::contactFetch()
             }
         }
 
-        // ensure that the contact is the same
-        QVERIFY(contacts.at(i) == currRestricted);
+        // now find the contact in the retrieved list which our restricted contact mimics
+        QContact retrievedRestricted;
+        bool found = false;
+        foreach (const QContact& retrieved, contacts) {
+            if (retrieved.id() == currRestricted.id()) {
+                retrievedRestricted = retrieved;
+                found = true;
+            }
+        }
+
+        QVERIFY(found); // must exist or fail.
+
+        // ensure that the contact is the same (except synth fields)
+        QList<QContactDetail> fdets = retrievedRestricted.details();
+        QList<QContactDetail> rdets = currRestricted.details();
+        foreach (const QContactDetail& det, fdets) {
+            // ignore backend synthesised details
+            // again, this requires a "default contact details" function to work properly.
+            if (det.definitionName() == QContactDisplayLabel::DefinitionName
+                || det.definitionName() == QContactTimestamp::DefinitionName) {
+                continue;
+            }
+
+            // everything else must exist in both.
+            if(!rdets.contains(det)) {
+                qWarning("A detail exists in retrieved contact which doesn't exist in restricted contact!  This could be due to backend synthesization, or represent a bug!  (Definition name: %s)", det.definitionName().toAscii().constData());
+            }
+        }
     }
 
     // cancelling
@@ -1216,7 +1242,7 @@ void tst_QContactAsync::relationshipFetch()
     QCOMPARE(rels, result);
 
     // specific relationship type retrieval
-    rfr.setRelationshipType(QContactRelationship::IsManagerOf);
+    rfr.setRelationshipType(QContactRelationship::HasManager);
     QVERIFY(!rfr.cancel()); // not started
     QVERIFY(rfr.start());
     QVERIFY(rfr.isActive());
@@ -1229,7 +1255,7 @@ void tst_QContactAsync::relationshipFetch()
     QVERIFY(rfr.isFinished());
     QVERIFY(!rfr.isActive());
 
-    rels = cm->relationships(QContactRelationship::IsManagerOf);
+    rels = cm->relationships(QContactRelationship::HasManager);
     result = rfr.relationships();
     QCOMPARE(rels, result);
 
@@ -1417,7 +1443,7 @@ void tst_QContactAsync::relationshipRemove()
     // specific source, destination and type removal
     rrr.setFirst(aId);
     rrr.setSecond(cId);
-    rrr.setRelationshipType(QContactRelationship::IsAssistantOf);
+    rrr.setRelationshipType(QContactRelationship::HasAssistant);
     rrr.setManager(cm);
     qRegisterMetaType<QContactRelationshipRemoveRequest*>("QContactRelationshipRemoveRequest*");
     QSignalSpy spy(&rrr, SIGNAL(progress(QContactRelationshipRemoveRequest*)));
@@ -1427,7 +1453,7 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(!rrr.cancel());
     QVERIFY(!rrr.waitForFinished());
     QVERIFY(!rrr.waitForProgress());
-    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::IsAssistantOf)));
+    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::HasAssistant)));
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
     QVERIFY(rrr.isActive());
@@ -1439,19 +1465,19 @@ void tst_QContactAsync::relationshipRemove()
     QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
     QVERIFY(rrr.isFinished());
     QVERIFY(!rrr.isActive());
-    QCOMPARE(cm->relationships(QContactRelationship::IsAssistantOf, cId, QContactRelationshipFilter::Second).size(), 1);
+    QCOMPARE(cm->relationships(QContactRelationship::HasAssistant, cId, QContactRelationshipFilter::Second).size(), 1);
 
     // specific relationship type removal
     rrr.setFirst(QContactId());
     rrr.setSecond(QContactId());
-    rrr.setRelationshipType(QContactRelationship::IsSpouseOf);
+    rrr.setRelationshipType(QContactRelationship::HasSpouse);
     rrr.setManager(cm);
     QCOMPARE(rrr.manager(), cm);
     QVERIFY(!rrr.isActive());
     QVERIFY(!rrr.cancel());
     QVERIFY(!rrr.waitForFinished());
     QVERIFY(!rrr.waitForProgress());
-    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::IsSpouseOf)));
+    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::HasSpouse)));
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
     QVERIFY(rrr.isActive());
@@ -1464,14 +1490,14 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(rrr.isFinished());
     QVERIFY(!rrr.isActive());
 
-    QCOMPARE(cm->relationships(QContactRelationship::IsSpouseOf).size(), 0);
-    (void)(cm->relationships(QContactRelationship::IsSpouseOf)); // check that it has already been removed.
+    QCOMPARE(cm->relationships(QContactRelationship::HasSpouse).size(), 0);
+    (void)(cm->relationships(QContactRelationship::HasSpouse)); // check that it has already been removed.
     QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
     // remove (asynchronously) a nonexistent relationship - should fail.
     rrr.setFirst(cId);
     rrr.setSecond(aId);
-    rrr.setRelationshipType(QContactRelationship::IsManagerOf);
+    rrr.setRelationshipType(QContactRelationship::HasManager);
     rrr.setManager(cm);
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
@@ -1485,20 +1511,20 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(rrr.isFinished());
     QVERIFY(!rrr.isActive());
 
-    QCOMPARE(cm->relationships(QContactRelationship::IsManagerOf, cId, QContactRelationshipFilter::First).size(), 0);
+    QCOMPARE(cm->relationships(QContactRelationship::HasManager, cId, QContactRelationshipFilter::First).size(), 0);
     QCOMPARE(rrr.error(), QContactManager::DoesNotExistError);
 
     // specific relationship type plus source removal
     rrr.setFirst(bId);
     rrr.setSecond(QContactId());
-    rrr.setRelationshipType(QContactRelationship::IsAssistantOf);
+    rrr.setRelationshipType(QContactRelationship::HasAssistant);
     rrr.setManager(cm);
     QCOMPARE(rrr.manager(), cm);
     QVERIFY(!rrr.isActive());
     QVERIFY(!rrr.cancel());
     QVERIFY(!rrr.waitForFinished());
     QVERIFY(!rrr.waitForProgress());
-    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::IsAssistantOf)));
+    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::HasAssistant)));
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
     QVERIFY(rrr.isActive());
@@ -1511,7 +1537,7 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(rrr.isFinished());
     QVERIFY(!rrr.isActive());
 
-    QCOMPARE(cm->relationships(QContactRelationship::IsAssistantOf, bId, QContactRelationshipFilter::First).size(), 0);
+    QCOMPARE(cm->relationships(QContactRelationship::HasAssistant, bId, QContactRelationshipFilter::First).size(), 0);
     QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
     // specific source removal
@@ -1617,7 +1643,7 @@ void tst_QContactAsync::relationshipSave()
     int originalCount = cm->relationships(aId).size();
     QContactRelationship testRel;
     testRel.setFirst(aId);
-    testRel.setRelationshipType(QContactRelationship::IsSpouseOf);
+    testRel.setRelationshipType(QContactRelationship::HasSpouse);
     testRel.setSecond(bId);
     QList<QContactRelationship> saveList;
     saveList << testRel;
@@ -1644,7 +1670,7 @@ void tst_QContactAsync::relationshipSave()
     QVERIFY(rsr.isFinished());
     QVERIFY(!rsr.isActive());
 
-    QList<QContactRelationship> expected = cm->relationships(QContactRelationship::IsSpouseOf, aId, QContactRelationshipFilter::First);
+    QList<QContactRelationship> expected = cm->relationships(QContactRelationship::HasSpouse, aId, QContactRelationshipFilter::First);
     QList<QContactRelationship> result = rsr.relationships();
     QCOMPARE(expected, result);
     QVERIFY(result.contains(testRel));
@@ -1669,7 +1695,7 @@ void tst_QContactAsync::relationshipSave()
     QVERIFY(!rsr.isActive());
 
     expected.clear();
-    expected = cm->relationships(QContactRelationship::IsSpouseOf, aId, QContactRelationshipFilter::First);
+    expected = cm->relationships(QContactRelationship::HasSpouse, aId, QContactRelationshipFilter::First);
     result = rsr.relationships();
     QCOMPARE(result, QList<QContactRelationship>() << testRel);
     QVERIFY(expected.contains(testRel));
@@ -1946,25 +1972,25 @@ QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
     QContactRelationship arb;
     arb.setFirst(a.id());
     arb.setSecond(b.id());
-    arb.setRelationshipType(QContactRelationship::IsManagerOf);
+    arb.setRelationshipType(QContactRelationship::HasManager);
     cm->saveRelationship(&arb);
 
     QContactRelationship brc;
     brc.setFirst(b.id());
     brc.setSecond(c.id());
-    brc.setRelationshipType(QContactRelationship::IsAssistantOf);
+    brc.setRelationshipType(QContactRelationship::HasAssistant);
     cm->saveRelationship(&brc);
 
     QContactRelationship cra;
     cra.setFirst(c.id());
     cra.setSecond(a.id());
-    cra.setRelationshipType(QContactRelationship::IsSpouseOf);
+    cra.setRelationshipType(QContactRelationship::HasSpouse);
     cm->saveRelationship(&cra);
 
     QContactRelationship arc;
     arc.setFirst(a.id());
     arc.setSecond(c.id());
-    arc.setRelationshipType(QContactRelationship::IsAssistantOf);
+    arc.setRelationshipType(QContactRelationship::HasAssistant);
     cm->saveRelationship(&arc);
 
     QContactRelationship crb;

@@ -41,7 +41,7 @@
 #ifndef QNMEAPOSITIONINFOSOURCE_H
 #define QNMEAPOSITIONINFOSOURCE_H
 
-#include "qlocationglobal.h"
+#include "qmobilityglobal.h"
 #include "qgeopositioninfosource.h"
 
 class QNmeaPositionInfoSourcePrivate;

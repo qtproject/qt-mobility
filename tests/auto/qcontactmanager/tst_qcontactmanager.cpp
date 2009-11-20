@@ -254,8 +254,8 @@ void tst_QContactManager::dumpContactDifferences(const QContact& ca, const QCont
 
     // now test specifically the display label and the type
     if (a.displayLabel() != b.displayLabel()) {
-        qDebug() << "A contact display label =" << a.displayLabel().label();
-        qDebug() << "B contact display label =" << b.displayLabel().label();
+        qDebug() << "A contact display label =" << a.displayLabel();
+        qDebug() << "B contact display label =" << b.displayLabel();
     }
     if (a.type() != b.type()) {
         qDebug() << "A contact type =" << a.type();
@@ -1988,8 +1988,6 @@ void tst_QContactManager::detailDefinitions()
 
 void tst_QContactManager::displayName()
 {
-    QSKIP("This test needs to be updated after we remove the deprecated API!", SkipSingle);
-#if 0 // XXX TODO: update displayName tests without deprecated API
     QFETCH(QString, uri);
     QContactManager* cm = QContactManager::fromUri(uri);
 
@@ -2001,51 +1999,40 @@ void tst_QContactManager::displayName()
     /* Try to make this a bit more consistent by using a single name */
     QContact d;
     QContactName name;
-    name.setFirst("Wesley");
+    name.setCustomLabel("Wesley");
 
-    QVERIFY(d.displayLabel().label().isEmpty());
+    QVERIFY(d.displayLabel().isEmpty());
     QVERIFY(d.saveDetail(&name));
-
-    QVERIFY(cm->saveContact(&d));
 
     QString synth = cm->synthesizeDisplayLabel(d);
 
     /*
-     * The display label is not updated until you save the contact, or
-     * do it manually.
+     * The display label is not updated until you save the contact.
      */
+    QVERIFY(cm->saveContact(&d));
     d = cm->contact(d.id().localId());
     QVERIFY(!d.isEmpty());
-
-    QCOMPARE(d.displayLabel().label(), synth);
-    QVERIFY(d.displayLabel().isSynthesized() == true);
-
-    /* Set something else */
-    d.setDisplayLabel("The grand old duchess");
-    QVERIFY(d.displayLabel().label() == "The grand old duchess");
-    QVERIFY(d.displayLabel().isSynthesized() == false);
+    QCOMPARE(d.displayLabel(), synth);
 
     /* Remove the detail via removeDetail */
-    QContactDisplayLabel old = d.displayLabel();
+    QContactDisplayLabel old;
     int count = d.details().count();
-    QVERIFY(d.removeDetail(&old));
+    QVERIFY(!d.removeDetail(&old)); // should fail.
     QVERIFY(d.isEmpty() == false);
-    QVERIFY(d.details().count() == count); // it should not be removed, only cleared (!)
+    QVERIFY(d.details().count() == count); // it should not be removed!
 
     /* Save the contact again */
     QVERIFY(cm->saveContact(&d));
     d = cm->contact(d.id().localId());
     QVERIFY(!d.isEmpty());
 
-    /* Make sure we go back to the old synth version */
-    QVERIFY(d.displayLabel().isSynthesized() == true);
-    QCOMPARE(d.displayLabel().label(), synth);
+    /* Make sure the label is still the synth version */
+    QCOMPARE(d.displayLabel(), synth);
 
     /* And delete the contact */
     QVERIFY(cm->removeContact(d.id().localId()));
 
     delete cm;
-#endif
 }
 
 void tst_QContactManager::actionPreferences()
@@ -2281,16 +2268,16 @@ void tst_QContactManager::relationships()
         QSKIP("Skipping: This manager does not support relationships!", SkipSingle);
 
     int totalRelationships = cm->relationships().size();
-    int totalManagerRelationships = cm->relationships(QContactRelationship::IsManagerOf).size();
+    int totalManagerRelationships = cm->relationships(QContactRelationship::HasManager).size();
 
     QStringList availableRelationshipTypes = cm->supportedRelationshipTypes();
     if (availableRelationshipTypes.isEmpty()) {
         // if empty, but has the relationships feature, then it must support arbitrary types.
         // so, add a few types that we can use.
         // if it doesn't support relationships, then it doesn't matter anyway.
-        availableRelationshipTypes.append(QContactRelationship::IsManagerOf);
-        availableRelationshipTypes.append(QContactRelationship::IsSpouseOf);
-        availableRelationshipTypes.append(QContactRelationship::IsAssistantOf);
+        availableRelationshipTypes.append(QContactRelationship::HasManager);
+        availableRelationshipTypes.append(QContactRelationship::HasSpouse);
+        availableRelationshipTypes.append(QContactRelationship::HasAssistant);
     }
 
     QContact source;
@@ -2369,7 +2356,7 @@ void tst_QContactManager::relationships()
     }
 
     totalRelationships = cm->relationships().size();
-    totalManagerRelationships = cm->relationships(QContactRelationship::IsManagerOf).size();
+    totalManagerRelationships = cm->relationships(QContactRelationship::HasManager).size();
 
     QContactId dest1Uri = dest1.id();
     QContactId dest1EmptyUri;
@@ -2515,7 +2502,7 @@ void tst_QContactManager::relationships()
     br2.setRelationshipType(QContactRelationship::HasMember);
     br3.setFirst(source.id());
     br3.setSecond(dest3.id());
-    br3.setRelationshipType(QContactRelationship::IsAssistantOf);
+    br3.setRelationshipType(QContactRelationship::HasAssistant);
     batchList << br1 << br2 << br3;
 
     // ensure that the batch save works properly

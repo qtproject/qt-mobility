@@ -4691,12 +4691,13 @@ bool MapiSession::showForm(IMessage* message, IMAPIFolder* folder, LPMDB store)
             if(hr==MAPI_E_USER_CANCEL)
             {
                 qWarning() << "Show form cancelled";
-                return false;
+                return true;
             }
-            else if(hr!=S_OK)
+            else
             {
-                qWarning() << "Show form failed";
-                return false;
+                if(hr != S_OK)
+                    qWarning() << "Show form failed";
+                return hr == S_OK;
             }
         }
         else
