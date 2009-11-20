@@ -55,11 +55,12 @@
 #include <mapix.h>
 #include <objbase.h>
 #include <mapiutil.h>
+#include <qmobilityglobal.h>
 #ifdef _WIN32_WCE
 #include <cemapi.h>
 #endif
 
-using namespace WinHelpers;
+using namespace QtMobility::WinHelpers;
 
 QTM_BEGIN_NAMESPACE
 
@@ -797,6 +798,8 @@ bool QMessageServiceAction::retrieve(const QMessageId &aMessageId, const QMessag
         return retrieveBody(aMessageId);
 
     //TODO download message attachment programatically using MAPI impossible?
+#else
+    Q_UNUSED(id)
 #endif
 
     return false;

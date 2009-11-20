@@ -721,4 +721,6 @@ QNativeWifiEngine *QNativeWifiEngine::instance()
     return engine;
 }
 
+#include "moc_qnativewifiengine_win_p.cpp"
+
 QTM_END_NAMESPACE

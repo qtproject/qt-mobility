@@ -4819,5 +4819,6 @@ void MapiSession::flushNotifyQueue()
 
 
 #include "winhelpers.moc"
+#include "moc_winhelpers_p.cpp"
 
 QTM_END_NAMESPACE

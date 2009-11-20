@@ -47,7 +47,7 @@
 
 #include "qcontactmanager.h"
 
-QTM_BEGIN_NAMESPACE
+
 
 /*!
  * \class QContactFilter
@@ -91,11 +91,13 @@ QTM_BEGIN_NAMESPACE
  */
 
 #if !defined(Q_CC_MWERKS)
-template<> QContactFilterPrivate *QSharedDataPointer<QContactFilterPrivate>::clone()
+template<> QTM_PREPEND_NAMESPACE(QContactFilterPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QContactFilterPrivate)>::clone()
 {
     return d->clone();
 }
 #endif
+
+QTM_BEGIN_NAMESPACE
 
 /*! Constructs an empty filter */
 QContactFilter::QContactFilter()

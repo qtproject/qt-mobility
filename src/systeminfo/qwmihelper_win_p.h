@@ -54,6 +54,7 @@
 //
 
 #ifndef Q_CC_MINGW
+#include <qmobilityglobal.h>
 #include <QObject>
 #include <QVariant>
 #include <QString>

@@ -49,10 +49,10 @@
 
 
 class QStringList;
+class QAudioFormat;
 
 QTM_BEGIN_NAMESPACE
 
-class QAudioFormat;
 class Q_MEDIA_EXPORT QAudioEncoderControl : public QMediaControl
 {
     Q_OBJECT

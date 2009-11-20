@@ -584,7 +584,9 @@ QNlaEngine *QNlaEngine::instance()
     return nlaEngine();
 }
 
+#include "qnlaengine_win.moc"
+#include "moc_qnlaengine_win_p.cpp"
 QTM_END_NAMESPACE
 
-#include "qnlaengine_win.moc"
+
 

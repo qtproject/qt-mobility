@@ -52,9 +52,10 @@
 class QUrl;
 class QSize;
 
+class QAudioFormat;
+
 QTM_BEGIN_NAMESPACE
 
-class QAudioFormat;
 class QMediaRecorderService;
 class QAudioEncoderSettings;
 class QVideoEncoderSettings;

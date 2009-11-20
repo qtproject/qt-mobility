@@ -48,6 +48,8 @@
 
 #include <evr.h>
 
+QTM_USE_NAMESPACE
+
 class QEvrVideoOverlay : public QVideoWindowControl, public QMFActivate
 {
     Q_OBJECT

@@ -82,7 +82,7 @@
 #ifndef Q_OS_WINCE
 #include "qwmihelper_win_p.h"
 
-QTM_BEGIN_NAMESPACE
+
 
 enum NDIS_MEDIUM {
     NdisMedium802_3 = 0,
@@ -361,6 +361,7 @@ static BluetoothFindRadioClose local_BluetoothFindRadioClose=0;
 typedef HANDLE (WINAPI *BluetoothFindFirstRadio)(const BLUETOOTH_FIND_RADIO_PARAMS * pbtfrp,HANDLE * phRadio);
 static BluetoothFindFirstRadio local_BluetoothFindFirstRadio=0;
 
+QTM_BEGIN_NAMESPACE
 
 static void resolveLibrary()
 {
@@ -774,10 +775,11 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     return featureSupported;
 }
 
-
+QTM_END_NAMESPACE
 //////// QSystemNetworkInfo
-Q_DECLARE_METATYPE(QSystemNetworkInfo::NetworkMode)
-Q_DECLARE_METATYPE(QSystemNetworkInfo::NetworkStatus)
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo)::NetworkMode)
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo)::NetworkStatus)
+QTM_BEGIN_NAMESPACE
 
 #if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
 
@@ -1981,6 +1983,6 @@ bool QSystemScreenSaverPrivate::isScreenLockOn()
     }
     return false;
 }
-
+#include "moc_qsysteminfo_win_p.cpp"
 
 QTM_END_NAMESPACE

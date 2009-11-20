@@ -1410,8 +1410,8 @@ bool RegistryLayer::notifyInterest(Handle, bool)
 {
     return false;
 }
-
+#include <registrylayer_win.moc>
 QTM_END_NAMESPACE
 
-#include <registrylayer_win.moc>
+
 
