@@ -623,24 +623,6 @@ void tst_QContact::emptiness()
     QContact c;
     QVERIFY(c.isEmpty() == true);
 
-#if 0 // XXX TODO deprecated API.  This test needs updating.
-    QContactDisplayLabel label = c.displayLabel();
-    QVERIFY(label.label().isEmpty());
-
-    label.setLabel("Wesley Wentworth Worrier");
-    QVERIFY(label.isEmpty() == false);
-    QVERIFY(label.label().isEmpty() == false);
-
-    c.setDisplayLabel(label);
-    QVERIFY(c.isEmpty() == false);
-
-    QVERIFY(c.displayLabel().label() == "Wesley Wentworth Worrier");
-    QVERIFY(c.displayLabel().isSynthesized() == false);
-
-    c.setDisplayLabel(QString());
-    QVERIFY(c.isEmpty() == true);
-#endif
-
     c.setType(QContactType::TypeContact);
     QVERIFY(c.type() == QString(QLatin1String(QContactType::TypeContact)));
     QVERIFY(c.isEmpty() == true); // type doesn't affect emptiness
