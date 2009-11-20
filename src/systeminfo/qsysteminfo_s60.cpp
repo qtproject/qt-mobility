@@ -95,6 +95,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
         }
         CleanupStack::PopAndDestroy(2, ptiEngine);
     )
+    languages.removeDuplicates();
     return languages;
 }
 
