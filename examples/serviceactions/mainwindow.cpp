@@ -73,15 +73,6 @@ static const QSize WindowGeometry(400,300);
 static const QString WindowTitle("Service-actions Example");
 static unsigned int RecentMessagesCount = 50;
 
-typedef struct
-{
-    QMessageId id;
-    QString subject;
-    bool partial;
-} MessageInfo;
-
-typedef QList<MessageInfo> MessageInfoList;
-
 class AccountsWidget : public QWidget
 {
     Q_OBJECT
@@ -486,7 +477,7 @@ void RecentMessagesWidget::load()
 {
     m_ids.clear();
 
-    if(!m_service->queryMessages(QMessageFilter(),QMessageOrdering::byReceptionTimeStamp(),m_maxRecent))
+    if(!m_service->queryMessages(QMessageFilter(),QMessageOrdering::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent))
         m_state = LoadFailed;
     else
         m_state = Loading;

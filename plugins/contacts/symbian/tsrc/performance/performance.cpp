@@ -112,12 +112,14 @@ void SymbianPluginPerfomance::createComplexContacts()
         QContactName aliceName;
         aliceName.setFirst(first.append(c));
         aliceName.setLast(last.append(c));
+        aliceName.setCustomLabel("Ally Jones"); // see comment below.
         alice.saveDetail(&aliceName);
 
-        QString label("Ally Jones");
-        QContactDisplayLabel aliceDisplay;
-        aliceDisplay.setLabel(label.append(c));
-        alice.saveDetail(&aliceDisplay);
+        // this uses deprecated API removed wk47 as per process.  use QContactName::CustomLabel instead.
+        //QString label("Ally Jones");
+        //QContactDisplayLabel aliceDisplay;
+        //aliceDisplay.setLabel(label.append(c));
+        //alice.saveDetail(&aliceDisplay);
 
         QContactPhoneNumber number;
         number.setContexts("Home");

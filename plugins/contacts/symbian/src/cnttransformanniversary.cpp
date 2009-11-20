@@ -44,7 +44,10 @@ const char separator = ',';
 
 QList<CContactItemField *> CntTransformAnniversary::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList;
+    if(detail.definitionName() != QContactAnniversary::DefinitionName)
+       User::Leave(KErrArgument);
+
+    QList<CContactItemField *> fieldList;
 
 	//cast to anniversary
 	const QContactAnniversary &anniversary(static_cast<const QContactAnniversary&>(detail));

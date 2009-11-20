@@ -41,13 +41,45 @@
 
 #include "cnttransformcontactdata.h"
 
+/*!
+ * Generic implementation for adding a new text field with one field type for
+ * the given detail value. The field type (fieldTypeUid) and vcard mapping are
+ * defined by the caller.
+ * \a detail The detail being transformed.
+ * \a fieldList On return, contains the created contact item field.
+ * \a detailValue The detail value to be transformed. If empty,
+ * \a fieldTypeUid The UID of the field type.
+ * \a vcardMapping The VCard mapping of the field's content type.
+ * \a setContext Set to true to enable defining context for the field, set to
+ * false to disable context.
+ */
+void CntTransformContactData::transformToTextFieldL(
+        const QContactDetail &detail,
+        QList<CContactItemField *> &fieldList,
+        const QString &detailValue,
+        const TUid fieldTypeUid,
+        const TUid vcardMapping,
+        const bool setContext)
+{
+    TPtrC value(reinterpret_cast<const TUint16*>(detailValue.utf16()));
+    if(value.Length()) {
+        CContactItemField* itemField = CContactItemField::NewLC(KStorageTypeText, fieldTypeUid);
+        itemField->TextStorage()->SetTextL(value);
+        itemField->SetMapping(vcardMapping);
+        if(setContext)
+            setContextsL(detail, *itemField);
+        fieldList.append(itemField);
+        CleanupStack::Pop(itemField);
+    }
+}
+
 void CntTransformContactData::setContexts(const TUid &fieldType, QContactDetail &detail)
 {
 	if (fieldType == KUidContactFieldVCardMapHOME)
 	{
 		detail.setContexts(QContactDetail::ContextHome);
 	}
-	
+
 	else if (fieldType == KUidContactFieldVCardMapWORK)
 	{
 		detail.setContexts(QContactDetail::ContextWork);
@@ -57,7 +89,7 @@ void CntTransformContactData::setContexts(const TUid &fieldType, QContactDetail 
 void CntTransformContactData::setContextsL(const QContactDetail &detail, CContactItemField &field)
 {
 	QStringList contexts = detail.contexts();
-	
+
 	//only first context in the array is taken into account
 	if (contexts.count() > 0) {
         if (contexts.at(0) == QContactDetail::ContextHome ) {

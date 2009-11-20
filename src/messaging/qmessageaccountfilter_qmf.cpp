@@ -108,6 +108,7 @@ QMessageAccountFilter& QMessageAccountFilter::operator=(const QMessageAccountFil
 {
     if (&other != this) {
         d_ptr->_key = other.d_ptr->_key;
+        d_ptr->_options = other.d_ptr->_options;
     }
 
     return *this;
@@ -115,7 +116,7 @@ QMessageAccountFilter& QMessageAccountFilter::operator=(const QMessageAccountFil
 
 void QMessageAccountFilter::setOptions(QMessageDataComparator::Options options)
 {
-    d_ptr->_options |= options;
+    d_ptr->_options = options;
 }
 
 QMessageDataComparator::Options QMessageAccountFilter::options() const
@@ -130,7 +131,7 @@ bool QMessageAccountFilter::isEmpty() const
 
 bool QMessageAccountFilter::isSupported() const
 {
-    return true;
+    return !d_ptr->_options;
 }
 
 QMessageAccountFilter QMessageAccountFilter::operator~() const
@@ -144,6 +145,7 @@ QMessageAccountFilter QMessageAccountFilter::operator&(const QMessageAccountFilt
 {
     QMessageAccountFilter result;
     result.d_ptr->_key = d_ptr->_key & other.d_ptr->_key;
+    result.d_ptr->_options = d_ptr->_options | other.d_ptr->_options; // options not supported
     return result;
 }
 
@@ -151,24 +153,28 @@ QMessageAccountFilter QMessageAccountFilter::operator|(const QMessageAccountFilt
 {
     QMessageAccountFilter result;
     result.d_ptr->_key = d_ptr->_key | other.d_ptr->_key;
+    result.d_ptr->_options = d_ptr->_options | other.d_ptr->_options; // options not supported
     return result;
 }
 
 const QMessageAccountFilter& QMessageAccountFilter::operator&=(const QMessageAccountFilter& other)
 {
     d_ptr->_key &= other.d_ptr->_key;
+    d_ptr->_options |= other.d_ptr->_options; // options not supported
     return *this;
 }
 
 const QMessageAccountFilter& QMessageAccountFilter::operator|=(const QMessageAccountFilter& other)
 {
     d_ptr->_key |= other.d_ptr->_key;
+    d_ptr->_options |= other.d_ptr->_options; // options not supported
     return *this;
 }
 
 bool QMessageAccountFilter::operator==(const QMessageAccountFilter& other) const
 {
-    return (d_ptr->_key == other.d_ptr->_key);
+    return ((d_ptr->_key == other.d_ptr->_key)
+            && (d_ptr->_options == other.d_ptr->_options));
 }
 
 QMessageAccountFilter QMessageAccountFilter::byId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)

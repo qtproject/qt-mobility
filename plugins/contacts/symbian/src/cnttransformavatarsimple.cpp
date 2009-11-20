@@ -46,33 +46,38 @@ const TUid KUidContactFieldCodImage={KUidContactFieldCodImageValue};
 
 QList<CContactItemField *> CntTransformAvatarSimple::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList;
+    if(detail.definitionName() != QContactAvatar::DefinitionName)
+        User::Leave(KErrArgument);
+
+    QList<CContactItemField *> fieldList;
 
 	//cast to avatar
 	const QContactAvatar &avatar(static_cast<const QContactAvatar&>(detail));
 
-	//supported subTypes
-	const QString& subTypeImage(QContactAvatar::SubTypeImage);
-	const QString& subTypeAudioRingtone(QContactAvatar::SubTypeAudioRingtone);
-
 	//create new field
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(avatar.avatar().utf16()));
 
-	TUid uid(KNullUid);
-    if (avatar.subType().compare(subTypeImage) == 0) {
-        uid = KUidContactFieldCodImage;
-    } else if (avatar.subType().compare(subTypeAudioRingtone) == 0) {
-        uid = KUidContactFieldRingTone;
-    } else {
-        User::LeaveIfError(KErrNotSupported);
-    }
-    CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, uid);
+	if(fieldText.Length()) {
+	    //supported subTypes
+	    const QString& subTypeImage(QContactAvatar::SubTypeImage);
+	    const QString& subTypeAudioRingtone(QContactAvatar::SubTypeAudioRingtone);
 
-    newField->SetMapping(KUidContactFieldVCardMapUnknown);
-    newField->TextStorage()->SetTextL(fieldText);
+	    TUid uid(KNullUid);
+	    if (avatar.subType().compare(subTypeImage) == 0) {
+	        uid = KUidContactFieldCodImage;
+	    } else if (avatar.subType().compare(subTypeAudioRingtone) == 0) {
+	        uid = KUidContactFieldRingTone;
+	    } else {
+	        User::LeaveIfError(KErrNotSupported);
+	    }
+	    CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, uid);
 
-	fieldList.append(newField);
-	CleanupStack::Pop(newField);
+	    newField->SetMapping(KUidContactFieldVCardMapUnknown);
+	    newField->TextStorage()->SetTextL(fieldText);
+
+	    fieldList.append(newField);
+	    CleanupStack::Pop(newField);
+	}
 
 	return fieldList;
 }
