@@ -97,6 +97,7 @@
 #include <mapitags.h>
 
 #ifdef _WIN32_WCE
+#include "win32wce/qmailmessage.h"
 #include <cemapi.h>
 #endif
 
@@ -3875,8 +3876,8 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                             msg->d_ptr->_contentFormat = EDITOR_FORMAT_HTML;
 #endif
                         } else if (prop.Value.l & MSGSTATUS_HAS_PR_CE_MIME_TEXT) {
-                            // TODO...
                             // This is how MS providers store HTML, as per http://msdn.microsoft.com/en-us/library/bb446140.aspx
+                            msg->d_ptr->_contentFormat = EDITOR_FORMAT_MIME;
                         }
 #endif
                         break;
@@ -4112,12 +4113,8 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                 LONG contentFormat(msg->d_ptr->_contentFormat);
 
                 if (contentFormat == EDITOR_FORMAT_DONTKNOW) {
-#ifdef _WIN32_WCE
-                    // TODO: Attempt to read MIME text first
-#else
                     // Attempt to read HTML first
                     contentFormat = EDITOR_FORMAT_HTML;
-#endif
                 }
                 if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
 #ifdef _WIN32_WCE
@@ -4168,9 +4165,47 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                         contentFormat = EDITOR_FORMAT_DONTKNOW;
 #endif
                     }
+#ifdef _WIN32_WCE
+                } else if (contentFormat == EDITOR_FORMAT_MIME) {
+                    // MIME format is only used on mobile
+                    HRESULT rv = message->OpenProperty(PR_CE_MIME_TEXT, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+                    if (HR_SUCCEEDED(rv)) {
+                        messageBody = readStream(lastError, is);
+
+                        QMailMessage msg(QMailMessage::fromRfc2822(messageBody));
+                        if (msg.multipartType() == QMailMessage::MultipartNone) {
+                            if (msg.contentType().type().toLower() == "text") {
+                                QByteArray subType(msg.contentType().subType().toLower());
+                                if ((subType == "plain") || (subType == "html") || (subType == "rtf")) {
+                                    messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(msg.body().data());
+                                    bodySubType = subType;
+                                }
+                            }
+                        } else if ((msg.multipartType() == QMailMessage::MultipartAlternative) ||
+                                   (msg.multipartType() == QMailMessage::MultipartMixed) ||
+                                   (msg.multipartType() == QMailMessage::MultipartRelated)) {
+                            // For multipart/related, just try the first part
+                            int maxParts(msg.multipartType() == QMailMessage::MultipartRelated ? 1 : msg.partCount());
+                            for (int i = 0; i < maxParts; ++i) {
+                                const QMailMessagePart &part(msg.partAt(i));
+
+                                if (part.contentType().type().toLower() == "text") {
+                                    QByteArray subType(part.contentType().subType().toLower());
+                                    if ((subType == "plain") || (subType == "html") || (subType == "rtf")) {
+                                        messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(part.body().data());
+                                        bodySubType = subType;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        qWarning() << "Unable to open PR_CE_MIME_TEXT!";
+                    }
+#endif
                 }
 
-#ifndef _WIN32_WCE // RTF not supported
+#ifndef _WIN32_WCE // RTF not supported on mobile
                 if (bodySubType.isEmpty()) {
                     if (!msg->d_ptr->_rtfInSync) {
                         // See if we need to sync the RTF
@@ -4250,11 +4285,12 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                             qWarning() << "Unable to decompress RTF";
                             bodySubType = "plain";
                         }
-                    } else {
-                        bodySubType = "unknown";
                     }
                 }
 #endif
+                if (bodySubType.isEmpty()) {
+                    qWarning() << "Unable to locate body for message.";
+                }
 
                 mapiRelease(is);
 
@@ -4282,7 +4318,6 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                     messageContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
                     msg->d_ptr->_bodyId = messageContainer->bodyContentId();
                     messageContainer->_available = bodyDownloaded;
-
                 } else {
                     // Add the message body data as the first part
                     QMessageContentContainer bodyPart;

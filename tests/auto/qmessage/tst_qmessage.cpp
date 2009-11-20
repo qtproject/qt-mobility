@@ -419,7 +419,6 @@ void tst_QMessage::testMessageAddress_data()
         << "\"First <Middle> Last\" <first.last@example.com>"
         << "\"First <Middle> Last\""
         << "first.last@example.com";
-
 }
 
 void tst_QMessage::testMessageAddress()
@@ -431,7 +430,7 @@ void tst_QMessage::testMessageAddress()
     QString name;
     QString address;
     QMessageAddress::parseEmailAddress(from, &name, &address);
-    QCOMPARE(targetName, name.trimmed());
+    QCOMPARE(targetName, name);
     QCOMPARE(targetAddress, address);
 }
 
