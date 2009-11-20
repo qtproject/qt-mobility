@@ -469,21 +469,23 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilterSqlHelper::filterSupport
 {
     CntAbstractContactFilter::FilterSupport filterSupported(CntAbstractContactFilter::NotSupported);
     switch (filter.type()) {
-            case QContactFilter::ContactDetailFilter:
-                const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
-                filterSupported = checkIfDetailFilterSupported(detailFilter);
-                                  break;
-            case QContactFilter::InvalidFilter :
-            case QContactFilter::ContactDetailRangeFilter:
-            case QContactFilter::ChangeLogFilter:
-            case QContactFilter::DefaultFilter:                           
-            case QContactFilter::ActionFilter:
-            case QContactFilter::IntersectionFilter:
-            case QContactFilter::UnionFilter:
-            default:
-                    filterSupported = CntAbstractContactFilter::NotSupported;
-                         
+        case QContactFilter::ContactDetailFilter: 
+        {
+            const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
+            filterSupported = checkIfDetailFilterSupported(detailFilter);
+            break;
         }
+        case QContactFilter::InvalidFilter :
+        case QContactFilter::ContactDetailRangeFilter:
+        case QContactFilter::ChangeLogFilter:
+        case QContactFilter::DefaultFilter:                           
+        case QContactFilter::ActionFilter:
+        case QContactFilter::IntersectionFilter:
+        case QContactFilter::UnionFilter:
+        default:
+            filterSupported = CntAbstractContactFilter::NotSupported;
+            break;
+    }
     return filterSupported;
 }
 CntAbstractContactFilter::FilterSupport CntSymbianFilterSqlHelper::checkIfDetailFilterSupported
