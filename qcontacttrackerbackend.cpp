@@ -54,6 +54,8 @@
 
 #include "trackerchangelistener.h"
 #include "qtrackercontactsaverequest.h"
+#include <qtrackerrelationshipfetchrequest.h>
+
 
 QContactManagerEngine* ContactTrackerFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
@@ -509,29 +511,6 @@ RDFVariable QContactTrackerEngine::contactDetail2Rdf(const RDFVariable& rdfConta
     return RDFVariable();
 }
 
-#if 0
-// Might not be needed but leaving here just in case.
-QString QContactTrackerEngine::escaped(const QString& input) const
-{
-    QString retn = "";
-    for (int i = 0; i < input.length(); i++) {
-        QChar currChar = input.at(i);
-        if (currChar == '\\' ||
-                currChar == '=' ||
-                currChar == ',' ||
-                currChar == ';') {
-            // we need to escape this character.
-            retn += '\\'; // escape with a single backslash.
-        }
-        retn += currChar;
-    }
-
-    return retn;
-}
-#endif
-
-
-
 /*! \reimp */
 void QContactTrackerEngine::requestDestroyed(QContactAbstractRequest* req)
 {
@@ -557,6 +536,9 @@ bool QContactTrackerEngine::startRequest(QContactAbstractRequest* req)
         case QContactAbstractRequest::ContactSaveRequest:
             request = new QTrackerContactSaveRequest(req, this);
             break;
+        case QContactAbstractRequest::RelationshipFetchRequest:
+            request = new QTrackerRelationshipFetchRequest(req, this);
+            break;
         default:
             return false;
     }
@@ -564,10 +546,11 @@ bool QContactTrackerEngine::startRequest(QContactAbstractRequest* req)
     return true;
 }
 
+/*! \reimp */
 QString QContactTrackerEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
     QString label = QContactManagerEngine::synthesizeDisplayLabel(contact, error);
-    if( label.isEmpty() )
+    if (label.isEmpty())
         return contact.detail<QContactNickname>().nickname();
     return label;
 }
