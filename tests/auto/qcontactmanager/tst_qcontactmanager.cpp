@@ -2155,7 +2155,7 @@ void tst_QContactManager::changeSet()
     cs.emitSignals(0);
     cs.oldAndNewSelfContactId() = QPair<QContactLocalId, QContactLocalId>(id, QContactLocalId(0));
     QVERIFY(cs2.oldAndNewSelfContactId() != cs.oldAndNewSelfContactId());
-    cs.dataChanged() = true;
+    cs.setDataChanged(true);
     cs.emitSignals(0);
 }
 
