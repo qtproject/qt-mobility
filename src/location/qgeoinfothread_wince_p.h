@@ -42,6 +42,8 @@
 #ifndef QGEOINFOTHREAD_WINCE_P_H
 #define QGEOINFOTHREAD_WINCE_P_H
 
+#include "qmobilityglobal.h"
+
 #include <QThread>
 #include <QMutex>
 #include <QWaitCondition>

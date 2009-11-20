@@ -354,4 +354,5 @@ void QGeoInfoThreadWinCE::run()
     GPSCloseDevice(m_gps);
 }
 
+#include "moc_qgeoinfothread_wince_p.cpp"
 QTM_END_NAMESPACE

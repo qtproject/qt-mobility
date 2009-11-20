@@ -1284,6 +1284,8 @@ QMessageFolderId addFolder(const Parameters &params)
 
 }
 
+QTM_BEGIN_NAMESPACE
+
 // The class 'MapiSession' is a friend of QMessageContentContainer - hijack it here
 class MapiSession
 {
@@ -1409,6 +1411,8 @@ public:
         return QMessageId();
     }
 };
+
+QTM_END_NAMESPACE
 
 namespace Support {
 

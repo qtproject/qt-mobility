@@ -164,4 +164,5 @@ void QGeoSatelliteInfoSourceWinCE::dataUpdated(GPS_POSITION data)
     emit satellitesInUseUpdated(satellitesInUse);
 }
 
+#include "moc_qgeosatelliteinfosource_wince_p.cpp"
 QTM_END_NAMESPACE

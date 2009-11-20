@@ -65,6 +65,8 @@
 #include "qcontactmanagerenginefactory.h"
 #include "qcontactrequestworker_p.h"
 
+QTM_USE_NAMESPACE
+
 /*
  * Simple "smart" pointer for IUnknown management - takes ownership when assigning, calls release at dtor
  *
@@ -246,10 +248,11 @@ private:
 };
 
 class QMutex;
+
 class Q_DECL_EXPORT ContactWinceFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactManagerEngineFactory)
+    Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
 public:
     ContactWinceFactory();
         QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);

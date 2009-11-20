@@ -180,4 +180,5 @@ void QGeoPositionInfoSourceWinCE::dataUpdated(GPS_POSITION data)
     emit positionUpdated(pos);
 }
 
+#include "moc_qgeopositioninfosource_wince_p.cpp"
 QTM_END_NAMESPACE
