@@ -1244,4 +1244,4 @@ QString Slots::requestStatusToString(QContactAbstractRequest::Status status)
     }
 }
 
-QTEST_APPLESS_MAIN(ut_qtcontacts_trackerplugin)
+QTEST_MAIN(ut_qtcontacts_trackerplugin)
