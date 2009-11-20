@@ -56,7 +56,7 @@
 #include "QMessageServiceAction.h"
 
 
-QTM_BEGIN_NAMESPACE
+
 
 class CRichText;
 class CCharFormatLayer;
@@ -69,9 +69,12 @@ class CSmtpClientMtm;
 class CImap4ClientMtm;
 class CPop3ClientMtm;
 class CMsvFindOperation;
+
+class CMessagesFindOperation;
+
+QTM_BEGIN_NAMESPACE
 class QMessageId;
 class QMessageAccount;
-class CMessagesFindOperation;
 
 struct MessageEvent
 {

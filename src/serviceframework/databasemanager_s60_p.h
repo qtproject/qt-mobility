@@ -156,8 +156,10 @@ class Q_AUTOTEST_EXPORT DatabaseManager : public QObject
 };
 
 #ifdef __WINS__
+QTM_END_NAMESPACE
     #include "databasemanagerserver_global.h"
     #include <QThread>
+QTM_BEGIN_NAMESPACE
     class DATABASEMANAGERSERVER_EXPORT CDatabaseManagerServerThread : public QThread
         {
         public:

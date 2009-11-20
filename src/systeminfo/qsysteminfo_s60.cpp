@@ -1022,4 +1022,6 @@ void QSystemScreenSaverPrivate::resetInactivityTime()
     User::ResetInactivityTime();
 }
 
+#include "moc_qsysteminfo_s60_p.cpp"
+
 QTM_END_NAMESPACE

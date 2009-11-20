@@ -243,4 +243,5 @@ QMessageStore::ErrorCode QMessageServiceAction::lastError() const
     return QMessageStore::NoError;
 }
 
+#include "moc_qmessageserviceaction_symbian_p.cpp"
 QTM_END_NAMESPACE

@@ -970,5 +970,5 @@ void AccessPointsAvailabilityScanner::RunL()
         iOwner.accessPointScanningReady(true,iIapBuf());
     }
 }
-
+#include "moc_qnetworkconfigmanager_s60_p.cpp"
 QTM_END_NAMESPACE

@@ -62,10 +62,11 @@
     #include <cmmanager.h>
 #endif
 
-QTM_BEGIN_NAMESPACE
-
 class CCommsDatabase;
 class QTimer;
+
+QTM_BEGIN_NAMESPACE
+
 class QNetworkSessionPrivate;
 class AccessPointsAvailabilityScanner;
 

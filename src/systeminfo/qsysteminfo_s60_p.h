@@ -173,12 +173,17 @@ private:
 
 //////// QSystemDeviceInfo
 
-#include <mproengprofileactivationobserver.h> 
-#include <cenrepnotifyhandler.h>
 
 class DeviceInfo;
+QTM_END_NAMESPACE
+
+#include <mproengprofileactivationobserver.h>
+#include <cenrepnotifyhandler.h>
+
 class MProEngEngine;
 class MProEngNotifyHandler;
+
+QTM_BEGIN_NAMESPACE
 
 class QSystemDeviceInfoPrivate : public QObject,
     public MTelephonyInfoObserver,

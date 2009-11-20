@@ -8,7 +8,7 @@ QT += core \
 FORMS += sessiondialog.ui \
          bearerex.ui \
          detailedinfodialog.ui
-         
+include(../../common.pri)
 #not really a test case but deployment happens same way
 CONFIG += testcase
 

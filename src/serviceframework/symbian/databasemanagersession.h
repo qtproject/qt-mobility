@@ -41,9 +41,12 @@
 #ifndef CDATABASEMANAGERSESSION_H_
 #define CDATABASEMANAGERSESSION_H_
 
+#include <qmobilityglobal.h>
 #include <e32base.h>
 #include <QObject>
 #include "databasemanager_p.h"
+
+QTM_BEGIN_NAMESPACE
 
 class CDatabaseManagerServer;
 class DatabaseManagerSignalHandler;
@@ -93,7 +96,8 @@ class CDatabaseManagerServerSession : public CSession2
         DatabaseManagerSignalHandler* iDatabaseManagerSignalHandler;
     };
 
-#endif
+QTM_END_NAMESPACE
 
+#endif
 
 // End of File

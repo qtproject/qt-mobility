@@ -51,8 +51,11 @@
 #include "qcontactmanager.h"
 
 // Forward declarations
+QTM_BEGIN_NAMESPACE
 class QContactManagerEngine;
+QTM_END_NAMESPACE
 
+QTM_USE_NAMESPACE
 // External data types
 
 // Constants
