@@ -207,7 +207,7 @@ QString QSystemInfoPrivate::TLanguageToISO639_1(TLanguage language) const
     return "";
 }
 
-QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
+QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString & /*parameter*/)
 {
     switch (type) {
         case QSystemInfo::Os:
@@ -380,7 +380,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         default:
             break;
     };
-    return -1;  //TODO
+    return -1;
 }
 
 int QSystemNetworkInfoPrivate::cellId()
@@ -393,13 +393,11 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
 	return DeviceInfo::instance()->cellNetworkInfo()->locationAreaCode();
 }
 
-// Mobile Country Code
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
 	return DeviceInfo::instance()->cellNetworkInfo()->countryCode();
 }
 
-// Mobile Network Code
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
 	return DeviceInfo::instance()->cellNetworkInfo()->networkCode();
@@ -416,7 +414,7 @@ QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
-    return QString();   //TODO
+    return QString();
 }
 
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
@@ -492,7 +490,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
     return address;
 }
 
-QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
+QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode /*mode*/)
 {
     return QNetworkInterface();
 }
@@ -579,7 +577,7 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 {
 }
 
-int QSystemDisplayInfoPrivate::displayBrightness(int screen)
+int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
 {
     const TUid KCRUidLightSettings = {0x10200C8C};
     const TUint32 KLightSensorSensitivity = 0x00000002;
@@ -936,7 +934,6 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
 
 QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
 {
-    //TODO: To be moved in QSystemDeviceInfo?
     int batteryLevel = DeviceInfo::instance()->batteryInfo()->batteryLevel();
     if(batteryLevel < 4) {
         return QSystemDeviceInfo::BatteryCritical;
