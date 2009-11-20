@@ -303,6 +303,7 @@ void tst_QMessageStore::testMessage_data()
     QTest::addColumn<QList<QByteArray> >("attachmentSubType");
     QTest::addColumn<QList<unsigned> >("attachmentSize");
     QTest::addColumn<CustomFieldMap>("custom");
+    QTest::addColumn<QString>("removeMessage");
 
     CustomFieldMap customData;
     customData.insert("cake", "chocolate");
@@ -329,7 +330,8 @@ void tst_QMessageStore::testMessage_data()
         << QList<QByteArray>()
         << QList<QByteArray>()
         << QList<unsigned>()
-        << customData;
+        << customData
+        << "byId";
 
     QTest::newRow("2")
         << "alice@example.com"
@@ -352,7 +354,8 @@ void tst_QMessageStore::testMessage_data()
         << QList<QByteArray>()
         << QList<QByteArray>()
         << QList<unsigned>()
-        << customData;
+        << customData
+        << "byFilter";
 
     QTest::newRow("3")
         << "alice@example.com"
@@ -375,7 +378,8 @@ void tst_QMessageStore::testMessage_data()
         << ( QList<QByteArray>() << "text" )
         << ( QList<QByteArray>() << "plain" )
         << ( QList<unsigned>() << 512u )
-        << customData;
+        << customData
+        << "byId";
 
     QTest::newRow("4")
         << "alice@example.com"
@@ -398,7 +402,8 @@ void tst_QMessageStore::testMessage_data()
         << ( QList<QByteArray>() << "text" << "image" )
         << ( QList<QByteArray>() << "plain" << "png" )
         << ( QList<unsigned>() << 512u << 4096u )
-        << customData;
+        << customData
+        << "byFilter";
 }
 
 void tst_QMessageStore::testMessage()
@@ -462,6 +467,7 @@ void tst_QMessageStore::testMessage()
     QFETCH(QList<QByteArray>, attachmentSubType);
     QFETCH(QList<unsigned>, attachmentSize);
     QFETCH(CustomFieldMap, custom);
+    QFETCH(QString, removeMessage);
 
     Support::Parameters p;
     p.insert("to", to);
@@ -650,7 +656,11 @@ void tst_QMessageStore::testMessage()
     QVERIFY(forward.bodyId().isValid());
 
     // Test message removal
-    QMessageStore::instance()->removeMessage(message.id());
+    if (removeMessage == "byId") {
+        QMessageStore::instance()->removeMessage(message.id());
+    } else { // byFilter
+        QMessageStore::instance()->removeMessages(QMessageFilter::byId(message.id()));
+    }
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
     QCOMPARE(QMessageStore::instance()->countMessages(), originalCount);
 
