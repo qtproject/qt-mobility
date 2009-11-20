@@ -57,7 +57,7 @@
     friend class Class##Private;
 
 class QContactFilterPrivate;
-class QTCONTACTS_EXPORT QContactFilter
+class Q_CONTACTS_EXPORT QContactFilter
 {
 public:
     QContactFilter();
@@ -103,7 +103,7 @@ protected:
     QSharedDataPointer<QContactFilterPrivate> d_ptr;
 };
 
-const QTCONTACTS_EXPORT QContactFilter operator&(const QContactFilter& left, const QContactFilter& right);
-const QTCONTACTS_EXPORT QContactFilter operator|(const QContactFilter& left, const QContactFilter& right);
+const Q_CONTACTS_EXPORT QContactFilter operator&(const QContactFilter& left, const QContactFilter& right);
+const Q_CONTACTS_EXPORT QContactFilter operator|(const QContactFilter& left, const QContactFilter& right);
 
 #endif

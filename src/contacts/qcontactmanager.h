@@ -61,7 +61,7 @@ class QContactFilter;
 class QContactAction;
 
 class QContactManagerData;
-class QTCONTACTS_EXPORT QContactManager : public QObject
+class Q_CONTACTS_EXPORT QContactManager : public QObject
 {
     Q_OBJECT
 
@@ -109,7 +109,6 @@ public:
     /* Contacts - Accessors and Mutators */
     QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const;    // retrieve contact ids
     QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve ids of contacts matching the filter
-    QList<QContactLocalId> Q_DECL_DEPRECATED contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve contacts of the given type
 
     QContact contact(const QContactLocalId& contactId) const;  // retrieve a contact
 

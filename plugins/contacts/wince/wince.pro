@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(contacts_wince)
+TARGET = $$qtLibraryTarget(qtcontacts_wince)
 PLUGIN_TYPE=contacts
 
 include(../../../common.pri)

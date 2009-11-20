@@ -151,6 +151,19 @@ QSet<QContactLocalId>& QContactChangeSet::removedRelationshipsContacts()
 }
 
 /*!
+ * Returns a reference to the pair of ids which represents the
+ * old and new self contact ids.  The first id in the pair is the
+ * old self contact id, while the second id in the pair is the
+ * new self contact id.  If the new id is different to the old id
+ * at the point in time when emitSignals() is called,
+ * the QContactManagerEngine::selfContactIdChanged() signal will be emitted.
+ */
+QPair<QContactLocalId, QContactLocalId>& QContactChangeSet::oldAndNewSelfContactId()
+{
+    return d->m_oldAndNewSelfContactId;
+}
+
+/*!
  * Clears all flags and sets of ids in this change set
  */
 void QContactChangeSet::clear()
@@ -184,5 +197,7 @@ void QContactChangeSet::emitSignals(QContactManagerEngine *engine)
             emit engine->relationshipsAdded(d->m_addedRelationships.toList());
         if (!d->m_removedRelationships.isEmpty())
             emit engine->relationshipsRemoved(d->m_removedRelationships.toList());
+        if (d->m_oldAndNewSelfContactId.first != d->m_oldAndNewSelfContactId.second)
+            emit engine->selfContactIdChanged(d->m_oldAndNewSelfContactId.first, d->m_oldAndNewSelfContactId.second);
     }
 }

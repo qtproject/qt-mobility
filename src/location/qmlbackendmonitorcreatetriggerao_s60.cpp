@@ -290,6 +290,8 @@ bool  QMLBackendMonitorCreateTriggerAO::InitializeTrigger(QGeoAreaMonitorS60* aP
         //set the trigger ID
         trig->SetId(triggerInfo->iTriggerID);
 
+        iLbt.SetTriggerStateL(triggerInfo->iTriggerID, CLbtTriggerEntry::EStateDisabled, ELbtTrue);
+
         //update the trigger with the new condition in LBT server
         TRAP(ret,iLbt.UpdateTriggerL(*trig, CLbtTriggerEntry::EAttributeCondition, ELbtTrue));
 

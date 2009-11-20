@@ -177,13 +177,15 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSource::preferredPosi
 
 QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *parent)
 {
-#if defined(Q_OS_SYMBIAN)
-    return CQGeoPositionInfoSourceS60::NewL(parent);
+#if defined(Q_OS_SYMBIAN)   
+    QGeoPositionInfoSource *ret = NULL; 
+    TRAPD(error,ret = CQGeoPositionInfoSourceS60::NewL(parent));
+    return ret;
 #elif defined(Q_OS_WINCE)
     return new QGeoPositionInfoSourceWinCE(parent);
-#else
-    Q_UNUSED(parent);
-#endif
+#else 
+    Q_UNUSED(parent); 
+#endif 
     return 0;
 }
 

@@ -53,9 +53,9 @@
 // We mean it.
 //
 
+#include "qmobilityglobal.h"
 #include "servicedatabase_p.h"
 #include <QObject>
-#include "qserviceglobal.h"
 
 QT_BEGIN_HEADER
 QT_BEGIN_NAMESPACE

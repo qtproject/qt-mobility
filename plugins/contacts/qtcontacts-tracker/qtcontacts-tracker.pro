@@ -3,9 +3,9 @@
 # #####################################################################
 
 # include version number for the plugin
-include(../../version.pri)
-
+include(version.pri)
 include(qtcontacts-tracker.pri)
+include(../../../common.pri)
 
 TEMPLATE = lib
 CONFIG += plugin
@@ -15,13 +15,8 @@ LIBS += -L/usr/lib
 MOC_DIR = .moc/
 OBJECTS_DIR = .obj/
 
-DEPENDPATH += .
-INCLUDEPATH += . 
-
 LIBS += -lqttracker
+qtAddLibrary(QtContacts)
 
-# QT += contacts
-INCLUDEPATH += /usr/include/qt4/QtContacts
-
-target.path = /usr/lib/qt4/plugins/contacts
+target.path = $$SOURCE_DIR/plugins/contacts
 INSTALLS += target

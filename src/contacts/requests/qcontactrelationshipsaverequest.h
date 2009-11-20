@@ -50,7 +50,7 @@
 #include <QStringList>
 
 class QContactRelationshipSaveRequestPrivate;
-class QTCONTACTS_EXPORT QContactRelationshipSaveRequest : public QContactAbstractRequest
+class Q_CONTACTS_EXPORT QContactRelationshipSaveRequest : public QContactAbstractRequest
 {
     Q_OBJECT
 

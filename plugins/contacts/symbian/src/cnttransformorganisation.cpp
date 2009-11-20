@@ -42,46 +42,21 @@
 
 QList<CContactItemField *> CntTransformOrganisation::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList;
+    if(detail.definitionName() != QContactOrganization::DefinitionName)
+       User::Leave(KErrArgument);
+
+    QList<CContactItemField *> fieldList;
 
 	//cast to orgenisation
     const QContactOrganization &orgDetails(static_cast<const QContactOrganization&>(detail));
 
-	//Company
-    TPtrC fieldTextCompany(reinterpret_cast<const TUint16*>(orgDetails.name().utf16()));
-	CContactItemField* company = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldCompanyName);
-	company->TextStorage()->SetTextL(fieldTextCompany);
-	company->SetMapping(KUidContactFieldVCardMapORG);
-	fieldList.append(company);
-	CleanupStack::Pop(company);
-
-	//Department
+    //create new fields without contexts
+    transformToTextFieldL(orgDetails, fieldList, orgDetails.name(), KUidContactFieldCompanyName, KUidContactFieldVCardMapORG, false);
 	QStringList departments = orgDetails.department();
-	if(departments.count()) {
-	    // Take only the first department
-	    TPtrC fieldTextDepartment(reinterpret_cast<const TUint16*>(departments[0].utf16()));
-	    CContactItemField* department = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldDepartmentName);
-	    department->TextStorage()->SetTextL(fieldTextDepartment);
-	    department->SetMapping(KUidContactFieldVCardMapDepartment);
-	    fieldList.append(department);
-	    CleanupStack::Pop(department);
-	}
-
-	//Job title
-	TPtrC fieldTextJobTitle(reinterpret_cast<const TUint16*>(orgDetails.title().utf16()));
-	CContactItemField* jobTitle = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldJobTitle);
-	jobTitle->TextStorage()->SetTextL(fieldTextJobTitle);
-	jobTitle->SetMapping(KUidContactFieldVCardMapTITLE);
-	fieldList.append(jobTitle);
-	CleanupStack::Pop(jobTitle);
-
-	//Assistant name
-    TPtrC fieldTextAssistantName(reinterpret_cast<const TUint16*>(orgDetails.assistantName().utf16()));
-    CContactItemField* assistantName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldAssistant);
-    assistantName->TextStorage()->SetTextL(fieldTextAssistantName);
-    assistantName->SetMapping(KUidContactFieldVCardMapAssistant);
-    fieldList.append(assistantName);
-    CleanupStack::Pop(assistantName);
+	if(departments.count()) // Take only the first department
+	    transformToTextFieldL(orgDetails, fieldList, departments[0], KUidContactFieldDepartmentName, KUidContactFieldVCardMapDepartment, false);
+	transformToTextFieldL(orgDetails, fieldList, orgDetails.title(), KUidContactFieldJobTitle, KUidContactFieldVCardMapTITLE, false);
+    transformToTextFieldL(orgDetails, fieldList, orgDetails.assistantName(), KUidContactFieldAssistant, KUidContactFieldVCardMapAssistant, false);
 
 	return fieldList;
 }

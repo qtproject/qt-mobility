@@ -45,7 +45,7 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qstringlist.h>
 
-#include <qmultimediaglobal.h>
+#include <qmobilityglobal.h>
 #include <qtmedianamespace.h>
 
 class QMediaService;

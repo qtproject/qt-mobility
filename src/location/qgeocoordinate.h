@@ -41,7 +41,7 @@
 #ifndef QGEOCOORDINATE_H
 #define QGEOCOORDINATE_H
 
-#include "qlocationglobal.h"
+#include "qmobilityglobal.h"
 
 #include <QString>
 

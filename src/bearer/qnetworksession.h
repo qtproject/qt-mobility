@@ -42,7 +42,7 @@
 #ifndef QNETWORKSESSION_H
 #define QNETWORKSESSION_H
 
-#include "qbearerglobal.h"
+#include "qmobilityglobal.h"
 
 #include <QtCore/qobject.h>
 #include <QtCore/qshareddata.h>

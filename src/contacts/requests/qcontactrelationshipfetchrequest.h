@@ -52,7 +52,7 @@
 #include <QString>
 
 class QContactRelationshipFetchRequestPrivate;
-class QTCONTACTS_EXPORT QContactRelationshipFetchRequest : public QContactAbstractRequest
+class Q_CONTACTS_EXPORT QContactRelationshipFetchRequest : public QContactAbstractRequest
 {
     Q_OBJECT
 

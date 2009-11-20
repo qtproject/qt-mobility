@@ -45,7 +45,7 @@
 #include "qcontactfilter.h"
 
 class QContactIntersectionFilterPrivate;
-class QTCONTACTS_EXPORT QContactIntersectionFilter : public QContactFilter
+class Q_CONTACTS_EXPORT QContactIntersectionFilter : public QContactFilter
 {
 public:
 

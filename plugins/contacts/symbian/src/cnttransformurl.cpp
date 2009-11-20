@@ -42,29 +42,34 @@
 
 QList<CContactItemField *> CntTransformUrl::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList;
+    if(detail.definitionName() != QContactUrl::DefinitionName)
+       User::Leave(KErrArgument);
+
+    QList<CContactItemField *> fieldList;
 
 	//cast to url
 	const QContactUrl &url(static_cast<const QContactUrl&>(detail));
 
 	//create new field
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(url.url().utf16()));
-	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldUrl);
- 	newField->TextStorage()->SetTextL(fieldText);
-	newField->SetMapping(KUidContactFieldVCardMapURL);
+	if(fieldText.Length()) {
+	    CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldUrl);
+	    newField->TextStorage()->SetTextL(fieldText);
+	    newField->SetMapping(KUidContactFieldVCardMapURL);
 
-	QString subType = url.subType();
-	const QString& subTypeHomePage(QContactUrl::SubTypeHomePage);
-	if (subType.length() != 0 && subType.compare(subTypeHomePage) != 0)
-	{
-        User::LeaveIfError(KErrNotSupported);
+	    QString subType = url.subType();
+	    const QString& subTypeHomePage(QContactUrl::SubTypeHomePage);
+	    if (subType.length() != 0 && subType.compare(subTypeHomePage) != 0)
+	    {
+	        User::LeaveIfError(KErrNotSupported);
+	    }
+
+	    //contexts
+	    setContextsL(url, *newField);
+
+	    fieldList.append(newField);
+	    CleanupStack::Pop(newField);
 	}
-
-	//contexts
-	setContextsL(url, *newField);
-
-	fieldList.append(newField);
-	CleanupStack::Pop(newField);
 
 	return fieldList;
 }

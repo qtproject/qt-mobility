@@ -42,7 +42,7 @@
 #ifndef QSYSTEMREADWRITELOCK_H
 #define QSYSTEMREADWRITELOCK_H
 
-#include "qcontextglobal.h"
+#include "qpublishsubscribeglobal.h"
 #include <QString>
 
 QT_BEGIN_NAMESPACE
@@ -55,25 +55,26 @@ public:
     enum SystemReadWriteLockError{
         NoError,
         PermissionDenied,
-        KeyError,
+        KeyError,//TODO:remove this enum
         NotFound,
-        LockError,
-        OutOfResources,
-        FailedToInitialize,
+        LockError,//TODO: remove this enum
+        OutOfResources, 
+        FailedToInitialize,//TODO: remove this enum
         UnknownError
     };
-                                
+
     QSystemReadWriteLock(const QString &key, AccessMode mode = Open);
     ~QSystemReadWriteLock();
 
     bool lockForRead();
     bool lockForWrite();
-    bool unlock();
+    void unlock();
 
-    SystemReadWriteLockError error();
-    QString errorString();
+    SystemReadWriteLockError error() const;
+    QString errorString() const;
 
     QString key() const;
+
 private:
     QSystemReadWriteLockPrivate *d;
 };

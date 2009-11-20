@@ -53,7 +53,7 @@
 class QContactFilter;
 
 class QContactManagerData;
-class QTCONTACTS_EXPORT QContactManagerInfo
+class Q_CONTACTS_EXPORT QContactManagerInfo
 {
 public:
     enum ManagerFeature {
