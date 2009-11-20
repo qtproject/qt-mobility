@@ -60,7 +60,6 @@ class QContactRelationshipRemoveRequest;
 class QContactDetailDefinitionFetchRequest;
 class QContactDetailDefinitionSaveRequest;
 class QContactDetailDefinitionRemoveRequest;
-class QContactManager;
 
 class QTCONTACTS_EXPORT QContactRequestWorker : public QThread
 {
@@ -90,8 +89,6 @@ public:
     /* waiting for a request*/
     bool waitRequest(QContactAbstractRequest* req, int msecs);
 
-    void removeRequestsForManager(QContactManager* manager);
-
 protected:
     /* Actual asynchronous requests process functions*/
     virtual void processContactFetchRequest(QContactFetchRequest* req);
@@ -106,9 +103,7 @@ protected:
     virtual void processContactDetailDefinitionRemoveRequest(QContactDetailDefinitionRemoveRequest* req);
 
 private:
-    QContactRequestWorkerData* d;
-    void removeRequestAndEmitSignals(QContactAbstractRequest* req);
-    void cleanupRequests();
+    QSharedDataPointer<QContactRequestWorkerData> d;
 };
 #endif
 

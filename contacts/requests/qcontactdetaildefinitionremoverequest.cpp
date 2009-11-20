@@ -69,7 +69,6 @@ QContactDetailDefinitionRemoveRequest::~QContactDetailDefinitionRemoveRequest()
 void QContactDetailDefinitionRemoveRequest::setNames(const QStringList& names)
 {
     Q_D(QContactDetailDefinitionRemoveRequest);
-    QMutexLocker locker(&d->m_mutex);
     d->m_names = names;
 }
 
@@ -77,7 +76,6 @@ void QContactDetailDefinitionRemoveRequest::setNames(const QStringList& names)
 QStringList QContactDetailDefinitionRemoveRequest::names() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);
-    QMutexLocker locker(&d->m_mutex);
     return d->m_names;
 }
 

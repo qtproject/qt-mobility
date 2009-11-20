@@ -69,7 +69,6 @@ QContactSaveRequest::~QContactSaveRequest()
 void QContactSaveRequest::setContacts(const QList<QContact>& contacts)
 {
     Q_D(QContactSaveRequest);
-    QMutexLocker locker(&d->m_mutex);
     d->m_contacts = contacts;
 }
 
@@ -78,6 +77,5 @@ void QContactSaveRequest::setContacts(const QList<QContact>& contacts)
 QList<QContact> QContactSaveRequest::contacts() const
 {
     Q_D(const QContactSaveRequest);
-    QMutexLocker locker(&d->m_mutex);
     return d->m_contacts;
 }

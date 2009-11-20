@@ -69,7 +69,6 @@ QContactRelationshipSaveRequest::~QContactRelationshipSaveRequest()
 void QContactRelationshipSaveRequest::setRelationships(const QList<QContactRelationship>& contactRelationships)
 {
     Q_D(QContactRelationshipSaveRequest);
-    QMutexLocker locker(&d->m_mutex);
     d->m_relationships = contactRelationships;
 }
 
@@ -78,6 +77,5 @@ void QContactRelationshipSaveRequest::setRelationships(const QList<QContactRelat
 QList<QContactRelationship> QContactRelationshipSaveRequest::relationships() const
 {
     Q_D(const QContactRelationshipSaveRequest);
-    QMutexLocker locker(&d->m_mutex);
     return d->m_relationships;
 }

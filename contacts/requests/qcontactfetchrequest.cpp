@@ -114,6 +114,5 @@ QStringList QContactFetchRequest::definitionRestrictions() const
 QList<QContact> QContactFetchRequest::contacts() const
 {
     Q_D(const QContactFetchRequest);
-    QMutexLocker locker(&d->m_mutex);
     return d->m_contacts;
 }

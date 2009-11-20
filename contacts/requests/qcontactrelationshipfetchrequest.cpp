@@ -139,6 +139,5 @@ QContactRelationshipFilter::Role QContactRelationshipFetchRequest::participantRo
 QList<QContactRelationship> QContactRelationshipFetchRequest::relationships() const
 {
     Q_D(const QContactRelationshipFetchRequest);
-    QMutexLocker locker(&d->m_mutex);
     return d->m_relationships;
 }

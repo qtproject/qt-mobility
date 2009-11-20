@@ -71,7 +71,6 @@
 #include "qcontactdetaildefinition.h"
 #include "qcontactabstractrequest.h"
 #include "qcontactchangeset.h"
-#include "qcontactrequestworker.h"
 
 class QContactAbstractRequest;
 class QContactMemoryEngineData : public QSharedData
@@ -83,8 +82,7 @@ public:
         m_selfContactId(0),
         m_nextContactId(1),
         m_anonymous(false),
-        m_engineVersion(0),
-        m_requestWorker(0)
+        m_engineVersion(0)
     {
     }
 
@@ -94,17 +92,12 @@ public:
         m_selfContactId(other.m_selfContactId),
         m_nextContactId(other.m_nextContactId),
         m_anonymous(other.m_anonymous),
-        m_engineVersion(0),
-        m_requestWorker(0)
+        m_engineVersion(0)
     {
     }
 
     ~QContactMemoryEngineData()
     {
-        if (m_requestWorker) {
-            delete m_requestWorker;
-            m_requestWorker = 0;
-        }
     }
 
     QAtomicInt m_refCount;
@@ -123,7 +116,7 @@ public:
     QString m_engineName;                          // name of this engine as supplied by factory (memory)
     int m_engineVersion;                           // version of this engine as supplied by factory
 
-    QContactRequestWorker *m_requestWorker;
+    QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
 };
 
 class QTCONTACTS_EXPORT QContactMemoryEngine : public QContactManagerEngine
@@ -170,7 +163,7 @@ public:
     bool cancelRequest(QContactAbstractRequest* req);
     bool waitForRequestProgress(QContactAbstractRequest* req, int msecs);
     bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
-    void removeRequestsForManager(QContactManager* manager);
+
     /* Capabilities reporting */
     bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
     bool filterSupported(const QContactFilter& filter) const;
@@ -181,6 +174,9 @@ public:
 
 protected:
     QContactMemoryEngine(const QMap<QString, QString>& parameters);
+
+private slots:
+    void performAsynchronousOperation();
 
 private:
     /* Implement "signal coalescing" for batch functions via change set */
