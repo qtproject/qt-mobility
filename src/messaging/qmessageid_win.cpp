@@ -255,6 +255,12 @@ bool QMessageId::operator<(const QMessageId& other) const
         return (d_ptr->_entryId < other.d_ptr->_entryId);
     }
 
+    if (d_ptr) {
+        return false;
+    } else if (other.d_ptr) {
+        return true;
+    }
+
     return false;
 }
 
