@@ -65,7 +65,8 @@ SUBDIRS +=  qcontact \                      #Contacts
             qcontactfilter \
             qcontactmanager \
             qcontactmanagerplugins \
-            qcontactmanagerfiltering
+            qcontactmanagerfiltering \
+            qcontactrelationship
 
 
 SUBDIRS += \             #Multimedia
