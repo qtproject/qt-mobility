@@ -4175,10 +4175,14 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                         QMailMessage msg(QMailMessage::fromRfc2822(messageBody));
                         if (msg.multipartType() == QMailMessage::MultipartNone) {
                             if (msg.contentType().type().toLower() == "text") {
-                                messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(msg.body().data());
-                                bodySubType = "plain";
+                                QByteArray subType(msg.contentType().subType().toLower());
+                                if ((subType == "plain") || (subType == "html") || (subType == "rtf")) {
+                                    messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(msg.body().data());
+                                    bodySubType = subType;
+                                }
                             }
                         } else if ((msg.multipartType() == QMailMessage::MultipartAlternative) ||
+                                   (msg.multipartType() == QMailMessage::MultipartMixed) ||
                                    (msg.multipartType() == QMailMessage::MultipartRelated)) {
                             // For multipart/related, just try the first part
                             int maxParts(msg.multipartType() == QMailMessage::MultipartRelated ? 1 : msg.partCount());
