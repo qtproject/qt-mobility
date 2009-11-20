@@ -44,7 +44,6 @@
 #include <QtTracker/Tracker>
 using namespace SopranoLive;
 
-#include <qtrackercontactslive.h>
 
 // TODO better error handling when saving
 QTrackerRelationshipFetchRequest::QTrackerRelationshipFetchRequest(QContactAbstractRequest* req, QContactManagerEngine* parent)
