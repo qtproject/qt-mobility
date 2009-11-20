@@ -53,6 +53,7 @@
 #include "testqgeopositioninfosource_p.h"
 #include "qlocationtestutils_p.h"
 
+
 Q_DECLARE_METATYPE(QGeoPositionInfoSource::PositioningMethod)
 Q_DECLARE_METATYPE(QGeoPositionInfoSource::PositioningMethods)
 Q_DECLARE_METATYPE(QGeoPositionInfo)

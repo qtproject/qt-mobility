@@ -48,10 +48,12 @@
 #include "qservicecontext.h"
 #include "qabstractsecuritysession.h"
 
+QTM_USE_NAMESPACE
+
 class TestServicePlugin : public QObject, public QServicePluginInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QServicePluginInterface)
+    Q_INTERFACES(QtMobility::QServicePluginInterface)
 
 public:
     QObject* createInstance(const QServiceInterfaceDescriptor& descriptor,

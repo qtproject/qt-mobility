@@ -47,6 +47,7 @@
 
 #include <float.h>
 
+QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QGeoCoordinate)
 Q_DECLARE_METATYPE(QGeoPositionInfo)
 Q_DECLARE_METATYPE(QGeoPositionInfo::Property)

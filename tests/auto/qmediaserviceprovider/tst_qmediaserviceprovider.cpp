@@ -51,6 +51,7 @@
 #include <experimental/qcamera.h>
 #include <qaudiocapturesource.h>
 
+QTM_USE_NAMESPACE
 class MockMediaService : public QMediaService
 {
     Q_OBJECT
@@ -67,8 +68,8 @@ class MockServicePlugin1 : public QMediaServiceProviderPlugin,
                            public QMediaServiceSupportedDevicesInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QMediaServiceSupportedFormatsInterface)
-    Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
+    Q_INTERFACES(QtMobility::QMediaServiceSupportedFormatsInterface)
+    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
 public:
     QStringList keys() const
     {
@@ -124,8 +125,8 @@ class MockServicePlugin2 : public QMediaServiceProviderPlugin,
                             public QMediaServiceFeaturesInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QMediaServiceSupportedFormatsInterface)
-    Q_INTERFACES(QMediaServiceFeaturesInterface)
+    Q_INTERFACES(QtMobility::QMediaServiceSupportedFormatsInterface)
+    Q_INTERFACES(QtMobility::QMediaServiceFeaturesInterface)
 public:
     QStringList keys() const
     {
@@ -169,7 +170,7 @@ class MockServicePlugin3 : public QMediaServiceProviderPlugin,
                             public QMediaServiceSupportedDevicesInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
+    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
 public:
     QStringList keys() const
     {

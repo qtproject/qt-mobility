@@ -45,6 +45,7 @@
 #include "qcontactchangeset.h"
 #include "qcontactmanager_p.h"
 
+QTM_USE_NAMESPACE
 // Eventually these will make it into qtestcase.h
 // but we might need to tweak the timeout values here.
 #ifndef QTRY_COMPARE

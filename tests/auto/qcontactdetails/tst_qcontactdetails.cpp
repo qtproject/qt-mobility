@@ -47,6 +47,7 @@
 //TESTED_CLASS=
 //TESTED_FILES=
 
+QTM_USE_NAMESPACE
 class tst_QContactDetails : public QObject
 {
 Q_OBJECT

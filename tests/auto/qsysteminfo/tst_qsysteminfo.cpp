@@ -42,6 +42,7 @@
 #include "qsysteminfo.h"
 #include <QDebug>
 
+QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QSystemInfo::Version);
 Q_DECLARE_METATYPE(QSystemInfo::Feature);
 

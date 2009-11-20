@@ -65,6 +65,7 @@
 # define TESTDATA_DIR "./tst_qmediaimageviewer_images"
 #endif
 
+QTM_USE_NAMESPACE
 class QtTestNetworkAccessManager;
 
 class tst_QMediaImageViewer : public QObject

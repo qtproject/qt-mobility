@@ -41,6 +41,7 @@
 #include <QtTest/QtTest>
 #include "qsysteminfo.h"
 
+QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QSystemNetworkInfo::NetworkStatus);
 Q_DECLARE_METATYPE(QSystemNetworkInfo::NetworkMode);
 

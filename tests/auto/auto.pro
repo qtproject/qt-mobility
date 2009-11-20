@@ -7,7 +7,7 @@ SUBDIRS += databasemanager \                #service framework
            servicemetadata \
            qserviceinterfacedescriptor \
            qservicefilter \
-           qservicemanager \
+#           qservicemanager \  #remove until qhash namespace issue resolved
            qabstractsecuritysession \
            qservicecontext
 

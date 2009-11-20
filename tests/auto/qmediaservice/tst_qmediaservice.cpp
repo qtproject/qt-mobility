@@ -51,6 +51,7 @@
 
 class QtTestMediaService;
 
+QTM_USE_NAMESPACE
 class tst_QMediaService : public QObject
 {
     Q_OBJECT
@@ -69,32 +70,43 @@ class QtTestMediaControlA : public QMediaControl
     Q_OBJECT
 };
 
+QTM_BEGIN_NAMESPACE
+
 #define QtTestMediaControlA_iid "com.nokia.QtTestMediaControlA"
 Q_MEDIA_DECLARE_CONTROL(QtTestMediaControlA, QtTestMediaControlA_iid)
+
+QTM_END_NAMESPACE
 
 class QtTestMediaControlB : public QMediaControl
 {
     Q_OBJECT
 };
 
+QTM_BEGIN_NAMESPACE
 #define QtTestMediaControlB_iid "com.nokia.QtTestMediaControlB"
 Q_MEDIA_DECLARE_CONTROL(QtTestMediaControlB, QtTestMediaControlB_iid)
+
+QTM_END_NAMESPACE
 
 class QtTestMediaControlC : public QMediaControl
 {
     Q_OBJECT
 };
 
+QTM_BEGIN_NAMESPACE
 #define QtTestMediaControlC_iid "com.nokia.QtTestMediaControlC"
 Q_MEDIA_DECLARE_CONTROL(QtTestMediaControlC, QtTestMediaControlA_iid) // Yes A.
+QTM_END_NAMESPACE
 
 class QtTestMediaControlD : public QMediaControl
 {
     Q_OBJECT
 };
 
+QTM_BEGIN_NAMESPACE
 #define QtTestMediaControlD_iid "com.nokia.QtTestMediaControlD"
 Q_MEDIA_DECLARE_CONTROL(QtTestMediaControlD, QtTestMediaControlD_iid)
+QTM_END_NAMESPACE
 
 struct QtTestDevice
 {

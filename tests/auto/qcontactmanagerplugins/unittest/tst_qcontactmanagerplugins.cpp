@@ -49,8 +49,8 @@
 
 #include <QApplication>
 #include "qcontactmanager_p.h"
-//TESTED_CLASS=
-//TESTED_FILES=
+
+QTM_USE_NAMESPACE
 
 class tst_QContactManagerPlugins : public QObject
 {
@@ -74,7 +74,7 @@ private slots:
 class DummyStaticEngineFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactManagerEngineFactory)
+    Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
     public:
         QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
         QString managerName() const {return "teststaticdummy";}
@@ -98,7 +98,7 @@ Q_IMPORT_PLUGIN(contacts_teststaticdummycopy)
 class ImpostorEngineFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactManagerEngineFactory)
+    Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
     public:
         QContactManagerEngine* engine(const QMap<QString, QString>& , QContactManager::Error& ) {return 0;}
         QString managerName() const {return "memory";}
@@ -111,7 +111,7 @@ Q_IMPORT_PLUGIN(contacts_testimpostordummy)
 class ImpostorEngineFactory2 : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactManagerEngineFactory)
+    Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
     public:
         QContactManagerEngine* engine(const QMap<QString, QString>& , QContactManager::Error& ) {return 0;}
         QString managerName() const {return "invalid";}
@@ -125,7 +125,7 @@ Q_IMPORT_PLUGIN(contacts_testimpostordummy2)
 class EmptyEngineFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactManagerEngineFactory)
+    Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
     public:
         QContactManagerEngine* engine(const QMap<QString, QString>& , QContactManager::Error& ) {return 0;}
         QString managerName() const {return QString();}

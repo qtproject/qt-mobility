@@ -55,6 +55,7 @@
 //TESTED_CLASS=
 //TESTED_FILES=
 
+QTM_USE_NAMESPACE
 /*
     Unit test for classes implementing query keys for the QMessageStore class.
 */

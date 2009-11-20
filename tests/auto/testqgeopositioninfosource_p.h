@@ -42,11 +42,15 @@
 #ifndef TESTQGEOPOSITIONINFOSOURCE_P_H
 #define TESTQGEOPOSITIONINFOSOURCE_P_H
 
+#include <qmobilityglobal.h>
 #include <QTest>
 #include <QObject>
 
+QTM_BEGIN_NAMESPACE
 class QGeoPositionInfoSource;
+QTM_END_NAMESPACE
 
+QTM_USE_NAMESPACE
 class TestQGeoPositionInfoSource : public QObject
 {
     Q_OBJECT
