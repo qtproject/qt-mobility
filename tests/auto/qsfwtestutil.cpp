@@ -120,11 +120,9 @@ void QSfwTestUtil::removeDatabases()
     TFullName name;
     if (findServer.Next(name) == KErrNone)
     {
-        qDebug() << "Server found";
         RProcess dbServer;
         if (dbServer.Open(_L("SFWDatabaseManagerServer")) == KErrNone)
         {
-            qDebug() << "Killed";
             dbServer.Kill(KErrNone);
             dbServer.Close();    
         }
@@ -135,8 +133,8 @@ void QSfwTestUtil::removeDatabases()
     CleanupClosePushL(fs);
     CFileMan* fileMan=CFileMan::NewL(fs);
     CleanupStack::PushL(fileMan);
-    qDebug() << fileMan->RmDir(_L("c:\\private\\E3b48c24\\Nokia\\")); //Server's fixed UID3
-    qDebug() << fileMan->RmDir(_L("c:\\data\\.config\\Nokia\\"));
+    fileMan->RmDir(_L("c:\\private\\E3b48c24\\Nokia\\")); //Server's fixed UID3
+    fileMan->RmDir(_L("c:\\data\\.config\\Nokia\\"));
     CleanupStack::PopAndDestroy(2, &fs);    
 }
 #endif

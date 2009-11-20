@@ -115,9 +115,7 @@ void DatabaseManagerUnitTest::registerService()
         QVERIFY(m_dbm->registerService(parseResults, DatabaseManager::UserScope));
     }
     
-#if defined(Q_OS_SYMBIAN)
-    QSKIP("There is no difference between user and system scope in symbian", SkipAll);
-#endif
+    QSKIP("There is no difference between user and system scope in symbian", SkipAll);   
     
     QStringList systemServiceFiles;
     systemServiceFiles << "ServiceOmni.xml" << "ServiceWayneEnt.xml"
