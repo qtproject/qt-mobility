@@ -12,7 +12,7 @@ qtAddLibrary(QtServiceFramework)
 symbian {
     load(data_caging_paths)
     pluginDep.sources = tst_sfw_sampleserviceplugin.dll
-    pluginDep.path = $$QT_PLUGINS_BASE_DIR    
+    pluginDep.path = $$QT_PLUGINS_BASE_DIR/plugins
 
     DEPLOYMENT += pluginDep
     

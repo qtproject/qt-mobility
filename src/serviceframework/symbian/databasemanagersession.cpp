@@ -71,11 +71,12 @@ CDatabaseManagerServerSession* CDatabaseManagerServerSession::NewLC()
 void CDatabaseManagerServerSession::ConstructL()
     {
     iDatabaseManagerSignalHandler = NULL;
+    iDb = NULL;
     iDb = new ServiceDatabase();
     initDbPath();
     }
 
-CDatabaseManagerServerSession::CDatabaseManagerServerSession()
+CDatabaseManagerServerSession::CDatabaseManagerServerSession() 
     {
     }
 
@@ -528,8 +529,23 @@ void CDatabaseManagerServerSession::initDbPath()
     qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version
     QString dbName = QString("QtServiceFramework_") + qtVersion + dbIdentifier + QLatin1String(".db");
     db->setDatabasePath(dir.path() + QDir::separator() + dbName);
-
-    bool isOpen = db->open();
+    
+    openDb();
 }
+
+bool CDatabaseManagerServerSession::openDb()
+{
+    if (iDb) {
+        if (iDb->isOpen()) {
+            return true;
+        } else {
+            return iDb->open();
+        }
+    }
+    
+    return false;
+}
+
+
 
 // End of File

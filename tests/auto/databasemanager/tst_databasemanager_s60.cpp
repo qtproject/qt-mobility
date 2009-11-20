@@ -114,7 +114,11 @@ void DatabaseManagerUnitTest::registerService()
         ServiceMetaDataResults parseResults = parser.parseResults();
         QVERIFY(m_dbm->registerService(parseResults, DatabaseManager::UserScope));
     }
-
+    
+#if defined(Q_OS_SYMBIAN)
+    QSKIP("There is no difference between user and system scope in symbian", SkipAll);
+#endif
+    
     QStringList systemServiceFiles;
     systemServiceFiles << "ServiceOmni.xml" << "ServiceWayneEnt.xml"
                         << "ServiceDharma_Hydra.xml"
@@ -130,6 +134,8 @@ void DatabaseManagerUnitTest::registerService()
 
 void DatabaseManagerUnitTest::getInterfaces()
 {
+    QSKIP("There is no difference between user and system scope in symbian", SkipAll);
+    
     QString iface("com.omni.device.accelerometer");
     QServiceFilter filter(iface);
     QList<QServiceInterfaceDescriptor> descriptors;
@@ -200,6 +206,8 @@ void DatabaseManagerUnitTest::getInterfaces()
 
 void DatabaseManagerUnitTest::getServiceNames()
 {
+    QSKIP("There is no difference between user and system scope in symbian", SkipAll);
+    
     //try getting a lost of service names only in user database
     QStringList serviceNames;
     serviceNames = m_dbm->getServiceNames("", DatabaseManager::UserOnlyScope);
@@ -238,6 +246,8 @@ void DatabaseManagerUnitTest::getServiceNames()
 
 void DatabaseManagerUnitTest::defaultService()
 {
+    QSKIP("There is no difference between user and system scope in symbian", SkipAll);
+    
     QServiceInterfaceDescriptor descriptor;
 
     //get a user default service at user scope
@@ -364,6 +374,8 @@ void DatabaseManagerUnitTest::defaultService()
 
 void DatabaseManagerUnitTest::unregisterService()
 {
+    QSKIP("There is no difference between user and system scope in symbian", SkipAll);
+
     //try remove a service that only exists in the user database
     QServiceFilter filter;
     filter.setServiceName("acme");
@@ -410,7 +422,7 @@ void DatabaseManagerUnitTest::unregisterService()
     QVERIFY(!m_dbm->unregisterService("; drop table Interface;", DatabaseManager::UserScope));
     QCOMPARE(m_dbm->lastError().code(), DBError::NotFound);
 
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
+#if !defined(__WINS__)
     QSfwTestUtil::removeDatabases();
 #endif
 }
