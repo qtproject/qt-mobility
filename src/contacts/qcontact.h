@@ -63,7 +63,7 @@ class QContactManager;
 class QContactData;
 class QContactName;
 
-class QTCONTACTS_EXPORT QContact
+class Q_CONTACTS_EXPORT QContact
 {
 public:
     QContact();
