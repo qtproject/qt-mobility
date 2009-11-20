@@ -34,8 +34,7 @@ PUBLIC_HEADERS += \
     qcontactrelationship.h \
     qcontactsortorder.h \
     qtcontactsglobal.h \
-    qtcontacts.h \
-    qcontactrequestworker.h
+    qtcontacts.h
 
 # Private Headers
 PRIVATE_HEADERS += \
@@ -50,7 +49,6 @@ PRIVATE_HEADERS += \
     qcontactid_p.h \
     qcontactmanager_p.h \
     qcontactrelationship_p.h \
-    qcontactrequestworker_p.h \
     qcontactsortorder_p.h
 
 SOURCES += \
@@ -70,7 +68,6 @@ SOURCES += \
     qcontactmanagerengine.cpp \
     qcontactmanagerenginefactory.cpp \
     qcontactrelationship.cpp \
-    qcontactrequestworker.cpp \
     qcontactsortorder.cpp
 
 HEADERS += \
