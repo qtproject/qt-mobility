@@ -95,9 +95,8 @@ contains(QT_CONFIG, multimedia) {
 
 #Messaging
 contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
-    SUBDIRS += \
+    !win32-g++:SUBDIRS += \
         qmessagestore \
         qmessagestorekeys \
         qmessage
-
 }
