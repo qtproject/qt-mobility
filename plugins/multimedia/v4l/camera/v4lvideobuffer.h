@@ -51,6 +51,11 @@
 #include <sys/ioctl.h>
 #include <linux/videodev2.h>
 
+#include <linux/types.h>
+#include <sys/time.h>
+#include <sys/ioctl.h>
+#include <linux/videodev2.h>
+
 class V4LVideoBuffer : public QAbstractVideoBuffer
 {
 public:

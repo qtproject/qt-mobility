@@ -246,7 +246,7 @@ bool QContactRequestWorker::removeRequest(QContactAbstractRequest* req)
 }
 
 /*!
- * Update the request's status in \a req to QContactAbstractRequest::Cancelling, returns true if sucessful, false if not.
+ * Update the status of the given request \a req to QContactAbstractRequest::Cancelling, returns true if sucessful, false if not.
  * \sa addRequest()
  */
 bool QContactRequestWorker::cancelRequest(QContactAbstractRequest* req)
@@ -472,7 +472,7 @@ void QContactRequestWorker::processContactDetailDefinitionSaveRequest(QContactDe
     }
 }
 /*!
- * Processes the QContactDetailDefinitionRemoveRequest passed in as \a req
+ * Processes the QContactDetailDefinitionRemoveRequest \a req
  * \sa QContactDetailDefinitionRemoveRequest
  */
 void QContactRequestWorker::processContactDetailDefinitionRemoveRequest(QContactDetailDefinitionRemoveRequest* req)

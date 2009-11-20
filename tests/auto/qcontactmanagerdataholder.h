@@ -40,8 +40,15 @@
 ****************************************************************************/
 
 
-#ifndef QCONTACTREQUESTWORKER_P_H
-#define QCONTACTREQUESTWORKER_P_H
+#ifndef QCONTACTMANAGERDATAHOLDER_H
+#define QCONTACTMANAGERDATAHOLDER_H
+
+#include <QMap>
+#include <QMultiMap>
+#include <QList>
+#include <QString>
+
+#include "qcontactmanager.h"
 
 //
 //  W A R N I N G
@@ -54,53 +61,50 @@
 // We mean it.
 //
 
-#include <QMutex>
-#include <QWaitCondition>
-#include <QQueue>
-#include <QSharedData>
-
-#include "qcontactrequestworker.h"
-
 QTM_BEGIN_NAMESPACE
-
-class QContactAbstractRequest;
-
-struct QContactRequestElement
-{
-    QContactAbstractRequest* request;
-    QMutex mutex;
-    QWaitCondition condition;
-    bool waiting;
-};
-
-class QContactRequestWorkerData : public QSharedData
+class QContact;
+class QContactManagerDataHolder
 {
 public:
-    QContactRequestWorkerData()
-        : QSharedData(),
-        m_stop(false)
+    QContactManagerDataHolder()
     {
+        QStringList managerNames = QContactManager::availableManagers();
+
+        foreach(QString mgr, managerNames) {
+            QMap<QString, QString> params;
+            QString mgrUri = QContactManager::buildUri(mgr, params);
+            QContactManager* cm = QContactManager::fromUri(mgrUri);
+            if (cm) {
+                QList<QContact> contacts;
+                foreach (const QContactLocalId id,  cm->contacts()) {
+                    contacts.push_back(cm->contact(id));
+                }
+                savedContacts.insert(cm->managerName(),contacts);
+                QList<QContactLocalId> ids = cm->contacts();
+                cm->removeContacts(&ids);
+            }
+        }
     }
 
-    QContactRequestWorkerData(const QContactRequestWorkerData& other)
-        : QSharedData(other),
-        m_stop(other.m_stop)
+    ~QContactManagerDataHolder()
     {
+        QStringList managerNames = QContactManager::availableManagers();
+
+        foreach(QString mgr, managerNames) {
+            QMap<QString, QString> params;
+            QString mgrUri = QContactManager::buildUri(mgr, params);
+            QContactManager* cm = QContactManager::fromUri(mgrUri);
+            if (cm) {
+                QList<QContact> contacts = savedContacts.value(cm->managerName());
+                foreach(QContact c, contacts) {
+                    c.setId(QContactId());
+                    cm->saveContact(&c);
+                }
+            }
+        }
     }
-
-    ~QContactRequestWorkerData()
-    {
-    }
-
-    QContactRequestElement* takeFirstRequestElement();
-    void cleanUpFinishedRequests(bool waitForAll = false);
-
-    bool m_stop;
-    QMutex m_mutex;
-    QWaitCondition m_newRequestAdded;
-    QMap<QContactAbstractRequest*, QContactRequestElement*> m_requestMap;
-    QQueue<QContactRequestElement*> m_requestQueue; 
-    QList<QContactRequestElement*> m_removedRequests; 
+private:
+    QMap<QString, QList<QContact> > savedContacts;
 };
 
 QTM_END_NAMESPACE

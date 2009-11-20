@@ -43,7 +43,7 @@
 
 #include <QCoreApplication>
 #include "qtcontacts.h"
-#include "qcontactmanager_p.h" //QContactManagerDataHolder
+#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 
 QTM_USE_NAMESPACE
 

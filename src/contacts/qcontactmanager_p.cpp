@@ -234,7 +234,7 @@ void QContactManagerData::loadFactories()
                  pluginsDir.cdUp();
              }
 #endif
-            if (pluginsDir.cd(QLatin1String("plugins/contacts")) || (pluginsDir.cdUp() && pluginsDir.cd(QLatin1String("plugins/contacts")))) {
+            if (pluginsDir.cd(QLatin1String("plugins/contacts")) || pluginsDir.cd(QLatin1String("contacts")) || (pluginsDir.cdUp() && pluginsDir.cd(QLatin1String("plugins/contacts")))) {
                 const QStringList& files = pluginsDir.entryList(QDir::Files);
                 qDebug() << "Looking for plugins in" << pluginsDir.path() << files;
                 for (int j=0; j < files.count(); j++) {

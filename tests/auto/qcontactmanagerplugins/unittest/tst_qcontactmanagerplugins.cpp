@@ -48,8 +48,7 @@
 #include "qtcontacts.h"
 
 #include <QApplication>
-#include "qcontactmanager_p.h"
-
+#include "qcontactmanagerdataholder.h"
 QTM_USE_NAMESPACE
 
 class tst_QContactManagerPlugins : public QObject

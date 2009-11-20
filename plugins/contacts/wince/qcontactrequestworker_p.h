@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -40,49 +40,65 @@
 ****************************************************************************/
 
 
-#ifndef CNTMODELEXTUIDS_H
-#define CNTMODELEXTUIDS_H
+#ifndef QCONTACTREQUESTWORKER_P_H
+#define QCONTACTREQUESTWORKER_P_H
 
-#include "cntmodelextuids.hrh"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-//  CONSTANTS  
+#include <QMutex>
+#include <QWaitCondition>
+#include <QQueue>
+#include <QSharedData>
 
-/**
- * Phonebook custom Field value.
- * Locationing privacy field type.
- */
-const TUid KPbkUidContactFieldLocationPriv={KPbkUidContactFieldLocationPrivValue};
+#include "qcontactrequestworker.h"
 
-/**
- * Phonebook custom Field value.
- * Top Contact field type.
- */
-const TUid KUidContactFieldTopContact={KUidContactFieldTopContactValue};
+class QContactAbstractRequest;
 
-/**
- * Phonebook custom Field value.
- * IMPP field type.
- */
-const TUid KUidContactFieldIMPP={KUidContactFieldIMPPValue};
+struct QContactRequestElement
+{
+    QContactAbstractRequest* request;
+    QMutex mutex;
+    QWaitCondition condition;
+    bool waiting;
+};
 
-/**
- * Phonebook custom Field value.
- * Video ringtone field type.
- */
-const TUid KUidContactFieldVideoRingTone={KUidContactFieldVideoRingToneValue};
+class QContactRequestWorkerData : public QSharedData
+{
+public:
+    QContactRequestWorkerData()
+        : QSharedData(),
+        m_stop(false)
+    {
+    }
 
-/**
- * Phonebook custom Field value.
- * Gender field type.
- */
-const TUid KUidContactFieldGender={KUidContactFieldGenderValue};
+    QContactRequestWorkerData(const QContactRequestWorkerData& other)
+        : QSharedData(other),
+        m_stop(other.m_stop)
+    {
+    }
 
-// !! In case this is undefined on earlier platforms
-#ifndef KUidContactFieldGEOValue
-#define KUidContactFieldGEOValue            0x10274DB2
-const TUid KUidContactFieldGEO = {KUidContactFieldGEOValue};
+    ~QContactRequestWorkerData()
+    {
+    }
+
+    QContactRequestElement* takeFirstRequestElement();
+    void cleanUpFinishedRequests(bool waitForAll = false);
+
+    bool m_stop;
+    QMutex m_mutex;
+    QWaitCondition m_newRequestAdded;
+    QMap<QContactAbstractRequest*, QContactRequestElement*> m_requestMap;
+    QQueue<QContactRequestElement*> m_requestQueue; 
+    QList<QContactRequestElement*> m_removedRequests; 
+};
 #endif
 
-#endif // CNTMODELEXTUIDS_HRH
-
-// End of File

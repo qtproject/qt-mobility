@@ -109,7 +109,7 @@ QTM_BEGIN_NAMESPACE
 Q_MEDIA_DECLARE_CONTROL(QtTestMediaControlD, QtTestMediaControlD_iid)
 QTM_END_NAMESPACE
 
-    class QtTestMediaControlE : public QMediaControl
+class QtTestMediaControlE : public QMediaControl
 {
     Q_OBJECT
 };

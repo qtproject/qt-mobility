@@ -206,7 +206,6 @@ QContact QContactMemoryEngine::contact(const QContactLocalId& contactId, QContac
         if (dl.label().isEmpty()) {
             QContactManager::Error synthError;
             retn = setContactDisplayLabel(synthesizeDisplayLabel(retn, synthError), retn);
-            // XXX TODO: ensure this is correct after removing the deprecated API
         }
 
         // also, retrieve the current relationships the contact is involved with.

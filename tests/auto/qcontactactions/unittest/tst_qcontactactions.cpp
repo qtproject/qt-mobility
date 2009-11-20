@@ -44,7 +44,7 @@
 #include <QApplication>
 
 #include "qtcontacts.h"
-#include "qcontactmanager_p.h"
+#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 #include "qcontactaction.h"
 #include "qcontactactionfactory.h"
 #include "qcontactactiondescriptor.h"

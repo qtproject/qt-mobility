@@ -746,7 +746,7 @@ bool QVideoWidget::event(QEvent *event)
             if (d->currentControl)
                 d->currentControl->setFullScreen(false);
 
-           if (d->wasFullScreen) {
+            if (d->wasFullScreen) {
                 flags &= ~(Qt::Window | Qt::SubWindow); //clear the flags...
                 flags |= d->nonFullScreenFlags; //then we reset the flags (window and subwindow)
                 setWindowFlags(flags);

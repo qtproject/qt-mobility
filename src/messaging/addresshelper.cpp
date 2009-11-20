@@ -43,7 +43,6 @@
 #include <qpair.h>
 
 QTM_BEGIN_NAMESPACE
-
 static QPair<int, int> findDelimiters(const QString& text)
 {
     int first = -1;
