@@ -733,6 +733,11 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
     d_ptr->_state = QMessageServiceAction::InProgress;
     emit stateChanged(d_ptr->_state);
 
+#if 0
+    d_ptr->_candidateIds = QMessageStore::instance()->queryMessages(filter, body, options, ordering, limit, offset);
+    d_ptr->_lastError = QMessageStore::instance()->lastError();
+    QTimer::singleShot(0,d_ptr,SLOT(reportMatchingIds()));
+#else
     // Perform the query in another thread to keep the UI thread free
     QueryThread *query = new QueryThread(d_ptr, filter, body, options, ordering, limit, offset);
     connect(query, SIGNAL(completed()), d_ptr, SLOT(reportMatchingIds()), Qt::QueuedConnection);
@@ -742,11 +747,12 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
         // Don't delete the previous thread object immediately
         if (!d_ptr->m_obsoleteThreads.isEmpty()) {
             qDeleteAll(d_ptr->m_obsoleteThreads);
+            d_ptr->m_obsoleteThreads.clear();
         }
         d_ptr->m_obsoleteThreads.append(d_ptr->m_queryThread);
     }
     d_ptr->m_queryThread = query;
-
+#endif
     return true;
 }
 
