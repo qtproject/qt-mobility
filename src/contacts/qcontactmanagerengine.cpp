@@ -257,21 +257,6 @@ QList<QContactLocalId> QContactManagerEngine::contacts(const QContactFilter& fil
 }
 
 /*!
- * \deprecated
- * Returns a list of ids of contacts of the given \a contactType, sorted according to the given list of \a sortOrders.
- * Any error which occurs is saved in \a error.
- */
-QList<QContactLocalId> QContactManagerEngine::contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
-{
-    qWarning("This function is deprecated and will be removed in week 47 - see email discussion from week 45!  Use a detail filter with definition set to QContactType::DefinitionName and field name set to QContactType::FieldType instead!");
-    QContactDetailFilter df;
-    df.setDetailDefinitionName(QContactType::DefinitionName, QContactType::FieldType);
-    df.setValue(contactType);
-    df.setMatchFlags(QContactFilter::MatchExactly);
-    return contacts(df, sortOrders, error);
-}
-
-/*!
  * Returns the contact in the database identified by \a contactId
  *
  * Any errors encountered should be stored to \a error.
@@ -537,7 +522,7 @@ int QContactManagerEngine::version()
  */ 
 int QContactManagerEngine::implementationVersion() const 
 { 
-    return 0; 
+    return 0;
 } 
   
 
@@ -615,35 +600,16 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     d.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     retn.insert(d.name(), d);
 
-    // display label - SOON TO BE DEPRECATED
-    // see Commit: e49024c7fb5255b465002c82c10a299bf125951a
+    // display label
     d.setName(QContactDisplayLabel::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
     fields.insert(QContactDisplayLabel::FieldLabel, f);
-    f.setDataType(QVariant::Bool);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QContactDisplayLabel::FieldSynthesized, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+    d.setAccessConstraint(QContactDetailDefinition::ReadOnly);
     retn.insert(d.name(), d);
-    // Note that in week 47, the above schema definition will be replaced with the following:
-    //d.setName(QContactDisplayLabel::DefinitionName);
-    //fields.clear();
-    //f.setDataType(QVariant::String);
-    //f.setAllowableValues(QVariantList());
-    //fields.insert(QContactDisplayLabel::FieldLabel, f);
-    //d.setFields(fields);
-    //d.setUnique(true);
-    //d.setAccessConstraint(QContactDetailDefinition::ReadOnly);
-    //retn.insert(d.name(), d);
-    // Which will cause the display label to be READ ONLY (always synthesised)
-    // To set a custom label, use QContactName::CustomLabel field!
 
     // email address
     d.setName(QContactEmailAddress::DefinitionName);
@@ -821,7 +787,7 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     f.setDataType(QVariant::String);
     fields.insert(QContactOnlineAccount::FieldAccountUri, f);
     fields.insert(QContactOnlineAccount::FieldServiceProvider, f);
-    f.setAccessConstract(QContactDetailDefinitionField::ReadOnly);
+    f.setAccessConstraint(QContactDetailDefinitionField::ReadOnly);
     fields.insert(QContactOnlineAccount::FieldNickname, f);
     fields.insert(QContactOnlineAccount::FieldStatusMessage, f);
     QVariantList presenceValues;
@@ -835,7 +801,7 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     f.setAllowableValues(presenceValues);
     fields.insert(QContactOnlineAccount::FieldPresence, f);
     f.setDataType(QVariant::StringList);
-    f.setAccessConstract(QContactDetailDefinitionField::NoConstraint);
+    f.setAccessConstraint(QContactDetailDefinitionField::NoConstraint);
     f.setAllowableValues(contexts);
     fields.insert(QContactDetail::FieldContext, f);
     f.setAllowableValues(QVariantList()); // allow any subtypes!
@@ -843,32 +809,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     d.setFields(fields);
     d.setUnique(false);
     d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-    retn.insert(d.name(), d);
-
-    // presence - DEPRECATED - use online account instead
-    // see: Commit SHA1: e70e29ae3d30288d793336a77829919d16171acb
-    d.setName(QContactPresence::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    fields.insert(QContactPresence::FieldAccountUri, f);
-    fields.insert(QContactPresence::FieldNickname, f);
-    fields.insert(QContactPresence::FieldStatusMessage, f);
-    presenceValues.clear();
-    presenceValues << QString(QLatin1String(QContactPresence::PresenceAvailable));
-    presenceValues << QString(QLatin1String(QContactPresence::PresenceHidden));
-    presenceValues << QString(QLatin1String(QContactPresence::PresenceBusy));
-    presenceValues << QString(QLatin1String(QContactPresence::PresenceAway));
-    presenceValues << QString(QLatin1String(QContactPresence::PresenceExtendedAway));
-    presenceValues << QString(QLatin1String(QContactPresence::PresenceUnknown));
-    presenceValues << QString(QLatin1String(QContactPresence::PresenceOffline));
-    f.setAllowableValues(presenceValues);
-    fields.insert(QContactPresence::FieldAccountUri, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QContactDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::ReadOnly);
     retn.insert(d.name(), d);
 
     // avatar

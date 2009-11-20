@@ -52,7 +52,6 @@
 #include <qdebug.h>
 #include <QThread>
 
-
 QTM_BEGIN_NAMESPACE
 
 namespace {

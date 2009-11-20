@@ -133,6 +133,8 @@ private Q_SLOTS:
     void captureFrame();
 
 private:
+    bool isFormatSupported(QVideoFrame::PixelFormat fmt);
+
     QSocketNotifier *notifier;
     QList<video_buffer> buffers;
 

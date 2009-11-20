@@ -129,7 +129,8 @@ QTM_BEGIN_NAMESPACE
 /*!
     \fn QMessageFolderFilter::operator~() const
   
-    Returns a filter that is the logical NOT of the value of this filter.
+    Returns a filter that is the logical NOT of the value of this filter (ignoring any
+    options() set on the filter).
 
     If this filter is empty, the result will be a non-matching filter; if this filter is 
     non-matching, the result will be an empty filter.

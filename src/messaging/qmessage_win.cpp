@@ -51,7 +51,6 @@
 #include <QDir>
 #include <QFile>
 
-
 QTM_BEGIN_NAMESPACE
 
 namespace {

@@ -83,7 +83,8 @@ public:
         m_refCount(QAtomicInt(1)),
         m_selfContactId(0),
         m_nextContactId(1),
-        m_anonymous(false)
+        m_anonymous(false),
+        m_engineVersion(0)
     {
     }
 
@@ -92,7 +93,8 @@ public:
         m_refCount(QAtomicInt(1)),
         m_selfContactId(other.m_selfContactId),
         m_nextContactId(other.m_nextContactId),
-        m_anonymous(other.m_anonymous)
+        m_anonymous(other.m_anonymous),
+        m_engineVersion(0)
     {
     }
 
@@ -114,11 +116,12 @@ public:
     QContactLocalId m_nextContactId;
     bool m_anonymous;                              // Is this backend ever shared?
     QString m_engineName;                          // name of this engine as supplied by factory (memory)
+    int m_engineVersion;                           // version of this engine as supplied by factory
 
     QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
 };
 
-class QContactMemoryEngine : public QContactManagerEngine
+class Q_CONTACTS_EXPORT QContactMemoryEngine : public QContactManagerEngine
 {
     Q_OBJECT
 
@@ -167,6 +170,9 @@ public:
     bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
     bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
+
+    /* Version Reporting */
+    int implementationVersion() const;
 
 protected:
     QContactMemoryEngine(const QMap<QString, QString>& parameters);

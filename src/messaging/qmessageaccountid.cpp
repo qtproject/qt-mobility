@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessageaccountid_p.h"
+#include "qmessageaccountid.h"
 
 QTM_BEGIN_NAMESPACE
 

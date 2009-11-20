@@ -1,6 +1,6 @@
 TEMPLATE = lib
 TARGET = QtPublishSubscribe
-QT = core network xml
+QT = core network
 
 include(../../common.pri)
 

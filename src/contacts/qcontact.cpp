@@ -205,65 +205,13 @@ void QContact::setType(const QContactType& type)
     d->m_details[1] = type;
 }
 
-///*!
-// * THIS FUNCTION WILL REPLACE THE THREE DEPRECATED FUNCTIONS BELOW AT WEEK 47 (unless feedback suggests otherwise).
-// * See Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a
-// *
-// * Returns the read-only display label of this contact.
-// * A contact which has been retrieved from a manager will have a display label synthesized for it.
-// */
-//QString QContact::displayLabel() const
-//{
-//    return d->m_details.at(0).value(QContactDisplayLabel::FieldLabel);
-//}
-
 /*!
- * \deprecated
- *
- * DEPRECATED, see Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a
- *
- * Returns the display label of the contact.  Every contact has exactly one display label
- * which is either set manually (by saving a modified copy of the QContactDisplayLabel
- * in the contact, or by calling \l setDisplayLabel()) or synthesized by the manager from
- * which the contact is retrieved.
- *
- * \sa setDisplayLabel()
+ * Returns the read-only display label of this contact.
+ * A contact which has been retrieved from a manager will have a display label synthesized for it.
  */
-QContactDisplayLabel QContact::displayLabel() const
+QString QContact::displayLabel() const
 {
-    return d->m_details.at(0);
-}
-
-/*!
- * \deprecated
- *
- * DEPRECATED, see Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a
- *
- * Set the display label of the contact to \a label.
- *
- * The corresponding "synthesized" flag in this contact will be
- * cleared.
- */
-void QContact::setDisplayLabel(const QContactDisplayLabel& label)
-{
-    d->m_details[0] = label;
-}
-
-/*!
- * \deprecated
- *
- * DEPRECATED, see Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a
- *
- * Set the display label of the contact to \a label.
- *
- * The corresponding "synthesized" flag in this contact will be
- * cleared.
- */
-void QContact::setDisplayLabel(const QString& label)
-{
-    QContactDisplayLabel dl = d->m_details[0];
-    dl.setLabel(label);
-    d->m_details[0] = dl;
+    return d->m_details.at(0).value(QContactDisplayLabel::FieldLabel);
 }
 
 /*!
@@ -346,9 +294,12 @@ QList<QContactDetail> QContact::details(const QString& definitionName, const QSt
  * this contact, that detail is overwritten.  Otherwise, a new Id is generated
  * and set in the detail, and the detail is added to the list.
  *
- * If \a detail is a contact display label, the existing display label will
- * be overwritten with \a detail.  There is never more than one display label
+ * If \a detail is a contact type, the existing contact type will
+ * be overwritten with \a detail.  There is never more than one contact type
  * in a contact.
+ *
+ * If \a detail is a display label, the operation will fail.
+ * The display label can never be updated manually and must be synthesized by the backend.
  *
  * Returns true if the detail was saved successfully, otherwise returns false
  */
@@ -357,14 +308,12 @@ bool QContact::saveDetail(QContactDetail* detail)
     if (!detail)
         return false;
 
-    /* Handle display labels specially */
+    /* Handle display labels specially - cannot save them! */
     if (detail->definitionName() == QContactDisplayLabel::DefinitionName) {
-        d->m_details[0] = *detail;
-        detail->d->m_id = 1;
-        return true;
+        return false;
     }
 
-    /* Also handle contact type specially */
+    /* Also handle contact type specially - only one of them. */
     if (detail->definitionName() == QContactType::DefinitionName) {
         d->m_details[1] = *detail;
         detail->d->m_id = 2;
@@ -395,8 +344,10 @@ bool QContact::saveDetail(QContactDetail* detail)
  * The Id of the \a detail is removed, to signify that it is no longer
  * part of the contact.
  *
- * If the detail is the display label for this contact, the display
- * label will be reset to an empty state, and the function will return success.
+ * If the detail is the contact type for this contact, the type
+ * will be reset to \c QContactType::TypeContact, and the function will return success.
+ *
+ * If the detail is a display label, the operation will fail and return false.
  *
  * Returns true if the detail was removed successfully, false if an error occurred
  */
@@ -410,11 +361,7 @@ bool QContact::removeDetail(QContactDetail* detail)
 
     // Check if this a display label
     if (detail->d->m_definitionName == QContactDisplayLabel::DefinitionName) {
-        // XXX TODO: fix this after removing the deprecated API
-        QContactDisplayLabel l = d->m_details[0];
-        l.setValue(QContactDisplayLabel::FieldLabel, QString());
-        d->m_details[0] = l;
-        return true;
+        return false;
     }
 
     // Check if this a type

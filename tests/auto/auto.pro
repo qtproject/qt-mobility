@@ -3,13 +3,16 @@ TEMPLATE = subdirs
 include($$QT_MOBILITY_BUILD_TREE/config.pri)
 
 SUBDIRS += databasemanager \                #service framework
-           servicedatabase \ 
            servicemetadata \
            qserviceinterfacedescriptor \
            qservicefilter \
 #           qservicemanager \  #remove until qhash namespace issue resolved
            qabstractsecuritysession \
            qservicecontext
+
+# servicedatabase is not compiled into the serviceframework library on symbian,
+# special handling is needed
+!symbian:SUBDIRS+=servicedatabase
 
 SUBDIRS += qnetworkconfigmanager \          #Bearer management
            qnetworkconfiguration \
@@ -91,9 +94,8 @@ contains(QT_CONFIG, multimedia) {
 
 #Messaging
 contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
-    SUBDIRS += \
+    !win32-g++:SUBDIRS += \
         qmessagestore \
         qmessagestorekeys \
         qmessage
-
 }

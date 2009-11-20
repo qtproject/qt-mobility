@@ -91,8 +91,7 @@ private:
                           QString& sqlQuery,
                           QContactManager::Error& error);
     /* Return true if this filter is leaf filter*/ 
-    bool isSingleFilter(const QContactFilter& filter, 
-                             QContactManager::Error& error) const;
+    bool isSingleFilter(const QContactFilter& filter) const;
     /*Local helper functions used for creating the sql query */
     void updateSqlQueryForSingleFilter(const QContactFilter& filter,
                                        QString& sqlQuery,
@@ -114,6 +113,8 @@ private:
             CContactIdArray*& idArray,
             const TDesC& phoneNumber,
             const TInt matchLength);
+    CntAbstractContactFilter::FilterSupport checkIfDetailFilterSupported(const QContactDetailFilter& detailFilter) const;
+    
 private:
     CntSymbianSrvConnection* m_srvConnection;
     CContactDatabase &m_contactDatabase;

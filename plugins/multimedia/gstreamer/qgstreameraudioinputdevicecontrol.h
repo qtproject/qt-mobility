@@ -70,6 +70,7 @@ private:
     void update();
     void updateAlsaDevices();
     void updateOssDevices();
+    void updatePulseDevices();
 
     int m_selectedDevice;
     QStringList m_names;

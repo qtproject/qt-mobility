@@ -12,5 +12,5 @@ symbian {
 SUBDIRS += bearer location contacts multimedia publishsubscribe systeminfo
 
 contains(qmf_enabled, yes)|wince*|win32|symbian|maemo {
-    SUBDIRS += messaging
+    !win32-g++:SUBDIRS += messaging
 }

@@ -58,6 +58,7 @@ class tst_QMediaService : public QObject
 private slots:
     void initTestCase();
 
+    void control_iid();
     void control();
     void nullAudioDeviceControl();
     void audioEndpoints();
@@ -107,6 +108,11 @@ QTM_BEGIN_NAMESPACE
 #define QtTestMediaControlD_iid "com.nokia.QtTestMediaControlD"
 Q_MEDIA_DECLARE_CONTROL(QtTestMediaControlD, QtTestMediaControlD_iid)
 QTM_END_NAMESPACE
+
+    class QtTestMediaControlE : public QMediaControl
+{
+    Q_OBJECT
+};
 
 struct QtTestDevice
 {
@@ -226,6 +232,17 @@ public:
 void tst_QMediaService::initTestCase()
 {
     qRegisterMetaType<QMediaService::MediaEndpoint>();
+}
+
+void tst_QMediaService::control_iid()
+{
+    const char *nullString = 0;
+
+    // Default implementation.
+    QCOMPARE(qmediacontrol_iid<QtTestMediaControlE *>(), nullString);
+
+    // Partial template.
+    QVERIFY(qstrcmp(qmediacontrol_iid<QtTestMediaControlA *>(), QtTestMediaControlA_iid) == 0);
 }
 
 void tst_QMediaService::control()

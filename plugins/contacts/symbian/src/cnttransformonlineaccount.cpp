@@ -43,7 +43,10 @@
 
 QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList;
+    if(detail.definitionName() != QContactOnlineAccount::DefinitionName)
+        User::Leave(KErrArgument);
+
+    QList<CContactItemField *> fieldList;
 
 	//cast to phonenumber
 	const QContactOnlineAccount &onlineAccount(static_cast<const QContactOnlineAccount&>(detail));
@@ -53,56 +56,58 @@ QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QCo
 
 	//create new field
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(onlineAccount.accountUri().utf16()));
-	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText);
-	newField->TextStorage()->SetTextL(fieldText);
+	if(fieldText.Length()) {
+	    CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText);
+	    newField->TextStorage()->SetTextL(fieldText);
 
-	//no subtype
-	if(!subTypes.count())
-	{
-        User::LeaveIfError(KErrArgument);
+	    //no subtype
+	    if(!subTypes.count())
+	    {
+	        User::LeaveIfError(KErrArgument);
+	    }
+
+	    // online account
+	    else if (subTypes.contains(QContactOnlineAccount::SubTypeImpp))
+	    {
+	        newField->AddFieldTypeL(KUidContactFieldIMPP);
+	        newField->SetMapping(KUidContactFieldVCardMapUnknown);
+	    }
+
+	    //internet
+	    else if (subTypes.contains(QContactOnlineAccount::SubTypeSipVoip))
+	    {
+	        newField->AddFieldTypeL(KUidContactFieldSIPID);
+	        newField->SetMapping(KUidContactFieldVCardMapSIPID);
+	        newField->AddFieldTypeL(KUidContactFieldVCardMapVOIP);
+	    }
+
+	    //share video
+	    else if (subTypes.contains(QContactOnlineAccount::SubTypeVideoShare))
+	    {
+	        newField->AddFieldTypeL(KUidContactFieldSIPID);
+	        newField->SetMapping(KUidContactFieldVCardMapSIPID);
+	        newField->AddFieldTypeL(KUidContactFieldVCardMapSWIS);
+	    }
+
+	    //sip
+	    else if (subTypes.contains(QContactOnlineAccount::SubTypeSip))
+	    {
+	        newField->AddFieldTypeL(KUidContactFieldSIPID);
+	        newField->SetMapping(KUidContactFieldVCardMapSIPID);
+	        newField->AddFieldTypeL(KUidContactFieldVCardMapSIPID);
+	    }
+
+	    else
+	    {
+	        User::LeaveIfError(KErrNotSupported);
+	    }
+
+	    //contexts
+	    setContextsL(onlineAccount, *newField);
+
+	    fieldList.append(newField);
+	    CleanupStack::Pop(newField);
 	}
-
-	// online account
-	else if (subTypes.contains(QContactOnlineAccount::SubTypeImpp))
-	{
-        newField->AddFieldTypeL(KUidContactFieldIMPP);
-        newField->SetMapping(KUidContactFieldVCardMapUnknown);
-	}
-
-	//internet
-	else if (subTypes.contains(QContactOnlineAccount::SubTypeSipVoip))
-	{
-		newField->AddFieldTypeL(KUidContactFieldSIPID);
-		newField->SetMapping(KUidContactFieldVCardMapSIPID);
-		newField->AddFieldTypeL(KUidContactFieldVCardMapVOIP);
-	}
-
-	//share video
-	else if	(subTypes.contains(QContactOnlineAccount::SubTypeVideoShare))
-	{
-		newField->AddFieldTypeL(KUidContactFieldSIPID);
-		newField->SetMapping(KUidContactFieldVCardMapSIPID);
-		newField->AddFieldTypeL(KUidContactFieldVCardMapSWIS);
-	}
-
-	//sip
-	else if	(subTypes.contains(QContactOnlineAccount::SubTypeSip))
-	{
-		newField->AddFieldTypeL(KUidContactFieldSIPID);
-		newField->SetMapping(KUidContactFieldVCardMapSIPID);
-		newField->AddFieldTypeL(KUidContactFieldVCardMapSIPID);
-	}
-
-	else
-	{
-        User::LeaveIfError(KErrNotSupported);
-	}
-
-	//contexts
-	setContextsL(onlineAccount, *newField);
-
-	fieldList.append(newField);
-	CleanupStack::Pop(newField);
 
 	return fieldList;
 }

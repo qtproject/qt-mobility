@@ -42,8 +42,6 @@
 #ifndef QGSTVIDEOBUFFER_H
 #define QGSTVIDEOBUFFER_H
 
-#ifndef QT_NO_MULTIMEDIA
-
 #include <QtMultimedia/QAbstractVideoBuffer>
 
 #include <gst/gst.h>
@@ -65,7 +63,5 @@ private:
     MapMode m_mode;
 };
 
-
-#endif
 
 #endif

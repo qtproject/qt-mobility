@@ -106,6 +106,8 @@ private slots:
     void testPriority();
     void testPreferredCharsets_data();
     void testPreferredCharsets();
+    void testMessageAddress_data();
+    void testMessageAddress();
 
 private:
     QMessageAccountId testAccountId;
@@ -391,5 +393,45 @@ void tst_QMessage::testPreferredCharsets()
     QCOMPARE(body.contentCharset().toLower(), encoded.toLower());
 
     QMessage::setPreferredCharsets(QList<QByteArray>());
+}
+
+void tst_QMessage::testMessageAddress_data()
+{
+    QTest::addColumn<QString>("from");
+    QTest::addColumn<QString>("targetName");
+    QTest::addColumn<QString>("targetAddress");
+
+    QTest::newRow("no angle brackets") 
+        << "wizard@oz.test" 
+        << "wizard@oz.test" 
+        << "wizard@oz.test";
+
+    QTest::newRow("name and address") 
+        << "Wizard of Oz <wizard@oz.test>" 
+        << "Wizard of Oz" 
+        << "wizard@oz.test";
+
+    QTest::newRow("quoted name and address") 
+        << "\"First Last\" <first.last@example.com>"
+        << "\"First Last\""
+        << "first.last@example.com";
+
+    QTest::newRow("quoted name with bracket and address") 
+        << "\"First <Middle> Last\" <first.last@example.com>"
+        << "\"First <Middle> Last\""
+        << "first.last@example.com";
+}
+
+void tst_QMessage::testMessageAddress()
+{
+    QFETCH(QString, from); 
+    QFETCH(QString, targetName); 
+    QFETCH(QString, targetAddress); 
+
+    QString name;
+    QString address;
+    QMessageAddress::parseEmailAddress(from, &name, &address);
+    QCOMPARE(targetName, name);
+    QCOMPARE(targetAddress, address);
 }
 

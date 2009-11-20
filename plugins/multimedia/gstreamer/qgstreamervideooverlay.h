@@ -42,8 +42,6 @@
 #ifndef QGSTREAMERVIDEOOVERLAY_H
 #define QGSTREAMERVIDEOOVERLAY_H
 
-#ifndef QT_NO_MULTIMEDIA
-
 #include <qvideowindowcontrol.h>
 
 #include "qgstreamervideorendererinterface.h"
@@ -105,7 +103,5 @@ private:
     QRect m_displayRect;
     bool m_fullScreen;
 };
-
-#endif
 
 #endif

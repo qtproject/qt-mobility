@@ -237,7 +237,7 @@ void TestModelUi::dataAvailable(QContactFetchRequest* request, bool appendOnly)
         text += "\n";
     }
 
-    talkingToName = curr.displayLabel().label();
+    talkingToName = curr.displayLabel();
     if (currentState == TestModelUi::DialingState) {
         talkingToNumber = curr.detail(QContactPhoneNumber::DefinitionName).value(QContactPhoneNumber::FieldNumber);
     }
@@ -254,7 +254,7 @@ void TestModelUi::filterResults(QContactFetchRequest* request, bool appendOnly)
     QList<QContact> results = request->contacts();
     QString text = "Matching Contacts:\n";
     for (int i = 0; i < results.size(); i++) {
-        text += "\n" + results.at(i).displayLabel().label();
+        text += "\n" + results.at(i).displayLabel();
     }
     textEdit->setText(text);
 

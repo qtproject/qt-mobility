@@ -53,8 +53,6 @@
 // We mean it.
 //
 
-#ifndef QT_NO_MULTIMEDIA
-
 #include <qmobilityglobal.h>
 #include <QtCore/qsize.h>
 #include <QtGui/qimage.h>
@@ -151,7 +149,5 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QPainterVideoSurface::ShaderTypes)
 #endif
 
 QTM_END_NAMESPACE
-
-#endif
 
 #endif

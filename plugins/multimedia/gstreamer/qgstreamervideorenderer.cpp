@@ -42,8 +42,6 @@
 #include "qgstreamervideorenderer.h"
 #include "qvideosurfacegstsink.h"
 
-#ifndef QT_NO_MULTIMEDIA
-
 #include <QEvent>
 #include <QApplication>
 
@@ -82,5 +80,3 @@ void QGstreamerVideoRenderer::setSurface(QAbstractVideoSurface *surface)
     m_surface = surface;
 }
 
-
-#endif

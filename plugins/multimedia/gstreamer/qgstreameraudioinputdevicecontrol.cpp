@@ -45,6 +45,8 @@
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
 
+#include <gst/gst.h>
+
 #ifdef HAVE_ALSA
 #include <alsa/asoundlib.h>
 #endif
@@ -107,6 +109,7 @@ void QGstreamerAudioInputDeviceControl::update()
     m_descriptions.clear();
     updateAlsaDevices();
     updateOssDevices();
+    updatePulseDevices();
 }
 
 void QGstreamerAudioInputDeviceControl::updateAlsaDevices()
@@ -159,3 +162,12 @@ void QGstreamerAudioInputDeviceControl::updateOssDevices()
 #endif
 }
 
+void QGstreamerAudioInputDeviceControl::updatePulseDevices()
+{
+    GstElementFactory *factory = gst_element_factory_find("pulsesrc");
+    if (factory) {
+        m_names.append("pulseaudio:");
+        m_descriptions.append("PulseAudio device.");
+        gst_object_unref(GST_OBJECT(factory));
+    }
+}

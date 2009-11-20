@@ -51,11 +51,9 @@
 #include "qvideowindowcontrol.h"
 #include "qvideowidgetcontrol.h"
 
-#ifndef QT_NO_MULTIMEDIA
 #include "qvideorenderercontrol.h"
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideosurfaceformat.h>
-#endif
 
 #include <QtGui/qapplication.h>
 
@@ -98,7 +96,6 @@ private slots:
     void saturationWidgetControl_data() { color_data(); }
     void saturationWidgetControl();
 
-#ifndef QT_NO_MULTIMEDIA
     void showRendererControl();
     void fullScreenRendererControl();
     void aspectRatioRendererControl();
@@ -114,7 +111,6 @@ private slots:
     void saturationRendererControl();
 
     void paintRendererControl();
-#endif
 
 private:
     void sizeHint_data();
@@ -251,7 +247,6 @@ private:
     bool m_fullScreen;
 };
 
-#ifndef QT_NO_MULTIMEDIA
 class QtTestRendererControl : public QVideoRendererControl
 {
 public:
@@ -266,9 +261,6 @@ public:
 private:
     QAbstractVideoSurface *m_surface;
 };
-#else
-class QtTestRendererControl;
-#endif
 
 class QtTestVideoService : public QMediaService
 {
@@ -292,9 +284,7 @@ public:
         delete outputControl;
         delete windowControl;
         delete widgetControl;
-#ifndef QT_NO_MULTIMEDIA
         delete rendererControl;
-#endif
     }
 
     QMediaControl *control(const char *name) const
@@ -305,10 +295,8 @@ public:
             return windowControl;
         else if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
             return widgetControl;
-#ifndef QT_NO_MULTIMEDIA
         else if (qstrcmp(name, QVideoRendererControl_iid) == 0)
             return rendererControl;
-#endif
         else
             return 0;
     }
@@ -363,11 +351,9 @@ void tst_QVideoWidget::nullObject()
 
     QVERIFY(widget.sizeHint().isEmpty());
 
-#ifdef QVIDEOWIDGET_TEST_FULLSCREEN
     widget.setFullScreen(true);
     QTest::qWaitForWindowShown(&widget);
     QCOMPARE(widget.isFullScreen(), true);
-#endif
 
     widget.setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
     QCOMPARE(widget.aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
@@ -448,11 +434,9 @@ void tst_QVideoWidget::nullService()
 
     QVERIFY(widget.sizeHint().isEmpty());
 
-#ifdef QVIDEOWIDGET_TEST_FULLSCREEN
     widget.setFullScreen(true);
     QTest::qWaitForWindowShown(&widget);
     QCOMPARE(widget.isFullScreen(), true);
-#endif
 
     widget.setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
     QCOMPARE(widget.aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
@@ -479,11 +463,9 @@ void tst_QVideoWidget::nullOutputControl()
 
     QVERIFY(widget.sizeHint().isEmpty());
 
-#ifdef QVIDEOWIDGET_TEST_FULLSCREEN
     widget.setFullScreen(true);
     QTest::qWaitForWindowShown(&widget);
     QCOMPARE(widget.isFullScreen(), true);
-#endif
 
     widget.setBrightness(100);
     QCOMPARE(widget.brightness(), 100);
@@ -507,10 +489,8 @@ void tst_QVideoWidget::noOutputs()
 
     QVERIFY(widget.sizeHint().isEmpty());
 
-#ifdef QVIDEOWIDGET_TEST_FULLSCREEN
     widget.setFullScreen(true);
     QCOMPARE(widget.isFullScreen(), true);
-#endif
 
     widget.setBrightness(100);
     QCOMPARE(widget.brightness(), 100);
@@ -550,10 +530,8 @@ void tst_QVideoWidget::serviceDestroyed()
     QCOMPARE(widget.hue(), 100);
     QCOMPARE(widget.saturation(), 100);
 
-#ifdef QVIDEOWIDGET_TEST_FULLSCREEN
     widget.setFullScreen(true);
     QCOMPARE(widget.isFullScreen(), true);
-#endif
 }
 
 void tst_QVideoWidget::showWindowControl()
@@ -574,6 +552,12 @@ void tst_QVideoWidget::showWindowControl()
 
     QVERIFY(object.testService->windowControl->repaintCount() > 0);
 
+    widget.resize(640, 480);
+    QCOMPARE(object.testService->windowControl->displayRect(), QRect(0, 0, 640, 480));
+
+    widget.move(10, 10);
+    QCOMPARE(object.testService->windowControl->displayRect(), QRect(0, 0, 640, 480));
+
     widget.hide();
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
@@ -593,13 +577,16 @@ void tst_QVideoWidget::showWidgetControl()
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::WidgetOutput);
     QCOMPARE(object.testService->widgetControl->videoWidget()->isVisible(), true);
 
+    widget.resize(640, 480);
+
+    widget.move(10, 10);
+
     widget.hide();
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
     QCOMPARE(object.testService->widgetControl->videoWidget()->isVisible(), false);
 }
 
-#ifndef QT_NO_MULTIMEDIA
 void tst_QVideoWidget::showRendererControl()
 {
     QtTestVideoObject object(0, 0, new QtTestRendererControl);
@@ -614,11 +601,14 @@ void tst_QVideoWidget::showRendererControl()
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::RendererOutput);
     QVERIFY(object.testService->rendererControl->surface() != 0);
 
+    widget.resize(640, 480);
+
+    widget.move(10, 10);
+
     widget.hide();
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
 }
-#endif
 
 void tst_QVideoWidget::aspectRatioWindowControl()
 {
@@ -682,7 +672,6 @@ void tst_QVideoWidget::aspectRatioWidgetControl()
     QCOMPARE(object.testService->widgetControl->aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 }
 
-#ifndef QT_NO_MULTIMEDIA
 void tst_QVideoWidget::aspectRatioRendererControl()
 {
     QtTestVideoObject object(0, 0, new QtTestRendererControl);
@@ -709,7 +698,6 @@ void tst_QVideoWidget::aspectRatioRendererControl()
     widget.show();
     QCOMPARE(widget.aspectRatioMode(), QVideoWidget::KeepAspectRatio);
 }
-#endif
 
 void tst_QVideoWidget::sizeHint_data()
 {
@@ -751,7 +739,6 @@ void tst_QVideoWidget::sizeHintWidgetControl()
     QCOMPARE(widget.sizeHint(), size);
 }
 
-#ifndef QT_NO_MULTIMEDIA
 void tst_QVideoWidget::sizeHintRendererControl_data()
 {
     QTest::addColumn<QSize>("frameSize");
@@ -802,11 +789,9 @@ void tst_QVideoWidget::sizeHintRendererControl()
     QCOMPARE(widget.sizeHint(), expectedSize);
 }
 
-#endif
 
 void tst_QVideoWidget::fullScreenWindowControl()
 {
-#ifdef QVIDEOWIDGET_TEST_FULLSCREEN
     QtTestVideoObject object(new QtTestWindowControl, 0, 0);
     QVideoWidget widget(&object);
     widget.show();
@@ -883,12 +868,10 @@ void tst_QVideoWidget::fullScreenWindowControl()
     object.testService->windowControl->setFullScreen(false);
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 6);
-#endif
 }
 
 void tst_QVideoWidget::fullScreenWidgetControl()
 {
-#ifdef QVIDEOWIDGET_TEST_FULLSCREEN
     QtTestVideoObject object(0, new QtTestWidgetControl, 0);
     QVideoWidget widget(&object);
     widget.show();
@@ -965,14 +948,11 @@ void tst_QVideoWidget::fullScreenWidgetControl()
     object.testService->widgetControl->setFullScreen(false);
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 6);
-#endif
 }
 
-#ifndef QT_NO_MULTIMEDIA
 
 void tst_QVideoWidget::fullScreenRendererControl()
 {
-#ifdef QVIDEOWIDGET_TEST_FULLSCREEN
     QtTestVideoObject object(0, 0, new QtTestRendererControl);
     QVideoWidget widget(&object);
     widget.show();
@@ -1029,10 +1009,8 @@ void tst_QVideoWidget::fullScreenRendererControl()
     widget.showFullScreen();
     QCOMPARE(widget.isFullScreen(), true);
     QCOMPARE(spy.count(), 5);
-#endif
 }
 
-#endif
 
 void tst_QVideoWidget::color_data()
 {
@@ -1138,8 +1116,6 @@ void tst_QVideoWidget::brightnessWidgetControl()
     QCOMPARE(spy.value(1).value(0).toInt(), controlValue);
 }
 
-#ifndef QT_NO_MULTIMEDIA
-
 void tst_QVideoWidget::brightnessRendererControl()
 {
     QFETCH(int, value);
@@ -1163,8 +1139,6 @@ void tst_QVideoWidget::brightnessRendererControl()
     QCOMPARE(widget.brightness(), expectedValue);
     QCOMPARE(spy.count(), 1);
 }
-
-#endif
 
 void tst_QVideoWidget::contrastWindowControl()
 {
@@ -1239,8 +1213,6 @@ void tst_QVideoWidget::contrastWidgetControl()
     QCOMPARE(spy.value(1).value(0).toInt(), controlValue);
 }
 
-#ifndef QT_NO_MULTIMEDIA
-
 void tst_QVideoWidget::contrastRendererControl()
 {
     QFETCH(int, value);
@@ -1264,8 +1236,6 @@ void tst_QVideoWidget::contrastRendererControl()
     QCOMPARE(widget.contrast(), expectedValue);
     QCOMPARE(spy.count(), 1);
 }
-
-#endif
 
 void tst_QVideoWidget::hueWindowControl()
 {
@@ -1339,8 +1309,6 @@ void tst_QVideoWidget::hueWidgetControl()
     QCOMPARE(spy.value(1).value(0).toInt(), controlValue);
 }
 
-#ifndef QT_NO_MULTIMEDIA
-
 void tst_QVideoWidget::hueRendererControl()
 {
     QFETCH(int, value);
@@ -1364,8 +1332,6 @@ void tst_QVideoWidget::hueRendererControl()
     QCOMPARE(widget.hue(), expectedValue);
     QCOMPARE(spy.count(), 1);
 }
-
-#endif
 
 void tst_QVideoWidget::saturationWindowControl()
 {
@@ -1439,8 +1405,6 @@ void tst_QVideoWidget::saturationWidgetControl()
 
 }
 
-#ifndef QT_NO_MULTIMEDIA
-
 void tst_QVideoWidget::saturationRendererControl()
 {
     QFETCH(int, value);
@@ -1508,8 +1472,6 @@ void tst_QVideoWidget::paintRendererControl()
     QCOMPARE(surface->isActive(), true);
     QCOMPARE(surface->isReady(), true);
 }
-
-#endif
 
 QTEST_MAIN(tst_QVideoWidget)
 

@@ -42,11 +42,13 @@
 #ifndef V4LVIDEOBUFFER_H
 #define V4LVIDEOBUFFER_H
 
-#ifndef QT_NO_MULTIMEDIA
-
 #include <QSize>
 
 #include <QtMultimedia/QAbstractVideoBuffer>
+
+#include <linux/types.h>
+#include <sys/time.h>
+#include <sys/ioctl.h>
 #include <linux/videodev2.h>
 
 class V4LVideoBuffer : public QAbstractVideoBuffer
@@ -71,7 +73,5 @@ private:
     v4l2_buffer m_buf;
 };
 
-
-#endif
 
 #endif

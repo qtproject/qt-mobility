@@ -567,74 +567,36 @@ void tst_QContact::relationships()
 
 void tst_QContact::displayName()
 {
-    QSKIP("This test needs to be updated after we remove the deprecated API!", SkipSingle);
-#if 0
     QContact c;
     QContactManager cm("memory"); // for formatting names
 
-    QContactDisplayLabel label = c.displayLabel();
-    QVERIFY(label.label().isEmpty());
-    QVERIFY(c.displayLabel().isSynthesized() == true);
-
-    label.setLabel("Wesley Wentworth Worrier");
-    QVERIFY(label.isEmpty() == false);
-    QVERIFY(label.label().isEmpty() == false);
-    QVERIFY(label.isSynthesized() == false);
-
-    label.setSynthesized(true);
-
-    c.setDisplayLabel(label);
-    QVERIFY(c.displayLabel().label() == "Wesley Wentworth Worrier");
-    QVERIFY(c.displayLabel().isSynthesized() == true);
-
-    //label.setLabel(QString());
-    //QVERIFY(label.isSynthesized() == true);
-
-    /* Clear the label again */
-    c.setDisplayLabel(QString());
-    QVERIFY(c.displayLabel().label().isEmpty());
-    QVERIFY(c.displayLabel().isSynthesized() == true);
-
-    /* Use the string mutator */
-    c.setDisplayLabel("Wesley Wentworth Worrier");
-    QVERIFY(c.displayLabel().label() == "Wesley Wentworth Worrier");
-    QVERIFY(c.displayLabel().isSynthesized() == false);
+    QString label = c.displayLabel();
+    QVERIFY(label.isEmpty());
 
     /* Try to make this a bit more consistent by using a single name */
     QContact d;
     QContactName name;
-    name.setFirst("Wesley");
+    name.setCustomLabel("Wesley");
 
-    QVERIFY(d.displayLabel().label().isEmpty());
+    QVERIFY(d.displayLabel().isEmpty());
     QVERIFY(d.saveDetail(&name));
 
     /*
-     * The display label is not updated until you save the contact, or
-     * do it manually.
+     * The display label is not updated until you save the contact!
      */
     QString synth = cm.synthesizeDisplayLabel(d);
-
-    QVERIFY(d.displayLabel().label().isEmpty());
-    QVERIFY(d.displayLabel().isSynthesized() == true);
-
-    QVERIFY(synth == name.first()); // XXX Perhaps not guaranteed
-
-    /* Set something else */
-    d.setDisplayLabel("The grand old duchess");
-    QVERIFY(d.displayLabel().label() == "The grand old duchess");
-    QVERIFY(d.displayLabel().isSynthesized() == false);
+    QVERIFY(d.displayLabel().isEmpty());
+    //QVERIFY(synth == name.customLabel()); // XXX Perhaps not guaranteed, depends on backend synth rules.
 
     /* Remove the detail via removeDetail */
-    QContactDisplayLabel old = d.displayLabel();
+    QContactDisplayLabel old;
     QVERIFY(d.details().count() == 3);
-    QVERIFY(d.removeDetail(&old));
+    QVERIFY(!d.removeDetail(&old)); // should fail.
     QVERIFY(d.isEmpty() == false);
-    QVERIFY(d.details().count() == 3); // it should not be removed, only cleared (!)
+    QVERIFY(d.details().count() == 3); // it should not be removed!
 
     /* Make sure we go back to the old synth version */
-    QVERIFY(d.displayLabel().isSynthesized() == true);
-    QVERIFY(d.displayLabel().label().isEmpty());
-#endif
+    QVERIFY(d.displayLabel().isEmpty());
 }
 
 void tst_QContact::type()

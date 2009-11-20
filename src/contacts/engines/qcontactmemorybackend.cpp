@@ -101,6 +101,7 @@ QContactMemoryEngine* QContactMemoryEngine::createMemoryEngine(const QMap<QStrin
     } else {
         QContactMemoryEngine *engine = new QContactMemoryEngine(parameters);
         engine->d->m_engineName = QString(QLatin1String("memory"));
+        engine->d->m_engineVersion = 1;
         engine->d->m_id = idValue;
         engine->d->m_anonymous = anonymous;
         engines.insert(idValue, engine);
@@ -134,6 +135,12 @@ void QContactMemoryEngine::deref()
 QString QContactMemoryEngine::managerName() const
 {
     return d->m_engineName;
+}
+
+/*! \reimp */
+int QContactMemoryEngine::implementationVersion() const
+{
+    return d->m_engineVersion;
 }
 
 /*! \reimp */

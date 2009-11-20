@@ -54,11 +54,7 @@
 #include <QtCore/qstringlist.h>
 #include <QtCore/qmetaobject.h>
 
-#ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/QAudioFormat>
-#else
-#include <qaudioformat.h>
-#endif
 
 QTM_BEGIN_NAMESPACE
 

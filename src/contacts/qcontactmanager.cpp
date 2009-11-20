@@ -312,24 +312,12 @@ QList<QContactLocalId> QContactManager::contacts(const QList<QContactSortOrder>&
 }
 
 /*!
- * \deprecated
- *
  * Returns a list of contact ids that match the given \a filter, sorted according to the given list of \a sortOrders.
- *
  * Depending on the backend, this filtering operation may involve retrieving all the contacts.
  */
 QList<QContactLocalId> QContactManager::contacts(const QContactFilter &filter, const QList<QContactSortOrder>& sortOrders) const
 {
     return d->m_engine->contacts(filter, sortOrders, d->m_error);
-}
-
-/*! 
- * Returns a list of ids of contacts of the given \a contactType, sorted according to the given list of \a sortOrders.
- */
-QList<QContactLocalId> QContactManager::contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders) const
-{
-    qWarning("This function is deprecated and will be removed in week 47 - see email discussion from week 45!  Use a detail filter with definition set to QContactType::DefinitionName and field name set to QContactType::FieldType instead!");
-    return d->m_engine->contacts(contactType, sortOrders, d->m_error);
 }
 
 /*! Returns the contact in the database identified by \a contactId */

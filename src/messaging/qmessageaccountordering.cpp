@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 #include "qmessageaccountordering.h"
-#include "qmessageaccountordering_p.h"
 
 QTM_BEGIN_NAMESPACE
 

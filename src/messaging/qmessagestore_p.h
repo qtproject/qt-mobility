@@ -45,7 +45,6 @@
 class QMutex;
 #endif
 
-
 QTM_BEGIN_NAMESPACE
 
 class QMessageStorePrivatePlatform;

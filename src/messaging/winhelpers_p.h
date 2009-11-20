@@ -59,7 +59,12 @@
 #define EDITOR_FORMAT_DONTKNOW ((ULONG)0)
 #define EDITOR_FORMAT_PLAINTEXT ((ULONG)1)
 #define EDITOR_FORMAT_HTML ((ULONG)2)
+#ifndef _WIN32_WCE
 #define EDITOR_FORMAT_RTF ((ULONG)3)
+#else
+// Not a real definition, but useful for us:
+#define EDITOR_FORMAT_MIME ((ULONG)3)
+#endif
 #endif
 
 #ifndef PR_ATTACH_CONTENT_ID

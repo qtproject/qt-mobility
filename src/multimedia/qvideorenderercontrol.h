@@ -42,9 +42,6 @@
 #ifndef QVIDEORENDERERCONTROL_H
 #define QVIDEORENDERERCONTROL_H
 
-
-#ifndef QT_NO_MULTIMEDIA
-
 #include <qmediacontrol.h>
 class QAbstractVideoSurface;
 
@@ -69,7 +66,5 @@ protected:
 Q_MEDIA_DECLARE_CONTROL(QVideoRendererControl, QVideoRendererControl_iid)
 
 QTM_END_NAMESPACE
-
-#endif  // QT_NO_MULTIMEDIA
 
 #endif // QVIDEORENDERERCONTROL_H

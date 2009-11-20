@@ -126,6 +126,7 @@ QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
 {
     if (&other != this) {
         d_ptr->_key = other.d_ptr->_key;
+        d_ptr->_options = other.d_ptr->_options;
     }
 
     return *this;
@@ -133,7 +134,7 @@ QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
 
 void QMessageFilter::setOptions(QMessageDataComparator::Options options)
 {
-    d_ptr->_options |= options;
+    d_ptr->_options = options;
 }
 
 QMessageDataComparator::Options QMessageFilter::options() const
@@ -148,7 +149,7 @@ bool QMessageFilter::isEmpty() const
 
 bool QMessageFilter::isSupported() const
 {
-    return true;
+    return !d_ptr->_options;
 }
 
 QMessageFilter QMessageFilter::operator~() const
@@ -162,6 +163,7 @@ QMessageFilter QMessageFilter::operator&(const QMessageFilter& other) const
 {
     QMessageFilter result;
     result.d_ptr->_key = d_ptr->_key & other.d_ptr->_key;
+    result.d_ptr->_options = d_ptr->_options | other.d_ptr->_options; // options not supported
     return result;
 }
 
@@ -169,24 +171,28 @@ QMessageFilter QMessageFilter::operator|(const QMessageFilter& other) const
 {
     QMessageFilter result;
     result.d_ptr->_key = d_ptr->_key | other.d_ptr->_key;
+    result.d_ptr->_options = d_ptr->_options | other.d_ptr->_options; // options not supported
     return result;
 }
 
 const QMessageFilter& QMessageFilter::operator&=(const QMessageFilter& other)
 {
     d_ptr->_key &= other.d_ptr->_key;
+    d_ptr->_options |= other.d_ptr->_options; // options not supported
     return *this;
 }
 
 const QMessageFilter& QMessageFilter::operator|=(const QMessageFilter& other)
 {
     d_ptr->_key |= other.d_ptr->_key;
+    d_ptr->_options |= other.d_ptr->_options; // options not supported
     return *this;
 }
 
 bool QMessageFilter::operator==(const QMessageFilter& other) const
 {
-    return (d_ptr->_key == other.d_ptr->_key);
+    return ((d_ptr->_key == other.d_ptr->_key)
+            && (d_ptr->_options == other.d_ptr->_options));
 }
 
 QMessageFilter QMessageFilter::byId(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)

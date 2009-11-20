@@ -87,12 +87,10 @@ private:
     QVideoDeviceControl *m_videoInputDevice;
 
     QGstreamerVideoOutputControl *m_videoOutput;
-#ifndef QT_NO_MULTIMEDIA
     QGstreamerVideoRenderer *m_videoRenderer;
     QGstreamerElementFactory *m_videoRendererFactory;
     QGstreamerVideoOverlay *m_videoWindow;
     QGstreamerElementFactory *m_videoWindowFactory;
-#endif
     QGstreamerVideoWidgetControl *m_videoWidgetControl;
     QGstreamerElementFactory *m_videoWidgetFactory;
     QGstreamerImageCaptureControl *m_imageCaptureControl;

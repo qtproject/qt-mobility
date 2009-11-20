@@ -188,6 +188,8 @@ GstElement *QGstreamerCaptureSession::buildAudioSrc()
         } else if (m_captureDevice.startsWith("oss:")) {
             elementName = "osssrc";
             device = m_captureDevice.mid(QString("oss:").length());
+        } else if (m_captureDevice.startsWith("pulseaudio:")) {
+            elementName = "pulsesrc";
         }
 
         audioSrc = gst_element_factory_make(elementName.toAscii().constData(), "audio_src");
