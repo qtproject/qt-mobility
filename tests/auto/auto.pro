@@ -3,13 +3,16 @@ TEMPLATE = subdirs
 include($$QT_MOBILITY_BUILD_TREE/config.pri)
 
 SUBDIRS += databasemanager \                #service framework
-           servicedatabase \ 
            servicemetadata \
            qserviceinterfacedescriptor \
            qservicefilter \
            qservicemanager \
            qabstractsecuritysession \
            qservicecontext
+
+# servicedatabase is not compiled into the serviceframework library on symbian,
+# special handling is needed
+!symbian:SUBDIRS+=servicedatabase
 
 SUBDIRS += qnetworkconfigmanager \          #Bearer management
            qnetworkconfiguration \
