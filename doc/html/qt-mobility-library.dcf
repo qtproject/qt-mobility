@@ -176,6 +176,7 @@
         <keyword ref="qcamera.html#MeteringMode-enum">QCamera::MeteringAverage</keyword>
         <keyword ref="qcamera.html#MeteringMode-enum">QCamera::MeteringMatrix</keyword>
         <keyword ref="qcamera.html#State-enum">State</keyword>
+        <keyword ref="qcamera.html#State-enum">QCamera::SuspendedState</keyword>
         <keyword ref="qcamera.html#State-enum">QCamera::ActiveState</keyword>
         <keyword ref="qcamera.html#State-enum">QCamera::StoppedState</keyword>
         <keyword ref="qcamera.html#WhiteBalanceMode-enum">WhiteBalanceMode</keyword>
@@ -1703,11 +1704,13 @@
         <keyword ref="qmediaplaylist.html#playbackMode-prop">playbackMode</keyword>
         <keyword ref="qmediaplaylist.html#playbackMode-prop">setPlaybackMode</keyword>
         <keyword ref="qmediaplaylist.html#appendItem">appendItem</keyword>
+        <keyword ref="qmediaplaylist.html#appendItems">appendItems</keyword>
         <keyword ref="qmediaplaylist.html#clear">clear</keyword>
         <keyword ref="qmediaplaylist.html#currentMediaChanged">currentMediaChanged</keyword>
         <keyword ref="qmediaplaylist.html#error">error</keyword>
         <keyword ref="qmediaplaylist.html#errorString">errorString</keyword>
         <keyword ref="qmediaplaylist.html#insertItem">insertItem</keyword>
+        <keyword ref="qmediaplaylist.html#insertItems">insertItems</keyword>
         <keyword ref="qmediaplaylist.html#isEmpty">isEmpty</keyword>
         <keyword ref="qmediaplaylist.html#isReadOnly">isReadOnly</keyword>
         <keyword ref="qmediaplaylist.html#itemsAboutToBeInserted">itemsAboutToBeInserted</keyword>
@@ -1785,8 +1788,10 @@
     <section ref="qmediaplaylistprovider.html" title="QMediaPlaylistProvider Class Reference">
         <keyword ref="qmediaplaylistprovider.html">QMediaPlaylistProvider</keyword>
         <keyword ref="qmediaplaylistprovider.html#appendItem">appendItem</keyword>
+        <keyword ref="qmediaplaylistprovider.html#appendItems">appendItems</keyword>
         <keyword ref="qmediaplaylistprovider.html#clear">clear</keyword>
         <keyword ref="qmediaplaylistprovider.html#insertItem">insertItem</keyword>
+        <keyword ref="qmediaplaylistprovider.html#insertItems">insertItems</keyword>
         <keyword ref="qmediaplaylistprovider.html#isReadOnly">isReadOnly</keyword>
         <keyword ref="qmediaplaylistprovider.html#itemsAboutToBeInserted">itemsAboutToBeInserted</keyword>
         <keyword ref="qmediaplaylistprovider.html#itemsAboutToBeRemoved">itemsAboutToBeRemoved</keyword>
@@ -2457,6 +2462,9 @@
         <keyword ref="qradiotuner.html#Error-enum">QRadioTuner::NoError</keyword>
         <keyword ref="qradiotuner.html#Error-enum">QRadioTuner::ResourceError</keyword>
         <keyword ref="qradiotuner.html#Error-enum">QRadioTuner::OpenError</keyword>
+        <keyword ref="qradiotuner.html#State-enum">State</keyword>
+        <keyword ref="qradiotuner.html#State-enum">QRadioTuner::ActiveState</keyword>
+        <keyword ref="qradiotuner.html#State-enum">QRadioTuner::StoppedState</keyword>
         <keyword ref="qradiotuner.html#StereoMode-enum">StereoMode</keyword>
         <keyword ref="qradiotuner.html#StereoMode-enum">QRadioTuner::ForceMono</keyword>
         <keyword ref="qradiotuner.html#StereoMode-enum">QRadioTuner::ForceStereo</keyword>
@@ -2471,6 +2479,7 @@
         <keyword ref="qradiotuner.html#searching-prop">searching</keyword>
         <keyword ref="qradiotuner.html#searching-prop">isSearching</keyword>
         <keyword ref="qradiotuner.html#signalStrength-prop">signalStrength</keyword>
+        <keyword ref="qradiotuner.html#state-prop">state</keyword>
         <keyword ref="qradiotuner.html#stereo-prop">stereo</keyword>
         <keyword ref="qradiotuner.html#stereo-prop">isStereo</keyword>
         <keyword ref="qradiotuner.html#stereoMode-prop">stereoMode</keyword>
@@ -2491,6 +2500,7 @@
         <keyword ref="qradiotuner.html#searchingStatusChanged">searchingStatusChanged</keyword>
         <keyword ref="qradiotuner.html#signalStrengthChanged">signalStrengthChanged</keyword>
         <keyword ref="qradiotuner.html#start">start</keyword>
+        <keyword ref="qradiotuner.html#stateChanged">stateChanged</keyword>
         <keyword ref="qradiotuner.html#stereoStatusChanged">stereoStatusChanged</keyword>
         <keyword ref="qradiotuner.html#stop">stop</keyword>
         <keyword ref="qradiotuner.html#volumeChanged">volumeChanged</keyword>
@@ -2523,6 +2533,8 @@
         <keyword ref="qradiotunercontrol.html#signalStrength">signalStrength</keyword>
         <keyword ref="qradiotunercontrol.html#signalStrengthChanged">signalStrengthChanged</keyword>
         <keyword ref="qradiotunercontrol.html#start">start</keyword>
+        <keyword ref="qradiotunercontrol.html#state">state</keyword>
+        <keyword ref="qradiotunercontrol.html#stateChanged">stateChanged</keyword>
         <keyword ref="qradiotunercontrol.html#stereoMode">stereoMode</keyword>
         <keyword ref="qradiotunercontrol.html#stereoStatusChanged">stereoStatusChanged</keyword>
         <keyword ref="qradiotunercontrol.html#stop">stop</keyword>
@@ -3007,8 +3019,14 @@
         <keyword ref="qvideowidget.html#brightnessChanged">brightnessChanged</keyword>
         <keyword ref="qvideowidget.html#contrastChanged">contrastChanged</keyword>
         <keyword ref="qvideowidget.html#fullScreenChanged">fullScreenChanged</keyword>
+        <keyword ref="qvideowidget.html#hideEvent">hideEvent</keyword>
         <keyword ref="qvideowidget.html#hueChanged">hueChanged</keyword>
+        <keyword ref="qvideowidget.html#moveEvent">moveEvent</keyword>
+        <keyword ref="qvideowidget.html#paintEvent">paintEvent</keyword>
+        <keyword ref="qvideowidget.html#resizeEvent">resizeEvent</keyword>
         <keyword ref="qvideowidget.html#saturationChanged">saturationChanged</keyword>
+        <keyword ref="qvideowidget.html#showEvent">showEvent</keyword>
+        <keyword ref="qvideowidget.html#sizeHint">sizeHint</keyword>
         <section ref="qvideowidget-members.html" title="List of all members"/>
     </section>
     <section ref="qvideowidgetcontrol.html" title="QVideoWidgetControl Class Reference">
@@ -3142,6 +3160,9 @@
     <section ref="audiorecorder.html" title="Audio Recorder Example">
         <keyword ref="audiorecorder.html">Audio Recorder Example</keyword>
     </section>
+    <section ref="audiorecorder.html" title="Audio Recorder Example">
+        <keyword ref="audiorecorder.html">Audio Recorder Example</keyword>
+    </section>
     <section ref="bearercloud.html" title="Bearer Cloud Example">
         <keyword ref="bearercloud.html">Bearer Cloud Example</keyword>
     </section>
@@ -3172,6 +3193,9 @@
     <section ref="logfilepositionsource.html" title="Log File Position Source Example">
         <keyword ref="logfilepositionsource.html">Log File Position Source Example</keyword>
     </section>
+    <section ref="player.html" title="Media Player Example">
+        <keyword ref="player.html">Media Player Example</keyword>
+    </section>
     <section ref="player.html" title="Player Example">
         <keyword ref="player.html">Player Example</keyword>
     </section>
@@ -3198,6 +3222,9 @@
     </section>
     <section ref="servicebrowser.html" title="Service Browser Example">
         <keyword ref="servicebrowser.html">Service Browser Example</keyword>
+    </section>
+    <section ref="slideshow.html" title="SlideShow Example">
+        <keyword ref="slideshow.html">SlideShow Example</keyword>
     </section>
     <section ref="slideshow.html" title="Slideshow Example">
         <keyword ref="slideshow.html">Slideshow Example</keyword>

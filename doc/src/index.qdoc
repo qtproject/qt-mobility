@@ -73,6 +73,8 @@
     <a href="classlists.html">Quick Reference to the Mobility Classes and Functions</a>
     \endraw
 
+    
+
     \section1 Mobility Component APIs
 
     \annotatedlist  mobility
@@ -184,11 +186,12 @@
 
     The services are implemented as plugins installed on the device and can
     look for supporting external services running on a central server. E.g.
-    weather, local tourist attractions etc. Also default applications can use
-    the layer to locate servers. Since this is a level of abstraction then the
-    app does not need to be concerned with the underlying protocol, where the
-    servers are, the hardware peculiarities with networking and other low
-    level details.
+    weather, local tourist attractions etc. Default applications can use
+    the layer to locate servers.
+
+    Since this is an abstraction layer then the app does not need to be
+    concerned with the underlying protocol, where the servers are, the
+    hardware peculiarities with networking and other low level details.
 
     \section1 System Information
 
@@ -196,6 +199,165 @@
     available will cover software version numbers, hardware features,
     network connection types and status, display, data storage devices,
     device information and the screensaver.
+
+
+    \section1 Platform Compatability
+    
+    \raw HTML
+
+    <table border="1">
+    <tr>
+    <td>Color</td>
+    <td>Explanation</td>
+    </tr>
+    <tr>
+    <td bgcolor="lightgray"></td>
+    <td>API compiles on the platform. Support for the API on the platform is not being worked on by Nokia. It is
+    possible for others to implement and integrate support.</td>
+    </tr>
+    <tr>
+    <td bgcolor="lightgreen"></td>
+    <td>Support for the API on the platform is being worked on by Nokia however it is not functionally complete.</td>
+    </tr>
+    <tr>
+    <td bgcolor="green"></td>
+    <td>Support for the API on the platform is included and is functionally complete.</td>
+    </tr>
+    </table>
+
+    <br>
+
+    <table border="1">
+
+    <tr>
+    <td></td>
+    <td>Symbian 3.1</td>
+    <td>Symbian 3.2</td>
+    <td>Symbian 5.0</td>
+    <td>Maemo 5</td>
+    <td>Maemo 6</td>
+    <td>Windows CE</td>
+    <td>Windows XP/Vista</td>
+    <td>Linux</td>
+    <td>Mac OS X</td>
+    <td>Other</td>
+    </tr>
+
+    <tr>
+    <td>Service Framework (in-process)</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td></td>
+    </tr>
+
+    <tr>
+    <td>Messaging</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="green">Using MAPI and Pocket Outlook</td>
+    <td bgcolor="lightgreen">Using MAPI and Outlook</td>
+    <td bgcolor="green">Using QMF</td>
+    <td></td>
+    <td></td>
+    </tr>
+
+    <tr>
+    <td>Bearer Management</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td></td>
+    </tr>
+
+    <tr>
+    <td>Publish and Subscribe</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="green">Only Subscription</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td></td>
+    </tr>
+
+    <tr>
+    <td>Contacts</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
+    <td></td>
+    </tr>
+
+    <tr>
+    <td>Location</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="green">NMEA data provider support</td>
+    </tr>
+
+    <tr>
+    <td>Multimedia</td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="green">GStreamer</td>
+    <td bgcolor="lightgreen"></td>
+    <td></td>
+    </tr>
+
+    <tr>
+    <td>System Information</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td></td>
+    </tr>
+
+    </table>
+    
+    \endraw
     
 */
 

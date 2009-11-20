@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>mainwindow.cpp Example File (serviceactions/mainwindow.cpp)</title>
+  <title>Qt Mobility 1.0: mainwindow.cpp Example File (serviceactions/mainwindow.cpp)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -833,14 +833,16 @@
 
     bool MessageViewWidget::retrieveBody()
     {
-
         if(m_state != Loading &amp;&amp; !m_loadTimer.isActive())
         {
             m_loadTimer.setSingleShot(true);
             m_loadTimer.start(LoadTimeLimit * 1000);
             m_state = Unloaded;
+
+            return m_service-&gt;retrieveBody(m_messageId);
         }
-        return m_service-&gt;retrieveBody(m_messageId);
+
+        return false;
     }
 
     void MessageViewWidget::showEvent(QShowEvent* e)
@@ -1351,6 +1353,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility API</div></td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
 </tr></table></div></address></body>
 </html>
