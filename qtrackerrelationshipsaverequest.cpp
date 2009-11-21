@@ -43,6 +43,7 @@
 
 #include <QtTracker/Tracker>
 #include <QtTracker/ontologies/nco.h>
+#include <QHash>
 using namespace SopranoLive;
 
 QTrackerRelationshipSaveRequest::QTrackerRelationshipSaveRequest(QContactAbstractRequest* req, QContactManagerEngine* parent)
@@ -54,9 +55,7 @@ QTrackerRelationshipSaveRequest::QTrackerRelationshipSaveRequest(QContactAbstrac
     QContactRelationshipSaveRequest* r = qobject_cast<QContactRelationshipSaveRequest*>(req);
     if (!r)
     {
-        QList<QContactManager::Error> errors(QList<QContactManager::Error>()<<QContactManager::UnspecifiedError);
-        QContactManagerEngine::updateRequest(req, QList<QContactRelationship>(), QContactManager::UnspecifiedError, errors, QContactAbstractRequest::Finished);
-        return;
+        commitError(QString());
     }
 
     QList<QContactRelationship> links = r->relationships();
@@ -69,51 +68,85 @@ QTrackerRelationshipSaveRequest::QTrackerRelationshipSaveRequest(QContactAbstrac
     QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy,
             QContactAbstractRequest::Active);
 
-    RDFTransactionPtr transaction_ = ::tracker()->initiateTransaction();
+
+    // the logic is like this
+    // 1) get contacts (first() and second())
+    // 2) when that is done set all metacontacts of 1sts to 2nds
+
+    QSet<QString> ids;
     foreach(QContactRelationship rel, links)
     {
-        saveRelationship(rel, transaction_->service());
+        ids << QString::number(rel.first().localId());
+        ids << QString::number(rel.second().localId());
     }
-    transaction_->commit();
+
+    RDFVariable contact;
+    QStringList idstrings(QStringList(ids.toList()));
+    contact.property<nco::contactUID>().isMemberOf(idstrings);
+    nodes = ::tracker()->modelVariable(contact);
+
+    // need to store LiveNodes in order to receive notification from model
+    QObject::connect(nodes.model(), SIGNAL(modelUpdated()), this, SLOT(nodesDataReady()));
+
 }
 
-void QTrackerRelationshipSaveRequest::saveRelationship(const QContactRelationship &rel,RDFServicePtr service)
+void QTrackerRelationshipSaveRequest::nodesDataReady()
 {
-    // 1) create metacontact if it doesnt exist and add it to first
+    // now that nodes are ready we can enumerate them without blocking
+    RDFTransactionPtr transaction_ = ::tracker()->initiateTransaction();
+    connect(transaction_.data(), SIGNAL(commitFinished()), this, SLOT(commitFinished()));
+    connect(transaction_.data(), SIGNAL(commitError(QString)), this, SLOT(commitError(QString)));
+
+    QHash<QString, Live<nco::PersonContact> > lContacts;
+    for(int i = 0; i < nodes->rowCount();i++)
     {
-        RDFVariable contactFirst;
-        contactFirst.property<nco::contactUID> () = LiteralValue(QString::number(rel.first().localId()));
-
-        RDFUpdate up;
-
-        // here we will specify to add new node for metacontact in 1st node
-        RDFVariable metacontact = contactFirst.optional().property<nco::metacontact> ();
-        RDFFilter doesntExist = metacontact.isBound().not_();// do not create if it already exist
-        QUrl newmetacontact = service->createLiveNode().uri();
-
-        QList<RDFVariableStatement> insertions;
-        insertions << RDFVariableStatement(contactFirst, nco::metacontact::iri(), newmetacontact)
-        << RDFVariableStatement(newmetacontact, rdf::type::iri(), nco::MetaContact::iri());
-
-        // this means that filter applies to both insertions
-        up.addInsertion(insertions);
-        service->executeQuery(up);
+        Live<nco::PersonContact> contact = nodes->liveNode(i);
+        lContacts[contact->getContactUID()] = contact;
     }
-    // 2) use first's metacontact and set it to second
+    QContactRelationshipSaveRequest* r = qobject_cast<QContactRelationshipSaveRequest*>(req);
+    if (!r)
+        commitError(QString());
+    QList<QContactRelationship> links = r->relationships();
+    foreach(QContactRelationship rel, links)
     {
-        RDFVariable contactSecond;
-        contactSecond.property<nco::contactUID> () = LiteralValue(QString::number(rel.second().localId()));
-        RDFVariable contactFirst;
-        contactFirst.property<nco::contactUID> () = LiteralValue(QString::number(rel.first().localId()));
-        RDFVariable metaOfFirst = contactFirst.property<nco::metacontact>();
-
-        RDFUpdate up;
-
-        RDFVariable existingmetacontact = contactSecond.optional().property<nco::metacontact>();
-        up.addDeletion(contactSecond,nco::metacontact::iri(), existingmetacontact);
-        up.addInsertion(contactSecond, nco::metacontact::iri(), metaOfFirst);
-        service->executeQuery(up);
+        Live<nco::PersonContact> first = lContacts[QString::number(rel.first().localId())];
+        Live<nco::PersonContact> second = lContacts[QString::number(rel.second().localId())];
+        second->setMetacontact(first->getMetacontact());
     }
+
+    transaction_->commit(false);
+    // temporary fix - signals not yet implemented in libqttracker
+    commitFinished();
 }
 
+void QTrackerRelationshipSaveRequest::commitFinished()
+{
+    QContactRelationshipSaveRequest* r = qobject_cast<QContactRelationshipSaveRequest*>(req);
+    if (r && r->isActive())
+    {
+        QContactManager::Error error = QContactManager::NoError;
+        QList<QContactManager::Error> errors; errors<<error;
+        QContactManagerEngine::updateRequest(r, r->relationships(), error, errors, QContactAbstractRequest::Finished);
+    }
+    else
+        qWarning()<<Q_FUNC_INFO<<r;
+}
+
+void QTrackerRelationshipSaveRequest::commitError(QString message)
+{
+    qWarning()<<Q_FUNC_INFO<<message;
+    QContactRelationshipSaveRequest* r = qobject_cast<QContactRelationshipSaveRequest*>(req);
+    if (r)
+    {
+        QContactManager::Error error = QContactManager::InvalidRelationshipError;
+        QList<QContactManager::Error> errors; errors<<error;
+        QContactManagerEngine::updateRequest(r, r->relationships(), error, errors, QContactAbstractRequest::Finished);
+    }
+    else
+    {
+        QList<QContactManager::Error> errors(QList<QContactManager::Error>()<<QContactManager::UnspecifiedError);
+        QContactManagerEngine::updateRequest(req, QList<QContactRelationship>(), QContactManager::UnspecifiedError, errors, QContactAbstractRequest::Finished);
+        return;
+    }
+}
 

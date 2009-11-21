@@ -55,6 +55,7 @@
 #include "trackerchangelistener.h"
 #include "qtrackercontactsaverequest.h"
 #include <qtrackerrelationshipfetchrequest.h>
+#include <qtrackerrelationshipsaverequest.h>
 
 
 QContactManagerEngine* ContactTrackerFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
@@ -538,6 +539,9 @@ bool QContactTrackerEngine::startRequest(QContactAbstractRequest* req)
             break;
         case QContactAbstractRequest::RelationshipFetchRequest:
             request = new QTrackerRelationshipFetchRequest(req, this);
+            break;
+        case QContactAbstractRequest::RelationshipSaveRequest:
+            request = new QTrackerRelationshipSaveRequest(req, this);
             break;
         default:
             return false;

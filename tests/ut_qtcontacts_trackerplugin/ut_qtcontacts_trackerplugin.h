@@ -96,6 +96,7 @@ private slots:
     void testFilterContacts();
     void testFilterContactsEndsWith();
     void testTrackerUriToUniqueId();
+    void testQRelationshipAndMetacontacts();
 
 private:
     QContactTrackerEngine *trackerEngine;

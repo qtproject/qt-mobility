@@ -22,13 +22,19 @@ HEADERS += $$QCONTACTS_TRACKER_BACKENDDIR/qcontacttrackerbackend_p.h \
            $$QCONTACTS_TRACKER_BACKENDDIR/qtrackercontactasyncrequest.h \
            $$QCONTACTS_TRACKER_BACKENDDIR/trackerchangelistener.h \
            $$QCONTACTS_TRACKER_BACKENDDIR/qtrackercontactslive.h \
-           $$QCONTACTS_TRACKER_BACKENDDIR/qtrackercontactsaverequest.h
+           $$QCONTACTS_TRACKER_BACKENDDIR/qtrackercontactsaverequest.h \
+           $$QCONTACTS_TRACKER_BACKENDDIR/qtrackerrelationshipfetchrequest.h \
+           $$QCONTACTS_TRACKER_BACKENDDIR/qtrackerrelationshipsaverequest.h 
+ 
 
 SOURCES += $$QCONTACTS_TRACKER_BACKENDDIR/qcontacttrackerbackend.cpp \
            $$QCONTACTS_TRACKER_BACKENDDIR/qtrackercontactasyncrequest.cpp \
            $$QCONTACTS_TRACKER_BACKENDDIR/trackerchangelistener.cpp \
            $$QCONTACTS_TRACKER_BACKENDDIR/qtrackercontactslive.cpp \
-           $$QCONTACTS_TRACKER_BACKENDDIR/qtrackercontactsaverequest.cpp
+           $$QCONTACTS_TRACKER_BACKENDDIR/qtrackercontactsaverequest.cpp \
+           $$QCONTACTS_TRACKER_BACKENDDIR/qtrackerrelationshipfetchrequest.cpp \
+           $$QCONTACTS_TRACKER_BACKENDDIR/qtrackerrelationshipsaverequest.cpp 
+ 
 
 ## Include unit test files
 HEADERS += ut_qtcontacts_trackerplugin.h \

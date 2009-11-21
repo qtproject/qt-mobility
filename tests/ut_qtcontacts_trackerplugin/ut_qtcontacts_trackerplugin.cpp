@@ -49,8 +49,9 @@
 #include <QtTracker/ontologies/nie.h>
 #include <qcontactfilters.h>
 #include <qtcontacts.h>
-
 #include <trackerchangelistener.h>
+#include <qcontactrelationshipsaverequest.h>
+#include <qcontactrelationshipfetchrequest.h>
 
 #include "contactmanager.h"
 
@@ -1202,6 +1203,52 @@ void ut_qtcontacts_trackerplugin::testTrackerUriToUniqueId()
     QString uri = "contact:1234567";
     QContactLocalId id = url2UniqueId( uri );
     QCOMPARE( (int)id, 1234567 );
+}
+
+void ut_qtcontacts_trackerplugin::testQRelationshipAndMetacontacts()
+{
+    QContact firstContact;
+    QContactName name;
+    name.setFirst("FirstMeta");
+    firstContact.saveDetail(&name);
+    QVERIFY(trackerEngine->saveContact(&firstContact, error));
+
+    QList<QContactLocalId> secondIds;
+    QStringList names(QStringList()<<"SecondMeta"<<"ThirdMeta");
+    foreach (QString firstname, names)
+    {
+        QContact secondContact;
+        QContactName name1;
+        name1.setFirst(firstname);
+        secondContact.saveDetail(&name1);
+        QVERIFY(trackerEngine->saveContact(&secondContact, error));
+        secondIds<<secondContact.id().localId();
+        QContactRelationship rel;
+        rel.setRelationshipType(QContactRelationship::Is);
+        rel.setFirst(firstContact.id());
+        rel.setSecond(secondContact.id());
+        QContactRelationshipSaveRequest req;
+        req.setRelationships(QList<QContactRelationship>()<<rel);
+        QVERIFY(trackerEngine->startRequest(&req));
+        trackerEngine->waitForRequestFinished(&req, 10000);
+        // if it takes more, then something is wrong
+        QVERIFY(req.isFinished());
+        QVERIFY(QContactManager::NoError == req.error());
+    }
+
+    QContactRelationshipFetchRequest req1;
+    req1.setFirst(firstContact.id());
+    QVERIFY(trackerEngine->startRequest(&req1));
+    trackerEngine->waitForRequestFinished(&req1, 10000);
+    // if it takes more, then something is wrong
+    QVERIFY(req1.isFinished());
+    QVERIFY(QContactManager::NoError == req1.error());
+    qDebug()<<req1.relationships().size();
+    QVERIFY(2 == req1.relationships().size());
+    foreach(QContactRelationship r, req1.relationships())
+    {
+        QVERIFY(secondIds.removeOne(r.second().localId()));
+    }
 }
 
 void Slots::progress(QContactLocalIdFetchRequest* self, bool appendOnly)

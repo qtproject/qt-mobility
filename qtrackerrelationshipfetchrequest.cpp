@@ -78,12 +78,14 @@ QTrackerRelationshipFetchRequest::QTrackerRelationshipFetchRequest(QContactAbstr
 
     RDFContact.property<nco::metacontact>() = RDFMetacontact;
     RDFContactThis.property<nco::metacontact>() = RDFMetacontact;
-    RDFContactThis.property<nco::contactUID>() = LiteralValue(QString(r->first().localId()));
+    RDFVariable contactIdThis = RDFContactThis.property<nco::contactUID>();
+
+    contactIdThis.equal(LiteralValue(QString::number(r->first().localId())));
 
 
     RDFSelect quer;
     quer.addColumn("contact_id", RDFContact.property<nco::contactUID>());
-    quer.addColumn("contactthis_id", RDFContactThis.property<nco::contactUID>());
+    quer.addColumn("contactthis_id", contactIdThis);
     query = ::tracker()->modelQuery(quer);
 
     QObject::connect(query.model(), SIGNAL(modelUpdated()), this, SLOT(modelUpdated()));
@@ -112,7 +114,9 @@ void QTrackerRelationshipFetchRequest::modelUpdated()
         QContactId idsecond;
         idsecond.setLocalId(query->index(i, 0).data().toUInt(&ok1));
 
-        if (ok && ok1) {
+        if (ok && ok1 ) {
+            if (idfirst.localId() == idsecond.localId())
+                continue;
             idfirst.setManagerUri(engine->managerUri());
             idsecond.setManagerUri(idfirst.managerUri());
 

@@ -57,6 +57,14 @@ public:
     QTrackerRelationshipSaveRequest (QContactAbstractRequest* req, QContactManagerEngine* parent);
 private:
     void saveRelationship (const QContactRelationship &relationship,SopranoLive::RDFServicePtr service);
+
+private slots:
+    void commitFinished();
+    void commitError(QString message);
+    void nodesDataReady();
+
+private:
+    SopranoLive::LiveNodes nodes;
 };
 
 #endif /* QTRACKERCONTACTSAVEREQUEST_H_ */
