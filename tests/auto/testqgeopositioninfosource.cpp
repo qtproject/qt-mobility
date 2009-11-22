@@ -120,6 +120,15 @@ TestQGeoPositionInfoSource *TestQGeoPositionInfoSource::createDefaultSourceTest(
     return test;
 }
 
+void TestQGeoPositionInfoSource::test_slot1()
+{
+}
+
+void TestQGeoPositionInfoSource::test_slot2()
+{
+	m_testSlot2Called = true;
+}
+
 void TestQGeoPositionInfoSource::base_initTestCase()
 {
     qRegisterMetaType<QGeoPositionInfo>();
@@ -128,6 +137,7 @@ void TestQGeoPositionInfoSource::base_initTestCase()
 void TestQGeoPositionInfoSource::base_init()
 {
     m_source = createTestSource();
+    m_testSlot2Called = false;
 }
 
 void TestQGeoPositionInfoSource::base_cleanup()
@@ -281,6 +291,9 @@ void TestQGeoPositionInfoSource::lastKnownPosition()
     connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
     timer.start();
     loop.exec();
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337_ABORT;
+
     QCOMPARE(spy.count(), 1);
 
     QList<QVariant> list = spy.takeFirst();
@@ -316,8 +329,13 @@ void TestQGeoPositionInfoSource::startUpdates_testIntervals()
     int interval = m_source->updateInterval();
 
     m_source->startUpdates();
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 1, 20000);
     for (int i = 0; i < 9; i++) {
+        EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
         QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 1, (interval*3));
         spy.clear();
     }
@@ -325,6 +343,8 @@ void TestQGeoPositionInfoSource::startUpdates_testIntervals()
 // TODO Currently updates are coming irregularly from S60
 #if !defined(Q_OS_SYMBIAN)
     for (int i = 0; i < 9; i++) {
+        EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
         QTRY_COMPARE_WITH_TIMEOUT_RANGE(spy.count(), 1, 6000, 10000);
         spy.clear();
     }
@@ -342,35 +362,49 @@ void TestQGeoPositionInfoSource::startUpdates_testIntervalChangesWhileRunning()
     m_source->startUpdates();
     m_source->setUpdateInterval(0);
 
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_VERIFY_WITH_TIMEOUT(spy.count() >= 1, 20000);
     spy.clear();
 
     m_source->setUpdateInterval(5000);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
     QTRY_COMPARE_WITH_TIMEOUT_RANGE(spy.count(), 2, 8000, 12000);
     spy.clear();
 
     m_source->setUpdateInterval(10000);
 
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_COMPARE_WITH_TIMEOUT_RANGE(spy.count(), 2, 18000, 22000);
     spy.clear();
 
     m_source->setUpdateInterval(5000);
 
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_COMPARE_WITH_TIMEOUT_RANGE(spy.count(), 2, 8000, 12000);
     spy.clear();
 
     m_source->setUpdateInterval(5000);
 
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_COMPARE_WITH_TIMEOUT_RANGE(spy.count(), 2, 8000, 12000);
     spy.clear();
 
     m_source->setUpdateInterval(0);
 
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_VERIFY_WITH_TIMEOUT(spy.count() >= 1, 5000);
     spy.clear();
 
     m_source->setUpdateInterval(0);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
     QTRY_VERIFY_WITH_TIMEOUT(spy.count() >= 1, 5000);
     spy.clear();
@@ -386,6 +420,8 @@ void TestQGeoPositionInfoSource::startUpdates_testDefaultInterval()
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     m_source->startUpdates();
     for (int i = 0; i < 3; i++) {
+        EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
         QTRY_VERIFY_WITH_TIMEOUT(spy.count() > 0, 3000);
         spy.clear();
     }
@@ -401,6 +437,8 @@ void TestQGeoPositionInfoSource::startUpdates_testZeroInterval()
     m_source->setUpdateInterval(0);
     m_source->startUpdates();
     for (int i = 0; i < 3; i++) {
+        EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
         QTRY_VERIFY_WITH_TIMEOUT(spy.count() > 0, 3000);
         spy.clear();
     }
@@ -416,6 +454,8 @@ void TestQGeoPositionInfoSource::startUpdates_moreThanOnce()
     m_source->startUpdates();
 
     m_source->startUpdates(); // check there is no crash
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
     QTRY_VERIFY_WITH_TIMEOUT(spy.count() > 0, MAX_WAITING_TIME);
 
@@ -433,6 +473,8 @@ void TestQGeoPositionInfoSource::stopUpdates()
     m_source->setUpdateInterval(8000);
     m_source->startUpdates();
     for (int i = 0; i < 2; i++) {
+        EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
         QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 1, 10000);
         spy.clear();
     }
@@ -477,8 +519,10 @@ void TestQGeoPositionInfoSource::requestUpdate_validTimeout()
 
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     m_source->requestUpdate(20000);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_COMPARE_WITH_TIMEOUT(spyUpdate.count(), 1, 20000);
-    spyUpdate.clear();
 }
 
 void TestQGeoPositionInfoSource::requestUpdate_defaultTimeout()
@@ -488,6 +532,8 @@ void TestQGeoPositionInfoSource::requestUpdate_defaultTimeout()
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
 
     m_source->requestUpdate(0);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
     QTRY_COMPARE_WITH_TIMEOUT(spyUpdate.count(), 1, MAX_WAITING_TIME);
 }
@@ -500,8 +546,10 @@ void TestQGeoPositionInfoSource::requestUpdate_timeoutLessThanMinimumInterval()
 
     QSignalSpy spyTimeout(m_source, SIGNAL(requestTimeout()));
     m_source->requestUpdate(1);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_COMPARE_WITH_TIMEOUT(spyTimeout.count(), 1, 10);
-    spyTimeout.clear();
 }
 
 // TC_ID_3_x_3 : Call requestUpdate() with same value repeatedly
@@ -511,11 +559,16 @@ void TestQGeoPositionInfoSource::requestUpdate_repeatedCalls()
 
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     m_source->requestUpdate(20000);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_COMPARE_WITH_TIMEOUT(spyUpdate.count(), 1, 20000);
     spyUpdate.clear();
     m_source->requestUpdate(20000);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_COMPARE_WITH_TIMEOUT(spyUpdate.count(), 1, 20000);
-    spyUpdate.clear();
 }
 
 void TestQGeoPositionInfoSource::requestUpdate_overlappingCalls()
@@ -525,6 +578,9 @@ void TestQGeoPositionInfoSource::requestUpdate_overlappingCalls()
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     m_source->requestUpdate(10000);
     m_source->requestUpdate(10000);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_COMPARE_WITH_TIMEOUT(spyUpdate.count(), 1, 20000);
 }
 
@@ -539,16 +595,22 @@ void TestQGeoPositionInfoSource::requestUpdateAfterStartUpdates_ZeroInterval()
     m_source->setUpdateInterval(0);
     m_source->startUpdates();
 
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 1, MAX_WAITING_TIME);
     spy.clear();
 
     m_source->requestUpdate(5000);
     QTest::qWait(7000);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QVERIFY((spy.count() > 0) && (spyTimeout.count() == 0));
     spy.clear();
 
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_VERIFY_WITH_TIMEOUT(spy.count() >= 0, MAX_WAITING_TIME);
-    spy.clear();
 
     m_source->stopUpdates();
 }
@@ -563,16 +625,22 @@ void TestQGeoPositionInfoSource::requestUpdateAfterStartUpdates_SmallInterval()
     m_source->setUpdateInterval(10000);
     m_source->startUpdates();
 
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 1, MAX_WAITING_TIME);
     spy.clear();
 
     m_source->requestUpdate(5000);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_VERIFY_WITH_TIMEOUT((spy.count() == 1) && (spyTimeout.count() == 0), 7000);
 
     spy.clear();
 
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 1, 12000);
-    spy.clear();
 
     m_source->stopUpdates();
 }
@@ -589,12 +657,16 @@ void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_ZeroInterval()
     m_source->setUpdateInterval(0);
     m_source->startUpdates();
 
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_VERIFY_WITH_TIMEOUT((spy.count() == 1) && (spyTimeout.count() == 0), MAX_WAITING_TIME);
     spy.clear();
 
     QTest::qWait(20000);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QCOMPARE(spyTimeout.count(), 0);
-    spy.clear();
 
     m_source->stopUpdates();
 }
@@ -611,13 +683,49 @@ void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_SmallInterval()
     m_source->setUpdateInterval(10000);
     m_source->startUpdates();
 
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_VERIFY_WITH_TIMEOUT((spy.count() > 0) && (spyTimeout.count() == 0), 7000);
     spy.clear();
 
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 1, 12000);
-    spy.clear();
 
     m_source->stopUpdates();
+}
+
+void TestQGeoPositionInfoSource::removeSlotForRequestTimeout()
+{
+	CHECK_SOURCE_VALID;
+	
+	bool i = connect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot1()));
+	QVERIFY(i==true);
+	i = connect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot2()));
+	QVERIFY(i==true);
+	i = disconnect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot1()));
+	QVERIFY(i==true);
+	
+	m_source->requestUpdate(-1);
+    QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 1000);
+}
+
+void TestQGeoPositionInfoSource::removeSlotForPositionUpdated()
+{
+	CHECK_SOURCE_VALID;
+	
+	bool i = connect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo &)), this, SLOT(test_slot1()));
+	QVERIFY(i==true);
+	i = connect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo &)), this, SLOT(test_slot2()));
+	QVERIFY(i==true);
+	i = disconnect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo &)), this, SLOT(test_slot1()));
+	QVERIFY(i==true);
+	
+	m_source->requestUpdate(60000);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
+    QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 60000);
 }
 
 #include "testqgeopositioninfosource.moc"
