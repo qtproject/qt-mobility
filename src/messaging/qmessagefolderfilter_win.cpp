@@ -41,6 +41,8 @@
 #include "qmessagefolderfilter.h"
 #include "qmessagefolderfilter_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 QMessageFolderFilterPrivate::QMessageFolderFilterPrivate(QMessageFolderFilter *folderFilter)
     : q_ptr(folderFilter),
       _operator(Identity),
@@ -600,3 +602,5 @@ QMessageFolderFilter QMessageFolderFilter::byAncestorFolderIds(const QMessageFol
     result.d_ptr->_criterion = QMessageFolderFilterPrivate::AncestorFolderFilter;
     return result;
 }
+
+QTM_END_NAMESPACE

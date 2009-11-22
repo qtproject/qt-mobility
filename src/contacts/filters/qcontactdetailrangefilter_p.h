@@ -61,6 +61,7 @@
 #include <QString>
 #include <QVariant>
 
+QTM_BEGIN_NAMESPACE
 
 class QContactDetailRangeFilterPrivate : public QContactFilterPrivate
 {
@@ -110,5 +111,7 @@ public:
     QContactFilter::MatchFlags m_flags;
     QContactDetailRangeFilter::RangeFlags m_rangeflags;
 };
+
+QTM_END_NAMESPACE
 
 #endif

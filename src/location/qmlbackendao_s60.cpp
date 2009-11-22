@@ -43,6 +43,8 @@
 #include "qgeosatelliteinfosource_s60_p.h"
 #include "qmlbackendao_s60_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 //The name of the requestor //Added by PM
 //_LIT(KRequestor,"QTMobility Location");
 
@@ -464,3 +466,5 @@ void CQMLBackendAO::startUpdates()
 
     }
 }
+
+QTM_END_NAMESPACE

@@ -47,6 +47,8 @@
 
 #include "qtcontactsglobal.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactIdPrivate;
 class Q_CONTACTS_EXPORT QContactId
 {
@@ -69,6 +71,8 @@ public:
 private:
     QSharedDataPointer<QContactIdPrivate> d;
 };
+
+QTM_END_NAMESPACE
 
 #endif
 

@@ -50,6 +50,8 @@
 #include <qmobilityglobal.h>
 
 
+QTM_BEGIN_NAMESPACE
+
 class QMediaContentPrivate;
 class Q_MEDIA_EXPORT QMediaContent
 {
@@ -92,7 +94,10 @@ private:
     QSharedDataPointer<QMediaContentPrivate> d;
 };
 
-Q_DECLARE_METATYPE(QMediaContent)
+QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaContent))
+
 
 
 #endif  // QMEDIACONTENT_H

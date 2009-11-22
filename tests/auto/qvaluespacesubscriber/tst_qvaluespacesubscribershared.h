@@ -39,11 +39,16 @@
 **
 ****************************************************************************/
 
+#include <qmobilityglobal.h>
 #include <QObject>
 #include <QMap>
 
+QTM_BEGIN_NAMESPACE
 class QValueSpaceProvider;
 class QAbstractValueSpaceLayer;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class tst_QValueSpaceSubscriber : public QObject
 {

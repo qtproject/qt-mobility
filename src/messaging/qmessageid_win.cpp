@@ -44,6 +44,9 @@
 #include <MAPIUtil.h>
 #include <QDebug>
 
+
+QTM_BEGIN_NAMESPACE
+
 #ifdef _WIN32_WCE
 
 QMessageId QMessageIdPrivate::from(const MapiEntryId &storeKey, const MapiEntryId &entryId, const MapiRecordKey &messageKey, const MapiEntryId &folderKey)
@@ -255,6 +258,12 @@ bool QMessageId::operator<(const QMessageId& other) const
         return (d_ptr->_entryId < other.d_ptr->_entryId);
     }
 
+    if (d_ptr) {
+        return false;
+    } else if (other.d_ptr) {
+        return true;
+    }
+
     return false;
 }
 
@@ -294,3 +303,5 @@ uint qHash(const QMessageId &id)
     return qHash(id.d_ptr->_storeRecordKey) ^ qHash(id.d_ptr->_entryId);
 }
 
+
+QTM_END_NAMESPACE

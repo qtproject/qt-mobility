@@ -55,15 +55,21 @@
 #include <mapix.h>
 #include <objbase.h>
 #include <mapiutil.h>
+#include <qmobilityglobal.h>
 #ifdef _WIN32_WCE
 #include <cemapi.h>
 #endif
 
-using namespace WinHelpers;
+using namespace QtMobility::WinHelpers;
+
+QTM_BEGIN_NAMESPACE
+
 static const unsigned long SmsCharLimit = 160;
 
 #ifndef _WIN32_WCE
+
 namespace {
+
 class ShowFormThread : public QThread
 {
 public:
@@ -74,6 +80,7 @@ public:
     ~ShowFormThread();
 
     void run();
+
     bool ok() const;
 
 private:
@@ -118,7 +125,9 @@ bool ShowFormThread::ok() const
 {
     return m_ok;
 }
+
 }
+
 #endif
 
 class QMessageServiceActionPrivate : public QObject
@@ -137,8 +146,9 @@ public:
     bool isPartiallyDownloaded(const QMessageId& id, bool considerAttachments = false);
     bool markForDownload(const QMessageId& id, bool includeAttachments = false);
     bool synchronize(const QMessageAccountId& id);
-    bool registerUpdates(const QMessageId& targetMessage);
+    bool registerUpdates(const QMessageId& id);
     void unregisterUpdates();
+    bool retrieveBody(const QMessage& partialMessage);
 #endif
 
 public slots:
@@ -256,8 +266,8 @@ void QMessageServiceActionPrivate::messageUpdated(const QMessageId& id)
         {
             unregisterUpdates();
             _state = isBodyDownloaded ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
-            emit q_ptr->stateChanged(_state);
             _active = false;
+            emit q_ptr->stateChanged(_state);
         }
     }
 }
@@ -314,6 +324,34 @@ static Lptstr createMCFRecipients(const QMessageAddressList& addressList, QMessa
 
 bool QMessageServiceActionPrivate::send(const QMessage& message, bool showComposer)
 {
+    //check message type
+
+    if(message.type() == QMessage::AnyType || message.type() == QMessage::NoType)
+    {
+        qWarning() << "Unsupported message type for sending/composition";
+        _lastError = QMessageStore::ConstraintFailure;
+        return false;
+    }
+
+    //check account
+
+    if(!message.parentAccountId().isValid())
+    {
+        qWarning() << "Invalid account for sending/composition";
+        _lastError = QMessageStore::ConstraintFailure;
+        return false;
+    }
+
+    //check account/message type compatibility
+
+    QMessageAccount account(message.parentAccountId());
+    if(!(account.messageTypes() & message.type()))
+    {
+        qWarning() << "Message type unsupported by account";
+        _lastError = QMessageStore::ConstraintFailure;
+        return false;
+    }
+
 #ifdef _WIN32_WCE
     if(showComposer)
     {
@@ -400,13 +438,12 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
                 mcf.pszBody = bodyText;
             }
         }
-        else
-            qWarning() << "Unsupported message type";
 
        mcf.cbSize = sizeof(mcf);
 
        if(FAILED(MailComposeMessage(&mcf)))
        {
+           _lastError = QMessageStore::FrameworkFault;
            qWarning() << "MailComposeMessage failed";
            return false;
        }
@@ -415,10 +452,19 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
     {
 #endif
 
+    //check recipients
+    QMessageAddressList recipients = message.to() + message.bcc() + message.cc();
+    if(recipients.isEmpty() && !showComposer)
+    {
+        qWarning() << "Message must have recipients for sending";
+        _lastError = QMessageStore::ConstraintFailure;
+        return false;
+    }
+
     MapiSessionPtr mapiSession(MapiSession::createSession(&_lastError));
     if (_lastError != QMessageStore::NoError)
     {
-        qWarning() << "Could not create session";
+        qWarning() << "Could not create MAPI session for sending";
         return false;
     }
 
@@ -426,26 +472,11 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
     //ensure the message is marked read otherwise showForm displays the message as incomming
     outgoing.setStatus(QMessage::Read,true);
 
-    if(!outgoing.parentAccountId().isValid())
-    {
-        qWarning() << "No valid account set for message, attempting to use default for message type...";
-
-        QMessageAccountId defaultAccountId = QMessageAccount::defaultAccount(message.type());
-        if(!defaultAccountId.isValid())
-        {
-            _lastError = QMessageStore::ConstraintFailure;
-            qWarning() << "No default account available for message type.";
-            return false;
-        }
-
-        outgoing.setParentAccountId(defaultAccountId);
-    }
-
     MapiStorePtr mapiStore = mapiSession->findStore(&_lastError, outgoing.parentAccountId(),false);
 
     if(mapiStore.isNull() || _lastError != QMessageStore::NoError)
     {
-        qWarning() << "Unable to get store for the account";
+        qWarning() << "Unable to retrieve MAPI store for account";
         return false;
     }
 
@@ -454,10 +485,10 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
     MapiFolderPtr mapiFolder = mapiStore->findFolder(&_lastError,QMessage::OutboxFolder);
 
     if( mapiFolder.isNull() || _lastError != QMessageStore::NoError ) {
-        qWarning() << "Unable to get outbox folder for outgoing store, trying drafts...";
+        qWarning() << "Unable to retrieve outbox MAPI folder for sending, attempting drafts...";
         mapiFolder = mapiStore->findFolder(&_lastError,QMessage::DraftsFolder);
         if(mapiFolder.isNull() || _lastError != QMessageStore::NoError) {
-            qWarning() << "Unable to get drafts folder for outgoing store";
+            qWarning() << "Unable to retrieve drafts MAPI folder for sending";
             return false;
         }
     }
@@ -474,7 +505,6 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
 #ifndef _WIN32_WCE
     if(showComposer)
     {
-
         ShowFormThread* sft = new ShowFormThread(mapiMessage,mapiFolder,mapiStore);
         connect(sft, SIGNAL(finished()), this, SLOT(showFormThreadFinished()), Qt::QueuedConnection);
         sft->start();
@@ -504,28 +534,30 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
 
 bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
 {
+    if(!messageId.isValid())
+    {
+        _lastError = QMessageStore::InvalidId;
+        qWarning() << "Invalid QMessageId";
+        return false;
+    }
+
 #ifdef _WIN32_WCE
     MapiEntryId entryId = QMessageIdPrivate::entryId(messageId);
     LPENTRYID entryIdPtr(reinterpret_cast<LPENTRYID>(const_cast<char*>(entryId.data())));
     if(FAILED(MailDisplayMessage(entryIdPtr,entryId.length())))
     {
         qWarning() << "MailDisplayMessage failed";
+        _lastError = QMessageStore::FrameworkFault;
         return false;
     }
     return true;
 
 #else
-    if(!messageId.isValid())
-    {
-        _lastError = QMessageStore::InvalidId;
-        qWarning() << "Invalid message id";
-        return false;
-    }
 
     MapiSessionPtr mapiSession(MapiSession::createSession(&_lastError));
     if (_lastError != QMessageStore::NoError)
     {
-        qWarning() << "Could not create seesion";
+        qWarning() << "Could not create MAPI seesion";
         return false;
     }
 
@@ -541,14 +573,14 @@ bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
 
     if(mapiStore.isNull() || _lastError != QMessageStore::NoError)
     {
-        qWarning() << "Unable to get store for the message";
+        qWarning() << "Unable to retrieve MAPI store for account";
         return false;
     }
 
     MapiFolderPtr mapiFolder = mapiStore->openFolderWithKey(&_lastError,folderRecordKey);
 
     if( mapiFolder.isNull() || _lastError != QMessageStore::NoError ) {
-        qWarning() << "Unable to get folder for the message";
+        qWarning() << "Unable to retrieve MAPI folder for message";
         return false;
     }
 
@@ -556,7 +588,7 @@ bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
 
     if(!mapiMessage || _lastError != QMessageStore::NoError)
     {
-        qWarning() << "Unable to create MAPI message from source";
+        qWarning() << "Unable to retrieve MAPI message";
         mapiRelease(mapiMessage);
         return false;
     }
@@ -577,18 +609,25 @@ bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
 
 bool QMessageServiceActionPrivate::isPartiallyDownloaded(const QMessageId& id, bool considerAttachments)
 {
+    if(!id.isValid())
+    {
+        _lastError = QMessageStore::InvalidId;
+        qWarning() << "Invalid QMessageId";
+        return false;
+    }
+
     MapiSessionPtr mapiSession(MapiSession::createSession(&_lastError));
 
     if (_lastError != QMessageStore::NoError)
     {
-        qWarning() << "Could not create session";
+        qWarning() << "Could not create MAPI session";
         return false;
     }
 
     MapiStorePtr mapiStore = mapiSession->openStore(&_lastError,QMessageIdPrivate::storeRecordKey(id));
 
     if(mapiStore.isNull() || _lastError != QMessageStore::NoError) {
-        qWarning() << "Unable to get store for the message id";
+        qWarning() << "Unable to retrieve MAPI store for account";
         return false;
     }
 
@@ -596,7 +635,8 @@ bool QMessageServiceActionPrivate::isPartiallyDownloaded(const QMessageId& id, b
 
     ULONG status = 0;
     if(!getMapiProperty(message,PR_MSG_STATUS,&status)) {
-        qWarning() << "Unable to get message flags";
+        qWarning() << "Unable to get MAPI message status flags";
+        _lastError = QMessageStore::FrameworkFault;
         return false;
     }
     else
@@ -610,11 +650,18 @@ bool QMessageServiceActionPrivate::isPartiallyDownloaded(const QMessageId& id, b
 
 bool QMessageServiceActionPrivate::markForDownload(const QMessageId& id, bool includeAttachments)
 {
+    if(!id.isValid())
+    {
+        _lastError = QMessageStore::InvalidId;
+        qWarning() << "Invalid QMessageId";
+        return false;
+    }
+
     MapiSessionPtr mapiSession(MapiSession::createSession(&_lastError));
 
     if (_lastError != QMessageStore::NoError)
     {
-        qWarning() << "Could not create session";
+        qWarning() << "Could not create MAPI session";
         return false;
     }
 
@@ -622,7 +669,7 @@ bool QMessageServiceActionPrivate::markForDownload(const QMessageId& id, bool in
 
     if(mapiStore.isNull() || _lastError != QMessageStore::NoError)
     {
-        qWarning() << "Unable to get store for the message id";
+        qWarning() << "Unable to retrieve MAPI store for message account";
         return false;
     }
 
@@ -632,7 +679,8 @@ bool QMessageServiceActionPrivate::markForDownload(const QMessageId& id, bool in
 
     if(!getMapiProperty(message,PR_MSG_STATUS,&status))
     {
-        qWarning() << "Unable to get message flags";
+        qWarning() << "Unable to get MAPI message status flags";
+        _lastError = QMessageStore::FrameworkFault;
         return false;
     }
     else
@@ -645,43 +693,59 @@ bool QMessageServiceActionPrivate::markForDownload(const QMessageId& id, bool in
 
         if(!setMapiProperty(message, PR_MSG_STATUS, status))
         {
-            qWarning() << "Could not mark the message for download!";
+            qWarning() << "Could not mark the MAPI message for download!";
+            _lastError = QMessageStore::FrameworkFault;
             return false;
         }
 
         mapiRelease(message);
 
-        //perform the synchronization on the store
-
+        //TODO investigate possiblity of interacting with mapi transport directly
+        /*
         QString transportName = mapiStore->transportName();
         if(transportName.isEmpty())
         {
             qWarning() << "Could not get transport name for mapi store";
             return false;
         }
-
+        */
     }
     return true;
 }
 
 bool QMessageServiceActionPrivate::synchronize(const QMessageAccountId& id)
 {
+    if(!id.isValid())
+    {
+        qWarning() << "Cannot synchronize invalid QMessageAccountId";
+        _lastError = QMessageStore::InvalidId;
+        return false;
+    }
+
     QMessageAccount account(id);
     if(FAILED(MailSyncMessages(LptstrFromQString(account.name()),MCF_ACCOUNT_IS_NAME | MCF_RUN_IN_BACKGROUND)))
     {
-        qWarning() << "MailSyncMessages failed for account " << account.name();
+        qWarning() << "MailSyncMessages failed for account: " << account.name();
+        _lastError = QMessageStore::FrameworkFault;
         return false;
     }
     return true;
 }
 
-bool QMessageServiceActionPrivate::registerUpdates(const QMessageId& targetMessage)
+bool QMessageServiceActionPrivate::registerUpdates(const QMessageId& id)
 {
+    if(!id.isValid())
+    {
+        qWarning() << "Cannot register for update notifications on invalid QMessageId";
+        _lastError = QMessageStore::InvalidId;
+        return false;
+    }
+
     if(!m_registeredUpdates)
     {
         connect(QMessageStore::instance(),SIGNAL(messageUpdated(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)),this,SLOT(messageUpdated(const QMessageId&)));
-        m_bodyDownloadFilterId = QMessageStore::instance()->registerNotificationFilter(QMessageFilter());
-        m_bodyDownloadTarget = targetMessage;
+        m_bodyDownloadFilterId = QMessageStore::instance()->registerNotificationFilter(QMessageFilter::byId(id));
+        m_bodyDownloadTarget = id;
         m_registeredUpdates = true;
     }
     return m_registeredUpdates;
@@ -693,6 +757,28 @@ void QMessageServiceActionPrivate::unregisterUpdates()
     QMessageStore::instance()->unregisterNotificationFilter(m_bodyDownloadFilterId);
     m_bodyDownloadFilterId = 0;
     m_registeredUpdates = false;
+}
+
+bool QMessageServiceActionPrivate::retrieveBody(const QMessage& partialMessage)
+{
+    if(partialMessage.type() != QMessage::Email)
+    {
+        qWarning() << "Cannot retrieve body for non-email message type";
+        _lastError = QMessageStore::ConstraintFailure;
+        return false;
+    }
+
+    if(isPartiallyDownloaded(partialMessage.id()))
+    {
+        //only valid for Email
+        if(markForDownload(partialMessage.id(),true))
+            if(registerUpdates(partialMessage.id()))
+                if(!synchronize(partialMessage.parentAccountId()))
+                    unregisterUpdates();
+    }
+    else QTimer::singleShot(0,this,SLOT(completed()));
+
+    return (_lastError == QMessageStore::NoError);
 }
 
 #endif
@@ -733,6 +819,11 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
     d_ptr->_state = QMessageServiceAction::InProgress;
     emit stateChanged(d_ptr->_state);
 
+#if 0
+    d_ptr->_candidateIds = QMessageStore::instance()->queryMessages(filter, body, options, ordering, limit, offset);
+    d_ptr->_lastError = QMessageStore::instance()->lastError();
+    QTimer::singleShot(0,d_ptr,SLOT(reportMatchingIds()));
+#else
     // Perform the query in another thread to keep the UI thread free
     QueryThread *query = new QueryThread(d_ptr, filter, body, options, ordering, limit, offset);
     connect(query, SIGNAL(completed()), d_ptr, SLOT(reportMatchingIds()), Qt::QueuedConnection);
@@ -742,11 +833,12 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
         // Don't delete the previous thread object immediately
         if (!d_ptr->m_obsoleteThreads.isEmpty()) {
             qDeleteAll(d_ptr->m_obsoleteThreads);
+            d_ptr->m_obsoleteThreads.clear();
         }
         d_ptr->m_obsoleteThreads.append(d_ptr->m_queryThread);
     }
     d_ptr->m_queryThread = query;
-
+#endif
     return true;
 }
 
@@ -785,18 +877,17 @@ bool QMessageServiceAction::send(QMessage &message)
         return false;
     }
 
-    d_ptr->_state = QMessageServiceAction::InProgress;
-    emit stateChanged(d_ptr->_state);
     d_ptr->_active = true;
-
+    d_ptr->_state = QMessageServiceAction::InProgress;
     d_ptr->_lastError = QMessageStore::NoError;
+    emit stateChanged(d_ptr->_state);
+
 
     bool result = d_ptr->send(message);
 
     d_ptr->_state = result ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
-    emit stateChanged(d_ptr->_state);
-
     d_ptr->_active = false;
+    emit stateChanged(d_ptr->_state);
 
     return result;
 }
@@ -808,79 +899,156 @@ bool QMessageServiceAction::compose(const QMessage &message)
         return false;
     }
 
-    d_ptr->_state = QMessageServiceAction::InProgress;
-    emit stateChanged(d_ptr->_state);
     d_ptr->_active = true;
+    d_ptr->_state = QMessageServiceAction::InProgress;
     d_ptr->_lastError = QMessageStore::NoError;
+    emit stateChanged(d_ptr->_state);
 
-    if(!d_ptr->send(message,true))
-    {
-        d_ptr->_state = QMessageServiceAction::Failed;
-        emit stateChanged(d_ptr->_state);
-        d_ptr->_active = false;
-        return false;
+    bool result = d_ptr->send(message,true);
+#ifndef _WIN32_WCE
+    if(!result) {
+#endif
+    d_ptr->_state = result ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
+    d_ptr->_active = false;
+    emit stateChanged(d_ptr->_state);
+    return result;
+#ifndef _WIN32_WCE
     }
     return true;
+#endif
 }
 
 bool QMessageServiceAction::retrieveHeader(const QMessageId& id)
 {
     Q_UNUSED(id);
-    return true;
-}
 
-bool QMessageServiceAction::retrieveBody(const QMessageId& id)
-{
-#ifdef _WIN32_WCE
     if(d_ptr->_active) {
         qWarning() << "Action is currently busy";
         return false;
     }
 
-    d_ptr->_state = InProgress;
-    emit stateChanged(d_ptr->_state);
+    d_ptr->_state = QMessageServiceAction::Successful;
     d_ptr->_lastError = QMessageStore::NoError;
-    d_ptr->_active = true;
+    d_ptr->_active = false;
+    emit stateChanged(d_ptr->_state);
 
-    QMessage message(id);
+    return true;
+}
 
-    bool result = true;
+bool QMessageServiceAction::retrieveBody(const QMessageId& id)
+{
 
-    if(message.type() == QMessage::Email) //already has body
-    {
-        if(d_ptr->isPartiallyDownloaded(id))
-        {
-            result = d_ptr->markForDownload(id,true);
-            result &= d_ptr->registerUpdates(id);
-            result &= d_ptr->synchronize(message.parentAccountId());
-        }
+    if(d_ptr->_active) {
+        qWarning() << "Action is currently busy";
+        return false;
     }
 
-    return result;
+#ifdef _WIN32_WCE
+
+    d_ptr->_active = true;
+    d_ptr->_state = InProgress;
+    d_ptr->_lastError = QMessageStore::NoError;
+    emit stateChanged(d_ptr->_state);
+
+    if(!id.isValid())
+    {
+        qWarning() << "Invalid QMessageId";
+        d_ptr->_lastError = QMessageStore::ConstraintFailure;
+    }
+
+    QMessage message;
+
+    if(d_ptr->_lastError == QMessageStore::NoError)
+    {
+        message = QMessage(id);
+        d_ptr->_lastError = QMessageStore::instance()->lastError();
+    }
+
+
+    if(d_ptr->_lastError == QMessageStore::NoError)
+        d_ptr->retrieveBody(message);
+
+    //emit failure immediately
+
+    if(d_ptr->_lastError != QMessageStore::NoError)
+    {
+        d_ptr->_state = Failed;
+        d_ptr->_active = false;
+        emit stateChanged(d_ptr->_state);
+        return false;
+    }
+
+    return true;
+
 #else
     Q_UNUSED(id);
+
+    d_ptr->_lastError = QMessageStore::NotYetImplemented;
+    d_ptr->_state = Failed;
+    d_ptr->_active = false;
+    emit stateChanged(d_ptr->_state);
     return false;
 #endif
 }
 
-bool QMessageServiceAction::retrieve(const QMessageId &aMessageId, const QMessageContentContainerId& id)
+bool QMessageServiceAction::retrieve(const QMessageId& messageId, const QMessageContentContainerId& id)
 {
+
+    if(d_ptr->_active) {
+        qWarning() << "Action is currently busy";
+        return false;
+    }
+
 #ifdef _WIN32_WCE
 
-    if(!aMessageId.isValid())
+    d_ptr->_active = true;
+    d_ptr->_state = InProgress;
+    d_ptr->_lastError = QMessageStore::NoError;
+    emit stateChanged(d_ptr->_state);
+
+    if(!messageId.isValid())
+    {
+        qWarning() << "Invalid QMessageId";
+        d_ptr->_lastError = QMessageStore::ConstraintFailure;
+    }
+
+    QMessage message;
+
+    if(d_ptr->_lastError == QMessageStore::NoError)
+    {
+        message = QMessage(messageId);
+        d_ptr->_lastError = QMessageStore::instance()->lastError();
+    }
+
+    if(d_ptr->_lastError == QMessageStore::NoError)
+    {
+        bool isBodyContainer = message.bodyId() == id;
+        if(isBodyContainer)
+            d_ptr->retrieveBody(message);
+        //TODO downloading attachment programatically possible?
+    }
+
+    //emit failure immediately
+
+    if(d_ptr->_lastError != QMessageStore::NoError)
+    {
+        d_ptr->_state = Failed;
+        d_ptr->_active = false;
+        emit stateChanged(d_ptr->_state);
         return false;
+    }
 
-    QMessage message(aMessageId);
+    return true;
 
-    bool isBodyContainer = message.bodyId() == id;
-
-    if(isBodyContainer)
-        return retrieveBody(aMessageId);
-
-    //TODO download message attachment programatically using MAPI impossible?
 #else
-    Q_UNUSED(aMessageId)
+    Q_UNUSED(messageId)
     Q_UNUSED(id)
+
+    d_ptr->_lastError = QMessageStore::NotYetImplemented;
+    d_ptr->_state = Failed;
+    d_ptr->_active = false;
+    emit stateChanged(d_ptr->_state);
+
 #endif
 
     return false;
@@ -893,25 +1061,40 @@ bool QMessageServiceAction::show(const QMessageId& id)
         return false;
     }
 
-    d_ptr->_state = InProgress;
-    emit stateChanged(d_ptr->_state);
-    d_ptr->_lastError = QMessageStore::NoError;
     d_ptr->_active = true;
+    d_ptr->_state = InProgress;
+    d_ptr->_lastError = QMessageStore::NoError;
+    emit stateChanged(d_ptr->_state);
 
-    if(!d_ptr->show(id))
-    {
-        d_ptr->_state = QMessageServiceAction::Failed;
-        emit stateChanged(d_ptr->_state);
-        d_ptr->_active = false;
-        return false;
+    bool result = d_ptr->show(id);
+#ifndef _WIN32_WCE
+    if(!result) {
+#endif
+    d_ptr->_state = result ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
+    d_ptr->_active = false;
+    emit stateChanged(d_ptr->_state);
+    return result;
+#ifndef _WIN32_WCE
     }
     return true;
+#endif
 }
 
 bool QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
 {
     Q_UNUSED(id);
-    return true;
+
+    if(d_ptr->_active) {
+        qWarning() << "Action is currently busy";
+        return false;
+    }
+
+    d_ptr->_lastError = QMessageStore::NotYetImplemented;
+    d_ptr->_state = Failed;
+    d_ptr->_active = false;
+    emit stateChanged(d_ptr->_state);
+
+    return false;
 }
 
 QMessageServiceAction::State QMessageServiceAction::state() const
@@ -921,7 +1104,23 @@ QMessageServiceAction::State QMessageServiceAction::state() const
 
 void QMessageServiceAction::cancelOperation()
 {
+#ifdef _WIN32_WCE
+    if(d_ptr->_active)
+    {
+        bool awaitingBodyRetrieval(d_ptr->m_bodyDownloadFilterId != 0);
+
+        if(awaitingBodyRetrieval)
+        {
+            d_ptr->unregisterUpdates();
+            d_ptr->_lastError = QMessageStore::NoError;
+            d_ptr->_state = QMessageServiceAction::Pending;
+            d_ptr->_active = false;
+            emit stateChanged(d_ptr->_state);
+        }
+    }
+#else
     //NOOP
+#endif
 }
 
 QMessageStore::ErrorCode QMessageServiceAction::lastError() const
@@ -930,3 +1129,5 @@ QMessageStore::ErrorCode QMessageServiceAction::lastError() const
 }
 
 #include <qmessageserviceaction_win.moc>
+
+QTM_END_NAMESPACE

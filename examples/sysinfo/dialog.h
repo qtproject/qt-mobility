@@ -43,9 +43,9 @@
 #define DIALOG_H
 
 #include <QDialog>
-class QSystemScreenSaver;
-class QSystemInfo;
 #include <qsysteminfo.h>
+
+QTM_USE_NAMESPACE
 
 namespace Ui {
     class Dialog;

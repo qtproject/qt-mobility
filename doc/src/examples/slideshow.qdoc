@@ -39,66 +39,49 @@
 **
 ****************************************************************************/
 
+/*!
+    \example slideshow
+    \title SlideShow Example
 
-#ifndef QCONTACTREQUESTWORKER_P_H
-#define QCONTACTREQUESTWORKER_P_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+    \image slideshow-img1.png
 
-#include <QMutex>
-#include <QWaitCondition>
-#include <QQueue>
-#include <QSharedData>
 
-#include "qcontactrequestworker.h"
+    Slideshow displays a series of time delayed images after you select a
+    source image directory to use. The folder button presents a list of three
+    options: browse for a directory, load a playlist or enter a location.
 
-class QContactAbstractRequest;
+    This implementation uses a QMediaImageViewer object for the image with
+    a QVideoWidget used to do the display. Whether the the source is a
+    browsed directory, a playlist file or a URL to a local or remote
+    location the playlist object in Slideshow is updated with the file or
+    multiple file locations. 
 
-struct QContactRequestElement
-{
-    QContactAbstractRequest* request;
-    QMutex mutex;
-    QWaitCondition condition;
-    bool waiting;
-};
+    \code
+        connect(imageViewer, SIGNAL(stateChanged(QMediaImageViewer::State)),
+                this, SLOT(stateChanged(QMediaImageViewer::State)));
 
-class QContactRequestWorkerData : public QSharedData
-{
-public:
-    QContactRequestWorkerData()
-        : QSharedData(),
-        m_stop(false)
-    {
-    }
+        playlist = new QMediaPlaylist(imageViewer);
+    \endcode
 
-    QContactRequestWorkerData(const QContactRequestWorkerData& other)
-        : QSharedData(other),
-        m_stop(other.m_stop)
-    {
-    }
+    We create a QVideoWidget to display the viewer and add it to the dialog.
 
-    ~QContactRequestWorkerData()
-    {
-    }
+    \code
+        QVideoWidget *videoWidget = new QVideoWidget(imageViewer);
+    \endcode
 
-    QContactRequestElement* takeFirstRequestElement();
-    void cleanUpFinishedRequests(bool waitForAll = false);
 
-    bool m_stop;
-    QMutex m_mutex;
-    QWaitCondition m_newRequestAdded;
-    QMap<QContactAbstractRequest*, QContactRequestElement*> m_requestMap;
-    QQueue<QContactRequestElement*> m_requestQueue; 
-    QList<QContactRequestElement*> m_removedRequests; 
-};
-#endif
+    \code
+        layout->addWidget(videoWidget, Qt::AlignCenter);
+    \endcode
 
+
+    The timeout between images is set by changing the timeout property in
+    QMediaImageViewer which is in milliseconds. So to change the timeout
+    to five seconds
+    \code
+        imageViewer->setTimeout( 5000 );
+    \endcode
+
+
+*/

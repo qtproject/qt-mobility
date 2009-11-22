@@ -56,6 +56,8 @@
 #include "qcontactmanager.h"
 #include "qcontactabstractrequest.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactFilter;
 class QContactSortOrder;
 
@@ -160,5 +162,7 @@ private:
     /* QContactChangeSet is a utility class used to emit the appropriate signals */
     friend class QContactChangeSet;
 };
+
+QTM_END_NAMESPACE
 
 #endif

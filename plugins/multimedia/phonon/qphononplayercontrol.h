@@ -50,13 +50,15 @@
 #include <qmediaplayercontrol.h>
 #include <qmediaplayer.h>
 
-
+QTM_BEGIN_NAMESPACE
 class QMediaPlaylist;
+class QMediaPlaylistNavigator;
+QTM_END_NAMESPACE
 
 class QPhononPlayerSession;
 class QPhononPlayerService;
-class QMediaPlaylistNavigator;
 
+QTM_USE_NAMESPACE
 
 class QPhononPlayerControl : public QMediaPlayerControl
 {

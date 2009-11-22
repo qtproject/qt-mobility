@@ -49,6 +49,7 @@
 
 #include <QDebug>
 
+QTM_USE_NAMESPACE
 class FakeLayer : public QAbstractValueSpaceLayer
 {
     Q_OBJECT

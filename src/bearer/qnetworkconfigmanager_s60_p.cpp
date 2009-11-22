@@ -58,7 +58,7 @@
     #include <aputils.h> 
 #endif
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 static const int KValueThatWillBeAddedToSNAPId = 1000;
 static const int KUserChoiceIAPId = 0;
@@ -970,5 +970,5 @@ void AccessPointsAvailabilityScanner::RunL()
         iOwner.accessPointScanningReady(true,iIapBuf());
     }
 }
-
-QT_END_NAMESPACE
+#include "moc_qnetworkconfigmanager_s60_p.cpp"
+QTM_END_NAMESPACE

@@ -43,6 +43,10 @@
 
 #include "qgeoinfothread_wince_p.h"
 
+Q_DECLARE_METATYPE(GPS_POSITION);
+
+QTM_BEGIN_NAMESPACE
+
 // ========== QGeoInfoValidator ==========
 
 QGeoInfoValidator::QGeoInfoValidator() {}
@@ -51,7 +55,6 @@ QGeoInfoValidator::~QGeoInfoValidator() {}
 
 // ========== QGeoInfoThreadWinCE ==========
 
-Q_DECLARE_METATYPE(GPS_POSITION);
 
 // This QGeoInfoThreadWinCE instance takes ownership of the validator, and must delete it before
 // it is destructed.
@@ -351,3 +354,6 @@ void QGeoInfoThreadWinCE::run()
 
     GPSCloseDevice(m_gps);
 }
+
+#include "moc_qgeoinfothread_wince_p.cpp"
+QTM_END_NAMESPACE

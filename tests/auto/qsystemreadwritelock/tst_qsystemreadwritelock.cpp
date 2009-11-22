@@ -43,6 +43,7 @@
 #include "qsystemreadwritelock_p.h"
 #include <QThread>
 
+QTM_USE_NAMESPACE
 bool volatile readThreadDone;
 bool volatile writeThreadDone;
 bool volatile readThreadStarted;

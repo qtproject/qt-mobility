@@ -57,7 +57,7 @@
 
 #include <QtCore/qtimer.h>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QNetworkConfigurationPrivate;
 
@@ -90,6 +90,6 @@ private:
     Qt::HANDLE handle;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif

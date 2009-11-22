@@ -53,6 +53,7 @@ class DSVideoDeviceControl;
 class DSVideoRendererControl;
 class DSImageCaptureControl;
 
+QTM_USE_NAMESPACE
 class DSCameraService : public QMediaService
 {
     Q_OBJECT

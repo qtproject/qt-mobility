@@ -51,6 +51,7 @@
 #include <QtCore/private/qmutexpool_p.h>
 #include <QUuid>
 
+QTM_BEGIN_NAMESPACE
 
 WMIHelper::WMIHelper(QObject * parent)
         : QObject(parent)
@@ -233,4 +234,6 @@ void WMIHelper::setConditional(const QString &conditional)
 {
    m_conditional = conditional;
 }
+
+QTM_END_NAMESPACE
 #endif

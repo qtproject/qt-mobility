@@ -49,6 +49,8 @@
 #define QTCONTACTS_IMPLEMENTATION_VERSION_NAME "com.nokia.qt.mobility.contacts.implementation.version" 
 #define QTCONTACTS_VERSION 1 
 
+QTM_BEGIN_NAMESPACE
+
 typedef quint32 QContactLocalId; // XXX Put this else where
 
 /*
@@ -118,5 +120,7 @@ template<int N> bool operator!=(const QString& b, const Latin1Literal<N>& a)
 
 #define Q_DECLARE_LATIN1_LITERAL(varname, str) static const Latin1Literal<sizeof(str)> varname
 #define Q_DEFINE_LATIN1_LITERAL(varname, str) const Latin1Literal<sizeof(str)> varname = {str}
+
+QTM_END_NAMESPACE
 
 #endif

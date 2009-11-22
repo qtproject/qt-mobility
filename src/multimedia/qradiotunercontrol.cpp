@@ -39,8 +39,11 @@
 **
 ****************************************************************************/
 
+#include <qmobilityglobal.h>
 #include <qradiotunercontrol.h>
 #include <qmediacontrol_p.h>
+
+QTM_BEGIN_NAMESPACE
 
 
 /*!
@@ -306,3 +309,7 @@ QRadioTunerControl::~QRadioTunerControl()
 
     Signals that an \a error has occured.
 */
+
+#include "moc_qradiotunercontrol.cpp"
+QTM_END_NAMESPACE
+

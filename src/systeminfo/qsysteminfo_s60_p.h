@@ -61,12 +61,12 @@
 #include "qsysteminfo.h"
 
 #include <f32file.h>
+#include "telephonyinfo_s60.h"
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
-#include "telephonyinfo_s60.h"
 
 //////// QSystemInfo
 class QSystemInfoPrivate : public QObject
@@ -173,12 +173,17 @@ private:
 
 //////// QSystemDeviceInfo
 
-#include <mproengprofileactivationobserver.h> 
-#include <cenrepnotifyhandler.h>
 
 class DeviceInfo;
+QTM_END_NAMESPACE
+
+#include <mproengprofileactivationobserver.h>
+#include <cenrepnotifyhandler.h>
+
 class MProEngEngine;
 class MProEngNotifyHandler;
+
+QTM_BEGIN_NAMESPACE
 
 class QSystemDeviceInfoPrivate : public QObject,
     public MTelephonyInfoObserver,
@@ -359,7 +364,7 @@ private:
     CCellSignalStrengthInfo *m_cellSignalStrengthInfo;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

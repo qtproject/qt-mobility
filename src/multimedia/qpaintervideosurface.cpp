@@ -45,13 +45,14 @@
 
 #include <qpainter.h>
 #include <qvariant.h>
-#include <qvideosurfaceformat.h>
+#include <QtMultimedia/qvideosurfaceformat.h>
 
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
 #include <qglshaderprogram.h>
 #endif
 
 #include <QtDebug>
+QTM_BEGIN_NAMESPACE
 
 class QVideoSurfacePainter
 {
@@ -1416,4 +1417,8 @@ void QPainterVideoSurface::createPainter()
     m_painter = new QVideoSurfaceRasterPainter;
 #endif
 }
+
+#include "moc_qpaintervideosurface_p.cpp"
+QTM_END_NAMESPACE
+
 

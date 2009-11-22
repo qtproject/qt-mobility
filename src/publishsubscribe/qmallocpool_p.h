@@ -42,11 +42,11 @@
 #ifndef QMALLOCPOOL_H
 #define QMALLOCPOOL_H
 
-#include "qpublishsubscribeglobal.h"
+#include "qmobilityglobal.h"
 #include <cstdlib>
 #include <QString>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QMallocPoolPrivate;
 
@@ -81,6 +81,6 @@ private:
     QMallocPoolPrivate * d;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif

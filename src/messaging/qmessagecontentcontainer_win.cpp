@@ -44,6 +44,8 @@
 #include <QTextCodec>
 #include <QDebug>
 
+QTM_BEGIN_NAMESPACE
+
 namespace WinHelpers {
 
 QMessageContentContainer fromLocator(const WinHelpers::AttachmentLocator &loc)
@@ -309,3 +311,4 @@ void QMessageContentContainer::setDerivedMessage(QMessage *derived)
     d_ptr->setDerivedMessage(derived);
 }
 
+QTM_END_NAMESPACE

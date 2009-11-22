@@ -44,6 +44,8 @@
 #include "qmlbackendmonitorinfo_s60_p.h"
 #include "qmlbackendmonitorcreatetriggerao_s60_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 //Sets the radius of the monitoring area, to  aRadius.If the Radius is less than the MinimumTriggerAreaSize(),
 //then aRadius will be set to MinimumTriggerAreaSize() supported by the LBT implementation.If the aRadius is
 //greater than the MinimumTriggerAreaSize() it is unaltered.
@@ -393,3 +395,5 @@ bool QMLBackendMonitorCreateTriggerAO::isTriggerInitialized(QGeoAreaMonitorS60* 
 
     return (triggerInfo != NULL) ? TRUE : FALSE;
 }
+
+QTM_END_NAMESPACE

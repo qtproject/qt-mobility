@@ -6,7 +6,7 @@
 //        		1 = MatchContains;
 //				2 = MatchStartsWith;
 //        		3 = MatchEndsWith;
-//				default = MatchRecursive;  ---> This not supporeted.
+//				default = MatchFixedString;;  ---> This not supporeted.
 //												It represents a failing case
 //
 // Error expected:	0 = NoError (default)

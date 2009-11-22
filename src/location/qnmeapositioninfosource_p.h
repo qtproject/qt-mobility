@@ -59,15 +59,15 @@
 #include <QQueue>
 #include <QPointer>
 
-class QNmeaReader;
 class QBasicTimer;
 class QTimerEvent;
 class QTimer;
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
+class QNmeaReader;
 struct QPendingGeoPositionInfo
 {
     QGeoPositionInfo info;
@@ -166,8 +166,7 @@ private:
     bool m_hasValidDateTime;
 };
 
-
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

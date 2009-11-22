@@ -45,6 +45,8 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMediaResource
     \preliminary
@@ -409,3 +411,5 @@ void QMediaResource::setResolution(int width, int height)
     else
         values.remove(Resolution);
 }
+QTM_END_NAMESPACE
+

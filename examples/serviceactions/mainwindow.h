@@ -51,6 +51,8 @@ class QTabWidget;
 class QMenuBar;
 class QStackedWidget;
 
+QTM_USE_NAMESPACE
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT

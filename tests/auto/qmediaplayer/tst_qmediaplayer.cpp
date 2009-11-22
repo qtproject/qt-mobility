@@ -50,6 +50,7 @@
 #include <qmediastreamscontrol.h>
 
 
+QTM_USE_NAMESPACE
 class AutoConnection
 {
 public:

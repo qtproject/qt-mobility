@@ -67,7 +67,7 @@
 
 class QIODevice;
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 // FORWARD DECLARATIONS
 class QServiceInterfaceDescriptor;
@@ -168,6 +168,6 @@ private:
     QHash<QString, int> m_latestIndex;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // SERVICEMETADATA_H

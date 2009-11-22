@@ -58,6 +58,8 @@
 
 #include <QDateTime>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactChangeLogFilterPrivate : public QContactFilterPrivate
 {
 public:
@@ -91,5 +93,7 @@ public:
     QContactChangeLogFilter::EventType m_eventType;
     QDateTime m_since;
 };
+
+QTM_END_NAMESPACE
 
 #endif

@@ -50,6 +50,8 @@
 #include <QStringList>
 #include <QVariant>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactDetailPrivate;
 class Q_CONTACTS_EXPORT QContactDetail
 {
@@ -130,5 +132,6 @@ private:
 #define Q_IMPLEMENT_CUSTOM_CONTACT_DETAIL(className, definitionNameString) \
     Q_DEFINE_LATIN1_LITERAL(className::DefinitionName, definitionNameString)
 
+QTM_END_NAMESPACE
 #endif
 

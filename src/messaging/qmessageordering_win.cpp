@@ -42,6 +42,9 @@
 #include "qmessageordering_p.h"
 #include "qmessage_p.h"
 
+
+QTM_BEGIN_NAMESPACE
+
 QMessageOrderingPrivate::QMessageOrderingPrivate(QMessageOrdering *ordering)
     :q_ptr(ordering),
      _valid(true)
@@ -427,3 +430,5 @@ QMessageOrdering QMessageOrdering::bySize(Qt::SortOrder order)
 #endif
     return result;
 }
+
+QTM_END_NAMESPACE

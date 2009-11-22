@@ -41,6 +41,9 @@
 
 #include "qmessageserviceaction.h"
 
+
+QTM_BEGIN_NAMESPACE
+
 class QMessageServiceActionPrivate : public QObject
 {
 	Q_OBJECT
@@ -77,3 +80,5 @@ private:
 };
 
 
+
+QTM_END_NAMESPACE

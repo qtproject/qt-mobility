@@ -63,7 +63,7 @@
 #include "qnmwifiengine_unix_p.h"
 #endif
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 #if defined(BACKEND_NM)
 static bool NetworkManagerAvailable()
@@ -536,5 +536,7 @@ if(serviceName.isEmpty())
         startTime = QDateTime::currentDateTime();
 }
 #endif
-QT_END_NAMESPACE
+
+#include "moc_qnetworksession_p.cpp"
+QTM_END_NAMESPACE
 

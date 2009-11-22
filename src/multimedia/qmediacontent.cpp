@@ -44,6 +44,8 @@
 
 #include <qmediacontent.h>
 
+QTM_BEGIN_NAMESPACE
+
 
 class QMediaContentPrivate : public QSharedData
 {
@@ -328,3 +330,5 @@ void QMediaContent::setThumbnailUriLarge(const QUrl &uri)
     if (d.constData() != 0)
         d->thumbnailUriLarge = uri;
 }
+QTM_END_NAMESPACE
+

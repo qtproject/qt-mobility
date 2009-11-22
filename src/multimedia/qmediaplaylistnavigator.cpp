@@ -46,6 +46,8 @@
 
 #include <QtCore/qdebug.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMediaPlaylistNullProvider : public QMediaPlaylistProvider
 {
 public:
@@ -536,3 +538,5 @@ void QMediaPlaylistNavigatorPrivate::_q_itemsChanged(int start, int end)
 */
 
 #include "moc_qmediaplaylistnavigator.cpp"
+QTM_END_NAMESPACE
+

@@ -44,7 +44,7 @@
 #include <QFileSystemWatcher>
 #include <QHash>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 DatabaseFileWatcher::DatabaseFileWatcher(DatabaseManager *parent)
     : QObject(parent),
@@ -795,4 +795,6 @@ void DatabaseManager::setChangeNotificationsEnabled(DbScope scope, bool enabled)
             m_systemDb : m_userDb, enabled);
 }
 
-QT_END_NAMESPACE
+#include "moc_databasemanager_p.cpp"
+
+QTM_END_NAMESPACE

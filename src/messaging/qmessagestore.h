@@ -53,6 +53,9 @@
 #include <qmessagefolder.h>
 #include <qmessageaccount.h>
 
+
+QTM_BEGIN_NAMESPACE
+
 class QMessageStorePrivate;
 
 class Q_MESSAGING_EXPORT QMessageStore : public QObject
@@ -109,7 +112,7 @@ public:
     void unregisterNotificationFilter(NotificationFilterId filterId);
 
     static QMessageStore* instance();
-    
+
 signals:
     void messageAdded(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
     void messageRemoved(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
@@ -122,8 +125,10 @@ private:
 
     QMessageStorePrivate *d_ptr;
 };
+QTM_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QMessageStore::NotificationFilterId)
-Q_DECLARE_METATYPE(QMessageStore::NotificationFilterIdSet)
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMessageStore::NotificationFilterId))
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMessageStore::NotificationFilterIdSet))
+
 
 #endif

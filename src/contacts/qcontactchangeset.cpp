@@ -44,6 +44,8 @@
 #include "qcontactchangeset_p.h"
 #include "qcontactmanagerengine.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactChangeSet
  *
@@ -174,6 +176,7 @@ void QContactChangeSet::clear()
     d->m_removedContacts.clear();
     d->m_addedRelationships.clear();
     d->m_removedRelationships.clear();
+    d->m_oldAndNewSelfContactId = QPair<QContactLocalId, QContactLocalId>();
 }
 
 /*!
@@ -201,3 +204,5 @@ void QContactChangeSet::emitSignals(QContactManagerEngine *engine)
             emit engine->selfContactIdChanged(d->m_oldAndNewSelfContactId.first, d->m_oldAndNewSelfContactId.second);
     }
 }
+
+QTM_END_NAMESPACE

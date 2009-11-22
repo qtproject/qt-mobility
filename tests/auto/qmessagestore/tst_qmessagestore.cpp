@@ -56,6 +56,7 @@
 //TESTED_CLASS=
 //TESTED_FILES=
 
+QTM_USE_NAMESPACE
 #if defined(Q_OS_WIN)
 const QByteArray defaultCharset("UTF-16");
 const QByteArray alternateCharset("UTF-8");
@@ -205,6 +206,10 @@ void tst_QMessageStore::testAccount()
     QCOMPARE(account.name(), name);
     QCOMPARE(account.messageTypes(), QMessage::Email);
 
+    QCOMPARE(QMessageAccount(account).id(), accountId);
+    QVERIFY(!(accountId < accountId));
+    QVERIFY((QMessageAccountId() < accountId) || (accountId < QMessageAccountId()));
+
     QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts());
     QVERIFY(accountIds.contains(accountId));
 
@@ -265,6 +270,10 @@ void tst_QMessageStore::testFolder()
     QCOMPARE(folder.displayName(), displayNameResult);
     QCOMPARE(folder.parentAccountId(), testAccountId);
 
+    QCOMPARE(QMessageFolder(folder).id(), folderId);
+    QVERIFY(!(folderId < folderId));
+    QVERIFY((QMessageFolderId() < folderId) || (folderId < QMessageFolderId()));
+
     if (!parentFolderPath.isEmpty()) {
         QMessageFolderFilter filter(QMessageFolderFilter::byPath(parentFolderPath) & QMessageFolderFilter::byParentAccountId(testAccountId));
         QMessageFolderIdList list(QMessageStore::instance()->queryFolders(filter));
@@ -301,6 +310,7 @@ void tst_QMessageStore::testMessage_data()
     QTest::addColumn<QList<QByteArray> >("attachmentSubType");
     QTest::addColumn<QList<unsigned> >("attachmentSize");
     QTest::addColumn<CustomFieldMap>("custom");
+    QTest::addColumn<QString>("removeMessage");
 
     CustomFieldMap customData;
     customData.insert("cake", "chocolate");
@@ -327,7 +337,8 @@ void tst_QMessageStore::testMessage_data()
         << QList<QByteArray>()
         << QList<QByteArray>()
         << QList<unsigned>()
-        << customData;
+        << customData
+        << "byId";
 
     QTest::newRow("2")
         << "alice@example.com"
@@ -350,7 +361,8 @@ void tst_QMessageStore::testMessage_data()
         << QList<QByteArray>()
         << QList<QByteArray>()
         << QList<unsigned>()
-        << customData;
+        << customData
+        << "byFilter";
 
     QTest::newRow("3")
         << "alice@example.com"
@@ -373,7 +385,8 @@ void tst_QMessageStore::testMessage_data()
         << ( QList<QByteArray>() << "text" )
         << ( QList<QByteArray>() << "plain" )
         << ( QList<unsigned>() << 512u )
-        << customData;
+        << customData
+        << "byId";
 
     QTest::newRow("4")
         << "alice@example.com"
@@ -396,7 +409,8 @@ void tst_QMessageStore::testMessage_data()
         << ( QList<QByteArray>() << "text" << "image" )
         << ( QList<QByteArray>() << "plain" << "png" )
         << ( QList<unsigned>() << 512u << 4096u )
-        << customData;
+        << customData
+        << "byFilter";
 }
 
 void tst_QMessageStore::testMessage()
@@ -460,6 +474,7 @@ void tst_QMessageStore::testMessage()
     QFETCH(QList<QByteArray>, attachmentSubType);
     QFETCH(QList<unsigned>, attachmentSize);
     QFETCH(CustomFieldMap, custom);
+    QFETCH(QString, removeMessage);
 
     Support::Parameters p;
     p.insert("to", to);
@@ -612,6 +627,10 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(updated.id(), message.id());
     QCOMPARE(updated.isModified(), false);
 
+    QCOMPARE(QMessage(message).id(), message.id());
+    QVERIFY(!(message.id() < message.id()));
+    QVERIFY((QMessageId() < message.id()) || (message.id() < QMessageId()));
+
     bodyId = updated.bodyId();
     QCOMPARE(bodyId.isValid(), true);
     QCOMPARE(bodyId != QMessageContentContainerId(), true);
@@ -647,7 +666,11 @@ void tst_QMessageStore::testMessage()
     QVERIFY(forward.bodyId().isValid());
 
     // Test message removal
-    QMessageStore::instance()->removeMessage(message.id());
+    if (removeMessage == "byId") {
+        QMessageStore::instance()->removeMessage(message.id());
+    } else { // byFilter
+        QMessageStore::instance()->removeMessages(QMessageFilter::byId(message.id()));
+    }
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
     QCOMPARE(QMessageStore::instance()->countMessages(), originalCount);
 

@@ -55,13 +55,15 @@
 #include <qmailserviceaction.h>
 #include <qmailstore.h>
 
+class QMailFolderKey;
+class QMailMessageKey;
+class QMailAccountKey;
+
+QTM_BEGIN_NAMESPACE
+
 class QMessageAccountFilter;
 class QMessageFolderFilter;
 class QMessageFilter;
-
-class QMailAccountKey;
-class QMailFolderKey;
-class QMailMessageKey;
 
 namespace QmfHelpers {
 
@@ -164,4 +166,6 @@ namespace QmfHelpers {
 
 bool operator==(const QMailMessagePart::Location &lhs, const QMailMessagePart::Location &rhs);
 
+
+QTM_END_NAMESPACE
 #endif

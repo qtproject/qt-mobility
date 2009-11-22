@@ -45,6 +45,8 @@
 #include <QtCore/qpair.h>
 #include <QtCore/qmetatype.h>
 
+QTM_BEGIN_NAMESPACE
+
 namespace QtMedia
 {
     enum MetaData
@@ -167,5 +169,7 @@ namespace QtMedia
     };
 
 }
+
+QTM_END_NAMESPACE
 
 #endif

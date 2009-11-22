@@ -58,7 +58,7 @@
 #include <QObject>
 
 QT_BEGIN_HEADER
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class DatabaseFileWatcher;
 #if defined(Q_OS_SYMBIAN) && defined(DATABASEMANAGERSERVER_NO_LIBRARY)
@@ -136,7 +136,7 @@ private:
     QStringList m_monitoredDbPaths;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 QT_END_HEADER
 
 #endif

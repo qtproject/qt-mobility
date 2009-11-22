@@ -346,10 +346,11 @@ void RecentMessagesWidget::showEvent(QShowEvent* e)
 
 void RecentMessagesWidget::hideEvent(QHideEvent* e)
 {
-    if(m_state == Loading)
+    if(m_state == Loading || m_state == Processing)
     {
         m_service->cancelOperation();
         m_state = Unloaded;
+        m_ids.clear();
     }
 
     QWidget::hideEvent(e);
@@ -769,7 +770,7 @@ private:
     void setupUi();
     void updateState();
     void loadMessage();
-    void setupService();
+    void resetService();
 
 private:
     QStackedLayout* m_layoutStack;
@@ -794,7 +795,7 @@ m_messageBrowser(0),
 m_state(Unloaded)
 {
     setupUi();
-    setupService();
+    resetService();
     connect(&m_loadTimer,SIGNAL(timeout()),this,SLOT(loadTimeout()));
     connect(QMessageStore::instance(),SIGNAL(messageUpdated(const QMessageId&,const QMessageStore::NotificationFilterIdSet&)),
         this,SLOT(messageUpdated(const QMessageId&,const QMessageStore::NotificationFilterIdSet&)));
@@ -865,8 +866,8 @@ void MessageViewWidget::stateChanged(QMessageServiceAction::State s)
 void MessageViewWidget::loadTimeout()
 {
     qWarning() << "Load timeout";
+    m_service->cancelOperation();
     m_state = LoadFailed;
-    setupService();
     updateState();
 }
 
@@ -888,13 +889,13 @@ void MessageViewWidget::messageUpdated(const QMessageId& id, const QMessageStore
 
 void MessageViewWidget::messageRemoved(const QMessageId& id, const QMessageStore::NotificationFilterIdSet& filterSet)
 {
-    if(!filterSet.contains(m_storeFilterId) || m_state == Loading || m_loadTimer.isActive())
+    if(id == m_messageId)
     {
         m_state = Unloaded;
         m_loadTimer.stop();
         m_messageId = QMessageId();
+        view(QMessageId());
     }
-    view(m_messageId);
 }
 
 QMessageId MessageViewWidget::viewing() const
@@ -935,8 +936,10 @@ void MessageViewWidget::updateState()
             if(m_loadTimer.isActive())
             {
                 m_loadTimer.stop();
-                setupService();
+                if(m_service->state() == QMessageServiceAction::InProgress)
+                    m_service->cancelOperation();
             }
+
             loadMessage();
             m_layoutStack->setCurrentWidget(m_messageBrowser);
         } break;
@@ -946,7 +949,6 @@ void MessageViewWidget::updateState()
             m_layoutStack->setCurrentWidget(m_statusLabel);
         } break;
     }
-
 }
 
 void MessageViewWidget::loadMessage()
@@ -1002,7 +1004,7 @@ void MessageViewWidget::loadMessage()
     }
 }
 
-void MessageViewWidget::setupService()
+void MessageViewWidget::resetService()
 {
     if(m_service)
         m_service->deleteLater();
@@ -1019,7 +1021,6 @@ public:
 
 private slots:
     void messageSelected(const QMessageId& messageId);
-    void retrieveMessage();
 
 private:
     void setupUi();
@@ -1047,12 +1048,6 @@ void RetrieveWidget::messageSelected(const QMessageId& messageId)
     bool partialMessage = !message.find(message.bodyId()).isContentAvailable();
 
     m_retrieveAction->setEnabled(partialMessage && messageId.isValid());
-}
-
-void RetrieveWidget::retrieveMessage()
-{
-    QMessageId selectedId = m_recentMessagesWidget->currentMessage();
-    m_service->retrieveBody(selectedId);
 }
 
 void RetrieveWidget::setupUi()

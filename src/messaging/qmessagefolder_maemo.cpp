@@ -40,6 +40,8 @@
 ****************************************************************************/
 #include "qmessagefolder.h"
 
+QTM_BEGIN_NAMESPACE
+
 QMessageFolder::QMessageFolder()
 {
 }
@@ -88,3 +90,5 @@ QString QMessageFolder::path() const
 {
     return QString::null; // stub
 }
+
+QTM_END_NAMESPACE

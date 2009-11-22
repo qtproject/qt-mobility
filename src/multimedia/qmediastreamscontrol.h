@@ -46,6 +46,8 @@
 #include "qmediacontrol.h"
 #include "qtmedianamespace.h"
 
+QTM_BEGIN_NAMESPACE
+
 class Q_MEDIA_EXPORT QMediaStreamsControl : public QMediaControl
 {
     Q_OBJECT
@@ -73,6 +75,8 @@ protected:
 
 #define QMediaStreamsControl_iid "com.nokia.Qt.QMediaStreamsControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QMediaStreamsControl, QMediaStreamsControl_iid)
+
+QTM_END_NAMESPACE
 
 #endif // QMEDIASTREAMSCONTROL_H
 

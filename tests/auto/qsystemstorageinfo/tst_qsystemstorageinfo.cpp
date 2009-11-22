@@ -41,6 +41,7 @@
 #include <QtTest/QtTest>
 #include "qsysteminfo.h"
 
+QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QSystemStorageInfo::DriveType);
 
 class tst_QSystemStorageInfo : public QObject

@@ -42,6 +42,8 @@
 #include "clientservercommon.h"
 #include "databasemanagersession.h"
 
+QTM_BEGIN_NAMESPACE
+
 CDatabaseManagerServer::CDatabaseManagerServer()
     : CServer2(EPriorityNormal)
     {
@@ -64,4 +66,5 @@ void CDatabaseManagerServer::PanicServer(TDatabaseManagerSerververPanic aPanic)
     User::Panic(KTxtServerPanic, aPanic);
     }
 
+QTM_END_NAMESPACE
 // End of File

@@ -52,6 +52,8 @@
 #include <QVariant>
 #endif
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageAccountFilterPrivate
 {
     Q_DECLARE_PUBLIC(QMessageAccountFilter)
@@ -110,4 +112,6 @@ public:
     static bool matchesStore(const QMessageAccountFilter &filter, const MapiStorePtr &store);
 #endif
 };
+
+QTM_END_NAMESPACE
 #endif

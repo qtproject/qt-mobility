@@ -52,6 +52,8 @@
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
 
+QTM_USE_NAMESPACE
+
 class DummyEngine : public QContactManagerEngine
 {
 public:
@@ -78,7 +80,7 @@ public:
 class Q_DECL_EXPORT DummyEngineFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactManagerEngineFactory)
+    Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
     public:
         QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
         QString managerName() const;

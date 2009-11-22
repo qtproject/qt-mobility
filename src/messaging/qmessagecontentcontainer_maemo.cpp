@@ -40,6 +40,8 @@
 ****************************************************************************/
 #include "qmessagecontentcontainer.h"
 
+QTM_BEGIN_NAMESPACE
+
 QMessageContentContainer::QMessageContentContainer()
 {
 }
@@ -147,3 +149,5 @@ void QMessageContentContainer::setDerivedMessage(QMessage *derived)
 {
     Q_UNUSED(derived)
 }
+
+QTM_END_NAMESPACE

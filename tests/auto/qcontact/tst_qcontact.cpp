@@ -42,11 +42,12 @@
 #include <QtTest/QtTest>
 
 #include "qtcontacts.h"
-#include "qcontactmanager_p.h"
+#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 
 //TESTED_CLASS=
 //TESTED_FILES=
 
+QTM_USE_NAMESPACE
 class tst_QContact: public QObject
 {
 Q_OBJECT
@@ -396,6 +397,18 @@ void tst_QContact::actions()
     availableActions = c2.availableActions(QString());
     QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
 
+    // try various combinations of version and name
+    availableActions = c2.availableActions();
+    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
+    availableActions = c2.availableActions("Test");
+    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
+    availableActions = c2.availableActions("Test", 1);
+    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
+    availableActions = c2.availableActions("Test", 5);
+    QVERIFY(availableActions.isEmpty()); // should NOT contain SendEmail
+    availableActions = c2.availableActions(QString(), 1);
+    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
+
     // detail with action:
     // empty contact
     d = c.detailWithAction("SendEmail");
@@ -622,24 +635,6 @@ void tst_QContact::emptiness()
 {
     QContact c;
     QVERIFY(c.isEmpty() == true);
-
-#if 0 // XXX TODO deprecated API.  This test needs updating.
-    QContactDisplayLabel label = c.displayLabel();
-    QVERIFY(label.label().isEmpty());
-
-    label.setLabel("Wesley Wentworth Worrier");
-    QVERIFY(label.isEmpty() == false);
-    QVERIFY(label.label().isEmpty() == false);
-
-    c.setDisplayLabel(label);
-    QVERIFY(c.isEmpty() == false);
-
-    QVERIFY(c.displayLabel().label() == "Wesley Wentworth Worrier");
-    QVERIFY(c.displayLabel().isSynthesized() == false);
-
-    c.setDisplayLabel(QString());
-    QVERIFY(c.isEmpty() == true);
-#endif
 
     c.setType(QContactType::TypeContact);
     QVERIFY(c.type() == QString(QLatin1String(QContactType::TypeContact)));

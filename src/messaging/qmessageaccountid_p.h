@@ -45,6 +45,8 @@
 #include "winhelpers_p.h"
 #endif
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageAccountIdPrivate
 {
     Q_DECLARE_PUBLIC(QMessageAccountId)
@@ -73,4 +75,6 @@ public:
     QString _id;
 #endif    
 };
+
+QTM_END_NAMESPACE
 #endif

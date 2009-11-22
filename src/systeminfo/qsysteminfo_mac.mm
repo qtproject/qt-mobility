@@ -105,6 +105,8 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 
+
+QTM_BEGIN_NAMESPACE
 //
 ////////
 static QString stringFromCFString(CFStringRef value) {
@@ -948,5 +950,6 @@ void QSystemScreenSaverPrivate::activityTimeout()
     UpdateSystemActivity(OverallAct);
 }
 
+#include "moc_qsysteminfo_mac_p.cpp"
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

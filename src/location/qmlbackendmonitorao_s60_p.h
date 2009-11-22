@@ -45,13 +45,14 @@
 #include <e32base.h>    // For CActive, link against: euser.lib
 #include <lbs.h>
 #include <lbscommon.h>
+#include <lbt.h>
 #include <lbtsessiontrigger.h>
 
 #include "qgeoareamonitor.h"
 
-class CBackendMonitorInfo;
+QTM_BEGIN_NAMESPACE
 
-#include <lbt.h>
+class CBackendMonitorInfo;
 
 enum enTriggerType { EntryTrigger,
                      ExitTrigger,
@@ -102,6 +103,6 @@ private:
     RLbt iLbt;  //subsession
 
 };
-
+QTM_END_NAMESPACE
 
 #endif /* QMLBACKENDMONITORAO_H_ */

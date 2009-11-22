@@ -51,16 +51,15 @@
 #define Q_SFW_EXPORT
 #endif
 
+class QDebug;
+class QStringList;
+class QDataStream;
+
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
-
-class QDebug;
-
-class QDataStream;
 class QServiceInterfaceDescriptorPrivate;
-class QStringList;
 class Q_SFW_EXPORT QServiceInterfaceDescriptor
 {
 public:
@@ -116,7 +115,7 @@ Q_SFW_EXPORT QDebug operator<<(QDebug, const QServiceInterfaceDescriptor &);
 #endif
 
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

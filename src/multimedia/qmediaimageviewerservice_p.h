@@ -66,6 +66,8 @@
 class QAbstractVideoSurface;
 class QNetworkAccessManager;
 
+QTM_BEGIN_NAMESPACE
+
 class QMediaImageViewerServicePrivate;
 
 class Q_AUTOTEST_EXPORT QMediaImageViewerService : public QMediaService
@@ -112,7 +114,6 @@ private:
 #define QMediaImageViewerControl_iid "com.nokia.Qt.QMediaImageViewerControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QMediaImageViewerControl, QMediaImageViewerControl_iid)
 
-#ifndef QT_NO_MULTIMEDIA
 class QMediaImageViewerRenderer : public QVideoRendererControl
 {
     Q_OBJECT
@@ -132,59 +133,6 @@ private:
     QAbstractVideoSurface *m_surface;
     QImage m_image;
 };
-#endif
-
-class QMediaImageViewerWidget : public QWidget
-{
-    Q_OBJECT
-public:
-    QMediaImageViewerWidget(QWidget *parent = 0);
-
-    void showImage(const QImage &image);
-
-    QVideoWidget::AspectRatioMode aspectRatioMode() const { return m_aspectRatioMode; }
-    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
-
-    QSize sizeHint() const;
-
-protected:
-    void paintEvent(QPaintEvent *event);
-
-private:
-    QVideoWidget::AspectRatioMode m_aspectRatioMode;
-    QImage m_image;
-};
-
-class QMediaImageViewerWidgetControl : public QVideoWidgetControl
-{
-    Q_OBJECT
-public:
-    QMediaImageViewerWidgetControl(QMediaImageViewerWidget *widget, QObject *parent = 0);
-
-    QWidget *videoWidget();
-
-    QVideoWidget::AspectRatioMode aspectRatioMode() const { return m_widget->aspectRatioMode(); }
-    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
-
-    bool isFullScreen() const { return m_fullScreen; }
-    void setFullScreen(bool fullScreen);
-
-    int brightness() const { return 0; }
-    void setBrightness(int) {}
-
-    int contrast() const { return 0; }
-    void setContrast(int) {}
-
-    int hue() const { return 0; }
-    void setHue(int) {}
-
-    int saturation() const { return 0; }
-    void setSaturation(int) {}
-
-private:
-    QMediaImageViewerWidget *m_widget;
-    bool m_fullScreen;
-};
 
 class QMediaImageViewerOutputControl : public QVideoOutputControl
 {
@@ -203,5 +151,7 @@ Q_SIGNALS:
 private:
     Output m_output;
 };
+
+QTM_END_NAMESPACE
 
 #endif

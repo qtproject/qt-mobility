@@ -54,6 +54,8 @@ class QListWidget;
 class QPushButton;
 class QTabWidget;
 
+QTM_USE_NAMESPACE
+
 class AddressFinder : public QMainWindow
 {
     Q_OBJECT

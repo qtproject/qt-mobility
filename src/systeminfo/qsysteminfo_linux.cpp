@@ -109,7 +109,7 @@
 
 
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 static bool halAvailable()
 {
@@ -2070,4 +2070,6 @@ bool QSystemScreenSaverPrivate::isScreenSaverActive()
     return false;
 }
 
-QT_END_NAMESPACE
+#include "moc_qsysteminfo_linux_p.cpp"
+
+QTM_END_NAMESPACE

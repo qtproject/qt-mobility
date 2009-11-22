@@ -54,6 +54,8 @@
 #include <QUuid>
 #include <QSharedData>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactMemoryEngine
  * \brief This class provides an in-memory implementation of a contacts backend.
@@ -204,7 +206,6 @@ QContact QContactMemoryEngine::contact(const QContactLocalId& contactId, QContac
         if (dl.label().isEmpty()) {
             QContactManager::Error synthError;
             retn = setContactDisplayLabel(synthesizeDisplayLabel(retn, synthError), retn);
-            // XXX TODO: ensure this is correct after removing the deprecated API
         }
 
         // also, retrieve the current relationships the contact is involved with.
@@ -1127,4 +1128,8 @@ bool QContactMemoryEngine::filterSupported(const QContactFilter& filter) const
     // Until we add hashes for common stuff, fall back to slow code
     return false;
 }
+
+#include "moc_qcontactmemorybackend_p.cpp"
+
+QTM_END_NAMESPACE
 

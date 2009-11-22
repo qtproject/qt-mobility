@@ -52,6 +52,8 @@
 //
 // We mean it.
 
+#include <qmobilityglobal.h>
+
 #include <QtDBus>
 #include <QDBusConnection>
 #include <QDBusError>
@@ -65,6 +67,7 @@
 #include <QDBusObjectPath>
 #include <QDBusContext>
 #include <QMap>
+
 typedef enum NMDeviceType
 {
     DEVICE_TYPE_UNKNOWN = 0,
@@ -105,11 +108,16 @@ typedef enum
 #define NM_DBUS_INTERFACE_ACTIVE_CONNECTION NM_DBUS_INTERFACE ".Connection.Active"
 #define NM_DBUS_INTERFACE_IP4_CONFIG        NM_DBUS_INTERFACE ".IP4Config"
 
+QTM_BEGIN_NAMESPACE
 typedef QMap< QString, QMap<QString,QVariant> > QNmSettingsMap;
-Q_DECLARE_METATYPE(QNmSettingsMap)
 typedef QList<quint32> ServerThing;
-Q_DECLARE_METATYPE(ServerThing)
+QTM_END_NAMESPACE
 
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QNmSettingsMap))
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(ServerThing))
+
+QTM_BEGIN_NAMESPACE
 
 class QNmDBusHelper: public QObject, protected QDBusContext
  {
@@ -449,7 +457,7 @@ public:
 	QNetworkManagerIp4ConfigPrivate *d;    
 };
 ////
-
+QTM_END_NAMESPACE
 
 
 #endif //QNETWORKMANAGERSERVICE_H

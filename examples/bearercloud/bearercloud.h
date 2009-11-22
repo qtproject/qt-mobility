@@ -45,6 +45,8 @@
 #include <QMap>
 #include <QHash>
 
+QTM_USE_NAMESPACE
+
 class Cloud;
 
 class BearerCloud : public QGraphicsScene

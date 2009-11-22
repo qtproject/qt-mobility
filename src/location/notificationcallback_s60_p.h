@@ -43,10 +43,12 @@
 #ifndef NOTIFICATIONCALLBACK_H
 #define NOTIFICATIONCALLBACK_H
 
+#include <qmobilityglobal.h>
 #include <e32base.h>    // For CActive, link against: euser.lib
 #include <lbs.h>
 #include <lbscommon.h>
 
+QTM_BEGIN_NAMESPACE
 
 class INotificationCallback
 {
@@ -56,4 +58,7 @@ public:
 
     virtual void updatePosition(HPositionGenericInfo  *mPosInfo, int error) = 0 ;
 };
+
+QTM_END_NAMESPACE
+
 #endif // NOTIFICATIONCALLBACK_H

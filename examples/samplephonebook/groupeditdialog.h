@@ -42,13 +42,19 @@
 #ifndef GROUPEDITDIALOG_H
 #define GROUPEDITDIALOG_H
 
+#include <qmobilityglobal.h>
 #include <QDialog>
 
 class QPushButton;
 class QListWidget;
 class QListWidgetItem;
 class QLineEdit;
+
+QTM_BEGIN_NAMESPACE
 class QContactManager;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class GroupEditDialog : public QDialog
 {

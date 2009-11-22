@@ -43,6 +43,8 @@
 
 #include <qmailid.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageAccountIdPrivate
 {
 public:
@@ -102,7 +104,15 @@ QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId& other)
 
 bool QMessageAccountId::operator<(const QMessageAccountId& other) const
 {
-    return (d_ptr->_id < other.d_ptr->_id);
+    if (isValid() && other.isValid())
+        return (d_ptr->_id < other.d_ptr->_id);
+    
+    if (isValid()) {
+        return false; // other is invalid, valid > invalid
+    } else if (other.isValid()) {
+        return true; // invalid < valid
+    }
+    return false; // both invalid
 }
 
 QString QMessageAccountId::toString() const
@@ -120,3 +130,4 @@ uint qHash(const QMessageAccountId &id)
     return qHash(QmfHelpers::convert(id));
 }
 
+QTM_END_NAMESPACE

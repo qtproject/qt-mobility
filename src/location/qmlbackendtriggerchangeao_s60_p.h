@@ -52,9 +52,9 @@
 
 #include <lbt.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QGeoAreaMonitorS60;
-
-
 class QMLBackendTriggerChangeAO : public CActive
 {
 public :
@@ -82,5 +82,6 @@ private :
 
 };
 
+QTM_END_NAMESPACE
 
 #endif /* QMLBACKENDMONITORAO_H_ */

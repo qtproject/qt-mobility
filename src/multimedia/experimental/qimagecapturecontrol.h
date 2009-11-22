@@ -46,6 +46,8 @@
 
 class QImage;
 
+QTM_BEGIN_NAMESPACE
+
 class Q_MEDIA_EXPORT QImageCaptureControl : public QMediaControl
 {
     Q_OBJECT
@@ -69,6 +71,8 @@ protected:
 
 #define QImageCaptureControl_iid "com.nokia.Qt.QImageCaptureControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QImageCaptureControl, QImageCaptureControl_iid)
+
+QTM_END_NAMESPACE
 
 #endif  // QMEDIAPLAYERCONTROL_H
 

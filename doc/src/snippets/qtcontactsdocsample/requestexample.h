@@ -57,6 +57,8 @@
 #include <QObject>
 #include "qcontactfetchrequest.h"
 
+QTM_USE_NAMESPACE
+
 class RequestExample : public QObject
 {
     Q_OBJECT

@@ -59,7 +59,7 @@
 #include <QtCore/qtimer.h>
 #include <QtCore/qstringlist.h>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 void QNetworkConfigurationManagerPrivate::registerPlatformCapabilities()
 {
@@ -444,5 +444,7 @@ void QNetworkConfigurationManagerPrivate::performAsyncConfigurationUpdate()
 #endif
 }
 
-QT_END_NAMESPACE
+#include "moc_qnetworkconfigmanager_p.cpp"
+
+QTM_END_NAMESPACE
 

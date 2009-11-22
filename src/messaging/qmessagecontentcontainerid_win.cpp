@@ -41,6 +41,7 @@
 #include "qmessagecontentcontainerid.h"
 #include "qmessagecontentcontainerid_p.h"
 
+QTM_BEGIN_NAMESPACE
 
 QMessageContentContainerId::QMessageContentContainerId()
     : d_ptr(new QMessageContentContainerIdPrivate)
@@ -89,3 +90,5 @@ bool QMessageContentContainerId::isValid() const
 {
     return (d_ptr->_number != QMessageContentContainerIdPrivate::Invalid);
 }
+
+QTM_END_NAMESPACE

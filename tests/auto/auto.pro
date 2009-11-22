@@ -6,7 +6,7 @@ SUBDIRS += databasemanager \                #service framework
            servicemetadata \
            qserviceinterfacedescriptor \
            qservicefilter \
-           qservicemanager \
+#           qservicemanager \  #remove until qhash namespace issue resolved
            qabstractsecuritysession \
            qservicecontext
 
@@ -65,7 +65,8 @@ SUBDIRS +=  qcontact \                      #Contacts
             qcontactfilter \
             qcontactmanager \
             qcontactmanagerplugins \
-            qcontactmanagerfiltering
+            qcontactmanagerfiltering \
+            qcontactrelationship
 
 
 SUBDIRS += \             #Multimedia

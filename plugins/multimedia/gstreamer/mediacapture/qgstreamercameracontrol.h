@@ -45,6 +45,7 @@
 
 #include <experimental/qcameracontrol.h>
 #include "qgstreamercapturesession.h"
+QTM_USE_NAMESPACE
 
 class QGstreamerCameraControl : public QCameraControl, public QGstreamerVideoInput
 {
