@@ -20,4 +20,12 @@ HEADERS += \
 SOURCES += \
     addressfinder.cpp\
     main.cpp
+    
+symbian:TARGET.CAPABILITY = NetworkServices \
+        LocalServices \
+        ReadUserData \
+        WriteUserData \
+        UserEnvironment \
+        ReadDeviceData \
+        WriteDeviceData
 

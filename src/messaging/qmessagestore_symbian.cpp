@@ -42,6 +42,7 @@
 #include "qmtmengine_symbian_p.h"
 
 #include <QString>
+#include <QEventLoop>
 
 Q_GLOBAL_STATIC(QMessageStorePrivate,messageStorePrivate);
 
@@ -60,6 +61,68 @@ void QMessageStorePrivate::initialize(QMessageStore *store)
 {
     q_ptr = store;
     _mtmEngine = CMTMEngine::instance();
+}
+
+QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
+{
+    QMessageIdList ids;
+    QMessageServiceAction serviceaction;
+    connect(&serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
+    if (serviceaction.queryMessages(filter, ordering, limit, offset)) {
+        QEventLoop loop;
+        QObject::connect(&serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), &loop, SLOT(quit()));
+        loop.exec();
+        ids = _ids;
+        _ids.clear();
+    }
+    return ids;
+}
+
+QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
+{
+    QMessageIdList ids;
+    QMessageServiceAction serviceaction;
+    connect(&serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
+    if (serviceaction.queryMessages(filter, body, options, ordering, limit, offset)) {
+        QObject::connect(&serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), &loop, SLOT(quit()));
+        loop.exec();
+        ids = _ids;
+        _ids.clear();
+    }
+    return ids;
+}
+
+int QMessageStorePrivate::countMessages(const QMessageFilter& filter) const
+{
+    int count = 0;
+    QMessageServiceAction serviceaction;
+    connect(&serviceaction, SIGNAL(messagesCounted(int)), this, SLOT(messagesCounted(int)));
+    if (serviceaction.countMessages(filter)) {
+        QObject::connect(&serviceaction, SIGNAL(messagesCounted(int)), &loop, SLOT(quit()));
+        loop.exec();
+        count = _count;
+        _count = 0;
+    }
+    return count;
+}
+
+void QMessageStorePrivate::stateChanged(QMessageServiceAction::State a)
+{
+    if (a == QMessageServiceAction::Failed) {
+        loop.quit();
+    }
+}
+
+void QMessageStorePrivate::messagesFound(const QMessageIdList &ids)
+{
+    _ids = ids;
+    loop.quit();
+}
+
+void QMessageStorePrivate::messagesCounted(int count)
+{
+    _count = count;
+    loop.quit();
 }
 
 QMessageAccountIdList QMessageStorePrivate::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset) const
@@ -105,7 +168,27 @@ bool QMessageStorePrivate::removeMessage(const QMessageId &id, QMessageStore::Re
 
 bool QMessageStorePrivate::removeMessages(const QMessageFilter &filter, QMessageStore::RemovalOption option)
 {
-    return _mtmEngine->removeMessages(filter, option);
+    bool retVal = true;
+    
+    QMessageIdList ids;
+    QMessageServiceAction serviceaction;
+    connect(&serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
+    if (serviceaction.queryMessages(filter)) {
+        QEventLoop loop;
+        QObject::connect(&serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), &loop, SLOT(quit()));
+        loop.exec();
+        ids = _ids;
+        _ids.clear();
+        for (int i=0; i < ids.count(); i++) {
+            if (!_mtmEngine->removeMessage(ids[i], option)) {
+                retVal = false;
+            }
+        }
+    } else {
+        retVal = false;
+    }
+    
+    return retVal;
 }
 
 QMessage QMessageStorePrivate::message(const QMessageId& id) const
@@ -169,27 +252,17 @@ QMessageStore* QMessageStore::instance()
 
 QMessageStore::ErrorCode QMessageStore::lastError() const
 {
-    return NotYetImplemented;
+    return NoError;
 }
 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(ordering)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
-    return QMessageIdList(); // stub
+    return messageStorePrivate()->queryMessages(filter, ordering, limit, offset);
 }
 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(ordering)
-    Q_UNUSED(body)
-    Q_UNUSED(options)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
-    return QMessageIdList(); // stub
+    return messageStorePrivate()->queryMessages(filter, body, options, ordering, limit, offset);
 }
 
 QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset) const
@@ -204,8 +277,7 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &
 
 int QMessageStore::countMessages(const QMessageFilter& filter) const
 {
-    Q_UNUSED(filter)
-    return 0; // stub
+    return messageStorePrivate()->countMessages(filter);
 }
 
 int QMessageStore::countFolders(const QMessageFolderFilter& filter) const
@@ -220,16 +292,12 @@ int QMessageStore::countAccounts(const QMessageAccountFilter& filter) const
 
 bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
 {
-    Q_UNUSED(id)
-    Q_UNUSED(option)
-    return false; // stub
+    return messageStorePrivate()->removeMessage(id, option);
 }
 
 bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageStore::RemovalOption option)
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(option)
-    return true; // stub
+    return messageStorePrivate()->removeMessages(filter, option);
 }
 
 bool QMessageStore::addMessage(QMessage *m)

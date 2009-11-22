@@ -22,4 +22,12 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     attachmentlistwidget.cpp
-
+    
+symbian:TARGET.CAPABILITY = NetworkServices \
+    LocalServices \
+    ReadUserData \
+    WriteUserData \
+    UserEnvironment \
+    ReadDeviceData \
+    WriteDeviceData
+    

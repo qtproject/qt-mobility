@@ -45,11 +45,18 @@
 #include "qtmessaging.h"
 #include "../support/support.h"
 
-#if defined(Q_OS_SYMBIAN) || (defined(Q_OS_WIN) && defined(_WIN32_WCE))
+#if (defined(Q_OS_WIN) && defined(_WIN32_WCE))
 # if defined(TESTDATA_DIR)
 #  undef TESTDATA_DIR
 # endif
 # define TESTDATA_DIR "."
+#endif
+
+#if defined(Q_OS_SYMBIAN)
+# if defined(TESTDATA_DIR)
+#  undef TESTDATA_DIR
+# endif
+# define TESTDATA_DIR ""
 #endif
 
 //TESTED_CLASS=
@@ -375,6 +382,7 @@ void tst_QMessage::testPreferredCharsets()
     QFETCH(QByteArray, preferred);
     QFETCH(QByteArray, encoded);
 
+#ifndef Q_OS_SYMBIAN    
     QCOMPARE(QMessage::preferredCharsets(), QList<QByteArray>());
 
     QList<QByteArray> preferredCharsets;
@@ -392,6 +400,7 @@ void tst_QMessage::testPreferredCharsets()
     QCOMPARE(body.contentCharset().toLower(), encoded.toLower());
 
     QMessage::setPreferredCharsets(QList<QByteArray>());
+#endif
 }
 
 void tst_QMessage::testMessageAddress_data()
