@@ -112,7 +112,7 @@ public:
     void unregisterNotificationFilter(NotificationFilterId filterId);
 
     static QMessageStore* instance();
-    
+
 signals:
     void messageAdded(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
     void messageRemoved(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);

@@ -4682,36 +4682,34 @@ bool MapiSession::showForm(IMessage* message, IMAPIFolder* folder, LPMDB store)
             MAPIFreeBuffer(pProp);
         }
 
-        propertyCount = 0;
+
+        char szMessageClass[256];
         p[1] = PR_MESSAGE_CLASS;
+
         if(message->GetProps((LPSPropTagArray)p, MAPI_UNICODE, &propertyCount, &pProp) == S_OK)
         {
 #ifdef UNICODE
-            char szMessageClass[256];
             WideCharToMultiByte(CP_ACP, 0, pProp->Value.LPSZ,-1, szMessageClass,255, NULL, NULL);
 #else
             char* szMessageClass=pProp->Value.LPSZ;
 #endif
-            HRESULT hr=_mapiSession->ShowForm(NULL, store, folder, NULL,messageToken, NULL, 0,messageStatus, messageFlags & MAPI_NEW_MESSAGE, messageAccess, szMessageClass);
-            MAPIFreeBuffer(pProp);
-            if(hr==MAPI_E_USER_CANCEL)
-            {
-                qWarning() << "Show form cancelled";
-                return true;
-            }
-            else
-            {
-                if(hr != S_OK)
-                    qWarning() << "Show form failed";
-                return hr == S_OK;
-            }
         }
-        else
+
+        HRESULT hr=_mapiSession->ShowForm(NULL, store, folder, NULL,messageToken, NULL, 0,messageStatus, messageFlags & MAPI_NEW_MESSAGE, messageAccess, szMessageClass);
+        MAPIFreeBuffer(pProp);
+
+        if(hr != MAPI_E_USER_CANCEL && hr != S_OK)
         {
-            qWarning() << "Failed to show form";
+            qWarning() << "ShowForm failed";
             return false;
         }
     }
+    else
+    {
+        qWarning() << "PrepareForm failed";
+        return false;
+    }
+
     return true;
 }
 
