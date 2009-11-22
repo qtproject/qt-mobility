@@ -46,6 +46,7 @@
 #include "ui_dialog.h"
 #endif
 #include <QMessageBox>
+#include <QTimer>
 
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
@@ -58,7 +59,9 @@ Dialog::Dialog(QWidget *parent) :
     connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
     connect(ui->versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
     connect(ui->featureComboBox,SIGNAL(activated(int)), this,SLOT(getFeature(int)));
-
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateDeviceLockedState()));
+    timer->start(1000);
 }
 
 Dialog::~Dialog()
@@ -212,6 +215,12 @@ void Dialog::setupDevice()
     }
 
     ui->inputMethodLabel->setText(inputs.join(" "));
+}
+
+void Dialog::updateDeviceLockedState()
+{
+    if (di)
+        ui->deviceLockCheckBox->setChecked(di->isDeviceLocked());
 }
 
 void Dialog::updateProfile(QSystemDeviceInfo::Profile profile)
