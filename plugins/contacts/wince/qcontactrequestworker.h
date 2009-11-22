@@ -50,7 +50,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QContactRequestWorkerData;
 class QContactAbstractRequest;
 class QContactFetchRequest;
 class QContactLocalIdFetchRequest;
@@ -63,6 +62,8 @@ class QContactDetailDefinitionFetchRequest;
 class QContactDetailDefinitionSaveRequest;
 class QContactDetailDefinitionRemoveRequest;
 QTM_END_NAMESPACE
+
+class QContactRequestWorkerData;
 
 QTM_USE_NAMESPACE
 
