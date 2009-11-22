@@ -70,9 +70,9 @@ class CImap4ClientMtm;
 class CPop3ClientMtm;
 class CMsvFindOperation;
 
-class CMessagesFindOperation;
 
 QTM_BEGIN_NAMESPACE
+class CMessagesFindOperation;
 class QMessageId;
 class QMessageAccount;
 
