@@ -45,11 +45,13 @@
 
 #include <qpainter.h>
 #include <qvariant.h>
-#include <qvideosurfaceformat.h>
+#include <QtMultimedia/qvideosurfaceformat.h>
 
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
 #include <qglshaderprogram.h>
 #endif
+
+#include <QtDebug>
 
 class QVideoSurfacePainter
 {
@@ -110,9 +112,10 @@ QVideoSurfaceRasterPainter::QVideoSurfaceRasterPainter()
 {
     m_imagePixelFormats
         << QVideoFrame::Format_RGB32
+#ifndef QT_OPENGL_ES // The raster formats should be a subset of the GL formats.
         << QVideoFrame::Format_RGB24
+#endif
         << QVideoFrame::Format_ARGB32
-        << QVideoFrame::Format_ARGB32_Premultiplied
         << QVideoFrame::Format_RGB565;
 }
 
@@ -230,8 +233,10 @@ protected:
     void initYuv420PTextureInfo(const QSize &size);
     void initYv12TextureInfo(const QSize &size);
 
+#ifndef QT_OPENGL_ES
     typedef void (APIENTRY *_glActiveTexture) (GLenum);
     _glActiveTexture glActiveTexture;
+#endif
 
     QList<QVideoFrame::PixelFormat> m_imagePixelFormats;
     QList<QVideoFrame::PixelFormat> m_glPixelFormats;
@@ -260,7 +265,9 @@ QVideoSurfaceGLPainter::QVideoSurfaceGLPainter(QGLContext *context)
     , m_textureCount(0)
     , m_yuv(false)
 {
+#ifndef QT_OPENGL_ES
     glActiveTexture = (_glActiveTexture)m_context->getProcAddress(QLatin1String("glActiveTexture"));
+#endif
 }
 
 QVideoSurfaceGLPainter::~QVideoSurfaceGLPainter()
@@ -752,13 +759,25 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::paint(
 
 #endif
 
+static const char *qt_glsl_vertexShaderProgram =
+        "attribute highp vec4 vertexCoordArray;\n"
+        "attribute highp vec2 textureCoordArray;\n"
+        "uniform highp mat4 positionMatrix;\n"
+        "varying highp vec2 textureCoord;\n"
+        "void main(void)\n"
+        "{\n"
+        "   gl_Position = positionMatrix * vertexCoordArray;\n"
+        "   textureCoord = textureCoordArray;\n"
+        "}\n";
+
 // Paints an RGB32 frame
 static const char *qt_glsl_xrgbShaderProgram =
         "uniform sampler2D texRgb;\n"
         "uniform mediump mat4 colorMatrix;\n"
+        "varying highp vec2 textureCoord;\n"
         "void main(void)\n"
         "{\n"
-        "    highp vec4 color = vec4(texture2D(texRgb, gl_TexCoord[0].st).bgr, 1.0);\n"
+        "    highp vec4 color = vec4(texture2D(texRgb, textureCoord.st).bgr, 1.0);\n"
         "    gl_FragColor = colorMatrix * color;\n"
         "}\n";
 
@@ -766,22 +785,24 @@ static const char *qt_glsl_xrgbShaderProgram =
 static const char *qt_glsl_argbShaderProgram =
         "uniform sampler2D texRgb;\n"
         "uniform mediump mat4 colorMatrix;\n"
+        "varying highp vec2 textureCoord;\n"
         "void main(void)\n"
         "{\n"
-        "    highp vec4 color = vec4(texture2D(texRgb, gl_TexCoord[0].st).bgr, 1.0);\n"
+        "    highp vec4 color = vec4(texture2D(texRgb, textureCoord.st).bgr, 1.0);\n"
         "    color = colorMatrix * color;\n"
-        "    gl_FragColor = vec4(color.rgb, texture2D(texRgb, gl_TexCoord[0].st).a);\n"
+        "    gl_FragColor = vec4(color.rgb, texture2D(texRgb, textureCoord.st).a);\n"
         "}\n";
 
 // Paints an RGB(A) frame.
 static const char *qt_glsl_rgbShaderProgram =
         "uniform sampler2D texRgb;\n"
         "uniform mediump mat4 colorMatrix;\n"
+        "varying highp vec2 textureCoord;\n"
         "void main(void)\n"
         "{\n"
-        "    highp vec4 color = vec4(texture2D(texRgb, gl_TexCoord[0].st).rgb, 1.0);\n"
+        "    highp vec4 color = vec4(texture2D(texRgb, textureCoord.st).rgb, 1.0);\n"
         "    color = colorMatrix * color;\n"
-        "    gl_FragColor = vec4(color.rgb, texture2D(texRgb, gl_TexCoord[0].st).a);\n"
+        "    gl_FragColor = vec4(color.rgb, texture2D(texRgb, textureCoord.st).a);\n"
         "}\n";
 
 // Paints a YUV420P or YV12 frame.
@@ -790,15 +811,17 @@ static const char *qt_glsl_yuvPlanarShaderProgram =
         "uniform sampler2D texU;\n"
         "uniform sampler2D texV;\n"
         "uniform mediump mat4 colorMatrix;\n"
+        "varying highp vec2 textureCoord;\n"
         "void main(void)\n"
         "{\n"
         "    highp vec4 color = vec4(\n"
-        "           texture2D(texY, gl_TexCoord[0].st).r,\n"
-        "           texture2D(texU, gl_TexCoord[0].st).r,\n"
-        "           texture2D(texV, gl_TexCoord[0].st).r,\n"
+        "           texture2D(texY, textureCoord.st).r,\n"
+        "           texture2D(texU, textureCoord.st).r,\n"
+        "           texture2D(texV, textureCoord.st).r,\n"
         "           1.0);\n"
         "    gl_FragColor = colorMatrix * color;\n"
         "}\n";
+
 
 class QVideoSurfaceGlslPainter : public QVideoSurfaceGLPainter
 {
@@ -822,7 +845,9 @@ QVideoSurfaceGlslPainter::QVideoSurfaceGlslPainter(QGLContext *context)
     m_imagePixelFormats
             << QVideoFrame::Format_RGB32
             << QVideoFrame::Format_ARGB32
+#ifndef QT_OPENGL_ES
             << QVideoFrame::Format_RGB24
+#endif
             << QVideoFrame::Format_RGB565
             << QVideoFrame::Format_YV12
             << QVideoFrame::Format_YUV420P;
@@ -851,10 +876,12 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::start(const QVideoSurface
             initRgbTextureInfo(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, format.frameSize());
             fragmentProgram = qt_glsl_argbShaderProgram;
             break;
+#ifndef QT_OPENGL_ES
         case QVideoFrame::Format_RGB24:
             initRgbTextureInfo(GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, format.frameSize());
             fragmentProgram = qt_glsl_rgbShaderProgram;
             break;
+#endif
         case QVideoFrame::Format_RGB565:
             initRgbTextureInfo(GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, format.frameSize());
             fragmentProgram = qt_glsl_rgbShaderProgram;
@@ -885,9 +912,14 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::start(const QVideoSurface
 
     if (!fragmentProgram) {
         error = QAbstractVideoSurface::UnsupportedFormatError;
+    } else if (!m_program.addShaderFromSourceCode(QGLShader::Vertex, qt_glsl_vertexShaderProgram)) {
+        qWarning("QPainterVideoSurface: Vertex shader compile error %s",
+                 qPrintable(m_program.log()));
+        error = QAbstractVideoSurface::ResourceError;
     } else if (!m_program.addShaderFromSourceCode(QGLShader::Fragment, fragmentProgram)) {
         qWarning("QPainterVideoSurface: Shader compile error %s", qPrintable(m_program.log()));
         error = QAbstractVideoSurface::ResourceError;
+        m_program.removeAllShaders();
     } else if(!m_program.link()) {
         qWarning("QPainterVideoSurface: Shader link error %s", qPrintable(m_program.log()));
         m_program.removeAllShaders();
@@ -921,20 +953,40 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
     if (m_frame.isValid()) {
         painter->beginNativePainting();
 
-        float txLeft = float(source.left()) / float(m_frameSize.width());
-        float txRight = float(source.right()) / float(m_frameSize.width());
-        float txTop = float(source.top()) / float(m_frameSize.height());
-        float txBottom = float(source.bottom()) / float(m_frameSize.height());
+        const int width = QGLContext::currentContext()->device()->width();
+        const int height = QGLContext::currentContext()->device()->height();
 
-        const GLfloat tx_array[] =
+        const QTransform transform = painter->deviceTransform();
+
+        const GLfloat wfactor = 2.0 / width;
+        const GLfloat hfactor = -2.0 / height;
+
+        const GLfloat positionMatrix[4][4] =
         {
-            txLeft , txBottom,
-            txRight, txBottom,
-            txLeft , txTop,
-            txRight, txTop
+            {
+                /*(0,0)*/ wfactor * transform.m11() - transform.m13(),
+                /*(0,1)*/ hfactor * transform.m12() + transform.m13(),
+                /*(0,2)*/ 0.0,
+                /*(0,3)*/ transform.m13()
+            }, {
+                /*(1,0)*/ wfactor * transform.m21() - transform.m23(),
+                /*(1,1)*/ hfactor * transform.m22() + transform.m23(),
+                /*(1,2)*/ 0.0,
+                /*(1,3)*/ transform.m23()
+            }, {
+                /*(2,0)*/ 0.0,
+                /*(2,1)*/ 0.0,
+                /*(2,2)*/ -1.0,
+                /*(2,3)*/ 0.0
+            }, {
+                /*(3,0)*/ wfactor * transform.dx() - transform.m33(),
+                /*(3,1)*/ hfactor * transform.dy() + transform.m33(),
+                /*(3,2)*/ 0.0,
+                /*(3,3)*/ transform.m33()
+            }
         };
 
-        const GLfloat v_array[] =
+        const GLfloat vertexCoordArray[] =
         {
             target.left()     , target.bottom() + 1,
             target.right() + 1, target.bottom() + 1,
@@ -942,7 +994,26 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
             target.right() + 1, target.top()
         };
 
+        const GLfloat txLeft = float(source.left()) / float(m_frameSize.width());
+        const GLfloat txRight = float(source.right()) / float(m_frameSize.width());
+        const GLfloat txTop = float(source.top()) / float(m_frameSize.height());
+        const GLfloat txBottom = float(source.bottom()) / float(m_frameSize.height());
+
+        const GLfloat textureCoordArray[] =
+        {
+            txLeft , txBottom,
+            txRight, txBottom,
+            txLeft , txTop,
+            txRight, txTop
+        };
+
         m_program.bind();
+
+        m_program.enableAttributeArray("vertexCoordArray");
+        m_program.enableAttributeArray("textureCoordArray");
+        m_program.setAttributeArray("vertexCoordArray", vertexCoordArray, 2);
+        m_program.setAttributeArray("textureCoordArray", textureCoordArray, 2);
+        m_program.setUniformValue("positionMatrix", positionMatrix);
 
         if (m_textureCount == 3) {
             glActiveTexture(GL_TEXTURE0);
@@ -964,18 +1035,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
         }
         m_program.setUniformValue("colorMatrix", m_colorMatrix);
 
-
-        glVertexPointer(2, GL_FLOAT, 0, v_array);
-        glTexCoordPointer(2, GL_FLOAT, 0, tx_array);
-
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-        glDisableClientState(GL_VERTEX_ARRAY);
-        glDisable(GL_FRAGMENT_PROGRAM_ARB);
 
         m_program.release();
 
@@ -1320,6 +1380,9 @@ void QPainterVideoSurface::setShaderType(ShaderType type)
 
             setError(ResourceError);
             QAbstractVideoSurface::stop();
+        } else {
+            delete m_painter;
+            m_painter = 0;
         }
         emit supportedFormatsChanged();
     }

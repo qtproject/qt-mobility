@@ -81,6 +81,7 @@
 #include "qmessageaccount_p.h"
 #include "qmessageaccountfilter_p.h"
 #include "qmessageaccountordering_p.h"
+#include "qmessagestore_p.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -88,6 +89,7 @@
 #include <QTextCodec>
 #include <QThreadStorage>
 #include <QTimer>
+#include <QMutexLocker>
 
 #include <shlwapi.h>
 #include <shlguid.h>
@@ -95,6 +97,7 @@
 #include <mapitags.h>
 
 #ifdef _WIN32_WCE
+#include "win32wce/qmailmessage.h"
 #include <cemapi.h>
 #endif
 
@@ -1022,18 +1025,54 @@ namespace {
                         qWarning() << "Unable to set submit time in message.";
                         *lastError = QMessageStore::FrameworkFault;
                     } else {
-                        QStringList headers;
-                        foreach (const QByteArray &name, source.headerFields()) {
-                            foreach (const QString &value, source.headerFieldValues(name)) {
-                                // TODO: Do we need soft line-breaks?
-                                headers.append(QString("%1: %2").arg(QString(name)).arg(value));
+                        QDateTime receivedDate(source.receivedDate());
+                        if (receivedDate.isValid()) {
+                            if (!setMapiProperty(message, PR_MESSAGE_DELIVERY_TIME, toFileTime(receivedDate))) {
+                                qWarning() << "Unable to set delivery time in message.";
+                                *lastError = QMessageStore::FrameworkFault;
                             }
                         }
-                        if (!headers.isEmpty()) {
-                            QString transportHeaders = headers.join("\r\n").append("\r\n\r\n");
-                            if (!setMapiProperty(message, PR_TRANSPORT_MESSAGE_HEADERS, transportHeaders)) {
-                                qWarning() << "Unable to set transport headers in message.";
+
+                        if (*lastError == QMessageStore::NoError) {
+                            // Mark this message as read/unread
+#ifndef _WIN32_WCE
+                            LONG flags = (source.status() & QMessage::Read ? 0 : CLEAR_READ_FLAG);
+                            HRESULT rv = message->SetReadFlag(flags);
+                            if (HR_FAILED(rv)) {
+                                qWarning() << "Unable to set flags in message.";
                                 *lastError = QMessageStore::FrameworkFault;
+                            }
+#else
+                            LONG flags = (source.status() & QMessage::Read ? MSGFLAG_READ : 0);
+                            if (!setMapiProperty(message, PR_MESSAGE_FLAGS, flags)) {
+                                qWarning() << "Unable to set flags in message.";
+                                *lastError = QMessageStore::FrameworkFault;
+                            }
+#endif
+                        }
+
+                        if (*lastError == QMessageStore::NoError) {
+                            LONG priority = (source.priority() == QMessage::HighPriority ? PRIO_URGENT : (source.priority() == QMessage::NormalPriority ? PRIO_NORMAL : PRIO_NONURGENT));
+                            if (!setMapiProperty(message, PR_PRIORITY, priority)) {
+                                qWarning() << "Unable to set priority in message.";
+                                *lastError = QMessageStore::FrameworkFault;
+                            }
+                        }
+
+                        if (*lastError == QMessageStore::NoError) {
+                            QStringList headers;
+                            foreach (const QByteArray &name, source.headerFields()) {
+                                foreach (const QString &value, source.headerFieldValues(name)) {
+                                    // TODO: Do we need soft line-breaks?
+                                    headers.append(QString("%1: %2").arg(QString(name)).arg(value));
+                                }
+                            }
+                            if (!headers.isEmpty()) {
+                                QString transportHeaders = headers.join("\r\n").append("\r\n\r\n");
+                                if (!setMapiProperty(message, PR_TRANSPORT_MESSAGE_HEADERS, transportHeaders)) {
+                                    qWarning() << "Unable to set transport headers in message.";
+                                    *lastError = QMessageStore::FrameworkFault;
+                                }
                             }
                         }
                     }
@@ -1525,27 +1564,15 @@ namespace {
         }
     }
 
-    class NotifyEvent : public QEvent
-    {
-    public:
-        static QEvent::Type eventType();
+}
 
-        NotifyEvent(MapiStore *store, const QMessageId &id, MapiSession::NotifyType type);
-
-        virtual Type type();
-
-        MapiStore *_store;
-        QMessageId _id;
-        MapiSession::NotifyType _notifyType;
-    };
-
-    QEvent::Type NotifyEvent::eventType()
+    QEvent::Type MapiSession::NotifyEvent::eventType()
     {
         static int result = QEvent::registerEventType();
         return static_cast<QEvent::Type>(result);
     }
 
-    NotifyEvent::NotifyEvent(MapiStore *store, const QMessageId &id, MapiSession::NotifyType type)
+    MapiSession::NotifyEvent::NotifyEvent(MapiStore *store, const QMessageId &id, MapiSession::NotifyType type)
         : QEvent(eventType()),
           _store(store),
           _id(id),
@@ -1553,11 +1580,10 @@ namespace {
     {
     }
 
-    QEvent::Type NotifyEvent::type()
+    QEvent::Type MapiSession::NotifyEvent::type()
     {
         return eventType();
     }
-}
 
 namespace WinHelpers {
 
@@ -2379,7 +2405,7 @@ IMessage* MapiFolder::createMessage(QMessageStore::ErrorCode* lastError, const Q
         //On Windows Mobile occurs by default and at discretion of mail client settings.
 
         MapiFolderPtr sentFolder = _store->findFolder(lastError,QMessage::SentFolder);
-        if (!sentFolder.isNull() && *lastError != QMessageStore::NoError) {
+        if (!sentFolder.isNull() && *lastError == QMessageStore::NoError) {
             if (!setMapiProperty(mapiMessage, PR_SENTMAIL_ENTRYID, sentFolder->entryId())) {
                 qWarning() << "Unable to set sent folder entry id on message";
             }
@@ -3111,7 +3137,7 @@ ULONG MapiStore::AdviseSink::OnNotify(ULONG notificationCount, LPNOTIFICATION no
                         }
 
                         // Create an event to be processed by the UI thread
-                        QCoreApplication::postEvent(session.data(), new NotifyEvent(_store, messageId, notifyType));
+                        QCoreApplication::postEvent(session.data(), new MapiSession::NotifyEvent(_store, messageId, notifyType));
                     } else {
                         qWarning() << "Received notification, but no entry ID";
                     }
@@ -3790,9 +3816,9 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
         IMessage *message = openMapiMessage(lastError, msg->id(), &store);
         if (*lastError == QMessageStore::NoError) {
 #ifndef _WIN32_WCE
-            const int np = 14;
+            const int np = 15;
 #else
-            const int np = 12;
+            const int np = 13;
 #endif
             SizedSPropTagArray(np, msgCols) = {np, { PR_PARENT_ENTRYID,
                                                      PR_MESSAGE_FLAGS,
@@ -3805,13 +3831,12 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                                                      PR_TRANSPORT_MESSAGE_HEADERS,
                                                      PR_HASATTACH,
                                                      PR_SUBJECT,
+													 PR_PRIORITY,
 #ifndef _WIN32_WCE
                                                      PR_MSG_EDITOR_FORMAT,
                                                      PR_RTF_IN_SYNC,
-                                                     PR_MESSAGE_SIZE
-#else
-                                                     PR_CONTENT_LENGTH
 #endif
+                                                     PR_MESSAGE_SIZE
                                                      }};
             ULONG count = 0;
             LPSPropValue properties;
@@ -3851,8 +3876,8 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                             msg->d_ptr->_contentFormat = EDITOR_FORMAT_HTML;
 #endif
                         } else if (prop.Value.l & MSGSTATUS_HAS_PR_CE_MIME_TEXT) {
-                            // TODO...
                             // This is how MS providers store HTML, as per http://msdn.microsoft.com/en-us/library/bb446140.aspx
+                            msg->d_ptr->_contentFormat = EDITOR_FORMAT_MIME;
                         }
 #endif
                         break;
@@ -3881,6 +3906,18 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                         break;
                     case PR_HASATTACH:
                         msg->d_ptr->_hasAttachments = (prop.Value.b != FALSE);
+                        if (prop.Value.b) {
+                            flags |= QMessage::HasAttachments;
+                        }
+                        break;
+                    case PR_PRIORITY:
+                        if (prop.Value.l == PRIO_URGENT) {
+                            msg->setPriority(QMessage::HighPriority);
+                        } else if (prop.Value.l == PRIO_NONURGENT) {
+                            msg->setPriority(QMessage::LowPriority);
+                        } else {
+                            msg->setPriority(QMessage::NormalPriority);
+                        }
                         break;
 #ifndef _WIN32_WCE
                     case PR_MSG_EDITOR_FORMAT:
@@ -3889,12 +3926,9 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                     case PR_RTF_IN_SYNC:
                         msg->d_ptr->_rtfInSync = (prop.Value.b != FALSE);;
                         break;
-                    case PR_MESSAGE_SIZE:
-#else
-                    case PR_CONTENT_LENGTH:
 #endif
-                        // Increase the size estimate by a third to allow for transfer encoding
-                        QMessagePrivate::setSize(*msg, prop.Value.ul * 4 / 3);
+                    case PR_MESSAGE_SIZE:
+                        QMessagePrivate::setSize(*msg, prop.Value.l);
                         break;
                     default:
                         break;
@@ -3902,6 +3936,7 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                 }
 
                 msg->setStatus(flags);
+                msg->setParentAccountId(store->id());
 
                 if (!senderName.isEmpty() || !senderAddress.isEmpty()) {
                     msg->setFrom(createAddress(senderName, senderAddress));
@@ -3910,6 +3945,11 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
 
                 if (!parentEntryId.isEmpty()) {
                     QMessagePrivate::setStandardFolder(*msg, store->standardFolder(parentEntryId));
+
+                    MapiFolderPtr parentFolder(store->openFolder(lastError, parentEntryId));
+                    if (parentFolder) {
+                        QMessagePrivate::setParentFolderId(*msg, parentFolder->id());
+                    }
                 }
 
                 if (!isModified) {
@@ -4073,12 +4113,8 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                 LONG contentFormat(msg->d_ptr->_contentFormat);
 
                 if (contentFormat == EDITOR_FORMAT_DONTKNOW) {
-#ifdef _WIN32_WCE
-                    // TODO: Attempt to read MIME text first
-#else
                     // Attempt to read HTML first
                     contentFormat = EDITOR_FORMAT_HTML;
-#endif
                 }
                 if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
 #ifdef _WIN32_WCE
@@ -4129,9 +4165,47 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                         contentFormat = EDITOR_FORMAT_DONTKNOW;
 #endif
                     }
+#ifdef _WIN32_WCE
+                } else if (contentFormat == EDITOR_FORMAT_MIME) {
+                    // MIME format is only used on mobile
+                    HRESULT rv = message->OpenProperty(PR_CE_MIME_TEXT, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+                    if (HR_SUCCEEDED(rv)) {
+                        messageBody = readStream(lastError, is);
+
+                        QMailMessage msg(QMailMessage::fromRfc2822(messageBody));
+                        if (msg.multipartType() == QMailMessage::MultipartNone) {
+                            if (msg.contentType().type().toLower() == "text") {
+                                QByteArray subType(msg.contentType().subType().toLower());
+                                if ((subType == "plain") || (subType == "html") || (subType == "rtf")) {
+                                    messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(msg.body().data());
+                                    bodySubType = subType;
+                                }
+                            }
+                        } else if ((msg.multipartType() == QMailMessage::MultipartAlternative) ||
+                                   (msg.multipartType() == QMailMessage::MultipartMixed) ||
+                                   (msg.multipartType() == QMailMessage::MultipartRelated)) {
+                            // For multipart/related, just try the first part
+                            int maxParts(msg.multipartType() == QMailMessage::MultipartRelated ? 1 : msg.partCount());
+                            for (int i = 0; i < maxParts; ++i) {
+                                const QMailMessagePart &part(msg.partAt(i));
+
+                                if (part.contentType().type().toLower() == "text") {
+                                    QByteArray subType(part.contentType().subType().toLower());
+                                    if ((subType == "plain") || (subType == "html") || (subType == "rtf")) {
+                                        messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(part.body().data());
+                                        bodySubType = subType;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        qWarning() << "Unable to open PR_CE_MIME_TEXT!";
+                    }
+#endif
                 }
 
-#ifndef _WIN32_WCE // RTF not supported
+#ifndef _WIN32_WCE // RTF not supported on mobile
                 if (bodySubType.isEmpty()) {
                     if (!msg->d_ptr->_rtfInSync) {
                         // See if we need to sync the RTF
@@ -4211,11 +4285,12 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                             qWarning() << "Unable to decompress RTF";
                             bodySubType = "plain";
                         }
-                    } else {
-                        bodySubType = "unknown";
                     }
                 }
 #endif
+                if (bodySubType.isEmpty()) {
+                    qWarning() << "Unable to locate body for message.";
+                }
 
                 mapiRelease(is);
 
@@ -4241,9 +4316,8 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                 if (!msg->d_ptr->_hasAttachments) {
                     // Make the body the entire content of the message
                     messageContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
-                    msg->d_ptr->_bodyId = QMessageContentContainerPrivate::bodyContentId();
+                    msg->d_ptr->_bodyId = messageContainer->bodyContentId();
                     messageContainer->_available = bodyDownloaded;
-
                 } else {
                     // Add the message body data as the first part
                     QMessageContentContainer bodyPart;
@@ -4621,12 +4695,13 @@ bool MapiSession::showForm(IMessage* message, IMAPIFolder* folder, LPMDB store)
             if(hr==MAPI_E_USER_CANCEL)
             {
                 qWarning() << "Show form cancelled";
-                return false;
+                return true;
             }
-            else if(hr!=S_OK)
+            else
             {
-                qWarning() << "Show form failed";
-                return false;
+                if(hr != S_OK)
+                    qWarning() << "Show form failed";
+                return hr == S_OK;
             }
         }
         else
@@ -4642,7 +4717,16 @@ bool MapiSession::event(QEvent *e)
 {
     if (e->type() == NotifyEvent::eventType()) {
         if (NotifyEvent *ne = static_cast<NotifyEvent*>(e)) {
-            notify(ne->_store, ne->_id, ne->_notifyType);
+
+            QMutex* storeMutex = QMessageStorePrivate::mutex(QMessageStore::instance());
+
+            if(!storeMutex->tryLock())
+                addToNotifyQueue(*ne);
+            else
+            {
+                notify(ne->_store, ne->_id, ne->_notifyType);
+                storeMutex->unlock();
+            }
             return true;
         }
     }
@@ -4727,6 +4811,23 @@ void MapiSession::dispatchNotifications()
     QTimer::singleShot(1000, this, SLOT(dispatchNotifications()));
 }
 
+void MapiSession::processNotifyQueue()
+{
+     foreach(const NotifyEvent& e, _notifyEventQueue)
+     {
+         QMutex* storeMutex = QMessageStorePrivate::mutex(QMessageStore::instance());
+         if(storeMutex->tryLock())
+         {
+             NotifyEvent ne = _notifyEventQueue.dequeue();
+             notify(e._store,e._id,e._notifyType);
+             storeMutex->unlock();
+         }
+         else break;
+     }
+     if(!_notifyEventQueue.isEmpty())
+        qWarning() << QString("Notify queue processing interrupted: pending %1").arg(_notifyEventQueue.length());
+}
+
 QMessagePrivate *MapiSession::messageImpl(const QMessage &message)
 {
     return message.d_ptr;
@@ -4736,5 +4837,18 @@ QMessageContentContainerPrivate *MapiSession::containerImpl(const QMessageConten
 {
     return container.d_ptr;
 }
+
+void MapiSession::addToNotifyQueue(const NotifyEvent& e)
+{
+    _notifyEventQueue.enqueue(e);
+    qWarning() << QString("Store busy...adding notify to queue: pending %1").arg(_notifyEventQueue.length());
+}
+
+void MapiSession::flushNotifyQueue()
+{
+    QTimer::singleShot(0, this, SLOT(processNotifyQueue()));
+}
+
+
 
 #include "winhelpers.moc"

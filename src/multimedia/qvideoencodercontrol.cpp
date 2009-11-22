@@ -46,6 +46,9 @@
 /*!
     \class QVideoEncoderControl
     \preliminary
+    \ingroup multimedia
+    \ingroup multimedia-serv
+
     \brief The QVideoEncoderControl class provides access to the settings of a media service that
     performs video encoding.
 
@@ -60,7 +63,7 @@
     The interface name of QVideoEncoderControl is \c com.nokia.Qt.QVideoEncoderControl/1.0 as
     defined in QVideoEncoderControl_iid.
 
-    \sa QMediaService::control(), QMediaRecorder
+    \sa QMediaRecorder, QVideoEncoderSettings, QMediaService::control()
 */
 
 /*!
@@ -89,33 +92,47 @@ QVideoEncoderControl::~QVideoEncoderControl()
 }
 
 /*!
-    \fn QVideoEncoderControl::minimumResolution() const
+    \fn QVideoEncoderControl::minimumResolution(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const
 
     Returns the minium resolution a video encoder supports.
 
+    If non null video \a settings parameter is passed,
+    returns the minimum supported resolution with partial settings applied.
+
     \sa QVideoEncoderSettings::resolution()
 */
 
 /*!
-    \fn QVideoEncoderControl::maximumResolution() const
+    \fn QVideoEncoderControl::maximumResolution(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const
 
     Returns the maximum resolution a video encoder supports.
 
+    If non null video \a settings parameter is passed,
+    returns the maximum supported resolution with partial settings applied.
+
     \sa QVideoEncoderSettings::resolution()
 */
 
 /*!
-    \fn QVideoEncoderControl::minimumFrameRate() const
+    \fn QVideoEncoderControl::minimumFrameRate(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const
 
     Returns the minimum frame rate a video encoder supports.
+
+    If non null video \a settings parameter is passed,
+    returns the minimum supported frame rate with partial settings like
+    \l {QVideoEncoderSettings::setResolution()}{video resolution} applied.
 
     \sa QVideoEncoderSettings::frameRate()
 */
 
 /*!
-    \fn QVideoEncoderControl::maximumFrameRate() const
+    \fn QVideoEncoderControl::maximumFrameRate(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const
 
     Returns the maximum frame rate a video encoder supports.
+
+    If non null video \a settings parameter is passed,
+    returns the maximum supported frame rate with partial settings like
+    \l {QVideoEncoderSettings::setResolution()}{video resolution} applied.
 
     \sa QVideoEncoderSettings::frameRate()
 */
@@ -153,19 +170,31 @@ QVideoEncoderControl::~QVideoEncoderControl()
 */
 
 /*!
-    \fn QVideoEncoderControl::supportedResolutions() const
+    \fn QVideoEncoderControl::supportedResolutions(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const
 
     Returns a list of supported resolutions.  An empty list is returned if the video encoder
     supports arbitrary resolutions within the minimum and maximum range.
+
+    If non null video \a settings parameter is passed,
+    the returned list is reduced to resolution supported with partial settings like
+    \l {QVideoEncoderSettings::setCodec()}{video codec} or
+    \l {QVideoEncoderSettings::setFrameRate()}{frame rate} applied.
+
+
 
     \sa QVideoEncoderSettings::resolution(), minimumResolution(), maximumResolution()
 */
 
 /*!
-    \fn QVideoEncoderControl::supportedFrameRates() const
+    \fn QVideoEncoderControl::supportedFrameRates(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const
 
     Returns a list of supported frame rates. An empty list is returned if the encoder supports
     arbitrary frame rates within the minimum and maximum range.
+
+    If non null video \a settings parameter is passed,
+    the returned list is reduced to frame rates supported with partial settings like
+    \l {QVideoEncoderSettings::setCodec()}{video codec} or
+    \l {QVideoEncoderSettings::setResolution()}{video resolution} applied.
 
     \sa QVideoEncoderSettings::frameRate(), minimumFrameRate(), maximumFrameRate()
 */

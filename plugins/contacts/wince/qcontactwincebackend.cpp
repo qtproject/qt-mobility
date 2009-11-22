@@ -39,9 +39,8 @@
 **
 ****************************************************************************/
 
-#include <QDebug>
 #include <QMutex>
-
+#include <QDebug>
 #include "qcontactmanager.h"
 #include "qcontactchangeset.h"
 #include "qtcontacts.h"
@@ -63,8 +62,6 @@
  * - use QScopedPointer
  * - pronunciation (needs schema update)
  * - any XXX comments
- * - change qDebugs to qWarnings or remove, as appropriate
- * - change factory to create the data, if any failures, return NULL manager.
  * - store extra metadata
  *  - Voice subtype for phone, don't always assume
  * - Address formatting - PIMPR_HOME_ADDRESS seems to be read only
@@ -83,7 +80,7 @@ QContactWinCEEngine::QContactWinCEEngine(const QString& engineName, const QMap<Q
                                        CLSCTX_INPROC_SERVER, IID_IPOutlookApp2,
                                        reinterpret_cast<void **>(&d->m_app)))) {
             if(FAILED(d->m_app->Logon(NULL))) {
-                qDebug() << "Failed to log on";
+                qWarning() << "Failed to log on";
                 d->m_app = 0;
             } else {
                 if(SUCCEEDED(d->m_app->GetDefaultFolder(olFolderContacts, &d->m_folder))) {
@@ -102,11 +99,11 @@ QContactWinCEEngine::QContactWinCEEngine(const QString& engineName, const QMap<Q
                             d->m_ids = convertP2QIdList(d->m_collection);
                         }
                     } else {
-                        qDebug() << "Failed to get items";
+                        qWarning() << "Failed to get items";
                         d->m_collection = 0;
                     }
                 } else {
-                    qDebug() << "Failed to get contacts folder";
+                    qWarning() << "Failed to get contacts folder";
                     d->m_folder = 0;
                 }
             }
@@ -167,7 +164,7 @@ QContact QContactWinCEEngine::contact(const QContactLocalId& contactId, QContact
             if (HRESULT_CODE(hr) == ERROR_NOT_FOUND) {
                 error = QContactManager::DoesNotExistError;
             } else {
-                qDebug() << "Failed to retrieve contact:" << HRESULT_CODE(hr);
+                qWarning() << "Failed to retrieve contact:" << HRESULT_CODE(hr);
                 error = QContactManager::UnspecifiedError;
             }
         }
@@ -206,7 +203,7 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
                 error = QContactManager::DoesNotExistError;
                 d->m_ids.removeAll(contact->localId());
             } else {
-                qDebug() << "Didn't get old contact" << HRESULT_CODE(hr);
+                qWarning() << "Didn't get old contact" << HRESULT_CODE(hr);
                 error = QContactManager::UnspecifiedError;
             }
         }
@@ -220,11 +217,11 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
 
             if (SUCCEEDED(hr)) {
             } else {
-                qDebug() << "Failed to query interface" << HRESULT_CODE(hr);
+                qWarning() << "Failed to query interface" << HRESULT_CODE(hr);
                 error = QContactManager::UnspecifiedError;
             }
         } else {
-            qDebug() << "Failed to create contact: "<< HRESULT_CODE(hr);
+            qWarning() << "Failed to create contact: "<< HRESULT_CODE(hr);
             error = QContactManager::OutOfMemoryError;
         }
     } else {
@@ -257,14 +254,14 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
                     cs.emitSignals(this);
                     return true;
                 }
-                qDebug() << "Saved contact, but couldn't retrieve id again??" << HRESULT_CODE(hr);
+                qWarning() << "Saved contact, but couldn't retrieve id again??" << HRESULT_CODE(hr);
                 // Blargh.
                 error = QContactManager::UnspecifiedError;
             } else {
-                qDebug() << "Failed to save contact" << HRESULT_CODE(hr);
+                qWarning() << "Failed to save contact" << HRESULT_CODE(hr);
             }
         } else {
-            qDebug() << "Failed to convert contact";
+            qWarning() << "Failed to convert contact";
         }
     }
 
@@ -289,13 +286,13 @@ bool QContactWinCEEngine::removeContact(const QContactLocalId& contactId, QConta
                 cs.emitSignals(this);
                 return true;
             }
-            qDebug() << "Failed to delete:" << HRESULT_CODE(hr);
+            qWarning() << "Failed to delete:" << HRESULT_CODE(hr);
             error = QContactManager::UnspecifiedError;
         } else {
             if (HRESULT_CODE(hr) == ERROR_NOT_FOUND) {
                 error = QContactManager::DoesNotExistError;
             } else {
-                qDebug() << "Failed to retrieve item pointer in delete" << HRESULT_CODE(hr);
+                qWarning() << "Failed to retrieve item pointer in delete" << HRESULT_CODE(hr);
                 error = QContactManager::UnspecifiedError;
             }
         }
@@ -313,13 +310,14 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(c
 
     // Remove the details we don't support
     defns[contactType].remove(QContactSyncTarget::DefinitionName);
-    defns[contactType].remove(QContactPresence::DefinitionName);
     defns[contactType].remove(QContactGeolocation::DefinitionName);
     defns[contactType].remove(QContactTimestamp::DefinitionName);
     defns[contactType].remove(QContactGuid::DefinitionName);
     defns[contactType].remove(QContactGender::DefinitionName); // ? Surprising
 
+
     // Remove the fields we don't support
+    defns[contactType][QContactName::DefinitionName].fields().remove(QContactName::FieldCustomLabel);
 
     // Simple anniversarys
     defns[contactType][QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldCalendarId);
@@ -330,9 +328,7 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(c
     defns[contactType][QContactOrganization::DefinitionName].fields().remove(QContactOrganization::FieldLogo);
 
     // No subtypes for these details
-    defns[contactType][QContactAddress::DefinitionName].fields().remove(QContactAddress::FieldSubTypes);
     defns[contactType][QContactUrl::DefinitionName].fields().remove(QContactUrl::FieldSubType);
-    defns[contactType][QContactAvatar::DefinitionName].fields().remove(QContactAvatar::FieldSubType);
 
     // No contexts for these details
     defns[contactType][QContactAvatar::DefinitionName].fields().remove(QContactDetail::FieldContext);
@@ -353,7 +349,6 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(c
 
     // XXX temporary definitions that we should support but don't yet.
     defns[contactType].remove(QContactOnlineAccount::DefinitionName);
-    defns[contactType].remove(QContactAvatar::DefinitionName);
 
     return defns[contactType];
 }
@@ -478,7 +473,6 @@ QContactManagerEngine* ContactWinceFactory::engine(const QMap<QString, QString>&
             m_engine = new QContactWinCEEngine(managerName(), parameters, error);
         }
     }
-    m_engine->d->m_refCount.ref();
     return m_engine;
 }
 

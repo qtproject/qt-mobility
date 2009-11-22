@@ -92,15 +92,6 @@ private slots:
     void cleanup();
     void cleanupTestCase();
 
-#if !defined(Q_OS_WIN)
-    // Transmission format not handled yet
-    void testFromTransmissionFormat_data();
-    void testFromTransmissionFormat();
-#endif
-
-    void testToTransmissionFormat_simple();
-    void testToTransmissionFormat_multipart();
-
     void testType();
     void testParentAccountId();
     void testFrom();
@@ -114,6 +105,8 @@ private slots:
     void testPriority();
     void testPreferredCharsets_data();
     void testPreferredCharsets();
+    void testMessageAddress_data();
+    void testMessageAddress();
 
 private:
     QMessageAccountId testAccountId;
@@ -161,527 +154,6 @@ void tst_QMessage::cleanup()
 
 void tst_QMessage::cleanupTestCase()
 {
-}
-
-#if !defined(Q_OS_WIN)
-Q_DECLARE_METATYPE(QList<QByteArray>)
-
-void tst_QMessage::testFromTransmissionFormat_data()
-{
-    QTest::addColumn<QString>("fileName");
-    QTest::addColumn<QString>("to");
-    QTest::addColumn<QString>("from");
-    QTest::addColumn<QString>("date");
-    QTest::addColumn<QString>("subject");
-    QTest::addColumn<int>("parts");
-    QTest::addColumn<QByteArray>("type");
-    QTest::addColumn<QByteArray>("subtype");
-    QTest::addColumn<QByteArray>("charset");
-    QTest::addColumn<QString>("text");
-    QTest::addColumn<QList<QByteArray> >("headerFields");
-    QTest::addColumn<QStringList>("headerFieldValues");
-
-    // A simple message
-    QTest::newRow("1") 
-        << "1.txt"
-        << "bbb@zzz.test"
-        << "bbb@ddd.example (John X. Doe)"
-        << "2001-05-04T18:05:44Z" // Convert the time in the message to UTC
-        << "This is a test message"
-        << 0
-        << QByteArray("text")
-        << QByteArray("plain")
-        << QByteArray("us-ascii")
-        << "\
-\n\
-Hi,\n\
-\n\
-Do you like this message?\n\
-\n\
--Me\n\
-"
-        << ( QList<QByteArray>() << "Return-Path"
-                                 << "Delivered-To"
-                                 << "Received" 
-                                 << "MIME-Version"
-                                 << "Content-Type"
-                                 << "Content-Transfer-Encoding"
-                                 << "Message-ID"
-                                 << "From"
-                                 << "To"
-                                 << "Subject"
-                                 << "Date" )
-        << ( QStringList() << "<bbb@zzz.test>" 
-                           << "bbb@zzz.test"
-                           << "by mail.zzz.test (Postfix, from userid 889)\tid 27CEAD38CC; Fri,  4 May 2001 14:05:44 -0400 (EDT)"
-                           << "1.0"
-                           << "text/plain; charset=us-ascii"
-                           << "7bit"
-                           << "<15090.61304.110929.45684@aaa.zzz.test>"
-                           << "bbb@ddd.example (John X. Doe)"
-                           << "bbb@zzz.test"
-                           << "This is a test message"
-                           << "Fri, 4 May 2001 14:05:44 -0400" );
-
-    // A multipart message
-    QTest::newRow("2") 
-        << "2.txt"
-        << "barry@python.test"
-        << "barry@python.test (Barry A. Krakow)"
-        << "2001-09-11T04:05:05Z"
-        << "a simple multipart"
-        << 2
-        << QByteArray("multipart")
-        << QByteArray("mixed")
-        << QByteArray()
-        << QString()
-        << ( QList<QByteArray>() << "Return-Path"
-                                 << "Delivered-To"
-                                 << "Received" 
-                                 << "MIME-Version"
-                                 << "Content-Type"
-                                 << "Content-Transfer-Encoding"
-                                 << "Message-ID"
-                                 << "From"
-                                 << "To"
-                                 << "Subject"
-                                 << "Date"
-                                 << "X-Mailer"
-                                 << "X-Attribution"
-                                 << "X-Oblique-Strategy" )
-        << ( QStringList() << "<barry@python.test>"
-                           << "barry@python.test"
-                           << "by mail.python.test (Postfix, from userid 889)\tid C2BF0D37C6; Tue, 11 Sep 2001 00:05:05 -0400 (EDT)"
-                           << "1.0"
-                           << "multipart/mixed; boundary=\"h90VIIIKmx\""
-                           << "7bit"
-                           << "<15261.36209.358846.118674@anthem.python.test>"
-                           << "barry@python.test (Barry A. Krakow)"
-                           << "barry@python.test"
-                           << "a simple multipart"
-                           << "Tue, 11 Sep 2001 00:05:05 -0400"
-                           << "VM 6.95 under 21.4 (patch 4) \"Artificial Intelligence\" XEmacs Lucid"
-                           << "BAW"
-                           << "Make a door into a window" );
-
-    // A nested multipart message
-    QTest::newRow("3") 
-        << "3.txt"
-        << "Dingus Lovers <cravindogs@cravindogs.test>"
-        << "Barry <barry@example.com>"
-        << "2001-04-20T23:35:02Z"
-        << "Here is your dingus fish"
-        << 2
-        << QByteArray("multipart")
-        << QByteArray("mixed")
-        << QByteArray()
-        << QString()
-        << ( QList<QByteArray>() << "MIME-Version"
-                                 << "From"
-                                 << "To"
-                                 << "Subject"
-                                 << "Date"
-                                 << "Content-Type" )
-        << ( QStringList() << "1.0"
-                           << "Barry <barry@example.com>"
-                           << "Dingus Lovers <cravindogs@cravindogs.test>"
-                           << "Here is your dingus fish"
-                           << "Fri, 20 Apr 2001 19:35:02 -0400"
-                           << "multipart/mixed; boundary=\"OUTER\"" );
-}
-
-void tst_QMessage::testFromTransmissionFormat()
-{
-    QFETCH(QString, fileName);
-    QFETCH(QString, to);
-    QFETCH(QString, from);
-    QFETCH(QString, date);
-    QFETCH(QString, subject);
-    QFETCH(int, parts);
-    QFETCH(QByteArray, type);
-    QFETCH(QByteArray, subtype);
-    QFETCH(QByteArray, charset);
-    QFETCH(QString, text);
-    QFETCH(QList<QByteArray>, headerFields);
-    QFETCH(QStringList, headerFieldValues);
-
-    QString path(TESTDATA_DIR "/testdata/" + fileName);
-    QMessage message(QMessage::fromTransmissionFormatFile(QMessage::Email, path));
-
-    QCOMPARE(message.to().first().recipient(), to);
-    QCOMPARE(message.from().recipient(), from);
-    QCOMPARE(message.date(), QDateTime::fromString(date, Qt::ISODate).toLocalTime());
-    QCOMPARE(message.subject(), subject);
-
-    QCOMPARE(message.contentIds().count(), parts);
-
-    QCOMPARE(message.contentType().toLower(), type);
-    QCOMPARE(message.contentSubType().toLower(), subtype);
-    QCOMPARE(message.contentCharset().toLower(), charset);
-
-    if (!text.isEmpty()) {
-        QMessageContentContainerId bodyId(message.bodyId());
-        QVERIFY(bodyId.isValid());
-
-        QMessageContentContainer body(message.find(bodyId));
-        QCOMPARE(body.contentType().toLower(), type);
-        QCOMPARE(body.contentSubType().toLower(), subtype);
-        QCOMPARE(body.contentCharset().toLower(), charset);
-        QCOMPARE(body.isContentAvailable(), true);
-        QCOMPARE(body.textContent(), text);
-    }
-
-    QCOMPARE(message.headerFields(), headerFields);
-
-    QStringList::const_iterator it = headerFieldValues.begin(), end = headerFieldValues.end();
-    foreach (const QByteArray &field, headerFields) {
-        QVERIFY(it != end);
-        QCOMPARE(message.headerFieldValue(field), *it);
-
-        foreach (const QString &value, message.headerFieldValues(field)) {
-            QVERIFY(it != end);
-            QCOMPARE(value, *it);
-            ++it;
-        }
-    }
-}
-#endif
-
-void tst_QMessage::testToTransmissionFormat_simple()
-{
-    const QString from("Alice <alice@example.com>");
-    const QString to("Bob <bob@example.com>");
-    const QString cc("Charlie <charlie@example.com>");
-    const QString bcc("Dave <dave@example.com>");
-    const QDateTime date(QDateTime::fromString(QDateTime::currentDateTime().toString(Qt::ISODate), Qt::ISODate)); // Strip unrepresentable elements
-    const QString subject("This is a simple message");
-    const QByteArray contentType("text");
-    const QByteArray contentSubType("plain");
-    const QByteArray contentCharset(defaultCharset);
-    const QString contentText(QString("This is the happy face:").append(QChar(0x263a)));
-
-    QMessage m1;
-
-    m1.setType(QMessage::Email);
-    m1.setFrom(QMessageAddress(from, QMessageAddress::Email));
-    m1.setTo(QMessageAddressList() << QMessageAddress(to, QMessageAddress::Email));
-    m1.setCc(QMessageAddressList() << QMessageAddress(cc, QMessageAddress::Email));
-    m1.setBcc(QMessageAddressList() << QMessageAddress(bcc, QMessageAddress::Email));
-    m1.setSubject(subject);
-    m1.setDate(date);
-
-    {
-        // Set body text using stream (for coverage testing only)
-        QTextStream is(const_cast<QString*>(&contentText), QIODevice::ReadOnly);
-
-        QByteArray mimeType(contentType + "/" + contentSubType + "; charset=" + contentCharset);
-        m1.setBody(is, mimeType);
-    }
-
-#if !defined(Q_OS_WIN)
-    QByteArray serialized;
-    {
-        // Serialize using stream (for coverage testing only)
-        QDataStream os(&serialized, QIODevice::WriteOnly);
-        m1.toTransmissionFormat(os);
-    }
-#endif
-
-    QCOMPARE(m1.from().recipient(), from);
-    QCOMPARE(m1.to().first().recipient(), to);
-    QCOMPARE(m1.cc().first().recipient(), cc);
-    QCOMPARE(m1.bcc().first().recipient(), bcc);
-    QCOMPARE(m1.subject(), subject);
-    QCOMPARE(m1.date(), date);
-    QAPPROXIMATECOMPARE(m1.size(), 2048u, 1024u);
-
-    QCOMPARE(m1.contentType().toLower(), contentType.toLower());
-    QCOMPARE(m1.contentSubType().toLower(), contentSubType.toLower());
-    QCOMPARE(m1.contentCharset().toLower(), contentCharset.toLower());
-    QCOMPARE(m1.textContent(), contentText);
-
-#if !defined(Q_OS_WIN)
-    QMessage m2(QMessage::fromTransmissionFormat(QMessage::Email, serialized));
-
-    QCOMPARE(m2.from().recipient(), from);
-    QCOMPARE(m2.to().first().recipient(), to);
-    QCOMPARE(m2.cc().first().recipient(), cc);
-    QCOMPARE(m2.bcc().count(), 0);
-    QCOMPARE(m2.date(), date);
-    QAPPROXIMATECOMPARE(m2.size(), 2048u, 1024u);
-
-    QCOMPARE(m2.contentType().toLower(), contentType.toLower());
-    QCOMPARE(m2.contentSubType().toLower(), contentSubType.toLower());
-    QCOMPARE(m2.contentCharset().toLower(), contentCharset.toLower());
-    QCOMPARE(m2.textContent(), contentText);
-#endif
-}
-
-void tst_QMessage::testToTransmissionFormat_multipart()
-{
-    const QString from("Alice <alice@example.com>");
-    const QString to("Bob <bob@example.com>");
-    const QString subject("This is a multipart message");
-    const QByteArray contentType("multipart");
-    const QByteArray contentSubType("mixed");
-    const unsigned messageSize(6244u);
-    const unsigned messageVariance(3072u);
-
-    const QByteArray p1ContentType("text");
-    const QByteArray p1ContentSubType("plain");
-    const QByteArray p1ContentCharset(defaultCharset);
-    const QString p1ContentText(QString("This is the happy face:").append(QChar(0x263a)));
-    const unsigned p1Size(48u);
-    const unsigned p1Variance(24u);
-
-    const QByteArray p2FileName("1.txt");
-    const QByteArray p2ContentType("text");
-    const QByteArray p2ContentSubType("plain");
-    const QByteArray p2ContentCharset("");
-    const QString p2ContentText("\
-Return-Path: <bbb@zzz.test>\r\n\
-Delivered-To: bbb@zzz.test\r\n\
-Received: by mail.zzz.test (Postfix, from userid 889)\r\n\
-\tid 27CEAD38CC; Fri,  4 May 2001 14:05:44 -0400 (EDT)\r\n\
-MIME-Version: 1.0\r\n\
-Content-Type: text/plain; charset=us-ascii\r\n\
-Content-Transfer-Encoding: 7bit\r\n\
-Message-ID: <15090.61304.110929.45684@aaa.zzz.test>\r\n\
-From: bbb@ddd.example (John X. Doe)\r\n\
-To: bbb@zzz.test\r\n\
-Subject: This is a test message\r\n\
-Date: Fri, 4 May 2001 14:05:44 -0400\r\n\
-\r\n\
-\r\n\
-Hi,\r\n\
-\r\n\
-Do you like this message?\r\n\
-\r\n\
--Me\r\n\
-");
-    const unsigned p2Size(512u);
-    const unsigned p2Variance(256u);
-
-    const QByteArray p3FileName("qtlogo.png");
-    const QByteArray p3ContentType("image");
-    const QByteArray p3ContentSubType("png");
-    const QByteArray p3ContentCharset("");
-    const unsigned p3Size(4096u);
-    const unsigned p3Variance(2048u);
-
-    const QByteArray p4FileName("pointless.sh");
-    const QByteArray p4ContentType("application");
-#ifdef Q_OS_WIN
-    const QByteArray p4ContentSubType("octet-stream");
-#else
-    const QByteArray p4ContentSubType("x-sh");
-#endif
-    const QByteArray p4ContentCharset("");
-    const QByteArray p4ContentData("\
-#!/bin/sh\n\
-# This script does nothing\n\
-exit 0\n");
-    const unsigned p4Size(64u);
-    const unsigned p4Variance(32u);
-
-    const QByteArray p5FileName("datafile");
-    const QByteArray p5ContentType("application");
-    const QByteArray p5ContentSubType("octet-stream");
-    const QByteArray p5ContentCharset("");
-    const QByteArray p5ContentData("abcdefghijklmnopqrstuvwxyz");
-    const unsigned p5Size(48u);
-    const unsigned p5Variance(24u);
-
-    QMessage m1;
-
-    m1.setType(QMessage::Email);
-    m1.setFrom(QMessageAddress(from, QMessageAddress::Email));
-    m1.setTo(QMessageAddressList() << QMessageAddress(to, QMessageAddress::Email));
-    m1.setSubject(subject);
-
-    QByteArray mimeType(p1ContentType + "/" + p1ContentSubType);
-    m1.setBody(p1ContentText, mimeType);
-
-    QStringList attachments;
-    foreach (const QString &file, ( QStringList() << p2FileName << p3FileName << p4FileName << p5FileName)) {
-        attachments.append(TESTDATA_DIR "/testdata/" + file);
-    }
-    m1.appendAttachments(attachments);
-
-    QByteArray serialized(m1.toTransmissionFormat());
-
-    {
-        QCOMPARE(m1.from().recipient(), from);
-        QCOMPARE(m1.to().first().recipient(), to);
-        QCOMPARE(m1.subject(), subject);
-        QAPPROXIMATECOMPARE(m1.size(), messageSize, messageVariance);
-
-        QCOMPARE(m1.contentType().toLower(), contentType.toLower());
-        QCOMPARE(m1.contentSubType().toLower(), contentSubType.toLower());
-        QCOMPARE(m1.isContentAvailable(), true);
-        QCOMPARE(m1.contentIds().count(), 5);
-        QCOMPARE(m1.attachmentIds().count(), 4);
-
-        QMessageContentContainerId bodyId(m1.bodyId());
-        QMessageContentContainerIdList ids(m1.contentIds());
-
-        QCOMPARE(bodyId, ids.first());
-        QCOMPARE(bodyId.isValid(), true);
-        QCOMPARE(bodyId != QMessageContentContainerId(), true);
-        QCOMPARE(QMessageContentContainerId(bodyId.toString()), bodyId);
-
-        QMessageContentContainerId attachmentId(ids.at(0));
-        QCOMPARE(attachmentId.isValid(), true);
-        QCOMPARE(attachmentId != QMessageContentContainerId(), true);
-        QCOMPARE(QMessageContentContainerId(attachmentId.toString()), bodyId);
-
-        QMessageContentContainer p1(m1.find(attachmentId));
-
-        QCOMPARE(p1.contentType().toLower(), p1ContentType.toLower());
-        QCOMPARE(p1.contentSubType().toLower(), p1ContentSubType.toLower());
-        QCOMPARE(p1.contentCharset().toLower(), p1ContentCharset.toLower());
-        QCOMPARE(p1.isContentAvailable(), true);
-        QCOMPARE(p1.contentIds().count(), 0);
-        QCOMPARE(p1.textContent(), p1ContentText);
-        QAPPROXIMATECOMPARE(p1.size(), p1Size, p1Variance);
-
-        attachmentId = ids.at(1);
-        QCOMPARE(attachmentId.isValid(), true);
-        QCOMPARE(attachmentId != QMessageContentContainerId(), true);
-        QCOMPARE(QMessageContentContainerId(attachmentId.toString()), attachmentId);
-
-        QMessageContentContainer p2(m1.find(attachmentId));
-
-        QCOMPARE(p2.contentType().toLower(), p2ContentType.toLower());
-        QCOMPARE(p2.contentSubType().toLower(), p2ContentSubType.toLower());
-        QCOMPARE(p2.contentCharset().toLower(), p2ContentCharset.toLower());
-        QCOMPARE(p2.isContentAvailable(), true);
-        QCOMPARE(p2.contentIds().count(), 0);
-        QCOMPARE(p2.textContent(), p2ContentText);
-        QAPPROXIMATECOMPARE(p2.size(), p2Size, p2Variance);
-
-        attachmentId = ids.at(2);
-        QCOMPARE(attachmentId.isValid(), true);
-        QCOMPARE(attachmentId != QMessageContentContainerId(), true);
-        QCOMPARE(QMessageContentContainerId(attachmentId.toString()), attachmentId);
-
-        QMessageContentContainer p3(m1.find(attachmentId));
-
-        QCOMPARE(p3.contentType().toLower(), p3ContentType.toLower());
-        QCOMPARE(p3.contentSubType().toLower(), p3ContentSubType.toLower());
-        QCOMPARE(p3.contentCharset().toLower(), p3ContentCharset.toLower());
-        QCOMPARE(p3.isContentAvailable(), true);
-        QCOMPARE(p3.contentIds().count(), 0);
-        QCOMPARE(p3.content().length(), 4075);
-        QAPPROXIMATECOMPARE(p3.size(), p3Size, p3Variance);
-
-        attachmentId = ids.at(3);
-        QCOMPARE(attachmentId.isValid(), true);
-        QCOMPARE(attachmentId != QMessageContentContainerId(), true);
-        QCOMPARE(QMessageContentContainerId(attachmentId.toString()), attachmentId);
-
-        QMessageContentContainer p4(m1.find(attachmentId));
-
-        QCOMPARE(p4.contentType().toLower(), p4ContentType.toLower());
-        QCOMPARE(p4.contentSubType().toLower(), p4ContentSubType.toLower());
-        QCOMPARE(p4.contentCharset().toLower(), p4ContentCharset.toLower());
-        QCOMPARE(p4.isContentAvailable(), true);
-        QCOMPARE(p4.contentIds().count(), 0);
-        QCOMPARE(p4.content(), p4ContentData);
-        QAPPROXIMATECOMPARE(p4.size(), p4Size, p4Variance);
-
-        attachmentId = ids.at(4);
-        QCOMPARE(attachmentId.isValid(), true);
-        QCOMPARE(attachmentId != QMessageContentContainerId(), true);
-        QCOMPARE(QMessageContentContainerId(attachmentId.toString()), attachmentId);
-
-        QMessageContentContainer p5(m1.find(attachmentId));
-
-        QCOMPARE(p5.contentType().toLower(), p5ContentType.toLower());
-        QCOMPARE(p5.contentSubType().toLower(), p5ContentSubType.toLower());
-        QCOMPARE(p5.contentCharset().toLower(), p5ContentCharset.toLower());
-        QCOMPARE(p5.isContentAvailable(), true);
-        QCOMPARE(p5.contentIds().count(), 0);
-        QCOMPARE(p5.content(), p5ContentData);
-        QAPPROXIMATECOMPARE(p5.size(), p5Size, p5Variance);
-    }
-
-    // Verify that attachments can be removed
-    m1.clearAttachments();
-    QCOMPARE(m1.attachmentIds(), QMessageContentContainerIdList());
-
-#if !defined(Q_OS_WIN)
-    QMessage m2(QMessage::fromTransmissionFormat(QMessage::Email, serialized));
-
-    {
-        QCOMPARE(m2.from().recipient(), from);
-        QCOMPARE(m2.to().first().recipient(), to);
-        QCOMPARE(m2.subject(), subject);
-        QAPPROXIMATECOMPARE(m2.size(), messageSize, messageVariance);
-
-        QCOMPARE(m2.contentType().toLower(), contentType.toLower());
-        QCOMPARE(m2.contentSubType().toLower(), contentSubType.toLower());
-        QCOMPARE(m2.isContentAvailable(), true);
-        QCOMPARE(m2.contentIds().count(), 5);
-        QCOMPARE(m2.attachmentIds().count(), 4);
-
-        QMessageContentContainerId bodyId(m2.bodyId());
-        QMessageContentContainerIdList ids(m2.contentIds());
-
-        QCOMPARE(bodyId, ids.first());
-
-        QMessageContentContainer p1(m2.find(ids.at(0)));
-
-        QCOMPARE(p1.contentType().toLower(), p1ContentType.toLower());
-        QCOMPARE(p1.contentSubType().toLower(), p1ContentSubType.toLower());
-        QCOMPARE(p1.contentCharset().toLower(), p1ContentCharset.toLower());
-        QCOMPARE(p1.isContentAvailable(), true);
-        QCOMPARE(p1.contentIds().count(), 0);
-        QCOMPARE(p1.textContent(), p1ContentText);
-        QAPPROXIMATECOMPARE(p1.size(), p1Size, p1Variance);
-
-        QMessageContentContainer p2(m2.find(ids.at(1)));
-
-        QCOMPARE(p2.contentType().toLower(), p2ContentType.toLower());
-        QCOMPARE(p2.contentSubType().toLower(), p2ContentSubType.toLower());
-        QCOMPARE(p2.contentCharset().toLower(), p2ContentCharset.toLower());
-        QCOMPARE(p2.isContentAvailable(), true);
-        QCOMPARE(p2.contentIds().count(), 0);
-        // This text has had the '\r' stripped out...
-        QCOMPARE(p2.textContent(), QString(p2ContentText).replace("\r\n", "\n"));
-        QAPPROXIMATECOMPARE(p2.size(), p2Size, p2Variance);
-
-        QMessageContentContainer p3(m2.find(ids.at(2)));
-
-        QCOMPARE(p3.contentType().toLower(), p3ContentType.toLower());
-        QCOMPARE(p3.contentSubType().toLower(), p3ContentSubType.toLower());
-        QCOMPARE(p3.contentCharset().toLower(), p3ContentCharset.toLower());
-        QCOMPARE(p3.isContentAvailable(), true);
-        QCOMPARE(p3.contentIds().count(), 0);
-        QCOMPARE(p3.content().length(), 4075);
-        QAPPROXIMATECOMPARE(p3.size(), p3Size, p3Variance);
-
-        QMessageContentContainer p4(m2.find(ids.at(3)));
-
-        QCOMPARE(p4.contentType().toLower(), p4ContentType.toLower());
-        QCOMPARE(p4.contentSubType().toLower(), p4ContentSubType.toLower());
-        QCOMPARE(p4.contentCharset().toLower(), p4ContentCharset.toLower());
-        QCOMPARE(p4.isContentAvailable(), true);
-        QCOMPARE(p4.contentIds().count(), 0);
-        QCOMPARE(p4.content(), p4ContentData);
-        QAPPROXIMATECOMPARE(p4.size(), p4Size, p4Variance);
-
-        QMessageContentContainer p5(m2.find(ids.at(4)));
-
-        QCOMPARE(p5.contentType().toLower(), p5ContentType.toLower());
-        QCOMPARE(p5.contentSubType().toLower(), p5ContentSubType.toLower());
-        QCOMPARE(p5.contentCharset().toLower(), p5ContentCharset.toLower());
-        QCOMPARE(p5.isContentAvailable(), true);
-        QCOMPARE(p5.contentIds().count(), 0);
-        QCOMPARE(p5.content(), p5ContentData);
-        QAPPROXIMATECOMPARE(p5.size(), p5Size, p5Variance);
-    }
-#endif
 }
 
 void tst_QMessage::testType()
@@ -920,5 +392,45 @@ void tst_QMessage::testPreferredCharsets()
     QCOMPARE(body.contentCharset().toLower(), encoded.toLower());
 
     QMessage::setPreferredCharsets(QList<QByteArray>());
+}
+
+void tst_QMessage::testMessageAddress_data()
+{
+    QTest::addColumn<QString>("from");
+    QTest::addColumn<QString>("targetName");
+    QTest::addColumn<QString>("targetAddress");
+
+    QTest::newRow("no angle brackets") 
+        << "wizard@oz.test" 
+        << "wizard@oz.test" 
+        << "wizard@oz.test";
+
+    QTest::newRow("name and address") 
+        << "Wizard of Oz <wizard@oz.test>" 
+        << "Wizard of Oz" 
+        << "wizard@oz.test";
+
+    QTest::newRow("quoted name and address") 
+        << "\"First Last\" <first.last@example.com>"
+        << "\"First Last\""
+        << "first.last@example.com";
+
+    QTest::newRow("quoted name with bracket and address") 
+        << "\"First <Middle> Last\" <first.last@example.com>"
+        << "\"First <Middle> Last\""
+        << "first.last@example.com";
+}
+
+void tst_QMessage::testMessageAddress()
+{
+    QFETCH(QString, from); 
+    QFETCH(QString, targetName); 
+    QFETCH(QString, targetAddress); 
+
+    QString name;
+    QString address;
+    QMessageAddress::parseEmailAddress(from, &name, &address);
+    QCOMPARE(targetName, name);
+    QCOMPARE(targetAddress, address);
 }
 

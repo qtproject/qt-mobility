@@ -340,7 +340,7 @@ bool QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, Mapi
             result = ~result;  // match all for include, match none for exclude
         } else {
             QMessageIdList ids(session->queryMessages(lastError, *filter->d_ptr->_messageFilter));
-            result = QMessageFilter::byId(ids, incl);
+            result = QMessageFilter::byId(ids, inclusion ? QMessageDataComparator::Includes : QMessageDataComparator::Excludes);
         }
     } else if (filter->d_ptr->_field == AccountFilter) {
         if (filter->d_ptr->_accountFilter->isEmpty()) {
@@ -998,7 +998,7 @@ MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
         case QMessageFilterPrivate::Size: {
             _restriction.res.resProperty.ulPropTag = PR_MESSAGE_SIZE;
             _keyProp.ulPropTag = PR_MESSAGE_SIZE;
-            _keyProp.Value.ul = d_ptr->_value.toInt();
+            _keyProp.Value.l = d_ptr->_value.toInt();
             _valid = true;
             break;
         }
@@ -1019,18 +1019,18 @@ MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
             break;
         }
         case QMessageFilterPrivate::Priority: {
-            _restriction.res.resProperty.ulPropTag = PR_IMPORTANCE;
-            _keyProp.ulPropTag = PR_IMPORTANCE;
+            _restriction.res.resProperty.ulPropTag = PR_PRIORITY;
+            _keyProp.ulPropTag = PR_PRIORITY;
             QMessage::Priority priority(static_cast<QMessage::Priority>(d_ptr->_value.toInt()));
             switch (priority) { // TODO: Double check that priority filtering is working
             case QMessage::HighPriority:
-                _keyProp.Value.ul = PRIO_URGENT;
+                _keyProp.Value.l = PRIO_URGENT;
                 break;
             case QMessage::NormalPriority:
-                _keyProp.Value.ul = PRIO_NORMAL;
+                _keyProp.Value.l = PRIO_NORMAL;
                 break;
             case QMessage::LowPriority:
-                _keyProp.Value.ul = PRIO_NONURGENT;
+                _keyProp.Value.l = PRIO_NONURGENT;
                 break;
             default:
                 qWarning("Unknown priority encountered during filter processing");
@@ -1110,9 +1110,16 @@ MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
                 _valid = true;
                 return;
             case QMessage::HasAttachments:
+#ifdef _WIN32_WCE
+                _restriction.rt = RES_EXIST;
+                _restriction.res.resExist.ulReserved1 = 0;
+                _restriction.res.resExist.ulPropTag = PR_HASATTACH;
+                _restriction.res.resExist.ulReserved2 = 0;
+#else
                 _restriction.res.resBitMask.relBMR = BMR_NEZ;
                 _restriction.res.resBitMask.ulPropTag = PR_MESSAGE_FLAGS;
-                _restriction.res.resBitMask.ulMask = MSGFLAG_HASATTACH; // Found in PR_HASATTACH msdn doc, but not covered in PR_MESSAGE_FLAGS doc
+                _restriction.res.resBitMask.ulMask = MSGFLAG_HASATTACH;
+#endif
                 _valid = true;
                 return;
             default:

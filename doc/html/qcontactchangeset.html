@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontactchangeset.cpp -->
 <head>
-  <title>QContactChangeSet Class Reference</title>
+  <title>Qt Mobility 1.0: QContactChangeSet Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -30,6 +30,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#clear">clear</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#dataChanged">dataChanged</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#emitSignals">emitSignals</a></b> ( QContactManagerEngine * <i>engine</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QPair&lt;QContactLocalId, QContactLocalId&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#oldAndNewSelfContactId">oldAndNewSelfContactId</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QContactLocalId&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#removedContacts">removedContacts</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QContactLocalId&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#removedRelationshipsContacts">removedRelationshipsContacts</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#setDataChanged">setDataChanged</a></b> ( bool <i>dataChanged</i> )</td></tr>
@@ -62,6 +63,8 @@
 <p>See also <a href="qcontactchangeset.html#setDataChanged">setDataChanged</a>().</p>
 <h3 class="fn"><a name="emitSignals"></a>void QContactChangeSet::emitSignals ( <a href="qcontactmanagerengine.html">QContactManagerEngine</a> * <i>engine</i> )</h3>
 <p>Emits the appropriate signals from the given <i>engine</i> given the state of the change set</p>
+<h3 class="fn"><a name="oldAndNewSelfContactId"></a><a href="http://qt.nokia.com/doc/4.5/qpair.html">QPair</a>&lt;QContactLocalId, QContactLocalId&gt; &amp; QContactChangeSet::oldAndNewSelfContactId ()</h3>
+<p>Returns a reference to the pair of ids which represents the old and new self contact ids. The first id in the pair is the old self contact id, while the second id in the pair is the new self contact id. If the new id is different to the old id at the point in time when <a href="qcontactchangeset.html#emitSignals">emitSignals</a>() is called, the <a href="qcontactmanagerengine.html#selfContactIdChanged">QContactManagerEngine::selfContactIdChanged</a>() signal will be emitted.</p>
 <h3 class="fn"><a name="removedContacts"></a><a href="http://qt.nokia.com/doc/4.5/qset.html">QSet</a>&lt;QContactLocalId&gt; &amp; QContactChangeSet::removedContacts ()</h3>
 <p>Returns a reference to the set of ids of contacts which have been removed from the database.</p>
 <h3 class="fn"><a name="removedRelationshipsContacts"></a><a href="http://qt.nokia.com/doc/4.5/qset.html">QSet</a>&lt;QContactLocalId&gt; &amp; QContactChangeSet::removedRelationshipsContacts ()</h3>
@@ -74,6 +77,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility API</div></td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
 </tr></table></div></address></body>
 </html>

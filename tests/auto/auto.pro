@@ -3,13 +3,16 @@ TEMPLATE = subdirs
 include($$QT_MOBILITY_BUILD_TREE/config.pri)
 
 SUBDIRS += databasemanager \                #service framework
-           servicedatabase \ 
            servicemetadata \
            qserviceinterfacedescriptor \
            qservicefilter \
            qservicemanager \
            qabstractsecuritysession \
            qservicecontext
+
+# servicedatabase is not compiled into the serviceframework library on symbian,
+# special handling is needed
+!symbian:SUBDIRS+=servicedatabase
 
 SUBDIRS += qnetworkconfigmanager \          #Bearer management
            qnetworkconfiguration \
@@ -62,7 +65,8 @@ SUBDIRS +=  qcontact \                      #Contacts
             qcontactfilter \
             qcontactmanager \
             qcontactmanagerplugins \
-            qcontactmanagerfiltering
+            qcontactmanagerfiltering \
+            qcontactrelationship
 
 
 SUBDIRS += \             #Multimedia
@@ -82,10 +86,6 @@ SUBDIRS += \             #Multimedia
         qradiotuner \
         qvideowidget
 
-# This causes X11 to crash in some places.
-# Remove it until it can be debugged manually
-linux*:SUBDIRS -= qvideowidget
-
 contains(QT_CONFIG, multimedia) {
     SUBDIRS += \
             qgraphicsvideoitem \
@@ -95,9 +95,8 @@ contains(QT_CONFIG, multimedia) {
 
 #Messaging
 contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
-    SUBDIRS += \
+    !win32-g++:SUBDIRS += \
         qmessagestore \
         qmessagestorekeys \
         qmessage
-
 }

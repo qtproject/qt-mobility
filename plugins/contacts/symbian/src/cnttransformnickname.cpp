@@ -44,18 +44,16 @@
 
 QList<CContactItemField *> CntTransformNickname::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList;
+    if(detail.definitionName() != QContactNickname::DefinitionName)
+       User::Leave(KErrArgument);
+
+    QList<CContactItemField *> fieldList;
 
 	//cast to name
 	const QContactNickname &name(static_cast<const QContactNickname &>(detail));
 
-	//Prefix
-	TPtrC fieldTextPrefix(reinterpret_cast<const TUint16*>(name.nickname().utf16()));
-	CContactItemField* nickname = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldSecondName);
-	nickname->TextStorage()->SetTextL(fieldTextPrefix);
-	nickname->SetMapping(KUidContactFieldVCardMapSECONDNAME);
-	fieldList.append(nickname);
-	CleanupStack::Pop(nickname);
+    //create new field without contexts
+    transformToTextFieldL(name, fieldList, name.nickname(), KUidContactFieldSecondName, KUidContactFieldVCardMapSECONDNAME, false);
 
 	return fieldList;
 }

@@ -58,6 +58,7 @@
 #include "cntrelationship.h"
 
 typedef QList<QContactLocalId> QContactLocalIdList;
+typedef QPair<QContactLocalId, QContactLocalId> QOwnCardPair;
 
 // NOTE: There is a bug with RVCT compiler which causes the local stack
 // variable to corrupt if the called function leaves. As a workaround we are
@@ -85,7 +86,6 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
         m_contactFilter    = new CntSymbianFilterDbms(*m_dataBase->contactDatabase());
         m_contactSorter    = new CntSymbianSorterDbms(*m_dataBase->contactDatabase(), *m_transformContact);
         m_relationship     = new CntRelationship(m_dataBase->contactDatabase());
-        connect(m_dataBase, SIGNAL(ownCardChanged(QContactLocalId,QContactLocalId)), this, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
     }
 }
 
@@ -591,8 +591,10 @@ bool CntSymbianEngine::removeContact(const QContactLocalId& contactId, QContactM
     QContactLocalId selfCntId = selfContactId(err); // err ignored
     QContactChangeSet changeSet;
     TBool ret = removeContact(contactId, changeSet, error);
-    if (ret && contactId == selfCntId )
-        emit selfContactIdChanged(selfCntId, QContactLocalId(0));
+    if (ret && contactId == selfCntId ) {
+        QOwnCardPair ownCard(selfCntId, QContactLocalId(0));
+        changeSet.oldAndNewSelfContactId() = ownCard;
+    }
     changeSet.emitSignals(this);
     return ret;
 }
@@ -627,7 +629,8 @@ QList<QContactManager::Error> CntSymbianEngine::removeContacts(QList<QContactLoc
                 (*contactIds)[i] = 0;
                 ret.append(QContactManager::NoError);
                 if (current == selfCntId ) {
-                    emit selfContactIdChanged(selfCntId, QContactLocalId(0));
+                    QOwnCardPair ownCard(selfCntId, QContactLocalId(0));
+                    changeSet.oldAndNewSelfContactId() = ownCard;
                 }
             }
         }

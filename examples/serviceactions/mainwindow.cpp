@@ -73,15 +73,6 @@ static const QSize WindowGeometry(400,300);
 static const QString WindowTitle("Service-actions Example");
 static unsigned int RecentMessagesCount = 50;
 
-typedef struct
-{
-    QMessageId id;
-    QString subject;
-    bool partial;
-} MessageInfo;
-
-typedef QList<MessageInfo> MessageInfoList;
-
 class AccountsWidget : public QWidget
 {
     Q_OBJECT
@@ -281,15 +272,15 @@ private slots:
     void stateChanged(QMessageServiceAction::State s);
     void messageUpdated(const QMessageId& id, const QMessageStore::NotificationFilterIdSet& filter);
     void messageRemoved(const QMessageId& id, const QMessageStore::NotificationFilterIdSet& filter);
+    void processResults();
 
 private:
     void setupUi();
     void updateState();
     void load();
-    void processResults();
 
 private:
-    enum State { Unloaded, Loading, LoadFinished, LoadFailed, Done };
+    enum State { Unloaded, Loading, LoadFinished, Processing, LoadFailed, Done };
     static const int MessageIdRole = Qt::UserRole + 1;
 
 private:
@@ -337,8 +328,8 @@ QMessageId RecentMessagesWidget::currentMessage() const
 {
     QMessageId result;
 
-    if(m_state == Done && !m_ids.isEmpty())
-        result = m_ids.at(m_messageListWidget->currentRow());
+    if(QListWidgetItem* currentItem = m_messageListWidget->currentItem())
+        result = QMessageId(currentItem->data(MessageIdRole).toString());
 
     return result;
 }
@@ -366,7 +357,8 @@ void RecentMessagesWidget::hideEvent(QHideEvent* e)
 
 void RecentMessagesWidget::currentItemChanged(QListWidgetItem*, QListWidgetItem*)
 {
-    emit selected(currentMessage());
+    if(m_state != Processing || m_state != Loading)
+        emit selected(currentMessage());
 }
 
 void RecentMessagesWidget::messagesFound(const QMessageIdList& ids)
@@ -459,11 +451,14 @@ void RecentMessagesWidget::updateState()
             }
             else
             {
+                m_state = Processing;
+                updateState();
                 processResults();
-                m_layout->setCurrentWidget(m_messageListWidget);
-                m_state = Done;
             }
         }
+        break;
+        case Processing:
+            m_layout->setCurrentWidget(m_messageListWidget);
         break;
         case LoadFailed:
         {
@@ -474,7 +469,7 @@ void RecentMessagesWidget::updateState()
     }
 
 #ifndef _WIN32_WCE
-    if(m_state == Loading)
+    if(m_state == Loading || m_state == Processing)
         setCursor(Qt::BusyCursor);
     else
         setCursor(Qt::ArrowCursor);
@@ -486,7 +481,7 @@ void RecentMessagesWidget::load()
 {
     m_ids.clear();
 
-    if(!m_service->queryMessages(QMessageFilter(),QMessageOrdering::byReceptionTimeStamp(),m_maxRecent))
+    if(!m_service->queryMessages(QMessageFilter(),QMessageOrdering::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent))
         m_state = LoadFailed;
     else
         m_state = Loading;
@@ -494,11 +489,9 @@ void RecentMessagesWidget::load()
 
 void RecentMessagesWidget::processResults()
 {
-    m_messageListWidget->clear();
-    m_indexMap.clear();
-
-    foreach(const QMessageId& id, m_ids)
+    if(!m_ids.isEmpty())
     {
+        QMessageId id = m_ids.takeFirst();
         QMessage message(id);
 
         QListWidgetItem* newItem = new QListWidgetItem(message.subject());
@@ -509,8 +502,14 @@ void RecentMessagesWidget::processResults()
         newItem->setFont(itemFont);
         m_messageListWidget->addItem(newItem);
         m_indexMap.insert(id,newItem);
+        m_messageListWidget->update();
+        QTimer::singleShot(100,this,SLOT(processResults()));
     }
-
+    else
+    {
+        m_state = Done;
+        updateState();
+    }
 }
 
 class ComposeSendWidget : public QWidget
@@ -819,14 +818,16 @@ void MessageViewWidget::view(const QMessageId& messageId)
 
 bool MessageViewWidget::retrieveBody()
 {
-
     if(m_state != Loading && !m_loadTimer.isActive())
     {
         m_loadTimer.setSingleShot(true);
         m_loadTimer.start(LoadTimeLimit * 1000);
         m_state = Unloaded;
+
+        return m_service->retrieveBody(m_messageId);
     }
-    return m_service->retrieveBody(m_messageId);
+
+    return false;
 }
 
 void MessageViewWidget::showEvent(QShowEvent* e)

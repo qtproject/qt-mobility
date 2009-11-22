@@ -58,6 +58,7 @@ public:
 #else
 protected:
 #endif
+    void transformToTextFieldL(const QContactDetail &detail, QList<CContactItemField *> &fieldList, const QString &detailValue, const TUid uid, const TUid vcardMapping, const bool setContext);
 	void setContexts(const TUid &fieldType, QContactDetail &detail);
 	void setContextsL(const QContactDetail &detail, CContactItemField &field);
 

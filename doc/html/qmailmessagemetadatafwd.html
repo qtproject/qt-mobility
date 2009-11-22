@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qmailmessagefwd.cpp -->
+<head>
+  <title>Qt Mobility 1.0: QMailMessageMetaDataFwd Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMailMessageMetaDataFwd Class Reference</h1>
+<p>The QMailMessageMetaDataFwd class declares enumerations used by <a href="qmailmessagemetadata.html">QMailMessageMetaData</a> <a href="#details">More...</a></p>
+<pre>    #include &lt;QMailMessageMetaDataFwd&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p>Inherited by <a href="qmailmessagemetadata.html">QMailMessageMetaData</a>.</p>
+<ul>
+<li><a href="qmailmessagemetadatafwd-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmailmessagemetadatafwd.html#ContentType-enum">ContentType</a></b> { UnknownContent, NoContent, PlainTextContent, RichTextContent, ..., UserContent }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmailmessagemetadatafwd.html#MessageType-enum">MessageType</a></b> { Mms, Sms, Email, Instant, ..., AnyType }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmailmessagemetadatafwd.html#ResponseType-enum">ResponseType</a></b> { NoResponse, Reply, ReplyToAll, Forward, ForwardPart, Redirect }</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QMailMessageMetaDataFwd class declares enumerations used by <a href="qmailmessagemetadata.html">QMailMessageMetaData</a></p>
+<p>QMailMessageMetaDataFwd allows <a href="qmailmessagemetadatafwd.html#MessageType-enum">QMailMessageMetaData::MessageType</a>, <a href="qmailmessagemetadatafwd.html#ContentType-enum">QMailMessageMetaData::ContentType</a> and <a href="qmailmessagemetadatafwd.html#ResponseType-enum">QMailMessageMetaData::ResponseType</a> to be used without including all of <tt>qmailmessage.h</tt>.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<h3 class="fn"><a name="ContentType-enum"></a>enum QMailMessageMetaDataFwd::ContentType</h3>
+<p>This enum type is used to describe the type of data contained within a message.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::UnknownContent</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The content of the message has not been specified.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::NoContent</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The message does not contain content and is completely described by its meta data.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::PlainTextContent</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Plain text content.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::RichTextContent</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Text content described via <a href="http://qt.nokia.com/doc/4.5/qtextbrowser.html">QTextBrowser</a> rich text markup.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::HtmlContent</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">Content marked up via HyperText Markup Language.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::ImageContent</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">Image content.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::AudioContent</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">Audio content.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::VideoContent</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">Video content.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::MultipartContent</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">Content consisting of multiple individual parts related according to RFC 2046.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::SmilContent</tt></td><td align="center" valign="top"><tt>9</tt></td><td valign="top">Dynamic content described via Synchronized Multimedia Integration Language.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::VoicemailContent</tt></td><td align="center" valign="top"><tt>10</tt></td><td valign="top">Content that should be presented as a recorded audio message from a contact.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::VideomailContent</tt></td><td align="center" valign="top"><tt>11</tt></td><td valign="top">Content that should be presented as a recorded video message from a contact.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::VCardContent</tt></td><td align="center" valign="top"><tt>12</tt></td><td valign="top">A contact description, as defined by RFC 2425.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::VCalendarContent</tt></td><td align="center" valign="top"><tt>13</tt></td><td valign="top">A scheduling element description as defined by the vCalendar 1.0 specification.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::ICalendarContent</tt></td><td align="center" valign="top"><tt>14</tt></td><td valign="top">A scheduling element description as defined by RFC 2445.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::DeliveryReportContent</tt></td><td align="center" valign="top"><tt>15</tt></td><td valign="top">A message delivery report.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::UserContent</tt></td><td align="center" valign="top"><tt>64</tt></td><td valign="top">The first value that can be used for application-specific purposes.</td></tr>
+</table></p>
+<h3 class="fn"><a name="MessageType-enum"></a>enum QMailMessageMetaDataFwd::MessageType</h3>
+<p>This enum type is used to describe the type of a message.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::Mms</tt></td><td align="center" valign="top"><tt>0x1</tt></td><td valign="top">The message is an MMS.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::Sms</tt></td><td align="center" valign="top"><tt>0x4</tt></td><td valign="top">The message is an SMS.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::Email</tt></td><td align="center" valign="top"><tt>0x8</tt></td><td valign="top">The message is an Email.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::Instant</tt></td><td align="center" valign="top"><tt>0x20</tt></td><td valign="top">The message is an instant message.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::System</tt></td><td align="center" valign="top"><tt>0x10</tt></td><td valign="top">The message is a system report.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::None</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Indicates no message type.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::AnyType</tt></td><td align="center" valign="top"><tt>Mms | Sms | Email | System | Instant</tt></td><td valign="top">Indicates any type of message.</td></tr>
+</table></p>
+<h3 class="fn"><a name="ResponseType-enum"></a>enum QMailMessageMetaDataFwd::ResponseType</h3>
+<p>This enum type is used to describe the type of response that a message is created as.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::NoResponse</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The message was not created as a response to another message.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::Reply</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The message was created as a reply to the sender of another message.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::ReplyToAll</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The message was created in reply to all recipients another message.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::Forward</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The message was created to forward the content of another message.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::ForwardPart</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The message was created to forward part of the content of another message.</td></tr>
+<tr><td valign="top"><tt>QMailMessageMetaDataFwd::Redirect</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The message was created to redirect another message to a different address.</td></tr>
+</table></p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+</tr></table></div></address></body>
+</html>

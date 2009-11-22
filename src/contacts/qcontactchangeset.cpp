@@ -174,6 +174,7 @@ void QContactChangeSet::clear()
     d->m_removedContacts.clear();
     d->m_addedRelationships.clear();
     d->m_removedRelationships.clear();
+    d->m_oldAndNewSelfContactId = QPair<QContactLocalId, QContactLocalId>();
 }
 
 /*!

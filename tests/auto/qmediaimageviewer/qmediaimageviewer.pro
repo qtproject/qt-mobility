@@ -6,11 +6,10 @@ include (../../../common.pri)
 
 SOURCES += tst_qmediaimageviewer.cpp
 
-QT += network
+QT += network multimedia
 qtAddLibrary(QtMedia)
 
 !contains(QT_CONFIG, no-jpeg):DEFINES += QTEST_HAVE_JPEG
-
 
 wince*|symbian {
     addFiles.sources = images/*
@@ -20,6 +19,7 @@ wince*|symbian {
 
 wince* {
     DEFINES += TESTDATA_DIR=\\\"./tst_qmediaimageviewer_images\\\"
+    !contains(QT_CONFIG, no-jpeg): DEPLOYMENT_PLUGIN += qjpeg
 } else: !symbian {
     DEFINES += TESTDATA_DIR=\\\"$$PWD/images\\\"
 }

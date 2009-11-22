@@ -43,7 +43,7 @@
 
 #include <QCoreApplication>
 #include "qtcontacts.h"
-#include "qcontactmanager_p.h" //QContactManagerDataHolder
+#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -333,8 +333,34 @@ void tst_QContactAsync::contactFetch()
             }
         }
 
-        // ensure that the contact is the same
-        QVERIFY(contacts.at(i) == currRestricted);
+        // now find the contact in the retrieved list which our restricted contact mimics
+        QContact retrievedRestricted;
+        bool found = false;
+        foreach (const QContact& retrieved, contacts) {
+            if (retrieved.id() == currRestricted.id()) {
+                retrievedRestricted = retrieved;
+                found = true;
+            }
+        }
+
+        QVERIFY(found); // must exist or fail.
+
+        // ensure that the contact is the same (except synth fields)
+        QList<QContactDetail> fdets = retrievedRestricted.details();
+        QList<QContactDetail> rdets = currRestricted.details();
+        foreach (const QContactDetail& det, fdets) {
+            // ignore backend synthesised details
+            // again, this requires a "default contact details" function to work properly.
+            if (det.definitionName() == QContactDisplayLabel::DefinitionName
+                || det.definitionName() == QContactTimestamp::DefinitionName) {
+                continue;
+            }
+
+            // everything else must exist in both.
+            if(!rdets.contains(det)) {
+                qWarning("A detail exists in retrieved contact which doesn't exist in restricted contact!  This could be due to backend synthesization, or represent a bug!  (Definition name: %s)", det.definitionName().toAscii().constData());
+            }
+        }
     }
 
     // cancelling

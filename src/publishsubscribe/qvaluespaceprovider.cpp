@@ -53,17 +53,20 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QValueSpaceProvider
 
-    \brief The QValueSpaceProvider class allows applications to add entries to the Value Space.
+    \brief The QValueSpaceProvider class allows applications to publish values in the Value Space.
 
     \ingroup publishsubscribe
 
-    For an overview of the Qt Value Space, please see the QValueSpaceSubscriber documentation.
+    When multiple Value Space layers are available QValueSpaceProvider only publishes values to the
+    layer with the highest order.  The layers that QValueSpaceProvider can access can be limited by
+    specifying either a \l {QValueSpace::LayerOption}{filter} or a QUuid at construction time.
 
-    The QValueSpaceProvider class allows applications to write entries into the
-    Value Space that are automatically removed when the QValueSpaceProvider is
-    destroyed, or the application exits either cleanly or abnormally.  All
-    applications in the system will have access to the data set through
-    QValueSpaceProvider and, if desired, can be notified when the data changes.
+    The lifetime of values published in the Value Space is specified by the particular Value Space
+    layer that the value is published in.  For details on the different behaviors see
+    QValueSpace::LayerOption.
+
+    Once a value is published all applications in the system will have read access to it via the
+    QValueSpaceSubscriber class.
 
     Although, logically, the Value Space is a simple collection of
     hierarchical paths, these paths can conceptually be visualized as a set of
@@ -91,38 +94,13 @@ QT_BEGIN_NAMESPACE
     BytesReceived, Time} }.  The QValueSpaceProvider class encapsulates this
     abstraction.
 
-    In the case of two or more applications creating an application object with
-    overlapping attributes, only the first is visible to observers in the system.
-    The other attributes are not discarded, but are buffered until the first
-    releases its hold on the attribute, either by manually removing it, destroying
-    the QValueSpaceProvider or by terminating.  For example:
-
-    \code
-    QValueSpaceProvider *object1 = new QValueSpaceProvider("/Device");
-    object1->setAttribute("Buttons", 2);
-
-    // QValueSpaceSubscriber("/Device/Buttons").value() == QVariant(2)
-
-    QValueSpaceProvider *object2 = new QValueSpaceProvider("/Device");
-    object2->setAttribute("Buttons", 3);
-
-    // QValueSpaceSubscriber("/Device/Buttons").value() == QVariant(2)
-
-    object2->removeAttribute("Buttons");
-    // QValueSpaceSubscriber("/Device/Buttons").value() == QVariant(3)
-    \endcode
-
     For performance reasons the setting of and removing of attributes is buffered
     internally by the QValueSpaceProvider and applied as a batch sometime later.
     Normally this occurs the next time the application enters the Qt event loop,
     but this behavior should not be relied upon.  If an application must
-    synchronize application objects with others, the QValueSpaceProvider::sync()
-    method can be used to force the application of changes.  This call is
-    generally unnecessary, and should be used sparingly to prevent unnecessary
-    load on the system.
-
-    \i {Note:} The QValueSpaceProvider class is not thread safe and may only be used from
-    an application's main thread.
+    synchronize with others, the QValueSpaceProvider::sync() and QValueSpaceProvider::syncAll()
+    functions can be used to force the application of changes.  This call is generally unnecessary,
+    and should be used sparingly to prevent unnecessary load on the system.
 
     \sa QValueSpaceSubscriber
 */
@@ -159,8 +137,8 @@ QValueSpaceProviderPrivate::QValueSpaceProviderPrivate(const QString &_path,
 
     if ((filter & QValueSpace::PermanentLayer &&
          filter & QValueSpace::NonPermanentLayer) ||
-        (filter & QValueSpace::WriteableLayer &&
-         filter & QValueSpace::NonWriteableLayer)) {
+        (filter & QValueSpace::WritableLayer &&
+         filter & QValueSpace::NonWritableLayer)) {
         return;
     }
 
@@ -198,11 +176,8 @@ QValueSpaceProviderPrivate::QValueSpaceProviderPrivate(const QString &_path, con
 }
 
 /*!
-    \overload
-
     Constructs a QValueSpaceProvider with the specified \a parent that publishes values under
-    \a path.  This constructor is equivalent to calling
-    \c {QValueSpaceSubscriber(path.toUtf8(), parent)}.
+    \a path.
 */
 QValueSpaceProvider::QValueSpaceProvider(const QString &path, QObject *parent)
 :   QObject(parent), d(new QValueSpaceProviderPrivate(path))
@@ -215,7 +190,7 @@ QValueSpaceProvider::QValueSpaceProvider(const QString &path, QObject *parent)
 
     Constructs a QValueSpaceProvider with the specified \a parent that publishes values under
     \a path.  This constructor is equivalent to calling
-    \c {QValueSpaceSubscriber(QString(path), parent)}.
+    \c {QValueSpaceSubscriber(QString::fromLatin1(path), parent)}.
 */
 QValueSpaceProvider::QValueSpaceProvider(const char *path, QObject *parent)
 :   QObject(parent), d(new QValueSpaceProviderPrivate(QString::fromLatin1(path)))
@@ -224,14 +199,11 @@ QValueSpaceProvider::QValueSpaceProvider(const char *path, QObject *parent)
 }
 
 /*!
-    \overload
-
     Constructs a QValueSpaceProvider with the specified \a parent that publishes values under
     \a path.  The \a filter parameter is used to limit which layer this QValueSpaceProvider will
-    access.  This constructor is equivalent to calling
-    \c {QValueSpaceProvider(path.toUtf8(), filter, parent)}.
+    access.
 
-    The constructed Value Space provier will access the \l {QAbstractValueSpaceLayer}{layer} with
+    The constructed Value Space provider will access the \l {QAbstractValueSpaceLayer}{layer} with
     the highest \l {QAbstractValueSpaceLayer::order()}{order} that matches \a filter and for which
     \a path is a valid path.
 
@@ -274,11 +246,8 @@ QValueSpaceProvider::QValueSpaceProvider(const char *path,
 }
 
 /*!
-    \overload
-
     Constructs a QValueSpaceProvider with the specified \a parent that publishes values under
-    \a path.  Only the layer identified by \a uuid will be accessed by this provider.  This
-    constructor is equivalent to calling \c {QValueSpaceProvider(path.toUtf8(), uuid, parent)}.
+    \a path.  Only the layer identified by \a uuid will be accessed by this provider.
 
     Use of this constructor is not platform agnostic.  If possible use one of the constructors that
     take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
@@ -300,7 +269,8 @@ QValueSpaceProvider::QValueSpaceProvider(const QString &path, const QUuid &uuid,
 
     Constructs a QValueSpaceProvider with the specified \a parent that publishes values under
     \a path.  Only the layer identified by \a uuid will be accessed by this provider.  This
-    constructor is equivalent to calling \c {QValueSpaceProvider(QString(path), uuid, parent)}.
+    constructor is equivalent to calling
+    \c {QValueSpaceProvider(QString::fromLatin1(path), uuid, parent)}.
 
     Use of this constructor is not platform agnostic.  If possible use one of the constructors that
     take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
@@ -317,7 +287,7 @@ QValueSpaceProvider::QValueSpaceProvider(const char *path, const QUuid &uuid, QO
 }
 
 /*!
-    Destroys the QValueSpaceProvider.  This will remove the values set by this provider in all
+    Destroys the QValueSpaceProvider.  This will remove all values published by this provider in
     \l {QValueSpace::NonPermanentLayer}{non-permanent} layers.
 */
 QValueSpaceProvider::~QValueSpaceProvider()
@@ -353,6 +323,15 @@ bool QValueSpaceProvider::isConnected() const
 
 /*!
     Forcibly sync all Value Space providers using the same layer as this provider.
+
+    For performance reasons attribute changes are batched internally by QValueSpaceProvider
+    instances.  In cases where the visibility of changes must be synchronized with other processes,
+    calling this function will flush these batches.  By the time this function returns, all other
+    processes in the system will be able to see the attribute changes.
+
+    Generally, calling this function is unnecessary.
+
+    \sa syncAll()
 */
 void QValueSpaceProvider::sync()
 {
@@ -365,13 +344,9 @@ void QValueSpaceProvider::sync()
 /*!
     Forcibly sync all Value Space providers.
 
-    For performance reasons attribute changes are batched internally by
-    QValueSpaceProvider instances.  In cases where the visibility of changes must
-    be synchronized with other processes, calling QValueSpaceProvider::sync() will
-    flush these batches.  By the time syncAll() returns, all other processes in the
-    system will be able to see the attribute changes.
+    This function is equivalent to calling sync() for all Value Space layers.
 
-    In the common asynchronous case, calling syncAll() is unnecessary.
+    Generally, calling this function is unnecessary.
 */
 void QValueSpaceProvider::syncAll()
 {
@@ -380,7 +355,7 @@ void QValueSpaceProvider::syncAll()
 }
 
 /*!
-    Set an \a attribute on the provider to \a data.  If attribute is empty, this call will set the
+    Set \a attribute on the provider to \a data.  If attribute is empty, this call will set the
     value of this providers path.
 
     For example:
@@ -408,7 +383,7 @@ void QValueSpaceProvider::setAttribute(const QString &attribute, const QVariant 
     \overload
 
     This is a convenience overload and is equivalent to
-    \c {setAttribute(QString(attribute), data)}.
+    \c {setAttribute(QString::fromLatin1(attribute), data)}.
 */
 void QValueSpaceProvider::setAttribute(const char *attribute, const QVariant &data)
 {
@@ -416,7 +391,7 @@ void QValueSpaceProvider::setAttribute(const char *attribute, const QVariant &da
 }
 
 /*!
-    Removes the proivder \a attribute and all sub-attributes from the system.
+    Removes the provider \a attribute and all sub-attributes from the system.
 
     For example:
     \code
@@ -446,7 +421,8 @@ void QValueSpaceProvider::removeAttribute(const QString &attribute)
 /*!
     \overload
 
-    This is a convenience overload and is equivalent to \c {removeAttribute(QString(attribute))}.
+    This is a convenience overload and is equivalent to
+    \c {removeAttribute(QString::fromLatin1(attribute))}.
 */
 void QValueSpaceProvider::removeAttribute(const char *attribute)
 {

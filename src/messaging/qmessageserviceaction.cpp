@@ -77,9 +77,9 @@
     that instance delivers.
 
     Except where noted QMessageServiceActions may initiate network activity. Other functions in
-    the mobility messaging API will not initiate network activity, with the exception of MAPI
-    based platforms which may initiate network activity during the evaluation of any function
-    call.
+    the mobility messaging API will not initiate network activity, with the exception of Windows
+    mobile and desktop platforms which may initiate network activity during the evaluation of any 
+    function call.
 */
 
 /*!
@@ -204,6 +204,9 @@
   
     Returns true if the action can be initiated; otherwise returns false.
     
+    On the QMF platform implementation of this function is left as a task for system 
+    integrators.
+    
     \sa QMessage::type()
 */
 
@@ -236,9 +239,9 @@
 */
 
 /*!
-    \fn QMessageServiceAction::retrieve(const QMessageContentContainerId& id)
+    \fn QMessageServiceAction::retrieve(const QMessageId &messageId, const QMessageContentContainerId& id)
   
-    Retrieve the container identified by \a id, the contents of the container should also be 
+    Retrieve the container identified by \a messageId and \a id, the contents of the container should also be 
     retrieved.
     
     Returns true if the action can be initiated; otherwise returns false.
@@ -255,16 +258,20 @@
 
     Returns true if the action can be initiated; otherwise returns false.
     
+    On the QMF platform implementation of this function is left as a task for system 
+    integrators.
+    
     \sa QMessageId, QMessage::type()
 */
     
 /*!
     \fn QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
   
-    Iniate synchronization with external servers of local changes that have been queued by message store operations.
+    Iniate synchronization with external servers of local changes that have been queued by message store operations, 
+    for messages with parent account \a id.
 
-    On MAPI platforms this function performs no operation, as when a connection is available, local changes are 
-    opportunistically synchronized with external servers.
+    On Windows mobile and desktop platforms this function performs no operation, as when a connection is available, 
+    local changes are opportunistically synchronized with external servers.
 
     Returns true if the action can be initiated; otherwise returns false.
     

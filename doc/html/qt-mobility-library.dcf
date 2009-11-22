@@ -1,11 +1,13 @@
 <!DOCTYPE DCF>
 <DCF ref="index.html" icon="qt-mobility-library.png" imagedir="../../gif" title="Qt Mobility Library Reference Documentation">
 <section ref="classes.html" title="Classes">
-    <section ref="qcontactdetaildefinition-field.html" title="Field Class Reference">
-        <keyword ref="qcontactdetaildefinition-field.html">Field</keyword>
-        <keyword ref="qcontactdetaildefinition-field.html#operator-not-eq">operator!=</keyword>
-        <keyword ref="qcontactdetaildefinition-field.html#operator-eq-eq">operator==</keyword>
-        <section ref="qcontactdetaildefinition-field-members.html" title="List of all members"/>
+    <section ref="qmailmessagepart-location.html" title="Location Class Reference">
+        <keyword ref="qmailmessagepart-location.html">Location</keyword>
+        <keyword ref="qmailmessagepart-location.html#containingMessageId">containingMessageId</keyword>
+        <keyword ref="qmailmessagepart-location.html#isValid">isValid</keyword>
+        <keyword ref="qmailmessagepart-location.html#setContainingMessageId">setContainingMessageId</keyword>
+        <keyword ref="qmailmessagepart-location.html#toString">toString</keyword>
+        <section ref="qmailmessagepart-location-members.html" title="List of all members"/>
     </section>
     <section ref="qabstractsecuritysession.html" title="QAbstractSecuritySession Class Reference">
         <keyword ref="qabstractsecuritysession.html">QAbstractSecuritySession</keyword>
@@ -182,6 +184,7 @@
         <keyword ref="qcamera.html#MeteringMode-enum">QCamera::MeteringAverage</keyword>
         <keyword ref="qcamera.html#MeteringMode-enum">QCamera::MeteringMatrix</keyword>
         <keyword ref="qcamera.html#State-enum">State</keyword>
+        <keyword ref="qcamera.html#State-enum">QCamera::SuspendedState</keyword>
         <keyword ref="qcamera.html#State-enum">QCamera::ActiveState</keyword>
         <keyword ref="qcamera.html#State-enum">QCamera::StoppedState</keyword>
         <keyword ref="qcamera.html#WhiteBalanceMode-enum">WhiteBalanceMode</keyword>
@@ -368,7 +371,6 @@
         <keyword ref="qcontact.html#relationships">relationships</keyword>
         <keyword ref="qcontact.html#removeDetail">removeDetail</keyword>
         <keyword ref="qcontact.html#saveDetail">saveDetail</keyword>
-        <keyword ref="qcontact.html#setDisplayLabel">setDisplayLabel</keyword>
         <keyword ref="qcontact.html#setId">setId</keyword>
         <keyword ref="qcontact.html#setPreferredDetail">setPreferredDetail</keyword>
         <keyword ref="qcontact.html#setRelationshipOrder">setRelationshipOrder</keyword>
@@ -563,6 +565,7 @@
         <keyword ref="qcontactchangeset.html#clear">clear</keyword>
         <keyword ref="qcontactchangeset.html#dataChanged">dataChanged</keyword>
         <keyword ref="qcontactchangeset.html#emitSignals">emitSignals</keyword>
+        <keyword ref="qcontactchangeset.html#oldAndNewSelfContactId">oldAndNewSelfContactId</keyword>
         <keyword ref="qcontactchangeset.html#removedContacts">removedContacts</keyword>
         <keyword ref="qcontactchangeset.html#removedRelationshipsContacts">removedRelationshipsContacts</keyword>
         <keyword ref="qcontactchangeset.html#setDataChanged">setDataChanged</keyword>
@@ -612,23 +615,45 @@
     </section>
     <section ref="qcontactdetaildefinitionfetchrequest.html" title="QContactDetailDefinitionFetchRequest Class Reference">
         <keyword ref="qcontactdetaildefinitionfetchrequest.html">QContactDetailDefinitionFetchRequest</keyword>
+        <keyword ref="qcontactdetaildefinitionfetchrequest.html#contactType">contactType</keyword>
         <keyword ref="qcontactdetaildefinitionfetchrequest.html#definitions">definitions</keyword>
         <keyword ref="qcontactdetaildefinitionfetchrequest.html#names">names</keyword>
         <keyword ref="qcontactdetaildefinitionfetchrequest.html#progress">progress</keyword>
+        <keyword ref="qcontactdetaildefinitionfetchrequest.html#setContactType">setContactType</keyword>
         <keyword ref="qcontactdetaildefinitionfetchrequest.html#setNames">setNames</keyword>
         <section ref="qcontactdetaildefinitionfetchrequest-members.html" title="List of all members"/>
     </section>
+    <section ref="qcontactdetaildefinitionfield.html" title="QContactDetailDefinitionField Class Reference">
+        <keyword ref="qcontactdetaildefinitionfield.html">QContactDetailDefinitionField</keyword>
+        <keyword ref="qcontactdetaildefinitionfield.html#AccessConstraint-enum">AccessConstraint</keyword>
+        <keyword ref="qcontactdetaildefinitionfield.html#AccessConstraint-enum">QContactDetailDefinitionField::NoConstraint</keyword>
+        <keyword ref="qcontactdetaildefinitionfield.html#AccessConstraint-enum">QContactDetailDefinitionField::ReadOnly</keyword>
+        <keyword ref="qcontactdetaildefinitionfield.html#accessConstraint">accessConstraint</keyword>
+        <keyword ref="qcontactdetaildefinitionfield.html#allowableValues">allowableValues</keyword>
+        <keyword ref="qcontactdetaildefinitionfield.html#dataType">dataType</keyword>
+        <keyword ref="qcontactdetaildefinitionfield.html#setAccessConstraint">setAccessConstraint</keyword>
+        <keyword ref="qcontactdetaildefinitionfield.html#setAllowableValues">setAllowableValues</keyword>
+        <keyword ref="qcontactdetaildefinitionfield.html#setDataType">setDataType</keyword>
+        <keyword ref="qcontactdetaildefinitionfield.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qcontactdetaildefinitionfield.html#operator-eq">operator=</keyword>
+        <keyword ref="qcontactdetaildefinitionfield.html#operator-eq-eq">operator==</keyword>
+        <section ref="qcontactdetaildefinitionfield-members.html" title="List of all members"/>
+    </section>
     <section ref="qcontactdetaildefinitionremoverequest.html" title="QContactDetailDefinitionRemoveRequest Class Reference">
         <keyword ref="qcontactdetaildefinitionremoverequest.html">QContactDetailDefinitionRemoveRequest</keyword>
+        <keyword ref="qcontactdetaildefinitionremoverequest.html#contactType">contactType</keyword>
         <keyword ref="qcontactdetaildefinitionremoverequest.html#names">names</keyword>
         <keyword ref="qcontactdetaildefinitionremoverequest.html#progress">progress</keyword>
+        <keyword ref="qcontactdetaildefinitionremoverequest.html#setContactType">setContactType</keyword>
         <keyword ref="qcontactdetaildefinitionremoverequest.html#setNames">setNames</keyword>
         <section ref="qcontactdetaildefinitionremoverequest-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactdetaildefinitionsaverequest.html" title="QContactDetailDefinitionSaveRequest Class Reference">
         <keyword ref="qcontactdetaildefinitionsaverequest.html">QContactDetailDefinitionSaveRequest</keyword>
+        <keyword ref="qcontactdetaildefinitionsaverequest.html#contactType">contactType</keyword>
         <keyword ref="qcontactdetaildefinitionsaverequest.html#definitions">definitions</keyword>
         <keyword ref="qcontactdetaildefinitionsaverequest.html#progress">progress</keyword>
+        <keyword ref="qcontactdetaildefinitionsaverequest.html#setContactType">setContactType</keyword>
         <keyword ref="qcontactdetaildefinitionsaverequest.html#setDefinitions">setDefinitions</keyword>
         <section ref="qcontactdetaildefinitionsaverequest-members.html" title="List of all members"/>
     </section>
@@ -664,13 +689,9 @@
     </section>
     <section ref="qcontactdisplaylabel.html" title="QContactDisplayLabel Class Reference">
         <keyword ref="qcontactdisplaylabel.html">QContactDisplayLabel</keyword>
-        <keyword ref="qcontactdisplaylabel.html#isSynthesised">isSynthesised</keyword>
         <keyword ref="qcontactdisplaylabel.html#label">label</keyword>
-        <keyword ref="qcontactdisplaylabel.html#setLabel">setLabel</keyword>
-        <keyword ref="qcontactdisplaylabel.html#setSynthesised">setSynthesised</keyword>
         <keyword ref="qcontactdisplaylabel.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactdisplaylabel.html#FieldLabel-var">FieldLabel</keyword>
-        <keyword ref="qcontactdisplaylabel.html#FieldSynthesised-var">FieldSynthesised</keyword>
         <section ref="qcontactdisplaylabel-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactemailaddress.html" title="QContactEmailAddress Class Reference">
@@ -680,6 +701,17 @@
         <keyword ref="qcontactemailaddress.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactemailaddress.html#FieldEmailAddress-var">FieldEmailAddress</keyword>
         <section ref="qcontactemailaddress-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactfamily.html" title="QContactFamily Class Reference">
+        <keyword ref="qcontactfamily.html">QContactFamily</keyword>
+        <keyword ref="qcontactfamily.html#children">children</keyword>
+        <keyword ref="qcontactfamily.html#setChildren">setChildren</keyword>
+        <keyword ref="qcontactfamily.html#setSpouse">setSpouse</keyword>
+        <keyword ref="qcontactfamily.html#spouse">spouse</keyword>
+        <keyword ref="qcontactfamily.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactfamily.html#FieldChildren-var">FieldChildren</keyword>
+        <keyword ref="qcontactfamily.html#FieldSpouse-var">FieldSpouse</keyword>
+        <section ref="qcontactfamily-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactfetchrequest.html" title="QContactFetchRequest Class Reference">
         <keyword ref="qcontactfetchrequest.html">QContactFetchRequest</keyword>
@@ -706,6 +738,15 @@
         <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::IntersectionFilter</keyword>
         <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::ContactDetailFilter</keyword>
         <keyword ref="qcontactfilter.html#FilterType-enum">QContactFilter::ContactDetailRangeFilter</keyword>
+        <keyword ref="qcontactfilter.html#MatchFlag-enum">MatchFlag</keyword>
+        <keyword ref="qcontactfilter.html#MatchFlag-enum">MatchFlags</keyword>
+        <keyword ref="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchStartsWith</keyword>
+        <keyword ref="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchEndsWith</keyword>
+        <keyword ref="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchFixedString</keyword>
+        <keyword ref="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchContains</keyword>
+        <keyword ref="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchExactly</keyword>
+        <keyword ref="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchCaseSensitive</keyword>
+        <keyword ref="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchPhoneNumber</keyword>
         <keyword ref="qcontactfilter.html#type">type</keyword>
         <keyword ref="qcontactfilter.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qcontactfilter.html#operator-eq">operator=</keyword>
@@ -788,7 +829,7 @@
         <keyword ref="qcontactinvalidengine.html">QContactInvalidEngine</keyword>
         <keyword ref="qcontactinvalidengine.html#deref">deref</keyword>
         <keyword ref="qcontactinvalidengine.html#managerName">managerName</keyword>
-        <keyword ref="qcontactinvalidengine.html#synthesiseDisplayLabel">synthesiseDisplayLabel</keyword>
+        <keyword ref="qcontactinvalidengine.html#synthesizeDisplayLabel">synthesizeDisplayLabel</keyword>
         <section ref="qcontactinvalidengine-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactinvalidfilter.html" title="QContactInvalidFilter Class Reference">
@@ -813,9 +854,21 @@
         <keyword ref="qcontactmanager.html#Error-enum">QContactManager::InvalidRelationshipError</keyword>
         <keyword ref="qcontactmanager.html#Error-enum">QContactManager::BadArgumentError</keyword>
         <keyword ref="qcontactmanager.html#Error-enum">QContactManager::PermissionsError</keyword>
+        <keyword ref="qcontactmanager.html#Error-enum">QContactManager::VersionMismatchError</keyword>
         <keyword ref="qcontactmanager.html#Error-enum">QContactManager::LockedError</keyword>
         <keyword ref="qcontactmanager.html#Error-enum">QContactManager::DetailAccessError</keyword>
+        <keyword ref="qcontactmanager.html#Error-enum">QContactManager::InvalidContactTypeError</keyword>
         <keyword ref="qcontactmanager.html#Error-enum">QContactManager::NotSupportedError</keyword>
+        <keyword ref="qcontactmanager.html#Error-enum">QContactManager::LimitReachedError</keyword>
+        <keyword ref="qcontactmanager.html#ManagerFeature-enum">ManagerFeature</keyword>
+        <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::Groups</keyword>
+        <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::ActionPreferences</keyword>
+        <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::ArbitraryRelationshipTypes</keyword>
+        <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::SelfContact</keyword>
+        <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::Relationships</keyword>
+        <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::Anonymous</keyword>
+        <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::ChangeLogs</keyword>
+        <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::MutableDefinitions</keyword>
         <keyword ref="qcontactmanager.html#availableManagers">availableManagers</keyword>
         <keyword ref="qcontactmanager.html#buildUri">buildUri</keyword>
         <keyword ref="qcontactmanager.html#contact">contact</keyword>
@@ -827,8 +880,10 @@
         <keyword ref="qcontactmanager.html#detailDefinition">detailDefinition</keyword>
         <keyword ref="qcontactmanager.html#detailDefinitions">detailDefinitions</keyword>
         <keyword ref="qcontactmanager.html#error">error</keyword>
+        <keyword ref="qcontactmanager.html#filterSupported">filterSupported</keyword>
         <keyword ref="qcontactmanager.html#fromUri">fromUri</keyword>
-        <keyword ref="qcontactmanager.html#information">information</keyword>
+        <keyword ref="qcontactmanager.html#hasFeature">hasFeature</keyword>
+        <keyword ref="qcontactmanager.html#implementationVersion">implementationVersion</keyword>
         <keyword ref="qcontactmanager.html#managerName">managerName</keyword>
         <keyword ref="qcontactmanager.html#managerParameters">managerParameters</keyword>
         <keyword ref="qcontactmanager.html#managerUri">managerUri</keyword>
@@ -846,9 +901,14 @@
         <keyword ref="qcontactmanager.html#saveRelationship">saveRelationship</keyword>
         <keyword ref="qcontactmanager.html#saveRelationships">saveRelationships</keyword>
         <keyword ref="qcontactmanager.html#selfContactId">selfContactId</keyword>
+        <keyword ref="qcontactmanager.html#selfContactIdChanged">selfContactIdChanged</keyword>
         <keyword ref="qcontactmanager.html#setSelfContactId">setSelfContactId</keyword>
         <keyword ref="qcontactmanager.html#splitUri">splitUri</keyword>
-        <keyword ref="qcontactmanager.html#synthesiseDisplayLabel">synthesiseDisplayLabel</keyword>
+        <keyword ref="qcontactmanager.html#supportedContactTypes">supportedContactTypes</keyword>
+        <keyword ref="qcontactmanager.html#supportedDataTypes">supportedDataTypes</keyword>
+        <keyword ref="qcontactmanager.html#supportedRelationshipTypes">supportedRelationshipTypes</keyword>
+        <keyword ref="qcontactmanager.html#synthesizeDisplayLabel">synthesizeDisplayLabel</keyword>
+        <keyword ref="qcontactmanager.html#version">version</keyword>
         <section ref="qcontactmanager-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactmanagerengine.html" title="QContactManagerEngine Class Reference">
@@ -868,6 +928,7 @@
         <keyword ref="qcontactmanagerengine.html#detailDefinitions">detailDefinitions</keyword>
         <keyword ref="qcontactmanagerengine.html#filterSupported">filterSupported</keyword>
         <keyword ref="qcontactmanagerengine.html#hasFeature">hasFeature</keyword>
+        <keyword ref="qcontactmanagerengine.html#implementationVersion">implementationVersion</keyword>
         <keyword ref="qcontactmanagerengine.html#managerName">managerName</keyword>
         <keyword ref="qcontactmanagerengine.html#managerParameters">managerParameters</keyword>
         <keyword ref="qcontactmanagerengine.html#managerUri">managerUri</keyword>
@@ -887,19 +948,23 @@
         <keyword ref="qcontactmanagerengine.html#saveRelationships">saveRelationships</keyword>
         <keyword ref="qcontactmanagerengine.html#schemaDefinitions">schemaDefinitions</keyword>
         <keyword ref="qcontactmanagerengine.html#selfContactId">selfContactId</keyword>
+        <keyword ref="qcontactmanagerengine.html#selfContactIdChanged">selfContactIdChanged</keyword>
+        <keyword ref="qcontactmanagerengine.html#setContactDisplayLabel">setContactDisplayLabel</keyword>
         <keyword ref="qcontactmanagerengine.html#setContactRelationships">setContactRelationships</keyword>
         <keyword ref="qcontactmanagerengine.html#setSelfContactId">setSelfContactId</keyword>
         <keyword ref="qcontactmanagerengine.html#sortContacts">sortContacts</keyword>
         <keyword ref="qcontactmanagerengine.html#startRequest">startRequest</keyword>
+        <keyword ref="qcontactmanagerengine.html#supportedContactTypes">supportedContactTypes</keyword>
         <keyword ref="qcontactmanagerengine.html#supportedDataTypes">supportedDataTypes</keyword>
         <keyword ref="qcontactmanagerengine.html#supportedRelationshipTypes">supportedRelationshipTypes</keyword>
-        <keyword ref="qcontactmanagerengine.html#synthesiseDisplayLabel">synthesiseDisplayLabel</keyword>
+        <keyword ref="qcontactmanagerengine.html#synthesizeDisplayLabel">synthesizeDisplayLabel</keyword>
         <keyword ref="qcontactmanagerengine.html#testFilter">testFilter</keyword>
         <keyword ref="qcontactmanagerengine.html#updateRequest">updateRequest</keyword>
         <keyword ref="qcontactmanagerengine.html#updateRequestStatus">updateRequestStatus</keyword>
         <keyword ref="qcontactmanagerengine.html#validateActionFilter">validateActionFilter</keyword>
         <keyword ref="qcontactmanagerengine.html#validateContact">validateContact</keyword>
         <keyword ref="qcontactmanagerengine.html#validateDefinition">validateDefinition</keyword>
+        <keyword ref="qcontactmanagerengine.html#version">version</keyword>
         <keyword ref="qcontactmanagerengine.html#waitForRequestFinished">waitForRequestFinished</keyword>
         <keyword ref="qcontactmanagerengine.html#waitForRequestProgress">waitForRequestProgress</keyword>
         <section ref="qcontactmanagerengine-members.html" title="List of all members"/>
@@ -908,6 +973,8 @@
         <keyword ref="qcontactmanagerenginefactory.html">QContactManagerEngineFactory</keyword>
         <keyword ref="qcontactmanagerenginefactory.html#engine">engine</keyword>
         <keyword ref="qcontactmanagerenginefactory.html#managerName">managerName</keyword>
+        <keyword ref="qcontactmanagerenginefactory.html#supportedImplementationVersions">supportedImplementationVersions</keyword>
+        <keyword ref="qcontactmanagerenginefactory.html#version">version</keyword>
         <section ref="qcontactmanagerenginefactory-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactmanagerinfo.html" title="QContactManagerInfo Class Reference">
@@ -921,10 +988,6 @@
         <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Anonymous</keyword>
         <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ChangeLogs</keyword>
         <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::MutableDefinitions</keyword>
-        <keyword ref="qcontactmanagerinfo.html#filterSupported">filterSupported</keyword>
-        <keyword ref="qcontactmanagerinfo.html#hasFeature">hasFeature</keyword>
-        <keyword ref="qcontactmanagerinfo.html#supportedDataTypes">supportedDataTypes</keyword>
-        <keyword ref="qcontactmanagerinfo.html#supportedRelationshipTypes">supportedRelationshipTypes</keyword>
         <section ref="qcontactmanagerinfo-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactmemoryengine.html" title="QContactMemoryEngine Class Reference">
@@ -937,6 +1000,7 @@
         <keyword ref="qcontactmemoryengine.html#detailDefinitions">detailDefinitions</keyword>
         <keyword ref="qcontactmemoryengine.html#filterSupported">filterSupported</keyword>
         <keyword ref="qcontactmemoryengine.html#hasFeature">hasFeature</keyword>
+        <keyword ref="qcontactmemoryengine.html#implementationVersion">implementationVersion</keyword>
         <keyword ref="qcontactmemoryengine.html#managerName">managerName</keyword>
         <keyword ref="qcontactmemoryengine.html#managerParameters">managerParameters</keyword>
         <keyword ref="qcontactmemoryengine.html#relationships">relationships</keyword>
@@ -951,6 +1015,8 @@
         <keyword ref="qcontactmemoryengine.html#saveDetailDefinition">saveDetailDefinition</keyword>
         <keyword ref="qcontactmemoryengine.html#saveRelationship">saveRelationship</keyword>
         <keyword ref="qcontactmemoryengine.html#saveRelationships">saveRelationships</keyword>
+        <keyword ref="qcontactmemoryengine.html#selfContactId">selfContactId</keyword>
+        <keyword ref="qcontactmemoryengine.html#setSelfContactId">setSelfContactId</keyword>
         <keyword ref="qcontactmemoryengine.html#startRequest">startRequest</keyword>
         <keyword ref="qcontactmemoryengine.html#supportedDataTypes">supportedDataTypes</keyword>
         <keyword ref="qcontactmemoryengine.html#waitForRequestFinished">waitForRequestFinished</keyword>
@@ -959,10 +1025,12 @@
     </section>
     <section ref="qcontactname.html" title="QContactName Class Reference">
         <keyword ref="qcontactname.html">QContactName</keyword>
+        <keyword ref="qcontactname.html#customLabel">customLabel</keyword>
         <keyword ref="qcontactname.html#first">first</keyword>
         <keyword ref="qcontactname.html#last">last</keyword>
         <keyword ref="qcontactname.html#middle">middle</keyword>
         <keyword ref="qcontactname.html#prefix">prefix</keyword>
+        <keyword ref="qcontactname.html#setCustomLabel">setCustomLabel</keyword>
         <keyword ref="qcontactname.html#setFirst">setFirst</keyword>
         <keyword ref="qcontactname.html#setLast">setLast</keyword>
         <keyword ref="qcontactname.html#setMiddle">setMiddle</keyword>
@@ -970,6 +1038,7 @@
         <keyword ref="qcontactname.html#setSuffix">setSuffix</keyword>
         <keyword ref="qcontactname.html#suffix">suffix</keyword>
         <keyword ref="qcontactname.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactname.html#FieldCustomLabel-var">FieldCustomLabel</keyword>
         <keyword ref="qcontactname.html#FieldFirst-var">FieldFirst</keyword>
         <keyword ref="qcontactname.html#FieldLast-var">FieldLast</keyword>
         <keyword ref="qcontactname.html#FieldMiddle-var">FieldMiddle</keyword>
@@ -996,17 +1065,35 @@
     <section ref="qcontactonlineaccount.html" title="QContactOnlineAccount Class Reference">
         <keyword ref="qcontactonlineaccount.html">QContactOnlineAccount</keyword>
         <keyword ref="qcontactonlineaccount.html#accountUri">accountUri</keyword>
+        <keyword ref="qcontactonlineaccount.html#nickname">nickname</keyword>
+        <keyword ref="qcontactonlineaccount.html#presence">presence</keyword>
+        <keyword ref="qcontactonlineaccount.html#serviceProvider">serviceProvider</keyword>
         <keyword ref="qcontactonlineaccount.html#setAccountUri">setAccountUri</keyword>
+        <keyword ref="qcontactonlineaccount.html#setNickname">setNickname</keyword>
+        <keyword ref="qcontactonlineaccount.html#setPresence">setPresence</keyword>
+        <keyword ref="qcontactonlineaccount.html#setServiceProvider">setServiceProvider</keyword>
+        <keyword ref="qcontactonlineaccount.html#setStatusMessage">setStatusMessage</keyword>
         <keyword ref="qcontactonlineaccount.html#setSubTypes">setSubTypes</keyword>
+        <keyword ref="qcontactonlineaccount.html#statusMessage">statusMessage</keyword>
         <keyword ref="qcontactonlineaccount.html#subTypes">subTypes</keyword>
         <keyword ref="qcontactonlineaccount.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactonlineaccount.html#FieldAccountUri-var">FieldAccountUri</keyword>
+        <keyword ref="qcontactonlineaccount.html#FieldNickname-var">FieldNickname</keyword>
+        <keyword ref="qcontactonlineaccount.html#FieldPresence-var">FieldPresence</keyword>
+        <keyword ref="qcontactonlineaccount.html#FieldServiceProvider-var">FieldServiceProvider</keyword>
+        <keyword ref="qcontactonlineaccount.html#FieldStatusMessage-var">FieldStatusMessage</keyword>
         <keyword ref="qcontactonlineaccount.html#FieldSubTypes-var">FieldSubTypes</keyword>
-        <keyword ref="qcontactonlineaccount.html#SubTypeH323-var">SubTypeH323</keyword>
-        <keyword ref="qcontactonlineaccount.html#SubTypeInternet-var">SubTypeInternet</keyword>
-        <keyword ref="qcontactonlineaccount.html#SubTypeShareVideo-var">SubTypeShareVideo</keyword>
+        <keyword ref="qcontactonlineaccount.html#PresenceAvailable-var">PresenceAvailable</keyword>
+        <keyword ref="qcontactonlineaccount.html#PresenceAway-var">PresenceAway</keyword>
+        <keyword ref="qcontactonlineaccount.html#PresenceBusy-var">PresenceBusy</keyword>
+        <keyword ref="qcontactonlineaccount.html#PresenceExtendedAway-var">PresenceExtendedAway</keyword>
+        <keyword ref="qcontactonlineaccount.html#PresenceHidden-var">PresenceHidden</keyword>
+        <keyword ref="qcontactonlineaccount.html#PresenceOffline-var">PresenceOffline</keyword>
+        <keyword ref="qcontactonlineaccount.html#PresenceUnknown-var">PresenceUnknown</keyword>
+        <keyword ref="qcontactonlineaccount.html#SubTypeImpp-var">SubTypeImpp</keyword>
         <keyword ref="qcontactonlineaccount.html#SubTypeSip-var">SubTypeSip</keyword>
-        <keyword ref="qcontactonlineaccount.html#SubTypeXmpp-var">SubTypeXmpp</keyword>
+        <keyword ref="qcontactonlineaccount.html#SubTypeSipVoip-var">SubTypeSipVoip</keyword>
+        <keyword ref="qcontactonlineaccount.html#SubTypeVideoShare-var">SubTypeVideoShare</keyword>
         <section ref="qcontactonlineaccount-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactorganization.html" title="QContactOrganization Class Reference">
@@ -1016,11 +1103,13 @@
         <keyword ref="qcontactorganization.html#location">location</keyword>
         <keyword ref="qcontactorganization.html#logo">logo</keyword>
         <keyword ref="qcontactorganization.html#name">name</keyword>
+        <keyword ref="qcontactorganization.html#role">role</keyword>
         <keyword ref="qcontactorganization.html#setAssistantName">setAssistantName</keyword>
         <keyword ref="qcontactorganization.html#setDepartment">setDepartment</keyword>
         <keyword ref="qcontactorganization.html#setLocation">setLocation</keyword>
         <keyword ref="qcontactorganization.html#setLogo">setLogo</keyword>
         <keyword ref="qcontactorganization.html#setName">setName</keyword>
+        <keyword ref="qcontactorganization.html#setRole">setRole</keyword>
         <keyword ref="qcontactorganization.html#setTitle">setTitle</keyword>
         <keyword ref="qcontactorganization.html#title">title</keyword>
         <keyword ref="qcontactorganization.html#DefinitionName-var">DefinitionName</keyword>
@@ -1029,6 +1118,7 @@
         <keyword ref="qcontactorganization.html#FieldLocation-var">FieldLocation</keyword>
         <keyword ref="qcontactorganization.html#FieldLogo-var">FieldLogo</keyword>
         <keyword ref="qcontactorganization.html#FieldName-var">FieldName</keyword>
+        <keyword ref="qcontactorganization.html#FieldRole-var">FieldRole</keyword>
         <keyword ref="qcontactorganization.html#FieldTitle-var">FieldTitle</keyword>
         <section ref="qcontactorganization-members.html" title="List of all members"/>
     </section>
@@ -1055,30 +1145,6 @@
         <keyword ref="qcontactphonenumber.html#SubTypeVoice-var">SubTypeVoice</keyword>
         <section ref="qcontactphonenumber-members.html" title="List of all members"/>
     </section>
-    <section ref="qcontactpresence.html" title="QContactPresence Class Reference">
-        <keyword ref="qcontactpresence.html">QContactPresence</keyword>
-        <keyword ref="qcontactpresence.html#accountUri">accountUri</keyword>
-        <keyword ref="qcontactpresence.html#nickname">nickname</keyword>
-        <keyword ref="qcontactpresence.html#presence">presence</keyword>
-        <keyword ref="qcontactpresence.html#setAccountUri">setAccountUri</keyword>
-        <keyword ref="qcontactpresence.html#setNickname">setNickname</keyword>
-        <keyword ref="qcontactpresence.html#setPresence">setPresence</keyword>
-        <keyword ref="qcontactpresence.html#setStatusMessage">setStatusMessage</keyword>
-        <keyword ref="qcontactpresence.html#statusMessage">statusMessage</keyword>
-        <keyword ref="qcontactpresence.html#DefinitionName-var">DefinitionName</keyword>
-        <keyword ref="qcontactpresence.html#FieldAccountUri-var">FieldAccountUri</keyword>
-        <keyword ref="qcontactpresence.html#FieldNickname-var">FieldNickname</keyword>
-        <keyword ref="qcontactpresence.html#FieldPresence-var">FieldPresence</keyword>
-        <keyword ref="qcontactpresence.html#FieldStatusMessage-var">FieldStatusMessage</keyword>
-        <keyword ref="qcontactpresence.html#PresenceAvailable-var">PresenceAvailable</keyword>
-        <keyword ref="qcontactpresence.html#PresenceAway-var">PresenceAway</keyword>
-        <keyword ref="qcontactpresence.html#PresenceBusy-var">PresenceBusy</keyword>
-        <keyword ref="qcontactpresence.html#PresenceExtendedAway-var">PresenceExtendedAway</keyword>
-        <keyword ref="qcontactpresence.html#PresenceHidden-var">PresenceHidden</keyword>
-        <keyword ref="qcontactpresence.html#PresenceOffline-var">PresenceOffline</keyword>
-        <keyword ref="qcontactpresence.html#PresenceUnknown-var">PresenceUnknown</keyword>
-        <section ref="qcontactpresence-members.html" title="List of all members"/>
-    </section>
     <section ref="qcontactrelationship.html" title="QContactRelationship Class Reference">
         <keyword ref="qcontactrelationship.html">QContactRelationship</keyword>
         <keyword ref="qcontactrelationship.html#first">first</keyword>
@@ -1091,11 +1157,11 @@
         <keyword ref="qcontactrelationship.html#operator-eq">operator=</keyword>
         <keyword ref="qcontactrelationship.html#operator-eq-eq">operator==</keyword>
         <keyword ref="qcontactrelationship.html#Aggregates-var">Aggregates</keyword>
+        <keyword ref="qcontactrelationship.html#HasAssistant-var">HasAssistant</keyword>
+        <keyword ref="qcontactrelationship.html#HasManager-var">HasManager</keyword>
         <keyword ref="qcontactrelationship.html#HasMember-var">HasMember</keyword>
+        <keyword ref="qcontactrelationship.html#HasSpouse-var">HasSpouse</keyword>
         <keyword ref="qcontactrelationship.html#Is-var">Is</keyword>
-        <keyword ref="qcontactrelationship.html#IsAssistantOf-var">IsAssistantOf</keyword>
-        <keyword ref="qcontactrelationship.html#IsManagerOf-var">IsManagerOf</keyword>
-        <keyword ref="qcontactrelationship.html#IsSpouseOf-var">IsSpouseOf</keyword>
         <section ref="qcontactrelationship-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactrelationshipfetchrequest.html" title="QContactRelationshipFetchRequest Class Reference">
@@ -1142,27 +1208,6 @@
         <keyword ref="qcontactremoverequest.html#progress">progress</keyword>
         <keyword ref="qcontactremoverequest.html#setFilter">setFilter</keyword>
         <section ref="qcontactremoverequest-members.html" title="List of all members"/>
-    </section>
-    <section ref="qcontactrequestworker.html" title="QContactRequestWorker Class Reference">
-        <keyword ref="qcontactrequestworker.html">QContactRequestWorker</keyword>
-        <keyword ref="qcontactrequestworker.html#addRequest">addRequest</keyword>
-        <keyword ref="qcontactrequestworker.html#cancelRequest">cancelRequest</keyword>
-        <keyword ref="qcontactrequestworker.html#processContactDetailDefinitionFetchRequest">processContactDetailDefinitionFetchRequest</keyword>
-        <keyword ref="qcontactrequestworker.html#processContactDetailDefinitionRemoveRequest">processContactDetailDefinitionRemoveRequest</keyword>
-        <keyword ref="qcontactrequestworker.html#processContactDetailDefinitionSaveRequest">processContactDetailDefinitionSaveRequest</keyword>
-        <keyword ref="qcontactrequestworker.html#processContactFetchRequest">processContactFetchRequest</keyword>
-        <keyword ref="qcontactrequestworker.html#processContactLocalIdFetchRequest">processContactLocalIdFetchRequest</keyword>
-        <keyword ref="qcontactrequestworker.html#processContactRelationshipFetchRequest">processContactRelationshipFetchRequest</keyword>
-        <keyword ref="qcontactrequestworker.html#processContactRelationshipRemoveRequest">processContactRelationshipRemoveRequest</keyword>
-        <keyword ref="qcontactrequestworker.html#processContactRelationshipSaveRequest">processContactRelationshipSaveRequest</keyword>
-        <keyword ref="qcontactrequestworker.html#processContactRemoveRequest">processContactRemoveRequest</keyword>
-        <keyword ref="qcontactrequestworker.html#processContactSaveRequest">processContactSaveRequest</keyword>
-        <keyword ref="qcontactrequestworker.html#removeRequest">removeRequest</keyword>
-        <keyword ref="qcontactrequestworker.html#run">run</keyword>
-        <keyword ref="qcontactrequestworker.html#stop">stop</keyword>
-        <keyword ref="qcontactrequestworker.html#waitRequest">waitRequest</keyword>
-        <keyword ref="qcontactrequestworker.html#operator-eq">operator=</keyword>
-        <section ref="qcontactrequestworker-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactsaverequest.html" title="QContactSaveRequest Class Reference">
         <keyword ref="qcontactsaverequest.html">QContactSaveRequest</keyword>
@@ -1376,19 +1421,29 @@
     </section>
     <section ref="qimageencodercontrol.html" title="QImageEncoderControl Class Reference">
         <keyword ref="qimageencodercontrol.html">QImageEncoderControl</keyword>
-        <keyword ref="qimageencodercontrol.html#imageCodec">imageCodec</keyword>
         <keyword ref="qimageencodercontrol.html#imageCodecDescription">imageCodecDescription</keyword>
+        <keyword ref="qimageencodercontrol.html#imageSettings">imageSettings</keyword>
         <keyword ref="qimageencodercontrol.html#maximumResolution">maximumResolution</keyword>
         <keyword ref="qimageencodercontrol.html#minimumResolution">minimumResolution</keyword>
-        <keyword ref="qimageencodercontrol.html#quality">quality</keyword>
-        <keyword ref="qimageencodercontrol.html#resolution">resolution</keyword>
-        <keyword ref="qimageencodercontrol.html#setImageCodec">setImageCodec</keyword>
-        <keyword ref="qimageencodercontrol.html#setQuality">setQuality</keyword>
-        <keyword ref="qimageencodercontrol.html#setResolution">setResolution</keyword>
+        <keyword ref="qimageencodercontrol.html#setImageSettings">setImageSettings</keyword>
         <keyword ref="qimageencodercontrol.html#supportedImageCodecs">supportedImageCodecs</keyword>
         <keyword ref="qimageencodercontrol.html#supportedResolutions">supportedResolutions</keyword>
         <keyword ref="qimageencodercontrol.html#QImageEncoderControl_iid">QImageEncoderControl_iid</keyword>
         <section ref="qimageencodercontrol-members.html" title="List of all members"/>
+    </section>
+    <section ref="qimageencodersettings.html" title="QImageEncoderSettings Class Reference">
+        <keyword ref="qimageencodersettings.html">QImageEncoderSettings</keyword>
+        <keyword ref="qimageencodersettings.html#codec">codec</keyword>
+        <keyword ref="qimageencodersettings.html#isNull">isNull</keyword>
+        <keyword ref="qimageencodersettings.html#quality">quality</keyword>
+        <keyword ref="qimageencodersettings.html#resolution">resolution</keyword>
+        <keyword ref="qimageencodersettings.html#setCodec">setCodec</keyword>
+        <keyword ref="qimageencodersettings.html#setQuality">setQuality</keyword>
+        <keyword ref="qimageencodersettings.html#setResolution">setResolution</keyword>
+        <keyword ref="qimageencodersettings.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qimageencodersettings.html#operator-eq">operator=</keyword>
+        <keyword ref="qimageencodersettings.html#operator-eq-eq">operator==</keyword>
+        <section ref="qimageencodersettings-members.html" title="List of all members"/>
     </section>
     <section ref="qimageprocessingcontrol.html" title="QImageProcessingControl Class Reference">
         <keyword ref="qimageprocessingcontrol.html">QImageProcessingControl</keyword>
@@ -1409,6 +1464,461 @@
         <keyword ref="qimageprocessingcontrol.html#whiteBalanceMode">whiteBalanceMode</keyword>
         <keyword ref="qimageprocessingcontrol.html#QImageProcessingControl_iid">QImageProcessingControl_iid</keyword>
         <section ref="qimageprocessingcontrol-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmail.html" title="QMail Namespace Reference">
+        <keyword ref="qmail.html">QMail</keyword>
+        <keyword ref="qmail.html#quoteString">quoteString</keyword>
+        <keyword ref="qmail.html#unquoteString">unquoteString</keyword>
+    </section>
+    <section ref="qmailaccountid.html" title="QMailAccountId Class Reference">
+        <keyword ref="qmailaccountid.html">QMailAccountId</keyword>
+        <keyword ref="qmailaccountid.html#isValid">isValid</keyword>
+        <keyword ref="qmailaccountid.html#operator-QVariant">operator QVariant</keyword>
+        <keyword ref="qmailaccountid.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qmailaccountid.html#operator-lt">operator&lt;</keyword>
+        <keyword ref="qmailaccountid.html#operator-eq-eq">operator==</keyword>
+        <keyword ref="qmailaccountid.html#QMailAccountIdList-typedef">QMailAccountIdList</keyword>
+        <section ref="qmailaccountid-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailaddress.html" title="QMailAddress Class Reference">
+        <keyword ref="qmailaddress.html">QMailAddress</keyword>
+        <keyword ref="qmailaddress.html#address">address</keyword>
+        <keyword ref="qmailaddress.html#fromStringList">fromStringList</keyword>
+        <keyword ref="qmailaddress.html#groupMembers">groupMembers</keyword>
+        <keyword ref="qmailaddress.html#isEmailAddress">isEmailAddress</keyword>
+        <keyword ref="qmailaddress.html#isGroup">isGroup</keyword>
+        <keyword ref="qmailaddress.html#isNull">isNull</keyword>
+        <keyword ref="qmailaddress.html#isPhoneNumber">isPhoneNumber</keyword>
+        <keyword ref="qmailaddress.html#name">name</keyword>
+        <keyword ref="qmailaddress.html#removeComments">removeComments</keyword>
+        <keyword ref="qmailaddress.html#removeWhitespace">removeWhitespace</keyword>
+        <keyword ref="qmailaddress.html#toString">toString</keyword>
+        <keyword ref="qmailaddress.html#toStringList">toStringList</keyword>
+        <section ref="qmailaddress-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailbase64codec.html" title="QMailBase64Codec Class Reference">
+        <keyword ref="qmailbase64codec.html">QMailBase64Codec</keyword>
+        <keyword ref="qmailbase64codec.html#ContentType-enum">ContentType</keyword>
+        <keyword ref="qmailbase64codec.html#ContentType-enum">QMailBase64Codec::Text</keyword>
+        <keyword ref="qmailbase64codec.html#ContentType-enum">QMailBase64Codec::Binary</keyword>
+        <keyword ref="qmailbase64codec.html#name">name</keyword>
+        <section ref="qmailbase64codec-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailcodec.html" title="QMailCodec Class Reference">
+        <keyword ref="qmailcodec.html">QMailCodec</keyword>
+        <keyword ref="qmailcodec.html#copy">copy</keyword>
+        <keyword ref="qmailcodec.html#decode">decode</keyword>
+        <keyword ref="qmailcodec.html#decodeChunk">decodeChunk</keyword>
+        <keyword ref="qmailcodec.html#encode">encode</keyword>
+        <keyword ref="qmailcodec.html#encodeChunk">encodeChunk</keyword>
+        <keyword ref="qmailcodec.html#name">name</keyword>
+        <section ref="qmailcodec-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailfolderid.html" title="QMailFolderId Class Reference">
+        <keyword ref="qmailfolderid.html">QMailFolderId</keyword>
+        <keyword ref="qmailfolderid.html#isValid">isValid</keyword>
+        <keyword ref="qmailfolderid.html#operator-QVariant">operator QVariant</keyword>
+        <keyword ref="qmailfolderid.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qmailfolderid.html#operator-lt">operator&lt;</keyword>
+        <keyword ref="qmailfolderid.html#operator-eq-eq">operator==</keyword>
+        <keyword ref="qmailfolderid.html#QMailFolderIdList-typedef">QMailFolderIdList</keyword>
+        <section ref="qmailfolderid-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmaillineendingcodec.html" title="QMailLineEndingCodec Class Reference">
+        <keyword ref="qmaillineendingcodec.html">QMailLineEndingCodec</keyword>
+        <section ref="qmaillineendingcodec-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailmessage.html" title="QMailMessage Class Reference">
+        <keyword ref="qmailmessage.html">QMailMessage</keyword>
+        <keyword ref="qmailmessage.html#appendHeaderField">appendHeaderField</keyword>
+        <keyword ref="qmailmessage.html#bcc">bcc</keyword>
+        <keyword ref="qmailmessage.html#cc">cc</keyword>
+        <keyword ref="qmailmessage.html#contains">contains</keyword>
+        <keyword ref="qmailmessage.html#contentAvailable">contentAvailable</keyword>
+        <keyword ref="qmailmessage.html#contentSize">contentSize</keyword>
+        <keyword ref="qmailmessage.html#externalLocationReference">externalLocationReference</keyword>
+        <keyword ref="qmailmessage.html#fromRfc2822">fromRfc2822</keyword>
+        <keyword ref="qmailmessage.html#fromRfc2822File">fromRfc2822File</keyword>
+        <keyword ref="qmailmessage.html#hasRecipients">hasRecipients</keyword>
+        <keyword ref="qmailmessage.html#inReplyTo">inReplyTo</keyword>
+        <keyword ref="qmailmessage.html#indicativeSize">indicativeSize</keyword>
+        <keyword ref="qmailmessage.html#partAt">partAt</keyword>
+        <keyword ref="qmailmessage.html#partialContentAvailable">partialContentAvailable</keyword>
+        <keyword ref="qmailmessage.html#recipients">recipients</keyword>
+        <keyword ref="qmailmessage.html#removeHeaderField">removeHeaderField</keyword>
+        <keyword ref="qmailmessage.html#replyTo">replyTo</keyword>
+        <keyword ref="qmailmessage.html#setBcc">setBcc</keyword>
+        <keyword ref="qmailmessage.html#setCc">setCc</keyword>
+        <keyword ref="qmailmessage.html#setContentSize">setContentSize</keyword>
+        <keyword ref="qmailmessage.html#setDate">setDate</keyword>
+        <keyword ref="qmailmessage.html#setExternalLocationReference">setExternalLocationReference</keyword>
+        <keyword ref="qmailmessage.html#setFrom">setFrom</keyword>
+        <keyword ref="qmailmessage.html#setHeaderField">setHeaderField</keyword>
+        <keyword ref="qmailmessage.html#setId">setId</keyword>
+        <keyword ref="qmailmessage.html#setInReplyTo">setInReplyTo</keyword>
+        <keyword ref="qmailmessage.html#setReplyTo">setReplyTo</keyword>
+        <keyword ref="qmailmessage.html#setSubject">setSubject</keyword>
+        <keyword ref="qmailmessage.html#setTo">setTo</keyword>
+        <keyword ref="qmailmessage.html#toRfc2822">toRfc2822</keyword>
+        <keyword ref="qmailmessage.html#toRfc2822Chunks">toRfc2822Chunks</keyword>
+        <section ref="qmailmessage-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailmessagebody.html" title="QMailMessageBody Class Reference">
+        <keyword ref="qmailmessagebody.html">QMailMessageBody</keyword>
+        <keyword ref="qmailmessagebody.html#contentType">contentType</keyword>
+        <keyword ref="qmailmessagebody.html#data">data</keyword>
+        <keyword ref="qmailmessagebody.html#fromData">fromData</keyword>
+        <keyword ref="qmailmessagebody.html#fromFile">fromFile</keyword>
+        <keyword ref="qmailmessagebody.html#fromStream">fromStream</keyword>
+        <keyword ref="qmailmessagebody.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qmailmessagebody.html#length">length</keyword>
+        <keyword ref="qmailmessagebody.html#toFile">toFile</keyword>
+        <keyword ref="qmailmessagebody.html#toStream">toStream</keyword>
+        <keyword ref="qmailmessagebody.html#transferEncoding">transferEncoding</keyword>
+        <section ref="qmailmessagebody-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailmessagebodyfwd.html" title="QMailMessageBodyFwd Class Reference">
+        <keyword ref="qmailmessagebodyfwd.html">QMailMessageBodyFwd</keyword>
+        <keyword ref="qmailmessagebodyfwd.html#EncodingFormat-enum">EncodingFormat</keyword>
+        <keyword ref="qmailmessagebodyfwd.html#EncodingFormat-enum">QMailMessageBodyFwd::Encoded</keyword>
+        <keyword ref="qmailmessagebodyfwd.html#EncodingFormat-enum">QMailMessageBodyFwd::Decoded</keyword>
+        <keyword ref="qmailmessagebodyfwd.html#EncodingStatus-enum">EncodingStatus</keyword>
+        <keyword ref="qmailmessagebodyfwd.html#EncodingStatus-enum">QMailMessageBodyFwd::RequiresEncoding</keyword>
+        <keyword ref="qmailmessagebodyfwd.html#EncodingStatus-enum">QMailMessageBodyFwd::AlreadyEncoded</keyword>
+        <keyword ref="qmailmessagebodyfwd.html#TransferEncoding-enum">TransferEncoding</keyword>
+        <keyword ref="qmailmessagebodyfwd.html#TransferEncoding-enum">QMailMessageBodyFwd::QuotedPrintable</keyword>
+        <keyword ref="qmailmessagebodyfwd.html#TransferEncoding-enum">QMailMessageBodyFwd::EightBit</keyword>
+        <keyword ref="qmailmessagebodyfwd.html#TransferEncoding-enum">QMailMessageBodyFwd::SevenBit</keyword>
+        <keyword ref="qmailmessagebodyfwd.html#TransferEncoding-enum">QMailMessageBodyFwd::NoEncoding</keyword>
+        <keyword ref="qmailmessagebodyfwd.html#TransferEncoding-enum">QMailMessageBodyFwd::Base64</keyword>
+        <keyword ref="qmailmessagebodyfwd.html#TransferEncoding-enum">QMailMessageBodyFwd::Binary</keyword>
+        <section ref="qmailmessagebodyfwd-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailmessagecontentdisposition.html" title="QMailMessageContentDisposition Class Reference">
+        <keyword ref="qmailmessagecontentdisposition.html">QMailMessageContentDisposition</keyword>
+        <keyword ref="qmailmessagecontentdisposition.html#creationDate">creationDate</keyword>
+        <keyword ref="qmailmessagecontentdisposition.html#filename">filename</keyword>
+        <keyword ref="qmailmessagecontentdisposition.html#modificationDate">modificationDate</keyword>
+        <keyword ref="qmailmessagecontentdisposition.html#readDate">readDate</keyword>
+        <keyword ref="qmailmessagecontentdisposition.html#setCreationDate">setCreationDate</keyword>
+        <keyword ref="qmailmessagecontentdisposition.html#setFilename">setFilename</keyword>
+        <keyword ref="qmailmessagecontentdisposition.html#setModificationDate">setModificationDate</keyword>
+        <keyword ref="qmailmessagecontentdisposition.html#setReadDate">setReadDate</keyword>
+        <keyword ref="qmailmessagecontentdisposition.html#setSize">setSize</keyword>
+        <keyword ref="qmailmessagecontentdisposition.html#setType">setType</keyword>
+        <keyword ref="qmailmessagecontentdisposition.html#size">size</keyword>
+        <keyword ref="qmailmessagecontentdisposition.html#type">type</keyword>
+        <section ref="qmailmessagecontentdisposition-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailmessagecontentdispositionfwd.html" title="QMailMessageContentDispositionFwd Class Reference">
+        <keyword ref="qmailmessagecontentdispositionfwd.html">QMailMessageContentDispositionFwd</keyword>
+        <keyword ref="qmailmessagecontentdispositionfwd.html#DispositionType-enum">DispositionType</keyword>
+        <keyword ref="qmailmessagecontentdispositionfwd.html#DispositionType-enum">QMailMessageContentDispositionFwd::Attachment</keyword>
+        <keyword ref="qmailmessagecontentdispositionfwd.html#DispositionType-enum">QMailMessageContentDispositionFwd::None</keyword>
+        <keyword ref="qmailmessagecontentdispositionfwd.html#DispositionType-enum">QMailMessageContentDispositionFwd::Inline</keyword>
+        <section ref="qmailmessagecontentdispositionfwd-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailmessagecontenttype.html" title="QMailMessageContentType Class Reference">
+        <keyword ref="qmailmessagecontenttype.html">QMailMessageContentType</keyword>
+        <keyword ref="qmailmessagecontenttype.html#boundary">boundary</keyword>
+        <keyword ref="qmailmessagecontenttype.html#charset">charset</keyword>
+        <keyword ref="qmailmessagecontenttype.html#name">name</keyword>
+        <keyword ref="qmailmessagecontenttype.html#setBoundary">setBoundary</keyword>
+        <keyword ref="qmailmessagecontenttype.html#setCharset">setCharset</keyword>
+        <keyword ref="qmailmessagecontenttype.html#setName">setName</keyword>
+        <keyword ref="qmailmessagecontenttype.html#setSubType">setSubType</keyword>
+        <keyword ref="qmailmessagecontenttype.html#setType">setType</keyword>
+        <keyword ref="qmailmessagecontenttype.html#subType">subType</keyword>
+        <keyword ref="qmailmessagecontenttype.html#type">type</keyword>
+        <section ref="qmailmessagecontenttype-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailmessagefwd.html" title="QMailMessageFwd Class Reference">
+        <keyword ref="qmailmessagefwd.html">QMailMessageFwd</keyword>
+        <keyword ref="qmailmessagefwd.html#AttachmentsAction-enum">AttachmentsAction</keyword>
+        <keyword ref="qmailmessagefwd.html#AttachmentsAction-enum">QMailMessageFwd::LinkToAttachments</keyword>
+        <keyword ref="qmailmessagefwd.html#AttachmentsAction-enum">QMailMessageFwd::CopyAttachments</keyword>
+        <keyword ref="qmailmessagefwd.html#AttachmentsAction-enum">QMailMessageFwd::CopyAndDeleteAttachments</keyword>
+        <keyword ref="qmailmessagefwd.html#ChunkType-enum">ChunkType</keyword>
+        <keyword ref="qmailmessagefwd.html#ChunkType-enum">QMailMessageFwd::Reference</keyword>
+        <keyword ref="qmailmessagefwd.html#ChunkType-enum">QMailMessageFwd::Text</keyword>
+        <keyword ref="qmailmessagefwd.html#EncodingFormat-enum">EncodingFormat</keyword>
+        <keyword ref="qmailmessagefwd.html#EncodingFormat-enum">QMailMessageFwd::IdentityFormat</keyword>
+        <keyword ref="qmailmessagefwd.html#EncodingFormat-enum">QMailMessageFwd::HeaderOnlyFormat</keyword>
+        <keyword ref="qmailmessagefwd.html#EncodingFormat-enum">QMailMessageFwd::TransmissionFormat</keyword>
+        <keyword ref="qmailmessagefwd.html#EncodingFormat-enum">QMailMessageFwd::StorageFormat</keyword>
+        <keyword ref="qmailmessagefwd.html#MessageChunk-typedef">MessageChunk</keyword>
+        <section ref="qmailmessagefwd-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailmessageheaderfield.html" title="QMailMessageHeaderField Class Reference">
+        <keyword ref="qmailmessageheaderfield.html">QMailMessageHeaderField</keyword>
+        <keyword ref="qmailmessageheaderfield.html#content">content</keyword>
+        <keyword ref="qmailmessageheaderfield.html#decodeContent">decodeContent</keyword>
+        <keyword ref="qmailmessageheaderfield.html#decodeParameter">decodeParameter</keyword>
+        <keyword ref="qmailmessageheaderfield.html#decodeWord">decodeWord</keyword>
+        <keyword ref="qmailmessageheaderfield.html#decodedContent">decodedContent</keyword>
+        <keyword ref="qmailmessageheaderfield.html#encodeContent">encodeContent</keyword>
+        <keyword ref="qmailmessageheaderfield.html#encodeParameter">encodeParameter</keyword>
+        <keyword ref="qmailmessageheaderfield.html#encodeWord">encodeWord</keyword>
+        <keyword ref="qmailmessageheaderfield.html#id">id</keyword>
+        <keyword ref="qmailmessageheaderfield.html#isNull">isNull</keyword>
+        <keyword ref="qmailmessageheaderfield.html#isParameterEncoded">isParameterEncoded</keyword>
+        <keyword ref="qmailmessageheaderfield.html#parameter">parameter</keyword>
+        <keyword ref="qmailmessageheaderfield.html#parameters">parameters</keyword>
+        <keyword ref="qmailmessageheaderfield.html#removeComments">removeComments</keyword>
+        <keyword ref="qmailmessageheaderfield.html#removeWhitespace">removeWhitespace</keyword>
+        <keyword ref="qmailmessageheaderfield.html#setContent">setContent</keyword>
+        <keyword ref="qmailmessageheaderfield.html#setId">setId</keyword>
+        <keyword ref="qmailmessageheaderfield.html#setParameter">setParameter</keyword>
+        <keyword ref="qmailmessageheaderfield.html#setParameterEncoded">setParameterEncoded</keyword>
+        <keyword ref="qmailmessageheaderfield.html#toString">toString</keyword>
+        <section ref="qmailmessageheaderfield-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailmessageheaderfieldfwd.html" title="QMailMessageHeaderFieldFwd Class Reference">
+        <keyword ref="qmailmessageheaderfieldfwd.html">QMailMessageHeaderFieldFwd</keyword>
+        <keyword ref="qmailmessageheaderfieldfwd.html#FieldType-enum">FieldType</keyword>
+        <keyword ref="qmailmessageheaderfieldfwd.html#FieldType-enum">QMailMessageHeaderFieldFwd::StructuredField</keyword>
+        <keyword ref="qmailmessageheaderfieldfwd.html#FieldType-enum">QMailMessageHeaderFieldFwd::UnstructuredField</keyword>
+        <section ref="qmailmessageheaderfieldfwd-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailmessageid.html" title="QMailMessageId Class Reference">
+        <keyword ref="qmailmessageid.html">QMailMessageId</keyword>
+        <keyword ref="qmailmessageid.html#isValid">isValid</keyword>
+        <keyword ref="qmailmessageid.html#operator-QVariant">operator QVariant</keyword>
+        <keyword ref="qmailmessageid.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qmailmessageid.html#operator-lt">operator&lt;</keyword>
+        <keyword ref="qmailmessageid.html#operator-eq-eq">operator==</keyword>
+        <keyword ref="qmailmessageid.html#QMailMessageIdList-typedef">QMailMessageIdList</keyword>
+        <section ref="qmailmessageid-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailmessagemetadata.html" title="QMailMessageMetaData Class Reference">
+        <keyword ref="qmailmessagemetadata.html">QMailMessageMetaData</keyword>
+        <keyword ref="qmailmessagemetadata.html#content">content</keyword>
+        <keyword ref="qmailmessagemetadata.html#contentAvailable">contentAvailable</keyword>
+        <keyword ref="qmailmessagemetadata.html#contentIdentifier">contentIdentifier</keyword>
+        <keyword ref="qmailmessagemetadata.html#contentScheme">contentScheme</keyword>
+        <keyword ref="qmailmessagemetadata.html#customField">customField</keyword>
+        <keyword ref="qmailmessagemetadata.html#customFields">customFields</keyword>
+        <keyword ref="qmailmessagemetadata.html#date">date</keyword>
+        <keyword ref="qmailmessagemetadata.html#from">from</keyword>
+        <keyword ref="qmailmessagemetadata.html#id">id</keyword>
+        <keyword ref="qmailmessagemetadata.html#inResponseTo">inResponseTo</keyword>
+        <keyword ref="qmailmessagemetadata.html#indicativeSize">indicativeSize</keyword>
+        <keyword ref="qmailmessagemetadata.html#messageType">messageType</keyword>
+        <keyword ref="qmailmessagemetadata.html#parentAccountId">parentAccountId</keyword>
+        <keyword ref="qmailmessagemetadata.html#parentFolderId">parentFolderId</keyword>
+        <keyword ref="qmailmessagemetadata.html#partialContentAvailable">partialContentAvailable</keyword>
+        <keyword ref="qmailmessagemetadata.html#previousParentFolderId">previousParentFolderId</keyword>
+        <keyword ref="qmailmessagemetadata.html#receivedDate">receivedDate</keyword>
+        <keyword ref="qmailmessagemetadata.html#removeCustomField">removeCustomField</keyword>
+        <keyword ref="qmailmessagemetadata.html#responseType">responseType</keyword>
+        <keyword ref="qmailmessagemetadata.html#serverUid">serverUid</keyword>
+        <keyword ref="qmailmessagemetadata.html#setContent">setContent</keyword>
+        <keyword ref="qmailmessagemetadata.html#setContentIdentifier">setContentIdentifier</keyword>
+        <keyword ref="qmailmessagemetadata.html#setContentScheme">setContentScheme</keyword>
+        <keyword ref="qmailmessagemetadata.html#setCustomField">setCustomField</keyword>
+        <keyword ref="qmailmessagemetadata.html#setDate">setDate</keyword>
+        <keyword ref="qmailmessagemetadata.html#setFrom">setFrom</keyword>
+        <keyword ref="qmailmessagemetadata.html#setId">setId</keyword>
+        <keyword ref="qmailmessagemetadata.html#setInResponseTo">setInResponseTo</keyword>
+        <keyword ref="qmailmessagemetadata.html#setMessageType">setMessageType</keyword>
+        <keyword ref="qmailmessagemetadata.html#setParentAccountId">setParentAccountId</keyword>
+        <keyword ref="qmailmessagemetadata.html#setParentFolderId">setParentFolderId</keyword>
+        <keyword ref="qmailmessagemetadata.html#setPreviousParentFolderId">setPreviousParentFolderId</keyword>
+        <keyword ref="qmailmessagemetadata.html#setReceivedDate">setReceivedDate</keyword>
+        <keyword ref="qmailmessagemetadata.html#setResponseType">setResponseType</keyword>
+        <keyword ref="qmailmessagemetadata.html#setServerUid">setServerUid</keyword>
+        <keyword ref="qmailmessagemetadata.html#setSize">setSize</keyword>
+        <keyword ref="qmailmessagemetadata.html#setStatus">setStatus</keyword>
+        <keyword ref="qmailmessagemetadata.html#setSubject">setSubject</keyword>
+        <keyword ref="qmailmessagemetadata.html#setTo">setTo</keyword>
+        <keyword ref="qmailmessagemetadata.html#size">size</keyword>
+        <keyword ref="qmailmessagemetadata.html#status">status</keyword>
+        <keyword ref="qmailmessagemetadata.html#statusMask">statusMask</keyword>
+        <keyword ref="qmailmessagemetadata.html#subject">subject</keyword>
+        <keyword ref="qmailmessagemetadata.html#to">to</keyword>
+        <keyword ref="qmailmessagemetadata.html#ContentAvailable-var">ContentAvailable</keyword>
+        <keyword ref="qmailmessagemetadata.html#Draft-var">Draft</keyword>
+        <keyword ref="qmailmessagemetadata.html#Forwarded-var">Forwarded</keyword>
+        <keyword ref="qmailmessagemetadata.html#HasAttachments-var">HasAttachments</keyword>
+        <keyword ref="qmailmessagemetadata.html#HasReferences-var">HasReferences</keyword>
+        <keyword ref="qmailmessagemetadata.html#HasUnresolvedReferences-var">HasUnresolvedReferences</keyword>
+        <keyword ref="qmailmessagemetadata.html#Incoming-var">Incoming</keyword>
+        <keyword ref="qmailmessagemetadata.html#Junk-var">Junk</keyword>
+        <keyword ref="qmailmessagemetadata.html#LocalOnly-var">LocalOnly</keyword>
+        <keyword ref="qmailmessagemetadata.html#New-var">New</keyword>
+        <keyword ref="qmailmessagemetadata.html#Outbox-var">Outbox</keyword>
+        <keyword ref="qmailmessagemetadata.html#Outgoing-var">Outgoing</keyword>
+        <keyword ref="qmailmessagemetadata.html#PartialContentAvailable-var">PartialContentAvailable</keyword>
+        <keyword ref="qmailmessagemetadata.html#Read-var">Read</keyword>
+        <keyword ref="qmailmessagemetadata.html#ReadElsewhere-var">ReadElsewhere</keyword>
+        <keyword ref="qmailmessagemetadata.html#ReadReplyRequested-var">ReadReplyRequested</keyword>
+        <keyword ref="qmailmessagemetadata.html#Removed-var">Removed</keyword>
+        <keyword ref="qmailmessagemetadata.html#Replied-var">Replied</keyword>
+        <keyword ref="qmailmessagemetadata.html#RepliedAll-var">RepliedAll</keyword>
+        <keyword ref="qmailmessagemetadata.html#Sent-var">Sent</keyword>
+        <keyword ref="qmailmessagemetadata.html#TransmitFromExternal-var">TransmitFromExternal</keyword>
+        <keyword ref="qmailmessagemetadata.html#Trash-var">Trash</keyword>
+        <keyword ref="qmailmessagemetadata.html#UnloadedData-var">UnloadedData</keyword>
+        <section ref="qmailmessagemetadata-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailmessagemetadatafwd.html" title="QMailMessageMetaDataFwd Class Reference">
+        <keyword ref="qmailmessagemetadatafwd.html">QMailMessageMetaDataFwd</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ContentType-enum">ContentType</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ContentType-enum">QMailMessageMetaDataFwd::VoicemailContent</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ContentType-enum">QMailMessageMetaDataFwd::SmilContent</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ContentType-enum">QMailMessageMetaDataFwd::UnknownContent</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ContentType-enum">QMailMessageMetaDataFwd::VideoContent</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ContentType-enum">QMailMessageMetaDataFwd::VideomailContent</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ContentType-enum">QMailMessageMetaDataFwd::VCardContent</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ContentType-enum">QMailMessageMetaDataFwd::RichTextContent</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ContentType-enum">QMailMessageMetaDataFwd::NoContent</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ContentType-enum">QMailMessageMetaDataFwd::PlainTextContent</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ContentType-enum">QMailMessageMetaDataFwd::UserContent</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ContentType-enum">QMailMessageMetaDataFwd::HtmlContent</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ContentType-enum">QMailMessageMetaDataFwd::ImageContent</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ContentType-enum">QMailMessageMetaDataFwd::MultipartContent</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ContentType-enum">QMailMessageMetaDataFwd::VCalendarContent</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ContentType-enum">QMailMessageMetaDataFwd::ICalendarContent</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ContentType-enum">QMailMessageMetaDataFwd::AudioContent</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ContentType-enum">QMailMessageMetaDataFwd::DeliveryReportContent</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#MessageType-enum">MessageType</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#MessageType-enum">QMailMessageMetaDataFwd::Sms</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#MessageType-enum">QMailMessageMetaDataFwd::None</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#MessageType-enum">QMailMessageMetaDataFwd::Email</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#MessageType-enum">QMailMessageMetaDataFwd::Instant</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#MessageType-enum">QMailMessageMetaDataFwd::System</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#MessageType-enum">QMailMessageMetaDataFwd::AnyType</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#MessageType-enum">QMailMessageMetaDataFwd::Mms</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ResponseType-enum">ResponseType</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ResponseType-enum">QMailMessageMetaDataFwd::ReplyToAll</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ResponseType-enum">QMailMessageMetaDataFwd::Redirect</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ResponseType-enum">QMailMessageMetaDataFwd::Reply</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ResponseType-enum">QMailMessageMetaDataFwd::NoResponse</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ResponseType-enum">QMailMessageMetaDataFwd::ForwardPart</keyword>
+        <keyword ref="qmailmessagemetadatafwd.html#ResponseType-enum">QMailMessageMetaDataFwd::Forward</keyword>
+        <section ref="qmailmessagemetadatafwd-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailmessagepart.html" title="QMailMessagePart Class Reference">
+        <keyword ref="qmailmessagepart.html">QMailMessagePart</keyword>
+        <keyword ref="qmailmessagepart.html#contentAvailable">contentAvailable</keyword>
+        <keyword ref="qmailmessagepart.html#contentDescription">contentDescription</keyword>
+        <keyword ref="qmailmessagepart.html#contentDisposition">contentDisposition</keyword>
+        <keyword ref="qmailmessagepart.html#contentID">contentID</keyword>
+        <keyword ref="qmailmessagepart.html#contentLanguage">contentLanguage</keyword>
+        <keyword ref="qmailmessagepart.html#contentLocation">contentLocation</keyword>
+        <keyword ref="qmailmessagepart.html#displayName">displayName</keyword>
+        <keyword ref="qmailmessagepart.html#fromData">fromData</keyword>
+        <keyword ref="qmailmessagepart.html#fromFile">fromFile</keyword>
+        <keyword ref="qmailmessagepart.html#fromMessageReference">fromMessageReference</keyword>
+        <keyword ref="qmailmessagepart.html#fromPartReference">fromPartReference</keyword>
+        <keyword ref="qmailmessagepart.html#fromStream">fromStream</keyword>
+        <keyword ref="qmailmessagepart.html#identifier">identifier</keyword>
+        <keyword ref="qmailmessagepart.html#indicativeSize">indicativeSize</keyword>
+        <keyword ref="qmailmessagepart.html#location">location</keyword>
+        <keyword ref="qmailmessagepart.html#messageReference">messageReference</keyword>
+        <keyword ref="qmailmessagepart.html#partNumber">partNumber</keyword>
+        <keyword ref="qmailmessagepart.html#partReference">partReference</keyword>
+        <keyword ref="qmailmessagepart.html#partialContentAvailable">partialContentAvailable</keyword>
+        <keyword ref="qmailmessagepart.html#referenceResolution">referenceResolution</keyword>
+        <keyword ref="qmailmessagepart.html#referenceType">referenceType</keyword>
+        <keyword ref="qmailmessagepart.html#setContentDescription">setContentDescription</keyword>
+        <keyword ref="qmailmessagepart.html#setContentDisposition">setContentDisposition</keyword>
+        <keyword ref="qmailmessagepart.html#setContentID">setContentID</keyword>
+        <keyword ref="qmailmessagepart.html#setContentLanguage">setContentLanguage</keyword>
+        <keyword ref="qmailmessagepart.html#setContentLocation">setContentLocation</keyword>
+        <keyword ref="qmailmessagepart.html#setReference">setReference</keyword>
+        <keyword ref="qmailmessagepart.html#setReferenceResolution">setReferenceResolution</keyword>
+        <keyword ref="qmailmessagepart.html#writeBodyTo">writeBodyTo</keyword>
+        <section ref="qmailmessagepart-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailmessagepartcontainer.html" title="QMailMessagePartContainer Class Reference">
+        <keyword ref="qmailmessagepartcontainer.html">QMailMessagePartContainer</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#appendHeaderField">appendHeaderField</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#appendPart">appendPart</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#body">body</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#boundary">boundary</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#clearParts">clearParts</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#contentAvailable">contentAvailable</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#contentType">contentType</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#foreachPart">foreachPart</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#hasBody">hasBody</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#headerField">headerField</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#headerFieldText">headerFieldText</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#headerFields">headerFields</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#headerFieldsText">headerFieldsText</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#multipartType">multipartType</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#multipartTypeForName">multipartTypeForName</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#nameForMultipartType">nameForMultipartType</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#partAt">partAt</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#partCount">partCount</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#partialContentAvailable">partialContentAvailable</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#prependPart">prependPart</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#removeHeaderField">removeHeaderField</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#removePartAt">removePartAt</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#setBody">setBody</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#setBoundary">setBoundary</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#setHeaderField">setHeaderField</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#setMultipartType">setMultipartType</keyword>
+        <keyword ref="qmailmessagepartcontainer.html#transferEncoding">transferEncoding</keyword>
+        <section ref="qmailmessagepartcontainer-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailmessagepartcontainerfwd.html" title="QMailMessagePartContainerFwd Class Reference">
+        <keyword ref="qmailmessagepartcontainerfwd.html">QMailMessagePartContainerFwd</keyword>
+        <keyword ref="qmailmessagepartcontainerfwd.html#MultipartType-enum">MultipartType</keyword>
+        <keyword ref="qmailmessagepartcontainerfwd.html#MultipartType-enum">QMailMessagePartContainerFwd::MultipartDigest</keyword>
+        <keyword ref="qmailmessagepartcontainerfwd.html#MultipartType-enum">QMailMessagePartContainerFwd::MultipartAlternative</keyword>
+        <keyword ref="qmailmessagepartcontainerfwd.html#MultipartType-enum">QMailMessagePartContainerFwd::MultipartRelated</keyword>
+        <keyword ref="qmailmessagepartcontainerfwd.html#MultipartType-enum">QMailMessagePartContainerFwd::MultipartSigned</keyword>
+        <keyword ref="qmailmessagepartcontainerfwd.html#MultipartType-enum">QMailMessagePartContainerFwd::MultipartMixed</keyword>
+        <keyword ref="qmailmessagepartcontainerfwd.html#MultipartType-enum">QMailMessagePartContainerFwd::MultipartNone</keyword>
+        <keyword ref="qmailmessagepartcontainerfwd.html#MultipartType-enum">QMailMessagePartContainerFwd::MultipartEncrypted</keyword>
+        <keyword ref="qmailmessagepartcontainerfwd.html#MultipartType-enum">QMailMessagePartContainerFwd::MultipartReport</keyword>
+        <keyword ref="qmailmessagepartcontainerfwd.html#MultipartType-enum">QMailMessagePartContainerFwd::MultipartParallel</keyword>
+        <keyword ref="qmailmessagepartcontainerfwd.html#MultipartType-enum">QMailMessagePartContainerFwd::MultipartFormData</keyword>
+        <section ref="qmailmessagepartcontainerfwd-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailmessagepartfwd.html" title="QMailMessagePartFwd Class Reference">
+        <keyword ref="qmailmessagepartfwd.html">QMailMessagePartFwd</keyword>
+        <keyword ref="qmailmessagepartfwd.html#ReferenceType-enum">ReferenceType</keyword>
+        <keyword ref="qmailmessagepartfwd.html#ReferenceType-enum">QMailMessagePartFwd::PartReference</keyword>
+        <keyword ref="qmailmessagepartfwd.html#ReferenceType-enum">QMailMessagePartFwd::None</keyword>
+        <keyword ref="qmailmessagepartfwd.html#ReferenceType-enum">QMailMessagePartFwd::MessageReference</keyword>
+        <section ref="qmailmessagepartfwd-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailpassthroughcodec.html" title="QMailPassThroughCodec Class Reference">
+        <keyword ref="qmailpassthroughcodec.html">QMailPassThroughCodec</keyword>
+        <section ref="qmailpassthroughcodec-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailquotedprintablecodec.html" title="QMailQuotedPrintableCodec Class Reference">
+        <keyword ref="qmailquotedprintablecodec.html">QMailQuotedPrintableCodec</keyword>
+        <keyword ref="qmailquotedprintablecodec.html#ConformanceType-enum">ConformanceType</keyword>
+        <keyword ref="qmailquotedprintablecodec.html#ConformanceType-enum">QMailQuotedPrintableCodec::Rfc2045</keyword>
+        <keyword ref="qmailquotedprintablecodec.html#ConformanceType-enum">QMailQuotedPrintableCodec::Rfc2047</keyword>
+        <keyword ref="qmailquotedprintablecodec.html#ContentType-enum">ContentType</keyword>
+        <keyword ref="qmailquotedprintablecodec.html#ContentType-enum">QMailQuotedPrintableCodec::Text</keyword>
+        <keyword ref="qmailquotedprintablecodec.html#ContentType-enum">QMailQuotedPrintableCodec::Binary</keyword>
+        <keyword ref="qmailquotedprintablecodec.html#name">name</keyword>
+        <section ref="qmailquotedprintablecodec-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmailtimestamp.html" title="QMailTimeStamp Class Reference">
+        <keyword ref="qmailtimestamp.html">QMailTimeStamp</keyword>
+        <keyword ref="qmailtimestamp.html#OutputFormat-enum">OutputFormat</keyword>
+        <keyword ref="qmailtimestamp.html#OutputFormat-enum">QMailTimeStamp::Rfc2822</keyword>
+        <keyword ref="qmailtimestamp.html#OutputFormat-enum">QMailTimeStamp::Rfc3501</keyword>
+        <keyword ref="qmailtimestamp.html#OutputFormat-enum">QMailTimeStamp::Rfc3339</keyword>
+        <keyword ref="qmailtimestamp.html#currentDateTime">currentDateTime</keyword>
+        <keyword ref="qmailtimestamp.html#isNull">isNull</keyword>
+        <keyword ref="qmailtimestamp.html#isValid">isValid</keyword>
+        <keyword ref="qmailtimestamp.html#toLocalTime">toLocalTime</keyword>
+        <keyword ref="qmailtimestamp.html#toString">toString</keyword>
+        <keyword ref="qmailtimestamp.html#toUTC">toUTC</keyword>
+        <keyword ref="qmailtimestamp.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qmailtimestamp.html#operator-lt">operator&lt;</keyword>
+        <keyword ref="qmailtimestamp.html#operator-lt-eq">operator&lt;=</keyword>
+        <keyword ref="qmailtimestamp.html#operator-eq-eq">operator==</keyword>
+        <keyword ref="qmailtimestamp.html#operator-gt">operator&gt;</keyword>
+        <keyword ref="qmailtimestamp.html#operator-gt-eq">operator&gt;=</keyword>
+        <section ref="qmailtimestamp-members.html" title="List of all members"/>
     </section>
     <section ref="qmediacontent.html" title="QMediaContent Class Reference">
         <keyword ref="qmediacontent.html">QMediaContent</keyword>
@@ -1620,11 +2130,13 @@
         <keyword ref="qmediaplaylist.html#playbackMode-prop">playbackMode</keyword>
         <keyword ref="qmediaplaylist.html#playbackMode-prop">setPlaybackMode</keyword>
         <keyword ref="qmediaplaylist.html#appendItem">appendItem</keyword>
+        <keyword ref="qmediaplaylist.html#appendItems">appendItems</keyword>
         <keyword ref="qmediaplaylist.html#clear">clear</keyword>
         <keyword ref="qmediaplaylist.html#currentMediaChanged">currentMediaChanged</keyword>
         <keyword ref="qmediaplaylist.html#error">error</keyword>
         <keyword ref="qmediaplaylist.html#errorString">errorString</keyword>
         <keyword ref="qmediaplaylist.html#insertItem">insertItem</keyword>
+        <keyword ref="qmediaplaylist.html#insertItems">insertItems</keyword>
         <keyword ref="qmediaplaylist.html#isEmpty">isEmpty</keyword>
         <keyword ref="qmediaplaylist.html#isReadOnly">isReadOnly</keyword>
         <keyword ref="qmediaplaylist.html#itemsAboutToBeInserted">itemsAboutToBeInserted</keyword>
@@ -1702,8 +2214,10 @@
     <section ref="qmediaplaylistprovider.html" title="QMediaPlaylistProvider Class Reference">
         <keyword ref="qmediaplaylistprovider.html">QMediaPlaylistProvider</keyword>
         <keyword ref="qmediaplaylistprovider.html#appendItem">appendItem</keyword>
+        <keyword ref="qmediaplaylistprovider.html#appendItems">appendItems</keyword>
         <keyword ref="qmediaplaylistprovider.html#clear">clear</keyword>
         <keyword ref="qmediaplaylistprovider.html#insertItem">insertItem</keyword>
+        <keyword ref="qmediaplaylistprovider.html#insertItems">insertItems</keyword>
         <keyword ref="qmediaplaylistprovider.html#isReadOnly">isReadOnly</keyword>
         <keyword ref="qmediaplaylistprovider.html#itemsAboutToBeInserted">itemsAboutToBeInserted</keyword>
         <keyword ref="qmediaplaylistprovider.html#itemsAboutToBeRemoved">itemsAboutToBeRemoved</keyword>
@@ -1948,8 +2462,6 @@
         <keyword ref="qmessage.html#createResponseMessage">createResponseMessage</keyword>
         <keyword ref="qmessage.html#date">date</keyword>
         <keyword ref="qmessage.html#from">from</keyword>
-        <keyword ref="qmessage.html#fromTransmissionFormat">fromTransmissionFormat</keyword>
-        <keyword ref="qmessage.html#fromTransmissionFormatFile">fromTransmissionFormatFile</keyword>
         <keyword ref="qmessage.html#id">id</keyword>
         <keyword ref="qmessage.html#isModified">isModified</keyword>
         <keyword ref="qmessage.html#parentAccountId">parentAccountId</keyword>
@@ -1976,7 +2488,6 @@
         <keyword ref="qmessage.html#status">status</keyword>
         <keyword ref="qmessage.html#subject">subject</keyword>
         <keyword ref="qmessage.html#to">to</keyword>
-        <keyword ref="qmessage.html#toTransmissionFormat">toTransmissionFormat</keyword>
         <keyword ref="qmessage.html#type">type</keyword>
         <section ref="qmessage-members.html" title="List of all members"/>
     </section>
@@ -2202,6 +2713,7 @@
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::NoError</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::NotYetImplemented</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::WorkingMemoryOverflow</keyword>
+        <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::Busy</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::FrameworkFault</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::InvalidId</keyword>
         <keyword ref="qmessagestore.html#ErrorCode-enum">QMessageStore::ConstraintFailure</keyword>
@@ -2374,6 +2886,9 @@
         <keyword ref="qradiotuner.html#Error-enum">QRadioTuner::NoError</keyword>
         <keyword ref="qradiotuner.html#Error-enum">QRadioTuner::ResourceError</keyword>
         <keyword ref="qradiotuner.html#Error-enum">QRadioTuner::OpenError</keyword>
+        <keyword ref="qradiotuner.html#State-enum">State</keyword>
+        <keyword ref="qradiotuner.html#State-enum">QRadioTuner::ActiveState</keyword>
+        <keyword ref="qradiotuner.html#State-enum">QRadioTuner::StoppedState</keyword>
         <keyword ref="qradiotuner.html#StereoMode-enum">StereoMode</keyword>
         <keyword ref="qradiotuner.html#StereoMode-enum">QRadioTuner::ForceMono</keyword>
         <keyword ref="qradiotuner.html#StereoMode-enum">QRadioTuner::ForceStereo</keyword>
@@ -2388,6 +2903,7 @@
         <keyword ref="qradiotuner.html#searching-prop">searching</keyword>
         <keyword ref="qradiotuner.html#searching-prop">isSearching</keyword>
         <keyword ref="qradiotuner.html#signalStrength-prop">signalStrength</keyword>
+        <keyword ref="qradiotuner.html#state-prop">state</keyword>
         <keyword ref="qradiotuner.html#stereo-prop">stereo</keyword>
         <keyword ref="qradiotuner.html#stereo-prop">isStereo</keyword>
         <keyword ref="qradiotuner.html#stereoMode-prop">stereoMode</keyword>
@@ -2408,6 +2924,7 @@
         <keyword ref="qradiotuner.html#searchingStatusChanged">searchingStatusChanged</keyword>
         <keyword ref="qradiotuner.html#signalStrengthChanged">signalStrengthChanged</keyword>
         <keyword ref="qradiotuner.html#start">start</keyword>
+        <keyword ref="qradiotuner.html#stateChanged">stateChanged</keyword>
         <keyword ref="qradiotuner.html#stereoStatusChanged">stereoStatusChanged</keyword>
         <keyword ref="qradiotuner.html#stop">stop</keyword>
         <keyword ref="qradiotuner.html#volumeChanged">volumeChanged</keyword>
@@ -2440,6 +2957,8 @@
         <keyword ref="qradiotunercontrol.html#signalStrength">signalStrength</keyword>
         <keyword ref="qradiotunercontrol.html#signalStrengthChanged">signalStrengthChanged</keyword>
         <keyword ref="qradiotunercontrol.html#start">start</keyword>
+        <keyword ref="qradiotunercontrol.html#state">state</keyword>
+        <keyword ref="qradiotunercontrol.html#stateChanged">stateChanged</keyword>
         <keyword ref="qradiotunercontrol.html#stereoMode">stereoMode</keyword>
         <keyword ref="qradiotunercontrol.html#stereoStatusChanged">stereoStatusChanged</keyword>
         <keyword ref="qradiotunercontrol.html#stop">stop</keyword>
@@ -2794,9 +3313,9 @@
         <keyword ref="qvaluespace.html#LayerOption-enum">LayerOption</keyword>
         <keyword ref="qvaluespace.html#LayerOption-enum">LayerOptions</keyword>
         <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::UnspecifiedLayer</keyword>
-        <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::WriteableLayer</keyword>
         <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::PermanentLayer</keyword>
-        <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::NonWriteableLayer</keyword>
+        <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::WritableLayer</keyword>
+        <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::NonWritableLayer</keyword>
         <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::NonPermanentLayer</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER">QVALUESPACE_CONTEXTKIT_LAYER</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_NONVOLATILEREGISTRY_LAYER">QVALUESPACE_NONVOLATILEREGISTRY_LAYER</keyword>
@@ -2924,8 +3443,14 @@
         <keyword ref="qvideowidget.html#brightnessChanged">brightnessChanged</keyword>
         <keyword ref="qvideowidget.html#contrastChanged">contrastChanged</keyword>
         <keyword ref="qvideowidget.html#fullScreenChanged">fullScreenChanged</keyword>
+        <keyword ref="qvideowidget.html#hideEvent">hideEvent</keyword>
         <keyword ref="qvideowidget.html#hueChanged">hueChanged</keyword>
+        <keyword ref="qvideowidget.html#moveEvent">moveEvent</keyword>
+        <keyword ref="qvideowidget.html#paintEvent">paintEvent</keyword>
+        <keyword ref="qvideowidget.html#resizeEvent">resizeEvent</keyword>
         <keyword ref="qvideowidget.html#saturationChanged">saturationChanged</keyword>
+        <keyword ref="qvideowidget.html#showEvent">showEvent</keyword>
+        <keyword ref="qvideowidget.html#sizeHint">sizeHint</keyword>
         <section ref="qvideowidget-members.html" title="List of all members"/>
     </section>
     <section ref="qvideowidgetcontrol.html" title="QVideoWidgetControl Class Reference">
@@ -3009,8 +3534,8 @@
     <section ref="location-releasenotes.html" title="Location Library Release Notes">
         <keyword ref="location-releasenotes.html">Location Library Release Notes</keyword>
     </section>
-    <section ref="messaging.html" title="Messaging">
-        <keyword ref="messaging.html">Messaging</keyword>
+    <section ref="messaging.html" title="Messaging API">
+        <keyword ref="messaging.html">Messaging API</keyword>
     </section>
     <section ref="multimedia.html" title="Mobility Multimedia">
         <keyword ref="multimedia.html">Mobility Multimedia</keyword>
@@ -3018,8 +3543,8 @@
     <section ref="multimedia.html" title="Multimedia">
         <keyword ref="multimedia.html">Multimedia</keyword>
     </section>
-    <section ref="publ-subs.html" title="Publish-Subscribe">
-        <keyword ref="publ-subs.html">Publish-Subscribe</keyword>
+    <section ref="publ-subs.html" title="Publish and Subscribe">
+        <keyword ref="publ-subs.html">Publish and Subscribe</keyword>
     </section>
     <section ref="bearer.html" title="Qt Bearer Management API">
         <keyword ref="bearer.html">Qt Bearer Management API</keyword>
@@ -3059,6 +3584,9 @@
     <section ref="audiorecorder.html" title="Audio Recorder Example">
         <keyword ref="audiorecorder.html">Audio Recorder Example</keyword>
     </section>
+    <section ref="audiorecorder.html" title="Audio Recorder Example">
+        <keyword ref="audiorecorder.html">Audio Recorder Example</keyword>
+    </section>
     <section ref="bearercloud.html" title="Bearer Cloud Example">
         <keyword ref="bearercloud.html">Bearer Cloud Example</keyword>
     </section>
@@ -3089,6 +3617,9 @@
     <section ref="logfilepositionsource.html" title="Log File Position Source Example">
         <keyword ref="logfilepositionsource.html">Log File Position Source Example</keyword>
     </section>
+    <section ref="player.html" title="Media Player Example">
+        <keyword ref="player.html">Media Player Example</keyword>
+    </section>
     <section ref="player.html" title="Player Example">
         <keyword ref="player.html">Player Example</keyword>
     </section>
@@ -3115,6 +3646,9 @@
     </section>
     <section ref="servicebrowser.html" title="Service Browser Example">
         <keyword ref="servicebrowser.html">Service Browser Example</keyword>
+    </section>
+    <section ref="slideshow.html" title="SlideShow Example">
+        <keyword ref="slideshow.html">SlideShow Example</keyword>
     </section>
     <section ref="slideshow.html" title="Slideshow Example">
         <keyword ref="slideshow.html">Slideshow Example</keyword>

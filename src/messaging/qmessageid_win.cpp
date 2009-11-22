@@ -255,6 +255,12 @@ bool QMessageId::operator<(const QMessageId& other) const
         return (d_ptr->_entryId < other.d_ptr->_entryId);
     }
 
+    if (d_ptr) {
+        return false;
+    } else if (other.d_ptr) {
+        return true;
+    }
+
     return false;
 }
 
@@ -263,8 +269,10 @@ QString QMessageId::toString() const
     if (!isValid())
         return QString();
 
+#ifndef _WIN32_WCE
     if (d_ptr->_messageRecordKey.isEmpty())
         d_ptr->_messageRecordKey = QMessageIdPrivate::messageRecordKey(*this);
+#endif
 
     if (d_ptr->_folderRecordKey.isEmpty())
         d_ptr->_folderRecordKey = QMessageIdPrivate::folderRecordKey(*this);

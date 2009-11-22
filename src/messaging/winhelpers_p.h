@@ -50,6 +50,8 @@
 #include <MAPIUtil.h>
 #include <qmessagestore.h>
 #include <QVector>
+#include <QQueue>
+#include <QEvent>
 
 // As per http://support.microsoft.com/kb/816477
 #ifndef PR_MSG_EDITOR_FORMAT
@@ -57,7 +59,12 @@
 #define EDITOR_FORMAT_DONTKNOW ((ULONG)0)
 #define EDITOR_FORMAT_PLAINTEXT ((ULONG)1)
 #define EDITOR_FORMAT_HTML ((ULONG)2)
+#ifndef _WIN32_WCE
 #define EDITOR_FORMAT_RTF ((ULONG)3)
+#else
+// Not a real definition, but useful for us:
+#define EDITOR_FORMAT_MIME ((ULONG)3)
+#endif
 #endif
 
 #ifndef PR_ATTACH_CONTENT_ID
@@ -343,6 +350,20 @@ class MapiSession : public QObject
 public:
     enum NotifyType { Added = 1, Removed, Updated };
 
+    class NotifyEvent : public QEvent
+    {
+    public:
+        static QEvent::Type eventType();
+
+        NotifyEvent(MapiStore *store, const QMessageId &id, MapiSession::NotifyType type);
+
+        virtual Type type();
+
+        MapiStore *_store;
+        QMessageId _id;
+        NotifyType _notifyType;
+    };
+
     static MapiSessionPtr createSession(QMessageStore::ErrorCode *lastError);
 
     ~MapiSession();
@@ -401,6 +422,9 @@ public:
     static QMessagePrivate *messageImpl(const QMessage &message);
     static QMessageContentContainerPrivate *containerImpl(const QMessageContentContainer &);
 
+    void addToNotifyQueue(const NotifyEvent& e);
+    void flushNotifyQueue();
+
 signals:
     void messageAdded(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
     void messageRemoved(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
@@ -408,6 +432,7 @@ signals:
 
 public slots:
     void dispatchNotifications();
+    void processNotifyQueue();
 
 private:
     MapiSession();
@@ -435,6 +460,7 @@ private:
     QMessageStore::NotificationFilterId _filterId;
     QMap<QMessageStore::NotificationFilterId, QMessageFilter> _filters;
     bool _registered;
+    QQueue<NotifyEvent> _notifyEventQueue;
 
     mutable QHash<MapiEntryId, MapiStorePtr> _storeMap;
 };

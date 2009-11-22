@@ -8,3 +8,9 @@ include (../../../common.pri)
 
 qtAddLibrary(QtMedia)
 
+wince* {
+    PLUGIN_DEPLOY.sources = $$OUTPUT_DIR/plugins/mediaservice/*.dll
+    PLUGIN_DEPLOY.path = mediaservice
+    DEPLOYMENT += PLUGIN_DEPLOY
+}
+

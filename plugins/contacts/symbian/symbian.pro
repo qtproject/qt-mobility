@@ -9,16 +9,16 @@ symbian: {
 
     TARGET.CAPABILITY = ALL -TCB
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.UID3 = 0xE5E2F4B4
+    TARGET.UID3 = 0x2002AC7B
   
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
   
     INCLUDEPATH += inc
-	INCLUDEPATH += rss
-	INCLUDEPATH += $$SOURCE_DIR/src/contacts 
-	INCLUDEPATH += $$SOURCE_DIR/src/contacts/details 
-	INCLUDEPATH += $$SOURCE_DIR/src/contacts/filters 
-	INCLUDEPATH += $$SOURCE_DIR/src/contacts/requests
+    INCLUDEPATH += rss
+    INCLUDEPATH += $$SOURCE_DIR/contacts
+    INCLUDEPATH += $$SOURCE_DIR/contacts/details
+    INCLUDEPATH += $$SOURCE_DIR/contacts/filters
+    INCLUDEPATH += $$SOURCE_DIR/contacts/requests
 
   HEADERS += \
         $$PUBLIC_HEADERS \
@@ -57,7 +57,7 @@ symbian: {
         inc/cntsymbiantransformerror.h \
         inc/cntsymbiandatabase.h
       
-  SOURCES += \
+    SOURCES += \
         src/cntsymbianengine.cpp \
         src/cnttransformcontact.cpp \
         src/cnttransformcontactdata.cpp \

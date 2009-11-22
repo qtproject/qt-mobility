@@ -269,13 +269,23 @@ QMediaContent QMediaPlaylist::media(int position) const
 }
 
 /*!
-  Append the list of media \a content to the playlist.
+  Append the media \a content to the playlist.
 
   Returns true if the operation is successfull, other wise return false.
   */
 bool QMediaPlaylist::appendItem(const QMediaContent &content)
 {
     return d_func()->control->playlistProvider()->appendItem(content);
+}
+
+/*!
+  Append multiple media content \a items to the playlist.
+
+  Returns true if the operation is successfull, other wise return false.
+  */
+bool QMediaPlaylist::appendItems(const QList<QMediaContent> &items)
+{
+    return d_func()->control->playlistProvider()->appendItems(items);
 }
 
 /*!
@@ -287,6 +297,17 @@ bool QMediaPlaylist::appendItem(const QMediaContent &content)
 bool QMediaPlaylist::insertItem(int pos, const QMediaContent &content)
 {
     return d_func()->playlist()->insertItem(pos, content);
+}
+
+/*!
+  Insert multiple media content \a items to the playlist at position \a pos.
+
+  Returns true if the operation is successful, otherwise false.
+*/
+
+bool QMediaPlaylist::insertItems(int pos, const QList<QMediaContent> &items)
+{
+    return d_func()->playlist()->insertItems(pos, items);
 }
 
 /*!

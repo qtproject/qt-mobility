@@ -42,27 +42,18 @@
 
 QList<CContactItemField *> CntTransformFamily::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList;
+    if(detail.definitionName() != QContactFamily::DefinitionName)
+       User::Leave(KErrArgument);
 
-	//cast to family
-	const QContactFamily &family(static_cast<const QContactFamily&>(detail));
+    QList<CContactItemField *> fieldList;
 
-    //spouse
-    TPtrC fieldSpouse(reinterpret_cast<const TUint16*>(family.spouse().utf16()));
-    CContactItemField* spouse = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldSpouse);
-    spouse->TextStorage()->SetTextL(fieldSpouse);
-    spouse->SetMapping(KUidContactFieldVCardMapSpouse);
-    fieldList.append(spouse);
-    CleanupStack::Pop(spouse);
+    //cast to family
+    const QContactFamily &family(static_cast<const QContactFamily&>(detail));
 
-    //children
+    //create new fields without contexts
+    transformToTextFieldL(family, fieldList, family.spouse(), KUidContactFieldSpouse, KUidContactFieldVCardMapSpouse, false);
     foreach(QString childName, family.children()) {
-        TPtrC fieldChild(reinterpret_cast<const TUint16*>(childName.utf16()));
-        CContactItemField* child = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldChildren);
-        child->TextStorage()->SetTextL(fieldChild);
-        child->SetMapping(KUidContactFieldVCardMapChildren);
-        fieldList.append(child);
-        CleanupStack::Pop(child);
+        transformToTextFieldL(family, fieldList, childName, KUidContactFieldChildren, KUidContactFieldVCardMapChildren, false);
     }
 
 	return fieldList;
