@@ -68,11 +68,10 @@ QTM_BEGIN_NAMESPACE
     The QMediaRecorder class is a high level media recording class.
     It's not intended to be used alone but for accessing the media
     recording functions of other media objects, like QRadioTuner,
-    QCamera or QAudioCaptureSource.
+    or QAudioCaptureSource.
 
-    If the camera or radio is used as a source, recording
+    If the radio is used as a source, recording
     is only possible when the source is in appropriate state
-    like QCamera::ActiveState for camera.
 
     \code
     // Audio only recording
@@ -89,17 +88,6 @@ QTM_BEGIN_NAMESPACE
     recorder->record();
     \endcode
 
-    \code
-    // Audio/Video recording
-    camera = new QCamera(deviceName);
-    recorder = new QMediaRecorder(camera);
-    preview = new QVideoWidget(camera);
-    camera->start();
-
-    //record with deafult settings after the camera has started
-    recorder->setOutputLocation(QUrl::fromLocalFile(fileName));
-    recorder->record();
-    \endcode
 
     \sa
 */

@@ -56,7 +56,6 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QCamera
-    \ingroup multimedia
 
     \preliminary
     \brief The QCamera class provides interface for system
