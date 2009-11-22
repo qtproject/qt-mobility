@@ -62,6 +62,9 @@ class QContactRelationshipRemoveRequest;
 class QContactDetailDefinitionFetchRequest;
 class QContactDetailDefinitionSaveRequest;
 class QContactDetailDefinitionRemoveRequest;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class QContactRequestWorker : public QThread
 {
@@ -108,7 +111,7 @@ private:
     QSharedDataPointer<QContactRequestWorkerData> d;
 };
 
-QTM_END_NAMESPACE
+
 
 #endif
 
