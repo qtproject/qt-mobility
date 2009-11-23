@@ -27,10 +27,14 @@ SOURCES += \
 symbian {
     HEADERS += qcrmlparser_p.h
     SOURCES += qcrmlparser.cpp
+
     deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
-    DEPLOYMENT += exportheaders
+
+    for(header, exportheaders.sources) {
+        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
+    }
 
     MMP_RULES += "EXPORTUNFROZEN"
     TARGET.CAPABILITY = ALL -TCB

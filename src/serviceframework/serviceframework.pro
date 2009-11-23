@@ -39,6 +39,10 @@ symbian {
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
     
+    for(header, exportheaders.sources) {
+        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
+    }
+
     libBlock = \
         "$${LITERAL_HASH}ifdef WINSCW" \
         "LIBRARY SFWDatabaseManagerServer.lib" \
