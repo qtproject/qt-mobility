@@ -41,6 +41,7 @@
 #include <QtTest/QtTest>
 #include "qsysteminfo.h"
 
+QTM_USE_NAMESPACE
 class tst_QSystemDisplayInfo : public QObject
 {
     Q_OBJECT

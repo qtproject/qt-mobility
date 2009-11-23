@@ -41,6 +41,8 @@
 #include "qmessageaccountfilter.h"
 #include "qmessageaccountfilter_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 QMessageAccountFilterPrivate::QMessageAccountFilterPrivate(QMessageAccountFilter *accountFilter)
     : q_ptr(accountFilter),
       _operator(Identity),
@@ -385,3 +387,4 @@ QMessageAccountFilter QMessageAccountFilter::byName(const QString &value, QMessa
     return result;
 }
 
+QTM_END_NAMESPACE

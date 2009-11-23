@@ -44,6 +44,8 @@
 #include "databasemanagerserver.pan"
 #include "databasemanagersignalhandler.h"
 
+QTM_BEGIN_NAMESPACE
+
 CDatabaseManagerServerSession* CDatabaseManagerServerSession::NewL()
     {
     CDatabaseManagerServerSession* self = CDatabaseManagerServerSession::NewLC();
@@ -445,5 +447,7 @@ void CDatabaseManagerServerSession::ServiceRemoved(const QString& aServiceName, 
         iWaitingAsyncRequest = EFalse;
         }
 }
+
+QTM_END_NAMESPACE
 
 // End of File

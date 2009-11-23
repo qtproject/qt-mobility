@@ -42,6 +42,8 @@
 #include "qcontactdetaildefinitionfetchrequest.h"
 #include "qcontactrequests_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactDetailDefinitionFetchRequest
  * \brief Allows a client to asynchronously request detail definitions from a contacts store manager
@@ -100,3 +102,7 @@ QMap<QString, QContactDetailDefinition> QContactDetailDefinitionFetchRequest::de
     Q_D(const QContactDetailDefinitionFetchRequest);
     return d->m_definitions;
 }
+
+#include "moc_qcontactdetaildefinitionfetchrequest.cpp"
+
+QTM_END_NAMESPACE

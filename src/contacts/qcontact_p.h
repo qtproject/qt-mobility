@@ -61,6 +61,8 @@
 
 #include "qtcontacts.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactData : public QSharedData
 {
 public:
@@ -90,6 +92,8 @@ public:
     QMap<QString, quint32> m_preferences;
     quint32 m_nextDetailId;
 };
+
+QTM_END_NAMESPACE
 
 #endif
 

@@ -46,11 +46,7 @@
 #include <QtCore/qpair.h>
 #include <QtCore/qsize.h>
 
-#ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qaudioformat.h>
-#else
-#include <qaudioformat.h>
-#endif
 
 #include <qmediarecorder.h>
 #include <qmediacontrol.h>
@@ -58,6 +54,8 @@
 #include <qmediaservice.h>
 
 #include <qmediaserviceprovider.h>
+
+QTM_BEGIN_NAMESPACE
 
 class QAudioCaptureSourcePrivate;
 
@@ -89,5 +87,7 @@ Q_SIGNALS:
 private:
     Q_DECLARE_PRIVATE(QAudioCaptureSource)
 };
+
+QTM_END_NAMESPACE
 
 #endif  // QAUDIOCAPTURESOURCE_H

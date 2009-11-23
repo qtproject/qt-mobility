@@ -52,6 +52,8 @@
 #include "QMessage.h"
 #include "QMessageAccount.h"
 
+QTM_USE_NAMESPACE
+
 class MessagingEx : public QMainWindow, public Ui::MessagingExMainWindow
 {
     Q_OBJECT

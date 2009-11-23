@@ -51,6 +51,8 @@ class AudioEncoderControl;
 class AudioMediaRecorderControl;
 class AudioDeviceControl;
 
+QTM_USE_NAMESPACE
+
 class AudioCaptureService : public QMediaService
 {
     Q_OBJECT

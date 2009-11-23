@@ -46,7 +46,11 @@
 #include <qmediaencodersettings.h>
 
 class QComboBox;
+QTM_BEGIN_NAMESPACE
 class QMediaRecorder;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 namespace Ui {
     class Settings;

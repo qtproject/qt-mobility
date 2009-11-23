@@ -56,7 +56,7 @@
 #include <QString>
 #include "qmobilityglobal.h"
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 #if defined(Q_OS_SYMBIAN) && defined(DATABASEMANAGERSERVER_NO_LIBRARY)
 class Q_SFW_EXPORT DBError
@@ -103,6 +103,6 @@ class Q_AUTOTEST_EXPORT DBError
         QString m_text;
         ErrorCode m_error;
 };
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif  //DBERROR_H

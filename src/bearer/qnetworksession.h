@@ -54,9 +54,7 @@
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
-
-QT_MODULE(Network)
+QTM_BEGIN_NAMESPACE
 
 class QNetworkSessionPrivate;
 class Q_BEARER_EXPORT QNetworkSession : public QObject
@@ -130,7 +128,7 @@ private:
     friend class QNetworkSessionPrivate;
     };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

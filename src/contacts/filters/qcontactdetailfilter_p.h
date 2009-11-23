@@ -59,6 +59,8 @@
 #include <QString>
 #include <QVariant>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactDetailFilterPrivate : public QContactFilterPrivate
 {
 public:
@@ -98,5 +100,7 @@ public:
     QVariant m_exactValue;
     QContactFilter::MatchFlags m_flags;
 };
+
+QTM_END_NAMESPACE
 
 #endif

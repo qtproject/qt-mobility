@@ -48,6 +48,7 @@
 #include <float.h>
 #include <limits.h>
 
+QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QGeoSatelliteInfo)
 Q_DECLARE_METATYPE(QGeoSatelliteInfo::Property)
 

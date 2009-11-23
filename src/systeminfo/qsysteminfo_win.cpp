@@ -71,10 +71,18 @@
 #include <qabstracteventdispatcher.h>
 
 #include <locale.h>
+#ifdef Q_OS_WINCE
+#include <simmgr.h>
+#include <Winbase.h>
+#include <Winuser.h>
+#endif
+
 
 #if !defined( Q_CC_MINGW)
 #ifndef Q_OS_WINCE
 #include "qwmihelper_win_p.h"
+
+
 
 enum NDIS_MEDIUM {
     NdisMedium802_3 = 0,
@@ -95,12 +103,6 @@ enum NDIS_PHYSICAL_MEDIUM {
     CTL_CODE(FILE_DEVICE_PHYSICAL_NETCARD, 0, METHOD_OUT_DIRECT, FILE_ANY_ACCESS)
 
 #endif
-#endif
-
-#ifdef Q_OS_WINCE
-#include <simmgr.h>
-#include <Winbase.h>
-#include <Winuser.h>
 #endif
 
 
@@ -359,6 +361,7 @@ static BluetoothFindRadioClose local_BluetoothFindRadioClose=0;
 typedef HANDLE (WINAPI *BluetoothFindFirstRadio)(const BLUETOOTH_FIND_RADIO_PARAMS * pbtfrp,HANDLE * phRadio);
 static BluetoothFindFirstRadio local_BluetoothFindFirstRadio=0;
 
+QTM_BEGIN_NAMESPACE
 
 static void resolveLibrary()
 {
@@ -772,10 +775,11 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     return featureSupported;
 }
 
-
+QTM_END_NAMESPACE
 //////// QSystemNetworkInfo
-Q_DECLARE_METATYPE(QSystemNetworkInfo::NetworkMode)
-Q_DECLARE_METATYPE(QSystemNetworkInfo::NetworkStatus)
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo)::NetworkMode)
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo)::NetworkStatus)
+QTM_BEGIN_NAMESPACE
 
 #if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
 
@@ -1979,6 +1983,6 @@ bool QSystemScreenSaverPrivate::isScreenLockOn()
     }
     return false;
 }
+#include "moc_qsysteminfo_win_p.cpp"
 
-
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

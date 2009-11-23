@@ -59,6 +59,8 @@
 #include <QString>
 #include <QVariant>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactLocalIdFilterPrivate : public QContactFilterPrivate
 {
 public:
@@ -85,5 +87,7 @@ public:
 
     QList<QContactLocalId> m_ids;
 };
+
+QTM_END_NAMESPACE
 
 #endif

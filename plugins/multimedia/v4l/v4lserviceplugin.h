@@ -45,10 +45,12 @@
 
 #include <qmediaserviceproviderplugin.h>
 
+QTM_USE_NAMESPACE
+
 class V4LServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
+    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
 public:
     QStringList keys() const;
     QMediaService* create(QString const& key);

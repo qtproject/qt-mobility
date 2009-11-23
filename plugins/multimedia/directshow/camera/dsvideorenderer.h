@@ -47,6 +47,8 @@
 
 class CameraFormatConverter;
 
+QTM_USE_NAMESPACE
+
 class DSVideoRendererControl : public QVideoRendererControl
 {
     Q_OBJECT

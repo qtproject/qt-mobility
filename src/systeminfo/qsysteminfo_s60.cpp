@@ -62,6 +62,8 @@
 #include <bttypes.h>
 #include <Etel3rdParty.h>
 
+QTM_BEGIN_NAMESPACE
+
 //////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
     : QObject(parent)
@@ -1020,4 +1022,6 @@ void QSystemScreenSaverPrivate::resetInactivityTime()
     User::ResetInactivityTime();
 }
 
-QT_END_NAMESPACE
+#include "moc_qsysteminfo_s60_p.cpp"
+
+QTM_END_NAMESPACE

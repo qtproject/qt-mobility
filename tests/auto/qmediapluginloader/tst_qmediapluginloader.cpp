@@ -45,6 +45,7 @@
 #include <qmediapluginloader_p.h>
 #include <qmediaserviceproviderplugin.h>
 
+QTM_USE_NAMESPACE
 
 class tst_QMediaPluginLoader : public QObject
 {

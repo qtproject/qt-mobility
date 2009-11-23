@@ -47,6 +47,9 @@
 #include "qgeopositioninfosource.h"
 #include "qmlbackendao_s60_p.h"
 
+
+QTM_BEGIN_NAMESPACE
+
 // constructor
 CQGeoPositionInfoSourceS60::CQGeoPositionInfoSourceS60(QObject* aParent) : QGeoPositionInfoSource(aParent),
         mCurrentModuleId(TUid::Null()),
@@ -875,3 +878,4 @@ void CQGeoPositionInfoSourceS60::disconnectNotify(const char *aSignal)
 
 }
 
+QTM_END_NAMESPACE

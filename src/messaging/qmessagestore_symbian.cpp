@@ -43,6 +43,9 @@
 
 #include <QString>
 
+
+QTM_BEGIN_NAMESPACE
+
 Q_GLOBAL_STATIC(QMessageStorePrivate,messageStorePrivate);
 
 QMessageStorePrivate::QMessageStorePrivate()
@@ -267,3 +270,5 @@ void QMessageStore::unregisterNotificationFilter(QMessageStore::NotificationFilt
     messageStorePrivate()->unregisterNotificationFilter(notificationFilterId);
 }
 
+
+QTM_END_NAMESPACE

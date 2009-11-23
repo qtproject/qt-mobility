@@ -55,11 +55,15 @@
 #include <mapix.h>
 #include <objbase.h>
 #include <mapiutil.h>
+#include <qmobilityglobal.h>
 #ifdef _WIN32_WCE
 #include <cemapi.h>
 #endif
 
-using namespace WinHelpers;
+using namespace QtMobility::WinHelpers;
+
+QTM_BEGIN_NAMESPACE
+
 static const unsigned long SmsCharLimit = 160;
 
 #ifndef _WIN32_WCE
@@ -1125,3 +1129,5 @@ QMessageStore::ErrorCode QMessageServiceAction::lastError() const
 }
 
 #include <qmessageserviceaction_win.moc>
+
+QTM_END_NAMESPACE

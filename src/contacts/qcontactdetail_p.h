@@ -60,6 +60,8 @@
 #include <QMap>
 #include <QString>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactDetailPrivate : public QSharedData
 {
 public:
@@ -85,5 +87,7 @@ public:
     QVariantMap m_values; // the value(s) stored in this field.
     QList<QContactActionDescriptor> m_preferredActions;
 };
+
+QTM_END_NAMESPACE
 
 #endif

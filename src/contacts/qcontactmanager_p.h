@@ -65,6 +65,8 @@
 #include "qcontactactiondescriptor.h"
 #include "qcontactactionfactory.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactManagerEngineFactory;
 
 /* Data and stuff that is shared amongst all backends */
@@ -111,49 +113,6 @@ private:
 };
 
 
-class QContact;
-class QContactManagerDataHolder
-{
-public:
-    QContactManagerDataHolder()
-    {
-        QStringList managerNames = QContactManager::availableManagers();
-
-        foreach(QString mgr, managerNames) {
-            QMap<QString, QString> params;
-            QString mgrUri = QContactManager::buildUri(mgr, params);
-            QContactManager* cm = QContactManager::fromUri(mgrUri);
-            if (cm) {
-                QList<QContact> contacts;
-                foreach (const QContactLocalId id,  cm->contacts()) {
-                    contacts.push_back(cm->contact(id));
-                }
-                savedContacts.insert(cm->managerName(),contacts);
-                QList<QContactLocalId> ids = cm->contacts();
-                cm->removeContacts(&ids);
-            }
-        }
-    }
-
-    ~QContactManagerDataHolder()
-    {
-        QStringList managerNames = QContactManager::availableManagers();
-
-        foreach(QString mgr, managerNames) {
-            QMap<QString, QString> params;
-            QString mgrUri = QContactManager::buildUri(mgr, params);
-            QContactManager* cm = QContactManager::fromUri(mgrUri);
-            if (cm) {
-                QList<QContact> contacts = savedContacts.value(cm->managerName());
-                foreach(QContact c, contacts) {
-                    c.setId(QContactId());
-                    cm->saveContact(&c);
-                }
-            }
-        }
-    }
-private:
-    QMap<QString, QList<QContact> > savedContacts;
-};
+QTM_END_NAMESPACE
 
 #endif

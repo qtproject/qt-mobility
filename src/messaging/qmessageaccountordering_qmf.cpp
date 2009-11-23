@@ -42,6 +42,8 @@
 
 #include <qmailaccountsortkey.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageAccountOrderingPrivate
 {
 public:
@@ -129,3 +131,4 @@ QMessageAccountOrdering QMessageAccountOrdering::byName(Qt::SortOrder order)
     return ordering;
 }
 
+QTM_END_NAMESPACE

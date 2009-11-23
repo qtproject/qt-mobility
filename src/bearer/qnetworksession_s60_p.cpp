@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include <qmobilityglobal.h>
 #include "qnetworksession_s60_p.h"
 #include "qnetworkconfiguration_s60_p.h"
 #include "qnetworkconfigmanager_s60_p.h"
@@ -47,6 +48,8 @@
 #include <in_sock.h>
 #include <stdapis/sys/socket.h>
 #include <stdapis/net/if.h>
+
+QTM_BEGIN_NAMESPACE
 
 QNetworkSessionPrivate::QNetworkSessionPrivate()
     : CActive(CActive::EPriorityStandard), state(QNetworkSession::Invalid),
@@ -1160,3 +1163,6 @@ void ConnectionProgressNotifier::RunL()
     }
 }
 
+#include "moc_qnetworksession_s60_p.cpp"
+
+QTM_END_NAMESPACE

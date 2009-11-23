@@ -43,6 +43,7 @@
 #define V4LVIDEODEVICECONTROL_H
 
 #include <qvideodevicecontrol.h>
+QTM_USE_NAMESPACE
 
 class V4LCameraSession;
 

@@ -51,6 +51,8 @@
 #include <QDir>
 #include <QFile>
 
+QTM_BEGIN_NAMESPACE
+
 namespace {
 
 QByteArray charsetFor(const QString &input)
@@ -646,3 +648,5 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
 
     return response;
 }
+
+QTM_END_NAMESPACE

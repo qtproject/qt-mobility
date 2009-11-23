@@ -42,13 +42,12 @@
 #ifndef QGSTREAMERVIDEORENDERER_H
 #define QGSTREAMERVIDEORENDERER_H
 
-#ifndef QT_NO_MULTIMEDIA
-
 #include <qvideorenderercontrol.h>
 #include "qvideosurfacegstsink.h"
 
 #include "qgstreamervideorendererinterface.h"
 
+QTM_USE_NAMESPACE
 
 class QGstreamerVideoRenderer : public QVideoRendererControl, public QGstreamerVideoRendererInterface
 {
@@ -68,7 +67,5 @@ private:
     GstElement *m_videoSink;
     QAbstractVideoSurface *m_surface;
 };
-
-#endif
 
 #endif // QGSTREAMERVIDEORENDRER_H

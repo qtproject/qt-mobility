@@ -54,6 +54,8 @@
 #include <QStringList>
 #include <QHash>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactAction;
 class Q_CONTACTS_EXPORT QContactActionFactory : public QObject
 {
@@ -69,7 +71,10 @@ public:
 
 uint qHash(const QContactActionDescriptor& ad);
 
+QTM_END_NAMESPACE
+
 #define QT_CONTACTS_ACTION_FACTORY_INTERFACE "com.nokia.qt.mobility.contacts.actionfactory/1.0"
-Q_DECLARE_INTERFACE(QContactActionFactory, QT_CONTACTS_ACTION_FACTORY_INTERFACE);
+Q_DECLARE_INTERFACE(QtMobility::QContactActionFactory, QT_CONTACTS_ACTION_FACTORY_INTERFACE);
+
 
 #endif

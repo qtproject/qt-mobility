@@ -49,6 +49,8 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
+QTM_BEGIN_NAMESPACE
+
 /* Leaf class */
 class Q_CONTACTS_EXPORT QContactGeolocation : public QContactDetail
 {
@@ -96,6 +98,8 @@ public:
     void setTimestamp(const QDateTime& timestamp) {setValue(FieldTimestamp, timestamp);}
     QDateTime timestamp() const {return variantValue(FieldTimestamp).toDateTime();}
 };
+
+QTM_END_NAMESPACE
 
 #endif
 

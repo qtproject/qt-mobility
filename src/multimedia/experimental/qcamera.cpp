@@ -52,9 +52,10 @@
 #include <experimental/qimagecapturecontrol.h>
 #include <qvideodevicecontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QCamera
-    \ingroup multimedia
 
     \preliminary
     \brief The QCamera class provides interface for system
@@ -1044,3 +1045,5 @@ void QCamera::capture(const QString &file)
 
 
 #include "moc_qcamera.cpp"
+QTM_END_NAMESPACE
+

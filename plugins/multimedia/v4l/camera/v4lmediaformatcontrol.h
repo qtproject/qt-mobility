@@ -45,6 +45,7 @@
 
 #include <qmediaformatcontrol.h>
 #include <QtCore/qstringlist.h>
+QTM_USE_NAMESPACE
 
 class V4LMediaFormatControl : public QMediaFormatControl
 {

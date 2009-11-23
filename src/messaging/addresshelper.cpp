@@ -42,6 +42,7 @@
 #include "addresshelper_p.h"
 #include <qpair.h>
 
+QTM_BEGIN_NAMESPACE
 static QPair<int, int> findDelimiters(const QString& text)
 {
     int first = -1;
@@ -129,3 +130,5 @@ void qParseMailbox(QString& input, QString& name, QString& address, QString& suf
     else
         endDelimeterFound = true;
 }
+
+QTM_END_NAMESPACE

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- multimedia.qdoc -->
 <head>
-  <title>Multimedia</title>
+  <title>Qt Mobility 1.0: Multimedia</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -14,8 +14,22 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Multimedia<br /><span class="subtitle"></span>
 </h1>
-<p>Multimedia provides a set of APIs that allow the developer to play, record and manage a collection of media content.</p>
+<p>Multimedia provides a set of APIs that allow the developer to play, record and manage a collection of media content. It is dependent on the <a href="http://qt.nokia.com/doc/4.5/qtmultimedia.html">QtMultimedia</a> API that is part of the Qt 4.6 release.</p>
+<p>The advantages of the Qt Mobility API are</p>
+<ul>
+<li>The ease of implementing functionality.</li>
+<li>The flexibility with the source / generated multimedia. Source files need not be local, it could be streamed data.</li>
+</ul>
 <ul><li><a href="#overview">Overview</a></li>
+<ul><li><a href="#audio">Audio</a></li>
+<li><a href="#video">Video</a></li>
+<li><a href="#radio">Radio</a></li>
+</ul>
+<li><a href="#examples">Examples</a></li>
+<ul><li><a href="#record-a-sound-source">Record a Sound Source</a></li>
+<li><a href="#play-a-media-file">Play a Media File</a></li>
+<li><a href="#slide-show">Slide Show</a></li>
+</ul>
 <li><a href="#reference-documentation">Reference documentation</a></li>
 <ul><li><a href="#main-classes">Main classes</a></li>
 <li><a href="#classes-for-service-implementers">Classes for service implementers.</a></li>
@@ -24,7 +38,30 @@
 <a name="overview"></a>
 <h3>Overview</h3>
 <p>This library will require Qt 4.6&#x2e;</p>
-<p>To build the library, run <tt>qmake</tt> and <tt>make</tt>.</p>
+<p>This API delivers an easy to use interface to multimedia functions whether the developer wants to show an image, a video, record sound or play a multimedia stream.</p>
+<a name="audio"></a>
+<h4>Audio</h4>
+<p>Looking at the Audio Recorder example we see that by creating a <a href="qmediarecorder.html">QMediaRecorder</a> object that is initialized with a newly created <a href="qaudiocapturesource.html">QAudioCaptureSource</a> object we can now perform all the core actions necessary to record a sound source.</p>
+<p>To initialize the objects we</p>
+<pre>        audiosource = new QAudioCaptureSource;
+        capture = new QMediaRecorder(audiosource);</pre>
+<p>the API now allows us to discover available devices and codecs as shown in the example. To actually do the recording we merely have to invoke the {<a href="qmediarecorder.html#record">QMediaRecorder::record</a>()}{record()} slot, and to stop signal the {<a href="qmediarecorder.html#stop">QMediaRecorder::stop</a>()}{stop()} slot. Saving to a file is done simply by calling <a href="qmediarecorder.html#outputLocation-prop">QMediaRecorder::setOutputLocation</a>() before starting to record.</p>
+<p>With a handful of functions and two classes we can implement a sound recording application, ignoring the user interface of course.</p>
+<a name="video"></a>
+<h4>Video</h4>
+<a name="radio"></a>
+<h4>Radio</h4>
+<a name="examples"></a>
+<h3>Examples</h3>
+<a name="record-a-sound-source"></a>
+<h4>Record a Sound Source</h4>
+<p><a href="audiorecorder.html">AudioRecorder</a> is a demonstration of the discovery of the supported devices and codecs and the use of recording functions in the <a href="qmediarecorder.html">QMediaRecorder</a> class.</p>
+<a name="play-a-media-file"></a>
+<h4>Play a Media File</h4>
+<p>The <a href="player.html">Player</a> example is a simple multimedia player. Select a video file to play, stop, pause, show in fullscreen or manipulate various image attributes using the Color Options button.</p>
+<a name="slide-show"></a>
+<h4>Slide Show</h4>
+<p>The <a href="slideshow.html">Slide Show</a> shows the use of the <a href="qmediaimageviewer.html">QMediaImageViewer</a> and <a href="qvideowidget.html">QVideoWidget</a> classes.</p>
 <a name="reference-documentation"></a>
 <h3>Reference documentation</h3>
 <a name="main-classes"></a>
@@ -33,12 +70,10 @@
 <tr valign="top" class="odd"><th><a href="qaudiocapturesource.html">QAudioCaptureSource</a></th><td>Interface to query and select an audio input device</td></tr>
 <tr valign="top" class="even"><th><a href="qaudioencodercontrol.html">QAudioEncoderControl</a></th><td>Access to the settings of a media service that performs audio encoding</td></tr>
 <tr valign="top" class="odd"><th><a href="qaudioformat.html">QAudioFormat</a></th><td>Stores audio parameter information</td></tr>
-<tr valign="top" class="even"><th><a href="qcamera.html">QCamera</a></th><td>Interface for system camera devices</td></tr>
-<tr valign="top" class="odd"><th><a href="qcameracontrol.html">QCameraControl</a></th></tr>
-<tr valign="top" class="even"><th><a href="qcameraexposurecontrol.html">QCameraExposureControl</a></th><td>Supplies control for exposure related camera parameters</td></tr>
-<tr valign="top" class="odd"><th><a href="qcamerafocuscontrol.html">QCameraFocusControl</a></th><td>Supplies control for focusing related camera parameters</td></tr>
-<tr valign="top" class="even"><th><a href="qimageprocessingcontrol.html">QImageProcessingControl</a></th><td>Abstract class for controling image processing parameters, like white balance, contrast, saturation, sharpening and denoising</td></tr>
-<tr valign="top" class="odd"><th><a href="qmediacontrol.html">QMediaControl</a></th><td>Base interface for media service controls</td></tr>
+<tr valign="top" class="even"><th><a href="qimageencodercontrol.html">QImageEncoderControl</a></th><td>Access to the settings of a media service that performs image encoding</td></tr>
+<tr valign="top" class="odd"><th><a href="qimageprocessingcontrol.html">QImageProcessingControl</a></th><td>Abstract class for controling image processing parameters, like white balance, contrast, saturation, sharpening and denoising</td></tr>
+<tr valign="top" class="even"><th><a href="qmediacontrol.html">QMediaControl</a></th><td>Base interface for media service controls</td></tr>
+<tr valign="top" class="odd"><th><a href="qmediaimageviewer.html">QMediaImageViewer</a></th><td>Means of viewing image media</td></tr>
 <tr valign="top" class="even"><th><a href="qmediaplayer.html">QMediaPlayer</a></th><td>Allows the playing of a media source</td></tr>
 <tr valign="top" class="odd"><th><a href="qmediaplayercontrol.html">QMediaPlayerControl</a></th></tr>
 <tr valign="top" class="even"><th><a href="qmediaplaylist.html">QMediaPlaylist</a></th><td>List of media content to play</td></tr>
@@ -47,25 +82,28 @@
 <tr valign="top" class="odd"><th><a href="qmediarecordercontrol.html">QMediaRecorderControl</a></th></tr>
 <tr valign="top" class="even"><th><a href="qmetadatacontrol.html">QMetaDataControl</a></th><td>Access to the meta-data of a QMediaService's media</td></tr>
 <tr valign="top" class="odd"><th><a href="qradiotunercontrol.html">QRadioTunerControl</a></th><td>Access to the radio tuning functionality of a QMediaService</td></tr>
-<tr valign="top" class="even"><th><a href="qvideowidget.html">QVideoWidget</a></th><td>Widget which presents video produced by a media object</td></tr>
+<tr valign="top" class="even"><th><a href="qvideoencodercontrol.html">QVideoEncoderControl</a></th><td>Access to the settings of a media service that performs video encoding</td></tr>
+<tr valign="top" class="odd"><th><a href="qvideowidget.html">QVideoWidget</a></th><td>Widget which presents video produced by a media object</td></tr>
 </table></p>
 <a name="classes-for-service-implementers"></a>
 <h4>Classes for service implementers.</h4>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="qaudiodevicecontrol.html">QAudioDeviceControl</a></th><td>Audio input/output device selector media control</td></tr>
 <tr valign="top" class="even"><th><a href="qaudioencodercontrol.html">QAudioEncoderControl</a></th><td>Access to the settings of a media service that performs audio encoding</td></tr>
-<tr valign="top" class="odd"><th><a href="qimageprocessingcontrol.html">QImageProcessingControl</a></th><td>Abstract class for controling image processing parameters, like white balance, contrast, saturation, sharpening and denoising</td></tr>
-<tr valign="top" class="even"><th><a href="qmediacontrol.html">QMediaControl</a></th><td>Base interface for media service controls</td></tr>
-<tr valign="top" class="odd"><th><a href="qmediaplayercontrol.html">QMediaPlayerControl</a></th></tr>
-<tr valign="top" class="even"><th><a href="qmediaplaylistcontrol.html">QMediaPlaylistControl</a></th><td>Access to the playlist functionality of a QMediaService</td></tr>
-<tr valign="top" class="odd"><th><a href="qmediarecordercontrol.html">QMediaRecorderControl</a></th></tr>
-<tr valign="top" class="even"><th><a href="qmetadatacontrol.html">QMetaDataControl</a></th><td>Access to the meta-data of a QMediaService's media</td></tr>
-<tr valign="top" class="odd"><th><a href="qradiotunercontrol.html">QRadioTunerControl</a></th><td>Access to the radio tuning functionality of a QMediaService</td></tr>
-<tr valign="top" class="even"><th><a href="qvideodevicecontrol.html">QVideoDeviceControl</a></th><td>Video device selector media control</td></tr>
+<tr valign="top" class="odd"><th><a href="qimageencodercontrol.html">QImageEncoderControl</a></th><td>Access to the settings of a media service that performs image encoding</td></tr>
+<tr valign="top" class="even"><th><a href="qimageprocessingcontrol.html">QImageProcessingControl</a></th><td>Abstract class for controling image processing parameters, like white balance, contrast, saturation, sharpening and denoising</td></tr>
+<tr valign="top" class="odd"><th><a href="qmediacontrol.html">QMediaControl</a></th><td>Base interface for media service controls</td></tr>
+<tr valign="top" class="even"><th><a href="qmediaplayercontrol.html">QMediaPlayerControl</a></th></tr>
+<tr valign="top" class="odd"><th><a href="qmediaplaylistcontrol.html">QMediaPlaylistControl</a></th><td>Access to the playlist functionality of a QMediaService</td></tr>
+<tr valign="top" class="even"><th><a href="qmediarecordercontrol.html">QMediaRecorderControl</a></th></tr>
+<tr valign="top" class="odd"><th><a href="qmetadatacontrol.html">QMetaDataControl</a></th><td>Access to the meta-data of a QMediaService's media</td></tr>
+<tr valign="top" class="even"><th><a href="qradiotunercontrol.html">QRadioTunerControl</a></th><td>Access to the radio tuning functionality of a QMediaService</td></tr>
+<tr valign="top" class="odd"><th><a href="qvideodevicecontrol.html">QVideoDeviceControl</a></th><td>Video device selector media control</td></tr>
+<tr valign="top" class="even"><th><a href="qvideoencodercontrol.html">QVideoEncoderControl</a></th><td>Access to the settings of a media service that performs video encoding</td></tr>
 </table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility API</div></td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
 </tr></table></div></address></body>
 </html>

@@ -51,6 +51,8 @@
 #include "qtcontactsglobal.h"
 #include "qcontactid.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactRelationshipPrivate;
 
 class Q_CONTACTS_EXPORT QContactRelationship
@@ -91,6 +93,8 @@ public:
 private:
     QSharedDataPointer<QContactRelationshipPrivate> d;
 };
+
+QTM_END_NAMESPACE
 
 #endif
 

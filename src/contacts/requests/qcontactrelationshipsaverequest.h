@@ -49,6 +49,8 @@
 #include <QList>
 #include <QStringList>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactRelationshipSaveRequestPrivate;
 class Q_CONTACTS_EXPORT QContactRelationshipSaveRequest : public QContactAbstractRequest
 {
@@ -72,5 +74,7 @@ private:
     friend class QContactManagerEngine;
     Q_DECLARE_PRIVATE_D(d_ptr, QContactRelationshipSaveRequest)
 };
+
+QTM_END_NAMESPACE
 
 #endif

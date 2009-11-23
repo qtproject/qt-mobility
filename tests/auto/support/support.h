@@ -45,9 +45,13 @@
 #include <QString>
 #include <qmessageglobal.h>
 
+QTM_BEGIN_NAMESPACE
 class QMessageAccountId;
 class QMessageFolderId;
 class QMessageId;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 namespace Support {
 

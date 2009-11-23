@@ -51,6 +51,8 @@
 #include <iapconf.h>
 #endif
 
+QTM_USE_NAMESPACE
+
 Q_DECLARE_METATYPE(QNetworkConfiguration)
 Q_DECLARE_METATYPE(QNetworkSession::State);
 Q_DECLARE_METATYPE(QNetworkSession::SessionError);

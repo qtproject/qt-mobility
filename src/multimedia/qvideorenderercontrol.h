@@ -42,11 +42,11 @@
 #ifndef QVIDEORENDERERCONTROL_H
 #define QVIDEORENDERERCONTROL_H
 
-#ifndef QT_NO_MULTIMEDIA
-
 #include <qmediacontrol.h>
-
 class QAbstractVideoSurface;
+
+QTM_BEGIN_NAMESPACE
+
 
 class Q_MEDIA_EXPORT QVideoRendererControl : public QMediaControl
 {
@@ -65,6 +65,6 @@ protected:
 #define QVideoRendererControl_iid "com.nokia.Qt.QVideoRendererControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QVideoRendererControl, QVideoRendererControl_iid)
 
-#endif  // QT_NO_MULTIMEDIA
+QTM_END_NAMESPACE
 
 #endif // QVIDEORENDERERCONTROL_H

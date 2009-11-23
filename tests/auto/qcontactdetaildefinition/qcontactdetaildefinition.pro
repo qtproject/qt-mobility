@@ -9,6 +9,7 @@ INCLUDEPATH += ../../../src/contacts \
                ../../../src/contacts/details \
                ../../../src/contacts/requests \
                ../../../src/contacts/filters
+INCLUDEPATH += ../
 
 qtAddLibrary(QtContacts)
 SOURCES  += tst_qcontactdetaildefinition.cpp

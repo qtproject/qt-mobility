@@ -41,13 +41,16 @@
 #ifndef SERVICEXMLGENERATOR_H
 #define SERVICEXMLGENERATOR_H
 
+#include <qmobilityglobal.h>
 #include <QMainWindow>
+
 
 class QWidget;
 class QIODevice;
 class QPushButton;
 class ServiceWidget;
 class QPlainTextEdit;
+
 
 class ServiceXmlGenerator : public QMainWindow
 {

@@ -48,9 +48,10 @@
 #include <QtCore/qpair.h>
 
 
-class QAudioFormat;
 class QStringList;
+class QAudioFormat;
 
+QTM_BEGIN_NAMESPACE
 
 class Q_MEDIA_EXPORT QAudioEncoderControl : public QMediaControl
 {
@@ -78,5 +79,7 @@ protected:
 
 #define QAudioEncoderControl_iid "com.nokia.Qt.QAudioEncoderControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QAudioEncoderControl, QAudioEncoderControl_iid)
+
+QTM_END_NAMESPACE
 
 #endif // QAUDIOCAPTUREPROPERTIESCONTROL_H

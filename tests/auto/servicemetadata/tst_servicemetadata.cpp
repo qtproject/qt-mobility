@@ -55,6 +55,7 @@
 # define TESTDATA_DIR "."
 #endif
 
+QTM_USE_NAMESPACE
 class ServiceMetadataTest: public QObject
 {
     Q_OBJECT

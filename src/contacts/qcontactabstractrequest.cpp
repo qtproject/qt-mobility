@@ -45,6 +45,8 @@
 #include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
 
+
+QTM_BEGIN_NAMESPACE
 /*!
   \class QContactAbstractRequest
   \brief The QContactAbstractRequest allows a client to asynchronously
@@ -216,3 +218,7 @@ bool QContactAbstractRequest::waitForProgress(int msecs)
 
     return false; // unable to wait for operation; not in progress or no engine.
 }
+
+#include "moc_qcontactabstractrequest.cpp"
+
+QTM_END_NAMESPACE

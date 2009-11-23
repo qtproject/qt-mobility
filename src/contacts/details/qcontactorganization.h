@@ -48,6 +48,8 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
+QTM_BEGIN_NAMESPACE
+
 /* Leaf class */
 class Q_CONTACTS_EXPORT QContactOrganization : public QContactDetail
 {
@@ -87,5 +89,7 @@ public:
     void setAssistantName(const QString& assistantName) {setValue(FieldAssistantName, assistantName);}
     QString assistantName() const {return value(FieldAssistantName);} 
 };
+
+QTM_END_NAMESPACE
 
 #endif

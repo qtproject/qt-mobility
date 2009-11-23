@@ -40,6 +40,9 @@
 ****************************************************************************/
 #include "qmessage.h"
 
+
+QTM_BEGIN_NAMESPACE
+
 QMessage::QMessage()
 {
 }
@@ -258,3 +261,5 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
     return QMessage(); // stub
 }
 
+
+QTM_END_NAMESPACE

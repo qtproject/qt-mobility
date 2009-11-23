@@ -47,6 +47,8 @@
 
 #include <experimental/qcamera.h>
 
+QTM_BEGIN_NAMESPACE
+
 class Q_MEDIA_EXPORT QCameraExposureControl : public QMediaControl
 {
     Q_OBJECT
@@ -112,6 +114,8 @@ protected:
 
 #define QCameraExposureControl_iid "com.nokia.Qt.QCameraExposureControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QCameraExposureControl, QCameraExposureControl_iid)
+
+QTM_END_NAMESPACE
 
 #endif  // QCAMERACONTROL_H
 

@@ -45,6 +45,8 @@
 #include <experimental/qimagecapturecontrol.h>
 #include "dscamerasession.h"
 
+QTM_USE_NAMESPACE
+
 class DSImageCaptureControl : public QImageCaptureControl
 {
     Q_OBJECT

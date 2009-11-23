@@ -43,6 +43,8 @@
 
 #include <qmailid.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageAccountIdPrivate
 {
 public:
@@ -128,3 +130,4 @@ uint qHash(const QMessageAccountId &id)
     return qHash(QmfHelpers::convert(id));
 }
 
+QTM_END_NAMESPACE

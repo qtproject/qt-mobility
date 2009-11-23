@@ -55,6 +55,7 @@
 #include <QHash>
 #include <QTimer>
 
+QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QNmeaPositionInfoSource::UpdateMode)
 Q_DECLARE_METATYPE(QGeoPositionInfo)
 Q_DECLARE_METATYPE(QList<QDateTime>)
