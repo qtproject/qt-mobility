@@ -43,15 +43,18 @@
 #define S60RADIOTUNERCONTROL_H
 
 #include <QtCore/qobject.h>
-#include <QtCore/qtimer.h>
-#include <QTime>
-
-#include <QRadioTunerControl>
-#include <QRadioTuner>
+#include "qradiotunercontrol.h"
+#include "qradiotuner.h"
+#include <tuner/tuner.h>
 
 class S60RadioTunerService;
 
-class S60RadioTunerControl : public QRadioTunerControl
+class S60RadioTunerControl : public QRadioTunerControl, 
+	public MMMTunerObserver,
+	public MMMTunerStereoObserver,
+	public MMMSignalStrengthObserver,
+	public MMMTunerChangeObserver,
+	public MMMTunerAudioPlayerObserver
 {
     Q_OBJECT
 public:
@@ -73,11 +76,8 @@ public:
     QRadioTuner::StereoMode stereoMode() const;
     void setStereoMode(QRadioTuner::StereoMode mode);
 
-
     int signalStrength() const;
-
-    qint64 duration() const;
-
+   
     int volume() const;
     void setVolume(int volume);
 
@@ -96,32 +96,61 @@ public:
 
     QRadioTuner::Error error() const;
     QString errorString() const;
+    
+    // for device interfaces if needed 
+    static int deviceCount();
+    
+    //from MMMTunerObserver
+    void MToTuneComplete(TInt aError);
+    void MToTunerEvent(MMMTunerObserver::TEventType aType, TInt aError, TAny* aAdditionalInfo);
+    // from MMMTunerStereoObserver
+    void MTsoStereoReceptionChanged(TBool aStereo);
+    void MTsoForcedMonoChanged(TBool aForcedMono);
+    //MMMSignalStrengthObserver
+    void MssoSignalStrengthChanged(TInt aNewSignalStrength);
+    //MMMTunerChangeObserver
+	void MTcoFrequencyChanged(const TFrequency& aOldFrequency, const TFrequency& aNewFrequency);
+	void MTcoChannelChanged(const TChannel& aOldChannel, const TChannel& aNewChannel);
+	void MTcoStateChanged(const TUint32& aOldState, const TUint32& aNewState);
+	void MTcoAntennaDetached();
+	void MTcoAntennaAttached();
+	void MTcoFlightModeChanged(TBool aFlightMode);
+	void MTcoSquelchChanged(TBool aSquelch);
+    //From MMMTunerAudioPlayerObserver
+	void MTapoInitializeComplete(TInt aError);
+	void MTapoPlayEvent(MMMTunerAudioPlayerObserver::TEventType aEvent, TInt aError, TAny* aAdditionalInfo);
 
 private slots:
     void search();
 
 private:
     bool initRadio();
-    void setVol(int v);
-    int  getVol();
+    CMMTunerUtility::TTunerBand getNativeBand(QRadioTuner::Band b) const;
 
+    mutable int m_error;
+    CMMTunerUtility *m_tunerUtility;
+    CMMTunerAudioPlayerUtility *m_audioPlayerUtily;
+    bool audioInitializationComplete;
     bool m_muted;
-    bool m_stereo;
-    bool low;
-    bool available;
-    int  tuners;
-    int  step;
-    int  vol;
-    int  sig;
-    bool scanning;
+    bool m_isStereo;
+    bool m_available;
+    int  m_tuners;
+    int  m_step;
+    int  m_vol;
+    mutable int  m_signal;
+    bool m_scanning;
     bool forward;
-    QTimer* timer;
-    QRadioTuner::Band   currentBand;
-    qint64 freqMin;
-    qint64 freqMax;
-    qint64 currentFreq;
-    QTime  playTime;
-    QRadioTuner::State m_tunerState;
+    QRadioTuner::Band   m_currentBand;
+    qint64 m_currentFreq;
+    
+    QRadioTuner::Error m_radioError;
+    QRadioTuner::StereoMode m_stereoMode;
+    QString m_errorString;
+    //caps meaning what the tuner can do.
+    TTunerCapabilities m_currentTunerCapabilities;
+    long m_tunerState; 
+    QRadioTuner::State m_apiTunerState;
+    
 };
 
 #endif
