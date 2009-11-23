@@ -209,9 +209,6 @@
                     <section ref="qcontacturl.html" title="QContactUrl Class Reference">
                         <section ref="qcontacturl-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qgeoareamonitor.html" title="QGeoAreaMonitor Class Reference">
-                        <section ref="qgeoareamonitor-members.html" title="List of all members"/>
-                    </section>
                     <section ref="qgeocoordinate.html" title="QGeoCoordinate Class Reference">
                         <section ref="qgeocoordinate-members.html" title="List of all members"/>
                     </section>
@@ -532,6 +529,7 @@
                     <section ref="player.html" title="Player Example"/>
                     <section ref="publish-subscribe.html" title="Publish and Subscribe Example"/>
                     <section ref="querymessages.html" title="Query Messages Example"/>
+                    <section ref="quickstart.html" title="Quickstart Example"/>
                     <section ref="radio.html" title="Radio Example"/>
                     <section ref="recorder.html" title="Recorder Example"/>
                     <section ref="samplephonebook.html" title="Sample Phonebook Example"/>
@@ -551,6 +549,7 @@
                     <section ref="classlists.html" title="Class and Function Documentation"/>
                     <section ref="contacts.html" title="Contacts"/>
                     <section ref="hierarchy.html" title="Inheritance Hierarchy"/>
+                    <section ref="installation.html" title="Installation Guide"/>
                     <section ref="location-overview.html" title="Location"/>
                     <section ref="location-releasenotes.html" title="Location Library Release Notes"/>
                     <section ref="messaging.html" title="Messaging API"/>
@@ -587,6 +586,7 @@
             <keyword name="File Manager Plugin Example" id="File Manager Plugin Example" ref="filemanagerplugin.html"/>
             <keyword name="Incoming Calls Example" id="Incoming Calls Example" ref="incomingcalls.html"/>
             <keyword name="Inheritance Hierarchy" id="Inheritance Hierarchy" ref="hierarchy.html"/>
+            <keyword name="Installation Guide" id="Installation Guide" ref="installation.html"/>
             <keyword name="Keep in Touch Example" id="Keep in Touch Example" ref="keepintouch.html"/>
             <keyword name="Location" id="Location" ref="location-overview.html"/>
             <keyword name="Location Library Release Notes" id="Location Library Release Notes" ref="location-releasenotes.html"/>
@@ -1581,15 +1581,6 @@
             <keyword name="setUrl" id="QContactUrl::setUrl" ref="qcontacturl.html#setUrl"/>
             <keyword name="subType" id="QContactUrl::subType" ref="qcontacturl.html#subType"/>
             <keyword name="url" id="QContactUrl::url" ref="qcontacturl.html#url"/>
-            <keyword name="QGeoAreaMonitor" id="QGeoAreaMonitor" ref="qgeoareamonitor.html"/>
-            <keyword name="areaEntered" id="QGeoAreaMonitor::areaEntered" ref="qgeoareamonitor.html#areaEntered"/>
-            <keyword name="areaExited" id="QGeoAreaMonitor::areaExited" ref="qgeoareamonitor.html#areaExited"/>
-            <keyword name="center" id="QGeoAreaMonitor::center" ref="qgeoareamonitor.html#center-prop"/>
-            <keyword name="createDefaultMonitor" id="QGeoAreaMonitor::createDefaultMonitor" ref="qgeoareamonitor.html#createDefaultMonitor"/>
-            <keyword name="radius" id="QGeoAreaMonitor::radius" ref="qgeoareamonitor.html#radius-prop"/>
-            <keyword name="setCenter" id="QGeoAreaMonitor::setCenter" ref="qgeoareamonitor.html#center-prop"/>
-            <keyword name="setRadius" id="QGeoAreaMonitor::setRadius" ref="qgeoareamonitor.html#radius-prop"/>
-            <keyword name="~QGeoAreaMonitor" id="QGeoAreaMonitor::~QGeoAreaMonitor" ref="qgeoareamonitor.html#dtor.QGeoAreaMonitor"/>
             <keyword name="QGeoCoordinate" id="QGeoCoordinate" ref="qgeocoordinate.html"/>
             <keyword name="QGeoCoordinate::CoordinateFormat" id="QGeoCoordinate::CoordinateFormat" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
             <keyword name="QGeoCoordinate::DecimalDegrees" id="QGeoCoordinate::DecimalDegrees" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
@@ -2763,6 +2754,7 @@
             <keyword name="isValid" id="QMessageId::isValid" ref="qmessageid.html#isValid"/>
             <keyword name="toString" id="QMessageId::toString" ref="qmessageid.html#toString"/>
             <keyword name="~QMessageId" id="QMessageId::~QMessageId" ref="qmessageid.html#dtor.QMessageId"/>
+            <keyword name="QMessageIdList" id="QMessageIdList" ref="AQMessageIdList-typedef"/>
             <keyword name="QMessageOrdering" id="QMessageOrdering" ref="qmessageordering.html"/>
             <keyword name="byPriority" id="QMessageOrdering::byPriority" ref="qmessageordering.html#byPriority"/>
             <keyword name="byReceptionTimeStamp" id="QMessageOrdering::byReceptionTimeStamp" ref="qmessageordering.html#byReceptionTimeStamp"/>
@@ -3545,6 +3537,7 @@
             <keyword name="QtMedia::ProbablySupported" id="QtMedia::ProbablySupported" ref="qtmedia.html#SupportEstimate-enum"/>
             <keyword name="QtMedia::PreferedService" id="QtMedia::PreferedService" ref="qtmedia.html#SupportEstimate-enum"/>
             <keyword name="Query Messages Example" id="Query Messages Example" ref="querymessages.html"/>
+            <keyword name="Quickstart Example" id="Quickstart Example" ref="quickstart.html"/>
             <keyword name="Radio Example" id="Radio Example" ref="radio.html"/>
             <keyword name="Recorder Example" id="Recorder Example" ref="recorder.html"/>
             <keyword name="Sample Phonebook Example" id="Sample Phonebook Example" ref="samplephonebook.html"/>
@@ -3717,6 +3710,7 @@
             <file>streamplayer-streamplayer-pro.html</file>
             <file>incomingcalls-testmodelui-h.html</file>
             <file>qvideoencodersettings.html</file>
+            <file>quickstart-quickstart-pro.html</file>
             <file>querymessages-main-cpp.html</file>
             <file>qvaluespaceprovider-members.html</file>
             <file>bearercloud-bearercloud-pro.html</file>
@@ -3835,10 +3829,10 @@
             <file>images/bearercloud-example.png</file>
             <file>qcontactname-members.html</file>
             <file>systeminfo.html</file>
+            <file>quickstart-main-cpp.html</file>
             <file>qcontactrelationshipfetchrequest.html</file>
             <file>qmediaobject.html</file>
             <file>filemanagerplugin-filemanagertransfer-cpp.html</file>
-            <file>qgeoareamonitor-members.html</file>
             <file>qcontactunionfilter-members.html</file>
             <file>qmediaplaylistcontrol-members.html</file>
             <file>qmessageid-members.html</file>
@@ -3929,8 +3923,8 @@
             <file>radio-main-cpp.html</file>
             <file>slideshow.html</file>
             <file>qcontactnickname.html</file>
-            <file>qmessagefolderordering-members.html</file>
             <file>qcontactrelationship.html</file>
+            <file>qmessagefolderordering-members.html</file>
             <file>qcontactsortorder.html</file>
             <file>serviceactions-attachmentlistwidget-h.html</file>
             <file>qcontactdetaildefinitionfield-members.html</file>
@@ -3958,7 +3952,6 @@
             <file>cameracapture-cameracapture-cpp.html</file>
             <file>samplephonebook-finddialog-h.html</file>
             <file>qcontactphonenumber-members.html</file>
-            <file>qgeoareamonitor.html</file>
             <file>qmediaservicesupportedformatsinterface-members.html</file>
             <file>qvideooutputcontrol.html</file>
             <file>slideshow-main-cpp.html</file>
@@ -3992,12 +3985,14 @@
             <file>qcontacturl-members.html</file>
             <file>qcontactmanager-members.html</file>
             <file>sysinfo-main-cpp.html</file>
+            <file>installation.html</file>
             <file>qmessageserviceaction-members.html</file>
             <file>qmailfolderid.html</file>
             <file>qimageencodercontrol.html</file>
             <file>qaudioformat.html</file>
             <file>qsystemscreensaver-members.html</file>
             <file>qcontactavatar-members.html</file>
+            <file>quickstart.html</file>
             <file>battery-charge-battery-consumer-battery-consumer-pro.html</file>
             <file>samplephonebook-phonebook-cpp.html</file>
             <file>qgraphicsvideoitem-members.html</file>

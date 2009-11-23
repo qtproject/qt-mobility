@@ -59,6 +59,8 @@
     #include &lt;qmessagestore.h&gt;
     #include &lt;qdebug.h&gt;
 
+    QTM_USE_NAMESPACE
+
     int main(int argc, char *argv[])
     {
         QApplication app(argc, argv);
@@ -67,9 +69,13 @@
         foreach (QMessageId id, ids) {
             QMessage message(QMessageStore::instance()-&gt;message(id));
             if (QMessageStore::instance()-&gt;lastError() == QMessageStore::NoError) {
+                            QStringList to;
+                            foreach (const QMessageAddress &amp;addr, message.to()) {
+                                    to.append(addr.recipient());
+                            }
                 qDebug() &lt;&lt; QString(message.subject().leftJustified(32, ' ' , true)
                                     + &quot;  &quot;
-                                    + message.from().recipient().leftJustified(21, ' ', true)
+                                    + to.join(&quot; &quot;)
                                     + &quot;  &quot;
                                     + QString::number(message.size()).left(19));
             }
