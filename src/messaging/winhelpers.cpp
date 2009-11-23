@@ -4071,6 +4071,7 @@ bool MapiSession::updateMessageRecipients(QMessageStore::ErrorCode *lastError, Q
 
                 mapiRelease(recipientsTable);
             } else {
+#ifdef _WIN32_WCE
                 if (rv == MAPI_E_NO_RECIPIENTS) {
                     updateMessageProperties(lastError, msg);
                     if (*lastError == QMessageStore::NoError) {
@@ -4080,8 +4081,11 @@ bool MapiSession::updateMessageRecipients(QMessageStore::ErrorCode *lastError, Q
                         }
                     }
                 } else {
+#endif
                     *lastError = QMessageStore::ContentInaccessible;
+#ifdef _WIN32_WCE
                 }
+#endif
             }
 
             mapiRelease(message);
