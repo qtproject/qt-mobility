@@ -1864,6 +1864,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="toString" fullname="QMessageId::toString" href="qmessageid.html#toString" location="qmessageid_symbian.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="toString() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QMessageId::isValid" href="qmessageid.html#isValid" location="qmessageid_symbian.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
         </class>
+        <typedef access="public" threadsafety="unspecified" status="commendable" name="QMessageIdList" href="#QMessageIdList-typedef" location="qmessageid.h"/>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactActionDescriptor" href="qcontactactiondescriptor.html" location="qcontactactiondescriptor.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactActionDescriptor" fullname="QContactActionDescriptor::QContactActionDescriptor" href="qcontactactiondescriptor.html#QContactActionDescriptor" location="qcontactactiondescriptor.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactActionDescriptor(const QString &amp; actionName, const QString &amp; vendorName, int vendorVersion)">
                 <parameter left="const QString &amp;" right="" name="actionName" default="QString()"/>
@@ -2583,37 +2584,6 @@
             </function>
             <function access="protected" threadsafety="unspecified" status="commendable" name="QCameraControl" fullname="QCameraControl::QCameraControl" href="qcameracontrol.html#QCameraControl" location="qcameracontrol.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QCameraControl(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-        </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoAreaMonitor" href="qgeoareamonitor.html" location="qgeoareamonitor.h" bases="QObject" module="">
-            <property access="public" threadsafety="unspecified" status="commendable" name="center" fullname="QGeoAreaMonitor::center" href="qgeoareamonitor.html#center-prop" location="qgeoareamonitor.h" type="QGeoCoordinate">
-                <getter name="center"/>
-                <setter name="setCenter"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QGeoAreaMonitor::radius" href="qgeoareamonitor.html#radius-prop" location="qgeoareamonitor.h" type="qreal">
-                <getter name="radius"/>
-                <setter name="setRadius"/>
-            </property>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoAreaMonitor" fullname="QGeoAreaMonitor::QGeoAreaMonitor" href="qgeoareamonitor.html#QGeoAreaMonitor" location="qgeoareamonitor.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoAreaMonitor(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoAreaMonitor" fullname="QGeoAreaMonitor::~QGeoAreaMonitor" href="qgeoareamonitor.html#dtor.QGeoAreaMonitor" location="qgeoareamonitor.h" virtual="pure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoAreaMonitor()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setCenter" fullname="QGeoAreaMonitor::setCenter" href="qgeoareamonitor.html#center-prop" location="qgeoareamonitor.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" associated-property="center" type="void" signature="setCenter(const QGeoCoordinate &amp; coordinate)">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="center" fullname="QGeoAreaMonitor::center" href="qgeoareamonitor.html#center-prop" location="qgeoareamonitor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="center" type="QGeoCoordinate" signature="center() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setRadius" fullname="QGeoAreaMonitor::setRadius" href="qgeoareamonitor.html#radius-prop" location="qgeoareamonitor.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" associated-property="radius" type="void" signature="setRadius(qreal radius)">
-                <parameter left="qreal" right="" name="radius" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QGeoAreaMonitor::radius" href="qgeoareamonitor.html#radius-prop" location="qgeoareamonitor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="radius" type="qreal" signature="radius() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="createDefaultMonitor" fullname="QGeoAreaMonitor::createDefaultMonitor" href="qgeoareamonitor.html#createDefaultMonitor" location="qgeoareamonitor.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QGeoAreaMonitor *" signature="createDefaultMonitor(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="areaEntered" fullname="QGeoAreaMonitor::areaEntered" href="qgeoareamonitor.html#areaEntered" location="qgeoareamonitor.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="areaEntered(const QGeoPositionInfo &amp; update)">
-                <parameter left="const QGeoPositionInfo &amp;" right="" name="update" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="areaExited" fullname="QGeoAreaMonitor::areaExited" href="qgeoareamonitor.html#areaExited" location="qgeoareamonitor.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="areaExited(const QGeoPositionInfo &amp; update)">
-                <parameter left="const QGeoPositionInfo &amp;" right="" name="update" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaServiceProviderHint" href="qmediaserviceproviderhint.html" location="qmediaserviceprovider.h" bases="" module="">
@@ -7220,6 +7190,10 @@
             <page access="public" status="commendable" name="filemanagerplugin/filemanagertransfer.h" href="filemanagerplugin-filemanagertransfer-h.html" subtype="file" title="" fulltitle="filemanagertransfer.h Example File" subtitle="filemanagerplugin/filemanagertransfer.h" location=""/>
             <page access="public" status="commendable" name="filemanagerplugin/filemanagerplugin.pro" href="filemanagerplugin-filemanagerplugin-pro.html" subtype="file" title="" fulltitle="filemanagerplugin.pro Example File" subtitle="filemanagerplugin/filemanagerplugin.pro" location=""/>
         </page>
+        <page access="public" status="commendable" name="quickstart" href="quickstart.html" subtype="example" title="Quickstart Example" fulltitle="Quickstart Example" subtitle="" location="quickstart.qdoc">
+            <page access="public" status="commendable" name="quickstart/main.cpp" href="quickstart-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="quickstart/main.cpp" location=""/>
+            <page access="public" status="commendable" name="quickstart/quickstart.pro" href="quickstart-quickstart-pro.html" subtype="file" title="" fulltitle="quickstart.pro Example File" subtitle="quickstart/quickstart.pro" location=""/>
+        </page>
         <page access="public" status="commendable" name="slideshow" href="slideshow.html" subtype="example" title="SlideShow Example" fulltitle="SlideShow Example" subtitle="" location="slideshow.qdoc">
             <page access="public" status="commendable" name="slideshow/slideshow.cpp" href="slideshow-slideshow-cpp.html" subtype="file" title="" fulltitle="slideshow.cpp Example File" subtitle="slideshow/slideshow.cpp" location=""/>
             <page access="public" status="commendable" name="slideshow/slideshow.h" href="slideshow-slideshow-h.html" subtype="file" title="" fulltitle="slideshow.h Example File" subtitle="slideshow/slideshow.h" location=""/>
@@ -7334,19 +7308,20 @@
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoOutputControl_iid" href="qvideooutputcontrol.html#QVideoOutputControl_iid" location="qvideooutputcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoOutputControl" type="" signature="QVideoOutputControl_iid()"/>
         <page access="public" status="commendable" name="mobility" href="mobility.html" subtype="group" title="Qt Mobility APIs" fulltitle="Qt Mobility APIs" subtitle="" location="index.qdoc"/>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Overview" fulltitle="Qt Mobility Overview" subtitle="" location="index.qdoc">
-            <contents name="mobility-component-apis" title="Mobility Component APIs" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
-            <contents name="bearer-management" title="Bearer Management" level="1"/>
-            <contents name="contacts" title="Contacts" level="1"/>
-            <contents name="publish-and-subscribe" title="Publish and Subscribe" level="1"/>
-            <contents name="location" title="Location" level="1"/>
-            <contents name="messaging" title="Messaging" level="1"/>
-            <contents name="messaging-dependencies-and-requirements" title="Messaging dependencies and requirements" level="2"/>
-            <contents name="multimedia" title="Multimedia" level="1"/>
-            <contents name="multimedia-dependencies-and-requirements" title="Multimedia Dependencies and Requirements" level="2"/>
-            <contents name="service-framework" title="Service Framework" level="1"/>
-            <contents name="service-framework-dependencies-and-requirements" title="Service Framework Dependencies and Requirements" level="2"/>
-            <contents name="system-information" title="System Information" level="1"/>
+            <contents name="introducing-the-mobility-apis" title="Introducing the Mobility APIs" level="2"/>
+            <contents name="getting-started" title="Getting Started" level="2"/>
+            <contents name="the-mobility-apis" title="The Mobility APIs" level="1"/>
+            <contents name="bearer-management" title="Bearer Management" level="2"/>
+            <contents name="contacts" title="Contacts" level="2"/>
+            <contents name="publish-and-subscribe" title="Publish and Subscribe" level="2"/>
+            <contents name="location" title="Location" level="2"/>
+            <contents name="messaging" title="Messaging" level="2"/>
+            <contents name="messaging-dependencies-and-requirements" title="Messaging dependencies and requirements" level="3"/>
+            <contents name="multimedia" title="Multimedia" level="2"/>
+            <contents name="service-framework" title="Service Framework" level="2"/>
+            <contents name="service-framework-dependencies-and-requirements" title="Service Framework Dependencies and Requirements" level="3"/>
+            <contents name="system-information" title="System Information" level="2"/>
             <contents name="platform-compatability" title="Platform Compatability" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaFormatControl_iid" href="qmediaformatcontrol.html#QMediaFormatControl_iid" location="qmediaformatcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaFormatControl" type="" signature="QMediaFormatControl_iid()"/>
@@ -7511,6 +7486,16 @@
             <contents name="upgrading-services" title="Upgrading Services" level="2"/>
             <contents name="examples" title="Examples" level="1"/>
             <contents name="main-classes" title="Main Classes" level="1"/>
+        </page>
+        <page access="public" status="commendable" name="installation.html" href="installation.html" subtype="page" title="Installation Guide" fulltitle="Installation Guide" subtitle="" location="installation.qdoc">
+            <contents name="pre-requisites-dependencies" title="Pre-requisites &amp; Dependencies" level="1"/>
+            <contents name="unpacking" title="Unpacking" level="1"/>
+            <contents name="building" title="Building" level="1"/>
+            <contents name="building-on-unix" title="Building On Unix" level="2"/>
+            <contents name="building-on-windows" title="Building On Windows" level="2"/>
+            <contents name="building-individual-qt-mobility-components" title="Building Individual Qt Mobility Components" level="2"/>
+            <contents name="environment-variables" title="Environment Variables" level="1"/>
+            <contents name="further-information" title="Further information" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoWidgetControl_iid" href="qvideowidgetcontrol.html#QVideoWidgetControl_iid" location="qvideowidgetcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoWidgetControl" type="" signature="QVideoWidgetControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QAudioDeviceControl_iid" href="qaudiodevicecontrol.html#QAudioDeviceControl_iid" location="qaudiodevicecontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QAudioDeviceControl" type="" signature="QAudioDeviceControl_iid()"/>

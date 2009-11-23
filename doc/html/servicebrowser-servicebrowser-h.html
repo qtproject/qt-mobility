@@ -60,6 +60,8 @@
     #include &lt;QWidget&gt;
     #include &lt;QObject&gt;
 
+    #include &lt;qmobilityglobal.h&gt;
+
     class QAbstractButton;
     class QGroupBox;
     class QListWidget;
@@ -67,7 +69,11 @@
     class QPushButton;
     class QRadioButton;
 
+    QTM_BEGIN_NAMESPACE
     class QServiceManager;
+    QTM_END_NAMESPACE
+
+    QTM_USE_NAMESPACE
 
     class ServiceBrowser : public QWidget
     {

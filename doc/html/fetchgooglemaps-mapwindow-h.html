@@ -56,13 +56,18 @@
     #ifndef MAPWINDOW_H
     #define MAPWINDOW_H
 
+    #include &lt;qmobilityglobal.h&gt;
     #include &lt;QMainWindow&gt;
 
     class QWebView;
     class QLabel;
 
+    QTM_BEGIN_NAMESPACE
     class QGeoPositionInfo;
     class QNmeaPositionInfoSource;
+    QTM_END_NAMESPACE
+
+    QTM_USE_NAMESPACE
 
     class MapWindow : public QMainWindow
     {
