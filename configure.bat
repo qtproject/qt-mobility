@@ -282,11 +282,13 @@ setlocal
             set MAKE=nmake
         )
     ) else if %MAKETYPE% == win32-mingw (
-        make -v >> %PROJECT_LOG% 2>&1
+        mingw32-make -v >> %PROJECT_LOG% 2>&1
         if not errorlevel 1 (
             echo ... mingw32-make found.
-            set MAKE=make
+            set MAKE=mingw32-make
         )
+    ) else (
+        echo ... Unknown target environment %MAKETYPE%.
     )
     cd %CURRENT_PWD%
 endlocal&set %1=%MAKE%&set %2=%MAKETYPE%&goto :EOF
