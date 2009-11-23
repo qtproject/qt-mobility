@@ -135,6 +135,8 @@
 #  endif
 #endif
 
+// The namespace is hardcoded as moc has issues resolving
+// macros which would be a prerequisite for a dynmamic namespace
 #define QTM_NAMESPACE QtMobility
 
 #ifdef QTM_NAMESPACE
