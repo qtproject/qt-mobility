@@ -85,6 +85,30 @@ static QVariant CEPropValToQVariant(const CEPROPVAL& val)
     return QVariant();
 }
 
+
+
+class WcsdupHelper {
+public:
+    WcsdupHelper() {}
+    ~WcsdupHelper() {
+        clear();
+    }
+    LPWSTR wcsdup(const ushort* str) {
+        LPWSTR newStr = wcsdup(str);
+        m_list.push_back(newStr);
+        return newStr;
+    }
+    void clear() {
+        foreach (LPWSTR str, m_list) {
+            free(str);
+        }
+    }
+private:
+    QList<LPWSTR> m_list; 
+};
+
+static WcsdupHelper wcsdupHelper;
+
 /*!
  * Convert the supplied QString \a value into a CEPROPVAL with the supplied \a id.
  *
@@ -98,7 +122,7 @@ static CEPROPVAL convertToCEPropVal(const CEPROPID& id, const QString& value)
     val.propid = id;
     val.wFlags = 0;
     val.wLenData = 0;
-    val.val.lpwstr = wcsdup(value.utf16()); // XXX leaks
+    val.val.lpwstr = wcsdupHelper.wcsdup(value.utf16());
 
     return val;
 }
@@ -871,6 +895,8 @@ bool QContactWinCEEngine::convertFromQContact(const QContact& contact, IItem* it
         qDebug() << QString("Failed to set props: %1 (%2)").arg(hr, 0, 16).arg(HRESULT_CODE(hr), 0, 16);
         error = QContactManager::UnspecifiedError;
     }
+    
+    wcsdupHelper.clear();
 
     return false;
 }
