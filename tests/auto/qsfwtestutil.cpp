@@ -105,8 +105,13 @@ void QSfwTestUtil::removeDirectory(const QString &path)
         if(file.isFile()) {
             QFile::remove (file.canonicalFilePath());
         }
-        if(file.isDir())
+        if(file.isDir()) {
+            QFile::Permissions perms = QFile::permissions(file.canonicalFilePath());
+            perms = perms | QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner;
+            QFile::setPermissions(file.canonicalFilePath(), perms);
+
             removeDirectory(file.canonicalFilePath());
+        }
     }
     dir.rmpath(path);
 }

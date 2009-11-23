@@ -97,6 +97,7 @@ void tst_DatabaseManager::initTestCase()
 {
     QSfwTestUtil::setupTempUserDb();
     QSfwTestUtil::setupTempSystemDb();
+    QSfwTestUtil::removeDirectory(QSfwTestUtil::tempSettingsPath());
     m_dbm = new DatabaseManager;
 }
 
