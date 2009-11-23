@@ -43,11 +43,20 @@ table.valuelist {
 
 table.indextable {
 	border-width: 1px 1px 1px 1px;
+	border-style: solid;
 	border-collapse: collapse;
 	background-color: #f0f0f0;
-    border-color:#555;    
+    border-color:#555;
+    font-size: 100%;
 }
 
+table td.largeindex {
+	border-width: 1px 1px 1px 1px;
+	border-collapse: collapse;
+	background-color: #f0f0f0;
+    border-color:#555;
+    font-size: 120%;
+}
 
 table.valuelist th {
 	border-width: 1px 1px 1px 2px;
@@ -60,11 +69,25 @@ table.valuelist th {
 
 th.titleheader  {
 	border-width: 1px 0px 1px 0px;
+	padding: 2px;
+	border-style: solid;
+	border-color: #666;
+    color:white;
+    background-color:#555;
+    background-image:url('images/gradient.png')};
+    background-repeat: repeat-x;
+    font-size: 100%;
+}
+
+
+th.largeheader {
+	border-width: 1px 0px 1px 0px;
 	padding: 4px;
 	border-style: solid;
 	border-color: #444;
     color:white;
     background-color:#555555;
+    font-size: 120%;
 }
 
 p {
@@ -232,45 +255,30 @@ span.string,span.char
 
 .qmlname {
     white-space: nowrap;
-    font-weight: bold;
-    font-size: 125%;
 }
 
 .qmltype {
-    font-weight: bold;
-    font-size: 125%;
-}
-
-.qmlproto, .qmldoc {
-   // border-top: 1px solid #84b0c7;
+    text-align: center;
+    font-size: 160%;
 }
 
 .qmlproto {
-    padding: 0;
-    //background-color: #e4e4e4;//#d5e1e8;
-    //font-weight: bold;
-    //-webkit-border-top-left-radius: 8px;
-    //-webkit-border-top-right-radius: 8px;
-    //-moz-border-radius-topleft: 8px;
-    //-moz-border-radius-topright: 8px;
+    background-color: #eee;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ddd;
+    font-weight: bold;
+    padding: 6px 10px 6px 10px;
+    margin: 42px 0px 0px 0px;
+}
+
+.qmlreadonly {
+    float: right;
+    color: red
 }
 
 .qmldoc {
-    border-top: 1px solid #e4e4e4;
-    //padding: 2px 5px;
-    //background-color: #eef3f5;
-    //border-top-width: 0;
-    //-webkit-border-bottom-left-radius: 8px;
-    //-webkit-border-bottom-right-radius: 8px;
-    //-moz-border-radius-bottomleft: 8px;
-    //-moz-border-radius-bottomright: 8px;
-}
-
-.qmldoc p, .qmldoc dl, .qmldoc ul {
-    //margin: 6px 0;
 }
 
 *.qmlitem p {
-    //margin-top: 0px;
-    //margin-bottom: 0px;
 }

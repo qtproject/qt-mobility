@@ -50,20 +50,50 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    QMessageIdList ids = QMessageStore::instance()->queryMessages(QMessageFilter(), QMessageOrdering::byReceptionTimeStamp(Qt::DescendingOrder), 100, 0);
-    foreach (QMessageId id, ids) {
+    int n = 0;
+    foreach (const QMessageId &id, QMessageStore::instance()->queryMessages(QMessageFilter(), QMessageOrdering::byReceptionTimeStamp(Qt::DescendingOrder), 100, 0)) {
+        QStringList result;
         QMessage message(QMessageStore::instance()->message(id));
         if (QMessageStore::instance()->lastError() == QMessageStore::NoError) {
-			QStringList to;
-			foreach (const QMessageAddress &addr, message.to()) {
-				to.append(addr.recipient());
-			}
-            qDebug() << QString(message.subject().leftJustified(32, ' ' , true) 
-                                + "  "
-                                + to.join(" ")
-                                + "  " 
-                                + QString::number(message.size()).left(19));
+            if (app.arguments().count() < 2) {
+                // Default to printing only the subject
+                result.append(message.subject());
+            } else {
+                foreach (const QString &arg, app.arguments().mid(1)) {
+                    if ((arg == "to") || (arg == "cc") || (arg == "bcc")) {
+                        QStringList addresses;
+                        foreach (const QMessageAddress &addr, (arg == "to" ? message.to() : (arg == "cc" ? message.cc() : message.bcc()))) {
+                            addresses.append(addr.recipient());
+                        }
+                        result.append(addresses.join(","));
+                    } else if (arg == "from") {
+                        result.append(message.from().recipient());
+                    } else if (arg == "subject") {
+                        result.append(message.subject());
+                    } else if (arg == "date") {
+                        result.append(message.date().toLocalTime().toString());
+                    } else if (arg == "receivedDate") {
+                        result.append(message.receivedDate().toLocalTime().toString());
+                    } else if (arg == "size") {
+                        result.append(QString::number(message.size()));
+                    } else if (arg == "priority") {
+                        result.append(message.priority() == QMessage::HighPriority ? "High" : (message.priority() == QMessage::LowPriority ? "Low" : "Normal"));
+                    } else if (arg == "type") {
+                        result.append(message.contentType() + '/' + message.contentSubType());
+                    } else if (arg == "body") {
+                        result.append(message.find(message.bodyId()).textContent());
+                    } else if (arg == "attachments") {
+                        QStringList fileNames;
+                        foreach (const QMessageContentContainerId &id, message.attachmentIds()) {
+                            fileNames.append(message.find(id).suggestedFileName());
+                        }
+                        result.append(fileNames.join(","));
+                    }
+                }
+            }
         }
+
+        qDebug() << qPrintable(QString::number(++n) + '\t') << qPrintable(result.join("\t"));
     }
 
     return 0;
