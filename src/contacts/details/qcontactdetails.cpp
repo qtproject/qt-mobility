@@ -45,22 +45,22 @@ QTM_BEGIN_NAMESPACE
 
 /*!
    \class QContactAddress
-   \brief The QContactAddress class is an address of a contact.
+   \brief The QContactAddress class contains an address of a contact.
  */
 
 /*!
    \class QContactAnniversary
-   \brief The QContactAnniversary class is the anniversary of a contact.
+   \brief The QContactAnniversary class contains the anniversary of a contact.
  */
 
 /*!
    \class QContactAvatar
-   \brief The QContactAvatar class is the avatar of a contact.
+   \brief The QContactAvatar class contains the avatar of a contact.
  */
 
 /*!
    \class QContactBirthday
-   \brief The QContactBirthday is the birthday of a contact.
+   \brief The QContactBirthday class contains the birthday of a contact.
  */
 
 /*!
@@ -71,7 +71,9 @@ QTM_BEGIN_NAMESPACE
 
 /*!
    \class QContactEmailAddress
-   \brief The QContactEmailAddress class is the email address of a contact.
+
+   \brief The QContactEmailAddress class contains the email address of
+   a contact.
  */
 
 /*!
