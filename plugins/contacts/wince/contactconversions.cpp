@@ -384,6 +384,15 @@ static void processOrganisation(const QContactWinCEEngine*, const QVariantList& 
         ret.saveDetail(&org);
 }
 
+static void processFamily(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
+{
+    QContactFamily family;
+    setIfNotEmpty(family, QContactFamily::FieldSpouse, values[0].toString());
+    setIfNotEmpty(family, QContactFamily::FieldChildren, values[1].toString());
+
+    if (!family.isEmpty())
+        ret.saveDetail(&family);
+}
 
 static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<CEPROPID, PoomContactElement>& prophash, QVector<CEPROPID>& propids)
 {
@@ -470,14 +479,17 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
         org.func = processOrganisation;
         list.append(org);
 
+        PoomContactElement family;
+        family.poom << PIMPR_SPOUSE <<  PIMPR_CHILDREN;
+        family.func = processFamily;
+        list.append(family);
+
         // XXX Unhandled:
         //
         //  PIMPR_ACCOUNT_NAME
         //  PIMPR_CUSTOMERID
         //  PIMPR_GOVERNMENTID
         //
-        //  PIMPR_SPOUSE
-        //  PIMPR_CHILDREN
         //
         //  PIMPR_MANAGER
         //  PIMPR_ASSISTANT_NAME
@@ -524,6 +536,13 @@ static bool processQName(const QContactDetail& detail, QVector<CEPROPVAL>& props
     addIfNotEmpty(PIMPR_MIDDLE_NAME, detail.value(QContactName::FieldMiddle), props);
     addIfNotEmpty(PIMPR_LAST_NAME, detail.value(QContactName::FieldLast), props);
     addIfNotEmpty(PIMPR_SUFFIX, detail.value(QContactName::FieldSuffix), props);
+    return true;
+}
+
+static bool processQFamily(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+{
+    addIfNotEmpty(PIMPR_SPOUSE, detail.value(QContactFamily::FieldSpouse), props);
+    addIfNotEmpty(PIMPR_CHILDREN, detail.value(QContactFamily::FieldChildren), props);
     return true;
 }
 
@@ -788,6 +807,7 @@ static void contactQ2PTransforms(QHash<QString, processContactPoomElement>& ret)
         hash.insert(QContactNickname::DefinitionName, processQNickname);
         hash.insert(QContactOrganization::DefinitionName, processQOrganisation);
         hash.insert(QContactUrl::DefinitionName, processQWebpage);
+        hash.insert(QContactFamily::DefinitionName, processQFamily);
     }
     ret = hash;
 }
