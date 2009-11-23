@@ -44,7 +44,7 @@
 
 /*!
  * \class QContactActionDescriptor
- * \brief Contains information that uniquely identifies a specific implementation of an action
+ * \brief QContactActionDescriptor class contains information that uniquely identifies a specific implementation of an action
  */
 
 /*!

@@ -44,7 +44,7 @@
 
 /*!
  * \class QContactLocalIdFetchRequest
- * \brief Allows a client to asynchronously request a list of contact ids from a contacts store manager
+ * \brief The QContactLocalIdFetchRequest class allows a client to asynchronously request a list of contact ids from a contacts store manager
  */
 
 /*!

@@ -44,7 +44,7 @@
 
 /*!
  * \class QContactFetchRequest
- * \brief Allows a client to asynchronously request contacts from a contacts store manager
+ * \brief The QContactFetchRequest class allows a client to asynchronously request contacts from a contacts store manager
  */
 
 /*!

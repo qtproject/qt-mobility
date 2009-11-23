@@ -44,7 +44,7 @@
 
 /*!
  * \class QContactDetailDefinitionRemoveRequest
- * \brief Allows a client to asynchronously request that certain detail definitions be removed from a contacts store
+ * \brief The QContactDetailDefinitionRemoveRequest class allows a client to asynchronously request that certain detail definitions be removed from a contacts store
  */
 
 /*!

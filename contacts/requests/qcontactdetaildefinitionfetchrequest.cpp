@@ -44,7 +44,7 @@
 
 /*!
  * \class QContactDetailDefinitionFetchRequest
- * \brief Allows a client to asynchronously request detail definitions from a contacts store manager
+ * \brief The QContactDetailDefinitionFetchRequest class allows a client to asynchronously request detail definitions from a contacts store manager
  */
 
 /*!

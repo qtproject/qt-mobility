@@ -44,7 +44,7 @@
 
 /*!
  * \class QContactDetailDefinitionSaveRequest
- * \brief Allows a client to asynchronously request that certain detail definitions be saved in a contacts store
+ * \brief The QContactDetailDefinitionSaveRequest class allows a client to asynchronously request that certain detail definitions be saved in a contacts store
  */
 
 /*!

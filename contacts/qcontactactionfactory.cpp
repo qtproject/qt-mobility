@@ -43,7 +43,7 @@
 
 /*!
  * \class QContactActionFactory
- * \brief Provides an interface for clients to retrieve instances of action implementations
+ * \brief The QContactActionFactory class provides an interface for clients to retrieve instances of action implementations
  */
 
 QContactActionFactory::~QContactActionFactory()

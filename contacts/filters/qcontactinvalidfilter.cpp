@@ -44,7 +44,7 @@
 
 /*!
  * \class QContactInvalidFilter
- * \brief A QContactInvalidFilter matches no contacts
+ * \brief The QContactInvalidFilter class provides a filter which matches no contacts
  *
  * This class provides a filter which will never match any contacts
  */

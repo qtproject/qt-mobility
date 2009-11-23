@@ -47,7 +47,7 @@
 
 /*!
  * \class QContactAbstractRequest
- * \brief Allows a client to asynchronously request some functionality of a particular QContactManager.
+ * \brief The QContactAbstractRequest class allows a client to asynchronously request some functionality of a particular QContactManager.
  *
  * This class provides a mechanism for asynchronous requests to be made of a manager if it supports them.
  */
