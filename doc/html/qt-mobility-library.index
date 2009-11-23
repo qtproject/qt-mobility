@@ -7308,20 +7308,20 @@
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoOutputControl_iid" href="qvideooutputcontrol.html#QVideoOutputControl_iid" location="qvideooutputcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoOutputControl" type="" signature="QVideoOutputControl_iid()"/>
         <page access="public" status="commendable" name="mobility" href="mobility.html" subtype="group" title="Qt Mobility APIs" fulltitle="Qt Mobility APIs" subtitle="" location="index.qdoc"/>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Overview" fulltitle="Qt Mobility Overview" subtitle="" location="index.qdoc">
-            <contents name="mobility-component-apis" title="Mobility Component APIs" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
+            <contents name="introducing-the-mobility-apis" title="Introducing the Mobility APIs" level="2"/>
             <contents name="getting-started" title="Getting Started" level="2"/>
-            <contents name="bearer-management" title="Bearer Management" level="1"/>
-            <contents name="contacts" title="Contacts" level="1"/>
-            <contents name="publish-and-subscribe" title="Publish and Subscribe" level="1"/>
-            <contents name="location" title="Location" level="1"/>
-            <contents name="messaging" title="Messaging" level="1"/>
-            <contents name="messaging-dependencies-and-requirements" title="Messaging dependencies and requirements" level="2"/>
-            <contents name="multimedia" title="Multimedia" level="1"/>
-            <contents name="multimedia-dependencies-and-requirements" title="Multimedia Dependencies and Requirements" level="2"/>
-            <contents name="service-framework" title="Service Framework" level="1"/>
-            <contents name="service-framework-dependencies-and-requirements" title="Service Framework Dependencies and Requirements" level="2"/>
-            <contents name="system-information" title="System Information" level="1"/>
+            <contents name="the-mobility-apis" title="The Mobility APIs" level="1"/>
+            <contents name="bearer-management" title="Bearer Management" level="2"/>
+            <contents name="contacts" title="Contacts" level="2"/>
+            <contents name="publish-and-subscribe" title="Publish and Subscribe" level="2"/>
+            <contents name="location" title="Location" level="2"/>
+            <contents name="messaging" title="Messaging" level="2"/>
+            <contents name="messaging-dependencies-and-requirements" title="Messaging dependencies and requirements" level="3"/>
+            <contents name="multimedia" title="Multimedia" level="2"/>
+            <contents name="service-framework" title="Service Framework" level="2"/>
+            <contents name="service-framework-dependencies-and-requirements" title="Service Framework Dependencies and Requirements" level="3"/>
+            <contents name="system-information" title="System Information" level="2"/>
             <contents name="platform-compatability" title="Platform Compatability" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaFormatControl_iid" href="qmediaformatcontrol.html#QMediaFormatControl_iid" location="qmediaformatcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaFormatControl" type="" signature="QMediaFormatControl_iid()"/>
