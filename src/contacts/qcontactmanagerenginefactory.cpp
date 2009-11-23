@@ -45,7 +45,7 @@
 /*!
  * \class QContactManagerEngineFactory
  * \preliminary
- * \brief This class is the interface for plugins that implement
+ * \brief The QContactManagerEngineFactory class is the interface that allows creation of plugins that implement
  * QContactManagerEngine functionality.
  *
  * This class provides a simple interface for the creation of

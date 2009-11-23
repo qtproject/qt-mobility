@@ -52,7 +52,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
  * \class QContactRelationship
- * \brief Describes a one-to-one relationship between a locally-stored contact and another (possibly remote) contact.
+ * \brief The QContactRelationship class describes a one-to-one relationship between a locally-stored contact and another (possibly remote) contact.
  *
  * Each relationship is uniquely identified by the combination of the first contact id, second contact id, and the relationship type.
  *

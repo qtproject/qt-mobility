@@ -45,102 +45,102 @@ QTM_BEGIN_NAMESPACE
 
 /*!
  * \class QContactAddress
- * \brief An address of a contact
+ * \brief The QContactAddress class provides a container for an address of a contact
  */
 
 /*!
  * \class QContactAnniversary
- * \brief An anniversary of a contact
+ * \brief The QContactAnniversary class provides a container for an anniversary of a contact
  */
 
 /*!
  * \class QContactAvatar
- * \brief An avatar of a contact
+ * \brief The QContact class provides a container for an avatar of a contact
  */
 
 /*!
  * \class QContactBirthday
- * \brief The birthday of a contact
+ * \brief The QContactBirthday class provides a container for the birthday of a contact
  */
 
 /*!
  * \class QContactDisplayLabel
- * \brief The (possibly synthesized) display label of a contact
+ * \brief The QContactDisplayLabel class provides a container for the (possibly synthesized) display label of a contact
  */
 
 /*!
  * \class QContactEmailAddress
- * \brief An email address of a contact
+ * \brief The QContactEmailAddress class provides a container for an email address of a contact
  */
 
 /*!
  * \class QContactFamily
- * \brief The names of the family members of a contact
+ * \brief The QContactFamily class provides a container for the names of the family members of a contact
  */
 
 /*!
  * \class QContactGender
- * \brief The gender of a contact
+ * \brief The QContactGender class provides a container for the gender of a contact
  */
 
 /*!
  * \class QContactGeolocation
- * \brief A global location coordinate associated with a contact
+ * \brief The QContactGeolocation class provides a container for a global location coordinate associated with a contact
  */
 
 /*!
  * \class QContactGuid
- * \brief The globally unique Id of a contact
+ * \brief The QContactGuid class provides a container for the globally unique Id of a contact
  */
 
 /*!
  * \class QContactName
- * \brief The name of a contact
+ * \brief The QContactName class provides a container for the name of a contact
  */
 
 /*!
  * \class QContactNickname
- * \brief A nickname of a contact
+ * \brief The QContactNickname class provides a container for a nickname of a contact
  */
 
 /*!
  * \class QContactNote
- * \brief A note associated with a contact
+ * \brief The QContactNote class provides a container for a note associated with a contact
  */
 
 /*!
  * \class QContactOnlineAccount
- * \brief An online account which the contact uses to communicate with friends and family
+ * \brief The QContactOnlineAccount class provides a container for an online account which the contact uses to communicate with friends and family
  */
 
 /*!
  * \class QContactOrganization
- * \brief Details about an organization that the contact is either a part of, or stands for
+ * \brief The QContactOrganization class provides a container for details about an organization that the contact is either a part of, or stands for
  */
 
 /*!
  * \class QContactPhoneNumber
- * \brief A phone number of a contact
+ * \brief The QContactPhoneNumber class provides a container for a phone number of a contact
  */
 
 /*!
  * \class QContactSyncTarget
- * \brief A sync target for a contact
+ * \brief The QContactSyncTarget class provides a container for a sync target for a contact
  */
 
 /*!
  * \class QContactTimestamp
- * \brief Contains the creation and last-modified timestamp associated with the contact
+ * \brief The QContactTimestamp class provides a container for the creation and last-modified timestamp associated with the contact
  */
 
 /*!
  * \class QContactType
- * \brief Describes the type of the contact
+ * \brief The QContactType class provides a container for the type of the contact
  */
 
 /*!
  * \class QContactUrl
- * \brief A url associated with a contact
+ * \brief The QContactUrl class provides a container for a url associated with a contact
  */
 
 /*!
