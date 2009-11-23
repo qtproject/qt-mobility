@@ -55,9 +55,13 @@ public:
     QMessagePrivate(QMessage *message);
     ~QMessagePrivate();
 
+    static QString senderName(const QMessage &message);
+    static void setSenderName(const QMessage &message, const QString &senderName);
+    static void setSize(const QMessage &message, uint size);
     static void setStandardFolder(QMessage& message, QMessage::StandardFolder sf);
+    static QMessagePrivate* implementation(const QMessage &message);
 
-private:
+public: // Data
     QMessage *q_ptr;
 
     QMessageId _id;
