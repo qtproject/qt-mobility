@@ -47,7 +47,7 @@
 
 \section1 Pre-requisites & Dependencies
 To install Qt Mobility you must already have installed
-Qt 4.6 or higher, visit http://qt.nokia.com/downloads to obtain
+Qt 4.6 or higher, visit \l {http://qt.nokia.com/downloads} to obtain
 a copy.
 
 Qt Mobility is comprised of a number of domains.
