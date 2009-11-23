@@ -39,40 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef V4LVIDEOBUFFER_H
-#define V4LVIDEOBUFFER_H
+#ifndef S60AUDIOPLAYERSESSION_H
+#define S60AUDIOPLAYERSESSION_H
 
+#include <QObject>
+#include <QUrl>
 #include <QSize>
+#include <QMediaPlayer>
+#include "s60mediaplayersession.h"
+#include <MdaAudioSamplePlayer.h>  
 
-#include <QtMultimedia/QAbstractVideoBuffer>
-#include <linux/videodev2.h>
+class QTimer;
 
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
-
-class V4LVideoBuffer : public QAbstractVideoBuffer
+class S60AudioPlayerSession : public S60MediaPlayerSession, public MMdaAudioPlayerCallback
 {
+    Q_OBJECT
+
 public:
-    V4LVideoBuffer(unsigned char *buffer, int fd, v4l2_buffer buf);
-    ~V4LVideoBuffer();
+    S60AudioPlayerSession(QObject *parent);
+    ~S60AudioPlayerSession();
 
-    MapMode mapMode() const;
+    qint64 duration() const;
+    qint64 position() const;
 
-    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
-    void unmap();
+    bool isVideoAvailable() const;
+    void setPlaybackRate(qreal rate);
 
-    void setBytesPerLine(int bytesPerLine);
+    void play();
+    void pause();
+    void stop();
+    void setPosition(qint64 pos);
+    void setVolume(int volume);
+    void setMuted(bool muted);
+    void load(const QUrl &url);
+    
+private: // From MMdaAudioPlayerCallback
+    void MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration);
+    void MapcPlayComplete(TInt aError);
+
+private: 
+    void getNativeHandles();
 
 private:
-    unsigned char *m_buffer;
-    int m_length;
-    int m_fd;
-    int m_bytesPerLine;
-    MapMode m_mode;
-    v4l2_buffer m_buf;
+    void setMediaStatus(QMediaPlayer::MediaStatus);
+    
+private:
+    CMdaAudioPlayerUtility *m_player;
 };
-
 
 #endif

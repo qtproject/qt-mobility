@@ -6,4 +6,3 @@
 
 TEMPLATE = subdirs
 SUBDIRS += contacts multimedia
-

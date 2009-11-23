@@ -39,40 +39,71 @@
 **
 ****************************************************************************/
 
-#ifndef V4LVIDEOBUFFER_H
-#define V4LVIDEOBUFFER_H
+#ifndef S60VIDEOOVERLAY_H
+#define S60VIDEOOVERLAY_H
 
-#include <QSize>
+#ifndef QT_NO_MULTIMEDIA
 
-#include <QtMultimedia/QAbstractVideoBuffer>
-#include <linux/videodev2.h>
+#include <QObject>
+#include <QVideoWindowControl>
 
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
+class QAbstractVideoSurface;
+class S60VideoSurface;
 
-class V4LVideoBuffer : public QAbstractVideoBuffer
+class S60VideoOverlay : public QVideoWindowControl
 {
+    Q_OBJECT
+
 public:
-    V4LVideoBuffer(unsigned char *buffer, int fd, v4l2_buffer buf);
-    ~V4LVideoBuffer();
+    S60VideoOverlay(QObject *parent = 0);
+    ~S60VideoOverlay();
 
-    MapMode mapMode() const;
+    WId winId() const;
+    void setWinId(WId id);
 
-    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
-    void unmap();
+    QRect displayRect() const;
+    void setDisplayRect(const QRect &rect);
 
-    void setBytesPerLine(int bytesPerLine);
+    bool isFullScreen() const;
+    void setFullScreen(bool fullScreen);
+
+    QSize nativeSize() const;
+
+	QVideoWidget::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+	
+    QSize customAspectRatio() const;
+    void setCustomAspectRatio(const QSize &customRatio);
+
+    void repaint();
+
+    int brightness() const;
+    void setBrightness(int brightness);
+
+    int contrast() const;
+    void setContrast(int contrast);
+
+    int hue() const;
+    void setHue(int hue);
+
+    int saturation() const;
+    void setSaturation(int saturation);
+
+    QAbstractVideoSurface *surface() const;
+
+private slots:
+    void surfaceFormatChanged();
 
 private:
-    unsigned char *m_buffer;
-    int m_length;
-    int m_fd;
-    int m_bytesPerLine;
-    MapMode m_mode;
-    v4l2_buffer m_buf;
+    void setScaledDisplayRect();
+
+    S60VideoSurface *m_surface;
+    QVideoWidget::AspectRatioMode m_aspectRatioMode;
+    QRect m_displayRect;
+    QSize m_aspectRatio;
+    bool m_fullScreen;
 };
 
+#endif // QT_NO_MULTIMEDIA
 
-#endif
+#endif // S60VIDEOOVERLAY_H

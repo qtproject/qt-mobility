@@ -39,40 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef V4LVIDEOBUFFER_H
-#define V4LVIDEOBUFFER_H
+#ifndef S60AUDIODEVICECONTROL_H
+#define S60AUDIODEVICECONTROL_H
 
-#include <QSize>
+#include <QStringList>
 
-#include <QtMultimedia/QAbstractVideoBuffer>
-#include <linux/videodev2.h>
+#include <QAudioDeviceControl>
 
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
+class S60AudioCaptureSession;
 
-class V4LVideoBuffer : public QAbstractVideoBuffer
+class S60AudioDeviceControl : public QAudioDeviceControl
 {
+
+Q_OBJECT
+
 public:
-    V4LVideoBuffer(unsigned char *buffer, int fd, v4l2_buffer buf);
-    ~V4LVideoBuffer();
+    S60AudioDeviceControl(QObject *parent);
+    virtual ~S60AudioDeviceControl();
 
-    MapMode mapMode() const;
+    int deviceCount() const;
 
-    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
-    void unmap();
+    QString name(int index) const;
+    QString description(int index) const;
+    QIcon icon(int index) const;
 
-    void setBytesPerLine(int bytesPerLine);
+    int defaultDevice() const;
+    int selectedDevice() const;
+
+public Q_SLOTS:
+    void setSelectedDevice(int index);
 
 private:
-    unsigned char *m_buffer;
-    int m_length;
-    int m_fd;
-    int m_bytesPerLine;
-    MapMode m_mode;
-    v4l2_buffer m_buf;
+    void update();
+
+    QStringList             m_names;
+    QStringList             m_descriptions;
+    S60AudioCaptureSession* m_session;
 };
 
-
-#endif
+#endif // S60AUDIODEVICECONTROL_H

@@ -39,40 +39,68 @@
 **
 ****************************************************************************/
 
-#ifndef V4LVIDEOBUFFER_H
-#define V4LVIDEOBUFFER_H
+#include "s60audiocapturesession.h"
+#include "s60audiodevicecontrol.h"
 
-#include <QSize>
+#include <QtGui/QIcon>
+#include <QtCore/QDebug>
 
-#include <QtMultimedia/QAbstractVideoBuffer>
-#include <linux/videodev2.h>
+//#include <multimedia/qaudiodeviceinfo.h>
 
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
 
-class V4LVideoBuffer : public QAbstractVideoBuffer
+S60AudioDeviceControl::S60AudioDeviceControl(QObject *parent)
+    :QAudioDeviceControl(parent)
 {
-public:
-    V4LVideoBuffer(unsigned char *buffer, int fd, v4l2_buffer buf);
-    ~V4LVideoBuffer();
+    m_session = qobject_cast<S60AudioCaptureSession*>(parent);
 
-    MapMode mapMode() const;
+    update();
+}
 
-    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
-    void unmap();
+S60AudioDeviceControl::~S60AudioDeviceControl()
+{
+}
 
-    void setBytesPerLine(int bytesPerLine);
+int S60AudioDeviceControl::deviceCount() const
+{
+    return 1;
+}
 
-private:
-    unsigned char *m_buffer;
-    int m_length;
-    int m_fd;
-    int m_bytesPerLine;
-    MapMode m_mode;
-    v4l2_buffer m_buf;
-};
+QString S60AudioDeviceControl::name(int index) const
+{
+    return QString();
+}
 
+QString S60AudioDeviceControl::description(int index) const
+{
+    return QString();
+}
 
-#endif
+QIcon S60AudioDeviceControl::icon(int index) const
+{
+    Q_UNUSED(index);
+    return QIcon();
+}
+
+int S60AudioDeviceControl::defaultDevice() const
+{
+    return 0;
+}
+
+int S60AudioDeviceControl::selectedDevice() const
+{
+    return 0;
+}
+
+void S60AudioDeviceControl::setSelectedDevice(int index)
+{
+    m_session->setCaptureDevice(QString("MMF"));    //TODO: What this should be in S60 case? There are no special devices as Linux or Windows.
+}
+
+void S60AudioDeviceControl::update()
+{
+    m_names.clear();
+    m_descriptions.clear();
+
+    m_names.append(QString("MMF"));
+    m_descriptions.append(QString("MMF"));
+}

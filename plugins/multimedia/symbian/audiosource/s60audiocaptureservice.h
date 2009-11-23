@@ -39,40 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef V4LVIDEOBUFFER_H
-#define V4LVIDEOBUFFER_H
+#ifndef S60AUDIOCAPTURESERVICE_H
+#define S60AUDIOCAPTURESERVICE_H
 
-#include <QSize>
+#include <QtCore/qobject.h>
 
-#include <QtMultimedia/QAbstractVideoBuffer>
-#include <linux/videodev2.h>
+#include <QMediaService>
 
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
+class S60AudioCaptureSession;
+class S60AudioEncoderControl;
+class S60AudioMediaRecorderControl;
+class S60AudioDeviceControl;
 
-class V4LVideoBuffer : public QAbstractVideoBuffer
+class S60AudioCaptureService : public QMediaService
 {
+    Q_OBJECT
 public:
-    V4LVideoBuffer(unsigned char *buffer, int fd, v4l2_buffer buf);
-    ~V4LVideoBuffer();
+    S60AudioCaptureService(QObject *parent = 0);
+    ~S60AudioCaptureService();
 
-    MapMode mapMode() const;
-
-    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
-    void unmap();
-
-    void setBytesPerLine(int bytesPerLine);
-
+    QMediaControl *control(const char *name) const;
 private:
-    unsigned char *m_buffer;
-    int m_length;
-    int m_fd;
-    int m_bytesPerLine;
-    MapMode m_mode;
-    v4l2_buffer m_buf;
+    S60AudioCaptureSession       *m_session;
+    S60AudioEncoderControl       *m_encoderControl;
+    S60AudioDeviceControl        *m_deviceControl;
+    S60AudioMediaRecorderControl *m_mediaControl;
 };
 
-
-#endif
+#endif // S60AUDIOCAPTURESERVICE_H

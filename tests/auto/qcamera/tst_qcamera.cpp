@@ -648,7 +648,6 @@ void tst_QCamera::testCtorWithDevice()
 void tst_QCamera::testSimpleCamera()
 {
     QCamera camera(0, provider);
-
     QCOMPARE(camera.service(), (QMediaService*)mockSimpleCameraService);
 
     QCOMPARE(camera.state(), QCamera::StoppedState);

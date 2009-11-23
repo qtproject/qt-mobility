@@ -39,40 +39,60 @@
 **
 ****************************************************************************/
 
-#ifndef V4LVIDEOBUFFER_H
-#define V4LVIDEOBUFFER_H
+#ifndef S60VIDEOWIDGET_H
+#define S60VIDEOWIDGET_H
 
-#include <QSize>
+#include <QVideoWidgetControl>
+#include <QObject>
 
-#include <QtMultimedia/QAbstractVideoBuffer>
-#include <linux/videodev2.h>
+class S60VideoWidget;
 
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
-
-class V4LVideoBuffer : public QAbstractVideoBuffer
+class S60VideoWidgetControl
+        : public QVideoWidgetControl
 {
+    Q_OBJECT
+	
 public:
-    V4LVideoBuffer(unsigned char *buffer, int fd, v4l2_buffer buf);
-    ~V4LVideoBuffer();
+    S60VideoWidgetControl(QObject *parent = 0);
+    virtual ~S60VideoWidgetControl();
 
-    MapMode mapMode() const;
+    QWidget *videoWidget();
 
-    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
-    void unmap();
+    QVideoWidget::AspectRatioMode aspectRatioMode() const;
+    QSize customAspectRatio() const;
 
-    void setBytesPerLine(int bytesPerLine);
+    void setAspectRatioMode(QVideoWidget::AspectRatioMode ratio);
+    void setCustomAspectRatio(const QSize &customRatio);
+
+    bool isFullScreen() const;
+    void setFullScreen(bool fullScreen);
+
+    int brightness() const;
+    void setBrightness(int brightness);
+
+    int contrast() const;
+    void setContrast(int contrast);
+
+    int hue() const;
+    void setHue(int hue);
+
+    int saturation() const;
+    void setSaturation(int saturation);
+
+    void setOverlay();
+
+    bool eventFilter(QObject *object, QEvent *event);
+
+public slots:
+    void updateNativeVideoSize();
 
 private:
-    unsigned char *m_buffer;
-    int m_length;
-    int m_fd;
-    int m_bytesPerLine;
-    MapMode m_mode;
-    v4l2_buffer m_buf;
+    void windowExposed();
+
+    S60VideoWidget *m_widget;
+    WId m_windowId;
+    QVideoWidget::AspectRatioMode m_aspectRatioMode;
+    QSize m_customAspectRatio;
 };
 
-
-#endif
+#endif // S60VIDEOWIDGET_H

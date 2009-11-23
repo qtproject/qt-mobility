@@ -39,40 +39,30 @@
 **
 ****************************************************************************/
 
-#ifndef V4LVIDEOBUFFER_H
-#define V4LVIDEOBUFFER_H
+#ifndef S60VIDEORENDERER_H
+#define S60VIDEORENDERER_H
 
-#include <QSize>
+#ifndef QT_NO_MULTIMEDIA
 
-#include <QtMultimedia/QAbstractVideoBuffer>
-#include <linux/videodev2.h>
+#include <QObject>
+#include <QVideoRendererControl>
 
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
-
-class V4LVideoBuffer : public QAbstractVideoBuffer
+class S60VideoRenderer : public QVideoRendererControl
 {
+    Q_OBJECT
+
 public:
-    V4LVideoBuffer(unsigned char *buffer, int fd, v4l2_buffer buf);
-    ~V4LVideoBuffer();
+    S60VideoRenderer(QObject *parent = 0);
+    virtual ~S60VideoRenderer();
+    
+    QAbstractVideoSurface *surface() const;
+    void setSurface(QAbstractVideoSurface *surface);
 
-    MapMode mapMode() const;
+private:    
 
-    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
-    void unmap();
-
-    void setBytesPerLine(int bytesPerLine);
-
-private:
-    unsigned char *m_buffer;
-    int m_length;
-    int m_fd;
-    int m_bytesPerLine;
-    MapMode m_mode;
-    v4l2_buffer m_buf;
+    QAbstractVideoSurface *m_surface;
 };
 
+#endif // QT_NO_MULTIMEDIA
 
-#endif
+#endif // S60VIDEORENDERER_H

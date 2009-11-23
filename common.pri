@@ -134,6 +134,8 @@ wince* {
 symbian {
     #For some reason the default include path doesn't include MOC_DIR on symbian
     INCLUDEPATH += $$MOC_DIR
+    TARGET.CAPABILITY = ALL -TCB
+    TARGET.EPOCALLOWDLLDATA = 1
 }
 
 # Add the output dirs to the link path too

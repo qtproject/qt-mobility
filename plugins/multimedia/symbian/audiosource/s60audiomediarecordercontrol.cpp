@@ -39,40 +39,54 @@
 **
 ****************************************************************************/
 
-#ifndef V4LVIDEOBUFFER_H
-#define V4LVIDEOBUFFER_H
+#include "s60audiocapturesession.h"
+#include "s60audiomediarecordercontrol.h"
 
-#include <QSize>
+#include <QtCore/qdebug.h>
 
-#include <QtMultimedia/QAbstractVideoBuffer>
-#include <linux/videodev2.h>
-
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
-
-class V4LVideoBuffer : public QAbstractVideoBuffer
+S60AudioMediaRecorderControl::S60AudioMediaRecorderControl(QObject *parent)
+    :QMediaRecorderControl(parent)
 {
-public:
-    V4LVideoBuffer(unsigned char *buffer, int fd, v4l2_buffer buf);
-    ~V4LVideoBuffer();
+    m_session = qobject_cast<S60AudioCaptureSession*>(parent);
+    connect(m_session, SIGNAL(positionChanged(qint64)), this, SIGNAL(durationChanged(qint64)));
+    connect(m_session, SIGNAL(stateChanged(QMediaRecorder::State)), this, SIGNAL(stateChanged(QMediaRecorder::State)));
+}
 
-    MapMode mapMode() const;
+S60AudioMediaRecorderControl::~S60AudioMediaRecorderControl()
+{
+}
 
-    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
-    void unmap();
+QUrl S60AudioMediaRecorderControl::outputLocation() const
+{
+    return m_session->outputLocation();
+}
 
-    void setBytesPerLine(int bytesPerLine);
+bool S60AudioMediaRecorderControl::setOutputLocation(const QUrl& sink)
+{
+    return m_session->setOutputLocation(sink);
+}
 
-private:
-    unsigned char *m_buffer;
-    int m_length;
-    int m_fd;
-    int m_bytesPerLine;
-    MapMode m_mode;
-    v4l2_buffer m_buf;
-};
+QMediaRecorder::State S60AudioMediaRecorderControl::state() const
+{
+    return (QMediaRecorder::State)m_session->state();
+}
 
+qint64 S60AudioMediaRecorderControl::duration() const
+{
+    return m_session->position();
+}
 
-#endif
+void S60AudioMediaRecorderControl::record()
+{
+    m_session->record();
+}
+
+void S60AudioMediaRecorderControl::pause()
+{
+    m_session->stop();
+}
+
+void S60AudioMediaRecorderControl::stop()
+{
+    m_session->stop();
+}

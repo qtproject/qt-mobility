@@ -39,40 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef V4LVIDEOBUFFER_H
-#define V4LVIDEOBUFFER_H
+#ifndef S60MEDIAMETADATAPROVIDER_H
+#define S60MEDIAMETADATAPROVIDER_H
 
-#include <QSize>
+#include <QMetaDataControl>
+#include "ms60mediaplayerresolver.h"
 
-#include <QtMultimedia/QAbstractVideoBuffer>
-#include <linux/videodev2.h>
+class S60MediaPlayerSession;
 
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
-
-class V4LVideoBuffer : public QAbstractVideoBuffer
+class S60MediaMetaDataProvider : public QMetaDataControl
 {
+    Q_OBJECT
+    
 public:
-    V4LVideoBuffer(unsigned char *buffer, int fd, v4l2_buffer buf);
-    ~V4LVideoBuffer();
+    S60MediaMetaDataProvider(MS60MediaPlayerResolver& mediaPlayerResolver, QObject *parent = 0);
+    ~S60MediaMetaDataProvider();
 
-    MapMode mapMode() const;
+    bool isMetaDataAvailable() const;
+    bool isWritable() const;
 
-    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
-    void unmap();
-
-    void setBytesPerLine(int bytesPerLine);
+    QVariant metaData(QtMedia::MetaData key) const;
+    void setMetaData(QtMedia::MetaData key, const QVariant &value);
+    QList<QtMedia::MetaData> availableMetaData() const;
+    
+    QVariant extendedMetaData(const QString &key) const ;
+    void setExtendedMetaData(const QString &key, const QVariant &value);
+    QStringList availableExtendedMetaData() const;
+    
+private:
+    QString metaDataKeyAsString(QtMedia::MetaData key) const;
 
 private:
-    unsigned char *m_buffer;
-    int m_length;
-    int m_fd;
-    int m_bytesPerLine;
-    MapMode m_mode;
-    v4l2_buffer m_buf;
+    mutable S60MediaPlayerSession *m_session;
+    MS60MediaPlayerResolver& m_mediaPlayerResolver;
 };
 
-
-#endif
+#endif // S60VIDEOMETADATAPROVIDER_H

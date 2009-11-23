@@ -39,40 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef V4LVIDEOBUFFER_H
-#define V4LVIDEOBUFFER_H
+#include "s60cameraimagecapturecontrol.h"
+#include "s60cameraservice.h"
+#include "s60camerasession.h"
 
-#include <QSize>
+#include <QtCore/qdebug.h>
+#include <QtCore/qstring.h>
 
-#include <QtMultimedia/QAbstractVideoBuffer>
-#include <linux/videodev2.h>
 
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
-
-class V4LVideoBuffer : public QAbstractVideoBuffer
+S60CameraImageCaptureControl::S60CameraImageCaptureControl(QObject *parent)
+    :QImageCaptureControl(parent)
 {
-public:
-    V4LVideoBuffer(unsigned char *buffer, int fd, v4l2_buffer buf);
-    ~V4LVideoBuffer();
+}
 
-    MapMode mapMode() const;
-
-    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
-    void unmap();
-
-    void setBytesPerLine(int bytesPerLine);
-
-private:
-    unsigned char *m_buffer;
-    int m_length;
-    int m_fd;
-    int m_bytesPerLine;
-    MapMode m_mode;
-    v4l2_buffer m_buf;
-};
+S60CameraImageCaptureControl::S60CameraImageCaptureControl(QObject *session, QObject *parent)
+   :QImageCaptureControl(parent)
+{
+    // use cast if we want to change session class later on..
+    m_session = qobject_cast<S60CameraSession*>(session);
+    // chain these signals from session class
+    connect(m_session, SIGNAL(imageCaptured(QString,QImage)),
+            this, SIGNAL(imageCaptured(QString,QImage)));
+    connect(m_session, SIGNAL(readyForCaptureChanged(bool)),
+            this, SIGNAL(readyForCaptureChanged(bool)));
+}
 
 
-#endif
+S60CameraImageCaptureControl::~S60CameraImageCaptureControl()
+{
+}
+
+bool S60CameraImageCaptureControl::isReadyForCapture() const
+{
+    if (m_session)
+        return m_session->deviceReady();
+    else
+        return false;
+}
+void S60CameraImageCaptureControl::capture(const QString &fileName)
+{
+    if (m_session)
+        m_session->capture();
+}
+

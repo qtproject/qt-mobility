@@ -39,40 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef V4LVIDEOBUFFER_H
-#define V4LVIDEOBUFFER_H
+#ifndef S60AUDIOMEDIARECORDERCONTROL_H
+#define S60AUDIOMEDIARECORDERCONTROL_H
 
-#include <QSize>
+#include <QtCore/qobject.h>
 
-#include <QtMultimedia/QAbstractVideoBuffer>
-#include <linux/videodev2.h>
+#include <QMediaRecorder>
+#include <QMediaRecorderControl>
 
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
+class S60AudioCaptureSession;
 
-class V4LVideoBuffer : public QAbstractVideoBuffer
+class S60AudioMediaRecorderControl : public QMediaRecorderControl
 {
+    Q_OBJECT
 public:
-    V4LVideoBuffer(unsigned char *buffer, int fd, v4l2_buffer buf);
-    ~V4LVideoBuffer();
+    S60AudioMediaRecorderControl(QObject *parent = 0);
+    ~S60AudioMediaRecorderControl();
 
-    MapMode mapMode() const;
+    QUrl outputLocation() const;
+    bool setOutputLocation(const QUrl &sink);
 
-    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
-    void unmap();
+    QMediaRecorder::State state() const;
 
-    void setBytesPerLine(int bytesPerLine);
+    qint64 duration() const;
+
+    void applySettings() {}
+
+public slots:
+    void record();
+    void pause();
+    void stop();
 
 private:
-    unsigned char *m_buffer;
-    int m_length;
-    int m_fd;
-    int m_bytesPerLine;
-    MapMode m_mode;
-    v4l2_buffer m_buf;
+    S60AudioCaptureSession* m_session;
 };
-
 
 #endif

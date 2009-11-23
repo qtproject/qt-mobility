@@ -38,41 +38,42 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <QDebug>
 
-#ifndef V4LVIDEOBUFFER_H
-#define V4LVIDEOBUFFER_H
+#include "s60audiocaptureservice.h"
+#include "s60audiocapturesession.h"
+#include "s60audiodevicecontrol.h"
+#include "s60audioencodercontrol.h"
+#include "s60audiomediarecordercontrol.h"
 
-#include <QSize>
-
-#include <QtMultimedia/QAbstractVideoBuffer>
-#include <linux/videodev2.h>
-
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
-
-class V4LVideoBuffer : public QAbstractVideoBuffer
+S60AudioCaptureService::S60AudioCaptureService(QObject *parent):
+    QMediaService(parent)
 {
-public:
-    V4LVideoBuffer(unsigned char *buffer, int fd, v4l2_buffer buf);
-    ~V4LVideoBuffer();
+    m_session = new S60AudioCaptureSession(this);
+    m_encoderControl  = new S60AudioEncoderControl(m_session);
+    m_mediaControl   = new S60AudioMediaRecorderControl(m_session);
+    m_deviceControl  = new S60AudioDeviceControl(m_session);
+}
 
-    MapMode mapMode() const;
+S60AudioCaptureService::~S60AudioCaptureService()
+{
+    delete m_encoderControl;
+    delete m_deviceControl;
+    delete m_mediaControl;
+    delete m_session;
+}
 
-    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
-    void unmap();
+QMediaControl *S60AudioCaptureService::control(const char *name) const
+{
+    if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
+        return m_mediaControl;
 
-    void setBytesPerLine(int bytesPerLine);
+    if (qstrcmp(name,QAudioEncoderControl_iid) == 0)
+        return m_encoderControl;
 
-private:
-    unsigned char *m_buffer;
-    int m_length;
-    int m_fd;
-    int m_bytesPerLine;
-    MapMode m_mode;
-    v4l2_buffer m_buf;
-};
+    if (qstrcmp(name,QAudioDeviceControl_iid) == 0)
+        return m_deviceControl;
 
+    return 0;
+}
 
-#endif

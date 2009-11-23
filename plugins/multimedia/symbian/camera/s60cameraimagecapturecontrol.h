@@ -39,40 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef V4LVIDEOBUFFER_H
-#define V4LVIDEOBUFFER_H
+#ifndef S60CAMERAIMAGECAPTURECONTROL_H
+#define S60CAMERAIMAGECAPTURECONTROL_H
 
-#include <QSize>
+#include <QtCore/qobject.h>
+#include "multimedia/experimental/qimagecapturecontrol.h"
 
-#include <QtMultimedia/QAbstractVideoBuffer>
-#include <linux/videodev2.h>
+class S60CameraService;
+class S60CameraSession;
 
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
-
-class V4LVideoBuffer : public QAbstractVideoBuffer
+class S60CameraImageCaptureControl : public QImageCaptureControl
 {
+    Q_OBJECT
 public:
-    V4LVideoBuffer(unsigned char *buffer, int fd, v4l2_buffer buf);
-    ~V4LVideoBuffer();
-
-    MapMode mapMode() const;
-
-    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
-    void unmap();
-
-    void setBytesPerLine(int bytesPerLine);
-
+    S60CameraImageCaptureControl(QObject *parent = 0);
+    S60CameraImageCaptureControl(QObject *session, QObject *parent = 0);
+    ~S60CameraImageCaptureControl();
+    
+    bool isReadyForCapture() const;
+    void capture(const QString &fileName);
+    
+/*Q_SIGNALS:
+    void readyForCaptureChanged(bool);
+    void imageCaptured(const QString &fileName, const QImage &preview);
+*/
 private:
-    unsigned char *m_buffer;
-    int m_length;
-    int m_fd;
-    int m_bytesPerLine;
-    MapMode m_mode;
-    v4l2_buffer m_buf;
+    S60CameraSession *m_session;
+    S60CameraService *m_service;
 };
-
 
 #endif

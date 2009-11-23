@@ -39,40 +39,58 @@
 **
 ****************************************************************************/
 
-#ifndef V4LVIDEOBUFFER_H
-#define V4LVIDEOBUFFER_H
+#ifndef AUDIOENCODERCONTROL_H
+#define AUDIOENCODERCONTROL_H
 
-#include <QSize>
+#include <QAudioEncoderControl>
 
-#include <QtMultimedia/QAbstractVideoBuffer>
-#include <linux/videodev2.h>
+#include <QtCore/qstringlist.h>
+#include <QtCore/qmap.h>
 
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
+#include <QAudioFormat>
 
-class V4LVideoBuffer : public QAbstractVideoBuffer
+class S60AudioCaptureSession;
+
+class S60AudioEncoderControl : public QAudioEncoderControl
 {
+    Q_OBJECT
 public:
-    V4LVideoBuffer(unsigned char *buffer, int fd, v4l2_buffer buf);
-    ~V4LVideoBuffer();
+    S60AudioEncoderControl(QObject *parent);
+    virtual ~S60AudioEncoderControl();
 
-    MapMode mapMode() const;
+    QStringList supportedAudioCodecs() const;
+    QString audioCodec() const;
+    bool setAudioCodec(const QString &codecName);
 
-    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
-    void unmap();
+    QString codecDescription(const QString &codecName) const;
 
-    void setBytesPerLine(int bytesPerLine);
+    int bitrate() const;
+    void setBitrate(int);
+
+    QtMedia::EncodingQuality quality() const;
+    void setQuality(QtMedia::EncodingQuality);
+
+    QStringList supportedEncodingOptions(const QString &codec) const;
+    QVariant encodingOption(const QString &codec, const QString &name) const;
+    void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
+
+    int sampleRate() const;
+    void setSampleRate(int sampleRate);
+    QList<int> supportedSampleRates(const QAudioEncoderSettings &settings) const;
+    
+    int channels() const;
+    void setChannels(int channels);
+    QList<int> supportedChannelCounts() const;
+
+    int sampleSize() const;
+    void setSampleSize(int sampleSize);
+    QList<int> supportedSampleSizes() const;
+
+    QAudioEncoderSettings audioSettings() const;
+    void setAudioSettings(const QAudioEncoderSettings&);
 
 private:
-    unsigned char *m_buffer;
-    int m_length;
-    int m_fd;
-    int m_bytesPerLine;
-    MapMode m_mode;
-    v4l2_buffer m_buf;
+    S60AudioCaptureSession* m_session;
 };
-
 
 #endif

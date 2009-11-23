@@ -39,40 +39,32 @@
 **
 ****************************************************************************/
 
-#ifndef V4LVIDEOBUFFER_H
-#define V4LVIDEOBUFFER_H
+#include "s60videorenderer.h"
 
-#include <QSize>
+#ifndef QT_NO_MULTIMEDIA
 
-#include <QtMultimedia/QAbstractVideoBuffer>
-#include <linux/videodev2.h>
+#include <QEvent>
+#include <QApplication>
 
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
-
-class V4LVideoBuffer : public QAbstractVideoBuffer
+S60VideoRenderer::S60VideoRenderer(QObject *parent)
+    :QVideoRendererControl(parent)
 {
-public:
-    V4LVideoBuffer(unsigned char *buffer, int fd, v4l2_buffer buf);
-    ~V4LVideoBuffer();
+}
 
-    MapMode mapMode() const;
+S60VideoRenderer::~S60VideoRenderer()
+{
+}
 
-    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
-    void unmap();
 
-    void setBytesPerLine(int bytesPerLine);
+QAbstractVideoSurface *S60VideoRenderer::surface() const
+{
+    return m_surface;
+}
 
-private:
-    unsigned char *m_buffer;
-    int m_length;
-    int m_fd;
-    int m_bytesPerLine;
-    MapMode m_mode;
-    v4l2_buffer m_buf;
-};
+void S60VideoRenderer::setSurface(QAbstractVideoSurface *surface)
+{
+    m_surface = surface;
+}
 
 
 #endif
